@@ -1,164 +1,175 @@
-Return-Path: <linux-kernel+bounces-572464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5617AA6CA91
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:29:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AD9A6CA96
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 15:33:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F063AEF17
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372411B64F79
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Mar 2025 14:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2C722155E;
-	Sat, 22 Mar 2025 14:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E4D22B8A9;
+	Sat, 22 Mar 2025 14:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="kEHuW3fP"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUNbwRaF"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71467136E3F
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 14:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A2048CFC;
+	Sat, 22 Mar 2025 14:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742653658; cv=none; b=iIa/w+0xYZvRKbNAfIr+zyBlmWnd8AagB0x0uU7uK/mlQ27NvvHbh+AXx0PwgENL1zQ7dcA+dMRulrYw/pqiYmvVyAtUCTEge30QJx8WKVwdxG0GSICgU5vEK5XJC3Z0MpJdXcLPm2+opt7E/d8OE4FNeXvAZbEgYTaLLmwpegM=
+	t=1742654011; cv=none; b=k8svXUYlx/M0jAig3SH6mPXdEjeOBC5daMF9Jr5vvi16dR2UTLO4QwWS6JPFspyABRP8umgcBeBirWfP3YRw6/pKMD66W6EvSge/Zl0IGayztjYRMNnaFl+gv2ZYBowjdvFZynpDPw+yWpByIc2OiPEhpHREjoj/e7zzYIeSYL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742653658; c=relaxed/simple;
-	bh=wpCm+hqOG2wsbtPLPSsueiJdiduXYzbm2JN6/V7qei4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y3j/jGG+xyoUuyJNFLvCdGLEDd3q59pQOcymkTROVpmJDypWb6X9U0dPUuWCjgcshjWpdTMJdZRoT0SiIWPkG19pY7il4dMsrDuT/4w2mKga18SsGAqOdP5DYx3Qeyoh6qXGuCyR/ji0h/5/D6JXnrit9gKgyRK/eK9mjF1k9QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=kEHuW3fP; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-85b4170f1f5so78822839f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 07:27:35 -0700 (PDT)
+	s=arc-20240116; t=1742654011; c=relaxed/simple;
+	bh=2m3O1qTTNBZo4pOaTIjiFgTRK7QQuuRVdD7/oz+VrTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Klroxq1jNJF/YajdbnFWeAfh8qHNthS7H0qfvGJN4WkF1dRhxMRsJ7ulG9siACBcrNFnuUasSx4L2lHUDIDU+7O7xzSwT28IPjqjTHeA2bhVhAmDWVHugq4pWUr6DWqdQbJrPpw1hSXDcE0y08Pan09g1SoqebYKP5q43UuV8/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUNbwRaF; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2243803b776so38984755ad.0;
+        Sat, 22 Mar 2025 07:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742653654; x=1743258454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxLNYJpvB/TXLfXAqOdKhmy/q9FPbJFzYq67r8P8xbE=;
-        b=kEHuW3fPfu726en3O8HTTUvD7b2bnYxF/E6T2FNNhZEAQqq986sLpeCS8/waNy+3zG
-         i8iYZ2PYNQ9Hjh2I+ELvrGFjPj0IFPeajwjcn0HOCZKXnztsMyNGuUfW8ehxjjD9f4aT
-         Cs1AlxPFtF/C4kOhyNl6zDvjeLKqmw+AjcybgoAJrXSM6vbNh68oTvND+XAjI4OuKnHQ
-         6VIFiVJ/z0Hrq75nE72h7c/ePE/2+4XiSSfjanKyT1b7uV8QcHX7E5r27eXCXGEESv1/
-         sKEuctf/5Dqj0Q7/lYfUTH7FKD1nqhQTBwaAN4ZUygR+BTE3LzJxrkdZPt4SF37nfGfz
-         zwCQ==
+        d=gmail.com; s=20230601; t=1742654008; x=1743258808; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CIBZE6KgWtHZM48TAyKomWUpshgbZruN/nT+wM0z3cY=;
+        b=RUNbwRaFApvN05W2SJ1g00z8UiVfL7PbL0GqJpuZWmdu3/OwaE/Iq6Afc5WAKgraMI
+         ytz+jLTIsi8VBiIWRIX8tPfaNpKrPukrZqRs84oGJeD8zIwFRhv3vld1a+MvqvDahKUj
+         OIBUwJ2o5nzGDeELXLAtEjxy7mFkToxN925kI+mNN70i9CGBjzRub3bO4MgyCUEFYtRG
+         BVdbWSxKjos5g1ZiddLCyBuJeKRryNnKxOcJrJI3qOkYrXhSn3lKDBTIx4Ty009aGxKG
+         CPD5uGNNuCthDnbzNlF5ZgLSom6sXGMDDiatWY3yInuczEkcd90MKqXrDCu99msrMl2S
+         lecQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742653654; x=1743258454;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxLNYJpvB/TXLfXAqOdKhmy/q9FPbJFzYq67r8P8xbE=;
-        b=E6Sn76OZHIvfmRXalcdwgTLGMigbt/Yz13vvIFnlIYRfC8iOGsC8gCjj6DmoJchPzB
-         7NBZodNZDm1XdsIxZU1HkZMj7lBNM6FvYTJHX7TbANrO2732jEg7rao+j2w/Qpt2Sylq
-         Gjtk8QTCb7pTGccbQ6QEB/mhArKR3lN/r5zbjVaKdWUW/P6BiT4KnpV/qno3udqilYXF
-         xUVcuJN0PW2s/YM5wGhY/ozM7ReORpCychbf0DnQ/3KnyoBCoNSo1umurzxydAmObr6b
-         bZb0iBwOE8K+DZnaq6HCrDOVNvoDEM50V20AFSBp+KxWL/QhY/8Wd6ivOBecBoQvuIki
-         NcHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaesvCElzMUG7+yfvaGWUCman5loC7GL5PVDnuuqjYh0OH0YCzD+TNdl0UShHaEPhjFhL0f+kpfjNn8qA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmawSVvzui0yTmJApC4GlPm8FGQiXOVK3OIpf0krpah2k7Lczj
-	QzGVRXvXBHic4sBqqlDtSVJdgpYgnwS5DM3ncjYEAowCvefUULj3w+Trc3LwSPA=
-X-Gm-Gg: ASbGncvI+s/iyHXNq/hqAHYl+lAB4KaqinWloWCn/wgsdctOLVOICxM/XvtcxIv6+4o
-	UMoERTslc3A103CkqrzPLEUk8LE/vO4BLpCXpKq3wlmS1zQdy2jS5rCrTOdocVgoISpMw5LMybl
-	K0AuGWtmFAEvq6+J23NOHBPpDmZYQK2m4bLuo9gDm3d2v6crG5+xqHNkm36YGqHqf8aw7fwScJJ
-	Fv4spVMtOxTCMRPJIoGGC/fv5/T1ocdqpO9FjZqNWRq5I+9DWDwhqob2yepY3np6StgxZqppfod
-	gNAITAhD0iGRwFj1OBUpOrHHCHHSykok/klNWs2LLDg0GAcHascSxSY/h2TX41yLnGWM9CLuM5A
-	Z02jJYwuHUuf138iEzQ==
-X-Google-Smtp-Source: AGHT+IHxH2JRqswkpmkABiwFlVLWGLbm4QGv8PyCPkc/LYC5FudrlksXf1TKCySAHhTc+btPlG9CLg==
-X-Received: by 2002:a05:6e02:2585:b0:3d0:235b:4810 with SMTP id e9e14a558f8ab-3d5960bf9b9mr82023985ab.2.1742653654335;
-        Sat, 22 Mar 2025 07:27:34 -0700 (PDT)
-Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbecb453sm908223173.142.2025.03.22.07.27.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Mar 2025 07:27:33 -0700 (PDT)
-Message-ID: <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
-Date: Sat, 22 Mar 2025 09:27:32 -0500
+        d=1e100.net; s=20230601; t=1742654008; x=1743258808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CIBZE6KgWtHZM48TAyKomWUpshgbZruN/nT+wM0z3cY=;
+        b=PpKyk5w7+qSJrY5SyaPsaR8K0/GkmJuOILQe5p5stwtZJEYRB8qgVq+Kbosl5+jxM3
+         Zr5261poWnyvVE4FPINKlkoUmVTV7D8cV7boMoFTmqY35Zrw8Uum6zpGZO8cOS36CnZu
+         uNgENxmwhkBphZNIHXN6xrQnlYFny6na3DjIuJwY2J7qrL/uzaW6hsymj8qpPpKge63/
+         qAw7bqReUg0+YycWVNgNnPmHHijvTQDCaJflQ+gQ+tJFHlTtTdq0zZebQzDSAXDyBpFM
+         ADHKuu7hxvHutNG5ccMbkSkVNP4AlZlEVkBEspOib/oBtgFo+Dmp3f9DqWT+tlWyLN+o
+         nXQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSI811abdv4k8bZdoP0TuswyhkqL2S3mGBY/tHYASIisHGk6dlWVvv2PWEhTgp5nTEasb0XMb0ta0wWi0t@vger.kernel.org, AJvYcCXleDMZMdD/7wYF4GVHv6OalwHvSoMnwbzxXn6GelpZP+eETNiIMdYh7GYOM/BcvFfjUoLNpR2MS9ww@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqg1dcavLDgyCglNP/SJAqYumlawZbeLfgLEWxe8oMN3DJBIFV
+	Lg0BXuy4OWAbaqGV7XGqsWizU5n91ttT1FrwoBrjfMJKRfsNLOH4
+X-Gm-Gg: ASbGncvap6bAQcOTREU2+9dyGDuARU4/pdEEaP84Ck6o8JLBLb9tW0CfUcgyzmYGur9
+	i/xSdPbphaBZmVsD3FZfUhp5Brx8S9Y+7sZgyQyiGb8bQ3+wugc1F0XDFZb27XHBRSuhAuobJ0T
+	4B5+hSGRtq19yU3yqVOH6oQ2cs0AuwuE+BDu7E7sqHclsI+XeeW5QMEqiTpG9YeURPoCXFsr2em
+	TJZfrniLnuuoCwFgQ7G4UI+sjomI+mC+FwGC/iImDmN7X6QBnfOdH8OWn1FO/iHrbgwPQ5cL2lW
+	pK9FBXFL80mNzO0lS4I4Q9cNu7jxfQPCMYMeSRwH2mCWZIT/HYktmN7xrPlzrF3v7qmP
+X-Google-Smtp-Source: AGHT+IFuGDrvHo87gSkJ3AgKg7PRhGZxToZM2+HRB79B6clNvtT7xfbYzfwMUOphtPaGeqwrjNJHSw==
+X-Received: by 2002:a17:903:320e:b0:224:1294:1d24 with SMTP id d9443c01a7336-22780c51260mr108189625ad.3.1742654008346;
+        Sat, 22 Mar 2025 07:33:28 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4c3a6sm36082255ad.92.2025.03.22.07.33.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Mar 2025 07:33:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 22 Mar 2025 07:33:27 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v2 08/12] lib/crc_kunit.c: add KUnit test suite for CRC
+ library functions
+Message-ID: <389b899f-893c-4855-9e30-d8920a5d6f91@roeck-us.net>
+References: <20241202012056.209768-1-ebiggers@kernel.org>
+ <20241202012056.209768-9-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
- spacemit,k1-ccu resets
-To: Yixun Lan <dlan@gentoo.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-2-elder@riscstar.com> <20250321222546-GYA11633@gentoo>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250321222546-GYA11633@gentoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202012056.209768-9-ebiggers@kernel.org>
 
-On 3/21/25 5:25 PM, Yixun Lan wrote:
-> hi Alex:
+Hi,
+
+On Sun, Dec 01, 2024 at 05:20:52PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> On 10:18 Fri 21 Mar     , Alex Elder wrote:
->> There are additional SpacemiT syscon CCUs whose registers control both
->> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
->> previously, these will initially support only resets.  They do not
->> incorporate power domain functionality.
->>
->> Define the index values for resets associated with all SpacemiT K1
->> syscon nodes, including those with clocks already defined, as well as
->> the new ones (without clocks).
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
->>   include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
->>   2 files changed, 143 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->> index 07a6728e6f864..333c28e075b6c 100644
->> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
->> @@ -19,6 +19,9 @@ properties:
->>         - spacemit,k1-syscon-apbc
->>         - spacemit,k1-syscon-apmu
->>         - spacemit,k1-syscon-mpmu
->> +      - spacemit,k1-syscon-rcpu
->> +      - spacemit,k1-syscon-rcpu2
->> +      - spacemit,k1-syscon-apbc2
->>   
->>     reg:
->>       maxItems: 1
+> Add a KUnit test suite for the crc16, crc_t10dif, crc32_le, crc32_be,
+> crc32c, and crc64_be library functions.  It avoids code duplication by
+> sharing most logic among all CRC variants.  The test suite includes:
+> 
+> - Differential fuzz test of each CRC function against a simple
+>   bit-at-a-time reference implementation.
+> - Test for CRC combination, when implemented by a CRC variant.
+> - Optional benchmark of each CRC function with various data lengths.
+> 
+> This is intended as a replacement for crc32test and crc16_kunit, as well
+> as a new test for CRC variants which didn't previously have a test.
+> 
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+...
+> +
+> +		nosimd = rand32() % 8 == 0;
+> +
+> +		/*
+> +		 * Compute the CRC, and verify that it equals the CRC computed
+> +		 * by a simple bit-at-a-time reference implementation.
+> +		 */
+> +		expected_crc = crc_ref(v, init_crc, &test_buffer[offset], len);
+> +		if (nosimd)
+> +			local_irq_disable();
+> +		actual_crc = v->func(init_crc, &test_buffer[offset], len);
+> +		if (nosimd)
+> +			local_irq_enable();
 
-. . .
+This triggers a traceback on some arm systems.
 
-32
->> @@ -180,6 +184,60 @@
->>   #define CLK_TSEN_BUS		98
->>   #define CLK_IPC_AP2AUD_BUS	99
->>   
->> +/*	APBC resets	*/
->> +
-> I'd also suggest to drop above blank line, keep style consistent
-> with others in this file, some same below that I won't comment
+[    7.810000]     ok 2 crc16_benchmark # SKIP not enabled
+[    7.810000] ------------[ cut here ]------------
+[    7.810000] WARNING: CPU: 0 PID: 1145 at kernel/softirq.c:369 __local_bh_enable_ip+0x118/0x194
+[    7.810000] Modules linked in:
+[    7.810000] CPU: 0 UID: 0 PID: 1145 Comm: kunit_try_catch Tainted: G                 N 6.14.0-rc7-00196-g88d324e69ea9 #1
+[    7.810000] Tainted: [N]=TEST
+[    7.810000] Hardware name: NPCM7XX Chip family
+[    7.810000] Call trace:
+[    7.810000]  unwind_backtrace from show_stack+0x10/0x14
+[    7.810000]  show_stack from dump_stack_lvl+0x7c/0xac
+[    7.810000]  dump_stack_lvl from __warn+0x7c/0x1b8
+[    7.810000]  __warn from warn_slowpath_fmt+0x19c/0x1a4
+[    7.810000]  warn_slowpath_fmt from __local_bh_enable_ip+0x118/0x194
+[    7.810000]  __local_bh_enable_ip from crc_t10dif_arch+0xd4/0xe8
+[    7.810000]  crc_t10dif_arch from crc_t10dif_wrapper+0x14/0x1c
+[    7.810000]  crc_t10dif_wrapper from crc_main_test+0x178/0x360
+[    7.810000]  crc_main_test from kunit_try_run_case+0x78/0x1e0
+[    7.810000]  kunit_try_run_case from kunit_generic_run_threadfn_adapter+0x1c/0x34
+[    7.810000]  kunit_generic_run_threadfn_adapter from kthread+0x118/0x254
+[    7.810000]  kthread from ret_from_fork+0x14/0x28
+[    7.810000] Exception stack(0xe3651fb0 to 0xe3651ff8)
+[    7.810000] 1fa0:                                     00000000 00000000 00000000 00000000
+[    7.810000] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    7.810000] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    7.810000] irq event stamp: 29
+[    7.810000] hardirqs last  enabled at (27): [<c037875c>] __local_bh_enable_ip+0xb4/0x194
+[    7.810000] hardirqs last disabled at (28): [<c0b09684>] crc_main_test+0x2e4/0x360
+[    7.810000] softirqs last  enabled at (26): [<c032a3ac>] kernel_neon_end+0x0/0x1c
+[    7.810000] softirqs last disabled at (29): [<c032a3c8>] kernel_neon_begin+0x0/0x70
+[    7.810000] ---[ end trace 0000000000000000 ]---
+[    8.050000]     # crc_t10dif_test: pass:1 fail:0 skip:0 total:1
 
-OK, I'll fix the weird extra line and will drop these blank
-lines as you suggest in v2.  I'll post another version after
-Sunday.  I recognize the merge window means I can't expect
-reviews during that time, but this code is waiting for the
-clock code to get accepted anyway.
+kernel_neon_end() calls local_bh_enable() which apparently conflicts with
+the local_irq_disable() in above code.
 
-Thanks a lot.
-
-					-Alex
-
->> +#define RST_UART0		0
->> +#define RST_UART2		1
->> +#define RST_UART3		2
->> +#define RST_UART4		3
->> +#define RST_UART5		4
-
-. . .
+Guenter
 
