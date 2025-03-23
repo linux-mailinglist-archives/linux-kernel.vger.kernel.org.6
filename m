@@ -1,405 +1,182 @@
-Return-Path: <linux-kernel+bounces-572883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEE1A6CFCD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:46:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60FEA6CFD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A91898C4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9834D3ABAE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4CE76C61;
-	Sun, 23 Mar 2025 14:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A997126C03;
+	Sun, 23 Mar 2025 15:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="gcNADe+N"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="nQbf/+Tp"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299F017E;
-	Sun, 23 Mar 2025 14:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3605210FB
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742741180; cv=none; b=dXkdyPwPtOX86Qgu+juFARj6Bjk7KKlh7QQQlyu9gomqywHHhJrAnyahi8MwMRnKaIP9L/1x/aqF4mYcu8AS6qOd70R4DLhcpQpBbfJy509ILlUu61MUfaf0Dlej9iUHxEQlNoXWAvN6pfi1cVvkpqbFVHy6BckhaPIMDy2ULiE=
+	t=1742742916; cv=none; b=J1NKLnlnuVj6s5DoZ9A52olvR1H3pqt2SERs1EUiWSLq3vKhB7CqcIXsetTen0WH0vmdq5hcT9MxRX4CJgB0i3SBptXtr700Z9UYcG1lHQgZud3iuncP4dDOYpr8nGps/KGPz95/Otj4xsASX0HA8WF5L2WHs5rsz2IbFjnQ7UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742741180; c=relaxed/simple;
-	bh=M28ISDlb1W5CK9exYOrD2QEmHKoXWE/iJ0qJbupBP7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J3vXsLtfqO7dFh4vLLS5/i9GfMOSoVEh3xtiAzFJnLo9472P9ytvkK1BOQlVoGDMkYspzAH42x/dVq2/SCOEpIBMfd9nAhNODln/W+CpPbvzVS8S3DPffo7vTDCi3/id1T6+zAurILaM8zoxeoT7uw5GB4rhW854GQRfFWt/kIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=gcNADe+N; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 6C6D42E0942E;
-	Sun, 23 Mar 2025 16:46:12 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742741173;
-	bh=nIjuKIgZLgFsutZJraBZ+LXemw50XUzGA0wSmBwF9QY=;
-	h=Received:From:Subject:To;
-	b=gcNADe+NqBcTwLa3UWzSdqlZYPTzE5d5AxqhnEOA+NwsJSy3nnk4lT3wvyxkk65OF
-	 0wgokIogoXFe+y+qQ19zkpnUUzoCOK22EDttUZu3xZllKmvjR39XkNkCdkIXQ4sVgH
-	 8nhr1LJL/huEWDW4tzic/9vtn7hy0MtCJOoRCJ2Y=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.171) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f171.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f171.google.com with SMTP id
- 38308e7fff4ca-30beedb99c9so35587231fa.3;
-        Sun, 23 Mar 2025 07:46:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVnU8fRiADqc71K68B0x4uVlTPq7516URZ1TvHvUB4J32MTwBxJHIoV+gVXtBkzQc4uSMajvQatM3ca0A==@vger.kernel.org,
- AJvYcCWpLUOnAnurW9bvOi2kF0eFeZr/pOI9+LIyMABajrTNJJGW1NqicxoRulwLhLp/qBouErnkg4S7uFtQOURl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqlEKSDtH0DYEW6qrWEJAjOOvw5QxLnewdfGBQUhe/AGL1MysW
-	s+mKOAjIC9NAQBCcj0qFwnLSeEsr1SaV66t448bX2VFEKBTYNGtLnX55Ik+ztHBPg4Vdf26MPFa
-	YdajAe5Z+7B0UVtLv1aUgJKDi2Ro=
-X-Google-Smtp-Source: 
- AGHT+IEL8qGmkQT4CCogsoRN6Nf69Pj9GUcRts5DjSuBCJ2lcVmjQkt4ZcA+2StrWYI9ybKfAENX8vgoalCvitYFu1A=
-X-Received: by 2002:a2e:a78a:0:b0:30c:4610:9e9e with SMTP id
- 38308e7fff4ca-30d7e2d9f69mr40665261fa.35.1742741171466; Sun, 23 Mar 2025
- 07:46:11 -0700 (PDT)
+	s=arc-20240116; t=1742742916; c=relaxed/simple;
+	bh=CpWT2pst7EIXUBJd+WV+li7kuPAwyRtD5eARsnqAP1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZnMZHk9iBzT52oX2/8pX5bOqjYIfX3rGV3dwyQxQ3fH87JH1vOHHJ5NwFCrgmw79T+dWJH0NTHq/KV5pPHl1rW5QLVWaY1g0HbEkgC2IXKd6ysvomerE4r4YZEh9aUj3D2iMr8whUCMgG8E1yU7nsuc904AVjWXHHM3KLh3lAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=nQbf/+Tp; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from mx0.riseup.net (mx0-pn.riseup.net [10.0.1.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4ZLKNW27y9zDrJp
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1742742587; bh=CpWT2pst7EIXUBJd+WV+li7kuPAwyRtD5eARsnqAP1g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nQbf/+TpgbHtfCiVOWi4slo6wm8C2iHUyge/A3a17NZ9aL8AFqovISF1LHbm6EFXy
+	 FCJXPtOQkqXPIf9N+3IC6/fp0TE7WNxk9+ERmMn5UoS5goclvAPRfbAozzMTSDJrmB
+	 nrAAvGFnys8sp61QnbBtPzJUCa5Br0u/9y28PpWo=
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4ZLKNP4hmSz9sHX;
+	Sun, 23 Mar 2025 15:09:41 +0000 (UTC)
+X-Riseup-User-ID: BF1F8C7DE14940D234E3ED4CDCB9CB8C726D39E202A64067E5369A4E7910525E
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4ZLKNM6vPYzFtBc;
+	Sun, 23 Mar 2025 15:09:39 +0000 (UTC)
+From: Fernando Fernandez Mancera <ffmancera@riseup.net>
+To: x86@kernel.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Cc: dwmw@amazon.co.uk,
+	mhkelley@outlook.com,
+	Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: [PATCH] x86/i8253: fix possible deadlock when turning off the PIT
+Date: Sun, 23 Mar 2025 16:09:24 +0100
+Message-ID: <20250323150924.3326-1-ffmancera@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322102804.418000-1-lkml@antheas.dev>
- <20250322102804.418000-10-lkml@antheas.dev>
- <bb3071d4-7910-46c2-ab48-aed574bcd758@ljones.dev>
- <CAGwozwFZAenLmmDC8tVChQMfzHo7NVuxOeqVmE9OVfY+-tAByA@mail.gmail.com>
-In-Reply-To: 
- <CAGwozwFZAenLmmDC8tVChQMfzHo7NVuxOeqVmE9OVfY+-tAByA@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Sun, 23 Mar 2025 15:45:59 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwGAFqbiFGdgrKOwc8rGBxQ47T7_vw=28R6FCxwn3MWDaQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrkekyNZesdsDsJ0DpRSUBpiUXalEILEOFpMb31u6t9LVr4qKED2giuVCA
-Message-ID: 
- <CAGwozwGAFqbiFGdgrKOwc8rGBxQ47T7_vw=28R6FCxwn3MWDaQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] HID: asus: add basic RGB support
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174274117284.8549.12899156043005326554@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 
-On Sun, 23 Mar 2025 at 12:37, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->
-> On Sun, 23 Mar 2025 at 07:40, Luke D. Jones <luke@ljones.dev> wrote:
-> >
-> > On 22/03/25 23:28, Antheas Kapenekakis wrote:
-> > > Adds basic RGB support to hid-asus through multi-index. The interface
-> > > works quite well, but has not gone through much stability testing.
-> > > Applied on demand, if userspace does not touch the RGB sysfs, not
-> > > even initialization is done. Ensuring compatibility with existing
-> > > userspace programs.
-> > >
-> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > ---
-> > >   drivers/hid/hid-asus.c | 169 +++++++++++++++++++++++++++++++++++++----
-> > >   1 file changed, 155 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > > index 905453a4eb5b7..9d8ccfde5912e 100644
-> > > --- a/drivers/hid/hid-asus.c
-> > > +++ b/drivers/hid/hid-asus.c
-> > > @@ -30,6 +30,7 @@
-> > >   #include <linux/input/mt.h>
-> > >   #include <linux/usb.h> /* For to_usb_interface for T100 touchpad intf check */
-> > >   #include <linux/power_supply.h>
-> > > +#include <linux/led-class-multicolor.h>
-> > >   #include <linux/leds.h>
-> > >
-> > >   #include "hid-ids.h"
-> > > @@ -85,6 +86,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> > >   #define QUIRK_ROG_NKEY_KEYBOARD             BIT(11)
-> > >   #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
-> > >   #define QUIRK_HANDLE_GENERIC                BIT(13)
-> > > +#define QUIRK_ROG_NKEY_RGB           BIT(14)
-> > >
-> > >   #define I2C_KEYBOARD_QUIRKS                 (QUIRK_FIX_NOTEBOOK_REPORT | \
-> > >                                                QUIRK_NO_INIT_REPORTS | \
-> > > @@ -97,9 +99,15 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> > >
-> > >   struct asus_kbd_leds {
-> > >       struct asus_hid_listener listener;
-> > > +     struct led_classdev_mc mc_led;
-> > > +     struct mc_subled subled_info[3];
-> > >       struct hid_device *hdev;
-> > >       struct work_struct work;
-> > >       unsigned int brightness;
-> > > +     uint8_t rgb_colors[3];
-> > > +     bool rgb_init;
-> > > +     bool rgb_set;
-> > > +     bool rgb_registered;
-> > >       spinlock_t lock;
-> > >       bool removed;
-> > >   };
-> > > @@ -504,23 +512,67 @@ static void asus_schedule_work(struct asus_kbd_leds *led)
-> > >       spin_unlock_irqrestore(&led->lock, flags);
-> > >   }
-> > >
-> > > -static void asus_kbd_backlight_set(struct asus_hid_listener *listener,
-> > > +static void do_asus_kbd_backlight_set(struct asus_kbd_leds *led, int brightness)
-> > > +{
-> > > +     unsigned long flags;
-> > > +
-> > > +     spin_lock_irqsave(&led->lock, flags);
-> > > +     led->brightness = brightness;
-> > > +     spin_unlock_irqrestore(&led->lock, flags);
-> > > +
-> > > +     asus_schedule_work(led);
-> > > +}
-> > > +
-> > > +static void asus_kbd_listener_set(struct asus_hid_listener *listener,
-> > >                                  int brightness)
-> > >   {
-> > >       struct asus_kbd_leds *led = container_of(listener, struct asus_kbd_leds,
-> > >                                                listener);
-> > > +     do_asus_kbd_backlight_set(led, brightness);
-> > > +     if (led->rgb_registered) {
-> > > +             led->mc_led.led_cdev.brightness = brightness;
-> > > +             led_classdev_notify_brightness_hw_changed(&led->mc_led.led_cdev,
-> > > +                                                       brightness);
-> > > +     }
-> > > +}
-> > > +
-> > > +static void asus_kbd_brightness_set(struct led_classdev *led_cdev,
-> > > +                                 enum led_brightness brightness)
-> > > +{
-> > > +     struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(led_cdev);
-> > > +     struct asus_kbd_leds *led = container_of(mc_cdev, struct asus_kbd_leds,
-> > > +                                              mc_led);
-> > >       unsigned long flags;
-> > >
-> > >       spin_lock_irqsave(&led->lock, flags);
-> > > -     led->brightness = brightness;
-> > > +     led->rgb_colors[0] = mc_cdev->subled_info[0].intensity;
-> > > +     led->rgb_colors[1] = mc_cdev->subled_info[1].intensity;
-> > > +     led->rgb_colors[2] = mc_cdev->subled_info[2].intensity;
-> > > +     led->rgb_set = true;
-> > >       spin_unlock_irqrestore(&led->lock, flags);
-> > >
-> > > -     asus_schedule_work(led);
-> > > +     do_asus_kbd_backlight_set(led, brightness);
-> > > +}
-> > > +
-> > > +static enum led_brightness asus_kbd_brightness_get(struct led_classdev *led_cdev)
-> > > +{
-> > > +     struct led_classdev_mc *mc_led;
-> > > +     struct asus_kbd_leds *led;
-> > > +     enum led_brightness brightness;
-> > > +     unsigned long flags;
-> > > +
-> > > +     mc_led = lcdev_to_mccdev(led_cdev);
-> > > +     led = container_of(mc_led, struct asus_kbd_leds, mc_led);
-> > > +
-> > > +     spin_lock_irqsave(&led->lock, flags);
-> > > +     brightness = led->brightness;
-> > > +     spin_unlock_irqrestore(&led->lock, flags);
-> > > +
-> > > +     return brightness;
-> > >   }
-> > >
-> > > -static void asus_kbd_backlight_work(struct work_struct *work)
-> > > +static void asus_kbd_backlight_work(struct asus_kbd_leds *led)
-> > >   {
-> > > -     struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
-> > >       u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4, 0x00 };
-> > >       int ret;
-> > >       unsigned long flags;
-> > > @@ -534,10 +586,69 @@ static void asus_kbd_backlight_work(struct work_struct *work)
-> > >               hid_err(led->hdev, "Asus failed to set keyboard backlight: %d\n", ret);
-> > >   }
-> > >
-> > > +static void asus_kbd_rgb_work(struct asus_kbd_leds *led)
-> > > +{
-> > > +     u8 rgb_buf[][7] = {
-> > > +             { FEATURE_KBD_LED_REPORT_ID1, 0xB3 }, /* set mode */
-> > > +             { FEATURE_KBD_LED_REPORT_ID1, 0xB5 }, /* apply mode */
-> > > +             { FEATURE_KBD_LED_REPORT_ID1, 0xB4 }, /* save to mem */
-> > > +     };
-> > > +     unsigned long flags;
-> > > +     uint8_t colors[3];
-> > > +     bool rgb_init, rgb_set;
-> > > +     int ret;
-> > > +
-> > > +     spin_lock_irqsave(&led->lock, flags);
-> > > +     rgb_init = led->rgb_init;
-> > > +     rgb_set = led->rgb_set;
-> > > +     led->rgb_set = false;
-> > > +     colors[0] = led->rgb_colors[0];
-> > > +     colors[1] = led->rgb_colors[1];
-> > > +     colors[2] = led->rgb_colors[2];
-> > > +     spin_unlock_irqrestore(&led->lock, flags);
-> > > +
-> > > +     if (!rgb_set)
-> > > +             return;
-> > > +
-> > > +     if (rgb_init) {
-> > > +             ret = asus_kbd_init(led->hdev, FEATURE_KBD_LED_REPORT_ID1);
-> > > +             if (ret < 0) {
-> > > +                     hid_err(led->hdev, "Asus failed to init RGB: %d\n", ret);
-> > > +                     return;
-> > > +             }
-> > > +             spin_lock_irqsave(&led->lock, flags);
-> > > +             led->rgb_init = false;
-> > > +             spin_unlock_irqrestore(&led->lock, flags);
-> > > +     }
-> > > +
-> > > +     /* Protocol is: 54b3 zone (0=all) mode (0=solid) RGB */
-> > > +     rgb_buf[0][4] = colors[0];
-> > > +     rgb_buf[0][5] = colors[1];
-> > > +     rgb_buf[0][6] = colors[2];
-> > > +
-> > > +     for (size_t i = 0; i < ARRAY_SIZE(rgb_buf); i++) {
-> > > +             ret = asus_kbd_set_report(led->hdev, rgb_buf[i], sizeof(rgb_buf[i]));
-> > > +             if (ret < 0) {
-> > > +                     hid_err(led->hdev, "Asus failed to set RGB: %d\n", ret);
-> > > +                     return;
-> > > +             }
-> > > +     }
-> > > +}
-> > > +
-> > > +static void asus_kbd_work(struct work_struct *work)
-> > > +{
-> > > +     struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds,
-> > > +                                              work);
-> > > +     asus_kbd_backlight_work(led);
-> > > +     asus_kbd_rgb_work(led);
-> > > +}
-> > > +
-> > >   static int asus_kbd_register_leds(struct hid_device *hdev)
-> > >   {
-> > >       struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> > >       unsigned char kbd_func;
-> > > +     struct asus_kbd_leds *leds;
-> > > +     bool no_led;
-> > >       int ret;
-> > >
-> > >       ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > > @@ -565,21 +676,51 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
-> > >       if (!drvdata->kbd_backlight)
-> > >               return -ENOMEM;
-> > >
-> > > -     drvdata->kbd_backlight->removed = false;
-> > > -     drvdata->kbd_backlight->brightness = 0;
-> > > -     drvdata->kbd_backlight->hdev = hdev;
-> > > -     drvdata->kbd_backlight->listener.brightness_set = asus_kbd_backlight_set;
-> > > -     INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_backlight_work);
-> > > +     leds = drvdata->kbd_backlight;
-> > > +     leds->removed = false;
-> > > +     leds->brightness = 3;
-> > > +     leds->hdev = hdev;
-> > > +     leds->listener.brightness_set = asus_kbd_listener_set;
-> > > +
-> > > +     leds->rgb_colors[0] = 0;
-> > > +     leds->rgb_colors[1] = 0;
-> > > +     leds->rgb_colors[2] = 0;
-> > > +     leds->rgb_init = true;
-> > > +     leds->rgb_set = false;
-> > > +     leds->mc_led.led_cdev.name = devm_kasprintf(&hdev->dev, GFP_KERNEL,
-> > > +                                     "asus-%s-led",
-> > > +                                     strlen(hdev->uniq) ?
-> > > +                                     hdev->uniq : dev_name(&hdev->dev));
-> >
-> > A quick note. This breaks convention for LED names. The style guide is
-> > at Documentation/leds/leds-class.rst. Per my parallel email to this one
-> > I would like to see the mentioned naming scheme `asus:rgb:kbd_backlight`
-> > adopted.
->
-> Perhaps. It would be the first kbd_backlight driver to have "rgb" in
-> it. It is a bit out of scope for this series as I do not touch the
-> functionality of it but I can add a patch for it and a fixes
-> e305a71cea37a64c75 tag.
->
-> > Expanding further on one of the points there you might need to
-> > move the led_classdev_mc in to asus-wmi to fulfil having the single
-> > sysfs endpoint. Since you're using the listner pattern it shouldn't be
-> > much work.
->
-> I only want the brightness to sync, not the color. Only the brightness
-> between Aura devices needs to be the same. In this case
-> asus::kbd_backlight if it has a color controls the wmi color, and the
-> asus- devices control the usb.
->
-> Also, groups are not dynamic so this is not possible. E.g., if you
-> setup a WMI listener that does not have RGB, and then the USB keyboard
-> connects you can no longer change the groups unless you reconnect the
-> device.
+As the PIT could be disabled during the init, it can possibly cause a
+deadlock when resuming from suspend due to a lock dependency created at
+pcspkr_event(). This new dependency connect a HARDIRQ-irq-safe to a
+HARDIRQ-irq-unsafe.
 
-Sorry, I confused the patches. Yes you are right. I cannot do
-kbd_backlight because userspace might pick the wrong handler. And with
-this patch series on the Z13 there are 3, one for the common
-backlight, one for the keyboard, and one for the lightbar.
+Solve this warning by using the raw_spin_lock_irqsave() variant when
+turning off the PIT.
 
-I can do asus-UNIQ:rgb:peripheral though. There is no appropriate
-function that is close enough currently. Also, since there can be
-multiple devices, UNIQ or something similar needs to be added,
-otherwise the led handler will suffix _X.
+[   45.408952] =====================================================
+[   45.408970] WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
+[   45.408974] 6.14.0-rc7+ #6 Not tainted
+[   45.408978] -----------------------------------------------------
+[   45.408980] systemd-sleep/3324 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+[   45.408986] ffffffffb2c23398 (i8253_lock){+.+.}-{2:2}, at: pcspkr_event+0x3f/0xe0 [pcspkr]
+[   45.409004]
+               and this task is already holding:
+[   45.409006] ffff9c334d7c2230 (&dev->event_lock){-.-.}-{3:3}, at: input_dev_resume+0x21/0x50
+[   45.409023] which would create a new lock dependency:
+[   45.409025]  (&dev->event_lock){-.-.}-{3:3} -> (i8253_lock){+.+.}-{2:2}
+[   45.409043]
+               but this new dependency connects a HARDIRQ-irq-safe lock:
+[   45.409045]  (&dev->event_lock){-.-.}-{3:3}
+[   45.409052]
+               ... which became HARDIRQ-irq-safe at:
+[   45.409055]   lock_acquire+0xd0/0x2f0
+[   45.409062]   _raw_spin_lock_irqsave+0x48/0x70
+[   45.409067]   input_event+0x3c/0x80
+[   45.409071]   atkbd_receive_byte+0x9b/0x6e0
+[   45.409077]   ps2_interrupt+0xb2/0x1d0
+[   45.409082]   serio_interrupt+0x4a/0x90
+[   45.409087]   i8042_handle_data+0xf8/0x280
+[   45.409091]   i8042_interrupt+0x11/0x40
+[   45.409095]   __handle_irq_event_percpu+0x87/0x260
+[   45.409100]   handle_irq_event+0x38/0x90
+[   45.409105]   handle_edge_irq+0x8b/0x230
+[   45.409109]   __common_interrupt+0x5c/0x120
+[   45.409114]   common_interrupt+0x80/0xa0
+[   45.409120]   asm_common_interrupt+0x26/0x40
+[   45.409125]   pv_native_safe_halt+0xf/0x20
+[   45.409130]   default_idle+0x9/0x20
+[   45.409135]   default_idle_call+0x7a/0x1d0
+[   45.409140]   do_idle+0x215/0x260
+[   45.409144]   cpu_startup_entry+0x29/0x30
+[   45.409149]   start_secondary+0x132/0x170
+[   45.409153]   common_startup_64+0x13e/0x141
+[   45.409158]
+               to a HARDIRQ-irq-unsafe lock:
+[   45.409161]  (i8253_lock){+.+.}-{2:2}
+[   45.409167]
+               ... which became HARDIRQ-irq-unsafe at:
+[   45.409170] ...
+[   45.409172]   lock_acquire+0xd0/0x2f0
+[   45.409177]   _raw_spin_lock+0x30/0x40
+[   45.409181]   clockevent_i8253_disable+0x1c/0x60
+[   45.409186]   pit_timer_init+0x25/0x50
+[   45.409191]   hpet_time_init+0x46/0x50
+[   45.409196]   x86_late_time_init+0x1b/0x40
+[   45.409201]   start_kernel+0x962/0xa00
+[   45.409206]   x86_64_start_reservations+0x24/0x30
+[   45.409211]   x86_64_start_kernel+0xed/0xf0
+[   45.409215]   common_startup_64+0x13e/0x141
+[   45.409220]
+               other info that might help us debug this:
 
-Antheas
+[   45.409222]  Possible interrupt unsafe locking scenario:
 
-> > > +     leds->mc_led.led_cdev.flags = LED_BRIGHT_HW_CHANGED;
-> > > +     leds->mc_led.led_cdev.max_brightness = 3,
-> > > +     leds->mc_led.led_cdev.brightness_set = asus_kbd_brightness_set,
-> > > +     leds->mc_led.led_cdev.brightness_get = asus_kbd_brightness_get,
-> > > +     leds->mc_led.subled_info = leds->subled_info,
-> > > +     leds->mc_led.num_colors = ARRAY_SIZE(leds->subled_info),
-> > > +     leds->subled_info[0].color_index = LED_COLOR_ID_RED;
-> > > +     leds->subled_info[1].color_index = LED_COLOR_ID_GREEN;
-> > > +     leds->subled_info[2].color_index = LED_COLOR_ID_BLUE;
-> > > +
-> > > +     INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_work);
-> > >       spin_lock_init(&drvdata->kbd_backlight->lock);
-> > >
-> > >       ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
-> > > +     no_led = !!ret;
-> > > +
-> > > +     if (drvdata->quirks & QUIRK_ROG_NKEY_RGB) {
-> > > +             ret = devm_led_classdev_multicolor_register(
-> > > +                     &hdev->dev, &leds->mc_led);
-> > > +             if (!ret)
-> > > +                     leds->rgb_registered = true;
-> > > +             no_led &= !!ret;
-> > > +     }
-> > >
-> > > -     if (ret < 0) {
-> > > +     if (no_led) {
-> > >               /* No need to have this still around */
-> > >               devm_kfree(&hdev->dev, drvdata->kbd_backlight);
-> > >       }
-> > >
-> > > -     return ret;
-> > > +     return no_led ? -ENODEV : 0;
-> > >   }
-> > >
-> > >   /*
-> > > @@ -1289,7 +1430,7 @@ static const struct hid_device_id asus_devices[] = {
-> > >         QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> > >           USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
-> > > -       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > > +       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
-> > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> > >           USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
-> > >         QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > > @@ -1318,7 +1459,7 @@ static const struct hid_device_id asus_devices[] = {
-> > >        */
-> > >       { HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> > >               USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
-> > > -       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-> > > +       QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
-> > >       { HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-> > >               USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD) },
-> > >       { }
-> >
+[   45.409224]        CPU0                    CPU1
+[   45.409226]        ----                    ----
+[   45.409228]   lock(i8253_lock);
+[   45.409234]                                local_irq_disable();
+[   45.409237]                                lock(&dev->event_lock);
+[   45.409243]                                lock(i8253_lock);
+[   45.409249]   <Interrupt>
+[   45.409251]     lock(&dev->event_lock);
+[   45.409257]
+                *** DEADLOCK ***
+
+Fixes: 70e6b7d9ae3c ("x86/i8253: Disable PIT timer 0 when not in use")
+Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
+---
+ drivers/clocksource/i8253.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
+index 39f7c2d736d1..9a91ce66e16e 100644
+--- a/drivers/clocksource/i8253.c
++++ b/drivers/clocksource/i8253.c
+@@ -103,7 +103,9 @@ int __init clocksource_i8253_init(void)
+ #ifdef CONFIG_CLKEVT_I8253
+ void clockevent_i8253_disable(void)
+ {
+-	raw_spin_lock(&i8253_lock);
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&i8253_lock, flags);
+ 
+ 	/*
+ 	 * Writing the MODE register should stop the counter, according to
+@@ -133,7 +135,7 @@ void clockevent_i8253_disable(void)
+ 
+ 	outb_p(0x30, PIT_MODE);
+ 
+-	raw_spin_unlock(&i8253_lock);
++	raw_spin_unlock_irqrestore(&i8253_lock, flags);
+ }
+ 
+ static int pit_shutdown(struct clock_event_device *evt)
+-- 
+2.47.0
+
 
