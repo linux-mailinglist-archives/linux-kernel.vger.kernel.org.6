@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-572996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A80A6D143
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:39:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEF5A6D147
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050D93AA263
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20D3016E6D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E83A1A7253;
-	Sun, 23 Mar 2025 21:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8B51B041E;
+	Sun, 23 Mar 2025 21:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbjbcgR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="nZ9Le3K9"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A839943ABC;
-	Sun, 23 Mar 2025 21:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141F81487D1
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 21:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742765902; cv=none; b=ZZp5aZJbWIxoTbqmbbWFX/p7XmIJt/UhqR+SSW6nztR04ISfPRCfU9ZNj1XvCluVeyVTABZ1h48oUsTqedovVDC/eWtqw6sTy5BSmkT+AgwNmAjUGlfBHj4RIWaxq99B7cH04WZ9tcCcrAFSuCRjPGtKZeJ9KXUM6ZkfDnd94ic=
+	t=1742766275; cv=none; b=tHr/F4sxQwpHybnlyF4kcV3DRktvBkFqsi5XsjwOgqYQn584iZm1tXaQZ63/RWutSUSHruZaPvbDaw+psmwfrgj5/3sTblWfUy4AjIPLNG1AdwNtNtWRHLgvuuS8TnUVF4cpzR4cyTTaFGuJYTURbwWSdPh7CTy5eF3V6deO58I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742765902; c=relaxed/simple;
-	bh=/LdUmRuYDzZ+pcAfIi5jUxXTqjVbMP2bRgHPhCCF4D0=;
+	s=arc-20240116; t=1742766275; c=relaxed/simple;
+	bh=Np008TJr5PK+P6vSrV7C4URKZjMVCbHKWGNlLBsimIs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCQ8Dfm0McJYOTp7z2v3b78diTb33xe5s+vg9oLDkohSzQF5LVyqWL8Tj9q/GdfsK6Xboju/UUqx+LZ5wqZZ5/6stEN2WiwYQ6RZYyS9zEbcMlyQ2dy8h9meHxiJAdhtg5dCH+HBxoLWbepLqOMhq7lu8Kjn5cejfGhZHnHu4aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbjbcgR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B5BEC4CEE2;
-	Sun, 23 Mar 2025 21:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742765902;
-	bh=/LdUmRuYDzZ+pcAfIi5jUxXTqjVbMP2bRgHPhCCF4D0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nbjbcgR+0uUDC4g6AP44WMqSQsAIlhpwUhszEjDRqqCAQU4i99GTtqM7Et6HLyg3A
-	 OsDVD5FdDr4tr5DDikKDkmLGniV/wRYZxeyuA+oyJGhx8XPLX4RKuwxJkCGk8qjYws
-	 exUvKr7wxGUjLXoA0m1qdjI7Llkq9ssplGQ8W06Wu9ZhcUA8wtMsyfUKaictCUrWdX
-	 0rcmB4KCYg+xBVX5pDoZAxN69qG7H6sTyND7VOEdSb00+fpG53zrb+PpELV83MgNiz
-	 u1QptBokjnKlE2okiS5pdFHdNMIK7pN7D8ID+Mj9QqPsNkEvhA0/egG+c78aT3jYmV
-	 v7UCZThwQVX5g==
-Date: Sun, 23 Mar 2025 22:38:15 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzxBQwz8ldJzrGnOPan+IIuitzwTkfiHTRu4Hzgg8N3gXk8K+qd5z2dhGAWEZl8MCvslUHLzR4EgHFX+i6Gru8RRYVUtXhA+kEKcCeZk4CsKW/9Fv6ihNorS4DfIcNJ4PE8LsOiOySO4SaaOSky5quCXc0CPICLLdPSuBoxCTWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=nZ9Le3K9; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Sun, 23 Mar 2025 17:44:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1742766271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QjI5CAIKnyK0cdKaefRJI+q3uIG7lhr68HrdHr6otHQ=;
+	b=nZ9Le3K9grAmT8NSqrDY7VgqawNr/XTrJxRvN1cnBj5rG5ctGZFQCbYbmgaahOqfE4y8X6
+	9KiTK78LgpYvRwVN+5zFnyPVfkywDFasGxtxhKNwLwWoFJmI3aEZJwku1/EAvQL4segCBL
+	GKMhFQ9tW6Sie6nKkCQzSyxkQg/G91JQl5JBVLihPfSOBgK0Rw9zfLdsp5oL61XNAM2K4y
+	EOadBxaZValTGWpyOOX2ozW/iNrMvBnfzLdCp+xW/A4nUucYKeDqrqta/rfKTlhwkGNgDe
+	CZGYYmPXcuH8jntdQWJIvZ7MVHpgdSGE0X7sP901OWfGmctB8KHsZb9uFe7BFA==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Faith Ekstrand <faith.ekstrand@collabora.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?=22Bj=F6rn_Roy_Baron=22?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sergio Lopez Pascual <slp@sinrega.org>,
+	Ryan Houdek <sonicadvance1@gmail.com>,
 	linux-kernel <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-	Greg Thelen <gthelen@google.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] x86/alternatives: remove false sharing in
- poke_int3_handler()
-Message-ID: <Z-B_R737uM31m6_K@gmail.com>
-References: <20250323072511.2353342-1-edumazet@google.com>
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	asahi <asahi@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-doc <linux-doc@vger.kernel.org>,
+	Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v3] drm: Add UAPI for the Asahi driver
+Message-ID: <Z-CAtz-D-CslvABE@blossom>
+References: <20250314-agx-uapi-v3-1-3abf7e74ea2f@rosenzweig.io>
+ <195b507d4b3.b25d0dad175771.7566427576910952468@collabora.com>
+ <195b582682b.121ba4d5e219032.3109114844776468245@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250323072511.2353342-1-edumazet@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <195b582682b.121ba4d5e219032.3109114844776468245@collabora.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-* Eric Dumazet <edumazet@google.com> wrote:
-
-> eBPF programs can be run 20,000,000+ times per second on busy servers.
+>  >  > +struct drm_asahi_queue_create { 
+>  >  > +    /** @flags: MBZ */ 
+>  >  > +    __u32 flags; 
+>  >  > + 
+>  >  > +    /** @vm_id: The ID of the VM this queue is bound to */ 
+>  >  > +    __u32 vm_id; 
+>  >  > + 
+>  >  > +    /** @queue_caps: Bitmask of DRM_ASAHI_QUEUE_CAP_* */ 
+>  >  > +    __u32 queue_caps; 
+>  >  > + 
+>  >  > +    /** @priority: Queue priority, 0-3 */ 
+>  >  > +    __u32 priority; 
 > 
-> Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
-> hundreds of calls sites are patched from text_poke_bp_batch()
-> and we see a critical loss of performance due to false sharing
-> on bp_desc.refs lasting up to three seconds.
+> Is one of these priorities REALTIME and only usable by privileged apps? If so, maybe document that and/or have an enum?
 
-> @@ -2413,8 +2415,12 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  	/*
->  	 * Remove and wait for refs to be zero.
->  	 */
-> -	if (!atomic_dec_and_test(&bp_desc.refs))
-> -		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
-> +	for_each_possible_cpu(i) {
-> +		atomic_t *refs = per_cpu_ptr(&bp_refs, i);
-> +
-> +		if (!atomic_dec_and_test(refs))
-> +			atomic_cond_read_acquire(refs, !VAL);
-> +	}
-
-So your patch changes text_poke_bp_batch() to busy-spin-wait for 
-bp_refs to go to zero on all 480 CPUs.
-
-Your measurement is using /proc/sys/kernel/bpf_stats_enabled on a 
-single CPU, right?
-
-What's the adversarial workload here? Spamming bpf_stats_enabled on all 
-CPUs in parallel? Or mixing it with some other text_poke_bp_batch() 
-user if bpf_stats_enabled serializes access?
-
-Does anything undesirable happen in that case?
-
-Thanks,
-
-	Ingo
+Actually, I've reserved realtime&high but always deny right now to make
+sure Mesa doesn't assume it can use them, then we can relax in the
+future once the kernel permission gating is there. (Needs rust
+bindings.)
 
