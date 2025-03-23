@@ -1,191 +1,255 @@
-Return-Path: <linux-kernel+bounces-573001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1544A6D158
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:05:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22E3A6D159
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207B01889228
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06ED816E47C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BB31A83F8;
-	Sun, 23 Mar 2025 22:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E1E1A5B8F;
+	Sun, 23 Mar 2025 22:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="jbqF4OpM"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KrSxcL1A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8B72AF04
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED15915E90;
+	Sun, 23 Mar 2025 22:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742767436; cv=none; b=G9VKPtV5cONxZcDnzC2tI80YDfeTWqp20OQR/r1vozWtpU0FW8ziyXTaHsSaPe+rsMVxGQFf/RXTZR/kNcbIw/rOGCjSkLseeN7t9niD012FE7KzPrX8ANyQBhRmhnDl+RLHxNBpqU2UX9gBOAYe6A9I3pqv2UizKO5waHYIPXA=
+	t=1742767521; cv=none; b=oj14tGHtnbEKm4WZJSKIJr1NYJWGtk/tQRZSzPqSaZ+jHHYehbEqSJLE3cPllEA+mZpeaJa1eWjKcM7p5d3QZNs1/oP339DPu1tkie3jx4eacZbOJQoHUOpav0wp5sxY4MKBCflIloU50M5DBXrCl+xRoyhyAj5d1KVsT3vHo/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742767436; c=relaxed/simple;
-	bh=ouZ+ajAd1ZI0QhE6GtHzDNbSoWotfxQ3ntZ4LbYMFNk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cAZcb6eYodUtFqQS1d5izbp0jL3Ng9Zc6hwijxr30IjBRfWEx6+iUJOmNv9yKDTr/VmGGd9iFbaQNSb/rgTl6kI97wxuJ3mRHTgwLL/FgL5vmohGv5h9ynYFS06IWXOkiu68RtFPIPeWSyamKOhX0/Th9x/Hl3aYJpgXA4mPSOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=jbqF4OpM; arc=none smtp.client-ip=121.127.44.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: References: Cc:
- To: From: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1742767433;
- bh=XY3BA1Vv02oLfVKMD+vhtMt4wqV14ktZSaEZlGUTwv8=;
- b=jbqF4OpMJbfYya2OvlaUKDGR2wW1oCtuVa+C6f2lraNb7zuCZrG+k5X02stoDhHaTUtx88EEa
- ldl3x2oJlqD9+Nzr684FEuFNzg6j2pFT9JAz8CDr6uJp7+6XFPYwcH1VgnOR+xv3zo7mZZreWIO
- gnKElRI4odGtfNF1Vs3EsJfhHsZMhg92WXNtJGa9E+r7yp4UuK55Xu2QxLEXdXgTRAK/ewUps3S
- p3CBjtxNUaIluZRXGbI6K35pk5JnRQfu28Qb3aRdrbXKSfSpY9ltSzE3kSIRnZH1/obFXVd5ieh
- Yq4G70nDn7aym2wxR8xkmMat+HKCvTSCZHnwtviVDWpQ==
-X-Forward-Email-ID: 67e08547bd529871d5f812bb
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.59
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <364bed4f-4ae1-48d5-ae6e-369668456d8e@kwiboo.se>
-Date: Sun, 23 Mar 2025 23:03:46 +0100
+	s=arc-20240116; t=1742767521; c=relaxed/simple;
+	bh=YhybzgPl2Cq/DacbVvF0iAzZ6kKcmY0Aiyj6Ah//UxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1Xw7DcMJBqgNWzJKZe2IiLMMbhd+TMDTiZv5DPlD7ZhFq9s7XbZXXYJfHMkm5omScECcn3b+vkjy7wN4ExDLv3AQmYkw50rJu8g4WQVYmaQrOktK0itiFMEuLWisah1+u/IM3XRiNZzgV17EBCD2i2b4hZfp/yynneQwPKtCOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KrSxcL1A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2CE5C4CEE2;
+	Sun, 23 Mar 2025 22:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742767519;
+	bh=YhybzgPl2Cq/DacbVvF0iAzZ6kKcmY0Aiyj6Ah//UxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KrSxcL1Ay3iHpOlC0ggiiDzHJhscV3ZIbPRbl2zOOJ2yNvBA362GDUegHoF7Y9Ujk
+	 OAaa8x6kkDqjSBI3i/9RsS+17fT8y1nod1C+1Zt3nqVAteR2VWYd0SQLq+9IZLsA6K
+	 CnMO/wOB9x+DdPrZy7V6b8fzgOyBslMvrerwej797+Ky/lrMqNTeNcHIVvIO06XyUp
+	 oWoPdw9C7d5zI2kPfVEv6kYPPXYyfkAoYw2FSxi4Pm+18KxmWnb4FsjfhUDqHN2RdQ
+	 uYusCTHgLf5ZBe/Zuv/PEfSZe2ptZA5MF45evvr2YCVUMTmzCh//8QnW0iW7YhaQrc
+	 hirJuGNxbiBcA==
+Date: Sun, 23 Mar 2025 23:05:16 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/2] rcu: Comment on the extraneous delta test on
+ rcu_seq_done_exact()
+Message-ID: <Z-CFnKELSqFotela@pavilion.home>
+References: <20250318135619.4300-1-frederic@kernel.org>
+ <20250318135619.4300-2-frederic@kernel.org>
+ <322b052d-0f1f-45a3-bfef-226b15f3a8fd@paulmck-laptop>
+ <20250319193831.GA3791727@joelnvbox>
+ <Z9wjBT3RQDUrFdbE@p200300d06f3e9880e1f174d4afcc9316.dip0.t-ipconnect.de>
+ <3c7f1032-f2ba-4fc6-91c0-a07fce1b9c3c@nvidia.com>
+ <Z96P_K0kt-FumSjz@pavilion.home>
+ <a2b9d79f-5406-422c-aa79-f0fd1862d4ab@nvidia.com>
+ <42297734-44af-42f9-8544-f3b25e35d3ef@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: rockchip: Add pwm nodes for RK3528
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250318120003.2340652-1-amadeus@jmu.edu.cn>
- <20250318120003.2340652-2-amadeus@jmu.edu.cn>
- <0d638134-0c0d-4918-af47-e23d2ead3bf3@kwiboo.se> <2499436.jE0xQCEvom@phil>
- <0f0a35ba-d85d-49eb-92dd-7bc17358aeaf@kwiboo.se>
-Content-Language: en-US
-In-Reply-To: <0f0a35ba-d85d-49eb-92dd-7bc17358aeaf@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <42297734-44af-42f9-8544-f3b25e35d3ef@nvidia.com>
 
-On 2025-03-20 08:02, Jonas Karlman wrote:
-> On 2025-03-20 00:47, Heiko Stuebner wrote:
->> Am Donnerstag, 20. MÃ¤rz 2025, 00:26:14 MEZ schrieb Jonas Karlman:
->>> Hi Chukun,
->>>
->>> On 2025-03-18 13:00, Chukun Pan wrote:
->>>> Add pwm nodes for RK3528. The PWM core on RK3528 is the same as
->>>> RK3328, but the driver does not support interrupts yet.
->>>
->>> The device tree should describe the hardware, not what the driver
->>> support, so interrupts should probably be included.
->>>
->>> However, looking closer at TRM for i.e. RK3328, RK3568 and RK3588 it
->>> look like the following description is not a true description of the
->>> hardware.
->>>
->>> Each PWM controller seem to support 4 channels, here (and for older RK
->>> SoCs) we instead describe each channel and not the controller.
->>
->> Yep, that is something that did go wrong in the very early days.
->> And all other Rockchip socs also have the same issue - even back
->> to the rk3066.
+Le Sat, Mar 22, 2025 at 03:40:53PM +0100, Joel Fernandes a écrit :
 > 
-> I see, look like the PWM has evolved something like following:
 > 
-> - The controller has always been 1 controller for 4 channels
-> - Initial versions only had 2 regs for interrupt outside of the 4x
->   0x10 reg space, one for each channel
-> - FIFO was introduced for channel 3
-> - Interrupts for FIFO was introduced (in RK3399 or earlier)
-> - Additional features/regs was introduced (in PX30 or earlier)
-> - PWM_VERSION_ID = 0x02120b34 is used (in RK3308 and later)
+> On 3/22/2025 3:20 PM, Joel Fernandes wrote:
+> > 
+> > On 3/22/2025 11:25 AM, Frederic Weisbecker wrote:
+> >> Le Sat, Mar 22, 2025 at 03:06:08AM +0100, Joel Fernandes a écrit :
+> >>> Insomnia kicked in, so 3 am reply here (Zurich local time) ;-):
+> >>>
+> >>> On 3/20/2025 3:15 PM, Frederic Weisbecker wrote:
+> >>>> Le Wed, Mar 19, 2025 at 03:38:31PM -0400, Joel Fernandes a écrit :
+> >>>>> On Tue, Mar 18, 2025 at 11:37:38AM -0700, Paul E. McKenney wrote:
+> >>>>>> On Tue, Mar 18, 2025 at 02:56:18PM +0100, Frederic Weisbecker wrote:
+> >>>>>>> The numbers used in rcu_seq_done_exact() lack some explanation behind
+> >>>>>>> their magic. Especially after the commit:
+> >>>>>>>
+> >>>>>>>     85aad7cc4178 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+> >>>>>>>
+> >>>>>>> which reported a subtle issue where a new GP sequence snapshot was taken
+> >>>>>>> on the root node state while a grace period had already been started and
+> >>>>>>> reflected on the global state sequence but not yet on the root node
+> >>>>>>> sequence, making a polling user waiting on a wrong already started grace
+> >>>>>>> period that would ignore freshly online CPUs.
+> >>>>>>>
+> >>>>>>> The fix involved taking the snaphot on the global state sequence and
+> >>>>>>> waiting on the root node sequence. And since a grace period is first
+> >>>>>>> started on the global state and only afterward reflected on the root
+> >>>>>>> node, a snapshot taken on the global state sequence might be two full
+> >>>>>>> grace periods ahead of the root node as in the following example:
+> >>>>>>>
+> >>>>>>> rnp->gp_seq = rcu_state.gp_seq = 0
+> >>>>>>>
+> >>>>>>>     CPU 0                                           CPU 1
+> >>>>>>>     -----                                           -----
+> >>>>>>>     // rcu_state.gp_seq = 1
+> >>>>>>>     rcu_seq_start(&rcu_state.gp_seq)
+> >>>>>>>                                                     // snap = 8
+> >>>>>>>                                                     snap = rcu_seq_snap(&rcu_state.gp_seq)
+> >>>>>>>                                                     // Two full GP differences
+> >>>>>>>                                                     rcu_seq_done_exact(&rnp->gp_seq, snap)
+> >>>>>>>     // rnp->gp_seq = 1
+> >>>>>>>     WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
+> >>>>>>>
+> >>>>>>> Add a comment about those expectations and to clarify the magic within
+> >>>>>>> the relevant function.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> >>>>>> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+> >>>>>>
+> >>>>>> But it would of course be good to get reviews from the others.
+> >>>>> I actually don't agree that the magic in the rcu_seq_done_exact() function about the
+> >>>>> ~2 GPs is related to the lag between rcu_state.gp_seq and root rnp->gp_seq,
+> >>>>> because the small lag can just as well survive with the rcu_seq_done()
+> >>>>> function in the above sequence right?
+> >>>>>
+> >>>>> The rcu_seq_done_exact() function on the other hand is more about not being
+> >>>>> stuck in the ULONG_MAX/2 guard band, but to actually get to that, you need a
+> >>>>> wrap around to happen and the delta between "rnp->gp_seq" and "snap" to be at
+> >>>>> least ULONG_MAX/2 AFAIU.
+> >>>>>
+> >>>>> So the only time this magic will matter is if you have a huge delta between
+> >>>>> what is being compared, not just 2 GPs.
+> >>>> You're right, and perhaps I should have made it more specific that my comment
+> >>>> only explains the magic "3" number here, in that if it were "2" instead, there
+> >>>> could be accidents with 2 full GPs difference (which is possible) spuriously
+> >>>> accounted as a wrap around.
+> >>> Ahh, so I guess I get it now and we are both right. The complete picture is - We
+> >>> are trying to handle the case of "very large wrap" around but as a part of that,
+> >>> we don't want to create false-positives for this "snap" case.
+> >>>
+> >>> A "snap" can be atmost  (2 * RCU_SEQ_STATE_MASK + 1) away from a gp_seq.
+> >>>
+> >>> That's within "2 GPs" worth of counts (about 8 counts)
+> >>>
+> >>> Taking some numbers:
+> >>>
+> >>> cur_s	s	delta (s - cur_s)
+> >>> 0	4	4
+> >>> 1	8	7
+> >>> 2	8	6
+> >>> 3	8	5
+> >>> 4	8	4
+> >>> 5	12	7
+> >>>
+> >>> The maximum delta of a snap from actual gp_seq can be (2 * RCU_SEQ_STATE_MASK +
+> >>> 1) which in this case is 7.
+> >>>
+> >>> So we adjust the comparison by adding the  ULONG_CMP_LT(cur_s, s - (2 *
+> >>> RCU_SEQ_STATE_MASK + 1)). i.e.
+> >> 3, right?
+> > Just to be absolutely sure, are you talking about the value of RCU_SEQ_STATE_MASK ?
+> > 
+> > That is indeed 3 (RCU_SEQ_STATE_MASK).
+> > 
+> > But if we're talking about number of GPs, my understanding is a count of 4 is
+> > one GP worth. Per the above table, the delta between gp_seq and is snap is
+> > always a count of 7 (hence less than 2 GPs).
+> > 
+> > Agreed?
+> > 
+> > If RCU_SEQ_STATE_MASK was 0x1 instead of 0x11, that is a single bit (or a count
+> > of 2 instead of 4, for a GP), then the table would be:
+> > 
+> >  cur_s	s (snap)	delta (s - cur_s)
+> >  0	2		2
+> >  1	4		3
+> >  2	4		2
+> >  3	6		3
+> >  4	6		2
+> >  5	8		3
+> > 
+> > So delta is always <= 3,  Or more generally: <= (RCU_SEQ_STATE_MASK * 2) + 1
 > 
->>
->> So yes, at some point we should overhaul the thing.
->>
->> But I think this is more involved, as right now everything is aimed
->> at the current single-channel status quo.
+> Oh man, I am wondering if we are on to a bug here:
 > 
-> I did a quick and dirty change in driver to use npwms = 4, and that was
-> a rather trivial change, see top commit at [1]. Minimum required change
-> in U-Boot also look to be very trivial.
+> From your example:
+> 
+>     CPU 0                                           CPU 1
+>     -----                                           -----
+>     // rcu_state.gp_seq = 1
+>     rcu_seq_start(&rcu_state.gp_seq)
+>                                       // snap = 8
+>                                       snap = rcu_seq_snap(&rcu_state.gp_seq)
+>                                       // Two full GP
+>                                       rcu_seq_done_exact(&rnp->gp_seq, snap)
+> 
+> 
+> Here, the
+> ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_STATE_MASK + 1));
+> 
+> Will be
+> ULONG_CMP_LT(0, 8 - (2 * RCU_SEQ_STATE_MASK + 1));
+> 
+>  = ULONG_CMP_LT(0, 8 - 7)
+> 
+>  = TRUE.
+> 
+> Which means rcu_seq_done_exact() will return a false positive saying the GP has
+> completed even though it has not.
+> 
+> I think rcu_seq_done_exact() is off by one and should be doing:
+> 
+> ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_STATE_MASK + 2));
+> 
+> ?
 
-I did a quick test on U-Boot and are preparing a series to add support
-for multiple channels in U-Boot, see [2] for an early version that
-should hit U-Boot ML in a day or two.
+But it's ULONG_CMP_LT(cur_s, s - (3 * RCU_SEQ_STATE_MASK + 1) now since:
 
-Found some other other issues when digging in the U-Boot pwm-regulator
-code so ended up with a bigger series than anticipated, only the last
-patch is related to preparation for multiple channels in rk-pwm driver.
+    85aad7cc4178 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
 
-[2] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/pwm-regulator
+That's 10 so we are good.
 
-Regards,
-Jonas
+However that magic value is arbitrary and doesn't mean much. It should be
+like you said. Or rather for clarity:
 
-> 
->   cat /sys/kernel/debug/pwm
->   0: platform/ffa90000.pwm, 4 PWM devices
->    pwm-0   ((null)              ): period: 0 ns duty: 0 ns polarity: normal
->    pwm-1   (regulator-vdd-arm   ): requested enabled period: 5000 ns duty: 2250 ns polarity: inverse
->    pwm-2   (regulator-vdd-logic ): requested enabled period: 5000 ns duty: 2800 ns polarity: inverse
->    pwm-3   ((null)              ): period: 0 ns duty: 0 ns polarity: normal
-> 
-> Not really seeing any reason not to describe these PWM controllers more
-> correctly, we need to start somewhere.
-> 
-> However, I have no idea on how to deal with historic and wrong bindings.
-> Driver could possible check if resource space is above 0x10 size and state
-> of PWM_VERSION_ID.
-> 
->   PWM_VERSION_ID  0x005c  W  0x02120b34  PWM Version ID Register  
-> 
-> [1] https://github.com/Kwiboo/linux-rockchip/commits/next-20250319-rk3528/
-> 
-> Regards,
-> Jonas
-> 
->>
->>
->> Heiko
->>
->>
->>> Maybe something like following would better represent the hardware:
->>>
->>> 	pwm0: pwm@ffa90000 {
->>> 		compatible = "rockchip,rk3528-pwm";
->>> 		reg = <0x0 0xffa90000 0x0 0x10000>;
->>> 		clocks = <&cru CLK_PWM0>, <&cru PCLK_PWM0>;
->>> 		clock-names = "pwm", "pclk";
->>> 		interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
->>> 			     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
->>> 	};
->>>
->>> 	pwm1: pwm@ffa98000 {
->>> 		compatible = "rockchip,rk3528-pwm";
->>> 		reg = <0x0 0xffa98000 0x0 0x10000>;
->>> 		clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>;
->>> 		clock-names = "pwm", "pclk";
->>> 		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
->>> 			     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
->>> 	};
->>>
->>> Regards,
->>> Jonas
->>>
->>>>
->>>> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
->>>> ---
->>>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 80 ++++++++++++++++++++++++
->>>>  1 file changed, 80 insertions(+)
->>>>
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 7acf1f36dd6c..e53f0b687a83 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -57,6 +57,10 @@
+ /* Low-order bit definition for polled grace-period APIs. */
+ #define RCU_GET_STATE_COMPLETED	0x1
+ 
++/* A complete grace period count */
++#define RCU_SEQ_GP (RCU_SEQ_STATE_MASK + 1)
++
++
+ extern int sysctl_sched_rt_runtime;
+ 
+ /*
+@@ -169,7 +173,7 @@ static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
+ {
+ 	unsigned long cur_s = READ_ONCE(*sp);
+ 
+-	return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (3 * RCU_SEQ_STATE_MASK + 1));
++	return ULONG_CMP_GE(cur_s, s) || ULONG_CMP_LT(cur_s, s - (2 * RCU_SEQ_GP));
+ }
+ 
+ /*
 
-[snip]
 
