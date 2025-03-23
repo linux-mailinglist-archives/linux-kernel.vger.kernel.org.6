@@ -1,192 +1,195 @@
-Return-Path: <linux-kernel+bounces-572767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24AB1A6CE7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:15:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82EBA6CE80
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A331891E63
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8DF16CD33
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4BA202C50;
-	Sun, 23 Mar 2025 09:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="YB0GOurS";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="NCQDlCUc"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7113AA20;
-	Sun, 23 Mar 2025 09:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B503202F70;
+	Sun, 23 Mar 2025 09:18:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E5A1754B;
+	Sun, 23 Mar 2025 09:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742721266; cv=none; b=AeXCZ0akPDnE0zC39bPqALr/r8tNVkRnlwWnklssEadoVfy9GBBxDs04WlyiQSQcVts9aTBQg/xVk6mtn2e/BvRbIOKnFimQ3V6PoIvOb8G1WgXyyRO3CPZE+0yOBxKhOTG5bYHZZS5MViJUEx1amKF3qP5RePlu0kuTi/oqSP8=
+	t=1742721526; cv=none; b=Eb4J/OlNPJjPpjs5dZUt6Ae8CJXsDGI0GO9MxZvmiMtEp8xcu9Zdry5KnD9kslU2jM1P2v1Oc+QDMWQXIIfBUv7varBiDc18o7h8ieamNDe4MDZa1aPQfNS0RNgvJ/B6JJnJX5ecfKH/wXOBmiGVOOsZkOF1nIaLQHnCZ+vDjUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742721266; c=relaxed/simple;
-	bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0hOl+XMybScDYl9F3qb9YsjrnE+0K9Y2XgvIEsQEsFvttr2dfY9+Q6K0fkdeBHizgOF/NvhLMxeJ86N+Yct9fTfStxW/gToYtL3YT9pJA6MhPiqE31kZxssBfFXbPjzj8CJM9gvUqe6qJI3dIIiCCD6JJn24JrSDlgw5kd/5x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=YB0GOurS; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=NCQDlCUc; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 67FEEEC59F1;
-	Sun, 23 Mar 2025 01:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1742720143; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YB0GOurS6e7ntM1c3szslhrVmNfTs29qW3DmV+4LusNNm/ZbyPsW22qezs41sbOmi
-	 Ny4wYzkogpnaK/lDgdomhH262gh1l0gCMIKIeH9v/0zD3Eq7NTZ9XbIUi9i3vB5wvt
-	 UYbntCXgGgr/w2Y4lkeATFRgAD/zQr9PbYURbHuZO66z8MQwrfluHDwgzqis3RLRb9
-	 FdsrvWv6O9MSbWvEO8y1YS/kTw4A+T7UDqVWlM+7krZn8dYOPd9R7DCnGN9Ct/rtfo
-	 scuWnLfZ1ycbhEbCyyZFHKC7Jb44vmqFqKcpyUlw6HPaEjZGuFzNkOpP2XXX7L5ZS3
-	 hnHNxcqmvj/Dw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id cxXVrxWgCf42; Sun, 23 Mar 2025 01:55:40 -0700 (PDT)
-Received: from ketchup (unknown [183.217.80.115])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 58C7DEC59EE;
-	Sun, 23 Mar 2025 01:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1742720140; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCQDlCUcrc4vhN8OBM1cEf/Rw4Catjgu4eGkIeUvAN8bFaEzI8TBhnHzzvDGmYclf
-	 PPhmMpX7zIrmDfxICl/VQ0B2nMb+X4LzAEslEZga5vKaLZoHyMXO5ivn3K+UgTpiTN
-	 kGiit+2e9HxwtIs4sXD8doRmPzhC9bWR7jfIF/yjCiJLaGHOh+JGH7FYHuwPv9xeBO
-	 4st5JpY68yfbJuljaEgSgQYJ4okfB/DfuMO5QpKLrXt5DgkFh+6tfS6RtAcoL30Sz4
-	 TN6tvJ1SYgWkY0fOb88bQy/kPUo7mj/nO2rxj0xpcIVKRM+IaOAxEkX9968uLu0Oq8
-	 sWkVC4OpSoTEQ==
-Date: Sun, 23 Mar 2025 08:55:28 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <Z9_MgAZE53eQ-FV8@ketchup>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-5-heylenay@4d2.org>
- <20250318053736-GYA2516@gentoo>
- <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
+	s=arc-20240116; t=1742721526; c=relaxed/simple;
+	bh=5HZmLzce4L9XeAcPttemnSzWQxYapG6GBhfDbqgHz10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RqU3joL5eo6CjOG/88/9gvhib74ssDnDJm6634WPT7Xv5vAGwOjXxKoXgtltcKPAnQPiY2kcnhechGyh02ymhQG6gIn3PnlFRnZIx/B5NyHW0/mAcYBl4zzCwxpymGTjFGFDcfliw2pxQHmfvqDPnMkyUb+sm+dqXwd7DkD9/So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9DDE106F;
+	Sun, 23 Mar 2025 02:18:41 -0700 (PDT)
+Received: from [10.57.41.149] (unknown [10.57.41.149])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4888E3F63F;
+	Sun, 23 Mar 2025 02:18:33 -0700 (PDT)
+Message-ID: <1e870bd8-0e13-4e0d-bbe9-e9f601f59a50@arm.com>
+Date: Sun, 23 Mar 2025 09:18:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
+ fast I/O devices
+To: "King, Colin" <colin.king@intel.com>, Jens Axboe <axboe@kernel.dk>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com>
+ <f18607ca-30dc-43de-be77-fec69968aeec@arm.com>
+ <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 18, 2025 at 01:43:52PM +0800, Inochi Amaoto wrote:
-> On Tue, Mar 18, 2025 at 05:37:36AM +0000, Yixun Lan wrote:
-> > Hi Haylen Chu:
-> > 
-> > On 17:57 Thu 06 Mar     , Haylen Chu wrote:
-> > > The clock tree of K1 SoC contains three main types of clock hardware
-> > > (PLL/DDN/MIX) and has control registers split into several multifunction
-> > > devices: APBS (PLLs), MPMU, APBC and APMU.
-> > > 
-> > > All register operations are done through regmap to ensure atomiciy
-> > > between concurrent operations of clock driver and reset,
-> > > power-domain driver that will be introduced in the future.
-> > > 
-> > > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> > > ---
-> > >  drivers/clk/Kconfig               |    1 +
-> > >  drivers/clk/Makefile              |    1 +
-> > >  drivers/clk/spacemit/Kconfig      |   20 +
-> > >  drivers/clk/spacemit/Makefile     |    5 +
-> > >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
-> > >  drivers/clk/spacemit/ccu_common.h |   47 +
-> > >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
-> > >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
-> > >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
-> > >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
-> > >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
-> > >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
-> > >  12 files changed, 2668 insertions(+)
-> > >  create mode 100644 drivers/clk/spacemit/Kconfig
-> > >  create mode 100644 drivers/clk/spacemit/Makefile
-> > >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
-> > >  create mode 100644 drivers/clk/spacemit/ccu_common.h
-> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
-> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
-> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
-> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
-> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
-> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
-> > > 
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > index 713573b6c86c..19c1ed280fd7 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
-> > >  source "drivers/clk/sifive/Kconfig"
-> > >  source "drivers/clk/socfpga/Kconfig"
-> > >  source "drivers/clk/sophgo/Kconfig"
-> > > +source "drivers/clk/spacemit/Kconfig"
-> > >  source "drivers/clk/sprd/Kconfig"
-> > >  source "drivers/clk/starfive/Kconfig"
-> > >  source "drivers/clk/sunxi/Kconfig"
-> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > > index bf4bd45adc3a..42867cd37c33 100644
-> > > --- a/drivers/clk/Makefile
-> > > +++ b/drivers/clk/Makefile
-> > > @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
-> > >  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
-> > >  obj-y					+= socfpga/
-> > >  obj-y					+= sophgo/
-> > > +obj-y					+= spacemit/
-> > >  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
-> > >  obj-y					+= sprd/
-> > >  obj-$(CONFIG_ARCH_STI)			+= st/
-> > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
-> > > new file mode 100644
-> > > index 000000000000..76090cd85668
-> > > --- /dev/null
-> > > +++ b/drivers/clk/spacemit/Kconfig
-> > > @@ -0,0 +1,20 @@
-> > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > +
-
-Hi Inochi, Yixun,
-
-> > > +config SPACEMIT_CCU
-> > > +	tristate "Clock support for Spacemit SoCs"
-> > > +	default y
-> > similar reason to pinctrl with these patches [1], [2]
-> > I'd suggest switch to "bool + default ARCH_SPACEMIT" 
-> > 
-> > Link: https://lore.kernel.org/all/20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org [1]
-> > Link: https://lore.kernel.org/all/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be [2]
-> > 
+On 3/17/25 10:03, King, Colin wrote:
+> Hi Christian, 
 > 
-> Clk subsystem prefers no defalt and set it in defconfig,
-> so should no default there.
+> Follow-up below:
+> 
+>> -----Original Message-----
+>> From: Christian Loehle <christian.loehle@arm.com>
+>> Sent: 03 March 2025 22:25
+>> To: King, Colin <colin.king@intel.com>; Jens Axboe <axboe@kernel.dk>; Rafael
+>> J. Wysocki <rafael@kernel.org>; Daniel Lezcano <daniel.lezcano@linaro.org>;
+>> linux-block@vger.kernel.org; linux-pm@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
+>> fast I/O devices
+>>
+>> On 3/3/25 16:43, Colin Ian King wrote:
+>>> Modern processors can drop into deep sleep states relatively quickly
+>>> to save power. However, coming out of deep sleep states takes a small
+>>> amount of time and this is detrimental to performance for I/O devices
+>>> such as fast PCIe NVME drives when servicing a completed I/O
+>>> transactions.
+>>>
+>>> Testing with fio with read/write RAID0 PCIe NVME devices on various
+>>> modern SMP based systems (such as 96 thead Granite Rapids Xeon 6741P)
+>>> has shown that on 85-90% of read/write transactions issued on a CPU
+>>> are completed by the same CPU, so it makes some sense to prevent the
+>>> CPU from dropping into a deep sleep state to help reduce I/O handling
+>>> latency.
+>>
+>> For the platform you tested on that may be true, but even if we constrain
+>> ourselves to pci-nvme there's a variety of queue/irq mappings where this
+>> doesn't hold I'm afraid.
+> 
+> This code is optional, one can enable it or disable it via the config option. Also, 
+> even when it is built-in one can disable it by writing 0 to the sysfs file
+>   /sys/devices/system/cpu/cpuidle/psd_cpu_lat_timeout_ms
+> 
+>>
+>>>
+>>> This commit introduces a simple, lightweight and fast power sleep
+>>> demotion mechanism that provides the block layer a way to inform the
+>>> menu governor to prevent a CPU from going into a deep sleep when an
+>>> I/O operation is requested. While it is true that some I/Os may not
+>>
+>> s/requested/completed is the full truth, isn't it?
+>>
+>>> be serviced on the same CPU that issued the I/O request and hence is
+>>> not 100% perfect the mechanism does work well in the vast majority of
+>>> I/O operations and there is very small overhead with the sleep
+>>> demotion prevention.
+>>>
+>>> Test results on a 96 thread Xeon 6741P with a 6 way RAID0 PCIe NVME md
+>>> array using fio 3.35 performing random read and read-write test on a
+>>> 512GB file with 8 concurrent I/O jobs. Tested with the
+>>> NHM_C1_AUTO_DEMOTE bit set in MSR_PKG_CST_CONFIG_CONTROL set in
+>> the BIOS.
+>>>
+>>> Test case: random reads, results based on geometic mean of results
+>>> from
+>>> 5 test runs:
+>>>            Bandwidth         IO-ops   Latency   Bandwidth
+>>>            read (bytes/sec)  per sec    (ns)    % Std.Deviation
+>>> Baseline:  21365755610	     20377     390105   1.86%
+>>> Patched:   25950107558       24748     322905   0.16%
+>>
+>> What is the baseline?
+>> Do you mind trying with Rafael's recently posted series?
+>> Given the IOPS I'd expect good results from that alone already.
+>> https://lore.kernel.org/lkml/1916668.tdWV9SEqCh@rjwysocki.net/
+>>
+>> (Happy to see teo as comparison too, which you don't modify).
+> 
+> OK, I re-ran the tests on 6.14-rc5 on the same H/W. The "Baseline" is 6.14-rc5 without
+> Raphel's patch. I also testing the Baseline with C6 and C6P disabled as this stops deeper
+> C-state sleeps and in theory should provide "best performance". I also benchmarked with
+> Raphel's patch and just my patch, and finally Raphels patch AND my patch:
+> 
+> Reads
+>                         Bandwidth       Bandwidth       latency         latency
+>                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
+> Baseline                25689182477     0.15            326177          0.15
+> C6, C6P disabled        25839580014     0.19            324349          0.19
+> Raphels Patch:          25695523747     0.06            326150          0.06
+> My patch:               25782011833     0.07            324999          0.07
+> Raphel + My patch:      25792551514     0.10            324924          0.10
 
-Thanks for these hints, I will drop default and set the configuration in
-defconfig, in which case it seems okay to keep it as bool.
+So these are mostly equal right?
 
-> Regards,
-> Inochi
+> 
+> Writes
+>                         Bandwidth       Bandwidth       latency         latency
+>                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
+> Baseline                15220468898     3.33            550290          3.36
+> C6, C6P disabled        13405624707     0.66            625424          0.66
+> Raphels Patch:          14017625200     1.15            598049          1.16
+> My patch:               15444417488     3.73            467818          29.10
+> Raphel + My patch:      14037711032     1.13            597143          1.13
 
-Thanks,
-Haylen Chu
+These don't make sense to me, why would C6 / C6P be this bad?
+Why would Rafael's patch make it worse?
+Are these just noise?
+
+> 
+> Combined Read+Writes, Reads
+> 
+>                         Bandwidth       Bandwidth       latency         latency
+>                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
+> Baseline                10132229433     0.41            484919          0.25
+> C6, C6P disabled        10567536346     0.60            515260          1.16
+> Raphels Patch:          10171044817     0.37            486937          0.20
+> My patch:               10468953527     0.07            504797          0.07
+> Raphel + My patch:      10174707546     1.26            488263          1.13
+> 
+> Combined Read+Writes, Writes
+> 
+>                         Bandwidth       Bandwidth       latency         latency
+>                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
+> Baseline                10139393169     0.44            342132          1.23
+> C6, C6P disabled        10583264662     0.63            277052          3.87
+> Raphels Patch:          10178275035     0.39            336989          0.94
+> My patch:               10482766569     1.28            294803          6.87
+> Raphel + My patch:      10183837235     0.38            330657          3.39      
+
+The above two indicate a +3% from (now mainline) Rafael's patch to yours.
+There's no reason why Rafael + your patch should be worse than just your patch.
+If this is statistically significant we would need to look into why.
+
+FWIW I think the energy cost of essentially remaining in polling even for quite
+sporadic IO can't be understated IMO.
+Comparison for teo, which might slightly better than menu while not outright
+disabling idle would be interesting still.
+
+
+
 
