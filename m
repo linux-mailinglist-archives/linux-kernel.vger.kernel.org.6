@@ -1,226 +1,160 @@
-Return-Path: <linux-kernel+bounces-572986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC9EA6D11E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E79A6D120
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFFD18944D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7E01894517
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E454419C55E;
-	Sun, 23 Mar 2025 20:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675B11A3174;
+	Sun, 23 Mar 2025 20:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OUV9YNH8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlV7EjwB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858BD225D6
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 20:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D0E14386D;
+	Sun, 23 Mar 2025 20:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742763429; cv=none; b=W7dOhep/xIuJh3s/6adVjLIGH61+EaLn+r++jaMzkzJaCuITsEHneOncVsieLuIBrbcRgcKBrJ5t8TYhESIXZ2X65eyREqybGYOozei/xjienmzEdM6n0rzY8CfyCPTCSL9JPLhYiv1mujo29jV2AUcAKw9uGf9LkzgtZhfF6oQ=
+	t=1742763445; cv=none; b=MhgXyc+7rGXHNl9ad+CIMdlTEiSZkF9Z3lgkdGKDgIHcrPgYqBpt1VFwtTv5yc8bQ6FkTHJSgWgjIGQTV1HNyBPQa9s+tO4ytUOy2FadD2HpBtQgs0vAZx3xREVRPyAIiGGChVhtSuPfDqelHXp0qmvGaJ0TyvPboQZWxUzMqPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742763429; c=relaxed/simple;
-	bh=/HD+e03WmkUTjCfdl7gQ3G9c2xyDlXTvBtFQsWK1+ZY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RDHkV8WU8utyKuz10Inv311cFzntH8DP8w7MyidYunLWKFxzEjlSscfEJ5h/dCmnp0KhpphnEVCB0LhRGeyuoa2b39VE5TkEMh9Inr8L7Ct7J7ppAFUD2trXY5MDcsxsWsB4ziUMB+GLGPMQnx4Xq1pU7dsWBgd6OP10HIDaD0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OUV9YNH8; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742763427; x=1774299427;
-  h=date:from:to:cc:subject:message-id;
-  bh=/HD+e03WmkUTjCfdl7gQ3G9c2xyDlXTvBtFQsWK1+ZY=;
-  b=OUV9YNH8epHLcjICfezO9Y96i1EiZBe76mRqgGxSYqz6omfNRuUoWxDY
-   0RkFiRgoQZssaWh8RPVaozJSsjHrPnFZOfJWq1pMIAqmYGYf2H6vxhzb0
-   h2dZuqYIHFIao3S1e7ejD2gTEQvMVvCrjEDUcGqhEr9AtMvVoVnYHGi5I
-   0JMOHgtTq5UiWcl9yCvQ3XzRoakfxoryT3PJ6gfqB9VD73O8b5C+HwoL6
-   ylmvWyLvF8NR4BNeEIjmcRFX5F5BjXmRB8ZjHokXFXH5T3F+j4mZczNkg
-   qvU9nmyTgpdrd8r6Oj9QxMOmIjFCkZ/qbH2pND0UBzHrU8CNykYYpKnyH
-   Q==;
-X-CSE-ConnectionGUID: r5GPyhnLTEiHWIWRsektpA==
-X-CSE-MsgGUID: 1SJP7LQ2QOScMoOfwftORA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43687323"
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="43687323"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 13:57:07 -0700
-X-CSE-ConnectionGUID: aoZOS/29Q0KfBwFTsx/3LA==
-X-CSE-MsgGUID: od5ZduehT5CHSOBUnPPAMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="124388561"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 23 Mar 2025 13:57:06 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twSNL-0002xV-2G;
-	Sun, 23 Mar 2025 20:56:59 +0000
-Date: Mon, 24 Mar 2025 04:55:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/kconfig] BUILD SUCCESS
- 03ad363e8f8a97372ae8ac1e7577b9c7a3e6db21
-Message-ID: <202503240432.69CGEnbF-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1742763445; c=relaxed/simple;
+	bh=Ev4tSesxO91BpPfkFPCZ9nFl2zIVQfSRk1iXPRbGrk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzLWzOdMpb0SLjqBZywO8iE7+rMQm/hwy0TJstX69xe+2ds7+UQ+lyQ9boUI1chfa7tc8suvNZHelKPulz/NEWRQGEOuQ74Gu4/y3BlI5+G79QY6Ry0yOwgTbovz1JmMjUyDlmqA44BEejMHJR5VP+OFBL5RktzU2F4v4PQHWpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlV7EjwB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD5EC4CEE2;
+	Sun, 23 Mar 2025 20:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742763445;
+	bh=Ev4tSesxO91BpPfkFPCZ9nFl2zIVQfSRk1iXPRbGrk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rlV7EjwBKKUpVqqY81Jdzx/BLuN+HSH3HFPkoJbJ/b3TEGabUg49QUOXOdp9wVz9h
+	 hdHAJGl1026w3fAjAKFnohMe7K6tbdWrIjtMNOQCP4btG79dkcZODFqwri6HDrtLSR
+	 +mSe6Z8ApNBw8stpzev3TuuCbj0+mOTnNWnHgNaeoyfpoLDExbYct7Y/dp2Bi21a4I
+	 /nyodGh8MR/x52VPoAACsUFO7XAbXMQ7YY6P/tI9TutSXSi3kn5NM111k2RBDS4zR4
+	 PsBbMNsEJeKD56EXCncyYguBhi13hvDBzfKdNc456lAWSgfD1Ht4uXH1ZiUEVtWbjD
+	 KmuXIvCkkVlAQ==
+Date: Sun, 23 Mar 2025 21:57:23 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, 
+	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
+ (4)
+Message-ID: <20250323-haftverschonung-rochen-22c230317a23@brauner>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <202503201225.92C5F5FB1@keescook>
+ <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
+ <20250322010008.GG2023217@ZenIV>
+ <20250322155538.GA16736@redhat.com>
+ <20250322185007.GI2023217@ZenIV>
+ <20250323181419.GA14883@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250323181419.GA14883@redhat.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/kconfig
-branch HEAD: 03ad363e8f8a97372ae8ac1e7577b9c7a3e6db21  x86/Kconfig: Fix lists in X86_EXTENDED_PLATFORM help text
+On Sun, Mar 23, 2025 at 07:14:21PM +0100, Oleg Nesterov wrote:
+> On 03/22, Al Viro wrote:
+> >
+> > On Sat, Mar 22, 2025 at 04:55:39PM +0100, Oleg Nesterov wrote:
+> >
+> > > And this means that we just need to ensure that ->in_exec is cleared
+> > > before this mutex is dropped, no? Something like below?
+> >
+> > Probably should work, but I wonder if it would be cleaner to have
+> > ->in_exec replaced with pointer to task_struct responsible.  Not
+> > "somebody with that fs_struct for ->fs is trying to do execve(),
+> > has verified that nothing outside of their threads is using this
+> > and had been holding ->signal->cred_guard_mutex ever since then",
+> > but "this is the thread that..."
+> 
+> perhaps... or something else to make this "not immediately obvious"
+> fs->in_exec more clear.
 
-elapsed time: 1442m
+Well, it would certainly help to document that cred_guard_mutex
+serializes concurrent exec.
 
-configs tested: 134
-configs skipped: 5
+This is kind of important information given that begin_new_exec() and
+finalize_exec() are only called from ->load_binary() and are thus always
+located in the individual binfmt_*.c files. That makes this pretty
+implicit information.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Let alone that the unlocking is all based on bprm->cred being set or
+unset.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                      axs103_smp_defconfig    gcc-14.2.0
-arc                                 defconfig    gcc-14.2.0
-arc                   randconfig-001-20250323    gcc-11.5.0
-arc                   randconfig-002-20250323    gcc-13.3.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                         assabet_defconfig    clang-18
-arm                                 defconfig    clang-14
-arm                          exynos_defconfig    clang-21
-arm                   randconfig-001-20250323    gcc-7.5.0
-arm                   randconfig-002-20250323    gcc-9.3.0
-arm                   randconfig-003-20250323    clang-15
-arm                   randconfig-004-20250323    gcc-5.5.0
-arm                         s3c6400_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-arm64                 randconfig-001-20250323    clang-21
-arm64                 randconfig-002-20250323    gcc-5.5.0
-arm64                 randconfig-003-20250323    gcc-9.5.0
-arm64                 randconfig-004-20250323    gcc-7.5.0
-csky                             alldefconfig    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-csky                  randconfig-001-20250323    gcc-13.3.0
-csky                  randconfig-002-20250323    gcc-14.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon                             defconfig    clang-21
-hexagon               randconfig-001-20250323    clang-21
-hexagon               randconfig-002-20250323    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250323    clang-20
-i386        buildonly-randconfig-002-20250323    gcc-12
-i386        buildonly-randconfig-003-20250323    clang-20
-i386        buildonly-randconfig-004-20250323    clang-20
-i386        buildonly-randconfig-005-20250323    gcc-12
-i386        buildonly-randconfig-006-20250323    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250323    gcc-14.2.0
-loongarch             randconfig-002-20250323    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                          sun3x_defconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-microblaze                      mmu_defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250323    gcc-13.3.0
-nios2                 randconfig-002-20250323    gcc-9.3.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250323    gcc-10.5.0
-parisc                randconfig-002-20250323    gcc-6.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                     ksi8560_defconfig    gcc-14.2.0
-powerpc               randconfig-001-20250323    gcc-9.3.0
-powerpc               randconfig-002-20250323    gcc-7.5.0
-powerpc               randconfig-003-20250323    gcc-9.3.0
-powerpc                     tqm8555_defconfig    gcc-14.2.0
-powerpc                 xes_mpc85xx_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20250323    clang-16
-powerpc64             randconfig-002-20250323    gcc-9.3.0
-powerpc64             randconfig-003-20250323    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250323    gcc-9.3.0
-riscv                 randconfig-002-20250323    gcc-14.2.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-15
-s390                  randconfig-001-20250323    gcc-8.5.0
-s390                  randconfig-002-20250323    clang-15
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                        edosk7760_defconfig    gcc-14.2.0
-sh                          polaris_defconfig    gcc-14.2.0
-sh                    randconfig-001-20250323    gcc-5.5.0
-sh                    randconfig-002-20250323    gcc-5.5.0
-sh                        sh7763rdp_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250323    gcc-14.2.0
-sparc                 randconfig-002-20250323    gcc-10.3.0
-sparc64                             defconfig    gcc-14.2.0
-sparc64               randconfig-001-20250323    gcc-14.2.0
-sparc64               randconfig-002-20250323    gcc-6.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-21
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250323    gcc-12
-um                    randconfig-002-20250323    clang-17
-um                           x86_64_defconfig    clang-15
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250323    clang-20
-x86_64      buildonly-randconfig-002-20250323    clang-20
-x86_64      buildonly-randconfig-003-20250323    gcc-12
-x86_64      buildonly-randconfig-004-20250323    clang-20
-x86_64      buildonly-randconfig-005-20250323    clang-20
-x86_64      buildonly-randconfig-006-20250323    clang-20
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250323    gcc-14.2.0
-xtensa                randconfig-002-20250323    gcc-8.5.0
+Otherwise the patch looks good to me.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> But I guess we need something simple for -stable, so will you agree
+> with this fix for now? Apart from changelog/comments.
+> 
+> 	retval = de_thread(me);
+> +	current->fs->in_exec = 0;
+> 	if (retval)
+> 		current->fs->in_exec = 0;
+> 
+> is correct but looks confusing. See "V2" below, it clears fs->in_exec
+> after the "if (retval)" check.
+> 
+> syzbot says:
+> 
+> 	Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> so I guess "#syz test: " is pointless right now...
+> 
+> Oleg.
+> ---
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 506cd411f4ac..02e8824fc9cd 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1236,6 +1236,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  	if (retval)
+>  		goto out;
+>  
+> +	current->fs->in_exec = 0;
+>  	/*
+>  	 * Cancel any io_uring activity across execve
+>  	 */
+> @@ -1497,6 +1498,8 @@ static void free_bprm(struct linux_binprm *bprm)
+>  	}
+>  	free_arg_pages(bprm);
+>  	if (bprm->cred) {
+> +		// for the case exec fails before de_thread()
+> +		current->fs->in_exec = 0;
+>  		mutex_unlock(&current->signal->cred_guard_mutex);
+>  		abort_creds(bprm->cred);
+>  	}
+> @@ -1862,7 +1865,6 @@ static int bprm_execve(struct linux_binprm *bprm)
+>  
+>  	sched_mm_cid_after_execve(current);
+>  	/* execve succeeded */
+> -	current->fs->in_exec = 0;
+>  	current->in_execve = 0;
+>  	rseq_execve(current);
+>  	user_events_execve(current);
+> @@ -1881,7 +1883,6 @@ static int bprm_execve(struct linux_binprm *bprm)
+>  		force_fatal_sig(SIGSEGV);
+>  
+>  	sched_mm_cid_after_execve(current);
+> -	current->fs->in_exec = 0;
+>  	current->in_execve = 0;
+>  
+>  	return retval;
+> 
 
