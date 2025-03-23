@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-572976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3496EA6D108
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:23:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799BFA6D10D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6F037A4AFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5282D1892F0F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05521A08AF;
-	Sun, 23 Mar 2025 20:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD751A0BED;
+	Sun, 23 Mar 2025 20:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PAa0R6Z7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkoccYn9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257EB3B7A8;
-	Sun, 23 Mar 2025 20:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D53B1A4;
+	Sun, 23 Mar 2025 20:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742761429; cv=none; b=h19DYLpM10tRVIhYZik9CRbZMOFLOdwj7/HzI9xx4cNNDaXeCJxKKfJA2x0TGjHP7+SN0OPZ9OmBdXo9upFzP7SPTOUIbe5mD1RODYJWLVEmgYv07ogsdr3bY0H+NTLVjIoXur1nTZBXikl9wh+WbMgBr80orxo3VSgcDm/qsTg=
+	t=1742762152; cv=none; b=aaQZQRliO7mUhWL32YYCRjxMLvuq9tV6oplLgI+J7Z8z4hSMCq/3ZvOaR6EkzWORVVzKjIdTZqsLnMx04erShKAXGcJf1NmHOARDUh4uWOx+27UbyZ4800TPIdf+fLK5EiXYn9gyZIwMIt63NTBjmwtF4CdHY921x0SCykwVZas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742761429; c=relaxed/simple;
-	bh=OJUMTTBkVUc2DlQDbl5Re5m52DrfECcJHH3h4T9vimc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tHEjTqRXbowjh96z6PzsVGpA/cTbh8AY4CHqNsKH7WfLoonwaRVndLQMC1S8EvbzN7uhdqJQUJqDI1f/GtxgEUCuGpbWZzwo/1GpOj1qGjMvt+H+S0/rwkqWjbh8COUfj1jVAoDHYPJG1x6edH3vkMRgalKhyocGKMmQ7gUtv6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PAa0R6Z7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742761415;
-	bh=yXetObvEXiv6CCkoG/ZOcLmoDavtpgBXlisgs8SqfUE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PAa0R6Z7hzg8Ff+jfzZm1DslPFg3rgZG05BHny4M6EmZLzGNIxHoqDxeaQ0lwNjJY
-	 wKm0bzaNW9mtjPekmOtHfS3+JKF33mWogT9UDo468YjuO9menIYmCgo7Nes7G16DM4
-	 Nzpr/qpPQNDikxXkzkGumIJqZaqFdqDtYotX1Cq1mKoQFdAlzy2TJCsCt7pBURp5jU
-	 AHCkxbjmGvVqV0S63NFY5SpteSPCOnDXOiDj2sMTeGbCQuASuenitwsE14XstscPYB
-	 hdCja8b4KZ5NIgd4b13tZ6bUwUIWsMtAJOxKdEOdRClZ4w//ioF8us4P5gNmxttvGP
-	 VRNi8IDhKLZrQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLSLb3Hr9z4wb0;
-	Mon, 24 Mar 2025 07:23:35 +1100 (AEDT)
-Date: Mon, 24 Mar 2025 07:23:34 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Message-ID: <20250324072334.064b83bb@canb.auug.org.au>
-In-Reply-To: <6e024a8c-5d54-44dd-8ab9-cb1d269c288a@acm.org>
-References: <20250321164700.477efe5c@canb.auug.org.au>
-	<6e024a8c-5d54-44dd-8ab9-cb1d269c288a@acm.org>
+	s=arc-20240116; t=1742762152; c=relaxed/simple;
+	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjv3zoDdKJUoctvHPWHJYG1LiwP8DpmfyTDloFthrCt1+WWdzutmj7mEqinhax5zXDjpvPD53K6AiJHdqf3UPl3Q+1E1oOjSTQZbbEVYespafBI+GuaIxmR78wvBWFZBDNaCF/Bzdy1piPWRBo5pdrZ6geB1KmGvJS4N5Mumwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkoccYn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2621C4CEE2;
+	Sun, 23 Mar 2025 20:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742762152;
+	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZkoccYn9iIrnnlLXqjtafwV9zsCmc0ozjZtyQUhSKYUbChF9wxU/j/wm2oCukWkHT
+	 p4XX8xe8UG+WG9GODgGVSq9yBKEpoR3TGtSHtV6NpQ8ZEiUUO6fXklLTzoxPTMtvtS
+	 nVoa6/Yqk2RemzQNBcQ/cSF9Be9OtkJ04BC2i3xyg/HnUgnhbM7vYJIyOr+BQqagZQ
+	 R8H7VRsYxis1fcGJ2Qsg5zathbThPxtljSZibljavLOZRtJ+yJ7IOtyUYpYuhqVy1i
+	 iIIZPehScuXcxwDxbf0C5QxB7lLhQ5F6rL8ISpEZGukZn4n2H+msmjHJFan8LmqPzt
+	 9bIhLX4oyOXKA==
+Date: Sun, 23 Mar 2025 22:35:47 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
+Message-ID: <Z-Bwo_ZHwYDgwh0X@kernel.org>
+References: <20250323140911.226137-1-nstange@suse.de>
+ <20250323140911.226137-11-nstange@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/otqVrLDA+Gj=OWyxrsM47yR";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323140911.226137-11-nstange@suse.de>
 
---Sig_/otqVrLDA+Gj=OWyxrsM47yR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Mar 23, 2025 at 03:09:08PM +0100, Nicolai Stange wrote:
+> PCR reads aren't currently authenticated even with CONFIG_TCG_TPM2_HMAC=y
+> yet.
+> 
+> It is probably desirable though, as e.g. IMA does some PCR reads to form
+> the cumulative boot digest subsequently extended into PCR 10 (an operation
+> which *is* authenticated).
+> 
+> Furthermore, a subsequent patch will make IMA to skip certain PCR bank
+> re-invalidations (which are implemented with extensions) upon kexec based
+> on the value read back at boot. In order to not weaken the overall
+> security posture in this case, it will be required to establish the same
+> level of trust into PCR reads as there is already for the extensions.
+> 
+> Make tpm2_pcr_read() to protect the command with a HMAC auth session,
+> using the already existing infrastructure.
+> 
+> As the TPM2_PCR_Read command doesn't have any authorizations defined, and
+> neither of TPM2_SA_ENCRYPT/TPM2_SA_DECRYPT is needed, use TPM2_SA_AUDIT,
+> even though no auditing functionality is actually being required. Since
+> the TPM will set TPM2_SA_AUDIT_EXCLUSIVE in its response with this
+> single-use session, set it upfront so that tpm_buf_check_hmac_response()
+> would expect it for the HMAC verification.
+> 
+> Now that tpm2_pcr_read() depends on the driver's session infrastructure,
+> note that the first call to tpm2_pcr_read() at init time gets issued from
+>   tpm_chip_bootstrap() -> tpm_get_pcr_allocation()
+>   -> tpm2_get_pcr_allocation() -> tpm2_init_bank_info()
+>   -> tpm2_pcr_read()
+> after
+>   tpm_chip_bootstrap() -> tpm_auto_startup() -> tpm2_auto_startup()
+>   -> tpm2_sessions_init(),
+> so there won't be any issues with that.
+> 
+> Signed-off-by: Nicolai Stange <nstange@suse.de>
 
-Hi Bart,
+Please write a better commit message. There's extra words like 'yet'.
 
-On Fri, 21 Mar 2025 09:29:20 -0700 Bart Van Assche <bvanassche@acm.org> wro=
-te:
->
-> Thank you for having resolved this conflict. While the conflict
-> resolution looks good to me and should result in working code, it may
-> be desirable to resolve it differently (init_completion() before the
-> ufs_get_desired_pm_lvl_for_dev_link_state() calls). This way the
-> spin_lock_init() and init_completion() calls stay close to each other.
+And e.g., subsequent patch means nothing in the commit log.  Please
+don't use such terminology.
 
-I have fixed this up from today.  Thanks for checking.
+Not going to waste my life reading this.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/otqVrLDA+Gj=OWyxrsM47yR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfgbcYACgkQAVBC80lX
-0GwikAf+KJnVEh4eMCUL0KHd+U5Boosfe2+3zpk8sNUfiAhkb1YugReMy+Z8D2Kn
-tqgRXOUPglKORKFWoSlbEElIfXG4D9jh01370dpyuxuYAr0zT/o6NtVmTrl4qpWw
-oL2jOnVYTcnPY4Z1FYGI23wYv0ZSXax+RYD+Vm8+jPKwVoBRvhPT3Do+dFxMSngQ
-MajqQyplJCMqmmPP3LouErAGaU9ByYAOuEcJu9FkRsYJ07BiQzepp2hEr5dzEl35
-DK/B87IOXrWvy/+cVAx71xLsLBL/J2QF3/zQqK4lnocLdO4kMEF5Ax+dKK7Quxx2
-mEKbmJ8ffFRmraXTNfN0vnRpdIEsLg==
-=0SG0
------END PGP SIGNATURE-----
-
---Sig_/otqVrLDA+Gj=OWyxrsM47yR--
+BR, Jarkko 
 
