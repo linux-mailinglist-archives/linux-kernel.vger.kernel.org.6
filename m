@@ -1,86 +1,72 @@
-Return-Path: <linux-kernel+bounces-573053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D59AA6D240
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 370FAA6D242
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C84416B2A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C4916F95A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5306C1D63D5;
-	Sun, 23 Mar 2025 22:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF911C8611;
+	Sun, 23 Mar 2025 22:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ7YXgpa"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="pPcWRwJ6"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DEA1C700D;
-	Sun, 23 Mar 2025 22:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB541C5490
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742769995; cv=none; b=K6YdZvMOVHLrqgKghSA1DxzKwnqKuGKHj3Sdywq1h1GDvz0Tm7crp7IQ9UQnYlZzG3PebvpUbIQwC2wusOcMGIA9BNKM6+2J+QLEJ4Izb9BQStkKkLL+iGnq9rOyXx7WfPQeSj2XWm5OvI5LG3SoDFygr0e8TgGUy+tke+clBXQ=
+	t=1742770121; cv=none; b=aqvbVeqa6NuXMdXGH3DrhA0E3xQCi7RXYLdpBHGWIiK7JrDQz0ZWEzXDBYjU3qKSFjiENzt+4uswUSuuzYenyhH7ncxzoSQqjzsiN8t3/558j4of6dPhnYBAoEhCy4Bp5c8qfrhz2AL5e8Q5xciZ/DkJYg3JNxgGRdP5cB5vAmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742769995; c=relaxed/simple;
-	bh=ccm0vWMDBLowOtsgeC0Np4Dq+ieIsmlaDmtQ0vxCKuc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BdAESbjPhxY82I+m4t+7dedxKtnTxx7L92fBPc3s2pFP+kadw7t2syjna3jItCVONE72jjYpd/+q9uQB4P8mFqAwqM1cXuSLOG46bDzgowQPmgSJQU+ehINdtyC8T3X3bjWepMQOS0WQ70Z51VsOqWDpk3m/XMQc2RYIWJJXD3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ7YXgpa; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301493f45aeso6185083a91.1;
-        Sun, 23 Mar 2025 15:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742769993; x=1743374793; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQbIxlTNY+cHu7R6IhUq3rHgE0kIfvcWVGQIcjca71s=;
-        b=UQ7YXgpaYT9n1lL03AxvgXfhroDuAURrFhEXoInGbKOPXkIOrdAeeanTQxql7zi3sD
-         SwDyDHOJc1whgQ+h8Vx/YXRMpFuEKxaTflEAkf4Ju7lNqKIC3GIHhAsF+NoR8ROQ2qVy
-         jU9ecTb4TNpvdsIkQrq7uTIf6GLvK12msPFvlHfx/UPQ4IVjynJj2noPyYNdLCGNnomw
-         C/FnwtROFMMCThIBSZihDOLYOlHp8CiP0RdF/v4XR6iTzGZCCV2R+6pZthBGCaP97eAj
-         Us3gghz/JhAv/WkKfsJXnzDQ6RAvAN2rqZmBUSRnG85BPeb2pWMVSjuPBIaABcj/xRim
-         89Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742769993; x=1743374793;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YQbIxlTNY+cHu7R6IhUq3rHgE0kIfvcWVGQIcjca71s=;
-        b=POeVrGfzCHK5eeu9PymXE4lI09A4agu7HwEEHrC/DhXe7wNFnRNz8TiK2SKcg7w1e1
-         A1wuWLxyx6xg1v3DE2g/aKcANTiucBBfU7HzMwpKH14nddteCpMSoOtXmp3zaK5fN800
-         5aLhbn5/zyJDIm8vmvxerlLjnyY3s5XVyzFY/9QA2fRIf3WT9t3H4gZTWTRJ4MWdSLoB
-         YNywpEhjPNXUfPcL1I+MUVuSdPz3o3akk7unsKwjtIsvLhSzcOxMB264pr898i5vv3Dz
-         zTMyifSv5cpPzK7lIhQPHvbqf5D5UNwMrvcdFI9utWo05I8PYeVZaGheCYJAd1T7QTh1
-         MdIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtBi6SVTt0/pldYRqrBKCX4tP/Mf2TA0pbKbcK2IA/n3Tb2WIwQC5AqonilsR+VqFNoSS4V44hCsPYNw==@vger.kernel.org, AJvYcCW2d1ucnEbX4ig9hVUBy7hzgPqBdkL/XKYCGbFnObf9htgd4+TqBWpshxCFeGDy5gSuVlK774Ba91Jv3wup@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsKPdYkxx/BAJAzgQ+ky1AfViMdxXTOECyg4hmBgVT63Pk5jg7
-	eGVbj52opfmVisZE4iEk2/y0iJj+JjSq7Eb3MR6eKFYpfqu83JEQ
-X-Gm-Gg: ASbGncu4OVdf9c5oo6aQnLSZgWw/AYtBv0ITv1HgQ05bZkZjsae1XTsH7oWcKzcLhfO
-	YfwsKyqx71yq1QaQOMkYLD6m2woLMlBXa4Qg8f1VZnBl4rIiUF6hK2uoambmarls0fdtr1nqjgX
-	qSXEh4y/jMkYVd6i1rNNEEl9+qcUyiUruzI+Dgzos3kr07/YbBimDjbx2M0Jb4Ad8WoRaaNZCFm
-	dtQ2TfrVqUX3IMtYGwNd1OgmueZlQ/acdKmfF77qlmxtucFXneU85BjJTmAFXvfelYdbPuIYBar
-	ZT1pcUFir9EiIsLZg/wz+0aFD1h1wWSR5QsC/VALROOw9fFMZQfpIhqpKb+m3uaR29GMq8s4oat
-	ZJkVxrVI8+oT9qZvWPec=
-X-Google-Smtp-Source: AGHT+IEzb/FSn36rD8g3bjC3CLhUP4bXdLZq4w66P1jvHqoP8f7Ex/B/4Qt/Da6+yywl+F0R0SDUjw==
-X-Received: by 2002:a17:90b:4c52:b0:2ff:6a5f:9b39 with SMTP id 98e67ed59e1d1-3030fea76f8mr16980734a91.18.1742769993320;
-        Sun, 23 Mar 2025 15:46:33 -0700 (PDT)
-Received: from fedora (c-66-235-14-182.sea.wa.customer.broadstripe.net. [66.235.14.182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f5d4e46sm6589100a91.14.2025.03.23.15.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 15:46:32 -0700 (PDT)
-Sender: Justin Cromer <justin.cromer@gmail.com>
-Date: Sun, 23 Mar 2025 15:46:27 -0700
-From: Justin Cromer <justincromer@gmail.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: sm750fb: fix casing style on getDeviceID
-Message-ID: <Z-CPQ7dGuTBZ3sWv@fedora>
+	s=arc-20240116; t=1742770121; c=relaxed/simple;
+	bh=dnFhYYnzKlVDFTJsHnhxZlxKUHTxCBnQ8RG2gM1BrKA=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6C7R0flyzffA85363AO9BPCfAPMOTGmy1PRXY2/J9+gF3yFLZlhA4FIZUOGBxTQSflaIwzQ7AFdRIrAw4lCvnNKpwJSFV9SnpKCVI1McWe4t73VBfiW51a5JvCdD3kV8IeEqoPzqnamtsi3TyxiwN4RuaeVrrsIUzMC0vVYL7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=pPcWRwJ6; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Sun, 23 Mar 2025 18:48:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1742770117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IPUcsPWWa2X9NKfpybVnP9b2BUGvSK430jlCkPrgcYg=;
+	b=pPcWRwJ6ULwbzFVnYhIkw85Ou/fbeyBqqixE9bPjue5gt4XnjsIwZtqv/W8AOOimwa//lw
+	MGeQNOeLPbmVR4Uyo46BmpfX7ZGdrSley00lutcJsJ0Wpcr2x4oaYsBYKei0QTrvg7djta
+	RF22Z3ZIY7jDI5SSCYfwpPEY/zAcQ5Z3M143egmgItXDXvPjsyLJfWiTEckWlVTJLeGhsL
+	8zRsfeddKqwItobtsycZyajOv3GLCEWP4k2k+4qrEEjucPkaAWbnM391NLpwvYC907xwjq
+	AZ7HfTVC+7PB4IFJv044IpsrUy4Lz2wsJejWoLjKXioqgx1zyBbtCFEYQnthnw==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>,
+	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sergio Lopez Pascual <slp@sinrega.org>,
+	Ryan Houdek <sonicadvance1@gmail.com>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v3] drm: Add UAPI for the Asahi driver
+Message-ID: <Z-CPspG_Cy-f-MKe@blossom>
+References: <20250314-agx-uapi-v3-1-3abf7e74ea2f@rosenzweig.io>
+ <Z912pMazVwHKLi72@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,93 +75,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Z912pMazVwHKLi72@phenom.ffwll.local>
+X-Migadu-Flow: FLOW_OUT
 
-Fixes camel casing for getDeviceID function. This includes an update to
-the internal function variable 'deviceID' as it's relevant, needs updating,
-and is clearly scoped to the small function.
+> Since this is a deparature from our usual requirement that all pieces
+> should be ready before landing anything we had discussion whether this is
+> an acceptable one-off exception for special circumstance. Thanks a lot to
+> Alyssa for driving this. The very much summarized consensus is that due to
+> rust this is a special case, and because the userspace is in upstream mesa
+> and lead by people who know what they're doing and have been around for
+> years, it should all work out. As a stand-in for that discussion:
+> 
+> Acked-by: Simona Vetter <simona.vetter@ffwll.ch>
+> 
+> But Dave&me very much do not want to make this a recurring thing, please
+> don't try :-)
 
-Signed-off-by: Justin Cromer <justincromer@gmail.com>
----
-
-First patch for me, so I chose a checkpatch.pl issue to get comfortable
-with the workflow. Any and all nits welcome. 
-
-Verified my change by recompiling and loading the module in question.
-Additionaly, checkpatch.pl reports two fewer errors.
-
- drivers/staging/sm750fb/ddk750_dvi.c    |  2 +-
- drivers/staging/sm750fb/ddk750_sii164.c | 12 ++++++------
- drivers/staging/sm750fb/ddk750_sii164.h |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/sm750fb/ddk750_dvi.c b/drivers/staging/sm750fb/ddk750_dvi.c
-index 8b81e8642f9e..3fb14eff2de1 100644
---- a/drivers/staging/sm750fb/ddk750_dvi.c
-+++ b/drivers/staging/sm750fb/ddk750_dvi.c
-@@ -16,7 +16,7 @@ static struct dvi_ctrl_device dcft_supported_dvi_controller[] = {
- 	{
- 		.init = sii164_init_chip,
- 		.get_vendor_id = sii164_get_vendor_id,
--		.get_device_id = sii164GetDeviceID,
-+		.get_device_id = sii164_get_device_id,
- #ifdef SII164_FULL_FUNCTIONS
- 		.reset_chip = sii164ResetChip,
- 		.get_chip_string = sii164GetChipString,
-diff --git a/drivers/staging/sm750fb/ddk750_sii164.c b/drivers/staging/sm750fb/ddk750_sii164.c
-index 2532b60245ac..d50c71824321 100644
---- a/drivers/staging/sm750fb/ddk750_sii164.c
-+++ b/drivers/staging/sm750fb/ddk750_sii164.c
-@@ -48,22 +48,22 @@ unsigned short sii164_get_vendor_id(void)
- }
- 
- /*
-- *  sii164GetDeviceID
-+ *  sii164_get_device_id
-  *      This function gets the device ID of the DVI controller chip.
-  *
-  *  Output:
-  *      Device ID
-  */
--unsigned short sii164GetDeviceID(void)
-+unsigned short sii164_get_device_id(void)
- {
--	unsigned short deviceID;
-+	unsigned short device_id;
- 
--	deviceID = ((unsigned short)i2cReadReg(SII164_I2C_ADDRESS,
-+	device_id = ((unsigned short)i2cReadReg(SII164_I2C_ADDRESS,
- 					       SII164_DEVICE_ID_HIGH) << 8) |
- 		   (unsigned short)i2cReadReg(SII164_I2C_ADDRESS,
- 					      SII164_DEVICE_ID_LOW);
- 
--	return deviceID;
-+	return device_id;
- }
- 
- /*
-@@ -141,7 +141,7 @@ long sii164_init_chip(unsigned char edge_select,
- 
- 	/* Check if SII164 Chip exists */
- 	if ((sii164_get_vendor_id() == SII164_VENDOR_ID) &&
--	    (sii164GetDeviceID() == SII164_DEVICE_ID)) {
-+	    (sii164_get_device_id() == SII164_DEVICE_ID)) {
- 		/*
- 		 *  Initialize SII164 controller chip.
- 		 */
-diff --git a/drivers/staging/sm750fb/ddk750_sii164.h b/drivers/staging/sm750fb/ddk750_sii164.h
-index 71a7c1cb42c4..a76091f6622b 100644
---- a/drivers/staging/sm750fb/ddk750_sii164.h
-+++ b/drivers/staging/sm750fb/ddk750_sii164.h
-@@ -28,7 +28,7 @@ long sii164_init_chip(unsigned char edgeSelect,
- 		      unsigned char pllFilterValue);
- 
- unsigned short sii164_get_vendor_id(void);
--unsigned short sii164GetDeviceID(void);
-+unsigned short sii164_get_device_id(void);
- 
- #ifdef SII164_FULL_FUNCTIONS
- void sii164ResetChip(void);
--- 
-2.49.0
-
+Thanks for the ack :)
 
