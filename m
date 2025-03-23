@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-573048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B44A6D229
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:45:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3658BA6D230
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32B1169D92
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033D21896115
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579A81FAC59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5C91FBCA1;
 	Sun, 23 Mar 2025 22:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFuCW/qi"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sg/BoZUo"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED641EF368
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159DB1E9B28
 	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742769591; cv=none; b=ZudCDHoVX2L0qXGJxWOP8nZ6HYcxybTYROBY/nh71f0FNmRvroahWV7zPHncRd7aaVa1K/sqPJmZDDOr2n7fnR5xLyBZ5bs555Ife//lASno40NqGpA32rx1OFWaYOyOBktRUQfUZl4aJP5p7TpKdHTLn5Ru0OWICtYwXmugc88=
+	t=1742769592; cv=none; b=VmhqCgwsmcKY+GmKT0N9Cqql2ZUv4TNnep8mdMViQpXCAk4nS44fY+TqOH9JaOfK+w+itkH5AhpYLZCS4piGfy+1fl+oZaNbkXToJuGsrHd1PssY4KIC+8zMygltvZiz7Xi3WLXJU4QBI2u3jR/Q/F41UpAq5ynBQhY7w3A7hSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742769591; c=relaxed/simple;
-	bh=wFMuIyuQV4OeONZ1CTvvoJlBLS9yPymppIm/9Rg9fR8=;
+	s=arc-20240116; t=1742769592; c=relaxed/simple;
+	bh=H9PnjiGdaPmfWukTzjrtFxLU+96UeMWEkuYWR2ErP7k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kKH2ZRcXk+OnYDX84N6n+B1UBQEg+iIzqMObr33PaNfxrqi+bVEsXOoHEMPJEqAozalSHPg3sbWANvZuMoNFBZ6/rTQJSqIiReow+kb3WDFAce9eDGQtndZgRwaizGwNoz1bzEOKIrQprzGcfoG93SqMhelgZq7xDEco8KzvZkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CFuCW/qi; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:To:Cc; b=gBAHqkpyvwt94hXaSE7E8LspzRJ4+7/6uar6fzZNO8aCkh/zkDgwCSu17Xy9JDk+zsSIcdt31gMZE6ozOEt5Y1g2+sZIycBfyPmX/1p+rhpNGRmTFjOJFrGIv7yUhk+taOr/+olFepVDbQg5DRZBz8fa34RBZHMVkdu1AC3V+WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sg/BoZUo; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac345bd8e13so673832166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:39:45 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaecf50578eso713685566b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1742769583; x=1743374383; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qB2B+UaRvhzRZZ5Wx1Ln6+NaDhGt6Oe4sLGxlVN20j8=;
-        b=CFuCW/qire8aywCE8R2nF9KA3js6JnqRjYn0LxXqEbLMqqh7gljrc1Op+LWpPpz45+
-         nzeHo60ZbYx7hfxaW6PPbDGGL+2YfYb/J0n51c9SPiMhge0z7JKYD+WjSpwdGeJYGTNa
-         rNQsoK5zJjgWkTUgINrZyBDXgUIE+XUVFIzMPG011L5tTLUEmtg31J6QxPCn72ykhYec
-         p/vqLmTB/ZJP4g1WqtgCc3OzI3MfhfTPQeEj+4UcgigbR5Sz3iOi6pEu96uT6XI8NsV5
-         lGZjddAI4UHYxZJYjL3YlbXMiLNNqSdDaE9XH1YU3iE/p/2C2Kl2Qc4SOzEvzMKH5+H9
-         LX6Q==
+        bh=+9zuZxWNg3rbrJTairaqhANzxAqu72T6zzPhxq7UOmE=;
+        b=sg/BoZUoO1vvhUz/iyXWR/MXNTeBGwofC6UNpxJQrUNNiw4KK7eE2KsY4y7RmEDrgc
+         CJDWqICOsVStbXFUlcoIpWqaRqmNNCv3c12rcDsZ/VNGnK6VtAlsbYR3wNoU3zuaC46C
+         fwz7FHf6mwR9L+LRktEj+XD8Vfg6qal8O9QomUJ2Tt536IPiTrdB1ffkNYE9bqYyKMlc
+         tnWoNjR9gAQhM8yrQ9ooN+jhbYkfFc/NTsvVLHYDekiMBbo3Lw/btgm3ML3LS3PXwz/t
+         kOBqxBnV5cVs/bHhMlwVsJk84DAfki4LbUB/W/IVthCI0pHuv19sX6FD39us8LONlxYz
+         8GjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1742769583; x=1743374383;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qB2B+UaRvhzRZZ5Wx1Ln6+NaDhGt6Oe4sLGxlVN20j8=;
-        b=xQ0RQaZYb5mShicIcsl4M1Zu0v8MkFazpuC3QkERNBZGA7rwRZSM6sTEGcOfVSMeEI
-         tIwhZtIdXqKaWLFNhw66mrgW425ewQK/VZqvoC//U1keb8nrE2GkAcPoFo//lvltYFlH
-         H2+/yU7aoe1iprsR2hRoq1qV2EBioCde1fTN821SlwKzSuEkQTZvtMfXLNv3ltCNyvx9
-         pZzn1tyCHSZkczfOw93n9vQfpXQDb+inOic3BMY0Syb1+5LVVskG2RfrfnnOz+h/q1qP
-         Z1hC9Opqv68Nf0Lw59gCNcSGbrXSH0T5sUh64rBcCjrxL+xy61wGwDHKjNABXOc5xhdl
-         mNQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWezyDxdNKpcK2GxSJa49eNLeo4lFwE4sNglPZqom6m4hTRqJm0/OxBRjo+gagUurdsNuUHtAWn74fQUo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0v9/3f2f/+gATvSRDEUUU0DvTxoyusZumVrXlekZ513oa12M3
-	YWGaNH85y9lhW2Cy7yxsKT/E/nbcrdaOQypV/+QjkVukR0WgCFpaEKI+uINq34I=
-X-Gm-Gg: ASbGncvuUbtYqM0OeMcgRVfpPc9Qdf8/IbOVk9P6qS0qeVjPvvMJwA11mqc0Xr+BveR
-	+NA8O12izZlKyWay0eoZqrUCpY17xlC6y0EW6RuDyNiz5DLzk8mpNtBtJmPfO8MEfuPdzS/7O7N
-	Q1FSC7fMwQAHI+EprRSPXlJ2BatBFJ/xhRTSsERFqYJecccidEwWm03lxZKXqdV1cG3L5z2k0ut
-	Lc2bqAvcjV3kuXfFRhu/v52uitDRzGSMkJ9JLaSrk+kxJnUZ8DsyACzlr5u7p2gy3uGYNhnGPKn
-	wc/v1eliJMJVB27ViZFHvqAzy69YsHCVswWcUYYDRO0+e2MxjWGcNsVrbK6ddhdpy3L8bWZvvvE
-	H+HMYGY7y0wn9WDlHc1gS/aBWVZbr
-X-Google-Smtp-Source: AGHT+IEqdMFkeJB9L19k5i2T9SHkqV7HBIih5q+Sk1+mGJp+qYtrcbGq+req37UQlXtoOfZvy9bw1w==
-X-Received: by 2002:a17:907:da0c:b0:ac3:f683:c842 with SMTP id a640c23a62f3a-ac3f683c845mr1099102666b.42.1742769582647;
-        Sun, 23 Mar 2025 15:39:42 -0700 (PDT)
+        bh=+9zuZxWNg3rbrJTairaqhANzxAqu72T6zzPhxq7UOmE=;
+        b=NvBy8nthfZJ0ExI9zL8NXrI5RMeK/pP8qjj7ukz/WGIQo1jwmvOw58zCU2k972KFzb
+         7UivbB1feOBG//tRRQ5Ya9G2fJFJffcyCFtIcFPZ20E+UFlNlcH7Qa9IuZY6WfU/F0w/
+         aDvL6AVNxBNYYTkiVw+doPzJpYBQgQNhXOmIixQu4+ko0TrHp9DV2iAZ1OTqzFj4Ymms
+         5woRwhrndCy7Fg1w0DZ7G41tBLghwSUaNRanIv30QnRUeBrlDRDaBf7yiYmDWPyp/SRN
+         GcDBdWcTwFWNICFY5WteDpQeYo4vmfmp8ii8GuVzycgwgoB3pKnUvITcp7JJext/IA2K
+         AEqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVstsE4kSRp/C+Bd2yEcPTHwLJf48MxMrgP1IwcRFnPmAoZ167ugKa3OaqMDBnMVAYSX8E/zYlIkMtiyOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp4onr6Zra7edIgcw/RvDFE2nZcXeicU7TDaYC8Act3yrgDpwD
+	wf1mQ2sD0mvuBQHKFxKRcIjP4ETS8bl3UOcC2M7Bu+GR9UUOG0O9RDAfZvZ2DH8=
+X-Gm-Gg: ASbGncscI5L2BYGICwi5z2CnU1hYtLOh5aHfnCsHmMkNbWe/fXiulArdbw4uNIWY3Mt
+	WVu1xCTb5/YtD1T7MfFjfgetdKfx49vFbyiHpcCVgjl6AO3yXQIVbpytPbPThJODXQR9ezSM5xS
+	9+UDKwBYmvIo5NlRRfv0n6RTdpZnSKJNGroVK+IFGyTogHdXDMLxeeeVnrbIH34h04xSpRk222E
+	RfqcPdMb72jIoqYOPFxUY9luWwqSMJM+D4SQC1l5yNQt5cIeoqshSmWfbbE+hx4lr1Gbis7bJSf
+	/EBcgU1IgwrNTm6SsapSHilpUjgkiHinJHxdU7rATHtCXGZxUMmQ1zU+HcpX45yTW0xJOm19y/k
+	ItycAdnnG+T764SAn0Gf9JP4kDtAjvTLfqdxyMYw=
+X-Google-Smtp-Source: AGHT+IFs4xHKZtefwGlVOQ1hTfmO2hUQ+8e+EVgI4+xRTbfzM8/S+AZdGH6X4/sL+XMu2751zvkyBQ==
+X-Received: by 2002:a17:907:7f0d:b0:ac3:3cfc:a59c with SMTP id a640c23a62f3a-ac3f20b9b10mr1154328366b.11.1742769583314;
+        Sun, 23 Mar 2025 15:39:43 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef86e44dsm559686666b.31.2025.03.23.15.39.41
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef86e44dsm559686666b.31.2025.03.23.15.39.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 15:39:41 -0700 (PDT)
+        Sun, 23 Mar 2025 15:39:42 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Sun, 23 Mar 2025 22:39:48 +0000
-Subject: [PATCH 32/34] rtc: s5m: replace regmap_update_bits with
- regmap_clear/set_bits
+Date: Sun, 23 Mar 2025 22:39:49 +0000
+Subject: [PATCH 33/34] rtc: s5m: replace open-coded read/modify/write
+ registers with regmap helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250323-s2mpg10-v1-32-d08943702707@linaro.org>
+Message-Id: <20250323-s2mpg10-v1-33-d08943702707@linaro.org>
 References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
 In-Reply-To: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -104,44 +104,77 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-The regmap_clear_bits() and regmap_set_bits() helper macros state the
-intention a bit more obviously.
+Instead of the open-coded read/modify/write sequence, we can simply use
+the regmap helpers regmap_set_bits() and regmap_update_bits()
+respectively.
 
-Use those.
+This makes the code easier to read, and avoids extra works in case the
+underlying bus supports updating bits via
+struct regmap_bus::reg_update_bits() directly (which is the case for
+S2MPG10 on gs101 where this driver communicates via ACPM).
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/rtc/rtc-s5m.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/rtc/rtc-s5m.c | 28 +++++++---------------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-index e8e442c503064eb4e570af5bf7dcff6bfa7f4656..fb65a8e439d72d9070751c00f5826a403ac0b416 100644
+index fb65a8e439d72d9070751c00f5826a403ac0b416..2ad01fb3bc72fe9259a8307584c9cf3a839bd492 100644
 --- a/drivers/rtc/rtc-s5m.c
 +++ b/drivers/rtc/rtc-s5m.c
-@@ -338,8 +338,8 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
- 
- 	/* On S2MPS13 the AUDR is not auto-cleared */
- 	if (info->device_type == S2MPS13X)
--		regmap_update_bits(info->regmap, info->regs->udr_update,
--				   S2MPS13_RTC_AUDR_MASK, 0);
-+		regmap_clear_bits(info->regmap, info->regs->udr_update,
-+				  S2MPS13_RTC_AUDR_MASK);
- 
- 	return ret;
- }
-@@ -351,10 +351,8 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+@@ -279,17 +279,9 @@ static int s5m_check_pending_alarm_interrupt(struct s5m_rtc_info *info,
+ static int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
+ {
  	int ret;
+-	unsigned int data;
+-
+-	ret = regmap_read(info->regmap, info->regs->udr_update, &data);
+-	if (ret < 0) {
+-		dev_err(info->dev, "failed to read update reg(%d)\n", ret);
+-		return ret;
+-	}
+-
+-	data |= info->regs->write_time_udr_mask;
  
- 	if (info->regs->read_time_udr_mask) {
--		ret = regmap_update_bits(info->regmap,
--				info->regs->udr_update,
--				info->regs->read_time_udr_mask,
--				info->regs->read_time_udr_mask);
-+		ret = regmap_set_bits(info->regmap, info->regs->udr_update,
-+				      info->regs->read_time_udr_mask);
- 		if (ret) {
- 			dev_err(dev,
- 				"Failed to prepare registers for time reading: %d\n",
+-	ret = regmap_write(info->regmap, info->regs->udr_update, data);
++	ret = regmap_set_bits(info->regmap, info->regs->udr_update,
++			      info->regs->write_time_udr_mask);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "failed to write update reg(%d)\n", ret);
+ 		return ret;
+@@ -303,19 +295,12 @@ static int s5m8767_rtc_set_time_reg(struct s5m_rtc_info *info)
+ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+ {
+ 	int ret;
+-	unsigned int data;
+-
+-	ret = regmap_read(info->regmap, info->regs->udr_update, &data);
+-	if (ret < 0) {
+-		dev_err(info->dev, "%s: fail to read update reg(%d)\n",
+-			__func__, ret);
+-		return ret;
+-	}
++	unsigned int udr_mask;
+ 
+-	data |= info->regs->write_alarm_udr_mask;
++	udr_mask = info->regs->write_alarm_udr_mask;
+ 	switch (info->device_type) {
+ 	case S5M8767X:
+-		data &= ~S5M_RTC_TIME_EN_MASK;
++		udr_mask |= S5M_RTC_TIME_EN_MASK;
+ 		break;
+ 	case S2MPG10:
+ 	case S2MPS15X:
+@@ -327,7 +312,8 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = regmap_write(info->regmap, info->regs->udr_update, data);
++	ret = regmap_update_bits(info->regmap, info->regs->udr_update,
++				 udr_mask, info->regs->write_alarm_udr_mask);
+ 	if (ret < 0) {
+ 		dev_err(info->dev, "%s: fail to write update reg(%d)\n",
+ 			__func__, ret);
 
 -- 
 2.49.0.395.g12beb8f557-goog
