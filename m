@@ -1,195 +1,167 @@
-Return-Path: <linux-kernel+bounces-572768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82EBA6CE80
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:19:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9134BA6CE84
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8DF16CD33
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3883B574A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B503202F70;
-	Sun, 23 Mar 2025 09:18:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E5A1754B;
-	Sun, 23 Mar 2025 09:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D40202F8C;
+	Sun, 23 Mar 2025 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="XjYX/WC8";
+	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="HqsZhSro"
+Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FFD800;
+	Sun, 23 Mar 2025 09:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742721526; cv=none; b=Eb4J/OlNPJjPpjs5dZUt6Ae8CJXsDGI0GO9MxZvmiMtEp8xcu9Zdry5KnD9kslU2jM1P2v1Oc+QDMWQXIIfBUv7varBiDc18o7h8ieamNDe4MDZa1aPQfNS0RNgvJ/B6JJnJX5ecfKH/wXOBmiGVOOsZkOF1nIaLQHnCZ+vDjUk=
+	t=1742721624; cv=none; b=Mm0exvv8fiKmgx6U6BGooHDt+7bjh0NhtLHNoOIpc8ymwC1UdtvS3tvAvozkGEdKm5glAOLDf/aii0o2DmplPaM7mQg2EK4KKfMudgHKKsPaTkLNhUiaaCv7kJgqQv0Pu3LYpAu6n1Up8V8MdJaaaVz6es6hCkNnc2EHHfsmEuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742721526; c=relaxed/simple;
-	bh=5HZmLzce4L9XeAcPttemnSzWQxYapG6GBhfDbqgHz10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RqU3joL5eo6CjOG/88/9gvhib74ssDnDJm6634WPT7Xv5vAGwOjXxKoXgtltcKPAnQPiY2kcnhechGyh02ymhQG6gIn3PnlFRnZIx/B5NyHW0/mAcYBl4zzCwxpymGTjFGFDcfliw2pxQHmfvqDPnMkyUb+sm+dqXwd7DkD9/So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9DDE106F;
-	Sun, 23 Mar 2025 02:18:41 -0700 (PDT)
-Received: from [10.57.41.149] (unknown [10.57.41.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4888E3F63F;
-	Sun, 23 Mar 2025 02:18:33 -0700 (PDT)
-Message-ID: <1e870bd8-0e13-4e0d-bbe9-e9f601f59a50@arm.com>
-Date: Sun, 23 Mar 2025 09:18:30 +0000
+	s=arc-20240116; t=1742721624; c=relaxed/simple;
+	bh=fTHfjM3YpFDVqr7eOMrB75AxCidt7NZyJSHi+kvPL70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDsEAw0eHWly3I+Jr5fT40UnK6gLSQo0WnNYO8Y8aDnF8LiTpCMBgul7BFmpD/OTcrlumfxHBo0A+g8thwe0t8xBa/TFpDzaWkZkUOWiC7mz9dHq8BEiwRu4LVEz9+XCT2D+WqtDIVA8Gb22vKVz1n0N4n1NCOJ1BMrslqd4Mw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=XjYX/WC8; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=HqsZhSro; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: by mail.netfilter.org (Postfix, from userid 109)
+	id 841CD60385; Sun, 23 Mar 2025 10:20:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1742721616;
+	bh=aTpgttncmN+s4PvDh7qBtNfVTcRVZaa7iHnpbbQkRlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XjYX/WC8l32MrMVxruedzOhZ/DIXDX3voFcc2xNPD1UO6e4CPULJosbQMmwrECFqV
+	 Mt/ibWQgiHsK7xBmRZbwJt9QLgvxX60whvG6vlEkAyiz0+nMl9ffk8pdcOJL8KPuwL
+	 Z6R4kJghBbV9DSSANBHkwTlJKwNSa2g8LuOLMQxRv6alzTjzhRfka7aFOER/8mnSpR
+	 1U5za26uEjcXLdtHyM4/YFa76FynIhNguGxBYApob2KvKFdozx/QLbQL5/JlBXQubi
+	 IDqejQm5MUsgbuiTFVWaashvLQhxEtFuh2iSqr7pziiShvcZ0Oxrrb6pfA8cLpxhZQ
+	 gDUhR/eQCHa3A==
+X-Spam-Level: 
+Received: from netfilter.org (mail-agni [217.70.190.124])
+	by mail.netfilter.org (Postfix) with ESMTPSA id E0A056036E;
+	Sun, 23 Mar 2025 10:20:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
+	s=2025; t=1742721613;
+	bh=aTpgttncmN+s4PvDh7qBtNfVTcRVZaa7iHnpbbQkRlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HqsZhSroZwXlEEDEN8V63qBqxl6tsE9zuyjMob3B9TwVWcxtozH2fNV1WpltukNzy
+	 H5J9TIg2e1o+q6x9duSphIh1FFinGv7CQ6FRFJXJnFM0cKeEF1tU4Px8953WXs1Xqa
+	 eQFhBIu54GzrF9UGCuDEUnxDT8ar4jMHZ0rNfalXcm8xemLCqLdHZ66TJB+vvePhqR
+	 oXvtSe2DmgpO32APscNPacWifxO7y6nEWc+G36kWmIpMI2wcq2kE8s3uxA+qDG1FKc
+	 dbnxA14sfVaUXpK3gVSFjh9nnt/CX+/msSNR4VABcXPCtm1Z91RfTnprZ3sGmQGB54
+	 lPS1sLFyB3X+Q==
+Date: Sun, 23 Mar 2025 10:20:10 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org,
+	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
+Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
+Message-ID: <Z9_SSuPu2TXeN2TD@calendula>
+References: <20250305170935.80558-1-mkoutny@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
- fast I/O devices
-To: "King, Colin" <colin.king@intel.com>, Jens Axboe <axboe@kernel.dk>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com>
- <f18607ca-30dc-43de-be77-fec69968aeec@arm.com>
- <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305170935.80558-1-mkoutny@suse.com>
 
-On 3/17/25 10:03, King, Colin wrote:
-> Hi Christian, 
-> 
-> Follow-up below:
-> 
->> -----Original Message-----
->> From: Christian Loehle <christian.loehle@arm.com>
->> Sent: 03 March 2025 22:25
->> To: King, Colin <colin.king@intel.com>; Jens Axboe <axboe@kernel.dk>; Rafael
->> J. Wysocki <rafael@kernel.org>; Daniel Lezcano <daniel.lezcano@linaro.org>;
->> linux-block@vger.kernel.org; linux-pm@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
->> fast I/O devices
->>
->> On 3/3/25 16:43, Colin Ian King wrote:
->>> Modern processors can drop into deep sleep states relatively quickly
->>> to save power. However, coming out of deep sleep states takes a small
->>> amount of time and this is detrimental to performance for I/O devices
->>> such as fast PCIe NVME drives when servicing a completed I/O
->>> transactions.
->>>
->>> Testing with fio with read/write RAID0 PCIe NVME devices on various
->>> modern SMP based systems (such as 96 thead Granite Rapids Xeon 6741P)
->>> has shown that on 85-90% of read/write transactions issued on a CPU
->>> are completed by the same CPU, so it makes some sense to prevent the
->>> CPU from dropping into a deep sleep state to help reduce I/O handling
->>> latency.
->>
->> For the platform you tested on that may be true, but even if we constrain
->> ourselves to pci-nvme there's a variety of queue/irq mappings where this
->> doesn't hold I'm afraid.
-> 
-> This code is optional, one can enable it or disable it via the config option. Also, 
-> even when it is built-in one can disable it by writing 0 to the sysfs file
->   /sys/devices/system/cpu/cpuidle/psd_cpu_lat_timeout_ms
-> 
->>
->>>
->>> This commit introduces a simple, lightweight and fast power sleep
->>> demotion mechanism that provides the block layer a way to inform the
->>> menu governor to prevent a CPU from going into a deep sleep when an
->>> I/O operation is requested. While it is true that some I/Os may not
->>
->> s/requested/completed is the full truth, isn't it?
->>
->>> be serviced on the same CPU that issued the I/O request and hence is
->>> not 100% perfect the mechanism does work well in the vast majority of
->>> I/O operations and there is very small overhead with the sleep
->>> demotion prevention.
->>>
->>> Test results on a 96 thread Xeon 6741P with a 6 way RAID0 PCIe NVME md
->>> array using fio 3.35 performing random read and read-write test on a
->>> 512GB file with 8 concurrent I/O jobs. Tested with the
->>> NHM_C1_AUTO_DEMOTE bit set in MSR_PKG_CST_CONFIG_CONTROL set in
->> the BIOS.
->>>
->>> Test case: random reads, results based on geometic mean of results
->>> from
->>> 5 test runs:
->>>            Bandwidth         IO-ops   Latency   Bandwidth
->>>            read (bytes/sec)  per sec    (ns)    % Std.Deviation
->>> Baseline:  21365755610	     20377     390105   1.86%
->>> Patched:   25950107558       24748     322905   0.16%
->>
->> What is the baseline?
->> Do you mind trying with Rafael's recently posted series?
->> Given the IOPS I'd expect good results from that alone already.
->> https://lore.kernel.org/lkml/1916668.tdWV9SEqCh@rjwysocki.net/
->>
->> (Happy to see teo as comparison too, which you don't modify).
-> 
-> OK, I re-ran the tests on 6.14-rc5 on the same H/W. The "Baseline" is 6.14-rc5 without
-> Raphel's patch. I also testing the Baseline with C6 and C6P disabled as this stops deeper
-> C-state sleeps and in theory should provide "best performance". I also benchmarked with
-> Raphel's patch and just my patch, and finally Raphels patch AND my patch:
-> 
-> Reads
->                         Bandwidth       Bandwidth       latency         latency
->                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
-> Baseline                25689182477     0.15            326177          0.15
-> C6, C6P disabled        25839580014     0.19            324349          0.19
-> Raphels Patch:          25695523747     0.06            326150          0.06
-> My patch:               25782011833     0.07            324999          0.07
-> Raphel + My patch:      25792551514     0.10            324924          0.10
+Hi Michal,
 
-So these are mostly equal right?
+I have one question.
 
+On Wed, Mar 05, 2025 at 06:09:35PM +0100, Michal Koutný wrote:
+> diff --git a/net/netfilter/xt_cgroup.c b/net/netfilter/xt_cgroup.c
+> index c0f5e9a4f3c65..c3055e74aa0ea 100644
+> --- a/net/netfilter/xt_cgroup.c
+> +++ b/net/netfilter/xt_cgroup.c
+> @@ -23,6 +23,13 @@ MODULE_DESCRIPTION("Xtables: process control group matching");
+>  MODULE_ALIAS("ipt_cgroup");
+>  MODULE_ALIAS("ip6t_cgroup");
+>  
+> +#define NET_CLS_CLASSID_INVALID_MSG "xt_cgroup: classid invalid without net_cls cgroups\n"
+> +
+> +static bool possible_classid(u32 classid)
+> +{
+> +	return IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) || classid == 0;
+> +}
+> +
+>  static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
+>  {
+>  	struct xt_cgroup_info_v0 *info = par->matchinfo;
+> @@ -30,6 +37,11 @@ static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
+>  	if (info->invert & ~1)
+>  		return -EINVAL;
+>  
+> +	if (!possible_classid(info->id)) {
+
+why classid != 0 is accepted for cgroup_mt_check_v0()?
+
+cgroup_mt_check_v0 represents revision 0 of this match, and this match
+only supports for clsid (groupsv1).
+
+History of revisions of cgroupsv2:
+
+- cgroup_mt_check_v0 added to match on clsid (initial version of this match)
+- cgroup_mt_check_v1 is added to support cgroupsv2 matching 
+- cgroup_mt_check_v2 is added to make cgroupsv2 matching more flexible
+
+I mean, if !IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) then xt_cgroup
+should fail for cgroup_mt_check_v0.
+
+But a more general question: why this check for classid == 0 in
+cgroup_mt_check_v1 and cgroup_mt_check_v2?
+
+> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
+> +		return -EINVAL;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -51,6 +63,11 @@ static int cgroup_mt_check_v1(const struct xt_mtchk_param *par)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (!possible_classid(info->classid)) {
+> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
+> +		return -EINVAL;
+> +	}
+> +
+>  	info->priv = NULL;
+>  	if (info->has_path) {
+>  		cgrp = cgroup_get_from_path(info->path);
+> @@ -83,6 +100,11 @@ static int cgroup_mt_check_v2(const struct xt_mtchk_param *par)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (info->has_classid && !possible_classid(info->classid)) {
+> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
+> +		return -EINVAL;
+> +	}
+> +
+>  	info->priv = NULL;
+>  	if (info->has_path) {
+>  		cgrp = cgroup_get_from_path(info->path);
 > 
-> Writes
->                         Bandwidth       Bandwidth       latency         latency
->                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
-> Baseline                15220468898     3.33            550290          3.36
-> C6, C6P disabled        13405624707     0.66            625424          0.66
-> Raphels Patch:          14017625200     1.15            598049          1.16
-> My patch:               15444417488     3.73            467818          29.10
-> Raphel + My patch:      14037711032     1.13            597143          1.13
-
-These don't make sense to me, why would C6 / C6P be this bad?
-Why would Rafael's patch make it worse?
-Are these just noise?
-
+> base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
+> -- 
+> 2.48.1
 > 
-> Combined Read+Writes, Reads
-> 
->                         Bandwidth       Bandwidth       latency         latency
->                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
-> Baseline                10132229433     0.41            484919          0.25
-> C6, C6P disabled        10567536346     0.60            515260          1.16
-> Raphels Patch:          10171044817     0.37            486937          0.20
-> My patch:               10468953527     0.07            504797          0.07
-> Raphel + My patch:      10174707546     1.26            488263          1.13
-> 
-> Combined Read+Writes, Writes
-> 
->                         Bandwidth       Bandwidth       latency         latency
->                         Bytes/sec       %Std.Dev.       nanosecs        %Std.Dev.
-> Baseline                10139393169     0.44            342132          1.23
-> C6, C6P disabled        10583264662     0.63            277052          3.87
-> Raphels Patch:          10178275035     0.39            336989          0.94
-> My patch:               10482766569     1.28            294803          6.87
-> Raphel + My patch:      10183837235     0.38            330657          3.39      
-
-The above two indicate a +3% from (now mainline) Rafael's patch to yours.
-There's no reason why Rafael + your patch should be worse than just your patch.
-If this is statistically significant we would need to look into why.
-
-FWIW I think the energy cost of essentially remaining in polling even for quite
-sporadic IO can't be understated IMO.
-Comparison for teo, which might slightly better than menu while not outright
-disabling idle would be interesting still.
-
-
-
 
