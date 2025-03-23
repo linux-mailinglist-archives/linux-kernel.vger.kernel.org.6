@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-572727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5FD5A6CDD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:47:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8515A6CDD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EB93174DA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5246B174DEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799D41DE8A0;
-	Sun, 23 Mar 2025 03:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85CA1FF1B6;
+	Sun, 23 Mar 2025 03:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="qssDhBXD"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbOFabvT"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED12B2E337D
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 03:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD1719D072;
+	Sun, 23 Mar 2025 03:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742701628; cv=none; b=o0FtqBtbegR04DVGLo2MCpH4a95cuv0NpK/oymmKgz6Jc7tgOOMvlSceOq+jz087FXIF+dyhLXCj0cHhO9kN11xlxlJrGwx91V6azCE2P1HFtqjAL/nix+vp0F4NLVnknAoJkLosCsyIixyJkB8K0TcShTylJaXe8TK/ghrjSzs=
+	t=1742701652; cv=none; b=LaR+oU3F0E5vr+l+bQN9V9X3NqkZZWvc1f9aUKJGVERysSfIJq6eDs+soeIV0VDJm95KPPNMw14eW9xlyU7Qzho2UDrbE625toG/q1HTHp7rQM4sRLwAHHvDak3RnUmmNxHgywCtwrn9kLo0Uk386dqD1OChlHrBeaC3KUQE4E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742701628; c=relaxed/simple;
-	bh=DWlSmLs0w7ovSD6AiZ8D7b/plWn/qpD/PqcGawu+u5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFmey01EEed3MMk7VqNtMvBs+BDH9H3MUVuX4E2lyoQTmAhonHerARKIieYZCBBj4VNI3kByluzILINO3+mnJyZGgd3j8kM7FF0aEE5uDJKv74F0ym544tlrPRlXAfq1rdFQCiW3Wj2e8YReUTtLiweQymfmbq4W4iyTD40EDB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=qssDhBXD; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-47698757053so42627101cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 20:47:04 -0700 (PDT)
+	s=arc-20240116; t=1742701652; c=relaxed/simple;
+	bh=WEU78p+4ISCb1u0XqjPlV+IporpqnM/H0CSjyncfgQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j0ggCx4GvECzZAjeMw5dMwTm7AwVwQXy2R8SrDpWG84tkX7Q6O1owMYxhkkRTUkJP12J7pVN9bxxBUf1eEZlsXrDBdSUtvwzhrfdH6Z/m3XdHlwVAfu/py8F1E7DAy4IWhVfMEqbaU6Tv6gJy1pJkvJxBf8N5IcFWm257I35eXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbOFabvT; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22401f4d35aso68247465ad.2;
+        Sat, 22 Mar 2025 20:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742701623; x=1743306423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=40bNv7hMAwwtRXNVkAj4nxm757/6riVRcENrQFl4p2Q=;
-        b=qssDhBXDdqNt5+CHT2H4kpJU6G+CkNjXuHabBM6yCA+ktca2ca09RMVDLhGbWghplv
-         Zb/KX5JujUDN/HBlC+UkvXp15+xvzX2LGEeE+hionKWAjde/qHZxz80QRMEbKyedYO4E
-         0zR+yg+/+ZVNHg4hGFsoelATMezOZxqCV6/5flRkkRuTDfd5sf43U2I+j/n2/DHgq4D4
-         BYH9mQdZEbBFzqHzdYqKNL8634dRFa/AkEoNuanMDltPMuWl6OAXPXMO/ViTCYDdJNv0
-         w/Ty50jHdaWG65g0DMN91mKCGQebIG7lsjmUzT/qJ1v4g2u75hlsz6opB1tQpoH7RueT
-         B6uw==
+        d=gmail.com; s=20230601; t=1742701650; x=1743306450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b6XOCol3u2a6nPObOOGbkI8Fg5Rq3rgeqOQ9YANUzBs=;
+        b=LbOFabvTW1KVcepOiVhzCJGyY9caNXxR0Mes6H0oIDaVD0h1A64oGaAv5ppxw1uhwC
+         S1NWKNLgqfkR0zP716PKUC4xPoDApKr1qzYRbtk8+8X4NDV4NtI22+o3yadiHs5ywEMc
+         7UbFq2RrTf4bvGmsSm1I/gPeHfw3tpP47OUIDMe9RAMzIQzpTAP54QwSaOkkFNhnBxbk
+         A1CQSCm2BhBLNr4FJm5vMXvKopQiIavQpRCInpS/e9VKFaHpxKyeJpLIOjRZEpGLR6sS
+         vBiSSu6+1uE05eqKg4+ExoQmAxki5XYcg8x+tJoNWwxyX8EkR1550jw44cvFtJkOPTzw
+         eVdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742701623; x=1743306423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=40bNv7hMAwwtRXNVkAj4nxm757/6riVRcENrQFl4p2Q=;
-        b=SQIjICVFfrBYdH74yFOLqT+eMS5U3dW1KAX++uBFByeCNY0B00O7qch9JjyWjh7UaI
-         sg4Zs12kVu75GzRJc0+xzOsrmxboJy62VkZ+8+/e+cJlnz9HWPpjQKab6I8qHW5u7mbP
-         SEFcBLLmBo8gnSO9mAf6w3uf2dkVRO6v0Aq+cqFwL6D5ajKKhin/OOYYzJjPJBytM+gf
-         tL88c6l4LDM8QANxtQPyFEpbLlTuIWPAYRlGnpC6XEermEUIUIhhcQCbu8T3Af0fNYdV
-         T5HS1dV/nqjh7w4GzB0mmy1rzc1SHsUf+6j8qZxIEWA1DDbsXnlZWjZZo/gLZiQfAA2/
-         Kk/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVrTLoJLHgEQNAFJzW77D3zPkfJqTIHWZhHX38L05p/0ZY/1OB8YGgueD0ZIpZjIRFs7znkOtJPVe4VANc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJOc3ul5IfIVLJWsDEnF0wCHhHTaGef33tJzEYnILGH/TnHhQS
-	sbtHJ9udFDAzWsuQbP9s0HOiW0iZTtwZLusgQJmMOWr0YijgmsZTsnW8M+HzJ0E=
-X-Gm-Gg: ASbGnctbfmA7SbaUPTy3z8Pbj8OnoNrI2VCHBSyttqPd+zN4bZfKf5jHJdGSCzws+11
-	QBrSFzdVkC3xCy+AC2E0dAUkU1WGcEjU7+fzFXPmZwalve/Jd8AS/20M8dXLO6sotJ40o/DOn5Z
-	h5O41rfrZX2b94IIYkF0yz3K3U0KKU7u49abeaaibB3eNCyrue5mqtsWctl4EIICLAtaQSrEW+a
-	5Jq1HXnoWlUZwrYNnVuIPH+kh5GLnIAOYf26gqT0oDJCHQyHZqC83vJan03d2PuwJEUAjEZ+NXh
-	k+xZDBguOrhiBtrGHuXkDd6F3SIf7d7xdI9gWF3Go4g=
-X-Google-Smtp-Source: AGHT+IFnRcBONefnUgCdgjRnWDkdRzPswf7L/Fq+jixakG6CxFaIgQKJOmOkORZ5wK1xmjSBQij57A==
-X-Received: by 2002:a05:622a:5449:b0:476:923a:f1cb with SMTP id d75a77b69052e-4771de13fccmr162328441cf.41.1742701623704;
-        Sat, 22 Mar 2025 20:47:03 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4771d51fd8csm30548191cf.49.2025.03.22.20.47.02
+        d=1e100.net; s=20230601; t=1742701650; x=1743306450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b6XOCol3u2a6nPObOOGbkI8Fg5Rq3rgeqOQ9YANUzBs=;
+        b=lGPfzcCu+Ff55c7L8f1ScI7SETl/VQD7JawCMcANSb7rx81f2EGmE8+NX52+WQx2A1
+         F2Fo88FSa8/r27jWNRnuZrdU1+0TbgZGroY3X8sDDG0XKpAeVVnQEWiOO9badjD5z60J
+         SHc72+EuojWTSHiNwvRxI4CsC6b0olran1JwdUU+JLhf+G+UW4KsTTcNagXwhimPpwJe
+         fRYAp74XViBmng9SRvzGtRoUU6dkg+AVynk+lxK1mPlg05bfKxDZMLMIgp1BFv38KSIF
+         x4wrcR2q+WQlgwMuyVe8oPJ1cPXASVYjGAtymB2cv1mX9s8jUIxWJ/phKQ0VOT7TVJWN
+         F+ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUuhRIP2OF1WOFMp2SWSbaCTBUB0iDXl92CJL+vwEyt+g5IYBaJr1d5hNbFtEe5kgme1YOczIMfkcY=@vger.kernel.org, AJvYcCVu0jbu7YGhvr1OqoFuDQAFayX6eEAaTe14ZpG4hkgNGKbMMrM/9x1ZjetScAUApQMQQUgenzh9mz3ncXbx@vger.kernel.org, AJvYcCXKwwGbsU4DbJRB4xIEQ8xWsWGMx+zuXnAvfw8rx9Ly2BNrSOBSy93Csq/N7jZdAKwFD2pLWcpsIUCVRkhavA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHA0tIg5kSFLcJuGCPsxMFVFQ9A82Rxjey1jneT4CO5HNLp6To
+	+ShrWJ34iEXG+7FghMp9bi4t9Is3Cy/wkXM5hpddf1At62tZXkHu
+X-Gm-Gg: ASbGncve6QnqsQ3Guo5xCxpP6rFmVjxIq6wfDyrChoHXtN0Gcr7VSkYfcP9PsNeeQ6Z
+	KCgivLnUE1KteOUlAomYYhDmCe1dosTKvHtu3ckmS20Rm1fAu4Pf+Edmx1yYpPV/KeW6v4eMJdh
+	DAD8U9FSmk/US8YCXkXxUFDu2bRxi1ErAYULrJJgj7nTiSYo5IGsmXcEZHzwiSJS2qhQmFqxP+6
+	Dz5/6nLmsg9l57k/Z5K34v7/mVo1dALR+CAgDKrhWTaxFINeywDM7ltB2HSmsDEFkp/0uMRsjjV
+	sUCLxjA/ViKAo1FrDlxXdl9LKWqoLhO667HzgEOFrWOseoM8EZw8GOkMgqbTO504lgTlUKFOG1s
+	=
+X-Google-Smtp-Source: AGHT+IGUsaWLVZsiSf2Nx/UAovAOD7/IzjSlUccrMhNTRIciOQVi+kOE55M63M4IOxnqDRElDxhI9g==
+X-Received: by 2002:a17:902:f54e:b0:223:fb3a:8647 with SMTP id d9443c01a7336-22780e0a4b3mr137083985ad.41.1742701650031;
+        Sat, 22 Mar 2025 20:47:30 -0700 (PDT)
+Received: from vaxr-ASUSPRO-D840MB-M840MB.. ([2001:288:7001:2703:ea7b:3f3b:ca04:6bed])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3962esm43771985ad.4.2025.03.22.20.47.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 20:47:02 -0700 (PDT)
-Date: Sat, 22 Mar 2025 23:46:57 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: page_alloc: defrag_mode
-Message-ID: <20250323034657.GD1894930@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-4-hannes@cmpxchg.org>
- <D8MVZ8L12HJN.1LN4G4H0ESLY6@google.com>
- <20250323005823.GB1894930@cmpxchg.org>
- <20250323013405.GC1894930@cmpxchg.org>
+        Sat, 22 Mar 2025 20:47:29 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: corbet@lwn.net
+Cc: willy@infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH] docs: vfs: Update struct file_system_type
+Date: Sun, 23 Mar 2025 11:47:25 +0800
+Message-ID: <20250323034725.32329-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323013405.GC1894930@cmpxchg.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 22, 2025 at 09:34:09PM -0400, Johannes Weiner wrote:
-> On Sat, Mar 22, 2025 at 08:58:27PM -0400, Johannes Weiner wrote:
-> > On Sat, Mar 22, 2025 at 04:05:52PM +0100, Brendan Jackman wrote:
-> > > On Thu Mar 13, 2025 at 10:05 PM CET, Johannes Weiner wrote:
-> > > > +	/* Reclaim/compaction failed to prevent the fallback */
-> > > > +	if (defrag_mode) {
-> > > > +		alloc_flags &= ALLOC_NOFRAGMENT;
-> > > > +		goto retry;
-> > > > +	}
-> > > 
-> > > I can't see where ALLOC_NOFRAGMENT gets cleared, is it supposed to be
-> > > here (i.e. should this be ~ALLOC_NOFRAGMENT)?
-> 
-> Please ignore my previous email, this is actually a much more severe
-> issue than I thought at first. The screwed up clearing is bad, but
-> this will also not check the flag before retrying, which means the
-> thread will retry reclaim/compaction and never reach OOM.
-> 
-> This code has weeks of load testing, with workloads fine-tuned to
-> *avoid* OOM. A blatant OOM test shows this problem immediately.
-> 
-> A simple fix, but I'll put it through the wringer before sending it.
+The structure definition now in the kernel adds macros defining the
+value of "fs_flags", and the value "FS_NO_DCACHE" no longer exists,
+update it to an existing flag value.
 
-Ok, here is the patch. I verified this with intentional OOMing 100
-times in a loop; this would previously lock up on first try in
-defrag_mode, but kills and recovers reliably with this applied.
-
-I also re-ran the full THP benchmarks, to verify that erroneous
-looping here did not accidentally contribute to fragmentation
-avoidance and thus THP success & latency rates. They were in fact not;
-the improvements claimed for defrag_mode are unchanged with this fix:
-
-                                                VANILLA    defrag_mode=1-OOMFIX
-Hugealloc Time mean               52739.45 (    +0.00%)   27342.44 (   -48.15%)
-Hugealloc Time stddev             56541.26 (    +0.00%)   33227.16 (   -41.23%)
-Kbuild Real time                    197.47 (    +0.00%)     196.32 (    -0.58%)
-Kbuild User time                   1240.49 (    +0.00%)    1231.89 (    -0.69%)
-Kbuild System time                   70.08 (    +0.00%)      58.75 (   -15.95%)
-THP fault alloc                   46727.07 (    +0.00%)   62669.93 (   +34.12%)
-THP fault fallback                21910.60 (    +0.00%)    5966.40 (   -72.77%)
-Direct compact fail                 195.80 (    +0.00%)      50.53 (   -73.81%)
-Direct compact success                7.93 (    +0.00%)       4.07 (   -43.28%)
-Compact daemon scanned migrate  3369601.27 (    +0.00%) 1588238.93 (   -52.87%)
-Compact daemon scanned free     5075474.47 (    +0.00%) 1441944.27 (   -71.59%)
-Compact direct scanned migrate   161787.27 (    +0.00%)   64838.53 (   -59.92%)
-Compact direct scanned free      163467.53 (    +0.00%)   37243.00 (   -77.22%)
-Compact total migrate scanned   3531388.53 (    +0.00%) 1653077.47 (   -53.19%)
-Compact total free scanned      5238942.00 (    +0.00%) 1479187.27 (   -71.77%)
-Alloc stall                        2371.07 (    +0.00%)     553.00 (   -76.64%)
-Pages kswapd scanned            2160926.73 (    +0.00%) 4052539.93 (   +87.54%)
-Pages kswapd reclaimed           533191.07 (    +0.00%)  765447.47 (   +43.56%)
-Pages direct scanned             400450.33 (    +0.00%)  358933.93 (   -10.37%)
-Pages direct reclaimed            94441.73 (    +0.00%)   26991.60 (   -71.42%)
-Pages total scanned             2561377.07 (    +0.00%) 4411473.87 (   +72.23%)
-Pages total reclaimed            627632.80 (    +0.00%)  792439.07 (   +26.26%)
-Swap out                          47959.53 (    +0.00%)  128511.80 (  +167.96%)
-Swap in                            7276.00 (    +0.00%)   27736.20 (  +281.16%)
-File refaults                    138043.00 (    +0.00%)  206198.40 (   +49.37%)
-
-Many thanks for your careful review, Brendan.
-
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 ---
+ Documentation/filesystems/vfs.rst | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-From c84651a46910448c6cfaf44885644fdb215f7f6a Mon Sep 17 00:00:00 2001
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Sat, 22 Mar 2025 19:21:45 -0400
-Subject: [PATCH] mm: page_alloc: fix defrag_mode's retry & OOM path
-
-Brendan points out that defrag_mode doesn't properly clear
-ALLOC_NOFRAGMENT on its last-ditch attempt to allocate. But looking
-closer, the problem is actually more severe: it doesn't actually
-*check* whether it's already retried, and keeps looping. This means
-the OOM path is never taken, and the thread can loop indefinitely.
-
-This is verified with an intentional OOM test on defrag_mode=1, which
-results in the machine hanging. After this patch, it triggers the OOM
-kill reliably and recovers.
-
-Clear ALLOC_NOFRAGMENT properly, and only retry once.
-
-Fixes: e3aa7df331bc ("mm: page_alloc: defrag_mode")
-Reported-by: Brendan Jackman <jackmanb@google.com>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/page_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0c01998cb3a0..582364d42906 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4543,8 +4543,8 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 		goto retry;
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 31eea688609a..4e7fa09ffb6d 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -115,6 +115,14 @@ members are defined:
+ 	struct file_system_type {
+ 		const char *name;
+ 		int fs_flags;
++	#define FS_REQUIRES_DEV		1
++	#define FS_BINARY_MOUNTDATA	2
++	#define FS_HAS_SUBTYPE		4
++	#define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
++	#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
++	#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
++	#define FS_MGTIME		64	/* FS uses multigrain timestamps */
++	#define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 		int (*init_fs_context)(struct fs_context *);
+ 		const struct fs_parameter_spec *parameters;
+ 		struct dentry *(*mount) (struct file_system_type *, int,
+@@ -140,7 +148,7 @@ members are defined:
+ 	"msdos" and so on
  
- 	/* Reclaim/compaction failed to prevent the fallback */
--	if (defrag_mode) {
--		alloc_flags &= ALLOC_NOFRAGMENT;
-+	if (defrag_mode && (alloc_flags & ALLOC_NOFRAGMENT)) {
-+		alloc_flags &= ~ALLOC_NOFRAGMENT;
- 		goto retry;
- 	}
+ ``fs_flags``
+-	various flags (i.e. FS_REQUIRES_DEV, FS_NO_DCACHE, etc.)
++	various flags (i.e. FS_REQUIRES_DEV, FS_BINARY_MOUNTDATA, etc.)
  
+ ``init_fs_context``
+ 	Initializes 'struct fs_context' ->ops and ->fs_private fields with
 -- 
-2.49.0
+2.43.0
 
 
