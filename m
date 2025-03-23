@@ -1,164 +1,111 @@
-Return-Path: <linux-kernel+bounces-572935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD3A6D089
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:15:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A9FA6D08A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1879F3AD478
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:15:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0258B16C22D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D4A194137;
-	Sun, 23 Mar 2025 18:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67451482E8;
+	Sun, 23 Mar 2025 18:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gSvZYnbi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XkNggL/t"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0D51922E7
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD80819644B
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742753709; cv=none; b=MJGt85qtrSXHa5sYdTUjs/DDZuvP6eNAZK09t3tv5ujHgjiRUERn6PnL4DVtHL3IUurQLYzPsFtdH9nv51GawONT6IQkRxCdRqJaXBxi6BOmpXuP6J2KR7h3VNd3q/SF7CeFoEMpphOqrqKoHhHoTU91kKNscCY9gCleH9IA4f8=
+	t=1742753715; cv=none; b=mvW41ji8hBM/TcxBeUbSDLjVB1qMtlxQclRDLLvMj5BV2XiHhoQEMWOODS2cnS5ZfXhwHz05Q5wpRSpti5agOtWzfM4gvGZtfgpDbFroZlXYOwgQ7Q1/N15a3bJfVJxD5LFnbxvzOLT+aPwaE3TGPCWTuwwDfMQiqqv91k3FjRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742753709; c=relaxed/simple;
-	bh=6Pr1pJucG4a6OJekUXmBhDG3Cp3c3Z6L8xPwhI0o9rY=;
+	s=arc-20240116; t=1742753715; c=relaxed/simple;
+	bh=gVA3JCX04/vCsbB4HcDlaTmKquk3ta8AlG6E4Wkbm/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOVLNiXQz9J8NMvOsaOLjPl886Nbn8UUMw85inlBI+Y04lWQxiNIOE02Oi3CgdMpXku5KiPIoMAgMMEWmgM6ZZdD4KhG25O3e5D9DOP8VOuLYzsyfXX2DZbjX2/1kR+wPJKV9dCEOcTaOtG79oVAjoszEE1dBLKRu7cO2h7JqA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gSvZYnbi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742753706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0w5axyZcg98z3a51P4ruVqk9dqgoLr8zEn3jjGLi8f0=;
-	b=gSvZYnbiQstvEBksuupLPXGLjJHfaxNt+XspWEoshRRvtO8IhcAIOSwJHV0yXgwircc8ft
-	ilDJ5n8+twMEOclPViteCHxauB6SnCXsiKiku51sse1qDj9X0smNoSz3MhG2HD+HFQ40A0
-	Dmg6Pdgg3cZkNi7Hi8nqlzo3PvFJ13U=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-99-imhGZ1CaPqSBS4hhHCfZrQ-1; Sun,
- 23 Mar 2025 14:15:01 -0400
-X-MC-Unique: imhGZ1CaPqSBS4hhHCfZrQ-1
-X-Mimecast-MFC-AGG-ID: imhGZ1CaPqSBS4hhHCfZrQ_1742753699
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpvJgUe53c4BMaqPGy1nnTbp8h7BygrgPUSF31YuaU0pst8ouTQaCMCG1/7CKjmAYNyNJam/K5ijeJYNKFOVABidWsN8ox8WhWNTe9TcA3a7GvHmxCd70mGyfWY3urCVR567A7t0QVGKSzldGftEImrgzbda6h5eJX67OrBnmfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XkNggL/t; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 24B2B40E0196;
+	Sun, 23 Mar 2025 18:15:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id RFP44gPZprFw; Sun, 23 Mar 2025 18:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742753699; bh=PIIWjnrfA984bOqJi5eOt7MWu8DHV+mIsqq/VA99BJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XkNggL/t5g8IniNgywso8rgSv21YakXchEAZgz2CaVKWw1GJQHnORBKypn7jwBeXO
+	 gFzDqVgWerFAB+C/mgw6kIJ+WXOAZ+yYD8TBLS+BEA+CtkO7L3OVaf50Am5kyOtDwV
+	 cXnAWVA0ggHpUueks5zQSIY85jc8AlQBbteozYBHivSyEHn/eeYC0VzS+ybIs6KtL3
+	 UGcwpSejJcBSlySF5C+RMKeYxx24jBbmMG3aZkIbaSgFldhx8kuXMlPPiOL6ZVqy0Z
+	 x3wMuC2y0ZRXY4z83mQ7jNC/OtA497BwhsvbDAL40dhV7hGlhUtG6+EuXKP0T/782i
+	 HrXKQVyg04TxdduCJY8svlusqtjP7N10MgXIr08FcQ35jLUeCg7zFrM1pmXcmQLsHe
+	 KDzfYPCyIcbapaLf/gcHGta5Y3rqfRPgkG/s8P61MIuC+WsZoD1sscliSRMJpQuQ7Q
+	 KV4fMpf9IUNu/womUnZ5m2BbCPwPQiSigvcxcWOkcYKodeRq7+mQDGp8DY01oOyC5J
+	 KXpeneSH/cph5FZjp/QbSDpFejWaG2otdB2VjdrdEw2yFK3WqUqEU1fIwgk2TOOgE5
+	 JV1yEQAUBH9zEjFpTaFh8gwL8sBmIqqtyA0Ab4u1+PFNAgOAbu/MBxvxEnlbI/H3Ds
+	 9AjhlqdwO0kreqacjeYzZhIQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD5F0196D2CD;
-	Sun, 23 Mar 2025 18:14:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8A03230001A1;
-	Sun, 23 Mar 2025 18:14:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 23 Mar 2025 19:14:25 +0100 (CET)
-Date: Sun, 23 Mar 2025 19:14:21 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com,
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>
-Subject: Re: [syzbot] [fs?] [mm?] KCSAN: data-race in bprm_execve / copy_fs
- (4)
-Message-ID: <20250323181419.GA14883@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <202503201225.92C5F5FB1@keescook>
- <20250321-abdecken-infomaterial-2f373f8e3b3c@brauner>
- <20250322010008.GG2023217@ZenIV>
- <20250322155538.GA16736@redhat.com>
- <20250322185007.GI2023217@ZenIV>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CEC040E01FF;
+	Sun, 23 Mar 2025 18:14:50 +0000 (UTC)
+Date: Sun, 23 Mar 2025 19:14:44 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+	dave.hansen@linux.intel.com, kernel@gpiccoli.net,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
+ boot
+Message-ID: <20250323181444.GCZ-BPlCAhtO7AIsS7@fat_crate.local>
+References: <20250226132733.58327-1-gpiccoli@igalia.com>
+ <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+ <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
+ <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com>
+ <87iko213qo.ffs@tglx>
+ <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250322185007.GI2023217@ZenIV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
 
-On 03/22, Al Viro wrote:
->
-> On Sat, Mar 22, 2025 at 04:55:39PM +0100, Oleg Nesterov wrote:
->
-> > And this means that we just need to ensure that ->in_exec is cleared
-> > before this mutex is dropped, no? Something like below?
->
-> Probably should work, but I wonder if it would be cleaner to have
-> ->in_exec replaced with pointer to task_struct responsible.  Not
-> "somebody with that fs_struct for ->fs is trying to do execve(),
-> has verified that nothing outside of their threads is using this
-> and had been holding ->signal->cred_guard_mutex ever since then",
-> but "this is the thread that..."
+On Sun, Mar 23, 2025 at 02:53:05PM -0300, Guilherme G. Piccoli wrote:
+> But what about AMD systems? Even the modern ones apparently lack
+> TSC_ADJUST - or is it changing recently?
 
-perhaps... or something else to make this "not immediately obvious"
-fs->in_exec more clear.
+Yes, it is.
 
-But I guess we need something simple for -stable, so will you agree
-with this fix for now? Apart from changelog/comments.
+> Checking TSC code, it is full of checks "if Intel" as well, like in
+> native calibration. Our issue is present on AMD and my impression is
+> that, in this respect, these systems are way more unstable (from TSC
+> perspective) than the ones having TSC_ADJUST.
 
-	retval = de_thread(me);
-+	current->fs->in_exec = 0;
-	if (retval)
-		current->fs->in_exec = 0;
+The only one I know of is a Zen2 laptop where BIOS botches a perfectly fine
+TSC because those BIOS programmers are soo smart.
 
-is correct but looks confusing. See "V2" below, it clears fs->in_exec
-after the "if (retval)" check.
+If you know of other cases, where are those bug reports?
 
-syzbot says:
+Thx.
 
-	Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+Regards/Gruss,
+    Boris.
 
-so I guess "#syz test: " is pointless right now...
-
-Oleg.
----
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 506cd411f4ac..02e8824fc9cd 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1236,6 +1236,7 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	if (retval)
- 		goto out;
- 
-+	current->fs->in_exec = 0;
- 	/*
- 	 * Cancel any io_uring activity across execve
- 	 */
-@@ -1497,6 +1498,8 @@ static void free_bprm(struct linux_binprm *bprm)
- 	}
- 	free_arg_pages(bprm);
- 	if (bprm->cred) {
-+		// for the case exec fails before de_thread()
-+		current->fs->in_exec = 0;
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
-@@ -1862,7 +1865,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 
- 	sched_mm_cid_after_execve(current);
- 	/* execve succeeded */
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 	rseq_execve(current);
- 	user_events_execve(current);
-@@ -1881,7 +1883,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 		force_fatal_sig(SIGSEGV);
- 
- 	sched_mm_cid_after_execve(current);
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 
- 	return retval;
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
