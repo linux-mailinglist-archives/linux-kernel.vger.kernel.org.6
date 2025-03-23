@@ -1,136 +1,221 @@
-Return-Path: <linux-kernel+bounces-572891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FBAA6CFF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:08:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8C8A6CFF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAA83B2626
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:08:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FC657A3962
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CA213B58D;
-	Sun, 23 Mar 2025 16:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5EC13D279;
+	Sun, 23 Mar 2025 16:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dg2euc03"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="TWny8waM"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013006.outbound.protection.outlook.com [40.93.201.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB61B82C60;
-	Sun, 23 Mar 2025 16:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742746098; cv=none; b=GgnfGD0du5Oz7/wvrPz3favSQ+YVZAaXwccw+Fbf6Sq3nGAhOYbzLPq03v8juFLMQW8yJjSDnjsm+mMv58o+bJMWoZQhDvXtFF8p8QOcc5jOgOaTwFm8kpwSU8Hu1zbDFFUVhyEJDbaUBBaPIpzYMoqRIX7XiIblnveop4JbcBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742746098; c=relaxed/simple;
-	bh=neIr23byQh5Ii3UIrUPwLSuKzaAgGYewIdlU6vNmKB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djj1/JPQbtVxpoLkZojFrz1/tsnop+oIdWfs7hxdUyDHmAWuuMDEug+k7HpolpFOwc3GLByt09J3jIUHh1typOCpzHkmloXjNbZXGe15SLYcIknPPO1qTouCvP0hb3wez/VnB510nQwFxOhSVWlE81jWX6Hb9fKLP6r8kwlCDPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=dg2euc03; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1742746094;
-	bh=neIr23byQh5Ii3UIrUPwLSuKzaAgGYewIdlU6vNmKB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dg2euc03IjTMzM0v8hnX5DTZson9qjo2J/osxwShgWv6EIp4URjevS9kXUDNt8yyb
-	 HAr/aIaf+oAWzYYHK/4RxpHVUHh/PRLLPDK3pXiCPx5HjcuOuNsnfqFDynNBVJjGll
-	 GohFdbKgCtQFJYcuhcZ/RcXPWqEbB3N2/SiZ93vk=
-Date: Sun, 23 Mar 2025 17:08:13 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Sung-Chi Li <lschyi@chromium.org>, Jean Delvare <jdelvare@suse.com>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] hwmon: (cros_ec) Add set and get target fan RPM
- function
-Message-ID: <155d783a-574c-474f-b87d-a20ddb56d109@t-8ch.de>
-References: <20250318-extend_ec_hwmon_fan-v3-1-4c886385861f@chromium.org>
- <e4da28be-66ca-45d3-9ccf-34819460b463@t-8ch.de>
- <f50221fd-1d76-465b-ba53-62c08c6f8536@roeck-us.net>
- <780ce6e8-11fc-42be-b4a7-9cffbf811d78@t-8ch.de>
- <dae402fc-4b3e-4a5e-adb1-59f0697d9d61@roeck-us.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C3C2E338A;
+	Sun, 23 Mar 2025 16:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742746438; cv=fail; b=TxrP3nfA/0jW5LXQgoccWcO04JSahhHHne7KxWYOMwEhvYBt7ie6hq6GRHWfGIVjTzc4kzOC3n4ggSC9FRZW6S377TxukwraOzdgds4GCAW3QRooiTnmnAL6OmRYSjc9znQQqVpkg2oR68UboJ7pVZ7mTG//TI/KadyntVfPHWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742746438; c=relaxed/simple;
+	bh=hzTuxvZu1XXIDg7und5+fVqHDGZLvfs2S8eLNJ1sgVI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nrualQV3ImXXIf+uR98AcoYsOvgc9WjzC7E+yLL/Dt7H/Xwx22ZNSlYFoYIqKdLbAvqfvOISS1YUJ9dcdIJrpp4Dnn+K94lqBuHqNNp1NcCpZUE/HzFxL63Cfke2Qhwn8Y7DS1mXk86b0qs5r7y91oytbMSMBy6kSOyb33paRCY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=TWny8waM; arc=fail smtp.client-ip=40.93.201.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AqGVqPOlvK4cpUyO5ilMbeTEB8VHdAgwWsC000ZoblSChXRR0nGin01LBdO+mxlk6Cz1zbTB7NTSvCDRUAdK/b/B8k1szHLpQfDHYfwn0n6sfpiEmHHrYVROb2ytHg6y7+FxAWpTeRQH4TTutD15zmJwiy1RgezwIavjvPJ0P5i9Zlln64C0BpYfacLodeDH3uEvDmtw4hjgDTV9UqxUnlsO6o706x3AhPwRmRAv3acoXZxSaquVAfpWpVTRhBblk9kJOnTgaRn95Y/DPTdC8DQXzxrp2RaRguulG0jAwWZG5uU0NOCiR53U00/kN5OCoctEoXZy6NAiNgDmkHWqmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gwgBY7yCi3DJPmkd0oUGlfDh5Zumee7Kbyn0V+QQjlA=;
+ b=HNQDuNeBx/XjMyczLTwfrthEuJzdZ4dnPFb0/SOa31IOnsQfDD9ySFT9vi3SdF6WRT7XXnKqjG+a8zIcJ4w0HYR9/2f0sB+GwNpVce3mkx50RpB0iSuqFU9T+IHrFrnP2wgKidSH6tNLy3ix0OA2U5aeMnuBa5nlMCvLrmoBDgpy0y0Gpg9NEkKz5K13mzJL7SpZQx1SUwg2dzQKkEK6l5wfReUTXYIQdDGt5FlRQ/pf9d/d718GeTiSKoekExHkPS70zkn+iCoaO2GYhqwX40rnv22lbRO6tr8WzB+CI3PrM0nHejZmmfpUM2BVi0JVXCzsVpdCGYBsI+nNFb/Gtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gwgBY7yCi3DJPmkd0oUGlfDh5Zumee7Kbyn0V+QQjlA=;
+ b=TWny8waM8OXDt4fC6F9TuBnKdNR15v9xiMxEwCJQGBHEy9+dwOVjf9yIVQxgsMACyASFOcePSnjLZy/y0/2bbyKazYmzbjcywMRRnmm71RaKOCK03B8Umns0DyA1JcfaLZuYFH5XuOkQ/yDCHjPAknGFvQD9q1jOLGeY9+aBnh7p4pfEhullTs675fkTlNsehx9JGyadjTcoOt6x7n1Ea+GeOOpAacQsUNjOQ1tEPKrDD9tABKbwvQc7g43qkLYaKtYINAOVbMPCpoeTNAQ59rAorjHb6xo4eDmNsXv8w1OdSIZXoJqRXQOWNrr00qGLrk3x06CYOJhLFtWnucWVZg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
+ by SJ2PR03MB7449.namprd03.prod.outlook.com (2603:10b6:a03:558::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Sun, 23 Mar
+ 2025 16:13:53 +0000
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::706b:dd15:bc81:313c%2]) with mapi id 15.20.8534.040; Sun, 23 Mar 2025
+ 16:13:53 +0000
+Message-ID: <32304141-5025-4955-97d3-392b5035c4dc@altera.com>
+Date: Sun, 23 Mar 2025 09:13:52 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] EDAC, altera: update driver to reflect hw/yaml
+To: Borislav Petkov <bp@alien8.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dinguyen@kernel.org, tony.luck@intel.com, james.morse@arm.com,
+ mchehab@kernel.org, rric@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
+References: <20250320164622.6971-1-matthew.gerlach@altera.com>
+ <20250320164622.6971-3-matthew.gerlach@altera.com>
+ <20250321211203.GEZ93WI8tLaTJTxHmF@fat_crate.local>
+Content-Language: en-US
+From: "Gerlach, Matthew" <matthew.gerlach@altera.com>
+In-Reply-To: <20250321211203.GEZ93WI8tLaTJTxHmF@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::12) To BYAPR03MB3461.namprd03.prod.outlook.com
+ (2603:10b6:a02:b4::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dae402fc-4b3e-4a5e-adb1-59f0697d9d61@roeck-us.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|SJ2PR03MB7449:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3fc78b37-8466-46ca-a544-08dd6a25b4a2
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?T3ZsU0Q1aHhXd3RSWEI1K3VvWURMU2MrV1d6K09BV0ozbjhyc1lSMUFKeFA2?=
+ =?utf-8?B?SXpyci9PZ0RwUEk1OFFvSFpUanhVTEx6alJuY2RjYmRYZnVJL1NaUDlFYUZS?=
+ =?utf-8?B?M3doVURNWTkzWGFOZFJlLzFtRDZ2eFdvUW1hU3VXeHFGcVQ4M1owSE56U3lZ?=
+ =?utf-8?B?Qk1VcHZ6Mk1VM0RFQW5vVDJiSS9BRFhlWFhQWnNMY2ZkNmNiYnZZVXJvbUhY?=
+ =?utf-8?B?d0lpWVdvR1hOcFBmODkwcXAwdmZEV1pYQU5mdWlIalZyTjJLT2dPRTFjOHM4?=
+ =?utf-8?B?MDZrVG9NS2MyOWxoZ0JHYnREaFdnK1IyUHpPNnVUWmlITC81TTlCQ3IwYVdH?=
+ =?utf-8?B?ZkRBc01kMUFTbXRjSjNJcFdJbGdzU29oZFZzemtCREwrNk4xdVBnQzh5M0J0?=
+ =?utf-8?B?dVVONWd3S0RhbDV3L3V5UGh4Y25EVmJuK21lUEJBK002eHBCb2pROWd1eEoz?=
+ =?utf-8?B?LzdpVnhITFVocmFMTVVIb3RUbkJEeDRFYnYrdzdjZTFIWTRoL1dadXJkMmE3?=
+ =?utf-8?B?b0VMZ2RRRWFBU2YzL3BvMlBTZ3N2UDY2TFQ3Um13TzQ4RWdic2VnakZIcTdJ?=
+ =?utf-8?B?VFdGME5kK1BsbjVWM3RzUC9ENjY2ZitpODcvYkNnajJDcDQ2WFhEY1JGYTRz?=
+ =?utf-8?B?dlhqcHRlSTFLazZ5WEkxY1NMWTBhazlvbFZKWHJtUEVySW13c3M5NGZDVlMw?=
+ =?utf-8?B?QjI0SWZQYk9HUnF6bGtnSXVYb0NvMVRuU2FxQ2JKUVd4QWN5dHlmNXNJSWkx?=
+ =?utf-8?B?YkRWNTlROWNTVmVaaDRzWHhXVThXNjhTbW9MbnBkVjB0bVdwL3dmOTBFUmRt?=
+ =?utf-8?B?anJFTXlTMFR2UHNQQTNuRzZ2dzlQSUJYTUYxN1gwN0FHSm1XTE1kUnFEbTFX?=
+ =?utf-8?B?eVU3Si9JZ3NIbzlTa2xiWnFCOGpvUjJ6M1dFTDgvNVpxQk5uTVNZeHNENFVK?=
+ =?utf-8?B?Y2NCOWFDZzJIUFdUK3BiYUNhTVcwTm9MaUNvR1lUdGhRZk41T3JWL0dFekRL?=
+ =?utf-8?B?cTVTQUlzc3ZFY1NtOVdnYTNEdzgvYnFaUU9sM0k4eDY5d0RsaXB2NjRTRHJP?=
+ =?utf-8?B?MW9NQnZkRFF5d3NwY3BYZFpNRE9nQmd1dVoxcElYMm5pbFZ5QTgwK29VWW9C?=
+ =?utf-8?B?czZhODUzTzMwYnFTN3plcGdZQW5HU3d6WmV2T3doWm9paHRoVnZ1a2RYNkU4?=
+ =?utf-8?B?QTFnelM2T1FHOTZqZmEzd1B1QUJNM0d5RkJFTkk2b3phQjJPcURWZzJjUExn?=
+ =?utf-8?B?Wno2UmloNGhIbVdSSG91Mjl1RTVDZUE2YmthOU56VGQ1Qm9oeGNNYzI2eWRE?=
+ =?utf-8?B?bVNzSWRTaExPQXB0N2t1b1l5Rmd3dzUwbzA4MGJWKytlQU9NUEF4NVIzUTZm?=
+ =?utf-8?B?Zld1UlRjMS9ZVVoxTEJRRXVldllCeW5qcm0weEwvNmY1cnNlNEkxNkhnckZa?=
+ =?utf-8?B?emJKZVFLUE5IdkxOSEFyZXpzS2ZoNHFibmR4WDFMaEJ0eUI5cXgxYzBzUHVV?=
+ =?utf-8?B?bFB3cXo4Mk1kb3FoWE1jd3RjbzJ3VWNNanU5WTZQMjlkRnQ3V3FDRGdvcEE0?=
+ =?utf-8?B?REdES2NVZTdXT1hCcEZRcUVIRUJxQmVITm1Hc1IrdlZidW4vMlFyek5ZcitJ?=
+ =?utf-8?B?UUdXZ1JYQ252SnpwL0Fnd1RlMVV0ZmhXSXduRXRNQWdYVEZzeFZ6elFQK2E1?=
+ =?utf-8?B?ZlJwTEYwYWhJT0xRcVRsTVBrUWMyaWFFMGR6SzlWa2s5Vkt5dW54cER4VlhN?=
+ =?utf-8?B?NndKZG9lVUI2TWUyWU9BMGRwMUJzaWNYK280K0l2WmNCeU5rZ3FDbm50UVlW?=
+ =?utf-8?B?d3VCOUpyUVVYMkZ2TXdKazV1M01mZDVMTHdmUDNqOWhrYytndHRHR3pkSDJu?=
+ =?utf-8?Q?s8aZrbklbKWXA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZWkzSy9DVTBhdzNwK1JkcnVsRmZzdE5NRXcxREdwRE4vN1M1TFUxYVNUZkF2?=
+ =?utf-8?B?eXJiZ0xkQmpZS2I4Nk9NaFZrbmhDeVg3elZwY015eVg2dHZFUms2cXNPWk8w?=
+ =?utf-8?B?T3BXV3VCMVdnRlM3MmR3cnM2TkRKOG9LS1VydGg5b2swVjB0R3phdHhLQnFJ?=
+ =?utf-8?B?ZytvakhOdVRhWDc1SEpOZWFKUkJoR3RrZzY3amxVNjd0c3RkWnZac2JlaHpk?=
+ =?utf-8?B?eWFCMWdsRUUrME84MEFOQkJzTnpUZVR6TzU1OHVZVDhIUWNoQ3FPbC9RNTFo?=
+ =?utf-8?B?SjN6VUZqZnlPRTEySVNoMDAyRHFGY080UjF2Ry81RWZrdmdMVGFUYysrOE41?=
+ =?utf-8?B?RVN4MmVYTGRpUDdUcDQyaVJnaGFRaWtraEtRaFZxTUxVUlp6U3pvRjE2SktL?=
+ =?utf-8?B?ZTJFQ2hwRWpHV0k4MFN4S096citUQjhIWm9FWkI3dFI1WFhhT0w0TEVhSkxt?=
+ =?utf-8?B?TUVPbCs2b0dBY2Jyc04wQWwrRkdzTndabndOYUh5NExvN2xiVlpUSUV4WUtm?=
+ =?utf-8?B?M3FIWnY5TzNJWk8zdTZFcXlJQWt5Zk00K0UzK0hST1NoUTJzSlBxMnF2cWVv?=
+ =?utf-8?B?V0FWTWd6Yi85dy9RSGRvOFJiMXRpVWY3OE5KK0NPLzBGSTdydEx4UC9PMC93?=
+ =?utf-8?B?OWlpNHdNMVZQM00xVDl5emFqeFRoMUlKdTVmbzgrblpiU2wxYjJtdTJKWUc5?=
+ =?utf-8?B?QWxzaHp2amdHUWJDMGtBWUIzcVF1SzZtRnBML3RmZ0JTaWhOMXlua0tmMEVG?=
+ =?utf-8?B?UmUxV0s4V3JkNzE1ZVVoMDhlMXIxaXRlTjZoYXVOYVlRbUdrWTZmZldMMmJY?=
+ =?utf-8?B?aVkwajNQSmRxNnlGSFZONXRxcUVpckJJUkUyUmFzMTJGSmlCcXQ4d3NMbWp1?=
+ =?utf-8?B?SUkza1BrY09Mc21ES1ZGT3ZkY1h6c0VNUE9BYnFiN21wSks0YnhtQzFJbGFs?=
+ =?utf-8?B?YmVjWElZYjdMN2xiNUl1UzBiTjgwa2xGNlNPaU5sV3pnMFRNTmtOd2I5U1h6?=
+ =?utf-8?B?Y1IxcHlrWXQvNTBrOTJ3VHhybU40TTBQUng1WG5YZ21jaHFVQnNrZHhOSHZ1?=
+ =?utf-8?B?Rkk1VlpKcDk2UUFJQVVQT0VrL1B2aUhVVGVnOGJSSDBMZk1SdHJTMFhzUG1u?=
+ =?utf-8?B?SFpFbU45UXlhbk9MUTdsWVU5aDV6bW1wd0VlM1UwWEZKNFRYajZWVXExa0dP?=
+ =?utf-8?B?bUw4YzZ1R3BDdGxBZS83bGRVcHg1L1VWUzB3V0ZTMVJscXhCV0FlVWxNcVFv?=
+ =?utf-8?B?d0FlZVRQU3hGQ0RUQW9SQkl1RG5DU3FyTkVLTnBDZ094bGJTOWEzejN4SVBp?=
+ =?utf-8?B?c2F1TFNJVmtqNnlFclNLZUVJaVBWMGJ5VG9hWUJmZmFlVFVOSTBRRFpMSlJw?=
+ =?utf-8?B?T0l6dC8rcEs2Nm1EOXV2RXl4cmwybGN2Mmh3UlhXdm5JVlZMSWNqNWRBWW1I?=
+ =?utf-8?B?V25XVjZJbExqSGlxMVpBV1pWME9mNFZPaUR5bytXVjUrZi9NLzFzc1d5aTMw?=
+ =?utf-8?B?aU1KclVnN2lNbVlndW8xSDMvSFR0ckg4VVJsZHVlSWxhRTZJOFVIczN0aVhl?=
+ =?utf-8?B?akRrTHNsbEhDcFlHY1VndTJxYjFFYjRwcnlldThIbU5IMTBCQzFpV0lSNk5O?=
+ =?utf-8?B?WnA3SkhMTGhIRVZwS01jN0ZjUklRNVkxTmVvejZIUDZIWUV3SXNSb3pNSU9D?=
+ =?utf-8?B?YTRSaHNpbHF0VkdHWG5Db2RCVW9VdnYwZjdjVkI2dEQ3WGs3UmtIOHZmR1ZQ?=
+ =?utf-8?B?WklvREs0UCt1RCtyQlp6QzBLRVUzTWQ2RkZUcnc3dzV3RGkzalRPZkNjUGZJ?=
+ =?utf-8?B?eTdwN2Z2blJnUWNDaE5jMTJTd1FBbHJUZ1Y2eGhHSSsxSmMwTnZrVlN1L1ht?=
+ =?utf-8?B?VTlCU0tqM2lPMVU0WnBJMEltZUdVdWlUU293WHdRdDNGc3hBeUlDdGNoTnY1?=
+ =?utf-8?B?K1AwMlJ3UVVKSUZMR1Q3cjJ1SE1oOGVwRWsxeG9jdSs5cENXeGJWMWZkTkxm?=
+ =?utf-8?B?dklWSmIrdDFQTlBmMUt3RnZVWUdCNnlpc1lVVG5NQ1BBWnpQcFlwSHhMd1c1?=
+ =?utf-8?B?OG9OalpOc2c5K0xmNGpRelZhb3RwbW9DdW5maEhxblFuWlNQc1lHQUVwU25D?=
+ =?utf-8?B?WHZxa3VoYTE2MVpEQ2dxUENNVEdUZ0RsY0MyYzRCM2QrVGs4UEVuMXF0VGZ4?=
+ =?utf-8?B?bmc9PQ==?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fc78b37-8466-46ca-a544-08dd6a25b4a2
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2025 16:13:53.5497
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6Hs3ahK7rUivAyNB15kfwMCQGApYs+Rezb5Sf2zhSIzYI/ZHU9hPffdtYoUJCo5koRuXxvkIQtwuzrkIqF9/0glLNHgu9uGlxX/yb5a8TtU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR03MB7449
 
-On 2025-03-22 08:45:06-0700, Guenter Roeck wrote:
-> On 3/22/25 08:23, Thomas Weißschuh wrote:
-> > On 2025-03-22 07:12:48-0700, Guenter Roeck wrote:
-> > > On 3/22/25 06:55, Thomas Weißschuh wrote:
-> > > > On 2025-03-18 15:45:23+0800, Sung-Chi Li wrote:
-> > > > > The ChromeOS embedded controller (EC) supports closed loop fan speed
-> > > > > control, so add the fan target attribute under hwmon framework, such
-> > > > > that kernel can expose reading and specifying the desired fan RPM for
-> > > > > fans connected to the EC.
-> > > > > 
-> > > > > When probing the cros_ec hwmon module, we also check the supported
-> > > > > command version of setting target fan RPM. This commit implements the
-> > > > > version 0 of getting the target fan RPM, which can only read the target
-> > > > > RPM of the first fan. This commit also implements the version 1 of
-> > > > > setting the target fan RPM to each fan respectively.
-> > > > > 
-> > > > > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> > > > > ---
-> > > > > ChromeOS embedded controller (EC) supports closed-loop fan control. We
-> > > > > anticipate to have the fan related control from the kernel side, so this
-> > > > > series register the HWMON_F_TARGET attribute, and implement the read and
-> > > > > write function for setting/reading the target fan RPM from the EC side.
-> > > > 
-> > > > Should it be possible to switch back to automatic control?
-> > > > I can't find anything in the hwmon ABI about it.
-> > > > And neither in the CrOS EC source.
-> > > > 
-> > > > Am I missing something?
-> > > > 
-> > > 
-> > > Not sure I understand the context, but the fan control method is normally
-> > > selected with pwmX_enable, which is defined as
-> > > 
-> > >                  Fan speed control method:
-> > > 
-> > >                  - 0: no fan speed control (i.e. fan at full speed)
-> > >                  - 1: manual fan speed control enabled (using `pwmY`)
-> > >                  - 2+: automatic fan speed control enabled
+
+On 3/21/2025 2:12 PM, Borislav Petkov wrote:
+> On Thu, Mar 20, 2025 at 09:46:20AM -0700, Matthew Gerlach wrote:
+> > The device tree subnodes, and hardware, for the eccmgr are
+> > the same for Arria10, Stratix10, and Agilex. Update driver
+> > to allow the subnodes to be allowed for "altr,socfpga-s10-ecc-manager".
 > > 
-> > So far I associated pwmY_enable = 1 with the pwmY attribute.
-> > Also controlling it through fanY_target does make sense though.
-> > It could be clearer from the docs IMHO.
-> 
-> That is chip specific, and needs to be documented in the chip documentation.
-
-Ack.
-
+> > Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> > ---
+> >  drivers/edac/altera_edac.c | 3 +++
+> >  1 file changed, 3 insertions(+)
 > > 
-> > That also means that the patch under discussion needs to implement the
-> > pwmY_enable attribute.
-> > 
-> > One more thing I have wondered about before:
-> > Is pwmY always refering to the same thing as the matching fanY?
-> > 
-> 
-> That used to be the case when the ABI was defined, and it is for the most part
-> still the case. However, nowadays there are chips which permit dynamic assignment
-> of pwm channels to fan tachometer channels. Recent Aspeed SoCs are a perfect
-> example. On those, the pwm <->fan mapping is completely dynamic. How to handle
-> and express that in devicetree (which is where it is really needed) is still
-> being worked out, though I think we are slowly getting there.
+> > diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> > index 3e971f902363..895a5beb700f 100644
+> > --- a/drivers/edac/altera_edac.c
+> > +++ b/drivers/edac/altera_edac.c
+> > @@ -1030,6 +1030,9 @@ static int __init __maybe_unused altr_init_a10_ecc_device_type(char *compat)
+> >  
+> >  	np = of_find_compatible_node(NULL, NULL,
+> >  				     "altr,socfpga-a10-ecc-manager");
+> > +	if (!np)
+> > +		np = of_find_compatible_node(NULL, NULL,
+> > +					     "altr,socfpga-s10-ecc-manager");
+>
+> Please slap a comment above this here - one can see the difference between the
+> two calls only after staring at them for a couple of minutes and wonder
+> where's Waldo.
 
-Thanks for the clarification.
+Adding a comment is a very good suggestion. On the other hand, Rob 
+Herring and Krzysztof Kozlowski pointed out that this change represents 
+a change in the ABI which should be avoided. This change won't be part 
+of v2.
 
-> Of course that means that the correlation isn't typically spelled out explicitly
-> since it _used_ to be implicit.
+>
+> :-P
+>
+> Thx.
 
-Ack.
 
-Given the docs need updating anyways, I'd like to the see the
-correlations spelled out there explicitly.
+Thanks for the feedback,
+
+Matthew Gerlach
+
 
