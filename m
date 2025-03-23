@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-572878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 081DEA6CFBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:24:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5848EA6CFC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6911895775
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4F7A16C280
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF9A4D599;
-	Sun, 23 Mar 2025 14:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290D36EB7C;
+	Sun, 23 Mar 2025 14:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RzuMR0Ls"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdBSEeBv"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70B7DF60;
-	Sun, 23 Mar 2025 14:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFE86ADD;
+	Sun, 23 Mar 2025 14:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742739860; cv=none; b=ilLJGp9jcQBKVLXGqgiwuO8lO7/3SaH+ciiPMrOyOfvXf74p8IAR+pOYpcMfu+Fq+PJ58V4hB4gBkQqZFKXCO+QMgWLU1elz8ApXBpbEE9yB5PDmx6gYec22HrUQ059PoIP6ddKeqbJOx/E9P3XvawYYqrknF+S1PEaylJ4kvs0=
+	t=1742740279; cv=none; b=HMJ9/fAt7BdlZPvmygD8DT/mTYeMYxhUohHkyfoUnVfBCYxHVZX6q9JDPQq53t8ftBZv21L4TX3b9fCA9foFQP9Y2tcLCbXM8WDdJBh3PytgIPcH8lut5dfkqj6AnAJUZa71ZM1LLSgsigm07Kf0jhF/L+YgLK57rypHDBRuz8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742739860; c=relaxed/simple;
-	bh=SBYzxFD1hwFvuIV4C5YJU/aVEIiuuFHGYfxfHfLvkQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qr6lWH2GawxnXKWG3QxGhHIhF6voz3nUf6M51QrFzRloqQ6tIWmfMIyvMqPNeCKDrHU1pDKdmyATVWtQrfXsvOc8t18l9PWTB5HXpAxF52Ylte8omW4Pwy4WrVJU7NJiS17AnKHmEv+obmhj28hxsD6KgVz9Dvfai05hiiiN0UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RzuMR0Ls; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=quM6B9G2VUOD40sCNsVXuMGBCuUlsByGgiKxIF63r7o=; b=RzuMR0LsCk0+xzbYpEFUG149Lw
-	xXA5lIIX+nXb6B8yT0wLBeIJBYcx5SSeI8q+bx9SPJTV5U0/46QwRHw06eDpgk5Naqr0RkA6VQBbg
-	H2snYOKQ6raJydR3xwh4TE84QOjIZ7y9nogjOuF5K57Lnpiz+mJjtjI9/aEayeGoVvBblP06t4/Ln
-	9HEZwqbbeG/JH3Xr7hnh6u7ZtvU4o8vQY8kdDFHQPpCnr5SD5k9B+1KLGNn+U9mErXXAoGYRKOz50
-	URN0kAVfTn6m5gd9+twXzB9oILtiSnCsctrhPE/rv1IpYz97fHVHmaLU6iopIftDOyMS0PldP7P7K
-	1lAw3zqg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1twMFG-00000006fyU-0Kjr;
-	Sun, 23 Mar 2025 14:24:10 +0000
-Date: Sun, 23 Mar 2025 14:24:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: I Hsin Cheng <richard120310@gmail.com>
-Cc: corbet@lwn.net, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] docs: vfs: Update struct file_system_type
-Message-ID: <Z-AZiYwkE9PsST90@casper.infradead.org>
-References: <20250323034725.32329-1-richard120310@gmail.com>
+	s=arc-20240116; t=1742740279; c=relaxed/simple;
+	bh=YtZNCx20UFkJV4E3LyfleA9XyUWhTkdQ7uT5cV/wZTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MsG0ngPYmFm7bSVmgPwfZ4bCvViItNowvOn1byt6HAwEFgVmbqYc2/S61H/Ef/6x1PBcDdv0IcoHehTE5GdWCZlpEeYuRijy8Nwe5Z6JId0m7IRBzJelKt/PK8qWBqJQw5AIEpfmD1fCkRqGVRNG3cS2t23E05FpO2pE/6NjNzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdBSEeBv; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6feafc707d3so30846007b3.1;
+        Sun, 23 Mar 2025 07:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742740277; x=1743345077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OwhPzibW/0lFOIn8jrj1EKhaVT3olcHCJQYIQSwSsTQ=;
+        b=TdBSEeBvBgY8OQS6fj5Wzpm8NR6lqcp+NPPF8FHiYMZ+n3mqjDYJ9vq9lqm51Cpzh6
+         USBWOlSHE2+l0YT2EXfTedVO1GoQuNRCqsoBxuky8VFlL5sZLXLszhKiXAa2pQ2YorIz
+         bRBDYI64OtWb3SP8CZ5mWXByxvGYVS9TL86SGGWVrbATl6H3ZA5kZXKZbmEesK5ogT9R
+         019QpuwTZPMsXCw7VT1BecTUmoxmdUgx9Lc/M2lCNwwdM9k+DYOck9ydfmbI1F4PNG07
+         Nk9pVPtfeE/da0F+hFnn13HYgNUcpuZ/dQg1gkHfixZJOZFa0XDWy8Gw3sVvZiK4EPzx
+         fjnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742740277; x=1743345077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OwhPzibW/0lFOIn8jrj1EKhaVT3olcHCJQYIQSwSsTQ=;
+        b=tIa4L9jCcHNmQEuWEMLMM8Dh2Bm/hDy/f9FK8boVfEMdDm6LCfkv49DxdRx89Y3P4r
+         ceoyky7ZDrpVNZnSajo8+efAV8DuxRmVNaNDsgfJvGwVVzwY9SXGBg9gOVlaaYjSwkZy
+         sqByQuGRER4Nn+WyTuNggDdoihU2fsFmMO5s/X3qhvALX8wlgnUnowBGdZ3aTa7/corp
+         bTFvxntQtyYJuk93/jM4iyIGJiWKS+cjRDymdNKSyMH9HT6iYymR6RMu4jq1Znu0w4s8
+         Le/USFi30PdjXV9u01rXefFe6OCTTkXInAmnmwS6JWaEf66nI8L9aok+g0ImwoLvVyfk
+         otxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ZpCjA9NrpFpqMys4sj/VtdWCx99+6LAYAalbt6Y3MlGiEochxFwtuyQKqGUQCM5RYp7dCwNcbqXvuJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4sNPmH/0J7Gr0YUVzqAVa/UT87vtmiUF7usBRUwzHENC2rNpx
+	OJj5eFqcU73QP1YjVzyaOkLq98E4OQfQ+Q36QTiA5ZlgjulYaebbXJjh0g==
+X-Gm-Gg: ASbGnctRUct396o7GPkZsc73q33nk4rti1vn/zanLhlmV88s1KqfM0w4nERenmBfeNr
+	a8FlZKcRERwJt2QHbeTSxMUFgfrKFMNSTA7UkJrm9IW9I8GBgXcvs189Tbg/hB7imZjEKoW+b/G
+	RfMWgNFOqeVvkvMrIO/21KmgXVSAxQTCpXeF5N8zUy4+qGrjL1BSQKW4UXqRwwjMEKBu4csRaF2
+	fQSI3H88WeejM1N4DrIwhIh/umqlgGrl6GKyCITYMUkfil3w//hF1ed9ZDczkelQvV9IJA26wR7
+	N6SiFmhiezMqp6PtIT8oSAwHlK2lZQlHRQ2olkDTLaMxlostlUAOPH3Qbm2fdXY=
+X-Google-Smtp-Source: AGHT+IFRvr4hm2z2D9ZBuYN0ijqS9RopqxklrqSwifTjVMR0JdghmeXmwrRSkSsh+ZzcWINa7J2LBw==
+X-Received: by 2002:a05:690c:dc7:b0:6fe:b88e:4d94 with SMTP id 00721157ae682-700bac6f9bbmr138344887b3.19.1742740276596;
+        Sun, 23 Mar 2025 07:31:16 -0700 (PDT)
+Received: from localhost ([64.234.79.138])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-700ba73b9b8sm11361287b3.11.2025.03.23.07.31.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 07:31:16 -0700 (PDT)
+From: kendrajmoore <kendra.j.moore3443@gmail.com>
+To: linux-pm@vger.kernel.org
+Cc: lenb@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kendra Moore <kendra.j.moore3443@gmail.com>
+Subject: [PATCH] Replace strncpy with strscpy to ensure null-termination
+Date: Sun, 23 Mar 2025 10:31:11 -0400
+Message-Id: <20250323143111.79886-1-kendra.j.moore3443@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323034725.32329-1-richard120310@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 23, 2025 at 11:47:25AM +0800, I Hsin Cheng wrote:
-> The structure definition now in the kernel adds macros defining the
-> value of "fs_flags", and the value "FS_NO_DCACHE" no longer exists,
-> update it to an existing flag value.
+From: Kendra Moore <kendra.j.moore3443@gmail.com>
 
-What value does it add to duplicate these flag definitions in the
-documentation?  I would not do this.
+The field pcounter->name is used as a null-terminated string.
+Using strncpy() with ARRAY_SIZE - 1 does not guarantee
+null-termination and can lead to undefined behavior if the source
+is too long.
 
-> @@ -140,7 +148,7 @@ members are defined:
->  	"msdos" and so on
->  
->  ``fs_flags``
-> -	various flags (i.e. FS_REQUIRES_DEV, FS_NO_DCACHE, etc.)
-> +	various flags (i.e. FS_REQUIRES_DEV, FS_BINARY_MOUNTDATA, etc.)
+This patch replaces it with strscpy() which ensures
+null-termination and returns an error code if truncation occurs.
 
-This should be "eg.", not "i.e."
+Signed-off-by: Kendra Moore <kendra.j.moore3443@gmail.com>
+---
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 8d5011a0bf60..8f24e18d3de0 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -9345,7 +9345,7 @@ int pmt_add_counter(unsigned int guid, unsigned int seq, const char *name, enum
+ 	}
+ 
+ 	if (new_counter) {
+-		strncpy(pcounter->name, name, ARRAY_SIZE(pcounter->name) - 1);
++		strscpy(pcounter->name, name, ARRAY_SIZE(pcounter->name));
+ 		pcounter->type = type;
+ 		pcounter->scope = scope;
+ 		pcounter->lsb = lsb;
+-- 
+2.39.5
+
 
