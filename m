@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-572924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3AEA6D075
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:54:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544F3A6D074
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20223188B54F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:54:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E31167E38
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E90518FDDB;
-	Sun, 23 Mar 2025 17:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B26190057;
+	Sun, 23 Mar 2025 17:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q1N4RLvC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fJ17TW4j"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB13190052
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 17:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AD318DF8D
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 17:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742752385; cv=none; b=lVUfM3UHBc5jcrj1h/MJiUzQIj3JSoj9iZJ3lx0cKt/dQkssTsmKGMMz9VCJ02UWjUR80XEjuoZPQOL8jiOabzBSk1RBQkr4D8jzl5pOatMJ7ikIFMmn+XBD6O2M/u3DbmgYjdZDB9C4HL9mcvTKCqEL7LR1gREbdFKD6Kinj7Q=
+	t=1742752409; cv=none; b=sJi1UVTX01tHj4D53MFD+B+3BVTBiLVhQAQDCUH4b3HKtXpS5uv2ENrCjkT6g+HKzCZXNkfVeMoSe+YJijVLFpBMpX4uhz7eu/BhBkLzLh5L1Ow1JFCSC5HmaqV49r/zvox2uHIYXYntF2U2s/3+eKMkSI3Q9uyx2Oai4OivTh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742752385; c=relaxed/simple;
-	bh=MXnQHSr+AHPw86rzIi6v6hyJ1x6zW5Z8ZkydO4MLDWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HJH7VbYHV0ugibd0MHs53thnCfM9HchcfW3+h9ePJgsuvSC35xAKoAkCxm9EjSX1bKBUFGkelqDch+2Iy/GXzTanMzetJReLkpObXpHdi8oioy7TXJuDAgDluMcP6favUhHcySlddTRbAxPn50QdYUZwQP51H7I4BCZ1FlJUAOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q1N4RLvC; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742752384; x=1774288384;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=MXnQHSr+AHPw86rzIi6v6hyJ1x6zW5Z8ZkydO4MLDWE=;
-  b=Q1N4RLvCKknZ5+lV4vJvSQziEZ3cnifZTFTNH2OKVrPJV28inLZDbvHO
-   Uue4VgA9sbkNFXSX6B+jf3zNB1EUmQIn6kQTDm9uyb0JLPyb0AYouFEe6
-   3lrXJVwi7XwK8CCN2fh6GyaqRKShWAT+3ty8UFguZtLY4pQxLacgz9vgl
-   zZJPLCv1bMFY3dbWi+LUdEB44N5Hu6nIZs/ISMoxq4AGiCqZJ4Z5NS4jJ
-   ieAh/Rp240J7H9OdaAuvM8crUGU+SA/IponrutX5WZ/QGbSPqbLq59ZZw
-   EKTZQXHGTr2+bVUbO0Uj9/WPuLgxO7GshJry235AxWBQ+RJoKDrBKWcou
-   w==;
-X-CSE-ConnectionGUID: FBxcxSGQQhW+tnJK1baEcw==
-X-CSE-MsgGUID: HSGetSGxQ76KXC8+0Hoslg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="44075977"
-X-IronPort-AV: E=Sophos;i="6.14,270,1736841600"; 
-   d="scan'208";a="44075977"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 10:53:03 -0700
-X-CSE-ConnectionGUID: hapjj2mNTSa3px8geK8Fvg==
-X-CSE-MsgGUID: Vv89XpeVTKyojyWX9Ng4zQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,270,1736841600"; 
-   d="scan'208";a="124303459"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Mar 2025 10:53:02 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twPVM-0002t7-0F;
-	Sun, 23 Mar 2025 17:53:00 +0000
-Date: Mon, 24 Mar 2025 01:52:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rong Xu <xur@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>, Kees Cook <kees@kernel.org>
-Subject: ld.lld: error: vmlinux.a(arch/riscv/kernel/process.o):(function
- __show_regs: .text.unlikely.+0xc): relocation R_RISCV_HI20 out of range:
- 527419 is not in [-524288, 524287]; references '.L.str'
-Message-ID: <202503240105.hUVR2ALl-lkp@intel.com>
+	s=arc-20240116; t=1742752409; c=relaxed/simple;
+	bh=NhtR3jMg1DbZqelavBB/HYow+zmxwmTBPkjAKQ/3sFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GOhCAKQEai2PKH3IjdiVSy651STpmywYgmmx9ugJeChOTuyxrtw17vuMh9SO1vOTTF17aQGMIJphA9r96B4L0++rL7DXJtRMtzKu1nQblzebJKS1iKEJaS9iYtvtx+dd7QMVC5Fb/qEwNv0W3yoc4vhBpCuUsjNr+MbOPaIdzM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fJ17TW4j; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Jjn/M8FT5O2BGiA0QtJ0YYHxqDVcoYX2QEUhSAy9no4=; b=fJ17TW4jCedqhGvuEdAmU9fG2B
+	QdX6oBpj2oCqfJ+1Pqa4QK6w9a++CaMnRQTTgaR9854kilDLtOGUNwSvXF2a2pmfqPrdgsSlAED6+
+	5+oNfU27PvLUG9dJVGz7ZtUt099rWEH5PiR70hTFXYfJrmxwEswUp14oCwv6zWcz6RB1EGhGPgFEz
+	UsMTdLiPqZyRhFt3NzLKycx7y6c7S9HrQdi8NAYjmGSNuUZeWI/Bsp1nAbodiAw4JYkiRgWwgH+47
+	gblE1pqEp5jkwKuYty2nDaVS2ReC3Kv1vMi8ksg/JTB+7GFni3Dp5yZ3gCVHWveInCh0KZ7IeMxnf
+	uDmZFPow==;
+Received: from [187.90.172.172] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1twPVW-005MY4-2b; Sun, 23 Mar 2025 18:53:10 +0100
+Message-ID: <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
+Date: Sun, 23 Mar 2025 14:53:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
+ boot
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ bp@alien8.de
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+ dave.hansen@linux.intel.com, kernel@gpiccoli.net, kernel-dev@igalia.com
+References: <20250226132733.58327-1-gpiccoli@igalia.com>
+ <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+ <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
+ <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com> <87iko213qo.ffs@tglx>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <87iko213qo.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   586de92313fcab8ed84ac5f78f4d2aae2db92c59
-commit: 0043ecea2399ffc8bfd99ed9dbbe766e7c79293c vmlinux.lds.h: Adjust symbol ordering in text output section
-date:   4 months ago
-config: riscv-randconfig-r064-20250323 (https://download.01.org/0day-ci/archive/20250324/202503240105.hUVR2ALl-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503240105.hUVR2ALl-lkp@intel.com/reproduce)
+Thanks Thomas for your comprehensive response, quite enriching.
+Some comments inline:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503240105.hUVR2ALl-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+On 21/03/2025 18:19, Thomas Gleixner wrote:
+> [...]
+> The proposed implementation is just an ad hoc band aid as well. Why?
+> 
+>   1) It has zero relation to the actual failure detection code paths.
+> 
+>   2) It covers only a small part of the problem space. On all modern
+>      systems, which have TSC_ADJUST the clocksource watchdog is disabled
+>      and just asynchronously invoking TSC unstable is a hack which only
+>      tests the unstable logic.
 
->> ld.lld: error: vmlinux.a(arch/riscv/kernel/process.o):(function __show_regs: .text.unlikely.+0xc): relocation R_RISCV_HI20 out of range: 527419 is not in [-524288, 524287]; references '.L.str'
-   >>> referenced by process.c:64 (arch/riscv/kernel/process.c:64)
-   >>> defined in vmlinux.a(arch/riscv/kernel/process.o)
+But what about AMD systems? Even the modern ones apparently lack
+TSC_ADJUST - or is it changing recently?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Checking TSC code, it is full of checks "if Intel" as well, like in
+native calibration. Our issue is present on AMD and my impression is
+that, in this respect, these systems are way more unstable (from TSC
+perspective) than the ones having TSC_ADJUST.
+
+
+> 
+> So I rather want to see a more complete solution, which
+> 
+>   1) lets the clocksource watchdog logic fail the test
+> 
+>   2) lets the TSC sync (including TSC_ADJUST) logic on CPU hotplug fail
+> 
+>   3) tweaks the TSC_ADJUST register and validates that the detection and
+>      mitigation logic on systems w/o clocksource watchdog works
+>      correctly.
+> 
+> Ideally that's a kunit test for CI integration plus a debugfs interface
+> for developers, which comes with a related selftest.
+> 
+
+This is a great suggestion. I'll try to come up with something in next
+weeks (as time allows), I agree this area indeed seems to lack good/easy
+testing.
+Cheers,
+
+
+Guilherme
 
