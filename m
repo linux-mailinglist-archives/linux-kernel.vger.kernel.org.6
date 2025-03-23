@@ -1,55 +1,98 @@
-Return-Path: <linux-kernel+bounces-572882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB323A6CFC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:37:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94635A6CF8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:10:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5AAE3B6124
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:37:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F262E1691A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2074960B8A;
-	Sun, 23 Mar 2025 14:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3D63C6BA;
+	Sun, 23 Mar 2025 14:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="nUJmMEYB"
-Received: from mx10.gouders.net (mx10.gouders.net [202.61.206.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kA1KVXjn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="G1C5xdJM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kA1KVXjn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="G1C5xdJM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6502420EB;
-	Sun, 23 Mar 2025 14:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.206.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4EFEEA8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 14:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742740643; cv=none; b=eueHXiK3oirVDOctjRBnuqYrSMgxLuJ33MCVHFSSUaPXTPy9x6qhpMy07HhiVTftFOryx3aKfbU6szwd2PKxUcdsaZHVkbtOYH6lD4euCChnPnbiXIGlqvCiFwpAGSTodzwGyAKCCpY6Q3Z6W8vo12njwS4b1phl5a9CAhiVMG0=
+	t=1742738995; cv=none; b=FX9DKSWp7YaLx757E9DDsLDnfQlGBRld8uI6tGmepCjehskKeAFJvec1tudagTki+zxhB+C6s+MqOaJVbAU4oud8H2elyPAMAkqIkq6b+Ur8J7kR+XEErQEmBf26V+3Oce7Fw3MHG09PiH5MJrNnrtOTZE4krgjOp4VNrpleCuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742740643; c=relaxed/simple;
-	bh=Z9/22kWKr/x8jhk4QnOrrqdwh6LlTgkSojjkYGWCPf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jCyk9J/nzDUb50PJBwR2szcBFECGZBIE77BtRkQO0e4+V0sI6qvFiPG+fnmwZ+YyU7Gyn3YXKnefQietiqWRkAG/E0MLyVM4iS1vctX7oX8pVDq5PHManILLPrRf+NXA0kbWEwYPaUCEw6J476ycVZ/O5YWJ7m/HDE48GQjs/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net; spf=pass smtp.mailfrom=gouders.net; dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b=nUJmMEYB; arc=none smtp.client-ip=202.61.206.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gouders.net
-Received: from localhost (ip-109-42-179-92.web.vodafone.de [109.42.179.92])
-	(authenticated bits=0)
-	by mx10.gouders.net (8.17.1.9/8.17.1.9) with ESMTPSA id 52NE6q3I008644
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sun, 23 Mar 2025 15:06:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-	t=1742738814; bh=Z9/22kWKr/x8jhk4QnOrrqdwh6LlTgkSojjkYGWCPf0=;
-	h=From:To:Cc:Subject:Date;
-	b=nUJmMEYBNQzqLZahTSvFo3VAaYQZfvTs4mrdzLrst/+F1AkvACJ8N/NuHWI3726B+
-	 SgoHVQGBCsc3x+FF0A6ektZvPbCcp+sQne2hSEFCxXk6pJa5Qz3VXwA019oqVUlfkl
-	 EQRFHz4UhK5GQ0WlMDBeBtD1cQpkrb24gmtQkQ3A=
-From: Dirk Gouders <dirk@gouders.net>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Cc: Dirk Gouders <dirk@gouders.net>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf bench sched pipe: fix enforced blocking reads in worker_thread
-Date: Sun, 23 Mar 2025 15:01:01 +0100
-Message-ID: <20250323140316.19027-2-dirk@gouders.net>
-X-Mailer: git-send-email 2.45.3
+	s=arc-20240116; t=1742738995; c=relaxed/simple;
+	bh=tw8P2c8xUPFYU2DXYjM9S98UP/nyibc5aTWNlVSGE24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YWJ2GDHgmvQO0i6ElOskxj+dvbGiNpb2bTqX6Lv2nMcHnJYPn9mPNHynoJlbyNpA7wT1Z+GNkDAgdPxkdsn6zSm21GzO1iW+0ZZjjlwAuV0oOOg3OqOSIFdGbsZANgAhSMvnixsrUMxcMeklMqvPkLY95NfTEz3kFEbNUgWWIcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kA1KVXjn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=G1C5xdJM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kA1KVXjn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=G1C5xdJM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D5CCE2119D;
+	Sun, 23 Mar 2025 14:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742738991; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2jDLWApycLVfP31DaCdo1jO1vVA011lwCmzuDG5Z3OQ=;
+	b=kA1KVXjnkgC3AKpCldlI7fh/o3QWCuq+CbxghnZ8Z5LkeLOD8+qRakqIgs3KRi9yE6z2c8
+	GnviqgE9Z7EnLZ/Z9IOMs1TR2TMcPwknm+eed2YRsfOdp8bfKoNWFwMx1MDhN6OFcNhvZw
+	tg1+ldkFRNXE4yX+eWdpMDReGWFHE8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742738991;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2jDLWApycLVfP31DaCdo1jO1vVA011lwCmzuDG5Z3OQ=;
+	b=G1C5xdJMj91qp1ul8epLYxh8l2Emog056gPYEiKXwmk1NJu4m3N4ql0H+e8AHALXPNE9Gk
+	kyZ7O4th9m9DF+Aw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742738991; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2jDLWApycLVfP31DaCdo1jO1vVA011lwCmzuDG5Z3OQ=;
+	b=kA1KVXjnkgC3AKpCldlI7fh/o3QWCuq+CbxghnZ8Z5LkeLOD8+qRakqIgs3KRi9yE6z2c8
+	GnviqgE9Z7EnLZ/Z9IOMs1TR2TMcPwknm+eed2YRsfOdp8bfKoNWFwMx1MDhN6OFcNhvZw
+	tg1+ldkFRNXE4yX+eWdpMDReGWFHE8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742738991;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=2jDLWApycLVfP31DaCdo1jO1vVA011lwCmzuDG5Z3OQ=;
+	b=G1C5xdJMj91qp1ul8epLYxh8l2Emog056gPYEiKXwmk1NJu4m3N4ql0H+e8AHALXPNE9Gk
+	kyZ7O4th9m9DF+Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 989271339F;
+	Sun, 23 Mar 2025 14:09:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nVUUJC8W4Gd7PAAAD6G6ig
+	(envelope-from <nstange@suse.de>); Sun, 23 Mar 2025 14:09:51 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nicolai Stange <nstange@suse.de>
+Subject: [RFC PATCH v2 00/13] ima: get rid of hard dependency on SHA-1
+Date: Sun, 23 Mar 2025 15:08:58 +0100
+Message-ID: <20250323140911.226137-1-nstange@suse.de>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,90 +100,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	URIBL_BLOCKED(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	FREEMAIL_TO(0.00)[linux.ibm.com,huawei.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The function worker_thread() is programmed in a way that roughly
-doubles the number of expectable context switches, because it enforces
-blocking reads:
+Hi,
 
- Performance counter stats for 'perf bench sched pipe':
+this is v2 of the RFC series to disentangle IMA from its current
+dependency on a working SHA-1 implementation.
 
-         2,000,004      context-switches
+For reference, v1 can be found at [1].
 
-      11.859548321 seconds time elapsed
+Several options for when and how to invalidate unsupported TPM PCR banks
+by extending them with a unique constant had been discussed at the v1:
+a.) every single time a new entry gets added to the measurement list
+b.) or only once.
 
-       0.674871000 seconds user
-       8.076890000 seconds sys
+b.) is appealing, because it enables recognizing unsupported banks right
+away from their value, but comes at a significant additional complexity.
+Fortunately, it turned out that it's possible to develop b.) incrementally
+on top of a.), so this series can get truncated
+- after [5/13] ("ima: select CRYPTO_SHA256 from Kconfig") to get a.),
+- or after [9/13] ("ima: invalidate unsupported PCR banks only once")
+  to get a partial b.), invalidating unsupported banks only once for
+  each kernel booted, but redoing it for each kernel in a kexec chain,
+- or not at all to get the full b.), i.e. to skip reinvalidations even
+  from later kernels in the kexec chain if possible.
 
-The result of this behavior is that the blocking reads by far dominate
-the performance analysis of 'perf bench sched pipe':
+I would personally go for the full set, because it also enables some
+perhaps helpful diagnostics for the kernel log, but OTOH I'm clearly
+biased now because I've implemented everthing. So it's your judgement
+call now on how to proceed. Either way, I would send the next iteration in
+non-RFC mode with the full CC set. If you opted for a.) only, it would be
+a.) only, i.e. [1-5/13]. If you decided for b.), it might make sense to
+send in two batches to facilitate review: [1-9/13] first and the rest
+somewhen later.
 
-Samples: 78K of event 'cycles:P', Event count (approx.): 27964965844
-Overhead  Command     Shared Object         Symbol
-  25.28%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
-   8.11%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
-   2.82%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
+FWIW, I did some testing now, on the full series in a VM with a swtpm
+attached to it:
+- both with and without CONFIG_TCG_TPM2_HMAC (for [10/13] ("tpm:
+  authenticate tpm2_pcr_read()" coverage) and
+- with a focus on verifying everything related to the new invalidation
+  logic is working as intended.
 
-From the code, it is unclear if that behavior is wanted but the log
-says that at least Ingo Molnar aims to mimic lmbench's lat_ctx, that
-doesn't handle the pipe ends that way
-(https://sourceforge.net/p/lmbench/code/HEAD/tree/trunk/lmbench2/src/lat_ctx.c)
+Thanks a lot!
 
-Fix worker_thread() by always first feeding the write ends of the pipes
-and then trying to read.
+Nicolai
 
-This roughly halves the context switches and runtime of pure
-'perf bench sched pipe':
 
- Performance counter stats for 'perf bench sched pipe':
 
-         1,005,770      context-switches
+Changes to v1:
+- [v1 1/7] ("ima: don't expose runtime_measurements for unsupported
+  hashes"): no change.
+- [v1 2/7] ("ima: always create runtime_measurements sysfs file for
+  ima_hash"): no change.
+- [v1 3/7] ("ima: move INVALID_PCR() to ima.h"): moved to [v2 6/13],
+  otherwise no change.
+- [v1 4/7] ("ima: track the set of PCRs ever extended"):
+  moved to [v2 8/13], drop code restoring ima_extended_pcrs_mask at kexec,
+  update it from ima_pcr_extend() only if the tpm_pcr_extend() was
+  successful.
+- [v1 5/7] ("tpm: enable bank selection for PCR extend"): moved to
+  [v2 7/13], fix a bug by actually passing the skip mask from
+  tpm_pcr_extend() to tpm2_pcr_extend().
+- [v1 6/7] ("ima: invalidate unsupported PCR banks once at first use"):
+  gone, superseded by the new
+    [v2 3/13]  ("invalidate unsupported PCR banks")
+    [v2 9/13]  ("ima: invalidate unsupported PCR banks only once")
+    [v2 13/13] ("ima: don't re-invalidate unsupported PCR banks after
+              kexec")
+- [v1 7/7] ("ima: make SHA1 non-mandatory"): moved to [v2 4/13],
+  diff context updates due to ima_unsupported_tpm_banks_mask not
+  existing yet at this point in the series.
 
-       6.033448041 seconds time elapsed
+- [v2 5/13] ("ima: select CRYPTO_SHA256 from Kconfig"): new to
+  (hopefully) address feedback at [2].
+- [v2 10/13] ("tpm: authenticate tpm2_pcr_read()"): new, prerequisite
+  for the next in a sense.
+- [v2 11/13] ("ima: introduce ima_pcr_invalidated_banks() helper"): new,
+  prerequisite for [13/13].
+- [v2 12/13] ("ma: make ima_free_tfm()'s linkage extern"): new,
+  likewise a prerequisite for [13/13].
 
-       0.423142000 seconds user
-       4.519829000 seconds sys
 
-And the blocking reads do no longer dominate the analysis at the above
-extreme:
+[1] https://lore.kernel.org/r/20250313173339.3815589-1-nstange@suse.de
+[2] https://lore.kernel.org/r/4e760360258bda56fbcb8f67e865a7a4574c305a.camel@linux.ibm.com
 
-Samples: 40K of event 'cycles:P', Event count (approx.): 14309364879
-Overhead  Command     Shared Object         Symbol
-  12.20%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
-   9.23%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
-   3.68%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
 
-Signed-off-by: Dirk Gouders <dirk@gouders.net>
----
- tools/perf/bench/sched-pipe.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Nicolai Stange (13):
+  ima: don't expose runtime_measurements for unsupported hashes
+  ima: always create runtime_measurements sysfs file for ima_hash
+  ima: invalidate unsupported PCR banks
+  ima: make SHA1 non-mandatory
+  ima: select CRYPTO_SHA256 from Kconfig
+  ima: move INVALID_PCR() to ima.h
+  tpm: enable bank selection for PCR extend
+  ima: track the set of PCRs ever extended
+  ima: invalidate unsupported PCR banks only once
+  tpm: authenticate tpm2_pcr_read()
+  ima: introduce ima_pcr_invalidated_banks() helper
+  ima: make ima_free_tfm()'s linkage extern
+  ima: don't re-invalidate unsupported PCR banks after kexec
 
-diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.c
-index e2562677df96..70139036d68f 100644
---- a/tools/perf/bench/sched-pipe.c
-+++ b/tools/perf/bench/sched-pipe.c
-@@ -204,17 +204,10 @@ static void *worker_thread(void *__tdata)
- 	}
- 
- 	for (i = 0; i < loops; i++) {
--		if (!td->nr) {
--			ret = read_pipe(td);
--			BUG_ON(ret != sizeof(int));
--			ret = write(td->pipe_write, &m, sizeof(int));
--			BUG_ON(ret != sizeof(int));
--		} else {
--			ret = write(td->pipe_write, &m, sizeof(int));
--			BUG_ON(ret != sizeof(int));
--			ret = read_pipe(td);
--			BUG_ON(ret != sizeof(int));
--		}
-+		ret = write(td->pipe_write, &m, sizeof(int));
-+		BUG_ON(ret != sizeof(int));
-+		ret = read_pipe(td);
-+		BUG_ON(ret != sizeof(int));
- 	}
- 
- 	return NULL;
+ drivers/char/tpm/tpm-interface.c      |  29 +++-
+ drivers/char/tpm/tpm.h                |   3 +-
+ drivers/char/tpm/tpm2-cmd.c           |  75 ++++++++-
+ include/linux/tpm.h                   |   3 +
+ security/integrity/ima/Kconfig        |  15 ++
+ security/integrity/ima/ima.h          |  12 ++
+ security/integrity/ima/ima_crypto.c   | 216 ++++++++++++++++++++++----
+ security/integrity/ima/ima_fs.c       |  41 +++--
+ security/integrity/ima/ima_policy.c   |   5 +-
+ security/integrity/ima/ima_queue.c    |  54 ++++++-
+ security/integrity/ima/ima_template.c |  84 +++++++++-
+ 11 files changed, 471 insertions(+), 66 deletions(-)
+
 -- 
-2.45.3
+2.49.0
 
 
