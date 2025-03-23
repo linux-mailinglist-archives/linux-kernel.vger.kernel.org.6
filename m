@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-572725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D04A6CDD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:24:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39084A6CDD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D90816CBB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE550189FD87
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19CF1FFC53;
-	Sun, 23 Mar 2025 03:23:48 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557351FECB2;
+	Sun, 23 Mar 2025 03:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZI19i6Mq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216AE1C8604;
-	Sun, 23 Mar 2025 03:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867EF9C1
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 03:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742700228; cv=none; b=Ql7uHZ5BqTW03ruDARJvww0GzMMq9ESyrNGcHj6+OHu8//O96Q9ddHJIey8o6aynogU6JhZP37TmZqh8nNKe9bmdoRxXK77O97Oa5BWbWhmWblOs6krdg9NEh6AlJRtoQUkRbZPp+BNeIeHlVEsm5KknwFfd1jfo3FuMmRJZcvs=
+	t=1742701401; cv=none; b=titY/NeqbJ2+Hnv48Qvyys/uZibVc+XJixs7+YHUpzL5Hu7KXIWoCr7QVSxfNvEJS6uQjfOPKpcYXlfgiJ4bsDYWeH8wwJCrvmsYBwo+pVgosyIAOsrMKNvZWiT9pNl900A1hUu3N820NShWvd25GegcsmPrGyGu7kQcIGcgxf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742700228; c=relaxed/simple;
-	bh=dM5rBeVJLlUGtD4m318JJVMBVAVkApyitEpqvLYGLhE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OAYEoDiN7dG222jihMamu3sGxWNoh0WK13CIaHkLqJU5jB7oHtF2EeDzl5LHNjP3gzH/vOfFWXR2dwc2uEhc1mDWB8sEVksUCDSv8zDEyic8QTw+Fd+qHgkTKbcIM+eSrAni9TLJ2EaxUPidmrt4cgO8uQyGpaOm6ngQgANgQkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZL1jL6lPJz1d0gl;
-	Sun, 23 Mar 2025 11:23:18 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4A48D14035E;
-	Sun, 23 Mar 2025 11:23:37 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sun, 23 Mar
- 2025 11:23:36 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <benve@cisco.com>, <neescoba@cisco.com>, <jgg@ziepe.ca>,
-	<leon@kernel.org>, <liyuyu6@huawei.com>, <umalhi@cisco.com>,
-	<roland@purestorage.com>
-CC: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] RDMA/usnic: Fix passing zero to PTR_ERR in usnic_ib_pci_probe()
-Date: Sun, 23 Mar 2025 11:34:14 +0800
-Message-ID: <20250323033414.1716788-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742701401; c=relaxed/simple;
+	bh=/JTc9led7vSFjAGqJ5rrIvAPjecmnhmJXbwU3vdzP+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dNaTHhpoIprdbNbSYYSTd7RNa+D2etHk06A86zsUsAYg8+6+PRckqIcOcKwtMmgcEb/MjMwJbokiOG8jlTieNCS5VfyYkubLsAXiRE7/0J0dmY9oXHb6cNs7X9TI0OuSKi50hZNjyHG2Z32Tp+NIJDh9gOei0aL3YXJHBGUkLNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZI19i6Mq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742701399; x=1774237399;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/JTc9led7vSFjAGqJ5rrIvAPjecmnhmJXbwU3vdzP+0=;
+  b=ZI19i6MqPINgcQ3/qMtGiebsqPLtIVbAIMz9KHeGJQNyTjsVCImIzRro
+   fA3cD2sPDWzAvmMYnaOk4Ye23LRW6bgcFhalSKaP/C3NRR4tbDxswzPs7
+   FC4s8wNuJ0oiHcFUvpKjOA5KgeIyJtBmc6l4liwe2au4TwZNxTlktii6V
+   6Kr7HEUVEjJ0pCOoU4gt1WWMDLsymGQul3hAgJWIdebTSW8VrfQ/YTJEC
+   Z11yFlMVHT762TDNgihfH83/MhzydIOh1aEOIApmW6b6gPxHj6b3qfyWk
+   BW3ienDkUvU8PlbLLkNSO6APxlG2sir2ZdWibEERDLmViJUlBXD5M0INo
+   A==;
+X-CSE-ConnectionGUID: 4hQo5+3XSvqIWvndYSeWWQ==
+X-CSE-MsgGUID: /gb1+ZdXSjueTWi8779qlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11381"; a="43164212"
+X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
+   d="scan'208";a="43164212"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2025 20:43:18 -0700
+X-CSE-ConnectionGUID: +vlykdxyROS+HK2H/JSEhA==
+X-CSE-MsgGUID: PPvsuTzsTsWjt2pRUXtn6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
+   d="scan'208";a="123540752"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 22 Mar 2025 20:43:17 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1twCF0-0002ZT-2c;
+	Sun, 23 Mar 2025 03:43:14 +0000
+Date: Sun, 23 Mar 2025 11:42:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: ERROR: modpost: "power_supply_get_drvdata"
+ [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
+Message-ID: <202503231159.ga9eWMVO-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-drivers/infiniband/hw/usnic/usnic_ib_main.c:590
- usnic_ib_pci_probe() warn: passing zero to 'PTR_ERR'
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   183601b78a9b1c3da2b59f2bee915f97ba745c0b
+commit: c78dd25138d104f94ddeab5248a5efe4504f205e platform/x86: x86-android-tablets: Add Vexia EDU ATLA 10 EC battery driver
+date:   3 months ago
+config: i386-randconfig-007-20250323 (https://download.01.org/0day-ci/archive/20250323/202503231159.ga9eWMVO-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250323/202503231159.ga9eWMVO-lkp@intel.com/reproduce)
 
-Use err code in usnic_err() to fix this.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503231159.ga9eWMVO-lkp@intel.com/
 
-Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/infiniband/hw/usnic/usnic_ib_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-index 4ddcd5860e0f..e40370f9ff25 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
-@@ -587,9 +587,9 @@ static int usnic_ib_pci_probe(struct pci_dev *pdev,
- 
- 	pf = usnic_ib_discover_pf(vf->vnic);
- 	if (IS_ERR_OR_NULL(pf)) {
--		usnic_err("Failed to discover pf of vnic %s with err%ld\n",
--				pci_name(pdev), PTR_ERR(pf));
- 		err = pf ? PTR_ERR(pf) : -EFAULT;
-+		usnic_err("Failed to discover pf of vnic %s with err%d\n",
-+				pci_name(pdev), err);
- 		goto out_clean_vnic;
- 	}
- 
+>> ERROR: modpost: "power_supply_get_drvdata" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
+>> ERROR: modpost: "power_supply_changed" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
+>> ERROR: modpost: "devm_power_supply_register" [drivers/platform/x86/x86-android-tablets/vexia_atla10_ec.ko] undefined!
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
