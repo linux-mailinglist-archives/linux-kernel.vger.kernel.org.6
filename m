@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-572760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF3BA6CE55
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:31:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5750CA6CE56
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0069188EDED
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58DB169A99
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F0F202975;
-	Sun, 23 Mar 2025 08:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73177201261;
+	Sun, 23 Mar 2025 08:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VIMimFAi"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KSWOzKej"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8685C3FD1;
-	Sun, 23 Mar 2025 08:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A78B15ADA6
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 08:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742718676; cv=none; b=FcGziBtzbsWD7Dy0FzIMu5YBkmH5/fa/AzOR/M10v48LS30s4Hw4kq2ORpm6JQctXlYLngRgKDLrZzEunCrx8LxyQCSApbzF0iqyhXxoS9Tdczo7n1AaU3b3fEw42Kt8P6U8NnXB6dot3Rm44Yz23w5L2t+crEBFm9J/ho3STk8=
+	t=1742719156; cv=none; b=OVF5lXrH3nAadkueZ51KN7etqEwC3SLSldjr1ZWhzneGyTnufTSc49cebcY94jY6vEik/hYkWmVj4WXn1ZgXL7yPlncy/6t9TskjJsYpVt0eTgARCzewKxnT3fJSDvNtVzun15ARJ/eP9/scaYQEpWdSeCopo7Eq6X7vlxveDHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742718676; c=relaxed/simple;
-	bh=DYPNU7IrXM3BAA5bDt9np5+DeRI7TeRzLYJArUf3A84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCf5XvqtnxmgmdSj3GBjfSHFkFagX12LPPXU8UdQx2x9qweN5k7ZYwGPy9sNmJoYOsSVP7K7UmM/PK9ePNkJeqSI+slSfPelCMWc/BuEMaaIvgBlYoKUBsSHFnb1YeXVMGg+Nw39JR/15vtMqptNNNharj/aTUDZQ3IasxgfI7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VIMimFAi; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742718653; x=1743323453; i=markus.elfring@web.de;
-	bh=DYPNU7IrXM3BAA5bDt9np5+DeRI7TeRzLYJArUf3A84=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VIMimFAiNYiWnto0HLD9gvyhH9Teq0oGbpaxVZz2KUd3uAZJ+3dRIb8lZhbyXlSo
-	 XbVlSPYaQ46JkHNu55JWfsn9x7p54idTHIHGT3C+uQyYDSXjUDpBuGoLETTq4HSRK
-	 3Nx5U0VOAkqJAcCXZcgF2K3TcFnlBj4q8S4k0dKU5zpKnsLiLN+oDxSHQ78gKwbYe
-	 jSLDikgNjpOKSL1lH8lY/VrCFdZL4HNKFv+4fHCyzxIjVF/Q558C7Wc0qk+KivlRP
-	 66DCXJMxBBHvXJ8kXjbJdQpLjUsBJm4SRcY2jQQz7Ik6abcn8mbGSEuObXrneagh1
-	 zrti/qqb1UWxxq4Gug==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.71]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNwjc-1tY1m12DLU-00MYlX; Sun, 23
- Mar 2025 09:30:53 +0100
-Message-ID: <352b3fb3-0acd-44bf-8f69-cf72b5d27e67@web.de>
-Date: Sun, 23 Mar 2025 09:30:21 +0100
+	s=arc-20240116; t=1742719156; c=relaxed/simple;
+	bh=pjyCmpxEr5jT0zIxY7JcF9hVQh7SAFHzVL7PbIN655o=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=enCZSsxbk4D+aJ+G/PY+qVBe+UzpYbfsIfu5Js6xAf2Y0JPiGzBJ6W24THN2hFgMerb/X1xQEXX6ztYEb5Fj3Az6vqFCdfjG1I1g9CLrM88pidAbrx1mtnX2hev+JKgRs9nKOVqea3wUxlrPzS0wQT2DLtSaWZpjvsE6dx1KWrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KSWOzKej; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742719155; x=1774255155;
+  h=date:from:to:cc:subject:message-id;
+  bh=pjyCmpxEr5jT0zIxY7JcF9hVQh7SAFHzVL7PbIN655o=;
+  b=KSWOzKej9J+jyMqmXZbgbpo9MAKy9swHmQKZDRy53R6scjlTSU75H1xC
+   mZbbTiSq3kMWPUp0O0BM9PFvTJwItTf9hI1haOmDF+i05Ahh1yx5LYrJZ
+   JNUM0YBwAJ3Rcv95qIZnExZDIFSxBVFohx4kBQNgdmaDziIGwdfDjIGNq
+   WHkzwgEqXSiiY1u0KY4lQlxb65opnck06SZjLiD3HQqw9aq/OqyvDhUIF
+   5hmUpPKFc1P+jyShH4c4bjVxWic9IlRtaknLTBex6PI+FTy96mb1KzbHR
+   2R+zOOSA5hOvWbI7MJEdgKtbH6a9TgL9YNvqBRtcAbSoEzSHzLBbhTKAz
+   w==;
+X-CSE-ConnectionGUID: Pwlh4vnhT9mxSIJa+pTJKw==
+X-CSE-MsgGUID: yeI/4VvcRXyq6lRqINGOSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11381"; a="43171688"
+X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
+   d="scan'208";a="43171688"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 01:39:15 -0700
+X-CSE-ConnectionGUID: IKam/7RMQrOr4I/WqkSbIA==
+X-CSE-MsgGUID: vf5RN25sSO6f1hDAnEDNDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
+   d="scan'208";a="127921669"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Mar 2025 01:39:13 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1twGrP-0002fX-2T;
+	Sun, 23 Mar 2025 08:39:11 +0000
+Date: Sun, 23 Mar 2025 16:38:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ 50a53b60e141d7e31368a87e222e4dd5597bd4ae
+Message-ID: <202503231650.ZPj02Ox0-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] dma-engine: sun4i: Use devm functions in probe()
-To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Vinod Koul <vkoul@kernel.org>,
- Samuel Holland <samuel@sholland.org>
-References: <20250322193640.246382-2-csokas.bence@prolan.hu>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250322193640.246382-2-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Eok7N/ZFTQPH/RQ/eVBr6b5jC0i/dy6yeFBhBmj57IReVHa0aDa
- qbRh06yLzMUPZpKRncmU9SPEssGx7qTPaLN58ZKELTkKtXRah2HhmLxfGLqRP8kASsuZjqE
- YX6u3nQqKtsYrc3G8wAAD8/NVbBcmZxvwqbTdW848BaJ3Cd5ITThEsNw7/+fVitGEU5Pjaj
- LMubty8hVyW9lL23kL2HQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dAswLujEvUw=;9KVLCGNHyqed/0kFl03BZHn51pP
- JtULO5FjGC71GnLRkuJmDwVcaad3GtJ4sWROV/cHrnK7YVqurRfU2JOMy4wa/qMTUiClKb+XM
- i5dDhKLnihGijJ8rcUtOCqsj4L7Hwd5gV3kfI8Tn2tYl1RxH7YIXUdaw2uWR5Rh/fnzEJEXvK
- F81r6T3K2M38M0s5r+kag2r5+y/blWAzlfaGLM2KZMQbrYIWz7GZDwld0VRqnkQEdzMUtjSJc
- SYpb3O+zoLnvBHzS/HZWb2ly80REu8e4+YDIrGz/VwGpGNyOwEsjWAE5qRx5Dy77TWUKVoJlc
- ULI6XFoiu2Wlj6qaLUIZw1Chh2u2m3Eh7rI+xUWqV5h75M9omCyks454bw7E1o6iqkJi9BXIL
- K//cFsuR/OR3NodNia2/feiIq4anuYEJCgjkaHvoyUb15KcMAzADYR9giYsbVfpOF4MSHPtPr
- /CayK9cXHUdjrE1yiCmB/EeMp8u7IAv7vmGQKi2z5w1RXAM/PndOBUJ1bjjm6c0GOGfNZnM8I
- dlZm5SVpF+TTZPiRlHURFekB7dPJwckgUvVsyoSGMCR2+5lCU+zg5h3akxB7l0gJgYrap0qT3
- rA078/SRxVSZ4+TKQo9JfxQKeFdGvhQlrg4L/dXG+YiSHJHuQA87/Q7BNyBKaAL7P/L/hNueB
- YeIPyne+LcjWdgwbjyoPKnxf0R87h9zjXcXAEHxahhOvQHe6dbtqVFmGH38Yslsr7ZjyOhDnH
- AmTvOWHy/U52vph3+/wvBHKr8IDkji5u2MF0RLMXfoy36/roocdliXxwWWKJ/3kz5X73wsQ7U
- w/DBxqw0BeEQcARYeFvZZ3us2Kfuxf7JUd5OUu/omDgTmMnN8rCmZqhSlstBa320ibbW71OWg
- iQJ0sdevcI8hxxwhhvXLUpP+XgpW4EjE+8olxJt4KPMmDI3pKMWh7XiqhiY/Vga/9Z4sB68zo
- H4f1LWoKLEokg5BUrImjEa5hXR7V9kaMQOTKvBLYJQjGmFOjC9pe1QKz8QMNX+epWUGjYZg2j
- R4LBji5Q9iu56kK7eU4znvoqYJO3gl80PC2EGY9KNbK3F0gMtg0a/V6960lHC2zizRC0YRN7d
- NL7JRaJFD6NRpOQUfibofYIZ2U3Q9+feRQ+7Z07DZFNlKfS7y3b3g7cOmQfLfPyKDDlJ9y2MU
- Tt1clxt3Vzf5C0ifJuZ15d+ai5xc7EKUMK6yEsPDL0wKGQQBEb20E5E3LBzSZqaEghN0tNwO6
- T60z+pO9Dg/tzBBm09OGl4SoBDDn71XfRC/RVj8Aj0Mc9EwkkCmMy6895zcUs/HxHh6hV5uQ6
- Y7eOwdpEsK1uEuvicb+i9S5vyUyEVHftT8+KII2Z2tOB0cKfnUqGFPufTkNCG4qR2VpxtzemQ
- nX/ennEcACKse+LcnHz3F0gozgCj3XZS62TNtHsvZfacf88YpEwxp/bnSL/G+QLmxI4hPIORc
- 6/5rd2dDXQkXKBU3k+zvybNZ7oFsjE8VZl57nu2g7H+SOomBx5Ye4ZOTdMH6I8aE/nD+u6Q==
 
-> Clean up =E2=80=A6 and dev_err_probe(). =E2=80=A6
-I find it more reasonable to offer such a change in a separate update step=
-.
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc7#n81
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
+branch HEAD: 50a53b60e141d7e31368a87e222e4dd5597bd4ae  perf/amd/ibs: Prevent leaking sensitive data to userspace
 
+elapsed time: 1444m
 
-Will it be clearer to mention also the function name =E2=80=9Csun4i_dma_pr=
-obe=E2=80=9D
-in the summary phrases?
+configs tested: 19
+configs skipped: 127
 
-Regards,
-Markus
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250322    clang-20
+i386    buildonly-randconfig-002-20250322    gcc-12
+i386    buildonly-randconfig-003-20250322    gcc-12
+i386    buildonly-randconfig-004-20250322    clang-20
+i386    buildonly-randconfig-005-20250322    clang-20
+i386    buildonly-randconfig-006-20250322    clang-20
+i386                            defconfig    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64                       allyesconfig    clang-20
+x86_64  buildonly-randconfig-001-20250322    clang-20
+x86_64  buildonly-randconfig-002-20250322    clang-20
+x86_64  buildonly-randconfig-003-20250322    clang-20
+x86_64  buildonly-randconfig-004-20250322    gcc-12
+x86_64  buildonly-randconfig-005-20250322    clang-20
+x86_64  buildonly-randconfig-006-20250322    gcc-12
+x86_64                          defconfig    gcc-11
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
