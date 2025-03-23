@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-572782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45FFA6CEB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:28:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4884A6CEB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:30:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266903A88EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269DD16EF24
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119ED2036FB;
-	Sun, 23 Mar 2025 10:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E952045B7;
+	Sun, 23 Mar 2025 10:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="gRn3yOp/"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O3FK1bGd"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC8C1DB933;
-	Sun, 23 Mar 2025 10:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CD020127A;
+	Sun, 23 Mar 2025 10:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742725697; cv=none; b=X5yXnlQFphVHyTvHF4f9p4MYq02X4jeeewdAAncnobgvpm2BJYOinbDf5s+38U1bgD84eAZq8Yfte9Xb7rJ6YLjgIQ+GNsWoBdqFWZJ0mOZ+JIgNyg4Vx6Bvwz4fCxzsJTNHtuCJ3peDKBGeqMwEto17n2MvmAeoWwX4XEfzoTw=
+	t=1742725801; cv=none; b=dIH8YZruLPDO1rF2QGKtiNBNaE2NrhhS2pG8apYDtxeMNAXBNIsb+s2R5wwxESBeQZkIP0p+3xXtIyoNPay93+DqCBDwlxKylQ7aFB38Oc2s39iW32IsPA8vVBzmbRNsoL6YuvX4qv4RzJetgRCzfJrTYuDRmYyfovxoufdjYSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742725697; c=relaxed/simple;
-	bh=kJQdhs4Yn3iNBIXS0n/J39EQi/RBNxC9l81xHA3vYxw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TBPkyD5M6i7UKKNcer7n9L6wJ8tdpv2mXndPIO2eT4FQYWdLDmexIeez/H3EHkHgX7bI4jQ+3rJ/mtX+xivbyjVi8qd3Ve2MKnOWkfVGcTkTGdygqEq/XdFRQYv4splUb/HAVfqpbw7JXFdWq8o91iJkZIMnDpWue10n5k/5lPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=gRn3yOp/; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742725690; x=1742984890;
-	bh=APuFgz6SVUioqb6/BR7NN+NPohXPkNmiAUPQoHNus80=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=gRn3yOp/umxwI8pu6knJXh2Fq2LgpLWLvQ43B6qEDeFPJ40dz7ajCE5+lGrg/n1Ru
-	 BwfbM5+aOq3qhwGxwtc+zBeOovr0vB8DIJZJCznj174zXqtfk3aU7SETyy6deaCEKk
-	 eX5V6UyD6QdIyXES/q8/9eJIV1BnCm5BTqcfTXKyLbSGxMlkK1TynpstXzar7xbpT+
-	 MQf4UA4GQk4Pm9BIlnkcwJbtLUzTfHCuJbi+6laIBdwN5xvcJg4J6sm8NyESMlykrs
-	 L6hKDgDYFZEj49zkFYKpiz1x3+Zqo1ovwVJM5nEgQD9q2X3qvBq3ytUxsyiRCiABI1
-	 BgnULZeXROr4g==
-Date: Sun, 23 Mar 2025 10:27:59 +0000
-To: Andrew Ballance <andrewjballance@gmail.com>, ojeda@kernel.org, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: alex.gaynor@gmail.com, jubalh@iodoru.org
-Subject: Re: [PATCH] rust: print: add rustdoc link to std::format
-Message-ID: <D8NKOYBU4B7C.2QEMXLVBOZK9U@proton.me>
-In-Reply-To: <20250323055948.89865-1-andrewjballance@gmail.com>
-References: <20250323055948.89865-1-andrewjballance@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e1ccb88736d660d9c06bc736c71fc02f6906af70
+	s=arc-20240116; t=1742725801; c=relaxed/simple;
+	bh=NmWh1k7W3U0d0Kpxq1obaK4D4zcCIG1K9ztnfmVdzNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a/+NpZ8/j0jVj5j8T6Way8pIFF75cqrHHfuSaEfqsZdEDH5Cx5jYJoFoPIUU8EdPPoZpf3L0QEI8KKzJAkjEN2AjMaFDqnccgjaoZMcAlivBtLrmMaukpCScnaeSIodIJi3voHwgnEvzw2V7b08sl24h0P4dyOrHqA5mHFZDIew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O3FK1bGd; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742725793;
+	bh=abI0svhSiSukWr9bs81MFOT2BJ9fk2+6xqNcz+6ja+A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=O3FK1bGdW4tdW8tnTgAupsJWhlr4O+hdwztz2MYnR5zEcuzh0rFwmmAv3Im+lS/VT
+	 Rwzk+MIeQOO0BZIEtmaJmqdIb3dfKMnF6EMUcI1AjV/DerIxifPT8Q+FBxGEA+HCB2
+	 CMuPowWlUb8ffb2TSWzLqHkpFZ5G4RTGYAkMOuIr7vKMSpVU7HIII0Of5cjD2DBu1Z
+	 To05OH9ILUS+MhH8fIURb9bSr6T3YvbzHVCDTSaw1er6TWiVhDaf9B7fOBL+KCrDNL
+	 ecniUJrGlRGDWiz/NiexxrBV5jsw1HNDFrIBaKu6kpf1ud3CFOZD6x0bC+VphpV+jK
+	 AHJmFmHiJig8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLC9X6JL4z4wyk;
+	Sun, 23 Mar 2025 21:29:52 +1100 (AEDT)
+Date: Sun, 23 Mar 2025 21:29:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
+Message-ID: <20250323212937.4f182bd3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/PAIwbpigSvq_PW3U4nYp_rN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/PAIwbpigSvq_PW3U4nYp_rN
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun Mar 23, 2025 at 6:59 AM CET, Andrew Ballance wrote:
-> Adds a url link to the rust std's format! to the pr_* macro docs.
->
-> Additionally replaces refrences to alloc::format[1] with std::format[2]
-> because they are identical but less likely to cause confusion with the
-> kernel's alloc crate.
->
-> Link: https://doc.rust-lang.org/alloc/macro.format.html [1]
-> Link: https://doc.rust-lang.org/std/macro.format.html [2]
-> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
-> ---
->  rust/kernel/print.rs | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+Hi all,
 
-There are also instances of `alloc::format!` in `rust/kernel/device.rs`.
-Could you also add those? Thanks!
+In commit
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+  9ef52d529bb7 ("ASoC: SDCA: Correct handling of selected mode DisCo proper=
+ty")
 
----
+Fixes tag
+
+  Fixes: 13fe7497af19 ("ASoC: SDCA: Add support for GE Entity properties")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: d1cd13f80dc6 ("ASoC: SDCA: Add support for GE Entity properties")
+
+--=20
 Cheers,
-Benno
+Stephen Rothwell
 
+--Sig_/PAIwbpigSvq_PW3U4nYp_rN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmff4pEACgkQAVBC80lX
+0GzyEQf/SkMu+zDRNua6I9DfSuUTT3m+orHSTvcdKldaOBo8EbVmk8Tt1hQ309sA
+/1yVD9BTCQy9zg9UCyYR1xQfN+vysAQ/lZ68QW56uWfX7rHY7nwIGMmAqNtSY6Kd
+Po/PkJ31Yt3DN5Q6vlS6Qm0MpS7Lc3bLlaZixutB9LXF+16C3tPmOAc0midy4sdq
+KeIZQS1eLYgxioN4Ogc++/7zFyWQ0ffQBE6eGlijkvEmKMjsV3MB7CotNl0jviUC
+z+aQHRVHFAL/7K2rtcxdJ5AhK8QzESwbnXTajcgfEeWLz3a7lsA3qvgxmywNSki5
+kXBiTikE85nnJLMrBoqPCEhWE2eT7A==
+=1j2q
+-----END PGP SIGNATURE-----
+
+--Sig_/PAIwbpigSvq_PW3U4nYp_rN--
 
