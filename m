@@ -1,96 +1,195 @@
-Return-Path: <linux-kernel+bounces-572972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C543EA6D0FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:59:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01E6A6D100
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5390C16ED40
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:59:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9608F7A4161
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DD119C55E;
-	Sun, 23 Mar 2025 19:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F39419E83E;
+	Sun, 23 Mar 2025 20:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Jjz0PJ8B"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTiEB3AX"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A513B7A8
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FF52F4A;
+	Sun, 23 Mar 2025 20:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742759979; cv=none; b=KoDdh+Odllh/A0i2DySdgF++0BvC/cQgDxkBQoL2f14nsY4bXtDAQyUiq8Ql+khaxm6r3a56lQZjnu/E96CZG7Sj+Vz+XLdjixlL28hCEzjUQixJHrvwvuFr8mWP0F3tUp+skgdM7IkSr1Pb/tV/6UqIA4NtOR3w44T3NS7qKcA=
+	t=1742760198; cv=none; b=GbUG9o7cM5mzyUeByX0whEtUlW6PcdsFeKQXLTYNZ9azKgwWvz87+t3XrcQhtieLk5ig3cOAxod0enDMkYcSIQZYX51V01+Tp+rvrmsmKLaRF+6nwcoC/XQf3gNHv1VO3xD83b9iQ1AfyWjRCmiCTTXaCDtJFYrDjZsDLGPV9g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742759979; c=relaxed/simple;
-	bh=aPfRB9VTOGJ3yvmNj0GIs5velCtgRYlJWqYRwdKQ8lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dUOmsBo42Jwr4tvAZ8eD9BMtjYE/uEfwTpBRj+0qAzOoKEpQuHvaFjovp4KdJ8bL9KYwmf654m5PlkXkP93Tiv432B0Ck5jAeeFmMZd24GaIEUSahalVVMQjdR0gPeKg4cU6oXfOKrJGmVPAK1uJBYa1VDkAeAxAXAqEneqmtp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Jjz0PJ8B; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pHGf6EDuTNpKnrAWnOuYszPosBN1CQ5PnIFL16Ufv3Y=; b=Jjz0PJ8BgZ6Wfg6nFuW8EOwJHO
-	O8gjwSf2hp0+LvqAi3RBwlkGcKvUrG3cUg+frhszbn4KbgKKtwrxEPdS0VU86whcvFHjBobX0CXSB
-	owVlNxo6B3+4Jbzl3rAc/g6uTIDpzpDeAuF/RfSCS9PiTbc2rNO01IQxghS0kg+Qi9eHatEUHXmGs
-	AuGRjVPkxlV0QaEM+xAJAdRpPLWK2CBsw0atUdf7PPRPZIlyLW5dIJliyk2q4ss2w/ZU4BEjIqaTu
-	pb/JD7OmbAbPANVZjYatvU6wsLzH2z38Fmt3PXZyQyIY3LgPh0dXvl4R31C1CJ95GSjHNPL01CAl1
-	14e6lejQ==;
-Received: from [187.90.172.172] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1twRTc-005OD2-Gn; Sun, 23 Mar 2025 20:59:20 +0100
-Message-ID: <d43653c5-6e54-0c59-17c4-acd09d61e9b2@igalia.com>
-Date: Sun, 23 Mar 2025 16:59:14 -0300
+	s=arc-20240116; t=1742760198; c=relaxed/simple;
+	bh=rwZPZTwPS4r7v6W5+VAKtKZSDLHg9y/9IgIloVL6og4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bnv8yDKMZpeU4+DkIgO8SdOHuUNqOKvW+xHFI1VD4IEsevPxUiKr7ccQiVOqOHgKP3mGaZ6sd/e09XVtwaB390O602BnHnZe/l2eMtf2Tge+Xd4Xf/QkEgrBhhcxVrLzUVuBMuEUHpZgS8KPOWqxN6p4+EvkKP5rcLbcQb+M7dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTiEB3AX; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so29732265e9.2;
+        Sun, 23 Mar 2025 13:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742760194; x=1743364994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGft5Et35KBhKNEX4bnKsS2M813r08vXuvkuA76ff7I=;
+        b=BTiEB3AXXKnOdJO/f3x+QkaT1Irtpe2ETMvkAoSe/BhYEx4ZHa9b/v8Fq9QopQ3acd
+         efaUP3IRRAvNJSNbdbQQ5GDyol1rq5D+XuxJbkaGgNROD69FVptS2Fnur7edIbDIXFs6
+         JETCUB3eKpPadq/+Zucb/P9DXsphwL5D2ggUXYClEA4nT9/yys+ncu4N5Lp1vEuOJQFc
+         KNbN+bBEzOVBVHFBUH/lIsmYGKkL9q/qptA6iIxBssqgj40addirxrr4xQqsl+dOqhRF
+         nZ7rTRJny+Z/UfDuh1ZRWgWeBU93+fZXfrbVWVCP3R3EXGrKu8zSE8THEHscyeBJF96x
+         MoGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742760194; x=1743364994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aGft5Et35KBhKNEX4bnKsS2M813r08vXuvkuA76ff7I=;
+        b=HylwCxO+O1GO/YSQHhQRkBWbkDz0Fnm+eXDsWgUyCtFb+Vv0Bb02xaG0kSqAjMfvOA
+         OG0wQGamis7+Y4hrRXyGJ63709cEyBOOQBhys8XTNhD52koYVdMtC6tHCbTNbg8VBFba
+         SNSATYJPn1ypesgT+jHsfBHH2eG8srdxquZRT/PDQiqSirYBwEFAmkHIrPSX/rhuKHRp
+         1hQLejj4wPDsHiKuMzVbyRfpDE0DneHdyCd350i/PLsD6WOgMRTyo83N+C3AKr/Wn5Wg
+         jAK0D7zvMtPI/nF62W2YZmJQckUyMRWGftwb6X6S1gJpJWGB+/8dBkA/zFKikB5nKBvk
+         e29g==
+X-Forwarded-Encrypted: i=1; AJvYcCV17OMOsttTHDgWkEbHZvUTETpVSdJr5Cm3jGwMhXe+CLfT+r0a92Zh7rH53QlLCjBI7svS3fPYcsrtNcl+@vger.kernel.org, AJvYcCVXPElVMKX169g/IRQrO9jrvePku/50k3de2VYlJNW/FGnlCTs8fzVAh3IpmqbzHtNMWmtV4OeUwoXaTo3+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu8w+CzwltjwwST2B5s+PxO30tiq74xA/NpAWcpmaC//hrZksD
+	co0IKi9N92S9ltZ4l7VzgHHqlpAIX4ohnM9Wqx+xC+z2LeYl5O10
+X-Gm-Gg: ASbGncu/a6Dd1Z6TR/ydmFD9YadeNlBgJC6cWUMTIMIWdbas3NaE4+9RQPj2JYX/WhN
+	gpUGjAfz3+TtGFJvJ3pAPVGAXEe63iTB+jFfRVIbZNaHUwqd3Siu78x76gWsrVXD25wSpGwmufU
+	D1WWVcx5MBJqB4oeow/c2T5bueGCpDKtF7Ev+VDILZZM5iYlTOnCye3cNPAfk/aQxDi4oV+pFU7
+	1nx2/82jgR4++pJuOfzYdl/1FlW4HiD1CNUeUvZOFlJAgK352vTw7+l1W35IKfmTc3JXYDZPgII
+	r2OOV0meKzwacAKXG+38TQHdXINRJBRcbEuuXpyaozQIAs8GFXC0Ilsukddi
+X-Google-Smtp-Source: AGHT+IHxC8eJ61S2vO5ZLyASbUzR3esC5aD0WxTSRyk1ncB2aHbentG4dmbxdka8YNFZsKOSN1yAkw==
+X-Received: by 2002:a05:600c:5742:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-43d510fff60mr71296195e9.19.1742760193891;
+        Sun, 23 Mar 2025 13:03:13 -0700 (PDT)
+Received: from f (cst-prg-82-128.cust.vodafone.cz. [46.135.82.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd9e96bsm98053895e9.25.2025.03.23.13.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 13:03:13 -0700 (PDT)
+Date: Sun, 23 Mar 2025 21:03:00 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz, 
+	jlayton@kernel.org, kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, oleg@redhat.com, swapnil.sapkal@amd.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <cqyyq5vbtxbz3cpvgdy4hupy3eykhv5fzc46aehgjnk2lifda4@w3jnwtvigvoh>
+References: <20250323184848.GB14883@redhat.com>
+ <67e05e30.050a0220.21942d.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
- boot
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
- dave.hansen@linux.intel.com, kernel@gpiccoli.net, kernel-dev@igalia.com
-References: <20250226132733.58327-1-gpiccoli@igalia.com>
- <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
- <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
- <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com> <87iko213qo.ffs@tglx>
- <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
- <20250323181444.GCZ-BPlCAhtO7AIsS7@fat_crate.local>
- <8247f64e-316d-0eca-9e5d-0c63c7dfc862@igalia.com>
- <20250323195102.GDZ-BmJgDWLieuUaJs@fat_crate.local>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20250323195102.GDZ-BmJgDWLieuUaJs@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67e05e30.050a0220.21942d.0003.GAE@google.com>
 
-On 23/03/2025 16:51, Borislav Petkov wrote:
-> On Sun, Mar 23, 2025 at 04:21:44PM -0300, Guilherme G. Piccoli wrote:
->> This is great to hear - is there any starting point model that you know
->> AMD introduced/is introducing TSC_ADJUST?
+> Tested on:
 > 
-> Zen5.
->
-
-Thanks! Nice improvement from AMD =)
-
-
-> [...]
-> Zen1 should not have TSC problems either. If it does, whack BIOS people.
+> commit:         aaec5a95 pipe_read: don't wake up the writer if the pi..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> console output: https://syzkaller.appspot.com/x/log.txt?x=169ac43f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8d5a2956e94d7972
+> dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17803c4c580000
 > 
 
-Heheh
-OK, thanks for confirming!
+Here is a "just in case" by me: the patch which made sure to only look
+at head + tail with the lock held.
+
+#syz test: upstream aaec5a95d59615523db03dd53c2052f0a87beea7
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 82fede0f2111..7eedcef2811e 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -210,11 +210,20 @@ static const struct pipe_buf_operations anon_pipe_buf_ops = {
+ /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+ static inline bool pipe_readable(const struct pipe_inode_info *pipe)
+ {
+-	unsigned int head = READ_ONCE(pipe->head);
+-	unsigned int tail = READ_ONCE(pipe->tail);
+-	unsigned int writers = READ_ONCE(pipe->writers);
++	return !READ_ONCE(pipe->isempty) || !READ_ONCE(pipe->writers);
++}
++
++static inline void pipe_recalc_state(struct pipe_inode_info *pipe)
++{
++	pipe->isempty = pipe_empty(pipe->head, pipe->tail);
++	pipe->isfull = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
++}
+ 
+-	return !pipe_empty(head, tail) || !writers;
++static inline void pipe_update_head(struct pipe_inode_info *pipe,
++				    unsigned int head)
++{
++	pipe->head = ++head;
++	pipe_recalc_state(pipe);
+ }
+ 
+ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
+@@ -244,6 +253,7 @@ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
+ 	 * without the spinlock - the mutex is enough.
+ 	 */
+ 	pipe->tail = ++tail;
++	pipe_recalc_state(pipe);
+ 	return tail;
+ }
+ 
+@@ -417,12 +427,7 @@ static inline int is_packetized(struct file *file)
+ /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+ static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+ {
+-	unsigned int head = READ_ONCE(pipe->head);
+-	unsigned int tail = READ_ONCE(pipe->tail);
+-	unsigned int max_usage = READ_ONCE(pipe->max_usage);
+-
+-	return !pipe_full(head, tail, max_usage) ||
+-		!READ_ONCE(pipe->readers);
++	return !READ_ONCE(pipe->isfull) || !READ_ONCE(pipe->readers);
+ }
+ 
+ static ssize_t
+@@ -524,7 +529,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			 * it, either the reader will consume it or it'll still
+ 			 * be there for the next write.
+ 			 */
+-			pipe->head = head + 1;
++			pipe_update_head(pipe, head);
+ 
+ 			/* Insert it into the buffer array */
+ 			buf = &pipe->bufs[head & mask];
+@@ -549,10 +554,9 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 			if (!iov_iter_count(from))
+ 				break;
+-		}
+ 
+-		if (!pipe_full(head, pipe->tail, pipe->max_usage))
+ 			continue;
++		}
+ 
+ 		/* Wait for buffer space to become available. */
+ 		if ((filp->f_flags & O_NONBLOCK) ||
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 8ff23bf5a819..d4b7539399b5 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -69,6 +69,8 @@ struct pipe_inode_info {
+ 	unsigned int r_counter;
+ 	unsigned int w_counter;
+ 	bool poll_usage;
++	bool isempty;
++	bool isfull;
+ #ifdef CONFIG_WATCH_QUEUE
+ 	bool note_loss;
+ #endif
 
