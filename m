@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-572911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63C5A6D03F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D1BA6D041
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:32:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D6D916E4B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7081E16F10E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0B3146013;
-	Sun, 23 Mar 2025 17:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AD613C3F2;
+	Sun, 23 Mar 2025 17:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="WnKYfybj"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/O7lI8m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD70146D57
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 17:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7881F14D28C;
+	Sun, 23 Mar 2025 17:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742751104; cv=none; b=rpodJGx1tn7HCVMezVH1Xe3Zf51pqk5tA7wKF99wu7QWW/xpbMb1JeryKxfiKqADLKWyMMZTe+5JB0OQxl3VZFn7IlatMv7WSiU3naWa6jiLNU4JrTiWx8JZdRAr1XTnjgH4oTstDGTMx8ZGyHe99sXWKpSem4TZKq4MLBv5yYI=
+	t=1742751108; cv=none; b=K8UD6RQ+ikZexRc/T/ZuMO7O122EwXYrmKSmTd9oOCKC/LIMp1kRmnX5yE2qgXIu2x7y4BEkCbdkJ6Sk7bZBBfodvrB2kGSkjXTEaMsBN+nsxge/48JYBAVQxLtbZqYL6YwFFbYxu/b0Jiu5hifZKKwTDT23IxmstvPl4WyLQ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742751104; c=relaxed/simple;
-	bh=OurAn6aCCufPe8wONOg+FSpmWM5jwOYj7w2wk4Opzkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhafbQib21Ca7U09evwxElgvd1ip+7tIhla7ceRJXvVoyuRrJcljR4R9MoF1vzu9KxEnqr8PeffuFdylgo/JozlOMjj+K3e9mB1cmpr3Y6Bf2zOUZVR67tzLGpiH9SH941/49LRXlDtkbz4iGhxiX/rSrp47ypndAphJ0JoLaAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=WnKYfybj; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id DBD71240101
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:31:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1742751094; bh=OurAn6aCCufPe8wONOg+FSpmWM5jwOYj7w2wk4Opzkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=WnKYfybji/HGiiOvQNgoYKehMkZv98JXM8cOIgvbWVB6NHOEWumkElbr+vot+vq+7
-	 zCj1S3mHG02IFLc9jxYsEEUHXrlvhcuW15Rz7O9t2d+wOUSl/2iFHJA5A1757RsZwP
-	 jX485Qiw234LJEXZiCbWXVFP9Z1tYeAPJ5R1f2h7effTBbd60wwu2lUPWGirby+iQk
-	 VRE1eY55jzZ7xSDNN1yOECUofgJDSQt/dkKuvSE58Ay7NO5sJ3yR/AHQ9GilL2QH7E
-	 Rrf/l433IpY9zaYOxGD7Iso7gSbAWPm/6kVnTvnQ2grh1zf4aHDmMX2pmgh9cEPXyV
-	 0FPx7mG18jCQg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4ZLNX531ncz9rxG;
-	Sun, 23 Mar 2025 18:31:32 +0100 (CET)
-Date: Sun, 23 Mar 2025 17:31:32 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: j.ne@posteo.net
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: HDMI output (Re: [PATCH 3/3] ARM: dts: amlogic: Add TCU Fernsehfee
- 3.0)
-Message-ID: <Z-BFdMfqVCX4T3NB@probook>
-References: <20250323-fernsehfee-v1-0-2621341cd37a@posteo.net>
- <20250323-fernsehfee-v1-3-2621341cd37a@posteo.net>
+	s=arc-20240116; t=1742751108; c=relaxed/simple;
+	bh=KW8HvEyjKl4+3w87G/HKj1aL1Obox2r5omiDDDKvHuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kHWnKWFcyVGpVxW8Dl7Ox7ZiRn61Dwiq9itsKUYQxTafSdZu1NkSqLvIzZs5Wcj6CvO2A7MfKqo3vY7STs+wi+aBDN00Pcy2kAxKAVdCwVdwq7hjnaypIHKVw8Grmlurx+610JP0R4mrxwuLmAJtAj1ONsRVLQezGzcb6lkkhqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/O7lI8m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D96A3C4CEED;
+	Sun, 23 Mar 2025 17:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742751107;
+	bh=KW8HvEyjKl4+3w87G/HKj1aL1Obox2r5omiDDDKvHuU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I/O7lI8m0clQf2iH5mum/fc0gVoxT9Qdrf++coZfcVT3ZZd6FzjCevXew8F70UVWx
+	 ZjNMipFaphHO/3w+KwJjq3QVn7fbcjcuXucfy6oirlIOXlcJe2TxqRjgWePFzXTDE5
+	 9L3Jfuqs2Lynq4fUedxPRAz4KZ41znhy8ZAKvUUjyp3QPNT8NH7pimCzJAuwY8TFMk
+	 ZivcA46BB+J+wP/BoO+oZbzjHbt/7JpIG0NJXE2sO6fubNLHm6KiKFhO8tN2h+G5Ss
+	 c7vMhkVjXD2DJAg7yh+lWH86GKE3jhOc21k3+NY8KG4CpnY1fku5fQ8/NZYFueipNp
+	 TNEgDDQI7hGzw==
+Message-ID: <2842b994-6970-4f31-9a9a-ff8dd1e9b212@kernel.org>
+Date: Sun, 23 Mar 2025 18:31:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: arm: amlogic: Add TCU Fernsehfee 3.0
+ board
+To: j.ne@posteo.net, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+References: <20250323-fernsehfee-v1-0-2621341cd37a@posteo.net>
+ <20250323-fernsehfee-v1-2-2621341cd37a@posteo.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250323-fernsehfee-v1-2-2621341cd37a@posteo.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250323-fernsehfee-v1-3-2621341cd37a@posteo.net>
 
-On Sun, Mar 23, 2025 at 01:37:52PM +0100, J. Neuschäfer via B4 Relay wrote:
+On 23/03/2025 13:37, J. Neuschäfer via B4 Relay wrote:
 > From: "J. Neuschäfer" <j.ne@posteo.net>
 > 
-> Fernsehfee[1] ("TV fairy") 3.0 is a set-top box with HDMI input and
-> output ports. It originally ran Android 4.4 and a Linux 3.10 kernel.
+> Fernsehfee ("TV fairy") 3.0 is a set-top box with HDMI input and output
+> ports. It originally ran Android 4.4 and a Linux 3.10 kernel.
 > 
-> The following features are tested and known to work:
-> 
-> - Ethernet
-> - Power LED (switching between green and red)
-> - Power button
-> - eMMC
-> - SD Card
-> - USB
-> - Wifi
-> 
-> The following features are untested or not working:
-> 
-> - HDMI input and output
-> - Infrared remote control input and output
+>   https://fernsehfee.de/  (German)
+>   https://telefairy.com/  (English)
 
-FWIW, with Martin Blumenstingl's meson-mx-integration-6.13-20250112
-branch, HDMI output works (albeit not at all resolutions).
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-J. Neuschäfer
+Krzysztof
 
