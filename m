@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-572833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72902A6CF31
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 13:31:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26103A6CF38
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 13:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7BDF170591
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2713B6077
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141A02206A3;
-	Sun, 23 Mar 2025 12:29:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A4C4A08;
+	Sun, 23 Mar 2025 12:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="A5GWs8ZZ"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E31C20C039
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 12:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CDE623;
+	Sun, 23 Mar 2025 12:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742732952; cv=none; b=WMJuqPVOLhwdHFG2fjC//3lx5XI/hDaPSj3vG1e1shV2Plp7C6HdVl6b9spPWZ7Id1KiVoINnJyqOkbpc3tCAxByEJ+bWUlN2IM/m1UjG7i/H71fIQdeusgRuEtw4qkp4BofHqluevemQynCgW90A7d5T6TtCF/pTH1FjRV7aVs=
+	t=1742733376; cv=none; b=K28RyGGbIDv+ZV2f0EgxijTTT1l3zdi5RGBLi40k5aNezyQeHHPMLQqg6+JobfTOZbFQ0NgFyVGNElKZPudgewILWWlVTK+DiabCsQvz/Ge/P5+SoXBvXtSbcWfOWzm0AI44yx6+/EeQG/qqMpsfh6MrMii77IqidDQmMHRvlpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742732952; c=relaxed/simple;
-	bh=kQE7lWjLc5+4FxD4hTC5SbZ6DD1VpQnZCqJXFz/ycLI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Zscv6N+nRk1LY8ehRuUwwHYECA4MQ/IAhqDxdYf/aNxzNNlDVI3a8Gi1osJTrAggsGZmFB43BVK9SQY5SyfSuEiwmpYX7AflAQD69CLD5iM5rdezKkoM3gA2u5bhSD+8B4Px61PJGcBHMdFCq5jn7sdTdxxcqkHumyc4nld4Z8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80DCEC4CEF8;
-	Sun, 23 Mar 2025 12:29:11 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1twKSc-00000001yiC-3eEJ;
-	Sun, 23 Mar 2025 08:29:50 -0400
-Message-ID: <20250323122950.727283891@goodmis.org>
-User-Agent: quilt/0.68
-Date: Sun, 23 Mar 2025 08:29:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Douglas Raillard <douglas.raillard@arm.com>
-Subject: [for-next][PATCH 10/10] tracing: Fix synth event printk format for str fields
-References: <20250323122933.407277911@goodmis.org>
+	s=arc-20240116; t=1742733376; c=relaxed/simple;
+	bh=cKnmb/AvRSbteASF5DT+ty/21aXMVv19VOgr9QzltMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cP5NurDTI1MoL5dqt7rmnbe3Bf541yaSzqpKVUzPoEpynG1UzgLyXYZLng7p7zvLaH0dzmH1zLBu3hZmS78uD1gr7M4dX5Cz9YVqW/4Dexva5YAZ/DF5IdkSvetHeWoVSoUcNP+dEl9I1WgtGxPfSFH/Va0gkwcDj1/m4NjhGqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=A5GWs8ZZ; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZLFzD1Dqjzm0ytd;
+	Sun, 23 Mar 2025 12:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742733366; x=1745325367; bh=5tj9iO/ST31ro8NtZXZ+WYzO
+	2KM6kAX7w53AjZ7Mg0A=; b=A5GWs8ZZ3fEVqp/IdS6gJ5ndHfUdUWDGXjSVadOm
+	ULUDNHfTeBg63zQOC/FYqWafLEyyAuM3Acaon/qlwAwmofjkUL5leSzGQEXN4bfp
+	WeJcisPT0KAPbeKZdB/55HMrN8u5xr/jwzLKUE+ozDsWc3cCxJOnvCU7Pgx2VhdT
+	5acN3hB2uASO90SyDR+xECFYnU7+e+XAhi/WOOc8UV5nhrk8hNZ7pYayDN7zx8FL
+	ol/sdTCpYOQjem7jkiWyVzuQVGtdBVJkqMjD/+1LXwYaJrpJm28WeIN4ToORgdA4
+	/dIFh62l4lQ0i1AeUXXBP2LnlNa5+p1Aqie5zaD/JRTR1Q==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id dO7ADQ8zc2Rh; Sun, 23 Mar 2025 12:36:06 +0000 (UTC)
+Received: from [10.46.23.145] (unknown [156.39.10.100])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZLFz56LcHzm0pKT;
+	Sun, 23 Mar 2025 12:36:00 +0000 (UTC)
+Message-ID: <1ae51ccc-66cc-4551-b649-2f5883e2f5a2@acm.org>
+Date: Sun, 23 Mar 2025 05:35:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpuidle: psd: add power sleep demotion prevention for
+ fast I/O devices
+To: "King, Colin" <colin.king@intel.com>,
+ Christian Loehle <christian.loehle@arm.com>, Jens Axboe <axboe@kernel.dk>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <33882f284ac6e6d1ec766ca4bb2f3b88@intel.com>
+ <f18607ca-30dc-43de-be77-fec69968aeec@arm.com>
+ <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <SJ2PR11MB7670F63C7052C88637D305DF8DDF2@SJ2PR11MB7670.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Douglas Raillard <douglas.raillard@arm.com>
+On 3/17/25 3:03 AM, King, Colin wrote:
+> This code is optional, one can enable it or disable it via the config option. Also,
+> even when it is built-in one can disable it by writing 0 to the sysfs file
+>    /sys/devices/system/cpu/cpuidle/psd_cpu_lat_timeout_ms
 
-The printk format for synth event uses "%.*s" to print string fields,
-but then only passes the pointer part as var arg.
+I'm not sure we need even more configuration knobs in sysfs. How are
+users expected to find this configuration option? How should they
+decide whether to enable or to disable it?
 
-Add the missing precision var arg.
+Please take a look at this proposal and let me know whether this would
+solve the issue that you are looking into: "[LSF/MM/BPF Topic] Energy-
+Efficient I/O" (https://lore.kernel.org/linux-block/ad1018b6-7c0b-4d70-
+b845-c869287d3cf3@acm.org/). The only disadvantage of this approach
+compared to the cpuidle patch is that it requires RPM (runtime power
+management) to be enabled. Maybe I should look into modifying the
+approach such that it does not rely on RPM.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250318180939.227696-1-douglas.raillard@arm.com
-Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_synth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
-index 463b0073629a..d91205bc9f61 100644
---- a/kernel/trace/trace_events_synth.c
-+++ b/kernel/trace/trace_events_synth.c
-@@ -620,7 +620,8 @@ static int __set_synth_event_print_fmt(struct synth_event *event,
- 		if (event->fields[i]->is_string &&
- 		    event->fields[i]->is_dynamic)
- 			pos += snprintf(buf + pos, LEN_OR_ZERO,
--				", __get_str(%s)", event->fields[i]->name);
-+				", (int)__get_dynamic_array_len(%s), __get_str(%s)",
-+				event->fields[i]->name, event->fields[i]->name);
- 		else if (event->fields[i]->is_stack)
- 			pos += snprintf(buf + pos, LEN_OR_ZERO,
- 				", __get_stacktrace(%s)", event->fields[i]->name);
--- 
-2.47.2
-
-
+Bart.
 
