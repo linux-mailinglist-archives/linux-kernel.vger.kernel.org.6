@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-572925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544F3A6D074
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:54:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99518A6D078
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E31167E38
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FECB3B11F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B26190057;
-	Sun, 23 Mar 2025 17:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F818FDDB;
+	Sun, 23 Mar 2025 17:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fJ17TW4j"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y87jEWOY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EDjk09+/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AD318DF8D
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 17:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E3853AC;
+	Sun, 23 Mar 2025 17:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742752409; cv=none; b=sJi1UVTX01tHj4D53MFD+B+3BVTBiLVhQAQDCUH4b3HKtXpS5uv2ENrCjkT6g+HKzCZXNkfVeMoSe+YJijVLFpBMpX4uhz7eu/BhBkLzLh5L1Ow1JFCSC5HmaqV49r/zvox2uHIYXYntF2U2s/3+eKMkSI3Q9uyx2Oai4OivTh4=
+	t=1742752609; cv=none; b=RW093/hv47wAWtbaU6+FznpuhiDvux8fSk3qHWas7xbGDGLWyzVuqmT89uFj7bmU3YLT+LTK8ZX3JlzTiWjqRAFMYWtXtjlllfLIcy12ZMSiEL6G7uBvLb5UH+/s6zKg30lLw21+nxumOKb4zF+MpEBzlDVVu7v16qebCAiIv9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742752409; c=relaxed/simple;
-	bh=NhtR3jMg1DbZqelavBB/HYow+zmxwmTBPkjAKQ/3sFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GOhCAKQEai2PKH3IjdiVSy651STpmywYgmmx9ugJeChOTuyxrtw17vuMh9SO1vOTTF17aQGMIJphA9r96B4L0++rL7DXJtRMtzKu1nQblzebJKS1iKEJaS9iYtvtx+dd7QMVC5Fb/qEwNv0W3yoc4vhBpCuUsjNr+MbOPaIdzM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fJ17TW4j; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Jjn/M8FT5O2BGiA0QtJ0YYHxqDVcoYX2QEUhSAy9no4=; b=fJ17TW4jCedqhGvuEdAmU9fG2B
-	QdX6oBpj2oCqfJ+1Pqa4QK6w9a++CaMnRQTTgaR9854kilDLtOGUNwSvXF2a2pmfqPrdgsSlAED6+
-	5+oNfU27PvLUG9dJVGz7ZtUt099rWEH5PiR70hTFXYfJrmxwEswUp14oCwv6zWcz6RB1EGhGPgFEz
-	UsMTdLiPqZyRhFt3NzLKycx7y6c7S9HrQdi8NAYjmGSNuUZeWI/Bsp1nAbodiAw4JYkiRgWwgH+47
-	gblE1pqEp5jkwKuYty2nDaVS2ReC3Kv1vMi8ksg/JTB+7GFni3Dp5yZ3gCVHWveInCh0KZ7IeMxnf
-	uDmZFPow==;
-Received: from [187.90.172.172] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1twPVW-005MY4-2b; Sun, 23 Mar 2025 18:53:10 +0100
-Message-ID: <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
-Date: Sun, 23 Mar 2025 14:53:05 -0300
+	s=arc-20240116; t=1742752609; c=relaxed/simple;
+	bh=KVf36YralWdv1yn+YqWFleHtYGS7OetRESKY/2lYMqA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CcmFLyAIIOMTZhSo83ujMZ6KfTD5diT7XF2aJL5k1KA355yekPVFdj6VbGIIN4kzUFypFKZnETiKl6KEdyJVhaZqmyxGzCo9H5E6IXBN7kxR+5+YwoW9XCOJXuckPZ+Bg72rD/mr4zwv0susTnFLOU+yfPVqsZ1MSSpE/scEwzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y87jEWOY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EDjk09+/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742752606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ybbVEqQyi4LCnvj4QmAykSpUgiX8fgqqKRGS630vjfo=;
+	b=y87jEWOYX4464VeoruYLaAPU0k/JzrSZc4nr7DcxkgC9nirArTyPxeyn0IQRV5MKfRpiz8
+	j3ADuPA88mlbXhpawYzlNDXX0RZQwIbAFKfH7Td64JsgvIwAN5yL4LUV/kG0ZmU2t4ikVS
+	ooSRXk+kSSmuz1304nczVLoCmP4Faf0pkbtCf63X/GiJPxps2rfyxwY1Iqtz2kUW/L1OhF
+	cyfpuBY87JMXgtOy6FX5w6IsQBG7TLAO4S0CaASwZQknZBs6NsrB9x5NI87FvXCu3CfOHM
+	Hy63du7RWi2S8nTtde2uxkwhGVjZpKHHvQL78BSWnn4NnZsxKycoJS3YkUp8sw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742752606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ybbVEqQyi4LCnvj4QmAykSpUgiX8fgqqKRGS630vjfo=;
+	b=EDjk09+/OtprWxZE4lAWSMMaI/bHuRBpN5/G4UE2i+WNOxMDc/s/GBUC2s1KD1L8ykPq1m
+	sU+RAGmbQq9BfWBg==
+To: Caleb James DeLisle <cjd@cjdns.fr>, linux-mips@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benjamin.larsson@genexis.eu
+Subject: Re: [PATCH v1 3/8] irqchip: Add EcoNet EN751221 INTC
+In-Reply-To: <7307e611-1cc6-425e-a066-478794878d8e@cjdns.fr>
+References: <20250321134633.2155141-1-cjd@cjdns.fr>
+ <20250321134633.2155141-4-cjd@cjdns.fr> <87tt7m1664.ffs@tglx>
+ <ce72abfe-e822-48d6-9fc7-3cf9faffdc76@cjdns.fr> <87bjtt1nod.ffs@tglx>
+ <7307e611-1cc6-425e-a066-478794878d8e@cjdns.fr>
+Date: Sun, 23 Mar 2025 18:56:45 +0100
+Message-ID: <8734f31vhe.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
- boot
-Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
- bp@alien8.de
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
- dave.hansen@linux.intel.com, kernel@gpiccoli.net, kernel-dev@igalia.com
-References: <20250226132733.58327-1-gpiccoli@igalia.com>
- <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
- <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
- <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com> <87iko213qo.ffs@tglx>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <87iko213qo.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Thanks Thomas for your comprehensive response, quite enriching.
-Some comments inline:
+On Sun, Mar 23 2025 at 04:06, Caleb James DeLisle wrote:
+> So it's my belief that what I'm doing here is standard for 34Kc.
+>
+> The reason I asked the question in the beginning was because I wanted
+> to check my assumptions and know if there's any way I can get SMP
+> without writing this dispatcher.
 
+Fair enough. If it just works as is then I don't have any objections and
+the question vs. SMP has to answered by the MIPS wizards.
 
-On 21/03/2025 18:19, Thomas Gleixner wrote:
-> [...]
-> The proposed implementation is just an ad hoc band aid as well. Why?
-> 
->   1) It has zero relation to the actual failure detection code paths.
-> 
->   2) It covers only a small part of the problem space. On all modern
->      systems, which have TSC_ADJUST the clocksource watchdog is disabled
->      and just asynchronously invoking TSC unstable is a hack which only
->      tests the unstable logic.
+>>>> So this patch clearly should have been tagged with 'RFC'.
+>>> Given the patchset works correctly in testing, does this comment
+>>> stand?
+>> Until the EI/VI issue is resolved so that it either works or cannot
+>> happen.
+>
+> All said, if "depends on !EI && !VI" makes you happy then I'm OK to add it.
 
-But what about AMD systems? Even the modern ones apparently lack
-TSC_ADJUST - or is it changing recently?
+It's not about making me happy. I just want to avoid a situation where
+this causes hard to diagnose issues.
 
-Checking TSC code, it is full of checks "if Intel" as well, like in
-native calibration. Our issue is present on AMD and my impression is
-that, in this respect, these systems are way more unstable (from TSC
-perspective) than the ones having TSC_ADJUST.
+> Just what I'm afraid of is being asked to find an authoritative answer to my
+> question before merging, because if nobody decides to jump in with one
+> then this could just be blocked indefinitely.
 
+Nah. If it works the way you implemented it and you can arguably exclude
+EI/VI interaction, then there is no reason to delay anything.
 
-> 
-> So I rather want to see a more complete solution, which
-> 
->   1) lets the clocksource watchdog logic fail the test
-> 
->   2) lets the TSC sync (including TSC_ADJUST) logic on CPU hotplug fail
-> 
->   3) tweaks the TSC_ADJUST register and validates that the detection and
->      mitigation logic on systems w/o clocksource watchdog works
->      correctly.
-> 
-> Ideally that's a kunit test for CI integration plus a debugfs interface
-> for developers, which comes with a related selftest.
-> 
+Thanks,
 
-This is a great suggestion. I'll try to come up with something in next
-weeks (as time allows), I agree this area indeed seems to lack good/easy
-testing.
-Cheers,
-
-
-Guilherme
+        tglx
 
