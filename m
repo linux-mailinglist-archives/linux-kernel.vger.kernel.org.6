@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-572769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9134BA6CE84
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:20:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C780A6CE86
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3883B574A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB93188CE5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D40202F8C;
-	Sun, 23 Mar 2025 09:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EB0202962;
+	Sun, 23 Mar 2025 09:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="XjYX/WC8";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="HqsZhSro"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="MtW90Xl1"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FFD800;
-	Sun, 23 Mar 2025 09:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742721624; cv=none; b=Mm0exvv8fiKmgx6U6BGooHDt+7bjh0NhtLHNoOIpc8ymwC1UdtvS3tvAvozkGEdKm5glAOLDf/aii0o2DmplPaM7mQg2EK4KKfMudgHKKsPaTkLNhUiaaCv7kJgqQv0Pu3LYpAu6n1Up8V8MdJaaaVz6es6hCkNnc2EHHfsmEuo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742721624; c=relaxed/simple;
-	bh=fTHfjM3YpFDVqr7eOMrB75AxCidt7NZyJSHi+kvPL70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VDsEAw0eHWly3I+Jr5fT40UnK6gLSQo0WnNYO8Y8aDnF8LiTpCMBgul7BFmpD/OTcrlumfxHBo0A+g8thwe0t8xBa/TFpDzaWkZkUOWiC7mz9dHq8BEiwRu4LVEz9+XCT2D+WqtDIVA8Gb22vKVz1n0N4n1NCOJ1BMrslqd4Mw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=XjYX/WC8; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=HqsZhSro; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 841CD60385; Sun, 23 Mar 2025 10:20:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742721616;
-	bh=aTpgttncmN+s4PvDh7qBtNfVTcRVZaa7iHnpbbQkRlA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XjYX/WC8l32MrMVxruedzOhZ/DIXDX3voFcc2xNPD1UO6e4CPULJosbQMmwrECFqV
-	 Mt/ibWQgiHsK7xBmRZbwJt9QLgvxX60whvG6vlEkAyiz0+nMl9ffk8pdcOJL8KPuwL
-	 Z6R4kJghBbV9DSSANBHkwTlJKwNSa2g8LuOLMQxRv6alzTjzhRfka7aFOER/8mnSpR
-	 1U5za26uEjcXLdtHyM4/YFa76FynIhNguGxBYApob2KvKFdozx/QLbQL5/JlBXQubi
-	 IDqejQm5MUsgbuiTFVWaashvLQhxEtFuh2iSqr7pziiShvcZ0Oxrrb6pfA8cLpxhZQ
-	 gDUhR/eQCHa3A==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id E0A056036E;
-	Sun, 23 Mar 2025 10:20:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742721613;
-	bh=aTpgttncmN+s4PvDh7qBtNfVTcRVZaa7iHnpbbQkRlA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HqsZhSroZwXlEEDEN8V63qBqxl6tsE9zuyjMob3B9TwVWcxtozH2fNV1WpltukNzy
-	 H5J9TIg2e1o+q6x9duSphIh1FFinGv7CQ6FRFJXJnFM0cKeEF1tU4Px8953WXs1Xqa
-	 eQFhBIu54GzrF9UGCuDEUnxDT8ar4jMHZ0rNfalXcm8xemLCqLdHZ66TJB+vvePhqR
-	 oXvtSe2DmgpO32APscNPacWifxO7y6nEWc+G36kWmIpMI2wcq2kE8s3uxA+qDG1FKc
-	 dbnxA14sfVaUXpK3gVSFjh9nnt/CX+/msSNR4VABcXPCtm1Z91RfTnprZ3sGmQGB54
-	 lPS1sLFyB3X+Q==
-Date: Sun, 23 Mar 2025 10:20:10 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org,
-	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
-Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-Message-ID: <Z9_SSuPu2TXeN2TD@calendula>
-References: <20250305170935.80558-1-mkoutny@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9FC44C7C;
+	Sun, 23 Mar 2025 09:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742722428; cv=pass; b=qg3vLk+ddBP+TPmjDN4/BADnYK41tO27Ns2VrMFB+6uqWRAl0QHC3TWrYQoBr3i9Z8g3ugKBHetZAFGAWk1wzFOeIMv/8PxMUNRzli8jdSLODNbP327O8ueMWgfYmEyGag/rndG+G2kX0tatCh91wGtyMVv+D+gc+EIa5xw7NFs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742722428; c=relaxed/simple;
+	bh=8jeaP+MWD2tgRl9NLRwGHRLuRzce6k/ACt8lN+rLuvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VYpLOC4do11nJujAUMBoI5UO22xwYOBCe2aGCJD8+oQOWM2C6do+FVl3d0QkNztU0rGqagZrzrDeU3hDWoVoM9pJbWpzVA2XY8IMFzr4mZFlnyF8AnZ08skxQOpXsqmTl7K2t5sUyUQUotu/znQdDpeCj4AYl9jImvJwJDrJEBA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=MtW90Xl1; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742722291; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=U4BqNczMHMF8stiLx9OjD1tAK/PAbEmf8GMsN/4e8fhyQKKpd4mV+bQQTONEs70WVglwi2h5vmVl/sAl2oRCgNW3LovMSIfOWdk479VpnoNIX6rAirjHYr9DEw3CbGcK504w2n3QEa7f0z2I6dHlkK0VFY/f6midUbVFS0+U9M4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742722291; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sHzVg5jAvTvlsVsN9qhuPuY+nmgFsZiFexjCim3EX2s=; 
+	b=KzAIQfxkuzO9csLzEljHI4Bo0tWLAJPiYvgUOCEcNZGvsxZfR4/G+iv6muU/NRAKAZTVNXBNmscM219J3kHwdwVCMzgteYO1iDhZDHQ1ViCTctgqfnTT8gcL/CTIJlnnFDHIjcJYCc0flacTQT/v5Up+fBkUICxRQIBjJk9s5iM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742722291;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=sHzVg5jAvTvlsVsN9qhuPuY+nmgFsZiFexjCim3EX2s=;
+	b=MtW90Xl1iJGpoTZJZWuwlLgHQmR/K9Qzp/dtXxjm5YBOLj0AxlkVDLctYD+pYHUF
+	n1oxyBwvTJrpfeW8wbnDr/WZyOofHbfwi9izaIiEoUMnSfzAJqqkDJ/zLdfxaEuvQeX
+	roTEDhxl3w6VsVKH+KzSy+sZpUrf88Zj7cW18QCw=
+Received: by mx.zohomail.com with SMTPS id 1742722290465787.3206155303363;
+	Sun, 23 Mar 2025 02:31:30 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v2 0/3] Fix using wrong GPF DVSEC location issue
+Date: Sun, 23 Mar 2025 17:31:07 +0800
+Message-Id: <20250323093110.233040-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250305170935.80558-1-mkoutny@suse.com>
+Feedback-ID: rr080112279cd3ea6009e317a589a172d400001df68938294a4cb517f7e72e810861307d513f365bf43b19bb:zu08011227a4438750858dcd53daab071e00004827cbb948a4535bffbc4e6da2705707098c4048aa9f498c9a:rf0801122d70d473059eefbebc9629feaa00000b7722115daa8f4d196100cbf51c196b17e4fa5c10dd323800fe318cf1a9be:ZohoMail
+X-ZohoMailClient: External
 
-Hi Michal,
+During review all new patches in branch cxl/next. I noticed there may be
+a problem in below commit.
 
-I have one question.
+commit a52b6a2c1c99 ("cxl/pci: Support Global Persistent Flush (GPF)")
 
-On Wed, Mar 05, 2025 at 06:09:35PM +0100, Michal Koutný wrote:
-> diff --git a/net/netfilter/xt_cgroup.c b/net/netfilter/xt_cgroup.c
-> index c0f5e9a4f3c65..c3055e74aa0ea 100644
-> --- a/net/netfilter/xt_cgroup.c
-> +++ b/net/netfilter/xt_cgroup.c
-> @@ -23,6 +23,13 @@ MODULE_DESCRIPTION("Xtables: process control group matching");
->  MODULE_ALIAS("ipt_cgroup");
->  MODULE_ALIAS("ip6t_cgroup");
->  
-> +#define NET_CLS_CLASSID_INVALID_MSG "xt_cgroup: classid invalid without net_cls cgroups\n"
-> +
-> +static bool possible_classid(u32 classid)
-> +{
-> +	return IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) || classid == 0;
-> +}
-> +
->  static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
->  {
->  	struct xt_cgroup_info_v0 *info = par->matchinfo;
-> @@ -30,6 +37,11 @@ static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
->  	if (info->invert & ~1)
->  		return -EINVAL;
->  
-> +	if (!possible_classid(info->id)) {
+There is a new field gpf_dvsec in struct cxl_port to cache GPF DVSEC for
+Port(DVSEC ID 04h) location. When the first EP attaching to a cxl port,
+it will trigger locating GPF DVSEC on the cxl dport which the first EP
+is under, then the location is cached in port->gpf_dvsec. So if another
+EP under another dport is attaching, it will reuse the value of
+port->gpf_dvsec as GPF DVSEC location for this another dport. The
+problem is the cached location may be a wrong location for other dports
+of the port.
 
-why classid != 0 is accepted for cgroup_mt_check_v0()?
+Per Table 8-2 in CXL r3.2 section 8.1.1 and CXL r3.2 section 8.1.6, Each
+CXL Downstream switch ports and CXL root ports have their own GPF DVSEC
+for Port(DVSEC ID 04h). So my understanding is that CXL subsystem should
+locate GPF DVSEC for Port for each dport rather than using the cached
+location in CXL port.
 
-cgroup_mt_check_v0 represents revision 0 of this match, and this match
-only supports for clsid (groupsv1).
+base-commit: 3b5d43245f0a56390baaa670e1b6d898772266b3 cxl/next
 
-History of revisions of cgroupsv2:
+v2:
+- Drop RFC tag.
+- Add Fixes tag to patch #1.
+- Pickup reviews.
+- Add tested by Davidlohr.
+- Adjust the changelog of patch #2.(Davidlohr)
+- Fix typo issue in patch #2.(Davidlohr)
 
-- cgroup_mt_check_v0 added to match on clsid (initial version of this match)
-- cgroup_mt_check_v1 is added to support cgroupsv2 matching 
-- cgroup_mt_check_v2 is added to make cgroupsv2 matching more flexible
+Li Ming (3):
+  cxl/core: Fix caching dport GPF DVSEC issue
+  cxl/pci: Update Port GPF timeout only when the first EP attaching
+  cxl/pci: Drop the parameter is_port of cxl_gpf_get_dvsec()
 
-I mean, if !IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) then xt_cgroup
-should fail for cgroup_mt_check_v0.
+ drivers/cxl/core/core.h |  2 +-
+ drivers/cxl/core/pci.c  | 30 +++++++++++++++++-------------
+ drivers/cxl/core/port.c |  2 +-
+ drivers/cxl/cxl.h       |  6 +++---
+ drivers/cxl/pmem.c      |  2 +-
+ 5 files changed, 23 insertions(+), 19 deletions(-)
 
-But a more general question: why this check for classid == 0 in
-cgroup_mt_check_v1 and cgroup_mt_check_v2?
+-- 
+2.34.1
 
-> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-> +		return -EINVAL;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -51,6 +63,11 @@ static int cgroup_mt_check_v1(const struct xt_mtchk_param *par)
->  		return -EINVAL;
->  	}
->  
-> +	if (!possible_classid(info->classid)) {
-> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-> +		return -EINVAL;
-> +	}
-> +
->  	info->priv = NULL;
->  	if (info->has_path) {
->  		cgrp = cgroup_get_from_path(info->path);
-> @@ -83,6 +100,11 @@ static int cgroup_mt_check_v2(const struct xt_mtchk_param *par)
->  		return -EINVAL;
->  	}
->  
-> +	if (info->has_classid && !possible_classid(info->classid)) {
-> +		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-> +		return -EINVAL;
-> +	}
-> +
->  	info->priv = NULL;
->  	if (info->has_path) {
->  		cgrp = cgroup_get_from_path(info->path);
-> 
-> base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
-> -- 
-> 2.48.1
-> 
 
