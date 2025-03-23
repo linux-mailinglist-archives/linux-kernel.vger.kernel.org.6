@@ -1,203 +1,156 @@
-Return-Path: <linux-kernel+bounces-572948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E89A6D0AA
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA31A6D0A9
 	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CA93A441B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134C5188E85D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302AE19C542;
-	Sun, 23 Mar 2025 19:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D78199E89;
+	Sun, 23 Mar 2025 19:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkagMSux"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbbDbVN0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095E6376F1
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C18E2AF04;
+	Sun, 23 Mar 2025 19:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742756541; cv=none; b=P1Im8glzr0T1wl9TJXB4s32c34tS18gcnrNc8m+RMm2YBO/t9XlGrcuDl/w7QcWK5lpz0bKfuT2+zEEuGuCK1rBmNogg0s4cobQnmaXzKVtnt7p77bOLQmxQdFP7llwpTWypncHkLplDXzuR+qslbPJjyZF/d+RdBiBIrlE8A90=
+	t=1742756541; cv=none; b=nuKtAalYsDmpZt6t5aeL8Q7f4wFAwiWpiUyimnX7Kj42K0CDvHxDxLixB/cu5VZ83Oe6pA++qhMv0/ropDX/cKRkS2od2in1fFuG4b1dfENl3dfU6dVVtg3oEwxl8MyIMpVsx91DPbGGQOFMfLklM3ImbsBfhXF/02dSf6zHKLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742756541; c=relaxed/simple;
-	bh=tDa9vpNu/b8nQeMcsn/2LF0GMloBDuo9YzrQSkldP8Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qRhJfxDdEi30hYc3q1SiyOffRGPZeF8Vl5xbyFlIM7a/ZW5s4urOEKjGoRFequjQNClkY4gTSe1cOi/XJb5F96wmtP9Tw057NQ5hxCswGhsIfGzQn9tvxKgueNIc8r+kMSI1noR7Cxyo0fKUrSR1WLsIAm+oHVuLeNuddlAp8Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkagMSux; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so10318271a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 12:02:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742756538; x=1743361338; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RuNRgEM1/VSSZOP8AP4UeKswwiKQNT+cWOtWKPuUrmU=;
-        b=rkagMSuxRsQn7+0LkxmjtFs7DEOGvu02Wd+ek3J8WMS8dyuLVar0abAhUPSUClOWpF
-         dhX7YdcsKnmB+HUlglrob2dqx9EDR6cNTrKD/M7Hh7DTF9WhO3J27mVtL6lNMsYsqcju
-         zC1wVa/EiEgCQ7Ly6/A2DWCzvMEPqsaLv5sBY9t05cEN/gxxKiFw3oQtwZs6c5r+00g0
-         qhI5AFaLehU8jEws4OeWrXW43Y6JFVQ/z33cjRZgWdwTB0+S5i8xZ9eYIhOz7saPWii4
-         Jti+aUWiVmQv2GrrM7pJHdAmV3oobz3h1qyLyDqnWzuLyjoj48HGHEc2qZ+6FYboEmNQ
-         wM/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742756538; x=1743361338;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RuNRgEM1/VSSZOP8AP4UeKswwiKQNT+cWOtWKPuUrmU=;
-        b=nlrz+9f34czBDCoidIRL9KBdd/QLVr+11k1IJTC993L6Ieet1Dud80HAOUNclBS9JT
-         zBLE356zS5xUYgiwvC5TuLZo7s+OPn7HfU1eiBBGyTobXua2kt+xrqaAEveQFlPwLrjn
-         tZJTKMScLUgkBbba+rKUUdjmqZ6SbAilwG0WYEHPJq5OCquvjZlviJxLMhX9h4u/3RTa
-         OqzsMQPxosohJJ3rCkLGH0ew0JAKK8hlE1VZ9RJZiKryHjJYcmUvP3H2Cm7tjjYLbJvj
-         sOH20wViIoP9SGzowd7rNBsAAIjveEJinUtxzzu1JuWQCvRLKXGOUtk8mn79CsZoG0ph
-         22TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjraf2bIW5y7n0S6AAgXRtX94K54eyk6xC/Y0NXp6yt04oche2CcLI6BYk/gcTPkEHwQ3jAzzdSlr5yv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVx4YZereno8RSdrmaSrcuYEOK9XZ5bBv0IFaspvGjWefjBzZx
-	MHlL6qN6K5wjr6qQzsIbt4RPWjXl/+uR0bfiFXKTquy16ANCgqlWYB+yKEgS5RvfZPN9VYs502X
-	WpeCnktMlUZ0XItMeNw==
-X-Google-Smtp-Source: AGHT+IHqKpRChgtgDh49YPKj5euGR0CZLSvO9CAU4Y43PCYdmIBq9tlLyCyLELbaKPjbaTiHWY1Fon3WmY7MX6oI
-X-Received: from pjbok3.prod.google.com ([2002:a17:90b:1d43:b0:301:1bf5:2f07])
- (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d008:b0:2ff:693a:7590 with SMTP id 98e67ed59e1d1-3030ff08de9mr20652493a91.33.1742756538347;
- Sun, 23 Mar 2025 12:02:18 -0700 (PDT)
-Date: Sun, 23 Mar 2025 12:02:04 -0700
-In-Reply-To: <20250321133447.GA251739@nvidia.com>
+	bh=xPwUEeMkum1alHhyumvzKlvq3K2o0Qo1SY878rhBFGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2+9kVozO6hgqHgDyHAjuqAs1zGKsjQCdZdfGm8FnRmFqipMMxepMlQzGcYxRQhiPbVBUkE9gLkc42GPUgfi1lpG45dI19hHqnt7fReI3AseJ04WxvYTJ1ng4khfa3Eh5aQGIiW9zo54Ds6ccMb5sdYsV9Qr1iWF85rxko0daGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbbDbVN0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97137C4CEE2;
+	Sun, 23 Mar 2025 19:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742756540;
+	bh=xPwUEeMkum1alHhyumvzKlvq3K2o0Qo1SY878rhBFGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sbbDbVN06ziuFHRyBn225BaHp3dYBYyjTiUiQptdyTp6qqBPG6QN0EQ+VJeHwQxDf
+	 HnDtbcAlzJhCqkipskKCGyDtNJ/Z5CswXFmz/dASHjHqZeEOy9RsMkpEM8TvfcADWs
+	 hP2LbPnnQNWMgsOnXTVhV0hMqd96skZT0wcROVllJCT82+jZoAlxRXhKBz9UKZrmDz
+	 QA8JMm4fom4/C9HuKpouG78++gEM8MxblXmmEnrr7YHY2Mpwi8Bxk2t+s0PSHNbnRf
+	 s3oTbJO5hQFh5jshHLN/GpJVQgPx9XTMZchJkdFz5pdWfTv4lm8VW3pHt2HWjIqVgJ
+	 5LVUyIog5wwyA==
+Date: Sun, 23 Mar 2025 20:02:15 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Dirk Gouders <dirk@gouders.net>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf bench sched pipe: fix enforced blocking reads in
+ worker_thread
+Message-ID: <Z-Bat1oBCQqT5mt5@gmail.com>
+References: <20250323140316.19027-2-dirk@gouders.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250321133447.GA251739@nvidia.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250323190204.742672-1-changyuanl@google.com>
-Subject: Re: [PATCH v5 07/16] kexec: add Kexec HandOver (KHO) generation helpers
-From: Changyuan Lyu <changyuanl@google.com>
-To: jgg@nvidia.com
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, changyuanl@google.com, corbet@lwn.net, 
-	dave.hansen@linux.intel.com, devicetree@vger.kernel.org, dwmw2@infradead.org, 
-	ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, 
-	kexec@lists.infradead.org, krzk@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
-	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, 
-	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de, 
-	robh+dt@kernel.org, robh@kernel.org, rostedt@goodmis.org, rppt@kernel.org, 
-	saravanak@google.com, skinsburskii@linux.microsoft.com, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323140316.19027-2-dirk@gouders.net>
 
-Hi Jason, thanks for reviewing the patchset!
 
-On Fri, Mar 21, 2025 at 10:34:47 -0300, Jason Gunthorpe <jgg@nvidia.com> wrote:
-> On Wed, Mar 19, 2025 at 06:55:42PM -0700, Changyuan Lyu wrote:
-> > From: Alexander Graf <graf@amazon.com>
-> >
-> > Add the core infrastructure to generate Kexec HandOver metadata. Kexec
-> > HandOver is a mechanism that allows Linux to preserve state - arbitrary
-> > properties as well as memory locations - across kexec.
-> >
-> > It does so using 2 concepts:
-> >
-> >   1) State Tree - Every KHO kexec carries a state tree that describes the
-> >      state of the system. The state tree is represented as hash-tables.
-> >      Device drivers can add/remove their data into/from the state tree at
-> >      system runtime. On kexec, the tree is converted to FDT (flattened
-> >      device tree).
->
-> Why are we changing this? I much prefered the idea of having recursive
-> FDTs than this notion copying eveything into tables then out into FDT?
-> Now that we have the preserved pages mechanism there is a pretty
-> direct path to doing recursive FDT.
+* Dirk Gouders <dirk@gouders.net> wrote:
 
-We are not copying data into the hashtables, instead the hashtables only
-record the address and size of the data to be serialized into FDT.
-The idea is similar to recording preserved folios in xarray
-and then serialize it to linked pages.
+> The function worker_thread() is programmed in a way that roughly
+> doubles the number of expectable context switches, because it enforces
+> blocking reads:
+> 
+>  Performance counter stats for 'perf bench sched pipe':
+> 
+>          2,000,004      context-switches
+> 
+>       11.859548321 seconds time elapsed
+> 
+>        0.674871000 seconds user
+>        8.076890000 seconds sys
+> 
+> The result of this behavior is that the blocking reads by far dominate
+> the performance analysis of 'perf bench sched pipe':
+> 
+> Samples: 78K of event 'cycles:P', Event count (approx.): 27964965844
+> Overhead  Command     Shared Object         Symbol
+>   25.28%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
+>    8.11%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
+>    2.82%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
+> 
+> From the code, it is unclear if that behavior is wanted but the log
+> says that at least Ingo Molnar aims to mimic lmbench's lat_ctx, that
+> doesn't handle the pipe ends that way
+> (https://sourceforge.net/p/lmbench/code/HEAD/tree/trunk/lmbench2/src/lat_ctx.c)
+> 
+> Fix worker_thread() by always first feeding the write ends of the pipes
+> and then trying to read.
+> 
+> This roughly halves the context switches and runtime of pure
+> 'perf bench sched pipe':
+> 
+>  Performance counter stats for 'perf bench sched pipe':
+> 
+>          1,005,770      context-switches
+> 
+>        6.033448041 seconds time elapsed
+> 
+>        0.423142000 seconds user
+>        4.519829000 seconds sys
+> 
+> And the blocking reads do no longer dominate the analysis at the above
+> extreme:
+> 
+> Samples: 40K of event 'cycles:P', Event count (approx.): 14309364879
+> Overhead  Command     Shared Object         Symbol
+>   12.20%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
+>    9.23%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
+>    3.68%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
+> 
+> Signed-off-by: Dirk Gouders <dirk@gouders.net>
+> ---
+>  tools/perf/bench/sched-pipe.c | 15 ++++-----------
+>  1 file changed, 4 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.c
+> index e2562677df96..70139036d68f 100644
+> --- a/tools/perf/bench/sched-pipe.c
+> +++ b/tools/perf/bench/sched-pipe.c
+> @@ -204,17 +204,10 @@ static void *worker_thread(void *__tdata)
+>  	}
+>  
+>  	for (i = 0; i < loops; i++) {
+> -		if (!td->nr) {
+> -			ret = read_pipe(td);
+> -			BUG_ON(ret != sizeof(int));
+> -			ret = write(td->pipe_write, &m, sizeof(int));
+> -			BUG_ON(ret != sizeof(int));
+> -		} else {
+> -			ret = write(td->pipe_write, &m, sizeof(int));
+> -			BUG_ON(ret != sizeof(int));
+> -			ret = read_pipe(td);
+> -			BUG_ON(ret != sizeof(int));
+> -		}
+> +		ret = write(td->pipe_write, &m, sizeof(int));
+> +		BUG_ON(ret != sizeof(int));
+> +		ret = read_pipe(td);
+> +		BUG_ON(ret != sizeof(int));
 
-> I feel like this patch is premature, it should come later in the
-> project along with a stronger justification for this approach.
->
-> IHMO keep things simple for this series, just the very basics.
+Yeah, this was unintended:
 
-The main purpose of using hashtables is to enable KHO users to save
-data to KHO at any time, not just at the time of activate/finalize KHO
-through sysfs/debugfs. For example, FDBox can save the data into KHO
-tree once a new fd is saved to KHO. Also, using hashtables allows KHO
-users to add data to KHO concurrently, while with notifiers, KHO users'
-callbacks are executed serially.
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
-Regarding the suggestion of recursive FDT, I feel like it is already
-doable with this patchset, or even with Mike's V4 patch. A KHO user can
-just allocates a buffer, serialize all its states to the buffer using
-libfdt (or even using other binary formats), save the address of the
-buffer to KHO's tree, and finally register the buffer's underlying
-pages/folios with kho_preserve_folio().
+Thanks,
 
-> > +int register_kho_notifier(struct notifier_block *nb)
-> > +{
-> > +	return blocking_notifier_chain_register(&kho_out.chain_head, nb);
-> > +}
-> > +EXPORT_SYMBOL_GPL(register_kho_notifier);
->
-> And another different set of notifiers? :(
-
-I changed the semantics of the notifiers. In Mike's V4, the KHO notifier
-is to pass the fdt pointer to KHO users to push data into the blob. In
-this patchset, it notifies KHO users about the last chance for saving
-data to KHO.
-
-It is not necessary for every KHO user to register a
-notifier, as they can use the helper functions to save data to KHO tree
-anytime (but before the KHO tree is converted and frozen). For example,
-FDBox would not need a notifier if it saves data to KHO tree immediately
-once an FD is registered to it.
-
-However, some KHO users may still want to add data just before kexec,
-so I kept the notifiers and allow KHO users to get notified when the
-state tree hashtables are about to be frozen and converted to FDT.
-
-> > +static int kho_finalize(void)
-> > +{
-> > +	int err = 0;
-> > +	void *fdt;
-> > +
-> > +	fdt = kvmalloc(kho_out.fdt_max, GFP_KERNEL);
-> > +	if (!fdt)
-> > +		return -ENOMEM;
->
-> We go to all the trouble of keeping track of stuff in dynamic hashes
-> but still can't automatically size the fdt and keep the dumb uapi to
-> have the user say? :( :(
-
-The reason of keeping fdt_max in the this patchset is to simplify the
-support of kexec_file_load().
-
-We want to be able to do kexec_file_load()
-first and then do KHO activation/finalization to move kexec_file_load()
-out of the blackout window. At the time of kexec_file_load(), we need to
-pass the KHO FDT address to the new kernel's setup data (x86) or
-devicetree (arm), but KHO FDT is not generated yet. The simple solution
-used in this patchset is to reserve a ksegment of size fdt_max and pass
-the address of that ksegment to the new kernel. The final FDT is copied
-to that ksegment in kernel_kexec().
-The extra benefit of this solution is the reserved ksegment is
-physically contiguous.
-
-To completely remove fdt_max, I am considering the idea in [1]. At the
-time of kexec_file_load(), we pass the address of an anchor page to
-the new kernel, and the anchor page will later be fulfilled with the
-physical addresses of the pages containing the FDT blob. Multiple
-anchor pages can be linked together. The FDT blob pages can be physically
-noncontiguous.
-
-[1] https://lore.kernel.org/all/CA+CK2bBBX+HgD0HLj-AyTScM59F2wXq11BEPgejPMHoEwqj+_Q@mail.gmail.com/
-
-Best,
-Changyuan
+	Ingo
 
