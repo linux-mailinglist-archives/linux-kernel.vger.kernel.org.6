@@ -1,189 +1,109 @@
-Return-Path: <linux-kernel+bounces-572965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA2BA6D0EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:51:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1110AA6D0EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183A33AC3AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07FB18951B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C219E965;
-	Sun, 23 Mar 2025 19:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC82219E83E;
+	Sun, 23 Mar 2025 19:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2c4zU1c8"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UH2jBKc6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A0428E7;
-	Sun, 23 Mar 2025 19:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742759460; cv=fail; b=sFXfcr4imtF0LJayWI+6OvcffkUtHzpMJ68uHolJjHC8KCvaGJpkg3FJsYG3skrEU3yTQ2y6FUO4+ajhDgu/y1Q3UrDH7M1KJDq/jjqs44ChMZ3Iq81vlPUYE+wQLVzkeaxY5d3f+WAj24b/k1uPuVjhoCPevy+yV2J9LR1Uvbg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742759460; c=relaxed/simple;
-	bh=z55Gz56za39C3sjAP9Lb4zTVymqC0X6JHvt2n+NVXHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eHbYfTSbmEGrH+fyx2xvpy7nt5Xugw67+o/bF0WanOO48MJ3ETnz+sERfD1uo87HRlnNDq0R7QLXYAsXmKxcK5o0ALK64bjdCTtB+gsyj27mcUQxeQDoGFbEPmGOAIwjRcwdZhw4FdDHVFC6mgzxc+FMhFTfg+yN4skdQK2tGaE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2c4zU1c8; arc=fail smtp.client-ip=40.107.92.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J+G6pM3V6OHoF5ZYZ3olXLq7zHiNbwFRvW/wpI3qyhmAASf2HzYBxPopAx63pAaPg9DrZaLr6hpz5flaVPfyzmV1Puj89OCXvvXSqysYHDhXfU1XoaCU8G1VXgGrQOWAKVSxCQBfSFzCwTU1+GprKmbvaGIRdiAoyp/CfIUQdYLMqAksXxWaQ0v5x9Jnqd49h6dKyJ9NOmlARviGuazl5z8eALFu0kyWb3Z91ikeBtK1rJsBnO/qNAjO0F0CI66DcOND3gRB9TfxljIS5da2bIBqP64sXjLnntK2ZTx1Hy0wVYWl5EQ+zfYuD2g05MfXR9Uh4ulKWi/xp5dOZdfdUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bioPFA65gArxZ5kNg6BQB/qc6THJBJWwxanL9UTbMrw=;
- b=zDpB/dwqrFOhJr8PSgg58fKw6glZVrHlfWU/Znif9BKgR4mA/JGcu4i0JS/ckFecdf391oVGnoFS1ieWbHt7AdXiGjDRxJ7dGTWslDOfvBk6dTixjQ3s8yNf5CZouiGyqYRfImXNwZFSDWIwi9Us+bl0ao50tGKj9vQ/xMQpV20eS9PBsnrUS0kq3fu5MVTGa0n6ECDemLD7LPPeRdgXsxGGKk3vCNIROB0hsA44K9ravqeLgpJIn+BteBngnBCF/sON0s12J0W4eySG+ElfLAD8Ywf67fL641itLMY3EUk7X3TVSFf6IFto4y8F7SrEhv0zDOE8TrHxeeO2fFVIrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bioPFA65gArxZ5kNg6BQB/qc6THJBJWwxanL9UTbMrw=;
- b=2c4zU1c8KaKf2nj44OXevjKtWrqBUEIhgXWdAbFfT2N9/1E/UXN+g6nctUD2Jmqe5EYpk3JA0vRR/8xbwudq7SAY0bLdjbxKjZA2f/roDN8+zNiFzf8rxImJEQAfZ4rAPSCTvkBmv/mKT3WnDi74OikJFI3YZSb5FFmfo/vTeTE=
-Received: from SJ0PR03CA0033.namprd03.prod.outlook.com (2603:10b6:a03:33e::8)
- by IA1PR12MB9531.namprd12.prod.outlook.com (2603:10b6:208:596::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.28; Sun, 23 Mar
- 2025 19:50:56 +0000
-Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:a03:33e:cafe::dc) by SJ0PR03CA0033.outlook.office365.com
- (2603:10b6:a03:33e::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Sun,
- 23 Mar 2025 19:50:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Sun, 23 Mar 2025 19:50:54 +0000
-Received: from [10.252.90.31] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 23 Mar
- 2025 14:50:50 -0500
-Message-ID: <791d5b5a-3204-41cf-8796-b26018824333@amd.com>
-Date: Mon, 24 Mar 2025 01:20:47 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637B528E7
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742759487; cv=none; b=s5sI32mwU7V5pcBO0qlScu78NbzdTj7bvTKMXI+OC0sekhtIbdgGgX5o0PYGqr7cq4fM3TPwx2hJyK1kZt4Jha77OH90yqXyEeVnHtYWB56thhssYfT3mUQabgY5u+F5c3CvFIZv2dqcx2ZsdnKAgMXJPeMZP/Yj5j7x31PXTfQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742759487; c=relaxed/simple;
+	bh=2z8DIs/MfUWa4qmP6/wlHkaufzH2IeAdTj7tuhZKYfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDufFBvlDEfesiTMMiS87pI575++C1USfVzodH72GW9SttFQN/lCdsveNiEQluw8evt3FOYcnS2HC28/zoobvcqyS9Dy/iGqCpU2EJeCxdKztCCQtjemqA++ddDU+wfIYUYRW0gOtLdrEhfIYsc2wvIHXH3SyQSNbh91pSFaHYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UH2jBKc6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EA50A40E01FF;
+	Sun, 23 Mar 2025 19:51:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cG2-PWExDVlH; Sun, 23 Mar 2025 19:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742759477; bh=vQw69BVbIRV1aaHYirCZ/+GJ4s80ZDu6SI8BvHKYn8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UH2jBKc6jVqAIqZubq7aY1UJ3vXE5wMiTbd6k8MXHRVQefXBfpw+asyn4ui9kkVxg
+	 fjxrj20aZesbat3Pftq70yxH4ozNE65xVl8nX9oBhOlkgqGz5ZqP0/PipPaQj6SWKG
+	 hEg4nL3H1bOHJhjTugbWmceHCXQVr+e2g66DQmxkYgt0Y5SwqzaYP05yVhH2oB3G6R
+	 f4ngt764A3gM481M+IXAdwkelzftbVD9YyLUujpKxtGsdIwebZY6zpqjdUWz3H6KNP
+	 8prqHf8PS3qLs/RYardt9/JxxlpowVTyaxxLRozsrv16z+TrVa2IqUTw/r3PbKmJjI
+	 gv4q9+yVFBY9fngGdvGaoVyM7bWVGE6KwNhbuhPTOe0mLnGNi/FUar+osX0r4w0knL
+	 ubZckyZAJTfjp5dcpgezyAWmm4uXDWxFNib86ptdn305vHmJMoLcY+jApwms0xxB0i
+	 aRa/CT8mChQvNDcX3m+HJgeRPkVHH6Hxl+9V0BWSng6UDlbXe82oFEvJIfbpbsQyEC
+	 Z1yPxEik31BBsINuWwVqAFpS/7L3I5EZFXoX0qaQKcEPVkG4s0BXG0jyl9ASrXEzaQ
+	 qEZz9WSh9mNTbA4jBwsxfKdDO37HTZrVtx4VP6LRo8I79yscKSILRbcw50iLzDX3r/
+	 4fhVH1BVeTBI4gyUSdlqBNZM=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 86A3240E0196;
+	Sun, 23 Mar 2025 19:51:08 +0000 (UTC)
+Date: Sun, 23 Mar 2025 20:51:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+	dave.hansen@linux.intel.com, kernel@gpiccoli.net,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
+ boot
+Message-ID: <20250323195102.GDZ-BmJgDWLieuUaJs@fat_crate.local>
+References: <20250226132733.58327-1-gpiccoli@igalia.com>
+ <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+ <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
+ <b43e2353-41ff-f2de-881c-c9a3348552b7@igalia.com>
+ <87iko213qo.ffs@tglx>
+ <c9ce2eb1-bf90-3ce4-0adf-3f4e43f4a5bd@igalia.com>
+ <20250323181444.GCZ-BPlCAhtO7AIsS7@fat_crate.local>
+ <8247f64e-316d-0eca-9e5d-0c63c7dfc862@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-To: Oleg Nesterov <oleg@redhat.com>, syzbot
-	<syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-CC: <brauner@kernel.org>, <dhowells@redhat.com>, <jack@suse.cz>,
-	<jlayton@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <mjguzik@gmail.com>, <netfs@lists.linux.dev>,
-	<swapnil.sapkal@amd.com>, <syzkaller-bugs@googlegroups.com>,
-	<viro@zeniv.linux.org.uk>
-References: <20250323184848.GB14883@redhat.com>
- <67e05e30.050a0220.21942d.0003.GAE@google.com>
- <20250323194701.GC14883@redhat.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250323194701.GC14883@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|IA1PR12MB9531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 300e54d9-b91a-478b-6ec1-08dd6a44060b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|30052699003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cHNRdHVyZEdJMlMzVzJrdUdkOVRhM0pNNmJQcnMzV1dXR2RSbTdzQ0IzaXBF?=
- =?utf-8?B?MUR0ZHRySHNxUzFFMlJ5Wkd1RHphSzlJT0NUQnFmV1pvZmR1L0pyY29vOG96?=
- =?utf-8?B?a3dRMzcrR1JJemhoSVd1Q2hyanJRSXpFRkd5YlpUZDdFWWwySGVIKzN0VnYw?=
- =?utf-8?B?R3gyWUFjRDhGVnBBd0FQYzVNSHFZS016bzZNcXJYQ2Q5RllZL29KS2I3dmYv?=
- =?utf-8?B?TEhQbVg1QkZkNVRLS1RpeHk1L21sRGR5dCtzWEh5NnJZdERiUE9xYUR4bmRo?=
- =?utf-8?B?SEFUOHVveTBvQjJOTmEyaFFHNjZ1ejc4SkVYN3NkMXhFamFhVUlaUk5mM0ZL?=
- =?utf-8?B?MElMN3pmV1JqTlFINm56clh2YjIvekduYk5iN1c4VFlka2s3MEYzQjBMWjJX?=
- =?utf-8?B?RVIyank3SGlpWEVKS3A1K3FpcHNvbDVrczVWRlJrU1ROWlJTckRMeTlTRWNk?=
- =?utf-8?B?RmxXZTdONlhqZ0ZVeHYzSTJsdEt4ZkJENEtvWWxWaytCOGE1K3FIUEVBZFFS?=
- =?utf-8?B?a3llaXVQMWI1QTlyNFJERkZBTHBxZm1mVUxPTFBBMCswTDhPbnpJR0I2eUwy?=
- =?utf-8?B?amlTTUZOYkthN3hRYjVmV1Rzb2NVK0t4Wlc2QTdWK1VvUWx5NzJaOCtNNHFs?=
- =?utf-8?B?U3hlWCswSTRyZlhHQVp4QUlzZUhLUWh0NHF1TGZBSkJ5cTAwazhvc0U2ZWRw?=
- =?utf-8?B?L0xFYUxnT3lLVHE4SG45dHZUUk5CdGRjaXl2NTcvckR6aHVjNHZiRlZDVUlO?=
- =?utf-8?B?ditTWG1EcHFQVFZOVXV1eHR0cnhTY3BIMXd6d2hrWTFqMnhPYXhnbFRiekJX?=
- =?utf-8?B?MjdpNjgxa21tN0xWZUM4cUd4MmJkWExwamJWYmdZdktEanhRVVA2WjdmaE5E?=
- =?utf-8?B?YkJZSGtyak5IdFNVOW1WY3pvSnBOcWdmTFZ2Vzc2VFB5MkhLSVdnbUp3STlE?=
- =?utf-8?B?R1hnYVIzQ1Nna3gxNHpXMEpOejJzNjExU1ZYQ1pzODFOdThvMmRhdnh2Qm1Q?=
- =?utf-8?B?L21uY1FML3VhUjZrUWl3SVdDbXQ5bE9UbFlFS09wSmJmRFlpMkJjZ1BkN2t3?=
- =?utf-8?B?RnJTRkhkRTduc25UeE5sbVIvSWt1YlppQ3ZsdGdQQXAwOTJGZTg4R3k4ZGVq?=
- =?utf-8?B?eDVkM01HZGRsVW5iN205TERkYjh5R2dzd1hFcVBzTDNDVHkzRXNVWlBIYzN1?=
- =?utf-8?B?RllVczRPSG0rL1BpTG9mK2t3L1hUVkNwN1J0dEpwbDluQUs5YllHSjNUa1lG?=
- =?utf-8?B?K0xCNWRlNDNoNWMreVlEaHhFU1ZKV2F5WFlROUtvRHVBUElxK1FhVnNLVVU1?=
- =?utf-8?B?czZlaE9oWEFteC9NakRCOURLK1ROWGlGb1RUTkN1Qm1wcndINHVNZVB1MXVn?=
- =?utf-8?B?cVh0UkZkL2g2bGFkZEpyWDdIMlB4bWl0T09vcjlueE5BZVZMajMzRzlpaGlv?=
- =?utf-8?B?bmU0eGphVDZhcWovcFJ0RzdNY2RpZFpoaU5MK21BbkNUS2paL015bHc5bWln?=
- =?utf-8?B?YWs4TkZnT1lDQ1NGemRDRHRodktpV3JxQjlQUDJ1QWpoRXB3R1FQUTBmVHcx?=
- =?utf-8?B?Qk9NQTZtOU1DbWVMMk5oclBJeDRDdktONzYyRWhjUnhtdmhXT2IzMTJTSzV6?=
- =?utf-8?B?V0EzNjRCVlVOb0NtdHFvSE0wMXE4TWNtRmlnY3NCQkltcXRZTUQxWkplUVdB?=
- =?utf-8?B?QzFLZTgrYUEzbmFhYUQ2eElueVBvbFQ3UmJBYjJMTy9nbVBCSkNhOXlzMmor?=
- =?utf-8?B?N3JvN1pxdTFpQ1BPa0YvU3hVSXYreTQ3dlF6bVliZjY1TTVnQlJUenQwVDQ3?=
- =?utf-8?B?VlByY2dxVWxRVWJiaWlCOHhMeXhYZnorYytKcDZFKy8rR09rL2dJVmdybVha?=
- =?utf-8?B?MEJFVGFvWlkvc2VIb0lLbFZNN01QSnNUSmNpT2VKL0dzY0FQWVJmb1BVL3dZ?=
- =?utf-8?B?WjRPUCtNQW5Wa2FQbG5ZWWpaSXhGSGRGOEhwTVpaa21HNWkweE5aSHJabzY3?=
- =?utf-8?B?TUIzR09WUGJ3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(30052699003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2025 19:50:54.6648
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 300e54d9-b91a-478b-6ec1-08dd6a44060b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCBE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9531
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8247f64e-316d-0eca-9e5d-0c63c7dfc862@igalia.com>
 
-Hello Oleg,
+On Sun, Mar 23, 2025 at 04:21:44PM -0300, Guilherme G. Piccoli wrote:
+> This is great to hear - is there any starting point model that you know
+> AMD introduced/is introducing TSC_ADJUST?
 
-On 3/24/2025 1:17 AM, Oleg Nesterov wrote:
-> On 03/23, syzbot wrote:
->>
->> Hello,
->>
->> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->> INFO: task hung in netfs_unbuffered_write_iter
-> 
-> OK, as expected.
-> 
-> Dear syzbot, thank you.
-> 
-> So far I think this is another problem revealed by aaec5a95d59615523db03dd5
-> ("pipe_read: don't wake up the writer if the pipe is still full").
-> 
-> I am going to forget about this report for now and return to it later, when
-> all the pending pipe-related changes in vfs.git are merged.
+Zen5.
 
-P.S. I'm trying to repro this on my machine on latest upstream. Haven't
-gotten lucky yet with the C reproducer with my config. I'm moving to the
-the syzbot's config to see if it reveals something. If I have something
-I'll report back here.
+> We don't know yet what's going on, some TSC skews reported eventually in
+> some machines, in a fleet - but "old" processors, Zen 1st gen.  Once things
+> are more clear, definitely could provide a more mature report of the issue.
 
-> 
-> Oleg.
-> 
+Sure.
+
+Zen1 should not have TSC problems either. If it does, whack BIOS people.
 
 -- 
-Thanks and Regards,
-Prateek
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
