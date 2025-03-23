@@ -1,375 +1,134 @@
-Return-Path: <linux-kernel+bounces-573010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67721A6D170
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:29:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7FAA6D173
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EED916F1F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3196F3B3664
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4230A1C5490;
-	Sun, 23 Mar 2025 22:29:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BABC1487D1;
+	Sun, 23 Mar 2025 22:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="za8yqTkV"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3524347C7
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41F129405
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742768967; cv=none; b=pI7W5hL5g/kAZRHzvyhq8Sy26wLrh+iSg1hHOUGLmCQYdB9ZgpEmVbsGIZi69OLBi15V/0ZrinmblHBbRM3JJ3HVgAfrc/9SqKNIbgzAKDwKK5N08IMw7Ur0CVZGzuqPMZmtwVxCjbEAu3iHUum+O2cU/Q6eMbMvHU579IMUjqY=
+	t=1742769035; cv=none; b=qomr8Ij49/LerwwNJQZ/ededgmlXwPviKUv0ni2WOA/rUu33QfHeFfBAyVEFtwYVJWEPj/wz5MJeV+Vqe7ZsJthFDaHfRftiTXg8J5cR1qP+P3mXik5JL57vmGzXiG0fgfbO2fix660zj8comgaf4papf0q0NDA0/gljrRBC4Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742768967; c=relaxed/simple;
-	bh=+jUYh885OfbSaYN0gkGWBrklf3NLx4kXWR01nBncUe4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jqxUe6A/JiIVT1UI3zxZi5zd/gLbmpZYLHzUfDZRrrmx/87ww2dF0b+n59r4fyJsHAD5exOMCwWho7KhsF/3wERp7Z6aUbJ5pd80FXarT5nD/mxJE4CZBw6eqfZzYLOXim3O3/ZHw14gwSS/FXv4cK6Ih9LDUP8Pak6TDQnXg4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2a6b4b2d4so75965715ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:29:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742768965; x=1743373765;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1742769035; c=relaxed/simple;
+	bh=1b3NqGhZ++VNtWquMWADqKAovnA8dxvjiZY17polxNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jJQLpIunJNnr7GW83120u0i86vCl98GNRo1CF8EPdH42dHsRg6z+7lLq4FYiVmBlhr4NxYGFed4lpVQBAyBn+IFuRolERq6IZpQsqQJy8p1K+bAR2dgI2LXmcp4wXo2Jf2ijBGOalu3MmFhllpZChTzqehpS8cE8jnAoJZVXjT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=za8yqTkV; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d434c84b7eso28924515ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742769033; x=1743373833; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0whirQfEp/HnVFS0TQ/d/sx4gZ3rbACrSb0zJJASSF4=;
-        b=a1HPVh+8Y7UznJzg2z1BQQ+HVY8ugOhQDRJJAJ/j3oFId3VWrZeRyxA9IMjoe91Jwm
-         JXpAS/5mVox/eil3/Xggw0LxcLe/+9r1TR72zlS/O+aQZlLw8fE05AnJQpGrkc6sQSSJ
-         OBY7OYf2/7s71ILPSvladiAufDZPBAADXmrAhTPFFuK5Ts1u/a8jvg0TgMUOAdMZlHNh
-         MHD6YRL1Iav80e7KZT3X3vptvPkjPR0sPKB+KvdVZ5EZ+lqauxovA9t4hVnsfIaqd/2a
-         n52pG6u+XY4yPRZ680I+l0MjorZUp9vydX82ByVxuazFscRTJ8sXevTbmS8vrp5Qf95z
-         UCgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhjYOFdt1MrSPttUWuoLG7YjVtWnoe8Y4ZZmt8tykE9+JselsYgEeAMUEaFwMrRlGLHhZqOZ6k0L8eUvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUGaYhff0IyIjOL+Eu1+IpTc7huNc0/5nx+A6pXBJOxirK3Mwr
-	RRCM/DLIOiPqnBGR/h0bBq4u7arav464E0he2XJFI+/XH6hYRIDrPePnWo9VVKt70efdQ26kpqz
-	G7t6oPpSWdntbaO/Vgq+IgYiX+aSdBmxphol8NipecqnJDMfP2dgb7DU=
-X-Google-Smtp-Source: AGHT+IHAFJbuIBndlkn8IzYxZyDwiVqSuXQZ53H3v0TdCZixhQBcJm0kyq7mImD8cTWCYLWjIMvpnLMiqlJXbkTcogWT+krpEMmc
+        bh=nTRlExMDyawWBV8YJuZYM4CxYbcHVqfU+45dmVV3tsQ=;
+        b=za8yqTkVfMyFHwD1+oWYC+gKzg5VhwhXkvOmBnIq9CC/T8XxO4JrmDhP5r3zfnG+Fd
+         UJbzZ4vgqLt3cJFNpaxpXoI2olejHL+IF86y72vmUgNIv4wdU6oOgG7stFfKQlji5asp
+         KQbf2X6w+2zsM3DXr6nR/BtieR6h5eaYh72zewIQB9b4Q1rLWOuKiWSttSl8ngsFQPRi
+         UkTsRvqFul0xUDU9qHgoxls/KCVFSuRWyAslygBaCRn1BLEgmB77vweODSDpqOlXR0vX
+         JNmISd+QebuZFN93XZJvSBAzEZKKhlBHiPP/vMZtR65cfgNbMElU16pJ4n41z7BSF1nM
+         T6HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742769033; x=1743373833;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTRlExMDyawWBV8YJuZYM4CxYbcHVqfU+45dmVV3tsQ=;
+        b=s4c951t9iqXL+RUCxiLz+AyWd6Qh2iBx+jVdXwF9IzIDgA6lgyU4Z7crwIFBAuTmdy
+         xyDZfGsot2x96LbdVEAchaMGS95mAwETTLW/DOsitdcqh8LldXJJGZ3cQX3USSxtzz7p
+         fx6JspDDeICuqrJUiNkm4L2e3zAMH01vfHJSIlWvzEDBHffmQITS1RbQVTJZuMA3mz8U
+         IYJPdvTsV9OpfhmYCvgxZLT3fvCbZNj7fcH5eH93wyhTnxTBiNbOvBEqOs1DMe1LEi7Z
+         mO5hQKvvPvnMg61oJJBbPltxlstlV+6bseYWrsml9HKKCb6GBZxf9+l9clS+LNYXdMXk
+         DKBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZkXwdwxw+Wdn9eVTfeR9IC1rwgK8puNJP2MdGokhxznTfmGbBz6grlPzCAhW7U3kNbEBrvyxAN9tJmLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRPX1qGL5+XhWmxfQCFqDwPZV8bog9oUWH3dkBKI8zlriIn6t5
+	Rn7P0VcA6fVexPoweiP0DAiod8riXXD1Qd66lN02yu0cVyvAMynCLklwi3a440E=
+X-Gm-Gg: ASbGnctF6kzkI+PR8f8J6dBmCcIMCPq25IZPrKYcxeDrtey5h+HgO3GSmtCnYStOA39
+	2kgAZU08uYJRAY3rG8V3dcPcsrlMSXwocpAn+ege0ZngVPP3qRsUKVfHbZISZyES97ArVokwMc0
+	1ZmnRtjI1fXwlE7o7BuIAVYtXkxERxVVaZWVkwu7DhtrgIXa8SuYjLie8XyymbGlKxHtfIDfP+5
+	IdagMnMDn4jpXnvHHV+64TZbhJgxCizjCJieICbKQV6NuIEsdApeJLOhLZMC3qAFfB0kW7FbYd8
+	XTBQui2HK68NKQtfiuVlepN1USDjs9KEWUOAQx7cy55+CNAUmgTZ+0rbSbw54BZ7BPDSDGAN7FP
+	KsR6UiS5BsWUUNeHgoQ==
+X-Google-Smtp-Source: AGHT+IGH7axJe7eTCwDAhgnxz/2TT8RhnJt+UseNxV/R3diYZCOSlRPsij/3sX+uVBgUHGoEXTkhpw==
+X-Received: by 2002:a05:6e02:3e03:b0:3d0:239a:c46a with SMTP id e9e14a558f8ab-3d596114994mr121950535ab.9.1742769032889;
+        Sun, 23 Mar 2025 15:30:32 -0700 (PDT)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbeb52f9sm1538014173.130.2025.03.23.15.30.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Mar 2025 15:30:32 -0700 (PDT)
+Message-ID: <661457f2-aad9-4b3c-926a-6ee021355dac@riscstar.com>
+Date: Sun, 23 Mar 2025 17:30:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188d:b0:3d3:dfc2:912f with SMTP id
- e9e14a558f8ab-3d59613ad08mr121544195ab.7.1742768964778; Sun, 23 Mar 2025
- 15:29:24 -0700 (PDT)
-Date: Sun, 23 Mar 2025 15:29:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e08b44.050a0220.21942d.0008.GAE@google.com>
-Subject: [syzbot] [net?] BUG: stack guard page was hit in worker_thread
-From: syzbot <syzbot+b6d2e10bf4503ebcd631@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 2/7] clk: spacemit: define struct k1_ccu_data
+To: Yixun Lan <dlan@gentoo.org>
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heylenay@4d2.org,
+ guodong@riscstar.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, spacemit@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-3-elder@riscstar.com> <20250322155034-GYB11633@gentoo>
+ <45526855-17b2-4de4-8e12-6320b7d84c8e@riscstar.com>
+ <20250323130430-GYB15267@gentoo>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250323130430-GYB15267@gentoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 3/23/25 8:04 AM, Yixun Lan wrote:
+> On 07:43 Sun 23 Mar     , Alex Elder wrote:
+>> On 3/22/25 10:50 AM, Yixun Lan wrote:
+>>> Hi Alex:
+>>>
+>>> this patch change relate to clock only, so how about let's fold
+>>> it into clk patches (which now has not been merged), so we make
+>>> the code right at first place? cause some moving around and renaming
+>>
+>> No I don't want to do that.
+>>
+>> The clock patches are Haylen's and the are getting closer to
+>> acceptance.  Let's not confuse things by adding a bunch of new
+>> functionality.  Get those patches in, and mine can follow not
+>> too long after that.
+>>
+> 
+> I only mean patch [2/7], not all patches, as it's still clock related
+> but, either way fine by me if you insist
 
-syzbot found the following issue on:
+I see.  It would be great for Haylen to implement this, it's a
+better way to do it anyway--you can define the number of
+elements in the array using ARRAY_SIZE() this way also (rather
+than having to count them at runtime).
 
-HEAD commit:    f653b608f783 MAINTAINERS: update bridge entry
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=166615e4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27515cfdbafbb90d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b6d2e10bf4503ebcd631
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Haylen is welcome to use my patch as the basis of this, but
+if it doesn't get into that code I'll add it.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+					-Alex
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5dcec1e5d2c5/disk-f653b608.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/18edc4cdc334/vmlinux-f653b608.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/55ff98409132/bzImage-f653b608.xz
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b6d2e10bf4503ebcd631@syzkaller.appspotmail.com
-
-BUG: TASK stack guard page was hit at ffffc9000c1bff18 (stack is ffffc9000c1c0000..ffffc9000c1c8000)
-Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 7350 Comm: kworker/u8:22 Not tainted 6.14.0-rc7-syzkaller-00138-gf653b608f783 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: bond2 bond_resend_igmp_join_requests_delayed
-RIP: 0010:lock_acquire+0x1c/0x550 kernel/locking/lockdep.c:5819
-Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec 20 01 00 00 <4c> 89 4c 24 28 4c 89 44 24 38 48 89 4c 24 30 89 54 24 1c 41 89 f6
-RSP: 0018:ffffc9000c1bff20 EFLAGS: 00010082
-RAX: 0000000000001c08 RBX: 1ffff92001838014 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88813fffc298
-RBP: ffffc9000c1c0068 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff2079f6f R12: 0000000000000246
-R13: 1ffff92001838010 R14: ffff88813fffc280 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc9000c1bff18 CR3: 000000002a12a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <#DF>
- </#DF>
- <TASK>
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
- rmqueue_buddy mm/page_alloc.c:2910 [inline]
- rmqueue mm/page_alloc.c:3083 [inline]
- get_page_from_freelist+0xb3d/0x37a0 mm/page_alloc.c:3474
- __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4740
- __alloc_pages_noprof+0xa/0x30 mm/page_alloc.c:4774
- __alloc_pages_node_noprof include/linux/gfp.h:265 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:292 [inline]
- ___kmalloc_large_node+0x8b/0x1d0 mm/slub.c:4239
- __kmalloc_large_node_noprof+0x1a/0x80 mm/slub.c:4266
- __do_kmalloc_node mm/slub.c:4282 [inline]
- __kmalloc_node_track_caller_noprof+0x335/0x4c0 mm/slub.c:4313
- kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:537
- pskb_expand_head+0x1ee/0x1470 net/core/skbuff.c:2185
- __skb_cow include/linux/skbuff.h:3769 [inline]
- skb_cow_head include/linux/skbuff.h:3803 [inline]
- gre_tap_xmit+0x4aa/0x800 net/ipv4/ip_gre.c:769
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip_finish_output2+0xcd3/0x12e0 net/ipv4/ip_output.c:236
- iptunnel_xmit+0x55d/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ip_tunnel_xmit+0x1dbf/0x2560 net/ipv4/ip_tunnel.c:858
- __gre_xmit net/ipv4/ip_gre.c:484 [inline]
- gre_tap_xmit+0x641/0x800 net/ipv4/ip_gre.c:772
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- sch_direct_xmit+0x29c/0x5d0 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:4042 [inline]
- __dev_queue_xmit+0x1a8f/0x3f50 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- bond_dev_queue_xmit+0x147/0x250 drivers/net/bonding/bond_main.c:309
- __bond_start_xmit drivers/net/bonding/bond_main.c:5583 [inline]
- bond_start_xmit+0xcb0/0x1c40 drivers/net/bonding/bond_main.c:5605
- __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
- netdev_start_xmit include/linux/netdevice.h:5160 [inline]
- xmit_one net/core/dev.c:3800 [inline]
- dev_hard_start_xmit+0x27a/0x7d0 net/core/dev.c:3816
- __dev_queue_xmit+0x1b73/0x3f50 net/core/dev.c:4652
- neigh_output include/net/neighbour.h:539 [inline]
- ip6_finish_output2+0x12bc/0x17c0 net/ipv6/ip6_output.c:141
- ip6_finish_output+0x41e/0x840 net/ipv6/ip6_output.c:226
- NF_HOOK+0x9e/0x430 include/linux/netfilter.h:314
- mld_sendpack+0x843/0xdb0 net/ipv6/mcast.c:1868
- ipv6_mc_rejoin_groups net/ipv6/mcast.c:2878 [inline]
- ipv6_mc_netdev_event+0x1cf/0x5d0 net/ipv6/mcast.c:2893
- notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
- call_netdevice_notifiers_extack net/core/dev.c:2244 [inline]
- call_netdevice_notifiers+0xb6/0xf0 net/core/dev.c:2258
- bond_resend_igmp_join_requests_delayed+0x63/0x180 drivers/net/bonding/bond_main.c:970
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:lock_acquire+0x1c/0x550 kernel/locking/lockdep.c:5819
-Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48 81 ec 20 01 00 00 <4c> 89 4c 24 28 4c 89 44 24 38 48 89 4c 24 30 89 54 24 1c 41 89 f6
-RSP: 0018:ffffc9000c1bff20 EFLAGS: 00010082
-RAX: 0000000000001c08 RBX: 1ffff92001838014 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88813fffc298
-RBP: ffffc9000c1c0068 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff2079f6f R12: 0000000000000246
-R13: 1ffff92001838010 R14: ffff88813fffc280 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc9000c1bff18 CR3: 000000002a12a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	90                   	nop
-   1:	90                   	nop
-   2:	90                   	nop
-   3:	90                   	nop
-   4:	90                   	nop
-   5:	90                   	nop
-   6:	90                   	nop
-   7:	90                   	nop
-   8:	90                   	nop
-   9:	90                   	nop
-   a:	90                   	nop
-   b:	90                   	nop
-   c:	90                   	nop
-   d:	90                   	nop
-   e:	f3 0f 1e fa          	endbr64
-  12:	55                   	push   %rbp
-  13:	48 89 e5             	mov    %rsp,%rbp
-  16:	41 57                	push   %r15
-  18:	41 56                	push   %r14
-  1a:	41 55                	push   %r13
-  1c:	41 54                	push   %r12
-  1e:	53                   	push   %rbx
-  1f:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
-  23:	48 81 ec 20 01 00 00 	sub    $0x120,%rsp
-* 2a:	4c 89 4c 24 28       	mov    %r9,0x28(%rsp) <-- trapping instruction
-  2f:	4c 89 44 24 38       	mov    %r8,0x38(%rsp)
-  34:	48 89 4c 24 30       	mov    %rcx,0x30(%rsp)
-  39:	89 54 24 1c          	mov    %edx,0x1c(%rsp)
-  3d:	41 89 f6             	mov    %esi,%r14d
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
