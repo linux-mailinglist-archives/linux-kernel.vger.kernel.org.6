@@ -1,145 +1,274 @@
-Return-Path: <linux-kernel+bounces-572756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA68A6CE3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:16:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71936A6CE46
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A82D3B6C6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D165B16AB11
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4A120296E;
-	Sun, 23 Mar 2025 07:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD020101B;
+	Sun, 23 Mar 2025 07:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJddlgKl"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HX2sVng8"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE39202F90;
-	Sun, 23 Mar 2025 07:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F53AD24
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 07:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742714099; cv=none; b=OVBg39+LnaTFEG6NeeUcrY12cpTIXZ/QAc7pQX+k7uTld9z7wPYF7WRE3DeVyEvBFBvUi9ZTlD8U0ERD9gsCXlWsM4zlGTUhc1j8afbv8wfshwU+j4zdeNJHEyRWkXDyYF9LQTKE1W05W+pgrOgjSfqAEzn73dhVkGXp5mWWkYg=
+	t=1742714718; cv=none; b=NsjmVMieUa3KCcLLEv7yLLmr/vOfXXVw9UkSWm88AMs/N+1AiD+1plsLnOaas/o66AZBw3dmCQIrjC25XiF1FOMs1+p04cIJFMvp9IXl6isk3uFNv3MYIatl+4tI/6BjdB2Rah81/Q0rxFGSJiKDVNbtAjxxrN8HZORXQKmmSTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742714099; c=relaxed/simple;
-	bh=K954LDETOESsqcW9N5tUsbdpbqeKHsx9OEWL6PY90WM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YY1xuaKZ8kMklPLzNa99KzWeuXO1vpRiNoR+RvFzWaQNSnMqfdH+fZcFWtjOtmYhuiaxKMynzrdN9IaEjlXxxJmtDDgGVBYnIJntL43+RyUK6Gw3HAQsfzwZm5pSJLAgLg04l6RWcCgMaykPQySWuTcGAMu5rUEo5SGm1NIaSuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJddlgKl; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso4998063a12.1;
-        Sun, 23 Mar 2025 00:14:57 -0700 (PDT)
+	s=arc-20240116; t=1742714718; c=relaxed/simple;
+	bh=pjEHBPzfvEeYJItimRBKQTAk73orwkt8aka59h1vjNs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ljwp0CwOJ6sDsr9jioYcgSCgAkxPtNaY2ad9KltunjMx87rA237RhAiWNuYibj5x1oNICBJXAb6QcA8x1d3XRW1rISm1vsWYKLgq5rcSd6tTEWBYZVv7kKVGOn93ujm8BdhgrG/dUotnB/FJN+I6UYaE1VFW/aO+Fvs566wbZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HX2sVng8; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7bb849aa5fbso890486585a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 00:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742714096; x=1743318896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d6o/yy0mJ6gEoAPM9wSzc0GuosBaD/tZXos6jZFch6o=;
-        b=DJddlgKlCwxJ1X+msvBYGMVXbPGfnfMDUXHQvqEiaqCeVy4vKhRMwzRgbBhdMZ+ut2
-         LCJZYOTaZzdhzK1fel/xieq4XsmybDYu9EJ1VxjDozFxff30sJjUAa9d6EK9opR07VMf
-         bsApo0xbxkZq9FdihJcmf/5n1GBUtYJXnWifYgKKgsqYZ8852QCbzdio86img+1c986Q
-         h5w/Zjrzc35WW4dbMEh+1lWgCHV1/l0ScggeraHojsiZ61Ypgcj6WJU+cPwIcP9qaCkS
-         eNURwC6TmqIrZyCwKeaKtVJiohc/pJN117Lk7c9XIe7Ahb4lQ/BHuncVEekP28gIXNx0
-         U/eQ==
+        d=google.com; s=20230601; t=1742714715; x=1743319515; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ocoek1h3wHR+5f+ll4cNEMjKwfXiGgCdyPNt9yxsz0c=;
+        b=HX2sVng8oXl2aqg2rbx0PNA7lDuIc47L6wG6gSjRyO8nsjUdj+0iwvhbm/+Ny/umJ0
+         eHvfYsbYT6YV0AGhnOuzeXZDmcE5BY2tq/TZlqfnMm/Rqrr78ly4LgNLYXUQWh2PKQoZ
+         HGT0v+67IoLQUBiOYeQ9dzX6h7jAzVhYP4ProZVQyZ4F7RX0alC3f4M4l4oszPztg6PM
+         I6u/6kyGglQHYnKCXW22LruWXLXqowOAdKVrWO8FhIZKzaslkQUEsNCRzft6zW3Ze+Vi
+         AcB3v0FtKy//FwnniewPOCUyKI7YuMnHdxLDlMcygZ3HNEN5HMjAMizTBUnfJd5aaCg+
+         sivg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742714096; x=1743318896;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d6o/yy0mJ6gEoAPM9wSzc0GuosBaD/tZXos6jZFch6o=;
-        b=Q4cfib5a+U60sM1WJpGzyJEhfdrztgYaMfAlxvATbQQ0oZ2jIXRX/w5sU58AZTkpwA
-         AjAht3N0+RaD4zv4WK7zBSmOtwDhvfbU7qlEOnGMGfLjAdbQTHtoU2R0YKpytrXH565b
-         VInyz758k1HBC6vKqdn/azCNLuPLu1Xc3V6n+iRLyCkpM3QD2bE8Y1BNQMxHBAd09qB5
-         puVwy5Hk0HrY1XmgLPLtlJSLq8Z+XChWoik68lHEwlt8BfVQ0QdeskCv9OOLnssmDKTM
-         Fbr4TDX051gnkKXxeaK7TiSefTY/D8XrtVueS7wRqs23k1stRpjeftPb5oi1geBiVjl7
-         FYGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLbnEafuIJpzi2dwQeoHudU8vheI6VXCop1exwlJ8yL2Fs2o/UFA9kohymDzaFNd7zDUsls0xxqk8Ie9M=@vger.kernel.org, AJvYcCWTdQKfGOUQYsinmNetWtE9Nax2Z9faUEvBCjvvrZdVCt0Kd4k4mdsCEFaiucGjxDqYPdLp0+dBciw=@vger.kernel.org, AJvYcCXBiogLjTJZm84Kd624SAa+MyovYBZCODQv6a0PZdjgvklvX7GP9d3j4EvNIBf4gt63zv1QfcNoEQTttnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIG7DVn1AsXj4lMJtYqA+A3sHFLhx6gKV8H8andQHe8/oPrnVs
-	bg8c9FjGXg4zTLkOWPO4CkU0R1TBHRYcBhydMBjcFcxkMS5NPb40
-X-Gm-Gg: ASbGncsQPH/wgZxORbNCNw8/hEVMa0MyuocbbRdhIQmcgdlvB+WyYqEcbILJGISBNYy
-	/d3xcIGpTIxH4wi4vI/5U2bzMoX2PgERCfzBau6NJXc2v6nRqfloZD/+PTyEc72UMD86+Bs8OR1
-	bS57naO/U32Z0IrukxWtpUYzAaSnQhXQY5H7Zvg8yx3gRgpAnLB3xINr08mZ92sjrm2y7vv59b3
-	1RvT/9dls5eWRl65k1uvLGsu30rB1SJ6jxJEANm/RdRJn9z5A/xYBZhYJEByliCFh6RBdndsEbg
-	jRJzjhYOx2mm0KzqsSfUQ6OOwMTpsqT0NzIO
-X-Google-Smtp-Source: AGHT+IFSwpraoqw/BQA/iEzngeutOVj9G954A9pOuqXbEzu4aPxLZEfsQu9PRth0KOUMeytXUYbUiw==
-X-Received: by 2002:a17:907:bb4b:b0:ac4:3cd:2cb2 with SMTP id a640c23a62f3a-ac403cd2eb7mr567966266b.1.1742714095690;
-        Sun, 23 Mar 2025 00:14:55 -0700 (PDT)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfaecfbsm4218283a12.41.2025.03.23.00.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 00:14:55 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v1 4/4] ARM: tegra: chagall: Add embedded controller node
-Date: Sun, 23 Mar 2025 09:14:24 +0200
-Message-ID: <20250323071424.48779-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250323071424.48779-1-clamor95@gmail.com>
-References: <20250323071424.48779-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1742714715; x=1743319515;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ocoek1h3wHR+5f+ll4cNEMjKwfXiGgCdyPNt9yxsz0c=;
+        b=IW3xlHj7oL/y4lxUjw4u+lO2/oJMy0J3SmZW+GuUpwxZ7TggeiUSItvfQXQffRckdK
+         DvW/Hwk1/OH6eKBGtPM+ZmTEU5gnm53wRgM3F1832DwAyjfEV+vLumfua2xNHW738HaZ
+         T3irCry8twDP8sN/L9z1c6wYEhGvbiPCHpQt1PCTrdxVQdekrLJwIDw1al0P+4MyltVQ
+         VCYqB7f36I3dg4JHp+36Zj91IP7RPpuG8xq/PkbPpOA/KVJlTaNeKMW7YrJw6IyTyhJI
+         fGlwSozEb//g7tglPCm3JdWMoWyqI/KS/K1vHBK3G+PAUXuR13xBeht1Lg+ISdxaren2
+         KTvQ==
+X-Gm-Message-State: AOJu0YxW3GIPRzrJidox9cHwEAXoww49MwCEuRI+N4oj09Zz7HhYeEpU
+	/hQDMxDS1XH4WMEVSp8rJyQtIXpsvJSmr5ELW4Atc+asGuTDQpRxikVjIhauEeBj2Io0D2tBiNR
+	/l8zsm4giGg==
+X-Google-Smtp-Source: AGHT+IEWgWZF6N/oTjsn9wQHDrFwRXFS8i6IktZJ+/0O2oyPVZJ2yRW/Ir7R6ApD3ALqTYnYnIF5efzt6GHTfQ==
+X-Received: from qkbdp6.prod.google.com ([2002:a05:620a:2b46:b0:7c5:3ce0:bd3e])
+ (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:620a:4720:b0:7c5:4c49:76a6 with SMTP id af79cd13be357-7c5ba12d9bemr1402211385a.8.1742714715634;
+ Sun, 23 Mar 2025 00:25:15 -0700 (PDT)
+Date: Sun, 23 Mar 2025 07:25:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250323072511.2353342-1-edumazet@google.com>
+Subject: [PATCH] x86/alternatives: remove false sharing in poke_int3_handler()
+From: Eric Dumazet <edumazet@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, 
+	Greg Thelen <gthelen@google.com>, Stephane Eranian <eranian@google.com>, 
+	Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add embedded controller node to Pegatron Chagall device-tree.
+eBPF programs can be run 20,000,000+ times per second on busy servers.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
+hundreds of calls sites are patched from text_poke_bp_batch()
+and we see a critical loss of performance due to false sharing
+on bp_desc.refs lasting up to three seconds.
+
+   51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
+            |
+            |--46.45%--poke_int3_handler
+            |          exc_int3
+            |          asm_exc_int3
+            |          |
+            |          |--24.26%--cls_bpf_classify
+            |          |          tcf_classify
+            |          |          __dev_queue_xmit
+            |          |          ip6_finish_output2
+            |          |          ip6_output
+            |          |          ip6_xmit
+            |          |          inet6_csk_xmit
+            |          |          __tcp_transmit_skb
+            |          |          |
+            |          |          |--9.00%--tcp_v6_do_rcv
+            |          |          |          tcp_v6_rcv
+            |          |          |          ip6_protocol_deliver_rcu
+            |          |          |          ip6_rcv_finish
+            |          |          |          ipv6_rcv
+            |          |          |          __netif_receive_skb
+            |          |          |          process_backlog
+            |          |          |          __napi_poll
+            |          |          |          net_rx_action
+            |          |          |          __softirqentry_text_start
+            |          |          |          asm_call_sysvec_on_stack
+            |          |          |          do_softirq_own_stack
+
+Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
+
+Before the patch, on a host with 240 cpus (480 threads):
+
+echo 0 >/proc/sys/kernel/bpf_stats_enabled
+text_poke_bp_batch(nr_entries=2)
+        text_poke_bp_batch+1
+        text_poke_finish+27
+        arch_jump_label_transform_apply+22
+        jump_label_update+98
+        __static_key_slow_dec_cpuslocked+64
+        static_key_slow_dec+31
+        bpf_stats_handler+236
+        proc_sys_call_handler+396
+        vfs_write+761
+        ksys_write+102
+        do_syscall_64+107
+        entry_SYSCALL_64_after_hwframe+103
+Took 324 usec
+
+text_poke_bp_batch(nr_entries=164)
+        text_poke_bp_batch+1
+        text_poke_finish+27
+        arch_jump_label_transform_apply+22
+        jump_label_update+98
+        __static_key_slow_dec_cpuslocked+64
+        static_key_slow_dec+31
+        bpf_stats_handler+236
+        proc_sys_call_handler+396
+        vfs_write+761
+        ksys_write+102
+        do_syscall_64+107
+        entry_SYSCALL_64_after_hwframe+103
+Took 2655300 usec
+
+After this patch:
+
+echo 0 >/proc/sys/kernecho 0 >/proc/sys/kernel/bpf_stats_enabled
+text_poke_bp_batch(nr_entries=2)
+        text_poke_bp_batch+1
+        text_poke_finish+27
+        arch_jump_label_transform_apply+22
+        jump_label_update+98
+        __static_key_slow_dec_cpuslocked+64
+        static_key_slow_dec+31
+        bpf_stats_handler+236
+        proc_sys_call_handler+396
+        vfs_write+761
+        ksys_write+102
+        do_syscall_64+107
+        entry_SYSCALL_64_after_hwframe+103
+Took 519 usec
+
+text_poke_bp_batch(nr_entries=164)
+        text_poke_bp_batch+1
+        text_poke_finish+27
+        arch_jump_label_transform_apply+22
+        jump_label_update+98
+        __static_key_slow_dec_cpuslocked+64
+        static_key_slow_dec+31
+        bpf_stats_handler+236
+        proc_sys_call_handler+396
+        vfs_write+761
+        ksys_write+102
+        do_syscall_64+107
+        entry_SYSCALL_64_after_hwframe+103
+Took 702 usec
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 ---
- .../boot/dts/nvidia/tegra30-pegatron-chagall.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/x86/kernel/alternative.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-index 4012f9c799a8..fc9eeec54692 100644
---- a/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts
-@@ -1155,6 +1155,14 @@ lcd_ddc: i2c@7000c000 {
- 		status = "okay";
- 		clock-frequency = <400000>;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index c71b575bf229..d7afbf822c45 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -2137,28 +2137,29 @@ struct text_poke_loc {
+ struct bp_patching_desc {
+ 	struct text_poke_loc *vec;
+ 	int nr_entries;
+-	atomic_t refs;
+ };
  
-+		embedded-controller@10 {
-+			compatible = "pegatron,chagall-ec", "cypress,cg7153am";
-+			reg = <0x10>;
++static DEFINE_PER_CPU(atomic_t, bp_refs);
 +
-+			monitored-battery = <&battery>;
-+			power-supplies = <&mains>;
-+		};
-+
- 		/* Wolfson Microelectronics WM8903 audio codec */
- 		wm8903: audio-codec@1a {
- 			compatible = "wlf,wm8903";
-@@ -2596,6 +2604,14 @@ backlight: backlight {
- 		default-brightness-level = <15>;
- 	};
+ static struct bp_patching_desc bp_desc;
  
-+	battery: battery-cell {
-+		compatible = "simple-battery";
-+		device-chemistry = "lithium-ion-polymer";
-+		charge-full-design-microamp-hours = <3050000>;
-+		energy-full-design-microwatt-hours = <23000000>;
-+		operating-range-celsius = <0 45>;
-+	};
+ static __always_inline
+ struct bp_patching_desc *try_get_desc(void)
+ {
+-	struct bp_patching_desc *desc = &bp_desc;
++	atomic_t *refs = this_cpu_ptr(&bp_refs);
+ 
+-	if (!raw_atomic_inc_not_zero(&desc->refs))
++	if (!raw_atomic_inc_not_zero(refs))
+ 		return NULL;
+ 
+-	return desc;
++	return &bp_desc;
+ }
+ 
+ static __always_inline void put_desc(void)
+ {
+-	struct bp_patching_desc *desc = &bp_desc;
++	atomic_t *refs = this_cpu_ptr(&bp_refs);
+ 
+ 	smp_mb__before_atomic();
+-	raw_atomic_dec(&desc->refs);
++	raw_atomic_dec(refs);
+ }
+ 
+ static __always_inline void *text_poke_addr(struct text_poke_loc *tp)
+@@ -2191,9 +2192,9 @@ noinstr int poke_int3_handler(struct pt_regs *regs)
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_desc with non-zero refcount:
+ 	 *
+-	 *	bp_desc.refs = 1		INT3
+-	 *	WMB				RMB
+-	 *	write INT3			if (bp_desc.refs != 0)
++	 *	bp_refs = 1		INT3
++	 *	WMB			RMB
++	 *	write INT3		if (bp_refs != 0)
+ 	 */
+ 	smp_rmb();
+ 
+@@ -2299,7 +2300,8 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	 * Corresponds to the implicit memory barrier in try_get_desc() to
+ 	 * ensure reading a non-zero refcount provides up to date bp_desc data.
+ 	 */
+-	atomic_set_release(&bp_desc.refs, 1);
++	for_each_possible_cpu(i)
++		atomic_set_release(per_cpu_ptr(&bp_refs, i), 1);
+ 
+ 	/*
+ 	 * Function tracing can enable thousands of places that need to be
+@@ -2413,8 +2415,12 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	/*
+ 	 * Remove and wait for refs to be zero.
+ 	 */
+-	if (!atomic_dec_and_test(&bp_desc.refs))
+-		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
++	for_each_possible_cpu(i) {
++		atomic_t *refs = per_cpu_ptr(&bp_refs, i);
 +
- 	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
- 	clk32k_in: clock-32k {
- 		compatible = "fixed-clock";
++		if (!atomic_dec_and_test(refs))
++			atomic_cond_read_acquire(refs, !VAL);
++	}
+ }
+ 
+ static void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
 -- 
-2.43.0
+2.49.0.395.g12beb8f557-goog
 
 
