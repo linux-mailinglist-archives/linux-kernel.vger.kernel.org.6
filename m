@@ -1,175 +1,211 @@
-Return-Path: <linux-kernel+bounces-572721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0367DA6CDC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:00:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 826A8A6CDCC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 04:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65C193B9190
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8C843B91B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD13D1FFC77;
-	Sun, 23 Mar 2025 02:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56FD1FFC76;
+	Sun, 23 Mar 2025 03:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+AEOHca"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="Z85BnGC5"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9425828691;
-	Sun, 23 Mar 2025 02:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0203C17;
+	Sun, 23 Mar 2025 03:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742698786; cv=none; b=Ric8qOXCPyQ6vGT/waxUD1TUFKR1jdpKvXOLNZ8Fx+HXYY5edJW3n1ktwPxm3rXjRto+c6Ro6xxKWpPh9kQc+J8UNohiVA6Qtpn0V+sJufar/FZlBSsWtdt0do+LHDv9wmxbStuPbSzrslB0VdMA+vwm8AegdFu8pOt9HYRhF4k=
+	t=1742699213; cv=none; b=IwjZbFgml1SyW2mWats8ttFw2Dwhom7RE+oBdaf7AmB1BpSpHACiiKXs1VifMaTF1AfQGvLieuIw3w0Q2TY9Veu/fKVDLce9LqJyo83MmVszAEAgXT1vdDuRovhwn8BqtOAdxQyBgXW+UMYWCWdmf3TT/5XHmYbni4nSk794gSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742698786; c=relaxed/simple;
-	bh=9BtaeiQjKgDpAE1AwouiFw+6IA/C4KaLsTyZY7gdYAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l+13hVYflzUTQrThHAcf2kIGHG9KEBq/4h71p+5tW6PNAlxBuuCG2TXWR3GJGndISK+T728+NswDBjAy8u2oezYVOfL3XUWMv9qunap7Lg8l+muWyOvioX1OhpNdV6+yYi59tIWJeJTkch6VdpQ3qQt400/4k8oxPh69CoG+WhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+AEOHca; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c5ba363f1aso329903985a.0;
-        Sat, 22 Mar 2025 19:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742698783; x=1743303583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=alDYSXZgOpXws3wZPrNZiq8p2H6lHODtdwt0xCwEuHg=;
-        b=c+AEOHcaYq1Qtl4daA8cdO00VVzll+82XGKhgMT6hHAnISt1ArSRB718DTdswzKP58
-         +uHmYzgAfDQi1wJTdquUPkIQDxLcCNMwwn/8jQPW70KHm2UGjCVgTn1VNIx+zX5yTzFb
-         yy/f4tjlrRO3tdq/f2JkimIdt9eGx3FE0zMGBxkAH2L5VZxYPo7hXyI7Y1jXWJCaz5dX
-         e/eYLEsY9jI8y3CVgJKadKb4EUbdUVWuineoBC6KcPa3StWghV/nL/L2Tg1By4ssdF+D
-         IMj+vBQ2SPrbMc2Ec0AjbBsEg4sgDUhARAWxFvqR8AuAoFFIUeQoW/LNqLgVgePZ9mO3
-         ylnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742698783; x=1743303583;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=alDYSXZgOpXws3wZPrNZiq8p2H6lHODtdwt0xCwEuHg=;
-        b=THpOSfOJRJYw8hgK+KYu+qZ9s+5MvKhLQo9wClH6W71hNbxOx2ngfZ6kzG4hByXh5k
-         CzdUMko7hw+hT9wjffgm8NWgz91TfaY5B2mM7ZPXLLw1E3J5Om8+9BIuOfEPiYmTUZsg
-         iFa0OTmWTPGLeM34Jf1kZ9p+zL4VtCm4xH5J0D2PeolX8tIeS1RNwKHW1Bo0GOilXZXI
-         bV2FuNl1GvwcJCJqVIyoT41gU//T+Hy2AHXMsSsD0k92hNDL515HTVuMB91tGffiBtl3
-         l6CAaprAc3kwvQ3aFkNSnNhdBkmWpzCuMzkzKCVGnZUzJAXotNn8lrGNxGOMcYo59UWu
-         vdIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU15i5Rk7dgoV7/8z3yBw1fbCGXwOImqYnBA9Z9qYwTvzhw1aH5Amv8SXmwRhfywFx8/QHl8ljaKJ/lg9qAVlg9FBH71w==@vger.kernel.org, AJvYcCUL7JOgLC9sHSp1Ie5Q+aOJ1iH0LQPEW9m5WA1Rrg7LrcN8Lt/6WMtscErMUGkMkzHZJ/rLZ5KrVnbXk1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzeDFDgDmJ2LctGHekKA4RGCdmCMUyFEzgMublIzVjHzjWrZTv
-	c4x5mADfbPW1AH8Y/PayiHt8q2fDz4K31ZmOnuurGvFZCHoi07PW
-X-Gm-Gg: ASbGncubLtvzxQomu3rase/Q6JYjAoPDRlKElQh0HJ8gpY0L0htdQ1+qjYcqtR1CLdd
-	0afd5adIZZxTyJBXdgv1MrpDuma9Qsmp32PVFeF1mMRqQEBCFHcd2QNO7gJi20u1q6Y6PUSbyp9
-	ThBsC+Gj/1ilTYdLO8QZ55gJZ8TgPQYuOG38HAAcJM3K7aC7VMjq3FrE4e5xNaR5mcTvzRtAMCy
-	kyTkF0mn/fsSfMLNdYjhUDN2T5MjaS2ZfyXkvXOvHGCMa0M+lPdyo5XYw5JXIHBBcSBJH6uMX8o
-	95A7B2zzMvdk4P3cMikMwzWpoFCXICFcAJ2RzOkKmeMtUSkLdGPGnFQmMHd1dQ9sikSEIuvCCUK
-	Dqg94UU6ylFRxP+dKtFsCAFyoLJFyQw==
-X-Google-Smtp-Source: AGHT+IE2oMk31LVZrSN2YrexYmcS3QStHLUvupI6DVGE5JYw2i3VW7ou4ghFmTV7R/0M9m/R1yKfBw==
-X-Received: by 2002:a05:620a:2485:b0:7c5:3e76:bcd7 with SMTP id af79cd13be357-7c5ba1dee3dmr1348443885a.37.1742698783386;
-        Sat, 22 Mar 2025 19:59:43 -0700 (PDT)
-Received: from localhost.localdomain (pat-199-212-65-136.resnet.yorku.ca. [199.212.65.136])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92d6b09sm319804185a.46.2025.03.22.19.59.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 19:59:42 -0700 (PDT)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: hmh@hmh.eng.br,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Seyediman Seyedarab <ImanDevel@gmail.com>,
-	Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com>,
-	Vlastimil Holer <vlastimil.holer@gmail.com>,
-	crok <crok.bic@gmail.com>,
-	Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>
-Subject: [PATCH] platform/x86: thinkpad_acpi: disable ACPI fan access for T495* and E560
-Date: Sat, 22 Mar 2025 23:01:19 -0400
-Message-ID: <20250323030119.17485-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742699213; c=relaxed/simple;
+	bh=JhIB323Iy8oRh6ltMfxnvtaHNZ01Z07O3c8rcIlp5hI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VqDQXJod5EQYSwzQ9CujaSALBNGlirGKakqhY8UuAtBF+NDPFiNRqWJOYD9uMTyFql+2YFZeEtSVEoc4cMg808ld79SZJca+KnEwBreT4MEnNfnH7vKA+DzBvHabDq0RfoJcFGKVf2oD93ghT2E/a8EAGjzWMex6A3T9jEWFVKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=Z85BnGC5; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 352B22A8408;
+	Sun, 23 Mar 2025 04:06:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1742699202; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=XPPUF/akYfiVaHG87FM7tDRS63NPbDuRHGbZg93aZK8=;
+	b=Z85BnGC5WNujHRhUPJ9SZHINQe8b1hwHVS/x/L0qdKbko1H85ekMqCDk6MJypNGfxCM96Q
+	phsURLoj0AsvSluaIcjyLAm4fTag20InUbQZ5DokKXxcvWnK4UrdTcnFF9GaLFDdjHJZQ9
+	P9O1aE+q+BMeCz5CwG//yGcnrMffRwLcZA/84O8lIRLquR9NR1HpooSyT25um/zQ3g5nTN
+	GKhmMtnBVQmvWmhn0bkKpZ/x3YhkdNgZYv5znhvCzOSvE9Nwa3OhrTQbuVJ81V5STqahl2
+	SzGRSfxRy9EY0isQGaWWQ8sM9TTMcvf03DRiJN0vMHt5ghQE6a84ZjXWX0ROPQ==
+Message-ID: <7307e611-1cc6-425e-a066-478794878d8e@cjdns.fr>
+Date: Sun, 23 Mar 2025 04:06:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v1 3/8] irqchip: Add EcoNet EN751221 INTC
+To: Thomas Gleixner <tglx@linutronix.de>, linux-mips@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250321134633.2155141-1-cjd@cjdns.fr>
+ <20250321134633.2155141-4-cjd@cjdns.fr> <87tt7m1664.ffs@tglx>
+ <ce72abfe-e822-48d6-9fc7-3cf9faffdc76@cjdns.fr> <87bjtt1nod.ffs@tglx>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <87bjtt1nod.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The bug was introduced in commit 57d0557dfa49 ("platform/x86:
-thinkpad_acpi: Add Thinkpad Edge E531 fan support") which adds a new
-fan control method via the FANG and FANW ACPI methods.
+[snip]
+>> Maybe my message was misleading everything has been tested and works correctly
+>> on multiple SoCs because ECONET_SOC_EN751221 does not select EI/VI. Answering
+>> this question will allow me to enable them, thus also getting
+>> MIPS_MT_SMP.
+> It does not select it, but it can be enabled independently or through
+> some other magic config knob, right? And if it gets enabled, then it
+> does not work, right?
 
-T945, T495s, and E560 laptops have the FANG+FANW ACPI methods (therefore
-fang_handle and fanw_handle are not NULL) but they do not actually work,
-which results in the dreaded "No such device or address" error. Fan access
-and control is restored after forcing the legacy non-ACPI fan control
-method by setting both fang_handle and fanw_handle to NULL.
+Not really true on either point.
 
-The DSDT table code for the FANG+FANW methods doesn't seem to do anything
-special regarding the fan being secondary.
+Firstly, it's not something you can select in the kernel menuconfig, it's
+selected by the SoC or some core feature of the SoC (e.g. SMP_MT_MIPS).
 
-This patch adds a quirk for T495, T495s, and E560 to make them avoid the
-FANG/FANW methods.
+Secondly it does work, it's just that it does what it says it does, and you
+need to handle those vectored interrupts - no irqchip driver does this.
+
+>> I could look at forbidding them in the driver, but I'm not sure that's
+>> appropriate as this seems like more of an SoC issue than an INTC
+>> issue. But I'll follow your guidance.
+> What's not appropriate? If it does not work, then it's very appropriate
+> to do
+>
+>     config ECONET
+>            depends on !EI && !VI
+>
+> on the principle of least surprise, no?
+
+I've spent quite a bit of time studying this, so with respect for your time,
+let me try to give you a brief summary of what I know and why I
+submitted this as I did:
+
+1. EI/VI is supported by the intc but it's really a feature of MIPS32r2.
+In MIPS32r2, the CPU<->intc wire interface allows the CPU to send its
+interrupts to the intc, and then allows the intc to fire any of of up to
+64 interrupts back to the CPU.
+
+2. When enabled, the CPU's internal intc sends its 7 interrupts to the
+external intc who prioritizes them, renumbers them, and sends them
+back along with their own.
+
+3. When they come back, the CPU tries to be helpful by dispatching to an
+offset within a vector table depending on the interrupt number.
+
+4. The real problem with this is IRQ_MIPS_CPU no longer gets its 7
+interrupts because they've been renumbered.
+
+5. MIPS 1004Kc uses a standard intc (IRQ_GIC), and they solved this by
+not really using the feature. Despite having 64 lines, they only send on
+one and they make the driver poll to find out what's pending. I believe
+they also return the CPU's 7 interrupts without renumbering.
+
+6. But in 34Kc world there is no standard intc, and AFAICT many (most?)
+of them fully use the EI/VI feature.
+
+7. If you don't set EI/VI, the processor goes into / stays in legacy mode,
+so it doesn't send anything to the intc, and everything the intc sends to
+it is converted to a hit on line 2 - so as long as the intc has some
+kind of pending register, chaining works.
+
+8. But without EI/VI you can't have MT_SMP so you only get one thread.
+
+9. In every 34Kc SoC I've found in Linux or OpenWRT, EI/VI is
+conspicuously missing (with one exception). Clearly they had a
+compelling reason for doing it, and I *think* that reason is because
+they all faced the same issue as me and solved it the same way.
+
+10. The exception is irq-realtek-rtl, which via an out-of-tree patch[1]
+was able to enable EI/VI and I have no idea what they're doing, but it
+appears that their intc hardware is participating, like with GIC.
+
+11. I did implement an EI/VI dispatcher myself and had it working with
+SMP, but I shelved because it's complex and it's not tightly coupled to
+the intc driver itself so I concluded that it should be a separate
+component that works with any intc. The complexity comes from the
+fact that you need to either route the software interrupts back to
+IRQ_MIPS_CPU's domain and fix the renumbering, or else implement
+your own IPI subsystem.
 
 
-Original-patch-by: Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com>
-Co-authored-by: Seyediman Seyedarab <ImanDevel@gmail.com>
-Reported-by: Vlastimil Holer <vlastimil.holer@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219643
-Tested-by: crok <crok.bic@gmail.com>
-Tested-by: Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
----
-The main patch was proposed on Bugzilla, but I couldn't reach the
-original author (Eduard Christian Dumitrescu) to help him fix it
-and resend it, so I submitted it on his behalf.
+So it's my belief that what I'm doing here is standard for 34Kc.
 
-Kindest Regards,
-Seyediman
+The reason I asked the question in the beginning was because I wanted
+to check my assumptions and know if there's any way I can get SMP
+without writing this dispatcher.
 
- drivers/platform/x86/thinkpad_acpi.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index d8df1405edfa..365cd7e452a4 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -8793,6 +8793,7 @@ static const struct attribute_group fan_driver_attr_group = {
- #define TPACPI_FAN_NS		0x0010		/* For EC with non-Standard register addresses */
- #define TPACPI_FAN_DECRPM	0x0020		/* For ECFW's with RPM in register as decimal */
- #define TPACPI_FAN_TPR		0x0040		/* Fan speed is in Ticks Per Revolution */
-+#define TPACPI_FAN_NOACPI	0x0080		/* Don't use ACPI methods even if detected */
- 
- static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
- 	TPACPI_QEC_IBM('1', 'Y', TPACPI_FAN_Q1),
-@@ -8823,6 +8824,9 @@ static const struct tpacpi_quirk fan_quirk_table[] __initconst = {
- 	TPACPI_Q_LNV3('N', '1', 'O', TPACPI_FAN_NOFAN),	/* X1 Tablet (2nd gen) */
- 	TPACPI_Q_LNV3('R', '0', 'Q', TPACPI_FAN_DECRPM),/* L480 */
- 	TPACPI_Q_LNV('8', 'F', TPACPI_FAN_TPR),		/* ThinkPad x120e */
-+	TPACPI_Q_LNV3('R', '0', '0', TPACPI_FAN_NOACPI),/* E560 */
-+	TPACPI_Q_LNV3('R', '1', '2', TPACPI_FAN_NOACPI),/* T495 */
-+	TPACPI_Q_LNV3('R', '1', '3', TPACPI_FAN_NOACPI),/* T495s  */
- };
- 
- static int __init fan_init(struct ibm_init_struct *iibm)
-@@ -8874,6 +8878,16 @@ static int __init fan_init(struct ibm_init_struct *iibm)
- 		tp_features.fan_ctrl_status_undef = 1;
- 	}
- 
-+	if (quirks & TPACPI_FAN_NOACPI) {
-+		/* E560, T495, T495s */
-+		pr_info("Ignoring buggy ACPI fan access method\n");
-+		gfan_handle = NULL;
-+		sfan_handle = NULL;
-+		fang_handle = NULL;
-+		fanw_handle = NULL;
-+		fans_handle = NULL;
-+	}
-+
- 	if (gfan_handle) {
- 		/* 570, 600e/x, 770e, 770x */
- 		fan_status_access_mode = TPACPI_FAN_RD_ACPI_GFAN;
--- 
-2.48.1
+>>> So this patch clearly should have been tagged with 'RFC'.
+>> Given the patchset works correctly in testing, does this comment
+>> stand?
+> Until the EI/VI issue is resolved so that it either works or cannot
+> happen.
 
+All said, if "depends on !EI && !VI" makes you happy then I'm OK to add it.
+
+Just what I'm afraid of is being asked to find an authoritative answer to my
+question before merging, because if nobody decides to jump in with one
+then this could just be blocked indefinitely.
+
+
+Thanks,
+
+Caleb
+
+
+[1]: 
+https://github.com/openwrt/openwrt/blob/main/target/linux/realtek/patches-6.6/314-irqchip-irq-realtek-rtl-add-VPE-support.patch
+
+>>>> +static int econet_intc_map(struct irq_domain *d, u32 irq, irq_hw_number_t hwirq)
+>>>> +{
+>>>> +	int ret;
+>>>> +
+>>>> +	if (hwirq >= INTC_IRQ_COUNT) {
+>>>> +		pr_err("%s: hwirq %lu out of range\n", __func__, hwirq);
+>>>> +		return -EINVAL;
+>>>> +	} else if (econet_intc_rai.shadow_interrupts[hwirq] == INTC_IS_SHADOW) {
+>>>> +		pr_err("%s: can't map hwirq %lu, it is a shadow interrupt\n",
+>>>> +		       __func__, hwirq);
+>>> No newline
+>> If I understand correctly, you prefer:
+>> .....interrupt\n", __func__, hwirq);
+>> for a 96 char line?
+> You have 100 characters in drivers/irqchip/
+>
+>>>> +	.domain_ops = {
+>>>> +		.xlate = irq_domain_xlate_onecell,
+>>>> +		.map = econet_intc_map,
+>>> See documention.
+>> I suppose this is tab alignment, but I will in any case make a point
+>> of reading it all carefully.
+> Yes. The aligned tabular view is way simpler to read and parse. Reading
+> is based on pattern recognition. Irregular patterns disturb the reading
+> flow, which means the focus is shifted from understanding to decoding
+> the irregular pattern.
+>
+>> In case of any doubt, I wasn't trying to sneak bad code past you.
+> I did not assume malice here at all.
+>
+> Thanks,
+>
+>          tglx
 
