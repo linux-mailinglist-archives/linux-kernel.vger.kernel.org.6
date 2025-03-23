@@ -1,300 +1,307 @@
-Return-Path: <linux-kernel+bounces-572938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5006A6D090
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:17:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06DFA6D093
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9FB16C3CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28FB63B3E80
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E97E792;
-	Sun, 23 Mar 2025 18:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A341922E7;
+	Sun, 23 Mar 2025 18:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHGfIUpx"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mB0+e1ij"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6B13CF9C;
-	Sun, 23 Mar 2025 18:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230C4C8F;
+	Sun, 23 Mar 2025 18:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742753865; cv=none; b=BiU3oJyR0Ijb33GR7J57BohE89thJTD9DFfKWZh3BuAN3JKinw6wCAkqbhHfZB2Wz5o/3VpK9S3/6Te+2W4LDnzfS0ZQ+ERvp9gv1mh8MDunJZHQKHgIa4K2sTOgCHsEnWWtcvdr6mO7nFTn0B43e/VLl1aht/fZBjMSIRC2Zqo=
+	t=1742754674; cv=none; b=HafD1UhIa0ZHguYCHRakc9QTTzmfO+H6hoBuiQe2U/lleFkBmuBjo3/ZjEZFIrygwMhkfQYpNc/az6cG71u33YDkgzrDeSY6Czfm6ALPlKH81w61OvmE7oLv+1oRSJniLhNcRKxdJ1S6vDw4X8IWFtpKIPmj+1t1awKxdXLjlLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742753865; c=relaxed/simple;
-	bh=rWj6WocXKBI0ugd9aAJVs40NDcWgGwovZXjcXknYzRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+W0yYjNb0sPQC6fykZDMhO7VginPiEVqWt6LPrs4YUoylzP/1f04vvsPZfvKuINr/TEd15MGQs84waQUBBiAOWxtVjA5X3kB4UataagKbXXGqCptDZ6Nw9Rt11JEXu60IxJ0uXbb4KhRpRT8jIImOTXuAH7wb0t3AhO8Rfmdqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHGfIUpx; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c55500d08cso363289485a.0;
-        Sun, 23 Mar 2025 11:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742753862; x=1743358662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p/Y3e2AAeYJ+Z6UX18Ug8YutlfvErNn61p0TdO5dpWc=;
-        b=DHGfIUpxHPSioZEGIHwk0DxsFOT6MLXWJJmKzsGVoxeZmy0WNMPi0h2c3JidfqNtsc
-         7EG40BDVGgzxZaUVUL7GXnOzZb1fOLMODJwS9JB+0IdbwqhcFAVthgXK0HDk9ocmM1Jl
-         aG18E1/ak02Vl7vsMIttQzfavxj7NCTRCEXFs9o1DAKOvVAwrZZR60GKWYZS4rC77M7R
-         Ec6vtPoMW69UeF7KvQcrhOmW/Rj6im1gkPl3yzC2fllAva+mUJG+qqiDgZ60PodUyOQ7
-         GBl+VAY3OBgHG+MKfc29glNRVt7QyHXnREMKrYPhhHvHfufLMr9L0iuxmlkK/02j0PbP
-         oFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742753862; x=1743358662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p/Y3e2AAeYJ+Z6UX18Ug8YutlfvErNn61p0TdO5dpWc=;
-        b=dRfFpS5qTIPnBqYHzg98S2oi2+p8+kFKJYbO5p2JNYC0iNhOctn7Zb/KN0ebrwU1wX
-         BFwKSH10N7sVKXgL4eUv3G2JwbhrteWuwaLGfUlJt3PmnPBQuH8syCMFGlJdbNxaNgR5
-         hVousIKRjLXKLj6zRltacUZ3fJkj0vF8OY3ivsJhBxh8Vc1s4tzgg7y9LrOtWIIJidzK
-         /ZFWOITWB/pHatylb0oIaJTc5wtWTASbXLuoGcnR1Cq4UJf8TIudNgXxVbWiCGPfxuWI
-         SKG3jXZy+poiJ3Pi6KyGDI4hIUzsu2+pcBmMxx+n2EL8dJYrx2406kCxaQL70+lSrVIv
-         XKbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjWnYyWHxgzgj6dxKJHXTA1AFqPNsiywa8CBCaSF8tdERnb2Muy8TER//ggdDVwOf3UjQJRiPc4hukppxLZrs=@vger.kernel.org, AJvYcCXGiu5hVoG1EcbmqY2Pp/cVzbHO7j2wL8wx25t5Gw7rzd3XKdKjdmES2Qhvmuv5D0843KSqIMPKotkYJsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFplDx5w04O0vK7k95F09wDaiyTlo4GBrh8vVWHWyjUGsLq+AP
-	KWavgCNi879YWcWFXBqKBBqX+CIgfF3otnq1z5596PqpJQWTdDIp
-X-Gm-Gg: ASbGncsmxgF1whmMh2HXqsLVCawM2/XWA5ddDpxScZSJR2/TRJMCzLiDiREhovpM53b
-	944WvjltX4d/hxfe9hAbYeuyMVioO1/SuViETvG+KTLH5/ic/iwdXYEisf0nPIGNtF9gqJAyd4h
-	xtDTVk+lf4FEebiRsR7PJiB02tenTXIPrbPktswTjhWpqKPq3iyfEbf/PhOLHuDtZs+cOSoG4Vg
-	P2C5LJ3NDFw/9XJTWR9x1Cr/d3dQFT44diRcYqE/G2jZVtpEdQOlPvaIRA8utQjNBQiINa4vATx
-	5wy89enNQHsDWJh6hJvAfziSs52jAEoRqWoAI5nyOQzp/+9po5BSnTFUaEt9kViio+uNCyZygPd
-	cMUZfi5XpKlgxzoaWytHuIWJFMqM+ufCNJz0=
-X-Google-Smtp-Source: AGHT+IFmNBhDriRO0irUBdJRjzDqYZ9meEjROmFEBD5cu7z9FsdbJP1sRzp13mrQ+HhLSXJk9YEvXg==
-X-Received: by 2002:a05:620a:1924:b0:7c5:431f:f5e6 with SMTP id af79cd13be357-7c5ba1a7d8dmr1304857585a.33.1742753862268;
-        Sun, 23 Mar 2025 11:17:42 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92b9af5sm391763585a.6.2025.03.23.11.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 11:17:41 -0700 (PDT)
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 169CB1200069;
-	Sun, 23 Mar 2025 14:17:41 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-13.internal (MEProxy); Sun, 23 Mar 2025 14:17:41 -0400
-X-ME-Sender: <xms:RFDgZ6m1jzHkA2GKcyVudDR3ZiTcIOAM-q89Ykwq_ilVkw15c6TbnA>
-    <xme:RFDgZx1LKIVV_r5scPmj7A9_5FaL_F_hi7biDzbGy9CDz17BfTJMDk_J7XwVFghHP
-    5COZTPN-LivGbeKNw>
-X-ME-Received: <xmr:RFDgZ4phwEEqks6BVb-QDo0qN34-BkQmAc9ebTXeRrNuxjLGL6kLQyRl>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheejheejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeigfegueffveeltefgiefgtdegtddv
-    jeefieffhfelvefhleehiedvjeehieenucffohhmrghinhepghhithhhuhgsrdgtohhmpd
-    hkvghrnhgvlhdrohhrghdptggrshhtrdgrshenucevlhhushhtvghrufhiiigvpedtnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrsh
-    honhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghn
-    gheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepud
-    elpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpfhholhhirgguihhssehpohhs
-    thgvohdrnhgvthdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgr
-    rhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhroh
-    htohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhho
-    thhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehtmhhgrhhoshhssehumhhitghhrdgvughu
-X-ME-Proxy: <xmx:RVDgZ-nvprKGYwGviVukxwhl22kEnivIylvsl_zS_rtdR1p6PG3Frw>
-    <xmx:RVDgZ41Ar4HEjGg4TF8943ZqDo1LTjgMyUQm3rHum6fJM8QYjQV2yA>
-    <xmx:RVDgZ1vGf_TkFJGUI2DwZG7C_s5SR-OSPctKTSJw1ZaV2rOSDb9hIw>
-    <xmx:RVDgZ0XIHh92VZKCvt7fQEDPIIcsaWa-k4PqqU3DD0TFYGZFwOPmFQ>
-    <xmx:RVDgZz0QVmZYR0t0XWMoIyL0rN0YZ_bk-OC5CXPmGerJsGORRcI3MIj2>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Mar 2025 14:17:40 -0400 (EDT)
-Date: Sun, 23 Mar 2025 11:17:39 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Panagiotis Foliadis <pfoliadis@posteo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Christian Schrefl <chrisi.schrefl@gmail.com>,
-	Charalampos Mitrodimas <charmitro@posteo.net>
-Subject: Re: [PATCH v3] rust: task: mark Task methods inline
-Message-ID: <Z-BQQwHHgediSaTt@Mac.home>
-References: <20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net>
+	s=arc-20240116; t=1742754674; c=relaxed/simple;
+	bh=Y3cNSXQWrRJ+X42ZFCnRlpb1W8mGKD3GA39bty0UQeU=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:
+	 References:In-Reply-To; b=gb/mZDDg/f24tFOcIc5CSTf+0c1h++k96F9NdkGzuKOuuQVwIK2YMRa+hTrevrLXfMt/g1HZBo+CnZRUXCv2UbVCdE9aLnalzzl5fH2otem1vJBXgSgqIckKiXrLGRk5TFW1fisGq7xRwAdo3JZASRyAqIsbg/YQAaKg7oz9aYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mB0+e1ij; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52NEU3Vi001632;
+	Sun, 23 Mar 2025 18:31:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=LzfccMC1Sv9oyQvyfO7z6eM4YF/kGn
+	0pLUo0WrfHexM=; b=mB0+e1ijXvkxuweNl1sCqEGWARfiAib5vG7UEx0qWs/S60
+	Q0tiY7x2+8tlvBoYgEVMIySmq2qZabk44+YgGEz6Ozh1YVAkSf4bYzoBlBYBbDmA
+	qsRYngaITqlsF2ZLdyeA1q/aMgFjLTilQZWot3J/3xX/oYspvepdwHCl9pYO6wqz
+	LhjHCe3/8nKqnlAMGU2G8NyGMgCqrvbH9Z5LmN41k93APwVNiZYlvXCiDm8dWfsY
+	bQDmztVuVgwsVUv9CN8fHsBMhEKzfEDJ66ywJPT5ZJRxmPxfFsxwGnUEg2FEVWzA
+	WNGOWikz8iysJnWPv+plojAidc/xNyJEi5DD7DcA==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45j4dyk459-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Mar 2025 18:31:05 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52NHj86D012234;
+	Sun, 23 Mar 2025 18:31:05 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j91ktrh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Mar 2025 18:31:04 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52NIV0JK48628216
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 23 Mar 2025 18:31:01 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E13512004D;
+	Sun, 23 Mar 2025 18:31:00 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9598E20040;
+	Sun, 23 Mar 2025 18:30:59 +0000 (GMT)
+Received: from [9.43.2.178] (unknown [9.43.2.178])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 23 Mar 2025 18:30:59 +0000 (GMT)
+Content-Type: multipart/mixed; boundary="------------NswYESWQF00tvx6wuNGErzHZ"
+Message-ID: <2a3c9acc-01de-43fd-a946-a3af4b0312a6@linux.ibm.com>
+Date: Mon, 24 Mar 2025 00:00:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [main-line]warning at arch/powerpc/net/bpf_jit_comp.c:961
+From: Hari Bathini <hbathini@linux.ibm.com>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        Saket Kumar Bhaskar <skb99@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>
+References: <6168bfc8-659f-4b5a-a6fb-90a916dde3b3@linux.ibm.com>
+ <73047120-e683-4142-b4e4-2422fc41f58d@linux.ibm.com>
+ <ef9ce622-db85-4c2c-b59f-e7703dc0d335@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <ef9ce622-db85-4c2c-b59f-e7703dc0d335@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Yce8GwNeN_iuMVtqJtOuPYRVkZpE1icE
+X-Proofpoint-ORIG-GUID: Yce8GwNeN_iuMVtqJtOuPYRVkZpE1icE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-23_08,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503230131
 
-On Sat, Mar 15, 2025 at 12:23:01PM +0000, Panagiotis Foliadis wrote:
-> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> toolchain provided by kernel.org, the following symbols are generated:
+This is a multi-part message in MIME format.
+--------------NswYESWQF00tvx6wuNGErzHZ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Hi Venkat,
+
+On 20/03/25 3:01 am, Hari Bathini wrote:
 > 
-> $ nm vmlinux | grep ' _R'.*Task | rustfilt
-> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
-> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
-> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
-> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
-> ffffffff817b2cc0 T <kernel::task::Task>::uid
-> ffffffff817b2ce0 T <kernel::task::Task>::euid
-> ffffffff817b2c70 T <kernel::task::Task>::current
-> ffffffff817b2d70 T <kernel::task::Task>::wake_up
-> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
-> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
 > 
-> These Rust symbols are trivial wrappers around the C functions
-> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
-> euid, get_current, wake_up, get_task_struct and put_task_struct. It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
+> On 19/03/25 1:06 pm, Hari Bathini wrote:
+>> Hi Venkat,
+>>
+>> Thanks for reporting this.
+>> I am having a hard time reproducing this. Please share the
+>> kernel build config..
+>>
 > 
-> After applying this patch, the above command will produce no output.
+> Thanks for reporting this and sharing the config file offline.
+> Narrowed down the potential root cause. Will post the fix...
 > 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-> Reviewed-by: Charalampos Mitrodimas <charmitro@posteo.net>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+> - Hari
+> 
+>> On 17/03/25 6:21 pm, Venkat Rao Bagalkote wrote:
+>>> Greetings!!!
+>>>
+>>> I am observing below warnings on linux-mainline kernel, while running 
+>>> bpf-sefltests.
+>>>
+>>> These warnings are intermitent, reproduces roughly 6 out of 10 times.
+>>>
+>>>
+>>> Repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>>
+>>>
+>>> Tests:
+>>>
+>>> ./test_progs
+>>>
+>>>
+>>> Attached is the log file of summary of tests.
+>>>
+>>>
+>>> Traces:
+>>>
+>>> [  978.200120] ------------[ cut here ]------------
+>>> [  978.200133] WARNING: CPU: 11 PID: 45522 at arch/powerpc/net/ 
+>>> bpf_jit_comp.c:961 __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
+>>> [  978.200144] Modules linked in: tun(E) bpf_testmod(OE) veth(E) 
+>>> bonding(E) tls(E) nft_fib_inet(E) nft_fib_ipv4(E) nft_fib_ipv6(E) 
+>>> nft_fib(E) nft_reject_inet(E) nf_reject_ipv4(E) nf_reject_ipv6(E) 
+>>> nft_reject(E) nft_ct(E) rfkill(E) nft_chain_nat(E) sunrpc(E) 
+>>> ibmveth(E) pseries_rng(E) vmx_crypto(E) drm(E) dm_multipath(E) 
+>>> dm_mod(E) fuse(E) drm_panel_orientation_quirks(E) zram(E) xfs(E) 
+>>> sd_mod(E) ibmvscsi(E) scsi_transport_srp(E) [last unloaded: 
+>>> bpf_test_modorder_x(OE)]
+>>> [  978.200194] CPU: 11 UID: 0 PID: 45522 Comm: test_progs Tainted: 
+>>> G           OE      6.14.0-rc7-auto #4
+>>> [  978.200202] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+>>> [  978.200205] Hardware name: IBM,8375-42A POWER9 (architected) 
+>>> 0x4e0202 0xf000005 of:IBM,FW950.A0 (VL950_144) hv:phyp pSeries
+>>> [  978.200210] NIP:  c0000000001e3658 LR: c0000000001e34b0 CTR: 
+>>> 0000000000000006
+>>> [  978.200216] REGS: c00000001c057570 TRAP: 0700   Tainted: G OE 
+>>> (6.14.0-rc7-auto)
+>>> [  978.200221] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 
+>>> 44844442  XER: 20040169
+>>> [  978.200234] CFAR: c0000000001e34e8 IRQMASK: 0
+>>> [  978.200234] GPR00: c0000000001e34b0 c00000001c057810 
+>>> c000000001d68100 0000000000000000
+>>> [  978.200234] GPR04: c00800000025d640 c00000001c05786c 
+>>> 0000000000000160 0000000000000164
+>>> [  978.200234] GPR08: c000000157b8c164 c000000157b8c16c 
+>>> 000000000000016c 0000000000004000
+>>> [  978.200234] GPR12: 0000000000000001 c00000001ec82b00 
+>>> 0000000000000078 0000000038210110
+>>> [  978.200234] GPR16: 00000000000000a8 00000000eb210098 
+>>> 0000000060638000 00000000e86100c0
+>>> [  978.200234] GPR20: 00000000eb4100a0 0000000000000004 
+>>> 000000002c230000 0000000060000000
+>>> [  978.200234] GPR24: fffffffffffff000 c000000005834428 
+>>> c00800000025d640 0000000000000001
+>>> [  978.200234] GPR28: c000000157b89c00 000000000000026c 
+>>> 0000000000000003 c000000157b8c000
+>>> [  978.200294] NIP [c0000000001e3658] 
+>>> __arch_prepare_bpf_trampoline.isra.0+0xdc8/0xfe0
+>>> [  978.200301] LR [c0000000001e34b0] 
+>>> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0
+>>> [  978.200308] Call Trace:
+>>> [  978.200310] [c00000001c057810] [c0000000001e34b0] 
+>>> __arch_prepare_bpf_trampoline.isra.0+0xc20/0xfe0 (unreliable)
+>>> [  978.200319] [c00000001c057950] [c0000000001e4974] 
+>>> arch_prepare_bpf_trampoline+0x94/0x130
+>>> [  978.200327] [c00000001c0579b0] [c0000000005001ac] 
+>>> bpf_trampoline_update+0x23c/0x660
+>>> [  978.200334] [c00000001c057a90] [c0000000005006dc] 
+>>> __bpf_trampoline_link_prog+0x10c/0x360
+>>> [  978.200341] [c00000001c057ad0] [c000000000500c28] 
+>>> bpf_trampoline_link_cgroup_shim+0x268/0x370
+>>> [  978.200348] [c00000001c057b80] [c00000000053254c] 
+>>> __cgroup_bpf_attach+0x4ec/0x760
+>>> [  978.200355] [c00000001c057c60] [c000000000533dd4] 
+>>> cgroup_bpf_prog_attach+0xa4/0x310
+>>> [  978.200362] [c00000001c057cb0] [c00000000049d1b8] 
+>>> bpf_prog_attach+0x2a8/0x2e0
+>>> [  978.200370] [c00000001c057d00] [c0000000004a7278] 
+>>> __sys_bpf+0x428/0xd20
+>>> [  978.200375] [c00000001c057df0] [c0000000004a7b9c] sys_bpf+0x2c/0x40
+>>> [  978.200381] [c00000001c057e10] [c000000000033078] 
+>>> system_call_exception+0x128/0x310
+>>> [  978.200388] [c00000001c057e50] [c00000000000d05c] 
+>>> system_call_vectored_common+0x15c/0x2ec
+>>> [  978.200396] --- interrupt: 3000 at 0x7fff98ba9f40
+>>> [  978.200405] NIP:  00007fff98ba9f40 LR: 00007fff98ba9f40 CTR: 
+>>> 0000000000000000
+>>> [  978.200410] REGS: c00000001c057e80 TRAP: 3000   Tainted: G OE 
+>>> (6.14.0-rc7-auto)
+>>> [  978.200415] MSR:  800000000280f033 
+>>> <SF,VEC,VSX,EE,PR,FP,ME,IR,DR,RI,LE>  CR: 48002848  XER: 00000000
+>>> [  978.200431] IRQMASK: 0
+>>> [  978.200431] GPR00: 0000000000000169 00007fffde891b10 
+>>> 00007fff98cb6d00 0000000000000008
+>>> [  978.200431] GPR04: 00007fffde891bf8 0000000000000020 
+>>> 0000000000000001 0000000000000008
+>>> [  978.200431] GPR08: 0000000000000008 0000000000000000 
+>>> 0000000000000000 0000000000000000
+>>> [  978.200431] GPR12: 0000000000000000 00007fff995fe9e0 
+>>> 0000000000000000 0000000000000000
+>>> [  978.200431] GPR16: 0000000000000000 0000000000000000 
+>>> 0000000000000000 0000000000000000
+>>> [  978.200431] GPR20: 0000000000000000 0000000000000000 
+>>> 0000000000000000 00007fff995ef438
+>>> [  978.200431] GPR24: 00000000105ed2f4 00007fff995f0000 
+>>> 00007fffde892998 0000000000000001
+>>> [  978.200431] GPR28: 00007fffde892aa8 00007fffde892988 
+>>> 0000000000000001 00007fffde891b40
+>>> [  978.200487] NIP [00007fff98ba9f40] 0x7fff98ba9f40
+>>> [  978.200491] LR [00007fff98ba9f40] 0x7fff98ba9f40
+>>> [  978.200495] --- interrupt: 3000
+>>> [  978.200498] Code: 7d5f412e 81210060 39290001 792a1788 3ba90040 
+>>> 91210060 7d3f5214 57bd103a e9010030 3908ff00 7c294040 4081fae0 
+>>> <0fe00000> 3ba0fff2 4bfffad4 8281003c
+>>> [  978.200519] ---[ end trace 0000000000000000 ]---
+>>>
+>>> If you happen to fix this, please add below tag.
+>>>
+>>>
+>>> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 
-I queued this for v6.16 via tip and more tests and reviews, thank you
-all. I changed a bit in the commit log per the usual tip tree rules,
-please see below, and let me know if something doesn't look good to you.
+The attached fix is not complete but will be sufficient for this
+test scenario. While I come up with the complete fix for all scenarios,
+can you share your observations applying the change...
 
-Regards,
-Boqun
+- Hari
+--------------NswYESWQF00tvx6wuNGErzHZ
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-powerpc-bpf-trampoline-fix.patch"
+Content-Disposition: attachment;
+ filename="0001-powerpc-bpf-trampoline-fix.patch"
+Content-Transfer-Encoding: base64
 
--------------------------->8
-From: Panagiotis Foliadis <pfoliadis@posteo.net>
-Date: Sat, 15 Mar 2025 12:23:01 +0000
-Subject: [PATCH] rust: task: Mark Task methods inline
+ZGlmZiAtLWdpdCBhL2FyY2gvcG93ZXJwYy9uZXQvYnBmX2ppdF9jb21wLmMgYi9hcmNoL3Bv
+d2VycGMvbmV0L2JwZl9qaXRfY29tcC5jCmluZGV4IDI5OTFiYjE3MWE5Yi4uZDg2N2FkYTMx
+YmQ1IDEwMDY0NAotLS0gYS9hcmNoL3Bvd2VycGMvbmV0L2JwZl9qaXRfY29tcC5jCisrKyBi
+L2FyY2gvcG93ZXJwYy9uZXQvYnBmX2ppdF9jb21wLmMKQEAgLTgzMyw3ICs4MzMsOCBAQCBz
+dGF0aWMgaW50IF9fYXJjaF9wcmVwYXJlX2JwZl90cmFtcG9saW5lKHN0cnVjdCBicGZfdHJh
+bXBfaW1hZ2UgKmltLCB2b2lkICpyd19pbQogCUVNSVQoUFBDX1JBV19TVEwoX1IyNiwgX1Ix
+LCBudnJfb2ZmICsgU1pMKSk7CiAKIAlpZiAoZmxhZ3MgJiBCUEZfVFJBTVBfRl9DQUxMX09S
+SUcpIHsKLQkJUFBDX0xJX0FERFIoX1IzLCAodW5zaWduZWQgbG9uZylpbSk7CisJCVBQQ19M
+SV9BRERSKF9SMywgaW0gPyAodW5zaWduZWQgbG9uZylpbSA6CisJCQkJKHVuc2lnbmVkIGxv
+bmcpKH4oMVVMIDw8IChCSVRTX1BFUl9MT05HIC0gMSkpKSk7CiAJCXJldCA9IGJwZl9qaXRf
+ZW1pdF9mdW5jX2NhbGxfcmVsKGltYWdlLCByb19pbWFnZSwgY3R4LAogCQkJCQkJICh1bnNp
+Z25lZCBsb25nKV9fYnBmX3RyYW1wX2VudGVyKTsKIAkJaWYgKHJldCkKQEAgLTg4OSw3ICs4
+OTAsOCBAQCBzdGF0aWMgaW50IF9fYXJjaF9wcmVwYXJlX2JwZl90cmFtcG9saW5lKHN0cnVj
+dCBicGZfdHJhbXBfaW1hZ2UgKmltLCB2b2lkICpyd19pbQogCQkJYnBmX3RyYW1wb2xpbmVf
+cmVzdG9yZV90YWlsX2NhbGxfY250KGltYWdlLCBjdHgsIGZ1bmNfZnJhbWVfb2Zmc2V0LCBy
+NF9vZmYpOwogCiAJCS8qIFJlc2VydmUgc3BhY2UgdG8gcGF0Y2ggYnJhbmNoIGluc3RydWN0
+aW9uIHRvIHNraXAgZmV4aXQgcHJvZ3MgKi8KLQkJaW0tPmlwX2FmdGVyX2NhbGwgPSAmKCh1
+MzIgKilyb19pbWFnZSlbY3R4LT5pZHhdOworCQlpZiAoaW0pCisJCQlpbS0+aXBfYWZ0ZXJf
+Y2FsbCA9ICYoKHUzMiAqKXJvX2ltYWdlKVtjdHgtPmlkeF07CiAJCUVNSVQoUFBDX1JBV19O
+T1AoKSk7CiAJfQogCkBAIC05MTIsOCArOTE0LDEwIEBAIHN0YXRpYyBpbnQgX19hcmNoX3By
+ZXBhcmVfYnBmX3RyYW1wb2xpbmUoc3RydWN0IGJwZl90cmFtcF9pbWFnZSAqaW0sIHZvaWQg
+KnJ3X2ltCiAJCX0KIAogCWlmIChmbGFncyAmIEJQRl9UUkFNUF9GX0NBTExfT1JJRykgewot
+CQlpbS0+aXBfZXBpbG9ndWUgPSAmKCh1MzIgKilyb19pbWFnZSlbY3R4LT5pZHhdOwotCQlQ
+UENfTElfQUREUihfUjMsIGltKTsKKwkJaWYgKGltKQorCQkJaW0tPmlwX2VwaWxvZ3VlID0g
+JigodTMyICopcm9faW1hZ2UpW2N0eC0+aWR4XTsKKwkJUFBDX0xJX0FERFIoX1IzLCBpbSA/
+ICh1bnNpZ25lZCBsb25nKWltIDoKKwkJCQkodW5zaWduZWQgbG9uZykofigxVUwgPDwgKEJJ
+VFNfUEVSX0xPTkcgLSAxKSkpKTsKIAkJcmV0ID0gYnBmX2ppdF9lbWl0X2Z1bmNfY2FsbF9y
+ZWwoaW1hZ2UsIHJvX2ltYWdlLCBjdHgsCiAJCQkJCQkgKHVuc2lnbmVkIGxvbmcpX19icGZf
+dHJhbXBfZXhpdCk7CiAJCWlmIChyZXQpCkBAIC05NzIsNyArOTc2LDYgQEAgc3RhdGljIGlu
+dCBfX2FyY2hfcHJlcGFyZV9icGZfdHJhbXBvbGluZShzdHJ1Y3QgYnBmX3RyYW1wX2ltYWdl
+ICppbSwgdm9pZCAqcndfaW0KIGludCBhcmNoX2JwZl90cmFtcG9saW5lX3NpemUoY29uc3Qg
+c3RydWN0IGJ0Zl9mdW5jX21vZGVsICptLCB1MzIgZmxhZ3MsCiAJCQkgICAgIHN0cnVjdCBi
+cGZfdHJhbXBfbGlua3MgKnRsaW5rcywgdm9pZCAqZnVuY19hZGRyKQogewotCXN0cnVjdCBi
+cGZfdHJhbXBfaW1hZ2UgaW07CiAJdm9pZCAqaW1hZ2U7CiAJaW50IHJldDsKIApAQCAtOTg4
+LDcgKzk5MSw3IEBAIGludCBhcmNoX2JwZl90cmFtcG9saW5lX3NpemUoY29uc3Qgc3RydWN0
+IGJ0Zl9mdW5jX21vZGVsICptLCB1MzIgZmxhZ3MsCiAJaWYgKCFpbWFnZSkKIAkJcmV0dXJu
+IC1FTk9NRU07CiAKLQlyZXQgPSBfX2FyY2hfcHJlcGFyZV9icGZfdHJhbXBvbGluZSgmaW0s
+IGltYWdlLCBpbWFnZSArIFBBR0VfU0laRSwgaW1hZ2UsCisJcmV0ID0gX19hcmNoX3ByZXBh
+cmVfYnBmX3RyYW1wb2xpbmUoTlVMTCwgaW1hZ2UsIGltYWdlICsgUEFHRV9TSVpFLCBpbWFn
+ZSwKIAkJCQkJICAgIG0sIGZsYWdzLCB0bGlua3MsIGZ1bmNfYWRkcik7CiAJYnBmX2ppdF9m
+cmVlX2V4ZWMoaW1hZ2UpOwogCg==
 
-When building the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-toolchain provided by kernel.org, the following symbols are generated:
-
-$ nm vmlinux | grep ' _R'.*Task | rustfilt
-... T <kernel::task::Task>::get_pid_ns
-... T <kernel::task::Task>::tgid_nr_ns
-... T <kernel::task::Task>::current_pid_ns
-... T <kernel::task::Task>::signal_pending
-... T <kernel::task::Task>::uid
-... T <kernel::task::Task>::euid
-... T <kernel::task::Task>::current
-... T <kernel::task::Task>::wake_up
-... T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
-... T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
-
-These Rust symbols are trivial wrappers around the C functions. It
-doesn't make sense to go through a trivial wrapper for these functions,
-so mark them inline.
-
-[boqun: Capitalize the title, reword a bit to avoid listing all the C
-functions as the code already shows them and remove the addresses of the
-symbols in the commit log as they are different from build to build]
-
-Link: https://github.com/Rust-for-Linux/linux/issues/1145
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
-Reviewed-by: Charalampos Mitrodimas <charmitro@posteo.net>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Link: https://lore.kernel.org/r/20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net
----
- rust/kernel/task.rs | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index ea43a3b8d9c5..6ba0b4286f09 100644
---- a/rust/kernel/task.rs
-+++ b/rust/kernel/task.rs
-@@ -134,6 +134,7 @@ pub fn current_raw() -> *mut bindings::task_struct {
-     /// # Safety
-     ///
-     /// Callers must ensure that the returned object doesn't outlive the current task/thread.
-+    #[inline]
-     pub unsafe fn current() -> impl Deref<Target = Task> {
-         struct TaskRef<'a> {
-             task: &'a Task,
-@@ -168,6 +169,7 @@ fn deref(&self) -> &Self::Target {
-     /// # Safety
-     ///
-     /// Callers must ensure that the returned object doesn't outlive the current task/thread.
-+    #[inline]
-     pub unsafe fn current_pid_ns() -> impl Deref<Target = PidNamespace> {
-         struct PidNamespaceRef<'a> {
-             task: &'a PidNamespace,
-@@ -275,24 +277,28 @@ pub fn pid(&self) -> Pid {
-     }
- 
-     /// Returns the UID of the given task.
-+    #[inline]
-     pub fn uid(&self) -> Kuid {
-         // SAFETY: It's always safe to call `task_uid` on a valid task.
-         Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
-     }
- 
-     /// Returns the effective UID of the given task.
-+    #[inline]
-     pub fn euid(&self) -> Kuid {
-         // SAFETY: It's always safe to call `task_euid` on a valid task.
-         Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
-     }
- 
-     /// Determines whether the given task has pending signals.
-+    #[inline]
-     pub fn signal_pending(&self) -> bool {
-         // SAFETY: It's always safe to call `signal_pending` on a valid task.
-         unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
-     }
- 
-     /// Returns task's pid namespace with elevated reference count
-+    #[inline]
-     pub fn get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
-         // SAFETY: By the type invariant, we know that `self.0` is valid.
-         let ptr = unsafe { bindings::task_get_pid_ns(self.as_ptr()) };
-@@ -308,6 +314,7 @@ pub fn get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
- 
-     /// Returns the given task's pid in the provided pid namespace.
-     #[doc(alias = "task_tgid_nr_ns")]
-+    #[inline]
-     pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
-         let pidns = match pidns {
-             Some(pidns) => pidns.as_ptr(),
-@@ -321,6 +328,7 @@ pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
-     }
- 
-     /// Wakes up the task.
-+    #[inline]
-     pub fn wake_up(&self) {
-         // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
-         // running.
-@@ -330,11 +338,13 @@ pub fn wake_up(&self) {
- 
- // SAFETY: The type invariants guarantee that `Task` is always refcounted.
- unsafe impl crate::types::AlwaysRefCounted for Task {
-+    #[inline]
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-         unsafe { bindings::get_task_struct(self.as_ptr()) };
-     }
- 
-+    #[inline]
-     unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-         // SAFETY: The safety requirements guarantee that the refcount is nonzero.
-         unsafe { bindings::put_task_struct(obj.cast().as_ptr()) }
--- 
-2.39.5 (Apple Git-154)
+--------------NswYESWQF00tvx6wuNGErzHZ--
 
 
