@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-572885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60FEA6CFD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:15:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD67A6CFD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9834D3ABAE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4090188C3E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A997126C03;
-	Sun, 23 Mar 2025 15:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1420E6F099;
+	Sun, 23 Mar 2025 15:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="nQbf/+Tp"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="JwLKJA8a"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3605210FB
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911DE8BF8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742742916; cv=none; b=J1NKLnlnuVj6s5DoZ9A52olvR1H3pqt2SERs1EUiWSLq3vKhB7CqcIXsetTen0WH0vmdq5hcT9MxRX4CJgB0i3SBptXtr700Z9UYcG1lHQgZud3iuncP4dDOYpr8nGps/KGPz95/Otj4xsASX0HA8WF5L2WHs5rsz2IbFjnQ7UM=
+	t=1742742891; cv=none; b=pWTrv4EQIJD63bjLAOdzw4E80A12Q1r9OHOl5BPf54vTm9uekS0lU6a5hk86dldKWWJvdfbbPJFaeKLUdEVco5ZXlFdFKfBfWr6OSFBc9yZc1ltRYPVwrnapdmBtYaoQZeGR6ckgGlLA/zjPVrqIfTr0ZhQGaUWRWtxUdPaTC9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742742916; c=relaxed/simple;
-	bh=CpWT2pst7EIXUBJd+WV+li7kuPAwyRtD5eARsnqAP1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZnMZHk9iBzT52oX2/8pX5bOqjYIfX3rGV3dwyQxQ3fH87JH1vOHHJ5NwFCrgmw79T+dWJH0NTHq/KV5pPHl1rW5QLVWaY1g0HbEkgC2IXKd6ysvomerE4r4YZEh9aUj3D2iMr8whUCMgG8E1yU7nsuc904AVjWXHHM3KLh3lAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=nQbf/+Tp; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from mx0.riseup.net (mx0-pn.riseup.net [10.0.1.42])
+	s=arc-20240116; t=1742742891; c=relaxed/simple;
+	bh=cPvB1HBjOG1aRVliKZB82wNmbxJ/w364kxn7jlVUqew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eSmuhN1pElsDqhPL4WrKTcn21GlccyLXpxXOia5tkGdvFlZh9afz7vnbnx22sPQK9NxaXMMgi0+ro2EewlbXEGE2eoS42sD85OLkNOfShyt4/quP6WdkuaXH6/QpHjW8Xj2YoKUhZKvP10hw8N6lz5+MInRp0PLVxYEdbKV3bd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=JwLKJA8a; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4ZLKNW27y9zDrJp
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1742742587; bh=CpWT2pst7EIXUBJd+WV+li7kuPAwyRtD5eARsnqAP1g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nQbf/+TpgbHtfCiVOWi4slo6wm8C2iHUyge/A3a17NZ9aL8AFqovISF1LHbm6EFXy
-	 FCJXPtOQkqXPIf9N+3IC6/fp0TE7WNxk9+ERmMn5UoS5goclvAPRfbAozzMTSDJrmB
-	 nrAAvGFnys8sp61QnbBtPzJUCa5Br0u/9y28PpWo=
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4ZLKNP4hmSz9sHX;
-	Sun, 23 Mar 2025 15:09:41 +0000 (UTC)
-X-Riseup-User-ID: BF1F8C7DE14940D234E3ED4CDCB9CB8C726D39E202A64067E5369A4E7910525E
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4ZLKNM6vPYzFtBc;
-	Sun, 23 Mar 2025 15:09:39 +0000 (UTC)
-From: Fernando Fernandez Mancera <ffmancera@riseup.net>
-To: x86@kernel.org,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Cc: dwmw@amazon.co.uk,
-	mhkelley@outlook.com,
-	Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: [PATCH] x86/i8253: fix possible deadlock when turning off the PIT
-Date: Sun, 23 Mar 2025 16:09:24 +0100
-Message-ID: <20250323150924.3326-1-ffmancera@riseup.net>
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZLKV83rfVz9sT3;
+	Sun, 23 Mar 2025 16:14:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1742742880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wBsTzwGiRDku+XW5xJyCrZPqEaEEKsEk9cFTk493Hzo=;
+	b=JwLKJA8aUEQ9pBwmlYR97zs6DigYm+VfLsRqyVo3ldiDF7iCyOpBbXvcItye1tqt+3XOLb
+	G22atEJalOzmq32Q1ZQQgxxCOTM/42qtMeXK0SvyVklbysLK7K5tBWfycm1QFV8tJuDNb1
+	aaFbm/jjweW6oop3Dtd34HFqNGUYkKHEH6BVlPUq3BoNOUHVLndzLSBb/FVcpvGgjXVZfK
+	3DHzMMlWz0D4/PY6jIQbtU1O/REUCaXmUuQMllLl48UIn9qRqpTrxG5dNSbzY8Rnf+gcJ1
+	DSkOkoWbtAg7lhPwDVgVP0G6JhlB45Qn/G0LgJjTOjHJruohcEq3QP+tCdHIrQ==
+Message-ID: <b67fad41-3849-446e-8982-1485f42e61eb@mailbox.org>
+Date: Sun, 23 Mar 2025 16:14:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] arch/x86: Add an option to build the kernel with
+ '-march=native' on x86-64
+To: Arnd Bergmann <arnd@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+References: <20250321142859.13889-1-torvic9@mailbox.org>
+ <e37ee471-0b10-48d4-ad20-871e585c98f6@app.fastmail.com>
+Content-Language: en-US
+From: Tor Vic <torvic9@mailbox.org>
+In-Reply-To: <e37ee471-0b10-48d4-ad20-871e585c98f6@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 9cdf7bf03641be610fe
+X-MBO-RS-META: axe7cye6wtwjr5jggougx956ao7whhx1
 
-As the PIT could be disabled during the init, it can possibly cause a
-deadlock when resuming from suspend due to a lock dependency created at
-pcspkr_event(). This new dependency connect a HARDIRQ-irq-safe to a
-HARDIRQ-irq-unsafe.
 
-Solve this warning by using the raw_spin_lock_irqsave() variant when
-turning off the PIT.
 
-[   45.408952] =====================================================
-[   45.408970] WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
-[   45.408974] 6.14.0-rc7+ #6 Not tainted
-[   45.408978] -----------------------------------------------------
-[   45.408980] systemd-sleep/3324 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[   45.408986] ffffffffb2c23398 (i8253_lock){+.+.}-{2:2}, at: pcspkr_event+0x3f/0xe0 [pcspkr]
-[   45.409004]
-               and this task is already holding:
-[   45.409006] ffff9c334d7c2230 (&dev->event_lock){-.-.}-{3:3}, at: input_dev_resume+0x21/0x50
-[   45.409023] which would create a new lock dependency:
-[   45.409025]  (&dev->event_lock){-.-.}-{3:3} -> (i8253_lock){+.+.}-{2:2}
-[   45.409043]
-               but this new dependency connects a HARDIRQ-irq-safe lock:
-[   45.409045]  (&dev->event_lock){-.-.}-{3:3}
-[   45.409052]
-               ... which became HARDIRQ-irq-safe at:
-[   45.409055]   lock_acquire+0xd0/0x2f0
-[   45.409062]   _raw_spin_lock_irqsave+0x48/0x70
-[   45.409067]   input_event+0x3c/0x80
-[   45.409071]   atkbd_receive_byte+0x9b/0x6e0
-[   45.409077]   ps2_interrupt+0xb2/0x1d0
-[   45.409082]   serio_interrupt+0x4a/0x90
-[   45.409087]   i8042_handle_data+0xf8/0x280
-[   45.409091]   i8042_interrupt+0x11/0x40
-[   45.409095]   __handle_irq_event_percpu+0x87/0x260
-[   45.409100]   handle_irq_event+0x38/0x90
-[   45.409105]   handle_edge_irq+0x8b/0x230
-[   45.409109]   __common_interrupt+0x5c/0x120
-[   45.409114]   common_interrupt+0x80/0xa0
-[   45.409120]   asm_common_interrupt+0x26/0x40
-[   45.409125]   pv_native_safe_halt+0xf/0x20
-[   45.409130]   default_idle+0x9/0x20
-[   45.409135]   default_idle_call+0x7a/0x1d0
-[   45.409140]   do_idle+0x215/0x260
-[   45.409144]   cpu_startup_entry+0x29/0x30
-[   45.409149]   start_secondary+0x132/0x170
-[   45.409153]   common_startup_64+0x13e/0x141
-[   45.409158]
-               to a HARDIRQ-irq-unsafe lock:
-[   45.409161]  (i8253_lock){+.+.}-{2:2}
-[   45.409167]
-               ... which became HARDIRQ-irq-unsafe at:
-[   45.409170] ...
-[   45.409172]   lock_acquire+0xd0/0x2f0
-[   45.409177]   _raw_spin_lock+0x30/0x40
-[   45.409181]   clockevent_i8253_disable+0x1c/0x60
-[   45.409186]   pit_timer_init+0x25/0x50
-[   45.409191]   hpet_time_init+0x46/0x50
-[   45.409196]   x86_late_time_init+0x1b/0x40
-[   45.409201]   start_kernel+0x962/0xa00
-[   45.409206]   x86_64_start_reservations+0x24/0x30
-[   45.409211]   x86_64_start_kernel+0xed/0xf0
-[   45.409215]   common_startup_64+0x13e/0x141
-[   45.409220]
-               other info that might help us debug this:
+On 3/22/25 12:40, Arnd Bergmann wrote:
+> On Fri, Mar 21, 2025, at 15:28, Tor Vic wrote:
+>> Add a 'native' option that allows users to build an optimized kernel for
+>> their local machine (i.e. the machine which is used to build the kernel)
+>> by passing '-march=native' to the CFLAGS.
+>>
+>> The idea comes from Linus' reply to Arnd's initial proposal in [1].
+>>
+>> This patch is based on Arnd's x86 cleanup series, which is now in -tip [2].
+> 
+> Thanks for having another look at this and for including the
+> benchmarks. I ended up dropping this bit of my series because
+> there were too many open questions around things like
+> reproducible builds, but there is clearly a demand for having
+> this included.
+> 
+>>        hackbench (lower is better):
+>>        102.27 --> 99.50                         (-2.709 %)
+>>
+>>    - stress-ng, bogoops, average of 3 15-second runs:
+>>        fork:
+>>        111'744 --> 115'509                      (+3.397 %)
+>>        bsearch:
+>>        7'211 --> 7'436                          (+3.120 %)
+>>        vm:
+>>        1'442'256 --> 1'486'615                  (+3.076 %)
+> 
+> 3% in userspace benchmarks does seem significant enough to
+> spend more time on seeing what exactly made the difference
+> here, and possibly including it as separate options.
+> 
+>> +ifdef CONFIG_NATIVE_CPU
+>> +        KBUILD_CFLAGS += -march=native
+>> +        KBUILD_RUSTFLAGS += -Ctarget-cpu=native
+>> +else
+>>           KBUILD_CFLAGS += -march=x86-64 -mtune=generic
+>>           KBUILD_RUSTFLAGS += -Ctarget-cpu=x86-64 -Ztune-cpu=generic
+>> +endif
+> 
+> I assume that the difference here is that -march=native on
+> your machine gets turned into -march=skylake, which then turns
+> on both additional instructions and a different instruction
+> scheduler.
+> 
+> Are you able to quickly run the same tests again using
+> just one of the two?
+> 
+> a) -march=x86-64 -mtune=skylake
+> b) -march=skylake -mtune=generic
+> 
 
-[   45.409222]  Possible interrupt unsafe locking scenario:
+I ran the tests on Zen2 (znver2), but this time the kernel was built 
+with clang-20+lto (the skylake tests were with gcc-14).
 
-[   45.409224]        CPU0                    CPU1
-[   45.409226]        ----                    ----
-[   45.409228]   lock(i8253_lock);
-[   45.409234]                                local_irq_disable();
-[   45.409237]                                lock(&dev->event_lock);
-[   45.409243]                                lock(i8253_lock);
-[   45.409249]   <Interrupt>
-[   45.409251]     lock(&dev->event_lock);
-[   45.409257]
-                *** DEADLOCK ***
+It turned out that with '-march=native', there is almost no difference 
+compared to '-march=x86-64'.
+All results are within +0.8% and -0.6%, most of which are probably 
+noise. Hackbench, stress-ng fork and xz compression seem to profit the 
+most from 'native'.
 
-Fixes: 70e6b7d9ae3c ("x86/i8253: Disable PIT timer 0 when not in use")
-Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
----
- drivers/clocksource/i8253.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+The vmlinux image is 0.03% bigger with 'native'.
 
-diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-index 39f7c2d736d1..9a91ce66e16e 100644
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -103,7 +103,9 @@ int __init clocksource_i8253_init(void)
- #ifdef CONFIG_CLKEVT_I8253
- void clockevent_i8253_disable(void)
- {
--	raw_spin_lock(&i8253_lock);
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&i8253_lock, flags);
- 
- 	/*
- 	 * Writing the MODE register should stop the counter, according to
-@@ -133,7 +135,7 @@ void clockevent_i8253_disable(void)
- 
- 	outb_p(0x30, PIT_MODE);
- 
--	raw_spin_unlock(&i8253_lock);
-+	raw_spin_unlock_irqrestore(&i8253_lock, flags);
- }
- 
- static int pit_shutdown(struct clock_event_device *evt)
--- 
-2.47.0
+I guess that 'native' can be somewhat useful on some architectures, but 
+not on all...
+
+As for your question to run with both '-march' and '-mtune', I'm sorry, 
+but I didn't have the time just yet.
+
+
+>      Arnd
 
 
