@@ -1,104 +1,158 @@
-Return-Path: <linux-kernel+bounces-572715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95E1A6CDB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:30:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C307A6CDB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D33B3B84DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A091897197
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F071F9F73;
-	Sun, 23 Mar 2025 02:30:25 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3301FFC52;
+	Sun, 23 Mar 2025 02:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="gP7dpyR/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XDON8f9I"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7302E3380
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066F4FC08;
+	Sun, 23 Mar 2025 02:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742697025; cv=none; b=M9kpymeMpFexWx1Slykps7+djuxfhGDL1498R05dDdnCUr/UvEAbUkBHuAxph63Xb6Df9UHo/fc1v7zW+ITgegd26ByiCT6hvwrieXGk5OSMMRbLXe0tWW2PaTEjrqnulE2wAhRwY6GBnVsqcZHGqkDA66xpS4/8m8d+3QQJ4zU=
+	t=1742697274; cv=none; b=qVcld8CbsZGoC9jL1I94A1VetrQMyC8VOQargoW5A9zbFChOX5WzOSSqtfiHQVwVNEqorRFmVIcCWC9oWO4nwiseh3f4mJkVwAzqwD+PkGRNDujTqFF1QBVhjsgcsn2cUF9DUKtgi0xy/IKwJ3uqqxi3E2iZR5DYLl2CnI0M6B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742697025; c=relaxed/simple;
-	bh=fNzT7JKdgX7Xeq8q0y71qemuhCzNxeIGs371Zh/Yvns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a72JGW2s14sYolrn1hutCEk2ZMO1BqYGNUxjhE7bcb5o+DPGf+Mj9nw9YrKOb0zr3nmIDjhaJYkBVAAoBdMaSNQO3Zdee8RadSQSrvtiaCczuJtL2Ptl6l0ZV/Ft3bM4DsITztvZxVk2Ce2iulb/ABVuPHUV5sHcSlNgT4yB48E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZL0Qp2sy0z1g2Cb;
-	Sun, 23 Mar 2025 10:25:38 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6120D1A0188;
-	Sun, 23 Mar 2025 10:30:13 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 23 Mar 2025 10:30:12 +0800
-Message-ID: <8370ea3f-38c5-4dd2-82fd-e89d53d88b8a@huawei.com>
-Date: Sun, 23 Mar 2025 10:30:12 +0800
+	s=arc-20240116; t=1742697274; c=relaxed/simple;
+	bh=tqNUBKfJs6VrEwaQwi1yE2Cu7ZKjHLdCh7GouijZFHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vBDXK4VGBEmSxpichy37Cy6VX9BDtNacQN058+d95HQrrJclI9+xqWKzBWPTxpU5dZYJuNyJjyhbdWPV3ZDpDbP3nojsOiO2N+fLw4VsSpJ/oFz8KPNBO+17nI9HGhNe+yuMhmeCZVBFTVDMgebNClCHinSsyclVeXGBSNzXhOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=gP7dpyR/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XDON8f9I; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id ACB4A11400AD;
+	Sat, 22 Mar 2025 22:34:30 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Sat, 22 Mar 2025 22:34:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm3; t=1742697270; x=1742783670; bh=1eF9uC0DFW6sxuK63cmCj
+	1nHFDHjzBIOVvMZQecvkPI=; b=gP7dpyR/Q5HljTVuuJP5rdoraRb36hjW8mMsv
+	6flEevdHJRyZXYBbt9Q3btis5++3Zbf91cGcykwgM9UD6Pyr3ADlgEoGLv4d+40i
+	rR4HCsKYY4hzf985j+9Ms/7iwACFh2sI0IlvX/n2ea9yhrfNLsU1RHd6wl0L5YE3
+	ntLajZlSqBYxR1KIW6miM4SEHFdrVQxPISMgo8CMx38XVEJRnFKPz2Ixd1jz9XZd
+	593Mx89M85w5aF4+EFAzHKM6kAzVcvvD6eOnB+jvvE7R4roi18CEYKA99UtF6Mg7
+	NT3Jn4bg9rcBDBJtTAbBOXZ61f9E93rsAWWrormRUTJZso/4A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1742697270; x=1742783670; bh=1eF9uC0DFW6sxuK63cmCj1nHFDHjzBIOVvM
+	ZQecvkPI=; b=XDON8f9ICbRoGB576/pwY0kClguJ6Z04CtkBpLvWrNHZ0skRpfL
+	FwYneLNHubwMyaW/yb06PpUT/l1Wq3fUS+B9GyAZxW0YLfa5JBH3U/R5b48wiaSh
+	Jtaq1NBY2fbPPJmAVrUOrkTaUhNR39XFGVJSjwkJi1gOH4S827rU4ZeaDQsXYht6
+	R93xkClUFn/rB+hIZkTGU2vM8EixOsfblZ6aUr++GPQQ5O+kK07IqNSRKB415mHl
+	tQBPBCVjGdrj+/Ghk+McxOSHu8OBhrCIb7vOhRiyEqQkDzYxxZCIedVrXf9o7z5z
+	M85YyNH0Frsb68uSrcATLA3ZEKM85oyj8Og==
+X-ME-Sender: <xms:NnPfZ9Wft_PeZMCuysXj-A4lLPKQnRS2XeGtBNZGEQxpROPJ4p-7JQ>
+    <xme:NnPfZ9mHGhWM8bpDrFUgkqv4UZPJliK9vAoHK-Kf6omf1fqZkVNOIfhaC9oQ1H8NT
+    IQ1dgmU6uNv0GfOSGE>
+X-ME-Received: <xmr:NnPfZ5YlxTN3EiFDv2BbD6iBvh3AlMPNBTBkgv-TcO7xMi6RJAyLMRUJM-Q2_0yHrCI8n2i6z7jfqF50pw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheehieejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+    evufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefnuhhkvgculfhonhgvshcuoehl
+    uhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpedtheeuleekgeehud
+    dufeduvdevffelgeffjeekieffuefghedvkeetgfffgfeifeenucffohhmrghinhepkhgv
+    rhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepuddtpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrght
+    rdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnth
+    gvlhdrtghomhdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhishhssehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtohep
+    lhhkmhhlsegrnhhthhgvrghsrdguvghv
+X-ME-Proxy: <xmx:NnPfZwUx4SmoiymXxADCbo4JJunCYHWm0c7BDIClY-VPq1ONvAr5xA>
+    <xmx:NnPfZ3khzOm_TVnAfBSYcQWWl1wFti-jv60ivsIMxKwiH8K2jeoVKA>
+    <xmx:NnPfZ9eSbzyoiiRw1V91O1zPwA10b_LJrYflv0sIySB93ZNWOK6wFw>
+    <xmx:NnPfZxFBQDwM7soNpVaNC9a77u_GolI3C4f--kgY4z0P-5RIkFTY2w>
+    <xmx:NnPfZwid6Jfyxbo2zzMyagyQAwg4i0PtAdZvvMcW4jqUKzlstEm-lYdw>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 22 Mar 2025 22:34:25 -0400 (EDT)
+From: Luke Jones <luke@ljones.dev>
+To: linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	bentiss@kernel.org,
+	jikos@kernel.org,
+	mario.limonciello@amd.com,
+	lkml@antheas.dev,
+	Luke Jones <luke@ljones.dev>
+Subject: [PATCH v4 0/2] hid-asus: asus-wmi: refactor Ally suspend/resume
+Date: Sun, 23 Mar 2025 15:34:19 +1300
+Message-ID: <20250323023421.78012-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] drm/xe: Fix unmet direct dependencies warning
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-CC: <thomas.hellstrom@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<airlied@gmail.com>, <simona@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250322095521.4153684-1-yuehaibing@huawei.com>
- <2p7zbqflqj4khxmwofotnn5no5vo54yq5wq7z3j6etntkg3b4v@wym3efsfrx4o>
-Content-Language: en-US
-From: Yue Haibing <yuehaibing@huawei.com>
-In-Reply-To: <2p7zbqflqj4khxmwofotnn5no5vo54yq5wq7z3j6etntkg3b4v@wym3efsfrx4o>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500002.china.huawei.com (7.185.36.57)
 
-On 2025/3/22 20:51, Lucas De Marchi wrote:
-> On Sat, Mar 22, 2025 at 05:55:21PM +0800, Yue Haibing wrote:
->> WARNING: unmet direct dependencies detected for FB_IOMEM_HELPERS
->>  Depends on [n]: HAS_IOMEM [=y] && FB_CORE [=n]
->>  Selected by [m]:
->>  - DRM_XE_DISPLAY [=y] && HAS_IOMEM [=y] && DRM [=m] && DRM_XE [=m] && DRM_XE [=m]=m [=m] && HAS_IOPORT [=y]
->>
->> FB_IOMEM_HELPERS depends on FB_CORE, Select it before FB_IOMEM_HELPERS.
->>
->> Fixes: 44e694958b95 ("drm/xe/display: Implement display support")
->> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
->> ---
->> drivers/gpu/drm/xe/Kconfig | 1 +
->> 1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
->> index 7d7995196702..fcf324f37d2d 100644
->> --- a/drivers/gpu/drm/xe/Kconfig
->> +++ b/drivers/gpu/drm/xe/Kconfig
->> @@ -53,6 +53,7 @@ config DRM_XE
->> config DRM_XE_DISPLAY
->>     bool "Enable display support"
->>     depends on DRM_XE && DRM_XE=m && HAS_IOPORT
->> +    select FB_CORE
-> 
-> other places in drm, including i915 where this is coming from, use:
-> 
->     select FB_IOMEM_HELPERS if DRM_FBDEV_EMULATION
-> 
-> ... and don't explicitly select FB_CORE. I think that is sufficient
-> following the chain of selects which ends up with DRM_CLIENT_LIB
-> selecting FB_CORE when DRM_FBDEV_EMULATION is set. Does that fixes it
-> for you?
+This short series refactors the Ally suspend/resume functionality in the
+asus-wmi driver along with adding support for ROG Ally MCU version checking.
 
-Thanks, it works for this, will send v2 soon.
-> 
-> Lucas De Marchi
-> 
+The version checking is then used to toggle the use of older CSEE call hacks
+that were initially used to combat Ally suspend/wake issues arising from the MCU
+not clearing a particular flag on resume. ASUS have since corrected this
+especially for Linux in newer firmware versions.
+
+- hid-asus requests the MCU version and displays a warning if the version is
+  older than the one that fixes the issue.
+- hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
+version is high enough.
+
+*Note: In review it was requested by Mario that I try strsep() for parsing
+the version. I did try this and a few variations but the result was much
+more code due to having to check more edge cases due to the input being
+raw bytes. In the end the cleaned up while loop proved more robust.
+
+- Changelog:
+  + V2: https://lore.kernel.org/platform-driver-x86/20250226010129.32043-1-luke@ljones.dev/T/#t
+    - Adjust warning message to explicitly mention suspend issues
+    - Use switch/case block to set min_version
+      - Set min_version to 0 by default and toggle hacks off
+  + V3
+    - Remove noise (excess pr_info)
+    - Use kstrtoint, not kstrtolong
+    - Use __free(kfree) for allocated mem and drop goto + logging
+    - Use print_hex_dump() to show failed data after pr_err in mcu_request_version()
+    - Use pr_debug in set_ally_mcu_hack() and set_ally_mcu_powersave() plus
+      correct the message.
+  + V4
+    - Change use_ally_mcu_hack var to enum to track init state and
+      prevent a race condition
+
+Luke D. Jones (2):
+  hid-asus: check ROG Ally MCU version and warn
+  platform/x86: asus-wmi: Refactor Ally suspend/resume
+
+ drivers/hid/hid-asus.c                     | 111 ++++++++++++++++-
+ drivers/platform/x86/asus-wmi.c            | 133 +++++++++++++++------
+ include/linux/platform_data/x86/asus-wmi.h |  19 +++
+ 3 files changed, 222 insertions(+), 41 deletions(-)
+
+-- 
+2.49.0
+
 
