@@ -1,271 +1,88 @@
-Return-Path: <linux-kernel+bounces-572741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D081DA6CDF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:06:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ACFA6CDF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A678189A6D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B71C1899206
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4631FFC67;
-	Sun, 23 Mar 2025 06:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTtj6SMy"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBF2010E8;
+	Sun, 23 Mar 2025 06:21:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0FBAD27;
-	Sun, 23 Mar 2025 06:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDCB1FC105
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 06:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742710011; cv=none; b=DBRJIMkU97nKhdBmFoisb8goUJxXR4ksyf+KTmUcmHpegSrysE+If21RJHNAnfvL0xh4BTcyFY5bhXeVHHGL/NvN3ITotXGdm7PxN8kkCdfw4T4HzIRUmOdN3nB+Q0869jDSiIn0CVRSrTU6m84E3oA/dDsQ7enRx89Ze+TuZdc=
+	t=1742710866; cv=none; b=iXptFml9M4dIfelZHn6Wru/ELwUDDhf6/vxuoDd9BenGtKgMEsrko10JKswn2doL2TsPVEprCCu0uUbGgI0eEGe06z/h7LZSLs2Ebh42VfZDm3adxhp114FFtpfuSU92YPYMaK9eYNtVC7rQD7kVbLjtYsWENRosXW8wbkFxuEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742710011; c=relaxed/simple;
-	bh=I6k1xtcP8hppbjVrKhSpeoD7jmUHCyEErJxzazqfbSc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gufojbVpg2Q41R0uOCs3is9hsY9wS4aXNYYKeR77OwlQ7yRaqQ/HRF0mLvjQ3DS8bX4RruwTWxcNDuD88Y/BRqAdX8ixU82xKsCTgx5mOQhTDszZ3FnpE7MWBDlomP/HEMfCxLk9XZE7a/jieICRtazKCMMaDWsVWOmxY2TPWUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTtj6SMy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2279915e06eso11180075ad.1;
-        Sat, 22 Mar 2025 23:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742710009; x=1743314809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/hRrLYrQqWoUWab1kJtk8tDpV6Q/Kh0bvdM9UsTNmZY=;
-        b=kTtj6SMyAt4GQhJkVCKztm2aw2JSmjcwsmyE+d+/PYokbO4oomI0cyivbl4AC3RI7Z
-         lXSLGPaphhp/GjL8QI0bj/7GxAlFa6A5Nyc9jHlvoSt/rjR8rWLsjGTijq7TdxXNvmKT
-         NYP9SqLnPO64L0It+T0zgk8UjXOlr7Jr3lFjH4jLv+v6mnU/iJs6NZRg2CTsS1azhJXQ
-         w2TmXQy5cWsOuGze8BxO4Vd7Ilz3bY/vj5x2Q/pIqCP/fwVIw6HI38WUDnTTXk6CT1Z7
-         DOaYcHLcKuSOohuqDoyh49wohpU+Lh1DoUsoxlIEjzKjLlzL3hljvoqWJr9o670S2woZ
-         ujaA==
+	s=arc-20240116; t=1742710866; c=relaxed/simple;
+	bh=fIjikgeQnvCF6m4qacBYM0tGQ43qTup+CcAWexWSxJM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=M3LRkp0KU/sdRrwCOWU9H1pKU5gW5aD/0LKOM/XoBMwr25Uk8aiZiM0svKwmPo+c1L1whHWEUBDwce+njwEmv/n1FlW6ZcyPNtg2xbs3bfORpno/nUp0DJhD+/UIGsUu670CBVaM9BxM21px6w6bRLu5BliU4VpeeIITdJt8VeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85dd46b20bfso298690139f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 23:21:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742710009; x=1743314809;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/hRrLYrQqWoUWab1kJtk8tDpV6Q/Kh0bvdM9UsTNmZY=;
-        b=JPGAZdZYjZfq77Vd+TwFCIadlaZfKKmxQawjT7ztZKtvVFAZUOPsWUVQQc8nCIx8ux
-         GYX7CW7Hns7yGxRCJOdC3xAyhbSsAzwYY8AzO1nwvAnsnjceSuo3P1+ey/EdZ6qVKUvC
-         rwFrKmzQszSutktPl60a/QTPMlcr0MTgNxR9W63koBhbkVkplfYqOWq8wv/XLOs5qCBG
-         wlR1hlf2gV1pyrK9fj1inSffPOLVFqo5VKCIaPvMKYcLRwvaOdH2wTEuoQ9PgCsxr7r7
-         RtN4FzBlfXz7UaSsjIZsshlzL582XoKhPaIaUZuWjwqm28psWTs6+2A7hsOYEDGO0qVH
-         f/Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTW2yXxtvIDUf+EE2taG5nNA5bGRFgL0pbz6phpQ2eHIHPWHl0d/Z9DgSefE1//w0xYN8NqM23XoXpQjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHZd/x682wFNBRk71kQA94pb7HZYD6LwpZY+U+R8CKQQ9p9BMO
-	94VRQ94W05EUBKsoKFGLNGYufzaiPQXo2MjwxI6laN5OgmjZGrvK
-X-Gm-Gg: ASbGncuncW8zbtBRBn5JfWa4ZcSesb4hkpAwdxXA5Y43L2ocHvcZVMWOgTNFhVy6idX
-	qJ2D10/P6wduERFzegdelZriFyiTMfS3b1ti5fCckBGlV6QIkc61nO7JM7vynw9w6/z61Q+PYV8
-	BAW2HvF5GVhIARXJJWLVj/4QfKVx+ITm/+pHCqE1vjlcVqKfDsZLKeglJjnQXq2Xo8CpcS2JUb/
-	yGZLpepS3f3FhHnZl8+NLBm4Hl4rcvKIm6IeSjXyuJ/OPQ5oDv3HWBY2NRXK8XhcstV6geT8KqA
-	57pCKytwb2iqUeN0PlqOs/pMyAesG4HlO5/0Dh04n1BwE7ABzyeHVp9LQ5PRlxMohMNvCvCZXxE
-	RpXu1pgFmG13a9ImwH9XIfKdAban+D/0=
-X-Google-Smtp-Source: AGHT+IFdTzdYwVw4qAZHzhbbTSWg3s2s5hfhGqEcU9flZ/U2rK2lNN4Qh8/poZ0SnK+VH3t/JQOFQQ==
-X-Received: by 2002:a17:902:e803:b0:227:ac2a:1dcf with SMTP id d9443c01a7336-227ac2a2536mr25143875ad.23.1742710008825;
-        Sat, 22 Mar 2025 23:06:48 -0700 (PDT)
-Received: from localhost.localdomain (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3a2e0sm45406045ad.39.2025.03.22.23.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 23:06:48 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	paul.walmsley@sifive.com,
-	samuel.holland@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	john.ogness@linutronix.de,
-	pmladek@suse.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Ryo Takakura <ryotkkr98@gmail.com>
-Subject: [PATCH] serial: sifive: Switch to nbcon console
-Date: Sun, 23 Mar 2025 15:06:03 +0900
-Message-Id: <20250323060603.388621-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1742710863; x=1743315663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKtFTb08bIbYVi1e3b+r4LgWp1VnGb++rIXGH1+LjFc=;
+        b=m3xAagycYiD2cbiwzGlLoWjOCr/ra+mhbbv3oBLPBqF84hxZmcnf1bdAZxn+uCeSWY
+         ddvMARYTGxiAtWQwIUuGERFuwdXm0Jtj7VxOkWO5cvZII4l4aZfz1QPJi4y9cnRw1m82
+         qWYBKKboGbvIjvpbfmcCK9Hse9jn+CRGOEHQGu2CXrWz4YEm7Nn+vVwfpAgIM249w0UF
+         8KHOtva8iJMCjpcYKfR4PYSqalQlPQnX3JiaLSTVxOQPIAFH93rgb2pw12RTLfm5BQry
+         4fY2WR3b80YsofZ7BGFm/E8uKBqG6TCkG+uTZqRzSeNj1YLpMQz5DLry5Qlewz6NQCpg
+         Gr9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXD2CwkyJ3xxfd9BhY+QO4HoLtMGpRVUtovkpmlXb2EdNgE7EacrJxOdTudCK0zIme6OBAPUCccPj+HqD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnXwGbYSxqt//ASi0FNO2PAQHmZ+cRKzXfJEOCzevJ8CMpqSNQ
+	cVtnoZK1j+Uz3IRnSCkjfaHpO7K5DeezMGy+eSHNiN36ENDfXZyHV9dIDeKikyXGQwMUXj+WXml
+	7xLjwK4ZL2cN6cdAjuCFk3BlV2t3ymdW3IinAMuQ3uQkIOkewJGDTWvU=
+X-Google-Smtp-Source: AGHT+IGPA7Fi5m69oP9shUMeLt/YBnyMDyFwY39TXEP9SiQUAtCQ+3ZkNsPsRUb2svjWb5C/HnXnpmmbKx6KHI8s8AYF+bo7faba
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:188b:b0:3d2:b0f1:f5bd with SMTP id
+ e9e14a558f8ab-3d5960bf875mr74389585ab.3.1742710863722; Sat, 22 Mar 2025
+ 23:21:03 -0700 (PDT)
+Date: Sat, 22 Mar 2025 23:21:03 -0700
+In-Reply-To: <03e95a73-6c8a-47b0-9b72-c1204118be47@gmx.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dfa84f.050a0220.31a16b.0056.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in close_ctree
+From: syzbot <syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quwenruo.btrfs@gmx.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add the necessary callbacks(write_atomic, write_thread, device_lock
-and device_unlock) and CON_NBCON flag to switch the sifive console
-driver to perform as nbcon console.
+Hello,
 
-Both ->write_atomic() and ->write_thread() will check for console
-ownership whenever they are accessing registers.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The ->device_lock()/unlock() will provide the additional serilization
-necessary for ->write_thread() which is called from dedicated printing
-thread.
+Reported-by: syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com
+Tested-by: syzbot+2665d678fffcc4608e18@syzkaller.appspotmail.com
 
-Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
----
+Tested on:
 
-Hi!
+commit:         70a1072f btrfs: extract the main loop of btrfs_buffere..
+git tree:       https://github.com/btrfs/linux.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12875c4c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d5d862b4e27dc0b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I referred to the already converted console drivers 8250 [0], imx [1]
-and amba-pl011 [2]. I tested the patch for each of the NBCON priority
-(PANIC, EMERGENCY and NORMAL) on riscv qemu.
-Hope to get feedbacks, thanks!
-
-Sincerely,
-Ryo Takakura
-
-[0] https://lore.kernel.org/lkml/20250107212702.169493-1-john.ogness@linutronix.de/
-[1] https://lore.kernel.org/linux-arm-kernel/20240913-serial-imx-nbcon-v3-1-4c627302335b@geanix.com/
-[2] https://lore.kernel.org/linux-serial/20250204044428.2191983-1-fj6611ie@aa.jp.fujitsu.com/
-
----
- drivers/tty/serial/sifive.c | 87 +++++++++++++++++++++++++++++++------
- 1 file changed, 74 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
-index 5904a2d4c..d032de619 100644
---- a/drivers/tty/serial/sifive.c
-+++ b/drivers/tty/serial/sifive.c
-@@ -151,6 +151,7 @@ struct sifive_serial_port {
- 	unsigned long		baud_rate;
- 	struct clk		*clk;
- 	struct notifier_block	clk_notifier;
-+	bool			console_line_ended;
- };
- 
- /*
-@@ -779,33 +780,88 @@ static void sifive_serial_console_putchar(struct uart_port *port, unsigned char
- 
- 	__ssp_wait_for_xmitr(ssp);
- 	__ssp_transmit_char(ssp, ch);
-+
-+	ssp->console_line_ended = (ch == '\n');
-+}
-+
-+static void sifive_serial_device_lock(struct console *co, unsigned long *flags)
-+{
-+	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
-+
-+	return __uart_port_lock_irqsave(up, flags);
-+}
-+
-+static void sifive_serial_device_unlock(struct console *co, unsigned long flags)
-+{
-+	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
-+
-+	return __uart_port_unlock_irqrestore(up, flags);
- }
- 
--static void sifive_serial_console_write(struct console *co, const char *s,
--					unsigned int count)
-+static void sifive_serial_console_write_atomic(struct console *co,
-+					       struct nbcon_write_context *wctxt)
- {
- 	struct sifive_serial_port *ssp = sifive_serial_console_ports[co->index];
--	unsigned long flags;
-+	struct uart_port *port = &ssp->port;
- 	unsigned int ier;
--	int locked = 1;
- 
- 	if (!ssp)
- 		return;
- 
--	if (oops_in_progress)
--		locked = uart_port_trylock_irqsave(&ssp->port, &flags);
--	else
--		uart_port_lock_irqsave(&ssp->port, &flags);
-+	if (!nbcon_enter_unsafe(wctxt))
-+		return;
- 
- 	ier = __ssp_readl(ssp, SIFIVE_SERIAL_IE_OFFS);
- 	__ssp_writel(0, SIFIVE_SERIAL_IE_OFFS, ssp);
- 
--	uart_console_write(&ssp->port, s, count, sifive_serial_console_putchar);
-+	if (!ssp->console_line_ended)
-+		uart_console_write(port, "\n", 1, sifive_serial_console_putchar);
-+	uart_console_write(port, wctxt->outbuf, wctxt->len,
-+			   sifive_serial_console_putchar);
- 
- 	__ssp_writel(ier, SIFIVE_SERIAL_IE_OFFS, ssp);
- 
--	if (locked)
--		uart_port_unlock_irqrestore(&ssp->port, flags);
-+	nbcon_exit_unsafe(wctxt);
-+}
-+
-+static void sifive_serial_console_write_thread(struct console *co,
-+					       struct nbcon_write_context *wctxt)
-+{
-+	struct sifive_serial_port *ssp = sifive_serial_console_ports[co->index];
-+	struct uart_port *port = &ssp->port;
-+	unsigned int ier;
-+
-+	if (!ssp)
-+		return;
-+
-+	if (!nbcon_enter_unsafe(wctxt))
-+		return;
-+
-+	ier = __ssp_readl(ssp, SIFIVE_SERIAL_IE_OFFS);
-+	__ssp_writel(0, SIFIVE_SERIAL_IE_OFFS, ssp);
-+
-+	if (nbcon_exit_unsafe(wctxt)) {
-+		int len = READ_ONCE(wctxt->len);
-+		int i;
-+
-+		for (i = 0; i < len; i++) {
-+			if (!nbcon_enter_unsafe(wctxt))
-+				break;
-+
-+			uart_console_write(port, wctxt->outbuf + i, 1,
-+					   sifive_serial_console_putchar);
-+
-+			if (!nbcon_exit_unsafe(wctxt))
-+				break;
-+		}
-+	}
-+
-+	while (!nbcon_enter_unsafe(wctxt))
-+		nbcon_reacquire_nobuf(wctxt);
-+
-+	__ssp_writel(ier, SIFIVE_SERIAL_IE_OFFS, ssp);
-+
-+	nbcon_exit_unsafe(wctxt);
- }
- 
- static int sifive_serial_console_setup(struct console *co, char *options)
-@@ -823,6 +879,8 @@ static int sifive_serial_console_setup(struct console *co, char *options)
- 	if (!ssp)
- 		return -ENODEV;
- 
-+	ssp->console_line_ended = true;
-+
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
- 
-@@ -833,10 +891,13 @@ static struct uart_driver sifive_serial_uart_driver;
- 
- static struct console sifive_serial_console = {
- 	.name		= SIFIVE_TTY_PREFIX,
--	.write		= sifive_serial_console_write,
-+	.write_atomic	= sifive_serial_console_write_atomic,
-+	.write_thread	= sifive_serial_console_write_thread,
-+	.device_lock	= sifive_serial_device_lock,
-+	.device_unlock	= sifive_serial_device_unlock,
- 	.device		= uart_console_device,
- 	.setup		= sifive_serial_console_setup,
--	.flags		= CON_PRINTBUFFER,
-+	.flags		= CON_PRINTBUFFER | CON_NBCON,
- 	.index		= -1,
- 	.data		= &sifive_serial_uart_driver,
- };
--- 
-2.34.1
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
