@@ -1,163 +1,266 @@
-Return-Path: <linux-kernel+bounces-572705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9763A6CD97
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 01:58:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431E4A6CD9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078413AE829
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 00:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021C516AE04
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 01:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEC51FC0FA;
-	Sun, 23 Mar 2025 00:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="hClIcA9S"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA311FE47D;
+	Sun, 23 Mar 2025 01:15:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E33194C96
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 00:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B891FE462
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 01:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742691512; cv=none; b=Pb4K+VMwhoKS7I40byIrqTV68r5Nd539sZA7Z2UnYSdZAMNJrGwgcEVRunlH2PAdwUD0sD7UA1740wziXvFu93pBAqT77jXR5KOHKS8LHUKXVlOQILy0kjw+u7pGOk3pQFClrLextfqECDGv1h1YjZIJJrMsW4SiLu+gPYR8s40=
+	t=1742692505; cv=none; b=Y8D7BF9RPRdMvwZOi35kvux7lzld7UttcrI2HlcxDlbT6T7qoYk/+791hBG9IEVJKqTmvd07wXloGiGdPRGC8E82oX4fkklxHq6b7h5xRATbTpdNqxPDMh9RMzp0W1W9HvQ2PAFx27TPkzGDxS9P3sSZt2TDTTgU1/U4975W5KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742691512; c=relaxed/simple;
-	bh=mAw2/DsVZbnbNFqZ/aVY8p4FFJUIIPE0GawzBjPSeS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAXUx6iqZYee9bHhjB4cDYGrdPnf9aPYnwgUIFlWGTs9YfnTokeiahjLS/AHcPTWRfhukBczEgk0eQSQophqi+IxLi50ead9zYeEWK3Da7NVZPe09IKozkJQQRpQtajlkjMEkbAr64gA4hq7ZKZBv4Eh55CR0cwtMjF5ynKAVVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=hClIcA9S; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ecf0e07957so2578466d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 17:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742691508; x=1743296308; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aeEPSpi+LouXy84gWofWuqLxs44DebxEJYRwtj0CHQ0=;
-        b=hClIcA9Saoa958GnC550C3nXkxpQWxfwnQqLtpeVEkbPTqXGbgSCr8rxhrfQ656OpK
-         UXWNrSo9Has+ko4vHju/EL7VsPs+yfxSZJj1ADNW9aVPaizGm1UG0Zq7/8ebI9UhWMzU
-         mcqHoM01YF7j8kbatClHh/V4+fS46Ve+TWt+4JmwqTTz3CpQHEKYfLAaus2X5/rYVCfx
-         1lRkYytfcRc28xKbfbusJ0X3Xo4yRJoMTMFgvUv47zjM6uJ/a/lVqdwKN/7uP3ZLmPez
-         KfeJYOUSWWld9LGIhKnNO08WmoHcGaE0432bqtMqU1YBSiOV4YV2Oj+k82xXmel5JxQC
-         1UAA==
+	s=arc-20240116; t=1742692505; c=relaxed/simple;
+	bh=4gyMtvDh+9b30JE5yfirPBmJuUWMrRcr32uXDtDflQg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ftYDPLDUI8xNHpQ0iOnlz7t+Cgckix83Hc1xN8OJ5Rgo2wcg5H/VYuaKsBqSoLPyokqVWoJMG1gyAGpMmUCBXJpVpi93zQOcO19oatvvtitoDl5xAhY0T9Jod3X68GtvTieVV+HmSJ3Y000k3qm8jCF27QMlW0m2czSPgVjOiSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d43b460962so61251385ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:15:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742691508; x=1743296308;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742692502; x=1743297302;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aeEPSpi+LouXy84gWofWuqLxs44DebxEJYRwtj0CHQ0=;
-        b=fjCzxsFDVgluWjE2rLZIRIBepcJC1SJEVutaq5g5VkVG4GiWPAbAJS4AFgwuznt2x6
-         Rl6TxpQ5wUWqPfnN4TjETs4k8/rp8wXVr4SccX8nrQLvUEVODUtn5dVLgyUF+qvlQg3E
-         dn6Y8Ot+FhLFFyhPawGp9nKiA/f/duW1mC5UWql+rWUfAnPm/CH9UBpxkrso3Sxy/aom
-         QrEvd0uXZt5+EdP4z6PjCVpn0wnm3kyOLWp3BNNOmcOSJT7iQLzSXgbTphCE+ysy5aKZ
-         adg46jcqr8NWCboAWdGrousQU4Jz6k7shM1rCvqdQApenGaufrFPP+UdUWP2oo+w/j9D
-         g0wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhH/49Bwha4yAYYpGvR6C9oNWZsiUDNiIqZDR8xDsMXSAOypi6+uLGiWQsASpYtauJxITVUpNmxfF9KZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU35UTZcOJtwz5EtPHJAOcTk096Or/qHzntOKiak+LSfF3Njzi
-	UQU+LwXA/GBVKZmc/vjJANqFStb/PElnKqdZcAf6n7Oypxv/Haw+HoZd/3DuIIw=
-X-Gm-Gg: ASbGnctRDCVfm8ATJU+tfD9/54VkVXGU14+0fEh1jORNVKuF89CrppzW1nu4Qj91tJq
-	7INtGaumREqm1Pi+U74dGS/yIZ0kvB2h+cZ1F9jMOJLLw0p3MmZHTX0wSbln3hA8/BnUDXKpQV0
-	gbVMUY6XiuxLWIhUGwaVQ9fcI+N49oOry9FW30smHm3hY5goPXkwpkPRQtB0KlRlSIUz7kyH4Td
-	+K1nzZaoftdqCzM8035lo4mVUpBfY7sqJXBoN6UDd5mcHtqK6Mjhjm4zjSL08OuLImWzVWvT8JS
-	zNkJyEbHTpsDWWj8u1dTM7GG77uLKYyvUTr0aDa2x1Y=
-X-Google-Smtp-Source: AGHT+IEEHlubSb2PqXumVDJJbARdcGgmHLjdwg+WVivkPmYNYOKDMb0d62YkgtAOTCepL4GbgJ3inA==
-X-Received: by 2002:a05:6214:1d24:b0:6e6:61f1:458a with SMTP id 6a1803df08f44-6eb3f2c8664mr116957126d6.14.1742691507736;
-        Sat, 22 Mar 2025 17:58:27 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eb3ef1f5d8sm26728796d6.45.2025.03.22.17.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 17:58:27 -0700 (PDT)
-Date: Sat, 22 Mar 2025 20:58:23 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: page_alloc: defrag_mode
-Message-ID: <20250323005823.GB1894930@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-4-hannes@cmpxchg.org>
- <D8MVZ8L12HJN.1LN4G4H0ESLY6@google.com>
+        bh=HFx1a+XC17/ire6sCAfCg0exH3t78kRA7jOzaVXWqPg=;
+        b=hvrJaOwbTxSimh1SGzDQtOtV2gA7zgxS0Axw1ghkGUqYaPNuEFMsXs8U70McBnmJx1
+         KeYmK3/Hce/qrRNEQ35yILbZW/JIMCSxX2b4TEWFG8Rcfa4V4Ih1waGkLE6bDlGDuKbr
+         /2GjDUfvpUuUNUBY57OmUFtUEzbqyBLW1ok+U8Y/MC+Gee8bRE7/DVmR2sry+DWQpKTM
+         r0NIjk50WILkREMxdrqAqGhGwq0VuxW7BheGULNUt2L+lVyhZQk45l4LQ2t64jwNHJFr
+         c6TZ1AoaJSwIGaQ45TGZkO+xy6Rp2ZCSEqEJfftvp8+jpQuOdGlc2YjiHVINgiOqAZZ8
+         W+hA==
+X-Forwarded-Encrypted: i=1; AJvYcCXz6qPof0Li6MPnP3hio2zYCLM7xmT4w6ND3SAMH6RIpfNI+Klb1p20ByLQm6HFaTQ0D9x+x/VUnzTGa1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyplz+ZZQC45qTZrJfosEGBQr1z2I5erj2KE7WHQ+u3OVeuOoyQ
+	0eSKL1YERjUlm3ELJV9ihCG89asRFqUOUw9HIa+iQgg0tcFx2zBYxtvtJACo2h7pfnsftNWG1B/
+	0Bzij5SrdnKZOrPe95qgF+tCRgihKXsINPMZCW5W4wr7SvibvS2GhjkY=
+X-Google-Smtp-Source: AGHT+IHgs1SxiIjU57qkb4EhbNxmd7v53oK+4ImCf8a3iHKj4n9rC2YoOqGzvC7dX4v/U7Dy0eFO+qXvCa+okRKO37GYDddyOjJ7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8MVZ8L12HJN.1LN4G4H0ESLY6@google.com>
+X-Received: by 2002:a05:6e02:3904:b0:3d4:4010:4eff with SMTP id
+ e9e14a558f8ab-3d596164076mr70328915ab.13.1742692502460; Sat, 22 Mar 2025
+ 18:15:02 -0700 (PDT)
+Date: Sat, 22 Mar 2025 18:15:02 -0700
+In-Reply-To: <20250323002028.3563-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67df6096.050a0220.31a16b.004f.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+To: brauner@kernel.org, hdanton@sina.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 22, 2025 at 04:05:52PM +0100, Brendan Jackman wrote:
-> On Thu Mar 13, 2025 at 10:05 PM CET, Johannes Weiner wrote:
-> > +	/* Reclaim/compaction failed to prevent the fallback */
-> > +	if (defrag_mode) {
-> > +		alloc_flags &= ALLOC_NOFRAGMENT;
-> > +		goto retry;
-> > +	}
-> 
-> I can't see where ALLOC_NOFRAGMENT gets cleared, is it supposed to be
-> here (i.e. should this be ~ALLOC_NOFRAGMENT)?
+Hello,
 
-Yes, it should be. Thanks for catching that.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Note that this happens right before OOM, and __alloc_pages_may_oom()
-does another allocation attempt without the flag set. In fact, I was
-briefly debating whether I need the explicit retry here at all, but
-then decided it's clearer and more future proof than quietly relying
-on that OOM attempt, which is really only there to check for racing
-frees. But this is most likely what hid this during testing.
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_amd64/syz-execprog" "root@10.128.10.24:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.10.24, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.10.24 [10.128.10.24] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.10.24:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:g5LT3corcdQiP3+7S3QNYL7lzLWO1gp=
+/6X86Qtf82jk
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.10.24' (ED25519) to the list of known ho=
+sts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.10.24 ([10.128.10.24]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
-What might be more of an issue is retrying without ALLOC_CPUSET and
-then potentially violating cgroup placement rules too readily -
-e.g. OOM only does that for __GFP_NOFAIL.
 
----
 
-From e81c2086ee8e4b9f2750b821e104d3b5174b81f2 Mon Sep 17 00:00:00 2001
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Sat, 22 Mar 2025 19:21:45 -0400
-Subject: [PATCH] mm: page_alloc: fix defrag_mode's last allocation before OOM
 
-Brendan points out that defrag_mode doesn't properly clear
-ALLOC_NOFRAGMENT on its last-ditch attempt to allocate.
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build2585973881=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-This is not necessarily a practical issue because it's followed by
-__alloc_pages_may_oom(), which does its own attempt at the freelist
-without ALLOC_NOFRAGMENT set. However, this is restricted to the high
-watermark instead of the usual min mark (since it's merely to check
-for racing frees). While this usually works - we just ran a full set
-of reclaim/compaction, after all, and likely failed due to a lack of
-pageblocks rather than watermarks - it's not as reliable as intended.
+git status (err=3D<nil>)
+HEAD detached at 22a6c2b175
+nothing to commit, working tree clean
 
-A more practical implication is retrying with the other flags cleared,
-which means ALLOC_CPUSET is cleared, which can violate placement rules
-defined by cgroup policy - OOM usually only does this for GFP_NOFAIL.
 
-Reported-by: Brendan Jackman <jackmanb@google.com>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D22a6c2b1752ef57d8d612e233d35f6be8c3bf7df -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250318-101307'" -o ./b=
+in/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"22a6c2b1752ef57d8d612e233d35f6be8c=
+3bf7df\"
+/usr/bin/ld: /tmp/ccpgaPmt.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0c01998cb3a0..b9ee0c00eea5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4544,7 +4544,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 
- 	/* Reclaim/compaction failed to prevent the fallback */
- 	if (defrag_mode) {
--		alloc_flags &= ALLOC_NOFRAGMENT;
-+		alloc_flags &= ~ALLOC_NOFRAGMENT;
- 		goto retry;
- 	}
- 
--- 
-2.49.0
+
+
+Tested on:
+
+commit:         586de923 Merge tag 'i2c-for-6.14-rc8' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2e330e9768b5b8f=
+f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D62262fdc0e01d9957=
+3fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D10125c4c5800=
+00
 
 
