@@ -1,111 +1,155 @@
-Return-Path: <linux-kernel+bounces-572761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5750CA6CE56
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:39:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41305A6CE58
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A58DB169A99
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C934A1897DEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73177201261;
-	Sun, 23 Mar 2025 08:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC9A202977;
+	Sun, 23 Mar 2025 08:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KSWOzKej"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZwVqlUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A78B15ADA6
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 08:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B8F15ADA6;
+	Sun, 23 Mar 2025 08:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742719156; cv=none; b=OVF5lXrH3nAadkueZ51KN7etqEwC3SLSldjr1ZWhzneGyTnufTSc49cebcY94jY6vEik/hYkWmVj4WXn1ZgXL7yPlncy/6t9TskjJsYpVt0eTgARCzewKxnT3fJSDvNtVzun15ARJ/eP9/scaYQEpWdSeCopo7Eq6X7vlxveDHk=
+	t=1742719237; cv=none; b=rEiSVw54yXiSHieOfkjT1jAcgCRkpV7XcTDXt+rC2yy1Jt9XGGWjKdnjfNXX6jA8A7mbn0GpCVchEDARy3ypSXtADwi0mrGRuZml1FoXaaPYCu7wgId2t9iYvIZt8XezVtkIcc8HsH/458i7eW9eaHW9IcSrUyICt7mb8SKnhCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742719156; c=relaxed/simple;
-	bh=pjyCmpxEr5jT0zIxY7JcF9hVQh7SAFHzVL7PbIN655o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=enCZSsxbk4D+aJ+G/PY+qVBe+UzpYbfsIfu5Js6xAf2Y0JPiGzBJ6W24THN2hFgMerb/X1xQEXX6ztYEb5Fj3Az6vqFCdfjG1I1g9CLrM88pidAbrx1mtnX2hev+JKgRs9nKOVqea3wUxlrPzS0wQT2DLtSaWZpjvsE6dx1KWrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KSWOzKej; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742719155; x=1774255155;
-  h=date:from:to:cc:subject:message-id;
-  bh=pjyCmpxEr5jT0zIxY7JcF9hVQh7SAFHzVL7PbIN655o=;
-  b=KSWOzKej9J+jyMqmXZbgbpo9MAKy9swHmQKZDRy53R6scjlTSU75H1xC
-   mZbbTiSq3kMWPUp0O0BM9PFvTJwItTf9hI1haOmDF+i05Ahh1yx5LYrJZ
-   JNUM0YBwAJ3Rcv95qIZnExZDIFSxBVFohx4kBQNgdmaDziIGwdfDjIGNq
-   WHkzwgEqXSiiY1u0KY4lQlxb65opnck06SZjLiD3HQqw9aq/OqyvDhUIF
-   5hmUpPKFc1P+jyShH4c4bjVxWic9IlRtaknLTBex6PI+FTy96mb1KzbHR
-   2R+zOOSA5hOvWbI7MJEdgKtbH6a9TgL9YNvqBRtcAbSoEzSHzLBbhTKAz
-   w==;
-X-CSE-ConnectionGUID: Pwlh4vnhT9mxSIJa+pTJKw==
-X-CSE-MsgGUID: yeI/4VvcRXyq6lRqINGOSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11381"; a="43171688"
-X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
-   d="scan'208";a="43171688"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 01:39:15 -0700
-X-CSE-ConnectionGUID: IKam/7RMQrOr4I/WqkSbIA==
-X-CSE-MsgGUID: vf5RN25sSO6f1hDAnEDNDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,269,1736841600"; 
-   d="scan'208";a="127921669"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Mar 2025 01:39:13 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twGrP-0002fX-2T;
-	Sun, 23 Mar 2025 08:39:11 +0000
-Date: Sun, 23 Mar 2025 16:38:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:perf/urgent] BUILD SUCCESS
- 50a53b60e141d7e31368a87e222e4dd5597bd4ae
-Message-ID: <202503231650.ZPj02Ox0-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1742719237; c=relaxed/simple;
+	bh=1Fqc8qTern+5AWtLNetV1XEhbB0+J28peG5nppakHYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBHqda9RyNVjtXieQlxQAhfVdzjdQiBNvsxIDZNgoaf9fZXW2ASJL8j0mL4gjlcgPvZ1Y6m3ZQEGO+RR+zXi5vLX3H5M+uC84wqlj993naQcoXVfOzEUSeMklnlfUvw4k7KmCqNZyA/z6YlcoJFFDgPdlVNdCYTvODmkJMhj1bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZwVqlUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C60C4CEE2;
+	Sun, 23 Mar 2025 08:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742719237;
+	bh=1Fqc8qTern+5AWtLNetV1XEhbB0+J28peG5nppakHYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fZwVqlUjlWQkP8O41VjI4qwX9y6B/G5i1qCTPA/w58iL+GZ3HJBH0cW/kEsh5iS8A
+	 CgFH1KjmSNJXBEXEJ3Df2cRzL+DnJ8nWzTD10jWReXePH4xO5YLHH8yu+Qk9HqobWT
+	 GvTimM9CW6cRJ2MDIbrnbaRguPB1vvIjyTZVikR0llaKwv6jQ6PhhhPZSCU4+3j5ID
+	 rIOHRZYIV73cttfY2knrjkMP4dLO2akiRqmhB5EKKioA2ipFBZA2n7FQfa9cSSAiAt
+	 Yklq3/w6LxT9+QrWPMQRVWNv2sQ11osxIFrJkyTREY6nNZVXr/VEqSw2n44QfKWDGT
+	 pNOzWKK4YKA2A==
+Date: Sun, 23 Mar 2025 01:40:35 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>, kdevops@lists.linux.dev
+Cc: Jude Gyimah <Jude.Gyimah@ruhr-uni-bochum.de>,
+	Ole Schuerks <ole0811sch@gmail.com>, linux-kbuild@vger.kernel.org,
+	jude.gyimah@rub.de, thorsten.berger@rub.de, deltaone@debian.org,
+	jan.sollmann@rub.de, linux-kernel@vger.kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu,
+	Brendan Jackman <jackmanb@google.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Carlos Maiolino <cem@kernel.org>
+Subject: Re: [PATCH v7 00/11] kconfig: Add support for conflict resolution
+Message-ID: <Z9_JA_tuFbVJRcTR@bombadil.infradead.org>
+References: <20250208163959.3973163-1-ole0811sch@gmail.com>
+ <CAK7LNAQBBKfSwQ=z3yBchg--gcrAykWz6xvpAYWKse9R9g8KVQ@mail.gmail.com>
+ <Z6oeplCypN825pyR@bombadil.infradead.org>
+ <CAK7LNAT48101gZzcHF3U-VL1i0Ekns6zXKpNDb3MnScoSNr-kw@mail.gmail.com>
+ <ac98e417-1587-4806-9576-7661acc6bf6e@ruhr-uni-bochum.de>
+ <CAK7LNAT4ezUbKj1N95tN2xaiGXWABp3ABkwK+NePWc87XgcEDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAT4ezUbKj1N95tN2xaiGXWABp3ABkwK+NePWc87XgcEDw@mail.gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
-branch HEAD: 50a53b60e141d7e31368a87e222e4dd5597bd4ae  perf/amd/ibs: Prevent leaking sensitive data to userspace
++ kdevops
 
-elapsed time: 1444m
+On Mon, Mar 03, 2025 at 01:56:44AM +0900, Masahiro Yamada wrote:
+> On Fri, Feb 21, 2025 at 12:03 PM Jude Gyimah
+> <Jude.Gyimah@ruhr-uni-bochum.de> wrote:
+> >
+> > Quick follow-up.
+> >
+> > On our end, our SAT-solver implementations can be easily adapted to accommodate your future
+> > toolchain selection refactorings.
+> 
+> OK, we will see.
+> 
+> >
+> > Also, could you share with us the timelines for your refactorings so we can plan and deliver the
+> > adjusted SAT-solver patches.
+> 
+> There is no timeline in upstream development.
 
-configs tested: 19
-configs skipped: 127
+Jude, while Masahiro works on dynamic shell evaluation support and
+given the SAT solver currently works with bools / tristates, I can
+think of ways we can likely move forward to experiment with the existing
+SAT solver integration, and can think of ways we can get ahead by
+exploring ways to leverage the SAT solver on kdevops which can likely
+pave the way for its use also later in Linux.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+We already carry a small delta on our kdevops kconfig to support yaml
+output which has proven invaluable to us, we can carry a SAT solver, as
+things settle with dynamic shell evaluation on Linux.
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250322    clang-20
-i386    buildonly-randconfig-002-20250322    gcc-12
-i386    buildonly-randconfig-003-20250322    gcc-12
-i386    buildonly-randconfig-004-20250322    clang-20
-i386    buildonly-randconfig-005-20250322    clang-20
-i386    buildonly-randconfig-006-20250322    clang-20
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250322    clang-20
-x86_64  buildonly-randconfig-002-20250322    clang-20
-x86_64  buildonly-randconfig-003-20250322    clang-20
-x86_64  buildonly-randconfig-004-20250322    gcc-12
-x86_64  buildonly-randconfig-005-20250322    clang-20
-x86_64  buildonly-randconfig-006-20250322    gcc-12
-x86_64                          defconfig    gcc-11
+How can we leverage a SAT solver on kdevops?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+1) Feature-driven configuration and scriptable goals
+
+Instead of having the user do the heavy work on figuring out what the
+heck to enable on make menuconfig, the user just has to writes a
+requirement. Something like this:
+
+ci-goal:
+  - filesystem: xfs
+  - features: [reflink, 4k]
+  - workload: sysbench-mysql-docker
+
+This can also enable scriptable CI goals:
+
+kconfig-solve --enable sysbench --fs xfs --blocksize 4k --reflink
+
+Generates .config to let us test this.
+
+2) Minimized configs to reproduce a test on our CI
+
+Today if someone wants to reproduce a generic/750 test on xfs reflink 4k
+profile they can just use the web interface to select just the xfs_reflink_4k
+defconfig, and we have a kconfig option to let us limit the test to a
+set specified [0]. That requires adding a defconfig per test profile we
+support. Wouldn't it be nicer if we can just say:
+
+ci-goal:
+  - filesystem: xfs
+  - features: [reflink, 4k]
+  - testsuite: fstests
+  - tests: generic/750
+
+3) Generate a set of different tests for a goal
+
+Given a set of features we want to test, we could have the
+SAT solver look for satisfiable combinations we could have
+
+ci-goal:
+  - filesystem: xfs
+  - features: [reflink]
+  - workload: sysbench-mysql-docker
+
+And so this may generate different .configs to help us run each one as a
+setup to test test XFS on mysql using docker using all XFS profiles.
+
+Let me know if your team is interested in exploring these things.
+
+[0] https://github.com/linux-kdevops/kdevops/blob/main/docs/kernel-ci/linux-filesystems-kdevops-CI-testing.md
+
+  Luis
 
