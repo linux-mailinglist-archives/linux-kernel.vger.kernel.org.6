@@ -1,109 +1,87 @@
-Return-Path: <linux-kernel+bounces-572784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4884A6CEB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C9BA6CEB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269DD16EF24
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:30:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F0316EDE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E952045B7;
-	Sun, 23 Mar 2025 10:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD587203714;
+	Sun, 23 Mar 2025 10:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O3FK1bGd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="a8DtxVst"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CD020127A;
-	Sun, 23 Mar 2025 10:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FE420127A;
+	Sun, 23 Mar 2025 10:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742725801; cv=none; b=dIH8YZruLPDO1rF2QGKtiNBNaE2NrhhS2pG8apYDtxeMNAXBNIsb+s2R5wwxESBeQZkIP0p+3xXtIyoNPay93+DqCBDwlxKylQ7aFB38Oc2s39iW32IsPA8vVBzmbRNsoL6YuvX4qv4RzJetgRCzfJrTYuDRmYyfovxoufdjYSE=
+	t=1742725792; cv=none; b=FPxuV3lcuPK84+nskB8VQ6UQFCBuzMPcveDrmjJrxMAR2Wo/84hOs+oM9YoV2BI/QwlpmhauzNWb6gVk78cTX+ozIXIWViVfCjhBNPHUMJ8oCyQclyE1dfNkENvQBnuhdiwIsRjim18OSZ0BkkFrUOjgng2pJmEa2LkyukHRf1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742725801; c=relaxed/simple;
-	bh=NmWh1k7W3U0d0Kpxq1obaK4D4zcCIG1K9ztnfmVdzNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a/+NpZ8/j0jVj5j8T6Way8pIFF75cqrHHfuSaEfqsZdEDH5Cx5jYJoFoPIUU8EdPPoZpf3L0QEI8KKzJAkjEN2AjMaFDqnccgjaoZMcAlivBtLrmMaukpCScnaeSIodIJi3voHwgnEvzw2V7b08sl24h0P4dyOrHqA5mHFZDIew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O3FK1bGd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742725793;
-	bh=abI0svhSiSukWr9bs81MFOT2BJ9fk2+6xqNcz+6ja+A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=O3FK1bGdW4tdW8tnTgAupsJWhlr4O+hdwztz2MYnR5zEcuzh0rFwmmAv3Im+lS/VT
-	 Rwzk+MIeQOO0BZIEtmaJmqdIb3dfKMnF6EMUcI1AjV/DerIxifPT8Q+FBxGEA+HCB2
-	 CMuPowWlUb8ffb2TSWzLqHkpFZ5G4RTGYAkMOuIr7vKMSpVU7HIII0Of5cjD2DBu1Z
-	 To05OH9ILUS+MhH8fIURb9bSr6T3YvbzHVCDTSaw1er6TWiVhDaf9B7fOBL+KCrDNL
-	 ecniUJrGlRGDWiz/NiexxrBV5jsw1HNDFrIBaKu6kpf1ud3CFOZD6x0bC+VphpV+jK
-	 AHJmFmHiJig8g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLC9X6JL4z4wyk;
-	Sun, 23 Mar 2025 21:29:52 +1100 (AEDT)
-Date: Sun, 23 Mar 2025 21:29:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Message-ID: <20250323212937.4f182bd3@canb.auug.org.au>
+	s=arc-20240116; t=1742725792; c=relaxed/simple;
+	bh=fPBM9ITvuM7lirHi1AJ+7gCaDuDnmt3ZpcGmkE5puZE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tylpoWExLw+TlP1BEiPtIcYzPJGZJbINdyS0Btd32nqx2lk2WneG5fsO3X4g4NSCqiEz5HRBQ44ex01kvUbsGmWsux+JK8PM2D+zpSrOxFyr0/riOjX9dtM00IBol/roVP9FRi+R7iTUzmRY4oHayVskULpMqVWeSXm2h7QMDIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=a8DtxVst; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742725788; x=1742984988;
+	bh=l+ASOZcM9HRgZ+nz5pIJnzRypkL94hqWNP9RHmPuWTg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=a8DtxVstiodhLlvooPtOArISro8h+o92/a0NMBGFBqo135ZJ3flUcM2FHDNiygxOK
+	 YzoLm+CpxEQOC8NlJrsRXgWOc0et5OXSeP+mxOPcHrCmic1PiTzb//YAhG46Ewq9G9
+	 fKStdc+2jpbfrOpjK1ir1TgVxHQiSb84zT1nx9BOnknt5FNAjV+JFOWSaz0GS3lyyv
+	 Fl4ggyv/cEyQlwlwZgrnAc6P7peK4+QyISn9eD0F6VXb90ecUTA0PfZgiqU5W0Eo8g
+	 MOmvRAO06uJ34ItUF27hL5IaEp21SNpt2NQvrZsRyc9A3S9E4ZXTf5nwOHXhl9/ub0
+	 EKDmdnIFTDLnA==
+Date: Sun, 23 Mar 2025 10:29:42 +0000
+To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/17] rust: init: refactor to use `&raw [const|mut]`
+Message-ID: <D8NKQ9JVRZ0Q.3URGSAFN5MHCN@proton.me>
+In-Reply-To: <20250320020740.1631171-3-contact@antoniohickey.com>
+References: <20250320020740.1631171-1-contact@antoniohickey.com> <20250320020740.1631171-3-contact@antoniohickey.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 43106bd6fd4e617b4b99b0cac304b9f6f2e8fe96
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/PAIwbpigSvq_PW3U4nYp_rN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/PAIwbpigSvq_PW3U4nYp_rN
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu Mar 20, 2025 at 3:07 AM CET, Antonio Hickey wrote:
+> Replacing all occurrences of `addr_of_mut!(place)`
+> with `&raw mut place`.
+>
+> This will allow us to reduce macro complexity, and improve consistency
+> with existing reference syntax as `&raw mut` is similar to `&mut`
+> making it fit more naturally with other existing code.
+>
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> ---
+>  rust/kernel/init.rs        |  8 ++++----
+>  rust/kernel/init/macros.rs | 28 ++++++++++++++--------------
+>  2 files changed, 18 insertions(+), 18 deletions(-)
 
-In commit
+These files have been moved in rust-next, so if you send a new
+version, it would be great if you could also rebase onto rust-next.
 
-  9ef52d529bb7 ("ASoC: SDCA: Correct handling of selected mode DisCo proper=
-ty")
-
-Fixes tag
-
-  Fixes: 13fe7497af19 ("ASoC: SDCA: Add support for GE Entity properties")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: d1cd13f80dc6 ("ASoC: SDCA: Add support for GE Entity properties")
-
---=20
+---
 Cheers,
-Stephen Rothwell
+Benno
 
---Sig_/PAIwbpigSvq_PW3U4nYp_rN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmff4pEACgkQAVBC80lX
-0GzyEQf/SkMu+zDRNua6I9DfSuUTT3m+orHSTvcdKldaOBo8EbVmk8Tt1hQ309sA
-/1yVD9BTCQy9zg9UCyYR1xQfN+vysAQ/lZ68QW56uWfX7rHY7nwIGMmAqNtSY6Kd
-Po/PkJ31Yt3DN5Q6vlS6Qm0MpS7Lc3bLlaZixutB9LXF+16C3tPmOAc0midy4sdq
-KeIZQS1eLYgxioN4Ogc++/7zFyWQ0ffQBE6eGlijkvEmKMjsV3MB7CotNl0jviUC
-z+aQHRVHFAL/7K2rtcxdJ5AhK8QzESwbnXTajcgfEeWLz3a7lsA3qvgxmywNSki5
-kXBiTikE85nnJLMrBoqPCEhWE2eT7A==
-=1j2q
------END PGP SIGNATURE-----
-
---Sig_/PAIwbpigSvq_PW3U4nYp_rN--
 
