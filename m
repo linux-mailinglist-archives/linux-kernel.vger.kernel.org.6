@@ -1,57 +1,54 @@
-Return-Path: <linux-kernel+bounces-572797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E312A6CED2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:39:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DFDA6CED6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 824657A55FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C6B3B6FC8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B155B20408E;
-	Sun, 23 Mar 2025 10:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6372040BC;
+	Sun, 23 Mar 2025 10:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EhtcXJiZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hdy8pQea"
 Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21661FECA3
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 10:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5300B1FC107;
+	Sun, 23 Mar 2025 10:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742726342; cv=none; b=XQeEwclLEX49yLDYhrgnp2remuRAYL2hLwnfkXxlpX1c8yqEut0IuxjnJwSFC2ON9JLZTwwP6bOnSPtSps+wXsB5EKZf9VADetNPe6BS5tcFOyeCHvfm02QRiUVwS/26e2TwI+hQPjbZAN9xscJAf6GsEnLk45umdevwiB+WjfM=
+	t=1742726358; cv=none; b=g/RlHO6S5RyztRylqVvSKHR0gtsC2KIC+Odnz9sK3khsIQ4NIavUgSTT+tv8avaxR/YPYjyLPbdx8nlofb6S84OQW4y+vdH7kPB1Q9DMt/wksZmBg6rAW5vNfvQhi6zRLaiPXN+yZtwmBNl79mAm4Tcfrj+K6BencunkM8hv0MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742726342; c=relaxed/simple;
-	bh=oMcbht4Qs7Z/lsIyggDKMZRC5JfG6lRFD7TyuPjZL8Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=euX43I9AupUvi2X7RbF/4D9BCQ3wa3m9rOwX+8mrL+5gHg0ijnmxv3HEpGMbfW1ulLikknoQAi/UBfncx0k5U9S6QV6rbP0o+gVjGoBXG0vQiGyoaQFvy+sqk2HChJkfTjFVJmfBFYfQgGJ9IO7XaLV0+21tQeN2nvdmdB4rBJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EhtcXJiZ; arc=none smtp.client-ip=185.70.43.16
+	s=arc-20240116; t=1742726358; c=relaxed/simple;
+	bh=AVRh0Xa6OPw4Vrq9X0/9b2V0Lz/TqprJd2MOxOm4igM=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Y2k2RY5En3/iXUU3p6OkjmrqB+5M/AGVLFyophUk6p6u56FuCJ4iEleCyTpFxzW/q6wGJe64fzb0YEKiiUIMGguiejs+jbJIVUeJ99W6ADYJZaAaedE50UG4WfN2Mlj3KawIA8dlQj7/V0TY3m9RJrppHimXzEOINWktw9GR9RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hdy8pQea; arc=none smtp.client-ip=185.70.43.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742726338; x=1742985538;
-	bh=JhWYioR0TnMhs+2LvrIpLH4Vufg6hj1LMtCyz37NSE8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=EhtcXJiZ38oMVRNHVdbysktqCST4lKoj4zEHSFhSTY8ybUD1VI8Iys+dMtmv2ZP1K
-	 mJhOB9cOh+5ddKS7FpBynOG8GAMXS1Xdk03UL5SkBu93wF4mYDwPmFgh7ZN/zlPCqX
-	 CK5/EIE5OJgjObzNrJ7sqFNCW3w3/1MCyd17dT+uimUXQVa4qTrZwmlk4eMGHlcaoM
-	 ot+so1MZvDI281/lrNLHmRZRl68nXB1uq+pHCqRtf9IP4Z4Vpmhbn0LcWGeRRvNVVK
-	 rFlGAme44Buy/hQg2EYv+B6DsOYeU5c4/rjNbUikdfq3FcTOy+XDNjiLaqyjEx7yrm
-	 UcKnznWj40QFQ==
-Date: Sun, 23 Mar 2025 10:38:55 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+	s=c5isnu5aurezjgl6uh5xx6wkaq.protonmail; t=1742726354; x=1742985554;
+	bh=vmqzh7/G+ae0+uJvF7eWYfnyUM6UEP9JdNqwExsi6yE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=hdy8pQea/2n4T48vqxgg95xVMg29YXggCAD3CaHf76ydSBpzHWoWALslKOmJAHsRI
+	 AwOneiGUl8auVPJ0GluNjLLMzI5DdvBcpHeF5XaHSGqEYsEFLdkD8KjP+3qy71xlPW
+	 mCftBhqvW/o5G0ruGWvs3OWSN73ybZ3FHrrgx3jExFdeIoAkWjfV4Z1Rb7hUVkiB2O
+	 9ls7SyqUoib4Wm+Qq2j0QdkPKC4udtuBmhCzkLh2ABhwnl6wNVILM0UvsCcD2MAlq+
+	 dmlyyO5vC9dVTj3GWHzDV0n5dlZPeLHTvypeTHNvABLRI0rTrs3ZcF+CaJpuEkb1X5
+	 KCH8bJyg5Ed5g==
+Date: Sun, 23 Mar 2025 10:39:11 +0000
+To: Antonio Hickey <contact@antoniohickey.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
 From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 11/17] rust: rbtree: refactor to use `&raw [const|mut]`
-Message-ID: <D8NKXBX3CQGT.1MR9MKL6H4G86@proton.me>
-In-Reply-To: <20250320020740.1631171-12-contact@antoniohickey.com>
-References: <20250320020740.1631171-1-contact@antoniohickey.com> <20250320020740.1631171-12-contact@antoniohickey.com>
+Cc: netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 12/17] rust: net: phy: refactor to use `&raw [const|mut]`
+Message-ID: <D8NKXKB4SLUN.2Q6T2MCQQZMOQ@proton.me>
 Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 34e1fbc301c389088d279158285f5073652bef37
+X-Pm-Message-ID: f1bf29502283d6ae593996d04b5eca3f90ce8144
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,8 +59,8 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 On Thu Mar 20, 2025 at 3:07 AM CET, Antonio Hickey wrote:
-> Replacing all occurrences of `addr_of_mut!(place)`
-> with `&raw mut place`.
+> Replacing all occurrences of `addr_of_mut!(place)` with
+> `&raw mut place`.
 >
 > This will allow us to reduce macro complexity, and improve consistency
 > with existing reference syntax as `&raw mut` is similar to `&mut`
@@ -80,7 +77,7 @@ Cheers,
 Benno
 
 > ---
->  rust/kernel/rbtree.rs | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+>  rust/kernel/net/phy.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
 
