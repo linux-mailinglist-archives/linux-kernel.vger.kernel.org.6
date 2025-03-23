@@ -1,159 +1,119 @@
-Return-Path: <linux-kernel+bounces-572896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92360A6D00A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:36:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C14A6D011
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D912C7A65A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4A05168CC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 16:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F70213E02D;
-	Sun, 23 Mar 2025 16:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A461519A9;
+	Sun, 23 Mar 2025 16:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qwWXMvyf"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEE759B71
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 16:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DFNk0OEY"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8C914A0A3;
+	Sun, 23 Mar 2025 16:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742747791; cv=none; b=L2huy5XVaomU7L34VSMiqPZDNpc8kf7+9WdXvhRJQB3I2cfC3dgQmXpQdht45cYJtm/s19rO+FlfpbHCQnIcIOiVPdkjte1JOfR1NxdsF+BRZz5woNpWiX7zrMsVwNqQ3qNI5DM+dvC8yG6HkUdqcb59jduIsrwWmHIZ6L2CveQ=
+	t=1742748621; cv=none; b=q2ttI1xAmUlNV6+4NVCBy04eo9kEjNdVnHDdWpbOKyRiy6p81PZHC9yS0uL/6OnjyjXiwd1+Qg1tekyhDTmcZqHRcK45v48gefs/ByiZBlVm5uF2RjQrIBCnG4Gwjypmg6S1+tSLuCposWsTH9GNCaeqkCNqhejkzYPLZPKbl3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742747791; c=relaxed/simple;
-	bh=yK7FSwYWiwWEUjTJ5bXYkScoChQ2qYb0SNRqOplox+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iKlUJyFKot4f/zkMBDbPmmsysr3lNWMrOs0upohBsWYYgJShoMnm1GA0+bKhOLDuhINRY8cv/rUZ1jkYebsnRgNw/wF6GR3I7VQHwF8p7ipoe9JGUhJm1CI2T5GXJKX06LIEVzxl2xgzNLbDsOcWng5zXlWxVzr0Bdiqg3LIaBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qwWXMvyf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52NEAG40007193;
-	Sun, 23 Mar 2025 16:36:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=sM/ybH
-	ruEmdSlSR/k3rexBzIxeb6dE4m6RLkYIDagPQ=; b=qwWXMvyf9wX0cxJIkb6Ztu
-	BA1GfkDev9DjjCl4y1ZqmeK2xrKJvjmaLhNPyt/Ms2CSLcrbt7NgGyPKswG3dLHF
-	YVmoWz4KLghr9djr9DCuZv9zS7Rg5WaW7kGACuW8AXaqrKy42bN6Mw6rGZpwkyM2
-	qM610NNRNFpLQExr648moeZUpYylKMjKnClFQIcsr/8HkG2Owsn4WT+DeyZuqDtv
-	R+8aX/taYfE7mbCxG9nh45hXryp2feN0IIQ/RudVLdYplCS3GNCbgRmp0+bRu/8m
-	f8ArvBeANxIuuGBfvhIJGBUzB3URu4+MCh8V/vM8eCXE2scS00wGXbHC2mvlrkNA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45j4cp2u3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Mar 2025 16:36:15 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52NGXTfL009795;
-	Sun, 23 Mar 2025 16:36:15 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45j4cp2u3a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Mar 2025 16:36:14 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52NDTAnq009694;
-	Sun, 23 Mar 2025 16:36:14 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rka89y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Mar 2025 16:36:14 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52NGaANF13369850
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 23 Mar 2025 16:36:10 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A962B20043;
-	Sun, 23 Mar 2025 16:36:10 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5E3D220040;
-	Sun, 23 Mar 2025 16:36:09 +0000 (GMT)
-Received: from ltcden6-lp1.aus.stglabs.ibm.com (unknown [9.3.101.155])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 23 Mar 2025 16:36:09 +0000 (GMT)
-From: Misbah Anjum N <misanjum@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] arch/powerpc: Remove redundant typedef for bool
-Date: Sun, 23 Mar 2025 11:36:07 -0500
-Message-ID: <20250323163607.537270-2-misanjum@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250323163607.537270-1-misanjum@linux.ibm.com>
-References: <20250323163607.537270-1-misanjum@linux.ibm.com>
+	s=arc-20240116; t=1742748621; c=relaxed/simple;
+	bh=zPOvcKeUlRXqtM1HLWr+7nnJMp2iWtlKIwbZBONKPhM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ecgxmYnv2cyrgyjWTDw9AaEctfL9Q+hi5gVqCYf7NUQLNrS6qvbmN772BVS5ECBTuB7Mt6nuFVvDdjZHnW3+X1WjiwYZJcU/uWz80Dv53X9LM7olqcu/KiOLraUsOQnXLhTyVMtqqyNVj896Aj10QS5KqwZx9qCZxrC1Yl9f1O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DFNk0OEY; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Mtr/t
+	9tWneDxjlXitL9L9CrnUhfQSRGTxaexGpKhaqI=; b=DFNk0OEYJt8ptsq3Vt8EN
+	BXjKTi8FwtfOrRdkptE68YwPqP7eSiRdUN19IEKLC5M/kFL1+voSXfZU6TrHIzO0
+	8GseOt9fMBdrRSBjesTLvavrpdtL9IGqRh4Iw7HNXNNPb44qPLjXcZ86ToXsCW6M
+	rmW3nv4st6RQYKjV+Gt0SQ=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgDXX3qlO+Bnk_g8AA--.12082S2;
+	Mon, 24 Mar 2025 00:49:42 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org
+Cc: kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	jingoohan1@gmail.com,
+	thomas.richard@bootlin.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [v6 0/5] Introduce generic capability search functions
+Date: Mon, 24 Mar 2025 00:48:47 +0800
+Message-Id: <20250323164852.430546-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 2CiNiKEF0Y0ptND0lguePAc19oiyAy3m
-X-Proofpoint-GUID: 715rgrEjQYfMiu-wbW7z75spDO1Pdkt1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-23_08,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=614
- impostorscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- spamscore=0 adultscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503230115
+X-CM-TRANSID:PSgvCgDXX3qlO+Bnk_g8AA--.12082S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar13XFW3Xw4UJr47Zr15XFb_yoW8Cw18pF
+	yrGwn3CF1rJFW3Cws3Aa1Fka43X3Z7J3srJ39xKw1fXF17CFyDJrn3tFyrJFZrJws7Xr13
+	ZF45JryxKFs8AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEGYLPUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxkZo2fgMeLaoQABsC
 
-The custom 'bool' typedef in arch/powerpc/boot/types.h is incompatible with
-the C23 standard, where 'bool', 'true', and 'false' are now reserved keywords.
-With newer GCC versions (such as GCC 15), redefining 'bool' leads to compilation
-errors. For example:
-    error: 'bool' cannot be defined via 'typedef'
+1. Introduce generic capability search functions.
+2. dwc/cdns use common PCI host bridge APIs for finding the capabilities.
+3. Use cdns_pcie_find_*capability to avoid hardcode.
+4. Add new patch for MAINTAINERS.
 
-Since 'stdbool.h' is already included and provides a standard definition for
-'bool', this typedef is redundant and can be removed to avoid conflicts.
+Changes since v5:
+- If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
+  the kernel's .text section even if it's known already at compile time
+  that they're never going to be used (e.g. on x86).
+- Move the API for find capabilitys to a new file called
+  pci-host-helpers.c.
+- Add new patch for MAINTAINERS.
 
-Compilation Error:
-    $ make -j$(nproc)
-    ....
-    In file included from arch/powerpc/boot/ops.h:13,
-                     from arch/powerpc/boot/cuboot.c:12:
-    arch/powerpc/boot/types.h:43:13: error: ‘bool’ cannot be defined via ‘typedef’
-    43 | typedef int bool;
-        |             ^~~~
-    arch/powerpc/boot/types.h:43:13: note: ‘bool’ is a keyword with ‘-std=c23’ onwards
-    arch/powerpc/boot/types.h:43:1: warning: useless type name in empty declaration
-    43 | typedef int bool;
-        | ^~~~~~~
-    ....
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/devtree.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/ofconsole.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/ns16550.o] Error 1
-    make[2]: *** [arch/powerpc/boot/Makefile:235: arch/powerpc/boot/main.o] Error 1
-    make[1]: *** [arch/powerpc/Makefile:236: zImage] Error 2
-    make: *** [Makefile:251: __sub-make] Error 2
+Changes since v4:
+- Resolved [v4 1/4] compilation warning.
+- The patch subject and commit message were modified.
 
-Signed-off-by: Misbah Anjum N <misanjum@linux.ibm.com>
----
- arch/powerpc/boot/types.h | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since v3:
+- Resolved [v3 1/4] compilation error.
+- Other patches are not modified.
 
-diff --git a/arch/powerpc/boot/types.h b/arch/powerpc/boot/types.h
-index 8a4c418b7..6f34b31b8 100644
---- a/arch/powerpc/boot/types.h
-+++ b/arch/powerpc/boot/types.h
-@@ -40,7 +40,9 @@ typedef s64 int64_t;
- #define min_t(type, a, b) min(((type) a), ((type) b))
- #define max_t(type, a, b) max(((type) a), ((type) b))
- 
-+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202300L
- typedef int bool;
-+#endif
- 
- #ifndef true
- #define true 1
+Changes since v2:
+- Add and split into a series of patches.
+
+Hans Zhang (5):
+  PCI: Introduce generic capability search functions
+  PCI: dwc: Use common PCI host bridge APIs for finding the capabilities
+  PCI: cadence: Use common PCI host bridge APIs for finding the
+    capabilities
+  PCI: cadence: Use cdns_pcie_find_*capability to avoid hardcode.
+  MAINTAINERS: Add entry for PCI host controller helpers
+
+ MAINTAINERS                                   |  6 ++
+ drivers/pci/controller/Kconfig                | 17 ++++
+ drivers/pci/controller/Makefile               |  1 +
+ drivers/pci/controller/cadence/Kconfig        |  1 +
+ .../pci/controller/cadence/pcie-cadence-ep.c  | 40 ++++----
+ drivers/pci/controller/cadence/pcie-cadence.c | 25 +++++
+ drivers/pci/controller/cadence/pcie-cadence.h |  8 +-
+ drivers/pci/controller/dwc/Kconfig            |  1 +
+ drivers/pci/controller/dwc/pcie-designware.c  | 71 +-------------
+ drivers/pci/controller/pci-host-helpers.c     | 98 +++++++++++++++++++
+ drivers/pci/pci.h                             |  7 ++
+ 11 files changed, 187 insertions(+), 88 deletions(-)
+ create mode 100644 drivers/pci/controller/pci-host-helpers.c
+
+
+base-commit: a1cffe8cc8aef85f1b07c4464f0998b9785b795a
 -- 
-2.49.0
+2.25.1
 
 
