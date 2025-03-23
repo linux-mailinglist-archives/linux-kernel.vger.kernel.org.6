@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-572961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E122DA6D0D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:39:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFC6A6D0D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F55416EADF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:39:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DAA7A69F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE04019D093;
-	Sun, 23 Mar 2025 19:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D5F1A5B84;
+	Sun, 23 Mar 2025 19:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QR84Nsil"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yym9Ydqw"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBD74C8F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788141A0BF8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742758786; cv=none; b=NGoYzZfAPGpRXLr6t99dbgGNZJmdk9ujP9enD8ONUz03mkRNsmfSsEO3PWD+cXW1xEQXzgLjyxBa6JuZvkrbAFK/J1/S4CVY6O4PDurzlGGqQHwHuy6CLEFRUmIUHTojn0ayrDRdJ1JFO0sSE4puxKDSj8Xa7Hj3UhkeXnEcA+I=
+	t=1742758790; cv=none; b=MFu8IYbBaPrzrBvKHfeXTQqYBOK4i2ucB0oc6bC4h+v3Mli6tg/QOSlXaWuLeNiwKM70COAZ1Nzjcop08H87GVkVvaW3vSIjEEZyUm5WjxSQZdL9bcLrkoE8xksY9mIYsmOd2+OMds8NU0LOQm08iCziOtdGY1wqd8EAf74kh0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742758786; c=relaxed/simple;
-	bh=C5M9FZxGke4NbdCrsCnEAwe8igTxj8Rkhg3YFuac+xY=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=VL19ky1uOJIqWMwQqH4Mu0GegVBXFV4PiTFfhkJ7gZXIZ2crQCLrP7UwOGGqEY0bGpzl84pzkkrjDfm+ZyDtzl4GBO8CVMtMo74tC2jWAaJ0Y4zt8ywRUsM+3Jq18GIBODC+uhAcBvJ8cGPLyLU3bsgNY0hh/1/MDQpHOBQ8XNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QR84Nsil; arc=none smtp.client-ip=209.85.219.54
+	s=arc-20240116; t=1742758790; c=relaxed/simple;
+	bh=BRhRgkSB7z8P4IHCJlBDVXeM2viBX2/9Xb1lcpWRG/4=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=ptm4LSVf9X7LGZizAEHmu/nk769Mv0Gql2fE4jH/rjfqQKQST7H00KWkUA80prQRdTtsf3yoRlgfsSLxW37Zk8q6llL71+G1tkEjgwQNsO3jpIQBPSetZfwAIRnJGqoMBzca0TIEmK4PW/WBYpnejuFMYiVJUtDLkvyIsSVIm+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yym9Ydqw; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8ec399427so29974396d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 12:39:44 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e8fd49b85eso60791706d6.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 12:39:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742758783; x=1743363583; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1742758787; x=1743363587; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m/9M2NmeSWUFErM1HWVWZj3fEsB3g8mWCeObHDD8N58=;
-        b=QR84NsilarWnf2npCDsjB8L774soPwubXBJOsMHjVOStPDs24nsKXzkayc8xhgTKTd
-         owE4HK57GdOjX+pUR0bkWHcypiT3Vbtc+Lbtna9kj6QYuWaf3qWbNO1ZvzFOMfoZZ3Uc
-         fQpRcCgMakJBtMB44UC/C0zbvrNyKRJcsO3+oRWOG3+BeioMcJVhMWWMAU25CtVRY2af
-         DUHutTGKPSucvaaaUrxoa0+EAorrxAXSoQXRE8H/GvckkWqP6Fyr/MUBEfF+sjig648W
-         GOr2zSE6fM1JvjyVmvxGK1Gp71n712WXfxpuRlCEFXak5RvTBDgMVCZLwW8IW2zy+4sM
-         eGjQ==
+        bh=sj8XaZt6/KwWc/WKs2MV1ArCjqHhkM5gbAr6nIVV+nc=;
+        b=Yym9YdqwszVjWGhaHCgAJJ8NUcRth6VAtnVM+Q0Mp5M9EvRMYVyBcK5p3gq9+yZHJD
+         DATekxC3wjJFcZiz9Y/6zpTvB6OKYhKYpuQiOefOyDmVjg7Wq7j4IBiRVjBIm4lt4qlK
+         jDW/Lc0Rc6OduNIbKmktTeh/GXE2echYW/5P1v/uDghE5ibE0GlF1v5CRuzm08MYkdk+
+         jNLLaqKSgxiW8IiTqug0XnyGv5/uRM4QrOAeypIh1Pph6xad1cQy46+FKlSZac8UeO1R
+         k/VoDky08zxdAhEXloe2HeoaSl65Ig4jgvAoAhfG1FurfNXnSZMJ3+OLFxcOQsjhJFSk
+         PKww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742758783; x=1743363583;
+        d=1e100.net; s=20230601; t=1742758787; x=1743363587;
         h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m/9M2NmeSWUFErM1HWVWZj3fEsB3g8mWCeObHDD8N58=;
-        b=pg1Co/5+3r5UuaJIKsdoNZJAnwNvPphiDOsRjd6tfRmNdAkYd0HYuTJ4gA8ppcxtGt
-         1/3cLOgzm8IAdvDk5BL9Yw6SZD3VLV7DgrcLRXtHFg9vmvKUhCFPCD8ijC9GWsx0b8x4
-         zmQoKJVAZ8RztkW2h8Y7sLq3ZJQU072B0P3ZhZRBGM7urEQknEPc+vs/kba6HmoPe7h5
-         BE3379U5Cvtmdk21TPlMXhVAXZMuS7M+T5wMZy3meJmbq8IH/fBx779INki9+IYjS7/M
-         /urQr0S/eby+fg+x8T2MMYRUp1e5JGa/axUvsG8vlTvKhO4IgCzEa5bVl5h1hdRmK3yt
-         Ruww==
-X-Forwarded-Encrypted: i=1; AJvYcCWdGZP476myyE37Og/rj/nlstNNyoSSLTzAtrJOBaBW9xOxPJaOZrjiGZMbRoqCvLxexchqKGK9GNiBJMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAdGnllA4qhxEDaJ0NRqO3fXoQpPNM28CBHnk7u1364UsxObPC
-	Mgc0Um4z7bKknfCivBa07y+BgSrG2q0NnFZpr3JOQR3KgBdEz9MDuhY1Kio6oQj7mIcbG7WFPLU
+        bh=sj8XaZt6/KwWc/WKs2MV1ArCjqHhkM5gbAr6nIVV+nc=;
+        b=izcUkbvOpev0r7ViJekxyZ4FHh5VB3JYjvbbDMHi1SMcILu1uxXUI4ZHhbKF+UPxSP
+         5sWbKCobhowvZcLsthkW6T8xH1UPEs4wwtAtHUYu/XlQgaDmoMaX6oWF3RWf9XB59Y5Q
+         y+rgvq9C0Ryot+7LBPvnRgTNisVb0mcUYhEhSZpmsO1+H7rP09IZyc3S02evCUEvcvU9
+         NgPwQNjVpRewF7sGyWO+SKvrisiCBuzqd/0X6SmLJw417tYp9VcbL66XUOsnravMLAge
+         /sJUhL7f2lGP/KhY6JMfTpfDSsyr1kfiA9nLy0DWA5HxzjnrU5UIz1vY8wC7bagkLnXr
+         0kqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoEkgAhfmgaJC16r6o5rjT1pqj9rDvySFwl4Ns5qUf0d5DQ+WLZVnUkkF4ltMPb9zMZVE4QVwRwKIBBaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZDLQ8lRpKw6fDW8PsRvy/a0Tf7KGQvcbOErn1NUfDiM8yi6Ds
+	bfSe/lDDyHKZpBwSDLTH7AuL+xG7d33UFR/dST3uYm6Dt3Kn0bK4iWYb9njCoTZYYG6thqqW7xE
 	=
-X-Gm-Gg: ASbGnctFtLI6COTPTpQwk5wk/m/ntXKBchm+1ZLSyTIIYoHR8zgHYWsd+6Cm8B9w3KJ
-	dgp8V7zYWW/+75gzTPKJP7eZnLrchUjBEMj8uzXoKfx2vojSWhSmqW8nOuYfz14tEkKpYrrrmxs
-	S/9wnbzkJtz8MqoxnAEO+2zxqCnKs8L1qwfz0Bz4tVvlbqUAat5BGGczEWlzVd8GeRPELCVXLbu
-	XcNNPDLzUDWZhW2eQHqo4vodBUuAXq+heEqjrl+WGmPKDivphmRu2YuYNuavChRUaJrQylLnryl
-	mzNuBlIXZuiyJTMLM8XW4UGeBfSf4nOUFhcDyYexui13o1L5N4L77x0iuywuUQLWvIkY/KKSrbq
-	BqDY/P+c7MTB/UQ==
-X-Google-Smtp-Source: AGHT+IHahVX7B5lRciT5ZQupqUnDxS9OGp3103z9xfJu3fR8xW0gMUGFEgUXjuKJoEJI/iSxu93o+A==
-X-Received: by 2002:a05:6214:2a4f:b0:6e4:7307:51c6 with SMTP id 6a1803df08f44-6eb3f35b4fcmr155940236d6.34.1742758783513;
-        Sun, 23 Mar 2025 12:39:43 -0700 (PDT)
+X-Gm-Gg: ASbGncsCuQV9MxGv61VogB+bdD5GIaoC3XgFqBgINlhVnMvYCghfREME6kwpnxnW2or
+	AjISKY6gV9Ly7g8wRDhf95/7MrLMFszI/DZMOE7CBjppJwZb6H4bxOSZHwyW+JZA9ZgHtlo+bwc
+	48c3TDGnCmDZmURPTRWma3tEOaX1oiuoc/2J9cn6S5HN++hzet46Rn9Hd3WHi42rrPHG5yM9WtH
+	SKWZrYndkUKJWpQ05X9znh3GxPuFoxs7MgENxjxL724afg2ZKEewFOpy+9zXKKH7liyN6rL214W
+	WAm8OeROWzzQh/Louu6KwPsbqCLlXFydMmertwCGuVoI2LpV+tQOkfKK0+4OpNvBfNYPgmTRq5x
+	kEWolcz47MQnsQQ==
+X-Google-Smtp-Source: AGHT+IFAB3x6FnMVEWde6N6oN5wX7FeWdrMvjooBIQDCq5DitsfBHMnP2NiIDwyIcMgkV3xbnKNvtQ==
+X-Received: by 2002:a05:6214:d47:b0:6e5:bc9:95f8 with SMTP id 6a1803df08f44-6eb3f2e8b39mr186523896d6.17.1742758787490;
+        Sun, 23 Mar 2025 12:39:47 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eb3ef1f5d8sm34480356d6.45.2025.03.23.12.39.42
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eb3ef0ed51sm34743946d6.6.2025.03.23.12.39.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 12:39:42 -0700 (PDT)
-Date: Sun, 23 Mar 2025 15:39:42 -0400
-Message-ID: <795b758412f3cb7dc64777a6fde9c16c@paul-moore.com>
+        Sun, 23 Mar 2025 12:39:47 -0700 (PDT)
+Date: Sun, 23 Mar 2025 15:39:46 -0400
+Message-ID: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20250323
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20250323
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,44 +84,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 Linus,
 
-Here is the LSM framework pull request for the Linux v6.15 merge window,
-the highlights are below:
+Here is the SELinux pull request for the Linux v6.15 merge window, the
+highlights are below:
 
-- Various minor updates to the LSM Rust bindings
+- Add additional SELinux access controls for kernel file reads/loads
 
-  Changes include marking trivial Rust bindings as inlines and comment
-  tweaks to better reflect the LSM hooks.
+  The SELinux kernel file read/load access controls were never updated
+  beyond the initial kernel module support, this pull request adds
+  support for firmware, kexec, policies, and x.509 certificates.
 
-- Add LSM/SELinux access controls to io_uring_allowed()
+- Add support for wildcards in network interface names
 
-  Similar to the io_uring_disabled sysctl, add a LSM hook to
-  io_uring_allowed() to enable LSMs a simple way to enforce security
-  policy on the use of io_uring.  This pull request includes SELinux
-  support for this new control using the io_uring/allowed permission.
+  There are a number of userspace tools which auto-generate network
+  interface names using some pattern of <XXXX>-<NN> where <XXXX> is
+  a fixed string, e.g. "podman", and <NN> is a increasing counter.
+  Supporting wildcards in the SELinux policy for network interfaces
+  simplifies the policy associted with these interfaces.
 
-- Remove an unused parameter from the security_perf_event_open() hook
+- Fix a potential problem in the kernel read file SELinux code
 
-  The perf_event_attr struct parameter was not used by any currently
-  supported LSMs, remove it from the hook.
+  SELinux should always check the file label in the
+  security_kernel_read_file() LSM hook, regardless of if the file is
+  being read in chunks.  Unfortunately, the existing code only
+  considered the file label on the first chunk; this pull request
+  fixes this problem.
+  
+  There is more detail in the individual commit, but thankfully the
+  existing code didn't expose a bug due to multi-stage reads only
+  taking place in one driver, and that driver loading a file type
+  that isn't targeted by the SELinux policy.
 
-- Add an explicit MAINTAINERS entry for the credentials code
+- Fix the subshell error handling in the example policy loader
 
-  We've seen problems in the past where patches to the credentials
-  code sent by non-maintainers would often languish on the lists for
-  multiple months as there was no one explicitly tasked with the
-  responsibility of reviewing and/or merging credentials related code.
-
-  Considering that most of the code under security/ has a vested
-  interest in ensuring that the credentials code is well maintained,
-  I'm volunteering to look after the credentials code and Serge Hallyn
-  has also volunteered to step up as an official reviewer.  I posted
-  the MAINTAINERS update as a RFC to LKML in hopes that someone else
-  would jump up with an "I'll do it!", but beyond Serge it was all
-  crickets.
-
-- Update Stephen Smalley's old email address to prevent confusion
-
-  This includes a corresponding update to the mailmap file.
+  Minor fix to SELinux example policy loader in scripts/selinux due
+  to an undesired interaction with subshells and errexit.
 
 Please merge,
 -Paul
@@ -133,61 +129,44 @@ The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20250323
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20250323
 
-for you to fetch changes up to 65b796acea1e5efc13eb29fdb4638fd26deabc17:
+for you to fetch changes up to a3d3043ef24ac750f05a164e48f3d0833ebf0252:
 
-  mailmap: map Stephen Smalley's old email addresses
-    (2025-03-10 16:06:24 -0400)
+  selinux: get netif_wildcard policycap from policy instead of cache
+    (2025-03-17 16:22:04 -0400)
 
 ----------------------------------------------------------------
-lsm/stable-6.15 PR 20250323
+selinux/stable-6.15 PR 20250323
 ----------------------------------------------------------------
 
-Alice Ryhl (3):
-      lsm,rust: mark SecurityCtx methods inline
-      lsm,rust: reword "destroy" -> "release" in SecurityCtx
-      cred,rust: mark Credential methods inline
+"Kipp N. Davis" (1):
+      selinux: add permission checks for loading other kinds of kernel
+         files
 
-Hamza Mahfooz (2):
-      io_uring: refactor io_uring_allowed()
-      io_uring,lsm,selinux: add LSM hooks for io_uring_setup()
+Christian Göttsche (2):
+      selinux: support wildcard network interface names
+      selinux: get netif_wildcard policycap from policy instead of cache
 
-Luo Gengkun (1):
-      perf: Remove unnecessary parameter of security check
+Paul Moore (1):
+      selinux: always check the file label in selinux_kernel_read_file()
 
-Paul Moore (2):
-      lsm: fix a missing security_uring_allowed() prototype
-      MAINTAINERS: add an explicit credentials entry
+Tanya Agarwal (1):
+      selinux: fix spelling error
 
-Stephen Smalley (2):
-      lsm: remove old email address for Stephen Smalley
-      mailmap: map Stephen Smalley's old email addresses
+Tim Schumacher (1):
+      selinux: Chain up tool resolving errors in install_policy.sh
 
-sergeh@kernel.org (1):
-      MAINTAINERS: add Serge Hallyn as a credentials reviewer
-
- .mailmap                            |    2 ++
- MAINTAINERS                         |   10 ++++++++++
- arch/x86/events/intel/bts.c         |    2 +-
- arch/x86/events/intel/core.c        |    2 +-
- arch/x86/events/intel/p4.c          |    2 +-
- drivers/perf/arm_spe_pmu.c          |    4 ++--
- include/linux/lsm_audit.h           |    2 +-
- include/linux/lsm_hook_defs.h       |    3 ++-
- include/linux/perf_event.h          |   10 +++++-----
- include/linux/security.h            |   10 +++++++---
- io_uring/io_uring.c                 |   21 ++++++++++++++-------
- kernel/events/core.c                |   14 +++++++-------
- kernel/trace/trace_event_perf.c     |    4 ++--
- rust/kernel/cred.rs                 |    5 +++++
- rust/kernel/security.rs             |   12 ++++++++----
- security/lsm_audit.c                |    2 +-
- security/security.c                 |   17 ++++++++++++++---
- security/selinux/hooks.c            |   16 +++++++++++++++-
- security/selinux/include/classmap.h |    2 +-
- 19 files changed, 99 insertions(+), 41 deletions(-)
+ scripts/selinux/install_policy.sh          |   15 ++---
+ security/selinux/avc.c                     |    2 
+ security/selinux/hooks.c                   |   58 +++++++++++++++++----
+ security/selinux/include/classmap.h        |    4 +
+ security/selinux/include/policycap.h       |    1 
+ security/selinux/include/policycap_names.h |    1 
+ security/selinux/include/security.h        |    8 ++
+ security/selinux/ss/services.c             |   15 ++++-
+ 8 files changed, 79 insertions(+), 25 deletions(-)
 
 --
 paul-moore.com
