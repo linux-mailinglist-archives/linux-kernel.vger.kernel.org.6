@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-572977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799BFA6D10D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:36:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC31A6D10F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5282D1892F0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B903B2EB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD751A0BED;
-	Sun, 23 Mar 2025 20:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkoccYn9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E001A0739;
+	Sun, 23 Mar 2025 20:36:51 +0000 (UTC)
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D53B1A4;
-	Sun, 23 Mar 2025 20:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70986131E2D;
+	Sun, 23 Mar 2025 20:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742762152; cv=none; b=aaQZQRliO7mUhWL32YYCRjxMLvuq9tV6oplLgI+J7Z8z4hSMCq/3ZvOaR6EkzWORVVzKjIdTZqsLnMx04erShKAXGcJf1NmHOARDUh4uWOx+27UbyZ4800TPIdf+fLK5EiXYn9gyZIwMIt63NTBjmwtF4CdHY921x0SCykwVZas=
+	t=1742762211; cv=none; b=Fe3rmWvu45+fTmVpkUQYAzuyFbpFbJdasgytMn8xqvwUb0lSDsQbI12Y1WieSZQrH9JNqnMBLyZ5b4fSlxDUCfH92633PPZQ4EVCa5oFz+JqMHto/UueCAjULwf80hjM+ZQiCf6BgBVUYrkMjIx5eBVHL00bJGbcHXl0EBFfsXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742762152; c=relaxed/simple;
-	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjv3zoDdKJUoctvHPWHJYG1LiwP8DpmfyTDloFthrCt1+WWdzutmj7mEqinhax5zXDjpvPD53K6AiJHdqf3UPl3Q+1E1oOjSTQZbbEVYespafBI+GuaIxmR78wvBWFZBDNaCF/Bzdy1piPWRBo5pdrZ6geB1KmGvJS4N5Mumwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkoccYn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2621C4CEE2;
-	Sun, 23 Mar 2025 20:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742762152;
-	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZkoccYn9iIrnnlLXqjtafwV9zsCmc0ozjZtyQUhSKYUbChF9wxU/j/wm2oCukWkHT
-	 p4XX8xe8UG+WG9GODgGVSq9yBKEpoR3TGtSHtV6NpQ8ZEiUUO6fXklLTzoxPTMtvtS
-	 nVoa6/Yqk2RemzQNBcQ/cSF9Be9OtkJ04BC2i3xyg/HnUgnhbM7vYJIyOr+BQqagZQ
-	 R8H7VRsYxis1fcGJ2Qsg5zathbThPxtljSZibljavLOZRtJ+yJ7IOtyUYpYuhqVy1i
-	 iIIZPehScuXcxwDxbf0C5QxB7lLhQ5F6rL8ISpEZGukZn4n2H+msmjHJFan8LmqPzt
-	 9bIhLX4oyOXKA==
-Date: Sun, 23 Mar 2025 22:35:47 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Nicolai Stange <nstange@suse.de>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
-Message-ID: <Z-Bwo_ZHwYDgwh0X@kernel.org>
-References: <20250323140911.226137-1-nstange@suse.de>
- <20250323140911.226137-11-nstange@suse.de>
+	s=arc-20240116; t=1742762211; c=relaxed/simple;
+	bh=nhg7jXSYXSE41ZdL6I2M8YCT5HxW+asa9RIQ6PNECwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g3KXjYtADFZHsAAalMWFkMK+8DNZ040/u7BOm0TI0pLmTWJNUMOsQX5llKjHcjD2qH74rM2ZZS4FwnIjxxL2NvpdPn++hBVzC/0b6imYT2HgipN9t/2V9rORWJz3+gv9NQ18YOQPIzYSsrmXr8Q3QGszOOdf3Ssllylx5XvrTwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
+Received: from [2a02:578:851f:1502:391e:c5f5:10e2:b9a3] (helo=deadeye)
+	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1twS3e-00AEp2-1q;
+	Sun, 23 Mar 2025 20:36:34 +0000
+Received: from ben by deadeye with local (Exim 4.98.1)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1twS3d-00000004EA6-2zgz;
+	Sun, 23 Mar 2025 21:36:33 +0100
+Date: Sun, 23 Mar 2025 21:36:33 +0100
+From: Ben Hutchings <benh@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] perf docs: Fix build with asciidoctor
+Message-ID: <Z-Bw0XbCBfn7yrcs@decadent.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5b5Mme7HoN5MOMdF"
+Content-Disposition: inline
+X-SA-Exim-Connect-IP: 2a02:578:851f:1502:391e:c5f5:10e2:b9a3
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
+
+
+--5b5Mme7HoN5MOMdF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250323140911.226137-11-nstange@suse.de>
 
-On Sun, Mar 23, 2025 at 03:09:08PM +0100, Nicolai Stange wrote:
-> PCR reads aren't currently authenticated even with CONFIG_TCG_TPM2_HMAC=y
-> yet.
-> 
-> It is probably desirable though, as e.g. IMA does some PCR reads to form
-> the cumulative boot digest subsequently extended into PCR 10 (an operation
-> which *is* authenticated).
-> 
-> Furthermore, a subsequent patch will make IMA to skip certain PCR bank
-> re-invalidations (which are implemented with extensions) upon kexec based
-> on the value read back at boot. In order to not weaken the overall
-> security posture in this case, it will be required to establish the same
-> level of trust into PCR reads as there is already for the extensions.
-> 
-> Make tpm2_pcr_read() to protect the command with a HMAC auth session,
-> using the already existing infrastructure.
-> 
-> As the TPM2_PCR_Read command doesn't have any authorizations defined, and
-> neither of TPM2_SA_ENCRYPT/TPM2_SA_DECRYPT is needed, use TPM2_SA_AUDIT,
-> even though no auditing functionality is actually being required. Since
-> the TPM will set TPM2_SA_AUDIT_EXCLUSIVE in its response with this
-> single-use session, set it upfront so that tpm_buf_check_hmac_response()
-> would expect it for the HMAC verification.
-> 
-> Now that tpm2_pcr_read() depends on the driver's session infrastructure,
-> note that the first call to tpm2_pcr_read() at init time gets issued from
->   tpm_chip_bootstrap() -> tpm_get_pcr_allocation()
->   -> tpm2_get_pcr_allocation() -> tpm2_init_bank_info()
->   -> tpm2_pcr_read()
-> after
->   tpm_chip_bootstrap() -> tpm_auto_startup() -> tpm2_auto_startup()
->   -> tpm2_sessions_init(),
-> so there won't be any issues with that.
-> 
-> Signed-off-by: Nicolai Stange <nstange@suse.de>
+Although I made a minor fix in 2023 for asciidoctor builds, I missed
+an earlier regression from 2020 that had been fixed locally in the
+Debian package but not upstream.  I'm sending 2 more fixes that should
+make all manual pages build properly with asciidoctor.
 
-Please write a better commit message. There's extra words like 'yet'.
+However, given that asciidoctor support has been broken upstream for
+nearly 5 years now, it might make more sense to remove it instead.  We
+only moved to asciidoctor in Debian to remove a Python 2 dependency.
+Since asciidoc was ported to Python 3 that's no longer a concern.
 
-And e.g., subsequent patch means nothing in the commit log.  Please
-don't use such terminology.
+Ben.
 
-Not going to waste my life reading this.
+Ben Hutchings (2):
+  perf docs: Fix build with asciidoctor
+  perf docs: Fix perf-check manual page built with asciidoctor
 
-BR, Jarkko 
+ tools/perf/Documentation/Makefile       | 17 +++++++++--------
+ tools/perf/Documentation/perf-check.txt |  2 +-
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+
+--5b5Mme7HoN5MOMdF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmfgcM0ACgkQ57/I7JWG
+EQlSAxAAunKk6y4UFrl8EPBvw6G1PMDKz17cS2zTvmzQnsW6TsnyfYMJf+KVuhP+
+uoSsa9YN1sYKYMp2WJzkHqg1eF7g9YWETUvQkT3N1LlVqTBoDTKwvBBfYhHC751M
+utAbWXTC9DxlhfH8z8N5md5VopbIqAU0zGbKYX8dzOFbEvlJ2wPZVA8APMW2/UD/
+sLGq9vKLDK8tuQ95s2349Oz6+w7BlMFN4lbhBSo5jR09uhwxUi0xyEAVGlOypmz4
+Ljm0k5f3Ip1z2SO1OOscAy0jb07TgtcqBeQ5rp5vPU/0MKCRhoDJ4HDkGcOyOM9G
+kC6fzhhsSePGDwCO3ZJ9YbML+bzt3q4347Pp+C7JV8IiIJIbrQeDFkqhJDyI+Jse
+YtCCtnifhWkTvzA6sHQON1WkrGsg6chSr2qjm1xTcauN10Md3aqNVFS9A4o1MrGA
+NYwQhIFOIROZe9O6OOJKeHQSjNyxpd3KhDKsRqxJGfVDSX4UVGmLMUpMu6BHQstZ
+S2tIW1mP8PyBe2c35g+uwRUYy1pEd3IOFHabRWCCpsG8apgfnkHiqr3C3GNtodlx
+9LQS9cO8hoKQMQzrqxN6DqMFQl3lzJhhEYjJWf54eI0xyVEZk7mfXumISofPR9Of
+D+DxvPx95OSrmVDKAZx/X5GXctlCG+/lNUjpl+/1bkuKLOgxTrA=
+=zGTd
+-----END PGP SIGNATURE-----
+
+--5b5Mme7HoN5MOMdF--
 
