@@ -1,202 +1,300 @@
-Return-Path: <linux-kernel+bounces-572937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E92FA6D08F
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5006A6D090
 	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5F53A9C56
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9FB16C3CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F271925A0;
-	Sun, 23 Mar 2025 18:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E97E792;
+	Sun, 23 Mar 2025 18:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOA/7Nht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHGfIUpx"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656C9469D;
-	Sun, 23 Mar 2025 18:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA6B13CF9C;
+	Sun, 23 Mar 2025 18:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742753848; cv=none; b=KjXr7TLaUDjq1vEFVEhtP01HivSlVlY7b83nAIjwLido7lPclkez0wAK7EEl5QPTCBGX0K7BzObp8yMZ+LCydPcogO0x7nlTw+DrBzZgjBjmn6Xfi2vEtEXhLjk38F/vRp5IEfhDKw+LwvDe2v2bkjXvtw0TmzVmkBpNdXA7puA=
+	t=1742753865; cv=none; b=BiU3oJyR0Ijb33GR7J57BohE89thJTD9DFfKWZh3BuAN3JKinw6wCAkqbhHfZB2Wz5o/3VpK9S3/6Te+2W4LDnzfS0ZQ+ERvp9gv1mh8MDunJZHQKHgIa4K2sTOgCHsEnWWtcvdr6mO7nFTn0B43e/VLl1aht/fZBjMSIRC2Zqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742753848; c=relaxed/simple;
-	bh=DnwlcnrmTvJn4x6Jhu4lPS5Jhc5VMN4fOZX67Zowe28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A9VuviQ5XN4OKp0La0lAAssbEW8jt9lhFniTPT6KPsbIhZ4WKLjHeQoDnJOIi5pJrVa+rC3bw3vXVsGjOxXn7qrQ7Uek1pHTD+D9M1K8RgzbCJg1Mh5h8MpdFNUnYnl/4GjRekZsWpNRmiCxjK/nsrMiEoHB+jHOGJUa2RXRdYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOA/7Nht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0274C4CEE2;
-	Sun, 23 Mar 2025 18:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742753847;
-	bh=DnwlcnrmTvJn4x6Jhu4lPS5Jhc5VMN4fOZX67Zowe28=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aOA/7NhtL5afDUxB+Zhh+QBnY+LwpQJbqtjSH6/f0XKI9u9yHS8Fy6dZOGSGOBDNF
-	 Yo7o8R4WnRz3l9p/NdlRFPj5rCCzvDr7BSyHE2zABYhWGBbsYGCg3fFo3QgFJxIptJ
-	 qGtyvOPq+jpo8Za7Ta5jL8YhzOt+K0JyPYIICFlTcmq/Wpj09RtsURrtf5atD7v9Gs
-	 SBeOElN9wucBbLZI2M2JpI2QYkbM4EUeFPaE3LBQm54IPWgvKnLJ1jSVoWX+aMelBf
-	 g/YJzRe3VkQ9c+cbty53T19yVHaBjH61CmhXB+p0Wf9DE7+gClaACxKKt0cwGXIX2p
-	 lE9e5dA4IxG/Q==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-549b116321aso3853042e87.3;
-        Sun, 23 Mar 2025 11:17:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5L//ZSu3Lx0ETkPEVner35g3akM0O3RU7es3Qdwz7fOS7h8eJNe9FuIyiOOo4EKQJycHc5d6zIaVi@vger.kernel.org, AJvYcCVg7x5jQegATEqVRA496PMLxqj2PHKnwN1kEzyBWI8TCuaCmIjBaIerFVfd5qM4RpUBihKcvE9IakJ5pIBv@vger.kernel.org, AJvYcCXZF5l9O0MjHXpUqZxP+0WQxzL/fRxZg+rdW5mUK1SxRo/GL9Y3ERJWDdAR10vYfhbeIkvK6c7r6q1UGJ41@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTgYlLYeOC8pRyLgLD/Mgt2tZ5eRIyz80YdxbN/gbw9UlSBh1g
-	z8H0gJBP5VAgec3R05amK0D/FzNdsGob0XgCXyvtLHJeDls8IOuL/SGFyH0nf9gIhycMXLUJLxB
-	nXzxofNp1rGJEWy2RF4oJ3HDs2BY=
-X-Google-Smtp-Source: AGHT+IETHfg8ib2tQB5DP02LtHyjTXmPdsydvih0XDlfjgyQtoziDZQMtCctILBs1DwoARqUA+qqI6epKDqy+wlyiFE=
-X-Received: by 2002:a05:6512:1598:b0:549:5769:6ad8 with SMTP id
- 2adb3069b0e04-54ad6470a7dmr3513782e87.4.1742753846190; Sun, 23 Mar 2025
- 11:17:26 -0700 (PDT)
+	s=arc-20240116; t=1742753865; c=relaxed/simple;
+	bh=rWj6WocXKBI0ugd9aAJVs40NDcWgGwovZXjcXknYzRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+W0yYjNb0sPQC6fykZDMhO7VginPiEVqWt6LPrs4YUoylzP/1f04vvsPZfvKuINr/TEd15MGQs84waQUBBiAOWxtVjA5X3kB4UataagKbXXGqCptDZ6Nw9Rt11JEXu60IxJ0uXbb4KhRpRT8jIImOTXuAH7wb0t3AhO8Rfmdqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHGfIUpx; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c55500d08cso363289485a.0;
+        Sun, 23 Mar 2025 11:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742753862; x=1743358662; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/Y3e2AAeYJ+Z6UX18Ug8YutlfvErNn61p0TdO5dpWc=;
+        b=DHGfIUpxHPSioZEGIHwk0DxsFOT6MLXWJJmKzsGVoxeZmy0WNMPi0h2c3JidfqNtsc
+         7EG40BDVGgzxZaUVUL7GXnOzZb1fOLMODJwS9JB+0IdbwqhcFAVthgXK0HDk9ocmM1Jl
+         aG18E1/ak02Vl7vsMIttQzfavxj7NCTRCEXFs9o1DAKOvVAwrZZR60GKWYZS4rC77M7R
+         Ec6vtPoMW69UeF7KvQcrhOmW/Rj6im1gkPl3yzC2fllAva+mUJG+qqiDgZ60PodUyOQ7
+         GBl+VAY3OBgHG+MKfc29glNRVt7QyHXnREMKrYPhhHvHfufLMr9L0iuxmlkK/02j0PbP
+         oFhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742753862; x=1743358662;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p/Y3e2AAeYJ+Z6UX18Ug8YutlfvErNn61p0TdO5dpWc=;
+        b=dRfFpS5qTIPnBqYHzg98S2oi2+p8+kFKJYbO5p2JNYC0iNhOctn7Zb/KN0ebrwU1wX
+         BFwKSH10N7sVKXgL4eUv3G2JwbhrteWuwaLGfUlJt3PmnPBQuH8syCMFGlJdbNxaNgR5
+         hVousIKRjLXKLj6zRltacUZ3fJkj0vF8OY3ivsJhBxh8Vc1s4tzgg7y9LrOtWIIJidzK
+         /ZFWOITWB/pHatylb0oIaJTc5wtWTASbXLuoGcnR1Cq4UJf8TIudNgXxVbWiCGPfxuWI
+         SKG3jXZy+poiJ3Pi6KyGDI4hIUzsu2+pcBmMxx+n2EL8dJYrx2406kCxaQL70+lSrVIv
+         XKbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjWnYyWHxgzgj6dxKJHXTA1AFqPNsiywa8CBCaSF8tdERnb2Muy8TER//ggdDVwOf3UjQJRiPc4hukppxLZrs=@vger.kernel.org, AJvYcCXGiu5hVoG1EcbmqY2Pp/cVzbHO7j2wL8wx25t5Gw7rzd3XKdKjdmES2Qhvmuv5D0843KSqIMPKotkYJsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFplDx5w04O0vK7k95F09wDaiyTlo4GBrh8vVWHWyjUGsLq+AP
+	KWavgCNi879YWcWFXBqKBBqX+CIgfF3otnq1z5596PqpJQWTdDIp
+X-Gm-Gg: ASbGncsmxgF1whmMh2HXqsLVCawM2/XWA5ddDpxScZSJR2/TRJMCzLiDiREhovpM53b
+	944WvjltX4d/hxfe9hAbYeuyMVioO1/SuViETvG+KTLH5/ic/iwdXYEisf0nPIGNtF9gqJAyd4h
+	xtDTVk+lf4FEebiRsR7PJiB02tenTXIPrbPktswTjhWpqKPq3iyfEbf/PhOLHuDtZs+cOSoG4Vg
+	P2C5LJ3NDFw/9XJTWR9x1Cr/d3dQFT44diRcYqE/G2jZVtpEdQOlPvaIRA8utQjNBQiINa4vATx
+	5wy89enNQHsDWJh6hJvAfziSs52jAEoRqWoAI5nyOQzp/+9po5BSnTFUaEt9kViio+uNCyZygPd
+	cMUZfi5XpKlgxzoaWytHuIWJFMqM+ufCNJz0=
+X-Google-Smtp-Source: AGHT+IFmNBhDriRO0irUBdJRjzDqYZ9meEjROmFEBD5cu7z9FsdbJP1sRzp13mrQ+HhLSXJk9YEvXg==
+X-Received: by 2002:a05:620a:1924:b0:7c5:431f:f5e6 with SMTP id af79cd13be357-7c5ba1a7d8dmr1304857585a.33.1742753862268;
+        Sun, 23 Mar 2025 11:17:42 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92b9af5sm391763585a.6.2025.03.23.11.17.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 11:17:41 -0700 (PDT)
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 169CB1200069;
+	Sun, 23 Mar 2025 14:17:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-13.internal (MEProxy); Sun, 23 Mar 2025 14:17:41 -0400
+X-ME-Sender: <xms:RFDgZ6m1jzHkA2GKcyVudDR3ZiTcIOAM-q89Ykwq_ilVkw15c6TbnA>
+    <xme:RFDgZx1LKIVV_r5scPmj7A9_5FaL_F_hi7biDzbGy9CDz17BfTJMDk_J7XwVFghHP
+    5COZTPN-LivGbeKNw>
+X-ME-Received: <xmr:RFDgZ4phwEEqks6BVb-QDo0qN34-BkQmAc9ebTXeRrNuxjLGL6kLQyRl>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheejheejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeigfegueffveeltefgiefgtdegtddv
+    jeefieffhfelvefhleehiedvjeehieenucffohhmrghinhepghhithhhuhgsrdgtohhmpd
+    hkvghrnhgvlhdrohhrghdptggrshhtrdgrshenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrsh
+    honhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghn
+    gheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepud
+    elpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpfhholhhirgguihhssehpohhs
+    thgvohdrnhgvthdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgr
+    rhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhroh
+    htohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhho
+    thhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:RVDgZ-nvprKGYwGviVukxwhl22kEnivIylvsl_zS_rtdR1p6PG3Frw>
+    <xmx:RVDgZ41Ar4HEjGg4TF8943ZqDo1LTjgMyUQm3rHum6fJM8QYjQV2yA>
+    <xmx:RVDgZ1vGf_TkFJGUI2DwZG7C_s5SR-OSPctKTSJw1ZaV2rOSDb9hIw>
+    <xmx:RVDgZ0XIHh92VZKCvt7fQEDPIIcsaWa-k4PqqU3DD0TFYGZFwOPmFQ>
+    <xmx:RVDgZz0QVmZYR0t0XWMoIyL0rN0YZ_bk-OC5CXPmGerJsGORRcI3MIj2>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Mar 2025 14:17:40 -0400 (EDT)
+Date: Sun, 23 Mar 2025 11:17:39 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Panagiotis Foliadis <pfoliadis@posteo.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Charalampos Mitrodimas <charmitro@posteo.net>
+Subject: Re: [PATCH v3] rust: task: mark Task methods inline
+Message-ID: <Z-BQQwHHgediSaTt@Mac.home>
+References: <20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202012056.209768-1-ebiggers@kernel.org> <20241202012056.209768-9-ebiggers@kernel.org>
- <389b899f-893c-4855-9e30-d8920a5d6f91@roeck-us.net> <CAMj1kXHAktbQ-605wfqXCWtn8bP-yEv8sYKWAykajeAX2m1hEA@mail.gmail.com>
- <20250323171243.GA852@quark.localdomain>
-In-Reply-To: <20250323171243.GA852@quark.localdomain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 23 Mar 2025 19:17:14 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGMtpMuiJqwWVuWDhRrb-dXC30Fj0vu0vU=O6-gGR0FWg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq9h71nypQ2vOBZhli703EaGsNLFv7huy-pmiN-c5U6P8ctOyu2HMEj9rU
-Message-ID: <CAMj1kXGMtpMuiJqwWVuWDhRrb-dXC30Fj0vu0vU=O6-gGR0FWg@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] lib/crc_kunit.c: add KUnit test suite for CRC
- library functions
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org, 
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>, Vinicius Peixoto <vpeixoto@lkcamp.dev>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net>
 
-On Sun, 23 Mar 2025 at 18:12, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Sun, Mar 23, 2025 at 04:35:29PM +0100, Ard Biesheuvel wrote:
-> > On Sat, 22 Mar 2025 at 15:33, Guenter Roeck <linux@roeck-us.net> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Sun, Dec 01, 2024 at 05:20:52PM -0800, Eric Biggers wrote:
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > >
-> > > > Add a KUnit test suite for the crc16, crc_t10dif, crc32_le, crc32_be,
-> > > > crc32c, and crc64_be library functions.  It avoids code duplication by
-> > > > sharing most logic among all CRC variants.  The test suite includes:
-> > > >
-> > > > - Differential fuzz test of each CRC function against a simple
-> > > >   bit-at-a-time reference implementation.
-> > > > - Test for CRC combination, when implemented by a CRC variant.
-> > > > - Optional benchmark of each CRC function with various data lengths.
-> > > >
-> > > > This is intended as a replacement for crc32test and crc16_kunit, as well
-> > > > as a new test for CRC variants which didn't previously have a test.
-> > > >
-> > > > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > > > Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-> > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > ---
-> > > ...
-> > > > +
-> > > > +             nosimd = rand32() % 8 == 0;
-> > > > +
-> > > > +             /*
-> > > > +              * Compute the CRC, and verify that it equals the CRC computed
-> > > > +              * by a simple bit-at-a-time reference implementation.
-> > > > +              */
-> > > > +             expected_crc = crc_ref(v, init_crc, &test_buffer[offset], len);
-> > > > +             if (nosimd)
-> > > > +                     local_irq_disable();
-> > > > +             actual_crc = v->func(init_crc, &test_buffer[offset], len);
-> > > > +             if (nosimd)
-> > > > +                     local_irq_enable();
-> > >
-> > > This triggers a traceback on some arm systems.
-> > >
-> > > [    7.810000]     ok 2 crc16_benchmark # SKIP not enabled
-> > > [    7.810000] ------------[ cut here ]------------
-> > > [    7.810000] WARNING: CPU: 0 PID: 1145 at kernel/softirq.c:369 __local_bh_enable_ip+0x118/0x194
-> > > [    7.810000] Modules linked in:
-> > > [    7.810000] CPU: 0 UID: 0 PID: 1145 Comm: kunit_try_catch Tainted: G                 N 6.14.0-rc7-00196-g88d324e69ea9 #1
-> > > [    7.810000] Tainted: [N]=TEST
-> > > [    7.810000] Hardware name: NPCM7XX Chip family
-> > > [    7.810000] Call trace:
-> > > [    7.810000]  unwind_backtrace from show_stack+0x10/0x14
-> > > [    7.810000]  show_stack from dump_stack_lvl+0x7c/0xac
-> > > [    7.810000]  dump_stack_lvl from __warn+0x7c/0x1b8
-> > > [    7.810000]  __warn from warn_slowpath_fmt+0x19c/0x1a4
-> > > [    7.810000]  warn_slowpath_fmt from __local_bh_enable_ip+0x118/0x194
-> > > [    7.810000]  __local_bh_enable_ip from crc_t10dif_arch+0xd4/0xe8
-> > > [    7.810000]  crc_t10dif_arch from crc_t10dif_wrapper+0x14/0x1c
-> > > [    7.810000]  crc_t10dif_wrapper from crc_main_test+0x178/0x360
-> > > [    7.810000]  crc_main_test from kunit_try_run_case+0x78/0x1e0
-> > > [    7.810000]  kunit_try_run_case from kunit_generic_run_threadfn_adapter+0x1c/0x34
-> > > [    7.810000]  kunit_generic_run_threadfn_adapter from kthread+0x118/0x254
-> > > [    7.810000]  kthread from ret_from_fork+0x14/0x28
-> > > [    7.810000] Exception stack(0xe3651fb0 to 0xe3651ff8)
-> > > [    7.810000] 1fa0:                                     00000000 00000000 00000000 00000000
-> > > [    7.810000] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > > [    7.810000] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > > [    7.810000] irq event stamp: 29
-> > > [    7.810000] hardirqs last  enabled at (27): [<c037875c>] __local_bh_enable_ip+0xb4/0x194
-> > > [    7.810000] hardirqs last disabled at (28): [<c0b09684>] crc_main_test+0x2e4/0x360
-> > > [    7.810000] softirqs last  enabled at (26): [<c032a3ac>] kernel_neon_end+0x0/0x1c
-> > > [    7.810000] softirqs last disabled at (29): [<c032a3c8>] kernel_neon_begin+0x0/0x70
-> > > [    7.810000] ---[ end trace 0000000000000000 ]---
-> > > [    8.050000]     # crc_t10dif_test: pass:1 fail:0 skip:0 total:1
-> > >
-> > > kernel_neon_end() calls local_bh_enable() which apparently conflicts with
-> > > the local_irq_disable() in above code.
-> > >
-> >
-> > This seems to be an oversight on my part. Can you try the below please?
-> >
-> > diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
-> > index 82191dbd7e78..56ddbd3c4997 100644
-> > --- a/arch/arm/include/asm/simd.h
-> > +++ b/arch/arm/include/asm/simd.h
-> > @@ -4,5 +4,6 @@
-> >
-> >  static __must_check inline bool may_use_simd(void)
-> >  {
-> > -       return IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && !in_hardirq();
-> > +       return IS_ENABLED(CONFIG_KERNEL_MODE_NEON) &&
-> > +              !in_hardirq() && !irqs_disabled();
-> >  }
->
-> Thanks Ard, you beat me to it.  Yes, may_use_simd() needs to be consistent with
-> kernel_neon_begin().  On x86 there is a case where the equivalent function is
-> expected to work when irqs_disabled(), but if there is no such case on arm this
-> fix looks good.  Can you send it out as a formal patch?  Presumably for the arm
-> maintainer to pick up.
->
+On Sat, Mar 15, 2025 at 12:23:01PM +0000, Panagiotis Foliadis wrote:
+> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> toolchain provided by kernel.org, the following symbols are generated:
+> 
+> $ nm vmlinux | grep ' _R'.*Task | rustfilt
+> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
+> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
+> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
+> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
+> ffffffff817b2cc0 T <kernel::task::Task>::uid
+> ffffffff817b2ce0 T <kernel::task::Task>::euid
+> ffffffff817b2c70 T <kernel::task::Task>::current
+> ffffffff817b2d70 T <kernel::task::Task>::wake_up
+> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
+> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
+> 
+> These Rust symbols are trivial wrappers around the C functions
+> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
+> euid, get_current, wake_up, get_task_struct and put_task_struct. It
+> doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
+> 
+> After applying this patch, the above command will produce no output.
+> 
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+> Reviewed-by: Charalampos Mitrodimas <charmitro@posteo.net>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
 
-Sure.
+I queued this for v6.16 via tip and more tests and reviews, thank you
+all. I changed a bit in the commit log per the usual tip tree rules,
+please see below, and let me know if something doesn't look good to you.
 
-On other architectures, we might just turn this logic around, and only
-disable softirqs when IRQs are enabled, as otherwise, there is no
-need: we don't care about whether or not IRQs are disabled, only the
-softirq plumbing that we need to call into does, and no softirqs can
-be delivered over the back of a hard IRQ when those are disabled to
-begin with.
+Regards,
+Boqun
 
-> > However, this test code also appears to assume that SIMD is forbidden
-> > on any architecture when IRQs are disabled, but this not guaranteed.
->
-> Yes, to reliably test the no-SIMD code paths, I need to finish refactoring the
-> crypto_simd_disabled_for_test stuff to be disentangled from the crypto subsystem
-> so that crc_kunit.c can use it.  It's on my list of things to do, and I'm
-> planning to get it done in 6.16.  Disabling hardirqs is just a trick to get
-> there more easily on some architectures.  But as this shows it's a useful test
-> to have anyway, so we'll want to keep that too.  The CRC functions need to work
-> in any context, and any context that we can easily test we should do so.
->
+-------------------------->8
+From: Panagiotis Foliadis <pfoliadis@posteo.net>
+Date: Sat, 15 Mar 2025 12:23:01 +0000
+Subject: [PATCH] rust: task: Mark Task methods inline
 
-Sounds good.
+When building the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+toolchain provided by kernel.org, the following symbols are generated:
+
+$ nm vmlinux | grep ' _R'.*Task | rustfilt
+... T <kernel::task::Task>::get_pid_ns
+... T <kernel::task::Task>::tgid_nr_ns
+... T <kernel::task::Task>::current_pid_ns
+... T <kernel::task::Task>::signal_pending
+... T <kernel::task::Task>::uid
+... T <kernel::task::Task>::euid
+... T <kernel::task::Task>::current
+... T <kernel::task::Task>::wake_up
+... T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
+... T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
+
+These Rust symbols are trivial wrappers around the C functions. It
+doesn't make sense to go through a trivial wrapper for these functions,
+so mark them inline.
+
+[boqun: Capitalize the title, reword a bit to avoid listing all the C
+functions as the code already shows them and remove the addresses of the
+symbols in the commit log as they are different from build to build]
+
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
+Reviewed-by: Charalampos Mitrodimas <charmitro@posteo.net>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Link: https://lore.kernel.org/r/20250315-inline-c-wrappers-v3-1-048e43fcef7d@posteo.net
+---
+ rust/kernel/task.rs | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+index ea43a3b8d9c5..6ba0b4286f09 100644
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@ -134,6 +134,7 @@ pub fn current_raw() -> *mut bindings::task_struct {
+     /// # Safety
+     ///
+     /// Callers must ensure that the returned object doesn't outlive the current task/thread.
++    #[inline]
+     pub unsafe fn current() -> impl Deref<Target = Task> {
+         struct TaskRef<'a> {
+             task: &'a Task,
+@@ -168,6 +169,7 @@ fn deref(&self) -> &Self::Target {
+     /// # Safety
+     ///
+     /// Callers must ensure that the returned object doesn't outlive the current task/thread.
++    #[inline]
+     pub unsafe fn current_pid_ns() -> impl Deref<Target = PidNamespace> {
+         struct PidNamespaceRef<'a> {
+             task: &'a PidNamespace,
+@@ -275,24 +277,28 @@ pub fn pid(&self) -> Pid {
+     }
+ 
+     /// Returns the UID of the given task.
++    #[inline]
+     pub fn uid(&self) -> Kuid {
+         // SAFETY: It's always safe to call `task_uid` on a valid task.
+         Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
+     }
+ 
+     /// Returns the effective UID of the given task.
++    #[inline]
+     pub fn euid(&self) -> Kuid {
+         // SAFETY: It's always safe to call `task_euid` on a valid task.
+         Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+     }
+ 
+     /// Determines whether the given task has pending signals.
++    #[inline]
+     pub fn signal_pending(&self) -> bool {
+         // SAFETY: It's always safe to call `signal_pending` on a valid task.
+         unsafe { bindings::signal_pending(self.as_ptr()) != 0 }
+     }
+ 
+     /// Returns task's pid namespace with elevated reference count
++    #[inline]
+     pub fn get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
+         // SAFETY: By the type invariant, we know that `self.0` is valid.
+         let ptr = unsafe { bindings::task_get_pid_ns(self.as_ptr()) };
+@@ -308,6 +314,7 @@ pub fn get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
+ 
+     /// Returns the given task's pid in the provided pid namespace.
+     #[doc(alias = "task_tgid_nr_ns")]
++    #[inline]
+     pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
+         let pidns = match pidns {
+             Some(pidns) => pidns.as_ptr(),
+@@ -321,6 +328,7 @@ pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
+     }
+ 
+     /// Wakes up the task.
++    #[inline]
+     pub fn wake_up(&self) {
+         // SAFETY: It's always safe to call `signal_pending` on a valid task, even if the task
+         // running.
+@@ -330,11 +338,13 @@ pub fn wake_up(&self) {
+ 
+ // SAFETY: The type invariants guarantee that `Task` is always refcounted.
+ unsafe impl crate::types::AlwaysRefCounted for Task {
++    #[inline]
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+         unsafe { bindings::get_task_struct(self.as_ptr()) };
+     }
+ 
++    #[inline]
+     unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+         // SAFETY: The safety requirements guarantee that the refcount is nonzero.
+         unsafe { bindings::put_task_struct(obj.cast().as_ptr()) }
+-- 
+2.39.5 (Apple Git-154)
+
 
