@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-572957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBECA6D0C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:26:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045D5A6D0C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96053B28AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0D58188DEEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC5F1A070E;
-	Sun, 23 Mar 2025 19:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6368A1A0BED;
+	Sun, 23 Mar 2025 19:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WFGf4qJ/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJs0YjcU"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5077CF510;
-	Sun, 23 Mar 2025 19:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787681946C7;
+	Sun, 23 Mar 2025 19:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742758007; cv=none; b=eVTC/zTpXPMfVNifb+QU855kfN9WFZhufmOcz0HGYDVK9TNreGGR7sBqbZkib1gH7US+edaWWGD9Xaykrub7XpOlOaRK9hwX29ICY3WumBHYFQeXTS35Z4rNnPSBECBHkzbRM0J4vZsRG0Adr0BsnXA1kq5+IkeowfW+fUhh9FU=
+	t=1742758107; cv=none; b=Xkld4p2MZ2CYsCyz43k0nxgtoXkClLdrUsUUyP1MK7JR7jmg1YCQaiv+4GRrL/nIl27tGXWDh16fqKQvAPKiBHkM/JDPruavSkWlOIutxALBEw0OhofJAKnFvBU3wGfQcCibvg+/guYFOafkc7WDzV5LC6fbYhy+aFmQkRyq9xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742758007; c=relaxed/simple;
-	bh=YezEgk1iCgYxkv79mD9bPU21i+VeN7khhGctWDqAaH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXBPJYN+AiJaMKgwIlg3fsaGz7c5o2dJlGNEsADgv7noBd6wmeLLF7Ho3xfEZiIaqEMy4rFb2QBcDDswrggdBUiis2SZSP2nZtmdlB/lnddnlnpkm1mDVVlW1bWv7Qu3r9hHViHU2EO2i8Qg4rPuBxqQRmhQ89bXc4zNNNmTTTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WFGf4qJ/; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742758006; x=1774294006;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YezEgk1iCgYxkv79mD9bPU21i+VeN7khhGctWDqAaH8=;
-  b=WFGf4qJ/oPeJQ0psB+U8L2boW7axsbLgLunLHXUF38DuQ5xA8rCAihTP
-   MpFZA5iIWtGFDWBh+wlVIH8EfqvX1n6gb2mBm5LsI8m7pgjcWGLeIBQgH
-   ahu5TKoq/vBvkvWMGWJz/yGytmy83ABjBxjkGp1f/BfArxVUbonyhBsxN
-   kUiAOys5XiXC+r5pEX9kucAtSXCrlJjNIg1qYtUtdBmxlRMUVFpHsOPdB
-   gUOVnINvniKj+wETLehzg75vAaY6M9+F+5eVjr0T0NKT5XoROk7AC6Dn8
-   UFObcZYbYMFOui5zXuMzyPI05CdE8u2aV0vNU5QRycWX0vT9N/6g8yf1v
-   g==;
-X-CSE-ConnectionGUID: vwByPp4qQEGS5bHoVkH00w==
-X-CSE-MsgGUID: jYBhkp2oSHmueHrZFsOnIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43685422"
-X-IronPort-AV: E=Sophos;i="6.14,270,1736841600"; 
-   d="scan'208";a="43685422"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 12:26:45 -0700
-X-CSE-ConnectionGUID: mAZak0DkR/yNjmwT4L+UcQ==
-X-CSE-MsgGUID: gw8cFEQ5QZyVQfCML4f3JQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,270,1736841600"; 
-   d="scan'208";a="124378757"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 23 Mar 2025 12:26:41 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twQxz-0002vK-1A;
-	Sun, 23 Mar 2025 19:26:39 +0000
-Date: Mon, 24 Mar 2025 03:26:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
-Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
- finding the capabilities
-Message-ID: <202503240338.N37HXlm9-lkp@intel.com>
-References: <20250323164852.430546-4-18255117159@163.com>
+	s=arc-20240116; t=1742758107; c=relaxed/simple;
+	bh=kGH5/CTpQKM7kf9ZgU2OdVOxJkNxotXc5CxI5Z5VwRY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oae4cocKXUPOS4o9op9d5xStod9iVKFaz8zQsWpavtlB4nTJ0pqpylNPvBu6IG80gctKCWN73J/igW8DyK1B3gIe+2Wa4rt0WyKaQLbgQKF0SanmmoEAh6ei9ZXVzV1V5mT12OwhJFOP+eWiFQEY2d5dWOIc5Qv1KoXW2RlZE2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJs0YjcU; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240b4de10eso9722455ad.1;
+        Sun, 23 Mar 2025 12:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742758105; x=1743362905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kGH5/CTpQKM7kf9ZgU2OdVOxJkNxotXc5CxI5Z5VwRY=;
+        b=QJs0YjcUpXF+V6wkeS811rTa+SBwf3cf4zaBYMj4F4ZC0wAKw0g8GyTwWCxzw1b5Tl
+         8RfCbN4F3YJlbR+TJCnf8MpDNuFMsYp20RhZWV0dovO4ZVQxs/c/7ukMXeeyBSNBRjNc
+         59QGNKjqAY3Wn4pF3TU8NsHZVVk8d8rp6dL91BTeB8rJfxQ6rJ7pIeMPmEfW0ZgocrRW
+         7vMK3o19mtBabbcMvQbWyXIIIu+hS2SrywpyZR/LMqpuuBiSIDDhxK4laSU8Tdlu9+9i
+         LH6SvCJ7se79XvWeOjAcEXDOR6vBcAVu9r9l/lhosdz5qRUNLBl7KbT92yzI89+Wflb5
+         P/Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742758105; x=1743362905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kGH5/CTpQKM7kf9ZgU2OdVOxJkNxotXc5CxI5Z5VwRY=;
+        b=LKmPsqvGu+pDnvte0rsTfAjbZusIJqBcYMd8k4xD+CzSMvaZQRwgjVhw7N819B3UWK
+         eDpzkBPVXj5KfAVdpXB5SIzyNyRgUeBsnhZfHQcwK+o/9qzsw2sLeYCARmbttx14ffCe
+         iRad81PKmlg0TCplueJwPxTFGMVHb7LyQbCVmBcOdoYbZ/09EWmWDjQayPrS0hcNK0f0
+         O1uy15HORAozX3rYReWP/8Xhf9ndF6oUlwdtRTjEMa3S7yIw6R9sU/AUdf1WcFOFQjkK
+         mmMwis2822ltMk2Hs/gfupWliQ3OKKUg06ePE52Z2IPJniTrtKKtz9uFiQYeUbz2lhO7
+         ZBZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFMeo60n/UNxQcIbhtieAIxoR56aojWDctChsy1o2ycOBTts7wEn5R4k0Vjbw1NOWaHNX6Q4X1dALb4AvOi7j@vger.kernel.org, AJvYcCVoqHSGWhrZd+9lNKkSXzyxn+st9ErL3PyliXPyEcGdp6WIWlPUemBuZFvB1YOw9OccpOQlZkaO4vLsM87+UFs=@vger.kernel.org, AJvYcCXr77YU1ZFH6ssTAdlyaPAdQy4LBglPouleYIL1leZWwLzy+bUZdzwBu0QKluZ3qI8VHyzdV9rM6DP7Czo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtGXkRxkTLTYMZ5fDlDJO+rZ9F5hUkqRFOfYEaB28TzZyjK01A
+	rGXSF68ECJu1SNOJrW4qzwEPaogYUx2MTzpYk1V4b1P40mSKV3asfU/NiKo+P30bsnSwD4aTYr1
+	AHZCDX/bkTsQqmo+GqKADI0MmW4k=
+X-Gm-Gg: ASbGnctxuymlU5/ZgtR19DEqk0/+L8C/2flaAv1W8UL86xuDLlZrx+/Qb6YNcm6gjLr
+	D5gvEftadC45N8QmKHI4uBsKoV0bQ5LqN9EGJXq2eF8mdsertjrgD1M5cNvnBgJO2JLFbZ1iE13
+	mAPAbK40Y5YhWI3oFjmeasTaodV36toTgKYpTE
+X-Google-Smtp-Source: AGHT+IEms8Zqvix1j44iZCMGR7rzEuXMhZQmOiNQtD8SeMAWae3Hu/55rylGMMQD9D/NmoQhXT3P4ZHnKpJYPWuZvYQ=
+X-Received: by 2002:a17:902:d543:b0:223:4b53:7349 with SMTP id
+ d9443c01a7336-22780df1736mr61515375ad.11.1742758105615; Sun, 23 Mar 2025
+ 12:28:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323164852.430546-4-18255117159@163.com>
+References: <20250320020740.1631171-1-contact@antoniohickey.com> <20250320020740.1631171-9-contact@antoniohickey.com>
+In-Reply-To: <20250320020740.1631171-9-contact@antoniohickey.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 23 Mar 2025 20:28:12 +0100
+X-Gm-Features: AQ5f1Jqvq_eKaV5-b8YwtT1cUR6hqrQQAMYIapt-T07hwVu_magImFA6N8hGwIU
+Message-ID: <CANiq72nw0QOq0gJDVn8FKXqiFGHi3S1XZP-ti-KCnVwr6XB0xw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/17] rust: kunit: refactor to use `&raw [const|mut]`
+To: Antonio Hickey <contact@antoniohickey.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hans,
+On Thu, Mar 20, 2025 at 3:08=E2=80=AFAM Antonio Hickey
+<contact@antoniohickey.com> wrote:
+>
+> Replacing all occurrences of `addr_of!(place)` with
+> `&raw const place`.
+>
+> This will allow us to reduce macro complexity, and improve consistency
+> with existing reference syntax as `&raw const` is similar to `&` making
+> it fit more naturally with other existing code.
+>
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 
-kernel test robot noticed the following build errors:
+In general, you should pick the previous tags (e.g. Reviewed-by) that
+you were given for each patch (unless you think there are enough
+changes that it should not be done anymore etc.).
 
-[auto build test ERROR on a1cffe8cc8aef85f1b07c4464f0998b9785b795a]
+For instance, in v4, this one was Reviewed-by: David, and a couple
+others were Reviewed-by Boqun; and from what I can tell, they didn't
+change.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-capability-search-functions/20250324-005300
-base:   a1cffe8cc8aef85f1b07c4464f0998b9785b795a
-patch link:    https://lore.kernel.org/r/20250323164852.430546-4-18255117159%40163.com
-patch subject: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for finding the capabilities
-config: riscv-randconfig-001-20250324 (https://download.01.org/0day-ci/archive/20250324/202503240338.N37HXlm9-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503240338.N37HXlm9-lkp@intel.com/reproduce)
+Thanks!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503240338.N37HXlm9-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/pci/controller/cadence/pcie-cadence.c:20:11: warning: variable 'val' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-      20 |         else if (size == 1)
-         |                  ^~~~~~~~~
-   drivers/pci/controller/cadence/pcie-cadence.c:23:9: note: uninitialized use occurs here
-      23 |         return val;
-         |                ^~~
-   drivers/pci/controller/cadence/pcie-cadence.c:20:7: note: remove the 'if' if its condition is always true
-      20 |         else if (size == 1)
-         |              ^~~~~~~~~~~~~~
-      21 |                 val = readb(pcie->reg_base + where);
-   drivers/pci/controller/cadence/pcie-cadence.c:14:9: note: initialize the variable 'val' to silence this warning
-      14 |         u32 val;
-         |                ^
-         |                 = 0
->> drivers/pci/controller/cadence/pcie-cadence.c:28:9: error: call to undeclared function 'pci_host_bridge_find_capability'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      28 |         return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
-         |                ^
->> drivers/pci/controller/cadence/pcie-cadence.c:33:9: error: call to undeclared function 'pci_host_bridge_find_ext_capability'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      33 |         return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
-         |                ^
-   drivers/pci/controller/cadence/pcie-cadence.c:33:9: note: did you mean 'cdns_pcie_find_ext_capability'?
-   drivers/pci/controller/cadence/pcie-cadence.c:31:5: note: 'cdns_pcie_find_ext_capability' declared here
-      31 | u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
-         |     ^
-      32 | {
-      33 |         return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
-         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                cdns_pcie_find_ext_capability
-   1 warning and 2 errors generated.
-
-
-vim +/pci_host_bridge_find_capability +28 drivers/pci/controller/cadence/pcie-cadence.c
-
-    25	
-    26	u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
-    27	{
-  > 28		return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
-    29	}
-    30	
-    31	u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
-    32	{
-  > 33		return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
-    34	}
-    35	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
