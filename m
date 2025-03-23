@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-572815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA67A6CF12
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 13:00:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35269A6CF10
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809B0189471C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B4C16E7C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F99204F66;
-	Sun, 23 Mar 2025 12:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD98E204F62;
+	Sun, 23 Mar 2025 11:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G59ocVhh"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pd8fH2KE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B813635946;
-	Sun, 23 Mar 2025 12:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF8C1E5B6B;
+	Sun, 23 Mar 2025 11:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742731225; cv=none; b=ejYPzAzib2RO/BCjwZrHbSzzSJPCvZ5aJM801oxS/1a3J4jiUBNoa1WPxmYN1oUkH8ec3cSDTViP+JN2ZHFz40N7daR5D8nnf8YJMFr4sY9WnspH68p+0hMQsjHcUGnRNiyWFIgbKvuYc78uGofooAeX5hMfIySNXe1ZkQBak1I=
+	t=1742731192; cv=none; b=cqOWdT0cZlzRPEsbc2UAaUMIbfXFvfNUwz3TK2lfKs91jsQoGyfXbzwAXeo9ABzju+tI8LkJvuxX+25UtiGzjvjXU3Y8w8MuHaqA15nXOtQqC4PmyMPioeFV0qjCXC62yt9qWBkBTjnzeeMcckCl7a+tgkjZ3h8x0Q7ysLvAEA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742731225; c=relaxed/simple;
-	bh=dV3WY7g5AgUsIPaJZLeXXgOiR4cISl+ezx0RCzVdEm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cKueDfteDxLYB6q3q74u7+FKs9v+fqbkzEsQCYe8Hw7dq7BYSpHfTtHxFDBm5e0js1dFskvD9qmXJCMKNbCSfzzDBoygRrpmNzfW109722ETqyQChLTLvLpT94TeHLtKbb2q7kN1mqzDB/KqiQQfwTSe3+7MDZUBESn2CEVr7dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G59ocVhh; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso501125066b.0;
-        Sun, 23 Mar 2025 05:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742731222; x=1743336022; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GrafXZ+fTOV5Q0yOHTKTlBFYtkynKxA292LQeLGoU8c=;
-        b=G59ocVhhLJL7IuEh3u7b07we7i6uARvibaweXtFI0x8TyO+NsXvky3qYVhxjvTwUIB
-         dwWiHErebCOxA4edFLBBCdwW7edEGsAyjY6Lmsvl6iA3dlHRGq7biZbpWRARz+DtBQkt
-         r70GKbNdp9QotZfvoT3s1QVnfFgFsjR0ChlarPkSnWoBiHVWM5n4jp3qH3kdqQHFuE8i
-         wD58fqCbpqxJcrf1zhQZyAMMQLzeiCSt3CfFsWL6Owot1pP/M6pVBn0zjPM63OYREGW3
-         Vj+bI6LKGHgmo2LyU1P8mxZaXKmhnEBL0wd4QPqp/KcwpyIcrB/FQBFfhyEJzq2PUFjp
-         cjvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742731222; x=1743336022;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GrafXZ+fTOV5Q0yOHTKTlBFYtkynKxA292LQeLGoU8c=;
-        b=H2qBNHMYgAWWuwOo4YDtcr8nWgmyydg+ELsodgwza8K+VzfEU+jYbpl7PRE0CZoBu5
-         32Z65zS7MgkctFnVc/Xie68WNyImlrtawxSsLbYvRNxYCtgQM3WaqoPYgRCFk1tpGG9t
-         XrKfnNsgwCj6SvbMBT5bGiEuMWzBI2FVInxyALvF37BwZ/PhZCYntAXTPl6cawF5EUIV
-         uvylxF7/JjWZZ7o8oxuLqrZp4QWhGVZ+LKao4vq8PJhDqYQQOskEolD1Swkty0LZhyc+
-         ldzaF8AsFLqNYC9ZjJmowUK9zU5mbibLFXDcbZglvNS8lwL5LmhV7/ADtL0zKtFVqf8R
-         vzvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2KQ+3cWjBmJjz4OPkR94MQdy1b5wBZF3DPvKn61MdVaqA0PIAG66KlwSaJOLcZduBABVgb59sZukFDrCM1wU=@vger.kernel.org, AJvYcCWdKAUmetyjRFVqmUz5queP5bR1PGSiQeEMqDA/A9wtqq9jAdyrtQ1N4PJN1gVylvhKXNkq9igBnMigQZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdKPbEL7NM9bG+jhH5X7V1CfGCZ8hl3hjMM0hVawAc0orC/nuZ
-	DAcs+0IeDUA9VY1+0HurkN30zSL/7fzzP8QJgvJXUTpa6zqdq4CmSQOPWabzpOIDpl77Z/QnQQA
-	ZliRRGm9fKQicx8mNkniKrlVIRflQSZQI6HU=
-X-Gm-Gg: ASbGnctt1HbUZeBkjzHzvqNpMR/WFuOMFtoUUpZsho0+71RupeT2WsGUx//KyAIvWOg
-	D9qZRUTrvlhgU6s8ZHJVPUlvk7KfKxw4l+Vo5mKASss0bRWBe+eAzIeoiKsjQsHOWsYc2gCTroa
-	QF2czNCAc/FNrZa7cZlMo2hiznAw==
-X-Google-Smtp-Source: AGHT+IEmwD9GqpgkQgN9NorTx5No1B/GDt3L++LgVtbFkWOFIhvRhQ5KQtfTXg5yPa+PtmUd4Pl7jRU5RvGVuuQ4xus=
-X-Received: by 2002:a17:907:a58b:b0:ac4:3d0:8bc9 with SMTP id
- a640c23a62f3a-ac403d08c9dmr677975666b.27.1742731221681; Sun, 23 Mar 2025
- 05:00:21 -0700 (PDT)
+	s=arc-20240116; t=1742731192; c=relaxed/simple;
+	bh=BCUqxCEYrRl38QQnY9UsQYipkTAwN/+KlfXG37n/a8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dDC7uQxdX4MWf0f0Qrlro0HBO+dFPhTa3WPKZ0DQ1t62+j8vYsMUqVq6wi4rOwcWU852dXzp49SvsILZD19O6UoTpBfGw3J/GhwKHwaaLgIfWPtfzR7Iq05V+NE2oIyC4cGr34WJhW5JLj2X7xTiFO6P0X3Im3ZVHQMhpUxHvAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pd8fH2KE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D07C4CEE2;
+	Sun, 23 Mar 2025 11:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742731191;
+	bh=BCUqxCEYrRl38QQnY9UsQYipkTAwN/+KlfXG37n/a8M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pd8fH2KEzRdGkjP7KHtMz0xgANl/rhdv89o8bTmrawdmP6WKCvGlqvNqjAwkY4ST5
+	 RvkySsc3sO2pS6ZzfTf6wzMvxym9pNJoZRglMo+MQ85rbZimRURD3dlBdG/ZKXPXTf
+	 KgsCye0eq6Ic9z2pmMAnZ0y62zBx4VF/niXdsSqGf7QUPPzB8gXraLqfPmylNROYT4
+	 K2Nxl+BjPB/DpGTFxJCS+7kinRfln6thUGs2NWH5Q5vUlml4ft4lE6NW6JX/a59UDV
+	 5eCbR2rda8tY6LSwSV1Dijl8y8faCvv5CC4jv9yYp8SllR/3fy4BvqL90gMHjNHkSj
+	 AYxW1fEqqIxjQ==
+Date: Sun, 23 Mar 2025 11:59:47 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Siddharth Menon <simeddon@gmail.com>, linux-iio@vger.kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] iio: frequency: ad9832: devicetree probing support
+Message-ID: <20250323115947.4f23b6a6@jic23-huawei>
+In-Reply-To: <Z969wZRJxMCyVuqy@debian-BULLSEYE-live-builder-AMD64>
+References: <20250322081108.202654-1-simeddon@gmail.com>
+	<Z969wZRJxMCyVuqy@debian-BULLSEYE-live-builder-AMD64>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322141910.4461-1-qasdev00@gmail.com> <d1df5d97-4691-40d4-a6cc-416505f35164@web.de>
- <92d1a410788c54facedec033474046dda6a1a2cc.camel@sipsolutions.net>
-In-Reply-To: <92d1a410788c54facedec033474046dda6a1a2cc.camel@sipsolutions.net>
-From: James Dutton <james.dutton@gmail.com>
-Date: Sun, 23 Mar 2025 11:59:45 +0000
-X-Gm-Features: AQ5f1JqVpB_XbQHhuZx8L6OtYWjrN2ZY-NMIq6Iv9-4jH4hsP7HUUWJ477xKkmg
-Message-ID: <CAAMvbhGrJ9b3Aab9+2a5zmvEgf0GZFmHLCC7Hud+egUE28voHQ@mail.gmail.com>
-Subject: Re: [PATCH] wifi: mt76: mt7996: avoid potential null deref in mt7996_get_et_stats()
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Qasim Ijaz <qasdev00@gmail.com>, 
-	linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, 
-	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bo Jiao <bo.jiao@mediatek.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-As a security side note in relation to the following patch:
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-index 66575698aef1..88e013577c0d 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-@@ -68,11 +68,13 @@ static int mt7996_start(struct ieee80211_hw *hw)
+On Sat, 22 Mar 2025 10:40:17 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
- static void mt7996_stop_phy(struct mt7996_phy *phy)
- {
--       struct mt7996_dev *dev = phy->dev;
-+       struct mt7996_dev *dev;
+> LGTM, one minor suggestion inline.
+> With that applied,
+> Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> 
+> On 03/22, Siddharth Menon wrote:
+> > Introduce struct for device match of_device_id
+> > 
+> > Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> > Signed-off-by: Siddharth Menon <simeddon@gmail.com>
+> > ---
+> >  drivers/staging/iio/frequency/ad9832.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> > index 9a27acd88926..506478ddede3 100644
+> > --- a/drivers/staging/iio/frequency/ad9832.c
+> > +++ b/drivers/staging/iio/frequency/ad9832.c
+> > @@ -439,6 +439,13 @@ static int ad9832_probe(struct spi_device *spi)
+> >  	return devm_iio_device_register(&spi->dev, indio_dev);
+> >  }
+> >  
+> > +static const struct of_device_id ad9832_of_match[] = {
+> > +	{ .compatible = "adi,ad9832" },
+> > +	{ .compatible = "adi,ad9835" },
+> > +	{},  
+> I think Jonathan prefers to have a space separating the null terminator braces.
+> 	{ },
+Indeed, but just for the record, no trailing comma on 'terminating entries'.
 
-        if (!phy || !test_bit(MT76_STATE_RUNNING, &phy->mt76->state))
-                return;
+Whilst that's not in the style guide that is pretty much default preference
+across the kernel (unlike the bracket things which is my random choice :)
 
-+       dev = phy->dev;
-+
-        cancel_delayed_work_sync(&phy->mt76->mac_work);
+Jonathan
 
-        mutex_lock(&dev->mt76.mutex);
+> 
+> > +};
+> > +MODULE_DEVICE_TABLE(of, ad9832_of_match);
+> > +
+> >  static const struct spi_device_id ad9832_id[] = {
+> >  	{"ad9832", 0},
+> >  	{"ad9835", 0},
+> > @@ -449,6 +456,7 @@ MODULE_DEVICE_TABLE(spi, ad9832_id);
+> >  static struct spi_driver ad9832_driver = {
+> >  	.driver = {
+> >  		.name	= "ad9832",
+> > +		.of_match_table = ad9832_of_match,
+> >  	},
+> >  	.probe		= ad9832_probe,
+> >  	.id_table	= ad9832_id,
+> > -- 
+> > 2.48.1
+> >   
 
-
-
-Prior to that patch, the code looks like this:
-static void mt7996_stop_phy(struct mt7996_phy *phy)
- {
-       struct mt7996_dev *dev = phy->dev;
-
-        if (!phy || !test_bit(MT76_STATE_RUNNING, &phy->mt76->state))
-                return;
-
-
-The compiler will completely remove the !phy check entirely because of
-the use above it, so it being present in the source code is completely
-bogus.
-If one actually needs a !phy check to be present in the compiled code,
-one must arrange it as per the patch above.
-
-The fact that the !phy check is in the source code, implies to me that
-someone, in the past, thought it was necessary, but I think an opinion
-could be taken that it is there to obfuscate a security vulnerability.
-
-Kind Regards
-
-James
 
