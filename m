@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-572851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630D2A6CF62
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F72A6CF63
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811C61893928
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 13:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143803B45F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 13:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AA4EADA;
-	Sun, 23 Mar 2025 13:04:45 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABC06125;
+	Sun, 23 Mar 2025 13:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="LgZ3XWvn"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8A2647;
-	Sun, 23 Mar 2025 13:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7B54C8F;
+	Sun, 23 Mar 2025 13:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742735084; cv=none; b=M6F0GOj8mlQYtQkCLHJZ61uLCpWBLBuVe4TSLuYGyBoRDMLLWOs7pyGBYXKLSLwjR2SAFjNAMAfPvbHY40P8UwNeaEvjmP5XM0IyAzjw3YWZ/spJQpAIPs2aITWAVK4u8F8glsFFhyEcSyTGH3CJa+RB+M84pVEqm/lX8IXrgxU=
+	t=1742735140; cv=none; b=QQg+WLNzfwsM1rZJPAgr3bb+/vuYbBbxui6E4giLX0mZSSLXdYH7lr2Megb9B5JcfPlATkqGrj0kDDNZZ0jYnkyREGCaBZO4mnQLtRvfNkW3q2gDWrNhFVfdRvRMkQT7d8+CgxfoGPUmtMYqWsKwjxuQ6IEJ7vEVRJY/xhztKpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742735084; c=relaxed/simple;
-	bh=Eu9OtonUOTWmJCZeFbbSPfhEvx93eCQIyJoYaBByPhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDzG5l+6Sv0ZvKWlkv4m7QLsXGlJnWgkqVfG7HSWk/CkeYUrYsFpgl0RhMEYYpKhp53Is8Pkwx6i9D6ibrI7P8QhmeN4WLV8D8uFnNn0GSrj/xZ6VWW5OXgRuwbLTuJFRV+DIcLTO+UBj98xNbgrZzQ472BxMuzoCc+D0w4jTE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 42A01343513;
-	Sun, 23 Mar 2025 13:04:41 +0000 (UTC)
-Date: Sun, 23 Mar 2025 13:04:30 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 2/7] clk: spacemit: define struct k1_ccu_data
-Message-ID: <20250323130430-GYB15267@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-3-elder@riscstar.com>
- <20250322155034-GYB11633@gentoo>
- <45526855-17b2-4de4-8e12-6320b7d84c8e@riscstar.com>
+	s=arc-20240116; t=1742735140; c=relaxed/simple;
+	bh=FnGnuH4v5LYu5NfrVRzYb2uuwWRU8dSBPh3Ax4G6XLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=osZ2W4f8N/eC2p2H2J19L9XiQkLQ7UwyvBBZCTUq2l//MGdMHqgrcKUssfKCj5TKJ7Bc5bKrvpszTlMUuMxoHO9IAoAjZjk6VRvN99s1z80KpRinLFLfIiF3deibV7QyLvT+NdNut20c+BoiLZEJS68fnG8AKcIHg5ETIVmU4SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=LgZ3XWvn; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=SG1PT6YtdkULD0AZzNIe+VWal3k+5o9YRVrkxQYxhWs=; b=LgZ3XWvnqxrpc5fhKk3FOKtNAw
+	XJw06zNjZTNeHSXBkG8Fit5Tz9+fvfxaO2NayqIKokCfyYxKqdGS1EukMMtiCIXGKQjLe2C0rnooB
+	zEo+F62NRP5S8zQiqdLNgvMZ3U6Adqum+wZ2nPGAxuWJ6iELYR4yvSuYfVM9P+sPk9Yak6vKSGitS
+	FTzJpoNY0NaiO/+PHqcpKMUiJf7URQ278e4u1K3bEDJDbWQkDB8dIlNUglDiJf1yjroEo7kz7tPGa
+	/CH65rYA3sRo8rk2500tlzedncsXxZ/J+GNQooTc02YrZ2sxw8CusPsLlziWy722ze0LqrvwSMGcy
+	mVYoQ4MeqNvZuqYSeIchOk0sDiz3AzCTlASH4BE5YoqGudNdTCsxluo1GzZFjUpVp9cHifsKtvsg0
+	ToBeHpJmH6DODOaY8J0fD5NKwxoQPpCfUHov6JhigorOEdONakIPtwWUxXRtEs0Pb+pQfYhzcTxXC
+	IlC+4gCsx7tceixZDsa6Un59iTDlV6MVP84wh3onzw2ujtItW25mPCebvy6+dA+44TRq1h0lVciIh
+	L5a5fxsOFXRcTYUcVaZfq1BWqyrjPratj6Y4dSeVKHJX6hvYz9zaiLmjVXjYCFmWIkkBSrtSy9Q3z
+	KYf8nLmesx14jocP6ycCVCbsaxLecI519tZ1Dcbj4=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Sasha Levin <sashal@kernel.org>, asmadeus@codewreck.org
+Cc: ericvh@kernel.org, lucho@ionkov.net, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: Use hashtable.h for hash_errmap
+Date: Sun, 23 Mar 2025 14:05:21 +0100
+Message-ID: <2699178.Jt51f5JuzZ@silver>
+In-Reply-To: <Z98q_K71xueitBeB@codewreck.org>
+References:
+ <20250320145200.3124863-1-sashal@kernel.org> <Z98q_K71xueitBeB@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45526855-17b2-4de4-8e12-6320b7d84c8e@riscstar.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 07:43 Sun 23 Mar     , Alex Elder wrote:
-> On 3/22/25 10:50 AM, Yixun Lan wrote:
-> > Hi Alex:
+On Saturday, March 22, 2025 10:26:20 PM CET asmadeus@codewreck.org wrote:
+> Sasha Levin wrote on Thu, Mar 20, 2025 at 10:52:00AM -0400:
+> > Convert hash_errmap in error.c to use the generic hashtable
+> > implementation from hashtable.h instead of the manual hlist_head array
+> > implementation.
 > > 
-> > this patch change relate to clock only, so how about let's fold
-> > it into clk patches (which now has not been merged), so we make
-> > the code right at first place? cause some moving around and renaming
+> > This simplifies the code and makes it more maintainable by using the
+> > standard hashtable API and removes the need for manual hash table
+> > management.
 > 
-> No I don't want to do that.
+> I'm not entierly convinced this is simpler from my little island (that's
+> one more API to learn about vs code that doesn't look all that
+> different), but I guess I can see the point from an overall perspective.
 > 
-> The clock patches are Haylen's and the are getting closer to
-> acceptance.  Let's not confuse things by adding a bunch of new
-> functionality.  Get those patches in, and mine can follow not
-> too long after that.
-> 
+> I see no problem with this, I'll pick it up for -next
+> Note this code is not used for 9p2000l iirc so I currently don't have
+> any test for it :/
+> (but it's simple enough that I'm willing to take the risk)
 
-I only mean patch [2/7], not all patches, as it's still clock related
-but, either way fine by me if you insist
+Correct, that code is only used for legacy 9p2000 and 9p2000.u protocol
+versions, but not for the default 9p2000.L version which is transmitting
+numeric (Linux) error codes only (i.e. error strings are never transmitted
+with 9p2000.L, hence no translation via hash map needed).
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+/Christian
+
+
 
