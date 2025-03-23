@@ -1,99 +1,88 @@
-Return-Path: <linux-kernel+bounces-572707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85569A6CD9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:18:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677ABA6CDA3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:36:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2175F3B8A1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 01:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296D3166D66
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 01:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209261D86E6;
-	Sun, 23 Mar 2025 01:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3471F463A;
+	Sun, 23 Mar 2025 01:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fuJBJc/p"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="z9dhFzuw"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F277E136E
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 01:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABEF847C
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 01:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742692720; cv=none; b=OaHaJCCionsnz/jAhtMJqUwVbTJF4yDKia1HgrMN/z5YhnqxG9wKUPr7cBt7l0dieoLt3E+oPYKUgcSLrTh2V6VXB9q128KNXh/FoEc+di3LEgGWJ70iiw2JJ8AUiKOyXgvdB/I+Z4tF6Ju51MekJOX0MraSNh0YoXEzQ3i+AK4=
+	t=1742693654; cv=none; b=dTU24LxkK7/NzxiGxVO5zH+N2gMDY76io7kPCm+0SxLtucVN45//WY0is/sRPCB/j+TmTVHgEAMgJi7uKNJXVcE7UoNrLVHw1khY24/mgZv4evqs/+P7SCsmL+Lz3RQi2MkezC5EfR5cYdZKaZ/atXDC2VKydVuvzQExG3yXd1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742692720; c=relaxed/simple;
-	bh=2ky60IaXpGICg8HniI6ovJiS/QU8uC/lhyixFAte1sQ=;
+	s=arc-20240116; t=1742693654; c=relaxed/simple;
+	bh=lKrvhOeZcj/4Df6v0ZP79ZMEvZZ51QsB6RYk3TKnQEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3YnOuJ1hAjRSMHGGpbn8NN1RY6Ht4n/P/7dOTnXUpKhGK+lyEq7dLmUfSsE+0vbz+/5PoZ0v7ykSMhO6rRRvbXBwRotBgHyltJAWgd5PRmTxRpUMnNS4EL9y/1U0MOUWStp8jav7YaOUisb9T+9bSz2Fw9imXPiodjOaDN1GX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fuJBJc/p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52MMZbxC005634
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 01:18:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=2R9ezOTp2OXuwq2T5MuT2vKZ
-	RZJiv8BpmQQIAHvkRRo=; b=fuJBJc/p1pME36ADkN25DN8/FvUuW4LGyR0BJfGw
-	LkfBleFjuQmWhD3r/zLQxhZevo4KIET1dD+C2qwlXWstLq60ZJZe1UcKDJIq43L3
-	CbzhVWK8TZ8GFc0blvX23vdn1TKDHrcS7vkFjFiw5H8mO7VlstReT98uuc+nBpJi
-	xjoytF7/xSAbzpfbBlsjpvvIrZoK6zyJYbZivwCcOmxoSPCIXag7aj3djHnuS6IA
-	GNHuEJ7oZVXqxDF68QuzHldLNY8Tx7cWhb4EjGuO2lbqa+xbjdioZdfGU/bvRc6U
-	BgdttTafXS3rzpFRgTL+wxNRTAok9q0/ier+QJvHf1GFiQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyj9amr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 01:18:38 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4767db0bae2so52786651cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:18:37 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOhvCev5fDDEr2gW4Vqg+5CdkLVDb9Jg0ZhSMBeXnhiXwF9Z0Mksfs6k0OIgGSj0VIHaFAGF9/CLxw1W3/sO73WRyXN3c7lFmjTqnWiTVPYVBlgNg79Zs7F6LQ0JKLKkQSporQt1+uyrWADBoFrm6g3JgRfG7OPsBz/ZpwnPOeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=z9dhFzuw; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c081915cf3so449793085a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 18:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742693650; x=1743298450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1FOdP+bSRRYHzcPHH0Rlip7ghgqtNeSWLX/OCB9MYc=;
+        b=z9dhFzuw3PlWIlY6JniRuuEGWI0mddOAhtumFviCJZ/f2AEi8tac1Bgw6zDdCddV8Z
+         a5pN3esN0EZY/c8r3lvneA4DqfGkhMhY2er1B8PRqgJsdIpNMTnzCoP51kM94EWW5x2u
+         5/cldlUUONXA1eyYxZEH0XOU7t3PWih2OvX9w4nh/iClISztvIsAU82robWy2BCHABIh
+         bwHPG0ykB3JIFSTHtRO8tdvGZ1mE1NZ3/yMhCR+IOFHB3tR2v85KVVHOw0maqV4ucVEg
+         qt1if182ydVTy8q3H51glF2wNefnnusrTcqzTALLG3LcdClMNLwKCPXSpgxTH0ZbtYq6
+         DeeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742692716; x=1743297516;
+        d=1e100.net; s=20230601; t=1742693650; x=1743298450;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2R9ezOTp2OXuwq2T5MuT2vKZRZJiv8BpmQQIAHvkRRo=;
-        b=anK2liPC6OJQchLKCyC78x3kpPIXdZKFUUGIlZYVM85hYHdqmKh5y0MZV0NDb5C+ll
-         a+RUnqtnZ7b4/oY02Vzvn/qVCSDVP6thCibF9NwMtAEDZSnZ6x38XBy2kZRq7wtVwgXP
-         hSDBrhkZwTGDaRQBWvVU5htYny2mnYOgEP40JWxlYQZDoOXFSsu8tw5BAIoddiA6gjw4
-         K5v8zeLOSMeGE2SHMYetgVagVRJaHF1qEKZElPmp0AlE4LfqzpKv2XrKBvvfXjf4vCpR
-         xW7dKI+Z5qdHVzHSb6uVv4uz0uv16mkkn+7BusewshuDXfqqXqLZkOA/+Ph486bHoTf2
-         2XVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc19f61qPKRkaVWRv9kUDiHjp0Xue6LrJUgaWe+t29gQ7HvmtP0ReSNPTfi53v04lzFGlhN+d3eMHdd7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrUW4PDJzwAKOoVzCxCaJx4Fc6F+Jcrj4p7tliR6HZ5+pbannc
-	HwlsxXakLyjTOMAiYdrW5l7Ynq1mQsuL3SX+gkC21VJjnGdWy182p6pE+1y+C2tmKiO664CLLOO
-	C+Y6PvPK/YRUcJg7X3AY/c9IKl8CWwXv3VGkqkGWfelLtevhm/ngMjH/xGyNfj/dOqDnMGJY=
-X-Gm-Gg: ASbGncu7WrSWfBgPwp1h95EgoeW/QyfM+O9c+YZgDrGVID8CsuevkNs5eeLXiLI6o3A
-	cg3C7GLm6fAlFpO2qHKSeS0yNtelbfULpod3faQRIVYM3OAI1xlVO31Dr4PTOchFPGHPMJZxu5R
-	BbkIPGKODk7Jf+gw6q/GgsqzoDyQN0r0qJgiMzStn+8Kh8wKjyu6kKiszhZON5B65vwLa/lu1kj
-	lukYqoVQh1QUEja4EM9fe8qXxbhGdN9GQLaysEp7SBQ+c43ETqjZcowxI8iEv2rSDATDX1g1VY+
-	E7TJCjXEpZvITg5JwyPSAmDh3TYl0jyJJ8AwHQYaA0kS1mrIaAb2bLyrf4m53wsfS7O9T83Bw/H
-	EqoI=
-X-Received: by 2002:a05:622a:906:b0:476:a655:c4a2 with SMTP id d75a77b69052e-4771dd922e7mr125176681cf.22.1742692716021;
-        Sat, 22 Mar 2025 18:18:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0/WAUbrypxHSD2MRLn7a/ohpYmGZD79AJWPxjbyAjULl0qmwkDIxxDUHGu7wO7VnkZgiMmw==
-X-Received: by 2002:a05:622a:906:b0:476:a655:c4a2 with SMTP id d75a77b69052e-4771dd922e7mr125176401cf.22.1742692715594;
-        Sat, 22 Mar 2025 18:18:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64685besm635531e87.33.2025.03.22.18.18.33
+        bh=L1FOdP+bSRRYHzcPHH0Rlip7ghgqtNeSWLX/OCB9MYc=;
+        b=GdAdn/xe0JzEGi5wNJP0V1Gm3MR0obuw1qaw+dWlSBQMUA9oHOK+E2MZAzX3d9vsEs
+         g3FX7bLslBi8msJ5nJipfaNdCF79AMaZqk4UJDmjCtcs/57QodHXKgdtmOaqY+UHHWnU
+         rU2PhFTOKr7x8uRtxMQwpwC5eSRl4Bo8DRBOysFsHM2wTz++h7wUMANBay8QoVI1YfF3
+         wIbrl5aLfwKkCncgXHpzNBOxRObm7UgQwQaJCOBJNtVxRcpvMRiocu6i+N11h/4JVNWI
+         EOSVbtNkJx7vsUkBSzadjZxkGK4nE82QGfEiwIRflExguTL2lnL8bIGR1vivRzGHuaBg
+         AFHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqKQIeXBRllXSK86GBVXD5RxLGFCgPU2raaQTQaUjren0ioLui0fDvw5vnFtTBqAPL2qiTrTf5kExbmIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmRrN4mNBqOsx9bfFOUhS5Q1SuCUPagOLYVol3CayqtGUGDTCf
+	zzPfp0hBQ8X5Y6Nd2Ri/FhNlnBeAcSP+Y0khUmtJizz1r0QgvSYee9emGu/dxNI=
+X-Gm-Gg: ASbGncvhutq0ssj4OZ0VD1tlrTUjKfUZhHTic92uC3qnWJ6pcls0tU1nJiDMTZOuFse
+	YJ0UumGX3LGyKHNJiz8jrR5xwWO171p30+brwDDSZXhiq+8Sf90KlmBhtV3ZUvV9u3URXwfxQSs
+	J7V4LiiD0fs6GZf14WwaLwXI/v0P3ZqCEqju+7iNiw7JRWSsyHZFNto5i+id6QqsCgjamjM9bC8
+	rJUYkt93pQERW6MPr9XDiD8Mr7sgAyjBWmZDebkyhWrctj1xgN4qmR+igpFw8az652EC5TtUt0Q
+	7pqkbmSwOJM7n3FuXxUVlS6rSWGMTUuhgmRofkMSDCw=
+X-Google-Smtp-Source: AGHT+IFm6W1qSo0vmznb+fewsV93cbQiKOUfP1imfL3yQ0EGbxw60fWJmZqiQrwOBv/b8hsnL6j2IA==
+X-Received: by 2002:a05:620a:8019:b0:7c5:af0d:97e6 with SMTP id af79cd13be357-7c5ba15c349mr1328914085a.17.1742693649852;
+        Sat, 22 Mar 2025 18:34:09 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c5b92ec688sm312122185a.64.2025.03.22.18.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 18:18:34 -0700 (PDT)
-Date: Sun, 23 Mar 2025 03:18:31 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>, Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm/adreno: Drop fictional address_space_size
-Message-ID: <tih7arhudjn2sotdvjddzncqi7nyx3xgsvnfi472ve7xcwhhqd@2nlrtoyymkfj>
-References: <20250321185437.5890-1-robdclark@gmail.com>
+        Sat, 22 Mar 2025 18:34:09 -0700 (PDT)
+Date: Sat, 22 Mar 2025 21:34:05 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] mm: page_alloc: defrag_mode
+Message-ID: <20250323013405.GC1894930@cmpxchg.org>
+References: <20250313210647.1314586-1-hannes@cmpxchg.org>
+ <20250313210647.1314586-4-hannes@cmpxchg.org>
+ <D8MVZ8L12HJN.1LN4G4H0ESLY6@google.com>
+ <20250323005823.GB1894930@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,41 +91,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321185437.5890-1-robdclark@gmail.com>
-X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67df616e cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=qQjcqu3RhaNh0RZ1ZdMA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: 98uViE5GQ8RjlUOglxMTDL6_zvBvt-X1
-X-Proofpoint-ORIG-GUID: 98uViE5GQ8RjlUOglxMTDL6_zvBvt-X1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-22_10,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=805 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503230009
+In-Reply-To: <20250323005823.GB1894930@cmpxchg.org>
 
-On Fri, Mar 21, 2025 at 11:54:37AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Really the only purpose of this was to limit the address space size to
-> 4GB to avoid 32b rollover problems in 64b pointer math in older sqe fw.
-> So replace the address_space_size with a quirk limiting the address
-> space to 4GB.  In all other cases, use the SMMU input address size (IAS)
-> to determine the address space size.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 33 +++++++++++------------
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c   | 19 ++++++++++---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  2 +-
->  3 files changed, 33 insertions(+), 21 deletions(-)
-> 
+On Sat, Mar 22, 2025 at 08:58:27PM -0400, Johannes Weiner wrote:
+> On Sat, Mar 22, 2025 at 04:05:52PM +0100, Brendan Jackman wrote:
+> > On Thu Mar 13, 2025 at 10:05 PM CET, Johannes Weiner wrote:
+> > > +	/* Reclaim/compaction failed to prevent the fallback */
+> > > +	if (defrag_mode) {
+> > > +		alloc_flags &= ALLOC_NOFRAGMENT;
+> > > +		goto retry;
+> > > +	}
+> > 
+> > I can't see where ALLOC_NOFRAGMENT gets cleared, is it supposed to be
+> > here (i.e. should this be ~ALLOC_NOFRAGMENT)?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Please ignore my previous email, this is actually a much more severe
+issue than I thought at first. The screwed up clearing is bad, but
+this will also not check the flag before retrying, which means the
+thread will retry reclaim/compaction and never reach OOM.
 
--- 
-With best wishes
-Dmitry
+This code has weeks of load testing, with workloads fine-tuned to
+*avoid* OOM. A blatant OOM test shows this problem immediately.
+
+A simple fix, but I'll put it through the wringer before sending it.
+
+
 
