@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-572909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C12DA6D03B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:31:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C04A6D03D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AA673ADCB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 048483AE764
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBF9146D57;
-	Sun, 23 Mar 2025 17:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0544146013;
+	Sun, 23 Mar 2025 17:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="euWeTzGb"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNN7y/WF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AF72E337C;
-	Sun, 23 Mar 2025 17:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ABC2E337C;
+	Sun, 23 Mar 2025 17:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742751074; cv=none; b=OzDbv55BYpsSBcbFJ3kODxwNh4bZ3+U+wbxXbxLOg4Kkm8X27J7v4B2XBHqczzDq3mYMJWLF8qtCsFq81mwi+yQR7E2THpgfgP//KFI0F/wRL6EA1Jo0Ttbr6K8rznF82LgkRIxnUDUI5SW4iwKEFaKVqxS8kRvTjbgipdsNgYY=
+	t=1742751084; cv=none; b=t5upVJsw/IXfD4pSYy8ptzw36zFYbx7ikzqWTm7j9X/iV0GTZXcAptKaChFo6syqKG0HpuyaAzKkcjwySOA2E4sDo/m2WDgR63DWIfhFHWRa3J/g6OMjFKejX3SLHFtd7fVHdXSROmB7colhShHrkEjUJrK8X1mCaoNoYBGcAao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742751074; c=relaxed/simple;
-	bh=vwsOFT8e65u6N+CcNPlcCQQ3RjoMD2CoARpH2XTneHQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=aJD7vk89FRfMZ1EwVZTyzFisKgAp6FvGWt53RzSA32w/s0lln4WJOVfF96Wagrsl9lwAmwPYgps96lO9yM8JkkL4v6/jIPTP6c1CW/n5NRoVMle2siuWEozolNTvjPh3RsXR3+HFvYBwfIuMpOdUXIWdS5Kc3jaXd5xVkxWE4vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=euWeTzGb; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742751057; x=1743355857; i=markus.elfring@web.de;
-	bh=aS26mjbyN4abFalJdzaoStx6yXU3U8r5tdNKBbcsZHU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=euWeTzGb1rN8KKZiRijlg7gIUkM7JDUBfjL1gr+b0UK6l43xtJPFUz5CA95xrbCS
-	 MIe3kTPEEi81izfL1fEKwQgl6WArlH+zRuqSABOKbHDWSDB6lnT7+78msDp52/rLW
-	 iBjLCyZIdPSjolVmPV6siFilCy+spFpHYLmES7RJZPUE0vZfrELG47MweIOpyycCt
-	 GX9ELDgPqjlYRTpZoYO+ChKDY3UIUXUHwcq1F6YExWJsK7jLMYKkeTVK53y+Q0BJ7
-	 RHVNvNjXfVeo3IHHbnWIIv3Fj10sXgDYm+vbWYcL8EV/Y6Xi8c9vh8LLVKG8CFln0
-	 Q5W8brIWphi+HhXLyg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.71]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQxo5-1tl4ju0s23-00NkmL; Sun, 23
- Mar 2025 18:30:57 +0100
-Message-ID: <6a45eb0a-01e2-4316-bbee-93bdd490cfb5@web.de>
-Date: Sun, 23 Mar 2025 18:30:53 +0100
+	s=arc-20240116; t=1742751084; c=relaxed/simple;
+	bh=Qjao8ngieYGAMozK7E16qRGK4Mj5F8kJXfJhLqGflZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qi1JOmLuc5SfOX37j81CLrtzP67T5LmVEGdvxt+MDPPviXCQb/OuLtb9VTcp/50BcTt3YKArz0XZOPqCYmat9fUik1Dp94cpFYeV/0hN/bW+yuIE/paIStlwfaY8iTOCLPuzsL/cA5/AxWlnH4zLvB9jxm6xa/Y5IYw5GUeQ2Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNN7y/WF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AF6C4CEE2;
+	Sun, 23 Mar 2025 17:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742751083;
+	bh=Qjao8ngieYGAMozK7E16qRGK4Mj5F8kJXfJhLqGflZU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UNN7y/WFnESLADhP8O2ue0VTjMsPVIz4TLlOpVqXPlYIU8ym68yRuxT5jqzDXIIbL
+	 Xw8BvZEkCB81WA/S99xzYJr7C/moEQ09//rrkz+0c3udueFj2ViWjMg6qZHbDbJC08
+	 oXLF2uUmJrM/jAoRKyjnj92vnw0fyg6SMcw9Nk/gxUNPHkZidNQG6UR5hgTADhPVvC
+	 3esfPkxDop3ruF3YWdLCicEfo7HzFG1LkhlcgahC9B1s+vt9/bgiMD999yadcd3dBE
+	 DO7VhuYScV5zDuz50l0j1dGYL14jYHh7e7mC6XJxCou3wKqo8Dd1Iks5cSyDS3tZph
+	 Gdts6zUkW8Sbg==
+Message-ID: <9a98186c-fc70-459e-a20f-02c45cb7c3cd@kernel.org>
+Date: Sun, 23 Mar 2025 18:31:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,91 +49,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Qasim Ijaz <qasdev00@gmail.com>, linux-wireless@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bo Jiao <bo.jiao@mediatek.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Felix Fietkau <nbd@nbd.name>, Jonas Gorski <jonas.gorski@gmail.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>
-References: <20250322230137.28164-1-qasdev00@gmail.com>
-Subject: Re: [PATCH v2] wifi: mt76: mt7996: prevent uninit return in
- mt7996_mac_sta_add_links
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250322230137.28164-1-qasdev00@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add TC
+ Unterhaltungselektronik AG
+To: j.ne@posteo.net, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+References: <20250323-fernsehfee-v1-0-2621341cd37a@posteo.net>
+ <20250323-fernsehfee-v1-1-2621341cd37a@posteo.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250323-fernsehfee-v1-1-2621341cd37a@posteo.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mGNn0js7md32cTCJEgqZPPy4hyHljtu/hoMlFhXvzLekJuVU0Tn
- ubdLUleIlTmQ7FNQCSSLtPk3mKbVE1DEfbxSLB79BnUzj0ur97GHBQwF9EHV/i7KatTE6dR
- eTMGxaSKsHq6n6QcuxIs0sng4OWxo+1OkswkNWIjZaGXDAReJwO99DSIX357yW9zouy1SrU
- BoE2zwzo8r3hXOcR1nTOw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1mKSqeyZi18=;W19U/1M1dA8MGB8usvwUxEXkLrA
- nX9et2qPU3TAVk6+9MNSRQc7tbID6fWCi0D4PfbYdhhiIQ1oSZEebgUpwfjDM4PR93C5jJhEP
- opfXC85UGKH/Io5S82p8EF5KmzLv3i+o3ArlcyvLHaDClTwhKowH0CyUOAJvS/skGk9wGBvNW
- Apt8Qi8092gawnDgyx7+fWk+Sn659QJhBxdTFeNs956DBuJub14R05/8lPYyyn7XieEhHvJ9Q
- D7q05Bj+5ELl6touPRVUeUZ7dZbAJfh+CoHpgIr34/1J1XHwhrRC2dW7qvOvn1oUeKkP5uacD
- id5Ry9xhNomJmnYViGiHAZS+6psqWBc1TisEhNkYPBK1ggSARrjA/E0IEv2La7irHVolti+im
- Ju0Bv0TaNTuqUMKLDXaMVgpFqZjh+v5LmiS963ludUk10U9iny/76RWKFi62nmb0MomEA/Fdk
- A2S9ZDalutNaPAPllTItGKLaCcHt4noqFjsk2oUllAUsBh1p7Vf1SrDtBBSLIdLHhYSMrTOMJ
- tPtGTW+4YuFCAkG3CtXnNycKYzjANaEsapwMwZJrg7MKHCsZNctZnywCRdURarhMV32rDkwmj
- 6leNKcFSfy8uNy4zhkHFeLEKp585UpENSzgWC9iWTh4BidpS7/O0+bHlWWjljuLWaJ/v9j6ba
- E1i/7C5Mxxajxa+A3U1veEDXrfhjYjP72q4NX17/0D4PQx+m6uM2evxyMEKn7Z1FqgpvFqbVP
- EOMOgVSSIBdGfkaHLrFqd2Z12XaRlhlNMDrTQiN7+d4FEJKoeL3y+wfgKcpQl5GRurIuCxzp3
- GQHNyWiUynnWCFVBeQSlrJqDNZIWRHkFAEf6Td5ZLb0dHJ3Rk3D1F+GfxWX2Odf6kGYpefxB5
- /KxjvhkMxmnnG1JOPQ+oTMP8lbGtELlxogzvDh+aRuQvSJFA8gi4Qn823ts8hKiWzwGlL0ofs
- et/urC/Dh8Q1J46iFNE1I+M8apiX1DV1VFjpoN+MnhF/7YTFssXLtZdHIzfMJeGMHAZ6A+sJj
- HNXVW/krAUfhEuFvrtbMk8ruB2xPFYPqSZJ8nckIBVmJ0kNv73Y/qwdHTCDjXGGiGejd0lAVb
- Q0Ii60fhYvLfYY4JIGgatWLaZW9wsJfs2892vPFai1FUffWGi4ydcjy1PtNG+fHJ08sSmKrAr
- o+H/z5LnthVDCtelaevV8Vhm1P0KlM6bvXBLn5NkzB0h+HALG/0Bh/CMHTk0lnDw7UacTN+Xz
- 0GrP/uXKvuV9SpgEr+fXjbKHB7i0JOPS/r1hDdOTGKL3YOirQvHVnLDGIRow7u82hYAvtHqDk
- OBnpau6DdgRyjn6h62bN6ZqhQCwC3O52ZgIlNJUUnceydse1LE0LO0wjqOMRc1t05NO6Ggkzo
- ofdzDtHsPegqzSFjPOaScufqL80/wB7fKk9zI7DdO9H91BRuGGEzFtn1M06wAR1sgpAnr/c+e
- PwnO2hzsS/4PaqwdgPbsmJDCJixtXFVD+na45TtlnprpYIOC+NdXl5v8LKgLBi1jWiEZc2A==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> or link_sta_dereference_protected() fail the code jumps to
-> the error_unlink label and returns ret which is uninitialised.
-=E2=80=A6
+On 23/03/2025 13:37, J. Neuschäfer via B4 Relay wrote:
+> From: "J. Neuschäfer" <j.ne@posteo.net>
+> 
+> TC Unterhaltungselektronik is the company behind Fernsehfee branded
+> set-top boxes.
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
 
-* Would you like to avoid typos in such a change description?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-* Can any background information become more relevant for the usage of
-  source code analysis tools?
-
-* Can the summary phrase be improved also another bit?
-
-
-=E2=80=A6
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7996/main.c
-> @@ -998,16 +998,22 @@ mt7996_mac_sta_add_links(struct mt7996_dev *dev, s=
-truct ieee80211_vif *vif,
->  			continue;
->
->  		link_conf =3D link_conf_dereference_protected(vif, link_id);
-> -		if (!link_conf)
-> +		if (!link_conf) {
-> +			err =3D -EINVAL;
->  			goto error_unlink;
-> +		}
->
->  		link =3D mt7996_vif_link(dev, vif, link_id);
-> -		if (!link)
-> +		if (!link) {
-> +			err =3D -EINVAL;
->  			goto error_unlink;
-> +		}
-=E2=80=A6
-
-Can software development interests evolve in ways which might make the avo=
-idance
-of duplicate source code more feasible also for affected error/exception h=
-andling?
-
-Regards,
-Markus
+Best regards,
+Krzysztof
 
