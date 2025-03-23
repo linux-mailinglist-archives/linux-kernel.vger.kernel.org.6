@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-572740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6337DA6CDF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:01:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D081DA6CDF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90084189A377
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A678189A6D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478D5201002;
-	Sun, 23 Mar 2025 06:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4631FFC67;
+	Sun, 23 Mar 2025 06:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTRi3Ka2"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTtj6SMy"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06E72E339B;
-	Sun, 23 Mar 2025 06:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0FBAD27;
+	Sun, 23 Mar 2025 06:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742709680; cv=none; b=DAMkEsyerDD2IjD9rzk1o9RBtaWmSOqKL3MVzyo04CbNz9oXKPjcadRRX806XI/sr6qIcZBtrafRi7yz/H3MDLPKi5DeWuLeDKs2XKqCJcDl2m7Fz8jKUvoM78OhAesCeVDebCbZQOPFkfhxMX5LWH7YaadgBV+3KhzA6rBiBtA=
+	t=1742710011; cv=none; b=DBRJIMkU97nKhdBmFoisb8goUJxXR4ksyf+KTmUcmHpegSrysE+If21RJHNAnfvL0xh4BTcyFY5bhXeVHHGL/NvN3ITotXGdm7PxN8kkCdfw4T4HzIRUmOdN3nB+Q0869jDSiIn0CVRSrTU6m84E3oA/dDsQ7enRx89Ze+TuZdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742709680; c=relaxed/simple;
-	bh=z3/5WxPgAhSoDkrOAwoE4Xd+tmuGu+cePxUBNw9hJzQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BXvJmd1Tje253Bse3xnlHkM3YDqw7FEGpQMxqq3UIrbFF8o2HO03Wt2YogGEP4ekfru9YvkjYgQM+0Nm4IFRCpLdCIkRyJhXmwm6FbTRY3XRJmFdDVfSPWYfB/QVqTc9sKTEmdAQAAv5K6HwmAc64OWcBIJ0LE5oRaQUM320/AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RTRi3Ka2; arc=none smtp.client-ip=209.85.210.50
+	s=arc-20240116; t=1742710011; c=relaxed/simple;
+	bh=I6k1xtcP8hppbjVrKhSpeoD7jmUHCyEErJxzazqfbSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gufojbVpg2Q41R0uOCs3is9hsY9wS4aXNYYKeR77OwlQ7yRaqQ/HRF0mLvjQ3DS8bX4RruwTWxcNDuD88Y/BRqAdX8ixU82xKsCTgx5mOQhTDszZ3FnpE7MWBDlomP/HEMfCxLk9XZE7a/jieICRtazKCMMaDWsVWOmxY2TPWUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTtj6SMy; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72c173211feso344122a34.1;
-        Sat, 22 Mar 2025 23:01:17 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2279915e06eso11180075ad.1;
+        Sat, 22 Mar 2025 23:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742709677; x=1743314477; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742710009; x=1743314809; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wiWN5RFuNIJQaekn208Gr5Okm2UpO1Tc0Q4yhp2iLZ0=;
-        b=RTRi3Ka2tR4zZoBBMwr0++rszOq0FOQHMZ2qoiNhUaxy43zvQM2re528HAADQ7g65y
-         KrtyWlx72Di7p1FhFY6rwQlikgMogIpkuqkURbLeoldGm0eWoXrgl7C3cwgQXLPEjzYB
-         R5vFhXihGgNe9Vfv8ucAEuaEemAgVgOZA6P+WCg4gwUcCWpM9u4wGFrbOaHZ9kuVpvTV
-         IFJgjlyCuoU/lM1q1+qke+KOR/Pm3AL9LBSfUB2/fogZ4PzPfqt3x2aihNfKB7OBPibM
-         YDaMi8nja9mOKwYocUWUUZAuA1/PnMy6l0EhEolNvUJr7CPcgnyAJ1GSMUu0Ksk5wUiA
-         Nucg==
+        bh=/hRrLYrQqWoUWab1kJtk8tDpV6Q/Kh0bvdM9UsTNmZY=;
+        b=kTtj6SMyAt4GQhJkVCKztm2aw2JSmjcwsmyE+d+/PYokbO4oomI0cyivbl4AC3RI7Z
+         lXSLGPaphhp/GjL8QI0bj/7GxAlFa6A5Nyc9jHlvoSt/rjR8rWLsjGTijq7TdxXNvmKT
+         NYP9SqLnPO64L0It+T0zgk8UjXOlr7Jr3lFjH4jLv+v6mnU/iJs6NZRg2CTsS1azhJXQ
+         w2TmXQy5cWsOuGze8BxO4Vd7Ilz3bY/vj5x2Q/pIqCP/fwVIw6HI38WUDnTTXk6CT1Z7
+         DOaYcHLcKuSOohuqDoyh49wohpU+Lh1DoUsoxlIEjzKjLlzL3hljvoqWJr9o670S2woZ
+         ujaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742709677; x=1743314477;
+        d=1e100.net; s=20230601; t=1742710009; x=1743314809;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wiWN5RFuNIJQaekn208Gr5Okm2UpO1Tc0Q4yhp2iLZ0=;
-        b=DPB4DyZ5ssYXLXSdHye5Xq10DrnzavylCMExHvQKarw4pf/1V/yTDRlLz+MmLsv212
-         xJOxcwGPgdCxdLLIUjf8+/UFLTuh5ELwPkBoxSpseDzOU4X+vbG689EET9EAoTD+JT+g
-         tBxTUkZK08nhMKCySbbkOnnftaRE3aHKA5GmeQCQRPpIq2bW7FZZNecg4syOWPkhDbgB
-         WiedKKnWbWNNKpsKlHolvfKpbVcGz/OhK9fz5hG/D3iiuTX9XgnRKkEzs7y8A3PFxF13
-         9+L0Ex6l3pfBOi1iISkq1meKc4gcaIByO3ctyUqh5NZhZyeC9nO26ApRDA4mWx2bYdmp
-         GO7g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ZZtHnviR2DSSC650vGjxV5uFsO6inua8DyqudMi7b6c7T3Lbcr7kE9VxRd+k+HZ1KKeq/efW8lw4u4IxhAE=@vger.kernel.org, AJvYcCW5JfQMy/BGtg2fouWTYeWWsOFjYpQJROP2e01yWFYbvgXh5tqjdGvIrD4YBCAtSJQBPMlyaPjs4Fo6vxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzdbVA4JC0OXtHenIAm0UDBiL7ycdlVAdhGxbqPryNYlo4wwTo
-	xAKGcrW3VgEhOBDCIKrFUDNv/30wNJxL2gjggDklqIebp8QmbyPO
-X-Gm-Gg: ASbGncu8OIBCCaL6W+KNrA+IffRilRrZjiP5TwirdopH8gCwPCi+15576zB3/5d9E8F
-	s6IHpzxZN3z+6Xh+4miVl/XDLhMGwyrIQVcLm8ae3o2wtlf4M+nSezTKnpggP4ptcRJFvbSatkq
-	AgooSp1BooTwqpKHXnL8qTBAuScaxhBQmbnOMrTVR7/qgIYw479l9kspXAOliRJEtrsuKKMH5Xy
-	0lW2xT+JZYUXV/d6FTup9iCKmAT8a4crGC8Ig9/tN1cpFPn8vG1ofPKlF1RRjZ1XeJ+vVu5/IHt
-	gc/kKYJAOogwTeiN84KKwvQuI5r6U+ycAO9xvEBvUVdkc2Qk1wJzaXkt6LJ8wNpWT5MN5AjZs1k
-	uiifHHTNQd+Z5zXNO
-X-Google-Smtp-Source: AGHT+IGB77AbW73BgjEFTlM2+kNiFKfYseF4vUZ3s1T/oza74XuqY/pAgusrpZ8JvTCQS4dPza+dzQ==
-X-Received: by 2002:a05:6830:6401:b0:72b:89ca:5120 with SMTP id 46e09a7af769-72c0ae594f2mr7148277a34.8.1742709676588;
-        Sat, 22 Mar 2025 23:01:16 -0700 (PDT)
-Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72c0ac7b8aasm1090431a34.62.2025.03.22.23.01.12
+        bh=/hRrLYrQqWoUWab1kJtk8tDpV6Q/Kh0bvdM9UsTNmZY=;
+        b=JPGAZdZYjZfq77Vd+TwFCIadlaZfKKmxQawjT7ztZKtvVFAZUOPsWUVQQc8nCIx8ux
+         GYX7CW7Hns7yGxRCJOdC3xAyhbSsAzwYY8AzO1nwvAnsnjceSuo3P1+ey/EdZ6qVKUvC
+         rwFrKmzQszSutktPl60a/QTPMlcr0MTgNxR9W63koBhbkVkplfYqOWq8wv/XLOs5qCBG
+         wlR1hlf2gV1pyrK9fj1inSffPOLVFqo5VKCIaPvMKYcLRwvaOdH2wTEuoQ9PgCsxr7r7
+         RtN4FzBlfXz7UaSsjIZsshlzL582XoKhPaIaUZuWjwqm28psWTs6+2A7hsOYEDGO0qVH
+         f/Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTW2yXxtvIDUf+EE2taG5nNA5bGRFgL0pbz6phpQ2eHIHPWHl0d/Z9DgSefE1//w0xYN8NqM23XoXpQjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHZd/x682wFNBRk71kQA94pb7HZYD6LwpZY+U+R8CKQQ9p9BMO
+	94VRQ94W05EUBKsoKFGLNGYufzaiPQXo2MjwxI6laN5OgmjZGrvK
+X-Gm-Gg: ASbGncuncW8zbtBRBn5JfWa4ZcSesb4hkpAwdxXA5Y43L2ocHvcZVMWOgTNFhVy6idX
+	qJ2D10/P6wduERFzegdelZriFyiTMfS3b1ti5fCckBGlV6QIkc61nO7JM7vynw9w6/z61Q+PYV8
+	BAW2HvF5GVhIARXJJWLVj/4QfKVx+ITm/+pHCqE1vjlcVqKfDsZLKeglJjnQXq2Xo8CpcS2JUb/
+	yGZLpepS3f3FhHnZl8+NLBm4Hl4rcvKIm6IeSjXyuJ/OPQ5oDv3HWBY2NRXK8XhcstV6geT8KqA
+	57pCKytwb2iqUeN0PlqOs/pMyAesG4HlO5/0Dh04n1BwE7ABzyeHVp9LQ5PRlxMohMNvCvCZXxE
+	RpXu1pgFmG13a9ImwH9XIfKdAban+D/0=
+X-Google-Smtp-Source: AGHT+IFdTzdYwVw4qAZHzhbbTSWg3s2s5hfhGqEcU9flZ/U2rK2lNN4Qh8/poZ0SnK+VH3t/JQOFQQ==
+X-Received: by 2002:a17:902:e803:b0:227:ac2a:1dcf with SMTP id d9443c01a7336-227ac2a2536mr25143875ad.23.1742710008825;
+        Sat, 22 Mar 2025 23:06:48 -0700 (PDT)
+Received: from localhost.localdomain (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3a2e0sm45406045ad.39.2025.03.22.23.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 23:01:16 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: ojeda@kernel.org,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	andrewjballance@gmail.com,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: alex.gaynor@gmail.com,
-	jubalh@iodoru.org
-Subject: [PATCH] rust: print: add rustdoc link to std::format
-Date: Sun, 23 Mar 2025 00:59:48 -0500
-Message-ID: <20250323055948.89865-1-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Sat, 22 Mar 2025 23:06:48 -0700 (PDT)
+From: Ryo Takakura <ryotkkr98@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	paul.walmsley@sifive.com,
+	samuel.holland@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	john.ogness@linutronix.de,
+	pmladek@suse.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Ryo Takakura <ryotkkr98@gmail.com>
+Subject: [PATCH] serial: sifive: Switch to nbcon console
+Date: Sun, 23 Mar 2025 15:06:03 +0900
+Message-Id: <20250323060603.388621-1-ryotkkr98@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,142 +96,176 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds a url link to the rust std's format! to the pr_* macro docs.
+Add the necessary callbacks(write_atomic, write_thread, device_lock
+and device_unlock) and CON_NBCON flag to switch the sifive console
+driver to perform as nbcon console.
 
-Additionally replaces refrences to alloc::format[1] with std::format[2]
-because they are identical but less likely to cause confusion with the
-kernel's alloc crate.
+Both ->write_atomic() and ->write_thread() will check for console
+ownership whenever they are accessing registers.
 
-Link: https://doc.rust-lang.org/alloc/macro.format.html [1]
-Link: https://doc.rust-lang.org/std/macro.format.html [2]
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+The ->device_lock()/unlock() will provide the additional serilization
+necessary for ->write_thread() which is called from dedicated printing
+thread.
+
+Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
 ---
- rust/kernel/print.rs | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
-index b19ee490be58..0f0a447bf5aa 100644
---- a/rust/kernel/print.rs
-+++ b/rust/kernel/print.rs
-@@ -198,10 +198,11 @@ macro_rules! print_macro (
- /// Equivalent to the kernel's [`pr_emerg`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_emerg`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_emerg
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -222,10 +223,11 @@ macro_rules! pr_emerg (
- /// Equivalent to the kernel's [`pr_alert`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_alert`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_alert
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -246,10 +248,11 @@ macro_rules! pr_alert (
- /// Equivalent to the kernel's [`pr_crit`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_crit`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_crit
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -270,10 +273,11 @@ macro_rules! pr_crit (
- /// Equivalent to the kernel's [`pr_err`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_err`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_err
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -294,10 +298,11 @@ macro_rules! pr_err (
- /// Equivalent to the kernel's [`pr_warn`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_warn`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_warn
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -318,10 +323,11 @@ macro_rules! pr_warn (
- /// Equivalent to the kernel's [`pr_notice`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_notice`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_notice
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -342,10 +348,11 @@ macro_rules! pr_notice (
- /// Equivalent to the kernel's [`pr_info`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_info`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_info
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -368,10 +375,11 @@ macro_rules! pr_info (
- /// yet.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_debug
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
-@@ -395,11 +403,12 @@ macro_rules! pr_debug (
- /// Equivalent to the kernel's [`pr_cont`] macro.
- ///
- /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
--/// `alloc::format!` for information about the formatting syntax.
-+/// [`std::format!`] for information about the formatting syntax.
- ///
- /// [`pr_info!`]: crate::pr_info!
- /// [`pr_cont`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_cont
- /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
-+/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
- ///
- /// # Examples
- ///
+Hi!
+
+I referred to the already converted console drivers 8250 [0], imx [1]
+and amba-pl011 [2]. I tested the patch for each of the NBCON priority
+(PANIC, EMERGENCY and NORMAL) on riscv qemu.
+Hope to get feedbacks, thanks!
+
+Sincerely,
+Ryo Takakura
+
+[0] https://lore.kernel.org/lkml/20250107212702.169493-1-john.ogness@linutronix.de/
+[1] https://lore.kernel.org/linux-arm-kernel/20240913-serial-imx-nbcon-v3-1-4c627302335b@geanix.com/
+[2] https://lore.kernel.org/linux-serial/20250204044428.2191983-1-fj6611ie@aa.jp.fujitsu.com/
+
+---
+ drivers/tty/serial/sifive.c | 87 +++++++++++++++++++++++++++++++------
+ 1 file changed, 74 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
+index 5904a2d4c..d032de619 100644
+--- a/drivers/tty/serial/sifive.c
++++ b/drivers/tty/serial/sifive.c
+@@ -151,6 +151,7 @@ struct sifive_serial_port {
+ 	unsigned long		baud_rate;
+ 	struct clk		*clk;
+ 	struct notifier_block	clk_notifier;
++	bool			console_line_ended;
+ };
+ 
+ /*
+@@ -779,33 +780,88 @@ static void sifive_serial_console_putchar(struct uart_port *port, unsigned char
+ 
+ 	__ssp_wait_for_xmitr(ssp);
+ 	__ssp_transmit_char(ssp, ch);
++
++	ssp->console_line_ended = (ch == '\n');
++}
++
++static void sifive_serial_device_lock(struct console *co, unsigned long *flags)
++{
++	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
++
++	return __uart_port_lock_irqsave(up, flags);
++}
++
++static void sifive_serial_device_unlock(struct console *co, unsigned long flags)
++{
++	struct uart_port *up = &sifive_serial_console_ports[co->index]->port;
++
++	return __uart_port_unlock_irqrestore(up, flags);
+ }
+ 
+-static void sifive_serial_console_write(struct console *co, const char *s,
+-					unsigned int count)
++static void sifive_serial_console_write_atomic(struct console *co,
++					       struct nbcon_write_context *wctxt)
+ {
+ 	struct sifive_serial_port *ssp = sifive_serial_console_ports[co->index];
+-	unsigned long flags;
++	struct uart_port *port = &ssp->port;
+ 	unsigned int ier;
+-	int locked = 1;
+ 
+ 	if (!ssp)
+ 		return;
+ 
+-	if (oops_in_progress)
+-		locked = uart_port_trylock_irqsave(&ssp->port, &flags);
+-	else
+-		uart_port_lock_irqsave(&ssp->port, &flags);
++	if (!nbcon_enter_unsafe(wctxt))
++		return;
+ 
+ 	ier = __ssp_readl(ssp, SIFIVE_SERIAL_IE_OFFS);
+ 	__ssp_writel(0, SIFIVE_SERIAL_IE_OFFS, ssp);
+ 
+-	uart_console_write(&ssp->port, s, count, sifive_serial_console_putchar);
++	if (!ssp->console_line_ended)
++		uart_console_write(port, "\n", 1, sifive_serial_console_putchar);
++	uart_console_write(port, wctxt->outbuf, wctxt->len,
++			   sifive_serial_console_putchar);
+ 
+ 	__ssp_writel(ier, SIFIVE_SERIAL_IE_OFFS, ssp);
+ 
+-	if (locked)
+-		uart_port_unlock_irqrestore(&ssp->port, flags);
++	nbcon_exit_unsafe(wctxt);
++}
++
++static void sifive_serial_console_write_thread(struct console *co,
++					       struct nbcon_write_context *wctxt)
++{
++	struct sifive_serial_port *ssp = sifive_serial_console_ports[co->index];
++	struct uart_port *port = &ssp->port;
++	unsigned int ier;
++
++	if (!ssp)
++		return;
++
++	if (!nbcon_enter_unsafe(wctxt))
++		return;
++
++	ier = __ssp_readl(ssp, SIFIVE_SERIAL_IE_OFFS);
++	__ssp_writel(0, SIFIVE_SERIAL_IE_OFFS, ssp);
++
++	if (nbcon_exit_unsafe(wctxt)) {
++		int len = READ_ONCE(wctxt->len);
++		int i;
++
++		for (i = 0; i < len; i++) {
++			if (!nbcon_enter_unsafe(wctxt))
++				break;
++
++			uart_console_write(port, wctxt->outbuf + i, 1,
++					   sifive_serial_console_putchar);
++
++			if (!nbcon_exit_unsafe(wctxt))
++				break;
++		}
++	}
++
++	while (!nbcon_enter_unsafe(wctxt))
++		nbcon_reacquire_nobuf(wctxt);
++
++	__ssp_writel(ier, SIFIVE_SERIAL_IE_OFFS, ssp);
++
++	nbcon_exit_unsafe(wctxt);
+ }
+ 
+ static int sifive_serial_console_setup(struct console *co, char *options)
+@@ -823,6 +879,8 @@ static int sifive_serial_console_setup(struct console *co, char *options)
+ 	if (!ssp)
+ 		return -ENODEV;
+ 
++	ssp->console_line_ended = true;
++
+ 	if (options)
+ 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+ 
+@@ -833,10 +891,13 @@ static struct uart_driver sifive_serial_uart_driver;
+ 
+ static struct console sifive_serial_console = {
+ 	.name		= SIFIVE_TTY_PREFIX,
+-	.write		= sifive_serial_console_write,
++	.write_atomic	= sifive_serial_console_write_atomic,
++	.write_thread	= sifive_serial_console_write_thread,
++	.device_lock	= sifive_serial_device_lock,
++	.device_unlock	= sifive_serial_device_unlock,
+ 	.device		= uart_console_device,
+ 	.setup		= sifive_serial_console_setup,
+-	.flags		= CON_PRINTBUFFER,
++	.flags		= CON_PRINTBUFFER | CON_NBCON,
+ 	.index		= -1,
+ 	.data		= &sifive_serial_uart_driver,
+ };
 -- 
-2.49.0
+2.34.1
 
 
