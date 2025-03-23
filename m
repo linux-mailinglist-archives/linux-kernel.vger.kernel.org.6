@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-572751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52643A6CE1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:53:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89517A6CE36
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A1916EE8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B22189A530
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E750720127A;
-	Sun, 23 Mar 2025 06:53:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3364C202961;
+	Sun, 23 Mar 2025 07:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVKqnD4t"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFC11F9A83
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 06:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A827AD24;
+	Sun, 23 Mar 2025 07:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742712785; cv=none; b=Dj1mqSwpwa62JKWVpGNgWxJeHStSV7uRTT+WuV7W0/DWXXYNKhsUTZoE8nvGjb1G1aoJCyETh/se7+qqO5h8HmYVMMI5WJ4+qFy3WadpqcrVd4P6Y1ISKmGsc3ITmTYZnS/H3mSFVkWeYKzyNxWmAbwZH6mcBl0tGV+82updLDs=
+	t=1742714093; cv=none; b=Rp6jFlQGiC439udYh5ADfZYsG1SjeC73Rxt7o7xhvBvkVH2MKv0BWALCRUMSRz9/7ja1/6Z2o5FcKrR+Aldy+F0IsPLkoNSodT9hFpunPnKwLIjzKg/H6IuGw8IQug4TlkbOYbJjbzEaWEAg2HR8IXm4IGv7qmWwVVaaQ6eslQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742712785; c=relaxed/simple;
-	bh=Bf7yka2w1VVpUuX6J7h+vWCKWalB2ArNcjPpVEqVGZc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eKiW2cSTnmxxjZ+Q+E/HmFl0MyEYx4NhdB96XA44Y25mHNXFXbTKevoG4r+39fHdA7eiPA6IpEMMdyWJ7u9orEKf6UyyFqaWu30ekh5Y4qrxp7qmDwxdU76U4R5epbbX9AVJOw3PQOfYpgcee7jbL6cQon2qzOTP2Ky5PwnzW4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-85d9a52717aso270130539f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 23:53:03 -0700 (PDT)
+	s=arc-20240116; t=1742714093; c=relaxed/simple;
+	bh=GJHelorMo/7+pcp0cFYxOAb4+HlzolzvwhZk6Y9/JeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s27GiMtFKri/kk8W97/s1zm99SewsD3PmpTpizaryGnmYjyA+A85hqr504PwtInl05TJ5zgv0BMojFf5gWTPVqpeDf+QPTUOLaYHDFTtoZiggAAlmUOuHqA5QYp10s6eMwFgX84HNBv1qTUqXPQakxZF6VVTvT1NXtRFu7sXvLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVKqnD4t; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so6471075a12.1;
+        Sun, 23 Mar 2025 00:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742714090; x=1743318890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtNt80DAB335/uRKq5f5fTTE5QKZJIZOvKQIq5dr29k=;
+        b=DVKqnD4trgy56lWh77pMDYPY2wPCRqHeeyLtfcsHoWhhqRU0SJo/lPpry9z4zL0deX
+         k95hPsBtwjf/N/9bP6Z4X/vot9bL1KxBV+inkz5oGIA4Ji5pqTefzEFk4ZbHc8WGTcA6
+         9BU5NDfV011wesTDZ7h8VHP4ssl1wk0Hu/7CbBhGqmCXecYgZXnFIBE8w4f4QSPnTLy8
+         sb7Ci/ZmG6F+f4IkKjOUCHycuPS0CzIiseDE2SKc82wquo9yPUm6bkyQ7qkQ/5jKL1eP
+         ZhQlgfuslXQbw6k8Vi7+YX9XIHiCcVWSNhXgwoRtMGwummoQgwmcKf+kCv7X2E5DMZG8
+         uEkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742712783; x=1743317583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uuTtDdQllfqVQdTnY1GFjo08/XepPL02PHTKNSl5Nyk=;
-        b=Nn9vv4c6LXcVxZCFdCOw18pF/1nEGhbsVujMCOGXZitxaGZ0nV6lTUcoVIjbNo01VY
-         uTucXQsCcVHj9Vyb4X1UG1hkCrV50GmqN9ErDKeEy2Ov2XuyWE8Obyt0d1mXWcd2U+rZ
-         NKQph3U0yJ7P1ff8BTBH/l5se+rV8+E4FzGKruB1+4+KmoeG4Ghft3NI9t7oDkGHztls
-         XRv2m0wR6S4JqC/7knMYNkI2yLbusuqxFrFI/WFdVKWtb42FVdhRDrLDC6+KlJKuQBnN
-         VhFhOPiHAiB5voT0hQMFEguE2EGdgqxF5v2lEpL+5qnSUQwEe5a/pZGeauovjuckxVW4
-         fJLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4N7xm6KLzxSdTTeqyx3kYVVsATCrg5IrU+e8vWy4iYVg2DAamnMPrUymguY7Rtj7Dm7TCyYhSbx57nnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPwhqbE5SD27Im52g2PLbr4PvzXFVkORcgSceBTru48nsmsCMr
-	/u85KHWEMqomkiAlBXrpevV/5QM2njbjUMlsUdkPgSykuGlXRky9uFDDc5EWq5eyx9ibULJ0HID
-	MoRLq6fotaS0KjlfqkZjw7HKakKAiExw66Hl3q3wUX9s8UGe6E5VMe6Y=
-X-Google-Smtp-Source: AGHT+IFomXej1RrN6WELV4Qii9/yxfjxlWnmlmMb+ysYA1j31F3Z04e+3d3vMyCUXzjVvvz9y1wv7XB/R6rxL+wT2R6HvXmksUMF
+        d=1e100.net; s=20230601; t=1742714090; x=1743318890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FtNt80DAB335/uRKq5f5fTTE5QKZJIZOvKQIq5dr29k=;
+        b=AhsB3vLzP2jTuk/mXN5kIX4QLfogQOtqT8p3ezhW/W5DAmCLwQ7OdIzb4T9ZI43wJF
+         iIFtrrOI6uP7qYSltDxaT2DkyfhpDwFyOa8hCBlUEblBbuddqWiqxP2+bHgZGxO0d+Tj
+         VkfOHcSEBySpXSPGPnZo6eZ6NNGb0iJER8HxtPY86YtnxVi55bD6fGZwXUCKaKX9Z7h6
+         vB+3lL8MmIb9iWvwt0e1CBhwrfXFL7A2zXOqOSF48nyHxGg3PRIywED7fEeBHri5Ocxw
+         HE1RL0B995OEvl/q77nrhQj7WnG0q2/3HRxSmt5QbEi3ed5Sf3a2cESk0F6WPGZ9hpmq
+         EBuA==
+X-Forwarded-Encrypted: i=1; AJvYcCURIYxy5C1UaEFSGyB+JQnr3SNHbmMg+N5IhusF9DjiF2gYelrqPJGt0hdASLu2LqyHZcu3e+cH95RvBLw=@vger.kernel.org, AJvYcCV+19Nnx007XT1TrNSNdQDBipAsp25aj4k+CevpGWW/pKT+NkY+Gghw5d6AC+ESB2HlRtaigUhw9FwLtLE=@vger.kernel.org, AJvYcCWL46Z8lB2n24uzYPsH9Giimenm4xiZ7eYukV57Nw3OfBPTDPnwM2KtN3rTbzD7n1MQfbIna7kleC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT9ZUaH2nFpHU8aRMVJ4fBHcCzfAjGSTVgfuxX8g74G6kVxU4q
+	mxbtravAFtgdw9Xl4uwspSQmJHFbB1bEnMGRSbA0HicRUzIvmQiH
+X-Gm-Gg: ASbGncv5IEZ931tacW3NSS9K0tCYqhIegH5weAC+XKGLxcgWAhFJgmfeSo/heQ/MTY5
+	F7aHyI5oFexut6x/S6Gc48fkyem7M1if5QX21++DgcIf+5FnqE+3XdAWtcZdG6Ut6oAc25hlriN
+	vCSfmN6i9oI8DTLWDQnpS21RYxH9EIo55KywObrBFoIZ+gv2bjbMoR7ZCmZPa+fyKnUaubwXQ6I
+	9DeiTyaUxxSTpV3yauZHpR70foeoRHbH1XldfsRIl/GXE0JGlDTGMI5Gp9fEYmEY6OFKWbL0PVM
+	NApIbMwvMv8/l+DbU1kzudLOGXW1dDfSmMNs
+X-Google-Smtp-Source: AGHT+IEfM2FhgguV6hU5oZP0B6rU5mJe4cX3B7K6QzAse5rXY7gvhfVbQuMkX6QRZ3r/6inKt6vEwQ==
+X-Received: by 2002:a05:6402:42c5:b0:5eb:ca95:4a91 with SMTP id 4fb4d7f45d1cf-5ebcd51e684mr7106227a12.31.1742714089885;
+        Sun, 23 Mar 2025 00:14:49 -0700 (PDT)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfaecfbsm4218283a12.41.2025.03.23.00.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 00:14:49 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v1 0/4] power: supply: add support for Pegatron Chagall battery
+Date: Sun, 23 Mar 2025 09:14:20 +0200
+Message-ID: <20250323071424.48779-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:378c:b0:3d3:cdb0:a227 with SMTP id
- e9e14a558f8ab-3d5960f4d68mr77368565ab.9.1742712783188; Sat, 22 Mar 2025
- 23:53:03 -0700 (PDT)
-Date: Sat, 22 Mar 2025 23:53:03 -0700
-In-Reply-To: <6707499c.050a0220.1139e6.0017.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67dfafcf.050a0220.31a16b.0058.GAE@google.com>
-Subject: Re: [syzbot] [net] INFO: rcu detected stall in sys_getdents64
-From: syzbot <syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com>
-To: apparmor-owner@lists.ubuntu.com, apparmor@lists.ubuntu.com, 
-	edumazet@google.com, jmorris@namei.org, john.johansen@canonical.com, 
-	john@apparmor.net, kuba@kernel.org, kuniyu@amazon.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, penguin-kernel@i-love.sakura.ne.jp, razor@blackwall.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+The Pegatron Chagall is an Android tablet utilizing a customized Cypress
+CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
+single-cell battery and features a dual-color charging LED.
 
-commit e759e1e4a4bd2926d082afe56046a90224433a31
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Wed Jan 29 14:27:26 2025 +0000
+Svyatoslav Ryhel (4):
+  dt-bindings: vendor-prefixes: add prefix for Pegatron Corporation
+  dt-bindings: mfd: Document Infineon/Cypress CG7153AM MCU
+  power/supply: Add driver for Pegatron Chagall battery
+  ARM: tegra: chagall: Add embedded controller node
 
-    net: revert RTNL changes in unregister_netdevice_many_notify()
+ .../bindings/mfd/cypress,cg7153am.yaml        |  55 ++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ .../dts/nvidia/tegra30-pegatron-chagall.dts   |  16 +
+ drivers/power/supply/Kconfig                  |  12 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/chagall-battery.c        | 308 ++++++++++++++++++
+ 6 files changed, 394 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+ create mode 100644 drivers/power/supply/chagall-battery.c
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1084f004580000
-start commit:   fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=17bc8c5157022e18da8b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135f7d27980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483b380580000
+-- 
+2.43.0
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: net: revert RTNL changes in unregister_netdevice_many_notify()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
