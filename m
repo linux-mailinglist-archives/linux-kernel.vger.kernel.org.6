@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-573013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AE0A6D175
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB85A6D176
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 975B07A6319
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA72716F2A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F2F18FC9D;
-	Sun, 23 Mar 2025 22:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACE11AD3E0;
+	Sun, 23 Mar 2025 22:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyB4/Mmb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOEoACuq"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A45229405;
-	Sun, 23 Mar 2025 22:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6C518FC9D;
+	Sun, 23 Mar 2025 22:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742769104; cv=none; b=F3lXAg3LpDa75XibDADPXg9fVZm0vG7J56iPh2WIN5j4n2TfJB/p0t5Vt9hmBvnSSgRVPNUqL3eurQJWZc8GwZjzzHwGrEmzqmU4COJhivtz+MNdY7Eux7jRfk7AVTeWE2LTUS6GmUYkEA+WOmMnF2KLfqJin5y4dlFwNHUIHT8=
+	t=1742769128; cv=none; b=t9wb+dL64iyB1mTXmFK974T+cWPeES3SRnaLSZQih6WvX1BogRtJjQEFcwlId6rR4XcK6669QyGj4YD36gS4X49noSFMeja5T2a3Oq0O33vc0oFGY3uJeF8YULAagfq/2beOv/e5485J3YQ/m1EvJyNdG2O8hhi5Q7VDctRGOtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742769104; c=relaxed/simple;
-	bh=M5qEdawiRuveSixGB/wzDFfDRdI3zKbpgZcdVcwWvVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PO/QEaek39GpA1OrGx+xjsfTW+YtkpyNU1uuniXucSsHu9SGT+0KxGk2siQHIP18TGQOmxUgZSqF0G7Emhbl/MriaM6oayO7xC8genQJubCHUBKIXLmgZkohWjxlgCLB4kjKs6TdHpC5Pkz7j7KFXyVrZ9WpmUbK7kTav8IeZcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyB4/Mmb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B01C4CEE2;
-	Sun, 23 Mar 2025 22:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742769103;
-	bh=M5qEdawiRuveSixGB/wzDFfDRdI3zKbpgZcdVcwWvVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LyB4/Mmb/Twl/MNwDwvzAD9Cwg1hQkZC/rKwyHN7cdWa5vsf2bSD/GObbPUpxly+H
-	 UwTpBcKEkTzcvMyRTYwAdpjfubc0xcTAten97iajTDynSHfGyhwAG1q9zMXXS0QGH2
-	 DsCwTvRKVPh6q7RTgNfOcXwss8gkE2/WOASoKxnYdWLEyGUCX8/3a7VahHa5O4SeDd
-	 LSia4exPz7gBMkZ7cle1dpm+MdJt5WO4GXKIJGzVd1i4Dk2JUM/lWUSTteRQY0B+Ax
-	 kLma/LVI7FHGGSfG2kBNqTmc+EtdM4RaMQoWXoTUyK73o4ljMMpIVAB1vYljwnK+gE
-	 TBoydYMnG7dNA==
-Date: Sun, 23 Mar 2025 23:31:41 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/2] rcu: Robustify rcu_is_cpu_rrupt_from_idle()
-Message-ID: <Z-CLzTk0BPQ82bfY@pavilion.home>
-References: <20250318135619.4300-1-frederic@kernel.org>
- <20250318135619.4300-3-frederic@kernel.org>
- <2a67f99e-7afd-499f-855c-69ecffd7c390@nvidia.com>
+	s=arc-20240116; t=1742769128; c=relaxed/simple;
+	bh=ckiFsgnFRsndBCSUp0jyyeFBVCRJh6uCFlkCY7hHwho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDoQnw6C8mLsHzijJeWdAJmA5h77yrwYdovb1c/phSN0mDztcDYyQtg8ybwseIEaGPxkI10fBG8/u1DG5jYdgm497eUBamNFOtYC2tva1igLJ9j/Pl8XcFeCfWGIVVbQ+Ie5tX2o+kw+hUuM9lysZJJ4jdCKWUzjgq9kWoWVBtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOEoACuq; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301001bc6a8so1049140a91.1;
+        Sun, 23 Mar 2025 15:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742769126; x=1743373926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qpQmANioPLvwRb3ZUWp7uoDXu2wKpVE/XtCKMWjV3HY=;
+        b=MOEoACuqJRhemsZVKkpC3OV8BAUDYjidv4QXMzpl4UDrcdX9GPGJIyywMwhrz47V9m
+         jMIqQb8T1IEx0UA8V9H0IQlwhRBXEvwhZM1x09UfjDoReBjdiLWfyWEOZXedd7lIJDUb
+         Gpbx0HgiRRtf/MkLD694otVwWsrSat2oRXJnrva0J9MnIwheeyssiOhlwaLi9Z0/n/Ry
+         T2Br0fxtDPAzffgivvVJaszfyF6VVzSs3mTeGgRDmT2KM93PbgHfXM8tZqoq9N7vo9/T
+         uQKK7rdiy9IE/Gd+hX1Gc0sPIIuKh6UtxYSrOoVRnxqJ8lwFqnd1wAxbBTBtdL+bQJC9
+         ghyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742769126; x=1743373926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qpQmANioPLvwRb3ZUWp7uoDXu2wKpVE/XtCKMWjV3HY=;
+        b=mWqhiIfy0cHHD8zFWS8xQFJpWlHjn/yBIPgyC7NyxBuK/aR3cCC6ypq94b+ZXDQOvr
+         7eVyKFUamkpJwRSnLxSeZLP8ZMu1S1gNJzkupkV3Rz7UluprdYFAUa3jhY0cxUxLpGD3
+         NOj8vwxPZze52DJepJ7oJkMOLIvLXQ3f2OHo1I370Y2piZNMyQ4ho/9F5j8+3OL1sJYm
+         dwapYABPbPqdeBVfZ9LWjJMM5AWXYNTNFYeC1gDerrQ9BU/AKZR593hjToJI7Tpsvaqi
+         WPjhinRFtiVnW5Jo6feMe7ZzhitOXcu91NT0mKYWERA8g+DESFPpldB1Oear4BPUaLLI
+         EymQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURp041nMYtCvIKs0eg2J1/oNA4qJU1m7q0PFjFePlvOTTWxCvOs9C2fn15R+Nh21Cwjz9LQjXgPwY9VLPvSO0=@vger.kernel.org, AJvYcCVwaq9a3mMvlDnozAUWHMBJ7ujwC4JICnLhkyRFdv5k/3XgM9WI9h/i71q1ryJpvU30tTCu+nnpsEWY7Qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZLnVGEzvQGREdYziCguwvtNUOtaC9ftHTvyaBCivglX2p68rh
+	7bf2968aVVlZ9BAXtiQgOrtozkcQqFD9qGyl/AZ4zaVp5/ZVqKh5drwDwOk7Vsqt7txn9QzA6q9
+	lajY/w90mmEmfdg818geoMLGRIHo=
+X-Gm-Gg: ASbGnctYHWx6QzmUEH0U++C+LfqMjWwIoStfRn0GkXhs3lYtRvLTTFUMVE5tv49JjXO
+	a7XIssByjOloqQL1A8QCS+VWShsak/vCzKmvlssI4tJUQTvdQUuEow547dWSnhlJVHnBSx4b7EQ
+	O17sGj7iV8/Fh33y15+AKbdKbC8w==
+X-Google-Smtp-Source: AGHT+IGoYvW+9AOT9407sdZ1db01as5vEkY9PtOhh2CNc3kSweQvqagzcV4Sk489fRHFECKiV93ufdAokH+a/1PaS+g=
+X-Received: by 2002:a17:903:1a23:b0:224:1001:6777 with SMTP id
+ d9443c01a7336-22780c7f938mr65469125ad.4.1742769125695; Sun, 23 Mar 2025
+ 15:32:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a67f99e-7afd-499f-855c-69ecffd7c390@nvidia.com>
+References: <20250317-uaccess-typo-reserve-v1-1-bbfcb45121f3@gmail.com>
+In-Reply-To: <20250317-uaccess-typo-reserve-v1-1-bbfcb45121f3@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 23 Mar 2025 23:31:53 +0100
+X-Gm-Features: AQ5f1JoYBxrfDvizw0dfXIBUvPU5PO_SHXCaIZc2uNUkRdDTxqWtAZpkbSiSTuM
+Message-ID: <CANiq72nJRbh6HZgKSUY2cibOvSd3UaBqYoKZQhX8+hBCPMo1ag@mail.gmail.com>
+Subject: Re: [PATCH] rust: uaccess: name the correct function
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Sat, Mar 22, 2025 at 06:00:13PM +0100, Joel Fernandes a écrit :
-> 
-> 
-> On 3/18/2025 2:56 PM, Frederic Weisbecker wrote:
-> > RCU relies on the context tracking nesting counter in order to determine
-> > if it is running in extended quiescent state.
-> > 
-> > However the context tracking nesting counter is not completely
-> > synchronized with the actual context tracking state:
-> > 
-> > * The nesting counter is set to 1 or incremented further _after_ the
-> >   actual state is set to RCU not watching.
-> 
-> I agree with patch, but this line is a bit confusing ->nesting is set to 1
-> *after* the RCU state is set to "watching".  Did you mean "watching" ?
-> 
-> But I think you meant "After RCU transitions from a state of not-watching to
-> watching' instead of 'actual state is set to RCU not watching'..
-> 
-> ct_kernel_entry():
-> 
-> 	// RCU is not watching here ...
-> 	ct_kernel_enter_state(offset);
-> 	// ... but is watching here.
-> 	WRITE_ONCE(ct->nesting, 1);
+On Mon, Mar 17, 2025 at 12:43=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+>
+> Correctly refer to `reserve` rather than `try_reserve` in a comment.  Thi=
+s
+> comment has been incorrect since inception in commit 1b580e7b9ba2 ("rust:
+> uaccess: add userspace pointers").
+>
+> Fixes: 1b580e7b9ba2 ("rust: uaccess: add userspace pointers")
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Oh I completely inverted the thing in the changelog!
+Applied to `rust-next` -- thanks everyone!
 
-> 
-> >    (then we know for sure we interrupted RCU not watching)
-> > 
-> > * The nesting counter is set to 0 or decremented further _before_ the
-> >   actual state is set to RCU watching.
-> > 
-> > Therefore it is safe to assume that if ct_nesting() > 0, RCU is not
-> > watching. But if ct_nesting() <= 0, RCU is watching except for a tiny
-> > window.
-> > 
-> > This hasn't been a problem so far because rcu_is_cpu_rrupt_from_idle()
-> > has only been called from interrupts. However the code is confusing
-> 
-> Agreed, and I could also see the existing code's snippet:
-> 	WARN_ON_ONCE(!nesting && !is_idle_task(current));
-> 
-> .. not working if this function were to be called from non-interrupt kernel
-> context.
-
-Right.
-
-I'll reissue that one.
-
-Thanks!
+Cheers,
+Miguel
 
