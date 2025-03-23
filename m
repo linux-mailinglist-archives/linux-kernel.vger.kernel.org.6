@@ -1,227 +1,130 @@
-Return-Path: <linux-kernel+bounces-572944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B39A6D09E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:48:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F24A6D0A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83EE189193D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFFF1892875
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B92B17C21C;
-	Sun, 23 Mar 2025 18:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4361953A2;
+	Sun, 23 Mar 2025 18:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RX69JT7q"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kb0x9zVb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C46276C61
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1574CEAF1
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742755715; cv=none; b=P7AGsPuhY0XKWucA5b42aczT6ecQGnOl0OUgDw7VvhYpUR1+GR2VTBqZUvIoU7/MEHdP2+NvSDOq9HKEw06hs/ZLPCjt503RlEGJSB2MarPUsiQ10XJGIME1Q7X36uLkEmB6WyIAAxY29iMoTTkdTzfQtQS6ZcJHapbFCq/ofn0=
+	t=1742755776; cv=none; b=O54cPv+ItvHU/3ab5v35g3Es0R+mZ9jwEweBM4Ir0Nd4Z8dTX9I1VfIkW35mDRXrnfjvLvCT2p0YUnX6nUJWVmQgdalI741GloFlFk2pbWaNeV8tvtlrmCZhTyqOpw6mC1TiVjp4j+gECVKsJ/Dq8PC0NkNxNobFN4XwMVoTwzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742755715; c=relaxed/simple;
-	bh=MXaB/EGWc9SIHH+sRcp2g55cBGomJ1G0axkecfzRMVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qbcv29n1tENqse7uHHlapw4KYoCCpemGsK2jewM+X6LImL35Xr9l57hFqUNiKprbzqVXHbf75amevHGrhDPCe889RAHOR9qtmfn1bt35J1inC1IOx4WFA69kLJaMp+F0NHpv5NyoM6ZA97/Qvn58odhFr1wrDmjpt7yxjU8Eaas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RX69JT7q; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=i8C+htjrl2FpMlmBDov/maIFRAisrLpuFY7SkKfSnDk=; b=RX69JT7q4lhTk1p59ddrzKMthz
-	5N526zkr2Zvbu84Fn3+Wsgh1EwmBjDBs9VB9HO5GzYpxrjfmHCXQJH46V3NezD83tBseR17e36aCe
-	zkqbBo2bo7tJJjA7x2/f2YCFKuD04F9NuA+EoSLplUyqTWwZYdUvd2kUo8kepMX3Fgs8xKPEeiGok
-	x5ffDTiDGaFbz6Vueh2NuWWIA4kV8LS2L0plTxcoriRIetnc2FB/eHH+nFJU/2GA5/8PEv6ulNJ17
-	RehuqpBxPtnZ1ngL40G6nxqg3mMVnaOgR6VQ82bJfwhp2bhaE3/b1+y0A3lIZmUx+aO50WSC/4yy5
-	wRIxbt8g==;
-Received: from [189.7.87.178] (helo=[192.168.0.224])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1twQMw-005NHj-Ll; Sun, 23 Mar 2025 19:48:22 +0100
-Message-ID: <ad77e39d-4862-4e04-87a0-2a6a2682d5c9@igalia.com>
-Date: Sun, 23 Mar 2025 15:48:17 -0300
+	s=arc-20240116; t=1742755776; c=relaxed/simple;
+	bh=Xg/yAE8d1727DDcBKSKkAadprr+hLHpZVwFQe7vn4+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6QTcmUohQQB8s7zFTmHlC3nQrC27EAUBr8iKyuHx7DULv0ifuYWUpl69bgbSLf0ByGKxblVDqoIdpH5QpgPEbHsbsOTFubQY7jGq+3TQchkCqA3d7+HcgulVPNwQN7rmAxb1eZ3SNOLBeuhJLSS4YUMQ1W3GDL854s2/fCH8I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kb0x9zVb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742755774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W9siAmY7I3iNk4H1uXzumfBakZmJG7mr6DM1yqiK9TM=;
+	b=Kb0x9zVb8ksR+91GSxZDb6Kz495PkDnWx7mfLlpPylGmbzw3rxGz66ROwHNUG++tNx3Hca
+	XbPCL2osg81aSiFGiB3aM0SnLrbpXIfw1OY6FatcK7pBSN6tmJQVypnvSfx1oJvzWfufEG
+	W2aXnbngWYIitsxAwO8lArCRLCihIzk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-84n91NZGOPeL27kRD4w-gg-1; Sun,
+ 23 Mar 2025 14:49:30 -0400
+X-MC-Unique: 84n91NZGOPeL27kRD4w-gg-1
+X-Mimecast-MFC-AGG-ID: 84n91NZGOPeL27kRD4w-gg_1742755768
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E719180049D;
+	Sun, 23 Mar 2025 18:49:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 38C8F180A801;
+	Sun, 23 Mar 2025 18:49:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 23 Mar 2025 19:48:55 +0100 (CET)
+Date: Sun, 23 Mar 2025 19:48:49 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
+	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Message-ID: <20250323184848.GB14883@redhat.com>
+References: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] drm/vc4: tests: Stop allocating the state in test
- init
-To: Maxime Ripard <mripard@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250318-drm-vc4-kunit-failures-v1-0-779864d9ab37@kernel.org>
- <20250318-drm-vc4-kunit-failures-v1-3-779864d9ab37@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250318-drm-vc4-kunit-failures-v1-3-779864d9ab37@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Maxime,
+On 03/22, syzbot wrote:
+>
+> HEAD commit:    fc444ada1310 Merge tag 'soc-fixes-6.14-2' of git://git.ker..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1397319b980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
+> dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1057319b980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d6a44c580000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/924e6055daef/disk-fc444ada.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/0cd40093a53e/vmlinux-fc444ada.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7370bbe4e1b8/bzImage-fc444ada.xz
+>
+> The issue was bisected to:
+>
+> commit aaec5a95d59615523db03dd53c2052f0a87beea7
+> Author: Oleg Nesterov <oleg@redhat.com>
+> Date:   Thu Jan 2 14:07:15 2025 +0000
+>
+>     pipe_read: don't wake up the writer if the pipe is still full
 
-On 18/03/25 11:17, Maxime Ripard wrote:
-> The vc4-pv-muxing-combinations and vc5-pv-muxing-combinations test
-> suites use a common test init function which, in part, allocates the
-> drm atomic state the test will use.
-> 
-> That allocation relies on  drm_kunit_helper_atomic_state_alloc(), and
-> thus requires a struct drm_modeset_acquire_ctx. This context will then
-> be stored in the allocated state->acquire_ctx field.
-> 
-> However, the context is local to the test init function, and is cleared
-> as soon as drm_kunit_helper_atomic_state_alloc() is done. We thus end up
-> with an dangling pointer to a cleared context in state->acquire_ctx for
-> our test to consumes.
-> 
-> We should really allocate the context and the state in the test
-> functions, so we can also control when we're done with it.
-> 
-> Fixes: 30188df0c387 ("drm/tests: Drop drm_kunit_helper_acquire_ctx_alloc()")
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c | 41 +++++++++++++++++---------
->   1 file changed, 27 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c b/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
-> index 992e8f5c5c6ea8d92338a8fe739fa1115ff85338..52c04ef33206bf4f9e21e3c8b7cea932824a67fa 100644
-> --- a/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
-> +++ b/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
-> @@ -18,11 +18,10 @@
->   
->   #include "vc4_mock.h"
->   
->   struct pv_muxing_priv {
->   	struct vc4_dev *vc4;
-> -	struct drm_atomic_state *state;
+OMG :/
 
-Can't we add `struct drm_modeset_acquire_ctx` here? Then, we can be sure
-that the context exists during the entire test case.
+Just to ensure it does not help,
 
-Also, we can add `drm_modeset_drop_locks()` and
-`drm_modeset_acquire_fini()` to a exit function in the kunit suite.
+#syz test: upstream aaec5a95d59615523db03dd53c2052f0a87beea7
 
-Best Regards,
-- Maíra
-
->   };
->   
->   static bool check_fifo_conflict(struct kunit *test,
->   				const struct drm_atomic_state *state)
->   {
-> @@ -675,14 +674,23 @@ KUNIT_ARRAY_PARAM(vc5_test_pv_muxing_invalid,
->   
->   static void drm_vc4_test_pv_muxing(struct kunit *test)
->   {
->   	const struct pv_muxing_param *params = test->param_value;
->   	const struct pv_muxing_priv *priv = test->priv;
-> -	struct drm_atomic_state *state = priv->state;
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_atomic_state *state;
-> +	struct drm_device *drm;
-> +	struct vc4_dev *vc4;
->   	unsigned int i;
->   	int ret;
->   
-> +	drm_modeset_acquire_init(&ctx, 0);
-> +
-> +	vc4 = priv->vc4;
-> +	drm = &vc4->base;
-> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
->   	for (i = 0; i < params->nencoders; i++) {
->   		enum vc4_encoder_type enc_type = params->encoders[i];
->   
->   		ret = vc4_mock_atomic_add_output(test, state, enc_type);
->   		KUNIT_ASSERT_EQ(test, ret, 0);
-> @@ -698,56 +706,61 @@ static void drm_vc4_test_pv_muxing(struct kunit *test)
->   		enum vc4_encoder_type enc_type = params->encoders[i];
->   
->   		KUNIT_EXPECT_TRUE(test, check_channel_for_encoder(test, state, enc_type,
->   								  params->check_fn));
->   	}
-> +
-> +	drm_modeset_drop_locks(&ctx);
-> +	drm_modeset_acquire_fini(&ctx);
->   }
->   
->   static void drm_vc4_test_pv_muxing_invalid(struct kunit *test)
->   {
->   	const struct pv_muxing_param *params = test->param_value;
->   	const struct pv_muxing_priv *priv = test->priv;
-> -	struct drm_atomic_state *state = priv->state;
-> +	struct drm_modeset_acquire_ctx ctx;
-> +	struct drm_atomic_state *state;
-> +	struct drm_device *drm;
-> +	struct vc4_dev *vc4;
->   	unsigned int i;
->   	int ret;
->   
-> +	drm_modeset_acquire_init(&ctx, 0);
-> +
-> +	vc4 = priv->vc4;
-> +	drm = &vc4->base;
-> +	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
-> +
->   	for (i = 0; i < params->nencoders; i++) {
->   		enum vc4_encoder_type enc_type = params->encoders[i];
->   
->   		ret = vc4_mock_atomic_add_output(test, state, enc_type);
->   		KUNIT_ASSERT_EQ(test, ret, 0);
->   	}
->   
->   	ret = drm_atomic_check_only(state);
->   	KUNIT_EXPECT_LT(test, ret, 0);
-> +
-> +	drm_modeset_drop_locks(&ctx);
-> +	drm_modeset_acquire_fini(&ctx);
->   }
->   
->   static int vc4_pv_muxing_test_init(struct kunit *test)
->   {
->   	const struct pv_muxing_param *params = test->param_value;
-> -	struct drm_modeset_acquire_ctx ctx;
->   	struct pv_muxing_priv *priv;
-> -	struct drm_device *drm;
->   	struct vc4_dev *vc4;
->   
->   	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
->   	KUNIT_ASSERT_NOT_NULL(test, priv);
->   	test->priv = priv;
->   
->   	vc4 = params->mock_fn(test);
->   	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, vc4);
->   	priv->vc4 = vc4;
->   
-> -	drm_modeset_acquire_init(&ctx, 0);
-> -
-> -	drm = &vc4->base;
-> -	priv->state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
-> -	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->state);
-> -
-> -	drm_modeset_drop_locks(&ctx);
-> -	drm_modeset_acquire_fini(&ctx);
-> -
->   	return 0;
->   }
->   
->   static struct kunit_case vc4_pv_muxing_tests[] = {
->   	KUNIT_CASE_PARAM(drm_vc4_test_pv_muxing,
-> 
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 82fede0f2111..7e36f54d21a5 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -417,8 +417,8 @@ static inline int is_packetized(struct file *file)
+ /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+ static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+ {
+-	unsigned int head = READ_ONCE(pipe->head);
+ 	unsigned int tail = READ_ONCE(pipe->tail);
++	unsigned int head = READ_ONCE(pipe->head);
+ 	unsigned int max_usage = READ_ONCE(pipe->max_usage);
+ 
+ 	return !pipe_full(head, tail, max_usage) ||
 
 
