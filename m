@@ -1,185 +1,126 @@
-Return-Path: <linux-kernel+bounces-572993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83A0A6D131
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:19:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B88A6D133
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AEB01657E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7BE3B30EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812B81A704B;
-	Sun, 23 Mar 2025 21:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411331A5BBF;
+	Sun, 23 Mar 2025 21:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEJ5qO5y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wGw4NZkQ"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D320C2AF1D
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 21:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6732AF1D;
+	Sun, 23 Mar 2025 21:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742764710; cv=none; b=DVgUcAd6FmPsH6i+xpJt7AFvnjUSiEnFS0+yJDyk7pq9o6SFje5mXGfiwTcsoArMmIBS8MiUec4e8g1S8olXe/mrUeKBEkpW0MQMrteZyc9R19Bu5z4FCjL8oHNnZ7E8HitLUnCHsFAXitQD0JO5ajSrGAAyDrK3HaVHXe9J5co=
+	t=1742764730; cv=none; b=hkkd6I9cemw7ww9IZ2P9agc52Gz3Y+F6+9Mn2kURZe+JpLWOs909tW10LMQypTj4f5UR71NduZTurhWDFlBU33z6ktMdStClWwX1S7WsbD+7kWTl9hKVC8LEfWod2Cj+kRNvjk4u4hnScmMZNKJM5Qv9Itt8bQO2NiEXUufyJKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742764710; c=relaxed/simple;
-	bh=TED3ljt5Bkf0dQsrUBCHIS/zTAfOz+5D+i8lk6McDio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eNwFuXDz6kzZcWi9ORex9NDeKmvDCsXQpmv5jrxQfAQaWe4BXqzDgAtWUSGGWDTQtTk/OuVv9PgmpcGzKcVX0UZ6aS29BOXbVyNtetMeBKNtVRhYMs71qMn5jDDMr8xyVSioUXCynjYef0FVXuTiBmbh7Qd8Aas5matDNpsSAts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEJ5qO5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94785C4CEE2;
-	Sun, 23 Mar 2025 21:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742764710;
-	bh=TED3ljt5Bkf0dQsrUBCHIS/zTAfOz+5D+i8lk6McDio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lEJ5qO5yqqhsFo9pM0XwZtRnbQA15/PZlL+XrumVI+/yILYcKY2w0s+X9KtjtejKQ
-	 pQyk1PevX4vmgUmvvnKnjNc4mzD7eX9wub9BWa3UwYT+W/kawtX8q85o8WSw1UHNBq
-	 XQ1BUvWrWSAiq/AhGQbUWdTcoeH3Sf+s6f4M0VC2UPx6KidSIk/MgN3kiOjxphT0Qx
-	 gygNN5GuZciS6JP80Oh1OncbopEi8TaF0scbC+nUpfPFBFWhTgfLdA5z6GbMoWRLQc
-	 WiyTKf5K+AneEro7zUfua3q0Fw1PMWlIbhgeuXrtuhePkp6K6XLxcLnYlhYiwLyHAq
-	 xkMWHd9CPMnDA==
-Date: Sun, 23 Mar 2025 22:18:25 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Fernando Fernandez Mancera <ffmancera@riseup.net>
-Cc: x86@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	dwmw@amazon.co.uk, mhkelley@outlook.com
-Subject: Re: [PATCH] x86/i8253: fix possible deadlock when turning off the PIT
-Message-ID: <Z-B6ob0zLZr81e8i@gmail.com>
-References: <20250323150924.3326-1-ffmancera@riseup.net>
+	s=arc-20240116; t=1742764730; c=relaxed/simple;
+	bh=VfcdpQnzSD1rS34uOpu8qcqXqndjkR9Po1lWFaGQxAc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pV6umC3HiekNx5dEUgqTwnd+VnyJbLyP8o7kIardTTQky0EHCvL1ZMs7YyO8LnZQJKyZpaMlfQCHe0TdK21Tg8mZYVQK5JJh+oZ2HbWoYpIdhRn0muvLIE4Qxo5Q5mwzDKRMZKtJ7eSt7YM0TWesIEQUvdXazrKOZ8fOZYuEP2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=wGw4NZkQ; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1742764726;
+	bh=VfcdpQnzSD1rS34uOpu8qcqXqndjkR9Po1lWFaGQxAc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=wGw4NZkQCeH2P/Vbk1T7HXh7tqK1dJPdXJDC8tfJCTCdQ4BA4KszYLacDyPMqyk3P
+	 fhzcBpMVJJdtV3bLFG7VZYNvWu8G9jil0fWzkajuNu5swX4p09SuapsbM7Z03Kevau
+	 V1jMMiHyE+XlWfXy+0dvV6MxY6PczbkukY4rHa1I=
+Received: from [172.26.15.206] (unknown [165.225.8.172])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 5904A1C015B;
+	Sun, 23 Mar 2025 17:18:46 -0400 (EDT)
+Message-ID: <5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 23 Mar 2025 17:18:45 -0400
+In-Reply-To: <20250323140911.226137-4-nstange@suse.de>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-4-nstange@suse.de>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323150924.3326-1-ffmancera@riseup.net>
 
+On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+> Normally IMA would extend a template hash of each bank's associated
+> algorithm into a PCR. However, if a bank's hash algorithm is
+> unavailable to the kernel at IMA init time, it would fallback to
+> extending padded SHA1 hashes instead.
+>=20
+> That is, if e.g. SHA-256 was missing at IMA init, it would extend
+> padded SHA1 template hashes into a PCR's SHA-256 bank.
+>=20
+> The ima_measurement command (marked as experimental) from ima-evm-
+> utils would accordingly try both variants when attempting to verify a
+> measurement list against PCRs. keylime OTOH doesn't seem to -- it
+> expects the template hash type to match the PCR bank algorithm. I
+> would argue that for the latter case, the fallback scheme could
+> potentially cause hard to debug verification failures.
+>=20
+> There's another problem with the fallback scheme: right now, SHA-1
+> availability is a hard requirement for IMA, and it would be good for
+> a number of reasons to get rid of that. However, if SHA-1 is not
+> available to the kernel, it can hardly provide padded SHA-1 template
+> hashes for PCR banks with unsupported algos.
 
-* Fernando Fernandez Mancera <ffmancera@riseup.net> wrote:
+I think this was done against the day IMA only supported sha1 and the
+TPM sha256 and beyond so there'd at least be a record that could be
+replayed.  I think today with most distros defaulting IMAs hash to
+sha256 that's much less of a problem.
 
-> As the PIT could be disabled during the init, it can possibly cause a
-> deadlock when resuming from suspend due to a lock dependency created at
-> pcspkr_event(). This new dependency connect a HARDIRQ-irq-safe to a
-> HARDIRQ-irq-unsafe.
-> 
-> Solve this warning by using the raw_spin_lock_irqsave() variant when
-> turning off the PIT.
-> 
-> [   45.408952] =====================================================
-> [   45.408970] WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
-> [   45.408974] 6.14.0-rc7+ #6 Not tainted
-> [   45.408978] -----------------------------------------------------
-> [   45.408980] systemd-sleep/3324 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-> [   45.408986] ffffffffb2c23398 (i8253_lock){+.+.}-{2:2}, at: pcspkr_event+0x3f/0xe0 [pcspkr]
-> [   45.409004]
->                and this task is already holding:
-> [   45.409006] ffff9c334d7c2230 (&dev->event_lock){-.-.}-{3:3}, at: input_dev_resume+0x21/0x50
-> [   45.409023] which would create a new lock dependency:
-> [   45.409025]  (&dev->event_lock){-.-.}-{3:3} -> (i8253_lock){+.+.}-{2:2}
-> [   45.409043]
->                but this new dependency connects a HARDIRQ-irq-safe lock:
-> [   45.409045]  (&dev->event_lock){-.-.}-{3:3}
-> [   45.409052]
->                ... which became HARDIRQ-irq-safe at:
-> [   45.409055]   lock_acquire+0xd0/0x2f0
-> [   45.409062]   _raw_spin_lock_irqsave+0x48/0x70
-> [   45.409067]   input_event+0x3c/0x80
-> [   45.409071]   atkbd_receive_byte+0x9b/0x6e0
-> [   45.409077]   ps2_interrupt+0xb2/0x1d0
-> [   45.409082]   serio_interrupt+0x4a/0x90
-> [   45.409087]   i8042_handle_data+0xf8/0x280
-> [   45.409091]   i8042_interrupt+0x11/0x40
-> [   45.409095]   __handle_irq_event_percpu+0x87/0x260
-> [   45.409100]   handle_irq_event+0x38/0x90
-> [   45.409105]   handle_edge_irq+0x8b/0x230
-> [   45.409109]   __common_interrupt+0x5c/0x120
-> [   45.409114]   common_interrupt+0x80/0xa0
-> [   45.409120]   asm_common_interrupt+0x26/0x40
-> [   45.409125]   pv_native_safe_halt+0xf/0x20
-> [   45.409130]   default_idle+0x9/0x20
-> [   45.409135]   default_idle_call+0x7a/0x1d0
-> [   45.409140]   do_idle+0x215/0x260
-> [   45.409144]   cpu_startup_entry+0x29/0x30
-> [   45.409149]   start_secondary+0x132/0x170
-> [   45.409153]   common_startup_64+0x13e/0x141
-> [   45.409158]
->                to a HARDIRQ-irq-unsafe lock:
-> [   45.409161]  (i8253_lock){+.+.}-{2:2}
-> [   45.409167]
->                ... which became HARDIRQ-irq-unsafe at:
-> [   45.409170] ...
-> [   45.409172]   lock_acquire+0xd0/0x2f0
-> [   45.409177]   _raw_spin_lock+0x30/0x40
-> [   45.409181]   clockevent_i8253_disable+0x1c/0x60
-> [   45.409186]   pit_timer_init+0x25/0x50
-> [   45.409191]   hpet_time_init+0x46/0x50
-> [   45.409196]   x86_late_time_init+0x1b/0x40
-> [   45.409201]   start_kernel+0x962/0xa00
-> [   45.409206]   x86_64_start_reservations+0x24/0x30
-> [   45.409211]   x86_64_start_kernel+0xed/0xf0
-> [   45.409215]   common_startup_64+0x13e/0x141
-> [   45.409220]
->                other info that might help us debug this:
-> 
-> [   45.409222]  Possible interrupt unsafe locking scenario:
-> 
-> [   45.409224]        CPU0                    CPU1
-> [   45.409226]        ----                    ----
-> [   45.409228]   lock(i8253_lock);
-> [   45.409234]                                local_irq_disable();
-> [   45.409237]                                lock(&dev->event_lock);
-> [   45.409243]                                lock(i8253_lock);
-> [   45.409249]   <Interrupt>
-> [   45.409251]     lock(&dev->event_lock);
-> [   45.409257]
->                 *** DEADLOCK ***
-> 
-> Fixes: 70e6b7d9ae3c ("x86/i8253: Disable PIT timer 0 when not in use")
-> Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
-> ---
->  drivers/clocksource/i8253.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-> index 39f7c2d736d1..9a91ce66e16e 100644
-> --- a/drivers/clocksource/i8253.c
-> +++ b/drivers/clocksource/i8253.c
-> @@ -103,7 +103,9 @@ int __init clocksource_i8253_init(void)
->  #ifdef CONFIG_CLKEVT_I8253
->  void clockevent_i8253_disable(void)
->  {
-> -	raw_spin_lock(&i8253_lock);
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&i8253_lock, flags);
->  
->  	/*
->  	 * Writing the MODE register should stop the counter, according to
-> @@ -133,7 +135,7 @@ void clockevent_i8253_disable(void)
->  
->  	outb_p(0x30, PIT_MODE);
->  
-> -	raw_spin_unlock(&i8253_lock);
-> +	raw_spin_unlock_irqrestore(&i8253_lock, flags);
->  }
+> There are several more or less reasonable alternatives possible,
+> among them are:
+> a.) Instead of padded SHA-1, use padded/truncated ima_hash template
+> =C2=A0=C2=A0=C2=A0 hashes.
+> b.) Don't extend unsupported banks at all.
+> c.) Record every event as a violation, i.e. extend unsupported banks
+> =C2=A0=C2=A0=C2=A0 with 0xffs.
+> d.) Invalidate unsupported banks at least once by extending with a
+> unique
+> =C2=A0=C2=A0=C2=A0 constant (e.g. with 0xfes).
 
-That's a nice one - and in general the clockevent shutdown/disable 
-handlers are called with IRQs off: hpet_time_init()->pit_timer_init() 
-being the odd one out post-70e6b7d9ae3c that introduced this bug.
+Instead of any of that, why not do what the TCG tells us to do for
+unsupported banks and simply cap them with 0xffffffff record
+EV_SEPARATOR and stop extending to them? (note this would probably
+require defining a separator event for IMA)
 
-So the real bug is that hpet_time_init() just blindly assumes that 
-clockevent_i8253_disable() is IRQ-safe, which it isn't and never was.
+Regards,
 
-So the slightly better fix would be to save-disable interrupts in 
-pit_timer_init() around the clockevent_i8253_disable() call. This would 
-avoid the IRQ disable/enable dance for all the other callers. (Not that 
-it really matters for the PIT driver, but it's the principle.)
+James
 
-Thanks,
-
-	Ingo
 
