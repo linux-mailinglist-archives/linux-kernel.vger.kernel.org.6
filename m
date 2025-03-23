@@ -1,72 +1,75 @@
-Return-Path: <linux-kernel+bounces-573054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370FAA6D242
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:50:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BCDA6D24C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C4916F95A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA283A8C79
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF911C8611;
-	Sun, 23 Mar 2025 22:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85751B4F0E;
+	Sun, 23 Mar 2025 22:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="pPcWRwJ6"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cme1o9pR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB541C5490
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0DB3D561;
+	Sun, 23 Mar 2025 22:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742770121; cv=none; b=aqvbVeqa6NuXMdXGH3DrhA0E3xQCi7RXYLdpBHGWIiK7JrDQz0ZWEzXDBYjU3qKSFjiENzt+4uswUSuuzYenyhH7ncxzoSQqjzsiN8t3/558j4of6dPhnYBAoEhCy4Bp5c8qfrhz2AL5e8Q5xciZ/DkJYg3JNxgGRdP5cB5vAmo=
+	t=1742770394; cv=none; b=LDGUVFFSo1krhIJ2JNejgjCOEvH++lvg7obz+Y6x5kcSKvs3WFhoDCGRKzK/M7Cko2NMf7Ff1skdB7RgXWzMg9I293r2usb6XG9eZHs44mRG2iRSmhyo2qBgMvg1BZ+Rz01Vu5jEOXzP2WQgGaNZqPtXVJLw8zMXcM3qD4xDpZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742770121; c=relaxed/simple;
-	bh=dnFhYYnzKlVDFTJsHnhxZlxKUHTxCBnQ8RG2gM1BrKA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6C7R0flyzffA85363AO9BPCfAPMOTGmy1PRXY2/J9+gF3yFLZlhA4FIZUOGBxTQSflaIwzQ7AFdRIrAw4lCvnNKpwJSFV9SnpKCVI1McWe4t73VBfiW51a5JvCdD3kV8IeEqoPzqnamtsi3TyxiwN4RuaeVrrsIUzMC0vVYL7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=pPcWRwJ6; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Sun, 23 Mar 2025 18:48:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1742770117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IPUcsPWWa2X9NKfpybVnP9b2BUGvSK430jlCkPrgcYg=;
-	b=pPcWRwJ6ULwbzFVnYhIkw85Ou/fbeyBqqixE9bPjue5gt4XnjsIwZtqv/W8AOOimwa//lw
-	MGeQNOeLPbmVR4Uyo46BmpfX7ZGdrSley00lutcJsJ0Wpcr2x4oaYsBYKei0QTrvg7djta
-	RF22Z3ZIY7jDI5SSCYfwpPEY/zAcQ5Z3M143egmgItXDXvPjsyLJfWiTEckWlVTJLeGhsL
-	8zRsfeddKqwItobtsycZyajOv3GLCEWP4k2k+4qrEEjucPkaAWbnM391NLpwvYC907xwjq
-	AZ7HfTVC+7PB4IFJv044IpsrUy4Lz2wsJejWoLjKXioqgx1zyBbtCFEYQnthnw==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sergio Lopez Pascual <slp@sinrega.org>,
-	Ryan Houdek <sonicadvance1@gmail.com>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH v3] drm: Add UAPI for the Asahi driver
-Message-ID: <Z-CPspG_Cy-f-MKe@blossom>
-References: <20250314-agx-uapi-v3-1-3abf7e74ea2f@rosenzweig.io>
- <Z912pMazVwHKLi72@phenom.ffwll.local>
+	s=arc-20240116; t=1742770394; c=relaxed/simple;
+	bh=KhSk1Wvn41RLE8OuIrS/dgnj4mzOEt2b86JUmA1AdQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxpFQgXRNkB80LDZDwO6jJSjlZ+KNHU/iXA3HeB9f4+5vJtipnUkQS65JPk2qUbayrNrYl1YgNCsGBPhzhOYDxumXqIQSF/3EQov9XosVOgkjG68yolHfiHYwJHuRyH2ZY0FK1l+/z958dyXC6KKJWIL+DZHXHamt9G4tTgRCTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cme1o9pR; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742770392; x=1774306392;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KhSk1Wvn41RLE8OuIrS/dgnj4mzOEt2b86JUmA1AdQU=;
+  b=Cme1o9pRxFFzpJXb1mPGzHhPCiw2+J4ToV/8X/b/2IL7MAhkzgDrnbal
+   m+B97Hy5XuJZAPZ6eaZZDRO/EKbYUH4Y8vn8cpAfihXaukoQDDfEC+VUX
+   yIineOdj0CLEEBdRpJ7qIsY4P1y49Qo5kS1Qk+xsVOHEk9LiENyVEVcLw
+   gSP0ufhS/ZsE35cox+D/AQpYm0igjOCffI2OIR0vPGax7DgxjDeyasRNM
+   ACKgSdXOLWtgjluLs7NCvNIpss8DWWzL1iMyQ7yezuMg75SDKiMKXUYcE
+   SWIcEcq+Qy9tk9C2Sq/g7yARVa5U50AH6Ybr7T60TyL6I6D8ZHkhdrF+9
+   A==;
+X-CSE-ConnectionGUID: 4Un8atEJR8K8x/LMR4Ajyg==
+X-CSE-MsgGUID: M8eEvCnuRyGHjVduQY5DkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43126625"
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="43126625"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 15:53:11 -0700
+X-CSE-ConnectionGUID: +0cn+hIKQ8iIclIM6QNmXg==
+X-CSE-MsgGUID: Fg+EMCiuSdiFWevV8B18Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="154783741"
+Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 23 Mar 2025 15:53:09 -0700
+Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1twUBm-0002zq-0f;
+	Sun, 23 Mar 2025 22:53:06 +0000
+Date: Mon, 24 Mar 2025 06:52:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sahil Siddiq <icegambit91@gmail.com>, jonas@southpole.se,
+	stefan.kristiansson@saunalahti.fi, shorne@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, sahilcdq@proton.me,
+	linux-openrisc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] openrisc: Add cacheinfo support
+Message-ID: <202503240635.ir63jqTI-lkp@intel.com>
+References: <20250323195544.152948-4-sahilcdq@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,21 +78,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z912pMazVwHKLi72@phenom.ffwll.local>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250323195544.152948-4-sahilcdq@proton.me>
 
-> Since this is a deparature from our usual requirement that all pieces
-> should be ready before landing anything we had discussion whether this is
-> an acceptable one-off exception for special circumstance. Thanks a lot to
-> Alyssa for driving this. The very much summarized consensus is that due to
-> rust this is a special case, and because the userspace is in upstream mesa
-> and lead by people who know what they're doing and have been around for
-> years, it should all work out. As a stand-in for that discussion:
-> 
-> Acked-by: Simona Vetter <simona.vetter@ffwll.ch>
-> 
-> But Dave&me very much do not want to make this a recurring thing, please
-> don't try :-)
+Hi Sahil,
 
-Thanks for the ack :)
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on ea1413e5b53a8dd4fa7675edb23cdf828bbdce1e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sahil-Siddiq/openrisc-Refactor-struct-cpuinfo_or1k-to-reduce-duplication/20250324-035738
+base:   ea1413e5b53a8dd4fa7675edb23cdf828bbdce1e
+patch link:    https://lore.kernel.org/r/20250323195544.152948-4-sahilcdq%40proton.me
+patch subject: [PATCH v3 3/3] openrisc: Add cacheinfo support
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20250324/202503240635.ir63jqTI-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503240635.ir63jqTI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503240635.ir63jqTI-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   arch/openrisc/kernel/setup.c: In function 'show_cpuinfo':
+>> arch/openrisc/kernel/setup.c:266:30: warning: unused variable 'cpuinfo' [-Wunused-variable]
+     266 |         struct cpuinfo_or1k *cpuinfo = v;
+         |                              ^~~~~~~
+
+
+vim +/cpuinfo +266 arch/openrisc/kernel/setup.c
+
+9d02a4283e9ce4 Jonas Bonn          2011-06-04  260  
+9d02a4283e9ce4 Jonas Bonn          2011-06-04  261  static int show_cpuinfo(struct seq_file *m, void *v)
+9d02a4283e9ce4 Jonas Bonn          2011-06-04  262  {
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11  263  	unsigned int vr, cpucfgr;
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11  264  	unsigned int avr;
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11  265  	unsigned int version;
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11 @266  	struct cpuinfo_or1k *cpuinfo = v;
+9d02a4283e9ce4 Jonas Bonn          2011-06-04  267  
+9d02a4283e9ce4 Jonas Bonn          2011-06-04  268  	vr = mfspr(SPR_VR);
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11  269  	cpucfgr = mfspr(SPR_CPUCFGR);
+8e6d08e0a15e7d Stefan Kristiansson 2014-05-11  270  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
