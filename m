@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-572907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6BEA6D02F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:13:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7DAA6D039
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31A47A48A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B453AB830
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 17:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7AC1487D1;
-	Sun, 23 Mar 2025 17:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4014A095;
+	Sun, 23 Mar 2025 17:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T60O6Nje"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="H6VAYzva"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303523595D;
-	Sun, 23 Mar 2025 17:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA0B136E;
+	Sun, 23 Mar 2025 17:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742749970; cv=none; b=ZmeKcZY/m+EIQ4ScxNZhCcdN1LTpl2A8lib7CJ79M5Tq42Q2Ki/FylfqXjGEUwe5f1oOnAzKK7qISDZlLO/ByF6KFypbhka6RqcpgSe4bjaZYMsdJpsiZ2+SHLGQhEtqiMoUtet8QkoyQg6H/RBT8azTeNsCffB2niJUN3Lb9ao=
+	t=1742750723; cv=none; b=k10ytSAfsZGRQgRofBvRyllRrLGZD2W5BP/l6Rjj81D+KdLgRYUVkNZ8/8eZmBBPT5FJmAiIaROftPH0zf6N4BWB1h+HwXjGNMjfrWag9Hfwr4B1IIiZjcUX66/oHnxbnL0njNHT5nsAM2ZMUWYHf/fkjAQ1UqbGHY+QktgcUP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742749970; c=relaxed/simple;
-	bh=XozAwQbTpUGYueKBZlPi1Tm0N8h4iRa1gpfz6WWgGhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/yrFxBNmfa8RtUyxCfYfLh+jx7Xqdx+GUD1MWVe62VVINFxp63+FctZCCqb5KEc6mUMd7TatMnzXhCaAS+S8f01i3XwFhhLx7gV5C8Z3GcJonC9g4sYsTCxe0xI0iTGhaXPBe7GWO84vqKr7GIu7HQX0q+RnNFrwHLaQcsRYrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T60O6Nje; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64CEC4CEE2;
-	Sun, 23 Mar 2025 17:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742749970;
-	bh=XozAwQbTpUGYueKBZlPi1Tm0N8h4iRa1gpfz6WWgGhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T60O6NjeFks2vJ6xoS5NBfgqWn8g0dPX15v5A0FxuX5LYy3UbxKMI4+NeCdWURWZG
-	 jCHwGkV04UqT5ic3MTt8KF6h9q5JEKJIlNLRXpxt4T4ZGEYsmnIVB2NU0YbS0Ydp7T
-	 ZjWpEvA56svrG5y/IEJz+CstDBwaIxEQLdRVgbcupgsUaw30FA/gSyKbg57dS4bLro
-	 mMQYE0Cu741xEKT8D/20is7yPBNPEYrB86hgDgBBSjY/sJnR8FxzPSpMYCaNB8fhxw
-	 5Pdo5Fk0lpKO5EIkasrZ8lsQXMV+t9w32r+13Jscjh2ISDmJcyWosyKOOnxqqRI/wn
-	 9pKRZr7zW+sug==
-Date: Sun, 23 Mar 2025 10:12:43 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	x86@kernel.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>,
-	Vinicius Peixoto <vpeixoto@lkcamp.dev>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2 08/12] lib/crc_kunit.c: add KUnit test suite for CRC
- library functions
-Message-ID: <20250323171243.GA852@quark.localdomain>
-References: <20241202012056.209768-1-ebiggers@kernel.org>
- <20241202012056.209768-9-ebiggers@kernel.org>
- <389b899f-893c-4855-9e30-d8920a5d6f91@roeck-us.net>
- <CAMj1kXHAktbQ-605wfqXCWtn8bP-yEv8sYKWAykajeAX2m1hEA@mail.gmail.com>
+	s=arc-20240116; t=1742750723; c=relaxed/simple;
+	bh=3/sdFDcSkElWIwIhxPhTXlK+rCZ0Y4GcwxBGAn4B3GM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j2TmkvjPm60xrNmKp7jf65Cr6QsuVI+Nzztf9KFi7ncul0kj8mvaEmKVxyhpODnx4lqLAQIB53gmP54h3eOAq0okqUtNXRhMl+K/NEPFFC9iUuXXDy0bQ7OFImXdpRiAbbbkksg578vaJetKk0Y4OuHFfw6XToUjgE8o8mPzSUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=H6VAYzva; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1742750719;
+	bh=3/sdFDcSkElWIwIhxPhTXlK+rCZ0Y4GcwxBGAn4B3GM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=H6VAYzvacTKQMikDEJb8KTabkHLc27pMnz32YZYM9EONOl5uQXgsLAFYi34mDpqD2
+	 j6Q+mqT8RgJ/GYxfVP8aS6iuoP9mNucYcTwnEECar0OyODaSwU3RNG637vou96/H2L
+	 mbgWNU/wkTFjSr8pPxbGn1pF6jyA+X2rppn406dw=
+Received: from [10.101.7.56] (ip-185-104-139-74.ptr.icomera.net [185.104.139.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 9DA8A1C0211;
+	Sun, 23 Mar 2025 13:25:18 -0400 (EDT)
+Message-ID: <300575957cee207c4191b8bc70219d13d467fdd7.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 23 Mar 2025 13:25:15 -0400
+In-Reply-To: <20250323140911.226137-11-nstange@suse.de>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-11-nstange@suse.de>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHAktbQ-605wfqXCWtn8bP-yEv8sYKWAykajeAX2m1hEA@mail.gmail.com>
 
-On Sun, Mar 23, 2025 at 04:35:29PM +0100, Ard Biesheuvel wrote:
-> On Sat, 22 Mar 2025 at 15:33, Guenter Roeck <linux@roeck-us.net> wrote:
-> >
-> > Hi,
-> >
-> > On Sun, Dec 01, 2024 at 05:20:52PM -0800, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > >
-> > > Add a KUnit test suite for the crc16, crc_t10dif, crc32_le, crc32_be,
-> > > crc32c, and crc64_be library functions.  It avoids code duplication by
-> > > sharing most logic among all CRC variants.  The test suite includes:
-> > >
-> > > - Differential fuzz test of each CRC function against a simple
-> > >   bit-at-a-time reference implementation.
-> > > - Test for CRC combination, when implemented by a CRC variant.
-> > > - Optional benchmark of each CRC function with various data lengths.
-> > >
-> > > This is intended as a replacement for crc32test and crc16_kunit, as well
-> > > as a new test for CRC variants which didn't previously have a test.
-> > >
-> > > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> > > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > > Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > ---
-> > ...
-> > > +
-> > > +             nosimd = rand32() % 8 == 0;
-> > > +
-> > > +             /*
-> > > +              * Compute the CRC, and verify that it equals the CRC computed
-> > > +              * by a simple bit-at-a-time reference implementation.
-> > > +              */
-> > > +             expected_crc = crc_ref(v, init_crc, &test_buffer[offset], len);
-> > > +             if (nosimd)
-> > > +                     local_irq_disable();
-> > > +             actual_crc = v->func(init_crc, &test_buffer[offset], len);
-> > > +             if (nosimd)
-> > > +                     local_irq_enable();
-> >
-> > This triggers a traceback on some arm systems.
-> >
-> > [    7.810000]     ok 2 crc16_benchmark # SKIP not enabled
-> > [    7.810000] ------------[ cut here ]------------
-> > [    7.810000] WARNING: CPU: 0 PID: 1145 at kernel/softirq.c:369 __local_bh_enable_ip+0x118/0x194
-> > [    7.810000] Modules linked in:
-> > [    7.810000] CPU: 0 UID: 0 PID: 1145 Comm: kunit_try_catch Tainted: G                 N 6.14.0-rc7-00196-g88d324e69ea9 #1
-> > [    7.810000] Tainted: [N]=TEST
-> > [    7.810000] Hardware name: NPCM7XX Chip family
-> > [    7.810000] Call trace:
-> > [    7.810000]  unwind_backtrace from show_stack+0x10/0x14
-> > [    7.810000]  show_stack from dump_stack_lvl+0x7c/0xac
-> > [    7.810000]  dump_stack_lvl from __warn+0x7c/0x1b8
-> > [    7.810000]  __warn from warn_slowpath_fmt+0x19c/0x1a4
-> > [    7.810000]  warn_slowpath_fmt from __local_bh_enable_ip+0x118/0x194
-> > [    7.810000]  __local_bh_enable_ip from crc_t10dif_arch+0xd4/0xe8
-> > [    7.810000]  crc_t10dif_arch from crc_t10dif_wrapper+0x14/0x1c
-> > [    7.810000]  crc_t10dif_wrapper from crc_main_test+0x178/0x360
-> > [    7.810000]  crc_main_test from kunit_try_run_case+0x78/0x1e0
-> > [    7.810000]  kunit_try_run_case from kunit_generic_run_threadfn_adapter+0x1c/0x34
-> > [    7.810000]  kunit_generic_run_threadfn_adapter from kthread+0x118/0x254
-> > [    7.810000]  kthread from ret_from_fork+0x14/0x28
-> > [    7.810000] Exception stack(0xe3651fb0 to 0xe3651ff8)
-> > [    7.810000] 1fa0:                                     00000000 00000000 00000000 00000000
-> > [    7.810000] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > [    7.810000] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > [    7.810000] irq event stamp: 29
-> > [    7.810000] hardirqs last  enabled at (27): [<c037875c>] __local_bh_enable_ip+0xb4/0x194
-> > [    7.810000] hardirqs last disabled at (28): [<c0b09684>] crc_main_test+0x2e4/0x360
-> > [    7.810000] softirqs last  enabled at (26): [<c032a3ac>] kernel_neon_end+0x0/0x1c
-> > [    7.810000] softirqs last disabled at (29): [<c032a3c8>] kernel_neon_begin+0x0/0x70
-> > [    7.810000] ---[ end trace 0000000000000000 ]---
-> > [    8.050000]     # crc_t10dif_test: pass:1 fail:0 skip:0 total:1
-> >
-> > kernel_neon_end() calls local_bh_enable() which apparently conflicts with
-> > the local_irq_disable() in above code.
-> >
-> 
-> This seems to be an oversight on my part. Can you try the below please?
-> 
-> diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
-> index 82191dbd7e78..56ddbd3c4997 100644
-> --- a/arch/arm/include/asm/simd.h
-> +++ b/arch/arm/include/asm/simd.h
-> @@ -4,5 +4,6 @@
-> 
->  static __must_check inline bool may_use_simd(void)
->  {
-> -       return IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && !in_hardirq();
-> +       return IS_ENABLED(CONFIG_KERNEL_MODE_NEON) &&
-> +              !in_hardirq() && !irqs_disabled();
->  }
+On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+> PCR reads aren't currently authenticated even with
+> CONFIG_TCG_TPM2_HMAC=3Dy yet.
 
-Thanks Ard, you beat me to it.  Yes, may_use_simd() needs to be consistent with
-kernel_neon_begin().  On x86 there is a case where the equivalent function is
-expected to work when irqs_disabled(), but if there is no such case on arm this
-fix looks good.  Can you send it out as a formal patch?  Presumably for the arm
-maintainer to pick up.
+The reason being TPM2_PCR_Read can only support an audit session, so it
+has even more overhead than the usual HMAC session for something you
+don't care about and because no-one relies on plain reads anyway,
+relying entities use quotes.
 
-> However, this test code also appears to assume that SIMD is forbidden
-> on any architecture when IRQs are disabled, but this not guaranteed.
+> It is probably desirable though, as e.g. IMA does some PCR reads to
+> form the cumulative boot digest subsequently extended into PCR 10 (an
+> operation which *is* authenticated).
 
-Yes, to reliably test the no-SIMD code paths, I need to finish refactoring the
-crypto_simd_disabled_for_test stuff to be disentangled from the crypto subsystem
-so that crc_kunit.c can use it.  It's on my list of things to do, and I'm
-planning to get it done in 6.16.  Disabling hardirqs is just a trick to get
-there more easily on some architectures.  But as this shows it's a useful test
-to have anyway, so we'll want to keep that too.  The CRC functions need to work
-in any context, and any context that we can easily test we should do so.
+Could you elaborate on what security properties this adds?  I can't see
+any form of attack that could be done by altering the boot aggregate:
+either the relying party cares, in which case it will quote the boot
+log and arrive at its own value, or it doesn't, in which case the value
+in the log is superfluous.
 
-- Eric
+> +		/*
+> +		 * Exclusivity is not needed, but set in the
+> response.
+> +		 * Set it here too, so that the HMAC verification
+> +		 * won't fail.
+> +		 */
+> +		tpm_buf_append_hmac_session(chip, &buf,
+> TPM2_SA_AUDIT
+> +					    |
+> TPM2_SA_AUDIT_EXCLUSIVE,
+> +					    NULL, 0);
+
+Exclusivity here requires no other command be unaudited between the
+session starting and now.  That means that with the lazy flush scheme
+you have a reasonable chance of this being violated and triggering an
+error on the command.
+
+Additionally, the response will only have the exclusive flag set if the
+above condition (no other unaudited command since session start) is
+true, which it might not be.  The problem you're having is that
+tpm2_auth_check_hmac_response() uses the command session flags to
+calculate the rpHash, which is a useful short cut because for non-audit
+sessions they're always the same.  If you want to use audit sessions,
+you have to teach it to dig the response session flags out of the
+header and use them instead.
+
+Regards,
+
+James
+
 
