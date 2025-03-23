@@ -1,126 +1,248 @@
-Return-Path: <linux-kernel+bounces-572994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B88A6D133
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:19:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357FCA6D137
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7BE3B30EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:18:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FACA16F837
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 21:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411331A5BBF;
-	Sun, 23 Mar 2025 21:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A551A704B;
+	Sun, 23 Mar 2025 21:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wGw4NZkQ"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="b3eLBULz"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6732AF1D;
-	Sun, 23 Mar 2025 21:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1234115575B
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 21:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742764730; cv=none; b=hkkd6I9cemw7ww9IZ2P9agc52Gz3Y+F6+9Mn2kURZe+JpLWOs909tW10LMQypTj4f5UR71NduZTurhWDFlBU33z6ktMdStClWwX1S7WsbD+7kWTl9hKVC8LEfWod2Cj+kRNvjk4u4hnScmMZNKJM5Qv9Itt8bQO2NiEXUufyJKU=
+	t=1742764745; cv=none; b=pBMKsWVhyU6wghGcleg58bfHt+oRG82tCoBxT+5/WCeYoky32DAB1/MO+VxLR/mholBRlqqTNnpFeyXPnkiiKoVeq1fWjBbYajWnNAR3GU/lW2sHpSVKGpyCmb7WA+Fery1Ap3RPc1O72m00YTdxN0erHtSKRgEkbmd5EMJg33U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742764730; c=relaxed/simple;
-	bh=VfcdpQnzSD1rS34uOpu8qcqXqndjkR9Po1lWFaGQxAc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pV6umC3HiekNx5dEUgqTwnd+VnyJbLyP8o7kIardTTQky0EHCvL1ZMs7YyO8LnZQJKyZpaMlfQCHe0TdK21Tg8mZYVQK5JJh+oZ2HbWoYpIdhRn0muvLIE4Qxo5Q5mwzDKRMZKtJ7eSt7YM0TWesIEQUvdXazrKOZ8fOZYuEP2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=wGw4NZkQ; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742764726;
-	bh=VfcdpQnzSD1rS34uOpu8qcqXqndjkR9Po1lWFaGQxAc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=wGw4NZkQCeH2P/Vbk1T7HXh7tqK1dJPdXJDC8tfJCTCdQ4BA4KszYLacDyPMqyk3P
-	 fhzcBpMVJJdtV3bLFG7VZYNvWu8G9jil0fWzkajuNu5swX4p09SuapsbM7Z03Kevau
-	 V1jMMiHyE+XlWfXy+0dvV6MxY6PczbkukY4rHa1I=
-Received: from [172.26.15.206] (unknown [165.225.8.172])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 5904A1C015B;
-	Sun, 23 Mar 2025 17:18:46 -0400 (EDT)
-Message-ID: <5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, Jarkko Sakkinen
-	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 23 Mar 2025 17:18:45 -0400
-In-Reply-To: <20250323140911.226137-4-nstange@suse.de>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-4-nstange@suse.de>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1742764745; c=relaxed/simple;
+	bh=9S7RKKhhOELyjtyd8BaQKXsc3EjmXfRPfSpW0zWxZ3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2TerYQGTBA+m/N1LZ2Rz7Mg7vMQHAHBaWnmhoScVeSyfu3LOki2LyewTXyFkl17a3H8vv+S/uMawka8JxhbdhVEV0weTDKZwBm/5DXzfHecDp+nNW+IUCX44l+5pMo/8ku2jQicAREnaM/qT3KfjS+QaxmCtzuotU1i1wC+Q7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=b3eLBULz; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Sun, 23 Mar 2025 17:18:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1742764739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wPlC94AM010WZW8moD0YzW91Vm5e7DR3TS+SPuJHxV0=;
+	b=b3eLBULz46IcHBiPzzA6apX7WoWCRsF73fSS+jtN1xfxJzeNP5ZAmZR9OzYdhFT3OyJHE2
+	dKosWAHDrjSstQLNbOdbHT73E9IQTixfNVQ2JGOn+BtMQMq8HVdvdOEih7MVC/Uq2r5psE
+	at17txaMiEIxdkeGFId0K3JCqb5QykTPE89o5O4LKZASRa1uWEac8jRAqmpsC5jps7hs6l
+	AOC2Gxe3NETgytlAOKNRdhlPe8+BjuWw7AMPxJOufWVrl7qR45PPy6ZlPhJn7UwQj+AU7y
+	Y801thcyZQHvcKyEOfVdh7Bmjb83QVZ/s2+8lzpLhpkMQXolwVBsFL90zh043g==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Faith Ekstrand <faith.ekstrand@collabora.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?=22Bj=F6rn_Roy_Baron=22?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sergio Lopez Pascual <slp@sinrega.org>,
+	Ryan Houdek <sonicadvance1@gmail.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	asahi <asahi@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-doc <linux-doc@vger.kernel.org>,
+	Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v3] drm: Add UAPI for the Asahi driver
+Message-ID: <Z-B6uc7EEAdBPXmt@blossom>
+References: <20250314-agx-uapi-v3-1-3abf7e74ea2f@rosenzweig.io>
+ <195b507d4b3.b25d0dad175771.7566427576910952468@collabora.com>
+ <195b582682b.121ba4d5e219032.3109114844776468245@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <195b582682b.121ba4d5e219032.3109114844776468245@collabora.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
-> Normally IMA would extend a template hash of each bank's associated
-> algorithm into a PCR. However, if a bank's hash algorithm is
-> unavailable to the kernel at IMA init time, it would fallback to
-> extending padded SHA1 hashes instead.
->=20
-> That is, if e.g. SHA-256 was missing at IMA init, it would extend
-> padded SHA1 template hashes into a PCR's SHA-256 bank.
->=20
-> The ima_measurement command (marked as experimental) from ima-evm-
-> utils would accordingly try both variants when attempting to verify a
-> measurement list against PCRs. keylime OTOH doesn't seem to -- it
-> expects the template hash type to match the PCR bank algorithm. I
-> would argue that for the latter case, the fallback scheme could
-> potentially cause hard to debug verification failures.
->=20
-> There's another problem with the fallback scheme: right now, SHA-1
-> availability is a hard requirement for IMA, and it would be good for
-> a number of reasons to get rid of that. However, if SHA-1 is not
-> available to the kernel, it can hardly provide padded SHA-1 template
-> hashes for PCR banks with unsupported algos.
+>  >  > +/** 
+>  >  > + * enum drm_asahi_bind_op - Bind operation 
+>  >  > + */ 
+>  >  > +enum drm_asahi_bind_op { 
+>  >  > +    /** @DRM_ASAHI_BIND_OP_BIND: Bind a BO to a GPU VMA range */ 
+>  >  > +    DRM_ASAHI_BIND_OP_BIND = 0, 
+>  >  > + 
+>  >  > +    /** @DRM_ASAHI_BIND_OP_UNBIND: Unbind a GPU VMA range */ 
+>  >  > +    DRM_ASAHI_BIND_OP_UNBIND = 1, 
+>  >  > + 
+>  >  > +    /** @DRM_ASAHI_BIND_OP_UNBIND_ALL: Unbind all mappings of a given BO */ 
+>  >  > +    DRM_ASAHI_BIND_OP_UNBIND_ALL = 2, 
+> 
+> Do you use this? We don't have it in nouveau and NVK gets by fine. Or does the asahi kernel do something where it expects you to unbind everything before the buffer is really destroyed? I think I remember talking to Lina about this a while ago but I don't remember the details.
 
-I think this was done against the day IMA only supported sha1 and the
-TPM sha256 and beyond so there'd at least be a record that could be
-replayed.  I think today with most distros defaulting IMAs hash to
-sha256 that's much less of a problem.
+We do not use it and I don't know why it's here either. In fact,
+drm/asahi does an unbind_all equivalently when closing a GEM
+handle, so should be definitely ok without.
 
-> There are several more or less reasonable alternatives possible,
-> among them are:
-> a.) Instead of padded SHA-1, use padded/truncated ima_hash template
-> =C2=A0=C2=A0=C2=A0 hashes.
-> b.) Don't extend unsupported banks at all.
-> c.) Record every event as a violation, i.e. extend unsupported banks
-> =C2=A0=C2=A0=C2=A0 with 0xffs.
-> d.) Invalidate unsupported banks at least once by extending with a
-> unique
-> =C2=A0=C2=A0=C2=A0 constant (e.g. with 0xfes).
+Dropped in v4, thanks.
 
-Instead of any of that, why not do what the TCG tells us to do for
-unsupported banks and simply cap them with 0xffffffff record
-EV_SEPARATOR and stop extending to them? (note this would probably
-require defining a separator event for IMA)
+>  >  > +    /** 
+>  >  > +     * @DRM_ASAHI_BIND_SINGLE_PAGE: Map a single page of the BO repeatedly 
+>  >  > +     * across the VA range. 
+>  >  > +     * 
+>  >  > +     * This is useful to fill a VA range with scratch pages or zero pages. 
+>  >  > +     * It is intended as a mechanism to accelerate sparse. 
+>  >  > +     */ 
+>  >  > +    DRM_ASAHI_BIND_SINGLE_PAGE = (1L << 2), 
+> 
+> Does this require the BO to be a single page? If so, does it require offset==0? Or does it just take whatever page is at the specified offset?
 
-Regards,
+I believe the intention is that it takes whatever page is at the
+specified offset and just maps that a bunch of times. HK doesn't use
+this yet though it probably should (this was added to help reduce
+overhead when emulating sparse with scratch/zero pages, which is still
+very new functionality in hk).
 
-James
+Accelerating this properly involves GPUVM patches - although even without
+that, moving the loop into the kernel so it's only a single ioctl
+(user-kernel roundtrip) seems worth keeping the flag for.
 
+Added comments in v4.
+
+>  >  > +    /** @object_handle: Object handle (out for BIND, in for UNBIND) */ 
+>  >  > +    __u32 object_handle; 
+> 
+> How is this different from the GEM handle? I mean, I know it's different, but What is this handle for? Just a thing we can pass in later?
+
+Yes, this is just a handle that's passed with the submit, see the
+comment in drm_asahi_timestamp.
+
+>  >  > +    /** @priority: Queue priority, 0-3 */ 
+>  >  > +    __u32 priority; 
+> 
+> Is one of these priorities REALTIME and only usable by privileged apps? If so, maybe document that and/or have an enum?
+
+Added an enum, thanks.
+
+I haven't actually implemented the priority check because that means
+even more rust bindings, and I don't think it's actually a uAPI
+regression to tighten the permissions later now that I've documented
+that we may do so.
+
+>  >  > +    /** 
+>  >  > +     * @usc_exec_base: GPU base address for all USC binaries (shaders) on 
+>  >  > +     * this queue. USC addresses are 32-bit relative to this 64-bit base. 
+>  >  > +     * 
+>  >  > +     * This sets the following registers on all queue commands: 
+>  >  > +     * 
+>  >  > +     *    USC_EXEC_BASE_TA  (vertex) 
+>  >  > +     *    USC_EXEC_BASE_ISP (fragment) 
+>  >  > +     *    USC_EXEC_BASE_CP  (compute) 
+>  >  > +     * 
+>  >  > +     * While the hardware lets us configure these independently per command, 
+>  >  > +     * we do not have a use case for this. Instead, we expect userspace to 
+>  >  > +     * fix a 4GiB VA carveout for USC memory and pass its base address here. 
+>  >  > +     */ 
+>  >  > +    __u64 usc_exec_base; 
+> 
+> I mean, you could have a command for this or or something but meh. That can be an extension on top of the current UAPI later if it's ever needed.
+
+Yep, and I really cannot fathom a use case for doing this at
+finer-than-queue granularity.
+
+>  >  > +    /** 
+>  >  > +     * @barriers: Array of command indices per subqueue to wait on. 
+>  >  > +     * 
+>  >  > +     * Barriers are indices relative to the beginning of a given submit. A 
+>  >  > +     * barrier of 0 waits on commands submitted to the subqueue in previous 
+>  >  > +     * submit ioctls. A barrier of N waits on N previous commands on the 
+>  >  > +     * subqueue within the current submit ioctl. As a special case, passing 
+>  >  > +     * @DRM_ASAHI_BARRIER_NONE avoids waiting on any commands in the 
+>  >  > +     * subqueue. 
+>  >  > +     * 
+>  >  > +     * Examples: 
+>  >  > +     * 
+>  >  > +     *   (0, 0): This waits on all previous work. 
+>  >  > +     * 
+>  >  > +     *   (NONE, 0): This waits on previously submitted compute commands but 
+>  >  > +     *   does not wait on any render commands. 
+>  >  > +     * 
+>  >  > +     *   (1, NONE): This waits on the first render command in the submit. 
+>  >  > +     *   This only makes sense if there are multiple render commands in the 
+>  >  > +     *   same submit. 
+>  >  > +     * 
+>  >  > +     * Barriers only make sense for hardware commands. Synthetic software 
+>  >  > +     * commands to set attachments must pass (NONE, NONE) here. 
+>  >  > +     */ 
+>  >  > +    __u16 barriers[DRM_ASAHI_SUBQUEUE_COUNT]; 
+> 
+> I'm not sure how good of an idea this is. You said in the comment above that SUBQUEUE_COUNT must be a power of 2. However, once you use it to size an array in the command header, it can never change ever. I'm not sure what to do about that. The command header being 8B is kinda nice... But also, will we ever need more than 2? I'd hate to have to change the size of the header.
+> 
+> Another option would be to potentially have a barrier command which would then be extensible but that sounds kinda annoying.
+
+I think the mistake here is making this an array instead of just
+`vdm_barrier`, `cdm_barrier` fields. It will never be not-2, at least
+not without such large hardware changes that we'd be due for a refresh
+of this uAPI anyway.
+
+I don't love the idea of the extra command, adds a lot more
+complexity/overhead for a hard-to-fathom theoretical future hw issue
+(that we could address with a drm_asahi_cmd_header_m7 if we
+need that.)
+
+Addressed in v4.
+
+>  >  > +/** 
+>  >  > + * struct drm_asahi_timestamp - Describe a timestamp write. 
+>  >  > + * 
+>  >  > + * The firmware can optionally write the GPU timestamp at render pass 
+>  >  > + * granularities, but it needs to be mapped specially via 
+>  >  > + * DRM_IOCTL_ASAHI_GEM_BIND_OBJECT. This structure therefore describes where to 
+>  >  > + * write as a handle-offset pair, rather than a GPU address like normal. 
+> 
+> Given that this struct is embedded in other structs, it might be worth a comment saying it can never be extended without breaking those structs.
+
+Done (for each of the places mentioned).
+
+>  >  > +struct drm_asahi_helper_program { 
+>  >  > +    /** 
+>  >  > +     * @binary: USC address to the helper program binary. This is a tagged 
+>  >  > +     * pointer with configuration in the bottom bits. 
+>  >  > +     */ 
+>  >  > +    __u32 binary; 
+>  >  > + 
+>  >  > +    /** @cfg: Configuration bits for the helper program. */ 
+>  >  > +    __u32 cfg; 
+> 
+> There's configuratin bits here and in the binary pointer abov?
+
+Yes. Not sure what the different bits mean exactly. My guess is that the
+binary pointer is tagged as "enable the helper prog?".
+
+The one known @cfg bit is when the helper program is needed within a
+preamble shader, i.e. if the preamble spills.
+
+> Woo! I made it to the end. I think that's all for now. I mostly asked a lot of questions.
+
+Hooray! Thank you so much for reviewing!
 
