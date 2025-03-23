@@ -1,301 +1,143 @@
-Return-Path: <linux-kernel+bounces-572949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5EEA6D0AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:07:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A27CA6D0B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D10FB7A5811
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:05:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB74616DE07
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9E4192D97;
-	Sun, 23 Mar 2025 19:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729E5192D97;
+	Sun, 23 Mar 2025 19:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQL7TQcT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="y6SJ7eh3";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="cBBAekPA";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="omDm0SJd"
+Received: from fallback23.i.mail.ru (fallback23.i.mail.ru [79.137.243.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0621B2E3399;
-	Sun, 23 Mar 2025 19:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02952E3399;
+	Sun, 23 Mar 2025 19:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742756812; cv=none; b=O/878XjKEXwd4vI0TCnI1VDqAicIUVoc+YBJePknyDsCXg3KXR+Of5FaC62OIadKlkKwriDxqTate6Sv0LuWH7h9ujLtodbDxpDssVgIDt6u5cDJJAl9R6jxIyJiyEZTFWQdPZBkHcaThB3Tj0+vmpAs5nvrjHjoP46U9kGi7t4=
+	t=1742756895; cv=none; b=onVNN7fkmMVcJO97zrUWYxLdts35hBmtM9w4mWAaLfIV6BMlMKDwDkIV5MTInYOKLfVt3fa+uqkEq9RVTwyj8/H01AzNsT/l8PdKYZgUgJfyEhYPl8n0ZYTPC1cGeR+z+cHPMB2lZZHTu0jydzIvjFsOBmvjuqQveFM3ajSNvOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742756812; c=relaxed/simple;
-	bh=gSiVK54BaFE1wEuUqKWSMj5BQvcJRmD5TNSAbSLcb4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaLF8VMBPHB+5lZjzrxQ9T9HWNLxnLCGRDa6SKJHWppE7gh29rCDkgQJ0a4arWECI013xU1ljt6FrnMUnyXr0/cZlHBIgf1eV2vdaisgWIM3fsIlnkrKQ3zI3fjWjHhPMiH9FL67SIjOd3ac3O6jveRRgrnv7fXXhizFv/J522U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQL7TQcT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D155BC4CEE2;
-	Sun, 23 Mar 2025 19:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742756811;
-	bh=gSiVK54BaFE1wEuUqKWSMj5BQvcJRmD5TNSAbSLcb4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jQL7TQcTZyLVxNaZanp8w7PAPcRH4eXRTp+zwa1fVLvF5RNXfwHOQMan+IZ/480BS
-	 J36iXtpvREPwHVbh+S0noYAmNgCjR0kF1d2InQsgzYc5STtc7o4YXlSsCioVzZrYiz
-	 wIf23ykcDVmXGQyA8PbN3cdvxQtwJ+DhU7qgnWnhod18nN8OQXj5/DlHIDG31v1ix4
-	 qElFiWBy334oaPSIFMcVa3Pz1GsZEnOcU2yqrYgQzBS4cBE5q2FuDJvZK0u+8MITH8
-	 Ebxhb99rOts9V9P2wMGpPU/1elBbVfhSMTDHxVLWiyN+WYJigvM3R1o2xALK9VHvdT
-	 vc0VfAUr5yPag==
-Date: Sun, 23 Mar 2025 14:06:47 -0500
-From: Nathan Chancellor <nathan@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 11/13] arch, mm: streamline HIGHMEM freeing
-Message-ID: <20250323190647.GA1009914@ax162>
-References: <20250313135003.836600-1-rppt@kernel.org>
- <20250313135003.836600-12-rppt@kernel.org>
+	s=arc-20240116; t=1742756895; c=relaxed/simple;
+	bh=HNheHeIrLKWnPq4AZI8bPbYW3FhAVpc9Cm4HAKsKqo4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diNca09oah1iwi/ifPz/Px2+R1Ke5xxgHyPiY1W4Qdc/Gr7AZ3YnJ1QegSdU4h1ZiWTgN0DgXQayRhIQ25hqVh4RgON7e29fBsTriNKlcQzdePFcYuwiXISJ+HIc+taExO8+sHr2Th3rlMXk+oVVTxmjFcRSXnl5Gjd3D2NZILo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=mail.ru; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=y6SJ7eh3; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=cBBAekPA; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=omDm0SJd; arc=none smtp.client-ip=79.137.243.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail4;
+	h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=;
+	t=1742756891;x=1742846891; 
+	b=y6SJ7eh3JJS5Ug2efGTyPwtJBF57oBsdwNEMK04ru3sPAA3Q45MjwRnteYe2wNiFGMNkqiEjtAaTdoUF692fhTSBMRUv+F1TzUGwj+viL+H880+Dl6x5CvG24n+hTRiUTkoFRYXlcCd0XgW7oNgLCEB/eRvHzPa7wZw686ppTmCxHHWXzm0O0CgIFAhDMcl1FGz5lkjJmwYLQd/QUvnU0c+vu+9JFfswFVZywOfz1Evp9gGiZUV7v3f8SZCHPzJhOghIwtf7odgDx2gby0uusghE0NlxsW6H6Ylk5LIwBzADxq+CbzvrpryqwXwBGkHn1tdWjhrybpn2gZCLs52XCA==;
+Received: from [10.113.177.82] (port=57044 helo=send262.i.mail.ru)
+	by fallback23.i.mail.ru with esmtp (envelope-from <listdansp@mail.ru>)
+	id 1twQWC-00EpDt-Td; Sun, 23 Mar 2025 21:57:57 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
+	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
+	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
+	bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=; t=1742756276; x=1742846276; 
+	b=cBBAekPAQAygyrxNWyIC+Vccby4A/15WW4je8APE/nwsIS5IlYSTgkuTfk0UI7+DFEGvMYGUJ0Y
+	HJ5wqSHTJ8UTjJWZ09cBnpl6XAXcFLvKqLqr0z9aQ7OTFhHRhP19cJgZBUFPoikrFn8zWyLtP0xFj
+	2B9WdpV4W8e5X+N/fvjDHYylPO67I12/KbpzK91+KtyeAKON9XcNxhyLNA0AWQsLzMDr4VQhFyuon
+	zk/gxypkRlNT0U19mQbPnLlQT43+fPODAOPn/s6yCKhtcHOu8BffTJfsCiUQGpSq9XyxSjd3sdYm2
+	C85233SwOg8ulgR2UhAG5gcB2h5ezYpu1uMg==;
+Received: from [10.113.185.249] (port=54634 helo=send126.i.mail.ru)
+	by exim-fallback-6464776d59-k9sng with esmtp (envelope-from <listdansp@mail.ru>)
+	id 1twQW4-00000000QOj-1U6J; Sun, 23 Mar 2025 21:57:48 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
+	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
+	To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=; t=1742756268; x=1742846268; 
+	b=omDm0SJdFEEXj6Y+CXyKyf4Aw0MaLjZqLYmSpZiv4rcws8DvrXvwlOLE5Z9pjlqCZf0AjqSAjAA
+	U+4oQ2rb510WN7ukZ95cdE/Z8JXNG7s+1fU8k107wLwMaD6vcy+nR/tsnbfMVM1C5ihH8TdSRiC4e
+	KGDqamL2pyXxUPtgLjD23iE1VEm6p6DhO7l1u+i5Tm1G1XIw6XFz6H6PkWQNaPJwgcMFs5GF9bUm8
+	E7BnzoDBu8fyS0xO8tQjNgYd09d7TwlkA8s5UcvHwQ+E9U6p0IjE14lnZFpQeY94zE+zFKEUW6ZEe
+	q8weodXJmsJm3VZmhALYaYPDAaWguWqzcvBg==;
+Received: by exim-smtp-75f69ddc6c-x6wgr with esmtpa (envelope-from <listdansp@mail.ru>)
+	id 1twQVu-00000000Hoy-466x; Sun, 23 Mar 2025 21:57:39 +0300
+From: Danila Chernetsov <listdansp@mail.ru>
+To: Helge Deller <deller@gmx.de>
+Cc: Danila Chernetsov <listdansp@mail.ru>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] video: fbdev: kyro: Add some geometry checks.
+Date: Sun, 23 Mar 2025 18:57:37 +0000
+Message-Id: <20250323185737.602339-1-listdansp@mail.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313135003.836600-12-rppt@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD92A53477891B58793825B79BECD38E02E42497B1FF40D587C182A05F538085040EE765B1EEA68409B3DE06ABAFEAF67058A6E3CF6E5E01F8BFAA9F3B359509F8249B610CA6D60D10F
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7A34C649281B21B01EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637AC83A81C8FD4AD23D82A6BABE6F325AC2E85FA5F3EDFCBAA7353EFBB553375664A2B0A4393176EAA77B2F40198CB27ACFB60C9A2166D956648CCE9848DA6250B8EEF46B7454FC60B9742502CCDD46D0D0CABCCA60F52D7EBF6B57BC7E64490618DEB871D839B73339E8FC8737B5C2249E232F00D8D26902CA471835C12D1D9774AD6D5ED66289B52BA9C0B312567BB23117882F446042972877693876707352033AC447995A7AD1828451B159A507268D2E47CDBA5A96583BA9C0B312567BB2376E601842F6C81A19E625A9149C048EEB28585415E75ADA9F41620B44FB51B7DD8FC6C240DEA76429C9F4D5AE37F343AA9539A8B242431040A6AB1C7CE11FEE362B3BD3CC35DA5886136E347CC761E07C4224003CC836476E2F48590F00D11D6E2021AF6380DFAD1A18204E546F3947CB11811A4A51E3B096D1867E19FE1407959CC434672EE6371089D37D7C0E48F6C8AA50765F790063717E6A56809D3D6D1EFF80C71ABB335746BA297DBC24807EABDAD6C7F3747799A
+X-C1DE0DAB: 0D63561A33F958A587F46D27172A86695002B1117B3ED696844EB587DD887C694A0A47EBA01A636A823CB91A9FED034534781492E4B8EEAD003C2D46C52F18F2C79554A2A72441328621D336A7BC284946AD531847A6065AED8438A78DFE0A9EBDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFD2EF63304466465627E35D2A99788FAFFA12A352F931B06FE8DB7F381BFF43A9486D6DC23143AA0ED556C2DAAA19247F5EB0CB9BADE52277B6F8643E9C2F164303EDA1124073BDCA77C8E16086367389913E6812662D5F2AF72BBD4AC8FF0C4E5649C4772AD793FE964550E41902C4E4
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXMZebaIdHP2ghjoIc/363UZI6Kf1ptIMVYrk7BQKFwEtzKseUyeDnhbAJ4K9bnQ3Bg==
+X-Mailru-Sender: F244DC1430FACE5461D0E33575193BA22C7BE48A118D0749B951B70A5BD4BD8E0259DC99F647BA51DE369B216F14D11CC53BD13D3F6EEB2F3DDE9B364B0DF289C95E31D8FCF52BE1594FB4C9F0DBF4120D4ABDE8C577C2ED
+X-Mras: Ok
+X-Mailru-Src: fallback
+X-7564579A: B8F34718100C35BD
+X-77F55803: 6242723A09DB00B4C75C13076030B6608AF98B5E2C9340ABBE3F2237FD3B192B049FFFDB7839CE9E8EB000FA6B60A7A9F84AF7FD74D637056122DCE773384725D6A2981A42E890C504465C7D8E5080F1
+X-7FA49CB5: 0D63561A33F958A5D0F3E1543A8E0B075002B1117B3ED696717A7032D552910775CAC6BD4D76D0B202ED4CEA229C1FA827C277FBC8AE2E8B54F520D093A0DF28
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZwShGFTa9ahxLo40IvX34dQ==
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B4C75C13076030B6608AF98B5E2C9340AB21EEB097175FBED5049FFFDB7839CE9E8EB000FA6B60A7A91BAD004C7C054933AF2A59B70FE12558B3E78FEF2776E810
+X-7FA49CB5: 0D63561A33F958A5F476775C5CA609668EFB79B1D6074E63BB372755940BCE1ECACD7DF95DA8FC8BD5E8D9A59859A8B6A096F61ED9298604
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZwShGFTa9ahw4BIdV5NVlDw==
+X-Mailru-MI: 20000000000000800
+X-Mras: Ok
 
-Hi Mike,
+The check protects against division by 0, integer wraparound,
+and overflow Start/End window settings.
 
-On Thu, Mar 13, 2025 at 03:50:01PM +0200, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> All architectures that support HIGHMEM have their code that frees high
-> memory pages to the buddy allocator while __free_memory_core() is limited
-> to freeing only low memory.
-> 
-> There is no actual reason for that. The memory map is completely ready
-> by the time memblock_free_all() is called and high pages can be released to
-> the buddy allocator along with low memory.
-> 
-> Remove low memory limit from __free_memory_core() and drop per-architecture
-> code that frees high memory pages.
-> 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>	# x86
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-...
-> diff --git a/arch/mips/mm/init.c b/arch/mips/mm/init.c
-> index ed9dde6a00f7..075177e817ac 100644
-> --- a/arch/mips/mm/init.c
-> +++ b/arch/mips/mm/init.c
-> @@ -425,25 +425,6 @@ void __init paging_init(void)
->  static struct kcore_list kcore_kseg0;
->  #endif
->  
-> -static inline void __init mem_init_free_highmem(void)
-> -{
-> -#ifdef CONFIG_HIGHMEM
-> -	unsigned long tmp;
-> -
-> -	if (cpu_has_dc_aliases)
-> -		return;
-> -
-> -	for (tmp = highstart_pfn; tmp < highend_pfn; tmp++) {
-> -		struct page *page = pfn_to_page(tmp);
-> -
-> -		if (!memblock_is_memory(PFN_PHYS(tmp)))
-> -			SetPageReserved(page);
-> -		else
-> -			free_highmem_page(page);
-> -	}
-> -#endif
-> -}
-> -
->  void __init mem_init(void)
->  {
->  	/*
-> @@ -454,7 +435,6 @@ void __init mem_init(void)
->  
->  	maar_init();
->  	setup_zero_pages();	/* Setup zeroed pages.  */
-> -	mem_init_free_highmem();
->  	memblock_free_all();
->  
->  #ifdef CONFIG_64BIT
-...
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index fdf20503850e..6fccd3b3248c 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3172,7 +3172,6 @@ extern void reserve_bootmem_region(phys_addr_t start,
->  
->  /* Free the reserved page into the buddy system, so it gets managed. */
->  void free_reserved_page(struct page *page);
-> -#define free_highmem_page(page) free_reserved_page(page)
->  
->  static inline void mark_page_reserved(struct page *page)
->  {
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 95af35fd1389..64ae678cd1d1 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -2164,8 +2164,7 @@ static unsigned long __init __free_memory_core(phys_addr_t start,
->  				 phys_addr_t end)
->  {
->  	unsigned long start_pfn = PFN_UP(start);
-> -	unsigned long end_pfn = min_t(unsigned long,
-> -				      PFN_DOWN(end), max_low_pfn);
-> +	unsigned long end_pfn = PFN_DOWN(end);
->  
->  	if (start_pfn >= end_pfn)
->  		return 0;
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-I bisected a crash that I see to this change as commit 6faea3422e3b
-("arch, mm: streamline HIGHMEM freeing") in -next.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Danila Chernetsov <listdansp@mail.ru>
+---
+ drivers/video/fbdev/kyro/fbdev.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-  $ cat arch/mips/configs/repro.config
-  CONFIG_RELOCATABLE=y
-  CONFIG_RELOCATION_TABLE_SIZE=0x00200000
-  CONFIG_RANDOMIZE_BASE=y
+diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
+index 08ee8baa79f8..1d5246313d9a 100644
+--- a/drivers/video/fbdev/kyro/fbdev.c
++++ b/drivers/video/fbdev/kyro/fbdev.c
+@@ -378,6 +378,13 @@ static int kyro_dev_overlay_viewport_set(u32 x, u32 y, u32 ulWidth, u32 ulHeight
+ 	    (x < 2 && ulWidth + 2 == 0))
+ 		return -EINVAL;
+ 
++	/* The check protects against division by 0, integer wraparound,
++	 * and overflow Start/End window settings.
++	 */
++	if (x + ulWidth - 1 <= x || y + ulHeight - 1 <= y ||
++	    x + ulWidth - 1 > 65535 || y + ulHeight - 1 > 65535)
++		return -EINVAL;
++
+ 	/* Stop Ramdac Output */
+ 	DisableRamdacOutput(deviceInfo.pSTGReg);
+ 
+-- 
+2.25.1
 
-  $ make -skj"$(nproc)" ARCH=mips CROSS_COMPILE=mips-linux- mrproper malta_defconfig repro.config vmlinux
-
-  $ qemu-system-mipsel \
-      -display none \
-      -nodefaults \
-      -cpu 24Kf \
-      -machine malta \
-      -kernel vmlinux \
-      -initrd rootfs.cpio \
-      -m 512m \
-      -serial mon:stdio
-  Linux version 6.14.0-rc6-00359-g6faea3422e3b (nathan@ax162) (mips-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP Fri Mar 21 08:12:02 MST 2025
-  earlycon: uart8250 at I/O port 0x3f8 (options '38400n8')
-  printk: legacy bootconsole [uart8250] enabled
-  Config serial console: console=ttyS0,38400n8r
-  CPU0 revision is: 00019300 (MIPS 24Kc)
-  FPU revision is: 00739300
-  MIPS: machine is mti,malta
-  Software DMA cache coherency enabled
-  Initial ramdisk at: 0x8fad0000 (5360128 bytes)
-  OF: reserved mem: Reserved memory: No reserved-memory node in the DT
-  Primary instruction cache 2kB, VIPT, 2-way, linesize 16 bytes.
-  Primary data cache 2kB, 2-way, VIPT, no aliases, linesize 16 bytes
-  Zone ranges:
-    DMA      [mem 0x0000000000000000-0x0000000000ffffff]
-    Normal   [mem 0x0000000001000000-0x000000001fffffff]
-  Movable zone start for each node
-  Early memory node ranges
-    node   0: [mem 0x0000000000000000-0x000000000fffffff]
-    node   0: [mem 0x0000000090000000-0x000000009fffffff]
-  Initmem setup node 0 [mem 0x0000000000000000-0x000000009fffffff]
-  On node 0, zone Normal: 16384 pages in unavailable ranges
-  random: crng init done
-  percpu: Embedded 3 pages/cpu s18832 r8192 d22128 u49152
-  Kernel command line: rd_start=0xffffffff8fad0000 rd_size=5360128  console=ttyS0,38400n8r
-  printk: log buffer data + meta data: 32768 + 102400 = 135168 bytes
-  Dentry cache hash table entries: 65536 (order: 4, 262144 bytes, linear)
-  Inode-cache hash table entries: 32768 (order: 3, 131072 bytes, linear)
-  Writing ErrCtl register=00000000
-  Readback ErrCtl register=00000000
-  Built 1 zonelists, mobility grouping on.  Total pages: 16384
-  mem auto-init: stack:all(zero), heap alloc:off, heap free:off
-  Unhandled kernel unaligned access[#1]:
-  CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.14.0-rc6-00359-g6faea3422e3b #1
-  Hardware name: mti,malta
-  $ 0   : 00000000 00000001 81cb0880 00129027
-  $ 4   : 00000001 0000000a 00000002 00129026
-  $ 8   : ffffdfff 80101e00 00000002 00000000
-  $12   : 81c9c224 81c63e68 00000002 00000000
-  $16   : 805b1e00 00025800 81cb0880 00000002
-  $20   : 00000000 81c63e64 0000000a 81f10000
-  $24   : 81c63e64 81c63e60
-  $28   : 81c60000 81c63de0 00000001 81cc9d20
-  Hi    : 00000000
-  Lo    : 00000000
-  epc   : 814a227c __free_pages_ok+0x144/0x3c0
-  ra    : 81cc9d20 memblock_free_all+0x1d4/0x27c
-  Status: 10000002        KERNEL EXL
-  Cause : 00800410 (ExcCode 04)
-  BadVA : 00129026
-  PrId  : 00019300 (MIPS 24Kc)
-  Modules linked in:
-  Process swapper (pid: 0, threadinfo=(ptrval), task=(ptrval), tls=00000000)
-  Stack : 81f10000 805a9e00 81c80000 00000000 00000002 814aa240 000003ff 00000400
-          00000000 81f10000 81c9c224 00003b1f 81c80000 81c63e60 81ca0000 81c63e64
-          81f10000 0000000a 0000001f 81cc9d20 81f10000 81cc96d8 00000000 81c80000
-          81c9c224 81c63e60 81c63e64 00000000 81f10000 00024000 00028000 00025c00
-          90000000 a0000000 00000002 00000017 00000000 00000000 81f10000 81f10000
-          ...
-  Call Trace:
-  [<814a227c>] __free_pages_ok+0x144/0x3c0
-  [<81cc9d20>] memblock_free_all+0x1d4/0x27c
-  [<81cc6764>] mm_core_init+0x100/0x138
-  [<81cb4ba4>] start_kernel+0x4a0/0x6e4
-
-  Code: 1080ffd5  02003825  2467ffff <8ce30000> 7c630500  1060ffd4  00000000  8ce30000  7c630180
-
-  ---[ end trace 0000000000000000 ]---
-  Kernel panic - not syncing: Attempted to kill the idle task!
-  ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
-
-At the immediate parent of that change, the boot completes fine.
-
-  Linux version 6.14.0-rc6-00358-ge120d1bc12da (nathan@ax162) (mips-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP Sun Mar 23 13:57:15 CDT 2025
-  earlycon: uart8250 at I/O port 0x3f8 (options '38400n8')
-  printk: legacy bootconsole [uart8250] enabled
-  Config serial console: console=ttyS0,38400n8r
-  CPU0 revision is: 00019300 (MIPS 24Kc)
-  FPU revision is: 00739300
-  MIPS: machine is mti,malta
-  Software DMA cache coherency enabled
-  Initial ramdisk at: 0x8fad0000 (5360128 bytes)
-  OF: reserved mem: Reserved memory: No reserved-memory node in the DT
-  Primary instruction cache 2kB, VIPT, 2-way, linesize 16 bytes.
-  Primary data cache 2kB, 2-way, VIPT, no aliases, linesize 16 bytes
-  Zone ranges:
-    DMA      [mem 0x0000000000000000-0x0000000000ffffff]
-    Normal   [mem 0x0000000001000000-0x000000001fffffff]
-  Movable zone start for each node
-  Early memory node ranges
-    node   0: [mem 0x0000000000000000-0x000000000fffffff]
-    node   0: [mem 0x0000000090000000-0x000000009fffffff]
-  Initmem setup node 0 [mem 0x0000000000000000-0x000000009fffffff]
-  On node 0, zone Normal: 16384 pages in unavailable ranges
-  random: crng init done
-  percpu: Embedded 3 pages/cpu s18832 r8192 d22128 u49152
-  Kernel command line: rd_start=0xffffffff8fad0000 rd_size=5360128  console=ttyS0,38400n8r
-  printk: log buffer data + meta data: 32768 + 102400 = 135168 bytes
-  Dentry cache hash table entries: 65536 (order: 4, 262144 bytes, linear)
-  Inode-cache hash table entries: 32768 (order: 3, 131072 bytes, linear)
-  Writing ErrCtl register=00000000
-  Readback ErrCtl register=00000000
-  Built 1 zonelists, mobility grouping on.  Total pages: 16384
-  mem auto-init: stack:all(zero), heap alloc:off, heap free:off
-  SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
-  rcu: Hierarchical RCU implementation.
-  rcu:    RCU event tracing is enabled.
-  rcu:    RCU restricting CPUs from NR_CPUS=8 to nr_cpu_ids=1.
-  rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
-  rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
-  NR_IRQS: 256
-  rcu: srcu_init: Setting srcu_struct sizes based on contention.
-  CPU frequency 320.00 MHz
-  clocksource: MIPS: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 11945390257 ns
-  sched_clock: 32 bits at 160MHz, resolution 6ns, wraps every 13421787132ns
-  Console: colour dummy device 80x25
-  Calibrating delay loop... 1895.62 BogoMIPS (lpj=9478144)
-  pid_max: default: 32768 minimum: 301
-  Mount-cache hash table entries: 4096 (order: 0, 16384 bytes, linear)
-  Mountpoint-cache hash table entries: 4096 (order: 0, 16384 bytes, linear)
-  rcu: Hierarchical SRCU implementation.
-  rcu:    Max phase no-delay instances is 1000.
-  smp: Bringing up secondary CPUs ...
-  smp: Brought up 1 node, 1 CPU
-  Memory: 241200K/262144K available (7844K kernel code, 330K rwdata, 1424K rodata, 2352K init, 224K bss, 19984K reserved, 0K cma-reserved)
-  devtmpfs: initialized
-  ...
-
-If there is any additional information I can provide or patches I can
-test, I am more than happy to do so.
-
-Cheers,
-Nathan
 
