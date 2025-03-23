@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-572734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57844A6CDE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:09:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCDAA6CDE2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBBC73AA9E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 05:08:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F2EC7A509C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 05:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5D2010E3;
-	Sun, 23 Mar 2025 05:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055A91EBFE2;
+	Sun, 23 Mar 2025 05:08:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D875136E3F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C21220102B
 	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 05:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742706535; cv=none; b=luqKcTYKYjuObxggHGzwdcM1KlNaVUPwTA7BZZSPUVaK0616In1n3mHHypw7RwiaX0a1MMF2JhT23ukqFiVqLPpkkKtCOw7f2fxG5jjU5WJFmTTpjAOZ5qAAqwc5kn5meBaYmZLj1OMzJ8crj0t56ofW1v4EmbYT7/SxJYRKIEc=
+	t=1742706535; cv=none; b=EbhN6qsiI0bMKQEPZKYQxpRiByH7UDgQRY6LGgGgKIRw9AancuYTzlSM5vfmTwFuO1EG1+lTcdcDLago5vXJmQUF6S17rQtkD1+4bCvwQw6MsKu5AbawamoryGdY6wOEdNeIEAcyoU3Rj3roNnd8HCPs3mM6RuWCqz1LI3fXWLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742706535; c=relaxed/simple;
-	bh=P50jUIRYNPDF1+7DYvV/qhb2YN3tv7N1DLLjMTixseI=;
+	bh=+s7BMcybeVwmnT3dHMb0ZKh1i0RPHR00Npbn+PrAVlM=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rnJLxZMHhol+TycV5MqNiRjQOVKh7BMgyTmJueMUPe2Tuy87HmiGTzRqS5vJpzhqwvFpQD6c28FpLVet8Ef2KJKTP+6OVLoDzfz2F5FveqWGAdVjnp8dr5prVqBlLm/h6qMGPQqymcPmmz2t0pto6DZRLpw7iNIe4KCmHMc5+qA=
+	 Content-Type; b=UTMJN2iN39OtYYQ6ooLQ/CG2wmSkfW7gEQh0q6k7B+EJ5nx9yBtXhvFfEhH/lleOW4wnoz0UCw/58vpQzGAaii6KNWzJ3WMt5ngtl0M3j1ISlwYveB5qi0sbz2zwpsJpBTK3I7XY6zQjPTAvRr2HmeWB8zN46GRdGRf98FDtToM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED812C4CEE2;
-	Sun, 23 Mar 2025 05:08:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3417EC4CEEF;
+	Sun, 23 Mar 2025 05:08:55 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1twDaX-00000001wzc-2RMf;
+	id 1twDaX-00000001x06-38qj;
 	Sun, 23 Mar 2025 01:09:33 -0400
-Message-ID: <20250323050933.430831510@goodmis.org>
+Message-ID: <20250323050933.602569205@goodmis.org>
 User-Agent: quilt/0.68
-Date: Sun, 23 Mar 2025 01:09:15 -0400
+Date: Sun, 23 Mar 2025 01:09:16 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 1/4] tracing: Fix a compilation error without CONFIG_MODULES
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [for-next][PATCH 2/4] tracing: Initialize scratch_size to zero to prevent UB
 References: <20250323050914.459621318@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,45 +52,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+From: Steven Rostedt <rostedt@goodmis.org>
 
-There are some code which depends on CONFIG_MODULES. #ifdef
-to enclose it.
+In allocate_trace_buffer() the following code:
 
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/174230515367.2909896.8132122175220657625.stgit@mhiramat.tok.corp.google.com
-Fixes: dca91c1c5468 ("tracing: Have persistent trace instances save module addresses")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+  buf->buffer = ring_buffer_alloc_range(size, rb_flags, 0,
+				      tr->range_addr_start,
+				      tr->range_addr_size,
+				      struct_size(tscratch, entries, 128));
+
+  tscratch = ring_buffer_meta_scratch(buf->buffer, &scratch_size);
+  setup_trace_scratch(tr, tscratch, scratch_size);
+
+Has undefined behavior if ring_buffer_alloc_range() fails because
+"scratch_size" is not initialize. If the allocation fails, then
+buf->buffer will be NULL. The ring_buffer_meta_scratch() will return
+NULL immediately if it is passed a NULL buffer and it will not update
+scratch_size. Then setup_trace_scratch() will return immediately if
+tscratch is NULL.
+
+Although there's no real issue here, but it is considered undefined
+behavior to pass an uninitialized variable to a function as input, and
+UBSan may complain about it.
+
+Just initialize scratch_size to zero to make the code defined behavior and
+a little more robust.
+
+Link: https://lore.kernel.org/all/44c5deaa-b094-4852-90f9-52f3fb10e67a@stanley.mountain/
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c3c79908766e..68abea81e51a 100644
+index 68abea81e51a..be97465485b3 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -6001,6 +6001,7 @@ struct trace_scratch {
- 
- static DEFINE_MUTEX(scratch_mutex);
- 
-+#ifdef CONFIG_MODULES
- static int save_mod(struct module *mod, void *data)
+@@ -9394,7 +9394,7 @@ allocate_trace_buffer(struct trace_array *tr, struct array_buffer *buf, int size
  {
- 	struct trace_array *tr = data;
-@@ -6025,6 +6026,12 @@ static int save_mod(struct module *mod, void *data)
+ 	enum ring_buffer_flags rb_flags;
+ 	struct trace_scratch *tscratch;
+-	unsigned int scratch_size;
++	unsigned int scratch_size = 0;
  
- 	return 0;
- }
-+#else
-+static int save_mod(struct module *mod, void *data)
-+{
-+	return 0;
-+}
-+#endif
+ 	rb_flags = tr->trace_flags & TRACE_ITER_OVERWRITE ? RB_FL_OVERWRITE : 0;
  
- static void update_last_data(struct trace_array *tr)
- {
 -- 
 2.47.2
 
