@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-572711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7803AA6CDA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:21:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A1CA6CDAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 03:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA6C189E929
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7E24174BB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 02:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63E200132;
-	Sun, 23 Mar 2025 02:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919871FF1B5;
+	Sun, 23 Mar 2025 02:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUmsIPCx"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ztdn9Jrf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84331FFC62;
-	Sun, 23 Mar 2025 02:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9C82E337D
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742696489; cv=none; b=h8WLoonUbYudPdhPjt/0H13zAU9vkz6qjgPhHtQ4VQ0UycjoS9BOMwfNLd3C0TnJKUCV5leh3xyBFZ2JOgyX00sa4ydWLD4863n8B3KKCW7suumD7yeiiOSzs915MPxpxP8druejXBwQHf5foAvpTvSSBcf2pc21YR9ZtsTIO98=
+	t=1742696557; cv=none; b=IfQ/Za1u6zn/YR7A/NkGhc2nvmNDDubiYhJNeBiXWMJQv42QE0fVlD2saq66R/oW8DRfe5s2aauNpbT1D/8zSNC65fySqGxecUkl/rgnTnStgxi6WtwHHD5ttr+XSNjmv9GUrHIVzG1oiuRXbe+YzCbq6vr9bcJCN9u8hbmCHnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742696489; c=relaxed/simple;
-	bh=fQ5Z3NSNCm3aGSYH+FftqQueFBJPG0SOnK6uQ2AsbYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l59eZcaEX4KfDG+pgVYRendrcrh9r50XHkSI6K+JEDLWlz5yJuz65uPbFLoSZLrOhqc6G7z+2yCDhKMNNSKCHy7ga3g7OVtIXzn3WppdGgm23jrhjPB15UQZY5SmlMAthriZpLaZD90NotciUJzKm/uY1i3HzI5EpuMkokQoW40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUmsIPCx; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e86b92d3b0so26890776d6.2;
-        Sat, 22 Mar 2025 19:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742696487; x=1743301287; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1dgETDWRkmBFgVmFnp9kqvNBTqgAU/LjYpNxSto7Q5Q=;
-        b=JUmsIPCx9kXQL0XAvqizJe59DiOuuHNRxbDndT7Mmbt5rgeiJaaNiptFYoxQyDHsQ+
-         zbVZzWy/pQB/qxKwSJps6qK4ghszaBk0AquN6Tuu+lhsPut56slQjyvYGG7KJX3jIrgB
-         enYSjlOqC41HvbdsdfWjxH0wiY9rns8Hv3geT9k+kpEaKP/Icc8XhTOuGIfTnS/vyRpC
-         SZo6mBh4RXku3la32HGmReCAOgfKi33+dOE7520qPeoROQQbYEE0TNS6WShgofX2SXnE
-         93A1thnvoy2Y+eU2KuRId771L5RCeumkop2TKigJ/F7bnDIKlNRrrHAL1ZsjM8V/MW4L
-         IKog==
+	s=arc-20240116; t=1742696557; c=relaxed/simple;
+	bh=CFBGyxxcznFYowScLUCDgamcTByTpytIhWeVr10ZSeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+XFgIapICj2oV3r19wG18n80MMfvQwRAQRYpWPQJ9+EHeOn2Ef0nYWfDl7pyAd6Hr2oFGQFwlUTkfCSci4rUqDxY6h3UhBHwfxkp++jvrpg7RrVJC7vtOuMcr9AxX9HoiX9EWNBJJIsHt8j55I9BRPp9zuSBb4oWAePd/f7uiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ztdn9Jrf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52N2CcM7016972
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:22:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=81suZB/MZ5E5A4/J04a0w+BM
+	YOEb5yY768zu5SV2FoY=; b=Ztdn9Jrf597JIG2qCkBG0lfqSgPpg55dD/uNA2sQ
+	xe5cx/hTB5H4wWLnsDZZrsniXKQJfZR7IA8ORVF91eh7CQm8F+/AZRxGn+RpAyR3
+	RYF7mtpbMo/JC0eLxXQrATum2gisqr7/UaBOUm8apcqKLwX61xtZY8sbEJITXJXG
+	zR/ZyVObp7KlUSUUyWWkbK1uTBU/79MQqbP8r2CV3XBKZVf5pUWC+G/f9ow7hKXE
+	GRulKlFXipeA4lgdB8eKuDOdTliQGJbmZv9lKfjrJG/PmbhZJbo32+EE/oKxImN9
+	jD3G1Tf3QrMgipOU4Lzf6qrDskVJOdra2gH0Ks/HAXCYKQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hm5ushdt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:22:34 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7bb849aa5fbso860354385a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Mar 2025 19:22:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742696487; x=1743301287;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1dgETDWRkmBFgVmFnp9kqvNBTqgAU/LjYpNxSto7Q5Q=;
-        b=FAiPNT2IURvKDADLlbivq8SoL3MUtZsBHZGDDlp+ozBWJSztNSC94iqRN37PGanr98
-         xPWbf6ZtkjJZMejwcj/JdnequmQoT7F9rCYwPDe4S2NOVUqAUZ02zTYKmL67CUT+S7p1
-         O3V3M6bZvlohrdikMbU+sYI46MN51iq1UntKMxojQdlFzlJzvGgZj/z1RJ11PB4XS5Dx
-         KouHCZNTtVpzbatjHa42CAw/MdoGq2yH2al5/jeRQLwGqVhMPvTxqNFFkmHsf9cjTkSA
-         aN5PdpebZTWaccG3hbRDrp0TEsFkwLEbH5JPFysTqJN4Sy5vuqjkBIADZwCpH3wmFTVH
-         PCpg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5vCvyEoqwOY5Xxg1X8TcnC+NkDtoQd15b7eoMoVNIU16ycT+kXnQkcZFt4RJSw3LD1PL5@vger.kernel.org, AJvYcCX29QHyowrRJEtzY5zLSCPr6RJzFwIHawJEosvigQNbJ0etAdaL6oZYkkSjUuPzJflPTCOASZ+ofa9dvsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy954KED/+4swrtQ58wM3xHq1MASnSLMojNFQofJcnIdSn6/06f
-	Koe9RdbubuJL4pRuBTvkog1SBVQSs7zYB1KGrkIgH2+Id6bMJ+7G
-X-Gm-Gg: ASbGnct6iy+dbf3HxrybMp2m1ncVDLZP79di+bFf3+Gay4aTDzeLLuNm3heV0kj+498
-	7HuyZZowQNTfdsOan3uf7xc2U0CMMwJ120IKPhsp14inVnbjXgW0aO8jlRP79wgHbjOktZ7nH6D
-	RhlUwtqdDw9mjlOM6BZdQDj2lYpjc/ai2MoSLXtXut4Til6LZ8wScq6jqDI61RUDTBQbLyfYa03
-	uElluRxSflcSttcqAHGm4br3Pk5GuZu22Kn7dmbZtRPmD3h/gvnV+IPKycf3+31eZBY6wo1jwbD
-	wJ++Uj6gz1XB7xXz3zI1piExH5TRQ/dGQaBvoitojl6PsylsOD1dcHoR4QAZ1nBhtmKpVxipx1v
-	CjwZaxuox3tDCEFUmd8nugk3fZhBPG20ACro=
-X-Google-Smtp-Source: AGHT+IEY/nOy/4Cmx8ig9IgFuv7woYs7hKFIIKiZGzj4NIrbYRzarAmgeaP0LCXRXV0HznrSr/z2sw==
-X-Received: by 2002:a05:6214:194b:b0:6e6:6103:f708 with SMTP id 6a1803df08f44-6eb3f34b97cmr130574206d6.38.1742696486435;
-        Sat, 22 Mar 2025 19:21:26 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef0f405sm27756146d6.20.2025.03.22.19.21.25
+        d=1e100.net; s=20230601; t=1742696552; x=1743301352;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81suZB/MZ5E5A4/J04a0w+BMYOEb5yY768zu5SV2FoY=;
+        b=VjAse0PTsRq1xggLM46cXd45Nnz1wijgO8mLCVCOJjcn0by1TGK6GbaTxVCkwFy4Ol
+         B4zNx28qDzBrvdR2waIxVgA9ktsFp2mkYa6f8r7r7RXZHH/Cw+/M6NEm8Kf7oZPkQDAY
+         OE4K+OTq50dcdi9y2Sj6zbTnsx75m3oRJsLbII2WoQb2rboR8u+iGKMtkZUnZ+XwLlHw
+         rGsNk7Dl4ImEJ27ciu5ihJiNkOGgKf338Wp1/l+VWmyzMFmkJOIWjLAzNk1JkzVCG3rf
+         2EzOCBZaes4sd4TILaQ2744+zZK672pHA+vGTkuhpt8cmvG5HN/21uZ8XjMWc+PHaNwm
+         FrzA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaAfzZN6kNQggz6ypbjiD5Wng4bdm7NucxoQGNadmOE2KdYsDAZ6mN3eM5RxK5iFkr33ZXnL+ypnlsLcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxVk4B2BCVf75mCvphjvGd360sFvdB0NcaFPxFtaP1yADgLbif
+	tGbxmdslVpBcCx2u+NI4Yaw02A7QuJYHVbr9kzYnSkA5sroMMCR94AHqSBUfADruB1/JaCNsFxR
+	wM+qYtorNpy39mMoqnBiL93TGyS1qF9UDN6ud+xU+lPaJLDXtfN+YQl3ahBkPJDuNYXl8W9Q=
+X-Gm-Gg: ASbGncuMQO0b/DZxkTLpWvCD7P2Az8nUVv7LAzPqIvEvmEk85Cdfa4eTyJajHnCewe5
+	0SQ7lAz9pHGtbt8OlpLn1/Y8S5ZsGRI8vDhnklHNvpw7nZi8VJLLLil/c6m2Q59wVw1OYEXbCYB
+	iP5mGoEX/RyHSfY+2AknFOnm4708geGUPwZHh9C7BjiysC632ImaxpSXzbiPn6H57xlreKIrOR7
+	1voexkg84I7lfgKlrUZ68KsNGJGdoQBr6kMQudrExGa0qqf1yNVsEWa+uZQNNV3YcDrFX6HOxba
+	b8hTzBR8DrI+3yUcBiuWXCtUALbtqFNdkHq7n+tHtFMhETk9oRcwX2HJ0jN7Dw2nYGaleGDkplo
+	kTmw=
+X-Received: by 2002:a05:620a:1a20:b0:7c5:5394:7e9c with SMTP id af79cd13be357-7c5ba1820b3mr1111230585a.32.1742696551803;
+        Sat, 22 Mar 2025 19:22:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAE6mCp9eWYSK2vsvmZ4Zf4j6kewjGyIH8Ci06kp4FzGYh2gdWAXSHVQdjhR2Np13RuI0f4A==
+X-Received: by 2002:a05:620a:1a20:b0:7c5:5394:7e9c with SMTP id af79cd13be357-7c5ba1820b3mr1111227985a.32.1742696551307;
+        Sat, 22 Mar 2025 19:22:31 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad63eedf2sm646162e87.0.2025.03.22.19.22.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Mar 2025 19:21:25 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id A02CD1200043;
-	Sat, 22 Mar 2025 22:21:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sat, 22 Mar 2025 22:21:25 -0400
-X-ME-Sender: <xms:JXDfZzjbFYj0HtszGcL9KVeAgIfoyr0Mi_yZwxVh9ufqqpohNo9B1A>
-    <xme:JXDfZwDD2INI6EMUabBofJ0ZlP1PLzwjQGpwT1I3BuWI1JBPeFBt9BL34XHm3dqGv
-    Y9roW9lChrl-nni-w>
-X-ME-Received: <xmr:JXDfZzFf3Z0UCqZSUxRVtsu9TmEV0iGFpX7yVoroq921ELAfU_TD7x6g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheehieehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkgggtugesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeeltdefueegfefhuedtheefvdelhfeftedvhfdt
-    veelueegtdejjedvieettedugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
-    thhopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehfrhgvuggvrh
-    hitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvvghrrghjrdhuphgrughhhigr
-    hieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhovghlsehjohgvlhhfvghrnhgrnh
-    guvghsrdhorhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepuhhrvgiikhhisehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgt
-    uhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:JXDfZwT61p6r8pRS_eZYH9aR01mgKYck12MuiQ6KVnJnINVrs3gT5g>
-    <xmx:JXDfZwzQG_Z6DCtCBr_IAzxpJm3vIMPcoDzf2rr3v36Q-Bt8F4_qQw>
-    <xmx:JXDfZ275uHoLANQD6h8Y9gVgaN32Kk6VRRFjXpmEtx1mJmnbXy0gGw>
-    <xmx:JXDfZ1yZ4DgnvRY_05Amrs15KafMJAW2RHPkMwol02dexU4iuUqYYA>
-    <xmx:JXDfZwjB6jKNlSZXmWHYzjcu8ZYqU2-9VyqwgTQz6bxjsnY7xTEnVdTh>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 22 Mar 2025 22:21:25 -0400 (EDT)
-Date: Sat, 22 Mar 2025 19:21:24 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: [GIT PULL] RCU changes for v6.15
-Message-ID: <Z99wJFZC1XlvA4vC@Mac.home>
+        Sat, 22 Mar 2025 19:22:30 -0700 (PDT)
+Date: Sun, 23 Mar 2025 04:22:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andy Yan <andyshrk@163.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Herve Codina <herve.codina@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Simona Vetter <simona.vetter@ffwll.ch>, lumag@kernel.org
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <vw2ncdomx3rwltb2xlo6nf3rapgcdtcjcodofgmecrzzabf7ji@pybsfv27jkq2>
+References: <20250313-dazzling-deer-of-ampleness-21db67@houat>
+ <6ae1c567.8c6.195922195d6.Coremail.andyshrk@163.com>
+ <k2md4q2tgwsdynaeljieqlzjdds677wqqduimfyrgmvyfi732a@vh3dbg7kdaop>
+ <20250314-courageous-bison-of-prestige-8b884b@houat>
+ <lf4wu5v3wym3foqgimuulyzz2dmd2jezkj3otn7xm7xp77nast@azqmajrn45lw>
+ <20250314-hissing-spirited-armadillo-dc9d3a@houat>
+ <2tfryn5plcqysdobavbjljnd3rq5ar2n2qmeyyryk6wqbx2zpk@qvqpkxe5ffjl>
+ <20250318-active-giraffe-of-memory-e0c66d@houat>
+ <lsbzit4765y6jrw7jmbpfb6rixidenpndjwgw2yx57rz2espux@hbfco2ht6vwi>
+ <20250321-majestic-cicada-of-argument-15b2d0@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -127,207 +118,273 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250321-majestic-cicada-of-argument-15b2d0@houat>
+X-Proofpoint-ORIG-GUID: hiBOMIJ8VhFCFLrS-zeL9wZaiow-HRXW
+X-Proofpoint-GUID: hiBOMIJ8VhFCFLrS-zeL9wZaiow-HRXW
+X-Authority-Analysis: v=2.4 cv=AJKH5mlP c=1 sm=1 tr=0 ts=67df706a cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Byx-y9mGAAAA:8 a=KKAkSRfTAAAA:8 a=hEbZjNMtiwb5NNjIx78A:9
+ a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-23_01,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503230017
 
-Hi Linus,
+On Fri, Mar 21, 2025 at 10:46:56AM +0100, Maxime Ripard wrote:
+> On Tue, Mar 18, 2025 at 09:00:29PM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Mar 18, 2025 at 04:51:19PM +0100, Maxime Ripard wrote:
+> > > On Fri, Mar 14, 2025 at 08:28:22PM +0200, Dmitry Baryshkov wrote:
+> > > > On Fri, Mar 14, 2025 at 06:40:24PM +0100, Maxime Ripard wrote:
+> > > > > On Fri, Mar 14, 2025 at 09:59:36AM +0200, Dmitry Baryshkov wrote:
+> > > > > > On Fri, Mar 14, 2025 at 08:45:17AM +0100, Maxime Ripard wrote:
+> > > > > > > On Fri, Mar 14, 2025 at 07:52:35AM +0200, Dmitry Baryshkov wrote:
+> > > > > > > > On Fri, Mar 14, 2025 at 08:50:29AM +0800, Andy Yan wrote:
+> > > > > > > > > At 2025-03-13 19:55:33, "Maxime Ripard" <mripard@kernel.org> wrote:
+> > > > > > > > > >Hi,
+> > > > > > > > > >
+> > > > > > > > > >On Thu, Mar 13, 2025 at 04:09:54PM +0800, Andy Yan wrote:
+> > > > > > > > > >> At 2025-03-05 19:55:19, "Andy Yan" <andyshrk@163.com> wrote:
+> > > > > > > > > >> >At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
+> > > > > > > > > >> >>With the bridges switching over to drm_bridge_connector, the direct
+> > > > > > > > > >> >>association between a bridge driver and its connector was lost.
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>This is mitigated for atomic bridge drivers by the fact you can access
+> > > > > > > > > >> >>the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> > > > > > > > > >> >>drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>This was also made easier by providing drm_atomic_state directly to all
+> > > > > > > > > >> >>atomic hooks bridges can implement.
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>However, bridge drivers don't have a way to access drm_atomic_state
+> > > > > > > > > >> >>outside of the modeset path, like from the hotplug interrupt path or any
+> > > > > > > > > >> >>interrupt handler.
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>Let's introduce a function to retrieve the connector currently assigned
+> > > > > > > > > >> >>to an encoder, without using drm_atomic_state, to make these drivers'
+> > > > > > > > > >> >>life easier.
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > > > > >> >>Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> > > > > > > > > >> >>Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > > > > > > > > >> >>---
+> > > > > > > > > >> >> drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> > > > > > > > > >> >> include/drm/drm_atomic.h     |  3 +++
+> > > > > > > > > >> >> 2 files changed, 48 insertions(+)
+> > > > > > > > > >> >>
+> > > > > > > > > >> >>diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > > > > > > > > >> >>index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41d48eb4da4bccf170ee236 100644
+> > > > > > > > > >> >>--- a/drivers/gpu/drm/drm_atomic.c
+> > > > > > > > > >> >>+++ b/drivers/gpu/drm/drm_atomic.c
+> > > > > > > > > >> >>@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(const struct drm_atomic_state *state,
+> > > > > > > > > >> >> 
+> > > > > > > > > >> >> 	return NULL;
+> > > > > > > > > >> >> }
+> > > > > > > > > >> >> EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
+> > > > > > > > > >> >> 
+> > > > > > > > > >> >>+/**
+> > > > > > > > > >> >>+ * drm_atomic_get_connector_for_encoder - Get connector currently assigned to an encoder
+> > > > > > > > > >> >>+ * @encoder: The encoder to find the connector of
+> > > > > > > > > >> >>+ * @ctx: Modeset locking context
+> > > > > > > > > >> >>+ *
+> > > > > > > > > >> >>+ * This function finds and returns the connector currently assigned to
+> > > > > > > > > >> >>+ * an @encoder.
+> > > > > > > > > >> >>+ *
+> > > > > > > > > >> >>+ * Returns:
+> > > > > > > > > >> >>+ * The connector connected to @encoder, or an error pointer otherwise.
+> > > > > > > > > >> >>+ * When the error is EDEADLK, a deadlock has been detected and the
+> > > > > > > > > >> >>+ * sequence must be restarted.
+> > > > > > > > > >> >>+ */
+> > > > > > > > > >> >>+struct drm_connector *
+> > > > > > > > > >> >>+drm_atomic_get_connector_for_encoder(const struct drm_encoder *encoder,
+> > > > > > > > > >> >>+				     struct drm_modeset_acquire_ctx *ctx)
+> > > > > > > > > >> >>+{
+> > > > > > > > > >> >>+	struct drm_connector_list_iter conn_iter;
+> > > > > > > > > >> >>+	struct drm_connector *out_connector = ERR_PTR(-EINVAL);
+> > > > > > > > > >> >>+	struct drm_connector *connector;
+> > > > > > > > > >> >>+	struct drm_device *dev = encoder->dev;
+> > > > > > > > > >> >>+	int ret;
+> > > > > > > > > >> >>+
+> > > > > > > > > >> >>+	ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
+> > > > > > > > > >> >>+	if (ret)
+> > > > > > > > > >> >>+		return ERR_PTR(ret);
+> > > > > > > > > >> >
+> > > > > > > > > >> >It seems that this will cause a deadlock when called from a  hotplug handling path,
+> > > > > > > > > >> >I have a WIP DP diver[0],  which suggested by Dmitry to use this API from a 
+> > > > > > > > > >> >&drm_bridge_funcs.detect callback to get the connector,  as detect is called by drm_helper_probe_detect,
+> > > > > > > > > >> >which will hold connection_mutex first, so the deaklock happens:
+> > > > > > > > > >> >
+> > > > > > > > > >> >
+> > > > > > > > > >> >drm_helper_probe_detect(struct drm_connector *connector,
+> > > > > > > > > >> >                        struct drm_modeset_acquire_ctx *ctx,
+> > > > > > > > > >> >                        bool force)
+> > > > > > > > > >> >{
+> > > > > > > > > >> >        const struct drm_connector_helper_funcs *funcs = connector->helper_private;
+> > > > > > > > > >> >        struct drm_device *dev = connector->dev;
+> > > > > > > > > >> >        int ret;
+> > > > > > > > > >> >
+> > > > > > > > > >> >        if (!ctx)
+> > > > > > > > > >> >                return drm_helper_probe_detect_ctx(connector, force);
+> > > > > > > > > >> >
+> > > > > > > > > >> >        ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
+> > > > > > > > > >> >        if (ret)
+> > > > > > > > > >> >                return ret;
+> > > > > > > > > >> >
+> > > > > > > > > >> >        if (funcs->detect_ctx)
+> > > > > > > > > >> >                ret = funcs->detect_ctx(connector, ctx, force);
+> > > > > > > > > >> >        else if (connector->funcs->detect)
+> > > > > > > > > >> >                ret = connector->funcs->detect(connector, force);
+> > > > > > > > > >> >        else
+> > > > > > > > > >> >                ret = connector_status_connected;
+> > > > > > > > > >> >
+> > > > > > > > > >> >        if (ret != connector->status)
+> > > > > > > > > >> >                connector->epoch_counter += 1;
+> > > > > > > > > >> >
+> > > > > > > > > >> >So I wonder can we let drm_bridge_funcs.detect pass a connector for this case ?
+> > > > > > > > > >> >
+> > > > > > > > > >> >
+> > > > > > > > > >> >
+> > > > > > > > > >> >[0]https://lore.kernel.org/linux-rockchip/047EECFC-7E55-44EC-896F-13FE04333E4D@gmail.com/T/#m25bc53b79f5cc7bddfcb7aae5656f68df396f094
+> > > > > > > > > >> >>+
+> > > > > > > > > >> >>+	drm_connector_list_iter_begin(dev, &conn_iter);
+> > > > > > > > > >> >>+	drm_for_each_connector_iter(connector, &conn_iter) {
+> > > > > > > > > >> >>+		if (!connector->state)
+> > > > > > > > > >> >>+			continue;
+> > > > > > > > > >> >>+
+> > > > > > > > > >> >>+		if (encoder == connector->state->best_encoder) {
+> > > > > > > > > >> >>+			out_connector = connector;
+> > > > > > > > > >> 
+> > > > > > > > > >> 
+> > > > > > > > > >> When try to use this patch in my bridge driver,  I found that the connector->state->best_encoder 
+> > > > > > > > > >>  maybe NULL when   drm_bridge_funcs.detect or drm_bridge_funcs.detect_ctx is  called:
+> > > > > > > > > >> 
+> > > > > > > > > >> [   52.713030] Invalid return value -22 for connector detection
+> > > > > > > > > >> [   52.713539] WARNING: CPU: 7 PID: 288 at drivers/gpu/drm/drm_probe_helper.c:602 drm_helper_probe_single_connector_modes+0x5e0/
+> > > > > > > > > >> 0x63c
+> > > > > > > > > >> [   52.714568] Modules linked in:
+> > > > > > > > > >> 
+> > > > > > > > > >> [   52.724546] Call trace:
+> > > > > > > > > >> [   52.724762]  drm_helper_probe_single_connector_modes+0x5e0/0x63c (P)
+> > > > > > > > > >> [   52.725319]  drm_mode_getconnector+0x2a4/0x488
+> > > > > > > > > >> [   52.725711]  drm_ioctl_kernel+0xb4/0x11c
+> > > > > > > > > >> [   52.726057]  drm_ioctl+0x22c/0x544
+> > > > > > > > > >> [   52.726358]  __arm64_sys_ioctl+0xac/0xe0
+> > > > > > > > > >> [   52.726706]  invoke_syscall+0x44/0x100
+> > > > > > > > > >> [   52.727039]  el0_svc_common.constprop.0+0x3c/0xd4
+> > > > > > > > > >> 
+> > > > > > > > > >> This is because  best_encoder is set by set_best_encoder, which is called from
+> > > > > > > > > >> drm_atomic_helper_check_modeset. When we call drm_mode_getconnector 
+> > > > > > > > > >> for the first time, the functions mentioned above have not been called yet,
+> > > > > > > > > >> then we can't match the encoder from connector->state->best_encoder for this case.
+> > > > > > > > > >
+> > > > > > > > > >As far as I'm concerned, it's by design. Encoders and connectors have
+> > > > > > > > > >1:N relationship, and only once a connector has been enabled it has an
+> > > > > > > > > >encoder.
+> > > > > > > > > >
+> > > > > > > > > >If the connector is disabled, there's no associated encoder.
+> > > > > > > > > 
+> > > > > > > > > Does this prove that this API is not suitable for my application scenario: 
+> > > > > > > > > Get the connector in the bridge's .detect callback, so this means that I may
+> > > > > > > > > still need to modify the bridge's connector callback so that it can pass the connector ?
+> > > > > > > > 
+> > > > > > > > I'd say, yes, please.
+> > > > > > > 
+> > > > > > > And I'd say no :)
+> > > > > > 
+> > > > > > Fair enough :-)
+> > > > > > 
+> > > > > > > There's no reason to deviate from the API other entities have here. It's
+> > > > > > > just that the switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR hasn't been
+> > > > > > > completely thought through and it's one of the part where it shows.
+> > > > > > > 
+> > > > > > > We have two alternative solutions: Either the driver creates the
+> > > > > > > connector itself, since it doesn't seem to use any downstream bridge
+> > > > > > > anyway, or we need a new bridge helper to find the connector on a bridge
+> > > > > > > chain.
+> > > > > > > 
+> > > > > > > We have the iterator already, we just need a new accessor to retrieve
+> > > > > > > the (optional) connector of a bridge, and if there's none, go to the
+> > > > > > > next bridge and try again.
+> > > > > > 
+> > > > > > The problem is that there is no guarantee that the the created connector
+> > > > > > is created for or linked to any bridge. For example, for msm driver I'm
+> > > > > > waiting for several series to go in, but after that I plan to work on
+> > > > > > moving connector creation to the generic code within the msm driver.
+> > > > > > 
+> > > > > > In other words, with DRM_BRIDGE_ATTACH_NO_CONNECTOR in place it is
+> > > > > > perfectly legit not to have a bridge which has "connector of a bridge".
+> > > > > > It is possible to create drm_bridge_connector on the drm_encoder's side
+> > > > > > after the drm_bridge_attach() succeeds.
+> > > > > 
+> > > > > Sure, but then I'd expect detect and get_modes to only be called *after*
+> > > > > that connector has been created, right?
+> > > > 
+> > > > Yes. But you can not get the connector by following bridge chain. Well,
+> > > > unless you include encoder into the chain. If that's what you have had
+> > > > in mind, then please excuse me, I didn't understand that from the
+> > > > beginning.
+> > > 
+> > > You can't include the encoder either, because the encoder doesn't have a
+> > > connector assigned yet at that time.
+> > > 
+> > > However, you can:
+> > > 
+> > >   - Store the bridge attach flags in drm_bridge
+> > > 
+> > >   - Create a hook that returns the connector a bridge creates, depending
+> > >     on the attach flags.
+> > > 
+> > >   - Create a helper that iterates over the next bridges until the
+> > >     previous hook returns !NULL. If it doesn't find anything, return
+> > >     NULL.
+> > > 
+> > > AFAIK, it solves all the problems being discussed here, while dealing
+> > > with legacy and new-style bridge drivers.
+> > 
+> > I'm still fail to understand how does that solve the issue for new-style
+> > bridges. How do we find the created drm_bridge_connector for them?
+> 
+> Sigh, for some reason I was remembering that drm_bridge_connector was a
+> bridge itself, which it isn't. My bad. But I guess it still applies. If
+> we make drm_bridge_connector a bridge, then it works, doesn't it?
 
-When the merge window opens, please pull the RCU update:
+I'd rather not. This would complicate other bridges using
+drm_bridge_connector (e.g. ite-it6263, ti-sn65dsi86)
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+> > > > But frankly speaking, I think it might be easier to pass down the
+> > > > connector to the detect callback (as drm_connector_funcs.detect already
+> > > > gets the connecor) rather than making bridge drivers go through the
+> > > > chain to get the value that is already present in the caller function.
+> > > > 
+> > > > (For some other usecases I'd totally agree with you, especially if the
+> > > > connector isn't already available on the caller side).
+> > > 
+> > > Still, we've tried to converge to the same API for all entities, it
+> > > feels like a step backward to me.
+> > 
+> > I'd argue here a bit. The drm_connector interface has connector here.
+> > drm_bridge is an extension/subpart of the drm_connector, so it would be
+> > logical to extend that interface.
+> 
+> The drm_connector interface has the connector because it's a connector.
+> Just like CRTC atomic_check has a crtc, but you wouldn't pass the crtc
+> pointer to drm_bridge atomic_check.
+> 
+> I still think it goes against the trend and work we've been doing over
+> the years. And we should at least *try* something different instead of
+> just taking the easy way out. Or accepting to duplicate the helpers that
+> started the discussion, or to create a connector directyl instead of
+> using drm_bridge_connector for that driver.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+I think passing drm_connector and drm_bridge matches the pattern started
+by edid_read() and several hdmi_audio_*() callbacks. They are receiving
+both the bridge and the connector for exactly the same reason - the
+callbacks needs both _and_ the connector is well known in the calling
+code.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git tags/rcu-next-v6.15
-
-for you to fetch changes up to 467c890f2d1ad6de9fd1dbd196fdc8f3ee63190a:
-
-  Merge branches 'docs.2025.02.04a', 'lazypreempt.2025.03.04a', 'misc.2025.03.04a', 'srcu.2025.02.05a' and 'torture.2025.02.05a' (2025-03-04 18:47:32 -0800)
-
-
-There is a small conflict with slab tree:
-
-	https://lore.kernel.org/all/20250212150941.5e4fa1c9@canb.auug.org.au/
-
-and Stephen's resolution looks good to me. I also made an example of my own resolution
-at:
-
-	git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git merge/rcu-vs-slab.2025.03.21a
-
-Regards,
-Boqun
-
-----------------------------------------------------------------
-RCU pull request for v6.15
-
-This pull request contains the following branches:
-
-docs.2025.02.04a:
- - Add broken-timing possibility to stallwarn.rst.
- - Improve discussion of this_cpu_ptr(), add raw_cpu_ptr().
- - Document self-propagating callbacks.
- - Point call_srcu() to call_rcu() for detailed memory ordering.
- - Add CONFIG_RCU_LAZY delays to call_rcu() kernel-doc header.
- - Clarify RCU_LAZY and RCU_LAZY_DEFAULT_OFF help text.
- - Remove references to old grace-period-wait primitives.
-
-srcu.2025.02.05a:
- - Introduce srcu_read_{un,}lock_fast(), which is similar to
-   srcu_read_{un,}lock_lite(): avoid smp_mb()s in lock and unlock at the
-   cost of calling synchronize_rcu() in synchronize_srcu(). Moreover, by
-   returning the percpu offset of the counter at srcu_read_lock_fast()
-   time, srcu_read_unlock_fast() can save extra pointer dereferencing,
-   which makes it faster than srcu_read_{un,}lock_lite().
-   srcu_read_{un,}lock_fast() are intended to replace
-   rcu_read_{un,}lock_trace() if possible.
-
-torture.2025.02.05a:
- - Add get_torture_init_jiffies() to return the start time of the test.
- - Add a test_boost_holdoff module parameter to allow delaying boosting
-   tests when building rcutorture as built-in.
- - Add grace period sequence number logging at the beginning and end of
-   failure/close-call results.
- - Switch to hexadecimal for the expedited grace period sequence number
-   in the rcu_exp_grace_period trace point.
- - Make cur_ops->format_gp_seqs take buffer length.
- - Move RCU_TORTURE_TEST_{CHK_RDR_STATE,LOG_CPU} to bool.
- - Complain when invalid SRCU reader_flavor is specified.
- - Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing, which forces SRCU
-   uses atomics even when percpu ops are NMI safe, and use the Kconfig
-   for SRCU lockdep testing.
-
-misc.2025.03.04a:
- - Split rcu_report_exp_cpu_mult() mask parameter and use for tracing.
- - Remove READ_ONCE() for rdp->gpwrap access in __note_gp_changes().
- - Fix get_state_synchronize_rcu_full() GP-start detection.
- - Move RCU Tasks self-tests to core_initcall().
- - Print segment lengths in show_rcu_nocb_gp_state().
- - Make RCU watch ct_kernel_exit_state() warning.
- - Flush console log from kernel_power_off().
- - rcutorture: Allow a negative value for nfakewriters.
- - rcu: Update TREE05.boot to test normal synchronize_rcu().
- - rcu: Use _full() API to debug synchronize_rcu().
-
-lazypreempt.2025.03.04a: Make RCU handle PREEMPT_LAZY better:
- - Fix header guard for rcu_all_qs().
- - rcu: Rename PREEMPT_AUTO to PREEMPT_LAZY.
- - Update __cond_resched comment about RCU quiescent states.
- - Handle unstable rdp in rcu_read_unlock_strict().
- - Handle quiescent states for PREEMPT_RCU=n, PREEMPT_COUNT=y.
- - osnoise: Provide quiescent states.
- - Adjust rcutorture with possible PREEMPT_RCU=n && PREEMPT_COUNT=y
-   combination.
- - Limit PREEMPT_RCU configurations.
- - Make rcutorture senario TREE07 and senario TREE10 use PREEMPT_LAZY=y.
-
-----------------------------------------------------------------
-Ankur Arora (7):
-      rcu: fix header guard for rcu_all_qs()
-      rcu: rename PREEMPT_AUTO to PREEMPT_LAZY
-      sched: update __cond_resched comment about RCU quiescent states
-      rcu: handle unstable rdp in rcu_read_unlock_strict()
-      rcu: handle quiescent states for PREEMPT_RCU=n, PREEMPT_COUNT=y
-      osnoise: provide quiescent states
-      rcu: limit PREEMPT_RCU configurations
-
-Boqun Feng (2):
-      rcutorture: Update ->extendables check for lazy preemption
-      Merge branches 'docs.2025.02.04a', 'lazypreempt.2025.03.04a', 'misc.2025.03.04a', 'srcu.2025.02.05a' and 'torture.2025.02.05a'
-
-Paul E. McKenney (47):
-      doc: Add broken-timing possibility to stallwarn.rst
-      docs: Improve discussion of this_cpu_ptr(), add raw_cpu_ptr()
-      rcu: Document self-propagating callbacks
-      srcu: Point call_srcu() to call_rcu() for detailed memory ordering
-      rcu: Add CONFIG_RCU_LAZY delays to call_rcu() kernel-doc header
-      rcu: Clarify RCU_LAZY and RCU_LAZY_DEFAULT_OFF help text
-      rcu: Remove references to old grace-period-wait primitives
-      rcu: Split rcu_report_exp_cpu_mult() mask parameter and use for tracing
-      srcu: Make Tiny SRCU able to operate in preemptible kernels
-      srcu: Define SRCU_READ_FLAVOR_ALL in terms of symbols
-      srcu: Use ->srcu_gp_seq for rcutorture reader batch
-      srcu: Pull ->srcu_{un,}lock_count into a new srcu_ctr structure
-      srcu: Make SRCU readers use ->srcu_ctrs for counter selection
-      srcu: Make Tree SRCU updates independent of ->srcu_idx
-      srcu: Force synchronization for srcu_get_delay()
-      srcu: Rename srcu_check_read_flavor_lite() to srcu_check_read_flavor_force()
-      srcu: Add SRCU_READ_FLAVOR_SLOWGP to flag need for synchronize_rcu()
-      srcu: Pull pointer-to-integer conversion into __srcu_ptr_to_ctr()
-      srcu: Pull integer-to-pointer conversion into __srcu_ctr_to_ptr()
-      srcu: Move SRCU Tree/Tiny definitions from srcu.h
-      srcu: Add SRCU-fast readers
-      rcutorture: Add ability to test srcu_read_{,un}lock_fast()
-      refscale: Add srcu_read_lock_fast() support using "srcu-fast"
-      rcutorture:  Make scenario SRCU-P use srcu_read_lock_fast()
-      srcu: Fix srcu_read_unlock_{lite,nmisafe}() kernel-doc
-      srcu: Document that srcu_{read_lock,down_read}() can share srcu_struct
-      srcu: Add srcu_down_read_fast() and srcu_up_read_fast()
-      srcu: Make SRCU-fast also be NMI-safe
-      torture: Add get_torture_init_jiffies() for test-start time
-      rcutorture: Add a test_boost_holdoff module parameter
-      rcutorture: Include grace-period sequence numbers in failure/close-call
-      rcutorture: Expand failure/close-call grace-period output
-      rcu: Trace expedited grace-period numbers in hexadecimal
-      rcutorture: Add ftrace-compatible timestamp to GP# failure/close-call output
-      rcutorture: Make cur_ops->format_gp_seqs take buffer length
-      rcutorture: Move RCU_TORTURE_TEST_{CHK_RDR_STATE,LOG_CPU} to bool
-      rcutorture: Complain when invalid SRCU reader_flavor is specified
-      srcu: Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing
-      torture: Make SRCU lockdep testing use srcu_read_lock_nmisafe()
-      rcu: Fix get_state_synchronize_rcu_full() GP-start detection
-      rcu-tasks: Move RCU Tasks self-tests to core_initcall()
-      rcu/nocb: Print segment lengths in show_rcu_nocb_gp_state()
-      context_tracking: Make RCU watch ct_kernel_exit_state() warning
-      Flush console log from kernel_power_off()
-      rcutorture: Update rcutorture_one_extend_check() for lazy preemption
-      rcutorture: Make scenario TREE10 build CONFIG_PREEMPT_LAZY=y
-      rcutorture: Make scenario TREE07 build CONFIG_PREEMPT_LAZY=y
-
-Uladzislau Rezki (Sony) (3):
-      rcutorture: Allow a negative value for nfakewriters
-      rcu: Update TREE05.boot to test normal synchronize_rcu()
-      rcu: Use _full() API to debug synchronize_rcu()
-
-Zilin Guan (1):
-      rcu: Remove READ_ONCE() for rdp->gpwrap access in __note_gp_changes()
-
- Documentation/RCU/rcubarrier.rst                   |   5 +-
- Documentation/RCU/stallwarn.rst                    |   7 +
- Documentation/admin-guide/kernel-parameters.txt    |   5 +
- Documentation/core-api/this_cpu_ops.rst            |  22 ++-
- include/linux/printk.h                             |   6 +
- include/linux/rcupdate.h                           |  25 +--
- include/linux/rcupdate_wait.h                      |   3 +
- include/linux/rcutree.h                            |   2 +-
- include/linux/srcu.h                               | 102 ++++++++--
- include/linux/srcutiny.h                           |  29 ++-
- include/linux/srcutree.h                           |  98 ++++++++--
- include/linux/torture.h                            |   1 +
- include/trace/events/rcu.h                         |   2 +-
- init/main.c                                        |   1 -
- kernel/context_tracking.c                          |   9 +-
- kernel/printk/printk.c                             |   4 +-
- kernel/rcu/Kconfig                                 |  35 +++-
- kernel/rcu/Kconfig.debug                           |  18 +-
- kernel/rcu/rcu.h                                   |  13 +-
- kernel/rcu/rcutorture.c                            | 124 ++++++++++--
- kernel/rcu/refscale.c                              |  32 +++-
- kernel/rcu/srcutiny.c                              |  20 +-
- kernel/rcu/srcutree.c                              | 207 +++++++++++----------
- kernel/rcu/tasks.h                                 |   5 +-
- kernel/rcu/tiny.c                                  |  14 ++
- kernel/rcu/tree.c                                  |  64 +++++--
- kernel/rcu/tree_exp.h                              |   6 +-
- kernel/rcu/tree_nocb.h                             |  20 +-
- kernel/rcu/tree_plugin.h                           |  22 ++-
- kernel/reboot.c                                    |   1 +
- kernel/sched/core.c                                |   4 +-
- kernel/torture.c                                   |  12 ++
- kernel/trace/trace_osnoise.c                       |  32 ++--
- .../selftests/rcutorture/bin/srcu_lockdep.sh       |   2 +-
- .../selftests/rcutorture/configs/rcu/SRCU-P.boot   |   1 +
- .../selftests/rcutorture/configs/rcu/TREE05.boot   |   6 +
- .../selftests/rcutorture/configs/rcu/TREE07        |   3 +-
- .../selftests/rcutorture/configs/rcu/TREE10        |   3 +-
- 38 files changed, 718 insertions(+), 247 deletions(-)
+-- 
+With best wishes
+Dmitry
 
