@@ -1,143 +1,242 @@
-Return-Path: <linux-kernel+bounces-572951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A27CA6D0B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:08:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F775A6D0B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 20:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB74616DE07
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8054C16DBA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729E5192D97;
-	Sun, 23 Mar 2025 19:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A5D1624DE;
+	Sun, 23 Mar 2025 19:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="y6SJ7eh3";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="cBBAekPA";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="omDm0SJd"
-Received: from fallback23.i.mail.ru (fallback23.i.mail.ru [79.137.243.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Az3L8dq+"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02952E3399;
-	Sun, 23 Mar 2025 19:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF1413B5AE
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 19:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742756895; cv=none; b=onVNN7fkmMVcJO97zrUWYxLdts35hBmtM9w4mWAaLfIV6BMlMKDwDkIV5MTInYOKLfVt3fa+uqkEq9RVTwyj8/H01AzNsT/l8PdKYZgUgJfyEhYPl8n0ZYTPC1cGeR+z+cHPMB2lZZHTu0jydzIvjFsOBmvjuqQveFM3ajSNvOQ=
+	t=1742756885; cv=none; b=eFDrBZExqsdCQ88ldKmLipWQXMyw8v89VVasZnR9KDPn3nMdiP+5iYgtcblVI0rBktxkkmZL4fvKUO4UCKhSCZzgdC8J9fjuciwzkHhyubRMAPGxHdb3klT02cJIR4x5L5k1fzudk8MzF6MI704MwvILMfqAgig8hwikC+uunU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742756895; c=relaxed/simple;
-	bh=HNheHeIrLKWnPq4AZI8bPbYW3FhAVpc9Cm4HAKsKqo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diNca09oah1iwi/ifPz/Px2+R1Ke5xxgHyPiY1W4Qdc/Gr7AZ3YnJ1QegSdU4h1ZiWTgN0DgXQayRhIQ25hqVh4RgON7e29fBsTriNKlcQzdePFcYuwiXISJ+HIc+taExO8+sHr2Th3rlMXk+oVVTxmjFcRSXnl5Gjd3D2NZILo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=mail.ru; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=y6SJ7eh3; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=cBBAekPA; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=omDm0SJd; arc=none smtp.client-ip=79.137.243.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail4;
-	h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=;
-	t=1742756891;x=1742846891; 
-	b=y6SJ7eh3JJS5Ug2efGTyPwtJBF57oBsdwNEMK04ru3sPAA3Q45MjwRnteYe2wNiFGMNkqiEjtAaTdoUF692fhTSBMRUv+F1TzUGwj+viL+H880+Dl6x5CvG24n+hTRiUTkoFRYXlcCd0XgW7oNgLCEB/eRvHzPa7wZw686ppTmCxHHWXzm0O0CgIFAhDMcl1FGz5lkjJmwYLQd/QUvnU0c+vu+9JFfswFVZywOfz1Evp9gGiZUV7v3f8SZCHPzJhOghIwtf7odgDx2gby0uusghE0NlxsW6H6Ylk5LIwBzADxq+CbzvrpryqwXwBGkHn1tdWjhrybpn2gZCLs52XCA==;
-Received: from [10.113.177.82] (port=57044 helo=send262.i.mail.ru)
-	by fallback23.i.mail.ru with esmtp (envelope-from <listdansp@mail.ru>)
-	id 1twQWC-00EpDt-Td; Sun, 23 Mar 2025 21:57:57 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
-	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
-	bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=; t=1742756276; x=1742846276; 
-	b=cBBAekPAQAygyrxNWyIC+Vccby4A/15WW4je8APE/nwsIS5IlYSTgkuTfk0UI7+DFEGvMYGUJ0Y
-	HJ5wqSHTJ8UTjJWZ09cBnpl6XAXcFLvKqLqr0z9aQ7OTFhHRhP19cJgZBUFPoikrFn8zWyLtP0xFj
-	2B9WdpV4W8e5X+N/fvjDHYylPO67I12/KbpzK91+KtyeAKON9XcNxhyLNA0AWQsLzMDr4VQhFyuon
-	zk/gxypkRlNT0U19mQbPnLlQT43+fPODAOPn/s6yCKhtcHOu8BffTJfsCiUQGpSq9XyxSjd3sdYm2
-	C85233SwOg8ulgR2UhAG5gcB2h5ezYpu1uMg==;
-Received: from [10.113.185.249] (port=54634 helo=send126.i.mail.ru)
-	by exim-fallback-6464776d59-k9sng with esmtp (envelope-from <listdansp@mail.ru>)
-	id 1twQW4-00000000QOj-1U6J; Sun, 23 Mar 2025 21:57:48 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
-	To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
-	X-Cloud-Ids:Disposition-Notification-To;
-	bh=enRdOwzdzHPi6bszjCuT/F6jj3XrHxNc9XrgbnkSZRo=; t=1742756268; x=1742846268; 
-	b=omDm0SJdFEEXj6Y+CXyKyf4Aw0MaLjZqLYmSpZiv4rcws8DvrXvwlOLE5Z9pjlqCZf0AjqSAjAA
-	U+4oQ2rb510WN7ukZ95cdE/Z8JXNG7s+1fU8k107wLwMaD6vcy+nR/tsnbfMVM1C5ihH8TdSRiC4e
-	KGDqamL2pyXxUPtgLjD23iE1VEm6p6DhO7l1u+i5Tm1G1XIw6XFz6H6PkWQNaPJwgcMFs5GF9bUm8
-	E7BnzoDBu8fyS0xO8tQjNgYd09d7TwlkA8s5UcvHwQ+E9U6p0IjE14lnZFpQeY94zE+zFKEUW6ZEe
-	q8weodXJmsJm3VZmhALYaYPDAaWguWqzcvBg==;
-Received: by exim-smtp-75f69ddc6c-x6wgr with esmtpa (envelope-from <listdansp@mail.ru>)
-	id 1twQVu-00000000Hoy-466x; Sun, 23 Mar 2025 21:57:39 +0300
-From: Danila Chernetsov <listdansp@mail.ru>
-To: Helge Deller <deller@gmx.de>
-Cc: Danila Chernetsov <listdansp@mail.ru>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] video: fbdev: kyro: Add some geometry checks.
-Date: Sun, 23 Mar 2025 18:57:37 +0000
-Message-Id: <20250323185737.602339-1-listdansp@mail.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742756885; c=relaxed/simple;
+	bh=+Q/fyk76Z1cDSounHVDPFMlvEhnXOKGnub0ZYWoMU+I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DtFhIRUj535Id9W/u0L1RoeC+Bh/gtS5cFEHX7G3yNKVjgXQ8xQjluE/o7qBp9WjdqSWdLDsTn+TquVe0ruwT4Mb27SJpwhLR9mYBEZO6Ar0Gvar/Gdw44x3MtBHpg6xJIFmvSutFHdcuUJptD27nFSINEfXZm974pDx6OOvCXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Az3L8dq+; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--changyuanl.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225107fbdc7so58686415ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 12:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742756883; x=1743361683; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzd5n04s6jxEJ+gCSK/dDhucMnvX+2uhB2qdLifXWko=;
+        b=Az3L8dq+SQbeeJ5G4q3dk6p0wFJSbIff45SeENBII3gOMHfuG+L4lXxzK+lvt++H4l
+         qSYVTtmo4J5nrAtNXVKMJuDF+e3VJMJtIO3jkNEIgquOYSYswElpE2y+p6K1G2w3qx9a
+         vHzalNUd4/ce+fNAFM9ew0cUAaYwXdaT7T/4RBpsBetxezbBROW5xSANHjO2yCFfkBlh
+         KFXLN06sOFCjngr/M7tpixJTlgpRTFjmra+UX+H3LOpda2P9Ud62u1YWtasFnZRkH8c0
+         H4dHKiQ82Evx3M5gb0aOJhvNIppom9uWGyj/SdwiRq01d/2iKnhNNKdfWdwPXxaB9bi6
+         3iFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742756883; x=1743361683;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzd5n04s6jxEJ+gCSK/dDhucMnvX+2uhB2qdLifXWko=;
+        b=uZ0t9kNRezj/+Fp6SQ3Te0p/LDfawdNjeVIXqPVtNlJkaugKWpbf2UwYxk9mA6OsG4
+         ZJUy2DrfcURZ72c9bAAhKqjmc83khrzo7wBi/TTRlYv+bnFM6Md1jz4ZrjRF7W3fT/ZL
+         6y1H0DK+5uyn6zoqZk4VPB02N6tsXVqQgNrE6/u4cj86xt589zioh9UbkifyEFgi0Sl7
+         xKaHU25Y/sJOEXnQtaio/CC8OoDkwfyHXE/hyW9bVdGm44KJFkgwtd3azsLLh8K59M5F
+         klajU54y3dLKDgPsTottiwSuUr5du14FyNrk68nLWL8rVL06s6TzMp3e87i/51zxeII8
+         vq9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVZmPLuoQZz+u3xIbwhcvEJOdUHvfkUpthO8/o1WNdX09AFPGdlPU7wSgDyzX6ZlAAwlLPOXsn0rQk/Nhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVk9vSE+NQTrfWMaQ1mlZa72y6cCTAUWI5bt/thhseRc7eHVJ6
+	g3AiXoARlrvXdlg4IXqtJ+BcZ4F6ma5aB6IA9PQxqP04QMgYYMfcPuyur8OdbZAFBx/Qm7aytQ3
+	2z+j7QnEO/GF/jdpguQ==
+X-Google-Smtp-Source: AGHT+IGWzYSY0zabXCYcrGJkQenZmyCPMKhLyeRtNYw0Z+Vw+fyMnZoqvv9CAHyz7l26vGknvFW4powxBM9q/JtU
+X-Received: from plri3.prod.google.com ([2002:a17:903:32c3:b0:220:e84e:350c])
+ (user=changyuanl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:da82:b0:224:162:a3e0 with SMTP id d9443c01a7336-22780e2a37fmr150656275ad.49.1742756882709;
+ Sun, 23 Mar 2025 12:08:02 -0700 (PDT)
+Date: Sun, 23 Mar 2025 12:07:58 -0700
+In-Reply-To: <20250321134629.GA252045@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-7564579A: 646B95376F6C166E
-X-77F55803: 4F1203BC0FB41BD92A53477891B58793825B79BECD38E02E42497B1FF40D587C182A05F538085040EE765B1EEA68409B3DE06ABAFEAF67058A6E3CF6E5E01F8BFAA9F3B359509F8249B610CA6D60D10F
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7A34C649281B21B01EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637AC83A81C8FD4AD23D82A6BABE6F325AC2E85FA5F3EDFCBAA7353EFBB553375664A2B0A4393176EAA77B2F40198CB27ACFB60C9A2166D956648CCE9848DA6250B8EEF46B7454FC60B9742502CCDD46D0D0CABCCA60F52D7EBF6B57BC7E64490618DEB871D839B73339E8FC8737B5C2249E232F00D8D26902CA471835C12D1D9774AD6D5ED66289B52BA9C0B312567BB23117882F446042972877693876707352033AC447995A7AD1828451B159A507268D2E47CDBA5A96583BA9C0B312567BB2376E601842F6C81A19E625A9149C048EEB28585415E75ADA9F41620B44FB51B7DD8FC6C240DEA76429C9F4D5AE37F343AA9539A8B242431040A6AB1C7CE11FEE362B3BD3CC35DA5886136E347CC761E07C4224003CC836476E2F48590F00D11D6E2021AF6380DFAD1A18204E546F3947CB11811A4A51E3B096D1867E19FE1407959CC434672EE6371089D37D7C0E48F6C8AA50765F790063717E6A56809D3D6D1EFF80C71ABB335746BA297DBC24807EABDAD6C7F3747799A
-X-C1DE0DAB: 0D63561A33F958A587F46D27172A86695002B1117B3ED696844EB587DD887C694A0A47EBA01A636A823CB91A9FED034534781492E4B8EEAD003C2D46C52F18F2C79554A2A72441328621D336A7BC284946AD531847A6065AED8438A78DFE0A9EBDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFD2EF63304466465627E35D2A99788FAFFA12A352F931B06FE8DB7F381BFF43A9486D6DC23143AA0ED556C2DAAA19247F5EB0CB9BADE52277B6F8643E9C2F164303EDA1124073BDCA77C8E16086367389913E6812662D5F2AF72BBD4AC8FF0C4E5649C4772AD793FE964550E41902C4E4
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXMZebaIdHP2ghjoIc/363UZI6Kf1ptIMVYrk7BQKFwEtzKseUyeDnhbAJ4K9bnQ3Bg==
-X-Mailru-Sender: F244DC1430FACE5461D0E33575193BA22C7BE48A118D0749B951B70A5BD4BD8E0259DC99F647BA51DE369B216F14D11CC53BD13D3F6EEB2F3DDE9B364B0DF289C95E31D8FCF52BE1594FB4C9F0DBF4120D4ABDE8C577C2ED
-X-Mras: Ok
-X-Mailru-Src: fallback
-X-7564579A: B8F34718100C35BD
-X-77F55803: 6242723A09DB00B4C75C13076030B6608AF98B5E2C9340ABBE3F2237FD3B192B049FFFDB7839CE9E8EB000FA6B60A7A9F84AF7FD74D637056122DCE773384725D6A2981A42E890C504465C7D8E5080F1
-X-7FA49CB5: 0D63561A33F958A5D0F3E1543A8E0B075002B1117B3ED696717A7032D552910775CAC6BD4D76D0B202ED4CEA229C1FA827C277FBC8AE2E8B54F520D093A0DF28
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZwShGFTa9ahxLo40IvX34dQ==
-X-Mras: Ok
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4C75C13076030B6608AF98B5E2C9340AB21EEB097175FBED5049FFFDB7839CE9E8EB000FA6B60A7A91BAD004C7C054933AF2A59B70FE12558B3E78FEF2776E810
-X-7FA49CB5: 0D63561A33F958A5F476775C5CA609668EFB79B1D6074E63BB372755940BCE1ECACD7DF95DA8FC8BD5E8D9A59859A8B6A096F61ED9298604
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpEZ9wIMwqVP4jLQVQ+dVm7x9BpDHadBV9RMjI809PraZwShGFTa9ahw4BIdV5NVlDw==
-X-Mailru-MI: 20000000000000800
-X-Mras: Ok
+Mime-Version: 1.0
+References: <20250321134629.GA252045@nvidia.com>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250323190758.743798-1-changyuanl@google.com>
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory preservation
+From: Changyuan Lyu <changyuanl@google.com>
+To: jgg@nvidia.com
+Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
+	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
+	catalin.marinas@arm.com, changyuanl@google.com, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, devicetree@vger.kernel.org, dwmw2@infradead.org, 
+	ebiederm@xmission.com, graf@amazon.com, hpa@zytor.com, jgowans@amazon.com, 
+	kexec@lists.infradead.org, krzk@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
+	mark.rutland@arm.com, mingo@redhat.com, pasha.tatashin@soleen.com, 
+	pbonzini@redhat.com, peterz@infradead.org, ptyadav@amazon.de, 
+	robh+dt@kernel.org, robh@kernel.org, rostedt@goodmis.org, rppt@kernel.org, 
+	saravanak@google.com, skinsburskii@linux.microsoft.com, tglx@linutronix.de, 
+	thomas.lendacky@amd.com, will@kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The check protects against division by 0, integer wraparound,
-and overflow Start/End window settings.
+On Fri, Mar 21, 2025 at 10:46:29 -0300, Jason Gunthorpe <jgg@nvidia.com> wrote:
+> On Wed, Mar 19, 2025 at 06:55:44PM -0700, Changyuan Lyu wrote:
+> > +/**
+> > + * kho_preserve_folio - preserve a folio across KHO.
+> > + * @folio: folio to preserve
+> > + *
+> > + * Records that the entire folio is preserved across KHO. The order
+> > + * will be preserved as well.
+> > + *
+> > + * Return: 0 on success, error code on failure
+> > + */
+> > +int kho_preserve_folio(struct folio *folio)
+> > +{
+> > +	unsigned long pfn = folio_pfn(folio);
+> > +	unsigned int order = folio_order(folio);
+> > +	int err;
+> > +
+> > +	if (!kho_enable)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	down_read(&kho_out.tree_lock);
+> > +	if (kho_out.fdt) {
+>
+> What is the lock and fdt test for?
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+It is to avoid the competition between the following 2 operations,
+- converting the hashtables and mem traker to FDT,
+- adding new data to hashtable/mem tracker.
+Please also see function kho_finalize() in the previous patch
+"kexec: add Kexec HandOver (KHO) generation helpers" [1].
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Danila Chernetsov <listdansp@mail.ru>
----
- drivers/video/fbdev/kyro/fbdev.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+The function kho_finalize() iterates over all the hashtables and
+the mem tracker. We want to make sure that during the iterations,
+no new data is added to the hashtables and mem tracker.
 
-diff --git a/drivers/video/fbdev/kyro/fbdev.c b/drivers/video/fbdev/kyro/fbdev.c
-index 08ee8baa79f8..1d5246313d9a 100644
---- a/drivers/video/fbdev/kyro/fbdev.c
-+++ b/drivers/video/fbdev/kyro/fbdev.c
-@@ -378,6 +378,13 @@ static int kyro_dev_overlay_viewport_set(u32 x, u32 y, u32 ulWidth, u32 ulHeight
- 	    (x < 2 && ulWidth + 2 == 0))
- 		return -EINVAL;
- 
-+	/* The check protects against division by 0, integer wraparound,
-+	 * and overflow Start/End window settings.
-+	 */
-+	if (x + ulWidth - 1 <= x || y + ulHeight - 1 <= y ||
-+	    x + ulWidth - 1 > 65535 || y + ulHeight - 1 > 65535)
-+		return -EINVAL;
-+
- 	/* Stop Ramdac Output */
- 	DisableRamdacOutput(deviceInfo.pSTGReg);
- 
--- 
-2.25.1
+Also if FDT is generated, the mem tracker then has been serialized
+to linked pages, so we return -EBUSY to prevent more data from
+being added to the mem tracker.
 
+> I'm getting the feeling that probably kho_preserve_folio() and the
+> like should accept some kind of
+> 'struct kho_serialization *' and then we don't need this to prove we
+> are within a valid serialization window. It could pass the pointer
+> through the notifiers
+
+If we use notifiers, callbacks have to be done serially.
+
+> The global variables in this series are sort of ugly..
+>
+> We want this to be fast, so try hard to avoid a lock..
+
+In most cases we only need read lock. Different KHO users can adding
+data into their own subnodes in parallel.
+We only need a write lock if
+- 2 KHO users register subnodes to the KHO root node at the same time
+- KHO root tree is about to be converted to FDT.
+
+> > +void *kho_restore_phys(phys_addr_t phys, size_t size)
+> > +{
+> > +	unsigned long start_pfn, end_pfn, pfn;
+> > +	void *va = __va(phys);
+> > +
+> > +	start_pfn = PFN_DOWN(phys);
+> > +	end_pfn = PFN_UP(phys + size);
+> > +
+> > +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+> > +		struct page *page = pfn_to_online_page(pfn);
+> > +
+> > +		if (!page)
+> > +			return NULL;
+> > +		kho_restore_page(page);
+> > +	}
+> > +
+> > +	return va;
+> > +}
+> > +EXPORT_SYMBOL_GPL(kho_restore_phys);
+>
+> What do you imagine this is used for? I'm not sure what value there is
+> in returning a void *? How does the caller "free" this?
+
+This function is also from Mike :)
+
+I suppose some KHO users may still
+preserve memory using memory ranges (instead of folio). In the restoring
+stage they need a helper to setup the pages of reserved memory ranges.
+A void * is returned so the KHO user can access the memory
+contents through the virtual address.
+I guess the caller can free the ranges by free_pages()?
+
+It makes sense to return nothing and let caller to call `__va`
+if they want. Then the function signature looks more symmetric to
+`kho_preserve_phys`.
+
+> > +#define KHOSER_PTR(type)          \
+> > +	union {                   \
+> > +		phys_addr_t phys; \
+> > +		type ptr;         \
+> > +	}
+> > +#define KHOSER_STORE_PTR(dest, val)                 \
+> > +	({                                          \
+> > +		(dest).phys = virt_to_phys(val);    \
+> > +		typecheck(typeof((dest).ptr), val); \
+> > +	})
+> > +#define KHOSER_LOAD_PTR(src) \
+> > +	((src).phys ? (typeof((src).ptr))(phys_to_virt((src).phys)) : NULL)
+>
+> I had imagined these macros would be in a header and usably by drivers
+> that also want to use structs to carry information.
+>
+
+OK I will move them to the header file in the next version.
+
+> > [...]
+> > @@ -829,6 +1305,10 @@ static __init int kho_init(void)
+> >
+> >  	kho_out.root.name = "";
+>
+> ?
+
+Set the root node name to an empty string since fdt_begin_node
+calls strlen on the node name.
+
+It is equivalent to `err = fdt_begin_node(fdt, "")` in kho_serialize()
+of Mike's V4 patch [2].
+
+> >  	err = kho_add_string_prop(&kho_out.root, "compatible", "kho-v1");
+> > +	err |= kho_add_prop(&kho_out.preserved_memory, "metadata",
+> > +			    &kho_out.first_chunk_phys, sizeof(phys_addr_t));
+>
+> metedata doesn't fee like a great a better name..
+>
+> Please also document all the FDT schema thoroughly!
+>
+> There should be yaml files just like in the normal DT case defining
+> all of this. This level of documentation and stability was one of the
+> selling reasons why FDT is being used here!
+
+YAML files were dropped because we think it may take a while for our
+schema to be near stable. So we start from some simple plain text. We
+can add some prop and node docs (that are considered stable at this point)
+back to YAML in the next version.
+
+[1] https://lore.kernel.org/all/20250320015551.2157511-8-changyuanl@google.com/
+[2] https://lore.kernel.org/all/20250206132754.2596694-6-rppt@kernel.org/
+
+Best,
+Changyuan
 
