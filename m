@@ -1,111 +1,98 @@
-Return-Path: <linux-kernel+bounces-572932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97D2A6D084
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:10:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F69A6D07C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 19:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3B716B841
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40255188C597
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 18:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6E5190052;
-	Sun, 23 Mar 2025 18:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OelJyDht"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5372313D8A3;
+	Sun, 23 Mar 2025 18:04:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCBA27452;
-	Sun, 23 Mar 2025 18:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F171813B2B8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742753432; cv=none; b=adWgIceu8LreT4apeq+q0044eoiRDL1fYBiPt21gwvw8C0+nyDzVFSVYWeVs/GLA25FxOGaA672UX2Iy/TryV1/lHtEWcQ03S9d5N4XQgXzQ5bf288cPFR7uKqFigxG2opQxywB8diMxt93igWPZualPDv2bXvOOzJEwWt6a7MQ=
+	t=1742753041; cv=none; b=V8WgsjMULuhqiWItYbSitx+PAXhoICU0HX1rHMhFvwlyTSdcRA62kkj3vCSFfmWmWbItxYdLY3geQR8qciFt5yrfHhB2CebZ0DGTCZ8jXFLSGyCmPNfdnyzoK04mjzfmGRB2nmV2lCWmTY03ufAS6FWN4OhueJaNh00BehH01Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742753432; c=relaxed/simple;
-	bh=0SGq6OSE+vSulCHu5kl1qv4hinnRfdlAm6vhArLGlBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sE+Ged5nvTp4SBL48Ay/D8k5pi6aDA3uWDSg2ienfr2HBe5AwZKdsyxRI8LyVMk/gxazXrRl15A8OjBwvk/23MhnUyNdf2qwfU/9p++nQbMoH1jVodlCYnV1H7cQu7Bkq7WabNd6sA17bamcqJK1x/9gm8+TOEH34Sodb4YYKt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OelJyDht; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wPdZtqcs4vQV0wPdctbi88; Sun, 23 Mar 2025 19:01:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742752895;
-	bh=zp3UcKJhUjE7ySXeU2dEz0mIKPMzZc8r54esOzKpgeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=OelJyDhtUiXn/3ZG0LOI5TjhwxvoaXoK9D1LUxe7j9eMo7tyWD+Si2DSO2zHRbynE
-	 8E18tkmJ1GiiQuKPDzLThmDhtE6TTjrdNI1edhccNt6tPcfIN9Xmwr3O3UMyflNSYP
-	 mlxRUzsl5jps9W+KhAyT6AiVmkDkPH7fmeEE3mv/L5EtmPq7C1q84INnpvO6//bpdm
-	 cWI4ORMUWlw2FcMDY9foxevsA6WfP7rCkr7ChmR8+CyaSlqmip9jZr+SLNQTbUc9JN
-	 Pn6urrO6ViumWpAlyYxfRPfY7FIqe+/Kpu9jElZ/ItY2E3MRkICnAK4CjqYJ1h0euN
-	 1y//Erg9ytZVA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 23 Mar 2025 19:01:35 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <b212955e-eac6-4eff-b666-5a830e9d1537@wanadoo.fr>
-Date: Sun, 23 Mar 2025 19:01:29 +0100
+	s=arc-20240116; t=1742753041; c=relaxed/simple;
+	bh=nzq52aDDPv9mCUrT9fpqH1wjARvWobgYMwqIYt+vUuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OPA1ph4yGe3if62aYd9oBhOM4OfTth0d4fKDW5ZeQXVyPvXR7+9r47A7Zp+NolL/juva2rnwK39tMEPHX454ND/PKAb/4R8vqrcq3EIBY2bGTuYwm1iZgv9hHV92aeHZNgI9GmdRRS6HDp+SRsMIc2Iqi7rlgE+JDFRpuaUijFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443A9C4CEE2;
+	Sun, 23 Mar 2025 18:03:59 +0000 (UTC)
+Date: Sun, 23 Mar 2025 14:03:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: ying chen <yc1082463@gmail.com>
+Cc: "mingo@redhat.com" <mingo@redhat.com>, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com
+Subject: Re: [bug report, 6.1.52] /proc/loadavg shows incorrect values
+Message-ID: <20250323140358.61c1ad10@batman.local.home>
+In-Reply-To: <CAN2Y7hyM6pAupptUZx-cQsbTimxYSYKinyrSGBLYq5i3Dbxmgw@mail.gmail.com>
+References: <CAN2Y7hwHWFpVRL3ZTSmKn2CGtixDBdszxofE4DSUx0rAOeK41g@mail.gmail.com>
+	<CAN2Y7hyM6pAupptUZx-cQsbTimxYSYKinyrSGBLYq5i3Dbxmgw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/xe/svm: fix dereferencing error pointer in
- drm_gpusvm_range_alloc()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-References: <20250323124907.3946370-1-harshit.m.mogalapalli@oracle.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250323124907.3946370-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Le 23/03/2025 à 13:49, Harshit Mogalapalli a écrit :
-> xe_svm_range_alloc() returns ERR_PTR(-ENOMEM) on failure and there is a
-> dereference of "range" after that:
-> 
-> 	-->     range->gpusvm = gpusvm;
-> 
-> In xe_svm_range_alloc(), when memory allocation fails return NULL
-> instead to handle this situation.
-> 
-> Fixes: 99624bdff867 ("drm/gpusvm: Add support for GPU Shared Virtual Memory")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/adaef4dd-5866-48ca-bc22-4a1ddef20381@stanley.mountain/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is based on static analysis and only compile tested.
-> ---
->   drivers/gpu/drm/xe/xe_svm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/xe/xe_svm.c b/drivers/gpu/drm/xe/xe_svm.c
-> index 52e04e7e343f..a79df8cf1f36 100644
-> --- a/drivers/gpu/drm/xe/xe_svm.c
-> +++ b/drivers/gpu/drm/xe/xe_svm.c
-> @@ -80,7 +80,7 @@ xe_svm_range_alloc(struct drm_gpusvm *gpusvm)
->   
->   	range = kzalloc(sizeof(*range), GFP_KERNEL);
->   	if (!range)
-> -		return ERR_PTR(-ENOMEM);
-> +		return NULL;
->   
->   	INIT_LIST_HEAD(&range->garbage_collector_link);
->   	xe_vm_get(gpusvm_to_vm(gpusvm));
+On Sun, 23 Mar 2025 20:45:51 +0800
+ying chen <yc1082463@gmail.com> wrote:
 
-Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Hello everyone. Have you ever encountered a similar situation?
+>=20
+> On Tue, Mar 18, 2025 at 9:54=E2=80=AFPM ying chen <yc1082463@gmail.com> w=
+rote:
+> >
+> > Hello all,
+> >
+> > In our production environment, "cat /proc/loadavg" shows incorrect
+> > huge values. The kernel version is 6.1.52. So far, at least four such
+> > cases have been found. It seems to be a kernel bug.
+> >
+> > ~$ cat /proc/loadavg
+> > 4294967392.49 4294967395.80 4294967395.83 87/16100 2341720
+> >
+> > top output is below:
+> >
+> > top - 21:12:13 up 191 days, 20:50,  1 user,  load average:
+> > 4294967397.45, 4294967396.82, 4294967396.15
+
+  4294967397 =3D 0x100000065
+
+Which looks like some calculation overflowed.
+
+191 day uptime is quite long (I reboot to update my kernel every
+month). Perhaps there's something there that caused an overflow.
+
+Interestingly in 5.14, some values were converted from long to int. Not
+sure if there was anything there that could have caused this.
+
+Just something to look at.
+
+-- Steve
+
+
+> > Tasks: 2388 total,   3 running, 1208 sleeping,   0 stopped,   0 zombie
+> > %Cpu(s): 27.9 us,  6.7 sy,  0.0 ni, 57.3 id,  0.5 wa,  1.7 hi,  5.8 si,=
+  0.0 st
+> > KiB Mem : 99966995+total, 56704217+free, 22655678+used, 20607096+buff/c=
+ache
+> > KiB Swap:        0 total,        0 free,        0 used. 68817177+avail =
+Mem =20
+
 
