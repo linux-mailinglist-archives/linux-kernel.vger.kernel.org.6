@@ -1,228 +1,192 @@
-Return-Path: <linux-kernel+bounces-572766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599A2A6CE76
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:56:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AB1A6CE7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360903B5551
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A331891E63
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4091C202F8C;
-	Sun, 23 Mar 2025 08:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4BA202C50;
+	Sun, 23 Mar 2025 09:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kq/8QIdn"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="YB0GOurS";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="NCQDlCUc"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82647FBAC;
-	Sun, 23 Mar 2025 08:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7113AA20;
+	Sun, 23 Mar 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742720199; cv=none; b=M8yGSBpwh/bw9D7shr242O3VDXOdXANPHvwr4pGaKvBJZfZYmb8fhC1ByPVVAKnwm0zL9vfpABetgIkCKWmp8I+60U+D03Yvtgt69cygOS/8sonjRqbuxqbx8xc5yU3pVc+HC8CkgNPcRHuClrqZEjJF1mFo6O4iKwM0pfiFCzQ=
+	t=1742721266; cv=none; b=AeXCZ0akPDnE0zC39bPqALr/r8tNVkRnlwWnklssEadoVfy9GBBxDs04WlyiQSQcVts9aTBQg/xVk6mtn2e/BvRbIOKnFimQ3V6PoIvOb8G1WgXyyRO3CPZE+0yOBxKhOTG5bYHZZS5MViJUEx1amKF3qP5RePlu0kuTi/oqSP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742720199; c=relaxed/simple;
-	bh=TJO9f5IdUVWtvEy9bUZKF/BDycaHHCYviXzt1jWheng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qZctoo1JzKYOBZv9ASuBI7GuN0MXiCcvVpB91q+7LriynelVMUtfIUINTcC3Dc3CHbCNYUquu4ipz/czKDLjfaY/qKgoB5Lf5gAOq4XZUHs+gU1GCb5i95WjHCQSGOF+HBNnPDy736F1XLaiN/is4loMyN8CoLVRg/OM+1OWEnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kq/8QIdn; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5eb5ecf3217so5953454a12.3;
-        Sun, 23 Mar 2025 01:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742720196; x=1743324996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TVIItDI8qaPBoFm1BXeIX43KSyqYt1PldCeim8uGiMU=;
-        b=Kq/8QIdnTucWdReadGpgzxmwW5iYuVhT1Q5UFVXLosibq9JG7RIZGfT5v42T5sq7IG
-         2wxym7qZOzrC++rTRt6EnBaBOCPsqsrghope/cuFxNQRuxRZnpQraDgr1eJ/us6d1NM8
-         tjQGfdbKkd3Rtd3MKzjdZXxwkoY8q4FxErdrknfat2lpacPgF2h7WMaLjxrMHz84i5/t
-         drfmMTxVIgoxhwz+RCgG9zBnQNFPBCkQ2yas325fSqPasu3Y8lBMl8eUNiZChv3qQ/Sk
-         CH37q4VxmFBYJUDEyTi+zMDKTBQdigU+YLR8jrpbOgnFSPSu7k0YEjwr9ZSF0txjx5/j
-         sm2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742720196; x=1743324996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVIItDI8qaPBoFm1BXeIX43KSyqYt1PldCeim8uGiMU=;
-        b=NOMph2AQowieGuuCsRX72j/yaKn8pRm3vctvZ9J3rgHpLQeFbDzgNF9ONDvMf5kLD7
-         KJdKaG/saqi2WdKr7i9/Me8SRkh06l0MEvrbcpmph7tkaJJ5C44fx0lC7i1YEjW80wsu
-         vamk73ePiATrb296NyT1/BohNr5RD68WrXgI9/dL7f0kw/njqpinziZkCYzKEjJzrcJR
-         mhfOkNmsuz6jMeGLEH4Aesy2CG8BFni9Kg1PNRZenJPuXbJQpOxLKl6VDc9ydkzf+nsU
-         DSa7n6uxMmVMTvPC0YCWbhe0dzc/i8kiueNciye1f/Bl6AMdFoy487LjayH812TsR8lI
-         M33A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7WQYpjvwR0KTifdhBF0psS8d/cchYCXnI6vQ/yYNPqMdCFrzfjgAUxzxTPfycI3r5WrI41G/oHebdf6tzPA==@vger.kernel.org, AJvYcCUzHhMT5OUxzMsuBbXofbYnm/xg0SfaXopYSMyXxI1FcJbk0zmI5pp/UTV0cu2F0pDNcIh/YlMDg4X3xQ==@vger.kernel.org, AJvYcCV4edBCJ0R/3rawvtWhbF9X0ha8gqg8pYpwEQ2yJXaQR95ADkF82xL/+WbCK5L4l9hYRXMNldt6AAXBhA==@vger.kernel.org, AJvYcCVHSaUupEiJXm4QbS3IY+oa/+OzZTKERlWNUrkwToN0xgybROTGSIO4SrlJLF+h83RDsZSE2nNkfdT3lprs@vger.kernel.org, AJvYcCVR5aimQYXs2uvZQpjKG6cBvxC5Sw1vxRGLAlfzNx2EAYAQ3EUWievkUf3guCu+Pa74v+REIX6sePYv9A==@vger.kernel.org, AJvYcCWmOe/UrM39u3GYu2QEWjwcnYg83WrXElO8YNPLpWynvg7MvznN1MOX2of8WFX5aurG4YyzUTjKHAEaHd9C@vger.kernel.org, AJvYcCWsHahzWt0/JvmkEfeHdoZmAPNsEvLs2f13ITpu5cLwQ+LUukX5CONJI6KDQftacBoGGUg15cBYGWNx@vger.kernel.org, AJvYcCX4foRLCFZrv9oXSbozr4/x5h0HJdyHSClkdn2m8HYWYM4a51BBQ8JQ+YN8T32JcTVved4VOT6Gc48rvAyan4sX89fKab23@vger.kernel.org, AJvYcCX8UDjFDmTWHO3oxMAhGHInXhXS4Aw0ac/LLHdyvJhOWi/SJR1oyuZLvUibr4Jl7wGKnKLqsUmnvtUoig==@vger.kernel.org, AJvY
- cCXa3kbqR2StcwdlRkrs3JZLOnFdJkfOGC3nya/vrEgpa7nvR32m+Irn9YSxOTvbaF62H5DH4q3ZTXDe@vger.kernel.org, AJvYcCXy4MRbqb/z79TkPdfztHoVkUm8WaWGoiRQAyC1ebfcXwX3AYRobuthBRaSJFAHlfq2W7jcjh6AWBM=@vger.kernel.org, AJvYcCXzlK0Hrf161LsIcqOcRfLQksWlrmM44L7Y819FlWpiSK4eHslLjZrxruywBOL7bkVfZDyL3sB6i8zoSw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrPzZonrC2sxY2OHbYJGL44D+O3cA4jx67AAiWVwptnOr2gh84
-	K35n/Uu3aYnfiX5GD6FFJPIQBc5cFVsaENmXwb/ZXXry1y+tT5uRY8kQ3w6wy9LQPmrImt5q6yt
-	P5YsakgDgNiHYzxP5YLvOmZx3l/M=
-X-Gm-Gg: ASbGncveNPbZokSTyMvLCCeVh0+lzbknXpGkaptk7Be3SYiiy18/2jEPaL4Foo4xB69
-	y/aTx/HkVEjx6b5D3u7BvvgySY2lPoNM/jYfMJz3nVOY5ehzEX3vRgiytzqZJ4Ku53hItepwZpg
-	ntu05owt+DxtKz7GgvctknSzi+Ca5iRxl8jKZPdLbACAOb1RGvFM55pTg9cts=
-X-Google-Smtp-Source: AGHT+IEBIy49ieatYEuSP1liKg/ID7cKJrCF9akLUZmVZ5wo1f/yMQ0YfYjV0MMVM+aDi+JYvMnWAUZwuWv6wUTqP1A=
-X-Received: by 2002:a05:6402:2753:b0:5e7:8501:8c86 with SMTP id
- 4fb4d7f45d1cf-5ebcd4f4378mr8004815a12.22.1742720195296; Sun, 23 Mar 2025
- 01:56:35 -0700 (PDT)
+	s=arc-20240116; t=1742721266; c=relaxed/simple;
+	bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0hOl+XMybScDYl9F3qb9YsjrnE+0K9Y2XgvIEsQEsFvttr2dfY9+Q6K0fkdeBHizgOF/NvhLMxeJ86N+Yct9fTfStxW/gToYtL3YT9pJA6MhPiqE31kZxssBfFXbPjzj8CJM9gvUqe6qJI3dIIiCCD6JJn24JrSDlgw5kd/5x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=YB0GOurS; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=NCQDlCUc; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 67FEEEC59F1;
+	Sun, 23 Mar 2025 01:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742720143; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YB0GOurS6e7ntM1c3szslhrVmNfTs29qW3DmV+4LusNNm/ZbyPsW22qezs41sbOmi
+	 Ny4wYzkogpnaK/lDgdomhH262gh1l0gCMIKIeH9v/0zD3Eq7NTZ9XbIUi9i3vB5wvt
+	 UYbntCXgGgr/w2Y4lkeATFRgAD/zQr9PbYURbHuZO66z8MQwrfluHDwgzqis3RLRb9
+	 FdsrvWv6O9MSbWvEO8y1YS/kTw4A+T7UDqVWlM+7krZn8dYOPd9R7DCnGN9Ct/rtfo
+	 scuWnLfZ1ycbhEbCyyZFHKC7Jb44vmqFqKcpyUlw6HPaEjZGuFzNkOpP2XXX7L5ZS3
+	 hnHNxcqmvj/Dw==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id cxXVrxWgCf42; Sun, 23 Mar 2025 01:55:40 -0700 (PDT)
+Received: from ketchup (unknown [183.217.80.115])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 58C7DEC59EE;
+	Sun, 23 Mar 2025 01:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742720140; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NCQDlCUcrc4vhN8OBM1cEf/Rw4Catjgu4eGkIeUvAN8bFaEzI8TBhnHzzvDGmYclf
+	 PPhmMpX7zIrmDfxICl/VQ0B2nMb+X4LzAEslEZga5vKaLZoHyMXO5ivn3K+UgTpiTN
+	 kGiit+2e9HxwtIs4sXD8doRmPzhC9bWR7jfIF/yjCiJLaGHOh+JGH7FYHuwPv9xeBO
+	 4st5JpY68yfbJuljaEgSgQYJ4okfB/DfuMO5QpKLrXt5DgkFh+6tfS6RtAcoL30Sz4
+	 TN6tvJ1SYgWkY0fOb88bQy/kPUo7mj/nO2rxj0xpcIVKRM+IaOAxEkX9968uLu0Oq8
+	 sWkVC4OpSoTEQ==
+Date: Sun, 23 Mar 2025 08:55:28 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <Z9_MgAZE53eQ-FV8@ketchup>
+References: <20250306175750.22480-2-heylenay@4d2.org>
+ <20250306175750.22480-5-heylenay@4d2.org>
+ <20250318053736-GYA2516@gentoo>
+ <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org> <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
-In-Reply-To: <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 23 Mar 2025 09:56:25 +0100
-X-Gm-Features: AQ5f1JrOXpIKV6C3iY7Wt_BJVbE3r_yhhr0gjM9ov_K98R8Pcb1AHPHKowO0lbc
-Message-ID: <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
 
-On Fri, Mar 21, 2025 at 8:49=E2=80=AFPM Andrey Albershteyn <aalbersh@redhat=
-.com> wrote:
->
-> From: Andrey Albershteyn <aalbersh@redhat.com>
->
-> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> extended attributes/flags. The syscalls take parent directory fd and
-> path to the child together with struct fsxattr.
->
-> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> that file don't need to be open as we can reference it with a path
-> instead of fd. By having this we can manipulated inode extended
-> attributes not only on regular files but also on special ones. This
-> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> we can not call ioctl() directly on the filesystem inode using fd.
->
-> This patch adds two new syscalls which allows userspace to get/set
-> extended inode attributes on special files by using parent directory
-> and a path - *at() like syscall.
->
-> CC: linux-api@vger.kernel.org
-> CC: linux-fsdevel@vger.kernel.org
-> CC: linux-xfs@vger.kernel.org
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-...
-> +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filename,
-> +               struct fsxattr __user *, ufsx, size_t, usize,
-> +               unsigned int, at_flags)
-> +{
-> +       struct fileattr fa;
-> +       struct path filepath;
-> +       int error;
-> +       unsigned int lookup_flags =3D 0;
-> +       struct filename *name;
-> +       struct mnt_idmap *idmap;.
+On Tue, Mar 18, 2025 at 01:43:52PM +0800, Inochi Amaoto wrote:
+> On Tue, Mar 18, 2025 at 05:37:36AM +0000, Yixun Lan wrote:
+> > Hi Haylen Chu:
+> > 
+> > On 17:57 Thu 06 Mar     , Haylen Chu wrote:
+> > > The clock tree of K1 SoC contains three main types of clock hardware
+> > > (PLL/DDN/MIX) and has control registers split into several multifunction
+> > > devices: APBS (PLLs), MPMU, APBC and APMU.
+> > > 
+> > > All register operations are done through regmap to ensure atomiciy
+> > > between concurrent operations of clock driver and reset,
+> > > power-domain driver that will be introduced in the future.
+> > > 
+> > > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > > ---
+> > >  drivers/clk/Kconfig               |    1 +
+> > >  drivers/clk/Makefile              |    1 +
+> > >  drivers/clk/spacemit/Kconfig      |   20 +
+> > >  drivers/clk/spacemit/Makefile     |    5 +
+> > >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
+> > >  drivers/clk/spacemit/ccu_common.h |   47 +
+> > >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
+> > >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
+> > >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
+> > >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
+> > >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
+> > >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
+> > >  12 files changed, 2668 insertions(+)
+> > >  create mode 100644 drivers/clk/spacemit/Kconfig
+> > >  create mode 100644 drivers/clk/spacemit/Makefile
+> > >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_common.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
+> > > 
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index 713573b6c86c..19c1ed280fd7 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
+> > >  source "drivers/clk/sifive/Kconfig"
+> > >  source "drivers/clk/socfpga/Kconfig"
+> > >  source "drivers/clk/sophgo/Kconfig"
+> > > +source "drivers/clk/spacemit/Kconfig"
+> > >  source "drivers/clk/sprd/Kconfig"
+> > >  source "drivers/clk/starfive/Kconfig"
+> > >  source "drivers/clk/sunxi/Kconfig"
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index bf4bd45adc3a..42867cd37c33 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+> > >  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+> > >  obj-y					+= socfpga/
+> > >  obj-y					+= sophgo/
+> > > +obj-y					+= spacemit/
+> > >  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+> > >  obj-y					+= sprd/
+> > >  obj-$(CONFIG_ARCH_STI)			+= st/
+> > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> > > new file mode 100644
+> > > index 000000000000..76090cd85668
+> > > --- /dev/null
+> > > +++ b/drivers/clk/spacemit/Kconfig
+> > > @@ -0,0 +1,20 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +
 
-> +       struct dentry *dentry;
-> +       struct vfsmount *mnt;
-> +       struct fsxattr fsx =3D {};
-> +
-> +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> +       BUILD_BUG_ON(sizeof(struct fsxattr) !=3D FSXATTR_SIZE_LATEST);
-> +
-> +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D 0)
-> +               return -EINVAL;
-> +
-> +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> +               lookup_flags |=3D LOOKUP_FOLLOW;
-> +
-> +       if (at_flags & AT_EMPTY_PATH)
-> +               lookup_flags |=3D LOOKUP_EMPTY;
-> +
-> +       if (usize > PAGE_SIZE)
-> +               return -E2BIG;
-> +
-> +       if (usize < FSXATTR_SIZE_VER0)
-> +               return -EINVAL;
-> +
-> +       error =3D copy_struct_from_user(&fsx, sizeof(struct fsxattr), ufs=
-x, usize);
-> +       if (error)
-> +               return error;
-> +
-> +       fsxattr_to_fileattr(&fsx, &fa);
-> +
-> +       name =3D getname_maybe_null(filename, at_flags);
-> +       if (!name) {
-> +               CLASS(fd, f)(dfd);
-> +
-> +               if (fd_empty(f))
-> +                       return -EBADF;
-> +
-> +               idmap =3D file_mnt_idmap(fd_file(f));
-> +               dentry =3D file_dentry(fd_file(f));
-> +               mnt =3D fd_file(f)->f_path.mnt;
-> +       } else {
-> +               error =3D filename_lookup(dfd, name, lookup_flags, &filep=
-ath,
-> +                                       NULL);
-> +               if (error)
-> +                       return error;
-> +
-> +               idmap =3D mnt_idmap(filepath.mnt);
-> +               dentry =3D filepath.dentry;
-> +               mnt =3D filepath.mnt;
-> +       }
-> +
-> +       error =3D mnt_want_write(mnt);
-> +       if (!error) {
-> +               error =3D vfs_fileattr_set(idmap, dentry, &fa);
-> +               if (error =3D=3D -ENOIOCTLCMD)
-> +                       error =3D -EOPNOTSUPP;
+Hi Inochi, Yixun,
 
-This is awkward.
-vfs_fileattr_set() should return -EOPNOTSUPP.
-ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
-but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
-ioctl returns -EOPNOTSUPP.
+> > > +config SPACEMIT_CCU
+> > > +	tristate "Clock support for Spacemit SoCs"
+> > > +	default y
+> > similar reason to pinctrl with these patches [1], [2]
+> > I'd suggest switch to "bool + default ARCH_SPACEMIT" 
+> > 
+> > Link: https://lore.kernel.org/all/20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org [1]
+> > Link: https://lore.kernel.org/all/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be [2]
+> > 
+> 
+> Clk subsystem prefers no defalt and set it in defconfig,
+> so should no default there.
 
-I don't think it is necessarily a bad idea to start returning
- -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
-because that really reflects the fact that the ioctl is now implemented
-in vfs and not in the specific fs.
+Thanks for these hints, I will drop default and set the configuration in
+defconfig, in which case it seems okay to keep it as bool.
 
-and I think it would not be a bad idea at all to make that change
-together with the merge of the syscalls as a sort of hint to userspace
-that uses the ioctl, that the sycalls API exists.
+> Regards,
+> Inochi
 
 Thanks,
-Amir.
+Haylen Chu
 
