@@ -1,102 +1,147 @@
-Return-Path: <linux-kernel+bounces-572743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04DFA6CDFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:21:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6973A6CE02
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7E216BC10
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E103ADC4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 06:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5752F20124E;
-	Sun, 23 Mar 2025 06:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DB32010F6;
+	Sun, 23 Mar 2025 06:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3zRY+YvN"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="dANbKYsr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="el7zuu2z"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD961FC105;
-	Sun, 23 Mar 2025 06:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23371DFF7;
+	Sun, 23 Mar 2025 06:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742710896; cv=none; b=TsvjqMcovtvWEu4OQHTNsX3TegtQKpTtsGxk39YYVGiaISzxO5qGsKtBlZ6NhpUgPOVu200rcH7/Nu6rUZfjpryDqoLmRSKTOcZ4TbtWQNYzcUoqiJAC20DsbQXmsggw6qC2f7Snj7xGPnF1+HLDHm7ZhiXhe+mA0nnunJk8NVM=
+	t=1742711386; cv=none; b=EOynzpN1Yofs/0uwDDCUrffMdEzYWROH43HoAUHgwCTQOXwu2cj+ezrY3FRBSgyhBd3uguTLdigSuhVOXxYrtJU6qBkwJNhP/M9e/CxNkNv0t4oETIsocWnUOwZSl8+jgxShi+TV1Bi73zQ7x2Br8CasSLR78GOJDWn7XeJd+BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742710896; c=relaxed/simple;
-	bh=1USActi8BiCcrXYOuZOmFNDAtk1TmeyWlhovpQvjTHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wq/5PWthQANfIe/7tHncve2ipWhgfJpOB3T09bN0L+3XcM/pOBWQV9/K8jASLyqb+3gRPv9SHFHDoEtZBqZ64TIC27pvM59KHUD59T9SB85a5TRItNPyDGa7aGdj95cLW6KTo3DLLrDtDbSXi+39vGtWPO+BpDj6CaAxw1lXxTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3zRY+YvN; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L1ic8gyVxVIspX+A5ncCA9aQdUq2VzF6Q97RWcvY5wU=; b=3zRY+YvNGQUSC9kOV3Jx4UErEG
-	BG2L8v7UKQkhm6NoDW6WlXMruVLMyVUMjWnIMhIgd8GZ1QZX0ouyX0SfxR5/QXAgpqPWlo8gqaeVz
-	PeoEtDOV58uSXA47JCHXsGbQMIqFrxtHUe6yKOcls61I8vP7y6CdL3EHZRPUrb1vc5P9CxDHhF+xj
-	Q6DGKhTJKQ1cxKDSIX7q+KJbjoqTUM7bOJysVABJzoLMlcNNIyzGuowJOv4RI7PHcUZ0TGoYhuuqb
-	bN5ClG2A7KLuDc+ZdIpUqH1CmOv17eDsPFOQz3gZ3IfJUMpeQ8in9Gf1gdvg3AwGZostRzNyA+o20
-	vQQgnhbg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1twEi8-00000000kzq-0yMV;
-	Sun, 23 Mar 2025 06:21:28 +0000
-Date: Sat, 22 Mar 2025 23:21:28 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Christian Brauner <christian@brauner.io>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Steve French <smfrench@gmail.com>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] iov_iter: Add composite, scatterlist and skbuff
- iterator types
-Message-ID: <Z9-oaC3lVIMQ4rUF@infradead.org>
-References: <20250321161407.3333724-1-dhowells@redhat.com>
+	s=arc-20240116; t=1742711386; c=relaxed/simple;
+	bh=ZB59SAlTAIjqdmyqoHQ4idigM2u6t4rdwdpkIKmx7ls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C2vCq7mNKArU4zhKSiMD+KP31yU5CNhjh2jzaIsdtyCI61a/EmjrSpgbbjj+Ny+cR2dZltMNEzILPW2chzkxzZm+Qmto2UC9moTosbmESYMp83xlE0Agxy00OsZojWaJLa/ejQ1tu1Cr0SpaXIJgHFETHpBdsxb0AhGbPLfhyJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=dANbKYsr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=el7zuu2z; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id D14FE1382D75;
+	Sun, 23 Mar 2025 02:29:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Sun, 23 Mar 2025 02:29:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1742711383;
+	 x=1742797783; bh=uyt6zaXIk2dJafBDLPUE9Q/yRJaG2eg6aAORdIP4u6s=; b=
+	dANbKYsrmmgq2bbLFs4MlObWJYVMjCpe9tK43+37bHm6VH/DZ250tJ9RlU2hUuMb
+	fdGJenAKmEag4Syl8nYm9tQaZitbDhK/LH0sdKMWkug8TfTJlO3dIx0zu6HH5Suy
+	Jbv+99XcOQNGBMnc2Xu1gRNhnQTZbTrUUhaxKhA4qdJJu94ZlBPTA3attTMNj044
+	HpQ6yg20/v6RUDU4+54IeFOciJOlwc4+k32aD530mSTg8jQ/ho129mJp86MByTpV
+	xZcsOwM4uaE010yfawntlEPWQDbXbGiOiCQDQptd4YKiW/AFeia98B3pz0GLq6rj
+	lGc6ZR2ekMnsjwuaG4VCwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742711383; x=
+	1742797783; bh=uyt6zaXIk2dJafBDLPUE9Q/yRJaG2eg6aAORdIP4u6s=; b=e
+	l7zuu2zflYpCp2PEt+4gjEDUbEAhYX025zyTV4xwhTdVkwC5lCThRHqFIbuAHXRK
+	17+brMV8HDRD/e6OLuK23pAfCZ64+ZSNTBs0lLztWWeOM+LKq50NXNLtUgT0nUBM
+	jKjVdXz0CVI1Wv7/Y6IPM2+KycUMPtUmdgJhNRQAL8TKbOmziL09rWlKUv4LBM6d
+	Zz03zDEhgAYoyU9iy3rsP/OmDGqEEFkY1lqvyL+vBeIXW7T8guf2DykUOmvSwNGb
+	sGdpy6LD8eT3x/ZI/f1nHpxc5XVHbbPmzWsaiKR5+5/d7yopb1OoVL79mrynZ/W0
+	4Fy9bBs5oHr+bLHety+oA==
+X-ME-Sender: <xms:V6rfZyk1K1shuqal4pi67tJeLBc6G4ODhTG1b4_2wGvkEnbKqFwsUA>
+    <xme:V6rfZ52U6npwT0qlxJYt2CqDnN8PSTvZONSBF-SaYW39NWDmS84jG5uJvGvaKsMpr
+    sFKDUokt9vxJZ7jyK8>
+X-ME-Received: <xmr:V6rfZwqtgjVeA8PrWVlgcSqyikaupxjXJE_03gPsQ7WinoPa5Ojlpq2dc8WPYu05V4H2_Gi1>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheeiudegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhhonh
+    gvshdruggvvheqnecuggftrfgrthhtvghrnhepveduueevtdetgfehfeeliedvvdfhtdei
+    hfdtkeejuddvgeeivddtkeffgeekueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
+    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
+    gvrghsrdguvghvpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekiees
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheptghorhgvnhhtihhnrdgthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    ephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:V6rfZ2kVNqanzrqtDKrk-rHipDiVhw7OVoQETVDh34eaaIH0AeWa5Q>
+    <xmx:V6rfZw04U2ODq-EvspDtzyCddblJWtraGQXxeXLVfcxmxU4vDVP7tA>
+    <xmx:V6rfZ9snrYFaLzwV3drAFhT0kBNmOnwQQ5_I8fLnKtgEfBPldxtBLQ>
+    <xmx:V6rfZ8VLCuPczJ352DntPKW60gfBEkpiNkdmK3BrpUHd6BYwkAuvzg>
+    <xmx:V6rfZxLsvvunpsq9gmNydYaI9D48UMo5kWdxHngNEP9xB8xEH2OcoDYM>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Mar 2025 02:29:39 -0400 (EDT)
+Message-ID: <26a3849e-1345-40bc-8b42-25f96ff17430@ljones.dev>
+Date: Sun, 23 Mar 2025 19:29:37 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321161407.3333724-1-dhowells@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/10] HID: asus: add RGB support to the ROG Ally units
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20250322102804.418000-1-lkml@antheas.dev>
+ <20250322102804.418000-11-lkml@antheas.dev>
+Content-Language: en-US
+From: "Luke D. Jones" <luke@ljones.dev>
+In-Reply-To: <20250322102804.418000-11-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This is going entirely in the wrong direction.  We don't need more iter
-types but less.  The reason why we have to many is because the underlying
-representation of the ranges is a mess which goes deeper than just the
-iterator, because it also means we have to convert between the
-underlying representations all the time.
+On 22/03/25 23:28, Antheas Kapenekakis wrote:
+> Apply the RGB quirk to the QOG Ally units to enable basic RGB support.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/hid/hid-asus.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 9d8ccfde5912e..1a9cd7f513282 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -1433,10 +1433,10 @@ static const struct hid_device_id asus_devices[] = {
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
+>   	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
 
-E.g. the socket code should have (and either has for a while or at least
-there were patches) been using bio_vecs instead of reinventing them as sk
-fragment.  The crypto code should not be using scatterlists, which are a
-horrible data structure because they mix up the physical memory
-description and the dma mapping information which isn't even used for
-most uses, etc.
+This is fine. We can deal with reverting later if required, but even 
+with my hid-asus-ally work as is, it doesn't affect it.
 
-So instead of more iters let's convert everyone to a common
-scatter/gather memory definition, which simplifies the iters.  For now
-that is the bio_vec, which really should be converted from storing a
-struct page to a phys_addr_t (and maybe renamed if that helps adoption).
-That allows to trivially kill the kvec for example.
-
-As for the head/tail - that seems to be a odd NFS/sunrpc fetish.  I've
-actually started a little project to just convert the sunrpc code to
-use bio_vecs, which massively simplifies the code, and allows directly
-passing it to the iters in the socket API.  It doesn't quite work yet
-but shows how all these custom (and in this case rather ad-hoc) memory
-fragment representation cause a huge mess.
-
-I don't think the iterlist can work in practice, but it would be nice
-to have for a few use cases.  If it worked it should hopefully allow
-to kill off the odd xarray iterator.
-
+Reviewed-by: Luke D. Jones <luke@ljones.dev>
 
