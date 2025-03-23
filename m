@@ -1,201 +1,133 @@
-Return-Path: <linux-kernel+bounces-572774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E24A6CE89
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:50:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6481AA6CE8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C41657A464B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111F91896B7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658DA1FFC53;
-	Sun, 23 Mar 2025 09:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgx0IvxK"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2121FF5EF;
+	Sun, 23 Mar 2025 09:52:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CCD18D65F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 09:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97EE6AAD
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 09:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742723393; cv=none; b=ELFBpL33ormrpcTJiEeN07YCM9E7+pwGTzPDboSj//peqbCJye/aQe4CHS0WpnS3dd2blaY5IdDXCzRbB8qMJS37Fk73QSFgWNossfPD8EKx+vVDLC5YQZfVT68eg7QzYZzK14FF5yNcsIwsBZKbgDaUmyOpO5u9gtWRxpxgJuw=
+	t=1742723524; cv=none; b=UT34qRFMpYfU2riZxFlp2d0rjpHazLR1w/5jwffKUXa/LfG46kCecocD7a0qQBkihDqCoaZu+ONjGi9QjDQdXC7Q6oBAlKvfUN/A1xest2QyfZE8qr1CmsfhQIcfX9VLKGlQScghYfzUQz6J5w45BF0g1wSMM1RELx1qizYQryk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742723393; c=relaxed/simple;
-	bh=zCCQPhULcp8Yr613A/F+Id/s/bqZMfd1q4V9qHcb1Jg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LytebmGZc/DTxiJ7gUwl9+rsiZtI3ICvDgJTaXrqNnu8WBOJbDCR17Couiua05Gnwq4XOKTP1yFJZWOqBXfdfun9QEGNjCYUNWsCpssh9/iGmW3EnIZInqKfYCxuzWWwieBgV1+35e0c4Yb4vEcXq7h11jAwWn4sNV3SrEP+2KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgx0IvxK; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c2bb447e5eso1844199fac.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742723391; x=1743328191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qtl4aMOEbfVOV1/Eu8J0ZwV0cESQwszhmL0cG268KPo=;
-        b=jgx0IvxKDoEbZ1k0hv3evKng2mrFUPopctxRkA26rUWx8ebHj2fYPX1J//WZq4ATJf
-         Qh85Yu+rtF180bZQjsMuI8boL9F7sZT0EyWLvCspyR/WlQ3X3SUQIZkZKjlg7HJqnYJA
-         LbErcx4e14zrDzcIrhxsq2Obo4zert2vQGLNT+8dki6S4c6jZS32RCR7ljRsAkoH1GFR
-         Q5Ja6P+kg1BmctGbQYKGwafRnE+UWwRWX4vfBg3XaHqshN6TfE2FAsvcMH48OIvA5VKU
-         Mz60gqHdowv4tA4FEHNfLtvV5imWFBqE2mT9CGu4pLjd7eQSOn9aJcBg2AurgYJOrPNy
-         QxgA==
+	s=arc-20240116; t=1742723524; c=relaxed/simple;
+	bh=PD0pwJdHbgj717UCJF/9ZB/AYrAxpakEk1Ekrwy1kpg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QqpgxyL40LZS0brjH62BohfzLAE3ZMkVEpa631jHYt7AXDwwn696MFEpwOH+/oprqBqKevZ3f48Jc/t2VFD3uZg0RFc0I8D3mK3YPBYaHVbrpxJGqkRSPmsjo+inoJMCMGsBGZXfua0jc/1Dhv6n6pUZxkIjik7HFc9xEP9yBQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso46080955ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 02:52:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742723391; x=1743328191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qtl4aMOEbfVOV1/Eu8J0ZwV0cESQwszhmL0cG268KPo=;
-        b=Tc8fBBwse81572chn96L17ZYVVX7C5iwnQHBvOemM4bQ88KCk1XVS2quSCBpvrItS7
-         HWYdXLwgShWVgWrE9Z6cHuYflqYAJpTr2+lanSRIrcQjUn5VllCiI11+e8uODQYiiMKy
-         z6kRO/msKlV8+JkdGfpdGQT7xeLow0qCF+qjxNl0H9YIVTBYxuw+AbxNcEmWirNqrZTM
-         FBTU6jLBnliBY2ym0/JbgXHtNUMf4qdsNgVXRuP9n22eBVlVdH0VWm/8lwVwAJ1oJSXC
-         hZpbcNFwUg7/yg/QgwvBCEp4SnBT0vTSTp/joN0w+H6Y9YZNO9PM/hZ+rYaQFe0b/a53
-         5wgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYgC+Pa3emb801PHl6/rZGyw5EmaBTypZfBlM4YCW17u814tqPo6D1o+yWRHCU22wRx3Glzr9LuiU7lrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ndb4dp6EKurrRYQLmjYXwdXAB2cHQ1J8nXVHnJ2ZtxRb7162
-	oDRy9OCGZgCiWtieOflD6X7Muw/o2fiNjiKxPAj4VyAlBCJlvuDyFulfIlbnP0nEb0pSrN/VYbI
-	JDlRVA/nvY3WA22HSABQQXp/+On4=
-X-Gm-Gg: ASbGncuzM87BD6FPmn20TGH8CIc9nRFUktR/NaVQ5+YONqqA+ShwpN1i1dPhi+dtZ8D
-	a8k/yoN6g6/OIXgIUiZ9IRtGFwD8DoJA2Cl1IplSHHMm1GqPmNYHotqy338pK+Ie1EAekGH3hcb
-	ldJ8Y7A6AORZopQ6YCIyVpcWAS3S+a
-X-Google-Smtp-Source: AGHT+IFbAl12hGCj2PVn2R4kzM0/iVrZhywz5UfVG+Lep2sLGwhL+4qnhCJvzW2eWiZaBz44180IIgiem78C1Cc7ib4=
-X-Received: by 2002:a05:6830:620b:b0:72b:7cc8:435 with SMTP id
- 46e09a7af769-72c0af0c2f2mr6743315a34.24.1742723390919; Sun, 23 Mar 2025
- 02:49:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742723522; x=1743328322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ceZ1PVSbwXZJPEzUxeA6G+/x20DyPQmkIzOmcGHXnWQ=;
+        b=Q2/stUNpNQRqG6Trz3WSDJw81wMCnmzwMB4/dNcUhQ+8yf67Ban09xNGq5G8rpoqrZ
+         Una5NlpPwfgLkvIJai+Dfsbgx0EEVYw24os0qdOlXx2LSVWY4MsBhVrYD9jG9CqRB9kb
+         nVYgHUnFr3DMgWohH4rLy1TnsX/qKB9GWThXb/AaY2ZZ9ggtq9hPUoVtW7ayAZzVMOWY
+         hC0P3rzjc3prAFBYYWs78rUK+bY/itjq14yxRqmalukSMnwJNxlEERjEMOfYNtc6+U6v
+         AdX9o2kuq5p/MLYMw3Dj0OLzl29OkXFFzK6Nt8ceR2a/lMnq2EIccnRwoRDGVhWBv1EJ
+         PT6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVqX90UstJnCAqUPwnzVsLYa3EFhDv16X9cA1n8ZHoDVfyEDsiPp6wRJbc0ha9Vmo/CZoxDhaXPgBuTJtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwScfJ46flBzk8o5TuCSKA7M+n0UEnWenoNOuI5CB/QoEU8MSyY
+	AwBIo73JXNlrXyL24ASc2KGKVAp6KxCrAB8T2GBXiDJRdMKi7c8ZABnWCukuEsULwm/bfE9su+7
+	jrc0jWa/ivCh79n64DCgQdg1KiVZcc2sc5jy5OJq/RwDf4qZaycCdAzo=
+X-Google-Smtp-Source: AGHT+IFhpZ0bamSMHf34NhWVASbXqgbEmALs9ZXfsSgz21IDS9XkumcwLVFVG8zj6H7IK32wdpmpsNBbgDThpyPQtwuAL2eHkOh8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMcxu3pCF8jYPeqF_jN34saBwc8Fci+c-Dg2Lh7rqvuFQ@mail.gmail.com>
- <Z8m9AbD3tjNpBt6p@kbusch-mbp>
-In-Reply-To: <Z8m9AbD3tjNpBt6p@kbusch-mbp>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Sun, 23 Mar 2025 14:49:40 +0500
-X-Gm-Features: AQ5f1Jqdg6rQH9CczdkRGALGwIfqDyOG2EaR3hIqmo1zElkNd9miN3R3DAWLx2Q
-Message-ID: <CABXGCsMd_xv8jPDF_sFYhwd8GtANZ23nbaSJuCxQRO7cjPtgWg@mail.gmail.com>
-Subject: Re: 6.13/regression/bisected - new nvme timeout errors
-To: Keith Busch <kbusch@kernel.org>, mlombard@bsdbackstore.eu
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, linux-nvme@lists.infradead.org, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
+X-Received: by 2002:a05:6e02:1146:b0:3a9:cde3:2ecc with SMTP id
+ e9e14a558f8ab-3d58e8b981fmr104603655ab.6.1742723521854; Sun, 23 Mar 2025
+ 02:52:01 -0700 (PDT)
+Date: Sun, 23 Mar 2025 02:52:01 -0700
+In-Reply-To: <tencent_4D4C8BE7C706C952C2066109A76EFE2ED406@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dfd9c1.050a0220.31a16b.005b.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 6, 2025 at 8:19=E2=80=AFPM Keith Busch <kbusch@kernel.org> wrot=
-e:
->
-> On Wed, Jan 15, 2025 at 02:58:04AM +0500, Mikhail Gavrilov wrote:
-> > Hi,
-> > During 6.13 development cycle I spotted strange new nvme errors in the
-> > log which I never seen before.
-> >
-> > [87774.010474] nvme nvme1: I/O tag 0 (3000) opcode 0x1 (I/O Cmd) QID 1 =
-timeout, aborting req_op:WRITE(1) size:131072
->
-> ...
->
-> > I still haven't found a stable way to reproduce this.
-> > But I'm pretty sure that if this error don't appearing within two
-> > days, then we can assume that the kernel isn't affected by the
-> > problem.
-> > So I made bisection with above assumption and found this commit:
-> >
-> > beadf0088501d9dcf2454b05d90d5d31ea3ba55f is the first bad commit
-> > commit beadf0088501d9dcf2454b05d90d5d31ea3ba55f
-> > Author: Christoph Hellwig <hch@lst.de>
-> > Date:   Wed Nov 13 16:20:41 2024 +0100
-> >
-> >     nvme-pci: reverse request order in nvme_queue_rqs
->
-> The patch here uses the order recieved to dispatch commands in
-> consequetive submission queue entries, which is supposed to be the
-> desired behavior for any device. I did some testing on mailine, and it
-> sure looks like the order the driver does this is optimal, so I'm not
-> sure what's going on with your observation.
->
-> Do you have a scheduler enabled on your device?
->
-> How are you generating IO? Is it a pattern I should be able to replicate
-> with 'fio'?
+Hello,
 
-Sorry for not answering for a long time, but all because I was testing
-the off-list patch that was sent to me by Maurizio Lombardi.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in _find_next_bit
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 950289405ef2..990d9ef1eef9 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -989,6 +989,9 @@ static void nvme_submit_cmds(struct nvme_queue
-*nvmeq, struct rq_list *rqlist)
- {
-        struct request *req;
+ocfs2: Finishing quota recovery on device (7,0) for slot 0
+=====================================================
+BUG: KMSAN: uninit-value in _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ _find_next_bit+0x11c/0x130 lib/find_bit.c:145
+ find_next_bit include/linux/find.h:69 [inline]
+ ocfs2_recover_local_quota_file fs/ocfs2/quota_local.c:493 [inline]
+ ocfs2_finish_quota_recovery+0xc4f/0x3ea0 fs/ocfs2/quota_local.c:646
+ ocfs2_complete_recovery+0x229f/0x38a0 fs/ocfs2/journal.c:1357
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3319
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3400
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-+       if (rq_list_empty(rqlist))
-+               return;
-+
-        spin_lock(&nvmeq->sq_lock);
-        while ((req =3D rq_list_pop(rqlist))) {
-                struct nvme_iod *iod =3D blk_mq_rq_to_pdu(req);
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_noprof+0x923/0x1230 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ ocfs2_add_recovery_chunk fs/ocfs2/quota_local.c:305 [inline]
+ ocfs2_recovery_load_quota+0x425/0x1760 fs/ocfs2/quota_local.c:365
+ ocfs2_local_read_info+0x139e/0x2c10 fs/ocfs2/quota_local.c:758
+ dquot_load_quota_sb+0xa35/0xdc0 fs/quota/dquot.c:2459
+ dquot_load_quota_inode+0x662/0x9f0 fs/quota/dquot.c:2496
+ ocfs2_enable_quotas+0x1d4/0x6e0 fs/ocfs2/super.c:930
+ ocfs2_fill_super+0xa6b7/0xb550 fs/ocfs2/super.c:1140
+ get_tree_bdev_flags+0x6ec/0x910 fs/super.c:1636
+ get_tree_bdev+0x37/0x50 fs/super.c:1659
+ ocfs2_get_tree+0x34/0x40 fs/ocfs2/super.c:1184
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3560
+ path_mount+0x742/0x1f10 fs/namespace.c:3887
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x71f/0x800 fs/namespace.c:4088
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4088
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-And I want to say right away that this patch solved my problem. I
-double checked, and both times the system worked for 4 days without
-errors:
+CPU: 0 UID: 0 PID: 3540 Comm: kworker/u8:14 Not tainted 6.14.0-rc7-syzkaller-g586de92313fc-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: ocfs2_wq ocfs2_complete_recovery
+=====================================================
 
-nvme nvme0: I/O tag 960 (33c0) opcode 0x2 (I/O Cmd) QID 7 timeout,
-aborting req_op:READ(0) size:16384
-nvme nvme0: I/O tag 961 (33c1) opcode 0x2 (I/O Cmd) QID 7 timeout,
-aborting req_op:READ(0) size:8192
-nvme nvme0: Abort status: 0x0
-* * *
-nvme nvme0: I/O tag 960 (33c0) opcode 0x2 (I/O Cmd) QID 7 timeout,
-reset controller
 
-and subsequent freezing of some applications.
+Tested on:
 
-> Do you have a scheduler enabled on your device?
-No. nvme0 is server-tire 30TB SSD.
+commit:         586de923 Merge tag 'i2c-for-6.14-rc8' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e47e98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d4644c4063c5098
+dashboard link: https://syzkaller.appspot.com/bug?extid=7ea0b96c4ddb49fd1a70
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=101973b0580000
 
-> head /sys/block/*/queue/scheduler
-=3D=3D> /sys/block/nvme0n1/queue/scheduler <=3D=3D
-[none] mq-deadline kyber bfq
-
-=3D=3D> /sys/block/nvme1n1/queue/scheduler <=3D=3D
-[none] mq-deadline kyber bfq
-
-=3D=3D> /sys/block/sda/queue/scheduler <=3D=3D
-none mq-deadline kyber [bfq]
-
-=3D=3D> /sys/block/sdb/queue/scheduler <=3D=3D
-none mq-deadline kyber [bfq]
-
-> How are you generating IO? Is it a pattern I should be able to replicate =
-with 'fio'?
-
-It's very complicated. Because it happens only when I update (podman
-pull) a large (16 GB) Docker container.
-
-$ podman images
-REPOSITORY                                                   TAG
-      IMAGE ID      CREATED       SIZE
-dev-image-store.my-company.com/local-stand/service  25.2100-latest
-513139713b48  19 hours ago  16.5 GB
-dev-image-store.my-company.com/local-stand/service  25.1220-latest
-920708d4b3dc  9 days ago    16.8 GB
-dev-image-store.my-company.com/local-stand/service  25.1220
-67d2af91f323  10 days ago   16.8 GB
-dev-image-store.my-company.com/local-stand/service  25.2100
-24e6817bff52  3 weeks ago   16.4 GB
-
-Podman stores its images on the 30TB BTRFS partition located in /home.
-
---=20
-Best Regards,
-Mike Gavrilov.
 
