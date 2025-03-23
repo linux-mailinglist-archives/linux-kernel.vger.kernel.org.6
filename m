@@ -1,151 +1,146 @@
-Return-Path: <linux-kernel+bounces-572862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37028A6CF8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB323A6CFC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 15:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7A21895A1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5AAE3B6124
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 14:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B9F6EB7C;
-	Sun, 23 Mar 2025 14:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2074960B8A;
+	Sun, 23 Mar 2025 14:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4ESwyvp"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="nUJmMEYB"
+Received: from mx10.gouders.net (mx10.gouders.net [202.61.206.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A93C2ED;
-	Sun, 23 Mar 2025 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6502420EB;
+	Sun, 23 Mar 2025 14:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.206.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742738900; cv=none; b=C1V8NO3kfNTj3od+Et9TlMAJ1pOz9UOmgEqyQ+GeDhc7kbP10bTR/zsFb4HyZ+x7P+zCTCydFXCG0GTbqErzpgsim/wiv0StXHcYWdQhNKCtsa35A+eOpmJg0GFbm/FlF7SDwJLnk3+QLQ+CmZIaavjugY+IxekaN749rYNRUZw=
+	t=1742740643; cv=none; b=eueHXiK3oirVDOctjRBnuqYrSMgxLuJ33MCVHFSSUaPXTPy9x6qhpMy07HhiVTftFOryx3aKfbU6szwd2PKxUcdsaZHVkbtOYH6lD4euCChnPnbiXIGlqvCiFwpAGSTodzwGyAKCCpY6Q3Z6W8vo12njwS4b1phl5a9CAhiVMG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742738900; c=relaxed/simple;
-	bh=xIwEINjj2gwrAy/Ew60O0QcjqBoYbWNAugj+Qco60z0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ZMP9iuIFpZvIjdP0bd9/jccI9M4qTZOi55iWJOrPR58Y1LAxkxYLr0Pn4zYsJGRHb4BDo/aaHmZ0dWkVOvDCKZ9m8ePYTnoeZ+c8Yb4sVZoW1yB2oQOA8DiTU1/egGDOw3GtMfmuEl0lTUciAJTR+WdS3zpqqAtnHvnWcj5BqUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4ESwyvp; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-226185948ffso66562165ad.0;
-        Sun, 23 Mar 2025 07:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742738895; x=1743343695; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IDF1H30hmfmuS4zs/ZqkO/uL6rPCL3F/GOuz/E1e84g=;
-        b=S4ESwyvpbXF8In+Y36vs2bXtL2wdw7TVLirxugc741SEqonGdTQk81YswxsQs6//qR
-         Ro15voj11IFtnsOm7hm4qlaezn/wlQ14wCHPliXT0ohfiZ8EIS3ImR/N/W6dtNeftd7S
-         cPjtaPR+INBHm7+rH2KoDWEeC+5tGWV/yv6KEPDJ/dlJGbqYnzixVIGa0uGXPjRj9dzk
-         c7v4SSNDLZUzcyTiZL7Y+vxwze0TDL1/3cNzKvsYFAeXy62/Mb0miFLM1R1UAHg/oVT9
-         nEmQNaxk9f0BMYB8IvT5fCrgxDwSNJ+yKWXqDDWJlEiMHZR+pnaV7JgjN3Pf4T0ZShtS
-         +9+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742738895; x=1743343695;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IDF1H30hmfmuS4zs/ZqkO/uL6rPCL3F/GOuz/E1e84g=;
-        b=spIM8OOcsMdiJ+4Uc7QDIcJprLJ79RrH/XKaugOBhMarvFU8r00iCW9ydtYfwseGYn
-         RaKFhGivAlUp6J/I/NN2fRSPKDjC9i9hzcoPYhjqM/dBucpqBsq+VxTGrRU/qlxtpGDM
-         SnCk6HiJ4/SKr3x+x0XI6fHB/hkqvvGKLKJEjMra1SdowaK6Vk1SfIcsNJtDUIaHUkRq
-         g/IOL1RBlSwcNflFIdqyKbFVqNLjSdAw/rWxZ4P2VmH1iEaRx+BQE2NKmtgPGDBB9P/B
-         q6LctSZ+DyFIbAz/7HK+2tHOI3hDK4k/Jokr6iQhw76ZnxbJDxZOifWiLmYumSgQg7x7
-         kmOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOtDAKvTArsKv2ES4thJwPqiGDMZccsrALn+s2VkgVJjyJzrZC3eShtbENVQumST+9uOl6KLY6umom@vger.kernel.org, AJvYcCVwC3SyNW9hI8jwDrsSlhrDSO3cqlDbwqstbevcbciWC9i3OpUgCQvPfG6nrVEUNmMYsxnCvDYx1wnEQrPmhg==@vger.kernel.org, AJvYcCXFCt10DN5/H+ANLyTu028IUhzPg0Yf7/ZjLpucfytCgr77fHTEIZ9TthV61bNTiXfFXuK5YwD5CYdP@vger.kernel.org, AJvYcCXJ9vt/Kf3OGlQswNKpfj9oHejepwMudB8D3hwV8Cggz3SvFBIPbJhr1DGIi4sMbvLkkICZ0P9f07fd0xDH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxcOSMV6hkDp/hekWZ+gOcfAnXc6oSq0rj4oG/0bgXAAdqOuZ5
-	aAlNJy3ZzA684er1IYGujdFerWA9r9NJEPV9XS6556YXm/NPLCR7RLZ0aw==
-X-Gm-Gg: ASbGncvoJy1grSSUB5bURK93TUBZcRAVgizDqM5NXvhaQ30+M0ucs3MrN8WH0fGg0c2
-	ATAVp/lvB15HqtYATehRg1iOajH3m5/JCQa+TiqrZb0uBCVnqxifsw3mT+XyY/+mbKwiC2r6A1y
-	dkySUfnIymKpxaQRfiNvLZkmdhyEt5JsjOB21yvpAoPFeyIV4bYk9Xb8PIMvfiFurd8VP7376YK
-	WE+yHSQmX4D24A0fhVMWdzW9h2etzJJmBoBvmK7O1gRDoTOFMXUKarEaIT9x8gKZZmgUlaz5Vzi
-	5tg9EPutwN/oxJ1gMlA4fNcxfCsJTx3+44BU9tTE3oY3vg3H
-X-Google-Smtp-Source: AGHT+IGaBFfjt0FQLriFYCmj3Oa1iv0U46d/ndwDW3jiP2m6speDDfglrGw//6dI9D+Ld9iT/ZIFUA==
-X-Received: by 2002:aa7:88c9:0:b0:730:7600:aeab with SMTP id d2e1a72fcca58-739059c5da7mr15848294b3a.13.1742738895230;
-        Sun, 23 Mar 2025 07:08:15 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa97fdsm5801796b3a.26.2025.03.23.07.08.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 07:08:14 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org, dchinner@redhat.com, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 3/3] iomap: rework IOMAP atomic flags
-In-Reply-To: <20250323063850.GA30703@lst.de>
-Date: Sun, 23 Mar 2025 19:12:02 +0530
-Message-ID: <87bjtrsw2d.fsf@gmail.com>
-References: <20250320120250.4087011-1-john.g.garry@oracle.com> <20250320120250.4087011-4-john.g.garry@oracle.com> <87cye8sv9f.fsf@gmail.com> <20250323063850.GA30703@lst.de>
+	s=arc-20240116; t=1742740643; c=relaxed/simple;
+	bh=Z9/22kWKr/x8jhk4QnOrrqdwh6LlTgkSojjkYGWCPf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jCyk9J/nzDUb50PJBwR2szcBFECGZBIE77BtRkQO0e4+V0sI6qvFiPG+fnmwZ+YyU7Gyn3YXKnefQietiqWRkAG/E0MLyVM4iS1vctX7oX8pVDq5PHManILLPrRf+NXA0kbWEwYPaUCEw6J476ycVZ/O5YWJ7m/HDE48GQjs/s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net; spf=pass smtp.mailfrom=gouders.net; dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b=nUJmMEYB; arc=none smtp.client-ip=202.61.206.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gouders.net
+Received: from localhost (ip-109-42-179-92.web.vodafone.de [109.42.179.92])
+	(authenticated bits=0)
+	by mx10.gouders.net (8.17.1.9/8.17.1.9) with ESMTPSA id 52NE6q3I008644
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Sun, 23 Mar 2025 15:06:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+	t=1742738814; bh=Z9/22kWKr/x8jhk4QnOrrqdwh6LlTgkSojjkYGWCPf0=;
+	h=From:To:Cc:Subject:Date;
+	b=nUJmMEYBNQzqLZahTSvFo3VAaYQZfvTs4mrdzLrst/+F1AkvACJ8N/NuHWI3726B+
+	 SgoHVQGBCsc3x+FF0A6ektZvPbCcp+sQne2hSEFCxXk6pJa5Qz3VXwA019oqVUlfkl
+	 EQRFHz4UhK5GQ0WlMDBeBtD1cQpkrb24gmtQkQ3A=
+From: Dirk Gouders <dirk@gouders.net>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Cc: Dirk Gouders <dirk@gouders.net>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf bench sched pipe: fix enforced blocking reads in worker_thread
+Date: Sun, 23 Mar 2025 15:01:01 +0100
+Message-ID: <20250323140316.19027-2-dirk@gouders.net>
+X-Mailer: git-send-email 2.45.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Christoph Hellwig <hch@lst.de> writes:
+The function worker_thread() is programmed in a way that roughly
+doubles the number of expectable context switches, because it enforces
+blocking reads:
 
-> On Sun, Mar 23, 2025 at 01:17:08AM +0530, Ritesh Harjani wrote:
->
-> [full quote deleted, can you please properly trim your replies?]
->
+ Performance counter stats for 'perf bench sched pipe':
 
-Sure.
+         2,000,004      context-switches
 
->> So, I guess we can shift IOMAP_F_SIZE_CHANGED and IOMAP_F_STALE by
->> 1 bit. So it will all look like.. 
->
-> Let's create some more space to avoid this for the next round, e.g.
+      11.859548321 seconds time elapsed
 
-Sure, that make sense. 
+       0.674871000 seconds user
+       8.076890000 seconds sys
 
-> count the core set flags from 31 down, and limit IOMAP_F_PRIVATE to a
-> single flag, which is how it is used.
+The result of this behavior is that the blocking reads by far dominate
+the performance analysis of 'perf bench sched pipe':
 
-flags in struct iomap is of type u16. So will make core iomap flags
-starting from bit 15, moving downwards. 
+Samples: 78K of event 'cycles:P', Event count (approx.): 27964965844
+Overhead  Command     Shared Object         Symbol
+  25.28%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
+   8.11%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
+   2.82%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
 
-Here is a diff of what I think you meant - let me know if this diff
-looks good to you? 
+From the code, it is unclear if that behavior is wanted but the log
+says that at least Ingo Molnar aims to mimic lmbench's lat_ctx, that
+doesn't handle the pipe ends that way
+(https://sourceforge.net/p/lmbench/code/HEAD/tree/trunk/lmbench2/src/lat_ctx.c)
 
+Fix worker_thread() by always first feeding the write ends of the pipes
+and then trying to read.
 
+This roughly halves the context switches and runtime of pure
+'perf bench sched pipe':
 
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 02fe001feebb..68416b135151 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -78,6 +78,11 @@ struct vm_fault;
- #define IOMAP_F_ANON_WRITE     (1U << 7)
- #define IOMAP_F_ATOMIC_BIO     (1U << 8)
+ Performance counter stats for 'perf bench sched pipe':
 
-+/*
-+ * Flag reserved for file system specific usage
-+ */
-+#define IOMAP_F_PRIVATE                (1U << 12)
-+
- /*
-  * Flags set by the core iomap code during operations:
-  *
-@@ -88,14 +93,8 @@ struct vm_fault;
-  * range it covers needs to be remapped by the high level before the operation
-  * can proceed.
-  */
--#define IOMAP_F_SIZE_CHANGED   (1U << 8)
--#define IOMAP_F_STALE          (1U << 9)
--
--/*
-- * Flags from 0x1000 up are for file system specific usage:
-- */
--#define IOMAP_F_PRIVATE                (1U << 12)
--
-+#define IOMAP_F_SIZE_CHANGED   (1U << 14)
-+#define IOMAP_F_STALE          (1U << 15)
+         1,005,770      context-switches
 
- /*
-  * Magic value for addr:
+       6.033448041 seconds time elapsed
 
+       0.423142000 seconds user
+       4.519829000 seconds sys
 
+And the blocking reads do no longer dominate the analysis at the above
+extreme:
 
-(PS: I might be on transit / travel for some other work for a week. My reponses may be delayed.)
--ritesh
+Samples: 40K of event 'cycles:P', Event count (approx.): 14309364879
+Overhead  Command     Shared Object         Symbol
+  12.20%  sched-pipe  [kernel.kallsyms]     [k] read_hpet
+   9.23%  sched-pipe  [kernel.kallsyms]     [k] retbleed_untrain_ret
+   3.68%  sched-pipe  [kernel.kallsyms]     [k] pipe_write
+
+Signed-off-by: Dirk Gouders <dirk@gouders.net>
+---
+ tools/perf/bench/sched-pipe.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/tools/perf/bench/sched-pipe.c b/tools/perf/bench/sched-pipe.c
+index e2562677df96..70139036d68f 100644
+--- a/tools/perf/bench/sched-pipe.c
++++ b/tools/perf/bench/sched-pipe.c
+@@ -204,17 +204,10 @@ static void *worker_thread(void *__tdata)
+ 	}
+ 
+ 	for (i = 0; i < loops; i++) {
+-		if (!td->nr) {
+-			ret = read_pipe(td);
+-			BUG_ON(ret != sizeof(int));
+-			ret = write(td->pipe_write, &m, sizeof(int));
+-			BUG_ON(ret != sizeof(int));
+-		} else {
+-			ret = write(td->pipe_write, &m, sizeof(int));
+-			BUG_ON(ret != sizeof(int));
+-			ret = read_pipe(td);
+-			BUG_ON(ret != sizeof(int));
+-		}
++		ret = write(td->pipe_write, &m, sizeof(int));
++		BUG_ON(ret != sizeof(int));
++		ret = read_pipe(td);
++		BUG_ON(ret != sizeof(int));
+ 	}
+ 
+ 	return NULL;
+-- 
+2.45.3
 
 
