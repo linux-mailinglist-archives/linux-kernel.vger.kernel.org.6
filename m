@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-572779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E532A6CEA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:21:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5BAA6CEAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7367A3B51AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AD233B07BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 10:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41428201006;
-	Sun, 23 Mar 2025 10:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456D62036E1;
+	Sun, 23 Mar 2025 10:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQzNBeDn"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C21OWYkj"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3EB1E5B6B;
-	Sun, 23 Mar 2025 10:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2675F507;
+	Sun, 23 Mar 2025 10:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742725263; cv=none; b=pz5YB9NiZKdAS4EYLG7pfB4q07KMV6/AnJpwCdkuQi0a49BHSeIkBucsbcb1r50wvI7xlAlmbxSlh/RLHJytcSJuDYPeOZkhyRWOP+EW27cnxPRawQ4NGpzVVDkVw6UOEUsqkKvgLyroARU9euzHy0WHPIys1I+ZLfg18yZFXo0=
+	t=1742725570; cv=none; b=HB0/1FFgCdbBSJJmQSBaJ/PB+/oKqxM3H7Rq8dQ297B8KRe33j4WJhr1Oceg6/CH0CNtJ46835SSkGq6PMcWFfy7ny39R1NBlNz+DkAk6t5dxBUwfvhhEkBTGPz0b5jxkbkz4QOIQVOhwcGhKeWKmeEQxLX/Mllg8687UXcYmpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742725263; c=relaxed/simple;
-	bh=mhlcwCiOJk1OYGNmsrJQoGnSWAYfCzhWAm+lenx4tR8=;
+	s=arc-20240116; t=1742725570; c=relaxed/simple;
+	bh=ZHByCQMu6fy/FYcssuBbQntJXaxUEjlHRFr3Q4iE9CQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FN1dmIlL1B2bBAQJr1Gq5YyX8ppWCx3j2aWXFvWCXw3vPXDr+yL/sd6T7DNOYxZKO0HGVBZ9RynVPaTGKT+IVjTwP8vjYL0QMjWa/t+bw3ROOnJcfaeMpiOPQn4cgF7HfSMYxTsXlS0qQ48xRep/CHaWQnZR7nvta2IzkwlXGrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQzNBeDn; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version:Content-Type; b=XtCn4wOjGwOmnLHCRcd5Ho7Jy/leuJXAKsn3XECAtW+YjwFeOe7EHAgEj1Ham0LVEQ61eAbXso8kAmXh1xITP6ENTDFgchtnXfFIOGXkMgUHsHipkOU7s6XtcpO21U2twrWu1DwWkbQs3udFhA2pdUWCrUDEADa5vRdGdK3+dp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C21OWYkj; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913b539aabso1834116f8f.2;
-        Sun, 23 Mar 2025 03:21:00 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-391342fc148so2252154f8f.2;
+        Sun, 23 Mar 2025 03:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742725259; x=1743330059; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742725567; x=1743330367; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qeJQl4E3xKZmL5KbVn4fJK5YhYvsJTclIdlv1fujUX8=;
-        b=mQzNBeDnrFJIdquMYUIk8vPgBm88DQtxwt4AAqKC+ZTD/95QXnBXovEm10vb6YJnTh
-         823FGulYLsKfrk6bCWR7wnFR44Wo3UrC1MxWVjb5o0KVb96jB8lEXwD5GUJjNFYJyTbe
-         wtNXaz0Sz81c0mwQBaINCLOmuza4CDOqwH3CwZPmoAHlXOI0uxnEzhJQ6Kc6CW1ZmLrw
-         PELZWeXRDNv16f8/8MIYWkk5CuOZNmV4jaQh9n4sVM4g8jEa3d3WZblLhSmETIjq+1MF
-         JqeLA8DufFf4485VAGiNfXin3vYZkuEAaZGUVnKFnYylHp0+Vx/MO1E2V11j9MvpU8Rz
-         /7Uw==
+        bh=cT+El6wDpvl0q+mSd1WIC6cyQoXjbajGs/lsGcnnTno=;
+        b=C21OWYkjaF637BqWsmCmZzol15cjBu5EbfpXRoNTFkSdwMz3CM7NP8HWHkbSNLcJTv
+         zX8murS0vgy+k285ZkvYdwZDGl5vM7i1QHZzEHXLphkB+PnMZVsOS9rtYmbD/vuNYSw1
+         TgfWUv0K6LHuU4rC2YyGOCkNowlz68LMk2Jr2ZWd1haZn4GnlxVKHs/e8CG4gsj6gbxv
+         XQkaFlVk1hRG9SNag26qwvK5Oc76uMPCiILh5ZHzpwYKgeX/+LrztbosbLWAA64Ow2SK
+         bON7lf8elqSoJkbbtHHyKi8mgyME2Q+uykq4Tl+sNLFyVGI5+FUzgJaWkk8K4ZIpX5J/
+         1Hxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742725259; x=1743330059;
+        d=1e100.net; s=20230601; t=1742725567; x=1743330367;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qeJQl4E3xKZmL5KbVn4fJK5YhYvsJTclIdlv1fujUX8=;
-        b=cHar1Zri0Q+/T9XPtgxsPVRAncWkfGMA81rO6hqz/E8as6DOX0txQ6KwIdlvGgOKWE
-         vLPFLOJapDoLA8CfGLPLQ4YJ7CKzXAEGNyUy9ZI5FUPXS2PlkInM+4qsAVMExId09Akm
-         hDQGRJiT+62QbivhQKUYmeviTPYZdO/RJXjkdinP6oqSc6x84rzObwQ5Go3xhSjwwUTf
-         g/YO2uwllmEI6cIULQ+7AXy4hEahlJkeO6FkH0/H/uzAQukEtNeKse5mEz15a/3gVFCR
-         UxYoLzH4CfMaUAGXSMalcxlRnmLURLaHEd95PUEjJGei7Q4GBnAv0+Tl14Au/cx1RW65
-         UsXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKhDYJO51+EUgAyAGlQbWxcmFwhmgKCyE+UetYAVtUyaTjmB7SXG3pZoRpCPQ8yPx76b3GWi4ad2lbAIs=@vger.kernel.org, AJvYcCXs7IJW33UvblHuxl4nw3gTmM4Uj0ZdQKdOmmw4l0KkEEL1Rb5qVF3o0JqO6jn6V36LFfAZsJAQTGISmqmQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoeEatG5/GZRsmnb7yiS5MpG7k4hyOfMXnnZs2BClQI0MNIpCk
-	kzjBBaUQHtiFF6BNuKHX11rL1U4Pg/S0aFK/65UuCrD+XIMrB4d3
-X-Gm-Gg: ASbGncvonm2o3suUMBH0UiIGw5pN3YKgz4RJsmiB0TOlQAzFNmEmMkELSTQblcMYyEn
-	MdZaB2kgLdS+0HBJEboD1wb0O756v9xE5LA53Xoho2ugfd5iLcMsG9sp/vCP1FYpf1TDkgFfLbP
-	7S8ssKNR/5Adw26SN5jBfdLf7/+ivh4ikAr1YLDLkcEtXxulXH2/VXqb0Zz0Ul553dfvL3xx1h3
-	NuOfaxJ2UBYctMwLf8aZJdCJY8V+eTbypnHP+rPuosYZsPP2Ay7HSQxKE4Z23TNU7TFIkhzWoTT
-	20cr9rrkpsxAS5m3LeobgghEVvv32KnIMvRC3jhLTGiZImzKrE4jhPZ34pVsnnWmDY/mPE2EfGy
-	iMLLB5TgkDPYbjLoF+Q==
-X-Google-Smtp-Source: AGHT+IFtspyb7aGU8PqUeHK5tVMGTazHsDMgEYaDtmM86O0LQ5fMac9P3KCTGj2Vs5NlkiCnMpgWhA==
-X-Received: by 2002:a5d:6d81:0:b0:391:29c0:83f5 with SMTP id ffacd0b85a97d-3997f94da3bmr8008850f8f.44.1742725259346;
-        Sun, 23 Mar 2025 03:20:59 -0700 (PDT)
+        bh=cT+El6wDpvl0q+mSd1WIC6cyQoXjbajGs/lsGcnnTno=;
+        b=qm+vqNYft8kq+oxcTakui2LRxors26RB3gE1MxWA8nVLcwouz6OOzxxsZoi6VZYUu8
+         1OUuldZ5E3AF5/EOgr+7I/ZKOjmcvFacwqynKBMaCmviAd65zQSDvXm/wXOoroN5Zy5T
+         RTO2IF3a7maTX/bDs20OlB7sMqGAj9ctRB9zai0jlR/Vnh8HM3P2aRYYFpQD9/zA5lkL
+         Vce65SI1uP06vyYuMX17jRr+XFUzVwrMSa4HzvEDKR0BmmJZg6uopJFpoMlnQU+9rKWj
+         8PdyUoduotp3POFb5Bv0MikGUc0OykD4riYS4p8BTmqyhM2P6PhLJPFiGduEdXJQe/Ov
+         O2ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVE3Fir64oKXneEcrgauiZ7P9E/jyfqjbo787s4D0HO1QpHo4SJSvzYycnTGb+8sqrUzfBUPGPJW4m0zkLiAD4=@vger.kernel.org, AJvYcCVmPP3VdB3FHDSU+5az1RcuDt0MOmZtLM/6i9fl9Em1u0+N1u6nHWkpWP18ojbvoEfX0Ff88yyI8XxDnJ0g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3PeWcx33LwdbanBN2TPbNv/fIeQA+2o94TfQ0E9JB2/bw6wSL
+	dBaENBLAFvnoMQskAP8oe3XUBqyyZq7SMHEPh5LcKBXGHOizrBMw
+X-Gm-Gg: ASbGncvAH9B1ix1dP1cvGmqFWUE39/RPp2d0l15FuOgLbakLEmIcATnfGR9f1hOSOeh
+	ZBc6J0YJ6vU+nfFvgG6sxeSzjLxEqsS4JSurfWuODxxQanjKifN3qHSHgzeUc4fnYAzDHnNJJkW
+	yN/pg6lqKbP9mAoM77eE+HMPUaofF7DoX2F3Zo7tGYzSkJ8dqTYm85JU53OAzsVJYcg+DchoyqR
+	hrJcwGCIrQi9pq8fffcluVIDHPloELyN9pZxxFKEYM/D2PDspggn0Rnz71son2q/fi32wYHrvu1
+	/HZj42R4MZkxbbK2xr/W3n696CXP1zLVZ4WTkkUmPH9Z8GwlDZg3TyPymsB+y135kDswiUzMJy0
+	tUIt7MSE=
+X-Google-Smtp-Source: AGHT+IHNBffE5W1DcvHicFO4RpE77hhDJuAALyW8zJfQAJNq2tW3CgjO9FW8TVxp1ssD8/P6xesKHA==
+X-Received: by 2002:a5d:5f46:0:b0:399:7918:541a with SMTP id ffacd0b85a97d-3997f8f5c13mr8866185f8f.10.1742725566950;
+        Sun, 23 Mar 2025 03:26:06 -0700 (PDT)
 Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3c90sm7575305f8f.36.2025.03.23.03.20.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6667sm7502555f8f.72.2025.03.23.03.26.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 03:20:58 -0700 (PDT)
-Date: Sun, 23 Mar 2025 10:20:57 +0000
+        Sun, 23 Mar 2025 03:26:05 -0700 (PDT)
+Date: Sun, 23 Mar 2025 10:26:04 +0000
 From: David Laight <david.laight.linux@gmail.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
- <davem@davemloft.net>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: essiv - Replace memcpy() + NUL-termination with
- strscpy()
-Message-ID: <20250323102057.79c810f1@pumpkin>
-In-Reply-To: <20250316211504.39327-2-thorsten.blum@linux.dev>
-References: <20250316211504.39327-2-thorsten.blum@linux.dev>
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Marco Elver <elver@google.com>, Nick Desaulniers <ndesaulniers@google.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Pekka Enberg
+ <penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim
+ <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Roman
+ Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/5] treewide: Replace kfree() casts with union members
+Message-ID: <20250323102604.5103c649@pumpkin>
+In-Reply-To: <20250321204105.1898507-1-kees@kernel.org>
+References: <20250321202620.work.175-kees@kernel.org>
+	<20250321204105.1898507-1-kees@kernel.org>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -93,45 +99,104 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 16 Mar 2025 22:15:04 +0100
-Thorsten Blum <thorsten.blum@linux.dev> wrote:
+On Fri, 21 Mar 2025 13:40:57 -0700
+Kees Cook <kees@kernel.org> wrote:
 
-> Use strscpy() to copy the NUL-terminated string 'p' to the destination
-> buffer instead of using memcpy() followed by a manual NUL-termination.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  crypto/essiv.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/crypto/essiv.c b/crypto/essiv.c
-> index 1c00c3324058..ec0ec8992c2d 100644
-> --- a/crypto/essiv.c
-> +++ b/crypto/essiv.c
-> @@ -405,8 +405,7 @@ static bool parse_cipher_name(char *essiv_cipher_name, const char *cra_name)
->  	if (len >= CRYPTO_MAX_ALG_NAME)
->  		return false;
->  
-> -	memcpy(essiv_cipher_name, p, len);
-> -	essiv_cipher_name[len] = '\0';
-> +	strscpy(essiv_cipher_name, p, len + 1);
+> As a prerequisite to being able to optionally take the address of any
+> lvalues used in a call to kfree(), replace casts to the kfree() argument
+> with unions to include an actual pointer.
 
-That is just 'so wrong'.
-The 'len' argument to strscpy() is supposed to be the length of the
-buffer (in order to avoid overflow) not the number of characters.
-
-In this case the bound check is before the copy (and the buffer assumed
-to be the right size!)
-So memcpy() + terminate is exactly correct.
-
-The warning gcc emits for strncpy() when the length depends on the source
-string is equally applicable to strscpy().
+Having different names for the argument to kfree() and other uses
+of the data is just brain-dead and will make reading code harder
+and writing code that access data after it is freed so much easier.
 
 	David
 
->  	return true;
+> 
+> This is an example subset. There are another handful remaining:
+> 
+> $ git grep '\bkfree((void \*)'
+> arch/mips/alchemy/common/dbdma.c:       kfree((void *)ctp->cdb_membase);
+> arch/s390/kernel/crash_dump.c:  kfree((void *)(unsigned long)addr);
+> drivers/crypto/atmel-sha204a.c: kfree((void *)i2c_priv->hwrng.priv);
+> drivers/infiniband/hw/cxgb4/mem.c:              kfree((void *) (unsigned long) mhp->kva);
+> drivers/isdn/mISDN/fsm.c:       kfree((void *) fsm->jumpmatrix);
+> drivers/misc/altera-stapl/altera.c:           kfree((void *)vars[variable_id]);
+> drivers/misc/altera-stapl/altera.c:                             kfree((void *)vars[i]);
+> drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h:                        kfree((void *)x); \
+> drivers/net/ethernet/qlogic/qed/qed_main.c:     kfree((void *)cdev);
+> drivers/net/usb/cx82310_eth.c:  kfree((void *)dev->partial_data);
+> drivers/net/usb/cx82310_eth.c:  kfree((void *)dev->partial_data);
+> drivers/scsi/snic/snic_io.c:            kfree((void *)rqi->sge_va);
+> drivers/scsi/snic/snic_io.c:                    kfree((void *)rqi->sge_va);
+> drivers/staging/rtl8723bs/os_dep/os_intfs.c:    /* kfree((void *)padapter); */
+> drivers/video/fbdev/grvga.c:            kfree((void *)virtual_start);
+> drivers/video/fbdev/grvga.c:                    kfree((void *)info->screen_base);
+> drivers/xen/grant-table.c:                      kfree((void *)page_private(pages[i]));
+> net/ieee802154/nl802154.c:      kfree((void *)cb->args[0]);
+> net/sched/em_ipset.c:           kfree((void *) em->data);
+> net/sched/em_meta.c:    kfree((void *) v->val);
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  include/linux/netlink.h | 1 +
+>  include/net/pkt_cls.h   | 5 ++++-
+>  net/sched/ematch.c      | 2 +-
+>  net/wireless/nl80211.c  | 2 +-
+>  4 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/netlink.h b/include/linux/netlink.h
+> index c3ae84a77e16..26eb9eea8a74 100644
+> --- a/include/linux/netlink.h
+> +++ b/include/linux/netlink.h
+> @@ -295,6 +295,7 @@ struct netlink_callback {
+>  	bool			strict_check;
+>  	union {
+>  		u8		ctx[NETLINK_CTX_SIZE];
+> +		void *		ptr;
+>  
+>  		/* args is deprecated. Cast a struct over ctx instead
+>  		 * for proper type safety.
+> diff --git a/include/net/pkt_cls.h b/include/net/pkt_cls.h
+> index c64fd896b1f9..4faf8d6eed1d 100644
+> --- a/include/net/pkt_cls.h
+> +++ b/include/net/pkt_cls.h
+> @@ -403,7 +403,10 @@ struct tcf_ematch_ops;
+>   */
+>  struct tcf_ematch {
+>  	struct tcf_ematch_ops * ops;
+> -	unsigned long		data;
+> +	union {
+> +		unsigned long	data;
+> +		void *		ptr;
+> +	};
+>  	unsigned int		datalen;
+>  	u16			matchid;
+>  	u16			flags;
+> diff --git a/net/sched/ematch.c b/net/sched/ematch.c
+> index 5c1235e6076a..f4b00e7aca6a 100644
+> --- a/net/sched/ematch.c
+> +++ b/net/sched/ematch.c
+> @@ -411,7 +411,7 @@ void tcf_em_tree_destroy(struct tcf_ematch_tree *tree)
+>  			if (em->ops->destroy)
+>  				em->ops->destroy(em);
+>  			else if (!tcf_em_is_simple(em))
+> -				kfree((void *) em->data);
+> +				kfree(em->ptr);
+>  			module_put(em->ops->owner);
+>  		}
+>  	}
+> diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
+> index d7d3da0f6833..b5a3ae07d84c 100644
+> --- a/net/wireless/nl80211.c
+> +++ b/net/wireless/nl80211.c
+> @@ -3270,7 +3270,7 @@ static int nl80211_dump_wiphy(struct sk_buff *skb, struct netlink_callback *cb)
+>  
+>  static int nl80211_dump_wiphy_done(struct netlink_callback *cb)
+>  {
+> -	kfree((void *)cb->args[0]);
+> +	kfree(cb->ptr);
+>  	return 0;
 >  }
 >  
 
