@@ -1,274 +1,95 @@
-Return-Path: <linux-kernel+bounces-572757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71936A6CE46
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:25:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AA7A6CE4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 08:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D165B16AB11
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80F81892839
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 07:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD020101B;
-	Sun, 23 Mar 2025 07:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFD6201016;
+	Sun, 23 Mar 2025 07:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HX2sVng8"
-Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYRFEOJy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F53AD24
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 07:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20A719007D
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 07:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742714718; cv=none; b=NsjmVMieUa3KCcLLEv7yLLmr/vOfXXVw9UkSWm88AMs/N+1AiD+1plsLnOaas/o66AZBw3dmCQIrjC25XiF1FOMs1+p04cIJFMvp9IXl6isk3uFNv3MYIatl+4tI/6BjdB2Rah81/Q0rxFGSJiKDVNbtAjxxrN8HZORXQKmmSTg=
+	t=1742716237; cv=none; b=osbih/kSbtp+ztG5oXz5c4zf071Qo+PDMDdJc64W/9ux5EukovAW3VUBfsE4iCL9Euq41YEVwyAIQlwHCMUtVXJ7YDVGcONthuy2lJuj11XK/4X7G/X4HsDKyjIaXCF0sjLkNnLhq/BRIVACCFEwop23YbX/ys8p+rvCKYcld9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742714718; c=relaxed/simple;
-	bh=pjEHBPzfvEeYJItimRBKQTAk73orwkt8aka59h1vjNs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ljwp0CwOJ6sDsr9jioYcgSCgAkxPtNaY2ad9KltunjMx87rA237RhAiWNuYibj5x1oNICBJXAb6QcA8x1d3XRW1rISm1vsWYKLgq5rcSd6tTEWBYZVv7kKVGOn93ujm8BdhgrG/dUotnB/FJN+I6UYaE1VFW/aO+Fvs566wbZas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HX2sVng8; arc=none smtp.client-ip=209.85.222.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
-Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7bb849aa5fbso890486585a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 00:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742714715; x=1743319515; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ocoek1h3wHR+5f+ll4cNEMjKwfXiGgCdyPNt9yxsz0c=;
-        b=HX2sVng8oXl2aqg2rbx0PNA7lDuIc47L6wG6gSjRyO8nsjUdj+0iwvhbm/+Ny/umJ0
-         eHvfYsbYT6YV0AGhnOuzeXZDmcE5BY2tq/TZlqfnMm/Rqrr78ly4LgNLYXUQWh2PKQoZ
-         HGT0v+67IoLQUBiOYeQ9dzX6h7jAzVhYP4ProZVQyZ4F7RX0alC3f4M4l4oszPztg6PM
-         I6u/6kyGglQHYnKCXW22LruWXLXqowOAdKVrWO8FhIZKzaslkQUEsNCRzft6zW3Ze+Vi
-         AcB3v0FtKy//FwnniewPOCUyKI7YuMnHdxLDlMcygZ3HNEN5HMjAMizTBUnfJd5aaCg+
-         sivg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742714715; x=1743319515;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ocoek1h3wHR+5f+ll4cNEMjKwfXiGgCdyPNt9yxsz0c=;
-        b=IW3xlHj7oL/y4lxUjw4u+lO2/oJMy0J3SmZW+GuUpwxZ7TggeiUSItvfQXQffRckdK
-         DvW/Hwk1/OH6eKBGtPM+ZmTEU5gnm53wRgM3F1832DwAyjfEV+vLumfua2xNHW738HaZ
-         T3irCry8twDP8sN/L9z1c6wYEhGvbiPCHpQt1PCTrdxVQdekrLJwIDw1al0P+4MyltVQ
-         VCYqB7f36I3dg4JHp+36Zj91IP7RPpuG8xq/PkbPpOA/KVJlTaNeKMW7YrJw6IyTyhJI
-         fGlwSozEb//g7tglPCm3JdWMoWyqI/KS/K1vHBK3G+PAUXuR13xBeht1Lg+ISdxaren2
-         KTvQ==
-X-Gm-Message-State: AOJu0YxW3GIPRzrJidox9cHwEAXoww49MwCEuRI+N4oj09Zz7HhYeEpU
-	/hQDMxDS1XH4WMEVSp8rJyQtIXpsvJSmr5ELW4Atc+asGuTDQpRxikVjIhauEeBj2Io0D2tBiNR
-	/l8zsm4giGg==
-X-Google-Smtp-Source: AGHT+IEWgWZF6N/oTjsn9wQHDrFwRXFS8i6IktZJ+/0O2oyPVZJ2yRW/Ir7R6ApD3ALqTYnYnIF5efzt6GHTfQ==
-X-Received: from qkbdp6.prod.google.com ([2002:a05:620a:2b46:b0:7c5:3ce0:bd3e])
- (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:4720:b0:7c5:4c49:76a6 with SMTP id af79cd13be357-7c5ba12d9bemr1402211385a.8.1742714715634;
- Sun, 23 Mar 2025 00:25:15 -0700 (PDT)
-Date: Sun, 23 Mar 2025 07:25:11 +0000
+	s=arc-20240116; t=1742716237; c=relaxed/simple;
+	bh=wQtw/lzExY68HoaTxxcO/5W9O00TsDIJX+jBhReBfnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QnTy4ncKDCRcW96BmbC03rKJcPMjO+FzX0UR6J8C8hLVk80uPL2Y1ctIlbrAX7qGYQcOu1n5TqTQRSRZxu0xuOHAOgmX6TKynfkMTsKuM12eHd1Q6+NYxWZIO8zofcqsLQFdNn+HKrg/er9HZySdo5z8zYD3JZcyNIa555P2j4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYRFEOJy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E40C4CEE2;
+	Sun, 23 Mar 2025 07:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742716237;
+	bh=wQtw/lzExY68HoaTxxcO/5W9O00TsDIJX+jBhReBfnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IYRFEOJyU/hLgJ9X9XdTbIUTGTq3My0P6TF+jHiD436yKLxNLA0rXK1isHvb/1X4o
+	 lKbauShjMhXFCPOnjqEAMjdhmPvFksKUYv2Jya8axw74tx+A0kTO7IQ83Id1tdoKYO
+	 vC0hcDe0N9WXYWcWQkqc0mR3PGpLMSmiB9Jkmf5Sw2kkYlXhz+4mRUT0Ej9eiYEbOs
+	 zq/O30ClVnESlYZLiKRw7Ozuj3denN80DFE5ETK9TAs6IX4hFXAqh2GfmfsK3/S7nS
+	 8xSh/9+MlnjGbeRP9c4iP83R4TpbjBIX+7sej+h0I6ZUd91/t1OxXLPG6kOsLewIDV
+	 /A9wOGfw4z0Eg==
+Date: Sun, 23 Mar 2025 00:50:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Brendan Jackman <jackmanb@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 13/13] objtool: Add CONFIG_OBJTOOL_WERROR
+Message-ID: <smpvowgf5xzatcat3gwpaxf3nvoacfyv4bbry545tjyxpx7dv2@bjurc4a4kn3l>
+References: <cover.1741975349.git.jpoimboe@kernel.org>
+ <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+ <alpine.LSU.2.21.2503171513220.4236@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250323072511.2353342-1-edumazet@google.com>
-Subject: [PATCH] x86/alternatives: remove false sharing in poke_int3_handler()
-From: Eric Dumazet <edumazet@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, 
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, 
-	Greg Thelen <gthelen@google.com>, Stephane Eranian <eranian@google.com>, 
-	Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2503171513220.4236@pobox.suse.cz>
 
-eBPF programs can be run 20,000,000+ times per second on busy servers.
+On Mon, Mar 17, 2025 at 03:14:25PM +0100, Miroslav Benes wrote:
+> On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
+> 
+> > Objtool warnings can be indicative of crashes, broken live patching, or
+> > even boot failures.  Ignoring them is not recommended.
+> > 
+> > Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
+> > enabling the objtool --Werror option.  Also set --backtrace to print the
+> > branches leading up to the warning, which can help considerably when
+> > debugging certain warnings.
+> > 
+> > To avoid breaking bots too badly for now, make it the default for real
+> > world builds only (!COMPILE_TEST).
+> > 
+> > Co-developed-by: Brendan Jackman <jackmanb@google.com>
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> 
+> Brendan's SoB missing.
+> 
+> With 'default y' being present or not
+> 
+> Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
-Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
-hundreds of calls sites are patched from text_poke_bp_batch()
-and we see a critical loss of performance due to false sharing
-on bp_desc.refs lasting up to three seconds.
+Miroslav and Brendan, thanks for the reviews.
 
-   51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
-            |
-            |--46.45%--poke_int3_handler
-            |          exc_int3
-            |          asm_exc_int3
-            |          |
-            |          |--24.26%--cls_bpf_classify
-            |          |          tcf_classify
-            |          |          __dev_queue_xmit
-            |          |          ip6_finish_output2
-            |          |          ip6_output
-            |          |          ip6_xmit
-            |          |          inet6_csk_xmit
-            |          |          __tcp_transmit_skb
-            |          |          |
-            |          |          |--9.00%--tcp_v6_do_rcv
-            |          |          |          tcp_v6_rcv
-            |          |          |          ip6_protocol_deliver_rcu
-            |          |          |          ip6_rcv_finish
-            |          |          |          ipv6_rcv
-            |          |          |          __netif_receive_skb
-            |          |          |          process_backlog
-            |          |          |          __napi_poll
-            |          |          |          net_rx_action
-            |          |          |          __softirqentry_text_start
-            |          |          |          asm_call_sysvec_on_stack
-            |          |          |          do_softirq_own_stack
+This was merged with a quickness, so I wasn't able to post a v2 to
+update the commit logs.  However I will be posting some patches soon to
+address the other comments, along with a bunch of fixes.
 
-Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
-
-Before the patch, on a host with 240 cpus (480 threads):
-
-echo 0 >/proc/sys/kernel/bpf_stats_enabled
-text_poke_bp_batch(nr_entries=2)
-        text_poke_bp_batch+1
-        text_poke_finish+27
-        arch_jump_label_transform_apply+22
-        jump_label_update+98
-        __static_key_slow_dec_cpuslocked+64
-        static_key_slow_dec+31
-        bpf_stats_handler+236
-        proc_sys_call_handler+396
-        vfs_write+761
-        ksys_write+102
-        do_syscall_64+107
-        entry_SYSCALL_64_after_hwframe+103
-Took 324 usec
-
-text_poke_bp_batch(nr_entries=164)
-        text_poke_bp_batch+1
-        text_poke_finish+27
-        arch_jump_label_transform_apply+22
-        jump_label_update+98
-        __static_key_slow_dec_cpuslocked+64
-        static_key_slow_dec+31
-        bpf_stats_handler+236
-        proc_sys_call_handler+396
-        vfs_write+761
-        ksys_write+102
-        do_syscall_64+107
-        entry_SYSCALL_64_after_hwframe+103
-Took 2655300 usec
-
-After this patch:
-
-echo 0 >/proc/sys/kernecho 0 >/proc/sys/kernel/bpf_stats_enabled
-text_poke_bp_batch(nr_entries=2)
-        text_poke_bp_batch+1
-        text_poke_finish+27
-        arch_jump_label_transform_apply+22
-        jump_label_update+98
-        __static_key_slow_dec_cpuslocked+64
-        static_key_slow_dec+31
-        bpf_stats_handler+236
-        proc_sys_call_handler+396
-        vfs_write+761
-        ksys_write+102
-        do_syscall_64+107
-        entry_SYSCALL_64_after_hwframe+103
-Took 519 usec
-
-text_poke_bp_batch(nr_entries=164)
-        text_poke_bp_batch+1
-        text_poke_finish+27
-        arch_jump_label_transform_apply+22
-        jump_label_update+98
-        __static_key_slow_dec_cpuslocked+64
-        static_key_slow_dec+31
-        bpf_stats_handler+236
-        proc_sys_call_handler+396
-        vfs_write+761
-        ksys_write+102
-        do_syscall_64+107
-        entry_SYSCALL_64_after_hwframe+103
-Took 702 usec
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
----
- arch/x86/kernel/alternative.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index c71b575bf229..d7afbf822c45 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -2137,28 +2137,29 @@ struct text_poke_loc {
- struct bp_patching_desc {
- 	struct text_poke_loc *vec;
- 	int nr_entries;
--	atomic_t refs;
- };
- 
-+static DEFINE_PER_CPU(atomic_t, bp_refs);
-+
- static struct bp_patching_desc bp_desc;
- 
- static __always_inline
- struct bp_patching_desc *try_get_desc(void)
- {
--	struct bp_patching_desc *desc = &bp_desc;
-+	atomic_t *refs = this_cpu_ptr(&bp_refs);
- 
--	if (!raw_atomic_inc_not_zero(&desc->refs))
-+	if (!raw_atomic_inc_not_zero(refs))
- 		return NULL;
- 
--	return desc;
-+	return &bp_desc;
- }
- 
- static __always_inline void put_desc(void)
- {
--	struct bp_patching_desc *desc = &bp_desc;
-+	atomic_t *refs = this_cpu_ptr(&bp_refs);
- 
- 	smp_mb__before_atomic();
--	raw_atomic_dec(&desc->refs);
-+	raw_atomic_dec(refs);
- }
- 
- static __always_inline void *text_poke_addr(struct text_poke_loc *tp)
-@@ -2191,9 +2192,9 @@ noinstr int poke_int3_handler(struct pt_regs *regs)
- 	 * Having observed our INT3 instruction, we now must observe
- 	 * bp_desc with non-zero refcount:
- 	 *
--	 *	bp_desc.refs = 1		INT3
--	 *	WMB				RMB
--	 *	write INT3			if (bp_desc.refs != 0)
-+	 *	bp_refs = 1		INT3
-+	 *	WMB			RMB
-+	 *	write INT3		if (bp_refs != 0)
- 	 */
- 	smp_rmb();
- 
-@@ -2299,7 +2300,8 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
- 	 * Corresponds to the implicit memory barrier in try_get_desc() to
- 	 * ensure reading a non-zero refcount provides up to date bp_desc data.
- 	 */
--	atomic_set_release(&bp_desc.refs, 1);
-+	for_each_possible_cpu(i)
-+		atomic_set_release(per_cpu_ptr(&bp_refs, i), 1);
- 
- 	/*
- 	 * Function tracing can enable thousands of places that need to be
-@@ -2413,8 +2415,12 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
- 	/*
- 	 * Remove and wait for refs to be zero.
- 	 */
--	if (!atomic_dec_and_test(&bp_desc.refs))
--		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
-+	for_each_possible_cpu(i) {
-+		atomic_t *refs = per_cpu_ptr(&bp_refs, i);
-+
-+		if (!atomic_dec_and_test(refs))
-+			atomic_cond_read_acquire(refs, !VAL);
-+	}
- }
- 
- static void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
 -- 
-2.49.0.395.g12beb8f557-goog
-
+Josh
 
