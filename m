@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-572811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-572812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807AA6CF07
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:51:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F16A6CF0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 12:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0C61898A29
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428743B5637
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 11:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F8A204C2F;
-	Sun, 23 Mar 2025 11:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDU6cPdN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2741A204F67;
+	Sun, 23 Mar 2025 11:56:07 +0000 (UTC)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A5F1EE028;
-	Sun, 23 Mar 2025 11:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A3C1FFC4C;
+	Sun, 23 Mar 2025 11:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742730696; cv=none; b=l1WdEu/Rjx103jTffqF/RsFtfQS3oxa3O3eowMQC0S+8SR/J0izVf9dziyECyP4EiVQWiBZDSxZXS5mPWy8H2Hcys/tIXmrqW75aGh9cQDw1gU2jkdCAbYBtFRbL8rYZgi+7ktUDQ7I7WSOfFWEJH6YMJlsTmZLhzdP79XrnxAM=
+	t=1742730966; cv=none; b=W1M6meOqneKU3+9EoJ3Xdn90E3H9+8Nd/oEefTCc8ibbAXKKOBxootY+39oU6uSoOPEyUH07XtugvB5ZTULGpr+4wcikePfhN8F5LRlS2Raj0qS7W43WCAc01XvD9TQYALkRY0zEQVICvkN2j4SKNYS411dSFW7ZxHSjwcBbM1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742730696; c=relaxed/simple;
-	bh=Z6VZv9XJvfOC4nN8cMFRk96f0NsWhkMi6zOL4ll7Xa8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kzN7htG7+0uAptZ91BlYUJW++auAd7JccdP/H5x2R8KGw/G+cnHU8PA7BVPxhfQsyjLpNLXmv4Koc5zDRlXWJsozoNCGCG/gjLxOi5QvOpxvFEQumqJScqtoSR4JRhrWNXXdKlGNxH8/EVCrShVYvJTaZodgmMqvloUr6N/EtBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDU6cPdN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D11C4CEE2;
-	Sun, 23 Mar 2025 11:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742730693;
-	bh=Z6VZv9XJvfOC4nN8cMFRk96f0NsWhkMi6zOL4ll7Xa8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hDU6cPdNd6G9oxSCct04hGTaz+JRXmVluqzQLEOcyHyktP47QBz1LmHxSul2iTy5N
-	 gAyAb6WM54kkliRGHr/oqemLkgCQ2kwzQgHNgsr2aASoSA/GWzjTuzA5MPDM1q8UP4
-	 si00iD3tPnRbFZHU5xSwbSDN39JFaTd4dRkWcA+pF66qn/kJL0hisIxzZTMXg+Yj3B
-	 Mk0sRbggj0KWaPPmF508floU2VVPKB1eiQCX4Gk16hV6ohlTyYRjov02MmWYWmc8/n
-	 RVOQqKE2jEy2KxUnH+LpZRULa8JRktRUp3niL7+3DSkRU086wUpD/gauoRgliPgSdJ
-	 qlS036RZhVpPg==
-Date: Sun, 23 Mar 2025 11:51:29 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- lars@metafoo.de, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com,
- mazziesaccount@gmail.com, subhajit.ghosh@tweaklogic.com,
- muditsharma.info@gmail.com, arthur.becker@sentec.com,
- ivan.orlov0322@gmail.com
-Subject: Re: [PATCH 2/3] iio: light: add support for veml6046x00 RGBIR color
- sensor
-Message-ID: <20250323115129.665457c0@jic23-huawei>
-In-Reply-To: <Z9jXLYYbY7nKDwA-@mail.your-server.de>
-References: <20250316113131.62884-1-ak@it-klinger.de>
-	<20250316113131.62884-3-ak@it-klinger.de>
-	<20250317115005.72a539a0@jic23-huawei>
-	<Z9jXLYYbY7nKDwA-@mail.your-server.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742730966; c=relaxed/simple;
+	bh=zaHJZ790y6z9d8LloSV8uGUpKzfsaeNLXw+plMJIaRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zdtot6MJkrzoa2RU9chMKR13xSJpPsE8YQuP6CuBRk9A/urvz/a5q8zZZ/QOLocm4Qyk2e7iJuLQsZLH6e3PsI0K48U+hfgTo8wFIMdcF5B9KpMXyibH7qtEB3mVTmS4czsSQ56abgqJYxp2OiOxWbBsOlAN/lh0xq6qd3ZBvc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-227914acd20so24536355ad.1;
+        Sun, 23 Mar 2025 04:56:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742730965; x=1743335765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8iP6s7RJZTq9P1esZphsb8AleCV4Kmq3vN6x3kTIwGs=;
+        b=Ebj7uySwrkztCeX8S8RWdKG7ekghDOdf8HTdaGcj76o/ASDV2u/cdgY1LDXIBQPqQd
+         4iKtAS3CIXE3qMppk6JvX57UAR5nTr8gLosuD9jIuBd0seLUCDWM+dLehxVtICXVaWCa
+         TtmzBaTbOftGrb5/8iI//lxX6ZiThygsEfCi1FXybEdaGKge08g2rNngT3rdICfUGO8U
+         vj60J2AB9rZmm4/amai0AoG0GvnzUG5N5wOlmoBQsWLZMhcXyxcrISspM375zFbD6IM9
+         lEGdLwZS+v32PVCEGZ41Itp6cggaxOhDm8g8jMrkzGTWIN/eDoeryqI+3FzyAePMG2KD
+         Jp+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUidUAr95DajjMtOgfG1tvTJoEJAeZ7GNhU5XfUoOcRYEKXWs7IZDVBxBi3UlbCXGv2gHp2kUSN36ky@vger.kernel.org, AJvYcCVDoxV9OfmVJr0Gs1bWhoakRxyrh0qGn4soq1TpuvIeuej5yIBHdhshZnVJrGMYPHtI5eogwMgbVBT7@vger.kernel.org, AJvYcCVWQHaBWYnmaAKO/dMdVv5RD9SxWWSVLsWYvRxftX3MYtn3X/Z89VJ4FvNMFlJ/1NBBf4XZDa6ol7aVgw==@vger.kernel.org, AJvYcCWigPA6jPMTeFDzsJwk7UGEYVr7WLPk9rk3UFAsOLaMi0JrO64qDO/IGfUFhdUoL81v1rXyGRVPtS9T@vger.kernel.org, AJvYcCXia582Jo8P+BwRStxwsR763/oLFHI+lIqTZLlNgq/G5tpdIndWWb2hqbd/pvlX7EbftaketQOWgYmfK50Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI+qXreRW8/4udzEs3Nu6xbOEfNX3JsFZUzrXAvlUQ75KIWBzo
+	jiXL0ArW9kFAU6gojQb+CiPRiGUwpWmymmQvKoXQ9CWOjBDGL/Mc
+X-Gm-Gg: ASbGncscy4+9v571QLoSLwO+jSW5B5oNvN4ThCj9u5jaQJqrDvKHZ0ZBDKUAvi7qS1s
+	qMJ542ezEQihAF6C12nuuGfli/wAzLE3b92iMPrkRavZ4IutBPZMkakUZvBE5LagRGSgZCzPYEm
+	3VYHfU0lbwucP1F3TYr4zF4rlNCz+WzHA1tvehZszx2febB4KFhlJghduYxNgRjPn9oqJHlmVx2
+	eUw0u+m3vT+SRWZJ/Pc53QTl7tDzeytXK4lZVPHQ2zSylVZ+i1qVRHXFJ5AILJqsv/G9/fgqecv
+	aq6mEaXIaxAwIdGFrtq0QS6I6dq4Qhof17wwr7zPL1uyci0qoFwuBzWUCLBQS8jQPG59sTcOhyr
+	pVoA=
+X-Google-Smtp-Source: AGHT+IGFrPrOjm1ltZW+6Dht1zMb++j1BuTfrfYxmMgOcEiQGmIANrOACm+sR9E2VHw4F5IauWW82A==
+X-Received: by 2002:a05:6a20:7288:b0:1f0:e2a9:fb2a with SMTP id adf61e73a8af0-1fd085563b1mr18959356637.4.1742730964522;
+        Sun, 23 Mar 2025 04:56:04 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af8a2a4f585sm5062513a12.73.2025.03.23.04.56.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 04:56:03 -0700 (PDT)
+Date: Sun, 23 Mar 2025 20:56:02 +0900
+From: Krzysztof Wilczynski <kw@linux.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <20250323115602.GE1902347@rocinante>
+References: <cover.1738963156.git.andrea.porta@suse.com>
+ <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+ <20250314083730.GC234496@rocinante>
+ <Z9lA31gBjpIRHm6y@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9lA31gBjpIRHm6y@apocalypse>
 
-> > > +	data = iio_priv(iio);
-> > > +	i2c_set_clientdata(i2c, iio);
-> > > +	data->dev = dev;
-> > > +	data->regmap = regmap;
-> > > +
-> > > +	ret = veml6046x00_regfield_init(data);
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret, "Failed to init regfield\n");
-> > > +
-> > > +	ret = devm_regulator_get_enable(dev, "vdd");
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret, "Failed to enable regulator\n");
-> > > +
-> > > +	ret = devm_add_action_or_reset(dev, veml6046x00_shutdown_action, data);  
+Hello,
+
+[...]
+> > Or, something like this over this the function name.  Perhaps exposing
+> > error code could be useful to the end user? If so then something like this:
 > > 
-> > Mostly we want a devm action to match against a specific setup operation.  Here is
-> > it that the device comes up in non shut down state?  Perhaps a comment to
-> > make it clear.  Also, how do we know it's in a good state rather than part
-> > configured by someone else?  I'm not seeing a reset sequence though perhaps
-> > that effectively happens in setup_device()  
+> >   return dev_err_probe(&pdev->dev, err,
+> > 		       "Failed to allocate MSI-X vectors, err=%d\n", err);
 > 
-> In veml6046x00_setup_device() all registers are set up to bring the device in a
-> known state. This function also switches the device on. I could move the call to
-> setup_device() up to here and add a comment to make it clear.
+> dev_err_probe() should already print the err code, no need to add it.
 
-Perfect.
+Ahh...
 
+I did a copy-paste of the code from above purely for illustration, sorry
+for the confusion here!
+
+> > Here and other errors where appropriate.
+> 
+> I've changed dev_err() to dev_err_probe() in cases where the error code
+> is not evident (i.e. hardcoded) from the source.
+
+Makes sense.
+
+> Thank you so much for your review!
+
+Pleasure!  Thank you for all the work here!
+
+	Krzysztof
 
