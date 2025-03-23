@@ -1,281 +1,113 @@
-Return-Path: <linux-kernel+bounces-573007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59446A6D16A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:24:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC322A6D16D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 23:24:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC73E16C62C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158AD1895370
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Mar 2025 22:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582D01ACED1;
-	Sun, 23 Mar 2025 22:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYrCNWGb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F29B1C7007;
+	Sun, 23 Mar 2025 22:24:29 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB9524B29;
-	Sun, 23 Mar 2025 22:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF003B1A4
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 22:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742768657; cv=none; b=ahzgE5oAI80AaHi3eQgp2O9DvM8i1YeH35wgJvOWdNaBXaRz+yllKYmN5S1n6rZ5GBcI3XqBEgnmMaA0R+OZOs6CiWr4aMpE8IYMrqkMNwxEDqjTEqnsE0poGeK2mxsgriMdhF78tuwMrl2YPNvVN2Yecchf9Uxq85DZCknfoe8=
+	t=1742768668; cv=none; b=TimD3vTAIomqPM8vEHvCjsUUXJcflsrjevfx0xFg+OTXAs2wFKfzTdO65nk+2I2TZFXJ2nhikve6QPrVBdyEV78oZHTZiQ7MXST3PBhftXKLVIibwlOYI28XyjNsMWY6DF4CGbfDNbaTxz4o91bOkHB7+qrbp5QjqgppzRomb+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742768657; c=relaxed/simple;
-	bh=pSuPLgb3YUS81mURBOzGRLLehj+iUHT29QAhz8DJIGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mTtWcHpsXxUN01+d+fz+dTHKBQCJf0NzHRnA/m1VK3B0oGsjnS7hRSSl+N6EJsNM66auUFhBy2BZXdR/NYmW8ZZNEhNiJXGBwaS0+nnQzpM9mdSZo22Dm0MdT4r2MmsBGRwxy01Q1318wRnar5Bvz3FqiNT86zU7EBEx2UUmL0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYrCNWGb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B934C4CEE2;
-	Sun, 23 Mar 2025 22:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742768657;
-	bh=pSuPLgb3YUS81mURBOzGRLLehj+iUHT29QAhz8DJIGc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qYrCNWGbkDBb/JDwwf394RfwE0N8Wv7N1D3ccFYVIZkXiCzZpRYrTywKtc87gonn2
-	 yKkl1XTxMov6pgMjn6cdaKclE6unWWdrslUb8djX8wlsBJvTQIMpXAdCFCSk6yFh+o
-	 MXyRHjC+5RJtaLd7fTj6GQw376vJnvD23Gw1DfSd0RvKZT8UfqiKtakuhKG3YqrgwS
-	 FlVraDPyAHdJ+X78El44JtVbzMSLTlrEGXaLR41rih0y9suGV45wtalwkzthLZu+Ez
-	 Jn+pZDxxE5+FssVmyWR+qx0lX4g5nd4K5GZwK0pzLhsOR6zD/dUvCLR+McpKV5AwNe
-	 8i+i9ayDMVhWw==
-Date: Sun, 23 Mar 2025 15:24:15 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	x86@kernel.org, linux-crypto@vger.kernel.org,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Uros Bizjak <ubizjak@gmail.com>
-Subject: [GIT PULL] CRC updates for 6.15
-Message-ID: <20250323222415.GC9584@sol.localdomain>
+	s=arc-20240116; t=1742768668; c=relaxed/simple;
+	bh=BEBfxi84Sx+LWiMfPgSqol8/dVxJ/6WfZFAZV5OkNrQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ieHvsWIIsX03YTXMK9wOzicNccpovSROGGt1fDOfatHNK/eD6d62rihdyOoMTkTh+EbmomCQeDe7JzbgtqImio+6XLYvt5483JYF45p2eIt23VPzZauEGxDkHbmkFMZx7787KxUAGjLiA+CP7afFKYg8lMSY0B1E0mlnFXxBcxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2a379bbf0so74144225ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 15:24:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742768666; x=1743373466;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I8SHUbNy7Bs1Yo8x58aYTf5+tCG6xrViHLpd6oKIB/g=;
+        b=fQsybGE/EfDd7K8e1LgdsMAyqEXqcy5PRlRB4cADtusu7jiyv1HjxTLEwVJWg0E/Bo
+         YnjjczPN60Hf27/VFH2Cn8KWE4rmg0CC0U7Z9KyUqVtLeOoAw9z2bgp9iBcq0RlIDmzF
+         i10+hC1F4EBSvNtGQj/WAZE3Smv1uGy3NH0gi78M3zsiduUy7Ha4T8lfPKiXFAAW76Yf
+         4NUWCYgnPQIRAguHVyQ0YDx0L/i6+XCwdNodVI05SL0gvg9MNlvCcuRaxDXaQL7edF9F
+         ZrYwCGKfARPbxS8jogXsZFTuDlRUXCSufeHzxM0QS/Lby8gA+K38qek1LpF72A8sZu66
+         q4BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkyJMW1GW8di+VSLKOK8KvxLTuNZmb9zBAEuEtgBaatOTKYAqWKf2Am8eJXgdTdAws/wCmztVHuWs+wpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP4qdU2mAHmWooi65tomfGu2T9TRvVLYcrgreQ9cF6TMz+OStw
+	yRfhB2vztBBpkfHT6xR/2Vlg6AyNmdj9y0lYSqt1I+AOisgZREPWIjwSpmT6tJQ3PVPrp7dEMTN
+	lU/RpUS7BhlxTJ7NPqFyDX1IBYeF698ymYdIkrhxLD47zJQJVeGEpMNo=
+X-Google-Smtp-Source: AGHT+IEgk/+ut+LYjpCks0O3waQ8ZdvGtupC8gp6xuLrneppz6wBtvnkxpFJkf05t9LxA9VFwehOxxV6AhzrcIsTwOL87A0ojOCY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:3e03:b0:3d3:eeec:8a07 with SMTP id
+ e9e14a558f8ab-3d59613e5f2mr122306025ab.6.1742768666459; Sun, 23 Mar 2025
+ 15:24:26 -0700 (PDT)
+Date: Sun, 23 Mar 2025 15:24:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e08a1a.050a0220.a7ebc.0004.GAE@google.com>
+Subject: [syzbot] Monthly bpf report (Mar 2025)
+From: syzbot <syzbot+list3422dac14361a02f01d5@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+Hello bpf maintainers/developers,
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+This is a 31-day syzbot report for the bpf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/bpf
 
-are available in the Git repository at:
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 29 issues are still open and 282 have already been fixed.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/crc-for-linus
+Some of the still happening issues:
 
-for you to fetch changes up to acf9f8da5e19fc1cbf26f2ecb749369e13e7cd85:
+Ref  Crashes Repro Title
+<1>  21440   Yes   possible deadlock in trie_delete_elem
+                   https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
+<2>  2281    Yes   possible deadlock in __bpf_ringbuf_reserve
+                   https://syzkaller.appspot.com/bug?extid=850aaf14624dc0c6d366
+<3>  2116    Yes   WARNING in bpf_map_lookup_percpu_elem
+                   https://syzkaller.appspot.com/bug?extid=dce5aae19ae4d6399986
+<4>  242     Yes   INFO: rcu detected stall in sys_clone (8)
+                   https://syzkaller.appspot.com/bug?extid=c4c6c3dc10cc96bcf723
+<5>  178     Yes   possible deadlock in __queue_map_get
+                   https://syzkaller.appspot.com/bug?extid=8bdfc2c53fb2b63e1871
+<6>  78      Yes   possible deadlock in queue_stack_map_push_elem
+                   https://syzkaller.appspot.com/bug?extid=252bc5c744d0bba917e1
+<7>  68      No    INFO: rcu detected stall in sys_sendmmsg (7)
+                   https://syzkaller.appspot.com/bug?extid=53e660acb94e444b9d63
+<8>  56      Yes   possible deadlock in __stack_map_get
+                   https://syzkaller.appspot.com/bug?extid=dddd99ae26c656485d89
+<9>  40      Yes   INFO: rcu detected stall in ip_list_rcv (6)
+                   https://syzkaller.appspot.com/bug?extid=45b67ef6e09a39a2cbcd
+<10> 31      Yes   BUG: MAX_STACK_TRACE_ENTRIES too low! (4)
+                   https://syzkaller.appspot.com/bug?extid=c6c4861455fdd207f160
 
-  x86/crc: drop the avx10_256 functions and rename avx10_512 to avx512 (2025-03-19 12:22:00 -0700)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-----------------------------------------------------------------
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Another set of improvements to the kernel's CRC (cyclic redundancy
-check) code:
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-- Rework the CRC64 library functions to be directly optimized, like what
-  I did last cycle for the CRC32 and CRC-T10DIF library functions.
-
-- Rewrite the x86 PCLMULQDQ-optimized CRC code, and add VPCLMULQDQ
-  support and acceleration for crc64_be and crc64_nvme.
-
-- Rewrite the riscv Zbc-optimized CRC code, and add acceleration for
-  crc_t10dif, crc64_be, and crc64_nvme.
-
-- Remove crc_t10dif and crc64_rocksoft from the crypto API, since they
-  are no longer needed there.
-
-- Rename crc64_rocksoft to crc64_nvme, as the old name was incorrect.
-
-- Add kunit test cases for crc64_nvme and crc7.
-
-- Eliminate redundant functions for calculating the Castagnoli CRC32,
-  settling on just crc32c().
-
-- Remove unnecessary prompts from some of the CRC kconfig options.
-
-- Further optimize the x86 crc32c code.
-
-----------------------------------------------------------------
-Eric Biggers (36):
-      lib/crc64-rocksoft: stop wrapping the crypto API
-      crypto: crc64-rocksoft - remove from crypto API
-      lib/crc64: rename CRC64-Rocksoft to CRC64-NVME
-      lib/crc_kunit.c: add test and benchmark for CRC64-NVME
-      lib/crc64: add support for arch-optimized implementations
-      lib/crc32: remove obsolete CRC32 options from defconfig files
-      mips/crc32: remove unused enums
-      lib/crc32: use void pointer for data
-      lib/crc32: don't bother with pure and const function attributes
-      lib/crc32: standardize on crc32c() name for Castagnoli CRC32
-      lib/crc32: rename __crc32c_le_combine() to crc32c_combine()
-      lib/crc32: remove "_le" from crc32c base and arch functions
-      crypto: crct10dif - remove from crypto API
-      lib/crc-t10dif: remove crc_t10dif_is_optimized()
-      x86: move ZMM exclusion list into CPU feature flag
-      scripts/gen-crc-consts: add gen-crc-consts.py
-      x86/crc: add "template" for [V]PCLMULQDQ based CRC functions
-      x86/crc32: implement crc32_le using new template
-      x86/crc-t10dif: implement crc_t10dif using new template
-      x86/crc64: implement crc64_be and crc64_nvme using new template
-      x86/crc32: improve crc32c_arch() code generation with clang
-      x86/crc: add ANNOTATE_NOENDBR to suppress objtool warnings
-      riscv/crc: add "template" for Zbc optimized CRC functions
-      riscv/crc32: reimplement the CRC32 functions using new template
-      riscv/crc-t10dif: add Zbc optimized CRC-T10DIF function
-      riscv/crc64: add Zbc optimized CRC64 functions
-      x86/crc32: optimize tail handling for crc32c short inputs
-      lib/crc_kunit.c: add test and benchmark for crc7_be()
-      lib/crc_kunit.c: update comment in crc_benchmark()
-      lib/crc7: unexport crc7_be_syndrome_table
-      lib/crc: remove unnecessary prompt for CONFIG_CRC4
-      lib/crc: remove unnecessary prompt for CONFIG_CRC7
-      lib/crc: remove unnecessary prompt for CONFIG_CRC8
-      lib/crc: remove unnecessary prompt for CONFIG_LIBCRC32C
-      lib/crc: remove unnecessary prompt for CONFIG_CRC64
-      x86/crc: drop the avx10_256 functions and rename avx10_512 to avx512
-
- MAINTAINERS                                    |   1 +
- arch/arm/configs/dove_defconfig                |   1 -
- arch/arm/configs/ep93xx_defconfig              |   1 -
- arch/arm/configs/imx_v6_v7_defconfig           |   2 -
- arch/arm/configs/lpc18xx_defconfig             |   1 -
- arch/arm/configs/moxart_defconfig              |   1 -
- arch/arm/configs/multi_v5_defconfig            |   1 -
- arch/arm/configs/mvebu_v5_defconfig            |   1 -
- arch/arm/configs/mxs_defconfig                 |   1 -
- arch/arm/configs/omap1_defconfig               |   1 -
- arch/arm/configs/omap2plus_defconfig           |   2 -
- arch/arm/configs/spitz_defconfig               |   1 -
- arch/arm/configs/stm32_defconfig               |   1 -
- arch/arm/configs/wpcm450_defconfig             |   1 -
- arch/arm/lib/crc-t10dif-glue.c                 |   6 -
- arch/arm/lib/crc32-glue.c                      |  12 +-
- arch/arm64/lib/crc-t10dif-glue.c               |   6 -
- arch/arm64/lib/crc32-glue.c                    |  10 +-
- arch/hexagon/configs/comet_defconfig           |   1 -
- arch/loongarch/lib/crc32-loongarch.c           |   6 +-
- arch/mips/configs/bcm47xx_defconfig            |   1 -
- arch/mips/configs/bigsur_defconfig             |   1 -
- arch/mips/configs/cobalt_defconfig             |   1 -
- arch/mips/configs/db1xxx_defconfig             |   1 -
- arch/mips/configs/decstation_64_defconfig      |   1 -
- arch/mips/configs/decstation_defconfig         |   1 -
- arch/mips/configs/decstation_r4k_defconfig     |   1 -
- arch/mips/configs/fuloong2e_defconfig          |   1 -
- arch/mips/configs/ip32_defconfig               |   1 -
- arch/mips/configs/rt305x_defconfig             |   1 -
- arch/mips/configs/xway_defconfig               |   1 -
- arch/mips/lib/crc32-mips.c                     |  15 +-
- arch/parisc/configs/generic-64bit_defconfig    |   1 -
- arch/powerpc/configs/85xx/ge_imp3a_defconfig   |   1 -
- arch/powerpc/configs/adder875_defconfig        |   1 -
- arch/powerpc/configs/ep88xc_defconfig          |   1 -
- arch/powerpc/configs/mpc866_ads_defconfig      |   1 -
- arch/powerpc/configs/mpc885_ads_defconfig      |   1 -
- arch/powerpc/configs/skiroot_defconfig         |   1 -
- arch/powerpc/configs/tqm8xx_defconfig          |   1 -
- arch/powerpc/lib/crc-t10dif-glue.c             |   6 -
- arch/powerpc/lib/crc32-glue.c                  |  10 +-
- arch/riscv/Kconfig                             |   2 +
- arch/riscv/lib/Makefile                        |   5 +
- arch/riscv/lib/crc-clmul-consts.h              | 122 ++++++
- arch/riscv/lib/crc-clmul-template.h            | 265 +++++++++++
- arch/riscv/lib/crc-clmul.h                     |  23 +
- arch/riscv/lib/crc-t10dif.c                    |  24 +
- arch/riscv/lib/crc16_msb.c                     |  18 +
- arch/riscv/lib/crc32-riscv.c                   | 311 -------------
- arch/riscv/lib/crc32.c                         |  53 +++
- arch/riscv/lib/crc32_lsb.c                     |  18 +
- arch/riscv/lib/crc32_msb.c                     |  18 +
- arch/riscv/lib/crc64.c                         |  34 ++
- arch/riscv/lib/crc64_lsb.c                     |  18 +
- arch/riscv/lib/crc64_msb.c                     |  18 +
- arch/s390/configs/debug_defconfig              |   3 -
- arch/s390/configs/defconfig                    |   3 -
- arch/s390/lib/crc32-glue.c                     |   2 +-
- arch/sh/configs/se7206_defconfig               |   2 -
- arch/sh/configs/sh2007_defconfig               |   1 -
- arch/sh/configs/titan_defconfig                |   1 -
- arch/sparc/configs/sparc32_defconfig           |   1 -
- arch/sparc/configs/sparc64_defconfig           |   1 -
- arch/sparc/lib/crc32_glue.c                    |  10 +-
- arch/x86/Kconfig                               |   3 +-
- arch/x86/crypto/aesni-intel_glue.c             |  22 +-
- arch/x86/include/asm/cpufeatures.h             |   1 +
- arch/x86/kernel/cpu/intel.c                    |  22 +
- arch/x86/lib/Makefile                          |   5 +-
- arch/x86/lib/crc-pclmul-consts.h               | 195 +++++++++
- arch/x86/lib/crc-pclmul-template.S             | 582 +++++++++++++++++++++++++
- arch/x86/lib/crc-pclmul-template.h             |  76 ++++
- arch/x86/lib/crc-t10dif-glue.c                 |  29 +-
- arch/x86/lib/crc16-msb-pclmul.S                |   6 +
- arch/x86/lib/crc32-glue.c                      |  57 +--
- arch/x86/lib/crc32-pclmul.S                    | 219 +---------
- arch/x86/lib/crc64-glue.c                      |  50 +++
- arch/x86/lib/crc64-pclmul.S                    |   7 +
- arch/x86/lib/crct10dif-pcl-asm_64.S            | 332 --------------
- block/Kconfig                                  |   2 +-
- block/t10-pi.c                                 |   2 +-
- crypto/Kconfig                                 |  20 -
- crypto/Makefile                                |   3 -
- crypto/crc32c_generic.c                        |   8 +-
- crypto/crc64_rocksoft_generic.c                |  89 ----
- crypto/crct10dif_generic.c                     | 168 -------
- crypto/tcrypt.c                                |   8 -
- crypto/testmgr.c                               |  14 -
- crypto/testmgr.h                               | 303 -------------
- drivers/crypto/stm32/stm32-crc32.c             |   2 +-
- drivers/infiniband/sw/siw/siw.h                |   4 +-
- drivers/md/raid5-cache.c                       |  31 +-
- drivers/md/raid5-ppl.c                         |  16 +-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c |   2 +-
- drivers/thunderbolt/ctl.c                      |   2 +-
- drivers/thunderbolt/eeprom.c                   |   2 +-
- include/linux/crc-t10dif.h                     |  12 -
- include/linux/crc32.h                          |  55 ++-
- include/linux/crc32c.h                         |   8 -
- include/linux/crc64.h                          |  38 +-
- include/linux/crc7.h                           |   7 -
- include/net/sctp/checksum.h                    |   7 +-
- lib/Kconfig                                    |  45 +-
- lib/Kconfig.debug                              |   1 +
- lib/Makefile                                   |   1 -
- lib/crc32.c                                    |  21 +-
- lib/crc64-rocksoft.c                           | 126 ------
- lib/crc64.c                                    |  49 +--
- lib/crc7.c                                     |   6 +-
- lib/crc_kunit.c                                |  68 ++-
- lib/gen_crc64table.c                           |  10 +-
- scripts/gen-crc-consts.py                      | 291 +++++++++++++
- sound/soc/codecs/aw88395/aw88395_device.c      |   2 +-
- tools/testing/selftests/arm64/fp/kernel-test.c |   1 -
- 115 files changed, 2121 insertions(+), 1969 deletions(-)
- create mode 100644 arch/riscv/lib/crc-clmul-consts.h
- create mode 100644 arch/riscv/lib/crc-clmul-template.h
- create mode 100644 arch/riscv/lib/crc-clmul.h
- create mode 100644 arch/riscv/lib/crc-t10dif.c
- create mode 100644 arch/riscv/lib/crc16_msb.c
- delete mode 100644 arch/riscv/lib/crc32-riscv.c
- create mode 100644 arch/riscv/lib/crc32.c
- create mode 100644 arch/riscv/lib/crc32_lsb.c
- create mode 100644 arch/riscv/lib/crc32_msb.c
- create mode 100644 arch/riscv/lib/crc64.c
- create mode 100644 arch/riscv/lib/crc64_lsb.c
- create mode 100644 arch/riscv/lib/crc64_msb.c
- create mode 100644 arch/x86/lib/crc-pclmul-consts.h
- create mode 100644 arch/x86/lib/crc-pclmul-template.S
- create mode 100644 arch/x86/lib/crc-pclmul-template.h
- create mode 100644 arch/x86/lib/crc16-msb-pclmul.S
- create mode 100644 arch/x86/lib/crc64-glue.c
- create mode 100644 arch/x86/lib/crc64-pclmul.S
- delete mode 100644 arch/x86/lib/crct10dif-pcl-asm_64.S
- delete mode 100644 crypto/crc64_rocksoft_generic.c
- delete mode 100644 crypto/crct10dif_generic.c
- delete mode 100644 lib/crc64-rocksoft.c
- create mode 100755 scripts/gen-crc-consts.py
+You may send multiple commands in a single email message.
 
