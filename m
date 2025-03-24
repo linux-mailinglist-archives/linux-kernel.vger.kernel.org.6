@@ -1,219 +1,195 @@
-Return-Path: <linux-kernel+bounces-573609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A62A6D9BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:04:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1216CA6D9C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5921894369
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:03:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3F41894338
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0D625F79F;
-	Mon, 24 Mar 2025 12:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB025D527;
+	Mon, 24 Mar 2025 12:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GXz63yTZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSG+scVS"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5423325F792;
-	Mon, 24 Mar 2025 12:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4AB25E461
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742817753; cv=none; b=ZYvyDzChsNUYVa9ZKI2BrSOcMMhNeMIn6484Y2ktiGzOAseVfk37RX1GLi9LmxCWuJXe21CpZo4LJkqcnkVP9PQjZe93AWKjzpJIZ/M0OxwRr6EUCN8F2Ub3aIMSE6+OYmpOlDDRHAStKj4ADtODxplAMpxP/ig/eWYcmzrRqaA=
+	t=1742817898; cv=none; b=RaiSX+5NjtenIwtDpHPXR9T+vfFQLe0PGsqzOeuKxPycDHglf2MuzMKsxTFc+crY47i7xxHzwXmQ1fEiUvex1Urs7FB1Kdvyx7i7XpDU9XVjB4amBT1qMpN+dLn9SeOBCYcnMN0GwKGL4qrl/FJnZhUyK0m3yxq2luNYcfeX10o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742817753; c=relaxed/simple;
-	bh=nO06MvROhvIV3lyFBXov2VZJkg+K/7hCEqnCnTBzYNs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WfzpgfuaLn0IcI1p63IIKN5W0xrk8toNXgMyUveo6JclCYPaT3vNpQ/qwnMkbaXSyMrrmgHmhLizFM/6EBQUe2kakgVCV3ZQ4ZtB8obm719D+sflFdhmcposPorud+qNPr0cJHTeCYZheE55DzH9kGHc5/G0BTlnmcxtjGMHpjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GXz63yTZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:904a:b2d:8d57:4705:738e])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 41FBC455;
-	Mon, 24 Mar 2025 13:00:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742817643;
-	bh=nO06MvROhvIV3lyFBXov2VZJkg+K/7hCEqnCnTBzYNs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GXz63yTZXs8/RmudswsztHLBHZ6k+F/IZ6bnpRyvGP+YpPtCs9jCyiLFHntN9v87Z
-	 ADJCN4PLaJ34zrlSIIvUYaBcDgxz9RWefGTJDr20UccRnKyMN/sggki7kxnH2iUPwD
-	 1D4fqBtBKEjKIWbTS6BOVUdirVs5jCRE+ZX0zMas=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Mon, 24 Mar 2025 17:31:42 +0530
-Subject: [PATCH 6/6] media: ti: j721e-csi2rx: Support multiple pixels per
- clock
+	s=arc-20240116; t=1742817898; c=relaxed/simple;
+	bh=T0bcV7ndvlkFcGXkP0IW95I+2fEZ4Khe9o1iUDmieMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ASwmmakBBmS8iOjkAsVTfMx+o3hKZpRjZUtohfF70L9TXSb4J2e6jRzkLnywOCOd/XbqLrqhz9Jn3uHqQ8hBCb6bPmJjyn++F+DO+jK1HiGHRR5DbztsYmRtxrznhqAjlQT70Z5kt3CQ6WXUc0eaSFueqF3ebg0+ntmBras6XGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSG+scVS; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf848528aso35914345e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742817894; x=1743422694; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EEiHQPlDHFWVDqKplkUnb12Sej7sgBWo60DG3eT9ZwE=;
+        b=fSG+scVSBfYoN4wQygj2ZoTa8QwcaWK2tKRdMp5ZPGFWgOJY+h3zj7BQxSnB9qe3DY
+         4ZU9D1jRdlDQPsI3UgoiWey+cJ2Xub3zBcHp8JGG6edx/YcoeI1nzzPyAJvy7v5qHiYb
+         ilQFCySJQoexTEvbzi6tJiALqgkPIsjQxCBKeO1S0npJCrHHv5R0/+gpBOajDQ3Qabpy
+         RL5PSXoYFeI39gFkmOk/BLGvHE0IHyJgDmvZJY2qf2NKWdGYpp59yVn28KOixhPiglPb
+         cxGSlU7R8JPXa/oesBZQxFw9Af3WoA56MplNeHJNp+xpI6mom4tYT6leh42XJ8C0ysdi
+         ucOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742817894; x=1743422694;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEiHQPlDHFWVDqKplkUnb12Sej7sgBWo60DG3eT9ZwE=;
+        b=eY/712PE7uHOE0jXcyStXKbun+Q/UKSVOYPQnHA/m5nftcytxZSUMuD+TlSdlRdDBZ
+         UBUyqY/tYcxxmp60sXtDY1jrl3WMJ3iLUvfvIxQgPs/ry1T5MHqnnlXGbLQPCvxvDtzp
+         GNTTuD7mpORfxuKSS4tNfE+nFszEGpOlG+eUD9SC3ZPkTCX8BmN2ftpQPcak1fdGlJ4y
+         DqXTYt4GS2u3e1rpT4DJuK8cjNHsBv0sMcEIiSYPD7Y2Ocz50subO/vLQx2lBJFqt1+i
+         6LMkLlLwLtsECYlVyprf8qZ1OY1WUX6GmURKiiO8U/PYgLVQg2vptKmb2qwtqpdP3Ybr
+         Eafw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk4AoY060AfcrQjYqXhdZXF9OCOxFiMeuLxfZfrdgIm9T2JrwlSdmxNcl4PBb/Ef8HPeeDr/hROVk918o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2mTaZA5sSmk6c0ljkNuCJSUus2Kr9tto8MDTRR977UtWFDaeK
+	0TSjMTgFCx8AclPr+MKOXi+1jTUZwCs1ZIt6ESFAA6XrxSPJZzSakyKxm7ZCg0Q=
+X-Gm-Gg: ASbGncv+N67lVTwI1rjjzfH8HmTFZmBEdDNeHgqsKE4TlqdpEiVvnHl1z6bzozgwRGp
+	LBC21mWdFbUUef/KvH+ks/zfrfDowkTarwr+hqkRrGPHBVGQfXBvKev5zO3NTbe7jbf921nj25J
+	ArJn29uKxhobSSSPES3K2rIIt/qT8e70HuLFSZ1cV6yn5zZvQx3EXngzBd4UfRWeNB05a0Sa5vk
+	hEw9G8XWZ2A7QxTMxJxA1B2jjTMfkXdubAEitwUkylJw5oTWpuwbUwEFPoi+CPWb4qWc1SEKea9
+	Xw2EpTXMwaEx98Eoh24HLIqGBzsbtISV79S9+jhUeVzONiV0XfDnA0hIP3yleTQ=
+X-Google-Smtp-Source: AGHT+IGviFIkVr8fo+EnJNNSPFp52zemYmg2/j6T6NycMIWANr5ACEdDLzVtzgMzC4WSGSPnCALLKg==
+X-Received: by 2002:a05:600c:1548:b0:43c:f78d:82eb with SMTP id 5b1f17b1804b1-43d509f5985mr137326265e9.15.1742817894289;
+        Mon, 24 Mar 2025 05:04:54 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9efe61sm10951273f8f.97.2025.03.24.05.04.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 05:04:53 -0700 (PDT)
+Message-ID: <ac58b70a-b53a-4c91-8483-1b870623d5e9@linaro.org>
+Date: Mon, 24 Mar 2025 12:04:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250324-probe_fixes-v1-6-5cd5b9e1cfac@ideasonboard.com>
-References: <20250324-probe_fixes-v1-0-5cd5b9e1cfac@ideasonboard.com>
-In-Reply-To: <20250324-probe_fixes-v1-0-5cd5b9e1cfac@ideasonboard.com>
-To: Jai Luthra <jai.luthra@linux.dev>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>
-Cc: Devarsh Thakkar <devarsht@ti.com>, 
- Rishikesh Donadkar <r-donadkar@ti.com>, Vaishnav Achath <vaishnav.a@ti.com>, 
- Changhuang Liang <changhuang.liang@starfivetech.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4663;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=nO06MvROhvIV3lyFBXov2VZJkg+K/7hCEqnCnTBzYNs=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBn4UmxLsOaLPaSUUSuhk7UqYZayUE5U28kB1LgO
- SMEyARVhSKJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ+FJsQAKCRBD3pH5JJpx
- RTggEADFqq7N5lTqSTGKpKCTkaPDfWwUqwUD05/SnJkGDOchOGoX3kh4wAgywf3W5GzH/chSeDt
- mBUlRNp7hERCtUs3DgjsET6an9ZLI06hzdk6twtn+EYEaf6DFEHTu2u8orNU+EbTpdg9nTaKZod
- 8eo9HrA582Cs8Cs+OgawXeEAtZSiaFnRTJldlPe3li2VnkGXvuvMYdlIOGRLHfuC6OZEP/Zfw9Q
- g6xFgDPcjM9ojST10cOgNPsidAeL6SmfarH+1CSEYJpbMLN+hXSV9MriFN7P7Papf5q2sk+ALZA
- SP52o6Dws1BBUzQlo68kysNiyGO2mDS0tvjT62whp5jryfu4s+8zvZMlC6bY4R81M1qjP+glxuc
- /t2vR/tgvQp99rlx6oJlQ3nn4Hqqcz0689BzUXawgynMQ5hzPzNtGdOygros6OLfuLkNJKKU3Ss
- kdovkYBUUrHAkkP5qCBXoE2P3w1wVNvkbtm9b18OdGQYC2RiXrS9Hkfsst4MQ+c4ssVg0Lk7k02
- H2RedjRZRf3u34Cudx444ALSzKf7VWdwJs5fLqDpjBgRpKeTosLksIVyfF60euwaiIP0aSbZGH6
- UqxFPMrR5pL1zGo5v4Zn+hevvAA9o9jIj49/le4lfiSf0F6I+u9ZV6xWiQQpubDdfk1aDhya6yY
- OUDKWLOygVZDnSQ==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] ASoC: codecs: wcd938x: add mux control support for
+ hp audio mux
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, peda@axentia.se,
+ broonie@kernel.org, andersson@kernel.org, krzk+dt@kernel.org
+Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
+ Christopher Obbard <christopher.obbard@linaro.org>
+References: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
+ <20250324110606.32001-6-srinivas.kandagatla@linaro.org>
+ <7fc622e8-6f9d-4a14-bf5f-3122e6f81808@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <7fc622e8-6f9d-4a14-bf5f-3122e6f81808@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add support for negotiating the highest possible pixel mode (from
-single, dual, quad) with the Cadence CSI2RX bridge. This is required to
-drain the Cadence stream FIFOs without overflowing when the source is
-operating at a high link-frequency [1].
 
-Also, update the Kconfig as this introduces a hard build-time dependency
-on the Cadence CSI2RX driver, even for a COMPILE_TEST.
 
-[1] Section 12.6.1.4.8.14 CSI_RX_IF Programming Restrictions of AM62 TRM
+On 24/03/2025 11:20, Dmitry Baryshkov wrote:
+> On 24/03/2025 13:06, srinivas.kandagatla@linaro.org wrote:
+>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>
+>> On some platforms to minimise pop and click during switching between
+>> CTIA and OMTP headset an additional HiFi mux is used. Most common
+>> case is that this switch is switched on by default, but on some
+>> platforms this needs a regulator enable.
+>>
+>> move to using mux control to enable both regulator and handle gpios,
+>> deprecate the usage of gpio.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
+>> ---
+>>   sound/soc/codecs/Kconfig   |  1 +
+>>   sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
+>>   2 files changed, 31 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+>> index ee35f3aa5521..a2829d76e108 100644
+>> --- a/sound/soc/codecs/Kconfig
+>> +++ b/sound/soc/codecs/Kconfig
+>> @@ -2226,6 +2226,7 @@ config SND_SOC_WCD938X
+>>       tristate
+>>       depends on SOUNDWIRE || !SOUNDWIRE
+>>       select SND_SOC_WCD_CLASSH
+>> +    select MULTIPLEXER
+>>   config SND_SOC_WCD938X_SDW
+>>       tristate "WCD9380/WCD9385 Codec - SDW"
+>> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+>> index dfaa3de31164..948b5f6cc45a 100644
+>> --- a/sound/soc/codecs/wcd938x.c
+>> +++ b/sound/soc/codecs/wcd938x.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/regmap.h>
+>>   #include <sound/soc.h>
+>>   #include <sound/soc-dapm.h>
+>> +#include <linux/mux/consumer.h>
+>>   #include <linux/regulator/consumer.h>
+>>   #include "wcd-clsh-v2.h"
+>> @@ -178,6 +179,8 @@ struct wcd938x_priv {
+>>       int variant;
+>>       int reset_gpio;
+>>       struct gpio_desc *us_euro_gpio;
+>> +    struct mux_control *us_euro_mux;
+>> +    u32 mux_state;
+>>       u32 micb1_mv;
+>>       u32 micb2_mv;
+>>       u32 micb3_mv;
+>> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct 
+>> snd_soc_component *component)
+>>       wcd938x = snd_soc_component_get_drvdata(component);
+>> -    value = gpiod_get_value(wcd938x->us_euro_gpio);
+>> +    if (!wcd938x->us_euro_mux) {
+>> +        value = gpiod_get_value(wcd938x->us_euro_gpio);
+>> -    gpiod_set_value(wcd938x->us_euro_gpio, !value);
+>> +        gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> 
+> Is it possible to use mux_state for both GPIO and MUX paths?
 
-Link: https://www.ti.com/lit/pdf/spruj16
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/platform/ti/Kconfig                  |  3 +-
- .../media/platform/ti/j721e-csi2rx/j721e-csi2rx.c  | 38 ++++++++++++++++++++--
- 2 files changed, 37 insertions(+), 4 deletions(-)
+Ideally I would like to do that the way that gpio is done, which is 
+clear reflection of hw state, however mux f/w is lacking such api.
 
-diff --git a/drivers/media/platform/ti/Kconfig b/drivers/media/platform/ti/Kconfig
-index bab998c4179aca3b07372782b9be7de340cb8d45..3bc4aa35887e6edc9fa8749d9956a67714c59001 100644
---- a/drivers/media/platform/ti/Kconfig
-+++ b/drivers/media/platform/ti/Kconfig
-@@ -67,7 +67,8 @@ config VIDEO_TI_J721E_CSI2RX
- 	tristate "TI J721E CSI2RX wrapper layer driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
- 	depends on MEDIA_SUPPORT && MEDIA_CONTROLLER
--	depends on (PHY_CADENCE_DPHY_RX && VIDEO_CADENCE_CSI2RX) || COMPILE_TEST
-+	depends on VIDEO_CADENCE_CSI2RX
-+	depends on PHY_CADENCE_DPHY_RX || COMPILE_TEST
- 	depends on ARCH_K3 || COMPILE_TEST
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_FWNODE
-diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index ad51d033b6725426550578bdac1bae8443458f13..425324c3d6802cfda79d116d3967b61a2e7a015a 100644
---- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-+++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -21,6 +21,8 @@
- #include <media/v4l2-mc.h>
- #include <media/videobuf2-dma-contig.h>
- 
-+#include "../../cadence/cdns-csi2rx.h"
-+
- #define TI_CSI2RX_MODULE_NAME		"j721e-csi2rx"
- 
- #define SHIM_CNTL			0x10
-@@ -29,6 +31,7 @@
- #define SHIM_DMACNTX			0x20
- #define SHIM_DMACNTX_EN			BIT(31)
- #define SHIM_DMACNTX_YUV422		GENMASK(27, 26)
-+#define SHIM_DMACNTX_DUAL_PCK_CFG	BIT(24)
- #define SHIM_DMACNTX_SIZE		GENMASK(21, 20)
- #define SHIM_DMACNTX_FMT		GENMASK(5, 0)
- #define SHIM_DMACNTX_YUV422_MODE_11	3
-@@ -40,6 +43,7 @@
- #define SHIM_PSI_CFG0_SRC_TAG		GENMASK(15, 0)
- #define SHIM_PSI_CFG0_DST_TAG		GENMASK(31, 16)
- 
-+#define TI_CSI2RX_MAX_PIX_PER_CLK	4
- #define PSIL_WORD_SIZE_BYTES		16
- /*
-  * There are no hard limits on the width or height. The DMA engine can handle
-@@ -110,6 +114,7 @@ struct ti_csi2rx_dev {
- 	struct v4l2_format		v_fmt;
- 	struct ti_csi2rx_dma		dma;
- 	u32				sequence;
-+	u8				pix_per_clk;
- };
- 
- static const struct ti_csi2rx_fmt ti_csi2rx_formats[] = {
-@@ -485,6 +490,26 @@ static int ti_csi2rx_notifier_register(struct ti_csi2rx_dev *csi)
- 	return 0;
- }
- 
-+/* Request maximum possible pixels per clock from the bridge */
-+static void ti_csi2rx_request_max_ppc(struct ti_csi2rx_dev *csi)
-+{
-+	struct media_pad *pad;
-+	int ret;
-+	u8 ppc = TI_CSI2RX_MAX_PIX_PER_CLK;
-+
-+	pad = media_entity_remote_source_pad_unique(&csi->vdev.entity);
-+	if (!pad)
-+		return;
-+
-+	ret = cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
-+	if (ret) {
-+		dev_warn(csi->dev, "NUM_PIXELS negotiation failed: %d\n", ret);
-+		csi->pix_per_clk = 1;
-+	} else {
-+		csi->pix_per_clk = ppc;
-+	}
-+}
-+
- static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- {
- 	const struct ti_csi2rx_fmt *fmt;
-@@ -496,6 +521,9 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- 	reg = SHIM_CNTL_PIX_RST;
- 	writel(reg, csi->shim + SHIM_CNTL);
- 
-+	/* Negotiate pixel count from the source */
-+	ti_csi2rx_request_max_ppc(csi);
-+
- 	reg = SHIM_DMACNTX_EN;
- 	reg |= FIELD_PREP(SHIM_DMACNTX_FMT, fmt->csi_dt);
- 
-@@ -524,14 +552,18 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_dev *csi)
- 	case V4L2_PIX_FMT_YVYU:
- 		reg |= FIELD_PREP(SHIM_DMACNTX_YUV422,
- 				  SHIM_DMACNTX_YUV422_MODE_11);
-+		/* Multiple pixels are handled differently for packed YUV */
-+		if (csi->pix_per_clk == 2)
-+			reg |= SHIM_DMACNTX_DUAL_PCK_CFG;
-+		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
- 		break;
- 	default:
--		/* Ignore if not YUV 4:2:2 */
-+		/* By default we change the shift size for multiple pixels */
-+		reg |= FIELD_PREP(SHIM_DMACNTX_SIZE,
-+				  fmt->size + (csi->pix_per_clk >> 1));
- 		break;
- 	}
- 
--	reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
--
- 	writel(reg, csi->shim + SHIM_DMACNTX);
- 
- 	reg = FIELD_PREP(SHIM_PSI_CFG0_SRC_TAG, 0) |
 
--- 
-2.48.1
+> 
+>> +    } else {
+>> +        mux_control_deselect(wcd938x->us_euro_mux);
+>> +        wcd938x->mux_state = !wcd938x->mux_state;
+>> +        if (mux_control_select(wcd938x->us_euro_mux, 
+>> wcd938x->mux_state))
+>> +            dev_err(component->dev, "Unable to select us/euro mux 
+>> state\n");
+> 
+> This can lead to mux being deselected next time even if the 
+> mux_control_select returned an error. I think mux_control API needs a 
+> way to toggle the state without deselecting it first. Anyway, an error 
+> from mux_control_select() must prevent you from calling 
+> mux_control_deselect() next time.
 
+We can rearrange deselect to be done only on successful select, that 
+should cleanup some of this.
+
+--srini
+> 
+>> +    }
+>>       return true;
+>>   }
+> 
+> 
 
