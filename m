@@ -1,104 +1,83 @@
-Return-Path: <linux-kernel+bounces-574377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE285A6E4AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:51:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE6CA6E4B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A7577A1982
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FEA916A97A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581AC1DE8B4;
-	Mon, 24 Mar 2025 20:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FF41E32C5;
+	Mon, 24 Mar 2025 20:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHpCSSk5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mueHOBzl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B889A1DC9BB;
-	Mon, 24 Mar 2025 20:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B581C7015;
+	Mon, 24 Mar 2025 20:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742849436; cv=none; b=GZ1F/f4QckyzEbFJhnC5XcoRfgt3rwj+lCfLBWWnkQJR6vUZXvPxrrtCUPnPfa4gs3WviSHMXXFPryx26qxcQyBbdZdnE+C59pElAcrfhkCzZmxLZhWrjwxdYzAK0Vtwfu+r28QY8iVJwZ7Ka7BvUHGW8AfgtGuJ3QG/1qgp3rg=
+	t=1742849446; cv=none; b=o1c1KE6FpuagTcMiW5hHmIzaxXHJeeUYFyoPUnOz4xiOMGSWhsRFl7o6TWS7Xd7XPu11JOQhdMwGykF8FKa1a6wl0VgBmkucdqjNYaFcnvhpnHlUR1eX2nIdbFG5eGNfFUiNwT/4txgC2KwiKrUhFHZJmAehj9zR75cPJWqmFcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742849436; c=relaxed/simple;
-	bh=mk8wlYjaUGveE5OrW4hhvleivR5X97FVKei5tSxhurk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZgI5RFDN+y0/WMl3Q5F6NVG60LcrhPvCZkt0ijRK+vLPkM2B886wLTrRaasTsozPHktrwIWkRrPiUtI3wNi1rVvbDbWosswKxe8/LP6AhLQnmXNKfEeEwP9DIUUFxcbRy6KxkvtXxQ11MuofMYR/qhM56Fu1SV0V/onHaq7YD1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHpCSSk5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD0AC4CEDD;
-	Mon, 24 Mar 2025 20:50:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742849436;
-	bh=mk8wlYjaUGveE5OrW4hhvleivR5X97FVKei5tSxhurk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eHpCSSk5bNY9/A27SdU2YshDsb4MVVj/f99VoYx5sHWs/WU/+uqco7pFC6lEvlUIl
-	 yupUtTsMZGtuCQAPvFH93/m+OpbEO5+upwy4RvMXObtukIRodW6dvMnTKcQL3TYTe1
-	 XZtSc4fIr1lyZCvCmlA7hKEZPOCYpF2+RYEkJOkQhtm9Th1AIs5w5iAj5HFqcqOl+X
-	 KHdgjoNoaUTbjD3Qn3clEJvBaVA1ZjcspoTfrALEKF7FhKAYaqd4rXrniHolOtibmm
-	 X9EGmTZM4kYowlBkbLuTJZnQFA8CwOuD/XB3fG91CpiwX27EziVbbqtMagxN93wW9O
-	 e5BsenGuk5Evg==
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so4173916276.0;
-        Mon, 24 Mar 2025 13:50:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXZhi5eGguNg/ClviPRT6SQOIqsR+tswDvON6rUCC+SQAMGKBZogt7RJ/okT3aQ2pEResHjU8GM8INTznw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+unnT2CHV5+8/yVqzVSb+k64mHBq79W5A5gNv8LTv1vMMWNn/
-	c7x2ZeMSdJynzRJ4R7zuchHr1M8IqZ3jUGoSKYAvPN5EciZfVy6RZBYD6B58TaXgf2N4cTG1fPX
-	Hh5+XA+y/TtlRlPD0tDFXRZGlbt0=
-X-Google-Smtp-Source: AGHT+IE4EE4XOQrsJMyGF2OM431UMvL4+tgZd6Db5EzoxzmWIAO/SIBxrq2PJG+BwgYIIWxpHvcNCPk57yH+wCVtvF4=
-X-Received: by 2002:a05:6902:1887:b0:e60:9cf3:5a51 with SMTP id
- 3f1490d57ef6-e6690e98687mr24133265276.17.1742849435564; Mon, 24 Mar 2025
- 13:50:35 -0700 (PDT)
+	s=arc-20240116; t=1742849446; c=relaxed/simple;
+	bh=MchipAU5sBxM6kqrzJJM5frG3EbJ8KvRCbLn29uzQWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POPak3eD8KPbyLUgFEuUNBO7XdwIqRXk32azaEn5uxgs+alkxXVNDhmXxH28MJSsQrqriBjwPEiDdfCKMH9slMhhTXJytebNRiaJkmgjPigBhacfkdAJY2P3xfgOYZaUdzXaqEGHCxi8Hsgs3WZfP5heMa7US3SsTLj097Iswkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mueHOBzl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HAcr7heHKfjYqqnB0DRD0tmxyXkvWOjnx1sWFmHXfG0=; b=mueHOBzl+J4JC5t+d0W9a3FfE4
+	KwhcgSL+St4ME6gir5KTdD6LAANvQKFBrlli1ptD1OPxqk9L+mHl3pwnOnBw/oSWayovllrVFs25a
+	hOHy/YknptRyIovlS5eQmOo/8KUoW/YTI3l//NfqKPrH/08mjFf5cDOoCv9kYp67la6s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1twokm-006yql-DQ; Mon, 24 Mar 2025 21:50:36 +0100
+Date: Mon, 24 Mar 2025 21:50:36 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: add a debugfs files for showing netns refcount
+ tracking info
+Message-ID: <59446182-8d60-40a0-975f-30069b0afe86@lunn.ch>
+References: <20250324-netns-debugfs-v1-1-c75e9d5a6266@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 24 Mar 2025 13:50:23 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkFq-4vHbinAjsTyxU=BTNR-yFfy-i0nvLSF_xWQ-awrMQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JoNGJXAFX9WiKI30a6UcbUWfqspH_GfXZ_4K1syzihepKoC_qopImxSMb0
-Message-ID: <CAKtyLkFq-4vHbinAjsTyxU=BTNR-yFfy-i0nvLSF_xWQ-awrMQ@mail.gmail.com>
-Subject: [GIT PULL] IPE update for 6.15
-To: torvalds@linux-foundation.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324-netns-debugfs-v1-1-c75e9d5a6266@kernel.org>
 
-Hi Linus,
+On Mon, Mar 24, 2025 at 04:24:47PM -0400, Jeff Layton wrote:
+> CONFIG_NET_NS_REFCNT_TRACKER currently has no convenient way to display
+> its tracking info. Add a new net_ns directory in debugfs. Have a
+> directory in there for every net, with refcnt and notrefcnt files that
+> show the currently tracked active and passive references.
 
-Please merge this PR for the IPE update for 6.15.
+Hi Jeff
 
-This PR contains only one commit from Randy Dunlap, which fixes
-kernel-doc warnings in the IPE subsystem.
-This commit has been tested for several weeks in linux-next without any issues.
+CONFIG_NET_NS_REFCNT_TRACKER is just an instance of
+CONFIG_REF_TRACKER.
 
-Thanks,
-Fan
+It would be good to explain why you are doing it at the netdev level,
+rather than part of the generic CONFIG_REF_TRACKER level. Why would
+other subsystems not benefit from having their reference trackers in
+debugfs?
 
---
-
-The following changes since commit 38fec10eb60d687e30c8c6b5420d86e8149f7557:
-
-  Linux 6.14 (2025-03-24 07:02:41 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git
-tags/ipe-pr-20250324
-
-for you to fetch changes up to 6df401a2ee4a91f4fd1095507d6f461f1082d814:
-
-  ipe: policy_fs: fix kernel-doc warnings (2025-03-24 13:36:00 -0700)
-
-----------------------------------------------------------------
-ipe/stable-6.15 PR 20250324
-
-----------------------------------------------------------------
-Randy Dunlap (1):
-      ipe: policy_fs: fix kernel-doc warnings
-
- security/ipe/policy_fs.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+	Andrew
 
