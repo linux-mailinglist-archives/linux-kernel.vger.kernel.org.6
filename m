@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-574216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671F6A6E216
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:10:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B493A6E21C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B687A4487
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA791889C61
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1BC8460;
-	Mon, 24 Mar 2025 18:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45447264638;
+	Mon, 24 Mar 2025 18:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LR7H1z8y"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTopPn3R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D3D26157E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99776189520;
+	Mon, 24 Mar 2025 18:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742839841; cv=none; b=jwDuAI/o2npwJRDIPZQDnTsbggMuk0I9xu97OovX+0RPIw8MrYREo/yy4X3FIZWxgZh6g9wtVexOUqV5sfAPkj7n+j5Btn+y+IMG/dOWg75E7QRtpeXif7ZdgnPVlVcmNSRaTiJExxzS30i1x3bGHcQfzLtEMe5DtRHx1c1bwFQ=
+	t=1742840001; cv=none; b=hUJrrYpFU1HTIUcPut2FAm+V7/jP6ygJhltTS3sZmw6h/1U5fEgeaiJD0cHUkWOBjIsGjPrIMI7wBa2vCIl5s3jvt7q/DWY+v578dGzorLTULZQK/zmp+uvbPYqPN3NzdfNuSHKFKBpbnr3BDE9SGxgOR9iRn2lm8vFfCiMGWf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742839841; c=relaxed/simple;
-	bh=W5EH4HgBMT2RDd5dV38icviVxonI3A9D3prl5SuNkFs=;
+	s=arc-20240116; t=1742840001; c=relaxed/simple;
+	bh=HxL4j75EqQZXg4nUUxuhCgYtvVucbH/8DgVWCMZjacs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FtMP/yswowKuDtVcYGTr6AASGZV0AmoGF2UZcGg2qUbf3qemC1zTUmuiM+GIneyHqnK+b+qW+0KMs3M03QQCSV0XzgNeAeV2Ho0QCLmUx3bTj62ud+Pi6WeBAcn1VWhqex5UKRrFGmULQ8SdQubPu7+flQUwedBHf/kE3/lRaSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LR7H1z8y; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-39ac56756f6so940845f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742839837; x=1743444637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W5EH4HgBMT2RDd5dV38icviVxonI3A9D3prl5SuNkFs=;
-        b=LR7H1z8y7SSIOrY31Y45gAqS+8KjgYiOGxmO9pGOiWvztPAQOhz74JDzFPDyWcHEtT
-         LbR+2xC/4knDjjANZBb3iVcSV684+o02yWNSsiD6y5pmVVpu8TfG5E0YbEKIyWpLu0ne
-         KV5NzXms6x43zIgcLB4y/Uy4ahwMc6LY/MhYFO7h+lspkMEthslAJe4C8S9ng+Tii576
-         EE591B+JHlezm5oxIJ9/MBqLeq2mmrMuPkC9nBHl1laXQdUWe4LxKlyzaM+dfORMq/Xj
-         KNhgm9++s9HqLu4XI2/Y1z3TabIyRflh5CRn9RWRWr/nMyAL0FzIi9lBfzTmXeq/PIBm
-         yAgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742839837; x=1743444637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W5EH4HgBMT2RDd5dV38icviVxonI3A9D3prl5SuNkFs=;
-        b=s7598Vj9BpnIj1d4X7i2+vsG0Xfw5fBcfTzuJlPstpKZjoAlC8zNRwD6bIEl5LJHoX
-         4e46vtLQPAiuz5tUfiwiLy04MavnPuHUyLjPIeFGpl4bocZmhZMqKz+Cs8pLk9NUANIq
-         vdZJuF4PGMFolsMkgIa446kgRPZKKQ6kkyUCTwhx2BgWctO2FKgv95En4qWuAXkjnlAn
-         i9hjARFR0L7VzWrTlrY6j5ipe/mNsJQYKDOBV4RKmgUU1rw8rFNlWX3GwLi58CNyZjBj
-         aGo5g18oVeA3mufRISR//hX63BQkdgr8sWgq3+7h0+yISiiDHr3HIprObBm8b1863eum
-         3HWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtJLdonLu7aDFe3DaB7uxWiqs6CCJ/mnLKGJutW0sS7iDSEt9cNobWaRxhPMyAp1jwgXJzI2zQNlPGTWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+VVpVyJ12gheIN8Z0URP9mAUkfnr4fJwQrGXMvm+xfMaZQjGa
-	0nacmRoQAvjcov9fZSy1mUHy83R/OYtC3J7AeL5uZt6ZIU4l1rnyLpmgUCT4qSA=
-X-Gm-Gg: ASbGncs4wZFSbDO4Fu5vl5sY8q8OgpD79lrDw5ZehjEco8FJzoFhmoCszrT0MT8lbDz
-	NIhHcT4zHHzeUXXltdfWtMSCiCNFZqquq62T03p/ZB+VCF5Lrmqfbs+k5QTZovf5dVh+5AcCzqK
-	pRWuXHB2e39ymwuCswioBRPLQNrKsyzo1YFqAR4NuggEQ2XSuQb4BTs03knJlZsdMziX8YGyUxI
-	qdSHabRN1otcMNQwPNLg94tQXGacNh4B1iCyl9RZRIsmc2HatWEr8CCM/VOvEyhRUvja7Z7Kv3d
-	6LybG32UJeCnd7VCkf1gJ/L39qzo2ok9NZx9O6hBN0INETJeweCjbAj92g==
-X-Google-Smtp-Source: AGHT+IG/xbG9SBbPWm/sxYQIS9iqyav4ZhR+Hp91ZTDsfvDr2jprMyVZFlSeudZyAmY/H8KBjJbSew==
-X-Received: by 2002:a5d:6d0a:0:b0:391:306f:57de with SMTP id ffacd0b85a97d-3997f9405c4mr12816495f8f.45.1742839837294;
-        Mon, 24 Mar 2025 11:10:37 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fceae03sm133023595e9.8.2025.03.24.11.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 11:10:36 -0700 (PDT)
-Date: Mon, 24 Mar 2025 19:10:35 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>, cgroups@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+n+ycl03d+++GEcuR+ur4bddkaynnuq95dPKk4jVVf94kMkiM39qlApOJtM4NXJizhcRiqIP2434x0nRIPVDj+TRs/Tv/nZy+wlYqIWGu7HYvmyRUSI2nIc6BxeFW7Wn68uyUFqmysGYz4+bG6ftk2TfGDvc+2k6phEQXSRdvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTopPn3R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB14C4CEDD;
+	Mon, 24 Mar 2025 18:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742840001;
+	bh=HxL4j75EqQZXg4nUUxuhCgYtvVucbH/8DgVWCMZjacs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTopPn3RAljPZx+g/g5IBXvkmaMMWchrjVzdIS5V9f1ViyUW54vubwIMO5krcXWTw
+	 OZ4UKGnqeSCBtW5zqETbG8Dd0YK/R0pzIruYv/EmUdSCCtWJt0AE6MZhKtzeMEllnx
+	 1nWBCPV8k4QUXdNoaR8sVG6iVYagoSnYXXLAvwanO/tUfJCAyhyTNoNjdH31isHCPD
+	 TLjbvBDUkHiw89+DnTz5Lm8BjqUQ/GHT0yi9QwS5IrQ187nIIucvuA+jt99reEwYXz
+	 DOQINh8mr5aC1FeTB3dIzkvg02/s7PyItJ7fxP3Penwt/LXlpHBQ9sNuszRlsJnNQ7
+	 deC1Xd8wYuDnQ==
+Date: Mon, 24 Mar 2025 19:13:15 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com,
+	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Frederic Weisbecker <fweisbecker@suse.com>
-Subject: Re: [PATCH v2 00/10] Add kernel cmdline option for rt_group_sched
-Message-ID: <5k6sdc6fha7cnxkl4k54vpxjukld7tevslkcl4i3xwvedea2s4@lugqjbp47jqz>
-References: <20250310170442.504716-1-mkoutny@suse.com>
+Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <Z-Ggu_YZBPM2Kf8J@cassiopeiae>
+References: <20250321214826.140946-1-dakr@kernel.org>
+ <20250321214826.140946-3-dakr@kernel.org>
+ <2025032158-embezzle-life-8810@gregkh>
+ <Z96MrGQvpVrFqWYJ@pollux>
+ <Z-CG01QzSJjp46ad@pollux>
+ <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
+ <Z-GNDE68vwhk0gaV@cassiopeiae>
+ <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sk7gjmsjwmnhfo2b"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310170442.504716-1-mkoutny@suse.com>
+In-Reply-To: <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
 
+On Mon, Mar 24, 2025 at 05:36:45PM +0000, Benno Lossin wrote:
+> On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
+> > On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
+> >> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
+> >> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
+> >> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
+> >> >> > Along these lines, if you can convince me that this is something that we
+> >> >> > really should be doing, in that we should always be checking every time
+> >> >> > someone would want to call to_pci_dev(), that the return value is
+> >> >> > checked, then why don't we also do this in C if it's going to be
+> >> >> > something to assure people it is going to be correct?  I don't want to
+> >> >> > see the rust and C sides get "out of sync" here for things that can be
+> >> >> > kept in sync, as that reduces the mental load of all of us as we travers
+> >> >> > across the boundry for the next 20+ years.
+> >> >> 
+> >> >> I think in this case it is good when the C and Rust side get a bit
+> >> >> "out of sync":
+> >> >
+> >> > A bit more clarification on this:
+> >> >
+> >> > What I want to say with this is, since we can cover a lot of the common cases
+> >> > through abstractions and the type system, we're left with the not so common
+> >> > ones, where the "upcasts" are not made in the context of common and well
+> >> > established patterns, but, for instance, depend on the semantics of the driver;
+> >> > those should not be unsafe IMHO.
+> >> 
+> >> I don't think that we should use `TryFrom` for stuff that should only be
+> >> used seldomly. A function that we can document properly is a much better
+> >> fit, since we can point users to the "correct" API.
+> >
+> > Most of the cases where drivers would do this conversion should be covered by
+> > the abstraction to already provide that actual bus specific device, rather than
+> > a generic one or some priv pointer, etc.
+> >
+> > So, the point is that the APIs we design won't leave drivers with a reason to
+> > make this conversion in the first place. For the cases where they have to
+> > (which should be rare), it's the right thing to do. There is not an alternative
+> > API to point to.
+> 
+> Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
+> trait to me is a sign of a canonical way to convert a value.
 
---sk7gjmsjwmnhfo2b
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 00/10] Add kernel cmdline option for rt_group_sched
-MIME-Version: 1.0
-
-Hello.
-
-On Mon, Mar 10, 2025 at 06:04:32PM +0100, Michal Koutn=FD <mkoutny@suse.com=
-> wrote:
-=2E..
-> Changes from v1 (https://lore.kernel.org/all/20250210151239.50055-1-mkout=
-ny@suse.com/)
-> - add runtime deprecation warning
-
-Peter, has this addition made the boot-time configurability less
-dreadful (until legacy users can migrate to something better)?
-
-Thanks,
-Michal
-
---sk7gjmsjwmnhfo2b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ+GgGQAKCRAt3Wney77B
-Sfh1AQD4AOnacq2Seg8evRvg3BkvnZUEsr9AdUOlOB48pFxO5AEA7CYrX9ngBYGI
-LhR7BHSBWP7qXxI+yP/3L+wRu6sw5Ac=
-=0U7+
------END PGP SIGNATURE-----
-
---sk7gjmsjwmnhfo2b--
+Well, it is the canonical way to convert, it's just that by the design of other
+abstractions drivers should very rarely get in the situation of needing it in
+the first place.
 
