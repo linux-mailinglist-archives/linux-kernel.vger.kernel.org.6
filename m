@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-573595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D481CA6D99C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:57:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CA1A6D99A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D6E1893B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3677916FB7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFAF25E47D;
-	Mon, 24 Mar 2025 11:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BA125E46F;
+	Mon, 24 Mar 2025 11:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WBSzL42p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MK0DP0ZZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2545E25E479
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4381802
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742817242; cv=none; b=FRqxyb71J17QnpGx38Nv/dp97/Edp87oFcewpjLy/JUE1Y41p+lcuhwLP7TQpmDdVJY92C9lYGspOCEThxerHfUfnLOpYt3exNRQrRo9nEXL027gkVy6DJ+gBRj1UfasdvRVRcKxlD7txTCMMrWpM/BEmFEtEU+VQo/0ia392Ik=
+	t=1742817313; cv=none; b=jE8EtLJCcCJXU+VQs234MomN2F5HJRKug59UqXEozRsyy2q7RqYp5eCKjYAq8GYQ4ZTrsCAzfrHyNmYg29W0zm0uAfh7xnnwV0R9ttSLtT+gvdSS8RSLrCnl4IMRmffvKhp212MiK3DpYLMQlBRGCdaFMTl2NIhW6Ug4ZDUGKnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742817242; c=relaxed/simple;
-	bh=f6PCMGxlR7PIv/WE7VQYyDd7YyTdYI1Uvqb6UHVthuI=;
+	s=arc-20240116; t=1742817313; c=relaxed/simple;
+	bh=0aYfIUc2aXBOdWiFJw2ve+BEVJO9t/pdyGnD0rTByV8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eK02sBDDaZEnKJQbHBOQ4+wFiW2YbQVuza/JKMKULLdsqCV4xfSwUxGLeK2PHHU91og2WUWamvxM92mpFqAblJqMEbNSXwtcMyVqj4Kd/6IqggN+imQEW5wCeVxbFoH2fnWYp//b+dmTu0BPKTVuQeYEeNFQv4em1SdU8+cBRZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WBSzL42p; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=a4K1ieeLazEhN3zuGfRHOYgb+BYo3GiBD9WIEwS+Iw++UiXqlTA3bibVp7GVo3/V/W+sqTxebA27RwOH8NxcVRHgQwzd321UFie5Z8MUTpM9iLsUUKbA253yc1AnaW8qLjF4JiGl3z+IzOIxwp6ePT3tS1Jg3jQojV9jMfGHnCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MK0DP0ZZ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742817240;
+	s=mimecast20190719; t=1742817310;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=C2sfeu8L38fTcPcGuMWEFZogzyzrv4bdx0MHI8FDP0g=;
-	b=WBSzL42pKj2y3i98OTXwdvLndiIaczoQaosvBEMAFj0QhvRiReDWdqYz5t4HZBHOii0rFB
-	WcpWwqOAecQ9guvqXISO6VTafhYkzZq+K7ulj6X6etkEXe1UHxIe5QWsrRt6Z4nfl2CzYO
-	PHyj/eQzun4Wf2TwKQHJUcJaHHh2J+g=
+	bh=N/mWgufSKxZcjFvRtGtAluf+mmnEUNmccTQzoSLEPJo=;
+	b=MK0DP0ZZ+Fww+xO5H2NKI5a2QRyuL5gm35GVFChHJ20Eqr+19sHYwNGaoKmIjlUglwr8MZ
+	iLSyiNLi5ZjStamIdKKF4DJjscx0YUlY9swdpgqZ5J0fKBvqnB5+/OkcA5VikMHp2bsXsE
+	XPmSPrKzrZdyC8NfH3qQzr+8AnfBmDw=
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
  [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-600-_fUeavklMXucSM-fDIndsw-1; Mon, 24 Mar 2025 07:53:58 -0400
-X-MC-Unique: _fUeavklMXucSM-fDIndsw-1
-X-Mimecast-MFC-AGG-ID: _fUeavklMXucSM-fDIndsw_1742817238
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4767261982eso79276031cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:53:58 -0700 (PDT)
+ us-mta-511-KuXYfXnRObKBdKQnf9Pfzw-1; Mon, 24 Mar 2025 07:55:09 -0400
+X-MC-Unique: KuXYfXnRObKBdKQnf9Pfzw-1
+X-Mimecast-MFC-AGG-ID: KuXYfXnRObKBdKQnf9Pfzw_1742817309
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4768488f4d7so76867891cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:55:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742817238; x=1743422038;
+        d=1e100.net; s=20230601; t=1742817309; x=1743422109;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=C2sfeu8L38fTcPcGuMWEFZogzyzrv4bdx0MHI8FDP0g=;
-        b=SQLiQzufaQM0oicsy/i4tJYdq7cg5yo7WdCY/QcxDlJQta3shEP65VVvE4VDIZ4MM0
-         uOSfIfb8iNB6Zyw3W4Bfvo4iwfq2j4kPvrPEIhUqAyzOdxJyOxZJIlWxlvK9IvGyJall
-         VAVyPXZWmR/vSlzY/3jcbxPTzz0nFWwt0uNRxSDImyFlK+jRB3nMlbeyMw/c0ln4MJ6T
-         cZ0pYDWQhiAPnG3X10ug18WT4igP9addVy0M1PjeZQOoAgPUx7tS+NEhvZPoF4r+PT8u
-         c0Az1lVZlFe71LxEzDMbOCjQSz3hiDYDKylwT6M9R3YCot7HY104Bd52WP2MLT/F4CCR
-         eHMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqZFvxOWhIhifIF9kxkQwQa2j8T6t82Gq/aOCY7ApzKvmoeJTS5Diia4ddjUR7QxZgjCc0yrAjOB36d9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHs32tNAQl+wYGJwc902pNVb32PuGK+slbKSZKJvPlfIpdDLOM
-	3fYmDzxl8lxdtyZZtk9k0Ald4LSFZLHrQIHnqBsdkjj7lOadFJ4xNPaZLHAQpYQ7jp5+OZmMQKV
-	n25YZli5tHQtNIyne9US91ADgQT0//paWMQP9SS00jPojpHHqZWpVQuCqh9pj0w==
-X-Gm-Gg: ASbGnct5wljbJVM6v+5MiKjT0cJ9ZlcMcHMbbZZ9NKCiS6D4mrl8J5XE6jyYNEXGOfN
-	8v1+WPk/tQ06hLqUGai7tlypoYKEyj44xE7wCFKSILbwuJg/I2UcdduCOH1V1/juKKDYzx9nIOw
-	2+aM6IY7eTjPAQcHfiWB84wIQcZkU70kyiwxfLS+Zti1tGIq8G5FPdQYF+KI2HlfTqc2hS5gymS
-	6xT9Ao19m2oqBonEbDTKIHHhV5KCFkLSmlF5mc6LQM039Bi08DK3bAJ7v2vUN8xHgUloZ85xNVA
-	3ZHBQvqdpAQX
-X-Received: by 2002:a05:622a:1345:b0:477:1f59:2876 with SMTP id d75a77b69052e-4771f592a4dmr160264931cf.28.1742817238143;
-        Mon, 24 Mar 2025 04:53:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJX1ZUsULbp6GUHAiEzkOwnrqQhf5LhF8C61B07lJEt8sE2bo3aPiY2wZwMlVNZp1+6u1IWA==
-X-Received: by 2002:a05:622a:1345:b0:477:1f59:2876 with SMTP id d75a77b69052e-4771f592a4dmr160264461cf.28.1742817237670;
-        Mon, 24 Mar 2025 04:53:57 -0700 (PDT)
+        bh=N/mWgufSKxZcjFvRtGtAluf+mmnEUNmccTQzoSLEPJo=;
+        b=LYWP2mEKQqPOOs3rn6uESjAmiDbR1+WA2jd1OSv4ntdOJv2hVQlELnhGhdNc2DfDC7
+         OFGgTz+Z+YuWOxqG2+NhHL9s2zJeUjT6RNYdEl/maRrlIQm9JinQ3SKwsJgMmpGNdu86
+         BB0HcE5ZWGWEw90QadBSp2vm9+UKMgcrYcL5Zhwki4gyrtq+zhM5V1sM7wMuf1XF0+rf
+         YJnKNbMWDPw9pDhYl6WcorSWu6BLIfeF+mFKWAXWqYE1/k2vPNBjr2BUwA2fKSByfAgX
+         mAS08ZYjlLcNWFQn/ZrMTDv4HPMw5QV9lz0IBzvgfWzNKimLjN1lO30IvWCpX3YfBLvG
+         BWUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAkeDMBZfg6g/DKPmbE9P2ZvaUw1inx7LRnM4CKFwoSmSvtJ6oiHHz0usAVBn7bDyeAfQchpiEDHHzleM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYiyyMgxtoVmNTDfOdQekYVtcxHmneoN/Naq6wpzv7O2B04krM
+	Qc0XKlg/B8VifUDoBXS7ri2m0Z/c/wAVLYZTaWR9llg/7v/i+LUw/aNYPsJxs8gWxopF2wUPpBv
+	w9lE5ye3CiKV8pGFk1/XRaGbbL18HmOYlehltoBjcxuBt/SPhyh6G/50Pap7o9Q==
+X-Gm-Gg: ASbGnctwsnSebYnWLDGNMQYX1Pn37G1qfOOKzHP5QH9sShFqMfSUICxRUiqPXBeZuhS
+	16+ACKlhUcAYu8ila/kzm2gcAezTXF8chd84Pdpnmhrhk28AJMzp24n66zCqe2JI3/CsxEcpa2j
+	3J1I/LLarn5vlQGk17cgYQ4AEIrBhGbG0NzD/gIXbrlNzKOpWVe9+f9uTj8gsz0N0tK5HXYyt9J
+	wx1Dbywl0Wk8TFkRQSXAiV0ltyw5RQJKXdxGmpfI0/fXvW5dfF1SgZHi3CWsk7NSvI/btL7fnwx
+	fel2moSF1zdw
+X-Received: by 2002:ad4:5ca3:0:b0:6e8:9797:f94e with SMTP id 6a1803df08f44-6eb3f34460emr178872536d6.35.1742817308886;
+        Mon, 24 Mar 2025 04:55:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQ+le9nN7sPrKfGN8U2wHmBTLgV+PHDtk7LyTbNYUZlAPQBSCgY7ucs38FPy724WOtICr/eg==
+X-Received: by 2002:ad4:5ca3:0:b0:6e8:9797:f94e with SMTP id 6a1803df08f44-6eb3f34460emr178872226d6.35.1742817308476;
+        Mon, 24 Mar 2025 04:55:08 -0700 (PDT)
 Received: from [172.20.3.205] ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d176093sm46156621cf.19.2025.03.24.04.53.56
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc51f1sm43198896d6.84.2025.03.24.04.55.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 04:53:57 -0700 (PDT)
-Message-ID: <73bea938-15a2-4b4a-8d31-0db9f9c476e0@redhat.com>
-Date: Mon, 24 Mar 2025 12:53:55 +0100
+        Mon, 24 Mar 2025 04:55:08 -0700 (PDT)
+Message-ID: <da852e3c-3a71-4830-8284-faa836200c69@redhat.com>
+Date: Mon, 24 Mar 2025 12:55:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,25 +88,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [akpm-mm:mm-stable] [mm] c25465eb76: ltp.swapon03.fail
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Andrew Morton <akpm@linux-foundation.org>,
- Simona Vetter <simona.vetter@ffwll.ch>, Alistair Popple
- <apopple@nvidia.com>, Alex Shi <alexs@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Dave Airlie <airlied@gmail.com>,
- Jann Horn <jannh@google.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jerome Glisse <jglisse@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Jonathan Corbet <corbet@lwn.net>, Karol Herbst <kherbst@redhat.com>,
- Liam Howlett <liam.howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Lyude <lyude@redhat.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Oleg Nesterov <oleg@redhat.com>, Pasha Tatashin <pasha.tatashin@soleen.com>,
- Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- SeongJae Park <sj@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Yanteng Si <si.yanteng@linux.dev>, Barry Song <v-songbaohua@oppo.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, ltp@lists.linux.it
-References: <202503241635.4c94156d-lkp@intel.com>
+Subject: Re: [PATCH v4] fs/proc/page: Refactoring to reduce code duplication.
+To: Liu Ye <liuyerd@163.com>, hannes@cmpxchg.org, mhocko@kernel.org,
+ roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev
+Cc: akpm@linux-foundation.org, willy@infradead.org,
+ svetly.todorov@memverge.com, vbabka@suse.cz, ran.xiaokai@zte.com.cn,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, Liu Ye <liuye@kylinos.cn>
+References: <20250318063226.223284-1-liuyerd@163.com>
+ <c21dbc6b-3f1b-4015-9aee-44979ef0233e@163.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -154,45 +144,14 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <202503241635.4c94156d-lkp@intel.com>
+In-Reply-To: <c21dbc6b-3f1b-4015-9aee-44979ef0233e@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 24.03.25 09:49, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "ltp.swapon03.fail" on:
-> 
-> commit: c25465eb7630ffcadaab29c1010071512f8c9621 ("mm: use single SWP_DEVICE_EXCLUSIVE entry type")
-> https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-stable
-> 
-> 
-> in testcase: ltp
-> version: ltp-x86_64-042eff32a-1_20250322
-> with following parameters:
-> 
-> 	disk: 1HDD
-> 	fs: btrfs
-> 	test: syscalls-04/swapon03
-> 
-> 
-> 
-> config: x86_64-rhel-9.4-ltp
-> compiler: gcc-12
-> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
+On 24.03.25 04:25, Liu Ye wrote:
+> Friendly ping.
 
-LTP needs fixing.
-
-tst_max_swapfiles() detects the number of supported swapfiles by parsing 
-the kernel config, expecting that with CONFIG_DEVICE_PRIVATE we'd use 4 
-on newer kernels.
-
-Now it's "3", and consequently we support one more swapfile which the 
-test cannot deal with (expecting a failure)
-
-So, all good from a kernel perspective.
+Likely material for after the merge window.
 
 -- 
 Cheers,
