@@ -1,250 +1,102 @@
-Return-Path: <linux-kernel+bounces-573268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F61A6D513
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:27:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EB1A6D515
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200A43A818B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E3C188CE8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3445D2505CA;
-	Mon, 24 Mar 2025 07:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CAC250C09;
+	Mon, 24 Mar 2025 07:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ALjmta4R"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXOWnZgo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE76F18FDAA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E362E3383;
+	Mon, 24 Mar 2025 07:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742801251; cv=none; b=OESGbqUNfJ8QQ6LkFi3iUnifKzZ8xWMkMSumdB4wZnFy5zrvjMcBa2ic1WeiXpaaVE+UmFCZid6FJ8lP4DbQrtUpKjZPAMA/eHWjLviKc4lP5ZUyroLZPp9pZ9OuoglBti37JCDozqjWBHtXs+DxqlXXdFcP2fVFd1KVbIP6fc0=
+	t=1742801317; cv=none; b=Me5P8q1nJRnw42rqWtMqE6GhFLS4eEq4lvMTRsvktp1GAIZfG+ZZezTY4L7X/WvzI8teOI7zXu5vtuKK2SmPfq0gWY8vLzCerbmFPvtvqujgnUOk+9JI1T56ZTAd9+MdIqCAI5bmJwM+VvdtEFjURMkpkygtj1Wg0C8QyavUnzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742801251; c=relaxed/simple;
-	bh=JrLE3vI/wDvuR4k6vGhF+iP4fIYrS1WCPX+1G+vy8mY=;
+	s=arc-20240116; t=1742801317; c=relaxed/simple;
+	bh=qvjg7nMYqzOBk4Rb6LYZs4P08P2ISAkK/8qUWcFYCis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmFnX66h/fX6x6NdyHFSpW883JY03X8/3s8MNQDtB/RgknU1DgwIB1ArdfVCEcW0AfrDWapx2yXPf9vKx+gxzfGcF1GWuboXIQdbQrZF7zM3tIl377dBOiK3UB+o0EKcSOdK+E6I+D0iOap1RlJwoWGP8PiYByUchct2iS/ryTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ALjmta4R; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224191d92e4so73659085ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:27:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742801249; x=1743406049; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t4Jk0LIldEE4o6suSfIbfBeNG/DNl11H9LcTF8uhDEw=;
-        b=ALjmta4R2Pm6TW2XabTBQFjPnRPaWJBZoNyGCkYszkwCoa0epahsBJDq4hJ2hudoli
-         FYIFPV4XhmD7URLUlwOWYwq5nZ0KJxUzh6FH+b/+KDw0FQVO/+waa6Fcih/kFn1xVG9s
-         A9IHEwH8birOR00SdCsjYVmrs16a08Erah8nadOf0ycZZQgczG4v0qB0ib5uzMsAqauQ
-         eGs6Oa1hi2Fy63G8LKZsTgZLtaBfatUYF3DYiaMObnGL2vLFpHnVNT8SKSqy/qB8i4bO
-         LvdJopZ5CRgVqwA9r2FZQI+nd31JOWw9xiGuAs4B+qtsH9UQ7G/AZHePhpX2F+3U/mXJ
-         792Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742801249; x=1743406049;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4Jk0LIldEE4o6suSfIbfBeNG/DNl11H9LcTF8uhDEw=;
-        b=IglN57wu4/0xAi28AExmzBn4jX7FhHeU3BIEcOsLcg6rCQ5W7aJ7DQMupFRrpkAPS1
-         /0Rz1AgydSIt+icPOfyzprGYATaJqW4QFjAEGdXM4brKDH6g2BxCyFbijLmU80Gyrlbs
-         /7ambf8whygkNEQBxyUvep+HktFnckHtBd/z/d557v8Q7+QJ+4KjVVPybu7gtluugqQG
-         AzIOn7zdGZ3U5hbxdnvoMNOBI/gh5vxGsLOiILvhcvoYKKruuJUz3X0YfDn2Crtvwwoa
-         1YLWrKV7P1Kzo/KsYMMOYeaY3tJNr8yz+c+8AJJkBNK0OP1NYIKIiCVYrCEN3ThJ2V/j
-         PhjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmJZOcE17BMYranRy1j6FhxxrlLZZmAjDoUxz/2pAbjJF+7Q9uBZfnO0SQwCpc1GY3FEMopm3cX8bhQE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8WJPfOyXGoLtzb5qRWD0LIOUE/ALb4aVRwuTdJb5AqpvPWPx+
-	W6BMKA1zJ1YGQzDUi/fwuAExo/QFnvwth8aXGjzF21rMovSZ1yWcbuzzK/Xz7Q==
-X-Gm-Gg: ASbGncsthJ3CAcEFyCtJrgvVoXOHRVT2oT+WPo7CHponS92DKB4PihuYvSu77BM3erf
-	NH6/PkI7vrPFQsv2B3j10FeveBghBdIB1D106ZChjIkunEROAhjk45WTU+I8H77uMyO7XC3kUlQ
-	LRwE9LiKfoJaDIV9HR5C/NHUF/bWXWWlOP6jYPrT53G7nqAn9kYQTNF1cAwVQ384bMm2gsmtlmM
-	Me8TsO5ZQKtYHZmAYWIn4OS6K62jMVHkETudplYvDV4mSZWksa4981kMDF/Yc3dvwAFGIqtTB7B
-	zbbax9G1dnTjnYNlfWAQDrdWlNtiei6WvODOBz3IOjytrToff5bVaNXy6FPMVGOiA2Q=
-X-Google-Smtp-Source: AGHT+IHB65h48pA/PuuIX4VGQx/BccbBSG+++EkqxSdIHlt8LtP0CEKu1UjMquapa/+391yz2zz6zQ==
-X-Received: by 2002:aa7:9317:0:b0:736:a682:deb8 with SMTP id d2e1a72fcca58-7390596685bmr22890137b3a.8.1742801248596;
-        Mon, 24 Mar 2025 00:27:28 -0700 (PDT)
-Received: from thinkpad ([220.158.156.91])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd67c1sm7406411b3a.60.2025.03.24.00.27.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 00:27:27 -0700 (PDT)
-Date: Mon, 24 Mar 2025 12:57:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, 
-	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH PATCH RFC NOT TESTED 1/2] ARM: dts: ti: dra7: Correct
- ranges for PCIe and parent bus nodes
-Message-ID: <ahkgq7aujrluhuqbdv2mbn5gjcu6hn4bi3jw4xar52ximyx5pi@mw4v4lzrvtky>
-References: <20250305-dra-v1-0-8dc6d9a0e1c0@nxp.com>
- <20250305-dra-v1-1-8dc6d9a0e1c0@nxp.com>
- <20250313165311.2fj7aus3pcsg4m2c@thinkpad>
- <20250314064642.fyf3jqylmc6meft7@uda0492258>
- <Z9RFJDdnoU+aKwF7@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZ9IyjnZ0SYslI9jwe2FD+gOKGnnoGRqozvcArbR2HoIgPMIofmRAowerhVO15uKUePAUzOKa9Vcgs8WuPdsbS46D5S48VfqSPZ8Y799hBUbUs+LZDzFWc2fDR1fLbMLqRkE71NZsHblyY579hWIP67cmFxI7qrbpoq8LcoF33Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXOWnZgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0E7C4CEDD;
+	Mon, 24 Mar 2025 07:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742801317;
+	bh=qvjg7nMYqzOBk4Rb6LYZs4P08P2ISAkK/8qUWcFYCis=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XXOWnZgoo+0kAl9qy5ZgdSs+1OtDGQog9Gmuq//QQwd1z9g1PGctEpTaIxFYuJnHb
+	 MNfO+m9yNB21bl1gdncarbsg/i+aL55rEGoMD5cJSajX2QlOVUNO3pxXi1bsNF8e9o
+	 3hDd+inoZjxYgunAF6wO0KjioT+b+rHmliBAPgNTZG328bhKJY1iI2NLv6H7vGCTWg
+	 XQpIK4tWtqiJlN8Hr1GpmA6rXuhD/ZNwFzQg2wCOUxazyMwQbr/5q5J419eH7NqxMd
+	 f7yOE1R0K2p0CETBImc1lyKCDo/QrSe5v1Kwrf15OS6RAxil2WJlEQNTScGTJl3qG3
+	 1TI7Aa06fyUCA==
+Date: Mon, 24 Mar 2025 08:28:31 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
+Message-ID: <Z-EJnye74la1triY@gmail.com>
+References: <20250307080829.354947-1-namhyung@kernel.org>
+ <Z9tjKcKvjYgbR6hb@google.com>
+ <Z9vgt1pjiNbDBDbM@gmail.com>
+ <Z9w_aFlzOkoCTSqK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9RFJDdnoU+aKwF7@lizhi-Precision-Tower-5810>
+In-Reply-To: <Z9w_aFlzOkoCTSqK@google.com>
 
-On Fri, Mar 14, 2025 at 11:03:00AM -0400, Frank Li wrote:
-> On Fri, Mar 14, 2025 at 12:16:42PM +0530, Siddharth Vadapalli wrote:
-> > On Thu, Mar 13, 2025 at 10:23:11PM +0530, Manivannan Sadhasivam wrote:
-> >
-> > Hello Mani,
-> >
-> > > On Wed, Mar 05, 2025 at 11:20:22AM -0500, Frank Li wrote:
-> > >
-> > > If you want a specific patch to be tested, you can add [PATCH RFT] tag.C
-> > >
-> > > > According to code in drivers/pci/controller/dwc/pci-dra7xx.c
-> > > >
-> > > > dra7xx_pcie_cpu_addr_fixup()
-> > > > {
-> > > > 	return cpu_addr & DRA7XX_CPU_TO_BUS_ADDR;  //0x0FFFFFFF
-> > > > }
-> > > >
-> > > > PCI parent bus trim high 4 bits address to 0. Correct ranges in
-> > > > target-module@51000000 to algin hardware behavior, which translate PCIe
-> > > > outbound address 0..0x0fff_ffff to 0x2000_0000..0x2fff_ffff.
-> > > >
-> > > > Set 'config' and 'addr_space' reg values to 0.
-> > > > Change parent bus address of downstream I/O and non-prefetchable memory to
-> > > > 0.
-> > > >
-> > > > Ensure no functional impact on the final address translation result.
-> > > >
-> > > > Prepare for the removal of the driver’s cpu_addr_fixup().
-> > > >
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > >  arch/arm/boot/dts/ti/omap/dra7.dtsi | 18 +++++++++---------
-> > > >  1 file changed, 9 insertions(+), 9 deletions(-)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/ti/omap/dra7.dtsi b/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > > index b709703f6c0d4..9213fdd25330b 100644
-> > > > --- a/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > > +++ b/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > > @@ -196,7 +196,7 @@ axi0: target-module@51000000 {
-> > > >  			#size-cells = <1>;
-> > > >  			#address-cells = <1>;
-> > > >  			ranges = <0x51000000 0x51000000 0x3000>,
-> > > > -				 <0x20000000 0x20000000 0x10000000>;
-> > > > +				 <0x00000000 0x20000000 0x10000000>;
-> > >
-> > > I'm not able to interpret this properly. So this essentially means that the
-> > > parent address 0x20000000 is mapped to child address 0x00000000. And the child
-> > > address is same for other controller as well.
-> > >
-> > > Also, the cpu_addr_fixup() is doing the same by masking out the upper 4 bits. I
-> > > tried looking into the DRA7 TRM, but it says (ECAM_Param_Base_Addr +
-> > > 0x20000000) where ECAM_Param_Base_Addr = 0x0000_0000 to 0x0FFF_F000.
-> > >
-> > > I couldn't relate TRM with the cpu_addr_fixup() callback. Can someone from TI
-> > > shed light on this?
-> >
-> > A "git blame" on the line being modified in dra7.dtsi gives the
-> > following commit:
-> > https://github.com/torvalds/linux/commit/c761028ef5e2
-> > prior to which the ranges is exactly the same as the one being added by
-> > this patch.
-> 
-> Okay, original one correct reflect hardware behavior.
-> 
-> >
-> > The cpu_addr_fixup() function was introduced by the following commit:
-> > https://github.com/torvalds/linux/commit/2ed6cc71e6f7
-> > with the reason described in
-> > Section 24.9.4.3.2 PCIe Controller Slave Port
-> > of the T.R.M. at:
-> > https://www.ti.com/lit/ug/spruic2d/spruic2d.pdf
-> > ---------------------------------------------------------------------------
-> > NOTE:
-> > The PCIe controller remains fully functional, and able to send transactions
-> > to, for example, anywhere within the 64-bit PCIe memory space, with the
-> > appropriate remapping of the 28-bit address by the outbound address
-> > translation unit (iATU). The limitation is that the total size of addressed
-> > PCIe regions (in config, memory, IO spaces) must be less than 2^28 bytes.
-> > ---------------------------------------------------------------------------
-> >
-> > The entire sequence is:
-> > 0) dra7.dtsi had ranges which match the ranges in the current patch.
-> > 1) cpu_addr_fixup() was added by
-> > https://github.com/torvalds/linux/commit/2ed6cc71e6f7
-> > 2) ranges was updated to <0x20000000 0x20000000 0x10000000> by:
-> > https://github.com/torvalds/linux/commit/c761028ef5e2
-> 
-> Actually this patch is not necessary, with cpu_addr_fixup(), it should
-> work with/without c761028ef5e2 change because it just the use CPU physical
-> address, the finial result is exact same.
-> 
-> > 3) ranges is being changed back to its original state of "0)" above.
-> >
-> > cpu_addr_fixup() was introduced to remove the following:
-> > 	pp->io_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> > 	pp->mem_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> > 	pp->cfg0_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> > 	pp->cfg1_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> > in dra7xx_pcie_host_init(). The reason for the above is mentioned in the
-> > "NOTE" as:
-> > ---------------------------------------------------------------------------
-> > The limitation is that the total size of addressed PCIe regions
-> > (in config, memory, IO spaces) must be less than 2^28 bytes.
-> > ---------------------------------------------------------------------------
-> >
-> 
-> That is functional equal.
-> 
-> > I am not sure if Frank is accounting for all of this in the current patch
-> > as well as the dependent patch series associated with removing
-> > cpu_addr_fixup().
-> 
-> I have not track back the history. I think before
-> https://github.com/torvalds/linux/commit/c761028ef5e2 is correct reflect
-> hardware behavor. axi@0 trim down 4 bits before send to PCI controller.
-> 
-> The commit message of c761028ef5e2
-> 
-> "In order to update pcie to probe with ti-sysc and genpd, let's update the
-> pcie ranges to not use address 0 for 0x20000000 and 0x30000000. The range
-> for 0 is typically used for child devices as the offset from the module
-> base. In the following patches, we will update pcie to probe with ti-sysc,
-> and the patches become a bit confusing to read compared to other similar
-> modules unless we update the ranges first. So let's just use the full
-> addresses for ranges for the 0x20000000 and 0x30000000 ranges."
-> 
-> I think maybe only ti's bus fabric do address translation at that time, and
-> DT team and dwc pci driver never consider that before. Now more vendor bus
-> fabric do address translation. So needn't every platform driver consider it
-> but it require DTB reflect hardware behavor correctly.
-> 
-> We may revert patch c761028ef5e2 firstly, after some time later, we can
-> cleanup cpu_addr_fixup().
-> 
 
-I agree. Commit, c761028ef5e2 is not going to break anything afaik (even the
-cpu_addr_fixup), but it would be good to get it tested.
+* Namhyung Kim <namhyung@kernel.org> wrote:
 
-> It will be wondful, if someone help test it.
+> > 3)
+> > 
+> > It would also be nice to be able to Ctrl-C out of a 'perf top' instance 
+> > that freezes the output or so. Or prints a snapshot in ASCII. Anything 
+> > but what it does currently: it just exits and clears the xterm screen 
+> > of all useful information...
+> > 
+> > I have to use 'f' (how many people know about that feature?) and copy & 
+> > paste anything interesting from the screen the hard way.
 > 
+> Actually I was not aware of 'f' key. :)  I think you can use 'P' to save
+> the current screen to a file.
 
-Let's see if Siddharth can come up with some good news.
+And I was not aware of the 'P' key. :-)
 
-- Mani
+Would be nice if it also printed column and meta information, i.e. if 
+it included these lines:
 
--- 
-மணிவண்ணன் சதாசிவம்
+  Samples: 1M of event 'cycles:P', 4000 Hz, Event count (approx.): 758731362801 lost: 0/0 drop: 0/0
+  Overhead  Shared Object            Symbol
+
+or so?
+
+BTW., the approximate 'event count' is a pretty uninformative value 
+these days, right? Might as well not clutter the screen with it.
+
+Thanks,
+
+	Ingo
 
