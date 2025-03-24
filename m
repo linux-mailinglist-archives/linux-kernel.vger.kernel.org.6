@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-573637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF27A6DA0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:25:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 748F4A6DA0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41463188FF3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9ED1893502
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9C325E82C;
-	Mon, 24 Mar 2025 12:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C225D908;
+	Mon, 24 Mar 2025 12:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="TN1DZnKM"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="VBhlyXIB"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAF62F2E;
-	Mon, 24 Mar 2025 12:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D5625E81D;
+	Mon, 24 Mar 2025 12:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742819134; cv=none; b=kwtLy3fP65LJeRZ40PJ6Ys2WeU4STUtppaV1wNMU0K2cw42Tk0bKc9/J5PC030ik4V9qhep8g/3LWTLoujAADFpJ6tlReVAcxHALx4W2jBpQS7ZH3xelZ7d3NcTMRlBuaKQotnLxgCtP+hKItw64rpbvvq8hDD0efouRJgn2cQQ=
+	t=1742819141; cv=none; b=FGEfYYh9RWfyzbyBXMCoF7RtA5xX4Fv8XjpvZULf2FoNL2VpxgOp/o+UYs+Yley7jgzIoerHnbq5SE7IANT3NS1Xx1L/XvAhpapgV4s/bmaIcux8fic3T8TDtbDwhk+i8Mvf3Iq6C7trH2RdinlPofCPRrcYoTHcQuLEDzlJUUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742819134; c=relaxed/simple;
-	bh=ghwWl9UC0dtimsqvv0x69/VNngLv7f4b15pFm1XCb7g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qp3wv38ikQem2um3rHWdCZjpIEn6Td5hEoKQRJrqRaWpskqTNqY8P839fmQigqszkHNBdKMteGgZ6S9K6x/HP2hHeSzOMZB+sjjzqw9xJjVeg9AoFmCmUoaEi0vva1+VxED7ki6qMyLhGK6yT51noHlQxzXV7SPNE4cibVsJJLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=TN1DZnKM; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 017E42E093D3;
-	Mon, 24 Mar 2025 14:25:26 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742819127;
-	bh=ghwWl9UC0dtimsqvv0x69/VNngLv7f4b15pFm1XCb7g=;
-	h=Received:From:Subject:To;
-	b=TN1DZnKM3bKQCDU3166AKEUDrl8bVRnS8TbbrWkJTQAPJWQGeBYNZzwM0YhOnpbtp
-	 W150JFT+LM/W3EMVOQlKmUkn2h+LU1hLVM4uY4G2lOsUSAdFr2KOT2+Fo1J1tJpMzc
-	 GF+S9D/021cISkZdulNcjHUa/FrNsQrUTB6FrW/k=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.175) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f175.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f175.google.com with SMTP id
- 38308e7fff4ca-30c091b54aaso43882581fa.3;
-        Mon, 24 Mar 2025 05:25:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUJqaL8GngTXW2g1bcm6y+h03yJBBFPxRKevKLzmmSWiBzuYcgvBgvkyDRVt4OGmbJTxl8M5aKPlePFxA==@vger.kernel.org,
- AJvYcCWIyVDSnmfy7gW9lgi3xvGMLy2yuAAXM9yMTbxhSCyAGRvucok1NxrVvN3vW/NPiTev8cR+Iz2VE28woPCs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK/VVJZ5flNoooPKRGLyk2slTeZOS+kzBxPLZt6BwNWKfH2EKU
-	ac4NGSS1HeMCBl8BDu2u3/YPVFWUvWz/9brNHGWSKNSmpmvREDzznIzEQ6x9e8g3//u/+HLP6/g
-	GRzvx+5NHGWFy2by89gl9d4atBls=
-X-Google-Smtp-Source: 
- AGHT+IFuh2UJDgIPN/kxydBvvKvYCAKXDByVcdnfHuxLh8o0wXpz12Yl3Kqnqb4Zff18Ab2edC1l299dikahggp/9r8=
-X-Received: by 2002:a2e:b98f:0:b0:30c:2da3:1493 with SMTP id
- 38308e7fff4ca-30d7e234c7amr38687181fa.19.1742819126150; Mon, 24 Mar 2025
- 05:25:26 -0700 (PDT)
+	s=arc-20240116; t=1742819141; c=relaxed/simple;
+	bh=AMYE+1I/yOpxWnGJfI5UUdY1aUw0MEixbTcQYKG3ztc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSE4FYJK+NN2fd45B520wWcEboZFCNKmpzleMCmTldjZWoFtjljkCfhNKgZzS3K690b0oXw6Sg8y4kyP9rVjoY6CUGJRms3ad4KhbGHJsLhuV095dxgrMd+lrVtsFNXTcTDNLmlm3tRMxmKr4QxXjmxbyl63Cbw26TNWMKpG78E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=VBhlyXIB; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A4522B2F11;
+	Mon, 24 Mar 2025 13:25:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1742819131; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=kA8B7ILRQjbrf7vZCpIq+EjV0GTPDQ45jh2Yc92ZEFQ=;
+	b=VBhlyXIBFTdyC6vVDFd8THg2EDDIryPPVZQHDU6uDYMW86/kWbvAPg4tTYo2UnKgdQPf6C
+	HnJEiqmujfJ5B4PDWSc1x5nwttMZqdi5o1fD/JgWgabi3y1NCv7SQ+dfLH2CVJ/7zH+BNb
+	V/XSKQzb4qXI3fyj7GHQGMKy6PeV/9L7k4tLUkGcj1fZ8qblwZrhAmNrXFHOhC73Z71wKm
+	a6sDm7zKEnyAiQePQF8FRwkTBXZpNrzqxjR+n3ASWR2P/E4Rqt1Zc/dUJLZBJf3gt4jSlM
+	fbKa7jWPGhXvwoJkkdzi1I4KU0D2/GBqAj+w7o91WUriRBw9n6yAVj4lqEtDvg==
+Message-ID: <f4bb786d-09b2-4237-84bd-cdfe297f8165@cjdns.fr>
+Date: Mon, 24 Mar 2025 13:25:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319191320.10092-1-lkml@antheas.dev>
- <dac78c3d-9ba2-4721-9fb2-06dd2589bc72@redhat.com>
-In-Reply-To: <dac78c3d-9ba2-4721-9fb2-06dd2589bc72@redhat.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 24 Mar 2025 13:25:14 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwGcJW0KarrbotFoYfLCikkaatzMTT_GzZPA7zoeTzofNg@mail.gmail.com>
-X-Gm-Features: AQ5f1JpOQBVi7LYT094UKaFTy2VYsQ-qJt18CC7O8MEaw-EKM8gf4dx8vzN_zL4
-Message-ID: 
- <CAGwozwGcJW0KarrbotFoYfLCikkaatzMTT_GzZPA7zoeTzofNg@mail.gmail.com>
-Subject: Re: [PATCH 00/11] HID: asus: hid-asus and asus-wmi backlight
- unification, Z13 QOL improvements
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174281912743.8530.15307629672798636061@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v1 4/8] dt-bindings: timer: Add EcoNet HPT CPU Timer
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-mips@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
+References: <20250321134633.2155141-1-cjd@cjdns.fr>
+ <20250321134633.2155141-5-cjd@cjdns.fr>
+ <c1791b2e-bdf6-448c-88d3-c97511af3357@kernel.org>
+ <8f095a56-a188-45e9-945a-1d77ef175dc8@cjdns.fr>
+ <f2738225-564e-479b-a4f0-fac0ba6b6d53@kernel.org>
+ <d419bcd2-fa78-4390-88b0-64ed54b87081@cjdns.fr>
+ <b3fea7b9-b7ea-4987-9fe7-b0adb9346f07@kernel.org>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <b3fea7b9-b7ea-4987-9fe7-b0adb9346f07@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 24 Mar 2025 at 13:10, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Antheas,
->
-> On 19-Mar-25 20:13, Antheas Kapenekakis wrote:
-> > This is a three part series that does the following: first, it cleans up
-> > the hid-asus driver initialization, preventing excess renames and dmesg
-> > errors on ROG devices. Then, it adds support for the Z13 2025 keyboard,
-> > by fixing its keyboard to not be stuck in BIOS mode and enabling its fan
-> > key. Finally, the bigger piece of this series is the unification of the
-> > backlight controls between hid-asus and asus-wmi.
->
-> Thank you for your work on this.
->
-> > This requires some context. First, some ROG devices expose both WMI and
-> > HID controls for RGB. In addition, some ROG devices (such as the Z13)
-> > have two AURA devices where both have backlight controls (lightbar and
-> > keyboard). Under Windows, Armoury Crate exposes a single brightness control
-> > for all Aura devices.
-> >
-> > However, currently in the linux kernel this is not the case, with asus-wmi
-> > and hid-asus relying on a quirk system to figure out which should control
-> > the backlight. But what about the other one? There might be silent
-> > regressions such as part of the RGB of the device not responding properly.
-> >
-> > In the Z13, this is the case, with a race condition causing the lightbar
-> > to control the asus::kbd_backlight device most of the time, with the
-> > keyboard being renamed to asus::kbd_backlight_1 and not doing anything
-> > under KDE controls.
-> >
-> > Here, we should note that most backlight handlers are hardcoded to check
-> > for backlight once, and for one backlight, during boot, so any other
-> > solution would require a large rewrite of userspace.
->
-> Note that work is actually ongoing to add support for multiple kbd
-> backlights to upower:
->
-> https://gitlab.freedesktop.org/upower/upower/-/merge_requests/258
->
-> But that is intended for when there are 2 kbds with a controllable backlight,
-> e.g. a docked laptop with a gaming kbd with RGB backlight connected to the dock.
->
-> Where as here we seem to have 2 controls which ideally should be set to
-> the same value if I understand things correctly ?
 
-Yes, there can be a HID device and a WMI device or multiple HID
-devices, and currently the driver is quirked to either select HID or
-WMI based on laptop model. There is also a deviation between how WMI
-is handled and how HID is handled. This way we unify all of it.
+On 24/03/2025 08:13, Krzysztof Kozlowski wrote:
+> On 24/03/2025 00:53, Caleb James DeLisle wrote:
+>>>>>> +  compatible:
+>>>>>> +    const: econet,timer-hpt
+>>>>> Soc components must have soc-based compatible and then filename matching
+>>>>> whatever you use as fallback.
+>>>> I have so far been unable to find good documentation on writing DT bindings
+>>>> specifically for SoC devices. If you have anything to point me to, I will read it.
+>>>> If not, even a good example of someone else doing it right is helpful.
+>>>>
+>>>> Currently, I see qcom,pdc.yaml appears to do what you say, so I in absence
+>>>> of any other advice, I can try to do what they do.
+>>> Just don't use generic fallback.
+>>
+>> Ok I watched your "Accepted in Less Than 10 Iterations" lecture (I'm doing my
+>> homework). If I understand this correctly, you prefer that I use something specific
+>> like econet,en751221-timer as the fallback case, so for example on EN751627,
+>> it would be:
+>>
+>> compatible = "econet,en751627-timer", "econet,en751221-timer";
+> Yes
+>
+>> The reason why I didn't do this is because this timer seems to show up in a lot of
+>> places. Vendor code says that it's older than EN751221, and (if my reading is
+> Just like every other SoC component for every other SoC.
+>
+>> correct) it has found it's way into chips branded TrendChip, MediaTek and Ralink
+>> as well as EcoNet.
+>>
+>> Now that I'll be adding strict checks on the number of register blocks, this way
+>> also has the advantage of allowing a case for users of the timer in SoCs we don't
+>> know about:
+>>
+>> // Only valid with 2 register blocks
+>> compatible = "econet,en751627-timer", "econet,timer-hpt";
+>>
+>> // Only valid with 1 register block
+>> compatible = "econet,en751612-timer", "econet,timer-hpt";
+> Above do not differ...
+>
+>> // No restriction because we don't know how many timers the SoC has
+>> compatible = "econet,timer-hpt";
+> How can you not know? This is strictly defined on given hardware.
+>
+I mean I don't know, the person writing the DTS for that SoC needs to know.
 
-In addition, on the Z13, we have a lightbar and a keyboard backlight
-(both HID/separate USB devices). And the keyboard is removable. On the
-Ally, we have a backlight but the controller disappears before sleep
-because WIndows does not support selective suspend for xinput. By
-placing the handler on WMI we ensure it is always active and the state
-does not get lost.
 
-> > Even when brightness controls are fixed, we still have the problem of the
-> > backlight key being on/off when controlled by KDE and 0/33/66/100 when
-> > the device has a WMI keyboard. Ideally, we would like the 0/33/66/100 to
-> > be done under hid as well, regardless of whether the backlight of the
-> > device is controlled by WMI or HID.
->
-> Hmm, ideally we want this sort of policy to be in userspace, this sounds
-> more like it is a keycode problem and we maybe need KEY_KBDILLUMCYCLE next
-> to the existing KEY_KBDILLUMTOGGLE. For the existing toggle doing on/off
-> obviously is the correct userspace behavior.
->
-> Anyways I can see how Asus is special here and on laptops the cycling is
-> typically handled by the EC and we have chosen to emulate EC behavior in
-> the kernel before to keep things consistent amongst models.
->
-> Still generally speaking we do prefer to just send keypresses when possible
-> and let userspace set the policy, but I guess we can make an exception here.
+Per your preference, I'll do the following:
 
-Yeah I agree with this, but now the WMI driver sets a bit of a precedent.
 
-> > Therefore, this is what the third part of this series does. It sets up
-> > asus-wmi to expose accepting listeners for the asus::kbd_backlight device
-> > and being the one that sets it up. Then, it makes hid-asus devices
-> > register a listener there, so that all of them are controlled by
-> > asus::kbd_backlight. Finally, it adds an event handler for keyboard keys,
-> > so that HID led controls are handled by the kernel instead of userspace.
-> > This way, even when userspace is not active the key works, and we get the
-> > desired behavior of 0/33/66/100 across all Aura devices (currently, that
-> > is keyboards, and embedded devices such as lightbars). This results
-> > removing the quirk system as well, eliminating a point of failure.
->
-> I've taken a quick look at the new API between asus-wmi and asus-hid and
-> this looks good to me, thank you for your work on this.
->
-> Regards,
->
-> Hans
->
->
+// 2 blocks accepted
+
+compatible = "econet,en751627-timer", "econet,en751221-timer";
+
+// 1 block accepted
+
+compatible = "econet,en751221-timer";
+
+
+If someone has an SoC with more than 2 timers, it is not supported so they
+should update the binding, or (in downstream) they might write an invalid
+DTS. FWIW I have no evidence of any >2 core processor which uses this, so
+2 timers is probably the maximum.
+
+
+Lastly I'll change the driver name to timer-econet-en751221.c to avoid the
+proliferation of different names.
+
+
+Thanks,
+
+Caleb
+
 
