@@ -1,98 +1,100 @@
-Return-Path: <linux-kernel+bounces-573980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD6AA6DF38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:04:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C17A6DF3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:05:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25ED3A6FF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1896F18921A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DCC261590;
-	Mon, 24 Mar 2025 16:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149DA261584;
+	Mon, 24 Mar 2025 16:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/EPK/dD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BEA13C3F2;
-	Mon, 24 Mar 2025 16:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743C341C85
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832230; cv=none; b=hEcUgEj/dFy3EIZqYEW2ObYkXfXcgdBrN2x6ZAI++tbtfJw7RkiUOLM7sofXHplCrE60NyQMzFIT4qNW69AJ51tZOf+PJjofBw8tb+1UpvFKdOMpoVikTzK8ZszdQsGpv89Hd9K4f4qZoysNNhgskVC/thKdrdNQ8K6yfggJH/o=
+	t=1742832313; cv=none; b=QqgH003MrGKvlvJOycsKBy5SjEeC/4c+pbVL4Am+QXj5EPTIIjxoOGOFq0GDK/0mbIY/S2j/00VbCx+eZVd2Mt9AqADOvFKYW/UFdBSkO20zo1O2j9fqiVZ11xqVEmwx2ELdmQoN0qA8ut9weU/L2zgbuh9RePHSMOh1UaOridQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832230; c=relaxed/simple;
-	bh=bgW7j/f9u8ZPFIkNNhLyPNhridLH3DGTgEjDIguYZ8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hw21PInKzxOBYbHYko0yMmgd6Vexy5Eipqu+zK6kaEIFgksLHH58vYyUU22r13wAHFlG2v22TMtFtJZLxPo4Sx5dnBh/2rUvQC75QMUifZn0Q0WvIAUF4MlvTe3tHKkQUHV8PRbiXeSGx/Lw5g2+CzPpCf4RZRicPh0vzI5WogI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C94C4CEDD;
-	Mon, 24 Mar 2025 16:03:48 +0000 (UTC)
-Date: Mon, 24 Mar 2025 12:04:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>, Kees Cook <kees@kernel.org>, "Masami
- Hiramatsu (Google)" <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-trace-kernel@vger.kernel.org, John
- Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Andy Shevchenko <andy@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v1 1/6] seq_buf: Mark binary printing functions with
- __printf() attribute
-Message-ID: <20250324120430.0620a8f6@gandalf.local.home>
-In-Reply-To: <20250320180926.4002817-2-andriy.shevchenko@linux.intel.com>
-References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
-	<20250320180926.4002817-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742832313; c=relaxed/simple;
+	bh=IT2XmJJcEYDTRA3U2J8Ikve5HF+HyGqJh2t6BVa75TI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKrpFeBOLKtNzh3+jV5uWZ0ddfIR7x22ukwf6nu5oQH5TV4tr+BPCuXMThQQztCpZNil7e/1NabaHQzSusmNFk3oOnrwYJ/f6C8QCgKx0jgjSP5gyk+kiK0ko9gcuSjS3232lOehxz3wvRf7QHedDQQzEqUYSSTaDuw00MfFClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/EPK/dD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF52C4CEDD;
+	Mon, 24 Mar 2025 16:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742832313;
+	bh=IT2XmJJcEYDTRA3U2J8Ikve5HF+HyGqJh2t6BVa75TI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/EPK/dDqft5JDasPEkhG35tpiJoUGPbCKA3vo9r/52WLoG7mq9FhzksvbEs4i56D
+	 R2jjobr6qbo9X91yRROKNWlLOfgD49hJPfjSacV6IIb+aNhIo6lbENuMIB4oBYuTUB
+	 uM7OiZjL67cBumneiUa/oVjtAqDGWueaE2iJvprDFT/Hc8ppmQa6q3r/zBgikD/V0Y
+	 L5eNg/YjR5UY6W5RQvsGpS2dm4l5fqZMhF8fbSTSB8oC3iVqG3bec39uzvXDbdDErD
+	 +/3lFjMuHx1dhrmh0K1tQ/U/OUnZKkh7SY2Y5F9QJOTTcKZlylU+oE/vtoQVxaglLC
+	 DG81j2h6y1GOw==
+Date: Mon, 24 Mar 2025 11:05:12 -0500
+From: Rob Herring <robh@kernel.org>
+To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
+Cc: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <gradenovic@ultratronik.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] MAINTAINERS: Add maintainers for Ultratronik SoC
+ Boards
+Message-ID: <20250324160512.GA129330-robh@kernel.org>
+References: <20250321111821.361419-1-goran.radni@gmail.com>
+ <20250321111821.361419-3-goran.radni@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250321111821.361419-3-goran.radni@gmail.com>
 
-On Thu, 20 Mar 2025 20:04:22 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> Binary printing functions are using printf() type of format, and compiler
-> is not happy about them as is:
->=20
-> lib/seq_buf.c:162:17: error: function =E2=80=98seq_buf_bprintf=E2=80=99 m=
-ight be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute [-Wer=
-ror=3Dsuggest-attribute=3Dformat]
->=20
-> Fix the compilation errors by adding __printf() attribute.
->=20
-
-Should also note the removal of "extern"
-
--- Steve
-
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Fri, Mar 21, 2025 at 12:18:17PM +0100, Goran Rađenović wrote:
+> From: Goran Rađenović <gradenovic@ultratronik.de>
+> 
+> Add maintainers for Ultratronik SBC STM32MP1 board.
+> 
+> Signed-off-by: Goran Rađenović <gradenovic@ultratronik.de>
 > ---
->  include/linux/seq_buf.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
-> index fe41da005970..52791e070506 100644
-> --- a/include/linux/seq_buf.h
-> +++ b/include/linux/seq_buf.h
-> @@ -167,8 +167,8 @@ extern int seq_buf_hex_dump(struct seq_buf *s, const =
-char *prefix_str,
->  			    const void *buf, size_t len, bool ascii);
-> =20
->  #ifdef CONFIG_BINARY_PRINTF
-> -extern int
-> -seq_buf_bprintf(struct seq_buf *s, const char *fmt, const u32 *binary);
-> +__printf(2, 0)
-> +int seq_buf_bprintf(struct seq_buf *s, const char *fmt, const u32 *binar=
-y);
->  #endif
-> =20
->  void seq_buf_do_printk(struct seq_buf *s, const char *lvl);
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 00e94bec401e..26896dd2ceb3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24336,6 +24336,12 @@ S:	Maintained
+>  F:	drivers/usb/common/ulpi.c
+>  F:	include/linux/ulpi/
+>  
+> +ULTRATRONIK BOARD SUPPORT
+> +M:	Goran Rađenović <goran.radni@gmail.com>
+> +M:	Börge Strümpfel <boerge.struempfel@gmail.com>
+> +S:	Maintained
+> +F:	arch/arm/boot/dts/st/stm32mp157c-ultra-fly-sbc.dts
 
+This file doesn't exist yet. Just squash this with patch #4.
+
+Is this the only board? Perhaps make it a wildcard so the next board 
+doesn't need a MAINTAINERS update.
+
+> +
+>  UNICODE SUBSYSTEM
+>  M:	Gabriel Krisman Bertazi <krisman@kernel.org>
+>  L:	linux-fsdevel@vger.kernel.org
+> -- 
+> 2.43.0
+> 
 
