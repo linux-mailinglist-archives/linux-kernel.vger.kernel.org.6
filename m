@@ -1,219 +1,140 @@
-Return-Path: <linux-kernel+bounces-573996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63905A6DF63
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:14:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510CDA6DF66
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:16:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6648E16F75F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9313B189C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42F22627E1;
-	Mon, 24 Mar 2025 16:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C239262D13;
+	Mon, 24 Mar 2025 16:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ez+DjuDo"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="afcdtANx"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6562620F7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F9262D0A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832865; cv=none; b=mESKpRqm1K2fPJRmbwKxMxK8Y7IVJI2Gp/kEKCPjJIFpaMksOqyI6xdOVfLLIeQ97CNkgKo5ctnCoIbGA+Q2UFkfZ4oalUY9W2SfBQUR+JHHgL1INJfjsm0shRqmLJYfZU50bL07+CRW1nZ/ZeyBlEF8sQ3MMYb/IorEV1vZQqw=
+	t=1742832972; cv=none; b=lY44rogA6ptCjaU7YARiMUVFtl5tqZFjep/2ZL3yc3ZYFiwW0CAbzdIANguPqSIT4a26hQgqT6I60w3H8Mi1fxiHYe4Jjt5Kc5D0DUVcqupf6BiXyFbL3oMbbbP9QuiyPBZl6v2J5AHWYqLvrFAlHBmg4kRnI9nyNq/tZyN5Hj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832865; c=relaxed/simple;
-	bh=OVx5qEzHDwHumfbtV5HYHgl6QC/zhZ7PJD7CJVooSts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gX7kpD3tIyjwdmbQNC7JXHxe++ryYBSsgaRaRy/yfSyl2y8sP+z7rriILVEj4v7QhvuAShuZTwxslyzMw6QZ6YpUEIfTv5TyoOiCfdKofQSOT2Y1ESEFPqXiDRLq13aJJzPBtm6RbKwudsqPAbuuzbUosUcQQfPXCuKvMN09cvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ez+DjuDo; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BBC7E3F6B3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742832853;
-	bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=ez+DjuDozZbB4k1BxvxPDwDjluwmaYtoRIUuhGkVbqXes1HPgU7D/Z8QYzdIbgoax
-	 MAOpjqGLXjG/lCcG7mRgiV3G9IKhbBBL6YPQFe62xqFUUugiRCipmDCAlDBUyTgjqZ
-	 IDLZhcKTpHvCinR/lj0z0aw43KZ7Xu3r8hVrceuINhu6cJ75NFiyA61pVXVcosMgO0
-	 H/b5Z42gE+6YHZ1PCvwTZEgWXC0pDkrUzkw8D7zsUEDE/2cZ5xdvC/7HigWfO8q2g1
-	 2QI+i61uI7lH4hgYuI2yRhVOe+mbuo1DxV1bu8ikTW+YLVDwfsICmPw5P9FBSNeANK
-	 yMh/CJyhyozow==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac3c16d6199so406702466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:14:13 -0700 (PDT)
+	s=arc-20240116; t=1742832972; c=relaxed/simple;
+	bh=M4+Lrf+tBhiaUGrW68bHw0hJrDpp+VAINoN6zAcbL9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=FlOjYYzqnEYBLk3paESbTXve0O63MNCT3lLunFASFhoiHQ7s2Fc85fr4mATLm1F4CTglrW5/vNEcEziqPPWQmNyIzalYwfvZYY0HTyKTU+6lX5E/aVV0Csld/0Czr/n1ZAQwqIE38MXj7WhNJ8l91KfCuD/1KOw3kU45rN0C8IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=afcdtANx; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2242ac37caeso389265ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742832970; x=1743437770; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5SRc0E5JJcFqM7BjfBegdLV1cJ0uZ5Z9Ovl532RgmCA=;
+        b=afcdtANxbbleWVisj0rq1N3Gtn2QJ8XNKiXr9Asiuml8cOBcUvGIWF3KIfuU3QJnXV
+         1RKj2x7dXycxp/b64g8KVK5Tt/TWkx6sCADfEukcAOMDHRdtvcRXRIRa4Mfdtlq25Ala
+         jpr2iCNWj/zJ/gGNFQAB0nKlgV8U/fACNhySfEftqr7tO1hZVfaSSNxaScqjLd4Y97Pu
+         /1byYASYQsZwlQbnpCqFXejMPtCW1atNljCQhI9ONsuMLbM+wHUI38ua2FbVPBAZiAIr
+         GQyOobSGibTO6tro4nGJ4euifKcGk/VkSYJz2Ec2/yuN5WXaDFC9HGSIshXtQQsSHL56
+         PXZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742832852; x=1743437652;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742832970; x=1743437770;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
-        b=OcjEg47brU2Ss8Fo6rwbg6zG9DfH9Q6KrXAxO2rJmfNpAayLVl6HFtAvDhhSAgq9Og
-         BwTF1rkhrKPUGBMjJiBcH4HflPynQvnggO0FFUI9IFSobW3lTcRsL1XuEOCVVsYudbdV
-         t4Cvtr/d1advxjNn+eIURRg3VbLflR/bK0PGHei4tgr/IRbRm+uXCJ+bl0XMIjc31EV4
-         HVnw4udSOhCAfPj7BU61Fn+ll84kNTRLa2jL8g5r6t6TvDHQovIc0Rr+f97xMKColaU+
-         LB8GjQ4Y16wticdUbq7ErIJAEaVQVLz19dU2uFAp+OsS3EDc8WZ2t2Hcz/MeJJNLp/4J
-         R47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKq+06o9PEoGH+VjBY6iIkFaWHR7gSfnSHG09x5SfiwqKAE7SRBwS551oHB9PRW6h/F9r4EBnck3ozB8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8pqtSNx77dRn7agkbsjtNsRAErEBrseAM8x3kDmO4olRXBoxO
-	JrliFOx5CSeveefWSAAfAfw4cSOZK9vA4XNWq1z4DRm445d0dDSr/0I1vTThl2RUJdoeK+BAvpp
-	wOr8bARekA396DTkr1wSomzFBGN1oh+Pfs7WttjJl+OnMnkZsHl/9e4XeSqjvZK91we9foLd8ag
-	QkH+XJig7GwsdpxITCqQ==
-X-Gm-Gg: ASbGncv1cQp8+h+A2P/fWFOQf16K39ppkvqC7+bqCWuh686gnKhEL9q5S5qWET6ItlU
-	k687f8rehvIN3LdRoMb5DHcx4hB/UCSUhKIupj+qSZMK9VVWff8Y3BCaZqhQ7YrNSkp1lqZil81
-	1ZKFsLMiPqRhW2I1heeQIPae2uWWCianlv2cMY7YC4WX7h3l1y4kqeQXkS4fagUG4k1xqY3Qwo7
-	e5FGzo2qvXYlgTzLei8z58KgjjZakgb5pa83pEMb893cAfqfNib20kr6FIGs5q7KBq377IAnX6U
-	915uJAw6LZXiB0PSATU=
-X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390896466b.35.1742832852503;
-        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBoAqH0NuQib7zD9bnBjLQS0nzGw/Lcb59ZJ35t8yUAZYJ88GwfFPzoOrDGVL+L95eR27PQg==
-X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390893966b.35.1742832852056;
-        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
-Received: from localhost ([176.88.101.113])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd24f6esm694852166b.154.2025.03.24.09.14.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 09:14:11 -0700 (PDT)
-Date: Mon, 24 Mar 2025 19:14:07 +0300
-From: Cengiz Can <cengiz.can@canonical.com>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: Vasiliy Kovalev <kovalev@altlinux.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, dutyrok@altlinux.org, 
-	gerben@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
+        bh=5SRc0E5JJcFqM7BjfBegdLV1cJ0uZ5Z9Ovl532RgmCA=;
+        b=Bbmmh05dCIX542hKY8/a0FGQjYgTEMze4EfyowI0/7UGto20uz2d6e0dTfVdxQJUua
+         PXJzTqOcztR7UtENoL1Dbk/X466slA9YSchwXWptWCTm+MkKmSKOu/QLE2HZv0nWiVF0
+         O7brNBl85sxNytNm6AMgVUDnnt0OjEwq67lR10IrerTmUTHh3jwU5NloDUpgouLgohk0
+         7/wRyafIgN4n+Wr4Eu9iVr9pkKzpjEViAibhad4JODmewoDl23ODk+RLhiq86/SdEES+
+         o1uLXEk5NL4yqJRPxD9L3gUL3HCJHXXEDh5e96knYyPkkliIrt3eF5gYlXGNpINpn3Nb
+         KWdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcZcPVlwRoTTsijsixG9MAapA379DHTfmO2HiwfVoXhUvO2uGsgz5/H8Mq3zxy6Vlk6GuPPHYpQahJkZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRquBb3HAJkCPFE0pNTw9njGXZTvD71FjTJTj7SyoQDQMj5QFb
+	CZXHcc2xlBr6VZMzE19DXvUlyJiBffNkf+bhBjTW7w3gu/HEzFRnw6ROCwsbdroR3uEnDXOom1t
+	NDPK7cXYwKKGH8c4JKOUdMXyK3/P2a+OdqirD
+X-Gm-Gg: ASbGncs3olEM5w3ch3Ux34ccBnM+rSwc78H+tN2Q5tkHeg61DOT4ro9BitOJTZS07/M
+	K0xwtcZgpatn5p6VeR3lFk1l5JPoZe6AQgH5LWSFwg2mVX77OiYl5PNDqFWI8zuY/etc3IaE9XM
+	r7XuV86neDf6y+LgPkLzA9VfJjzSgRI6Mz+uN29i9ujtXfmt7zWRWsfvVDTnX9eXYV8w==
+X-Google-Smtp-Source: AGHT+IFJdl0wwlNRPgxAYdSAvv48PsxCERa1aF2/9Rzp4Fd3VvhzX/0iRMyvcecJa+ev9tM8gvDsxiL/wSSwlZrUwAk=
+X-Received: by 2002:a17:903:3d06:b0:21d:dca4:21ac with SMTP id
+ d9443c01a7336-227982a7e42mr5582265ad.6.1742832970059; Mon, 24 Mar 2025
+ 09:16:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z9xsx-w4YCBuYjx5@eldamar.lan>
-User-Agent: NeoMutt/20231103
+References: <20250311213628.569562-1-irogers@google.com>
+In-Reply-To: <20250311213628.569562-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 24 Mar 2025 09:15:58 -0700
+X-Gm-Features: AQ5f1JpPJbKS_0ytg1eSMnLwkzKCjJrQfOfha4Pc7G-W8NP0BTmBN2w8ZWG67fc
+Message-ID: <CAP-5=fUZ9_0hOx2La7B4a_3oPDFdAWDC-NDcMibAfb166kt7gA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Mypy and pylint build support
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Charlie Jenkins <charlie@rivosinc.com>, John Garry <john.g.garry@oracle.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
-> Hi
-> 
+On Tue, Mar 11, 2025 at 2:36=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Support building perf checking the python code with mypy and/or
+> pylint. Currently there are too many errors to make this a default.
+>
+> Shellcheck generates no output on success, so linking shellcheck files
+> doesn't cause `ld` to fail. Mypy and pylint generate output that will
+> break `ld` so change the Makefile.build to ignore test log files.
+>
+> Address some initial mypy errors.
+>
+> v2: Rebase. Add James Clark's reviewed-by tags. Add example mypy and
+>     pylint error output.
 
-Hello Salvatore,
+Ping.
 
-> On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
-> > Syzbot reported an issue in hfs subsystem:
-> > 
-> > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
-> > 
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:94 [inline]
-> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> >  print_address_description mm/kasan/report.c:377 [inline]
-> >  print_report+0x169/0x550 mm/kasan/report.c:488
-> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
-> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
-> >  memcpy_from_page include/linux/highmem.h:423 [inline]
-> >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
-> >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
-> >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
-> >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-> >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-> >  __do_sys_mkdir fs/namei.c:4300 [inline]
-> >  __se_sys_mkdir fs/namei.c:4298 [inline]
-> >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7fbdd6057a99
-> > 
-> > Add a check for key length in hfs_bnode_read_key to prevent
-> > out-of-bounds memory access. If the key length is invalid, the
-> > key buffer is cleared, improving stability and reliability.
-> > 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> > ---
-> >  fs/hfs/bnode.c     | 6 ++++++
-> >  fs/hfsplus/bnode.c | 6 ++++++
-> >  2 files changed, 12 insertions(+)
-> > 
-> > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-> > index 6add6ebfef8967..cb823a8a6ba960 100644
-> > --- a/fs/hfs/bnode.c
-> > +++ b/fs/hfs/bnode.c
-> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
-> >  	else
-> >  		key_len = tree->max_key_len + 1;
-> >  
-> > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
-> > +		memset(key, 0, sizeof(hfs_btree_key));
-> > +		pr_err("hfs: Invalid key length: %d\n", key_len);
-> > +		return;
-> > +	}
-> > +
-> >  	hfs_bnode_read(node, key, off, key_len);
-> >  }
+Thanks,
+Ian
 
-Simpler the better. 
-
-Our fix was released back in February. (There are other issues in our attempt I
-admit).
-
-https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
-
-If someone can pick this submission, I will be happy to replace our version.
-
-> >  
-> > diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
-> > index 87974d5e679156..079ea80534f7de 100644
-> > --- a/fs/hfsplus/bnode.c
-> > +++ b/fs/hfsplus/bnode.c
-> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
-> >  	else
-> >  		key_len = tree->max_key_len + 2;
-> >  
-> > +	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
-> > +		memset(key, 0, sizeof(hfsplus_btree_key));
-> > +		pr_err("hfsplus: Invalid key length: %d\n", key_len);
-> > +		return;
-> > +	}
-> > +
-> >  	hfs_bnode_read(node, key, off, key_len);
-> >  }
-> >  
-> > -- 
-> > 2.33.8
-
-Reviewed-by: Cengiz Can <cengiz.can@canonical.com>
-
-> 
-> I do realize that the HFS filesystem is "Orphan". But in the light of
-> the disclosure in
-> https://ssd-disclosure.com/ssd-advisory-linux-kernel-hfsplus-slab-out-of-bounds-write/
-> is there still something which needs to be done here?
-> 
-> Does the above needs to be picked in mainline and then propagated to
-> the supported stable versions?
-> 
-> Regards,
-> Salvatore
-> 
+> Ian Rogers (6):
+>   tools/build: Don't pass test log files to linker
+>   perf build: Rename TEST_LOGS to SHELL_TEST_LOGS
+>   perf build: Add mypy build tests
+>   perf build: Add pylint build tests
+>   perf test: Address attr.py mypy error
+>   perf python: Fix setup.py mypy errors
+>
+>  tools/build/Makefile.build         |  6 +++++-
+>  tools/perf/Build                   | 32 +++++++++++++++++++++++++++---
+>  tools/perf/Makefile.perf           | 14 +++++++++++--
+>  tools/perf/arch/x86/Build          |  6 +++---
+>  tools/perf/arch/x86/tests/Build    |  6 +++---
+>  tools/perf/pmu-events/Build        | 25 ++++++++++++++++++++++-
+>  tools/perf/scripts/Build           | 26 ++++++++++++++++++++++++
+>  tools/perf/tests/Build             | 32 +++++++++++++++++++++++++++---
+>  tools/perf/tests/shell/lib/attr.py |  8 +-------
+>  tools/perf/trace/beauty/Build      |  6 +++---
+>  tools/perf/util/Build              | 31 ++++++++++++++++++++++++++---
+>  tools/perf/util/setup.py           | 10 ++++++++--
+>  12 files changed, 171 insertions(+), 31 deletions(-)
+>
+> --
+> 2.49.0.rc0.332.g42c0ae87b1-goog
+>
 
