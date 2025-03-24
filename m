@@ -1,160 +1,134 @@
-Return-Path: <linux-kernel+bounces-574218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC8FAA6E221
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:18:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60BFA6E225
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614C43A7599
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:18:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3504A7A5058
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682DB264A62;
-	Mon, 24 Mar 2025 18:18:32 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40E536124;
+	Mon, 24 Mar 2025 18:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9Ur08k8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8E036124
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2555126463F;
+	Mon, 24 Mar 2025 18:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840312; cv=none; b=ShwCBYp2b2JAIY3GjAdIpDwlMdagnyk4Q0uvAWQhteyu147vuJLrGVHjTInfV8pYOMG+pbu5HtBVY578D0yCcC7RiDFhng2sevP2PnHoatySFAfBFzhwamz+cUApS9zOavdpDDJgcmmXmo+n5JcoL44msmgCpkXkF6mjrp5sdfs=
+	t=1742840320; cv=none; b=unLpOrPkrrnzxJiHK9heLDYvIsjFGWmb7xCnsDnjQdmhOXjifyJl0GdFd/ziDaz8ABPePAYVrM4N+cTN6MLQLiT+IppfWt07qprgt4iHGgwmPNeTO9bCQTzpfUWJAtV5SPfVCC6Pccjo8N/mPm7Wux1M6Dh4nV8LPzTxH4QoALI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840312; c=relaxed/simple;
-	bh=btgeIGnIUoCIck9+wS+7c/hFv1g6wYgJLfeKG87NVzA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RMtMGczBLlOOPAGoCVlbdBdfPPsjd4r007yzm3fkHIhYYyf5FUocatTNrVzz0h3sEk907pcb7jnGAZHTuIYBTJhwWpe34MK0efOvCb4RUj6yaPDzvJgGVN9bQO6WyRqsE7h7ZESrEV+nL40cnciW2aGHXNaH5ykNYIefhEAaTus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43d3338d7so93625935ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:18:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742840309; x=1743445109;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pBNLf/d9pxK/fHTPY4JvsITkXOFpMyYfD4pamBhwHRA=;
-        b=QgNwGDMrUi9ulGH4Vfr9QUecCYRwa1VIMMXJlCKWB0v8QfoH4eJbNZg7n6354oUkQl
-         Gp0Q3x3DNdARjXZU7F4s31B9S60szB05sXGZdHHKhF1qQa2fUiT502HagqKJXn+bwarC
-         B2qE0gA4vmmI+2+rNAoKm8S5uKgsAz+eAoDDm9syB/enq0KqoYQ2nWoLHrNJHWq6fDZ3
-         ROA5mo5XaRy3vwOZ3Aj7mCOrGgTZc1tEk5zPFw6USKqzLkiD75NHV2CqevEqnQVI9nVS
-         wiOnSs/K1mvzMlp3oZbT/i8MLVoYTepwWUNJzDmD9xZ2hHxJ95RCfz8aI6tZ4xnot4T4
-         IpJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdD6R9/084Tax4pRSv6cKW+hqJHu7FRMbqTRBXzB2TSd7csi2vKuKgiP3qkqrY0mVjdhdVopBCwOGMxyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv/qxG2J0OB/f/+Fi1d54cZ2l1NTpRMjUe/wvj4RU1KhBgt5ii
-	zwgK1RVXDBpT7AK3qNXq1NANMipaze0STLblV33UIN/lxHjVumUttfJpGiAxTRHVJmtN/QLwAwt
-	Elr6faHOUQxBaMJ/rDgTPFdMnmf2XaAmWjzN2BlBnMiv+WbyMkzCJizc=
-X-Google-Smtp-Source: AGHT+IHAO6nfo755uIRQ2cGgnPp5lBiB6CmROXZt0tvLmT1MEN9v/EwZsmiYxrgD2wI4hYDXTJjrhTrIXK4dSioxL/HqgQhiF2Fe
+	s=arc-20240116; t=1742840320; c=relaxed/simple;
+	bh=CvPtVrvhXjNToxQtztbHoatPZJDWgp/53NY9ElBqIcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxSr0z+aA8y6KsnpploqbYQtWuAGH7dxdgGRLOOs2x+gNKtN19B9EAOzki5ubzpiFu0BCrTtYdmPh9CDAY6CNeTZkDUwBpuvKLNfMa4aAFnGE0ZK03g5Cv+CQfKZ9XiAEb8PPiF3y2odjU8eLpTVRgmL5fPDJ8MLxuk0yjI1Qvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9Ur08k8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1986DC4CEDD;
+	Mon, 24 Mar 2025 18:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742840319;
+	bh=CvPtVrvhXjNToxQtztbHoatPZJDWgp/53NY9ElBqIcg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m9Ur08k8fMZRkAAhCI2CxUvgZeupcT7GIrwX+p9fSpvfV3Ajb3FbMQVykY2lKtAQe
+	 rcSRUeEGnf3/NMWyPQ0qugpcciD3AvqI+F+GniZhsF5a2Ryvk/XXb2nshNIIN+x5cR
+	 JYlU5fpj2U7s/S3WdPrOsq+Y0apgFmjxkWh8sXtE1wxekMHk5W9Gzb05gDZS+Vgjfn
+	 oho/ytmj/aLCNS2l7wFW8/VHiNHcb8DPqS3CMWOxTVqp1CjPVVhuNpZCOYebRtk4tZ
+	 ZLlxV+n2Jb/jAlskHje+GtPWM7FPyNyourFaqabkHce71qm183YbuQjYPsdqdZX51N
+	 JlOQHRHBYPBPw==
+Date: Mon, 24 Mar 2025 14:18:34 -0400
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
+	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, dwmw2@infradead.org,
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
+	corbet@lwn.net, krzk@kernel.org, mark.rutland@arm.com,
+	pbonzini@redhat.com, pasha.tatashin@soleen.com, hpa@zytor.com,
+	peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org,
+	robh@kernel.org, saravanak@google.com,
+	skinsburskii@linux.microsoft.com, rostedt@goodmis.org,
+	tglx@linutronix.de, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, will@kernel.org,
+	devicetree@vger.kernel.org, kexec@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
+ preservation
+Message-ID: <Z-Gh-t9xB21UNGU2@kernel.org>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+ <20250320015551.2157511-10-changyuanl@google.com>
+ <20250321134629.GA252045@nvidia.com>
+ <Z98Lmo50h5RboFXq@kernel.org>
+ <Z+BZOKSpyPA1Pyu+@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174c:b0:3d4:3aba:e5ce with SMTP id
- e9e14a558f8ab-3d5961bc1ffmr145580605ab.20.1742840309399; Mon, 24 Mar 2025
- 11:18:29 -0700 (PDT)
-Date: Mon, 24 Mar 2025 11:18:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e1a1f5.050a0220.a7ebc.0029.GAE@google.com>
-Subject: [syzbot] [usb?] WARNING in dib0700_i2c_xfer/usb_submit_urb
-From: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z+BZOKSpyPA1Pyu+@nvidia.com>
 
-Hello,
+On Sun, Mar 23, 2025 at 03:55:52PM -0300, Jason Gunthorpe wrote:
+> On Sat, Mar 22, 2025 at 03:12:26PM -0400, Mike Rapoport wrote:
+>  
+> > > > +		page->private = order;
+> > > 
+> > > Can't just set the page order directly? Why use private?
+> > 
+> > Setting the order means recreating the folio the way prep_compound_page()
+> > does. I think it's better to postpone it until the folio is requested. This
+> > way it might run after SMP is enabled. 
+> 
+> I see, that makes sense, but also it could stil use page->order..
 
-syzbot found the following issue on:
+But there's no page->order :)
+ 
+> > Besides, when we start allocating
+> > folios separately from struct page, initializing it here would be a real
+> > issue.
+> 
+> Yes, but also we wouldn't have page->private to make it work.. Somehow
+> anything we want to carry over would have to become encoded in the
+> memdesc directly.
 
-HEAD commit:    5fc319360819 Merge tag 'net-6.14-rc8' of git://git.kernel...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=15445e98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27515cfdbafbb90d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c38e5e60d0041a99dbf5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ea4c4c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15435004580000
+This is a problem to solve in 2026 :)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1c90f739fd77/disk-5fc31936.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1949bfaaa2fe/vmlinux-5fc31936.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dc1e147ca5d4/bzImage-5fc31936.xz
+The January update for State of Page [1] talks about 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com
+	reasonable goal to shrink struct page to (approximately): 
 
-------------[ cut here ]------------
-usb 1-1: BOGUS control dir, pipe 80000f80 doesn't match bRequestType c0
-WARNING: CPU: 1 PID: 5901 at drivers/usb/core/urb.c:413 usb_submit_urb+0x11d9/0x18c0 drivers/usb/core/urb.c:411
-Modules linked in:
-CPU: 1 UID: 0 PID: 5901 Comm: syz-executor773 Not tainted 6.14.0-rc7-syzkaller-00137-g5fc319360819 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:usb_submit_urb+0x11d9/0x18c0 drivers/usb/core/urb.c:411
-Code: 48 8b 4c 24 08 0f b6 04 01 84 c0 0f 85 52 05 00 00 45 0f b6 07 48 c7 c7 e0 4b d1 8c 4c 89 f6 48 89 da 89 e9 e8 e8 9b 09 fa 90 <0f> 0b 90 90 e9 c9 f3 ff ff 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 57
-RSP: 0018:ffffc900041cf808 EFLAGS: 00010246
-RAX: fe52edbd68e0e800 RBX: ffff888021693020 RCX: ffff8880267d5a00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000080000f80 R08: ffffffff81819e52 R09: 1ffff92000839e9c
-R10: dffffc0000000000 R11: fffff52000839e9d R12: ffff88802a23f0a8
-R13: ffff88801e6cfa00 R14: ffffffff8cd1b600 R15: ffff888033956e60
-FS:  0000555580b9b380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa8c1abb0f0 CR3: 00000000282c0000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
- dib0700_ctrl_rd drivers/media/usb/dvb-usb/dib0700_core.c:95 [inline]
- dib0700_i2c_xfer_legacy drivers/media/usb/dvb-usb/dib0700_core.c:315 [inline]
- dib0700_i2c_xfer+0xc53/0x1060 drivers/media/usb/dvb-usb/dib0700_core.c:361
- __i2c_transfer+0x866/0x2220
- i2c_transfer+0x271/0x3b0 drivers/i2c/i2c-core-base.c:2315
- i2cdev_ioctl_rdwr+0x452/0x710 drivers/i2c/i2c-dev.c:306
- i2cdev_ioctl+0x759/0x9f0 drivers/i2c/i2c-dev.c:467
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa8c1a448f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc66aa7058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa8c1a448f9
-RDX: 00002000000004c0 RSI: 0000000000000707 RDI: 0000000000000004
-RBP: 000000000002ca0e R08: 00232d6332692f76 R09: 0000000000000006
-R10: 000000000000001f R11: 0000000000000246 R12: 00007ffc66aa706c
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+	struct page {
+	    unsigned long flags;
+	    union {
+	        struct list_head buddy_list;
+	        struct list_head pcp_list;
+	        struct {
+	            unsigned long memdesc;
+	            int _refcount;
+	        };
+	    };
+	    union {
+	        unsigned long private;
+	        struct {
+	            int _folio_mapcount;
+	        };
+	    };
+	};
+ 
+[1] https://lore.kernel.org/linux-mm/Z37pxbkHPbLYnDKn@casper.infradead.org/
+ 
+> Jason
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Sincerely yours,
+Mike.
 
