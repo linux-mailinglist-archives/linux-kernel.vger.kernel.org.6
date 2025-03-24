@@ -1,85 +1,74 @@
-Return-Path: <linux-kernel+bounces-574224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768EAA6E234
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F83A6E236
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12AC67A5023
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:21:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FBF7A55B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C792620C9;
-	Mon, 24 Mar 2025 18:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A1626463E;
+	Mon, 24 Mar 2025 18:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EO7pkUX5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B2mmLRCt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC1E2641D7;
-	Mon, 24 Mar 2025 18:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F31EB5B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840531; cv=none; b=EOzbm1MlquVv1Z2bM1XYmov3yt9cmqDIQmzs2NNr311M5yS/nE/QQ5xkoKuypOuhNpOoariaQEdtTn0crxNfuSBKoKoANl/XCksCWDQwKDvNL8HtSmmIdoLWntRGOYZR9dFDIhHzeCn9P6YwOd5Aw4hF7I0jQoMD+voVIklK9Hk=
+	t=1742840587; cv=none; b=Qcc7B+gGwOn+towgL4ti16788pheZS5SOm+MOswRsu6TMNwkWSVwlWUDCXKXQcdf4gg+Roz7mopMYWrB/Kj8JsU2m5kFrhWvE4Yt+vPuxu81/gfkRSTVWMOAGhj4DiDi/Od6ibCOqaq1+ZYHLPhTGE3Ba3kGZZU0NcLCLtdqURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840531; c=relaxed/simple;
-	bh=Vp9Vb+EnT3y9QyflxOjJ4zdpm+Iip8GTmt0L7VxcHDQ=;
+	s=arc-20240116; t=1742840587; c=relaxed/simple;
+	bh=ZeRY07bNCq4ht4qtQOC4e9VFCeSCnYwVqOaj75U64GY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgnXFz1DHalmdRtVoLQBHpcTmnCZHJhUY2BfGkXJ31eqDXkrW9JY1S0/8rW4ZOyXgjbVKhauyPphauYCPeSTT+JIN/S3aEgRbif+ACzKkpsyHogXU4reVn/imeEGyw9JSqqxvy597rxfG6z+dp1yxXqt2shvVehtM0/4iN4fR8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EO7pkUX5; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742840529; x=1774376529;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vp9Vb+EnT3y9QyflxOjJ4zdpm+Iip8GTmt0L7VxcHDQ=;
-  b=EO7pkUX5jt4XQOrMiQhV0TV7V1xNfPwHYU6JU6ib9VPybCX+prTDWcU3
-   W6As0bKjEbzi0EnObdaSwcU/RC5vgDbuz5P1XDbHFTw1N00WnUyfTMr5L
-   jcLK9X8oAUHgowdep+0g6byCf4KXXtLGB5QPFMyjhXVf9of9iGELPGtgE
-   TSX9lR3LLL38hoeLNcEJsN4F5jXGaWgZSYYCfIeUpBruJg4NnjMzDOBAb
-   dc18lzVOFTGvX8PJWj4zD/kheMEWmh20mIKbwJA4nOFvlxolziwAiXfb/
-   ggjGf5WJs62uSXMv8FaQUrlGbLWFhRuALXVVAnqmAm0ffKaziOp2uom7n
-   A==;
-X-CSE-ConnectionGUID: JiBgetHIQmCoTK8xO5hyMA==
-X-CSE-MsgGUID: YmuNQt34Q/2EU4CO85NYkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="47937432"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="47937432"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 11:21:52 -0700
-X-CSE-ConnectionGUID: XiLhMqERQseZujl4hhWaZg==
-X-CSE-MsgGUID: R/BwO3NIQ+CrgRHxCeMTjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="129322151"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 24 Mar 2025 11:21:49 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twmQk-0003rR-1n;
-	Mon, 24 Mar 2025 18:21:46 +0000
-Date: Tue, 25 Mar 2025 02:21:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
-	Jai Luthra <jai.luthra@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Rishikesh Donadkar <r-donadkar@ti.com>,
-	Vaishnav Achath <vaishnav.a@ti.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] media: cadence: cdns-csi2rx: Support multiple pixels
- per clock cycle
-Message-ID: <202503250056.MfBrAipQ-lkp@intel.com>
-References: <20250324-probe_fixes-v1-5-5cd5b9e1cfac@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ApWeSQIs7O1eA4sEMqSUf45ANcagjK3+m5yylRcYn/2l7hU65FtZfRWih8NsGtZC3CHdGv94dAPrjjcHoopxvOjhHGll8BN2bGF148US08eP/BnJ3NNc5nKWGJKLtxEHTYO80lVHly3ok3BcSKcp0Txt9zWU2PlMDjVaaI3kiJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B2mmLRCt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742840584;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q5FUeUf5qZFkxlfZh7QgAlQGxD5fCVQ/217Dc1NXrL8=;
+	b=B2mmLRCtpQvxM/WcG1XBtomhuOaHKUoldhAdU/N47Uv0nE4uQVhK9G92ZuwwLU4j90wpT3
+	KnU+HHRMtS98za+c3DNZa0UkGIScrff5yD7OmsLUS0+jD1CRMVfyKKoJOd1n9lVeLr7VJT
+	eFclFRR2FspiOMS1MSl948ZBJjlHEgM=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-QeRIsDMqMCGxfRC2gqpXvQ-1; Mon,
+ 24 Mar 2025 14:23:00 -0400
+X-MC-Unique: QeRIsDMqMCGxfRC2gqpXvQ-1
+X-Mimecast-MFC-AGG-ID: QeRIsDMqMCGxfRC2gqpXvQ_1742840579
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFB73196B356;
+	Mon, 24 Mar 2025 18:22:58 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.81.75])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 463C330001A1;
+	Mon, 24 Mar 2025 18:22:56 +0000 (UTC)
+Date: Mon, 24 Mar 2025 14:22:53 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Filipe Xavier <felipeaggger@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH v2 1/2] selftests: livepatch: add new ftrace helpers
+ functions
+Message-ID: <Z+Gi/QEFPffEonTE@redhat.com>
+References: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
+ <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,159 +77,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324-probe_fixes-v1-5-5cd5b9e1cfac@ideasonboard.com>
+In-Reply-To: <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Jai,
+On Tue, Mar 18, 2025 at 06:20:35PM -0300, Filipe Xavier wrote:
+> Add new ftrace helpers functions cleanup_tracing, trace_function and
+> check_traced_functions.
+> 
+> Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+> ---
+>  tools/testing/selftests/livepatch/functions.sh | 49 ++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
+> index 15601402dee6567837c2c49ba342eb357e410d18..dea9cc10a3f09662c57c2593cff49423302c8a5c 100644
+> --- a/tools/testing/selftests/livepatch/functions.sh
+> +++ b/tools/testing/selftests/livepatch/functions.sh
+> @@ -10,6 +10,7 @@ SYSFS_KERNEL_DIR="/sys/kernel"
+>  SYSFS_KLP_DIR="$SYSFS_KERNEL_DIR/livepatch"
+>  SYSFS_DEBUG_DIR="$SYSFS_KERNEL_DIR/debug"
+>  SYSFS_KPROBES_DIR="$SYSFS_DEBUG_DIR/kprobes"
+> +SYSFS_TRACING_DIR="$SYSFS_DEBUG_DIR/tracing"
+>  
+>  # Kselftest framework requirement - SKIP code is 4
+>  ksft_skip=4
+> @@ -62,6 +63,9 @@ function push_config() {
+>  			awk -F'[: ]' '{print "file " $1 " line " $2 " " $4}')
+>  	FTRACE_ENABLED=$(sysctl --values kernel.ftrace_enabled)
+>  	KPROBE_ENABLED=$(cat "$SYSFS_KPROBES_DIR/enabled")
+> +	TRACING_ON=$(cat "$SYSFS_TRACING_DIR/tracing_on")
+> +	CURRENT_TRACER=$(cat "$SYSFS_TRACING_DIR/current_tracer")
+> +	FTRACE_FILTER=$(cat "$SYSFS_TRACING_DIR/set_ftrace_filter")
+>  }
+>  
+>  function pop_config() {
+> @@ -74,6 +78,17 @@ function pop_config() {
+>  	if [[ -n "$KPROBE_ENABLED" ]]; then
+>  		echo "$KPROBE_ENABLED" > "$SYSFS_KPROBES_DIR/enabled"
+>  	fi
+> +	if [[ -n "$TRACING_ON" ]]; then
+> +		echo "$TRACING_ON" > "$SYSFS_TRACING_DIR/tracing_on"
+> +	fi
+> +	if [[ -n "$CURRENT_TRACER" ]]; then
+> +		echo "$CURRENT_TRACER" > "$SYSFS_TRACING_DIR/current_tracer"
+> +	fi
+> +	if [[ -n "$FTRACE_FILTER" ]]; then
+> +		echo "$FTRACE_FILTER" \
+> +			| sed -e "/#### all functions enabled ####/d"
+> +			> "$SYSFS_TRACING_DIR/set_ftrace_filter"
+> +	fi
+>  }
+>  
+>  function set_dynamic_debug() {
+> @@ -352,3 +367,37 @@ function check_sysfs_value() {
+>  		die "Unexpected value in $path: $expected_value vs. $value"
+>  	fi
+>  }
+> +
+> +# cleanup_tracing() - stop and clean up function tracing
+> +function cleanup_tracing() {
+> +	echo 0 > "$SYSFS_TRACING_DIR/tracing_on"
+> +	echo "" > "$SYSFS_TRACING_DIR/set_ftrace_filter"
+> +	echo "nop" > "$SYSFS_TRACING_DIR/current_tracer"
+> +	echo "" > "$SYSFS_TRACING_DIR/trace"
+> +}
+> +
+> +# trace_function(function) - start tracing of a function
+> +#	function - to be traced function
+> +function trace_function() {
+> +	local function="$1"; shift
+> +
+> +	cleanup_tracing
+> +
+> +	echo "function" > "$SYSFS_TRACING_DIR/current_tracer"
+> +	echo "$function" > "$SYSFS_TRACING_DIR/set_ftrace_filter"
+> +	echo 1 > "$SYSFS_TRACING_DIR/tracing_on"
+> +}
+> +
+> +# check_traced_functions(functions...) - check whether each function appeared in the trace log
+> +#	functions - list of functions to be checked
+> +function check_traced_functions() {
+> +	local function
+> +
+> +	for function in "$@"; do
+> +		if ! grep -q "$function" "$SYSFS_TRACING_DIR/trace" ; then
 
-kernel test robot noticed the following build errors:
+Small suggestion here: grep on "$function" may find partial string
+matches, like:
 
-[auto build test ERROR on 586de92313fcab8ed84ac5f78f4d2aae2db92c59]
+  $ echo 'hamburger' | grep 'ham'
+  hamburger
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jai-Luthra/media-ti-j721e-csi2rx-Use-devm_of_platform_populate/20250324-200457
-base:   586de92313fcab8ed84ac5f78f4d2aae2db92c59
-patch link:    https://lore.kernel.org/r/20250324-probe_fixes-v1-5-5cd5b9e1cfac%40ideasonboard.com
-patch subject: [PATCH 5/6] media: cadence: cdns-csi2rx: Support multiple pixels per clock cycle
-config: sparc-randconfig-002-20250324 (https://download.01.org/0day-ci/archive/20250325/202503250056.MfBrAipQ-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250325/202503250056.MfBrAipQ-lkp@intel.com/reproduce)
+so it's probably safer to user --word-regexp to avoid longer function
+names inadvertently matching:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503250056.MfBrAipQ-lkp@intel.com/
+  $ echo 'hamburger' | grep -w 'ham'
+  $ echo 'ham' | grep -w 'ham'
+  ham
 
-All errors (new ones prefixed by >>):
+Also, maybe also --fixed-strings for the extra paranoid?  Off the top of
+my head, I don't think any C function characters are special regex (like
+$ ^ [ ] etc.) so it's probably safe w/o.
 
-   drivers/media/platform/cadence/cdns-csi2rx.c: In function 'csi2rx_start':
->> drivers/media/platform/cadence/cdns-csi2rx.c:286:24: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-     286 |                 reg |= FIELD_PREP(CSI2RX_STREAM_CFG_NUM_PIXELS_MASK,
-         |                        ^~~~~~~~~~
-   cc1: some warnings being treated as errors
+-- Joe
 
-
-vim +/FIELD_PREP +286 drivers/media/platform/cadence/cdns-csi2rx.c
-
-   214	
-   215	static int csi2rx_start(struct csi2rx_priv *csi2rx)
-   216	{
-   217		unsigned int i;
-   218		unsigned long lanes_used = 0;
-   219		u32 reg;
-   220		int ret;
-   221	
-   222		ret = clk_prepare_enable(csi2rx->p_clk);
-   223		if (ret)
-   224			return ret;
-   225	
-   226		reset_control_deassert(csi2rx->p_rst);
-   227		csi2rx_reset(csi2rx);
-   228	
-   229		reg = csi2rx->num_lanes << 8;
-   230		for (i = 0; i < csi2rx->num_lanes; i++) {
-   231			reg |= CSI2RX_STATIC_CFG_DLANE_MAP(i, csi2rx->lanes[i]);
-   232			set_bit(csi2rx->lanes[i], &lanes_used);
-   233		}
-   234	
-   235		/*
-   236		 * Even the unused lanes need to be mapped. In order to avoid
-   237		 * to map twice to the same physical lane, keep the lanes used
-   238		 * in the previous loop, and only map unused physical lanes to
-   239		 * the rest of our logical lanes.
-   240		 */
-   241		for (i = csi2rx->num_lanes; i < csi2rx->max_lanes; i++) {
-   242			unsigned int idx = find_first_zero_bit(&lanes_used,
-   243							       csi2rx->max_lanes);
-   244			set_bit(idx, &lanes_used);
-   245			reg |= CSI2RX_STATIC_CFG_DLANE_MAP(i, i + 1);
-   246		}
-   247	
-   248		writel(reg, csi2rx->base + CSI2RX_STATIC_CFG_REG);
-   249	
-   250		/* Enable DPHY clk and data lanes. */
-   251		if (csi2rx->dphy) {
-   252			reg = CSI2RX_DPHY_CL_EN | CSI2RX_DPHY_CL_RST;
-   253			for (i = 0; i < csi2rx->num_lanes; i++) {
-   254				reg |= CSI2RX_DPHY_DL_EN(csi2rx->lanes[i] - 1);
-   255				reg |= CSI2RX_DPHY_DL_RST(csi2rx->lanes[i] - 1);
-   256			}
-   257	
-   258			writel(reg, csi2rx->base + CSI2RX_DPHY_LANE_CTRL_REG);
-   259	
-   260			ret = csi2rx_configure_ext_dphy(csi2rx);
-   261			if (ret) {
-   262				dev_err(csi2rx->dev,
-   263					"Failed to configure external DPHY: %d\n", ret);
-   264				goto err_disable_pclk;
-   265			}
-   266		}
-   267	
-   268		/*
-   269		 * Create a static mapping between the CSI virtual channels
-   270		 * and the output stream.
-   271		 *
-   272		 * This should be enhanced, but v4l2 lacks the support for
-   273		 * changing that mapping dynamically.
-   274		 *
-   275		 * We also cannot enable and disable independent streams here,
-   276		 * hence the reference counting.
-   277		 */
-   278		for (i = 0; i < csi2rx->max_streams; i++) {
-   279			ret = clk_prepare_enable(csi2rx->pixel_clk[i]);
-   280			if (ret)
-   281				goto err_disable_pixclk;
-   282	
-   283			reset_control_deassert(csi2rx->pixel_rst[i]);
-   284	
-   285			reg = CSI2RX_STREAM_CFG_FIFO_MODE_LARGE_BUF;
- > 286			reg |= FIELD_PREP(CSI2RX_STREAM_CFG_NUM_PIXELS_MASK,
-   287					  csi2rx->num_pixels[i]);
-   288			writel(reg, csi2rx->base + CSI2RX_STREAM_CFG_REG(i));
-   289	
-   290			/*
-   291			 * Enable one virtual channel. When multiple virtual channels
-   292			 * are supported this will have to be changed.
-   293			 */
-   294			writel(CSI2RX_STREAM_DATA_CFG_VC_SELECT(0),
-   295			       csi2rx->base + CSI2RX_STREAM_DATA_CFG_REG(i));
-   296	
-   297			writel(CSI2RX_STREAM_CTRL_START,
-   298			       csi2rx->base + CSI2RX_STREAM_CTRL_REG(i));
-   299		}
-   300	
-   301		ret = clk_prepare_enable(csi2rx->sys_clk);
-   302		if (ret)
-   303			goto err_disable_pixclk;
-   304	
-   305		reset_control_deassert(csi2rx->sys_rst);
-   306	
-   307		ret = v4l2_subdev_call(csi2rx->source_subdev, video, s_stream, true);
-   308		if (ret)
-   309			goto err_disable_sysclk;
-   310	
-   311		clk_disable_unprepare(csi2rx->p_clk);
-   312	
-   313		return 0;
-   314	
-   315	err_disable_sysclk:
-   316		clk_disable_unprepare(csi2rx->sys_clk);
-   317	err_disable_pixclk:
-   318		for (; i > 0; i--) {
-   319			reset_control_assert(csi2rx->pixel_rst[i - 1]);
-   320			clk_disable_unprepare(csi2rx->pixel_clk[i - 1]);
-   321		}
-   322	
-   323		if (csi2rx->dphy) {
-   324			writel(0, csi2rx->base + CSI2RX_DPHY_LANE_CTRL_REG);
-   325			phy_power_off(csi2rx->dphy);
-   326		}
-   327	err_disable_pclk:
-   328		clk_disable_unprepare(csi2rx->p_clk);
-   329	
-   330		return ret;
-   331	}
-   332	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
