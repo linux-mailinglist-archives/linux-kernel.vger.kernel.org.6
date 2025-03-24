@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-573327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71F8A6D5CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF81A6D5D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819E116DA41
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8790516FAC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A25E25C70D;
-	Mon, 24 Mar 2025 08:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C13725C706;
+	Mon, 24 Mar 2025 08:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGynYWlj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kQm5eO3I"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ACD18B470;
-	Mon, 24 Mar 2025 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7C82512D8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742803498; cv=none; b=UwsiaRbUHEu/0fwmQDSunjEPu7/C5npCWB7PtwRo9tC+0CApuKy9mhfgPjZ+qM3TxgjlOGJ6zrLpns4pq9V9mruJ5m0FAMwAGYVFyw8XwyHxfg8kuyzC/GyWXKDNwE0+l1RoRaOjpMX4TsZTOygyCqiR11ya89wxTteW6qOEv6U=
+	t=1742803546; cv=none; b=Z3mZY08urI7Qqo+PUkITmdH/pr8pGYWFif4fqQ+iRY8C7fCtPpLl0AV+iOSmY0LI8ATnNogImLQ44GsIQF7swJ3Z3KaOSY1lm9sj/QudEsw3OTqldzSWpwjGvIyGOh333RiAHC0A9W4X6ag6ykybsEtahPIKXRa/kC6yVd+b3PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742803498; c=relaxed/simple;
-	bh=2gSLluaFzVDaLqnWsNk8sVoYQ+2ifhmEkiUog9vfzOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cG3S9crPCTFVKvZ2Mm7IwuL2fTylTkaB5/iYpZHfzRkJjweMmHEa8Dx+f4/PRL/7nHNvR9+S0+dshnthnnporcsN6KxbBhnaz9mbdrZ0monf1mEhRl4kvoAO52ywuP1WGY+5A45PR4yGBDA1vzFB4KRFYU9Fydun34tE5gZgrQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGynYWlj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1451BC4CEDD;
-	Mon, 24 Mar 2025 08:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742803497;
-	bh=2gSLluaFzVDaLqnWsNk8sVoYQ+2ifhmEkiUog9vfzOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RGynYWljYVwsjBkFfRfR2JqFmEpoDbpRvYy/VqSO977TnZaXU4Bqk5Oi73yGNsmzT
-	 7pO8mPc/CiqmEsMhvsQzsbZXEOombY5TdnaCSfSfgApcR2oCoiIdWRKlh9mJtg5ndZ
-	 ZhzacUowUFkM878v9z5W7PQoaum7xVkkGN5wDtaipvu3OiXv/NaFWGjJs3UKPxQG/a
-	 6FNJvUVt3Q+wKg15fZGoNsDTxCz9fewYvF3ESQyZ9R/w7TwDx4eZXjY5a53p4eeG71
-	 gbuR5LjomfD8yWv/AN9/7d+wEf5Zwa6jOnexDlxYy9GM0qKEVF602UKdYGgL5RTJ5X
-	 Zpooy1FVRPvcg==
-Date: Mon, 24 Mar 2025 09:04:50 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-	Greg Thelen <gthelen@google.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] x86/alternatives: remove false sharing in
- poke_int3_handler()
-Message-ID: <Z-ESIogCNDiHz4NG@gmail.com>
-References: <20250323072511.2353342-1-edumazet@google.com>
- <Z-B_R737uM31m6_K@gmail.com>
- <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
- <Z-EGvjhkg6llyX24@gmail.com>
- <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
- <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
+	s=arc-20240116; t=1742803546; c=relaxed/simple;
+	bh=S/Q/cmvjORyllVqkKmvXSGVShiTGxtyrAPfuuXoaXP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WPM87FM1lvNhTIBywPDCaQK9y+6FXpTZnkFLR37SpG3GYuzu+vQnxJH42s9FT2sk2VNlX+qe75a8ogPW1c/z0rjeh7oWZ6WIWt96yb8uBjssraV+FVVwF6wBLuLHXswqHGi2E1ZlgdT00daVCfglHwPAAE+JjpwG0sjhWDPFkPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kQm5eO3I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6c3a0001787;
+	Mon, 24 Mar 2025 08:05:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GiZikm6IvzzQWX6CT9gL5kOPLfz2b9r0DDzgSO0bZyo=; b=kQm5eO3I3oNcWYSL
+	sK/nlPLVwfrjXEaFj54BQUKK7mTTmHc8iA+nUK7Ic1mzbdY69qPKEp5VQC4OkaG5
+	tT7G0Jn82IhzY3vSHyNsRfbrY9T91hxkdZejL2MYNoCbMTYw3AjYj84UDr1HAPMC
+	+divdF43wt5zVQ21eKMx17oLg1IQ6tLV0BntAqA01Tzjp/A1wAppgbawvarnY4hR
+	zihgv+yPwSnwfPoUUzUtwBo9XaA0hmpeYmICcjEEv4TuerEej1AwPebQXYQwujm+
+	NGXdau6OEo82huNZp3DKxqFMMm/wF8XI2K8rkR/4e6nt7LH9kUrkiFmqJK677yAZ
+	W/muIA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hm5uumu0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 08:05:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O85dbU011050
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 08:05:39 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 01:05:37 -0700
+Message-ID: <a1aa02e8-7f58-46ae-b3df-ae43288cf683@quicinc.com>
+Date: Mon, 24 Mar 2025 16:05:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath12k: extend dma mask to 36 bits
+To: Johan Hovold <johan@kernel.org>
+CC: Johan Hovold <johan+linaro@kernel.org>,
+        Jeff Johnson
+	<jjohnson@kernel.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250321162331.19507-1-johan+linaro@kernel.org>
+ <bc3601ae-5639-4ee4-bbcb-4e39b542bfbe@quicinc.com>
+ <Z-EMgPg5Gp-JtTZp@hovoldconsulting.com>
+Content-Language: en-US
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <Z-EMgPg5Gp-JtTZp@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jyA0r0eLjHC-X6nZZ87De9CCb1vuhA17
+X-Proofpoint-GUID: jyA0r0eLjHC-X6nZZ87De9CCb1vuhA17
+X-Authority-Analysis: v=2.4 cv=AJKH5mlP c=1 sm=1 tr=0 ts=67e11254 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=2XIbIgQLYS011rX2vRkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=888 adultscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240058
 
 
-* Eric Dumazet <edumazet@google.com> wrote:
 
-> On Mon, Mar 24, 2025 at 8:47 AM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > On Mon, Mar 24, 2025 at 8:16 AM Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >
-> > > * Eric Dumazet <edumazet@google.com> wrote:
-> > >
-> > > > > What's the adversarial workload here? Spamming bpf_stats_enabled on all
-> > > > > CPUs in parallel? Or mixing it with some other text_poke_bp_batch()
-> > > > > user if bpf_stats_enabled serializes access?
-> > >             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >
-> > > > > Does anything undesirable happen in that case?
-> > > >
-> > > > The case of multiple threads trying to flip bpf_stats_enabled is
-> > > > handled by bpf_stats_enabled_mutex.
-> > >
-> > > So my suggested workload wasn't adversarial enough due to
-> > > bpf_stats_enabled_mutex: how about some other workload that doesn't
-> > > serialize access to text_poke_bp_batch()?
-> >
-> > Do you have a specific case in mind that I can test on these big platforms ?
-> >
-> > text_poke_bp_batch() calls themselves are serialized by text_mutex, it
-> > is not clear what you are looking for.
+On 3/24/2025 3:40 PM, Johan Hovold wrote:
+> On Mon, Mar 24, 2025 at 11:06:16AM +0800, Baochen Qiang wrote:
+>> On 3/22/2025 12:23 AM, Johan Hovold wrote:
+>>> Extend the DMA mask to 36 bits to avoid using bounce buffers on machines
+>>> without an iommu (under OS control) similar to what was done for ath11k
+>>> in commit dbd73acb22d8 ("wifi: ath11k: enable 36 bit mask for stream
+>>> DMA").
+>>>
+>>> This specifically avoids using bounce buffers on Qualcomm Snapdragon X
+>>> Elite machines like the Lenovo ThinkPad T14s when running at EL1.
+>>
+>> why bounce buffer is used at EL1? is it because IOMMU is not working at EL1?
+>> or even because IOMMU is not present on Elite machines?
 > 
+> As I mentioned above, the IOMMU is not under OS control. The boot
+> firmware / hypervisor has configured the IOMMU in by-pass mode and it's
+> effectively missing from the OS POV.
 > 
-> BTW the atomic_cond_read_acquire() part is never called even during my
-> stress test.
-
-Yeah, that code threw me off - can it really happen with text_mutex 
-serializing all of it?
-
-> @@ -2418,7 +2418,7 @@ static void text_poke_bp_batch(struct
-> text_poke_loc *tp, unsigned int nr_entries
->         for_each_possible_cpu(i) {
->                 atomic_t *refs = per_cpu_ptr(&bp_refs, i);
+> Note that this is also the case on Qualcomm platforms like sc8280xp
+> (e.g. the Lenovo ThinkPad X13s which already benefits from the extended
+> DMA mask for ath11k).
 > 
-> -               if (!atomic_dec_and_test(refs))
-> +               if (unlikely(!atomic_dec_and_test(refs)))
->                         atomic_cond_read_acquire(refs, !VAL);
+>>> Note that the mask could possibly be extended further but unresolved DMA
+>>> issues with 64 GiB X Elite machines currently prevents that from being
+>>> tested.
+>>
+>> could you help elaborate how it could be extended?
+> 
+> The mask should reflect the capability of the device. That may be
+> 64 (or 40) bits, but I've only been able to test using 36 bits.
 
-If it could never happen then this should that condition be a 
-WARN_ON_ONCE() perhaps?
+are you talking about QCN9274? As far as I know, WCN7850 does not support 40 bits or more.
 
-Thanks,
+> 
+>>> Also note that the driver is limited to 32 bits for coherent
+>>> allocations and that there is no need to check for errors when setting
+>>> masks larger than 32 bits.
+>>
+>> why is it not necessary to check error?
+> 
+> The DMA-API documentation was recently updated to clarify that there is
+> no need to check for errors when settings DMA mask with 32 bits or more
+> as the call will never fail in that case. See commit
+> 
+> 	f7ae20f2fc4e ("docs: dma: correct dma_set_mask() sample code")
 
-	Ingo
+thanks for the info.
+
+> 
+> Johan
+
 
