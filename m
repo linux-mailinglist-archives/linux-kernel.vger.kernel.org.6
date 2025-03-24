@@ -1,211 +1,152 @@
-Return-Path: <linux-kernel+bounces-573148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9B0A6D393
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391C3A6D396
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0100916EC45
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFCB3A47A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4603A188736;
-	Mon, 24 Mar 2025 04:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A468A18893C;
+	Mon, 24 Mar 2025 04:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QjNeLFAa"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2088.outbound.protection.outlook.com [40.107.237.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUmsYPVU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CFF23A9;
-	Mon, 24 Mar 2025 04:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742791162; cv=fail; b=C+ZPwS/5DIJ3AUZ0sBtJVtLwVQIW88FVhYmsoy5cWEjUpEm+krlxllrAmMzRo7G29U+4QD8TclKdGZqHY78d06w8EmHB5+9WAAK+GIqWKJG8XR++f/Goqvs2t2XWX37w28T5EqkdFhTN5eeNhtcn6SnBDFghMGU/41sq+bKxZpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742791162; c=relaxed/simple;
-	bh=RsQRG511sCClcyuvYVZwjFWj6eQyA0WLLxm5tDP09Q0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rINLj/zVWuQAkFZrWlGpR0vIV7Hph73jctY1xiKrFT6xdRx9paskgMRhFmh4ZtzHbnTy7VsGGhotrZOJGTfhSdTHaY0ZtHxkilIWj/zIyF769MntS+6I3w841+RSCKjPRmdjjaSIWvHNn8a9ALiplMdxWrQkb6ap/eSBfvDRmkQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QjNeLFAa; arc=fail smtp.client-ip=40.107.237.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mO3gSAa7pS2T2EQ7LNak8WsQRfqKlq+vvdyRlFm7OVHoCZGrPiTv5g29HLgk83lf+2i771uqiGzme/fjC0cfRgsdLbj9pBg8E/A33S6oCaJEJHWtRjAEvhPNBOEMqE4OFXLQmV7ldprs+N4l7gpCqwuYFiheHNmzaG34xKP54rjwToGRkSA8r4G+QbXkzn5wfULOQ9SVPBJMgKoInxM/YijBiD79G1xUkjjbGz2ZHrDMjfsGCns+UaoaC/zHRt85zZkxBbAKUXh+hFRNtRqId16Q9qFW2IHUurPFEYJEu4UwPae/mmYZp2w3po21LO9vpNN/qnTsuWl6ObAudC98KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wQSI7cgVz9D2YpLW0/YzqnHOZ+osngT5+JuU3qcOq90=;
- b=lFq7tceVa+syYqO9SSs6luNxWecQ2upXB/wWo3JRa27sYlTvlJkAlDT+FacFcM2L4V8Mz6n3uDFtIyj7f+Bv23Zo1ZOZsyuXvoMi0uqWi0/v8UCCYPEyBUUyh0bnZD/8rVy7OUKiGMqhIkvxpwGBPDG9TDJYGJgWfv2RW3zoFN7m/5hhfb/yFiuL+adGs4mhT9oWm3Gal2tFglgRBL3N3kW1zNm92OB/u6DwL7pLUlOxEjv1m82IxyzmIPOU1Com05PX9b4/qCU8HERvyg5xBQrHYLnTiwpW4bE1qqPRzxjfs1j0LNYA7qbuoTn6DdQ/c4Pj1srs0nNZP32dahbMFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wQSI7cgVz9D2YpLW0/YzqnHOZ+osngT5+JuU3qcOq90=;
- b=QjNeLFAay8pEOYjW6ZGwK+cX5sAGi59NkLdKfK9DvDWqWbpwxEF8cS/SK12lEudIOuYVmILXevl7CqqO7jRhXZtmIfOa8D7uPmV2vR+hC70vrIy6M1FSrM13PvilnKUmVAq3r1hwr26h9zD3twn7wgNNF+f0yToUPWIGY7dKvdE=
-Received: from SN7PR12MB7201.namprd12.prod.outlook.com (2603:10b6:806:2a8::22)
- by DM4PR12MB5938.namprd12.prod.outlook.com (2603:10b6:8:69::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.42; Mon, 24 Mar 2025 04:39:14 +0000
-Received: from SN7PR12MB7201.namprd12.prod.outlook.com
- ([fe80::b25:4657:e9:cbc3]) by SN7PR12MB7201.namprd12.prod.outlook.com
- ([fe80::b25:4657:e9:cbc3%3]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 04:39:14 +0000
-From: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
-To: =?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>
-Subject: RE: [PATCH] PCI: xilinx-cpm: Add cpm5_csr register mapping for
- CPM5_HOST1 variant
-Thread-Topic: [PATCH] PCI: xilinx-cpm: Add cpm5_csr register mapping for
- CPM5_HOST1 variant
-Thread-Index: AQHblzn6K4uoE7dESU+9Ri50kCv+tbOAtgGAgAEIfnA=
-Date: Mon, 24 Mar 2025 04:39:13 +0000
-Message-ID:
- <SN7PR12MB720191752A36AD0C90E296528BA42@SN7PR12MB7201.namprd12.prod.outlook.com>
-References: <20250317124136.1317723-1-thippeswamy.havalige@amd.com>
- <20250323125101.GI1902347@rocinante>
-In-Reply-To: <20250323125101.GI1902347@rocinante>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=87ec4e40-ff6c-47f2-a653-e2ab2b2e33b4;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-03-24T04:37:39Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR12MB7201:EE_|DM4PR12MB5938:EE_
-x-ms-office365-filtering-correlation-id: 05e12d03-18a2-4606-c5a1-08dd6a8dd43d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?d8x7LOTFtB6AGszNMC1Wo9/+DxvLZPUW84Qp86CeCwHTsOGdlRSlXmWOB7?=
- =?iso-8859-2?Q?626Uk+SgFLnSvc91o9R/oaBGA6Iyipwm4tWgRpUeS+KxzQH7lHohjCRFjZ?=
- =?iso-8859-2?Q?vdtJsXP4Xvx4AMypf9NEvjRKp9g1T0q8KS58desj0feauV2TfVzzajT+kz?=
- =?iso-8859-2?Q?CFL9A4lkOKTBJCAtQga6jM72FyqTwjMk33kJU4F10xLxQmBA5IP4fFuNK3?=
- =?iso-8859-2?Q?ZOsK+bnfuTdama0ikWYUQliwv/MtozAJx1hqc0Bv+Z4xB0frYYJPfpmj6p?=
- =?iso-8859-2?Q?0x5UvsV23+OGRxt6DsoTbqbwZW1ce29I0EjkF/MHItts9Uo1dpOvrCCaJ7?=
- =?iso-8859-2?Q?Fd1L4Zf4u0Oeq0n8vkdw0WEvugj+Xslvy2vcl6g+p70+wT0kGh4UeYVCWu?=
- =?iso-8859-2?Q?Ig0f4lMAQDAxytOQuOGEwL/WU3DiuF5TqDRw13G7Y86O29/483GQmAt484?=
- =?iso-8859-2?Q?oL1mXBxv4YnUmLN1Wse5ImLluhf5zFp3ePqjcK7JCBZHiM8Yfga6DCVf0J?=
- =?iso-8859-2?Q?g0ApzsZefFeGLkn1cZVumzEpzusBZsiHEllot5CgVhLUvl5LmF32A1ara2?=
- =?iso-8859-2?Q?S18Xw94LIC5PXZQ/5RtQw33FbUMkdaPWxpy6ThYzgs72QvUaAVdZnAz/TB?=
- =?iso-8859-2?Q?qk1BBBr+DjPB3LsDi/RpJ8p0rhR488lKCC54TQbcqZdedqjTZwYZQJ+KmL?=
- =?iso-8859-2?Q?GWXRBiHDyw3UKbyfMP3V3k9PuyJyo4ftmaV4tyoXxRlSUi+k7GmYVcX5tx?=
- =?iso-8859-2?Q?6CB77H4ux/r9tjqhjLQvc034ksgI/DaUROJRdERnaTVQWADplQsbzwvDv3?=
- =?iso-8859-2?Q?+I7oijZtlUQVoKKhoagvhYuaFMzUHKd9TC3HVYtlwiA8RuHxaeNSsX/+9Q?=
- =?iso-8859-2?Q?Km83swVxCeoNJCsAhf9Q1GF9Z6bOoy2LwXzqJqURhD3U9svxoTOjWq4rNn?=
- =?iso-8859-2?Q?B1FSuFwa8C+cfQuy0XmIqVYbaLPdCbv3BJHiNUrDEDLrPgA6A91+qyaZ1a?=
- =?iso-8859-2?Q?e7RkZk4YNQTl1Gm82H/ZfW+3lZ7iyXsbdG0nWx0h7MmX5RgfxKoNMudL7/?=
- =?iso-8859-2?Q?8s8z+KShW7Cm9B47TJ4eLE3j227QCAjkL/KLvh+tod1+fDV8n4FX0G0+AO?=
- =?iso-8859-2?Q?pz7krTZQq9vmL+952mm8kZKEh7ftab6O6FNE2DzZdlU9/nVM+hc7c9RZnB?=
- =?iso-8859-2?Q?z7YXNWqxqnoA8EXZqg10e2dqQ3/SORLGOqzVuBX5ElsRg5M3yTMl7Ed3fd?=
- =?iso-8859-2?Q?nw/fTAFP0kH/mFhiewm1iDvangxC8W3kYyNPHp803jlzi2VhJ8m4O9N8Sz?=
- =?iso-8859-2?Q?pNGTi+W5C2Tc6d40Gc6KstoBxE5B0aUX8EF1jG+uNV57kNnmMDLGyURcBX?=
- =?iso-8859-2?Q?wJCs2PRUT8cVLBOUHrTvzWOL9k9gJhAB0lWCugKcyK1BklymUTy0zKn6xN?=
- =?iso-8859-2?Q?zn1zF5SivLdrAW45j02rTTxNZjmst733oxsz5gfXb6tjHnmPPCE1Rba/i5?=
- =?iso-8859-2?Q?Zuhu2l006QqHbbpZt7oVzJ?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB7201.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?rxdSft8au1vqjoeXSM0qJA02ITCCAMYrZZK0NbfUlv6+mFM6D6HpiVjlJ4?=
- =?iso-8859-2?Q?muX4HJ7mlAISSQ+7kIm/kyIOmwa4lYUw9dmEQ3FSIVfusnwJbs5bDNB5kq?=
- =?iso-8859-2?Q?JIP/ovxcPG2lb9H7NzDbcEmBID5MdD5iPgBVTJCUIJNTkbke8+vpTVlWW0?=
- =?iso-8859-2?Q?AtiwaL2Hm7lT9ExGSt5Pb5uWrCehEmxNzOurrvTYZP3OqAt0FuXQMJSMR+?=
- =?iso-8859-2?Q?5795up3EuD2U1fri85I1y+PDyv1NfTj/3XD6m2SKVtTQVaeI5Fep2okaUz?=
- =?iso-8859-2?Q?TaMPRgLobohbvkGti+YVqs+SP84Vakp4HVrfaBd1y/tsI45QJK4D3YLh0S?=
- =?iso-8859-2?Q?wwhFRbFCzdZhZgWAyxPZMlq2SoxwWdkfeFRQ4+rkeYJtYGqru3q7WjJjS6?=
- =?iso-8859-2?Q?YIGvoC/6IAflUP0luHnpC97WbD9d+AfbLdTrJ0ghpNmcR+nrqsUOHrrCXi?=
- =?iso-8859-2?Q?rLG6U14UdTWzgjHTMVIbLdKQhub62oOnQIV24hVRoakDdJsxWo4vAXSEma?=
- =?iso-8859-2?Q?4s5J7HPyx80pDpHbTrJExQbE01SDcn9CkB50zA7hNklM/WqI9LZ2cTzYxT?=
- =?iso-8859-2?Q?+3YafDK1HSLvJQy/i1LMp1i6TghwqQ2LKuSrMktY+N/8/SNoWZx0PeHoAy?=
- =?iso-8859-2?Q?Z+F5KsRnhQHfe1FWFuCtNschJ8Yqu4HOogF8LdlFXSO1hOfJqariYeLZ2h?=
- =?iso-8859-2?Q?X0IY/nOcxnv0WdKxGMTlq31RyOJy3YHRwcfO7R6qeqxvn+h3CO0GEZmVez?=
- =?iso-8859-2?Q?UeJKtmrViPHeQikgAZOhpjgs5CwpgRxFejw7i8Qaa5mrxsGeJStsgtTABt?=
- =?iso-8859-2?Q?pOFf1nwOYR+Tng4vGKootxLqg9SSZDYzlislXTbLONbDV0XK7UVAmXq/Dz?=
- =?iso-8859-2?Q?ucDgJDrdsQyIkh+/Pcr6UzHJWvFWeiLA3Sny3K6PNKuoyt3zeu92OVkJ+x?=
- =?iso-8859-2?Q?99XMUhM8UPrnl7MxlgpqazYp/MXpvj529VBTqRlbFwtkbf+DDKhEG6WWQL?=
- =?iso-8859-2?Q?0eBUoSpItzCOPc3U59ZAh5eEzV/QVNem9wNaQ9V/mueaIO+5qBWf1pfn2g?=
- =?iso-8859-2?Q?bGPbSy4yE8V8xdS2Sqorlil3y9AjqqOxnTVFXwKhMOJ35hdKP3iw8EFzul?=
- =?iso-8859-2?Q?ul1t6Q74efYcIAjNTKJBgye2m0Vr23HpndQhzJp3f742YAKSFmUDHTfAXD?=
- =?iso-8859-2?Q?NQ0+cy1gDfH4lA6lA3PSMbWLSOzQkqvPv2k7VUEclf5Xq+kuXuLyTW2fRb?=
- =?iso-8859-2?Q?Vc65R1rhTn4GJsM6judgSo/I+1JlzpVfI1Cpv/3rFmg9HaO6/qB9nDwMlg?=
- =?iso-8859-2?Q?4lV99fYxbNvr5Sq5WOgNDWfp0J5x04yMMQR2RcCoUOyDQf+j2R2XRWq+tF?=
- =?iso-8859-2?Q?wBg8dG6g/FsHPpvEnTHulaz8lr9rKDQoekT5Vop9PncqzX1WFvT/Dtcn6q?=
- =?iso-8859-2?Q?Dt2vOfRMTrxR61Aw3NExZpT/x0qIpSv64bwegU3xiTqbD7QyY0G4cpu85O?=
- =?iso-8859-2?Q?Gg6r3RapuV8Dr16Sqohot8BEtIHDeEyNUoFDJAoWgI1iZMU9QPxELQ9u5+?=
- =?iso-8859-2?Q?W5UuHC0P4tMOUQVkqm1sx7Jdn9W8lFEjHAedWM1K3FUnIFzh6S7BlivWhN?=
- =?iso-8859-2?Q?fJsnHaYWYJPGs=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD1217C98;
+	Mon, 24 Mar 2025 04:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742791192; cv=none; b=HtWbSDgq4yJFnOxcHjndGcy/ln1fLzPxqBS4YOfAwJoObbUE4nmlj7YqnxVdSAv7LFXcbF9jSMe/rUwCior/BP9eowkXq0D8wo/QX/XptGp+cnM2BmNakf2jTpEIYbgMgHdnK8SEJw/bGU5XWeNOSZGbQgpYIVovZpwq0ZLqiwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742791192; c=relaxed/simple;
+	bh=bLydqWjhM1B7vEwtHxkX/eEz4MhuQyQvlDU40xRN73M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oXDAbCGb9qyds2shF0z989Vt+ioyhomjkfhApsGaGIr0TXCCDQ+TziUtahmSAIBoO4MX45xZ5cNQ0vDojQKC0aF/UMzuR26flpjQpzVydZdrf8zyytowcWYqZ429bWsGEblV7XAh9FNjYf7i+HiaPe8zhEzdavd7qd8Ic0mUtJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUmsYPVU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2260c91576aso64568755ad.3;
+        Sun, 23 Mar 2025 21:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742791190; x=1743395990; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJiGMqARJ6F937zf06+BViA3Gv/CNPmEBgEvEBsQkgs=;
+        b=gUmsYPVU9po9E/LpXdxGzTQnnXOPu9o9JtPA5OEsZJtf/Dhb2TxBkoXv01VKx14mnp
+         yud39Z5cxEXZcuXf4KveK/tCJoMeWgWgZwt4xmOUst3smJN+dy3vHxHbb4LS/xa8vYQA
+         3Fz5hov7um7Sy6GZFns+8ZmK86KUC76+Pwdi9zfdMmhdtBlyUCtoWtg9aUjR9Bnr81xU
+         tmODLJwSVoM+Gh/tzrkR4KDXGqukEQqLVciSNs851shjnv4UW7Tec8XJqF6KJdJhYF5i
+         YWzA5DX46//M8V67F5rQJUk+yE6VZec165XUFzmhWhbAthQqXOrjsNFe3oqEV1aLJNLk
+         4IVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742791190; x=1743395990;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJiGMqARJ6F937zf06+BViA3Gv/CNPmEBgEvEBsQkgs=;
+        b=PvvnkeIWDGfVSaMbc8z25pcqubUnybQV7GEw/apG79K1S0s3CtJR1+4Tv0TteHcBsF
+         Uany8z6RbfF36FcqYTILZqKIp5X9ew8pt12uZL68N2ESkbaZ3gxcHK5cQ6zMkHPa3uxV
+         8BP4NESvh8MHS/116ZKrQwQOEzxli3VrBTX6HAp4r9sePEvRVWi9gjwc+E771d1qSct2
+         /A1zkFNpbP0VU8uquX86BuWUQiQ3HSWRm6SScfaKTeKmTsQC2a2eDSW4CIHTqZG5rsc+
+         RwnWKV/YzAzx1ukw6CYSGzXv4KLNtA9zm1hLksH40NHdTzxcT5ZPwmIy2uxUpq9CS1KU
+         y3yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY2BkdQX0l3FmjPhchC8jjIVs6giuMno4n9CxmgbJDX6DQMSJrMktBfwGd3dPrf7Ra/2tHse1Ry8fcIVIg@vger.kernel.org, AJvYcCWBl7o+vPxDu4IKXimxDXoxa1OtxOmKo5jvYkPnO2nBbshv9s9/b3AasECnbTB25+juG8/yzujUXQB+@vger.kernel.org, AJvYcCXcpzhU+HGOnzbR45PHuVZTEztrZ6r5W77mAD8hpYP+107Pbr/cby9SFD0JaKFeVzFgRk2a5p70cWM10Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpqrhUuBo/U/3Qk/MTVNr+BYm92jSS27QkT/xrPhEMdVO3tFzT
+	GycSbR7RaL9RVrUUy/OmQtdIp24pp+bs7la4McGid/CvzyXnuXR4ZKgmw3Pj
+X-Gm-Gg: ASbGncsr0lxZxC0/Hfa3qp2VouZU5hFj+BmyqZO9cv39htllXDDKZjXCbDAcqd6B3a6
+	2A2nqItb+4JENjgQ+hi5C669pWEVHeO2Z7u+CgUrqr5fOuBLnMfVSyNFahQYRY+gUDpAVj9PfQ0
+	m/T7BFkebjWPBNm9R1KJ5WNL8Pd3aIxYxux0t6EkOi015n5R0XIE4XHPqF/QZthhEBx0Czu16KE
+	K022In0DsEELSY6l6PHV/w214RtvjfVyltQnu16ZcUkye8tItFVPeib+3eBed13jr9YkgPu4xsP
+	drZOj+gEvYUOzi4rL2MdJ++DBbt8ukNAdp2KJvyxQf2BmWT9oEGh/A98iQ==
+X-Google-Smtp-Source: AGHT+IGbTLiSDc7gbbQyXlGf8FcXIjRfo066WaItNTko/ZQZu96X2tYhszKfkZBIoonNrCu7fcF8rw==
+X-Received: by 2002:a17:902:dace:b0:223:67ac:8929 with SMTP id d9443c01a7336-22780ba2de1mr188988655ad.0.1742791189368;
+        Sun, 23 Mar 2025 21:39:49 -0700 (PDT)
+Received: from localhost.localdomain ([27.70.184.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4619asm60822885ad.95.2025.03.23.21.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 21:39:48 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: krzk+dt@kernel.org
+Cc: pavel@kernel.org,
+	lee@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+Date: Mon, 24 Mar 2025 11:39:23 +0700
+Message-Id: <20250324043923.15276-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <2507f003-c4f1-44be-93cd-176697f0bc8c@kernel.org>
+References: <2507f003-c4f1-44be-93cd-176697f0bc8c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB7201.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05e12d03-18a2-4606-c5a1-08dd6a8dd43d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 04:39:13.9821
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AeekOSZm4ZFvilLN54DGeppf/k5z7CNy+pQZQS/j5jQ8FhDKQH5LCWk8g11zlHG2La0xeFE0sRkXKxjKEI9nww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5938
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On 18 Mar 2025 19:54:15, Krzysztof Kozlowski wrote:
 
-HI Krzysztof
+>> 
+>> In previous comment you have a question
+>>  "Why none of the 10 existing drivers fit for your device?"
+>> 
+>> Nam: I have carefully reviewed the existing LED drivers in the kernel, but none of them fully support the advanced capabilities of the LP5812. Unlike basic LED controllers, the LP5812 has difference features and register
+>> For more detail, please refer to this documentation https://www.ti.com/lit/ds/symlink/lp5812.pdf?ts=1741765622088&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FLP5812
+>
+>So you read my question and decided to not give an answer. Great.
 
-> -----Original Message-----
-> From: Krzysztof Wilczy=F1ski <kw@linux.com>
-> Sent: Sunday, March 23, 2025 6:21 PM
-> To: Havalige, Thippeswamy <thippeswamy.havalige@amd.com>
-> Cc: bhelgaas@google.com; lpieralisi@kernel.org;
-> manivannan.sadhasivam@linaro.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; linux-pci@vger.kernel.org; devicetree@vger.kernel.or=
-g;
-> linux-kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>;
-> Gogada, Bharat Kumar <bharat.kumar.gogada@amd.com>
-> Subject: Re: [PATCH] PCI: xilinx-cpm: Add cpm5_csr register mapping for
-> CPM5_HOST1 variant
->
-> Hello,
->
-> > This commit updates the CPM5 variant check to include CPM5_HOST1.
-> > Previously, only CPM5 was considered when mapping the "cpm_csr"
-> register.
->
-> The subject says "cpm5_csr" but here we say "cpm_csr", I think it's only
-> the latter?  Let me know, so I can update the branch correctly.  Maybe bo=
-th
-> things are correct.  I am just double-checking.
-Yes, You're correct, cpm_csr is correct one and not cpm5_csr.
+I am sorry, this was my mistake. I thought I only needed to update the source code based on your comments and submit a new patch.
+I will make sure to respond to your comments more promptly in the future.
 
-Thank you for correcting.
+>The burden of proving this is on you. Do not expect me to read this and
+>10 other datasheets for existing LP devices. Maybe they fit, maybe they
+>don't but based on style of this submission and style of the code I feel
+>you just want to push your patches instead of integrate.
+>
+>That's not how it works.
 
-Regards,
-Thippeswamy H
+I appreciate your feedback. I will provide a more detailed explanation rather than just linking the datasheet.
+
+LP5812 is a new LED driver family. LP5812 has different registers for new features such as run mode, config AEU module...
+These are not supported in the existing drivers, which are tailored for different device architectures or use cases.
+
+The LP5812 uses a register map and control scheme that differs significantly from other LPxxxx LED drivers.
+This required a custom implementation to manage device mode, select LEDs in each mode, configure autonomous AEU...
+
+Integrating the LP5812 into an existing driver would introduce significant complexity,
+as it would require modifications that could compromise the performance or maintainability of the existing codebase.
+Developing a dedicated driver ensures clean, maintainable, and optimized code.
+
+By creating a separate driver for the LP5812, we ensure that it can fully exploit its capabilities while maintaining compatibility with the Linux driver framework.
+This approach also facilitates scalability for future revisions of this or similar devices.
+
+>> 
+>>>
+>>> The driver is implemented in two parts:
+>>> - Core driver logic in leds-lp5812.c
+>>> - Common support functions in leds-lp5812-common.c
+>> 
+>> Why do you make two modules? This looks really unneccessary. Just compile them into one module. No, use proper kerneldoc Missing kerneldoc. Every exported symbol must have kerneldoc. Why this is not static?
+>> 
+>> Nam: I will merge source code into a file only. Therefore, I don’t need to export symbols here.
 >
-> Thank you!
->
->       Krzysztof
+> I cannot parse this. Use standard email quotes and replies. Like every
+> email client since 30 years.
+
+I apologize for the formatting issue in my previous response. I will ensure that my future responses follow standard email quoting for better readability.
+For my remaining unreadable responses, I will correct them and reply to the corresponding emails.
+
+Best regards,
+Nam Tran
 
