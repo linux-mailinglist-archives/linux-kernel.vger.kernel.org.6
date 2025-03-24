@@ -1,66 +1,96 @@
-Return-Path: <linux-kernel+bounces-574204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA4FA6E205
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:03:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C6AA6E203
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:02:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2833A2AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A492188A4DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC895263F42;
-	Mon, 24 Mar 2025 17:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669226136C;
+	Mon, 24 Mar 2025 18:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="PBL5wDwg"
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Vnvp6Cyv"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2047.outbound.protection.outlook.com [40.107.96.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E399450;
-	Mon, 24 Mar 2025 17:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742839049; cv=none; b=Hxx/0ZAl7EnOUEMIpBa+lJpaBDebyw9+SLR4Khg3g211trMLrPPwPsgZzMIEjHSYrT9iiRQSKNUIREReudqj32iV0qxnqzaxKunUvI9TZ4dgawvsVt90P6UZf+Mep+X3/tPebBxdc+L1KmoKLL2NGbQarJFFqRUPu+7Ijk4uNKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742839049; c=relaxed/simple;
-	bh=NWMa0LZi+vB8RiQmxqV47sxMrBDDPBMaWAHnbcE9oBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hY8XCr8Kg/6FkYJlpkM4LdoNkzIcbG5dCTzeKskURSuP20MnIOLfFC6kIZtTeQLRLDbqTtIOAuEUweC58GiJbzRB82/Mz2oN4eQ/XCXIXSmla8YyGI/attkZE7JHfRotEaNOxETD8MdINfpxh50Dw67GwYiPtvMkti/jL/kzWAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=PBL5wDwg; arc=none smtp.client-ip=178.154.239.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:4795:0:640:c576:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id C05DB46D06;
-	Mon, 24 Mar 2025 20:57:14 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id CvSVLw4LiqM0-RnaISLm5;
-	Mon, 24 Mar 2025 20:57:14 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1742839034; bh=f0JglIfLdiJdCiELGSM17hESlAkEOahyf16djTIKSYU=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=PBL5wDwg7MAbXY6t78q8y4M1UiOLqiX617xviqHqJ2ktIE/d3tDeMXk/wm0aHN50V
-	 3ZohWMKB6dxSCAGPydPlTZ37jGToShxnfpU0e0WQpPgnLeLm3mbNSKJWgA8eMptyiK
-	 130MFmmr8WJp16rc+sai/9YGhgTxj9lKB9h2NtG0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Mikhail Lobanov <m.lobanov@rosa.ru>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mikhail Lobanov <m.lobanov@rosa.ru>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] KVM: x86: forcibly leave SMM mode on vCPU reset
-Date: Mon, 24 Mar 2025 20:57:07 +0300
-Message-ID: <20250324175707.19925-1-m.lobanov@rosa.ru>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C082641DB;
+	Mon, 24 Mar 2025 18:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742839209; cv=fail; b=Rf9Re8W4pwzYU7bE+WMwcMlL2vinMKINuNmM7cdZTCmrHKsbkL0h8dw1AsUelNR3rZ8dBJG16TnJruZV5ywvaQ38GERnq8QrmOynek0Oiy/mdODQBa1e5pamV9PO2tmfGHUxe5JAXgvtd4a0vg58YI5h+7Xzgb+q2Z4zx3gwcZg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742839209; c=relaxed/simple;
+	bh=ZiEUW2tpqFK48GU5nnL/1PlWIC+qW2P1CPrxGLQFL0E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VtdGOQd5Eg4MZQJ77WWmpGjHeo9v+trTjJhD7RLZfX/ulO3nSPLYMAQx/2T136eeQSenuqYwuVXkei8nIp6m+G40tn0m2PMxH1MFOrZDma7gu9KoSYuU/9zKoW697/SaK24MQaRTNobthVxcv68f9dfhBKICBrg32Krp1/Dab4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Vnvp6Cyv; arc=fail smtp.client-ip=40.107.96.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Fq2O88h3dWOTAPbNIw8ihjrhQiakR2oYlsjMjdqIXaCWxL/Tl/dR5VVXooBRvumZdav5ObnhxMd5w0oXVH8YCTRcciMlkVmIUnoLj+NWO3gmkRHOtb0lBDXb0D9urIjFSJ8LQ6kj4iF5LvYm/cgdJhqoMy/K+xYvglfuCD9ZQkAr8SPZLmYvebdIP9SU4I1A9jIbSBRTAbQ/MgtFqSK4AcnGKGIgbvzY0Dl2DvurdQRskqFHdFEt49HZnV3DerNlIvYtY17OpPmDkh6f0H3hbnN26jJ2yKgm6yPuiqtReAGXaAHdC05yr2bBLAruR/ME9yAq1qgatGr8bs5l2CuzMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GL1cDUKammEDDEoDXUXIeXN5sXVckvBTNfoMp3lq6zE=;
+ b=caBD4hHoRcsSZzuxNCLw9Um7xTC2qC9iz9voANLQLL4++WzA+D7RIzEzSww7+QpjfepH6ZdNi5tLBsa07A+hAWChZ5i3ly+UFMxCHo5zofyqCvkni+5eiIXTuGVNUAiGwEqKrseWwXjiIkYmKzpNtG33LpoB5pMGA+O+c7qLVBzGm+vMeUgMsSTuybnn5jKt6vUXoKJzRfR1B8i+LtkHAGCtAPbCPoLin+CtejHbpv7HTY4vYat9cGRBgEP6peak+XyYOI8u1+kwtnwZTMXHY0QfCmrEdWgtTM0pFZzpPIxG0E+VTOaXUozq3tz3Rf932lLmUHWANJLryE/4IiQZHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GL1cDUKammEDDEoDXUXIeXN5sXVckvBTNfoMp3lq6zE=;
+ b=Vnvp6CyvgzHug4zNyOLUG8uqgDe2kGmqvJ399X3eqjVF7iVSDZjIZRofUyMjm0uNYl5ecSRpmtb4XCxsCSuS8tc6BNhN1Qvmr4PNRq7h3Vzb/UhDQItr/tftZcEh1ukHsZhKhaTJpGvmW6wt4whnMsVjcWuGNc0vXxdrNCKpcYHg6kXLDy8Mkpa4ATE7jtxJ7lbQRaGtQJilj4GoTyHRfuwhElj0jh6h6y6kKFYOccJDP8t8oH5Q83b6eBMtbz736OlX5Wn0mjV1DXAhVddFlLhuaHfKRctooAfMUcy5H6VAeQMQ3HjrfMvIYYqVI4c6ElaBlbGuIaKyeyN1hEfhXg==
+Received: from CH0PR08CA0025.namprd08.prod.outlook.com (2603:10b6:610:33::30)
+ by PH8PR12MB7206.namprd12.prod.outlook.com (2603:10b6:510:226::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 18:00:00 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:33:cafe::5a) by CH0PR08CA0025.outlook.office365.com
+ (2603:10b6:610:33::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Mon,
+ 24 Mar 2025 18:00:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 18:00:00 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
+ 2025 10:59:40 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
+ 2025 10:59:40 -0700
+Received: from willie-obmc-builder.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 24 Mar 2025 10:59:39 -0700
+From: Willie Thai <wthai@nvidia.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <kees@kernel.org>,
+	<tony.luck@intel.com>, <gpiccoli@igalia.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+	<openbmc@lists.ozlabs.org>
+CC: <wthai@nvidia.com>, <leohu@nvidia.com>, <tingkaic@nvidia.com>,
+	<dkodihalli@nvidia.com>, Mars Yang <maryang@nvidia.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Paul Menzel
+	<pmenzel@molgen.mpg.de>
+Subject: [PATCH v4 0/3] Add device tree for Nvidia's GB200NVL BMC
+Date: Mon, 24 Mar 2025 17:59:23 +0000
+Message-ID: <20250324175926.222473-1-wthai@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,79 +98,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|PH8PR12MB7206:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4610913d-2193-4d91-e885-08dd6afdb21d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RkjAp5mIzXgNN6JgfJcf6Krt3n2IdbDOf0YByYK4tVtKqiKqPx4wcl0kUC5f?=
+ =?us-ascii?Q?BauOBAwg7dOuvNfjZOIS8qouw/x+tJTWYOpfSnS1EscN/4fFuc4vFwaxf+uL?=
+ =?us-ascii?Q?j8W6xYM3N4ckxGEnQEPfDjd1xO4snLxabg6C36Unl8BRFmZM4p5tkQCTQuBV?=
+ =?us-ascii?Q?IhIdSTRxKgpUaZUpNQXW3zX1TrqM0AQMEumi1YbXgdz5f6fzBQUXFCJZHnkn?=
+ =?us-ascii?Q?FI1fmVKCaq1u1zMPCDmRf8p62Ny0ZCFW9eNDy41f39HUqkKG4RwLZhhhO7fN?=
+ =?us-ascii?Q?R3VApvyTIG6RfCIa/w8rLtIljfStVf0Ok+eANZn9Y4NAU5PIvDFx/Kc0pt9R?=
+ =?us-ascii?Q?DRa2QHVCVJxh+KyJ2sJ4/RLL4rx2qICOmNzpA7TVKJ9ts0lYVLI9DqsKcdMp?=
+ =?us-ascii?Q?DIo6BNe2cP2YY6IDpS+alcG0FBSLLk8CzMPYcJhOFnhq2aCJuoYPskC0qj7s?=
+ =?us-ascii?Q?oUyUhD87uNDqjajlMbno9tIDbMXtfUx86wISM0EE1NOnv8CrO+HYwYXnOK6K?=
+ =?us-ascii?Q?o7RrQIWxU6fYYX1rU7IY4AB9PctfisBMz6h0EAAaLNvPTWV1jiEuOkQABzqO?=
+ =?us-ascii?Q?QRJ8NmHWEZLodeEV1REbomzdYi2vpsqI6LfY9p9LdZsj4nLggcTNIzJsuLQe?=
+ =?us-ascii?Q?/kFYMY7DU1I7wXvuq6HD0Rumij0dr/uaYH49lbD3m/Vy/5Uomg9NINktJgy4?=
+ =?us-ascii?Q?LQRqzcaq1DfvYxXpshI3iEvz7m69EwQLmHSZryPPRyHz2SEjl1DfynSeDWul?=
+ =?us-ascii?Q?Gh74AGbW0p4LW4TzdLn1zyhusoDU1KxYM9Lty/M/tlPnaymxJ7IHHzHfINk9?=
+ =?us-ascii?Q?92RyqagO1H1b+ruCZIA+AdsSpWKXMvmrmmf5MaKgN/wzhC0xeF3dZBlkjygw?=
+ =?us-ascii?Q?kMk67V1W2zlbSBSvqmnCzeHpfHSsPuiCLRzeUVFYko2tqAy2FGraeprKJaA7?=
+ =?us-ascii?Q?OeXWWTZjyBSRTxUhgIAj9FAbzazaHe+c3u98PQ+uI5Y6xAU12J4ouD4UuIHW?=
+ =?us-ascii?Q?DUIAI08vZ0h4ow4DKvJJ7k14jz3pec1J28EZABcdYp+a2uowpH5Uji/7f9hl?=
+ =?us-ascii?Q?myd3gcYVXEhAPYhukcFMqavKLVETwSwVt3WNDYEE1jRefu8qD4Sob+wQeVE+?=
+ =?us-ascii?Q?ToEBt4q8hd2PRbrrb6q57lSZNfyimw5CIweABxVMvWqeDEWSipGlIiJmcsdz?=
+ =?us-ascii?Q?jnPzIIWDcqiG2xPKcE2Ho3BJCL5Amfe8YqsGWPWg4OE9JigB+rgi5xljnaLr?=
+ =?us-ascii?Q?M1mq9rOyevlKgk9a7+fPP9zOvB3mFYxs04JGsXZF0gxe1mCChKdOCtttPQ8T?=
+ =?us-ascii?Q?Kw1i/nu749Gid0/SsKHlcOokwfWR733IdXIpYtsonqD2goyhaNeTrg8/LpUo?=
+ =?us-ascii?Q?cMdsJzL513Rze14gabRZVxpehswIQnSV6WWxcG24CysuEIqVqMm6UM7OtnxW?=
+ =?us-ascii?Q?6vAGDPphibdzaH46qMJlnc/GsGc5lk+eTa10ULJvhzq0APuLsZf4WiSrqGHQ?=
+ =?us-ascii?Q?2H7HOloNfeVpJ1/HwQ4pMQ5JWcYQ3kG5iGgP?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 18:00:00.2646
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4610913d-2193-4d91-e885-08dd6afdb21d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7206
 
-Previously, commit ed129ec9057f ("KVM: x86: forcibly leave nested mode
-on vCPU reset") addressed an issue where a triple fault occurring in
-nested mode could lead to use-after-free scenarios. However, the commit
-did not handle the analogous situation for System Management Mode (SMM).
+The GB200NVL BMC is an Aspeed Ast2600 based BMC
+for Nvidia Blackwell GB200NVL platform.
+Reference to Ast2600 SOC [1].
+Reference to Blackwell GB200NVL Platform [2].
 
-This omission results in triggering a WARN when a vCPU reset occurs
-while still in SMM mode, due to the check in kvm_vcpu_reset(). This
-situation was reprodused using Syzkaller by:
-1) Creating a KVM VM and vCPU
-2) Sending a KVM_SMI ioctl to explicitly enter SMM
-3) Executing invalid instructions causing consecutive exceptions and
-eventually a triple fault
-
-The issue manifests as follows:
-
-WARNING: CPU: 0 PID: 25506 at arch/x86/kvm/x86.c:12112
-kvm_vcpu_reset+0x1d2/0x1530 arch/x86/kvm/x86.c:12112
-Modules linked in:
-CPU: 0 PID: 25506 Comm: syz-executor.0 Not tainted
-6.1.130-syzkaller-00157-g164fe5dde9b6 #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.12.0-1 04/01/2014
-RIP: 0010:kvm_vcpu_reset+0x1d2/0x1530 arch/x86/kvm/x86.c:12112
-Call Trace:
- <TASK>
- shutdown_interception+0x66/0xb0 arch/x86/kvm/svm/svm.c:2136
- svm_invoke_exit_handler+0x110/0x530 arch/x86/kvm/svm/svm.c:3395
- svm_handle_exit+0x424/0x920 arch/x86/kvm/svm/svm.c:3457
- vcpu_enter_guest arch/x86/kvm/x86.c:10959 [inline]
- vcpu_run+0x2c43/0x5a90 arch/x86/kvm/x86.c:11062
- kvm_arch_vcpu_ioctl_run+0x50f/0x1cf0 arch/x86/kvm/x86.c:11283
- kvm_vcpu_ioctl+0x570/0xf00 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4122
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x19a/0x210 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x35/0x80 arch/x86/entry/common.c:81
- entry_SYSCALL_64_after_hwframe+0x6e/0xd8
-
-Considering that hardware CPUs exit SMM mode completely upon receiving
-a triple fault by triggering a hardware reset (which inherently leads
-to exiting SMM), explicitly perform SMM exit prior to the WARN check.
-Although subsequent code clears vCPU hflags, including the SMM flag,
-calling kvm_smm_changed ensures the exit from SMM is handled correctly
-and explicitly, aligning precisely with hardware behavior.
-
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Fixes: ed129ec9057f ("KVM: x86: forcibly leave nested mode on vCPU reset")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
+Co-developed-by: Mars Yang <maryang@nvidia.com>
+Signed-off-by: Mars Yang <maryang@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Link: https://www.aspeedtech.com/server_ast2600/ [1]
+Link: https://nvdam.widen.net/s/wwnsxrhm2w/blackwell-datasheet-3384703 [2]
+Signed-off-by: Willie Thai <wthai@nvidia.com>
 ---
- arch/x86/kvm/x86.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes v1 -> v2:
+  - Fix the SOB name [Krzysztof]
+  - Fix warnings from scripts/checkpatch.pl run [Krzysztof]
+  - Fix DTS coding style [Krzysztof]
+  - Move pinctrl override to the bottom [Krzysztof]
+  - Drop bootargs [Krzysztof]
+  - Follow DTS coding style and change naming for leds node [Krzysztof]
+  - Change flash 0 status property [Krzysztof]
+  - Change the phy-mode to rgmii [Andrew]
+  - Remove the max-speed in mac0 [Andrew]
+  - Put gpio line name in one line per group of 8 gpios, but keep some b/c they can exceed length limit [Paul]
+Changes v2 -> v3:
+  - Fix missing new line [Krzysztof]
+  - Fix missing binding define, adding it in the patch no.1 of this patch set v3 [Krzysztof, Rob]
+  - Fix DTS coding style [Krzysztof]
+  - Modify nodes name to generic name for: i2c expander pca9546, gpio expander pca9555, power monitor lm5066i, fan controller max31790 [Krzysztof]
+  - Skip mac setting and wait till the delay issue in phy-mode fix from Aspeed SOC vendor side [Andrew]
+  - Remove i2c-scl-clk-low-timeout-us which is Apseed proprietary property [Mars]
+Changes v3 -> v4:
+  - Order binding patch first in the patch set [Andrew Jeffery]
+  - Make the commit message more concise [Krzysztof]
+  - Remove stray blank lines [Krzysztof]
+  - Remove unnecessary comments [Krzysztof]
+  - Remove underscore, repalce by dash symbol in node name [Krzysztof]
+  - Remove disable-master property in i2c as it is downstream added property [Rob, Andrew Jeffery]
+  - Remove #address-cells, #size-cells in nxp,pca9555 and maxim,max31790 as they are no longer defined [Rob, Andrew Jeffery]
+---
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 4b64ab350bcd..f1c95c21703a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12409,6 +12409,9 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
- 	if (is_guest_mode(vcpu))
- 		kvm_leave_nested(vcpu);
- 
-+	if (is_smm(vcpu))
-+		kvm_smm_changed(vcpu, false);
-+
- 	kvm_lapic_reset(vcpu, init_event);
- 
- 	WARN_ON_ONCE(is_guest_mode(vcpu) || is_smm(vcpu));
+Willie Thai (3):
+  dt-bindings: arm: aspeed: add Nvidia's GB200NVL BMC
+  dt-bindings: pinctrl: aspeed,ast2600-pinctrl
+  ARM: dts: aspeed: Add device tree for Nvidia's GB200NVL BMC
+
+ .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |    1 +
+ arch/arm/boot/dts/aspeed/Makefile             |    1 +
+ .../aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts | 1149 +++++++++++++++++
+ 4 files changed, 1152 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts
+
 -- 
-2.47.2
+2.25.1
 
 
