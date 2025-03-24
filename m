@@ -1,176 +1,129 @@
-Return-Path: <linux-kernel+bounces-574171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE87A6E190
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:52:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25276A6E177
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390D03AF648
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0712316AC5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C8264627;
-	Mon, 24 Mar 2025 17:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B093265CBF;
+	Mon, 24 Mar 2025 17:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3o+whsa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="aJxFE3Z+"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11902641FC;
-	Mon, 24 Mar 2025 17:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E137262815;
+	Mon, 24 Mar 2025 17:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837803; cv=none; b=IbH+fgsIO/hv40/bYyZbodU7GOIAfiJmjSTp8drXcdgXc/KhBodDOC09e3veNDKKKw1dIvKBZRJq5HnnpJs5HEjK3VWNhlYl4x6FvSoPR/1/lZGOQ5v/EZNkCLM2zNDE7PvVxqRWST4AzruZsqiCw8KEv/3mrrCoQ0U5PiupLJ8=
+	t=1742837822; cv=none; b=uKCWr6ocimRny7tt/L/o2SRdXaSLw83Td2yvQetCZVCBevfkYZrJ0sODOeBsOyKsQGkFy5aMc9OwAWPoEIoD5sbI6l6B+fybs1+oVDzQUQSDuJknax3BzYl6hUAImLZMOSubS42vLmsORCHbSgXRPUaXYgDgv4r+9cZIWW1ARUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837803; c=relaxed/simple;
-	bh=+25jEvHEESNINi6+64Bl9j1NggULgv81xjHU1aPWSZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cXVvMsWbnj1j6bZDr0Bg2+SFqVp9G2f0Ynsy4NJfoqzR5cGjbb4Qb9+oRg2p0lZEH7xCNs/g2Ypk6TxuEIRvRDnWqtvB2EOX7tAVef7Win06l9Y06GOFbVsbFerXARx2YlBBvlqyUriJxWVybG0xTW+fUJevSP+IGhe+CxZA30g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c3o+whsa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B7C2C4CEDD;
-	Mon, 24 Mar 2025 17:36:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742837802;
-	bh=+25jEvHEESNINi6+64Bl9j1NggULgv81xjHU1aPWSZk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c3o+whsa46fydE3RC51ZYro7T5XNgIaZ977VtUfZ9kehOn5JgAF2hBgCkWdBcWi2E
-	 sj2sJZoRk2S+gO8LEm9wNyV64H0OLwtsnpNvoP6bTRWVWmiAEV1/C/LJEHDrLJVJqH
-	 m7WAj/jr8+5xsenFS++9IW1GaGJGTYYLsCXT0OV+KuXtSxwYYktT9SLgPZL2J5UnJQ
-	 75c1tsr/PwMjkN5ErXSPI13fWMOkZT7YLTlw5a49UNjMsqVNZw0+iNhoytr6GaKrIi
-	 8Rz0N2FLXWqiS+vIEcoj8Kh74XC9iN+PXZCJbzbG1F41nomVcfsZYwt5QeGkuZwNwg
-	 k0ODsGse/rVHQ==
-Date: Mon, 24 Mar 2025 17:36:41 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Wei Liu <wei.liu@kernel.org>,
-	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>, kys@microsoft.com,
-	haiyangz@microsoft.com, decui@microsoft.com
-Subject: [GIT PULL] Hyper-V patches for 6.15
-Message-ID: <Z-GYKSuytHh-Weas@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1742837822; c=relaxed/simple;
+	bh=pr+TErMsVxDlfkiS5MHu/5LIlKend1IEbpzReT3WRCs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kajCA8wnUcf/9Zum6aWdfhp47Un8kRymG4e/gKQnqMGkv7p58tqzSodFEnU5Cz+3A5ao7xDbBV4tL56p4OYbYLgaS4hAcEfUK78cykeA63oVDKJT40bCSvWW2Z5fuafzdVuSx2Ff/INefxhXpPj7rJoD4WGqVEi6dPOti9ixbm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=aJxFE3Z+; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742837812; x=1743097012;
+	bh=gzjWOjpOta91XnfdGX5MvAMkuzEnujIhqjARpEPjTIo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=aJxFE3Z+1qsqYa3hVJ+gBJHED1dcKaiGpxcPPASqawq7u9fCjBjapsb5WGUMFycMj
+	 I/OUrTVXk78LCc7c9XCkoRuCttvY/jd+9oSgWYxmBS+RNQnk8jEQ6JX4qgvnQfXvDx
+	 s+ImhioG9IujYnHdT4pOPrdVoc9tsOjqNn3urNqJX495wQ83BuXeaPgRh5n7zQATB7
+	 +fgar0I4BpwxMH8LlpexwncDpnGctNqumtgLr7ZAhr+P3+Z6lCfR8nFqlNt6Xe9PLO
+	 t5rGfkzHzqVebkMBjHsCJePn3RRm/7D+JI1jKhAuRX15tGoyuIDNY35ch3Ingow1oV
+	 yUSNuW+WGM/xw==
+Date: Mon, 24 Mar 2025 17:36:45 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
+In-Reply-To: <Z-GNDE68vwhk0gaV@cassiopeiae>
+References: <20250321214826.140946-1-dakr@kernel.org> <20250321214826.140946-3-dakr@kernel.org> <2025032158-embezzle-life-8810@gregkh> <Z96MrGQvpVrFqWYJ@pollux> <Z-CG01QzSJjp46ad@pollux> <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me> <Z-GNDE68vwhk0gaV@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9c1e69920ada344c286ef23456f72788df8f151c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
+> On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
+>> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
+>> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
+>> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
+>> >> > Along these lines, if you can convince me that this is something th=
+at we
+>> >> > really should be doing, in that we should always be checking every =
+time
+>> >> > someone would want to call to_pci_dev(), that the return value is
+>> >> > checked, then why don't we also do this in C if it's going to be
+>> >> > something to assure people it is going to be correct?  I don't want=
+ to
+>> >> > see the rust and C sides get "out of sync" here for things that can=
+ be
+>> >> > kept in sync, as that reduces the mental load of all of us as we tr=
+avers
+>> >> > across the boundry for the next 20+ years.
+>> >>=20
+>> >> I think in this case it is good when the C and Rust side get a bit
+>> >> "out of sync":
+>> >
+>> > A bit more clarification on this:
+>> >
+>> > What I want to say with this is, since we can cover a lot of the commo=
+n cases
+>> > through abstractions and the type system, we're left with the not so c=
+ommon
+>> > ones, where the "upcasts" are not made in the context of common and we=
+ll
+>> > established patterns, but, for instance, depend on the semantics of th=
+e driver;
+>> > those should not be unsafe IMHO.
+>>=20
+>> I don't think that we should use `TryFrom` for stuff that should only be
+>> used seldomly. A function that we can document properly is a much better
+>> fit, since we can point users to the "correct" API.
+>
+> Most of the cases where drivers would do this conversion should be covere=
+d by
+> the abstraction to already provide that actual bus specific device, rathe=
+r than
+> a generic one or some priv pointer, etc.
+>
+> So, the point is that the APIs we design won't leave drivers with a reaso=
+n to
+> make this conversion in the first place. For the cases where they have to
+> (which should be rare), it's the right thing to do. There is not an alter=
+native
+> API to point to.
 
-Hi Linus,
+Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
+trait to me is a sign of a canonical way to convert a value. So if it
+shouldn't be used lightly, then I would prefer a normal method. Even if
+there is no alternative API, we could say that it is unusual to use it
+and the correct type should normally be available. This kind of
+documentation is not possible with `TryFrom`.
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+For a user it won't make a big difference, they'll just call a method
+not named `try_from`.
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+---
+Cheers,
+Benno
 
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-next-signed-20250324
-
-for you to fetch changes up to 628cc040b3a2980df6032766e8ef0688e981ab95:
-
-  x86/hyperv: fix an indentation issue in mshyperv.h (2025-03-21 22:41:56 +0000)
-
-----------------------------------------------------------------
-hyperv-next for 6.15
- - Add support for running as the root partition in Hyper-V (Microsoft
-   Hypervisor) by exposing /dev/mshv (Nuno and various people)
- - Add support for CPU offlining in Hyper-V (Hamza Mahfooz)
- - Misc fixes and cleanups (Roman Kisel, Tianyu Lan, Wei Liu, Michael Kelley,
-   Thorsten Blum)
-----------------------------------------------------------------
-Hamza Mahfooz (3):
-      cpu: export lockdep_assert_cpus_held()
-      drivers/hv: introduce vmbus_channel_set_cpu()
-      drivers/hv: add CPU offlining support
-
-Michael Kelley (1):
-      x86/hyperv: Add comments about hv_vpset and var size hypercall input args
-
-Nuno Das Neves (14):
-      hyperv: Move hv_current_partition_id to arch-generic code
-      hyperv: Move arch/x86/hyperv/hv_proc.c to drivers/hv
-      hyperv: Convert hypercall statuses to linux error codes
-      hyperv: Change hv_root_partition into a function
-      hyperv: Add CONFIG_MSHV_ROOT to gate root partition support
-      hyperv: Log hypercall status codes as strings
-      arm64/hyperv: Add some missing functions to arm64
-      hyperv: Introduce hv_recommend_using_aeoi()
-      acpi: numa: Export node_to_pxm()
-      Drivers: hv: Export some functions for use by root partition module
-      Drivers: hv: Introduce per-cpu event ring tail
-      x86: hyperv: Add mshv_handler() irq handler and setup function
-      hyperv: Add definitions for root partition driver to hv headers
-      Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs
-
-Roman Kisel (2):
-      x86/hyperv: Add VTL mode emergency restart callback
-      x86/hyperv: Add VTL mode callback for restarting the system
-
-Stanislav Kinsburskii (1):
-      x86/mshyperv: Add support for extended Hyper-V features
-
-Thorsten Blum (1):
-      hyperv: Remove unused union and structs
-
-Tianyu Lan (1):
-      x86/hyperv: Fix check of return value from snp_set_vmsa()
-
-Wei Liu (1):
-      x86/hyperv: fix an indentation issue in mshyperv.h
-
- Documentation/userspace-api/ioctl/ioctl-number.rst |    2 +
- arch/arm64/hyperv/hv_core.c                        |   17 +
- arch/arm64/hyperv/mshyperv.c                       |    6 +
- arch/arm64/include/asm/mshyperv.h                  |   13 +
- arch/x86/hyperv/Makefile                           |    2 +-
- arch/x86/hyperv/hv_apic.c                          |    5 +
- arch/x86/hyperv/hv_init.c                          |   35 +-
- arch/x86/hyperv/hv_vtl.c                           |   34 +
- arch/x86/hyperv/irqdomain.c                        |    6 +-
- arch/x86/hyperv/ivm.c                              |    2 +-
- arch/x86/hyperv/mmu.c                              |    4 +
- arch/x86/include/asm/mshyperv.h                    |    8 +-
- arch/x86/kernel/cpu/mshyperv.c                     |   40 +-
- drivers/acpi/numa/srat.c                           |    1 +
- drivers/clocksource/hyperv_timer.c                 |    4 +-
- drivers/hv/Kconfig                                 |   17 +
- drivers/hv/Makefile                                |    4 +
- drivers/hv/hv.c                                    |   94 +-
- drivers/hv/hv_common.c                             |  198 +-
- {arch/x86/hyperv => drivers/hv}/hv_proc.c          |   27 +-
- drivers/hv/mshv.h                                  |   30 +
- drivers/hv/mshv_common.c                           |  161 ++
- drivers/hv/mshv_eventfd.c                          |  833 +++++++
- drivers/hv/mshv_eventfd.h                          |   71 +
- drivers/hv/mshv_irq.c                              |  124 ++
- drivers/hv/mshv_portid_table.c                     |   83 +
- drivers/hv/mshv_root.h                             |  311 +++
- drivers/hv/mshv_root_hv_call.c                     |  849 +++++++
- drivers/hv/mshv_root_main.c                        | 2307 ++++++++++++++++++++
- drivers/hv/mshv_synic.c                            |  665 ++++++
- drivers/hv/vmbus_drv.c                             |   54 +-
- drivers/iommu/hyperv-iommu.c                       |    8 +-
- include/asm-generic/mshyperv.h                     |   72 +-
- include/hyperv/hvgdk_mini.h                        |   83 +-
- include/hyperv/hvhdk.h                             |  132 +-
- include/hyperv/hvhdk_mini.h                        |   91 +
- include/linux/hyperv.h                             |   57 +-
- include/uapi/linux/mshv.h                          |  291 +++
- kernel/cpu.c                                       |    1 +
- 39 files changed, 6514 insertions(+), 228 deletions(-)
- rename {arch/x86/hyperv => drivers/hv}/hv_proc.c (90%)
- create mode 100644 drivers/hv/mshv.h
- create mode 100644 drivers/hv/mshv_common.c
- create mode 100644 drivers/hv/mshv_eventfd.c
- create mode 100644 drivers/hv/mshv_eventfd.h
- create mode 100644 drivers/hv/mshv_irq.c
- create mode 100644 drivers/hv/mshv_portid_table.c
- create mode 100644 drivers/hv/mshv_root.h
- create mode 100644 drivers/hv/mshv_root_hv_call.c
- create mode 100644 drivers/hv/mshv_root_main.c
- create mode 100644 drivers/hv/mshv_synic.c
- create mode 100644 include/uapi/linux/mshv.h
 
