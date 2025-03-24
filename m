@@ -1,181 +1,155 @@
-Return-Path: <linux-kernel+bounces-573630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557F3A6D9FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:20:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD297A6D9FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E723A3AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3052016B91A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B71725E80B;
-	Mon, 24 Mar 2025 12:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8696A25E81C;
+	Mon, 24 Mar 2025 12:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCR9NCUH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="rDbmyv6v";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="WKaMpdNi"
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EA825E457
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E9D25C71A;
+	Mon, 24 Mar 2025 12:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742818827; cv=none; b=vDth9c96jodJIon9i2Ub7rkwJSoCRfaJru2RBrlNrjedNJupRGbBWH7nmvQKzmaB2x4cZ0RmaIpSDVXtfFvZoQyvMHce93wRQnQddvfxqIv4hnZ/uKMHVbDNUxeLSBkjBuGn5IScHxZ9/dpshOalsLSooTeIOMdKGgKg1aDDKcU=
+	t=1742818879; cv=none; b=N6IOCfX3WFpaNRt2DJrqIM4bYwv1Yvcp6LAvqX3+BwPDwQQyAUfiDGatYv+WzUAcKJkIEkg2yC++rqzFWZQ2aWCuDuLkUFOeialKrU8fGLL6jMVdXXQBpMRpm4ImRkXmdYjMSPcaiK3oCYaH6gFHEnJUoiywx3aMcKmBtLVZ3HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742818827; c=relaxed/simple;
-	bh=h6EXQtOMm1giDo9FOnn5Hqk0DnGCyR67Eox8XU5ZNHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d52h3WY675LFvUpkv+pyoR6qrVipSEfPmCyUei1VaOpep9kDtM2C20AZMeoi7pj0iqkMZZXplY/dhnfSBDuT32LAumbLwWRk3BZ9giaF+kpYKnnNCYvP3l3ZnYP9ckDhvzziFiL538mjD6UPPmY5FhvlZDtdYS8DWq+deTbDRyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCR9NCUH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742818824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vBvMUUbkMLRaYqxLSSI92c3hpwamAvh7kByiodVp/2g=;
-	b=NCR9NCUHYYSTt0sGSSJm1R8m3+Wd2RvZu0g0zbDgJgB/4FfICVepVhQr3GoDG5Ik3KcEgA
-	PtynMQXrwaLwzTf0GTvLwtO1p2wy+WWuzsruJ3Gpr4EZoj3d8eH7SoB6UGbnj0mYUr8mIB
-	Wv9hPPFTyRfmKICxmgVzGZvr8RbyGNo=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-MEXIjrfLMEu718BoUnTYwQ-1; Mon, 24 Mar 2025 08:20:23 -0400
-X-MC-Unique: MEXIjrfLMEu718BoUnTYwQ-1
-X-Mimecast-MFC-AGG-ID: MEXIjrfLMEu718BoUnTYwQ_1742818822
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac297c7a0c2so326061866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:20:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742818822; x=1743423622;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vBvMUUbkMLRaYqxLSSI92c3hpwamAvh7kByiodVp/2g=;
-        b=jyHCd291Q1vPmhmL4lLS4N4FoUGWllbv0OG6WYFa0NsTGzLosZcOhgWbNATW6NjYyN
-         EREmfkskuK9kMCk2z0ST/HmgLXaKf9e8gpVNdPu4MPL2fkdMon8CxHE4fR/UAEeJnIEE
-         kNFmHGyx0dyA6s0WbOgBvvJE6tOJkZsIs8Yc7dRwTAiBeqH5wLnHUd082IWXjDgHtCvp
-         spojQ58sSpDgo8hKKlY0pMTe0UJTMRUfzmUAcCnI0MdRyHXWkhbkrbaR3ZVW0ROsq6Hb
-         ApIwvCT0eXYRSdHCFaUFsAV6pOIE4tQ68jAliSUW99Kz0R6Vbn60KfjBiwxvSek6DHuN
-         YoDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjvizR01R98RYtSdKyXIL/RAD/0IE366ztY3FOW8f1FuPKV6YE6z8K8py2tMy/iSbtAeW6mKxQzb0hXzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziuRCjtTx56cSYYVI0fuLM5HRJZe/PxNafG88wSciFK5PJcFHh
-	RPZI6wg3WiLIrsvLnGsvljBKVClecJGgeKRsFTxKgpx8KaIxtDaRGkQeo0noMvRFEDgj/A/Q+ej
-	26HO7EGFIRIsLpPPkQe73dNHvHUk+2EEKZZfGeDoU12qAeC3rG62/dKtsMvcOnA==
-X-Gm-Gg: ASbGncsHsRLb1yrrZZaSEBTo670GgNKc/x2IrzCclrwZjKy9UUavz+sycmECOWJa0md
-	UxzGiC5q3LkacUWiDbqwpwjGdG+YECHlfc/yXy9WPEB8Y+ruT9nTgtqI3Zl1yLVG2EaIIVf61wk
-	ZA0PNTRybCZICq2fGG40Z+/x5X3TdBzaFlxtN+txzJfZiSTXp/ICanz9mJvAwP5oVfEIYskWeH6
-	gZ00WErgVz5tX35EDXp4McbYr2Nbt7gqH9jyLTbqGiHmFCMfynGkiOhi3CVHIJyt2MPugS7S6H1
-	8HRW8nt+EG8XQfRHIJQ=
-X-Received: by 2002:a17:906:f59d:b0:ac2:344:a15e with SMTP id a640c23a62f3a-ac3f229ce3cmr1090886466b.22.1742818822010;
-        Mon, 24 Mar 2025 05:20:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdipAoepu1nHwUhR/99bUNdfsf56iHHtxs7QMKyzshA4SqzjR1onmN3GV4yX3QhxM4Rn8h/Q==
-X-Received: by 2002:a17:906:f59d:b0:ac2:344:a15e with SMTP id a640c23a62f3a-ac3f229ce3cmr1090882366b.22.1742818821496;
-        Mon, 24 Mar 2025 05:20:21 -0700 (PDT)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbded04sm671995466b.142.2025.03.24.05.20.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 05:20:20 -0700 (PDT)
-Message-ID: <ba25c7e1-5031-48d1-a1f8-1b25d57856f5@redhat.com>
-Date: Mon, 24 Mar 2025 13:20:20 +0100
+	s=arc-20240116; t=1742818879; c=relaxed/simple;
+	bh=9gpFd8EFx60nBxNFMoV0usv+BAC3zxeWfcnDeFxbqxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sQhubFdBeacUp73R60WjnnBA1v/GRkhizmKOtPiTchOgymwWD8O6YM7Tv5g8vppIbwixN1TS40s5CVYV7kZmv8614RX9bSIL7l72ljJ4vcVNJCPG0iduq5e/vfnYnQZ6FIAiSdVoNv1mpmmrFafy3D7syr1jKT/NwIC213DYZJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=rDbmyv6v; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=WKaMpdNi; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id B3637EC59FA;
+	Mon, 24 Mar 2025 05:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742818874; bh=9gpFd8EFx60nBxNFMoV0usv+BAC3zxeWfcnDeFxbqxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rDbmyv6vIYVR4mO3RtZFWbK2+WP/H3WVLmsa5FJ9uNKgtGEb+SL3kMQo4Fnv4nVHf
+	 wmOyvW81EIWY2wwa6lRqcnC7SrSFjU8+56R2qa9PNSGBE9GUAGJp7bfUKbsSiuezMM
+	 +HGX90qUPKmNEsaoMroHF+qzA8ksiYt0pfdGVmNyKX9Sm6oDI87CCQsF3cPE7P8Cci
+	 SdMlddqRc9LMcXW76hxh02VTKMw2QtXC7mKPxC1GsGzmmL/yNK77y5a6h8yep5Nvvb
+	 K7+oISqlEPE2XiUFtAo73s/ej8k5uNvtKueS+OraDQK/7XwtAbBk5gC2jQe6jd7KnV
+	 svZwHSRWFsyRQ==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id GSqTSPtA-cE2; Mon, 24 Mar 2025 05:21:13 -0700 (PDT)
+Received: from ketchup (unknown [183.217.80.115])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id A56AEEC59F0;
+	Mon, 24 Mar 2025 05:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742818865; bh=9gpFd8EFx60nBxNFMoV0usv+BAC3zxeWfcnDeFxbqxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WKaMpdNisRVneY5YjfL44Z9h1qM+1S/RZ/juY/PjwDLMi8svonxhF8S65hOXoZT4n
+	 Yeh7TYUS5Bgl/2Q6CBHJ09DUIZhAjsfRKEG1jCTNwqzTC+AWoYWmZHOiXdsPzhSEnr
+	 3aAPSl+cZ6eEz8SZoopFeidMCnwhq24C85M9qyy1FT/qt9wEYxJaWzXHB/762GkWkH
+	 OOK4riQLivvaYP+ECV2jv9AT0iiaDPwwTINBtsSCyncm5081eJL+SdciOvReu9hXj9
+	 pvvtu5hQQVQHcKS8GHN7Rlkod1B8eyr4/Anmn3uXRK+nKHivgiYlhn+v4ZOGBMBfvp
+	 wSYqGy8b5Osng==
+Date: Mon, 24 Mar 2025 12:20:52 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, p.zabel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	guodong@riscstar.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 3/7] clk: spacemit: add reset controller support
+Message-ID: <Z-FOJFHOsU_dLkmS@ketchup>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-4-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Added support for a some new buttons in ideapad-laptop
- driver Added entries to unsuported wmi codes in ideapad_keymap[] and one
- check in wmi_nofify in order to get wmi code 0x13d to trigger
- platform_profile_cycle
-To: =?UTF-8?Q?Ga=C5=A1per_Nemgar?= <gasper.nemgar@gmail.com>,
- ikepanhc@gmail.com, "Peter F. Patel-Schneider" <pfpschneider@gmail.com>
-Cc: ilpo.jarvinen@linux.intel.com, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20250321083003.84661-1-gasper.nemgar@gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250321083003.84661-1-gasper.nemgar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321151831.623575-4-elder@riscstar.com>
 
-Hi Gašper,
-
-Than you for the new version.
-
-On 21-Mar-25 09:30, Gašper Nemgar wrote:
-> Signed-off-by: Gašper Nemgar <gasper.nemgar@gmail.com>"
-> ---
->  drivers/platform/x86/ideapad-laptop.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+On Fri, Mar 21, 2025 at 10:18:26AM -0500, Alex Elder wrote:
+> Define ccu_reset_data as a structure that contains the constant
+> register offset and bitmasks used to assert and deassert a reset
+> control on a SpacemiT K1 CCU. Define ccu_reset_controller_data as
+> a structure that contains the address of an array of those structures
+> and a count of the number of elements in the array.
 > 
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 30bd366d7..a03377d87 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1308,6 +1308,16 @@ static const struct key_entry ideapad_keymap[] = {
->  	/* Specific to some newer models */
->  	{ KE_KEY,	0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
->  	{ KE_KEY,	0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
-> +	/* Star- (User Asignable Key) */
-> +	{ KE_KEY,	0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
+> Add a pointer to a ccu_reset_controller_data structure to the
+> k1_ccu_data structure.  Reset support is optional for SpacemiT CCUs;
+> the new pointer field will be null for CCUs without any resets.
+> 
+> Finally, define a new ccu_reset_controller structure, which (for
+> a CCU with resets) contains a pointer to the constant reset data,
+> the regmap to be used for the controller, and an embedded a reset
+> controller structure.
+> 
+> Each reset control is asserted or deasserted by updating bits in
+> a register.  The bits used are defined by an assert mask and a
+> deassert mask.  In some cases, one (non-zero) mask asserts reset
+> and a different (non-zero) mask deasserts it.  Otherwise one mask
+> is nonzero, and the other is zero.  Either way, the bits in
+> both masks are cleared, then either the assert mask or the deassert
+> mask is set in a register to affect the state of a reset control.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 93 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+> 
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index f7367271396a0..6d879411c6c05 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
 
-Still ack,
+...
 
-> +	/* Eye */
-> +	{ KE_KEY,	0x45 | 	, { KEY_BRIGHTNESS_CYCLE } },
+> +static int
+> +k1_rst_update(struct reset_controller_dev *rcdev, unsigned long id, bool assert)
+> +{
+> +	struct ccu_reset_controller *controller = rcdev_to_controller(rcdev);
+> +	struct regmap *regmap = controller->regmap;
+> +	const struct ccu_reset_data *data;
+> +	u32 val;
+> +	int ret;
+> +
+> +	data = &controller->data->data[id];
+> +
+> +	ret = regmap_read(regmap, data->offset, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val &= ~(data->assert_mask | data->deassert_mask);
+> +	val |= assert ? data->assert_mask : data->deassert_mask;
+> +
+> +	return regmap_write(regmap, data->offset, val);
+> +}
 
-According to:
+I don't think it's safe to write the regmap based on a value read
+earlier without the regmap's inner lock held: it's totally fine for the
+clock part to issue an update of the register at the same time. Without
+knowledge on it, reset code may rollback the clock bits written by clock
+code earlier to the original value. That's why I keep using ccu_update()
+everywhere and dropped ccu_write().
 
-https://ardes.bg/uploads/original/lenovo-yoga-9-2-in-1-14-g9-550178.jpg
-
-there already is brightness up/down on Fn + F5 / Fn + F6, so I would just
-map this to a free (not used elsewhere on the keyboard) KEY_PROG#.
-
-> +	/* Performance toggle also Fn+Q */
-> +	{ KE_KEY,	0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
-
-I would make this KE_IGNORE with a comment that this is handled
-inside the driver, following how this is done for the 0x02 / 0x03 keycodes:
-
-        /* FnLock (handled by the firmware) */
-        { KE_IGNORE,    0x02 | IDEAPAD_WMI_KEY },
-        /* Esc (handled by the firmware) */
-        { KE_IGNORE,    0x03 | IDEAPAD_WMI_KEY },
-
-
-> +	/* shift + prtsc */
-> +	{ KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
-> +	{ KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE } },
-> +	{ KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
->  
->  	{ KE_END },
->  };
-> @@ -2093,6 +2103,12 @@ static void ideapad_wmi_notify(struct wmi_device *wdev, union acpi_object *data)
->  
->  		dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
->  			data->integer.value);
-> +				
-> +		/* performance button triggered by  ...  */
-> +		if ((data->integer.value | IDEAPAD_WMI_KEY) == 0x13d ) {
-
-You can drop the  | IDEAPAD_WMI_KEY here and just write:
-
-		if (data->integer.value == 0x3d) {
-
-> +			platform_profile_cycle();
-> +			break;
-> +		}
->  
->  		/* 0x02 FnLock, 0x03 Esc */
->  		if (data->integer.value == 0x02 || data->integer.value == 0x03)
-
-Regards,
-
-Hans
-
-
+Thanks,
+Haylen Chu
 
