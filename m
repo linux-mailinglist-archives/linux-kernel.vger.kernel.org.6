@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-573232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D225A6D48C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10C2A6D48E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:06:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E27D07A5036
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E131188A0F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564212500DA;
-	Mon, 24 Mar 2025 07:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5672505A5;
+	Mon, 24 Mar 2025 07:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O7IVSesG"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zh3xaXRJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B91D27442
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FDF24F599
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742799832; cv=none; b=Sa/A3XKwuCffXX051DiviOPwvMeK1zjl/BirJGVi6Buy2CpWAvz/kk/nQXZfISyoTl8PPkPle8ENduxQvZ0vRjKiQfg4JhD3h552S4jq/9d58h6f699SrgZgPVWwtss4TZtTIgnk5i3X/EwcmyInKEWG6oq3zuaPeqrF9MQWfWc=
+	t=1742800004; cv=none; b=UuM4ZxISWSDJPFviWst5ccW0YRpQ3P6OEZ+lR9ZV6u7B/thkIm3nWuiZPfNJcOZ9eT3sS+mxFi9oM7WKG7cctZ3X42/o72Z0n2eLCWEzILiLv5Qr5iH8oCUzHBq1iRvegNcM1/QRl6iUztZ0KUPQPTFqoE4g+3DE+xHxTpsoxeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742799832; c=relaxed/simple;
-	bh=8v6DXp8VVOZAcngvnmztj2dWVJSSmculyyNSAPiBw8c=;
+	s=arc-20240116; t=1742800004; c=relaxed/simple;
+	bh=JNeEAtWEz/shAbHDBMxqR7YafgsvRHXKdLCDlFyIwZI=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JAS9mju8aw+1nLaKMnH8xPZyGNk7zuo/6yfhBC42S8jJSSKa4qa7j5nA5aYZQbBEMOy3T1pEE3IAfJb0xIl+HYjlsE/Jm3R/kq9HiHveI4jk/U4xArGX7lK3tI1GxnrifkQNRVlpd2XasOJRq61ShPEpi98UJEL5zh6Hxa0kLG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O7IVSesG; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:Content-Type; b=qM2VGfeVPrBGGERnadvzUCREc83yAXAx68OoVGVgGgX1FUW3OpblcArCh4YQUJoLPUStnlecCgGfQT5s7j6/hqDkJXH7Kc+c7tHQK1rLJf7WXt2i8w75n5QhR2DvzSrIUfQUUPaJuRmwF84B7V9aBN2wkjEFGw8QrCQd1dyq/3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zh3xaXRJ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3995ff6b066so2240865f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:03:50 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0618746bso25750475e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742799829; x=1743404629; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742800001; x=1743404801; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=evKoye4qr3e2esDEjAClgjzYt25iik3YDkZA93sVcVQ=;
-        b=O7IVSesGqV4yJQfbE6gPZ9GAgCnNEcr5vsWiA00HOvgqKm9fyzz0g45q87gzJjCA+o
-         dotSwfVv7JZ/0rKU3kau29eW+3Xg+w4Tm3jjtbFqFvgYd/oWsg4XGyfsq+nIwVJ/cWUS
-         e/RQXeUO30/WKdjqz+Qz19O7gAtLRdhCYi0XPBg0Z3U8CEAX+AHgdOo8MVo9Pr0eMwFb
-         DKTmqvanIKC9nVv9CiQIEDwD6oYxyRljSiQ3n7r67Gcf8KzON1YIwNqSCAuUjn4JVbix
-         alTtlrqF+Wp+NbErEt2SeavINe7pt8FqnMPKIZcO87uWaxgDSRrrsuvLyBescd99NHx5
-         mZvw==
+        bh=qnmDKnt+3x8rZ4oEZN/cwh/A9C0xUNyVpIFqNNgq/qA=;
+        b=Zh3xaXRJEBvug8U5PA88andDcn0ZqQV7ubPtzcfah8yH9pDD4PhSaKDnznjV1V+fdR
+         Xersy9lvD8WrRBzcuKGknm0HFra+2m7z/fLd1NtbEj1pt/ubJUIWDlhe3Y0OaFFfsNb0
+         i6EQZDulslJ99jFx8fcVDyl+4/B2uWdPzPzH64/sQvR45D4XuUimJHHzylEIjMvFe+s9
+         20HsQLzGXlb2JopcwauPCWEI3hns0fwrh11d/1XeMqk1Sqz+ceDL441bfH1fV65yeoQx
+         YgyVfIoBjOTKQ3tKypoVXJmRYoQHlTUlPBkRgrHW4gvkQetSc+7KJW1f8NCfrATfgBjt
+         rD2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742799829; x=1743404629;
+        d=1e100.net; s=20230601; t=1742800001; x=1743404801;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=evKoye4qr3e2esDEjAClgjzYt25iik3YDkZA93sVcVQ=;
-        b=EHwL9Fm2xRj92pxBRIXxjfZmdqiWfxUm4HEQAklxje2siXIMxbyrcs3x3xpOSuS+Is
-         v3L9qNNaMrNTD9cim0hI5at00cmHTsDPSm8mgukUrDZHrTwDx75EV/SbkFVTfGI/7HW+
-         cbBG/x3WIBQBlLxX9DfvF+GbR6HBLHQczZbtnIml1pdNuhpM2iBhCaPG/9yN1DK2l/vs
-         v/00C3xOHmI7iF+NEM+07YITZvo7Jyv8TSLtAMCYGCGy7+TFVAroN7yrGXjudLMWx+89
-         Zumsof2PZmu0eT40kj78kJbI0yBq3QIgd4EMq2Zo3GXZV8XgYITOryGepi+FHpw5Ztu5
-         C6NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSvgtjZ43sfaIEYPShxn1Y+nO74MFl0aVm+8m3Vs/fVOiMf+HgVHsf+li3vGl3AyjSnQeZsqgZ+9GudTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9g+fd8MwrONIrRFO6HxiJTBLkOmly1gqONLOgGt1RP8vqLAxt
-	E/acFNe6F6SNvGaQa7P9QTAVZJYLYbtzZR58SM0gTcXIEDSxor+b3UEgTu+kvYg=
-X-Gm-Gg: ASbGncta8PHzjvZiPMIvRQZyli+obcQzZF/YCKzAkPZiJ3v3d9Z3aCqVvZ+ohd3zebK
-	MKbn/OXg8IA7XuY3kv6IenWTCR5j1EaFjQr9ct3XHLBLAXA6zmunU1xE29JmU5o0cYN73qOIRpF
-	P0Mu/og5SjOxVhLlb70JomoyuL1bavL8RXuspwHOUU0UGlcwBfDO6nbHo4WSv2Fj8KMmSn05OGt
-	3f6fp9Z+QHw4DS0EKz0Jh+WF0E98Yh7B86380OaU8PHrRBSOZpAWQdorlCQnnJ8V+GwOozD7TUD
-	r6ruxbMGq/VSYy5ijA90mKI1Z/qYirsWY0u+DIcNYfgE1AQvJt3o+e67wfICLKGPMsWmOJSTRYu
-	ql9QF4gBXeFgGnjo7
-X-Google-Smtp-Source: AGHT+IFrItb54fv7OtyWO3JUfvqB/p+6ybKUl5+PzXmwRlD5DkQF8OviAn1ax7qXq3VcP+u5iINy8A==
-X-Received: by 2002:a5d:5f96:0:b0:391:2fe3:24ec with SMTP id ffacd0b85a97d-3997f91072amr9832062f8f.14.1742799829315;
-        Mon, 24 Mar 2025 00:03:49 -0700 (PDT)
+        bh=qnmDKnt+3x8rZ4oEZN/cwh/A9C0xUNyVpIFqNNgq/qA=;
+        b=wyhr/09J1kBKhNtjrY2fdoJRiwvUSUU5SF7p8bS1JjqE62aZ9oce6kTEwnmCSejTkA
+         0pIVtA44yKvOkyuBBwgNmzPf4W7wG4+lgAjH8CDJ8OB7AHHQp8ntazYqMXe++E2moMnY
+         dbgTsoCntK551nwQ+7zMDOSalqi+b74EwJLHZ07fLRcryl8I4+g7xbEAWW8bot4zjINK
+         zHPpCOiGxcdXeRa1JuZR3ZFrkOirh3IgVsoDJgxdaQK3FtD1vteA0MxExH2E3E4bxb4j
+         Mc6pE2cyaFaLxYIkP5d7gDvwqcavj7ZdaK4OeAryfx0jXmABQorOLUMqlQGlzVgRT4Td
+         7tpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdvkmY1NL0mm9kmxqwatZd3des1YIZuVLP2xbWAOCa8wZP8kjpy7zws4sMk8xqJ7WVJRh7N6XGkJUob4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzraGX1H+K7yEiEpBTy+OZpRowpweSHjdMeyfHRY3WYMi770RB
+	iNNBzymnjDAWNSiSW6wqVp7xlvGVeyzwFJ+PqvrjWdUaVL0L4lkxkldM+4rClBnJhITgnXTwXoz
+	c
+X-Gm-Gg: ASbGncvmphg0nNv8LfYJhwebwwIOfiAUKlGBUhc9y9lpYLXtJYoL/OFQ6vJAj/8jAFF
+	0Ca6b2O+ZL9biyGFZCxtPk9EE87ZeQUTa1MAPqCym6yz/P6x20CHwodGYKK1xW8HsMM21I3j/nq
+	xXd0zeORn2ABXECy33xEbVpUWQuvEj2ifxUUVLi2GXwyW2wKa6GR6Isgojup+t2wkm1mxUMjk5T
+	wfkoC/sglKr2XcITnFwi013BFCR3YN6ieFtXqKg2w7FCVeeB0YcwV1nUn3pzOJC+3tL1ML+Yw/Y
+	wR273XW4AtshqR4lk5ii2weYhxuYtiioBo/E45gTOS3ZXcyMSq3jWLInQ/xxXg8cuhGtmltC4fd
+	5brRiHGSewBDSyJsercIuyIfLSUs=
+X-Google-Smtp-Source: AGHT+IEb+RllboZvRFdgVsQATpGzqRiQIUj/XZMAGqa20bkDRnSgciaHkWRmRX6hFu38Os+eZIOsfw==
+X-Received: by 2002:a05:600c:34cc:b0:43c:efed:732c with SMTP id 5b1f17b1804b1-43d50a3c1d4mr97177875e9.28.1742800000709;
+        Mon, 24 Mar 2025 00:06:40 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:a356:8d0:d4d:bb5f? ([2a01:e0a:3d9:2080:a356:8d0:d4d:bb5f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b5939sm10243311f8f.60.2025.03.24.00.03.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9957aasm10173629f8f.10.2025.03.24.00.06.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 00:03:48 -0700 (PDT)
-Message-ID: <88dbbf6e-7886-4261-ac46-55738156a5fb@linaro.org>
-Date: Mon, 24 Mar 2025 08:03:48 +0100
+        Mon, 24 Mar 2025 00:06:40 -0700 (PDT)
+Message-ID: <e01d48c6-287b-476a-b5ca-de670375561d@linaro.org>
+Date: Mon, 24 Mar 2025 08:06:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,21 +86,17 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 2/2] arm64: dts: amlogic: add support for
- xiaomi-aquaman/Mi TV Stick
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Ferass El Hafidi <funderscore@postmarketos.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Jerome Brunet
- <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Artur Weber <aweber.kernel@gmail.com>, Karl Chan <exxxxkc@getgoogleoff.me>,
- Christian Hewitt <christianshewitt@gmail.com>
-References: <20250319190150.31529-2-funderscore@postmarketos.org>
- <20250319190150.31529-4-funderscore@postmarketos.org>
- <CAFBinCArRO-F59tOv9m27f+DV+qhy69OGUunGOAbDdfOdd5_Xg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] arm64: dts: amlogic: Add A4 Reset Controller
+To: kelvin.zhang@amlogic.com, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Zelong Dong <zelong.dong@amlogic.com>
+References: <20250320-a4-a5-reset-v5-0-296f83bf733d@amlogic.com>
+ <20250320-a4-a5-reset-v5-2-296f83bf733d@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -126,57 +123,150 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <CAFBinCArRO-F59tOv9m27f+DV+qhy69OGUunGOAbDdfOdd5_Xg@mail.gmail.com>
+In-Reply-To: <20250320-a4-a5-reset-v5-2-296f83bf733d@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 19/03/2025 23:36, Martin Blumenstingl wrote:
-> Hello,
+On 20/03/2025 10:42, Kelvin Zhang via B4 Relay wrote:
+> From: Zelong Dong <zelong.dong@amlogic.com>
 > 
-> thanks for your contribution and sorry for the late reply!
+> Add the device node and related header file for Amlogic
+> A4 reset controller.
 > 
-> On Wed, Mar 19, 2025 at 8:02 PM Ferass El Hafidi
-> <funderscore@postmarketos.org> wrote:
-> [...]
->> +       au2: analog-amplifier {
->> +               compatible = "simple-audio-amplifier";
->> +               sound-name-prefix = "AU2";
->> +               VCC-supply = <&vcc_5v>;
->> +               enable-gpios = <&gpio GPIOH_5 GPIO_ACTIVE_HIGH>;
->> +       };
-> I couldn't find any pictures online that show an analog audio output
-> (typically a 3.5mm socket).
-> Can you confirm that this is really present?
+> Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
+> Link: https://lore.kernel.org/r/20240918074211.8067-3-zelong.dong@amlogic.com
+> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/amlogic-a4-reset.h | 93 ++++++++++++++++++++++++++
+>   arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi    |  8 +++
+>   2 files changed, 101 insertions(+)
 > 
-> [...]
->> +       sound {
->> +               compatible = "amlogic,gx-sound-card";
->> +               model = "XIAOMI-AQUAMAN";
->> +               audio-aux-devs = <&au2>;
->> +               audio-widgets = "Line", "Lineout";
->> +               audio-routing = "AU2 INL", "ACODEC LOLN",
->> +                               "AU2 INR", "ACODEC LORN",
->> +                               "Lineout", "AU2 OUTL",
->> +                               "Lineout", "AU2 OUTR";
-> If there's no analog audio in/out then this section can be cleaned up
-> as well - together with the references to acodec in the dai-links
-> below.
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4-reset.h b/arch/arm64/boot/dts/amlogic/amlogic-a4-reset.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f6a4c90bab3cf7cfaa3c98c522bed5e455b73bd3
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4-reset.h
+> @@ -0,0 +1,93 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __DTS_AMLOGIC_A4_RESET_H
+> +#define __DTS_AMLOGIC_A4_RESET_H
+> +
+> +/* RESET0 */
+> +/*						0-3 */
+> +#define RESET_USB				4
+> +/*						5-6*/
+> +#define RESET_U2PHY22				7
+> +#define RESET_USBPHY20				8
+> +#define RESET_U2PHY21				9
+> +#define RESET_USB2DRD				10
+> +#define RESET_U2H				11
+> +#define RESET_LED_CTRL				12
+> +/*						13-31 */
+> +
+> +/* RESET1 */
+> +#define RESET_AUDIO				32
+> +#define RESET_AUDIO_VAD				33
+> +/*						34*/
+> +#define RESET_DDR_APB				35
+> +#define RESET_DDR				36
+> +#define RESET_VOUT_VENC				37
+> +#define RESET_VOUT				38
+> +/*						39-47 */
+> +#define RESET_ETHERNET				48
+> +/*						49-63 */
+> +
+> +/* RESET2 */
+> +#define RESET_DEVICE_MMC_ARB			64
+> +#define RESET_IRCTRL				65
+> +/*						66*/
+> +#define RESET_TS_PLL				67
+> +/*						68-72*/
+> +#define RESET_SPICC_0				73
+> +#define RESET_SPICC_1				74
+> +/*						75-79*/
+> +#define RESET_MSR_CLK				80
+> +/*						81*/
+> +#define RESET_SAR_ADC				82
+> +/*						83-87*/
+> +#define RESET_ACODEC				88
+> +/*						89-90*/
+> +#define RESET_WATCHDOG				91
+> +/*						92-95*/
+> +
+> +/* RESET3 */
+> +/*						96-127 */
+> +
+> +/* RESET4 */
+> +/*						128-131 */
+> +#define RESET_PWM_AB				132
+> +#define RESET_PWM_CD				133
+> +#define RESET_PWM_EF				134
+> +#define RESET_PWM_GH				135
+> +/*						136-137*/
+> +#define RESET_UART_A				138
+> +#define RESET_UART_B				139
+> +/*						140*/
+> +#define RESET_UART_D				141
+> +#define RESET_UART_E				142
+> +/*						143-144*/
+> +#define RESET_I2C_M_A				145
+> +#define RESET_I2C_M_B				146
+> +#define RESET_I2C_M_C				147
+> +#define RESET_I2C_M_D				148
+> +/*						149-151*/
+> +#define RESET_SDEMMC_A				152
+> +/*						153*/
+> +#define RESET_SDEMMC_C				154
+> +/*						155-159*/
+> +
+> +/* RESET5 */
+> +/*						160-175*/
+> +#define RESET_BRG_AO_NIC_SYS			176
+> +/*						177*/
+> +#define RESET_BRG_AO_NIC_MAIN			178
+> +#define RESET_BRG_AO_NIC_AUDIO			179
+> +/*						180-183*/
+> +#define RESET_BRG_AO_NIC_ALL			184
+> +/*						185*/
+> +#define RESET_BRG_NIC_SDIO			186
+> +#define RESET_BRG_NIC_EMMC			187
+> +#define RESET_BRG_NIC_DSU			188
+> +#define RESET_BRG_NIC_CLK81			189
+> +#define RESET_BRG_NIC_MAIN			190
+> +#define RESET_BRG_NIC_ALL			191
+> +
+> +#endif
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
+> index fa80fa365f13c4a93f5577f78bf2b3369cb91cb8..6537153b3026af1bf9d1df0a196619b716553cde 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi
+> @@ -4,6 +4,7 @@
+>    */
+>   
+>   #include "amlogic-a4-common.dtsi"
+> +#include "amlogic-a4-reset.h"
+>   #include <dt-bindings/power/amlogic,a4-pwrc.h>
+>   #include <dt-bindings/pinctrl/amlogic,pinctrl.h>
+>   / {
+> @@ -51,6 +52,13 @@ pwrc: power-controller {
+>   };
+>   
+>   &apb {
+> +	reset: reset-controller@2000 {
+> +		compatible = "amlogic,a4-reset",
+> +			     "amlogic,meson-s4-reset";
+> +		reg = <0x0 0x2000 0x0 0x98>;
+> +		#reset-cells = <1>;
+> +	};
+> +
+>   	gpio_intc: interrupt-controller@4080 {
+>   		compatible = "amlogic,a4-gpio-intc",
+>   			     "amlogic,meson-gpio-intc";
 > 
-> [...]
->> +/* Wireless SDIO Module (Amlogic W155S1 / Realtek RTL8821CS) */
->> +&sd_emmc_b {
-> question to Neil: since we know that there's two board variants out
-> there (with different wifi chipsets) - are dt overlays down the road
-> enough (to enable Bluetooth / wifi - depending on the chipset or board
-> revision) or do we need to split the whole .dts?
 
-Perhaps yes
-
-Neil
-
-> 
-> 
-> Best regards,
-> Martin
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
