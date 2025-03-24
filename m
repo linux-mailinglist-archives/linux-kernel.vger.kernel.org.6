@@ -1,163 +1,126 @@
-Return-Path: <linux-kernel+bounces-573861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1BFA6DD47
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:44:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17D2A6DD49
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78FCD188D94C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C783A98C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C016125;
-	Mon, 24 Mar 2025 14:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000FD2628C;
+	Mon, 24 Mar 2025 14:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8sKAZ2+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqsnhrgl"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEC125F999;
-	Mon, 24 Mar 2025 14:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D873B7A8;
+	Mon, 24 Mar 2025 14:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827485; cv=none; b=Cw19fMKroZzK9tRYNgs6si2NtTsoUE03QuQMZS4EGdFG23tS+li8ra6Y+RzOLx3VQjvyB8xjidHax+kefmbAzD6qyNO6FVvYh2wXXxkiXwtNAcCPAag4d5gVG2WRflqjUnuipWjZLPoQLqzSgSJuEuFUFZWqdOE7naLqhGurzHs=
+	t=1742827548; cv=none; b=iE3GQCVIG2CyVKlQtdvSvWLO6Ei/fStB35NNIWsjEJyvYbh4psSyqLOR4OFvQZtcOhYujchxY7x99RQzCD4/zHqQyP5KpyYk7YnZl5MTzMfT0glK9+gXZqaZnMyPnNMRWBJn5RKK8LUpQfXm9xhw8JIjKPKTMMF5x7fQ6sHMPRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827485; c=relaxed/simple;
-	bh=aFlNGtyRy9oVmVjrSqn43hcqtvgmECgCXHyXQI+/7CA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n787KEPO/DBtKvMuI4zi4IrUscV7+0aiEXv1DJV6eLWfLJ8qgWtu0wcy1zXLSxQxOZZbeP7slr86yOjeZNPt6qbZ/XPfd3uXUd5chwWZfT8aOZP1G649VFbILplLoQPO4l3C6YfPT3a+8mOmeCtg0ICkc1Q2NXpFAi7A1Jxv+U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8sKAZ2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B6FC4CEDD;
-	Mon, 24 Mar 2025 14:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742827485;
-	bh=aFlNGtyRy9oVmVjrSqn43hcqtvgmECgCXHyXQI+/7CA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q8sKAZ2+lhd8maxG/iv8jyZ89kySEjKbcQAe99pgprGn+u9AfKdb7808l67lJeaGF
-	 Gjjc18B1BmUBZTHiuk1t8mbG/La2dNDlIzNDsaaXCRUOYgZ/Kv5lpd2Z9ISGAq7pm1
-	 eii8h3re+b8WUU/h0EVRY9Z7E+LhMANHqIEed6c68mAzKQawRweqa/o90LEEs1gMc4
-	 uVafHwBKMoVbzhNRRAGQHyLaoacx+cRydC9JjSPffc/csDUSjd548JJaInj2YBmKs8
-	 5xPRVxfL3EoAKNzeTFtRW4LltVmhp9kHiExZPz1zw//DzYWz3JZq3yKYDVzzCJMOYU
-	 dUryZbbH63Dsg==
-Date: Mon, 24 Mar 2025 09:44:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Thomas Fossati <thomas.fossati@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>,
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] dt-bindings: NXP System Timer Module
-Message-ID: <20250324144443.GA17721-robh@kernel.org>
-References: <20250324100008.346009-1-daniel.lezcano@linaro.org>
+	s=arc-20240116; t=1742827548; c=relaxed/simple;
+	bh=rMIDekdgu7k+w3o8KxlJ2MhnfGm0bZTtGCdWxSGqOTo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HRZUJX8zMbB/SjA0/wKgs4if3PsNITNkIyoOrkh74UlGErgefFPnLfoJg+5QpLzes9viWYL9wrggFShLdzTn9MBZFn8cRHQkcpSZnxUIOFccMey60GfW3FK7Mwo0wQx40FxqvUlmT3JsdU8nkpcBikw3czNCq9YG+cxh6s51GXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqsnhrgl; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso46848411fa.3;
+        Mon, 24 Mar 2025 07:45:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742827545; x=1743432345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
+        b=dqsnhrglCaGX/uQGUWAs2NrspxZWhpEIMJKBkXMjuX7CcvEG88R3HNlcUCQCYWnddc
+         yKAHsQmap+AvbuOkGXZeuoESmz8KUEH8oSrW4Un4U/ZwcVS1Qntf3+XEFSQ4LFtJlwdr
+         ppCD/OdDoICYgEsgmwyv2EkbAwTpE9spSJp3hn4H37pLCRh540ksOfUI+9IwXVCZ1MsA
+         26EPlXdxufdH8wm+8/3ECtXW8txc/R86VS/X8AkQButqBosQXcT1gvNJhPf6x9ncOP/0
+         TSO1mYpOMIJ22K9/HvhQYoScJP73M8N9ag75LGWQG6DCHz0CVGeElA+enRsLKIqFvrfo
+         w5CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742827545; x=1743432345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
+        b=nij6Jsr6VxniPHQcm2OeiWOEmOuCeVfSUcPhqoa2Z3lWCQhJ/kXIXzpyWIG3bTZZjN
+         FZ0CGKREwGjEqyyVnjTZqlfLBgylCQAdDgd9qkLgyKOQ9WCCdLvSP/+DdYouiWj3EOxT
+         bxPbERIiIQ6knAqZSq0uv26PbyUx8nP9vvRW78aqyw+Tnpw7S9Mm2C/ew8FVELrUW1My
+         MZZyK1Ju16S7Mhmz8jCoHqJaLwA3Zrvk9YZSwLkoua6SsGMqLguvXagUnAxSWe89xrF5
+         nGSvmcster7FzwphxVZfrhIhkjiBIP2mNPaqpZl9D+x1uZuzqcNFMPT24/CNUfjCzhCF
+         /V7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNnVWCgWNYCgzInCbau1rI60wDXI5B6ofP4C32aRKkl+PjP9dhEYy0GiPDE8Ftvmuqw7qcEi4zEOYbPCmG@vger.kernel.org, AJvYcCUtSPl2lQsl8793sJ6AR35wafMXLqbL/T973/jTBYoTjaPlb5wPRfpFLkcK4uFfQqO0YC8ZDhwcuLXSCdC0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEgXCOL2x3vVbgMkhv/VRj3/zfbGMJFeizukiRSyw4LKEw6/Z/
+	EELZaYRcbDZQcLDmjVH6v8C90dLi4QaBoD+A5X+Pk2QJXhtUI34f5/pRhBKfh/+mWHiE6LrnwG1
+	sBKcvvJhJDXYmMjCmom7+jmtSxAksTUtPD80=
+X-Gm-Gg: ASbGncuCgBz595JXbEdfXfbucXV+Lqr2LYPN0PpSmKxJVB0rL4Ao+vMLApfjC3KoNr1
+	G+bdBEbrpb2a8hMmJRCpGDy/vXacskoCLrPqnf/1h9lLpqRfEFW6IAnxdRRB054KRs9XBgjM9EG
+	wu2WbNgo/OA+BsFgtvPokknO6eUZQvlXgIFa/IwPExX7gdCzDS4heB
+X-Google-Smtp-Source: AGHT+IHl9dwplhezNLn7IB7Sq3eiZyr65Hj6aswx7up7md4DBgKJttJkhnAhxsOY6v3v1JjbW7Pfci2rEpaF23aoXNM=
+X-Received: by 2002:a2e:b8c8:0:b0:308:eb34:103a with SMTP id
+ 38308e7fff4ca-30d7e2a722cmr57009151fa.28.1742827544473; Mon, 24 Mar 2025
+ 07:45:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324100008.346009-1-daniel.lezcano@linaro.org>
+References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com> <Z98oChgU7Z9wyTw1@casper.infradead.org>
+In-Reply-To: <Z98oChgU7Z9wyTw1@casper.infradead.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 24 Mar 2025 10:45:07 -0400
+X-Gm-Features: AQ5f1JrW68Vn_B0jmPyAT5zcOLPzNVAsAnicIcYueNfueTreXg8ST6v187cy9-0
+Message-ID: <CAJ-ks9kZ-745x2_U00xwwG6nsJbcd=Fg-n8-X6oS+z=CsGy5VA@mail.gmail.com>
+Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 11:00:05AM +0100, Daniel Lezcano wrote:
-> Add the System Timer Module description found on the NXP s32 platform
-> and the compatible for the s32g2 variant.
-> 
-> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Thomas Fossati <thomas.fossati@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  .../bindings/timer/nxp,stm-timer.yaml         | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nxp,stm-timer.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nxp,stm-timer.yaml b/Documentation/devicetree/bindings/timer/nxp,stm-timer.yaml
-> new file mode 100644
-> index 000000000000..41093892c617
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/nxp,stm-timer.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/timer/nxp,stm-timer.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP System Timer Module (STM)
-> +
-> +maintainers:
-> +  - Daniel Lezcano <daniel.lezcano@kernel.org>
-> +
-> +description: |
+On Sat, Mar 22, 2025 at 5:13=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Mar 21, 2025 at 10:17:08PM -0400, Tamir Duberstein wrote:
+> > Partially revert commit 6684aba0780d ("XArray: Add extra debugging chec=
+k
+> > to xas_lock and friends"), fixing test failures in check_xa_alloc.
+> >
+> > Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and=
+ friends")
+>
+> This doesn't fix anything.  The first failure is:
+>
+> #6  0x0000555555649979 in XAS_INVALID (xas=3Dxas@entry=3D0x7ffff4a003a0)
+>     at ../shared/linux/../../../../include/linux/xarray.h:1434
+> #7  0x000055555564f545 in check_xas_retry (xa=3Dxa@entry=3D0x55555591ba00=
+ <array>)
+> --Type <RET> for more, q to quit, c to continue without paging--
+>     at ../../../lib/test_xarray.c:131
+> #8  0x0000555555663869 in xarray_checks () at ../../../lib/test_xarray.c:=
+2221
+> #9  0x00005555556639ab in xarray_tests () at xarray.c:15
 
-Don't need '|' and wrap at 80 char.
+That's not what I see when I boot a kernel with CONFIG_TEST_XARRAY=3Dy.
 
-> +  The System Timer Module supports commonly required system and
-> +  application software timing functions. STM includes a 32-bit
-> +  count-up timer and four 32-bit compare channels with a separate
-> +  interrupt source for each channel. The timer is driven by the STM
-> +  module clock divided by an 8-bit prescale value.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nxp,s32g2-stm
-> +      - items:
-> +          - const: nxp,s32g2-stm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: System Timer Module clock
+> That has nothing to do with xa_destroy().  What on earth are you doing?
 
-Just 'maxItems: 1'. The description is rather obvious.
+I'm running the kernel in a VM on arm64. What are you doing?
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: stm
+> Anyway, I'm at LSFMM and it'a Saturday.  I shan't be looking at this
+> until the 27th.  There's clearly no urgency since you're the first one
+> to notice in six months.
 
-No need for *-names when there is only 1 entry.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    stm@4011c000 {
-
-timer@...
-
-> +        compatible = "nxp,s32g2-stm";
-> +        reg = <0x4011c000 0x3000>;
-> +        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clks 0x3b>;
-> +        clock-names = "stm";
-> +    };
-> -- 
-> 2.43.0
-> 
+Sure. I misunderstood the purpose of linux-next, thinking that if a
+commit is in there then it will soon head to mainline. I realize now
+this isn't the case.
 
