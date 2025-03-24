@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-573535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210F9A6D8C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:01:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57628A6D8CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454A316A164
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120311891EDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939E01E5B95;
-	Mon, 24 Mar 2025 11:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C4D1E7C08;
+	Mon, 24 Mar 2025 11:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZVFjCCZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="yOI7/oRW"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462901487D1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA252C80;
+	Mon, 24 Mar 2025 11:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814070; cv=none; b=d+eouOOOmWIKLT8YiQ/u0ddAk6aVgvPy0DiE2dDsQQTsIptyoVe7E7lWWTqNXQTJOj8oeUhZnVBTCoQz9qpc7CFI3ky/Nrf9UAKTzLUq4/X35kDJ/ojqmP7w8SG+hxtkC8ufaQwpj2Sg+OwoIEm8aQJlPbZrBcj83ierlzp8zOA=
+	t=1742814160; cv=none; b=bWC6rx4e3O+0lS/t9n9LfCoZmFgf4BV4GsIoCMwqoXaLyAC1CsKW4P9BvTT0hc+AU3QA6sRAaoj1nOOdLkAHnTFKr9VBMCg7C335rF/NOMyRB466XnSy8CCwGlLS0eAKN+k+b8BEC0whvZmWAZOcZN3cXt6Dt1JNiRxA+q4IVf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814070; c=relaxed/simple;
-	bh=LDsJSlPtXgnODZ+ldr2KxIShTemz/tVXnReb9HkLtQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCX+nuKXlhRCv5RdRJqHW//GKvGu7XpPodivO9pdkMKPyln6FvkBu+5JGp1esHG0x9Q+FMK0jk/KzBr+6Esrp2q1RAkuamBzkRAXGrNHuvGmniPEARiFnSa69hcfOtphuXddIsePP15lSdItqbkkmox1P32OOgtEj3qrllL8jcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZVFjCCZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742814067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PS69gZ7L0QPn+MJNrvH0ZaDSrgaKGsoM7m8BjefV88=;
-	b=eZVFjCCZlH/mv/q1uVho4+6yYZ1KF8kP2l7hV0jqDkcg2IcdPWvOyYwBAVF+ZhyBT4lZdQ
-	60N8taWo/RbEnBkLvu6Sd87/tHJnbfjGSKGYfJjmocoiWsy81c4Ql+wxV2l/7k/g6O3ASQ
-	xVK4KTkRuXhZl8khV2kAwRlEJNhdx8M=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-515-uB3P39bgPWWtQdZfxMmeVA-1; Mon,
- 24 Mar 2025 07:01:02 -0400
-X-MC-Unique: uB3P39bgPWWtQdZfxMmeVA-1
-X-Mimecast-MFC-AGG-ID: uB3P39bgPWWtQdZfxMmeVA_1742814060
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1742814160; c=relaxed/simple;
+	bh=1JesYhBF8Hs5fgCeMj1bwvbhhCqj11DO9tdHIVFb1Do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BUg+qhRjEF/aoeNSQzbpNmxIgveuNr8fmx+Zl7GoapYBY9riOZ/XoN2lN4n7HubKnvsX/3Y5GXMshR+1lKsLxjHt9BwqJXQrwMC6jrFdUe55Xy/0B6TYvnMreBcKj6tARvqAvPRrAqTBeOrBDuVSgvtSh6Qi1e1iOd138Wwty1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=yOI7/oRW; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZLqrs2LSTzlrnRb;
+	Mon, 24 Mar 2025 11:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742814155; x=1745406156; bh=AHVZb8o6xuG6edhOIrcokBGX
+	1qq9SAaDQUp+MtVAobs=; b=yOI7/oRWbEdY8h+Q2AzHj84P2zpRfC8oEyrPGWLr
+	RdHKQYpLEX7Knunn/C6wVaby9+vXfAjkqXwLa9+ZT9T2F3xsuqBBV0eSH4uzEr8W
+	7vf7rZczG/+wz4WZN2GHs95Dk91ZP09uxYatS1giQIJJnhbsmfdhlg8q4f+fCUmN
+	hqPY0Zp6DpD85Ld/snXwHs0s626II3qnciP1kfwCB3QBTddHZH0X2cDrwIRS23uD
+	X+009ZfA92wyuZAR8O+F63ENcQLhvD/F9QFYiBoPfmS6iLaBfdXdSadWiyQQASte
+	sfx1lihrPUK2UOzLM3PtEBiYYwIsf+ulPHqXGa1bFWBZlA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Sv3ohFgoL4sO; Mon, 24 Mar 2025 11:02:35 +0000 (UTC)
+Received: from [172.22.32.156] (unknown [99.209.85.25])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09060196B370;
-	Mon, 24 Mar 2025 11:01:00 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.24])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC52719560AD;
-	Mon, 24 Mar 2025 11:00:56 +0000 (UTC)
-Date: Mon, 24 Mar 2025 19:00:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
- execute
-Message-ID: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-7-chenste@linux.microsoft.com>
- <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
- <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZLqrh17H8zm8kvP;
+	Mon, 24 Mar 2025 11:02:26 +0000 (UTC)
+Message-ID: <e9f33f59-da1f-426b-8bdd-3c47397abf29@acm.org>
+Date: Mon, 24 Mar 2025 07:02:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] ufs: delegate the interrupt service routine to a
+ threaded irq handler
+To: neil.armstrong@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250321-topic-ufs-use-threaded-irq-v1-1-7a55816a4b1d@linaro.org>
+ <31b46812-72d5-4f9d-b55d-16a6e10afe7d@acm.org>
+ <d084e50e-8b2b-4820-a5e7-25ec440d128e@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <d084e50e-8b2b-4820-a5e7-25ec440d128e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 03/21/25 at 09:23am, steven chen wrote:
-> On 3/19/2025 7:06 PM, Baoquan He wrote:
-> > On 03/17/25 at 06:04pm, steven chen wrote:
-> > ...snip...
-> > > ---
-> > >   kernel/kexec_file.c                | 10 ++++++
-> > >   security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
-> > >   2 files changed, 40 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > index 606132253c79..ab449b43aaee 100644
-> > > --- a/kernel/kexec_file.c
-> > > +++ b/kernel/kexec_file.c
-> > > @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
-> > >   }
-> > >   #endif
-> > > +static void kimage_file_post_load(struct kimage *image)
-> > > +{
-> > > +#ifdef CONFIG_IMA_KEXEC
-> > > +	ima_kexec_post_load(image);
-> > > +#endif
-> > > +}
-> > > +
-> > >   /*
-> > >    * In file mode list of segments is prepared by kernel. Copy relevant
-> > >    * data from user space, do error checking, prepare segment list
-> > > @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
-> > >   	kimage_terminate(image);
-> > > +	if (!(flags & KEXEC_FILE_ON_CRASH))
-> > > +		kimage_file_post_load(image);
-> > machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
-> > we should use it to do things post load, but not introducing another
-> > kimage_file_post_load().
-> 
-> Hi Baoquan,
-> 
-> Could you give me more detail about this?
+On 3/24/25 5:31 AM, Neil Armstrong wrote:
+> On 21/03/2025 17:20, Bart Van Assche wrote:
+>> - Instead of retaining hba->ufs_stats.last_intr_status and
+>> =C2=A0=C2=A0 hba->ufs_stats.last_intr_ts, please remove both members a=
+nd also
+>> =C2=A0=C2=A0 the debug code that reports the values of these member va=
+riables.
+>> =C2=A0=C2=A0 Please also remove hba->intr_en.
+>=20
+> Hmm ok so no need for the IRQ debug code anymore ? I guess this should
+> be in a separate cleanup patch.
 
-I mean machine_kexec_post_load() is the place where post load operations
-are done, including kexec_load and kexec_file_load. There's no need to
-specifically introduce a kimage_file_post_load() to do post load
-operaton for kexec_file_load.
+Hi Neil,
 
+There are two reasons why I propose to remove that code:
+- I don't think that it is possible to keep that code and switch to
+   threaded interrupts without a measurable negative performance impact.
+- That debug code is primarily useful for hardware (SoC) debugging,
+   something that falls outside the scope of the UFS driver.
+
+Thanks,
+
+Bart.
 
