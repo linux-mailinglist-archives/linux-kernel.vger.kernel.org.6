@@ -1,74 +1,164 @@
-Return-Path: <linux-kernel+bounces-573777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8542BA6DC35
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:56:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B265A6DC3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41564188F7EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F66C16CDEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A561D25F790;
-	Mon, 24 Mar 2025 13:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6634A25F7B0;
+	Mon, 24 Mar 2025 13:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAHXGi5C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LdnvjBV+"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7E92AD14;
-	Mon, 24 Mar 2025 13:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE99025E444
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824567; cv=none; b=dw+CO53bvyqRU2svkJ+gwZ7OPYVpnXvDHikpYCjdwZM1ovljKk5HA+HOF3IxwPk6drFB9tZpXwdDS00c1mhqD4bfT7V6wFgslu8xw63BEFazSeMO195wlC7SCWNT1JJaHRvQpX5FQpKD8M+HiYH9ZXAC4y7kDsGFWO7KEp58wbU=
+	t=1742824632; cv=none; b=oqcpZx7ddqiwtYIx8YeaM+FM6x0ePzvSJ7kn/KPdKG2EL/Tj5vfyGNadh+kDUoJzQMHEAB7ZU4MCE+aPqMID86RYGe4TkPiY4bvVTmE5OdLRpSTPnJzNvRZQJy3MM4Np5uGoLWTFVmp/sRgqZ+TdhaXJV58Qvkl3zIKrMz764hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824567; c=relaxed/simple;
-	bh=Bk+llUkPLzsHMJNfH7OsrFnkGNMUvHDNZlJwjw0gq1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bIjKgQE6LABXe6Jl+iIX+9KkAmpNkFEeMxd3wr0rfPlK0YIf1bfl+ph/KXzHAT2iI53w9w0cUiTlsLI3558lRGW9wT70rvUHI5U7SOFutmOh4eLq+CNQdUmwUF3mgXIbld4b73R12NAdRU2bwPaXsIfmrhKD39sFB327RsjzP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAHXGi5C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10F2C4CEDD;
-	Mon, 24 Mar 2025 13:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742824565;
-	bh=Bk+llUkPLzsHMJNfH7OsrFnkGNMUvHDNZlJwjw0gq1o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UAHXGi5CBznaEVgugAZORdfUHpOhmPsS+egkBQHiadtlXum/621kVBU9q3EytGFF4
-	 x9icbiTw/JbGk5TQzopb5e1RIi6jlRMyhFZSkozWNnrZ3dYaKcpU48S2QblKlc03aE
-	 E2rUrZ8eoieGgZ/QdlT87HrsKxJHx0IwK3HzH/qHkk6k2V94Kl4hGeAhI4MuV5Ddb/
-	 SWvq4hmsh7iJFfx7R3HhOgg/o3fAo2wkJF8IY8RUvYYA/F1p9dMTMtXp/EdClHnQ02
-	 ordkrLiKgqsNUx8A+kMDC8IIiAWUPntQ8vt1BL/DZQ1J/Jmhzcj4L4sJkuftogE4lR
-	 dFW/L0mpE2wtw==
-Date: Mon, 24 Mar 2025 06:55:58 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Jesper Dangaard
- Brouer <hawk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, "Toke =?UTF-8?B?SMO4aWxhbmQt?=
- =?UTF-8?B?SsO4cmdlbnNlbg==?=" <toke@toke.dk>
-Subject: Re: [PATCH RFC net-next v1] page_pool: import Jesper's page_pool
- benchmark
-Message-ID: <20250324065558.6b8854f1@kernel.org>
-In-Reply-To: <20250309084118.3080950-1-almasrymina@google.com>
-References: <20250309084118.3080950-1-almasrymina@google.com>
+	s=arc-20240116; t=1742824632; c=relaxed/simple;
+	bh=MPO6jCCozjhYMoPt4y+gKPOuX7ez+gZqkKwymGwFc0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oiriJOozHSuNXNgalCH+DWQwV4BOYNqRqllc7TZhFtgIrLZswvePAE2NDYDt8Nm+5JBAft00fk/mNEVyyrPGXp3TfgiYOHp0xtVOC36mDRkPlchpIVbmpQna44zUCzXdQqUmF5pHSEBUgmYAIdIJAjnsqP5mdgPxCfq3Rs7nni8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LdnvjBV+; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so34427185e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:57:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1742824629; x=1743429429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=geHsdT1vrdpFfM6YFLK2c0Yi2DY1fN5x5Y+Dw80cp/o=;
+        b=LdnvjBV+8Eaye8ho5RjmMoedW57GovKqz7vx45WSQPkXG0yau3B7sA8P3xg6+X7bUC
+         UaR8J6UYHxcgTN3Y2e6mad1yF5zV/upEiMnA1slqtErekQzAL458hzSXEiZmsWEk9oc0
+         aXQnpjXcQlLLqSITTRhjEcggyjxxvjK6nfVs/qRt82JxcsSm0HCqo+ugkA1aSALB2d0N
+         kHf5YDBXhaAB/DMT8K/haBwA+h3ZSiIsqxSztQzcEUqh9h3NdZaHoukIi+Q/E36pXCXU
+         +Gqxg5u/nS/H7IoGddCW8NKiYtrnQ3iTjsm9ruWzP1slCJFUAZdIJBorqECIDK9j8asJ
+         +igA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742824629; x=1743429429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=geHsdT1vrdpFfM6YFLK2c0Yi2DY1fN5x5Y+Dw80cp/o=;
+        b=Lqlqr1w7j1RIBJ3wIGsYAGTXoOmJe8UXedgXBEQXCX3FsV4oMU3iNaqYtCd19eK12U
+         YeY7+ibeJJ6lYupvu7aKlpAB3oRJT+jvCPk6jLZdcqB+2YmU+VWe/Ni44aW9rIaVHsTV
+         +rV39YJAFuVZrwS7vdwaSp2wVH8h8+NA+SkNJKkSDvpQnL7R5791ODGs6ULQn59z1IuK
+         ZS2VjPP6CWP6Ea89V1cbnVHSCnVum4FhxGrz4mWEb6zNo8Io+INhk/UwNDP615E+suI0
+         LU/afifLJy3OkYkEkRk+1cEbMavlcX5RS2qCVLp78h6P6P65W1wH5kpjyoYX1Ia3Bhwh
+         uKeg==
+X-Forwarded-Encrypted: i=1; AJvYcCU95TYs2lO0RuGKhJ7GdRSFho+iuYPQlmAOFeTpEfAKi9gkvD47zfjTHPjA8i8o5MnDtmvL69l79Ha5a4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtTJ10itTATCetEM3yz3+Rm9qkVfIzb7n0fLsT2wtObwIMC2kQ
+	KMGRUKGinuDgIk4mHyLMt1xJaCvwXI2MJR0x2rowJlfe67i9QhllDSJkFXAklfg=
+X-Gm-Gg: ASbGncu5c1lyxrmcItA8gGzS3Jv7laWVGWeum/lJ1zkZdIbuR3LRXKvUQ8IK/glX/jK
+	uRhhQsJ/O9dVayJtAEc8WCl6lT5/T+zBwkNSeXkEofgw6gPOm793kJI4bzjvVtrKxaNV7Cccq80
+	XQOcNxNf8V0KhlEd/pLFYG8nXFZlfVI0xfM7GHhDspu0Y4eBnw20WK/ySoeV2H7E1TPNAwtO0Hh
+	7n2fZAsTfrPJJ/a5pKJnoE5CP26lhEWncQcDoFi5MnfWcMsi8OEYFgiOS9Ua+7yEeBsIri4TfBZ
+	BcLr4B9508fnNGz+PhQhgvPgAZzEsPdYB4RWcwMqkl446gP+dr9MhMY6v84r8MUnv+165chbMg=
+	=
+X-Google-Smtp-Source: AGHT+IGkbsgJvhaLoKe9hCL01Phvk9cQWomrPl7igNBxsiltgQYpsqqfKtqy6vBzpm7mTH5vwHyozg==
+X-Received: by 2002:a5d:64a8:0:b0:390:ff84:532b with SMTP id ffacd0b85a97d-3997955cc22mr13735349f8f.7.1742824629087;
+        Mon, 24 Mar 2025 06:57:09 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbcfaasm120146525e9.35.2025.03.24.06.57.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 06:57:08 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 0/4] thermal: renesas: Add support for RZ/G3S
+Date: Mon, 24 Mar 2025 15:56:57 +0200
+Message-ID: <20250324135701.179827-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun,  9 Mar 2025 08:41:18 +0000 Mina Almasry wrote:
->  lib/Kconfig                        |   2 +
->  lib/Makefile                       |   2 +
->  lib/bench/Kconfig                  |   4 +
->  lib/bench/Makefile                 |   3 +
->  lib/bench/bench_page_pool_simple.c | 328 ++++++++++++++++++++++
->  lib/bench/time_bench.c             | 426 +++++++++++++++++++++++++++++
->  lib/bench/time_bench.h             | 259 ++++++++++++++++++
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Why not in tools/testing? I thought selftest infra supported modules.
+Hi,
+
+This series adds thermal support for the Renesas RZ/G3S SoC.
+
+Series is organized as follows:
+- patches 1-2/4:	add thermal support for RZ/G3S
+- patches 3-4/5:	add device tree support
+
+Merge strategy, if any:
+- patches 1-2/4 can go through the thermal tree
+- patches 3-4/4 can go through the Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Changes in v3:
+- drop runtime resume/suspend from the temperature reading function;
+  this is not needed as the temperature is read with ADC; this is
+  confirmed by the HW team
+- use dedicated function to open the devres group in probe; in this
+  way the thermal probe code is simpler
+
+Changes in v2:
+- dropped the already applied patches
+- dropped patch 2/6 from v1 as the devres_open_group()/devres_release_group()
+  approach was implemented in this version (similar to what was proposed in
+  [1])
+- collected tags
+- added a passive trip point not bound to any cooling device, as proposed
+  in the review process
+- decreased the trip points temperature
+- convert the temperature to mili degree Celsius before applying the
+  computation formula to avoid losing precision
+- use int variables (instead of unsigned) for temperature computation
+
+[1] https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com/
+
+Claudiu Beznea (4):
+  dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
+  thermal: renesas: rzg3s: Add thermal driver for the Renesas RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045: Add TSU node
+  arm64: defconfig: Enable RZ/G3S thermal
+
+ .../thermal/renesas,r9a08g045-tsu.yaml        |  93 ++++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  49 ++-
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 -
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/thermal/renesas/Kconfig               |   8 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3s_thermal.c       | 313 ++++++++++++++++++
+ 8 files changed, 471 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
+
+-- 
+2.43.0
+
 
