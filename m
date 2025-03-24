@@ -1,120 +1,213 @@
-Return-Path: <linux-kernel+bounces-573999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C94A6DF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 690C0A6DF70
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41BFE3AF1DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA3293B2BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573C7263898;
-	Mon, 24 Mar 2025 16:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6E72638AA;
+	Mon, 24 Mar 2025 16:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eZGdRWRs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KvetgiWQ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243E8263885;
-	Mon, 24 Mar 2025 16:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416DA263883;
+	Mon, 24 Mar 2025 16:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742833082; cv=none; b=qdWFLadbh7/8yJnrILBTt1qlNfmVPs1mPRjZ9HSkTDxFGLotmlmop+NTWuYDOv+2GX30q4pgOHEY61c7uj9/5cwb3QNBqgDoXFuf9/5EwlJDwEqu7zoVbfCaDiMFWf+PsDJqoVbDXuCPKXgMB1zcvPWnFWKd4d5Y5UhBBd2dhEs=
+	t=1742833100; cv=none; b=rYhp0MKVjR3nwLNbnI9/SRSqMe5a4N01FBFwzJAoWrZB9Gpyhnyg2Ax3LsI7BTBYHxmKc3ndiJNeiOyqpmSteSjLhRAv1u01L1SKi3ZDF1GeLOQaJ1vXTa9cdfSyYVUgofQZyl6Gc2jsnNTaWAMmbIdQ1yGAeQVI71L5d7opBqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742833082; c=relaxed/simple;
-	bh=r1CWYmSitq8ffSacjnIINz9x92kI2IJzQEeKRfc58Ts=;
+	s=arc-20240116; t=1742833100; c=relaxed/simple;
+	bh=2sHGA/ry/oLbba4j9oOPgiDk3EvtRBfPsp/RiJsDnzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ch8uaiOhsDO5XqXfrY6EHC51u4otvBRldrsT9jdwW6hmXOnCgMh40cnazML8E0Wg9y/sbGwz1WbyeyVuoH9+7WV7RZUQyyEt9XmbvLizHHoexETltRI9PoDDt9Ru7XcIYFhm+2vR/RvhBtX/EcI1EvLznIGePjK0A3YDdT/BxvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eZGdRWRs; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742833080; x=1774369080;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=r1CWYmSitq8ffSacjnIINz9x92kI2IJzQEeKRfc58Ts=;
-  b=eZGdRWRsbgik6YQdoteM/UOgNEZdJ/qbsbJ+MhSPo5mlJ9mtVplbmmzi
-   VjxOa6wmRR0OVeVjTP5spQHVHO4A2CyxiU8p/X1it4Mpi2Yalrk0GvjvS
-   a9jzoBXgSAtAEcn6BMBKMjth4bICRYsgl+jb14fF5j3U9/uGj2fRncOOK
-   mAXsxplPCIVY18Dj7JhF8R2KYKv0qGXM7b9+W9SvHFgMgV2HcIQk7RJ/c
-   yh7TYirHqJVNDkc6gSzyxH9XmIPSoBZ6gybGfOL3p3yuwhDkRKyjXnk3u
-   6cQcKorAGQM4v/6nXRewyfIlFtLeFj9UyEoclrNMFNE9kZyhtWU/dV5Od
-   w==;
-X-CSE-ConnectionGUID: owDA7x07TMuQ1WFl944HWw==
-X-CSE-MsgGUID: 4fh7HGukQnq0zZuOavSDjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="55426930"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="55426930"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 09:17:57 -0700
-X-CSE-ConnectionGUID: MI0HGLbxSTSEOprtpndLBg==
-X-CSE-MsgGUID: kP5VE1NRTm6Z+IaGNcSjZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="155000896"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 09:17:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1twkUn-00000005UlE-391E;
-	Mon, 24 Mar 2025 18:17:49 +0200
-Date: Mon, 24 Mar 2025 18:17:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Petr Mladek <pmladek@suse.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Kees Cook <kees@kernel.org>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v1 1/6] seq_buf: Mark binary printing functions with
- __printf() attribute
-Message-ID: <Z-GFrV3B1eoK0wrq@smile.fi.intel.com>
-References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
- <20250320180926.4002817-2-andriy.shevchenko@linux.intel.com>
- <20250324120430.0620a8f6@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QPlDnPoFFM9YvwK6fRQLO/lPwJZb4HtCZ6ZcUU6grxkYXsIsPM2rZIdv6FI8a5TPJ1km6pqeRQKysGU/GIt6Gn9rN0n/Q1TA3tIJrQ0eq5b/pryjwxgMdd7f3tBxITL5mfdYYqjTkANtwYQiS1I1hDq+UxDWqMc/Z6oIJ69rJOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KvetgiWQ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k1rF4AjMxpu/VzA+psONaAHx7bxOfl1oo9aEdd/g99k=; b=KvetgiWQXLxfGdwA9sl33xut1y
+	1Kg1qPYjj6k7mF5hy8jix8TjqNtxyc9mEtqAGl69cW+mcuJX2WpNehp1a1C0UlG4YThFzC8M7M8sV
+	vfP8rp71DaaDr410zFz2jbkBBkw6eZ+0jBbIW/enHwMm4+n0trqL8RJgj/4nJ58/GeRycMbj3uj6A
+	TbII/UX4ZJtHXbUpJ0P1ONeINrR9ReIu29QEyKVIN8MjRCHlQ/yGaGo0J7odgjcisqzMLFtOE4Swy
+	2wBvscvi8Di18MryFchMwp4lneesFH4nMaVpkn/fcbJrlEjmllV/5jv0TrbrODMUKhRd1XVA/4+2W
+	bq3vMtPg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33212)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1twkV4-0003mQ-0L;
+	Mon, 24 Mar 2025 16:18:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1twkV0-0002Nn-04;
+	Mon, 24 Mar 2025 16:18:02 +0000
+Date: Mon, 24 Mar 2025 16:18:01 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH net-next v5 2/6] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <Z-GFufp4uggxjjNT@shell.armlinux.org.uk>
+References: <20250319084952.419051-1-o.rempel@pengutronix.de>
+ <20250319084952.419051-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250324120430.0620a8f6@gandalf.local.home>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250319084952.419051-3-o.rempel@pengutronix.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Mar 24, 2025 at 12:04:30PM -0400, Steven Rostedt wrote:
-> On Thu, 20 Mar 2025 20:04:22 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Mar 19, 2025 at 09:49:48AM +0100, Oleksij Rempel wrote:
+> Convert the LAN78xx driver to use the PHYlink framework for managing
+> PHY and MAC interactions.
 > 
-> > Binary printing functions are using printf() type of format, and compiler
-> > is not happy about them as is:
-> > 
-> > lib/seq_buf.c:162:17: error: function ‘seq_buf_bprintf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-> > 
-> > Fix the compilation errors by adding __printf() attribute.
-> > 
-> 
-> Should also note the removal of "extern"
+> Key changes include:
+> - Replace direct PHY operations with phylink equivalents (e.g.,
+>   phylink_start, phylink_stop).
+> - Introduce lan78xx_phylink_setup for phylink initialization and
+>   configuration.
+> - Add phylink MAC operations (lan78xx_mac_config,
+>   lan78xx_mac_link_down, lan78xx_mac_link_up) for managing link
+>   settings and flow control.
+> - Remove redundant and now phylink-managed functions like
+>   `lan78xx_link_status_change`.
+> - update lan78xx_get/set_pause to use phylink helpers
 
-Ah, just noticed that you are looking at v1, there is also v2 available:
-20250321144822.324050-1-andriy.shevchenko@linux.intel.com
+I don't think this goes into enough detail - there's some subtle changes
+going on in this patch.
 
-Thank you for the review, nevertheless!
+>  static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+>  {
+> -	struct fixed_phy_status fphy_status = {
+> -		.link = 1,
+> -		.speed = SPEED_1000,
+> -		.duplex = DUPLEX_FULL,
+> -	};
+>  	struct phy_device *phydev;
+>  	int ret;
+>  
+>  	phydev = phy_find_first(dev->mdiobus);
+>  	if (!phydev) {
+> -		netdev_dbg(dev->net, "PHY Not Found!! Registering Fixed PHY\n");
+> -		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL);
+> -		if (IS_ERR(phydev)) {
+> -			netdev_err(dev->net, "No PHY/fixed_PHY found\n");
+> -			return ERR_PTR(-ENODEV);
+> -		}
+> -		netdev_dbg(dev->net, "Registered FIXED PHY\n");
+> -		dev->interface = PHY_INTERFACE_MODE_RGMII;
+> +		netdev_dbg(dev->net, "PHY Not Found!! Forcing RGMII configuration\n");
+
+dev->interface is removed.
+
+>  		ret = lan78xx_write_reg(dev, MAC_RGMII_ID,
+>  					MAC_RGMII_ID_TXC_DELAY_EN_);
+>  		if (ret < 0)
+> @@ -2547,7 +2545,7 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+>  			netdev_err(dev->net, "no PHY driver found\n");
+>  			return ERR_PTR(-EINVAL);
+>  		}
+> -		dev->interface = PHY_INTERFACE_MODE_RGMII_ID;
+
+Here too.
+
+> +		phydev->interface = PHY_INTERFACE_MODE_RGMII_ID;
+
+I'm not sure why this is being set here - the PHY has been found, but
+hasn't had phy_connect*() or phy_attach*() called on it yet (which will
+write this member of phy_device.)
+
+> +static int lan78xx_phylink_setup(struct lan78xx_net *dev)
+> +{
+> +	struct phylink_config *pc = &dev->phylink_config;
+> +	phy_interface_t link_interface;
+> +	struct phylink *phylink;
+> +
+> +	pc->dev = &dev->net->dev;
+> +	pc->type = PHYLINK_NETDEV;
+> +	pc->mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE | MAC_10 |
+> +			       MAC_100 | MAC_1000FD;
+> +	pc->mac_managed_pm = true;
+> +
+> +	if (dev->chipid == ID_REV_CHIP_ID_7801_) {
+> +		phy_interface_set_rgmii(pc->supported_interfaces);
+> +		link_interface = PHY_INTERFACE_MODE_RGMII_ID;
+> +	} else {
+> +		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
+> +			  pc->supported_interfaces);
+> +		link_interface = PHY_INTERFACE_MODE_INTERNAL;
+> +	}
+
+Hmm. This seems to me to be a functional change. lan78xx_phy_init() had
+a switch() statement that:
+
+1. for ID_REV_CHIP_ID_7801_, calls lan7801_phy_init().
+
+   For a fixed PHY, sets dev->interface to PHY_INTERFACE_MODE_RGMII for
+   a fixed-PHY (and it seems to configure the RGMII interface delays).
+
+   For a normal PHY, sets dev->interface to PHY_INTERFACE_MODE_RGMII_ID
+   and apparently disables the MAC-side RGMII delays.
+
+2. for ID_REV_CHIP_ID_7800_ and ID_REV_CHIP_ID_7850_, uses GMII mode
+   with an internal PHY. Maybe the internal connection is GMII. Note
+   that with PHY_INTERFACE_MODE_INTERNAL, phylink will not restrict
+   the speeds, whereas with PHY_INTERFACE_MODE_GMII it will.
+
+So, I think it would make sense to first make this functional change as
+a separate patch.
+
+>  		if (IS_ERR(phydev)) {
+> -			netdev_err(dev->net, "lan7801: failed to init PHY: %pe\n",
+> -				   phydev);
+> -			return PTR_ERR(phydev);
+> +			struct phylink_link_state state = {
+> +				.speed = SPEED_1000,
+> +				.duplex = DUPLEX_FULL,
+> +				.interface = PHY_INTERFACE_MODE_RGMII,
+
+This member has no effect here. phylink_set_fixed_link() just
+reconfigures for a fixed link as if it had been specified by firmware.
+It doesn't support changing the interface at this point.
+
+> @@ -2586,7 +2627,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+>  			return -ENODEV;
+>  		}
+>  		phydev->is_internal = true;
+> -		dev->interface = PHY_INTERFACE_MODE_GMII;
+> +		phydev->interface = PHY_INTERFACE_MODE_GMII;
+
+Same as the case above with PHY_INTERFACE_MODE_RGMII_ID.
+
+Thanks.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
