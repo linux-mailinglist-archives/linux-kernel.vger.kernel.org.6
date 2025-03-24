@@ -1,163 +1,80 @@
-Return-Path: <linux-kernel+bounces-574601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66546A6E763
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:00:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4233FA6E761
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C23E1884713
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515631697AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7FA1F180E;
-	Mon, 24 Mar 2025 23:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAF21F180F;
+	Mon, 24 Mar 2025 23:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAwDxLlB"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="gS0Iydm/"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCD614658D;
-	Mon, 24 Mar 2025 23:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7877D14658D;
+	Mon, 24 Mar 2025 23:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742860727; cv=none; b=O/2WKse9raoL+ke4X33JgG3bVyL1XbzE51VJveLCq0yRLxM1yvooOBtx5h1fvbLM7QQXz5nCJyy+t+9ugzVHHTjrDB2sJUh97z23gkqHhuIs5zwFLvWCiPhss7bH22pu3tvrPkG2K4Os+lstpAcN1jvpBNmtvDZH5/voWcuh6mw=
+	t=1742860752; cv=none; b=GfZEHn8J2MtiQfXd/0idlZU6RrnH7sk/QBtt1eJsko0WY/gN3PpU8g3H+xYeefSVli0duewgQEPEwjPlTlwUUx12KUrC6NeSlfmBO73W5qFcIJAncK3hogtin62O/EDxjz+tEyAIGISDdmWRZOHmftViDNed1q92z1fAExUnhUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742860727; c=relaxed/simple;
-	bh=1OAba6xZgT26nihaaZhzNyeN6c4f+/Pf4pmZvl349LI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sJPiJ2Mo+sgaoaNWiXXogDIhultiU0s6NozHVafK6fhuI5l4z0SwgcMce1N8n07Grm2BqKddl+3CrzoQZAgvedarG6uxksMLuws/Yn9TtooPUfYHia3xmb1X1+LJjl3qnJ1ELU/iLuCoBUAAOzG/xGGCJiGk7gjqOCde6hIGNGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAwDxLlB; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223a7065ff8so25730235ad.0;
-        Mon, 24 Mar 2025 16:58:45 -0700 (PDT)
+	s=arc-20240116; t=1742860752; c=relaxed/simple;
+	bh=jrZ7ZaNs4d9Lc7kh5J6sq7xG8RVnppeRCIfrfAPId1E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hAaK/IDfHsPC9w8yiXWCZNpMnC/SsHQQIqEz9K6dB7yocAt1W/k4V9FkoquUupLrFMWRIn8ziUPhTGx/nm1vsM6OrruMAg3qjwWYZITwC0N5i+Ja+7NxN5SBb+AA2olgOc+CB9nKdYFIHMeIVVFUNnKX4ru8QV/Vp+LAw0H7eYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=gS0Iydm/; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742860724; x=1743465524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fVOXMIH/0fBT/Jprf9dWY2GcvLQefs99A976BzEg7aU=;
-        b=TAwDxLlB///LKlOh1MtZTSK5XnVxMmfHzkzHsRGqPQHpspX++rW1cVI6z+U7rUwDAt
-         8pEFnBAWY1xiczf8kD2kcSo9oT9RO6li4V9uMd/2ljuRP+ppgS9JURjSF8ZbalFyIv6w
-         lvxoT/m2zFv+v7pzWOAn6dLrI//Y8Jk+Z3haxYKuhphVlSfMifUKElDoSHSI1c42w+y6
-         3IJgEbxNKNeTUi1TkA97LAIo2RKiRin1naMaWliO+RYjhJUT+rhR2QuBF2GaGDk6MB54
-         9P8oBQlhedu8FnM8OMuj0TYrkO0tOPSM9PpjMzmdNiQC2CXJgK0cHaG1dY1LqxcSppnQ
-         338A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742860724; x=1743465524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fVOXMIH/0fBT/Jprf9dWY2GcvLQefs99A976BzEg7aU=;
-        b=XyIABvdYE7Sr/Hy/5KuiQs99/6CHI1WZ0S3XZIyTDgfQMPB1JmaoXm3tpBfbttrY2X
-         CTRfzbN9hcP+ziq6bsu7THt9vKFAS3u201EqMgZxbNU18hNy9vUMbbUCXtYm2nvDWPxx
-         cEzzoQP/eer79CVM1ZMMBp83Uo+0H2kaSEjzVweplpLn5Mq1STvQ14Wn0QAjH3augbFT
-         EcRd4mSQ81BGdFtIHiT2YI+QnBAIx7gDxvZHlTHCoT+p969bvUu766c6ieTEneocVTBz
-         xzcAsWrOZZ326R8BEjyhihYraUGsmxu2SAyUUVW/CI0u1tEcUNQgeS7neM0muFJdPvqT
-         5X5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ/rV1H/qUy5R9+hQ4JDfz2rxaP719VEeMZRynbF+PCYGxazdOtkc4lgsLbhtiE08ESNS25FKuN4/Sx/U=@vger.kernel.org, AJvYcCWgOctwm+rpr5rdgaS4dsvOINf4zZWRabJHhmJuhhen9tmgj2Abeu6X7tnwjsVsXslfFYD6ppCd6gF7CfXVu4kqhA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpRFzduVZlTrKe22TUU1qL4Ka7Pi5jv/nO/gjSa+huyJPcd6II
-	wkvqAjgkRncGIIN5ZFR2mG0QQpuOBiVVzjlnvKkxBGDmv4NrqLOAkQYYuvUm
-X-Gm-Gg: ASbGncsDGjPdCJOmzT43YBgbZ6CsdY9zhiXggdzTSiY4b4gQ4Eqyg/v47IYgmxeLezf
-	RHLD4w1LyiKGSOWdlHI1K2FYrzRGOK1j5XpDYELldD9QmVwtTvX+X988zVdnbJRJkrAVAdKweLS
-	Amhr1l+B7b78vFluIX3Z58JWSLB/rUD4w9XLkoTW16M4CCHYMcdb1ummBF7bskFUKXfeXNeN1Zv
-	DX5WtNPHOhv53eneYbXY1MNEkXMh2QiZgvXv1MbGCdm5Ji88Kl4HOm2sG3oJrqgsmSOvY6Udg+F
-	C+5/Bzsjz9usZfodtHa3GrFQXz3zQYmzCCq277mIS6+quLEOqd0lssESMC8PhPu3wcFSdcCLiX5
-	/Mx0=
-X-Google-Smtp-Source: AGHT+IHHkZk++M+VzY5yje5Z9GoISl071IMJ960KpJg4kK+PHqYrTe8NUo0qX8yRqm3pCRv6iXxlVw==
-X-Received: by 2002:a17:902:e748:b0:21f:6c81:f63 with SMTP id d9443c01a7336-22780c79ef5mr185870745ad.16.1742860724234;
-        Mon, 24 Mar 2025 16:58:44 -0700 (PDT)
-Received: from gmail.com (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4a670sm77288975ad.86.2025.03.24.16.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 16:58:43 -0700 (PDT)
-Date: Mon, 24 Mar 2025 16:58:41 -0700
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, peterz@infradead.org,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf trace: Fix possible insufficient allocation of
- argument formats
-Message-ID: <Z-HxsV8KyeTWeskb@gmail.com>
-References: <20250324235245.613063-1-howardchu95@gmail.com>
+	d=codeconstruct.com.au; s=2022a; t=1742860748;
+	bh=FWdFElbolN32IcSIukRd2p8E/VsngBvOblp9fg+S+xY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=gS0Iydm/MeDjtnLSJdBetps1Xv0ZUqMP2L6gevOdlk9P4BuYUJa3X0+mAzh1KELYu
+	 RpqKP0F7rqM7clhL4pPXc5sbOKWMm35GLhEwqB3ENEiQcSCiWPOJv4shasRNZrbEc7
+	 N2bJK6ywGbu70kOZ9nQRl9AOtaLLwky/V6fCLtKmsoYGKtqm9ONzJEU5wYDUc9oKOk
+	 u9KnOXA7OcCT/GnzMbnsg6wbc+/kZe35QawZCbDj+kovJCXAhJDPVf++U5iRpxjRT+
+	 eGuYM063/xkB2Qmj2s+cGbijNsGY2zjC8ppTiwhL2whiZ/0+ymmAH/3/qdzgiGMWn1
+	 F73EryAwms/Rw==
+Received: from [127.0.1.1] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A8CEC7B506;
+	Tue, 25 Mar 2025 07:59:06 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Patrick Williams <patrick@stwcx.xyz>, Potin Lai <potin.lai.pt@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
+In-Reply-To: <20250321-potin-catalina-dts-update-20250102-v6-0-4bd85efeb9b4@gmail.com>
+References: <20250321-potin-catalina-dts-update-20250102-v6-0-4bd85efeb9b4@gmail.com>
+Subject: Re: [PATCH v6 00/10] ARM: dts: aspeed: catalina: Update DTS to
+ support Catalina PVT hardware
+Message-Id: <174286074647.923686.7149650911621706997.b4-ty@codeconstruct.com.au>
+Date: Tue, 25 Mar 2025 10:29:06 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324235245.613063-1-howardchu95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hello,
-
-Forgot to add, there should be:
-
-Fixes: c7b87ce0dd10 ("perf trace: Fix runtime error of index out of bounds")
-
-Thanks,
-Howard
-
-On Mon, Mar 24, 2025 at 04:52:45PM -0700, Howard Chu wrote:
-> In my previous fix of runtime error(Link:
-> https://lore.kernel.org/linux-perf-users/20250122025519.361873-1-howardchu95@gmail.com/),
-> I made a mistake of decrementing one unconditionally, regardless of
-> whether an extra 'syscall_nr' or 'nr' field was present in
-> libtraceevent's tp_format. This may cause perf trace to allocate one
-> fewer arg_fmt entry than needed for the accurate representation of syscall
-> arguments.
+On Fri, 21 Mar 2025 15:26:01 +0800, Potin Lai wrote:
+> Update the DTS file for the Catalina platform based on the PVT hardware
+> changes.
 > 
-> This patch corrects the mistake by checking the presence of'syscall_nr' or
-> 'nr', and adjusting the length of arg_fmt[] accordingly.
 > 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/builtin-trace.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index a102748bd0c9..ad6dad8e2453 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -2139,6 +2139,7 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
->  	char tp_name[128];
->  	const char *name;
->  	int err;
-> +	bool extra_nr = false;
->  
->  	if (sc->nonexistent)
->  		return -EEXIST;
-> @@ -2176,20 +2177,22 @@ static int syscall__read_info(struct syscall *sc, struct trace *trace)
->  		return err;
->  	}
->  
-> +	sc->args = sc->tp_format->format.fields;
-> +	if (!strcmp(sc->args->name, "__syscall_nr") || !strcmp(sc->args->name, "nr"))
-> +		extra_nr = true;
->  	/*
->  	 * The tracepoint format contains __syscall_nr field, so it's one more
->  	 * than the actual number of syscall arguments.
->  	 */
-> -	if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields - 1))
-> +	if (syscall__alloc_arg_fmts(sc, sc->tp_format->format.nr_fields - (extra_nr ? 1 : 0)))
->  		return -ENOMEM;
->  
-> -	sc->args = sc->tp_format->format.fields;
->  	/*
->  	 * We need to check and discard the first variable '__syscall_nr'
->  	 * or 'nr' that mean the syscall number. It is needless here.
->  	 * So drop '__syscall_nr' or 'nr' field but does not exist on older kernels.
->  	 */
-> -	if (sc->args && (!strcmp(sc->args->name, "__syscall_nr") || !strcmp(sc->args->name, "nr"))) {
-> +	if (sc->args && extra_nr) {
->  		sc->args = sc->args->next;
->  		--sc->nr_args;
->  	}
-> -- 
-> 2.45.2
-> 
+
+Thanks, I've applied this to be picked up through the BMC tree.
+
+--
+Andrew Jeffery <andrew@codeconstruct.com.au>
+
 
