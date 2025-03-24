@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-574578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C16A6E6F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8150FA6E6FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEFB16AE0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0133F16AB2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01AC198A34;
-	Mon, 24 Mar 2025 22:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228C01F0E5C;
+	Mon, 24 Mar 2025 22:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Ju3AGeh6"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvgPWPRc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA977082F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C391198A34;
+	Mon, 24 Mar 2025 22:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742857169; cv=none; b=GJOJhMnCobbDYJxEoXVz61MGJf5Jlpm0KqMtMTgKVMknbgWenvU3ZXhy0hnrM/u2xlJ80WSkzQnA4C+LOe4rvgECjAzrk+HymVAf0c7mn9DRpIQ3BPzUJ+AvvTpcnmJf9k5S4L3HxkSZD9RWY/zwZ+Z1meyt/z9A8K0sLGhnujA=
+	t=1742857193; cv=none; b=FaPSe23ou30lB53ANY0e/FJYIZ4k4sf7JemGs34N6arH0aOnbCAcApYae43pPE+vfKoxkVn4AjNEFsE+gC7ZFmMxsCNrfY+c1OoEub9AfoWdkD6Eu0GRHrOg2SNY3jH01VnL3tFMbxpfYW/AY4A4hZ9rBHm2SJ1wPkIOYIDoJwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742857169; c=relaxed/simple;
-	bh=j3AtbBepxVY9t4s2Hi3h6u0/eJQIjx5Yl0Fb4JK3+wM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aEyXnaLDHTMn+J+xstuoNqMxwQUuL/nMk/uc3UNdhEn+JW4Tots+UEiUyrv1xiWojVfbj4rzxmWeuTSG10bRY0WAu4TvSgTIqTLbPWPSEigONb/g30oTOfvukG91WlWgQQDs0Re4/mNvfkM/fa6e7p7/hbexbfmPT58IMK//Sd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Ju3AGeh6; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742857165; x=1743116365;
-	bh=UkVSl0Pru0KKuSb5x4nU9T1S7nrs/LDzBYVaKWSryss=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Ju3AGeh6bAflmU8tuB2a6+dalFaD10S3vxKIbxUhAJW7AignUSoB38bGeKyJHzt4F
-	 OkdEmupXefgu5Ww1ORUuoFlmdo47WFJunrqMikr/nFjqV5htyQmsrTQoaEY89EEJLT
-	 32uVMpqQ8FB8SlQv550UB+58IszlOaLIL8sWBCEnntZKNdUgrjlASsGmP9tav3X63K
-	 IYnntr8zEzmvGdnqkNrO5Be4BwyTAe4luxOAbT5cEw8TcPIDouJFdQQji37efTod9X
-	 mj3KMNAdwNz/205DGVTQkKQMw1EM2yAMsmAmSY4DK0vmJkA1yNU2mvy8+53U8vj0GF
-	 onIJkEpOy7qPw==
-Date: Mon, 24 Mar 2025 22:59:22 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH 00/10] rust: clean and enable Clippy `doc_markdown` lint
-Message-ID: <D8OVATSS19YC.1GXZRNM6TBA0X@proton.me>
-In-Reply-To: <20250324210359.1199574-1-ojeda@kernel.org>
-References: <20250324210359.1199574-1-ojeda@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: f923cfed497f62b6bdc1c007c1284d6c95c1ef17
+	s=arc-20240116; t=1742857193; c=relaxed/simple;
+	bh=Lw1mP4qAeaD2JWWbT/o7f/jVHtDLVrGkTT7I1/dyG1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QbD3CNdzw42mLaz/rAvA4hUm0fva3wA1OORWSUzUlNkZwrrONIscvAYQG0bp6hqJxIFgF61CZqKQCS3dugEgNhfgQhmKbqM73+qoxk3jShgqJMrsaFE6Tc2khme5z2+LYhnCV6KJ14Yynft40wO0evrH4a4suAhNJVFGnWY7CEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvgPWPRc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1063C4CEF0;
+	Mon, 24 Mar 2025 22:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742857192;
+	bh=Lw1mP4qAeaD2JWWbT/o7f/jVHtDLVrGkTT7I1/dyG1A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kvgPWPRcCAwczrYTg8HGdP9ePFv0PUMVMuiEiNTNBR6BagvCuXvhR8IwKaWnDyueA
+	 CqOQ1FAfY3znCDXqVmMxVTcDf+Mj9r7oXP9qIuQSq6ODFViw6fyqqQFZlBq3Wk84ML
+	 GuH4WqrqCKcMF1hItKbNJFHn+nHfkfVnzgWCEuugSG38PzZx1DlMck2TXf57CvyKZ7
+	 48uUi/LbipSHxBT8JK4fsqHZoIr07kjWT/oQx2VZWXeVtJQrrnvlK8U77ikuZPPrw2
+	 crgLVAI1xUj1LZSTa+7vX3QKEszseKJH9lDTsus8JdombMXir9gX7udJSBWXy0OZiX
+	 GTWYCU8z8BZAA==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e60cfef9cfso7384943a12.2;
+        Mon, 24 Mar 2025 15:59:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjLK1QykkOH1bBS4H+3eJS35Bt20MTXB11UqwUeXj3Cu6bowEG2Xa+TwGLY+wlGawJ135fyXHEJw6tl2My@vger.kernel.org, AJvYcCVqGio8g587gbSRl8K9TBoXMwO3itOgl7bbak4t/+VYq0znrwe0pYGBNfZwiQfyzzEnsRI5QxeWctquiVHUcw4=@vger.kernel.org, AJvYcCW20IMCF++9h1mR3/jDPQaE/jqCRilwOK+OpuvQLYurwYGb98BjjdH7kauqnlgULrjpUSuRTSLBrOmEZjZtkQ==@vger.kernel.org, AJvYcCWMnE4qHNf07O2pPvt7FZYEGalkhCqoXcYMlIp6nR1b1oCG7mzRWTbU4MYWTRvtVy5PxKD+84XD@vger.kernel.org, AJvYcCWSYXFVHEWLNXUkfupe65Plc3GK7fLsivBoA0POroTTqxekuk7BTP1HYGcHZ4W5IfXCAohZA1yexo8XuvZIBuY=@vger.kernel.org, AJvYcCWel3+sfxmz1ZwITc674B/3zkEod87Kzou5qpIGIfUriNvUjHLoiAlaHEVgQZQWslQf1NGr0/DtIpB+kw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze+TPpx4XP5yO/9BzmRuaKTVBBrTwTS5z25DpkUZdEu+78bMwH
+	WE8mDdsNpjVhdVXXHkpqVJ7e6Y+8idm+TVrSd47+LQdWvWuhRcVQdXYkaTFTH7ezOU+sRadf2hV
+	ek1yGG57glbtLoguKCd2Z9fcEsw==
+X-Google-Smtp-Source: AGHT+IGMI1Cl7DYidw+DSHuEV1LN/O9iU02wqw1tml5Iu5KEnu3G+HWexYp+f0u6TjbJC81n8Ym/RO+LHqMzqmOjC8w=
+X-Received: by 2002:a05:6402:13d0:b0:5eb:9673:feb with SMTP id
+ 4fb4d7f45d1cf-5ebcd4f8250mr12537192a12.25.1742857191292; Mon, 24 Mar 2025
+ 15:59:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz> <20250324-dt-bindings-network-class-v5-1-f5c3fe00e8f0@ixit.cz>
+In-Reply-To: <20250324-dt-bindings-network-class-v5-1-f5c3fe00e8f0@ixit.cz>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Mar 2025 17:59:40 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJt-3mA4mnfMkS10pbPoAPKJ=Q4P3r0P0fzTZDLX+H5NA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jol00ghFWSCxCHKge5D28bVFmC4YsOFGlu-gViPVE2B_vZ9pKfwkJkFqNk
+Message-ID: <CAL_JsqJt-3mA4mnfMkS10pbPoAPKJ=Q4P3r0P0fzTZDLX+H5NA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] dt-bindings: net: Add network-class schema for
+ mac-address properties
+To: david@ixit.cz
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
+	Johannes Berg <johannes@sipsolutions.net>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	van Spriel <arend@broadcom.com>, =?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Andy Gross <agross@kernel.org>, Mailing List <devicetree-spec@vger.kernel.org>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon Mar 24, 2025 at 10:03 PM CET, Miguel Ojeda wrote:
-> This is how it would look like -- I am not sure how many false positives
-> we will get, so I marked the last commit as RFC and perhaps we just want
-> this lint as an opt-in in e.g. `W=3D2`.
-
-I think we should try. If it's too much trouble, we can disable it
-again.
-
-> However, so far, we only got one ("KUnit"), plus a couple others that
-> are in C side comments that were copied, and thus someone may want to
-> keep them exactly in sync. So it seems pretty OK so far.
+On Mon, Mar 24, 2025 at 12:41=E2=80=AFPM David Heidelberg via B4 Relay
+<devnull+david.ixit.cz@kernel.org> wrote:
 >
-> Another question is whether we want to commit to something like the
-> global list in `.clippy.toml`.
-
-Not sure what you mean by this, but I think we need some way to disable
-it for some acronyms.
-
-> Anyway, please take a look -- the other commits should probably be
-> picked even if we do not enable the lint.
-
-For the entire series:
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
----
-Cheers,
-Benno
-
-> Thanks!
+> From: Janne Grunau <j@jannau.net>
 >
-> Miguel Ojeda (10):
->   drm/panic: add missing space
->   drm/panic: add missing Markdown code span
->   rust: alloc: add missing Markdown code spans
->   rust: alloc: add missing Markdown code span
->   rust: dma: add missing Markdown code span
->   rust: of: add missing Markdown code span
->   rust: pci: fix docs related to missing Markdown code spans
->   rust: platform: fix docs related to missing Markdown code spans
->   rust: task: add missing Markdown code spans and intra-doc links
->   rust: kbuild: enable `doc_markdown` Clippy lint
+> The ethernet-controller schema specifies "mac-address" and
+> "local-mac-address" but other network devices such as wireless network
+> adapters use mac addresses as well.
+> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
+> a generic "Network Class Binding" with "address-bits", "mac-address",
+> "local-mac-address" and "max-frame-size". This schema specifies the
+> "address-bits" property and moves the remaining properties over from
+> the ethernet-controller.yaml schema.
 >
->  .clippy.toml                        |  4 ++++
->  Makefile                            |  1 +
->  drivers/gpu/drm/drm_panic_qr.rs     |  4 ++--
->  rust/kernel/alloc.rs                |  4 ++--
->  rust/kernel/alloc/allocator_test.rs |  2 +-
->  rust/kernel/dma.rs                  |  2 +-
->  rust/kernel/of.rs                   |  2 +-
->  rust/kernel/pci.rs                  | 15 +++++++++------
->  rust/kernel/platform.rs             |  9 +++++----
->  rust/kernel/task.rs                 |  4 ++--
->  10 files changed, 28 insertions(+), 19 deletions(-)
+> The "max-frame-size" property is used to describe the maximal payload
+> size despite its name. Keep the description from ethernet-controller
+> specifying this property as MTU. The contradictory description in the
+> Devicetree Specification is ignored.
 >
-> --
-> 2.49.0
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  .../bindings/net/ethernet-controller.yaml          | 25 +-----------
+>  .../devicetree/bindings/net/network-class.yaml     | 46 ++++++++++++++++=
+++++++
+>  2 files changed, 47 insertions(+), 24 deletions(-)
 
-
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
