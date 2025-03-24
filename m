@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-573454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D92A6D782
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:34:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2E2A6D786
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1003A7620
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC75B16DCB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226DB25D915;
-	Mon, 24 Mar 2025 09:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA30B25D913;
+	Mon, 24 Mar 2025 09:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HA98kcj3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OCwbxnPb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7614210F9;
-	Mon, 24 Mar 2025 09:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D775213C81B;
+	Mon, 24 Mar 2025 09:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742808846; cv=none; b=gdMc2hbOompzJMl+mEMopwY8frlC6u6I9yJ5vagkPyTe+fEVBDZqWPUA+DgNVDCEaUHXW5GRDPc/CaeUU6nrKJdlofvG+8GNLGKZLIM94me8FyyPWVCBEpdbNs6gcXmoUH7fbnaGsOvbjkI8DgPvtuE+luSdYfn5p6ymzd2a9hE=
+	t=1742808901; cv=none; b=X1vFDhb1GNhR9O21RHkp+CgR1nf2Q4cMye6DrMRCm3RDIzOQt4pomoVY0D8qtlIXCXsQO8kON6CrVcEe/R7qnNCy3dhm4iaJXf8kf4xowyMkjJZFdd68xqt5Mh8Wi6x4/RmcipUTiQPQSAZLlCBeVrdbdtMEUKYtTjsJwLCLevw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742808846; c=relaxed/simple;
-	bh=FvQn3givm85EANWlfsUtGcpdsUFHMIzmUrIJkbrLKlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePNNX6T5kNeCJw4MSZZ+N36Qa5YFTfJdZIUqZKidUmYsH63ursTbBUl3foCmyw8H5LMv0TPc6MEaNE25i3YAAhCCM1oHwsCgQ/Lt+7kByptcU07LbaE0B3qhSym1Drh5/NL3492ZtTj0ifkPXFJlULKb1vrbq9pDTFlcm4tYJH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HA98kcj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF6CC4CEDD;
-	Mon, 24 Mar 2025 09:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742808846;
-	bh=FvQn3givm85EANWlfsUtGcpdsUFHMIzmUrIJkbrLKlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HA98kcj3d+kiZI2Lofc3n1TBAGS7wYTceRz1BVXH62/B4d5TNdiIjqZNskJcWKKtz
-	 Vpjj0auztCgtdivyZ/WHR5b0zJT8QvR6jSYk4wTuy+2oYygLaULIWN+HSsUQ7Uo3/P
-	 1BZnR8plpgEWS3OmPmzjY6W/VBMYs6kI2b9dOLVchttfqBHLuv12TdXHDscJIA0lyz
-	 SoJ7xwUJoBzbbUejhLYLX84VY5pUXIVbxht9NSjtO5+M0J+BrMPKVlEzZ2FVCgKbmu
-	 wUoN4brf8KOLM6bRVYbq25XEeBlzOUX52q99zgulHr/en2hem1Hd0sToceVrHw0ALw
-	 gQx/wmwyQHGrg==
-Date: Mon, 24 Mar 2025 10:34:03 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "paul-pl.chen" <paul-pl.chen@mediatek.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	chunkuang.hu@kernel.org, angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com, 
-	p.zabel@pengutronix.de, jason-jh.lin@mediatek.com, nancy.lin@mediatek.com, 
-	singo.chang@mediatek.com, xiandong.wang@mediatek.com, sirius.wang@mediatek.com, 
-	sunny.shen@mediatek.com, fshao@chromium.org, treapking@chromium.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v2 02/15] dt-bindings: soc: mediatek: add mutex yaml for
- MT8196
-Message-ID: <20250324-amusing-pearl-yak-9d925a@krzk-bin>
-References: <20250321093435.94835-1-paul-pl.chen@mediatek.com>
- <20250321093435.94835-3-paul-pl.chen@mediatek.com>
+	s=arc-20240116; t=1742808901; c=relaxed/simple;
+	bh=5faaDxQ++N3YVHDh0h1jietj3gcwvYwVapcPuq18u4I=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=c01Nc5eXWH1ZzQb0bMaQOuz9cKgB7Xx8zbR6zpz0Uw01mBCF9iDgv70qxSNzExugi4Kz6RRIhKj9CXD2UzPm6H/Hqmi1fPhbRlqyZI56xZhZmPBuPriL6gRLfpLfkITpIox0NLKsYxt+trTfSPTq/vW+1Z/2pwNX5iRTgJgj2xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OCwbxnPb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3590D455;
+	Mon, 24 Mar 2025 10:33:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742808792;
+	bh=5faaDxQ++N3YVHDh0h1jietj3gcwvYwVapcPuq18u4I=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=OCwbxnPb0UpoU+IjJK/9G1iwcQHV3yi93nK76EbOhZrBKsTIuCh1GQWE/9tdDtWs2
+	 ORBvZAZXGgcjwe/k0Uy1v9MMcq3k4viCmETNejb43PIoz6iIgGmeQqq0vekYYNmwB4
+	 S7S+LnFiaHwcwsUtvinroQrKm4MJC/k4GT+a79+8=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250321093435.94835-3-paul-pl.chen@mediatek.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250324-cal-streams-v6-2-28c93fb8f0c9@ideasonboard.com>
+References: <20250324-cal-streams-v6-0-28c93fb8f0c9@ideasonboard.com> <20250324-cal-streams-v6-2-28c93fb8f0c9@ideasonboard.com>
+Subject: Re: [PATCH v6 2/3] media: ti: cal: Fix wrong goto on error path
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Jai Luthra <jai.luthra@ideasonboard.com>, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-media@vger.kernel.org
+Date: Mon, 24 Mar 2025 09:34:55 +0000
+Message-ID: <174280889514.3289779.16133476560769261076@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Fri, Mar 21, 2025 at 05:33:31PM +0800, paul-pl.chen wrote:
-> From: Paul-pl Chen <paul-pl.chen@mediatek.com>
-> 
-> Add compatible string to support mutex for MT8196.
-> 
-> Signed-off-by: Paul-pl Chen <paul-pl.chen@mediatek.com>
+Quoting Tomi Valkeinen (2025-03-24 09:29:18)
+> If pm_runtime_resume_and_get() fails, we should unprepare the context,
+> but currently we skip that as we goto to a later line.
+>=20
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+This looks reasonable and correct to me.
+
+
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
 > ---
->  .../devicetree/bindings/soc/mediatek/mediatek,mutex.yaml        | 2 ++
->  1 file changed, 2 insertions(+)
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>  drivers/media/platform/ti/cal/cal-video.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/ti/cal/cal-video.c b/drivers/media/pl=
+atform/ti/cal/cal-video.c
+> index 4eb77f46f030..29c38bf8d7a1 100644
+> --- a/drivers/media/platform/ti/cal/cal-video.c
+> +++ b/drivers/media/platform/ti/cal/cal-video.c
+> @@ -744,7 +744,7 @@ static int cal_start_streaming(struct vb2_queue *vq, =
+unsigned int count)
+> =20
+>         ret =3D pm_runtime_resume_and_get(ctx->cal->dev);
+>         if (ret < 0)
+> -               goto error_pipeline;
+> +               goto error_unprepare;
+> =20
+>         cal_ctx_set_dma_addr(ctx, addr);
+>         cal_ctx_start(ctx);
+> @@ -761,8 +761,8 @@ static int cal_start_streaming(struct vb2_queue *vq, =
+unsigned int count)
+>  error_stop:
+>         cal_ctx_stop(ctx);
+>         pm_runtime_put_sync(ctx->cal->dev);
+> +error_unprepare:
+>         cal_ctx_unprepare(ctx);
+> -
+>  error_pipeline:
+>         video_device_pipeline_stop(&ctx->vdev);
+>  error_release_buffers:
+>=20
+> --=20
+> 2.43.0
+>
 
