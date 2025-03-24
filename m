@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-574187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1B4A6E1CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8C3A6E1B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72163A5C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:51:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D34B18858A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520DD26770C;
-	Mon, 24 Mar 2025 17:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D7C263F22;
+	Mon, 24 Mar 2025 17:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM1CUWpv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWhtQ8/y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF06267718;
-	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5714426463D;
+	Mon, 24 Mar 2025 17:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838103; cv=none; b=tIuVuGmgqk6/P4prhX/XP9sL5q4eLLsJlRQ2OJUloKy3hmP5TZ9xVCgtD7TKDuoaJ+M9UA9Obx39aLCOqlRIddb0dhnQvKeB0caW7idHy9gQm2NSCsNMPpvaWN28inxxT3nnk14FRmGxaU1f5Rnispm8+xvT16YrYgzsReRTcvY=
+	t=1742838147; cv=none; b=AIuPB3a6YFm/0yzNfSxTBP2vgor4+jR1j5I3Gp5bLtWrM2pWsRxpREWdPsEt6zLHeFmnuW2iIUL6vjHAfbgk6ou15EKcviHDFnvJhI5AyTrTAt2vQg8yvd5GYU9kDrAevC/AQ6Tu71ryZ9yGz1T/nuI0SwPw34M2KViwN2pTq/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838103; c=relaxed/simple;
-	bh=eUFaq+yugIuksyG03BYSR72DIzc5mCrpziXwrV7Qk88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nNDElK9KBf9QVqY1XhvSwDEgNAxkvHoDfXxiQDqgUT222Dr8ILt/bnIOlfrbSdSc0yUxs9XuKwa7hrHByjqc1PP+vOREge3NPY6bJVfeoJ+mQ0TPRQOO8ZhfVgVz1K5LU5Y1VD3gNnALtL7NFXtC964HSyuDJcfcvsJTREBYxr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM1CUWpv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C5DD4C4CEF3;
-	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
+	s=arc-20240116; t=1742838147; c=relaxed/simple;
+	bh=JzLwpUYcuzVCpdSFrJ47M0hj0NSi9n7p7JRZWewryVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXeD/EbpHqNZbCSmEC1z4rA9u1kCG/VZWmlmzJoBwxhnN1ZuSNdygdcbV1PCsWE5AqUo7w+SYQUGGeMiBKrMBuWDJKRoNYDCHyKJB4xnlf77WWo/j2KshlG0jX1AoIqil5eob+wwStDoGA88ldh8Pj7WGNHN+0cB0HjmkzLtfsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWhtQ8/y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F85C4CEDD;
+	Mon, 24 Mar 2025 17:42:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742838102;
-	bh=eUFaq+yugIuksyG03BYSR72DIzc5mCrpziXwrV7Qk88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UM1CUWpvVSEW6wS3JIFbX8YAbP+JaY4SD5GiSG4Zz6CB1zgKOyAhCB3AgB/HH+FN8
-	 44d2lmFCoAPEtkLYdURCEYv5a1foMznp81ItNJATSwLPsb74qsLhujdwfurwixlTKL
-	 5VlN7nmxRc6ZWe40mmTWRhkCcUKIBiepjDEFJebQxigxi/2ocLJXwVXZLIR0L9Ctjr
-	 wOzjglyhSFNojAC0Czd8m+ynxmC7U1fhAi7NqHSeRp4zsWa5JMN6uF7va0YcLUZq2X
-	 MLYjG5o5/pV0l/msILpbJZo7BC89SMb7By6AflujkGTHe7lY+EGmkERn32cGQdG2pw
-	 R/lv99dP0yFCw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF18C36008;
-	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Mon, 24 Mar 2025 18:41:42 +0100
-Subject: [PATCH v5 5/5] dt-bindings: wireless: qcom,wcnss: Use
- wireless-controller.yaml
+	s=k20201202; t=1742838146;
+	bh=JzLwpUYcuzVCpdSFrJ47M0hj0NSi9n7p7JRZWewryVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YWhtQ8/yCUsdR0t6RLb6QpyiO9AcH38H6foBfoBAnhX9qxkUg8AmSC8B5K0LoYPLy
+	 40/vYLWgSBp74df3IawiLqMWqFPvoDFFpFJBR3/711Quc7Ur+uVTEIA5GWG/FnoVgA
+	 oWQex/dLnFORQuKEo+y2dd5KbDf2dF4yYOabppFexMJKAUgI2CT7XxzHSmSDXwW7sY
+	 PMJ+LyN8Bj5zMUYp6KzmJisMn6+hFOiPnWS2fBzGqrrQ1qN3J/MsuLukT094TqCAT+
+	 KpsvFXLUbAFDdQ626ilhm0uWQyoFQRTkqJWaXwNZFPyhd6mGmIbyS8IwHLIw1P2jp+
+	 y4l5meIQdK9xw==
+Date: Mon, 24 Mar 2025 18:42:24 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [GIT PULL] pwm: Changes for 6.15-rc1
+Message-ID: <dkvbidqel4v3wndhjp7cnzyh6h3le54tthblcwflq4ayilm2dw@vcclgjfkrm6e>
+References: <gwhcc5df76untpl5ko4mqbt7vtxo3z4zdbqn4ehkenktt6untv@eng6ov2jmlwb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250324-dt-bindings-network-class-v5-5-f5c3fe00e8f0@ixit.cz>
-References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
-In-Reply-To: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
- Johannes Berg <johannes@sipsolutions.net>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
- =?utf-8?q?J=C3=A9r=C3=B4me_Pouiller?= <jerome.pouiller@silabs.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>, 
- Mailing List <devicetree-spec@vger.kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1122; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=8m+TP7dhDaz8he9N9bMiZ3ZhzlbMMMqDKwJGp281Vxg=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn4ZlU7W6DvkU/GtU/5mgv1mJEVjM4fMdd4lFLB
- YEnkBz9O4aJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ+GZVAAKCRBgAj/E00kg
- cjZWD/9gYT52tWM4Pj6Xa1C9vE5/lk54/lUY/gSgvswdtF7p8i7iEfWQ1TAp6bESqwxYpp3QaZ/
- hDpevbVV/KiBcnkL9XCOImWcaGNBM+KgPmZHmgj/dChDYuhxtBhSCGTAJlPA+fsBnwuP/le9X67
- wYDmWqJAvJOdRRvDosljxZoMoCMde9D0xEQ58b8wkKvEJIALE4hDmkMTrkNAcQ9kbQs0V8WqnHu
- FakuiaHdvBiRxln3b1Jb62vC9QdJFZvut36ORsLRJNj8bkeQOyFuybIodr6Pd1URNMBulafo76t
- /knBV1EuMz2KjnvNF7kC0r2sd8K3ZK6E81Kbpb+7zci+JShAdz6vm1VUbX83FTJKTled2L3ronh
- S1QR7GJKiJ2DLaqHiaBr+S5H9Bfwa+1Y6nGZgo0GAzRBFP5+ecG++alMEjCFaqPI0g0veZ5nN8a
- iduChlEKGZSwqVVXbQofOQ9f5IRZb/zqYbEydRIb25SeOei0XaF+kbl12j5ykx6Mu9MrTFPxXby
- RpL1Jp10Zox9eYFqfnYgiz+FN9D0a8sEyYS/BAUb/6z3hPxpnBIf+NMuNh0ulyQe81F7UOq1qdK
- WYWHmwXAOpdxaBuugB3TAwIt33DuRlAmS+8X9IMWwnjOd3RrsWW+P2mxZiXHFmBed4PbPg9Swvc
- 1gEwu7ZdbzaosRg==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
-
-From: David Heidelberg <david@ixit.cz>
-
-Reference wireless-controller.yaml schema, so we can use properties
-as local-mac-address or mac-address.
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-index fd6db0ca98eb7e56d7399f55c408844d5e782805..4fcae6bedfffa845ad61c776ee0b70768e9a38a5 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-@@ -54,7 +54,7 @@ properties:
-       - compatible
- 
-   wifi:
--    additionalProperties: false
-+    unevaluatedProperties: false
-     type: object
-     properties:
-       compatible:
-@@ -88,6 +88,9 @@ properties:
-       - qcom,smem-states
-       - qcom,smem-state-names
- 
-+    allOf:
-+      - $ref: /schemas/net/wireless/wireless-controller.yaml#
-+
- required:
-   - compatible
-   - qcom,mmio
-
--- 
-2.49.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="52r62j6bu437hsws"
+Content-Disposition: inline
+In-Reply-To: <gwhcc5df76untpl5ko4mqbt7vtxo3z4zdbqn4ehkenktt6untv@eng6ov2jmlwb>
 
 
+--52r62j6bu437hsws
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [GIT PULL] pwm: Changes for 6.15-rc1
+MIME-Version: 1.0
+
+Hello,
+
+On Mon, Mar 24, 2025 at 06:08:52PM +0100, Uwe Kleine-K=F6nig wrote:
+> warn: No match for commit 6df320abbb40654085d7258de33d78481e93ac8d found =
+at uklko
+> warn: Are you sure you pushed 'pwm/for-6.15-rc1' there?
+
+I only noticed this warning after sending. Probably I was too quick
+calling git-request-pull after pushing that tag. I confirm that I want
+you to pull the tag pointing to 6df320abbb40654085d7258de33d78481e93ac8d
+and that pwm/for-6.15-rc1 is the right name:
+
+$ git ls-remote uklko refs/tags/pwm/for-6.15-rc1\*
+0a313207e23c1353c84de62dd60226ce920fe466	refs/tags/pwm/for-6.15-rc1
+6df320abbb40654085d7258de33d78481e93ac8d	refs/tags/pwm/for-6.15-rc1^{}
+
+So I think everything is fine now and you can ignore the warning.=20
+
+Best regards and sorry for the noise,
+Uwe
+
+--52r62j6bu437hsws
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhmX0ACgkQj4D7WH0S
+/k7nkQf/R2iUjmJa/sihMlha50hNUug9eC7k4uIr+TDuolE59K/wzICpG18AxfQd
+vts1AKwUbgq6Uq/reh78aGPAKvazZ9Wxp+rOQVVhyJuO0pxln9KWQqf1ao0wfYDj
+B91FeGKigbiADp40o1UM9WyVyb5pmPVfYclfUwZNYG+kzNz515ny66qz2XwPZsWb
+AsiPAHMwG0y44VgKJlstJa3g8Su/ccNAJ3XAacj4slCSJqmed580pXs2Q/OX4yQT
+ytI2UeKM3e8yKycADF+pE/cpGaiNs88OKaxrQ3ONVb4Pf5m2dan4fbJ8DNR3ppGN
+7nzyvxhn1dhnj3ZdfUJ9bZWnPp8L5w==
+=fvg/
+-----END PGP SIGNATURE-----
+
+--52r62j6bu437hsws--
 
