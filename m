@@ -1,75 +1,65 @@
-Return-Path: <linux-kernel+bounces-574228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FE5A6E246
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:28:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8EAA6E248
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 686117A1E96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55C037A5ED3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF078264A75;
-	Mon, 24 Mar 2025 18:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F944264A87;
+	Mon, 24 Mar 2025 18:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QzUlCVO+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMSHIior"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBDE2E3374
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08CE263F22;
+	Mon, 24 Mar 2025 18:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840888; cv=none; b=L0e3nE5ZJzwbI3oHf+jK72GUUtkeaw5/dsLc1uCqe4pz8pBiX7muoFixIc1S4eYybOfMr/UkklptxNpSVlwxPr+M478ks2GaxISxRFfnbIofBzWrx++5lmR1+RYt+/OwYJ7QFbTg3kd5qaUOI/w7rOOuDlT+3UUcW4ETGfaM9GQ=
+	t=1742840909; cv=none; b=MswyazFQVEXyizX6PfPTg8FRZuHxlGyYT/H1EZ0sNp0yFMoecQEUDlSK3XtJNbd0Tq5tyx3q474P3skHl5DD0fZctV9TE6ghEy4K5R+cVRfHV9M2QCMszLtGJBlc+JNsV3rcI6N11Awb7mOevNi6AZXYHTt9zqp79gj/G1JN8lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840888; c=relaxed/simple;
-	bh=xKXLckG3JcEYiJLm25eTT4GpebPkKVPJ6WMyBA2uJV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOKHlTNhs8qQFr4JXR/ZM30yfhH9jNOpwtbTEaGmWvgzLXXf5Lo2z1Am0Du3umJTU3cMkUjE5zoAtuFaAcfanOvSzmXg4rbGStwR1wmO65/e0pqQGPizLWDLWiCRUQcL1SoT3aRPC7Au2Pw6EJ3gYcAAzYMb6s34yM7kExRfrsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QzUlCVO+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742840884;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xKXLckG3JcEYiJLm25eTT4GpebPkKVPJ6WMyBA2uJV0=;
-	b=QzUlCVO+BaNuRbnIGVnGznBXZtk/XW+N3lfGz+VMu0ENVS2lSuEAPPn86hnmYWThJCeZK/
-	zPnEFixY0L1MThgGgl49KH4iBkOW6d/QBwBY3T/dNGFU9LijnXTw7tima7TuknnKCE44Gu
-	a8QrmTlj/glOaC4jOTje6XH7nwCi8JI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-Nv2AS9tqP9uVkEWzJ_qCJA-1; Mon,
- 24 Mar 2025 14:28:02 -0400
-X-MC-Unique: Nv2AS9tqP9uVkEWzJ_qCJA-1
-X-Mimecast-MFC-AGG-ID: Nv2AS9tqP9uVkEWzJ_qCJA_1742840881
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1534180AF55;
-	Mon, 24 Mar 2025 18:28:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B5869180B48C;
-	Mon, 24 Mar 2025 18:27:56 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 24 Mar 2025 19:27:27 +0100 (CET)
-Date: Mon, 24 Mar 2025 19:27:22 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
-	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-Message-ID: <20250324182722.GA29185@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <20250324160003.GA8878@redhat.com>
- <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+	s=arc-20240116; t=1742840909; c=relaxed/simple;
+	bh=EWIOhq8a6WrbauOCbT88senxBdzZjHc5hedq099LcUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tKAAzptZMe0+fQDS/3f7SrGTng850nlB40uQYdmdaMjJnTnvF39OpQ73tBypkqKArQfKhTGjXhUqJMJ92mxSIyMpixudVfK8eYYi4swIVq6OfKxoHFqDz5dEJ+9H8P7eGeiarGM4rN8Hz/PCBrpK252WqLYtLDOZSZ/PPiXjWQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMSHIior; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B447C4CEDD;
+	Mon, 24 Mar 2025 18:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742840909;
+	bh=EWIOhq8a6WrbauOCbT88senxBdzZjHc5hedq099LcUM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jMSHIior9o47tI8oJHPN6ePxVwCZYJdCO/6fFs6AZByzpgiYy/9UX5RvfW6ih0Kql
+	 7gLZPoaZU0njyioZ5rfgfyA9Qqa7CIGgf9MmANlX/ud45edRowOoDEyRqDPypwFnXV
+	 Ne95va5kK2vmy4HBZ1UXFULxlV6pv8SJcKnbAkwyxTmehuJ3tc4af/Rd3nNeN+4YcL
+	 PD7RbLiRjbxoAZEYqlpESyh6+i5QJUD6v7X/ieViJmSs/yj3jW+6GpNETCvQCOJtFi
+	 wzHySGpGscT5I9gyPQX03ua+2JdbMHj2df1SRUCxBuEApbt/oheMREFl+dm+FCdC23
+	 ZOYYX+YyJ2bfw==
+Date: Mon, 24 Mar 2025 13:28:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Niklas Cassel <cassel@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v12 05/13] PCI: dwc: Add dw_pcie_parent_bus_offset()
+Message-ID: <20250324182827.GA1257218@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,38 +68,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <j3qw4zmopulpn3iqq5wsjt6dbs4z3micoeoxkw3354txkx22ml@67ip5sfo6wwd>
 
-On 03/24, Mateusz Guzik wrote:
->
-> I had cursory glances at this code earlier and the more I try to
-> understand it the more confused I am.
+On Mon, Mar 24, 2025 at 10:48:23PM +0530, Manivannan Sadhasivam wrote:
+> On Sat, Mar 15, 2025 at 03:15:40PM -0500, Bjorn Helgaas wrote:
+> > From: Frank Li <Frank.Li@nxp.com>
+> > 
+> > Return the offset from CPU physical address to the parent bus address of
+> > the specified element of the devicetree 'reg' property.
 
-You are not alone ;)
+> > +resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
+> > +					  const char *reg_name,
+> > +					  resource_size_t cpu_phy_addr)
+> > +{
+> 
+> s/cpu_phy_addr/cpu_phys_addr/g
 
-> Per my other e-mail the obvious scheme would serialize all execs
-> sharing ->fs and make copy_fs do a killable wait for execs to finish.
-> Arguably this would also improve userspace-visible behavior as a
-> transient -EBUSY would be eliminated.
+Fixed, thanks!
 
-I had the same feeling years ago. Why didn't I do it? I can't recall.
-Perhaps because I found some problem in this idea, but most probably
-because I failed to make the correct and simple patch.
+> > +	struct device *dev = pci->dev;
+> > +	struct device_node *np = dev->of_node;
+> > +	int index;
+> > +	u64 reg_addr;
+> > +
+> > +	/* Look up reg_name address on parent bus */
+> 
+> 'parent bus' is not accurate as the below code checks for the 'reg_name' in
+> current PCI controller node.
 
-> is there a problem getting this done even for stable kernels? I
-> understand it would be harder to backport churn-wise, but should be
-> much easier to reason about?
+We want the address of "reg_name" on the node's primary side.  We've
+been calling that the "parent bus address", I guess because it's the
+address on the "parent bus" of the node.
 
-I won't argue with another solution. But this problem is quite old,
-unless I am totally confused this logic was wrong from the very
-beginning when fs->in_exec was introduced by 498052bba55ec.
+I'm not sure what the best term is for this.  Do you have a
+suggestion?
 
-So to me it would be better to have the trivial fix for stable,
-exactly because it is trivially backportable. Then cleanup/simplify
-this logic on top of it.
+If "parent bus address" is the wrong term, maybe we need to rename
+dw_pcie_parent_bus_offset() itself?  
 
-Oleg.
+Currently we pass in cpu_phys_addr, but this function doesn't need it
+except for the debug code added later.  I would really rather have
+something like this in the callers:
 
+  pci->parent_bus_offset = pp->cfg0_base -
+      dw_pcie_parent_bus_addr(pci, "config");
+
+because then the offset is computed sort of at the same level where
+it's used, and a grep for "cfg0_base" would find both the set and the
+use and they would be easy to match up.
+
+> > +	index = of_property_match_string(np, "reg-names", reg_name);
+> > +
+> > +	if (index < 0) {
+> > +		dev_err(dev, "No %s in devicetree \"reg\" property\n", reg_name);
+> 
+> Both of these callers are checking for the existence of the
+> 'reg_name' property before calling this API. So this check seems to
+> be redundant (for now).
+
+True, but I don't see a way to enforce the caller checks.  I don't
+like the idea of calling of_property_read_reg(np, index, ...) where we
+have to look the caller to verify that "index" is valid.
+
+Bjorn
 
