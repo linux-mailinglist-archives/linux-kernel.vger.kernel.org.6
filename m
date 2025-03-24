@@ -1,114 +1,207 @@
-Return-Path: <linux-kernel+bounces-573669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06020A6DA77
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8733A6DA96
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FCC77A81BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820B21895F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926B926136F;
-	Mon, 24 Mar 2025 12:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F396F25EFA2;
+	Mon, 24 Mar 2025 12:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH3BhXIR"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cjqGr3+m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6511953A2;
-	Mon, 24 Mar 2025 12:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3732625E445;
+	Mon, 24 Mar 2025 12:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820770; cv=none; b=a+aq/KvDYnrtwYsQPSeEvqTiDpwJQIBLNtD8VfGzt0klcQLQWmVySqhNe2weAvC5Ag2chds70/eQF952gZLn1xVVUOcb9cqsENwCrS/mcm/CSyuxNFYVDR8FO/o+RKrd1aSajcrk5C/6QtMidPu+r13D6YI2qmyhb1yL9J8n5Tg=
+	t=1742820887; cv=none; b=r/T/IAfWTHvayZgw2rtP/4fK1yc59ZYWh2wie7LtKM5XXt0saib7Q28c3w0KI0xTZ3zTVYA9wMfEyxLB0T/K2WGlmpjYGHFtHWodHXSX+LATglguqoaCCYW4FgPgNUVcgEcXJeD1pdc/YVllJ66Fz00PwK2kazbuw5RHKQ6Spzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820770; c=relaxed/simple;
-	bh=l0GeOJz16oW6SGdnb06/aK2t7USSqgz1qqgSmbO45sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1XJeTZ1ChdQuTrAd3aoD538hjMQClLHdxNuG24qPzoygQOvR0fp91BXedTsbMq9gWWdXG68R/XzzkBuSi5clNaey1QvyScwGoSVUTv41gAbEiPnlI6+Is5zU1AOlG9x9MXi1hLADRf+LK3ZIt73Moc8ANv1jtz6nmCEVPYEVqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mH3BhXIR; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-476977848c4so43697601cf.1;
-        Mon, 24 Mar 2025 05:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742820768; x=1743425568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vme9H9wmsAwxUfbsVKtvTuLGOlzu2k2VT8Gp2wTq77Q=;
-        b=mH3BhXIRtl1QPfnx97v36SLpDxHOTcYsM0cZOGnQgweIXyRsyY5UHRFLLK0hrXPb8q
-         2/Em/SdL83o49UHoYkO+YAsXTRWrfXUEMtrUp+r8lU09AOMnX6APC8uG9MMwPPvhWIus
-         pS70mn5A5KNaZFZWTSephL9wUWxovKIPsPzhXr1Y5e28MNk5AHhbevTOWsrCBnabO4Yr
-         lYdZ2m2iq7jCdGjm9dNBBiQOTd3gBHGa5G+1rI3oD3sdMeMBazXXXDwRLVXF9By/8WUE
-         6gLWbdaFYRIDvMZtqzGs6GuLT4/ul6uqsleVCi1fcFLEbokiPXXZZ+dKOyNnI6B5Zmht
-         +KcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742820768; x=1743425568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vme9H9wmsAwxUfbsVKtvTuLGOlzu2k2VT8Gp2wTq77Q=;
-        b=wzKAY9wePM7WCFz1gVLsg4gGRTZjGgt09UBTlkNI3RqH1loscXOsvDxoV8x385Qmym
-         g92ah6VN8LSINLR79vDv0bq845Z9CSrE84M4cYvOyJg84+MaDjr++cv1hZ29gTClLeYt
-         hRbpkX07jUTsJJW4vi96c9T+hakGkQGytpjojvUpgJQxuMKwLHc64Uz4mScdA//MG4OH
-         OjqVSPUEk32xNExfqmgL7Wr5HvZkbUmboPI4O4UyOVSTf+k1Tw1UNEtplsUbdHZlZRfZ
-         mmgx/1T+v6QSZzbaB+vTYqdq2Ph036/O+dPU1pJeTqwYEVAjYuvzB2VsZljo9mxBJVvo
-         uOkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWZsH4tH4bdBdv5QIdDMUKDrI3KrL5MzOk/9Y3cfbgZrrVoGk5mY+3dte2gBlIMddjWydDB60CWXx/1LvgcNQknS1CRw==@vger.kernel.org, AJvYcCXJqZx5joocfEbtJ+E9GUWlgvDDPIJSL60oOPTA98qdKZGQpiGbAg/BWEySQUpZBXgX19fLQufm@vger.kernel.org, AJvYcCXr7e0/gm3/eAz4dBhbF7gCfab3+arHFmM3iw35oARlVNCrIDmR2uRuY9x2+Tk9ot7ltLYL4bPwZyRHQF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6zk6l2psQaNp8QN9V41B3IwO4LguLR9OnaFtzpkr2do2GAFK6
-	8+kjTg4MuLvaxPxRkPzbDfGbnVho1mmlxEqwBCJP0g3dS5HiwuT+
-X-Gm-Gg: ASbGncs4aDVm0zBtyMVEbhszUEKqccwzVMy9Ri53xgPnXXvUdaH4HBSwSTQ7v+kwRJC
-	PLPpVutDBtOOF1dKzCGP/vx48NhK6B3YC8RkuPZHbXE5SnXyjdbXBmsAeLcee/y8h+H97eca7XU
-	1FmzAVhA81XqSIJhHmdWMMivokFlV6G3hausVL7cvIfJr19is20b8q4DgWNCUGT/i/5uCuYgOAr
-	fHnLycsFlmF3IjiV1c1zu5mqwcajsfmMHoZqcVn3nFMuOAKHqbKFp1UiralNsZR5p6aEqn7Xmhn
-	/aze6Ids0k3wDObrpVKL7rRHGtVS7bEraLhgZ65l1eQA/st7BQhVnkr8ajuQstZE3CmCO2HrirD
-	C
-X-Google-Smtp-Source: AGHT+IFBjEOy7vbR53CK0B/QWpq+o5gZGcznEE5+haT6GVIZen5thERBPa5VSCwyNKU9DrTsad2dHw==
-X-Received: by 2002:a05:620a:4556:b0:7c5:61b2:b95 with SMTP id af79cd13be357-7c5ba1840a2mr1757424785a.30.1742820768120;
-        Mon, 24 Mar 2025 05:52:48 -0700 (PDT)
-Received: from localhost (pat-199-212-65-32.resnet.yorku.ca. [199.212.65.32])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c5b9348358sm507353785a.71.2025.03.24.05.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 05:52:47 -0700 (PDT)
-Date: Mon, 24 Mar 2025 08:54:21 -0400
-From: Seyediman Seyedarab <imandevel@gmail.com>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: hmh@hmh.eng.br, Hans de Goede <hdegoede@redhat.com>, 
-	ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org, 
-	Vlastimil Holer <vlastimil.holer@gmail.com>, crok <crok.bic@gmail.com>, 
-	Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>, Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com>
-Subject: Re: [PATCH v2] platform/x86: thinkpad_acpi: disable ACPI fan access
- for T495* and E560
-Message-ID: <euxpp6zdhlpg3eutc3omspt2exmsyulo5ytbpbqwxovzcy6xey@fuuhsp2agtrx>
-References: <20250324012911.68343-1-ImanDevel@gmail.com>
- <f4567e02-8478-682f-0947-765ef9258ab5@linux.intel.com>
+	s=arc-20240116; t=1742820887; c=relaxed/simple;
+	bh=5Yofkm1dNa6vGniR8xlKP/z1QwhPxmHysFr4OgO1Qtk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KvOdr5FCeoveD/RgdMJ+hFBWRQ1Qh9sJC0lHSzfNWFi2F+U7I1OSTY0e7ZZrG8aShzRiOBUZnSvbJziItm6e/8zVSmCrdMppJfbfQhHitXrdTPBSgdXgdiaMy03FjaYZM59hnAJJrH8hyMU87lz6AK2lT5kqJ5LwTop0Bj0CBhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cjqGr3+m; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742820885; x=1774356885;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=5Yofkm1dNa6vGniR8xlKP/z1QwhPxmHysFr4OgO1Qtk=;
+  b=cjqGr3+m94657UAMQLtc5dieGJiIS9TGNrVmcPeWCHxonAzFoWvgzKC7
+   oSA1NoGK3s4tb8MfTVtFk7tnFn91Ehd/+tfihgLuk/NEspALOADXCQHQO
+   iw5rUlIOMX7wfIs9SXxcrKpteJNuibdYOFTjK4s0f/oTpB4Oz6/b6rkUf
+   KWNHXCqv4hbDYd9hBe6QkpnT+5sJSVC47yvgsgeJl9tOdPglfBN+gKtjM
+   36IFyU9Pv3BBednbov7TmpTHc5vXm2Yj7HUvbMWa0A6s8yViGHrkMWQ7H
+   UqMzx3qGzM1tv9OjAaJHp2W/i18PkAtxRp+OUPyMyR2/jp7P9TY/kadl5
+   Q==;
+X-CSE-ConnectionGUID: 4sMa5BH5R4KQpoGGRdBzxQ==
+X-CSE-MsgGUID: 4ANoNXOOQvi3w988TJ2ABw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43178727"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="43178727"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:54:44 -0700
+X-CSE-ConnectionGUID: YsdPNGcISjGrFVNme+iMeg==
+X-CSE-MsgGUID: IBn7zjQUQz60GGLw/GwisQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="147243419"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.30])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:54:39 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Damian Tometzki <damian@riscv-rocks.de>, Kees Cook <kees@kernel.org>
+Cc: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang
+ <zhi.wang.linux@gmail.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, intel-gvt-dev@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] drm/i915/gvt: Add __nonstring annotations for
+ unterminated strings
+In-Reply-To: <01070195c306db7f-9f28efdd-9456-4db3-b6c6-343298bd571b-000000@eu-central-1.amazonses.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250310222355.work.417-kees@kernel.org>
+ <01070195c306db7f-9f28efdd-9456-4db3-b6c6-343298bd571b-000000@eu-central-1.amazonses.com>
+Date: Mon, 24 Mar 2025 14:54:36 +0200
+Message-ID: <87r02ma8s3.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4567e02-8478-682f-0947-765ef9258ab5@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-Thank you for your response.
+On Sun, 23 Mar 2025, Damian Tometzki <damian@riscv-rocks.de> wrote:
+> On Mon, 10. Mar 15:23, Kees Cook wrote:
+>> When a character array without a terminating NUL character has a static
+>> initializer, GCC 15's -Wunterminated-string-initialization will only
+>> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+>> with __nonstring to and correctly identify the char array as "not a C
+>> string" and thereby eliminate the warning.
+>>=20
+>> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
+>> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
+>> Cc: Zhi Wang <zhi.wang.linux@gmail.com>
+>> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+>> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+>> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+>> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: intel-gvt-dev@lists.freedesktop.org
+>> Cc: intel-gfx@lists.freedesktop.org
+>> Cc: dri-devel@lists.freedesktop.org
+>> Signed-off-by: Kees Cook <kees@kernel.org>
+>> ---
+>>  drivers/gpu/drm/i915/gvt/opregion.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/=
+gvt/opregion.c
+>> index 509f9ccae3a9..f701638d3145 100644
+>> --- a/drivers/gpu/drm/i915/gvt/opregion.c
+>> +++ b/drivers/gpu/drm/i915/gvt/opregion.c
+>> @@ -43,7 +43,7 @@
+>>  #define DEVICE_TYPE_EFP4   0x10
+>>=20=20
+>>  struct opregion_header {
+>> -	u8 signature[16];
+>> +	u8 signature[16] __nonstring;
 
-> > Tested-by: crok <crok.bic@gmail.com>
-> > Tested-by: Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>
-> 
-> Did these two person either give you those Tested-by tags or gave 
-> you green light to add theirs Tested-by tags? I don't see the tags given 
-> in the bugzilla entry. If they didn't yet, please ask if they're fine with 
-> you adding their Tested-by tags.
-Alireza Elikahi gave me the green light to add his Tested-by tag
-after testing on the E560. I haven't reached out to crok yet, but
-I'll send PATCH v3 as soon as I hear back from them and get their
-permission.
+Why would this annotation be needed? It's not treated as a string
+anywhere, and it's u8 not char.
 
-Kindest Regards,
-Seyediman
+>>  	u32 size;
+>>  	u32 opregion_ver;
+>>  	u8 bios_ver[32];
+>> @@ -222,7 +222,7 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
+>>  	u8 *buf;
+>>  	struct opregion_header *header;
+>>  	struct vbt v;
+>> -	const char opregion_signature[16] =3D OPREGION_SIGNATURE;
+>> +	const char opregion_signature[16] __nonstring =3D OPREGION_SIGNATURE;
+>>=20=20
+>>  	gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
+>>  	vgpu_opregion(vgpu)->va =3D (void *)__get_free_pages(GFP_KERNEL |
+>> --=20
+>> 2.34.1
+>>=20
+> Hello together,
+>
+> it doesnt resolve the build issue with gcc15 gcc (GCC) 15.0.1 20250228
+>
+> CC [M]  drivers/gpu/drm/i915/gvt/scheduler.o
+> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c: In functio=
+n =E2=80=98intel_vgpu_init_opregion=E2=80=99:
+> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:35:28: erro=
+r: initializer-string for array of =E2=80=98char=E2=80=99 is too long [-Wer=
+ror=3Dunterminated-string-initialization]
+>    35 | #define OPREGION_SIGNATURE "IntelGraphicsMem"
+>       |                            ^~~~~~~~~~~~~~~~~~
+> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:225:57: not=
+e: in expansion of macro =E2=80=98OPREGION_SIGNATURE=E2=80=99
+>   225 |         const char opregion_signature[16] __nonstring =3D OPREGIO=
+N_SIGNATURE;
+>       |                                                         ^~~~~~~~~=
+~~~~~~~~~
+>   CC [M]  drivers/gpu/drm/i915/gvt/trace_points.o
+> cc1: all warnings being treated as errors
+> make[7]: *** [/home/damian/kernel/linux/scripts/Makefile.build:207: drive=
+rs/gpu/drm/i915/gvt/opregion.o] Error 1
+> make[7]: *** Waiting for unfinished jobs....
+>   CC [M]  drivers/gpu/drm/i915/gvt/vgpu.o
+> make[6]: *** [/home/damian/kernel/linux/scripts/Makefile.build:465: drive=
+rs/gpu/drm/i915] Error 2
+> make[5]: *** [/home/damian/kernel/linux/s
+
+What about this?
+
+IMO it's anyway good practice to use sizeof(dest) rather than
+sizeof(src) for memcpy.
+
+
+diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/gvt=
+/opregion.c
+index 509f9ccae3a9..dbad4d853d3a 100644
+--- a/drivers/gpu/drm/i915/gvt/opregion.c
++++ b/drivers/gpu/drm/i915/gvt/opregion.c
+@@ -222,7 +222,6 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
+ 	u8 *buf;
+ 	struct opregion_header *header;
+ 	struct vbt v;
+-	const char opregion_signature[16] =3D OPREGION_SIGNATURE;
+=20
+ 	gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
+ 	vgpu_opregion(vgpu)->va =3D (void *)__get_free_pages(GFP_KERNEL |
+@@ -236,8 +235,10 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
+ 	/* emulated opregion with VBT mailbox only */
+ 	buf =3D (u8 *)vgpu_opregion(vgpu)->va;
+ 	header =3D (struct opregion_header *)buf;
+-	memcpy(header->signature, opregion_signature,
+-	       sizeof(opregion_signature));
++
++	static_assert(sizeof(header->signature) =3D=3D sizeof(OPREGION_SIGNATURE)=
+ - 1);
++	memcpy(header->signature, OPREGION_SIGNATURE, sizeof(header->signature));
++
+ 	header->size =3D 0x8;
+ 	header->opregion_ver =3D 0x02000000;
+ 	header->mboxes =3D MBOX_VBT;
+
+
+
+--=20
+Jani Nikula, Intel
 
