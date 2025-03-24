@@ -1,121 +1,174 @@
-Return-Path: <linux-kernel+bounces-573481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFD6A6D7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:03:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC81A6D806
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:05:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965AD1894243
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:03:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533D316D161
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B554425DB01;
-	Mon, 24 Mar 2025 10:03:44 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E6F25DCF9;
+	Mon, 24 Mar 2025 10:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dguEe5Yl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7143822339;
-	Mon, 24 Mar 2025 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E5622339;
+	Mon, 24 Mar 2025 10:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742810624; cv=none; b=qKsCFx8JlVbxHOeWZTqcaW9NFcOEHfabUZU3kJcvcfxzLa1ZW/jb3acbSqM95ZKFfoKWlcUU815tbE/39IGArFYQWV5uqVI9ogJK9S67/87ORo17MASJlW/kGDBMggE4cR2OAazT/AlCFj6muX5M7H9LlL+p90RQQreCkKv9L/g=
+	t=1742810678; cv=none; b=DuPXuUcX+wH9i3tyG8wg9gdnIE5fWSEMcB6uD7JABm+yNWjh6PkepBH8ndMqIWzbu4J4NtCCL75qPJsgFNBM0YgeYtEGcK91/CmPPl0HdJcma0/W0hLFk6JxxksrrvUW4YrHbCyapK6D4wGCw/f74gH8ep6WZEgH5RV7hmN8krc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742810624; c=relaxed/simple;
-	bh=UUsI0Yf3LSlqidv27UoT1xNgBH1xYokdKDjpI7A6dro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B9sT9EjbjkiHa7hAPkE1ZO0rAWPglxOuThFN5gxrd9JEIzErdwMiXHUZOFRmz7wfHe90Gd9ONBUQoDOcwwVfbmMqxpDS6SUTH6sQ5RQ9o6W5jOo9ru48RJMGbMq+aDua1UguQ/6DD+MaE14cIpfE0cnszRb8hs3sXhdbgsm3i/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-523de538206so1710908e0c.2;
-        Mon, 24 Mar 2025 03:03:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742810619; x=1743415419;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4an5EZEc/O/4TMi7/ZRMH2yqkpPVn07S2JgMUsIis3Y=;
-        b=n3JhTuT9x+Q7+6OYkO1f3yWIvoN9se5iSPPL6MGRXndXm5X1/yM4YKa7eR0EW8otP1
-         dZrk+B45OR6FG/gJk4Vtdh8xHmvAAycwBGz25w//wxsSmwKY4ljZiH11ts16zVIofffu
-         hIAm2Wypizr2bQGGZCXTKma/A/6DZi4nc5bGNIJRYskRUCXXLcE0TL54qHzSejKfN5pP
-         MnInvdCpvav+gkziJWd0Fgx+h8JtYjLrtchiaDrQiYeAmcr+d2uf5lxb1k9mIKGcurYk
-         f6mY6Vy8o5pjUn0pNUcflxMrD4hav1xGwCsrQU2bn+YDVI2jraalcF4jig37jRauQJTQ
-         Tk2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaI4K6YHgB7uu4sKCMZ1SMRA9IiKVrxhQEYthvt4duZdstTZotA4XhiNHyW2gJvjLRaAiahwts4R1i8cCS@vger.kernel.org, AJvYcCV3tuqIIWhoVWWUgf/oO1KEKP7o1U956vEYTlY68sP4gOVX3OSF+tEgQ4uKAC6u1f3eRmFoI1MDg7SXGKc8JWyrjZU=@vger.kernel.org, AJvYcCWswvPGyD5ZRAXtR2LdH84TXUybslCaMumlhQJCkCjr69JpLbzcaa95LOh3sS1Bn0hFr00rb9q5qVyfzB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynx+kEert8mNFekKhoofRzbJLSH+zy3c/pW25RW4av55U8CiRx
-	Qo0TLyMMwGLXcPaxN04umUacwPmTu0DTKc7gG0BsjE2zFwG89L7wXKsVZEza
-X-Gm-Gg: ASbGncuhDpSh4XARrPyExFZ6cQc8+55HQYG+HAb2ysU4oxy0vjYBRQ3fNZUmw8nOtWY
-	Y7HJTLaOzfl+ovFTloPnbZ+bqj7Ndl5g0GWIgW4cPG3MaVIsRGs55al8QjYQ3yxB0sRskFS2YtK
-	T/I71Jkk26cYPUUuNX1Cd32/jxgeSpbO/0j/PVASHdEEQLgK/VrA0twEuyWSFfH5+aH5z2ls6bB
-	XafZdkv3TPwZIWMht4mRuKgSYzZ5GDTjlxvE6cJdTNqqDx1IBSVLl3UAyyg2V+te2xeQLFOa8d4
-	5Gq/egquZFqb5z0J5A2RT6aOFQA5Iv+T1s3otECieoQNmnMMypm9fIzB+M/4XPnFmDyRk/jn1Ob
-	XUnSPpfcUvI+XE2vbhQ==
-X-Google-Smtp-Source: AGHT+IGeI0ZGzwpvG0mH7TuE44LwPqG0ell1IJjJ5zCz2gT1JnG7ijA73/zEUoTpR5qQd2pP2FujYQ==
-X-Received: by 2002:a05:6122:2398:b0:520:60c2:3fd with SMTP id 71dfb90a1353d-525a833acc5mr8117549e0c.3.1742810619256;
-        Mon, 24 Mar 2025 03:03:39 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-525a7359ccdsm1327348e0c.4.2025.03.24.03.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 03:03:38 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86fbc8717fcso487072241.2;
-        Mon, 24 Mar 2025 03:03:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4OsysQ9aXjizmIHvz8/0I0txxJCSC0olVI+ukrdGZ+ewAIqGgnK6KMF/bgUB9kQMg5U/OH0sqJYsFQxJ0@vger.kernel.org, AJvYcCWOjgpZyW9aORfSwgu1odA7WNZq/6cHF+65H5T3yjuuzdsLwktXK8MycQE06+wO3aDpSfS0u+rIhKkcw7g=@vger.kernel.org, AJvYcCXzq8oDDRspp8TEKpeDpcP06P+DOIBh8ISkOB3ucSB2eufUPuf70BsgHFqPJ5NqywSZCZb436L0ndS7AjtP7cVWy4g=@vger.kernel.org
-X-Received: by 2002:a05:6102:1624:b0:4bb:e36f:6a25 with SMTP id
- ada2fe7eead31-4c50d50e074mr8130701137.13.1742810618396; Mon, 24 Mar 2025
- 03:03:38 -0700 (PDT)
+	s=arc-20240116; t=1742810678; c=relaxed/simple;
+	bh=2YzndqjPYZtO24UsGSXBDXw/XTK3KIe4lsm6degtopA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ngqAGJ1krE1rP/9nc2aXuS4xNX3LViQnPSkv/pkGxz2+pcxrQGfmeAPVOIlERAt1mR1R0eWyNnx6YPqrS50lBzsMyyoEXW/RNzLoPF0G0dVeCujk0if/SpM3Q9gcbDeY+QNcCTMfZxRbKyKvprglxwO+rEJD0WEwQMewADtKCDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dguEe5Yl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 11AACC4CEDD;
+	Mon, 24 Mar 2025 10:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742810678;
+	bh=2YzndqjPYZtO24UsGSXBDXw/XTK3KIe4lsm6degtopA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=dguEe5YllTNdyFnOJoOjvAf4aG3VWVmUTsFzAPx9Xziw8PeHEDbpIUttRhuwx7n/G
+	 kBWA7qodpZjxN4mQDxwDr0hzDKF3POwYtyEtBSKYs8364IvzUqP7pzUP0+1iLEl+CX
+	 bhT7TTYf1Fqd2v7rp9T7jFm+DNimuJr/BmImp2AWBFnfp/q13cZZHfF2oHUReo3Z49
+	 uVkiVEcCwY/ClmiqJrf6Oqv2hE9SCT5DtQswzyDAl0njlhJcE1uJG2c5Rnj2WtNcR9
+	 prMNCjEWKqmY3IAXRtsAlNrKnmKlWDm6nqTBkL9VCYAy7LsqmjFjQBKMjKahCo87l9
+	 nYzk8yw4+PFtw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87E8C36002;
+	Mon, 24 Mar 2025 10:04:37 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH v2 0/3] PCI: Add PTM sysfs support
+Date: Mon, 24 Mar 2025 15:34:34 +0530
+Message-Id: <20250324-pcie-ptm-v2-0-c7d8c3644b4a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com> <20250306152451.2356762-10-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250306152451.2356762-10-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Mar 2025 11:03:26 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXZqnmhVcuRmdyxtyVwnonj1aKNdf=smroPrrcGe9yaxg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqhpiWiWGXr9SpPiXsEU6lVLKlEGzKLi0nA39A7Ors4tZFbjTvGRx51fDI
-Message-ID: <CAMuHMdXZqnmhVcuRmdyxtyVwnonj1aKNdf=smroPrrcGe9yaxg@mail.gmail.com>
-Subject: Re: [PATCH v4 09/13] serial: sh-sci: Introduced sci_of_data
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADIu4WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMT3YLkzFTdgpJc3VRz0yTLJKO0tOS0JCWg8oKi1LTMCrBR0bG1tQA
+ JftiHWgAAAA==
+X-Change-ID: 20250324-pcie-ptm-e75b9b2ffcfb
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Jingoo Han <jingoohan1@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3419;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=2YzndqjPYZtO24UsGSXBDXw/XTK3KIe4lsm6degtopA=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBn4S4zvOHOf5c9xVh0GG6JM1Q9A3czgGvOAcZbH
+ S1Ll0Aw/ayJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ+EuMwAKCRBVnxHm/pHO
+ 9cwzB/9uiEOi3CSoNq8pYCiP8oeJJZE5yK15c3WbCVKN52oQujU/KsAh4Aqw0g15hasr5dOkz1j
+ DlAaorGqvHxOj7EB4acC4GNGPyHQv13RijpGfEUhWhLDYJsBA/Dps25pZKO/VAbwC83VzseWeuU
+ F9+psruO5YtMS5H20UbDTv1nGOjghyXZHW4U++7NnXOSleWZHUiGCX4hF+AICSoQ0GDmVwqufhE
+ gZajFxJ4RtrRAf8gTqI4KWKVRx443jYZpVS7ROm+HiBpMSOd1deS2ASGWujXkKrzuDXBE5mPeNg
+ /1IqpLwe7+8cTpqWRVVZj4CPQ+8cTQIlhxAvy2SoqQPqHRNw
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On Thu, 6 Mar 2025 at 16:26, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> The aim here is to provide an easier support to more different SCI
-> controllers, like the RZ/T2H one.
->
-> The existing .data field of_sci_match is changed to a structure containing
-> all what that can be statically initialized, and avoid a call to
-> 'sci_probe_regmap', in both 'sci_init_single', and 'early_console_setup'.
->
-> 'sci_probe_regmap' is now assumed to be called in the only case where the
-> device description is from a board file instead of a dts.
->
-> In this way, there is no need to patch 'sci_probe_regmap' for adding new
-> SCI type, and also, the specific sci_port_params for a new SCI type can be
-> provided by an external file.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
-> Changes v3->v4:
->    - Fix the bot compilation error on superh in sci_probe_earlyprink()
+Hi,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series adds sysfs support to expose the PTM context available in the
+capable PCIe controllers. Support for enabling PTM in the requester/responder is
+already available in drivers/pci/pcie/ptm.c and this series expands that file to
+add sysfs support for the PTM context info.
 
-Gr{oetje,eeting}s,
+The controller drivers are expected to call pcie_ptm_create_sysfs() with
+'pcie_ptm_ops' callbacks populated to create the sysfs entries and call
+pcie_ptm_destroy_sysfs() to destroy them.
 
-                        Geert
+Patch 1 adds the necessary code in the drivers/pci/pcie/ptm.c to expose PTM
+context over sysfs and patch 2 adds PTM support in the DWC drivers (host and
+endpoint). Finally, patch 3 masks the PTM_UPDATING interrupt in the pcie-qcom-ep
+driver to avoid processing the interrupt for each PTM context update.
 
+Testing
+=======
+
+This series is tested on Qcom SA8775p Ride Mx platform where one SA8775p acts as
+RC and another as EP with following instructions:
+
+RC
+--
+
+$ echo 1 > /sys/devices/platform/1c10000.pcie/ptm/context_valid
+
+EP
+--
+
+$ echo auto > /sys/devices/platform/1c10000.pcie-ep/ptm/context_update
+
+$ cat /sys/devices/platform/1c10000.pcie-ep/ptm/local_clock
+159612570424
+
+$ cat /sys/devices/platform/1c10000.pcie-ep/ptm/master_clock
+159609466232
+
+$ cat /sys/devices/platform/1c10000.pcie-ep/ptm/t1
+159609466112
+
+$ cat /sys/devices/platform/1c10000.pcie-ep/ptm/t4
+159609466518
+
+NOTE: To make use of the PTM feature, the host PCIe client driver has to call
+'pci_enable_ptm()' API during probe. This series was tested with enabling PTM in
+the MHI host driver with a local change (which will be upstreamed later).
+Technically, PTM could also be enabled in the pci_endpoint_test driver, but I
+didn't add the change as I'm not sure we'd want to add random PCIe features in
+the test driver without corresponding code in pci-epf-test driver.
+
+Changes in v2:
+
+* Dropped the VSEC changes that got merged
+* Moved the PTM sysfs code from drivers/pci/controller/dwc to
+  drivers/pci/pcie/ptm to make it generic so that other controller drivers could
+  also benefit from it.
+* Rebased on top of pci/controller/dwc
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (3):
+      PCI: Add sysfs support for exposing PTM context
+      PCI: dwc: Add sysfs support for PTM context
+      PCI: qcom-ep: Mask PTM_UPDATING interrupt
+
+ Documentation/ABI/testing/sysfs-platform-pcie-ptm  |  70 ++++++
+ MAINTAINERS                                        |   1 +
+ drivers/pci/controller/dwc/Makefile                |   2 +-
+ drivers/pci/controller/dwc/pcie-designware-ep.c    |   3 +
+ drivers/pci/controller/dwc/pcie-designware-host.c  |   3 +
+ drivers/pci/controller/dwc/pcie-designware-sysfs.c | 254 +++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c       |   6 +
+ drivers/pci/controller/dwc/pcie-designware.h       |  21 ++
+ drivers/pci/controller/dwc/pcie-qcom-ep.c          |   8 +
+ drivers/pci/pcie/ptm.c                             | 268 +++++++++++++++++++++
+ include/linux/pci.h                                |  35 +++
+ include/linux/pcie-dwc.h                           |   8 +
+ 12 files changed, 678 insertions(+), 1 deletion(-)
+---
+base-commit: 1f5a69f1b3132054d8d82b8d7546d0af6a2ed4f6
+change-id: 20250324-pcie-ptm-e75b9b2ffcfb
+
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
 
