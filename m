@@ -1,102 +1,141 @@
-Return-Path: <linux-kernel+bounces-573269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EB1A6D515
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:28:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D19AA6D516
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E3C188CE8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E092316573A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CAC250C09;
-	Mon, 24 Mar 2025 07:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5743250C17;
+	Mon, 24 Mar 2025 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXOWnZgo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XBC7nYxi"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E362E3383;
-	Mon, 24 Mar 2025 07:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FADF175D48
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742801317; cv=none; b=Me5P8q1nJRnw42rqWtMqE6GhFLS4eEq4lvMTRsvktp1GAIZfG+ZZezTY4L7X/WvzI8teOI7zXu5vtuKK2SmPfq0gWY8vLzCerbmFPvtvqujgnUOk+9JI1T56ZTAd9+MdIqCAI5bmJwM+VvdtEFjURMkpkygtj1Wg0C8QyavUnzY=
+	t=1742801425; cv=none; b=RKbzzi+QUFaCGCLGsjKDzxJKDvlHCnABhsShy69GAekY6CVyumqbzAlwp7Fd5v708CRiMvgLc2QDd90Yo498RGLy7VcwaIqOUIehIGKAF3QQszcS4qrp2dH9jQxPvowWzkaRWZByq+mjvNywjTvq4Wn4porIEu8lgf7hbSq4sC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742801317; c=relaxed/simple;
-	bh=qvjg7nMYqzOBk4Rb6LYZs4P08P2ISAkK/8qUWcFYCis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ9IyjnZ0SYslI9jwe2FD+gOKGnnoGRqozvcArbR2HoIgPMIofmRAowerhVO15uKUePAUzOKa9Vcgs8WuPdsbS46D5S48VfqSPZ8Y799hBUbUs+LZDzFWc2fDR1fLbMLqRkE71NZsHblyY579hWIP67cmFxI7qrbpoq8LcoF33Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXOWnZgo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0E7C4CEDD;
-	Mon, 24 Mar 2025 07:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742801317;
-	bh=qvjg7nMYqzOBk4Rb6LYZs4P08P2ISAkK/8qUWcFYCis=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XXOWnZgoo+0kAl9qy5ZgdSs+1OtDGQog9Gmuq//QQwd1z9g1PGctEpTaIxFYuJnHb
-	 MNfO+m9yNB21bl1gdncarbsg/i+aL55rEGoMD5cJSajX2QlOVUNO3pxXi1bsNF8e9o
-	 3hDd+inoZjxYgunAF6wO0KjioT+b+rHmliBAPgNTZG328bhKJY1iI2NLv6H7vGCTWg
-	 XQpIK4tWtqiJlN8Hr1GpmA6rXuhD/ZNwFzQg2wCOUxazyMwQbr/5q5J419eH7NqxMd
-	 f7yOE1R0K2p0CETBImc1lyKCDo/QrSe5v1Kwrf15OS6RAxil2WJlEQNTScGTJl3qG3
-	 1TI7Aa06fyUCA==
-Date: Mon, 24 Mar 2025 08:28:31 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 1/3] perf sort: Keep output fields in the same level
-Message-ID: <Z-EJnye74la1triY@gmail.com>
-References: <20250307080829.354947-1-namhyung@kernel.org>
- <Z9tjKcKvjYgbR6hb@google.com>
- <Z9vgt1pjiNbDBDbM@gmail.com>
- <Z9w_aFlzOkoCTSqK@google.com>
+	s=arc-20240116; t=1742801425; c=relaxed/simple;
+	bh=lwS7fGyY3ghDEpokPLpMM0HJbUP8WS4SiI9P4rR2lGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NE/N13/nt3FSHXb7RgF6SDmfgMHKvHe0KfyCJUxvgt1nn5/IS24aUTYvSNHgPU7q38o1cD+OX5pe45hF3I+l64DbJja3mHxuk+arLr6RDp3UdCGtSwZ25nls8VEJRO/ZOCWRrV0cFgN+KAN+3JdJ1i9wvFwjlS3BBy6sNH9X5II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XBC7nYxi; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a6bso42912701fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742801421; x=1743406221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NU2FVsh97m7TP1y3tfx9WOUJoAfHylfE9LhCzm81iVg=;
+        b=XBC7nYxixEpGkdQEk1CarDA23eFeP3hhNPALtj/79IGhZfdG/WZqb/O+OcvDs8AWOT
+         JImPnpBeQxipOwB8UqIZmkW8GGgemZGiMjpdg/ftg3QLL9w44/C7BS9vYZS4RlMdPJj7
+         5EVmG9Io3vIk5h7RpP39kDVnAaHpckTCBAoQsKbLmCy9jj91kXYODrLMTIdjwX/8VmvU
+         Y5aPydeYBpvv7zIQYAewVkGuDtk7bqL9RSFlA55cEVehR3pK5JFvKP89yDw8IQVKS+lJ
+         FtlmSnv4fx8yjV7F5bKSUy2OZbYhJ7lZt6scHGutTXBtfl7GHaGLSDGXmZePLhvO8iuZ
+         cXVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742801421; x=1743406221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NU2FVsh97m7TP1y3tfx9WOUJoAfHylfE9LhCzm81iVg=;
+        b=SB8uQBnUhDZvXq5f4CqI54FbVUvSQqaAjN5S9bkSODXd++yK104Gk2c2E7YI8mC7sE
+         1hJ/EA3f/duUA8NarketEGoO81Y0zC4BnO2DU+qK91hocc9xSL2HLuesL1hXJU6XcNnS
+         cPAhrYjMY+/uZ2fJ93OGgEk2WBVdVtHBXlruSPRtw6x7qCAnJ6g0RzkVJivTuU+uqFiL
+         6+4yNEkXULM8C5lIOnBc2rb5Neb/hFUSBWCwrZbaUMLwEmFPT4bP0Mw4aD48f4SBORbe
+         d2VKJngm9MOE/9TAnyi72xnO/3nlF5vgEmKgQtX2euU9Iy01xfHdvKq11A4O6dHXjDtL
+         dqcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXupQIhylYq0oTEbTNk4laUjoGF/7RXQOQd/PR4U4PkpXeiEjt3fyl43NyjX/nNcKO7J+Si9TSdPjeq6RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE+7bLOCP4Mf94zMp6BQwsjHWZlZbtAHsamY9hJ4lgzOd0b3Sp
+	oV1ErSBdW4zgeqg9wW12HZWalymehiE2Fo0eWJE11YzG6MO5MHHP/agOI6NF+4bmJkoFjEQUSWB
+	g980hMuyKl5HpeWHqkwWGqBZvyZkED7Y6CD9AkA==
+X-Gm-Gg: ASbGncunSLtQude1wubvmegPdmNX0qQyEsKKHJ8T5TV/zTq4jAYADT3G2t+FRaLuUcW
+	P4iXSHwoSYj3qGwptzs/ahJEf6cvkQwVliJkF2pyne9rytAdXimq4tNdgVmqFLl5VqrmkuPJHvH
+	XjViWEBqeV86UzpQThHQiYY7o=
+X-Google-Smtp-Source: AGHT+IE7ElI0Wie88BjvIx4/nAvhgrv4C9qAG+SVDsK5xNXRaCwIrYfp4uSH7h+9tbFwPhfRFVhl7PG+FIJIC44x9zQ=
+X-Received: by 2002:a05:6512:318c:b0:549:8f06:8225 with SMTP id
+ 2adb3069b0e04-54ad6512f29mr3163266e87.53.1742801421294; Mon, 24 Mar 2025
+ 00:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9w_aFlzOkoCTSqK@google.com>
+References: <20250324-wcd-gpiod-v1-0-27afa472e331@nxp.com> <20250324-wcd-gpiod-v1-1-27afa472e331@nxp.com>
+In-Reply-To: <20250324-wcd-gpiod-v1-1-27afa472e331@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 24 Mar 2025 08:30:09 +0100
+X-Gm-Features: AQ5f1Jp89LHUfGV1BvkWIJcCi8kryB-sXnI19w6Nw7WZk7DWQ3yMLvoYji6l6JQ
+Message-ID: <CACRpkda=gb=u94CqYC8LuBtqg7x0eUVyJnuixLuyNonZ0=X3Kg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ASoC: codec: wcd939x: Convert to GPIO descriptors
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Peng,
 
-* Namhyung Kim <namhyung@kernel.org> wrote:
+thanks for your patch, and thanks a *LOT* for working on the gpio descripto=
+r
+task!!
 
-> > 3)
-> > 
-> > It would also be nice to be able to Ctrl-C out of a 'perf top' instance 
-> > that freezes the output or so. Or prints a snapshot in ASCII. Anything 
-> > but what it does currently: it just exits and clears the xterm screen 
-> > of all useful information...
-> > 
-> > I have to use 'f' (how many people know about that feature?) and copy & 
-> > paste anything interesting from the screen the hard way.
-> 
-> Actually I was not aware of 'f' key. :)  I think you can use 'P' to save
-> the current screen to a file.
+On Mon, Mar 24, 2025 at 3:28=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 
-And I was not aware of the 'P' key. :-)
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> of_gpio.h is deprecated, update the driver to use GPIO descriptors.
+>  - Use dev_gpiod_get to get GPIO descriptor.
+>  - Use gpiod_set_value to configure output value.
+>
+> With legacy of_gpio API, the driver set gpio value 0 to assert reset,
+> and 1 to deassert reset. And the reset-gpios use GPIO_ACTIVE_LOW flag in
+> DTS, so set GPIOD_ASIS when get GPIO descriptors, and set value 1 means
+> output low, set value 0 means output high with gpiod API.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Would be nice if it also printed column and meta information, i.e. if 
-it included these lines:
+The patch as such is perfect:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-  Samples: 1M of event 'cycles:P', 4000 Hz, Event count (approx.): 758731362801 lost: 0/0 drop: 0/0
-  Overhead  Shared Object            Symbol
+However we need to watch out for users:
+$ git grep qcom,wcd939
+arch/arm64/boot/dts/qcom/sm8650-hdk.dts:                compatible =3D
+"qcom,wcd9395-codec", "qcom,wcd9390-codec";
+arch/arm64/boot/dts/qcom/sm8650-hdk.dts:                compatible =3D
+"qcom,wcd9395-usbss", "qcom,wcd9390-usbss";
 
-or so?
+reset-gpios =3D <&tlmm 107 GPIO_ACTIVE_LOW>;
 
-BTW., the approximate 'event count' is a pretty uninformative value 
-these days, right? Might as well not clutter the screen with it.
+arch/arm64/boot/dts/qcom/sm8650-qrd.dts:                compatible =3D
+"qcom,wcd9395-codec", "qcom,wcd9390-codec";
+arch/arm64/boot/dts/qcom/sm8650-qrd.dts:                compatible =3D
+"qcom,wcd9395-usbss", "qcom,wcd9390-usbss";
 
-Thanks,
+reset-gpios =3D <&tlmm 107 GPIO_ACTIVE_LOW>;
 
-	Ingo
+Mention in the commit message that the in-tree DTS files have the right
+polarity set up already so we can expect this to "just work".
+
+I would also mention that the current code in the driver is quite ugly:
+it doesn't even request the GPIO before starting to use it :/
+
+Yours,
+Linus Walleij
 
