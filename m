@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-573880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54647A6DD86
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:58:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EA5A6DD89
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:59:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2551887DE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811BE18871E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82825FA3C;
-	Mon, 24 Mar 2025 14:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3501F2628C;
+	Mon, 24 Mar 2025 14:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EUYLEyJp"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ADXjhzIs"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2022628C;
-	Mon, 24 Mar 2025 14:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD41426136D;
+	Mon, 24 Mar 2025 14:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828321; cv=fail; b=nTRBvyvKgRvz1UXwQUIp4RdZr3WbrDkjAFufJ+zZPmEdHTGhEfMbHAF1TIRIyfIto5P1ZjFAom44NshhBnI+gUtBPXZTxB9ZLQtMMm5MPSvzpjyt7Isz/RuNz+Anxae6Lj01fPn46bwrgV4T1FXEV6drkhV8gUTMu4dwwwo4lrE=
+	t=1742828325; cv=fail; b=tab1tKJijJMI7c2/F++Xkjiw+SCq+xrCUsOGjF/z5gOQgqa/bnqc4Z8PnqcMnUiVMaYgOkScxXY85Ki5Pz0zl61zZotTPeHW1A5FmIAUZgWcelYN/GxTMC9FFioHYH1HeoaGC0YzcpmZPeFYiudWLbr40OVgD6FPhp7ZpEq6N8o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828321; c=relaxed/simple;
-	bh=XG+DZbBGrb4zWpB+B/ArI6ofApxffZGn+UGi8ZJBZro=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nYkfqpUInCaOtxcvdllmf7/Nku+ycI2OQD1Ci0RoDhGoEygJ51TyaaFljLWArb0ZAj3e+Z06r0n6Zz2k2j//gdY3tMX9KTK7657nghI/Dtb5SOkWA/plLnP6BRwxftwX+EfFO4jHKZkR3ISx5lQI3vtIDWKTp9qyHqn5EspTQv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EUYLEyJp; arc=fail smtp.client-ip=40.107.237.54
+	s=arc-20240116; t=1742828325; c=relaxed/simple;
+	bh=1rVVbZMM43xmRkB1LDORI2NL1Sy51/KISgimfsR1kjY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DhMBf2S6hU3XEDXV0Hj3txb8F3/wd9QP0RZz/F5rQhx2QecuK4/FCHWerh1jvNrtWjwqU9X4nG+mvnLynjK8ltIUvso83l7K1fWWUha7Ir7viCjLxQrLTcn3cLEWTN4hlVbeE3MCTg4aRaC5Oa+R16qjpaAh7ew3tgXnMFvOZu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ADXjhzIs; arc=fail smtp.client-ip=40.107.220.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=al85IZeWmmM3MHUYgC0xAeqjUc2eaiT8UqwgMOZP8D+9n6si+vSmNbmmIEmJ65/neJjux1EZG7YwBJiZ/vHPbXkjN+tPvJQSLkbR+9s7L1wBCBcRNq+YjdEyTo1L6MqdRx/pqI20nIqcBM8i/mCnUoPdnI3DMsXnraJzB87rxsm2rl+mBMMtgA8d39RWx4PVpxQ2FlLjSOob+E/N5KZzWWWanGurH7FYs+1hiX5ugQqpsj1GAXL8iRHYMfjavy+Jx6+aE99udtdSyaidn5EiOUZcvijoZ0aJAr4wkCm03+Fdvtv9FUogrkKAYmo6cOCjnTot1EeMaHfFz4l4NEayLA==
+ b=ZIpUtn5X50bSTuuUnqknVMXu1vjj9QYQrevtlfe9RRfKxdOEthggMIkWEvje3UWxmyyB1gvq8KPtWBcI0vxHHZ2wSDlHtVV3BxTdmLxEPvRwgJrkWXu2R1oTqRzW0fiJ4dS195Vq0jz87mlImi+/nxv+oo71mdNM99bPHfGTFQSA0lAAFXGzOqhLVuOg2dy0ZoOx+OMcrBCu/BMeDxBM0q/sAA2BhE+AGXQ9DN7jb+0/odeGrkeyEJ4Bdot9kqssvcydCuS+HzFZ8Uiq+6OeWuV3SMSkCbWyWhyccRIrwpqjUIYJE5mIJ0zJxI2HPJ5q0vRtm4jN9kbX2kg/gAOfcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wsw1nHaGO3JoznedQOVKe8/Vv40OWNGJjbDL3MxZpzo=;
- b=UJf35WAqIKnm6QmwsqpcQVnz/tnznEH0YCtZe6bwzuDsSyLxC2bw72iKln3vUWDkXnpg0YrBMD/wZcKzX0kqO2i+0IPcY6KMDt9131aCjdZDRpvko+20wXZbVuhfSy8VHgqv3uYiSD4hv2Z2/k0ASx6TDZm76Ur5Y/SoLW/x6I4T3kX4d96rRQD+6hVxihcgE7WC56/2JwlKG6XWj7Uff76JcfcUcNh5df4LMd35hMc72nssSqMmoOWxXZnHlMs/0jqvXm0UbMVcVoclsBVuJHuVGK8RqbFmiQqWTvKauQQxcKvgwqpXD+hLWd2Y++m24BSuRIMejb9Y4XncpAOFaQ==
+ bh=uGa2Dp3ps9Hc4YY0ANXFTkLgiN2wtbYBASkzwUjRC2Q=;
+ b=x8h9CdDe2MQR+XHhzrhFwo1Bg+4zwQZzq6WRBRdOA5Rn4F1zW12M41AIZWSR4j2Wfbv9RhZaKas/DBJ0OCYLxx/y5lMXRegP1bl2iNKnA1k6OiipcX0N8ltk4PNo4QsHIh6MmYpMBizSb9GhOQXNkeKuOzacS7sECzxBA4yPv6wFOi9mjY4hARfRi6cmChCLhv2RT91I2fzVSbMc7mN8la+/U2Lht3Wk0M6kp/QqSFCXB2Ma8sMWN8ewgfNzMG7qMcRd6euRnsTJ3COSw1NRdoOn/AhlgHMOvslNKmc++3T/8BEer/tnQmAirQrKPHqzPz97yr5KOh7gnHpv3VsvlA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wsw1nHaGO3JoznedQOVKe8/Vv40OWNGJjbDL3MxZpzo=;
- b=EUYLEyJpQepkbFnVbaY0lDd9yNE/j03eqt//cy3NB0loPvt6lYEB1+uDaVVG6nEr2p/aIqcn0Dct/DZihv0SVShVAoSnrP3dHpYBXl2cBRClOEYoPIvaFZBt8BCcknmBOLE1gocogugOfP/9iGzgSqDST+0+XJThxSYkGs1mJXY=
-Received: from PH8PR07CA0011.namprd07.prod.outlook.com (2603:10b6:510:2cd::19)
- by SJ1PR12MB6242.namprd12.prod.outlook.com (2603:10b6:a03:457::6) with
+ bh=uGa2Dp3ps9Hc4YY0ANXFTkLgiN2wtbYBASkzwUjRC2Q=;
+ b=ADXjhzIsfTGqZfCVgZDW0yk1LXztgS7FxHmQh+1/5Rze6tIs2Fx6ixXoaNSSzokKAKsfUBbNsGZfXfO/bvGKuc33OHkYLb+jco+BHC9HAwbLSrHbkPUoplGH0+mYP+8hQDuvpcP3Wo494tQ6aS/t00U90UG/9YyRR5BqcCZFJcY=
+Received: from PH8PR07CA0033.namprd07.prod.outlook.com (2603:10b6:510:2cf::20)
+ by CY8PR12MB8215.namprd12.prod.outlook.com (2603:10b6:930:77::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 14:58:34 +0000
-Received: from CY4PEPF0000EE3A.namprd03.prod.outlook.com
- (2603:10b6:510:2cd:cafe::2d) by PH8PR07CA0011.outlook.office365.com
- (2603:10b6:510:2cd::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.40 via Frontend Transport; Mon,
- 24 Mar 2025 14:58:34 +0000
+ 2025 14:58:39 +0000
+Received: from CY4PEPF0000EE39.namprd03.prod.outlook.com
+ (2603:10b6:510:2cf:cafe::f8) by PH8PR07CA0033.outlook.office365.com
+ (2603:10b6:510:2cf::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.37 via Frontend Transport; Mon,
+ 24 Mar 2025 14:58:39 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -61,23 +62,25 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3A.mail.protection.outlook.com (10.167.242.12) with Microsoft
+ CY4PEPF0000EE39.mail.protection.outlook.com (10.167.242.11) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 14:58:34 +0000
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 14:58:39 +0000
 Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
- 2025 09:58:30 -0500
+ 2025 09:58:36 -0500
 From: Akshay Gupta <akshay.gupta@amd.com>
 To: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <linux@roeck-us.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
 	<shyam-sundar.s-k@amd.com>, <gautham.shenoy@amd.com>,
 	<mario.limonciello@amd.com>, <naveenkrishna.chatradhi@amd.com>,
 	<anand.umarji@amd.com>, Akshay Gupta <akshay.gupta@amd.com>
-Subject: [PATCH v6 00/11] misc: Move AMD side band interface(SBI) functionality
-Date: Mon, 24 Mar 2025 14:58:04 +0000
-Message-ID: <20250324145815.1026314-1-akshay.gupta@amd.com>
+Subject: [PATCH v6 01/11] hwmon/misc: amd-sbi: Move core sbrmi from hwmon to misc
+Date: Mon, 24 Mar 2025 14:58:05 +0000
+Message-ID: <20250324145815.1026314-2-akshay.gupta@amd.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250324145815.1026314-1-akshay.gupta@amd.com>
+References: <20250324145815.1026314-1-akshay.gupta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,135 +93,156 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3A:EE_|SJ1PR12MB6242:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2413564-ba6e-42d6-9737-08dd6ae4598e
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE39:EE_|CY8PR12MB8215:EE_
+X-MS-Office365-Filtering-Correlation-Id: 874475fd-a14d-41be-4c7a-08dd6ae45c9c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sVAWd8GGOpxelglHvsBABnX5t2LuRE6kJhAGT1UB8nLfDsnEsoCPlZfH+/sc?=
- =?us-ascii?Q?PwkY7yn+Zm13UYoD61odUuLP+veHA7ODSgOcfasIncoPT+4QoCIqSfoOQP9o?=
- =?us-ascii?Q?2kuVjp1q3XXiALtDPSX6Ic9X7hE4i3DoAVmrYv5ZYCRv8buc3PzWbtYi3GtR?=
- =?us-ascii?Q?Aeazw/PnYxJ5QxxYjdT3GINHGFWA7RSUuXcA+KC/rwrBMjgls/iHYrNmp4lz?=
- =?us-ascii?Q?mUggXFRJxxqy/GjZNK+KQN3ZvWH7HKbEahpjYASVdWK/I6yqrOhtN3f0dN3K?=
- =?us-ascii?Q?U4hPrg7MeMHUQ46wPczVxD3hHOWP9zn12lfp+YWnxblgAXLzD2ezdOnwqWyu?=
- =?us-ascii?Q?VVUVG9EUBF4927725dGWwfZPUwuBhdMDMyWPXLqo623kyPgbAK4wy/CQk/vs?=
- =?us-ascii?Q?DfofxC0IVNQT/PLeHm5TuH5UsYB+XBgNpqLrvUC7Azn/kHuUPOHp/Dm3IsME?=
- =?us-ascii?Q?opLIxt/nXHslDWfCEwV/sUwuR7cjPoJCm60Y5Cn03ziGZfuie84/CH1IB15Q?=
- =?us-ascii?Q?El2LURWQ0AnSJ1oe/IOe5wb2Al3ZSJBaKz/PSe2vS4ENrzOhGid/xLiG6evG?=
- =?us-ascii?Q?ZPVL7ZoU88DdwwlC80pdWPF6JwGJsxGJ42eIblK/a7gfOXpuV8SwAz/EA33P?=
- =?us-ascii?Q?kp4Ojuse3/pIogA0cSbMbvHxUYQSK4UqTe0snGIvGHSGf094YAid3/HPl3sc?=
- =?us-ascii?Q?Bf1oCgOiLQ7JY1K3dWRX14ib5hCubFdhsuWJm+pXp8ZcDYaJzqCFkg0IbNlR?=
- =?us-ascii?Q?Zz3dJlg+Xh73pNDWpTpK4eEGcWH3ilGnQ9OvCy23TFcfPZZ5WtzyVJR8o/48?=
- =?us-ascii?Q?tZ3p1AuZ6FDvPUHja9A/A//8xUZUp6DQrC19v/1RtiwBjYlJIyJO3tJX2Fnf?=
- =?us-ascii?Q?vpyadR3zhukslUjWm/qY2SRt9MBf53V/jXa1IKHyJN3C2N3NY6kw/Al39ZK/?=
- =?us-ascii?Q?6z8opMeR1M2eQzcT8roglFc2ICPzvrmKQYeIakuOHbt+bGP6khYsTrNOwZBk?=
- =?us-ascii?Q?QeEJp3wpOpBErng05nHVssXsWv7h0XKiZetci7O8P2L/o9qu4P9ukQVUQXsn?=
- =?us-ascii?Q?SkP77UDgkXhV0bzZ8Cd+KM8A5U9S9cm57N5dY2JpPrPQ/YVBducw+rnPXc7J?=
- =?us-ascii?Q?bZMWXX564SEf04a4cu5lwg89o6qqvDIqb+NS3cdO2vjYVLpTIqVWn0Vr4y+O?=
- =?us-ascii?Q?dRPsUSgMUNQcX/M7URf+8QMRb71dUwuRCEha2FCykrjLk7E+HUoAndPyvk11?=
- =?us-ascii?Q?z+1Yy3MgUlA5Ti9f1NgiTOEQKYWM45VZ42YK627RScotdJ5FTk/7xJSbRS5K?=
- =?us-ascii?Q?WbhNIFNw2E+eFu7m2NXFcb5+xNLiqxw63mtpZy/l8y3z9r8X6SGlIycKxs8W?=
- =?us-ascii?Q?JnU4k0ZUj74V572E2sIZwyr9D2xFtvMXVpQEfGx98ehZGOxjxmZEHprorUvo?=
- =?us-ascii?Q?ZYNY1V0YNNDXgjv3K3UAVYq+PmOGWltgSfx4MsB2rRkQjdrWFs9iN4LiMYNt?=
- =?us-ascii?Q?0ppAWKgZBBD1xL0=3D?=
+	=?us-ascii?Q?UIkVVzh6fgwOkhH5CNHAn5PmLuwTr6JnGmRRv9NodGNqwmqvt/vRnJqFGPNq?=
+ =?us-ascii?Q?2IN0I9Eos4sSgMnxeaNvVF/44zOgkY245oEP/4xNFR0YfWYo7gJZCpWgedf4?=
+ =?us-ascii?Q?CDPHhV3a7AlQvrX8d7pyEYz8n8AQQCzvDmynKQf4zN19gfLnbMBrU84W3xri?=
+ =?us-ascii?Q?me5mPqQZNYz2BOXvB8OWcplHYIbrCyzcgPbRNuukl0niUE/ACBPJWDEa3iNG?=
+ =?us-ascii?Q?ptd2mg0IGJ+EsnTCNwxeJmwoYLxphy0rOlZDf8gY/lwsA7s9igCwZX2WYrQY?=
+ =?us-ascii?Q?PP6BUa+658RRtA999wrMdHI13+9q5JfBfqlNTX6zqA6TidoFkBU5tTZ29bsi?=
+ =?us-ascii?Q?gcfLR+vAAc4Vm0vwhWPvLmw/cc6H/gm/UwzjUBJgo6EfYAx0oBRWnnGp99G6?=
+ =?us-ascii?Q?qVa9rNnqEOioMCg+xkb+s9FQB3PcZWY3zFlJrUtzscneVD+csY7+ocyuzqfW?=
+ =?us-ascii?Q?lZED6AdmQRdcmllI5mMGKZTHTWZpJrl6QWpw8RamD4Or44H2Fi5rJPNkEPw8?=
+ =?us-ascii?Q?GX16FsF6nD/BeINDr9a2B5uyVw32Gln/ytAxRkUIhrCqiqKcuhoySO2bQFMH?=
+ =?us-ascii?Q?BQfV7T+K8hbO0bVOFlRz7g8+WaEHNfDH1tQPGoy7QL0S8fCJuzlBmjrWd6Q8?=
+ =?us-ascii?Q?Y/5r1cQJ6y9fwK0wlM+oL4yK3BZ770QN7mMvVTLHb09RaF5lvg3+9GropMZJ?=
+ =?us-ascii?Q?hBbnTDebdl9wmDgppDtHpCjbjY/rm64LImduBtYd/xWAPwOD95f72r1NRC8L?=
+ =?us-ascii?Q?GVFw+Pauwh5/icmjiiR6UD63qQTPiUfXnHYx39J4cpnTH2NtlnBobkAxPww2?=
+ =?us-ascii?Q?jEHUMzor97bFYfNk1TjUSZMlmssUxlUxMHPVQx7QAtaTnjiOdXbHhXjOI3yX?=
+ =?us-ascii?Q?B7rwgGTzB/kQYeayYKqk6SFdQKeA2rwTqIHa7Y3+HDxIhwYm5MbeXF2UTFFa?=
+ =?us-ascii?Q?o1wPJm7hK9Wj/UrAxXeDgH3lDgovROhcxRKsv5uZeM+eVkMsOCaTE6sF5IlZ?=
+ =?us-ascii?Q?Ptxobl/0kqigVswP8rSRFUmjFh7YDSx4o0ngPO/VCVCwaALzyPGD5t6WNV6V?=
+ =?us-ascii?Q?BSGN9j0jKOxC7MrpgKjLM4iIoQhh5MMJxp9rfAbmSi2odtCvjmxKu0tVc/7m?=
+ =?us-ascii?Q?nBFc1Ul3/2GPBG//oC+QkKTnIA3qTVeesbqSc+QdJmzINLy0frTUD8wGGJ7Z?=
+ =?us-ascii?Q?kf4nkrJXkghEDhHTBgApcHxZtN0MQQuVJ3HPQRlH1GBhw61VrxpXVt5Da3iz?=
+ =?us-ascii?Q?oCrSDp5LA3Y07CzxL+T3QA1qIkTS811PL5gn3154hG4ZJi4amZ0DJ6ha2Jt4?=
+ =?us-ascii?Q?0Pv18rHhRArEks175rsWw86WIA3BkrLSx8QlNjR0YKsaWmkU6gW4Bd9+hMfH?=
+ =?us-ascii?Q?vWuJh9Ij6HQ/2cCFweTsJxTRtj9UM74pUUOraEgBQ6H7skgVL6sLLC+9u8FP?=
+ =?us-ascii?Q?cg5uI5EVFlva5lnCOEYiEg1lmNa5my8Rli6D/mV/ipq7md7jDbQdkIT0aP+b?=
+ =?us-ascii?Q?F/R2c+bd1p0ZjzM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 14:58:34.2676
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 14:58:39.3750
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2413564-ba6e-42d6-9737-08dd6ae4598e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 874475fd-a14d-41be-4c7a-08dd6ae45c9c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3A.namprd03.prod.outlook.com
+	CY4PEPF0000EE39.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6242
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8215
 
-At present, sbrmi driver under hwmon subsystem, is probed as an i2c driver,
-fetches data using APML specified protocol and reports through hwmon power sensor.
+This is done to support other functionality provided by the SBRMI, which
+does not fit in the hwmon subsystem.
 
-AMD provides additional information using custom protocols, which cannot be
-enumerated as hwmon sensors. Hence, move the existing functionality from hwmon/
-to misc/ and add support for following custom protocols
-  - read Processor feature capabilities and configuration information
-    through side band.
-  - read Machine Check Architecture(MCA) registers over sideband.
-    The information is accessed for range of MCA registers by passing
-    register address and thread ID to the protocol.
+Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+---
+Changes since v4:
+- Split in 3 new patches as per review comments
+  1. Bring drivers/hwmon to drivers/misc/amd-sbi
+  2. Move out the core functionality
+  3. Move out the hwmon functionality.
 
-NOTE: AMD defines Advanced Platform Management Link (APML) interface which provides
-system management functionality access to the baseboard management
-controller (BMC).
+Changes since v3:
+Rebase the patch
+Added Acked-by
 
-This patchset is an attempt to keep all APML core functionality in one place,
-provide hwmon and IOCTL interface to user space
-1. [Patch 1] Move the i2c client probe, hwmon sensors and sbrmi core functionality
-   from drivers/hwmon to drivers/misc/
-2. [Patch 2] Move sbrmi core functionality to new core file to export core functionality
-3. [Patch 3] Move hwmon device sensor as separate entity
-4. [Patch 4] Convert i2c to regmap which provides multiple benefits
-   over direct smbus APIs.
-    a. i2c/i3c support and
-    b. 1 byte/2 byte RMI register size addressing
-5. [Patch 5] Optimize wait condition with regmap API regmap_read_poll_timeout as per
-   suggestion from Arnd
-6. [Patch 6, 7] Register a misc device which provides
-    a. An ioctl interface through node /dev/sbrmiX
-    b. Register sets is common across APML protocols. IOCTL is providing
-       synchronization among protocols as transactions may create
-       race condition.
-7. [Subsequent patches 8, 9 and 10] add support for AMD custom protocols
-    a. CPUID
-    b. MCAMSR
-    c. Register xfer
-8. [Patch 11] AMD side band description document
+Changes since v2:
+Rebase the patch
 
-Open-sourced and widely used [1]_ will continue to provide user-space programmable API.
+Changes since v1:
+- File name update
+- Add hwmon sensor registration in this patch
+- Update Copyright year
 
-.. [1] https://github.com/amd/esmi_oob_library
-
-Akshay Gupta (11):
-  hwmon/misc: amd-sbi: Move core sbrmi from hwmon to misc
-  misc: amd-sbi: Move protocol functionality to core file
-  misc: amd-sbi: Move hwmon device sensor as separate entity
-  misc: amd-sbi: Use regmap subsystem
-  misc: amd-sbi: Optimize the wait condition for mailbox command
-    completion
-  misc: amd-sbi: Add support for AMD_SBI IOCTL
-  misc: amd-sbi: Add support for mailbox error codes
-  misc: amd-sbi: Add support for CPUID protocol
-  misc: amd-sbi: Add support for read MCA register protocol
-  misc: amd-sbi: Add support for register xfer
-  misc: amd-sbi: Add document for AMD SB IOCTL description
-
- Documentation/misc-devices/amd-sbi.rst        |  87 ++++
- Documentation/misc-devices/index.rst          |   1 +
- .../userspace-api/ioctl/ioctl-number.rst      |   2 +
- drivers/hwmon/Kconfig                         |  10 -
- drivers/hwmon/sbrmi.c                         | 357 --------------
- drivers/misc/Kconfig                          |   1 +
- drivers/misc/Makefile                         |   1 +
- drivers/misc/amd-sbi/Kconfig                  |   9 +
- drivers/misc/amd-sbi/Makefile                 |   3 +
- drivers/misc/amd-sbi/rmi-core.c               | 449 ++++++++++++++++++
- drivers/misc/amd-sbi/rmi-core.h               |  67 +++
- drivers/misc/amd-sbi/rmi-hwmon.c              | 124 +++++
- drivers/misc/amd-sbi/rmi-i2c.c                | 134 ++++++
- include/uapi/misc/amd-apml.h                  |  95 ++++
- 14 files changed, 973 insertions(+), 367 deletions(-)
- create mode 100644 Documentation/misc-devices/amd-sbi.rst
- delete mode 100644 drivers/hwmon/sbrmi.c
+ drivers/hwmon/Kconfig                   | 10 ----------
+ drivers/misc/Kconfig                    |  1 +
+ drivers/misc/Makefile                   |  1 +
+ drivers/misc/amd-sbi/Kconfig            |  9 +++++++++
+ drivers/misc/amd-sbi/Makefile           |  2 ++
+ drivers/{hwmon => misc/amd-sbi}/sbrmi.c |  0
+ 6 files changed, 13 insertions(+), 10 deletions(-)
  create mode 100644 drivers/misc/amd-sbi/Kconfig
  create mode 100644 drivers/misc/amd-sbi/Makefile
- create mode 100644 drivers/misc/amd-sbi/rmi-core.c
- create mode 100644 drivers/misc/amd-sbi/rmi-core.h
- create mode 100644 drivers/misc/amd-sbi/rmi-hwmon.c
- create mode 100644 drivers/misc/amd-sbi/rmi-i2c.c
- create mode 100644 include/uapi/misc/amd-apml.h
+ rename drivers/{hwmon => misc/amd-sbi}/sbrmi.c (100%)
 
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 4cbaba15d86e..5b53137f8b89 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1866,16 +1866,6 @@ config SENSORS_SBTSI
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called sbtsi_temp.
+ 
+-config SENSORS_SBRMI
+-	tristate "Emulated SB-RMI sensor"
+-	depends on I2C
+-	help
+-	  If you say yes here you get support for emulated RMI
+-	  sensors on AMD SoCs with APML interface connected to a BMC device.
+-
+-	  This driver can also be built as a module. If so, the module will
+-	  be called sbrmi.
+-
+ config SENSORS_SHT15
+ 	tristate "Sensiron humidity and temperature sensors. SHT15 and compat."
+ 	depends on GPIOLIB || COMPILE_TEST
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 56bc72c7ce4a..b2792b9664ba 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -649,4 +649,5 @@ source "drivers/misc/uacce/Kconfig"
+ source "drivers/misc/pvpanic/Kconfig"
+ source "drivers/misc/mchp_pci1xxxx/Kconfig"
+ source "drivers/misc/keba/Kconfig"
++source "drivers/misc/amd-sbi/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 545aad06d088..fde23b0b4f0e 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -75,3 +75,4 @@ lan966x-pci-objs		:= lan966x_pci.o
+ lan966x-pci-objs		+= lan966x_pci.dtbo.o
+ obj-$(CONFIG_MCHP_LAN966X_PCI)	+= lan966x-pci.o
+ obj-y				+= keba/
++obj-y				+= amd-sbi/
+diff --git a/drivers/misc/amd-sbi/Kconfig b/drivers/misc/amd-sbi/Kconfig
+new file mode 100644
+index 000000000000..be2d9e495eb7
+--- /dev/null
++++ b/drivers/misc/amd-sbi/Kconfig
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0-only
++config AMD_SBRMI_I2C
++        tristate "AMD side band RMI support"
++        depends on I2C
++        help
++          Side band RMI over I2C support for AMD out of band management.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called sbrmi-i2c.
+diff --git a/drivers/misc/amd-sbi/Makefile b/drivers/misc/amd-sbi/Makefile
+new file mode 100644
+index 000000000000..304394bf5e59
+--- /dev/null
++++ b/drivers/misc/amd-sbi/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_AMD_SBRMI_I2C)	+= sbrmi.o
+diff --git a/drivers/hwmon/sbrmi.c b/drivers/misc/amd-sbi/sbrmi.c
+similarity index 100%
+rename from drivers/hwmon/sbrmi.c
+rename to drivers/misc/amd-sbi/sbrmi.c
 -- 
 2.25.1
 
