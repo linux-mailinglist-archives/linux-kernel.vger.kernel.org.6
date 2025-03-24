@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-573952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C22A6DEAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:30:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906C5A6DEA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635A018968A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAB3816A7DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24733261364;
-	Mon, 24 Mar 2025 15:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E0725FA04;
+	Mon, 24 Mar 2025 15:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F7oC7x30"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ffLrU+BN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Com4cb3U"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AED257448;
-	Mon, 24 Mar 2025 15:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD441CD1E4;
+	Mon, 24 Mar 2025 15:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742830094; cv=none; b=PmK+h8hV4NpnV4eYQcGmm3p7Rn+9+lB+ncnrTDANqeNQ4FXoLPDfpemXJUL88qtzMcMXenqedzaJpgEqcqsHRVbCuNw+FUKnIUSlA60k/+mmOoZX5jmZPwMYFFfSfOV6oBwS4Bf6KqqKb3yzLOfngyhnjKSaLdXm7C1OtQWbznA=
+	t=1742830183; cv=none; b=WRbhPEfWbo1BEUmNaH9hd4S27lcf1clAWFPKyfoXF0kQeSlFGqIsYFhn1kNf/lp+4GTyhpDgaoHGugnvRB8qZQ36O2+v1pwLX7LxDFNOwKryEHuNS6lK7GH1dkMNyrVj0vvjMyPIbBERtUWD1pQjKwl61Qt/l3syOS8ze++DvoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742830094; c=relaxed/simple;
-	bh=cqMO73am4Bc9cZMTcysm5XHve1x61DpjXMsSPTeDOXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcCM6sBldGyeKP3H6ciNlroZJnQQFqN/Yu3Rsd/hZbG52pjtzMT9K09doWLQVakeET3j/LiZJnLK10UxqXUnZ8BWYlKvE8ZA42i6hIyaw0X6sXQouUhbi1f/HtfogcB9hNCfLjnGL4XgQpSPX3DpqQkS+y98ifxPlpYagNwSUfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F7oC7x30; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9qBGA011754;
-	Mon, 24 Mar 2025 15:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=6KBh66XSYbfoHzXoObK9YPJS8KJVf8KWJEG4ORUaa
-	v4=; b=F7oC7x306wEqvSZ6SJJ+CcaM6HPJ7r3NqP1FCliTF0iyXHA8w/lqDZI5P
-	N2ri/vfml9OHeEdtbCQh8HoWLL+jwEK9MRaPK1tNM6zQYNXGGj13tlncGm+g601t
-	JzeR9/ZG5RbLLlb2zvbG0PgNwGijn2MRRySMTlczFTXF8vGWNIocPF2OZzgJP4AG
-	2+f9T9mZkh1AwAc0JOUxvVxntgV5d86PgZzCFxFQG7ofAQ4yuQDbWkhXfUBEeH4o
-	vZrGPeVn0SNRLO8eoF0A8AHodxuZJzCEom+QjxJcjJ3iAJX/UMtbBrKMv/X32f9a
-	gWuVEkwS9f+/PUqCaEEnzeeBE6Khg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsh04cc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:28:08 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52OF4j3f011715;
-	Mon, 24 Mar 2025 15:28:08 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsh04cc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:28:08 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52ODEI7W009737;
-	Mon, 24 Mar 2025 15:28:07 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rkemgy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:28:07 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OFS4YW9175464
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Mar 2025 15:28:04 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3D3DD20049;
-	Mon, 24 Mar 2025 15:28:04 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0569620040;
-	Mon, 24 Mar 2025 15:28:04 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Mar 2025 15:28:03 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        irogers@google.com, james.clark@linaro.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] perf trace: Fix wrong size to bpf_map__update_elem call
-Date: Mon, 24 Mar 2025 16:27:56 +0100
-Message-ID: <20250324152756.3879571-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1742830183; c=relaxed/simple;
+	bh=m7ubwnP1UV4Z1iX99eO+HYzRGPRx/EX3E+nvos6h7Y0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=E4W3AaJNE0HfH4Ho9wRmZorpG2ZPLZ+wo9IuDuysLomU8xgkTLaEk18j8joJyWgTjqS0ArV5BdjDBMZ3GtIQF84bB4fbgR4gJogzz2AWyebE7tfaLFia1qIymK52aN43EOwPUH7v2PTrUFO6B60QY9a8GU8XJh8/vjdRbBbTqEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ffLrU+BN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Com4cb3U; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2DD251383DE3;
+	Mon, 24 Mar 2025 11:29:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 11:29:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742830181;
+	 x=1742916581; bh=juOVH8qsGuDRgM3esIYt4jWBd8gP6RsMPF2nauED83s=; b=
+	ffLrU+BNUaCv0i4QcDtKNrwnqugYM3fRlHIkut1aCL91EXFql4d0iS6ZvRJapgPa
+	lBTpLI9lf1VSoToI95TJ6UMNOXS86s9J8Ve7ROPNFge9M0o6EZIVAvyA4cxhs2Gj
+	Hmby+AjlhtdqlrFmVNnztCxC4aZFZ2DSwpc6vOKZWtxopuTsX2c2eyWteGQ5CdIT
+	TLOVuGuPgqU5F0opLtTV3Zphy0RyztxjBiXySLmfYKy5Ls5hCEQWPwrwdMEX4BG1
+	nqRmf/hBiQ5HR7Bvbk4XvGk5YDWTV8JOXv7xcyBC9sG7J/hA7m//NxOdiYffYK9Z
+	ZfNzBngQv+D6b5L2P/JlfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742830181; x=
+	1742916581; bh=juOVH8qsGuDRgM3esIYt4jWBd8gP6RsMPF2nauED83s=; b=C
+	om4cb3U9IMUCuA+vQWlvMDSrJJcYSEwAg4P6y1Khiry31XK8YUpHIcuFkqUEFtj9
+	vcKous4K8PhbRtUMwd+Zq4+pBpvXpbjoFdH3acuAvJRVyBlDR5LDL80b8TEsQWW7
+	A8OOXFUAUeeSAuEmdQNRMlyyK03mfyLgCaNrXDKbYnjj29K02PvcTOpBYQKO/pf+
+	OYjpymEkQgAoS4YkXQL+1avpBzJi9FLk7FEg6DneJkSs36ZHnXqC4I9VHWfH3aKj
+	zIZ7iPQbkE6boiwjZ3+HX2qAePPmQIddEUpKwGWjR2IVPc3OWn41im4VXVR2aH0F
+	1bS0+ZE6JprfPYABlWh2g==
+X-ME-Sender: <xms:ZHrhZztB4bnJeBZs7sj90JJrqWVk9VadPlwHSVEh0ROXOp5tYzFmnQ>
+    <xme:ZHrhZ0fk3RlFTkxEigxfs6ahJrB5E2PRExnONnUeYLo1LsEp8C5iZXRoxv_NE1vJJ
+    5jayND57NgEJUTsBVk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrg
+    esrghmugdrtghomhdprhgtphhtthhopegrnhgrnhgurdhumhgrrhhjihesrghmugdrtgho
+    mhdprhgtphhtthhopehgrghuthhhrghmrdhshhgvnhhohiesrghmugdrtghomhdprhgtph
+    htthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthht
+    ohepnhgrvhgvvghnkhhrihhshhhnrgdrtghhrghtrhgrughhihesrghmugdrtghomhdprh
+    gtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomhdprhgtphht
+    thhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
+    hopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhh
+    fihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ZHrhZ2xUZlldXZfMCiF1HxfddFQhsc9NXvTvmCt7FBmIFPPay5TEGg>
+    <xmx:ZHrhZyNm3sB72TB1qK4ZYJwR0_jaW9z3AxREoVed8WehNXb-Q9RH2w>
+    <xmx:ZHrhZz-z_Kxo2abwQWJuzTJx362bLHjCFyh04NvM0XNzEUPdjWoMGQ>
+    <xmx:ZHrhZyWInREfHzMvTSvU7acmQwEv-T2pustXSHC74TCSA3MJ4jZ5Rw>
+    <xmx:ZXrhZ6ZVNTpgMOphAVbOBM7rT37_nUaK0EaElJ8jlAmL7f2iVOfGhL4Z>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C46B22220072; Mon, 24 Mar 2025 11:29:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tVYJXf0O80kRZA_uEUXg36habZPJSido
-X-Proofpoint-GUID: UgLw_rgWeC3n3kF4SmRo3CF77DFCAdyX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxlogscore=979 suspectscore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 malwarescore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503240112
+X-ThreadId: Tee0478150e682e72
+Date: Mon, 24 Mar 2025 16:29:20 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
+ gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
+ naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
+Message-Id: <3ab1116b-7021-4d83-847d-fdec53af9bee@app.fastmail.com>
+In-Reply-To: <20250324145815.1026314-9-akshay.gupta@amd.com>
+References: <20250324145815.1026314-1-akshay.gupta@amd.com>
+ <20250324145815.1026314-9-akshay.gupta@amd.com>
+Subject: Re: [PATCH v6 08/11] misc: amd-sbi: Add support for CPUID protocol
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-In linux-next
-commit c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
-causes the perf tests 100 126 to fail on s390:
+On Mon, Mar 24, 2025, at 15:58, Akshay Gupta wrote:
 
-Output before:
- # ./perf test 100
- 100: perf trace BTF general tests         : FAILED!
- #
+>  struct apml_message {
+>  	/*
+>  	 * [0]...[3] mailbox 32bit input
+> +	 *	     cpuid,
+> +	 * [4][5] cpuid: thread
+> +	 * [6] cpuid: ext function & read eax/ebx or ecx/edx
+> +	 *	[7:0] -> bits [7:4] -> ext function &
+> +	 *	bit [0] read eax/ebx or ecx/edx
+>  	 * [7] read/write functionality
+>  	 */
+>  	union {
+> +		__u64 cpu_msr_in;
+>  		__u32 mb_in[2];
+>  		__u8 reg_in[8];
+>  	} data_in;
 
-The root cause is the change from int to int16_t for the
-cpu maps. The size of the CPU key value pair changes from
-four bytes to two bytes. However a two byte key size is
-not supported for bpf_map__update_elem().
-Note: validate_map_op() in libbpf.c emits warning
- libbpf: map '__augmented_syscalls__': \
-	 unexpected key size 2 provided, expected 4
-when key size is set to int16_t.
+This changes the alignment of the structure and makes
+it incompatible between 32-bit and 64-bit userspace
+when there is an odd number of 32-bit words in it.
 
-Therefore change to variable size back to 4 bytes for
-invocation of bpf_map__update_elem().
-
-Output after:
- # ./perf test 100
- 100: perf trace BTF general tests         : Ok
- #
-
-Fixes: c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
----
- tools/perf/builtin-trace.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 092c5f6404ba..464c97a11852 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4375,10 +4375,12 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 		 * CPU the bpf-output event's file descriptor.
- 		 */
- 		perf_cpu_map__for_each_cpu(cpu, i, trace->syscalls.events.bpf_output->core.cpus) {
-+			int mycpu = cpu.cpu;
-+
- 			bpf_map__update_elem(trace->skel->maps.__augmented_syscalls__,
--					&cpu.cpu, sizeof(int),
-+					&mycpu, sizeof(int),
- 					xyarray__entry(trace->syscalls.events.bpf_output->core.fd,
--						       cpu.cpu, 0),
-+						       mycpu, 0),
- 					sizeof(__u32), BPF_ANY);
- 		}
- 	}
--- 
-2.48.1
-
+      Arnd
 
