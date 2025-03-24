@@ -1,212 +1,328 @@
-Return-Path: <linux-kernel+bounces-573398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A96A6D6BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:57:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDE0A6D6C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D937A4043
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CDE3B1E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2FF25DAFC;
-	Mon, 24 Mar 2025 08:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F6925DD0B;
+	Mon, 24 Mar 2025 08:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sOsPXeOn"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2084.outbound.protection.outlook.com [40.107.236.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc+XGBg7"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BD925D90F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806591; cv=fail; b=Tk5OYLF7WGOaj95lFTvOWuczlelNXHS5e2VpzT41rTeiQZc5UbYR3lf0lGKXWoaOtPVE/Nv9pPjDfEz80QLT1SidwtxV1tG9Lm1tl5WhvXG+VIMlF8lVyh/p7u38v5IsLqb9hlQtHw+3VnrgPWsgalOa3F6HKVo2n8Qayz3kQLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806591; c=relaxed/simple;
-	bh=iwKijLjp/yT5h+Kd2eOQy3sshDkYiA+ZsqM3rOS9DRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Dw3gWg3CyAyLhz13GpKjc47bN6Ju0w1vskcUgnDRwkWjL1lxAw5y6IJaBeFYXaXtwe5pMGq7ogH35bz404J/7xIQKsjWjpNoKrMn5tePfZPc2nGIZ/TFewzwAleehpm9iubS9zd9ugLlRLCRTei9HuTiI0jWMSKUu32RQerbom8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sOsPXeOn; arc=fail smtp.client-ip=40.107.236.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EGK+JKcSpsgVHxZpKhxvui7EuMoxQzugOiuVXWvVT7KVux1A9sNi080VTLsuEBme3pwu906ZCQHw2ct4q/Gc2UEZQkJTnMdCNQ7BNh3udJvKKZpFIb3IE5OcELa82+JUfrR2Iu6Pai8G+KFb/HZ+7GdBxc5m9jDprd0iL48gMBILeL/IOZnP1pXRucehdbR4cVInXAujMS6XRKLu+onhxFGjQ1BNojmKDDnIEb0DiWZHtz9zNMuuG7uAkmpU4FK7eF/M7Xo7Txg4FPgNJqfK/Ti9RNiGYB9dDT6VkQsQV+tYLnnXnwqu63QheU/weIPNDzcb6GFCVRyc8t/QtVaTlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t4jXNKrbtW1ANiXrxyy16cQFPC35IQc1jMG6n89c6a8=;
- b=YhkUYDNo4G31rf8FAzWS0ijsKjZ33T27wRZpRjk/1DDqBWAaPyp2YO4km62Vu4I1ali2xlt+boEO7ammBtUFqdcMeiWbhnJcmxtVFfByPiA+KKXJ3xpqM8mUuM5s0zYZt4uUj6Bt1XVL5q7jDiysiTHJ4+NURmfTUaHWbW4eHSv8DKpQEYWjb4ZK76vrpP5DVa/De+MHliL2/XOfyiC7vhB0984penaMXP6gjZpGsEMg0e0Z9DN4/YDwNeDC64p707hmZAvptd9LH9OtgU3AJYlYjZWCHV0ODf3ifn9vLU8Lm3pbYcZPENMEYC+vct9Mn+eR4uvqwmtSsCffFEklGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t4jXNKrbtW1ANiXrxyy16cQFPC35IQc1jMG6n89c6a8=;
- b=sOsPXeOnK+TRGlKyVC/25x+X0h4T5vrl3W5bFOqCFczsj/z+9i9o0RXvA19Q9tUT4TlRfMMTG93GzWRRO6x4ND9fks6HASNpLn9gEliq4BE7tNT/PEKTuG6YgQr9YRuD6y+DChaEMk1FVTVSgB/b+opqKJw/Tdg44VLQQopnKmCEHvsQtOofPToV6xHSVTXBhtviqUGgdxFLtgDYrp2zWbWE2+3JjvY1Fh+FLQnG0zrVafoykTtw35a3t7gUFvPl5Gr4Edf7DwI5bG77VzTUQXlR4LuSUSGwnJvLIlLeEyfJ9bdoXwzp7avtXVgpmp6VlLWR6yDbCFBse2dmhGh9NQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by BL3PR12MB9051.namprd12.prod.outlook.com (2603:10b6:208:3ba::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 08:56:26 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 08:56:26 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched_ext: initialize built-in idle state before ops.init()
-Date: Mon, 24 Mar 2025 09:56:16 +0100
-Message-ID: <20250324085616.26810-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0058.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:21::9) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407C025DB03;
+	Mon, 24 Mar 2025 08:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742806594; cv=none; b=b6/SFtdv3IBWAUZWhd3dosODZgjVfu4jCxdFbLSKc0lok0J0ChLxi+jFPQ6RCk/ehVHVJQnUXFjTEuQGpCg2DoJp//r98k4SkP6xadBBi00swXD8CSwkx2rEaBg/QSVMKo9doNp+mch0qGsoLnJ9BQwDxoq6d32O0KMxNsDjwmQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742806594; c=relaxed/simple;
+	bh=l4WWAwEydaPNgF4KjhGROyUK39NyBrA+t9scJbuSYW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcqQz/gAQqanxJ9bmSMRTVBGqnwhPCyExZGUd/UrQeOUXtKJN0+cLzO2IeTUlORqUSAnfcSUneuA1Yly2mOvutulxlXlrZRaiVWMMXldmE4/PDMyR+Pzc/LDY5aAW1T38tzu7UlaYKey9tKcHzkVPVXHChDJcQiXg99A2HyiMVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zc+XGBg7; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54aef877725so248898e87.1;
+        Mon, 24 Mar 2025 01:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742806590; x=1743411390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6fdlKmgWUdck7JQxeSbntpoEnLA6wDGGCN4OQ/puqE8=;
+        b=Zc+XGBg7wenf5RiX7VS13S0thNw5KJirBJMtLTG7xt5b5hvIwAP71u6Fcx9RG0olol
+         TEapYmisNq2hOKJwuuf+Z2O+TcY+5Up2LEyUGxPfRB61u+qW2zZ7klyk9TNwJa9D/N4V
+         YIY9j6sQozgYOBrG/IO6nctM6d0K8YnHIhFgtQZZe9tiaMMTzR7KAfaJ8MGF9RFTWB08
+         XsX/lwJKbP0IZSMznJjv8rm+RVTg3O6+n2qQRoYaSCrJbizMCdenYmbyrh8Ss0BlsIiV
+         HuHiUwYcoH2URQCfHIAVMy7tZ8J30E8gGRHBmVw8OO0kx8pC7PBjWxPIkJ2EbrSqFZ1g
+         JC7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742806590; x=1743411390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6fdlKmgWUdck7JQxeSbntpoEnLA6wDGGCN4OQ/puqE8=;
+        b=fKR4N6ix69SGnyDiBDJHdeccfP8ybOXmukjfP2L5S/np/txrOPtQ1W/mbHPGP+Gy7Z
+         2VdvV3RmxGYZ7FPFfV7L5NxLfnba+WRo6WkBQwBXOwl9PFWFBzVci/k0dqJfsbfjJmXk
+         75NzQuP7ZwCK2N+zFF+fj6vAyWfXAXQvYXqWZiEWpPS+oz6TO2ibzpuYeu4JnfVAZKN0
+         KjWmSJALiIFe2KGnwyPSxwo/uhn3JZcwrHTK508TY1dhT+VtZRpqM6fkRrf4kwKyodU4
+         zSP2OXGr7uKgWk9ouny0djfqYFBq7ZTu50PGFtnWE7g8ySeXlCuRzM+t8pX9pxC+rXXN
+         zUWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXErmsuWc/vtNF1Q1H9itL+OMUsEYy1EOmnqu5g0yaZSd8P6Al/oMxRKNcTPWuthV6OM9Jr4sIu+5pR3NhK@vger.kernel.org, AJvYcCXhHw4rNS+acVgR/KWrhJkZhp3FL7+RtqoWci+mET8oOnJjhfEIUTXT190eY13L10l37vZlmnNEGCwX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxJ7TV14kqRwxOYHhl5gEBlaGkSIe31twkL5Jdg1crJ95DkUCo
+	B3RYl4Y2sgB4/Watkk3GUTRk8eUO8BnefdGIglnGYquqKv8WmUal
+X-Gm-Gg: ASbGncsHglcqKw9yrIoLJmH0oCRgtcfemejaYQv8yggd6yBI5zwJt4C0CXUwkrQ/uki
+	ThUViuLyCBG1EL92lLJu7E3+9IvPDyLgBQJtgnIqLDDZ4bT5wnelGgows+igsbBJ/UdeYINZuU+
+	WXLXOgrHfYslEzig5/0VmevvFYbfipz2d3PkJWqdIbwMgxt1bhjETGQLiJ99X+9eL+sko5kTt6h
+	2XjY4UE7Lg7aZMpumyVpSxmSMSDjVko1P7l1Oy/vfAFmu+Mj80XbkhaA3ejc3lRS8Sm7/KBMG1Y
+	/c3HXV0r5Isq4s+Bg1jGCKQX9XvoXtSfCGoUj2ISH/kiC/Mo/Jc=
+X-Google-Smtp-Source: AGHT+IElkGpEGEXGcM5VcpOtUTb8PykQYgDole3Ne06Zo+hRHDi3i0YC/ufNXj0Li5b0fBPW6PVBdw==
+X-Received: by 2002:a05:6512:1103:b0:549:7330:6a5a with SMTP id 2adb3069b0e04-54ad648f09dmr4505290e87.23.1742806589980;
+        Mon, 24 Mar 2025 01:56:29 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64fbd0asm1054096e87.111.2025.03.24.01.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 01:56:28 -0700 (PDT)
+Date: Mon, 24 Mar 2025 10:56:25 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 09/14] regulator: bd96801: Support ROHM BD96802
+Message-ID: <ac254491c2d650d263b064142068c282a3f624fa.1742802856.git.mazziesaccount@gmail.com>
+References: <cover.1742802856.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|BL3PR12MB9051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b10a6e1-3ddf-4fef-07ef-08dd6ab1c2a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d7R51hdEtzazudySuu7ajq8rh4SJnm/0xeuCTnDtmpDQaGOnf+nKWd2Sxopv?=
- =?us-ascii?Q?zdpHAP9aJcOrhwO2sJEk9pTBJsuJvT3+E0im9i21u8EybeRdcjiOAVRDEMWX?=
- =?us-ascii?Q?9+XkCib7+Y/G3bpdwVwFPhNxvQlz5P15M9YSbHt1ObnObC+wVH/vVC+kBaYF?=
- =?us-ascii?Q?uZrOmRmrDfCzRRSLt0wx9I6JDFugSBb7tuI92Tijuir6KablCYFaMFfN2s9S?=
- =?us-ascii?Q?YoTvMHYjUDvaPs1gKBqyg0yip7aV6ELaHLPQTioPGhOSu5/OwuFCFd+VIyq6?=
- =?us-ascii?Q?wjVsqW+Nxmr1JpxBloPf6y0pNzq4lM/bwcSRiST78lCs9tlqRjoe5ZDwlW5P?=
- =?us-ascii?Q?3bHLEq4rUrPrVhIjXje+625f/KofhqR8WcqAISTK0FG5i+BAjslT44SZ/hYn?=
- =?us-ascii?Q?H9Uc8TcNBqNrwh5f3P73gYClTgax7S2zN7yw/14ZM+1N3jTXDGrD2QS+3xvf?=
- =?us-ascii?Q?Ax1BE3jg8Tpoc8WsnNNiAu/u/PGnZB7aRUQyLC07cc9TfMQob2DxMB10KARi?=
- =?us-ascii?Q?bI7ZoOteNKV9rY3JaF9U93f/dyyZBUtGLSIL9BKWdJr87PmHz6xhHsU+Nm4Y?=
- =?us-ascii?Q?Np/9PjB+/kx0vWB36dqmfOkblc31FHOTvimOazIx4dSiyrt1QTLVx1idisDG?=
- =?us-ascii?Q?eTia4Y1MMp3mmDFYnW/b7Ew/zLbeq8svBB4SIS6NgEdXIIk6W48h85M00bzO?=
- =?us-ascii?Q?vHvJOX0lgxvuOPy2Sg3dDmeLAXLyoCx/mhAdzU3jJwXkP+tQjAW6YPqynVbW?=
- =?us-ascii?Q?PcYnBWeCT4FPfYyGm9NEVUCXL+o0M7pVmLqxV7WGD5/8OP7DPfSa7TyEa2GG?=
- =?us-ascii?Q?hRwPLd1q2nLns9Yh2Q2b7ondZuWniHDoLT0kd8D9z3poS4D+plEojJujQXi2?=
- =?us-ascii?Q?DvdKEGSAdLZL1tp08PbG1qn8eTi9Uwpyf40eDluI08k9iptOS5gC+ufPPJQG?=
- =?us-ascii?Q?0P2NVoIxBoFiZgq3fhxqnXchJI1UDSm9NJGL6C4ph84NxFjK9d7DBjRTylVr?=
- =?us-ascii?Q?kOot/ni/gaOSBDhR2/MGWDHvqByILZXiILHs1ny/vZPuO/L7wN+GyFuS+ao9?=
- =?us-ascii?Q?lJohzyZb4yNx3yCiMtI6oa9jYK1U30qsig28gggD81h0HEZHp/w2QeK+Espw?=
- =?us-ascii?Q?Z8Rg5qjgsDo7I9rx2U9wzpLeH+YsOPVoC+vwWyefm6RgD3KRGaRTds81q7I8?=
- =?us-ascii?Q?ouTO05UvcaXADlQYLKemUfwF6nSu9jYP0VZS4Knl6qbGIWXJefGEJnp0xyym?=
- =?us-ascii?Q?Zm77vTn6jsjRQKLkI/OMnxvjmrdiZX771GSwBfPe9vgAQ8Op5sriyln6M9lN?=
- =?us-ascii?Q?rW9zHdL80n4cNP8CfTnCOP27y2isDZVoean6ZRmZVq/FNk4wziowN4kzlxwK?=
- =?us-ascii?Q?rAbl6wp1ZFEi5qjrjGrswHpVjhGR?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zL3/guHWCAyny8gKsMoSCSHR0EA6gQIt1cjuDh/RwbvXKQMEBawr5yq0p28y?=
- =?us-ascii?Q?KeahXacQmRPfrv2a+ONYqHewgYBHNHAP+3kRDwaJuUc3j4qQidiCpgNl6lJJ?=
- =?us-ascii?Q?GbPuSfuydc38rhzIWG4vgGF41EvHkzsiBS6JL1WMcZr/wc0EEIadCiGiDM5N?=
- =?us-ascii?Q?/GDldfDRO0yDz/kYdNA+9Z2BSwBQt1EoOraaaki5C2DWIXMh9MHV0BMpvzim?=
- =?us-ascii?Q?wlXdFCvLKiw/5LhVh0S5PLIA5Qz/4DJrweARKwh+0TiYpFHqvhljHTU8CBXj?=
- =?us-ascii?Q?hMmQFfkO6ny9xsppRCGEnRhQPsGTRRDuF9l4mim5eQCn0+GduR4LcGdQYVBn?=
- =?us-ascii?Q?/fwHWVuyatMor/uW85TuarcIXkcItTRbazfGWk8eKpqfRkOVLgDBfGJqffUb?=
- =?us-ascii?Q?6BBoAA3a2zVBGCfjy7v9TyJiPSHbXZ/1BnhKd/sCPvVe+sGp0bO1eO1TapQn?=
- =?us-ascii?Q?rItZlPtoVfK5XrqiaYlUPK0z0ciSVdsGEKpEv6HkiO9aY3Fq+csp6cgqyttA?=
- =?us-ascii?Q?0lEN7IETkys9GmgZXF9+ET3Ypfx05vhmi7dAU8GbDKjw1Vv2u9e5fj6s4Re5?=
- =?us-ascii?Q?Ysi7Qmhu5dDEEsa2WueYoJiEKGvP3R1xzHR+AgSgUI8zTY8wLp7GmtfdtUpt?=
- =?us-ascii?Q?zQL2PQ6Jql0Yuf14VVok3vMi8ywKmxT1TOLEHi/Y7M3+nP4tJI7+Og65XU2s?=
- =?us-ascii?Q?UQ3aRusP0y5Qq2MeoxNKOtSdpJ8aJWw7eDCtqoRW/V1QYbvR7fQ+btBPK/6h?=
- =?us-ascii?Q?hAB2P3uVnPvr4TU20brMsjN/2do1oaEqDZOJloM2IefxZfbWObUVGT7Z23V7?=
- =?us-ascii?Q?Bp8HEQaLHoFVPeNudj6LswoatBFAtalWY9HI8O47EEnhMXDvzLkTCzffk3zr?=
- =?us-ascii?Q?aVzSHIaPod+30N04VV3rxcZBpSKNL7SssviSVUY+Y2f0KNFBRM2ChlwwEZFW?=
- =?us-ascii?Q?ME9tptNeB0HToAyHjRWUuMkgmDLFOOAoeWAu6pSyCYgtdSPy5SYRvDg7r8VT?=
- =?us-ascii?Q?+4YIPFS5WdJqbAPuriaxDFVaxqeRkHT2fiZ+73RLXUEaxJM/d7SWgoVVwper?=
- =?us-ascii?Q?PvTMRkH/0Z3WkMv1d8Csliz5NQEHZrZEvdofF/GlmewJoobSHdr53fqxqpxK?=
- =?us-ascii?Q?oxBExCDbQ8+ChcWhuTZMjedZeqGWXRYgWV5/Hi/clu2qy6X/S7+1vUXqcV8i?=
- =?us-ascii?Q?bMWJl4rbMUaCT+ox9KbvrZYVepZzkXiQ+nbe302qRVR18FwLqX4NVh/rnx4A?=
- =?us-ascii?Q?81YGolA/TsOOtdFdL3YGCkwOp7LMQNOTg8LSF5hxnZXATMWcblC7QecYgfEg?=
- =?us-ascii?Q?DiwAiEXKxJxoV6BsmYIKtlLERJha2eW6+paCuDqYO8w1/a4b+W9Ob0UkH4c5?=
- =?us-ascii?Q?x1h+Vqu7Az0oK76DL21HBmxzpGH4XVuahdCyJj9dPBqjFeC4GWbmc23PgJEJ?=
- =?us-ascii?Q?2Xi4VRPZhI9JQ6VzXxLqC9L7BQvJzVSbl2CY7CdM4ryA1gKs5sg/rin1XHjZ?=
- =?us-ascii?Q?8FjvmG24Ceyb1H/UXKIQkscDw1IjMJDYrt7Yykrq2lTlIkYsp1bRhCr7detJ?=
- =?us-ascii?Q?lB5Sq/FiZXRG8HsHBdnwc/jdXgmG440cy1kQLHYD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b10a6e1-3ddf-4fef-07ef-08dd6ab1c2a1
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 08:56:26.4762
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ypTVO71yeWYUOJ7gEHV2er7eWMKQN8ZpzW670B/QfdsMbYD1BW8iFJiDdugTvKj+vm8xDKMQ3m7e5GHQn72Wvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB9051
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EXNubZP+THGMtcHt"
+Content-Disposition: inline
+In-Reply-To: <cover.1742802856.git.mazziesaccount@gmail.com>
 
-A BPF scheduler may want to use the built-in idle cpumasks in ops.init()
-before the scheduler is fully initialized, either directly or through a
-BPF timer for example.
 
-However, this would result in an error, since the idle state has not
-been properly initialized yet.
+--EXNubZP+THGMtcHt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This can be easily verified by modifying scx_simple to call
-scx_bpf_get_idle_cpumask() in ops.init():
+The ROHM BD96802 PMIC is primarily intended to be used as a companion
+PMIC extending the capabilities of the BD96802 but it can be used on
+it's own as well. When used as a companion PMIC, the start-up and
+shut-down sequences are usually intitiated by the master PMIC using IF
+pins.
 
-$ sudo scx_simple
+The BD96802 looks from the digital interface point of view pretty much
+like a reduced version of BD96801. It includes only 2 BUCKs and provides
+the same error protection/detection mechanisms as the BD96801. Also, the
+voltage control logic is same up to the register addresses.
 
-DEBUG DUMP
-===========================================================================
+Add support for controlling BD96802 using the BD96801 driver.
 
-scx_simple[121] triggered exit kind 1024:
-  runtime error (built-in idle tracking is disabled)
-...
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Fix this by properly initializing the idle state before ops.init() is
-called. With this change applied:
-
-$ sudo scx_simple
-local=2 global=0
-local=19 global=11
-local=23 global=11
-...
-
-Fixes: d73249f88743d ("sched_ext: idle: Make idle static keys private")
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
 ---
- kernel/sched/ext.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Revision history:
+v1 =3D> :
+ - No changes
+---
+ drivers/regulator/bd96801-regulator.c | 92 ++++++++++++++++++++++++---
+ 1 file changed, 83 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 06561d6717c9a..1ba02755ae8ad 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5361,6 +5361,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 	 */
- 	cpus_read_lock();
- 
-+	scx_idle_enable(ops);
+diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96=
+801-regulator.c
+index 48cdd583e92d..893efdd92008 100644
+--- a/drivers/regulator/bd96801-regulator.c
++++ b/drivers/regulator/bd96801-regulator.c
+@@ -302,6 +302,7 @@ struct bd96801_pmic_data {
+ 	struct bd96801_regulator_data regulator_data[BD96801_NUM_REGULATORS];
+ 	struct regmap *regmap;
+ 	int fatal_ind;
++	int num_regulators;
+ };
+=20
+ static int ldo_map_notif(int irq, struct regulator_irq_data *rid,
+@@ -503,6 +504,70 @@ static int bd96801_walk_regulator_dt(struct device *de=
+v, struct regmap *regmap,
+  * case later. What we can easly do for preparing is to not use static glo=
+bal
+  * data for regulators though.
+  */
++static const struct bd96801_pmic_data bd96802_data =3D {
++	.regulator_data =3D {
++	{
++		.desc =3D {
++			.name =3D "buck1",
++			.of_match =3D of_match_ptr("buck1"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK1,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96801_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
++			.n_voltages =3D BD96801_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK1_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK1_VSEL_REG,
++			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK1_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck1_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck1_irqinfo),
++		},
++	},
++	{
++		.desc =3D {
++			.name =3D "buck2",
++			.of_match =3D of_match_ptr("buck2"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK2,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96801_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
++			.n_voltages =3D BD96801_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK2_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK2_VSEL_REG,
++			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK2_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck2_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck2_irqinfo),
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++	},
++	},
++	.num_regulators =3D 2,
++};
 +
- 	if (scx_ops.init) {
- 		ret = SCX_CALL_OP_RET(SCX_KF_UNLOCKED, init);
- 		if (ret) {
-@@ -5427,8 +5429,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 	if (scx_ops.cpu_acquire || scx_ops.cpu_release)
- 		static_branch_enable(&scx_ops_cpu_preempt);
- 
--	scx_idle_enable(ops);
--
+ static const struct bd96801_pmic_data bd96801_data =3D {
+ 	.regulator_data =3D {
+ 	{
+@@ -688,11 +753,13 @@ static const struct bd96801_pmic_data bd96801_data =
+=3D {
+ 		.ldo_vol_lvl =3D BD96801_LDO7_VOL_LVL_REG,
+ 	},
+ 	},
++	.num_regulators =3D 7,
+ };
+=20
+-static int initialize_pmic_data(struct device *dev,
++static int initialize_pmic_data(struct platform_device *pdev,
+ 				struct bd96801_pmic_data *pdata)
+ {
++	struct device *dev =3D &pdev->dev;
+ 	int r, i;
+=20
  	/*
- 	 * Lock out forks, cgroup on/offlining and moves before opening the
- 	 * floodgate so that they don't wander into the operations prematurely.
--- 
+@@ -700,7 +767,7 @@ static int initialize_pmic_data(struct device *dev,
+ 	 * wish to modify IRQ information independently for each driver
+ 	 * instance.
+ 	 */
+-	for (r =3D 0; r < BD96801_NUM_REGULATORS; r++) {
++	for (r =3D 0; r < pdata->num_regulators; r++) {
+ 		const struct bd96801_irqinfo *template;
+ 		struct bd96801_irqinfo *new;
+ 		int num_infos;
+@@ -866,6 +933,7 @@ static int bd96801_probe(struct platform_device *pdev)
+ {
+ 	struct regulator_dev *ldo_errs_rdev_arr[BD96801_NUM_LDOS];
+ 	struct regulator_dev *all_rdevs[BD96801_NUM_REGULATORS];
++	struct bd96801_pmic_data *pdata_template;
+ 	struct bd96801_regulator_data *rdesc;
+ 	struct regulator_config config =3D {};
+ 	int ldo_errs_arr[BD96801_NUM_LDOS];
+@@ -878,12 +946,16 @@ static int bd96801_probe(struct platform_device *pdev)
+=20
+ 	parent =3D pdev->dev.parent;
+=20
+-	pdata =3D devm_kmemdup(&pdev->dev, &bd96801_data, sizeof(bd96801_data),
++	pdata_template =3D (struct bd96801_pmic_data *)platform_get_device_id(pde=
+v)->driver_data;
++	if (!pdata_template)
++		return -ENODEV;
++
++	pdata =3D devm_kmemdup(&pdev->dev, pdata_template, sizeof(bd96801_data),
+ 			     GFP_KERNEL);
+ 	if (!pdata)
+ 		return -ENOMEM;
+=20
+-	if (initialize_pmic_data(&pdev->dev, pdata))
++	if (initialize_pmic_data(pdev, pdata))
+ 		return -ENOMEM;
+=20
+ 	pdata->regmap =3D dev_get_regmap(parent, NULL);
+@@ -906,11 +978,11 @@ static int bd96801_probe(struct platform_device *pdev)
+ 		use_errb =3D true;
+=20
+ 	ret =3D bd96801_walk_regulator_dt(&pdev->dev, pdata->regmap, rdesc,
+-					BD96801_NUM_REGULATORS);
++					pdata->num_regulators);
+ 	if (ret)
+ 		return ret;
+=20
+-	for (i =3D 0; i < ARRAY_SIZE(pdata->regulator_data); i++) {
++	for (i =3D 0; i < pdata->num_regulators; i++) {
+ 		struct regulator_dev *rdev;
+ 		struct bd96801_irq_desc *idesc =3D &rdesc[i].irq_desc;
+ 		int j;
+@@ -923,6 +995,7 @@ static int bd96801_probe(struct platform_device *pdev)
+ 				rdesc[i].desc.name);
+ 			return PTR_ERR(rdev);
+ 		}
++
+ 		all_rdevs[i] =3D rdev;
+ 		/*
+ 		 * LDOs don't have own temperature monitoring. If temperature
+@@ -972,14 +1045,15 @@ static int bd96801_probe(struct platform_device *pde=
+v)
+=20
+ 	if (use_errb)
+ 		return bd96801_global_errb_irqs(pdev, all_rdevs,
+-						ARRAY_SIZE(all_rdevs));
++						pdata->num_regulators);
+=20
+ 	return 0;
+ }
+=20
+ static const struct platform_device_id bd96801_pmic_id[] =3D {
+-	{ "bd96801-regulator", },
+-	{ }
++	{ "bd96801-regulator", (kernel_ulong_t)&bd96801_data },
++	{ "bd96802-regulator", (kernel_ulong_t)&bd96802_data },
++	{ },
+ };
+ MODULE_DEVICE_TABLE(platform, bd96801_pmic_id);
+=20
+--=20
 2.49.0
 
+
+--EXNubZP+THGMtcHt
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhHjkACgkQeFA3/03a
+ocXWgggApCu9vSoLTovPwKwNr750AuIygBiXB5ZvyF0cHl4WJMLoMe5o6AZs38Xt
+cFabE41c2+eiK961xMf8HkFOe/xGSz4P6LmWWYl4ilfaGX7YJ0IdRJ4fJY9WR7G7
+K7wYFYgqe6kFSwS3oQVGWMKDtIOg5c9K4VxMUORnkgsgWrMO3YiCs2XWrjNlmn6Q
+UJYP0cQ3TbxHjY+B2l/YDCq1qTZuZjsvWmI5Uy40hK/g4ItwaZdQE9JS9CuiSzI/
+HTCd1eQwXxRQ/0fVq5zwv+rd1N1E/f99lKRzJXjmf7qc+mUb19m00dblId9B/cWN
+QCo50l6EtamS9h2vTHl0mE1DQJ46YQ==
+=h/5c
+-----END PGP SIGNATURE-----
+
+--EXNubZP+THGMtcHt--
 
