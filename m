@@ -1,182 +1,160 @@
-Return-Path: <linux-kernel+bounces-573082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F4FA6D2DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:41:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E540A6D2DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062F316E035
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:41:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA501889DC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085BE2110E;
-	Mon, 24 Mar 2025 01:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="uiqNJSNo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u+L0V146"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47CA367;
-	Mon, 24 Mar 2025 01:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C3A2110E;
+	Mon, 24 Mar 2025 01:44:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D294B667
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742780510; cv=none; b=YBediygmzKi4c0kZHlYLz+Dj0WlO7x5M2Jegr1XiNVfehuLvmQevsU6JgnHZhuxR9J+XJtUFHslGEMzB8JOVYRZ4qTZ9DwIjd8Btmp4NH/rmC+eygMLQQwgamtroPvRyIKPAsnygRbOnIomTzFulLWbH+avFQVnkiXZT/6RmBLI=
+	t=1742780661; cv=none; b=DKZ85dFHH7wYdXLSY8wGGdO0A3kjPM6b6IBSiM0rV/1/RDFGOApZhwm7ErcYwFLTuGTJTSreU2CGIt1hbgPy/EU9HYcCHQCwY3p0iEOvWfLyuisZQAWF9nRXpdellfIP2opfD2CtsfhTRTLi1Q/lbH7AbiHSOlulieweAsF1rSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742780510; c=relaxed/simple;
-	bh=hNUA8ajXEF3jCVz2tTKvjz2TXG3YLE3+en1hSJz4f5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AiDnKnmaCWceOZnB0/je19HvzNHiTv2LJTDyARU0MlxE+brI278pGmR56W7Ky5cxIOJU4GTeXQoNzTOdEKiAruDn+/WgT3Pi8RjSgk1OjxIyIIlJPNwoFZnA9EQrLQDTgq+wIW63ctbLhH3jeVfSCMx50JOjByeDCYkQT51xCOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=uiqNJSNo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u+L0V146; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfout.phl.internal (Postfix) with ESMTP id E26971381100;
-	Sun, 23 Mar 2025 21:41:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-13.internal (MEProxy); Sun, 23 Mar 2025 21:41:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742780506;
-	 x=1742866906; bh=scMdHBPZ6vxqc2HSxuk39OMIToy9t5zqjIDcVZ1lF1c=; b=
-	uiqNJSNoUVxEQ26bQqgtsqkglWBs6asc25pHEWjBIsmsqG+eKYUOZsyl4Itz7HES
-	iYP8SKoJfsXOMronyCH3YdO57kLMXIWn5WxDSA/GLoAhSE1P253dYOfFSv2XkSYv
-	aKs3DMmAXf9fQlRcx6xQQfQ0afanFjLx/FhV4Kw0DdqO3xaCqJxQrKF40Div5hx6
-	7197YVa4YfxRHuCTdhcty+qBlgmnOMkKGYoOd0YLdIjIHIVaQnhFLoAZYFzSf5+V
-	FC4Yx9q2mjDiYQibY/RPwuZetzdj4bbIP4S2NzO47TFu0SHU1bpECZKBEC2wD2Ln
-	fUOZd2UBr2Qb8xPcCX0bFA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742780506; x=
-	1742866906; bh=scMdHBPZ6vxqc2HSxuk39OMIToy9t5zqjIDcVZ1lF1c=; b=u
-	+L0V146T5Szv+t/x0gfIf1AvZOdBzudx649nTh7S0+frElwKYmHpdkEAoVog0SuW
-	eePtyagIeh3iZc1mJ33q+kKOT+vBMSLMSlLwO4pAwqOjyTjHaOaXWQbXn7QQ0EG6
-	1L1WTnKTb//0N2HP85rDfriDcNdsKgIMLCBFGFQ7Enz9C4fxTKTOFYm+zyAK4z+o
-	EqkMnyddDMNvLFSi0lrvI4YfGffGzBj7DAgkdcl3VXzGio7gmINUvh0gTIN3JCuH
-	EUhFPrfR715yt71X7kDiCDIj48/AWTdkC1SP0LrGSS/XPVxphhDGGzRPvkgM/HN3
-	5CHbEnojivxqtmdbK/2aQ==
-X-ME-Sender: <xms:WbjgZyXIqyfUn-3bKDlELZ_VkcF_CHQ9ArfOpxVMa0qqp3dThfWWFw>
-    <xme:WbjgZ-mRBxqFgAayvnxhO775GyfGMQbLMuJ0PCoxQfGRoYrhbXNeIf4o9WtFAvf7X
-    Y8gybxuBzsP8kuEMoY>
-X-ME-Received: <xmr:WbjgZ2bOfGrJSfm4s8Yp9hfZgU7A0t0oZCZllH0EbMm1Y_hhATZKvL6Q1XzFKQSZkuXPsTkB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheekgeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefkff
-    ggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepfdfnuhhkvgcuffdrucfl
-    ohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpe
-    eigeekveevffelfedtieegudfhkeefudeuleduhfehfffhtdekhfekffefteduvdenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomh
-    dprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgt
-    ohhmpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgr
-    rhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomh
-X-ME-Proxy: <xmx:WbjgZ5XxfndmstQ103gs6YipU6cAU12Hep3KmJVWnE-nu7i-H5Uawg>
-    <xmx:WbjgZ8l-uBVlQQmj5P-1VISDwa4saDe4CNLLP4fsjgT938F_eCjCZA>
-    <xmx:WbjgZ-ctqbHDngBg8qFslnJiJh9QtabtaH0Q1VDSHpt9M8IocP9LZA>
-    <xmx:WbjgZ-Gm17nv31L2GwxgZcSxYYoUWwjlNEG9cAg0RCBFH2b-d2ZVVA>
-    <xmx:WrjgZ24cNAHX91OS066CezgpYMOk4ZQDze_pQCBLe1htB_itbE98K1hh>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Mar 2025 21:41:42 -0400 (EDT)
-Message-ID: <deeb4946-dd66-4a82-a8f0-5e8b1751899e@ljones.dev>
-Date: Mon, 24 Mar 2025 14:41:40 +1300
+	s=arc-20240116; t=1742780661; c=relaxed/simple;
+	bh=xRbrfHOuddHYdxNvjKjVq6wM8tNLSTWFvbiXOpOeo8w=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VxNs2sYgvXTZnh+BSaQYq+HfED5r5qp36JYocKByt3tl4Jp4g1J8YzRd22sZ/10s+SrGeLHqBsS4TUK7yncpTAXRpaH++mGkIBYXSVuatL+xGqepQUWwIxEPctdAKmgcmsjSshx25y7wjR6iix8YB4cM9GvtKC7Sq6MH/qv2A80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.9.175.10])
+	by gateway (Coremail) with SMTP id _____8DxjXKVuOBnJJmjAA--.12635S3;
+	Mon, 24 Mar 2025 09:42:45 +0800 (CST)
+Received: from [10.136.12.26] (unknown [111.9.175.10])
+	by front1 (Coremail) with SMTP id qMiowMDxu8SPuOBnTflcAA--.9800S3;
+	Mon, 24 Mar 2025 09:42:41 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: KGDB: Rework arch_kgdb_breakpoint()
+ implementation
+To: Huacai Chen <chenhuacai@kernel.org>, WangYuli <wangyuli@uniontech.com>
+Cc: kernel@xen0n.name, guanwentao@uniontech.com, wentao@uniontech.com,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ zhoubinbin@loongson.cn, lihui@loongson.cn, rdunlap@infradead.org,
+ chenhuacai@loongson.cn, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ Tiezhu Yang <yangtiezhu@loongson.cn>
+References: <943E06D656E4E707+20250321141001.109916-1-wangyuli@uniontech.com>
+ <CAAhV-H71aEKj2V8mAqbUuAe1JiHngWHW3rSaJ_Dx_CzoQC7TgQ@mail.gmail.com>
+From: Jinyang He <hejinyang@loongson.cn>
+Message-ID: <545ed081-bec3-395c-e0dd-a45146e00cd1@loongson.cn>
+Date: Mon, 24 Mar 2025 09:42:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] hid-asus: asus-wmi: refactor Ally suspend/resume
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
- linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
- mario.limonciello@amd.com
-References: <20250323023421.78012-1-luke@ljones.dev>
- <CAGwozwE4oXmFMRO5jZJC4d11TstTqSC8ZUZ1CCkZMWYZKTKF_w@mail.gmail.com>
+In-Reply-To: <CAAhV-H71aEKj2V8mAqbUuAe1JiHngWHW3rSaJ_Dx_CzoQC7TgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <CAGwozwE4oXmFMRO5jZJC4d11TstTqSC8ZUZ1CCkZMWYZKTKF_w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMDxu8SPuOBnTflcAA--.9800S3
+X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGF4UGFyxtr1fKF13WF43XFc_yoW5WFW3pF
+	48Ca4qkF48Jry8C39xK3y3Zr15Aws7Ww4xZ3Z8Ka4fCayDX3W5tr1IkFn7Wa4jgw1xK3W0
+	vF90gF92q3W5J3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOa93UUU
+	UU=
 
-On 24/03/25 00:41, Antheas Kapenekakis wrote:
-> On Sun, 23 Mar 2025 at 03:34, Luke Jones <luke@ljones.dev> wrote:
->>
->> This short series refactors the Ally suspend/resume functionality in the
->> asus-wmi driver along with adding support for ROG Ally MCU version checking.
->>
->> The version checking is then used to toggle the use of older CSEE call hacks
->> that were initially used to combat Ally suspend/wake issues arising from the MCU
->> not clearing a particular flag on resume. ASUS have since corrected this
->> especially for Linux in newer firmware versions.
->>
->> - hid-asus requests the MCU version and displays a warning if the version is
->>    older than the one that fixes the issue.
->> - hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
->> version is high enough.
->>
->> *Note: In review it was requested by Mario that I try strsep() for parsing
->> the version. I did try this and a few variations but the result was much
->> more code due to having to check more edge cases due to the input being
->> raw bytes. In the end the cleaned up while loop proved more robust.
->>
->> - Changelog:
->>    + V2: https://lore.kernel.org/platform-driver-x86/20250226010129.32043-1-luke@ljones.dev/T/#t
->>      - Adjust warning message to explicitly mention suspend issues
-> 
-> How did the testing go with this one, especially with mcu_powersave 0?
+On 2025-03-22 20:51, Huacai Chen wrote:
 
-Appears to be good. Checked a few reboots with powersave off - it is 
-setting on as I expect every time. Did modules unload/load also. And 
-tested with it set off after boot plus suspend resumes.
-
-Very much hope this is the end of that particular saga, and with 
-bazzites help we can hopefully get everyone on November MCU FW or later, 
-then finally remove the hack completely this year.
-
-A small side note - I expect ASUS to fully reuse the X hardware, or at 
-least the bios/acpi/mcu-fw for that new windows handheld they've doing, 
-so fingers crossed that they actually do, and there will be nomore 
-suspend issues with current kernels plus this patch.
-
-Cheers,
-Luke.
-
->>      - Use switch/case block to set min_version
->>        - Set min_version to 0 by default and toggle hacks off
->>    + V3
->>      - Remove noise (excess pr_info)
->>      - Use kstrtoint, not kstrtolong
->>      - Use __free(kfree) for allocated mem and drop goto + logging
->>      - Use print_hex_dump() to show failed data after pr_err in mcu_request_version()
->>      - Use pr_debug in set_ally_mcu_hack() and set_ally_mcu_powersave() plus
->>        correct the message.
->>    + V4
->>      - Change use_ally_mcu_hack var to enum to track init state and
->>        prevent a race condition
+> Hi, Tiezhu & Jinyang,
+>
+> On Fri, Mar 21, 2025 at 10:11 PM WangYuli <wangyuli@uniontech.com> wrote:
+>> The arch_kgdb_breakpoint() function defines the kgdb_breakinst
+>> symbol using inline assembly.
 >>
->> Luke D. Jones (2):
->>    hid-asus: check ROG Ally MCU version and warn
->>    platform/x86: asus-wmi: Refactor Ally suspend/resume
+>> There's a potential issue where the compiler might inline
+>> arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
+>> symbol multiple times, leading to a linker error.
 >>
->>   drivers/hid/hid-asus.c                     | 111 ++++++++++++++++-
->>   drivers/platform/x86/asus-wmi.c            | 133 +++++++++++++++------
->>   include/linux/platform_data/x86/asus-wmi.h |  19 +++
->>   3 files changed, 222 insertions(+), 41 deletions(-)
+>> To prevent this, declare arch_kgdb_breakpoint() as noline.
 >>
+>> Fix follow error with LLVM-19 *only* when LTO_CLANG_FULL:
+>>      LD      vmlinux.o
+>>    ld.lld-19: error: ld-temp.o <inline asm>:3:1: symbol 'kgdb_breakinst' is already defined
+>>    kgdb_breakinst: break 2
+>>    ^
+>>
+>> Additionally, remove "nop" here because it's meaningless for LoongArch
+>> here.
+>>
+>> Fixes: e14dd076964e ("LoongArch: Add basic KGDB & KDB support")
+>> Co-developed-by: Winston Wen <wentao@uniontech.com>
+>> Signed-off-by: Winston Wen <wentao@uniontech.com>
+>> Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+>> Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
+>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+>> Tested-by: Yuli Wang <wangyuli@uniontech.com>
+>> Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+>> Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+>> ---
+>> Changelog:
+>>   *v1->v2:
+>>      1. Drop the nop which is no effect for LoongArch here.
+>>      2. Add "STACK_FRAME_NON_STANDARD" for arch_kgdb_breakpoint() to
+>> avoid the objtool warning.
+>> ---
+>>   arch/loongarch/kernel/kgdb.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kernel/kgdb.c b/arch/loongarch/kernel/kgdb.c
+>> index 445c452d72a7..38bd0561d7d5 100644
+>> --- a/arch/loongarch/kernel/kgdb.c
+>> +++ b/arch/loongarch/kernel/kgdb.c
+>> @@ -224,13 +224,13 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
+>>          regs->csr_era = pc;
+>>   }
+>>
+>> -void arch_kgdb_breakpoint(void)
+>> +noinline void arch_kgdb_breakpoint(void)
+>>   {
+>>          __asm__ __volatile__ (                  \
+>>                  ".globl kgdb_breakinst\n\t"     \
+>> -               "nop\n"                         \
+>>                  "kgdb_breakinst:\tbreak 2\n\t"); /* BRK_KDB = 2 */
+>>   }
+>> +STACK_FRAME_NON_STANDARD(arch_kgdb_breakpoint);
+> Is there a better solution than STACK_FRAME_NON_STANDARD()? In the
+> past we can use annotate_reachable() in arch_kgdb_breakpoint(), but
+> annotate_reachable() is no longer exist.
+
+Maybe we can parse the imm-code of `break` and set diffrent insn_type in 
+objtool.
+The BRK_KDB imply the PC will go head, while the BRK_BUG imply PC stop.
+(arch/loongarch/include/uapi/asm/break.h)
+
+Tiezhu, how do you think?
+
+
+>
+> Huacai
+>
+>>   /*
+>>    * Calls linux_debug_hook before the kernel dies. If KGDB is enabled,
 >> --
 >> 2.49.0
 >>
