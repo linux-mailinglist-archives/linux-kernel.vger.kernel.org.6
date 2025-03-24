@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43DFA6DE95
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4483FA6DE8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B171896826
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92CC43B1AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312562620C1;
-	Mon, 24 Mar 2025 15:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E602620DC;
+	Mon, 24 Mar 2025 15:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HxEm+23y"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lLnpiOs9"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4DF26159B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152732620D7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829815; cv=none; b=bztY2IMXWgynuqHnjwffCXctWKqkt+Qte8T63+L26QU42Q2+9vzejGvBC/HmZwYackmXLPShSWT5K+1mEPZ+a4OS/MxgcC/IE8ovdbyo0YbXBcNH2WBpEvQ4ScsEk75pHZLGMUesE1IrkeJNDjPox+eZ5khtv/wJtMo9aDMCxak=
+	t=1742829823; cv=none; b=ICCCEzPyqV+FDx/zIfzaCaZ/cHEDTPvxeFEAG1o/0aUqxdQ/YAuWz344hrLCfocTSnZL+SyeQcT0GnGhGTAYovY0Qlsr+dQ69TR4HDmDraQt0kEI1pRAE/404uNdD4lVeUBhH4m+8ZQOOUQMgEwFaxYji7r3dF7mHIaVaWVf57g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829815; c=relaxed/simple;
-	bh=GU/SpGQjG44fOsbkslZBBHhwFbcRS1NukpZiFcR87aQ=;
+	s=arc-20240116; t=1742829823; c=relaxed/simple;
+	bh=Qf4qeQW+wjVLIBUELOGcGvqOHPWKchIyxe6eQ9hR7sY=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Kmx/1u5rxbtOaDmdhq1oYuRUt0zXVWfHQc2n9D79yhDI7eI/Az67kjzyf2yxXquJYNtXasUIaOICpsYYnnfeoVo4GANg08fSUBUgAIVAPNYlcLb74T/3YUjstRGJjEjyrCkLQGfTJxsxSeYEdwS+TZMN1qdk1CjDi+srFiyxuAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HxEm+23y; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:Content-Type; b=JvnB5oZ80VO5W3mflySTKemU634tRSgLjGycezzSjGe8UF3pUKUvwrLozRg2TYLFg0OZqhsmu2GGy1sZCO9brUfyNgBdx1XZTznZst9PbtL6t8jg06ULZcXD1z9TFGa6cnRf+mZXbA6iWBR1+2sR+4TNyax5cwoGiZbApQh4qUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lLnpiOs9; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DC0A04441A;
-	Mon, 24 Mar 2025 15:23:29 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E2FCB2047D;
+	Mon, 24 Mar 2025 15:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829811;
+	t=1742829819;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Sfhjzf8WQqsEexhtSG8Mnb2j5UTla8RiHjEDRoYc8TM=;
-	b=HxEm+23y3efkfVKyw5Huj7fEOjI2TeHPL81n/NmKSZgQlyHiLuWvKE0CxvP6FoP9PkpCMA
-	zOAmC/DmA7+ky5oi8pVFCjZlx+GL8jBEzrgyJAEa2yDCg+m6SK6YY147I7SWoCLUNcIAnz
-	1ey6K3TyxMWswHulEhhHVUUY72wRboDZV5d/i5+EjvDV17YpKoaSEdu6Mbg+cDMJIyhcO0
-	XNojeS2eg7qToWq9Cz+Tu5ihcv+Uus6+RcudCi+zaDJL3MzgvtUU4x1Tzwjmt1f/g/l/VF
-	O/zKoBBXSqSbIxekHEv4oSeBx7kZO0pFv1PfSgZFQ2w1uVsR5EenEYF8M0p0EA==
-Message-ID: <04b28c61-6930-48aa-8775-471311e57486@bootlin.com>
-Date: Mon, 24 Mar 2025 16:23:29 +0100
+	bh=gwRDAlMrRSsbk7Dtkg+geNWaGO0P2ULA+XK/aIHHTyw=;
+	b=lLnpiOs9Z+PoVRIFeSggD1/b1Z2/2EOZ/trBGd2HySvyy1THMeGuY3TW+jDEvsJNqjlaGw
+	4hZXxNZtOnsKLyzS/4qsKXN91xWSHSaJZpKSOG0ypvmID3ewiObiXdoG2DTufRMjD/9fwv
+	bU/iPvNvDrCqzHuoIIzrQR1imRJxWPZPt6CpP0JwqX0b6wClwaMtGRgnJsvTWkEIua5/T9
+	NYGD2HbVZxZnDI7NtiR2ayxMyctorC7914JDXuj7KG1Zfh904MUcE1nHJAlZfdPJItxL6l
+	cNRVdr2sDQrhbqx5ssShegUxzuU8/G+uF0Bvvxb2WXhjUTtECLDj5Nrh+NEWaA==
+Message-ID: <77cb7a9f-490e-4ab8-b934-da4cb5e49c37@bootlin.com>
+Date: Mon, 24 Mar 2025 16:23:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 38/59] drm-print: fix config-dependent unused variable
+Subject: Re: [PATCH v2 37/59] drm-dyndbg: adapt DRM to invoke
+ DYNAMIC_DEBUG_CLASSMAP_PARAM
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -63,7 +64,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-39-jim.cromie@gmail.com>
+ <20250320185238.447458-38-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -119,55 +120,70 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-39-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-38-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> With CONFIG_DRM_USE_DYNAMIC_DEBUG=y, __drm_printfn_dbg() gets an
-> unused variable warning/error on 'category', even though the usage
-> follows immediately, in drm_debug_enabled(category).
+> Invoke DYNAMIC_DEBUG_CLASSMAP_PARAM to hook drm.debug (__drm_debug) to the
+> DRM_UT_* classmap, replacing the ad-hoc wiring previously doing it.
 > 
-> For static-key optimized dyndbg, the macro doesn't actually check the
-> category var, since the static-key patches in the proper state.  The
-> compiler evidently sees this lack of reference and complains.
-> 
-> So this drops the local var and refs the field directly in the
-> macro-call, which avoids the warning/error.
+> Add DRM_CLASSMAP_* adapter macros to selectively use
+> DYNAMIC_DEBUG_CLASSMAP_* when DRM_USE_DYNAMIC_DEBUG=y is configured.
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-I believe I can merge it before the entire series. Does anyone have any 
-objections?
-
 > ---
->   drivers/gpu/drm/drm_print.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   drivers/gpu/drm/drm_print.c | 8 ++------
+>   include/drm/drm_print.h     | 4 ++++
+>   2 files changed, 6 insertions(+), 6 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> index 46d53fe30204..41ad11247b48 100644
+> index a3b70d104afa..46d53fe30204 100644
 > --- a/drivers/gpu/drm/drm_print.c
 > +++ b/drivers/gpu/drm/drm_print.c
-> @@ -212,9 +212,8 @@ void __drm_printfn_dbg(struct drm_printer *p, struct va_format *vaf)
->   {
->   	const struct drm_device *drm = p->arg;
->   	const struct device *dev = drm ? drm->dev : NULL;
-> -	enum drm_debug_category category = p->category;
+> @@ -69,12 +69,8 @@ DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS,
+>   		    "DRM_UT_DP",
+>   		    "DRM_UT_DRMRES");
 >   
-> -	if (!__drm_debug_enabled(category))
-> +	if (!__drm_debug_enabled(p->category))
->   		return;
+> -static struct ddebug_class_param drm_debug_bitmap = {
+> -	.bits = &__drm_debug,
+> -	.flags = "p",
+> -	.map = &drm_debug_classes,
+> -};
+> -module_param_cb(debug, &param_ops_dyndbg_classes, &drm_debug_bitmap, 0600);
+> +DRM_CLASSMAP_PARAM_REF(debug, __drm_debug, drm_debug_classes, p);
+> +
+>   #endif
 >   
->   	__drm_dev_vprintk(dev, KERN_DEBUG, p->origin, p->prefix, vaf);
+>   void __drm_puts_coredump(struct drm_printer *p, const char *str)
+> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+> index e86ebb716b4c..8758449491b8 100644
+> --- a/include/drm/drm_print.h
+> +++ b/include/drm/drm_print.h
+> @@ -144,9 +144,13 @@ enum drm_debug_category {
+>   #ifdef CONFIG_DRM_USE_DYNAMIC_DEBUG
+>   #define DRM_CLASSMAP_DEFINE(...)    DYNAMIC_DEBUG_CLASSMAP_DEFINE(__VA_ARGS__)
+>   #define DRM_CLASSMAP_USE(name)      DYNAMIC_DEBUG_CLASSMAP_USE(name)
+> +#define DRM_CLASSMAP_PARAM_REF(...) DYNAMIC_DEBUG_CLASSMAP_PARAM_REF(__VA_ARGS__)
+> +#define DRM_CLASSMAP_PARAM(...)     DYNAMIC_DEBUG_CLASSMAP_PARAM(__VA_ARGS__)
+>   #else
+>   #define DRM_CLASSMAP_DEFINE(...)
+>   #define DRM_CLASSMAP_USE(name)
+> +#define DRM_CLASSMAP_PARAM_REF(...)
+> +#define DRM_CLASSMAP_PARAM(...)
+>   #endif
+>   
+>   static inline bool drm_debug_enabled_raw(enum drm_debug_category category)
 
 -- 
 Louis Chauvet, Bootlin
