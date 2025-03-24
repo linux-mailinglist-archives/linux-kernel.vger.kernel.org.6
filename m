@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-573203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D732A6D434
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:26:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC861A6D433
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE7817A5F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:25:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87AD77A5E6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA471922DE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651AB19004B;
 	Mon, 24 Mar 2025 06:25:03 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1VApnjZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6111B4248;
-	Mon, 24 Mar 2025 06:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C061D1B4F0E;
+	Mon, 24 Mar 2025 06:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742797503; cv=none; b=LJZODjeuwkkdGO1WE4JcRcCLW9cswoF9AR39XmJ9hpfEQsIp+EQYLWj55N+GyPqGgZdViYz57ah9mP3HsaQXZhYBg3iENjD73FdMilJB8L7Jv81bJMJoi8/TGN/lM+QXMUtvuFXfb+ZX5FqotmKuksOtIUc0Eogu2PEKiahryV4=
+	t=1742797502; cv=none; b=W57Xo+veWI8ReWslqAnCpVsphY3lrk1kKL7lvbNOphjQvWmwLPGuXqZ13dpKZUDncvXr04EFswWeAbg2FPec4XlmAGMIo3vTt/vyg2jjY0qtwxvLdarsgHaxrmENasqCgYO8jSpj3KtqU61kprt8RDKBSxbfONXNfywDqk6IxTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742797503; c=relaxed/simple;
-	bh=GLUjQfEpWB2Nxp8PDFXc3kKHegJ9tbzWrH3NEbLiPAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjD9N3WzRj+I/+fGJwlnOU8OxZ5reuOx9koxh/+kMTrzEinimjywcpVnTVPd5gxEhCDw6vE2kDzmUR1NTJphZpBJxaTnNQUGiUTLG8KTSQ0wWPMoZHkKj/gIX3jawk61Q7IaXWf44aaM6ukfK+GUwknyNHZXsbbuQ7hgJIJ5hxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 7AA283434DF;
-	Mon, 24 Mar 2025 06:25:00 +0000 (UTC)
-Date: Mon, 24 Mar 2025 06:24:56 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 4/7] clk: spacemit: define existing syscon resets
-Message-ID: <20250324062456-GYB18687@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-5-elder@riscstar.com>
- <20250322162909-GYA15267@gentoo>
- <ee9fb4b7-7829-4eec-815c-1e269d6abc38@riscstar.com>
+	s=arc-20240116; t=1742797502; c=relaxed/simple;
+	bh=9XXXo3EWZtEobiajEK/dAZklZgfyP4VnNuDdDAvYcz4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P9HSaVhwrXHbtBQ2LKQDTHv6MVOBEbgoieT473XjnUAZiGBIC1uLkDalUYY+gAZwFaHYtpDcdMKOOz0CBYbD9ERaAUgsH5OrAVtOIyTt3pxK7zxeiL8aC253uxLNLkqC7nXayeUplNm7kOIJMavTcn1OJIbAzsEoej0Mh/sMIHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1VApnjZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 33183C4CEEA;
+	Mon, 24 Mar 2025 06:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742797502;
+	bh=9XXXo3EWZtEobiajEK/dAZklZgfyP4VnNuDdDAvYcz4=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=o1VApnjZqBgmj6Mn6l0B+/7J8UV/5HCarFDwFRGPWpNB2lMe4LWw8HdZ/up7oF1Ii
+	 xFwYrE97kSNtVwi1a1t51GoX7q/xejRw4/j9yTmUNMhbQlkSXyxYwygNv4bgsiM4Hs
+	 hq6efF+UQ40WBYdj1OgBGtUMn77ee5ozDYGN6h8JWDx7I7pViVf37tbZ/sRWrilJ/h
+	 MpDDhh7Tyi5dWbQtWzXWhmtSOqLbt5Gc9ta1G0ELHIDlBhRSucmcXmbdFFOnuMpnwr
+	 bpRolNp7kGQcVvPULcoZrvgZC1HKuYtIKtohUdsgASlV5fE8Bd5dHMuBDmwJ+SX4RK
+	 qjgunBCTF/mHw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A65FC36008;
+	Mon, 24 Mar 2025 06:25:02 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 24 Mar 2025 10:24:59 +0400
+Subject: [PATCH] wifi: ath11k: support fetching mac address from nvmem
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee9fb4b7-7829-4eec-815c-1e269d6abc38@riscstar.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250324-ath11k-nvmem-v1-1-d82bdf72820e@outlook.com>
+X-B4-Tracking: v=1; b=H4sIALv64GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMT3cSSDEPDbN28stzUXF3LJJM0U5M0ExNDCwsloJaCotS0zAqwcdG
+ xtbUAm2N0AF4AAAA=
+To: Jeff Johnson <jjohnson@kernel.org>
+Cc: ath11k@lists.infradead.org, linux-wireless@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742797500; l=1623;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=KFf/U6jpX3DLdf5cfXG9vG8Hbqcu1hFbIGhlckUUI7s=;
+ b=PoKhNSfsaNEQZQFXjHirGqsZeV20EcazdhX8I5TzQPa2R5lvPNK6z6IzkvT152fkvWA0wqYRc
+ pYhUAbz+GmRA9jGIGq7rRxXYScv+jjqoQr0WP0xU9nY4HQw+aRbHwa9
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi Alex:
+From: George Moussalem <george.moussalem@outlook.com>
 
-On 08:23 Sun 23 Mar     , Alex Elder wrote:
-> On 3/22/25 11:29 AM, Yixun Lan wrote:
-> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> >> Define reset controls associated with the MPMU, APBC, and APMU
-> >> SpacemiT K1 CCUs.  These already have clocks associated with them.
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   drivers/clk/spacemit/ccu-k1.c | 132 ++++++++++++++++++++++++++++++++++
-> >>   1 file changed, 132 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> >> index 6d879411c6c05..be8abd27753cb 100644
-> >> --- a/drivers/clk/spacemit/ccu-k1.c
-> >> +++ b/drivers/clk/spacemit/ccu-k1.c
-> > ..
-> >> +static const struct ccu_reset_data apmu_reset_data[] = {
-> >> +	[RST_CCIC_4X]	= RST_DATA(APMU_CCIC_CLK_RES_CTRL,	0, BIT(1)),
-> >> +	[RST_CCIC1_PHY] = RST_DATA(APMU_CCIC_CLK_RES_CTRL,	0, BIT(2)),
-> >> +	[RST_SDH_AXI]	= RST_DATA(APMU_SDH0_CLK_RES_CTRL,	0, BIT(0)),
-> >> +	[RST_SDH0]	= RST_DATA(APMU_SDH0_CLK_RES_CTRL,	0, BIT(1)),
-> >> +	[RST_SDH1]	= RST_DATA(APMU_SDH1_CLK_RES_CTRL,	0, BIT(1)),
-> >> +	[RST_SDH2]	= RST_DATA(APMU_SDH2_CLK_RES_CTRL,	0, BIT(1)),
-> >> +	[RST_USBP1_AXI] = RST_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(4)),
-> >> +	[RST_USB_AXI]	= RST_DATA(APMU_USB_CLK_RES_CTRL,	0, BIT(0)),
-> > ..
-> >> +	[RST_USB3_0]	= RST_DATA(APMU_USB_CLK_RES_CTRL,	0,
-> >> +				      BIT(9)|BIT(10)|BIT(11)),
-> > 100 column if possible, also add one space between "BIT(9) | BIT(10) .."
-> > continuous bits can just use GENMASK for short?
-> 
-> You'll notice that every place that has multiple bits in the mask
-> also have a line break.  I kind of liked that as a way to highlight
-> that fact (i.e., it goes beyond my preference for 80 columns).
-> 
-ok
+Many embedded devices with ath11k wifi chips store their mac address in
+nvmem partitions. Currently, the ath11k driver supports getting the
+mac address from the 'mac-address', 'local-mac-address', and 'address'
+device tree properties only. As such, add support for obtaining the mac
+address from nvmem if defined in a 'mac-address' cell by replacing the
+call to device_get_mac_address by of_get_mac_address which does exactly
+the same as the former but tries to get it from nvmem if it is not set
+by above mentioned DT properties,
 
-> I will definitely add spaces, that was a mistake not to.
-> 
-> I will not define this with GENMASK().  In this case each bit
-> represents a single reset, and so each one is significant on
-> its own.  It is *not* a mask of contiguous bits, it's a set
-> of bits that happen to have consecutive positions.
-> 
-ok
+Tested-on: IPQ5018, QCN6122, and QCN9074
 
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ drivers/net/wireless/ath/ath11k/mac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/mac.c b/drivers/net/wireless/ath/ath11k/mac.c
+index 97816916abac..49af6b9fc867 100644
+--- a/drivers/net/wireless/ath/ath11k/mac.c
++++ b/drivers/net/wireless/ath/ath11k/mac.c
+@@ -9,6 +9,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/bitfield.h>
+ #include <linux/inetdevice.h>
++#include <linux/of_net.h>
+ #include <net/if_inet6.h>
+ #include <net/ipv6.h>
+ 
+@@ -10379,7 +10380,7 @@ int ath11k_mac_register(struct ath11k_base *ab)
+ 	if (ret)
+ 		return ret;
+ 
+-	device_get_mac_address(ab->dev, mac_addr);
++	of_get_mac_address(ab->dev->of_node, mac_addr);
+ 
+ 	for (i = 0; i < ab->num_radios; i++) {
+ 		pdev = &ab->pdevs[i];
+
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250324-ath11k-nvmem-9b4f54f44188
+
+Best regards,
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+George Moussalem <george.moussalem@outlook.com>
+
+
 
