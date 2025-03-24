@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-574188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8C3A6E1B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:55:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43B2A6E1D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D34B18858A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D80B3AD5F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D7C263F22;
-	Mon, 24 Mar 2025 17:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B226268FC2;
+	Mon, 24 Mar 2025 17:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWhtQ8/y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5714426463D;
-	Mon, 24 Mar 2025 17:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RQwIXqJB"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E19F2641E9;
+	Mon, 24 Mar 2025 17:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838147; cv=none; b=AIuPB3a6YFm/0yzNfSxTBP2vgor4+jR1j5I3Gp5bLtWrM2pWsRxpREWdPsEt6zLHeFmnuW2iIUL6vjHAfbgk6ou15EKcviHDFnvJhI5AyTrTAt2vQg8yvd5GYU9kDrAevC/AQ6Tu71ryZ9yGz1T/nuI0SwPw34M2KViwN2pTq/M=
+	t=1742838221; cv=none; b=BhrFzI2OdffKdpjyrV0uF6E/vmn7Ua/bAlla9P8j/buSpA8UFIVnEAom5pbTnT89RVOlh2/OqxxVmLBXbyPz0nFac55xLnE/UPo5yALjnTEWNN7nbBgeWoRHm2408DSqySiUb7jUXm046oCoGWwDpqL6rmZbdc4d1r2UXjQTaIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838147; c=relaxed/simple;
-	bh=JzLwpUYcuzVCpdSFrJ47M0hj0NSi9n7p7JRZWewryVg=;
+	s=arc-20240116; t=1742838221; c=relaxed/simple;
+	bh=IEbZX5LHrjNjLHzpwBGHTfQ+kmLMtFidxbWZveAryjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CXeD/EbpHqNZbCSmEC1z4rA9u1kCG/VZWmlmzJoBwxhnN1ZuSNdygdcbV1PCsWE5AqUo7w+SYQUGGeMiBKrMBuWDJKRoNYDCHyKJB4xnlf77WWo/j2KshlG0jX1AoIqil5eob+wwStDoGA88ldh8Pj7WGNHN+0cB0HjmkzLtfsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWhtQ8/y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70F85C4CEDD;
-	Mon, 24 Mar 2025 17:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742838146;
-	bh=JzLwpUYcuzVCpdSFrJ47M0hj0NSi9n7p7JRZWewryVg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBVyJErLEUqXaI+bKlXlqSat45cJz3QgOHNM68SilBskzQYVetg9ayi8NqpTrWW4GRnpb9BgPmwWDcKGgFDm15NqcqjqOU+0LqUZejJ0gX/N8lF2ZZ5dey4gcWBmNTzQeRhHuNYe8KVXS1dgnfTIiP10VstXcQ4qzySAWWp8aKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RQwIXqJB; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id A2BA1211AA01; Mon, 24 Mar 2025 10:43:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A2BA1211AA01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742838219;
+	bh=R0yptjoilxJTorB2L0W8GLNAJvxs/9K84UNE0zqBuPs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YWhtQ8/yCUsdR0t6RLb6QpyiO9AcH38H6foBfoBAnhX9qxkUg8AmSC8B5K0LoYPLy
-	 40/vYLWgSBp74df3IawiLqMWqFPvoDFFpFJBR3/711Quc7Ur+uVTEIA5GWG/FnoVgA
-	 oWQex/dLnFORQuKEo+y2dd5KbDf2dF4yYOabppFexMJKAUgI2CT7XxzHSmSDXwW7sY
-	 PMJ+LyN8Bj5zMUYp6KzmJisMn6+hFOiPnWS2fBzGqrrQ1qN3J/MsuLukT094TqCAT+
-	 KpsvFXLUbAFDdQ626ilhm0uWQyoFQRTkqJWaXwNZFPyhd6mGmIbyS8IwHLIw1P2jp+
-	 y4l5meIQdK9xw==
-Date: Mon, 24 Mar 2025 18:42:24 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [GIT PULL] pwm: Changes for 6.15-rc1
-Message-ID: <dkvbidqel4v3wndhjp7cnzyh6h3le54tthblcwflq4ayilm2dw@vcclgjfkrm6e>
-References: <gwhcc5df76untpl5ko4mqbt7vtxo3z4zdbqn4ehkenktt6untv@eng6ov2jmlwb>
+	b=RQwIXqJBSTQ+Fzolz8VNvpueVTY2MJrPe63NQ3B5cOjnV/K+0x7jZ5i8TJsft8Ewa
+	 88X/IiZGs4Qs1d0bosnLp5bpEhlmPCUHGoNS1fRF5UcMsDbfRfhmUHMO/NItBNrIhu
+	 gCUPmQ8KgiPX8gtMIjSGiLteYPuRztvQE9bSI9SE=
+Date: Mon, 24 Mar 2025 10:43:39 -0700
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
+	brett.creeley@amd.com, surenb@google.com,
+	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
+	shradhagupta@linux.microsoft.com, erick.archer@outlook.com,
+	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 1/3] net: mana: Add speed support in
+ mana_get_link_ksettings
+Message-ID: <20250324174339.GA29274@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
+ <1742473341-15262-2-git-send-email-ernis@linux.microsoft.com>
+ <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="52r62j6bu437hsws"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <gwhcc5df76untpl5ko4mqbt7vtxo3z4zdbqn4ehkenktt6untv@eng6ov2jmlwb>
+In-Reply-To: <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
---52r62j6bu437hsws
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL] pwm: Changes for 6.15-rc1
-MIME-Version: 1.0
-
-Hello,
-
-On Mon, Mar 24, 2025 at 06:08:52PM +0100, Uwe Kleine-K=F6nig wrote:
-> warn: No match for commit 6df320abbb40654085d7258de33d78481e93ac8d found =
-at uklko
-> warn: Are you sure you pushed 'pwm/for-6.15-rc1' there?
-
-I only noticed this warning after sending. Probably I was too quick
-calling git-request-pull after pushing that tag. I confirm that I want
-you to pull the tag pointing to 6df320abbb40654085d7258de33d78481e93ac8d
-and that pwm/for-6.15-rc1 is the right name:
-
-$ git ls-remote uklko refs/tags/pwm/for-6.15-rc1\*
-0a313207e23c1353c84de62dd60226ce920fe466	refs/tags/pwm/for-6.15-rc1
-6df320abbb40654085d7258de33d78481e93ac8d	refs/tags/pwm/for-6.15-rc1^{}
-
-So I think everything is fine now and you can ignore the warning.=20
-
-Best regards and sorry for the noise,
-Uwe
-
---52r62j6bu437hsws
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhmX0ACgkQj4D7WH0S
-/k7nkQf/R2iUjmJa/sihMlha50hNUug9eC7k4uIr+TDuolE59K/wzICpG18AxfQd
-vts1AKwUbgq6Uq/reh78aGPAKvazZ9Wxp+rOQVVhyJuO0pxln9KWQqf1ao0wfYDj
-B91FeGKigbiADp40o1UM9WyVyb5pmPVfYclfUwZNYG+kzNz515ny66qz2XwPZsWb
-AsiPAHMwG0y44VgKJlstJa3g8Su/ccNAJ3XAacj4slCSJqmed580pXs2Q/OX4yQT
-ytI2UeKM3e8yKycADF+pE/cpGaiNs88OKaxrQ3ONVb4Pf5m2dan4fbJ8DNR3ppGN
-7nzyvxhn1dhnj3ZdfUJ9bZWnPp8L5w==
-=fvg/
------END PGP SIGNATURE-----
-
---52r62j6bu437hsws--
+On Thu, Mar 20, 2025 at 02:37:47PM +0100, Andrew Lunn wrote:
+> > +int mana_query_link_cfg(struct mana_port_context *apc)
+> > +{
+> > +	struct net_device *ndev = apc->ndev;
+> > +	struct mana_query_link_config_req req = {};
+> > +	struct mana_query_link_config_resp resp = {};
+> > +	int err;
+> > +
+> > +	mana_gd_init_req_hdr(&req.hdr, MANA_QUERY_LINK_CONFIG,
+> > +			     sizeof(req), sizeof(resp));
+> > +
+> > +	req.vport = apc->port_handle;
+> > +
+> > +	err = mana_send_request(apc->ac, &req, sizeof(req), &resp,
+> > +				sizeof(resp));
+> > +
+> > +	if (err) {
+> > +		netdev_err(ndev, "Failed to query link config: %d\n", err);
+> > +		goto out;
+> > +	}
+> > +
+> > +	err = mana_verify_resp_hdr(&resp.hdr, MANA_QUERY_LINK_CONFIG,
+> > +				   sizeof(resp));
+> > +
+> > +	if (err || resp.hdr.status) {
+> > +		netdev_err(ndev, "Failed to query link config: %d, 0x%x\n", err,
+> > +			   resp.hdr.status);
+> > +		if (!err)
+> > +			err = -EPROTO;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (resp.qos_unconfigured) {
+> > +		err = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +	apc->speed = resp.link_speed;
+> 
+> Might be worth adding a comment that the firmware is returning speed
+> in Mbps.
+> 
+> Or name the struct member link_speed_mbps.
+> 
+Thank you for your suggestion. I'll make this change for the next
+version of this patchset.
+> 	Andrew
 
