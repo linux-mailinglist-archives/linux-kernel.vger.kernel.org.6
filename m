@@ -1,114 +1,314 @@
-Return-Path: <linux-kernel+bounces-573727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C684A6DBA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:33:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84065A6DBA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EBB16AF31
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4A13A674B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD7C25EFAB;
-	Mon, 24 Mar 2025 13:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F214625F784;
+	Mon, 24 Mar 2025 13:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gebCyklj"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RcqOuHIh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XPh7YflJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6565F1A08AF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C0119C569
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823176; cv=none; b=SA8Ort9ZutM3lsaZD/xqi0LB/4Kiws2yVLjYvrId8EOEBWThBN6wMPwHviQjb+gSgbpEV7D53TM9j8BcpeJDmJyfgbdGcjBee6FqDiGNuRpuRiRwkWraXpn3FO1BryHD9N7tznJ6QDrIiKf0HGkGLGa2uWI7xCIQ/LkAjIbg2Wg=
+	t=1742823214; cv=none; b=qrwsj12V34g0n64c1C5DtqWmwS+ulslEAUY9+gxf+Cko57XWeWzP1ijmkhDc0/argKEW1Y24r9w9QDT9sUeDcSQZfiZEXtIYNwF+MeouBj5PI0wH0xf2lQ/2QxYRwMCMkVFajB2j9qDdPBfCvk9BXDr6Hko+sq5CvR7JgyXCK8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823176; c=relaxed/simple;
-	bh=jyMXTLyNgoR+3Mh43uHX54/Ii8JgrwxoERkKPkXm7H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDko4D2edYApp37FQIPqPZQdN+VrHYUpsBMg4N94YRq6yRLMXrgz8Ue7wDXU/0QGOj9qDR+gzuTIWJsDdhYrKSZW/R9FqC1l10KlJoe5SLIwO3XKKvPZVCGg6orkPeZlu1AZXOnzSzoQdtD98FhWL2zeNIlJKttFO/NwkuHKpz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gebCyklj; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f254b875so39398976d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1742823172; x=1743427972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJ3k7yEhYDRnLKFARJZHNQlKgfuegZSgLZhOzT1gU3A=;
-        b=gebCykljom64PRfiMPz5Rb9bwBFSxX4MbQEFO4m0eDTy1ODTtv7k2XjH5dbV+AbV7u
-         zZ3amKMtNneMeV1wkqgiFzzyw8YM4U1W2B0Fy43wDwW1EI77HywLVsNXTdZE7/LV8NF8
-         03sN9uW9TYZei4WYTYk46yqqw9++n/XE7zRLGrWpCrz2VCeOJz76rpnL8UVHukXESsQB
-         eBOk3RwNvLJeOWJ0ggxUageoixKLtNeXFdHptLKL5M1QJc7ELe2A2v0DmrXrJ9N6Soxo
-         HM49bWCVUVcWbXxcEl6d9o/VcMVQfz1gKA4ECGSdDbCpNKwQ5m3dVYsOaT3LtoPFIvDw
-         6d6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742823172; x=1743427972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJ3k7yEhYDRnLKFARJZHNQlKgfuegZSgLZhOzT1gU3A=;
-        b=RnHLEkaAcUfas9rrLrfMY6OCZ++wV7xKuMDe1JT+K2ek2oI/NxsoMzZxNUcsVPp4sj
-         Y5BN74L9+3xsJ3BTAiO5Ynzk97c3WR49Mskjo8HQ6DW7fwNxAH61uBVLbuEex9e5jVE+
-         zwTHA0nSXaTGLP7ulvlMxzbXwXxtt3sk/vD+hzn/0rNzKGgkQ4ESsnEhrx9B35Yds4g7
-         dmZTIfnE2wY57thAnGproaMuwmZ5TH0Sg1v2sbvgPg9NNrFjgasdDyvYyLa09g1xK5ed
-         BUgkudrcC4u+D1d034CS7WY/mn687S9Whlj6+8uZKGrTkClVoRNZNq3QvVQF7bMvEhFF
-         j6LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWKcJ37cSMYt1XlIDd5lkgW45rjTK/+ruBWrEhNRnWo5ABhzyHc5DHPFN0P0U0fpKnzEpya6PVVszFEKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8yu5fpXYkC6hxH0UksUJZ54wGlKDrwKkzeiezEoUeVQ5oWwIl
-	4nystgHr9YP1f4rOISZUVf5A+k16wlCMekSBmm9m4okYbUTHn8QzaapZ33OQ+zA=
-X-Gm-Gg: ASbGnctYPQ5lxSoz2Cyml6/ex7ySvZN29XPC5Q6xo2OqYZZFcCgVXXF9IgJxEj9wc9B
-	z8wpjvIQibGSC3Sp1QA8dDjXihXgQ8TziN5oms9IHGUp2iz9PKWdk+Ydtn/Y51NQsZhBtrXeNa2
-	TMJPthcFQX/Pf6r6GgqEjwiJV1qmSCgGZp/9YJheOv9lo34q5pl7pwcW+o80kiQUJjt9mxDTWof
-	4rtDaLeH18Qzt4lNKetdGYgM/RIF9PR9Wx87++CB65ZRSJjhxaU9bZCIx7a1Yj0PgPdltKXqym+
-	UnA962wo5Rydn2rZOszriEu/ygc6aKio0AIWYL9cD3YYfel91Ta1ZQ==
-X-Google-Smtp-Source: AGHT+IH6AI2Hu4EvLbPfd+tJ+iT15wj0QMHGeMvnf+rKbGzhr8KsnPvdxaL8QbRANSa5d3GYbYPvMA==
-X-Received: by 2002:ad4:5f4f:0:b0:6e8:fe16:4d45 with SMTP id 6a1803df08f44-6eb3f3446bemr145244976d6.41.1742823171962;
-        Mon, 24 Mar 2025 06:32:51 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef34792sm44450036d6.68.2025.03.24.06.32.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 06:32:51 -0700 (PDT)
-Date: Mon, 24 Mar 2025 09:32:49 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com, david@redhat.com,
-	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
-	honggyu.kim@sk.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH v3 3/3] mm/mempolicy: Support memory hotplug in weighted
- interleave
-Message-ID: <Z-FfAUiGePF9mnPS@gourry-fedora-PF4VCD3F>
-References: <20250324084920.987-1-rakie.kim@sk.com>
- <20250324085433.998-1-rakie.kim@sk.com>
+	s=arc-20240116; t=1742823214; c=relaxed/simple;
+	bh=nipTG/eYAPkEvdySWem5mrArzBEbTakIEwTW95+rZhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JBbPlPFJjVZQc1fhA09TYSIeH7XWSPgYvUdtpCj+AoaibYSm8g7Cvz9k4Omuy1vtu2+UT9flFHWzIDwD3KyJkLdeWUd/iBOG3oSi+VrLTTPU5Hg0HFfkASQDfXtq4f/40zmLOLFQEfnbexEIB1xMWzgGK2/UUfG6ncyDC4UjSxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RcqOuHIh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XPh7YflJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742823210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lHIUcfdD/zy8OEPWglnxaTNSN5JXNK2u6fcaj7+Nsys=;
+	b=RcqOuHIhZVLRB9tCCHahMKrFc2bsuscyAxqgsguoLOhSm20iBEpTaQprld1/9EXbdKkwwD
+	pvnvTnDOue4GVjEU8Q2+eCvd2iIgiDoNHyoApOG4gv5URgit3fV22WmGVCw3Vc+/mkyUZK
+	7Tp+pgpZhbX2hzjxUhywrLDve+hPBLmrBbpgrYm2SuIL7FCJMjhzf3k+Y6cOLRf2vP9NMu
+	cm25JlE/h4qmpw9ED+e5qU/j2KyQY3wwljyGxNSi+qeOoN3i+Yx7tSlor5CruEdKXr27iJ
+	9kJINn9ZXHwPImdAHypnypbbSFQ6hVMODvhDaEjdO1OiF4Wx6RsjJU1CHEvKng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742823210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lHIUcfdD/zy8OEPWglnxaTNSN5JXNK2u6fcaj7+Nsys=;
+	b=XPh7YflJANjUVcn7EXjfMHmNvGi8QTOmzXtO6h1Sc1h/uJGWJQguecIfGRi8Q5nms8fGLb
+	mzFM3E3jaIUchoAg==
+To: Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v4 00/29] x86: Leaf 0x2 and leaf 0x4 refactorings
+Date: Mon, 24 Mar 2025 14:32:55 +0100
+Message-ID: <20250324133324.23458-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324085433.998-1-rakie.kim@sk.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 24, 2025 at 05:54:27PM +0900, Rakie Kim wrote:
-> 
-> I'm sorry, the code is missing.
-> I may not fully understand the scenario you described, but I think your concern
-> can be addressed by adding a simple check like the following:
-> 
->     case MEM_OFFLINE:
->         if (!node_state(nid, N_MEMORY)) --> this point
->             sysfs_wi_node_release(nid);
->
+Hi,
 
-This should work.  I have some questions about whether there might be
-some subtle race conditions with this implementation, but I can take a
-look after LSFMM.  (Example: Two blocks being offlined/onlined at the
-same time, is state(nid, N_MEMORY) a raced value?)
+This is v4 of the CPUID leaf 0x2 and leaf 0x4 code paths cleanup, in
+preparation for the x86-cpuid-db CPUID caching model on top of this
+series.
 
-~Gregory
+Patch queue is on top of tip/x86/core.
+
+Changelog v4
+============
+
+* Add fix for the sparse report:
+
+     https://lore.kernel.org/x86-cpuid/202503192150.Vhannmnp-lkp@intel.com
+
+  I've analyzed it here:
+
+     https://lore.kernel.org/x86-cpuid/Z9rsTirs9lLfEPD9@lx-t490
+
+  And folded the fixes in:
+
+     patch 18/29 ("x86/cacheinfo: Use enums for cache descriptor types")
+     patch 19/29 ("x86/cpu: Use enums for TLB descriptor types")
+
+* Add fix for the KASAN report:
+
+     https://lore.kernel.org/x86-cpuid/202503241523.6b53646b-lkp@intel.com
+
+  I've analyzed it here:
+
+     https://lore.kernel.org/x86-cpuid/Z-E-vXHVl3dLFYx0@lx-t490
+
+  And folded the fix in:
+
+     patch 20/29 ("x86/cpu: Consolidate CPUID leaf 0x2 tables")
+
+* Plus testing for the final PQ.
+
+
+Changelog v3
+============
+
+https://lore.kernel.org/r/20250319122137.4004-1-darwi@linutronix.de
+
+v2 CPUID headers refactoring, 02b63b33dfc9 ("x86/cpuid: Refactor
+<asm/cpuid.h>") got merged + more refactorings on top of it by Ingo.
+
+Apply review remarks from Boris:
+
+   - Drop v2 "x86: treewide: Introduce x86_vendor_amd_or_hygon()"
+
+Apply review remarks from Ingo:
+
+   - Divide the CPUID(2) changes further, quoting from review:
+
+    "One does the functional change - this patch should be as small as
+     possible.  This patch turns a piece of 'Intel documents' property
+     into 'actual code' that differs from the previous code, which may or
+     may not regress in practice.
+
+     The other does the factoring out and the introduction of
+     <asm/cpuid/leaf_0x2_api.h>."
+
+    This is now done as:
+
+    patch 01/29 ("x86/cacheinfo: Use leaf 0x2 parsing helpers")
+    patch 02/29 ("x86/cpu: Introduce and use leaf 0x2 parsing helpers")
+    patch 03/29 ("x86/cacheinfo: Remove leaf 0x2 parsing loop")
+    patch 04/29 ("x86/cpu: Remove leaf 0x2 parsing loop")
+
+Plus more testing and minor commit logs massaging overall.
+
+
+Changelog v2
+============
+
+https://lore.kernel.org/r/20250317164745.4754-1-darwi@linutronix.de
+
+Twelve patches got merged from v1, and they're now at tip/x86/core
+
+Apply Ingo Molnar's review remarks:
+
+   - New <asm/cpuid/> header structure matching what is at <asm/fpu/>:
+
+	<asm/cpuid/>
+	  |
+	  +-- api.h
+	  +-- leaf_0x2_api.h
+	  `-- types.h
+
+   - Standardize words usage and header file references across commit
+     logs and comments (CPUID, vendor names, <header.h>, etc.)
+
+   - Use cpuid_ prefix for all new functions at <asm/cpuid/api.h> and
+     <asm/cpuid/leaf_0x2_api.h>.
+
+   - By the end of this series, leaf 0x2 call sites become:
+
+	const struct leaf_0x2_table *entry;
+	union leaf_0x2_regs regs;
+	u8 *ptr;
+
+	cpuid_get_leaf_0x2_regs(&regs);
+	for_each_leaf_0x2_entry(regs, ptr, entry) {
+		switch (entry->c_type) {
+			...
+		}
+	}
+
+
+Changelog v1
+============
+
+https://lore.kernel.org/r/20250304085152.51092-1-darwi@linutronix.de
+
+As part of the onging x86-cpuid work [*], we've found that the handling
+of leaf 0x2 and leaf 0x4 code paths is difficult to work with in its
+current state.  This was mostly due to the organic incremental growth of
+the x86/cpu and x86/cacheinfo logic since the very early Linux days.
+
+This series cleans up and refactors these code paths in preparation for
+the new x86-cpuid model.
+
+Summary:
+
+- Patches 1 to 3 are independent bugfixes that were discovered during
+  this refactoring work.
+
+- Patches 4 to 10 are x86/cpu refactorings for code size and
+  readability.
+
+- Patch 10 adds standardized and kernel-doc documented logic for
+  accessing leaf 0x2 one byte descriptors.
+
+  This makes the leaf 0x2 sanitization logic centralized in one place.
+  x86/cpu and x86/cacheinfo is modified to use such macros afterwards.
+
+- Patches 11 to 28 refactors the x86/cacheinfo code.
+
+  Beside readability, some of the unrelated logic (e.g. AMD northbridge
+  cache_disable sysfs code) was first splitted from the generic leaf 0x4
+  code paths, at the structure relationships level, then gutted-out into
+  their own files.
+
+- Patches 29 to 31 consolidate the existing (loop-based lookup) leaf 0x2
+  cache and TLB descriptor tables into one hash-based lookup table.
+  This reduces code size while still keeping rodata size in check.
+
+  Standardized macros for accessing this consolidated table are also
+  added.  Call sites can now just do:
+
+	const struct leaf_0x2_table *entry;
+	union leaf_0x2_regs regs;
+	u8 *ptr;
+
+	get_leaf_0x2_regs(&regs);
+	for_each_leaf_0x2_entry(regs, ptr, entry) {
+		switch (entry->c_type) {
+			...
+		}
+	}
+
+  without need to worry about sanitizing registers, skipping certain
+  descriptors, etc.
+
+- Patches 32 and 33 uses the consolidated table above for x86/cpu and
+  x86/cacheinfo.
+
+- Patches 34 to 40 provide the final set of x86/refactorings.
+
+This series is based on -rc5.  It also applies cleanly on top of
+tip/x86/core.
+
+Note, testing was done by comparing below files:
+
+	/proc/cpuinfo
+	/sys/devices/system/cpu/
+	/sys/kernel/debug/x86/topo/
+	dmesg --notime | grep 'Last level [id]TLB entries'
+
+before and after on various old and new x86 machine configurations.
+
+[*] https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+    https://x86-cpuid.org
+
+8<-----
+
+Ahmed S. Darwish (25):
+  x86/cpu: Remove leaf 0x2 parsing loop
+  x86/cacheinfo: Remove leaf 0x2 parsing loop
+  x86/cpu: Introduce and use leaf 0x2 parsing helpers
+  x86/cacheinfo: Use leaf 0x2 parsing helpers
+  x86/cacheinfo: Constify _cpuid4_info_regs instances
+  x86/cacheinfo: Align ci_info_init() assignment expressions
+  x86/cacheinfo: Standardize _cpuid4_info_regs instance naming
+  x86/cacheinfo: Consolidate AMD/Hygon leaf 0x8000001d calls
+  x86/cacheinfo: Separate amd_northbridge from _cpuid4_info_regs
+  x86/cacheinfo: Move AMD cache_disable_0/1 handling to separate file
+  x86/cacheinfo: Use sysfs_emit() for sysfs attributes show()
+  x86/cacheinfo: Separate Intel and AMD leaf 0x4 code paths
+  x86/cacheinfo: Rename _cpuid4_info_regs to _cpuid4_info
+  x86/cacheinfo: Clarify type markers for leaf 0x2 cache descriptors
+  x86/cacheinfo: Use enums for cache descriptor types
+  x86/cpu: Use enums for TLB descriptor types
+  x86/cacheinfo: Use consolidated leaf 0x2 descriptor table
+  x86/cpu: Use consolidated leaf 0x2 descriptor table
+  x86/cacheinfo: Separate leaf 0x2 handling and post-processing logic
+  x86/cacheinfo: Separate Intel leaf 0x4 handling
+  x86/cacheinfo: Extract out cache level topology ID calculation
+  x86/cacheinfo: Extract out cache self-snoop checks
+  x86/cacheinfo: Relocate leaf 0x4 cache_type mapping
+  x86/cacheinfo: Introduce cpuid_amd_hygon_has_l3_cache()
+  x86/cacheinfo: Apply maintainer-tip coding style fixes
+
+Thomas Gleixner (4):
+  x86/cacheinfo: Refactor leaf 0x2 cache descriptor lookup
+  x86/cacheinfo: Properly name amd_cpuid4()'s first parameter
+  x86/cacheinfo: Use proper name for cacheinfo instances
+  x86/cpu: Consolidate CPUID leaf 0x2 tables
+
+ arch/x86/include/asm/cpuid.h              |    1 +
+ arch/x86/include/asm/cpuid/api.h          |    9 +
+ arch/x86/include/asm/cpuid/leaf_0x2_api.h |   96 ++
+ arch/x86/include/asm/cpuid/types.h        |   96 ++
+ arch/x86/kernel/amd_nb.c                  |    7 +-
+ arch/x86/kernel/cpu/Makefile              |    5 +-
+ arch/x86/kernel/cpu/amd_cache_disable.c   |  301 ++++++
+ arch/x86/kernel/cpu/cacheinfo.c           | 1042 +++++++--------------
+ arch/x86/kernel/cpu/cpu.h                 |    9 +
+ arch/x86/kernel/cpu/cpuid_0x2_table.c     |  128 +++
+ arch/x86/kernel/cpu/intel.c               |  124 +--
+ 11 files changed, 984 insertions(+), 834 deletions(-)
+ create mode 100644 arch/x86/include/asm/cpuid/leaf_0x2_api.h
+ create mode 100644 arch/x86/kernel/cpu/amd_cache_disable.c
+ create mode 100644 arch/x86/kernel/cpu/cpuid_0x2_table.c
+
+base-commit: 1400c87e6cac47eb243f260352c854474d9a9073
+--
+2.48.1
 
