@@ -1,988 +1,366 @@
-Return-Path: <linux-kernel+bounces-573917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E73A6DE03
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:15:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3034EA6DDEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF173B44DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:15:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA9A57A31E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F68261392;
-	Mon, 24 Mar 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B17F261396;
+	Mon, 24 Mar 2025 15:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ZYEmTdDW"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="icI5Ro0Z"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD5D42A99;
-	Mon, 24 Mar 2025 15:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE74E2A1BA;
+	Mon, 24 Mar 2025 15:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829308; cv=pass; b=U8BEDw9cZvk9N0gTKrm7keef9xv9NMalFpWdR+srMxJ/KgP/VB+HZY1+65J+6GurkH8E9+cN01jQ64ecuMwxpvH6eIaGaB5pK5VUkeFc47qSEakWDwntLlfxgK7q65kEjjx6tb6pndLth6h9Y9qNV1FArHDxC0qiQ/SkYbKrbdk=
+	t=1742829243; cv=fail; b=NFZRQNRkxG9T3MESGmyqJRYhZyZ2ipjqiB8Os5G1kCZxyoGIjIhbLJ6iSIYjAMhpAFcRFEu+qRZkx8YeHmRU1IK6o5Shw7wW94OVyCRb8ph1wFq/E9RUpqU/UfZNdH4ePmsU1MH3enEiLMD2Ttj31T4FrEiIa4d2dUlunrDo5tk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829308; c=relaxed/simple;
-	bh=iwXHDCvRRhvcdl2K43+2WWSmunLylk22g+U39RjQ5oM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gJCyTvLdu+BBpHZluS7W+lF7jvKJdZzQwmYdlIIrKPHqUR24tf3uxpGG1rMarITONP0es/fVxxW1jjfrKZGa7zJTLzcXWIDQFgkV2fcBODbtnGTJbxrH5Q5cECIv1vP1RDAoId74W7lm+I9pt3IHocAcVgj++DAQPc8BctYj91w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ZYEmTdDW; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742829277; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZSiHoueYqVlM6RLV8T0w/HOAdNFSW8n+nVzxj6PwuHGPQxlY7ITDmkDMOzU4ZMXSKTYZxjhSviF1Ig2/4W8bePhJKm2cZaLMZNKuxtA17oX491xYy0WgxOtzTHWN9uIApxGm0XOW2kMBxERR2fxfDgN4hyCQxE44kfCNbe8d1XM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742829277; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nUC7537CjzGVE7RZJlY7zU8rxribHh/4rAje2iLHfBg=; 
-	b=HP8ElI1zUhV12XoS0DD0Zpn1RtCkADt7f8U/ZgACx2etTYoVBQkliomO/yYcTBaHkLD+7fb23sDIbHig+fzIVfvJJyjZ3SYivS/BtnuP+qOYJt7VL//tf0ysu44jgQo9BnbNQASbPWD25KAyOGvDauo82ggHD3D2Iwgw8gznY/Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742829277;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=nUC7537CjzGVE7RZJlY7zU8rxribHh/4rAje2iLHfBg=;
-	b=ZYEmTdDWCIWNKyxKhGZfaVdYc7H8D1FOBzQLP5p04OMbI+KETeNnwQLL/CshbhcZ
-	+LsfuSLC2O7aBcvnD2gFvJ9+VAmoxHSZzmi/5gB3UyMiojKU+xYxiVAgH+Nm19lfqRX
-	SdfXZLttEHNL2FUNUYZKj1mFVDQ+nBbkz3Xo7yWk=
-Received: by mx.zohomail.com with SMTPS id 1742829275293182.35144515663887;
-	Mon, 24 Mar 2025 08:14:35 -0700 (PDT)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Mon, 24 Mar 2025 12:13:55 -0300
-Subject: [PATCH 2/2] rust: drm: Add GPUVM abstraction
+	s=arc-20240116; t=1742829243; c=relaxed/simple;
+	bh=46TZk7oTUJW0VAd2cqnJ+KkgvTmqs0+CPJE+PGTr6f0=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=EEL38N92UxqP2VDbOzU7P6ce/ZQD4BG5i0VHDGjL9GosAislLcMejCXeMD4kWMaxgzXGj3QAv8VP8d1ks1TJzudlIhyNJws17pAonmkrxRO8ajX42P+M+878n//sb+4fnp7YcN4refCm4ION/4qNAhgFniZmw4CpFR+avBKUw3U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=icI5Ro0Z; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I4+QSeqE0u8Vwhfb8gK71hqdrMWMIp+kDwttHJwc6tDihEqDHkSL/EhXO2B8V1EHuemPyvUMJ9JOHzJmcxxcydd49zSDWIMx5INpj0hMX3ZqX7RiG3cMDRCIAjNLccTYxBiOMUQD1qXiBKQfobf3mqbpy085feDg3CE77QUQmR/xftxrQ/l8IGwLJUdfOeIQKVRgXctpXYkzgtrQM5ulV8bAcL3ST3Zr5EmaR/vxSflZLr8pmklw8inpUEpluflKvf1X1okMcD7J6H47dexBMM76HvPM3VP8yhdGpnw2A2HipU9mVcnyjM8AMdt5p2Ht643UPpoJRHfngxhuPNJLmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dTXe7BT5TX2gefj/+MMC9J8Q/3u5+Gc3jVYUmd61YhI=;
+ b=ibcCIfTHeui+xoDSEM6MYMEYeoiWtGcviutBUY5VacmVU+18PBnd0EyNDkZtBtrEuYeO6aox4dVdble5hSPbNoqXXsLzQzgHWPKJuM6h8DoFukxlETYV8HEO+fcbqnh2fzc8BmTEAZER5WwOT3gDDQYAxFBgUiB/uQ982hViJyWeadHXkfPQt7weIA0e3Jhk4yQWUOoVo47AGxtj2LDzW7hvcEqP+Bl29R7gH52P74vlTTjY2YTdBrzQSwa8eDuP8K6/NMDX9pxxWmrj3EjqksgbC6SacyxgJFnEji1ACc82RAdJjs97i0/NLfG2SWxJdEyHn0DGeJ9ygkoZA0gBMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dTXe7BT5TX2gefj/+MMC9J8Q/3u5+Gc3jVYUmd61YhI=;
+ b=icI5Ro0ZLVhcVaNIXrEGqVf6iybUdF97v8ywAZ+8noAZSlTQ5ujfPTMVfR3b9G8W8gjciVLjVb4bgApkTImQfJ+vKm5RByypkSguKOcGUJR7NlHlyJ8Y9dsNwEW/YF6cSFWIOc1anSO/84MXKDNcV32vt35wWIW5FwEGdF4cPZN8LIdfq0wgQlUgsBOLD9FngeS1SSDZpud9DPoQJqRaA6aHf3KTzhim6W7LNvVhW8khLDE6BOnKSML2p69nF2j5dJY2FdIKz7aBWCjDZyDy0EWHEufqDisNHQ7Zr/bCy2SP+dg2G4QUUtwOnnmpSnVHV8hF84t7K2c2LPdkRHY7PA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB8296.namprd12.prod.outlook.com (2603:10b6:8:f7::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.42; Mon, 24 Mar 2025 15:13:58 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 15:13:58 +0000
+Date: Mon, 24 Mar 2025 12:13:57 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Jiang <dave.jiang@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Shannon Nelson <shannon.nelson@amd.com>, linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Please pull fwctl subsystem changes
+Message-ID: <Z+F2tcBM1LJpTDF9@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HsutAd9tIALeo6cu"
+Content-Disposition: inline
+X-ClientProxiedBy: YQBP288CA0008.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6a::20) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250324-gpuvm-v1-2-7f8213eebb56@collabora.com>
-References: <20250324-gpuvm-v1-0-7f8213eebb56@collabora.com>
-In-Reply-To: <20250324-gpuvm-v1-0-7f8213eebb56@collabora.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Asahi Lina <lina@asahilina.net>, 
- Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB8296:EE_
+X-MS-Office365-Filtering-Correlation-Id: 144c2793-3717-4a8a-8ccd-08dd6ae68017
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CS34VoovbDCGHnq/w+2nG4ftp9EekBX4LnsisYx2OWlgP3ZWGeodboG6vUYf?=
+ =?us-ascii?Q?sBI+6qazm8mvkxMjIo7c9OFfGvBQxl+TjtfV0JK4+OBwjhJNNM2NAMBh7LYL?=
+ =?us-ascii?Q?XcreWGbxkeSxSfUMwX3MiE17BFsKij0snxbnWf6NP7XnB19zlGcOlTPSR9dy?=
+ =?us-ascii?Q?u+avcJGxslbZe+Pgbyy2vn/AwuZj1TWoQQ3AiuElbiHb4UZAYZuAymvnfvUJ?=
+ =?us-ascii?Q?wMy6RFWOclER8PlqIuCCk3wdJQ2N2gMLBADK5HGIyqvLZ0/9bCIvsIrODdFF?=
+ =?us-ascii?Q?CT3MnkE5ETU5enjG1N0E97T9enerLb10egRuXnprg406Kab+xKwbCHSoQPDp?=
+ =?us-ascii?Q?tdIK8v8naDa1dCWDMV5PU0gHBrQGvL/e832fuv53BNWVfoPoT9FUe9/w20Rv?=
+ =?us-ascii?Q?knKpTuGBuWyIiBAAzeHb+fVNYIKx7apbA+YEvxOaVpwo0JtI206175zL3+Go?=
+ =?us-ascii?Q?PIx4ARloJ+2+BohXHCWRPOtRov4a4Hij17lwKAnFqf0wRwHiVN4dRPg9+Fug?=
+ =?us-ascii?Q?OsEf2VYkwS7ULIsD1uNdQOoFrAYnRWJqG9fN4A8vOfBcRZTEr/oD0s6eAawU?=
+ =?us-ascii?Q?yDUcp5/9+WwCWo4sb9oVErn8b2ki1/mpF9xguc0eQ4ef2105fsSllSwpA4ob?=
+ =?us-ascii?Q?vhR/qfOlTWRlqg8tgiZ3oNKH1OBBAldSrNi2JgMuBBqXh4c2Yt8Bc0SnjtQs?=
+ =?us-ascii?Q?uaHxx0PWYIaWNa66rRP/Qzbu9QSLwKEIz7WVnIaQeVLZBCyXPoPrJxbnKqez?=
+ =?us-ascii?Q?n1HMz9D09tCvQaKRK1NW+2SMm43u6T6GLaZrx8cNDQi/Tt9brOlGp7zob3fB?=
+ =?us-ascii?Q?+3CPumM3ZLuAJM2r2SkMAVKte9D+keoHCQkGkc9YQhyP5+AXjG+0KoBCWvh0?=
+ =?us-ascii?Q?0d29VAkhmX7vjZc/Rn/dzk6otIfgwXJcIzvjWIIVFiZ/IOu7zZYzddd9url8?=
+ =?us-ascii?Q?y30jbTlwWZFzx7GRoHe+E+YY/K2nC70vfjCQSilVgTUpws8++PHtSMtAAyHv?=
+ =?us-ascii?Q?/vGsaMWfI1PnkXqB+luQi4wN+9TyGtNRzdlX4OTzzLrqL5kwk4G1yD36miv+?=
+ =?us-ascii?Q?7M3xKv7rWC4o1z8UfArFWh02fBtEdSWN4TlBQj+nJi+RhkxzNRhNRvHO2VS/?=
+ =?us-ascii?Q?IAYLi7uWVmdKikDVyvYkFBYkCwDabDVQvObZaq0wxp8x0FVxBKTDABNQmdiN?=
+ =?us-ascii?Q?2i/f3geQtx9/RzsZ3NubpUzdpIn68IlVASGSb0IWi9EUNBrdTNOMTGgqkvWN?=
+ =?us-ascii?Q?Uleb3QZYO5V1+gzvtDQdvf9ZBZCNI44qwOP4UEZ7D/gNbWwRwFBf6pLERIEJ?=
+ =?us-ascii?Q?H+WGBrTF+UGcWfsZwbOVT2bclHcf5JEKLov3GDvWSibS8MgFKtVMgMRP3T7r?=
+ =?us-ascii?Q?2Juqj5N4Jifk6cTVdNGXZs2EZvQT?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CWF9DZW3iGxPr1lIFH8EZKiOXhNabW2hZiduMXHMhjwTS13k2y4UcGsfVENO?=
+ =?us-ascii?Q?VeOBWleIoWiH6LO+vgLkl5ZX75oEXBQYhgaXJiRdagCNNdJCM4vTPCbuCjyn?=
+ =?us-ascii?Q?tcUIF5102lDYgAXAUjwSD5bayXyEwYL/koG/AQgQsBDtPXZUWi0ILSyHINIC?=
+ =?us-ascii?Q?Z0w8wLv5MUXifegOOBJZZ1vFW62b6RjR0Ux52R5p628CTSag/mI7+2PPdggU?=
+ =?us-ascii?Q?z5uXaGsiRCOHQS+esF+zPfRFdAg3KIhL2iZ58f8u71z3d0aT9gtA0SeOhTer?=
+ =?us-ascii?Q?Lr4AQIpX34h2LdbjOukDQ7NQf7xrrQv0DoYLt6Wpc/1wVKpwPoZqse79VEx6?=
+ =?us-ascii?Q?s+2bcp1EP8SqcgDLmhPORThh6tPszmGheKJahcipZc2ZC1NkHwla6mWK+zL3?=
+ =?us-ascii?Q?WV17GurmLulCkZuudRZL47twQgsJT2/yuJmzDQumsS39IphnuFLjvDtapoQd?=
+ =?us-ascii?Q?uWxRLMTRv6ORfLzzqKYm6wpJ900+ao58DYvZ2vyjUgLoN2Leh5kAh4ddCSaD?=
+ =?us-ascii?Q?vn+9aBGBEk1DoX8bbxuVeQAWCnqefmwNrOkiAE/mHKmgzG0merodhPa4oh4Z?=
+ =?us-ascii?Q?6RFI3ZUD/iCOxZdojTdS0cX2BKLxeTAMxugvaiE6FS4IoTH+0acDT55Dj6Dp?=
+ =?us-ascii?Q?y9LFvAQzqU2udghk9Lp7j3fS2q70xHgutllEHQk8fTXRmfsHLjl5QCiua30g?=
+ =?us-ascii?Q?exIB1Iq5bn3D99Tt7nRmBPrf5F0Fxmv6LtLAC7ppnJzXumbRpehZJkKsIczO?=
+ =?us-ascii?Q?Knf1XD9uO2Ur0eUvjgl7cy29HfCKKeKTjQ2Mpe0XS0llz233WGTQgQwpDwfy?=
+ =?us-ascii?Q?P7Y2jtX3OAbv30bo6Bm+deXS8R6EYgar04ujYP0g0XxxXUXU+hDKC3sF7yT0?=
+ =?us-ascii?Q?iZ3vQwmHxztZAyZBaX6bcEqIuy5Wl1lr4TV41owtiejm3B+vum9rhRMBomZU?=
+ =?us-ascii?Q?s9sWsSDKYaqP1IyXFwdSEQubv7ySqqT5Ur3TTu7yzWxEF0lkRgXbVx2Hizrn?=
+ =?us-ascii?Q?rFeX1VVhQsgvVUYsinKX4R7q5O9PIpOJe7acO7CGHLXppzXnBXVGrmyneZki?=
+ =?us-ascii?Q?6JCvS0MSYeoxkE724McURiT/WW0p0BTnzrs6rTXDYoqXdpgcvJMws0wQ0ylw?=
+ =?us-ascii?Q?PlST7iOOa0Cjb5iVA70pldxhcpB7+LxICAmPOK1G7NpAIPc9uBZj/zrruM2H?=
+ =?us-ascii?Q?V6Y5bcNfoTmKcensxe56sN7hGvLFYfMpfgPhiAgNZcA1CoPoALUe2ksmFKkV?=
+ =?us-ascii?Q?K6dR8jdtyhdqX9aytc7mV751XwAlaPI/RZrO/nVSgXjVMld34QqhH1w3nxul?=
+ =?us-ascii?Q?6SuSUhnJLsTlBfDCer3jCOrQopLwNJ2a8uNT8rJ1fVLfZOK+r+v+F0JCa4Sc?=
+ =?us-ascii?Q?t/cnVHXbDRZdu5QqB53Cbm1WzOWnCuA2PfWenBaAzfuWjjBChvslSuamsQtC?=
+ =?us-ascii?Q?T+WFwF/N1hLI50ry/GGb4EyArkDqt/xtN4Lhn1lfCDHXmTWY0mBAJelWaIYl?=
+ =?us-ascii?Q?VI2TPZp7MPvwkkiGOe/9/wWpYs4TF7qRnGWeQTpo66be7pPNGp9qCFH45S32?=
+ =?us-ascii?Q?bqTUMUmjn63ngft5YX0=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 144c2793-3717-4a8a-8ccd-08dd6ae68017
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 15:13:58.3040
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /8ZUmpJm6YFMTuQVMD47Hzx4oJhdAseFrnS9KCVFkC2XYZc6+CJ4p6uEy3Ki1jXu
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8296
 
-From: Asahi Lina <lina@asahilina.net>
+--HsutAd9tIALeo6cu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add a GPUVM abstraction to be used by Rust GPU drivers.
+Hi Linus,
 
-GPUVM keeps track of a GPU's virtual address (VA) space and manages the
-corresponding virtual mappings represented by "GPU VA" objects. It also
-keeps track of the mapping's backing GEM buffers.
+Here is the pull request for fwctl, this is following what was agreed
+at the Maintainer Summit in Austria.
 
-This initial version only support synchronous operations. In other words,
-we do not support the use case where the operations are pre-built and
-handed over to the driver.
+To refresh what it is about please refer to the cover letter and LWN coverage:
 
-We also do not support using a driver-specific lock in order to serialize
-the gpuva list for a given GEM object. This has to be the GEM object resv,
-which is the default behavior in C.
+ https://lore.kernel.org/all/0-v5-642aa0c94070+4447f-fwctl_jgg@nvidia.com/
+ https://lwn.net/Articles/990802/
 
-Similarly to the C code, locking is left to the driver. This means that the
-driver should make sure that the VM's interval tree is protected against
-concurrent access. In Rust, we encode this requirement by requiring a
-generic Guard type in GpuVm::lock(), which is a similar approach as the one
-taken by CondVar.
+This PR has three drivers for CXL, mlx5 and pds to launch the
+subsystem. I have interest and soft commitments for maybe as many as 7
+drivers in the forseeable future.
 
-It is up to drivers to make sure that the guard indeed provides the
-required locking. Any operations that modifies the interval tree is only
-available after the VM has been locked as per above.
+There is a shared branch in here with CXL, but we still have a trivial
+conflict to resolve:
 
-Signed-off-by: Asahi Lina <lina@asahilina.net>
-Co-developed-by: Daniel Almeida <daniel.almeida@collabora.com>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
- rust/bindings/bindings_helper.h |   1 +
- rust/helpers/drm_gpuvm.c        |  29 ++
- rust/helpers/helpers.c          |   1 +
- rust/kernel/drm/gpuvm.rs        | 790 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/drm/mod.rs          |   2 +
- 5 files changed, 823 insertions(+)
+diff --cc tools/testing/cxl/test/mem.c
+index 9495dbcc03a7,0ceba8aa6eec..000000000000
+--- a/tools/testing/cxl/test/mem.c
++++ b/tools/testing/cxl/test/mem.c
+@@@ -177,7 -169,7 +181,8 @@@ struct cxl_mockmem_data
+        u8 event_buf[SZ_4K];
+        u64 timestamp;
+        unsigned long sanitize_timeout;
+ +      struct vendor_test_feat test_feat;
++       u8 shutdown_state;
+  };
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 53111b5b35588541eca05e574a8d24cdafbf1dd6..0152f87bfeaccfca4fd5d58c45fe4d9f81f05d7b 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -10,6 +10,7 @@
- #include <drm/drm_drv.h>
- #include <drm/drm_file.h>
- #include <drm/drm_gem.h>
-+#include <drm/drm_gpuvm.h>
- #include <drm/drm_ioctl.h>
- #include <kunit/test.h>
- #include <linux/auxiliary_bus.h>
-diff --git a/rust/helpers/drm_gpuvm.c b/rust/helpers/drm_gpuvm.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..7a074d2c2160ebc5f92909236c5aaecb1853e45d
---- /dev/null
-+++ b/rust/helpers/drm_gpuvm.c
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: GPL-2.0 or MIT
-+
-+#include <drm/drm_gpuvm.h>
-+
-+#ifdef CONFIG_DRM
-+#ifdef CONFIG_DRM_GPUVM
-+
-+struct drm_gpuvm *rust_helper_drm_gpuvm_get(struct drm_gpuvm *obj)
-+{
-+	return drm_gpuvm_get(obj);
-+}
-+
-+void rust_helper_drm_gpuva_init_from_op(struct drm_gpuva *va, struct drm_gpuva_op_map *op)
-+{
-+	drm_gpuva_init_from_op(va, op);
-+}
-+
-+struct drm_gpuvm_bo *rust_helper_drm_gpuvm_bo_get(struct drm_gpuvm_bo *vm_bo)
-+{
-+	return drm_gpuvm_bo_get(vm_bo);
-+}
-+
-+bool rust_helper_drm_gpuvm_is_extobj(struct drm_gpuvm *gpuvm, struct drm_gem_object *obj)
-+{
-+	return drm_gpuvm_is_extobj(gpuvm, obj);
-+}
-+
-+#endif /* CONFIG_DRM_GPUVM */
-+#endif /* CONFIG_DRM */
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index c5e536d688bc35c7b348daa61e868c91a7bdbd23..a013cc91020ae5094a04a2e4b93993cf0b149885 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -16,6 +16,7 @@
- #include "device.c"
- #include "dma-resv.c"
- #include "drm.c"
-+#include "drm_gpuvm.c"
- #include "err.c"
- #include "fs.c"
- #include "io.c"
-diff --git a/rust/kernel/drm/gpuvm.rs b/rust/kernel/drm/gpuvm.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..98553aaea650c800d40bb483dbcf35c67e696114
---- /dev/null
-+++ b/rust/kernel/drm/gpuvm.rs
-@@ -0,0 +1,790 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+
-+//! GPUVM abstractions.
-+//!
-+//! Only synchronous operations are supported, and the GEM's `dma_resv` is used
-+//! as the GEM's gpuva lock.
-+//!
-+//! C header: [`include/drm/drm_gpuvm.h`](srctree/include/drm/drm_gpuvm.h)
-+
-+use core::cell::UnsafeCell;
-+use core::marker::{PhantomData, PhantomPinned};
-+use core::ops::{Deref, DerefMut, Range};
-+use core::ptr::NonNull;
-+
-+use crate::bindings;
-+use crate::drm::device;
-+use crate::drm::drv;
-+use crate::drm::gem::IntoGEMObject;
-+use crate::error::code::ENOMEM;
-+use crate::error::from_result;
-+use crate::error::to_result;
-+use crate::error::Result;
-+use crate::init;
-+use crate::init::pin_init_from_closure;
-+use crate::prelude::*;
-+use crate::sync::lock::Backend;
-+use crate::sync::lock::Guard;
-+use crate::types::ARef;
-+use crate::types::AlwaysRefCounted;
-+use crate::types::Opaque;
-+
-+// SAFETY: This type is safe to zero-initialize.
-+unsafe impl init::Zeroable for bindings::drm_gpuvm_bo {}
-+
-+#[allow(type_alias_bounds)]
-+// A convenience type for the driver's GEM object.
-+type DriverObject<T: DriverGpuVm> = <T::Driver as drv::Driver>::Object;
-+
-+/// Trait that must be implemented by DRM drivers to represent a DRM GpuVm (a GPU address space).
-+pub trait DriverGpuVm: Sized {
-+    /// The parent `Driver` implementation for this `DriverGpuVm`.
-+    type Driver: drv::Driver;
-+
-+    /// The driver-specific GpuVa type.
-+    type GpuVa: DriverGpuVa;
-+
-+    /// The driver-specific GpuVmBo type.
-+    type GpuVmBo: DriverGpuVmBo;
-+
-+    /// The driver-specific context that is kept through the map, unmap and
-+    /// remap steps.
-+    type StepContext;
-+
-+    /// Implements the map step for the driver.
-+    fn step_map(
-+        self: &mut UpdatingGpuVm<'_, Self>,
-+        op: &mut OpMap<Self>,
-+        ctx: &mut Self::StepContext,
-+    ) -> Result;
-+
-+    /// Implements the unmap step for the driver.
-+    fn step_unmap(
-+        self: &mut UpdatingGpuVm<'_, Self>,
-+        op: &mut OpUnMap<Self>,
-+        ctx: &mut Self::StepContext,
-+    ) -> Result;
-+
-+    /// Implements the remap step for the driver.
-+    fn step_remap(
-+        self: &mut UpdatingGpuVm<'_, Self>,
-+        op: &mut OpReMap<Self>,
-+        vm_bo: &GpuVmBo<Self>,
-+        ctx: &mut Self::StepContext,
-+    ) -> Result;
-+}
-+
-+/// The driver-specific context that is passed through the map, unmap and remap
-+/// steps.
-+struct StepContext<'a, T: DriverGpuVm> {
-+    gpuvm: &'a GpuVm<T>,
-+    ctx: &'a mut T::StepContext,
-+}
-+
-+/// Trait that must be implemented by DRM drivers to represent a DRM GpuVa (a mapping in GPU address space).
-+pub trait DriverGpuVa: Sized {}
-+
-+/// Trait that must be implemented by DRM drivers to represent a DRM GpuVmBo (a connection between a BO and a VM).
-+pub trait DriverGpuVmBo: Sized {
-+    /// Initializes the GpuVmBo object.
-+    fn new() -> impl PinInit<Self>;
-+}
-+
-+/// Provide a default implementation for trivial types
-+impl<T: Default> DriverGpuVmBo for T {
-+    fn new() -> impl PinInit<Self> {
-+        // SAFETY:
-+        // - Ok(()) is always returned.
-+        // - The slot is never moved.
-+        unsafe {
-+            pin_init_from_closure(|slot| {
-+                *slot = Self::default();
-+                Ok(())
-+            })
-+        }
-+    }
-+}
-+
-+#[repr(transparent)]
-+/// A transparent wrapper over `drm_gpuva_op_map`.
-+///
-+/// This encodes the map operation to be carried out by the driver.
-+pub struct OpMap<T: DriverGpuVm>(bindings::drm_gpuva_op_map, PhantomData<T>);
-+
-+#[repr(transparent)]
-+/// Represents a single remap operation generated by [`GpuVm`].
-+///
-+/// A remap operation is generated when an existing GPU VA mapping is split by
-+/// inserting a new one or by partially unmapping existing mappings. Hence, it
-+/// consists of a maximum of two maps and one unmap operation,
-+///
-+/// The unmap operation takes care of removing the original existing mapping.
-+/// The `prev` field is used to remap the preceding part and `next` is used to
-+/// remap the subsequent part.
-+///
-+/// If the start address of the new mapping aligns with the start address of the
-+/// old mapping, `prev` will be `None`. Similarly, if the end address of the new
-+/// mapping aligns with the end address of the old mapping, `next` will be
-+/// `None`.
-+
-+/// Note: the reason for a dedicated remap operation, rather than arbitrary
-+/// unmap and map operations, is to give drivers the chance of extracting driver
-+/// specific data for creating the new mappings from the unmap operations's
-+/// [`GpuVa`] structure which typically is embedded in larger driver specific
-+/// structures.
-+pub struct OpReMap<T: DriverGpuVm>(bindings::drm_gpuva_op_remap, PhantomData<T>);
-+
-+impl<T: DriverGpuVm> OpMap<T> {
-+    #[inline]
-+    /// Returns the base address of the new mapping.
-+    pub fn addr(&self) -> u64 {
-+        self.0.va.addr
-+    }
-+
-+    #[inline]
-+    /// Returns the range of the new mapping.
-+    pub fn range(&self) -> u64 {
-+        self.0.va.range
-+    }
-+
-+    #[inline]
-+    /// Returns the offset within the GEM object.
-+    pub fn offset(&self) -> u64 {
-+        self.0.gem.offset
-+    }
-+
-+    #[inline]
-+    /// Returns the GEM object to map.
-+    pub fn object(&self) -> &<T::Driver as drv::Driver>::Object {
-+        let p = <<T::Driver as drv::Driver>::Object as IntoGEMObject>::from_gem_obj(self.0.gem.obj);
-+        // SAFETY: The GEM object has an active reference for the lifetime of this op
-+        unsafe { &*p }
-+    }
-+
-+    /// A helper function to map and link a GpuVa to a GpuVmBo.
-+    pub fn map_and_link_va(
-+        &mut self,
-+        gpuvm: &mut UpdatingGpuVm<'_, T>,
-+        gpuva: Pin<KBox<GpuVa<T>>>,
-+        gpuvmbo: &ARef<GpuVmBo<T>>,
-+    ) -> Result<(), Pin<KBox<GpuVa<T>>>> {
-+        // SAFETY: We are handing off the GpuVa ownership and it will not be moved.
-+        let p = KBox::leak(unsafe { Pin::into_inner_unchecked(gpuva) });
-+        // SAFETY: These C functions are called with the correct invariants
-+        unsafe {
-+            bindings::drm_gpuva_init_from_op(&mut p.gpuva, &mut self.0);
-+            if bindings::drm_gpuva_insert(gpuvm.0.gpuvm() as *mut _, &mut p.gpuva) != 0 {
-+                // EEXIST, return the GpuVa to the caller as an error
-+                return Err(Pin::new_unchecked(KBox::from_raw(p)));
-+            };
-+            // SAFETY: This takes a new reference to the gpuvmbo.
-+            bindings::drm_gpuva_link(&mut p.gpuva, &gpuvmbo.bo as *const _ as *mut _);
-+        }
-+        Ok(())
-+    }
-+}
-+
-+#[repr(transparent)]
-+/// Represents a single unmap operation generated by [`GpuVm`].
-+pub struct OpUnMap<T: DriverGpuVm>(bindings::drm_gpuva_op_unmap, PhantomData<T>);
-+
-+impl<T: DriverGpuVm> OpUnMap<T> {
-+    #[inline]
-+    /// Returns the GPU VA to unmap.
-+    pub fn va(&self) -> Option<&GpuVa<T>> {
-+        if self.0.va.is_null() {
-+            return None;
-+        }
-+        // SAFETY: Container invariant is guaranteed for ops structs created for our types.
-+        let p = unsafe { crate::container_of!(self.0.va, GpuVa<T>, gpuva) as *mut GpuVa<T> };
-+        // SAFETY: The GpuVa object reference is valid per the op_unmap contract
-+        Some(unsafe { &*p })
-+    }
-+
-+    #[inline]
-+    /// Indicates whether this GPU VA is physically contiguous with the original
-+    /// mapping request.
-+    ///
-+    /// Optionally, if `keep` is set, drivers may keep the actual page table
-+    /// mappings for this GPU VA, adding the missing page table entries only and
-+    /// subsequently updating the VM accordingly.
-+    pub fn keep(&self) -> bool {
-+        self.0.keep
-+    }
-+
-+    /// A helper to unmap and unlink a GpuVa from a GpuVmBo.
-+    pub fn unmap_and_unlink_va(&mut self) -> Option<Pin<KBox<GpuVa<T>>>> {
-+        if self.0.va.is_null() {
-+            return None;
-+        }
-+        // SAFETY: Container invariant is guaranteed for ops structs created for our types.
-+        let p = unsafe { crate::container_of!(self.0.va, GpuVa<T>, gpuva) as *mut GpuVa<T> };
-+
-+        // SAFETY: The GpuVa object reference is valid per the op_unmap contract
-+        unsafe {
-+            bindings::drm_gpuva_unmap(&mut self.0);
-+            bindings::drm_gpuva_unlink(self.0.va);
-+        }
-+
-+        // Unlinking/unmapping relinquishes ownership of the GpuVa object,
-+        // so clear the pointer
-+        self.0.va = core::ptr::null_mut();
-+        // SAFETY: The GpuVa object reference is valid per the op_unmap contract
-+        Some(unsafe { Pin::new_unchecked(KBox::from_raw(p)) })
-+    }
-+}
-+
-+impl<T: DriverGpuVm> OpReMap<T> {
-+    #[inline]
-+    /// Returns the preceding part of a split mapping, if any.
-+    pub fn prev_map(&mut self) -> Option<&mut OpMap<T>> {
-+        // SAFETY: The prev pointer must be valid if not-NULL per the op_remap contract
-+        unsafe { (self.0.prev as *mut OpMap<T>).as_mut() }
-+    }
-+
-+    #[inline]
-+    /// Returns the subsequent part of a split mapping, if any.
-+    pub fn next_map(&mut self) -> Option<&mut OpMap<T>> {
-+        // SAFETY: The next pointer must be valid if not-NULL per the op_remap contract
-+        unsafe { (self.0.next as *mut OpMap<T>).as_mut() }
-+    }
-+
-+    #[inline]
-+    /// Returns the unmap operation for the original existing mapping.
-+    pub fn unmap(&mut self) -> &mut OpUnMap<T> {
-+        // SAFETY: The unmap pointer is always valid per the op_remap contract
-+        unsafe { (self.0.unmap as *mut OpUnMap<T>).as_mut().unwrap() }
-+    }
-+}
-+
-+#[repr(C)]
-+#[pin_data]
-+/// A GPU VA range.
-+///
-+/// Drivers can use `inner` to store additional data.
-+pub struct GpuVa<T: DriverGpuVm> {
-+    #[pin]
-+    gpuva: bindings::drm_gpuva,
-+    #[pin]
-+    inner: T::GpuVa,
-+    #[pin]
-+    _p: PhantomPinned,
-+}
-+
-+// SAFETY: This type is safe to zero-init (as far as C is concerned).
-+unsafe impl init::Zeroable for bindings::drm_gpuva {}
-+
-+impl<T: DriverGpuVm> GpuVa<T> {
-+    /// Creates a new GPU VA.
-+    pub fn new<E>(inner: impl PinInit<T::GpuVa, E>) -> Result<Pin<KBox<GpuVa<T>>>>
-+    where
-+        Error: From<E>,
-+    {
-+        KBox::try_pin_init(
-+            try_pin_init!(Self {
-+                gpuva <- init::zeroed(),
-+                inner <- inner,
-+                _p: PhantomPinned
-+            }),
-+            GFP_KERNEL,
-+        )
-+    }
-+
-+    #[inline]
-+    /// Returns the start address of the GPU VA range.
-+    pub fn addr(&self) -> u64 {
-+        self.gpuva.va.addr
-+    }
-+
-+    #[inline]
-+    /// Returns the range of the GPU VA.
-+    pub fn range(&self) -> u64 {
-+        self.gpuva.va.range
-+    }
-+
-+    #[inline]
-+    /// Returns the offset within the GEM object.
-+    pub fn offset(&self) -> u64 {
-+        self.gpuva.gem.offset
-+    }
-+}
-+
-+#[repr(C)]
-+#[pin_data]
-+/// The connection between a GEM object and a VM.
-+pub struct GpuVmBo<T: DriverGpuVm> {
-+    #[pin]
-+    bo: bindings::drm_gpuvm_bo,
-+    #[pin]
-+    inner: T::GpuVmBo,
-+    #[pin]
-+    _p: PhantomPinned,
-+}
-+
-+impl<T: DriverGpuVm> GpuVmBo<T> {
-+    /// Return a reference to the inner driver data for this GpuVmBo
-+    pub fn inner(&self) -> &T::GpuVmBo {
-+        &self.inner
-+    }
-+}
-+
-+// SAFETY: DRM GpuVmBo objects are always reference counted and the get/put functions
-+// satisfy the requirements.
-+unsafe impl<T: DriverGpuVm> AlwaysRefCounted for GpuVmBo<T> {
-+    fn inc_ref(&self) {
-+        // SAFETY: The drm_gpuvm_get function satisfies the requirements for inc_ref().
-+        unsafe { bindings::drm_gpuvm_bo_get(&self.bo as *const _ as *mut _) };
-+    }
-+
-+    unsafe fn dec_ref(mut obj: NonNull<Self>) {
-+        // SAFETY: drm_gpuvm_bo_put() requires holding the gpuva lock, which is the dma_resv lock by default.
-+        // The drm_gpuvm_put function satisfies the requirements for dec_ref().
-+        // (We do not support custom locks yet.)
-+        unsafe {
-+            let resv = (*obj.as_mut().bo.obj).resv;
-+            bindings::dma_resv_lock(resv, core::ptr::null_mut());
-+            bindings::drm_gpuvm_bo_put(&mut obj.as_mut().bo);
-+            bindings::dma_resv_unlock(resv);
-+        }
-+    }
-+}
-+
-+/// The DRM GPU VA Manager.
-+///
-+/// It keeps track of a GPU's virtual address space by using maple tree
-+/// structures.
-+///
-+/// Typically, an instance of [`GpuVm`] is embedded bigger, driver-specific
-+/// structures.
-+///
-+/// Drivers can pass addresses and ranges in arbitrary units, e.g.: bytes or
-+/// pages.
-+///
-+/// There should be one manager instance per GPU virtual address space.
-+#[repr(C)]
-+#[pin_data]
-+pub struct GpuVm<T: DriverGpuVm> {
-+    #[pin]
-+    gpuvm: Opaque<bindings::drm_gpuvm>,
-+    #[pin]
-+    inner: UnsafeCell<T>,
-+    #[pin]
-+    _p: PhantomPinned,
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn vm_free_callback<T: DriverGpuVm>(raw_gpuvm: *mut bindings::drm_gpuvm) {
-+    // SAFETY: Container invariant is guaranteed for objects using our callback.
-+    let p = unsafe {
-+        crate::container_of!(
-+            raw_gpuvm as *mut Opaque<bindings::drm_gpuvm>,
-+            GpuVm<T>,
-+            gpuvm
-+        ) as *mut GpuVm<T>
-+    };
-+
-+    // SAFETY: p is guaranteed to be valid for drm_gpuvm objects using this callback.
-+    unsafe { drop(KBox::from_raw(p)) };
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn vm_bo_alloc_callback<T: DriverGpuVm>() -> *mut bindings::drm_gpuvm_bo {
-+    let obj: Result<Pin<KBox<GpuVmBo<T>>>> = KBox::try_pin_init(
-+        try_pin_init!(GpuVmBo::<T> {
-+            bo <- init::zeroed(),
-+            inner <- T::GpuVmBo::new(),
-+            _p: PhantomPinned
-+        }),
-+        GFP_KERNEL,
-+    );
-+
-+    match obj {
-+        Ok(obj) =>
-+        // SAFETY: The DRM core will keep this object pinned
-+        unsafe {
-+            let p = KBox::leak(Pin::into_inner_unchecked(obj));
-+            &mut p.bo
-+        },
-+        Err(_) => core::ptr::null_mut(),
-+    }
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn vm_bo_free_callback<T: DriverGpuVm>(raw_vm_bo: *mut bindings::drm_gpuvm_bo) {
-+    // SAFETY: Container invariant is guaranteed for objects using this callback.
-+    let p = unsafe { crate::container_of!(raw_vm_bo, GpuVmBo<T>, bo) as *mut GpuVmBo<T> };
-+
-+    // SAFETY: p is guaranteed to be valid for drm_gpuvm_bo objects using this callback.
-+    unsafe { drop(KBox::from_raw(p)) };
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn step_map_callback<T: DriverGpuVm>(
-+    op: *mut bindings::drm_gpuva_op,
-+    _priv: *mut core::ffi::c_void,
-+) -> core::ffi::c_int {
-+    // SAFETY: We know this is a map op, and OpMap is a transparent wrapper.
-+    let map = unsafe { &mut *((&mut (*op).__bindgen_anon_1.map) as *mut _ as *mut OpMap<T>) };
-+    // SAFETY: This is a pointer to a StepContext created inline in sm_map(), which is
-+    // guaranteed to outlive this function.
-+    let ctx = unsafe { &mut *(_priv as *mut StepContext<'_, T>) };
-+
-+    from_result(|| {
-+        UpdatingGpuVm(ctx.gpuvm).step_map(map, ctx.ctx)?;
-+        Ok(0)
-+    })
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn step_remap_callback<T: DriverGpuVm>(
-+    op: *mut bindings::drm_gpuva_op,
-+    _priv: *mut core::ffi::c_void,
-+) -> core::ffi::c_int {
-+    // SAFETY: We know this is a map op, and OpReMap is a transparent wrapper.
-+    let remap = unsafe { &mut *((&mut (*op).__bindgen_anon_1.remap) as *mut _ as *mut OpReMap<T>) };
-+    // SAFETY: This is a pointer to a StepContext created inline in sm_map(), which is
-+    // guaranteed to outlive this function.
-+    let ctx = unsafe { &mut *(_priv as *mut StepContext<'_, T>) };
-+
-+    let p_vm_bo = remap.unmap().va().unwrap().gpuva.vm_bo;
-+
-+    let res = {
-+        // SAFETY: vm_bo pointer must be valid and non-null by the step_remap invariants.
-+        // Since we grab a ref, this reference's lifetime is until the decref.
-+        let vm_bo_ref = unsafe {
-+            bindings::drm_gpuvm_bo_get(p_vm_bo);
-+            &*(crate::container_of!(p_vm_bo, GpuVmBo<T>, bo) as *mut GpuVmBo<T>)
-+        };
-+
-+        from_result(|| {
-+            UpdatingGpuVm(ctx.gpuvm).step_remap(remap, vm_bo_ref, ctx.ctx)?;
-+            Ok(0)
-+        })
-+    };
-+
-+    // SAFETY: We incremented the refcount above, and the Rust reference we took is
-+    // no longer in scope.
-+    unsafe { bindings::drm_gpuvm_bo_put(p_vm_bo) };
-+
-+    res
-+}
-+
-+/// # Safety
-+///
-+/// This function is only safe to be called from the GPUVM C code.
-+unsafe extern "C" fn step_unmap_callback<T: DriverGpuVm>(
-+    op: *mut bindings::drm_gpuva_op,
-+    _priv: *mut core::ffi::c_void,
-+) -> core::ffi::c_int {
-+    // SAFETY: We know this is a map op, and OpUnMap is a transparent wrapper.
-+    let unmap = unsafe { &mut *((&mut (*op).__bindgen_anon_1.unmap) as *mut _ as *mut OpUnMap<T>) };
-+    // SAFETY: This is a pointer to a StepContext created inline in sm_map(), which is
-+    // guaranteed to outlive this function.
-+    let ctx = unsafe { &mut *(_priv as *mut StepContext<'_, T>) };
-+
-+    from_result(|| {
-+        UpdatingGpuVm(ctx.gpuvm).step_unmap(unmap, ctx.ctx)?;
-+        Ok(0)
-+    })
-+}
-+
-+impl<T: DriverGpuVm> GpuVm<T> {
-+    const OPS: bindings::drm_gpuvm_ops = bindings::drm_gpuvm_ops {
-+        vm_free: Some(vm_free_callback::<T>),
-+        op_alloc: None,
-+        op_free: None,
-+        vm_bo_alloc: Some(vm_bo_alloc_callback::<T>),
-+        vm_bo_free: Some(vm_bo_free_callback::<T>),
-+        vm_bo_validate: None,
-+        sm_step_map: Some(step_map_callback::<T>),
-+        sm_step_remap: Some(step_remap_callback::<T>),
-+        sm_step_unmap: Some(step_unmap_callback::<T>),
-+    };
-+
-+    fn gpuvm(&self) -> *const bindings::drm_gpuvm {
-+        self.gpuvm.get()
-+    }
-+
-+    /// Creates a GPUVM instance.
-+    pub fn new<E>(
-+        name: &'static CStr,
-+        dev: &device::Device<T::Driver>,
-+        r_obj: &<T::Driver as drv::Driver>::Object,
-+        range: Range<u64>,
-+        reserve_range: Range<u64>,
-+        inner: impl PinInit<T, E>,
-+    ) -> Result<ARef<GpuVm<T>>>
-+    where
-+        Error: From<E>,
-+    {
-+        let obj: Pin<KBox<Self>> = KBox::try_pin_init(
-+            try_pin_init!(Self {
-+                // SAFETY: drm_gpuvm_init cannot fail and always initializes the member
-+                gpuvm <- unsafe {
-+                    init::pin_init_from_closure(move |slot: *mut Opaque<bindings::drm_gpuvm> | {
-+                        // Zero-init required by drm_gpuvm_init
-+                        *slot = core::mem::zeroed();
-+                        bindings::drm_gpuvm_init(
-+                            Opaque::raw_get(slot),
-+                            name.as_char_ptr(),
-+                            0,
-+                            dev.as_raw(),
-+                            r_obj.gem_obj() as *const _ as *mut _,
-+                            range.start,
-+                            range.end - range.start,
-+                            reserve_range.start,
-+                            reserve_range.end - reserve_range.start,
-+                            &Self::OPS
-+                        );
-+                        Ok(())
-+                    })
-+                },
-+                // SAFETY: Just passing through to the initializer argument
-+                inner <- unsafe {
-+                    init::pin_init_from_closure(move |slot: *mut UnsafeCell<T> | {
-+                        inner.__pinned_init(slot as *mut _)
-+                    })
-+                },
-+                _p: PhantomPinned
-+            }),
-+            GFP_KERNEL,
-+        )?;
-+
-+        // SAFETY: We never move out of the object
-+        let vm_ref = unsafe {
-+            ARef::from_raw(NonNull::new_unchecked(KBox::leak(
-+                Pin::into_inner_unchecked(obj),
-+            )))
-+        };
-+
-+        Ok(vm_ref)
-+    }
-+
-+    /// Locks the VM, protecting its interval tree against concurrent accesses.
-+    ///
-+    /// Callers must prove that they have exclusive access to the VM by holding
-+    /// some guard type. This encodes the driver-specific locking requirements.
-+    ///
-+    /// It is up to the caller to ensure that the guard indeed provides the
-+    /// required locking.
-+    pub fn lock<U: ?Sized, B: Backend>(&self, _guard: &mut Guard<'_, U, B>) -> LockedGpuVm<'_, T> {
-+        LockedGpuVm { gpuvm: self }
-+    }
-+
-+    /// Returns true if the given object is external to the GPUVM, i.e.: if it
-+    /// does not share the DMA reservation object of the GPUVM.
-+    pub fn is_extobj(&self, obj: &impl IntoGEMObject) -> bool {
-+        let gem = obj.gem_obj() as *const _ as *mut _;
-+        // SAFETY: This is safe to call as long as the arguments are valid pointers.
-+        unsafe { bindings::drm_gpuvm_is_extobj(self.gpuvm() as *mut _, gem) }
-+    }
-+}
-+
-+// SAFETY: DRM GpuVm objects are always reference counted and the get/put functions
-+// satisfy the requirements.
-+unsafe impl<T: DriverGpuVm> AlwaysRefCounted for GpuVm<T> {
-+    fn inc_ref(&self) {
-+        // SAFETY: The drm_gpuvm_get function satisfies the requirements for inc_ref().
-+        unsafe { bindings::drm_gpuvm_get(&self.gpuvm as *const _ as *mut _) };
-+    }
-+
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: The drm_gpuvm_put function satisfies the requirements for dec_ref().
-+        unsafe { bindings::drm_gpuvm_put(Opaque::raw_get(&(*obj.as_ptr()).gpuvm)) };
-+    }
-+}
-+
-+/// The object returned after a call to [`GpuVm::lock`].
-+///
-+/// This object has access to operations that modify the VM's interval tree.
-+pub struct LockedGpuVm<'a, T: DriverGpuVm> {
-+    gpuvm: &'a GpuVm<T>,
-+}
-+
-+impl<T: DriverGpuVm> LockedGpuVm<'_, T> {
-+    /// Finds the [`GpuVmBo`] object that connects `obj` to this VM.
-+    ///
-+    /// If found, increases the reference count of the GpuVmBo object
-+    /// accordingly.
-+    pub fn find_bo(&mut self, obj: &DriverObject<T>) -> Option<ARef<GpuVmBo<T>>> {
-+        // SAFETY: LockedGpuVm implies the right locks are held.
-+        let p = unsafe {
-+            bindings::drm_gpuvm_bo_find(
-+                self.gpuvm.gpuvm() as *mut _,
-+                obj.gem_obj() as *const _ as *mut _,
-+            )
-+        };
-+        if p.is_null() {
-+            None
-+        } else {
-+            // SAFETY: All the drm_gpuvm_bo objects in this GpuVm are always allocated by us as GpuVmBo<T>.
-+            let p = unsafe { crate::container_of!(p, GpuVmBo<T>, bo) as *mut GpuVmBo<T> };
-+            // SAFETY: We checked for NULL above, and the types ensure that
-+            // this object was created by vm_bo_alloc_callback<T>.
-+            Some(unsafe { ARef::from_raw(NonNull::new_unchecked(p)) })
-+        }
-+    }
-+
-+    /// Obtains the [`GpuVmBo`] object that connects `obj` to this VM.
-+    ///
-+    /// This connection is unique, so an instane of [`GpuVmBo`] will be
-+    /// allocated for `obj` once, and that instance will be returned from that
-+    /// point forward.
-+    pub fn obtain_bo(&mut self, obj: &DriverObject<T>) -> Result<ARef<GpuVmBo<T>>> {
-+        // SAFETY: LockedGpuVm implies the right locks are held.
-+        let p = unsafe {
-+            bindings::drm_gpuvm_bo_obtain(
-+                self.gpuvm.gpuvm() as *mut _,
-+                obj.gem_obj() as *const _ as *mut _,
-+            )
-+        };
-+        if p.is_null() {
-+            Err(ENOMEM)
-+        } else {
-+            // SAFETY: Container invariant is guaranteed for GpuVmBo objects for this GpuVm.
-+            let p = unsafe { crate::container_of!(p, GpuVmBo<T>, bo) as *mut GpuVmBo<T> };
-+            // SAFETY: We checked for NULL above, and the types ensure that
-+            // this object was created by vm_bo_alloc_callback<T>.
-+            Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(p)) })
-+        }
-+    }
-+
-+    /// Iterates the given range of the GPU VA space. It utilizes
-+    /// [`DriverGpuVm`] to call back into the driver providing the split and
-+    /// merge steps.
-+    ///
-+    /// A sequence of callbacks can contain map, unmap and remap operations, but
-+    /// the sequence of callbacks might also be empty if no operation is
-+    /// required, e.g. if the requested mapping already exists in the exact same
-+    /// way.
-+    ///
-+    /// There can be an arbitrary amount of unmap operations, a maximum of two
-+    /// remap operations and a single map operation. The latter one represents
-+    /// the original map operation requested by the caller.
-+    ///
-+    /// # Arguments
-+    ///
-+    /// - `ctx`: A driver-specific context.
-+    /// - `req_obj`: The GEM object to map.
-+    /// - `req_addr`: The start address of the new mapping.
-+    /// - `req_range`: The range of the mapping.
-+    /// - `req_offset`: The offset into the GEM object.
-+    pub fn sm_map(
-+        &mut self,
-+        ctx: &mut T::StepContext,
-+        req_obj: &DriverObject<T>,
-+        req_addr: u64,
-+        req_range: u64,
-+        req_offset: u64,
-+    ) -> Result {
-+        let mut ctx = StepContext {
-+            ctx,
-+            gpuvm: self.gpuvm,
-+        };
-+
-+        // SAFETY: LockedGpuVm implies the right locks are held.
-+        to_result(unsafe {
-+            bindings::drm_gpuvm_sm_map(
-+                self.gpuvm.gpuvm() as *mut _,
-+                &mut ctx as *mut _ as *mut _,
-+                req_addr,
-+                req_range,
-+                req_obj.gem_obj() as *const _ as *mut _,
-+                req_offset,
-+            )
-+        })
-+    }
-+
-+    /// Iterates the given range of the GPU VA space. It utilizes
-+    /// [`DriverGpuVm`] to call back into the driver providing the operations to
-+    /// unmap and, if required, split existent mappings.
-+    ///
-+    /// A sequence of callbacks can contain unmap and remap operations,
-+    /// depending on whether there are actual overlapping mappings to split.
-+    ///
-+    /// There can be an arbitrary amount of unmap operations and a maximum of
-+    /// two remap operations.
-+    ///
-+    /// # Arguments
-+    ///
-+    /// - `ctx`: A driver-specific context.
-+    /// - `req_addr`: The start address of the range to unmap.
-+    /// - `req_range`: The range of the mappings to unmap.
-+    pub fn sm_unmap(&mut self, ctx: &mut T::StepContext, req_addr: u64, req_range: u64) -> Result {
-+        let mut ctx = StepContext {
-+            ctx,
-+            gpuvm: self.gpuvm,
-+        };
-+
-+        // SAFETY: LockedGpuVm implies the right locks are held.
-+        to_result(unsafe {
-+            bindings::drm_gpuvm_sm_unmap(
-+                self.gpuvm.gpuvm() as *mut _,
-+                &mut ctx as *mut _ as *mut _,
-+                req_addr,
-+                req_range,
-+            )
-+        })
-+    }
-+}
-+
-+impl<T: DriverGpuVm> Deref for LockedGpuVm<'_, T> {
-+    type Target = T;
-+
-+    fn deref(&self) -> &T {
-+        // SAFETY: The existence of this LockedGpuVm implies the lock is held,
-+        // so this is the only reference
-+        unsafe { &*self.gpuvm.inner.get() }
-+    }
-+}
-+
-+impl<T: DriverGpuVm> DerefMut for LockedGpuVm<'_, T> {
-+    fn deref_mut(&mut self) -> &mut T {
-+        // SAFETY: The existence of this UpdatingGpuVm implies the lock is held,
-+        // so this is the only reference
-+        unsafe { &mut *self.gpuvm.inner.get() }
-+    }
-+}
-+
-+/// A state representing a GPU VM that is being updated.
-+pub struct UpdatingGpuVm<'a, T: DriverGpuVm>(&'a GpuVm<T>);
-+
-+impl<T: DriverGpuVm> UpdatingGpuVm<'_, T> {}
-+
-+impl<T: DriverGpuVm> Deref for UpdatingGpuVm<'_, T> {
-+    type Target = T;
-+
-+    fn deref(&self) -> &T {
-+        // SAFETY: The existence of this UpdatingGpuVm implies the lock is held,
-+        // so this is the only reference
-+        unsafe { &*self.0.inner.get() }
-+    }
-+}
-+
-+impl<T: DriverGpuVm> DerefMut for UpdatingGpuVm<'_, T> {
-+    fn deref_mut(&mut self) -> &mut T {
-+        // SAFETY: The existence of this UpdatingGpuVm implies the lock is held,
-+        // so this is the only reference
-+        unsafe { &mut *self.0.inner.get() }
-+    }
-+}
-+
-+// SAFETY: All our trait methods take locks
-+unsafe impl<T: DriverGpuVm> Sync for GpuVm<T> {}
-+// SAFETY: All our trait methods take locks
-+unsafe impl<T: DriverGpuVm> Send for GpuVm<T> {}
-+
-+// SAFETY: All our trait methods take locks
-+unsafe impl<T: DriverGpuVm> Sync for GpuVmBo<T> {}
-+// SAFETY: All our trait methods take locks
-+unsafe impl<T: DriverGpuVm> Send for GpuVmBo<T> {}
-diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
-index c44760a1332fa1ef875939b48e7af450f7372020..849dc1e577f15bfada11d6739dff48ac33813326 100644
---- a/rust/kernel/drm/mod.rs
-+++ b/rust/kernel/drm/mod.rs
-@@ -6,4 +6,6 @@
- pub mod drv;
- pub mod file;
- pub mod gem;
-+#[cfg(CONFIG_DRM_GPUVM = "y")]
-+pub mod gpuvm;
- pub mod ioctl;
+Thanks,
+Jason
 
--- 
-2.48.1
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus-fwctl
+
+for you to fetch changes up to 403257070602fcd1512af6f24cecdb23da8a914a:
+
+  pds_fwctl: add Documentation entries (2025-03-21 20:57:55 -0300)
+
+----------------------------------------------------------------
+fwctl first pull request
+
+fwctl is a new subsystem intended to bring some common rules and order to
+the growing pattern of exposing a secure FW interface directly to
+userspace. Unlike existing places like RDMA/DRM/VFIO/uacce that are
+exposing a device for datapath operations fwctl is focused on debugging,
+configuration and provisioning of the device. It will not have the
+necessary features like interrupt delivery to support a datapath.
+
+This concept is similar to the long standing practice in the "HW" RAID
+space of having a device specific misc device to manage the RAID
+controller FW. fwctl generalizes this notion of a companion debug and
+management interface that goes along with a dataplane implemented in an
+appropriate subsystem.
+
+There have been three LWN articles written discussing various aspects of
+this:
+
+ https://lwn.net/Articles/955001/
+ https://lwn.net/Articles/969383/
+ https://lwn.net/Articles/990802/
+
+This pull requests includes three drivers to launch the subsystem:
+
+ - CXL provides a vendor scheme for executing commands and a way to learn
+   the 'command effects' (ie the security properties) of such
+   commands. The fwctl driver allows access to these mechanism within the
+   fwctl security model
+
+ - mlx5 is family of networking products, the driver supports all current
+   Mellanox HW still receiving FW feature updates. This includes RDMA
+   multiprotocol NICs like ConnectX and the Bluefield family of Smart
+   NICs.
+
+ - AMD/Pensando Distributed Services card is a multi protocol Smart NIC
+   with a multi PCI function design. fwctl works on the management PCI
+   function following a 'command effects' model similar to CXL.
+
+----------------------------------------------------------------
+Brett Creeley (1):
+      pds_fwctl: add rpc and query support
+
+Dave Jiang (14):
+      cxl: Refactor user ioctl command path from mds to mailbox
+      cxl: Enumerate feature commands
+      cxl: Add Get Supported Features command for kernel usage
+      cxl/test: Add Get Supported Features mailbox command support
+      cxl: Setup exclusive CXL features that are reserved for the kernel
+      cxl: Add FWCTL support to CXL
+      cxl: Move cxl feature command structs to user header
+      cxl: Add support for fwctl RPC command to enable CXL feature commands
+      cxl: Add support to handle user feature commands for get feature
+      cxl: Add support to handle user feature commands for set feature
+      cxl/test: Add Get Feature support to cxl_test
+      cxl/test: Add Set Feature support to cxl_test
+      fwctl/cxl: Add documentation to FWCTL CXL
+      cxl: Fixup kdoc issues for include/cxl/features.h
+
+Jason Gunthorpe (7):
+      fwctl: Add basic structure for a class subsystem with a cdev
+      fwctl: Basic ioctl dispatch for the character device
+      fwctl: FWCTL_INFO to return basic information about the device
+      taint: Add TAINT_FWCTL
+      fwctl: FWCTL_RPC to execute a Remote Procedure Call to device firmware
+      fwctl: Add documentation
+      Merge branch 'for-6.15/features' into fwctl
+
+Saeed Mahameed (2):
+      fwctl/mlx5: Support for communicating with mlx5 fw
+      mlx5: Create an auxiliary device for fwctl_mlx5
+
+Shannon Nelson (5):
+      pds_core: make pdsc_auxbus_dev_del() void
+      pds_core: specify auxiliary_device to be created
+      pds_core: add new fwctl auxiliary_device
+      pds_fwctl: initial driver framework
+      pds_fwctl: add Documentation entries
+
+Shiju Jose (2):
+      cxl/mbox: Add GET_FEATURE mailbox command
+      cxl/mbox: Add SET_FEATURE mailbox command
+
+ Documentation/admin-guide/tainted-kernels.rst      |   5 +
+ Documentation/userspace-api/fwctl/fwctl-cxl.rst    | 142 +++++
+ Documentation/userspace-api/fwctl/fwctl.rst        | 286 +++++++++
+ Documentation/userspace-api/fwctl/index.rst        |  14 +
+ Documentation/userspace-api/fwctl/pds_fwctl.rst    |  46 ++
+ Documentation/userspace-api/index.rst              |   1 +
+ Documentation/userspace-api/ioctl/ioctl-number.rst |   1 +
+ MAINTAINERS                                        |  26 +
+ drivers/Kconfig                                    |   2 +
+ drivers/Makefile                                   |   1 +
+ drivers/cxl/Kconfig                                |  12 +
+ drivers/cxl/core/Makefile                          |   1 +
+ drivers/cxl/core/core.h                            |  17 +-
+ drivers/cxl/core/features.c                        | 708 +++++++++++++++++++++
+ drivers/cxl/core/mbox.c                            | 124 ++--
+ drivers/cxl/core/memdev.c                          |  22 +-
+ drivers/cxl/cxlmem.h                               |  47 +-
+ drivers/cxl/pci.c                                  |   8 +
+ drivers/fwctl/Kconfig                              |  33 +
+ drivers/fwctl/Makefile                             |   6 +
+ drivers/fwctl/main.c                               | 421 ++++++++++++
+ drivers/fwctl/mlx5/Makefile                        |   4 +
+ drivers/fwctl/mlx5/main.c                          | 411 ++++++++++++
+ drivers/fwctl/pds/Makefile                         |   4 +
+ drivers/fwctl/pds/main.c                           | 536 ++++++++++++++++
+ drivers/net/ethernet/amd/pds_core/auxbus.c         |  44 +-
+ drivers/net/ethernet/amd/pds_core/core.c           |   7 +
+ drivers/net/ethernet/amd/pds_core/core.h           |   8 +-
+ drivers/net/ethernet/amd/pds_core/devlink.c        |   7 +-
+ drivers/net/ethernet/amd/pds_core/main.c           |  25 +-
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c      |   9 +
+ include/cxl/features.h                             |  87 +++
+ include/cxl/mailbox.h                              |  44 +-
+ include/linux/fwctl.h                              | 135 ++++
+ include/linux/panic.h                              |   3 +-
+ include/linux/pds/pds_adminq.h                     | 277 ++++++++
+ include/linux/pds/pds_common.h                     |   2 +
+ include/uapi/cxl/features.h                        | 170 +++++
+ include/uapi/fwctl/cxl.h                           |  56 ++
+ include/uapi/fwctl/fwctl.h                         | 141 ++++
+ include/uapi/fwctl/mlx5.h                          |  36 ++
+ include/uapi/fwctl/pds.h                           |  62 ++
+ kernel/panic.c                                     |   1 +
+ tools/debugging/kernel-chktaint                    |   8 +
+ tools/testing/cxl/Kbuild                           |   1 +
+ tools/testing/cxl/test/mem.c                       | 185 ++++++
+ 46 files changed, 4054 insertions(+), 132 deletions(-)
+ create mode 100644 Documentation/userspace-api/fwctl/fwctl-cxl.rst
+ create mode 100644 Documentation/userspace-api/fwctl/fwctl.rst
+ create mode 100644 Documentation/userspace-api/fwctl/index.rst
+ create mode 100644 Documentation/userspace-api/fwctl/pds_fwctl.rst
+ create mode 100644 drivers/cxl/core/features.c
+ create mode 100644 drivers/fwctl/Kconfig
+ create mode 100644 drivers/fwctl/Makefile
+ create mode 100644 drivers/fwctl/main.c
+ create mode 100644 drivers/fwctl/mlx5/Makefile
+ create mode 100644 drivers/fwctl/mlx5/main.c
+ create mode 100644 drivers/fwctl/pds/Makefile
+ create mode 100644 drivers/fwctl/pds/main.c
+ create mode 100644 include/cxl/features.h
+ create mode 100644 include/linux/fwctl.h
+ create mode 100644 include/uapi/cxl/features.h
+ create mode 100644 include/uapi/fwctl/cxl.h
+ create mode 100644 include/uapi/fwctl/fwctl.h
+ create mode 100644 include/uapi/fwctl/mlx5.h
+ create mode 100644 include/uapi/fwctl/pds.h
+
+--HsutAd9tIALeo6cu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCZ+F2sgAKCRCFwuHvBreF
+YfjjAQDo19KN0DkLLPqoUhArL7u5goqgPnm6sQxEQo5jl4rJRAD+LQDz+chY97S3
+vohFkN/099D7XF0zrU9SAkYOyE790QM=
+=TTOr
+-----END PGP SIGNATURE-----
+
+--HsutAd9tIALeo6cu--
 
