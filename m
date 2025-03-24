@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-574419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CB0A6E532
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF100A6E533
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1A973B0D1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:08:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290CC3B1DEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E661F3B8F;
-	Mon, 24 Mar 2025 21:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1831F3BB6;
+	Mon, 24 Mar 2025 21:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MikyyTjj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmh7hgSh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96AF13633F;
-	Mon, 24 Mar 2025 21:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA88A1DED76;
+	Mon, 24 Mar 2025 21:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742850220; cv=none; b=d98dk1WORsVuW4roS1exmbsz3mf2sf0NzHQx44ijmW7bUdOlf7eLWzUvvAobanZMpX8T/TSozrWDJ3VdFtebnfSeRZa/mbW3M+F+4UeZkh+ZSO89q08OjEc4Ppd14r2c6Ljh2CMym0ekejEjS6R9pm/YMrnOIN3f012yF6M3H9I=
+	t=1742850251; cv=none; b=Klbl46Gr8GrfLrpQeQMi5GJd48Vn8kyAfOC1hpuE0ZuMbEDW39Kefe2gjVhgsiv514tzy1Hq1Ngl7odTkypc7DazteWXodPc1AVdGlsvbkz50IsLtxxldtTp57HZScAaMyfivsClG78y5wslMRz5mSHhZyA2aC4hKGXDh0wjfsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742850220; c=relaxed/simple;
-	bh=mIpJ6gMT+yAKUPwrQwzMR5CGtCCEeyIIeIxEY+/v2zw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DPbA5DRAYPyBBmzFPOtx7CBe0Nxq4OJndIunuwrh9zOghnu1/zvmOxSPkG52rMAxAnhELCg7Vqt97NhysFAUOURGueGpIwgAhp4f71hQnwxEcEOwLh/XgDQCYqqMMsA6SqDqOiY2kUgM4DStM5qmCSMCKlWv8NQyVeNAlbuZTxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MikyyTjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBACC4CEDD;
-	Mon, 24 Mar 2025 21:03:38 +0000 (UTC)
+	s=arc-20240116; t=1742850251; c=relaxed/simple;
+	bh=o72TB1NTQ+rLH2wrbrpTZbwQ6E6S4RZ1mc9yiTyQiI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kbm3jBZ3oO9iBAxRtUOGgkRVsMFud5u7TKNCvrsgj+DG0rfXLgpEsd9tcUW43tUlq5/+gG/KQDVg/36suPaoj7BDsp+l83LAB/xS3dg0sMmM2tQO646PrSfg0hdIo4runQAX7LdMk792kBAt3nAyL+Z89tyzL147hepAOIfRrC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmh7hgSh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E57C4CEDD;
+	Mon, 24 Mar 2025 21:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742850220;
-	bh=mIpJ6gMT+yAKUPwrQwzMR5CGtCCEeyIIeIxEY+/v2zw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MikyyTjjsVGSWL/Wso1b/qhzlPQAZSOaWS2KzXM39vwQtwLLSiONl30YmPzqxKIan
-	 xVexPMxOPgcnVv01EVuG5Zcwue0K5xVLxhT/HUYpueH/RxEmDjCHjrRG5/Ernsj2ba
-	 vL8Ew403g09Er9hTSoETnPy3ldp0wM3eZW+fyoL6KPWNkA9b8XSKo6CWj97+3GKJvY
-	 Mc7lHyceaNo3MkmM/sQzOtvQUy+19pvVFp1vglL9r+nKIAs732i7uxOM6qp/FeDmLO
-	 vzJmoUsOUQTEeUCiWIxnUzzZVpLFeMMfFpVz9oYNCV2TTG/SIVDEuqtle02ipAKcmN
-	 HOeAyQbMioFDQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iommufd_driver: make IOMMUFD_DRIVER_CORE a 'bool' symbol
-Date: Mon, 24 Mar 2025 22:03:23 +0100
-Message-Id: <20250324210329.2809869-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250324210329.2809869-1-arnd@kernel.org>
-References: <20250324210329.2809869-1-arnd@kernel.org>
+	s=k20201202; t=1742850250;
+	bh=o72TB1NTQ+rLH2wrbrpTZbwQ6E6S4RZ1mc9yiTyQiI8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rmh7hgShasVbB4t238GyVkm5FFPWr5JdPrbJoUvATk6TCrWuYz81+UU86sS90/q6z
+	 3J5reJs6pkbuS5wyGvRKGcF5Aehi0ifT7QmU0TR6JjbvAUdhUy8vGK73VrZTKkU5Bh
+	 hLwVjyFREE4acfl/W3n2GvQWKWOVqYBXRp4rlEyNoa181fl6AuBPsWyKSrqJF0E/7Z
+	 7XG3vMwj8f4MkhxcfEumTaeX/GoJ7XxYsebubSU4ou7yhc/nVFt+lFGpdT899TvIkE
+	 oQkyJzpsO62O3F0LM31COnN+8erv5TngDZwZG3QAAqkJgCTs7sWP7P+Ag3BsqAx6uU
+	 vjY8Bu6GraElQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 00/10] rust: clean and enable Clippy `doc_markdown` lint
+Date: Mon, 24 Mar 2025 22:03:47 +0100
+Message-ID: <20250324210359.1199574-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,37 +64,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+This is how it would look like -- I am not sure how many false positives
+we will get, so I marked the last commit as RFC and perhaps we just want
+this lint as an opt-in in e.g. `W=2`.
 
-Calling iommufd_sw_msi() from iommu_dma_prepare_msi() in the iommu core
-code is no longer possible if the driver core is in a loadable module
-because it is now a direct call rather than a function pointer:
+However, so far, we only got one ("KUnit"), plus a couple others that
+are in C side comments that were copied, and thus someone may want to
+keep them exactly in sync. So it seems pretty OK so far.
 
-arm-linux-gnueabi-ld: drivers/iommu/iommu.o: in function `iommu_dma_prepare_msi':
-iommu.c:(.text+0x4fb4): undefined reference to `iommufd_sw_msi'
+Another question is whether we want to commit to something like the
+global list in `.clippy.toml`.
 
-This effectively makes the iommu driver core part of the iommu subsystem
-itself, so disallow building it as a loadable module.
+Anyway, please take a look -- the other commits should probably be
+picked even if we do not enable the lint.
 
-Fixes: e009e088d88e ("iommu: Drop sw_msi from iommu_domain")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/iommu/iommufd/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/iommu/iommufd/Kconfig b/drivers/iommu/iommufd/Kconfig
-index 0a07f9449fd9..2beeb4f60ee5 100644
---- a/drivers/iommu/iommufd/Kconfig
-+++ b/drivers/iommu/iommufd/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config IOMMUFD_DRIVER_CORE
--	tristate
-+	bool
- 	default (IOMMUFD_DRIVER || IOMMUFD) if IOMMUFD!=n
- 
- config IOMMUFD
--- 
-2.39.5
+Miguel Ojeda (10):
+  drm/panic: add missing space
+  drm/panic: add missing Markdown code span
+  rust: alloc: add missing Markdown code spans
+  rust: alloc: add missing Markdown code span
+  rust: dma: add missing Markdown code span
+  rust: of: add missing Markdown code span
+  rust: pci: fix docs related to missing Markdown code spans
+  rust: platform: fix docs related to missing Markdown code spans
+  rust: task: add missing Markdown code spans and intra-doc links
+  rust: kbuild: enable `doc_markdown` Clippy lint
 
+ .clippy.toml                        |  4 ++++
+ Makefile                            |  1 +
+ drivers/gpu/drm/drm_panic_qr.rs     |  4 ++--
+ rust/kernel/alloc.rs                |  4 ++--
+ rust/kernel/alloc/allocator_test.rs |  2 +-
+ rust/kernel/dma.rs                  |  2 +-
+ rust/kernel/of.rs                   |  2 +-
+ rust/kernel/pci.rs                  | 15 +++++++++------
+ rust/kernel/platform.rs             |  9 +++++----
+ rust/kernel/task.rs                 |  4 ++--
+ 10 files changed, 28 insertions(+), 19 deletions(-)
+
+--
+2.49.0
 
