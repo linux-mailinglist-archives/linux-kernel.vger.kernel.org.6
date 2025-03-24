@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-573988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E35AA6DF4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:10:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9759AA6DF51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEF83ABE35
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713B03B0EBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319672620C3;
-	Mon, 24 Mar 2025 16:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570A32620CC;
+	Mon, 24 Mar 2025 16:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihDM1Lzc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UFTK7VIn"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC2226158E;
-	Mon, 24 Mar 2025 16:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12AC25EFB8;
+	Mon, 24 Mar 2025 16:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832618; cv=none; b=secT5tmOoZjyfXb4Ec0s/pSJjTZvGi2BDxSTyqW2ZKnLmH45kMNHjDs5LDz9Gs+ySoAZI8ReBTFKTk9dVR1j63/GNiE58/Vm3essC8hk9MJjzKJ5o2SBolgYw9LO5BU4rDlX3K+vj6kvnIZEMkmZ9yP8ncDHho32fZNC6Nhqv5o=
+	t=1742832648; cv=none; b=e9Bxg8QJqz8ObjOS65mPafgGgqz05I+oJ8ijSYbvYxyMYDFX8FQJrVdhgt+niLO/s0thW/Y/1PSQnJTs5NDPWspoR9ck5DVYcQTW463W3q95NEh+7v+qHtSicAj/lbw9BjyvZRyUMbVGkPEUd9z6T/bQPQNkzNKHe+Jg0qT1yJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832618; c=relaxed/simple;
-	bh=VRNuMZ46YoefRymfk92bpusxS2YiPpYOHdDtSJvUv28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AC8FXZForh1CfzPUGtoAyvKo6eZmvZnyY7FtpeNWFQyaG7a3P5n0ImVkL7i3Qw6wSLuSgPTlq3keaqx+TNHP/OtDjdkgROfauGsHUK8NDHwC9Z8fJjEKX01yNn+7o6vla9Y8uboBxQp7KAen9OpQHx41HIfRjnDjpAGccWPrNW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihDM1Lzc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42D5C4CEDD;
-	Mon, 24 Mar 2025 16:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742832615;
-	bh=VRNuMZ46YoefRymfk92bpusxS2YiPpYOHdDtSJvUv28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihDM1LzcyF7ntp/L6yv553qVXhlfA2d21lvEo2ba33p7z5XZxNhVG6BXieL8rA0rf
-	 hHLHAn1CFEkTehALove7hl1eijCG/cuefvE6IIEkdGJhIyS+RTSk0GYtnrsl6Kct3U
-	 mCNRwfIym40mhLadEy6sXjEUdJAEPY3+bKQSpIx0VHlikBVxrVnguI5PNp5cL54NWi
-	 QzIu9/OYTN3o74c3AxAxILmJ1QhagtOTQKTMVgljsQ6SM4TLwwaztInWEbgS5hL2A1
-	 A2jEUCr3mRkcx6mhlPcKEUuF0FIc8iu1iM4UdFPPPlY6WRM+jJeJfYDg253Jp8JA43
-	 Op41GcNd0aiMQ==
-Date: Mon, 24 Mar 2025 11:10:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <goran.radni@gmail.com>
-Cc: Goran =?utf-8?B?UmHEkWVub3ZpxIc=?= <gradenovic@ultratronik.de>,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] dt-bindings: arm: stm32: Document Ultratronik's
- Fly board DT binding
-Message-ID: <174283261429.162935.4991717491782236222.robh@kernel.org>
-References: <20250321111821.361419-1-goran.radni@gmail.com>
- <20250321111821.361419-4-goran.radni@gmail.com>
+	s=arc-20240116; t=1742832648; c=relaxed/simple;
+	bh=Gu2l2JLxMDCWKF/ck8d4RiqN/9CsaCC/fejEKfEzVwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W3s46qwI5dnyD9D/Aee50waFPXf8lg4E7iV2rKn/m/lo+rjSEbRzokEthoU2wdDq6W7Hpo0RoSQYOpmJL3xqid6Ho1+NzAbWit+AeQFzaGnLQX9lJlrhhsiKzGxZeLNqtquTCGKin8yQXgkX3b5mZQvb8Dl9Ip8d+g0qPPtoMgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UFTK7VIn; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742832644;
+	bh=Gu2l2JLxMDCWKF/ck8d4RiqN/9CsaCC/fejEKfEzVwk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UFTK7VIn1/I5hwkLfw1XtFbanIRysbesCsb7Fc5V2u10bJp47QKQJzMxNFMd5F+YQ
+	 akSezJjNHkk1SM7F6Yg74KtRyeXn1RjJr5dXTsjZavrUokJhiDalxFZs1qUAziHsic
+	 ltV6lzA8gJpa7SZF32lROzTPIL01r4ystflTk419bzbr294SJTQjVxwl3jneu+1hQX
+	 3VW21ug4qlj7uAjAIKJqFir6xaRJPgUdCpLZ8lYDmNSM1YW8HcSjjV+iibRNwiv2i8
+	 ZPwUOohPHhlJp7A4KR/uyhGj4f9R2Jaj3N7QaBl/FVdM04PIxxijVdBOkc0ijYn6MB
+	 U1BpVWajMgaiA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D517417E0A50;
+	Mon, 24 Mar 2025 17:10:42 +0100 (CET)
+Message-ID: <d4af318b-1bdf-4abd-842d-461a763b79a4@collabora.com>
+Date: Mon, 24 Mar 2025 17:10:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321111821.361419-4-goran.radni@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] pinctrl: mediatek: Add pinctrl driver on mt8196
+To: Cathy Xu <ot_cathy.xu@mediatek.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Lei Xue <lei.xue@mediatek.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ yong.mao@mediatek.com, Axe.Yang@mediatek.com, Jimin.Wang@mediatek.com,
+ Wenbin.Mei@mediatek.com, Guodong Liu <guodong.liu@mediatek.com>
+References: <20250321084142.18563-1-ot_cathy.xu@mediatek.com>
+ <20250321084142.18563-4-ot_cathy.xu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250321084142.18563-4-ot_cathy.xu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Il 21/03/25 09:39, Cathy Xu ha scritto:
+> From: Guodong Liu <guodong.liu@mediatek.com>
+> 
+> Add pinctrl driver support for MediaTek Soc mt8196.
+> 
+> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
+> Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
 
-On Fri, 21 Mar 2025 12:18:18 +0100, Goran Rađenović wrote:
-> From: Goran Rađenović <gradenovic@ultratronik.de>
-> 
-> This commit documents ultra-fly-sbc devicetree binding based on
-> STM32MP157 SoC.
-> 
-> Signed-off-by: Goran Rađenović <gradenovic@ultratronik.de>
-> ---
->  Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
