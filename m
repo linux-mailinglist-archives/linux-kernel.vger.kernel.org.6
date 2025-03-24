@@ -1,78 +1,152 @@
-Return-Path: <linux-kernel+bounces-573761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC58A6DBCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:41:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548FDA6DBD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:42:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0760B18864DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B833ADFF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F5725F983;
-	Mon, 24 Mar 2025 13:39:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B3C25E460;
+	Mon, 24 Mar 2025 13:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ou7ZU8Lb"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3965925F7AC;
-	Mon, 24 Mar 2025 13:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D138A25EFB4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823565; cv=none; b=R3FXFmrppb0IR5o0M3SpeWBF7H1v9AI+Fm8MORDHQupUpivM1UuZKql04TqQF8oTCH3j4XfPO8oDm/rBgXT2x6SOzoZUhMrDdwSy8yrU1zlKVAi3XmXUD3w/U3lytvidQBKwgDqHfNg+cc4maH5L26u2JqOaofY/gfZhCFIJEPo=
+	t=1742823688; cv=none; b=BVfwYhuQWLpW6zieCGBEbS4OT5u0Ply2/DkPy20zHftbf1IgWCQ9T/Pwu/YU+l4iNovp0bj4RDYgbp+KlteAcdMK2aejm0QyqYklssVi0hgsFlAXQYlV0DaddPMrZ8OQSXUFMSQec60aSXZILGco7nxVV9r4ZrSuN8is/nd+8xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823565; c=relaxed/simple;
-	bh=EzpZ5jy/OB0YYBQlrkWGvh1GOdX8+dvl0ffEE/Sm/+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C8MmK83YavMNYXiMwN8X6pxuPUIaDvBuLGH8qJ+QXEDhNJnWmyAmo7WmdreZocnscnqVS3Mb0DAo+dCzpPUmK2SEbRHkRFU2EsgL3aQnl+DyKujJwWSU8QfkpiTx4BToC9sQNRFU6YYVJcUSBWqzeRyYa/gvHN6Iv4pASDQ2RNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007D9C4CEE9;
-	Mon, 24 Mar 2025 13:39:23 +0000 (UTC)
-Date: Mon, 24 Mar 2025 09:40:05 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Douglas Raillard <douglas.raillard@arm.com>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Fix synth event printk format for str fields
-Message-ID: <20250324094005.045cd547@gandalf.local.home>
-In-Reply-To: <a5af352b-9f0d-4280-8d7b-e72597e6265d@arm.com>
-References: <20250318180939.227696-1-douglas.raillard@arm.com>
-	<20250319211858.6d8166e3fb202e6e5a658557@kernel.org>
-	<9d234136-05b9-46b6-849f-901df83bf54c@arm.com>
-	<20250324144551.fc290f9cf9f57b3d2f205354@kernel.org>
-	<a5af352b-9f0d-4280-8d7b-e72597e6265d@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742823688; c=relaxed/simple;
+	bh=NoaI0VIXS9nDnrTt+JbrnYNyk4JDEUMVi5yyzjmnMZs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=giQ3EGWL5DIjlbm+mUocY9Evc+a3QV9g7MHBRslQoexdWBlKpPJQJHgntHVYlIVwcvrowhQxDguFDKUImSsF3/l+D5YLne0HmcQG+4SxPu3/xtQutCzodXdF+NanBDOIzn3NXzzR6IM6GZ2EzZNybwbisF8zGj9P0ZqYB17y1S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ou7ZU8Lb; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22406ee0243so54714865ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:41:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742823686; x=1743428486; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOMUBa0uAqlf20qeqn3I3utJD4aHpZ+FGIRL3z6psP8=;
+        b=ou7ZU8LbVY/7W2aEhi1Upbob78ioGSWTh4lyohHgOV+r4Lvzo/p0DS/NddMqrr8IZl
+         QufYtYD3qxfTaXUHwk993jzmLQ+KWMPsHxu749JqhehLGRBQ87lZTiO1BjqZjkojBmu5
+         sXFsAJmaqI9/pWtV235012MCBg8gU7lk4llYecCT2VU4etfrj1aXiwWwS3GSCPyfDswb
+         7wzgwn/NHNcqXSeRRZmXqMttRY6nNaMEjG3XqRNfXjFj1jX0j4i/v1E3jU202fKjosVt
+         z0875nloLPHowiLGf3ntuvPgT6HIu9N6HJ+pqkivnzpakCA/isAog66SiIsy15tkAGGp
+         ENwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742823686; x=1743428486;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOMUBa0uAqlf20qeqn3I3utJD4aHpZ+FGIRL3z6psP8=;
+        b=OiYC7O6sNXWkVtmQQAq/6ySLWXf2mb+CUgs3QoeIIcFCWMLjkuT4Zwuntk/GJj+b8o
+         Bz8ukD1AS9tZPgM6rOYA/SYg/3/k7t8cogfieyQKy20YH7HdsayZa3GyQ/D8oPZWekxC
+         lkMwgX/lLbCdl++NMhCHnj8g11vvyBOAZ+xMOSmAdXYdfWl4rAvD9iB32FzsiJu+cC3i
+         rhwg7qc6FU3BZCvqWUe6qGbH84g+cYuKPkmKgNyLKcbyqEMCipbd2Cze17N2XKSuFgPj
+         N/uPlQjn2vyO3+jsv01kYp+1TgL0r1No0NMqdULN3J10lxfMaqkN0aMePTyiZdm4NVWG
+         qfOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWd3FWCS23BVIveugMZ2OiRSmreR+nQFCLn66zp8J/hr/5mkTCPRF0uIeOmHjjiYhMi43KhWzoZUH+uQxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4wDCq/kxe3r5zPstqYywviSv1QVX32Zuqy5gKXfvrhc7rKFVH
+	JFmQTX7K+EQ80id02442Sx7k6dYOj3fM/J8/nbVcan0LLwHPa0vniUSN5Ag+j6GvUp4hevbzTnC
+	+RA==
+X-Google-Smtp-Source: AGHT+IF1FB4A8qFLi8Ozqi3+nCx7rU7glmRRUDo35MhMjgvHg/5rVBEXCQVZGbO5vn6nku0l/wkKqu1AtRw=
+X-Received: from plsu3.prod.google.com ([2002:a17:902:bf43:b0:223:f487:afc6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc4f:b0:223:60ce:2451
+ with SMTP id d9443c01a7336-22780c7b70emr208367505ad.15.1742823686205; Mon, 24
+ Mar 2025 06:41:26 -0700 (PDT)
+Date: Mon, 24 Mar 2025 06:41:24 -0700
+In-Reply-To: <Z+ElLSmJHkBqDPIT@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250320142022.766201-1-seanjc@google.com> <20250320142022.766201-4-seanjc@google.com>
+ <Z9xXd5CoHh5Eo2TK@google.com> <Z9zHju4PIJ+eunli@intel.com>
+ <Z93Pv0HWYvq9Nz2h@google.com> <Z+ElLSmJHkBqDPIT@intel.com>
+Message-ID: <Z-FhBHJW2cJb9eZG@google.com>
+Subject: Re: [PATCH v2 3/3] KVM: x86: Add a module param to control and
+ enumerate device posted IRQs
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 24 Mar 2025 10:18:50 +0000
-Douglas Raillard <douglas.raillard@arm.com> wrote:
-
-> > https://lore.kernel.org/all/b6bdb34e70d970e8026daa3503db6b8e5cdad524.1601848695.git.zanussi@kernel.org/T/#u
-> > 
-> > So, I think it should always print the STR_VAR_LEN_MAX value.  
+On Mon, Mar 24, 2025, Chao Gao wrote:
+> On Fri, Mar 21, 2025 at 01:44:47PM -0700, Sean Christopherson wrote:
+> >On Fri, Mar 21, 2025, Chao Gao wrote:
+> >> On Thu, Mar 20, 2025 at 10:59:19AM -0700, Sean Christopherson wrote:
+> >> >@@ -9776,8 +9777,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+> >> >        if (r != 0)
+> >> >                goto out_mmu_exit;
+> >> > 
+> >> >-       enable_device_posted_irqs &= enable_apicv &&
+> >> >-                                    irq_remapping_cap(IRQ_POSTING_CAP);
+> >> >+       enable_device_posted_irqs = allow_device_posted_irqs && enable_apicv &&
+> >> >+                                   irq_remapping_cap(IRQ_POSTING_CAP);
+> >> 
+> >> Can we simply drop this ...
+> >> 
+> >> > 
+> >> >        kvm_ops_update(ops);
+> >> > 
+> >> >@@ -14033,6 +14034,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
+> >> > 
+> >> > static int __init kvm_x86_init(void)
+> >> > {
+> >> >+       allow_device_posted_irqs = enable_device_posted_irqs;
+> >> >+
+> >> >        kvm_init_xstate_sizes();
+> >> > 
+> >> >        kvm_mmu_x86_module_init();
+> >> >
+> >> >
+> >> >Option #2 is to shove the module param into vendor code, but leave the variable
+> >> >in kvm.ko, like we do for enable_apicv.
+> >> >
+> >> >I'm leaning toward option #2, as it's more flexible, arguably more intuitive, and
+> >> >doesn't prevent putting the logic in kvm_x86_vendor_init().
+> >> >
+> >> 
+> >> and do
+> >> 
+> >> bool kvm_arch_has_irq_bypass(void)
+> >> {
+> >> 	return enable_device_posted_irqs && enable_apicv &&
+> >> 	       irq_remapping_cap(IRQ_POSTING_CAP);
+> >> }
+> >
+> >That would avoid the vendor module issues, but it would result in
+> >allow_device_posted_irqs not reflecting the state of KVM.  We could partially
 > 
-> That makes sense. It's tempting to keep the actual length value though as native Rust strings are not null-terminated, so
-> it could make it nicer to emit events from Rust code. From a cursory look, the in-tree Rust code seems to be using both
-> &str and &CStr (the latter being null-terminated for FFI needs) so I'm not sure what's the plan around those
-> and what's the established convention if any.
+> Ok. I missed that.
 > 
-> > Steve, can you check it?
+> btw, is using module_param_cb() a bad idea? like:
+> 
+> module_param_cb(nx_huge_pages, &nx_huge_pages_ops, &nx_huge_pages, 0644);
+> 
+> with a proper .get callback, we can reflect the state of KVM to userspace
+> accurately.
 
-So I did take this patch, but thinking about this more, I may remove it.
+It's not a bad idea, but it comes with tradeoffs too.  A little bit more code,
+but more importantly enable_device_posted_irqs wouldn't reflect KVM's internal
+state, which could result in bugs if KVM were to check the module param directly.
+I don't think that'd be likely to happen, but given that pretty much every other
+"simple" param in KVM reflects KVM's state directly, it'd be an easy mistake to
+make.
 
-The __get_str() doesn't expect a string end. The parser should limit it, as
-the length of the string is saved in the ring buffer. Just like other trace
-events where dynamically size strings only use "%s" and __get_str().
-
-I think the real fix is to replace the "%.*s" with "%s".
-
--- Steve
+That, and being able to set toggle the param when reloading the vendor module is
+actually valuable, as there are setups where kvm.ko is built-in, but the vendor
+modules are not.
 
