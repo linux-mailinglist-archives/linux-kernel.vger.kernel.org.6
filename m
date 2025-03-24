@@ -1,223 +1,139 @@
-Return-Path: <linux-kernel+bounces-574249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1B9A6E293
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:43:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C138A6E295
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0833169232
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3546D188EED0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFCE264F8A;
-	Mon, 24 Mar 2025 18:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5590B264FB4;
+	Mon, 24 Mar 2025 18:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="XwVZMftb"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yx3L5YMY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A5C261568
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8F9261568
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742841806; cv=none; b=SMS8XqyYOMrgHJ5lTKbpP4Z66HpCyplHUFmRkFdOkevydvIraqCyT+0U1YAz/7NbPKxettqehLnITi4mR/i4togSlCh3Y0sPSFibRWRGTMUAu7H+1CTD4KFvc2Ry4xzmSU5nG4UBs29bWSckxuXyi+m/QKcnV3xddaxhCbuQkFU=
+	t=1742841813; cv=none; b=O0HGbavfP9lZaLfXoOeKBi/OKewIBoVZZ8//j3XkXnGe/n5rFNvXDx4xgTwDx/cGwum+pAlJFYHQtfnhFaZSYE8rDMv6KsKFAW1bXQcV3jpwMoOwmaK1J6tIMPL+8fmtM3JaoQWhLmZ45YP8/8NQukI9iL/rT86nPLHhJG8aN9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742841806; c=relaxed/simple;
-	bh=DyPdR8XejOdJArHhChOKI1F1uccExW7lMxKjafwnONI=;
+	s=arc-20240116; t=1742841813; c=relaxed/simple;
+	bh=a/60Gz2XcnfG+t3/f2uLSscvy4uBkeNMSaylO44euTw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Au5q3oXR/ExJZc/AIPyPV+QZS3iK/HVERTV6h6AZ6PfnC3ho+C0ND1ixkvHUqoVtnT/2p2Qe/i3rsfhpsl/l73jlR1nGg5YQ03N/RP8QaHg0lXZ+kA3yfYRTrDE1hzKAU1aPrLyKXYVsQBYB0oKYq4z50K7F4deApvEy4cMcxQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=XwVZMftb; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	 Content-Type:Content-Disposition:In-Reply-To; b=lU7pMo2S/XRcsWveBJ4Ka5AmyP/b7lEHUpWbRnbMyPM4kYBEkiBu2MCM2fJryHrl2FXtBoR5VMX/loCjvOPn5CiBQJvCRtBjQTJpkJWybg4YA3S2ir0wpUP25KiCg/yX7+Bs7XYPdXVlz+dmuzPKS90DozhtjzYe25JCA93Qseo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yx3L5YMY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742841811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dirlrC9HUIJwMMcxh44t00bYDCSz1022lqmCTgSxUDs=;
+	b=Yx3L5YMYyE+/JHSJ9kNvUrd/UyxOzDd+LJqEypOoPPrZ5Sy1wtYUiPg2BgIkbpZKryYyEI
+	wx5c5oI2UQxU9qNcKoS1SrcBjejE4A1b4YIyLWrx6X1XtrdZdX6Zl1LazK6MlQdufaCmU1
+	6cfXGHZomhy06IrzQlJbzNERkz5PR18=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-7rcx0zzhPKixMjC_goCYWA-1; Mon,
+ 24 Mar 2025 14:43:27 -0400
+X-MC-Unique: 7rcx0zzhPKixMjC_goCYWA-1
+X-Mimecast-MFC-AGG-ID: 7rcx0zzhPKixMjC_goCYWA_1742841805
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 73FBE3F46B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742841801;
-	bh=bmsw4ewzcXLmD+pkXVGwFfrm6ow1zJu7eLFjnQrlG3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=XwVZMftbXu33p987QScv1DFwyCH/D1i8TOqE6FJaOG6YD/k02o2jnArAK8OpP13Lk
-	 b6wEqgQKYqkQCBeLbx0hunBkytERir0RZXQR+qtoPPk14Wcek3upEZr5Vwvk4nZ3HT
-	 5XByMnsTk4iV04jn5FmETXx5Vr5p0C0CHPmxLTTlhpzvz/W8iuD+guUnqBg+1eanVg
-	 0xCrGc5+BVHYE3tEyd23UxvhQq8R+jvq66HcnNKLjyLg8d8crFv68E3Ehzqbt0qixp
-	 V0KyXJvygEt0HK2rl8Yw4StMmIAQLLBS8MmkgQVJbmjCTmLWS9kEP8huG7ZHD5swSC
-	 w62LM81cuJ1Ng==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac297c7a0c2so356096366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:43:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742841801; x=1743446601;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bmsw4ewzcXLmD+pkXVGwFfrm6ow1zJu7eLFjnQrlG3k=;
-        b=NZp6otT+ne7jS2RhGf15aPB2LH28cv2Cg8b/rTjQaPxfzGD1TELkWJtVgDWsvP0E2b
-         YPbQuoAF5Kb7RZem9Hhbz8qE/z0w4knMQQVcJK9gnpNZkGrxVokT63dcrOtTLXWct/Rh
-         eCfIANhhxBFq2ke1gleRBU1LFtmJ2M4bI2XZuf/655KZrSMPuCab6pI2SzrBuVD9UNvS
-         frhobO9WvM6N5izEbQoekJTa6eAUbZnbas2PcIXp00kRhTemIn7lD6eP4gaqzaCdcPle
-         o1EmelFDdIN7ZqrVAFnByGSMg1Qckg+grlN0uD8SDULbaK+JLQ2p4k2mOt189VivUBno
-         WnVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtRn6pLKLlRteYVNjbk7ye6v7Pr3ckJAYv4Deh48Ch108EljnJ/KQc7QqNT0E39wAX5WjpsYtPASMx3Ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsItCm+DJxCGs6sFkNPH9m6CvBIJoFXPZF6dvO31G5BOBFmXKa
-	8R1BPaXggpama4f+TPOFiKeByEzMsZGkxaFPVw900Ahlc3ufNWEgL/VGv9V1YjrhOs7SATr23qP
-	JJej1f3gAZPcbkKNwdaGhBqux2W0pikN5QPGlo5xMcX5IfHwSMDgUPWJkCDKwl7b3f+a/qyGIWN
-	UB+g==
-X-Gm-Gg: ASbGncsVqjA+eTxXBk3XC3uPJIS0Y+P1yFEdWPoF9EmFgo+JVwNiEWazyJzVGWl5maK
-	0FpxvVkAYs7uoMO5Dz8ZPcFM635rW+mmVTMUZQjWSvyR20sIGekxLfTNrpZGuKX6tiYM49mWx6d
-	mh9ijVhFNAcFAPriRx0zo/WIL8VyHh2cRqONA5EbVjgS88zG1z+LB1Zmt2HdmCAznnr1O11nZ5v
-	XgnCJhvtyO+dUnDtOpVwDA1s1UqLHTESOYsfkNS9AdMuvMNfcDTnQDxo2FwoBrd6sWci18Eu3w2
-	qOeSij4ZGRHBpSDgSU0=
-X-Received: by 2002:a17:907:da4:b0:ac1:e332:b1f5 with SMTP id a640c23a62f3a-ac3f2502f3amr1331213766b.37.1742841800704;
-        Mon, 24 Mar 2025 11:43:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHB+I+1R+JqYek+Q0I5+9nDVaAEO0lpIglG7jRbh+7uyr3OSYJUS/du9QNLk3uBN/js20IAkQ==
-X-Received: by 2002:a17:907:da4:b0:ac1:e332:b1f5 with SMTP id a640c23a62f3a-ac3f2502f3amr1331210066b.37.1742841800156;
-        Mon, 24 Mar 2025 11:43:20 -0700 (PDT)
-Received: from localhost ([176.88.101.113])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb6483fsm721247366b.112.2025.03.24.11.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 11:43:19 -0700 (PDT)
-Date: Mon, 24 Mar 2025 21:43:18 +0300
-From: Cengiz Can <cengiz.can@canonical.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
-	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
- <2025032402-jam-immovable-2d57@gregkh>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6682D1956067;
+	Mon, 24 Mar 2025 18:43:25 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.81.75])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B75F30001A1;
+	Mon, 24 Mar 2025 18:43:23 +0000 (UTC)
+Date: Mon, 24 Mar 2025 14:43:20 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Filipe Xavier <felipeaggger@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH v2 2/2] selftests: livepatch: test if ftrace can trace a
+ livepatched function
+Message-ID: <Z+GnyGJxRFHhQR6U@redhat.com>
+References: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
+ <20250318-ftrace-sftest-livepatch-v2-2-60cb0aa95cca@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025032402-jam-immovable-2d57@gregkh>
-User-Agent: NeoMutt/20231103
+In-Reply-To: <20250318-ftrace-sftest-livepatch-v2-2-60cb0aa95cca@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 24-03-25 09:17:05, Greg KH wrote:
-> On Mon, Mar 24, 2025 at 07:14:07PM +0300, Cengiz Can wrote:
-> > On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
-> > > Hi
-> > > 
-> > 
-> > Hello Salvatore,
-> > 
-> > > On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
-> > > > Syzbot reported an issue in hfs subsystem:
-> > > > 
-> > > > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-> > > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> > > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> > > > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
-> > > > 
-> > > > Call Trace:
-> > > >  <TASK>
-> > > >  __dump_stack lib/dump_stack.c:94 [inline]
-> > > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> > > >  print_address_description mm/kasan/report.c:377 [inline]
-> > > >  print_report+0x169/0x550 mm/kasan/report.c:488
-> > > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
-> > > >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
-> > > >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
-> > > >  memcpy_from_page include/linux/highmem.h:423 [inline]
-> > > >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> > > >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> > > >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
-> > > >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
-> > > >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
-> > > >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-> > > >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-> > > >  __do_sys_mkdir fs/namei.c:4300 [inline]
-> > > >  __se_sys_mkdir fs/namei.c:4298 [inline]
-> > > >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-> > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > > RIP: 0033:0x7fbdd6057a99
-> > > > 
-> > > > Add a check for key length in hfs_bnode_read_key to prevent
-> > > > out-of-bounds memory access. If the key length is invalid, the
-> > > > key buffer is cleared, improving stability and reliability.
-> > > > 
-> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
-> > > > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> > > > ---
-> > > >  fs/hfs/bnode.c     | 6 ++++++
-> > > >  fs/hfsplus/bnode.c | 6 ++++++
-> > > >  2 files changed, 12 insertions(+)
-> > > > 
-> > > > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-> > > > index 6add6ebfef8967..cb823a8a6ba960 100644
-> > > > --- a/fs/hfs/bnode.c
-> > > > +++ b/fs/hfs/bnode.c
-> > > > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
-> > > >  	else
-> > > >  		key_len = tree->max_key_len + 1;
-> > > >  
-> > > > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
-> > > > +		memset(key, 0, sizeof(hfs_btree_key));
-> > > > +		pr_err("hfs: Invalid key length: %d\n", key_len);
-> > > > +		return;
-> > > > +	}
-> > > > +
-> > > >  	hfs_bnode_read(node, key, off, key_len);
-> > > >  }
-> > 
-> > Simpler the better. 
-> > 
-> > Our fix was released back in February. (There are other issues in our attempt I
-> > admit).
-> > 
-> > https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
-> > 
-> > If someone can pick this submission, I will be happy to replace our version.
+On Tue, Mar 18, 2025 at 06:20:36PM -0300, Filipe Xavier wrote:
+> This new test makes sure that ftrace can trace a
+> function that was introduced by a livepatch.
 > 
-> any specific reason why you didn't submit this upstream?  Or did that
-> happen and it somehow not get picked up?
-
-It was mentioned by the researchers that previous attempts were unanswered. I
-didn't question the validity of that statement.
-
-I received excerpts from a private email communication indicating that the
-HFSPlus filesystem currently has no maintainers, and that at least one of the
-decision-makers does not consider filesystem corruption flaws to be particularly
-sensitive.
-
-Re-sharing this publicly on linux-fsdevel probably won't get picked up and would
-definitely put Ubuntu users at risk, as we were the only ones shipping the
-'enabling' policy lines at org.freedesktop.udisks2.filesystem-mount. 
-
-So I proceeded with downstream fix and we released the fix before announcement
-date.
-
+> Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+> ---
+>  tools/testing/selftests/livepatch/test-ftrace.sh | 34 ++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
 > 
-> And why assign a CVE for an issue that is in the mainline kernel, last I
-> checked, Canonical was NOT allowed to do that.
+> diff --git a/tools/testing/selftests/livepatch/test-ftrace.sh b/tools/testing/selftests/livepatch/test-ftrace.sh
+> index fe14f248913acbec46fb6c0fec38a2fc84209d39..4937c74de0e4d34e4e692f20ee2bbe3cd6f5a232 100755
+> --- a/tools/testing/selftests/livepatch/test-ftrace.sh
+> +++ b/tools/testing/selftests/livepatch/test-ftrace.sh
+> @@ -61,4 +61,38 @@ livepatch: '$MOD_LIVEPATCH': unpatching complete
+>  % rmmod $MOD_LIVEPATCH"
+>  
+>  
+> +# - verify livepatch can load
+> +# - check if traces have a patched function
+> +# - reset trace and unload livepatch
+> +
+> +start_test "trace livepatched function and check that the live patch remains in effect"
+> +
+> +FUNCTION_NAME="livepatch_cmdline_proc_show"
+> +
+> +load_lp $MOD_LIVEPATCH
+> +trace_function "$FUNCTION_NAME"
+> +
+> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
+> +	log "livepatch: ok"
+> +fi
+> +
+> +check_traced_functions "$FUNCTION_NAME"
+> +
+> +disable_lp $MOD_LIVEPATCH
+> +unload_lp $MOD_LIVEPATCH
+> +
+> +check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
+> +livepatch: enabling patch '$MOD_LIVEPATCH'
+> +livepatch: '$MOD_LIVEPATCH': initializing patching transition
+> +livepatch: '$MOD_LIVEPATCH': starting patching transition
+> +livepatch: '$MOD_LIVEPATCH': completing patching transition
+> +livepatch: '$MOD_LIVEPATCH': patching complete
+> +livepatch: ok
+> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
 
-This was not ideal, you're right. It should be assigned by kernel.org.
+A few months ago, 637c730998b8 ("selftests: livepatch: rename
+KLP_SYSFS_DIR to SYSFS_KLP_DIR") tweaked the functions.sh::SYSFS_KLP_DIR
+and then updated all of the test-*.sh scripts to use the variable
+instead of the spelled out "/sys/kernel/livepatch" string.
 
-> 
-> Please work to revoke that CVE and ask for one properly.
+So if there if there is another patchset version,
+s/\/sys\/kernel\/livepatch/$SYSFS_KLP_DIR/g
 
-Will do. Thanks.
+-- Joe 
 
-In the meantime, can we get this fix applied?
-
-> 
-> thanks,
-> 
-> greg k-h
 
