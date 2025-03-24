@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-573334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BF7A6D5D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:07:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820D6A6D5E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DF01892D87
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:07:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0013AE2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A3A2512D8;
-	Mon, 24 Mar 2025 08:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D4125C71F;
+	Mon, 24 Mar 2025 08:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAWJ+i9/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjOSF9Id"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345DD2054F9;
-	Mon, 24 Mar 2025 08:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B382505C3;
+	Mon, 24 Mar 2025 08:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742803604; cv=none; b=Jf2Yv7Q5BoIpfrKfeNJ/680aBCjcKu05efcSv3LxPKGxGSc3vBQoJlMZivJZdJ+BHdfK7OIBX7TklKqAvx7t1mDoJRHwiGlpauu908P/t9et3lcXGLfnFuQFnByOzsLObP2Qa6CkzPjyBL7bjysF4X7sYz3u4ln+NnZSYlcM1kc=
+	t=1742803719; cv=none; b=TFGZmy9Or2A72ql9nstWdpgc7elcLw+q6AYBYihqr+799bGGX43ZdYYz7smbGFrDMyeI5tlMLozKhoEGRoJqcD4IFKDiX5xiqD7CB/BJYyQT9yvlZV1wQpLi0jgdXqJAABh54bRPb9tSQ7vinFXosPeXPJlzSlc8QveO4QWzSoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742803604; c=relaxed/simple;
-	bh=ZK89vsBV5uED0rXLzoj209yPUF+EwAtwLwv58tQL5Kw=;
+	s=arc-20240116; t=1742803719; c=relaxed/simple;
+	bh=XQaE6rjkOH/E76NaiDGoVIFy4iawccC3XvnuHWOp+vM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbwlqIV12/edfPe29+VQMyi6mFrn7kH7qnYUfNu4adquTzia1GmdXYWW5JXZLviNtAbdllpeqMyuGMHTwxXU/1/Jh5e7j6ka20yo697fVWgw9S9mHQIpdUZnfXxa3fpUGqQyFdYh99Iw1BT6M8BAe6x+WNYos1lTf89gsoc8m6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAWJ+i9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20A71C4CEDD;
-	Mon, 24 Mar 2025 08:06:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgMs6fT5p6ZgFzJpQ/y8hp8U3p9daJjabN985g7CVj2HaqVipSGCCEMjvgqiFvLeICYCwwOWSF2ymV7ykigDursqnuz/X5Enn8HSK5vH9uTDRytYy714crwZ5zxfBBW5RXF46BqcMXWGjpfA2PrLT8T5jvYMB0J9WllEzqlUlZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjOSF9Id; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5864C4CEDD;
+	Mon, 24 Mar 2025 08:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742803603;
-	bh=ZK89vsBV5uED0rXLzoj209yPUF+EwAtwLwv58tQL5Kw=;
+	s=k20201202; t=1742803718;
+	bh=XQaE6rjkOH/E76NaiDGoVIFy4iawccC3XvnuHWOp+vM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eAWJ+i9/oEEBn99JCkz5k0VgD53RE/en/8HESNnd52viVQi8EBSgoHb8eR+Vr15N1
-	 DNzIKa58kYmqozeCYq45xLzt11vyrsYOeGQr42Oe0Ju1b4GEJppllreAhN+sUbgj+F
-	 irpcKIOVWJ/LHGJDa3uYitAQLYERFAIsJlKwjRNfIad3VD+GQSmccyhdDqkup6y1va
-	 I0XY4CM83FCBJ9/NHJ0UsX1LYKVP7PzKYBDJEZiyhl6pJbbEdEVTTkc8NHIL9WPtZl
-	 /thdeCChPm0VnR5s6CpuQsc9a4vncbixWA43Q5NUPmb1Ohu5AMD3nRnqYzV414BPg1
-	 gLL+uFtDNgjPw==
-Date: Mon, 24 Mar 2025 09:06:40 +0100
+	b=MjOSF9IdWrkOwNvNnwBkaqJi/a0+B9YPlAU5R2+N9Jt5Z+/sf+vxnSmXELwohrUuW
+	 /zVXSoFYM1GelnurfQfJWS2QJY8HE/wW+7R8ZiA80+se90X8TFWmsPhci4ISoHPuKo
+	 DeMrYlfyQR2mdzWi3lW0uh4c7hfJK7zN5rrjPeNuawlh7papOmbYwNBBuYNx0sus7M
+	 Hz2w82AmgVQXEawmO/4GbU5RV8pc5/T2O955PYMRujE83qQdHuB03wJ5Ab2puotM1N
+	 j3aBSvIndcz8pS29Hd6xoJ9K72TLoLqEs7gbcjrfBAdNegv8K8qnw0WHDDFVuiuEMs
+	 tXK2k8sIpb4CA==
+Date: Mon, 24 Mar 2025 09:08:34 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
-	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	cassel@kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, michal.simek@amd.com, bharat.kumar.gogada@amd.com, 
-	thippeswamy.havalige@amd.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: PCI: xilinx-cpm: Add reset-gpios for
- PCIe RP PERST#
-Message-ID: <20250324-successful-aquatic-pudu-5a3cdb@krzk-bin>
-References: <20250321114211.2185782-1-sai.krishna.musham@amd.com>
- <20250321114211.2185782-2-sai.krishna.musham@amd.com>
+To: Sergio Perez <sergio@pereznus.es>
+Cc: Tomasz Duszynski <tduszyns@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: light: bh1750: Add reset-gpios
+ property
+Message-ID: <20250324-massive-dancing-sidewinder-bd51b3@krzk-bin>
+References: <20250321161609.3662-1-sergio@pereznus.es>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,55 +60,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250321114211.2185782-2-sai.krishna.musham@amd.com>
+In-Reply-To: <20250321161609.3662-1-sergio@pereznus.es>
 
-On Fri, Mar 21, 2025 at 05:12:10PM +0530, Sai Krishna Musham wrote:
-> Introduce `reset-gpios` property to enable GPIO-based control of
-> the PCIe RP PERST# signal, generating assert and deassert signals.
-> 
-> Traditionally, the reset was managed in hardware and enabled during
-> initialization. With this patch set, the reset will be handled by the
-> driver. Consequently, the `reset-gpios` property must be explicitly
-> provided to ensure proper functionality.
-> 
-> Add CPM clock and reset control registers base (`cpm_crx`) to handle
-> PCIe IP reset along with PCIe RP PERST# to avoid Link Training errors.
-> 
-> Add `cpm_crx` property between `cfg` and `cpm_csr` as required. Absence
-> of this property results in an ABI break.
-> 
-> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
-> ---
-> Changes for v5:
-> - Remove `reset-gpios` property from required as it is already present
->   in pci-bus-common.yaml
-> - Update commit message
-> Changes for v4:
-> - Add CPM clock and reset control registers base to handle PCIe IP
->   reset.
-> - Update commit message.
-> 
-> Changes for v3:
-> - None
-> 
-> Changes for v2:
-> - Add define from include/dt-bindings/gpio/gpio.h for PERST# polarity
-> - Update commit message
-> ---
->  .../bindings/pci/xilinx-versal-cpm.yaml         | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> index d674a24c8ccc..293df91d4e74 100644
-> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> @@ -24,15 +24,17 @@ properties:
->      items:
->        - description: CPM system level control and status registers.
->        - description: Configuration space region and bridge registers.
-> +      - description: CPM clock and reset control registers.
+On Fri, Mar 21, 2025 at 05:16:08PM +0100, Sergio Perez wrote:
+> +  reset-gpios:
+> +    description: GPIO connected to the DVI reset pin (active low)
+> +    maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -36,9 +40,12 @@ examples:
+>        #address-cells = <1>;
+>        #size-cells = <0>;
+>  
+> +      #include <dt-bindings/gpio/gpio.h>
 
-Nothing improved.
+This goes upper. Please open any other bindings to see how it is done.
+
+With fixed placement:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
 Best regards,
 Krzysztof
