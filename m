@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-573719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3E3A6DB6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:28:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E0CA6DB74
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625BB3AEBB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D253B3497
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BE925F783;
-	Mon, 24 Mar 2025 13:27:43 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73A225F784;
+	Mon, 24 Mar 2025 13:29:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F02925EF81;
-	Mon, 24 Mar 2025 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983625DB03;
+	Mon, 24 Mar 2025 13:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822862; cv=none; b=ZNtuFiDYKUcTQ/VL/LwbNZo5nVzSC4J+r4huRVfWUZ1ofQH8IIjYQLXY23JAK2hLOeXjh0fHnuqoUHuK7JiQqXKuDW3IPL0pZLvdtkTHKQNJQOnTX37/vV//tMabsdXB5gQyxuGnDSCEv8Uvp19kT7yJS9hN5pwkDlynHtBiIvI=
+	t=1742822961; cv=none; b=YECO5ti2HHED4efttfML3xcEHuYyuAuRuKXQ2RZmHAIi9uCI4y7b+buXW5dwKl2OPkBTT0xop/kTFMfY53jOveSlmKT/qCA9+B7USxIhIdVfzq7493e1gU+xHG8hH4J30xIkvidLE2npZuEpE1l4A03L1jCh89yWRPDpoLKEqc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822862; c=relaxed/simple;
-	bh=Hz+lHqMcrt47SWNjmBgQ77sCHMdM7OH6gByDyjmmoHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lU1t0mj/gQl38OMJ6fOkUaQzg92MvThcFy5oQ45RxxE3bWAD9h/2wQazbl7/WWb8IcWxUlesxZuJciQAARFGCANJLEcsrEBmh/Fq7sV6X7U1jgYU84mKDeumLYucBW6NyKNBQiVwfLFeUa9GODuJ0FPZJtfKeK45EG8xqcC+bI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-523edc385caso1630132e0c.3;
-        Mon, 24 Mar 2025 06:27:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742822859; x=1743427659;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zQ+K7YM9+7vb1XXWZkvn/CJUu3nmvB88QVFZm2AQkeg=;
-        b=BPT/cFKPr3NmI8l+fsK5Gu+PWGDD0z3cwYwUb8K67Wh2hbC6X5ydbJvc2nhVCSkKdE
-         3HOjvhwf2s6yNiBM2u387qpkURcaiU9pACzEKkeJsQ14gxFiAaX9orXrzb3Nh6CmVCUY
-         MHE8eLk7ba9IccQF9Iz1dDf+P50hmA5udF9rPKCiyXiwY8QfG9IzCfgd+99APAkBDmIQ
-         V+tu8f0cRMAbb/2ua1ld4jja8tS+9qwTmZSJ1ydJK2KQ6ctIUJfAT+alO/4ZDuA8l6sN
-         x8NnrRxGGLk4/DLYpRJOm9NrTfY7BzpXe8thbLNWcutK8XVBAvM7aFs1N403PDpmeRH4
-         NH7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUmzgXh/94SQC6N58zCY658OsXKRLQRqLuhbkeWIDbsL3NsWnohvMhjmINCtrgl8pFjny1h/c298U2MNAKi+r2bNE4=@vger.kernel.org, AJvYcCVuhwehvYZ6zC39P0K9Qh3g3tsDUBIK1w99RrVTWH2Bt783wlWGx5A5RRTALJMJYfsPmrHMwzao8kK6@vger.kernel.org, AJvYcCXBpkSFzsKi7nfq2Ln89wtz6gC4Vvi5vUOIpFrCt6fXt9jNaWl1J+FG5TjtJuBhJ/mK0SaIDHwwulQ9@vger.kernel.org, AJvYcCXZmsHSDOmdPHMdOyZ6BepVAVJavkNc7ffHucvnTsKKYc8XYxBip8z8ykE8tEHL7mga2RVidd9D4W+0lcxh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDtdHAZzv2p1mJGuWoqyOhnofWlNI5zPxRSylt58cRAbKAQi66
-	8Z6gHNq08d60XC16bvaQhDsfwBeZuJ+VnlQ09VnSd57R8KdWyX2m4lQn/vJW
-X-Gm-Gg: ASbGnctYATErdw8fOH1TbAszZHfopHq3FPw7n2/Wh72g/vGo2TVtgAt0UJFN3OjmFjn
-	LBnypSTl3lcdFunl8HKoJzMmmSXTg6YRcWmdDyadzBCsphsKNI587CywpCoK6CT3HlV9pqJoWDa
-	Zgri+Hp7YQpNq3TYXYsIKTTk2Zh+K80blqUWsxIIzWzBdk0OJijslHj7FcpC7zb21oUpSQHu6On
-	aII7HfKGLb4Lq1+TtowMfk5yPZlvCi9Qtx0B+bF6VCj1ItBwNt+j8urFHFBPTwgiVxm/piUGwEk
-	36dPBjPT5LNoFGnX8iBAJL0xwpO5h/kMutzD/SaF0V+pA3GrQ/vV2n/hk2TRPKHU1jeEN1wGxy5
-	tM8l0f2hMcKH2ojP9rj3hZg==
-X-Google-Smtp-Source: AGHT+IEaIvL4qcl+HGvHyopbqwbkfuBWZ+UOQLBYO6R3Rzn0zYW5sjAO+2kzxBfTbmRDnMWvTcERSA==
-X-Received: by 2002:a05:6122:3989:b0:523:7316:7f31 with SMTP id 71dfb90a1353d-525a8379913mr9183241e0c.5.1742822859229;
-        Mon, 24 Mar 2025 06:27:39 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-525a767186fsm1371593e0c.46.2025.03.24.06.27.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 06:27:38 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-525b44b7720so853303e0c.0;
-        Mon, 24 Mar 2025 06:27:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVe/weo3VhPN5jzNOM1a9666ICTlFokT1e1yhBj3jTWKAuYsKkbpEn56SJBFUhE1mZWwCz/BYlzZ7Wj@vger.kernel.org, AJvYcCVgQxEOK97uLImruluv5X3b1eB6EYTL7jtF1yvLgQQGTSEIaNUi06yzlvlnhR+qFyp1i+2cDDOgxaWdce7H/OdkFmY=@vger.kernel.org, AJvYcCWU9WKtWpYYX78chOfsewfVncnk/OPG2BDCYsJ2iHeQhpo+eBpDUC0KVXiuNIB9SW4RFGZ+M8mi/B0XWB/t@vger.kernel.org, AJvYcCWp0nmHJ0I0x2gn/8RcRp/Khki2Z3XcpMOUP4NghZ/SYGb04DK2iGRsDglC1THt+fStTmTwKJgksaoK@vger.kernel.org
-X-Received: by 2002:a05:6122:210e:b0:517:4e40:6838 with SMTP id
- 71dfb90a1353d-525a8519f0amr8262190e0c.6.1742822858639; Mon, 24 Mar 2025
- 06:27:38 -0700 (PDT)
+	s=arc-20240116; t=1742822961; c=relaxed/simple;
+	bh=MooAaV+Kvm9Expqrkk8Zya9Xzw3n3iQ2WHNCdwo+e/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IW6kK2HWouFm+B1mvCuIYyDkgUuKMR83E51PiJoIcqB3O983FfuXLq9+2N4/H3g6VwZPDUlaoqsMFQBv+E0x6btddVvAtdiJDcHnf/sNsktVP5qhbPiC+E52gzKtZVN3NQu+4ZXYRPSLK+9bZ9AzOahezLuCedsNsXl3AMApKLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2F0C4CEDD;
+	Mon, 24 Mar 2025 13:29:20 +0000 (UTC)
+Date: Mon, 24 Mar 2025 06:27:59 -0700
+From: Greg KH <greg@kroah.com>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Message-ID: <2025032446-glass-volatile-d77d@gregkh>
+References: <20250324193728.4af92ccc@canb.auug.org.au>
+ <DB9PR04MB8429CD5C790E85AEBD7A7DE292A42@DB9PR04MB8429.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324125202.81986-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250324125202.81986-1-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Mar 2025 14:27:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXOND_TJqGckmGVB2jda=xxZmY8C5q-QAzvztcW0yPuMg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqy03btuV5Gp3EW0QPI3_1fSYM7sA6rvEy343cRRLCgBG9ZP_0N-abJFTU
-Message-ID: <CAMuHMdXOND_TJqGckmGVB2jda=xxZmY8C5q-QAzvztcW0yPuMg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: PCI: Correct indentation and style in
- DTS example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>, 
-	Nicolas Saenz Julienne <nsaenz@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Srikanth Thokala <srikanth.thokala@intel.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Marek Vasut <marek.vasut+renesas@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Greentime Hu <greentime.hu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>, Michal Simek <michal.simek@amd.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Tom Joseph <tjoseph@cadence.com>, Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB8429CD5C790E85AEBD7A7DE292A42@DB9PR04MB8429.eurprd04.prod.outlook.com>
 
-Hi Krzysztof,
+On Mon, Mar 24, 2025 at 09:10:01AM +0000, Sherry Sun wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Sent: Monday, March 24, 2025 4:37 PM
+> > To: Greg KH <greg@kroah.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Sherry Sun
+> > <sherry.sun@nxp.com>; Linux Kernel Mailing List <linux-
+> > kernel@vger.kernel.org>; Linux Next Mailing List <linux-next@vger.kernel.org>
+> > Subject: linux-next: build failure after merge of the tty tree
+> > 
+> > Hi all,
+> > 
+> > After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > drivers/tty/serial/fsl_lpuart.c: In function 'lpuart_poll_init':
+> > drivers/tty/serial/fsl_lpuart.c:642:29: error: unused variable 'sport' [-
+> > Werror=unused-variable]
+> >   642 |         struct lpuart_port *sport = container_of(port,
+> >       |                             ^~~~~
+> > drivers/tty/serial/fsl_lpuart.c: In function 'lpuart32_poll_init':
+> > drivers/tty/serial/fsl_lpuart.c:696:29: error: unused variable 'sport' [-
+> > Werror=unused-variable]
+> >   696 |         struct lpuart_port *sport = container_of(port, struct lpuart_port,
+> > port);
+> >       |                             ^~~~~
+> > cc1: all warnings being treated as errors
+> > 
+> 
+> Hi Stephen,
+> 
+> Thanks for the quick fix, actually I sent the fix patch earlier today, please check
+> https://lore.kernel.org/imx/20250324021051.162676-1-sherry.sun@nxp.com/T/
+> 
+> Best Regards
+> Sherry
+> 
+> > Caused by commit
+> > 
+> >   3cc16ae096f1 ("tty: serial: fsl_lpuart: use port struct directly to simply code")
+> > 
+> > I have applied the following patch for today:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 24 Mar 2025 19:10:57 +1100
+> > Subject: [PATCH] fix up for "tty: serial: fsl_lpuart: use port struct directly  to
+> > simply code"
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  drivers/tty/serial/fsl_lpuart.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c index
+> > 33eeefa6fa8f..4470966b826c 100644
+> > --- a/drivers/tty/serial/fsl_lpuart.c
+> > +++ b/drivers/tty/serial/fsl_lpuart.c
+> > @@ -639,8 +639,6 @@ static void lpuart32_wait_bit_set(struct uart_port
+> > *port, unsigned int offset,
+> > 
+> >  static int lpuart_poll_init(struct uart_port *port)  {
+> > -	struct lpuart_port *sport = container_of(port,
+> > -					struct lpuart_port, port);
+> >  	unsigned long flags;
+> >  	u8 fifo;
+> > 
+> > @@ -693,7 +691,6 @@ static int lpuart_poll_get_char(struct uart_port *port)
+> > static int lpuart32_poll_init(struct uart_port *port)  {
+> >  	unsigned long flags;
+> > -	struct lpuart_port *sport = container_of(port, struct lpuart_port,
+> > port);
+> >  	u32 fifo;
+> > 
+> >  	port->fifosize = 0;
+> > --
+> > 2.45.2
 
-Thanks for your patch!
+I've applied the fix to my tree now, sorry for the delay.
 
-On Mon, 24 Mar 2025 at 13:52, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
-
-+ While re-indenting, drop unused labels.
-
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
 
