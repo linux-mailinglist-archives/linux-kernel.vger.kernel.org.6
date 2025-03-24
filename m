@@ -1,79 +1,35 @@
-Return-Path: <linux-kernel+bounces-573770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34317A6DC14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:51:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 777D1A6DC19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F45316B1B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D5F16DB5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F68E1EDA31;
-	Mon, 24 Mar 2025 13:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PT6FtSzu"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E74D25D55A;
+	Mon, 24 Mar 2025 13:50:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF31E14F9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8973914F9FB;
+	Mon, 24 Mar 2025 13:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824222; cv=none; b=ZgAe8ELsbFlWiuNbrEkjsE8iIf9JKwWTmEtKZ/ZoN33ecyNgEZRXf8Pgt4Kg+sG4HUy+mloc9AdQOkm1XQ5LTvsS1jOZrkIWhcpZwD2u+K2+tzT7E6hazmJ39wmfd/oQH6udDEMiRnY2us5KsMXOjsMUh8E2ELyw7DVqMOL0g34=
+	t=1742824227; cv=none; b=HZhiqYp6djhngal4ckJYOI8y/0g0jLhYU07DxdtKT5FqcIMxMe/WwhDJW3kTrlth7b5sSHQsxMDgvJAxVYQBtqMyW/19UsaRA1nXmv0CifTzDACB8QxRL7T566ACBuffXf8cEG+SJD6npyRNeXrN3GwxnFZKNhk9qhTF1QGkIfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824222; c=relaxed/simple;
-	bh=idBIRQzC41pEK3vxHCsW3jlGzyWUmPmwM/kPI+tS88M=;
+	s=arc-20240116; t=1742824227; c=relaxed/simple;
+	bh=5DWVH+PYF6T7L8669uq6zv4/kb1H6dDU0ckc3N5uPHU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WAnZ3K/k9yGOkHIake+Zql+eL+UdT126PORqoETU3D4m/neqEVxwflw5sVMfLyVQxEoR4IaTeMfUvgA/D5ZW4ceegkytm7Pxbji5/wLTP/1VudRTW9L/HLxywwhvZ/Y9tGFM9GMOqQ/eYhMhXM7/57pb21T6lTnYMZB28ud9BnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PT6FtSzu; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6025007e592so436494eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742824218; x=1743429018; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CdxeeM9Wzx2ULG71chhuAoOD2bPZ1lIe5eeC/XTvSI0=;
-        b=PT6FtSzugs9idtT+MOVtd9b+l+JbWZoUvXNYG6mZYJkke2IfyJIgp2374Pooy2o2Ko
-         cq0tJ3PkxyZAhimIbf1N+Tkp0Nz5z8ANJhr7AfHvpYMh/NjcZ9tmcUxlG1wWY1glK+vt
-         CQAnf3pFLC2x1HjCPMJVDKzqFTq+6vSBl0yJpJAsEQgywzm8FqJm0F9Rpyj/WThX8fb9
-         fzKQb9s8jlT4BO9xGUbD4LPphn3VpGqvCjUgPdq+jNiDvdqvB+eV+IK8DusxAu6K5e31
-         cC3ZIF/t/9QCFaSn5wtQFMW0pbDEF13Sjh4BJK+QTapuFfMgDei93XBPRg/A+fhM21My
-         h7xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742824218; x=1743429018;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdxeeM9Wzx2ULG71chhuAoOD2bPZ1lIe5eeC/XTvSI0=;
-        b=Ye4AaIsLJgV5nTx1gKJLLxQQEXmC8OVVKZygW4xSQmfCKZqoAsci+o1GY8OxT6zCkR
-         22ifz9mQbudMB5rrXRSK8xFw0wlzF1kFHNguly+bPBP3HFU6vfYMoii2CDLqUfDaZz36
-         XSF6LZ0x+Ou8APVQS+JBTXjBgw/F+qg0AFTAfCtt3ndEcDtUnXinzdoTUKppP/EhEiDy
-         le1lS3f9PWGT28kXajZtgdsqjkeBTq9ySRfumc0uC+7kdQzctbqDSDXVNvI0lpRuclB3
-         ix0UDE37xx9fGUTs1K51NA4RYkV+rz0e1btsdocJUKk+U7dtDVGHoE6VkRvUCTRY0f1F
-         oEoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/g1YJUGwASB3b4Lj6iWMTjzI1t3rU11MDMU8oydRcwkFvPaPpU6TYhXYFqkKyHzJEtsCtxmyEDLNtqFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziR50eqKupqKrneAGpQecwkNhNLNAshqnA0Q5YB0qw1YjVLQtq
-	dDwhSVN582M0e5O02HIouwut+6yKT1bMZIPHIB/ZYm79QNrVPIdU+KVmDSV9kHE=
-X-Gm-Gg: ASbGncs9ktjBsTNNN8bhFmDIS5DyoJZJLMeywF1DsR5EfA/06ejNO/HdaTpSl0cyAf3
-	Y48TX7KwZGs5kAbR1RU/e/nxz6YH5JVoXNpAifydkJwMuVV3ow6noEV/gHyfdOWayF/fOmj0gwI
-	bvAi5mgOePeUFT28pZXYNGACfCtN8VbRzDDW84KuoqdKGOm6QBAS9Okpd2t7fW5HF8ILjdCxYQF
-	RmZHjKxfzW1CKfFOeai83f385b/966iOof+7Udn2DGBuQZTrt2GEOosHwvpHJ5if+OpKbwIY5+Z
-	nBMpQjRW/xisRC+z2UzNe/UzeTLYTCwsYUOpBr0nkDuWLtPHudaoD7Krz/IFnA0NcyN4ZtJF0SI
-	WlInJtg==
-X-Google-Smtp-Source: AGHT+IGUKGUnBQQj8euBvc40iv5UxLc92QmBpQeJUNQcD9g9q1Gn7KRpSWRrk0DYtdOznF3qMa6O7Q==
-X-Received: by 2002:a05:6871:530b:b0:29e:3de0:d400 with SMTP id 586e51a60fabf-2c77fdcc096mr8345834fac.0.1742824217751;
-        Mon, 24 Mar 2025 06:50:17 -0700 (PDT)
-Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77f0f3fbcsm2025356fac.49.2025.03.24.06.50.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 06:50:17 -0700 (PDT)
-Message-ID: <4854b569-5032-4b75-80a6-8c5822845dc7@baylibre.com>
-Date: Mon, 24 Mar 2025 08:50:15 -0500
+	 In-Reply-To:Content-Type; b=M22MfMyNm5+m6/QAEOKO1Oc4EbQwzJY6LyV9Q7YbWxdzonFDEFEHqxU589CUSjy8AD+nL6mj15CgVN28Ch0XUrT5mw78x/a0mDzHg5qlyWDlqr/5xxcPMRizqMKBI6ow96Uai+pn5e0bIhzZ0o0gYf6MJA1AYuFpBbTa7eHP8zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AE6C4CEDD;
+	Mon, 24 Mar 2025 13:50:21 +0000 (UTC)
+Message-ID: <9076d00e-c469-4a05-a686-94e3e55c8389@linux-m68k.org>
+Date: Mon, 24 Mar 2025 23:50:19 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,135 +37,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel
- info
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
- Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Angelo Dureghello <adureghello@baylibre.com>,
- Alexandru Ardelean <aardelean@baylibre.com>,
- Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
- <stefan.popa@analog.com>, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-References: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
-From: David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH 6/6] m68k/nommu: stop using GENERIC_IOMAP
+To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+ Matt Turner <mattst88@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Julian Vetter <julian@outer-limits.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+References: <20250315105907.1275012-1-arnd@kernel.org>
+ <20250315105907.1275012-7-arnd@kernel.org>
+ <64f226e5-7931-40ba-878a-a28688da82fd@linux-m68k.org>
+ <4a31c6a8-7c99-4d8f-8248-92e0e52b8db6@app.fastmail.com>
 Content-Language: en-US
-In-Reply-To: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <4a31c6a8-7c99-4d8f-8248-92e0e52b8db6@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/22/25 12:25 PM, Dan Carpenter wrote:
-> Hi David,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7606-check-for-NULL-before-calling-sw_mode_config/20250319-065737
-> base:   9f36acefb2621d980734a5bb7d74e0e24e0af166
-> patch link:    https://lore.kernel.org/r/20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c%40baylibre.com
-> patch subject: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel info
-> config: arm64-randconfig-r071-20250322 (https://download.01.org/0day-ci/archive/20250322/202503222246.RafigmhQ-lkp@intel.com/config)
-> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202503222246.RafigmhQ-lkp@intel.com/
-> 
-> smatch warnings:
-> drivers/iio/adc/ad7606.c:1270 ad7606_probe_channels() warn: potentially one past the end of array 'channels[i]'
-> 
-> vim +1270 drivers/iio/adc/ad7606.c
-> 
-> 87cf5705725eeb David Lechner      2025-03-18  1196  static int ad7606_probe_channels(struct iio_dev *indio_dev)
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1197  {
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1198  	struct ad7606_state *st = iio_priv(indio_dev);
-> 87cf5705725eeb David Lechner      2025-03-18  1199  	struct device *dev = indio_dev->dev.parent;
-> 87cf5705725eeb David Lechner      2025-03-18  1200  	struct iio_chan_spec *channels;
-> 87cf5705725eeb David Lechner      2025-03-18  1201  	bool slow_bus;
-> 87cf5705725eeb David Lechner      2025-03-18  1202  	int ret, i;
-> 87cf5705725eeb David Lechner      2025-03-18  1203  
-> 87cf5705725eeb David Lechner      2025-03-18  1204  	slow_bus = !st->bops->iio_backend_config;
-> 87cf5705725eeb David Lechner      2025-03-18  1205  	indio_dev->num_channels = st->chip_info->num_adc_channels;
-> 87cf5705725eeb David Lechner      2025-03-18  1206  
-> 87cf5705725eeb David Lechner      2025-03-18  1207  	/* Slow buses also get 1 more channel for soft timestamp */
-> 87cf5705725eeb David Lechner      2025-03-18  1208  	if (slow_bus)
-> 87cf5705725eeb David Lechner      2025-03-18  1209  		indio_dev->num_channels++;
-> 87cf5705725eeb David Lechner      2025-03-18  1210  
-> 87cf5705725eeb David Lechner      2025-03-18  1211  	channels = devm_kcalloc(dev, indio_dev->num_channels, sizeof(*channels),
-> 87cf5705725eeb David Lechner      2025-03-18  1212  				GFP_KERNEL);
-> 87cf5705725eeb David Lechner      2025-03-18  1213  	if (!channels)
-> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1214  		return -ENOMEM;
-> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1215  
-> 87cf5705725eeb David Lechner      2025-03-18  1216  	for (i = 0; i < indio_dev->num_channels; i++) {
+Hi Arnd,
 
-The fix is to change this line to:
-
-							for (i = 0; i < st->chip_info->num_adc_channels; i++) {
-
-> 87cf5705725eeb David Lechner      2025-03-18  1217  		struct iio_chan_spec *chan = &channels[i];
-> 87cf5705725eeb David Lechner      2025-03-18  1218  
-> 87cf5705725eeb David Lechner      2025-03-18  1219  		chan->type = IIO_VOLTAGE;
-> 87cf5705725eeb David Lechner      2025-03-18  1220  		chan->indexed = 1;
-> 87cf5705725eeb David Lechner      2025-03-18  1221  		chan->channel = i;
-> 87cf5705725eeb David Lechner      2025-03-18  1222  		chan->scan_index = i;
-> 87cf5705725eeb David Lechner      2025-03-18  1223  		chan->scan_type.sign = 's';
-> 87cf5705725eeb David Lechner      2025-03-18  1224  		chan->scan_type.realbits = st->chip_info->bits;
-> 87cf5705725eeb David Lechner      2025-03-18  1225  		chan->scan_type.storagebits = st->chip_info->bits > 16 ? 32 : 16;
-> 87cf5705725eeb David Lechner      2025-03-18  1226  		chan->scan_type.endianness = IIO_CPU;
-> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1227  
-> 87cf5705725eeb David Lechner      2025-03-18  1228  		if (indio_dev->modes & INDIO_DIRECT_MODE)
-> 87cf5705725eeb David Lechner      2025-03-18  1229  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
-> 87cf5705725eeb David Lechner      2025-03-18  1230  
-> 87cf5705725eeb David Lechner      2025-03-18  1231  		if (st->sw_mode_en) {
-> 87cf5705725eeb David Lechner      2025-03-18  1232  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
-> 87cf5705725eeb David Lechner      2025-03-18  1233  			chan->info_mask_separate_available |=
-> 87cf5705725eeb David Lechner      2025-03-18  1234  				BIT(IIO_CHAN_INFO_SCALE);
-> 87cf5705725eeb David Lechner      2025-03-18  1235  
-> 87cf5705725eeb David Lechner      2025-03-18  1236  			/*
-> 87cf5705725eeb David Lechner      2025-03-18  1237  			 * All chips with software mode support oversampling,
-> 87cf5705725eeb David Lechner      2025-03-18  1238  			 * so we skip the oversampling_available check. And the
-> 87cf5705725eeb David Lechner      2025-03-18  1239  			 * shared_by_type instead of shared_by_all on slow
-> 87cf5705725eeb David Lechner      2025-03-18  1240  			 * buses is for backward compatibility.
-> 87cf5705725eeb David Lechner      2025-03-18  1241  			 */
-> 87cf5705725eeb David Lechner      2025-03-18  1242  			if (slow_bus)
-> 87cf5705725eeb David Lechner      2025-03-18  1243  				chan->info_mask_shared_by_type |=
-> 87cf5705725eeb David Lechner      2025-03-18  1244  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-> 87cf5705725eeb David Lechner      2025-03-18  1245  			else
-> 87cf5705725eeb David Lechner      2025-03-18  1246  				chan->info_mask_shared_by_all |=
-> 87cf5705725eeb David Lechner      2025-03-18  1247  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-> 87cf5705725eeb David Lechner      2025-03-18  1248  
-> 87cf5705725eeb David Lechner      2025-03-18  1249  			chan->info_mask_shared_by_all_available |=
-> 87cf5705725eeb David Lechner      2025-03-18  1250  				BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-> 87cf5705725eeb David Lechner      2025-03-18  1251  		} else {
-> 87cf5705725eeb David Lechner      2025-03-18  1252  			chan->info_mask_shared_by_type |=
-> 87cf5705725eeb David Lechner      2025-03-18  1253  				BIT(IIO_CHAN_INFO_SCALE);
-> 87cf5705725eeb David Lechner      2025-03-18  1254  
-> 87cf5705725eeb David Lechner      2025-03-18  1255  			if (st->chip_info->oversampling_avail)
-> 87cf5705725eeb David Lechner      2025-03-18  1256  				chan->info_mask_shared_by_all |=
-> 87cf5705725eeb David Lechner      2025-03-18  1257  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-> 87cf5705725eeb David Lechner      2025-03-18  1258  		}
-> 87cf5705725eeb David Lechner      2025-03-18  1259  
-> 87cf5705725eeb David Lechner      2025-03-18  1260  		if (!slow_bus)
-> 87cf5705725eeb David Lechner      2025-03-18  1261  			chan->info_mask_shared_by_all |=
-> 87cf5705725eeb David Lechner      2025-03-18  1262  				BIT(IIO_CHAN_INFO_SAMP_FREQ);
-> 87cf5705725eeb David Lechner      2025-03-18  1263  
-> 87cf5705725eeb David Lechner      2025-03-18  1264  		ret = st->chip_info->scale_setup_cb(indio_dev, chan);
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1265  		if (ret)
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1266  			return ret;
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1267  	}
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1268  
-> 87cf5705725eeb David Lechner      2025-03-18  1269  	if (slow_bus)
-> 87cf5705725eeb David Lechner      2025-03-18 @1270  		channels[i] = (struct iio_chan_spec)IIO_CHAN_SOFT_TIMESTAMP(i);
->                                                                 ^^^^^^^^^^^
-> i is == indio_dev->num_channels so this is out of bounds by one element.
+On 24/3/25 18:02, Arnd Bergmann wrote:
+> On Mon, Mar 24, 2025, at 02:33, Greg Ungerer wrote:
+>> Hi Arnd,
+>>
+>> On 15/3/25 20:59, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> There is no need to go through the GENERIC_IOMAP wrapper for PIO on
+>>> nommu platforms, since these always come from PCI I/O space that is
+>>> itself memory mapped.
+>>>
+>>> Instead, the generic ioport_map() can just return the MMIO location
+>>> of the ports directly by applying the PCI_IO_PA offset, while
+>>> ioread32/iowrite32 trivially turn into readl/writel as they do
+>>> on most other architectures.
+>>>
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> With this applied this fails to build for me:
+>>
+>>     UPD     include/generated/utsversion.h
+>>     CC      init/version-timestamp.o
+>>     LD      vmlinux
+>> m68k-linux-uclibc-ld: drivers/pci/quirks.o: in function
+>> `quirk_switchtec_ntb_dma_alias':
+>> quirks.c:(.text+0x23e4): undefined reference to `pci_iomap'
+>> m68k-linux-uclibc-ld: quirks.c:(.text+0x24fe): undefined reference to
+>> `pci_iounmap'
+>> m68k-linux-uclibc-ld: drivers/pci/quirks.o: in function
+>> `disable_igfx_irq':
+>> quirks.c:(.text+0x32f4): undefined reference to `pci_iomap'
+>> m68k-linux-uclibc-ld: quirks.c:(.text+0x3348): undefined reference to
+>> `pci_iounmap'
 > 
-> 87cf5705725eeb David Lechner      2025-03-18  1271  
-> 87cf5705725eeb David Lechner      2025-03-18  1272  	indio_dev->channels = channels;
-> 87cf5705725eeb David Lechner      2025-03-18  1273  
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1274  	return 0;
-> e571c1902116a3 Alexandru Ardelean 2024-09-19  1275  }
+> Thanks for the report, I was able to reproduce the problem now
+> and applied the fixup below. I had tested m5475evb_defconfig earlier,
+> and that built cleanly with PCI enabled, but I had missed how
+> that still used GENERIC_IOMAP because it has CONFIG_MMU enabled.
 > 
+> Does this fixup work for you?
+
+Yes, this looks good, works for me.
+Feel free to add this if you like:
+
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+
+
+> On a related note, I'm curious about how the MCF54xx chips are
+> used in practice, as I see that they are the only coldfire chips
+> with PCI and they all have an MMU. Are there actual users of these
+> chips that have PCI but choose not to use the MMU?
+
+No, I think everyone with these uses them with MMU enabled.
+
+It is probably more of an historical curiosity to use them with
+the MMU disabled. That supported pre-dated mainline kernels having
+full ColdFire MMU support by a good few years.
+
+Regards
+Greg
+
+
+
+>        Arnd
+> 
+> 8<-----
+>  From a36995e2a64711556c6773797367d165828f6705 Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Mon, 24 Mar 2025 07:53:47 +0100
+> Subject: [PATCH] m68k: coldfire: select PCI_IOMAP for PCI
+> 
+> After I dropped CONFIG_GENERIC_IOMAP, some PCI drivers started failing
+> to link when CONFIG_MMU is disabled:
+> 
+> ERROR: modpost: "pci_iounmap" [drivers/video/fbdev/i740fb.ko] undefined!
+> ERROR: modpost: "pci_iounmap" [drivers/video/fbdev/vt8623fb.ko] undefined!
+> ERROR: modpost: "pci_iomap_wc" [drivers/video/fbdev/vt8623fb.ko] undefined!
+> ERROR: modpost: "pci_iomap" [drivers/video/fbdev/vt8623fb.ko] undefined!
+> ERROR: modpost: "pci_iounmap" [drivers/video/fbdev/s3fb.ko] undefined!
+> ...
+> 
+> It turns out that there were two mistakes in my patch: on !MMU I forgot
+> to enable CONFIG_GENERIC_PCI_IOMAP, and for Coldfire with MMU enabled,
+> teh GENERIC_IOMAP was left in place but incorrectly configured.
+> 
+> Fixes: 9d48cc07d0d7 ("m68k/nommu: stop using GENERIC_IOMAP")
+> Reported-by: Greg Ungerer <gerg@linux-m68k.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+> index b50c275fa94d..eb5bb6d36899 100644
+> --- a/arch/m68k/Kconfig
+> +++ b/arch/m68k/Kconfig
+> @@ -18,12 +18,13 @@ config M68K
+>   	select DMA_DIRECT_REMAP if M68K_NONCOHERENT_DMA && !COLDFIRE
+>   	select GENERIC_ATOMIC64
+>   	select GENERIC_CPU_DEVICES
+> -	select GENERIC_IOMAP if HAS_IOPORT && MMU
+> +	select GENERIC_IOMAP if HAS_IOPORT && MMU && !COLDFIRE
+>   	select GENERIC_IRQ_SHOW
+>   	select GENERIC_LIB_ASHLDI3
+>   	select GENERIC_LIB_ASHRDI3
+>   	select GENERIC_LIB_LSHRDI3
+>   	select GENERIC_LIB_MULDI3
+> +	select GENERIC_PCI_IOMAP if PCI
+>   	select HAS_IOPORT if PCI || ISA || ATARI_ROM_ISA
+>   	select HAVE_ARCH_LIBGCC_H
+>   	select HAVE_ARCH_SECCOMP
 
 
