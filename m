@@ -1,197 +1,189 @@
-Return-Path: <linux-kernel+bounces-574210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7B0A6E1F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:01:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FF5A6E208
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC016943D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4816F188EAFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB02264A74;
-	Mon, 24 Mar 2025 18:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F1E264A99;
+	Mon, 24 Mar 2025 18:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkbXWx7v"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="TRdh2fja"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2790154BE4;
-	Mon, 24 Mar 2025 18:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859E2264606;
+	Mon, 24 Mar 2025 18:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742839248; cv=none; b=CSpomSm+IkZJTkxOQQsQoNNDzbaxmWqvA4/NEsxHTvglB1kQjEhv/qlLxqh2jDM696QU1y24uXpx5rw2JJM0at2bUo3TpvsNiLeYW9c6Y/SV0w9FndBsmpuCQTZDsPxFEgwTeEBpmNYfxAIYxpy1U6Dj4oZhLgBCwDw91GAGE9s=
+	t=1742839250; cv=none; b=u4yeYBnU0idYnHEqvm+oPy1Qnfcu89mzl3mkcTegvrZzczUx8f60RIebrJFoVED1bplahCvpGxz9UwKd6x0AZAX+KH8UMQDkSBzwMzkF0alRfP/2NxuHuZrBUncVuxc+2LkM5qK4JGQdTCI9zPrHS3BZgItdX9lKJaHiwibIu/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742839248; c=relaxed/simple;
-	bh=2u1pQswtfbbtYrllsPjiOGGlvhCAk1KcYcAx9KdocPI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9sAw1Bu4R6EKQlq5yMTFvWGdlJJdRFo1EvnATFHdUnrmSxbEv3l3q3jAmvKugjgFemJvrICwkOK0CJhCFxaJ/6AUfwGUc8Ka1zDzqGotGx14JpcV9DPZxm5GCkm4+hWR6IAj1HPmys9jTpdwHeukLcAFMPc2Lklpbn28t+asHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mkbXWx7v; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so51266546d6.0;
-        Mon, 24 Mar 2025 11:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742839245; x=1743444045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IxegvS/gmdX5MahtcjlhaOV/WbLLvOW/4APvLi3D66M=;
-        b=mkbXWx7vsBdiF80XUm3yv+Qdhm4KXUj9A+8xFXir1q26H7Ai2o1GW60lzws3DTn3yx
-         8T0ijOv5pgenTgq+OnRskU1QoMHnM5SFOuh0/po6C70i6uf8agEuEsP30LzsdOQS2BWi
-         ULZWQk4ZKHxrvuR500bE2WF2/hSrmYUmuSBNcL431d1P3P/Vwls4ueQMxiaFjXVumn9w
-         pEQkaeKdq3n4fKfM7KxntoiAWky7lHGRN/8VFBIYprvNhoocColtqeTYFNd1R2vjGK7V
-         dx5Fp1jOdGX2hgEQNGBwiWO60gVguahkLmEzECWY3JVsjRx+ck/alsWPowB6Fo8onRQk
-         AUWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742839245; x=1743444045;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IxegvS/gmdX5MahtcjlhaOV/WbLLvOW/4APvLi3D66M=;
-        b=PvECdB8Z+maiT7fa6adSLUtrvwCYRS+yZCH6gc63jKjwBZ5GRLkNrGwfzQaahlAHIi
-         M9aTJSwjIjUxofGE/6zNAfH6BfGiJFDTEhrQqEL3ywHzUktuy3UnFgIaR2Qtu58gVK6Q
-         UyMavkfpAlPzVGFqNItAJ8a854up80qJ+kDiPXK2RSFxCAddHZ9Jcski2wpzx9CGbNB9
-         KMhEPjYwWWvUdVJDpcXq+8cyaTPHzLS7lX3sUHUuPpnVW2+nMz2h4FXDOGs9XB5gckdv
-         gygXynn5U2n4epLvsV2I1nqrMUxRCyJwVMRmd80cutLHSjJFxNqd45ng1t3/UBw6T+xU
-         xT+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUdHEXX8Gqq2gYcKf+tE3q7ZnGscbT9VqKLrx42YQFQ0K2oFCUdsJqo5QDaZXZTaQKfKXLClzv23NCLluX80FI=@vger.kernel.org, AJvYcCVqejzaOSTciUUeR16A28TttNVz9YIKxCcKlspoHMlwUFbJxZeqdp8o1qX+4Jzer+O0gjfjeuFbNrznnA==@vger.kernel.org, AJvYcCXSoP/9OlthCFZp83wmBOOs10Rktt2El8sVqMB6FErQi2016hRXPmaCiQsdSOsbc9zS2lMvTYclcgoOgmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf51T9wGvOwdayqxZZzlyfTR1UUpFu6l4iIAioJBg3PU2lTtVA
-	k3ysLEjmE3seIc9yVBn4+w8NcvOsJFB2DNKYH12fz5vsSku8nXaD
-X-Gm-Gg: ASbGncsSmITDEOtMsybTAzNm5qu2j5jrUdepfyOszdPZCXj7sg8ESnPZgJ+UIPEx7lw
-	PW8IgNXxZmgc5MtZE4KOqpmsMHBYOBFEEpiRjxq8M5+DXZ4ZtH6obM4hmTzvNJVpjsxsRvb4tQg
-	meTEJtM3wXe94Z8sVKyqEzpXFpAYV2FiwFCfJ7yxzBVzUvlfTFoUDCESNSpH1rwEAIKnGAy4mqw
-	uqMVgwQbmpNotNtQJD/maMF/fB4kSxLyDrffuDMPvcnZdNIvvls6NekRbDotSfygoKWKOqw24ct
-	sTMZ3mip9yiYnQ+OofAc8i+zCOr0AsRJOpkaBzzY6nRmyeg4qp8cQaj9SVevIrUVuhHiWXRmAxZ
-	49E5ad0+ZtMs1FSyXcWTrMkvPKZ4q4KhEr3g=
-X-Google-Smtp-Source: AGHT+IHsd+IFmnbdrEWTTxfoPrgW0qHvvuQf3D0PGaby/SHA+37i0fcg8c4VJfrr2wYgvG7daVMjpw==
-X-Received: by 2002:ad4:5d43:0:b0:6e8:f120:80ce with SMTP id 6a1803df08f44-6eb34a4ae02mr302241246d6.22.1742839243600;
-        Mon, 24 Mar 2025 11:00:43 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f51esm47519356d6.26.2025.03.24.11.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 11:00:43 -0700 (PDT)
-Message-ID: <67e19dcb.050a0220.bdc26.35e5@mx.google.com>
-X-Google-Original-Message-ID: <Z-GdyCoaf1o01ban@winterfell.>
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8ED061200043;
-	Mon, 24 Mar 2025 14:00:42 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 24 Mar 2025 14:00:42 -0400
-X-ME-Sender: <xms:yp3hZ18y2n9NObdE9hXwsoFVpnf4mKUriGoaOsKGnsawQywgzhWmJw>
-    <xme:yp3hZ5vospLPMVwQOYCqCzM42W2XR-_H79JB0clLGALOfmKsJpYtT9F9eF3gAIPtY
-    0IYqdvt1XNo5AdYtw>
-X-ME-Received: <xmr:yp3hZzCkbANHQai2uAeDoJ5T5KR8PiskAkbvMbrVKqgTQMvNpVkGWSdyAhI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtgeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedv
-    teehuddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopedvtddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprggsughivghlrdhj
-    rghnuhhlghhuvgesghhmrghilhdrtghomhdprhgtphhtthhopegurghkrheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprh
-    gtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopegu
-    rghnihgvlhdrrghlmhgvihgurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhope
-    hrohgsihhnrdhmuhhrphhhhiesrghrmhdrtghomhdprhgtphhtthhopegrrdhhihhnuggs
-    ohhrgheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:yp3hZ5d06FEPwd4NwSmV5AC_xr_9qI5OBEl_aJ9dQKOEwxrDoGisPg>
-    <xmx:yp3hZ6MSMWL0opM9rOvWXo7PLKTErZ9EM-4trzalErYkVxPP0gB13g>
-    <xmx:yp3hZ7n9ze5sWivLXoiWQHl2MfmwE6o2F9kLlTmvWGYirYDUVbyl3A>
-    <xmx:yp3hZ0vP0oaAGDRlB0zwyiMM2gCn44bX9mwyweu5hwnF80_u7bpFcg>
-    <xmx:yp3hZ8tx1Pm_NPLBt6zhCbfVqIkydDZpgB_1jqYeWtVl_xFP_emmpMAb>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 14:00:41 -0400 (EDT)
-Date: Mon, 24 Mar 2025 11:00:40 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	rust-for-linux@vger.kernel.org, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-next@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] rust: dma: add `Send` implementation for
- `CoherentAllocation`
-References: <20250324174048.1075597-1-ojeda@kernel.org>
+	s=arc-20240116; t=1742839250; c=relaxed/simple;
+	bh=ic/gD2e8FElvHjMYoVpKeuRsRXdNWE6ntV5CdKr+MG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OElbk+qYo7bM8GrGyzqYHWKCLHdEFS50gXGCf+WB1gLcDToslVR/v1X8vjYCVG6uaCvAqJy/io7FUGyNttEgfbtSuLJi04jIqz1poafbmGtAHkVM0Ou2CGhbft/V27kQDtNnzZPfAbZAOtuB/4mD+ILMaHTfB2rkAMT1h11X4Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=TRdh2fja; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.228] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 86FBA1669EF;
+	Mon, 24 Mar 2025 19:00:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1742839244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gPNjVLcsszAEW3wUXYkTHGhTLdJohQD4DxTgKx7WZSI=;
+	b=TRdh2fjaJTkxlKXRb/owPxslyZoUh7mVt07qI1Sj9dS5g8mrEXdYJy8m2qB91jndTKGTrF
+	UhFuy4CcwEgliOaK3muYkpFLGWW5dig4PKpWcL9BA66iYM6/SmPpBjb8/ccMKENMC62GXf
+	nsHMGP//gOXVPIzxwZcSACwBPpwMHd0=
+Message-ID: <3c5e12fc-eb91-46e8-a558-9896f0bdcab4@ixit.cz>
+Date: Mon, 24 Mar 2025 19:00:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324174048.1075597-1-ojeda@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] dt-bindings: input: syna,rmi4: document
+ syna,pdt-fallback-desc
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Caleb Connolly <caleb.connolly@linaro.org>
+References: <20250308-synaptics-rmi4-v3-0-215d3e7289a2@ixit.cz>
+ <20250308-synaptics-rmi4-v3-1-215d3e7289a2@ixit.cz>
+ <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20250310-hissing-vagabond-pegasus-cc8aed@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 06:40:48PM +0100, Miguel Ojeda wrote:
-> From: Danilo Krummrich <dakr@kernel.org>
+On 10/03/2025 10:45, Krzysztof Kozlowski wrote:
+> On Sat, Mar 08, 2025 at 03:08:37PM +0100, David Heidelberg wrote:
+>> From: Caleb Connolly <caleb.connolly@linaro.org>
+>>
+>> This new property allows devices to specify some register values which
+>> are missing on units with third party replacement displays. These
+>> displays use unofficial touch ICs which only implement a subset of the
+>> RMI4 specification.
 > 
-> Stephen found a future build failure in linux-next [1]:
-> 
->     error[E0277]: `*mut MyStruct` cannot be sent between threads safely
->       --> samples/rust/rust_dma.rs:47:22
->        |
->     47 | impl pci::Driver for DmaSampleDriver {
->        |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be sent between threads safely
-> 
-> It is caused by the interaction between commit 935e1d90bf6f ("rust: pci:
-> require Send for Driver trait implementers") from the driver-core tree,
-> which fixes a missing concurrency requirement, and commit 9901addae63b
-> ("samples: rust: add Rust dma test sample driver") which adds a sample
-> that does not satisfy that requirement.
-> 
-> Add a `Send` implementation to `CoherentAllocation`, which allows the
-> sample (and other future users) to satisfy it.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250324215702.1515ba92@canb.auug.org.au/
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/kernel/dma.rs | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 9d00f9c49f47..18de693c4924 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -301,6 +301,10 @@ fn drop(&mut self) {
->      }
->  }
->  
-> +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-> +// can be send to another thread.
+> These are different ICs, so they have their own compatibles. Why this
+> cannot be deduced from the compatible?
 
-s/can be send/can be sent
+Yes, but these identify as the originals.
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Some of them can be detected at runtime which is what this patchset 
+tries to do.
 
-Regards,
-Boqun
-
-> +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-> +
->  /// Reads a field of an item from an allocated region of structs.
->  ///
->  /// # Examples
-> -- 
-> 2.49.0
 > 
+>>
+>> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>> ---
+>>   Documentation/devicetree/bindings/input/syna,rmi4.yaml | 18 ++++++++++++++++++
+>>   1 file changed, 18 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/syna,rmi4.yaml b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+>> index b522c8d3ce0db719ff379f2fefbdca79e73d027c..a80ec0c052cb1b7278f0832dd18ebd3256bc0874 100644
+>> --- a/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+>> +++ b/Documentation/devicetree/bindings/input/syna,rmi4.yaml
+>> @@ -49,6 +49,24 @@ properties:
+>>       description:
+>>         Delay to wait after powering on the device.
+>>   
+>> +  syna,pdt-fallback-desc:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8-matrix
+>> +    description:
+>> +      This property provides fallback values for certain register fields that
+>> +      are missing on devices using third-party replacement displays.
+>> +      These unofficial displays contain touch controllers that claim RMI4
+>> +      compliance but fail to populate the function_number and function_version
+>> +      registers of their Page Descriptor Table (PDT) entries.
+>> +
+>> +      Since the number of required fallback entries depends on the number of
+>> +      Page Descriptor Tables supported by a given device, this property
+>> +      should be provided on a best-effort basis.
+>> +
+>> +    items:
+> 
+> min/maxItems here
+
+There is no hardcoded limit how many of these items will be provided, 
+should I put there some huge range as 1..1024?
+
+Thank you
+David
+
+> 
+>> +      items:
+>> +        - description: The 5th byte of the PDT entry (function number)
+>> +        - description: The 4th byte of the PDT entry (version value)
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+David Heidelberg
+
 
