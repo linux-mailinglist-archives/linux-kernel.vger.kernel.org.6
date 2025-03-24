@@ -1,161 +1,424 @@
-Return-Path: <linux-kernel+bounces-573678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A7EA6DA8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:57:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66836A6DA98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2727A2A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F65B16ACFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2721953A2;
-	Mon, 24 Mar 2025 12:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD3B25EFA7;
+	Mon, 24 Mar 2025 12:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="doxrXvdx"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="bmguFzJE"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F8925DB07
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B476825DAEE;
+	Mon, 24 Mar 2025 12:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820973; cv=none; b=vAtczj4yJ3Vn2H+HU2yHuV2DuU/qKNbJbsKViDzHfEkhct1lWc5nyctUalDcU5iT+k1rJUAFjWa4YUtCwKD5y/s7vZ8aphXJMYtUh2XnBfXLIA8HjwJQaWYej2jKLK0OumIHpw50/Q1iRxnw63zm3NN0QEN+1484DvLhlNk00eY=
+	t=1742821148; cv=none; b=or/f6ohPtujY+s4eUdaAYbKDZNmqINz2N0Li/vPJZvWNL7pH+66k7qwAwUssHm+o0rGADfObVEnYQ9KGeQJvw3AYZh65wNzWA7RiWnpUjCQrZysPsekqUghZn/Sg7xPY9EI6/JDfBKUfGEy8O8+c8WTi9PhlQjL7wVYGV/Q66z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820973; c=relaxed/simple;
-	bh=Bb5ashzNWlu6TPRKb3SZq8oM68pwtoH9f4wtwRqtYQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIREFCPX2U3B0zzrR3TThkjZJpzqs2r5L3klMrdQdkNIzhCrr5Uagoy7uNT5+hNZtEM3dsqkRAZy+BOzUi4BTfo65TINNR3QpW7dLB+T71Be8e+UxUGeASP3GEjyxAWrfKMH/dfJ/Y9R+9/tQ3JXhMpTxCYYUig080CXQolK9KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=doxrXvdx; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913d129c1aso3072803f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742820970; x=1743425770; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bb5ashzNWlu6TPRKb3SZq8oM68pwtoH9f4wtwRqtYQc=;
-        b=doxrXvdxyYtGGTFF7JEWuCuWVtoQ0ZD/FKlMJu0BlMlhNPZ+t2jGrdj3lh3LGcy1Nm
-         TkLRba8CUr24B9iq689xezt/BFmnrEMdce5/y+LpXyCjOO4E6xJfPNlC22s4uHf3xX0N
-         boycByc/0lXny9nwjTXnAgxz7aj0EczA/Kwr0M33OUWr9SY2tjs5lwX9LSMoUwblKTRE
-         jzW++xaud7iyE0+EW9YDVQ8lhvlPdeatWTpqdluLeptwiWKOM41rjH7nYk9ChcTjUDCr
-         wdq0/ZN1iKGOCUfa65d3mCnAlkq4c/9I++ooSdTOPBZrMz4XKcli8nbPBgaewIlIBdJi
-         ZQJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742820970; x=1743425770;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bb5ashzNWlu6TPRKb3SZq8oM68pwtoH9f4wtwRqtYQc=;
-        b=Z7MztzT5vKCme5hVuNzrtUbZV8XuYoYN17mb1Gt73xyiavxd5gtjhNVkLmF0UWcjfe
-         dDrLLAGMb8x7IDe3wmiVaiB7EyAsUNB4qLi3E+rwyJpSSvZdAATuASE5TOXJYGkgqVoT
-         SbC6O0G+FQAJwnloWjUmGMTiyRY7cl0JQhjkmVwJxlVEbLIMHzSi3nLnOekdql7OJXzp
-         VRMEiYpSF9nUWU2qQO/i0mMfOgql7yeVicYuocqLnkQtDGiWsHEUJs1PhsHoHqgPNxsL
-         TJAriMAFs5tiSPhhr+oBM7V4eW/ZXEYMqPPH98yLEXlcywznAq1EON5k6gbY7BTOlebZ
-         xm5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoj2HCWa9mpJsz0HefkvheK0OvKkFyNNRoJ/53rASaH0y5vcAMfBuQOx6SIQCo3w3qPiFe8HMfxMR/46E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYjNGF7HrqkpcJcvAlGAlQHH6rtSZZDSAf5EotTqTzmDSJgzgv
-	4ca/lLMFUnIVPNJR9S1m6xkxCgiU11ykBpwMWIGJMn3L3NtjDSnsTerLuc9v+QQ=
-X-Gm-Gg: ASbGncsz9ICziJhX5sBaZOfaV/0cR5GoZ4ceNLO9I//GCBnSFrF+lPhDfK1E7s+Uz1t
-	i9Xw45AHDrVo/goddqgVHqGcF8bLo0fRZ6K7Drkto05xTrqwduPaydH0OU1rCmL5fUDaJWL+F3+
-	710NgSpMLFgEPqa1DKQ+7SP8cQOPWeLCd9wf7eDjGIHuazBeY2p5DFK3n+dt9ad5M1PUkGnNy73
-	InlWLtPJ+PTjW57/9LsZlrUdsxm3laxqbLa/Ryy23nOn2A099rx79Ttaq5iIdgfLan5tYTTY8Qo
-	nnTy70K8IFkTjre6FrIQNuaiq2ToSQsvV/WHBcj7P6qQG9w=
-X-Google-Smtp-Source: AGHT+IEh+2cx2NjeBYko3qeni7OqGRsZaVwIGE91RRbMpXS3hmSeZB73isRPNemQZA8pSphOxB2XdQ==
-X-Received: by 2002:a05:6000:1565:b0:38d:b028:d906 with SMTP id ffacd0b85a97d-3997f933816mr11122788f8f.21.1742820969725;
-        Mon, 24 Mar 2025 05:56:09 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e65besm11013603f8f.65.2025.03.24.05.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 05:56:09 -0700 (PDT)
-Date: Mon, 24 Mar 2025 13:56:07 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org, 
-	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
-Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-Message-ID: <rpu5hl3jyvwhbvamjykjpxdxdvfmqllj4zyh7vygwdxhkpblbz@5i2abljyp2ts>
-References: <20250305170935.80558-1-mkoutny@suse.com>
- <Z9_SSuPu2TXeN2TD@calendula>
+	s=arc-20240116; t=1742821148; c=relaxed/simple;
+	bh=SFFq3J4gZhE4NEQPRKA4r4uw31OBT2ZLslV569uGoM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nxYBVbGrbhi8FHy8G99kGurf8dAZDttNdXxoHdNmxaSH/sbGN2d7MGyAMLgQl603bq9r8hGuUCutbboUn0xgyiMJE1ewoBqkXu4H4NYj9hSNChJSuuVVnr6FLr5bFG7aO3caSGM00gTz5JR3jPn3+xufwzYVd3SCx+yLU9bBB9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=bmguFzJE; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.2.71] (office.icewarp.com [82.113.48.146])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 0BDD51669CA;
+	Mon, 24 Mar 2025 13:58:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1742821136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ghHaIoZTdVg9s4AcD2zJxE+31Mhe4sZUJ4hTXusvaGY=;
+	b=bmguFzJEiOBbzjWzRn6AMh2wdiX+dlHiGJLokvL2KAqR9iQbGzH1wVn1RYonHzGrLIi17s
+	Atw/knSrWKHsXIKx7mTIB/rKV70HFWjEEIkbghwmZW+9RehgeyAuYY8xzSJt/sbKHlGA8k
+	Fk1I/4g/56QFVXYD8uSJkgGUAdcTxFs=
+Message-ID: <2cf735da-9f20-4372-8b08-0b40c335ba6b@ixit.cz>
+Date: Mon, 24 Mar 2025 13:58:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6dgz5r7q7tf2aomx"
-Content-Disposition: inline
-In-Reply-To: <Z9_SSuPu2TXeN2TD@calendula>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iommu: Correct indentation and style in DTS
+ example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Maxime Ripard <mripard@kernel.org>, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20250324125250.82137-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <20250324125250.82137-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 24/03/2025 13:52, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
+> unused labels.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   .../iommu/allwinner,sun50i-h6-iommu.yaml      |  24 ++--
+>   .../bindings/iommu/arm,smmu-v3.yaml           |  20 ++--
+>   .../devicetree/bindings/iommu/arm,smmu.yaml   | 104 +++++++++---------
+>   .../bindings/iommu/mediatek,iommu.yaml        |  18 +--
+>   .../bindings/iommu/qcom,apq8064-iommu.yaml    |  20 ++--
+>   5 files changed, 92 insertions(+), 94 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
+> index a8409db4a3e3..ad51ace9ca09 100644
+> --- a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
+> @@ -48,19 +48,19 @@ additionalProperties: false
+>   
+>   examples:
+>     - |
+> -      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -      #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+>   
+> -      #include <dt-bindings/clock/sun50i-h6-ccu.h>
+> -      #include <dt-bindings/reset/sun50i-h6-ccu.h>
+> +    #include <dt-bindings/clock/sun50i-h6-ccu.h>
+> +    #include <dt-bindings/reset/sun50i-h6-ccu.h>
+>   
+> -      iommu: iommu@30f0000 {
+> -          compatible = "allwinner,sun50i-h6-iommu";
+> -          reg = <0x030f0000 0x10000>;
+> -          interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> -          clocks = <&ccu CLK_BUS_IOMMU>;
+> -          resets = <&ccu RST_BUS_IOMMU>;
+> -          #iommu-cells = <1>;
+> -      };
+> +    iommu@30f0000 {
+> +        compatible = "allwinner,sun50i-h6-iommu";
+> +        reg = <0x030f0000 0x10000>;
+> +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&ccu CLK_BUS_IOMMU>;
+> +        resets = <&ccu RST_BUS_IOMMU>;
+> +        #iommu-cells = <1>;
+> +    };
+>   
+>   ...
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> index 75fcf4cb52d9..36b31197c908 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> @@ -82,14 +82,14 @@ examples:
+>       #include <dt-bindings/interrupt-controller/irq.h>
+>   
+>       iommu@2b400000 {
+> -            compatible = "arm,smmu-v3";
+> -            reg = <0x2b400000 0x20000>;
+> -            interrupts = <GIC_SPI 74 IRQ_TYPE_EDGE_RISING>,
+> -                         <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>,
+> -                         <GIC_SPI 77 IRQ_TYPE_EDGE_RISING>,
+> -                         <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>;
+> -            interrupt-names = "eventq", "gerror", "priq", "cmdq-sync";
+> -            dma-coherent;
+> -            #iommu-cells = <1>;
+> -            msi-parent = <&its 0xff0000>;
+> +        compatible = "arm,smmu-v3";
+> +        reg = <0x2b400000 0x20000>;
+> +        interrupts = <GIC_SPI 74 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 77 IRQ_TYPE_EDGE_RISING>,
+> +                     <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "eventq", "gerror", "priq", "cmdq-sync";
+> +        dma-coherent;
+> +        #iommu-cells = <1>;
+> +        msi-parent = <&its 0xff0000>;
+>       };
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> index 7b9d5507d6cc..5b56e4f9d106 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
+> @@ -621,73 +621,71 @@ examples:
+>     - |+
+>       /* SMMU with stream matching or stream indexing */
+>       smmu1: iommu@ba5e0000 {
+> -            compatible = "arm,smmu-v1";
+> -            reg = <0xba5e0000 0x10000>;
+> -            #global-interrupts = <2>;
+> -            interrupts = <0 32 4>,
+> -                         <0 33 4>,
+> -                         <0 34 4>, /* This is the first context interrupt */
+> -                         <0 35 4>,
+> -                         <0 36 4>,
+> -                         <0 37 4>;
+> -            #iommu-cells = <1>;
+> +        compatible = "arm,smmu-v1";
+> +        reg = <0xba5e0000 0x10000>;
+> +        #global-interrupts = <2>;
+> +        interrupts = <0 32 4>,
+> +                     <0 33 4>,
+> +                     <0 34 4>, /* This is the first context interrupt */
+> +                     <0 35 4>,
+> +                     <0 36 4>,
+> +                     <0 37 4>;
+> +        #iommu-cells = <1>;
+>       };
+>   
+>       /* device with two stream IDs, 0 and 7 */
+>       master1 {
+> -            iommus = <&smmu1 0>,
+> -                     <&smmu1 7>;
+> +        iommus = <&smmu1 0>,
+> +                 <&smmu1 7>;
+>       };
+>   
+>   
+>       /* SMMU with stream matching */
+>       smmu2: iommu@ba5f0000 {
+> -            compatible = "arm,smmu-v1";
+> -            reg = <0xba5f0000 0x10000>;
+> -            #global-interrupts = <2>;
+> -            interrupts = <0 38 4>,
+> -                         <0 39 4>,
+> -                         <0 40 4>, /* This is the first context interrupt */
+> -                         <0 41 4>,
+> -                         <0 42 4>,
+> -                         <0 43 4>;
+> -            #iommu-cells = <2>;
+> +        compatible = "arm,smmu-v1";
+> +        reg = <0xba5f0000 0x10000>;
+> +        #global-interrupts = <2>;
+> +        interrupts = <0 38 4>,
+> +                     <0 39 4>,
+> +                     <0 40 4>, /* This is the first context interrupt */
+> +                     <0 41 4>,
+> +                     <0 42 4>,
+> +                     <0 43 4>;
+> +        #iommu-cells = <2>;
+>       };
+>   
+>       /* device with stream IDs 0 and 7 */
+>       master2 {
+> -            iommus = <&smmu2 0 0>,
+> -                     <&smmu2 7 0>;
+> +        iommus = <&smmu2 0 0>,
+> +                 <&smmu2 7 0>;
+>       };
+>   
+>       /* device with stream IDs 1, 17, 33 and 49 */
+>       master3 {
+> -            iommus = <&smmu2 1 0x30>;
+> +        iommus = <&smmu2 1 0x30>;
+>       };
+>   
+>   
+>       /* ARM MMU-500 with 10-bit stream ID input configuration */
+>       smmu3: iommu@ba600000 {
+> -            compatible = "arm,mmu-500", "arm,smmu-v2";
+> -            reg = <0xba600000 0x10000>;
+> -            #global-interrupts = <2>;
+> -            interrupts = <0 44 4>,
+> -                         <0 45 4>,
+> -                         <0 46 4>, /* This is the first context interrupt */
+> -                         <0 47 4>,
+> -                         <0 48 4>,
+> -                         <0 49 4>;
+> -            #iommu-cells = <1>;
+> -            /* always ignore appended 5-bit TBU number */
+> -            stream-match-mask = <0x7c00>;
+> +        compatible = "arm,mmu-500", "arm,smmu-v2";
+> +        reg = <0xba600000 0x10000>;
+> +        #global-interrupts = <2>;
+> +        interrupts = <0 44 4>,
+> +                     <0 45 4>,
+> +                     <0 46 4>, /* This is the first context interrupt */
+> +                     <0 47 4>,
+> +                     <0 48 4>,
+> +                     <0 49 4>;
 
---6dgz5r7q7tf2aomx
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-MIME-Version: 1.0
+If you want to squash another change,
 
-Hello Pablo.
+0 xx 4
+to
+GIC_SPI xx IRQ_TYPE_LEVEL_HIGH
 
-On Sun, Mar 23, 2025 at 10:20:10AM +0100, Pablo Neira Ayuso <pablo@netfilte=
-r.org> wrote:
-> why classid !=3D 0 is accepted for cgroup_mt_check_v0()?
+anyway, with or without:
 
-It is opposite, only classid =3D=3D 0 is accepted (that should be same for
-all of v0..v2). (OTOH, there should be no change in validation with
-CONFIG_CGROUP_NET_CLASSID.)
+Reviewed-by: David Heidelberg <david@ixit.cz>
 
-> cgroup_mt_check_v0 represents revision 0 of this match, and this match
-> only supports for clsid (groupsv1).
->=20
-> History of revisions of cgroupsv2:
->=20
-> - cgroup_mt_check_v0 added to match on clsid (initial version of this mat=
-ch)
-> - cgroup_mt_check_v1 is added to support cgroupsv2 matching=20
-> - cgroup_mt_check_v2 is added to make cgroupsv2 matching more flexible
-=20
-> I mean, if !IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) then xt_cgroup
-> should fail for cgroup_mt_check_v0.
+> +        #iommu-cells = <1>;
+> +        /* always ignore appended 5-bit TBU number */
+> +        stream-match-mask = <0x7c00>;
+>       };
+>   
+>       bus {
+> -            /* bus whose child devices emit one unique 10-bit stream
+> -               ID each, but may master through multiple SMMU TBUs */
+> -            iommu-map = <0 &smmu3 0 0x400>;
+> -
+> -
+> +        /* bus whose child devices emit one unique 10-bit stream
+> +           ID each, but may master through multiple SMMU TBUs */
+> +        iommu-map = <0 &smmu3 0 0x400>;
+>       };
+>   
+>     - |+
+> @@ -695,17 +693,17 @@ examples:
+>       #include <dt-bindings/interrupt-controller/arm-gic.h>
+>       #include <dt-bindings/interrupt-controller/irq.h>
+>       smmu4: iommu@d00000 {
+> -      compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+> -      reg = <0xd00000 0x10000>;
+> +        compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+> +        reg = <0xd00000 0x10000>;
+>   
+> -      #global-interrupts = <1>;
+> -      interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+> -             <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> -             <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+> -      #iommu-cells = <1>;
+> -      power-domains = <&mmcc 0>;
+> +        #global-interrupts = <1>;
+> +        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+> +        #iommu-cells = <1>;
+> +        power-domains = <&mmcc 0>;
+>   
+> -      clocks = <&mmcc 123>,
+> -        <&mmcc 124>;
+> -      clock-names = "bus", "iface";
+> +        clocks = <&mmcc 123>,
+> +                 <&mmcc 124>;
+> +        clock-names = "bus", "iface";
+>       };
+> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> index ea6b0f5f24de..1eac27893b03 100644
+> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
+> @@ -218,13 +218,13 @@ examples:
+>       #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       iommu: iommu@10205000 {
+> -            compatible = "mediatek,mt8173-m4u";
+> -            reg = <0x10205000 0x1000>;
+> -            interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_LOW>;
+> -            clocks = <&infracfg CLK_INFRA_M4U>;
+> -            clock-names = "bclk";
+> -            mediatek,infracfg = <&infracfg>;
+> -            mediatek,larbs = <&larb0>, <&larb1>, <&larb2>,
+> -                             <&larb3>, <&larb4>, <&larb5>;
+> -            #iommu-cells = <1>;
+> +        compatible = "mediatek,mt8173-m4u";
+> +        reg = <0x10205000 0x1000>;
+> +        interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_LOW>;
+> +        clocks = <&infracfg CLK_INFRA_M4U>;
+> +        clock-names = "bclk";
+> +        mediatek,infracfg = <&infracfg>;
+> +        mediatek,larbs = <&larb0>, <&larb1>, <&larb2>,
+> +                         <&larb3>, <&larb4>, <&larb5>;
+> +        #iommu-cells = <1>;
+>       };
+> diff --git a/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml b/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
+> index 9f83f851e61a..aaecad32dc9d 100644
+> --- a/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
+> @@ -65,14 +65,14 @@ examples:
+>       #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   
+>       iommu@7500000 {
+> -            compatible = "qcom,apq8064-iommu";
+> -            reg = <0x07500000 0x100000>;
+> -            interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
+> -                         <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+> -            clocks = <&clk SMMU_AHB_CLK>,
+> -                     <&clk MDP_AXI_CLK>;
+> -            clock-names = "smmu_pclk",
+> -                          "iommu_clk";
+> -            #iommu-cells = <1>;
+> -            qcom,ncb = <2>;
+> +        compatible = "qcom,apq8064-iommu";
+> +        reg = <0x07500000 0x100000>;
+> +        interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&clk SMMU_AHB_CLK>,
+> +                 <&clk MDP_AXI_CLK>;
+> +        clock-names = "smmu_pclk",
+> +                      "iommu_clk";
+> +        #iommu-cells = <1>;
+> +        qcom,ncb = <2>;
+>       };
 
+-- 
+David Heidelberg
 
-I considered classid =3D=3D 0 valid (regardless of CONFIG_*) as counterpart
-to implementation of sock_cgroup_classid() that collapses to 0 when
-!CONFIG_CGROUP_NET_CLASSID (thus at least rules with classid=3D0 remain
-acceptable).
-
-> But a more general question: why this check for classid =3D=3D 0 in
-> cgroup_mt_check_v1 and cgroup_mt_check_v2?
-
-cgroup_mt_check_v1 is for cgroupv2 OR classid matching. Similar with
-cgroup_mt_check_v2.
-
-IOW, all three versions accept classid=3D0 with !CONFIG_CGROUP_NET_CLASSID
-equally because that is the value that sockets reported classid falls
-back to.
-
-But please correct me if I misunderstood the logic.
-
-Thanks,
-Michal
-
---6dgz5r7q7tf2aomx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ+FWZAAKCRAt3Wney77B
-SRC+AP9sgXg3/nlHJXqWYQNOLruM+2kuDLj+lHSd6Lank2sSnAEAlIfDtD+FKSEZ
-igeXXdA6fXYy92Cwb3N2vY8ZfDd2SQg=
-=IEko
------END PGP SIGNATURE-----
-
---6dgz5r7q7tf2aomx--
 
