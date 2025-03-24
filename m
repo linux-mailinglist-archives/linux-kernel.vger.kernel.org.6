@@ -1,145 +1,163 @@
-Return-Path: <linux-kernel+bounces-573309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11FDA6D584
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:54:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A79A6D55F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27AB716A3F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9713AA32E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8530D25A2BC;
-	Mon, 24 Mar 2025 07:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BBF25C6E9;
+	Mon, 24 Mar 2025 07:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sdI268tj"
-Received: from out.smtpout.orange.fr (out-65.smtpout.orange.fr [193.252.22.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZOKWWML"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02AC13B797
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C412AD25
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742802847; cv=none; b=Ne2Kbl7DsZSQo0AA2lLm4/B2uvVIKtvCbdj65oErp6Xu9vlNOFv9ciSRVw+ADppm/uTHAwtrJmAjvPVj8VJW3ce/xNJPYM6rzbBngMa6Pi1n5fQqbH9SBJGNIAjyJDBe6PxVk4woMmIyPEFl638Gy0Rcb2VN9O8+9IEmdYhWv3g=
+	t=1742802383; cv=none; b=ayUEAC0oSmoFwLagwnigTWOOS0aaOTXr2KX5utAqGO3GDxT0WrPqu4r/cVqyrUlVunYmch2MJFL6m9AKEYk5RLP7meFfIUaR0QgIF5odZDrhWubRGwP2zmj7BTlbaTz2PiVGEQtSwMrSjQE+EAcYq7EP3m7vDy4ihFIO1+F4JoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742802847; c=relaxed/simple;
-	bh=tvAIIuR1iPe/70LBC/XK+o9+54IQoWvVHvcnYdC+BSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGr/0+NFfbPYw+t9lUdkx9iufbg47YrMvEXpGuuV/8h9LZSmoYSaOTNUZQaOsi62za4n7taYIhMm2URexPY0Cp2sichwL259/exE/BEk8hk2VcHyKcQAkwUtOrC8VQfTkfWEgfb3ktpy+JJigrnDEaFe1xi7tGhnv8vwG2tPfrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sdI268tj; arc=none smtp.client-ip=193.252.22.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id wcU2tGWSCo3Z8wcU6tISto; Mon, 24 Mar 2025 08:44:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742802281;
-	bh=XsGk3ixhSurfkLIH5o1CSD/Ev7zogu3EYa8+C/nPa0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sdI268tj5lyVJtO3fEwynmKPbQg09PuOecq2JJCSdjSp7N1NgJ6fcy6XKYbjGhr/1
-	 2gk2XM/VMpWoxAKiiAcbhewU0pEJZB6nFv5S2ZlayCpKZ18kjNF05DGW9vwRi6bIcz
-	 z3ul2hSwmRTaF10207d/yfQSpK0HTU8rrtuJjS1jHE0+UHG38ESd4ian45uXMWsPxj
-	 KymUZv00SMfq99I4IgfJQJjFAQJ0EUxtmscmuGjmFOjH0YeShHtWdQ/rPkGEvecps8
-	 CUFUtHhORoskiP35auEhZb9UakXJ6ypJq3LVyLDwRigo50w+Z7LRWCyAlaZpmWdz9O
-	 j0TF2QXUwzPnw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Mar 2025 08:44:41 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <202c97b2-e99e-4b88-9ac5-171db244b7d0@wanadoo.fr>
-Date: Mon, 24 Mar 2025 16:44:29 +0900
+	s=arc-20240116; t=1742802383; c=relaxed/simple;
+	bh=TfODWm1M0ZXJmeY4LnW3qCr7DVndKYh/sG0G7/aLfkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XglBzZmInf55SsELiNtTAZZqkj0bPWPFb3Tq7sHzMPYYz5gBPGLf45D6NFqq5YW2+apYRPhM7MNL/2ItHPzLu6yOMV26vftTBe9lc73uQDMI6P1SdNuvYc6CVLUNESQhqlvJaq+ryVB0lu5dRC+YQuNWw1SXMDgqOz6bU8Gg6qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZOKWWML; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54957f0c657so4375320e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742802379; x=1743407179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hMUWST69DWBxdXQICnizeifSpfvf4a4EPHYJz2w7L2o=;
+        b=UZOKWWMLbFESlQNxJVDLDc8jAvBy+ZFkkMuLV7bfl8MRWOYIaV8vO1eiPPZfT/am8x
+         SFkeSeC9WehpbjP+3tlFe6XOdYi/sJOZ/RPn8HUzVaKlxin3SIIPcxGwR8BGktVLkadP
+         1CQ3U/Jf4k7DMTV53wB6pFIlutR456nexuCp9AVggaiYjOfBbPVMdHLKeZwQY8VKZCow
+         O6ghBKCOZBIKRgNWF2F6R2b/aTHhdF/vih884BPfPpkR+HJ+9/BsFLei8vDaUKIMrxNF
+         IFUiZcRVh3SeqNH24Mqj3N3A1wRYIb8MTDfmPqtwqhifeCkU8P4NKx3K1k0Tto9lR88P
+         H8Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742802379; x=1743407179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hMUWST69DWBxdXQICnizeifSpfvf4a4EPHYJz2w7L2o=;
+        b=K5oVF2hswkZRHGkF+m5F+LxZL1Z8XH933Xrb32MwLETkZBbyGFiORW0RtlZNlmacnc
+         g/VsExIeLmcFpX16BQPQ+xSCKagLSEKf5yVerLmvCuBHCVGMkpKqTqMy78hXr3EcIoeK
+         0S72ZnApCWP80ot80AEv1UVGI0xGVVBbPc9q+f9BvlR96/DIsWyNxMFN8MncJVXL0euU
+         EjaqF6SCWXQBD3sZmAQu82ePrNTCC78WcNITraWKNC8ICzqln25I0xMcPl9f6lxVyQQb
+         xZeuUmUs7HoD+VgdB2hkkdHMabS4zYxMpO2HDT/Og5bIuRMrUk/IF/dJxxiZhxMdkPZV
+         WB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWx12nOgfjZcn+Ve4017OeLnggm0R1yluAA6wOWEDc/mFCu8zigzzlB0Hm4/Bb10WxYHNCUodW+qmubvnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPrjhSzpe1/ig59ZN9Qhh4yNt3JlJcBAWPqHCT6EkvT8gEBS74
+	K5e2WsMEOXSVd+sF8Kpu2QcwtLb7TXnP8uOynPMAuNqpM3sM0WUgEeUgRdO+gfs6Zc6ZtID3HfL
+	w6e6PUU6mugZa0E+ylADTxigKy/1uzoG2qFsizw==
+X-Gm-Gg: ASbGncsRvaHTXbsrYkLKTn0BU2izWvJkChG9w7WexvaTBF/kUqY02kCYU8bi5yfJap1
+	yQD/mNRPLbo8PmMXF7nJALYjF1vprnjeviAf/m7O3DbBGYzSjH/9s/5NOxJDHN8P6+W6waaKrCW
+	8LsTKrE9nmLhY9GLb83tbUUAWqyKuIYsaing==
+X-Google-Smtp-Source: AGHT+IHWv/VboFhXNK2XpXps/bxwKIcYKOMez6LLCx8aPGa5SQF6NbUgEgHeVW4eBz5VO9FuBCLn09W/ZghHhKDVfRE=
+X-Received: by 2002:a05:6512:b83:b0:549:744c:fffb with SMTP id
+ 2adb3069b0e04-54ad609d72dmr3944521e87.23.1742802379177; Mon, 24 Mar 2025
+ 00:46:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] bits: introduce fixed-type GENMASK_U*()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>, Jani Nikula <jani.nikula@intel.com>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
- <20250322-fixed-type-genmasks-v7-1-da380ff1c5b9@wanadoo.fr>
- <Z-EIHBCkUiBh63JE@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z-EIHBCkUiBh63JE@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250324-wcd-gpiod-v1-0-27afa472e331@nxp.com> <20250324-wcd-gpiod-v1-2-27afa472e331@nxp.com>
+ <CAKXuJqht5ZiFyt2uWXwPSEdszYQWKHm22+mAQCPQXn8b7AbL-w@mail.gmail.com> <PAXPR04MB8459D61091A8BF9ABD94DA7E88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB8459D61091A8BF9ABD94DA7E88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 24 Mar 2025 08:46:07 +0100
+X-Gm-Features: AQ5f1JrbrVSW1XDO8yz8UbRJofr062hFHRQi78f3pNkQKYxPx9YmO_59Oy_iH1I
+Message-ID: <CACRpkdZXG0JC7_-Mg6Dpq08Y=Kr3M+fRWQF_bPG8c-WH8pA9Mg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ASoC: codec: wcd938x: Convert to GPIO descriptors
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Steev Klimaszewski <steev@kali.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/03/2025 at 16:22, Andy Shevchenko wrote:
-> On Sat, Mar 22, 2025 at 06:23:12PM +0900, Vincent Mailhol via B4 Relay wrote:
->>
->> Add GENMASK_TYPE() which generalizes __GENMASK() to support different
->> types, and implement fixed-types versions of GENMASK() based on it.
->> The fixed-type version allows more strict checks to the min/max values
->> accepted, which is useful for defining registers like implemented by
->> i915 and xe drivers with their REG_GENMASK*() macros.
->>
->> The strict checks rely on shift-count-overflow compiler check to fail
->> the build if a number outside of the range allowed is passed.
->> Example:
->>
->>   #define FOO_MASK GENMASK_U32(33, 4)
->>
->> will generate a warning like:
->>
->>   include/linux/bits.h:51:27: error: right shift count >= width of type [-Werror=shift-count-overflow]
->>      51 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
->>         |                           ^~
->>
->> While GENMASK_TYPE() is crafted to cover all variants, including the
->> already existing GENMASK(), GENMASK_ULL() and GENMASK_U128(), for the
->> moment, only use it for the newly introduced GENMASK_U*(). The
->> consolidation will be done in a separate change.
-> 
-> ...
-> 
->>  #if !defined(__ASSEMBLY__)
->> +
-> 
->> -#else
-> 
->> +#else /* defined(__ASSEMBLY__) */
-> 
->> -#endif
->> +
->> +#endif /* !defined(__ASSEMBLY__) */
-> 
-> Up to you, but if new version is needed or maintainer require, I would move the
-> above changes either to a separate patch (prerequisite) or dropped them at all.
-> These are not big but unneeded churn,
+On Mon, Mar 24, 2025 at 8:33=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
 
-I do not want to drop this. After all the changes, there is a lot of
-scrolling between the #if, #else and #endif, and the comments helps to
-keep track of which context we are in.
+> > With this patchset applied, the wcd938x codec used in the Thinkpad
+> > X13s stops working:
+> >
+> > wcd938x_codec audio-codec: soundwire device init timeout
+> > wcd938x_codec audio-codec: ASoC: error at
+> > snd_soc_component_probe on
+> > audio-codec: -110
+> > snd-sc8280xp sound: ASoC: failed to instantiate card -110 snd-
+> > sc8280xp sound: probe with driver snd-sc8280xp failed with error -110
+>
+> Thanks for help testing. But per current in-tree DTS, the reset is using
+> GPIO_ACTIVE_LOW, so it should work.
+>
+> I am not sure whether you are using firmware published DTS,
+> if yes, could you please help check the codec node to dump
+> the reset-gpios property under /sys/firmware/devicetree/xx ?
 
-As for putting this into another patch, OK but only if there is a need
-for new version for other reasons.
+I'm also a bit puzzled.
 
+I think maybe this device has some DTB that comes from the vendor
+with the wrong polarity :/
 
-Yours sincerely,
-Vincent Mailhol
+If this is the case we need to add a quirk to gpiolib to force this
+GPIO into active low,  something like this:
 
+From dfe3d2a12a63135e917abacd0d3a29ce347a6cf9 Mon Sep 17 00:00:00 2001
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 24 Mar 2025 08:44:45 +0100
+Subject: [PATCH] Fix WCD938x polarity
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpiolib-of.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 2e537ee979f3..3baaddedb7b6 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -220,6 +220,15 @@ static void of_gpio_try_fixup_polarity(const
+struct device_node *np,
+                 * treats it as "active low".
+                 */
+                { "ti,tsc2005",         "reset-gpios",  false },
++#endif
++#if IS_ENABLED(SND_SOC_WCD938X)
++               /*
++                * This codec is used in laptops with deployed devicetrees
++                * that fail to specify the correct active low property for
++                * the reset line.
++                */
++               { "qcom,wcd9380-codec", "reset-gpios",  false },
++               { "qcom,wcd9385-codec", "reset-gpios",  false },
+ #endif
+        };
+        unsigned int i;
+--=20
+2.48.1
+
+Maybe you can fold this into your patch if it helps. And if there are more
+of the codecs with this problem, we need a similar patch in each one
+of them.
+
+Yours,
+Linus Walleij
 
