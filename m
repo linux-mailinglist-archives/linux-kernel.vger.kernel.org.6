@@ -1,251 +1,166 @@
-Return-Path: <linux-kernel+bounces-573440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E900A6D73A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:26:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB32BA6D74F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:29:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA04F3AA609
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:26:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13CEB16D14D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98FC25DAE3;
-	Mon, 24 Mar 2025 09:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC98325D91B;
+	Mon, 24 Mar 2025 09:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAHXs+2d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Whae2DUn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEDD18FC80;
-	Mon, 24 Mar 2025 09:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742808381; cv=fail; b=ThLOwRO+9p/RcpIXWfvr8+YASO4Ira1JfeTlQAdKgAnr3avjBJ4P2Yfp0KTZs1LoBI6iwIUwdlrMhOgo3yMuSmzWWiGw1ir3YHRw4gTLZxFdrGrUTtx3Sc+AfgslBNF9hLDCJqpc33d8Y2Vq/tlReNYL2EZnT0KtT+dOlTrnmlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742808381; c=relaxed/simple;
-	bh=RhkWsWpN8dAiM9WmV6lRO3uz9MtKl98gu+8iCfPY/vo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ePc7pkzAIKWwgpEGKH6TZ3jAOocZ1l+zQgViDoNOM+YhRjYOZ0UZXArGLVnolQlX88uoVacAQbuFFxm/zZRoJ2LDo5rmiW6MEBYV/gkZL3/JRaKgm5c63U91bgUHwls/v5NnwPlmyQ11yzeSgEMLZxDv2zKsTUFsBJ99AtF/xOA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAHXs+2d; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DA425D8E7;
+	Mon, 24 Mar 2025 09:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742808543; cv=none; b=eTrhaPfJ4Txk8M56JhqK1GbrxjhKT5fPFvC3MfLKUorO4hGfeu3bxP+Sq7t1W5YnCto3Un811Shxjy19kixoGZNWcf7OP+izyY3ZUpxRuwCS8Ka6Oy+UPv6ZHvVZlx3d7oygM247rLajU7TgwHfKmG169n/e6ezQ6HoQ4SXb8zY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742808543; c=relaxed/simple;
+	bh=/7lhOihOiF6LFmy/aky+kel/L5mJlt1vEBAezb7fuIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMoFJR1kS7E1HZ91muqx9XZNLyPKQWsHLcXlgRtMmD4YWNrLu/L20iUqyNEnbRN4kRKIMDNOa+PwV4iIbMyiviajZBEjuwmSjd9m1Ejy/DnWtrPjAWkX8WgJ2YYLodJc7mRYR01qbCtk3WH+pOBPhVbC7nUMpa2ToF9EjiEUr+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Whae2DUn; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742808379; x=1774344379;
+  t=1742808542; x=1774344542;
   h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=RhkWsWpN8dAiM9WmV6lRO3uz9MtKl98gu+8iCfPY/vo=;
-  b=PAHXs+2d0cuGUToj9RkqfWyzYFs7NwYNv3eFUE5plcM13K39fnLRYQFy
-   Aoj4sL3BybBAdTY14mVThpdUS9jVs+MAdRq/aCxKcM0FmmN0me0r0gWMN
-   49AtSHZMx5vL1/Wx2OJ6K2s51uqKM+PUKi/E8w11DG+vBEv/feFvrbkQp
-   i8ARUt6+aco1Vbr6TqVXiaw8km6oQvrd7+sHp5NJDrWBqmJqWGJkQdaC5
-   yLjC/azwjhZw0HP9/g/ni4Y14v8M+/wHiAbX3FGzNVDZyEdUI3MR5Yhu+
-   EJmzyoqhWwVbs5sk34MHykdTodUlPtJTW3gFeoN5fZR2SfYfVJo/1UrRp
-   g==;
-X-CSE-ConnectionGUID: kfmE73mxQLCdmT9J5DXanw==
-X-CSE-MsgGUID: lat3a59aRnyZfy//koYeAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="55001858"
+   mime-version:in-reply-to;
+  bh=/7lhOihOiF6LFmy/aky+kel/L5mJlt1vEBAezb7fuIE=;
+  b=Whae2DUn5W65cuOETy7rLgIuUjecPv94boLVTKs0xmupGU2mdMCBt5DD
+   F3FpPoDoTERSl8hREjMe0sYkzFkAYxZly7HoQvgkn4LaR6PE/M+ddW5nj
+   xlrW42/IjdnS9d2rv7m8QJg0DgNbBus3cHXWJT9lPKZVpRnqJxiJnaq8r
+   JGK1DG5VtZ9xNXkhFAnvDycSQkblBek/rSmSPqlXvU3W0gp5E+4fvJCJS
+   ild863oRZ12+E9SLBdPeV7d8sYcRfo9Kkj4G22w2odmH8rGQGgeGUYV25
+   cv4iM95VItXKvIVNGNy8bTwDVmniLcaPfLK1BBZLicyu3/zpxi6TkBuCY
+   A==;
+X-CSE-ConnectionGUID: MdllRRkSSuuPWFC/Y7s5BQ==
+X-CSE-MsgGUID: kyT2WBDGS9aW1WpTZDaSrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43733412"
 X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="55001858"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:26:17 -0700
-X-CSE-ConnectionGUID: xVL8cjnAQwWrg9I076P8MQ==
-X-CSE-MsgGUID: sryCiz72T4O7P3gMQb/tVQ==
+   d="scan'208";a="43733412"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:29:02 -0700
+X-CSE-ConnectionGUID: mkCKeAlfQCWAla3fCSuedA==
+X-CSE-MsgGUID: 5cRl6niPQHauZ4xHsws5qQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="129104881"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:26:16 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 24 Mar 2025 02:26:16 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 24 Mar 2025 02:26:16 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 24 Mar 2025 02:26:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NO/eZGaf4M3Myv2i7LD4K9mFO9/bxREAnWuPUq+IiUaorJREBDm9aXdE4zImqbwY3tScp4yV036MWftptlAy/QPJk+jd13ojF2GwQK5XIMmrsrfYHbpD8741rgzHB4+9P0r2OXlraNcK/PlT+pLYDTIi+oP71Lfg26UElCknxrx0BbaJ56O5xCeKiAwxj90BJPu8Zx22PLnizlxy/pZlUi7Oa+MhQzyK+zsY9xr4D6W7V6V6yLyOQKTRQoqwTKLWaVeizyPu+cWoFSNi5AkPAef1IWnlWxwN+YCgqTQMgjnKvUlYvLf1LU5bdt31E0tGkTj+ERKiaQPUBh0dJLy0gA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dEtHvnmZIGikwh8STSkwfxj4G82yYqWvJN4mtYZzGqw=;
- b=R97Z8DyNK7uKP7Eu9Tr1pQuRezYH0gxDoSuwC36XGf9ny6L4xCms6+31MmngG3P5wQd441JdfIkM2zjHQZXqhhXipFhlZpszwaPwmdgPy6F5vHK9D6cB2qPTReLBF/RiYWcJKXNG42ywtfdrTuAipDCfPnVegOKt2Bo8gkkRTdzm9cNiMJpk58TRqEmJ9AjDAEU2TAdC5w4K/7W5+djlcQOhFEqLzPb8P7epnMf18EqBsKZLHBPT5WAUKBclHBpzEx8wNEIZe1Ede3i+t2thjKuiATd4d6RfG5aSoo5bh9XmkQG0k3T7VCopEZlJ0lqEHeffLWVTrD63eHDQcLk5lA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by BL3PR11MB6529.namprd11.prod.outlook.com (2603:10b6:208:38c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 09:26:13 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 09:26:13 +0000
-Date: Mon, 24 Mar 2025 17:26:05 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: Re: [PATCH v2 3/3] KVM: x86: Add a module param to control and
- enumerate device posted IRQs
-Message-ID: <Z+ElLSmJHkBqDPIT@intel.com>
-References: <20250320142022.766201-1-seanjc@google.com>
- <20250320142022.766201-4-seanjc@google.com>
- <Z9xXd5CoHh5Eo2TK@google.com>
- <Z9zHju4PIJ+eunli@intel.com>
- <Z93Pv0HWYvq9Nz2h@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z93Pv0HWYvq9Nz2h@google.com>
-X-ClientProxiedBy: SI2PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:4:194::6) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+   d="scan'208";a="128811251"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:28:59 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 48899120AB3;
+	Mon, 24 Mar 2025 11:28:56 +0200 (EET)
+Date: Mon, 24 Mar 2025 09:28:56 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v2] media: i2c: thp7312: use fwnode_for_each_child_node()
+Message-ID: <Z-El2EzbV5EFDA3Q@kekkonen.localdomain>
+References: <Z90qM33DvkTMGg_x@mva-rohm>
+ <20250321104100.GC25483@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|BL3PR11MB6529:EE_
-X-MS-Office365-Filtering-Correlation-Id: b79bf542-d268-42ef-1041-08dd6ab5ebc3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mqEnbvIjAwJ44TFlKlLAtJSYtxnkfNyiz8tBMcmPgct4/dzYfTAu2PCRLV3x?=
- =?us-ascii?Q?B3+2KQwjOZgrHXnU7uOPep4UQcz2QqduUwEJoDMyM2Uam/2pmzcaMS7XbHny?=
- =?us-ascii?Q?JgGFlOJDbl6KIYNPuXwSvfcEnjnkQ2keu8kHthqwtNDx4gRkxDfOTnXNuXMG?=
- =?us-ascii?Q?6wtxQBstHJ8WzTulbltUflq7GfAVb6WWkrYVlXfe7TB0u530RzdqSJbNDkNW?=
- =?us-ascii?Q?nCU/CsfoxTVQnr4n8ZEqaWbdjGl8Y6mhtKQAnEI80hMI5JK1hAuShDSSu78J?=
- =?us-ascii?Q?JZBWdqW9a3nIhdW39braXQ4Fd8mHoFmdCGTQpMR8lGZfcF9rYMzYez4yzee0?=
- =?us-ascii?Q?fu/K15MKZS8TDItX+fqZXBXCjTt9kfVu+FXcrHQpMxe9jMKGfvRVtdQkL6Ix?=
- =?us-ascii?Q?MMErPhFLsMcG8h6V7xxBntOARTSuiHiP1AC58eEV4jqxxaGYTelxsitdsXN9?=
- =?us-ascii?Q?UoYEAtFpbfbRcPA46UYAFcgypGjhZk2fxz4mWjJvmUjDA0u1ZABTfi01XscT?=
- =?us-ascii?Q?CicAKACNGy/X9Y/FoZLgEX4f2b7RF5obfl57hIYj+a5dS0uWYzpIxEYmluUJ?=
- =?us-ascii?Q?EXOS2hzcRaQ6p97ocYZzb7HpKCgRZZwgO9z+3ayeu5MP8P1udokKRI4cD7px?=
- =?us-ascii?Q?kK4QKZySEKGHS75N/1HpVzxYQuWZAy85gOcSRic9DEAa78ROCwBJsQnmwh40?=
- =?us-ascii?Q?GdKYLVy7oH46Ld+rGaoIyDu/olSXTf0Mfd+5EtBsXpTG23vfPJLIur0qPasj?=
- =?us-ascii?Q?zH1EWzjDKwqzRz1D3xxPkdjArLPDExEuLOHC4DFAN6maU2WP/SsVSLfW1r94?=
- =?us-ascii?Q?MKAwnkwZE9hd4mcKZEV+ag5uZj6LOG6mJjJqVeHGmCiXx9VCw15Mz69s5RAP?=
- =?us-ascii?Q?cj8E7Nb0uS0f9brvuRs/yjXHhyypHVvTgv/Usg14zTWyIIavw120RjAP+oti?=
- =?us-ascii?Q?Ex/+Kmso4X9CQmBI8fWtL6bvVHxxggcQCM9R2kZdEqMMXWyOogufiXrIUW3n?=
- =?us-ascii?Q?vZKdIkQ+Rz88jpZNv0yoC/FKjnl6F91hD+FkiNhwwbxD6vRPA49QSdTFWTMC?=
- =?us-ascii?Q?6c0zs/AAICNSUb1pgbVFRo3ROr1ZFeuuketGZEuJ7XHY4BQU6rZ4uOc8h0uz?=
- =?us-ascii?Q?4gjKCTnMFZB+un/MiCtpNY3VQrpGouwAFql05YgbrtnYgsrchdecvJcB1mUx?=
- =?us-ascii?Q?yLRb+q04C0Ie2PxzA0rfNCmPzM0BG1v8yVw2vX0yX3+LNrbsNc2PSC8UtpNM?=
- =?us-ascii?Q?VgOSvqgqHOxFG5Kavu+R3vrucfGD0Aslz0ochbakxZhM7iKQ+VICyI8ChzVg?=
- =?us-ascii?Q?CtwusWTayGrD8GP6KDw5GplkEL1ax81wADxgaM0sdedwjg/3UmvtcBwGzRep?=
- =?us-ascii?Q?TJYlluJK2luVxvr0wwVgv4R93Mib?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cPWrh9luZ4AZaBwMJlblUQg/plN7f0MQWB+TIbGgMmMPbB/1hDsNY46daYIy?=
- =?us-ascii?Q?vbqCDMTBCea76anYcWywphHSVX1R3bdRHkw86OH0sc5VJTmNs9IlfwnTCzhA?=
- =?us-ascii?Q?5nMCCiByqXNJYgpMo1OcpSsTFvI/jZhcIcEznd59gp3IMBep0owdDJ2VuVWC?=
- =?us-ascii?Q?+opTnf028OZ3mydF0BfcwNU5BtYFZMscxhuuvF76L8Mb9Uhwy4k4Ps+BXcs2?=
- =?us-ascii?Q?B8PPJ9ZLnavqLLnE65ngL9cPll9IgftyRdpV2CECBY6YP7tkc/bPcLYo6x+h?=
- =?us-ascii?Q?Vvr+MxEVh+AZXG81HXUlo/eBChmOeuzgBR8gmCWqqJLeSAWvXlBhR7XieoeR?=
- =?us-ascii?Q?a2GpAhnYj1yiUKSGsNkBn9U2Hk+cfcWgTUA7Sa+GwC4zty8LkVNn73VhF/Ts?=
- =?us-ascii?Q?8Ty6wfJ+cYNxEO8iuefO4B2rThjC57foaHmibFnmoLaY5z5ObSo1iTrEXrvm?=
- =?us-ascii?Q?SrUS+FBmSaJiUw2ttmcXQLYbPDmj5ZAKgxT5l8sQaReitM8EvByYFoCvbA8I?=
- =?us-ascii?Q?/FUfw3F3+S/ZO0E2GY/feIwNnm/0beXFEr26A2mEd4x+d0cVvCrIC3n+uasX?=
- =?us-ascii?Q?lvebbyALW5cICWlBNsW6Ct0OGWx6SzesWxW1IdsWaDQ7yruI+HtVwqP++kVZ?=
- =?us-ascii?Q?7jAp6kXFk/20iCKT5CrO20HEDVBsDluETfIUj7ii/kgkE7XkH8GY/Z3smWv4?=
- =?us-ascii?Q?FL6A8GG0r9eSDTPSLIJtzHxAvJzE2uNU/vhKaQljdy4v4EH78U98xWbUbKlS?=
- =?us-ascii?Q?fZeyUe8Zlf1eNkyKzrm1pmHuWktFnbB5FFVi0/uDPMiwV6fB29ax4OWS5hvT?=
- =?us-ascii?Q?WrU7z9sanFoPyWs6lMRzoomMVj8zYkuHfUlkuvJzzYwPCRuc3Pu/pA4qKlVR?=
- =?us-ascii?Q?NBZ+JYzzzxgEFIpU3PvvrAk753o+LOrJsKsHoeSZXVpkkzxqkQCr9pq1ZAij?=
- =?us-ascii?Q?bmy8Y2k11EueIYF5SD1AuEr2HbUhD7ttNrd3JNitgHiLoqeq3/dTH1TBA/ng?=
- =?us-ascii?Q?dzZE0ca6KC5qdSlJFz9fA87bi22q4HWca/z2/QFH50u0TsYoYGG7ExyBYbtJ?=
- =?us-ascii?Q?bRU/yaOFsbYTlDqAn8DAslzstP/YE700QV/pRL0fO1THn/j3pXmroE8Dxv5/?=
- =?us-ascii?Q?2ImEN1eckEXOuDUsF5HWNSv3Br73M9T4OoKiu2eC3eY18+v6tYTLJq9o5+g5?=
- =?us-ascii?Q?AZuy2AKo1wAtsCngxXoY928IIHswQUF3QNbHRGVjPOrEzSXqcdhc+PkC8NKl?=
- =?us-ascii?Q?fxT3UddeAHqbUCHzWSntl1qdnRI4lEr0nfaw5RvJG6+3vrIq4VoOQtgj2py5?=
- =?us-ascii?Q?GA5aUnWGOXYrV0taoAzoqn1WpaBbeVWtSarb3Xj0V8//Vfb8ezFojUo6od21?=
- =?us-ascii?Q?lg7WVxfgM70uVs8av3UAwgk+QvUi9usXxOrdQdwMq6H0PML/xdKZ8d06VI0M?=
- =?us-ascii?Q?iZJQW4gAGl3HPJe78hGV4HHs5QLQugJuyRw2bL0dWA7k/Ulmj/rDe83SZNcQ?=
- =?us-ascii?Q?eo7Pm7jn21tVzbxAiB1Nxdsbl5fzCXaJAopNMVgak8IaV+hsEA4E06jabEMv?=
- =?us-ascii?Q?uXiTb2/qtEt9pTQGGwh04RvWz/xFARxE54ZZONFx?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b79bf542-d268-42ef-1041-08dd6ab5ebc3
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 09:26:13.4718
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Eq3MIV3Ejkj5AzsjIsL+roACyEDRAsr+xHyWrL9VCvM1VoFqEyFDJsiTA4D4DZQOOd/+YRj9BX6angrjEwqi2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6529
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321104100.GC25483@pendragon.ideasonboard.com>
 
-On Fri, Mar 21, 2025 at 01:44:47PM -0700, Sean Christopherson wrote:
->On Fri, Mar 21, 2025, Chao Gao wrote:
->> On Thu, Mar 20, 2025 at 10:59:19AM -0700, Sean Christopherson wrote:
->> >@@ -9776,8 +9777,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
->> >        if (r != 0)
->> >                goto out_mmu_exit;
->> > 
->> >-       enable_device_posted_irqs &= enable_apicv &&
->> >-                                    irq_remapping_cap(IRQ_POSTING_CAP);
->> >+       enable_device_posted_irqs = allow_device_posted_irqs && enable_apicv &&
->> >+                                   irq_remapping_cap(IRQ_POSTING_CAP);
->> 
->> Can we simply drop this ...
->> 
->> > 
->> >        kvm_ops_update(ops);
->> > 
->> >@@ -14033,6 +14034,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
->> > 
->> > static int __init kvm_x86_init(void)
->> > {
->> >+       allow_device_posted_irqs = enable_device_posted_irqs;
->> >+
->> >        kvm_init_xstate_sizes();
->> > 
->> >        kvm_mmu_x86_module_init();
->> >
->> >
->> >Option #2 is to shove the module param into vendor code, but leave the variable
->> >in kvm.ko, like we do for enable_apicv.
->> >
->> >I'm leaning toward option #2, as it's more flexible, arguably more intuitive, and
->> >doesn't prevent putting the logic in kvm_x86_vendor_init().
->> >
->> 
->> and do
->> 
->> bool kvm_arch_has_irq_bypass(void)
->> {
->> 	return enable_device_posted_irqs && enable_apicv &&
->> 	       irq_remapping_cap(IRQ_POSTING_CAP);
->> }
->
->That would avoid the vendor module issues, but it would result in
->allow_device_posted_irqs not reflecting the state of KVM.  We could partially
+Hi Laurent,
 
-Ok. I missed that.
+On Fri, Mar 21, 2025 at 12:41:00PM +0200, Laurent Pinchart wrote:
+> Hi Matti,
+> 
+> Thank you for the patch.
+> 
+> On Fri, Mar 21, 2025 at 10:58:27AM +0200, Matti Vaittinen wrote:
+> > When fwnode_for_each_available_child_node() is used on the device-tree
+> > backed systems, it renders to same operation as the
+> > fwnode_for_each_child_node(), because the fwnode_for_each_child_node()
+> > does only iterate through those device-tree nodes which are available.
+> 
+> This makes me wonder why the OF backend implements
+> fwnode_for_each_child_node() as fwnode_for_each_available_child_node().
+> Is that on purpose, or is it a bug ?
 
-btw, is using module_param_cb() a bad idea? like:
+I went back to see where this came from,I understand
+<URL:https://lkml.org/lkml/2014/10/17/185> is the first version of the
+patch adding device_get_next_child_node(). Since then the behaviour has
+been carried forward.
 
-module_param_cb(nx_huge_pages, &nx_huge_pages_ops, &nx_huge_pages, 0644);
+Cc Rafael.
 
-with a proper .get callback, we can reflect the state of KVM to userspace
-accurately.
+> 
+> > The thp7312 uses the fwnode_for_each_available_child_node() to look up
+> > and handle nodes with specific names. This means the code is used only
+> > on the device-tree backed systems because the node names have little
+> > meaning on ACPI or swnode backed systems.
+> > 
+> > Use the fwnode_for_each_child_node() instead of the
+> > fwnode_for_each_available_child_node() In order to make it clearly
+> > visible that the 'availability' of the nodes does not need to be
+> > explicitly considered here. This will also make it clearly visible that
+> > the code in this driver is suitable candidate to be converted to use the
+> > new fwnode_for_each_named_child_node()[2] when it gets merged.
+> > 
+> > [1]: https://lore.kernel.org/all/Z9rhfJUlCbi7kA2m@kekkonen.localdomain/
+> > [2]: https://lore.kernel.org/all/9c3880f74476436f39d796b5c10c540ae50b722c.1742225817.git.mazziesaccount@gmail.com/
+> > 
+> > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > 
+> > ---
+> > Revision history:
+> > v1 => v2:
+> >  - rephrase the commit message to not claim the 'availability' has no
+> >    well defined meaning on the DT backed systems. Instead, explain that
+> >    the fwnode_for_each_available_child_node() only iterates through the
+> >    available nodes on the DT backed systems and is thus functionally
+> >    equivalent to the fwnode_for_each_child_node().
+> > 
+> > NOTE: The change is compile tested only! Proper testing and reviewing is
+> > highly appreciated (as always).
+> > ---
+> >  drivers/media/i2c/thp7312.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+> > index 8852c56431fe..4b66f64f8d65 100644
+> > --- a/drivers/media/i2c/thp7312.c
+> > +++ b/drivers/media/i2c/thp7312.c
+> > @@ -2067,7 +2067,7 @@ static int thp7312_parse_dt(struct thp7312_device *thp7312)
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	fwnode_for_each_available_child_node(sensors, node) {
+> > +	fwnode_for_each_child_node(sensors, node) {
+> >  		if (fwnode_name_eq(node, "sensor")) {
+> >  			if (!thp7312_sensor_parse_dt(thp7312, node))
+> >  				num_sensors++;
+> > 
+> > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+> 
 
->address that by having the variable incorporate irq_remapping_cap(IRQ_POSTING_CAP)
->but not enable_apicv, but that's still a bit funky.
->
->Given that enable_apicv already has the "variable in kvm.ko, module param in
->kvm-{amd,intel}.ko" behavior, and that I am planning on giving enable_ipiv the
->same treatment (long story), my strong vote is to go with option #2 as it's the
->most flexibile, most accurate, and consistent with existing knobs.
+-- 
+Kind regards,
+
+Sakari Ailus
 
