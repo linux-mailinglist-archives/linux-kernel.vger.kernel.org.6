@@ -1,140 +1,199 @@
-Return-Path: <linux-kernel+bounces-573553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF31FA6D8FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:18:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6C7A6D902
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:18:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A03A8FB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57E921890257
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13025DD0B;
-	Mon, 24 Mar 2025 11:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FBA25DD08;
+	Mon, 24 Mar 2025 11:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDgUxHx6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M4mRsw0L"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F666200CB;
-	Mon, 24 Mar 2025 11:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A423200CB;
+	Mon, 24 Mar 2025 11:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815094; cv=none; b=l9teI7a38E08rFDbgdpeyHGMMQBQ6EN7soy/ru8OlTBQPlQ/gvDs59UHNATpb/ht6wi+b1oi1Qe22V3tBei7TGPvqZkKvuxr97kYjIbH9lz3cWuq1BQr8H7o+dlscAXigtWt1kyzF/Poni7/GmmSTBBYdvuEPr5CoN4F+p9ZsEc=
+	t=1742815114; cv=none; b=tgen2j2504b5jXMd06PlOG+8hG/kEpt7CJuF6v3jPj9OHsLcNUTjy8QM75F8xSpdTopg/GRcia+IXy30iAvdDhYRuhQmW/+zsvsB1tmyqx5dMk6dBWYNXVxXIhkLxQ1haPTJf67voMbNgRwv1tVorOQ7THm+tKtIH3di4wUU7mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815094; c=relaxed/simple;
-	bh=CxXJC2B67ym1SyMIg/if96ldf/F164p7rhWaGHPsDbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pg6Ho/Aaev1hq+lo9ahF7BqNh5d20JS1yqkPk+ysPjctcrowbpUE0FqvXpEqwCQQ+xeg2op/7S8y19yOrlTUkeVVlgHH7RTnhXpAOc3UVd1/26rIU6KjnrGKHFpY2W/wZt2ZoT5EJFBGyzfvFtBk0kluDI0akW7sWM+yCSeTU38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDgUxHx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD37C4CEDD;
-	Mon, 24 Mar 2025 11:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742815093;
-	bh=CxXJC2B67ym1SyMIg/if96ldf/F164p7rhWaGHPsDbs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PDgUxHx6h3Icy3ncr5Y9vhH9Zd72rRvJU6TErHxvtGSbuyhPEp1qi8FDXBArK9XNv
-	 W6xEFFcI2/rABKjSitcCWWnaqOyxUNTZDPWsv7DKmkFgf8DJz/GiMkU4VPDNoUkHC0
-	 aqESZFVM9f6I5gedHrs4L6wTQqN0KseG0k+mIYtyuEGCbAqUWcMzXLCbA0JGxInQ/7
-	 dess321kEQb4oCJIzoY21bmR4t6A0TMjTzaM82U5Q42ZUG0QUze9W3QeVq0tJj72PB
-	 GopHOhhxqG/9XNZZELTAn/z1OkyXes5BKrpYzB8pMZlgapJagjkJgaoSNjkUoNSnqt
-	 SoNcwYzIKyR6g==
-Message-ID: <201dc2a7-e031-47d7-9c17-c4275365b477@kernel.org>
-Date: Mon, 24 Mar 2025 12:18:03 +0100
+	s=arc-20240116; t=1742815114; c=relaxed/simple;
+	bh=ZqmTOH9CHDOzfwbC26hEeO5uBkNA+EhZHNdOSUiJrzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfqsPakWLccaln0U3EBkM83XHXyh5WKZy+9LxBtAH9bPqFFCeOcR9R5dWG7R3ivhG1+rA9tvLtUxPyGCk283JZFas1sWH7aD7/MyV9QR42q2LYiJ7cc88p/rs00zhjMAwU3BQ5GRSf218Y1/mfidaMC9iGz2aPP7b/36vPlKnko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M4mRsw0L; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WTJEmzGsIeYqe9DjdoX+7aXEfA9POxMXhYB6XA9pUwc=; b=M4mRsw0LsjEyFxwErQy5o+Z0AZ
+	Xn93TgmntiU2IByaWxuPsL5agskcaG1cfnJc7Q3qcO+DUShwX02HcI4iJUpQw5qDwP0whmoSsOHaX
+	u4O4MhUUH+4vMisKrGkEXHmrXiIUjmx1BK6qypJrHltx54gn73U6cHRmyEbhvqnzruAQhe73ReGNY
+	fbba8hdQUa4cbBYllMKFug0eBHtP7xK7KV0e1rGsZmFN8CI1FTBkaFWvg+JbWcKFNID+TRaLVpgkQ
+	GcHfsdGYnnDIwVTpVh5BgbeUkvgIjBgHIk49bLxwGao23KyvEZFTZ9wI9+ZRx9OtcsHOSc5988jZf
+	Ndx6CBdA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1twfow-00000005Dhi-2qcb;
+	Mon, 24 Mar 2025 11:18:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 08A693004AF; Mon, 24 Mar 2025 12:18:18 +0100 (CET)
+Date: Mon, 24 Mar 2025 12:18:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v2] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <20250324111817.GA14944@noisy.programming.kicks-ass.net>
+References: <20250324083051.3938815-1-edumazet@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] ASoC: dt-bindings: wcd93xx: add bindings for audio
- mux controlling hp
-To: srinivas.kandagatla@linaro.org, peda@axentia.se, broonie@kernel.org,
- andersson@kernel.org, krzk+dt@kernel.org
-Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- johan+linaro@kernel.org, Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
- <20250324110606.32001-5-srinivas.kandagatla@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250324110606.32001-5-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324083051.3938815-1-edumazet@google.com>
 
-On 24/03/2025 12:06, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Mon, Mar 24, 2025 at 08:30:51AM +0000, Eric Dumazet wrote:
+> eBPF programs can be run 50,000,000 times per second on busy servers.
 > 
-> On some platforms to minimise pop and click during switching between
-> CTIA and OMTP headset an additional HiFi mux is used. Most common
-> case is that this switch is switched on by default, but on some
-> platforms this needs a regulator enable.
+> Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
+> hundreds of calls sites are patched from text_poke_bp_batch()
+> and we see a huge loss of performance due to false sharing
+> on bp_desc.refs lasting up to three seconds.
 > 
-> Move to using mux-controls so that both the gpio and regulators can be
-> driven correctly, rather than adding regulator handing in the codec.
+>    51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
+>             |
+>             |--46.45%--poke_int3_handler
+>             |          exc_int3
+>             |          asm_exc_int3
+>             |          |
+>             |          |--24.26%--cls_bpf_classify
+>             |          |          tcf_classify
+>             |          |          __dev_queue_xmit
+>             |          |          ip6_finish_output2
+>             |          |          ip6_output
+>             |          |          ip6_xmit
+>             |          |          inet6_csk_xmit
+>             |          |          __tcp_transmit_skb
+>             |          |          |
+>             |          |          |--9.00%--tcp_v6_do_rcv
+>             |          |          |          tcp_v6_rcv
+>             |          |          |          ip6_protocol_deliver_rcu
+>             |          |          |          ip6_rcv_finish
+>             |          |          |          ipv6_rcv
+>             |          |          |          __netif_receive_skb
+>             |          |          |          process_backlog
+>             |          |          |          __napi_poll
+>             |          |          |          net_rx_action
+>             |          |          |          __softirqentry_text_start
+>             |          |          |          asm_call_sysvec_on_stack
+>             |          |          |          do_softirq_own_stack
 > 
-> This patch adds required bindings to add such mux controls.
+> Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
+> Before the patch, on a host with 240 cores (480 threads):
+> 
+> $ bpftool prog | grep run_time_ns
+> ...
+> 105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+> 3009063719 run_cnt 82757845
+> 
+> -> average cost is 36 nsec per call
+> 
+> echo 0 >/proc/sys/kernel/bpf_stats_enabled
+> text_poke_bp_batch(nr_entries=2)
+>         text_poke_bp_batch+1
+>         text_poke_finish+27
+>         arch_jump_label_transform_apply+22
+>         jump_label_update+98
+>         __static_key_slow_dec_cpuslocked+64
+>         static_key_slow_dec+31
+>         bpf_stats_handler+236
+>         proc_sys_call_handler+396
+>         vfs_write+761
+>         ksys_write+102
+>         do_syscall_64+107
+>         entry_SYSCALL_64_after_hwframe+103
+> Took 324 usec
+> 
+> text_poke_bp_batch(nr_entries=164)
+>         text_poke_bp_batch+1
+>         text_poke_finish+27
+>         arch_jump_label_transform_apply+22
+>         jump_label_update+98
+>         __static_key_slow_dec_cpuslocked+64
+>         static_key_slow_dec+31
+>         bpf_stats_handler+236
+>         proc_sys_call_handler+396
+>         vfs_write+761
+>         ksys_write+102
+>         do_syscall_64+107
+>         entry_SYSCALL_64_after_hwframe+103
+> Took 2655300 usec
+> 
+> After this patch:
+> 
+> $ bpftool prog | grep run_time_ns
+> ...
+> 105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+> 1928223019 run_cnt 67682728
+> 
+>  -> average cost is 28 nsec per call
+> 
+> echo 0 >/proc/sys/kernel/bpf_stats_enabled
+> text_poke_bp_batch(nr_entries=2)
+>         text_poke_bp_batch+1
+>         text_poke_finish+27
+>         arch_jump_label_transform_apply+22
+>         jump_label_update+98
+>         __static_key_slow_dec_cpuslocked+64
+>         static_key_slow_dec+31
+>         bpf_stats_handler+236
+>         proc_sys_call_handler+396
+>         vfs_write+761
+>         ksys_write+102
+>         do_syscall_64+107
+>         entry_SYSCALL_64_after_hwframe+103
+> Took 519 usec
+> 
+> text_poke_bp_batch(nr_entries=164)
+>         text_poke_bp_batch+1
+>         text_poke_finish+27
+>         arch_jump_label_transform_apply+22
+>         jump_label_update+98
+>         __static_key_slow_dec_cpuslocked+64
+>         static_key_slow_dec+31
+>         bpf_stats_handler+236
+>         proc_sys_call_handler+396
+>         vfs_write+761
+>         ksys_write+102
+>         do_syscall_64+107
+>         entry_SYSCALL_64_after_hwframe+103
+> Took 702 usec
 
-I claim you cannot test a binding in the way we understand Tested-by
-tags. Testing a binding is part of the build process and we do not have
-tested-by for builds...
+This is unreadable due to the amount of pointless repetition.
 
-Anyway,
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Also, urgh.
 
