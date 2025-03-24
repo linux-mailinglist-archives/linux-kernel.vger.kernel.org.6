@@ -1,170 +1,95 @@
-Return-Path: <linux-kernel+bounces-573795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244FFA6DC89
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:05:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25B2A6DC70
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686493B1BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48274188BD85
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE8F25E839;
-	Mon, 24 Mar 2025 14:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DF925F970;
+	Mon, 24 Mar 2025 13:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="MWygime5"
-Received: from p00-icloudmta-asmtp-us-central-1k-100-percent-8.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster2-host7-snip4-5.eps.apple.com [57.103.88.196])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NoOFdZGM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FE925D8F1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.88.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CB225E81C;
+	Mon, 24 Mar 2025 13:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742825018; cv=none; b=eiB4xFz1CSuHZoiIwOMhX/2SzmxslFM+mE0WKvqSJBf9TGPQXrrKW8igS+BbjBQZTOAAivLAhuquMvAee4X03Qvu+EVs3qwFQEPE/6h5dOgzqKUMw/0Ff6tkq3/W5QjSMOISvYOCD/Cl0XrmblAlcBxC4u1n+WBBjm3dUhANfhQ=
+	t=1742824773; cv=none; b=s9Y5it4ohp7MQVR2m6TCs+ShsHz2PRsLNQpEr5B56xuzcRRgC7JAUpDrjbzFZclVSMxnhWSDvhV+zZ87AVdh0uwHGY1Bk8JLnKzeqblrBk+m/SrpQU1lroXQKzBKTCq25VbXx8Yl9zRistOuTo2yjGlCvibdM454wEAk15K0L3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742825018; c=relaxed/simple;
-	bh=6Y2CsVi71JRPHLZBHtUCL5LXq4SNhxmS4nTeOSN7U9M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dBdf89eZrt7Alk7u/0wgbj7vQRQmi8ilATuRu4Vd1WFZp+S2WHBJcGifj7848YKzqxJesoahN8WC9EMbQkp5iRBCGNFX6yj6ZCbfjQrqKcFto95/H0k/NNNc8rmv0/VJ3IDwNUZT1ALpxMxxMqEmuFgXST+Cb1FPhMUVOgUGWGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=MWygime5; arc=none smtp.client-ip=57.103.88.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
-	bh=L/3jVTIh7MFp37vxu36ccNLDUYtIM80/gETCDI1so+I=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=MWygime5IeOdEyuTClBEQPZXvDJvEMpfxeYwyvOKWeW/FA496syVWjO2VVn0KiazG
-	 blVIBrp/diNdC9H91YUh6XbqOWi20T5jGZRX5iQ5Vl3dZ4dGrBmFw0eSAW1AklkN3R
-	 pX4TZ9vIrqxEi8ZMim8PR/kEAoQ01LgvSvVKbWFKbvR8+nR/qS21E+x/xE75teOzWn
-	 nRqHXPl95hGa79MRkVWFuHsaMj4n6OuoVTYJ3uXvbPGpka5mjbcjKvCVSkCxIrz5/S
-	 ssybsycMTKBN52FmFsAtMqMelR8n6/i/Mt82xLY+ide0MhmAzpMwzTCr50CT0Ai/JP
-	 B2wNBdRhc3D5g==
-Received: from localhost.localdomain (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
-	by p00-icloudmta-asmtp-us-central-1k-100-percent-8.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 9423A180121B;
-	Mon, 24 Mar 2025 14:03:32 +0000 (UTC)
-From: Sergio Perez <sergio@pereznus.es>
-To: Tomasz Duszynski <tduszyns@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Sergio Perez <sergio@pereznus.es>
-Subject: [PATCH v6 2/2] iio: light: bh1750: Add hardware reset support via GPIO
-Date: Mon, 24 Mar 2025 14:59:20 +0100
-Message-ID: <20250324135920.6802-2-sergio@pereznus.es>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250324135920.6802-1-sergio@pereznus.es>
-References: <20250324135920.6802-1-sergio@pereznus.es>
+	s=arc-20240116; t=1742824773; c=relaxed/simple;
+	bh=pPpPGmbFhlnpcrD/sdzrDoBTzh8QL5fZzQQDJK4oxFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YBISBCTmKGnYLqwM+cd84IJHI8B8yoQ7CKWfyyO1m+2TBLJc7VTLan0WyUIanA0pT+nbn6ZKiRoebX3H+7rD10sg/wSGjw9XEljhEHdyq8pg/e9+I7P7p0ax84pqixcaYANwYKCw9JqNs4ugDrfjwNB8KsTnGlIHty4s90hCV+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NoOFdZGM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742824770;
+	bh=pPpPGmbFhlnpcrD/sdzrDoBTzh8QL5fZzQQDJK4oxFg=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=NoOFdZGMVYWoM9DEu8WggGAbsUWyXP8z1gBmOVYNDchafopGHD8cg4ne8gCQsrEOh
+	 JuPHDleNcmv2mZtMw280dk7j8HJNk0a2bA09/3uu/G9Uan44pDZR/7pX1/ujgzT38+
+	 Rdagsu4hGj3TsONQ0hWTCj58/NVcn/+o8gN6FioqAwbbI51EgB2ciGuYEPfxVjU9aG
+	 4L9msFdmuoIAAHy336MF8sXfMWPhsl469v7mWyDIQtr9FU0VZYSEtdcGCqAPkFzK2G
+	 R6rVAXwgu/vjlgh73bV7Cxrpz4kZcKKNchIGPzlVxsKRAX+Ytb8w2TnpKBz7jOsxaQ
+	 3TNL44MXe1f6A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3AAF417E0673;
+	Mon, 24 Mar 2025 14:59:28 +0100 (CET)
+Message-ID: <28135f96-ef99-4347-884d-20e870a3d64a@collabora.com>
+Date: Mon, 24 Mar 2025 14:59:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: lpdnBlp3BhFVnQgTLKEq9h7RfPq57Phv
-X-Proofpoint-GUID: lpdnBlp3BhFVnQgTLKEq9h7RfPq57Phv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 malwarescore=0 clxscore=1030 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2503240102
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iommu: Correct indentation and style in DTS
+ example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, David Heidelberg <david@ixit.cz>,
+ iommu@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250324125250.82137-1-krzysztof.kozlowski@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250324125250.82137-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Some BH1750 sensors require a hardware reset before they can be
-detected on the I2C bus. This implementation adds support for an
-optional reset GPIO that can be specified in the device tree.
+Il 24/03/25 13:52, Krzysztof Kozlowski ha scritto:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
+> unused labels.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The reset sequence pulls the GPIO low and then high before initializing
-the sensor, which enables proper detection with tools like i2cdetect.
-This is particularly important for sensors that power on in an
-undefined state.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Sergio Perez <sergio@pereznus.es>
----
-Revision history:
-v5 => v6:
- - No changes
-v4 => v5:
- - Logic change to be coherent with dt-binding as mentioned by Krzysztof Kozlowski
- - Adjust indentation as commented by Krzysztof Kozlowski
-v3 => v4:
- - No changes
-v2 => v3:
- - Split in two patches: dtbinding and code
- - Ensure list on mantainers following instructions by Krzysztof Kozlowski
- - Fix check tests as explainned by Krzysztof Kozlowski
-v1 => v2:
- - Fixes some whitespaces and end lines
- - Remove unnecessary include
- - Use of fsleep rather than usleep_range as suggested by Jonathan Cameron
- - Use of dev_dbg to reduce innecessary output as suggested by Jonathan Cameron
- - Delete an extra function implementing the functionality inline as suggested by Jonathan Cameron
----
- drivers/iio/light/bh1750.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
-index 4b869fa9e5b1..764f88826fcb 100644
---- a/drivers/iio/light/bh1750.c
-+++ b/drivers/iio/light/bh1750.c
-@@ -22,12 +22,16 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- 
- #define BH1750_POWER_DOWN		0x00
- #define BH1750_ONE_TIME_H_RES_MODE	0x20 /* auto-mode for BH1721 */
- #define BH1750_CHANGE_INT_TIME_H_BIT	0x40
- #define BH1750_CHANGE_INT_TIME_L_BIT	0x60
- 
-+/* Define the reset delay time in microseconds */
-+#define BH1750_RESET_DELAY_US 10000 /* 10ms */
-+
- enum {
- 	BH1710,
- 	BH1721,
-@@ -40,6 +44,7 @@ struct bh1750_data {
- 	struct mutex lock;
- 	const struct bh1750_chip_info *chip_info;
- 	u16 mtreg;
-+	struct gpio_desc *reset_gpio;
- };
- 
- struct bh1750_chip_info {
-@@ -248,6 +253,25 @@ static int bh1750_probe(struct i2c_client *client)
- 	data->client = client;
- 	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
- 
-+	/* Get reset GPIO from device tree */
-+	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
-+						   "reset", GPIOD_OUT_HIGH);
-+
-+	if (IS_ERR(data->reset_gpio))
-+		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
-+				     "Failed to get reset GPIO\n");
-+
-+	/* Perform hardware reset if GPIO is provided */
-+	if (data->reset_gpio) {
-+		/* Perform reset sequence: low-high */
-+		gpiod_set_value_cansleep(data->reset_gpio, 1);
-+		fsleep(BH1750_RESET_DELAY_US);
-+		gpiod_set_value_cansleep(data->reset_gpio, 0);
-+		fsleep(BH1750_RESET_DELAY_US);
-+
-+		dev_dbg(&client->dev, "BH1750 reset completed via GPIO\n");
-+	}
-+
- 	usec = data->chip_info->mtreg_to_usec * data->chip_info->mtreg_default;
- 	ret = bh1750_change_int_time(data, usec);
- 	if (ret < 0)
--- 
-2.43.0
 
 
