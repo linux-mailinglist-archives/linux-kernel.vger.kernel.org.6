@@ -1,170 +1,161 @@
-Return-Path: <linux-kernel+bounces-574302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427A0A6E382
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:28:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD01A6E377
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:27:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1895F3A5C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054761889830
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C7919D897;
-	Mon, 24 Mar 2025 19:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D197219C556;
+	Mon, 24 Mar 2025 19:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="hzrlVIqF"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZHOurTVq"
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05263199E84
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B831319539F;
+	Mon, 24 Mar 2025 19:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844443; cv=none; b=VRhKdUZABWq9Izb2FIpxwP8r7uf73qB1uQdo0/ArVjBehNwYiwJVZw+8D1jsiKBOnCctXOjL1vECB+pITVk1IVuDw1KqVXJK9M8YXnREvXXPpIEYCJuYvc3L5rCCO/AkbfRpCgq9wHFWOrN2diTzm4LK0VmPg3IVtpF1y2kzMWk=
+	t=1742844435; cv=none; b=i0NQGgO6Zl+mKD1YdZHGAccQiSNaQIW5iDcAym36PpW/+FMWhXvEXxi3Dp+XbOm/gEw5cD676WlKXF1vpMDyWEMd8VKO1hUmF5Yr63Z9EriX4Z4DbfVBZnZfElLbDCiw1IrMEeie1guUZbNlC4R4AI8BjnrfEGDa+ihV4KDy4ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844443; c=relaxed/simple;
-	bh=tow1bbsuiMKdxwcgM5wqdG0LBLdJEDfAWZYo0p/RsCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lJZ8JvvP/GZ1ynKBadkZNsB+0VZAS1B/+Ipr0KT/RmPDMzRgDaerhnPQkv5NXuzGTo2zJgTaIcANDjNo7zU6El19kw1CTcAvaC5L4TdNwg+0ILHKSAABtcdO15EmQi1dZYFRSn1UhxzRDPX3SytfZ76RuMoYcujrsFR9X3FCABQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=hzrlVIqF; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-476a304a8edso42310481cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1742844441; x=1743449241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=risWjFwCypYzMEcsgslZMqIUPKF0hXh9xXq6g1dCnwU=;
-        b=hzrlVIqF5lXKCI9UnOheIx2QUoJEvTxg22bRKZZBa+LUBMgnKw+pD4bt4qLCuyssJk
-         XV6T0WIwlkOQFa6HFlqpDlXHqYyu1vfwxV5vegnUU+nD2dZh9AJR1xwcoCwU1AIti75W
-         VTpsCkZ+fdKar18/9YWbd+I2rZbCCBSR8hqqACZ07U/4ScUoeHEAZ+MP/2um+89n7+yC
-         0yTM5MNH4uHWkOi1uvdUmTVb8xpyXD3DPT1vl8eVrr2pTw8b6UOggWB1HWhHCwY7zhqh
-         TFB56YDd3f4rdl1xQXCvCCrMzR7h3VZ24+zNHQ1K8mnvig7AHXpQCVb0VhD/wG4ghasA
-         /vIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742844441; x=1743449241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=risWjFwCypYzMEcsgslZMqIUPKF0hXh9xXq6g1dCnwU=;
-        b=DEbp+X5NZ70+KNkM2M7e47sL0g1V/IGU7pDbY+t5H1ljGde6pQEvqqEl6S5MTdlOVr
-         FVu8M32xDLz4NKvPSGmkTKcaUS/8T5pG2NhzzYBx5HaB5dy00WbEigEnMFaFOO+zfITu
-         iRDNHCX77c0xFmlC6P2dGkpbwru+eRE+6Fa0eHf5CJlsvvRCZhYIBspW70hIwC4Jv3sH
-         cqvlo+BO/5eCRzRkg+Dhq1s7JBZSojBVkhgF3ocPZy7bOdfoNLZiXNQSAcPGvO0+n7eU
-         LD0e1ISD2ipm3JpjuLaFI5Yp9q/CryHYqPSGo8zR4USAXGy7XC/+sdu3+VNoFJ7gEV5m
-         oSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoVDw5nTSjcYxevmMPPaCQKHhjW2G/dBkzRM7BqCS1zBCpnYsZ1DYzv+D7Ay4MPPGsr070GKA+/b+3SEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzInhv7xDBPtD7cKgbk81yngydB+ZZkX78MoSkbpBk8LEjr+5FN
-	7c8Ecqi8UortcvMT30qorr7+n6AZsYcVrI8N60cwQCk4zn7wM6Y9fO/bmeKhnEWkUSwOYb2UMX/
-	SL+gfAw8ZZHSUd4HcHGcbkG2nzxsZXNoeflURPg==
-X-Gm-Gg: ASbGncskRxyk+TG12LIliDVuLSp8rbjNH1U6jlh5kKmOvJwf6S/4KKpYUlyd1Zk8o8Z
-	GKSPgCKr7eFkUpjnawgS0qOucN8yML8bWMddHichg+DvdYvXzKdH3tZdx5FN1+d9GyoPm47mtt/
-	FWcwBFoCvx6lGOCp9pFH3HKNCtRpVoRJPsx/M=
-X-Google-Smtp-Source: AGHT+IGstsIg4qTmJ5YmWZYDNChDQ3+AV2nMWCj2a+cFs02lJM90kE8eqj7HIwLM8JIykyDhXLdef0fVOQCXvqByXHY=
-X-Received: by 2002:a05:622a:550f:b0:472:bbb:1bab with SMTP id
- d75a77b69052e-4771dd88e91mr196322501cf.24.1742844440714; Mon, 24 Mar 2025
- 12:27:20 -0700 (PDT)
+	s=arc-20240116; t=1742844435; c=relaxed/simple;
+	bh=P4P2z1eF/YNnOfLW8fBoOKbdAwyqWpJFO/rcNQNfqQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=schmMIm1RyUKcYYh1jd5Nj+QbAA9/H74aPgQc9BP+O/BBP5G1Xd6Sq0AQpFykCwGFIxxuh8pVOQPEDeSevq697y+Cqck/seQsOPOF5OP6dwQwvKfoKIHySiPSEe+mXbRAkY6Kbf6oO4nlOwnXuWv1IdKNK4+551V6RRb7bqe0JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZHOurTVq; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZM32x2YZ7zdsP;
+	Mon, 24 Mar 2025 20:27:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1742844425;
+	bh=QBR/kecod01J1h193BKpllSnIdD5DJtmTOWxdGopk5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZHOurTVqBYQHfSi3F6pdPowbpieWYs2igBgvPmtLeNtKh6bOX6LndXdRYsKY6jh9C
+	 KH3Sauy/1pIzJ/oIq5tcqOK2Grf+Vopzl7YTCM6Ps/dI4TzMQV42PBtmh1lSd4a4Ot
+	 uxKt6oeGXt0Fw5OGk8If/a4DunNXPqyIjb/UWnHQ=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZM32v3B5vz9hp;
+	Mon, 24 Mar 2025 20:27:03 +0100 (CET)
+Date: Mon, 24 Mar 2025 20:27:02 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v4 1/3] lsm: introduce new hooks for setting/getting
+ inode  fsxattr
+Message-ID: <20250324.aThi9ioghiex@digikod.net>
+References: <20250321-xattrat-syscall-v4-1-3e82e6fb3264@kernel.org>
+ <e2d5b27847fde03e0b4b9fc7a464fd87@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-12-changyuanl@google.com> <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
-In-Reply-To: <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 24 Mar 2025 15:26:43 -0400
-X-Gm-Features: AQ5f1JrjPincvTv7ELB8J7T2hdmnlfkqUUS0uCgm9_GvQ7ohVp8PZ0NaxW7sdEs
-Message-ID: <CA+CK2bC4PM0JnHOUm7qfpQ=wUhwsYQ-hJ12tTK_7pSWgYk+bhg@mail.gmail.com>
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
-To: Dave Young <dyoung@redhat.com>
-Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org, graf@amazon.com, 
-	akpm@linux-foundation.org, luto@kernel.org, anthony.yznaga@oracle.com, 
-	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
-	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
-	hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org, 
-	robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e2d5b27847fde03e0b4b9fc7a464fd87@paul-moore.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Mar 24, 2025 at 12:18=E2=80=AFAM Dave Young <dyoung@redhat.com> wro=
-te:
->
-> On Thu, 20 Mar 2025 at 23:05, Changyuan Lyu <changyuanl@google.com> wrote=
-:
-> >
-> > From: Alexander Graf <graf@amazon.com>
-> >
-> > We have all generic code in place now to support Kexec with KHO. This
-> > patch adds a config option that depends on architecture support to
-> > enable KHO support.
-> >
-> > Signed-off-by: Alexander Graf <graf@amazon.com>
-> > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
+On Fri, Mar 21, 2025 at 05:32:25PM -0400, Paul Moore wrote:
+> On Mar 21, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> > 
+> > Introduce new hooks for setting and getting filesystem extended
+> > attributes on inode (FS_IOC_FSGETXATTR).
+> > 
+> > Cc: selinux@vger.kernel.org
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > 
+> > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > > ---
-> >  kernel/Kconfig.kexec | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> >
-> > diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> > index 4d111f871951..57db99e758a8 100644
-> > --- a/kernel/Kconfig.kexec
-> > +++ b/kernel/Kconfig.kexec
-> > @@ -95,6 +95,21 @@ config KEXEC_JUMP
-> >           Jump between original kernel and kexeced kernel and invoke
-> >           code in physical address mode via KEXEC
-> >
-> > +config KEXEC_HANDOVER
-> > +       bool "kexec handover"
-> > +       depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_=
-FILE
-> > +       select MEMBLOCK_KHO_SCRATCH
-> > +       select KEXEC_FILE
-> > +       select DEBUG_FS
-> > +       select LIBFDT
-> > +       select CMA
-> > +       select XXHASH
-> > +       help
-> > +         Allow kexec to hand over state across kernels by generating a=
-nd
-> > +         passing additional metadata to the target kernel. This is use=
-ful
-> > +         to keep data or state alive across the kexec. For this to wor=
-k,
-> > +         both source and target kernels need to have this option enabl=
-ed.
+> >  fs/ioctl.c                    |  7 ++++++-
+> >  include/linux/lsm_hook_defs.h |  4 ++++
+> >  include/linux/security.h      | 16 ++++++++++++++++
+> >  security/security.c           | 32 ++++++++++++++++++++++++++++++++
+> >  4 files changed, 58 insertions(+), 1 deletion(-)
+> 
+> Thanks Andrey, one small change below, but otherwise this looks pretty
+> good.  If you feel like trying to work up the SELinux implementation but
+> need some assitance please let me know, I'll be happy to help :)
+> 
+> > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > index 638a36be31c14afc66a7fd6eb237d9545e8ad997..4434c97bc5dff5a3e8635e28745cd99404ff353e 100644
+> > --- a/fs/ioctl.c
+> > +++ b/fs/ioctl.c
+> > @@ -525,10 +525,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
+> >  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+> >  {
+> >  	struct inode *inode = d_inode(dentry);
+> > +	int error;
+> >  
+> >  	if (!inode->i_op->fileattr_get)
+> >  		return -ENOIOCTLCMD;
+> >  
+> > +	error = security_inode_getfsxattr(inode, fa);
+> > +	if (error)
+> > +		return error;
 > > +
->
-> Have you tested kdump?  In my mind there are two issues,  one is with
-> CMA enabled, it could cause kdump crashkernel memory reservation
-> failures more often due to the fragmented low memory.  Secondly,  in
+> >  	return inode->i_op->fileattr_get(dentry, fa);
+> >  }
+> >  EXPORT_SYMBOL(vfs_fileattr_get);
+> > @@ -692,7 +697,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+> >  			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+> >  		}
+> >  		err = fileattr_set_prepare(inode, &old_ma, fa);
+> > -		if (!err)
+> > +		if (!err && !security_inode_setfsxattr(inode, fa))
+> >  			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> >  	}
+> >  	inode_unlock(inode);
+> 
+> I don't believe we want to hide or otherwise drop the LSM return code as
+> that could lead to odd behavior, e.g. returning 0/success despite not
+> having executed the fileattr_set operation.
 
-As I understand cma low memory scratch reservation is needed only to
-support some legacy pci devices that cannot use the full 64-bit space.
-If so, I am not sure if KHO needs to be supported on machines with
-such devices. However, even if we keep it, it should really be small,
-so I would not expect that to be a problem for crash kernel memory
-reservation.
+Yes, this should look something like this:
 
-> kdump kernel dump the crazy scratch memory in vmcore is not very
-> meaningful.  Otherwise I suspect this is not tested under kdump.  If
-> so please disable this option for kdump.
+ 		err = fileattr_set_prepare(inode, &old_ma, fa);
+ 		if (err)
+ 			goto out;
+ 		err = security_inode_setfsxattr(dentry, fa);
+ 		if (err)
+ 			goto out;
+ 		err = inode->i_op->fileattr_set(idmap, dentry, fa);
+ 		if (err)
+ 			goto out;
 
-The scratch memory will appear as regular CMA in the vmcore. The crash
-kernel can be kexec loaded only from userland, long after the scratch
-memory is converted to CMA.
-
-Pasha
+> 
+> --
+> paul-moore.com
+> 
 
