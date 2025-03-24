@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-573466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E74DA6D7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:43:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09897A6D7C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:44:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3F816E08E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BC83B12A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0571925DAE6;
-	Mon, 24 Mar 2025 09:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD52F25DB11;
+	Mon, 24 Mar 2025 09:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bGCb9mZU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T5FRuUVE"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2D3170A13
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286A125D8F4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742809407; cv=none; b=pPhJP6n0J7K8riSzncSHmEPKCZ1SS4akBnfA+VH/Bypfj7rLHecPxKdvcKLckSf+lUGYaMcYa57Y97hp3bZtzlGIk1Ag8Sb3t+H1oeIIPihhd07/wlxO9Mv5rh3KHXlKlf3WLiMNQlBJDfBZfTWVrrbDPiJTIHjWp8GlSVTJlL8=
+	t=1742809409; cv=none; b=ZJgDhet2Z09t2/hk0TQyzmdouKRpF4U0Bjd2t+XLOp2A43x+nw8dGo1Kj38kP/y/cqxS7NbmAFPWdVM4ekQTAS+bEV5FuSvWTx44JwA8YgPhJwsAha/H2Tjg7uHkDZg7CXejs68QhdlegqmFvQjp4GXPNsw/iWVJtn20YV6aoD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742809407; c=relaxed/simple;
-	bh=sUwMoW1N+6j1u5OCROWXxbQhi2uVQ4/eh02wGNvr17I=;
+	s=arc-20240116; t=1742809409; c=relaxed/simple;
+	bh=pak5k7IWyYhyihUG+ysdV/ZoBiBbpwMnIeB5wwqQFWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wknuhebp0I012ygLkV3CmrBPBsnM5FUzusv2iuwKcXhZotXOh+BGeYfmY5qoq7Cj8wI5GHqoFt5e2wJvUxBa6RMS3bGa84CVsyBv2H4U7bykE11IbBFvg2442oFI14HIJ6f9ugeKTSEki+HBveLeDv9vwBO1xysc7iyDECAYncI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bGCb9mZU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742809404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sXgHgtcldaqEgL1B2MyW4inEnkIl1i2EB10yamCb83E=;
-	b=bGCb9mZUCd1TMnFrd4VXfqT6Su1nIpduH+BOX0KLw6tIMf5gJepX9qu4mcLugWTGUj9lmp
-	H+RSDx1LHVIu0CQcuuwwg7MeJSJr8J76S2KHl3XEgxyO0rhnMs282xm8AhyUCRN+Q2d98+
-	uvdddUeopjPhiGIHvrVFfLH9mQpHSWA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-svbXV-eaMs6sb0RZzUgyDg-1; Mon,
- 24 Mar 2025 05:43:19 -0400
-X-MC-Unique: svbXV-eaMs6sb0RZzUgyDg-1
-X-Mimecast-MFC-AGG-ID: svbXV-eaMs6sb0RZzUgyDg_1742809398
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46732180025A;
-	Mon, 24 Mar 2025 09:43:18 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.24])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5855F1801764;
-	Mon, 24 Mar 2025 09:43:15 +0000 (UTC)
-Date: Mon, 24 Mar 2025 17:43:11 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, kasong@tencent.com,
-	tim.c.chen@linux.intel.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] Minor cleanups and improvements to swap freeing
- code
-Message-ID: <Z+EpL2zXWP2HM+GX@MiWiFi-R3L-srv>
-References: <20250320114829.25751-1-shikemeng@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBZ4ivHnRHusWezBt9QN+iuaR4JRasx+ulzwxJsaL+QM81wZxv/eGR9WIUySACYeMZQkL+I/DIiZiPc/HPLyWLEjbm3oZmQtUOnQnbbhqfB4WcDWAC2sCbGeth4H1TvZRwunz1hYwr12YLlw+6H1CTuYPU5yJ3yQsTcYbLbIb0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T5FRuUVE; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=r7d8
+	Ot8mfH1I2wFZHCJQK70oiDoS2l0a40rEehkWGPg=; b=T5FRuUVE207AkDGjX4Mo
+	dGjHJ4m9FMONUA30tCsJMe2X9YbEA73rT/Ytsy487aKvDSqOPq2I3AluGojfQoOQ
+	mvm3Q/OkcfnWicVI00buv7xouFHacV827g7+8lwj3shw0FOozrr8JTFM1by5/TrQ
+	tdDtvLb7SxrW85MU4nMcv1IWr+nvmdb2wjQal6wuEjl0GaL7ClBY5JHkOG7nK62e
+	tnmkZS2Z+HWj56SUmfBc9V3Mx7azu/adPBQJ32m+2IjSfpdpiJrFgmRx7FPhSIrc
+	aqJDiLU3lNxXaD8+9RDQrXszJk+COH7+gHmU9RLo/KH+iSsOTIT642hzkk7/B4fT
+	Iw==
+Received: (qmail 2486540 invoked from network); 24 Mar 2025 10:43:24 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 10:43:24 +0100
+X-UD-Smtp-Session: l3s3148p1@2S12bxMx4TNtKPH/
+Date: Mon, 24 Mar 2025 10:43:24 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+Message-ID: <Z-EpPL3tn54E8KG5@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
+ <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wQ0cBGF5R+xQ7By2"
+Content-Disposition: inline
+In-Reply-To: <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
+
+
+--wQ0cBGF5R+xQ7By2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320114829.25751-1-shikemeng@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 03/20/25 at 07:48pm, Kemeng Shi wrote:
-> v2->v3:
-> -Extent VM_BUG_ON instead of remove it
-> -Keep bracket for more readability
-> -Collect RVG from Tim for rest part
-> 
-> v1->v2:
-> -Collect RVB from Tim
-> -Drop patch to factor out __swap_entry_free()
-> -Improve changelog and add more comment.
-> -Avoid unneeded lock re-aquire
-> 
-> Hi All,
-> This series contains some cleanups and improvements which are made
-> during learning swapfile. Here is a summary of the changes:
 
-Nice improvements about swapfile.c. Those kinds of swap_free_xxx
-confused me, I planned to clean up them. Thanks for great work.
+> +config SERIAL_RZ_SCI
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+I think this name is too generic. Most RZ-variants so far do not have
+this SoC. Would 'RZT2H' work or is it too narrow then?
 
+> +	SCIx_RZT2H_SCI_REGTYPE,
+
+This name is better.
+
+>  struct plat_sci_port {
+> -	unsigned int	type;			/* SCI / SCIF / IRDA / HSCIF */
+> +	unsigned int	type;			/* SCI / SCIF / IRDA / HSCIF / RZSCI */
+
+"RZT2" in the comment as well.
+
+> +/* SH-SCI */
+> +#define PORT_RZSCI	124
+> +
+>  /* Generic type identifier for ports which type is not important to userspace. */
+>  #define PORT_GENERIC	(-1)
+
+Does userspace need to know this port? Can't we use PORT_GENERIC?
+
+
+--wQ0cBGF5R+xQ7By2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfhKTwACgkQFA3kzBSg
+KbaGEBAAko5Zdq31eqGFNBy32OeJQ6zpiUA2K5ueKkvKDsZdQFJRwzx5e23rDPlS
+8JSNVPmJkqIn23c+Fs3CySTiE0NmdLWU+0x4BSocF2wdGEN0sHSRWV3Hyvf4mwYS
+m5dwGXYf7M1aBBU72eq1MRnOlo/GfvhJS4YY6QR6waJCCtdK76MvbSu98NSMwv8K
+53WmYX/Vj5R2MduC8Exl2soxg4Q0BQkwEj64LVwr/K80R+w/koiPOug1XMoMCMLl
+zNhHaIhtcerURNvElIB6oi+ZEwPC20ErptdvqgIzLNuQgL72yTmsfnov3ikI6ybg
+B2udVb73mXJc0SE3jxtshYLIcVeRBjS7n8goisDVKhKsWu9FwuWFUGgmrnOXzVfD
+zT+3vCN3Ab/o6N+hri2j1m69s9aorWa8EF4x42YVmLiGx0kgbeASqCx70Iz4zIXG
+yQ9viwyDIu9lOsmgMm8HHZ4X3EQHt5Tjx0seEFt9jGCUPZMGy4cJIfIhA14DHA7K
+yf5U/bwNDXRtxiGFt8drMe4QDS+hlVqMCCvJfG7Bvrx07h+mnrs9eHXLLcoRBMj1
+3cTy/In64cd+VyKsre4QDEzz9pr/J5HyUVq2y1RMIDt2QK+dJSronIYNnzln8TWR
+pGtKERYgScgbKx9Ya5qxeKsw0bTD5+6H4BMBFCXkeOaVCBEURuQ=
+=Wo2h
+-----END PGP SIGNATURE-----
+
+--wQ0cBGF5R+xQ7By2--
 
