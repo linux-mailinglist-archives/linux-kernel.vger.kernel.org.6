@@ -1,94 +1,139 @@
-Return-Path: <linux-kernel+bounces-574305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0D9A6E38B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:30:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C42CA6E39D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E7E171FE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5A8188BA0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE8F19F461;
-	Mon, 24 Mar 2025 19:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EED2199E84;
+	Mon, 24 Mar 2025 19:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmS9/pr/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hTW8Pqic"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923FD2E3381;
-	Mon, 24 Mar 2025 19:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4978E157A46;
+	Mon, 24 Mar 2025 19:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844599; cv=none; b=K3UK11bC5wRTcZDTk1SWV3Pbbk2l87v4khqOBuCgbchVvU6oRdE+HCmoSJYQRNiVw50Id00MNMBP08YmKkdRcV48AKxcmbLUSD25lzY9h7PDEItwbSnRqmmqL+5+FN9KcDLA+EE/eQAdB/7XtIbRXQ8QguI91r+ETxqailynf9Q=
+	t=1742844776; cv=none; b=jolXqu6GGkutamD33wUz7MPnwao+XiKzTfbSMF9S6+Gw4M4e6QbA2Hp0CrxcTrlipW735xkqlYsQ71kjAel41+HoIYzsal5qwrIMFu+82om8fBra5DEaNQ7JzzRJh0XtTLf8S5lp37Xz2B/WsZtPlUcpEHH52KQP0VKp8WdCPAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844599; c=relaxed/simple;
-	bh=K3ZPwimm9uQDOq2Wn0kNP++Woe199Uk9nvlB/z6pfUI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dbkjc3gbGr27M4y6mCJ8SMbdR8k5cqHVq1s7xq/Gbq4FfdCXwukGSI4BZ9SoyCmKoth4B2kZOg/X0Y14wwIxLtI52D24WTQTvvmXczozRrMZpesQ3kuE6aRRR1oM4QSEQEeK0zI6Zoo5Cx+5sGsxkYVwQi6gFffLA9I6CK2aVSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmS9/pr/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02644C4CEDD;
-	Mon, 24 Mar 2025 19:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742844599;
-	bh=K3ZPwimm9uQDOq2Wn0kNP++Woe199Uk9nvlB/z6pfUI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EmS9/pr/WVKx3HhJ0exGPyJUNXILPi7lqWUapIeben0AQbMr+jqFQgL129eZyEZ0a
-	 AWgac6dES5D93dsI3ZmrfAahae7G6uGqTrK9ljETRG6uY/7DgWfLGu1WrLpg/20l53
-	 PZRUC0oAFaoOkH4XTqI1teabP2k5LJtTP0weKWbGn80VYKNbl7cuDz8aoaamLzXpQx
-	 PybijwSlcXTLzHpLa4bz61HjtUB7l3UOFQhJkO6pe4MXcl1SyghjvsJ+cSPABk8yal
-	 idUh0BURgqyd/kr8yRhcyfbQJf+5fNhYysPwwN+2nV9exmZHLKQLa9xwp+Cf0UaYsV
-	 vcq0C9fj2skew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 712AA380664D;
-	Mon, 24 Mar 2025 19:30:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742844776; c=relaxed/simple;
+	bh=sQB6S7wqkulPvI9FHamXXy9Yd0RmyEoWhqQ4Qadl98U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VE/eXd7/fnKizoDOWZdEVue2JswKW1cabkJzs13aaz/OhI7IpTnJb/pYw0vHuM1PgNyOHz/Rj9VslE3Ll2TMCoiL8VAQ6ok5Zhb2EQHyZy+0THKzLLg8i/a/YHBn6AH3C75NAOnyKKIj987i3gZGjEjVEIKxzKzyKxL2XUN/SlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hTW8Pqic; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742844775; x=1774380775;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=sQB6S7wqkulPvI9FHamXXy9Yd0RmyEoWhqQ4Qadl98U=;
+  b=hTW8Pqicd5AX+EJrpIM/R4cpa4ldUY4tWOGs4uMZMnIagldSby6qhmFT
+   hnqzjI8BeQtoEHKdFvJY0K7h2E4rXvI61QzZ3R3LCnxLNxEsiwuyNdU6R
+   ETRRNeYhDZAfFQI2m/XcFPPNDvxDFo9nlz2yeJPmZfytdqdMJkZeMB5Vv
+   xGFbYwRKGL/z0T/K73mqxuJv6df1s5RqpGqtToPZIoGwTUYKMt67m2jMD
+   Igdzfk3Xtw1rZCmxLi7lDYj3Ja8b38V96idXEUBmf6lPhYS4V0K5qsHgh
+   sFPLeB2FE88LArDT3VLiRmLsBN11w5yx0q/yOpo9Axs5BEeouIqscoZeY
+   w==;
+X-CSE-ConnectionGUID: x4M21kaATna0jYtWugTVtA==
+X-CSE-MsgGUID: rl5crQZ0RwCeRIGSn8IMHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43960534"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="43960534"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 12:32:53 -0700
+X-CSE-ConnectionGUID: wNVo1/tCTEGIur4Q2foRzA==
+X-CSE-MsgGUID: nle3g7Z2QJWEQQwqLtcB3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="124923143"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 12:32:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1twnXT-00000005Xo9-0OTP;
+	Mon, 24 Mar 2025 21:32:47 +0200
+Date: Mon, 24 Mar 2025 21:32:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Kees Cook <kees@kernel.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 4/6] vsnprintf: Mark binary printing functions with
+ __printf() attribute
+Message-ID: <Z-GzXglM4MGgzcgV@smile.fi.intel.com>
+References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
+ <20250321144822.324050-5-andriy.shevchenko@linux.intel.com>
+ <20250324152012.413380d8@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] r8169: enable more devices ASPM support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174284463526.4144910.10638299332464041712.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Mar 2025 19:30:35 +0000
-References: <20250318083721.4127-1-hau@realtek.com>
-In-Reply-To: <20250318083721.4127-1-hau@realtek.com>
-To: ChunHao Lin <hau@realtek.com>
-Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250324152012.413380d8@gandalf.local.home>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 18 Mar 2025 16:37:19 +0800 you wrote:
-> This series of patches will enable more devices ASPM support.
-> It also fix a RTL8126 cannot enter L1 substate issue when ASPM is
-> enabled.
+On Mon, Mar 24, 2025 at 03:20:12PM -0400, Steven Rostedt wrote:
+> On Fri, 21 Mar 2025 16:40:50 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 > 
+> > Binary printf() functions are using printf() type of format, and compiler
+> > is not happy about them as is:
+> > 
+> > lib/vsprintf.c:3130:47: error: function ‘vbin_printf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
+> > lib/vsprintf.c:3298:33: error: function ‘bstr_printf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
 > 
-> V2 -> V3: Fix code format issue.
-> V1 -> V2: Add name for pcie extended config space 0x890 and bit 0.
+> BTW, I find it disturbing that the compiler is set to "error" on a warning
+> that "might be a candidate". What happens if it is not? We have to play
+> games to quiet it.
 > 
-> [...]
+> Adding __printf() attributes to stubs seems to be a case of the compiler
+> causing more problems than its worth :-/
+> 
+> I honestly hate this error on warning because it causes real pain when
+> debugging. 
 
-Here is the summary with links:
-  - [net-next,v3,1/2] r8169: enable RTL8168H/RTL8168EP/RTL8168FP ASPM support
-    https://git.kernel.org/netdev/net-next/c/3d9b8ac53412
-  - [net-next,v3,2/2] r8169: disable RTL8126 ZRX-DC timeout
-    https://git.kernel.org/netdev/net-next/c/b48688ea3c9a
+Tell it to Linus :-) since it was him who enabled that default. And since it's
+there and defconfigs are also part of the kernel I can't easy remove that, and
+TBH I even won't dare doing that.
 
-You are awesome, thank you!
+> There's a lot of times I don't know if the value is long or long
+> long, and when I get it wrong, my printk() causes the build to fail. It's
+> especially annoying when both long and long long are the same size!
+> 
+> Fixing theses stupid errors takes a non trivial amount of time away from
+> actual debugging.
+
+You (actually me) fix them once, currently CI's typically run with W=1, but
+with WERROR=n. Which means that the new code that is not fixed a priori, will
+induce the CI red report.
+
+> > Fix the compilation errors by adding __printf() attribute.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+With Best Regards,
+Andy Shevchenko
 
 
 
