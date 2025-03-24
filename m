@@ -1,108 +1,126 @@
-Return-Path: <linux-kernel+bounces-573496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D73DA6D84E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:31:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5A6A6D85C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575B5188FC92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20193B2EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF54225DCF4;
-	Mon, 24 Mar 2025 10:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3587725DCFF;
+	Mon, 24 Mar 2025 10:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3Oh38jK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F8814386D;
-	Mon, 24 Mar 2025 10:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KlYHZBq7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D2C25DAE9;
+	Mon, 24 Mar 2025 10:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742812301; cv=none; b=V29mWiU0I3wfODOdrM7n5aTJxcWaVE+d7oLqfyjr2PIcBcNpvlVjcNTRah8MPOgoNq2hZtYapTfmFR0iiWbnFZy7/2MmZhclI7xaSneUW5EBq3+Xw3l2xnC/E3OkJoka9JhzsDxOk1Z4BObpMgNrqNxsAq3srFPnVSfSj6apAgM=
+	t=1742812457; cv=none; b=lHJQWtaNapGyAEMD/yTMqtCtOSXUqQmokDvXgtnOXN2Dpl1g+YB+cFGHNZ8HRQ6SQf+pQ+VNgmslnxB0suiy+5ni0RKBq949ZDdAB5O0XDaCPaPoGP69iiENX7oN9vjshUu87m5m7nKRJzirKQfwr9CVivIUFJN5SL7MSEJfTes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742812301; c=relaxed/simple;
-	bh=7GAZFJZl+eKu5P9ihY2WmQuvZGa6gA3gVGjHE+fPDMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yuwy2ty9+Q0069q16rkraxy6G3wWTDigQzkwqWNWBYeeDt7AG2O/nwYyHtTxE0W90lBkqJC253qou5Ac44wdPYZ6fG7qHvf6ljQTmTPpH2c9ufWHmbBOqUE47uR9cV6qlE7FvpRXbqVzkAHVHGtGVXA08XFP5hTDWJ5129p3SZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3Oh38jK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F69C4CEDD;
-	Mon, 24 Mar 2025 10:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742812300;
-	bh=7GAZFJZl+eKu5P9ihY2WmQuvZGa6gA3gVGjHE+fPDMo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=o3Oh38jKmLbmx2Hy9PuIK6O8ifW4Y0N/uz0RAy/iM6IehElvV79s5T/S0HnlpjEbj
-	 CmquiYEvuA9O2qYRu6Jy3udMGB+/ImugKje5kRLPpU0rGJgmmjwa92rnD5SIW2gtjh
-	 I/RCkgdLwrK0tz1nXth2eJCD9l0DW53CiFJqn2aStOg9EERHD7wXDs9LEm5Ex4BfjK
-	 7z1UkMS6uNVFLXJPXYTp5FlDOo2f/q+SPd5xsISTmMbHr+F9LwH6HclxFneC3VUO4W
-	 muKE/QeNmJJhfayAnei1uqT+8MbSJMn9ChCu6fHf62r9NERRKh1i1EGMqY4hVuIdBK
-	 2nFLB2fDdo/Xw==
-Date: Mon, 24 Mar 2025 03:31:29 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn
- <willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko
- <andrew@daynix.com>, Stephen Hemminger <stephen@networkplumber.org>,
- gur.stavi@huawei.com, Lei Yang <leiyang@redhat.com>, Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH net-next v11 09/10] selftest: tap: Add tests for
- virtio-net ioctls
-Message-ID: <20250324033129.0016abc9@kernel.org>
-In-Reply-To: <20250317-rss-v11-9-4cacca92f31f@daynix.com>
-References: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
-	<20250317-rss-v11-9-4cacca92f31f@daynix.com>
+	s=arc-20240116; t=1742812457; c=relaxed/simple;
+	bh=/qLi6q7LEG6G+gTysNKTm/VHDb6U6FHfd5xdcOKhZRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xqd+PEl1zQS7+dQxvoMnenK5lNS5UIE4KMWM0KLrzizEqz6130VrLXSlo/mFeEd/MjlO/jLaPUDF4wthfCgEsBzugtK325NJXgEyd1WUaOpSGELrCpz31V41jeaynk3jXFjyx5oRczbexTp2t1sV3aL3HF/1rD+FERRcxKYcJbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KlYHZBq7; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=CsxSq
+	wIllapJ8LuBOULZiZ9puOmcXb0kK/lST1rS3uI=; b=KlYHZBq7R/W2BQ7zdJVkV
+	WUzZkIu6+L5n1kfRPJM2QD5nNS68FYaF7EFfZ14B+liGtLfSfhvmIkKrbNzr4vlC
+	nTa3hHaTE65m8EAyVZTg+Nq9zRyocLrP5rfM0PfCZRQ2v7tdUEc49Oy7e7jMnsww
+	cnHiYLOS2BFbo9MCO/N1Dc=
+Received: from ProDesk.. (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgA3TEH9NOFnDTbjAg--.63654S2;
+	Mon, 24 Mar 2025 18:33:37 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	hjc@rock-chips.com,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH 1/2] dt-bindings: display: rockchip,inno-hdmi: Fix ref clk Document of RK3036 compatible
+Date: Mon, 24 Mar 2025 18:33:27 +0800
+Message-ID: <20250324103332.159682-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgA3TEH9NOFnDTbjAg--.63654S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw45GrW5ur4xJFyrWF45Wrg_yoW8WF43pa
+	93Cw1kXr1Ikr1UXw1ktr18CrZYya4kAa1Ykry2q3W8Gr1j9ayDKa1agr1DZay3Ar47Aa9F
+	vF47GFy8A34SvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_3ktUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0g0aXmfhMHZKxwABsX
 
-On Mon, 17 Mar 2025 19:57:59 +0900 Akihiko Odaki wrote:
-> +TEST_F(tap, test_vnetbe)
-> +{
-> +	int be = 1;
-> +	int ret;
-> +
-> +	ASSERT_FALSE(dev_delete(param_dev_tap_name));
-> +	self->deleted = true;
-> +
-> +	ret = ioctl(self->fd, TUNSETVNETBE, &be);
-> +	if (ret == -1 && errno == EINVAL)
-> +		SKIP(return, "TUNSETVNETBE not supported");
-> +
-> +	ASSERT_FALSE(ret);
-> +	be = 0;
-> +	ASSERT_FALSE(ioctl(self->fd, TUNGETVNETBE, &be));
-> +	EXPECT_EQ(1, be);
+From: Andy Yan <andy.yan@rock-chips.com>
 
-The config options needed by selftests should be listed in the relevant
-config file, I think you need this snippet:
+The RK3036 HDMI DDC bus requires it's PHY's reference clock to be enabled
+first before normal DDC communication can be carried out.
 
-diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
-index 130d532b7e67..9b6aa8c4e6d8 100644
---- a/tools/testing/selftests/net/config
-+++ b/tools/testing/selftests/net/config
-@@ -101,6 +101,7 @@ CONFIG_IPV6_IOAM6_LWTUNNEL=y
- CONFIG_CRYPTO_SM4_GENERIC=y
- CONFIG_AMT=m
- CONFIG_TUN=y
-+CONFIG_TUN_VNET_CROSS_LE=y
- CONFIG_VXLAN=m
- CONFIG_IP_SCTP=m
- CONFIG_NETFILTER_XT_MATCH_POLICY=m
+Therefore, both RK3036 and RK3128 HDMI require two identical clocks.
+
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
+
+ .../bindings/display/rockchip/rockchip,inno-hdmi.yaml | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,inno-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,inno-hdmi.yaml
+index 5b87b0f1963e1..9d1e7f894ea54 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip,inno-hdmi.yaml
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,inno-hdmi.yaml
+@@ -23,13 +23,11 @@ properties:
+     maxItems: 1
+ 
+   clocks:
+-    minItems: 1
+     items:
+       - description: The HDMI controller main clock
+       - description: The HDMI PHY reference clock
+ 
+   clock-names:
+-    minItems: 1
+     items:
+       - const: pclk
+       - const: ref
+@@ -87,11 +85,6 @@ allOf:
+             const: rockchip,rk3128-inno-hdmi
+ 
+     then:
+-      properties:
+-        clocks:
+-          minItems: 2
+-        clock-names:
+-          minItems: 2
+       required:
+         - power-domains
+ 
+@@ -106,8 +99,8 @@ examples:
+       compatible = "rockchip,rk3036-inno-hdmi";
+       reg = <0x20034000 0x4000>;
+       interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+-      clocks = <&cru  PCLK_HDMI>;
+-      clock-names = "pclk";
++      clocks = <&cru PCLK_HDMI>, <&cru SCLK_LCDC>;
++      clock-names = "pclk", "ref";
+       pinctrl-names = "default";
+       pinctrl-0 = <&hdmi_ctl>;
+       #sound-dai-cells = <0>;
 -- 
-pw-bot: cr
+2.43.0
+
 
