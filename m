@@ -1,194 +1,145 @@
-Return-Path: <linux-kernel+bounces-573121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D71A6D341
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:13:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E853CA6D347
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FEE1893334
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409A716DA4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35881624DE;
-	Mon, 24 Mar 2025 03:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B762D16CD33;
+	Mon, 24 Mar 2025 03:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMmt5A+3"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAlnpQjo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB36314386D;
-	Mon, 24 Mar 2025 03:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B812E3393;
+	Mon, 24 Mar 2025 03:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742785971; cv=none; b=KmA8Jayn2wcZcs9lqD21G13n6Gv0dQuomGHekPl81Uru0A0TjUk9+I5AeMsOjtfF4v5urJV22BrVBHi7xyohM4zj6h5c+5yehuBBsyi8qaF2WEwELONkL66cAsD7+4b8JGZkPjogO6F1u7psftzx950RVxmqxp3qjSdF3P3RIMw=
+	t=1742786153; cv=none; b=CzLlYOlnwFJnZA5Klyrfh+b1z93SFLA1u+T9Zev2Hjiq8tpB4AeQ25WfMUE2efxaCoIExeAxa/ZGFnrR0I11KVsDovhciX4t7e3W/zEwRNjPr9UYEjVk2j8DaFftueitvgkQtkq5Ye7g7eY0AKPZ3Pzx7S2DLHSLc8aWjanPNJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742785971; c=relaxed/simple;
-	bh=J+hMmHqyIo6zEGpGHB+QTEiRNpKQC9RZPUd7hFpsiV0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ahstNuGpJhs6DkkqcCPy7/e4kVkhQxkD2J3GkUm/MEHAzC2D5uG8mxhwSqyT7fPIq9RxHUViuY0n7rVc+9IhkYwV76CqlIpJ59p9WVockrzKuQGFWeKjOPeZVIufmniZyvj/gxHobklUKGBWlS4c+57tMFN/n4y3C8VBhCYB9BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMmt5A+3; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1742786153; c=relaxed/simple;
+	bh=vJXjiPQclcKJr94KhBV2/PvWFdooNrk6foq0Ulyl4HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qo/omXiEa9a4UfohqCskvopWMvWxAoRKOoHWicLWV6D4Q5z5RoXZpllblOzjyke87+GC8IATQJlyc1OsDL5VRi8noHYeCEg1ynXOze2Ru5MlDbjAxvEnkb0D5AE/2tjPh3rpb7umJCNTu7c2JtqlGNyKhwOd9oxUo4isTpozTXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAlnpQjo; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff4a4f901fso6966115a91.2;
-        Sun, 23 Mar 2025 20:12:49 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2254e0b4b79so56982055ad.2;
+        Sun, 23 Mar 2025 20:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742785969; x=1743390769; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tea/ozfNH1Ujz9+Pt/AIl/58j38z2XpiNMnZ79tiKCM=;
-        b=cMmt5A+3g6rNGydQIA1kdKrhnXhi0vfxq7g8x+U11evrPAy0OkyVcF/vElv02BdeaH
-         OV6pMU3zKcEthxxqtpVSshKQ2IlUsjAA3WRuGgBJLNl6/8M0FbfJ8GrY1MaZqKeeJk9A
-         x8UDlAo37pTjy3/XODcION9VN6q06FudPSm9KlGgvNOpkEWUvktfkwQkMyXKGVrM84uS
-         h0PnGQgOOGFOWXoCdc/9QGFvJM6Tg/U1FQ2GroozIZ393T+w3EUfU0LJX3fLteyB07Kk
-         XsZdFLpAmDjv7Ph/dOgYBB0QZwjwv1geX20FLXyA+YtLR01htHxE4A0m2bG03GZNa7+C
-         73/A==
+        d=gmail.com; s=20230601; t=1742786151; x=1743390951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nbPO7g2pp562SD8YE2yC6B6rGfgGkiRuF9xabS6hR30=;
+        b=FAlnpQjouTqnKiOCTOK/pdQQCXO1v+yomLdtReHHWDMzLLCwGOiSpl8zskmiPvC9gj
+         WlcqnDQWQvqmWAeMvhbPKRLnxZryDOszwx/canwDFv5tJtGWqIbvXM5k87oQM9DxKaJp
+         ZaztpAivrgk9+fAH9ggnIUh2rIatwKFbCiem/VVbO+2fd5byYvwlyHgcog001mHo+BgX
+         7EwRLS9Lu5s57QqZYC79+6xpdKMM+UQb1NuhblqYif4CPEQDjgZR9CgmeNviCxvUK06e
+         u/0htlJ60a7KOCuFysy0MmAUw+Ok/rF2PUt5/7ssNjHgojtsj+vVdzB3yAajq0fbURN+
+         vOZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742785969; x=1743390769;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Tea/ozfNH1Ujz9+Pt/AIl/58j38z2XpiNMnZ79tiKCM=;
-        b=em5rufelqzY3QZ8+eUGjJ8fxx+kKgzWWdew45rAhbi0MJfyVK2RBX8tPNHnvF80Jnq
-         HkbRZVcTetaSTlaLX920/m9GUCIVbmaQ0izljXQJMcFYWaqqtmvQEaGNJZX2wrAdrQnh
-         NP5ySgzjd5hf7VlWf60oWXwp99glwTL89TNJ7zAWtuPFr3ZmnbOUFCtq9F/RUP7JFK7D
-         caLHq47/bSgDgH7S8U6jhl+dZ1b9FpXnWFNTANZ+mNqNA7J3uGWWJz5l7CtGcICdm3iI
-         5iF1t7PU/92RVbymHxZCT0pY4FsMdSZ1x+noFO/fbrL1/tn+nRC1m1Fkb+MbldvaYSRP
-         4UAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCZ+eIpBoKSa11qLQjWav5KiXIwFTM6su5vDZWLHwxziaT/XaE5IRwCirNocW7Z+4L//1z2jHCKCvJxWg=@vger.kernel.org, AJvYcCVZpxphfEWYhIvu3vIsYbZPVydbnLv7KHTPECCfyTTUoAVJpAF0bNO4cqDd96tdaWLF21t334Ek@vger.kernel.org, AJvYcCXnBNMikGzy2rPR7qSgjsY+csMzWmZHAAbuzXInnj16grp16MaUqHZVKncoZjH6xuqG+k7L/eOYmudfy23YCs7+0y2Gow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxRs1xcTdpqSRk6Kh9rOApGB6w6cFDW536TU12HixkfwVBJALD
-	+8eZxgvm7mZy09GW/VHFYUyCBKwii1CIUr+QZoW1747YzjLJf23A
-X-Gm-Gg: ASbGncuaWQceKv/bzUYJIucOSPtfbidqgQuscRXHR6njzJJPX++nqmXIbAGy5C75+QW
-	krsB7EBf0xcyTkSSFk72wXOn6JehHU8a0uBeqEMFYQ//01JMHVTw0a2/MFLdxUV2D0iOqZJ0bGy
-	MKpnUdmD9BAVz4XZ9rZPmtzbE8FFxDRXMp4XAkO+FdFspSMZK8DHM5eWZX3XlW9d7jKBE0zVx/t
-	HKImT+jyCOMmGbofCj5leay9JwJGhd8TD4SwYRTG5DbcOqi0UPNdUqm9vZ5RjwITlkQ/uP1K2iO
-	9WMS477jDEVWlxpM1FiMYEMCwJ9UqxASmO+ddQ==
-X-Google-Smtp-Source: AGHT+IEn+9qYJQnWY98h1MLFYD024IQB4Y4D/jzquQCHfmfgDvDvH40NQfXJETuT2lCsQp1RzMQlpQ==
-X-Received: by 2002:a17:90b:53d0:b0:2ee:90a1:5d42 with SMTP id 98e67ed59e1d1-3030fd4b078mr22842917a91.0.1742785968650;
-        Sun, 23 Mar 2025 20:12:48 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf58b343sm10873298a91.15.2025.03.23.20.12.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Mar 2025 20:12:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742786151; x=1743390951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nbPO7g2pp562SD8YE2yC6B6rGfgGkiRuF9xabS6hR30=;
+        b=llUPbuAkk6VUTUt3VSSfi8JfuEB+O/bAA8tZmQarkQ4Nk1l8wsSMCxVc0pejuxJ0At
+         13Y2PBU42arJtGNuIoOzWy2l8zaOVGpeivp+EEbt2os+f2ih6LbC14UMN42d9Pz9TAEp
+         VTdLA9qWWXFWDexIj/sllP/Tf5Hzsqvo9+uIZOk7PQyPxUiwilxqcy3AavEqLCl0w4iQ
+         91aVWg5zzfgvbHrAFW/JduCXtoAbzbcQheJNSafQVi3HmwyrcyMwU8aFnVFWlO86vJ7P
+         CWsnT7+NzbzrVH6NvJ+fJxvXydTkAQwyrV4rZFiIddkhYr7wyacLjsx61q9Sc55WV078
+         zIdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKy+2rru8rxSxp5BDVV7ZbNRvXMjeEp3bxMzG+PmHnAQmxN9+D89BxfOSGlHOufJiaSD4fBPvyXdTEQ10hpccS@vger.kernel.org, AJvYcCXGdQdr7hLXnGkPxSdlr0pezQouBye8OJ0IqEG0K7pezLnUQ2b7Y6FKa6q3D5CivRZJHmMge5ucP87gtu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywUjZdikTaju6ToLgHuS/bhRMXn2ZvUZsUAKmtVDR+V/5QLSSk
+	6QNVWF+052w4RQbSOjdI1G+NaNaADw0wMrJjLrbaZcldOhftD+A0GOATgsiBzIM=
+X-Gm-Gg: ASbGncs+Gr/Ipv+SZ51wvEJGBfyzKLBwJry3vpHTB/0fuWI3l0t3/0eCJOauaK4+xGZ
+	7phNBeieiCBslygEA+ejAPgsWI0Iwe22752MnuOVJ8DTMKQ/PwhmFtYMVlOL8yJwpQ9c5IdVdsD
+	9Cti+da1YNYnpMKc6VtEFiYmrOzU1bRn7PvZDdy4bMYjeKB2wha/dYp+pH2D7YgYTUBdzhp0zgk
+	9Uzv7hHh9Z4Kp00oMBaBLI3HyxuTfrXckLkvyLSPNpoilfc/u3n9RGuzPrVTFp17vJjh34YAvkI
+	I/+MUB7s8A482Wo5KCldaDvwoXptXHcvn1jYtTtCpD7IXnypdg==
+X-Google-Smtp-Source: AGHT+IGaaYhWfHcEkvaSBr0W/VndL8LcxHEFgy/XsRLyxKQzY/wjBZcbB9qTsOYo1wE24M5XjEBsWw==
+X-Received: by 2002:a17:903:2f47:b0:224:376:7a21 with SMTP id d9443c01a7336-22780e0969cmr174217795ad.42.1742786150821;
+        Sun, 23 Mar 2025 20:15:50 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f44bbsm59159555ad.232.2025.03.23.20.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 20:15:50 -0700 (PDT)
+Date: Mon, 24 Mar 2025 03:15:42 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Phil Sutter <phil@nwl.cc>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 net-next 1/2] wireguard: selftests: convert iptables to
+ nft
+Message-ID: <Z-DOXpknpAn-yC_P@fedora>
+References: <20250322093016.16631-1-liuhangbin@gmail.com>
+ <20250322093016.16631-2-liuhangbin@gmail.com>
+ <Z-B4yfBvm2aXW_Ar@orbyte.nwl.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 00:12:44 -0300
-Message-Id: <D8O62BJFWT7P.23HRFHB8PX7JN@gmail.com>
-Cc: <ibm-acpi-devel@lists.sourceforge.net>,
- <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Seyediman Seyedarab" <ImanDevel@gmail.com>, <stable@vger.kernel.org>,
- "Vlastimil Holer" <vlastimil.holer@gmail.com>, "crok" <crok.bic@gmail.com>,
- "Alireza Elikahi" <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>, "Eduard Christian
- Dumitrescu" <eduard.c.dumitrescu@gmail.com>
-Subject: Re: [PATCH v2] platform/x86: thinkpad_acpi: disable ACPI fan access
- for T495* and E560
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Seyediman Seyedarab" <imandevel@gmail.com>, <hmh@hmh.eng.br>,
- <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250324012911.68343-1-ImanDevel@gmail.com>
-In-Reply-To: <20250324012911.68343-1-ImanDevel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-B4yfBvm2aXW_Ar@orbyte.nwl.cc>
 
-On Sun Mar 23, 2025 at 10:29 PM -03, Seyediman Seyedarab wrote:
-> From: Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com>
->
-> The bug was introduced in commit 57d0557dfa49 ("platform/x86:
-> thinkpad_acpi: Add Thinkpad Edge E531 fan support") which adds a new
-> fan control method via the FANG and FANW ACPI methods.
->
-> T945, T495s, and E560 laptops have the FANG+FANW ACPI methods (therefore
-> fang_handle and fanw_handle are not NULL) but they do not actually work,
-> which results in the dreaded "No such device or address" error. Fan acces=
-s
-> and control is restored after forcing the legacy non-ACPI fan control
-> method by setting both fang_handle and fanw_handle to NULL.
->
-> The DSDT table code for the FANG+FANW methods doesn't seem to do anything
-> special regarding the fan being secondary.
->
-> This patch adds a quirk for T495, T495s, and E560 to make them avoid the
-> FANG/FANW methods.
+On Sun, Mar 23, 2025 at 10:10:33PM +0100, Phil Sutter wrote:
+> On Sat, Mar 22, 2025 at 09:30:15AM +0000, Hangbin Liu wrote:
+> > Convert iptabels to nft as it is the replacement for iptables, which is used
+>           ~~~~~~~~
+> 
+> Typo, but I would write "Convert the selftest to nft ..." instead since
+> that is what you're converting, iptables is just replaced. :)
+> 
+> > by default in most releases.
+> > 
+> > Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> > ---
+> >  tools/testing/selftests/wireguard/netns.sh | 29 ++++++++++++++--------
+> >  1 file changed, 19 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/wireguard/netns.sh b/tools/testing/selftests/wireguard/netns.sh
+> > index 55500f901fbc..8b840fef90af 100755
+> > --- a/tools/testing/selftests/wireguard/netns.sh
+> > +++ b/tools/testing/selftests/wireguard/netns.sh
+> > @@ -75,6 +75,11 @@ pp ip netns add $netns1
+> >  pp ip netns add $netns2
+> >  ip0 link set up dev lo
+> >  
+> > +# init nft tables
+> > +n0 nft add table ip wgtest
+> > +n1 nft add table ip wgtest
+> > +n2 nft add table ip wgtest
+> > +
+> >  ip0 link add dev wg0 type wireguard
+> >  ip0 link set wg0 netns $netns1
+> >  ip0 link add dev wg0 type wireguard
+> > @@ -196,13 +201,14 @@ ip1 link set wg0 mtu 1300
+> >  ip2 link set wg0 mtu 1300
+> >  n1 wg set wg0 peer "$pub2" endpoint 127.0.0.1:2
+> >  n2 wg set wg0 peer "$pub1" endpoint 127.0.0.1:1
+> > -n0 iptables -A INPUT -m length --length 1360 -j DROP
+> > +n0 nft add chain ip wgtest INPUT { type filter hook input priority filter \; policy accept \; }
+> 
+> You may skip the 'policy accept \;' part in all 'add chain' commands as
+> this is the default for all chains. Unless you prefer to explicitly
+> state the chain policy, of course.
 
-Reviewed-by: Kurt Borja <kuurtb@gmail.com>
+Yes, I would prefer to keep the "policy accept" unless Jason has objects.
 
->
-> Cc: stable@vger.kernel.org
-> Fixes: 57d0557dfa49 ("platform/x86: thinkpad_acpi: Add Thinkpad Edge E531=
- fan support")
-> Reported-by: Vlastimil Holer <vlastimil.holer@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219643
-> Tested-by: crok <crok.bic@gmail.com>
-> Tested-by: Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>
-> Signed-off-by: Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com=
->
-> Co-developed-by: Seyediman Seyedarab <ImanDevel@gmail.com>
-> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
-> ---
-> Changes in v2:
-> - Added the From: tag for the original author
-> - Replaced the Co-authored-by tag with Co-developed-by
-> - Cc'd stable@vger.kernel.org
-> - Removed the extra space inside the comment
-> - Dropped nullification of sfan/gfan_handle, as it's unrelated to
->   the current fix
->
-> Kindest Regards,
-> Seyediman
->
->  drivers/platform/x86/thinkpad_acpi.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
-thinkpad_acpi.c
-> index d8df1405edfa..27fd67a2f2d1 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -8793,6 +8793,7 @@ static const struct attribute_group fan_driver_attr=
-_group =3D {
->  #define TPACPI_FAN_NS		0x0010		/* For EC with non-Standard register addr=
-esses */
->  #define TPACPI_FAN_DECRPM	0x0020		/* For ECFW's with RPM in register as =
-decimal */
->  #define TPACPI_FAN_TPR		0x0040		/* Fan speed is in Ticks Per Revolution =
-*/
-> +#define TPACPI_FAN_NOACPI	0x0080		/* Don't use ACPI methods even if dete=
-cted */
-> =20
->  static const struct tpacpi_quirk fan_quirk_table[] __initconst =3D {
->  	TPACPI_QEC_IBM('1', 'Y', TPACPI_FAN_Q1),
-> @@ -8823,6 +8824,9 @@ static const struct tpacpi_quirk fan_quirk_table[] =
-__initconst =3D {
->  	TPACPI_Q_LNV3('N', '1', 'O', TPACPI_FAN_NOFAN),	/* X1 Tablet (2nd gen) =
-*/
->  	TPACPI_Q_LNV3('R', '0', 'Q', TPACPI_FAN_DECRPM),/* L480 */
->  	TPACPI_Q_LNV('8', 'F', TPACPI_FAN_TPR),		/* ThinkPad x120e */
-> +	TPACPI_Q_LNV3('R', '0', '0', TPACPI_FAN_NOACPI),/* E560 */
-> +	TPACPI_Q_LNV3('R', '1', '2', TPACPI_FAN_NOACPI),/* T495 */
-> +	TPACPI_Q_LNV3('R', '1', '3', TPACPI_FAN_NOACPI),/* T495s */
->  };
-> =20
->  static int __init fan_init(struct ibm_init_struct *iibm)
-> @@ -8874,6 +8878,13 @@ static int __init fan_init(struct ibm_init_struct =
-*iibm)
->  		tp_features.fan_ctrl_status_undef =3D 1;
->  	}
-> =20
-> +	if (quirks & TPACPI_FAN_NOACPI) {
-> +		/* E560, T495, T495s */
-> +		pr_info("Ignoring buggy ACPI fan access method\n");
-> +		fang_handle =3D NULL;
-> +		fanw_handle =3D NULL;
-> +	}
-> +
->  	if (gfan_handle) {
->  		/* 570, 600e/x, 770e, 770x */
->  		fan_status_access_mode =3D TPACPI_FAN_RD_ACPI_GFAN;
-
+Thanks
+Hangbin
 
