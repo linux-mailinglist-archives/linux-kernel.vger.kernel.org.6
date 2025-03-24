@@ -1,203 +1,207 @@
-Return-Path: <linux-kernel+bounces-573862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E900EA6DD48
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:45:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF39EA6DD4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E4A3A7F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52673ABA60
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62D925F79B;
-	Mon, 24 Mar 2025 14:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A5825FA2E;
+	Mon, 24 Mar 2025 14:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQ5YVIIS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="aXDT7Evh"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33D43B7A8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4532F2628C;
+	Mon, 24 Mar 2025 14:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827541; cv=none; b=Hk0lEf1GRUSIU82KzZ1HOSDdQol5eruTJSh7OLhq1cf4D81lx4/ihg2tIMa3c17oCf4GTb4L1j1JdFpHTq8t1v8Pr69Q6gROcIvHYfR8j0880RD1WNWDh6cUvwo/xGUdzkl2e0fwFoHJuDvdln6y4OFSI46ct+F0416nz6L43Rs=
+	t=1742827579; cv=none; b=tDgq9LvEeU3tWGYi4XydM0T53S/eFAEY3XN18uArcF4soZcHz17bFirflTz4S71g0hjX5Xl/ljsY8KaM4AgBPK/3TD2KLof2t7Yf+hQ+TE+j1OR31+YiS5KzCdk/UKGPfLFscMUYJLP+DX4yu2wtAhvBUXUenK2zxIoiLmdBK1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827541; c=relaxed/simple;
-	bh=M1hWD/oSou+r5X9ScN+rHnKhewbykMu1plQom+IBOPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eKyq5osu67faVfnk07f83WniCf8t8mepA9JxLuHHpHQB70B8M21KdoIVT3pgi4ZbeKDz3qnrEfC45QPaYl2UfHGt37b5XzzARJxQzHrAAqZ/A4/OUBe0lrsTVEvwx+Q28X8QMjAHK/PjYLImy2IM6PkgofDeg7l2oJGYp/T7X9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQ5YVIIS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742827538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ECA6zhUqnyZiEyBYCMUo+zUIFQyB0/m7K5nNM3gOBd8=;
-	b=PQ5YVIISV7GTa8IHJlvbbds7oCD5btkyP+6ALsH78mbSxdA0ww2OPtVLQIJHwgdxhHd25/
-	lKg76ew9ppRZxqDKayfd3n2FnvUOgLJBsr/xh7nVpqw25gy22xh6EkCbcfVnjIQN/AuLkT
-	kDvqpcWeaoMnFE5kuZT8WwbEAXRoMtc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-BAnIxituMdOFwTuiTKpHiA-1; Mon,
- 24 Mar 2025 10:45:33 -0400
-X-MC-Unique: BAnIxituMdOFwTuiTKpHiA-1
-X-Mimecast-MFC-AGG-ID: BAnIxituMdOFwTuiTKpHiA_1742827531
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BF5618001FC;
-	Mon, 24 Mar 2025 14:45:31 +0000 (UTC)
-Received: from jbrnak-thinkpadx1carbongen9.tpbc.com (unknown [10.43.17.192])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35794180A802;
-	Mon, 24 Mar 2025 14:45:25 +0000 (UTC)
-From: Jakub Brnak <jbrnak@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	kan.liang@linux.intel.com,
-	mpetlan@redhat.com,
-	tglozar@redhat.com,
-	jbrnak@redhat.com,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v3] perf test probe_vfs_getname: Skip if no suitable line detected
-Date: Mon, 24 Mar 2025 15:45:23 +0100
-Message-ID: <20250324144523.597557-1-jbrnak@redhat.com>
+	s=arc-20240116; t=1742827579; c=relaxed/simple;
+	bh=ToTpe1LYw9DyodZumYyKXOyXesV7edGmIPf4l5abzO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VoMUIIpaPNlxuJVtmykE02M7IZp2BMGsPjXFTAra6u1IV74UJeluP7upbaDA0h6EySHUrLj+D69IkFONxLgS8DU7/k51VHZ7xhYDSnMZGS7vpDBmfAL9Bq5BXqiZI0hbCYORzCCTWnidrGrCNJEBE/GiSSIllvz3Yt/Rasqg/mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=aXDT7Evh; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 2C5602E00F59;
+	Mon, 24 Mar 2025 16:46:12 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742827572;
+	bh=u9IU7+meIOr371mEdgZ5pCKYmQvhV+O9kkQwA6cXgqA=;
+	h=Received:From:Subject:To;
+	b=aXDT7EvhoBhi9UTolqPDg5rsjBJ+DZI4EQ5ISBXalkRv8YGsjtaLeIsLG3Xgj4t0y
+	 PW8/4pYPLXvTAkG+DQem9s4JIm7zdUELXrUF1cAvRkifqHQTHJocaxu5daFlWlsuNH
+	 j3i+8TdomIyWts4cxV841AmWxotBzILkwwEJd0ZA=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-30bfed67e08so50912141fa.2;
+        Mon, 24 Mar 2025 07:46:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVA0K5oVvecOL+kwZXbriEbUYxObINbZTCHNjlsmx8jfh2hevSj4ac7jzoUKZOE+2pgZq96R+8MZc7XcQ==@vger.kernel.org,
+ AJvYcCXIs2Mfpsmv86jBUj2Wl3YpRLOnATl5poH1a/1rKj6fwnOaD/ACUnRCABcQMOWYdBhKZRH0XkXV6rA+JmIp9qN13Y1BVA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuNp28w6D5ZpDU+WosvsoQIJuW5Brh0K1dYPDF3TIJzRSBa5uU
+	4UlnY9GkKBbH4hciMVXnPmlS+9ckcTt2fi6kLP6Dh+BlzjA6tSvph+vSLdFdgQ1hahY3ofjvbXG
+	V90nl6xWM7U9HzITRIZWdrJiwK5Y=
+X-Google-Smtp-Source: 
+ AGHT+IG1p8/DmYpOK8sy9cB93Dxy5t2DVU+b7G1nWVZeFTjaZ7IkdowFc9dZ5907eE+CcbMg5YGyY6jhIAa8bcUpKrQ=
+X-Received: by 2002:a2e:8612:0:b0:30b:e440:dbdb with SMTP id
+ 38308e7fff4ca-30d7e31c966mr46041311fa.37.1742827571490; Mon, 24 Mar 2025
+ 07:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250323023421.78012-1-luke@ljones.dev>
+ <CAGwozwE4oXmFMRO5jZJC4d11TstTqSC8ZUZ1CCkZMWYZKTKF_w@mail.gmail.com>
+ <deeb4946-dd66-4a82-a8f0-5e8b1751899e@ljones.dev>
+ <CAGwozwGPVJznyX4Vp5vNfb1JOP7AGoZV3vOkRwT_W=_0g+gkJQ@mail.gmail.com>
+ <41bf9d87-be11-4814-bc3e-c6c9297e0cc4@ljones.dev>
+In-Reply-To: <41bf9d87-be11-4814-bc3e-c6c9297e0cc4@ljones.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 24 Mar 2025 15:46:00 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGE0vVUEn=1pCakhcMZP8oT=9jzrYMNYM8RvBvE9Wq0WQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr4NC78r4qNNNTLJDqqS3v7268tJEAEM67O7hxcO8RLWmmyIYj8P_JJigU
+Message-ID: 
+ <CAGwozwGE0vVUEn=1pCakhcMZP8oT=9jzrYMNYM8RvBvE9Wq0WQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] hid-asus: asus-wmi: refactor Ally suspend/resume
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
+	mario.limonciello@amd.com
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174282757277.17451.1073231361952910226@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-In some cases when calling function add_probe_vfs_getname, line number
-can't be detected by perf probe -L getname_flags:
+On Mon, 24 Mar 2025 at 11:34, Luke D. Jones <luke@ljones.dev> wrote:
+>
+> On 24/03/25 21:11, Antheas Kapenekakis wrote:
+> > On Mon, 24 Mar 2025 at 02:41, Luke D. Jones <luke@ljones.dev> wrote:
+> >>
+> >> On 24/03/25 00:41, Antheas Kapenekakis wrote:
+> >>> On Sun, 23 Mar 2025 at 03:34, Luke Jones <luke@ljones.dev> wrote:
+> >>>>
+> >>>> This short series refactors the Ally suspend/resume functionality in the
+> >>>> asus-wmi driver along with adding support for ROG Ally MCU version checking.
+> >>>>
+> >>>> The version checking is then used to toggle the use of older CSEE call hacks
+> >>>> that were initially used to combat Ally suspend/wake issues arising from the MCU
+> >>>> not clearing a particular flag on resume. ASUS have since corrected this
+> >>>> especially for Linux in newer firmware versions.
+> >>>>
+> >>>> - hid-asus requests the MCU version and displays a warning if the version is
+> >>>>     older than the one that fixes the issue.
+> >>>> - hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
+> >>>> version is high enough.
+> >>>>
+> >>>> *Note: In review it was requested by Mario that I try strsep() for parsing
+> >>>> the version. I did try this and a few variations but the result was much
+> >>>> more code due to having to check more edge cases due to the input being
+> >>>> raw bytes. In the end the cleaned up while loop proved more robust.
+> >>>>
+> >>>> - Changelog:
+> >>>>     + V2: https://lore.kernel.org/platform-driver-x86/20250226010129.32043-1-luke@ljones.dev/T/#t
+> >>>>       - Adjust warning message to explicitly mention suspend issues
+> >>>
+> >>> How did the testing go with this one, especially with mcu_powersave 0?
+> >>
+> >> Appears to be good. Checked a few reboots with powersave off - it is
+> >> setting on as I expect every time. Did modules unload/load also. And
+> >> tested with it set off after boot plus suspend resumes.
+> >
+> > Did you test suspends with mcu_powersave to 0 and rgb on? I had a few
+> > issues you can reference the previous version for and I want to see if
+> > you have them.
+> >
+> > Even with powersave set to 1, the RGB does not fade anymore without the quirk
+>
+> Yes I tested every scenario I could think of. I don't think the fade is
+> something to worry about
 
-  78         atomic_set(&result->refcnt, 1);
+From my testing, I got it to flash random colors and not disconnect
+properly, so if you really want to remove it, you should make sure to
+test the version that disables the quirk properly first.
 
-	     // one of the following lines should have line number
-	     // but sometimes it does not because of optimization
-	     result->uptr = filename;
-             result->aname = NULL;
+> seems like it happening at all previously was
+> just due to suspend being held up for a bit longer and now that the hack
 
-  81         audit_getname(result);
+Yes, because Windows does not enter s0i3 instantly, so some devices,
+like the Ally units, like the Go S, rely on that for different
+purposes. 500ms is perfectly fine for both, and since it happens
+during suspend and not resume, provided that the screen has been
+turned off, it is transparent. (The Go S gets an APU hang due to very
+aggressive TDP tuning; a delay after the sleep entry call and
+userspace suspend lets the VRMs cool off a bit)
 
-To prevent false failures, skip the affected tests
-if no suitable line numbers can be detected.
+> is disabled for new FW, it relies fully on Linux suspend (async?
+> Honestly it's never been fully clear how async it really is).
 
-Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
----
-v3:
-- ensure POSIX compliance
+The call is at the wrong place unfortunately. That's about it
 
-v2: 
-https://lore.kernel.org/linux-perf-users/Z9tKat6vvC1XUj0U@google.com/
-- check if return from add_vfs_getname equals to 1
-sice it is only option in case of fail 
+> I'd rather the faster suspend/resume. And so far I've heard no
+> complaints (although my userbase is smaller than bazzites).
 
-v1:
- https://lore.kernel.org/linux-perf-users/Z8pAep0GJsMFTyEi@google.com/T/#t
----
- tools/perf/tests/shell/lib/probe_vfs_getname.sh          | 8 +++++++-
- tools/perf/tests/shell/probe_vfs_getname.sh              | 8 +++++++-
- .../perf/tests/shell/record+script_probe_vfs_getname.sh  | 8 +++++++-
- tools/perf/tests/shell/trace+probe_vfs_getname.sh        | 9 +++++++--
- 4 files changed, 28 insertions(+), 5 deletions(-)
+Have you deployed the V4 though? Because the behavior with the quirk
+is fine. WIthout, it is soso.
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 5c33ec7a5a63..89f72a4c818c 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -19,8 +19,14 @@ add_probe_vfs_getname() {
- 			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
- 			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
- 		fi
-+
-+		if [ -z "$line" ] ; then
-+			echo "Could not find probeable line"
-+			return 2
-+		fi
-+
- 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
--		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
-+		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring" || return 1
- 	fi
- }
- 
-diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
-index c51a32931af6..0f52654c914a 100755
---- a/tools/perf/tests/shell/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/probe_vfs_getname.sh
-@@ -13,7 +13,13 @@ skip_if_no_perf_probe || exit 2
- # shellcheck source=lib/probe_vfs_getname.sh
- . "$(dirname $0)"/lib/probe_vfs_getname.sh
- 
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [ $err -eq 1 ] ; then
-+	skip_if_no_debuginfo
-+	err=$?
-+fi
-+
- cleanup_probe_vfs_getname
- exit $err
-diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-index fd5b10d46915..1ad252f0d36e 100755
---- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
-@@ -35,8 +35,14 @@ perf_script_filenames() {
- 	grep -E " +touch +[0-9]+ +\[[0-9]+\] +[0-9]+\.[0-9]+: +probe:vfs_getname[_0-9]*: +\([[:xdigit:]]+\) +pathname=\"${file}\""
- }
- 
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [ $err -eq 1 ] ; then
-+        skip_if_no_debuginfo
-+        err=$?
-+fi
-+
- if [ $err -ne 0 ] ; then
- 	exit $err
- fi
-diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-index 60fccb62c540..5d5019988d61 100755
---- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-@@ -25,9 +25,14 @@ trace_open_vfs_getname() {
- 	grep -E " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +\"?${file}\"?, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
- }
- 
--
--add_probe_vfs_getname || skip_if_no_debuginfo
-+add_probe_vfs_getname
- err=$?
-+
-+if [ $err -eq 1 ] ; then
-+        skip_if_no_debuginfo
-+        err=$?
-+fi
-+
- if [ $err -ne 0 ] ; then
- 	exit $err
- fi
--- 
-2.48.1
-
+> Cheers,
+> Luke.
+>
+> > Antheas
+> >
+> >> Very much hope this is the end of that particular saga, and with
+> >> bazzites help we can hopefully get everyone on November MCU FW or later,
+> >> then finally remove the hack completely this year.
+> >>
+> >> A small side note - I expect ASUS to fully reuse the X hardware, or at
+> >> least the bios/acpi/mcu-fw for that new windows handheld they've doing,
+> >> so fingers crossed that they actually do, and there will be nomore
+> >> suspend issues with current kernels plus this patch.
+> >>
+> >> Cheers,
+> >> Luke.
+> >>
+> >>>>       - Use switch/case block to set min_version
+> >>>>         - Set min_version to 0 by default and toggle hacks off
+> >>>>     + V3
+> >>>>       - Remove noise (excess pr_info)
+> >>>>       - Use kstrtoint, not kstrtolong
+> >>>>       - Use __free(kfree) for allocated mem and drop goto + logging
+> >>>>       - Use print_hex_dump() to show failed data after pr_err in mcu_request_version()
+> >>>>       - Use pr_debug in set_ally_mcu_hack() and set_ally_mcu_powersave() plus
+> >>>>         correct the message.
+> >>>>     + V4
+> >>>>       - Change use_ally_mcu_hack var to enum to track init state and
+> >>>>         prevent a race condition
+> >>>>
+> >>>> Luke D. Jones (2):
+> >>>>     hid-asus: check ROG Ally MCU version and warn
+> >>>>     platform/x86: asus-wmi: Refactor Ally suspend/resume
+> >>>>
+> >>>>    drivers/hid/hid-asus.c                     | 111 ++++++++++++++++-
+> >>>>    drivers/platform/x86/asus-wmi.c            | 133 +++++++++++++++------
+> >>>>    include/linux/platform_data/x86/asus-wmi.h |  19 +++
+> >>>>    3 files changed, 222 insertions(+), 41 deletions(-)
+> >>>>
+> >>>> --
+> >>>> 2.49.0
+> >>>>
+> >>
+>
 
