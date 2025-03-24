@@ -1,129 +1,102 @@
-Return-Path: <linux-kernel+bounces-573798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4DEA6DC96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:07:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE99AA6DC95
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA1B188F219
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:07:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D8D7A3187
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F7125F96B;
-	Mon, 24 Mar 2025 14:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5C244C7C;
+	Mon, 24 Mar 2025 14:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+4OM8Ie"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cskc8iNO"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D50444C7C;
-	Mon, 24 Mar 2025 14:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959121EDA31
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742825232; cv=none; b=pCgZVLsHI2mDfsmkm/1WnPzq67egI3JojUq0aJOaVZga3Y5pjiE5bpvRwcs+FPiK6++28t6iOh4rVOXfzH62iMcris7tCHXn3HQTphWdsg+RGaByxFHfO/ec7Ckug8N35i2SdBGmMdQ1yQRv5ZfsfA+3d24qu3FTnf/KLMdOw9E=
+	t=1742825254; cv=none; b=qEUVt/vmyPin+GrpjHaLQI2pa5GAO7TETlmdXjhvUfdQDyFs8EDqduZ8bcVcAn/1Pb7zo50uD9ZeMNxsXmbfacYgmJyXHmyzS4HVgFLx6G2yL7MzLJZRNMv+SLP/3UYm8po7VVq02OePP+49ROXWXRRHV0smChI7zypIl2LbAnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742825232; c=relaxed/simple;
-	bh=jHYmZAm72tXV8VRTMDAeJrYugQzQdJqdki7GVsa3neo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jf8yqsfzWzkbU3wkiIq62E1B7fjnWpILzktD1JD4iK2w+2iRDk8IL5QZ2tomFZPQN94TiXxJ7lXk5k8OB+hWADTiYDMySNRt3YPk0Dk7Xn+jesOp8+imYcZQvIKCIZWC2Ovfc6yzuHUuSJoOtbxqgc8VDYsEAv/VpVzgyrwiWP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+4OM8Ie; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1742825254; c=relaxed/simple;
+	bh=9ts/+W19OfEqb+su2V7RPw2oWOzTqR9GO67Y3MbTXPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFRRfsJx3rWJFA+ZwIuXv6qMgFK/8PCjJCGABuGXTV+Az8iKyGxzyFXfAp4yYi9d+ijmSLic9eDUdm4ajMO9esQzmdRosCQemBWpzRvxeFN0cyl4KShZbEH9HeCstRqwR2p5afMvSj6t6nflooim1x2qVRY7LZMofIvFLDTDSJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cskc8iNO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742825231; x=1774361231;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jHYmZAm72tXV8VRTMDAeJrYugQzQdJqdki7GVsa3neo=;
-  b=F+4OM8IejLNcGnk076MO4JVe8DwxQJ+ig/L/GIv49ReTsxOKhz+kkha2
-   rI/llFnwjntmbBcF0xdDTsdMiMBW7VlF7QYHR1XPntc3VTLoYCF2/W/7T
-   CWo7/gsOsgT7PgIuUifMhy/R5FHoyy2alT2Tdiz+knZ5HPpgjCv2Z0Qwd
-   ZsVI93YKy3GEpiyK90ItIsfqfCIyqncETk0xpbnnUNNeIvqv+YRO8eMaw
-   U8qgBMYPfs80xSO9bzaEen5ueYGJVjpHyanEN5cI9v2WoAW7l4KVDuQSp
-   dRm/yYR6OzotUmwr+iXxSzb6tGzT9fmia5O/HvHDeeNF3mRH+Uy+l5+pT
-   Q==;
-X-CSE-ConnectionGUID: Ay+Ghp/URGGWywbfRk3CfQ==
-X-CSE-MsgGUID: rWN6WtrQQqGSyGnm1D4dVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="46775513"
+  t=1742825252; x=1774361252;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9ts/+W19OfEqb+su2V7RPw2oWOzTqR9GO67Y3MbTXPY=;
+  b=Cskc8iNOXv6ERKBKp5tktqY59DcG6OIKpyVBLofNeeIZQSGVTRwsK/Rf
+   T1/6mTWhz/U/N+rrbgwZkwaPouRD4LILeUnE4ABL9+OFipW66kJ21NR2k
+   Ir3giCSsD71oHig4USDgZJD5s4DBq5Wc0ywOiDHYxo4+hVT4QrS8qLHRR
+   0IQcJlVW/j9IYzuKf5jDzYG1wME26TpKDC8NgugWRkxzkJe22+eEAXDGl
+   Wkq3XLfgr96eAfGiu58tjIaKXJRCg7cR7TRSzLDu5lzv2qCbENIs/omZE
+   86gbE0rAWXXj+2Tf54pXPHzQOZy2NmeVVbxoyJ7QcDbhoCjw3QvTNfD88
+   A==;
+X-CSE-ConnectionGUID: 1tqCVXK1RxiE5vEmycF5IQ==
+X-CSE-MsgGUID: 5xCMREDaSNeuyG9JgwD5Tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="46775562"
 X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="46775513"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:07:10 -0700
-X-CSE-ConnectionGUID: S83qCIn5RBKupRlz1oqrEA==
-X-CSE-MsgGUID: 08XG4bZ+SR+gTS0loiFomQ==
+   d="scan'208";a="46775562"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:07:31 -0700
+X-CSE-ConnectionGUID: N3g8cNo4TOK7+/nPFd2s1A==
+X-CSE-MsgGUID: Q3a3mJ04RCCn9a1cI+T/dw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124520586"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 24 Mar 2025 07:07:08 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twiS5-0003eP-0D;
-	Mon, 24 Mar 2025 14:06:53 +0000
-Date: Mon, 24 Mar 2025 22:06:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v2 2/3] PCI: dwc: Add sysfs support for PTM context
-Message-ID: <202503242112.lOewj3sy-lkp@intel.com>
-References: <20250324-pcie-ptm-v2-2-c7d8c3644b4a@linaro.org>
+   d="scan'208";a="128749764"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:07:31 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id D778920B5736;
+	Mon, 24 Mar 2025 07:07:29 -0700 (PDT)
+Message-ID: <65ef0526-b613-4db5-bd27-d572299284b6@linux.intel.com>
+Date: Mon, 24 Mar 2025 10:07:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324-pcie-ptm-v2-2-c7d8c3644b4a@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V10 1/7] perf: Save PMU specific data in task_struct
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com
+References: <20250314172700.438923-1-kan.liang@linux.intel.com>
+ <20250317111045.GA36386@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250317111045.GA36386@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Manivannan,
+Hi Peter,
 
-kernel test robot noticed the following build warnings:
+Sorry for the late response. I was on vacation last week.
+> 
+> Kan, can you please do a patch failing perf_pmu_register() is there's
+> more than one pmu with one of the kmem_cache things on?
+> 
+> Because the current thing very much cannot deal with that case.
 
-[auto build test WARNING on 1f5a69f1b3132054d8d82b8d7546d0af6a2ed4f6]
+Sure, I will do more tests with register failing cases and report back.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-Add-sysfs-support-for-exposing-PTM-context/20250324-181039
-base:   1f5a69f1b3132054d8d82b8d7546d0af6a2ed4f6
-patch link:    https://lore.kernel.org/r/20250324-pcie-ptm-v2-2-c7d8c3644b4a%40linaro.org
-patch subject: [PATCH v2 2/3] PCI: dwc: Add sysfs support for PTM context
-config: csky-randconfig-001-20250324 (https://download.01.org/0day-ci/archive/20250324/202503242112.lOewj3sy-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503242112.lOewj3sy-lkp@intel.com/reproduce)
+Thanks,
+Kan
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503242112.lOewj3sy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/perf/dwc_pcie_pmu.c:16:
->> include/linux/pcie-dwc.h:38:38: warning: 'dwc_pcie_ptm_vsec_ids' defined but not used [-Wunused-const-variable=]
-      38 | static const struct dwc_pcie_vsec_id dwc_pcie_ptm_vsec_ids[] = {
-         |                                      ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/dwc_pcie_ptm_vsec_ids +38 include/linux/pcie-dwc.h
-
-    37	
-  > 38	static const struct dwc_pcie_vsec_id dwc_pcie_ptm_vsec_ids[] = {
-    39		{ .vendor_id = PCI_VENDOR_ID_QCOM, /* EP */
-    40		  .vsec_id = 0x03, .vsec_rev = 0x1 },
-    41		{ .vendor_id = PCI_VENDOR_ID_QCOM, /* RC */
-    42		  .vsec_id = 0x04, .vsec_rev = 0x1 },
-    43		{ }
-    44	};
-    45	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
