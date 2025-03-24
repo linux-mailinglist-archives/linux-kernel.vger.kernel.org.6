@@ -1,164 +1,163 @@
-Return-Path: <linux-kernel+bounces-573520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D6DA6D89E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:49:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9BEA6D89C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C4573B2CC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:47:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53B767A7531
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DDB25DD15;
-	Mon, 24 Mar 2025 10:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2E525DCFA;
+	Mon, 24 Mar 2025 10:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dppOvNLF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DqSoWvn2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E0925E468
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066122339;
+	Mon, 24 Mar 2025 10:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742813242; cv=none; b=tZWbk3SA3gl/SJlpmfcSvf9/0lb5xctZTl0BAL46na4viKCrZ5QJleJa9th1hFr6cGljx9lbALwMrLs0aiQUnq+czJG+X/eJv1Ex4/RbZLMvRGj2vskCkEOiJYJeKkQWYoaNAzq99SZLeWMPvbyj/PcMoX+SgkRgjODiV9ZkzK4=
+	t=1742813299; cv=none; b=K938wWY4WcZ4k36GtCuJijgWnIWMIuU80hnsjweqryP62qO+JQYYCSF1b6GnqMLgWwyDsBpS/6xbM9/YzkiLRILUELjUn079p5gZ2lpHhqK3WCQIznWM5BvxY9nXm0gY7Q8lHNY/wMrolkfFCHgeZomNXrtaatJf1MlSxBV+jT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742813242; c=relaxed/simple;
-	bh=9z0RxKjeC8RwUmLb5SarlKv6HJUVpqk+rJh1s528L40=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rLeNeipVPEhZCBIhljkymk5knCY4Bw7AftOeGByF183OcelthrjL9BObO6Vvar4s8HNX4hChZAHb+AsX8j3OP5P2C8MVNBou69xNWVhPQNBwKobCwFxeltVUsCmh/F3A2ZuyLNuq9mS1P5z9/q5VIBT8LtOCX96p7Stjphh9yWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dppOvNLF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742813239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ILxEYoeVE+MpXO0Glj+Y1U0EAxeFxdsejgciRSsrwF8=;
-	b=dppOvNLFItHM6qTB60vUOhBgJMsV8FETTb9bV01Ww0ZI82zMbYT5R4f/wJ6IG0yxxFuTn8
-	4Rg+lDQ+6JTBZbbcQXoWZQxpawLEVuzdtTLNB6ocBDjW8rS98grEAz6rRf0h4LXOwa0joO
-	2yxk7Zi0IypmlxPXpWAjeKtlUOFzSHk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-382-5p0Q9gH5O6uT1alkYX8gsg-1; Mon, 24 Mar 2025 06:47:18 -0400
-X-MC-Unique: 5p0Q9gH5O6uT1alkYX8gsg-1
-X-Mimecast-MFC-AGG-ID: 5p0Q9gH5O6uT1alkYX8gsg_1742813237
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d51bd9b41so25044545e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 03:47:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742813237; x=1743418037;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ILxEYoeVE+MpXO0Glj+Y1U0EAxeFxdsejgciRSsrwF8=;
-        b=MXmpLgvCp/Mo6jDCHIXmlvkgsloO3D7yW2QufAHjVA9lz+X3IyICCYIerg++ET81Q8
-         1EJfe5LjmxFMw3hAr3d1JkBAptFsJ1Ual1V7H0lxFBTGCEWY2ff2JWnWpLtNBNtNe1UA
-         4yIdRovDae4vjtN+Vq57mULH8GkgWdeJ7x9o2mvv3kFSmgH0PRijwlGq4o0azWIdqEiJ
-         RB1DwOMe9geOsNYbBO0J164sFpmLvhC23gxdCu0X87iz4TjdTnna72nnwF48SC785a74
-         3oecHvlY13wMQ9fbIIDvwtJXx3rSs2+WT4p1pckUnWlbiFfL88r2d7/OIDTs9jpC9X8J
-         Gihw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6RMi8fWN+ZJYUWR96Ht4WsBiGDJ1nWmw/GxSc09SVxG1DzmQ3KtInGL2fg5oppkRBr1xAsQQF8hIsr+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFrcjlVZRnIHN1mXNeYxR9aIQ5lRod7O5syrHRVjTiPuKwsrPF
-	EwSW3zT3f8XpkjNqiB7MHyvaLUfJQsRKFMXSzfvm/3ZGr7jUJgk1JglYl0vml9TsvA2NXhu35xC
-	d9YSzMacqmVi33wOHFwzYA2bFG6hF9SoQECf9BSynxxcvRDt6LIs+i88f1q3srw==
-X-Gm-Gg: ASbGncs7Q+1tWvVuN6T7tR4mMTC3fftJIMvGXRJv8CXLDThGjLltDn0IzDo8YWGEwyI
-	2FO85TlsPXl/NNMgrMrOKveRyKcRZaOXwSHkFnQxMFHbwjwYxLZ3YcJNZo9CHO3vf078eg9xtZM
-	C3SORlBNOd75Ba22PdDASDGBN98O0LCKYw3efLS+KioyLZQx+PXhkrN2jT6vzgYfnSfcPGPW2we
-	k3wnD+xgMeLhiCmP6yGVEfzS4FS8+IC6r0iFn97sl6dbk+dqK4iovUiYRL+cuoSsGx99lOIaOKg
-	iJNyTF6kYUR7sEJ8a6B5DT2IU2b9Ue9M42I4ywWqwSlgq6BHR6HoFrtpK9pTIG1rQw==
-X-Received: by 2002:a05:600c:1d9f:b0:43d:83a:417d with SMTP id 5b1f17b1804b1-43d509ec5d7mr113154335e9.12.1742813236957;
-        Mon, 24 Mar 2025 03:47:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWZa9wuN2PTDGpTipt3fq+aoFWpOBqvRgoGNR3/VEGSUJWm0DGpVCjLokA7c7167YRmdsfkw==
-X-Received: by 2002:a05:600c:1d9f:b0:43d:83a:417d with SMTP id 5b1f17b1804b1-43d509ec5d7mr113154055e9.12.1742813236335;
-        Mon, 24 Mar 2025 03:47:16 -0700 (PDT)
-Received: from stex1.redhat.com (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd9e96bsm118452815e9.25.2025.03.24.03.47.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 03:47:15 -0700 (PDT)
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Joerg Roedel <jroedel@suse.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	x86@kernel.org,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-coco@lists.linux.dev,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	linux-integrity@vger.kernel.org,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v4 4/4] x86/sev: register tpm-svsm platform device
-Date: Mon, 24 Mar 2025 11:46:49 +0100
-Message-ID: <20250324104653.138663-5-sgarzare@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250324104653.138663-1-sgarzare@redhat.com>
-References: <20250324104653.138663-1-sgarzare@redhat.com>
+	s=arc-20240116; t=1742813299; c=relaxed/simple;
+	bh=KKpN7ifW0FwxjJpOhtFmsCId4QhbQ/vnhrEMIbMuqjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/M583F3bFLBRbgvNC6CsoWSCzPDFJSzTP7SQG5SN9QyCW7SfRpH1nNs4vNWEIPxwze2XaBc9g6gZBdpEIA/jwcQXC5mD4MSmRQPlIqs426tsjOk2rjlEd3VVQjNNP4NObmAvwoP916Am3ZHl+aYqkvOwqfkxo6v0MRf0yUt7Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DqSoWvn2; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9ptko016767;
+	Mon, 24 Mar 2025 10:47:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=VIga+xvQk4RxwLl37s8roD8US+RxZH
+	6wgAnN7cz6dUM=; b=DqSoWvn2hNYTALQxMlD7ZFoi+4zq0N1yWuxe53qPbwlofS
+	11EDXetv8BM4utLmdlLw0MYgxwUAi5gSGHNoREjNHy90tDmAWBicdY3u5OsLqFNm
+	FswP8lh4U8KL0Z+kmbDMnrfazqs0pMLjoe8sYQPDDhg+bESIKfnjQkeT2J5kZ8gZ
+	uTpBQo4JY573uCvrEvB6/7EY+71e5v7MwS2GmtATqmPLrQY+OFUtee+p4N29MFed
+	yMLrXbyFZsn7mGVDVNB3gW9NBCAPa3n7ktStYlAB993VUD+ET9ZqifqLhNy/ADTm
+	3QJgYd+LcjsIPnDPueY9NsSPBS5ASB0qja99r70Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jkqp44qf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 10:47:11 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52OAlA92022659;
+	Mon, 24 Mar 2025 10:47:10 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jkqp44qc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 10:47:10 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52O77iAg025489;
+	Mon, 24 Mar 2025 10:47:09 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j7wywy1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 10:47:09 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OAl5LT16187800
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Mar 2025 10:47:05 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 694862004B;
+	Mon, 24 Mar 2025 10:47:05 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD8DB20040;
+	Mon, 24 Mar 2025 10:47:03 +0000 (GMT)
+Received: from osiris (unknown [9.179.14.66])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 24 Mar 2025 10:47:03 +0000 (GMT)
+Date: Mon, 24 Mar 2025 11:47:02 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-kselftest@vger.kernel.org,
+        David Airlie <airlied@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        =?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>, David Gow <davidgow@google.com>,
+        Arthur Grillo <arthurgrillo@riseup.net>,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alessandro Carminati <alessandro.carminati@gmail.com>,
+        Jani Nikula <jani.nikula@intel.com>, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        loongarch@lists.linux.dev, x86@kernel.org,
+        Linux Kernel Functional Testing <lkft@linaro.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v4 10/14] s390: Add support for suppressing warning
+ backtraces
+Message-ID: <20250324104702.12139E73-hca@linux.ibm.com>
+References: <20250313114329.284104-1-acarmina@redhat.com>
+ <20250313114329.284104-11-acarmina@redhat.com>
+ <b6bb68f0-7e93-4db2-9fe6-f615f06ddeb1@roeck-us.net>
+ <CAGegRW4GinPmsav5=VBfjXBKy4cUEs5FWv-ixXODk7ajZ69vYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGegRW4GinPmsav5=VBfjXBKy4cUEs5FWv-ixXODk7ajZ69vYg@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -BXK6qMXWLef6jiJ2R9hHCsaI_IjDOmx
+X-Proofpoint-ORIG-GUID: 40o9NRITvQhnDK-iPsw_sUFfSwFPyp4T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 spamscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=810 clxscore=1011 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240076
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+On Fri, Mar 21, 2025 at 10:05:42PM +0100, Alessandro Carminati wrote:
+> > > +#ifdef CONFIG_KUNIT_SUPPRESS_BACKTRACE
+> > > +# define HAVE_BUG_FUNCTION
+> > > +# define __BUG_FUNC_PTR      "       .long   %0-.\n"
+> > > +# define __BUG_FUNC  __func__
+> >
+> > gcc 7.5.0 on s390 barfs; it doesn't like the use of "__func__" with "%0-."
 
-SNP platform can provide a vTPM device emulated by SVSM.
+...
 
-The "tpm-svsm" device can be handled by the platform driver added
-by the previous commit in drivers/char/tpm/tpm_svsm.c
+> GCC makes significant efforts to handle this, and for several
+> architectures, it manages to solve the problem.
+> However, this is not universally the case.
+> Additionally, -fPIC is not widely used in kernel code... I have only
+> seen it used for VDSO, the x86 boot piggyback decompressor, PowerPC
+> boot, and the s390x architecture.
+> 
+> That said, GCC has been mitigating this issue, allowing us to treat a
+> non-compile-time constant as if it were one.
+> A proof of this is that, at least since GCC 11, the s390x version of
+> GCC is able to build this code.
+> Before that... certainly in GCC 7.5 it couldn't.
+> 
+> A simple fix would be to restrict usage to GCC versions greater than
+> 11 for s390.
 
-Register the device unconditionally. The support check (e.g. SVSM, cmd)
-is in snp_svsm_vtpm_probe(), keeping all logic in one place.
-This function is called during the driver's probe along with other
-setup tasks like memory allocation.
-
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v4:
-- explained better why we register it anyway in the commit message
----
- arch/x86/coco/sev/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 034aab7e76d2..0abcac87af89 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -2692,6 +2692,11 @@ static struct platform_device sev_guest_device = {
- 	.id		= -1,
- };
- 
-+static struct platform_device tpm_svsm_device = {
-+	.name		= "tpm-svsm",
-+	.id		= -1,
-+};
-+
- static int __init snp_init_platform_device(void)
- {
- 	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-@@ -2700,6 +2705,9 @@ static int __init snp_init_platform_device(void)
- 	if (platform_device_register(&sev_guest_device))
- 		return -ENODEV;
- 
-+	if (platform_device_register(&tpm_svsm_device))
-+		return -ENODEV;
-+
- 	pr_info("SNP guest platform device initialized.\n");
- 	return 0;
- }
--- 
-2.49.0
-
+But please add that dependency only for this new feature for the time
+being. Right now I would not like to see that s390 is the only architecture
+(besides parisc) which requires a much higher minimum gcc level than every
+other architecture. Unless there are specific reasons.
 
