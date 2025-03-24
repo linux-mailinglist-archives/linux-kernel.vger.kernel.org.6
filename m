@@ -1,143 +1,267 @@
-Return-Path: <linux-kernel+bounces-573568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740B4A6D930
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:33:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0381FA6D933
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 075787A3DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE46F1890AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167825E46F;
-	Mon, 24 Mar 2025 11:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rk+6Q2Yy"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54DDDF78;
+	Mon, 24 Mar 2025 11:34:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1ED25DB03
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892B11D514A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742816010; cv=none; b=iyghWhRj5ocV6z6A0NOZ3S0p6sYaAYbn92XQb/6HYNFSc01FyVnCbWprCLBwcSyR73GR95yfDVlTP5xJ83UZ+MMj7pcPm1L6QPSaJfZR2/DQIq2g96TOMrH39EhswTVr6Q4iOM7qqI3tipz6qZA53in6DYap3a3aNnMvUT0M6nU=
+	t=1742816046; cv=none; b=pFaVgFqPBZVOrpaO8Yvg3/Rx3pPEFx61qZ3AX+FFp/9XFoKi2eT74VMnPHYYOT7hBNVrbYMxZEtO8HVssWVuusjB6dzVCVrm98wdBy9AW65GkVsD+LI9K9CY6/7GDdo+veq0DEOL9KZYi93uRC6va987JHWNsxKf0WiJbf3Lv1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742816010; c=relaxed/simple;
-	bh=0QhCQHHqNirjdYBN4QdEl9+nTA8hPopgI9hEFzjoWzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bUx7RouTg/5QSdvTmjBXLlqIgF+T4dDaDrX8yAj2u2jjuOxtnOqglDdmk2ogCpUvxdb4DyMDFwm7kytmmlYKqML+RUGzppNpLHHItgzoqWYc9LFbc6IbuuF4X6CLDXNmH1XdWkTSSlUSvxVF/PrrnLXbeF9l2acRLOKMkty9SOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rk+6Q2Yy; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3913958ebf2so3417727f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742816006; x=1743420806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RZaqAclEJIkWjFVuVskTZM+5u6eA26Yq4IN8pnm0qc8=;
-        b=Rk+6Q2YyZ5mwJEAB4v6YJLWozKyNqVLumD0a1sxc+G6Cqz6C32Zzk//+/wp9wD87qj
-         hp1Xk4Ucd67hLMhFK8M+R8Agh9rMNGJTvTlsJ2yWRllyO0w+4zPbPgy4FJ2WoVQ0W1n5
-         Mg87q6iSV1oPEM0+fdGq05TPo9jQBiJh50z+Pgd4V2qq1VFc/VamwWwkMbXIy+DBZyyO
-         8W9/xL/9UR8rudXN7oJ+wGtZKdrH0VOY896sXrbN3pYDkJ+wNN9LIUUY2Rhw8jIzg0Jr
-         t1mUBVhn11HpaD5wAcHSVk4VAL0Ru3Nf3LR21NrJ/OVhfL8OB3DgDBvhOBBdKvjrG+zG
-         /AcQ==
+	s=arc-20240116; t=1742816046; c=relaxed/simple;
+	bh=hZRcbHYIIsFeCvOs511PbwSu+2LMzzsQhDlUg8xDKMc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=l8M8FUi2TFb1dPEHAUxjIhD2/nlLzfKEEYs6DKQpAcAx9Bitcj294SCs8A73j9NvEuOIQhdgj7+3GPRB+WZELYKAJn3SYrQp/sK7fKzH8X0Xg06JkK3zfUEEoERZx9X7s4cbz6o4gWamjw/gHZq0vKPOTI9w09HsYNOyKVGVy6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d586b968cfso84842375ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:34:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742816006; x=1743420806;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZaqAclEJIkWjFVuVskTZM+5u6eA26Yq4IN8pnm0qc8=;
-        b=cWNx8uq0Ah+x1ebgZ5w6/vmbH19clsBhlLoXHyqKQcrKJ2zx+sDAeAAenD55ZN4v27
-         W6bLEVAdf5sA8o4Ap2z3Vgkpn6qCPASowJ+xG5H1GAT5Z8cMwyEEu2di5ztQOLeNsdTU
-         NlYpdKIJ3Ne/lBbUPE8LwalisjU/0bd6arDA1Zz9OFgzK/rn9zTTmDdf43UKiLLXfH2O
-         /2BVoZdvuqccHPIgJuymJGd5bA6JgF+UpN1agz2KddfNaLxF0llB0qKk+0X91EF6hMis
-         7ZmQplmM8ysEK+s5i7RDecRpEQSalzTue5fB4GuRpUUmIuPvAy5b4BVlmnD1759VX2ce
-         XLtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrz/Fi9OJWncgPvQjKLssTbVg7WQWGWan4icbbGmMsr2otdiKXQE/SSw3ayX+KY17CDg6iePHIhjvkt9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGQJ2r7VFMUc3zdEXsYtnb0kJhzdTQRAKn8TapG7gmMpl3PJ6m
-	k/aSLBSdVUUAsS1qYR7mZlny6mkxuvb8J3u8J0IM+nsoziq1UayBy6kynbYx89g=
-X-Gm-Gg: ASbGnctBDZ7ji5caucfEDhqLx9HI5WtdeLYRZi3ofX++Aols5QZj6IuBgeE7jmgC9gA
-	n6OfWHXLOdD0H6r5zveBUEGoen0tvSqmKGW3y8GX/E6uuaxBruIt90PfhjRZkizysrsAo+1znP2
-	jnGRNY+1sXRMYjc6pFFwRE6t5r+3tcduIKMbV3haYPDNrWtHd0awpd8iby/YzX9uTxRLWREvPCF
-	zD9WJm5692EU6V+cAqPPP7XxPiqJL1/Shwq4CUBMJ2ZyiNjjp5Jwab7J3a2DdI2lcyXSdOLXQM2
-	FbR/4Lp3veJhLI0CYsi/owGWulH6Ez8bidJWlr1Pkz5Ohg11yTO+taup82GuWxE=
-X-Google-Smtp-Source: AGHT+IFSfs1o8ReuKsDzD9hr5+CF5RuqGwYnwXccjml/f40pB4QQMqmLEg2EktW6960K8d3RhxZUkA==
-X-Received: by 2002:a05:6000:186b:b0:391:3768:f448 with SMTP id ffacd0b85a97d-3997f941b0fmr9625633f8f.49.1742816005906;
-        Mon, 24 Mar 2025 04:33:25 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9b517csm10918673f8f.51.2025.03.24.04.33.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 04:33:25 -0700 (PDT)
-Message-ID: <4256f8ab-d975-4f5d-8762-50d301ce4dcd@linaro.org>
-Date: Mon, 24 Mar 2025 11:33:24 +0000
+        d=1e100.net; s=20230601; t=1742816043; x=1743420843;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5q6zUte+jr6gTyWMTp18L4w1pYbPOIDKis5odPsk4lc=;
+        b=Al9fKI5beoP2M+w8kdkzVuBfUwaaRqVnUmvBTloo30VcRcBlkKavNZh8XXk8FPol1b
+         4rjnwpAjS9UoqzfUUVLAgWThYEZTpxEek+v7IbgaA2dn183HUPQqzg0JQ2XxDDdY94+l
+         gbevx1fRFgf8cZ4qucTcBkb0k8P9vSikcUaP/LjPFpJ7XAbn/PBda70TPnVYcdZO8rxJ
+         OaaBspowGEdwEmpmUVAP+V01hKY81NypkiV+qtFudhjYET6b2T3nHKGp2Aa6XFQQG7fN
+         OLbmfk0FPvnYFWjoESFB2OZ2i5ohL/Nn5YAh5K5ZG8MymQHAT3kr9TbzUmSaRWruO6US
+         3v3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvbNgPmrxV+z8t8aVIsW15+hQGbj4VFzypjMr2+T2q+zNEadWruMMzu4dpLQE2v3oF5GscJcJxvDnvRJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy0yaXD7oMGXLY+iEus37pA7X46sToGAyExqoS97g02qngXVn4
+	StVP/WuIXUtI/TfYfH7Xhe7FmrBU3zd20ZSQr2biDsU92jh9iUICn7kosd2JRAGS0EKUxiss13c
+	I4H82thgKpCWK9Jvwsbl4v89IGEaFJVSNpdl7D6R0fB6qiDQyPy29xDk=
+X-Google-Smtp-Source: AGHT+IF2b/zZlREFM0IK2pre0+6D5+JGSUg+IzltAiFkEN9T4IXlsWSDUeNc7+uBgYf5qJNATyI3u3oL2Xn9bJK1VbLlvL0XCoFV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] ASoC: dt-bindings: wcd93xx: add bindings for audio
- mux controlling hp
-To: Krzysztof Kozlowski <krzk@kernel.org>, peda@axentia.se,
- broonie@kernel.org, andersson@kernel.org, krzk+dt@kernel.org
-Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- johan+linaro@kernel.org, Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
- <20250324110606.32001-5-srinivas.kandagatla@linaro.org>
- <201dc2a7-e031-47d7-9c17-c4275365b477@kernel.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <201dc2a7-e031-47d7-9c17-c4275365b477@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1f05:b0:3d5:890b:f8f8 with SMTP id
+ e9e14a558f8ab-3d596051f09mr138209575ab.0.1742816043470; Mon, 24 Mar 2025
+ 04:34:03 -0700 (PDT)
+Date: Mon, 24 Mar 2025 04:34:03 -0700
+In-Reply-To: <20250324111613.3620-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e1432b.050a0220.a7ebc.001f.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+To: brauner@kernel.org, hdanton@sina.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, oleg@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_amd64/syz-execprog" "root@10.128.1.162:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.1.162, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.1.162 [10.128.1.162] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.1.162:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:g5LT3corcdQiP3+7S3QNYL7lzLWO1gp=
+/6X86Qtf82jk
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.1.162' (ED25519) to the list of known ho=
+sts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.1.162 ([10.128.1.162]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
 
 
-On 24/03/2025 11:18, Krzysztof Kozlowski wrote:
-> On 24/03/2025 12:06, srinivas.kandagatla@linaro.org wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>
->> On some platforms to minimise pop and click during switching between
->> CTIA and OMTP headset an additional HiFi mux is used. Most common
->> case is that this switch is switched on by default, but on some
->> platforms this needs a regulator enable.
->>
->> Move to using mux-controls so that both the gpio and regulators can be
->> driven correctly, rather than adding regulator handing in the codec.
->>
->> This patch adds required bindings to add such mux controls.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
-> 
-> I claim you cannot test a binding in the way we understand Tested-by
-> tags. Testing a binding is part of the build process and we do not have
-> tested-by for builds...
 
-I see your point, Normally if the tested by is given to series Its 
-applied to all the patches in that series, I guess even b4 does that.
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build4191695603=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-Will make a note of this next time and not add tested by to bindings.
+git status (err=3D<nil>)
+HEAD detached at 22a6c2b175
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D22a6c2b1752ef57d8d612e233d35f6be8c3bf7df -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250318-101307'" -o ./b=
+in/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"22a6c2b1752ef57d8d612e233d35f6be8c=
+3bf7df\"
+/usr/bin/ld: /tmp/ccPfs6m2.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
 
 
 
-Thanks,
-Srini
+Tested on:
 
-> 
-> Anyway,
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
+commit:         88d324e6 Merge tag 'spi-fix-v6.14-rc7' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
+x.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2e330e9768b5b8f=
+f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D62262fdc0e01d9957=
+3fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D15910bb05800=
+00
+
 
