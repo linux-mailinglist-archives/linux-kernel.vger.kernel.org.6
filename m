@@ -1,92 +1,98 @@
-Return-Path: <linux-kernel+bounces-573992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D388A6DF55
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:11:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62F1A6DF59
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D0E1670CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43E61892740
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0351625DAF4;
-	Mon, 24 Mar 2025 16:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878382620E5;
+	Mon, 24 Mar 2025 16:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9TtKFEb"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsZaKxTC"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791F026159F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0632620C5
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832665; cv=none; b=niYFxkYCOCXAFOu4gqq2ZoqJmWUKrhBa1MbQ5aji0VsNGzbSb+D+VezpdhQySDMZ8gKIXxsRZkVn7NaNjpSkez7T0o7nzxcOB+v061KSeObGQwLTtyweqqI3RZdexFi4h2NLAM6G+MbLIt9tlOwc7JpxsKb4b6lZ/ExBWIMXP7o=
+	t=1742832666; cv=none; b=S/DSo7lA2bkJhPD1bLoye2t0AmPz49WW8hTXDl2g7QqbumQLuSrGZ0e4cnMYT0Px4FtsQKLUZ96gfKMUL328SZi4HE8doE2jbPbDtiEaArPegPi3X4VeeoAefZTCjs1dD4mcsTesplx8JxVubY6duHfoWzsQ9Zo5PflM0yYq3a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832665; c=relaxed/simple;
-	bh=RXGsw/IIZ2cQK4vDV2zmSSo3gezBRdYOcUXmqa2QnfE=;
+	s=arc-20240116; t=1742832666; c=relaxed/simple;
+	bh=h/ci9IErEClJvj/hos9no5+LsAX7syJvns3LywaCNmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1I4UfHqssQpqwyf8cEFePzsgHALtG+4WvgxpLmEUIGEpcnB5txqDhQAWdRLN4WS5u+6IH4McAXZwxZRq86o2Py2rleIh0wBPKpYDsVIU7yM5zSGUTGbQK/FYLUeG6c510eyD1aIQ2yLtaO/akgdZD063IheEy+dSk7BLCA9v1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9TtKFEb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227914acd20so42282205ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:11:02 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NP2yC2N9r88Jd5reGUQewy1t2mQU5V7rno+uwaIdghVqtnMyXM+ycy1bSrvpmk+r0p/OeKXNmb7DrZWvWZyzRprludUUEOoGKiDXxRo/oOY1kb/qbeNIUY6qmJnvEn8rdYqxbdLhOdkqAv8gKTz47k5O0+ty+nmO9OQOdiUQGok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsZaKxTC; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso9886899a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742832662; x=1743437462; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742832664; x=1743437464; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5vgk90XdjvD//xy5cJrxojmSgOgyA8sd6HdwMa8sAQ=;
-        b=E9TtKFEbXstLazJ8CSJKq1faW4g8NTPXEDNcdThUZQ1eAipZd4GGaNjtlOd45uft9t
-         lkPKiKAnI4UMyvdm7zY3pQyHL61MGcp5wltAdTyO7INmZ2Pr7hMZPpn4xvBDGebhIY9I
-         Bw7/SqYusxJJi148ygRY1pJpbpBtw2EISJTlKZPtVriUAX6Qc++wFqBlLkpRauGaKEeR
-         FH/s7nqINEyEOEUnFPg7stdyJR+aM1jJfJ49lgAoudv+0Ep01cBViT7VNnegHnlkXux1
-         FZvCMlHnxuaIAhMtkb4qC1Nsf9gOCQWJX55A7gdvQtMqsOf09elRPokOxuqag/UQh31m
-         vOyg==
+        bh=pfKZtzv59eBwLvLslJklRIH1GlVmmxb0T7NI0lTwvR4=;
+        b=bsZaKxTCM8l3/SRt8K8HOvWnqYImCPza+3onKkH4KYa679neXl2RIHUk2/hKy+z6KT
+         eehcXZttQshviYDxCG6Tuoq/6peL+QyFu9UnfDC8PSD0rj7VUqWayNZmlkT7AEYZQ1HX
+         JcEoPkWnkKfqTPjVYDeFlttROA+QZqRmJ6eGYvN9NLbyFO+xJTn6v9xAnOh2oUdfs/uL
+         dm0y+xXzYhp84HzFnbISRn/TlgENFALSqJi9x1yNZa87U127+FWL2vl9vHNpu4HlQoEd
+         Or4HNrp7u96GBVZUFaR+GkQubWnF4OQ3N7Vnl8OcVJFeMdzXNYOjGoucxDlsLpK6WJPL
+         ecmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742832662; x=1743437462;
+        d=1e100.net; s=20230601; t=1742832664; x=1743437464;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r5vgk90XdjvD//xy5cJrxojmSgOgyA8sd6HdwMa8sAQ=;
-        b=bZkOQlvqsZaUzoGIjaRP+sLw5mcZtmJ2mPNbg401Bizi1QUcJIPYZt/ZRkyi2hHMmi
-         gqEo+EkXqnPAAzf46eDHOp5ndC3bWGeQW9rc8keyp1aE4v9evgjqYc95Xs5FBG0zB4SM
-         FCV9s/uXDv2rFZb0LPdk7tZq81Z99qmJ0Dy02DAhdAQhAiQSMvqRW6IPWQyK8QNFd4gF
-         MnxKiPH47yNskJFFgihRKZBNdPN66TFlesxHc7LxcJsdlgMu79nmy5Wdito3RdDlQoM3
-         FFzbpotvplhYso8tKDKdhhMI2DNbJhSyFPKfcB+4gVQnDfrHvH55JrHywqoty1danTQX
-         iOKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZEQxvMfbo6XU6nSfQ9X40E49q1cVt4A+atHakoJSMj0Xs31uVi1ovcmby+IwQd/7tYRE1DoxbzdknU14=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwljf6ckzQIt3vX313y0dLIdSLGCmo/InRG690niCHgUkSyQX0
-	3AceTu4hCsDJtdtMEdDLu/KK87sgvvHqcNyeJ8VUOm/ObMnjDpGmOtoiMSvSUeA=
-X-Gm-Gg: ASbGncsQiyuhJqEJmsqkKdEf9WkJdf6HJ7Elg0pnKSUBmaZdOwJD9bbIqylr5AYhu4V
-	Ud5IiwzUZOJXLD4a+Owlwbri7qNTiM/Zbvdq666NadJfTdqxZ9lxwlLAteDjwDPU7QckOvWIPGl
-	Mk9c7yTp/AmYs1Rtx2BM7mcg0W2Bb2CsLovutNmFJTJOlXB2InCUCPU680Fa701IVUxiJM3h0x5
-	OK8RHAzVD43keG2SA9IXoR3t3rsFElmP0rboNs/SX1/di6iMBJvnXJ9wkjncrZhNsk+LftVmdON
-	IOZNncegQBOf3/KOnk9/1hFg3nTTwz7ctFgyF26VYtfFbTt1
-X-Google-Smtp-Source: AGHT+IEUktCIjYcV/UliuBFwLd7ktQyPdWhUBdENSBLSBk2b6FUGTx7qO3Kt+i5xGhua1KlGlHJUIg==
-X-Received: by 2002:a05:6a00:4648:b0:736:491b:5370 with SMTP id d2e1a72fcca58-73905a28b22mr22284141b3a.10.1742832661421;
-        Mon, 24 Mar 2025 09:11:01 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1300:9465:2fd2:e14f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390614afb5sm8086630b3a.121.2025.03.24.09.10.59
+        bh=pfKZtzv59eBwLvLslJklRIH1GlVmmxb0T7NI0lTwvR4=;
+        b=diRAeNaH17+LFkkJcAXh++0GmbL31ldGoXMjMT7w28jmM4Ja+EY8pJUGPsx/GfeFAk
+         /f1pHUGAgfja1SWtltao4y84WguhWlHfdzKZn1IvYp54Fu7BqvDzDPe9KJCmVRtAzD4O
+         +lplb2n2O7p3gn8uJ5v+p5uneDJlRStAhcAIqJWnMPeRlRw4QAJ3sSG32xLUJH1gcSqM
+         8FtW9J83BG090dm6O2c0TSZRCNH0QWDYPAEgtDG/JDb16mlrgQ+3S/de25EsONWQtENe
+         DamAGDco7lNl+jREbCUXY+Vk9fjEjlVxxvG12rqt28BZLoKL1p69H8M4fMFVh9di6Zdm
+         tnpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW80RZDX7fynnjxCKe4TswCTxw6tYeNKg7K42F3BGwZOGCZjdsWXSUS90iXSQTYFplvW4HSU3CZ/j63CQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ/nNRmRmT1Z2lcCIg8+FXUAmhlFcQQpeABEJKhnRtAYF4slpV
+	gY08UFgx97KsDlPDetbs+fbFMWj2QGCt8l5EPfrD40At0bdptstr
+X-Gm-Gg: ASbGncveoFzOijiwrpMiArcOXPDYqRVz/zUKfHHmCUGfO41uTKYwwLXH+Z9VBPTsKcJ
+	NkmysUSommL6f1h0JM7IZuR3E7Y+3Jm5jMfj3G3dsIgB6kEqMY5o84E7JoTfapKeBLP6ZCJ6AnO
+	LuUqtJ1VaHtcKVKiuRlIJxsIPD7KZ/0aeISg+va/+E+F6Us6gnLa+jYM3H6lcUlPKxN7in/8PgB
+	ESUPUrfdSw8C5AKaPpoXi2KuuORRUGnKuEEB7XD6vBnY8fIYu+ZxH4k69k8/+7WRjr0RPmwgg4b
+	iDgzArasjagS9c6RYK2iJVwJ1yh8q+97uOcKkuHn8aWTvJs+XlYKnovQNnS9nFkydE5l
+X-Google-Smtp-Source: AGHT+IFGSZzECIzd4xFIfdlc38K0Cf0n26OwSjiHv+4oEt7ysXyvnNIq/1GYBi7pelSqe/eAsII4KQ==
+X-Received: by 2002:a17:90b:3943:b0:2ef:ad48:7175 with SMTP id 98e67ed59e1d1-301d43c9272mr29014013a91.15.1742832664244;
+        Mon, 24 Mar 2025 09:11:04 -0700 (PDT)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576c7dsm12373991a91.3.2025.03.24.09.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 09:11:00 -0700 (PDT)
-Date: Mon, 24 Mar 2025 10:10:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: Add support for
- DSP-specific features
-Message-ID: <Z-GEEVMXUysX1Hhu@p14s>
-References: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
+        Mon, 24 Mar 2025 09:11:03 -0700 (PDT)
+Date: Mon, 24 Mar 2025 12:11:01 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 0/3] bits: Split asm and non-asm GENMASK*() and unify
+ definitions
+Message-ID: <Z-GEFcciqCwxL88W@thinkpad>
+References: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,163 +101,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318215007.2109726-1-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
 
-Good day Iuliana,
++ Anshuman Khandual, Catalin Marinas, linux-arm-kernel@lists.infradead.org
 
-On Tue, Mar 18, 2025 at 11:50:07PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> Some DSP firmware requires a FW_READY signal before proceeding, while
-> others do not.
-> Therefore, add support to handle i.MX DSP-specific features.
-> 
-> Implement handle_rsc callback to handle resource table parsing and to
-> process DSP-specific resource, to determine if waiting is needed.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
-> Changes in v2:
-> - Reviews from Mathieu Poirier:
->   - Use vendor-specific resource table entry.
->   - Implement resource handler specific to the i.MX DSP.
-> - Revise commit message to include recent updates.
-> - Link to v1: https://lore.kernel.org/all/20250305123923.514386-1-iuliana.prodan@oss.nxp.com/
-> 
->  drivers/remoteproc/imx_dsp_rproc.c | 59 +++++++++++++++++++++++++++++-
->  1 file changed, 57 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..1729bfbc602e 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -35,9 +35,17 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->  MODULE_PARM_DESC(no_mailboxes,
->  		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
->  
-> +/* Flag indicating that the remote is up and running */
->  #define REMOTE_IS_READY				BIT(0)
-> +/* Flag indicating that the host should wait for a firmware-ready response */
-> +#define HOST_WAIT_FW_READY			BIT(1)
-
-Right now the default behavior is to wait for a ready message from the remote
-processor.  We need to keep this implementation in order to remain backward
-compatible with older firwmare images.  As such the above should be:
-
-#define HOST_DONT_WAIT_FW_READY			BIT(1)
-
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/* This flag is set in the DSP resource table's features field to indicate
-> + * that the firmware requires the host to wait for a FW_READY response.
-> + */
-> +#define WAIT_FW_READY				BIT(0)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -136,6 +144,19 @@ struct imx_dsp_rproc_dcfg {
->  	int (*reset)(struct imx_dsp_rproc *priv);
->  };
->  
-> +/**
-> + * struct fw_rsc_imx_dsp - i.MX DSP specific info
-> + * @len: length of the resource entry
-> + * @features: feature flags supported by the i.MX DSP firmware
-> + *
-> + * This represents a DSP-specific resource in the firmware's
-> + * resource table, providing information on supported features.
-> + */
-> +struct fw_rsc_imx_dsp {
-> +	uint32_t len;
-> +	uint32_t features;
-> +};
-> +
-
-This needs a version field and magic number.  Have a look at what Xilinx did for
-inspiration [1] (both magic and complement of the magic number).  You will also
-need a "__packed" attribute for the structure.
-
-[1].
-https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/remoteproc/xlnx_r5_remoteproc.c#L103
-
->  static const struct imx_rproc_att imx_dsp_rproc_att_imx8qm[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	{ 0x596e8000, 0x556e8000, 0x00008000, ATT_OWN },
-> @@ -300,6 +321,39 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
->  }
->  
-> +/**
-> + * imx_dsp_rproc_handle_rsc() - Handle DSP-specific resource table entries
-> + * @rproc: remote processor instance
-> + * @rsc_type: resource type identifier
-> + * @rsc: pointer to the resource entry
-> + * @offset: offset of the resource entry
-> + * @avail: available space in the resource table
-> + *
-> + * Parse the DSP-specific resource entry and update flags accordingly.
-> + * If the WAIT_FW_READY feature is set, the host must wait for the firmware
-> + * to signal readiness before proceeding with execution.
-> + *
-> + * Return: RSC_HANDLED if processed successfully, RSC_IGNORED otherwise.
-> + */
-> +static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
-> +				    void *rsc, int offset, int avail)
-> +{
-> +	struct imx_dsp_rproc *priv = rproc->priv;
-> +	struct fw_rsc_imx_dsp *imx_dsp_rsc = rsc;
-> +
-> +	if (!imx_dsp_rsc || imx_dsp_rsc->len != sizeof(imx_dsp_rsc->features)) {
-> +		priv->flags |= HOST_WAIT_FW_READY;
-
-Unless I am missing something, this way of enforcing the default behavior won't
-work because in older images, function imx_dsp_rproc_handle_rsc() will never be
-called.
-
-To fix this I suggest renaming HOST_WAIT_FW_READY to
-HOST_DONT_WAIT_FOR_FW_READY.  That way the host can skip waiting for a FW ready
-message only when it was specifically told to do so.
+This series moves GENMASK_U128 out of uapi. ARM is the only proposed
+user. Add ARM people for visibility.
 
 Thanks,
-Mathieu
+Yury
 
-> +		return RSC_IGNORED;
-> +	}
-> +
-> +	if (imx_dsp_rsc->features & WAIT_FW_READY)
-> +		priv->flags |= HOST_WAIT_FW_READY;
-> +	else
-> +		priv->flags &= ~HOST_WAIT_FW_READY;
-> +
-> +	return RSC_HANDLED;
-> +}
-> +
->  /*
->   * Start function for rproc_ops
->   *
-> @@ -335,8 +389,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (priv->flags & HOST_WAIT_FW_READY)
-> +		return imx_dsp_rproc_ready(rproc);
->  
->  	return ret;
->  }
-> @@ -936,6 +990,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.kick		= imx_dsp_rproc_kick,
->  	.load		= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
-> +	.handle_rsc	= imx_dsp_rproc_handle_rsc,
->  	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
+On Sat, Mar 22, 2025 at 07:39:35PM +0900, Vincent Mailhol via B4 Relay wrote:
+> This is a subset of below series:
+> 
+>   bits: Fixed-type GENMASK_U*() and BIT_U*()
+>   Link: https://lore.kernel.org/r/20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr
+> 
+> Yury suggested to split the above series in two steps:
+> 
+>   #1 Introduce the new fixed type GENMASK_U*()
+>   #2 Consolidate the existing GENMASK*()
+> 
+> This new series is the resulting step #2 following the split.
+> 
+> And thus, this series consolidate all the non-asm GENMASK*() so that
+> they now all depend on GENMASK_TYPE() which was introduced in step #1.
+> 
+> To do so, I had to split the definition of the asm and non-asm
+> GENMASK(). I think this is controversial. So I initially implemented a
+> first draft in which both the asm and non-asm version would rely on
+> the same helper macro, i.e. adding this:
+> 
+>   #define __GENMASK_TYPE(t, w, h, l)		\
+>   	(((t)~_ULL(0) << (l)) &			\
+>   	 ((t)~_ULL(0) >> (w - 1 - (h))))
+> 
+> to uapi/bits.h. And then, the different GENMASK()s would look like
+> this:
+> 
+>   #define __GENMASK(h, l) __GENMASK_TYPE(unsigned long, __BITS_PER_LONG, h, l)
+> 
+> and so on.
+> 
+> I implemented it, and the final result looked quite ugly. Not only do
+> we need to manually provide the width each time, the biggest concern
+> is that adding this to the uapi is asking for trouble. Who knows how
+> people are going to use this? And once it is in the uapi, there is
+> virtually no way back.
+> 
+> Adding to this, that macro can not even be generalized to u128
+> integers, whereas after the split, it can.
+> 
+> And so, after implementing both, the asm and non-asm split seems way
+> more clean and I think this is the best compromise.
+> 
+> Aside from the split, the asm's GENMASK() and GENMASK_ULL() are left
+> untouched. While there are some strong incentives to also simplify
+> these as pointed by David Laight in this thread:
+> 
+>   https://lore.kernel.org/all/20250309102312.4ff08576@pumpkin/
+> 
+> this series deliberately limit its scope to the non-asm variants.
+> 
+> Here are the bloat-o-meter stats:
+> 
+>   $ ./scripts/bloat-o-meter vmlinux_before.o vmlinux_after.o 
+>   add/remove: 0/0 grow/shrink: 4/2 up/down: 5/-4 (1)
+>   Function                                     old     new   delta
+>   intel_psr_invalidate                         666     668      +2
+>   mst_stream_compute_config                   1652    1653      +1
+>   intel_psr_flush                              977     978      +1
+>   intel_dp_compute_link_config                1327    1328      +1
+>   cfg80211_inform_bss_data                    5109    5108      -1
+>   intel_drrs_activate                          379     376      -3
+>   Total: Before=22723481, After=22723482, chg +0.00%
+> 
+> (done with GCC 12.4.1 on an x86_64 defconfig)
+> 
+> --
+> 2.43.0
+> 
+> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> ---
+> Vincent Mailhol (3):
+>       bits: split the definition of the asm and non-asm GENMASK*()
+>       bits: unify the non-asm GENMASK*()
+>       test_bits: add tests for __GENMASK() and __GENMASK_ULL()
+> 
+>  include/linux/bits.h | 29 ++++++-----------------------
+>  lib/test_bits.c      | 19 +++++++++++++++++++
+>  2 files changed, 25 insertions(+), 23 deletions(-)
+> ---
+> base-commit: e3f42c436d7e0cb432935fe3ae275dd8d9b60f71
+> change-id: 20250320-consolidate-genmask-6cd02abadf82
+> prerequisite-change-id: 20250228-fixed-type-genmasks-8d1a555f34e8:v7
+> prerequisite-patch-id: 572c05165229640db7dd8fe4d53e1a33ee5dd586
+> prerequisite-patch-id: c16d122a487f83e2866a9a669259db097ef46a70
+> prerequisite-patch-id: 35f115c0f1b327f1516cfc38b3076e07713df6cd
+> prerequisite-patch-id: 5fe7058f6ea73b37df75d5c39ad69a4da928058d
+> prerequisite-patch-id: 82fb628d052ce9f1efac7f3b61eafb2749f95847
+> 
+> Best regards,
 > -- 
-> 2.25.1
+> Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 > 
 
