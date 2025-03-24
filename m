@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-573385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547A4A6D69A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:51:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 441F7A6D696
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E5E1892385
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 177887A3952
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D999D25D541;
-	Mon, 24 Mar 2025 08:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC75525D219;
+	Mon, 24 Mar 2025 08:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="txuDlAgE";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="gefietRw"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jDzC0VFa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Fo9saBI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9467D136988;
-	Mon, 24 Mar 2025 08:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB3F1AAA0D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806301; cv=none; b=UbH1tCO7tMiPJz+3NPgGQPyXlZcOenO7NvZ+YU5fzHTQf1RAO8bAd+peL5aZ9fE7zUhYPVWPAc1wbpxKcZhFjvnU2p1cyrQFevYIkGMz1iXSFCCNo0a70Vu6PzPpKXziFACKmZRkNPq96+CHfLy+lRAAMlxtfJAGqB1TPkCMN/w=
+	t=1742806189; cv=none; b=ChwygDyeCRO9Leai2armxq0QaT1qgbTICPEdn2LtMuKFKD3ofNW9POCFmZWrgj52cgKX2WjH7SmGCWpkEYIkTrfBqyICLGWRmPr5ZOSJmvSAoG6+d8hRa8e+XzSRbco2okaDMMyhkACraqjB2MxRuV0LkS+0vwnHN6hd9qcxDZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806301; c=relaxed/simple;
-	bh=jMs358a025W5rZlrGuf3EpGosP/aRmWTeL5KWdoGoeU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cp4Riq/kCJkJvJrXBte5qugSQ9H07xRZXzEqhTJS8sbNfPKHbnPwQr7R8JH+lARljdsxJKNv/VDDlctsm0A0PV19EsUOQj0Tw39WBBWvf1GDY0O1b03tmR3mOkVxS+waMZechmgSAJa97DIujVZhrbLwzRfw/YngszjFIGKUwAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=txuDlAgE; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=gefietRw; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 2600AE000C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1742806288; bh=44lYnrkjFp/kZnkuZ5MNTXbu+MbDe/0CqTQuJddqXAE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=txuDlAgE5oN6oF4clLDa95SjObJoeoLi2UR4zE/8fqbWkBiSRLkhzB/lsZaj/9DJi
-	 6hPW+xYtMAMJUck/mbEYObXK9pFTDd2d6QPrMfGYUYcGA29qt2nAqXK6YfVq4upjHP
-	 f8vocD0QMexQjwtyOI4hbLnkGBFu1Gx8IQNXFzVn5IhOAw0rnfUCClvhikQxuAIsP5
-	 TLcHEwHrV7s4RhCOgFQTWW24Zb1B1yeeCZl8Dajrc9NPdo0NJdRncq3nJMQ3ALRO2O
-	 sfLFIBZZDzmXtqvZNyLDwSx0DPoHbInMzLf0OfU6bdDEqExNZ/Jze9F5Ge+EIx3gCR
-	 DgDIesUGZNBlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1742806288; bh=44lYnrkjFp/kZnkuZ5MNTXbu+MbDe/0CqTQuJddqXAE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=gefietRwEioMA2JHwB1QcBOeGHbXxihLwZJt9ZgTBWDyY3WBsmddRw/IAn+vULsBz
-	 Isr9SlJ0h7LtUFG1rj6S9Lv1b6U7tdtFqOKu0+Ez/8wm6/7JXa+hNvCuoErWGzqY1T
-	 3hnVSDnNGu+xXKDstVD0urFQNqHJ4obBdyeXn0zq4W6dUR4nXb3Wxc6Attb3E5gwny
-	 FlRlqPvUDmGCOkLQj5HQV2rkH70sShLMhFEnTetMGOnrIHoWM1TXRydPpmZDnc96Uf
-	 dOUMA25qUgdJWF87MV2xW9x3FMuSM/9CrB0z/ACzY/vbVkowz2U3R/nSet0A1pS0my
-	 iSVMusZ+lElGQ==
-From: Anastasia Kovaleva <a.kovaleva@yadro.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<hare@suse.de>, <axboe@kernel.dk>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux@yadro.com>
-Subject: [PATCH 1/1] scsi: uninit not completed scsi cmd
-Date: Mon, 24 Mar 2025 11:49:33 +0300
-Message-ID: <20250324084933.15932-2-a.kovaleva@yadro.com>
-X-Mailer: git-send-email 2.40.3
-In-Reply-To: <20250324084933.15932-1-a.kovaleva@yadro.com>
-References: <20250324084933.15932-1-a.kovaleva@yadro.com>
+	s=arc-20240116; t=1742806189; c=relaxed/simple;
+	bh=+sToP3pixtP25svobMgGXAU3cGSfV1smaDpJO+OPZXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBlryZZqK2yBiU3dt+evggddxs+SxExaFXqIPuSze41wVHxPmvVBSM3DR6vA6UQEfzriIanEQ1uiMOuwDhF1kSouXBlydnYHoWe7WtlenSpWoYJvGAUlFiCAUhlpn1Lo16zsk+GqkGCBJukflZeAIztT4SLEACya++Q65h9eESw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jDzC0VFa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Fo9saBI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 24 Mar 2025 09:49:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742806185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKBj0T72KDDkEXHVASentyqDmL/9h8qGAHGx41X5rGA=;
+	b=jDzC0VFa6FtHleFSNly3Ld9eEUDm8VJGibifsdJPS19CYoUtBDXQ0M8PrvMt9LTGWUHi3X
+	a7hXcexX4qlAPQ/V8MO724nsBTzh7EpH/n7knf93MoTbdOoVaqjALge5aqz6KOfqoByEXp
+	PKaztVJ3aIEcbi9IJ9saeEccNIbM4iaVpqWp9TTqHKJkhL+dPXcnnxK0VhoCBzLvdh4rw9
+	XXmPp3Jj8FvlhEx7503NENtbn4XweXASTnVyehXDLXCBA18Nqt/fSlWjeo0THXjgbTjHA9
+	egyJ8YDCwQTQ+wKCyS9C8wU6p12qlyBLUx4a9z2eAeJxrQGDlwlB8V5u3PrJzg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742806185;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VKBj0T72KDDkEXHVASentyqDmL/9h8qGAHGx41X5rGA=;
+	b=7Fo9saBI0puPPdi3Hlhm2qT6S/3TzGP7e5soEcFPwJYWF5Vfl8XHwgEJursfv/ReVWqewW
+	TQchQ1j9vbADuMDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: cuiguoqi <cuiguoqi@kylinos.cn>
+Cc: tglx@linutronix.de, anna-maria@linutronix.de, clrkwllms@kernel.org,
+	frederic@kernel.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev, rostedt@goodmis.org
+Subject: Re: [PATCH] hrtimer: Fix the incorrect initialization of
+ timer->is_hard
+Message-ID: <20250324084944.z1J0Kf8c@linutronix.de>
+References: <874izm2v02.ffs@tglx>
+ <20250322082403.3126947-1-cuiguoqi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTM-EXCH-01.corp.yadro.com (10.34.9.201) To
- T-EXCH-09.corp.yadro.com (172.17.11.59)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250322082403.3126947-1-cuiguoqi@kylinos.cn>
 
-Scsi commands that have not been completed with scsi_done() do not clear
-the SCMD_INITIALIZED flag and therefore will not be properly
-reinitialized. Thus, the next time the scsi_cmnd structure is used, the
-scsi command may fail in scsi_cmd_runtime_exceeced() due to the old
-jiffies_at_alloc field of the scsi command:
+On 2025-03-22 16:24:03 [+0800], cuiguoqi wrote:
+> Hi tglx,
+>  
+> First of all, I'd like to thank you for your reply and for pointing out the email issue. 
+> 
+> As you've accurately noted, when PREEMPT_RT is disabled, it introduces a certain
+> degree of ambiguity for kernel developers. So far, no malfunctions have been
+> observed as a direct consequence of this.
+>  
+> This issue came to light during kernel development when using the is_hard flag, 
+> where the expected logic was not achieved.Naturally, we opted for the more reliable 
+> is_soft flag to address the situation.
+>  
+> Consequently, when PREEMPT_RT is disabled, there is a potential risk if developers
+> choose to use the is_hard flag. I firmly believe this risk should not be overlooked.
 
- kernel: sd 16:0:1:84: [sdts] tag#405 timing out command, waited 720s
- kernel: sd 16:0:1:84: [sdts] tag#405 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_OK cmd_age=66636s
+You shouldn't try to set the is_hard flag without knowing its
+implications. HRTIMER_MODE_HARD is what you should pay attention to.
+Everything else is implementation specific.
 
-Clear the SCMD_INITIALIZED flag for scsi commands, that have not been
-completed by SCSI, so that they can be initialised when queueing.
+> I concur with your analysis that one of these flags is redundant. In fact,
+> it might be possible to consolidate them based on the overall requirements. 
 
-Fixes: 4abafdc4360d ("block: remove the initialize_rq_fn blk_mq_ops method")
-Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
----
- drivers/scsi/scsi_lib.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+A timer that is missing HRTIMER_MODE_HARD is not a automatically a
+HRTIMER_MODE_SOFT and also a timer missing HRTIMER_MODE_SOFT is not
+automatically HRTIMER_MODE_HARD. These depends on RT vs non-RT mode.
+Wouldn't your suggestion influence the warning in
+hrtimer_start_range_ns()?
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 79a8fb317a2d..db4c0f07ea72 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1237,8 +1237,12 @@ EXPORT_SYMBOL_GPL(scsi_alloc_request);
-  */
- static void scsi_cleanup_rq(struct request *rq)
- {
-+	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(rq);
-+
-+	cmd->flags &= ~SCMD_INITIALIZED;
-+
- 	if (rq->rq_flags & RQF_DONTPREP) {
--		scsi_mq_uninit_cmd(blk_mq_rq_to_pdu(rq));
-+		scsi_mq_uninit_cmd(cmd);
- 		rq->rq_flags &= ~RQF_DONTPREP;
- 	}
- }
--- 
-2.40.3
+> Thanks.
+>  
+> 
+> Cui Guoqi
 
+Sebastian
 
