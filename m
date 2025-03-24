@@ -1,103 +1,152 @@
-Return-Path: <linux-kernel+bounces-573146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC9BA6D38D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:34:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A02EA6D390
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 783EC7A632E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFDD3B122A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A2917B502;
-	Mon, 24 Mar 2025 04:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456441624E4;
+	Mon, 24 Mar 2025 04:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfBPplIw"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o3aYJ2ZB"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D762E3383;
-	Mon, 24 Mar 2025 04:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617842E3383;
+	Mon, 24 Mar 2025 04:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742790873; cv=none; b=kl84Flgl2r3FdTToODeWuU6EFg6H/9a7u5I1oMWf20TR/i3EMMW8b3v31+8iVlr+xDa24Png24uOAzWErMjVvjy0Rt4M9aZmGe2W/hb8o7TqMIp4WYEHRWvbKrerSvLpDHxHx6fT0G797zK2C1Ffw8AYvNya+V8kOjqLtKhjKoY=
+	t=1742791041; cv=none; b=qF0e4NPXS9jBEkEcvWORP5EV39BTV9sSdw/agBI8Q73CiMsbTCjvmvETor/v5wL0OGNzVAf99Uzcs7krb1gtUsNzOUsr2UytCHZ9+3MloUcYl9FwV04mcd1aXttvEUHdUDghaxuEQ8tsfI1WRTT1fcY6KKhZZqDnI2TsagEru/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742790873; c=relaxed/simple;
-	bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fN6S9giLEeSqr/z33l2JXVPdMPydZCLKpTEGOpi0x0IYuCzi5BxzMh8oDwhv2sj+QWY38rSQzeAbzgifB073ilZ1LV2uggMJmqId6CyLZrDLZ9Js6dWNlkuC97ta0X3FE3OafnkV1TpvKM50sgWkb0AOtjT6sFrpD9pM2MhScWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfBPplIw; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fb0f619dso75810215ad.1;
-        Sun, 23 Mar 2025 21:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742790872; x=1743395672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
-        b=AfBPplIw/bS3025GXAkardXMGFiXtwa9qGRfRgDSNr1GA1LGFbALjkM7CH5PMOSn3M
-         jRlGWMAtE4eGiVi7q4/org9K9zyKp2I7tUQl9ofCrWEFb/T8jbDtmEiM2LJN2MVr+53G
-         FxIiGPm4F0BCHOUNyrr3zRE+PmIsAC9nxLVNn/HLZIQISu+6Fq1y8OvJE7K1hKzzJmHK
-         H5EwwOyXghZHO6wCePouiOsV94r8yiO5qTk6IKkja7UG62m4eAI+KCndQ0RtGA3P/6M2
-         +5JFXluQ4WQL7wZsjfbnUbSdNy5PLBg8JQWIfOE2JHtiDT/w/ILFad60tOVn0A0qmt1c
-         RbBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742790872; x=1743395672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
-        b=J0Xu80Zx6KolWBwyk3T45q1D/svSDZLuB1ou482gzY47pHvjHaqPtJAnb/i2gk8QBt
-         vcTu+4iemTBQ0HuAImdenQMaJyJfdtEZEpNKuZjeRapXJRbo9ml5L/7CGrojQ6E3qz5t
-         xnlxVzWcE5yPwdQHf5cnRqCO/NsJjYdJ2VAYc9zwWf7WgXMbFwsPNEq8Sat/uiUj3eL9
-         IfFI2C8DH1HlzO0I08yUIi2ODXAI+MZRjI/P0Yehlaq3Gsu02ZxS5bvXMl+uEQxVjk8A
-         z4kRDY5NXo5S1iWFNX9B4zVfIK/HzvFD9FhTo7j16U6CCHmh37tvWwaoeRXK1C7JVWJI
-         mScg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm1C3o3BL9tqy+0moRXlQPkja1f2RUAkjCVvGHHD+7H5HwqQh5GUYGtPlhcRN/rbdZc3wO2FLRnntCmEdS@vger.kernel.org, AJvYcCVpSwR1GVOsTByfxpfRAAtjSBt7SCaJ4HYh50KQemfUOmK7d9x2bcfAczzi3cH486Q/ggsx202Dfltn@vger.kernel.org, AJvYcCVseX/3f9C6Bj8Ms6fSm15oMoooc3x61nmG/q+OARRX3AUm9w/QMV2OMzhxG6HCb0jjilhONBXcicpFqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLPjaLdbkmXsPYlkffsA7VjhXCs3KT53VbYcIedFRAXJ6dRIRq
-	BP10/je+G79aHF7aYqAiUuZFrfcYwot92zZ3e61h5M+xitk4xs29W1raaYF2
-X-Gm-Gg: ASbGnctzSqIu4kZu2fDzcd0alCWmj3SyUl81Mo6FoHiR4Tm1SuWwozXMXhVFxwOnlfZ
-	SZmyzHLh0aqlkUPRvJBSYumvPeY+FkVYSJIr4vIYJEwB+P0+UdWUSy27Gd5/AYDhgfTZkQs0p7C
-	qPrMdkPkP6koDr8dYESVSrQnLH//iybDZyjXybaZOTRK4ulnqqE2ZRyqTORJg1C14N5E2YXmHQY
-	tT19lLfadsOZjsdAxxtULGQ/VfKBoK9SLokLZe/4YbbTuovp/3IpjQxFfLKyHXgkFfH7iM8lrQB
-	m9VVdmaW4ek7r7gTeSAdcQ/SmbAb4KgKCLsJ42gpTKttcz5NvmrdmYEoeAitBaveZSU0
-X-Google-Smtp-Source: AGHT+IEA2YgUDTs4JndOkGPpH9t1CsF5sL3RwabFC5JDF8x48W//RtHV9Udnl71HEc7Nh14BhQz2fw==
-X-Received: by 2002:a17:903:1aac:b0:223:5945:ffd5 with SMTP id d9443c01a7336-22780e110b1mr197060465ad.32.1742790871418;
-        Sun, 23 Mar 2025 21:34:31 -0700 (PDT)
-Received: from localhost.localdomain ([27.70.184.106])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811e3132sm60696135ad.200.2025.03.23.21.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 21:34:30 -0700 (PDT)
-From: Nam Tran <trannamatk@gmail.com>
-To: lee@kernel.org
-Cc: pavel@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
-Date: Mon, 24 Mar 2025 11:34:04 +0700
-Message-Id: <20250324043404.14078-1-trannamatk@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250320155012.GT3890718@google.com>
-References: <20250320155012.GT3890718@google.com>
+	s=arc-20240116; t=1742791041; c=relaxed/simple;
+	bh=fggBk4XxrkKKYlWFVtskALGh/abGCavWLxQiPl9syOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=t/bVCrudWu4Yg0ux8N3qKUyepMTV+vZm8y74MfqgxZ/hSHMFkML3J60QZ/YbscfKFJi0gBlihxpeMxQOsPX699+UdTrrdrY6xjlgPzic71tg8rxeyWtOt9pPTCsfKAKwOoWqHilBXtDs5Dz3tLIcSjIQIWGdl0JQwCsIduxybxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o3aYJ2ZB; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742791034;
+	bh=oTscpH4djTLQPl9PzPMEVPDXJUvfjeXgqJhMtetg+R4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o3aYJ2ZBgmUXE4YIBW2yFkHxr8icWLTXgdkQy5RemFUNTsBbaOR6soX34oy+0s/4m
+	 hkKjWJgvYBPkZ9ejUFE9/vQ8qyfe+xgiTm42TwwhqoVmE8WY32tVfvJco6Q29ZOIpu
+	 khNr559dIggftOU9lw3FysHScVLOwxJ76bVfSw2O/gS+alhf4Fz8Ji/pg7HHdJggdd
+	 e130v8SrHsp21fB9AMnns9hqbi9uWT5QzaJHdgdSOziyxqHOsaJqTALrMDuXY9834K
+	 xnCobm0BNAHitD3Jh54hlgpARh1ZT59Mt/EsacfKmiB87bIBJxgKL592Wvh0ct83r0
+	 2WT0CyduXqx5Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLgJ93vfqz4wcZ;
+	Mon, 24 Mar 2025 15:37:13 +1100 (AEDT)
+Date: Mon, 24 Mar 2025 15:37:12 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Luo Gengkun <luogengkun@huaweicloud.com>, Ingo Molnar
+ <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ravi Bangoria
+ <ravi.bangoria@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the security tree
+Message-ID: <20250324153712.6a2b2a5c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/SQO_sz4ZsQqxbJaMZTZyPSj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Thank you for your suggestion. I appreciate your guidance on proper email formatting.
-I will ensure my future responses follow this standard.
-Your feedback is very helpful for me to improve my contributions.
+--Sig_/SQO_sz4ZsQqxbJaMZTZyPSj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Nam Tran
+Hi all,
+
+After merging the security tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+arch/x86/events/amd/ibs.c: In function 'perf_ibs_handle_irq':
+arch/x86/events/amd/ibs.c:1207:13: error: too many arguments to function 'p=
+erf_allow_kernel'
+ 1207 |             perf_allow_kernel(&event->attr)) {
+      |             ^~~~~~~~~~~~~~~~~
+In file included from arch/x86/events/amd/ibs.c:9:
+include/linux/perf_event.h:1675:5: note: declared here
+ 1675 | int perf_allow_kernel(void);
+      |     ^~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  9ec84f79c5a7 ("perf: Remove unnecessary parameter of security check")
+
+interacting with commit
+
+  50a53b60e141 ("perf/amd/ibs: Prevent leaking sensitive data to userspace")
+
+=46rom Linus' tree.
+
+I have applied the following merge resolution patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 24 Mar 2025 15:25:18 +1100
+Subject: [PATCH] fix up for "perf: Remove unnecessary parameter of security=
+ check"
+
+interacting with commit
+
+  50a53b60e141 ("perf/amd/ibs: Prevent leaking sensitive data to userspace")
+
+=46rom Linus' tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/events/amd/ibs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index e36c9c63c97c..30157ab98cea 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -1204,7 +1204,7 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_=
+ibs, struct pt_regs *iregs)
+ 	 * unprivileged users.
+ 	 */
+ 	if ((event->attr.sample_type & PERF_SAMPLE_RAW) &&
+-	    perf_allow_kernel(&event->attr)) {
++	    perf_allow_kernel()) {
+ 		perf_ibs_phyaddr_clear(perf_ibs, &ibs_data);
+ 	}
+=20
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SQO_sz4ZsQqxbJaMZTZyPSj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfg4XgACgkQAVBC80lX
+0GxCoAf/bkjXdjn49ey9ErEFeWe7xhSBdWZSq1LYbtcGPpvApio0Y3A8aiOvHvjy
+R4sKn9/L/m8jFXIDj53D5to9Tw+XMdn/Tsh3vJR1OR1xX1iPn0ST5baBZr8gWau/
+B6aZHBD3AHq+n1zz2/XW3PTTT9eAV/5KHTp802nFc2RarQgobzjrnIDxwhG0K3nX
+A0D/wh2jVg9UQjmK7RAC8oaQfmpF9rOFYMA3HUO5loiTVFF9ucWXLTj22rlR5Wba
+eeEG28OCiFvds7AyzqVczngdDLMrrPXh0kkqDIYYXae5VtulZNXJnuKy1utv37uY
+3ZwPMk8IvZm1gD1d7Ny25iM43hPn8Q==
+=+1Nm
+-----END PGP SIGNATURE-----
+
+--Sig_/SQO_sz4ZsQqxbJaMZTZyPSj--
 
