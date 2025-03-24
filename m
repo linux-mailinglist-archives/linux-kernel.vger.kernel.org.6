@@ -1,300 +1,186 @@
-Return-Path: <linux-kernel+bounces-573502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A00A6D866
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:37:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F36A6D86E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09D03188CB74
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 840713A8B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF7B25DCF4;
-	Mon, 24 Mar 2025 10:37:21 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8714025E447;
+	Mon, 24 Mar 2025 10:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N3k8NpCC"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488FA433A8;
-	Mon, 24 Mar 2025 10:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66425DCE0;
+	Mon, 24 Mar 2025 10:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742812640; cv=none; b=RCpgbL+1GHNczGTOOKaBwnzeBb6TVL9VIuMLIzPOw1nJFOVavva+x1cj01DCpHwnXYkhi549tkd1uIFpMp0Ysx7FEZhpKT5yyCw9ERp3vxMB4LktGHACmT9Z7ywJXFpHTqqVoIZTdWO1fTjYTpDqC2UuZORcPhEkgBMt/NmttTE=
+	t=1742812825; cv=none; b=hCPv8kGLrGAsHV41AYgZMt3hKuhcz34cIft+iJBwLOzhHOAeHYLAiFg3fXrKjEM3VUjAN/I3tzUiJEHuR2mTN+fBdyC8LZ+ptPL2dg8P7Ie/E/yhR9N7B/T78lSlgIxt6ePu2tJNtXH5Xn8Zi8WCrUDPsqMRAAfkjk6d+JQla4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742812640; c=relaxed/simple;
-	bh=LnUAMeG9pWRqCjGh/oaX9QtJIz5JX5VGvxwU+xEdGF0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XW4FPhUkKj1qZ17ekzecHyiEah98RL/6eNKfB74lPxiQt5f72coIzH2tzrmTnS4eYPKkl1bxoI2uUpM26GpOJnxrkRF0+onEs1MfTmtV7ZyorRIMVqAdpY7kWcsGGGXg1LWWYKN/q4oi+2qHJWYhZ2DibwPBgxQPzq4ze6Uznyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZLqHK4jGKz6L540;
-	Mon, 24 Mar 2025 18:37:01 +0800 (CST)
-Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 94EAB14050C;
-	Mon, 24 Mar 2025 18:37:08 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 24 Mar 2025 11:37:08 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Mon, 24 Mar 2025 11:37:08 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
-	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
-	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
-	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
-	<gthelen@google.com>, "wschwartz@amperecomputing.com"
-	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
-	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
-	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH v2 2/8] EDAC: Update documentation for the CXL memory
- patrol scrub control feature
-Thread-Topic: [PATCH v2 2/8] EDAC: Update documentation for the CXL memory
- patrol scrub control feature
-Thread-Index: AQHbmcKs9aOZDT4yoEmIHT6+0TZ4QbN9TJeAgATOjJA=
-Date: Mon, 24 Mar 2025 10:37:08 +0000
-Message-ID: <f9fa8335c52444398e1736854c887fb7@huawei.com>
-References: <20250320180450.539-1-shiju.jose@huawei.com>
-	<20250320180450.539-3-shiju.jose@huawei.com>
- <20250321100305.000018d2@huawei.com>
-In-Reply-To: <20250321100305.000018d2@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1742812825; c=relaxed/simple;
+	bh=b/pAV4sv6SN8xVStCQxYfZPdG8p/Www/E1RDHmtoa1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jzg5sgWLbJcVaAyiJ39/jep75qQ0diW9nekO+I6XaZb0PS11f11pzLmVOQ3fd7NBM6Vm02QKqooD6WwBLABo8cxUncEXTMkM9vo2WIZDZD6zkbuRE970YvWi1+tSwmvhoxb49hdq5tmGQ9lh5gPLg2nlna/1+12lGV1nqyW3020=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N3k8NpCC; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BA273442E9;
+	Mon, 24 Mar 2025 10:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742812816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=s6FNrudKISRIlY4MPIqsl0wZh+w9Rep6xe74cx2bQaA=;
+	b=N3k8NpCCYvy54uKjQxxYIkffHYjtGmcYnfYzzSXPmySJM8Gz4DASxBqL7WVdgxcfWUwECJ
+	Qi143hgbsDMmWE4Pmg0PK8vQbga3TNfhXl206Vpaex9jxobzc66tbmjjPtHXU8uPDJd0WN
+	YN6fznn6DITXvbHxx6JRRC/A7WoTU0tkvkpvPpqzFUi2BFCYb7RaAOnIKC3El2u6hGvanA
+	1ihV7ubzQjGi54kpnnqa4DBcOfpSf5ZnZ65o2A+voyVtmQun81GDLf/lIEM7KcqxaIPExQ
+	+6+ZciZ9qQm6rUvu1uYczBWQpUwbjwrBmdPwOZAHGwpTa59Aoq7i7PI9pexe8g==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: [PATCH net-next v4 0/8] net: ethtool: Introduce ethnl dump helpers
+Date: Mon, 24 Mar 2025 11:40:02 +0100
+Message-ID: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjefhleeihefgffeiffdtffeivdehfeetheekudekgfetffetveffueeujeeitdevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemhedvrgefmeejsgeludemudehtgelmegtledtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeehvdgrfeemjegsledumeduhegtleemtgeltdeipdhhvghlohepuggvvhhitggvqddvgedrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvr
+ hhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
+
+Hi everyone,
+
+This is V4 for the ethnl dump support, allowing better handling of
+per-phy dump but also any other dump operation that needs to dump more
+than one message per netdev.
+
+Changes in V4:
+ - Don't grab rcu_read_lock when we already have a refcounter netdev on
+   the filtered dump path (Paolo)
+ - Move the dump_all stuff in a dedicated helper (Paolo)
+ - Added patch 1 to set the dev in ctx->req_info
+
+Changes in V3:
+ - Fixed some typos and xmas tree issues
+ - Added a missing check for EOPNOTSUPP in patch 1
+ - Added missing kdoc
+ - Added missing comments in phy_reply_size
+
+Changes in V2:
+ - Rebased on the netdev_lock work by Stanislav and the fixes from Eric
+ - Fixed a bissectability issue
+ - Fixed kdoc for the new ethnl ops and fields
+
+V1: https://lore.kernel.org/netdev/20250305141938.319282-1-maxime.chevallier@bootlin.com/
+V2: https://lore.kernel.org/netdev/20250308155440.267782-1-maxime.chevallier@bootlin.com/
+V3: https://lore.kernel.org/netdev/20250313182647.250007-1-maxime.chevallier@bootlin.com/
+
+As of today when using ethnl's default ops, the DUMP requests will
+simply perform a GET for each netdev.
+
+That hits limitations for commands that may return multiple messages for
+a single netdev, such as :
+
+ - RSS (listing contexts)
+ - All PHY-specific commands (PLCA, PSE-PD, phy)
+ - tsinfo (one item for the netdev +  one per phy)
+
+ Commands that need a non-default DUMP support have to re-implement
+ ->dumpit() themselves, which prevents using most of ethnl's internal
+ circuitry.
+
+This series therefore introduces a better support for dump operations in
+ethnl.
+
+The patches 1 and 2 introduce the support for filtered DUMPs, where an
+ifindex/ifname can be passed in the request header for the DUMP
+operation. This is for when we want to dump everything a netdev
+supports, but without doing so for every single netdev. ethtool's
+"--show-phys ethX" option for example performs a filtered dump.
+
+Patch 3 introduces 3 new ethnl ops : 
+ ->dump_start() to initialize a dump context
+ ->dump_one_dev(), that can be implemented per-command to dump
+ everything on a given netdev
+ ->dump_done() to release the context
+
+The default behaviour for dumps remains the same, calling the whole
+->doit() path for each netdev.
+
+Patch 4 introduces a set of ->dump_start(), ->dump_one_dev() and
+->dump_done() callback implementations that can simply be plugged into
+the existing commands that list objects per-phy, making the 
+phy-targeting command behaviour more coherent.
+
+Patch 5 uses that new set of helpers to rewrite the phy.c support, which
+now uses the regulat ethnl_ops instead of fully custom genl ops. This
+one is the hardest to review, sorry about that, I couldn't really manage
+to incrementally rework that file :(
+
+Patches 6 and 7 are where the new dump infra shines, adding per-netdev
+per-phy dump support for PLCA and PSE-PD.
+
+We could also consider converting tsinfo/tsconfig, rss and tunnels to
+these new ->dump_***() operations as well, but that's out of this
+series' scope.
+
+Thanks,
+
+Maxime
 
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 21 March 2025 10:03
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-cxl@vger.kernel.org; dan.j.williams@intel.com; dave@stgolabs.net=
-;
->dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com=
-;
->ira.weiny@intel.com; david@redhat.com; Vilas.Sridharan@amd.com; linux-
->edac@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org; linu=
-x-
->kernel@vger.kernel.org; bp@alien8.de; tony.luck@intel.com; rafael@kernel.o=
-rg;
->lenb@kernel.org; mchehab@kernel.org; leo.duran@amd.com;
->Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
->Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
->naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
->somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
->duenwen@google.com; gthelen@google.com;
->wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
-><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
->Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
->wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
-><linuxarm@huawei.com>
->Subject: Re: [PATCH v2 2/8] EDAC: Update documentation for the CXL memory
->patrol scrub control feature
->
->On Thu, 20 Mar 2025 18:04:39 +0000
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> Update the Documentation/edac/scrub.rst to include descriptions and
->> policies for CXL memory device-based and CXL region-based patrol scrub
->> control.
->>
->> Note: This may require inputs from CXL memory experts regarding
->> region-based scrubbing policies.
->
->So I suggested the region interfaces in the first place.  It's all about u=
-secases and
->'why' we might increase the scrub rate.
->Ultimately the hardware is controlled in a device wide way, so we could ha=
-ve
->made it complex userspace problem to deal with it on a perf device.
->The region interfaces are there as a simplification not because they are s=
-trictly
->necessary.
->
->Anyhow, the use cases:
->
->1) Scrubbing because a device is showing unexpectedly high errors.  That
->   control needs to be at device granularity.  If one device in an interle=
-ave
->   set (backing a region) is dodgy, why make them all do more work?
->
->2) Scrubbing may apply to memory that isn't online at all yet.  Nice to kn=
-ow
->   if we have a problem before we start using it!  Likely this is setting
->   system wide defaults on boot.
->
->3) Scrubbing at higher rate because software has decided that we want
->   more reliability for particular data.  I've been calling this
->   Differentiated Reliability.  That data sits in a region which
->   may cover part of multiple devices. The region interfaces are about
->   supporting this use case.
->
->So now the question is what do we do if both interfaces are poked because
->someone cares simultaneously about 1 and 3?
->
->I'd suggest just laying out a set for rules on how to set the scrub rates =
-for any
->mixture of requirements, rather than making the driver work out the optimu=
-m
->combination.
->
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->> ---
->>  Documentation/edac/scrub.rst | 47
->> ++++++++++++++++++++++++++++++++++++
->>  1 file changed, 47 insertions(+)
->>
->> diff --git a/Documentation/edac/scrub.rst
->> b/Documentation/edac/scrub.rst index daab929cdba1..d1c02bd90090 100644
->> --- a/Documentation/edac/scrub.rst
->> +++ b/Documentation/edac/scrub.rst
->> @@ -264,3 +264,51 @@ Sysfs files are documented in
->> `Documentation/ABI/testing/sysfs-edac-scrub`
->>
->>  `Documentation/ABI/testing/sysfs-edac-ecs`
->> +
->> +Examples
->> +--------
->> +
->> +The usage takes the form shown in these examples:
->> +
->> +1. CXL memory device patrol scrubber
->> +
->> +1.1 Device based scrubbing
->> +
->> +CXL memory is exposed to memory management subsystem and ultimately
->> +userspace via CXL devices.
->> +
->> +For cases where hardware interleave controls do not directly map to
->> +regions of Physical Address space, perhaps due to interleave the
->> +approach described in
->> +1.2 Region based scrubbing section, which is specific to CXL regions
->> +should be followed.
->
->These sentences end up a bit unwieldy. Perhaps simply a forwards reference=
-.
->
->When combining control via the device interfaces and region interfaces see
->1.2 Region bases scrubbing.
->
->
->
->> In those cases settings on the presented interface may interact with
->> +direct control via a device instance specific interface and care must b=
-e taken.
->> +
->> +Sysfs files for scrubbing are documented in
->> +`Documentation/ABI/testing/sysfs-edac-scrub`
->> +
->> +1.2. Region based scrubbing
->> +
->> +CXL memory is exposed to memory management subsystem and ultimately
->> +userspace via CXL regions. CXL Regions represent mapped memory
->> +capacity in system physical address space. These can incorporate one
->> +or more parts of multiple CXL memory devices with traffic interleaved
->> +across them. The user may want to control the scrub rate via this
->> +more abstract region instead of having to figure out the constituent
->> +devices and program them separately. The scrub rate for each device
->> +covers the whole device. Thus if multiple regions use parts of that
->> +device then requests for scrubbing of other regions may result in a hig=
-her
->scrub rate than requested for this specific region.
->> +
->> +1. When user sets scrub rate for a memory region, the scrub rate for al=
-l the
->CXL
->> +   memory devices interleaved under that region is updated with the sam=
-e
->scrub
->> +   rate.
->
->Note that this may affect multiple regions.
->
->> +
->> +2. When user sets scrub rate for a memory device, only the scrub rate f=
-or
->that
->> +   memory devices is updated though device may be part of a memory regi=
-on
->and
->> +   does not change scrub rate of other memory devices of that memory
->region.
->> +
->> +3. Scrub rate of a CXL memory device may be set via EDAC device or regi=
-on
->scrub
->> +   interface simultaneously. Care must be taken to prevent a race condi=
-tion,
->or
->> +   only region-based setting may be allowed.
->
->So is this saying if you want to mix and match, set region first then devi=
-ce next?
->Can we just lay out the rules to set up a weird mixture.  We could add mor=
-e
->smarts to the driver but do we care as mixing 1 and 3 above is probably
->unusual?
->
->1. Taking each region in turn from lowest desired scrub rate to highest an=
-d set
->   their scrub rates.  Later regions may override the scrub rate on indivi=
-dual
->   devices (and hence potentially whole regions).
->
->2. Take each device for which enhanced scrubbing is required (higher rate)=
- and
->   set those scrub rates.  This will override the scrub rates of individua=
-l devices
->   leaving any that are not specifically set to scrub at the maximum rate =
-required
->   for any of the regions they are involved in backing.
 
-Thanks. Will incorporate these info and rules in the next version.
->
->
->> +
->> +Sysfs files for scrubbing are documented in
->> +`Documentation/ABI/testing/sysfs-edac-scrub`
+Maxime Chevallier (8):
+  net: ethtool: Set the req_info->dev on DUMP requests for each dev
+  net: ethtool: netlink: Allow per-netdevice DUMP operations
+  net: ethtool: netlink: Rename ethnl_default_dump_one
+  net: ethtool: netlink: Introduce command-specific dump_one_dev
+  net: ethtool: netlink: Introduce per-phy DUMP helpers
+  net: ethtool: phy: Convert the PHY_GET command to generic phy dump
+  net: ethtool: plca: Use per-PHY DUMP operations
+  net: ethtool: pse-pd: Use per-PHY DUMP operations
 
-Shiju
+ net/ethtool/netlink.c | 185 ++++++++++++++++++-----
+ net/ethtool/netlink.h |  47 +++++-
+ net/ethtool/phy.c     | 344 ++++++++++++------------------------------
+ net/ethtool/plca.c    |  12 ++
+ net/ethtool/pse-pd.c  |   6 +
+ 5 files changed, 310 insertions(+), 284 deletions(-)
+
+-- 
+2.48.1
 
 
