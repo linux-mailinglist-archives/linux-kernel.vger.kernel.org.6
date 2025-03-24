@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-573703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19D3A6DAF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:23:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2853AA6DB59
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:26:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9FA43AD659
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC95A7A61F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8D525EF95;
-	Mon, 24 Mar 2025 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zGqfTfhU"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5B425EFB4;
+	Mon, 24 Mar 2025 13:24:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1595013C3F6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C4625E834
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822585; cv=none; b=M4yeH7XU6B6tcNAkguuD6n8u0uszhHVtlKl/PHjWdFN8jVy1udAk1n6LXoWnA4o+reDBiOMYX339NW/p5oHpppQQWTH9PDMjB5GRaw7Ypgx5Ab13bdJRQKRd59QeQh5xleQdPSHgELI9TVWxb0oLiQ//hvTcAxUqFVbBKie4tIc=
+	t=1742822674; cv=none; b=n/hZ10e2PcHBI24Z5rzHBUJnC9npblIjNynhBowDlW/JfDaDhfhOmgN1UnCTaGmrOrGD684/GLy67N2qw68IgQ6gkkY2lTaJs//0m9ByhiN1l+VUhz/6KgG7A5qJvX5SLBY1JWj6LdmoHYGMstbuHqaCw630NRfQzupZkYdTPoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822585; c=relaxed/simple;
-	bh=FWGjGltJ73Yzplwv0HeDy+Wxd+YiFD2X298kLBzUJwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGxWV0LkDaLcJmIENiwg3aF5ba6vuvVmKGr1LB24XrNEYPbsbnMFL7w98sv21C5aZVwXca3a9enR4LmK4PIOPpGIy3oJGP/Uc3qcQTS9VdtzzM1d2liicpcxHWyxAUMr5tre+vhg1DCJEo9B8ypxS+q/dHO/X4wOvP2ghV/sNss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zGqfTfhU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43948021a45so36288635e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742822582; x=1743427382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QpLay2NRUxXBZBIq5TN4wg5iG7+LcfQc4wrhgea9GRc=;
-        b=zGqfTfhUdRizp31hO4Iy4WxON2/XVloAwGCHpIjhqrYkEoTnh5YKyWSwzXVmxhZ3g9
-         LlyBAaRJDHPmFIL0SbPdOV2Ip3oJEtJb7TAlDMIEr99kZIkbMuVMjKc0Q8MpK6OyNxxs
-         blicuqqbTYiAJU8zwGe5xwJi5TKFe+YjUsBsoIPdDtE1UE7ILuQfZYepJDjWSei2V9P8
-         nLoSKyNLz+hHINJ0zcTrpPazNHx9Shy/lbefXlTCad38B56cpo/OlfPbp/yCruejShN9
-         ChZu1iwzriD3VmnNynHIbaxaBhS6z54vZ3DmlH4+fTO8omPhc600rOsV1Boq6cjUL5/F
-         gXFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742822582; x=1743427382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QpLay2NRUxXBZBIq5TN4wg5iG7+LcfQc4wrhgea9GRc=;
-        b=Q2nvNWMofNVdHrjbdy8wbCtm9z0ULs8nkBFjQehPLkOEX8nlEv17zcU6saSAtaKF+f
-         I3gC/ll7y7dzzT7AJ51B88FbYSJGXH//tH/aEAIXdLclxli5UJIWPvtMPVIjQBwgiUZh
-         KCjkCyn9+y2G1gPSgG56M+U6aXdI3R+dbc8VUEmfoje1KUp+X2+62z4JSUJm7+MOQEYc
-         0AGfjagjO9Uqu5pJwJW5mXyKD4xr+G2ubGMj6dHYoecm79MDzwCwz24+1mUBwcTizLJU
-         A/cz33tFxa6tPNDNFTMPPcvsK6WyXDtAAU0U4z/6NIJBYCJeNcxPup77t3nnPeo4I0Ah
-         17Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi1zCTufFdhdaUYrkFzklkUsxM2gpITffZU5KzeMgd5oOJJn5Li+Vfr4t8+qc+mxjh/jGJUiMKXPsH3uM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNwVz9nVlp5TV3ZMHp6FBDpUjKcUazAqjxl6/4lL3QGnTqsia0
-	4tpIWBeYYxEQMpV+22iidti6ldaU2djberXd84yvJYpYIiDpnj4yHIlyEcV6ylI=
-X-Gm-Gg: ASbGncs3SOCj5/xAG2lwlJQy7y+OOew4nwaP9685z6cpE1tZWQ505EPVkAI5t301B9U
-	bZFDUUqYuhdGU+KC4sfp+zjyrfTMsITE5Wt+gOIV+fvO16YX8YMQrgX6dGtZqkQAH5JSc1w6lX0
-	G34Zwz6UztOrYFz8Vte+tbmZ3nqOiMYe44sI6rrUvioMx3WmIIHFFCb+czWNZGSEc4B5ytH6s2i
-	Th0NFTsHTXRLjd8Zz2xWv75h9BOecngfmnJMUFoUObUPFyGNdriPoGCtl9qTkgdevoTHs1dQleC
-	2Ps3ps8Xq7qYpcAhU75MfcnPpXMrwSkFjItxMD8UcAjBj0khJK0ADcJtAPU++1AgeQ==
-X-Google-Smtp-Source: AGHT+IEf/zzI0Tp9Ahcexm+a6tN9Lg0kiY6AKaxAwg/q8l9R6KHv3dKYwSmrj+c+Gwc5IajDQJz/DA==
-X-Received: by 2002:a05:6000:186b:b0:391:4684:dbdb with SMTP id ffacd0b85a97d-3997f9039ecmr10697036f8f.17.1742822582202;
-        Mon, 24 Mar 2025 06:23:02 -0700 (PDT)
-Received: from [192.168.0.251] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b4ce9sm11091922f8f.53.2025.03.24.06.23.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 06:23:01 -0700 (PDT)
-Message-ID: <9b372589-1c52-4f3d-9f5b-8f729489b545@linaro.org>
-Date: Mon, 24 Mar 2025 13:23:00 +0000
+	s=arc-20240116; t=1742822674; c=relaxed/simple;
+	bh=MxFbOX8Cs1Sy9jrRj60xk0ifXGCaWBeo/9SKCDM64ic=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=q4zosQkVBQbkJcAjkBoPxDieoRB04VJSfkLyOfBNdiK0aFTpQeWQm4MeyaBT8PTvjEgZLyYjBLDWeSWm9u6JptqadslKuSAXQByPzSES/oY/3cZnJdjz8unOI7HIR9qc4d8UkZft5QJ+I7kI0Fsv8Z0tp3bcFnLmBuR0tHb1S6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1twhmm-0003sF-72; Mon, 24 Mar 2025 14:24:12 +0100
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1twhmk-001PyK-3D;
+	Mon, 24 Mar 2025 14:24:11 +0100
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1twhml-004Vqr-11;
+	Mon, 24 Mar 2025 14:24:11 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH wireless-next v5 00/10] mwifiex: cleanups
+Date: Mon, 24 Mar 2025 14:24:01 +0100
+Message-Id: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] firmware: exynos-acpm: allow use during system
- shutdown
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org>
- <20250321-acpm-atomic-v1-2-fb887bde7e61@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20250321-acpm-atomic-v1-2-fb887bde7e61@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPJc4WcC/33QwWrDMAwA0F8pPs/DluMk3Wn/MXZwbLkVdE6w0
+ zSl5N8rAtsOM7tICElPoIcomAmLeDs8RMaFCo2JC/tyEP7s0gklBa4FKGhUD638ulEkXKW/oEv
+ XSWo5WGWs76KLsRW8N2WMtO7mh7hRxguWIhOus/jk9pnKPOb7fnHR+9A/+KKlkrbFNvaoOPv3C
+ dPpOucx0foacCcX+GWOuq8xwAwEZY+d7rtg6oz5YTSHGmOYMbpzrUcVgh2qTPPN8GNA15iGmcY
+ ZGEAjWGv+MNu2PQENz6V6mwEAAA==
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>
+Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>, 
+ kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742822651; l=2914;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=MxFbOX8Cs1Sy9jrRj60xk0ifXGCaWBeo/9SKCDM64ic=;
+ b=p6d2ToZVw8IAOz2e8VKe+nP/LB112DQOBIIu1CwQ/n2idXKoIdQTFN0ARvXC3EJWMFpe5CQiH
+ 2PxpTZOno8ECOYJQn6/zs/KGxEZGNEMsveFiuQnGaP1zNrPepQI9lgy
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+This contains several cleanup patches for the mwifiex driver. I dropped
+the MAC address fixing patch this time as it needs more discussion, but
+the remaining patches sent here are nearly unchanged from v1 and should
+be good to go.
 
+Sascha
 
-On 3/21/25 4:40 PM, André Draszik wrote:
-> We need to access the PMIC during late system shutdown and at that time
-> we are not allowed to sleep anymore.
-> 
-> To make this case work, detect this condition and use busy waiting via
-> udelay() instead of usleep_range() in that situation.
-> 
-> The code isn't switched over to udelay() unconditionally so as to not
-> waste resources during normal operation. acpm_may_sleep() was heavily
-> inspired by the I2C subsystem's i2c_in_atomic_xfer_mode().
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+Changes in v5:
+- rebase on wireless-next
+- Link to v4: https://lore.kernel.org/r/20250321-mwifiex-cleanup-1-v4-0-4a32b21e2553@pengutronix.de
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> 
-> ---
-> udelay(10) causes a checkpatch warning (it suggests to use
-> usleep_range() instead for usec >= 10), but that's exactly what we can
-> not do.
-> Reducing the udelay to be smaller will generally cause the loop to be
-> iterated more than once, which I wanted to avoid.
-> I could reflow the code to hide the actual value from checkpatch, e.g.
-> with the help of a local variable if that is preferred to ignoring the
-> checkpatch warning.
-> ---
->  drivers/firmware/samsung/exynos-acpm.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-> index d7ed6b77a957af5db5beba7deecce13ac7b30fd2..33cde6e88e2c0773fdd36c80927c77d3bcb44135 100644
-> --- a/drivers/firmware/samsung/exynos-acpm.c
-> +++ b/drivers/firmware/samsung/exynos-acpm.c
-> @@ -15,6 +15,8 @@
->  #include <linux/firmware/samsung/exynos-acpm-protocol.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/irqflags.h>
-> +#include <linux/kernel.h>
->  #include <linux/mailbox/exynos-message.h>
->  #include <linux/mailbox_client.h>
->  #include <linux/module.h>
-> @@ -24,6 +26,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/preempt.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  
-> @@ -272,6 +275,17 @@ static int acpm_get_rx(struct acpm_chan *achan, const struct acpm_xfer *xfer)
->  	return 0;
->  }
->  
-> +/*
-> + * When ACPM transfers happen very late, e.g. to access a PMIC when powering
-> + * down, we can not sleep. We do want to sleep in the normal case, though, to
-> + * avoid wasting CPU cycles!
-> + */
-> +static bool acpm_may_sleep(void)
-> +{
-> +	return system_state <= SYSTEM_RUNNING ||
-> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
-> +}
-> +
->  /**
->   * acpm_dequeue_by_polling() - RX dequeue by polling.
->   * @achan:	ACPM channel info.
-> @@ -299,7 +313,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
->  			return 0;
->  
->  		/* Determined experimentally. */
-> -		usleep_range(20, 30);
-> +		if (!acpm_may_sleep())
-> +			udelay(10);
-> +		else
-> +			usleep_range(20, 30);
->  	} while (!ktime_after(ktime_get(), timeout));
->  
->  	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx.\n",
-> 
+Changes in v4:
+- rebase and test on v6.14-rc7
+- drop "wifi: mwifiex: fix MAC address handling" because needs more
+  discussion
+- Link to v3: https://lore.kernel.org/r/20241202-mwifiex-cleanup-1-v3-0-317a6ce0dd5b@pengutronix.de
+
+Changes in v3:
+- Remove Cc: stable tag from 02/12 wifi: mwifiex: fix MAC address handling
+- Add better reasons for setting the locally admistered bit in 02/12
+  wifi: mwifiex: fix MAC address handling
+- Link to v2: https://lore.kernel.org/r/20240918-mwifiex-cleanup-1-v2-0-2d0597187d3c@pengutronix.de
+
+Changes in v2:
+- Add refence to 7bff9c974e1a in commit message of "wifi: mwifiex: drop
+  asynchronous init waiting code"
+- Add extra sentence about bss_started in "wifi: mwifiex: move common
+  settings out of switch/case"
+- Kill now unused MWIFIEX_BSS_TYPE_ANY
+- Collect reviewed-by tags from Francesco Dolcini
+- Link to v1: https://lore.kernel.org/r/20240826-mwifiex-cleanup-1-v1-0-56e6f8e056ec@pengutronix.de
+
+---
+Sascha Hauer (10):
+      wifi: mwifiex: deduplicate code in mwifiex_cmd_tx_rate_cfg()
+      wifi: mwifiex: use adapter as context pointer for mwifiex_hs_activated_event()
+      wifi: mwifiex: drop unnecessary initialization
+      wifi: mwifiex: make region_code_mapping_t const
+      wifi: mwifiex: pass adapter to mwifiex_dnld_cmd_to_fw()
+      wifi: mwifiex: simplify mwifiex_setup_ht_caps()
+      wifi: mwifiex: fix indention
+      wifi: mwifiex: make locally used function static
+      wifi: mwifiex: move common settings out of switch/case
+      wifi: mwifiex: drop asynchronous init waiting code
+
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 34 ++++--------
+ drivers/net/wireless/marvell/mwifiex/cfp.c      |  4 +-
+ drivers/net/wireless/marvell/mwifiex/cmdevt.c   | 74 ++++++++-----------------
+ drivers/net/wireless/marvell/mwifiex/init.c     | 18 ++----
+ drivers/net/wireless/marvell/mwifiex/main.c     | 40 ++-----------
+ drivers/net/wireless/marvell/mwifiex/main.h     | 11 +---
+ drivers/net/wireless/marvell/mwifiex/sta_cmd.c  | 49 +++++-----------
+ drivers/net/wireless/marvell/mwifiex/txrx.c     |  3 +-
+ drivers/net/wireless/marvell/mwifiex/util.c     | 20 +------
+ drivers/net/wireless/marvell/mwifiex/wmm.c      | 12 ++--
+ 10 files changed, 71 insertions(+), 194 deletions(-)
+---
+base-commit: 1794d7ab34d2221ac7eb921b171e75b856e10561
+change-id: 20240826-mwifiex-cleanup-1-b5035c7faff6
+
+Best regards,
+-- 
+Sascha Hauer <s.hauer@pengutronix.de>
 
 
