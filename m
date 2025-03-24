@@ -1,161 +1,311 @@
-Return-Path: <linux-kernel+bounces-573252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B900FA6D4D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:16:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7616FA6D4D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E1A918934CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:14:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B4416F6D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F46B251793;
-	Mon, 24 Mar 2025 07:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADC42505DE;
+	Mon, 24 Mar 2025 07:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4kKzzuw"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7E42505CA;
-	Mon, 24 Mar 2025 07:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GvWUJxd2"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500972505C2;
+	Mon, 24 Mar 2025 07:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800461; cv=none; b=BT4cjh/huO8SjVK/wThEWsiSHwEicrpGhMTfA5jsqfoiCOPLQtD2JO1a5pGTlCxt1bcuvir6opzytj6hIwKMFB+fR2uqKo7mhizjvEZQ7nyUZM3j+HqRyHSY3qf2LhwILpBHQrA21yuU//PB3UW3nCg5gBjUWxrTQl5S4sPsG2k=
+	t=1742800500; cv=none; b=a4YNmITPiEdY508PH03PufbjpOiPFSjlFnW7DBAQPMF4pWIvaj4+BwttrsDfl1tSIggL5QuYxJPUs2w9MZZrhBM9buqK0D7O3hiHtGLbON333fPA1iX1R77LVCefjL3EYBK1fTvHoXXNS/8WSM++/vR/Pg5kMAX/Yhcfr1rZlQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800461; c=relaxed/simple;
-	bh=Wy3vPqiaLlYahW/IAM7YJlCm2a1eSBYC78uTW6IqDuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/bZ2g5h7jN2uI8vYUf0Wg5G0CqPghf7l2g2s16781J1dwmP7D5vQih7GZEcwCD3YuNxAcMoVtCm0w3NgCV2MnMaKEw75jOV4kuikfgd/ZCR0+jAsr5G5kLBOaZriflw0ZXRn1WR3sSq8npyyFi0mURNeYr+/G4ZZaH6tRvzKwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4kKzzuw; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-549967c72bcso4757030e87.3;
-        Mon, 24 Mar 2025 00:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742800457; x=1743405257; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AszQrPJcVtm10G/JAoQuwy6/p9hq7KTTJ2EVW3dDhxk=;
-        b=j4kKzzuwUjuCf7q01lCl1D+GTg7ZKmKJqCgMYbT/uSW7+3TdOxylkHeurswyUsq+eN
-         gXU62j5Uhtd+QKjdw9QFnZulbPJyHBVYIz9Ci1lLcoGdpuydkq2QXuC5E0FY5Mu+xtZ7
-         Cd0fhiXzspbOJynRzA3stJYvrOFEKKAA+UneOhrRb1TN5WiKESAcaGrDDBkjpXF4CDSP
-         hKs60BWyequZ6/e6HBr4Is0TZGGFvAEjNloLNl5TegVzxjcR22R7AEB7waUazwTLXCi9
-         DFpR8OPV4GuqPIjscs/w4a2BbKiFxLQLbNpg2Ldxs9Z+Jf+3K5iBOKg+xeWmpMT9QcXE
-         702A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742800457; x=1743405257;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AszQrPJcVtm10G/JAoQuwy6/p9hq7KTTJ2EVW3dDhxk=;
-        b=c9jQXj8yUVxrgkE+EuG/eR4gDxkMplIzxPaFIOHU4Gs3k+Vbt0hO0E/Dnb/024C8Zu
-         Efa17+ayz8yrM0csTv6Bqfb0HsaN0EkQHCDmjMSlQ6sACyEKkGSIm3BLianGPGubcMvX
-         flz4R2wRdqcdBlk/H8W0J+tLCcn3wuw+mci+qzZaWhS9xigfhWPHqsZGFKnzKsHuz6hE
-         kQ1l5oyWa9KkR3VhBIwkXFGqALpQJibcgPgd/NLz5kOImtN4M/LL7hA1HM5MZJGooaiP
-         CJb/QTkCW1Gwa1zEJhaG6F/itxvE0Vf3yGjvoVCaVoh7Bx4CSS6iXPmzrDVkPcdxjyzA
-         IyFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXItzDT+pITS9ViI6fm2tpv6fhozt3mo11yybAw6DXZyt3goaddmF86Z9lSBmDJ6wVkOjwCj5jrLTc=@vger.kernel.org, AJvYcCXiKnDEtVHDZF77YitdpZa9KcDFfa57BHhrsrd96idQq8U9Pkzw6zwmSQzGyiCoYZgqp7Vf8OEduKB/uLvI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWO/MRB61SB4f6vp/vt3NXdzi8Ik09H9syvodLuWJMLeyMMd4k
-	RokoyGD2kvnrLXZPEGmMwl73y9feB9riVCizwktvliJpL0rjRelt
-X-Gm-Gg: ASbGnctg0UWVp3A5B5pe/Twm6O1oCQrFg0iSGLgFFeDmX+Zcj44l1Od0akAGUTCoWNj
-	vOTZafxA8JF/d0aAzxLt3FBUiBWHetgL+XjsuwbltiIP4YScpDMIvWoyWdkrs0tEzSQ5iL2pD2B
-	Ql8gYRGXVyHxE6Dadda4DQakqeQ3FRa5/vfZo9lWdCtkYZOkgSuhZRRu0pQI+QD91II9xxVpkgz
-	ycK8Wyrb+RpSWwJzS81g9ICq4wQWJ/v4aUJJMF3GFr4Z7+Vucp9TRf1072CZk6scPdiXkkdu5m7
-	/GKk8VihPLT/UBD21S/H3aqmW8ym6JTMMXX504o8pf9FUp8jpQc=
-X-Google-Smtp-Source: AGHT+IHfv5aFN0tDmB64HQusf6jSJ2U6WNfQ0VWY8vXw9sHof5NsJQ8OBHmeGKbr2jfV+OxBSzm5aA==
-X-Received: by 2002:a05:6512:3b82:b0:549:8f3a:f64 with SMTP id 2adb3069b0e04-54ad64b30d8mr4505976e87.41.1742800456590;
-        Mon, 24 Mar 2025 00:14:16 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64806dcsm1016682e87.96.2025.03.24.00.14.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 00:14:14 -0700 (PDT)
-Date: Mon, 24 Mar 2025 09:14:09 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: [PATCH v10 8/8] MAINTAINERS: Add ROHM BD79124 ADC/GPO
-Message-ID: <fa3b65599592c1685230a5fa95aea6ed12b0b504.1742560649.git.mazziesaccount@gmail.com>
-References: <cover.1742560649.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1742800500; c=relaxed/simple;
+	bh=PKa3zoVaphNmxES1mu8sRdzUr9GoOg0wu/NaPlC6DGI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=XjaX2UaVa6nsrbhFbvK6sbx2ZNelyzCNIiJXlEHey/E73YLGg610hrREYfXVaZWAQq1d3Diu7A3ZKnAHXqpZHu7LNuMFYTBraEuTfQXQxAONMZGHp7vD4svUllIiJ5ZVStcGgVhHIHovZMFrTCpvgbs8mB9NE50s2nLH3PMPmv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GvWUJxd2; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id BEB182036571; Mon, 24 Mar 2025 00:14:53 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BEB182036571
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742800493;
+	bh=uTGr0WIymJiONKq41/5qrDmVxnOqzeOtFmJlRbTVln4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GvWUJxd25qxb1PfzpwAI/9XKOEGfTqmMyEdOyfcqDICLxVJcNH53WvbLOUdU3X8w+
+	 aDyldzjVYRbm0sgfCjYM9ylMUn5cJwo71IS4p1onO49hTWveHXK6e2ISLvBCPrbVaQ
+	 p1guu84DpbDtOV/Jrdo3OXTHUMo6CukWBvf5optc=
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: [PATCH] hv/hv_kvp_daemon: Enable debug logs for hv_kvp_daemon
+Date: Mon, 24 Mar 2025 00:14:52 -0700
+Message-Id: <1742800492-25911-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qwb98GzFX2VTic7/"
-Content-Disposition: inline
-In-Reply-To: <cover.1742560649.git.mazziesaccount@gmail.com>
 
+Allow the KVP daemon to log the KVP updates triggered in the VM
+with a new debug flag(-d).
+When the daemon is started with this flag, it logs updates and debug
+information in /var/log/kvp_debug_file.log. This information comes
+in handy for debugging issues where the key-value pairs for certain
+pools show mismatch/incorrect values.
 
---qwb98GzFX2VTic7/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Add undersigned as a maintainer for the ROHM BD79124 ADC/GPO driver.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 ---
-Revision history:
-v2 =3D>
- - No changes
-RFC v1 =3D> v2:
- - Drop MFD and pinmux drivers
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/hv/hv_kvp_daemon.c | 120 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 112 insertions(+), 8 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5b96fb864227..2e4416b59930 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20547,6 +20547,11 @@ S:	Supported
- F:	drivers/power/supply/bd99954-charger.c
- F:	drivers/power/supply/bd99954-charger.h
-=20
-+ROHM BD79124 ADC / GPO IC
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Supported
-+F:	drivers/iio/adc/rohm-bd79124.c
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index 04ba035d67e9..1f8b02b17356 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -41,6 +41,7 @@
+ #include <net/if.h>
+ #include <limits.h>
+ #include <getopt.h>
++#include <time.h>
+ 
+ /*
+  * KVP protocol: The user mode component first registers with the
+@@ -83,6 +84,7 @@ enum {
+ };
+ 
+ static int in_hand_shake;
++static int debug_enabled;
+ 
+ static char *os_name = "";
+ static char *os_major = "";
+@@ -91,6 +93,7 @@ static char *processor_arch;
+ static char *os_build;
+ static char *os_version;
+ static char *lic_version = "Unknown version";
++static char debug_file[PATH_MAX];
+ static char full_domain_name[HV_KVP_EXCHANGE_MAX_VALUE_SIZE];
+ static struct utsname uts_buf;
+ 
+@@ -99,6 +102,7 @@ static struct utsname uts_buf;
+  */
+ 
+ #define KVP_CONFIG_LOC	"/var/lib/hyperv"
++#define KVP_DEBUG_LOC	"/var/log/"
+ 
+ #ifndef KVP_SCRIPTS_PATH
+ #define KVP_SCRIPTS_PATH "/usr/libexec/hypervkvpd/"
+@@ -153,6 +157,16 @@ static void kvp_release_lock(int pool)
+ 	}
+ }
+ 
++static void convert_tm_to_string(char *tm_str, size_t tm_str_size)
++{
++	struct tm tm;
++	time_t t;
 +
- ROHM BH1745 COLOUR SENSOR
- M:	Mudit Sharma <muditsharma.info@gmail.com>
- L:	linux-iio@vger.kernel.org
---=20
-2.49.0
++	time(&t);
++	gmtime_r(&t, &tm);
++	strftime(tm_str, tm_str_size, "%Y-%m-%dT%H:%M:%S", &tm);
++}
++
+ static void kvp_update_file(int pool)
+ {
+ 	FILE *filep;
+@@ -183,6 +197,45 @@ static void kvp_update_file(int pool)
+ 	kvp_release_lock(pool);
+ }
+ 
++static void kvp_dump_initial_pools(int pool)
++{
++	FILE *debug_filep;
++	char tm_str[50];
++	int i, ret;
++
++	convert_tm_to_string(tm_str, sizeof(tm_str));
++
++	debug_filep = fopen(debug_file, "a");
++	if (!debug_filep) {
++		syslog(LOG_ERR, "Failed to open file: %s, pool: %d; error: %d%s",
++		       debug_file, pool, errno, strerror(errno));
++		return;
++	}
++
++	ret = fprintf(debug_filep, "===Start dumping the contents on pool %d ===\n",
++		      pool);
++	if (ret <= 0) {
++		syslog(LOG_ERR, "Failed to write to kvp debug file: %d", pool);
++		fclose(debug_filep);
++		return;
++	}
++
++	for (i = 0; i < kvp_file_info[pool].num_records; i++) {
++		ret = fprintf(debug_filep, "[%s]: pool: %d, %d/%d key=%s val=%s\n",
++			      tm_str, pool, i, kvp_file_info[pool].num_records,
++			      kvp_file_info[pool].records[i].key,
++			      kvp_file_info[pool].records[i].value);
++
++		if (ret <= 0) {
++			syslog(LOG_ERR, "Failed to write to kvp debug file: pool=%d, i=%u/%u",
++			       pool, i, kvp_file_info[pool].num_records);
++			break;
++		}
++	}
++
++	fclose(debug_filep);
++}
++
+ static void kvp_update_mem_state(int pool)
+ {
+ 	FILE *filep;
+@@ -270,6 +323,8 @@ static int kvp_file_init(void)
+ 			return 1;
+ 		kvp_file_info[i].num_records = 0;
+ 		kvp_update_mem_state(i);
++		if (debug_enabled)
++			kvp_dump_initial_pools(i);
+ 	}
+ 
+ 	return 0;
+@@ -321,14 +376,37 @@ static int kvp_key_delete(int pool, const __u8 *key, int key_size)
+ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
+ 				 const __u8 *value, int value_size)
+ {
+-	int i;
+-	int num_records;
+ 	struct kvp_record *record;
++	FILE *filep = NULL;
++	int num_records;
++	char tm_str[50];
+ 	int num_blocks;
++	int i;
++
++	if (debug_enabled) {
++		filep = fopen(debug_file, "a");
++		if (!filep) {
++			syslog(LOG_ERR, "Failed to open file %s; error: %d",
++			       debug_file, errno);
++		} else {
++			convert_tm_to_string(tm_str, sizeof(tm_str));
++			fprintf(filep, "[%s]:%s: got a KVP: pool=%d key=%s val=%s\n",
++				__func__, tm_str, pool, key, value);
++		}
++	}
+ 
+ 	if ((key_size > HV_KVP_EXCHANGE_MAX_KEY_SIZE) ||
+-		(value_size > HV_KVP_EXCHANGE_MAX_VALUE_SIZE))
++		(value_size > HV_KVP_EXCHANGE_MAX_VALUE_SIZE)) {
++		syslog(LOG_ERR, "Got a too long key or value: key=%s, val=%s",
++		       key, value);
++
++		if (filep) {
++			fprintf(filep, "[%s]: Got a too long key or value: pool=%d, key=%s, val=%s\n",
++				tm_str, pool, key, value);
++			fclose(filep);
++		}
+ 		return 1;
++	}
+ 
+ 	/*
+ 	 * First update the in-memory state.
+@@ -348,6 +426,11 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
+ 		 */
+ 		memcpy(record[i].value, value, value_size);
+ 		kvp_update_file(pool);
++		if (filep) {
++			fprintf(filep, "[%s]:%s: updated: pool=%d key=%s val=%s\n",
++				__func__, tm_str, pool, key, value);
++			fclose(filep);
++		}
+ 		return 0;
+ 	}
+ 
+@@ -359,8 +442,12 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
+ 		record = realloc(record, sizeof(struct kvp_record) *
+ 			 ENTRIES_PER_BLOCK * (num_blocks + 1));
+ 
+-		if (record == NULL)
++		if (!record) {
++			if (filep)
++				fclose(filep);
++			syslog(LOG_ERR, "%s: Memory alloc failure", __func__);
+ 			return 1;
++		}
+ 		kvp_file_info[pool].num_blocks++;
+ 
+ 	}
+@@ -368,6 +455,12 @@ static int kvp_key_add_or_modify(int pool, const __u8 *key, int key_size,
+ 	memcpy(record[i].key, key, key_size);
+ 	kvp_file_info[pool].records = record;
+ 	kvp_file_info[pool].num_records++;
++
++	if (filep) {
++		fprintf(filep, "[%s]:%s: added: pool=%d key=%s val=%s\n",
++			__func__, tm_str, pool, key, value);
++		fclose(filep);
++	}
+ 	kvp_update_file(pool);
+ 	return 0;
+ }
+@@ -1662,6 +1755,7 @@ void print_usage(char *argv[])
+ 	fprintf(stderr, "Usage: %s [options]\n"
+ 		"Options are:\n"
+ 		"  -n, --no-daemon        stay in foreground, don't daemonize\n"
++		"  -d, --debug-enabled    Enable debug logs\n"
+ 		"  -h, --help             print this help\n", argv[0]);
+ }
+ 
+@@ -1681,12 +1775,13 @@ int main(int argc, char *argv[])
+ 	int daemonize = 1, long_index = 0, opt;
+ 
+ 	static struct option long_options[] = {
+-		{"help",	no_argument,	   0,  'h' },
+-		{"no-daemon",	no_argument,	   0,  'n' },
+-		{0,		0,		   0,  0   }
++		{"help",		no_argument,	   0,  'h' },
++		{"no-daemon",		no_argument,	   0,  'n' },
++		{"debug-enabled",	no_argument,	   0,  'd' },
++		{0,			0,		   0,  0   }
+ 	};
+ 
+-	while ((opt = getopt_long(argc, argv, "hn", long_options,
++	while ((opt = getopt_long(argc, argv, "hnd", long_options,
+ 				  &long_index)) != -1) {
+ 		switch (opt) {
+ 		case 'n':
+@@ -1695,6 +1790,9 @@ int main(int argc, char *argv[])
+ 		case 'h':
+ 			print_usage(argv);
+ 			exit(0);
++		case 'd':
++			debug_enabled = 1;
++			break;
+ 		default:
+ 			print_usage(argv);
+ 			exit(EXIT_FAILURE);
+@@ -1717,6 +1815,12 @@ int main(int argc, char *argv[])
+ 	 */
+ 	kvp_get_domain_name(full_domain_name, sizeof(full_domain_name));
+ 
++	if (debug_enabled) {
++		sprintf(debug_file, "%s%s", KVP_DEBUG_LOC, "kvp_debug_file.log");
++		syslog(LOG_INFO, "Logging debug info in kvp_debug_file=%s",
++		       debug_file);
++	}
++
+ 	if (kvp_file_init()) {
+ 		syslog(LOG_ERR, "Failed to initialize the pools");
+ 		exit(EXIT_FAILURE);
+-- 
+2.34.1
 
-
---qwb98GzFX2VTic7/
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhBkEACgkQeFA3/03a
-ocWizwf/bQfebv+Kaip7GLqV4xairEUMHLFWw3EJ/ANa3YuWdKdymkOh6ZteleWk
-6QGx0opk0hCNZVSRsm+jmy4kGXD9bb74qPZ3AyMRuBW67GV1E9aR07k0TyCvHDka
-mAf1XiMYK+TUZ2BOxksjcXx6yuzykOCemAXhCyuHIT1WMIbNH0Aid0HwY43pe4VI
-EPN000XObLc9RELHHuabVb+eFmIhCKftVwzZCkfZC89tHvKuVQtOSrFt2hMrpt/T
-XnekgUHAWBVvvY1nvexvT8kz9vnGRfV3vRD18WT0dC1IJn351DLoYKgiuWggpuKH
-ryIoLkKIKv7OIHdXEc/EINw9Fa8hMQ==
-=yP3X
------END PGP SIGNATURE-----
-
---qwb98GzFX2VTic7/--
 
