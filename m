@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-573291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC111A6D542
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04490A6D541
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495C21893287
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:40:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F122A7A4732
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E38F2586C1;
-	Mon, 24 Mar 2025 07:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56604257ADB;
+	Mon, 24 Mar 2025 07:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/DCj6aJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FLKVB7p2"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8634F257438;
-	Mon, 24 Mar 2025 07:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAAE257AC7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742801924; cv=none; b=LbBMQA8YpvhLJg+m148zR885Ku6B6W5hR8sXHCo7rjjlswcPW6zELEoncDIHJvuHA+H7Xo36SW8CMP7BPyW5Tv1nXCTeFQ4syHJ7fvrqETBTBVKpoVMtUXsj7lKT80OrgUStFu6WT9V7nUd4aAz9pHUPBN6g29o0unkD3pDTNpU=
+	t=1742801977; cv=none; b=Yjobv3caz3C2TPzopZHtJQ2zEJ8zWDhGyg9jdjr5ylQLm0p5YQOhYdcRtLNj65FykfSSRMJUSQognIWMkWTk0mzgcbicd8gJrdXdijiuo0PHpMxN5RcCwNjrVkEOIOOwLwf1flbf45/+NpPJqHZMvsQ8hvxfPKeEkGPLwj+mGpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742801924; c=relaxed/simple;
-	bh=e6SIowdMXYBD6xhP/5nsiEyaBQQ8xzjEYV6YQOv7ymM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUEZ0wwBxqt1zBwTYA3VPiSbRz5s48/kUe2obMstR9gILMa+AQuWR81sqc8LbrvRdABOiCeVCwKZSh4Z/Bf5NuZ72ErranbTPD5+lslz6WJ1j5SFF6PXsr0zzHHtyzopnJJ+jrUBcGYobT4zNXFRKfijPSHDJGVDYsyc34USgd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/DCj6aJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD385C4CEDD;
-	Mon, 24 Mar 2025 07:38:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742801924;
-	bh=e6SIowdMXYBD6xhP/5nsiEyaBQQ8xzjEYV6YQOv7ymM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G/DCj6aJbFrctGnnNft7BvBOvluAP/K89AzprkIRMNZvv7bMDagxizxlZH81+6cHW
-	 fZToOiRCFHBIx4aGs0H+4IR6GTMJJjzm3Jp2vwdsIXpe5pP3xK5L2+QjvQJG68jVBR
-	 CwJglWxvRsCxLd6Y4cMtN1e5kgRVPt7uzP9CAtATZS4mb7pMEkkaus+qCgHjmCYQ5z
-	 3GaZGAOvtMOiNYX77EJtFfHHdrwroynnsA3kpw+k8Bymt4WisPRY7DG+SnU4kS6hNv
-	 MBYIP8AhcZOp5r/MYFeVg23ydzZnX5tsZzUEjhUhh68BG3KeQPdzlK5uXkfeYqzZ67
-	 7OX89F2laUpJQ==
-Message-ID: <fbd5c153-b73a-4dbc-a923-4e3d3924e748@kernel.org>
-Date: Mon, 24 Mar 2025 08:38:34 +0100
+	s=arc-20240116; t=1742801977; c=relaxed/simple;
+	bh=/E1+CdUd622YHSdavtWVNjJeqQ3x0Q9Uv74BQL9+Btc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8wtGGh6bvJmUM3mFToFM2XahJk3e/y5kB9/np4ckEFl77xjCD2xIOSegPOInqW6IHPLwPfKJHsGdqI/lncnNSiSYvK60xVx79tBFkdRFq/+X/K7Zl3pI+8kyEle7tepXOwDjL8XVM/kSBcKwilqSIIcv06rfEGh4tiOqmWzuIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FLKVB7p2; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2240b4de12bso58950375ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:39:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742801975; x=1743406775; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SxcFj9fapiNOLa4zKIqkX0qfsgj2Wcwr7I86fBYGV1c=;
+        b=FLKVB7p2BAPSLHdcTWEku7Jr8bx28PABFcTQNHgT3LD2H7FnjPSqljbJlAw1wClIrW
+         oJxmtGu2UQkD5foeSAHUjvqz60TPkhnf2wx2NYsTz3YmfYRNEKsN/nADD3Ze1Jb1Hmpk
+         FGC/vjcseCeuT6fXeD6HrViyOfRqRy8r+sPanCOj5fAIquYygjY+nxZa8LrOUrne+gqJ
+         pWP/tG/UNcNG6A29tkYNYfSiWuNI4Y5kym3lQhQsEUWlYeyqk/XZ6RGnbCNHqLW3J3Yx
+         LlmTASDqWn2ba/Qu3lDaZqLocCKYfWfurrQ+npDAte7WGc9HpvNFv1IhX98k5tb+DH4p
+         QfuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742801975; x=1743406775;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SxcFj9fapiNOLa4zKIqkX0qfsgj2Wcwr7I86fBYGV1c=;
+        b=IGU5T86daC9r4kKK5CI39cLayrQRNkEn1vXdIA8x1SSxbgLS4A7Ttxa9l/mlwmxVcp
+         eXQXSK6+MxvLdDhICckeSh5TNSRc0ywMvewHwo6hQcQPLfS1Th+H0+EtABDqJJStEeQt
+         68eTqZWD61uEjUqRk2j36F4bcPgTycjMHrZWZp+T6SVUNmGjlKL6rgB9lCCmV5mMmLLS
+         MdkCv9xNbOwM6MjZsIyKv9PYC8j9KAq3kE9WzXQrfHkPzIA9FPnbD2EiCapb5h5Qbp2E
+         3KyIksUgcGSFZ8cJBkr4BpMVh+1wJv5QFtYCUZKPfon1FQr7Ejv8gQwy2ZaZYNcYCAYa
+         J3jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkzzIuuZOFFVfRW7+4D0GlItbO+sSEm9SiPO1S5XtzSPxLmv3Yk6Z+9ZEK7MP+nvrJiTjSEGslW/VKVK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFrtomwc223VnnJi1rqMdZvaUrjUFqiV8CFcwMC7xlYKei3Hry
+	ppCafFBodpZ4d8eA+7XUcDg+lmdypjcEQcYZgRhew3J8z5PiwUfu07MEPThB6Q==
+X-Gm-Gg: ASbGncsF0lq2NJAa4wHgCMUCR6iS7utqM4S+FFflIuK22ULVX9AqufKaMz3ylwfxjHa
+	UvF8AvTQUN6zfRAMClxeHxy12NOjkoLlEPujikYZs7noW3FinOAtLzHL4PsKbXhVGJC5UF/m7oc
+	8PHiYxT7EjurNDes2a3CIK2FQW9XD5PDVzGIk4iKPrGsiUL2nog7VrPrcm3VnwnZapCwxvVGAUz
+	ltbr17kI/kdX9XothEjCbX+U4frMFKy0ayDWfMbNpEQ0kRQVfva0Gm+q23GAU69EQy3Rev7CMJc
+	74QMaMzyYFrpIcvgWWc2huzYX8P5MICwdxXPaGH0UjygISsE4TOdn7e7
+X-Google-Smtp-Source: AGHT+IHRecfblK8vR1wTkg7Bdl2kn7F86Ux81QsmlBimFCn4K8XEWHWHnLXKyVSFhm78XAFAqD/w/w==
+X-Received: by 2002:a05:6a00:23d5:b0:730:8a0a:9f09 with SMTP id d2e1a72fcca58-73905a02721mr19367881b3a.18.1742801975063;
+        Mon, 24 Mar 2025 00:39:35 -0700 (PDT)
+Received: from thinkpad ([220.158.156.91])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618beafsm7199869b3a.161.2025.03.24.00.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 00:39:34 -0700 (PDT)
+Date: Mon, 24 Mar 2025 13:09:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: MANISH PANDEY <quic_mapa@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com, quic_cang@quicinc.com, 
+	quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V3 2/3] scsi: ufs-qcom: Add support for dumping MCQ
+ registers
+Message-ID: <awc2ql2x5amiahf7l47xqhgl7ugi4zpk5wz7qycgbqb52gh4yb@24za7q2rqqob>
+References: <20250313051635.22073-1-quic_mapa@quicinc.com>
+ <20250313051635.22073-3-quic_mapa@quicinc.com>
+ <20250318064421.bvlv2xz7libxikk5@thinkpad>
+ <12753be6-c69b-448d-a258-79221f4dbc7c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] arm64: defconfig: enable PCI Power Control for
- PCIe3
-To: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- catalin.marinas@arm.com, will@kernel.org, quic_qianyu@quicinc.com,
- sfr@canb.auug.org.au, linux-arm-kernel@lists.infradead.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250320055502.274849-1-quic_wenbyao@quicinc.com>
- <20250320055502.274849-2-quic_wenbyao@quicinc.com>
- <694b6638-92b2-4ac0-a175-bd29aea6cba9@kernel.org>
- <CAMRc=MfZrRp=VuEOLuMY_04JdyRrD+joGL56LwRFQ-+D-8Z_6w@mail.gmail.com>
- <9ea8fe39-b818-403b-bd69-815e58eb2949@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9ea8fe39-b818-403b-bd69-815e58eb2949@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <12753be6-c69b-448d-a258-79221f4dbc7c@quicinc.com>
 
-On 24/03/2025 08:09, Wenbin Yao (Consultant) wrote:
-> On 3/21/2025 5:43 PM, Bartosz Golaszewski wrote:
->> On Fri, Mar 21, 2025 at 8:37 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> On 20/03/2025 06:55, Wenbin Yao wrote:
->>>> From: Qiang Yu <quic_qianyu@quicinc.com>
->>>>
->>>> Enable the pwrctrl driver, which is utilized to manage the power supplies
->>>> of the devices connected to the PCI slots. This ensures that the voltage
->>>> rails of the x8 PCI slots on the X1E80100 - QCP can be correctly turned
->>>> on/off if they are described under PCIe port device tree node.
->>>>
->>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->>>> ---
->>>>   arch/arm64/configs/defconfig | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->>>> index 85ec2fba1..de86d1121 100644
->>>> --- a/arch/arm64/configs/defconfig
->>>> +++ b/arch/arm64/configs/defconfig
->>>> @@ -245,6 +245,7 @@ CONFIG_PCIE_LAYERSCAPE_GEN4=y
->>>>   CONFIG_PCI_ENDPOINT=y
->>>>   CONFIG_PCI_ENDPOINT_CONFIGFS=y
->>>>   CONFIG_PCI_EPF_TEST=m
->>>> +CONFIG_PCI_PWRCTL_SLOT=y
->>> Bartosz,
->>>
->>> Wasn't the intention to select it the same way as PCI_PWRCTL_PWRSEQ is
->>> selected?
->>>
->>> Best regards,
->>> Krzysztof
->>>
->> For sure. I would expect there to be something like:
->>
->> select PCI_PWRCTL_SLOT if ARCH_QCOM
->>
->> in Kconfig and nothing in defconfig.
->>
->> Bartosz
+On Wed, Mar 19, 2025 at 11:51:07AM +0530, MANISH PANDEY wrote:
 > 
-> IIUC, pci slot power driver is a common driver that could be used by all DT
-> based platform.
+> 
+> On 3/18/2025 12:14 PM, Manivannan Sadhasivam wrote:
+> > On Thu, Mar 13, 2025 at 10:46:34AM +0530, Manish Pandey wrote:
+> > > This patch adds functionality to dump MCQ registers.
+> > > This will help in diagnosing issues related to MCQ
+> > > operations by providing detailed register dumps.
+> > > 
+> > 
+> > Same comment as previous patch. Also, make use of 75 column width.
+> > 
+> will Update in next patch set.>> Signed-off-by: Manish Pandey
+> <quic_mapa@quicinc.com>
+> > > ---
+> > > 
+> > > Changes in v3:
+> > > - Addressed Bart's review comments by adding explanations for the
+> > >    in_task() and usleep_range() calls.
+> > > Changes in v2:
+> > > - Rebased patchsets.
+> > > - Link to v1: https://lore.kernel.org/linux-arm-msm/20241025055054.23170-1-quic_mapa@quicinc.com/
+> > > ---
+> > >   drivers/ufs/host/ufs-qcom.c | 60 +++++++++++++++++++++++++++++++++++++
+> > >   drivers/ufs/host/ufs-qcom.h |  2 ++
+> > >   2 files changed, 62 insertions(+)
+> > > 
+> > > diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> > > index f5181773c0e5..fb9da04c0d35 100644
+> > > --- a/drivers/ufs/host/ufs-qcom.c
+> > > +++ b/drivers/ufs/host/ufs-qcom.c
+> > > @@ -1566,6 +1566,54 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
+> > >   	return 0;
+> > >   }
+> > > +static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
+> > > +{
+> > > +	/* sleep intermittently to prevent CPU hog during data dumps. */
+> > > +	/* RES_MCQ_1 */
+> > > +	ufshcd_dump_regs(hba, 0x0, 256 * 4, "MCQ HCI 1da0000-1da03f0 ");
+> > > +	usleep_range(1000, 1100);
+> > 
+> > If your motivation is just to not hog the CPU, use cond_resched().
+> > 
+> > - Mani
+> > 
+> The intention here is to introduce a specific delay between each dump.
 
+What is the reason for that?
 
-You are not responding to the raised problem.
+> Therefore, i would like to use usleep_range() instead of cond_resched().
+> Please let me know if i am getting it wrong..
+> 
 
-Best regards,
-Krzysztof
+Without knowing the reason, I cannot judge. Your comment said that you do not
+want to hog the CPU during dump. But now you are saying that you wanted to have
+a delay. Both are contradictions.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
