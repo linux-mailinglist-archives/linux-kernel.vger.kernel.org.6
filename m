@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-574351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF83A6E44D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:26:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DECA6E451
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996413A28B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7FD71885820
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF231D5159;
-	Mon, 24 Mar 2025 20:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpyucDn/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2541C861F;
+	Mon, 24 Mar 2025 20:27:21 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52DD1C84A7;
-	Mon, 24 Mar 2025 20:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A817E0;
+	Mon, 24 Mar 2025 20:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742847996; cv=none; b=iA0VN68dxd+qWZA897dWJMAYaqSpUaDkzLBbQEFiWhq76h7zH7xtVAHzsm8z17lEtkE/58Cyz0ZOJ/ybGH8ybOfVIlcHAWT8uqQqepConfS8ZIqjoolbN9mRFuYyYifbUFFbzLgTri5r6vwPbPo4A+H8Kb3894tX2uZiUiRTROM=
+	t=1742848041; cv=none; b=rPY52KEewyWPV+WN4qMYsmu3kaFJlfYBjUwuuirNOH83IY47Dm1ZboPohdzopPlRnWPgpWIbwTQGuuPKHM/poNxuJu1tIVa2qRKEnwWsxndc0eNRlX04GiG28ASi7MPgmr/BZsMbj4c0u+foYP01RxxrsU7WER23elmNwgJ7f3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742847996; c=relaxed/simple;
-	bh=U2itnEtEw8dYRuqh+Nkd+n+cV/VkuXPkeCP/FByVvn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPkIvhLd2ycXmyulUzJ0w321+7XjdTThwE3NuARB3FfPqP60aYoRiFJro7nIoDaJ3UTsNBasRk0WI+eIE50pZvm5DWMfsbnIXAqShxCKg5lTE9w6wbv/1guz/eWOn5vb3p6/EhuqS1dd5Xpkj5lDLFQlP5z3yOyFkmYonoV9LpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpyucDn/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E38C4CEDD;
-	Mon, 24 Mar 2025 20:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742847995;
-	bh=U2itnEtEw8dYRuqh+Nkd+n+cV/VkuXPkeCP/FByVvn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YpyucDn/QAvK0eQpzRJI1sbLV5MJQINSLAB8fswkB4uz6+jdAX1XDBH8eGgCI3aCc
-	 vOrtllfdHI0B11aB3jrSQJkCZcnQFJaUCTUTvBNcDD18XNPru8kmn5bxFErmlh/KGF
-	 gGbclZN+au0HKYdCNww7YBTGS2CD0whXXqOn/Pw3zSLRTwORsFdITEiBKaZpNp03Hj
-	 EdzSFH5rwElpTZiUbi6QBuPLKwBju4oxMGBpbV8lbFRsEiiK/3LePbari2zdgSO5Dr
-	 ODUXEKm5rbyY9g24tb1LNg5N82SLCckSSG2jVkoZV2W20acQIYaeOhI7+ck1c9vEIk
-	 IsiZxWeDoC/Nw==
-Date: Mon, 24 Mar 2025 15:26:34 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Alex Elder <elder@kernel.org>,
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: net: qcom,ipa: Correct indentation and
- style in DTS example
-Message-ID: <174284799393.813695.16014567995562723088.robh@kernel.org>
-References: <20250324125222.82057-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1742848041; c=relaxed/simple;
+	bh=YLMnGIT3vZCVyFu8ky1mPKgPHp937CnACVRHmUQJprY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rcA0OcYC3Km/7Rpptpg0KgD+Egz/69uHxQhhJvegkv1CWUPBhoe7tzBw12mWi0qFWbOfqUksFocypH26DSZLjDx1eymvONU/Fe/ZcrGVPnCAjiw6p8yV6y9VDCMoS2Z/bLCe8ofrfcY3qramHwgs6Tkv+6tyrlAOBPdwwbBJyyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE18C4CEDD;
+	Mon, 24 Mar 2025 20:27:20 +0000 (UTC)
+Date: Mon, 24 Mar 2025 16:28:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the ftrace tree
+Message-ID: <20250324162802.0fda49eb@gandalf.local.home>
+In-Reply-To: <20250324133533.19b88cbf@canb.auug.org.au>
+References: <20250324133533.19b88cbf@canb.auug.org.au>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324125222.82057-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 24 Mar 2025 13:35:33 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Mon, 24 Mar 2025 13:52:22 +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
+> Hi all,
 > 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
+> In commit
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/net/qcom,ipa.yaml     | 124 +++++++++---------
->  1 file changed, 62 insertions(+), 62 deletions(-)
+>   6d5934331009 ("tracing: Do not use PERF enums when perf is not defined")
 > 
+> Fixes tag
+> 
+>   Fixes: a1e3ad43115e ("tracing: Ensure module defining synth event cannot be unloaded while tracing")
+> 
+> has these problem(s):
+> 
+>   - Subject does not match target commit subject
+>     Just use
+>         git log -1 --format='Fixes: %h ("%s")'
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+I rebased due to a conflict between my topic branches. Good thing too, as
+it appears it also caught the fact that I cut and pasted the wrong commit
+to fix :-p
 
+
+> 
+> Did you mean
+> 
+> Fixes: a1e3ad43115e ("tracing: Fix synth event printk format for str fields")
+> 
+> or
+> 
+> Fixes: 21581dd4e7ff ("tracing: Ensure module defining synth event cannot be unloaded while tracing")
+
+Thanks,
+
+-- Steve
 
