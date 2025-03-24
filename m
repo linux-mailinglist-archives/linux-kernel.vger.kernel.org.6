@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-573715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7B1A6DB64
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:27:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF65CA6DB67
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAFED170DF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6640B17151A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA9B25F98D;
-	Mon, 24 Mar 2025 13:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJIlr8IE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C68825FA0B;
+	Mon, 24 Mar 2025 13:25:29 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A326325EF8E;
-	Mon, 24 Mar 2025 13:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CE025F989;
+	Mon, 24 Mar 2025 13:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822726; cv=none; b=Ipgkcsyop2rQK64+1gayzvqe0IyEl0fT1C2XL1xiP4ES12CTQSa+egCRmMalkR89YyS6fLLZmwqjR/68xMPzuaOhLYbkYGG6RdoDFZbZhtz6PgNxFONqSLDQeFffegg6l+8xh6PbyUPexsLaR0IA5E5B8x/Kt9t/rm7hlUZgWPw=
+	t=1742822728; cv=none; b=qrO2RxcgmtBJM/X3VA78iOGFfiwPDjoymuU8jV/+d3zFldufakIptULjLjJIzEDNYASV6Qwv1Pp04XFVRLBO/6hgaKnkK29thzRLxmHCQ2ZEibDcM2f2amQ/RKkgbRtpCaGoD86oE1vrhf8XU2gBy8lnPTrkFb5IBkd3JLMqHk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822726; c=relaxed/simple;
-	bh=vxSgfp4SAGwj8pW9/pjz9+PbBk6qOxXhxUFHyUJJJfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJrdEj9WgL51Ww+lmXf76xXlCKsywKYhHlN5+TZlBMvxHsDYuzyTz11HpnFIE7Hy0XJoaLM+1MDCqG3vGsrLrnfr2JacIrHZD8cqDcJaYD14JB9T4yJjZtegeghnZupNHDZTH/2dVfsgTWBZS1Sh17Y4NzsiCRPcHc734hf+990=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJIlr8IE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BEFC4CEDD;
-	Mon, 24 Mar 2025 13:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742822726;
-	bh=vxSgfp4SAGwj8pW9/pjz9+PbBk6qOxXhxUFHyUJJJfE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HJIlr8IEDm+quXlfbSjZDKXtzj1xNT+IgttbRQjlcNzZnnUMwAxQIpaand/+BaKTI
-	 ugjVwG88Sa53de4lc+zhVy8Y/ze18J15qf17ASvcAVlukv8Omf+U5TpdJ7J2a/dTf5
-	 8ijNsARi0keigLbTuABcWTq2jS75nV4m5X9DiyeX/BgVq8gFq7wnhZodKsFMtNsD7k
-	 Fx3PCHA2Uowgl+GsmgzmLAFhwxKFajxMTUEz0gJCsvr+oAvip+pLZk2ByiQ+ququJV
-	 VqzEja2RN53JrPbGteG6bXBWD2NrCGhOGsCNVRTXFVahhs4d9xoOCtqnIl6yBvCZ4s
-	 60Ff/ukBwN1hQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1twhnx-000000001bd-3C5m;
-	Mon, 24 Mar 2025 14:25:25 +0100
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org,
-	Clayton Craft <clayton@craftyguy.net>
-Subject: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug events
-Date: Mon, 24 Mar 2025 14:24:48 +0100
-Message-ID: <20250324132448.6134-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742822728; c=relaxed/simple;
+	bh=5sydytHx7h525TTyhjomwsCO0JsaR5Fp//WMRl6worI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uBtjaS2DGtG8g/EO9QjAf24LkLp99cqmKCt3T65aA7SMhgOyeZw8Rp0u1o6sU9lQJ21r80SlDDBKtAa7+6eZByYeKSDhtzz4eHrmjrsnLqGT5DMfVLBCG5oFUDnlEzBFbHVs8M1RbLpSWVRzBvhH9wKsHMeWG6Igyuzz+GgdfuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86d69774081so1832343241.0;
+        Mon, 24 Mar 2025 06:25:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742822725; x=1743427525;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pysUx5KjUsnCC7SRGDXolsL0u/kPjjXuwebo/Ew3v+g=;
+        b=EuduDbpz5L7JywfYN4Tjh49acGhOsd4c3lYwH5YyaumuUC7sJB7hotootVnNGilV3K
+         MofP5cGqV8kAs+ZfVatcQzMU1ZBYqebgV09FH35PXDrKQoow/ktPoq4xSVULy3F/MLxl
+         ieb6VZXWs4ykAcVjN+RBXJusminQzWsV0tpMRbfLQGBN9yGc5lG4LCUkpIBt+E3VLeNn
+         czzxZxw9AZxA8nBsz2ksloa8KRIKZJtqoHDDZ8Bqu4cq3LEgB8r/zCyce6/9XhYDaCiA
+         GWV0EZR3H5+anhQ2S1NTH5i1/k5aRIqCysA5Qfu9AZdeka2WydR7Mj4liiUkMbdMr9Vj
+         fmFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAEzChmIpfe2HStDmYzfukNbDjgxjjA3gcoMyGyEc+OZwS32S1FveKCH/csDt0PGItHFJiLQG8T3Oq26iubv3Fx2w=@vger.kernel.org, AJvYcCWzCkf3q2WZd+xOSSXaiIQBuGwPGbuFE62Uvj3HjrdRDMb4QCng2sLwa9RBvb70yzQ1JT78cjCg6p9ZKw==@vger.kernel.org, AJvYcCX0QqwhEVKIRh+zH+NOtEka02p0mVV1V9cCH+t6qvLu4aD40Rj8FLSaA9u4eeOO15aRv7MYS6Olfcrf@vger.kernel.org, AJvYcCXz9coG5I8a6VRSc1KqAJIiCwKoe7p73EszrL4AMm+GtbUbmjeDjFDYPu1uGtkDNaavjS3ORL9dZvV/0gdm@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo63BD5bOd3D5cxEENwoj4r86QYexBS46eDqPV+v/11bEQy9pO
+	ic6Tq612AdN7Rw6HGX8cmwSwU4Zo9kfmVYc9TXVueHJ+fdcIS/CzNvPOhFbk
+X-Gm-Gg: ASbGnct0pOQvscCt+o8A0JFKv90StxSAjJDTGUhCUuYHZBJc0aLKZl/u3Szkkes+VWh
+	1MladtIyTYWYzUYdlOuMniDzaqvQBqm9hSnSxg+a2JboKvEFJ2j0s3JIhCVbJMPpi5dG8tUub4a
+	fknkrxTD8jHOSv7Dd4wYoW+if63btpEj6z97o9hTBdHdDwNfyvivhQB51lwuGT2qXYQJK/bWKR4
+	B+Ex/+HGsR2OVQJs/EC627yD4gccw5tL0ORn4JMMK1AKSXaqlbtmvRwJo2HhyEx0AdW/Gelck6C
+	HuUCn3k8v0TLhZtDjAxHcIgaxGkajcXLDor9UWmqNCNIOW8WwBjLEQTSspVCqDBfVO3/tsA3LTq
+	aNZumD9I=
+X-Google-Smtp-Source: AGHT+IHL9Ymtw3VlVx3jr9AyIdjS/9H5taPKKe/gOo+775noX2h3vSpl3dUq88TcU6DqvrglZhSW2w==
+X-Received: by 2002:a05:6102:1944:b0:4c5:1c0b:4ee9 with SMTP id ada2fe7eead31-4c51c0bb1c5mr4429730137.22.1742822724473;
+        Mon, 24 Mar 2025 06:25:24 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c50bdbe1ebsm1548308137.29.2025.03.24.06.25.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 06:25:23 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86d69774081so1832297241.0;
+        Mon, 24 Mar 2025 06:25:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtVbmDoIDlgxbAdU67hlYPXmPtsvL7FdN75sSb6DmFRw9gMG6NomLnolczTDQXY/PSDUGuGUSrHrCs+NadLH7RgV0=@vger.kernel.org, AJvYcCUtvGSECi3hnpgU5FQAx2up1FbLrWti3nO2IZSY1UnadIhfkYmQODKf9Sa0prqhGlGHt2wdIhyC1MGAODgO@vger.kernel.org, AJvYcCV3WKQUMFuFOMHRS3UVWnlF0+y+ijnOuS3S1vO+ksgXHEt93EH6lziGiMZY07/TL6/igALP/4mcULi4@vger.kernel.org, AJvYcCWPWNyFLLFOxE36Z2beO9V/WWYULs8XF+ZLAWkbQD/ZVg6C8+8RyZ2GTVdqCWJDXjljnUERMo/iLzIEGg==@vger.kernel.org
+X-Received: by 2002:a05:6102:fa0:b0:4c1:76a4:aee4 with SMTP id
+ ada2fe7eead31-4c50d5c5525mr9355749137.19.1742822722526; Mon, 24 Mar 2025
+ 06:25:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Mar 2025 14:25:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVKFgm_44XXq7Zq8yqosBCQc1CK9dkJoz4nLQ=aDNx-Yg@mail.gmail.com>
+X-Gm-Features: AQ5f1JrAqzrQO9P6bZUVH1yKTkJKGarnEoNgpKJ1GLu55BnPfqFnSLdxcuz5LI0
+Message-ID: <CAMuHMdVKFgm_44XXq7Zq8yqosBCQc1CK9dkJoz4nLQ=aDNx-Yg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: Correct indentation and style in DTS example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Srinivas Neeli <srinivas.neeli@amd.com>, 
+	Michal Simek <michal.simek@amd.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Manikandan Muralidharan <manikandan.m@microchip.com>, Maxime Ripard <mripard@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Sander Vanheule <sander@svanheule.net>, Bert Vermeulen <bert@biot.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The PMIC GLINK driver is currently generating DisplayPort hotplug
-notifications whenever something is connected to (or disconnected from)
-a port regardless of the type of notification sent by the firmware.
+On Mon, 24 Mar 2025 at 13:53, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
+> unused labels.
+>
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-These notifications are forwarded to user space by the DRM subsystem as
-connector "change" uevents:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    KERNEL[1556.223776] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-    ACTION=change
-    DEVPATH=/devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0
-    SUBSYSTEM=drm
-    HOTPLUG=1
-    CONNECTOR=36
-    DEVNAME=/dev/dri/card0
-    DEVTYPE=drm_minor
-    SEQNUM=4176
-    MAJOR=226
-    MINOR=0
+Gr{oetje,eeting}s,
 
-On the Lenovo ThinkPad X13s and T14s, the PMIC GLINK firmware sends two
-identical notifications with orientation information when connecting a
-charger, each generating a bogus DRM hotplug event. On the X13s, two
-such notification are also sent every 90 seconds while a charger remains
-connected, which again are forwarded to user space:
+                        Geert
 
-    port = 1, svid = ff00, mode = 255, hpd_state = 0
-    payload = 01 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00
-
-Note that the firmware only sends on of these when connecting an
-ethernet adapter.
-
-Fix the spurious hotplug events by only forwarding hotplug notifications
-for the Type-C DisplayPort service id. This also reduces the number of
-uevents from four to two when an actual DisplayPort altmode device is
-connected:
-
-    port = 0, svid = ff01, mode = 2, hpd_state = 0
-    payload = 00 01 02 00 f2 0c 01 ff 03 00 00 00 00 00 00 00
-    port = 0, svid = ff01, mode = 2, hpd_state = 1
-    payload = 00 01 02 00 f2 0c 01 ff 43 00 00 00 00 00 00 00
-
-Fixes: 080b4e24852b ("soc: qcom: pmic_glink: Introduce altmode support")
-Cc: stable@vger.kernel.org	# 6.3
-Cc: Bjorn Andersson <andersson@kernel.org>
-Reported-by: Clayton Craft <clayton@craftyguy.net>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
-
-Clayton reported seeing display flickering with recent RC kernels, which
-may possibly be related to these spurious events being generated with
-even greater frequency.
-
-That still remains to be fully understood, but the spurious events, that
-on the X13s are generated every 90 seconds, should be fixed either way.
-
-Johan
-
-
- drivers/soc/qcom/pmic_glink_altmode.c | 30 +++++++++++++++++----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
-index bd06ce161804..7f11acd33323 100644
---- a/drivers/soc/qcom/pmic_glink_altmode.c
-+++ b/drivers/soc/qcom/pmic_glink_altmode.c
-@@ -218,21 +218,29 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
- {
- 	struct pmic_glink_altmode_port *alt_port = work_to_altmode_port(work);
- 	struct pmic_glink_altmode *altmode = alt_port->altmode;
-+	enum drm_connector_status conn_status;
- 
- 	typec_switch_set(alt_port->typec_switch, alt_port->orientation);
- 
--	if (alt_port->svid == USB_TYPEC_DP_SID && alt_port->mode == 0xff)
--		pmic_glink_altmode_safe(altmode, alt_port);
--	else if (alt_port->svid == USB_TYPEC_DP_SID)
--		pmic_glink_altmode_enable_dp(altmode, alt_port, alt_port->mode,
--					     alt_port->hpd_state, alt_port->hpd_irq);
--	else
--		pmic_glink_altmode_enable_usb(altmode, alt_port);
-+	if (alt_port->svid == USB_TYPEC_DP_SID) {
-+		if (alt_port->mode == 0xff) {
-+			pmic_glink_altmode_safe(altmode, alt_port);
-+		} else {
-+			pmic_glink_altmode_enable_dp(altmode, alt_port,
-+						     alt_port->mode,
-+						     alt_port->hpd_state,
-+						     alt_port->hpd_irq);
-+		}
- 
--	drm_aux_hpd_bridge_notify(&alt_port->bridge->dev,
--				  alt_port->hpd_state ?
--				  connector_status_connected :
--				  connector_status_disconnected);
-+		if (alt_port->hpd_state)
-+			conn_status = connector_status_connected;
-+		else
-+			conn_status = connector_status_disconnected;
-+
-+		drm_aux_hpd_bridge_notify(&alt_port->bridge->dev, conn_status);
-+	} else {
-+		pmic_glink_altmode_enable_usb(altmode, alt_port);
-+	}
- 
- 	pmic_glink_altmode_request(altmode, ALTMODE_PAN_ACK, alt_port->index);
- }
 -- 
-2.48.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
