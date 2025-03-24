@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-573258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5724A6D4E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:20:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4E0A6D4EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF448188D1F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD91016A496
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDD519C56D;
-	Mon, 24 Mar 2025 07:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C518A2505B8;
+	Mon, 24 Mar 2025 07:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8m2jUFN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0V0ccYw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D6718D65E;
-	Mon, 24 Mar 2025 07:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1148113A244;
+	Mon, 24 Mar 2025 07:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800793; cv=none; b=t+2SgEsmWSWg+8wGsAFxt2qpu+PhCk5kg2xyQU0KEhg9NsYlYQ2xu6D9PkwWgx66o4Ff3gx6JD9NWpW7GGwoPkKZXF2Jwu5zolTCpPgi4QbNo0M8tt+1F5A2puw5+KmIXDHqv8r+crc+5KthpzgDoBxl1eMpPFxbGBiKtg23HXk=
+	t=1742800878; cv=none; b=TbNHQi4s0xPg5cWBvbte8DkKobAzdaoTuzX2DW1TLTPfL+dnmDtIJ5+XAeyL61B+FXfXpuBQ9dTb3o9fWRTMffiEXJMLz/+it3IEkIszRAlV58VYsM3xRGaKR4M+BxvEmga0I9SeCHAf7no3D4O5QqnrXkoSJoBVI0wPjBI8hJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800793; c=relaxed/simple;
-	bh=2GetM2IGOY5ME8RVRd+C5jKk3BERunSkKsBZ1Wyayyg=;
+	s=arc-20240116; t=1742800878; c=relaxed/simple;
+	bh=hZOLeXM0Ug3C3TwPfT34U466/uiJ/FqJQwwx+ag0N2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HSGJ6FAREWZe9UP6MCQe66e6Iwo+m5yJzIsjpletV4aw0vqEDmo89qZ6BzxXOL0fuIvHgi8L8WWf2/wu3bzKkJbHrIbKQ1rFBmG7ve1xfBIcOS7ivP2FE3jdXj8sEQs+v2jGeh+OTsK60bo/YDstswzA15Z//W8Xs5v+MjGuZgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8m2jUFN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33CD2C4CEDD;
-	Mon, 24 Mar 2025 07:19:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cW0oT2cogozuFkaeYURQYrBOFlg82Xi7YQLHozWjO1mKTe7+V3rRib8it7JNkXaeA5kWgPRaA9a7GM8hRHmyM8Cxs0VCvJpClYf21mTHBqND++Kb8GBxTptsY27MbB6EI/X93RtV2XLMmU5hv+6G8GveaBjyrG8iVO7s9qBsPk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0V0ccYw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DBC8C4CEDD;
+	Mon, 24 Mar 2025 07:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742800793;
-	bh=2GetM2IGOY5ME8RVRd+C5jKk3BERunSkKsBZ1Wyayyg=;
+	s=k20201202; t=1742800877;
+	bh=hZOLeXM0Ug3C3TwPfT34U466/uiJ/FqJQwwx+ag0N2o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C8m2jUFNIoWNw0jTghEyNrcEpqjIt+gCemltQi50mMX3D7tmAThDLas4Lc1ARBhEh
-	 CRfBvNS+bFMYxuQ3z7lBQ/NqcUJV/BZkC2u9F+p2Rj7O6LERb4YluABNZHPkb/hppG
-	 G3iX6GaDufIbU6rlt4SXBMBpSbuH/IHf9tO6ztSrnCwU/TVegX992QMevCL2SvD52z
-	 uZ0KB4s0vWohbmPPS+Vj/CSxcwwfo24sSqiV9784PKJl2AZtL07OFJN5fPF2y8ryMP
-	 kmmPjzmWD/MN6wGR3OgJajhca3TrITTrgr4CzBzdcYZmwtSa9hc0XqgFz+tXfPvkiL
-	 7bYvLUzEYflRA==
-Message-ID: <39968d11-1b7d-4453-8350-26ed31dae02f@kernel.org>
-Date: Mon, 24 Mar 2025 08:19:45 +0100
+	b=V0V0ccYw3vDZ2ElMfWTcMXj8wMmna3rIjzOrMW6fNWlJR33R4JjLz0U/qebJT6bjm
+	 /stdXKZkCGLYpqPBsFaUGTaBUuo2RzfZvlOeoOLQ/d8NrIEKl0wZrPcorqX5ozv19c
+	 bazQG3zZnkL3n1LwJaIc7dKQYxHoq6WVY9QG0MH1exCiCLBnOfCwMJAJr8yhir90Vy
+	 tWH3jRHRE9WTpm7VAawb5JMOb3CGlmNVWBES5+zMxdMiPdasSt/aEFNZWnNdofWKBy
+	 stdik79Y1ltOAu15zDuRr6SKLw1ZkFA9Yoa2nIa8CU1xvYNdrdF/5k+E9sEHqYoyRW
+	 5V2nzVRF7ajjw==
+Message-ID: <994cb954-f3c4-4a44-800e-9303787c1be9@kernel.org>
+Date: Mon, 24 Mar 2025 08:21:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: PCI: xilinx-cpm: Add reset-gpios for
- PCIe RP PERST#
-To: "Musham, Sai Krishna" <sai.krishna.musham@amd.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
- <kw@linux.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+ AST2600-i2cv2
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+ "joel@jms.id.au" <joel@jms.id.au>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
  "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
  <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "cassel@kernel.org" <cassel@kernel.org>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
  "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Simek, Michal" <michal.simek@amd.com>,
- "Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>,
- "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
-References: <20250318092648.2298280-1-sai.krishna.musham@amd.com>
- <20250318092648.2298280-2-sai.krishna.musham@amd.com>
- <afe7947b-ed71-40d0-aa2e-b16549fc6b7d@kernel.org>
- <DM4PR12MB6158F761C80CA82B59FC0634CDDB2@DM4PR12MB6158.namprd12.prod.outlook.com>
+ Mo Elbadry <elbadrym@google.com>
+References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
+ <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
+ <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
+ <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <50327725-f3b8-4a8b-94a2-85afccd2868a@kernel.org>
+ <OS8PR06MB7541B0DBC64B3EF6838DFE74F2CD2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <d1b184c5-84c1-4d76-a1d0-a9f37f1e363c@kernel.org>
+ <OS8PR06MB7541D1D2E16C5E77037F3BB0F2CB2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <069b9fe4-c54a-4efd-923e-1558c59fe3f4@kernel.org>
+ <OS8PR06MB7541C69AB8E6425313DA8606F2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <677cb075-24ae-45d8-bfb4-9b23fbacc5df@kernel.org>
+ <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,64 +125,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <DM4PR12MB6158F761C80CA82B59FC0634CDDB2@DM4PR12MB6158.namprd12.prod.outlook.com>
+In-Reply-To: <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/03/2025 10:42, Musham, Sai Krishna wrote:
-> [AMD Official Use Only - AMD Internal Distribution Only]
-> 
-> Hi Krzysztof,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Tuesday, March 18, 2025 3:23 PM
->> To: Musham, Sai Krishna <sai.krishna.musham@amd.com>;
->> bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
->> manivannan.sadhasivam@linaro.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; cassel@kernel.org
->> Cc: linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>; Gogada, Bharat
->> Kumar <bharat.kumar.gogada@amd.com>; Havalige, Thippeswamy
->> <thippeswamy.havalige@amd.com>
->> Subject: Re: [PATCH v4 1/2] dt-bindings: PCI: xilinx-cpm: Add reset-gpios for PCIe
->> RP PERST#
+On 19/03/2025 12:12, Ryan Chen wrote:
+>> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+>> AST2600-i2cv2
 >>
->> Caution: This message originated from an External Source. Use proper caution
->> when opening attachments, clicking links, or responding.
->>
->>
->> On 18/03/2025 10:26, Sai Krishna Musham wrote:
->>> Changes for v2:
->>> - Add define from include/dt-bindings/gpio/gpio.h for PERST# polarity
->>> - Update commit message
->>> ---
->>>  .../bindings/pci/xilinx-versal-cpm.yaml       | 21 ++++++++++++++-----
->>>  1 file changed, 16 insertions(+), 5 deletions(-)
+>> On 17/03/2025 10:21, Ryan Chen wrote:
+>>>> Neither this.
+>>>>
+>>>> So it seems you describe already existing and documented I2C, but for
+>>>> some reason you want second compatible. The problem is that you do
+>>>> not provide reason from the point of view of bindings.
+>>>>
+>>>> To summarize: what your users want - don't care. Start properly
+>>>> describing hardware and your SoC.
 >>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
->>> b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
->>> index d674a24c8ccc..904594138af2 100644
->>> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
->>> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
->>> @@ -24,15 +24,20 @@ properties:
->>>      items:
->>>        - description: CPM system level control and status registers.
->>>        - description: Configuration space region and bridge registers.
->>> +      - description: CPM clock and reset control registers.
->>>        - description: CPM5 control and status registers.
->>
->> You cannot add items to the middle, that's an ABI break. Adding required properties
->> is also an ABI break. Why you cannot add it to the end of the list?
->>
->> Or at least explain ABI break impact in commit msg?
->>
-> When I add property at the end, I'm observing failure during dt_binding_check.
-> $ make DT_CHECKER_FLAGS=-m dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-> Documentation/devicetree/bindings/pci/xilinx-versal-cpm.example.dtb: pcie@fca10000: reg-names:2: 'cpm_csr' was expected
->         from schema $id: http://devicetree.org/schemas/pci/xilinx-versal-cpm.yaml#
-Maybe for a good reason.
+>>> OK, for ast2600 i2c controller have two register mode setting.
+>>> One, I call it is old register setting, that is right now i2c-aspeed.c
+>>> .compatible = "aspeed,ast2600-i2c-bus", And there have a global register
+>> that can set i2c controller as new mode register set.
+>>> That I am going to drive. That I post is all register in new an old register list.
+>>>
+>>> For example,
+>>> Global register [2] = 0 => i2c present as old register set Global
+>>> register [2] = 1 => i2c present as new register set
+>> It's the same device though, so the same compatible.
+> 
+> Sorry, it is different design, and it share the same register space.
+> So that the reason add new compatible "aspeed,ast2600-i2cv2" for this driver.
+> It is different register layout.
+
+Which device is described by the existing "aspeed,ast2600-i2c-bus"
+compatible? And which device is described by new compatible?
+
+
 
 Best regards,
 Krzysztof
