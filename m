@@ -1,132 +1,274 @@
-Return-Path: <linux-kernel+bounces-573253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678BEA6D4D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:16:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF30A6D4C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AD5416F1BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677703A6020
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CA5250C12;
-	Mon, 24 Mar 2025 07:14:27 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CF7250BF1;
+	Mon, 24 Mar 2025 07:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hw8d9A3G"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F7C2505C3;
-	Mon, 24 Mar 2025 07:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36452500C9;
+	Mon, 24 Mar 2025 07:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800467; cv=none; b=o/jjqLZXEtGfrvoxfb9syQft+rKTCNvxrZf4f0L2prktti9yUXLsrBg3oxjce1MZEe63DlA71kuSecGv8xJdkF/O3lfZjsT/9Fl6lKWsTpP3vRz+nqyKt6u+09uNqyMoHsMVqJseKdDjYLPoxzA6iQs6pGdk50acKAXxQhJ/6AA=
+	t=1742800419; cv=none; b=KTiBNExw3zZF+H8S51sGt/4nSnYaW4V3Yo6VRtzzuRIkn2GTZmg/HxPQaasqpL1WUAGGTr9O1jEkNQfvhqMeB/VEyOsaWZcVxZSsVWyzKC66J0xw+TK9b6Pd/meDNHqzzflpIghjveP8ehfLzPY6ua5z7PhcE4KNy1Odr3WM/lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800467; c=relaxed/simple;
-	bh=kEBFPGNKRmD867OotAxEjTRBog9XzrLq+S+e6KpyV3U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uurmA8ZGcCcqyPGtl+xSQSklkqSoOKAdO4Dnk+m3bPHl7VIknf4zwksUfTtwXzFviHBko+lhYBOUTCLbAUU+dWMMvRVyueWwLplyOiwoQZlK2hqBPxWJ+ugt0eFdDSRh+m7JxPeBtyLbauL6QPfXIEWoT+OuJ7JKQVgVY5nvFpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O60OU9018528;
-	Mon, 24 Mar 2025 00:13:32 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45hrg41m8u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 24 Mar 2025 00:13:32 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 24 Mar 2025 00:13:31 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 24 Mar 2025 00:13:29 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>,
-        <sfrench@samba.org>, <linux-cifs@vger.kernel.org>,
-        <samba-technical@lists.samba.org>, <pc@manguebit.com>,
-        <stfrench@microsoft.com>
-Subject: [PATCH 5.10.y] smb: client: fix potential UAF in cifs_debug_files_proc_show()
-Date: Mon, 24 Mar 2025 15:13:28 +0800
-Message-ID: <20250324071328.3796049-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742800419; c=relaxed/simple;
+	bh=NSMSptKDxxA+mg30jX+nwXZbs8BZotVym0oijYtttek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVNVhXCSRBB/71SgIJ8TyOQGA3iVdMs/HeMux+BoUdWjGYy23HmRA1US1KM8aPa5HcvzxE5VHwYUe7ibcelgeY9XYdlLSYlf0rwRqW4pN1hx2/5aAJI47T8b7lGLNLJRedfs5siq+mZvLlGOWnuYdDHod6bk9COWkIBxHn4FzQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hw8d9A3G; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-307325f2436so41157841fa.0;
+        Mon, 24 Mar 2025 00:13:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742800416; x=1743405216; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HgmO3spMSV3ya0XSwKi8qyhViZcHQWh3KY5h+If7iMY=;
+        b=hw8d9A3Gcr926gg4o2QvnJgFniuqgpqke/PW0ttU3C+dnFj4LVNlKKauKREZ5OBucV
+         02iB4VZk5Sy6cxntLHf6GPBNUTZ6nrcAMGlID937ISLbBhhQU8XziXUT6K7+jZ4b3l3c
+         fEf9cXyOJbfdPjdd/Ba3FDMQKmEG9GWKJSUI5UzE8M1MCbVdOmjnk919h3D5s8/m6Es0
+         b6KknmtqOemKIG6VcUCUbjfy5vTHTgUUeMIN4DS7wHfJknQmdf/L2JsGAXiMe3CPOTiq
+         hvtqCb332CwVwLtj3wX7Ddg35+qnLPCsk3CS+JQTu0oC7z3uOF7qCxhIV0sYH1NVMPuT
+         /JAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742800416; x=1743405216;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HgmO3spMSV3ya0XSwKi8qyhViZcHQWh3KY5h+If7iMY=;
+        b=VYLwy1lNO5y7GvzWkCbRgPFJ63pA8Jp4xFZ7W21v4T1bn3bLy5gIE94CB8UN+N+wUk
+         iZ/7ou6/R6Sj5GHPJal2RL1y6KvtUostc0TDU4x94jCQGytqOLz93sboWBoA5Kms+G5Y
+         RDSgKnkeyvc3uB2K1GN4rYGzoYXyxb7s6H7u9ujMVbvdyAsIDELiMJQuLmohdlkyNWlP
+         RcCFmcMhDntX3DyXjqMOzofdS06+ynFlcV3IIlrFRF8mkMQB1Vd9dLuvt8uZXQObOJSj
+         nSn7oEIyrG8GjOuDVFrYgr0AeF71uY9ddNm/zUIStMIAN7WsJQq6HP00i3sRhcj3poFr
+         NI3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVkS2nECM6Zt+qBtHfqy4Y50bs6WOTfzlv6ebDaWj6/yejyg98k+8Ex/au/FXSRBxGvZbHwCZCngLk=@vger.kernel.org, AJvYcCXYOwkZCpsyuMM9rjoGoE2TVlJFAJ/qir7mzky6MZxtV6PEw1aWtg0Dc+durneN2c5Ik7I1zyKe94ldbAzl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFIrc/d2w4mvtxTZ58JeOa2S0qBVJnLHzo+QIHbTrxGljXkO1O
+	ms5BPopbLz62TkpQy0h6iyTmCJXxzsn8jdq2e6DjQvrjc+c6wfcaq9Taog==
+X-Gm-Gg: ASbGnctmAEKLweVBXTbf3gjFU04JSHmJGT5ZKb2MkJXMHCG74QJuf28YJYV0fVUW3NY
+	FeNBBGUJiH6vJB4c4KeC+crysJxnHUVYaegM6apvpzvvaqwHtkejEHfUeRpi+r+1JvMeOGqkbH7
+	e+VEjfKvx+D79C1u3bGstT9gbO5u5DBgVUWKec5LD0Fb0/RbmvLXfiZAAFcNIpCsjF7HszyE1DX
+	xrkB9bX3hIn8FJ701USUdBFgdSkLemc1qANSCbRHjJJpZ96cpRBeneP+t5qZKZ27qitOPbhBSDq
+	k4VjYsm6jWIVbBzNpYn5oVOWbHFsXpF5xtPxABGU26obxYOppHs=
+X-Google-Smtp-Source: AGHT+IHvmMZhQ7UINc12GkdV/NNFv5twVruKqPihFFYmoT9ixDrjCc0MP+dwSTZVKrnR+Hoq28l74Q==
+X-Received: by 2002:a2e:bc1d:0:b0:30c:2ff9:913f with SMTP id 38308e7fff4ca-30d7e202fcemr42821831fa.2.1742800415667;
+        Mon, 24 Mar 2025 00:13:35 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d913196sm12558171fa.109.2025.03.24.00.13.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 00:13:33 -0700 (PDT)
+Date: Mon, 24 Mar 2025 09:13:28 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH v10 5/8] iio: adc: sun20i-gpadc: Use adc-helpers
+Message-ID: <e367a803c0d625e60c9fca16c55a25eee06b5a89.1742560649.git.mazziesaccount@gmail.com>
+References: <cover.1742560649.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=HZwUTjE8 c=1 sm=1 tr=0 ts=67e1061c cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=Vs1iUdzkB0EA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=F951-fjzzYaKpzs5SyQA:9
- a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: cr_-suQoDhQQRyiZKq9F-V8BUXZ247Th
-X-Proofpoint-ORIG-GUID: cr_-suQoDhQQRyiZKq9F-V8BUXZ247Th
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 phishscore=0 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=995 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503240051
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sLfxLgpI+RSOHiBu"
+Content-Disposition: inline
+In-Reply-To: <cover.1742560649.git.mazziesaccount@gmail.com>
 
-From: Paulo Alcantara <pc@manguebit.com>
 
-[ Upstream commit ca545b7f0823f19db0f1148d59bc5e1a56634502 ]
+--sLfxLgpI+RSOHiBu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Skip sessions that are being teared down (status == SES_EXITING) to
-avoid UAF.
+The new devm_iio_adc_device_alloc_chaninfo_se() -helper is intended to
+help drivers avoid open-coding the for_each_node -loop for getting the
+channel IDs. The helper provides standard way to detect the ADC channel
+nodes (by the node name), and a standard way to convert the "reg"
+-properties to channel identification numbers, used in the struct
+iio_chan_spec. Furthermore, the helper can optionally check the found
+channel IDs are smaller than given maximum. This is useful for callers
+which later use the IDs for example for indexing a channel data array.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[This patch removes lock/unlock operation in routine cifs_ses_exiting()
-for ses_lock is not present in v5.10 and not ported yet. ses->status
-is protected by a global lock, cifs_tcp_ses_lock, in v5.10.]
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+The original driver treated all found child nodes as channel nodes. The
+new helper requires channel nodes to be named channel[@N]. This should
+help avoid problems with devices which may contain also other but ADC
+child nodes. Quick grep from arch/* with the sun20i-gpadc's compatible
+string didn't reveal any in-tree .dts with channel nodes named
+otherwise. Also, same grep shows all the in-tree .dts seem to have
+channel IDs between 0..num of channels.
+
+Use the new helper.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
 ---
-Verified the build test
----
- fs/cifs/cifs_debug.c | 2 ++
- fs/cifs/cifsglob.h   | 8 ++++++++
- 2 files changed, 10 insertions(+)
+NOTE: This change now drops a print "no channel children" which used to
+be printed if no channel nodes were found. It also changes the return
+value from -ENODEV to -ENOENT.
 
-diff --git a/fs/cifs/cifs_debug.c b/fs/cifs/cifs_debug.c
-index 53588d7517b4..8b88b0705481 100644
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -183,6 +183,8 @@ static int cifs_debug_files_proc_show(struct seq_file *m, void *v)
- 				    tcp_ses_list);
- 		list_for_each(tmp, &server->smb_ses_list) {
- 			ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
-+			if (cifs_ses_exiting(ses))
-+				continue;
- 			list_for_each(tmp1, &ses->tcon_list) {
- 				tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
- 				spin_lock(&tcon->open_file_lock);
-diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-index 92a7628560cc..b4aa7cd3a914 100644
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -2115,4 +2115,12 @@ static inline struct scatterlist *cifs_sg_set_buf(struct scatterlist *sg,
- 	return sg;
+Revision history:
+v8 =3D>
+ - No changes
+v7 =3D> v8:
+ - drop explicit "no channels check". It is now done inside the
+   devm_iio_adc_device_alloc_chaninfo_se().
+v6 =3D> v7:
+ - Fix function name in the commit message
+v5 =3D> v6:
+ - Commit message typofix
+v4 =3D> v5:
+ - Drop the diff-channel stuff from the commit message
+v3 =3D> v4:
+ - Adapt to 'drop diff-channel support' changes to ADC-helpers
+ - select ADC helpers in the Kconfig
+v2 =3D> v3:
+ - New patch
+
+I picked the sun20i-gpadc in this series because it has a straightforward
+approach for populating the struct iio_chan_spec. Everything else except
+the .channel can use 'template'-data.
+
+This makes the sun20i-gpadc well suited to be an example user of this new
+helper. I hope this patch helps to evaluate whether these helpers are worth
+the hassle.
+
+The change is compile tested only!! Testing before applying is highly
+appreciated (as always!). Also, even though I tried to audit the dts
+files for the reg-properties in the channel nodes, use of references
+didn't make it easy. I can't guarantee I didn't miss anything.
+---
+ drivers/iio/adc/Kconfig            |  1 +
+ drivers/iio/adc/sun20i-gpadc-iio.c | 39 +++++++++++-------------------
+ 2 files changed, 15 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index e4933de0c366..0993008a1586 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -1357,6 +1357,7 @@ config SUN4I_GPADC
+ config SUN20I_GPADC
+ 	tristate "Allwinner D1/T113s/T507/R329 and similar GPADCs driver"
+ 	depends on ARCH_SUNXI || COMPILE_TEST
++	select IIO_ADC_HELPER
+ 	help
+ 	  Say yes here to build support for Allwinner (D1, T113, T507 and R329)
+ 	  SoCs GPADC. This ADC provides up to 16 channels.
+diff --git a/drivers/iio/adc/sun20i-gpadc-iio.c b/drivers/iio/adc/sun20i-gp=
+adc-iio.c
+index 136b8d9c294f..2428ea69d676 100644
+--- a/drivers/iio/adc/sun20i-gpadc-iio.c
++++ b/drivers/iio/adc/sun20i-gpadc-iio.c
+@@ -15,6 +15,7 @@
+ #include <linux/property.h>
+ #include <linux/reset.h>
+=20
++#include <linux/iio/adc-helpers.h>
+ #include <linux/iio/iio.h>
+=20
+ #define SUN20I_GPADC_DRIVER_NAME	"sun20i-gpadc"
+@@ -149,36 +150,23 @@ static void sun20i_gpadc_reset_assert(void *data)
+ 	reset_control_assert(rst);
  }
- 
-+static inline bool cifs_ses_exiting(struct cifs_ses *ses)
-+{
-+	bool ret;
+=20
++static const struct iio_chan_spec sun20i_gpadc_chan_template =3D {
++	.type =3D IIO_VOLTAGE,
++	.indexed =3D 1,
++	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
++	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),
++};
 +
-+	ret = ses->status == CifsExiting;
-+	return ret;
-+}
-+
- #endif	/* _CIFS_GLOB_H */
--- 
-2.25.1
+ static int sun20i_gpadc_alloc_channels(struct iio_dev *indio_dev,
+ 				       struct device *dev)
+ {
+-	unsigned int channel;
+-	int num_channels, i, ret;
++	int num_channels;
+ 	struct iio_chan_spec *channels;
+=20
+-	num_channels =3D device_get_child_node_count(dev);
+-	if (num_channels =3D=3D 0)
+-		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+-
+-	channels =3D devm_kcalloc(dev, num_channels, sizeof(*channels),
+-				GFP_KERNEL);
+-	if (!channels)
+-		return -ENOMEM;
+-
+-	i =3D 0;
+-	device_for_each_child_node_scoped(dev, node) {
+-		ret =3D fwnode_property_read_u32(node, "reg", &channel);
+-		if (ret)
+-			return dev_err_probe(dev, ret, "invalid channel number\n");
+-
+-		channels[i].type =3D IIO_VOLTAGE;
+-		channels[i].indexed =3D 1;
+-		channels[i].channel =3D channel;
+-		channels[i].info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW);
+-		channels[i].info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE);
+-
+-		i++;
+-	}
++	num_channels =3D devm_iio_adc_device_alloc_chaninfo_se(dev,
++				&sun20i_gpadc_chan_template, -1, &channels);
++	if (num_channels < 0)
++		return num_channels;
+=20
+ 	indio_dev->channels =3D channels;
+ 	indio_dev->num_channels =3D num_channels;
+@@ -271,3 +259,4 @@ module_platform_driver(sun20i_gpadc_driver);
+ MODULE_DESCRIPTION("ADC driver for sunxi platforms");
+ MODULE_AUTHOR("Maksim Kiselev <bigunclemax@gmail.com>");
+ MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS("IIO_DRIVER");
+--=20
+2.49.0
 
+
+--sLfxLgpI+RSOHiBu
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhBhgACgkQeFA3/03a
+ocWpAQgAtegzSV9b1MqKbin6TsL4sVZQhZBySnTY3uMGX61W160CWt2mo5soZW3q
+gIRhD6/UED57xk8uEGDMZBfhh82692r/hNo8n7xviFaLGyNsjUHwrfTUU3P4piiz
+oiUFe1ouZy6Wr0HDDLiH3UVA4d7nVInoRRQwjS+JHEYAgAW9uSZdEPFO8Rttu8Zz
+SEJlDv0S/7tNWcOd/se0xY9q/wWNVscGP5HKoTnLyuhM9o2FGMyj3v7pE726ZTf3
+18s85OQuuADurNKaLCC27j7SngXG09vpxygdfYde4/kBUluLoywjGtnCmYWU2ROh
+m+SKv/ht5dpPDhR2XQbpUEu/wT3hTQ==
+=/T4m
+-----END PGP SIGNATURE-----
+
+--sLfxLgpI+RSOHiBu--
 
