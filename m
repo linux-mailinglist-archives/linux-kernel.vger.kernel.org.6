@@ -1,206 +1,154 @@
-Return-Path: <linux-kernel+bounces-573363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35231A6D64B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:37:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C12CA6D65C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07B7188CF5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 748283B14B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49A325D539;
-	Mon, 24 Mar 2025 08:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AC25D8E0;
+	Mon, 24 Mar 2025 08:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oPyNA8TW"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="m7WG47WK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4253C200CB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B125D52C;
+	Mon, 24 Mar 2025 08:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805453; cv=none; b=dtM8AfGkW2VDXusqX0gJi28hG1zKN4y9rVGRIbMiMXvZ5BJB8/36FgQyMuDxqLTTy/WNcs1iAD4ECp7y0trTYFTxDN+TITKqCR11iDhTag58E7NGgSeHsIJw4SO0iMuTGPwO5AUTC/dyQGsZNuiB+3op1wZJTi+UTY2wYAXV18E=
+	t=1742805457; cv=none; b=n7F2j5kw47PtrXmAOvL5fRYSDaBk80B+J5gryzldL9TW7rSjZay9ltxqYb2D5IMeX7TnCxSRi+Pxl4PzTmCtaka3gVdsLLd23V3gmeUTcqZUIbxLQNs+D+XL/Ej15Qhv4ZjoPMAAzSfvucZKTcf+ODibMqMIkP+TDYFGm8z7aLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805453; c=relaxed/simple;
-	bh=x7M8kfO9ZWk0O+/183B2qw+TXk5OXy89eMjQrV+Shxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VIGhdzA+H/T6iV1rapHyWTk886CeySUFgoXTwHIeaIoKGlRYupchFTq1ZPpvfBlsUor3Ini6PPLdSxvKx+lI048VWDT2i6frfjOf6vbJ3vTiaKAJcsS8xVkmIuOEE1tSOlKGRR4XhSvjwcHkIazjSQocEpWInmZuffNc/l5rcWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oPyNA8TW; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22435603572so69652015ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742805449; x=1743410249; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2s6YbLy4nW+jYW+2j4zgOCotGnhPTE4p9OSJFGAI4n8=;
-        b=oPyNA8TWKv6xm6QyLf3mPW4Mxt1v/RPJkmw2/tmVb7N2R06hjGGe2EppOnZyYCXfhT
-         U1hbNkT2wUBkLhsl9TEsauXfycQlY2lOF1lkVIyT4UjDSsG7svLISKgENLquakFbrR95
-         dWt08uF4THhTYe5kS5saq8poS1qU2LQR9khNBIXTMIrmdHSW/ZYmfcE4qyB6oxSPgSmY
-         EX5QQQi0G1F/k4emeNDAgkbFu87gUYVVsNoRPo+6SYtWh8kuvnlMG6DXr8CuzbCmKuFM
-         T8UHtkxG0xY6tcK/3HcBZK0WBM5Rl0V/g4sGd7cVR4CwfI3JtLU+G/4K3AiUSBfDvLMV
-         qC+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742805449; x=1743410249;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2s6YbLy4nW+jYW+2j4zgOCotGnhPTE4p9OSJFGAI4n8=;
-        b=R9KguMWgeLIAbpz8SEFhpi8ZLEeW3nFwGBGlvoznTzCiwKiC3mHRkcSaFmStg+OSd1
-         3rqlngW60JT0tTk1y4ifdavbNEKknktaTfrhGjaQGkSoTXPTaSfUhZsfiyM9L/XZMoVw
-         IDOq9J+PCMyKqduunKomnUct3DhnG+3JtpQgYwR6RQekaF7mEU3VYJIhAqKYBtKo68jj
-         AFF2uzyMduEGXwGo5hKYxs/f6t7121LkU8A1Er0/VpBXoHLJblvwwwzyL7leQp5W3CGh
-         LZccLibW1Qy2ArSCgW5haXfVwFcQURntJeL9KuUG20+Cn86wXsscXSiS294C3oYK17u5
-         u04g==
-X-Forwarded-Encrypted: i=1; AJvYcCUbcKWGjttTI7E0WqflA2LhFMxmqy/Hlf862EKAYHZMoRrEctBry6k69/V+ifbPP1Mthaa0hfj0RaRyKxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX60/qAQxABIW6CM2M81XVFVVUHtBR05CCKY0A1fMkc43a5k5l
-	TKXTLv2gs/M6y9DrA+9bBdvprlE8sjS0ZbR1axdkgB4i9TEGqu4+Wo8N/jtivGo=
-X-Gm-Gg: ASbGncuxU8UQPNbifwaxU51wtddi1jCXWTzTvGNtASFUTWT9K50d9jCqVe/sn+L/fad
-	SAM+vC9v6kmfuEiVCXWxGRzDWPFXimSsdX1fGtlkMJuNESRkzjlUCYeXuQ6e0LU/9tVAuCV7Dr7
-	euX6DuNC34tvnh/Rl7AwHNHJe5yS+oMTTJ4k9ygDsuyIei+0muGwjurWff3bNbJvhpsUSj/w4PA
-	cmh9mRCgyUwFnh4jLVaMjPLikKxk6hcg8b11e+Tym9n0gTc+tn5MUDKsEGhk04+zzqspKTkYByb
-	OzV51E88N3EEsA/Tb1o4K6/KusRxnILr+rZjzmMfIoRtdfX3hMVPY15njcXOK8AjXTkRj1gVV47
-	VsY+bfOQz0uzwXA==
-X-Google-Smtp-Source: AGHT+IGyDIlFsMFtDafxJbgUfgP/qTb6rCAL5yHNPveThhrNUx+dqUwr1+vxGkhJvulgvlhTLqQIxQ==
-X-Received: by 2002:a05:6a21:7a90:b0:1f5:902e:1e97 with SMTP id adf61e73a8af0-1fe4331934bmr20590058637.41.1742805449356;
-        Mon, 24 Mar 2025 01:37:29 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa980asm7587742b3a.11.2025.03.24.01.37.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 01:37:28 -0700 (PDT)
-Message-ID: <ea14978a-f29f-45a2-acff-5585c81f4ca6@rivosinc.com>
-Date: Mon, 24 Mar 2025 09:37:17 +0100
+	s=arc-20240116; t=1742805457; c=relaxed/simple;
+	bh=D69SC+5FQc2WAFqCzWqeK4ofTdNQe+cRvdH05Lz/0Ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ag2KdrBhwHiRz7AVfWe2kHyzvV7YK1b/v+F019NDIXAT07D73vWVPLz3eEozFQKyqQW2y76D3jUcl7mtBNH7R0US3sNIAjHNHDmtkofto5zMv+HtVYeuX6L+axd2hLnZZwNkEslt0gID9c1PKInCSdmUyLMzNotjFjad51T37GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=m7WG47WK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742805450;
+	bh=dGrsEpWWQThTpylnaO8MjPKqdNf2MabWrZhjdBJLAlU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=m7WG47WKYD8yWyYb8XYQL/uuVvGYZP6QuAMUfQiiGTNawr7xM+EVC9R1BQk1PjlSR
+	 2TKGzzV8vzeoyZRE/Ov641eQLedFr2OYaouLZXcNAV6+HBMCIu07s4P7T7ieYzzojm
+	 RdnPQjbAtA+h9rtLn4iw1uKPJPmB4IIhp/l+16tvjxy8BuqAkAypQzfPwiDlzMfm2z
+	 DxlcrUaNPJ9xiEj3qVGc13EqJQCC1UnpdjHx+bpbsLpYGtiUzt8L13JR+kvuwHkOEu
+	 +B1f+ZTYNvLWDCTsTIp8R1cJ8MzCiMVRV2ErWkcHLS1M9hgARF09pBX7qEFHFaKN7D
+	 KBYpd1yuXhtNA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLmdQ0117z4wbn;
+	Mon, 24 Mar 2025 19:37:29 +1100 (AEDT)
+Date: Mon, 24 Mar 2025 19:37:28 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sherry Sun
+ <sherry.sun@nxp.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tty tree
+Message-ID: <20250324193728.4af92ccc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/18] riscv: sbi: add SBI FWFT extension calls
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <20250317170625.1142870-1-cleger@rivosinc.com>
- <20250317170625.1142870-5-cleger@rivosinc.com>
- <20250322-62ad16eaf41abd98170fa6bb@orel>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250322-62ad16eaf41abd98170fa6bb@orel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/kH8wyLagAvfHnj_cEOSj3hM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/kH8wyLagAvfHnj_cEOSj3hM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 22/03/2025 13:14, Andrew Jones wrote:
-> On Mon, Mar 17, 2025 at 06:06:10PM +0100, Clément Léger wrote:
->> Add FWFT extension calls. This will be ratified in SBI V3.0 hence, it is
->> provided as a separate commit that can be left out if needed.
->>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->>  arch/riscv/kernel/sbi.c | 30 ++++++++++++++++++++++++++++--
->>  1 file changed, 28 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
->> index d41a5642be24..54d9ceb7b723 100644
->> --- a/arch/riscv/kernel/sbi.c
->> +++ b/arch/riscv/kernel/sbi.c
->> @@ -299,6 +299,8 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->>  	return 0;
->>  }
->>  
->> +static bool sbi_fwft_supported;
->> +
->>  /**
->>   * sbi_fwft_get() - Get a feature for the local hart
->>   * @feature: The feature ID to be set
->> @@ -308,7 +310,15 @@ static int __sbi_rfence_v02(int fid, const struct cpumask *cpu_mask,
->>   */
->>  int sbi_fwft_get(u32 feature, unsigned long *value)
->>  {
->> -	return -EOPNOTSUPP;
->> +	struct sbiret ret;
->> +
->> +	if (!sbi_fwft_supported)
->> +		return -EOPNOTSUPP;
->> +
->> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_GET,
->> +			feature, 0, 0, 0, 0, 0);
-> 
-> We're missing the
-> 
->  if (!ret)
->     *value = ret.value;
-> 
-> part.
+After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Damn, and even worse it isn't used at all. I'll probably remove it
-entirely and keep the strict minimum for this series.
+drivers/tty/serial/fsl_lpuart.c: In function 'lpuart_poll_init':
+drivers/tty/serial/fsl_lpuart.c:642:29: error: unused variable 'sport' [-We=
+rror=3Dunused-variable]
+  642 |         struct lpuart_port *sport =3D container_of(port,
+      |                             ^~~~~
+drivers/tty/serial/fsl_lpuart.c: In function 'lpuart32_poll_init':
+drivers/tty/serial/fsl_lpuart.c:696:29: error: unused variable 'sport' [-We=
+rror=3Dunused-variable]
+  696 |         struct lpuart_port *sport =3D container_of(port, struct lpu=
+art_port, port);
+      |                             ^~~~~
+cc1: all warnings being treated as errors
 
-Thanks,
+Caused by commit
 
-Clément
+  3cc16ae096f1 ("tty: serial: fsl_lpuart: use port struct directly to simpl=
+y code")
 
-> 
->> +
->> +	return sbi_err_map_linux_errno(ret.error);
->>  }
->>  
->>  /**
->> @@ -321,7 +331,15 @@ int sbi_fwft_get(u32 feature, unsigned long *value)
->>   */
->>  int sbi_fwft_set(u32 feature, unsigned long value, unsigned long flags)
->>  {
->> -	return -EOPNOTSUPP;
->> +	struct sbiret ret;
->> +
->> +	if (!sbi_fwft_supported)
->> +		return -EOPNOTSUPP;
->> +
->> +	ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
->> +			feature, value, flags, 0, 0, 0);
->> +
->> +	return sbi_err_map_linux_errno(ret.error);
->>  }
->>  
->>  struct fwft_set_req {
->> @@ -360,6 +378,9 @@ int sbi_fwft_local_set_cpumask(const cpumask_t *mask, u32 feature,
->>  		.error = ATOMIC_INIT(0),
->>  	};
->>  
->> +	if (!sbi_fwft_supported)
->> +		return -EOPNOTSUPP;
->> +
->>  	if (feature & SBI_FWFT_GLOBAL_FEATURE_BIT)
->>  		return -EINVAL;
->>  
->> @@ -691,6 +712,11 @@ void __init sbi_init(void)
->>  			pr_info("SBI DBCN extension detected\n");
->>  			sbi_debug_console_available = true;
->>  		}
->> +		if ((sbi_spec_version >= sbi_mk_version(3, 0)) &&
->> +		    (sbi_probe_extension(SBI_EXT_FWFT) > 0)) {
->> +			pr_info("SBI FWFT extension detected\n");
->> +			sbi_fwft_supported = true;
->> +		}
->>  	} else {
->>  		__sbi_set_timer = __sbi_set_timer_v01;
->>  		__sbi_send_ipi	= __sbi_send_ipi_v01;
->> -- 
->> 2.47.2
->>
-> 
-> Thanks,
-> drew
+I have applied the following patch for today:
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 24 Mar 2025 19:10:57 +1100
+Subject: [PATCH] fix up for "tty: serial: fsl_lpuart: use port struct direc=
+tly
+ to simply code"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/tty/serial/fsl_lpuart.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuar=
+t.c
+index 33eeefa6fa8f..4470966b826c 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -639,8 +639,6 @@ static void lpuart32_wait_bit_set(struct uart_port *por=
+t, unsigned int offset,
+=20
+ static int lpuart_poll_init(struct uart_port *port)
+ {
+-	struct lpuart_port *sport =3D container_of(port,
+-					struct lpuart_port, port);
+ 	unsigned long flags;
+ 	u8 fifo;
+=20
+@@ -693,7 +691,6 @@ static int lpuart_poll_get_char(struct uart_port *port)
+ static int lpuart32_poll_init(struct uart_port *port)
+ {
+ 	unsigned long flags;
+-	struct lpuart_port *sport =3D container_of(port, struct lpuart_port, port=
+);
+ 	u32 fifo;
+=20
+ 	port->fifosize =3D 0;
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kH8wyLagAvfHnj_cEOSj3hM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfhGcgACgkQAVBC80lX
+0Gxj+wf6A8Nz+mmyouOrNfjIEFol8Od7tyO2xm/TwkseiY4wrOfYuS4h9JVNVgR0
+HpKVLaTsJMRpmZ12XmTFrolsd72itth5gjZjFQMLYagtkWumHMdPcvvomzM7nj79
+q2Y7pk7BFXJF5qWyrCHxE6NzhI/AxrFs0PG8VXlHvcoBW/CXAfoYg5P/u7yyN5mH
+HzKBvBOZgfxeLJy3EiT9/hi97WHQA30pCMuZfyrbWFrwdYG+wEupJrq2u/GeK6eE
+rOWNCnLiks5mJGRFc/nFx76759Tl+RmnrcmcC2ffpFQ6othoss5bKi/MIsOnvn8x
+t27YKRC3nhNP7yF+Uswagb8DilcpAg==
+=b6IY
+-----END PGP SIGNATURE-----
+
+--Sig_/kH8wyLagAvfHnj_cEOSj3hM--
 
