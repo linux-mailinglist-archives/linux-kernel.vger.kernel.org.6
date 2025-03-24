@@ -1,184 +1,131 @@
-Return-Path: <linux-kernel+bounces-574103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267C8A6E099
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:09:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A749A6E0A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:10:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6409D3A7B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C903ABB25
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E81263C84;
-	Mon, 24 Mar 2025 17:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66E026461A;
+	Mon, 24 Mar 2025 17:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQqM6pJ6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVAkbcYL"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1B8263F4C;
-	Mon, 24 Mar 2025 17:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7319263F3E;
+	Mon, 24 Mar 2025 17:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742836136; cv=none; b=T77MMuzli1fA9CsKOHin8WbYkyjA6D1FGloD7ZCSJlUMFtc9mGG9bop3MvPxLeHMp6MaWgRMGjRo9hqFqcjP0brov02iVbF03+eI7JQ+Lcm7Iy6I4cx+mT9aaTubeXX4R1zTOh700sO19BwP5g8mFDFSQ1j+D/gQhnn0wLHDNnc=
+	t=1742836184; cv=none; b=spNPuZtk9eW84WezLmI5cpCGnRdRy0Y5KGHlJQsQVsM6MI5AhxgsiCgXGlgN59ku94d7WQBgRM3JISH5sfdgDHj8fuPVDMivHVtsG8roalEN9eOF4QQPUeu7jsR7X1sY1ZHcsFW3y+3EGBo/m+ULn8UcyjT3st6jpaHFFdGMdGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742836136; c=relaxed/simple;
-	bh=1RZR1rmwIvUvIXlqLuLhx6DIKSNHQjzBEPPf3ULBh4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oVSTeBuF7M6zLBnoq/H8PlIDnFrtdPwWSRkjicE0Xk+Ldzy24t0PNHv3eSBbI6ac3Pz5aBz5LS/GpIxIVbEcAR62TGE8mIAA7Y5c38ckvESjolaS1+R1ymP0+KaauNe5VEdGQek34k1YY6aS/hTwc/5TIKUI9ENMQ1uj45ARanY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQqM6pJ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14433C4CEDD;
-	Mon, 24 Mar 2025 17:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742836135;
-	bh=1RZR1rmwIvUvIXlqLuLhx6DIKSNHQjzBEPPf3ULBh4Q=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GQqM6pJ6hrG0WVxL+2u7JTWzBz8tzT6mG8+Soivw8807F2FNhTHbEh3Djkw/+qyja
-	 LANxyDPac/7mPUFg+hmxuG7orXUn04tN/rR7gdUUJCmmaQuyRPutRnxOAYkIIm/cKq
-	 lg8+oyxi3BvBWFeAxtuangUWTZeyjx7srOXebm5Rg5zel+SkWB+ZHsaxYjdcr3NtVe
-	 MLaBpIuo0SsC+8WnF+/wG4tDtOEupOrMRlL/YbK6CKGqDn5KubvJlP9TV6l+Sb3FvK
-	 VzX5oQw3mItHUhU0Kt5cZIMaiEIi5lfAi0KR1NF6F7utBlNUFIoHSSVQdwLT3xhHq2
-	 PmzO6Od09+aNw==
-Date: Mon, 24 Mar 2025 18:08:52 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: [GIT PULL] pwm: Changes for 6.15-rc1
-Message-ID: <gwhcc5df76untpl5ko4mqbt7vtxo3z4zdbqn4ehkenktt6untv@eng6ov2jmlwb>
+	s=arc-20240116; t=1742836184; c=relaxed/simple;
+	bh=YtM1xccQ9b4jm0BYJlLYAyhgiwHHbsx3miX3KYmfG5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEtElEaxZcvRx2mpROxizjDgXIya3oTbWg7XS8cP5M+hvTgUXoh2o0QnwN63tGnb79yXO0weB2VmJ3UluxHUwIGmIIe5BR5BUbFvYeFhtqBV5jOKmOauH/k/cggsc7gVK9cN9cs5ps3PyPdZcP2QP5gxg/g5KxnypXt65vgy8/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVAkbcYL; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso782829166b.1;
+        Mon, 24 Mar 2025 10:09:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742836180; x=1743440980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xkzaRWdI/oLc0o3QPM8pJTyhISa2Grm6xBDcFcXBazs=;
+        b=WVAkbcYLjc7Y8lvcMl/VavVQcHgGjsLPIxnFp9ETObTzKXxj4WZWGPz0U4QCrqfhxR
+         9ZNyhfUgmg759VROsFitZqw617VKi9OIr+K6WXMcQAkxxhiHexoIU7DoBly+HYjgfh5M
+         4CMMn5jL25peoxjCdEYf1x/Iou2cLS/mEhD6W1bLAHcP4XyI+hN49OOIq3d03TIZ1Ra6
+         6C27B3x4586ewwdmBTMMg4nc194ONiZRmDEtWvsd+KKrxCYsxsJiFOgOrweKS1lhzawR
+         VVjB7vU8W0lEhsE+9fBXuLJVvIiWykYwmFBVAvVYy9JiLB7LgV8GcPExbH5FE3BeIjdh
+         oNEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742836180; x=1743440980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xkzaRWdI/oLc0o3QPM8pJTyhISa2Grm6xBDcFcXBazs=;
+        b=U4azpD/KcyRRu2tSivN+S7XJ2wKyvfvcTtstF8FDGotL+iA/FPZKlr3E0n5iX8ZTOm
+         hKGX5hdHqyFGbJVL2DeE1ZXexY6HMMDewA+eSoiOl1vGbruZRmof5BDGutx9f5VE3GOg
+         I5Rav8VqGVTtTnIV7FQfq3l933ocgaO43OXgl0NHy/r8gh5Ekkic/YY2EOlK4Ht5EqnT
+         j/5ma4zYHAvJCzJGziXd014JhQRPgH0puAKDG1azKtWopgwqER6au4BNIp3Qm4Dc5Nqw
+         T4iuWYvPsi+h8fd2cA9/gb4UaZxHSQUp/zU982r9GAxepHs52FRLG/XsmLDbzeZ6u8QZ
+         HZNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCqSf/ZmcfR7NXxr1eMXc5ai/7RalUCQ43l10/kIdpdLgBAbNN57tNSNw/UrheAu9EXhBwH0YzZr4itjgS@vger.kernel.org, AJvYcCWkCCN1DaRRj1+Mli66nfGyydE3BxjR+q2lC/vMqndcMUGJrIMcjScRVQakav9Gs0X6HwOojipxvzxME62R@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDTXLnb4PKO7JkEBX79B6EaN2FR9Mog1VXUtvGdASRGNnFpZq9
+	0gDhhvUCCc1yqAnkkuvUlYIp+hXnhz1bvkI+gmSOY4e3DKkVoyNIhMzXJHQSEbY58nCfxWb5XUk
+	kiRNIOVKtuEbXgx4+96OqFRqkaX4=
+X-Gm-Gg: ASbGncuoSAFj7F1rOrlxac+v5XPt43AvB0n3gL1dTig4/X6fV5e4bNyAvb+wOUGOd1I
+	1IXQ5lOzvr3JEYQR3CZ9hKRwlrDboqz5ceuq7gQDRE1908n3Kv2NMTISCdMpIT6wwneqnFgRpbT
+	Og6MP6pOxgFPYRaS42272X1vZdZw==
+X-Google-Smtp-Source: AGHT+IEWWIniopIYLKMSFAkoZXn00ztXTo+NuYLzSRTxqIy8VtPspTFZgF8v7zShU8+voiuALLFpEkuTXNcUjHkY6VQ=
+X-Received: by 2002:a17:907:97ce:b0:ac3:3f13:4b98 with SMTP id
+ a640c23a62f3a-ac3f251f516mr1448880366b.39.1742836179687; Mon, 24 Mar 2025
+ 10:09:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qtmlwnort57mfscr"
-Content-Disposition: inline
-
-
---qtmlwnort57mfscr
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250321-vfs-misc-77bd9633b854@brauner> <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
+In-Reply-To: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 24 Mar 2025 18:09:27 +0100
+X-Gm-Features: AQ5f1JrUKxVxpDn8a0zpEGv_bY9k5PsGe8CVPNBkl-LPY_z5m10EaLygiCD9l1I
+Message-ID: <CAGudoHGJ-z2pYw2ydJcu1LnL=C6Lzozw05QEAgBfj7FEn+4dcA@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs misc
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] pwm: Changes for 6.15-rc1
-MIME-Version: 1.0
 
-Hello Linus,
+On Mon, Mar 24, 2025 at 5:20=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sat, 22 Mar 2025 at 03:13, Christian Brauner <brauner@kernel.org> wrot=
+e:
+> >
+> > Merge conflicts with mainline
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> >
+> > This contains a minor merge conflict for include/linux/fs.h.
+>
+> Hmm. My resolution here was to just take the plain VFS_WARN_ON_INODE()
+> side, which basically drops commit 37d11cfc6360 ("vfs: sanity check
+> the length passed to inode_set_cached_link()") entirely, because that
+> one had a "TODO" that implies it's now replaced by the new
+> VFS_WARN_ON_INODE() interface.
+>
+> This is just a note to make sure that if anybody was expecting
+> something else, you can now speak up and say "can you please do X".
+>
+> Or, better yet, send a patch.
+>
 
-warn: No match for commit 6df320abbb40654085d7258de33d78481e93ac8d found at=
- uklko
-warn: Are you sure you pushed 'pwm/for-6.15-rc1' there?
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+That TODO thing was a temporary fixup for the release and indeed it is
+sorted out in this pull request.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+If inode_set_cached_link() looks like this:
+static inline void inode_set_cached_link(struct inode *inode, char
+*link, int linklen)
+{
+        VFS_WARN_ON_INODE(strlen(link) !=3D linklen, inode);
+        VFS_WARN_ON_INODE(inode->i_opflags & IOP_CACHED_LINK, inode);
+        inode->i_link =3D link;
+        inode->i_linklen =3D linklen;
+        inode->i_opflags |=3D IOP_CACHED_LINK;
+}
 
-are available in the Git repository at:
+then you got the right version.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/fo=
-r-6.15-rc1
-
-for you to fetch changes up to 6df320abbb40654085d7258de33d78481e93ac8d:
-
-  dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95 support (2025-03-10 =
-17:13:54 +0100)
-
-I intended to include a few changes by a guy from salutedevices.com, but
-given that there was no feedback to him and these changes were only in
-next since mid of last week, I backed them out with the intention to
-send them to you during the next cycle when they were exposed to next
-considerably longer. The changes included here are in next since nearly
-two weeks.
-
-Thanks for pulling this for v6.15-rc1.
-
-Best regards from Germany,
-Uwe
-
-----------------------------------------------------------------
-pwm: Changes for v6.15-rc1
-
-Here comes the usual mix of cleanups, new dt-bindings for existing
-drivers and nexus nodes; and a new driver for the pwm subsystem.
-
-Patches were contributed by Andy Shevchenko, Chen Wang, Chukun Pan,
-Frank Li, Herve Codina, Kever Yang, and Nam Cao.
-Patch feedback was provided by Andy Shevchenko, Conor Dooley, Daniel
-Mack, Duje Mihanovi=C4=87, Heiko Stuebner, Herve Codina, Krzysztof Kozlowsk=
-i,
-Neil Armstrong, Rob Herring, and Zack Rusin.
-Thanks to all of them.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      pwm: pca9685: Drop ACPI_PTR() and of_match_ptr()
-
-Chen Wang (2):
-      dt-bindings: pwm: sophgo: add PWM controller for SG2042
-      pwm: sophgo: add driver for Sophgo SG2042 PWM
-
-Chukun Pan (1):
-      dt-bindings: pwm: rockchip: Add rockchip,rk3528-pwm
-
-Frank Li (1):
-      dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95 support
-
-Herve Codina (2):
-      dt-bindings: pwm: Add support for PWM nexus node
-      pwm: Add support for pwm nexus dt bindings
-
-Kever Yang (1):
-      dt-bindings: pwm: rockchip: Add rockchip,rk3562-pwm
-
-Nam Cao (1):
-      pwm: gpio: Switch to use hrtimer_setup()
-
-Uwe Kleine-K=C3=B6nig (6):
-      pwm: lpss: Only include <linux/pwm.h> where needed
-      pwm: Add upgrade path to #pwm-cells =3D <3> for users of of_pwm_singl=
-e_xlate()
-      pwm: clps711x: Drop of_match_ptr() usage for .of_match_table
-      pwm: Strengthen dependency for PWM_SIFIVE
-      pwm: Check for CONFIG_PWM using IS_REACHABLE() in main header
-      pwm: stmpe: Allow to compile as a module
-
- .../devicetree/bindings/pwm/imx-tpm-pwm.yaml       |  11 +-
- .../devicetree/bindings/pwm/pwm-nexus-node.yaml    |  65 +++++++
- .../devicetree/bindings/pwm/pwm-rockchip.yaml      |   2 +
- .../devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml |  58 ++++++
- drivers/pwm/Kconfig                                |  14 +-
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/core.c                                 |  19 +-
- drivers/pwm/pwm-clps711x.c                         |   4 +-
- drivers/pwm/pwm-gpio.c                             |   5 +-
- drivers/pwm/pwm-lpss.c                             |   1 +
- drivers/pwm/pwm-lpss.h                             |   1 -
- drivers/pwm/pwm-pca9685.c                          |   9 +-
- drivers/pwm/pwm-sophgo-sg2042.c                    | 194 +++++++++++++++++=
-++++
- drivers/pwm/pwm-stmpe.c                            |  25 ++-
- include/linux/pwm.h                                |   4 +-
- 15 files changed, 390 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-nexus-node.ya=
-ml
- create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm=
-=2Eyaml
- create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
-
---qtmlwnort57mfscr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhkaIACgkQj4D7WH0S
-/k6RiAgAkGzTf65DXYgHnIz8/Ah/1X9GJKCIZ0ylNtX77PohhCe6y43ARkCmZyuy
-ljlO8G3rP+cOyxQkLAGRoMAeMQj/eX7JmDPYIu1/uLFgvoGAooO1x+JsSpPNqehm
-t5Q5rwIpPJd3omObhcxeKclCia3m3wBihIrdivG1DgODreHq6rG5JK5S/NMdOJ27
-AsR3PhdYKOSpdMLlDG4DFrzpiw9CgATA8pJPnOtlQUpRyc7WJDGBsU7xn+l41l8U
-a1nCAnt5N1wBFNbzJ1Ni5+v1VO6MKR2IXcvwvCkOhVSJuWtwiB00FIzuZo2yhxXO
-4J1vrYeXmzdwr2ymcLkZId6M/49tkw==
-=keqi
------END PGP SIGNATURE-----
-
---qtmlwnort57mfscr--
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
