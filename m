@@ -1,83 +1,154 @@
-Return-Path: <linux-kernel+bounces-574062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27746A6E023
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8253DA6DF72
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C9B16C462
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:48:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A346A16A0F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFF8263C91;
-	Mon, 24 Mar 2025 16:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3993263C65;
+	Mon, 24 Mar 2025 16:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="PuNW8IJM"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cUooPKZv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AA625D1E1;
-	Mon, 24 Mar 2025 16:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AF4261577;
+	Mon, 24 Mar 2025 16:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834932; cv=none; b=KZ1MA7gz9u8B5a+XUzSKZTEBFPS3Go7ld7jff7uyq82I+0+d1C8S+juLWw7KA5kJ+KHiCatyJKiNorKQBPnYqcgeWrt5i+1lBWUc6BHTki+lsS43Iy0f9GIFtr0H7oQCssMocZ1Cf6ayVBCBbGcf0w9dktXDIsVUsci+27QARHs=
+	t=1742833146; cv=none; b=iQaTvm2RN09MQAHrVkrn0sglsDbQt5yMHu5mszZA2YxAaEiqlFrDGECTbycqNxKZBnA5rSEU+awfu/yRcdmOutaxNGJCNiRiQ/aHeZfzEwhI3f5/O9x3/4klOUo00zU+jKrxA8wAcINsxNcRydPy1FHTUA06e9VPxHlp5KJ/rpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834932; c=relaxed/simple;
-	bh=sayeoWKFFq1gCersPRDqm3tR8WeC5c4VRp8l8D2eJ7Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nuoFwJhiG6SbZKLP+Zu60dsfUfuS2CB9U9MDLszYVsYXt2UyX7c5wX5h7nqAq4u5YcVQvOkTCKg7ZGmKQ31HDmYzCfI0g58PDGX4+yFW3VmA9ytRU/cR+Am19pJ6LnzB2j4HQJQHfzFlj1B9qtAN2UMymo9VYVdTDz1YCZVQ+VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=PuNW8IJM; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1742833007;
-	bh=sayeoWKFFq1gCersPRDqm3tR8WeC5c4VRp8l8D2eJ7Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=PuNW8IJMRMPqmJoHY28KOKknba33zkvjaGV+/sa/zYLs7an3WLSXSqyZYOc+PbYaq
-	 bMg+fwipm3EQ7e7HD453pzc4EAU1x96demCTo+8BnZewB/GkMqnxGfxFwIr96MI+8M
-	 PPQq2Ypi0ufeYnFdWPm+TG7hE+HMqv2KVTvIDvNE=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 61C6A4027F; Mon, 24 Mar 2025 09:16:47 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 5F45E401C4;
-	Mon, 24 Mar 2025 09:16:47 -0700 (PDT)
-Date: Mon, 24 Mar 2025 09:16:47 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Kees Cook <kees@kernel.org>
-cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-    David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-    Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-    Marco Elver <elver@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
-    Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-    linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 5/5] [DEBUG] slab: Report number of NULLings
-In-Reply-To: <20250321204105.1898507-5-kees@kernel.org>
-Message-ID: <e3437446-798d-f4f3-11d7-675f8886575b@gentwo.org>
-References: <20250321202620.work.175-kees@kernel.org> <20250321204105.1898507-5-kees@kernel.org>
+	s=arc-20240116; t=1742833146; c=relaxed/simple;
+	bh=7ocTwtJHSxgTAKQDZy8c0kf/SmLiv3uVNj5AZmyLi2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdhKWAmysg9knSlYcuh51S3CC35Y6EL0ny8mrgzp2hHNO9xO5Jvjy4ggPJnM8Ey5aV9ssE++mkyxkivW/GDK0AC4ghq0hgPd0xVsZigFzmje6FAnv1LVQhOsJWsSwifsmuEslbFrGzPkW/BMTdqSwjfgIhbJpbou2KXBNL6/Jhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cUooPKZv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D04C4CEE9;
+	Mon, 24 Mar 2025 16:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742833144;
+	bh=7ocTwtJHSxgTAKQDZy8c0kf/SmLiv3uVNj5AZmyLi2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cUooPKZvSqG2lE2mau828JPJBCXqBGBWdLNKx4DZ3c1ltWrxxCstK+OxOev+p3o+9
+	 MQewyp5MDtnVRyYOE7295XtueeBrJTywvs/ixDbOl16CoI0WZ8IxQlj2OkDhp+Xp9n
+	 UB8kTHHytRTZhFw5ztOj+1CzBI8KXmmqDboLfaJk=
+Date: Mon, 24 Mar 2025 09:17:05 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cengiz Can <cengiz.can@canonical.com>
+Cc: Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
+	dutyrok@altlinux.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <2025032402-jam-immovable-2d57@gregkh>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
 
-On Fri, 21 Mar 2025, Kees Cook wrote:
+On Mon, Mar 24, 2025 at 07:14:07PM +0300, Cengiz Can wrote:
+> On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
+> > Hi
+> > 
+> 
+> Hello Salvatore,
+> 
+> > On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
+> > > Syzbot reported an issue in hfs subsystem:
+> > > 
+> > > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+> > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+> > > 
+> > > Call Trace:
+> > >  <TASK>
+> > >  __dump_stack lib/dump_stack.c:94 [inline]
+> > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> > >  print_address_description mm/kasan/report.c:377 [inline]
+> > >  print_report+0x169/0x550 mm/kasan/report.c:488
+> > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> > >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> > >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+> > >  memcpy_from_page include/linux/highmem.h:423 [inline]
+> > >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+> > >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+> > >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+> > >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> > >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> > >  __do_sys_mkdir fs/namei.c:4300 [inline]
+> > >  __se_sys_mkdir fs/namei.c:4298 [inline]
+> > >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > RIP: 0033:0x7fbdd6057a99
+> > > 
+> > > Add a check for key length in hfs_bnode_read_key to prevent
+> > > out-of-bounds memory access. If the key length is invalid, the
+> > > key buffer is cleared, improving stability and reliability.
+> > > 
+> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+> > > ---
+> > >  fs/hfs/bnode.c     | 6 ++++++
+> > >  fs/hfsplus/bnode.c | 6 ++++++
+> > >  2 files changed, 12 insertions(+)
+> > > 
+> > > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+> > > index 6add6ebfef8967..cb823a8a6ba960 100644
+> > > --- a/fs/hfs/bnode.c
+> > > +++ b/fs/hfs/bnode.c
+> > > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> > >  	else
+> > >  		key_len = tree->max_key_len + 1;
+> > >  
+> > > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
+> > > +		memset(key, 0, sizeof(hfs_btree_key));
+> > > +		pr_err("hfs: Invalid key length: %d\n", key_len);
+> > > +		return;
+> > > +	}
+> > > +
+> > >  	hfs_bnode_read(node, key, off, key_len);
+> > >  }
+> 
+> Simpler the better. 
+> 
+> Our fix was released back in February. (There are other issues in our attempt I
+> admit).
+> 
+> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
+> 
+> If someone can pick this submission, I will be happy to replace our version.
 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 2717ad238fa2..a4740c8b6ccb 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -469,6 +469,8 @@ void __kfree(const void *objp);
->  void __kfree_sensitive(const void *objp);
->  size_t __ksize(const void *objp);
->
-> +extern atomic_t count_nulled;
+any specific reason why you didn't submit this upstream?  Or did that
+happen and it somehow not get picked up?
 
-That is a scalability issue. Use a vmstat counter instead?
+And why assign a CVE for an issue that is in the mainline kernel, last I
+checked, Canonical was NOT allowed to do that.
 
+Please work to revoke that CVE and ask for one properly.
+
+thanks,
+
+greg k-h
 
