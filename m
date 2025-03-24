@@ -1,152 +1,296 @@
-Return-Path: <linux-kernel+bounces-574220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1B1A6E228
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:20:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02800A6E232
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:22:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9910188CB16
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1813AA764
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD7F264A7A;
-	Mon, 24 Mar 2025 18:20:34 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3552641D7;
+	Mon, 24 Mar 2025 18:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y21IOOzQ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669772641D7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306341DDE9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840433; cv=none; b=IVr7TbRRPYaYCM8GlBQESpdAaVKlZ7xwhrZrrAaYDh+Zn7nXgeB8BFlHKYVGxBjKHrWAKOJMsRN6VzxTv98g8w90s+Xy2QuDjJix7SZIQWitNY7PvaYryUT+xDLf5GgRDRG9RWIeccxtXhrzR2haepUjIoczi5tmnjOHGDv1klY=
+	t=1742840513; cv=none; b=EhJ5ypwf3GPaVxffUwly/4sV9mpzXM4Clvyp0+1N+G2RZbOnQh/VnOQgag6j/Uk+1167hi6gpZK8ZBBpTzT4l7ETBjn8LaDXPr2yk30HnGGZ+uo/e3S1yUosAHuPVyrj85weD3bCayW+rEk/RdyyTjzb91rLEOEEBs+FZETIH5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840433; c=relaxed/simple;
-	bh=KtlEUCfyuUrw5cIGb23zFW0D0wbr27GwH1908BiJLuc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f9C3re9dBY9zE1AFwSEG8xtrAkQ4AyrTQ2nW5xkuij2tRb8M4w6OVeHaAu/Oco9oqBqeB+2MLXsBIrIE6RzL8/Cnp2C0WxJ6fLNpREiELiQXIpVF5CgKuKY86zFWBRs5Ph5/iIBaKUQ36hH+rAyUH1svSIDwjXP9dHs8ss39Aro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85b3b781313so1028094339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:20:32 -0700 (PDT)
+	s=arc-20240116; t=1742840513; c=relaxed/simple;
+	bh=zrnjllOaaVCrevHwpeSRdGJoKF3yeMBuYeMtGhQbo4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iQF9E6XBMTuYK13YfxgMHBkCTom2bpRXipVdQMqVRV+xpXTlfBtJC+WlcQ+V0rE9+5yWaEuIV9AnEf6Eqv/fyl7uebRhwtNvkEVYmTeHNrIVP4N3pQk+vvX/f5sjg5BZFWm/LYyrDMkebfRo0Ffl4ef8ALVPe8itDvUxO1lBCbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y21IOOzQ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227c7e57da2so22046535ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742840511; x=1743445311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYGcI8imqj+MGUqjN29fBqg3Vw5woBztKuaSrXR3vbI=;
+        b=y21IOOzQ7oWFkC5MgERgN3pHOrnckRViW2tubWvvZIMv0dQY3A1X9uK/8bp+AH32vx
+         Y2QMbgI6c/SggVMc9QQ0RNJ1aNw6qbHKyF0SzBzjqJn6ZdeBq0HqYBJltgNcMb+3QYdE
+         5TMUBZUU8wYVYWG1rtSwLZH8ZUjXqtlYSOtlLk84vqWSTUazP4/B0w1+HbqZRzVt7BA8
+         nV1kuDNMTckgfuTKDtC2WDmwfjc+WfPrDwEXmI8pCVN8K/EJtFL+E2lQFoI8z/xNauox
+         FKSpJtxNZLzvvsjXYd2r+TlVLd5HsFHTn4OjykcCnUzSnij8c2vUoN8KXF09KM3htf/h
+         pyGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742840431; x=1743445231;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfGgeD061v2X9cdK9GBmRLKxw6itSHQzCAu//F++bhs=;
-        b=T+kdmSwSlLUbTNK1YhjLcnODp1Yf6GhflA365uF2PQPLjK7eLOyRE3Qk84GaBWRQtA
-         pxpHTsHzykzpncFfpOYvy0SmOSmGH6C9fwlV3xbrEpcCdMFiLQdbk9z+MDSbYilmCfx8
-         ScEjqIMp6zydPVF2+/DCTIAzrkuiocSLl5X7byU8JgAOz9kXd1yi4/oksWsAS9Gbfror
-         vSKt8408NVy6eDOVNkqeq0Nj4bgoQMabr1RjWTCnnmp90JuWgaPhoA7bn3K7lHysrtFu
-         vhXKbJA0JwETe8shrxOhF9eyLAcbglGEJmpJFlI9nwZx+SynRwYYvDOx8N+duo2uTPAp
-         0ZEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM+lAgnCqqlsgnssD5dveku6CACFPMkdvCdTlt1MjIfI7t+SQNAo3DAjOug6h/3faeaqi9A5OMReMotw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHx1OgTiKjSgXH1z5Dh+u2rDXphJqF0sEtmUoosbqxJ4WBG/UD
-	CQ7DbVWciqmKJUMxYRWNWRshgXJd6KsK4XEV7FDRff2A1pnyTnqHHHYOZ6m130IIzJ233mNV/6W
-	FsbpG2cwERJQsVOPSk+jpwqobPsZeS/DThAK93r9nG2/HISikh0vrifM=
-X-Google-Smtp-Source: AGHT+IEix882w6oYG/fF3m+qql5LodKizG2K5f9lH5OYOluq5tD0B5kooSE28HZi4G0BaoKEtAS099GE4nByrxoCughyEXqpQoxM
+        d=1e100.net; s=20230601; t=1742840511; x=1743445311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vYGcI8imqj+MGUqjN29fBqg3Vw5woBztKuaSrXR3vbI=;
+        b=DBSWNvit+tsc1m35OTSLWy+q8LcGAFzLBryjKuAZ/bsAsXc4ZWhXGThaAEC+nrBf0R
+         zKwTl0A3Gk8U7NeCA8pnFO0rE4iDY9KdClrGgRQ/XlYbXZn1tgyhXTXOVfxqfQm3xnd3
+         XyNxQetS3p2AJuFdo7lTz8ZIkGiLM5bPcYiFiCldNExe22GTVbxTswPadKePNUMH56/O
+         hVIPupsct0hxquORaWxded0m+YrbQkLU3LXZfacBIPsoZaAxvqzzpszfm48/HedaXkwV
+         1lpdyez50r1esxMMUqV4dgx8dV0YUlTftJKf24N/lOGwu1ftytqO4tquFA2zDDfkwOKK
+         1ojg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbbOODmypHRkcQFV6+2H8UtYL8yNe6YOuNjsCd4xrKkcjO3IF78l+N62ganzbf4nqN5d7Q07jMHwHXWzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoCvbCErema4eDrrBxDFf7NFx+D6aqnYGCVxr8bbxSUjcbtuIL
+	BzsLiUnQETgMPDqeFun3r1WFZbZDiTEDBJBoM0Dy+oRClasRx/xxKetgc+UKfU/ROfJsmLJ/UaB
+	xpnH5Zryt1bo408qt2YNFF6CBJTyLxTR3yL4yKkDcn4zwS6Mb130=
+X-Gm-Gg: ASbGnctGULblk7mt6odcRlyLK0z5QeFJkstwE/+Oov+N64d7UX60YRFR3xSkUF8CcC4
+	18uENDSRnIF6moSrbFIL74zL/iHfjSZxD9Ztqpmlt5AVZ/iiuYbDkopO4rmTC7jyMSFvthoW8S7
+	M+Ibv6IepGWApsVCGn1066yDxfC27L8sHT8plhJHcBxPObExtufHc+Mj8qP0E=
+X-Google-Smtp-Source: AGHT+IFF3EcxhuVze+FBnKUvTSo2ADv/p17nL+WNhX5Rraz4E5NBfUNu9Acb3U1M/4KPXQVXhN5pXD8y6Aad14poHsA=
+X-Received: by 2002:a05:6a00:2384:b0:730:d5ca:aee with SMTP id
+ d2e1a72fcca58-73905a2529fmr23710196b3a.23.1742840511070; Mon, 24 Mar 2025
+ 11:21:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ce:b0:3d4:36da:19a1 with SMTP id
- e9e14a558f8ab-3d5961bc1e6mr160971615ab.21.1742840431391; Mon, 24 Mar 2025
- 11:20:31 -0700 (PDT)
-Date: Mon, 24 Mar 2025 11:20:31 -0700
-In-Reply-To: <679b398d.050a0220.48cbc.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e1a26f.050a0220.a7ebc.002b.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in ieee80211_prep_channel
-From: syzbot <syzbot+c90039fcfb40175abe28@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250109171956.3535294-1-yeoreum.yun@arm.com> <CAJ9a7ViuVntYL62q=WYPkFR3++cyufPdKUHm0FUAPyGy76pB_A@mail.gmail.com>
+ <GV1PR08MB10521BB7C93822F5124F2D66EFBD22@GV1PR08MB10521.eurprd08.prod.outlook.com>
+ <CAJ9a7Vgz+L+UYf8Yqyu9J5hp3AB3WPSKutA4AvR-OFdu8b-dPA@mail.gmail.com> <Z+FlLDLV9WkGNbj+@e129823.arm.com>
+In-Reply-To: <Z+FlLDLV9WkGNbj+@e129823.arm.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Mon, 24 Mar 2025 18:21:39 +0000
+X-Gm-Features: AQ5f1JpBLeuBe2uwu_6LtTYvGXXov15RoxnfseC3LtykXCAnpx1LgBpQDY-jWNc
+Message-ID: <CAJ9a7VgsBZ6MkgwVjDiOm7rvcy9KVPfPc_PbaRNX7ra8NWGb9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] coresight: prevent deactivate active config while
+ enabling the config
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: Suzuki Poulose <Suzuki.Poulose@arm.com>, 
+	"james.clark@linaro.org" <james.clark@linaro.org>, 
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+Hi,
 
-HEAD commit:    38fec10eb60d Linux 6.14
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114c8198580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0b5b6b74098b0ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=c90039fcfb40175abe28
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d8a43f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12afbc4c580000
+On Mon, 24 Mar 2025 at 13:59, Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+>
+> Hi Mike,
+>
+> Please ignore my foremer mail.. and please see my comments for your
+> suggestion.
+>
+> > Hi
+> >
+> > On Fri, 14 Mar 2025 at 15:25, Yeo Reum Yun <YeoReum.Yun@arm.com> wrote:
+> > >
+> > > Hi, Mike.
+> > >
+> > > > >  static void cscfg_remove_owned_csdev_features(struct coresight_device *csdev, void *load_owner)
+> > > > > @@ -867,6 +870,28 @@ void cscfg_csdev_reset_feats(struct coresight_device *csdev)
+> > > > >  }
+> > > > >  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
+> > > > >
+> > > > > +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc, bool enable)
+> > > > > +{
+> > > > > +       if (enable)
+> > > > > +               return atomic_inc_not_zero(&config_desc->active_cnt);
+> > > > > +
+> > > >
+> > > > Not sure why we have an "enable" parameter here - it completely
+> > > > changes the meaning of the function - with no comment at the start.
+> > >
+> > > Sorry. But what I intended is to distinguish
+> > >     - activation of config
+> > >     - enable of activated config.
+> > > Because, current coresight doesn't grab the module reference on enable of activate config,
+> > > But It grabs that reference only in activation.
+> > > That's why I used to "enable" parameter to distinguish this
+> > > while I integrate with module_owner count.
+> > >
+> > > > >         list_for_each_entry(config_desc, &cscfg_mgr->config_desc_list, item) {
+> > > > >                 if ((unsigned long)config_desc->event_ea->var == cfg_hash) {
+> > > > > -                       atomic_dec(&config_desc->active_cnt);
+> > > > >                         atomic_dec(&cscfg_mgr->sys_active_cnt);
+> > > > > -                       cscfg_owner_put(config_desc->load_owner);
+> > > > > +                       cscfg_config_desc_put(config_desc);
+> > > > >                         dev_dbg(cscfg_device(), "Deactivate config %s.\n", config_desc->name);
+> > > > >                         break;
+> > > > >                 }
+> > > > > @@ -1047,7 +1066,7 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+> > > > >                                      unsigned long cfg_hash, int preset)
+> > > > >  {
+> > > > >         struct cscfg_config_csdev *config_csdev_active = NULL, *config_csdev_item;
+> > > > > -       const struct cscfg_config_desc *config_desc;
+> > > > > +       struct cscfg_config_desc *config_desc;
+> > > > >         unsigned long flags;
+> > > > >         int err = 0;
+> > > > >
+> > > > > @@ -1062,8 +1081,8 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+> > > > >         raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+> > > > >         list_for_each_entry(config_csdev_item, &csdev->config_csdev_list, node) {
+> > > > >                 config_desc = config_csdev_item->config_desc;
+> > > > > -               if ((atomic_read(&config_desc->active_cnt)) &&
+> > > > > -                   ((unsigned long)config_desc->event_ea->var == cfg_hash)) {
+> > > > > +               if (((unsigned long)config_desc->event_ea->var == cfg_hash) &&
+> > > > > +                               cscfg_config_desc_get(config_desc, true)) {
+> > > > >
+> > > > This obfuscates the logic of the comparisons without good reason. With
+> > > > the true parameter, the function does no "get" operation but just
+> > > > replicates the logic being replaced - checking the active_cnt is
+> > > > non-zero.
+> > > >
+> > > > Restore this to the original logic to make it readable again
+> > >
+> > > It's not a replicates of comparsion logic, but if true,
+> >
+> > sorry - missed that point .
+> >
+> > > It get the reference of active_cnt but not get module reference.
+> > > The fundemental fault in the UAF becase of just "atomic_read()"
+> > > so, it should hold reference in here.
+> > >
+> > > So, If you think the cscfg_config_desc_get()'s parameter makes obfuscation,
+> > > I think there're two way to modfiy.
+> > >
+> > >     1. cscfg_config_desc_get()/put() always grab/drop the module count.
+> > >     2. remove cscfg_config_desc_get()/put() but just use atomic_XXX(&active_cnt) only
+> > >         with cscfg_owner_get()/put()
+> > >
+> > > Any thougt?
+> > >
+> > > Thanks!
+> > >
+> > >
+> >
+> > The get and put functions are asymmetrical w.r.t. owner.
+> >
+> > The put will put owner if active count decrements to 0,
+> > The get if not on enable path will put owner unconditionally.
+> >
+> > This means that the caller has to work out the correct input conditions.
+> >
+> > Might be better if:-
+> >
+> > get_desc()
+> > {
+> >     if (! desc->refcnt) {
+> >        if (!get_owner())
+> >            return false;
+> >    }
+> >    desc->refcnt++;
+> >     return true;
+> > }
+>
+> I think This makes another problem when
+> it races with _cscfg_deactivate_config().
+>
+> CPU0                                          CPU1
+> (sysfs enable)                                load module
+>                                               cscfg_load_config_sets()
+>                                               activate config. // sysfs
+>                                               (sys_active_cnt == 1)
+>
+>                                               // sysfs
+>                                               _cscfg_deactivate_config()
+>                                               (sys_active_cnt == 0)
+>                                               (config->active_cnt = 0)
+> ...
+> cscfg_csdev_enable_active_config()
+>   lock(csdev->cscfg_csdev_lock)
+>   // here get module reference??
+>   // even sys_active_cnt == 0 and
+>   // config->active_cnt == 1.
+>   get_desc()
+>   unlock(csdev->cscfg_csdev_lock)
+>
+>
+>   // access to config_desc which freed
+>   // while unloading module.
+>   cfs_csdev_enable_config
+>
+>
+> Because, the desc->refcnt meaning of zero is different from the context.
+>    - while activate . it should get module reference if zero.
+>    - while enable active configuration, if zero, it should be failed.
+>
+> that means to prevent this race, the core key point is:
+>    when config->active_cnt == 0, it should be failed in cscfg_csdev_enable_active_config()
+>
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-38fec10e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d34e40d2aad1/vmlinux-38fec10e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e290e3747399/bzImage-38fec10e.xz
+This is not a failure case, it simple means that this config should
+not be activated for this device.
+It is possible for a configuration to be active on the system, without
+it being active for a particular coresight device.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c90039fcfb40175abe28@syzkaller.appspotmail.com
+Having a get/put interface for the config descriptor - which prevents
+the config from being unloaded is fine, the key logic here is that we
+are searching a list of possible enabled configurations for this
+device and taking the necessary action to enable it if we find one -
+and there can only ever be a single configuration enabled for a trace
+session.
 
-mac80211_hwsim: wmediumd released netlink socket, switching to perfect channel medium
-wlan1: No basic rates, using min rate instead
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5313 at net/mac80211/mlme.c:1012 ieee80211_determine_chan_mode net/mac80211/mlme.c:1012 [inline]
-WARNING: CPU: 0 PID: 5313 at net/mac80211/mlme.c:1012 ieee80211_prep_channel+0x389b/0x5120 net/mac80211/mlme.c:5667
-Modules linked in:
-CPU: 0 UID: 0 PID: 5313 Comm: syz-executor339 Not tainted 6.14.0-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ieee80211_determine_chan_mode net/mac80211/mlme.c:1012 [inline]
-RIP: 0010:ieee80211_prep_channel+0x389b/0x5120 net/mac80211/mlme.c:5667
-Code: c6 05 4f cd 94 04 01 48 c7 c7 37 3b 4b 8d be 78 03 00 00 48 c7 c2 a0 3c 4b 8d e8 70 00 0b f6 e9 7e ca ff ff e8 16 a6 2f f6 90 <0f> 0b 90 48 8b 7c 24 30 e8 e8 5c 8b f6 48 c7 44 24 30 ea ff ff ff
-RSP: 0018:ffffc9000d086500 EFLAGS: 00010293
-RAX: ffffffff8b9239ba RBX: 0000000000000000 RCX: ffff888000280000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000d086850 R08: ffffffff8b920ed9 R09: ffffffff8b60cbf9
-R10: 000000000000000e R11: ffff888000280000 R12: dffffc0000000000
-R13: ffff888044136758 R14: ffffc9000d086710 R15: ffffc9000d086750
-FS:  00007fab44b026c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fab44b01198 CR3: 0000000043c60000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ieee80211_prep_connection+0xda1/0x1310 net/mac80211/mlme.c:8539
- ieee80211_mgd_auth+0xedb/0x1750 net/mac80211/mlme.c:8829
- rdev_auth net/wireless/rdev-ops.h:486 [inline]
- cfg80211_mlme_auth+0x59f/0x970 net/wireless/mlme.c:291
- cfg80211_conn_do_work+0x601/0xeb0 net/wireless/sme.c:183
- cfg80211_sme_connect net/wireless/sme.c:626 [inline]
- cfg80211_connect+0x190a/0x22f0 net/wireless/sme.c:1525
- nl80211_connect+0x19ec/0x2140 net/wireless/nl80211.c:12242
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb1f/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x206/0x480 net/netlink/af_netlink.c:2533
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8de/0xcb0 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:733
- ____sys_sendmsg+0x53a/0x860 net/socket.c:2573
- ___sys_sendmsg net/socket.c:2627 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fab44b48de9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fab44b02218 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fab44bd2368 RCX: 00007fab44b48de9
-RDX: 0000000000000000 RSI: 00002000000001c0 RDI: 0000000000000003
-RBP: 00007fab44bd2360 R08: 0000000000000034 R09: 0000000000000000
-R10: 000000000000000a R11: 0000000000000246 R12: 00007fab44b9f294
-R13: 0000200000000200 R14: 00002000000001d0 R15: 00002000000001c0
- </TASK>
+Therefore when the list of loaded configs for a device is > 1, then
+all but one is allowed to be active - so the search code will validly
+find instances where config->active_cnt == 0.
+
+My objection to the original interface was not the get/put operations
+to protect the module from unload, but the fact that the logic
+deciding if a config needed to be enabled on the device was hidden
+inside the get() operation.
+My suggestion is to restore the logic that decides if there is a
+config to enable on the device be clear in the enable function itself,
+then use get/put as appropriate to prevent module unload.
+
+Regards
+
+Mike
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> Because, according to context the handling the zero reference value is
+> different, It seems,to integrate the get_desc() interface to handle
+> above case together without extra arguments (in case of here is
+> "enable").
+>
+> If this interface is really ugly and unhappy to you,
+> I think It should remove get_desc()/put_desc().
+> although we can add new interface for cscfg_config_desc_get() for enable
+> path. but it makes people more confused.
+>
+> So my suggestion is:
+>    - sustain this patch's contents
+>    - or remove get_desc()/put_desc() interface but use
+>      atomic_inc_zero(&config_desc->active_cnt) directly in
+>      cscfg_csdev_enable_active_config()
+>
+> Any thougt?
+>
+> Thanks.
+
+
+
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
