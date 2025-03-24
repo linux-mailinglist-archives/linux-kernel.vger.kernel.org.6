@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-573467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09897A6D7C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:44:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334E1A6D7CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BC83B12A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19991674D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD52F25DB11;
-	Mon, 24 Mar 2025 09:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5CC25DB02;
+	Mon, 24 Mar 2025 09:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="T5FRuUVE"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2sJKe8t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286A125D8F4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC6A25C6F5;
+	Mon, 24 Mar 2025 09:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742809409; cv=none; b=ZJgDhet2Z09t2/hk0TQyzmdouKRpF4U0Bjd2t+XLOp2A43x+nw8dGo1Kj38kP/y/cqxS7NbmAFPWdVM4ekQTAS+bEV5FuSvWTx44JwA8YgPhJwsAha/H2Tjg7uHkDZg7CXejs68QhdlegqmFvQjp4GXPNsw/iWVJtn20YV6aoD4=
+	t=1742809432; cv=none; b=Fe5wy5MQ+sgZn3ldpCLoMNOXgH5ABK7PF2vGzEs8i7Q8gapgnP5hIVjL5yY/2P5SPTIED5/zHZlif/QF7NGkCVjhMRSdBNeqFqLmPiCjmTI99zgrPadX70Xjy5JO2EO5Y0p86Twcl5rEjX78TXmDP5lZEhGV+ytj0Kdadib1Gjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742809409; c=relaxed/simple;
-	bh=pak5k7IWyYhyihUG+ysdV/ZoBiBbpwMnIeB5wwqQFWM=;
+	s=arc-20240116; t=1742809432; c=relaxed/simple;
+	bh=l0EsM4WPrsP2/dZGbpiEOfdu9H02HYDRq1VyCp+kVqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBZ4ivHnRHusWezBt9QN+iuaR4JRasx+ulzwxJsaL+QM81wZxv/eGR9WIUySACYeMZQkL+I/DIiZiPc/HPLyWLEjbm3oZmQtUOnQnbbhqfB4WcDWAC2sCbGeth4H1TvZRwunz1hYwr12YLlw+6H1CTuYPU5yJ3yQsTcYbLbIb0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=T5FRuUVE; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=r7d8
-	Ot8mfH1I2wFZHCJQK70oiDoS2l0a40rEehkWGPg=; b=T5FRuUVE207AkDGjX4Mo
-	dGjHJ4m9FMONUA30tCsJMe2X9YbEA73rT/Ytsy487aKvDSqOPq2I3AluGojfQoOQ
-	mvm3Q/OkcfnWicVI00buv7xouFHacV827g7+8lwj3shw0FOozrr8JTFM1by5/TrQ
-	tdDtvLb7SxrW85MU4nMcv1IWr+nvmdb2wjQal6wuEjl0GaL7ClBY5JHkOG7nK62e
-	tnmkZS2Z+HWj56SUmfBc9V3Mx7azu/adPBQJ32m+2IjSfpdpiJrFgmRx7FPhSIrc
-	aqJDiLU3lNxXaD8+9RDQrXszJk+COH7+gHmU9RLo/KH+iSsOTIT642hzkk7/B4fT
-	Iw==
-Received: (qmail 2486540 invoked from network); 24 Mar 2025 10:43:24 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 10:43:24 +0100
-X-UD-Smtp-Session: l3s3148p1@2S12bxMx4TNtKPH/
-Date: Mon, 24 Mar 2025 10:43:24 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-Message-ID: <Z-EpPL3tn54E8KG5@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnwI+9vIp7KjGxTTJtDcU/exCHA4HiytlhG4MwXCEjB6sbeYlLpzPTLIiigyFWZqh8VNEWXXdyNbvKtFvqXu9HQ7nyXmXrNLjZhjkyBQY6DSTwQvOVaLHh1LD/iYQtHQ5rzM0xPGX44r/InNbFNef9i/s3fr2QWLgUJZQT+v/no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2sJKe8t; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742809431; x=1774345431;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l0EsM4WPrsP2/dZGbpiEOfdu9H02HYDRq1VyCp+kVqE=;
+  b=T2sJKe8t+2Xth1CtHgvTt0oOv2oItSfgvMIpdcBEB0QE80vK2hxbmeTv
+   hSEB9I1RJC46cD/WBVt98otxe6Q7OhwxlfHc/4TXi3UC6u6NUOYNB/fyq
+   za+d2BdV75VkHHSYr3W19t4qzET1jFts63DAsFoPqZ2lnI8stlYNr0gZW
+   KNLCKgmpg0OwOf7/VgAbnvGQGVCwDRHFDyiLK7hO8ZWBarasak1+aYLbz
+   5mQtCHZ2omR4Zfv9guDFG0QEdoadqbBzB9HbKs9cu5shRMUrqfeXj0qvL
+   5/L9Jl/V9Up6DXSeVeUKrq1veW7f50dfmrs8cktDzhBhaI6YJYaRRpP7A
+   w==;
+X-CSE-ConnectionGUID: CThS8P3qSV6Y1KgBp/FvLg==
+X-CSE-MsgGUID: 0lUoxiwJSdiYM7DZ18Ww/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="69360685"
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="69360685"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:43:50 -0700
+X-CSE-ConnectionGUID: Pvmb/+8MRqW99/1pzmVESQ==
+X-CSE-MsgGUID: IFoLYrjuRQOhNS12ivjZTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="161232721"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa001.jf.intel.com with SMTP; 24 Mar 2025 02:43:47 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 24 Mar 2025 11:43:46 +0200
+Date: Mon, 24 Mar 2025 11:43:46 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: typec: class: Invalidate USB device pointers on
+ partner unregistration
+Message-ID: <Z-EpUlA9VOBO9yd4@kuha.fi.intel.com>
+References: <20250321143728.4092417-1-akuchynski@chromium.org>
+ <20250321143728.4092417-3-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wQ0cBGF5R+xQ7By2"
-Content-Disposition: inline
-In-Reply-To: <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
-
-
---wQ0cBGF5R+xQ7By2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250321143728.4092417-3-akuchynski@chromium.org>
 
+On Fri, Mar 21, 2025 at 02:37:27PM +0000, Andrei Kuchynski wrote:
+> To avoid using invalid USB device pointers after a Type-C partner
+> disconnects, this patch clears the pointers upon partner unregistration.
+> This ensures a clean state for future connections.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 59de2a56d127 ("usb: typec: Link enumerated USB devices with Type-C partner")
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
 
-> +config SERIAL_RZ_SCI
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-I think this name is too generic. Most RZ-variants so far do not have
-this SoC. Would 'RZT2H' work or is it too narrow then?
+> ---
+>  drivers/usb/typec/class.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index eadb150223f8..3df3e3736916 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1086,10 +1086,14 @@ void typec_unregister_partner(struct typec_partner *partner)
+>  	port = to_typec_port(partner->dev.parent);
+>  
+>  	mutex_lock(&port->partner_link_lock);
+> -	if (port->usb2_dev)
+> +	if (port->usb2_dev) {
+>  		typec_partner_unlink_device(partner, port->usb2_dev);
+> -	if (port->usb3_dev)
+> +		port->usb2_dev = NULL;
+> +	}
+> +	if (port->usb3_dev) {
+>  		typec_partner_unlink_device(partner, port->usb3_dev);
+> +		port->usb3_dev = NULL;
+> +	}
+>  
+>  	device_unregister(&partner->dev);
+>  	mutex_unlock(&port->partner_link_lock);
+> -- 
+> 2.49.0.395.g12beb8f557-goog
 
-> +	SCIx_RZT2H_SCI_REGTYPE,
-
-This name is better.
-
->  struct plat_sci_port {
-> -	unsigned int	type;			/* SCI / SCIF / IRDA / HSCIF */
-> +	unsigned int	type;			/* SCI / SCIF / IRDA / HSCIF / RZSCI */
-
-"RZT2" in the comment as well.
-
-> +/* SH-SCI */
-> +#define PORT_RZSCI	124
-> +
->  /* Generic type identifier for ports which type is not important to userspace. */
->  #define PORT_GENERIC	(-1)
-
-Does userspace need to know this port? Can't we use PORT_GENERIC?
-
-
---wQ0cBGF5R+xQ7By2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfhKTwACgkQFA3kzBSg
-KbaGEBAAko5Zdq31eqGFNBy32OeJQ6zpiUA2K5ueKkvKDsZdQFJRwzx5e23rDPlS
-8JSNVPmJkqIn23c+Fs3CySTiE0NmdLWU+0x4BSocF2wdGEN0sHSRWV3Hyvf4mwYS
-m5dwGXYf7M1aBBU72eq1MRnOlo/GfvhJS4YY6QR6waJCCtdK76MvbSu98NSMwv8K
-53WmYX/Vj5R2MduC8Exl2soxg4Q0BQkwEj64LVwr/K80R+w/koiPOug1XMoMCMLl
-zNhHaIhtcerURNvElIB6oi+ZEwPC20ErptdvqgIzLNuQgL72yTmsfnov3ikI6ybg
-B2udVb73mXJc0SE3jxtshYLIcVeRBjS7n8goisDVKhKsWu9FwuWFUGgmrnOXzVfD
-zT+3vCN3Ab/o6N+hri2j1m69s9aorWa8EF4x42YVmLiGx0kgbeASqCx70Iz4zIXG
-yQ9viwyDIu9lOsmgMm8HHZ4X3EQHt5Tjx0seEFt9jGCUPZMGy4cJIfIhA14DHA7K
-yf5U/bwNDXRtxiGFt8drMe4QDS+hlVqMCCvJfG7Bvrx07h+mnrs9eHXLLcoRBMj1
-3cTy/In64cd+VyKsre4QDEzz9pr/J5HyUVq2y1RMIDt2QK+dJSronIYNnzln8TWR
-pGtKERYgScgbKx9Ya5qxeKsw0bTD5+6H4BMBFCXkeOaVCBEURuQ=
-=Wo2h
------END PGP SIGNATURE-----
-
---wQ0cBGF5R+xQ7By2--
+-- 
+heikki
 
