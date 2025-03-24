@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-574501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB7CA6E606
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:59:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD52A6E60D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B057171F34
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6993B8F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE8F195985;
-	Mon, 24 Mar 2025 21:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837CA1F4610;
+	Mon, 24 Mar 2025 21:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5J3o8rG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qn6UzrqT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F151F3FEE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56721EB5F4
 	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853389; cv=none; b=hk5oYsbqjWKBdQh71muEIxbDSaQwf18W4yG057Nj7RvRkkp5TX1He6F/ldn/FWdBP5Xx78j/QqBWGPdLKBnjcZPzVSv7aZ3upT769ZVvecsstBSl7ve9Qg/5BI+lP0fgRi0yy4sc45AiuYqJBr/Xr07lYHXn7s5lMnxT+2teI6k=
+	t=1742853389; cv=none; b=Nyo8rcVejVBIDyem0r9+yeOq6haWgIOQ/Lex0qa3IoHgrAFNAlxsL6IucOuUJjATiAPvOndmyxfsLAdp8FqnkBuKq4Q24e5fYHy6M0rb723g/0hMUMUp2AxkaURC/GXNCTwPS6d60KAKjCvx/x8f7EO+61VTP3P32ZilF/hWS4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742853389; c=relaxed/simple;
-	bh=SMqJ/mdxDUlaT7sCHuMQcldNMFe2OQbR1k57sPHhsYw=;
+	bh=Q0e+jxUlQcnZIxhwPBuE5JgMeJO9eNl4R7CNugxR5gw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sUGIGPS8CPJU0TKT7KJvisIJDBxW+fk8Yur04o9G9KOR8czC/N++M1Lk15JN+i8ApICtZqzptTA6nu04kwwG9IS/n6RQnSzEwSTwJ7MNFGcnFTAjm8YIAW8gJ+OMjDKMfel/v899uPX04kO0PElQVoyY2Xicd7MABirr9CSPhww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5J3o8rG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88179C4CEE4;
-	Mon, 24 Mar 2025 21:56:28 +0000 (UTC)
+	 MIME-Version; b=rUGVAcSi5NKKqsQMCqot8OeUD1hoHa2Lxy12oMhyaGg9bWBUk5slXXxEC8YRc4xAxy9rF0yuavJsnbHcC4vCAtlnse0ecGMuxfRjzw5o15Smhm9VeY+sY3+X5mULz6V/FMR0rMoRgffEnW0EmNwbI8w+R9O5fFAvU2ODz9vh7Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qn6UzrqT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F108C4CEDD;
+	Mon, 24 Mar 2025 21:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742853388;
-	bh=SMqJ/mdxDUlaT7sCHuMQcldNMFe2OQbR1k57sPHhsYw=;
+	s=k20201202; t=1742853389;
+	bh=Q0e+jxUlQcnZIxhwPBuE5JgMeJO9eNl4R7CNugxR5gw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T5J3o8rGqRFbhzpVB+HSQSUCd+LB8+GKgriCJ76BHS8VJyVHtfzRGlmom1lo+Cv3q
-	 RYVvKq/Pm5hBYgYRyIYna+qnuxgXbVVL5+5/mVXWvnesZdHRAxOMxuv+Au8js02H3f
-	 u2AVOoWIsvEugOE1Lt4Nd4zH8jL06Xvi5kD87dHbCHlrskBZhinxkhxUBPSMmLHqn3
-	 +9Lnp1xAeX1nD01n83RFuNR4VBkcicqPlvLA62EYaEflmT1f0FdcTfN06kC6LoFqDg
-	 0RA1r7PYP+Xqg00hYtBavMcWVM0vAmyAUG+h+AgXEKa5CHj5TUtUqx32FUCjtF9i4+
-	 biNIBhtBFYmmQ==
+	b=Qn6UzrqT6xep3HeIv1eyz62P3PLrDOL9PCilW8yIqIHmKPQfYECAgQc1cFF3qoSQx
+	 NAMfQ9h04qofOjJjiVNT8fCkuPaeRP2wKJZ7nLaY6EU9A2Xt3HrrKljAFgA0sQame5
+	 jl1ofpYxCapvRdiqOWo//06/CUA3/allCC9EL2zWKcvdOi1ilEwUXKCCI3IxSVQecM
+	 +O02Q49BL5WBBrSpyEXXHimVCjDAd+GLRhY+nyjy7HWbcToxgPrAdRHe73mANV/311
+	 fgC6/C7TrQYsd49KbVjVhiwVxcZnzMYapGnUdGu4F3zYJbZDWi0HRKDsHQoNRKsKET
+	 pMs5llV5rfmfg==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -47,12 +47,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Ingo Molnar <mingo@kernel.org>,
 	Miroslav Benes <mbenes@suse.cz>,
 	Brendan Jackman <jackmanb@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 16/22] media: dib8000: Prevent divide-by-zero in dib8000_set_dds()
-Date: Mon, 24 Mar 2025 14:56:06 -0700
-Message-ID: <bd1d504d930ae3f073b1e071bcf62cae7708773c.1742852847.git.jpoimboe@kernel.org>
+	Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 17/22] panic: Disable SMAP in __stack_chk_fail()
+Date: Mon, 24 Mar 2025 14:56:07 -0700
+Message-ID: <a3e97e0119e1b04c725a8aa05f7bc83d98e657eb.1742852847.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1742852846.git.jpoimboe@kernel.org>
 References: <cover.1742852846.git.jpoimboe@kernel.org>
@@ -64,39 +62,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If dib8000_set_dds()'s call to dib8000_read32() returns zero, the result
-is a divide-by-zero.  Prevent that from happening.
+__stack_chk_fail() can be called from uaccess-enabled code.  Make sure
+uaccess gets disabled before calling panic().
 
-Fixes the following warning with an UBSAN kernel:
+Fixes the following warning:
 
-  drivers/media/dvb-frontends/dib8000.o: warning: objtool: dib8000_tune() falls through to next function dib8096p_cfg_DibRx()
+  kernel/trace/trace_branch.o: error: objtool: ftrace_likely_update+0x1ea: call to __stack_chk_fail() with UACCESS enabled
 
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Fixes: 173a64cb3fcf ("[media] dib8000: enhancement")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202503210602.fvH5DO1i-lkp@intel.com/
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- drivers/media/dvb-frontends/dib8000.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/panic.c        | 6 ++++++
+ tools/objtool/check.c | 5 ++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/dib8000.c b/drivers/media/dvb-frontends/dib8000.c
-index 2f5165918163..cfe59c3255f7 100644
---- a/drivers/media/dvb-frontends/dib8000.c
-+++ b/drivers/media/dvb-frontends/dib8000.c
-@@ -2701,8 +2701,11 @@ static void dib8000_set_dds(struct dib8000_state *state, s32 offset_khz)
- 	u8 ratio;
- 
- 	if (state->revision == 0x8090) {
-+		u32 internal = dib8000_read32(state, 23) / 1000;
+diff --git a/kernel/panic.c b/kernel/panic.c
+index d8635d5cecb2..f9f0c5148f6a 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -832,9 +832,15 @@ device_initcall(register_warn_debugfs);
+  */
+ __visible noinstr void __stack_chk_fail(void)
+ {
++	unsigned long flags;
 +
- 		ratio = 4;
--		unit_khz_dds_val = (1<<26) / (dib8000_read32(state, 23) / 1000);
+ 	instrumentation_begin();
++	flags = user_access_save();
 +
-+		unit_khz_dds_val = (1<<26) / (internal ?: 1);
- 		if (offset_khz < 0)
- 			dds = (1 << 26) - (abs_offset_khz * unit_khz_dds_val);
- 		else
+ 	panic("stack-protector: Kernel stack is corrupted in: %pB",
+ 		__builtin_return_address(0));
++
++	user_access_restore(flags);
+ 	instrumentation_end();
+ }
+ EXPORT_SYMBOL(__stack_chk_fail);
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index f4b9fcc395eb..a953ce5fe395 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1194,12 +1194,15 @@ static const char *uaccess_safe_builtin[] = {
+ 	"__ubsan_handle_load_invalid_value",
+ 	/* STACKLEAK */
+ 	"stackleak_track_stack",
++	/* TRACE_BRANCH_PROFILING */
++	"ftrace_likely_update",
++	/* STACKPROTECTOR */
++	"__stack_chk_fail",
+ 	/* misc */
+ 	"csum_partial_copy_generic",
+ 	"copy_mc_fragile",
+ 	"copy_mc_fragile_handle_tail",
+ 	"copy_mc_enhanced_fast_string",
+-	"ftrace_likely_update", /* CONFIG_TRACE_BRANCH_PROFILING */
+ 	"rep_stos_alternative",
+ 	"rep_movs_alternative",
+ 	"__copy_user_nocache",
 -- 
 2.48.1
 
