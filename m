@@ -1,58 +1,97 @@
-Return-Path: <linux-kernel+bounces-573764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A457BA6DBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:43:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83B8A6DBDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:44:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDCF3ABD81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:43:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C620816896F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFEA25EFAB;
-	Mon, 24 Mar 2025 13:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5A625E444;
+	Mon, 24 Mar 2025 13:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jz9+9cwh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="GxonC7VQ"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069DC19C569;
-	Mon, 24 Mar 2025 13:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE312505C3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823812; cv=none; b=o/mah/+GCB2gkpXt2H0y5mnyHumxLclY8MM892kAEBTB8YlOivi85zlmcWo+iDpaNjsQEzja3YDWJghyUeh/1P8i6+W56Ftqe2A3qbqHcrnM17dqi4N4gVb6ugcHfGXPBQfBzeImsUX//YDDI8qf+cHSAhc2uIXgnV+FT0aNajY=
+	t=1742823839; cv=none; b=jNUuDespWVVkewiNlYVF6QItrBntShbKSutqgcG4qq7jXmM7BBfRwhT3v5RCTEn/nQwDYK4yfXh8MRV+Ts1lZuJInJdHCnVh8TeTQcK9rFbR2wrduzEajrc/P1atJTFsgxwhP7vAetKiwMr+uBZzyMHxa9+GBjVC+KeZvK8ZfsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823812; c=relaxed/simple;
-	bh=oMpqXQrrxK7A/shYjvYDKkBZWp4XdicK9zEvqFjtbcg=;
+	s=arc-20240116; t=1742823839; c=relaxed/simple;
+	bh=1xNZlSVbNDoJPRjUb5MwLSBNNaLvxA65XB62/kSkR9U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpk3NMW8YUZiVdH4IXVd9eFqRkN7iSg46yASXIYeb1g2cTA9Ny8ebqyoEOBJD2rE6lQng6np4OmopF8puMKD9jkBLKavM40dB5AZfURssiEpAsUIdLIzvjIAw7BrbScyfvHVIsRNAYarIH/jfAHGhSxc+fKzYx0K8eYUNnxxbaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jz9+9cwh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 448FCC4CEE9;
-	Mon, 24 Mar 2025 13:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742823811;
-	bh=oMpqXQrrxK7A/shYjvYDKkBZWp4XdicK9zEvqFjtbcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jz9+9cwh0Lq/AqNpL9fGxv0zd4pTQiHFfLC5BIE0aH/mCvTNuf4mN4k0eXVq1wtge
-	 ske5xnfrGouzxFF2apfZ6HXPRRxlEkXSkk8NQigcH/HOjpbiwdQaLsh8g/QHICUB8+
-	 AkMWvWMbDx0CYZB3TpdaJ7Ul96MnLxeOAKzBJHDBCmM/F986vP7jTrrWTIPtCyB2W7
-	 hoWXDVlqg5czLC5dup0Iw80UtQc52KtgDKOOAa3HfTaZ2nHDfO6+xXSiOlquhRhNVd
-	 SOPaxXNHaxBHIRil6JA27h0DOF1dmUoF83PoClAQzk9ujF68CcqTsaiAxskasqhMQY
-	 t0cNjotuhF2Gg==
-Date: Mon, 24 Mar 2025 14:43:27 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
-References: <20250324215702.1515ba92@canb.auug.org.au>
- <20250324220629.1665236b@canb.auug.org.au>
- <Z-FJH628-j2HCuaE@cassiopeiae>
- <2025032443-recharger-legacy-93bf@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJtt87pf1g+PwzxkwfEKHv3xhFUCfd5voqwIDyeLGFEPcrMOqAShvspOfmjNSFty6MMTXq8dNnbWHFfDuZh+2U3yhNXKR1FkxK5YJXq0uVoRhxmvsI3SuVZrQJfPR9BSmefOr4cjxAFUt7EnScQLi4l/4CD/vrB1UtWPydPagvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=GxonC7VQ; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c08fc20194so929323885a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742823835; x=1743428635; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGW53LfyIVcfMlHvMt/kyxY4rw5TXGHD2Z6PF0btLwM=;
+        b=GxonC7VQfqVjdahd80EeR03ZNTV04FhyqxcCafMDwOzh6rrvWQW88W6r2ujLEIlLdq
+         yXZD9yHtta/bJ6OmQ11bypQMwf3jb2kToQCYSPoPCDerjwL88LnIN2AYiQ9ltbDVtRrq
+         tn+Uu7QSFSCpTzpfl37mQLAv04wbNTLCr+WLcBx4yjwdRddkh0W5DXqWgIIVxrkLA4g8
+         np35uJfQSOSEBvq2JNcE0Yi6FseBA1uOxOwXEpGACFZd3oOqtg+WdacOIAlM8amSip5w
+         Q5/Llxw4J4J2EmyddATdkiwNJEcaeM7hs8WYZvR7QpRDLaO9LVAYF7Yw/MpwLtijElos
+         Tqwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742823835; x=1743428635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vGW53LfyIVcfMlHvMt/kyxY4rw5TXGHD2Z6PF0btLwM=;
+        b=hCzZQr27wp6Jh9Ccqr3drJeuASphDnuni3ClGY4f6/BnqT0ozmY4a0ZxwD/N/F9/df
+         +6+6Wxkcn1qJM2uOmaGXbVccvzT5yuVv4wgHoqkoxAOO3ffu6vQEOvENWzKBVkrxvFKJ
+         0GGqQTHdK/0nsyqxzg9e+jvw0Oz6kW7l6ya++johmlLzSgRrNKfrZj0RxkYj3iXE2Org
+         Rrn17WMCk/24Fqu1O1D7Lo/D7bSQ1CUAqYIV+BSj8Lht/KdhL8KkzpzwBOQeyR0lTjUa
+         OCKBqK5OAHR1geM0UNFaI33UTyhSwRxhAjlXc4B9IUORQumqApeBGoTfG3aZeNf2lbZc
+         b5Xw==
+X-Gm-Message-State: AOJu0Yy4jyIAeXBg/PCQtwH6HMcyVfUfpMhnJY7a+7R2A/JYrGPiY/y7
+	sv190Yb2FMaCWy8YncT9it4OWLYswigR/G3YVGdQTmFmBYo/JblSdo3CE3bAQlQ=
+X-Gm-Gg: ASbGnct8yxLuZoRPdQVnasG11hWKQYySoX5CXqajWDosq3y8U3fCtVM4J+GKbg3X3S9
+	04QolpJAhYLH/PoP5OUM7DJKvKY+Y5NDZIVSUCL7fM7O92r8f03tKq3O1C0CrS88I1AAOstFap+
+	cilD3zkzXMxldiUTEaxdhOYFMrsIoSYOsjHTrrtKsoVLKLxeusjzNbCH7eNRbgu1IfkYFzfEul3
+	umJ8DNyNkellcR9HwflRr4Anuiz3VbtIYwsLPa/VhKeR/BMUBCnRTOvkA7SBFy/46l6WNsiYZta
+	bCZwyVDWRDG+LC8SkHIfAjW3Fg6dSlb56nTmrEw4vop2Z1qdRMsVmw==
+X-Google-Smtp-Source: AGHT+IH8FMzSfvRHQLrikh/cxN2juHwustpDdgjWn8aSD//4Ho2J2tvUAcurpDqW2WXUj0eQ9aDqjA==
+X-Received: by 2002:a05:620a:f05:b0:7c5:9fd3:a90b with SMTP id af79cd13be357-7c5ba235ba9mr1867116885a.47.1742823835257;
+        Mon, 24 Mar 2025 06:43:55 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5cf74e3cdsm163064985a.18.2025.03.24.06.43.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 06:43:54 -0700 (PDT)
+Date: Mon, 24 Mar 2025 09:43:51 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Bharata B Rao <bharata@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
+	Jonathan.Cameron@huawei.com, Michael.Day@amd.com,
+	akpm@linux-foundation.org, dave.hansen@intel.com, david@redhat.com,
+	feng.tang@intel.com, hannes@cmpxchg.org, honggyu.kim@sk.com,
+	hughd@google.com, jhubbard@nvidia.com, k.shutemov@gmail.com,
+	kbusch@meta.com, kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com,
+	leillc@google.com, liam.howlett@oracle.com,
+	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
+	nphamcs@gmail.com, peterz@infradead.org, raghavendra.kt@amd.com,
+	riel@surriel.com, rientjes@google.com, rppt@kernel.org,
+	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
+	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
+	yuanchu@google.com, hyeonggon.yoo@sk.com
+Subject: Re: [RFC PATCH 2/4] mm: kpromoted: Hot page info collection and
+ promotion daemon
+Message-ID: <Z-Fhl6rLJH2wweGC@gourry-fedora-PF4VCD3F>
+References: <20250306054532.221138-1-bharata@amd.com>
+ <20250306054532.221138-3-bharata@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,152 +100,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025032443-recharger-legacy-93bf@gregkh>
+In-Reply-To: <20250306054532.221138-3-bharata@amd.com>
 
-On Mon, Mar 24, 2025 at 06:29:30AM -0700, Greg KH wrote:
-> On Mon, Mar 24, 2025 at 12:59:27PM +0100, Danilo Krummrich wrote:
-> > Hi Stephen,
-> > 
-> > On Mon, Mar 24, 2025 at 10:06:29PM +1100, Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > On Mon, 24 Mar 2025 21:57:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > After merging the rust tree, today's linux-next build (x86_64
-> > > > allmodconfig) failed like this:
-> > > > 
-> > > > error[E0277]: `*mut MyStruct` cannot be sent between threads safely
-> > > >   --> samples/rust/rust_dma.rs:47:22  
-> > > >    |
-> > > > 47 | impl pci::Driver for DmaSampleDriver {
-> > > >    |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be sent between threads safely
-> > > >    |
-> > > >    = help: within `DmaSampleDriver`, the trait `Send` is not implemented for `*mut MyStruct`, which is required by `DmaSampleDriver: Send`
-> > > > note: required because it appears within the type `CoherentAllocation<MyStruct>`
-> > > >   --> rust/kernel/dma.rs:132:12  
-> > > > note: required because it appears within the type `DmaSampleDriver`
-> > > >   --> samples/rust/rust_dma.rs:9:8  
-> > > >    |
-> > > > 9  | struct DmaSampleDriver {
-> > > >    |        ^^^^^^^^^^^^^^^
-> > > > note: required by a bound in `kernel::pci::Driver`
-> > > >   --> rust/kernel/pci.rs:225:1  
-> > > > 
-> > > > error: aborting due to 1 previous error
-> > > > 
-> > > > For more information about this error, try `rustc --explain E0277`.
-> > > > 
-> > > > I have no idea what caused this - it built in next-20250321, but that
-> > > > no longer builds, so I have reset to the version of the rust tree in
-> > > > next-20250320 (commit 4a47eec07be6).
-> > > 
-> > > Actually, the driver-core tree gained these commits over the weekend:
-> > > 
-> > >   51d0de7596a4 ("rust: platform: require Send for Driver trait implementers")
-> > >   935e1d90bf6f ("rust: pci: require Send for Driver trait implementers")
-> > >   455943aa187f ("rust: platform: impl Send + Sync for platform::Device")
-> > >   e2942bb4e629 ("rust: pci: impl Send + Sync for pci::Device")
-> > > 
-> > > A heads up would have been nice ... and maybe even a test merge and
-> > > build against -next (given how late we are in the cycle).
-> > 
-> > Commit 935e1d90bf6f ("rust: pci: require Send for Driver trait implementers")
-> > from the driver-core tree fixes a missing concurrency requirement, which commit
-> > 9901addae63b ("samples: rust: add Rust dma test sample driver") from the Rust
-> > tree did not yet consider.
-> > 
-> > Technically, it did what it is supposed to do -- catch a concurrency issue at
-> > compile time. However, since I was involved into both sides, I could have
-> > thought of this, but unfortunately in this case it was too subtle for me to
-> > spot -- sorry.
-> > 
-> > There are two options, 1. simply drop the commit [1] that introduces the
-> > affected sample DMA code, or 2. apply the fix below to [2]. My preference would
-> > be (2).
-> > 
-> > --
-> > 
-> > diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> > index 9d00f9c49f47..18de693c4924 100644
-> > --- a/rust/kernel/dma.rs
-> > +++ b/rust/kernel/dma.rs
-> > @@ -301,6 +301,10 @@ fn drop(&mut self) {
-> >      }
-> >  }
-> > 
-> > +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-> > +// can be send to another thread.
-> > +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-> > +
-> >  /// Reads a field of an item from an allocated region of structs.
-> >  ///
-> >  /// # Examples
-> > 
-> 
-> I can't "drop" anything here as that would be a mess.
+On Thu, Mar 06, 2025 at 11:15:30AM +0530, Bharata B Rao wrote:
+> kpromoted is a kernel daemon that accumulates hot page info
+> from different sources and tries to promote pages from slow
+> tiers to top tiers. One instance of this thread runs on each
+> node that has CPUs.
+>
 
-It's the DMA commit that has a bug, that was revealed by the fix in the
-driver-core tree. So, the patch to drop is in the rust tree (not sure if Miguel
-changes history at this point though).
+Hot take: This sounds more like ktieringd not kpromoted
 
-Anyways, I think the fix is simple enough.
+Is it reasonable to split the tracking a promotion logic into separate
+interfaces?  This would let us manage, for example, rate-limiting in the
+movement interface cleanly without having to care about the tiering
+system(s) associated with it.
 
-> Maybe we just
-> consider a merge of the driver core and rust trees at this point in time
-> and fix things up and do a combined pull request to Linus so he doesn't
-> have to deal with the fixups?
+    my_tiering_magic():
+        ... identify hot things ...
+        promote(batch_folios, optional_data);
+            -> kick daemon thread to wake up and do the promotion
+	... continue async things ...
 
-I think it's not that bad, the full diff for the conflicts between driver-core
-and rust is:
+Optional data could be anything from target nodes or accessor info, but
+not hotness information.
 
-diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-index 9d00f9c49f47..18de693c4924 100644
---- a/rust/kernel/dma.rs
-+++ b/rust/kernel/dma.rs
-@@ -301,6 +301,10 @@ fn drop(&mut self) {
-     }
- }
+Then users at least get a clean interface for things like rate-limiting,
+and everyone proposing their own take on tiering can consume it.  This
+may also be useful for existing users (TPP, reclaim?, etc).
 
-+// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-+// can be send to another thread.
-+unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-+
- /// Reads a field of an item from an allocated region of structs.
- ///
- /// # Examples
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index 908acd34b8db..874c2c964afa 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -4,10 +4,10 @@
- //!
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
-
--use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
-+use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude::*, types::ARef};
-
- struct DmaSampleDriver {
--    pdev: pci::Device,
-+    pdev: ARef<pci::Device>,
-     ca: CoherentAllocation<MyStruct>,
- }
-
-@@ -48,7 +48,7 @@ impl pci::Driver for DmaSampleDriver {
-     type IdInfo = ();
-     const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
-
--    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-+    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-         dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
-
-         let ca: CoherentAllocation<MyStruct> =
-@@ -64,7 +64,7 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>
-
-         let drvdata = KBox::new(
-             Self {
--                pdev: pdev.clone(),
-+                pdev: pdev.into(),
-                 ca,
-             },
-             GFP_KERNEL,
+~Gregory
 
