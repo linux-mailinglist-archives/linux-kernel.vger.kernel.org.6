@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-573205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A14A6D446
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:28:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F7BA6D44A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D720A16A7C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88EC03B11B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2315E18FDDB;
-	Mon, 24 Mar 2025 06:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533918FDD8;
+	Mon, 24 Mar 2025 06:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kz1c6gg+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="CWFZ056b"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2BA33981;
-	Mon, 24 Mar 2025 06:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF88291E;
+	Mon, 24 Mar 2025 06:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742797679; cv=none; b=qM/wd0/iTmYVlly1zHM623l8W/7QQuZ7y1tJynDhxQkFvoICiQDjDk80ZhpXrYacn5CY8K77vEIkCNJYWTcm6hm+/R2XRWFR5APX5z4cZdzZ7/7e37DlUShrcllyAFtJTkhnP55U30RpKfnPiX+GxhhsFxazCmTplKEuAU/x2Tw=
+	t=1742797799; cv=none; b=PH+HrKBCNDhHJGGMDvmBgfzZtmyeEtefomzL8JUyg9nhM1MEeGAnOQ7ih/NK4ojfZiolqEQTanfeb+CZIxGOC5/1kCgQG7yy+8To+p8PH7IPadSgS3CPrioqz5Ci7oLrmMcVY0UNTrFkqNgGU/eYTPHiP/R3F/ykZ6hLNc5XXwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742797679; c=relaxed/simple;
-	bh=eITHe9O29qurQr+w4lnf9ce6r8QgdKu3VSz+sAB0QJc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G7kJ0Ky0orW5+PwkGxMp0VsoF9LbBgzMuyw6l/ZlXsixaEJEUnmlXJUp+APdpcSj4AMawpvOxmXIK7a+7XyqTcwd0KhvztruWxcuazJUgoIancuyxrwZmiYNdpALGNE5vcourfR6Z5pe8LT2D6NyhbnoQmv/4EZNyz4z/fffMDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kz1c6gg+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742797677; x=1774333677;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eITHe9O29qurQr+w4lnf9ce6r8QgdKu3VSz+sAB0QJc=;
-  b=Kz1c6gg+Ias6OFknNF5dyEMfUNnD3OsOmHWhm0ZpymJk8xrV1UTYyD1J
-   Kd2vlnW1hff7ekdCF1jVu6VNYXKL6DrkbJ/SCRiCRBTyCltZGvGBcz4BR
-   rj0ZBqo/WvG4KMoDbbZlGHpOSgay6enaiUzdpWaYa+55GjfdGJa44eJ9d
-   oeh8fw6A6luUz+Y7Go7EJpD9X6jtOHqfA6SYwKGwAWRlRoU+kr7t5tyIw
-   tiX8T7Y5Ggxem0GvZhBCEbMJIQa1TBBKluV3PeACyORHCrzk3up374RJ9
-   HdaJ1rz1uUr7VWGNl9RVXaIvFpFqZurnormgU3LhPHCn2TeXedpKBa2ao
-   w==;
-X-CSE-ConnectionGUID: tryT+XEiTIqul8/xoTrLVw==
-X-CSE-MsgGUID: 8ifJC+9wTNujKU9dtpjuPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="47638762"
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="47638762"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2025 23:27:56 -0700
-X-CSE-ConnectionGUID: B48+T+GRQwqiLpAT4hNPdA==
-X-CSE-MsgGUID: BDisJXbXTsSeVaZTCIRHpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="124901989"
-Received: from yongliang-ubuntu20-ilbpg12.png.intel.com ([10.88.227.39])
-  by orviesa008.jf.intel.com with ESMTP; 23 Mar 2025 23:27:54 -0700
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v1 1/1] stmmac: intel: interface switching support for RPL-P platform
-Date: Mon, 24 Mar 2025 14:27:42 +0800
-Message-Id: <20250324062742.462771-1-yong.liang.choong@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742797799; c=relaxed/simple;
+	bh=Lm4uRu63/KJJw2DC5oteNhnhTDOIM+cXANS37kk/mac=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=IlA08TyFyaFjEqok/GvILXIrCqF6ixQRhDzaQJ3x6GItBLvYasJ2g6L3Ymqm4Epi75L3qic7d7nVIrryUDtErTHo71VcRy017uKMgQtljwTZG4NZ0/yiYjaaS23g0mo3BWL0kRGfLRpn9LU6Xg5zvbJnyviZuAaUOwv+RNwXs9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=CWFZ056b; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52O6TKu34126578
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 23 Mar 2025 23:29:21 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52O6TKu34126578
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1742797761;
+	bh=ZSd/+ojTYINNRGW4Jz8s2mPHc2J111xKaaTn8tja+wQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=CWFZ056bdNnOMjeX2/RJytFNeN4TOC0ttQgXPv4Qi6JD9T8uG3JdZpUP0eLcpbG7t
+	 r2RTJE1mioGwc0031Wy3o8aGEAymzVVEg7RHbCmt8cRw6y7sJla+c1P/I92FhelQ3Q
+	 7ZObXH42GcNvq0fS1Eu6f7EHCTHD3i9hM7k5dlDZPHfdwYrzm6/Tw4sz0QRHt1kjwo
+	 n7ImHb39Ti9DOj9HSelP7z24wEyvRyTEhIZV4AdnB/D7+pHhhyg1jw4EoObeBRbRuq
+	 UXbVZKuRIkiGiwQEidY1EJVQOkviknT+f/g+DHfWLzKBIwIkOV6DWYKM61R3hsz/cc
+	 5+mG/mXIA/Qmg==
+Date: Sun, 23 Mar 2025 23:29:20 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC: Ingo Molnar <mingo@kernel.org>, Tor Vic <torvic9@mailbox.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250324172723.49fb0416@canb.auug.org.au>
+References: <20250324172723.49fb0416@canb.auug.org.au>
+Message-ID: <6227FBC4-AF53-4992-9E29-C0D1DCAFA136@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Based on the patch series [1], the enablement of interface switching for
-RPL-P will use the same handling as ADL-N.
+On March 23, 2025 11:27:23 PM PDT, Stephen Rothwell <sfr@canb=2Eauug=2Eorg=
+=2Eau> wrote:
+>Hi all,
+>
+>After merging the tip tree, today's linux-next build (x86_64 allmodconfig=
+)
+>failed like this:
+>
+>cc1: error: bad value 'native' for '-march=3D' switch
+>cc1: note: valid arguments to '-march=3D' switch are: nocona core2 nehale=
+m corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-=
+avx2 broadwell skylake skylake-avx512 cannonlake icelake-client rocketlake =
+icelake-server cascadelake tigerlake cooperlake sapphirerapids emeraldrapid=
+s alderlake raptorlake meteorlake graniterapids graniterapids-d arrowlake a=
+rrowlake-s lunarlake pantherlake bonnell atom silvermont slm goldmont goldm=
+ont-plus tremont gracemont sierraforest grandridge clearwaterforest knl knm=
+ x86-64 x86-64-v2 x86-64-v3 x86-64-v4 eden-x2 nano nano-1000 nano-2000 nano=
+-3000 nano-x2 eden-x4 nano-x4 lujiazui yongfeng k8 k8-sse3 opteron opteron-=
+sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdve=
+r3 bdver4 znver1 znver2 znver3 znver4 znver5 btver1 btver2
+>make[3]: *** [scripts/Makefile=2Ebuild:203: scripts/mod/empty=2Eo] Error =
+1
+>cc1: error: bad value 'native' for '-march=3D' switch
+>cc1: note: valid arguments to '-march=3D' switch are: nocona core2 nehale=
+m corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-=
+avx2 broadwell skylake skylake-avx512 cannonlake icelake-client rocketlake =
+icelake-server cascadelake tigerlake cooperlake sapphirerapids emeraldrapid=
+s alderlake raptorlake meteorlake graniterapids graniterapids-d arrowlake a=
+rrowlake-s lunarlake pantherlake bonnell atom silvermont slm goldmont goldm=
+ont-plus tremont gracemont sierraforest grandridge clearwaterforest knl knm=
+ x86-64 x86-64-v2 x86-64-v3 x86-64-v4 eden-x2 nano nano-1000 nano-2000 nano=
+-3000 nano-x2 eden-x4 nano-x4 lujiazui yongfeng k8 k8-sse3 opteron opteron-=
+sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdve=
+r3 bdver4 znver1 znver2 znver3 znver4 znver5 btver1 btver2
+>make[3]: *** [scripts/Makefile=2Ebuild:98: scripts/mod/devicetable-offset=
+s=2Es] Error 1
+>make[2]: *** [Makefile:1276: prepare0] Error 2
+>
+>Caused by commit
+>
+>  0480bc7e65dc ("x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU option to l=
+ocally optimize the kernel with '-march=3Dnative'")
+>
+>I have reverted that commit for today=2E
+>
+>$ x86_64-linux-gnu-gcc --version
+>x86_64-linux-gnu-gcc (Debian 14=2E2=2E0-12) 14=2E2=2E0
+>
+>cross build - ppc hosted
+>
 
-Link: https://patchwork.kernel.org/project/netdevbpf/cover/20250227121522.1802832-1-yong.liang.choong@linux.intel.com/ [1]
-
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-index 5910571a954f..c8bb9265bbb4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-@@ -1437,7 +1437,7 @@ static const struct pci_device_id intel_eth_pci_id_table[] = {
- 	{ PCI_DEVICE_DATA(INTEL, ADLS_SGMII1G_0, &adls_sgmii1g_phy0_info) },
- 	{ PCI_DEVICE_DATA(INTEL, ADLS_SGMII1G_1, &adls_sgmii1g_phy1_info) },
- 	{ PCI_DEVICE_DATA(INTEL, ADLN_SGMII1G, &adln_sgmii1g_phy0_info) },
--	{ PCI_DEVICE_DATA(INTEL, RPLP_SGMII1G, &tgl_sgmii1g_phy0_info) },
-+	{ PCI_DEVICE_DATA(INTEL, RPLP_SGMII1G, &adln_sgmii1g_phy0_info) },
- 	{}
- };
- MODULE_DEVICE_TABLE(pci, intel_eth_pci_id_table);
--- 
-2.34.1
-
+Cross compiling?
 
