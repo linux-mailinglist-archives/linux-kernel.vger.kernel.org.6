@@ -1,143 +1,203 @@
-Return-Path: <linux-kernel+bounces-574100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09875A6E094
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:07:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1F1A6E096
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD5D3B6EBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BBA3B36FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579E263F54;
-	Mon, 24 Mar 2025 17:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1CF264615;
+	Mon, 24 Mar 2025 17:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="WfIBASoi"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QzqFxv3h"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E950263C75
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C0263F5D;
+	Mon, 24 Mar 2025 17:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742835956; cv=none; b=hgB/Rzh9nfQiTZm/Jmt8U+myMATHf6+sNUvVHYl0Cp1J9mWPOnnH+r9gfQFcmBIVDJYrwg6J4ILIEENLmjyAowVJQAYvuBgmhrME9+u8YbesjDnWrx3Nmbr+9C4/IlQHwa3ft4L393DFuO2yGu7u5iovAQziKJWVw/lJdjMXBLQ=
+	t=1742835974; cv=none; b=X3huWlP3q2Lci33RsEG2AasavigT/jueXFzIska1NgVnd7CY52zEOtaTdHfE1aiFb6vDkfsU5epRQ7bhEQn/5AtJ5Y04Uf7nQABMJRU+HILxhyoaqVELs4nKgKI6n92AyoTW0GPQvKCw31C20BTKv5zUd9OUxDl10Dsr5sTU558=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742835956; c=relaxed/simple;
-	bh=tmqHuzhAZXTG4eAuu0ZnQgAzD2ivCoMGn/5U74rRFp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSN8LlZhmxG1q5aoiK5YsoHJRNpmonLfFWxYmt6SmUB47eHqlG0K4mthsMlzMvRSbGpKFadY8yPzUfxjicfnKa3yubRlIAqg8/83+qgIjeBLg2pL16/AahSI6R8yWhYEtd4Fspr3if7cx+3hDyS7UZzccU3PTOgoYTY5dt7PH+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=WfIBASoi; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
-Message-ID: <dd1bc01c-75f4-4071-a2ac-534a12dd3029@craftyguy.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
-	s=key1; t=1742835951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y0MUSaxC+hQA+rUwUSVWGGTFbI21s/8Et44mf+YXe3o=;
-	b=WfIBASoiCff/K2GUmPuwz0CoE4OwEWKBKn3IQq+nmjO+FBltsURxhaGA4Vl/fjgP+DY+IJ
-	eEY+5l6QH8RwNHHD0sJYmdvftHUB765X+GWF3OdpXYV+wRyOW27SDL4+me6h+nn5ixVq12
-	hbZU0RxRulGKzcSH3gy4cXzzygj9Q5sEIviMkDivvFOuV2p/JRVMxoOvDTkAJEqjD6cBXH
-	8xxTDARNCpIjG2UhXGpPqSmNX04DjWEh5f6z+W4DbHfzyLSW42oYghSM8sECjYcOCk84so
-	IfaPIQUfDIbk7Nj33LJ0Cxvs/D5kRSMoiOvWSvg0yNeDj1EOnuJG9kgpm3Fg7A==
-Date: Mon, 24 Mar 2025 10:05:44 -0700
+	s=arc-20240116; t=1742835974; c=relaxed/simple;
+	bh=41GT6Nz+bc0ecmxG6gaQLa2C9sVbGLrHlvcO4fqGlIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QOuWEFjhbHWxGjfZgSgiHA+h5il2hUYFgRRbTBO5KL2bRsIhB7vmBiowRhj07CTJIOtXExgpoUcotFZWc1Gdate7YeXHorkvC04nWTK9eYv/0sl5pKgBfa0q/gHuIr4ufIjgquhefHDUaBdWGr1rq1x/ck9HSogk0dBJUUeQEFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QzqFxv3h; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912baafc58so3689492f8f.1;
+        Mon, 24 Mar 2025 10:06:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742835971; x=1743440771; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dFk3IdcSKxayCGlsiOfhMmx3PWLJAwIckQnSX27bd3Y=;
+        b=QzqFxv3hxj6K90kVavWZF7KFkPPitvqTsDgB6WJl0r9RQK66ZOv/sj1PMZakyHdEB0
+         kHEpN6Ex9t5H0pd3eiPSOWD8xVUjhWlRUUboIzk1Bsg3Wpf7A/3NYe/csPrzIRnKsGMW
+         3Zz7YciE11MFizr1uOzyZKBbOazvgwh2H5ZsQBcBVYK8H0hDmqg3/LrSUBQHGm9ED3PN
+         9ua0kTbLofi1JtnJN4iMejPgbO3Ft7/0gjc/6U/+U6Hsb7kgS14PDWQ8Xi3jjPxcTFLC
+         X1sDgHeMF70P61ggJygVsb9G3pziKgCeO8/j+X/7T9BDxxo4931Ktuh/TCJ4UggkfVPK
+         ptdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742835971; x=1743440771;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dFk3IdcSKxayCGlsiOfhMmx3PWLJAwIckQnSX27bd3Y=;
+        b=Z38RttQ2PyDJWfaTBp+imA5AIEtjx2A/k1/bjPwyVE5kulJwp0VL1kRlhz6jrWqoxH
+         YzVAHPvZ/OvPNUOIIBg1VLbY4XUxOVpoJ+bRYtWYoOyKuxWJRCWlTPWCXxjMGRYbsUS8
+         ga6juqSSGUZt6bTzICZmUDj8gRDijkrOCIoHegnM8XmgNOILkksBrySb4InXp/fYLEfJ
+         h11QbHcKJCM4XLETYXUMgFaTYrAuZP/6k/HgxwKBP3xzOZCz5+8eHdjj4/1YC7Lecj3C
+         FoJpigpOHhhxl479f+Qk1u1C9vIBV+0VvVVyVxDdLRUuzNDl7CQnCcOpDwquLBeUoABl
+         V3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2lirtyqylRC24oovI95KEK0XClD0i35yRioPC7ssqU7lRK3lb1Vjsuroevdf336JJ4F8k4480QPI=@vger.kernel.org, AJvYcCV9+PwBI81rSjem3o08F+1LtAZ7WyXez0OL9YQV4R4wh4e1DreNmTXT5Hy/KPejwf6rt15GITy4VEZhiQuz@vger.kernel.org, AJvYcCW+hcyfDFUTwL2If53omPhbF1AahLvuxkkWtntXGUXTrBiojieHX5ZE1ByehhPxifiOCbcXqmrIWLNi@vger.kernel.org, AJvYcCWniksdc1Tr9GdO8ERtObsrcVCPoj56URriR3tOcO7lAvTd9tjZB8kAyQyAlhdUhiJLAayZBfIv+/6+8sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4kMHwvF+slHZlqUCOPDalAMET3YLv0s+ubjA+X615R5jgEOAt
+	ptXDoPv9DoZBmZ0SqcMwE+hLwGFLU9U18++PASi6OBr/W1Iq+GEeodjJiIgWVE/OW5NoDL/8R84
+	Mb2CKp/H12vCBKBkUNjOCKPmQjIc=
+X-Gm-Gg: ASbGncuBJCI28JcBqRDwvm2B0Asdk40lrKEuwel5/EjVJjxY8RJkfDNx5I1zDxG3mCx
+	T0ISVByENTpbIsID6IpJUGkukg6cd7nU2WJ/xdy0EImXwpiOX21c/ifWR5aRHdN82DjTZBhTdcf
+	RsWS1OaGwCwIfyshJ4sIP0Sn41TJA=
+X-Google-Smtp-Source: AGHT+IGFs85m2tb0CvbZ1cteIaSaWqbwx3SiFJBR4bxFXClC5PSNDvwcxnvalrKmwApXl+dNsAqoYgLQtb4T1r/VDvY=
+X-Received: by 2002:a05:6000:400e:b0:391:3f94:dc9e with SMTP id
+ ffacd0b85a97d-3997f90394emr14378665f8f.16.1742835970541; Mon, 24 Mar 2025
+ 10:06:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
- events
-To: Johan Hovold <johan+linaro@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250324132448.6134-1-johan+linaro@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Clayton Craft <clayton@craftyguy.net>
-In-Reply-To: <20250324132448.6134-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250323071424.48779-1-clamor95@gmail.com> <20250323071424.48779-3-clamor95@gmail.com>
+ <20250324165257.GA458528-robh@kernel.org>
+In-Reply-To: <20250324165257.GA458528-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 24 Mar 2025 19:05:58 +0200
+X-Gm-Features: AQ5f1JqjtDObBIN6HWXp4Xb-bKxDpiwv0AZaLd-JroEnLNLYqWC2vlIVyshRnAE
+Message-ID: <CAPVz0n3=-QL1_NGP31WX_4LQBt5-T47BbU_yn6td1zk9C2T=iA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: mfd: Document Infineon/Cypress
+ CG7153AM MCU
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/24/25 06:24, Johan Hovold wrote:
-> The PMIC GLINK driver is currently generating DisplayPort hotplug
-> notifications whenever something is connected to (or disconnected from)
-> a port regardless of the type of notification sent by the firmware.
-> 
-> These notifications are forwarded to user space by the DRM subsystem as
-> connector "change" uevents:
-> 
->      KERNEL[1556.223776] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
->      ACTION=change
->      DEVPATH=/devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0
->      SUBSYSTEM=drm
->      HOTPLUG=1
->      CONNECTOR=36
->      DEVNAME=/dev/dri/card0
->      DEVTYPE=drm_minor
->      SEQNUM=4176
->      MAJOR=226
->      MINOR=0
-> 
-> On the Lenovo ThinkPad X13s and T14s, the PMIC GLINK firmware sends two
-> identical notifications with orientation information when connecting a
-> charger, each generating a bogus DRM hotplug event. On the X13s, two
-> such notification are also sent every 90 seconds while a charger remains
-> connected, which again are forwarded to user space:
-> 
->      port = 1, svid = ff00, mode = 255, hpd_state = 0
->      payload = 01 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00
-> 
-> Note that the firmware only sends on of these when connecting an
-> ethernet adapter.
-> 
-> Fix the spurious hotplug events by only forwarding hotplug notifications
-> for the Type-C DisplayPort service id. This also reduces the number of
-> uevents from four to two when an actual DisplayPort altmode device is
-> connected:
-> 
->      port = 0, svid = ff01, mode = 2, hpd_state = 0
->      payload = 00 01 02 00 f2 0c 01 ff 03 00 00 00 00 00 00 00
->      port = 0, svid = ff01, mode = 2, hpd_state = 1
->      payload = 00 01 02 00 f2 0c 01 ff 43 00 00 00 00 00 00 00
-> 
-> Fixes: 080b4e24852b ("soc: qcom: pmic_glink: Introduce altmode support")
-> Cc: stable@vger.kernel.org	# 6.3
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Reported-by: Clayton Craft <clayton@craftyguy.net>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> 
-> Clayton reported seeing display flickering with recent RC kernels, which
-> may possibly be related to these spurious events being generated with
-> even greater frequency.
-> 
-> That still remains to be fully understood, but the spurious events, that
-> on the X13s are generated every 90 seconds, should be fixed either way.
+=D0=BF=D0=BD, 24 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 18:52 Rob =
+Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Sun, Mar 23, 2025 at 09:14:22AM +0200, Svyatoslav Ryhel wrote:
+> > Add binding for Cypress CG7153AM embedded controller. Pegatron implemen=
+ted
+> > a custom configuration of this MCU in their Chagall tablets, utilizing =
+it
+> > for battery monitoring.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../bindings/mfd/cypress,cg7153am.yaml        | 55 +++++++++++++++++++
+> >  1 file changed, 55 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/cypress,cg715=
+3am.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yam=
+l b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+> > new file mode 100644
+> > index 000000000000..f8469b5e3816
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+> > @@ -0,0 +1,55 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/mfd/cypress,cg7153am.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Infineon/Cypress Semicon CG7153AM Microcontroller
+> > +
+> > +maintainers:
+> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > +
+> > +description:
+> > +  The CG7153AM, an 8-bit programmable microcontroller from Infineon/Cy=
+press
+> > +  Semiconductor, communicates over I2C and is implemented in devices l=
+ike the
+> > +  Pegatron Chagall tablet for fuel gauge and battery control functions=
+.
+> > +
+> > +$ref: /schemas/power/supply/power-supply.yaml
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - pegatron,chagall-ec # Pegatron Chagall tablet device
+> > +          - const: cypress,cg7153am
+> > +      - items:
+> > +          const: cypress,cg7153am
+>
+> Is this just some general purpose uC which could be used for anything
+> and the interface exposed is Pegatron's invention. If so, then I'd drop
+> the cypress,cg7153am compatible. What use would it be to software?
+>
 
-When a display/dock (which has ethernet) is connected, I see this 
-hotplug change event 2 times (every 30 seconds) which I think you said 
-this is expected now?
+Yeah, Cypress made an MPU, Pegatron used it as a base to make a fuel gauge.
 
-> UDEV  [236.150574] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [236.588696] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [266.208175] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [266.644710] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [296.243187] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [296.678177] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [326.276256] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> UDEV  [326.712248] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+You propose smth like this?
 
-Not sure about you seeing it every 90s vs my 30s... anyways, I no longer 
-see these events when a PD charger is connected though, so this patch 
-seems to help with that!
+      - items:
+          - enum:
+              - pegatron,chagall-ec # Pegatron Chagall tablet device
+          - const: cypress,cg7153am
 
-Tested-by: Clayton Craft <clayton@craftyguy.net>
+Without oneOf and second item or remove cypress,cg7153am entirely and
+submit as pegatron,chagall-ec.yaml? Just to be clear.
+
+I am fine with removing oneOf and items: const: cypress,cg7153am, but
+I would like to preserve cypress,cg7153am as second compatible since
+this is an actual MCU model.
+
+Thanks.
+
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  monitored-battery: true
+> > +  power-supplies: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        embedded-controller@10 {
+> > +            compatible =3D "pegatron,chagall-ec", "cypress,cg7153am";
+> > +            reg =3D <0x10>;
+> > +
+> > +            monitored-battery =3D <&battery>;
+> > +            power-supplies =3D <&mains>;
+> > +        };
+> > +    };
+> > +...
+> > --
+> > 2.43.0
+> >
 
