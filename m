@@ -1,377 +1,215 @@
-Return-Path: <linux-kernel+bounces-573769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E52A6DBFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:49:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34317A6DC14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3AF16ADE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F45316B1B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9C125E444;
-	Mon, 24 Mar 2025 13:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F68E1EDA31;
+	Mon, 24 Mar 2025 13:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r7Vg8ZP+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PT6FtSzu"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE67AFC0A;
-	Mon, 24 Mar 2025 13:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF31E14F9FB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824160; cv=none; b=oJFpvY8vSwsyNfknbP9y7UsNt0paajG3aRDYLJ1wE/+y37e8UdISsrguO2mBC0cDaZexqzLvoqFKsb4UODDQfdKItKbi/ccKZzhKEXv1mGnS+aMxOx0nvkNuawRcnXXrDI7xx+blOJLekf9zjLKdZzyqNpOcCLXArC9ppkCEJKE=
+	t=1742824222; cv=none; b=ZgAe8ELsbFlWiuNbrEkjsE8iIf9JKwWTmEtKZ/ZoN33ecyNgEZRXf8Pgt4Kg+sG4HUy+mloc9AdQOkm1XQ5LTvsS1jOZrkIWhcpZwD2u+K2+tzT7E6hazmJ39wmfd/oQH6udDEMiRnY2us5KsMXOjsMUh8E2ELyw7DVqMOL0g34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824160; c=relaxed/simple;
-	bh=1d98LpnuRQzscRcy1wKUMiTv9IxQT2cYRvWeQYcatNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lQY6eiTnowU7nM6gjGjCQ2KBMshDgU5NMr0vuP+EBGEohlw69XVwKywZsAVEnNoQZW/i0QF9AR8nOZjndF5FZCJjoRqaVYcLa87cQ75zvp4RuNcoSxlXlbfEjP9brBZDE2RVNtdPoAm/7Z1sep5A8RZ6Z/R36B76kF/AxPAkbmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r7Vg8ZP+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=4aiGzvplkYDrIq2JaDrvyRz6Tq58zzawWVzsjC0w1dY=; b=r7Vg8ZP+LtdAp4GiZ/APeBC4gH
-	GfRJ2mjcxKyeh6D1X/HbQ/qqAV9y9/sGSRZyUJL6CVQlPTt9/6fUCUuUGyKxnRT7eVV1vrT7yh6nO
-	6mcCcWTNWLmFmWgEsBXHhhyJASgceADSftPYoNihZbZq7XcxE44x24N4xv1ZZ0zYEnd9pKYIJYUCg
-	AZNdGYCWekjb1NXneDgg6m1x3oVkSbaSmJpEuUkw4wH+6RVyPIpCkCNnbaPh4A89ZZswXNe/9Gs/R
-	spGb+aFnoNBss0msqdz3gBIEY8n5nPlu0ROVUn2g41fAOTW4whZzpt7gxDpgVK+aF2Op8x16R46ph
-	S0hVh7SQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1twiAv-00000000kUw-2VGC;
-	Mon, 24 Mar 2025 13:49:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 29C1F3004AF; Mon, 24 Mar 2025 14:49:09 +0100 (CET)
-Date: Mon, 24 Mar 2025 14:49:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: mingo@kernel.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, jpoimboe@kernel.org, jikos@kernel.org,
-	mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
-	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
- live-patching
-Message-ID: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1742824222; c=relaxed/simple;
+	bh=idBIRQzC41pEK3vxHCsW3jlGzyWUmPmwM/kPI+tS88M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WAnZ3K/k9yGOkHIake+Zql+eL+UdT126PORqoETU3D4m/neqEVxwflw5sVMfLyVQxEoR4IaTeMfUvgA/D5ZW4ceegkytm7Pxbji5/wLTP/1VudRTW9L/HLxywwhvZ/Y9tGFM9GMOqQ/eYhMhXM7/57pb21T6lTnYMZB28ud9BnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PT6FtSzu; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6025007e592so436494eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742824218; x=1743429018; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CdxeeM9Wzx2ULG71chhuAoOD2bPZ1lIe5eeC/XTvSI0=;
+        b=PT6FtSzugs9idtT+MOVtd9b+l+JbWZoUvXNYG6mZYJkke2IfyJIgp2374Pooy2o2Ko
+         cq0tJ3PkxyZAhimIbf1N+Tkp0Nz5z8ANJhr7AfHvpYMh/NjcZ9tmcUxlG1wWY1glK+vt
+         CQAnf3pFLC2x1HjCPMJVDKzqFTq+6vSBl0yJpJAsEQgywzm8FqJm0F9Rpyj/WThX8fb9
+         fzKQb9s8jlT4BO9xGUbD4LPphn3VpGqvCjUgPdq+jNiDvdqvB+eV+IK8DusxAu6K5e31
+         cC3ZIF/t/9QCFaSn5wtQFMW0pbDEF13Sjh4BJK+QTapuFfMgDei93XBPRg/A+fhM21My
+         h7xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742824218; x=1743429018;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CdxeeM9Wzx2ULG71chhuAoOD2bPZ1lIe5eeC/XTvSI0=;
+        b=Ye4AaIsLJgV5nTx1gKJLLxQQEXmC8OVVKZygW4xSQmfCKZqoAsci+o1GY8OxT6zCkR
+         22ifz9mQbudMB5rrXRSK8xFw0wlzF1kFHNguly+bPBP3HFU6vfYMoii2CDLqUfDaZz36
+         XSF6LZ0x+Ou8APVQS+JBTXjBgw/F+qg0AFTAfCtt3ndEcDtUnXinzdoTUKppP/EhEiDy
+         le1lS3f9PWGT28kXajZtgdsqjkeBTq9ySRfumc0uC+7kdQzctbqDSDXVNvI0lpRuclB3
+         ix0UDE37xx9fGUTs1K51NA4RYkV+rz0e1btsdocJUKk+U7dtDVGHoE6VkRvUCTRY0f1F
+         oEoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/g1YJUGwASB3b4Lj6iWMTjzI1t3rU11MDMU8oydRcwkFvPaPpU6TYhXYFqkKyHzJEtsCtxmyEDLNtqFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziR50eqKupqKrneAGpQecwkNhNLNAshqnA0Q5YB0qw1YjVLQtq
+	dDwhSVN582M0e5O02HIouwut+6yKT1bMZIPHIB/ZYm79QNrVPIdU+KVmDSV9kHE=
+X-Gm-Gg: ASbGncs9ktjBsTNNN8bhFmDIS5DyoJZJLMeywF1DsR5EfA/06ejNO/HdaTpSl0cyAf3
+	Y48TX7KwZGs5kAbR1RU/e/nxz6YH5JVoXNpAifydkJwMuVV3ow6noEV/gHyfdOWayF/fOmj0gwI
+	bvAi5mgOePeUFT28pZXYNGACfCtN8VbRzDDW84KuoqdKGOm6QBAS9Okpd2t7fW5HF8ILjdCxYQF
+	RmZHjKxfzW1CKfFOeai83f385b/966iOof+7Udn2DGBuQZTrt2GEOosHwvpHJ5if+OpKbwIY5+Z
+	nBMpQjRW/xisRC+z2UzNe/UzeTLYTCwsYUOpBr0nkDuWLtPHudaoD7Krz/IFnA0NcyN4ZtJF0SI
+	WlInJtg==
+X-Google-Smtp-Source: AGHT+IGUKGUnBQQj8euBvc40iv5UxLc92QmBpQeJUNQcD9g9q1Gn7KRpSWRrk0DYtdOznF3qMa6O7Q==
+X-Received: by 2002:a05:6871:530b:b0:29e:3de0:d400 with SMTP id 586e51a60fabf-2c77fdcc096mr8345834fac.0.1742824217751;
+        Mon, 24 Mar 2025 06:50:17 -0700 (PDT)
+Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77f0f3fbcsm2025356fac.49.2025.03.24.06.50.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 06:50:17 -0700 (PDT)
+Message-ID: <4854b569-5032-4b75-80a6-8c5822845dc7@baylibre.com>
+Date: Mon, 24 Mar 2025 08:50:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel
+ info
+To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+ Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Angelo Dureghello <adureghello@baylibre.com>,
+ Alexandru Ardelean <aardelean@baylibre.com>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+References: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <72d776ae-4373-4a78-ba00-fa809478b453@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 3/22/25 12:25 PM, Dan Carpenter wrote:
+> Hi David,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7606-check-for-NULL-before-calling-sw_mode_config/20250319-065737
+> base:   9f36acefb2621d980734a5bb7d74e0e24e0af166
+> patch link:    https://lore.kernel.org/r/20250318-iio-adc-ad7606-improvements-v2-9-4b605427774c%40baylibre.com
+> patch subject: [PATCH v2 09/10] iio: adc: ad7606: dynamically allocate channel info
+> config: arm64-randconfig-r071-20250322 (https://download.01.org/0day-ci/archive/20250322/202503222246.RafigmhQ-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202503222246.RafigmhQ-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/iio/adc/ad7606.c:1270 ad7606_probe_channels() warn: potentially one past the end of array 'channels[i]'
+> 
+> vim +1270 drivers/iio/adc/ad7606.c
+> 
+> 87cf5705725eeb David Lechner      2025-03-18  1196  static int ad7606_probe_channels(struct iio_dev *indio_dev)
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1197  {
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1198  	struct ad7606_state *st = iio_priv(indio_dev);
+> 87cf5705725eeb David Lechner      2025-03-18  1199  	struct device *dev = indio_dev->dev.parent;
+> 87cf5705725eeb David Lechner      2025-03-18  1200  	struct iio_chan_spec *channels;
+> 87cf5705725eeb David Lechner      2025-03-18  1201  	bool slow_bus;
+> 87cf5705725eeb David Lechner      2025-03-18  1202  	int ret, i;
+> 87cf5705725eeb David Lechner      2025-03-18  1203  
+> 87cf5705725eeb David Lechner      2025-03-18  1204  	slow_bus = !st->bops->iio_backend_config;
+> 87cf5705725eeb David Lechner      2025-03-18  1205  	indio_dev->num_channels = st->chip_info->num_adc_channels;
+> 87cf5705725eeb David Lechner      2025-03-18  1206  
+> 87cf5705725eeb David Lechner      2025-03-18  1207  	/* Slow buses also get 1 more channel for soft timestamp */
+> 87cf5705725eeb David Lechner      2025-03-18  1208  	if (slow_bus)
+> 87cf5705725eeb David Lechner      2025-03-18  1209  		indio_dev->num_channels++;
+> 87cf5705725eeb David Lechner      2025-03-18  1210  
+> 87cf5705725eeb David Lechner      2025-03-18  1211  	channels = devm_kcalloc(dev, indio_dev->num_channels, sizeof(*channels),
+> 87cf5705725eeb David Lechner      2025-03-18  1212  				GFP_KERNEL);
+> 87cf5705725eeb David Lechner      2025-03-18  1213  	if (!channels)
+> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1214  		return -ENOMEM;
+> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1215  
+> 87cf5705725eeb David Lechner      2025-03-18  1216  	for (i = 0; i < indio_dev->num_channels; i++) {
 
-With the goal of deprecating / removing VOLUNTARY preempt, live-patch
-needs to stop relying on cond_resched() to make forward progress.
+The fix is to change this line to:
 
-Instead, rely on schedule() with TASK_FREEZABLE set. Just like
-live-patching, the freezer needs to be able to stop tasks in a safe /
-known state.
+							for (i = 0; i < st->chip_info->num_adc_channels; i++) {
 
-Compile tested only.
+> 87cf5705725eeb David Lechner      2025-03-18  1217  		struct iio_chan_spec *chan = &channels[i];
+> 87cf5705725eeb David Lechner      2025-03-18  1218  
+> 87cf5705725eeb David Lechner      2025-03-18  1219  		chan->type = IIO_VOLTAGE;
+> 87cf5705725eeb David Lechner      2025-03-18  1220  		chan->indexed = 1;
+> 87cf5705725eeb David Lechner      2025-03-18  1221  		chan->channel = i;
+> 87cf5705725eeb David Lechner      2025-03-18  1222  		chan->scan_index = i;
+> 87cf5705725eeb David Lechner      2025-03-18  1223  		chan->scan_type.sign = 's';
+> 87cf5705725eeb David Lechner      2025-03-18  1224  		chan->scan_type.realbits = st->chip_info->bits;
+> 87cf5705725eeb David Lechner      2025-03-18  1225  		chan->scan_type.storagebits = st->chip_info->bits > 16 ? 32 : 16;
+> 87cf5705725eeb David Lechner      2025-03-18  1226  		chan->scan_type.endianness = IIO_CPU;
+> f3838e934dfff2 Alexandru Ardelean 2024-09-19  1227  
+> 87cf5705725eeb David Lechner      2025-03-18  1228  		if (indio_dev->modes & INDIO_DIRECT_MODE)
+> 87cf5705725eeb David Lechner      2025-03-18  1229  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
+> 87cf5705725eeb David Lechner      2025-03-18  1230  
+> 87cf5705725eeb David Lechner      2025-03-18  1231  		if (st->sw_mode_en) {
+> 87cf5705725eeb David Lechner      2025-03-18  1232  			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
+> 87cf5705725eeb David Lechner      2025-03-18  1233  			chan->info_mask_separate_available |=
+> 87cf5705725eeb David Lechner      2025-03-18  1234  				BIT(IIO_CHAN_INFO_SCALE);
+> 87cf5705725eeb David Lechner      2025-03-18  1235  
+> 87cf5705725eeb David Lechner      2025-03-18  1236  			/*
+> 87cf5705725eeb David Lechner      2025-03-18  1237  			 * All chips with software mode support oversampling,
+> 87cf5705725eeb David Lechner      2025-03-18  1238  			 * so we skip the oversampling_available check. And the
+> 87cf5705725eeb David Lechner      2025-03-18  1239  			 * shared_by_type instead of shared_by_all on slow
+> 87cf5705725eeb David Lechner      2025-03-18  1240  			 * buses is for backward compatibility.
+> 87cf5705725eeb David Lechner      2025-03-18  1241  			 */
+> 87cf5705725eeb David Lechner      2025-03-18  1242  			if (slow_bus)
+> 87cf5705725eeb David Lechner      2025-03-18  1243  				chan->info_mask_shared_by_type |=
+> 87cf5705725eeb David Lechner      2025-03-18  1244  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> 87cf5705725eeb David Lechner      2025-03-18  1245  			else
+> 87cf5705725eeb David Lechner      2025-03-18  1246  				chan->info_mask_shared_by_all |=
+> 87cf5705725eeb David Lechner      2025-03-18  1247  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> 87cf5705725eeb David Lechner      2025-03-18  1248  
+> 87cf5705725eeb David Lechner      2025-03-18  1249  			chan->info_mask_shared_by_all_available |=
+> 87cf5705725eeb David Lechner      2025-03-18  1250  				BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> 87cf5705725eeb David Lechner      2025-03-18  1251  		} else {
+> 87cf5705725eeb David Lechner      2025-03-18  1252  			chan->info_mask_shared_by_type |=
+> 87cf5705725eeb David Lechner      2025-03-18  1253  				BIT(IIO_CHAN_INFO_SCALE);
+> 87cf5705725eeb David Lechner      2025-03-18  1254  
+> 87cf5705725eeb David Lechner      2025-03-18  1255  			if (st->chip_info->oversampling_avail)
+> 87cf5705725eeb David Lechner      2025-03-18  1256  				chan->info_mask_shared_by_all |=
+> 87cf5705725eeb David Lechner      2025-03-18  1257  					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> 87cf5705725eeb David Lechner      2025-03-18  1258  		}
+> 87cf5705725eeb David Lechner      2025-03-18  1259  
+> 87cf5705725eeb David Lechner      2025-03-18  1260  		if (!slow_bus)
+> 87cf5705725eeb David Lechner      2025-03-18  1261  			chan->info_mask_shared_by_all |=
+> 87cf5705725eeb David Lechner      2025-03-18  1262  				BIT(IIO_CHAN_INFO_SAMP_FREQ);
+> 87cf5705725eeb David Lechner      2025-03-18  1263  
+> 87cf5705725eeb David Lechner      2025-03-18  1264  		ret = st->chip_info->scale_setup_cb(indio_dev, chan);
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1265  		if (ret)
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1266  			return ret;
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1267  	}
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1268  
+> 87cf5705725eeb David Lechner      2025-03-18  1269  	if (slow_bus)
+> 87cf5705725eeb David Lechner      2025-03-18 @1270  		channels[i] = (struct iio_chan_spec)IIO_CHAN_SOFT_TIMESTAMP(i);
+>                                                                 ^^^^^^^^^^^
+> i is == indio_dev->num_channels so this is out of bounds by one element.
+> 
+> 87cf5705725eeb David Lechner      2025-03-18  1271  
+> 87cf5705725eeb David Lechner      2025-03-18  1272  	indio_dev->channels = channels;
+> 87cf5705725eeb David Lechner      2025-03-18  1273  
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1274  	return 0;
+> e571c1902116a3 Alexandru Ardelean 2024-09-19  1275  }
+> 
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/livepatch_sched.h | 15 +++++--------
- include/linux/sched.h           |  6 -----
- kernel/livepatch/transition.c   | 30 ++++++-------------------
- kernel/sched/core.c             | 50 +++++++----------------------------------
- 4 files changed, 21 insertions(+), 80 deletions(-)
-
-diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
-index 013794fb5da0..7e8171226dd7 100644
---- a/include/linux/livepatch_sched.h
-+++ b/include/linux/livepatch_sched.h
-@@ -3,27 +3,24 @@
- #define _LINUX_LIVEPATCH_SCHED_H_
- 
- #include <linux/jump_label.h>
--#include <linux/static_call_types.h>
-+#include <linux/sched.h>
-+
- 
- #ifdef CONFIG_LIVEPATCH
- 
- void __klp_sched_try_switch(void);
- 
--#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
--
- DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
- 
--static __always_inline void klp_sched_try_switch(void)
-+static __always_inline void klp_sched_try_switch(struct task_struct *curr)
- {
--	if (static_branch_unlikely(&klp_sched_try_switch_key))
-+	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
-+	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
- 		__klp_sched_try_switch();
- }
- 
--#endif /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
--
- #else /* !CONFIG_LIVEPATCH */
--static inline void klp_sched_try_switch(void) {}
--static inline void __klp_sched_try_switch(void) {}
-+static inline void klp_sched_try_switch(struct task_struct *curr) {}
- #endif /* CONFIG_LIVEPATCH */
- 
- #endif /* _LINUX_LIVEPATCH_SCHED_H_ */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 6e5c38718ff5..b988e1ae9bd9 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -44,7 +44,6 @@
- #include <linux/seqlock_types.h>
- #include <linux/kcsan.h>
- #include <linux/rv.h>
--#include <linux/livepatch_sched.h>
- #include <linux/uidgid_types.h>
- #include <asm/kmap_size.h>
- 
-@@ -2069,9 +2068,6 @@ extern int __cond_resched(void);
- 
- #if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
- 
--void sched_dynamic_klp_enable(void);
--void sched_dynamic_klp_disable(void);
--
- DECLARE_STATIC_CALL(cond_resched, __cond_resched);
- 
- static __always_inline int _cond_resched(void)
-@@ -2092,7 +2088,6 @@ static __always_inline int _cond_resched(void)
- 
- static inline int _cond_resched(void)
- {
--	klp_sched_try_switch();
- 	return __cond_resched();
- }
- 
-@@ -2102,7 +2097,6 @@ static inline int _cond_resched(void)
- 
- static inline int _cond_resched(void)
- {
--	klp_sched_try_switch();
- 	return 0;
- }
- 
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index ba069459c101..2676c43642ff 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -29,22 +29,13 @@ static unsigned int klp_signals_cnt;
- 
- /*
-  * When a livepatch is in progress, enable klp stack checking in
-- * cond_resched().  This helps CPU-bound kthreads get patched.
-+ * schedule().  This helps CPU-bound kthreads get patched.
-  */
--#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
--
--#define klp_cond_resched_enable() sched_dynamic_klp_enable()
--#define klp_cond_resched_disable() sched_dynamic_klp_disable()
--
--#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
- 
- DEFINE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
--EXPORT_SYMBOL(klp_sched_try_switch_key);
- 
--#define klp_cond_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
--#define klp_cond_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
--
--#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
-+#define klp_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
-+#define klp_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
- 
- /*
-  * This work can be performed periodically to finish patching or unpatching any
-@@ -365,9 +356,6 @@ static bool klp_try_switch_task(struct task_struct *task)
- 
- void __klp_sched_try_switch(void)
- {
--	if (likely(!klp_patch_pending(current)))
--		return;
--
- 	/*
- 	 * This function is called from cond_resched() which is called in many
- 	 * places throughout the kernel.  Using the klp_mutex here might
-@@ -377,14 +365,14 @@ void __klp_sched_try_switch(void)
- 	 * klp_try_switch_task().  Thanks to task_call_func() they won't be
- 	 * able to switch this task while it's running.
- 	 */
--	preempt_disable();
-+	lockdep_assert_preemption_disabled();
- 
- 	/*
- 	 * Make sure current didn't get patched between the above check and
- 	 * preempt_disable().
- 	 */
- 	if (unlikely(!klp_patch_pending(current)))
--		goto out;
-+		return;
- 
- 	/*
- 	 * Enforce the order of the TIF_PATCH_PENDING read above and the
-@@ -395,11 +383,7 @@ void __klp_sched_try_switch(void)
- 	smp_rmb();
- 
- 	klp_try_switch_task(current);
--
--out:
--	preempt_enable();
- }
--EXPORT_SYMBOL(__klp_sched_try_switch);
- 
- /*
-  * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
-@@ -508,7 +492,7 @@ void klp_try_complete_transition(void)
- 	}
- 
- 	/* Done!  Now cleanup the data structures. */
--	klp_cond_resched_disable();
-+	klp_resched_disable();
- 	patch = klp_transition_patch;
- 	klp_complete_transition();
- 
-@@ -560,7 +544,7 @@ void klp_start_transition(void)
- 			set_tsk_thread_flag(task, TIF_PATCH_PENDING);
- 	}
- 
--	klp_cond_resched_enable();
-+	klp_resched_enable();
- 
- 	klp_signals_cnt = 0;
- }
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4d617946d6e8..e6bfcdfb631e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -66,6 +66,7 @@
- #include <linux/vtime.h>
- #include <linux/wait_api.h>
- #include <linux/workqueue_api.h>
-+#include <linux/livepatch_sched.h>
- 
- #ifdef CONFIG_PREEMPT_DYNAMIC
- # ifdef CONFIG_GENERIC_ENTRY
-@@ -6654,6 +6655,8 @@ static void __sched notrace __schedule(int sched_mode)
- 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
- 		hrtick_clear(rq);
- 
-+	klp_sched_try_switch(prev);
-+
- 	local_irq_disable();
- 	rcu_note_context_switch(preempt);
- 
-@@ -7322,7 +7325,6 @@ EXPORT_STATIC_CALL_TRAMP(might_resched);
- static DEFINE_STATIC_KEY_FALSE(sk_dynamic_cond_resched);
- int __sched dynamic_cond_resched(void)
- {
--	klp_sched_try_switch();
- 	if (!static_branch_unlikely(&sk_dynamic_cond_resched))
- 		return 0;
- 	return __cond_resched();
-@@ -7494,7 +7496,6 @@ int sched_dynamic_mode(const char *str)
- #endif
- 
- static DEFINE_MUTEX(sched_dynamic_mutex);
--static bool klp_override;
- 
- static void __sched_dynamic_update(int mode)
- {
-@@ -7502,8 +7503,7 @@ static void __sched_dynamic_update(int mode)
- 	 * Avoid {NONE,VOLUNTARY} -> FULL transitions from ever ending up in
- 	 * the ZERO state, which is invalid.
- 	 */
--	if (!klp_override)
--		preempt_dynamic_enable(cond_resched);
-+	preempt_dynamic_enable(cond_resched);
- 	preempt_dynamic_enable(might_resched);
- 	preempt_dynamic_enable(preempt_schedule);
- 	preempt_dynamic_enable(preempt_schedule_notrace);
-@@ -7512,8 +7512,7 @@ static void __sched_dynamic_update(int mode)
- 
- 	switch (mode) {
- 	case preempt_dynamic_none:
--		if (!klp_override)
--			preempt_dynamic_enable(cond_resched);
-+		preempt_dynamic_enable(cond_resched);
- 		preempt_dynamic_disable(might_resched);
- 		preempt_dynamic_disable(preempt_schedule);
- 		preempt_dynamic_disable(preempt_schedule_notrace);
-@@ -7524,8 +7523,7 @@ static void __sched_dynamic_update(int mode)
- 		break;
- 
- 	case preempt_dynamic_voluntary:
--		if (!klp_override)
--			preempt_dynamic_enable(cond_resched);
-+		preempt_dynamic_enable(cond_resched);
- 		preempt_dynamic_enable(might_resched);
- 		preempt_dynamic_disable(preempt_schedule);
- 		preempt_dynamic_disable(preempt_schedule_notrace);
-@@ -7536,8 +7534,7 @@ static void __sched_dynamic_update(int mode)
- 		break;
- 
- 	case preempt_dynamic_full:
--		if (!klp_override)
--			preempt_dynamic_disable(cond_resched);
-+		preempt_dynamic_disable(cond_resched);
- 		preempt_dynamic_disable(might_resched);
- 		preempt_dynamic_enable(preempt_schedule);
- 		preempt_dynamic_enable(preempt_schedule_notrace);
-@@ -7548,8 +7545,7 @@ static void __sched_dynamic_update(int mode)
- 		break;
- 
- 	case preempt_dynamic_lazy:
--		if (!klp_override)
--			preempt_dynamic_disable(cond_resched);
-+		preempt_dynamic_disable(cond_resched);
- 		preempt_dynamic_disable(might_resched);
- 		preempt_dynamic_enable(preempt_schedule);
- 		preempt_dynamic_enable(preempt_schedule_notrace);
-@@ -7570,36 +7566,6 @@ void sched_dynamic_update(int mode)
- 	mutex_unlock(&sched_dynamic_mutex);
- }
- 
--#ifdef CONFIG_HAVE_PREEMPT_DYNAMIC_CALL
--
--static int klp_cond_resched(void)
--{
--	__klp_sched_try_switch();
--	return __cond_resched();
--}
--
--void sched_dynamic_klp_enable(void)
--{
--	mutex_lock(&sched_dynamic_mutex);
--
--	klp_override = true;
--	static_call_update(cond_resched, klp_cond_resched);
--
--	mutex_unlock(&sched_dynamic_mutex);
--}
--
--void sched_dynamic_klp_disable(void)
--{
--	mutex_lock(&sched_dynamic_mutex);
--
--	klp_override = false;
--	__sched_dynamic_update(preempt_dynamic_mode);
--
--	mutex_unlock(&sched_dynamic_mutex);
--}
--
--#endif /* CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
--
- static int __init setup_preempt_mode(char *str)
- {
- 	int mode = sched_dynamic_mode(str);
 
