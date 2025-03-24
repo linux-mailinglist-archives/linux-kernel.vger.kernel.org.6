@@ -1,210 +1,135 @@
-Return-Path: <linux-kernel+bounces-573444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF369A6D758
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:30:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324A1A6D756
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D9C16E1E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF3B77A52CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7730625DB11;
-	Mon, 24 Mar 2025 09:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC4D25DB01;
+	Mon, 24 Mar 2025 09:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K3sDFV8h"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XC2q6RJm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AA425D8E7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70D525D909;
+	Mon, 24 Mar 2025 09:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742808585; cv=none; b=OU4i8SGKSzjXGcgs2tSMBHifL//MkMG0a6b8ZfFHNsTe+A6L4nCz7Syar6kjnuRek3fCDSa6Oe2kI2ZMkN66q+H05W6rY8Nv4MIw12TbOoulUDpsqDQ77299N4TCThTMUeJqgKCPcPr1OgQaaUIk7lfepp5luiJ+FPpMq/zdPR8=
+	t=1742808585; cv=none; b=lijw3N8VLcDvshmxJYtgNwzV9jTHuT+iCKwvXjV9gJqHfL3OZgtJmjb0EWcalX4Q8eGUaCoqkdZ0mpx8oEaEv5IjzCAnV/zhxzAp2EB0O1Hg0DScZEEfYqvrz1zpb+QO+mWM3gYJXVjVGI1x8yzLirIh0l7RJCKa80y0+b26cCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742808585; c=relaxed/simple;
-	bh=Jg2Ux5dpMEc1Gq/iD6BBtOeo1/OyGHegPZAHexg9xXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czu56Mism1pRxxT/Vibx5AlZOSdVFcH/LGcg2LFzKPYxepnL7nxCsLoO5122T7TqzrByjxML7Auz0Tx1Do8mtlkw6pFRHiVYWgq+3piGFnCjacuvpRzaYpxdzCN2BvUrlKv0gYB3sjOBUjnXXo9OfnO5QIMTqB8rcF5s4iHA+4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K3sDFV8h; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8DEF140E01D1;
-	Mon, 24 Mar 2025 09:29:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Q0jb--TMQEV8; Mon, 24 Mar 2025 09:29:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742808573; bh=kx+lLNVmZoG27PV24TZRKC1S4MTXMtaKeJEU2cHIdwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K3sDFV8hvAM+fv0jYtBCgS/neox0qcux/YHY5FmpQGr+se9cVt63ZwRG2k3l3ju1Y
-	 XIfRzStLSWj0mCVn+3iRj8xKHfYQyuJbLnO2Jqcvuv9AM33F5blnKrO0IpEJCMKdrZ
-	 BgADmjaI2fKlkygtr8MRt4m3+ODUzK7hvnaJFbohGiV9WJ/QSk23M3O/QFzfHf08KG
-	 zHm2k1QlcpYfPRHlvaKAckN2Smsci/52hV234rq4877BLzoKXdqzWfMP9N+bsp6vX4
-	 54KCRfL5YQAK0d+JCO0oDR3V0pDBlPXg6qKeTiOwR19zQWEkKL6d73rv+KAGw53/BY
-	 dCZpBkMx0jo73HMXG0CklMDihxDt2UOTIis+jJfFnKQBYPjwszwiRLSfJVtjdEQgYR
-	 vc4qoPZ9nOacgXA0Fo5YdONZ6Mfnx1kePMpANcJmw0wVusgSbCua04KufkmoblRAxW
-	 AAz98skeuV9xijdIGWvDI9clAWMgZ8LP2XrWqMv2J+DwKdS7OYNoiIorSZ8b3rRBXx
-	 +cC84/sFpl+Z7uEFOrqweAarPZNqNWDrHNz6veZGbA/iV5+6dXv2YF9HDoGXVw66dh
-	 4ndkgEppjx/q98Qkb2U0Gpm+PEfSE59bdTmPmYL4zigVA/u2la1OqHBEx0Rb7C+/pr
-	 djpJaCaxMSr02LfdMCldKv50=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 75EAE40E021E;
-	Mon, 24 Mar 2025 09:29:21 +0000 (UTC)
-Date: Mon, 24 Mar 2025 10:29:15 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Brendan Jackman <jackmanb@google.com>,
-	Derek Manwaring <derekmn@amazon.com>
-Subject: Re: [PATCH v4 03/36] x86/bugs: Restructure mmio mitigation
-Message-ID: <20250324092915.GAZ-El68JG2BVuMK0K@fat_crate.local>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-4-david.kaplan@amd.com>
- <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
- <20250313192606.iijythngqtpx4tyy@desk>
+	bh=Xo9nBCN6mL/Lwjg5NJIHhMumGF7/9tGqo46IKMyQtxg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YpJfRK1eNKNuB+1RUmXat0dnRJxbIWZiCcwk7d3HygG/57LBY2vSXHPLxd7s7MpROS9ohmkv/Btq/jRJE4wFE7B7g4MIE0SPrGQ01ib08DnN1a/0E0ppBE5xiVCfxVthm398MRp0hqj0hjoaqy0faY04dEizjopuVqct4161Me4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XC2q6RJm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C4293455;
+	Mon, 24 Mar 2025 10:27:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742808475;
+	bh=Xo9nBCN6mL/Lwjg5NJIHhMumGF7/9tGqo46IKMyQtxg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=XC2q6RJmMeV11n1voFHGyPiAUliCSrNcN8Id9FtWBQiOI0usr77wLjtpIPMavcizE
+	 Mrsu8gcXtUvCp3O2A/oXJvMUbd1D2eHXb0rmyoNnN3luGQTwmcxn5V2awo5tZgahou
+	 2HbUlBAoO8X2D5oegnKE/s+qxHHftqPMOCtMFvP0=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v6 0/3] media: ti: cal: Add streams support
+Date: Mon, 24 Mar 2025 11:29:16 +0200
+Message-Id: <20250324-cal-streams-v6-0-28c93fb8f0c9@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250313192606.iijythngqtpx4tyy@desk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO0l4WcC/23OTW7DIBCG4atErIM1Y34MWfUeVRfEHmKUGCqwU
+ KvIdy/OJlKT5SfNPHrvrFAOVNjpcGeZaighxTb08cDG2cUL8TC1zXroBRgwfHQ3XtZMbin8bFE
+ Y6EdtvWTt4zuTDz8P7fOrbZ/Twte5HT8NAT0CDEp1aBG15MjXtISuutuVQqT4ESZyJcVzcnnqx
+ rTs8hzKmvLvI7PK3X9fVHcPvRg0AoGV+lXbw6p6Ehb/EYoDl0ahh0F4ZdwbYtu2P6zRnDA6AQA
+ A
+X-Change-ID: 20230808-cal-streams-b913802c69f4
+To: linux-media@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1894;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=Xo9nBCN6mL/Lwjg5NJIHhMumGF7/9tGqo46IKMyQtxg=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn4SYAuBVMtjMleczSfGi06i+lOv88DzayuiEHD
+ 584OZ1M1RSJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ+EmAAAKCRD6PaqMvJYe
+ 9bpxEACHZuuL+B/fhe5f0a0nSf+ysgFYSgYav3979t3w65qe+NH3uhx0jSfD/jy/eCOLujKRwSz
+ C4zapNkUXJvjXWK8GgMw4+Iv0Lc9KhSfPsS7pq/UuOF4I4TzZuyeSOAREnJL6jXJNsM1hYwSd1g
+ vkyE+hrxRCgkg1nM2Ew4DnBHr9YuSI8ysnA1VMxxS4imNxZypHUUbFgwMJ0VC8lVynhxnhFvCA4
+ 2Ez4owR3fowPRvP6PDnXJa9lTPekKM2WJpYLNEgsieEf39GTllKinz/c9/lRV59k6HhBYKiACmR
+ 7jigZ4y/+y6oyrozWbcaGYEhH2WuMr9OzD/is4OSxidkx1AZIbTzJ+pQcGZ18vEmDm88DA0d4is
+ QPM0nJV3eCDTKRmAqb+/iWhjzcaDxsChKX7Oc+LmTWYzJyht8JrqhbTqyF/FED2Mx0RWXci40dw
+ 74Uw8ejQrM8NQDvRgzhQeo2h/1hx3hfSFq/lmcKVTHEa5RClIuInlQGIG9VnBrpFsC2zr/w73p4
+ x+uu0Fov8dnhaMGMxlIFhbFikerG95vmqOJZGHmVkkwGrFiQEnVfdCrgqzqlrVVtZfKHMOwD6xf
+ Nh5LilU0zB/jWvrdYXhCID2OTkl49JWRDEuNjpVvg4yNYWT+78uTKCLq1L5xuhAG5QwgVtO2Ntv
+ e9BFSsdg4HlkO6g==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Thu, Mar 13, 2025 at 12:26:06PM -0700, Pawan Gupta wrote:
-> Hmm, that would not be straightforward, specially for sysfs status.
+This adds streams support to TI CAL driver (and two minor improvements).
 
-See below:
+The previous version was sent in 2023, but there has been no changes
+except from rebasing to upstream.
 
-- the unknown thing is done only for this vuln and not for the others
+ Tomi
 
-- it doesn't do anything besides reporting things differently - it doesn't
-  apply any mitigations - it is simply causing unnecessary complications which
-  don't bring anything besides maintenance overhead. Unless I'm missing an
-  angle...
+---
+Changes in v6:
+- Rebase on top of v4.16-rc7
+- Add two small patches (not related to streams as such)
+- Dropper the metadata patch for now, to make the series apply to plain
+  upstream
+- Link to v5: https://lore.kernel.org/r/20230918-cal-streams-v5-0-4851f073f58a@ideasonboard.com
 
-- all the currently unaffected CPUs can also be in "unknown" status so why is
-  this special?
+Changes in v5:
+- Some improvements in the patch description of the first patch
+- Add "media: ti: cal: Add metadata streams support"
+- Link to v4: https://lore.kernel.org/r/20230808-cal-streams-v4-1-1f37610e0946@ideasonboard.com
 
-IOW, just whack the thing.
+Changes in v4:
+- A few minor formatting changes
+- Small changes regarding how the code handles metadata formats.
+  No metadata formats are supported yet, but we do have some code to
+  ensure that metadata formats aren't allowed on video nodes in video
+  capture mode. A future patch will enable metadata capture, allowing
+  the runtime change of video nodes between video and meta capture.
+- Link to v3: https://lore.kernel.org/all/20230302100755.191164-6-tomi.valkeinen@ideasonboard.com/
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 46935f29805c..75d77a5c28d7 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -518,7 +518,7 @@
- #define X86_BUG_ITLB_MULTIHIT		X86_BUG(23) /* "itlb_multihit" CPU may incur MCE during certain page attribute changes */
- #define X86_BUG_SRBDS			X86_BUG(24) /* "srbds" CPU may leak RNG bits if not mitigated */
- #define X86_BUG_MMIO_STALE_DATA		X86_BUG(25) /* "mmio_stale_data" CPU is affected by Processor MMIO Stale Data vulnerabilities */
--#define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) /* "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
-+/* unused, was #define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
- #define X86_BUG_RETBLEED		X86_BUG(27) /* "retbleed" CPU is affected by RETBleed */
- #define X86_BUG_EIBRS_PBRSB		X86_BUG(28) /* "eibrs_pbrsb" EIBRS is vulnerable to Post Barrier RSB Predictions */
- #define X86_BUG_SMT_RSB			X86_BUG(29) /* "smt_rsb" CPU is vulnerable to Cross-Thread Return Address Predictions */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 4386aa6c69e1..a91a1cac6183 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -428,7 +428,6 @@ static const char * const mmio_strings[] = {
- static void __init mmio_select_mitigation(void)
- {
- 	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) ||
--	     boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN) ||
- 	     cpu_mitigations_off()) {
- 		mmio_mitigation = MMIO_MITIGATION_OFF;
- 		return;
-@@ -591,8 +590,6 @@ static void __init md_clear_update_mitigation(void)
- 		pr_info("TAA: %s\n", taa_strings[taa_mitigation]);
- 	if (boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA))
- 		pr_info("MMIO Stale Data: %s\n", mmio_strings[mmio_mitigation]);
--	else if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		pr_info("MMIO Stale Data: Unknown: No mitigations\n");
- 	if (boot_cpu_has_bug(X86_BUG_RFDS))
- 		pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
- }
-@@ -2819,9 +2816,6 @@ static ssize_t tsx_async_abort_show_state(char *buf)
- 
- static ssize_t mmio_stale_data_show_state(char *buf)
- {
--	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		return sysfs_emit(buf, "Unknown: No mitigations\n");
--
- 	if (mmio_mitigation == MMIO_MITIGATION_OFF)
- 		return sysfs_emit(buf, "%s\n", mmio_strings[mmio_mitigation]);
- 
-@@ -3006,7 +3000,6 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return srbds_show_state(buf);
- 
- 	case X86_BUG_MMIO_STALE_DATA:
--	case X86_BUG_MMIO_UNKNOWN:
- 		return mmio_stale_data_show_state(buf);
- 
- 	case X86_BUG_RETBLEED:
-@@ -3075,10 +3068,7 @@ ssize_t cpu_show_srbds(struct device *dev, struct device_attribute *attr, char *
- 
- ssize_t cpu_show_mmio_stale_data(struct device *dev, struct device_attribute *attr, char *buf)
- {
--	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_UNKNOWN);
--	else
--		return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_STALE_DATA);
-+	return cpu_show_common(dev, attr, buf, X86_BUG_MMIO_STALE_DATA);
- }
- 
- ssize_t cpu_show_retbleed(struct device *dev, struct device_attribute *attr, char *buf)
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 12126adbc3a9..4ada55f126ae 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1402,15 +1402,10 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	 * Affected CPU list is generally enough to enumerate the vulnerability,
- 	 * but for virtualization case check for ARCH_CAP MSR bits also, VMM may
- 	 * not want the guest to enumerate the bug.
--	 *
--	 * Set X86_BUG_MMIO_UNKNOWN for CPUs that are neither in the blacklist,
--	 * nor in the whitelist and also don't enumerate MSR ARCH_CAP MMIO bits.
- 	 */
- 	if (!arch_cap_mmio_immune(x86_arch_cap_msr)) {
- 		if (cpu_matches(cpu_vuln_blacklist, MMIO))
- 			setup_force_cpu_bug(X86_BUG_MMIO_STALE_DATA);
--		else if (!cpu_matches(cpu_vuln_whitelist, NO_MMIO))
--			setup_force_cpu_bug(X86_BUG_MMIO_UNKNOWN);
- 	}
- 
- 	if (!cpu_has(c, X86_FEATURE_BTC_NO)) {
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 9e3fa7942e7d..e88500d90309 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -508,7 +508,7 @@
- #define X86_BUG_ITLB_MULTIHIT		X86_BUG(23) /* "itlb_multihit" CPU may incur MCE during certain page attribute changes */
- #define X86_BUG_SRBDS			X86_BUG(24) /* "srbds" CPU may leak RNG bits if not mitigated */
- #define X86_BUG_MMIO_STALE_DATA		X86_BUG(25) /* "mmio_stale_data" CPU is affected by Processor MMIO Stale Data vulnerabilities */
--#define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) /* "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
-+/* unused, was #define X86_BUG_MMIO_UNKNOWN		X86_BUG(26) * "mmio_unknown" CPU is too old and its MMIO Stale Data status is unknown */
- #define X86_BUG_RETBLEED		X86_BUG(27) /* "retbleed" CPU is affected by RETBleed */
- #define X86_BUG_EIBRS_PBRSB		X86_BUG(28) /* "eibrs_pbrsb" EIBRS is vulnerable to Post Barrier RSB Predictions */
- #define X86_BUG_SMT_RSB			X86_BUG(29) /* "smt_rsb" CPU is vulnerable to Cross-Thread Return Address Predictions */
+---
+Tomi Valkeinen (3):
+      media: ti: cal: Use printk's fourcc formatting
+      media: ti: cal: Fix wrong goto on error path
+      media: ti: cal: Add streams support
 
+ drivers/media/platform/ti/cal/cal-camerarx.c | 271 +++++++++++++++++++++------
+ drivers/media/platform/ti/cal/cal-video.c    | 157 ++++++++++------
+ drivers/media/platform/ti/cal/cal.c          |  45 +++--
+ drivers/media/platform/ti/cal/cal.h          |   3 +-
+ 4 files changed, 348 insertions(+), 128 deletions(-)
+---
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+change-id: 20230808-cal-streams-b913802c69f4
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
