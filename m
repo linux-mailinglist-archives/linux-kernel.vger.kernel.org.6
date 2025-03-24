@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-573751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3856A6DBC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:38:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53888A6DBC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:38:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDE1706C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA7B18928D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CFF262D33;
-	Mon, 24 Mar 2025 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5256F263882;
+	Mon, 24 Mar 2025 13:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fXcKnGsb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DK+/yPVO"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bImzMsJs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5RAIQ35h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D12262D1F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF7E262D0D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823284; cv=none; b=KT+7wz86lSwaCQ437ybYBLO7GvoxtGQtJzyb0ogVB97C5wc75GT+0YAPDbh5ySl0D1/mryKDPTHgd2NuRQcIHwXXat19vRWi1ZalGDEAbYP0Aj+iRDiXBBZKjUlJOjSsVQD88MfH1/HqP/RPaowEqc3ynZGISQaqhxeCns2J8Sg=
+	t=1742823286; cv=none; b=rUfcfC7Kh1xPh62NMMhZAmXax08w+h270/2e58DXHIW8Td+dgRCQFpi3444MDsnxi+BoQMCQwh/zdc1em2MqN3W76EMGvnkDohOz6icTrUYGSgSZITfP/MJgo/d80PvaOhkm19K/qAhJZO4A0nsVp8rodEpq1hMrFU6WQc8JcCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823284; c=relaxed/simple;
-	bh=8CZtrik/m1OpuvTqRpEr7ZSdlB8IuGxU9dWngFiRvsQ=;
+	s=arc-20240116; t=1742823286; c=relaxed/simple;
+	bh=m/K01KgXGVST7kNCinXLCQl3HbIi2grBBdYW7CRD18A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YqbHfWeq9++Pw2DZqG4RkNnUlSIMD3kzcFzILCRPrqibzsBG5lC28iBK2b1PPAMJ4ClD8oG2YAxznucehdeYGW24vmpUb0CdHjVr/LC1kVmlLLoHy263NZvtiY8oQ6e5PzyM95pz6mjsjI8O6QTQ1fUCUKFMjcXgjE91ppUZyOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fXcKnGsb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DK+/yPVO; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=RJvXccAEmPd8I8S2kbu/bEZiTCjHTsvyomMAuanVPcvQK5VM49lL9xfSacJJh/TAKQD03kj8FLU22fENZVdsHCuXY9LPUJ8WMJzMvU4MVp46f5WWr6pRZfDj768pmO/NEk5WZbpQzgvYNcvSyuw5iMym+RdGl98HLpJnOwFnP90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bImzMsJs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5RAIQ35h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742823280;
+	s=2020; t=1742823283;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PR/pwcTQej6ZozGFoHLmug/iN92AMvov3zwy5UBCeZY=;
-	b=fXcKnGsbPQtBB+sLXRg3Mc1GTvLB9lQLTyUKXVqrRNOvm0uW8Q3CdvcfhN5UHmYskZPmzo
-	SZlJWmAXE/EmZlTXRbtB1nurynJtJH4oOoazTnCX2CA3QQml5rxaCalZTFZPVliJ0sz0nh
-	NbYHE7CNVuaBbBTD7ZsdIya+CnxwiELIx8jUweg+zvcUIN3dDIHIkM20oH4OPqxCRWmVEe
-	NdtMvSrgY3bFb8smX2lV/Z6r5DYK1s2Qq3+kMA47HL3GCkY4Uc8esOPlgBs+Kn4Zk2VtFr
-	kawQyUzYfUTQ4vobeyUioH7f02eTQvhLQAfJGt7MGabPeEGRtP7aBM+Kkp2LMw==
+	bh=uWsflW12l3h8RYZJxhtdnrG6wdMqcnEWMvzT4KUkGLM=;
+	b=bImzMsJsw6F/PkNndmEAosCdikzOV7ogqDpu5Vqp2Ijw3EMvKlzD60Mihfcu+r3BfXsct5
+	mVfy9RDwISw6GndC3YinymcxfqHtpZQA4UyUgXXKZdr8KuZMpGggKYgneAKG9rMe5IAjZG
+	2j+gXzeDmI5iVPE3SM2df74/nLGjpZKYVmb5L10bPD2XXTOLU9iMLo7VPc2rjxfsrbo6qi
+	mDTv8Vg1B/LCwarLStL6aOD959MrXzIqKnRSGdqthvz4fuVoubgOx2Jz7fY4emh1xakbkV
+	TzxLHUaX1q+QAvXGkzplB3cld203+hTJW897MoeUxqF0Mr9DtlAW8OEIw01EMg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742823280;
+	s=2020e; t=1742823283;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PR/pwcTQej6ZozGFoHLmug/iN92AMvov3zwy5UBCeZY=;
-	b=DK+/yPVOl5E4y3484GHlw7buYZ8J4oYYp7wpuH9k8XQo1Qkuo2TkoKVTGlTpZp+8zLsCST
-	y1I1GOprMMo5iFDQ==
+	bh=uWsflW12l3h8RYZJxhtdnrG6wdMqcnEWMvzT4KUkGLM=;
+	b=5RAIQ35hT6hYaqu5qJTH1BY9t355dY+u5PDq2F0PTCBb4jEQYh0TiCh2mQ2c3MYvfKuEZL
+	uHpXXnSnmLsdciCg==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v4 22/29] x86/cpu: Use consolidated leaf 0x2 descriptor table
-Date: Mon, 24 Mar 2025 14:33:17 +0100
-Message-ID: <20250324133324.23458-23-darwi@linutronix.de>
+Subject: [PATCH v4 23/29] x86/cacheinfo: Separate leaf 0x2 handling and post-processing logic
+Date: Mon, 24 Mar 2025 14:33:18 +0100
+Message-ID: <20250324133324.23458-24-darwi@linutronix.de>
 In-Reply-To: <20250324133324.23458-1-darwi@linutronix.de>
 References: <20250324133324.23458-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,154 +77,177 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-CPUID leaf 0x2 output is a stream of one-byte descriptors, each implying
-certain details about the CPU's cache and TLB entries.
+The logic of init_intel_cacheinfo() is quite convoluted: it mixes leaf
+0x4 parsing, leaf 0x2 parsing, plus some post-processing, in a single
+place.
 
-At previous commits, the mapping tables for such descriptors were merged
-into one consolidated table.  The mapping was also transformed into a
-hash lookup instead of a loop-based lookup for each descriptor.
+Begin simplifying its logic by extracting the leaf 0x2 parsing code, and
+the post-processing logic, into their own functions.  While at it,
+rework the SMT LLC topology ID comment for clarity.
 
-Use the new consolidated table and its hash-based lookup through the
-for_each_leaf_0x2_tlb_entry() accessor.
-
-Remove the TLB-specific mapping, intel_tlb_table[], as it is now no
-longer used.  Remove the <cpuid/types.h> macro, for_each_leaf_0x2_desc(),
-since the converted code was its last user.
-
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/include/asm/cpuid/types.h | 10 ++++
- arch/x86/kernel/cpu/intel.c        | 83 +++---------------------------
- 2 files changed, 17 insertions(+), 76 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c | 106 +++++++++++++++++---------------
+ 1 file changed, 58 insertions(+), 48 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
-index 24f643f2a2ad..c95fee66e148 100644
---- a/arch/x86/include/asm/cpuid/types.h
-+++ b/arch/x86/include/asm/cpuid/types.h
-@@ -115,4 +115,14 @@ struct leaf_0x2_table {
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index e399bf2a701d..b39aad1ecf9c 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -355,14 +355,56 @@ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
+ 	ci->num_leaves = find_num_cache_leaves(c);
+ }
  
- extern const struct leaf_0x2_table cpuid_0x2_table[256];
- 
-+/*
-+ * All of leaf 0x2's one-byte TLB descriptors implies the same number of entries
-+ * for their respective TLB types.  TLB descriptor 0x63 is an exception: it
-+ * implies 4 dTLB entries for 1GB pages and 32 dTLB entries for 2MB or 4MB pages.
-+ *
-+ * Encode that descriptor's dTLB entry count for 2MB/4MB pages here, as the entry
-+ * count for dTLB 1GB pages is already encoded at the cpuid_0x2_table[]'s mapping.
-+ */
-+#define TLB_0x63_2M_4M_ENTRIES		32
+-void init_intel_cacheinfo(struct cpuinfo_x86 *c)
++static void intel_cacheinfo_done(struct cpuinfo_x86 *c, unsigned int l3,
++				 unsigned int l2, unsigned int l1i, unsigned int l1d)
++{
++	/*
++	 * If llc_id is still unset, then cpuid_level < 4, which implies
++	 * that the only possibility left is SMT.  Since CPUID(2) doesn't
++	 * specify any shared caches and SMT shares all caches, we can
++	 * unconditionally set LLC ID to the package ID so that all
++	 * threads share it.
++	 */
++	if (c->topo.llc_id == BAD_APICID)
++		c->topo.llc_id = c->topo.pkg_id;
 +
- #endif /* _ASM_X86_CPUID_TYPES_H */
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index def433e0081f..e5d814703406 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -626,81 +626,11 @@ static unsigned int intel_size_cache(struct cpuinfo_x86 *c, unsigned int size)
- }
- #endif
- 
--/*
-- * All of leaf 0x2's one-byte TLB descriptors implies the same number of
-- * entries for their respective TLB types.  The 0x63 descriptor is an
-- * exception: it implies 4 dTLB entries for 1GB pages 32 dTLB entries
-- * for 2MB or 4MB pages.  Encode descriptor 0x63 dTLB entry count for
-- * 2MB/4MB pages here, as its count for dTLB 1GB pages is already at the
-- * intel_tlb_table[] mapping.
-- */
--#define TLB_0x63_2M_4M_ENTRIES	32
--
--struct _tlb_table {
--	unsigned char descriptor;
--	enum _tlb_table_type type;
--	unsigned int entries;
--};
--
--static const struct _tlb_table intel_tlb_table[] = {
--	{ 0x01, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages, 4-way set associative */
--	{ 0x02, TLB_INST_4M,		2},	/* TLB_INST 4 MByte pages, full associative */
--	{ 0x03, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way set associative */
--	{ 0x04, TLB_DATA_4M,		8},	/* TLB_DATA 4 MByte pages, 4-way set associative */
--	{ 0x05, TLB_DATA_4M,		32},	/* TLB_DATA 4 MByte pages, 4-way set associative */
--	{ 0x0b, TLB_INST_4M,		4},	/* TLB_INST 4 MByte pages, 4-way set associative */
--	{ 0x4f, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages */
--	{ 0x50, TLB_INST_ALL,		64},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
--	{ 0x51, TLB_INST_ALL,		128},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
--	{ 0x52, TLB_INST_ALL,		256},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
--	{ 0x55, TLB_INST_2M_4M,		7},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
--	{ 0x56, TLB_DATA0_4M,		16},	/* TLB_DATA0 4 MByte pages, 4-way set associative */
--	{ 0x57, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, 4-way associative */
--	{ 0x59, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, fully associative */
--	{ 0x5a, TLB_DATA0_2M_4M,	32},	/* TLB_DATA0 2-MByte or 4 MByte pages, 4-way set associative */
--	{ 0x5b, TLB_DATA_4K_4M,		64},	/* TLB_DATA 4 KByte and 4 MByte pages */
--	{ 0x5c, TLB_DATA_4K_4M,		128},	/* TLB_DATA 4 KByte and 4 MByte pages */
--	{ 0x5d, TLB_DATA_4K_4M,		256},	/* TLB_DATA 4 KByte and 4 MByte pages */
--	{ 0x61, TLB_INST_4K,		48},	/* TLB_INST 4 KByte pages, full associative */
--	{ 0x63, TLB_DATA_1G_2M_4M,	4},	/* TLB_DATA 1 GByte pages, 4-way set associative
--						 * (plus 32 entries TLB_DATA 2 MByte or 4 MByte pages, not encoded here) */
--	{ 0x6b, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 8-way associative */
--	{ 0x6c, TLB_DATA_2M_4M,		128},	/* TLB_DATA 2 MByte or 4 MByte pages, 8-way associative */
--	{ 0x6d, TLB_DATA_1G,		16},	/* TLB_DATA 1 GByte pages, fully associative */
--	{ 0x76, TLB_INST_2M_4M,		8},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
--	{ 0xb0, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 4-way set associative */
--	{ 0xb1, TLB_INST_2M_4M,		4},	/* TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries */
--	{ 0xb2, TLB_INST_4K,		64},	/* TLB_INST 4KByte pages, 4-way set associative */
--	{ 0xb3, TLB_DATA_4K,		128},	/* TLB_DATA 4 KByte pages, 4-way set associative */
--	{ 0xb4, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 4-way associative */
--	{ 0xb5, TLB_INST_4K,		64},	/* TLB_INST 4 KByte pages, 8-way set associative */
--	{ 0xb6, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 8-way set associative */
--	{ 0xba, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way associative */
--	{ 0xc0, TLB_DATA_4K_4M,		8},	/* TLB_DATA 4 KByte and 4 MByte pages, 4-way associative */
--	{ 0xc1, STLB_4K_2M,		1024},	/* STLB 4 KByte and 2 MByte pages, 8-way associative */
--	{ 0xc2, TLB_DATA_2M_4M,		16},	/* TLB_DATA 2 MByte/4MByte pages, 4-way associative */
--	{ 0xca, STLB_4K,		512},	/* STLB 4 KByte pages, 4-way associative */
--	{ 0x00, 0, 0 }
--};
--
--static void intel_tlb_lookup(const unsigned char desc)
-+static void intel_tlb_lookup(const struct leaf_0x2_table *entry)
++	c->x86_cache_size = l3 ? l3 : (l2 ? l2 : l1i + l1d);
++
++	if (!l2)
++		cpu_detect_cache_sizes(c);
++}
++
++/*
++ * Legacy Intel CPUID(2) path if CPUID(4) is not available.
++ */
++static void intel_cacheinfo_0x2(struct cpuinfo_x86 *c)
  {
--	unsigned int entries;
--	unsigned char k;
--
--	if (desc == 0)
--		return;
--
--	/* look up this descriptor in the table */
--	for (k = 0; intel_tlb_table[k].descriptor != desc &&
--	     intel_tlb_table[k].descriptor != 0; k++)
--		;
--
--	if (intel_tlb_table[k].type == 0)
--		return;
-+	short entries = entry->entries;
- 
--	entries = intel_tlb_table[k].entries;
--	switch (intel_tlb_table[k].type) {
-+	switch (entry->t_type) {
- 	case STLB_4K:
- 		tlb_lli_4k = max(tlb_lli_4k, entries);
- 		tlb_lld_4k = max(tlb_lld_4k, entries);
-@@ -757,15 +687,16 @@ static void intel_tlb_lookup(const unsigned char desc)
- 
- static void intel_detect_tlb(struct cpuinfo_x86 *c)
- {
+-	/* Cache sizes */
+ 	unsigned int l1i = 0, l1d = 0, l2 = 0, l3 = 0;
+-	unsigned int new_l1d = 0, new_l1i = 0; /* Cache sizes from cpuid(4) */
+-	unsigned int new_l2 = 0, new_l3 = 0, i; /* Cache sizes from cpuid(4) */
+-	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
 +	const struct leaf_0x2_table *entry;
- 	union leaf_0x2_regs regs;
--	u8 *desc;
++	union leaf_0x2_regs regs;
 +	u8 *ptr;
++
++	if (c->cpuid_level < 2)
++		return;
++
++	cpuid_get_leaf_0x2_regs(&regs);
++	for_each_leaf_0x2_entry(regs, ptr, entry) {
++		switch (entry->c_type) {
++		case CACHE_L1_INST:	l1i += entry->c_size; break;
++		case CACHE_L1_DATA:	l1d += entry->c_size; break;
++		case CACHE_L2:		l2  += entry->c_size; break;
++		case CACHE_L3:		l3  += entry->c_size; break;
++		}
++	}
++
++	intel_cacheinfo_done(c, l3, l2, l1i, l1d);
++}
++
++void init_intel_cacheinfo(struct cpuinfo_x86 *c)
++{
+ 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
++	unsigned int l1i = 0, l1d = 0, l2 = 0, l3 = 0;
++	unsigned int l2_id = 0, l3_id = 0;
  
- 	if (c->cpuid_level < 2)
- 		return;
+ 	if (c->cpuid_level > 3) {
+ 		/*
+@@ -376,7 +418,8 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 		 * Whenever possible use cpuid(4), deterministic cache
+ 		 * parameters cpuid leaf to find the cache details
+ 		 */
+-		for (i = 0; i < ci->num_leaves; i++) {
++		for (int i = 0; i < ci->num_leaves; i++) {
++			unsigned int num_threads_sharing, index_msb;
+ 			struct _cpuid4_info id4 = {};
+ 			int retval;
  
- 	cpuid_get_leaf_0x2_regs(&regs);
--	for_each_leaf_0x2_desc(regs, desc)
--		intel_tlb_lookup(*desc);
-+	for_each_leaf_0x2_entry(regs, ptr, entry)
-+		intel_tlb_lookup(entry);
+@@ -387,18 +430,18 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 			switch (id4.eax.split.level) {
+ 			case 1:
+ 				if (id4.eax.split.type == CTYPE_DATA)
+-					new_l1d = id4.size/1024;
++					l1d = id4.size / 1024;
+ 				else if (id4.eax.split.type == CTYPE_INST)
+-					new_l1i = id4.size/1024;
++					l1i = id4.size / 1024;
+ 				break;
+ 			case 2:
+-				new_l2 = id4.size/1024;
++				l2 = id4.size / 1024;
+ 				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
+ 				index_msb = get_count_order(num_threads_sharing);
+ 				l2_id = c->topo.apicid & ~((1 << index_msb) - 1);
+ 				break;
+ 			case 3:
+-				new_l3 = id4.size/1024;
++				l3 = id4.size / 1024;
+ 				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
+ 				index_msb = get_count_order(num_threads_sharing);
+ 				l3_id = c->topo.apicid & ~((1 << index_msb) - 1);
+@@ -411,52 +454,19 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 
+ 	/* Don't use CPUID(2) if CPUID(4) is supported. */
+ 	if (!ci->num_leaves && c->cpuid_level > 1) {
+-		const struct leaf_0x2_table *entry;
+-		union leaf_0x2_regs regs;
+-		u8 *ptr;
+-
+-		cpuid_get_leaf_0x2_regs(&regs);
+-		for_each_leaf_0x2_entry(regs, ptr, entry) {
+-			switch (entry->c_type) {
+-			case CACHE_L1_INST:	l1i += entry->c_size; break;
+-			case CACHE_L1_DATA:	l1d += entry->c_size; break;
+-			case CACHE_L2:		l2  += entry->c_size; break;
+-			case CACHE_L3:		l3  += entry->c_size; break;
+-			}
+-		}
++		intel_cacheinfo_0x2(c);
++		return;
+ 	}
+ 
+-	if (new_l1d)
+-		l1d = new_l1d;
+-
+-	if (new_l1i)
+-		l1i = new_l1i;
+-
+-	if (new_l2) {
+-		l2 = new_l2;
++	if (l2) {
+ 		c->topo.llc_id = l2_id;
+ 		c->topo.l2c_id = l2_id;
+ 	}
+ 
+-	if (new_l3) {
+-		l3 = new_l3;
++	if (l3)
+ 		c->topo.llc_id = l3_id;
+-	}
+ 
+-	/*
+-	 * If llc_id is not yet set, this means cpuid_level < 4 which in
+-	 * turns means that the only possibility is SMT (as indicated in
+-	 * cpuid1). Since cpuid2 doesn't specify shared caches, and we know
+-	 * that SMT shares all caches, we can unconditionally set cpu_llc_id to
+-	 * c->topo.pkg_id.
+-	 */
+-	if (c->topo.llc_id == BAD_APICID)
+-		c->topo.llc_id = c->topo.pkg_id;
+-
+-	c->x86_cache_size = l3 ? l3 : (l2 ? l2 : (l1i+l1d));
+-
+-	if (!l2)
+-		cpu_detect_cache_sizes(c);
++	intel_cacheinfo_done(c, l3, l2, l1i, l1d);
  }
  
- static const struct cpu_dev intel_cpu_dev = {
+ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
 -- 
 2.48.1
 
