@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AB1A6DE4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:22:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D78A6DE4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CCB1895B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87813B7C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F6F25F7B3;
-	Mon, 24 Mar 2025 15:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2088225F997;
+	Mon, 24 Mar 2025 15:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aeIllzXY"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XBUSDQA1"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDF28460
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2363426AFC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829603; cv=none; b=XvQeQ0s3CkZZWFWycaz4Osk3wVLDV5x25XJriISuzsPpkZI03q5XI2ldxpqyfEYy8Sx/O6/AQiqt1WSgEQF4mBJO5BhMT54Dt70/Xa1731fdeIO98eVME45zG57rxvJe2bPGAg8Uw6hWAltgCFO3LkgCv67YmQjqfeGpy6hnn1k=
+	t=1742829612; cv=none; b=KcxP2JVPYbPeYsyTYxK5VxsIZvk30d/2x5nUuGHHENAigeXFgYAYKJfwiHb/oWvs/PijcM4YObGKnIHxBIrlH6CrwgiBBWuy/UVTWqMv/f5vjUNOrOMT6kwr2nmGhXgOdb0AfIRxvNNuAqiGDrV3YpJDhCQieMT1JNzusGwuXDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829603; c=relaxed/simple;
-	bh=UNb1jgJYYlgssZp1Hb11RJ5VBidmZSFGUu59Z/mSFYw=;
+	s=arc-20240116; t=1742829612; c=relaxed/simple;
+	bh=J8i6w4wHFIHRW749vcKhmCwWnV+XJUWyY6zBOiHIDU0=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LerRtRZeFF9L95axhDlmXCG2z6T9Big4pZU/AgeKTaFRmPL1S0ZaFIBKJKOJZUk/qkf3tCVqut5KaOBi0AFQCMT0PAP/CPhj2sR7WJGMb4ruoRzYxZxT5pDEtRULJ9FdfB5yJ51/qN2fuAMuoF5Z+G0NPdU/p26/NhQ0SGMaW24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aeIllzXY; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:Content-Type; b=Ou8QLcVptVP4IY7n9vzSHIYkDJp56WoFRQ/rX9mUgk3rvTGQniyRQbOFVXmr31x34esA3leO0KMgod+CK+s4sAChyfmVGaveG1/s/k7JJf40H6rl338ToYhsy7XuvsVFufGBFapX256brZVpQA9du2dI8zpWt0QNi49UnXEkTTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XBUSDQA1; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6178F44507;
-	Mon, 24 Mar 2025 15:19:57 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 94BA144521;
+	Mon, 24 Mar 2025 15:20:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829599;
+	t=1742829608;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a/nFxbsHm5XYyqmKk/YxRlm8ZDusAoe6/HOCMxllS5I=;
-	b=aeIllzXYPGKp/TnyRzfIe3UhVz2jEi2WFSDpMTgmuY+3qdFNHX0GIDfWw48sfpwMCWBtIj
-	/Cc+hB6pLabpPd0v8BVnT4JMqoriRxhDqbTknkjtVE7MxSj0AcfoIq/08ez8IRVz4IgsjW
-	5YlkHg+oDw9EfEFhbbgP4efGxPyEZNyfPN9dhjq/L6vBZkig7FHFE1HM7h+6E9LcPp28ie
-	Ei0RPX4BR1T3RGrAnT0k41Q9SJKGVfPSudiUOmYpF9Q8Qhxu4ovjOe8ln95tchbHj7aaGu
-	k14ZGXq1rOaSCYAT5qtThv4/CgGDdJswOWDTxxFHlmDfUknkAMQEJlSlOJntkA==
-Message-ID: <05dff3c7-91e8-4d42-b75a-90c410d6470d@bootlin.com>
-Date: Mon, 24 Mar 2025 16:19:54 +0100
+	bh=64cGfJX2CUfwKXlibv/gVIOSuJtuUlaHPjewtQM7FkA=;
+	b=XBUSDQA1p6h43VO1cpZVHe7SdMc0N2tw5im0y5oSOqjX4uPR68MDOJL6T8TqR7VmCh6iWM
+	SJQZjJPl6U7QduJdtlQdnpnWv18rJpxKbtUqfoJhezcX84FbdsqmT8TbNPBHtJDE/NyaFA
+	dZZodrI6FtULgstofnlcRhWw2643/dGr+R1YvvqeF5qVrAFPhC+xE+yAy+pwektrnON/uf
+	Dt44JQNpOZdCnYSPxaf7vRB2Y3Gs9Ve9VIEXrFuHUBjv2H+4AZNDBkGxvgGQY58WJLEZkU
+	2K3NLQIJAtORAqLzZYB5Tf8KY/JU39i2uvWwkrnxvqVpkfiQWd8CGghOGpZJKw==
+Message-ID: <80e58693-8ca0-4bce-b7b3-bf0302d0825c@bootlin.com>
+Date: Mon, 24 Mar 2025 16:20:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,8 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 29/59] dyndbg: change __dynamic_func_call_cls* macros
- into expressions
+Subject: Re: [PATCH v2 28/59] selftests-dyndbg: add test_mod_submod
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -64,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-30-jim.cromie@gmail.com>
+ <20250320185238.447458-29-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -120,78 +119,139 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-30-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-29-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpeefnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpeegnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> The Xe driver's XE_IOCTL_DBG macro calls drm_dbg() from inside an if
-> (expression).  This breaks when CONFIG_DRM_USE_DYNAMIC_DEBUG=y because
-> the invoked macro has a do-while-0 wrapper.
+> This new test-fn runs 3 module/submodule modprobe scenarios, variously
+> using both the generic dyndbg=<queries> modprobe arg, and the
+> test-module's classmap-params to manipulate the test-mod*'s pr_debugs.
+> In all cases, the current flag-settings are counted and tested vs
+> expectations.
 > 
->     if (cond && (drm_dbg("expr-form"),1)) {
->        ... do some more stuff
->     }
+> The 3rd scenario recapitulates the DRM_USE_DYNAMIC_DEBUG=y failure.
 > 
-> Fix for this usage by changing __dynamic_func_call_cls{,_no_desc}
-> macros into expressions, by replacing the do-while-0s with a ({ })
-> wrapper.  In the common usage, the trailing ';' converts the
-> expression into a statement.
+> 1. 2 modprobes (super then sub), with separate dyndbg=class-settings
+>     check module specific flag settings
 > 
->     drm_dbg("statement form");
+> 2. modprobe submod, supermod is auto-loaded
+>     set supermod class-params
+>     check expected enablements in super & submod
+> 
+> 3. modprobe super, with param=setting (like drm.debug=0x1ef)
+>     modprobe submod
+>     validate submod's class'd pr_debugs get properly enabled
+> 
+> The test uses multi-queries, with both commas and percents (to avoid
+> spaces and quoting).  This is the main reason the test wasn't earlier
+> in the patchset, closer to the classmap patches its validating.
+> 
+> With some tedium, the tests could be refactored to split out early
+> tests which avoid multi-cmds, and test only the class-params.
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
 > ---
+> - drop -v used in test_mod_submod(). V=1 does it for whole test
+> - ifrmmod at test end (Lukasz)
 > ---
->   include/linux/dynamic_debug.h | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
+>   .../dynamic_debug/dyndbg_selftest.sh          | 69 +++++++++++++++++++
+>   1 file changed, 69 insertions(+)
 > 
-> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-> index 8043966a0fd6..80bcaad03400 100644
-> --- a/include/linux/dynamic_debug.h
-> +++ b/include/linux/dynamic_debug.h
-> @@ -339,20 +339,20 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
->    * (|_cls):	adds in _DPRINT_CLASS_DFLT as needed
->    * (|_no_desc):	former gets callsite descriptor as 1st arg (for prdbgs)
->    */
-> -#define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {	\
-> -	DEFINE_DYNAMIC_DEBUG_METADATA_CLS((id), cls, fmt);	\
-> +#define __dynamic_func_call_cls(id, cls, fmt, func, ...) ({	\
-> +	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);	\
-
-Is it normal to remove the parenthesis around id? Or the other way 
-around, why did you add parenthesis in PATCH 17?
-
->   	if (DYNAMIC_DEBUG_BRANCH(id))				\
-> -		func(&id, ##__VA_ARGS__);			\
-> -} while (0)
-> +		func(&(id), ##__VA_ARGS__);			\
-> +})
->   #define __dynamic_func_call(id, fmt, func, ...)				\
->   	__dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,		\
->   				func, ##__VA_ARGS__)
+> diff --git a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> index c97c9391d0f4..cfed79b34996 100755
+> --- a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> +++ b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> @@ -275,10 +275,79 @@ function test_percent_splitting {
+>       ifrmmod test_dynamic_debug
+>   }
 >   
-> -#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do {	\
-> +#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) ({	\
->   	DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);		\
-
-I expect the same constraints around id here, both with parenthesis, or 
-no parenthesis at all.
-
->   	if (DYNAMIC_DEBUG_BRANCH(id))					\
->   		func(__VA_ARGS__);					\
-> -} while (0)
-> +})
->   #define __dynamic_func_call_no_desc(id, fmt, func, ...)			\
->   	__dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,	\
->   					fmt, func, ##__VA_ARGS__)
+> +function test_mod_submod {
+> +    echo -e "${GREEN}# TEST_MOD_SUBMOD ${NC}"
+> +    ifrmmod test_dynamic_debug_submod
+> +    ifrmmod test_dynamic_debug
+> +    ddcmd =_
+> +
+> +    # modprobe with class enablements
+> +    modprobe test_dynamic_debug \
+> +	dyndbg=class,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+> +
+> +    check_match_ct '\[test_dynamic_debug\]' 23 -r
+> +    check_match_ct =pf 1
+> +    check_match_ct =pt 1
+> +    check_match_ct =pm 1
+> +
+> +    modprobe test_dynamic_debug_submod
+> +    check_match_ct test_dynamic_debug_submod 23 -r
+> +    check_match_ct '\[test_dynamic_debug\]' 23 -r
+> +    check_match_ct test_dynamic_debug 46 -r
+> +
+> +    # no enablements propagate here
+> +    check_match_ct =pf 1
+> +    check_match_ct =pt 1
+> +    check_match_ct =pm 1
+> +
+> +    # change classes again, this time submod too
+> +    ddcmd class,D2_CORE,+mf%class,D2_KMS,+lt%class,D2_ATOMIC,+ml "# add some prefixes"
+> +    check_match_ct =pmf 1
+> +    check_match_ct =plt 1
+> +    check_match_ct =pml 1
+> +    #  submod changed too
+> +    check_match_ct =mf 1
+> +    check_match_ct =lt 1
+> +    check_match_ct =ml 1
+> +
+> +    # now work the classmap-params
+> +    # fresh start, to clear all above flags (test-fn limits)
+> +    ifrmmod test_dynamic_debug_submod
+> +    ifrmmod test_dynamic_debug
+> +    modprobe test_dynamic_debug_submod # get supermod too
+> +
+> +    echo 1 > /sys/module/test_dynamic_debug/parameters/p_disjoint_bits
+> +    echo 4 > /sys/module/test_dynamic_debug/parameters/p_level_num
+> +    # 2 mods * ( V1-3 + D2_CORE )
+> +    check_match_ct =p 8
+> +    echo 3 > /sys/module/test_dynamic_debug/parameters/p_disjoint_bits
+> +    echo 0 > /sys/module/test_dynamic_debug/parameters/p_level_num
+> +    # 2 mods * ( D2_CORE, D2_DRIVER )
+> +    check_match_ct =p 4
+> +    echo 0x16 > /sys/module/test_dynamic_debug/parameters/p_disjoint_bits
+> +    echo 0 > /sys/module/test_dynamic_debug/parameters/p_level_num
+> +    # 2 mods * ( D2_DRIVER, D2_KMS, D2_ATOMIC )
+> +    check_match_ct =p 6
+> +
+> +    # recap DRM_USE_DYNAMIC_DEBUG regression
+> +    ifrmmod test_dynamic_debug_submod
+> +    ifrmmod test_dynamic_debug
+> +    # set super-mod params
+> +    modprobe test_dynamic_debug p_disjoint_bits=0x16 p_level_num=5
+> +    check_match_ct =p 7
+> +    modprobe test_dynamic_debug_submod
+> +    # see them picked up by submod
+> +    check_match_ct =p 14
+> +    ifrmmod test_dynamic_debug_submod
+> +    ifrmmod test_dynamic_debug
+> +}
+> +
+>   tests_list=(
+>       basic_tests
+> +    # these require test_dynamic_debug*.ko
+>       comma_terminator_tests
+>       test_percent_splitting
+> +    test_mod_submod
+>   )
+>   
+>   # Run tests
 
 -- 
 Louis Chauvet, Bootlin
