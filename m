@@ -1,130 +1,100 @@
-Return-Path: <linux-kernel+bounces-574511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64713A6E626
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:03:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1D6A6E62E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69613B902E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:01:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB593AC0B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7411F12EB;
-	Mon, 24 Mar 2025 22:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68BB1EDA0F;
+	Mon, 24 Mar 2025 22:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwfkiynV"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="PVpdqEX1"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E528F1EB199;
-	Mon, 24 Mar 2025 22:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241E518E75A;
+	Mon, 24 Mar 2025 22:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853624; cv=none; b=d7RCbBfxtw8uJj5IYx0zElNplwKewfbyBomIY5tdgFLFrcPibDcsIzohi/fsQMkDnVmgmpk2NBtRVKaiEw8szEWc7a3UXuZvPb/XrMr6V73x+HrmgESqtqpg3F3xJNePTg0xggMLSxQ51FGAMB98quzIx53BAyoOW4XFdPe3xTo=
+	t=1742853705; cv=none; b=ra2smAvn7IMrxWG8KQxICmyVnHokvQoBH4dhU/Xfi6Xq6nb51Rxqt1l3hWlRCM0xdJ1pPkSRW1LDz6ehBln2ZTxrGpocvkam6V+op64pyKjr/8NIc1UHL7X1EO9aLVUtizaDkY95UZPet/7tjd/zonB75t6ZrfQAcBUvCdtJGk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853624; c=relaxed/simple;
-	bh=PtpzQPV91DRAINKIpL1SiRX65+cy10ZmPzRxJQEHIlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZDlJZ3X29SmahxsvmyeZGkPW6OncfHw73jUyKufgtM56FoODSxX9yMr16m+jLWm7UgzR0kMGNkrELhDWGLr9pUNYWDF6CV8/xbPGZ8caqjcOkHcgsoGFxvqUGI9ASwun+iw9ncL5dfq087APQTwkKWUPMF7yfhmjHD61RXwRhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwfkiynV; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso22371765e9.3;
-        Mon, 24 Mar 2025 15:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742853621; x=1743458421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B2YpdWGkegazNf2klfKbGc0M99P0XIEZmajFVkaDbgM=;
-        b=mwfkiynV4ksYRcuFB/dFiF1s0nVn++l5oOoT3NwNFZ5cv7CoIAB9HuKL0GRSvBY2aI
-         j0d+kKguDNtPVLvx0TxLeOFviJBZZ3pYJi2nbyYzPURm4eMh1uwNaNcxtrmAuasGnC+d
-         XvAqfEY1WHeDcxfNPX+lo78Pbrr5m06IpXkof5SllcwafR5B2Uji8saqhSaJpqQUquBr
-         EwwjIF9e2OswrBr8OkBy/al7GJZ/j1YNlEk+WbhyFNfxd1kRKKwFPuxR1yRhrVr4JPPD
-         4gu2lG9A+hDx4gSdmjsTG0KQOkV1/htsxha4SeDWXzcxMtq5lMAgfEqYyunzL4pDymt8
-         RwcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742853621; x=1743458421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B2YpdWGkegazNf2klfKbGc0M99P0XIEZmajFVkaDbgM=;
-        b=GwAvSSzV0J5x/BVUCb5GrDV/b6SBSQ5LXHvgmVLeR9ZOuSppWESMnm7nNkNauSzcWO
-         bWwn/sTDfpk3veBE4QWEr9OzI9NyVlc44JIz3lqml0qze89uJvhZ6phyCBGw0zS9QxNB
-         rscNOQ9HDzyy6TfwHqihLANtCvR/5qd38/6KfzAzWCG0nG9raPrJ1/khGeLX2ox5373q
-         I7jCzl2SSzq49NcF9B+Fx1gi2i0XKI7njNpp9P2JeBFM2oSaBNg2IDsd+sQB+s8plLbS
-         G6yDHEPQv10Dd7aCQy/dn+rxCb26TT3z61TiXrR5ad84u8nRKajzpeP3m0oxJemLSLAZ
-         MzrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7yUTWKoqSib2faxVtbTtWSU6q3S5w4ZuCGWMBb7xWIKM19OE2aLjdrvjrNtJyYa8dZLeOFUThYnm9lTQ=@vger.kernel.org, AJvYcCXt7T6ETLeLAi9FR7eTaaJivPwpdBSe1UD7ZE7kSTlDliYQzDIuB6R+sO3apl9Jjlw+V1dYPdM/1kyXuQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/mn0rSvDQYg+FunVGaEzFtzjUNPQV8pKw9KI2Z8U2NB2mn3Ow
-	JizBqvXtl6sXb3RXoc54cHziDj4utM9C4WiM5Ip0WRB5LkKC97Se5KFcC0ZOrAyqVLrhvoCq+kL
-	ysWOVd8uA8nWn3YamSBdWoBb81H0=
-X-Gm-Gg: ASbGncvsxvg5mSYHQkpcOQVJxBFAlxOYPFFyPNvW3a1Zk9t1P3pli3zGjv21MA6+UhS
-	sTVrFQ6JEGYlitWqAP+Uz9KVVyLFKCj54c3amJZC9c8Gcoe8T7DIBy3EzDSzyo929V5CEGnzI/K
-	q965TRb7o5dIGxQl8m45Px9hm4iNM=
-X-Google-Smtp-Source: AGHT+IGIQdKUGDLT7ZkBsz4oPRHqTvjMI6XDp9IXS4MKQVVNgncyu3YecpMRjzROj05syhyckqwlunpao3HnWgiOP10=
-X-Received: by 2002:a05:600c:1553:b0:43c:e7a7:1e76 with SMTP id
- 5b1f17b1804b1-43d509e373fmr117579115e9.1.1742853620933; Mon, 24 Mar 2025
- 15:00:20 -0700 (PDT)
+	s=arc-20240116; t=1742853705; c=relaxed/simple;
+	bh=YzqdrLQFmw900gKmkqdoCcoT/1kDx0pVEvq0I7vYnc8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B4YEFKMKeBOIkO5F8YvyA88EOWfTo8TsDDcmfb7FzO5eSqIcrU/JavA6X8aWMieeGJ2cMkdyOdbrcWD+axVZ2icpZvpinm2Ecbavw1R7bH1xci9mO7q0y2UmayZ2w2rIA/SpcdpSrwvf3Fc0Uc5KoGb43/K/sS/VGjdhuBCAtrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=PVpdqEX1; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1742853693;
+	bh=YzqdrLQFmw900gKmkqdoCcoT/1kDx0pVEvq0I7vYnc8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=PVpdqEX1cL+qGswZ2p6Ns8smf2GZtj5uJI1ZcFKcB5pmKVpkefe8joCGHkLMDT0ad
+	 rxPe+FstMgK8R0nx4+DgZwU0RA5uRUsRXJZDC1QMLcgNmWRGung7mTd5bBICQs9G93
+	 DZE5W8SgxViXCVx9CqgWLZutAEEc/ds1JEO8whCg=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Mon, 24 Mar 2025 23:01:28 +0100
+Subject: [PATCH] selftests/nolibc: drop unnecessary sys/io.h include
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324173242.1501003-1-arnd@kernel.org> <20250324173242.1501003-9-arnd@kernel.org>
-In-Reply-To: <20250324173242.1501003-9-arnd@kernel.org>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Mon, 24 Mar 2025 23:00:08 +0100
-X-Gm-Features: AQ5f1Jr0LTV0sn7xM4IaIDNraogN3q0NXArhmlOA0HByopDTVxKTYXLP7U_x9R8
-Message-ID: <CA+fCnZd6uLYoKZwwHfBo72C0QLV=pv1feEmB2mMaqP9HKKeo9A@mail.gmail.com>
-Subject: Re: [PATCH 09/10] mm/kasan: add module decription
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>, 
-	Marco Elver <elver@google.com>, Nihar Chaithanya <niharchaithanya@gmail.com>, 
-	Jann Horn <jannh@google.com>, Peter Zijlstra <peterz@infradead.org>, kasan-dev@googlegroups.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250324-nolibc-ioperm-v1-1-8a7cfb2876ae@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIADfW4WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMT3bz8nMykZN3M/ILUolxdQ1NTMxMzUzODJEtTJaCegqLUtMwKsHn
+ RsbW1AA+RrZ1fAAAA
+X-Change-ID: 20250324-nolibc-ioperm-155646560b95
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sebastian Andrzej Siewior <sebastian@breakpoint.cc>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742853692; l=1117;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=YzqdrLQFmw900gKmkqdoCcoT/1kDx0pVEvq0I7vYnc8=;
+ b=ON8q9+3kEiJLby0+BZbFk94/DXye6ISRKTAp8DrUredPmbc1LVdxi8iBbFXV3FGRI3fYYDaCm
+ 8Nc0AaFInUJCdlbfk8WToC680ZctBHAhIFpxNYlIdm52VK2PYrOtKJJ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Mon, Mar 24, 2025 at 6:34=E2=80=AFPM 'Arnd Bergmann' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Modules without a description now cause a warning:
->
-> WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  mm/kasan/kasan_test_c.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index 59d673400085..710684ffe302 100644
-> --- a/mm/kasan/kasan_test_c.c
-> +++ b/mm/kasan/kasan_test_c.c
-> @@ -2130,4 +2130,5 @@ static struct kunit_suite kasan_kunit_test_suite =
-=3D {
->
->  kunit_test_suite(kasan_kunit_test_suite);
->
-> +MODULE_DESCRIPTION("kunit test case for kasan");
->  MODULE_LICENSE("GPL");
-> --
-> 2.39.5
+The include of sys/io.h is not necessary anymore since
+commit 67eb617a8e1e ("selftests/nolibc: simplify call to ioperm").
+It's existence is also problematic as the header does not exist on all
+architectures.
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Reported-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ tools/testing/selftests/nolibc/nolibc-test.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-But just in case you end up sending a v2, let's change the text to
-"KUnit tests for checking KASAN bug-detection capabilities".
+diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+index 5884a891c491544050fc35b07322c73a1a9dbaf3..7a60b6ac1457e8d862ab1a6a26c9e46abec92111 100644
+--- a/tools/testing/selftests/nolibc/nolibc-test.c
++++ b/tools/testing/selftests/nolibc/nolibc-test.c
+@@ -16,7 +16,6 @@
+ #ifndef _NOLIBC_STDIO_H
+ /* standard libcs need more includes */
+ #include <sys/auxv.h>
+-#include <sys/io.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+ #include <sys/mount.h>
 
-Thank you!
+---
+base-commit: bceb73904c855c78402dca94c82915f078f259dd
+change-id: 20250324-nolibc-ioperm-155646560b95
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
