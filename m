@@ -1,56 +1,86 @@
-Return-Path: <linux-kernel+bounces-573276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D596FA6D527
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:35:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B35A6D52B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412B43ABD83
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0533A1892A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6CA2512E7;
-	Mon, 24 Mar 2025 07:35:09 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E791257AD4;
+	Mon, 24 Mar 2025 07:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WzsoDhti"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E48250BF0;
-	Mon, 24 Mar 2025 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DDF25742D;
+	Mon, 24 Mar 2025 07:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742801709; cv=none; b=KsnXPO5iatWhSrtHbcfVFzmrLFvFGxNXH8TEEmAHyFAhil2cofpkleftxlHeRgrkfOTsEY4weOBzecFtq3m+OvyjIc7NciycjQqU+OGEVr4kLOtHP07Jhn1GrsoJvxS35Q/XzZ5HTPw/bdrrFKzCR9vdxICe07kmCSXGnUAOEUg=
+	t=1742801852; cv=none; b=m3EXv9qG1EkttTZgKniCM+bRKd/JfmEZb5gcVse/B7+bbP4UiksCGFDSiS0gwUwJNYcOePXw/mBZ2m6iSGRUSB1lD7fZwkEkvlncvqN1d6gxtNgk7xd/YV7+h2BUxQZn6EpvLvHGcZ+Txwqgph+n+ep0ChVxcQfEzCfleJhKqXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742801709; c=relaxed/simple;
-	bh=kNdkIG9UPAH3v2U1o048RTeCISVVguBVoM06LHnz1Ds=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g5kpUmyvsyykNfuC2UQHzLFnbdRvqfGzwL7rNKL0lWNo2yf70LJVBok8JenV6175KyCcTkmNxMluYMdVvUjiszF+TEyj9z6iRF9uSUjHryse+PlFLs50H99UxBPSQW+6awq6ovDIKX5F7TNGgaqO7dM3SzFPrw1N3k8WsfiVTt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O60OUf018528;
-	Mon, 24 Mar 2025 00:34:59 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45hrg41mrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 24 Mar 2025 00:34:58 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 24 Mar 2025 00:34:57 -0700
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 24 Mar 2025 00:34:55 -0700
-From: <jianqi.ren.cn@windriver.com>
-To: <stable@vger.kernel.org>
-CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>,
-        <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
-        <linux-btrfs@vger.kernel.org>, <llfamsec@gmail.com>, <wqu@suse.com>
-Subject: [PATCH 6.6.y] btrfs: make sure that WRITTEN is set on all metadata blocks
-Date: Mon, 24 Mar 2025 15:34:54 +0800
-Message-ID: <20250324073454.3796450-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742801852; c=relaxed/simple;
+	bh=e3AoWLYNPTFZnz86iaVTUGPwvS+iqfeIOPNwxgo7smE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4G3/OrQ2HvKXh8O+13kZZ9TUQ66HzkkHQBd16IcLwN+KIxcroZaeD8bC/S6Sf4RfNFfFRBOpTkHlehb6mopB+q2FVNiZSFSZye9CmAIcWvbAfRcWJfDGyIJSWp65ylcg/z9jRG74thMcPcqfTbxnNV6BKcO9n5ISEtjYrvjgVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WzsoDhti; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52NNSmSp009728;
+	Mon, 24 Mar 2025 07:37:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=G+8DRrZFR05yC73toKSnJnS0F8v+CsMnumFAJhpHp
+	Io=; b=WzsoDhtiGfPl95yzEH+wsahiBNzaVHXXgrL1s0J84e6NpjCI0xzd/4JmC
+	KojQt71R2Ykksa9sHE0+KSSGFn8vTo90TEBVZk4E2lgFyv7SGXX3z3+TltINJOIA
+	2/5ALV9sQKv92R59kElB7MIDAAvFL/W0lgXAQeaZYpHEcSW3IYA0XQ+mgSc39hYl
+	nhffPhfQ502MjrRgsssbpiKiXNxImi4uk+ccAzLOKJj7BG0+zxkuyvnH8Pr1RNYm
+	k4apNvY2VclysByiEfsE+SjR6IaU2JuYuaOTSCE86ZferiovxXvMzHSp71Wj1XzK
+	C0zmyrcd41OOBqAN7hq3a5AQm99Ng==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsfpa15g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:37:15 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52O7bFSm008864;
+	Mon, 24 Mar 2025 07:37:15 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsfpa15b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:37:15 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52O3uOgt012245;
+	Mon, 24 Mar 2025 07:37:14 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j91kw3cn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:37:14 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52O7bC1055116112
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Mar 2025 07:37:12 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DD2020043;
+	Mon, 24 Mar 2025 07:37:12 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 022062004E;
+	Mon, 24 Mar 2025 07:37:11 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.29.200])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Mar 2025 07:37:10 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: John Garry <john.g.garry@oracle.com>, dchinner@redhat.com,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [RFC v3 00/11] ext4: Add extsize and forcealign support (groundwork for multi block atomic writes)
+Date: Mon, 24 Mar 2025 13:06:58 +0530
+Message-ID: <cover.1742800203.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,172 +88,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=HZwUTjE8 c=1 sm=1 tr=0 ts=67e10b22 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=gEA-OUY-moF3Uf1y:21 a=Vs1iUdzkB0EA:10 a=maIFttP_AAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
- a=t7CeM3EgAAAA:8 a=xqbIuppjPMaPyYIW3jgA:9 a=qR24C9TJY6iBuJVj_x8Y:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: XKmDfec6X6tV-aNjrxe3Hfm0-dMsJgX6
-X-Proofpoint-ORIG-GUID: XKmDfec6X6tV-aNjrxe3Hfm0-dMsJgX6
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: E4qrm2tcfPhpdfBV4k5bDL5Epyk8einZ
+X-Proofpoint-GUID: QZ490p1iBWt23sZaVpaIwFuPY1p9T7N1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 phishscore=0 malwarescore=0 adultscore=0
- clxscore=1011 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2503240054
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 adultscore=0
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=764 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503240053
 
-From: Josef Bacik <josef@toxicpanda.com>
+These patches lay the ground work for supporting multi block
+HW-accelerated atomic writes without the use of bigalloc. Multiblock
+atomic write support with bigalloc is already posted as an RFC here [3].
+Without bigalloc, we need a mechanism to get aligned blocks from the
+allocator so that HW accelerated atomic writes can be performed. extsize
++ forcealign provide this mechanism in ext4.
 
-[ Upstream commit e03418abde871314e1a3a550f4c8afb7b89cb273 ]
+[3] https://lore.kernel.org/linux-ext4/cover.1742699765.git.ritesh.list@gmail.com/
 
-We previously would call btrfs_check_leaf() if we had the check
-integrity code enabled, which meant that we could only run the extended
-leaf checks if we had WRITTEN set on the header flags.
+- extsize is a per inode hint to physically and logically align blocks
+  to a certain value.
 
-This leaves a gap in our checking, because we could end up with
-corruption on disk where WRITTEN isn't set on the leaf, and then the
-extended leaf checks don't get run which we rely on to validate all of
-the item pointers to make sure we don't access memory outside of the
-extent buffer.
+- forcealign gives a **strict guarantee** that allocator will physically
+  as well as logically align blocks to the extsize value
 
-However, since 732fab95abe2 ("btrfs: check-integrity: remove
-CONFIG_BTRFS_FS_CHECK_INTEGRITY option") we no longer call
-btrfs_check_leaf() from btrfs_mark_buffer_dirty(), which means we only
-ever call it on blocks that are being written out, and thus have WRITTEN
-set, or that are being read in, which should have WRITTEN set.
+The extsize support is almost same as v2 with rebase to latest ext4 dev
+branch. Patches 7 - 11 adds the new forcealign feature that can be
+seen like a sort of per file bigalloc. Some points about forcealign:
 
-Add checks to make sure we have WRITTEN set appropriately, and then make
-sure __btrfs_check_leaf() always does the item checking.  This will
-protect us from file systems that have been corrupted and no longer have
-WRITTEN set on some of the blocks.
+ * Allocation on a forcealign inode is guaranteed to get an extent
+   aligned to extsize physicall and logically, else error is returned. 
+   This mimicks bigalloc but on a per file level
 
-This was hit on a crafted image tweaking the WRITTEN bit and reported by
-KASAN as out-of-bound access in the eb accessors. The example is a dir
-item at the end of an eb.
+ * Deallocations are also only allowed in extsize aligned units. This is
+   pretty strict and can be relaxed in later revisions.
 
-  [2.042] BTRFS warning (device loop1): bad eb member start: ptr 0x3fff start 30572544 member offset 16410 size 2
-  [2.040] general protection fault, probably for non-canonical address 0xe0009d1000000003: 0000 [#1] PREEMPT SMP KASAN NOPTI
-  [2.537] KASAN: maybe wild-memory-access in range [0x0005088000000018-0x000508800000001f]
-  [2.729] CPU: 0 PID: 2587 Comm: mount Not tainted 6.8.2 #1
-  [2.729] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-  [2.621] RIP: 0010:btrfs_get_16+0x34b/0x6d0
-  [2.621] RSP: 0018:ffff88810871fab8 EFLAGS: 00000206
-  [2.621] RAX: 0000a11000000003 RBX: ffff888104ff8720 RCX: ffff88811b2288c0
-  [2.621] RDX: dffffc0000000000 RSI: ffffffff81dd8aca RDI: ffff88810871f748
-  [2.621] RBP: 000000000000401a R08: 0000000000000001 R09: ffffed10210e3ee9
-  [2.621] R10: ffff88810871f74f R11: 205d323430333737 R12: 000000000000001a
-  [2.621] R13: 000508800000001a R14: 1ffff110210e3f5d R15: ffffffff850011e8
-  [2.621] FS:  00007f56ea275840(0000) GS:ffff88811b200000(0000) knlGS:0000000000000000
-  [2.621] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [2.621] CR2: 00007febd13b75c0 CR3: 000000010bb50000 CR4: 00000000000006f0
-  [2.621] Call Trace:
-  [2.621]  <TASK>
-  [2.621]  ? show_regs+0x74/0x80
-  [2.621]  ? die_addr+0x46/0xc0
-  [2.621]  ? exc_general_protection+0x161/0x2a0
-  [2.621]  ? asm_exc_general_protection+0x26/0x30
-  [2.621]  ? btrfs_get_16+0x33a/0x6d0
-  [2.621]  ? btrfs_get_16+0x34b/0x6d0
-  [2.621]  ? btrfs_get_16+0x33a/0x6d0
-  [2.621]  ? __pfx_btrfs_get_16+0x10/0x10
-  [2.621]  ? __pfx_mutex_unlock+0x10/0x10
-  [2.621]  btrfs_match_dir_item_name+0x101/0x1a0
-  [2.621]  btrfs_lookup_dir_item+0x1f3/0x280
-  [2.621]  ? __pfx_btrfs_lookup_dir_item+0x10/0x10
-  [2.621]  btrfs_get_tree+0xd25/0x1910
+ * FS_XFLAG_FORCEALIGN can be set via FS_IOC_GET/SETXATTR ioctl to
+   enable forcealign. As of now, we can only enable forcealign if
+   extsize is set on the inode
 
-Reported-by: lei lu <llfamsec@gmail.com>
-CC: stable@vger.kernel.org # 6.7+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-[ copy more details from report ]
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
-Signed-off-by: He Zhe <zhe.he@windriver.com>
----
-Verified the build test
----
- fs/btrfs/tree-checker.c | 30 +++++++++++++++---------------
- fs/btrfs/tree-checker.h |  1 +
- 2 files changed, 16 insertions(+), 15 deletions(-)
+ * Reused the EXT4_EOFBLOCKS_FL flag for forcealig since it is no longer
+   used. Incase this is not feasible, we can explore other ways to set
+   the flag (eg xattr or overriding a field)
 
-diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
-index 53c74010140e..6d16506bbdc0 100644
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -1889,6 +1889,11 @@ enum btrfs_tree_block_status __btrfs_check_leaf(struct extent_buffer *leaf)
- 		return BTRFS_TREE_BLOCK_INVALID_LEVEL;
- 	}
- 
-+	if (unlikely(!btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_WRITTEN))) {
-+		generic_err(leaf, 0, "invalid flag for leaf, WRITTEN not set");
-+		return BTRFS_TREE_BLOCK_WRITTEN_NOT_SET;
-+	}
-+
- 	/*
- 	 * Extent buffers from a relocation tree have a owner field that
- 	 * corresponds to the subvolume tree they are based on. So just from an
-@@ -1950,6 +1955,7 @@ enum btrfs_tree_block_status __btrfs_check_leaf(struct extent_buffer *leaf)
- 	for (slot = 0; slot < nritems; slot++) {
- 		u32 item_end_expected;
- 		u64 item_data_end;
-+		enum btrfs_tree_block_status ret;
- 
- 		btrfs_item_key_to_cpu(leaf, &key, slot);
- 
-@@ -2005,21 +2011,10 @@ enum btrfs_tree_block_status __btrfs_check_leaf(struct extent_buffer *leaf)
- 			return BTRFS_TREE_BLOCK_INVALID_OFFSETS;
- 		}
- 
--		/*
--		 * We only want to do this if WRITTEN is set, otherwise the leaf
--		 * may be in some intermediate state and won't appear valid.
--		 */
--		if (btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_WRITTEN)) {
--			enum btrfs_tree_block_status ret;
--
--			/*
--			 * Check if the item size and content meet other
--			 * criteria
--			 */
--			ret = check_leaf_item(leaf, &key, slot, &prev_key);
--			if (unlikely(ret != BTRFS_TREE_BLOCK_CLEAN))
--				return ret;
--		}
-+		/* Check if the item size and content meet other criteria. */
-+		ret = check_leaf_item(leaf, &key, slot, &prev_key);
-+		if (unlikely(ret != BTRFS_TREE_BLOCK_CLEAN))
-+			return ret;
- 
- 		prev_key.objectid = key.objectid;
- 		prev_key.type = key.type;
-@@ -2049,6 +2044,11 @@ enum btrfs_tree_block_status __btrfs_check_node(struct extent_buffer *node)
- 	int level = btrfs_header_level(node);
- 	u64 bytenr;
- 
-+	if (unlikely(!btrfs_header_flag(node, BTRFS_HEADER_FLAG_WRITTEN))) {
-+		generic_err(node, 0, "invalid flag for node, WRITTEN not set");
-+		return BTRFS_TREE_BLOCK_WRITTEN_NOT_SET;
-+	}
-+
- 	if (unlikely(level <= 0 || level >= BTRFS_MAX_LEVEL)) {
- 		generic_err(node, 0,
- 			"invalid level for node, have %d expect [1, %d]",
-diff --git a/fs/btrfs/tree-checker.h b/fs/btrfs/tree-checker.h
-index 3c2a02a72f64..43f2ceb78f34 100644
---- a/fs/btrfs/tree-checker.h
-+++ b/fs/btrfs/tree-checker.h
-@@ -51,6 +51,7 @@ enum btrfs_tree_block_status {
- 	BTRFS_TREE_BLOCK_INVALID_BLOCKPTR,
- 	BTRFS_TREE_BLOCK_INVALID_ITEM,
- 	BTRFS_TREE_BLOCK_INVALID_OWNER,
-+	BTRFS_TREE_BLOCK_WRITTEN_NOT_SET,
- };
- 
- /*
+Some of the TODOs and open questions regarding the design:
+
+1. I want to design forcealign in such a way that FS formatting is not
+  required. For that Im exploring 2 options:
+
+  - Add an RO_COMPAT feature flag. tune2fs can be used to enable it on
+    existing filesystems without formatting. Simplest but this has a
+    drawback that even for a single forcealign file, the FS would become
+    RO on older kernels
+
+  - To avoid that, we can instead expose an ioctl to fix a misaligned
+    forcealign file. However this is an overhead for sys admins/end
+    users. Maybe fsck can help with this?
+
+2. For extsize, I'm not planning to support FS-wide tunable since we
+   already have bigalloc for that.
+
+3. Also, we are not supporting non-power-of-2 extsizes (atleast for now)
+   as there are no clear use cases to justify the added complexity 
+
+4. directory wide extsize is not yet supported however can be added in 
+   future revision
+
+We are passing quick xfstests with these patches along with a lot of
+custom allocation scenarios that I'll eventually add to xfstest, however
+this series is still largely an RFC and might have bugs.
+
+Posting this here for review and suggestions on the design as well as
+implementation. 
+
+
+** Changes since rfc v2 [2] **
+
+ - Patch 0-6 are same as v2 just rebased. Patch 7-11 are new in this
+   series.
+ - Patch 7 adds a wrapper on ext4_map_blocks to better handle some
+   allocation scenarios
+ - Patch 8-11 Add a new called forcealign. More about it below.
+
+[2] https://lore.kernel.org/linux-ext4/cover.1733901374.git.ojaswin@linux.ibm.com/
+
+** Changes since rfc v1 [1] **
+
+1. Allocations beyond EOF also respect extsize hint however we 
+   unlink XFS, we don't trim the blocks allocated beyond EOF due
+   to extsize hints. The reasoning behind this is explained in 
+   patch 6/6.
+
+2. Minor fixes in extsize ioctl handling logic.
+
+Rest of the design detials can be in individual patches as well as
+the original cover leter which can be found here:
+
+[1]
+https://lore.kernel.org/linux-ext4/cover.1726034272.git.ojaswin@linux.ibm.com/
+
+Comments and suggestions are welcome!
+
+Regards,
+ojaswin
+
+Ojaswin Mujoo (11):
+  ext4: add aligned allocation hint in mballoc
+  ext4: allow inode preallocation for aligned alloc
+  ext4: support for extsize hint using FS_IOC_FS(GET/SET)XATTR
+  ext4: pass lblk and len explicitly to ext4_split_extent*()
+  ext4: add extsize hint support
+  ext4: make extsize work with EOF allocations
+  ext4: add ext4_map_blocks_extsize() wrapper to handle overwrites
+  ext4: add forcealign support of mballoc
+  ext4: add forcealign support to ext4_map_blocks
+  ext4: add support for adding focealign via SETXATTR ioctl
+  ext4: disallow unaligned deallocations on forcealign inodes
+
+ fs/ext4/ext4.h              |  20 +-
+ fs/ext4/ext4_jbd2.h         |  23 ++
+ fs/ext4/extents.c           | 294 ++++++++++++++++---
+ fs/ext4/inode.c             | 543 +++++++++++++++++++++++++++++++++---
+ fs/ext4/ioctl.c             | 191 +++++++++++++
+ fs/ext4/mballoc.c           | 141 ++++++++--
+ fs/ext4/super.c             |   1 +
+ include/trace/events/ext4.h |   3 +
+ include/uapi/linux/fs.h     |   6 +-
+ 9 files changed, 1111 insertions(+), 111 deletions(-)
+
 -- 
-2.25.1
+2.48.1
 
 
