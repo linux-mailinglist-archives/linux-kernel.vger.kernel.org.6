@@ -1,200 +1,377 @@
-Return-Path: <linux-kernel+bounces-573768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECFDA6DBFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:48:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E52A6DBFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6485F3AE72E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:48:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3AF16ADE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9824719C569;
-	Mon, 24 Mar 2025 13:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9C125E444;
+	Mon, 24 Mar 2025 13:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORr2+tuV"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r7Vg8ZP+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64212FC0A;
-	Mon, 24 Mar 2025 13:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE67AFC0A;
+	Mon, 24 Mar 2025 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824092; cv=none; b=EcbUVI9xnvI/CNhWW+7/Fzvl2o7qry7No5CFBt1qXXXToSDjtbkvkOVPcU1VDJlZS5Zq3o4QB3NjBlxPojqgTGNBWLXrnwpbcIoiAoPQ7MbatIpAi3wg98aLM/eS+RFJ5SX0PDIoZdLwvT9CF722tvUOOgPADsI6NFQwpZVmLOg=
+	t=1742824160; cv=none; b=oJFpvY8vSwsyNfknbP9y7UsNt0paajG3aRDYLJ1wE/+y37e8UdISsrguO2mBC0cDaZexqzLvoqFKsb4UODDQfdKItKbi/ccKZzhKEXv1mGnS+aMxOx0nvkNuawRcnXXrDI7xx+blOJLekf9zjLKdZzyqNpOcCLXArC9ppkCEJKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824092; c=relaxed/simple;
-	bh=xlJYEsG/YxZpSX5fkvrHQUPL6adkhPa0PcpWMKkszuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BY3vazZwKRFGukLi7ArFmIjlw+nuF0Ok+95XsY7SFVl/rpjzphflsQaT7fkyQr3VYgWtU7D8W7LAkefrbj6zn+wzHXq03lj+YsBUXQawnOi76CCmpVt/OW0Vm1BjvH69atr1Q3QrRYglfL5WH8Uv3wZubiRLZr7VQEUZ8zwM8Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORr2+tuV; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2c1c4e364c8so1490933fac.1;
-        Mon, 24 Mar 2025 06:48:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742824089; x=1743428889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P8qRncFe1dnLfI3S8hPEYswLDq6RLhZSuYf8HCQ7pgs=;
-        b=ORr2+tuVkLB8r5wa5nxva/NujK1qGWKYT+ghk9CjaXYTJbMBMzaIN8K2PrKoqKwaev
-         o2a3fDbmcAoymHVCazcTGZnYEUJLdGvDVESFHY0xDAwdKCGYoRhIMvW3y/9eMSjmkhLh
-         gBHuXvgZz7x5fecuUxCV455JkXQ72f/sl7hahCKDDBJOe4LZrYuzRgdFkG12SE8wUE4B
-         Zd8/yCxgP0CIOs7Cr6Yov7k4HL+2RFqESxKJZUghl6hD+4Ww2OIbCO8YrVwl2erUG6pr
-         ml0yQAnMvynAhxiR5pUWX9v9Per3ulA/UoOiAncHhSoohZ3PBd/FsMPrMu3M1oaQXFDt
-         cg4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742824089; x=1743428889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P8qRncFe1dnLfI3S8hPEYswLDq6RLhZSuYf8HCQ7pgs=;
-        b=O3w4Yu4c3rWVTkwrNEx1HCLu03gwufTBBAMB6cTTtiumpuiLCAvlPEicrpDBI58v7m
-         MRL0bBWj9nOIEcuyIM0UJv+fKNZcUmmTperoFJRDA+QsqKFXrrxCtR1S3lKQ7Ego3fxV
-         Edee9iyj6dO4yCRy7ZG5wwCXEtoS8bv6rgl34/+QW2H7sgNTfadRkevm/zeT5xHJT3Vq
-         C7irsrgkc83NMMC94MHcEvWi4SMdVl43f3w3nQgRZpQGLkJQ4e+1XU5ZWGRI6ysFnL0A
-         LQSsdE0dtlYumh3d+i5jRyrsp1kgEFO99HeO1oVcc39Tv4F8DpB3ay3mndzBh8UXAtMW
-         mPSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIGbsue72rsiuwYNAVx6q7XNtJXiJ76NYulF71phCdSSy74r4zwIZwVZB0jS7C/RYkLIH44tQZsOEd//Y=@vger.kernel.org, AJvYcCXngYWDj64pf+v0nSUUDn+F8UVvcNTCtiDu0Y2O3zNwnI2l8sjlulZVtv9sVz0Z7aeNaUn/P650DhTmmhBJOsSuhkPjgw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+Fkdh8fLUfz0Vybw5y1EWqS4tls5cjZWcjZtVcvh7YOXH3VQz
-	4irPs2Upqv6/QussHAg9cJQMefgJIOl8StpCOKAJ9ORfi5z39PzBtb2eHiq5qeuDV4039KPa56l
-	sQsyHSF7Ep+8/XO/O+xo4kfihQc0=
-X-Gm-Gg: ASbGncu1QBDnfn8tT41GiuLe1Eu8uwjn91bRtyijucsGBdkNcW9T573Hbr1A2HCKwtH
-	Bug1nKpVkUKF+oeceMrEmMLerbZfINdqEvw3wYSMIgdYrj0rhvBubNofCe/VI26Oo4R5HSArzr2
-	XjT2D4xaAC1P0Y5CQbiG+wYMFdh/EX/pCidPmq5A==
-X-Google-Smtp-Source: AGHT+IFIZFQN+bdrDeNdd5pkzb/e6pLvUv+qITaW+VrDqM52pDdwBLl2nhWweBesXNrc1E9qJUYut0xwTq4ZknWRNiA=
-X-Received: by 2002:a05:6871:2309:b0:2b1:db0e:e22d with SMTP id
- 586e51a60fabf-2c7606453fdmr11163028fac.0.1742824089067; Mon, 24 Mar 2025
- 06:48:09 -0700 (PDT)
+	s=arc-20240116; t=1742824160; c=relaxed/simple;
+	bh=1d98LpnuRQzscRcy1wKUMiTv9IxQT2cYRvWeQYcatNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lQY6eiTnowU7nM6gjGjCQ2KBMshDgU5NMr0vuP+EBGEohlw69XVwKywZsAVEnNoQZW/i0QF9AR8nOZjndF5FZCJjoRqaVYcLa87cQ75zvp4RuNcoSxlXlbfEjP9brBZDE2RVNtdPoAm/7Z1sep5A8RZ6Z/R36B76kF/AxPAkbmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r7Vg8ZP+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=4aiGzvplkYDrIq2JaDrvyRz6Tq58zzawWVzsjC0w1dY=; b=r7Vg8ZP+LtdAp4GiZ/APeBC4gH
+	GfRJ2mjcxKyeh6D1X/HbQ/qqAV9y9/sGSRZyUJL6CVQlPTt9/6fUCUuUGyKxnRT7eVV1vrT7yh6nO
+	6mcCcWTNWLmFmWgEsBXHhhyJASgceADSftPYoNihZbZq7XcxE44x24N4xv1ZZ0zYEnd9pKYIJYUCg
+	AZNdGYCWekjb1NXneDgg6m1x3oVkSbaSmJpEuUkw4wH+6RVyPIpCkCNnbaPh4A89ZZswXNe/9Gs/R
+	spGb+aFnoNBss0msqdz3gBIEY8n5nPlu0ROVUn2g41fAOTW4whZzpt7gxDpgVK+aF2Op8x16R46ph
+	S0hVh7SQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1twiAv-00000000kUw-2VGC;
+	Mon, 24 Mar 2025 13:49:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 29C1F3004AF; Mon, 24 Mar 2025 14:49:09 +0100 (CET)
+Date: Mon, 24 Mar 2025 14:49:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: mingo@kernel.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, jpoimboe@kernel.org, jikos@kernel.org,
+	mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
+	linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [RFC][PATCH] sched,livepatch: Untangle cond_resched() and
+ live-patching
+Message-ID: <20250324134909.GA14718@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321083003.84661-1-gasper.nemgar@gmail.com>
- <ce934c71-2220-c8f9-ff3a-5633360a8935@linux.intel.com> <CAKi4K-jVGw58nbxdWKizaNJRzPc3izE9ipZUOwUq=v-hAAjd8w@mail.gmail.com>
- <35969669-48b6-469e-9cd2-26929fb33e5f@redhat.com>
-In-Reply-To: <35969669-48b6-469e-9cd2-26929fb33e5f@redhat.com>
-From: =?UTF-8?Q?Ga=C5=A1per_Nemgar?= <gasper.nemgar@gmail.com>
-Date: Mon, 24 Mar 2025 14:47:42 +0100
-X-Gm-Features: AQ5f1Jq7Tdh_8RKZ9lznJjZOQ1vjW2CzTC94xLd-UFf7LVANbU2QzwIpbmHANDE
-Message-ID: <CAKi4K-i809rcJqZTiRejG6c5Vu7OeFMEri42jBgOOpagcx-bWA@mail.gmail.com>
-Subject: Re: [PATCH] Added support for a some new buttons in ideapad-laptop
- driver Added entries to unsuported wmi codes in ideapad_keymap[] and one
- check in wmi_nofify in order to get wmi code 0x13d to trigger platform_profile_cycle
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	ikepanhc@gmail.com, LKML <linux-kernel@vger.kernel.org>, 
-	platform-driver-x86@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
-noted. About the performance button, under windows id does toggle the
-performance mode, I would much rather have a assignable key, but will
-bind it to platform_profile_cycle().
-Thanks,
-Ga=C5=A1per
 
-On Mon, 24 Mar 2025 at 13:23, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 21-Mar-25 15:47, Ga=C5=A1per Nemgar wrote:
-> > Hello, yes I have noticed it messed up the title and will change it,
->
->
-> > I just have a question about the performance button aka WMI code 0x13d,=
- is it smart to hardwire it into platorm_profile_cycle() or is it better to=
- leave it as KEY_PROG4 keycode. Thanks
->
-> That depends on what the key does under Windows, if it cycles through per=
-formance
-> settings under Windows then calling platorm_profile_cycle() is the right =
-thing to do.
->
-> If it opens some sort of performance settings dialog / Windows then a fre=
-e KEY_PROG#
-> would be better.
->
-> Regards,
->
-> Hans
->
->
->
-> >
-> >
-> > On Fri, 21 Mar 2025 at 15:17, Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.i=
-ntel.com <mailto:ilpo.jarvinen@linux.intel.com>> wrote:
-> >
-> >     On Fri, 21 Mar 2025, Ga=C5=A1per Nemgar wrote:
-> >
-> >     Hi Gasper,
-> >
-> >     Thanks for the patch. I think the changelog text got messed up duri=
-ng send
-> >     as it should here, not in the subject.
-> >
-> >     Also please change "Added support" to "Add support", add the correc=
-t
-> >     prefix into the shortlog (the line in Subject), and add parenthesis=
- after
-> >     functions in the description.
-> >
-> >     --
-> >      i.
-> >
-> >     > Signed-off-by: Ga=C5=A1per Nemgar <gasper.nemgar@gmail.com <mailt=
-o:gasper.nemgar@gmail.com>>"
-> >     > ---
-> >     >  drivers/platform/x86/ideapad-laptop.c | 16 ++++++++++++++++
-> >     >  1 file changed, 16 insertions(+)
-> >     >
-> >     > diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/plat=
-form/x86/ideapad-laptop.c
-> >     > index 30bd366d7..a03377d87 100644
-> >     > --- a/drivers/platform/x86/ideapad-laptop.c
-> >     > +++ b/drivers/platform/x86/ideapad-laptop.c
-> >     > @@ -1308,6 +1308,16 @@ static const struct key_entry ideapad_keym=
-ap[] =3D {
-> >     >       /* Specific to some newer models */
-> >     >       { KE_KEY,       0x3e | IDEAPAD_WMI_KEY, { KEY_MICMUTE } },
-> >     >       { KE_KEY,       0x3f | IDEAPAD_WMI_KEY, { KEY_RFKILL } },
-> >     > +     /* Star- (User Asignable Key) */
-> >     > +     { KE_KEY,       0x44 | IDEAPAD_WMI_KEY, { KEY_PROG1 } },
-> >     > +     /* Eye */
-> >     > +     { KE_KEY,       0x45 | IDEAPAD_WMI_KEY, { KEY_BRIGHTNESS_CY=
-CLE } },
-> >     > +     /* Performance toggle also Fn+Q */
-> >     > +     { KE_KEY,       0x3d | IDEAPAD_WMI_KEY, { KEY_PROG4 } },
-> >     > +     /* shift + prtsc */
-> >     > +     { KE_KEY,   0x2d | IDEAPAD_WMI_KEY, { KEY_CUT } },
-> >     > +     { KE_KEY,   0x29 | IDEAPAD_WMI_KEY, { KEY_TOUCHPAD_TOGGLE }=
- },
-> >     > +     { KE_KEY,   0x2a | IDEAPAD_WMI_KEY, { KEY_ROOT_MENU } },
-> >     >
-> >     >       { KE_END },
-> >     >  };
-> >     > @@ -2093,6 +2103,12 @@ static void ideapad_wmi_notify(struct wmi_=
-device *wdev, union acpi_object *data)
-> >     >
-> >     >               dev_dbg(&wdev->dev, "WMI fn-key event: 0x%llx\n",
-> >     >                       data->integer.value);
-> >     > +
-> >     > +             /* performance button triggered by  ...  */
-> >     > +             if ((data->integer.value | IDEAPAD_WMI_KEY) =3D=3D =
-0x13d ) {
-> >     > +                     platform_profile_cycle();
-> >     > +                     break;
-> >     > +             }
-> >     >
-> >     >               /* 0x02 FnLock, 0x03 Esc */
-> >     >               if (data->integer.value =3D=3D 0x02 || data->intege=
-r.value =3D=3D 0x03)
-> >     >
-> >
->
+With the goal of deprecating / removing VOLUNTARY preempt, live-patch
+needs to stop relying on cond_resched() to make forward progress.
+
+Instead, rely on schedule() with TASK_FREEZABLE set. Just like
+live-patching, the freezer needs to be able to stop tasks in a safe /
+known state.
+
+Compile tested only.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/livepatch_sched.h | 15 +++++--------
+ include/linux/sched.h           |  6 -----
+ kernel/livepatch/transition.c   | 30 ++++++-------------------
+ kernel/sched/core.c             | 50 +++++++----------------------------------
+ 4 files changed, 21 insertions(+), 80 deletions(-)
+
+diff --git a/include/linux/livepatch_sched.h b/include/linux/livepatch_sched.h
+index 013794fb5da0..7e8171226dd7 100644
+--- a/include/linux/livepatch_sched.h
++++ b/include/linux/livepatch_sched.h
+@@ -3,27 +3,24 @@
+ #define _LINUX_LIVEPATCH_SCHED_H_
+ 
+ #include <linux/jump_label.h>
+-#include <linux/static_call_types.h>
++#include <linux/sched.h>
++
+ 
+ #ifdef CONFIG_LIVEPATCH
+ 
+ void __klp_sched_try_switch(void);
+ 
+-#if !defined(CONFIG_PREEMPT_DYNAMIC) || !defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+-
+ DECLARE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+ 
+-static __always_inline void klp_sched_try_switch(void)
++static __always_inline void klp_sched_try_switch(struct task_struct *curr)
+ {
+-	if (static_branch_unlikely(&klp_sched_try_switch_key))
++	if (static_branch_unlikely(&klp_sched_try_switch_key) &&
++	    READ_ONCE(curr->__state) & TASK_FREEZABLE)
+ 		__klp_sched_try_switch();
+ }
+ 
+-#endif /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ #else /* !CONFIG_LIVEPATCH */
+-static inline void klp_sched_try_switch(void) {}
+-static inline void __klp_sched_try_switch(void) {}
++static inline void klp_sched_try_switch(struct task_struct *curr) {}
+ #endif /* CONFIG_LIVEPATCH */
+ 
+ #endif /* _LINUX_LIVEPATCH_SCHED_H_ */
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 6e5c38718ff5..b988e1ae9bd9 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -44,7 +44,6 @@
+ #include <linux/seqlock_types.h>
+ #include <linux/kcsan.h>
+ #include <linux/rv.h>
+-#include <linux/livepatch_sched.h>
+ #include <linux/uidgid_types.h>
+ #include <asm/kmap_size.h>
+ 
+@@ -2069,9 +2068,6 @@ extern int __cond_resched(void);
+ 
+ #if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+ 
+-void sched_dynamic_klp_enable(void);
+-void sched_dynamic_klp_disable(void);
+-
+ DECLARE_STATIC_CALL(cond_resched, __cond_resched);
+ 
+ static __always_inline int _cond_resched(void)
+@@ -2092,7 +2088,6 @@ static __always_inline int _cond_resched(void)
+ 
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return __cond_resched();
+ }
+ 
+@@ -2102,7 +2097,6 @@ static inline int _cond_resched(void)
+ 
+ static inline int _cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	return 0;
+ }
+ 
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index ba069459c101..2676c43642ff 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -29,22 +29,13 @@ static unsigned int klp_signals_cnt;
+ 
+ /*
+  * When a livepatch is in progress, enable klp stack checking in
+- * cond_resched().  This helps CPU-bound kthreads get patched.
++ * schedule().  This helps CPU-bound kthreads get patched.
+  */
+-#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+-
+-#define klp_cond_resched_enable() sched_dynamic_klp_enable()
+-#define klp_cond_resched_disable() sched_dynamic_klp_disable()
+-
+-#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+ 
+ DEFINE_STATIC_KEY_FALSE(klp_sched_try_switch_key);
+-EXPORT_SYMBOL(klp_sched_try_switch_key);
+ 
+-#define klp_cond_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
+-#define klp_cond_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
+-
+-#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
++#define klp_resched_enable() static_branch_enable(&klp_sched_try_switch_key)
++#define klp_resched_disable() static_branch_disable(&klp_sched_try_switch_key)
+ 
+ /*
+  * This work can be performed periodically to finish patching or unpatching any
+@@ -365,9 +356,6 @@ static bool klp_try_switch_task(struct task_struct *task)
+ 
+ void __klp_sched_try_switch(void)
+ {
+-	if (likely(!klp_patch_pending(current)))
+-		return;
+-
+ 	/*
+ 	 * This function is called from cond_resched() which is called in many
+ 	 * places throughout the kernel.  Using the klp_mutex here might
+@@ -377,14 +365,14 @@ void __klp_sched_try_switch(void)
+ 	 * klp_try_switch_task().  Thanks to task_call_func() they won't be
+ 	 * able to switch this task while it's running.
+ 	 */
+-	preempt_disable();
++	lockdep_assert_preemption_disabled();
+ 
+ 	/*
+ 	 * Make sure current didn't get patched between the above check and
+ 	 * preempt_disable().
+ 	 */
+ 	if (unlikely(!klp_patch_pending(current)))
+-		goto out;
++		return;
+ 
+ 	/*
+ 	 * Enforce the order of the TIF_PATCH_PENDING read above and the
+@@ -395,11 +383,7 @@ void __klp_sched_try_switch(void)
+ 	smp_rmb();
+ 
+ 	klp_try_switch_task(current);
+-
+-out:
+-	preempt_enable();
+ }
+-EXPORT_SYMBOL(__klp_sched_try_switch);
+ 
+ /*
+  * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
+@@ -508,7 +492,7 @@ void klp_try_complete_transition(void)
+ 	}
+ 
+ 	/* Done!  Now cleanup the data structures. */
+-	klp_cond_resched_disable();
++	klp_resched_disable();
+ 	patch = klp_transition_patch;
+ 	klp_complete_transition();
+ 
+@@ -560,7 +544,7 @@ void klp_start_transition(void)
+ 			set_tsk_thread_flag(task, TIF_PATCH_PENDING);
+ 	}
+ 
+-	klp_cond_resched_enable();
++	klp_resched_enable();
+ 
+ 	klp_signals_cnt = 0;
+ }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 4d617946d6e8..e6bfcdfb631e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -66,6 +66,7 @@
+ #include <linux/vtime.h>
+ #include <linux/wait_api.h>
+ #include <linux/workqueue_api.h>
++#include <linux/livepatch_sched.h>
+ 
+ #ifdef CONFIG_PREEMPT_DYNAMIC
+ # ifdef CONFIG_GENERIC_ENTRY
+@@ -6654,6 +6655,8 @@ static void __sched notrace __schedule(int sched_mode)
+ 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
+ 		hrtick_clear(rq);
+ 
++	klp_sched_try_switch(prev);
++
+ 	local_irq_disable();
+ 	rcu_note_context_switch(preempt);
+ 
+@@ -7322,7 +7325,6 @@ EXPORT_STATIC_CALL_TRAMP(might_resched);
+ static DEFINE_STATIC_KEY_FALSE(sk_dynamic_cond_resched);
+ int __sched dynamic_cond_resched(void)
+ {
+-	klp_sched_try_switch();
+ 	if (!static_branch_unlikely(&sk_dynamic_cond_resched))
+ 		return 0;
+ 	return __cond_resched();
+@@ -7494,7 +7496,6 @@ int sched_dynamic_mode(const char *str)
+ #endif
+ 
+ static DEFINE_MUTEX(sched_dynamic_mutex);
+-static bool klp_override;
+ 
+ static void __sched_dynamic_update(int mode)
+ {
+@@ -7502,8 +7503,7 @@ static void __sched_dynamic_update(int mode)
+ 	 * Avoid {NONE,VOLUNTARY} -> FULL transitions from ever ending up in
+ 	 * the ZERO state, which is invalid.
+ 	 */
+-	if (!klp_override)
+-		preempt_dynamic_enable(cond_resched);
++	preempt_dynamic_enable(cond_resched);
+ 	preempt_dynamic_enable(might_resched);
+ 	preempt_dynamic_enable(preempt_schedule);
+ 	preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7512,8 +7512,7 @@ static void __sched_dynamic_update(int mode)
+ 
+ 	switch (mode) {
+ 	case preempt_dynamic_none:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7524,8 +7523,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_voluntary:
+-		if (!klp_override)
+-			preempt_dynamic_enable(cond_resched);
++		preempt_dynamic_enable(cond_resched);
+ 		preempt_dynamic_enable(might_resched);
+ 		preempt_dynamic_disable(preempt_schedule);
+ 		preempt_dynamic_disable(preempt_schedule_notrace);
+@@ -7536,8 +7534,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_full:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7548,8 +7545,7 @@ static void __sched_dynamic_update(int mode)
+ 		break;
+ 
+ 	case preempt_dynamic_lazy:
+-		if (!klp_override)
+-			preempt_dynamic_disable(cond_resched);
++		preempt_dynamic_disable(cond_resched);
+ 		preempt_dynamic_disable(might_resched);
+ 		preempt_dynamic_enable(preempt_schedule);
+ 		preempt_dynamic_enable(preempt_schedule_notrace);
+@@ -7570,36 +7566,6 @@ void sched_dynamic_update(int mode)
+ 	mutex_unlock(&sched_dynamic_mutex);
+ }
+ 
+-#ifdef CONFIG_HAVE_PREEMPT_DYNAMIC_CALL
+-
+-static int klp_cond_resched(void)
+-{
+-	__klp_sched_try_switch();
+-	return __cond_resched();
+-}
+-
+-void sched_dynamic_klp_enable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override = true;
+-	static_call_update(cond_resched, klp_cond_resched);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-void sched_dynamic_klp_disable(void)
+-{
+-	mutex_lock(&sched_dynamic_mutex);
+-
+-	klp_override = false;
+-	__sched_dynamic_update(preempt_dynamic_mode);
+-
+-	mutex_unlock(&sched_dynamic_mutex);
+-}
+-
+-#endif /* CONFIG_HAVE_PREEMPT_DYNAMIC_CALL */
+-
+ static int __init setup_preempt_mode(char *str)
+ {
+ 	int mode = sched_dynamic_mode(str);
 
