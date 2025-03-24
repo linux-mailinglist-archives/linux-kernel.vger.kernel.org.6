@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-574369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16803A6E487
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC646A6E48F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831D57A7384
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:33:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CDCA7A591A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA041DB128;
-	Mon, 24 Mar 2025 20:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDD81DB127;
+	Mon, 24 Mar 2025 20:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWY+snBo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="El+Lh+x7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FEB1A08A3;
-	Mon, 24 Mar 2025 20:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA17F1CBA02;
+	Mon, 24 Mar 2025 20:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742848458; cv=none; b=PpWf/RD6kRt+J+67RT8gnvlx9T9rcIWLwDjm8Nq0gT0m868i+73X/hYIUs5jVRDKyvvgoOji1k11XsiYBezW6c1fgxAHCxX2OYBPv69NX54pdgzrzy/QIpfjHuDQq4aquIUQkCe4LyCGz8Kj+knEyHObpf1mI0OshKzewu4x8ts=
+	t=1742849038; cv=none; b=CGCUGdLJv3rYvpcncZa4+MrRrEt88J+wbjg9BpXQ88Fz6YV6yUxh3eRCWjfIgLk7hSyN8Kq+X/bMZgMxoYC4uEd+F+eQ4FySyDy7cz0EJW9q6Xy1saAq9s7mbbQjUct7S6mo0B/PJY39+hxTyGd/T2skwMuHZyx5h9AaJzoW5U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742848458; c=relaxed/simple;
-	bh=WQsgdrLzGf/rKF9Rxu+Myb56pbGqDyG8vHyfgjdOXGI=;
+	s=arc-20240116; t=1742849038; c=relaxed/simple;
+	bh=5qv2oLIMm2+4dPKPDdOd7Vvq9j2CoO5cseyHaKaSETU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBPOxm36Nwf6DUFfPZSdATyqPyaAwK08Oh8ajC5aPuDSOSY6ExVI24SrcbpxC6UVyq9xyvRQoPuNB9xboe7C9b/qJQe6RVSlVprVA9OzDsFDvVQ9+GEydPCypohizr8UIGw6ZU++ru/exLaQGmqYI5byG0Kpri//h/NSCsz1ato=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWY+snBo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D591BC4CEDD;
-	Mon, 24 Mar 2025 20:34:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBChK6msEoZ8F/uVOswGJByfxaSQbSl4isvBYDFwGvQNZWv68dJYxBwgpwzitQlzoc+WSwpUl7IQCCryKrF4Tm9UFh/SeA7GOT5ykny9wreRMT9sQFdRHu5bFg2OwUy9rLkWVuc+KDTJV0PA31n+liHaiKgOQjSefmMfM7rHDLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=El+Lh+x7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B80B1C4CEDD;
+	Mon, 24 Mar 2025 20:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742848458;
-	bh=WQsgdrLzGf/rKF9Rxu+Myb56pbGqDyG8vHyfgjdOXGI=;
+	s=k20201202; t=1742849037;
+	bh=5qv2oLIMm2+4dPKPDdOd7Vvq9j2CoO5cseyHaKaSETU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DWY+snBo1wR3tfpaXeEhwe+NKbipOVKkpTmiUiZR2C/w3Fa8r5TSIJD+NV8xyjIFT
-	 N+fPC0DanXPQgM4ll3UklXBdUxOaaHdp6tvramUR3CIjFrksuRlriGIOHucexniQjc
-	 AoObG2d3679GL69DDFxFFWWe8xfxGWWtmVhlw6sX+atDBdyvtOSN23D9fwqreWywKi
-	 zJqx/D08WhocPB3Wv4W8eSY8oPQnHcaMClZO//4V9dq562tI2+OwvO7aBGAvtOsPeI
-	 AZH3qv9kWTsouu7N0tkAZC045cfM2e3RRVREStfWQST7uvV7eJ32wkaCZaDinWuuwW
-	 pGD19TWfAG4qA==
-Date: Mon, 24 Mar 2025 15:34:17 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	krzk+dt@kernel.org, johan+linaro@kernel.org, broonie@kernel.org,
-	conor+dt@kernel.org, konradybcio@kernel.org,
-	paulha@opensource.cirrus.com, luca.ceresoli@bootlin.com,
-	linux-arm-msm@vger.kernel.org, perex@perex.cz,
-	dmitry.baryshkov@oss.qualcomm.com, zhoubinbin@loongson.cn,
-	ivprusov@salutedevices.com, peda@axentia.se, andersson@kernel.org,
-	tiwai@suse.com, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	lgirdwood@gmail.com
-Subject: Re: [PATCH v4 1/6] dt-bindings: mux: add optional regulator binding
- to gpio mux
-Message-ID: <174284845664.822870.8151972984188794106.robh@kernel.org>
-References: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
- <20250324130057.4855-2-srinivas.kandagatla@linaro.org>
+	b=El+Lh+x7Ov0tedf1j097pfmE66FNRoNWkY+yizS+d1M3Ct4q573vq3HqVxO66bhEm
+	 Xx6u60eOXLMJn9Xq1s5qWyj3gbypSH6BNsEvSWLgPYzURdNUZVDSl1P9Md1JBj4+Hi
+	 kzg3myOB+C+4C9LdYst5F5zpAmrOjUuogkJQADKFmZtlAwmSRJIaUkm7q2v+Fuv+/Z
+	 jIBrz7PMJImwZlIkQpDhoEFlUMJk1YKh7/LyYwyZ5zcoFFEawqZigPNXr8CYQYT+7O
+	 ucNAd+sBA0r/9QpCNIFYlcOgPXLIfmgWhmXLON8H2kOJiL4WCQwqgXhhnfHqJB21UX
+	 IVW9mOi2U4wXQ==
+Date: Mon, 24 Mar 2025 13:43:52 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	robin.murphy@arm.com, joro@8bytes.org, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iommu: Drop sw_msi from iommu_domain
+Message-ID: <20250324204352.GA2734321@ax162>
+References: <cover.1741294235.git.nicolinc@nvidia.com>
+ <6d4b493d20926c8d14e29bc776639cdcf2095146.1741294235.git.nicolinc@nvidia.com>
+ <20250324162558.GA198799@ax162>
+ <Z+GK98/VSvYl518j@nvidia.com>
+ <Z+GOkl21ZLtE3B/e@nvidia.com>
+ <20250324170743.GA1339275@ax162>
+ <Z+G67avxHQt5L+62@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,27 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324130057.4855-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <Z+G67avxHQt5L+62@nvidia.com>
 
+On Mon, Mar 24, 2025 at 05:05:01PM -0300, Jason Gunthorpe wrote:
+> On Mon, Mar 24, 2025 at 10:07:43AM -0700, Nathan Chancellor wrote:
+> 
+> > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> > index 0f4cc15ded1c..2b81166350ae 100644
+> > --- a/drivers/iommu/iommu.c
+> > +++ b/drivers/iommu/iommu.c
+> > @@ -3661,7 +3661,6 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+> >  			ret = iommufd_sw_msi(group->domain, desc, msi_addr);
+> >  			break;
+> >  		default:
+> > -			ret = -EOPNOTSUPP;
+> >  			break;
+> >  		}
+> >  	}
+> 
+> Can we explain why this scenario has a 0 cookie_type?
+> 
+> Actually.. Is it just an identity domain? Nicolin did you test this on
+> your arm system with a device using identity (iommu=pt kernel param)?
+> I would expect identity to end up with a 0 cookie because we never
+> setup dma-iommu.c code on it.
+> 
+> Should we be testing for identity to return 0 instead?
 
-On Mon, 24 Mar 2025 13:00:52 +0000, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> On some platforms to minimise pop and click during switching between
-> CTIA and OMTP headset an additional HiFi Mux Switch is used. Most common
-> case is that this switch is switched on by default, but on some
-> platforms this needs a regulator enable. One such platform is Lenovo
-> T14s.
-> 
-> This patch adds required bindings in gpio-mux to add such optional regulator.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mux/gpio-mux.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+For the record, the particular system I noticed the issue on does need
+"iommu.passthrough=1" (which is the ARM equivalent to "iommu=pt" IIUC?)
+to boot due to a lack of firmware support for IORT RMR, so I think the
+answer to your first question is probably yes?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+Cheers,
+Nathan
 
