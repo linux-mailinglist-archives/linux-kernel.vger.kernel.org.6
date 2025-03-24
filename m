@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-574027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EB2A6DFBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:32:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA29FA6DFC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2FD1893928
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8B8170E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B296126461F;
-	Mon, 24 Mar 2025 16:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D921264A6C;
+	Mon, 24 Mar 2025 16:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQQ28Lc0"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQXijb/6"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A50126460A;
-	Mon, 24 Mar 2025 16:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14241264624;
+	Mon, 24 Mar 2025 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742833820; cv=none; b=XOxr5dO51XYZtAKqVAs55tmNPuxWTAYY3sC9+cb3AXBaAevmBl69fnG6eYvx6upKloAdYa0y2R5YS8gBjCZNZ5RCcCYR7nu+D6olfpdHjR70qDX1FWLsAuabQwKTH8NZKKK2sWvpTmADZgBplPgh5DiMlBWmthMRyzlpXy2lfcQ=
+	t=1742833822; cv=none; b=XKta+r8jCGlNlXFjbmMmDXoAHJ3x4hHoIY5qhDrQ39Bx73iEMh+8DAfb2IvEFkTwUm0dCbewgPDF3djgGQld5BBAOA/nfdq8Oplrid/q9ejbHOeAz9nlYPaxs2o2GC2AxsiCAqmeB49Ur5B99PPOtmFxX/OexABUT2hsZEzWXJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742833820; c=relaxed/simple;
-	bh=ERndhZd7uvmOxp7VBKjvNKNvE9RMcex1A2puj1YAGhk=;
+	s=arc-20240116; t=1742833822; c=relaxed/simple;
+	bh=8TTMenqqnPPI38gwxk24+UYMgJl+buQli4nIdMttr4A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UOJvTxf+PDGESfnbHmM0ygGWdsPjedbx+luvltGP+q3GdAhlJXcv/WnCP3q4MBCC5wc/AOC6ThrFc+dp7YqhgDjRXlUe/aMb5WpgWbUmgLuJwRDFF5RomqG2Fj0VPrU4nsycXZ4VU7UctepoSENaB5nvn9++TMlUR2pyehP7+Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQQ28Lc0; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=YW0bQ78j7g5dLSPjADzo0JMWK2fcYymJI0K//jTTHHo6w3j2EVw/3VB2sKsm1BCC7OvYb5R8YZWGUk58veg4iFnZRjY+kINrzpvehkfHl6/ojJ8hcA/N4/zPBEh1+DTafGdUeziA4osyo+yPcbvYSLYbaw34g05IyoryAA1XiBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQXijb/6; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so28100475e9.2;
-        Mon, 24 Mar 2025 09:30:18 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso4389060f8f.2;
+        Mon, 24 Mar 2025 09:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742833817; x=1743438617; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742833819; x=1743438619; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nXT10w3JwIzjDNmgL5a3o8h4+fjE6CRvvk0IUCmWmyY=;
-        b=NQQ28Lc00w31qt1qX2V3yfXy70qfxQOpPybHCVRYqy6ZnEJpP/AkDNZH8J0FN11FV8
-         pJh1/14hm+gtkXopAZDXqzLDyIHLY4d/wvKIqfR0Y+VaATk5wBwAipmPKDI914Y6V2fT
-         YLgH0o8pxWZ+uAEuuApeHpIX0EJAIgch5CQdQTwaAQQTmUHJvX+FoijKqUGSSsbSAQZx
-         bFisndxZSHUIqjXdEfwGLz03gcYiFHYZvPu8Ahdt+ycb74iMOvwCQI7WGvQzHzGQlgem
-         r26SyzOZ9LV+AeKLS60Q53PQ2NfyM8ktiDXypmtkmQZHP8Q/EjB+bSo9FwXF7lnmG7Pf
-         +lvQ==
+        bh=meQ0Mipo8UgEq53792yFhZe7Xcnc763+mjkb31Obgck=;
+        b=MQXijb/6a48AFsDFXAv+brQI3tb9fma70K9Z1FoDE3z0Gs9L1gw3dGw+uJr5McirSY
+         Q9lafOaQaCsl1X7Sakx3iv4JCCUoEEX654HORI9PHc+ONfrzpLUe5JdmjCvzuZDNzEqs
+         W5rcbOQCTJSj2Mlt0K7cF964JneAVI1fdQ/XNrrFrtrkc/mJi2igr7scj/rNCCwrhht4
+         BTq4jK3BIxAe5G/xw1scV4wFyBaRSCoKQgfzFw43SWHTKYEVNlHxXC17lQgWmIsjDXVc
+         KZiyDWbN3RfEeWbrSlwUk/Rphuzc4gd39FwYS3z9eo87pV4Medc9ockoquGcqGFz+i4l
+         lEfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742833817; x=1743438617;
+        d=1e100.net; s=20230601; t=1742833819; x=1743438619;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nXT10w3JwIzjDNmgL5a3o8h4+fjE6CRvvk0IUCmWmyY=;
-        b=Hmh1ykpUtwQlLbtoniGyL1Cu71XmxzznZ6oIKzaLmRRk0YF8BsuuSGIEiDOT8mA4Cp
-         eqFMb74BiSDv2CAXl8df8vQs8kNGM1UKnfBd3XCeQCEOaTb+N1uHiA6bxEsbo4hLuVjk
-         hGKiR/wKToHEZRyOOWJRno6jOau0qmJDqTeBISFTpufVKaeThpkJOPv6j+VwWoa3X5cn
-         buCVZyeeMLZIaenJjpXtRJ1N36A7xdZzDjZcFd3rc+pHt+yxhoQ8lkZz6wppZIWrqTE+
-         QqyK3XHq6TKX6mHzA58hQimw80jHjbguEKrjbkJQoL00iBReRPmsHKVDwUXVm1sQQK7V
-         jr2A==
-X-Forwarded-Encrypted: i=1; AJvYcCU5aJSBlUtm6A5NRhQZfvpQBF5gSsUtIj59SAm/SzbXLZNuj3pcbX6xyxh0EIa5eLbRYASLY9TEHgHW@vger.kernel.org, AJvYcCW8ZIWBmFeqZklfz8HVEN0gMyXHQL514kTUEYTwmj8bDkxfdKBvMqB68NCM0UPqYpZr+WudsiWaY0I0b4qX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIcVtI03tYpjuPZnRWnNlb1wbOfV9fNGO/NIIazKmwiinl3seP
-	cD5dNIHI55lYB4wtrRCQji95blJNy7XxWWUF57T06FoSVO+XglGSKlQKLAB9
-X-Gm-Gg: ASbGncsp9fUGew/acjvIXtBvau3p3dA2FOA+ePE6jIlzcI3AB5DKZRsAK19UwD3oGXe
-	OoD3Ait/v+bmW1DLXUz8dYDmNJI/fJKoDQ7DGerBizSN439O37ef1z85oVC7CZYHA2rt1+a5+Ei
-	WDMpbdfbBtcWsssK42k4RTjxmfKFGU3vQ/bxXemfZ0aALoIwu9I1896eVoLE4cnaOl7hnWodCHN
-	8J4zKmaS1pz2bVr0CNa9fqKXZl2Eeh1Ru8TeF2okaJi7ove2WPmaf6PSPdHuyFzzyJfsPav13GR
-	gUVW5xKXmbi6LBbmYU/bkCeS8d441i98x3/GVWbRqTpmOsp3CQxSJGofn9OV9x/2FfGidyQ1I6o
-	PhgtZCqs=
-X-Google-Smtp-Source: AGHT+IFx9LdNvoxcmfurF69vi4WC8lka5DNxoYeKcQFuNnicURHcUqXEChK3XzKRjFR0RH0cV+xM3Q==
-X-Received: by 2002:a05:600c:1546:b0:43c:ea40:ae4a with SMTP id 5b1f17b1804b1-43d50a524a8mr131049695e9.31.1742833816586;
-        Mon, 24 Mar 2025 09:30:16 -0700 (PDT)
+        bh=meQ0Mipo8UgEq53792yFhZe7Xcnc763+mjkb31Obgck=;
+        b=MTkPXzFNGOTe3BcBI7bRcTgSPoGgvEo9hg2y2HpS1Z5DducVjfZjmH5xWh10QvnuJW
+         eohttBuzgJfGIUW/5Oid8nM0Kn1kJrpUD2r3HiDZeRz7JfuRkNEfou88e3POZs+tSZz7
+         BbH5etIM7N7vaQFRPgOWBtRB1vm+81t5Q20+m1JkkyWKofAohjl6XjJ5DzT8AOr/2Get
+         KsnMsDeCDmfKXLwNkoYjaYSNmcxEtNXMu0JOnJl19B6Zx1nEesZhE1KK7ZYPEkJ+29CA
+         kVpUpWOxg+pLY07XqD3crjzPy8PkXU/UUF8nAT/eRpURFNI7DDsmlSIw+4woEeD0mAuL
+         vFjA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5yW3LaSiMCPJaM4ifmyZ7+4uXXK/NQ+S/n7/WE3JilF0T/BJDiKD6YFq09mWxafGW4/awvcvSBlN1hUQF@vger.kernel.org, AJvYcCXTC1Xxxi49uJbDTB3jJRB1kEdLU0Bk40zA2vmkFdFhLz7LHluy4yASw3tvlXN+KcqIN57HRpGwzo9g@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJXs7fzwxYiYUFLZBX+xPLtFEymMOUEkO/Hk42+4qQtxfnIuAu
+	H3Xr9AmJKiabdbswiye+0WhSmM8ODO2NOiQGi1vUM3n/bIHHFvo+HPBiCYRj
+X-Gm-Gg: ASbGncsQfYp3jOV3KR5fiX2QMzJfzE+0zdDoQaYUmZUkD8QPDB0d5GpD3CoFPRImlnq
+	tZV4CFzToFNFPwZxtv9wFPKbbjw41LJ5aoD//uVllw/MaqwCdZn3eVQRwTKxeEAwTH5nbagBzem
+	xXvAV4vPnhQK5qRg3UEKhikLgj+fnKVDLBl6hKBQiF7rsykvKu3e378WceSoEoxyvT0IiitLsHE
+	jV+5uzr1VU+PAJm9ihs7q6rcgqGTIot1a8M/Q+F+HHoT/3UMJB73NZBJIU7XvIro7EfBUB1wrC0
+	bj1vI3shjdmyYrjMAVpPUmrvtcFvT6xDZonTIYvsvcARV1mjkhbhEARFiag0iRkUVlz4U5t5Pxu
+	1Yz8NF3U=
+X-Google-Smtp-Source: AGHT+IE66Gqa84UGtwTooRZYvTVucmMfLSU4uitXios1JhaytT2gQ5+HpqGU4z5hPX3SCx18hnX4JQ==
+X-Received: by 2002:a5d:47c6:0:b0:399:6d54:25ce with SMTP id ffacd0b85a97d-3997f8f9cc4mr9475035f8f.7.1742833819118;
+        Mon, 24 Mar 2025 09:30:19 -0700 (PDT)
 Received: from playground.localdomain ([82.79.237.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdb0669sm124106765e9.34.2025.03.24.09.30.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdb0669sm124106765e9.34.2025.03.24.09.30.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 09:30:16 -0700 (PDT)
+        Mon, 24 Mar 2025 09:30:18 -0700 (PDT)
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -89,9 +89,9 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/5] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
-Date: Mon, 24 Mar 2025 12:25:55 -0400
-Message-Id: <20250324162556.30972-5-laurentiumihalcea111@gmail.com>
+Subject: [PATCH v3 5/5] arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
+Date: Mon, 24 Mar 2025 12:25:56 -0400
+Message-Id: <20250324162556.30972-6-laurentiumihalcea111@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250324162556.30972-1-laurentiumihalcea111@gmail.com>
 References: <20250324162556.30972-1-laurentiumihalcea111@gmail.com>
@@ -105,47 +105,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-AIPS5 is actually AIPSTZ5 as it offers some security-related
-configurations. Since these configurations need to be applied before
-accessing any of the peripherals on the bus, it's better to make AIPSTZ5
-be their parent instead of keeping AIPS5 and adding a child node for
-AIPSTZ5. Also, because of the security configurations, the address space
-of the bus has to be changed to that of the configuration registers.
+The DSP needs to access peripherals on AIPSTZ5 (to communicate with
+the AP using AUDIOMIX MU, for instance). To do so, the security-related
+registers of the bridge have to be configured before the DSP is started.
+Enforce a dependency on AIPSTZ5 by adding the 'access-controllers'
+property to the 'dsp' node.
 
-Finally, since AIPSTZ5 belongs to the AUDIOMIX power domain, add the
-missing 'power-domains' property. The domain needs to be powered on before
-attempting to configure the security-related registers.
-
-The DT node name is not changed to avoid potential issues with DTs in
-which this node is referenced.
-
-Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index ce6793b2d57e..ce9f6da1e257 100644
+index ce9f6da1e257..db14e85023a0 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -1400,10 +1400,13 @@ eqos: ethernet@30bf0000 {
+@@ -2425,6 +2425,7 @@ dsp: dsp@3b6e8000 {
+ 			mboxes = <&mu2 2 0>, <&mu2 2 1>,
+ 				<&mu2 3 0>, <&mu2 3 1>;
+ 			memory-region = <&dsp_reserved>;
++			access-controllers = <&aips5>;
+ 			status = "disabled";
  		};
- 
- 		aips5: bus@30c00000 {
--			compatible = "fsl,aips-bus", "simple-bus";
--			reg = <0x30c00000 0x400000>;
-+			compatible = "fsl,imx8mp-aipstz";
-+			reg = <0x30c00000 0x400000>, <0x30df0000 0x10000>;
-+			reg-names = "bus", "ac";
-+			power-domains = <&pgc_audio>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-+			#access-controller-cells = <0>;
- 			ranges;
- 
- 			spba-bus@30c00000 {
+ 	};
 -- 
 2.34.1
 
