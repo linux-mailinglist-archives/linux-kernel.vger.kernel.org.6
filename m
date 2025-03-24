@@ -1,235 +1,184 @@
-Return-Path: <linux-kernel+bounces-573262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316F9A6D500
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:24:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DE0A6D502
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:24:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E4C3AFF63
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:23:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D063216CFD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C76C2500C9;
-	Mon, 24 Mar 2025 07:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9849E2512FC;
+	Mon, 24 Mar 2025 07:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcfwUvPn"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZY/ipM75"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD8C18D65E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EBB250C17;
+	Mon, 24 Mar 2025 07:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800996; cv=none; b=ZIZToKLjNYXlvj66vDqreCtG0OkQjs/8n4o2EzLRJbIJhkhhKgnrKrVRt4LYu5DOWvU3yA+fAiHQDxs+iGV2d/q83RsqIR+MtT5zLmMA6ZwNwSWFHCcKJW1lELI7OeV5wSI91XrHTOVmsisvFWRINuKbcJTcLWijTPKgpaTOsrQ=
+	t=1742801005; cv=none; b=Ulfym+WtmLKCb44syBeTfskJ+cNp7Rnwv0V5RMI1ZY6Iyk/80Us/st3NnJIObOG1M5VsqMTHQlQA2N5D0DrUUV4frBqIv8p5e1jdSH/HQhv8yAw6d0lY8gUqAP3RERpRCzM/XSgkAOtJVObJkUSLiQuK91AUJerdY58kJ7cTajU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800996; c=relaxed/simple;
-	bh=Rq5Qsj+vtD9TgfS3gUgFhd0FdKFXn64WXTOxKmO6hBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYNrq8NeHMrMy00oN9n49l/jwvJ7zaZ3jBMMx+wbBit6rxH3cmec13RIYt1pYqneIYTI04Jt4Sp+XOJZggSmqoA9wpYfFtYwTlv1pWBw6WEVwCsGSSPm9qesA4RB6AUE6NwppeSvEJWZDXXgjhJ/s/lQEwqsASjSBzPxYHGfCNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AcfwUvPn; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227d6b530d8so575415ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742800993; x=1743405793; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qe/MCCvdJLYJ3g+QnwJQUU6NC2SI4IaMPwysTrJxuV0=;
-        b=AcfwUvPnzD8feBoFMYcGQDZr8gNGhElE2P9+5TlfXfzozRkql5+6bPoYp6tG7dBJH/
-         tARAKzEXxuxrn49DEGkksvFJtgk0cXjWq4O9/ZIOKEoHlENv1NzM6+PL2eWATFdh6x+i
-         NpwqxgWRndt5AITQs6ml/xpxPGQYpLnBGdgnUaNOs5MJmqoA2+QJn0C+PyyoqBRsw/FY
-         yH5PqmuT5QIsaDh7kjEvsNlBrhUIyN/sBzk0X6b/B8M/mhL00QIkxQzZ3UZRWTw+NblC
-         Rmo2+2cu9/VOOSVVjCqjAStp81GNNP9fYEE8NmZQ9FJ/fId/YYj5kNJGBBi9tlH280h7
-         qvCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742800993; x=1743405793;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qe/MCCvdJLYJ3g+QnwJQUU6NC2SI4IaMPwysTrJxuV0=;
-        b=cMjS9VjocGekvv44RuTHeqGq79tz7kCMvM4gf3eoAAUa7xJiBr/4CKEjxBVDqZFlMi
-         3oeUYLFuid/jmNzeLvjnF06fZimPF8Q+/AH4ZdJ9e55DoZ+r2hVIpd6ff8Pg1DVrhMC8
-         tjbceZGxyExU5NsVc9kHnxry12Tn6OtLhtjK7i55Ndgp8+51UCOGTa0+jN2qkCkIdrKl
-         vRc0AfIx2pHzjF5Pq2VuxAmUiGOFsHhSEk4HP17w3sVNdADna9lHGyoSDwZhyVroixRX
-         uncuGNTa78NpkKSYc5tgHx6GxTed3/ako+U+unyXvClzGZ+ycEwdyK9ftTej5UkGvpgP
-         5MTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlXeMAFXirGjEGdxp0/BycefueQwni7iFNAIkw0M0sLJ/DDuhx3raVElf8bNkai+WbIJgKCBakKDqTm+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIthU1wO46KHSZ+gs/ivlfdOZR6V/7PGcVdcoAXJoXXE1Diqpf
-	tPtcZRshSW5wS2HdDWQDWXwhwWwpayVVjcUvL8GC3el12jtmlB/l5ZkgY5bJ+A==
-X-Gm-Gg: ASbGncsy2/zs5X+rdfMRqpvesplnj6RDwmqgqqUdp+YT0JYrh/hPgqAfOAKMaAWwlQJ
-	ZjErmNm3KUMxpywlm3Du1Erv6whmO2fTdttuTtY1R1a4JW727LnAWFSJiHIT8N4+I8BfF99DqjU
-	dyYjq3ZBljarD8uqZ8hGKeWMijHVtnqsjUO8py3U0zk2xcNquOunXN3QgFOvc69lpNCRTHWlcyV
-	LEaSR1dXTCeg5DJZt0VzE+K9l1bmUBSo794zX0aqQBwP3UWHc56hDVKXt1HXGMht/fHanghD7os
-	3NRPYpzEFp7FSbogh5MxofRIDVwtFWoonute42xeLShaORalCVNLOmhud3l9ySCnoN0=
-X-Google-Smtp-Source: AGHT+IEVDoBTCHOODzvBGMAnc/Iok1j6AhaExydrGDQgnCUirKAYBNkCKwG2t70sQoq1tMM3o02m1Q==
-X-Received: by 2002:a17:903:230d:b0:220:e9ac:e746 with SMTP id d9443c01a7336-22780e46648mr200826765ad.53.1742800992590;
-        Mon, 24 Mar 2025 00:23:12 -0700 (PDT)
-Received: from thinkpad ([220.158.156.91])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22781208966sm63304325ad.254.2025.03.24.00.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 00:23:12 -0700 (PDT)
-Date: Mon, 24 Mar 2025 12:53:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Tony Lindgren <tony@atomide.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH PATCH RFC NOT TESTED 1/2] ARM: dts: ti: dra7: Correct
- ranges for PCIe and parent bus nodes
-Message-ID: <hhvst2uvlymcyir5sb5vwd4ezko7yawwp5cnosluaz2hkabcna@ywr4thtjpdps>
-References: <20250305-dra-v1-0-8dc6d9a0e1c0@nxp.com>
- <20250305-dra-v1-1-8dc6d9a0e1c0@nxp.com>
- <20250313165311.2fj7aus3pcsg4m2c@thinkpad>
- <20250314064642.fyf3jqylmc6meft7@uda0492258>
+	s=arc-20240116; t=1742801005; c=relaxed/simple;
+	bh=YXWjgc+LtkFVwK54Fq+jXzkI+tzud1ifstmjVonNXxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ISySjJaAjVqImEEK0xA8zOynXmDZBbQUZfipsYlMX9RhDSGGvLI1ttWQIjZqrIlRwof9TvuEeE/7+myFcQIi1sAJQyIrlqae4XURHC/KKaQTIJkAHimf4zVRY6PnyDnP+2hh5EvGQe8gtqi0wUSJvuIFqs22aCB9aAziRDgjm0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZY/ipM75; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6d8sN001035;
+	Mon, 24 Mar 2025 07:23:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JRHqQk8vUkI56yBzwoURTXxt6b+rm+AdYrcH5GWCykg=; b=ZY/ipM75hRxFjndJ
+	WRie34kRmlLI2ceLJYsZutZR8H4zwdhT5OvEY9vWQ2vkegMA2nJFGwmaKsVIWT/Y
+	amGijDHnVKlFenb7y5RllIK08iYONXuFfsQjtGxY618+YD6mvg4uqfgnbHIWvwu2
+	wip6pxpvuwSnb3E78wD/qfsULdvBPK+PKiEDUO6JlfutzTFnNeEnlCxhhL9S/LZW
+	w9JYqd730wAG3edcGDwyeXBnKtl2NxPHsanznF0F6zH7VDtrYMm0RbzctaQY1uwQ
+	vZju2rN/t4h7SWscE+kAYfR+R5hEPOLDTqIxw8rn03cnr5wUkZyrUczUyd6AaclJ
+	Cj63gA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hne5ucta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:23:14 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O7NExn022764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:23:14 GMT
+Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 00:23:10 -0700
+Message-ID: <b9f8dc30-7f6a-ecd5-16d1-678d9f2004cd@quicinc.com>
+Date: Mon, 24 Mar 2025 12:53:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250314064642.fyf3jqylmc6meft7@uda0492258>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 1/7] dt-bindings: media: qcom,sm8550-iris: document
+ SM8650 IRIS accelerator
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org>
+ <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-1-bd65a3fc099e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 30eiHm5MOBdHn0bwt5wRAuxAG4EPuWXS
+X-Proofpoint-ORIG-GUID: 30eiHm5MOBdHn0bwt5wRAuxAG4EPuWXS
+X-Authority-Analysis: v=2.4 cv=JvPxrN4C c=1 sm=1 tr=0 ts=67e10862 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=EHIPYe3-PrpxJ9E0mfMA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240052
 
-On Fri, Mar 14, 2025 at 12:16:42PM +0530, Siddharth Vadapalli wrote:
-> On Thu, Mar 13, 2025 at 10:23:11PM +0530, Manivannan Sadhasivam wrote:
+
+On 3/6/2025 12:35 AM, Neil Armstrong wrote:
+> Document the IRIS video decoder and encoder accelerator found in the
+> SM8650 platform, it requires 2 more reset lines in addition to the
+> properties required for the SM8550 platform.
 > 
-> Hello Mani,
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/media/qcom,sm8550-iris.yaml           | 33 ++++++++++++++++++----
+>  1 file changed, 28 insertions(+), 5 deletions(-)
 > 
-> > On Wed, Mar 05, 2025 at 11:20:22AM -0500, Frank Li wrote:
-> > 
-> > If you want a specific patch to be tested, you can add [PATCH RFT] tag.C
-> > 
-> > > According to code in drivers/pci/controller/dwc/pci-dra7xx.c
-> > > 
-> > > dra7xx_pcie_cpu_addr_fixup()
-> > > {
-> > > 	return cpu_addr & DRA7XX_CPU_TO_BUS_ADDR;  //0x0FFFFFFF
-> > > }
-> > > 
-> > > PCI parent bus trim high 4 bits address to 0. Correct ranges in
-> > > target-module@51000000 to algin hardware behavior, which translate PCIe
-> > > outbound address 0..0x0fff_ffff to 0x2000_0000..0x2fff_ffff.
-> > > 
-> > > Set 'config' and 'addr_space' reg values to 0.
-> > > Change parent bus address of downstream I/O and non-prefetchable memory to
-> > > 0.
-> > > 
-> > > Ensure no functional impact on the final address translation result.
-> > > 
-> > > Prepare for the removal of the driver’s cpu_addr_fixup().
-> > > 
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  arch/arm/boot/dts/ti/omap/dra7.dtsi | 18 +++++++++---------
-> > >  1 file changed, 9 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/ti/omap/dra7.dtsi b/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > index b709703f6c0d4..9213fdd25330b 100644
-> > > --- a/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > +++ b/arch/arm/boot/dts/ti/omap/dra7.dtsi
-> > > @@ -196,7 +196,7 @@ axi0: target-module@51000000 {
-> > >  			#size-cells = <1>;
-> > >  			#address-cells = <1>;
-> > >  			ranges = <0x51000000 0x51000000 0x3000>,
-> > > -				 <0x20000000 0x20000000 0x10000000>;
-> > > +				 <0x00000000 0x20000000 0x10000000>;
-> > 
-> > I'm not able to interpret this properly. So this essentially means that the
-> > parent address 0x20000000 is mapped to child address 0x00000000. And the child
-> > address is same for other controller as well.
-> > 
-> > Also, the cpu_addr_fixup() is doing the same by masking out the upper 4 bits. I
-> > tried looking into the DRA7 TRM, but it says (ECAM_Param_Base_Addr +
-> > 0x20000000) where ECAM_Param_Base_Addr = 0x0000_0000 to 0x0FFF_F000.
-> > 
-> > I couldn't relate TRM with the cpu_addr_fixup() callback. Can someone from TI
-> > shed light on this?
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> index e424ea84c211f473a799481fd5463a16580187ed..536cf458dcb08141e5a1ec8c3df964196e599a57 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-iris.yaml
+> @@ -14,12 +14,11 @@ description:
+>    The iris video processing unit is a video encode and decode accelerator
+>    present on Qualcomm platforms.
+>  
+> -allOf:
+> -  - $ref: qcom,venus-common.yaml#
+> -
+>  properties:
+>    compatible:
+> -    const: qcom,sm8550-iris
+> +    enum:
+> +      - qcom,sm8550-iris
+> +      - qcom,sm8650-iris
+>  
+>    power-domains:
+>      maxItems: 4
+> @@ -49,11 +48,15 @@ properties:
+>        - const: video-mem
+>  
+>    resets:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
+>  
+>    reset-names:
+> +    minItems: 1
+>      items:
+>        - const: bus
+> +      - const: xo
+> +      - const: core
+>  
+>    iommus:
+>      maxItems: 2
+> @@ -75,6 +78,26 @@ required:
+>    - iommus
+>    - dma-coherent
+>  
+> +allOf:
+> +  - $ref: qcom,venus-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sm8650-iris
+> +    then:
+> +      properties:
+> +        resets:
+> +          minItems: 3
+> +        reset-names:
+> +          minItems: 3
+> +    else:
+> +      properties:
+> +        resets:
+> +          maxItems: 1
+> +        reset-names:
+> +          maxItems: 1
+> +
+>  unevaluatedProperties: false
+>  
+>  examples:
 > 
-> A "git blame" on the line being modified in dra7.dtsi gives the
-> following commit:
-> https://github.com/torvalds/linux/commit/c761028ef5e2
-> prior to which the ranges is exactly the same as the one being added by
-> this patch.
-> 
-> The cpu_addr_fixup() function was introduced by the following commit:
-> https://github.com/torvalds/linux/commit/2ed6cc71e6f7
-> with the reason described in
-> Section 24.9.4.3.2 PCIe Controller Slave Port
-> of the T.R.M. at:
-> https://www.ti.com/lit/ug/spruic2d/spruic2d.pdf
-> ---------------------------------------------------------------------------
-> NOTE:
-> The PCIe controller remains fully functional, and able to send transactions
-> to, for example, anywhere within the 64-bit PCIe memory space, with the
-> appropriate remapping of the 28-bit address by the outbound address
-> translation unit (iATU). The limitation is that the total size of addressed
-> PCIe regions (in config, memory, IO spaces) must be less than 2^28 bytes.
-> ---------------------------------------------------------------------------
-> 
-> The entire sequence is:
-> 0) dra7.dtsi had ranges which match the ranges in the current patch.
-> 1) cpu_addr_fixup() was added by
-> https://github.com/torvalds/linux/commit/2ed6cc71e6f7
-> 2) ranges was updated to <0x20000000 0x20000000 0x10000000> by:
-> https://github.com/torvalds/linux/commit/c761028ef5e2
-> 3) ranges is being changed back to its original state of "0)" above.
-> 
-
-Thanks a lot for the reference.
-
-> cpu_addr_fixup() was introduced to remove the following:
-> 	pp->io_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> 	pp->mem_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> 	pp->cfg0_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> 	pp->cfg1_base &= DRA7XX_CPU_TO_BUS_ADDR;
-> in dra7xx_pcie_host_init(). The reason for the above is mentioned in the
-> "NOTE" as:
-> ---------------------------------------------------------------------------
-> The limitation is that the total size of addressed PCIe regions
-> (in config, memory, IO spaces) must be less than 2^28 bytes.
-> ---------------------------------------------------------------------------
-> 
-
-I don't think so. This note is for the *size* of the addressed regions. The
-fixup corresponds to the sentence in your above note from TRM:
-
-"able to send transactions to, for example, anywhere within the 64-bit PCIe
-memory space, with the appropriate remapping of the 28-bit address by the
-outbound address translation unit (iATU)"
-
-I think the limitation is due to the 29-bit address bus width of the PCIe
-controller slave port as mentionend in section, 24.9.4.3.2. And that correlates
-to the truncation of the upper 4 bits of the IO/CFG/MEM addresses. So even if
-the CPU passes address range relative to offset 0, PCIe controller converts it
-to 0x20000000/0x30000000 based on the instance.
-
-If my understanding is correct, then commit, c761028ef5e2 should be reverted and
-this patch can be applied.
-
-> I am not sure if Frank is accounting for all of this in the current patch
-> as well as the dependent patch series associated with removing
-> cpu_addr_fixup().
-> 
-> Regarding testing the series, I unfortunately don't have the hardware so
-> I cannot test it.
-> 
-
-That's a pity. If TI employee doesn't have access to an upstream supported
-platform, then I'm not sure whom we should ask for testing.
-
-Could you please ask around and see if you can get access to one? I'm sure that
-the hardware will be available somewhere :)
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
