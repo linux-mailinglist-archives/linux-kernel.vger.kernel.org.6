@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-574365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E60EA6E478
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:32:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D815A6E484
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B64397A3D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAC53A744D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570F1D95B4;
-	Mon, 24 Mar 2025 20:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AE71ACEB0;
+	Mon, 24 Mar 2025 20:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT4IM+bM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6SHkBB8"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA5B2E3374;
-	Mon, 24 Mar 2025 20:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003E2E3367;
+	Mon, 24 Mar 2025 20:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742848319; cv=none; b=vDOthIMSE4Mi/nvtw0xumAU/NivjFowaKSZrjipsT5Kqi88NtpZm07GhDDHp5/yBkvYRVmpQPDwAxJ8LY9CMdY/9GKoYE23qt4sKVnU7SV4PRpUHLeHz/cR4PqqcJqkbhSrX90pQzzpZb7bQ1yE1Z4SJPPNWAbRO4jWBA39fi5c=
+	t=1742848362; cv=none; b=NxmMGOM0hMh9y0pY9pEXQCm4DPI9sQjeDOhZ7fWwmQhKIIufLCQOwUSklWm79Ny9c/qNXJyNCMlc3OvlDtG91nwB2gjIF2POInKqKH2cK5lGyEcVxF2xixrWVaS9GDc8U33gQqg66qd2obUoUUfOAxlYqh+KrLfZDfF8UU/nj18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742848319; c=relaxed/simple;
-	bh=LDTKp3W7h188ixr/vX4U7f5V6ZusmxQCsTGFE63qb20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2Qr9vwEKj8MCs/WUk5gFlYgG50i0avt5XQ16+YG6pQb199LqrbxyKmsmIQb3q/0isPrpT8Em+bMyCh4ejKpNL4qzOcgFhZQkBu5GOVRIYaz3W3AkNvclxHEjavzalsu5Us4z7VZUypd3KWG5Of1iUChzFfT0PiZa9t6KdJINpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT4IM+bM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD08C4CEDD;
-	Mon, 24 Mar 2025 20:31:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742848318;
-	bh=LDTKp3W7h188ixr/vX4U7f5V6ZusmxQCsTGFE63qb20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LT4IM+bMgEYMcruZeVIseTw5+f/xunSV2APT5kPRxD76MAc1Wg24Tz9VlF5iGCEJ8
-	 YGA3pU5hhz60cKgndPvFxfYPqSfkx+uKYR8Ng1dEAgUkAuntkDeqdCo3O6sv9oZCQT
-	 BHq12rVUyZKUjeLPjwOBkXH67myUVkzMBvIMF1tI162dpJ164PUMYyCtgJEvOJ6+XD
-	 Ieh4KXL553HZi1EfaxUqE9ucsNEN6JV/54/KoUh5zaDIwxvyEDeXgIfttMQh0fCKGu
-	 2QSf4KQPT+3uNDxjNU8LfOuup5OaEntF3WyDC49zxcpk7BtqntxOwdwWjdFc4D43NO
-	 527MT5yxxsFBg==
-Date: Mon, 24 Mar 2025 15:31:57 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bert Vermeulen <bert@biot.com>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-gpio@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Maxime Ripard <mripard@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	linux-riscv@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sander Vanheule <sander@svanheule.net>
-Subject: Re: [PATCH] dt-bindings: gpio: Correct indentation and style in DTS
- example
-Message-ID: <174284830296.819870.8907081146872259608.robh@kernel.org>
-References: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1742848362; c=relaxed/simple;
+	bh=m9qJ9hfcqsnhDr/y0t+0cgwjiivaOIccvHrnRP4/JvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZJI1Vt+lTQETDPr0SVtYqhWbs0IsENY+wnvxHqvxT0nkX5rzEQI8PsQwMttXg3fwGroiC06qjfXC9hW1tyPc4OO40zL0fDV/RxOvt0mh9K1Hj2gVpoAcDXQKTDCRwXIG2YEKuxlE25V5R2t3SXaAT7f/VZqAqclEwBbi4zHvcws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6SHkBB8; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-225df540edcso113916515ad.0;
+        Mon, 24 Mar 2025 13:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742848359; x=1743453159; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4Ttsoo8OWelVr1FIAW5txkAjwug6YJv1rO6LqO2moA=;
+        b=Q6SHkBB89mOoe9vq7mjhr+CBZBdpmUbQoEPZT3wjETPfKLjhS5E+SeJz2zUInkhYNx
+         3PAAonib1ZQ9TJ4CHxyLAmZIP6UKoHiLdHMLO8hPPXJSNoIZNAD/fKGwS967qY0i+StU
+         hfWnyRpNDJLMm9Mcl/SFEdGCg8xOkfrdV6/iduoezeqeSDtMLGAbN4BGGQ0mt5RKYOao
+         IiomKaIPrhUr5D46ac4pTjRDLNiBDUtNyWtid6GW8HJBJ787jIBnvw+LKhA/00kgve9t
+         759Ip2hOI0orgh6SyZWKhFSJRMmeENiOHpB+Bfcdgm4OmDMNjUb1SLf/dvPE37XAWc1J
+         vqwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742848359; x=1743453159;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c4Ttsoo8OWelVr1FIAW5txkAjwug6YJv1rO6LqO2moA=;
+        b=JXVdwkGOtTdPrm3Wpi6U3DRxVg12Ax6hiqr/BWaSQuizi5phx1UQVMboF/hEaZtVHP
+         Lgk9jSqDMeQP2jx0qYZqSnlC2pnwkPrWaocd93j5pkOn3htCXye69sPjYJeACYJ+iJ3D
+         ofQhFdRRxn7bV/nu+dEDw+S+t3sy7cXmbBpWxAwu75pDpjcZcz0DkjDk4E8qtC5xTCgV
+         ve3nBZtg9AymQ0GqOWc6qZczwtBwbdb8rLRlLA/QMsKA8mPb4RjrYk72NCZqKdTc+YSX
+         hWx5GLQy8EdWUUOJ7XUX9oT0HTTYiWO/9tAOuKGwuilGLp84Y4JH3sa4AQFGpVg7GZzz
+         /srg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDFSkqSTFm5HBuwz3QlmsGPuSDbigcypD6xe9BI0W4DOtBri1BJR9oCNfL37LBJ/M8j9dTZNi+ItU=@vger.kernel.org, AJvYcCXBSrwbkRskMCZumOJF54OGkRm0syylNB+P59KG4HFo2PHoFc3To/kswY08Z7QpMbreRBspMCPP0jA5KaL3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1jMeDcZx9zvWivmEjS158Jy8IMftUMnqbbwB53ajM/jQSmtam
+	Ia7yr0WYnbTcXheM4q+MJUMXLHxHEoltbx3rxUjOJo+dW12Ng88j
+X-Gm-Gg: ASbGncuy64dPd96v/R+Nh8VBYTcWzL7shOj+JZtrZG6X+XGAYVuBj4rluOOTHWLgLql
+	xZE8dby0aLhz753lvtlzbaUZhy3Ro3pCb2YcYOMflRx//UOouBucdd/ptMtkmUXOfSKcJeICfww
+	a2VvnVyN9+dK/eMukoBSUtzY/bsN8mpMjyZbyl+uAUyu3fwx3ikNT6WcOhFBGdursJmAfd/Vxf2
+	a8T5RYuL34qvkKldP1krwI/f1n1MHYTexVAmuR7IBY8wqGyunu9/vO0qTkDl4znD+AbjVX+oDmU
+	zlnp2Mmrxcsj1fZ10X5hAQCtd3dR8KFMhXgf/02U8kGyVa1kzCDfZP0HtQ+46QI4Bj9vME8hhp7
+	/2er/pC8OcBiSkeOj+KLJCOS7GeKe+3k5jzSzpbeUMy2W7VkcUDVb
+X-Google-Smtp-Source: AGHT+IHgGPWF0ym+Tv4mM1Xv5CI6iXbrMz5Man/ozAwwl2nQXmJ4AX5iIxyiUBChusXdPmM6oqZJQw==
+X-Received: by 2002:a05:6a20:3d83:b0:1f5:8cf7:de4b with SMTP id adf61e73a8af0-1fe4291df24mr23305567637.16.1742848358937;
+        Mon, 24 Mar 2025 13:32:38 -0700 (PDT)
+Received: from elbadrym.c.googlers.com.com (34.125.168.34.bc.googleusercontent.com. [34.168.125.34])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a23c31sm7593981a12.54.2025.03.24.13.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 13:32:38 -0700 (PDT)
+From: mohammed.0.elbadry@gmail.com
+To: 
+Cc: Tali Perry <tali.perry1@gmail.com>,
+	Mohammed Elbadry <mohammed.0.elbadry@gmail.com>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/1] i2c: npcm: Add clock toggle in case of stuck bus during init
+Date: Mon, 24 Mar 2025 20:32:02 +0000
+Message-ID: <20250324203233.1266772-1-mohammed.0.elbadry@gmail.com>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+In-Reply-To: <mohammed.0.elbadry@gmail.com>
+References: <mohammed.0.elbadry@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+From: Tali Perry <tali.perry1@gmail.com>
 
-On Mon, 24 Mar 2025 13:53:26 +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
-> unused labels.
-> 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/gpio/atmel,at91rm9200-gpio.yaml  | 16 ++---
->  .../bindings/gpio/fairchild,74hc595.yaml      | 20 +++---
->  .../devicetree/bindings/gpio/gpio-mxs.yaml    | 70 +++++++++----------
->  .../devicetree/bindings/gpio/nxp,pcf8575.yaml | 24 +++----
->  .../bindings/gpio/realtek,otto-gpio.yaml      |  8 +--
->  .../bindings/gpio/renesas,em-gio.yaml         | 20 +++---
->  .../bindings/gpio/renesas,rcar-gpio.yaml      | 24 +++----
->  .../devicetree/bindings/gpio/sifive,gpio.yaml |  6 +-
->  .../bindings/gpio/toshiba,gpio-visconti.yaml  | 24 +++----
->  .../bindings/gpio/xlnx,gpio-xilinx.yaml       | 48 ++++++-------
->  10 files changed, 130 insertions(+), 130 deletions(-)
-> 
+Hi,
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+During init of the bus, the module checks that the bus is idle.
+If one of the lines are stuck try to toggle them first.
+
+Fixes: 76487532f797 (i2c: npcm: Add slave enable/disable function)
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+Signed-off-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>
+---
+
+Tali Perry (1):
+  i2c: npcm: Add clock toggle in case of stuck bus during init in
+    npcm_i2c_init_module
+
+ drivers/i2c/busses/i2c-npcm7xx.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+-- 
+2.34.1
 
 
