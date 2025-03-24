@@ -1,49 +1,55 @@
-Return-Path: <linux-kernel+bounces-574255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBDEA6E2B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:50:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F763A6E2B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC1216FEEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C43216FF1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07300266F07;
-	Mon, 24 Mar 2025 18:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tibyIlAm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB68D266F00;
+	Mon, 24 Mar 2025 18:52:09 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5563D1FCFDC;
-	Mon, 24 Mar 2025 18:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ABB1FCFDC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742842196; cv=none; b=t/P6hZQPOxYFuK6kXbK7K8OpdDQ5xiRHj2Y6g7m1EOt4cZxTbs08Qvcl9NpdredaR5aKUk+R987Sb2jw6eF8DMfaesmLIC2fna9gPJgSGeuVIy5eyoF+EWGNAJWtMpiKWN4FUhIVQyiW7obXFfD3sFwBz4c5xfBtYKRbPENxX6k=
+	t=1742842329; cv=none; b=YDVc59MsQVBhZ0VVMPS3yftzS0IR3WOlq0xEQXUfW9XaMsCcGWEK7LF3sbQCvuQ1OQao1rpBSnM+/giUM7oJcHA2yuWLAU94iRiBjgfsROXYg9ucYBx3gP3C5QsKk9FLT2ydoPSx9d2rY761r0yJV3bmSM1LHXY9hmCW/nYTPRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742842196; c=relaxed/simple;
-	bh=5mJQMRQsVibHd/5bNNk88AKE105YGw+TZJNqXyev8w8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Uqwmoor/yyzXRM2GTDTtSnwiD/ArUvzA6QxOiGwyHJyNlVeX0cqEmn3r7WyUo/fx2fhgcpuBzZQsm2iFTbqtCsmVG/hcjBAh0bdw+PgrYXMeUxQ7QMB0rx1gghBYD16Wg0zdk6DrR4h5DkGuqQfaAYoM1aD6D+pc5KhxmkL/IOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tibyIlAm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A05C4CEDD;
-	Mon, 24 Mar 2025 18:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742842195;
-	bh=5mJQMRQsVibHd/5bNNk88AKE105YGw+TZJNqXyev8w8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=tibyIlAmKi10TBcgbcIfgj80LnAb4flQKSfrvR1TlD9mnGZeWL4PZYsgPbx2KnR0O
-	 6zd8HM5WMjab+2rO9OChcJ9P41fkPpUxwkFRTwHsECxFZGLv22XJdmJThYzAg55vPK
-	 eM3zjMsh8hJ0L3rdO1jnvr0rUdjBW3w7ECFYPsRHsT4zoVRHXatIMzYGYh95WptVre
-	 1oy2h/Hz518+fR09MfIC3YiKDY/uWhLnsW02dhOoWL+oY3smD1Dy9MX448t7Z7GEsf
-	 gY6IzC2OFGUIyJE4ytBCzBax8rybCKIUVaT0O5k/ugiPlaqWMFyibgvrbLEnX1oEAy
-	 oVeTsCjDPeszw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34660380664D;
-	Mon, 24 Mar 2025 18:50:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742842329; c=relaxed/simple;
+	bh=c3aKlu7+7ehGOVtkRnzGy3jinX6zgOcsCNdKmeosbz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g6kNiJ46k0VUQFAV0grjFroEmEZARldIF/AvpohL2r8Z8QcHuatCAgeh4XS8l38BP/gObqBSzmqTG+iWO6KzHD/EkZPMHRyr75U+YpkKpZj8rGsNDqVsjWi8IP4u482Y8BiZ1dk6d/UEhN9Vyfrg9xg9mkp31zY1zFHKDJk5q6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:3869:6636:1af3:7cec])
+	by baptiste.telenet-ops.be with cmsmtp
+	id Uis32E00G0LH2Jv01is3tA; Mon, 24 Mar 2025 19:52:04 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1twmta-0000000FRgv-2c4g;
+	Mon, 24 Mar 2025 19:52:03 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1twmu3-000000018CO-2FUh;
+	Mon, 24 Mar 2025 19:52:03 +0100
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [GIT PULL] m68k updates for v6.15
+Date: Mon, 24 Mar 2025 19:51:45 +0100
+Message-ID: <20250324185145.269783-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,45 +57,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: stmmac: Fix accessing freed irq affinity_hint
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174284223202.4131627.8031895461636997073.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Mar 2025 18:50:32 +0000
-References: <20250318032424.112067-1-dqfext@gmail.com>
-In-Reply-To: <20250318032424.112067-1-dqfext@gmail.com>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, boon.leong.ong@intel.com,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
 
-Hello:
+	Hi Linus,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-On Tue, 18 Mar 2025 11:24:23 +0800 you wrote:
-> The cpumask should not be a local variable, since its pointer is saved
-> to irq_desc and may be accessed from procfs.
-> To fix it, use the persistent mask cpumask_of(cpu#).
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 8deec94c6040 ("net: stmmac: set IRQ affinity hint for multi MSI vectors")
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> 
-> [...]
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Here is the summary with links:
-  - [net,v2] net: stmmac: Fix accessing freed irq affinity_hint
-    https://git.kernel.org/netdev/net/c/c60d101a226f
+are available in the Git repository at:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.15-tag1
 
+for you to fetch changes up to c94cf023dce30d5f28323a9f28ee2912f248a68f:
 
+  m68k: defconfig: Update defconfigs for v6.14-rc1 (2025-03-17 14:25:57 +0100)
+
+----------------------------------------------------------------
+m68k updates for v6.15
+
+  - Miscellaneous fixes and improvements,
+  - Defconfig updates.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      m68k: sun3: Fix DEBUG_MMU_EMU build
+      m68k: defconfig: Update defconfigs for v6.14-rc1
+
+Thorsten Blum (2):
+      m68k: sun3: Use str_read_write() helper in mmu_emu_handle_fault()
+      m68k: setup: Remove size argument when calling strscpy()
+
+ arch/m68k/configs/amiga_defconfig    |  2 +-
+ arch/m68k/configs/apollo_defconfig   |  2 +-
+ arch/m68k/configs/atari_defconfig    |  2 +-
+ arch/m68k/configs/bvme6000_defconfig |  2 +-
+ arch/m68k/configs/hp300_defconfig    |  2 +-
+ arch/m68k/configs/mac_defconfig      |  2 +-
+ arch/m68k/configs/multi_defconfig    |  2 +-
+ arch/m68k/configs/mvme147_defconfig  |  2 +-
+ arch/m68k/configs/mvme16x_defconfig  |  2 +-
+ arch/m68k/configs/q40_defconfig      |  2 +-
+ arch/m68k/configs/sun3_defconfig     |  2 +-
+ arch/m68k/configs/sun3x_defconfig    |  2 +-
+ arch/m68k/include/asm/processor.h    | 14 ++++++++++++++
+ arch/m68k/kernel/setup_mm.c          |  3 +--
+ arch/m68k/sun3/mmu_emu.c             |  7 ++++---
+ 15 files changed, 31 insertions(+), 17 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
