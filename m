@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-573784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2379BA6DC64
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:59:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B86A6DC68
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBAE33B135C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7BAA3B2E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4346225F7B7;
-	Mon, 24 Mar 2025 13:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C50925F992;
+	Mon, 24 Mar 2025 13:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jf9Ch+03"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPQ7wWZz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D56D25EF90
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8625F97D;
+	Mon, 24 Mar 2025 13:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824691; cv=none; b=JvPmqnYSpXNcJ1AQzxm2mlpmAm6c7IaioCM0UxYe76CXA25Qp6xLhXhIXDaqYw3eJh2LvUO3vKxF1BZzz0dT0uEqL1e7oZk/kYrII6doby7sgmaTeUy/Z/lQtHjIpf9KYpEywnu6WjbuIcsH2gavSp8WzGyt4LaY8OV9A6e63mw=
+	t=1742824699; cv=none; b=Bp6Z3e4g6+9rvGfme6eBOCGIc9yhm+jjpdKo1yD1qanFRlmk5cdxKiv9/BY9Y6ukhQWsr3I2KcirnDXzbDW5W7M1yv0RRtzuLZzW27EA2PUtM0mZYfKWO8kZWVii4/+KB/NKs+p8YBEiFdSqdcsGfU5tYZDSwDbrHeeI7SLIBJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824691; c=relaxed/simple;
-	bh=y4Yv/4+0V8Ty/I5zEXY3cZz1CfX1+e1X8HtU9exWbpM=;
+	s=arc-20240116; t=1742824699; c=relaxed/simple;
+	bh=vvZImpPDSXtjhYYx9VMQXwdHX6YtDsEjrO4u8NsvmqE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ihzpUu6swPY05ih7T/8sTFiujSS2S7aMHNzaxD8DU3A3eDpprj1g3N6wBsNNN/mDJuyeL+Po1uzJaADgSlEaZ99rRCTYdohICVUvknTD4PlHWOlcO+B+a7qETJvEClvQ+XGgaopK/K2QtArcAYnZE++sFwEdmVXusC9kXdI9zhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jf9Ch+03; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so41049845e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:58:09 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=obmCUi7WB91vDQ6vP1aAgv8E4C+NU/z2jZSMylcOwkL6sErSzfPJ+IkwL3wXYThiGo5UGV0Wmeg2gVhjQAc4rMMc3G86MeO7EBUlJiQTBdinlTQZ3deEjrb8XnGqgdDN5WMNhSozjCb5wYZmHzp+Yk72lrmLEh+McKIINmTcyac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPQ7wWZz; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224191d92e4so82040355ad.3;
+        Mon, 24 Mar 2025 06:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742824688; x=1743429488; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HzBq7E0dY/7OqbduLLdzI0R6VOQc8u4E/kDdciBltiw=;
-        b=Jf9Ch+035l9QUvPYeUey+9XqwsTyIgiOyTJbZwAT62Q9kO85ROa7tYnOIkoiOGrHTL
-         FFN7XcdjRun4j01AdMyvclns3v2vesJDpuqFwbXvxyXEc1tBh8dQ+2/96ZooFO3M0B3b
-         vv8iwmZ0ynxivcm/j3UnywaKAql9vd4vjtVhtf2Dpl8a4APEXVX8VdMKEcfalns8zwW4
-         CxoGNZECYC1gX0KrzgDmDI0lw7EAyzdPmkCen4sOjeMlZBAPkw607yIAKsB4QcjSKsnd
-         Ji2mCf/0pgvvlHiKcQdRadk9m6bmWuoWJEs9EwxFfm0kUn1SdJQnd+DPRB0cpfGszJSi
-         pNMg==
+        d=gmail.com; s=20230601; t=1742824697; x=1743429497; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcExjkUMRFkywZF7IJHsZMCyAGFZolx+FfzPyY4VMWo=;
+        b=IPQ7wWZzprwL0pC9JJFUFN8Y7oItNGsRjW6YuBR7NdpiNen914Xz+YcAhFRgf9dKzZ
+         Jdv+dVD8Jj8rcfykQU0JohETlPbGhXEKUXzNGTnlASY4kwJC4Hf92UrYxKeTZPx18FUg
+         yVSRWlItZ1FrEvi8Ahnvsv71ai6xCoGZ+GVGg7mEJOTxePfeB8CxxQlFNODTSzr2/mm+
+         BMbcIVz8p5IuA+wjx5BTvwKfYu4SajdOf9sr+B+8PQibq6085BXjFCpv4kQjJ5fOTXkD
+         CAkHZsv8AdqpLUl6k+5uqPciNpBYe1xdoSWraICnx28EaRGaKrDgFyZxVqDJ6UK+HICF
+         A15g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742824688; x=1743429488;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HzBq7E0dY/7OqbduLLdzI0R6VOQc8u4E/kDdciBltiw=;
-        b=IrZrRBqIp6PI66R4kGAEuflArYZvdDA/GCpjcz9HazkqTL1wnzJ07TqwyyDlAyI2ks
-         OpiQcdOsnHAYpZom0y3bnuG5pjjIF9ySsJ2k0mnAqT2T/FUrdfUbVrROANl9Z5Gk+amZ
-         ZPx0EKJV/O0Z15S8MGg9FVUjO9NqlC0fplorRSAZj9/rKM4OGTrwESitBsbxY4XcmpOE
-         ousEN9E9K63DnP/zaCKfVis8iRYapn0WcKwYEshw2eQuxFEW2wVfJyzxYqn4vLfFkimn
-         DX0joqH8YEu5WYCk+3DzBMlpYCHL+PfR6xtbUqI7E6zI4co/ggR2SyFlNSTteBlwQhjO
-         E7tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWD8tQOOOMnvCenrvDWbeSTJOpoY51Pg3MYtQsdpOjD7ezowdcmt4juUoqIIrzYIzxgu5h73VqdLBtBu9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU4vifl07l+EliKBCfM1PKLnTmHUwf+qr0GroTSuTTLGuANQeD
-	ryFmhbOaL8WUIPG2FbMWfXCoMa4uF6dsqYD74fKjg7PXNYQzZMq7Ku1ovsv6ETU=
-X-Gm-Gg: ASbGncv3JysroU6E/GIShkCDxlCeNLvX6DBpRg68I/0KAPhvQesul5UwMkVUtEfiUPm
-	iMmkwxZ6xHJGya5NCym0ShvTi3pVdiGoQzaetZ8rfWR4rEGc3QgvfmX70rqOCvx3oCHmxxrl7Nb
-	yu4qlB8OrYl2jOkwr/tYkw8ZuRWVNIVQ+FDZPrMyPtQTWqECsSscGgLd08u6JPc86teHMJxJbJ9
-	NLC0/9fYdObLZ3hGdxYfyNC0m0yh2YdeGnr3AyYsVnTTsIDT2ebvNqwXko7bcbo2PjFpcKWXPm2
-	IXTarURvtvoAwilStcsuP+Hj6BE9e6LFnkiailT+qJuckI696tD2xDop8k59+b6wvFDmHLtkQA=
-	=
-X-Google-Smtp-Source: AGHT+IHu6+jsbV7bKWmWs8+hRNELJ+cI6cKFiSeoykyEH0Xk36WsoVuwLU4toY3H2FVtwFB9Bud6fg==
-X-Received: by 2002:a05:600c:3c9e:b0:439:9424:1b70 with SMTP id 5b1f17b1804b1-43d50a4f8camr124967445e9.30.1742824687578;
-        Mon, 24 Mar 2025 06:58:07 -0700 (PDT)
-Received: from [192.168.68.117] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d3bb2b2ffsm151418925e9.1.2025.03.24.06.58.06
+        d=1e100.net; s=20230601; t=1742824697; x=1743429497;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bcExjkUMRFkywZF7IJHsZMCyAGFZolx+FfzPyY4VMWo=;
+        b=gQuDrTuyHvVZiOeEJ39KwovwS4IWWR90ZlhwabIxxKdKmQTQCFhMifzyuArsd77tlO
+         rvaV1VGwr5vZYGRsfGs+ZBDRoeU+jjRd2PfesCb6YHZqULsuiB9jkpbMzPu9Y1JClRzN
+         xZZhNMvmnnbimCkRFCb7+R2etI2C04qEsG6o59JviO/jZZr86JRvH0J3ecmWRga2G1le
+         CHrAzZ9ZKcgACdoVcpPQQ1G2OSjU3+atX85B5nsRGo9Dzj5Bp+/VECQdFD1vvKYzPR9r
+         KkCyIGEf6c56Z2Lw9cu3DD5gXOy9r3/HPubnWveztv1jADoSGbdbD3tlDsqrNIxP2P35
+         m96A==
+X-Forwarded-Encrypted: i=1; AJvYcCUDCs2dVvralevnasYtA/SfnhQM4mhMV6HYFfFAPUAMpMJ5za4FHWe/lYJtXfPCS5l2wh58V/UqxPVh5EY=@vger.kernel.org, AJvYcCVMMN1RwODy4Am+SeruN5lUs30iHzs9T7DZA1dbpQs7IwIZu2DT44+gm72uPjaXjjDGFh1DNIeQ498v@vger.kernel.org, AJvYcCVZOKX3/w9RzAZ1E1EWs09dsMjH7Prp1ODVGy0228DKw3CnowKDhN1neDofFVYS2Iq0SzusZ/pXBa/t@vger.kernel.org, AJvYcCVmDJY4RWkOPtefS4C9gO1r4xG+3MOJQyJZzJuP48++HRH74xnhuKernPg+ziGJDJxZIi7tQprBKdpp2etC@vger.kernel.org, AJvYcCXVz3MjvoaQTofMuaxtuytkppKYh/X4yzygUH8/DhBsh13uEwB3smqUpo6psLg4wMVf3OufregY9AF+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOFavQuLSqrdDbEy4Nv3IXTx4ybiRwSGkVXlC1cc6JfVqQjO87
+	Np3D34h32+l6ZiEZLTCpce6AeRPrStBSw4hywIJ4riaaj/sbppTu
+X-Gm-Gg: ASbGncuCk3TJpQ7HqOrS3NMQCqXS2k5DaRfSZTRtRmPNFMKhUXN9v1Q5BrNDvjDEYsP
+	QbUWllm0OTpcDxJ4xfk6fZ7VRL47JTQLNtCjVFSsLtMTmN/hkLkp03LawHv3qTDcyngcAUaBgY2
+	IuCbFrWOiXAIevxjQeQJYxhf50A0GWXJ/Z7MAqDwm20ufvRkfDHS9QQxCUYBi5e1HI29wrty56T
+	6LDFDefGi54rNqXst9jk0B9uN+nLEBWEv5ezk0Yd4v5/4ci78TbO+5vqYpcsbvs4c8y4XL+SHfN
+	4Fmd3V1y1MDLMC4Kb2Jy21hiOdqPTjgZKl8vNzy2BKOe/dnB/vjmkNT2gvtFrfy+rGdlFp1QlBn
+	m9jrpSELLfyJoD9TBvw==
+X-Google-Smtp-Source: AGHT+IGp8O7cq1uK0v/iuDHoZYPSWwvPQS5uZ3OszuIq7sJCR2hCvwPSIjpvwwmvt/SXqYre34xjPw==
+X-Received: by 2002:a05:6a20:ad0c:b0:1f5:75a9:5255 with SMTP id adf61e73a8af0-1fe43477ca6mr21749487637.39.1742824697005;
+        Mon, 24 Mar 2025 06:58:17 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a27dea45sm7136663a12.11.2025.03.24.06.58.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 06:58:07 -0700 (PDT)
-Message-ID: <e4e94fbf-172f-4cfd-becc-cb2836ac1fb1@linaro.org>
-Date: Mon, 24 Mar 2025 13:58:06 +0000
+        Mon, 24 Mar 2025 06:58:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <190c4a14-167a-4f72-8aed-477d4a401d20@roeck-us.net>
+Date: Mon, 24 Mar 2025 06:58:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,162 +83,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] ASoC: codecs: wcd938x: add mux control support for
- hp audio mux
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
- krzk+dt@kernel.org, ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
- zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
- robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
- Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
- <20250324130057.4855-6-srinivas.kandagatla@linaro.org>
- <CAO9ioeX9RTBAeL3+9STn+=oEYR0wtaF6yoa=esNddEvqLQyO9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: pmbus: add lt3074
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "Encarnacion, Cedric justine" <Cedricjustine.Encarnacion@analog.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <20250225-upstream-lt3074-v2-0-18ad10ba542e@analog.com>
+ <20250225-upstream-lt3074-v2-1-18ad10ba542e@analog.com>
+ <20250226-gentle-spicy-jacamar-2dd36a@krzk-bin>
+ <20250226145931.GA2314060-robh@kernel.org>
+ <3f7b031d-7b83-4a00-996d-aabb26278b67@roeck-us.net>
+ <20250227-sceptical-phenomenal-wolverine-56e3cf@krzk-bin>
+ <dbd9cc84-a0b6-4323-b343-6e80aaaf2d14@roeck-us.net>
+ <PH0PR03MB69385BEFFD04ECF850311E988EDE2@PH0PR03MB6938.namprd03.prod.outlook.com>
+ <15ce883f-444c-4b27-a48d-b17e3df5895d@roeck-us.net>
+ <PH0PR03MB693831397416C4247F8BA58D8ED92@PH0PR03MB6938.namprd03.prod.outlook.com>
+ <PH0PR03MB6938087B8F2EDB9899DD0F1D8EDB2@PH0PR03MB6938.namprd03.prod.outlook.com>
+ <ab329813-2903-4bd1-8734-ab36466650c2@roeck-us.net>
+ <16b6b98e-711e-40d5-970e-af1feb46ce91@roeck-us.net>
+ <7c3f107e-2732-4d6e-a9e4-652ae18c16c5@kernel.org>
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <CAO9ioeX9RTBAeL3+9STn+=oEYR0wtaF6yoa=esNddEvqLQyO9Q@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <7c3f107e-2732-4d6e-a9e4-652ae18c16c5@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 24/03/2025 13:50, Dmitry Baryshkov wrote:
-> On Mon, 24 Mar 2025 at 15:01, <srinivas.kandagatla@linaro.org> wrote:
+On 3/24/25 00:16, Krzysztof Kozlowski wrote:
+> On 21/03/2025 18:24, Guenter Roeck wrote:
+>>>
+>>> Figured. As it turns out, there is also a patch series pending which tries
+>>> to fix the problem for ir38060 by changing its bindings.
+>>>
+>>> I'll dig up my patch series to add a new macro and send it out as RFT.
+>>>
 >>
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> Question for DT maintainers:
 >>
->> On some platforms to minimise pop and click during switching between
->> CTIA and OMTP headset an additional HiFi mux is used. Most common
->> case is that this switch is switched on by default, but on some
->> platforms this needs a regulator enable.
+>> Existing bindings, such as
+>> 	Documentation/devicetree/bindings/regulator/mps,mpq2286.yaml
+>> expect a nested regulators node even though there is only a single
+>> regulator. What is the correct approach: Keep the nesting requirement
+>> for those regulators as is (even if there are no in-tree bindings
+>> using them), or update the code and the bindings to drop the nesting ?
 >>
->> move to using mux control to enable both regulator and handle gpios,
->> deprecate the usage of gpio.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
->> ---
->>   sound/soc/codecs/Kconfig   |  1 +
->>   sound/soc/codecs/wcd938x.c | 50 +++++++++++++++++++++++++++++---------
->>   2 files changed, 40 insertions(+), 11 deletions(-)
->>
->> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
->> index ee35f3aa5521..a2829d76e108 100644
->> --- a/sound/soc/codecs/Kconfig
->> +++ b/sound/soc/codecs/Kconfig
->> @@ -2226,6 +2226,7 @@ config SND_SOC_WCD938X
->>          tristate
->>          depends on SOUNDWIRE || !SOUNDWIRE
->>          select SND_SOC_WCD_CLASSH
->> +       select MULTIPLEXER
->>
->>   config SND_SOC_WCD938X_SDW
->>          tristate "WCD9380/WCD9385 Codec - SDW"
->> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
->> index dfaa3de31164..88c758efe40d 100644
->> --- a/sound/soc/codecs/wcd938x.c
->> +++ b/sound/soc/codecs/wcd938x.c
->> @@ -19,6 +19,7 @@
->>   #include <linux/regmap.h>
->>   #include <sound/soc.h>
->>   #include <sound/soc-dapm.h>
->> +#include <linux/mux/consumer.h>
->>   #include <linux/regulator/consumer.h>
->>
->>   #include "wcd-clsh-v2.h"
->> @@ -178,6 +179,8 @@ struct wcd938x_priv {
->>          int variant;
->>          int reset_gpio;
->>          struct gpio_desc *us_euro_gpio;
->> +       struct mux_control *us_euro_mux;
->> +       u32 mux_state;
->>          u32 micb1_mv;
->>          u32 micb2_mv;
->>          u32 micb3_mv;
->> @@ -3235,17 +3238,31 @@ static void wcd938x_dt_parse_micbias_info(struct device *dev, struct wcd938x_pri
->>                  dev_info(dev, "%s: Micbias4 DT property not found\n", __func__);
->>   }
->>
->> -static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
->> +static int wcd938x_select_mux_state(struct device *dev, struct wcd938x_priv *wcd938x, int state)
->>   {
->> -       int value;
->> +       int ret = mux_control_try_select(wcd938x->us_euro_mux, state);
+> I would recommend keep the nesting, so don't touch it. There might be
+> external users, other projects relying on this. You can however
+> deprecate old node (nesting), if the driver can support both. Not sure
+> if it is worth the effort.
 > 
-> Hmm. Does this really work? You have selected the mux in probe
-> function, now you are trying to select it again. If I'm reading the
-> code correctly, you will get -EBUSY here.
+That is not in driver control: If regulators_node is set by the driver,
+the regulator subsystem mandates the sub-node.
 
-On successful selection of mux state, the mux will be kept available 
-(mux_control_deselect) for any new callers.
+Thanks,
+Guenter
 
-So we will not get EBUSY for the second caller.
-
---srini
-> 
->>
->> -       struct wcd938x_priv *wcd938x;
->> +       if (ret) {
->> +               dev_err(dev, "Error (%d) Unable to select us/euro mux state\n", ret);
->> +               return ret;
->> +       }
->>
->> -       wcd938x = snd_soc_component_get_drvdata(component);
->> +       wcd938x->mux_state = state;
->> +       mux_control_deselect(wcd938x->us_euro_mux);
->> +
->> +       return 0;
->> +}
->>
->> -       value = gpiod_get_value(wcd938x->us_euro_gpio);
->> +static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
->> +{
->> +       struct wcd938x_priv *wcd938x = snd_soc_component_get_drvdata(component);
->>
->> -       gpiod_set_value(wcd938x->us_euro_gpio, !value);
->> +       if (wcd938x->us_euro_mux) {
->> +               if (wcd938x_select_mux_state(component->dev, wcd938x, !wcd938x->mux_state))
->> +                       return false;
->> +       } else {
->> +               gpiod_set_value(wcd938x->us_euro_gpio, !wcd938x->mux_state);
->> +       }
->>
->>          return true;
->>   }
->> @@ -3261,11 +3278,22 @@ static int wcd938x_populate_dt_data(struct wcd938x_priv *wcd938x, struct device
->>                  return dev_err_probe(dev, wcd938x->reset_gpio,
->>                                       "Failed to get reset gpio\n");
->>
->> -       wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro",
->> -                                               GPIOD_OUT_LOW);
->> -       if (IS_ERR(wcd938x->us_euro_gpio))
->> -               return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
->> -                                    "us-euro swap Control GPIO not found\n");
->> +       wcd938x->us_euro_mux = devm_mux_control_get(dev, NULL);
->> +       if (IS_ERR(wcd938x->us_euro_mux)) {
->> +               if (PTR_ERR(wcd938x->us_euro_mux) == -EPROBE_DEFER)
->> +                       return -EPROBE_DEFER;
->> +
->> +               /* mux is optional and now fallback to using gpio */
->> +               wcd938x->us_euro_mux = NULL;
->> +               wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro", GPIOD_OUT_LOW);
->> +               if (IS_ERR(wcd938x->us_euro_gpio))
->> +                       return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
->> +                                            "us-euro swap Control GPIO not found\n");
->> +       } else {
->> +               ret = wcd938x_select_mux_state(dev, wcd938x, wcd938x->mux_state);
->> +               if (ret)
->> +                       return ret;
->> +       }
->>
->>          cfg->swap_gnd_mic = wcd938x_swap_gnd_mic;
->>
->> --
->> 2.39.5
->>
-> 
-> 
 
