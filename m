@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-573259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4E0A6D4EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 016C9A6D4FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD91016A496
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:21:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7331D16AAB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C518A2505B8;
-	Mon, 24 Mar 2025 07:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE31250C11;
+	Mon, 24 Mar 2025 07:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0V0ccYw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tukkuj9h"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1148113A244;
-	Mon, 24 Mar 2025 07:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696EC2505A5;
+	Mon, 24 Mar 2025 07:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800878; cv=none; b=TbNHQi4s0xPg5cWBvbte8DkKobAzdaoTuzX2DW1TLTPfL+dnmDtIJ5+XAeyL61B+FXfXpuBQ9dTb3o9fWRTMffiEXJMLz/+it3IEkIszRAlV58VYsM3xRGaKR4M+BxvEmga0I9SeCHAf7no3D4O5QqnrXkoSJoBVI0wPjBI8hJE=
+	t=1742800938; cv=none; b=oW5Q8m0sSKXRrS1HFH61XQlUl3YXfWL1WptsL+UdfEG9Miv17krL2HbVeeuBCVSbjKtqdydpg3ea1rZNpC2MNfhHauzAbRsZJ3GFGFFj5c5VNHLTkQVfbhL/Ts4D9tFs4bbm1mcTa8nAIee5k4mfX1I6JT++c9ONLFOzxm7gKBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800878; c=relaxed/simple;
-	bh=hZOLeXM0Ug3C3TwPfT34U466/uiJ/FqJQwwx+ag0N2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cW0oT2cogozuFkaeYURQYrBOFlg82Xi7YQLHozWjO1mKTe7+V3rRib8it7JNkXaeA5kWgPRaA9a7GM8hRHmyM8Cxs0VCvJpClYf21mTHBqND++Kb8GBxTptsY27MbB6EI/X93RtV2XLMmU5hv+6G8GveaBjyrG8iVO7s9qBsPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0V0ccYw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DBC8C4CEDD;
-	Mon, 24 Mar 2025 07:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742800877;
-	bh=hZOLeXM0Ug3C3TwPfT34U466/uiJ/FqJQwwx+ag0N2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V0V0ccYw3vDZ2ElMfWTcMXj8wMmna3rIjzOrMW6fNWlJR33R4JjLz0U/qebJT6bjm
-	 /stdXKZkCGLYpqPBsFaUGTaBUuo2RzfZvlOeoOLQ/d8NrIEKl0wZrPcorqX5ozv19c
-	 bazQG3zZnkL3n1LwJaIc7dKQYxHoq6WVY9QG0MH1exCiCLBnOfCwMJAJr8yhir90Vy
-	 tWH3jRHRE9WTpm7VAawb5JMOb3CGlmNVWBES5+zMxdMiPdasSt/aEFNZWnNdofWKBy
-	 stdik79Y1ltOAu15zDuRr6SKLw1ZkFA9Yoa2nIa8CU1xvYNdrdF/5k+E9sEHqYoyRW
-	 5V2nzVRF7ajjw==
-Message-ID: <994cb954-f3c4-4a44-800e-9303787c1be9@kernel.org>
-Date: Mon, 24 Mar 2025 08:21:09 +0100
+	s=arc-20240116; t=1742800938; c=relaxed/simple;
+	bh=GD8mUBTlaCk9XHl24Tc35Y+NinCF+coEPAtI6DhQv2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=c4mzP8pngLU+ULwPL3KloXo1QX+wDMoCSZ358I3ZOtD6unfktoQVQI8ulE/VW3rGKYK32I48skuSz1RQuMUmaFBJ30ZFS7z3lKa02Seh7h0jqkrG8EEaSbUEcoVOOd3MUQcbEtQKZEdDH/8StiWGzrSUmy3ecE1gd+o1yIWX/NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Tukkuj9h; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6c27D000529;
+	Mon, 24 Mar 2025 07:22:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fiBK3k2MO0T9Nq+cnZNmVgQOcY1jGw6wYPK3Cg4ZuNU=; b=Tukkuj9hlbJzOe5l
+	XGDDLgOVmvFXhJlQRtSS+gQJg6173ABOzqSsmZBs8D2XtlNG7YRlLmkC50No3qqC
+	m7Esi4ZcrKTaoomxaxat2I89Swzdh+RmZ7VUH5Zr0b/f3+yWXbGxnL32hnMl6hds
+	f7b1lGFuo4QWIjAREmQctRx929IUozLvHbV/Kxxfe8HC2qiL/U1Awuz/fb9FlDv5
+	jOrOExFdyNaE4wKRLDBW+iTEDLem4EbjEfYuffRv+nj8F2htD77lDelCGas1YjFM
+	bFyJIVPhKdLtVFpxjSDxIA3iIyMrny7Cl5uWlSLPUTLckgzB9XsmdmBULpa8x3st
+	zgfXgg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wbdjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:22:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O7LxIK027659
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:21:59 GMT
+Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 00:21:56 -0700
+Message-ID: <70db6155-a230-4f9c-a2e1-2c872c87cd39@quicinc.com>
+Date: Mon, 24 Mar 2025 15:21:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,120 +64,222 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mo Elbadry <elbadrym@google.com>
-References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
- <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
- <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
- <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <50327725-f3b8-4a8b-94a2-85afccd2868a@kernel.org>
- <OS8PR06MB7541B0DBC64B3EF6838DFE74F2CD2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <d1b184c5-84c1-4d76-a1d0-a9f37f1e363c@kernel.org>
- <OS8PR06MB7541D1D2E16C5E77037F3BB0F2CB2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <069b9fe4-c54a-4efd-923e-1558c59fe3f4@kernel.org>
- <OS8PR06MB7541C69AB8E6425313DA8606F2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <677cb075-24ae-45d8-bfb4-9b23fbacc5df@kernel.org>
- <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100-qcp: Add power control
+ and sideband signals for PCIe3
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <quic_qianyu@quicinc.com>, <sfr@canb.auug.org.au>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250320055502.274849-1-quic_wenbyao@quicinc.com>
+ <w7mbnqG7DHPCH6hVoSu4E2p8pV7Rw6uvurlK-CUxF7TYQ53fFyagxmLUCmCTfG0DOUgIQn7GdppXgBlq8Gyv9Q==@protonmail.internalid>
+ <20250320055502.274849-4-quic_wenbyao@quicinc.com>
+ <54c588be-d630-4901-8885-a042b477f168@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+In-Reply-To: <54c588be-d630-4901-8885-a042b477f168@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rSKfBKjZoSF1N6qxinMMgdaZVnSNQaYe
+X-Proofpoint-ORIG-GUID: rSKfBKjZoSF1N6qxinMMgdaZVnSNQaYe
+X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e10818 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=d_BdsECxPa-TM83sDTsA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240052
 
-On 19/03/2025 12:12, Ryan Chen wrote:
->> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
->> AST2600-i2cv2
+On 3/21/2025 6:08 AM, Bryan O'Donoghue wrote:
+> On 20/03/2025 05:55, Wenbin Yao wrote:
+>> From: Qiang Yu <quic_qianyu@quicinc.com>
 >>
->> On 17/03/2025 10:21, Ryan Chen wrote:
->>>> Neither this.
->>>>
->>>> So it seems you describe already existing and documented I2C, but for
->>>> some reason you want second compatible. The problem is that you do
->>>> not provide reason from the point of view of bindings.
->>>>
->>>> To summarize: what your users want - don't care. Start properly
->>>> describing hardware and your SoC.
->>>
->>> OK, for ast2600 i2c controller have two register mode setting.
->>> One, I call it is old register setting, that is right now i2c-aspeed.c
->>> .compatible = "aspeed,ast2600-i2c-bus", And there have a global register
->> that can set i2c controller as new mode register set.
->>> That I am going to drive. That I post is all register in new an old register list.
->>>
->>> For example,
->>> Global register [2] = 0 => i2c present as old register set Global
->>> register [2] = 1 => i2c present as new register set
->> It's the same device though, so the same compatible.
-> 
-> Sorry, it is different design, and it share the same register space.
-> So that the reason add new compatible "aspeed,ast2600-i2cv2" for this driver.
-> It is different register layout.
+>> Add perst, wake and clkreq sideband signals and required regulators in
+>> PCIe3 controller and PHY device tree node. Describe the voltage rails of
+>> the x8 PCI slots for PCIe3 port.
+>>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 119 ++++++++++++++++++++++
+>>   1 file changed, 119 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts 
+>> b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+>> index 28086a2bc..9cd313802 100644
+>> --- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+>> @@ -318,6 +318,48 @@ vreg_wcn_3p3: regulator-wcn-3p3 {
+>>           regulator-boot-on;
+>>       };
+>>
+>> +    vreg_pcie_12v: regulator-pcie_12v {
+>> +        compatible = "regulator-fixed";
+>> +
+>> +        regulator-name = "VREG_PCIE_12V";
+>> +        regulator-min-microvolt = <12000000>;
+>> +        regulator-max-microvolt = <12000000>;
+>> +
+>> +        gpio = <&pm8550ve_8_gpios 8 GPIO_ACTIVE_HIGH>;
+>> +        enable-active-high;
+>> +
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&pcie_x8_12v>;
+>> +    };
+>> +
+>> +    vreg_pcie_3v3_aux: regulator-pcie_3v3_aux {
+>> +        compatible = "regulator-fixed";
+>> +
+>> +        regulator-name = "VREG_PCIE_3P3_AUX";
+>> +        regulator-min-microvolt = <3300000>;
+>> +        regulator-max-microvolt = <3300000>;
+>> +
+>> +        gpio = <&pmc8380_3_gpios 8 GPIO_ACTIVE_HIGH>;
+>> +        enable-active-high;
+>> +
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&pm_sde7_aux_3p3_en>;
+>> +    };
+>> +
+>> +    vreg_pcie_3v3: regulator-pcie_3v3 {
+>> +        compatible = "regulator-fixed";
+>> +
+>> +        regulator-name = "VREG_PCIE_3P3";
+>> +        regulator-min-microvolt = <3300000>;
+>> +        regulator-max-microvolt = <3300000>;
+>> +
+>> +        gpio = <&pmc8380_3_gpios 6 GPIO_ACTIVE_HIGH>;
+>> +        enable-active-high;
+>> +
+>> +        pinctrl-names = "default";
+>> +        pinctrl-0 = <&pm_sde7_main_3p3_en>;
+>> +};
+>> +
+>>       usb-1-ss0-sbu-mux {
+>>           compatible = "onnn,fsusb42", "gpio-sbu-mux";
+>>
+>> @@ -907,6 +949,60 @@ &mdss_dp3_phy {
+>>       status = "okay";
+>>   };
+>>
+>> +&pm8550ve_8_gpios {
+>> +    pcie_x8_12v: pcie-12v-default-state {
+>> +        pins = "gpio8";
+>> +        function = "normal";
+>> +        output-enable;
+>> +        output-high;
+>> +        bias-pull-down;
+>> +        power-source = <0>;
+>> +    };
+>> +};
+>> +
+>> +&pmc8380_3_gpios {
+>> +    pm_sde7_aux_3p3_en: pcie-aux-3p3-default-state {
+>> +        pins = "gpio8";
+>> +        function = "normal";
+>> +        output-enable;
+>> +        output-high;
+>> +        bias-pull-down;
+>> +        power-source = <0>;
+>> +    };
+>> +
+>> +    pm_sde7_main_3p3_en: pcie-main-3p3-default-state {
+>> +        pins = "gpio6";
+>> +        function = "normal";
+>> +        output-enable;
+>> +        output-high;
+>> +        bias-pull-down;
+>> +        power-source = <0>;
+>> +    };
+>> +};
+>> +
+>> +&pcie3 {
+>> +
+>> +    pinctrl-names = "default";
+>> +    pinctrl-0 = <&pcie3_default>;
+>> +    perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
+>> +    wake-gpios = <&tlmm 145 GPIO_ACTIVE_LOW>;
+>> +    status = "okay";
+>> +};
+>> +
+>> +&pcie3_phy {
+>> +    vdda-phy-supply = <&vreg_l3j_0p8>;
+>> +    vdda-pll-supply = <&vreg_l3e_1p2>;
+>> +    vdda-qref-supply = <&vreg_l3c_0p8>;
+>> +
+>> +    status = "okay";
+>> +};
+>> +
+>> +&pcie3port {
+>> +    vpcie12v-supply = <&vreg_pcie_12v>;
+>> +    vpcie3v3-supply = <&vreg_pcie_3v3>;
+>> +    vpcie3v3aux-supply = <&vreg_pcie_3v3_aux>;
+>> +};
+>> +
+>>   &pcie4 {
+>>       perst-gpios = <&tlmm 146 GPIO_ACTIVE_LOW>;
+>>       wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
+>> @@ -1118,6 +1214,29 @@ nvme_reg_en: nvme-reg-en-state {
+>>           bias-disable;
+>>       };
+>>
+>> +    pcie3_default: pcie3-default-state {
+>> +        clkreq-n-pins {
+>> +            pins = "gpio144";
+>> +            function = "pcie3_clk";
+>> +            drive-strength = <2>;
+>> +            bias-pull-up;
+>> +        };
+>> +
+>> +        perst-n-pins {
+>> +            pins = "gpio143";
+>> +            function = "gpio";
+>> +            drive-strength = <2>;
+>> +            bias-pull-down;
+>> +        };
+>> +
+>> +        wake-n-pins {
+>> +               pins = "gpio145";
+>> +               function = "gpio";
+>> +               drive-strength = <2>;
+>> +               bias-pull-up;
+>> +        };
+>> +    };
+>> +
+>>       pcie4_default: pcie4-default-state {
+>>           clkreq-n-pins {
+>>               pins = "gpio147";
+>> -- 
+>> 2.34.1
+>>
+>>
+>
+> Recommend breaking this patch into at least two patches @ the and
+>
+> -> Add power control
+> -> Add sideband signals
+>
+> if your patch title requires an and its usually a good indicator of a 
+> place to break that patch into different parts.
 
-Which device is described by the existing "aspeed,ast2600-i2c-bus"
-compatible? And which device is described by new compatible?
+Will fix in the next version.
 
+>
+> ---
+> bod
 
+-- 
+With best wishes
+Wenbin
 
-Best regards,
-Krzysztof
 
