@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-574296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC895A6E355
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:22:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F59A6E36A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E880172631
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F197F3A56B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFD198E75;
-	Mon, 24 Mar 2025 19:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBD4194C75;
+	Mon, 24 Mar 2025 19:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R7p3iaXO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="mw3UaA9m"
+Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1121195FEF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420818B03;
+	Mon, 24 Mar 2025 19:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844077; cv=none; b=QtH70RwqIDY8O3VUw407/P/nZnOTZApsKDfMPnOVk8u35Np2RmvWMJb1DRcB2+HIM0zcqYanpze9UEXgS2vK6r3LOo62mMRIZfbo5LxO9jUD70tHG01bUyMeXdYBFGwKZSYxRuIFWTRWPfDvG4we4QL9ICnLlorS9XlWP8zMDwQ=
+	t=1742844154; cv=none; b=NlcHrPj/8NrfbGK8B1DUmVGkYprw3tnzhOxge4E9mgMoPnVzHxvIE6rNMcFmjEvCWaP++68IVyqGFvj/F7aSoV8HoVAxZQFb+LRJDLjRclasY9gEbI/wxaWPnSCVgC4Rj6WXd4x8MpxUGefhYGU06rn27exRKQimu69m0Vtp/Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844077; c=relaxed/simple;
-	bh=0T4JFLhJnl4iWm2bszU4lW8Y2/BqIgDH5IiF44yaoYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvdLGzSu/nWLFgn/ks6OHxSyCGG2mORMA5I+nKUoL94VD0x9f0cYkF8sWKoUPP5t/IxNovGVnvgdfiowRShGD+iAqA1MDrFGW/4eHrlv2zMkzFcc3lvs4V3Usqj7zDoHYWV7N6DWE8Qh4T0LVfoqFTIrA8swlydKBBTOCGGvWtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R7p3iaXO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OIDLxK025896
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:21:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0T4JFLhJnl4iWm2bszU4lW8Y2/BqIgDH5IiF44yaoYk=; b=R7p3iaXOREmp9MPS
-	FOl2KcaK5pekD50Z5RzIB8VdqKAwrjZ/RkxHya2rPcyCZJaMmZsYdrfQICNwNir1
-	sWZ++Rrmv/8HwSkJg1YxYHhTyl4jA2bPyD02DU4ZNsaPblXLYGc175YXiodn4CaB
-	LsyOot7ge1bw74GTLg/qd1nCYRdxav0LdCHv9LPHJjZraYjX9sB4dlmzblBGBEuL
-	+tzkl89SkC06rSBlycRi1mKRiR/GynGbKF+ghMs2do2yRjFi7pJxKRd2qwIEyQQ+
-	PxafOndg79idZjuzGpQpUb3S4mgTjhgI4/rsx22hGu1PqicY6kVXCc8epmFDupLw
-	buGcFA==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnnmvw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:21:14 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c55ac3a1d9so73950785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:21:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742844073; x=1743448873;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0T4JFLhJnl4iWm2bszU4lW8Y2/BqIgDH5IiF44yaoYk=;
-        b=LnyNXTT3hoZEw57WnfRs4wT8Fj5SBfVzBJL89dpATRCESEuhgkE5t8Wxh9T0K5Xp0F
-         /tZecl3I66IjXAm+L7e5++dWDP5M95CluFpI2BnAT+/1c6BtQllllNpcT1iXaOjDm3xf
-         E2AfvoODk61nZhiZFiLFOSfp9evmaH7YsRTUWEnm2evSOLI0GCsvYkNtMaHQX7091oUm
-         9VA4oyEPTOhupbewyOX3yZ2KWcyoQAVfXA/HmHacD/V4hWeCOzVD09WZ8lQiElcGoT1/
-         gpLvqIXJtrs+JiE82iAsWBPQiVd1sHTz/n2IDtcKmVLjtJ7TvsZJ2MwuWcURIMpdXPCj
-         j1HA==
-X-Forwarded-Encrypted: i=1; AJvYcCW877jJxc3EkqOx+j9pmWAPjl9L94HSLLYMkyv3oG3zAmH8uPTu/8roK3/qX6d+bT6ynKGj3R5M6AX1TGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb3usMKbChkK05LWrFuLO1RwttRQMTA6ZDKfB3F+QhiAFr6E9T
-	ufbbOdK0ogpYZthvOYtAr76oCrIpOXIqERBhr+R1zoVG0JgTs1bDDEt2//gXaPgPjH0kIg1YwbC
-	ac2ETBTF3KODJaKzzhbS6n/VSSft7nPbFQcJ15s0a0a1Tp9H3j3y5+CC+aivmvEaNiqOy+vY=
-X-Gm-Gg: ASbGncu1JxIyIOHKdm1v5mX+lsu7z5NX+y71SR1dBj+G6vGfIff7lKkttPDKW2GBzTH
-	IhuwnyUeOrG8Am/fXox/mu+0c/UceYdYjMe79N5AzFx2mOFaipzeVJiQq+k5ONVb0PGF1nSLx8s
-	YKRJSYm8caFjH3pTBLzvNOyp36zLXwKzTOKbDWRk61B2gFlpCOHvNLe7ZUEgwM3UZ/glRjWLDDu
-	9zMYjirCyQ4xs+ODhjTlFaIJQ9uDaJwmS9jeiUHOU/6R0NAChL6h37EuT4LAMjnllyNU3UiY3sG
-	JBN4/kAyiNW0VWeuLimiixTb3mV4LxTQ5GxVcJ1t0wAjCcqtHTT3yrEIsIgmJ3t3Vn1Hww==
-X-Received: by 2002:ad4:5ca1:0:b0:6e8:f88f:b96a with SMTP id 6a1803df08f44-6eb3f27b6c2mr81881916d6.1.1742844073283;
-        Mon, 24 Mar 2025 12:21:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfn8mbJAqQ2iSvP5BVpjwukE/fw5NAfTybeF+konRlU7Y8X9xq0mefSPXdNyWq3w+LFMKy7Q==
-X-Received: by 2002:ad4:5ca1:0:b0:6e8:f88f:b96a with SMTP id 6a1803df08f44-6eb3f27b6c2mr81881646d6.1.1742844072705;
-        Mon, 24 Mar 2025 12:21:12 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e509dsm730749766b.68.2025.03.24.12.21.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 12:21:12 -0700 (PDT)
-Message-ID: <7f161a25-f134-44cd-a619-8f7b806a869d@oss.qualcomm.com>
-Date: Mon, 24 Mar 2025 20:21:10 +0100
+	s=arc-20240116; t=1742844154; c=relaxed/simple;
+	bh=yJDMXLZzTHk3EZq76Q74N4Zwvzvre3uZR9K9t14AwoU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GZb06jcpsQiixzvGMNmb+db/0mrqYAgld0J7AAVnHHHhWzeYxSguJku+eRVnqCC8qQUGEmuQ3mJuyJOK26m8R+lABGwk2E+ubLv2B+UjqIMkvB6a2KIrXQn0w7dXOKwnRzdroY7OW+9db9+613vqzWjbECpedWzdqU2BN+/52JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=mw3UaA9m; arc=none smtp.client-ip=148.163.142.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0144091.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OD2W3k001531;
+	Mon, 24 Mar 2025 19:22:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=czoJ/paFLCwaFLFspLyWITZgqMgVHu04NTA7upDGRSA=; b=mw3UaA9mQlkg
+	feFrrKbQUnnLUvi3tboPLvOxNHUWq9adcNw0nYEx5wppKjXpTw17V3AaLA8JtUaN
+	dHTNg870Ks9t7lmPzOcBxmZz+IECm73T09QIwzv7EGd/T9vsc0NbAwKPiXAE1R8i
+	eadHiolb9sB1Za1+UAg8O9OVPDY2Om6HUf8lo9yhTvrz84Hq0FHdqTvMYCCMrBdg
+	i7yqCalwNgQQP6vjTHEDonluLcUjBEypP8tXpLm5FJuMyM7+liOh12tZ+rLYymrs
+	muB7yuIduWxmsJsTl/w6DQZT/Y0NnJTbBI/RNSST3A1WHRzldK1EiyjyB7rhIBWJ
+	jhOQitHP1w==
+Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45k7x1w8gq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 19:22:02 +0000 (GMT)
+Received: from us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Mon, 24 Mar 2025 14:21:16 -0500
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.33) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Mon, 24 Mar 2025 14:21:16
+ -0500
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <ulf.hansson@linaro.org>
+CC: <adrian.hunter@intel.com>, <andy-ld.lu@mediatek.com>,
+        <avri.altman@wdc.com>, <dsimic@manjaro.org>, <erick.shepherd@ni.com>,
+        <jason.lai@genesyslogic.com.tw>, <jeff.johnson@oss.qualcomm.com>,
+        <jonathan@raspberrypi.com>, <keita.aihara@sony.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <victor.shih@genesyslogic.com.tw>, <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] mmc: Add quirk to disable DDR50 tuning
+Date: Mon, 24 Mar 2025 14:21:16 -0500
+Message-ID: <20250324192116.1756281-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAPDyKFqrT0zXVRya=sgEOdjmn7D6xb-e+nD9Q4JpVnh1ddu_Fw@mail.gmail.com>
+References: <CAPDyKFqrT0zXVRya=sgEOdjmn7D6xb-e+nD9Q4JpVnh1ddu_Fw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
- events
-To: Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Clayton Craft <clayton@craftyguy.net>
-References: <20250324132448.6134-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250324132448.6134-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e1b0aa cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=6uNWq3ElG-ILUvwBAFAA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-ORIG-GUID: 5lRFrlLHurCzZIeBr0jul0x0hJQ8Bf-V
-X-Proofpoint-GUID: 5lRFrlLHurCzZIeBr0jul0x0hJQ8Bf-V
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ambo5f-lN4Bq9HsUUGgFt5ONALa__j-F
+X-Proofpoint-GUID: ambo5f-lN4Bq9HsUUGgFt5ONALa__j-F
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_06,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=728
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ spamscore=0 malwarescore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2503240138
 
-On 3/24/25 2:24 PM, Johan Hovold wrote:
-> The PMIC GLINK driver is currently generating DisplayPort hotplug
-> notifications whenever something is connected to (or disconnected from)
-> a port regardless of the type of notification sent by the firmware.
-
-Yikes!
-
-Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-That said, I'm hoping there isn't any sort of "port is full of water,
-emergency" messages that we should treat as "unplug" though..
-
-Konrad
+> Please move this to mmc_sd_init_uhs_card() instead. Moreover, please=0D
+> add a helper in drivers/mmc/core/card.h for=0D
+> MMC_QUIRK_NO_UHS_DDR50_TUNING, similar to other quirks.=0D
+=0D
+Sorry for the late response, how does this look? I can change the=0D
+MMC_QUIRK_NO_UHS_DDR50_TUNING check to be before the tuning=0D
+if-statement instead of within it if that seems more appropriate.=0D
+=0D
+--- a/drivers/mmc/core/card.h=0D
++++ b/drivers/mmc/core/card.h=0D
+@@ -89,6 +89,7 @@ struct mmc_fixup {=0D
+ #define CID_MANFID_MICRON       0x13=0D
+ #define CID_MANFID_SAMSUNG      0x15=0D
+ #define CID_MANFID_APACER       0x27=0D
++#define CID_MANFID_SWISSBIT     0x5D=0D
+ #define CID_MANFID_KINGSTON     0x70=0D
+ #define CID_MANFID_HYNIX	0x90=0D
+ #define CID_MANFID_KINGSTON_SD	0x9F=0D
+@@ -294,4 +295,9 @@ static inline int mmc_card_broken_sd_poweroff_notify(co=
+nst struct mmc_card *c)=0D
+ 	return c->quirks & MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY;=0D
+ }=0D
+ =0D
++static inline int mmc_card_no_uhs_ddr50_tuning(const struct mmc_card *c)=0D
++{=0D
++	return c->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING;=0D
++}=0D
++=0D
+=0D
+--- a/drivers/mmc/core/sd.c=0D
++++ b/drivers/mmc/core/sd.c=0D
+@@ -664,6 +664,10 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)=
+=0D
+	if (!mmc_host_is_spi(card->host) &&=0D
+ 		(card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR50 ||=0D
+ 		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50 ||=0D
+ 		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR104)) {=0D
++		if ((card->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING) &&=0D
++		    card->host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50)=0D
++			goto out;=0D
++=0D
+ 		err =3D mmc_execute_tuning(card);=0D
+ =0D
+ 		/*=0D
+=0D
+Regards,=0D
+Erick=0D
 
