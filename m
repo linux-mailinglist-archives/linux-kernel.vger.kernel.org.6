@@ -1,281 +1,123 @@
-Return-Path: <linux-kernel+bounces-573549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17901A6D8F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:15:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211B1A6D8F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9593A8581
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EEA16DC32
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1C51DE2A5;
-	Mon, 24 Mar 2025 11:15:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4508925DD1E;
+	Mon, 24 Mar 2025 11:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qtZNJJNZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rEc6EP4K"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA625DB1E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11E025DD19
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814906; cv=none; b=UUHaCJd9JN59z2JyUzZiFs6hBK8qgcY4T44fYrrKq2K4V9EAibF4GqvLuMR+8hTBdeetYLUX8ATkn6mtF/tYhcmW8V9B8gDBuAf0TTDMhDi0pZsCwvkx20J20GMoicOOEQfTW0AqeUDGtBt+icDpAETaMIEAc+66d07cCQEOfr8=
+	t=1742814915; cv=none; b=a6CsPwAgXsRNv8e3nry2f6LZoTZBK7/kBYwumDobYa1yofd1flW67SPnrLflHVcw5qVOkvyeYu0tNNjPP50wegfNxatrJSY5j9rGSk2o/M3XTI8HmK/LcBz4TTpcvcQVp8sZCRL8ACrW3G0vsU3VMtUZn1DT5CZgYZXifbvjB5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814906; c=relaxed/simple;
-	bh=ag19h64y1x9Esf8f8fl9K0vmeml+C3hyWoG85fkFgcU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DzyW8P+THmsnthiVYcV5x8eYgWg9BWFZ9j7AEsnlc9VNv/EalTlElp+q47o74yE/2YCZDEE7hnOTccaEecKkES3zZTNW9w0+bkNms5Ek2e0e5J5nDjYd0teYiW2JvXUnBQMigsFXdlbxnlHdbLw+ig5JJas5HpbUahG56JydgDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b402f6a1bso1267227239f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742814903; x=1743419703;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FVRXh8drqMt7jNzBvZOb/gqer1J2lINTc2OP+Ko2me4=;
-        b=pj/TWsgXBFP6LxjSel4erUuRSaWWijF4GosxStZ/bwF1P8ReMSrdkMJuW4lEmAt21+
-         tyZH4TptmTfYCaiO9vEZZmevA5elNFX0RLQA9ui3uiMz2suoS3U4p3ZeLOrjiUpnBP6t
-         vLSmPVbLCeDuq/AGO+/g0CIrZQ+xoUUUVBhsgObTJ+MM/YbpA+7V5SJKINGFka2wIEKH
-         iJnK8xvbN0zPlKlMbgzYuMZ3nME61ofdqS9ESX30p/eu/7J6tDvKZxlcK3MM2d1/2BKD
-         +T4cd0zPomxmGUdu5Sl4vqsmBXRGRwtYKP7igk++U4BrkGd4zTFGYAyAbqmgfhuPnKt0
-         mmtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEqPkRQJuUzGGs6lxxxzqACqn/p0CGMLJfkNZCpz+R+BoMmjB0cBAGa5UCIBOBTrsD4URyXaLmrLI2WDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPPvf11KqyIDljaPqmyaSo5pD1DpPJ0j95BF3Q7TqA2E1/BDPF
-	h18zMFxeHisJNadmfhr4KdLhBQZVslE22RbQiFncSg4BlM4q70hDDLqP8QvKRX1u3Ff080c0cBP
-	Xkf3Ec9LeQHNsgJyIz/TD9OoQyeO1M8RWT0UFqtlfTFeGkeIICCTpw/U=
-X-Google-Smtp-Source: AGHT+IEyNysNWVch14YKZQcav42ifuMoGinGdohw8j1y+TDb4B1ZGPYPdv8gGAXqaPV1B0vRG+JRkTTocFJ8rSOoVuDb/Vh6YEz0
+	s=arc-20240116; t=1742814915; c=relaxed/simple;
+	bh=hZ5GbCzl/Fw4XjbhusZchqQNyyvFLq+89EztqsUraO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GedREjDblyT18739HkWRQ4yRtGQj4+j6YO8UrPWY6HpakpV3NNTbuIVsvQsIYTKXmpJDYs7kwjJn/VGyW1ZX59Cq14IuUeXh1uB/gjuP+Eavnvz2Ir6wjcZ8iW47k10AdI8twmCdbt5+VItaOzR+JEdFlIPXwEnLDDHPzfbZ3+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qtZNJJNZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rEc6EP4K; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 24 Mar 2025 12:15:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742814911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=86m/cLxXP9bfNs1Ln11D5y3dZxfnOk7qTOhdH9UMKxk=;
+	b=qtZNJJNZ0xux8VOBm84Ls0CCUhvjW5xt0HKjoR8ebj71eSGy+VSwFogWGspDaUrgVC+79c
+	wUP1mwAIqvH6Rpc2sDAIo+FSG7j0Ne2E75uaOOYjKIBAUvhiCofQbjrtdD0E3k+T++wQ87
+	1DQPfFyNXb1WpWNlyC8xNailwbYRUhDGOf3mpmmBmUUTiGETZWmYkwB2JIFdu6yc5rIU+w
+	j7zscMi/7J+KWhfOGDn8MvAG3vLvxF4MVvOhGOeIvWNqoxXkTWh9RwalVl/vrZ8y+x4X4g
+	iatO+lIJD0/d/mNNv71r/oR6wiKZJAm6NOf12xwmNjqxjQ/zxMtgEukJz6NY2Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742814911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=86m/cLxXP9bfNs1Ln11D5y3dZxfnOk7qTOhdH9UMKxk=;
+	b=rEc6EP4KLiJw5DPcwsIAdDU0oL1zCwm7e0CxHExT4ByjW2oe0vs1aRtV8jFwxu9OgXOAcT
+	LbUhQgAmx3TKI1CQ==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev
+Subject: Re: [PATCH v3 22/29] x86/cpu: Use consolidated leaf 0x2 descriptor
+ table
+Message-ID: <Z-E-vXHVl3dLFYx0@lx-t490>
+References: <20250319122137.4004-23-darwi@linutronix.de>
+ <202503241523.6b53646b-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:10:b0:3d2:b4ea:5f42 with SMTP id
- e9e14a558f8ab-3d59613bbf9mr127150455ab.6.1742814903559; Mon, 24 Mar 2025
- 04:15:03 -0700 (PDT)
-Date: Mon, 24 Mar 2025 04:15:03 -0700
-In-Reply-To: <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e13eb7.050a0220.a7ebc.001d.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-To: brauner@kernel.org, dhowells@redhat.com, jack@suse.cz, jlayton@kernel.org, 
-	kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjguzik@gmail.com, netfs@lists.linux.dev, 
-	oleg@redhat.com, swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503241523.6b53646b-lkp@intel.com>
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in netfs_unbuffered_write_iter
+On Mon, 24 Mar 2025, kernel test robot wrote:
+>
+> [ 5.001760][ T0] BUG: KASAN: stack-out-of-bounds in intel_detect_tlb (arch/x86/kernel/cpu/intel.c:698 arch/x86/kernel/cpu/intel.c:688)
+> [    5.001760][    T0] Read of size 1 at addr ffffffff8a607e80 by task swapper/0/0
+> [    5.001760][    T0]
+> [    5.001760][    T0] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.14.0-rc5-00152-ge114ca069e27 #1
+> [    5.001760][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [    5.001760][    T0] Call Trace:
+> [    5.001760][    T0]  <TASK>
+> [ 5.001760][ T0] dump_stack_lvl (lib/dump_stack.c:124)
+> [ 5.001760][ T0] print_address_description+0x2c/0x3f0
+> [ 5.001760][ T0] ? intel_detect_tlb (arch/x86/kernel/cpu/intel.c:698 arch/x86/kernel/cpu/intel.c:688)
+>
 
-INFO: task syz.0.18:6758 blocked for more than 143 seconds.
-      Not tainted 6.13.0-rc1-syzkaller-00017-gaaec5a95d596-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.18        state:D stack:26608 pid:6758  tgid:6757  ppid:6540   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0xe58/0x5ad0 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6848
- bit_wait+0x15/0xe0 kernel/sched/wait_bit.c:237
- __wait_on_bit+0x62/0x180 kernel/sched/wait_bit.c:49
- out_of_line_wait_on_bit+0xda/0x110 kernel/sched/wait_bit.c:64
- wait_on_bit include/linux/wait_bit.h:77 [inline]
- netfs_unbuffered_write_iter_locked+0xba8/0xe70 fs/netfs/direct_write.c:105
- netfs_unbuffered_write_iter+0x413/0x6d0 fs/netfs/direct_write.c:193
- v9fs_file_write_iter+0xbf/0x100 fs/9p/vfs_file.c:404
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fae42f8d169
-RSP: 002b:00007fae43eb2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fae431a5fa0 RCX: 00007fae42f8d169
-RDX: 0000000000007fec RSI: 0000400000000540 RDI: 0000000000000007
-RBP: 00007fae4300e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fae431a5fa0 R15: 00007ffef04451c8
- </TASK>
+I've reproduced the KASAN report and below hunk fixes it:
 
-Showing all locks held in the system:
-2 locks held by kworker/u8:1/12:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90000117d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-1 lock held by khungtaskd/30:
- #0: ffffffff8e1bac80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e1bac80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e1bac80 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6744
-2 locks held by kworker/u8:3/52:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90000bd7d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:4/63:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000214fd80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:5/1034:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000403fd80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:6/2116:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90005937d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:7/4367:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000f717d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:8/4487:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000fd07d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by kworker/u8:9/4559:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000ffe7d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-2 locks held by getty/5582:
- #0: ffff8880313180a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002fde2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
-3 locks held by syz.0.18/6758:
- #0: ffff888026eba478 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888024f5a420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff8880755987b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.1.23/6787:
- #0: ffff88803111c9b8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff88807d6da420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff888075720148 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.2.25/6807:
- #0: ffff88803562d438 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888027a9e420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff88807559a178 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.3.28/6829:
- #0: ffff888026d3e9b8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888025ffa420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff8880757207b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.4.30/6854:
- #0: ffff888033e600f8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888036adc420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff888075720e28 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-2 locks held by kworker/u8:10/6856:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90002ee7d80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-3 locks held by syz.5.32/6881:
- #0: ffff88803162deb8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff88802aa02420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff88807559a7e8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by kworker/u8:11/6882:
-3 locks held by syz.6.34/6908:
- #0: ffff88804f312d38 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888062c8c420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff888075721498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-2 locks held by kworker/u8:12/6909:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc900021dfd80 ((work_completion)(&rreq->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-3 locks held by syz.7.36/6935:
- #0: ffff8880369530b8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888063c48420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff888075721b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.8.38/6968:
- #0: ffff88801e2adeb8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff88807b25e420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff88807559ae58 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
-3 locks held by syz.9.40/6997:
- #0: ffff88802a74a7f8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x267/0x390 fs/file.c:1191
- #1: ffff888053afa420 (sb_writers#14){.+.+}-{0:0}, at: ksys_write+0x12b/0x250 fs/read_write.c:731
- #2: ffff888075722178 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+ | --- a/arch/x86/include/asm/cpuid/leaf_0x2_api.h
+ | +++ b/arch/x86/include/asm/cpuid/leaf_0x2_api.h
+ | @@ -88,9 +88,9 @@ static inline void cpuid_get_leaf_0x2_regs(union leaf_0x2_regs *regs)
+ |   *		}
+ |   *	}
+ |   */
+ | -#define for_each_leaf_0x2_entry(regs, __ptr, entry)			\
+ | -	for (__ptr = &(regs).desc[1], entry = &cpuid_0x2_table[*__ptr];	\
+ | -	     __ptr < &(regs).desc[16];					\
+ | -	     __ptr++, entry = &cpuid_0x2_table[*__ptr])
+ | +#define for_each_leaf_0x2_entry(regs, __ptr, entry)				\
+ | +	for (__ptr = &(regs).desc[1];						\
+ | +	     __ptr < &(regs).desc[16] && (entry = &cpuid_0x2_table[*__ptr]);	\
+ | +	     __ptr++)
 
-=============================================
+I'll include the fix in v4.
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.13.0-rc1-syzkaller-00017-gaaec5a95d596-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
- watchdog+0xf14/0x1240 kernel/hung_task.c:397
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5182 Comm: klogd Not tainted 6.13.0-rc1-syzkaller-00017-gaaec5a95d596-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:__raw_callee_save___pv_queued_spin_unlock+0x12/0x18
-Code: 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 52 b8 01 00 00 00 31 d2 f0 0f b0 17 75 06 <5a> c3 cc cc cc cc 56 0f b6 f0 e8 9f ff ff ff 5e 5a c3 cc cc cc cc
-RSP: 0018:ffffc90005667618 EFLAGS: 00000046
-RAX: 0000000000000001 RBX: ffffffff9a9f6bc8 RCX: ffffffff81770803
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffff9a9f6bc8
-RBP: ffffffff9a9f6bd0 R08: 0000000000000000 R09: fffffbfff353ed79
-R10: ffffffff9a9f6bcb R11: 0000000000000001 R12: ffffffff9a9f6bd8
-R13: 0000000000000012 R14: 0000000000000000 R15: ffff888067f30000
-FS:  00007fb083fb7500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005612bebd5240 CR3: 00000000347be000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- pv_queued_spin_unlock arch/x86/include/asm/paravirt.h:589 [inline]
- queued_spin_unlock arch/x86/include/asm/qspinlock.h:57 [inline]
- do_raw_spin_unlock+0x172/0x230 kernel/locking/spinlock_debug.c:142
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:150 [inline]
- _raw_spin_unlock_irqrestore+0x22/0x80 kernel/locking/spinlock.c:194
- __debug_check_no_obj_freed lib/debugobjects.c:1108 [inline]
- debug_check_no_obj_freed+0x327/0x600 lib/debugobjects.c:1129
- free_pages_prepare mm/page_alloc.c:1134 [inline]
- free_unref_page+0x276/0x1080 mm/page_alloc.c:2657
- __put_partials+0x14c/0x170 mm/slub.c:3142
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_node_noprof+0x223/0x3c0 mm/slub.c:4205
- __alloc_skb+0x2b1/0x380 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1323 [inline]
- alloc_skb_with_frags+0xe4/0x850 net/core/skbuff.c:6612
- sock_alloc_send_pskb+0x7f1/0x980 net/core/sock.c:2881
- unix_dgram_sendmsg+0x4b8/0x19e0 net/unix/af_unix.c:2027
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg net/socket.c:726 [inline]
- __sys_sendto+0x488/0x4f0 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2200
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb0841199b5
-Code: 8b 44 24 08 48 83 c4 28 48 98 c3 48 98 c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 26 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 7a 48 8b 15 44 c4 0c 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffd368d15b8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb0841199b5
-RDX: 0000000000000049 RSI: 0000558a1e31e270 RDI: 0000000000000003
-RBP: 0000558a1e3172c0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
-R13: 00007fb0842a7212 R14: 00007ffd368d16b8 R15: 0000000000000000
- </TASK>
+(It also makes sense that this was triggered at x86/cpu intel.c and not
+ x86/cacheinfo, since in cacheinfo.c, CPUID(4) when available is always
+ preferred to CPUID(2).)
 
+Thanks!
 
-Tested on:
-
-commit:         aaec5a95 pipe_read: don't wake up the writer if the pi..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12debc4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d5a2956e94d7972
-dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10750198580000
-
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
