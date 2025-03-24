@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-574042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E84CA6DFE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:37:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3257DA6DFEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97753A8FFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E47188DBAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C24261390;
-	Mon, 24 Mar 2025 16:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D8D263C6A;
+	Mon, 24 Mar 2025 16:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QVKyFxnR"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CsDiiExK"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055F2261380
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCD4261390
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834211; cv=none; b=KnYsdeiwNmCP/N7ldoP9B/SqWhmpo4YyqxTsD4p6Sg/H+jmr1aZRB2Gs3Wbh/s9bH166XS7K4iKr5bSLJ+JyO/WC1QTcYp7bIpE+CI3NiKasSTbBTJVjVbPXmvYVBztQhykBbGMVHAn0sCoub+hRULPAy1OcI2l3gRLSa0f7QvI=
+	t=1742834236; cv=none; b=iCyeyyGj1XPEmO08DQgEJQd3/1A/FBZaRK5Jvs+I53RqxbOqcgL5A+V2JJterr+pLPzj2AOlHvf1CdyA3yVDar7D7UzRS0xfTBHhM4R+by8Aqoz6P03+zcic7oR3PeQCgdRt9mNV8/QqMSsN+NbTtwgqODFIcK8Lss1hxY22Bns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834211; c=relaxed/simple;
-	bh=T0OaTV3U3YTC8+B6JtQmMAnjF+aMrFR3h1bWX2bdKDs=;
+	s=arc-20240116; t=1742834236; c=relaxed/simple;
+	bh=Y+4yAGgYQGKj/qkjS5hr6PuM1UYULojI6XEd2pZcjAw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e0GbFMbUbtBILfod1mVM9obpXus7bV2ITew27Fry+FtqiZdmVtuJw32j5fuY/dNrYsINw1EXbFs7rERLlZ2B3oCqcW1qyAx9SS3PqoxObAo6gMFQptQ6KOTUuYr/cn3/ydMrJ3J6EaFFbcfWa3pfi0FrrQu167sAPfylcYsFjhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QVKyFxnR; arc=none smtp.client-ip=209.85.167.49
+	 To:Cc:Content-Type; b=WAoaQIcaTcDPr63ZUyMjgVry+wndY3IQuOBh1HJoQtWhEkDWQcvPRyr+KlAThj9aQDWvcVbrxfXWL0hfKTaAAhPAc15j8i12UbbMhqVg0GyT2A98atcTihdt59znuVaDU4cT0XKKcABSjbxu911EYllj0emIF+6te0/a0Qbs+ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CsDiiExK; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5499614d3d2so5318215e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:36:49 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfed67e08so52821351fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742834206; x=1743439006; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1742834231; x=1743439031; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WbVSfwSwUsyBVRZtdurPZ1fEIzsDEzw5c2RH7LloXHc=;
-        b=QVKyFxnRlEG1ssj0yDCQgTERshQizqssTNczgMQ0gukIJMWiY34c/8ctnI/JzzDRpU
-         EfKYIsbxw1lDhxNZ4LV2VtohellwDAosQ4SQhYEyWegR4Cc6FrjP9ClLZhwfYli1YL94
-         64s6rRtJ8BPLvS8+hC/hqaGS7TmoUAGYAPQIc=
+        bh=fDN1DigddMVH2DZcXLwHcLv3wl4mw8L1y1VFkP+R480=;
+        b=CsDiiExKWkSlZeMN2sxBwe8mjcrJ7BlOfOCEAVXg6rcC9Fm/L4Q42aZy8/tn7dRbnf
+         sBzSH1wNpIm2DHE2GsInnw6suBif5/xTVFZKG9u5C7ZVWVStmUw15M+VLV8Ftz2pHKSx
+         UpwJg6yB7ZfZohJJ5Bvcr2RwtKUM+gvEI7aEs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742834206; x=1743439006;
+        d=1e100.net; s=20230601; t=1742834231; x=1743439031;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WbVSfwSwUsyBVRZtdurPZ1fEIzsDEzw5c2RH7LloXHc=;
-        b=urd9RTAZfbUbEX8MOQlsMcaWktkk1epsiwSCnYbTYuEmT+RHAyLugvvaNx+Ob3FE2U
-         HR1MASricPwuY4utcw3AEElQM0+117df4Vtu9aD/7gbnLHjLNL8Guf73u2qemgxhPytV
-         uNtK6UBeWTN1S1Q97BsOO2d4vkGLBJZuACcjorIyXWs/DaN2IsJoH/Ghs8SY09hzpM+Q
-         qzvMp4k4o55KEOnlcl2JT05mo6oCaxi8lAzZDE+7JllH+4dbX7ExfS4dSRePuGrWyBsD
-         u8Y2FTwF7gIMjn6ckoJ/ytS4JwjHh+bsqt5vXwIiy6XddQgYF9/OffGYdkwPwqU4CKoL
-         kvKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJDRATmzW8YQ0LWr5bRGQ7CuHvHFQaOlMkXGNDiKRQVAAXx6kromDDTaIkIiR3Edvxh66YElfLPmHu954=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnHJj6fcwuHRdARf7kA+0TIRhkB+KB6lyWXjF+SVq04+Xq5Om0
-	BJ8hswlbQXbFYBhnuCU0gAAQq7Huts0cIcqRSA0gYq6pXgvQC37OpwkLZh235oHP1nsdRJOgGTH
-	KpA==
-X-Gm-Gg: ASbGncvo1NdytvNrGA9bLKzSCgvW6Oc+jaZH4J9bCLRIit1BNFwEJZMCnWqvWo3PLx2
-	AY1xOWy1h+jaJyVYAiSoo+7FabhmhN6Ppf0ILWw7Sqt9hL97CeYCsvbmzff3AxjJQTifstTWDXO
-	30sFsF+NHBvbFJfjFC3ZLbgpddosv3+UbQL93/R2A1Ys1Jms/wBNaiinRPruhXQnY3zJRLKG05/
-	Ve971gf78UyOtTceD1iy6zSfvbmgk9f/AM5k/J1WFDk+rqeQ1LEraxqqxUwvmWyLJlo4aYDVS7S
-	M7d04KZzBAhP3h0gWi2jQ9ovezernERYtHoD0fHSE/eI/UFGNWR5k23pFgvaILBxeMdxyglAqxH
-	hujpueTGo1/qp
-X-Google-Smtp-Source: AGHT+IFq2CHSfuK8hE7OuHIhcS/bd7ba8ojWVzH/gxwTT6AagGY5Ep5QbQpGmFLVzgcYCrSnWYmauw==
-X-Received: by 2002:a05:6512:118e:b0:545:2f0c:a29c with SMTP id 2adb3069b0e04-54ad64ef026mr4977316e87.36.1742834205845;
-        Mon, 24 Mar 2025 09:36:45 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647ca43sm1195360e87.68.2025.03.24.09.36.40
+        bh=fDN1DigddMVH2DZcXLwHcLv3wl4mw8L1y1VFkP+R480=;
+        b=kI5qqz/UYaTDESu8KtpIptT4HuY4bAnjLLqIpyQD6iwDBt932EORO3BCyrOMKxhTJF
+         c+c54aU2okVpF+F/zlCbrXIuqfBYjnOjVV/2996nx0lUOs8AaCrKuCPsZSi+dlG0214u
+         qKYr+oD+yEgjx6OB2TRVp4CcNpfyzquYUqaJytvLwEE77meAcfXwNC0m2AJN/ALISDN/
+         tJJ0p6sbpPWqoJavo8mXLB6LsH2r3jwskHOrQihI9K6D7EwANED6SSW7HzYmCUrPP2t+
+         LQUKlbEZzVZLt6LcIY+kFrTf3TwdMMkr7G7wZRtSNJr74C8KkvEDsaj4+HKOGGfkwUpB
+         wCIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyG4MKGEzXX147D+ijoC/IQgAWignbRZnwqGmsvHZ41/ZmbldKOnF+wjN9sXRBiBr6i5nCis2BvUE/Xeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK5ej/gM1RgTVzPQD2O1nwbPyNwAIajnY+QM2fH5URjGCjh1fB
+	osNVXKEk3UxDQeKKGVGx43IOt6xDIaEc9vMmJqX8LOzHfSo585MzPw3QLykpi009z04kkvYW+70
+	Gog==
+X-Gm-Gg: ASbGnctnu4SpzHd8LqDaPcbdd6tcHHNHau8m6zccKA62Wh3N1ziiVveVNwin10/hjVD
+	s1WKEieoenDEaBufZV7KLxTc0pC3LwbJbmNzxXLYTvnoLH3x5igBsZ4f06Hiy9AZrHsxY7aLb4/
+	Ce7RYlra7J5nH0oHduAtyZghOCkNWp8mhxtrDelxL5FepjmfgFIMeOvBOzamg3Zy774GhfJ2JWP
+	ynk+EI68BICZn5PL9fMS4Jqu9H17WrfgxAhF/QhGIhVgVzI8Dft/aDrZDnlRKp6pdh77W8YXoaS
+	JfIxNOu8UmkpbKHSasRJbKWRb6lsrEfCr7TrS2mJxSvq5pY74OBAwyI1WwObNQ0A6AmpUpAo1Vn
+	UFGD7Xz7f
+X-Google-Smtp-Source: AGHT+IHhXU/ipE/ihkY71SJK0o0GXq8uZE+oXgmnJeRMVw29O64lwBubrMo7293HBc65yh18F2v7ag==
+X-Received: by 2002:a05:6512:3da1:b0:545:353:4d46 with SMTP id 2adb3069b0e04-54ad6490503mr3913215e87.25.1742834230876;
+        Mon, 24 Mar 2025 09:37:10 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6508163sm1183548e87.181.2025.03.24.09.37.07
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 09:36:40 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30613802a59so48475761fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:36:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXCG/VQ080sJDRwGMLnTIwqO7q2h3EEKIQ61It7acbedNlMvuXDvSIH2Lz92N/kn0I/JhlqbLVlP7lf6oQ=@vger.kernel.org
-X-Received: by 2002:a05:6512:2394:b0:549:5866:6489 with SMTP id
- 2adb3069b0e04-54ad64fc6c1mr5079567e87.47.1742834199580; Mon, 24 Mar 2025
- 09:36:39 -0700 (PDT)
+        Mon, 24 Mar 2025 09:37:07 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499bd3084aso4170154e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:37:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXKlT4ptPFNyh7uu070+vI0ccpZRrAc33MMXtX80n86q5MnplFlJYEotGkc2M37+m4BNVrPAhiD+w+NIjA=@vger.kernel.org
+X-Received: by 2002:a05:6512:3d11:b0:549:8cc8:efed with SMTP id
+ 2adb3069b0e04-54ad650a07dmr5306442e87.48.1742834226392; Mon, 24 Mar 2025
+ 09:37:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315182522.628187-1-tejasvipin76@gmail.com>
-In-Reply-To: <20250315182522.628187-1-tejasvipin76@gmail.com>
+References: <20250319183106.12613-1-tejasvipin76@gmail.com> <CAD=FV=WZxF4CGSAAqSvs8XnLEvkXNEEv87V3ffE_uBfj-qWN=A@mail.gmail.com>
+In-Reply-To: <CAD=FV=WZxF4CGSAAqSvs8XnLEvkXNEEv87V3ffE_uBfj-qWN=A@mail.gmail.com>
 From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 24 Mar 2025 09:36:28 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=X0Tn+=M8oYsxtT=g7etQ1Fsusn_O3_K4MD=n2rQRdxJg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqXvIcRz_JthPYvuupBe3v23vMi4-VDj2o_1AcvqTjIjsr3L9gaH4gwORg
-Message-ID: <CAD=FV=X0Tn+=M8oYsxtT=g7etQ1Fsusn_O3_K4MD=n2rQRdxJg@mail.gmail.com>
-Subject: Re: [PATCH v4] drm/panel: novatek-nt36523: transition to mipi_dsi
+Date: Mon, 24 Mar 2025 09:36:54 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VWj03LmA-LfSDSkrg0m53AuYPg8YQLK0m_BKT6xBEBEQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrW47wJ32hbO7SbwG8ki058S8keXJviwMHqGv6pjeXdowOMFlpfudBmNlc
+Message-ID: <CAD=FV=VWj03LmA-LfSDSkrg0m53AuYPg8YQLK0m_BKT6xBEBEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel: samsung-s6d7aa0: transition to mipi_dsi
  wrapped functions
 To: Tejas Vipin <tejasvipin76@gmail.com>
 Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
 	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	lujianhua000@gmail.com, quic_jesszhan@quicinc.com, 
+	aweber.kernel@gmail.com, quic_jesszhan@quicinc.com, 
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
 	asrivats@redhat.com
 Content-Type: text/plain; charset="UTF-8"
@@ -103,63 +103,34 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sat, Mar 15, 2025 at 11:25=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
-m> wrote:
+On Wed, Mar 19, 2025 at 1:05=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
 >
-> Changes the novatek-nt36523 panel to use multi style functions for
-> improved error handling.
+> Hi,
+>
+> On Wed, Mar 19, 2025 at 11:31=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.=
+com> wrote:
+> >
+> > Changes the samsung-s6d7aa0 panel to use multi style functions for
+> > improved error handling.
+> >
+> > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> > ---
+> > Changes in v2:
+> >     - Remove unnecessary early return in s6d7aa0_lock
+> >     - Remove redundant GPIO reset setting in s6d7aa0_on.
+> >
+> > Link to v1: https://lore.kernel.org/all/20250316045024.672167-1-tejasvi=
+pin76@gmail.com/
+> > ---
+> >  drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 222 +++++-------------
+> >  1 file changed, 65 insertions(+), 157 deletions(-)
 >
 > Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
-> Changes in v4:
->     - Cleanup nt36523_prepare
->
-> Link to v3: https://lore.kernel.org/all/20250309040355.381386-1-tejasvipi=
-n76@gmail.com/
->
-> Changes in v3:
->     - Remove mipi_dsi_dual_msleep
->     - Change mipi_dsi_dual_dcs_write_seq_multi to use the same dsi_ctx
->       by swapping the dsi accordingly.
->
-> Link to v2: https://lore.kernel.org/all/20250307091519.245889-1-tejasvipi=
-n76@gmail.com/
->
-> Changes in v2:
->     - Uses mipi_dsi_dual_msleep
->     - Changed mipi_dsi_dual_dcs_write_seq_multi to not equate accum_err
->       of either dsi_ctx.
->
-> Link to v1: https://lore.kernel.org/all/20250306134350.139792-1-tejasvipi=
-n76@gmail.com/
-> ---
->  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1683 ++++++++---------
->  1 file changed, 823 insertions(+), 860 deletions(-)
 
-When applying, I did get a yell from the stricter checkpatch mode:
+When I applied I got a few whitespace errors that checkpatch yelled
+about. I fixed them for you while applying. Pushed to drm-misc-next:
 
--:28: CHECK:MACRO_ARG_REUSE: Macro argument reuse 'dsi_ctx' - possible
-side-effects?
-#28: FILE: drivers/gpu/drm/panel/panel-novatek-nt36523.c:26:
-+#define mipi_dsi_dual_dcs_write_seq_multi(dsi_ctx, dsi0, dsi1, cmd,
-seq...)    \
-+               do {
-         \
-+                       dsi_ctx.dsi =3D dsi0;
-         \
-+                       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, cmd,
-seq);       \
-+                       dsi_ctx.dsi =3D dsi1;
-         \
-+                       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, cmd,
-seq);       \
-                } while (0)
-
-That's not new though, so I went ahead and applied the patch anyway. I
-think the easiest way to solve it is to just assign "cmd" to a local
-variable inside the "do {} while(0)" scope. Pushed to drm-misc-next:
-
-[1/1] drm/panel: novatek-nt36523: transition to mipi_dsi wrapped functions
-      commit: 15a226179c55ffef2e0a883b6bc15eaceff4a08d
+[1/1] drm/panel: samsung-s6d7aa0: transition to mipi_dsi wrapped functions
+      commit: 837f9b917c47b4d35f0ee571a736de2895e2dd54
 
