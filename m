@@ -1,122 +1,140 @@
-Return-Path: <linux-kernel+bounces-573191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B491A6D410
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:16:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE49A6D41C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F288118882AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5522C3A9B7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73D484037;
-	Mon, 24 Mar 2025 06:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0BF17BEBF;
+	Mon, 24 Mar 2025 06:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="AW+seEM8"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wdSu9NA2"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2602CBE5E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D817E01B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796974; cv=none; b=IrzZrdl8Q9+J2Y7aB/xfB0f1jgQOwDRjNcm2hzQgbofxNP9JWen96bxfaIB0kW6+rtgPOYVNsIOnLF125o/xJuhbVjA/uSZlNfOXvQ+fq3pN4SW8NMEloVRFgLY2MNvYD0x4WbB5Q9MnFikZAsz8I9dK4ofudmW0PGRY2mgCDfA=
+	t=1742797162; cv=none; b=ccLRC3rx2uw3Hh7rpAcH4w2yzR54k8yLvrxoOpynMC+N+ZuenI5/XncD83eq4uHG4gfQJHyhq957rUj4N8tD65flVjLHbG70ZU8YXWCCfmTgMnH3n98+0xh+OduC4m8ZAQUVHfyvzYB1kHLVOvY4IzAVBX0QRb32SaFPfLgez2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796974; c=relaxed/simple;
-	bh=T0fMoQbxKTs+J5RN/iwSWQZM40qUvOQCb8V4cNqTR+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcPgmdRL1LVk6Azg3lzaD6rU4BZjWZ6bMzBuIHZdeNYabnN7eGEtwPCgGyL/H9wRU6RWf8tiwTfKUVBbp9csKRPHjryCZejQDS8Un+MoujIqp4HjWPQBUuoUklSitEZyVCkURITDnQTuWwVehXIUpKqPqvuGCDkkFrYC3+DDv1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=AW+seEM8; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
-Message-ID: <51a59b41-4214-4e24-bfe8-3d8174ba1a3b@craftyguy.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
-	s=key1; t=1742796960;
+	s=arc-20240116; t=1742797162; c=relaxed/simple;
+	bh=EmIz2lLWZAsWPVRdqglI5WF3ic5iH2SgqlIBROEY68o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WHLBnDmbcz3ZchZJSySsP+B17aHhaHdxFUIBukT7wcbJ9SWUuf78bm3FAkPOzTipTQBNKYwg6BlHzLvg9sm13aAF54mf/re+qE751HIBk0cC/UHplIsG/0cOanOkdFd8MqsnHQV6oP/rl+fira/8KuRDCdNCpSz0YNHABauAFKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wdSu9NA2; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742797158;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C8JLMiI733S4xTq1mEOv/zfYlCWUzTNqm+0T4v8oraU=;
-	b=AW+seEM8/syKljhEMGkSA3KPt7Al/dEjX1dKgxcynyPa3TzM90Nkz9NV5h8KEnLn5A68h3
-	FxZ6EH8ioKxSvJL8hLKfdMixNTsT1QFvBtLxgxyOianttCUaek8gCrrGfuPeTP8L4ClgDk
-	/oflXwoN9AcoCuO9PVKg40w3+QxUYU0r/IkmqPYasPmFdRgNfNiDACSNNgGvkkf3+046cO
-	4Wv+hZdpFk9byAk/ls69EtsmpsGckON7smiMeAU+T6Mrv3dhjmYhxhQrl9bNv3OcFeluYF
-	2Z5lRmC8sbkYx5+7Aj/ikPyxRWFKIhxg2f3ojVkpM27iEeSnQZIfZ/kXVurXSA==
-Date: Sun, 23 Mar 2025 23:15:54 -0700
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TvhJEaWvDoaTAezZAcDpCCpB9iCGHWPgiSVGgqYu6Jw=;
+	b=wdSu9NA2wq9kblJR8pfDVQKz92XQlXP6gCDG2m2E9Tp/aF6Mt81S11Rdsa3vEkaxu/E18b
+	qSQBerdoesC6V1NVZ+A199MCDebZaqphngOYA6/uUtxKyPqy2VHgFbNYVb9ExakOonKMb/
+	K//b+D2JBF2kziIGsisiO5RjgCyHZto=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Grace Deng <Grace.Deng006@Gmail.com>
+Subject: [PATCH v2] rust: sync: optimize rust symbol generation for CondVar
+Date: Mon, 24 Mar 2025 14:18:34 +0800
+Message-ID: <20250324061835.1693125-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] wifi: ath11k: fix rx completion meta data corruption
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
- Steev Klimaszewski <steev@kali.org>,
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250321145302.4775-1-johan+linaro@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Clayton Craft <clayton@craftyguy.net>
-In-Reply-To: <20250321145302.4775-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-On 3/21/25 07:53, Johan Hovold wrote:
-> Add the missing memory barrier to make sure that the REO dest ring
-> descriptor is read after the head pointer to avoid using stale data on
-> weakly ordered architectures like aarch64.
-> 
-> This may fix the ring-buffer corruption worked around by commit
-> f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
-> ring") by silently discarding data, and may possibly also address user
-> reported errors like:
-> 
-> 	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
-> 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org	# 5.6
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> 
-> As I reported here:
-> 
-> 	https://lore.kernel.org/lkml/Z9G5zEOcTdGKm7Ei@hovoldconsulting.com/
-> 
-> the ath11k and ath12k appear to be missing a number of memory barriers
-> that are required on weakly ordered architectures like aarch64 to avoid
-> memory corruption issues.
-> 
-> Here's a fix for one more such case which people already seem to be
-> hitting.
-> 
-> Note that I've seen one "msdu_done" bit not set warning also with this
-> patch so whether it helps with that at all remains to be seen. I'm CCing
-> Jens and Steev that see these warnings frequently and that may be able
-> to help out with testing.
-> 
+From: Kunwu Chan <kunwu.chan@hotmail.com>
 
-Before this patch I was seeing this "msdu_done bit" an average of about 
-40 times per hour... e.g. a recent boot period of 43hrs saw 1600 of 
-these msgs. I've been testing this patch for about 10 hours now 
-connected to the same network etc, and haven't seen this "msdu_done bit" 
-message once. So, even if it's not completely resolving this for 
-everyone, it seems to be a huge improvement for me.
+When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+with ARCH=arm64, the following symbols are generated:
 
-0006:01:00.0 Network controller: Qualcomm Technologies, Inc QCNFA765 
-Wireless Network Adapter (rev 01)
-ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c 
-soc_id 0x400c0210
-ath11k_pci 0006:01:00.0: fw_version 0x11088c35 fw_build_timestamp 
-2024-04-17 08:34 fw_build_id 
-WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+$nm vmlinux | grep ' _R'.*CondVar | rustfilt
+... T <kernel::sync::condvar::CondVar>::notify_all
+... T <kernel::sync::condvar::CondVar>::notify_one
+... T <kernel::sync::condvar::CondVar>::notify_sync
+... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
 
-Tested-by: Clayton Craft <clayton@craftyguy.net>
+These notify_* symbols are trivial wrappers around the C functions
+__wake_up and __wake_up_sync. It doesn't make sense to go through
+a trivial wrapper for these functions, so mark them inline.
+
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+---
+Changes in v2:
+- Remove '#[inline]' for notify()
+- Reword commit msg
+- v1 link: https://lore.kernel.org/rust-for-linux/01c67d96-6477-4851-81ae-0cbee3b9e893@linux.dev
+---
+ rust/kernel/sync/condvar.rs | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
+index caebf03f553b..c6ec64295c9f 100644
+--- a/rust/kernel/sync/condvar.rs
++++ b/rust/kernel/sync/condvar.rs
+@@ -216,6 +216,7 @@ fn notify(&self, count: c_int) {
+     /// This method behaves like `notify_one`, except that it hints to the scheduler that the
+     /// current thread is about to go to sleep, so it should schedule the target thread on the same
+     /// CPU.
++    #[inline]
+     pub fn notify_sync(&self) {
+         // SAFETY: `wait_queue_head` points to valid memory.
+         unsafe { bindings::__wake_up_sync(self.wait_queue_head.get(), TASK_NORMAL) };
+@@ -225,6 +226,7 @@ pub fn notify_sync(&self) {
+     ///
+     /// This is not 'sticky' in the sense that if no thread is waiting, the notification is lost
+     /// completely (as opposed to automatically waking up the next waiter).
++    #[inline]
+     pub fn notify_one(&self) {
+         self.notify(1);
+     }
+@@ -233,6 +235,7 @@ pub fn notify_one(&self) {
+     ///
+     /// This is not 'sticky' in the sense that if no thread is waiting, the notification is lost
+     /// completely (as opposed to automatically waking up the next waiter).
++    #[inline]
+     pub fn notify_all(&self) {
+         self.notify(0);
+     }
+-- 
+2.43.0
+
 
