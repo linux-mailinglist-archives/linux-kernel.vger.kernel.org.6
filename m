@@ -1,138 +1,556 @@
-Return-Path: <linux-kernel+bounces-574283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28E1A6E30F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:09:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C86A6E319
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B2AA7A4565
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9796A168723
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044C9266F1D;
-	Mon, 24 Mar 2025 19:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EE7267386;
+	Mon, 24 Mar 2025 19:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="LipMvCuu"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BTEcgDij"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0893266EFE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC51261370
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742843329; cv=none; b=fMnm+8WGhw4kBjnazWUFP1fP/ZgdnaDJPyGj+3V0aYgZ/CBWLirPp0jXZUdKYZKe1M2V2M29XbOH3v6bnBzRwWzSF2q5qREIklQcQ1wlyIHNE4cl3iOMbr9UVeAs8HkYp8kMOieKoZ3jp/TIUZZPCJB7a1WhkaGu7xvhtjfeK9g=
+	t=1742843382; cv=none; b=dTmZNeJIZQlBbn3RHpm6B2q1ZrWluq4eBC0TL9iqH3ohmUSiDj739d/Q1X2YjkBFlW3i2kDm+/q4nVC5CkDuXA6nBYemP98nhbU995bb4fyDOeE4VvsjTH/ljuTk2H8y/mLniLxGbPcsTTGgYRmLiI8MX73uVDbdv3+S3nxIIN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742843329; c=relaxed/simple;
-	bh=1rymG9tMU7d+EpOLvZQFkNyqfGP87y3hoGgfLC166/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RvZBGz6b35Im3H0xmRj5TL7RKy4tjCOth6wfDSSoIpcv6itJgx2CcJKn5SncB9GX0fFl51/hWwbsyooaEgJ4IWk7RoAwMjyXF5ls6pR+j3WYMZ79FuSrnfKyqVgmDSopKwTBtiLy8GhQSCBZlCZwDeT7maEcLtajXb11mSrjzXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=LipMvCuu; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4768f90bf36so46213401cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:08:47 -0700 (PDT)
+	s=arc-20240116; t=1742843382; c=relaxed/simple;
+	bh=4e+oFu9Q6wUXTrgtXS5M+E3pj/8zp3lm10t7a5Qm2k0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rgh4VAsr04o/mzw75i+7IC8re0GZx3HQtYfRxL/yGLJ75pQNgdD1JPI7HfWUUXBhOzgF+Xd/PKRWp0hnqiRnPs92UYdV/REj+6ikfENF0VzHmhZ9IKknS2R69qR0yWGCMEnKWSb1zJgk3qstH+0qGlzn4CyZ7XmXJWmzWYOWDTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BTEcgDij; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6021d118877so2384104eaf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:09:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1742843326; x=1743448126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1dTQfcrbRLKQGYdsmVW0rTSaepqHTuYnIg8Unhl8ec=;
-        b=LipMvCuuqAVFW/ay6G7/+fSJxc6SfY4PY6zXm+Vs9uIRu1FoBWfbjXGTdGz7jzspUb
-         CMHZ9FygTiMqIvHgd6MQl5bvVm191GCzO9VRcTKOkaCon60HWVoM4tCsmOnmiCuc/jOe
-         flhJvb6RV3o1qeYCJnRtgl0/s25v4MqjWPI9jqZp+PhkyVMPz3bem9tSi/S9ldO2HgRO
-         tCab37lZEGNaTbWiZUlOl57IB9KVCfxUzlqHME+s+T+HHMazu0OVE7ijp8471oMpF0Zm
-         KYV7qwLnIm+JWCW3e0xq/g8aCEnK4XAXvBnJIcmA4WJbr5XkO4thQhgT1cu/gqOAWUTg
-         eqbA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742843378; x=1743448178; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=H0zdoAwcwDLSwtGfrTRWrJHFn7hMD5+WG40QGfQorTg=;
+        b=BTEcgDijjBC6I+SBOnJmpd7WNHRipzJHrLQEcCQFQZHbXniqog9Acugf+nBc4s4xnS
+         HKgL+bwXhdgVwZka6XjsPpERuGHqeOk8+U2gWegifh3B6EaGsMHrAUr5xAMm/It9IJ9k
+         vdsgsLnY+wL6Tv0RTny40PRSVCkhxlO8bFaYa/yRdB57UZZCoOPSNK3fPJOBp/zbe6XG
+         42opKZorStXqU5pggyfwhV2l0i0puR+x7w8fpGklkev8G+D3G55bGq7tJv3jpz1x/jEc
+         c/xwu6TWCkWD4znFZLDqkWFkCyYgy4XjpykKE9D8zqKGz9fBf4pURdsTFPOLW7m5Clo2
+         1l4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742843326; x=1743448126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e1dTQfcrbRLKQGYdsmVW0rTSaepqHTuYnIg8Unhl8ec=;
-        b=JAtKW8JZQNpIs1mNaDoRrJB3dWPNv2x27qqkGVpVZ7BQ4ED+b8YU9fk9ifSMLtHbfs
-         4dlx8/hUfNdAFFUTYoPdytSYWdHo3mVOfyWzlgJP6frIEVKKaAE0Ykd9jrxp5ePPAlbu
-         01MBaLIeAEqcFVOtqY7CZsWWS9VQM4HP7QyHgRDTiEscgY93BgpfqyGxA+dYW7NSMoB/
-         Ot0loZnx9yGjcxQw850HEij6ds4C+jfAPK+uqwXX8QEsl4jtV2lvgfnkyTzJSd9tU0b5
-         hbVfEKY73YZCn2vbJG6S5QSCIWAfSINWdkpUxBMcmhyGdDzuYC6W4n5X95oqKwbtU6uO
-         wYcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWORCXMt68itLRldAGhY+unU6b2AirCZKsAOwttEuQ0jHh8LSIWIi4G8vHxZx8dupyXwR2wl3wtBD+izAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2DCc/klmBmvLcYRXJ+OuAO8qWCGBhlqCml7YtugSRmKW2biOL
-	/tbQNq2hmK1tGzp8M5+u+ujdReaFhwjU6aWmD0ulDzokKIpu90oWZ7yuoHwW5JdvQneN/msF7cQ
-	=
-X-Gm-Gg: ASbGncsTUeqMROSS+DyIZct5cB8bBzEqiAnSa4e2WNyO6cHJYLDNlBphLHI7jnoUOkn
-	3DVVXEokbpZrfEs1PSAmBj+++EYtYbx17ygfecrepSW5FR+e8clUmhTVT8rYeX3hHgtg8J+73HS
-	1R5FMg8MVEkT3npc5VUxfMAdDWf+oqCL0ROU8nLoldh8w6mXR4rcB5qtmGAh6Jor2voukugkEWV
-	r7R2Or9lArQkHxEZMPQDW2FXS+gdaHP+s/bR3RO4+4WBgbbJV0LjBSKeLAGvgDPRRwCnr6evr8z
-	VPqeBkBG8DHFG2ooGGDTnsQcc+303lkVOM3FZuHY8hVpu5ZnWwYYl+RQTtFltnVZNV6ebji013n
-	M82LNgZKEGDJuTK+whYmybXmMitUHZxi/e4Hfnw==
-X-Google-Smtp-Source: AGHT+IHHVjLyxs4xugjYg38o07zQ3r4VavLlX0Whe/aSGbbSEHsuX248QsM4WBhcDUcE3xWJGlSOXA==
-X-Received: by 2002:ac8:5ac3:0:b0:477:1f29:e80f with SMTP id d75a77b69052e-4771f29e85fmr239847391cf.4.1742843326471;
-        Mon, 24 Mar 2025 12:08:46 -0700 (PDT)
-Received: from rowland.harvard.edu (nat-65-112-8-24.harvard-secure.wrls.harvard.edu. [65.112.8.24])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d159a42sm50755791cf.11.2025.03.24.12.08.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 12:08:45 -0700 (PDT)
-Date: Mon, 24 Mar 2025 15:08:42 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-i2c@vger.kernel.org
-Subject: Re: [syzbot] [usb?] WARNING in dib0700_i2c_xfer/usb_submit_urb
-Message-ID: <acfa19a7-9d24-4cd6-9d1d-580a9ac7473c@rowland.harvard.edu>
-References: <67e1a1f5.050a0220.a7ebc.0029.GAE@google.com>
+        d=1e100.net; s=20230601; t=1742843378; x=1743448178;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H0zdoAwcwDLSwtGfrTRWrJHFn7hMD5+WG40QGfQorTg=;
+        b=WrRaJo3s7/EPsVuCJyesM1N9cV3N3f7lOIXK+jeic5fzG2e19SUV1I6NRJyOIwSM6d
+         0SD7nxNjAUrS9+0IitjWZaB+BHeV+7Hw/e0kxIn46Q7MxZZ9MxGBA0j4+h1qauhPWdZS
+         h1cXI3SAPPMHUQE4Et8Q0JJsN9b/wY+AVz4vund9dJvx0u55eOHePC4iNeemqI3bcNv8
+         A9Tg3R0p4H2U3ln9boRX/tLoE910WBDr/k8Fq3ZBUDlYgJ7SVAJ6tsgpSIJ0ck2j1oKi
+         IIBQJah2ZPYPtkAgYprcejY1mLNdZv2KkJxLj9RCV3EsFg6jKENs35+oF+x9hHps2KRV
+         dPUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmAAxV7eLbpB9hSTIzB4h1tHI/OxWqJY8T5fr3XnkHDTc0H+fC3n+G94ndYK1e8RGPj1clnrgL8T9NGII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZixnBG/YIkaduMNauEPuHrMbEUTNutLNJ2rchGV2GRzZ9KZBr
+	GcCVrxUPxGnJkNm7jki42CE93zgZYQ3ELZUkSNGPFZRxDaxmi3Mov/nR8f3UV9w=
+X-Gm-Gg: ASbGncuS3+z6fHd+hIbfZonq7eiilbD6TePC9wYLDOQDxK81LAVAb9z+r/NylPCWdGa
+	bxM0h6lU9eLx07jpbEOrhpUZVZt9kC8WsQoWK2oS28vTZJQgBctKvWG/7c/e57WoeVDkHsxpnGZ
+	mMuTMl2bwdtSlcyl0bx9AE4YjxDo0+o/2aPlje15kfnHKMVQtE7UENjvEN0ilDRHsNDLVvjbefs
+	RRvqW1nyT6IjZHPx2wzw5XUSd+D1tUbJza1nl6OUhXr7ruveUAv7kYx7x3I89HiEU9kR/qP6bTH
+	uHaSAtNoX0a9ZEvKtTtFF5mCkHy9IYxm/I6zETe+Wsg/x+o09T5LBLLra83sEANz8Yd41qSpw8P
+	hAQP29Q==
+X-Google-Smtp-Source: AGHT+IHbHJS2ELGvP1HWTkIv85XUyoptAROmV7RaFDSIwXC/XQCS78dgMcqkqcEWANU8rVY19XdwKA==
+X-Received: by 2002:a05:6820:2486:b0:601:afda:cddd with SMTP id 006d021491bc7-602345ef325mr6350812eaf.4.1742843377911;
+        Mon, 24 Mar 2025 12:09:37 -0700 (PDT)
+Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60234710c7dsm1281811eaf.14.2025.03.24.12.09.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 12:09:36 -0700 (PDT)
+Message-ID: <4e18f195-fec2-4562-bbe5-69ff465e44d9@baylibre.com>
+Date: Mon, 24 Mar 2025 14:09:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67e1a1f5.050a0220.a7ebc.0029.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] iio: adc: ad7405: add ad7405 driver
+To: Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Guillaume Stols <gstols@baylibre.com>, Trevor Gamblin
+ <tgamblin@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Michael Walle <michael@walle.cc>, Herve Codina <herve.codina@bootlin.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250324090813.2775011-1-pop.ioan-daniel@analog.com>
+ <20250324090813.2775011-6-pop.ioan-daniel@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20250324090813.2775011-6-pop.ioan-daniel@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 24, 2025 at 11:18:29AM -0700, syzbot wrote:
-> Hello,
+On 3/24/25 4:08 AM, Pop Ioan Daniel wrote:
+> Add support for the AD7405/ADUM770x, a high performance isolated ADC,
+> 1-channel, 16-bit with a second-order Σ-Δ modulator that converts an
+> analog input signal into a high speed, single-bit data stream.
 > 
-> syzbot found the following issue on:
+
+Dragos is listed as the MODULE_AUTHOR, so would expect to see Co-developed-by:
+and Signed-off-by: tags for him as well, assuming he wrote some of this code.
+
+More info: https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+
+> Signed-off-by: Pop Ioan Daniel <pop.ioan-daniel@analog.com>
+> ---
+>  drivers/iio/adc/Kconfig  |  10 ++
+>  drivers/iio/adc/Makefile |   1 +
+>  drivers/iio/adc/ad7405.c | 301 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 312 insertions(+)
+>  create mode 100644 drivers/iio/adc/ad7405.c
 > 
-> HEAD commit:    5fc319360819 Merge tag 'net-6.14-rc8' of git://git.kernel...
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15445e98580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=27515cfdbafbb90d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c38e5e60d0041a99dbf5
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ea4c4c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15435004580000
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index f64b5faeb257..321a1ee7304f 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -203,6 +203,16 @@ config AD7380
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called ad7380.
+>  
+> +config AD7405
+> +	tristate "Analog Device AD7405 ADC Driver"
+> +	select IIO_BACKEND
+> +	help
+> +	  Say yes here to build support for Analog Devices AD7405, ADUM7701,
+> +	  ADUM7702, ADUM7703 analog to digital converters (ADC).
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called ad7405.
+> +
+>  config AD7476
+>  	tristate "Analog Devices AD7476 1-channel ADCs driver and other similar devices from AD and TI"
+>  	depends on SPI
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index ee19afba62b7..0c3c1c69b6b4 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -21,6 +21,7 @@ obj-$(CONFIG_AD7291) += ad7291.o
+>  obj-$(CONFIG_AD7292) += ad7292.o
+>  obj-$(CONFIG_AD7298) += ad7298.o
+>  obj-$(CONFIG_AD7380) += ad7380.o
+> +obj-$(CONFIG_AD7405) += ad7405.o
+>  obj-$(CONFIG_AD7476) += ad7476.o
+>  obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
+>  obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
+> diff --git a/drivers/iio/adc/ad7405.c b/drivers/iio/adc/ad7405.c
+> new file mode 100644
+> index 000000000000..40fe072369d5
+> --- /dev/null
+> +++ b/drivers/iio/adc/ad7405.c
+> @@ -0,0 +1,301 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Analog Devices AD7405 driver
+> + *
+> + * Copyright 2025 Analog Devices Inc.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/log2.h>
+> +#include <linux/clk.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/backend.h>
+> +#include <linux/util_macros.h>
+> +#include <linux/regulator/consumer.h>
 
-> ------------[ cut here ]------------
-> usb 1-1: BOGUS control dir, pipe 80000f80 doesn't match bRequestType c0
-> WARNING: CPU: 1 PID: 5901 at drivers/usb/core/urb.c:413 usb_submit_urb+0x11d9/0x18c0 drivers/usb/core/urb.c:411
+Sort the includes in alphabetical order. And prune headers that aren't used
+like log2.h and of.h.
 
-> Call Trace:
->  <TASK>
->  usb_start_wait_urb+0x113/0x520 drivers/usb/core/message.c:59
->  usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
->  usb_control_msg+0x2b1/0x4c0 drivers/usb/core/message.c:154
->  dib0700_ctrl_rd drivers/media/usb/dvb-usb/dib0700_core.c:95 [inline]
->  dib0700_i2c_xfer_legacy drivers/media/usb/dvb-usb/dib0700_core.c:315 [inline]
->  dib0700_i2c_xfer+0xc53/0x1060 drivers/media/usb/dvb-usb/dib0700_core.c:361
->  __i2c_transfer+0x866/0x2220
->  i2c_transfer+0x271/0x3b0 drivers/i2c/i2c-core-base.c:2315
->  i2cdev_ioctl_rdwr+0x452/0x710 drivers/i2c/i2c-dev.c:306
->  i2cdev_ioctl+0x759/0x9f0 drivers/i2c/i2c-dev.c:467
->  vfs_ioctl fs/ioctl.c:51 [inline]
+> +
+> +#define AD7405_DEFAULT_DEC_RATE 1024
+> +
+> +const unsigned int ad7405_dec_rates[] = {
+> +		4096, 2048, 1024, 512, 256, 128, 64, 32,
+> +};
+> +
+> +struct ad7405_chip_info {
+> +	const char *name;
+> +	unsigned int num_channels;
+> +	unsigned int max_rate;
+> +	unsigned int min_rate;
+> +	struct iio_chan_spec channel[3];
 
-It appears that this problem was caused by the fuzzer requesting an i2c 
-transfer containing a 0-length read (I2C_M_RD) message.  The dib0700 
-driver translates this more or less literally into a USB read request of 
-length 0.  But the USB protocol does not allow such things; a 
-request of length 0 is always a write.  Hence the WARNING above.
+Currently, all chips only have one channel, so we can leave out num_channels
+and not use an array for the single struct iio_chan_spec.
 
-As far as I can tell from the source code, the dib0700 simply isn't able 
-to handle 0-length reads.  Should the dib0700_ctrl_rd() routine be 
-changed simply to return 0 in such cases?
+> +	const unsigned long *available_mask;
+> +};
+> +
+> +struct ad7405_state {
+> +	struct iio_backend *back;
+> +	struct clk *axi_clk_gen;
 
-Alan Stern
+Just call it clk. Also, if we don't need to access it outside of probe, we
+don't need it in this struct.
+
+> +	/* lock to protect multiple accesses to the device registers */
+> +	struct mutex lock;
+> +	struct regmap *regmap;
+
+These are not used, so should be removed.
+
+> +	struct iio_info iio_info;
+
+Don't need to have a copy in this struct.
+
+> +	const struct ad7405_chip_info *info;
+> +	unsigned int sample_frequency_tbl[ARRAY_SIZE(ad7405_dec_rates)];
+> +	unsigned int sample_frequency;
+> +	unsigned int ref_frequency;
+> +};
+> +
+> +static void ad7405_fill_samp_freq_table(struct ad7405_state *st)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(ad7405_dec_rates); i++)
+> +		st->sample_frequency_tbl[i] = DIV_ROUND_CLOSEST_ULL(st->ref_frequency, ad7405_dec_rates[i]);
+
+Wrap to 80 chars.
+
+> +}
+> +
+> +static int ad7405_set_sampling_rate(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan,
+> +				    unsigned int samp_rate)
+> +{
+> +	struct ad7405_state *st = iio_priv(indio_dev);
+> +	unsigned int dec_rate, idx;
+> +	int ret;
+> +
+> +	dec_rate = DIV_ROUND_CLOSEST_ULL(st->ref_frequency, samp_rate);
+> +
+> +	idx = find_closest_descending(dec_rate, ad7405_dec_rates,
+> +				      ARRAY_SIZE(ad7405_dec_rates));
+> +
+> +	    dec_rate = ad7405_dec_rates[idx];
+> +
+> +	ret = iio_backend_set_dec_rate(st->back, dec_rate);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->sample_frequency = DIV_ROUND_CLOSEST_ULL(st->ref_frequency, dec_rate);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad7405_update_scan_mode(struct iio_dev *indio_dev,
+> +				   const unsigned long *scan_mask)
+> +{
+> +	struct ad7405_state *st = iio_priv(indio_dev);
+> +	unsigned int c;
+> +	int ret;
+> +
+> +	for (c = 0; c < indio_dev->num_channels; c++) {
+> +		if (test_bit(c, scan_mask))
+> +			ret = iio_backend_chan_enable(st->back, c);
+> +		else
+> +			ret = iio_backend_chan_disable(st->back, c);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad7405_read_raw(struct iio_dev *indio_dev,
+> +			   const struct iio_chan_spec *chan, int *val,
+> +			   int *val2, long info)
+> +{
+> +	struct ad7405_state *st = iio_priv(indio_dev);
+> +
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +			*val = st->sample_frequency;
+> +
+> +			return IIO_VAL_INT;
+> +	default:
+> +			return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad7405_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan, int val,
+> +			    int val2, long info)
+> +{
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +
+
+Need to return -EINVAL on val = 0 to avoid divide by zero crash.
+
+> +			return ad7405_set_sampling_rate(indio_dev, chan, val);
+> +
+> +	default:
+> +			return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad7405_read_avail(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan,
+> +				 const int **vals, int *type, int *length,
+> +				 long info)
+> +{
+> +	struct ad7405_state *st = iio_priv(indio_dev);
+> +
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +			*vals = st->sample_frequency_tbl;
+> +			*length = ARRAY_SIZE(st->sample_frequency_tbl);
+> +			*type = IIO_VAL_INT;
+> +			return IIO_AVAIL_LIST;
+> +	default:
+> +			return -EINVAL;
+> +	}
+> +}
+
+./scripts/checkpatch.pl should be catching issues with indentation style in the
+functions above.
+
+> +
+> +static const struct iio_info ad7405_iio_info = {
+> +	.read_raw = &ad7405_read_raw,
+> +	.write_raw = &ad7405_write_raw,
+> +	.read_avail = &ad7405_read_avail,
+> +	.update_scan_mode = ad7405_update_scan_mode,
+> +};
+> +
+> +#define AD7405_IIO_CHANNEL(_chan, _bits, _sign)		  \
+
+chan, bits and sign are always the same, so we could omit these paramters.
+
+> +	{ .type = IIO_VOLTAGE,					  \
+
+We need info_mask_shared_by_type (or _separate) with IIO_CHAN_INFO_SCALE and
+IIO_CHAN_INFO_OFFSET flags so that userspace knows how to convert raw data to
+the standard unit of millivolts.
+
+> +	  .info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	  .info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	  .indexed = 1,						 \
+> +	  .channel = _chan,					 \
+
+Also needs .scan_index = _chan, .differential = 1, .channel2 = _chan + 1,
+
+> +	  .scan_type = {				\
+> +		.sign = _sign,				\
+> +		.realbits = _bits,			\
+> +		.storagebits = 16,			\
+> +		.shift = 0,				\
+> +	  },						\
+> +	}
+> +
+> +static const unsigned long ad7405_channel_masks[] = {
+> +		BIT(0),
+> +		0,
+> +};
+
+This should not be need since there is only one channel.
+
+> +
+> +static const struct ad7405_chip_info ad7405_chip_info = {
+> +		.name = "AD7405",
+> +		.max_rate = 625000UL,
+> +		.min_rate = 4883UL,
+
+Doesn't the max rate depend on the clock frequency? So not sure how useful it
+is to specify this.
+
+min_rate is not used anywhere, so can be omitted.
+
+> +		.num_channels = 1,
+> +		.channel = {
+> +			AD7405_IIO_CHANNEL(0, 16, 'u'),
+> +		},
+> +		.available_mask = ad7405_channel_masks,
+> +};
+> +
+> +static const struct ad7405_chip_info adum7701_chip_info = {
+> +		.name = "ADUM7701",
+> +		.max_rate = 656250UL,
+> +		.min_rate = 5127UL,
+> +		.num_channels = 1,
+> +		.channel = {
+> +			AD7405_IIO_CHANNEL(0, 16, 'u'),
+> +		},
+> +		.available_mask = ad7405_channel_masks,
+> +};
+> +
+> +static const char * const ad7405_power_supplies[] = {
+> +	"vdd1",	"vdd2",
+> +};
+> +
+> +static int ad7405_probe(struct platform_device *pdev)
+> +{
+> +	const struct ad7405_chip_info *chip_info;
+> +	struct device *dev = &pdev->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ad7405_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	chip_info = &ad7405_chip_info;
+
+This uses the same chip info for all chips and ignores the .data in the module
+device table.
+
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+
+There is no platform_get_drvdata(), so this is unnecessary.
+
+> +
+> +	st->axi_clk_gen = devm_clk_get(dev, NULL);
+
+Can be simplified to devm_clk_get_enabled().
+
+> +	if (IS_ERR(st->axi_clk_gen))
+> +		return PTR_ERR(st->axi_clk_gen);
+> +
+> +	ret = clk_prepare_enable(st->axi_clk_gen);
+> +	if (ret)
+> +		return ret;
+
+Otherwise we also need to add something to disable_unprepare the clock when
+the driver is removed.
+
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad7405_power_supplies),
+> +					     ad7405_power_supplies);
+
+I didn't see anything in the datasheet about power up sequencing, but typically
+we would turn on power to the chip first before applying any other signals, like
+the clock.
+
+> +
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to get and enable supplies");
+> +
+> +	st->ref_frequency = clk_get_rate(st->axi_clk_gen);
+
+Should check for return value of 0 and raise an error, otherwise we would get
+divide by zero crash later.
+
+> +
+> +	ad7405_fill_samp_freq_table(st);
+> +
+> +	indio_dev->dev.parent = dev;
+> +	indio_dev->name = pdev->dev.of_node->name;
+
+I think usually this is chip_info->name rather than the DT node name.
+
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+
+IIO_CHAN_INFO_RAW isn't implemented, so INDIO_DIRECT_MODE should not be set.
+
+> +
+> +	indio_dev->channels = chip_info->channel;
+> +	indio_dev->num_channels = chip_info->num_channels;
+> +
+> +	st->iio_info = ad7405_iio_info;
+> +	indio_dev->info = &st->iio_info;
+> +
+> +	st->back = devm_iio_backend_get(dev, NULL);
+> +	if (IS_ERR(st->back))
+> +		return dev_err_probe(dev, PTR_ERR(st->back),
+> +				     "failed to get IIO backend");
+> +
+> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_backend_enable(dev, st->back);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Reset all HDL Cores */
+> +	iio_backend_disable(st->back);
+> +	iio_backend_enable(st->back);
+
+Seems like this would be redunant and should be done implicitly by
+devm_iio_backend_enable() (i.e. disable in adi_axi_adc_probe() so that 
+devm_iio_backend_enable() brings it out of reset).
+
+> +
+> +	ret = ad7405_set_sampling_rate(indio_dev, &indio_dev->channels[0],
+> +				       chip_info->max_rate);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_device_register(dev, indio_dev);
+
+Can just return directly here.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Match table for of_platform binding */
+> +static const struct of_device_id ad7405_of_match[] = {
+> +	{ .compatible = "adi,ad7405", .data = &ad7405_chip_info, },
+> +	{ .compatible = "adi,adum7701", .data = &adum7701_chip_info, },
+> +	{ .compatible = "adi,adum7702", .data = &adum7701_chip_info, },
+> +	{ .compatible = "adi,adum7703", .data = &adum7701_chip_info, },
+> +	{ /* end of list */ },
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, ad7405_of_match);
+> +
+> +static struct platform_driver ad7405_driver = {
+> +	.driver = {
+> +		.name = "ad7405",
+> +		.owner = THIS_MODULE,
+> +		.of_match_table = ad7405_of_match,
+> +	},
+> +	.probe = ad7405_probe,
+> +};
+> +
+> +module_platform_driver(ad7405_driver);
+> +
+> +MODULE_AUTHOR("Dragos Bogdan <dragos.bogdan@analog.com>");
+> +MODULE_DESCRIPTION("Analog Devices AD7405 driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("IIO_BACKEND");
+
 
