@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-574525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946DEA6E662
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:09:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E37A6E668
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:11:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B2A3A70B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2027316C118
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985731E1C2B;
-	Mon, 24 Mar 2025 22:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C106A1EF09A;
+	Mon, 24 Mar 2025 22:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RD8EvEgm"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="UAWpwE8/"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762381E5B7C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853981; cv=fail; b=LVgjNCfmZmytJRnIWCptrH2aSM0jyl67dlNQZuqQy/PmHI70MCU/iFjxCwDcqCCLAgpatFCL+Uc1kdYzPgBAtAOxM1Z+smm58RIBXlchv2U7u+4sxqeXW4VrViEgjg6uE77qeIAL3mRZurur/ICvIxWXDpYqmZvtSXxAJLcQksI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853981; c=relaxed/simple;
-	bh=Ag3xFBr5sklEqKWYuE69paBu+UdTuBU05YxjNfrzbvg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vp5F2Q0qQx6r8l9MIwalPyd8VtFoGjFiTaqgpeDTeoNdHnc+wLeMBkzbj16atK1gRBG+oRTk0fsnBQxUk1b58NHXjAowedW5eDX43DrgyuUbRDD6TR2zrwxxvYfNk6yr2Z1XExB4/Hut/hSzjN+LCEERAJalmA+yrOoLuUxvoT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RD8EvEgm; arc=fail smtp.client-ip=40.107.94.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CckvnVlMG7d0JGSQaNWc18+TQ/2tT7WH3S1WyIig0sgHUhuxpTNVcA/Mi/f+cAGTJPuWUEudXzB+WmYRC/QgHMTbYJgHSO1OS71k7to3PiN6GOZ4T1OT7mkeiNveXTt3+ou0yz3m1KKpBNcwa6/n7+2SqnLUfWqxejytqN9mCyx0HoYZT/xoWbtyCHE6I5rc1uSk8hdpCanCxqZ4b7fN5AUucsyJ13HN2qFYLnPZEWiMbiXDr0TPJJKHrRKe4I7sqENTR/hK4EOCJBCVF8LsyRfgyjlB+QiLa9XI3du+XU++pkwJdIzOC/XNDf9f+Y8BCiZ/ffTKhOD0EexQHKLEng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O3J0feagq3sOEAsjmGyb73m9SraIJCgPLjnTnIHtmWA=;
- b=ImUPGfzGvHHVODbAXvzOadBuz7aMStHgNOQ/qnmZwLV8DBbfddLZK4sO2EquORjAgsvFipTK3710oF+2khSXQsDwJsy6DgMzCBdxWPtNprNetqUSGv2vSpD7eKoNgK6Pw1dQY4EWRAvVl3Hvt4SngSkzrm7eaNttxPp5v/JgGI1NNcr9RbWlkRXsjeoGuxcSUAMUYup8AnM6jENFYrRUAOATizU2T+Dt0e+x+oYt3gdNuJJdSOTBz8h63Hcs80iR6dFPlwcl9yeIBtiN8bL2ZH8+xRp3lfkiSUO56GZzbKg+AAu5913DggrA73+5KkfXAXR8CennUc7zuEzGbUc0zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O3J0feagq3sOEAsjmGyb73m9SraIJCgPLjnTnIHtmWA=;
- b=RD8EvEgm8naLFLoikzK1ca1bkjxfoO6VAeXqu0mx6P4F7oGp7C7mTC62oYFF+W8nyljX/MqnDYe74YI/JdVeGNag6MX3wp+QAb+a4U1CRpp6S1QW8Xi8eIPfR4BFs8m9d3Fpcbg2Z3huKDKI/aVtWMEwBSsB6w8WglCcZwrGm/fgiVsPTiH55/uq4/AvIDiTxLRRYJcB/n3rI+8Y2+wqaafQtqlrgP6sVw/1q8kipAzhv8vtiObDRpLtyoOohrYSNIMNBokZKEwmXBfsiY6r58t9VeTO9TzfktDmXMpsJYb12ZNItvOHrubuv2vgdJxXreDopGy2drIoPTUna114ZQ==
-Received: from SJ0PR03CA0354.namprd03.prod.outlook.com (2603:10b6:a03:39c::29)
- by LV2PR12MB5967.namprd12.prod.outlook.com (2603:10b6:408:170::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 22:06:15 +0000
-Received: from SJ5PEPF00000206.namprd05.prod.outlook.com
- (2603:10b6:a03:39c:cafe::9) by SJ0PR03CA0354.outlook.office365.com
- (2603:10b6:a03:39c::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Mon,
- 24 Mar 2025 22:06:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF00000206.mail.protection.outlook.com (10.167.244.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 22:06:15 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
- 2025 15:06:04 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
- 2025 15:06:03 -0700
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 24 Mar 2025 15:05:55 -0700
-Date: Mon, 24 Mar 2025 15:05:48 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Arnd Bergmann <arnd@kernel.org>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, "Joerg
- Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Arnd Bergmann
-	<arnd@arndb.de>, Robin Murphy <robin.murphy@arm.com>, Lu Baolu
-	<baolu.lu@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] iommufd: import IOMMUFD_INTERNAL namespace
-Message-ID: <Z+HXPDuw+x7CK6a9@nvidia.com>
-References: <20250324210329.2809869-1-arnd@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334A71EE7BB;
+	Mon, 24 Mar 2025 22:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742854238; cv=none; b=lfGYKb1seDj6Sp9Pw53z0RVmECO6UTZexIXCFCuIhuKrMEXZtftCm5oUj6Q+pS3nDvcqHZQ8dGZ6kBNBy4/LBStscWXpCLEZwHoY9m9qLkgqv4YfVxyG11J2bZUDUOhlQKplBzpIOSGWZHUM8b5NSe5aiu4z9hHLZfsbQ4J2dss=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742854238; c=relaxed/simple;
+	bh=zsWY8qS8zuIETSt8iIrsOojgHvXhoycAQbZSI9tCAuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bcU4IxCF7PvW8KhQ1kDENX2hBWdcmjTxHZBAVPN/P6h4ep3w2lC/kBPAhx8cSFALHCO3O0TbdjeH5lRy9GiJ79rXJiySbTNTwzgZcZsmlkXU/5LJJHdbIwaYIClM5ucwlnE2dIPqe0hF2DJef0SnkK5WeFiBupkUMllKwzNHLLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=UAWpwE8/; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZM6gZ6qypzm0R45;
+	Mon, 24 Mar 2025 22:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=mr01; t=
+	1742854233; x=1745446234; bh=J5mEtuUm0A7K6yocRivKWzDqx8ynCyjDU/P
+	eLFthzKc=; b=UAWpwE8/aVYkTkvCti1zIvXCJC9rBnTKyCZtjyHO48hBbtfUmTt
+	Ajiu2Np6i51op4W+oEhVGCbOljGxiKFxkL30jtWzUy5aMnWiOf8SdwzZPcFryHir
+	QRU5dyGNgvHH1tIkWah8g1reQ1I/TcShttzBq+CmIKtwmJhW97wTutj47a3vtD2n
+	OyUazBF1tZp+1+bkURgWDNw1jpdtr0HcY8FdrDONp1QJFChOe6Qp7uZg2YZdjhYX
+	hwGb5TEn35sHQd+GnjTGbHX/EORMlr3FPgl0Nv6o7PdbWwt27HNyd2PcVYl9zH/Q
+	0hQyerKQxpcv2F05PQBetkyOFX6PQXQfiAA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id fHeKHxPkWptN; Mon, 24 Mar 2025 22:10:33 +0000 (UTC)
+Received: from localhost.localdomain (dslb-002-206-092-185.002.206.pools.vodafone-ip.de [2.206.92.185])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: tom.vierjahn@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZM6gP0zwmzlfnBq;
+	Mon, 24 Mar 2025 22:10:23 +0000 (UTC)
+From: Tom Vierjahn <tom.vierjahn@acm.org>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: dirk.gouders@w-hs.de,
+	Tom Vierjahn <tom.vierjahn@acm.org>,
+	linux-ext4@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: ext4: Add fields to ext4_super_block documentation
+Date: Mon, 24 Mar 2025 23:09:30 +0100
+Message-ID: <20250324221004.5268-1-tom.vierjahn@acm.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250324210329.2809869-1-arnd@kernel.org>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000206:EE_|LV2PR12MB5967:EE_
-X-MS-Office365-Filtering-Correlation-Id: fbc063e2-fc60-466b-df32-08dd6b2018c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5CzPZHKDRTDkkXqAfbww8ouG6y04kbFwotmV5kkKpFVOmfsTlDxFwSsHp/YK?=
- =?us-ascii?Q?nkB6dBJP9iL4ws/j0ke7+3Cu+aEm3Tb9H7fdD5NGj59EgmnpYnTHNzc8cKZM?=
- =?us-ascii?Q?r2pcJgNARIH2sK2Gwcj8B3wXHfs8b6p6NNr1HW+0TjSFnhs4+uooCbs/ZmVB?=
- =?us-ascii?Q?paDiTpV31B0fNIIl367pXYgRcfjQM3QVT7C8cugEXFdMEyCpTubikTO7th7f?=
- =?us-ascii?Q?eLQPZglDh9irxSZmevZsZXMAI3ERhNNWlV3GdMsg+N7QXkngUqD+3L9d6Chm?=
- =?us-ascii?Q?Eh5v3aVjuvZsh3FNBfKgMX/Xwx1qkWA8QiU23RIMA6oqX37PYSTbSQ7biWaH?=
- =?us-ascii?Q?UKG45HzGPsqqLBNdOuQUTqkfM7xFemCaX4uPDfybFlpbIBUUwymDXeRwczAL?=
- =?us-ascii?Q?qvEqe5mgKAGSSokYad7pWkzbE5F1T85G6eJg4Z08S++dZnzwsKQ+T4LFX1fU?=
- =?us-ascii?Q?z1g4EFFb59gf4dh05Kk58Lg7FZSlZHDfaYm5WlJjRjpOUbz15+su4KiALwWT?=
- =?us-ascii?Q?CpL7h/kqIRXTGe7WkBmlDfz1e3jXbdu8gJBovInZddgbXLXIxH+peKDX46Gy?=
- =?us-ascii?Q?2tkYHwmCY5sSXSQmbYXHfu6N+Y+j6V2rnOH0PgLCINosVAtNOkaLGppLEtba?=
- =?us-ascii?Q?PGuZNRe1AnKugvZEiHeEAfCRobVS8Cl8xcRxFtV3jw8lGFzP4UZLqj0lOoIl?=
- =?us-ascii?Q?PB/2UHaO/fblc+4Rd0C2PfoKiZDjHuShI/e67W3ZObbYwiT96lUAmVUCFSJ3?=
- =?us-ascii?Q?o1wrH6IOssP5IJ2XjJcupAJsUtJcb2UZ4RjGaetDUCjANsDuqzLgR126qah1?=
- =?us-ascii?Q?BG2UBXZfVfOoFXHZWUJ1IJnGHhbHURGoMRHz21X8UN6MOBBTIQahjUCSF2dj?=
- =?us-ascii?Q?1fG9rBH5ZRnN94Cd7Sr+JVRO5o02DtJCGHBs23ltpDxdLpEXSsZ8w9Hvy3Fg?=
- =?us-ascii?Q?QDpffZUV6ULvzeF+W51N5d1KaffTK2/Mpcx9ZpIyurnMOichJrsx/9uIcqbU?=
- =?us-ascii?Q?ueesr+XuBdv2vTAlV+mIlt9jxIJ7AjXZQkrztsm5wMsyFIC3dv5Ar/DP/Gi0?=
- =?us-ascii?Q?gesPTUe51V+MR3um0nY4MzJFmz9ChBGDmKRNWPzDUL5IsYkRllZORhJezwGP?=
- =?us-ascii?Q?b3gmU+CvfHxv+WRqoL6oKcNC7zyh1wHrqPhREH1NOMBEONrwK1dME18XDml7?=
- =?us-ascii?Q?f/jqulqd+WN+pcCDn0VNgWlV6WcwccJqFwXR72KHZh39+KDaWi6ozGD4OuSB?=
- =?us-ascii?Q?wdIUmXYKuB6xQGDbYH2e13m2xvduMQzPXiHAglolcak6G1oIuznd35Fhhn1/?=
- =?us-ascii?Q?+2Wpwk5kVHU42oVbbhCSEkCrDToyv5GQ6ERZFCQJmxorsK7el81kBbaYcW0L?=
- =?us-ascii?Q?92vuo36RQ8YRPPyFXcGRQ4paGtxpGsMmwI3ZSthbOxN8VKPxqDnyqWKNODEu?=
- =?us-ascii?Q?APEo3Vs6mKETngavDaUGdGi9oCj9SptcFfjW3yP/lIAdumQ4u0pksIxIPJJ6?=
- =?us-ascii?Q?w6dvLPi2AQEasky1UEJuEXJ/f4pRyRiBiAe+?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 22:06:15.4937
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbc063e2-fc60-466b-df32-08dd6b2018c3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000206.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5967
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 10:03:22PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Building the iommufd driver as a loadable module causes a failure now:
-> 
-> ERROR: modpost: module iommufd_driver uses symbol iommu_attach_handle_get from namespace IOMMUFD_INTERNAL, but does not import it.
-> 
-> Import the namespace as needed here.
-> 
-> Fixes: 916a207692ce ("iommufd: Move iommufd_sw_msi and related functions to driver.c")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Documentation and implementation of the ext4 super block have
+slightly diverged: Padding has been removed in order to make room for
+new fields that are still missing in the documentation.
 
-Tested-by: Nicolin Chen <nicolinc@nvidia.com>
+Add the new fields s_encryption_level, s_first_error_errorcode,
+s_last_error_errorcode to the documentation of the ext4 super block.
 
-Thanks!
+Fixes: f542fbe8d5e8 ("ext4 crypto: reserve codepoints used by the ext4 en=
+cryption feature")
+Fixes: 878520ac45f9 ("ext4: save the error code which triggered an ext4_e=
+rror() in the superblock")
+
+Signed-off-by: Tom Vierjahn <tom.vierjahn@acm.org>
+---
+ Documentation/filesystems/ext4/super.rst | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/filesystems/ext4/super.rst b/Documentation/fil=
+esystems/ext4/super.rst
+index a1eb4a11a1d0..1b240661bfa3 100644
+--- a/Documentation/filesystems/ext4/super.rst
++++ b/Documentation/filesystems/ext4/super.rst
+@@ -328,9 +328,13 @@ The ext4 superblock is laid out as follows in
+      - s_checksum_type
+      - Metadata checksum algorithm type. The only valid value is 1 (crc3=
+2c).
+    * - 0x176
+-     - __le16
+-     - s_reserved_pad
+-     -
++     - \_\_u8
++     - s\_encryption\_level
++     - Versioning level for encryption.
++   * - 0x177
++     - \_\_u8
++     - s\_reserved\_pad
++     - Padding to next 32bits.
+    * - 0x178
+      - __le64
+      - s_kbytes_written
+@@ -466,9 +470,13 @@ The ext4 superblock is laid out as follows in
+      - s_last_error_time_hi
+      - Upper 8 bits of the s_last_error_time field.
+    * - 0x27A
+-     - __u8
+-     - s_pad[2]
+-     - Zero padding.
++     - \_\_u8
++     - s\_first\_error\_errcode
++     -
++   * - 0x27B
++     - \_\_u8
++     - s\_last\_error\_errcode
++     -
+    * - 0x27C
+      - __le16
+      - s_encoding
+
+base-commit: d5e206778e96e8667d3bde695ad372c296dc9353
+--=20
+2.49.0
+
 
