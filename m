@@ -1,120 +1,125 @@
-Return-Path: <linux-kernel+bounces-574345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5601AA6E43D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBC0A6E43F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FEEB3B4735
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 902DF3B53EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260A21D6DB4;
-	Mon, 24 Mar 2025 20:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBAF1DD9AC;
+	Mon, 24 Mar 2025 20:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hOuCnQFs"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eGN9sYHe"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB6C8634A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9251CDFAC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742847729; cv=none; b=drpAA6K6coSUHywQoz0EJqvPsyh2NJxC7UZIdOVRSWuwUVoZFSfjOooH04Arw3hqcqa4sNgQaUPLyVoUp00eFi2ocTXrwJgKK79vSUh+LAL4hd2Emqb2HO++ECnHTNF+tiLdIveWL3+nAlj7ZybNkq3lqwbnXApK/r1crCxIWyk=
+	t=1742847749; cv=none; b=kwGFvL28RB/idT/+odRuDxX9GEdf0BkMyiXTKHnd25HER3yup6o/zzue01q34teyMRb08vK8YBH6yQXRvcTnJq15+ieVuIESzhQjQdsqayVNNGs1qnSPd0qgvoIpTHpy2GO/qD+by3hjhYSYn34WKBy0A5dyEjrU+21I4RI92H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742847729; c=relaxed/simple;
-	bh=FztcM5JzPEKSfZfhduO7XfHyNElQhOvgkbtRXZ7IDQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nqJeL9dbUbvYowG9hXxrO/b+3OweWtVHWi+oq3qNFmzgMtZmKem6YV1jp9Nsu962OuiP9hmL3bJyFddzPFhJkAQjppTXjJB6cOtd0MuuOt0a9XVCaSLsMn8q9z3m/t2K/s0tCpv4avFQY3wpc4cEvxhroDEXcC4PiwPJsrOxT8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hOuCnQFs; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2263428c8baso13835ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:22:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742847727; x=1743452527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zgVH1mDvEmNxyAJr/MBXbYbtV3ceuotfIxoUXuGJIzw=;
-        b=hOuCnQFsd7Y/3w9j5F6O0zU8E45BrGrkt9jG+RHfPcoDQHEWALxVnJvp5MG/M+rTn4
-         fId5nMBvGf81Fca3X+I5MBD+DXxr9aQ+Vc0aP1vPVIuTwi+IgNccscpFdr0v0IBF5B6W
-         JagSxwgZ0ISF99YhLls3LEL+gDfGUH0qlPekuahCm6iPTeyHEBHVOH/xPs7PZAj6s+Th
-         lQfDhZyCGV77OKsxFKfAb2lkOLbbzSNEkMlGVW1Wpfp/BhYPljzAfIQrrUjQCdMRGybb
-         1842DCXwaqpSr8lYqooEwjS23NW1i0Aufic3VbxYq4XgxgBgLhk/o8Dj4OZ3q0MSS5Rv
-         I8Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742847727; x=1743452527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zgVH1mDvEmNxyAJr/MBXbYbtV3ceuotfIxoUXuGJIzw=;
-        b=CWBEF/cCkJmm8XUsbB6IEJDdI/uoG6vjLmPf2qC/D37vBMHyhye+jUaEI5PsmU+dwK
-         tu2k2sXxh6d+24cPCBkhT/uT6XCmozejC4mTPOZa56bNFMjSwdccZbXEzDcXQb67OjGi
-         7jbrxsusF4usRdT/zT8hj+fZU2l6MYpGIPDBimwQkqDxMn8BAFnBmncGvap+sucJySnf
-         RZXeMMXcR19bZ9N7K5+K9EoninE2uEg6w2VrQ43+wyKnx6JaTpBT/bAWQnQcmatlGj+i
-         LSeniECQ+EaoOtwcSQwKptAK7RKp6xv4HVFIlc3w5kab7NydOMjfUVfU4fSca98og/xA
-         YfTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwsPYnMrxKXrJNkdMhMRBzZKTxtZG/fsOJ1usaf1MNXGK3pbsjeTbPxGbzCUCxnhVVkfkpcEuuTWRkCAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5393k4wb9QyaDFbCnWz+zKd+Au9fahT8/BP/BSALYuhmj6Ylm
-	f5GIxRKvU27mqhwG41+2wkGLJqLTO3bDItux7/zg6Snaeq0wILtCS6Du0siAQSDIXhxVNht8Xyj
-	r073fG0gkk4WlYrGoGSXbObO+IVs8fQwBWCRGGj2ho6/IDOEfucxOhGI=
-X-Gm-Gg: ASbGncvUh38NgAIn1u8v6ob/fvMKoorj+JLPCJV9B3Z7vQq/33Cc7InV5mUZoNpSyot
-	AgYU8wArjzoRuf/i0nYxhyZdNF50StVBvOJX7+HS/iGZmf52UAKVOHYLkgmGE1aC0jka3PuF6nD
-	YYkry1VCi7LpJI34HWQgaurgfdjelnTusk7pu7UHdNk7HUmIBpBHJj/wGH
-X-Google-Smtp-Source: AGHT+IE4W70sX1ZkRQ/GL3sVoP5yTJpDgVL6YqdtpN5lSDwuzj4TMC8cSgGv0xiX+YNWSSPMj8XtcM3NbtNq1FWi1P4=
-X-Received: by 2002:a17:902:f647:b0:215:8723:42d1 with SMTP id
- d9443c01a7336-227982aac1bmr6151675ad.10.1742847726910; Mon, 24 Mar 2025
- 13:22:06 -0700 (PDT)
+	s=arc-20240116; t=1742847749; c=relaxed/simple;
+	bh=qCCekKi+RpiTvTSUEDHAhSz2dIi8KIRY0LLAUwkHIdU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WxPoBzwDGHnlBB0JCwnUZcBj7ygnAQHkqu4SqFJpZ4p3XBEu9SqyPvRiYscXQt70AKDocW65A1YZ8SIlAWkke7MwK7H3oGUgrHVsHZI3Ymh9ZcLtkB6xckW4v1TVHPUcXUcFMg4i7ro021jH5qyqGKNGi9/8/Vjx+YKWFaEnQSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eGN9sYHe; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742847744; x=1743106944;
+	bh=vf70c5tOfKHHC/BHZEA6asmxjvC7HiIGPQLTOZOZaWw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=eGN9sYHedaDbr80DjvrasOB+loXQ+JpB6blmIU+KMI14/UypDrsrEtbL5qfmoYfb1
+	 aFf5JfmYsYUIr2VI4E+qAk1jNPugIahoq4rnsDJ9Evz/KEyaaDcFtRYyZSTXfgs/ZZ
+	 epaCm6z8v1NXZx1RVPXM/yg/8ge1523P/bCg7qPUV3jhD8KcqF7hfNIHX0NDgeZG8S
+	 dmtZYZNgh/oDNBGBTzOTMgrGQuMBWyv8T9TChxXqoEMChbxS7p1YY28FuQH5Xmtdmb
+	 yKiPdW+0FOC6SIgViq/UwMBDTnOktsyzEYjtcADp8zXmkKKNL6nRTDF+qMOOdAvvno
+	 1CbY/jurC/ozg==
+Date: Mon, 24 Mar 2025 20:22:20 +0000
+To: Daniel Almeida <daniel.almeida@collabora.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Sumit Semwal <sumit.semwal@linaro.org>, =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Boris Brezillon <boris.brezillon@collabora.com>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH 2/2] rust: drm: Add GPUVM abstraction
+Message-ID: <D8ORYL7ZZG8R.1LEAYI5807G9H@proton.me>
+In-Reply-To: <509EADD7-607B-4DED-ADAC-152D7338EB50@collabora.com>
+References: <20250324-gpuvm-v1-0-7f8213eebb56@collabora.com> <20250324-gpuvm-v1-2-7f8213eebb56@collabora.com> <CANiq72mQ3zuYmsq1PD-49kKLNji8OJwuvxK5QWkNaBMuC-PHQg@mail.gmail.com> <509EADD7-607B-4DED-ADAC-152D7338EB50@collabora.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b9d8d4ae2ff8425c2b69e06a7ab40a7407bb0645
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309084118.3080950-1-almasrymina@google.com> <20250324065558.6b8854f1@kernel.org>
-In-Reply-To: <20250324065558.6b8854f1@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 24 Mar 2025 13:21:53 -0700
-X-Gm-Features: AQ5f1JoDwr-hcxtVGUvUER9Yz8iKDA7P1EW26_KEBix0QH-PaONcGrT5CHee4uE
-Message-ID: <CAHS8izPTxxcQog3yA=wSyTn-B6jT2U3KsQDzYb4LDW546=uoDg@mail.gmail.com>
-Subject: Re: [PATCH RFC net-next v1] page_pool: import Jesper's page_pool benchmark
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 6:56=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
+On Mon Mar 24, 2025 at 8:25 PM CET, Daniel Almeida wrote:
+>> On 24 Mar 2025, at 14:36, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>=
+ wrote:
+>>=20
+>> Hi Daniel,
+>>=20
+>> A few quick notes for future versions on style/docs to try to keep
+>> things consistent upstream -- not an actual review.
+>>=20
+>> On Mon, Mar 24, 2025 at 4:14=E2=80=AFPM Daniel Almeida
+>> <daniel.almeida@collabora.com> wrote:
+>>>=20
+>>> +#[allow(type_alias_bounds)]
+>>=20
+>> The documentation says this is highly discouraged -- it may be good to
+>> mention why it is OK in this instance in a comment or similar.
 >
-> On Sun,  9 Mar 2025 08:41:18 +0000 Mina Almasry wrote:
-> >  lib/Kconfig                        |   2 +
-> >  lib/Makefile                       |   2 +
-> >  lib/bench/Kconfig                  |   4 +
-> >  lib/bench/Makefile                 |   3 +
-> >  lib/bench/bench_page_pool_simple.c | 328 ++++++++++++++++++++++
-> >  lib/bench/time_bench.c             | 426 +++++++++++++++++++++++++++++
-> >  lib/bench/time_bench.h             | 259 ++++++++++++++++++
+> Someone correct me here, but I see no issue with this warning. That=
+=E2=80=99s
+> because we need the bound to make `<T::Driver as drv::Driver>` work in th=
+e
+> first place. Otherwise, we=E2=80=99d get a compiler error saying that the=
+re=E2=80=99s
+> no `Driver` associated type (assuming the case where a random T gets
+> passed in)
 >
-> Why not in tools/testing? I thought selftest infra supported modules.
+> So, for this to be a problem, we would need to mix this up with something=
+ that
+> also has a `Driver` associated type, and this associated type would also =
+need a
+> drv::Driver bound.
+>
+> In other words, we would need a lot of things to align for this to actual=
+ly
+> have a chance of being misused. When you consider that this is then only =
+used
+> in a few places, the balance tips heavily in favor of the convenience of =
+having
+> the type alias IMHO.
+>
+> In fact, the docs point to the exact thing I am trying to do, i.e.:
+>
+>>  these bounds may have secondary effects such as enabling the use of =
+=E2=80=9Cshorthand=E2=80=9D associated type paths
+>
+>>  I.e., paths of the form T::Assoc where T is a type parameter bounded by=
+ trait Trait which defines an associated type called Assoc as opposed to a =
+fully qualified path of the form <T as Trait>::Assoc.=20
 
-You must be referring to TEST_GEN_MODS_DIR? Yes, that seems better. We
-don't use it in tools/testing/selftests/net but it is used in
-tool/testing/selftests/mm and page_frag_test.ko is a very similar
-example. I can put it in tools/testing/selftests/net/page_pool_bench
-or something like that.
+You can avoid the allow by using:
 
-Also I guess you're alluding that this benchmark should be a selftest
-as well, right? I can make it a selftest but probably for starters the
-test will run and output the perf data but will exit code 4 to skip,
-right? I'm not sure it is consistent enough to get pass/fail data from
-it. When I run it in my env it's mostly consistent but i'm not sure
-across evironments.
+    type DriverObject<T> =3D <<T as DriverGpuVm>::Driver as drv::Driver>::O=
+bject;
 
---=20
-Thanks,
-Mina
+That is more wordy, but avoids the allow (it still errors when you put
+in something that doesn't implement `DriverGpuVm`).
+
+---
+Cheers,
+Benno
+
 
