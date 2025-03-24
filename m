@@ -1,245 +1,156 @@
-Return-Path: <linux-kernel+bounces-573927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B1CA6DE34
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:19:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9514A6DE41
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A77F3ABF8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0B216DDCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D9E261366;
-	Mon, 24 Mar 2025 15:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A8525F997;
+	Mon, 24 Mar 2025 15:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RnbC5SOQ"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8V0vd2A"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E262A1BA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC32A1BA;
+	Mon, 24 Mar 2025 15:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829511; cv=none; b=iXKLkWYz1MTEJ58tf8TjAxA+HodQQwfmPT1RoQwRfrwyWwRFeL3b0Nk/aOPjbo3WSoJGof6W9wncNAQslRoRoBiVE/ss1JHqhHhkK3r4uusyNiUUwWHYPRl0+t/1yujF43K84hNtNkYTt6jHxSaHhskStsw3uz77FlkqhiEJcAs=
+	t=1742829535; cv=none; b=rD7MGonJBAt2Jy3DRD5OHvDrqQfEpulxnMV2g88qYksnHzW61dln9h8uVp6MvjfkdYz6wxvz2zJOF+vDph+IuW0g/kdHYb81VYjfNxyOAm/OoP+I1SyySbZNYlycJSmb3j1tK9AKsA37ZN59z2W/m8Jvm0MNsKjML9fQAZ/hhi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829511; c=relaxed/simple;
-	bh=vhNvuwx7Ia4neUdKhSpdC67ZpYbUgz+lA9ewuAZvYOE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Jf9RGkVYZCILHjqqB+R/j6+BYzRt+XPJD8KvHXjwkH+iiEG+15W9xL6q9d3bb3cF/bbju9mUsE0bKTZ1pmNXyPw3+Minzuvrm2ZaYjmHGjxIpIL3ADMi/7IRAjik5RlYyaw8PD6hTHfALWfZqGWuR/4vQLiFlL6WAVfCwNLenbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RnbC5SOQ; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 108104441C;
-	Mon, 24 Mar 2025 15:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HUBHQg0Daa6K6GLuXE7TSPlGQ+M3NRSkAcMJIBLX3xk=;
-	b=RnbC5SOQ6wJ0LIUNE/kO7MP90UcWHYVDFTE9QBwms0dAguPzj0IUwRFZc6XxyrOyji6oqL
-	OVeDB9e/4eE4qrwX+FQljKbkaijlCyHisoZXRbUiQmVYdvSWcsC2v9NFmLZKPjQyP+YMMI
-	eZ55JBRi6X5BYCRRhDmpkAdiRDq5Cwx+UB4bQQbATkJABkQmopjiI4chs8cz5oTRhlLwva
-	W6aMM0MAxRiIPOLqR7AqzVLKCSjYq1eM+MWLGAmlVC4v/Q/HLxrywhdnVSrX27WmaQZRSp
-	5yQHDPHCotoPl6xR8mPnSddnP1U/3mWWdmDWvUyxMXTOTO5qp7hHnlepf8Gt/A==
-Message-ID: <1bc8fe84-fc67-4348-b916-05174e07c884@bootlin.com>
-Date: Mon, 24 Mar 2025 16:18:20 +0100
+	s=arc-20240116; t=1742829535; c=relaxed/simple;
+	bh=7qldwG97RgKzbo+9R7bW0qG7TOIAkqe2ss3aTp0sM5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YUwGzm8ULzya09DMlftLhQs+gQgOPooZ+1EBDrYqrker9LDOtgmlKxXh3lkEjOiQO8YvwyQXk3dIdEZ5KGs38NXaNH43fW1VxJtpE8h3Lp/O71RbtXAUcegrbVlMYwK13SZvWJAD1wzuFc9+0eGOdTkuzBuRI4PrSKT1VNH123M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8V0vd2A; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff62f9b6e4so1425754a91.0;
+        Mon, 24 Mar 2025 08:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742829533; x=1743434333; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RO/O+X3ZpSBE6bujfte2mw8/TyRjxpx3CWANRtb+DaA=;
+        b=O8V0vd2AYqZfcfShhcGUHLUWHlVHQLjTUtVOZMFXFhTbNAaNDkQWa4khVL4Tinccnt
+         XbVG12YVkZ7fcyexfGOvbV5P2WKw1klmIPHjeeIlIYP8Wx1NJmeLGygiWnHrQ2NR9drz
+         FIyiUayeCwG7x1lIteq9Fvx+A4unAl9MABWCaE9yjw77CLv6W7yy5GxIPgBGRbaBxdJe
+         ER8EgCIjBvO5Rx0qkZNaK2pbQmyOoxHbEDDHKSiniYKF0KusQxnnHQ+DWF97VaVlFVGs
+         GPCrsz5UIa98NMz6o1OY15SYwbgkOfFsyGRAIIh4sStlGzJEkadIrHVm7id6Yvr0vKqu
+         h1cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742829533; x=1743434333;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RO/O+X3ZpSBE6bujfte2mw8/TyRjxpx3CWANRtb+DaA=;
+        b=MBbLqutRRABceBbUssSbupzPsMa7FcxL2WUKyAGqwWWEmb9WN5tePCP+DskEVgtUIR
+         z2E3uLosozFGd8AfEURfCcttRSBbLs/EviikEODzJOW6cOs5XwXOpvMWKejQhmCrj/kt
+         j/la3AyflaRXFWl9Fpmw2rlUWuUTViw7BLnuSp2+GT2bHVgY/2Yj0LovEpTEBrmGJS7y
+         g0Wbmn2Zp8J2Y0pG5gQ1VLNIVHq8vhlxRfRiosH5I5uGq0SOle+ooktI5WTSO3NmpiGK
+         qFrso5pZ4NFIaKRbDE8FJc9ZVOsgnAHKIAmOvOlgT9UVw8NPaf515MrTTp2IEC/0nj6d
+         ZdqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3BarrKslvShuugUfXQ7cBptVR+gCHSIk3fVr3Jz/bEwHR1RUoKynUicBkg8RPtBbTrRTNbO/vJxw7DQ==@vger.kernel.org, AJvYcCUXY0/13sk9pEm3hLIPcGE8C+5gPfKAZQvr8hn3ukoxAzLaXfBpooNKnJiKOZpIvKz61PPfYPWPQholyLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvnMuhmy1dJNcMy7a7SgO45E3gjqyixf3DTGjMMa+zhZnglizO
+	FnJX1JPq5SKLmY+4mewZN10Pp8Cmw09bwIh4GaeHO5CWUg+v+rDsgBqrCfzKHR0v3p0Bur//m4a
+	KpxKLNjelBnTEKuUCcafoLecUTXk=
+X-Gm-Gg: ASbGncumt7NsYrB2LN6WPhJh+9of3AdPNxS1uB3C54hBH8+ibS3OsYrOnaShT5PrwpM
+	5MynQ/rysC7VQk5+KWqOaJHyf4a1LMnPiWh91bweRh9Z8iTMqbaWyCFRUJkj6PH3jJ7A2cKYLAf
+	XQ8fgewXIrjUUSHCVeIor/9WSM4A==
+X-Google-Smtp-Source: AGHT+IGv//TNyMwTptj2LukCFA3IACfBaFPXo3cfelCELNwfuuq5uecen5C0xSIOKBuosyTMeHw0TdvP+zCtgvq3xlM=
+X-Received: by 2002:a17:90b:33d2:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-3030fe534b9mr8004795a91.2.1742829532854; Mon, 24 Mar 2025
+ 08:18:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 24/59] dyndbg: treat comma as a token separator
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-gfx-trybot@lists.freedesktop.org
-Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com
-References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-25-jim.cromie@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
- 5K81kIWbtQX91pD/wH5UapRF4kwMXTAqof8+m3XfYcEDVG31Kf8QkJTG/gLBi1UfJgGBahbY
- hjP40kuUR/mr7M7bKoBP9Uh0uaEM+DuKl6bSXMSrJ6fOtEPOtnfBY0xVPmqIKfLFEkjh800v
- jD1fdwWKtAIXf+cQtC9QWvcdzAmQIwmyFBmbg+ccqao1OIXTgu+qMAHfgKDjYctESvo+Szmb
- DFBZudPbyTAlf2mVKpoHKMGy3ndPZ19RboKUP0wjrF+Snif6zRFisHK7D/mqpgUftoV4HjEH
- bQO9bTJZXIoPJMSb+Lyds0m83/LYfjcWP8w889bNyD4Lzzzu+hWIu/OObJeGEQqY01etOLMh
- deuSuCG9tFr0DY6l37d4VK4dqq4Snmm87IRCb3AHAEMJ5SsO8WmRYF8ReLIk0tJJPrALv8DD
- lnLnwadBJ9H8djZMj24+GC6MJjN8dDNWctpBXgGZKuCM7Ggaex+RLHP/+14Vl+lSLdFiUb3U
- ljBXuc9v5/9+D8fWlH03q+NCa1dVgUtsP2lpolOV3EE85q1HdMyt5K91oB0hLNFdTFYwn1bW
- WJ2FaRhiC1yV4kn/z8g7fAp57VyIb6lQfS1Wwuj5/53XYjdipQARAQABzSlMb3VpcyBDaGF1
- dmV0IDxsb3Vpcy5jaGF1dmV0QGJvb3RsaW4uY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
- CwIEFgIDAQIeAQIXgBYhBItxBK6aJy1mk/Un8uwYg/VeC0ClBQJmlnw+BQkH8MsdAAoJEOwY
- g/VeC0ClyhwP/Ra6H+5F2NEW6/IMVHeXmhuly8CcZ3kyoKeGNowghIcTBo59dFh0atGCvr+y
- K9YD5Pyg9aX4Ropw1R1RVIMrWoUNZUKebRTu6iNHkE6tmURJaKLzR+9la+789jznQvbV+9gM
- YTBppX4/0cWY58jiDiDV4aJ77JDo7aWNK4hz8mZsB+Y7ezMuS4jy2r4b7dZ+YL/T9/k3/emO
- PkAuFkVhkNhytMEyOBsT7SjL4IUBeYWvOw9MIaXEl4qW/5HLGtMuNhS94NsviDXZquoOHOby
- 2uuRAI0bLz1qcsnY90yyPlDJ0pMuJHbi0DBzPTIYkyuwoyplfWxnUPp1wfsjiy/B6mRKTbdE
- a/K6jNzdVC1LLjTD4EjwnCE8IZBRWH1NVC1suOkw3Sr1FYcHFSYqNDrrzO+RKtR1JMrIe8/3
- Xhe2/UNUhppsK3SaFaIsu98mVQY3bA/Xn9wYcuAAzRzhEHgrbp8LPzYdi6Qtlqpt4HcPV3Ya
- H9BkCacgyLHcdeQbBXaup9JbF5oqbdtwev3waAmNfhWhrQeqQ0tkrpJ46l9slEGEdao5Dcct
- QDRjmJz7Gx/rKJngQrbboOQz+rhiHPoJc/n75lgOqtHRePNEf9xmtteHYpiAXh/YNooXJvdA
- tgR1jAsCsxuXZnW2DpVClm1WSHNfLSWona8cTkcoSTeYCrnXzsFNBGCG6KUBEADZhvm9TZ25
- JZa7wbKMOpvSH36K8wl74FhuVuv7ykeFPKH2oC7zmP1oqs1IF1UXQQzNkCHsBpIZq+TSE74a
- mG4sEhZP0irrG/w3JQ9Vbxds7PzlQzDarJ1WJvS2KZ4AVnwc/ucirNuxinAuAmmNBUNF8w6o
- Y97sdgFuIZUP6h972Tby5bu7wmy1hWL3+2QV+LEKmRpr0D9jDtJrKfm25sLwoHIojdQtGv2g
- JbQ9Oh9+k3QG9Kh6tiQoOrzgJ9pNjamYsnti9M2XHhlX489eXq/E6bWOBRa0UmD0tuQKNgK1
- n8EDmFPW3L0vEnytAl4QyZEzPhO30GEcgtNkaJVQwiXtn4FMw4R5ncqXVvzR7rnEuXwyO9RF
- tjqhwxsfRlORo6vMKqvDxFfgIkVnlc2KBa563qDNARB6caG6kRaLVcy0pGVlCiHLjl6ygP+G
- GCNfoh/PADQz7gaobN2WZzXbsVS5LDb9w/TqskSRhkgXpxt6k2rqNgdfeyomlkQnruvkIIjs
- Sk2X68nwHJlCjze3IgSngS2Gc0NC/DDoUBMblP6a2LJwuF/nvaW+QzPquy5KjKUO2UqIO9y+
- movZqE777uayqmMeIy4cd/gg/yTBBcGvWVm0Dh7dE6G6WXJUhWIUtXCzxKMmkvSmZy+gt1rN
- OyCd65HgUXPBf+hioCzGVFSoqQARAQABwsOyBBgBCAAmAhsuFiEEi3EErponLWaT9Sfy7BiD
- 9V4LQKUFAmaWfGYFCQfwx0ECQAkQ7BiD9V4LQKXBdCAEGQEIAB0WIQRPj7g/vng8MQxQWQQg
- rS7GWxAs4gUCYIbopQAKCRAgrS7GWxAs4gfGEACcA0XVNesbVIyvs5SJpJy+6csrH4yy233o
- GclX2P7pcCls55wiV6ywCtRaXWFjztYmklQieaZ/zq+pUuUDtBZo95rUP20E56gYV2XFB18W
- YeekTwH5d2d/j++60iHExWTB+sgMEv3CEGikUBj7iaMX2KtaB1k9K+3K6dx/s1KWxOClFkbJ
- EV/tmeq7Ta8LiytQM9b4yY550tzC0pEEeFcLFXo1m5KcJauYnAqrlOVY48NFpFUd9oAZf/Pz
- p3oEs+zn/8zK2PBrZZCD6AhrbotRy7irE5eimhxcsFm1+MG5ufnaQUWHrRYXVuFhvkSoqZ8j
- GPgPEpFor4NjRyX/PMLglQ7S5snkvKcr3Lun44aybXEHq/1FTzW2kOh6kFHFFOPbMv1voJKM
- IzrmDoDS+xANt/La7OwpCylCgF6t9oHHTTGfAfwtfYZbiepC66FDe/Jt/QLwkIXeIoeSS1O4
- 6rJdGWG2kHthUM+uIbUbaRJW8AkJpzP1Mz7TieR/9jO4YPeUm9tGL5kP2yyNtzFilcoOeox1
- NSFNAPz+zPcovVmxAaSDGcSzhQVJVlk8xPib8g4fnI8qJ3Gj7xyw8D9dzxhCR2DIFmZL84En
- N7Rj+k4VIGY7M/cVvxL81jlbMGMERMmb96Cua9z1ROviGA1He2gbHOcp6qmLNu3nprleG8PL
- ZRNdEAC0iZapoyiXlVCKLFIwUPnxUz5iarqIfQU8sa1VXYYd/AAAFI6Wv3zfNtGicjgHP8rN
- CIegqm2Av1939XXGZJVI9f3hEoUn04rvxCgcDcUvn7I0WTZ4JB9G5qAGvQLXeXK6Byu77qTx
- eC7PUIIEKN3X47e8xTSj2reVTlanDr8yeqZhxpKHaS0laF8RbD85geZtAK67qEByX2KC9DUo
- eHBFuXpYMzGQnf2SG105ePI2f4h5iAfbTW9VWH989fx4f2hVlDwTe08/NhPdwq/Houov9f/+
- uPpYEMlHCNwE8GRV7aEjd/dvu87PQPm4zFtC3jgQaUKCbYYlHmYYRlrLQenX3QSorrQNPbfz
- uQkNLDVcjgD2fxBpemT7EhHYBz+ugsfbtdsH+4jVCo5WLb/HxE6o5zvSIkXknWh1DhFj/qe9
- Zb9PGmfp8T8Ty+c/hjE5x6SrkRCX8qPXIvfSWLlb8M0lpcpFK+tB+kZlu5I3ycQDNLTk3qmf
- PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
- ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
- qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-25-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
- dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20250324215702.1515ba92@canb.auug.org.au> <20250324220629.1665236b@canb.auug.org.au>
+ <Z-FJH628-j2HCuaE@cassiopeiae> <2025032443-recharger-legacy-93bf@gregkh> <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
+In-Reply-To: <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 24 Mar 2025 16:18:40 +0100
+X-Gm-Features: AQ5f1Jqjz7SmxgftEFXbxo0zTStea1KSXA_2LDRC1NRQdmMwTAuqW8ZOx_PqW8E
+Message-ID: <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Miguel Ojeda <ojeda@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="00000000000035dfd40631181f54"
 
+--00000000000035dfd40631181f54
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 24, 2025 at 2:43=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> It's the DMA commit that has a bug, that was revealed by the fix in the
+> driver-core tree. So, the patch to drop is in the rust tree (not sure if =
+Miguel
+> changes history at this point though).
 
-Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> Treat comma as a token terminator, just like a space.  This allows a
-> user to avoid quoting hassles when spaces are otherwise needed:
-> 
->   :#> modprobe drm dyndbg=class,DRM_UT_CORE,+p\;class,DRM_UT_KMS,+p
-> 
-> or as a boot arg:
-> 
->   drm.dyndbg=class,DRM_UT_CORE,+p  # todo: support multi-query here
-> 
-> Given the many ways a boot-line +args can be assembled and then passed
-> in/down/around shell based tools, this may allow side-stepping all
-> sorts of quoting hassles thru those layers.
-> 
-> existing query format:
-> 
->   modprobe test_dynamic_debug dyndbg="class D2_CORE +p"
-> 
-> new format:
-> 
->   modprobe test_dynamic_debug dyndbg=class,D2_CORE,+p
-> 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> Co-developed-by: Łukasz Bartosik <ukaszb@chromium.org>
-> Signed-off-by: Łukasz Bartosik <ukaszb@chromium.org>
+Just to double-check, the diff you show below is the combined one,
+right? i.e. it is the one that Stephen already had the previous week +
+the fix you posted above (`Send` `impl`), right?
 
-This patch seems to be unrelated to the whole series, and can be applied 
-on the current rc. What do you think about extracting the patches 24, 
-25, 26, 27? I understand 28 depends on it, but I believe 24..27 can be 
-merged before as they are simple.
+If so, I think it is OK, and we could put the new `Send` impl on top
+of `rust-next` -- given the trees on their own are OK until they
+arrive to Linus, I am not sure if it counts as a fix.
 
-> ---
->   lib/dynamic_debug.c | 17 +++++++++++++----
->   1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index cd3eec5bb81c..168663629ef2 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -293,6 +293,14 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
->   	return nfound;
->   }
->   
-> +static char *skip_spaces_and_commas(const char *str)
-> +{
-> +	str = skip_spaces(str);
-> +	while (*str == ',')
-> +		str = skip_spaces(++str);
-> +	return (char *)str;
-> +}
-> +
+i.e. something like the attached patch (crediting Danilo and Stephen).
 
-This is a bit complex to read, maybe you can simply re-write skip_space 
-completely to avoid the explicit check against is_skip below
+Cheers,
+Miguel
 
-bool is_skip(char c) {
-	return isspace(c) || c == ',';
-}
-char *skip(char *s) {
-	while (is_skip(*s))
-		s++;
-	return s;
-}
+--00000000000035dfd40631181f54
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-rust-dma-add-Send-implementation-for-CoherentAllocat.patch"
+Content-Disposition: attachment; 
+	filename="0001-rust-dma-add-Send-implementation-for-CoherentAllocat.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m8n7mwkw0>
+X-Attachment-Id: f_m8n7mwkw0
 
-With or without this:
-
-Reviewed-by: Louis Chauvet <louis.chauvet@booltin.com>
-
->   /*
->    * Split the buffer `buf' into space-separated words.
->    * Handles simple " and ' quoting, i.e. without nested,
-> @@ -306,8 +314,8 @@ static int ddebug_tokenize(char *buf, char *words[], int maxwords)
->   	while (*buf) {
->   		char *end;
->   
-> -		/* Skip leading whitespace */
-> -		buf = skip_spaces(buf);
-> +		/* Skip leading whitespace and comma */
-> +		buf = skip_spaces_and_commas(buf);
->   		if (!*buf)
->   			break;	/* oh, it was trailing whitespace */
->   		if (*buf == '#')
-> @@ -323,7 +331,7 @@ static int ddebug_tokenize(char *buf, char *words[], int maxwords)
->   				return -EINVAL;	/* unclosed quote */
->   			}
->   		} else {
-> -			for (end = buf; *end && !isspace(*end); end++)
-> +			for (end = buf; *end && !isspace(*end) && *end != ','; end++)
-
-                                                    ^ here use is_skip
-
->   				;
->   			if (end == buf) {
->   				pr_err("parse err after word:%d=%s\n", nwords,
-> @@ -595,7 +603,8 @@ static int ddebug_exec_queries(char *query, const char *modname)
->   		if (split)
->   			*split++ = '\0';
->   
-> -		query = skip_spaces(query);
-> +		query = skip_spaces_and_commas(query);
-> +
->   		if (!query || !*query || *query == '#')
->   			continue;
->   
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
-
+RnJvbSA2YTE1MmFmMjNjYjQ5YTNiY2JiOGM0NDU3YTYxMmZmYTI3ZDU0NjkzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBEYW5pbG8gS3J1bW1yaWNoIDxkYWtyQGtlcm5lbC5vcmc+CkRh
+dGU6IE1vbiwgMjQgTWFyIDIwMjUgMTY6MDE6MDAgKzAxMDAKU3ViamVjdDogW1BBVENIXSBydXN0
+OiBkbWE6IGFkZCBgU2VuZGAgaW1wbGVtZW50YXRpb24gZm9yIGBDb2hlcmVudEFsbG9jYXRpb25g
+CgpTdGVwaGVuIGZvdW5kIGEgZnV0dXJlIGJ1aWxkIGZhaWx1cmUgaW4gbGludXgtbmV4dCBbMV06
+CgogICAgZXJyb3JbRTAyNzddOiBgKm11dCBNeVN0cnVjdGAgY2Fubm90IGJlIHNlbnQgYmV0d2Vl
+biB0aHJlYWRzIHNhZmVseQogICAgICAtLT4gc2FtcGxlcy9ydXN0L3J1c3RfZG1hLnJzOjQ3OjIy
+CiAgICAgICB8CiAgICA0NyB8IGltcGwgcGNpOjpEcml2ZXIgZm9yIERtYVNhbXBsZURyaXZlciB7
+CiAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXiBgKm11dCBNeVN0
+cnVjdGAgY2Fubm90IGJlIHNlbnQgYmV0d2VlbiB0aHJlYWRzIHNhZmVseQoKSXQgaXMgY2F1c2Vk
+IGJ5IHRoZSBpbnRlcmFjdGlvbiBiZXR3ZWVuIGNvbW1pdCA5MzVlMWQ5MGJmNmYgKCJydXN0OiBw
+Y2k6CnJlcXVpcmUgU2VuZCBmb3IgRHJpdmVyIHRyYWl0IGltcGxlbWVudGVycyIpIGZyb20gdGhl
+IGRyaXZlci1jb3JlIHRyZWUsCndoaWNoIGZpeGVzIGEgbWlzc2luZyBjb25jdXJyZW5jeSByZXF1
+aXJlbWVudCwgYW5kIGNvbW1pdCA5OTAxYWRkYWU2M2IKKCJzYW1wbGVzOiBydXN0OiBhZGQgUnVz
+dCBkbWEgdGVzdCBzYW1wbGUgZHJpdmVyIikgd2hpY2ggYWRkcyBhIHNhbXBsZQp0aGF0IGRvZXMg
+bm90IHNhdGlzZnkgdGhhdCByZXF1aXJlbWVudC4KCkFkZCBhIGBTZW5kYCBpbXBsZW1lbnRhdGlv
+biB0byBgQ29oZXJlbnRBbGxvY2F0aW9uYCwgd2hpY2ggYWxsb3dzIHRoZQpzYW1wbGUgKGFuZCBv
+dGhlciBmdXR1cmUgdXNlcnMpIHRvIHNhdGlzZnkgaXQuCgpSZXBvcnRlZC1ieTogU3RlcGhlbiBS
+b3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Ckxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwu
+b3JnL2xpbnV4LW5leHQvMjAyNTAzMjQyMTU3MDIuMTUxNWJhOTJAY2FuYi5hdXVnLm9yZy5hdS8K
+U2lnbmVkLW9mZi1ieTogRGFuaWxvIEtydW1tcmljaCA8ZGFrckBrZXJuZWwub3JnPgpTaWduZWQt
+b2ZmLWJ5OiBNaWd1ZWwgT2plZGEgPG9qZWRhQGtlcm5lbC5vcmc+Ci0tLQogcnVzdC9rZXJuZWwv
+ZG1hLnJzIHwgNCArKysrCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspCgpkaWZmIC0t
+Z2l0IGEvcnVzdC9rZXJuZWwvZG1hLnJzIGIvcnVzdC9rZXJuZWwvZG1hLnJzCmluZGV4IDlkMDBm
+OWM0OWY0Ny4uMThkZTY5M2M0OTI0IDEwMDY0NAotLS0gYS9ydXN0L2tlcm5lbC9kbWEucnMKKysr
+IGIvcnVzdC9rZXJuZWwvZG1hLnJzCkBAIC0zMDEsNiArMzAxLDEwIEBAIGZuIGRyb3AoJm11dCBz
+ZWxmKSB7CiAgICAgfQogfQogCisvLyBTQUZFVFk6IEl0IGlzIHNhZmUgdG8gc2VuZCBhIGBDb2hl
+cmVudEFsbG9jYXRpb25gIHRvIGFub3RoZXIgdGhyZWFkIGlmIGBUYAorLy8gY2FuIGJlIHNlbmQg
+dG8gYW5vdGhlciB0aHJlYWQuCit1bnNhZmUgaW1wbDxUOiBBc0J5dGVzICsgRnJvbUJ5dGVzICsg
+U2VuZD4gU2VuZCBmb3IgQ29oZXJlbnRBbGxvY2F0aW9uPFQ+IHt9CisKIC8vLyBSZWFkcyBhIGZp
+ZWxkIG9mIGFuIGl0ZW0gZnJvbSBhbiBhbGxvY2F0ZWQgcmVnaW9uIG9mIHN0cnVjdHMuCiAvLy8K
+IC8vLyAjIEV4YW1wbGVzCi0tIAoyLjQ5LjAKCg==
+--00000000000035dfd40631181f54--
 
