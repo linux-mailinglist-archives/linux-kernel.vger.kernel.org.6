@@ -1,117 +1,265 @@
-Return-Path: <linux-kernel+bounces-573895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DD2A6DDBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:06:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC5DA6DDC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAFF3A9172
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC203ABBBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B4425E45A;
-	Mon, 24 Mar 2025 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC10725FA2B;
+	Mon, 24 Mar 2025 15:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7WFxw+Z"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UtkbcPW7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427C59450
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BCB667;
+	Mon, 24 Mar 2025 15:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828549; cv=none; b=Mra0XUowaZlKJ0PTY3bsVX7nqnodo5XqQEI0CKF0lvZuAiQPgOyiD719eR0RGEoqglJFYQ3WyDvfZIV09FZOu5TaT5zmETomxA4JjMjjMPr25QBAZugFl2uSZm1SYCJlVgjaxThF9a7PEbOV8bmmPNGx8bAlIuwGU4ENSj6LaS4=
+	t=1742828558; cv=none; b=eljGKpKeQIL0ubPcNwaGaHgnsvit5rHKkT+cKd32q4r+5q+05oBARrLnR/sH3eIIujNjSewy8TLIFccdbN0tTjhwDda4nPUtPSYhCEMqE1QQ5cIcMZDctPhM9AWI0pykr6NwycjU+EbhCXYzfhSUKDKJYFHnGgvCh+JrrCzIJuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828549; c=relaxed/simple;
-	bh=gHJgB9sut4zMdePkaly+IvIbVFS40V1VctFvKxx3P8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lqsZVjXZhoQmTI5Pk9YObMut1dPcGP0blnLH0S62epOt1O6lQF+ssm7khaPNbba4I2KRezMGWp0xBDezQFh1FySkV43/WjfztX/3nPBzEo+06fz0OzX/9PSOpu6l46xu/sLwHXtlp0o3VZJtKBuibepnLj2PnsTbZ7x0Siz1OkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7WFxw+Z; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2243803b776so9650955ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742828547; x=1743433347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=thkoKxykLsETroc6mn87fVjpfe6Eo9+STWnHf3GGcRM=;
-        b=T7WFxw+ZzZUMi2vk0RjN/W6crl+ZTqGAGhtlFqGLNcocBVNPHJrUCnZiTYlDZKB93+
-         kIAY3h8XvxTzxV5foOXZTnFXCyK4LXlAxpUSa4cHno7XXH/VOUJcwGNcpcltbK+y08dV
-         QKeCfG0yxyBHd8OAVHq2pNe4I//uWzAoT8bSNPz+/85dBsucdv39Fo3yEcbToxBZbUhH
-         NLfZz6LnOjzETlP9xZALaAPdyZXU0kG3vPK8yymKNOSO6572+EgC7C+R/2SY0JM9dD74
-         ayoiQotmqBCaGf1H7yshE78yN3PoZzoTPaUZMpmxxrCq6Xo7kdZXmizEDgDj9LOJGOta
-         CT9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742828547; x=1743433347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=thkoKxykLsETroc6mn87fVjpfe6Eo9+STWnHf3GGcRM=;
-        b=EnnsxOArn/LTX/qQqfjuKu/b1klGA5ine+K5aSvstkrK3cJA9aZoU+Q+vT00tdXhVZ
-         +cXJMUs3fLUK2nCjcpS3wn+TAaThgI66cPYxjJkewlDTEQQv2S+3+lqHqSm4t2kI/ACc
-         m1fOK8h3I9OmuPU3UG7voScq4II+LbIQjrIzeP9Fn8fbwr7qg9tYWo1psgq4IOWFIxIZ
-         akI/ZNl4HIEOnUxGuUE/spi1coXJM8/U08trQs8W57tPUMgL5RYv0BgF1sVT/gYzikHj
-         S9xdJRDUOliZSrziTayP2DmYiglMHYLnNG3/aeGde2h3JK0zePdaqPf+8QZaqWYzLZFH
-         ADkg==
-X-Gm-Message-State: AOJu0YxwxwO4De6eYSzV4hX411he9V5mwuCNCN7SGqq0oo3RHGUeFn3S
-	4PMl6vT3JqdIlIBSAD2NJmrsr9sJynnrkr4cGZPuUHvpxiU29hHcAAuNlw==
-X-Gm-Gg: ASbGncvQp69wdQZNtH27xMbLZmFC8o6wAdEMIlbEizmej2buirLNVMt5OWRFJCd5Bp4
-	vbSZ0t6CpacunWp20jEEIHQCYnRWW0Wtx5ZOh4mKBQBcbNjWhamN2nza/GfOOv3v1TQJlaePPaJ
-	nyO6KK3O//QjoSoTBWoYv0YRW1boNstAhVodglwPSJi28xxHGh+HKZSdjQCASxGqUlTS8nDKt0N
-	ociWPY54bcErA1h8kdsoyDjVQqHJz6Cj+cZXIUwdW+x9NA+xeTLhbqPHs/FjbC7cnzHD+8sh8ja
-	PZocAsW4FKVt1fRbqL1wdvjYo1DhcFiwsnSjJOOOEqu+s5eXt9mZMndT5vrPylvLNbaw
-X-Google-Smtp-Source: AGHT+IGr/YRRu0sAJ7wEPqi/mxNqtNffODibXjrYjhkvWCqcaNcg/AbPXQN+biMqZTzAtSh2Phrdxw==
-X-Received: by 2002:a17:903:250:b0:223:635d:3e38 with SMTP id d9443c01a7336-22780c76135mr219585055ad.15.1742828547184;
-        Mon, 24 Mar 2025 08:02:27 -0700 (PDT)
-Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b287bsm71697385ad.124.2025.03.24.08.02.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 08:02:26 -0700 (PDT)
-Date: Mon, 24 Mar 2025 11:02:24 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>
-Subject: Re: [PATCH 0/4] cleanup dead code in nodemasks and cpumasks
-Message-ID: <Z-F0APn3eisfC0lC@thinkpad>
-References: <20250313021953.86035-1-yury.norov@gmail.com>
+	s=arc-20240116; t=1742828558; c=relaxed/simple;
+	bh=8cXfyPbWxAr/jWnMcJDQrocLjVs+q5zx4VVdCdCy9kM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fRZMphNCwBCJl6LaAG2jBGe310npGWzpSht8Fi25XydrCVZftKq2x1f5Uf0XcjI+v88bCGGpBK8fzMo9enriHlFEQwBQFOhkKsWgxYY3fAxs7p77jrhLSWJQNLyJRpJ5QOycXyTjimrFQnz3IKkZCPSHragpNiWdaWVCeYYlXFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UtkbcPW7; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742828556; x=1774364556;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=8cXfyPbWxAr/jWnMcJDQrocLjVs+q5zx4VVdCdCy9kM=;
+  b=UtkbcPW7LGJCR3/yOiAnfvOL8yXhQTBPAKiTgfokKONxMolw1mtfPlNo
+   boiC+TZDiQ1RjE/DqEWoGlJ5/5bWL/3Tv4PWYuHTiv5LP0bFCT6C4sBSU
+   3wryJcT2IfySFtXXZZE3QqEpMTt1r1JK4BGIeMlHQU/cIODHECh6GrgOs
+   3A2TQ++/uaVR8eiuoFgIHDk0bTOPRZTn8hv77U1n4Y7HdnwMkd6hljSEJ
+   vIMPhfdBezSCRgheO44QFQd+fm804msCY53rVqk/nUs3yGrgPJdb8DKiZ
+   GIQi+71tPu7vhC/9vq4jHJQZ3PZsOBnc3GTOI3H1fl+1HqLpZWY4GZAu2
+   A==;
+X-CSE-ConnectionGUID: i702SIYEQACFVJJn+sjX/g==
+X-CSE-MsgGUID: cXFIolXSRdGx8O7+bWm/+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="55409908"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="55409908"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 08:02:35 -0700
+X-CSE-ConnectionGUID: gMnauPJeRRK4fryKzAjBIw==
+X-CSE-MsgGUID: RgZUcThoSyyQCA7D+PG4Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="129183127"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 08:02:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 24 Mar 2025 17:02:28 +0200 (EET)
+To: Hans Zhang <18255117159@163.com>
+cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
+    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
+ finding the capabilities
+In-Reply-To: <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com>
+Message-ID: <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
+References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-4-18255117159@163.com> <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com> <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313021953.86035-1-yury.norov@gmail.com>
+Content-Type: multipart/mixed; BOUNDARY="8323328-920175786-1742826920=:1100"
+Content-ID: <318e995d-f786-7902-a077-e902a2ba123b@linux.intel.com>
 
-Ping?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-If no objections, I'll schedule it for 6.15.
+--8323328-920175786-1742826920=:1100
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <d310fa7e-10d5-290b-4aff-454e1f31a150@linux.intel.com>
 
-On Wed, Mar 12, 2025 at 10:19:48PM -0400, Yury Norov wrote:
-> Cleanup dead code in nodemasks and cpumasks, and while there, fix
-> set_icache_stale_mask() that misuses atomic cpumask_assign_cpu().
-> 
-> Yury Norov (4):
->   nodemask: drop nodes_shift
->   cpumask: add non-atomic __assign_cpu()
->   riscv: switch set_icache_stale_mask() to using non-atomic assign_cpu()
->   cpumask: drop cpumask_assign_cpu()
-> 
->  arch/riscv/mm/cacheflush.c |  2 +-
->  include/linux/cpumask.h    | 19 +++----------------
->  include/linux/nodemask.h   | 19 -------------------
->  3 files changed, 4 insertions(+), 36 deletions(-)
-> 
-> -- 
-> 2.43.0
+On Mon, 24 Mar 2025, Hans Zhang wrote:
+> On 2025/3/24 21:44, Ilpo J=E4rvinen wrote:
+> > On Mon, 24 Mar 2025, Hans Zhang wrote:
+> >=20
+> > > Since the PCI core is now exposing generic APIs for the host bridges =
+to
+> >=20
+> > No need to say "since ... is now exposing". Just say "Use ..." as if th=
+e
+> > API has always existed even if you just added it.
+> >=20
+>=20
+> Hi Ilpo,
+>=20
+> Thanks your for reply. Will change.
+>=20
+>=20
+> > > search for the PCIe capabilities, make use of them in the CDNS driver=
+=2E
+> > >=20
+> > > Signed-off-by: Hans Zhang <18255117159@163.com>
+> > > ---
+> > > Changes since v5:
+> > > https://lore.kernel.org/linux-pci/20250321163803.391056-4-18255117159=
+@163.com
+> > >=20
+> > > - Kconfig add "select PCI_HOST_HELPERS"
+> > > ---
+> > >   drivers/pci/controller/cadence/Kconfig        |  1 +
+> > >   drivers/pci/controller/cadence/pcie-cadence.c | 25 ++++++++++++++++=
++++
+> > >   drivers/pci/controller/cadence/pcie-cadence.h |  3 +++
+> > >   3 files changed, 29 insertions(+)
+> > >=20
+> > > diff --git a/drivers/pci/controller/cadence/Kconfig
+> > > b/drivers/pci/controller/cadence/Kconfig
+> > > index 8a0044bb3989..0a4f245bbeb0 100644
+> > > --- a/drivers/pci/controller/cadence/Kconfig
+> > > +++ b/drivers/pci/controller/cadence/Kconfig
+> > > @@ -5,6 +5,7 @@ menu "Cadence-based PCIe controllers"
+> > >     config PCIE_CADENCE
+> > >   =09bool
+> > > +=09select PCI_HOST_HELPERS
+> > >     config PCIE_CADENCE_HOST
+> > >   =09bool
+> > > diff --git a/drivers/pci/controller/cadence/pcie-cadence.c
+> > > b/drivers/pci/controller/cadence/pcie-cadence.c
+> > > index 204e045aed8c..329dab4ff813 100644
+> > > --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> > > +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> > > @@ -8,6 +8,31 @@
+> > >     #include "pcie-cadence.h"
+> > >   +static u32 cdns_pcie_read_cfg(void *priv, int where, int size)
+> > > +{
+> > > +=09struct cdns_pcie *pcie =3D priv;
+> > > +=09u32 val;
+> > > +
+> > > +=09if (size =3D=3D 4)
+> > > +=09=09val =3D readl(pcie->reg_base + where);
+> >=20
+> > Should this use cdns_pcie_readl() ?
+>=20
+> pci_host_bridge_find_*capability required to read two or four bytes.
+>=20
+> reg =3D read_cfg(priv, cap_ptr, 2);
+> or
+> header =3D read_cfg(priv, pos, 4);
+>=20
+> Here I mainly want to write it the same way as size =3D=3D 2 and size =3D=
+=3D 1.
+> Or size =3D=3D 4 should I write it as cdns_pcie_readl() ?
+
+As is, it seems two functions are added for the same thing for the case=20
+with size =3D=3D 4 with different names which feels duplication. One could =
+add=20
+cdns_pcie_readw() and cdns_pcie_readb() too but perhaps cdns_pcie_readl()=
+=20
+should just call this new function instead?
+
+> > > +=09else if (size =3D=3D 2)
+> > > +=09=09val =3D readw(pcie->reg_base + where);
+> > > +=09else if (size =3D=3D 1)
+> > > +=09=09val =3D readb(pcie->reg_base + where);
+> > > +
+> > > +=09return val;
+> > > +}
+> > > +
+> > > +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
+> > > +{
+> > > +=09return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, =
+cap);
+> > > +}
+> > > +
+> > > +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
+> > > +{
+> > > +=09return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_c=
+fg,
+> > > cap);
+> > > +}
+> >=20
+> > I'm really wondering why the read config function is provided directly =
+as
+> > an argument. Shouldn't struct pci_host_bridge have some ops that can re=
+ad
+> > config so wouldn't it make much more sense to pass it and use the func
+> > from there? There seems to ops in pci_host_bridge that has read(), does
+> > that work? If not, why?
+> >=20
+>=20
+> No effect.=20
+
+I'm not sure what you meant?
+
+> Because we need to get the offset of the capability before PCIe
+> enumerates the device.=20
+
+Is this to say it is needed before the struct pci_host_bridge is created?
+
+> I originally added a separate find capability related
+> function for CDNS in the following patch. It's also copied directly from =
+DWC.
+> Mani felt there was too much duplicate code and also suggested passing a
+> callback function that could manipulate the registers of the root port of=
+ DWC
+> or CDNS.
+
+I very much like the direction this patchset is moving (moving shared=20
+part of controllers code to core), I just feel this doesn't go far enough=
+=20
+when it's passing function pointer to the read function.
+
+I admit I've never written a controller driver so perhaps there's=20
+something detail I lack knowledge of but I'd want to understand why
+struct pci_ops (which exists both in pci_host_bridge and pci_bus) cannot=20
+be used?
+
+> https://patchwork.kernel.org/project/linux-pci/patch/20250308133903.32221=
+6-1-18255117159@163.com/
+>=20
+> The original function is in the following file:
+> drivers/pci/controller/dwc/pcie-designware.c
+> u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+> u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
+>=20
+> CDNS has the same need to find the offset of the capability.
+>=20
+> > > +
+> > >   void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
+> > >   {
+> > >   =09u32 delay =3D 0x3;
+> > > diff --git a/drivers/pci/controller/cadence/pcie-cadence.h
+> > > b/drivers/pci/controller/cadence/pcie-cadence.h
+> > > index f5eeff834ec1..6f4981fccb94 100644
+> > > --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> > > +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> > > @@ -557,6 +557,9 @@ static inline int cdns_pcie_ep_setup(struct
+> > > cdns_pcie_ep *ep)
+> > >   }
+> > >   #endif
+> > >   +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap);
+> > > +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap);
+> > > +
+> > >   void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
+> > >     void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 bus=
+nr,
+> > > u8 fn,
+> > >=20
+> >=20
+>=20
+> Best regards,
+> Hans
+>=20
+
+--=20
+ i.
+--8323328-920175786-1742826920=:1100--
 
