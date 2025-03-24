@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-574200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC27BA6E1E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:59:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6657EA6E1D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997A21895EB1
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B85168FCB
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D2266592;
-	Mon, 24 Mar 2025 17:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33664266B45;
+	Mon, 24 Mar 2025 17:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SfuW2aaZ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="eqdm2IRx"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E68266567
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3145265CDE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838583; cv=none; b=mL9eyl1zKXjjAN2zZFh8j9i6fdDa2GmQ66pDKFEudWZa3ztO8PI8SEOWgWdZPf2c/bIqjGyVhSAWWQxDfod9eXzKrHvKldXJk5Be7C9IKeKY+Jm37YbuZKVVp4Rfx2MVdZAwzVPuGFObbde3/Qjg/PBGwwI+HuKgzrqOWW33YH4=
+	t=1742838584; cv=none; b=rTlHT+pZV5SjrXx6gDFhrrnWAjON0/Z4Zf9MqYI4MNCVtGRWHMy0MjovZoFTsM20RLNOFOXUxWOF8tnJ94ZH3ahyxaSo5l1u9UndnUk/CbXTDO5Or1NbzmepItsAJ8f8rURV5FbFONGXQqj3+453HucdSwyq9M1PUPbN5w/Ct/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838583; c=relaxed/simple;
-	bh=JnmDDcSLS273VKumaze2o0TCWurNnovdSvbi2PRkVqc=;
+	s=arc-20240116; t=1742838584; c=relaxed/simple;
+	bh=dVGPX7JGPkIN+0UvwddpfThGx7do2Vbuy+auXYK06L4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qvuRqeuOzRlFuWhb4Rury2566iLCZysxU+wZ1uLnaxoDC283mua9krOpKiSJUDIubl6KVPN4Prtff/1Q7qQwb7CLlVuK5xAssO13paRVofDXKzDhMpQ6ytOcXTO6LngsDjvqYeQYo/vRqqa49FvfE8k0CW/NlEtheOMa1XgB1kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SfuW2aaZ; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=Gp+7cbt05ut3oLw+UjeoCqI8icLIJmmCx/MH3v7BuanMzkpp9DSxpJ7R23ExgI7JHQVgqqQVxfHkG/6W/Fuko1FV4K6l/Af3linjjcqZNgNA7modY0xC24w6jX6dW9bfBtG9FZv5MTe4cC6aLwTuVv4fnxm9m2Q+FyX4SB7g96c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=eqdm2IRx; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-224100e9a5cso90670545ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:49:41 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22438c356c8so93251385ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:49:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742838580; x=1743443380; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1742838582; x=1743443382; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yz2osXWrElalCzIio0fRrS4N7V336cnORYficYcWn18=;
-        b=SfuW2aaZCUznm3bg6s5j1BWhfRWZn1b66O56e3V1kEqP03MZYdXueR4hmiQmdTK3KW
-         i9Hw9y5gIKGrgqQjEEoi2i1/IjK2pwVS+C4cdexX7SKmdSkp53Kj+taK7fR6UzNhsAME
-         s5nnSOn4DeUDOjklG7fO32Pn1ze67gbq8cIsTfrxDNVUt1Y98Ke2cWt6Qi4X+OBc+Uyp
-         FsorsUbnDWO2LhqEjKjjl0IFf1TmP5LUcQ79lX2AxMTCs2k14wor3O8DNIBKc0DU5Yg5
-         Ar3o5D5OOI017dNL53rdSV3+J8xiskl19TWu9SGNn28FCvG0kijVLnF74GzNnzUdCJxt
-         kwvw==
+        bh=pOiHfP9p0mlqSIoELkUxcyuZubPUyJkOsyllMOrSXD8=;
+        b=eqdm2IRxN1n58gZiYHjzH8uoX2NpCnis1KxqTK6xLnlUpDdEWbtBxleMraE/ocRI4Z
+         6Va+M+/amSpTukfibyPr5pnz/gC5MGOutTMxB+VYmHl3nZyq2U08yNsT03ax12C2ThqR
+         KeeFIhkzZdypK4bkd4oswkYzv9UWZTcaGZHZTs8FZ1uDF8xKkpzWJVN8PcnhOxFL9Zvs
+         I0KkN0X2rsmDjGYU5Hrs2vbxGQ6QRF0E9bRLBOXt20JWiNxyb+ghcdFxBmNi0ovIh76v
+         w66cY6wGbifALFIUzahjrHhdVoGK0aIqyQsEd2eLBzZRBQClQ6ToqqzGASuQ1VqVf1oC
+         5nQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742838580; x=1743443380;
+        d=1e100.net; s=20230601; t=1742838582; x=1743443382;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Yz2osXWrElalCzIio0fRrS4N7V336cnORYficYcWn18=;
-        b=I9Rs6+g96YU+LeLY9/m6nsSp+dL+dC0nmil2Tp6LsQIXGyESKT1qoW7pip6SiVjnIB
-         8LEZexHWcO02stYgL/cTEHFuJkLLhtSkzjxKxM21ioXZXZOZkxqDFDnC/PwuNBUtB7sC
-         L5s960lng76fdhMbLhEgGOxkYqKoXoQktDqqeC6blK05ne60JbAkp4iioYEvECSHmJrM
-         59l7DDhR/N+SkQlXAFd81YGPfqoFlnt/bnbseTVOLw08Fstl/2XBjVcIeY8y4dTki8gN
-         lk/eaE0RqjbfWEKBNldM6oME4BxIvv03mE/BU4tyi8oUPG2Ws4ECidGfvaH5rbs4hwPB
-         hrUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5JrVP8V7Ap52Cy1Ag8b/UjoUnW3qMyZ7YzjQVc27c1nF+XdYPGmA+gJTQ0aH7DSJpY4/kqmGCY/ufXdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3J+1Z5YuWx8FXpYgqD++sHdJ7M9gmqkcKeQoNWfZvP0weGRe0
-	in3IVimZn4TVnRBZzvJyeb4pUkW9v6atxmC78+x4Q6JNNaDoxxGYhBbiK6Kjd4I=
-X-Gm-Gg: ASbGncunK4tZ53mX+PbDAG1P1Xw1i0prSqeEEuN7JarlBy3t7jRKiwNgAmzbLZyOknq
-	GA4ZEsZiPv3ES/f0TwQvIP9NqzgjRYGTveG0KiSti24Tbkfw6lCyriPvp+gGkaoL0EZFXzI/qlt
-	Cvn0DKgJcE5hai3sZgFyrbbi1oqMU2fjiFfCMtCuHRZbU+EXpLT5GzC4RwqllsF29k33xKpyrqT
-	tk+nxjQAxr8X9ZItQK/AwzvNcMMmBt7fgDG+oMdMMt3X+tFzYFnZrijOx32rkfnQlgKEfBFzkGy
-	g6+/cgOrCQRd6gcS+j/xQB4biQCkb/jzR+Qsrp1xdVzqfcGS1H0rq12lLlK+zw==
-X-Google-Smtp-Source: AGHT+IEvbZLBkadN8enrTpfI1MaG14FFBTGvRXIEJ2kVCjGfPPoMyljKBkm92M3bmOxmimTtPebNvA==
-X-Received: by 2002:a17:90b:2647:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-3030fe95343mr26865713a91.12.1742838580250;
-        Mon, 24 Mar 2025 10:49:40 -0700 (PDT)
+        bh=pOiHfP9p0mlqSIoELkUxcyuZubPUyJkOsyllMOrSXD8=;
+        b=h4oN1a6PnJlQtug8dPfrzOeuqUQqJcydilxigB9w8vxFZDVToOtbiCylreRsfCrRKr
+         EdhasNnFscf7KYN9HNjG9k/M4zKKypuPde7Kdtbwqe+lSpQLab4ZWEMbcfZMwYuaivgi
+         WIW5KLh7zSrDH3lDlZfuw//cmQNwyaCohvAEi7qxnONeqThukD6H4C8KNcpJaZBSKiDi
+         7TgefCbbjlrcUWN3dK2GpJ7I9D2Jng91kCfaLa3rf1QrkWTSO7KfSBprYVRQKcGz5nQ8
+         3+gCOAodBEx5CFqkBdwJT98xoJxQYLw7XCgRWE98CwazeIXXevftoIJYgYZ3PdLiTxhX
+         88FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWazRUFSPwKonVQt11O2mKzWgD86lf7lHPBpFmI32EtDJoP6gxvd6LVe45ZdndInB/Afc1pHQ+PoYoGbsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1oCeHom0crGAhlJzN+rSEuhG40NSx1ZuYwO01ojAauaaGfQt3
+	it5zhreZ5SpKBUTT+ZkjjQn7SB/Ez65jKj4Br9HLOx6qRsW1G9D3nXbqofIYium9/YCZXp96vCg
+	h
+X-Gm-Gg: ASbGncuHuYPUMX6MYF4KnQP47zQaaCm+kUpE8Hi1+hoKBCc3yOvhRGfqUk0xC0XSdwi
+	GRx1Q21KQ68VHQcVaDMRzAsjntEKtphBrmd/bp7YBk3c3ssAZOZB+p4+zC4zYsRQM/6uwoqMQgR
+	hBRArDuvomXUk/I8tYevq39LbF4+cqXepmwSEYYcOLiamX8Sj6JS/4EkEgeaHW9gsQ71RjmRYlN
+	nptcxWQhWpTbBh08BOOM1F116CRf3sGK2KjPmAuch+i3ko88t5MPI0DwRpb34HQP64/oYabo2lv
+	AkAVTfC9EWcSxptGelqgOqtQWgj32DVJlizM0Ma9BdfsrnfeMfM=
+X-Google-Smtp-Source: AGHT+IH0d58rGWHCXEpkj7PaCzoJMt0vqxtCsjEoJi4vb1FwzxgpckX9h31G9WT2Is6kAP/nriGNww==
+X-Received: by 2002:a17:902:f605:b0:224:2207:5130 with SMTP id d9443c01a7336-22780e260d3mr210963105ad.45.1742838581913;
+        Mon, 24 Mar 2025 10:49:41 -0700 (PDT)
 Received: from localhost.localdomain ([2601:640:8900:32c0::e120])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-301bf576c7dsm12505821a91.3.2025.03.24.10.49.38
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-301bf576c7dsm12505821a91.3.2025.03.24.10.49.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 10:49:39 -0700 (PDT)
+        Mon, 24 Mar 2025 10:49:41 -0700 (PDT)
 From: Mohamed Khalfella <mkhalfella@purestorage.com>
 To: Christoph Hellwig <hch@lst.de>,
 	Sagi Grimberg <sagi@grimberg.me>,
@@ -84,9 +85,9 @@ Cc: Hannes Reinecke <hare@suse.de>,
 	linux-nvme@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	mkhalfella@purestorage.com
-Subject: [RFC PATCH v1 6/7] nvme-core: Add support for holding inflight requests
-Date: Mon, 24 Mar 2025 10:48:59 -0700
-Message-ID: <20250324174909.3919131-7-mkhalfella@purestorage.com>
+Subject: [RFC PATCH v1 7/7] nvme-tcp: Do not immediately cancel inflight requests during recovery
+Date: Mon, 24 Mar 2025 10:49:00 -0700
+Message-ID: <20250324174909.3919131-8-mkhalfella@purestorage.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250324174909.3919131-1-mkhalfella@purestorage.com>
 References: <20250324174909.3919131-1-mkhalfella@purestorage.com>
@@ -98,120 +99,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TP4129 requires nvme controller to hold inflight requests in case of
-connection loss for a certain duration of time until it is safe for
-these requests to be retried. In case there are inflight requests
-held_req_work is scheduled with the appropriate delay to cancel the
-requests. Add the necessary logic to nvme-core so that all fabric
-transports can use it.
+In case of controller recovery, reset, or deletion it is possible there
+are inflight requests for which no response was received from target
+controller. TP4129 requires such inflight requests to not be canceled
+immediately. Instead these requests should be held until the target
+learns about disconnection and quiesce pending nvme commands. Implement
+this for nvme-tcp.
 
 Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
 ---
- drivers/nvme/host/core.c | 61 ++++++++++++++++++++++++++++++++++++++++
- drivers/nvme/host/nvme.h |  4 +++
- 2 files changed, 65 insertions(+)
+ drivers/nvme/host/tcp.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index f4b3c6a42e90..4170785ecf21 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -551,6 +551,65 @@ void nvme_cancel_admin_tagset(struct nvme_ctrl *ctrl)
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 327e37a25281..822e6329e332 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -2252,12 +2252,14 @@ static int nvme_tcp_configure_admin_queue(struct nvme_ctrl *ctrl, bool new)
+ 	return error;
  }
- EXPORT_SYMBOL_GPL(nvme_cancel_admin_tagset);
  
-+static void nvme_held_req_work(struct work_struct *work)
-+{
-+	struct nvme_ctrl *ctrl = container_of(to_delayed_work(work),
-+			struct nvme_ctrl, held_req_work);
-+	dev_info(ctrl->device, "releasing inflight requests\n");
-+	nvme_cancel_tagset(ctrl);
-+	nvme_cancel_admin_tagset(ctrl);
-+	complete(&ctrl->held_req_completion);
-+}
-+
-+static bool nvme_check_inflight_request(struct request *req, void *data)
-+{
-+	bool *inflight_reqs = data;
-+
-+	if (blk_mq_rq_state(req) == MQ_RQ_IN_FLIGHT) {
-+		*inflight_reqs = true;
-+		return false;
-+	}
-+	return true;
-+}
-+
-+bool nvme_queue_held_requests_work(struct nvme_ctrl *ctrl)
-+{
-+	unsigned long timeout = nvmef_req_hold_timeout_ms(ctrl);
-+	bool inflight_reqs = false;
-+
-+	if (ctrl->queue_count > 1 && ctrl->tagset)
-+		blk_mq_tagset_busy_iter(ctrl->tagset,
-+			nvme_check_inflight_request, &inflight_reqs);
-+	if (inflight_reqs)
-+		goto schedule_work;
-+
-+	if (ctrl->admin_tagset)
-+		blk_mq_tagset_busy_iter(ctrl->admin_tagset,
-+					nvme_check_inflight_request, &inflight_reqs);
-+	if (!inflight_reqs)
-+		return false;
-+
-+schedule_work:
-+	dev_info(ctrl->device, "holding inflight requests for %lums\n", timeout);
-+	reinit_completion(&ctrl->held_req_completion);
-+	schedule_delayed_work(&ctrl->held_req_work, msecs_to_jiffies(timeout));
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(nvme_queue_held_requests_work);
-+
-+void nvme_wait_for_held_requests(struct nvme_ctrl *ctrl)
-+{
-+	/*
-+	 * Inflight requests can be held for a duration of time that is longer
-+	 * than hung_task timeout. Avoid hitting hung_task timeout while waiting
-+	 * for held requests to be completed.
-+	 */
-+	while (!wait_for_completion_timeout(&ctrl->held_req_completion,
-+					    secs_to_jiffies(1)))
-+		;
-+}
-+EXPORT_SYMBOL_GPL(nvme_wait_for_held_requests);
-+
- bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
- 		enum nvme_ctrl_state new_state)
+-static void nvme_tcp_teardown_admin_queue(struct nvme_ctrl *ctrl)
++static void nvme_tcp_teardown_admin_queue(struct nvme_ctrl *ctrl,
++					  bool hold_reqs)
  {
-@@ -4846,6 +4905,8 @@ int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
+ 	nvme_quiesce_admin_queue(ctrl);
+ 	blk_sync_queue(ctrl->admin_q);
+ 	nvme_tcp_stop_queue(ctrl, 0);
+-	nvme_cancel_admin_tagset(ctrl);
++	if (!hold_reqs)
++		nvme_cancel_admin_tagset(ctrl);
+ 	nvme_tcp_free_admin_queue(ctrl);
+ 	if (ctrl->tls_pskid) {
+ 		dev_dbg(ctrl->device, "Wipe negotiated TLS_PSK %08x\n",
+@@ -2274,12 +2276,14 @@ static void nvme_tcp_suspend_io_queues(struct nvme_ctrl *ctrl)
+ 	nvme_sync_io_queues(ctrl);
+ }
  
- 	INIT_DELAYED_WORK(&ctrl->ka_work, nvme_keep_alive_work);
- 	INIT_DELAYED_WORK(&ctrl->failfast_work, nvme_failfast_work);
-+	INIT_DELAYED_WORK(&ctrl->held_req_work, nvme_held_req_work);
-+	init_completion(&ctrl->held_req_completion);
- 	memset(&ctrl->ka_cmd, 0, sizeof(ctrl->ka_cmd));
- 	ctrl->ka_cmd.common.opcode = nvme_admin_keep_alive;
- 	ctrl->ka_last_check_time = jiffies;
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index 7563332b5b7b..ed8729f93ace 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -356,6 +356,8 @@ struct nvme_ctrl {
- 	struct work_struct async_event_work;
- 	struct delayed_work ka_work;
- 	struct delayed_work failfast_work;
-+	struct delayed_work held_req_work;
-+	struct completion held_req_completion;
- 	struct nvme_command ka_cmd;
- 	unsigned long ka_last_check_time;
- 	struct work_struct fw_act_work;
-@@ -793,6 +795,8 @@ blk_status_t nvme_host_path_error(struct request *req);
- bool nvme_cancel_request(struct request *req, void *data);
- void nvme_cancel_tagset(struct nvme_ctrl *ctrl);
- void nvme_cancel_admin_tagset(struct nvme_ctrl *ctrl);
-+bool nvme_queue_held_requests_work(struct nvme_ctrl *ctrl);
-+void nvme_wait_for_held_requests(struct nvme_ctrl *ctrl);
- bool nvme_change_ctrl_state(struct nvme_ctrl *ctrl,
- 		enum nvme_ctrl_state new_state);
- int nvme_disable_ctrl(struct nvme_ctrl *ctrl, bool shutdown);
+-static void nvme_tcp_teardown_io_queues(struct nvme_ctrl *ctrl)
++static void nvme_tcp_teardown_io_queues(struct nvme_ctrl *ctrl,
++					bool hold_reqs)
+ {
+ 	if (ctrl->queue_count <= 1)
+ 		return;
+ 	nvme_tcp_stop_io_queues(ctrl);
+-	nvme_cancel_tagset(ctrl);
++	if (!hold_reqs)
++		nvme_cancel_tagset(ctrl);
+ 	nvme_tcp_free_io_queues(ctrl);
+ }
+ 
+@@ -2375,7 +2379,7 @@ static int nvme_tcp_setup_ctrl(struct nvme_ctrl *ctrl, bool new)
+ 	}
+ destroy_admin:
+ 	nvme_stop_keep_alive(ctrl);
+-	nvme_tcp_teardown_admin_queue(ctrl);
++	nvme_tcp_teardown_admin_queue(ctrl, false);
+ 	if (new) {
+ 		nvme_unquiesce_admin_queue(ctrl);
+ 		nvme_remove_admin_tag_set(ctrl);
+@@ -2418,10 +2422,12 @@ static void nvme_tcp_error_recovery_work(struct work_struct *work)
+ 	nvme_stop_keep_alive(ctrl);
+ 	flush_work(&ctrl->async_event_work);
+ 	nvme_tcp_suspend_io_queues(ctrl);
+-	nvme_tcp_teardown_io_queues(ctrl);
++	nvme_tcp_teardown_io_queues(ctrl, true);
++	nvme_tcp_teardown_admin_queue(ctrl, true);
++	if (nvme_queue_held_requests_work(ctrl))
++		nvme_wait_for_held_requests(ctrl);
+ 	/* unquiesce to fail fast pending requests */
+ 	nvme_unquiesce_io_queues(ctrl);
+-	nvme_tcp_teardown_admin_queue(ctrl);
+ 	nvme_unquiesce_admin_queue(ctrl);
+ 	nvme_auth_stop(ctrl);
+ 
+@@ -2439,11 +2445,15 @@ static void nvme_tcp_error_recovery_work(struct work_struct *work)
+ 
+ static void nvme_tcp_teardown_ctrl(struct nvme_ctrl *ctrl, bool shutdown)
+ {
++	bool hold_reqs;
++
+ 	nvme_tcp_suspend_io_queues(ctrl);
+-	nvme_tcp_teardown_io_queues(ctrl);
+ 	nvme_quiesce_admin_queue(ctrl);
+-	nvme_disable_ctrl(ctrl, shutdown);
+-	nvme_tcp_teardown_admin_queue(ctrl);
++	hold_reqs = nvme_disable_ctrl(ctrl, shutdown);
++	nvme_tcp_teardown_io_queues(ctrl, hold_reqs);
++	nvme_tcp_teardown_admin_queue(ctrl, hold_reqs);
++	if (hold_reqs && nvme_queue_held_requests_work(ctrl))
++		nvme_wait_for_held_requests(ctrl);
+ }
+ 
+ static void nvme_tcp_delete_ctrl(struct nvme_ctrl *ctrl)
 -- 
 2.48.1
 
