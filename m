@@ -1,229 +1,206 @@
-Return-Path: <linux-kernel+bounces-573728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB67A6DBA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:33:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8FEA6DBBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8410D188F42C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D03EC3A770A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8880625E838;
-	Mon, 24 Mar 2025 13:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A164726280A;
+	Mon, 24 Mar 2025 13:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ErbaNGnp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lpozj9oQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/tse191R"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236C119C569
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9282B25FA0B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823203; cv=none; b=nUpx/KaP1urh5zhRwgLBIMWXqIstheqApQv7qW3JyHyq8gHpOTKSUuj2R9waJAQ0SE8jFP4HiZr+nWhGNd1JhexU/oSVCbHOMS0iB6gWn+DM+FpZTy9p+rS50YZXPmZR8SgQVA6sW2ZBFWCDTlJAxXZrYvsyUcAaspwkXAVbDd8=
+	t=1742823273; cv=none; b=aE41RaBdHCNg9hEbFcX9EtJ7r6tCpJMUFIqwceCgsrWo84zU13Q2lsSGSKQB3SikEWVp7a6CfnWYMWFXUilgXFAWocedkuLLJ+z3akbDYTdmiEyHtN1/5/43eT2ZS9YRyPaIhppfSKZkL9uBFiUJZEmQVcY/AekuHmesABtcbSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823203; c=relaxed/simple;
-	bh=672I3/+hGrCRodDTgPKh2B6jZ5R+Fb8/Nlctlz3nabc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X+j0HJGne0eCIEZ13/+vRVz09bHK0DTWia0NNeKJ/ddKMF5d5jlYBVSNc7zge5V5/xL5Fto0CRoYc/sGJF3aC83k1BGjfRyP9g9vPZogDceoAYNOFIrEa1ol62AquySo80iG+/uQ8Hnl+SnodqBp59AcFHWAkdDyfxpf/YMfiCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ErbaNGnp; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742823203; x=1774359203;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=672I3/+hGrCRodDTgPKh2B6jZ5R+Fb8/Nlctlz3nabc=;
-  b=ErbaNGnpIe7Fvkj3rVGxaDgWCi6PgGMhrwOxT7JDzf0vljG1HHQmm8YK
-   ZYIbNLjDhDNUOMDYbObOSD7ljt9mz6fZZi9hHfN2zZ56UdDY4RVz370tD
-   HZDr06c97uJC7xYFyGqvWYAAM0KahMcjgA2EU48rlQ3ubMlL0U4QCkRTV
-   kxyKmUVJmK/7iPrFO3OSwnKQ6TwrUT/93/VFCFSx6F4HeXyqMPUXEv/PI
-   rFWvcZpoguPgOOLgd+azH+PiHU1Z1tP4Bipg+KVRhtY+TX+xDpkFavxU+
-   M1zrFtsqjRJ3LaFrwBqLXXib/1ixjTbbmb3QHBL4pI4Z9zPXBT59okzgL
-   w==;
-X-CSE-ConnectionGUID: /QxKiwS7Si2KqQ+1CDmicA==
-X-CSE-MsgGUID: 4TicbbUATZaTOkTkMDIRhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="44191547"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="44191547"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:33:22 -0700
-X-CSE-ConnectionGUID: HUyPZEDVRdmRhrgXUv8/oA==
-X-CSE-MsgGUID: f0vnuuvITZ6BvwyGfdDnVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="128227255"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:33:16 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
- tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
-Cc: liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com,
- libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- shiyongbang@huawei.com
-Subject: Re: [PATCH v7 drm-dp 5/9] drm/hisilicon/hibmc: Getting connector
- info and EDID by using AUX channel
-In-Reply-To: <ff11c8ac-7eb4-42cb-86d3-ad9924c9374b@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250319032435.1119469-1-shiyongbang@huawei.com>
- <20250319032435.1119469-6-shiyongbang@huawei.com>
- <87frj8c9ol.fsf@intel.com>
- <ff11c8ac-7eb4-42cb-86d3-ad9924c9374b@huawei.com>
-Date: Mon, 24 Mar 2025 15:33:13 +0200
-Message-ID: <87jz8ea6zq.fsf@intel.com>
+	s=arc-20240116; t=1742823273; c=relaxed/simple;
+	bh=oJBlFC8RVHGgl8j5wwdUCD6FwPiik3nx0cWpMgPmt1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZL4yZue7/scst40EPL1r0MQIarPtW/rub6gLOlLajQkrMY0asrafYq5e/FuZCMsIXAgvWtei6g4lAquSWluS4E+D3IyS1t+rqTolTwawNzVn+Aj2Km1oD3qQ0JuYX6KFVn+b+T46ugzGjaO1NauLVi5aAGZG8eiEx2xUbVb1EN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lpozj9oQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/tse191R; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742823270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T6RSxh+ngXoYWpeKOf12JK5PZIX476LSn57y3yYtrgk=;
+	b=lpozj9oQ2V2n6Nh9jNWEQdmKC697+mIB0e3zuvjXqV1zq8/cktn6LzqxE8F0jAgLtOQC42
+	a/KoFNMnV0PmZpLuMsqBx+tHOQryH1SX7tgA6LF/WrI0HjnlZVef5nsw/Y+NWAMIsHUZ/o
+	kJtXQbqOF3JhZJXE4dpisb13MvknYDeDWqJlw7nTzv9o/BExKx/LdhNP4ygP2u0Rs95I08
+	103QW/aPwQEqXybv2rnxqQivzgGYJKX54+vx8Ikk65D6yFPM9VZSjhNjJfqcFCAU5A0i9Q
+	i5UQmv3PAUW9FKYbRlchHQ2j9WRcZfTs2Or8R/5CaqOWvmi4yTHl+nRIn/e4FA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742823270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T6RSxh+ngXoYWpeKOf12JK5PZIX476LSn57y3yYtrgk=;
+	b=/tse191RVktpzQ4sOOuuRz9nvPn74ABPslv4UgkxUivR1OfPjmfP5SudJt1pToyIpehjOu
+	c5I2RChxK5+DszDA==
+To: Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v4 19/29] x86/cpu: Use enums for TLB descriptor types
+Date: Mon, 24 Mar 2025 14:33:14 +0100
+Message-ID: <20250324133324.23458-20-darwi@linutronix.de>
+In-Reply-To: <20250324133324.23458-1-darwi@linutronix.de>
+References: <20250324133324.23458-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Mar 2025, Yongbang Shi <shiyongbang@huawei.com> wrote:
->> On Wed, 19 Mar 2025, Yongbang Shi <shiyongbang@huawei.com> wrote:
->>> From: Baihan Li <libaihan@huawei.com>
->>>
->>> Add registering drm_aux and use it to get connector edid with drm
->>> functions. Add ddc channel in connector initialization to put drm_aux
->>> in drm_connector.
->>>
->>> Signed-off-by: Baihan Li <libaihan@huawei.com>
->>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>> ChangeLog:
->>> v6 -> v7:
->>>    - add if statement about drm aux in hibmc_dp_connector_get_modes(), suggested by Jani Nikula
->> I don't understand this, and I did not suggest such a thing.
->>
->> BR,
->> Jani.
->>
-> Hi Jani,
->
-> Is the modification of v8 correct?
+The leaf 0x2 one-byte TLB descriptor types:
 
-I never received that for whatever reason.
+	TLB_INST_4K
+	TLB_INST_4M
+	TLB_INST_2M_4M
+	...
 
->
->
->>> v5 -> v6:
->>>    - move the detect_ctx() to the patch 7/9.
->>> v2 -> v3:
->>>    - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
->>> v1 -> v2:
->>>    - deleting type conversion, suggested by Dmitry Baryshkov.
->>>    - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
->>> ---
->>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  3 +-
->>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 35 ++++++++++++++++---
->>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  5 +++
->>>   3 files changed, 37 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->>> index ded9e7ce887a..e0bb9b14d9d8 100644
->>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->>> @@ -161,7 +161,8 @@ void hibmc_dp_aux_init(struct hibmc_dp *dp)
->>>   				 HIBMC_DP_MIN_PULSE_NUM);
->>>   
->>>   	dp->aux.transfer = hibmc_dp_aux_xfer;
->>> -	dp->aux.is_remote = 0;
->>> +	dp->aux.name = kasprintf(GFP_KERNEL, "HIBMC DRM dp aux");
->>> +	dp->aux.drm_dev = dp->drm_dev;
->>>   	drm_dp_aux_init(&dp->aux);
->>>   	dp->dp_dev->aux = &dp->aux;
->>>   }
->>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> index 603d6b198a54..0256724d8b9b 100644
->>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->>> @@ -15,11 +15,20 @@
->>>   
->>>   static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>>   {
->>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>> +	const struct drm_edid *drm_edid;
->>>   	int count;
->>>   
->>> -	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
->>> -				     connector->dev->mode_config.max_height);
->>> -	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
->>> +	if (!dp->aux.name)
->>> +		return 0;
->>> +
->>> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->>> +
->>> +	drm_edid_connector_update(connector, drm_edid);
->>> +
->>> +	count = drm_edid_connector_add_modes(connector);
->>> +
->>> +	drm_edid_free(drm_edid);
->>>   
->>>   	return count;
->>>   }
->>> @@ -28,12 +37,28 @@ static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->>>   	.get_modes = hibmc_dp_connector_get_modes,
->>>   };
->>>   
->>> +static int hibmc_dp_late_register(struct drm_connector *connector)
->>> +{
->>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>> +
->>> +	return drm_dp_aux_register(&dp->aux);
->>> +}
->>> +
->>> +static void hibmc_dp_early_unregister(struct drm_connector *connector)
->>> +{
->>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>> +
->>> +	drm_dp_aux_unregister(&dp->aux);
->>> +}
->>> +
->>>   static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
->>>   	.reset = drm_atomic_helper_connector_reset,
->>>   	.fill_modes = drm_helper_probe_single_connector_modes,
->>>   	.destroy = drm_connector_cleanup,
->>>   	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->>>   	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->>> +	.late_register = hibmc_dp_late_register,
->>> +	.early_unregister = hibmc_dp_early_unregister,
->>>   };
->>>   
->>>   static inline int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
->>> @@ -103,8 +128,8 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
->>>   
->>>   	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
->>>   
->>> -	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
->>> -				 DRM_MODE_CONNECTOR_DisplayPort);
->>> +	ret = drm_connector_init_with_ddc(dev, connector, &hibmc_dp_conn_funcs,
->>> +					  DRM_MODE_CONNECTOR_DisplayPort, &dp->aux.ddc);
->>>   	if (ret) {
->>>   		drm_err(dev, "init dp connector failed: %d\n", ret);
->>>   		return ret;
->>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->>> index d982f1e4b958..3ddd71aada66 100644
->>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->>> @@ -47,6 +47,11 @@ static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
->>>   	return container_of(connector, struct hibmc_vdac, connector);
->>>   }
->>>   
->>> +static inline struct hibmc_dp *to_hibmc_dp(struct drm_connector *connector)
->>> +{
->>> +	return container_of(connector, struct hibmc_dp, connector);
->>> +}
->>> +
->>>   static inline struct hibmc_drm_private *to_hibmc_drm_private(struct drm_device *dev)
->>>   {
->>>   	return container_of(dev, struct hibmc_drm_private, dev);
+are just discriminators to be used within the intel_tlb_table[] mapping.
+Their specific values are irrelevant.
 
+Use enums for such types.
+
+Make the enum packed and static assert that its values remain within a
+single byte so that the intel_tlb_table[] size do not go out of hand.
+
+Use a __CHECKER__ guard for the static_assert(sizeof(enum) == 1) line as
+sparse ignores the __packed annotation on enums.  This is similar to
+commit fe3944fb245a ("fs: Move enum rw_hint into a new header file") for
+core SCSI code.
+
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+Link: https://lore.kernel.org/r/Z9rsTirs9lLfEPD9@lx-t490
+---
+ arch/x86/include/asm/cpuid/types.h | 31 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/intel.c        | 28 +++------------------------
+ 2 files changed, 34 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
+index 39c3c79c081b..e756327f8e02 100644
+--- a/arch/x86/include/asm/cpuid/types.h
++++ b/arch/x86/include/asm/cpuid/types.h
+@@ -60,4 +60,35 @@ enum _cache_table_type {
+ static_assert(sizeof(enum _cache_table_type) == 1);
+ #endif
+ 
++/*
++ * Leaf 0x2 1-byte descriptors' TLB types
++ * To be used for their mappings at intel_tlb_table[]
++ *
++ * Start at 1 since type 0 is reserved for HW byte descriptors which are
++ * not recognized by the kernel; i.e., those without an explicit mapping.
++ */
++enum _tlb_table_type {
++	TLB_INST_4K		= 1,
++	TLB_INST_4M,
++	TLB_INST_2M_4M,
++	TLB_INST_ALL,
++
++	TLB_DATA_4K,
++	TLB_DATA_4M,
++	TLB_DATA_2M_4M,
++	TLB_DATA_4K_4M,
++	TLB_DATA_1G,
++	TLB_DATA_1G_2M_4M,
++
++	TLB_DATA0_4K,
++	TLB_DATA0_4M,
++	TLB_DATA0_2M_4M,
++
++	STLB_4K,
++	STLB_4K_2M,
++} __packed;
++#ifndef __CHECKER__
++static_assert(sizeof(enum _tlb_table_type) == 1);
++#endif
++
+ #endif /* _ASM_X86_CPUID_TYPES_H */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index aeb7d6d48379..def433e0081f 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -626,28 +626,6 @@ static unsigned int intel_size_cache(struct cpuinfo_x86 *c, unsigned int size)
+ }
+ #endif
+ 
+-#define TLB_INST_4K		0x01
+-#define TLB_INST_4M		0x02
+-#define TLB_INST_2M_4M		0x03
+-
+-#define TLB_INST_ALL		0x05
+-#define TLB_INST_1G		0x06
+-
+-#define TLB_DATA_4K		0x11
+-#define TLB_DATA_4M		0x12
+-#define TLB_DATA_2M_4M		0x13
+-#define TLB_DATA_4K_4M		0x14
+-
+-#define TLB_DATA_1G		0x16
+-#define TLB_DATA_1G_2M_4M	0x17
+-
+-#define TLB_DATA0_4K		0x21
+-#define TLB_DATA0_4M		0x22
+-#define TLB_DATA0_2M_4M		0x23
+-
+-#define STLB_4K			0x41
+-#define STLB_4K_2M		0x42
+-
+ /*
+  * All of leaf 0x2's one-byte TLB descriptors implies the same number of
+  * entries for their respective TLB types.  The 0x63 descriptor is an
+@@ -660,7 +638,7 @@ static unsigned int intel_size_cache(struct cpuinfo_x86 *c, unsigned int size)
+ 
+ struct _tlb_table {
+ 	unsigned char descriptor;
+-	char tlb_type;
++	enum _tlb_table_type type;
+ 	unsigned int entries;
+ };
+ 
+@@ -718,11 +696,11 @@ static void intel_tlb_lookup(const unsigned char desc)
+ 	     intel_tlb_table[k].descriptor != 0; k++)
+ 		;
+ 
+-	if (intel_tlb_table[k].tlb_type == 0)
++	if (intel_tlb_table[k].type == 0)
+ 		return;
+ 
+ 	entries = intel_tlb_table[k].entries;
+-	switch (intel_tlb_table[k].tlb_type) {
++	switch (intel_tlb_table[k].type) {
+ 	case STLB_4K:
+ 		tlb_lli_4k = max(tlb_lli_4k, entries);
+ 		tlb_lld_4k = max(tlb_lld_4k, entries);
 -- 
-Jani Nikula, Intel
+2.48.1
+
 
