@@ -1,196 +1,143 @@
-Return-Path: <linux-kernel+bounces-574098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20936A6E08B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:06:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09875A6E094
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8A9189588E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD5D3B6EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B62641FC;
-	Mon, 24 Mar 2025 17:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D579E263F54;
+	Mon, 24 Mar 2025 17:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tGU9pVLL"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="WfIBASoi"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CD32641C6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742835928; cv=fail; b=nUdnAMDvooGQWK4tF479g/9rWNJM1QDm46UbJIf+QXUWHnDBXtH05wA/NFIqgFhuSCbRq+GH53hWoL9OvTBkduHfye5fAjo/Z2MyrPHTHHtcYFoW2dbJfKmUOip+yLR50BRNGRTAeoPg9mTVqiYGKwnNpf1xQASMmSK14cV8xlk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742835928; c=relaxed/simple;
-	bh=K9vJQGR8bT1c9m0tGwgiEOoxu7CLLNKDuDkaWCMLnWo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pABuP+M6uHYCaKvJ2JRR+9HShgxUoIAXIq/D0fq/lvcFrbzbtOBCdlzblAt0EHpua0IErzAe8onsmP6V4ycYGB1ReF+t2hCwnrlXHHbVYhzGpgMQ0H9Pvd1IvVyyqhG21x4h3lc3ZZM+dvm/fkIXePIpC/7i2ZTy0rCS82RJrk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tGU9pVLL; arc=fail smtp.client-ip=40.107.243.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UKFYd3BQesplI3Q7EuKKaW4lWpcsYb8wbB9Ykiif1LPfwx3mxmHiavXelqinIoJcn758IpDyD0Q5W2QkqmyYTcOTPkDbND477RYS5jOmZbEw7KtjEF/SKSWQuLsxneCSvqd4JRb2bc/AYutTXmrrba4PFXyY0BJQ6PxTjfkIEVXyYneGdSRPfo9xs+noPFocQSbrOcssNjZEIdf/IM1eq0nXu5LqV58ZF9DH8WBJ7YO3GAokfm9iK+d7DyG7cljmLYJhJ7CCKDsVfae7NusO5whz8N8gTe13drHQpdnUDPtIgiyEiE3Lxikh3zeAOzWMtAgyIV4ajY28HG/Sc/Rfqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gwu2HX1kbe040I2+lLxd9xZoywXmvH7zDXEeXXoKCAU=;
- b=yjx427fYe1mJ6eqezrXCvNXjd+PvpEp7K0BCzr6ttaDimh4YbATzC3+k4qGqwEFi27LY/FKPIByr7W223gfDm8e2fT/P8yr4u/0wJfRh8KttkX9cCcUZGP/UwLY7OYn/bh7y4NbYu8feSYNiKfIYq+saEk4pR9sKH/qe+os8z/yA1e9Ql7pLXnEIPQOYctTqNm1ZKWiKfHDq6nR2eUe4XpUg/ERaqFn0Ie6I+8FsQUmKJWm1FBDRXSw9TGYAWTxqV1SnRtjLkjqwKskL2Arx2KiQUr/gZ594tivGcpnaM4H6eVO/Z/huEApdUp89sDfEH7OVffNAJwv7ZyWgnDft1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gwu2HX1kbe040I2+lLxd9xZoywXmvH7zDXEeXXoKCAU=;
- b=tGU9pVLLwJti8yWpaAU9vSzNGcpZ8tIMIaZxFRH1XY0ZvuFVgeGvV2ashX894STQCXpIn9djrDeeZMvUSIQ7HG06ktNRiO/zFenfsfc/mvIfDSUbhA4PLCNP9+RAI8Pq8Hga3En3dm+TPDJJbjNkOs5DCFpqQp4alvrnnrfB4EC5K1sHT6OT1jXfrNlf0Hqf9gTcvWtap1yPyrWs32Fl/iyLiBAD6ivBtEH4LHKmxdT2EpWl9uQWk86Kzy3RwbhR9JkbIbZZy41C0xddivnU9FP4eT2WcGYsk17Oaonb7KoFbWBz13+65GAsYv+B6my22xk0CP11D1YbqSynvLA3Jw==
-Received: from DS7PR05CA0097.namprd05.prod.outlook.com (2603:10b6:8:56::26) by
- SJ2PR12MB8807.namprd12.prod.outlook.com (2603:10b6:a03:4d0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 17:05:24 +0000
-Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
- (2603:10b6:8:56:cafe::a1) by DS7PR05CA0097.outlook.office365.com
- (2603:10b6:8:56::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Mon,
- 24 Mar 2025 17:05:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 17:05:23 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
- 2025 10:05:09 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
- 2025 10:05:09 -0700
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.129.68.10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 24 Mar 2025 10:05:08 -0700
-Date: Mon, 24 Mar 2025 10:05:07 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Nathan Chancellor <nathan@kernel.org>, <kevin.tian@intel.com>,
-	<robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] iommu: Drop sw_msi from iommu_domain
-Message-ID: <Z+GQw2A5nzoxfiHc@nvidia.com>
-References: <cover.1741294235.git.nicolinc@nvidia.com>
- <6d4b493d20926c8d14e29bc776639cdcf2095146.1741294235.git.nicolinc@nvidia.com>
- <20250324162558.GA198799@ax162>
- <Z+GK98/VSvYl518j@nvidia.com>
- <Z+GOkl21ZLtE3B/e@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E950263C75
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742835956; cv=none; b=hgB/Rzh9nfQiTZm/Jmt8U+myMATHf6+sNUvVHYl0Cp1J9mWPOnnH+r9gfQFcmBIVDJYrwg6J4ILIEENLmjyAowVJQAYvuBgmhrME9+u8YbesjDnWrx3Nmbr+9C4/IlQHwa3ft4L393DFuO2yGu7u5iovAQziKJWVw/lJdjMXBLQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742835956; c=relaxed/simple;
+	bh=tmqHuzhAZXTG4eAuu0ZnQgAzD2ivCoMGn/5U74rRFp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tSN8LlZhmxG1q5aoiK5YsoHJRNpmonLfFWxYmt6SmUB47eHqlG0K4mthsMlzMvRSbGpKFadY8yPzUfxjicfnKa3yubRlIAqg8/83+qgIjeBLg2pL16/AahSI6R8yWhYEtd4Fspr3if7cx+3hDyS7UZzccU3PTOgoYTY5dt7PH+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=WfIBASoi; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
+Message-ID: <dd1bc01c-75f4-4071-a2ac-534a12dd3029@craftyguy.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
+	s=key1; t=1742835951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y0MUSaxC+hQA+rUwUSVWGGTFbI21s/8Et44mf+YXe3o=;
+	b=WfIBASoiCff/K2GUmPuwz0CoE4OwEWKBKn3IQq+nmjO+FBltsURxhaGA4Vl/fjgP+DY+IJ
+	eEY+5l6QH8RwNHHD0sJYmdvftHUB765X+GWF3OdpXYV+wRyOW27SDL4+me6h+nn5ixVq12
+	hbZU0RxRulGKzcSH3gy4cXzzygj9Q5sEIviMkDivvFOuV2p/JRVMxoOvDTkAJEqjD6cBXH
+	8xxTDARNCpIjG2UhXGpPqSmNX04DjWEh5f6z+W4DbHfzyLSW42oYghSM8sECjYcOCk84so
+	IfaPIQUfDIbk7Nj33LJ0Cxvs/D5kRSMoiOvWSvg0yNeDj1EOnuJG9kgpm3Fg7A==
+Date: Mon, 24 Mar 2025 10:05:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z+GOkl21ZLtE3B/e@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|SJ2PR12MB8807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69681d69-f454-4448-234b-08dd6af61144
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VFdiFToLvOjqpbbcRi0qbqMXQ9sXu9PTeubkNZdjt5GgRaqehT9zCW3MaGZ7?=
- =?us-ascii?Q?ZmODDro2U5oK3FZ1HArG1no8VTYCMYKhv5BEp/zR1y9mehBmQGCFmOT5y4CX?=
- =?us-ascii?Q?nYHNnRgLpJJl/TUI1crtczuZYcW+2yAWj/Vs+Dh2KTAaYmZBiTYVKPMQCBzr?=
- =?us-ascii?Q?NOkLyJhEt3JMw8YNvZbAflgmLwhuuxcDCrvsYo6NMN0bxo1K/vTUXFqXTw0Z?=
- =?us-ascii?Q?dULO8oQ88XR6r7EvW9AfXDNLs3a/BNxB0t1FhRJqEuszNyC1UxWZe0En0B1J?=
- =?us-ascii?Q?FLfkF2T8itEqoOxC02yXpyHjm91elVldV54hr6gnDFhDT4CP520xzb6dS5XV?=
- =?us-ascii?Q?SlCROPvu3Ia8BvJ75y2+Ow2On8aKBFRri0Doha1hJHIZUck0DKQGTflxfZlU?=
- =?us-ascii?Q?q8288MRWNU83jZ3uqHKuQyG53ZsYwXH/t6djVhkEyuG3B2UUe71WIm9+TkSK?=
- =?us-ascii?Q?69qA2BE1HaeJJgm9JT7f9Dqcy7i1LNoEo+GRTeSQ94uIqJimhza9d1W3YI2l?=
- =?us-ascii?Q?A3KG17ePqJACSwoFp42FrXpxBu6Fy8HAVaIES7S6hNvLgU+KBpLqkzJdeY+l?=
- =?us-ascii?Q?PQ9J+oaG3lQ6xxPWLndRl5tXixoIAovZa3DfVOOL0g+ykqKVuD+X5MrpJVyO?=
- =?us-ascii?Q?b0HIMnNubK9V4bnVMm+Jf7oAMzGFtm5ev8xK236idPOFVIUB59uPWnbDdkv4?=
- =?us-ascii?Q?HoHkUlHKQRi/g9+y/GvYLrncmR6NUEiuMdSCoirpU/O+IFywg6ygy1wa9WTI?=
- =?us-ascii?Q?eUnSsNbXw93xRIPs+3dHdwVEBCSaSc45gw0393Y5z2Edzh/qS+Ej7GbXTnJB?=
- =?us-ascii?Q?kjssIr02RYKlpzFpTW3DOCqshswmhi9DYcTTxAG7FY6HsmDgmsGCypWL56ew?=
- =?us-ascii?Q?SWKig6+f5pDPK0M8f2Ac/IlpTgkWyY9DRAVB9CmXAL1DAukqLBFP2wW8J4uj?=
- =?us-ascii?Q?mXef0N672kWl0lQKD2weqpaaRydWnL11oFbBUK7XVCAqHFQX7GdzOYFoKQ05?=
- =?us-ascii?Q?t28uv2AluUICoRikbOlTYtZm0ZHFOHV3kBte9DWJg3tIycaP/X1PBUgqNzMI?=
- =?us-ascii?Q?4NzZQFLk7thMwKKx79/QEUybAm661ckk6zuhfMx+4PJgZVYbeGpXYAT6/dFP?=
- =?us-ascii?Q?Bb+YO0AMzB1azw8/SAsILpalyp1DxuSW+VDgDR5LZglpUEw+1Ot9yueyXMIB?=
- =?us-ascii?Q?Sz5GEJDaarc1MbYbeZ2eyqAlxX7NFsu2Z8Mc8taHGrkyaj7w4HKkkibsPl8z?=
- =?us-ascii?Q?XhU01mzNdBvHjsbWYoTD3BopcGAssDIw9HH1kR9hH5HWp1Uh55JzTEeUnMWX?=
- =?us-ascii?Q?MOFMmc6r0qSPhU+BLOn2I2NvlZB5+D9eQ//PiizS59YXyL4OdFIf+UUe0pW/?=
- =?us-ascii?Q?RO6BDFXAa3F3SR9etsJ5dddejOAXZK8PxufpOf3DBe2u34g1fwpKn8Ky3ZTj?=
- =?us-ascii?Q?FrPiqYXe+YdenWL8mYw4ld+h4p214oHrfzbXYdUfBqTk+DOZywh0nZ0NuFGq?=
- =?us-ascii?Q?84YEykb+CPO+cI0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 17:05:23.9249
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69681d69-f454-4448-234b-08dd6af61144
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37C.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8807
+Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
+ events
+To: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250324132448.6134-1-johan+linaro@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Clayton Craft <clayton@craftyguy.net>
+In-Reply-To: <20250324132448.6134-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 24, 2025 at 09:55:48AM -0700, Nicolin Chen wrote:
-> On Mon, Mar 24, 2025 at 01:40:23PM -0300, Jason Gunthorpe wrote:
-> > On Mon, Mar 24, 2025 at 09:25:58AM -0700, Nathan Chancellor wrote:
-> > 
-> > > I bisected a loss of networking on one of my machines to this change as
-> > > commit e009e088d88e ("iommu: Drop sw_msi from iommu_domain") in -next.
-> > 
-> > Okay wow, I will drop this series from the tree if I don't see a
-> > resolution in a few days. We can try again next cycle, thank you for
-> > testing and bisect!
-> > 
-> > > At this change, I see:
-> > > 
-> > >   [  +0.000000] Linux version 6.14.0-rc2-00033-ge009e088d88e (nathan@ax162) (aarch64-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT_DYNAMIC Mon Mar 24 08:57:49 MST 2025
-> > >   ...
-> > >   [  +0.002355] fsl_mc_bus NXP0008:00: Adding to iommu group 0
-> > >   [  +0.000533] fsl_mc_bus NXP0008:00: MC firmware version: 10.28.1
-> > >   [  +0.002565] fsl_mc_dprc dprc.1: DMA mask not set
-> > >   [  +0.019255] fsl_mc_dprc dprc.1: Adding to iommu group 1
-> > >   [  +0.046820] fsl_mc_dprc dprc.1: Failed to allocate IRQs
-> > 
-> > I guess it is tripping up going through iommu_dma_prepare_msi()
-> > somehow?
-> > 
-> > Maybe fsl bus is special and doesn't manage to set
-> > IOMMU_COOKIE_DMA_IOVA for some reason?
-> > 
-> > I wonder if this is not right:
-> > 
-> > +               default:
-> > +                       ret = -EOPNOTSUPP;
-> > +                       break;
-> > 
-> > And it should be just break instead (return 0) which is what was
-> > happening before?
+On 3/24/25 06:24, Johan Hovold wrote:
+> The PMIC GLINK driver is currently generating DisplayPort hotplug
+> notifications whenever something is connected to (or disconnected from)
+> a port regardless of the type of notification sent by the firmware.
 > 
-> Yea, I found the diff here too.
+> These notifications are forwarded to user space by the DRM subsystem as
+> connector "change" uevents:
+> 
+>      KERNEL[1556.223776] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+>      ACTION=change
+>      DEVPATH=/devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0
+>      SUBSYSTEM=drm
+>      HOTPLUG=1
+>      CONNECTOR=36
+>      DEVNAME=/dev/dri/card0
+>      DEVTYPE=drm_minor
+>      SEQNUM=4176
+>      MAJOR=226
+>      MINOR=0
+> 
+> On the Lenovo ThinkPad X13s and T14s, the PMIC GLINK firmware sends two
+> identical notifications with orientation information when connecting a
+> charger, each generating a bogus DRM hotplug event. On the X13s, two
+> such notification are also sent every 90 seconds while a charger remains
+> connected, which again are forwarded to user space:
+> 
+>      port = 1, svid = ff00, mode = 255, hpd_state = 0
+>      payload = 01 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00
+> 
+> Note that the firmware only sends on of these when connecting an
+> ethernet adapter.
+> 
+> Fix the spurious hotplug events by only forwarding hotplug notifications
+> for the Type-C DisplayPort service id. This also reduces the number of
+> uevents from four to two when an actual DisplayPort altmode device is
+> connected:
+> 
+>      port = 0, svid = ff01, mode = 2, hpd_state = 0
+>      payload = 00 01 02 00 f2 0c 01 ff 03 00 00 00 00 00 00 00
+>      port = 0, svid = ff01, mode = 2, hpd_state = 1
+>      payload = 00 01 02 00 f2 0c 01 ff 43 00 00 00 00 00 00 00
+> 
+> Fixes: 080b4e24852b ("soc: qcom: pmic_glink: Introduce altmode support")
+> Cc: stable@vger.kernel.org	# 6.3
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Reported-by: Clayton Craft <clayton@craftyguy.net>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+> 
+> Clayton reported seeing display flickering with recent RC kernels, which
+> may possibly be related to these spurious events being generated with
+> even greater frequency.
+> 
+> That still remains to be fully understood, but the spurious events, that
+> on the X13s are generated every 90 seconds, should be fixed either way.
 
-Or it should return 0 just for "case IOMMU_COOKIE_NONE" doing a
-passthrough for !CONFIG_IRQ_MSI_IOMMU configuration.
+When a display/dock (which has ethernet) is connected, I see this 
+hotplug change event 2 times (every 30 seconds) which I think you said 
+this is expected now?
 
-Thanks
-Nicolin
+> UDEV  [236.150574] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [236.588696] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [266.208175] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [266.644710] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [296.243187] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [296.678177] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [326.276256] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+> UDEV  [326.712248] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+
+Not sure about you seeing it every 90s vs my 30s... anyways, I no longer 
+see these events when a PD charger is connected though, so this patch 
+seems to help with that!
+
+Tested-by: Clayton Craft <clayton@craftyguy.net>
 
