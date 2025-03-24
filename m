@@ -1,610 +1,338 @@
-Return-Path: <linux-kernel+bounces-574576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D210A6E6E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:54:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28A6A6E6F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8B53B384D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:54:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6655A7A3271
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D77C1F0E4B;
-	Mon, 24 Mar 2025 22:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C291EF0AE;
+	Mon, 24 Mar 2025 22:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kfa4brEa"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYHIuZ+j"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A94A1DD877
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375DB1DA628
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742856877; cv=none; b=mzzkJcQKRmlYznAOt0AcYGPWqUPDCgKjrwkU8gnaS3QuypblVL+2KlJ0NuL21Z6X4vC8+fiAfrx4JDFMASwUXt/tfXrG49BN1z4HUhuF745N2FmdW1peV9kwzwXn1/LrRU5l377SKtSx8yg54bQ8FLsWJldyHI8yeSFUk87c3fw=
+	t=1742857141; cv=none; b=ZNrLzU5dDj80l3lYWFutodLYoYa/p82Qw4UgoLtRSnRkpuBnnmc4F4TVbnOcpKRF/HAEXD2hGhaklcVU0OKc9cFsr+9lQ89QJA4GouYq0HV1u0Sc7gjt70OMwwP/buIWfQ2rGaRsMlv6RCyzgEyuN71xkTUv/wwcTYfn3axosNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742856877; c=relaxed/simple;
-	bh=H/KbU9bNZPSdTUDBAgDADPKvsO4zVTxptFjNZFV9tZE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZoK+ob3WD5c0vCL4gQqwgMdFZrkq6XWQr0Zer2g4sT2bcLBbPR1jmIoPxg9BGtGs1fhuX01j444SFOegoxNVjYL8KGMcI1acqISgK3gfU0KBQoOSjDyT5tnatE0svTus3s3/PgaL9fPBsCR1myfeAYSb4ZMdEHCcfZ036096j+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kfa4brEa; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff52e1c56fso13152554a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:54:35 -0700 (PDT)
+	s=arc-20240116; t=1742857141; c=relaxed/simple;
+	bh=x3g84SFyqbXWab5/rtbXK9bdYKVQSXAZev6zLXFbDbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=JeJm5MJj/xekzkCk/jzjZx6i/Ni2I3A95ervOMCqKSeqfB9i/2llwcjk6cabykx1VGRmr2DcNJCePS0B+WtYn/l0IP6C1t4empxvmBX/HXIAFyGPCZZCRuvnZvvUUcIQgp1r8VPXCDisBN0z9ANHKXiYVavlKxlsmc8nZ6kc5rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYHIuZ+j; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ca9a3425so49534147b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742856875; x=1743461675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wbsrCW8dqSE0zO5n1Ik72zuJrrYpxKr+BDPKgcfDXD4=;
-        b=Kfa4brEayqFJtfA1fn7jWiNlZoOy0c3RAAmjnTy6CXHFvp1CSOm4rjrVUoDhOmgdXJ
-         FV44X9bwTEpOy/AwZhcVgkUXD0fjcKCU0KCSEZ+Mlb0l/l2ydRRlv5fRoI61te3dfu9l
-         BoIsgBHlgZanxOtGuacjSkCZg0it6oFimzTn4tMrl7P2Deebz+bvJBmVFsNI0KitERjr
-         tMAGUakXq6DkFlJdGFiFbHOYK9EXOAmV0ROCM1BNVOiQMOTTtCiLcX+55N7GPV9WA5MY
-         6w1y6228juzIGpEiL3vJ7h8nKcm+SxdSGFPF5ocV1v6Iuz1SAD80ykLIXB1WjDcB3uzx
-         Uh5w==
+        d=gmail.com; s=20230601; t=1742857138; x=1743461938; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xOweNL3SXc2nhIPv7ifUcHo8yRDM2GGo5EVKCdQ2n5I=;
+        b=KYHIuZ+j789G3X+24hwXi5SclylJuwuKU8aJr/s410sFalwSCv2SfZno9Y+RTiE6u1
+         eW1almjoPF/Idr9mzPEP04HY6kcrW2J6QreFblVLiZLUAudJNGhaGz2Q0S4C4kprSRy/
+         vS+6qzgDP+X58+so+O+6NXifXZ/9celP6oSSmZwtPibYd4FcKw+7DStVTKo2VnvKHjOe
+         oox167919gi3UwzOHu2/0qD5Krrbh0otX3FzQ96nPqwvOqVIioyV0c3E6L2JS0G9eccx
+         6Ep67iA2kNIsN7iUX7gPR1i6T/nbPPUFMhr7ZzWCrwPyDJK+iG1kYJsochB5lnfSMGeD
+         F82Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742856875; x=1743461675;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wbsrCW8dqSE0zO5n1Ik72zuJrrYpxKr+BDPKgcfDXD4=;
-        b=A0CAxHgiWG71sYja9k+s4b+k+t73DlRuYzhkY88u7r4zBCfrgA9BVQ1ZFZqoAKK8Fq
-         dOixo8fOYEZBtvoDzJ5p1bNdvBjsBzdhAzq+iJl7RGxjZArprcD4W2ej+wYoYNh2h3zr
-         4pXu/p5iunw2x0Vu5DyCrRqVdEC7xPKdwxEIgbFSFObV4HUYeACmHLmRAA1BJHSnex4/
-         /RlKymExEJS++dWF+EYDKV6NAN1x0NkxcGHBbn1cPgZFdEqVK33klyGSu1j5wBNetrKV
-         dPN5/3If1LI+gSlMtAsQrYNsijIoJ7DrPlfGLp9iqVGrRdBypTsXj4KsP5MSMV5lQcXc
-         BH1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUG/IAGWSCDn+M5RQC/kv3PLE05meEDNYcVs2yqnLFa2jOwMaF2TBmvE7trPXV8ROT6qfe82YtMlOMQbV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYlRRQQ67nYeovhl+sdeiF3TusJ51HTK2trB7LFFZ/0PTsUdUI
-	KMQaBbGuGD8ixwHzzdjy2L92t86S3wnI45BkHUzNvR4SQcEae2ujveYVFHHY0fZuSXmXNRfxurT
-	+QA==
-X-Google-Smtp-Source: AGHT+IGiw7ILhrX9iuCbLlYhgfQOn44Bu+lzK1r35/JFTn8Ji2iJWjpcfklE9ShIDfGS/ecZUh41fJSCs0E=
-X-Received: from pjbsc2.prod.google.com ([2002:a17:90b:5102:b0:2ff:611c:bae8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:53c3:b0:2ee:d024:e4fc
- with SMTP id 98e67ed59e1d1-30310022326mr26084574a91.33.1742856874511; Mon, 24
- Mar 2025 15:54:34 -0700 (PDT)
-Date: Mon, 24 Mar 2025 15:54:32 -0700
-In-Reply-To: <facda6e2-3655-4f2c-9013-ebb18d0e6972@gmail.com>
+        d=1e100.net; s=20230601; t=1742857138; x=1743461938;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xOweNL3SXc2nhIPv7ifUcHo8yRDM2GGo5EVKCdQ2n5I=;
+        b=e9H0y1/8/qP4S3JOqZ5IJvLWkKLB8g0Qqg//CZ/8iajitZNml0m/F3UCMyjGAPwlhW
+         NBEFtOiQnw79BGY2fSn5wHDgQcDGGpxOYDmvaKcetcWDOnNrz/NAzg9YeUMLFUEyvsXR
+         0MCnqsK0QP54/exJR7/DJ7gAjOacgNzg1b63LpSVRVos7K+rO/MB+dzpYrvS7ze7KqhD
+         /u9sRPoUb1/mbDqHEWRrB1KQPt9TN1LEfPCu3jbMSs9FCNFVJxQUNfST1gPcc9it7Xhk
+         5UNL9yraydtpY32dCmUf8GvIkQA2YYJRY5z4q/xPEA6Yc4a/8kmB6kJyiRzmC3jFJJwG
+         /Lbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvUCOtkIsncI04PSEQqN9ybLfSlXaSxT22+5gwtiu3HvMzjXiLOVnxl63qWhBQjXASoTTteIf4CRUbnmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHlTLAIsVQQDhPJWUaO2hs+GkNAOafIWJtAl8BCY0gRaiYV963
+	DZKpUXBcNthijQredoTOcnsOvVQGlfTpNtuje+3isIyXPzRXMifRBh9tg3rae+cal03KHRMIYqJ
+	PlywNeNps96K94IUSc1+Kz2+ewi4=
+X-Gm-Gg: ASbGncuF6Ova53f0/NEXgbq9hwiqSYklqAY+8Ny/bvWQjR6Fxs1LcTqTmSFeGhdBRWw
+	2WPZWgfGy8SDBZFOvnfxZEYeINOpT4+jhnEIZKrY9pe+BFBEoq81MK0B9+SuUcKF1PUXjE2qAEN
+	XEXBj1lXc8fRoPmxS+KebW9PHb
+X-Google-Smtp-Source: AGHT+IGJQhE8J9Fev2YDAjew937hy/BDBKy0IxGWP41fseJBpVPTdqCggsrZGeRZCl04ynbwuEzhtC0igtYRZyc/8n8=
+X-Received: by 2002:a05:690c:4444:b0:6ef:652b:91cf with SMTP id
+ 00721157ae682-700bacd28e9mr200033997b3.27.1742857137825; Mon, 24 Mar 2025
+ 15:58:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <facda6e2-3655-4f2c-9013-ebb18d0e6972@gmail.com>
-Message-ID: <Z-HiqG_uk0-f6Ry1@google.com>
-Subject: Re: pvclock time drifting backward
-From: Sean Christopherson <seanjc@google.com>
-To: Ming Lin <minggr@gmail.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, 
-	David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250125064619.8305-1-jim.cromie@gmail.com> <20250125064619.8305-29-jim.cromie@gmail.com>
+ <160ec360-918d-414f-aef9-606cfa1749df@bootlin.com> <CAJfuBxxzXoKummiBDGODidpRj7Fm2UDip-T0qkB7L9tscK0zCQ@mail.gmail.com>
+In-Reply-To: <CAJfuBxxzXoKummiBDGODidpRj7Fm2UDip-T0qkB7L9tscK0zCQ@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Mon, 24 Mar 2025 16:58:31 -0600
+X-Gm-Features: AQ5f1Jq_ealCWnlM2C-q0MIDv15aWKUMJ6YjQ3JJZCvoTPWllKRV36DEBSe2p6k
+Message-ID: <CAJfuBxwCPfPHqWFx0Jh+sucT2smf7o_5TmDJELkV7J--ftotuA@mail.gmail.com>
+Subject: Re: [PATCH 28/63] dyndbg-API: promote DYNDBG_CLASSMAP_PARAM to API
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org, jbaron@akamai.com, 
+	gregkh@linuxfoundation.org, ukaszb@chromium.org, 
+	intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch, 
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-+David
+On Sun, Mar 16, 2025 at 3:14=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 7:29=E2=80=AFAM Louis Chauvet <louis.chauvet@boot=
+lin.com> wrote:
+> >
+> >
+> >
+> > Le 25/01/2025 =C3=A0 07:45, Jim Cromie a =C3=A9crit :
+> > > move the DYNDBG_CLASSMAP_PARAM macro from test-dynamic-debug.c into
+> > > the header, and refine it, by distinguishing the 2 use cases:
+> > >
+> > > 1.DYNDBG_CLASSMAP_PARAM_REF
+> > >      for DRM, to pass in extern __drm_debug by name.
+> > >      dyndbg keeps bits in it, so drm can still use it as before
+> > >
+> > > 2.DYNDBG_CLASSMAP_PARAM
+> > >      new user (test_dynamic_debug) doesn't need to share state,
+> > >      decls a static long unsigned int to store the bitvec.
+> > >
+> > > __DYNDBG_CLASSMAP_PARAM
+> > >     bottom layer - allocate,init a ddebug-class-param, module-param-c=
+b.
+> > >
+> > > Modify ddebug_sync_classbits() argtype deref inside the fn, to give
+> > > access to all kp members.
+> > >
+> > > Also clean up and improve comments in test-code, and add
+> > > MODULE_DESCRIPTIONs.
+> > >
+> > > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > > ---
+> > >
+> > > -v9
+> > >   - fixup drm-print.h  add PARAM_REF forwarding macros
+> > >     with DYNDBG_CLASSMAP_PARAM_REF in the API, add DRM_ variant
+> > > ---
+> > >   include/linux/dynamic_debug.h   | 38 +++++++++++++++++++++
+> > >   lib/dynamic_debug.c             | 60 ++++++++++++++++++++++--------=
+---
+> > >   lib/test_dynamic_debug.c        | 59 +++++++++++++-----------------=
+--
+> > >   lib/test_dynamic_debug_submod.c |  9 ++++-
+> > >   4 files changed, 111 insertions(+), 55 deletions(-)
+> > >
+> > > diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_de=
+bug.h
+> > > index 48d76a273f68..b47d1088b7ad 100644
+> > > --- a/include/linux/dynamic_debug.h
+> > > +++ b/include/linux/dynamic_debug.h
+> > > @@ -205,6 +205,44 @@ struct ddebug_class_param {
+> > >       const struct ddebug_class_map *map;
+> > >   };
+> > >
+> > > +/**
+> > > + * DYNDBG_CLASSMAP_PARAM - control a ddebug-classmap from a sys-para=
+m
+> > > + * @_name:  sysfs node name
+> > > + * @_var:   name of the classmap var defining the controlled classes=
+/bits
+> > > + * @_flags: flags to be toggled, typically just 'p'
+> > > + *
+> > > + * Creates a sysfs-param to control the classes defined by the
+> > > + * exported classmap, with bits 0..N-1 mapped to the classes named.
+> > > + * This version keeps class-state in a private long int.
+> > > + */
+> > > +#define DYNDBG_CLASSMAP_PARAM(_name, _var, _flags)                  =
+ \
+> > > +     static unsigned long _name##_bvec;                             =
+ \
+> > > +     __DYNDBG_CLASSMAP_PARAM(_name, _name##_bvec, _var, _flags)
+> > > +
+> > > +/**
+> > > + * DYNDBG_CLASSMAP_PARAM_REF - wrap a classmap with a controlling sy=
+s-param
+> > > + * @_name:  sysfs node name
+> > > + * @_bits:  name of the module's unsigned long bit-vector, ex: __drm=
+_debug
+> > > + * @_var:   name of the (exported) classmap var defining the classes=
+/bits
+> > > + * @_flags: flags to be toggled, typically just 'p'
+> > > + *
+> > > + * Creates a sysfs-param to control the classes defined by the
+> > > + * exported clasmap, with bits 0..N-1 mapped to the classes named.
+> > > + * This version keeps class-state in user @_bits.  This lets drm che=
+ck
+> > > + * __drm_debug elsewhere too.
+> > > + */
+> > > +#define DYNDBG_CLASSMAP_PARAM_REF(_name, _bits, _var, _flags)       =
+         \
+> > > +     __DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)
+> > > +
+> > > +#define __DYNDBG_CLASSMAP_PARAM(_name, _bits, _var, _flags)         =
+ \
+> > > +     static struct ddebug_class_param _name##_##_flags =3D {        =
+   \
+> > > +             .bits =3D &(_bits),                                    =
+   \
+> > > +             .flags =3D #_flags,                                    =
+   \
+> > > +             .map =3D &(_var),                                      =
+   \
+> > > +     };                                                             =
+ \
+> > > +     module_param_cb(_name, &param_ops_dyndbg_classes,              =
+ \
+> > > +                     &_name##_##_flags, 0600)
+> > > +
+> > >   /*
+> > >    * pr_debug() and friends are globally enabled or modules have sele=
+ctively
+> > >    * enabled them.
+> > > diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> > > index 781781835094..9283f2866415 100644
+> > > --- a/lib/dynamic_debug.c
+> > > +++ b/lib/dynamic_debug.c
+> > > @@ -660,6 +660,30 @@ static int ddebug_apply_class_bitmap(const struc=
+t ddebug_class_param *dcp,
+> > >
+> > >   #define CLASSMAP_BITMASK(width) ((1UL << (width)) - 1)
+> > >
+> > > +static void ddebug_class_param_clamp_input(unsigned long *inrep, con=
+st struct kernel_param *kp)
+> > > +{
+> > > +     const struct ddebug_class_param *dcp =3D kp->arg;
+> > > +     const struct ddebug_class_map *map =3D dcp->map;
+> > > +
+> > > +     switch (map->map_type) {
+> > > +     case DD_CLASS_TYPE_DISJOINT_BITS:
+> > > +             /* expect bits. mask and warn if too many */
+> > > +             if (*inrep & ~CLASSMAP_BITMASK(map->length)) {
+> > > +                     pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, =
+masking\n",
+> > > +                             KP_NAME(kp), *inrep, CLASSMAP_BITMASK(m=
+ap->length));
+> > > +                     *inrep &=3D CLASSMAP_BITMASK(map->length);
+> > > +             }
+> > > +             break;
+> > > +     case DD_CLASS_TYPE_LEVEL_NUM:
+> > > +             /* input is bitpos, of highest verbosity to be enabled =
+*/
+> > > +             if (*inrep > map->length) {
+> > > +                     pr_warn("%s: level:%ld exceeds max:%d, clamping=
+\n",
+> > > +                             KP_NAME(kp), *inrep, map->length);
+> > > +                     *inrep =3D map->length;
+> > > +             }
+> > > +             break;
+> > > +     }
+> > > +}
+> > >   static int param_set_dyndbg_module_classes(const char *instr,
+> > >                                          const struct kernel_param *k=
+p,
+> > >                                          const char *modnm)
+> > > @@ -678,26 +702,15 @@ static int param_set_dyndbg_module_classes(cons=
+t char *instr,
+> > >               pr_err("expecting numeric input, not: %s > %s\n", instr=
+, KP_NAME(kp));
+> > >               return -EINVAL;
+> > >       }
+> > > +     ddebug_class_param_clamp_input(&inrep, kp);
+> > >
+> > >       switch (map->map_type) {
+> > >       case DD_CLASS_TYPE_DISJOINT_BITS:
+> > > -             /* expect bits. mask and warn if too many */
+> > > -             if (inrep & ~CLASSMAP_BITMASK(map->length)) {
+> > > -                     pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, =
+masking\n",
+> > > -                             KP_NAME(kp), inrep, CLASSMAP_BITMASK(ma=
+p->length));
+> > > -                     inrep &=3D CLASSMAP_BITMASK(map->length);
+> > > -             }
+> > >               v2pr_info("bits:0x%lx > %s.%s\n", inrep, modnm ?: "*", =
+KP_NAME(kp));
+> > >               totct +=3D ddebug_apply_class_bitmap(dcp, &inrep, *dcp-=
+>bits, modnm);
+> > >               *dcp->bits =3D inrep;
+> > >               break;
+> > >       case DD_CLASS_TYPE_LEVEL_NUM:
+> > > -             /* input is bitpos, of highest verbosity to be enabled =
+*/
+> > > -             if (inrep > map->length) {
+> > > -                     pr_warn("%s: level:%ld exceeds max:%d, clamping=
+\n",
+> > > -                             KP_NAME(kp), inrep, map->length);
+> > > -                     inrep =3D map->length;
+> > > -             }
+> > >               old_bits =3D CLASSMAP_BITMASK(*dcp->lvl);
+> > >               new_bits =3D CLASSMAP_BITMASK(inrep);
+> > >               v2pr_info("lvl:%ld bits:0x%lx > %s\n", inrep, new_bits,=
+ KP_NAME(kp));
+> > > @@ -1163,15 +1176,24 @@ static const struct proc_ops proc_fops =3D {
+> > >   static void ddebug_sync_classbits(const struct kernel_param *kp, co=
+nst char *modname)
+> > >   {
+> > >       const struct ddebug_class_param *dcp =3D kp->arg;
+> > > +     unsigned long new_bits;
+> > >
+> > > -     /* clamp initial bitvec, mask off hi-bits */
+> > > -     if (*dcp->bits & ~CLASSMAP_BITMASK(dcp->map->length)) {
+> > > -             *dcp->bits &=3D CLASSMAP_BITMASK(dcp->map->length);
+> > > -             v2pr_info("preset classbits: %lx\n", *dcp->bits);
+> > > +     ddebug_class_param_clamp_input(dcp->bits, kp);
+> > > +
+> > > +     switch (dcp->map->map_type) {
+> > > +     case DD_CLASS_TYPE_DISJOINT_BITS:
+> > > +             v2pr_info("  %s: classbits: 0x%lx\n", KP_NAME(kp), *dcp=
+->bits);
+> > > +             ddebug_apply_class_bitmap(dcp, dcp->bits, 0UL, modname)=
+;
+> > > +             break;
+> > > +     case DD_CLASS_TYPE_LEVEL_NUM:
+> > > +             new_bits =3D CLASSMAP_BITMASK(*dcp->lvl);
+> > > +             v2pr_info("  %s: lvl:%ld bits:0x%lx\n", KP_NAME(kp), *d=
+cp->lvl, new_bits);
+> > > +             ddebug_apply_class_bitmap(dcp, &new_bits, 0UL, modname)=
+;
+> > > +             break;
+> > > +     default:
+> > > +             pr_err("bad map type %d\n", dcp->map->map_type);
+> > > +             return;
+> > >       }
+> > > -     /* force class'd prdbgs (in USEr module) to match (DEFINEr modu=
+le) class-param */
+> > > -     ddebug_apply_class_bitmap(dcp, dcp->bits, ~0, modname);
+> > > -     ddebug_apply_class_bitmap(dcp, dcp->bits, 0, modname);
+> >
+> > Hi Jim,
+> >
+> > We lost the double call with ~0/0, is it normal?
+>
+> Good catch,
+>
+> I thought so, since it guarantees the pr_debugs' state to
+> comport with sysfs settings on modprobe.
+>
+> I will review.
+>
 
-On Wed, Mar 19, 2025, Ming Lin wrote:
-> Hi,
->=20
-> After performing a live migration on a QEMU guest OS that had been runnin=
-g for over 30 days,
-> we noticed that the guest OS time was more than 2 seconds behind the actu=
-al time.
->=20
-> After extensive debugging, we found that this issue is related to master_=
-kernel_ns and master_cycle_now.
->=20
-> When the guest OS starts, the host initializes a pair of master_kernel_ns=
- and master_cycle_now values.
-> After live migration, the host updates these values.
->=20
-> Our debugging showed that if the host does not update master_kernel_ns/ma=
-ster_cycle_now,
-> the guest OS time remains correct.
->=20
-> To illustrate how updating master_kernel_ns/master_cycle_now leads to the=
- guest OS time drifting backward,
-> we applied the following debug patch:
->=20
-> The patch adds a KVM debugfs entry to trigger time calculations and print=
- the results.
-> The patch runs on the host side, but we use __pvclock_read_cycles() to si=
-mulate the guest OS updating its time.
->=20
-> Example Output:
->=20
-> # cat /sys/kernel/debug/kvm/946-13/pvclock
-> old: master_kernel_ns: 15119778316
-> old: master_cycle_now: 37225912658
-> old: ns: 1893199569691
-> new: master_kernel_ns: 1908210098649
-> new: master_cycle_now: 4391329912268
-> new: ns: 1893199548401
->=20
-> tsc 4391329912368
-> kvmclock_offset -15010550291
-> diff: ns: 21290
->=20
-> Explanation of Parameters:
->=20
-> Input:
-> "old: master_kernel_ns:" The master_kernel_ns value recorded when the gue=
-st OS started (remains unchanged during testing).
-> "old: master_cycle_now:" The master_cycle_now value recorded when the gue=
-st OS started (remains unchanged during testing).
-> "new: master_kernel_ns:" The latest master_kernel_ns value at the time of=
- reading.
-> "new: master_cycle_now:" The latest master_cycle_now value at the time of=
- reading.
-> tsc: The rdtsc() value at the time of reading.
-> kvmclock_offset: The offset recorded by KVM_SET_CLOCK when the guest OS s=
-tarted (remains unchanged during testing).
->=20
-> Output:
-> "old: ns:" Time in nanoseconds calculated using the old master_kernel_ns/=
-master_cycle_now.
-> "new: ns:" Time in nanoseconds calculated using the new master_kernel_ns/=
-master_cycle_now.
-> "diff: ns:" (old ns - new ns), representing the time drift relative to th=
-e guest OS start time.
->=20
-> Test Script:
-> #!/bin/bash
->=20
-> qemu_pid=3D$(pidof qemu-system-x86_64)
->=20
-> while [ 1 ] ; do
->     echo "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D"
->     echo "Guest OS running time: $(ps -p $qemu_pid -o etime=3D | awk '{pr=
-int $1}')"
->     cat /sys/kernel/debug/kvm/*/pvclock
->     echo
->     sleep 10
-> done
->=20
-> Test Results:
-> Below are the first and last parts of a >2-hour test run.
-> As time progresses, the time drift calculated using the latest master_ker=
-nel_ns/master_cycle_now increases monotonically.
->=20
-> After 2 hours and 18 minutes, the guest OS time drifted by approximately =
-93 milliseconds.
->=20
-> I have uploaded an image for a more intuitive visualization of the time d=
-rift:
-> https://postimg.cc/crCDWtD7
->=20
-> Is this a real problem?
+Ok, Im pretty sure I put those in to override DEBUG settings,
+ie reset the default print state to whatever the controlling sysfs node,
+if it was declared with CLASSMAP_PARAM*, has the var set at.
 
-David can confirm, but I'm pretty sure the drift you are observing is addre=
-ssed
-by David's series to fix a plethora of kvmclock warts.
-
-https://lore.kernel.org/all/20240522001817.619072-1-dwmw2@infradead.org
-
-> If there is any fix patch, I=E2=80=99d be happy to test it. Thanks!
->=20
->=20
->     1 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->     2 guest os running time: 00:50
->     3 old: master_kernel_ns: 15119778316
->     4 old: master_cycle_now: 37225912658
->     5 old: ns: 48092694964
->     6 new: master_kernel_ns: 63103244699
->     7 new: master_cycle_now: 147587790614
->     8 new: ns: 48092694425
->     9
->    10 tsc 147587790654
->    11 kvmclock_offset -15010550291
->    12 diff: ns: 539
->    13
->    14 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    15 guest os running time: 01:00
->    16 old: master_kernel_ns: 15119778316
->    17 old: master_cycle_now: 37225912658
->    18 old: ns: 58139026532
->    19 new: master_kernel_ns: 73149576143
->    20 new: master_cycle_now: 170694333104
->    21 new: ns: 58139025879
->    22
->    23 tsc 170694333168
->    24 kvmclock_offset -15010550291
->    25 diff: ns: 653
->    26
->    27 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    28 guest os running time: 01:10
->    29 old: master_kernel_ns: 15119778316
->    30 old: master_cycle_now: 37225912658
->    31 old: ns: 68183772122
->    32 new: master_kernel_ns: 83194321616
->    33 new: master_cycle_now: 193797227862
->    34 new: ns: 68183771357
->    35
->    36 tsc 193797227936
->    37 kvmclock_offset -15010550291
->    38 diff: ns: 765
->    39
->    40 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    41 guest os running time: 01:20
->    42 old: master_kernel_ns: 15119778316
->    43 old: master_cycle_now: 37225912658
->    44 old: ns: 78225289157
->    45 new: master_kernel_ns: 93235838545
->    46 new: master_cycle_now: 216892696976
->    47 new: ns: 78225288279
->    48
->    49 tsc 216892697034
->    50 kvmclock_offset -15010550291
->    51 diff: ns: 878
->    52
->    53 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    54 guest os running time: 01:30
->    55 old: master_kernel_ns: 15119778316
->    56 old: master_cycle_now: 37225912658
->    57 old: ns: 88268955340
->    58 new: master_kernel_ns: 103279504612
->    59 new: master_cycle_now: 239993109102
->    60 new: ns: 88268954349
->    61
->    62 tsc 239993109168
->    63 kvmclock_offset -15010550291
->    64 diff: ns: 991
->    65
->    66 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    67 guest os running time: 01:40
->    68 old: master_kernel_ns: 15119778316
->    69 old: master_cycle_now: 37225912658
->    70 old: ns: 98313212581
->    71 new: master_kernel_ns: 113323761740
->    72 new: master_cycle_now: 263094880668
->    73 new: ns: 98313211476
->    74
->    75 tsc 263094880732
->    76 kvmclock_offset -15010550291
->    77 diff: ns: 1105
-> .....
-> .....
-> 10160 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10161 guest os running time: 02:17:11
-> 10162 old: master_kernel_ns: 15119778316
-> 10163 old: master_cycle_now: 37225912658
-> 10164 old: ns: 8229817213297
-> 10165 new: master_kernel_ns: 8244827670997
-> 10166 new: master_cycle_now: 18965537819524
-> 10167 new: ns: 8229817120748
-> 10168
-> 10169 tsc 18965537819622
-> 10170 kvmclock_offset -15010550291
-> 10171 diff: ns: 92549
-> 10172 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10173 guest os running time: 02:17:21
-> 10174 old: master_kernel_ns: 15119778316
-> 10175 old: master_cycle_now: 37225912658
-> 10176 old: ns: 8239861074959
-> 10177 new: master_kernel_ns: 8254871532564
-> 10178 new: master_cycle_now: 18988638681302
-> 10179 new: ns: 8239860982297
-> 10180
-> 10181 tsc 18988638681358
-> 10182 kvmclock_offset -15010550291
-> 10183 diff: ns: 92662
-> 10184 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10185 guest os running time: 02:17:31
-> 10186 old: master_kernel_ns: 15119778316
-> 10187 old: master_cycle_now: 37225912658
-> 10188 old: ns: 8249904622988
-> 10189 new: master_kernel_ns: 8264915080459
-> 10190 new: master_cycle_now: 19011738821632
-> 10191 new: ns: 8249904530213
-> 10192
-> 10193 tsc 19011738821736
-> 10194 kvmclock_offset -15010550291
-> 10195 diff: ns: 92775^@
-> 10196 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10197 guest os running time: 02:17:41
-> 10198 old: master_kernel_ns: 15119778316
-> 10199 old: master_cycle_now: 37225912658
-> 10200 old: ns: 8259949369203
-> 10201 new: master_kernel_ns: 8274959826576
-> 10202 new: master_cycle_now: 19034841717872
-> 10203 new: ns: 8259949276315
-> 10204
-> 10205 tsc 19034841717942
-> 10206 kvmclock_offset -15010550291
-> 10207 diff: ns: 92888
-> 10208 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10209 guest os running time: 02:17:51
-> 10210 old: master_kernel_ns: 15119778316
-> 10211 old: master_cycle_now: 37225912658
-> 10212 old: ns: 8269996849598
-> 10213 new: master_kernel_ns: 8285007306846
-> 10214 new: master_cycle_now: 19057950902658
-> 10215 new: ns: 8269996756597
-> 10216
-> 10217 tsc 19057950902756
-> 10218 kvmclock_offset -15010550291
-> 10219 diff: ns: 93001^@
-> 10220 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 10221 guest os running time: 02:18:02
-> 10222 old: master_kernel_ns: 15119778316
-> 10223 old: master_cycle_now: 37225912658
-> 10224 old: ns: 8280039094317
-> 10225 new: master_kernel_ns: 8295049551453
-> 10226 new: master_cycle_now: 19081048045430
-> 10227 new: ns: 8280039001203
-> 10228
-> 10229 tsc 19081048045526
-> 10230 kvmclock_offset -15010550291
-> 10231 diff: ns: 93114^@
->=20
->=20
->=20
-> =C2=A0=C2=A0=C2=A0 pvclock debugfs patch
-> ---
-> =C2=A0arch/x86/include/asm/kvm_host.h |=C2=A0 4 +++
-> =C2=A0arch/x86/kvm/x86.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 29 +++++++++++++++-
-> =C2=A0b.sh=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A0virt/kvm/kvm_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 75 +++++++++++++++++++++++++++++++++++++++++
-> =C2=A04 files changed, 108 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
-ost.h
-> index 32ae3aa50c7e..5a82a69bfe7a 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1411,6 +1411,10 @@ struct kvm_arch {
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct delayed_work kvmclock_update_work;
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct delayed_work kvmclock_sync_work;
-> +=C2=A0=C2=A0=C2=A0 u64 old_master_kernel_ns;
-> +=C2=A0=C2=A0=C2=A0 u64 old_master_cycle_now;
-> +=C2=A0=C2=A0=C2=A0 s64 old_kvmclock_offset;
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct kvm_xen_hvm_config xen_hvm_config;
-> =C2=A0=C2=A0=C2=A0=C2=A0 /* reads protected by irq_srcu, writes by irq_lo=
-ck */
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 4b64ab350bcd..a56511ed8c5b 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2819,7 +2819,7 @@ static inline u64 vgettsc(struct pvclock_clock *clo=
-ck, u64 *tsc_timestamp,
-> =C2=A0 * As with get_kvmclock_base_ns(), this counts from boot time, at t=
-he
-> =C2=A0 * frequency of CLOCK_MONOTONIC_RAW (hence adding gtos->offs_boot).
-> =C2=A0 */
-> -static int do_kvmclock_base(s64 *t, u64 *tsc_timestamp)
-> +int do_kvmclock_base(s64 *t, u64 *tsc_timestamp)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct pvclock_gtod_data *gtod =3D &pvclock_gtod=
-_data;
-> =C2=A0=C2=A0=C2=A0=C2=A0 unsigned long seq;
-> @@ -2861,6 +2861,27 @@ static int do_monotonic(s64 *t, u64 *tsc_timestamp=
-)
-> =C2=A0=C2=A0=C2=A0=C2=A0 return mode;
-> =C2=A0}
-> +u64 mydebug_get_kvmclock_ns(u64 master_kernel_ns, u64 master_cycle_now, =
-s64 kvmclock_offset, u64 tsc)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pvclock_vcpu_time_info=
- hv_clock;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 ret;
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hv_clock.tsc_timestamp =3D ma=
-ster_cycle_now;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hv_clock.system_time =3D mast=
-er_kernel_ns + kvmclock_offset;
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* both __this_cpu_read() and=
- rdtsc() should be on the same cpu */
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 get_cpu();
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kvm_get_time_scale(NSEC_PER_S=
-EC, __this_cpu_read(cpu_tsc_khz) * 1000LL,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &hv_clock.tsc_shi=
-ft,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &hv_clock.tsc_to_=
-system_mul);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D __pvclock_read_cycles=
-(&hv_clock, tsc);
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 put_cpu();
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> +}
-> +
-> =C2=A0static int do_realtime(struct timespec64 *ts, u64 *tsc_timestamp)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0 struct pvclock_gtod_data *gtod =3D &pvclock_gtod=
-_data;
-> @@ -2988,6 +3009,10 @@ static void pvclock_update_vm_gtod_copy(struct kvm=
- *kvm)
-> =C2=A0=C2=A0=C2=A0=C2=A0 host_tsc_clocksource =3D kvm_get_time_and_clockr=
-ead(
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ka->master_kernel_ns,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &ka->master_cycle_now);
-> +=C2=A0=C2=A0=C2=A0 ka->old_master_kernel_ns =3D ka->master_kernel_ns;
-> +=C2=A0=C2=A0=C2=A0 ka->old_master_cycle_now =3D ka->master_cycle_now;
-> +=C2=A0=C2=A0=C2=A0 printk("MYDEBUG: old_master_kernel_ns =3D %llu, old_m=
-aster_cycle_now =3D %llu\n",
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ka->o=
-ld_master_kernel_ns, ka->old_master_cycle_now);
-> =C2=A0=C2=A0=C2=A0=C2=A0 ka->use_master_clock =3D host_tsc_clocksource &&=
- vcpus_matched
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 && !ka->backwards_tsc_observed
-> @@ -6989,6 +7014,8 @@ static int kvm_vm_ioctl_set_clock(struct kvm *kvm, =
-void __user *argp)
-> =C2=A0=C2=A0=C2=A0=C2=A0 else
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 now_raw_ns =3D get_kvmcl=
-ock_base_ns();
-> =C2=A0=C2=A0=C2=A0=C2=A0 ka->kvmclock_offset =3D data.clock - now_raw_ns;
-> +=C2=A0=C2=A0=C2=A0 ka->old_kvmclock_offset =3D ka->kvmclock_offset;
-> +=C2=A0=C2=A0=C2=A0 printk("MYDEBUG: old_kvmclock_offset =3D %lld\n", ka-=
->old_kvmclock_offset);
-> =C2=A0=C2=A0=C2=A0=C2=A0 kvm_end_pvclock_update(kvm);
-> =C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> =C2=A0}
-> diff --git a/b.sh b/b.sh
-> new file mode 120000
-> index 000000000000..0ff9a93fd53f
-> --- /dev/null
-> +++ b/b.sh
-> @@ -0,0 +1 @@
-> +/home/mlin/build.upstream/b.sh
-> \ No newline at end of file
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index ba0327e2d0d3..d6b9a6e7275e 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -399,6 +399,7 @@ int __kvm_mmu_topup_memory_cache(struct kvm_mmu_memor=
-y_cache *mc, int capacity,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-return mc->nobjs >=3D min ? 0 : -ENOMEM;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mc->objects[mc->nobjs++]=
- =3D obj;
-> =C2=A0=C2=A0=C2=A0=C2=A0 }
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> =C2=A0}
-> @@ -998,6 +999,78 @@ static void kvm_destroy_vm_debugfs(struct kvm *kvm)
-> =C2=A0=C2=A0=C2=A0=C2=A0 }
-> =C2=A0}
-> +extern int do_kvmclock_base(s64 *t, u64 *tsc_timestamp);
-> +extern u64 mydebug_get_kvmclock_ns(u64 master_kernel_ns, u64 master_cycl=
-e_now, s64 kvmclock_offset, u64 tsc);
-> +
-> +static ssize_t kvm_mydebug_pvclock_read(struct file *file, char __user *=
-buf,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t len, loff_t *ppos)
-> +{
-> +=C2=A0=C2=A0=C2=A0 struct kvm *kvm =3D file->private_data;
-> +=C2=A0=C2=A0=C2=A0 struct kvm_arch *ka;
-> +=C2=A0=C2=A0=C2=A0 char buffer[256];
-> +=C2=A0=C2=A0=C2=A0 ssize_t ret, copied;
-> +=C2=A0=C2=A0=C2=A0 u64 new_master_kernel_ns;
-> +=C2=A0=C2=A0=C2=A0 u64 new_master_cycle_now;
-> +=C2=A0=C2=A0=C2=A0 u64 old_ns, new_ns;
-> +=C2=A0=C2=A0=C2=A0 u64 tsc;
-> +
-> +=C2=A0=C2=A0=C2=A0 if (!kvm) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("file->private_data is=
- NULL\n");
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
-> +=C2=A0=C2=A0=C2=A0 }
-> +
-> +=C2=A0=C2=A0=C2=A0 ka =3D &kvm->arch;
-> +
-> +=C2=A0=C2=A0=C2=A0 do_kvmclock_base(&new_master_kernel_ns, &new_master_c=
-ycle_now);
-> +
-> +=C2=A0=C2=A0=C2=A0 tsc =3D rdtsc();
-> +
-> +=C2=A0=C2=A0=C2=A0 old_ns =3D mydebug_get_kvmclock_ns(ka->old_master_ker=
-nel_ns, ka->old_master_cycle_now, ka->old_kvmclock_offset, tsc);
-> +=C2=A0=C2=A0=C2=A0 new_ns =3D mydebug_get_kvmclock_ns(new_master_kernel_=
-ns, new_master_cycle_now, ka->old_kvmclock_offset, tsc);
-> +
-> +=C2=A0=C2=A0=C2=A0 ret =3D snprintf(buffer, sizeof(buffer),
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "old: master_kernel_ns: %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "old: master_cycle_now: %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "old: ns: %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "new: master_kernel_ns: %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "new: master_cycle_now: %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "new: ns: %llu\n\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "tsc %llu\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "kvmclock_offset %lld\n"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "diff: ns: %lld\n",
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ka->old_master_kernel_ns, ka->old_mast=
-er_cycle_now, old_ns,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 new_master_kernel_ns, new_master_cycle=
-_now, new_ns,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tsc, ka->old_kvmclock_offset,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 old_ns - new_ns
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 );
-> +
-> +=C2=A0=C2=A0=C2=A0 if (ret < 0)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> +
-> +=C2=A0=C2=A0=C2=A0 if ((size_t)ret > sizeof(buffer))
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D sizeof(buffer);
-> +
-> +=C2=A0=C2=A0=C2=A0 if (*ppos >=3D ret)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0; /* EOF */
-> +
-> +=C2=A0=C2=A0=C2=A0 copied =3D min(len, (size_t)(ret - *ppos));
-> +
-> +=C2=A0=C2=A0=C2=A0 if (copy_to_user(buf, buffer + *ppos, copied)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("copy_to_user failed\n=
-");
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EFAULT;
-> +=C2=A0=C2=A0=C2=A0 }
-> +
-> +=C2=A0=C2=A0=C2=A0 *ppos +=3D copied;
-> +
-> +=C2=A0=C2=A0=C2=A0 return copied;
-> +}
-> +
-> +static const struct file_operations kvm_pvclock_fops =3D {
-> +=C2=A0=C2=A0=C2=A0 .owner =3D THIS_MODULE,
-> +=C2=A0=C2=A0=C2=A0 .read =3D kvm_mydebug_pvclock_read,
-> +=C2=A0=C2=A0=C2=A0 .open =3D simple_open,
-> +};
-> +
-> =C2=A0static int kvm_create_vm_debugfs(struct kvm *kvm, const char *fdnam=
-e)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0 static DEFINE_MUTEX(kvm_debugfs_lock);
-> @@ -1063,6 +1136,8 @@ static int kvm_create_vm_debugfs(struct kvm *kvm, c=
-onst char *fdname)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &stat_fops_per_vm);
-> =C2=A0=C2=A0=C2=A0=C2=A0 }
-> +=C2=A0=C2=A0=C2=A0 debugfs_create_file("pvclock", 0444, kvm->debugfs_den=
-try, kvm, &kvm_pvclock_fops);
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0 kvm_arch_create_vm_debugfs(kvm);
-> =C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> =C2=A0out_err:
->=20
+It now seems like extra work to clean up a corner case
+which they asked for, by defining DEBUG
 
