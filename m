@@ -1,258 +1,161 @@
-Return-Path: <linux-kernel+bounces-573351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4989A6D622
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:28:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30458A6D62A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:30:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574C21891153
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A6E188D87C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37EF25D216;
-	Mon, 24 Mar 2025 08:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A1225D218;
+	Mon, 24 Mar 2025 08:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wmMxXL+g"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gMsoovib"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EDFC8E0;
-	Mon, 24 Mar 2025 08:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A7725D1F3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742804882; cv=none; b=Kj81A9zVD6yIPYK1XGQRjyEN5JACzarUfu3CvPB/wzlWzDfdNQwon/B4QCirym4cEXu6JTgcaT3VRERqjOn1mKna93h0B3Jyo4NtqJhHtRzp+vm21+MwB6mf0r2mFmvTUsTzhYWx1bpmSEj91geOMS/vNtyFw+bIc4l3dbo323U=
+	t=1742804989; cv=none; b=YsTdsP/CKCC3mh5728GCpAShwIk8t/AB8f+PJuOd3hIujVVDexNJ/WYConvyMGlOv1LwD8C5f10ihBg2KZqpR8i+iCrecwgzK4hjk5/zFrNFociOmqbGJOOk1E79tckNWGwpQauzA41MTj/Ryg8NAM6MhSVUWtfx73/LaExc10s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742804882; c=relaxed/simple;
-	bh=zcYb0OpQftPm6DoERO+Loz4whE/31dcHpgCuk6D/aDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uiQgKKD4U05lUdVcDe47KlPFOXoCjUePk/8j6nmP2VsJv/eIbCT7zKutdbTD3+OwAee4Q9zD7/5dTk4aacM5XYdGGw1up0fvO9i/Mvv0Z3iHJXMxzH4iAzT8Uif9vajgklWa8edXacBSiHHAvjNsOl5zIh/CXjq3AgEGZg2oisQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wmMxXL+g; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2B7663F;
-	Mon, 24 Mar 2025 09:26:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742804772;
-	bh=zcYb0OpQftPm6DoERO+Loz4whE/31dcHpgCuk6D/aDY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wmMxXL+gokvbN5KmMl8Jg5W/LRtbYF0qYwz2iYMGLtavzo/P0aI/8w7jIFZBEKD1D
-	 0Pj5lHAILBA/rpqo3IFpsqRGqyBtBKDM/fMTRBBMufwTv21SCrNhSR39s7ul3pFVr1
-	 dtyZrO/I3xckPK+PEAmzKCz0fwK8sxMsTBhci30o=
-Date: Mon, 24 Mar 2025 09:27:56 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	niklas soderlund <niklas.soderlund@ragnatech.se>
-Cc: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v6 7/7] media: vsp1: pipe: Add RAW Bayer formats mapping
-Message-ID: <dkatmlnysvsy3g4n3m53bzxcqx4avklzfctxgjv4hl6sd7fte3@vlfsvasn53d7>
-References: <20250321-v4h-iif-v6-0-361e9043026a@ideasonboard.com>
- <20250321-v4h-iif-v6-7-361e9043026a@ideasonboard.com>
- <20250321215634.GB11255@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1742804989; c=relaxed/simple;
+	bh=NzJP8TqEb08WGj9kYfvDbx+CpZLoCO3wvBykc6g+6mo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvQ8laPlv0W1GB+DnoBKOxwqdTCfrD6COtY4pnuazvsFgG9Ar+xxrpPdhTtkJ82af46jMF6neh5gwQs+ksLqSccX+DI8LwK5tcZtAvO+d0lbrd8UkxwPg5A5PDtZO5eATOwYem0xtZSSjP5g9FVbUuxuWd9mzw1Rb/hiEh944Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gMsoovib; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22435603572so69527025ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742804986; x=1743409786; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2qMUlDAaek7Ax30c0AGSTiyhNrDt/tYOpdl5MsMoLow=;
+        b=gMsoovibKmSv81FaIAbJ9TjBXOxhesE6qDSuZej0OaUgJK9k9PZ43q2GBOsJ50HJSo
+         BYlXxmAt2EBq60V91lo6qmWoOn0u4ZqDiCk75leuCFnH0zqpcKfhaAHbs9By3tswSTN8
+         FPNGMuA6ndcnQkQ9JbLkSMR3WHZ2q4aQFQ02bLbfmTt2bIb2a9+UY2bLUjQ+75Socqol
+         VuiT85EyHZ0AN1NHVNdSSDxBm9sJGn8UAK6tGtMGXqI4BR+2AMb9sMTBqaYAsugBxydW
+         e1pTLS7nN4aKWsSUWv5d9DOYThG+qTy11Fi6a4Q2eZngH2BeEVLNl2Noq+E3cVZ11Rdm
+         KA/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742804986; x=1743409786;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2qMUlDAaek7Ax30c0AGSTiyhNrDt/tYOpdl5MsMoLow=;
+        b=pLdZz0mTTZxp66G9zXPK1aXYkDmiMbMkOIhsM3/OrJSXj61S11MD8bpAHZeJ54ptH/
+         sg6nsE6PtvgY4ZliaDB77UlMCVzDV+RM1H6RV6VsgGtKwi/u+uNGRq1QudHn7HPB1/4a
+         0vu20C2h44TLYt1/UvQGtiFyRy3v1BtR77BSluxt1LcrFa1f/oIOLZTQMU4OVirPbivp
+         to+W/lOhxzs274lLVVSmBALulFdHinrc+baUyPGyRJhQY5JmB2HWKbkxSwbcRnZXifta
+         rd/MmbfvU791w3+2TEaHpuRhZrq+m3RBIY9g6ny5vuMwHwltKpDNbferQsPQBr7XN/J8
+         hA1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXyr+Sdbk7uZs+ARUqChrH8epXsyQsw7UXwmPcSUcqKJpqgjgT/qCeHgA8B1ad+jAqDX00XsIIu3WLVyaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW/Hj/XVhRgGT7NkjnfhTXpyvi7m0kTLqmfo2t4pXia4cr2so2
+	3KcbT01877xw0yxdCm/vvIZB4D1ufyxXemQJnRKbX4yUDVa37uDhyudAJP210z4=
+X-Gm-Gg: ASbGncsAWTwG61lMLKgks68rO8Fbax5N8NmTHlT2j+beRHrJ/hJwVFls4vCcQdIkxAO
+	Ur4SkqQE1k8qLqUk1TC9Q/LuueIFR968E46suA5CGattxfFCplosp7tunEulSWVPJl+ytP26qbV
+	yDJkkuW2JA+7F5wBXFHZpuIEja35m9/wH3EqeMguP7SfBQSLAd2dneFeS8QTf5cJywPCiTaxkyX
+	cyJi0dU5W2l/z0qosrQAXnSd+Ncslkcr/AcZlF3tPuhNguh5mKkptEAiB7tP66zTCXhCi9BJ4tZ
+	t8rFeY5qV530LMhvAplDZniaLayRVEBUhg0nWwgeKgqtdD0GTNBPz+KpQGJBZl79NdpuskBOCU/
+	1RwOp6odUSfMFCQ==
+X-Google-Smtp-Source: AGHT+IE/svKRMr10qo5TWA29tMIKA3okBWKKu6uK4vQbAlDiEPBzS0bf2OPavcRs7sE+zsZm2iXV3g==
+X-Received: by 2002:a05:6a20:a109:b0:1f5:7007:9eb7 with SMTP id adf61e73a8af0-1fe433193c6mr24677051637.37.1742804986196;
+        Mon, 24 Mar 2025 01:29:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a4747bsm6509935a12.68.2025.03.24.01.29.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 01:29:45 -0700 (PDT)
+Message-ID: <779c137d-5030-4212-b957-3d2620448ea9@rivosinc.com>
+Date: Mon, 24 Mar 2025 09:29:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/18] riscv: sbi: add new SBI error mappings
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
+References: <20250317170625.1142870-1-cleger@rivosinc.com>
+ <20250317170625.1142870-3-cleger@rivosinc.com>
+ <20250322-cce038c88db88dd119a49846@orel>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <20250322-cce038c88db88dd119a49846@orel>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321215634.GB11255@pendragon.ideasonboard.com>
-
-Hi Laurent
-
-On Fri, Mar 21, 2025 at 11:56:34PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Fri, Mar 21, 2025 at 04:45:39PM +0100, Jacopo Mondi wrote:
-> > Add formats definition for RAW Bayer formats in vsp1_pipe.c.
-> >
-> > 8-bits RAW Bayer pixel formats map on VSP format RGB332.
->
-> s/map on/map to/
->
-> > 10, 12 and 16 bits RAW Bayer pixel formats map on RGB565 insted.
-> >
-> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> > ---
-> > v3->v4:
-> > - Fix SWAP bits for RAW 10, 12 and 16
-> > ---
-> >  drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 72 ++++++++++++++++++++++++-
-> >  1 file changed, 71 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > index 8e9be3ec1b4d..a51061738edc 100644
-> > --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-> > @@ -30,10 +30,80 @@
-> >   */
-> >
-> >  static const struct vsp1_format_info vsp1_video_formats[] = {
-> > -	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-> > +	/* Raw Bayer 8-bit: Maps on RGB332 */
-> > +	{ V4L2_PIX_FMT_SBGGR8, MEDIA_BUS_FMT_Y8_1X8,
-> > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGBRG8, MEDIA_BUS_FMT_Y8_1X8,
-> > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGRBG8, MEDIA_BUS_FMT_Y8_1X8,
-> > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SRGGB8, MEDIA_BUS_FMT_Y8_1X8,
-> >  	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> >  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> >  	  1, { 8, 0, 0 }, false, false, 1, 1, false },
->
-> Similarly to the media bus codes, could we have a single entry, using
-> V4L2_PIX_FMT_GREY ? Same below with V4L2_PIX_FMT_Y10, V4L2_PIX_FMT_Y12
-> and V4L2_PIX_FMT_Y16.
-
-mmm, the SRGB mbus codes come from the R-Car ISP input image format.
-I understand these are multiple identical entries, but having
-somewhere a translation from SRGB->Y formats just to have fewer
-entries here it feels a bit of an hack
-
->
-> This would still duplicate entries, as V4L2_PIX_FMT_Y1[026] are
-> essentially treated the same, and they are identical to
-> V4L2_PIX_FMT_RGB565. We could ask the ISP driver to use
-> V4L2_PIX_FMT_RGB565 (and V4L2_PIX_FMT_RGB332 for 8-bit raw) when
-> configuring the VSPX, but that's a bit of a hack.
-
-Indeed, but I don't think 3 "duplicated" entries are any bad, if
-that's how the HW work.
-
->
-> Another option would be to handle the translation in
-> vsp1_vspx_rwpf_set_subdev_fmt(). I would still in that case only expect
-> the V4L2_PIX_FMT_GREY and V4L2_PIX_FMT_Y* 4CCs from the ISP driver. This
-
-Do you expect the ISP driver to translate SRGB to Y formats ?
 
 
-> patch could then be dropped.
 
-So are you suggesting to translate in the ISP driver
+On 22/03/2025 13:06, Andrew Jones wrote:
+> On Mon, Mar 17, 2025 at 06:06:08PM +0100, Clément Léger wrote:
+>> A few new errors have been added with SBI V3.0, maps them as close as
+>> possible to errno values.
+>>
+>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/sbi.h | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>> index bb077d0c912f..d11d22717b49 100644
+>> --- a/arch/riscv/include/asm/sbi.h
+>> +++ b/arch/riscv/include/asm/sbi.h
+>> @@ -536,11 +536,20 @@ static inline int sbi_err_map_linux_errno(int err)
+>>  	case SBI_SUCCESS:
+>>  		return 0;
+>>  	case SBI_ERR_DENIED:
+>> +	case SBI_ERR_DENIED_LOCKED:
+>>  		return -EPERM;
+>>  	case SBI_ERR_INVALID_PARAM:
+>> +	case SBI_ERR_INVALID_STATE:
+>> +	case SBI_ERR_BAD_RANGE:
+>>  		return -EINVAL;
+>>  	case SBI_ERR_INVALID_ADDRESS:
+>>  		return -EFAULT;
+>> +	case SBI_ERR_NO_SHMEM:
+>> +		return -ENOMEM;
+>> +	case SBI_ERR_TIMEOUT:
+>> +		return -ETIME;
+>> +	case SBI_ERR_IO:
+>> +		return -EIO;
+>>  	case SBI_ERR_NOT_SUPPORTED:
+>>  	case SBI_ERR_FAILURE:
+>>  	default:
+>> -- 
+>> 2.47.2
+>>
+> 
+> I'm not a huge fan sbi_err_map_linux_errno() since the mappings seem a bit
+> arbitrary, but if we're going to do it, then these look pretty good to me.
+> Only other thought I had was E2BIG for bad-range, but nah...
 
-        SRGB8 -> RGB332
+Yeah I also think some mappings are a bit odd even though I skimmed
+through the whole errno list to find the best possible mappings. I'd be
+happy to find something better though.
 
-        SRGB10/12/16 -> RGB565
+Thanks,
 
-Niklas, what do you think ?
+Clément
 
+> 
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> 
+> Thanks,
+> drew
 
->
-> What's your preference ?
->
-> > +
-> > +	/* Raw Bayer 10/12/16-bit: Maps on RGB565 */
-> > +	{ V4L2_PIX_FMT_SBGGR10, MEDIA_BUS_FMT_Y10_1X10,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
->
-> The bpp values are used to calculate memory offsets. Unless I'm
-> mistaken, you should use 16 here, not 10.
->
-
-I'm rounding up in the vspx driver. However it is true these formats
-are sampled in 16bpp chunks, so I can use 16 here.
-
-> > +	{ V4L2_PIX_FMT_SGBRG10, MEDIA_BUS_FMT_Y10_1X10,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGRBG10, MEDIA_BUS_FMT_Y10_1X10,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SRGGB10, MEDIA_BUS_FMT_Y10_1X10,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-> > +
-> > +	{ V4L2_PIX_FMT_SBGGR12, MEDIA_BUS_FMT_Y12_1X12,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGBRG12, MEDIA_BUS_FMT_Y12_1X12,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGRBG12, MEDIA_BUS_FMT_Y12_1X12,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SRGGB12, MEDIA_BUS_FMT_Y12_1X12,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-> > +
-> > +	{ V4L2_PIX_FMT_SBGGR16, MEDIA_BUS_FMT_Y16_1X16,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGBRG16, MEDIA_BUS_FMT_Y16_1X16,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SGRBG16, MEDIA_BUS_FMT_Y16_1X16,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> > +	{ V4L2_PIX_FMT_SRGGB16, MEDIA_BUS_FMT_Y16_1X16,
-> > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS,
-> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-> > +
-> > +	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-> > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
->
-> This doesn't seem right, the patch is changing the V4L2_PIX_FMT_RGB332.
-
-If I'm not mistaken V4L2_PIX_FMT_RGB332 was
-
-        { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-          VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-          VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-          1, { 8, 0, 0 }, false, false, 1, 1, false }
-
-and is now
-
-        { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-          VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-          VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-          1, { 10, 0, 0 }, false, false, 1, 1, false },
-
-Seems like I messed up the bpp
-
-With that fixed the diff looks saner. Thanks for spotting.
-
-
->
-> >  	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >  	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> >  	  VI6_RPF_DSWAP_P_WDS,
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
