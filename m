@@ -1,129 +1,197 @@
-Return-Path: <linux-kernel+bounces-574172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25276A6E177
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:49:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A68A6E17A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0712316AC5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2BB1714EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B093265CBF;
-	Mon, 24 Mar 2025 17:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6438B265CD9;
+	Mon, 24 Mar 2025 17:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="aJxFE3Z+"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjXJ4MZB"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E137262815;
-	Mon, 24 Mar 2025 17:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF95265CB7;
+	Mon, 24 Mar 2025 17:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837822; cv=none; b=uKCWr6ocimRny7tt/L/o2SRdXaSLw83Td2yvQetCZVCBevfkYZrJ0sODOeBsOyKsQGkFy5aMc9OwAWPoEIoD5sbI6l6B+fybs1+oVDzQUQSDuJknax3BzYl6hUAImLZMOSubS42vLmsORCHbSgXRPUaXYgDgv4r+9cZIWW1ARUs=
+	t=1742837824; cv=none; b=HxeD0f9fA+0EyztZDX3We5ycj5r/HGgnfjH7C/xuyxlwmofzCJxw1JGC16oYAwUQXch3FesoSRNE0R7LADoddw/8+SphXrpwwWq5tFrKuxiAo96e3emp0ZR6eitllPMeaLeqcLSDdYq4kLgmQEF74kdO8P0gkEft+FOQt4B73TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837822; c=relaxed/simple;
-	bh=pr+TErMsVxDlfkiS5MHu/5LIlKend1IEbpzReT3WRCs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kajCA8wnUcf/9Zum6aWdfhp47Un8kRymG4e/gKQnqMGkv7p58tqzSodFEnU5Cz+3A5ao7xDbBV4tL56p4OYbYLgaS4hAcEfUK78cykeA63oVDKJT40bCSvWW2Z5fuafzdVuSx2Ff/INefxhXpPj7rJoD4WGqVEi6dPOti9ixbm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=aJxFE3Z+; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742837812; x=1743097012;
-	bh=gzjWOjpOta91XnfdGX5MvAMkuzEnujIhqjARpEPjTIo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=aJxFE3Z+1qsqYa3hVJ+gBJHED1dcKaiGpxcPPASqawq7u9fCjBjapsb5WGUMFycMj
-	 I/OUrTVXk78LCc7c9XCkoRuCttvY/jd+9oSgWYxmBS+RNQnk8jEQ6JX4qgvnQfXvDx
-	 s+ImhioG9IujYnHdT4pOPrdVoc9tsOjqNn3urNqJX495wQ83BuXeaPgRh5n7zQATB7
-	 +fgar0I4BpwxMH8LlpexwncDpnGctNqumtgLr7ZAhr+P3+Z6lCfR8nFqlNt6Xe9PLO
-	 t5rGfkzHzqVebkMBjHsCJePn3RRm/7D+JI1jKhAuRX15tGoyuIDNY35ch3Ingow1oV
-	 yUSNuW+WGM/xw==
-Date: Mon, 24 Mar 2025 17:36:45 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
-Message-ID: <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
-In-Reply-To: <Z-GNDE68vwhk0gaV@cassiopeiae>
-References: <20250321214826.140946-1-dakr@kernel.org> <20250321214826.140946-3-dakr@kernel.org> <2025032158-embezzle-life-8810@gregkh> <Z96MrGQvpVrFqWYJ@pollux> <Z-CG01QzSJjp46ad@pollux> <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me> <Z-GNDE68vwhk0gaV@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9c1e69920ada344c286ef23456f72788df8f151c
+	s=arc-20240116; t=1742837824; c=relaxed/simple;
+	bh=d9iNtNazP1RDoTpmr0lxnjvelUtrku/ls3fouKhWZXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qYYtD7WPbb2L+t3pUybBqxcY1YH/lQK108qCMkG+iMsUkZEfif5j5jFd74O47eeL7gUZPTbaf3Q5KXswPE7G/Grdd9u3FIgUPvbN34642Dpao9tnuOT623NPaDmPvt7SxPuZlaPI5/evYuEh7SZULswb4scunHb+sqp40EdXEv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjXJ4MZB; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso1310614a91.1;
+        Mon, 24 Mar 2025 10:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742837822; x=1743442622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=69JJjcOX5eDVKLskijk4B2SQOSJ22teSjVBu6vFOVp8=;
+        b=TjXJ4MZBd9nmqEyBERZy/3I37bINnAMAbzwi/xudsA5/Pndd8enbHp4HD7ZusBvsnT
+         2uBk4JWAUXDcZ+MOY8FI3CDYwEmnoA+apgwKsbK1wh9un9d5uaP1inPijkCCXB/cu+Db
+         mRMRSJlGdc0FD+RIWRoSaoitOaNPL4qVD9kcNveqvYeqULE5ycEFPo6OMTz57+Z3tbYs
+         rL1Hi2MPtiCnv1zf0oZk9+yFRJzoz9rc5fI7q9a+PX/eYdZgtf4wAfPjwW6BZvDE0UjP
+         5Ejs3ua4AYwdkaMYHQNZbbMZ4H8XDcsphnj4yGbCoaOZlyuFoYyEHiKwmKpAEaUhjtVH
+         2uwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742837822; x=1743442622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=69JJjcOX5eDVKLskijk4B2SQOSJ22teSjVBu6vFOVp8=;
+        b=e5C81uNtmhQJ+TW2mL0DG6Hbn5OcZ7e4oi7jmi1lvcx3AbqsI0kYYxdruhYsnypVAN
+         ATwdPB6iLkLfXRSiCI7iSH7mmysEhrsamtqRQml3HDRY0byNWXFbHVGVfqD86bU9u1A2
+         OXVuni7+4Fq1C2hgHhhEsibPHWjUziTjmzG5TTa+BcXdsHek4QieZ1h/qjgAKi59gKO5
+         GDggMLHH3AwTEtPA5rMd2WGZL2vEZFMBl52FILsiaeUyMWxmYO6EdC0W52zRSyJDU/8Q
+         zyhpalPjlak+ufKQAVocNo866+UVaDrHooj00QKu49wGXdgd9BauZuqfhmFSOW5CcjjS
+         lgew==
+X-Forwarded-Encrypted: i=1; AJvYcCUNRbx8tob4cOFGZeBQ9qPZMH28z4wppWOrJax6Og5gksFz1n299NhNNte06JD56O1cJZm3bPROLwA1vtUcpVY=@vger.kernel.org, AJvYcCUcXCmnIC0HoG7gGt9quLQhvucH/3nG66h0dFNXluTmp9ZblA0SRlr7Zpw8Hn3YIJoRfFM6rwAdv7v/0zU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhMGAwOUkHYAZHdNhj/duPqAwrdhvA6RGf109fvkJKj1H4GpjX
+	tXx/Ikey0i5uORiFyRnvsPdEle8t8ju+VXBKBas3fABZEgF9yckrTt9u1B5eQB+DaKHinauoS/t
+	OwzxNgM2Pztx+QSnG+RzywCJ5RBI=
+X-Gm-Gg: ASbGncsWPmKlC5JGLmwVQWbEDOGVXpmbVnzED0I0dEbSulu9QDDxlreQ9AwOkBR38W0
+	2kgo1I6ZHMSEQN6Kg+JIQwcacqc2muFYXPpCDZedpIez27N6ax9CSvOmjRgsFkQJahgoCbgmSnL
+	tt0WacwilrDjbBgq19NIUD5osrlQ==
+X-Google-Smtp-Source: AGHT+IFUfJRzqAlcwqRGIR42C+MQ4CQtkFiLwS/ECZRB5538auZlyErsfsZGQdT1VlP88qOFuiR1vK3EzFkLShjtobw=
+X-Received: by 2002:a17:90b:1d91:b0:2ff:78dd:2875 with SMTP id
+ 98e67ed59e1d1-3030fefb123mr8424394a91.5.1742837822154; Mon, 24 Mar 2025
+ 10:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250324-gpuvm-v1-0-7f8213eebb56@collabora.com> <20250324-gpuvm-v1-2-7f8213eebb56@collabora.com>
+In-Reply-To: <20250324-gpuvm-v1-2-7f8213eebb56@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 24 Mar 2025 18:36:49 +0100
+X-Gm-Features: AQ5f1JqKEQjEOH0hQER9UoxLXyyw9kL-VoZN7He3uxMUqnP5eeVyZ20eChjJehw
+Message-ID: <CANiq72mQ3zuYmsq1PD-49kKLNji8OJwuvxK5QWkNaBMuC-PHQg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: drm: Add GPUVM abstraction
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Asahi Lina <lina@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
-> On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
->> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
->> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
->> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
->> >> > Along these lines, if you can convince me that this is something th=
-at we
->> >> > really should be doing, in that we should always be checking every =
-time
->> >> > someone would want to call to_pci_dev(), that the return value is
->> >> > checked, then why don't we also do this in C if it's going to be
->> >> > something to assure people it is going to be correct?  I don't want=
- to
->> >> > see the rust and C sides get "out of sync" here for things that can=
- be
->> >> > kept in sync, as that reduces the mental load of all of us as we tr=
-avers
->> >> > across the boundry for the next 20+ years.
->> >>=20
->> >> I think in this case it is good when the C and Rust side get a bit
->> >> "out of sync":
->> >
->> > A bit more clarification on this:
->> >
->> > What I want to say with this is, since we can cover a lot of the commo=
-n cases
->> > through abstractions and the type system, we're left with the not so c=
-ommon
->> > ones, where the "upcasts" are not made in the context of common and we=
-ll
->> > established patterns, but, for instance, depend on the semantics of th=
-e driver;
->> > those should not be unsafe IMHO.
->>=20
->> I don't think that we should use `TryFrom` for stuff that should only be
->> used seldomly. A function that we can document properly is a much better
->> fit, since we can point users to the "correct" API.
+Hi Daniel,
+
+A few quick notes for future versions on style/docs to try to keep
+things consistent upstream -- not an actual review.
+
+On Mon, Mar 24, 2025 at 4:14=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
 >
-> Most of the cases where drivers would do this conversion should be covere=
-d by
-> the abstraction to already provide that actual bus specific device, rathe=
-r than
-> a generic one or some priv pointer, etc.
->
-> So, the point is that the APIs we design won't leave drivers with a reaso=
-n to
-> make this conversion in the first place. For the cases where they have to
-> (which should be rare), it's the right thing to do. There is not an alter=
-native
-> API to point to.
+> +#[allow(type_alias_bounds)]
 
-Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
-trait to me is a sign of a canonical way to convert a value. So if it
-shouldn't be used lightly, then I would prefer a normal method. Even if
-there is no alternative API, we could say that it is unusual to use it
-and the correct type should normally be available. This kind of
-documentation is not possible with `TryFrom`.
+The documentation says this is highly discouraged -- it may be good to
+mention why it is OK in this instance in a comment or similar.
 
-For a user it won't make a big difference, they'll just call a method
-not named `try_from`.
+Also, could this be `expect`? (e.g. if it triggers in all compiler
+versions we support)
 
----
+> +// A convenience type for the driver's GEM object.
+
+Should this be a `///` comment, i.e. docs?
+
+> +/// Trait that must be implemented by DRM drivers to represent a DRM Gpu=
+Vm (a GPU address space).
+
+(Throughout the file) Markdown in documentation, e.g. `GpuVm`.
+
+(Throughout the file) Intra-doc links where they work, e.g. [`GpuVm`]
+(assuming it works this one).
+
+> +        // - Ok(()) is always returned.
+
+(Throughout the file) Markdown in normal comments too.
+
+> +/// A transparent wrapper over `drm_gpuva_op_map`.
+
+(Throughout the file) A link to C definitions is always nice if there
+is a good one, e.g.
+
+    [`drm_gpuva_op_map`]:
+https://docs.kernel.org/gpu/drm-mm.html#c.drm_gpuva_op_map
+
+Ideally we will eventually have a better way to link these
+automatically, but for the time being, this helps (and later we can do
+a replace easier).
+
+> +/// `None`.
+> +
+> +/// Note: the reason for a dedicated remap operation, rather than arbitr=
+ary
+
+Missing `///` (?).
+
+> +#[repr(C)]
+> +#[pin_data]
+> +/// A GPU VA range.
+> +///
+> +/// Drivers can use `inner` to store additional data.
+
+(Throughout the file) We typically place attributes go below the
+documentation -- or is there a reason to do it like this?
+
+We had cases with e.g. Clippy bugs regarding safety comments that
+could be workarounded with "attribute movement", but it does not seem
+to be the case here.
+
+> +        if p.is_null() {
+> +            Err(ENOMEM)
+
+For error cases, we typically try to do early returns instead.
+
+> +    /// Iterates the given range of the GPU VA space. It utilizes
+> +    /// [`DriverGpuVm`] to call back into the driver providing the split=
+ and
+> +    /// merge steps.
+
+This title (and the next one) may be a bit too long (or not -- please
+check in the rendered docs), i.e. the first paragraph is the "title",
+which is used differently in the rendered docs. If there is a way to
+have a shorter title that still differentiates between the two
+methods, that would be nice.
+
+> +    /// # Arguments
+> +    ///
+> +    /// - `ctx`: A driver-specific context.
+> +    /// - `req_obj`: The GEM object to map.
+> +    /// - `req_addr`: The start address of the new mapping.
+> +    /// - `req_range`: The range of the mapping.
+> +    /// - `req_offset`: The offset into the GEM object.
+
+Normally we try to avoid this kind of sections and instead reference
+the arguments from the text (e.g. "...the range of the mapping
+(`req_range`)...") -- but if there is no good way to do it, then it is
+OK.
+
+> +// SAFETY: All our trait methods take locks
+
+(Throughout the file) Period at the end.
+
+Thanks!
+
 Cheers,
-Benno
-
+Miguel
 
