@@ -1,94 +1,78 @@
-Return-Path: <linux-kernel+bounces-574387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D21A6E4DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:00:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFB6A6E4E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFA447A829F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:59:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDC018870B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3721E0DD8;
-	Mon, 24 Mar 2025 20:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C271EDA1E;
+	Mon, 24 Mar 2025 21:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzXj/fhd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4LyujHr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EF41DEFD7;
-	Mon, 24 Mar 2025 20:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5F61E2852;
+	Mon, 24 Mar 2025 21:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742849999; cv=none; b=jBUoLcpnmh2T2ptZia+kqFtK+j+B5nDbhyyQtdfhI3mOsKP1RWYBUAbLBFbIGL1/1vQIY1YnwG9UXTvxqA/80Z2hmV5RCduAhz2Eez30mkxKjfClOgr15A2lkUvDmcLMMZ4l1isPUGCwEd4Qilu8YaEwtzU4aOXUPWtW1HyGRbo=
+	t=1742850021; cv=none; b=EG8hwU5RXqgjOGVOZWHRpIVobFoKvb4c0FPGWZLU/Re0A39KQsqL+KfDuvUxECOALRvTWbioW+Eg0N1OlPOWSgNxE+TZeXzZKHRL2CAv2tf0hyIO0mMxjlW7ZKWnxCc1Iw4y4//0AfhGW93A11b+8g/5kCE39PsVg7GmzItqYwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742849999; c=relaxed/simple;
-	bh=GGMBDJY6SvgbvByr7GollhePLTL/SiptTTpr/p1Y/fY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=LpqyNfI3uwzyS+2beIOm9iitIikRrjoC4pVhhF00t8+lvTMxp6AyNqRnsBQ4GpSidB6SHyczozHhcuYAftVIJxxurrhAo4hFAygY8Q9QaDwd/TQU2YrqTwY50a2Xd+hGCIBsHRA8cAYndj9r7X7BoxXnEeIJa2gaGI8gmXkfxf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzXj/fhd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87DDC4CEE4;
-	Mon, 24 Mar 2025 20:59:58 +0000 (UTC)
+	s=arc-20240116; t=1742850021; c=relaxed/simple;
+	bh=CsAXHQveFTs/0UYbSYdoNAGN5x9PsIhHFTX3rueaxEM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OKHvEtNW/IZnJrYFJgv+nMidRcJb3JkoJvo77vNhnU53RHamtcCoZj6kjAm6HzEQmMQxWGDIJiWl3xVNTyl5eySwiR6KR/gJ0AqRGJlzCi3Yu95c2Qcf+sCn1TpA5jRGjBwYV3hFPkQfR9502KnvsC5vJB0Wjfx503DkBkn6SUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4LyujHr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FADAC4CEE4;
+	Mon, 24 Mar 2025 21:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742849998;
-	bh=GGMBDJY6SvgbvByr7GollhePLTL/SiptTTpr/p1Y/fY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UzXj/fhdGjGTQ8aAPOjcdmUEo7GwgExwEGcw2oxdTtyJn0o7b09993Q6MRn+47Oh5
-	 jV7JqViL9sOIG9ew9Md2SuaVz0fS7bgb8XENZU4CcfcPV3k+5ciOlCOxwvokJafuTU
-	 s5jSokhCg8N64eP5muYmdOeROc0yv+yoRZ4sKucwDWCFrMGIuZNtr80R44SiQsZ8Ke
-	 o9DOQg3Vp1lj8thBCSOhez4wnhjOjucLsA4opAwb3eVfPoePlkA9i8LRsDFd6zB418
-	 Wk6YrsTy+sSiCVtA8k+0twGuJxBNFikesBaLnC3s4Sl91D5c5L/s0oiYaVR8Y9Ds7s
-	 phC5975mYhouw==
+	s=k20201202; t=1742850021;
+	bh=CsAXHQveFTs/0UYbSYdoNAGN5x9PsIhHFTX3rueaxEM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=s4LyujHrviCrAJxgfiBvy2FqBC9dcVolbEvIDTrzn7QHa7PM1tJgjUoTrVOUFs5vZ
+	 N09HJXOoBTXX48XbyRPQb956As3n5wOjGzkUpQj2hy8w6ql8dtBWn1LwM+tH6m1CzW
+	 0ORFWCFu2yF6bWkCkdh0Zp2FG8sGvw8+P/JPtfkFr67hQ9a1789WtvShUAruO/pEyV
+	 wURiCkqj6gmy8l3fSlQRrznPdJ+TlkJOgw5a4fA9w+ennFbvPCILebqYB13ojMlX1W
+	 hWcwPkJ27sbQ65VjumRMWv9cT8I2Co9IQMlatpMb6m+hMUH5z9behx5ysmLeu4QUaf
+	 dCHZMjwDfrCCw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 38101380664D;
-	Mon, 24 Mar 2025 21:00:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F2B49380664F;
+	Mon, 24 Mar 2025 21:00:58 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs misc
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250321-vfs-misc-77bd9633b854@brauner>
+References: <20250321-vfs-misc-77bd9633b854@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250321-vfs-misc-77bd9633b854@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.misc
+X-PR-Tracked-Commit-Id: 4dec4f91359c456a5eea26817ea151b42953432e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 99c21beaab2db53d1ba17102b7cedc7a584dfe23
+Message-Id: <174285005773.4171303.7791354323608380268.pr-tracker-bot@kernel.org>
+Date: Mon, 24 Mar 2025 21:00:57 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND PATCH] net: phy: fixed_phy: transition to the faux device
- interface
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174285003475.4171308.4781336832128708063.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Mar 2025 21:00:34 +0000
-References: <20250319135209.2734594-1-sudeep.holla@arm.com>
-In-Reply-To: <20250319135209.2734594-1-sudeep.holla@arm.com>
-To: Sudeep Holla <Sudeep.Holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
- gregkh@linuxfoundation.org, andrew@lunn.ch, davem@davemloft.net,
- netdev@vger.kernel.org
 
-Hello:
+The pull request you sent on Sat, 22 Mar 2025 11:12:49 +0100:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc1.misc
 
-On Wed, 19 Mar 2025 13:52:09 +0000 you wrote:
-> The net fixed phy driver does not require the creation of a platform
-> device. Originally, this approach was chosen for simplicity when the
-> driver was first implemented.
-> 
-> With the introduction of the lightweight faux device interface, we now
-> have a more appropriate alternative. Migrate the device to utilize the
-> faux bus, given that the platform device it previously created was not
-> a real one anyway. This will get rid of the fake platform device.
-> 
-> [...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/99c21beaab2db53d1ba17102b7cedc7a584dfe23
 
-Here is the summary with links:
-  - [RESEND] net: phy: fixed_phy: transition to the faux device interface
-    https://git.kernel.org/netdev/net-next/c/c4ebde35085e
+Thank you!
 
-You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+https://korg.docs.kernel.org/prtracker.html
 
