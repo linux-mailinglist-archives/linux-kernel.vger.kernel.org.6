@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9CFA6DE8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:25:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 206C5A6DE8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9C3B4134
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8E53B4747
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559A26156A;
-	Mon, 24 Mar 2025 15:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CEB261591;
+	Mon, 24 Mar 2025 15:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ln7CtI1e"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nha9iTbP"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C841125DD13
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7147261573;
+	Mon, 24 Mar 2025 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829802; cv=none; b=IT8IU5A21oGOvFbSiSOuO3drowlDKx+CdU9FVCtSx/+To9BiH5CBasLrH1t6OvBvty+qnKx5ESNE1UDkOXxEtMkQMms/R1sUQbglEHX3zwUEDFNdwFcz4vF+WVsiRcuWYP+pVgCP7CuBv/2AV+loWahA95hCTMOHLwmdhxKNyr8=
+	t=1742829806; cv=none; b=SCFLOLtJJfIH7zbyB16oqtCDPtugs45V/zOqH+uQp4n+srkt0ryPVLPUVaj+Yy46yHNWocSdvHTGTLifNopiHWh9ZC5qRRpIQf4i6TncsbiVLfSKNQeyHgcPlfyFV80ZsY1JzezcGs3vzLyi6npJgQOAMPIXNanFQGwEUjpMuLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829802; c=relaxed/simple;
-	bh=O17Rh+VdAK5JbMEssx75JbuOMjbwox9vV2y6ixVE3Fc=;
+	s=arc-20240116; t=1742829806; c=relaxed/simple;
+	bh=RlMc1qQkGcDTfhh/qUr5RqVrBV5Y7vj0LSbOljmbBic=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u3lvQnfMlXGR+Nz/q+f0cxZHqhYtDCTOQhTvoAE88g2YiQAWZmkaPRFGZnCHzbFCG0X7OPE8AwBcpd9d2yfeYq51cmpllMTD7so+TrcJfe7P5j/r2kSuxFHF3POrD7ygGBogZZDWPy5kDhj5ZxkBshM/o6T2rKTdQxK39CttVR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ln7CtI1e; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:Content-Type; b=Kgxh5LthRuaxIx4k3BsKsO26eVvQBC1BVde3/jcX6WCk0zR9GowxT3bKQRjK6Roch8xpWYNg3RxPz+aN6mQgm87LRXpHj3M4ruraYVxvJ+8k/jaslbCThCyQJ84b8/PGDUFpnW6+8pLnWi8g1RT4WnlYwPeg8yEcZTsk5Bcbsc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nha9iTbP; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CFE462047D;
-	Mon, 24 Mar 2025 15:23:12 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3036420577;
+	Mon, 24 Mar 2025 15:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829799;
+	t=1742829802;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=D3gWML1DZeb3CvxHzBB9x65brvewkABGhRCqq6B0PnY=;
-	b=ln7CtI1exG6vcOi0D8LQkBDUTSSa8PJ7+0lhOJGeevy+OtbIOiF++zo28Dalg4zNfchTS2
-	fEK2Xm+S/Iij0lnfgdSAcfhOaREq8aC3uJEWbQBLHqASVS0ws+0SR7c2+0Z9144a4HrpFe
-	mPENoLrYqCGxIFEvYaAYFjH4/ABYrK9SI/0tORCa6LrfZeteeUDgGqAapMYQUBiWnEGnU1
-	udD4qZKeqAk1N6NXZQ4qejE/2QXWYQdbnXU4aI5g+KH7AYcElSqQDzEuWgVoEnMhFfl4ek
-	VmCBB0im2AYYF1DvEJCo3cct4rlja9dnpvHFUpPaLCP/AEAtnrPNDdqkXZRvww==
-Message-ID: <79cd2985-bcdc-4dc1-8aa3-b19d7fd595f9@bootlin.com>
-Date: Mon, 24 Mar 2025 16:23:12 +0100
+	bh=JwuW83OwbehfUQ0b6+agTugM6hRqyHyoBrJtyNV0PR8=;
+	b=nha9iTbPOTGXk7vnAYcvtxfeysInYpzSHd4B2KH1ACm6z9TOgwI+3rBp6CvrNjyJYgNrsq
+	aJXVrzyol+B9LcvkXL++meTsgHNSZf3X1mrzEC0HF4ut36datmQ4bDs0KtgKv9hzIFx98A
+	gHVVgsq9XpvJNI5QDIwcmoERRLUQdoQ2qzeTT1/jrDvQa35yCczV8FGj1V8NYak8WtQUMD
+	T/kJvGU3jqSjPP2ijXaBUCjqqUOv3A0AxY9rZMLLxX54WCZJGOC/1L98qO/yYYxzs0FClQ
+	9wU/FS1je6gjVon727tjoY9VZy6lO5tUs8z9WVBT0uSFtDo5TamKY74dTS6Cyg==
+Message-ID: <2dffcb05-1c31-4704-9081-91107b3ce165@bootlin.com>
+Date: Mon, 24 Mar 2025 16:23:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,8 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 34/59] checkpatch: dont warn about unused macro arg on
- empty body
+Subject: Re: [PATCH v2 33/59] docs/dyndbg: add classmap info to howto (TBD)
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -63,11 +62,9 @@ To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
 Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com,
- Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
+ linux-doc@vger.kernel.org
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-35-jim.cromie@gmail.com>
+ <20250320185238.447458-34-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -123,52 +120,141 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-35-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-34-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> we currently get:
->    WARNING: Argument 'name' is not used in function-like macro
-> on:
->    #define DRM_CLASSMAP_USE(name)  /* nothing here */
+> Describe the 3 API macros providing dynamic_debug's classmaps
 > 
-> Following this advice is wrong here, and shouldn't be fixed by
-> ignoring args altogether; the macro should properly fail if invoked
-> with 0 or 2+ args.
+> DYNDBG_CLASSMAP_DEFINE - create & export a classmap
+> DYNDBG_CLASSMAP_USE    - refer to exported map
+> DYNDBG_CLASSMAP_PARAM  - bind control param to the classmap
+> DYNDBG_CLASSMAP_PARAM_REF + use module's storage - __drm_debug
 > 
-> cc: Andy Whitcroft <apw@canonical.com>
-> cc: Joe Perches <joe@perches.com>
-> cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-> cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> TBD: some of this might be over-specification, or just over-talked.
+> 
+> NB: The _DEFINE & _USE model makes the user dependent on the definer,
+> just like EXPORT_SYMBOL(__drm_debug) already does.
+> 
+> cc: linux-doc@vger.kernel.org
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
 > ---
->   scripts/checkpatch.pl | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> v5 adjustments per Randy Dunlap
+> v7 checkpatch fixes
+> v8 more
+> v9 rewords
+> ---
+>   .../admin-guide/dynamic-debug-howto.rst       | 80 ++++++++++++++++++-
+>   1 file changed, 79 insertions(+), 1 deletion(-)
 > 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 7b28ad331742..0c4f578ea6e7 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -6037,7 +6037,7 @@ sub process {
->   				}
+> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+> index d2928884c92b..9422dc4917d0 100644
+> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
+> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+> @@ -243,7 +243,6 @@ the ``p`` flag has meaning, other flags are ignored.
+>   Note the regexp ``^[-+=][fslmpt_]+$`` matches a flags specification.
+>   To clear all flags at once, use ``=_`` or ``-fslmpt``.
 >   
->   # check if this is an unused argument
-> -				if ($define_stmt !~ /\b$arg\b/) {
-> +				if ($define_stmt !~ /\b$arg\b/ && $define_stmt) {
->   					WARN("MACRO_ARG_UNUSED",
->   					     "Argument '$arg' is not used in function-like macro\n" . "$herectx");
->   				}
+> -
+>   Debug messages during Boot Process
+>   ==================================
+>   
+> @@ -393,3 +392,82 @@ just a shortcut for ``print_hex_dump(KERN_DEBUG)``.
+>   For ``print_hex_dump_debug()``/``print_hex_dump_bytes()``, format string is
+>   its ``prefix_str`` argument, if it is constant string; or ``hexdump``
+>   in case ``prefix_str`` is built dynamically.
+> +
+> +Dynamic Debug classmaps
+> +=======================
+> +
+> +The "class" keyword selects prdbgs based on author supplied,
+> +domain-oriented names.  This complements the nested-scope keywords:
+> +module, file, function, line.
+> +
+> +The main difference from the others: class'd prdbgs must be named to
+> +be changed.  This protects them from generic overwrite:
+> +
+> +  # IOW this cannot undo any DRM.debug settings
+> +  :#> ddcmd -p
+
+Patch 30/59 just dropped this behavior no?
+
+> +So each class must be enabled individually (no wildcards):
+> +
+> +  :#> ddcmd class DRM_UT_CORE +p
+> +  :#> ddcmd class DRM_UT_KMS +p
+> +  # or more selectively
+> +  :#> ddcmd class DRM_UT_CORE module drm +p
+> +
+> +Or the legacy/normal (more convenient) way:
+> +
+> +  :#> echo 0x1ff > /sys/module/drm/parameters/debug
+> +
+> +Dynamic Debug Classmap API
+> +==========================
+> +
+> +DRM.debug is built upon:
+> +  ~23 macros, all passing a DRM_UT_* constant as arg-1.
+> +  ~5000 calls to them, across drivers/gpu/drm/*
+> +  bits in /sys/module/drm/parameters/debug control all DRM_UT_* together
+> +
+> +The const short ints are good for optimizing compilers; a classmaps
+> +design goal was to keep that.  So basically .classid === category.
+> +
+> +And since prdbgs are cataloged with just a DRM_UT_* to identify them,
+> +the "class" keyword maps known classnames to those reserved IDs, and
+> +by explicitly requiring "class FOO" in queries, we protect FOO class'd
+> +debugs from overwrite by generic queries.
+> +
+> +Its expected that other classmap users will also provide debug-macros
+> +using an enum-defined categorization scheme like DRM's, and dyndbg can
+> +be adapted under them similarly.
+> +
+> +DYNAMIC_DEBUG_CLASSMAP_DEFINE(var,type,_base,classnames) - this maps
+> +classnames onto class-ids consecutively, starting at _base, it also
+> +maps the names onto CLASSMAP_PARAM bits 0..N.
+> +
+> +DYNAMIC_DEBUG_CLASSMAP_USE(var) - modules call this to refer to the
+> +var _DEFINEd elsewhere (and exported).
+> +
+> +Classmaps are opt-in: modules invoke _DEFINE or _USE to authorize
+> +dyndbg to update those classes.  "class FOO" queries are validated
+> +against the classes, this finds the classid to alter; classes are not
+> +directly selectable by their classid.
+> +
+> +There are 2 types of classmaps:
+> +
+> + DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, like DRM.debug
+> + DD_CLASS_TYPE_LEVEL_NUM: classes are relative, ordered (V3 > V2)
+> +
+> +DYNAMIC_DEBUG_CLASSMAP_PARAM - modelled after module_param_cb, it
+> +refers to a DEFINEd classmap, and associates it to the param's
+> +data-store.  This state is then applied to DEFINEr and USEr modules
+> +when they're modprobed.
+> +
+> +The PARAM interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
+> +amongst the contained classnames; all classes are independent in the
+> +control parser itself; there is no implied meaning in names like "V4".
+> +
+> +Modules or module-groups (drm & drivers) can define multiple
+> +classmaps, as long as they share the limited 0..62 per-module-group
+> +_class_id range, without overlap.
+
+Maybe clarify that a driver using _USE macro should take care that he 
+only use distinct non-overlaping classmaps?
+
+> +``#define DEBUG`` will enable all pr_debugs in scope, including any
+> +class'd ones.  This won't be reflected in the PARAM readback value,
+> +but the class'd pr_debug callsites can be forced off by toggling the
+> +classmap-kparam all-on then all-off.
 
 -- 
 Louis Chauvet, Bootlin
