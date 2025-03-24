@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25D9A6DE89
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:25:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9CFA6DE8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629F516B263
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB9C3B4134
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED2A262D07;
-	Mon, 24 Mar 2025 15:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559A26156A;
+	Mon, 24 Mar 2025 15:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pBpxv0/y"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ln7CtI1e"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845A9261380;
-	Mon, 24 Mar 2025 15:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C841125DD13
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829790; cv=none; b=FCZShDN7DurG1Ynxquf3kKwBARhJyZwDtd0YLiWtmVKb7+5LCrmGr5UauJGnMBeT+p7Y0EB5XUT9DbBMawKMsKsnozO3EufuqwrtNdT6PZCO68uARaGRktUz1x6lU4zQmVjDSq2zDtQqbwh3qpheWl8CVLCZehgWgEFrDbSO/t0=
+	t=1742829802; cv=none; b=IT8IU5A21oGOvFbSiSOuO3drowlDKx+CdU9FVCtSx/+To9BiH5CBasLrH1t6OvBvty+qnKx5ESNE1UDkOXxEtMkQMms/R1sUQbglEHX3zwUEDFNdwFcz4vF+WVsiRcuWYP+pVgCP7CuBv/2AV+loWahA95hCTMOHLwmdhxKNyr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829790; c=relaxed/simple;
-	bh=Sl+4AytBzeGzReV3diMnOhXINOftqN9pkCbPD2ZMDlw=;
+	s=arc-20240116; t=1742829802; c=relaxed/simple;
+	bh=O17Rh+VdAK5JbMEssx75JbuOMjbwox9vV2y6ixVE3Fc=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SsQYuBUGgCJEjLohqadmVnV9mMzXxu0wEzipBUK7I4G8acebzsbAja9r1xCMOBx/9uMP7rR9x952jAHd5z1qMt9a1cFYtQwGSGbxaA4jaar9IHUdv8SvhCj+KmacQtIpU23PWEfIzrk76v5/GfZ50l2xZhLC0CM2hGofoZAfkX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pBpxv0/y; arc=none smtp.client-ip=217.70.183.199
+	 In-Reply-To:Content-Type; b=u3lvQnfMlXGR+Nz/q+f0cxZHqhYtDCTOQhTvoAE88g2YiQAWZmkaPRFGZnCHzbFCG0X7OPE8AwBcpd9d2yfeYq51cmpllMTD7so+TrcJfe7P5j/r2kSuxFHF3POrD7ygGBogZZDWPy5kDhj5ZxkBshM/o6T2rKTdQxK39CttVR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ln7CtI1e; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 432974438E;
-	Mon, 24 Mar 2025 15:23:05 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CFE462047D;
+	Mon, 24 Mar 2025 15:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829786;
+	t=1742829799;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pJFgNFBVo9Y/fYi2mFx/DtELvv7oTepOjCaghcZkMmw=;
-	b=pBpxv0/yyajnKwZeTTLYnbedugi+AFIp4kjIQKICZrDEJu8ehusqntNjpk4SgRRvQfdNJG
-	L8qktlYalwxbabmfjyxjY9OKNF33Crdjz6pUPICe+r9IpX2HwbFa8wO/hZBgYiRogKylSM
-	DYyJAEnlhqjfhKmPsToR522t7Q7vMvAL4MYVfKN/22rYtMVsL52TgEhHANMQ3B7bMEQxZn
-	89BbRWBiLbVNpYIJCtKBMa8Rj7K2aTxF04q0m2QTFwuMqF1sExK5S+eoR8+NA45rSu8Pkp
-	K+LApDXQqjueZGOGgEV4YzsmigUlQcfn46Ya1/SvDYSpu/Zkd+h0qYzKz1cqGw==
-Message-ID: <aa2dbe5e-7e0d-49be-a1ee-80320576d807@bootlin.com>
-Date: Mon, 24 Mar 2025 16:23:04 +0100
+	bh=D3gWML1DZeb3CvxHzBB9x65brvewkABGhRCqq6B0PnY=;
+	b=ln7CtI1exG6vcOi0D8LQkBDUTSSa8PJ7+0lhOJGeevy+OtbIOiF++zo28Dalg4zNfchTS2
+	fEK2Xm+S/Iij0lnfgdSAcfhOaREq8aC3uJEWbQBLHqASVS0ws+0SR7c2+0Z9144a4HrpFe
+	mPENoLrYqCGxIFEvYaAYFjH4/ABYrK9SI/0tORCa6LrfZeteeUDgGqAapMYQUBiWnEGnU1
+	udD4qZKeqAk1N6NXZQ4qejE/2QXWYQdbnXU4aI5g+KH7AYcElSqQDzEuWgVoEnMhFfl4ek
+	VmCBB0im2AYYF1DvEJCo3cct4rlja9dnpvHFUpPaLCP/AEAtnrPNDdqkXZRvww==
+Message-ID: <79cd2985-bcdc-4dc1-8aa3-b19d7fd595f9@bootlin.com>
+Date: Mon, 24 Mar 2025 16:23:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 32/59] docs/dyndbg: explain flags parse 1st
+Subject: Re: [PATCH v2 34/59] checkpatch: dont warn about unused macro arg on
+ empty body
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -62,9 +63,11 @@ To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
 Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com,
- linux-doc@vger.kernel.org
+ Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-33-jim.cromie@gmail.com>
+ <20250320185238.447458-35-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -120,56 +123,52 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-33-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-35-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> When writing queries to >control, flags are parsed 1st, since they are
-> the only required field, and they require specific compositions.  So
-> if the flags draw an error (on those specifics), then keyword errors
-> aren't reported.  This can be mildly confusing/annoying, so explain it
-> instead.
+> we currently get:
+>    WARNING: Argument 'name' is not used in function-like macro
+> on:
+>    #define DRM_CLASSMAP_USE(name)  /* nothing here */
 > 
-> cc: linux-doc@vger.kernel.org
+> Following this advice is wrong here, and shouldn't be fixed by
+> ignoring args altogether; the macro should properly fail if invoked
+> with 0 or 2+ args.
+> 
+> cc: Andy Whitcroft <apw@canonical.com>
+> cc: Joe Perches <joe@perches.com>
+> cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-I think this could be merged outside this series.
-
 > ---
->   Documentation/admin-guide/dynamic-debug-howto.rst | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+>   scripts/checkpatch.pl | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
-> index 8e2083605bd7..d2928884c92b 100644
-> --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> @@ -112,6 +112,16 @@ The match-spec's select *prdbgs* from the catalog, upon which to apply
->   the flags-spec, all constraints are ANDed together.  An absent keyword
->   is the same as keyword "*".
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 7b28ad331742..0c4f578ea6e7 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -6037,7 +6037,7 @@ sub process {
+>   				}
 >   
-> +Note: because the match-spec can be empty, the flags are checked 1st,
-> +then the pairs of keyword values.  Flag errs will hide keyword errs:
-> +
-> +  bash-5.2# ddcmd mod bar +foo
-> +  dyndbg: read 13 bytes from userspace
-> +  dyndbg: query 0: "mod bar +foo" mod:*
-> +  dyndbg: unknown flag 'o'
-> +  dyndbg: flags parse failed
-> +  dyndbg: processed 1 queries, with 0 matches, 1 errs
-> +
->   A match specification is a keyword, which selects the attribute of
->   the callsite to be compared, and a value to compare against.  Possible
->   keywords are:::
+>   # check if this is an unused argument
+> -				if ($define_stmt !~ /\b$arg\b/) {
+> +				if ($define_stmt !~ /\b$arg\b/ && $define_stmt) {
+>   					WARN("MACRO_ARG_UNUSED",
+>   					     "Argument '$arg' is not used in function-like macro\n" . "$herectx");
+>   				}
 
 -- 
 Louis Chauvet, Bootlin
