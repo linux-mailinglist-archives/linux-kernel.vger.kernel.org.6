@@ -1,185 +1,130 @@
-Return-Path: <linux-kernel+bounces-574512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68D5A6E62D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:03:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64713A6E626
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D95E3AB9CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69613B902E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41641F1905;
-	Mon, 24 Mar 2025 22:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7411F12EB;
+	Mon, 24 Mar 2025 22:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1qsGPRX"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwfkiynV"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273841F12F9;
-	Mon, 24 Mar 2025 22:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E528F1EB199;
+	Mon, 24 Mar 2025 22:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853627; cv=none; b=W4gnm9gRpa/eHA4XYSIfgrn2zxf/ldFZpZGVkIA5KgGp2PmNXEaCoA5lRcrOw0jTNdnEQkbGn70AilkJqpmLu04c5rR5yIbBGvcRhnYShiM5CUT5qXkuwCSogeLZjB3CizBd2j0dUzule1ASpXuOvz4Sep0jnIuWILXMm30u5pA=
+	t=1742853624; cv=none; b=d7RCbBfxtw8uJj5IYx0zElNplwKewfbyBomIY5tdgFLFrcPibDcsIzohi/fsQMkDnVmgmpk2NBtRVKaiEw8szEWc7a3UXuZvPb/XrMr6V73x+HrmgESqtqpg3F3xJNePTg0xggMLSxQ51FGAMB98quzIx53BAyoOW4XFdPe3xTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853627; c=relaxed/simple;
-	bh=71xNedCC4Z94uiVIEssxqGS6mu2h+O+GIrdzt89KsFI=;
+	s=arc-20240116; t=1742853624; c=relaxed/simple;
+	bh=PtpzQPV91DRAINKIpL1SiRX65+cy10ZmPzRxJQEHIlc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F3FiXh0vH6n6XQi4qVxUzmUjGYhVEJYb+Cu8KoRxbBTbcox0d4DyYLA21CYqCw1BFqX6G7qWH8rzC2Uou0Ie1mH6zBayFle6LDgYiQVxcsif6l6e9wXCxX/K+y3dLahYaeIm0nAHchBDBBd6qI65MUpyPt3F/797LTvgBWWNh9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1qsGPRX; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=oZDlJZ3X29SmahxsvmyeZGkPW6OncfHw73jUyKufgtM56FoODSxX9yMr16m+jLWm7UgzR0kMGNkrELhDWGLr9pUNYWDF6CV8/xbPGZ8caqjcOkHcgsoGFxvqUGI9ASwun+iw9ncL5dfq087APQTwkKWUPMF7yfhmjHD61RXwRhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mwfkiynV; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30bae572157so47426551fa.3;
-        Mon, 24 Mar 2025 15:00:25 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso22371765e9.3;
+        Mon, 24 Mar 2025 15:00:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742853624; x=1743458424; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742853621; x=1743458421; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JJIj2kwPWDyO/H6Koa3jkD6S+3PQLap6yvrWwbihLMs=;
-        b=A1qsGPRXyHyLIPy8Nwk82mBP+JI6iC+Xb+k6TRPI7Jqh2UKoVW2FVE3fsausfaCzbV
-         0eABQKm+up8ATAQ5sytYCmjQ0fKH3wK5mC4hvJIO2lr22ZzUKSVkRHfRjmdRRCTP+wAJ
-         lnMvX74sb99t0ll5yiWNTY/taohSiIN47XzenflwIKv897Vp7EsNxg+FMj7k7s7OQO0n
-         6eTmMAzxEROTlZxTe8VecCZQPZsQ5w3774MVRQEGVjGIVZ7blBF9ucxrBnLMTcbEKdMC
-         JJaNlag/OTH+n0xtnh2I9l4cMS9KyayVAjPm52bZsuYsZmbKzR69goZ6NgMu8pczWIw4
-         etBw==
+        bh=B2YpdWGkegazNf2klfKbGc0M99P0XIEZmajFVkaDbgM=;
+        b=mwfkiynV4ksYRcuFB/dFiF1s0nVn++l5oOoT3NwNFZ5cv7CoIAB9HuKL0GRSvBY2aI
+         j0d+kKguDNtPVLvx0TxLeOFviJBZZ3pYJi2nbyYzPURm4eMh1uwNaNcxtrmAuasGnC+d
+         XvAqfEY1WHeDcxfNPX+lo78Pbrr5m06IpXkof5SllcwafR5B2Uji8saqhSaJpqQUquBr
+         EwwjIF9e2OswrBr8OkBy/al7GJZ/j1YNlEk+WbhyFNfxd1kRKKwFPuxR1yRhrVr4JPPD
+         4gu2lG9A+hDx4gSdmjsTG0KQOkV1/htsxha4SeDWXzcxMtq5lMAgfEqYyunzL4pDymt8
+         RwcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742853624; x=1743458424;
+        d=1e100.net; s=20230601; t=1742853621; x=1743458421;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JJIj2kwPWDyO/H6Koa3jkD6S+3PQLap6yvrWwbihLMs=;
-        b=ABPMLmLg0TQcg4I17sBOmV823rNpBnFik5F93hWOwmNfdLzVhiSzF3wh+qBRbj0/AN
-         ZsklpcfSC16vGwA+AyyReaB7tISXKQeO5hRAVYSwXS8EJZQXVERRierpbcJMYirSlW+b
-         HpDiuzsrKBvfB+Eyplv/QlBLWzuAmMVl21xmZwde7VdIRbdOWHYkbWd1aSmPsRL9PfQp
-         fukuNMQDlJ6njNeMqu7k8LYdAR7ko1Jm68gpmQozDkPrOp/wHI/qKtwzSTuZhz2neqrF
-         HfKuFtLeTfjiqpuYsGcBYQOwubpBgAeiR26fNlLKzvbdM/N7Pt9bQq8wNPM4byBnVRqt
-         uQ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUgT6yMC/+EebEtkbjRTwhfyGibnvIwg4ez2JMMANQQSnecW3Aj7cRxjkxEsTZaeDEJ4u9TQRB9Ff8UOl7MfNs=@vger.kernel.org, AJvYcCUnHb9tyeJxvf9gUXPGwnQB5wtaF1I2ln2OKvg4TSYq9vTgVbDUcCzaFhY5eHqGUTl1nkiCMFmaFFWAvBxF/Bc0@vger.kernel.org, AJvYcCWBPpDlZQncR66K/GNYHFVEdVi7NeAndV1v6iPj9Zm/eeo/YGe6xAZJCL4LJJnEyaI57oQ1W1QlVGH+iaOk@vger.kernel.org, AJvYcCWBvrgK+37kaTTWP4lbZEf1XGPKUPocloNcKIn/5UfB3pLQ3DGmqKXOtZluSIcB7+wwNcE+NZmQTGnj@vger.kernel.org, AJvYcCWeiPihy1dlWg37JqkhpZPBxNmhrLdCbffWVLHdu0OnbpnEcRNiz77LTmDpRU4tDy9cwcnw/COtajMPiO0=@vger.kernel.org, AJvYcCX9mMClVO9k/kbGbgGkTZ6olvc4Go5NMGf9rruLqeNBWXHU5qHqf2FQcfUYQN3qSu1rpO7ZONmea/UzCLhV@vger.kernel.org, AJvYcCXDotCvR88W9EHgBqiMkuqDJjNFMraBiKdAUfPz7CcWozv7Uj3whjU1bLbVG2PVaKLvMZfuXDSOtNo7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSDqcq1JLaWiL71ul0uggzx2w8puAu+D6/pCajs5tLIBvn5m2e
-	Ks8i5hPUxgQn8u8ENEqPNIHphCZMqHipRWUEQfjZpTuh9Q9Kp5efitBqb5aKIn/PycCcDlqkDiy
-	1hdJUPxg6foBkcFdprgbes+d+vVo=
-X-Gm-Gg: ASbGncvLjJ5DqYL/KfS0vQ63dUqlA3ZaylabbyVpWefBcBn13Wt2z7e+00Y4NLOy0L2
-	kLSa0sifGXf4KPBYZjuziSBI1UzUNBIXslPpXRiGt+0siJXA1kBVtGDfYxlBmJtZ5IRjqhH28EV
-	JCOwove2WbXInPv5hP7YNsmfSV/nHW8ZfFZtUfNcU4ag==
-X-Google-Smtp-Source: AGHT+IFeg45oEQUJPJrJjwj5pNO8wB8HGP8iRSPaWOmoQfcnrVDkQ0M/tV/Ph5abLBSgZgYDBnpiW+Lls35LHRVodrY=
-X-Received: by 2002:a2e:88cb:0:b0:30c:177c:9e64 with SMTP id
- 38308e7fff4ca-30d7e2bce01mr52434671fa.35.1742853623931; Mon, 24 Mar 2025
- 15:00:23 -0700 (PDT)
+        bh=B2YpdWGkegazNf2klfKbGc0M99P0XIEZmajFVkaDbgM=;
+        b=GwAvSSzV0J5x/BVUCb5GrDV/b6SBSQ5LXHvgmVLeR9ZOuSppWESMnm7nNkNauSzcWO
+         bWwn/sTDfpk3veBE4QWEr9OzI9NyVlc44JIz3lqml0qze89uJvhZ6phyCBGw0zS9QxNB
+         rscNOQ9HDzyy6TfwHqihLANtCvR/5qd38/6KfzAzWCG0nG9raPrJ1/khGeLX2ox5373q
+         I7jCzl2SSzq49NcF9B+Fx1gi2i0XKI7njNpp9P2JeBFM2oSaBNg2IDsd+sQB+s8plLbS
+         G6yDHEPQv10Dd7aCQy/dn+rxCb26TT3z61TiXrR5ad84u8nRKajzpeP3m0oxJemLSLAZ
+         MzrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yUTWKoqSib2faxVtbTtWSU6q3S5w4ZuCGWMBb7xWIKM19OE2aLjdrvjrNtJyYa8dZLeOFUThYnm9lTQ=@vger.kernel.org, AJvYcCXt7T6ETLeLAi9FR7eTaaJivPwpdBSe1UD7ZE7kSTlDliYQzDIuB6R+sO3apl9Jjlw+V1dYPdM/1kyXuQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/mn0rSvDQYg+FunVGaEzFtzjUNPQV8pKw9KI2Z8U2NB2mn3Ow
+	JizBqvXtl6sXb3RXoc54cHziDj4utM9C4WiM5Ip0WRB5LkKC97Se5KFcC0ZOrAyqVLrhvoCq+kL
+	ysWOVd8uA8nWn3YamSBdWoBb81H0=
+X-Gm-Gg: ASbGncvsxvg5mSYHQkpcOQVJxBFAlxOYPFFyPNvW3a1Zk9t1P3pli3zGjv21MA6+UhS
+	sTVrFQ6JEGYlitWqAP+Uz9KVVyLFKCj54c3amJZC9c8Gcoe8T7DIBy3EzDSzyo929V5CEGnzI/K
+	q965TRb7o5dIGxQl8m45Px9hm4iNM=
+X-Google-Smtp-Source: AGHT+IGIQdKUGDLT7ZkBsz4oPRHqTvjMI6XDp9IXS4MKQVVNgncyu3YecpMRjzROj05syhyckqwlunpao3HnWgiOP10=
+X-Received: by 2002:a05:600c:1553:b0:43c:e7a7:1e76 with SMTP id
+ 5b1f17b1804b1-43d509e373fmr117579115e9.1.1742853620933; Mon, 24 Mar 2025
+ 15:00:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com>
- <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me>
-In-Reply-To: <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 24 Mar 2025 17:59:47 -0400
-X-Gm-Features: AQ5f1Jo_JgGEbpEujqZivDL4PsjF419w5vGvkxnh3P210yQsoVdHUfiWuXxj0tU
-Message-ID: <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
+References: <20250324173242.1501003-1-arnd@kernel.org> <20250324173242.1501003-9-arnd@kernel.org>
+In-Reply-To: <20250324173242.1501003-9-arnd@kernel.org>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Mon, 24 Mar 2025 23:00:08 +0100
+X-Gm-Features: AQ5f1Jr0LTV0sn7xM4IaIDNraogN3q0NXArhmlOA0HByopDTVxKTYXLP7U_x9R8
+Message-ID: <CA+fCnZd6uLYoKZwwHfBo72C0QLV=pv1feEmB2mMaqP9HKKeo9A@mail.gmail.com>
+Subject: Re: [PATCH 09/10] mm/kasan: add module decription
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Sabyrzhan Tasbolatov <snovitoll@gmail.com>, 
+	Marco Elver <elver@google.com>, Nihar Chaithanya <niharchaithanya@gmail.com>, 
+	Jann Horn <jannh@google.com>, Peter Zijlstra <peterz@infradead.org>, kasan-dev@googlegroups.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 5:55=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
+On Mon, Mar 24, 2025 at 6:34=E2=80=AFPM 'Arnd Bergmann' via kasan-dev
+<kasan-dev@googlegroups.com> wrote:
 >
-> On Mon Mar 24, 2025 at 9:55 PM CET, Tamir Duberstein wrote:
-> > On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >> * `shared_ref as *const _` (for example in rust/kernel/uaccess.rs:247,
-> >>   rust/kernel/str.rs:32 and rust/kernel/fs/file.rs:367), these we can
-> >>   replace with `let ptr: *const ... =3D shared_ref;`. Don't know if th=
-ere
-> >>   is a clippy lint for this.
-> >
-> > I think there's not a focused one. There's a nuclear option:
-> > https://rust-lang.github.io/rust-clippy/master/index.html?levels=3Dallo=
-w#as_conversions
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Yeah I saw that one, I don't think it's a good idea, since there will be
-> false positives.
+> Modules without a description now cause a warning:
 >
-> >> * some pointer casts in rust/kernel/list/impl_list_item_mod.rs:{253,25=
-4}
-> >>   not sure if they can be converted though (maybe they are unsizing th=
-e
-> >>   pointer?)
-> >
-> > I have a local series that gets rid of these by doing similar things
-> > to https://lore.kernel.org/all/20250307-no-offset-v1-0-0c728f63b69c@gma=
-il.com/.
-> > I can send it later this week but it probably can't land until Alice
-> > is back from vacation; she was the author of this code.
+> WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
 >
-> No worries, as I wrote below, I think it's fine to do that in a new
-> series.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  mm/kasan/kasan_test_c.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> >>   Another pointer cast in rust/kernel/driver.rs:81 (I'm pretty sure th=
-is
-> >>   one can be replaced by a `.cast()`)
-> >>
-> >> Some clippy lints that we could also enable that share the spirit of
-> >> this series:
-> >>
-> >> * `char_lit_as_u8` (maybe that also covers the `'|' as u32` case from
-> >>   above?)
-> >
-> > It's already enabled, it's warn-by-default.
+> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> index 59d673400085..710684ffe302 100644
+> --- a/mm/kasan/kasan_test_c.c
+> +++ b/mm/kasan/kasan_test_c.c
+> @@ -2130,4 +2130,5 @@ static struct kunit_suite kasan_kunit_test_suite =
+=3D {
 >
-> Ah I see, didn't look :)
+>  kunit_test_suite(kasan_kunit_test_suite);
 >
-> >> * `cast_lossless` (maybe this catches some of the `num as int_type`
-> >>   conversions I mentioned above)
-> >
-> > Yeah, suggested the same above. I had hoped this would deal with the
-> > char as u32 pattern but it did not.
->
-> Aw that's a shame. Maybe we should create a clippy issue for that,
-> thoughts?
+> +MODULE_DESCRIPTION("kunit test case for kasan");
+>  MODULE_LICENSE("GPL");
+> --
+> 2.39.5
 
-Yeah, it's not clear to me why it isn't covered by `cast_lossless`.
-Might just be a bug. Want to file it?
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 
->
-> >> I'll leave it up to you what you want to do with this: add it to this
-> >> series, make a new one, or let someone else handle it. If you don't wa=
-nt
-> >> to handle it, let me know, then I'll create a good-first-issue :)
-> >
-> > I'll add a patch for `cast_lossless` -- the rest should probably go
-> > into an issue.
->
-> Do you mind filing the issue? Then you can decide yourself what you want
-> to do yourself vs what you want to leave for others. Feel free to copy
-> from my mail summary.
+But just in case you end up sending a v2, let's change the text to
+"KUnit tests for checking KASAN bug-detection capabilities".
 
-Well, I don't really know what's left to do. We're pretty close at
-this point to having enabled everything but the nukes. Then there's
-the strict provenance thing, which I suppose we can write down.
-
-> Also I wouldn't mark it as a good-first-issue yet, since it's pretty
-> complicated and needs to be delayed/based on this series.
-
-Yeah, certainly not good-first-issue.
+Thank you!
 
