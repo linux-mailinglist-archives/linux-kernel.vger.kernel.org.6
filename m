@@ -1,294 +1,650 @@
-Return-Path: <linux-kernel+bounces-573563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DC7A6D921
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E074A6D923
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5782C16CDAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7598B16CE6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB9125DD0A;
-	Mon, 24 Mar 2025 11:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3325DD07;
+	Mon, 24 Mar 2025 11:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lD+2HuCZ"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2079.outbound.protection.outlook.com [40.107.212.79])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0PGIVrm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64EFBA53;
-	Mon, 24 Mar 2025 11:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815545; cv=fail; b=UGLTUaWINFPiKfma+v7BQlPAEm55N4GmRDcf0CR+UQpCQzg6QzZBSxwxGONNHGVzNxzRenb/oy3i33saB93g5w/MyZHs2aZUKJsNddXAXlhENkh1y+ZuM7lRln/PWK1KbnECn66IZ/iawJkRiSNjs1AWGUfFYODfKuutxMp+vQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815545; c=relaxed/simple;
-	bh=iT+zRoPdJl5xC6ZgDUcb+ru2r3c14JWuth95dwu7Pnk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZlE4lGwqqwmZoUKCnOSLK4BXzfOaSZmwFj9dgiGUCl0A242QqrevT96Q39mCSys82JLWv7W6R53MQNrCFPZ1KF0Pe5NmeV4A0ClLs527crBrnhNwme7VFuBCvnOm6lpR8LoSs+7Su+oiDSYfJymG/Gx9IKV9sg8Qiu2END9WPQs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lD+2HuCZ; arc=fail smtp.client-ip=40.107.212.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fiffqeenhb8bnf18BptJlxSHHrZDZuEbjFpZaTPhRZr5FQbdXgisAYmA6fT5RfRdaXIpeMD1ewTRWu/LKWn5TbsMdQYqneg08Z4V4svzzahI/Sb/NxlS1xVwt63XIwb1yjm0SWAPio0czJC3D4pVekyW7ztR3/jnDxe7QtgwduXMBrJ0pkkuf5cfVZuBWBG0S8AiqGWXn9hwgRSS03XkobgQrtCZUr7CwTlXP4kmIPnJ3cqjJJARQMsNgqxlVuwuO/TrfzK7vw0DmSqw1NkGpgPman/mzGx1J5/JStUTHwNA7DpOFY1HkCcoYd7ApoDz6VN4H7rDi/DVq8EHOVoj1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DxoXErn1X/lySE1KB0g3L9rCWgqHIZKpXf4cKzVmm3c=;
- b=kMd2k6fP7jhsZtDZI3V9Un+u76x1IfgYph/CWdnSTqwo6hyS8w8jrArz/j6z2MuDLxT7i3f9+1N9ife0Kw5edQ8kc3LUm1UNTc9GDfM8M6TWoIaRps/C5EJL5WH3AXKwdWbzNCsjgUebrKlILtiM/EUbV1gAkl6T/bMsnGog3+4vMukei3mW2r4SlYzWHH0k6KPEdVGCd0/6piuMAi5+nENQQpD8AkyrHbP/vLhmbHu1ur82X7cNuFGkdV+Kg1R7ZNVFA7C6HJXXgjNHvLceAYOpwEqLlHkJvaaQav9cIgWEuYDp2U2N2JYOo6rl6yBjf8bVFkGPHgZEtwZ7ZaGcUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DxoXErn1X/lySE1KB0g3L9rCWgqHIZKpXf4cKzVmm3c=;
- b=lD+2HuCZmVKaWSKgInhq+30cwj8BYuqJhfuFMCD1WD0hzz6EY7t9ilDQ2KJi8RjLw4Eb6ssLPlCqSN6VZKlXK+o2rWYPVe2ylzDvIa0qpLfc4Mb6yFah7bvtZdRT0G+lV+xwPLe9ls1+8fhIh31yKYYd09CQvcjmsDPHrSwK8T8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by PH7PR12MB6396.namprd12.prod.outlook.com (2603:10b6:510:1fc::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 11:25:41 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 11:25:41 +0000
-Message-ID: <819f9f59-6d80-40c9-a7a7-1b8485fa45f2@amd.com>
-Date: Mon, 24 Mar 2025 16:55:34 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] cpufreq/amd-pstate-ut: Add a unit test for raw EPP
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250321022858.1538173-1-superm1@kernel.org>
- <20250321022858.1538173-6-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20250321022858.1538173-6-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0136.apcprd02.prod.outlook.com
- (2603:1096:4:188::16) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2275200CB;
+	Mon, 24 Mar 2025 11:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742815784; cv=none; b=RcTVFX8eT0Rvnw63GGjQyOputeRgil3Da+t4xeu9Ic8/7IzBJDOi+SlPFhSSvNNVAfbbyV7d9dpvA944jYoO43CIJOFKtWqop933ESNwW+oV06ioXDP0Fts9798EVq451fCvfUU6fLPnH3yN63Hlj16xkPizRvSrgBtym0Gbpd0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742815784; c=relaxed/simple;
+	bh=pXSvmnsfZeH4qdTVDB5E1EkPKoYDMFI/4KEb9PoMPyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0vn3WX/wuEocE6YkSUmfTvfewanwP4mPBHysljLbxXfWqpsK1YwUW//qnD+QLmYXQq50XilB/iGJWnEwMKZJH+9e1KuCO6CNZrZeeqid1bzk0m9yTWuP0LUYy5tUJ3bx53BJw2LIT1jzV5HWOPXK922VVuJiv5z+EAzBpazYpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0PGIVrm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E013DC4CEDD;
+	Mon, 24 Mar 2025 11:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742815784;
+	bh=pXSvmnsfZeH4qdTVDB5E1EkPKoYDMFI/4KEb9PoMPyg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H0PGIVrmXfb7lXBQKALfoGDmI27aOH8kOr1n42IujOWPMYIW3ToMzL/T2lyAC7sMJ
+	 7wuaqNJNtkai/kx/bv48MIxyGfaqCxsHGqUXz0Lt5TkW5cgrshCHlKGEgrSE0M+odQ
+	 tZamLUcVVySwdFoISg2SHuuIJnu/IxQejEYhoFuIxrxqb8NAnKX3jGXCCdk9UO3rIT
+	 e2coU/MvDTF1Akn6gTFhFvB88MVPZ+3KEU2MjZiLf0A7eZPSISasivNz7SAVOk72a9
+	 JDqoIq0bvVc0rGa+al4JBhd62RRw7yejG2noGxtCBfGbT/XdS5SaOmrg9M3N8tfnx8
+	 oj2OBQffZlfgA==
+Date: Mon, 24 Mar 2025 12:29:41 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Mubin Sayyed <mubin.sayyed@amd.com>
+Cc: krzysztof.kozlowski+dt@linaro.org, daniel.lezcano@linaro.org, 
+	tglx@linutronix.de, michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, git@amd.com
+Subject: Re: [PATCH v4 3/3] pwm: pwm-cadence: Add support for TTC PWM
+Message-ID: <nwdxbyynffy7kkxdznxrogzqg2r5bje45ywgxa6jj7mcix65ze@dtabj46eut5i>
+References: <20250115113556.2832282-1-mubin.sayyed@amd.com>
+ <20250115113556.2832282-4-mubin.sayyed@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|PH7PR12MB6396:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61a86059-8d3b-413f-6001-08dd6ac69bf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHdWSEw0bHBmWVg3cHczb3BodEIzMkRiYUxCZjBpc29od2d0NlFmZmdjcjAr?=
- =?utf-8?B?RmNncnNjUGhRRmovTmFzd1Q3RE8xMGNDYVhQcFAvVzFmVFE3cEFoVGhGY2lj?=
- =?utf-8?B?WnlLWFc2alQ1SU5JWVVjOHp1bGQvSnZBKzd2R1J4S1VxVnFNVjhPNUozUGVD?=
- =?utf-8?B?TjQ1akpuU2tGVkRRVlFlZmtoYmh3MXY4cUlaYUpUK3hQeGFNc01wWE5MY2Fu?=
- =?utf-8?B?cVRZV2FMMVh4ZVozb3h3STNEdVh1QkQ2ZkJybTFnRk1sdzBKSjBPSWtoR3dO?=
- =?utf-8?B?STFabDNOb2ZpSEJVRzhWOTdnc2RHOGxUTENSNnU3Y2VWVXpSdHYraG1EdUNE?=
- =?utf-8?B?b1pKc0RYYjBFKy9LdDMwdlhTNy9EWm9pTnpaUzFZbzVEM1JyVDc4UU5LR1RU?=
- =?utf-8?B?UnlUa0szVi9lK0pLOFVJNkJEQkFwYVNBNzVpQTBWM2g0TTZwcmlGTytzRC9v?=
- =?utf-8?B?Z3pMb3pGUzdHLzQ3MXM4VG9vaDFDTm4wT2VtMktZNzNYOEVkcjFSMWkrK3Bm?=
- =?utf-8?B?MmhvUlNNV0hzMW8rT1hKSENpVk5nTE5aTmd4RCs4SUUxZHpPSnVmZjUxNG10?=
- =?utf-8?B?R3V1aDM2MkZHeVpGQzBldmtmRzUzWjdBZVhYa2VrbnJiVDF0Zk1sOXBRM3p2?=
- =?utf-8?B?SzJzUjFOY0JHVFZQNFB0dks4QUdhb21sak4ydllCQ0s4QTdxUkcyUlh2b3Iw?=
- =?utf-8?B?a1o4TXZTTkUrVklBQlZ6aXcyb1lGMXZUTlA1N08vU3dTSk16NUFySTk5SVEv?=
- =?utf-8?B?VENIRzVRRHNiK2l4cUgrM0p3eVNwUzlTbldiSTdjcjl1UUpNekUyYmFmWHRF?=
- =?utf-8?B?bEtBOVUva0NUOTdNTmhiR0dVVFppOHNEVkpDMGNMUDI3RCt5NWlOZmdiQWZu?=
- =?utf-8?B?aXJMdVU3TDhYZkR3TEZDZXRCTzZVRFFtZC9UTGVtWFBvNm1QSDc4S0JlbUJv?=
- =?utf-8?B?NGNhelZoUlNsbTNMbldZYTVrRnkzajNjemQ2d0dKcFZUR1FhdWR0cXQ3ams4?=
- =?utf-8?B?R2M0aXpFdFFhZXRpRzZGc1NCS01wUmRkSDZzaUZDeGE2ZWI1MlVCWFFNcUFD?=
- =?utf-8?B?TVJJQTFpcmExdGsxTzB3SjJGK2VMYkdQMVJYb0JmeG9sZDdyOHJ0U3VUNXRW?=
- =?utf-8?B?QkdGREs3RVUvaFRhd1dkS3JsWDVYd1BqMVMwRTFzSXpYQ2F5b3NZa3Q3WEdM?=
- =?utf-8?B?b0dCOWRadzQ2dmxtWTBZTHJIaC9ZVVh0VmZDY0dhR2Y1NnN1bUdEWjVBU3dj?=
- =?utf-8?B?Mmh3WFhNeUk4ZVdLUGdCdWI2VlVxdU5XVFl6RjlvWHJHdnZYektrMHpVRm80?=
- =?utf-8?B?U0E4eGNCUWpaZ3UzV0xxcG04MG1ldHZ0eU9VeHZDYUkvUEZCc1pEa09pN0xq?=
- =?utf-8?B?Vm5HZWR1T3ErSzdTK0lkdHVZWFg3QUJwaEJmVmVTTU44U1FLUFJYbFRrZnQz?=
- =?utf-8?B?TjFGalNya1F4cHpxRjUyV1BsMmhxa3BlYTNna3IvTnVjOVNIUG8zOUdPa1BH?=
- =?utf-8?B?WldzbURteWR2aUdjbVRZYndCdkFSeUIzOXcrZEFQelFscTdjRDNLaWZlMDhG?=
- =?utf-8?B?aXR1OStId0xtUnZKUkdMUkhVbHFCeGxwNFpUOG91OHQyK3g3RHYzRGJWbzk3?=
- =?utf-8?B?d3hsQVNEWHVDeDNWVGIxb1J1aDRTdTJYekRhRFNFNDlzYWhyUmJaVU5aWTd3?=
- =?utf-8?B?SHZoYnR4b2pvdHcyZ1JKV1dEMUpudWVORmtvWVluUGhTQTVOa1pFN0FCbGVC?=
- =?utf-8?B?RnkyMFFzNFJsY2hzTEsxK01PY0U3SXg2QUhnOTdUTG1OeDl4R3haVlBNMXF1?=
- =?utf-8?B?Yk9HNU1GZ21VL3lOaEJwQ0JTb01DK09Ycm0zbkc4K1NrUkRBYWlEZHFDRmEv?=
- =?utf-8?Q?JKCdIiGxKEhhG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NVRKclNyVndoQ3NLc1V3RFZFam1xaFVzZTBsVzg1T0p1UkdsMERzWkhWRm5o?=
- =?utf-8?B?dnk3WXZ0eGEraW5aODRpbEhFNExnczR0ZjI1OTVoaWplN3JFbjczeGJKZGZL?=
- =?utf-8?B?dHBhZFlLZFJmeDVyU2dsVWUrL2NEQ3I2dTVGNWd2VU9UQXRkdFpNaGRMN1Vp?=
- =?utf-8?B?ZFBaTGZ1TnNSRzBicUZrTzlMZEtXS0s4TmRPczYxMzZScVZMbGhpYzBOeGh4?=
- =?utf-8?B?NjB1TEp0M054OU5IYklVblNmc00yN0Jjdy9NcUVWWS9GL0Uvc1poQXBxOGxT?=
- =?utf-8?B?WkFwUm9pRFlkcHRPQ3BmaUIyUUYxL043UDBsOWRFUWdvcEZhR2crNU1uNHNn?=
- =?utf-8?B?TmFnQ2szWmNaelhmaE5kNmc5cCtHby9KOHIzaDlWWjAySlRhcWRxMWthRm91?=
- =?utf-8?B?VnpqalRsVCtEWDBqVlJ0VHlHZHRmY3J0Q29XbzhlYnZwVTdHOHZwWXgzM3ZS?=
- =?utf-8?B?cXhwelpKWGF5ZEVkZmVjMGZxT0tTdlZCNWswQkdTNGgwcnRndWRpcFFCWjRP?=
- =?utf-8?B?bHplZ0YxQ3gzVW14R1BDVDhzK2duaXRsVm5qMUNpSXhOZ3dMZzVrMFJHaW1X?=
- =?utf-8?B?QmZ4VEdSbDhwN21LZTNpcXZsa2dWS3NQR2Z0LzAvMUo3QVNRWnF4UEhUS3h6?=
- =?utf-8?B?Q1pzdnk5R2Qxd1pKeUJ2STBNV29PWm9ITTNxNGM3UVloWTVBODJEYzRPZFIy?=
- =?utf-8?B?bkt6K3kzVmlEdWJ3L2ZlcDZvSzE1dy9OSmFHY1dGdFNQa1dEVmJxQnc1ME52?=
- =?utf-8?B?UU05TWhRZThneWdnNUMxSjV3Z2NoeW4vMEJuN0NoaUgxTmYvYmEzeUQwR0Qx?=
- =?utf-8?B?Wi9TRGxRNm90WEJlZU1SZnE0WGcrajFwUVRNOGlqUFlWelVCblB2enVWem9F?=
- =?utf-8?B?OG9xeDh2b3hzdWdNVWw2K1FidmxEbmswdHZuTnJXM2tRVVc0UWJyTFZNRjdD?=
- =?utf-8?B?Q1FENFhSZzZXelkzYlF2VUY0R2pKdE5lakxrM1dlTTg0cVhPczA3WVl0NVM4?=
- =?utf-8?B?c0I4czZtVUVzWlNkUFJDcktLOXpyUC8rQXM5ejExbVdnTlV4aGlsU0lVR2Zv?=
- =?utf-8?B?STFTZjlWV29xamhadUlGM2hLTEdJVTVXT3B1dTRkUkp1V0xyQzhvZHVBR2ln?=
- =?utf-8?B?azMrWnZqNU9URzBLSldBSE9QRXhpOS9qU2tjVGQyYW9WcUQwS1czQ0I3MkFN?=
- =?utf-8?B?aFBYaXAzR2hQQ1dZUHB0SWhVM3ppSnFYWG1yUWpPWlZjWEttVTFKQmdmLzE2?=
- =?utf-8?B?aUY0Z2dNNEt6bVdnTkYvdnJ3aUZaUVJTS0ZxK3ZUdDVVUnVBdDZKdHdqbGVz?=
- =?utf-8?B?eWJocVNzSDBodkZuNzdSK0NscStxaXU5REFkdTdCQ2JtZWlQSEpadHdXbmdO?=
- =?utf-8?B?QUE0azJ1ME5WQ1hTN3BIUmFmckdTd0t0Mkx0bXN5S2I0MHVQT0xkWndjMnFu?=
- =?utf-8?B?Q0t2UmhoT2NSNW1KeDNScUU4aldRWFo1cDFqZW5xeHV5MHhjcUxqcE1hbmZ5?=
- =?utf-8?B?TWZMb0FHK1JXNDBTdFFmTjBOTjlzNkgxRUlUcFBDaDdHYzBKSElKdWF0dHlZ?=
- =?utf-8?B?dW9LUU14bC9vZ3ZCUkh6UE9naVhUSWorTHU1NGRWUWY0QUlpbXJ2SlJMakdO?=
- =?utf-8?B?Q0VVUS9jNG5QOU9IQzJrTFZFbkxSd1dhOGx1d3Q1VWIxQzN1ZTFqZ210K0wv?=
- =?utf-8?B?UUFlM1NPTHJ0cGZCSXppMjF4QnhaUHI0ZFoxNExWdzF1QVloaFR6RGJZWVNB?=
- =?utf-8?B?VzlMT3pKbWtHaFAxZVpCa0VmOGt6MWhQOG5mbGwxVGwwTUZVdnRrdTZSbmlT?=
- =?utf-8?B?NklPMXZUdG5xSWZPaHFLSFNNSWVnemgvK0ZPZXlRS2JUWjkwWFFDR29mbXJY?=
- =?utf-8?B?QzQrOE9JTGpNQlhyb1gxbHZGdzBDalJXbkJsbmRzVHdVOUpqS09DTjVxYk5q?=
- =?utf-8?B?bVFoNTR0WTVsVmJPdXByUEZsYnVCQ2dDU0VyOVlrSXNiU2d4QllTWVZpWEtQ?=
- =?utf-8?B?SUd3Sm4wY21EdnZxSWdmc3hhRWMvZGIwNElpdTJ4T3NVTTlZenVLbEF0Vnlu?=
- =?utf-8?B?c1Vkb1dUWnN3VUtjeXdGNUUrVjBNWTBJNHRpTkNBc1lwUCtNL0VMeXVpSitY?=
- =?utf-8?Q?9Lm3iS6LiuwSM3yaSgvpF3BiO?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61a86059-8d3b-413f-6001-08dd6ac69bf6
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 11:25:41.2455
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S4sxySk8JhEyFeegR3YpBBJS7i1cBDvdd4Bl0ZF+0TeLcf/q6q+RBZllP/gkWyigXWbyoQCy+ED5v7hn+Qg1Og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6396
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qalzlpcxz2i65esg"
+Content-Disposition: inline
+In-Reply-To: <20250115113556.2832282-4-mubin.sayyed@amd.com>
 
-On 3/21/2025 7:58 AM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> Ensure that all supported raw EPP values work properly.
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+
+--qalzlpcxz2i65esg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 3/3] pwm: pwm-cadence: Add support for TTC PWM
+MIME-Version: 1.0
+
+Hello,
+
+On Wed, Jan 15, 2025 at 05:05:56PM +0530, Mubin Sayyed wrote:
+> Cadence TTC timer can be configured as clocksource/clockevent or PWM
+> device.Specific TTC device would be configured as PWM device, if
+> pwm-cells property is present in the device tree node.
+>=20
+> In case of Zynq, ZynqMP and Versal SoC's, each TTC device has 3
+> timers/counters, so maximum 3 PWM channels can be configured for each TTC
+> IP instance. Also, output of 0th PWM channel of each TTC device can be
+> routed to MIO or EMIO, and output of 2nd and 3rd PWM channel can be
+> routed only to EMIO.
+>=20
+> Period for given PWM channel is configured through interval timer and
+> duty cycle through match counter.
+>=20
+> Details for cadence TTC IP can be found in Zynq UltraScale+ TRM.
+>=20
+> Signed-off-by: Mubin Sayyed <mubin.sayyed@amd.com>
 > ---
->  drivers/cpufreq/amd-pstate-ut.c | 58 +++++++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-> index e671bc7d15508..d0c5c0aa3cc94 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -26,6 +26,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/mm.h>
->  #include <linux/fs.h>
->  #include <linux/cleanup.h>
->  
-> @@ -33,6 +34,7 @@
->  
->  #include "amd-pstate.h"
->  
-> +DEFINE_FREE(free_page, void *, if (_T) free_page((unsigned long)_T))
->  
->  struct amd_pstate_ut_struct {
->  	const char *name;
-> @@ -46,6 +48,7 @@ static int amd_pstate_ut_acpi_cpc_valid(u32 index);
->  static int amd_pstate_ut_check_enabled(u32 index);
->  static int amd_pstate_ut_check_perf(u32 index);
->  static int amd_pstate_ut_check_freq(u32 index);
-> +static int amd_pstate_ut_epp(u32 index);
->  static int amd_pstate_ut_check_driver(u32 index);
->  
->  static struct amd_pstate_ut_struct amd_pstate_ut_cases[] = {
-> @@ -53,6 +56,7 @@ static struct amd_pstate_ut_struct amd_pstate_ut_cases[] = {
->  	{"amd_pstate_ut_check_enabled",    amd_pstate_ut_check_enabled    },
->  	{"amd_pstate_ut_check_perf",       amd_pstate_ut_check_perf       },
->  	{"amd_pstate_ut_check_freq",       amd_pstate_ut_check_freq       },
-> +	{"amd_pstate_ut_epp",              amd_pstate_ut_epp              },
->  	{"amd_pstate_ut_check_driver",	   amd_pstate_ut_check_driver     }
->  };
->  
-> @@ -239,6 +243,60 @@ static int amd_pstate_set_mode(enum amd_pstate_mode mode)
->  	return amd_pstate_update_status(mode_str, strlen(mode_str));
->  }
->  
-> +static int amd_pstate_ut_epp(u32 index)
+> Refer link given below for Zynq UltraScale+ TRM
+> https://docs.xilinx.com/r/en-US/ug1085-zynq-ultrascale-trm
+
+I would prefer to have a link to the TRM in the source file. When I
+follow that link today however I only get "The document you are looking
+for has been moved or deleted" :-\
+
+> Changes for v4:
+>  Configure it as part of TTC clocksource/clockevent driver
+>  drivers/clocksource/timer-cadence-ttc.c.
+>  Move probe/remove function to timer-cadence-ttc.c.
+> Changes for v3:
+>  None
+> Changes for v2:
+>  Use maybe_unused attribute for ttc_pwm_of_match_driver structure
+>  Add new function ttc_pwm_set_polarity
+>  Removed calls to pwm_get_state
+>  Replace DIV_ROUNF_CLOSEST with mul_u64_u64_div_u64
+>  Modify ttc_pwm_apply to remove while loop in prescalar logic
+>  and avoid glitch
+>  Calculate rate in probe and add it to private structure for further
+>  Drop ttc_pwm_of_xlate
+>  Replace of_clk_get with devm_clk_get_enabled
+>  Drop _OFFSET and _MASK from definitions
+>  Keep Kconfig and Makefile changes alphabetically sorted
+>  Use remove_new instead of remove
+>  Document limitations in driver file
+> ---
+>  drivers/pwm/Kconfig               |  10 +
+>  drivers/pwm/Makefile              |   1 +
+>  drivers/pwm/pwm-cadence.c         | 323 ++++++++++++++++++++++++++++++
+>  include/linux/timer-cadence-ttc.h |  22 +-
+>  4 files changed, 355 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/pwm/pwm-cadence.c
+>=20
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 0915c1e7df16..b418e5d8fa42 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -202,6 +202,16 @@ config PWM_CROS_EC
+>  	  PWM driver for exposing a PWM attached to the ChromeOS Embedded
+>  	  Controller.
+> =20
+> +config PWM_CADENCE
+> +	bool "Cadence TTC PWM driver"
+
+tristate please
+
+> +	depends on CADENCE_TTC_TIMER
+> +	help
+> +	  Generic PWM framework driver for cadence TTC IP found on
+> +          Xilinx Zynq/ZynqMP/Versal SOCs. Each TTC device has 3 PWM
+> +          channels. Output of 0th PWM channel of each TTC device can
+> +          be routed to MIO or EMIO, and output of 1st and 2nd PWM
+> +          channels can be routed only to EMIO.
+> +
+>  config PWM_DWC_CORE
+>  	tristate
+>  	depends on HAS_IOMEM
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 9081e0c0e9e0..246380391a63 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -12,6 +12,7 @@ obj-$(CONFIG_PWM_BCM_KONA)	+=3D pwm-bcm-kona.o
+>  obj-$(CONFIG_PWM_BCM2835)	+=3D pwm-bcm2835.o
+>  obj-$(CONFIG_PWM_BERLIN)	+=3D pwm-berlin.o
+>  obj-$(CONFIG_PWM_BRCMSTB)	+=3D pwm-brcmstb.o
+> +obj-$(CONFIG_PWM_CADENCE)	+=3D pwm-cadence.o
+>  obj-$(CONFIG_PWM_CLK)		+=3D pwm-clk.o
+>  obj-$(CONFIG_PWM_CLPS711X)	+=3D pwm-clps711x.o
+>  obj-$(CONFIG_PWM_CRC)		+=3D pwm-crc.o
+> diff --git a/drivers/pwm/pwm-cadence.c b/drivers/pwm/pwm-cadence.c
+> new file mode 100644
+> index 000000000000..e7c337fe956b
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-cadence.c
+> @@ -0,0 +1,323 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver to configure cadence TTC timer as PWM
+> + * generator
+> + *
+> + * Limitations:
+> + * - When PWM is stopped, timer counter gets stopped immediately. This
+> + *   doesn't allow the current PWM period to complete and stops abruptly.
+> + * - Disabled PWM emits inactive level.
+> + * - When user requests a change in  any parameter of PWM (period/duty c=
+ycle/polarity)
+
+s/  / /
+
+> + *   while PWM is in enabled state:
+> + *	- PWM is stopped abruptly.
+> + *	- Requested parameter is changed.
+> + *	- Fresh PWM cycle is started.
+> + *
+> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+
+I didn't check, but <linux/device.h> is unusual. Do you really need it?
+
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/of_address.h>
+
+Also I think this can be dropped.
+
+> +#include <linux/timer-cadence-ttc.h>
+> +
+> +/**
+> + * struct ttc_pwm_priv - Private data for TTC PWM drivers
+> + * @chip:	PWM chip structure representing PWM controller
+> + * @clk:	TTC input clock
+> + * @rate:	TTC input clock rate
+> + * @max:	Maximum value of the counters
+> + * @base:	Base address of TTC instance
+> + */
+> +struct ttc_pwm_priv {
+> +	struct pwm_chip chip;
+> +	struct clk *clk;
+> +	unsigned long rate;
+> +	u32 max;
+> +	void __iomem *base;
+> +};
+> +
+> +static inline u32 ttc_pwm_readl(struct ttc_pwm_priv *priv,
+> +				unsigned long offset)
 > +{
-> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) = NULL;
-> +	void *buf __free(free_page) = NULL;
-> +	struct amd_cpudata *cpudata;
-> +	int ret, cpu = 0;
-> +	u16 epp;
+> +	return readl_relaxed(priv->base + offset);
+> +}
 > +
-> +	policy = cpufreq_cpu_get(cpu);
-> +	if (!policy)
-> +		return -ENODEV;
+> +static inline void ttc_pwm_writel(struct ttc_pwm_priv *priv,
+> +				  unsigned long offset,
+> +				  unsigned long val)
+> +{
+> +	writel_relaxed(val, priv->base + offset);
+> +}
 > +
-> +	cpudata = policy->driver_data;
+> +static inline u32 ttc_pwm_ch_readl(struct ttc_pwm_priv *priv,
+> +				   unsigned int chnum,
+> +				   unsigned long offset)
+> +{
+> +	unsigned long pwm_ch_offset =3D offset +
+> +				       (TTC_PWM_CHANNEL * chnum);
 > +
-> +	/* disable dynamic EPP before running test */
-> +	if (cpudata->dynamic_epp) {
-> +		pr_debug("Dynamic EPP is enabled, disabling it\n");
-> +		amd_pstate_clear_dynamic_epp(policy);
+> +	return ttc_pwm_readl(priv, pwm_ch_offset);
+> +}
+> +
+> +static inline void ttc_pwm_ch_writel(struct ttc_pwm_priv *priv,
+> +				     unsigned int chnum,
+> +				     unsigned long offset,
+> +				     unsigned long val)
+> +{
+> +	unsigned long pwm_ch_offset =3D offset +
+> +				       (TTC_PWM_CHANNEL * chnum);
+> +
+> +	ttc_pwm_writel(priv, pwm_ch_offset, val);
+> +}
+> +
+> +static inline struct ttc_pwm_priv *xilinx_pwm_chip_to_priv(struct pwm_ch=
+ip *chip)
+
+Can you please stick to a single unique function prefix? The involved
+prefixes here are ttc_pwm, xilinx_pwm and the driver is called
+"cadence". Unifying them all to a single name would be good.
+
+> +{
+> +	return pwmchip_get_drvdata(chip);
+> +}
+> +
+> +static void ttc_pwm_enable(struct ttc_pwm_priv *priv, struct pwm_device =
+*pwm)
+> +{
+> +	u32 ctrl_reg;
+> +
+> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
+> +	ctrl_reg |=3D (TTC_CNTR_CTRL_INTR_MODE_EN
+> +				 | TTC_CNTR_CTRL_MATCH_MODE_EN | TTC_CNTR_CTRL_RST);
+> +	ctrl_reg &=3D ~(TTC_CNTR_CTRL_DIS | TTC_CNTR_CTRL_WAVE_EN);
+> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
+> +}
+> +
+> +static void ttc_pwm_disable(struct ttc_pwm_priv *priv, struct pwm_device=
+ *pwm)
+
+This function only needs .hwpwm from *pwm. Maybe pass hwpwm as parameter
+instead of pwm?
+
+> +{
+> +	u32 ctrl_reg;
+> +
+> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
+> +	ctrl_reg |=3D TTC_CNTR_CTRL_DIS;
+> +
+> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
+> +}
+> +
+> +static void ttc_pwm_set_polarity(struct ttc_pwm_priv *priv, struct pwm_d=
+evice *pwm,
+> +				 enum pwm_polarity polarity)
+> +{
+> +	u32 ctrl_reg;
+> +
+> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
+> +
+> +	if (polarity =3D=3D PWM_POLARITY_NORMAL)
+> +		ctrl_reg |=3D TTC_CNTR_CTRL_WAVE_POL;
+> +	else
+> +		ctrl_reg &=3D (~TTC_CNTR_CTRL_WAVE_POL);
+
+The parenthesis can be dropped.
+
+> +
+> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
+> +}
+> +
+> +static void ttc_pwm_set_counters(struct ttc_pwm_priv *priv,
+> +				 struct pwm_device *pwm,
+> +				 u32 period_cycles,
+> +				 u32 duty_cycles)
+> +{
+> +	/* Set up period */
+> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_INTR_VAL_OFFSET, period_cycles);
+> +
+> +	/* Set up duty cycle */
+> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_MATCH_CNT_VAL_OFFSET, duty_cycl=
+es);
+> +}
+> +
+> +static void ttc_pwm_set_prescalar(struct ttc_pwm_priv *priv,
+> +				  struct pwm_device *pwm,
+> +				  u32 div, bool is_enable)
+> +{
+> +	u32 clk_reg;
+> +
+> +	if (is_enable) {
+> +		/* Set up prescalar */
+> +		clk_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
+> +		clk_reg &=3D ~TTC_CLK_CNTRL_PSV_MASK;
+> +		clk_reg |=3D (div << TTC_CNTR_CTRL_PRESCALE_SHIFT);
+> +		clk_reg |=3D TTC_CLK_CNTRL_PS_EN;
+> +		ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET, clk_reg);
+> +	} else {
+> +		/* Disable prescalar */
+> +		clk_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
+> +		clk_reg &=3D ~TTC_CLK_CNTRL_PS_EN;
+> +		ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET, clk_reg);
+> +	}
+> +}
+> +
+> +static int ttc_pwm_apply(struct pwm_chip *chip,
+> +			 struct pwm_device *pwm,
+> +			 const struct pwm_state *state)
+> +{
+> +	struct ttc_pwm_priv *priv =3D xilinx_pwm_chip_to_priv(chip);
+> +	u64 duty_cycles, period_cycles;
+> +	struct pwm_state cstate;
+> +	unsigned long rate;
+> +	bool flag =3D false;
+> +	u32 div =3D 0;
+> +
+> +	cstate =3D pwm->state;
+
+A pointer would be enough here. No need to copy the whole struct.
+
+> +	if (state->polarity !=3D cstate.polarity) {
+> +		if (cstate.enabled)
+> +			ttc_pwm_disable(priv, pwm);
+> +
+> +		ttc_pwm_set_polarity(priv, pwm, state->polarity);
 > +	}
 > +
-> +	buf = (void *)__get_free_page(GFP_KERNEL);
-> +	if (!buf)
-> +		return -ENOMEM;
+> +	rate =3D priv->rate;
 > +
-> +	ret = amd_pstate_set_mode(AMD_PSTATE_ACTIVE);
+> +	/* Prevent overflow by limiting to the maximum possible period */
+> +	period_cycles =3D min_t(u64, state->period, ULONG_MAX * NSEC_PER_SEC);
 
-This causes a deadlock, as we are holding cpufreq_policy reference and calling set_mode(), which 
-needs to unregister the cpufreq subsystem (i.e. needs all cpufreq_policy references freed). 
+ULONG_MAX * NSEC_PER_SEC overflows before it's casted to u64.
 
-We might need to drop and retake the reference around set_mode(). Also make cpudata variable NULL 
-to avoid anyone using a stale cpudata pointer later on by mistake.
-OR 
-Directly call set_epp() instead of store_energy_performance_preference() and eliminate the need 
-of policy ref after set_mode().
+> +	period_cycles =3D mul_u64_u64_div_u64(period_cycles, rate, NSEC_PER_SEC=
+);
 
-> +	if (ret)
-> +		return ret;
+mul_u64_u64_div_u64() doesn't overflow if rate <=3D NSEC_PER_SEC.
+
+> +	if (period_cycles > priv->max) {
+> +		/*
+> +		 * Prescale frequency to fit requested period cycles within limit.
+> +		 * Prescalar divides input clock by 2^(prescale_value + 1). Maximum
+> +		 * supported prescalar value is 15.
+> +		 */
+> +		div =3D mul_u64_u64_div_u64(state->period, rate, (NSEC_PER_SEC * priv-=
+>max));
+
+No parenthesis needed around the 3rd parameter. Can NSEC_PER_SEC *
+priv->max overflow? Is it intended that you use state->period here and
+don't cap the value first as you did above?
+
+> +		div =3D order_base_2(div);
+> +		if (div)
+> +			div -=3D 1;
 > +
-> +	for (epp = 0; epp <= U8_MAX; epp++) {
-> +		u8 val;
+> +		if (div > 15)
+> +			return -ERANGE;
 > +
-> +		/* write all EPP values */
-> +		memset(buf, 0, sizeof(*buf));
-> +		snprintf(buf, PAGE_SIZE, "%d", epp);
-> +		ret = store_energy_performance_preference(policy, buf, sizeof(*buf));
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* check if the EPP value reads back correctly for raw numbers */
-> +		memset(buf, 0, sizeof(*buf));
-> +		ret = show_energy_performance_preference(policy, buf);
-> +		if (ret < 0)
-> +			return ret;
-> +		strreplace(buf, '\n', '\0');
-> +		ret = kstrtou8(buf, 0, &val);
-> +		if (!ret && epp != val) {
-> +			pr_err("Raw EPP value mismatch: %d != %d\n", epp, val);
-> +			return -EINVAL;
-> +		}
+> +		rate =3D DIV_ROUND_CLOSEST(rate, BIT(div + 1));
+> +		period_cycles =3D mul_u64_u64_div_u64(state->period, rate,
+> +						    NSEC_PER_SEC);
+
+Dividing twice decreases precision. Also rounding to closest looks
+wrong. I think this should just be:
+
+	period_cycles =3D mul_u64_u64_div_u64(state->period, rate, NSEC_PER_SEC * =
+BIT(div + 1));
+
+Wouldn't it be simpler to just use:
+
+	dif =3D order_base_2(period_cycles / priv->max);
+
+(modulo correctness)?
+
+> +		flag =3D true;
 > +	}
+> +
+> +	if (cstate.enabled)
+> +		ttc_pwm_disable(priv, pwm);
+> +
+> +	duty_cycles =3D mul_u64_u64_div_u64(state->duty_cycle, rate,
+> +					  NSEC_PER_SEC);
+> +	ttc_pwm_set_counters(priv, pwm, period_cycles, duty_cycles);
+> +
+> +	ttc_pwm_set_prescalar(priv, pwm, div, flag);
+> +
+> +	if (state->enabled)
+> +		ttc_pwm_enable(priv, pwm);
+> +	else
+> +		ttc_pwm_disable(priv, pwm);
+
+The hardware is already disabled, so I'd expect that this
+ttc_pwm_disable() can be dropped?
+
+> +	return 0;
+> +}
+> +
+> +static int ttc_pwm_get_state(struct pwm_chip *chip,
+> +			     struct pwm_device *pwm,
+> +			     struct pwm_state *state)
+> +{
+> +	struct ttc_pwm_priv *priv =3D xilinx_pwm_chip_to_priv(chip);
+> +	u32 value, pres_en, pres =3D 1;
+> +	unsigned long rate;
+> +	u64 tmp;
+> +
+> +	value =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
+> +
+> +	if (value & TTC_CNTR_CTRL_WAVE_POL)
+> +		state->polarity =3D PWM_POLARITY_NORMAL;
+> +	else
+> +		state->polarity =3D PWM_POLARITY_INVERSED;
+> +
+> +	if (value & TTC_CNTR_CTRL_DIS)
+> +		state->enabled =3D false;
+
+You can exit early here.
+
+> +	else
+> +		state->enabled =3D true;
+> +
+> +	rate =3D priv->rate;
+> +
+> +	pres_en =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
+> +	pres_en	&=3D TTC_CLK_CNTRL_PS_EN;
+> +
+> +	if (pres_en) {
+> +		pres =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET)
+> +					& TTC_CLK_CNTRL_PSV_MASK;
+> +		pres >>=3D TTC_CNTR_CTRL_PRESCALE_SHIFT;
+
+		pres =3D FIELD_GET(...)
+
+> +		/* If prescale is enabled, the count rate is divided by 2^(pres + 1) */
+> +		pres =3D BIT(pres + 1);
+> +	}
+> +
+> +	tmp =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_INTR_VAL_OFFSET);
+> +	tmp *=3D pres;
+
+you can drop `pres =3D BIT(pres + 1);` above if you use
+
+	tmp <<=3D pres + 1
+
+here.
+
+> +	state->period =3D DIV64_U64_ROUND_UP(tmp * NSEC_PER_SEC, rate);
+
+Can this overflow?
+
+> +	tmp =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_MATCH_CNT_VAL_OFFSET);
+> +	tmp *=3D pres;
+> +	state->duty_cycle =3D DIV64_U64_ROUND_UP(tmp * NSEC_PER_SEC, rate);
 > +
 > +	return 0;
 > +}
 > +
->  static int amd_pstate_ut_check_driver(u32 index)
->  {
->  	enum amd_pstate_mode mode1, mode2 = AMD_PSTATE_DISABLE;
+> +static const struct pwm_ops ttc_pwm_ops =3D {
+> +	.apply =3D ttc_pwm_apply,
+> +	.get_state =3D ttc_pwm_get_state,
+> +};
+> +
+> +int ttc_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D dev->of_node;
+> +	struct ttc_pwm_priv *priv;
+> +	struct pwm_chip *chip;
+> +	u32 timer_width;
+> +	int ret;
+> +
+> +	ret =3D of_property_read_u32(np, "timer-width", &timer_width);
+> +	if (ret)
+> +		timer_width =3D 16;
+> +
+> +	chip =3D devm_pwmchip_alloc(dev, TTC_PWM_MAX_CH, sizeof(*priv));
+> +	if (IS_ERR(chip))
+> +		return PTR_ERR(chip);
+> +
+> +	priv =3D xilinx_pwm_chip_to_priv(chip);
+> +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	priv->max =3D BIT(timer_width) - 1;
+> +
+> +	priv->clk =3D devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(priv->clk)) {
+> +		return dev_err_probe(dev, PTR_ERR(priv->clk),
+> +				     "ERROR: timer input clock not found\n");
+> +	}
+> +
+> +	priv->rate =3D clk_get_rate(priv->clk);
+> +
+> +	clk_rate_exclusive_get(priv->clk);
 
+Only call clk_get_rate() after clk_rate_exclusive_get(). Also note there
+is a devm variant of clk_rate_exclusive_get().
+
+> +	chip->ops =3D &ttc_pwm_ops;
+> +	chip->npwm =3D TTC_PWM_MAX_CH;
+> +
+> +	ret =3D devm_pwmchip_add(dev, chip);
+> +	if (ret) {
+> +		clk_rate_exclusive_put(priv->clk);
+> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
+> +	}
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(ttc_pwm_probe);
+
+Putting these functions in a name space would be great.
+
+> +void ttc_pwm_remove(struct platform_device *pdev)
+> +{
+> +	struct ttc_pwm_priv *priv =3D platform_get_drvdata(pdev);
+> +
+> +	pwmchip_remove(&priv->chip);
+> +	clk_rate_exclusive_put(priv->clk);
+> +}
+
+Did you test the remove path? Hint: Don't call pwmchip_remove() if you
+registered the chip using devm_pwmchip_add() and priv->chip is
+uninitialized.
+
+> +EXPORT_SYMBOL_GPL(ttc_pwm_remove);
+> +
+> +MODULE_AUTHOR("Mubin Sayyed <mubin.sayyed@amd.com>");
+> +MODULE_DESCRIPTION("Cadence TTC PWM driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/timer-cadence-ttc.h b/include/linux/timer-cade=
+nce-ttc.h
+> index d938991371e5..6b6135d0ba0c 100644
+> --- a/include/linux/timer-cadence-ttc.h
+> +++ b/include/linux/timer-cadence-ttc.h
+> @@ -12,13 +12,14 @@
+>  #define TTC_CNT_CNTRL_OFFSET            0x0C /* Counter Control Reg, RW =
+*/
+>  #define TTC_COUNT_VAL_OFFSET            0x18 /* Counter Value Reg, RO */
+>  #define TTC_INTR_VAL_OFFSET             0x24 /* Interval Count Reg, RW */
+> +#define TTC_MATCH_CNT_VAL_OFFSET        0x30 /* Match Count Reg, RW */
+
+I assume all these constants are register addresses. I'd drop _OFFSET
+here. If you want a designator for these, I'd suggest REG or ADDR, but
+IMHO plain TTC_MATCH_CNT_VAL is fine.
+
+>  #define TTC_ISR_OFFSET          0x54 /* Interrupt Status Reg, RO */
+>  #define TTC_IER_OFFSET          0x60 /* Interrupt Enable Reg, RW */
+> =20
+>  #define TTC_CNT_CNTRL_DISABLE_MASK      0x1
+> =20
+>  #define TTC_CLK_CNTRL_CSRC_MASK         (1 << 5)        /* clock source =
+*/
+> -#define TTC_CLK_CNTRL_PSV_MASK          0x1e
+> +#define TTC_CLK_CNTRL_PSV_MASK		0x1e
+>  #define TTC_CLK_CNTRL_PSV_SHIFT         1
+> =20
+>  /*
+> @@ -33,3 +34,22 @@
+> =20
+>  #define MAX_F_ERR 50
+> =20
+> +#define TTC_PWM_CHANNEL         0x4
+
+That define is misnamed IMHO. That's the offset between register ranges
+for different channels. *Here* _OFFSET is fine.
+
+> +
+> +#define TTC_CLK_CNTRL_CSRC              BIT(5)
+> +#define TTC_CLK_CNTRL_PS_EN             BIT(0)
+> +#define TTC_CNTR_CTRL_DIS               BIT(0)
+> +#define TTC_CNTR_CTRL_INTR_MODE_EN      BIT(1)
+> +#define TTC_CNTR_CTRL_MATCH_MODE_EN     BIT(3)
+> +#define TTC_CNTR_CTRL_RST               BIT(4)
+> +#define TTC_CNTR_CTRL_WAVE_EN   BIT(5)
+> +#define TTC_CNTR_CTRL_WAVE_POL  BIT(6)
+> +#define TTC_CNTR_CTRL_WAVE_POL_SHIFT    6
+> +#define TTC_CNTR_CTRL_PRESCALE_SHIFT    1
+> +#define TTC_PWM_MAX_CH	3
+> +
+> +#if defined(CONFIG_PWM_CADENCE)
+> +int ttc_pwm_probe(struct platform_device *pdev);
+> +void ttc_pwm_remove(struct platform_device *pdev);
+> +#endif
+
+No need for the ifdef.
+
+Best regards
+Uwe
+
+--qalzlpcxz2i65esg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhQiMACgkQj4D7WH0S
+/k4Z/ggAoa7oTUS1+r9sZyGVLuPO3maZ+Xr1MkBXOWdq1spUdApZr3FG0W8XCtm4
+cy8icKVYTMx9fbJV/6uMJrukF44CfoCPv9kg4X7DyI/xDjot65Kr5b7OD4tq/jib
+BnKqIS++JiWSoDc687J5rCLlfX8gFRNuIEh9yIT1VvXFECnJy3TCScaru326aErm
+iwB2DXezk4ekQhfnEbO++AQ3y2f11qaa0w9z4oOedJuaSvXYKkRq6u9m/oq9bOxY
+SvgSN2/GYj0TnGzvE62yi8dCC2wllcKRzUMdY7jbVHRa55iLrRbmKXINPDFAZ+f6
+BQovM/yYdbuIzjEmSvCvR2bxYXlVlQ==
+=UNuV
+-----END PGP SIGNATURE-----
+
+--qalzlpcxz2i65esg--
 
