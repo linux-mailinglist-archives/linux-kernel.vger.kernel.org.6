@@ -1,281 +1,189 @@
-Return-Path: <linux-kernel+bounces-573494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1988DA6D834
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:22:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D54A6D6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B49A16E6FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D6216D3D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A684E25D91E;
-	Mon, 24 Mar 2025 10:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9E25D8F1;
+	Mon, 24 Mar 2025 09:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LzLGXsvO"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0OB4Pb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEEC2E3366
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBF9197A68;
+	Mon, 24 Mar 2025 09:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742811740; cv=none; b=O7W2NOCXpdlyEP0Fw4ZFridSk0iK1mnIM9yanyDXYptb1pcDQYezX00hWioV8wsS9LyX4/1m6TAbNVpZ0p4wxubKAKxGQYxTsn+AxsxJPG1QpPfmcq8ulY6RXI3/pJA9vXqrNnvgpvo4D5C8Al/YNsqIdTdIrTs3vw1uE0kE9As=
+	t=1742807251; cv=none; b=DgUNb+RJFKgou3cI3i2pOnEM0pTBVPefbe3mbPy9EW9aTxUPW1ddOnsmu2SmhKXWwZHabpbB+sM6iE6xjPNNkUKLJ83ycnxmi2Q+/LYGVlishU7v9X2Dr8XqfJ3p1VzOqOWusFWXMDySVCUAS0DL1CylDLwW2NkWQNhQEgwltlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742811740; c=relaxed/simple;
-	bh=7EuDp97T6eGN9Uv1l+Ew36X/SFMuxHOZbvKNx3732Fg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Ut7p1GWJspcFcOYmHX/XG5gjNe3fu23l2DlD5YDGeGmioTb47jxFFqul9g7uqtEw5Q31Fsy6SWAAq+6DMpKFJX8BKLWEuTXSmjST9OqfvKoikl5MOsbsXxtjcS5uMO7k0mWLsqhG9Zd339/OMriUmBnz4TO+7DcRzkRdutbCxfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LzLGXsvO; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250324102216epoutp0179b6754a0c2a35bd97076bfdc1e5f745~vtgpSSLpK1343413434epoutp01v
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:22:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250324102216epoutp0179b6754a0c2a35bd97076bfdc1e5f745~vtgpSSLpK1343413434epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742811736;
-	bh=ZB3Z0j0VHC9UQuJJRKuwipbhHT0HrtT0tEnIfDyyr18=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=LzLGXsvORc/n7Gx2nufgfeoP3BFJbi5s6AOAdjCkuNhKx7IRVMCIrhiFiIg3zMT/u
-	 T0WHfdtfZZs4Ly95sNgI3yplujTdM1QcMQbZItrNC4wNwLVoRUnWqGxle4PlYoC4ux
-	 4ddIu0NIIIDU1puvUK/4uMNhg4p1aLEr17VRFJN4=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250324102215epcas5p3d861070bb6dcbdddd9c6330b7426bd29~vtgomuDGw1918719187epcas5p3B;
-	Mon, 24 Mar 2025 10:22:15 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZLpyG25n9z3hhT7; Mon, 24 Mar
-	2025 10:22:14 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DC.E3.10173.65231E76; Mon, 24 Mar 2025 19:22:14 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250324073455epcas5p2fef46449d34e33682625d5edc77bc087~vrOiazsYP1752617526epcas5p2k;
-	Mon, 24 Mar 2025 07:34:55 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250324073455epsmtrp14571a1529c1de57a17e465d1964bdf00~vrOiZwp9-2690026900epsmtrp1X;
-	Mon, 24 Mar 2025 07:34:55 +0000 (GMT)
-X-AuditID: b6c32a44-8b5fb700000027bd-a6-67e13256e64c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.4E.08766.F1B01E76; Mon, 24 Mar 2025 16:34:55 +0900 (KST)
-Received: from FDSFTE245 (unknown [107.122.81.20]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250324073454epsmtip217eaf384a235b4550fc70c7be5b76526~vrOhkIMFq1488814888epsmtip2S;
-	Mon, 24 Mar 2025 07:34:54 +0000 (GMT)
-From: "Aatif Mushtaq/Aatif Mushtaq" <aatif4.m@samsung.com>
-To: "'Vinod Koul'" <vkoul@kernel.org>
-Cc: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
-Date: Mon, 24 Mar 2025 13:04:53 +0530
-Message-ID: <000001db9c8f$3ce35770$b6aa0650$@samsung.com>
+	s=arc-20240116; t=1742807251; c=relaxed/simple;
+	bh=BTpr/xKyMbID/mfk2G3kaCpevUKnRtaW+ey2UsAOI6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fbu6VRCCglxUNQxTPmJHPSdBXj2EIqzEeTgllH1oZYu6uqVJdgW+qRVRa1Lpy3xbVRYb8eLA3sCJpIZUppScePOUzGvKTB/MMb6pZ3TrXZrXLu+2BYnnY5gPpG1nx/PKXaNfTbLHzJ2wv2fItQNouHbwMtWYwWzxOs1ygGFIoyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0OB4Pb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBA4C4CEDD;
+	Mon, 24 Mar 2025 09:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742807250;
+	bh=BTpr/xKyMbID/mfk2G3kaCpevUKnRtaW+ey2UsAOI6E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f0OB4Pb35nUhcXZhCBCSRewAqNK2Xhvrgmdwb/9fVpgDIdnh0125n1W4E86MdNuMb
+	 ZBXHQkB4GDy2fOQQ6FA14iRWHAA+pQMvKqM5K/r7MKt58z3k+GcL4K13VI2h1n9kPZ
+	 XXu/MPKHJXdGg12NcHSPzjHa5KOvHLujIg1BVSFTdEN61Tmjg9gYLuiMxRblRpxRhP
+	 KkQ6pCBpk3raDNs6lgBuS3w3hq4vUJGq4aO9ueIJN24l5aAq/YqxB6Jk+HJh25Nj+H
+	 LqtPJj6gH01xJSybftNaqwKHdmeLBWVVA20wH0RInTb6d+yVGfKKVi2rSYDBIZkbqm
+	 L76iINlYXna2g==
+Message-ID: <4523caea-3406-4de0-9ab5-424fb7a0a474@kernel.org>
+Date: Mon, 24 Mar 2025 10:07:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+ AST2600-i2cv2
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+ "joel@jms.id.au" <joel@jms.id.au>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mo Elbadry <elbadrym@google.com>
+References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
+ <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
+ <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
+ <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <50327725-f3b8-4a8b-94a2-85afccd2868a@kernel.org>
+ <OS8PR06MB7541B0DBC64B3EF6838DFE74F2CD2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <d1b184c5-84c1-4d76-a1d0-a9f37f1e363c@kernel.org>
+ <OS8PR06MB7541D1D2E16C5E77037F3BB0F2CB2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <069b9fe4-c54a-4efd-923e-1558c59fe3f4@kernel.org>
+ <OS8PR06MB7541C69AB8E6425313DA8606F2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <677cb075-24ae-45d8-bfb4-9b23fbacc5df@kernel.org>
+ <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <994cb954-f3c4-4a44-800e-9303787c1be9@kernel.org>
+ <SI6PR06MB753542037E1D6BBF5CE8D2E7F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <SI6PR06MB753542037E1D6BBF5CE8D2E7F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFsIHTrWqAe9Pu9L3iNOvGTrR8WTgG4P+QRAcvczKUCj5EGvbQKqHTggAfgiMCAHbHb4A==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTUzfM6GG6wZY+fotDm7eyW6ye+pfV
-	4vKuOWwWi7Z+YbfYeecEswOrx6ZVnWwefVtWMXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r
-	5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
-	kV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ3x7/Z79oIJ+hVnN2xnamDsUO1i
-	5OSQEDCRmLdkF0sXIxeHkMBuRolJz7+zgSSEBD4xSiy66Q2R+MYoserfE1aYjo3LZ7JBJPYy
-	Ssx7eoAZwnnOKPFxYhsjSBWbgJXE+V/7wEaJCKhKbHnyAMjm4GAWqJTY8koTxOQU4JWY8M8a
-	pEJYwEXi5Lk/YNUsQNW/z95jB7F5BSwl9r+axwxhC0qcnPmEBcRmFpCX2P52DjPEPQoSP58u
-	Y4XYFCbR/uMYO0SNuMTRnz1QNT/ZJW5tNoKwXSRePD8DFReWeHV8CzuELSXxsr8NyvaR+DHv
-	FdS/GRIT+lqhbHuJA1fmsEB8oimxfpc+RFhWYuqpdUwQa/kken8/YYKI80rsmAdjK0msed/H
-	BmFLSPw7eJJxAqPSLCSfzULy2SwkH8xC2LaAkWUVo2RqQXFuemqyaYFhXmo5PLaT83M3MYKT
-	o5bLDsYb8//pHWJk4mA8xCjBwawkwnuM9WG6EG9KYmVValF+fFFpTmrxIUZTYHBPZJYSTc4H
-	pue8knhDE0sDEzMzMxNLYzNDJXHe5p0t6UIC6YklqdmpqQWpRTB9TBycUg1MkrpSl11uHzl/
-	QoJV7GLu9zPzJ/BOcpz7rHbLsuO1017wSUiJNS47oLuA1XeOd0b2XSkpr4p7SanPnSMWFxdt
-	zXplHXMzl/GVvrZ99fs3eSrO4Ux7XXXLLZb9zuhSz1j27GxhZ2rEqhmnsjP3rZ6fFK7ot0On
-	SpGl7rPRpSkLtj7ufzx7Kdt8h2nuO3LfaF5p+/ZaOI5tpd3zXcpu5RIqk4wrr9g8OH9u6sHX
-	/02MNqoyLb8+oS7XPK/U1t0srnBfvK7t822prebnS6QufV3lWf7yQGU5e+DDD/1eb38XBLvk
-	sAg1Bc0+UrQymJnxz8Vij1k81/+kFZ/ee+dDvIiNzrwPjms3/nu57IjL6707lFiKMxINtZiL
-	ihMBEXI6WxcEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSvK4898N0gwOL9S0Obd7KbrF66l9W
-	i8u75rBZLNr6hd1i550TzA6sHptWdbJ59G1ZxejxeZNcAHMUl01Kak5mWWqRvl0CV8a/2+/Z
-	CyboV5zdsJ2pgbFDtYuRk0NCwERi4/KZbF2MXBxCArsZJaZtn8kEkZCQaO5shLKFJVb+e84O
-	UfSUUWJh33VmkASbgJXE+V/72EBsEQFViS1PHoDZzAK1Eg8WXWOCaLjCKHG85w1QAwcHpwCv
-	xIR/1iA1wgIuEifP/QGrZwHq/X32HjuIzStgKbH/1TxmCFtQ4uTMJywgrcwCehJtGxkhxstL
-	bH87hxniNgWJn0+XsUKcECbR/uMYO0SNuMTRnz3MExiFZyGZNAth0iwkk2Yh6VjAyLKKUTK1
-	oDg3PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM4RrQ0dzBuX/VB7xAjEwfjIUYJDmYlEd5jrA/T
-	hXhTEiurUovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgskycXBKNTAdfqpq7Hoj
-	sfRG7tOEIA+p8uc1r9NazryKXbtfhV19qsPrydejf1ZsPWy6ubttru+KFVmr9s/uXHxUp7Qz
-	9NfB0NSfgWVOv5cyaz0WuCMX11mfqyE23Yl5u8XUr58PZTH+0cjYaOlxfFmg9zOnApNDS3WY
-	TPs+zmfUljlidLLULXhOi8SM06f2eF8V9xLcYSLz7tieRpewuUwyte2dVxoVf/BOyfZlSyxu
-	z2SofcH+aOobjUzbokjv63r7Ra4+Wzbf8dizgAzx9AUdqfZP438rH10g7fJ+r+KUxGZjm8iT
-	RtodPDOufLfvn1bts4819YPM50+/OXMsbM9zf7hV+9TBYPKRx1GXrU4l19wWPabEUpyRaKjF
-	XFScCACYqGelAAMAAA==
-X-CMS-MailID: 20250324073455epcas5p2fef46449d34e33682625d5edc77bc087
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc
-References: <20250210061915.26218-1-aatif4.m@samsung.com>
-	<CGME20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc@epcas5p4.samsung.com>
-	<20250210061915.26218-2-aatif4.m@samsung.com> <Z8Ab3VcAXf5z7UqE@vaman>  
 
-Hi Vinod,
+On 24/03/2025 09:30, Ryan Chen wrote:
+>> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+>> AST2600-i2cv2
+>>
+>> On 19/03/2025 12:12, Ryan Chen wrote:
+>>>> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+>>>> AST2600-i2cv2
+>>>>
+>>>> On 17/03/2025 10:21, Ryan Chen wrote:
+>>>>>> Neither this.
+>>>>>>
+>>>>>> So it seems you describe already existing and documented I2C, but
+>>>>>> for some reason you want second compatible. The problem is that you
+>>>>>> do not provide reason from the point of view of bindings.
+>>>>>>
+>>>>>> To summarize: what your users want - don't care. Start properly
+>>>>>> describing hardware and your SoC.
+>>>>>
+>>>>> OK, for ast2600 i2c controller have two register mode setting.
+>>>>> One, I call it is old register setting, that is right now
+>>>>> i2c-aspeed.c .compatible = "aspeed,ast2600-i2c-bus", And there have
+>>>>> a global register
+>>>> that can set i2c controller as new mode register set.
+>>>>> That I am going to drive. That I post is all register in new an old register
+>> list.
+>>>>>
+>>>>> For example,
+>>>>> Global register [2] = 0 => i2c present as old register set Global
+>>>>> register [2] = 1 => i2c present as new register set
+>>>> It's the same device though, so the same compatible.
+>>>
+>>> Sorry, it is different design, and it share the same register space.
+>>> So that the reason add new compatible "aspeed,ast2600-i2cv2" for this
+>> driver.
+>>> It is different register layout.
+>>
+>> Which device is described by the existing "aspeed,ast2600-i2c-bus"
+>> compatible? And which device is described by new compatible?
+>>
+> On the AST2600 SoC, there are up to 16 I2C controller instances (I2C1 ~ I2C16).
 
-> -----Original Message-----
-> From: Aatif Mushtaq/Aatif Mushtaq <aatif4.m@samsung.com>
-> Sent: 06 March 2025 12:06
-> To: 'Vinod Koul' <vkoul@kernel.org>
-> Cc: 'dmaengine@vger.kernel.org' <dmaengine@vger.kernel.org>; 'linux-
-> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
-> 'pankaj.dubey@samsung.com' <pankaj.dubey@samsung.com>;
-> 'aswani.reddy@samsung.com' <aswani.reddy@samsung.com>
-> Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
-> 
-> 
-> 
-> > -----Original Message-----
-> > From: Aatif Mushtaq/Aatif Mushtaq <aatif4.m@samsung.com>
-> > Sent: 28 February 2025 15:03
-> > To: 'Vinod Koul' <vkoul@kernel.org>
-> > Cc: 'dmaengine@vger.kernel.org' <dmaengine@vger.kernel.org>; 'linux-
-> > kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
-> > 'pankaj.dubey@samsung.com' <pankaj.dubey@samsung.com>;
-> > 'aswani.reddy@samsung.com' <aswani.reddy@samsung.com>
-> > Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: Vinod Koul <vkoul@kernel.org>
-> > > Sent: 27 February 2025 13:32
-> > > To: Aatif Mushtaq <aatif4.m@samsung.com>
-> > > Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > pankaj.dubey@samsung.com; aswani.reddy@samsung.com
-> > > Subject: Re: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
-> > >
-> > > On 10-02-25, 11:49, Aatif Mushtaq wrote:
-> > > > Add a new dma engine API to support 2D DMA operations.
-> > > > The API will be used to get the descriptor for 2D transfer based on
-> > > > the 16-bit immediate to define the stride length between
-> > > > consecuitive source address or destination address after every DMA
-> > > > load and store instruction is processed.
-> > >
-> > > Why should we define a new API for this...? Why not use the sg or
-> > > interleaved api for this?
-> > >
-> >
-> > Thanks for pointing out, interleaved API can be used for this.
-> > I will make the change
-> >
-> 
-> While trying to make the change I realised that sg and interleaved
-> APIs cannot be used for our use case.
-> Interleaved API is used to transfer data from non-contiguous
-> buffer to non-contiguous buffer and sg API is used to transfer
-> non-contiguous buffer to contiguous buffer but both the APIs work
-> on multiple data chunks where each chunk has its individual attributes
-> and there is a tx descriptor for each data chunk.
-> But in our case we have single tx descriptor to increment the source or
-> destination after every DMA LOAD and STORE operation till the desired
-> length of transfer is achieved, which means we don't have multiple data
-> chunks which is required in case of interleaved and sg.
-> The use case is to do memory to memory copy but not in a linear way,
-> such that we can define a gap between each burst.
-> 
+So you have 16 same devices.
 
-I want to gently remind you to please review my approach.
+> Each of these controllers is hardwired at the SoC level to use either the legacy register layout or the new v2 register layout.
+> The mode is selected by a bit in the global register, these represent two different hardware blocks:
+> "aspeed,ast2600-i2c-bus" describes controllers using the legacy register layout.
+> "aspeed,ast2600-i2cv2" describes controllers using the new register layout
 
-> > > >
-> > > > Signed-off-by: Aatif Mushtaq <aatif4.m@samsung.com>
-> > > > ---
-> > > >  include/linux/dmaengine.h | 25 +++++++++++++++++++++++++
-> > > >  1 file changed, 25 insertions(+)
-> > > >
-> > > > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> > > > index b137fdb56093..8a73b2147983 100644
-> > > > --- a/include/linux/dmaengine.h
-> > > > +++ b/include/linux/dmaengine.h
-> > > > @@ -833,6 +833,7 @@ struct dma_filter {
-> > > >   *	be called after period_len bytes have been transferred.
-> > > >   * @device_prep_interleaved_dma: Transfer expression in a generic
-> > way.
-> > > >   * @device_prep_dma_imm_data: DMA's 8 byte immediate data to
-> the
-> > > dst
-> > > > address
-> > > > + * @device_prep_2d_dma_memcpy: prepares a 2D memcpy
-> operation
-> > > >   * @device_caps: May be used to override the generic DMA slave
-> > > capabilities
-> > > >   *	with per-channel specific ones
-> > > >   * @device_config: Pushes a new configuration to a channel, return
-> > > > 0 or an error @@ -938,6 +939,9 @@ struct dma_device {
-> > > >  	struct dma_async_tx_descriptor *(*device_prep_dma_imm_data)(
-> > > >  		struct dma_chan *chan, dma_addr_t dst, u64 data,
-> > > >  		unsigned long flags);
-> > > > +	struct dma_async_tx_descriptor
-> > > *(*device_prep_2d_dma_memcpy)(
-> > > > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t
-src,
-> > > > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long
-flags);
-> > > >
-> > > >  	void (*device_caps)(struct dma_chan *chan, struct
-dma_slave_caps
-> > > *caps);
-> > > >  	int (*device_config)(struct dma_chan *chan, struct
-> > > dma_slave_config
-> > > > *config); @@ -1087,6 +1091,27 @@ static inline struct
-> > > dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
-> > > >  						    len, flags);
-> > > >  }
-> > > >
-> > > > +/**
-> > > > + * device_prep_2d_dma_memcpy() - Prepare a DMA 2D memcpy
-> > > descriptor.
-> > > > + * @chan: The channel to be used for this descriptor
-> > > > + * @dest: Address of the destination data for a DMA channel
-> > > > + * @src: Address of the source data for a DMA channel
-> > > > + * @len: The total size of data
-> > > > + * @src_imm: The immediate value to be added to the src address
-> > > > +register
-> > > > + * @dest_imm: The immediate value to be added to the dst address
-> > > > +register
-> > > > + * @flags: DMA engine flags
-> > > > + */
-> > > > +static inline struct dma_async_tx_descriptor
-> > > *device_prep_2d_dma_memcpy(
-> > > > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t
-src,
-> > > > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long
-flags) {
-> > > > +	if (!chan || !chan->device || !chan->device-
-> > > >device_prep_2d_dma_memcpy)
-> > > > +		return NULL;
-> > > > +
-> > > > +	return chan->device->device_prep_2d_dma_memcpy(chan, dest,
-> > > src, len,
-> > > > +						       src_imm,
-dest_imm,
-> > > flags); }
-> > > > +
-> > > >  static inline bool dmaengine_is_metadata_mode_supported(struct
-> > > dma_chan *chan,
-> > > >  		enum dma_desc_metadata_mode mode)  {
-> > > > --
-> > > > 2.17.1
-> > >
-> > > --
-> > > ~Vinod
+Which part of "same device" is not clear? You have one device, one
+compatible. Whatever you do with register layout, is already defined by
+that compatible. It does not matter that you forgot to implement it in
+the Linux kernel.
 
+Best regards,
+Krzysztof
 
