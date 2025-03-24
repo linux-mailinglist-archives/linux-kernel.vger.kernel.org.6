@@ -1,399 +1,224 @@
-Return-Path: <linux-kernel+bounces-574303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9350A6E387
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:30:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D190CA6E390
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B21188BA92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990EB188C5F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B93D19539F;
-	Mon, 24 Mar 2025 19:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB70C19E97A;
+	Mon, 24 Mar 2025 19:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Wu+bzumv"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4CVFu+s"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D302E3381
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C674157A46;
+	Mon, 24 Mar 2025 19:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844593; cv=none; b=RRfT/LBCumvGOnZCROGH2HgqiQQ5Tp8BjSmjFS3N8xhBCDPXmV9bo0DNmF4NnHtPIqlmkB2x//AOwCnsKQb1D8CWghPIzBfwj/kQgp5NgRzOuHSThB8gZqUwD5sfZiQKtYqUUi1tahQVEVsx94vvJV1wi8abKKbgNpPRWnXYXSM=
+	t=1742844615; cv=none; b=EPJ5PlGKbtabzsnaySgmigdJzmc753xYcXyuk5X+oj/+rPnn+EQ7D3tta3r7HBw6A2OQLruwrbFSpXB7QID5hMhQ8sZ0Ti8gvo9IiHbNzQ5O/06GzCmqZ12lWjbl6rltkE6m9nMBqxknOk+rg4eE7Y4wXSGJ+ovO1pXXiW5Y9bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844593; c=relaxed/simple;
-	bh=j5OVxPFLq29GXiCKrU656RaWw4cyWIYA4WD+scEZ7Xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ml/PimuonDA0l6Blnizz+bHeV5kmxFCvA9QvGUvW/POpZJUcUk3wPaWchjS9eIKiDluXCg41tHTrlZ/dVxea+0Dp6IwrWCzankpmdS8YSG3SFTeHxqzKxj/f0wcuYLVM+leIKNk5NJZH0m0WENu613ZFD6oiomlHJ+O+fVvk5D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Wu+bzumv; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7F5082C0526;
-	Tue, 25 Mar 2025 08:29:49 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1742844589;
-	bh=P5DjFWk3LK/sagkk45Rhp6cyX4c3fky3dNSl7gsy2pc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wu+bzumvUetu+G+H9zXhyDuVmX2ztuPpphu5RI0n6GKf+wxjM8fZ0IsiC68gmsXKc
-	 uqW0I/98T/w6s580azvJK8q2D2KmyU8pbiwljcFuP/yMJccfEafp6dDmpBKSliNnn9
-	 JCpw4gj2zRjSiI1aujlkmyZS3Nzygi4d2t0Le2UlV3fyV84Dna+S0wmNXuRORZDX3v
-	 tSzflUE/AqpWxgMAfVzu4vfD6Wt6LNz+fqef4hNW28jwKsTTQ0mbOTjQoFHpNUDZmB
-	 x5V0v9HaEbMrIsJLWuaEcMC2FHSwfkhVszsQApSMHnGzqiutIGl4oGWfjGkjs19678
-	 EeYBsxpmanpHQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67e1b2ad0000>; Tue, 25 Mar 2025 08:29:49 +1300
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id 47D1D13ED56;
-	Tue, 25 Mar 2025 08:29:49 +1300 (NZDT)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 453652A362E; Tue, 25 Mar 2025 08:29:49 +1300 (NZDT)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Markus Elfring <Markus.Elfring@web.de>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Robert Richter <rric@kernel.org>
-Subject: [PATCH v14 1/1] i2c: octeon: add block-mode i2c operations
-Date: Tue, 25 Mar 2025 08:29:46 +1300
-Message-ID: <20250324192946.3078712-2-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250324192946.3078712-1-aryan.srivastava@alliedtelesis.co.nz>
-References: <20250324192946.3078712-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1742844615; c=relaxed/simple;
+	bh=z4Bmz8QEbS8bemOrvtD2u3Ao/zjB4T8szLjDdqwXF24=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxhPrPMpRT8xl74j/2+Rba8d1LVjHzIBOeoko2LsrTGBsTnYr10FB67Yg5M2mPdlwXoWqzsk7XfajpWLUEs1ZiL4X+5V48qYdDmu2w1Pg2J6B2TgWkx5HaZs+OZGvAhgi4OPmUxgTqfHEOoA9bourFJsqHDcf7YcM8gDc/gAa9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4CVFu+s; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c08fc20194so989997585a.2;
+        Mon, 24 Mar 2025 12:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742844613; x=1743449413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oLwcfCvl0y0TOE8vM9dZorE+bZgWQzp6dmKQBP8YWtY=;
+        b=O4CVFu+sVmnfHwi8Wpy7Ii7mPLeOHc5bcPw0t0zxTAYdEq/am2tcCts+ZAaO+X6by0
+         BedCKnCPbZIbDpHPTJZZCKGfVX4W2O+2+RGEpEiNMmaLDY97zZb6EUNZL3hqHzJCbahd
+         5TyytXgHsQ7in2LgbtJTZnhm/FYU+QmF2Rqzd4EnIUcR3fv2wF0IsAYQPFftY93RGN0T
+         bujdk6m313TSTponbdI+HFIqGlZDULw1OB4a/EwRf+Cju8ysIk+tKfkEjOWp8zWlhkcf
+         QxZCohPWvmLe2qpKt6NlTOL1XFJ+K+p3QT4+9epXuJB5Is+QAV74FfwGENIZ83XxCk/g
+         PUBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742844613; x=1743449413;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oLwcfCvl0y0TOE8vM9dZorE+bZgWQzp6dmKQBP8YWtY=;
+        b=gZ627Vap88fgvy/P+VvIybmv3TFz9kJE/H0VJ6LdYeeCMkxTR3EdDj5rHi0aTr6jAa
+         f/SnXoHOeMY1Jj5TU9lVB66BByqQa3l7ZbvrDBtwwO4MDGHZpyT2YD3Z5h3ucCR098ub
+         mpSnieBVTizmeRa8uMT3MiIG1DoaahNGvctJqfIt0ABCVxKw3g4AfqZWDd13PaEX86T9
+         3iaaop4k4NXy7aduAkoY1bQe2v1ahA7pNPNTWzxGVjOOeWFbAQeocWU//IDCW9YCZFCX
+         4cVG+B9wqnqhFENxxwQtAsxYCEJHhQlDE2Ve/zGyVXmbW6ymz2vmMSoaPxAxqVcHLJqe
+         6UYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhYdaSTRxJDqgQQDj/xWFZmAB4fCi56VLbcTjqyiLqD2zsh2nJz3xNqOfJizr79T7ToIWRGYs25H+5aS0=@vger.kernel.org, AJvYcCW/sV7ZhpgkEDlIo3+/z5eCHctFvnVi2S67km4Sj36kkKp3pMB/ZgBiA8l9frWPW3UMqBrONPVy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV1bsWtuWrGZIM0adCBdOkrGQvZYzd/7kkNHeDsJ9a0BbU/Bie
+	MBJhmHS8FX+np9J8Cal+QHbo5QlN/F7WwHz57CiQ3U2oimwFK9k+
+X-Gm-Gg: ASbGnctvFhfN4IwRCLJRoDSHksHHrOxadp7aZht7CFxa3+XIqjAozRn5k9cuu/fBnj8
+	/FSCPH1eNm7uwWqd6gl67HJ6BFApOBhBWF0WA4MjmteiKKNDLtoVN/rz144I+rrx1ob7dgsYEtw
+	MPAbIO5VmjOgdUgRCtzCs5fCLXOz8HSl4yfDrkUq9AmaUkwu0SbBhAUVYcrEPSBE9bv7gZ7YcBY
+	7p+Ph6/LKebRspIKqC6d6lmGgQR64MxydBDtZIauPgNOncd0rv4DNo/Zqa/LnIwLCoTTnEMBjkp
+	D+hcLPXTVr5YYadCItR9GtqL/21MGa3+23e21OMqt4ZIIxzwJElTqUzDWawXQeLhcU43A8ZAMm5
+	P8Jo9UnJtrVK8qpl4dCD37DzZXa89vDmRT0g=
+X-Google-Smtp-Source: AGHT+IFrpyIFCPZY9VniQnxujcY9Z2QJCar8QwZDVHX4Q4jyqC+BCirHlv7hbrTGkCMjTV8EvLyE7A==
+X-Received: by 2002:a05:620a:d8a:b0:7c5:97ca:3ea0 with SMTP id af79cd13be357-7c5ba090be5mr2107778485a.0.1742844612845;
+        Mon, 24 Mar 2025 12:30:12 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b93582d9sm546351685a.96.2025.03.24.12.30.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 12:30:12 -0700 (PDT)
+Message-ID: <67e1b2c4.050a0220.353291.663c@mx.google.com>
+X-Google-Original-Message-ID: <Z-Gywg0B93SL4hKx@winterfell.>
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 127281200068;
+	Mon, 24 Mar 2025 15:30:12 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Mon, 24 Mar 2025 15:30:12 -0400
+X-ME-Sender: <xms:w7LhZ5i3xcp37D9tLhFuXCJqUJ1RZhh_gQf_Xqt4uNVpO5YKE6xIhw>
+    <xme:w7LhZ-DXN1GL8HxpoqZE7LJEKO_1993LXOdRpR0BRUDD-C244Z73HprSQ8kHUv4Kn
+    F_Na3AM3fJ3d47o5g>
+X-ME-Received: <xmr:w7LhZ5GCmvp-FdQd1AEMaRFXSuN9GH7TuCaXoB6Q7MUZsGnoGm0wrgssfKI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtieduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
+    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghp
+    thhtoheplhgvihhtrghoseguvggsihgrnhdrohhrghdprhgtphhtthhopehmihhnghhose
+    hrvgguhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprggvhh
+    esmhgvthgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:xLLhZ-RJp-Vq56OUoV23i3dgsor0kB9z2zh_r6cmE_OmrGCNh4mc3g>
+    <xmx:xLLhZ2wSESeeF_UrqtSRcyNku_ljrE09O5HOvtRlrREUKX4d82XScQ>
+    <xmx:xLLhZ058SB1sJabzYbndBqL0iL43_fa_r4Q9Fz_Em9QQwNLSf2iJLw>
+    <xmx:xLLhZ7ySEEbu8tSYxD7avqYmQId3MaYIaofg4ob_FsxVx9_MrrYZsA>
+    <xmx:xLLhZ-gu5A7cC5Bi0UzLU47GVeJr6TDVovvmK1Ofv3f6R0a1Giv6tesd>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Mar 2025 15:30:11 -0400 (EDT)
+Date: Mon, 24 Mar 2025 12:30:10 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Breno Leitao <leitao@debian.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, aeh@meta.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	jhs@mojatatu.com, kernel-team@meta.com,
+	Erik Lundgren <elundgren@meta.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with
+ expedited RCU synchronization
+References: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
+ <20250324121202.GG14944@noisy.programming.kicks-ass.net>
+ <CANn89iKykrnUVUsqML7dqMuHx6OuGnKWg-xRUV4ch4vGJtUTeg@mail.gmail.com>
+ <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67e1b2ad a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=Vs1iUdzkB0EA:10 a=VTaoIAi0P-8XhCTjSE4A:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
 
-Add functions to perform block read and write operations. This applies
-for cases where the requested operation is for >8 bytes of data.
+On Mon, Mar 24, 2025 at 12:21:07PM -0700, Boqun Feng wrote:
+> On Mon, Mar 24, 2025 at 01:23:50PM +0100, Eric Dumazet wrote:
+> [...]
+> > > > ---
+> > > >  kernel/locking/lockdep.c | 6 ++++--
+> > > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> > > > index 4470680f02269..a79030ac36dd4 100644
+> > > > --- a/kernel/locking/lockdep.c
+> > > > +++ b/kernel/locking/lockdep.c
+> > > > @@ -6595,8 +6595,10 @@ void lockdep_unregister_key(struct lock_class_key *key)
+> > > >       if (need_callback)
+> > > >               call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> > > >
+> > > > -     /* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
+> > > > -     synchronize_rcu();
+> 
+> I feel a bit confusing even for the old comment, normally I would expect
+> the caller of lockdep_unregister_key() should guarantee the key has been
+> unpublished, in other words, there is no way a lockdep_unregister_key()
+> could race with a register_lock_class()/lockdep_init_map_type(). The
+> synchronize_rcu() is not needed then.
+> 
+> Let's say someone breaks my assumption above, then when doing a
+> register_lock_class() with a key about to be unregister, I cannot see
+> anything stops the following:
+> 
+> 	CPU 0				CPU 1
+> 	=====				=====
+> 	register_lock_class():
+> 	  ...
+> 	  } else if (... && !is_dynamic_key(lock->key)) {
+> 	  	// ->key is not unregistered yet, so this branch is not
+> 		// taken.
+> 	  	return NULL;
+> 	  }
+> 	  				lockdep_unregister_key(..);
+> 					// key unregister, can be free
+> 					// any time.
+> 	  key = lock->key->subkeys + subclass; // BOOM! UAF.
+> 
+> So either we don't need the synchronize_rcu() here or the
+> synchronize_rcu() doesn't help at all. Am I missing something subtle
+> here?
+> 
 
-When not using the block mode transfer, the driver will attempt a series
-of 8 byte i2c operations until it reaches the desired total. For
-example, for a 40 byte request the driver will complete 5 separate
-transactions. This results in large transactions taking a significant
-amount of time to process.
+Oh! Maybe I was missing register_lock_class() must be called with irq
+disabled, which is also an RCU read-side critical section.
 
-Add block mode such that the driver can request larger transactions, up
-to 1024 bytes per transfer.
+Regards,
+Boqun
 
-Many aspects of the block mode transfer is common with the regular 8
-byte operations. Use generic functions for parts of the message
-construction and sending the message. The key difference for the block
-mode is the usage of separate FIFO buffer to store data.
-
-Write to this buffer in the case of a write (before command send).
-Read from this buffer in the case of a read (after command send).
-
-Data is written into this buffer by placing data into the MSB onwards.
-This means the bottom 8 bits of the data will match the top 8 bits, and
-so on and so forth.
-
-Set specific bits in message for block mode, enable block mode transfers
-from global i2c management registers, construct message, send message,
-read or write from FIFO buffer as required.
-
-The block-mode transactions result in a significant speed increase in
-large i2c requests.
-
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/i2c/busses/i2c-octeon-core.c     | 166 ++++++++++++++++++++++-
- drivers/i2c/busses/i2c-octeon-core.h     |  13 +-
- drivers/i2c/busses/i2c-thunderx-pcidrv.c |   3 +
- 3 files changed, 175 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-octeon-core.c b/drivers/i2c/busses/i2=
-c-octeon-core.c
-index baf6b27f3752..93a49e4637ec 100644
---- a/drivers/i2c/busses/i2c-octeon-core.c
-+++ b/drivers/i2c/busses/i2c-octeon-core.c
-@@ -135,6 +135,32 @@ static void octeon_i2c_hlc_disable(struct octeon_i2c=
- *i2c)
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB);
- }
-=20
-+static void octeon_i2c_block_enable(struct octeon_i2c *i2c)
-+{
-+	u64 mode;
-+
-+	if (i2c->block_enabled || !OCTEON_REG_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D true;
-+	mode =3D __raw_readq(i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+	mode |=3D TWSX_MODE_BLOCK_MODE;
-+	octeon_i2c_writeq_flush(mode, i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+}
-+
-+static void octeon_i2c_block_disable(struct octeon_i2c *i2c)
-+{
-+	u64 mode;
-+
-+	if (!i2c->block_enabled || !OCTEON_REG_BLOCK_CTL(i2c))
-+		return;
-+
-+	i2c->block_enabled =3D false;
-+	mode =3D __raw_readq(i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+	mode &=3D ~TWSX_MODE_BLOCK_MODE;
-+	octeon_i2c_writeq_flush(mode, i2c->twsi_base + OCTEON_REG_MODE(i2c));
-+}
-+
- /**
-  * octeon_i2c_hlc_wait - wait for an HLC operation to complete
-  * @i2c: The struct octeon_i2c
-@@ -281,6 +307,7 @@ static int octeon_i2c_start(struct octeon_i2c *i2c)
- 	u8 stat;
-=20
- 	octeon_i2c_hlc_disable(i2c);
-+	octeon_i2c_block_disable(i2c);
-=20
- 	octeon_i2c_ctl_write(i2c, TWSI_CTL_ENAB | TWSI_CTL_STA);
- 	ret =3D octeon_i2c_wait(i2c);
-@@ -604,6 +631,125 @@ static int octeon_i2c_hlc_comp_write(struct octeon_=
-i2c *i2c, struct i2c_msg *msg
- 	return ret;
- }
-=20
-+/**
-+ * octeon_i2c_hlc_block_comp_read - high-level-controller composite bloc=
-k read
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, place read data into msg[1]
-+ *
-+ * i2c core command is constructed and written into the SW_TWSI register=
-.
-+ * The execution of the command will result in requested data being
-+ * placed into a FIFO buffer, ready to be read.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of re=
-ad data.
-+ *
-+ * Returns: 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_read(struct octeon_i2c *i2c, struct=
- i2c_msg *msgs)
-+{
-+	int ret;
-+	u16 len, i;
-+	u64 cmd;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL=
-(i2c));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_R | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Send core command */
-+	ret =3D octeon_i2c_hlc_read_cmd(i2c, msgs[0], cmd);
-+	if (ret)
-+		goto err;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0) {
-+		octeon_i2c_block_disable(i2c);
-+		return octeon_i2c_check_status(i2c, false);
-+	}
-+
-+	/* read data in FIFO */
-+	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
-+				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
-+	for (i =3D 0; i <=3D len; i +=3D 8) {
-+		/* Byte-swap FIFO data and copy into msg buffer */
-+		__be64 rd =3D cpu_to_be64(__raw_readq(i2c->twsi_base + OCTEON_REG_BLOC=
-K_FIFO(i2c)));
-+
-+		memcpy(&msgs[1].buf[i], &rd, min(8, msgs[1].len - i));
-+	}
-+
-+err:
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
-+/**
-+ * octeon_i2c_hlc_block_comp_write - high-level-controller composite blo=
-ck write
-+ * @i2c: The struct octeon_i2c
-+ * @msgs: msg[0] contains address, msg[1] contains data to be written
-+ *
-+ * i2c core command is constructed and write data is written into the FI=
-FO buffer.
-+ * The execution of the command will result in HW write, using the data =
-in FIFO.
-+ * Used in the case where the i2c xfer is for greater than 8 bytes of wr=
-ite data.
-+ *
-+ * Returns: 0 on success, otherwise a negative errno.
-+ */
-+static int octeon_i2c_hlc_block_comp_write(struct octeon_i2c *i2c, struc=
-t i2c_msg *msgs)
-+{
-+	bool set_ext;
-+	int ret;
-+	u16 len, i;
-+	u64 cmd, ext =3D 0;
-+
-+	octeon_i2c_hlc_enable(i2c);
-+	octeon_i2c_block_enable(i2c);
-+
-+	/* Write (size - 1) into block control register */
-+	len =3D msgs[1].len - 1;
-+	octeon_i2c_writeq_flush((u64)len, i2c->twsi_base + OCTEON_REG_BLOCK_CTL=
-(i2c));
-+
-+	/* Prepare core command */
-+	cmd =3D SW_TWSI_V | SW_TWSI_SOVR | SW_TWSI_OP_7_IA;
-+	cmd |=3D (u64)(msgs[0].addr & 0x7full) << SW_TWSI_ADDR_SHIFT;
-+
-+	/* Set parameters for extended message (if required) */
-+	set_ext =3D octeon_i2c_hlc_ext(i2c, msgs[0], &cmd, &ext);
-+
-+	/* Write msg into FIFO buffer */
-+	octeon_i2c_writeq_flush(TWSX_BLOCK_STS_RESET_PTR,
-+				i2c->twsi_base + OCTEON_REG_BLOCK_STS(i2c));
-+	for (i =3D 0; i <=3D len; i +=3D 8) {
-+		__be64 buf =3D 0;
-+
-+		/* Copy 8 bytes or remaining bytes from message buffer */
-+		memcpy(&buf, &msgs[1].buf[i], min(8, msgs[1].len - i));
-+
-+		/* Byte-swap message data and write into FIFO */
-+		buf =3D cpu_to_be64(buf);
-+		octeon_i2c_writeq_flush((u64)buf, i2c->twsi_base + OCTEON_REG_BLOCK_FI=
-FO(i2c));
-+	}
-+	if (set_ext)
-+		octeon_i2c_writeq_flush(ext, i2c->twsi_base + OCTEON_REG_SW_TWSI_EXT(i=
-2c));
-+
-+	/* Send command to core (send data in FIFO) */
-+	ret =3D octeon_i2c_hlc_cmd_send(i2c, cmd);
-+	if (ret)
-+		goto err;
-+
-+	cmd =3D __raw_readq(i2c->twsi_base + OCTEON_REG_SW_TWSI(i2c));
-+	if ((cmd & SW_TWSI_R) =3D=3D 0) {
-+		octeon_i2c_block_disable(i2c);
-+		return octeon_i2c_check_status(i2c, false);
-+	}
-+
-+err:
-+	octeon_i2c_block_disable(i2c);
-+	return ret;
-+}
-+
- /**
-  * octeon_i2c_xfer - The driver's xfer function
-  * @adap: Pointer to the i2c_adapter structure
-@@ -630,13 +776,21 @@ int octeon_i2c_xfer(struct i2c_adapter *adap, struc=
-t i2c_msg *msgs, int num)
- 			if ((msgs[0].flags & I2C_M_RD) =3D=3D 0 &&
- 			    (msgs[1].flags & I2C_M_RECV_LEN) =3D=3D 0 &&
- 			    msgs[0].len > 0 && msgs[0].len <=3D 2 &&
--			    msgs[1].len > 0 && msgs[1].len <=3D 8 &&
-+			    msgs[1].len > 0 &&
- 			    msgs[0].addr =3D=3D msgs[1].addr) {
--				if (msgs[1].flags & I2C_M_RD)
--					ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
--				else
--					ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
--				goto out;
-+				if (msgs[1].len <=3D 8) {
-+					if (msgs[1].flags & I2C_M_RD)
-+						ret =3D octeon_i2c_hlc_comp_read(i2c, msgs);
-+					else
-+						ret =3D octeon_i2c_hlc_comp_write(i2c, msgs);
-+					goto out;
-+				} else if (msgs[1].len <=3D 1024 && OCTEON_REG_BLOCK_CTL(i2c)) {
-+					if (msgs[1].flags & I2C_M_RD)
-+						ret =3D octeon_i2c_hlc_block_comp_read(i2c, msgs);
-+					else
-+						ret =3D octeon_i2c_hlc_block_comp_write(i2c, msgs);
-+					goto out;
-+				}
- 			}
- 		}
- 	}
-diff --git a/drivers/i2c/busses/i2c-octeon-core.h b/drivers/i2c/busses/i2=
-c-octeon-core.h
-index b265e21189a1..32a44f2d6274 100644
---- a/drivers/i2c/busses/i2c-octeon-core.h
-+++ b/drivers/i2c/busses/i2c-octeon-core.h
-@@ -96,18 +96,28 @@ struct octeon_i2c_reg_offset {
- 	unsigned int twsi_int;
- 	unsigned int sw_twsi_ext;
- 	unsigned int mode;
-+	unsigned int block_ctl;
-+	unsigned int block_sts;
-+	unsigned int block_fifo;
- };
-=20
- #define OCTEON_REG_SW_TWSI(x)		((x)->roff.sw_twsi)
- #define OCTEON_REG_TWSI_INT(x)		((x)->roff.twsi_int)
- #define OCTEON_REG_SW_TWSI_EXT(x)	((x)->roff.sw_twsi_ext)
- #define OCTEON_REG_MODE(x)		((x)->roff.mode)
-+#define OCTEON_REG_BLOCK_CTL(x)	((x)->roff.block_ctl)
-+#define OCTEON_REG_BLOCK_STS(x)	((x)->roff.block_sts)
-+#define OCTEON_REG_BLOCK_FIFO(x)	((x)->roff.block_fifo)
-=20
--/* Set REFCLK_SRC and HS_MODE in TWSX_MODE register */
-+/* TWSX_MODE register */
- #define TWSX_MODE_REFCLK_SRC	BIT(4)
-+#define TWSX_MODE_BLOCK_MODE	BIT(2)
- #define TWSX_MODE_HS_MODE	BIT(0)
- #define TWSX_MODE_HS_MASK	(TWSX_MODE_REFCLK_SRC | TWSX_MODE_HS_MODE)
-=20
-+/* TWSX_BLOCK_STS register */
-+#define TWSX_BLOCK_STS_RESET_PTR	BIT(0)
-+
- /* Set BUS_MON_RST to reset bus monitor */
- #define BUS_MON_RST_MASK	BIT(3)
-=20
-@@ -123,6 +133,7 @@ struct octeon_i2c {
- 	void __iomem *twsi_base;
- 	struct device *dev;
- 	bool hlc_enabled;
-+	bool block_enabled;
- 	bool broken_irq_mode;
- 	bool broken_irq_check;
- 	void (*int_enable)(struct octeon_i2c *);
-diff --git a/drivers/i2c/busses/i2c-thunderx-pcidrv.c b/drivers/i2c/busse=
-s/i2c-thunderx-pcidrv.c
-index 143d012fa43e..0dc08cd97e8a 100644
---- a/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-+++ b/drivers/i2c/busses/i2c-thunderx-pcidrv.c
-@@ -168,6 +168,9 @@ static int thunder_i2c_probe_pci(struct pci_dev *pdev=
-,
- 	i2c->roff.twsi_int =3D 0x1010;
- 	i2c->roff.sw_twsi_ext =3D 0x1018;
- 	i2c->roff.mode =3D 0x1038;
-+	i2c->roff.block_ctl =3D 0x1048;
-+	i2c->roff.block_sts =3D 0x1050;
-+	i2c->roff.block_fifo =3D 0x1058;
-=20
- 	i2c->dev =3D dev;
- 	pci_set_drvdata(pdev, i2c);
---=20
-2.47.1
-
+> Regards,
+> Boqun
+> 
+> > > > +     /* Wait until is_dynamic_key() has finished accessing k->hash_entry.
+> > > > +      * This needs to be quick, since it is called in critical sections
+> > > > +      */
+> > > > +     synchronize_rcu_expedited();
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(lockdep_unregister_key);
+> > >
+> > > So I fundamentally despise synchronize_rcu_expedited(), also your
+> > > comment style is broken.
+> > >
+> > > Why can't qdisc call this outside of the lock?
+> > 
+> > Good luck with that, and anyway the time to call it 256 times would
+> > still hurt Breno use case.
+> > 
+> > My suggestion was to change lockdep_unregister_key() contract, and use
+> > kfree_rcu() there
+> > 
+> > > I think we should redesign lockdep_unregister_key() to work on a separately
+> > > allocated piece of memory,
+> > > then use kfree_rcu() in it.
+> > >
+> > > Ie not embed a "struct lock_class_key" in the struct Qdisc, but a pointer to
+> > >
+> > > struct ... {
+> > >      struct lock_class_key key;
+> > >      struct rcu_head  rcu;
+> > > }
+> > 
+> > More work because it requires changing all lockdep_unregister_key() users.
 
