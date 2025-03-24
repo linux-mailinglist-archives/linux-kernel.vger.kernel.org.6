@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-574290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E930A6E33C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:20:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800FDA6E349
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F423B4082
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA0D189575F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9894E19309E;
-	Mon, 24 Mar 2025 19:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1184D194C61;
+	Mon, 24 Mar 2025 19:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY4UkiXX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3042F84D08;
-	Mon, 24 Mar 2025 19:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F8B9444;
+	Mon, 24 Mar 2025 19:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742843973; cv=none; b=MvXrzHp4KyL8Q+Rg5I3+KahuMFLlVBI1a5ccTuR8ZHghB1d4Sdw+HDXv7Du1LbRa5HJURuZpgtbfRV82JzJcS/mYpNEsBSqNKjIExZtTeX6iIr9KRKL2nkzuRNByn3aUnXy3HDrNU4mX1TuiZXSEKZIMGB/PfpJHlVkp8J/iAFQ=
+	t=1742843996; cv=none; b=t+hhzl9b6rjE0ahcxE1wdert1CKg0NNH+VFIN7Tj29GLvURh5lXX+ANeU3vYioej76UfML8gU8FCV6h7bXyMrkiow8cpCTVjaP6ajEvVLx/pj17FMgmsj+0NrMvztlQiLnGccbmUs3dslIW3+7Hdmk/BZxIr565+spPHsTT0b/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742843973; c=relaxed/simple;
-	bh=fqnEprHyp29eEzNNsQAHHHd77WVKBIYKI6z30Kl4dAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iut4RkIFEo4ge5CrdBzwnQ2K49K15O0zgWO843wSZgyGVTUT/koReelhmMwX6M3Hq1s59qIZ7vU1Rk96Fo7R9un2K6XrO0hx3N2XpOos9hjWQ9mokr4SH7Wp5jJQVHqYtu9yh4RvIzrgs6X4SVKJS0NL/KtpqtSyQ+wovALnbgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395E5C4CEDD;
-	Mon, 24 Mar 2025 19:19:31 +0000 (UTC)
-Date: Mon, 24 Mar 2025 15:20:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Kees Cook
- <kees@kernel.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, Rasmus
- Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
- <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2 4/6] vsnprintf: Mark binary printing functions with
- __printf() attribute
-Message-ID: <20250324152012.413380d8@gandalf.local.home>
-In-Reply-To: <20250321144822.324050-5-andriy.shevchenko@linux.intel.com>
-References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
-	<20250321144822.324050-5-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742843996; c=relaxed/simple;
+	bh=tCQwg+ILmxSv/vZ1mMK34olzXUWqG3EfmuPCjXaXCR0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=svVjAdHqmdipcRysIdD+Qqnt21Zw0vwlRy3Ks2Yx9Ke8RLhFQ271MHKXeUdK0FeXff6dud0XEaPQ++st1A3b18ZX5va+VBknW/BkJf7kHDqQ223ybPsZsJIsMbTmek23F5WhHdMTw4G5BOfBxXMWNx6fufRZiSqEhlbZULZzb2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY4UkiXX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BD0C4CEDD;
+	Mon, 24 Mar 2025 19:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742843995;
+	bh=tCQwg+ILmxSv/vZ1mMK34olzXUWqG3EfmuPCjXaXCR0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZY4UkiXX9S/UfOKf6NcPX7pE8IfyjnVqTZArcCPhkywuts4g6UnK4rx0khYOLdAyn
+	 jqNhA9bfpGgKKsWKZaL6jF6AVaiWsjo+XZbaX0S9KRWvbYPUWv0s7QJCd+TdSssMrZ
+	 G6f4AfICcTvNanogU34dS2Vku51xa2jaJs1Wo3FoasppBKtyhQLYf3UI34DNAbDbpT
+	 IRotqtcruDfASUZKbzid3zpLBw5OWEeEt2qeiN6f3FfQGVgyexfkoVyQcboXo0kV8O
+	 mvGbWUCjS05wv/YDjin8TOCuIXBb8D0ZiKSSoKj5J/5lKTInU+gJbbOcU5jURUfd2a
+	 dN5c98lxFSzKA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D08380664D;
+	Mon, 24 Mar 2025 19:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] gve: unlink old napi only if page pool exists
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174284403204.4140851.713015694194753583.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Mar 2025 19:20:32 +0000
+References: <20250317214141.286854-1-hramamurthy@google.com>
+In-Reply-To: <20250317214141.286854-1-hramamurthy@google.com>
+To: Harshitha Ramamurthy <hramamurthy@google.com>
+Cc: netdev@vger.kernel.org, jeroendb@google.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ pkaligineedi@google.com, shailend@google.com, willemb@google.com,
+ jacob.e.keller@intel.com, joshwash@google.com, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
 
-On Fri, 21 Mar 2025 16:40:50 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Hello:
 
-> Binary printf() functions are using printf() type of format, and compiler
-> is not happy about them as is:
->=20
-> lib/vsprintf.c:3130:47: error: function =E2=80=98vbin_printf=E2=80=99 mig=
-ht be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute [-Werro=
-r=3Dsuggest-attribute=3Dformat]
-> lib/vsprintf.c:3298:33: error: function =E2=80=98bstr_printf=E2=80=99 mig=
-ht be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute [-Werro=
-r=3Dsuggest-attribute=3Dformat]
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-BTW, I find it disturbing that the compiler is set to "error" on a warning
-that "might be a candidate". What happens if it is not? We have to play
-games to quiet it.
+On Mon, 17 Mar 2025 21:41:41 +0000 you wrote:
+> Commit de70981f295e ("gve: unlink old napi when stopping a queue using
+> queue API") unlinks the old napi when stopping a queue. But this breaks
+> QPL mode of the driver which does not use page pool. Fix this by checking
+> that there's a page pool associated with the ring.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: de70981f295e ("gve: unlink old napi when stopping a queue using queue API")
+> Reviewed-by: Joshua Washington <joshwash@google.com>
+> Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> 
+> [...]
 
-Adding __printf() attributes to stubs seems to be a case of the compiler
-causing more problems than its worth :-/
+Here is the summary with links:
+  - [net] gve: unlink old napi only if page pool exists
+    https://git.kernel.org/netdev/net/c/81273eb87af8
 
-I honestly hate this error on warning because it causes real pain when
-debugging. There's a lot of times I don't know if the value is long or long
-long, and when I get it wrong, my printk() causes the build to fail. It's
-especially annoying when both long and long long are the same size!
-
-Fixing theses stupid errors takes a non trivial amount of time away from
-actual debugging.
-
--- Steve
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
->=20
-> Fix the compilation errors by adding __printf() attribute.
->=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
