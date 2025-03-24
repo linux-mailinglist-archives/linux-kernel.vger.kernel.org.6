@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-573326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4F0A6D5CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:06:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88087A6D5C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82923B3490
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DFB17A4938
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DDB2505C3;
-	Mon, 24 Mar 2025 08:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BD825D20E;
+	Mon, 24 Mar 2025 08:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOgNvj+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t3sX6v/e"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718C25D1E8;
-	Mon, 24 Mar 2025 08:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9023918B470;
+	Mon, 24 Mar 2025 08:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742803438; cv=none; b=tvpuCj84ltkr3ECa/IC4gt9WmD2sIsN1PSzN7BbY2Y3nn23anrURlFvj/mRs0XmRkkCW/LQLa42WNo8+EtvQQX+vzmMteLlMTV33X82owg/fSzaSbxZZHuBnsoPpJWJOodV+z8r8KyplMoMEir0w+fHk2t/EpPI6X6EVWJPFT+I=
+	t=1742803505; cv=none; b=jHNDPmcq+vrsNGXIJGuUh8PkR3IEaRCht2AVU5oOOEQNVB7Ptm3IKMPWX50K7ULIhjNTkud6h7N7ihtV23A2iy8cJRxaWpWQxRZF565g+ji2xmBBHgOdWD6cmnXVaMb5q+F8emsDqxciNTkpXayr6C9ZF+AqT98iYKre4d6Cr+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742803438; c=relaxed/simple;
-	bh=bVc8ppawXuFZXap+bB2SZMErDGCzppriuGtA2w5+FAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OokueUvgb59LmMQMywgEqoYwY/n85SuC/oJ5ddh7Vgz14cIJTIsFcAOF1p0sjpRgXkB/BZvKTv4lTLhqgitpCxbrwTVB/zNkyaX03unqUpQWChfBv6nUs2auCUIv+Tozt0EZ6x7AU0qgd2pWlAiubizlCJB+ECV03kaBmQnCu6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOgNvj+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3279BC4CEED;
-	Mon, 24 Mar 2025 08:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742803437;
-	bh=bVc8ppawXuFZXap+bB2SZMErDGCzppriuGtA2w5+FAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mOgNvj+4vU03obYi+4rPDzBTYcup6VXKdy48bVjZY6PqjIisLRYuY3vw6mZlt/36Y
-	 Qp8RlSvpnNGvrkfVDldpl463p3uAyBim2nJUr97B1zXu0vL4sDVBUDHTz3B91gM9pG
-	 pF0t2ToYS+gmDEc2gVDUHqSiBc4XpuDBmZKaNEtX83WtvcxKtbL6/a4IwVj4EEzGHA
-	 RQs5HW+XG6Rv+xUIvvLWndqebzugrx9yh5iVcDQKb7zd3otnRekULB1b7urTymwzpH
-	 QtxZBeqNN5N40hvz+WNY6e+BCNfQDGVbMZnnl2B5p3anES6LaWIHIBjefo9fyjUE1j
-	 QhLzPg5V7a4Vw==
-Date: Mon, 24 Mar 2025 09:03:53 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cathy Xu <ot_cathy.xu@mediatek.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, Lei Xue <lei.xue@mediatek.com>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, yong.mao@mediatek.com, 
-	Axe.Yang@mediatek.com, Jimin.Wang@mediatek.com, Wenbin.Mei@mediatek.com, 
-	Guodong Liu <guodong.liu@mediatek.com>
-Subject: Re: [PATCH v5 2/3] arm64: dts: mediatek: mt8196: Add pinmux macro
- header file
-Message-ID: <20250324-cunning-ruby-lorikeet-aac6bf@krzk-bin>
-References: <20250321084142.18563-1-ot_cathy.xu@mediatek.com>
- <20250321084142.18563-3-ot_cathy.xu@mediatek.com>
+	s=arc-20240116; t=1742803505; c=relaxed/simple;
+	bh=TKskNBLPeo1lBhgmUyu9myMXtF9h3YS7rpbRm8JCR5M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WFIkJ0CWwBMo9zNoGpEkr57vIb4wvf/G4OsMZlhXxiUJ6zXK2m95bu83Qx1QGfyBLmpS5SaiogpOI9yO7BK0YmdbovQJIrp52Ti439A+1SSEpRJCFbr5EcIvxt6J3W9rjYtX+y/p/WqGXhV0OyQVA/JRo1K52YPdN0+63B4kgEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=t3sX6v/e; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5E29563F;
+	Mon, 24 Mar 2025 09:03:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742803395;
+	bh=TKskNBLPeo1lBhgmUyu9myMXtF9h3YS7rpbRm8JCR5M=;
+	h=From:Subject:Date:To:Cc:From;
+	b=t3sX6v/eNu7LkRA2bl18o+72DnaEPDQrq6dIoqi2TtcCWo/7g5jDyskE+XWX1yurz
+	 PsFjrGtY/NfeJjenK8yvYtaGZVK6C4dy32xz7iTt/mN0vHve04yFYO0a0Xx6PSlntJ
+	 OQbX/G5Gquv5An0WEWBRy8PJWVd+ptobSTn3y9MU=
+From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: [PATCH v4 0/3] media: subdev: Add
+ v4l2_subdev_get_frame_desc_passthrough and use it
+Date: Mon, 24 Mar 2025 10:04:43 +0200
+Message-Id: <20250324-frame-desc-passthrough-v4-0-dbe2412297cc@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250321084142.18563-3-ot_cathy.xu@mediatek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABwS4WcC/4XNsQ6DIBDG8VcxzKURDlQ69T2aDiinMigGLGljf
+ PeiSzvUdPxfcr9vIQG9xUAu2UI8RhusG1OIU0aaXo8dUmtSE55zmXNW0dbrAanB0NBJhzD33j2
+ 6nhZFlUsUDFQpSHqePLb2ucO3e+rehtn5174T2Xb9S0ZGc6qBC1m1EkomrtagDm6snfbm3LiBb
+ HLk35o61HjSJANpZImNKfSBBh8tTR9qkDSloAKlWatq+KGt6/oGMUGphV8BAAA=
+X-Change-ID: 20250218-frame-desc-passthrough-66805e413974
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1586;
+ i=tomi.valkeinen+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=TKskNBLPeo1lBhgmUyu9myMXtF9h3YS7rpbRm8JCR5M=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBn4RIrfO4q48FllCcKgconQwH4aphtt4vlcXCXg
+ CH0zaDsXO+JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ+ESKwAKCRD6PaqMvJYe
+ 9dTgD/9DtFTyDJMUZdI01jwnuZ3MoTSK1N7/xZrAaKTNVXxWpAfGZBgWYY5bwTw3DfdF49tEJU0
+ C2sw9XBzQq8iQ4tRw1S9g2vC4C4P6pf6nH0Gd02U35w2LYwTyQQINso3jJFhQcNec4K2RRiLETk
+ kiyzfgTYCYuwB7yEv8Do239XJbSQXQbsW4EnK+q7nCaP4qz9RMPgv2UUUuiCWlxcE4JcD8KMBB4
+ IXghONlD/lYn5nbQ/Ezu2r6U8z9WigGaPOq0j3MQnH/rSf+tKRp6W+1ylaP9d5gNwLn25B6Agz3
+ X2T7e2Cpyg6sf67VivUo4YXSwgpb4EFsfnTqKDL0H4joiDmOC5E6rylTYks+6AYekyGPjP9nTGd
+ AwmeUyNEpgnAyIT4YsimUC8kMyTal4D2TJvP40UyH2bc8l0yuuqX6fWBimo7Q7bT8nl1i2n0IHk
+ 4XIyKQJUMWusj+nIkKDLgG9ShkRGNxHsn0Q/k6ssqjW39Loa6Oa3l6dWyy0DuQqkhRO67gtL5JC
+ 1DrwKRbj4tvKMLNDhCFxzmDS/W4Shks6bmlr8TgS/aXaRHKQnuSyOySxrxtqvI+Yn8wy5j8QTal
+ S/X9ggax6OE0EOMkTDBqs72kjW6Rpwj6ecfPe0/VO7H3K1p4/hBW6ROtVtmKx8B+1JbFx7UqYLR
+ 3gKTR1HmJuMktXQ==
+X-Developer-Key: i=tomi.valkeinen+renesas@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Fri, Mar 21, 2025 at 04:39:13PM +0800, Cathy Xu wrote:
-> Add the pinctrl header file on MediaTek mt8196.
-> 
-> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
-> Signed-off-by: Cathy Xu <ot_cathy.xu@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h | 1574 +++++++++++++++++
->  1 file changed, 1574 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h
-> 
+When writing the exact same code the third time for Renesas, I thought
+we probably need a helper.
 
-Where is the change adding the pinctrl nodes to the DTS?
+ Tomi
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+---
+Changes in v4:
+- Update the helper name in commit descriptions too
+- Link to v3: https://lore.kernel.org/r/20250324-frame-desc-passthrough-v3-0-993839a1f9b3@ideasonboard.com
+
+Changes in v3:
+- Rename the helper to v4l2_subdev_get_frame_desc_passthrough()
+- Check for fd->entry[] array overflow
+- Add error prints (with dev_dbg)
+- Link to v2: https://lore.kernel.org/r/20250219-frame-desc-passthrough-v2-0-5135d57ecd6a@ideasonboard.com
+
+Changes in v2:
+- Fix "uninitialized symbol 'ret'"
+- Reorder local variables
+- Link to v1: https://lore.kernel.org/r/20250218-frame-desc-passthrough-v1-0-a32458f53714@ideasonboard.com
+
+---
+Tomi Valkeinen (3):
+      media: subdev: Add v4l2_subdev_get_frame_desc_passthrough helper
+      media: i2c: ds90ub953: Use v4l2_subdev_get_frame_desc_passthrough
+      media: i2c: ds90ub913: Use v4l2_subdev_get_frame_desc_passthrough
+
+ drivers/media/i2c/ds90ub913.c         |  59 +-----------------
+ drivers/media/i2c/ds90ub953.c         |  61 +-----------------
+ drivers/media/v4l2-core/v4l2-subdev.c | 113 ++++++++++++++++++++++++++++++++++
+ include/media/v4l2-subdev.h           |  22 +++++++
+ 4 files changed, 137 insertions(+), 118 deletions(-)
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250218-frame-desc-passthrough-66805e413974
 
 Best regards,
-Krzysztof
+-- 
+Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 
 
