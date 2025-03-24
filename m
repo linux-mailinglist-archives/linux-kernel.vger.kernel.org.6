@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-574163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F3DA6E161
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:46:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0084DA6E16B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F52716FF1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A7818989AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB52026F448;
-	Mon, 24 Mar 2025 17:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E3026FA45;
+	Mon, 24 Mar 2025 17:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Z+tr33A"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M3+3ZEQt"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A20926B968
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BD126E16F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837630; cv=none; b=SDP0EurJT+ubXm7OC57FFYOek9LtGjQuaejdMgptsV5Q5+FVxMcHcDbSzrlLoNKCU9hPd3ZyWiWmgdjIwtqoYqR76NOpVvcSGsXWMSYmzby5i5F0QwN9IQzibiE4yR7/ChMi4gLJFLnh92qd+BxR7XV0XCFtuaqiYjA+AAQkpMc=
+	t=1742837632; cv=none; b=iKx7u79mlRzo7NK+RL8TEU03OsmAmCoRBvjP5p/zPM7RsmM65wnbMKqHbJiq/AD6TNQLPTIZurYR5T9uo1oxZUaaB8jwroB9s0d1N0J146YfHqIH4uZZ9el2ONN7td76z1ZxtXvYYi6otblX1NO0PWCovwyZ9NJdJWMK2uQEAmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837630; c=relaxed/simple;
-	bh=zOnGJniEN3WXnc3VeKLo8SjLrISpK18TNlsPROxYixw=;
+	s=arc-20240116; t=1742837632; c=relaxed/simple;
+	bh=QEXTgCiBbEdS4w6CQHuGGcellK8LpBCCKx5tvc2kY/4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=A1iWj6Irphy3WqnDKQ+HPFMU9urmAgTgWjBiKEMjZL8AtcUUlShLZGki04JBTyBIC6wwnWMV2CXw4HMowAH2qDYtcvymHBoHg60KudqVZMUABPgtN33LQnVfyp7Fr4jfC/EkZi+gMhtAY73grFvsliqlFuWyc+lIUBYGiGaPaiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Z+tr33A; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=RV3m5O2eq+E7YehFvu314N/tY4R/tfO0w2h6TYH63ghZvr1lHu691XxoqIyJA/zfSyoO59TJZSOAFhzvrl/sm/HQsNM3nm60ICy75kbNBR+nsikdSTLnRcnYDRuzootMVCEd5Dz2Lhmz3D86XTmbrOhYTzTl8TsPYXJV8pCSpUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M3+3ZEQt; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2241e7e3addso66344235ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:49 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so7024910a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742837629; x=1743442429; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742837630; x=1743442430; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=+5INsqPwwbOfqQ7eFWXO61jTPMwL6br0niH/ojJ3Zxg=;
-        b=2Z+tr33An67SC8ci0lyW5v2i47HRpk9AD90kJV5uWkd9NZ++1Cw3QXrHiENgKc1Zd3
-         1MFtikti0MqVQfiN5o9LK7gf8SSrgjkXyu2Q4gA46IriC7OHyaXX+vDWMe8ieP1Wl3OO
-         4do0/yFHX9CGSlTgmeowLs5nt5fyu31cN9Ds4XbGHwNjtRtNuj2a8V2m+xwsh3i8ipNI
-         2Ke3ZTw9zDdJUSxmBWP7zfmBpZ/aiIY/vGSct3O9TBL+k8K+hzPou/J2X4C61Bt96HcF
-         JEaStGf5iTx8SJkF2aiPlIvYldJf63aIx+s6JM7p9eA3Rc/pI1Ph6gfmufICFgcCOneg
-         OmXw==
+        bh=dBqCRDl1BaUTi1HkHSsNxnlzCe4zXBNzKMIODcAHiYw=;
+        b=M3+3ZEQtiHGdOCLYG5U2JoETd1v86mAbIQUuAb6hXUC1gJWNobZmKAX2w+iD9p8AmB
+         dKhcNrwtqzBP5ME7WlIkA5CNBaMjch9CSSAfXaAFI88OV0kcsY6OiAC+WWjQogaGtNhi
+         nk7n6fQuiwpU+k8prr4AMw1Dy/0832/PR0V8mkhh9ZisM6ZjNnlAAAq4a8qQNXjEP5gO
+         6tItd+qliyDfuHzLXr8HIEm1/QQ4W+KsdT2B0yjA3wec4Cb1+s6Wm6+SxvkGPVPpDC5j
+         No//eL2PUrBXvzXFxCZ0mj6V+UuvCnq3P5Yt8q5HMT8ZkvxU2P6/YKuTBRoOLUjQtevV
+         pk5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742837629; x=1743442429;
+        d=1e100.net; s=20230601; t=1742837630; x=1743442430;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+5INsqPwwbOfqQ7eFWXO61jTPMwL6br0niH/ojJ3Zxg=;
-        b=PvoeuH2B/UDtiu7T0dX23Qms4C5bgCaLxyklIj2UuS72wKPu7IlS5E+WvmlgOVPZ0y
-         Aggu2M//3hVQ8D4S5JRaopJwtV3Hx3GL/zYIU05Ogyq/HRnDFPMD8JopdI2P8c4SZeQh
-         kWO2oayDnFrxUvas97OI1JBml0oUhvNMNpTs+wkOldUVvD9r+Bx2sE1CcFRPjEP9seoA
-         cVgM3AhRTycIq4SFQndKqBh4s4DdsNbq6cFRjezJf/eJoOFXTPw22bdtqG618z2423zF
-         zBiGyocc7YxI/xDprlzss4kQsemdu95g+q5I9Wwk0w9+OHhn+1TrddW4dJRkIw6yjqce
-         J5cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUxQS75Oaz2vC/le+7lTEBUXUeRRCaW3ZDLmIW+b6yFT5kE50KrbLPg0Mub1now+Yb6pHmRBrdb88/d4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCLSp77a4TGBYUl50mQpiKPkunKi9d93RSmWiqEr8TmOjhmYoP
-	OGKfcmZHARj3VG8Ea5z3BVEs3m+pEO6YrmBKfOSMyR7i59WG7rkzWl8s4NlqhEJnGUziNHoXTW7
-	XFM5Sag==
-X-Google-Smtp-Source: AGHT+IHU2CykiJSiQvxXiEw9anmIf5P5FGVKtn7cQ47VHoNwLlgG0OkW/k4wbNcHBidn2YUs/QsPYppALFJG
-X-Received: from plgu5.prod.google.com ([2002:a17:902:e805:b0:223:58e2:570d])
- (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d488:b0:224:26fd:82e5
- with SMTP id d9443c01a7336-22780e29ebfmr212668755ad.48.1742837628794; Mon, 24
- Mar 2025 10:33:48 -0700 (PDT)
+        bh=dBqCRDl1BaUTi1HkHSsNxnlzCe4zXBNzKMIODcAHiYw=;
+        b=ZcoGrQe6wn8wPR7o6bW47M8kDcXTBHma2BoGl/ayRdZC4s+x6CLBGnLTezH2iLpB2n
+         HeSUUUXzBxFtBPnHFxUbkg53MfaKZS972wCqoC/itYwHcQktZROclzt2tx7l1YmOydOZ
+         mnQBGcQoBZds89YzkvxZEiYXSKguACKbEVjbBPK7XEJ/Ulp0LPMx6ZG5jcDMQl/TsysB
+         HLg6fPTA6SLUq8WlC+vfeYaKa8auXYTqxXP+O9D+Fv6nCTKapgJuxgF4egrCzl2i+XoG
+         sD6oGYfQctSt8ML+saPMWN83Ih2pDC6ndrmsqRjJlQHYVocR8sqLzQQHwNFelppoBrLw
+         b96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWv9wBAIST4MLe0oPzKCMH1JvDCne+5mkznEqBKs6ILENBKV1zML0PulKC0pqTU4gDPiKD7qrraak/cCkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh//19ui38Z5uuMT4JdFExGjhamYNp05ODt3UiwS6rfyMLOlzm
+	4AVOVUzQzXmKNNAIPsZ+2UytvH9WJwrsuJP3dQXbgWttGJca4EuQs9dPP0Dm+vj1W5mf65SWLD6
+	aR9LjMQ==
+X-Google-Smtp-Source: AGHT+IFVMWyCCSqp8v1wmBp9ZYcVHAb3dnatY+7Oyg/sMKAHidEKkkuGwuo6xJ/wrZ6w/wGs3G6SoF1DmHcl
+X-Received: from pjbpl3.prod.google.com ([2002:a17:90b:2683:b0:2fb:fa85:1678])
+ (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2dc7:b0:2ee:d371:3227
+ with SMTP id 98e67ed59e1d1-3030fea3935mr26101748a91.17.1742837630569; Mon, 24
+ Mar 2025 10:33:50 -0700 (PDT)
 Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Mon, 24 Mar 2025 17:31:15 +0000
+Date: Mon, 24 Mar 2025 17:31:16 +0000
 In-Reply-To: <20250324173121.1275209-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250324173121.1275209-1-mizhang@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250324173121.1275209-36-mizhang@google.com>
-Subject: [PATCH v4 35/38] KVM: x86/pmu: Expose enable_mediated_pmu parameter
- to user space
+Message-ID: <20250324173121.1275209-37-mizhang@google.com>
+Subject: [PATCH v4 36/38] KVM: selftests: Add mediated vPMU supported for pmu tests
 From: Mingwei Zhang <mizhang@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -98,42 +97,109 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-Expose enable_mediated_pmu parameter to user space, then users can
-enable/disable mediated vPMU on demand.
+Mediated vPMU needs to call KVM_CAP_PMU_CAPABILITY ioctl to enable it.
+Thus add a helper vm_create_with_one_vcpu_with_pmu() to create PMU
+enabled VM and replace vm_create_with_one_vcpu() helper with this new
+helper in pmu tests.
 
 Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 Signed-off-by: Mingwei Zhang <mizhang@google.com>
 ---
- arch/x86/kvm/svm/svm.c | 2 ++
- arch/x86/kvm/vmx/vmx.c | 2 ++
- 2 files changed, 4 insertions(+)
+ .../testing/selftests/kvm/include/kvm_util.h  |  3 +++
+ tools/testing/selftests/kvm/lib/kvm_util.c    | 23 +++++++++++++++++++
+ .../selftests/kvm/x86/pmu_counters_test.c     |  4 +++-
+ .../selftests/kvm/x86/pmu_event_filter_test.c |  8 ++++---
+ 4 files changed, 34 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index bff351992468..a7ccac624dd3 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -265,6 +265,8 @@ module_param(intercept_smi, bool, 0444);
- bool vnmi = true;
- module_param(vnmi, bool, 0444);
+diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+index 4c4e5a847f67..a73b0b98be5e 100644
+--- a/tools/testing/selftests/kvm/include/kvm_util.h
++++ b/tools/testing/selftests/kvm/include/kvm_util.h
+@@ -961,6 +961,9 @@ static inline struct kvm_vm *vm_create_shape_with_one_vcpu(struct vm_shape shape
+ 	return __vm_create_shape_with_one_vcpu(shape, vcpu, 0, guest_code);
+ }
  
-+module_param(enable_mediated_pmu, bool, 0444);
++struct kvm_vm *vm_create_with_one_vcpu_with_pmu(struct kvm_vcpu **vcpu,
++						void *guest_code);
 +
- static bool svm_gp_erratum_intercept = true;
+ struct kvm_vcpu *vm_recreate_with_one_vcpu(struct kvm_vm *vm);
  
- static u8 rsm_ins_bytes[] = "\x0f\xaa";
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 7bb16bed08da..af9e7b917335 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -147,6 +147,8 @@ module_param_named(preemption_timer, enable_preemption_timer, bool, S_IRUGO);
- extern bool __read_mostly allow_smaller_maxphyaddr;
- module_param(allow_smaller_maxphyaddr, bool, S_IRUGO);
+ void kvm_pin_this_task_to_pcpu(uint32_t pcpu);
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 33fefeb3ca44..18143ec2e751 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -545,6 +545,29 @@ struct kvm_vcpu *vm_recreate_with_one_vcpu(struct kvm_vm *vm)
+ 	return vm_vcpu_recreate(vm, 0);
+ }
  
-+module_param(enable_mediated_pmu, bool, 0444);
++struct kvm_vm *vm_create_with_one_vcpu_with_pmu(struct kvm_vcpu **vcpu,
++						void *guest_code)
++{
++	struct kvm_vm *vm;
++	int r;
 +
- #define KVM_VM_CR0_ALWAYS_OFF (X86_CR0_NW | X86_CR0_CD)
- #define KVM_VM_CR0_ALWAYS_ON_UNRESTRICTED_GUEST X86_CR0_NE
- #define KVM_VM_CR0_ALWAYS_ON				\
++	r = kvm_check_cap(KVM_CAP_PMU_CAPABILITY);
++	if (!(r & KVM_PMU_CAP_DISABLE))
++		return NULL;
++
++	vm = vm_create(1);
++
++	/*
++	 * KVM_CAP_PMU_CAPABILITY ioctl must be explicitly called to enable
++	 * mediated vPMU.
++	 */
++	vm_enable_cap(vm, KVM_CAP_PMU_CAPABILITY, !KVM_PMU_CAP_DISABLE);
++
++	*vcpu = vm_vcpu_add(vm, 0, guest_code);
++
++	return vm;
++}
++
+ void kvm_pin_this_task_to_pcpu(uint32_t pcpu)
+ {
+ 	cpu_set_t mask;
+diff --git a/tools/testing/selftests/kvm/x86/pmu_counters_test.c b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+index 698cb36989db..441c66f314fb 100644
+--- a/tools/testing/selftests/kvm/x86/pmu_counters_test.c
++++ b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+@@ -40,7 +40,9 @@ static struct kvm_vm *pmu_vm_create_with_one_vcpu(struct kvm_vcpu **vcpu,
+ {
+ 	struct kvm_vm *vm;
+ 
+-	vm = vm_create_with_one_vcpu(vcpu, guest_code);
++	vm = vm_create_with_one_vcpu_with_pmu(vcpu, guest_code);
++	assert(vm);
++
+ 	sync_global_to_guest(vm, kvm_pmu_version);
+ 
+ 	/*
+diff --git a/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c b/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
+index c15513cd74d1..1c7d265a0003 100644
+--- a/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
++++ b/tools/testing/selftests/kvm/x86/pmu_event_filter_test.c
+@@ -822,8 +822,9 @@ static void test_fixed_counter_bitmap(void)
+ 	 * fixed performance counters.
+ 	 */
+ 	for (idx = 0; idx < nr_fixed_counters; idx++) {
+-		vm = vm_create_with_one_vcpu(&vcpu,
+-					     intel_run_fixed_counter_guest_code);
++		vm = vm_create_with_one_vcpu_with_pmu(&vcpu,
++						      intel_run_fixed_counter_guest_code);
++		assert(vm);
+ 		vcpu_args_set(vcpu, 1, idx);
+ 		__test_fixed_counter_bitmap(vcpu, idx, nr_fixed_counters);
+ 		kvm_vm_free(vm);
+@@ -843,7 +844,8 @@ int main(int argc, char *argv[])
+ 	TEST_REQUIRE(use_intel_pmu() || use_amd_pmu());
+ 	guest_code = use_intel_pmu() ? intel_guest_code : amd_guest_code;
+ 
+-	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
++	vm = vm_create_with_one_vcpu_with_pmu(&vcpu, guest_code);
++	assert(vm);
+ 
+ 	TEST_REQUIRE(sanity_check_pmu(vcpu));
+ 
 -- 
 2.49.0.395.g12beb8f557-goog
 
