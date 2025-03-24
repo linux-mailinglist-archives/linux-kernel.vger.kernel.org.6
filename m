@@ -1,154 +1,93 @@
-Return-Path: <linux-kernel+bounces-573364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C12CA6D65C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:38:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C869A6D662
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 748283B14B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:37:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC70216B307
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6AC25D8E0;
-	Mon, 24 Mar 2025 08:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="m7WG47WK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B125D52C;
-	Mon, 24 Mar 2025 08:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A99025D531;
+	Mon, 24 Mar 2025 08:39:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F9EFC1D;
+	Mon, 24 Mar 2025 08:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805457; cv=none; b=n7F2j5kw47PtrXmAOvL5fRYSDaBk80B+J5gryzldL9TW7rSjZay9ltxqYb2D5IMeX7TnCxSRi+Pxl4PzTmCtaka3gVdsLLd23V3gmeUTcqZUIbxLQNs+D+XL/Ej15Qhv4ZjoPMAAzSfvucZKTcf+ODibMqMIkP+TDYFGm8z7aLk=
+	t=1742805542; cv=none; b=s7tvfm7FLLq+WALDee5jsSTDbSxkBiCegreD77eTJs/MxmtAUxdWQ7juc+isBxHPu7QhLcfnAMb2RMUyYhzerfpDxC8Ba99M8vOaoALcDjEhHvESwv0vJ5xt6s+UEbnmieMuQ6MvkBDjJUNIFUsFQ6e6UM9j7g2lqeEBJJd6wBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805457; c=relaxed/simple;
-	bh=D69SC+5FQc2WAFqCzWqeK4ofTdNQe+cRvdH05Lz/0Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ag2KdrBhwHiRz7AVfWe2kHyzvV7YK1b/v+F019NDIXAT07D73vWVPLz3eEozFQKyqQW2y76D3jUcl7mtBNH7R0US3sNIAjHNHDmtkofto5zMv+HtVYeuX6L+axd2hLnZZwNkEslt0gID9c1PKInCSdmUyLMzNotjFjad51T37GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=m7WG47WK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742805450;
-	bh=dGrsEpWWQThTpylnaO8MjPKqdNf2MabWrZhjdBJLAlU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=m7WG47WKYD8yWyYb8XYQL/uuVvGYZP6QuAMUfQiiGTNawr7xM+EVC9R1BQk1PjlSR
-	 2TKGzzV8vzeoyZRE/Ov641eQLedFr2OYaouLZXcNAV6+HBMCIu07s4P7T7ieYzzojm
-	 RdnPQjbAtA+h9rtLn4iw1uKPJPmB4IIhp/l+16tvjxy8BuqAkAypQzfPwiDlzMfm2z
-	 DxlcrUaNPJ9xiEj3qVGc13EqJQCC1UnpdjHx+bpbsLpYGtiUzt8L13JR+kvuwHkOEu
-	 +B1f+ZTYNvLWDCTsTIp8R1cJ8MzCiMVRV2ErWkcHLS1M9hgARF09pBX7qEFHFaKN7D
-	 KBYpd1yuXhtNA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLmdQ0117z4wbn;
-	Mon, 24 Mar 2025 19:37:29 +1100 (AEDT)
-Date: Mon, 24 Mar 2025 19:37:28 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sherry Sun
- <sherry.sun@nxp.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tty tree
-Message-ID: <20250324193728.4af92ccc@canb.auug.org.au>
+	s=arc-20240116; t=1742805542; c=relaxed/simple;
+	bh=WFJMT0e0Wx2d4fqga/UUx/kJofGh0hGb/MxIjebVoZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r/jU+AWxxZ+3XQeo8tCdm4EUyLnXBlsPAvDKDrjQWuRv/ofPpKDz785i5pjVvY5Uz0d7zXZORwc+RXcLXFb/a8AdMJG6jOCwzmAftgV7Iwo4hO6aT4AGxI2RVTUODHqlRRm2ZkK1mHnlcU7EF4fBuO+Flk44DRJoqwv1y1LF5eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A3C51A2D;
+	Mon, 24 Mar 2025 01:39:05 -0700 (PDT)
+Received: from [10.57.41.67] (unknown [10.57.41.67])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53A833F58B;
+	Mon, 24 Mar 2025 01:38:53 -0700 (PDT)
+Message-ID: <efc72f28-0dcb-4811-a20c-73bcdbdf28fb@arm.com>
+Date: Mon, 24 Mar 2025 09:37:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kH8wyLagAvfHnj_cEOSj3hM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] mm: Call ctor/dtor for kernel PTEs
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Peter Zijlstra <peterz@infradead.org>, Qi Zheng
+ <zhengqi.arch@bytedance.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Will Deacon <will@kernel.org>, Yang Shi <yang@os.amperecomputing.com>,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org
+References: <20250317141700.3701581-1-kevin.brodsky@arm.com>
+ <20250317141700.3701581-3-kevin.brodsky@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <20250317141700.3701581-3-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/kH8wyLagAvfHnj_cEOSj3hM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 17/03/2025 15:16, Kevin Brodsky wrote:
+> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
+> index e164ca66f0f6..3c8ec3bfea44 100644
+> --- a/include/asm-generic/pgalloc.h
+> +++ b/include/asm-generic/pgalloc.h
+> @@ -23,6 +23,11 @@ static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
+>  
+>  	if (!ptdesc)
+>  		return NULL;
+> +	if (!pagetable_pte_ctor(mm, ptdesc)) {
 
-Hi all,
+As reported by the CI [1], this can cause trouble on x86 because dtor
+calls are missing in pud_free_pmd_page() and pmd_free_pte_page(). Will
+fix in the next version.
 
-After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+- Kevin
 
-drivers/tty/serial/fsl_lpuart.c: In function 'lpuart_poll_init':
-drivers/tty/serial/fsl_lpuart.c:642:29: error: unused variable 'sport' [-We=
-rror=3Dunused-variable]
-  642 |         struct lpuart_port *sport =3D container_of(port,
-      |                             ^~~~~
-drivers/tty/serial/fsl_lpuart.c: In function 'lpuart32_poll_init':
-drivers/tty/serial/fsl_lpuart.c:696:29: error: unused variable 'sport' [-We=
-rror=3Dunused-variable]
-  696 |         struct lpuart_port *sport =3D container_of(port, struct lpu=
-art_port, port);
-      |                             ^~~~~
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  3cc16ae096f1 ("tty: serial: fsl_lpuart: use port struct directly to simpl=
-y code")
-
-I have applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Mar 2025 19:10:57 +1100
-Subject: [PATCH] fix up for "tty: serial: fsl_lpuart: use port struct direc=
-tly
- to simply code"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/tty/serial/fsl_lpuart.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuar=
-t.c
-index 33eeefa6fa8f..4470966b826c 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -639,8 +639,6 @@ static void lpuart32_wait_bit_set(struct uart_port *por=
-t, unsigned int offset,
-=20
- static int lpuart_poll_init(struct uart_port *port)
- {
--	struct lpuart_port *sport =3D container_of(port,
--					struct lpuart_port, port);
- 	unsigned long flags;
- 	u8 fifo;
-=20
-@@ -693,7 +691,6 @@ static int lpuart_poll_get_char(struct uart_port *port)
- static int lpuart32_poll_init(struct uart_port *port)
- {
- 	unsigned long flags;
--	struct lpuart_port *sport =3D container_of(port, struct lpuart_port, port=
-);
- 	u32 fifo;
-=20
- 	port->fifosize =3D 0;
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kH8wyLagAvfHnj_cEOSj3hM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfhGcgACgkQAVBC80lX
-0Gxj+wf6A8Nz+mmyouOrNfjIEFol8Od7tyO2xm/TwkseiY4wrOfYuS4h9JVNVgR0
-HpKVLaTsJMRpmZ12XmTFrolsd72itth5gjZjFQMLYagtkWumHMdPcvvomzM7nj79
-q2Y7pk7BFXJF5qWyrCHxE6NzhI/AxrFs0PG8VXlHvcoBW/CXAfoYg5P/u7yyN5mH
-HzKBvBOZgfxeLJy3EiT9/hi97WHQA30pCMuZfyrbWFrwdYG+wEupJrq2u/GeK6eE
-rOWNCnLiks5mJGRFc/nFx76759Tl+RmnrcmcC2ffpFQ6othoss5bKi/MIsOnvn8x
-t27YKRC3nhNP7yF+Uswagb8DilcpAg==
-=b6IY
------END PGP SIGNATURE-----
-
---Sig_/kH8wyLagAvfHnj_cEOSj3hM--
+[1] https://lore.kernel.org/oe-lkp/202503211612.e11bd73f-lkp@intel.com/
 
