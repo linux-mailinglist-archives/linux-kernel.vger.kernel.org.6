@@ -1,650 +1,381 @@
-Return-Path: <linux-kernel+bounces-573564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E074A6D923
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96524A6D927
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7598B16CE6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197D216D542
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3325DD07;
-	Mon, 24 Mar 2025 11:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4C1CD1E4;
+	Mon, 24 Mar 2025 11:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0PGIVrm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZAh8Bvfc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2275200CB;
-	Mon, 24 Mar 2025 11:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED66042077
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815784; cv=none; b=RcTVFX8eT0Rvnw63GGjQyOputeRgil3Da+t4xeu9Ic8/7IzBJDOi+SlPFhSSvNNVAfbbyV7d9dpvA944jYoO43CIJOFKtWqop933ESNwW+oV06ioXDP0Fts9798EVq451fCvfUU6fLPnH3yN63Hlj16xkPizRvSrgBtym0Gbpd0=
+	t=1742815885; cv=none; b=lZ6rR54BclTrCHm8/FdT/lT/bbTwbrpsxG02XSUsh7kYYf0/yyGwVzMRcE/RR1z/0O4QmLal2DJuQY5dYsLXTLRmrY3pOse2eiQNMvYNx3eLWGJkUiUNioZl3qvgIRryflQIrvqBG5LBjM2+/YMgVv1YAXZ/j78v2wf8tAUxhuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815784; c=relaxed/simple;
-	bh=pXSvmnsfZeH4qdTVDB5E1EkPKoYDMFI/4KEb9PoMPyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0vn3WX/wuEocE6YkSUmfTvfewanwP4mPBHysljLbxXfWqpsK1YwUW//qnD+QLmYXQq50XilB/iGJWnEwMKZJH+9e1KuCO6CNZrZeeqid1bzk0m9yTWuP0LUYy5tUJ3bx53BJw2LIT1jzV5HWOPXK922VVuJiv5z+EAzBpazYpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0PGIVrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E013DC4CEDD;
-	Mon, 24 Mar 2025 11:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742815784;
-	bh=pXSvmnsfZeH4qdTVDB5E1EkPKoYDMFI/4KEb9PoMPyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H0PGIVrmXfb7lXBQKALfoGDmI27aOH8kOr1n42IujOWPMYIW3ToMzL/T2lyAC7sMJ
-	 7wuaqNJNtkai/kx/bv48MIxyGfaqCxsHGqUXz0Lt5TkW5cgrshCHlKGEgrSE0M+odQ
-	 tZamLUcVVySwdFoISg2SHuuIJnu/IxQejEYhoFuIxrxqb8NAnKX3jGXCCdk9UO3rIT
-	 e2coU/MvDTF1Akn6gTFhFvB88MVPZ+3KEU2MjZiLf0A7eZPSISasivNz7SAVOk72a9
-	 JDqoIq0bvVc0rGa+al4JBhd62RRw7yejG2noGxtCBfGbT/XdS5SaOmrg9M3N8tfnx8
-	 oj2OBQffZlfgA==
-Date: Mon, 24 Mar 2025 12:29:41 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Mubin Sayyed <mubin.sayyed@amd.com>
-Cc: krzysztof.kozlowski+dt@linaro.org, daniel.lezcano@linaro.org, 
-	tglx@linutronix.de, michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, git@amd.com
-Subject: Re: [PATCH v4 3/3] pwm: pwm-cadence: Add support for TTC PWM
-Message-ID: <nwdxbyynffy7kkxdznxrogzqg2r5bje45ywgxa6jj7mcix65ze@dtabj46eut5i>
-References: <20250115113556.2832282-1-mubin.sayyed@amd.com>
- <20250115113556.2832282-4-mubin.sayyed@amd.com>
+	s=arc-20240116; t=1742815885; c=relaxed/simple;
+	bh=KAAtuBE64BwzHEeogup0HNqAthm81DZxc8tTnHfoIB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VviX3YJebtImA9m8fuQuVtK5U72e7NLyp9Gi0uhYOmCxkONoE5eqdaBF4aA7Scn6pO6nTX6NXrGF1IFv431eofrC4UCTPCM5HxeYcR2e+74k+dmtk3l7u99UHIp2SMnvQQ9u3A28aiVN3sPEQlmj/2eFD9v52Aj0PsUsO867vMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZAh8Bvfc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742815881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dggUHBckjaPdw6FWAtjj0p2FBMjWS+2b+l3ntJW3vZA=;
+	b=ZAh8BvfcJW+EojCMu6bZqShrB3WxFUSY31M6NrrcX8Nm7Kxv4WxHkI7VuitTfiw2C7EiJ1
+	0yuYDM0lpAuxMkjarzIaNF5Z7LcESkhnPhPUGENFytDvkVVLCWJT3ojkzr3r+MiPPGDqrI
+	LloxQ7ahT9g/tPCQPeloWJBqC1VhR8A=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-9s6pAyhEOSS0lw9gUZWQVA-1; Mon, 24 Mar 2025 07:31:20 -0400
+X-MC-Unique: 9s6pAyhEOSS0lw9gUZWQVA-1
+X-Mimecast-MFC-AGG-ID: 9s6pAyhEOSS0lw9gUZWQVA_1742815879
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac2bb3ac7edso418588166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:31:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742815879; x=1743420679;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dggUHBckjaPdw6FWAtjj0p2FBMjWS+2b+l3ntJW3vZA=;
+        b=W/tAjRvkrWGrTY5q1C3joNvEuSOJZRlmafYj50UH9roM4YRoxoNLDwcw43DLvxJCP4
+         11QeCSrU4CAvsfMJcMAWtofbpXbiTHfZgvavcvDGBKWh/yaGVD0koUu3kw9fN5oSUTtV
+         f5u/39kCmAEizTzxyU7KsP5PlaJblny8Rb4l9lvJM6Zu4/MA7uTg6lVNGcwI5cpCZNx+
+         33ODiqf1SplB6Tvq3ed1ZqD3d+C1hnVRgc/RFZPop2OQRGe3YsNkWetEyls9chIv4JKx
+         B4FCr6bS5oCYBKZrIqc8zJadBczpHZXc/sicbqFJiadimkGiYW9gXJbkLWz0zMyI96vB
+         kLhg==
+X-Gm-Message-State: AOJu0YxL9p7bDjPPoacPMB9aRLOCDnBCswSG3rMHbBn3+AD2m5CDbii4
+	DZeV7LcJzbXcumaCiBQC0KmRJI/fkoTEs3LMq8bg8nf6onBZniXQYBW2az1HE1i270KhteI+7BO
+	pJ7sCCe3z0uIIvUT53nK82m/lv/U9YqoUPYr4XqMe+lYWotW0Rx6x9Ccw9zv3gQ==
+X-Gm-Gg: ASbGncsLohJZwY1u5dGOz+ZJ/tEuwpljLySXK9ClJl9YMf3DTDnmjn9ZxJEYZkXoAXp
+	UYlcB2lRHHGFYDHIlrG9R3L5tSxfWAvXBKprcnQxxd6WwRU090lRiiCJd3GG+2jHVWKqKECtXsU
+	6mkM7h+M/flzkSkg59aj/Hp3JBKnAIEfJUkSWC9pth1z7cRPBwHOrFb+P2Q/9SnkoKlOn9jL5ix
+	iYUfrjSUIO4qzqcjAM55oMvPXFpvEWRMwse7g2xIDJIF4L5D+1vt8YoWdxv5OMFY5pZmVnCNSgc
+	M8SU/z60yr+51v34tz0=
+X-Received: by 2002:a17:907:2ce6:b0:ac2:c41b:f32b with SMTP id a640c23a62f3a-ac3f229960dmr1202346966b.28.1742815879112;
+        Mon, 24 Mar 2025 04:31:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfxWRopK4uIUuklOnmxlSXlcvi9BwXT+CEwa/DvSgMg6XDsSuOw4LxLQZRkmyIjkA7Qbb1FQ==
+X-Received: by 2002:a17:907:2ce6:b0:ac2:c41b:f32b with SMTP id a640c23a62f3a-ac3f229960dmr1202344266b.28.1742815878626;
+        Mon, 24 Mar 2025 04:31:18 -0700 (PDT)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb51e74sm652660966b.115.2025.03.24.04.31.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 04:31:18 -0700 (PDT)
+Message-ID: <8666efcb-37b5-4201-ac47-0afde8881068@redhat.com>
+Date: Mon, 24 Mar 2025 12:31:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qalzlpcxz2i65esg"
-Content-Disposition: inline
-In-Reply-To: <20250115113556.2832282-4-mubin.sayyed@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/10] platform/x86: asus-wmi: Add support for multiple
+ kbd RGB handlers
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+References: <20250322102804.418000-1-lkml@antheas.dev>
+ <20250322102804.418000-5-lkml@antheas.dev>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250322102804.418000-5-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Antheas,
 
---qalzlpcxz2i65esg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 3/3] pwm: pwm-cadence: Add support for TTC PWM
-MIME-Version: 1.0
+Note not a full review, just taking a generic look at the new API
+between asus-wmi and asus-hid.
 
-Hello,
-
-On Wed, Jan 15, 2025 at 05:05:56PM +0530, Mubin Sayyed wrote:
-> Cadence TTC timer can be configured as clocksource/clockevent or PWM
-> device.Specific TTC device would be configured as PWM device, if
-> pwm-cells property is present in the device tree node.
->=20
-> In case of Zynq, ZynqMP and Versal SoC's, each TTC device has 3
-> timers/counters, so maximum 3 PWM channels can be configured for each TTC
-> IP instance. Also, output of 0th PWM channel of each TTC device can be
-> routed to MIO or EMIO, and output of 2nd and 3rd PWM channel can be
-> routed only to EMIO.
->=20
-> Period for given PWM channel is configured through interval timer and
-> duty cycle through match counter.
->=20
-> Details for cadence TTC IP can be found in Zynq UltraScale+ TRM.
->=20
-> Signed-off-by: Mubin Sayyed <mubin.sayyed@amd.com>
+On 22-Mar-25 11:27, Antheas Kapenekakis wrote:
+> Some devices, such as the Z13 have multiple AURA devices connected
+> to them by USB. In addition, they might have a WMI interface for
+> RGB. In Windows, Armoury Crate exposes a unified brightness slider
+> for all of them, with 3 brightness levels.
+> 
+> Therefore, to be synergistic in Linux, and support existing tooling
+> such as UPower, allow adding listeners to the RGB device of the WMI
+> interface. If WMI does not exist, lazy initialize the interface.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 > ---
-> Refer link given below for Zynq UltraScale+ TRM
-> https://docs.xilinx.com/r/en-US/ug1085-zynq-ultrascale-trm
-
-I would prefer to have a link to the TRM in the source file. When I
-follow that link today however I only get "The document you are looking
-for has been moved or deleted" :-\
-
-> Changes for v4:
->  Configure it as part of TTC clocksource/clockevent driver
->  drivers/clocksource/timer-cadence-ttc.c.
->  Move probe/remove function to timer-cadence-ttc.c.
-> Changes for v3:
->  None
-> Changes for v2:
->  Use maybe_unused attribute for ttc_pwm_of_match_driver structure
->  Add new function ttc_pwm_set_polarity
->  Removed calls to pwm_get_state
->  Replace DIV_ROUNF_CLOSEST with mul_u64_u64_div_u64
->  Modify ttc_pwm_apply to remove while loop in prescalar logic
->  and avoid glitch
->  Calculate rate in probe and add it to private structure for further
->  Drop ttc_pwm_of_xlate
->  Replace of_clk_get with devm_clk_get_enabled
->  Drop _OFFSET and _MASK from definitions
->  Keep Kconfig and Makefile changes alphabetically sorted
->  Use remove_new instead of remove
->  Document limitations in driver file
-> ---
->  drivers/pwm/Kconfig               |  10 +
->  drivers/pwm/Makefile              |   1 +
->  drivers/pwm/pwm-cadence.c         | 323 ++++++++++++++++++++++++++++++
->  include/linux/timer-cadence-ttc.h |  22 +-
->  4 files changed, 355 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/pwm/pwm-cadence.c
->=20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 0915c1e7df16..b418e5d8fa42 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -202,6 +202,16 @@ config PWM_CROS_EC
->  	  PWM driver for exposing a PWM attached to the ChromeOS Embedded
->  	  Controller.
-> =20
-> +config PWM_CADENCE
-> +	bool "Cadence TTC PWM driver"
-
-tristate please
-
-> +	depends on CADENCE_TTC_TIMER
-> +	help
-> +	  Generic PWM framework driver for cadence TTC IP found on
-> +          Xilinx Zynq/ZynqMP/Versal SOCs. Each TTC device has 3 PWM
-> +          channels. Output of 0th PWM channel of each TTC device can
-> +          be routed to MIO or EMIO, and output of 1st and 2nd PWM
-> +          channels can be routed only to EMIO.
-> +
->  config PWM_DWC_CORE
->  	tristate
->  	depends on HAS_IOMEM
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 9081e0c0e9e0..246380391a63 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -12,6 +12,7 @@ obj-$(CONFIG_PWM_BCM_KONA)	+=3D pwm-bcm-kona.o
->  obj-$(CONFIG_PWM_BCM2835)	+=3D pwm-bcm2835.o
->  obj-$(CONFIG_PWM_BERLIN)	+=3D pwm-berlin.o
->  obj-$(CONFIG_PWM_BRCMSTB)	+=3D pwm-brcmstb.o
-> +obj-$(CONFIG_PWM_CADENCE)	+=3D pwm-cadence.o
->  obj-$(CONFIG_PWM_CLK)		+=3D pwm-clk.o
->  obj-$(CONFIG_PWM_CLPS711X)	+=3D pwm-clps711x.o
->  obj-$(CONFIG_PWM_CRC)		+=3D pwm-crc.o
-> diff --git a/drivers/pwm/pwm-cadence.c b/drivers/pwm/pwm-cadence.c
-> new file mode 100644
-> index 000000000000..e7c337fe956b
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-cadence.c
-> @@ -0,0 +1,323 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Driver to configure cadence TTC timer as PWM
-> + * generator
-> + *
-> + * Limitations:
-> + * - When PWM is stopped, timer counter gets stopped immediately. This
-> + *   doesn't allow the current PWM period to complete and stops abruptly.
-> + * - Disabled PWM emits inactive level.
-> + * - When user requests a change in  any parameter of PWM (period/duty c=
-ycle/polarity)
-
-s/  / /
-
-> + *   while PWM is in enabled state:
-> + *	- PWM is stopped abruptly.
-> + *	- Requested parameter is changed.
-> + *	- Fresh PWM cycle is started.
-> + *
-> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/device.h>
-
-I didn't check, but <linux/device.h> is unusual. Do you really need it?
-
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/of_address.h>
-
-Also I think this can be dropped.
-
-> +#include <linux/timer-cadence-ttc.h>
-> +
-> +/**
-> + * struct ttc_pwm_priv - Private data for TTC PWM drivers
-> + * @chip:	PWM chip structure representing PWM controller
-> + * @clk:	TTC input clock
-> + * @rate:	TTC input clock rate
-> + * @max:	Maximum value of the counters
-> + * @base:	Base address of TTC instance
-> + */
-> +struct ttc_pwm_priv {
-> +	struct pwm_chip chip;
-> +	struct clk *clk;
-> +	unsigned long rate;
-> +	u32 max;
-> +	void __iomem *base;
+>  drivers/platform/x86/asus-wmi.c            | 113 ++++++++++++++++++---
+>  include/linux/platform_data/x86/asus-wmi.h |  16 +++
+>  2 files changed, 117 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 38ef778e8c19b..95ef9b1d321bb 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -254,6 +254,8 @@ struct asus_wmi {
+>  	int tpd_led_wk;
+>  	struct led_classdev kbd_led;
+>  	int kbd_led_wk;
+> +	bool kbd_led_avail;
+> +	bool kbd_led_registered;
+>  	struct led_classdev lightbar_led;
+>  	int lightbar_led_wk;
+>  	struct led_classdev micmute_led;
+> @@ -1487,6 +1489,53 @@ static void asus_wmi_battery_exit(struct asus_wmi *asus)
+>  
+>  /* LEDs ***********************************************************************/
+>  
+> +struct asus_hid_ref {
+> +	struct list_head listeners;
+> +	struct asus_wmi *asus;
+> +	spinlock_t lock;
 > +};
 > +
-> +static inline u32 ttc_pwm_readl(struct ttc_pwm_priv *priv,
-> +				unsigned long offset)
-> +{
-> +	return readl_relaxed(priv->base + offset);
-> +}
-> +
-> +static inline void ttc_pwm_writel(struct ttc_pwm_priv *priv,
-> +				  unsigned long offset,
-> +				  unsigned long val)
-> +{
-> +	writel_relaxed(val, priv->base + offset);
-> +}
-> +
-> +static inline u32 ttc_pwm_ch_readl(struct ttc_pwm_priv *priv,
-> +				   unsigned int chnum,
-> +				   unsigned long offset)
-> +{
-> +	unsigned long pwm_ch_offset =3D offset +
-> +				       (TTC_PWM_CHANNEL * chnum);
-> +
-> +	return ttc_pwm_readl(priv, pwm_ch_offset);
-> +}
-> +
-> +static inline void ttc_pwm_ch_writel(struct ttc_pwm_priv *priv,
-> +				     unsigned int chnum,
-> +				     unsigned long offset,
-> +				     unsigned long val)
-> +{
-> +	unsigned long pwm_ch_offset =3D offset +
-> +				       (TTC_PWM_CHANNEL * chnum);
-> +
-> +	ttc_pwm_writel(priv, pwm_ch_offset, val);
-> +}
-> +
-> +static inline struct ttc_pwm_priv *xilinx_pwm_chip_to_priv(struct pwm_ch=
-ip *chip)
-
-Can you please stick to a single unique function prefix? The involved
-prefixes here are ttc_pwm, xilinx_pwm and the driver is called
-"cadence". Unifying them all to a single name would be good.
-
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static void ttc_pwm_enable(struct ttc_pwm_priv *priv, struct pwm_device =
-*pwm)
-> +{
-> +	u32 ctrl_reg;
-> +
-> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
-> +	ctrl_reg |=3D (TTC_CNTR_CTRL_INTR_MODE_EN
-> +				 | TTC_CNTR_CTRL_MATCH_MODE_EN | TTC_CNTR_CTRL_RST);
-> +	ctrl_reg &=3D ~(TTC_CNTR_CTRL_DIS | TTC_CNTR_CTRL_WAVE_EN);
-> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
-> +}
-> +
-> +static void ttc_pwm_disable(struct ttc_pwm_priv *priv, struct pwm_device=
- *pwm)
-
-This function only needs .hwpwm from *pwm. Maybe pass hwpwm as parameter
-instead of pwm?
-
-> +{
-> +	u32 ctrl_reg;
-> +
-> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
-> +	ctrl_reg |=3D TTC_CNTR_CTRL_DIS;
-> +
-> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
-> +}
-> +
-> +static void ttc_pwm_set_polarity(struct ttc_pwm_priv *priv, struct pwm_d=
-evice *pwm,
-> +				 enum pwm_polarity polarity)
-> +{
-> +	u32 ctrl_reg;
-> +
-> +	ctrl_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
-> +
-> +	if (polarity =3D=3D PWM_POLARITY_NORMAL)
-> +		ctrl_reg |=3D TTC_CNTR_CTRL_WAVE_POL;
-> +	else
-> +		ctrl_reg &=3D (~TTC_CNTR_CTRL_WAVE_POL);
-
-The parenthesis can be dropped.
-
-> +
-> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET, ctrl_reg);
-> +}
-> +
-> +static void ttc_pwm_set_counters(struct ttc_pwm_priv *priv,
-> +				 struct pwm_device *pwm,
-> +				 u32 period_cycles,
-> +				 u32 duty_cycles)
-> +{
-> +	/* Set up period */
-> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_INTR_VAL_OFFSET, period_cycles);
-> +
-> +	/* Set up duty cycle */
-> +	ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_MATCH_CNT_VAL_OFFSET, duty_cycl=
-es);
-> +}
-> +
-> +static void ttc_pwm_set_prescalar(struct ttc_pwm_priv *priv,
-> +				  struct pwm_device *pwm,
-> +				  u32 div, bool is_enable)
-> +{
-> +	u32 clk_reg;
-> +
-> +	if (is_enable) {
-> +		/* Set up prescalar */
-> +		clk_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
-> +		clk_reg &=3D ~TTC_CLK_CNTRL_PSV_MASK;
-> +		clk_reg |=3D (div << TTC_CNTR_CTRL_PRESCALE_SHIFT);
-> +		clk_reg |=3D TTC_CLK_CNTRL_PS_EN;
-> +		ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET, clk_reg);
-> +	} else {
-> +		/* Disable prescalar */
-> +		clk_reg =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
-> +		clk_reg &=3D ~TTC_CLK_CNTRL_PS_EN;
-> +		ttc_pwm_ch_writel(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET, clk_reg);
-> +	}
-> +}
-> +
-> +static int ttc_pwm_apply(struct pwm_chip *chip,
-> +			 struct pwm_device *pwm,
-> +			 const struct pwm_state *state)
-> +{
-> +	struct ttc_pwm_priv *priv =3D xilinx_pwm_chip_to_priv(chip);
-> +	u64 duty_cycles, period_cycles;
-> +	struct pwm_state cstate;
-> +	unsigned long rate;
-> +	bool flag =3D false;
-> +	u32 div =3D 0;
-> +
-> +	cstate =3D pwm->state;
-
-A pointer would be enough here. No need to copy the whole struct.
-
-> +	if (state->polarity !=3D cstate.polarity) {
-> +		if (cstate.enabled)
-> +			ttc_pwm_disable(priv, pwm);
-> +
-> +		ttc_pwm_set_polarity(priv, pwm, state->polarity);
-> +	}
-> +
-> +	rate =3D priv->rate;
-> +
-> +	/* Prevent overflow by limiting to the maximum possible period */
-> +	period_cycles =3D min_t(u64, state->period, ULONG_MAX * NSEC_PER_SEC);
-
-ULONG_MAX * NSEC_PER_SEC overflows before it's casted to u64.
-
-> +	period_cycles =3D mul_u64_u64_div_u64(period_cycles, rate, NSEC_PER_SEC=
-);
-
-mul_u64_u64_div_u64() doesn't overflow if rate <=3D NSEC_PER_SEC.
-
-> +	if (period_cycles > priv->max) {
-> +		/*
-> +		 * Prescale frequency to fit requested period cycles within limit.
-> +		 * Prescalar divides input clock by 2^(prescale_value + 1). Maximum
-> +		 * supported prescalar value is 15.
-> +		 */
-> +		div =3D mul_u64_u64_div_u64(state->period, rate, (NSEC_PER_SEC * priv-=
->max));
-
-No parenthesis needed around the 3rd parameter. Can NSEC_PER_SEC *
-priv->max overflow? Is it intended that you use state->period here and
-don't cap the value first as you did above?
-
-> +		div =3D order_base_2(div);
-> +		if (div)
-> +			div -=3D 1;
-> +
-> +		if (div > 15)
-> +			return -ERANGE;
-> +
-> +		rate =3D DIV_ROUND_CLOSEST(rate, BIT(div + 1));
-> +		period_cycles =3D mul_u64_u64_div_u64(state->period, rate,
-> +						    NSEC_PER_SEC);
-
-Dividing twice decreases precision. Also rounding to closest looks
-wrong. I think this should just be:
-
-	period_cycles =3D mul_u64_u64_div_u64(state->period, rate, NSEC_PER_SEC * =
-BIT(div + 1));
-
-Wouldn't it be simpler to just use:
-
-	dif =3D order_base_2(period_cycles / priv->max);
-
-(modulo correctness)?
-
-> +		flag =3D true;
-> +	}
-> +
-> +	if (cstate.enabled)
-> +		ttc_pwm_disable(priv, pwm);
-> +
-> +	duty_cycles =3D mul_u64_u64_div_u64(state->duty_cycle, rate,
-> +					  NSEC_PER_SEC);
-> +	ttc_pwm_set_counters(priv, pwm, period_cycles, duty_cycles);
-> +
-> +	ttc_pwm_set_prescalar(priv, pwm, div, flag);
-> +
-> +	if (state->enabled)
-> +		ttc_pwm_enable(priv, pwm);
-> +	else
-> +		ttc_pwm_disable(priv, pwm);
-
-The hardware is already disabled, so I'd expect that this
-ttc_pwm_disable() can be dropped?
-
-> +	return 0;
-> +}
-> +
-> +static int ttc_pwm_get_state(struct pwm_chip *chip,
-> +			     struct pwm_device *pwm,
-> +			     struct pwm_state *state)
-> +{
-> +	struct ttc_pwm_priv *priv =3D xilinx_pwm_chip_to_priv(chip);
-> +	u32 value, pres_en, pres =3D 1;
-> +	unsigned long rate;
-> +	u64 tmp;
-> +
-> +	value =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CNT_CNTRL_OFFSET);
-> +
-> +	if (value & TTC_CNTR_CTRL_WAVE_POL)
-> +		state->polarity =3D PWM_POLARITY_NORMAL;
-> +	else
-> +		state->polarity =3D PWM_POLARITY_INVERSED;
-> +
-> +	if (value & TTC_CNTR_CTRL_DIS)
-> +		state->enabled =3D false;
-
-You can exit early here.
-
-> +	else
-> +		state->enabled =3D true;
-> +
-> +	rate =3D priv->rate;
-> +
-> +	pres_en =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET);
-> +	pres_en	&=3D TTC_CLK_CNTRL_PS_EN;
-> +
-> +	if (pres_en) {
-> +		pres =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_CLK_CNTRL_OFFSET)
-> +					& TTC_CLK_CNTRL_PSV_MASK;
-> +		pres >>=3D TTC_CNTR_CTRL_PRESCALE_SHIFT;
-
-		pres =3D FIELD_GET(...)
-
-> +		/* If prescale is enabled, the count rate is divided by 2^(pres + 1) */
-> +		pres =3D BIT(pres + 1);
-> +	}
-> +
-> +	tmp =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_INTR_VAL_OFFSET);
-> +	tmp *=3D pres;
-
-you can drop `pres =3D BIT(pres + 1);` above if you use
-
-	tmp <<=3D pres + 1
-
-here.
-
-> +	state->period =3D DIV64_U64_ROUND_UP(tmp * NSEC_PER_SEC, rate);
-
-Can this overflow?
-
-> +	tmp =3D ttc_pwm_ch_readl(priv, pwm->hwpwm, TTC_MATCH_CNT_VAL_OFFSET);
-> +	tmp *=3D pres;
-> +	state->duty_cycle =3D DIV64_U64_ROUND_UP(tmp * NSEC_PER_SEC, rate);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops ttc_pwm_ops =3D {
-> +	.apply =3D ttc_pwm_apply,
-> +	.get_state =3D ttc_pwm_get_state,
+> +struct asus_hid_ref asus_ref = {
+> +	.listeners = LIST_HEAD_INIT(asus_ref.listeners),
+> +	.asus = NULL,
+> +	.lock = __SPIN_LOCK_UNLOCKED(asus_ref.lock),
 > +};
 > +
-> +int ttc_pwm_probe(struct platform_device *pdev)
+> +int asus_hid_register_listener(struct asus_hid_listener *bdev)
 > +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct device_node *np =3D dev->of_node;
-> +	struct ttc_pwm_priv *priv;
-> +	struct pwm_chip *chip;
-> +	u32 timer_width;
-> +	int ret;
+> +	unsigned long flags;
+> +	int ret = 0;
 > +
-> +	ret =3D of_property_read_u32(np, "timer-width", &timer_width);
-> +	if (ret)
-> +		timer_width =3D 16;
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	list_add_tail(&bdev->list, &asus_ref.listeners);
+> +	if (asus_ref.asus) {
+> +		if (asus_ref.asus->kbd_led_registered && asus_ref.asus->kbd_led_wk >= 0)
+> +			bdev->brightness_set(bdev, asus_ref.asus->kbd_led_wk);
 > +
-> +	chip =3D devm_pwmchip_alloc(dev, TTC_PWM_MAX_CH, sizeof(*priv));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	priv =3D xilinx_pwm_chip_to_priv(chip);
-> +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->max =3D BIT(timer_width) - 1;
-> +
-> +	priv->clk =3D devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(priv->clk)) {
-> +		return dev_err_probe(dev, PTR_ERR(priv->clk),
-> +				     "ERROR: timer input clock not found\n");
+> +		if (!asus_ref.asus->kbd_led_registered) {
+> +			ret = led_classdev_register(
+> +				&asus_ref.asus->platform_device->dev,
+> +				&asus_ref.asus->kbd_led);
+> +			if (!ret)
+> +				asus_ref.asus->kbd_led_registered = true;
+> +		}
 > +	}
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
 > +
-> +	priv->rate =3D clk_get_rate(priv->clk);
-> +
-> +	clk_rate_exclusive_get(priv->clk);
-
-Only call clk_get_rate() after clk_rate_exclusive_get(). Also note there
-is a devm variant of clk_rate_exclusive_get().
-
-> +	chip->ops =3D &ttc_pwm_ops;
-> +	chip->npwm =3D TTC_PWM_MAX_CH;
-> +
-> +	ret =3D devm_pwmchip_add(dev, chip);
-> +	if (ret) {
-> +		clk_rate_exclusive_put(priv->clk);
-> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
-> +	}
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +	return 0;
+> +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(ttc_pwm_probe);
-
-Putting these functions in a name space would be great.
-
-> +void ttc_pwm_remove(struct platform_device *pdev)
+> +EXPORT_SYMBOL_GPL(asus_hid_register_listener);
+> +
+> +void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
 > +{
-> +	struct ttc_pwm_priv *priv =3D platform_get_drvdata(pdev);
+> +	unsigned long flags;
 > +
-> +	pwmchip_remove(&priv->chip);
-> +	clk_rate_exclusive_put(priv->clk);
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	list_del(&bdev->list);
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
 > +}
-
-Did you test the remove path? Hint: Don't call pwmchip_remove() if you
-registered the chip using devm_pwmchip_add() and priv->chip is
-uninitialized.
-
-> +EXPORT_SYMBOL_GPL(ttc_pwm_remove);
+> +EXPORT_SYMBOL_GPL(asus_hid_unregister_listener);
 > +
-> +MODULE_AUTHOR("Mubin Sayyed <mubin.sayyed@amd.com>");
-> +MODULE_DESCRIPTION("Cadence TTC PWM driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/timer-cadence-ttc.h b/include/linux/timer-cade=
-nce-ttc.h
-> index d938991371e5..6b6135d0ba0c 100644
-> --- a/include/linux/timer-cadence-ttc.h
-> +++ b/include/linux/timer-cadence-ttc.h
-> @@ -12,13 +12,14 @@
->  #define TTC_CNT_CNTRL_OFFSET            0x0C /* Counter Control Reg, RW =
-*/
->  #define TTC_COUNT_VAL_OFFSET            0x18 /* Counter Value Reg, RO */
->  #define TTC_INTR_VAL_OFFSET             0x24 /* Interval Count Reg, RW */
-> +#define TTC_MATCH_CNT_VAL_OFFSET        0x30 /* Match Count Reg, RW */
-
-I assume all these constants are register addresses. I'd drop _OFFSET
-here. If you want a designator for these, I'd suggest REG or ADDR, but
-IMHO plain TTC_MATCH_CNT_VAL is fine.
-
->  #define TTC_ISR_OFFSET          0x54 /* Interrupt Status Reg, RO */
->  #define TTC_IER_OFFSET          0x60 /* Interrupt Enable Reg, RW */
-> =20
->  #define TTC_CNT_CNTRL_DISABLE_MASK      0x1
-> =20
->  #define TTC_CLK_CNTRL_CSRC_MASK         (1 << 5)        /* clock source =
-*/
-> -#define TTC_CLK_CNTRL_PSV_MASK          0x1e
-> +#define TTC_CLK_CNTRL_PSV_MASK		0x1e
->  #define TTC_CLK_CNTRL_PSV_SHIFT         1
-> =20
 >  /*
-> @@ -33,3 +34,22 @@
-> =20
->  #define MAX_F_ERR 50
-> =20
-> +#define TTC_PWM_CHANNEL         0x4
-
-That define is misnamed IMHO. That's the offset between register ranges
-for different channels. *Here* _OFFSET is fine.
-
+>   * These functions actually update the LED's, and are called from a
+>   * workqueue. By doing this as separate work rather than when the LED
+> @@ -1566,6 +1615,7 @@ static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
+>  
+>  static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+>  {
+> +	struct asus_hid_listener *listener;
+>  	struct asus_wmi *asus;
+>  	int max_level;
+>  
+> @@ -1573,25 +1623,39 @@ static void do_kbd_led_set(struct led_classdev *led_cdev, int value)
+>  	max_level = asus->kbd_led.max_brightness;
+>  
+>  	asus->kbd_led_wk = clamp_val(value, 0, max_level);
+> -	kbd_led_update(asus);
 > +
-> +#define TTC_CLK_CNTRL_CSRC              BIT(5)
-> +#define TTC_CLK_CNTRL_PS_EN             BIT(0)
-> +#define TTC_CNTR_CTRL_DIS               BIT(0)
-> +#define TTC_CNTR_CTRL_INTR_MODE_EN      BIT(1)
-> +#define TTC_CNTR_CTRL_MATCH_MODE_EN     BIT(3)
-> +#define TTC_CNTR_CTRL_RST               BIT(4)
-> +#define TTC_CNTR_CTRL_WAVE_EN   BIT(5)
-> +#define TTC_CNTR_CTRL_WAVE_POL  BIT(6)
-> +#define TTC_CNTR_CTRL_WAVE_POL_SHIFT    6
-> +#define TTC_CNTR_CTRL_PRESCALE_SHIFT    1
-> +#define TTC_PWM_MAX_CH	3
+> +	if (asus->kbd_led_avail)
+> +		kbd_led_update(asus);
 > +
-> +#if defined(CONFIG_PWM_CADENCE)
-> +int ttc_pwm_probe(struct platform_device *pdev);
-> +void ttc_pwm_remove(struct platform_device *pdev);
-> +#endif
+> +	list_for_each_entry(listener, &asus_ref.listeners, list)
+> +		listener->brightness_set(listener, asus->kbd_led_wk);
+>  }
+>  
+>  static void kbd_led_set(struct led_classdev *led_cdev,
+>  			enum led_brightness value)
+>  {
+> +	unsigned long flags;
+> +
+>  	/* Prevent disabling keyboard backlight on module unregister */
+>  	if (led_cdev->flags & LED_UNREGISTERING)
+>  		return;
+>  
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+>  	do_kbd_led_set(led_cdev, value);
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
+>  }
+>  
+>  static void kbd_led_set_by_kbd(struct asus_wmi *asus, enum led_brightness value)
+>  {
+> -	struct led_classdev *led_cdev = &asus->kbd_led;
+> +	struct led_classdev *led_cdev;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	led_cdev = &asus->kbd_led;
+>  
+>  	do_kbd_led_set(led_cdev, value);
+>  	led_classdev_notify_brightness_hw_changed(led_cdev, asus->kbd_led_wk);
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
+>  }
+>  
+>  static enum led_brightness kbd_led_get(struct led_classdev *led_cdev)
+> @@ -1601,6 +1665,9 @@ static enum led_brightness kbd_led_get(struct led_classdev *led_cdev)
+>  
+>  	asus = container_of(led_cdev, struct asus_wmi, kbd_led);
+>  
+> +	if (!asus->kbd_led_avail)
+> +		return asus->kbd_led_wk;
+> +
+>  	retval = kbd_led_read(asus, &value, NULL);
+>  	if (retval < 0)
+>  		return retval;
+> @@ -1716,7 +1783,14 @@ static int camera_led_set(struct led_classdev *led_cdev,
+>  
+>  static void asus_wmi_led_exit(struct asus_wmi *asus)
+>  {
+> -	led_classdev_unregister(&asus->kbd_led);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	asus_ref.asus = NULL;
+> +	if (asus->kbd_led_registered)
+> +		led_classdev_unregister(&asus->kbd_led);
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
+> +
+>  	led_classdev_unregister(&asus->tpd_led);
+>  	led_classdev_unregister(&asus->wlan_led);
+>  	led_classdev_unregister(&asus->lightbar_led);
+> @@ -1730,6 +1804,8 @@ static void asus_wmi_led_exit(struct asus_wmi *asus)
+>  static int asus_wmi_led_init(struct asus_wmi *asus)
+>  {
+>  	int rv = 0, num_rgb_groups = 0, led_val;
+> +	unsigned long flags;
+> +	bool has_listeners;
+>  
+>  	if (asus->kbd_rgb_dev)
+>  		kbd_rgb_mode_groups[num_rgb_groups++] = &kbd_rgb_mode_group;
+> @@ -1754,24 +1830,37 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>  			goto error;
+>  	}
+>  
+> -	if (!kbd_led_read(asus, &led_val, NULL) && !dmi_check_system(asus_use_hid_led_dmi_ids)) {
+> -		pr_info("using asus-wmi for asus::kbd_backlight\n");
+> +	asus->kbd_led.name = "asus::kbd_backlight";
+> +	asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+> +	asus->kbd_led.brightness_set = kbd_led_set;
+> +	asus->kbd_led.brightness_get = kbd_led_get;
+> +	asus->kbd_led.max_brightness = 3;
+> +	asus->kbd_led_avail = !kbd_led_read(asus, &led_val, NULL);
+> +
+> +	if (asus->kbd_led_avail)
+>  		asus->kbd_led_wk = led_val;
+> -		asus->kbd_led.name = "asus::kbd_backlight";
+> -		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+> -		asus->kbd_led.brightness_set = kbd_led_set;
+> -		asus->kbd_led.brightness_get = kbd_led_get;
+> -		asus->kbd_led.max_brightness = 3;
+> +	else
+> +		asus->kbd_led_wk = -1;
+> +
+> +	if (asus->kbd_led_avail && num_rgb_groups != 0)
+> +		asus->kbd_led.groups = kbd_rgb_mode_groups;
+>  
+> -		if (num_rgb_groups != 0)
+> -			asus->kbd_led.groups = kbd_rgb_mode_groups;
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	has_listeners = !list_empty(&asus_ref.listeners);
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
 
-No need for the ifdef.
+It seems to me that you should also call brightness_set()
+on all the kbds already in the list so that their brightness
+gets synced with the wmi kbd-backlight brightness when
+the wmi driver loads later then the hid driver ?
 
-Best regards
-Uwe
+>  
+> +	if (asus->kbd_led_avail || has_listeners) {
+>  		rv = led_classdev_register(&asus->platform_device->dev,
+>  					   &asus->kbd_led);
+>  		if (rv)
+>  			goto error;
+> +		asus->kbd_led_registered = true;
+>  	}
+>  
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	asus_ref.asus = asus;
 
---qalzlpcxz2i65esg
-Content-Type: application/pgp-signature; name="signature.asc"
+There is race here where a hid keyboard might show up between
+the 2 places you take the lock, in that case if there is
+no wmi kbd-backlight then you will not register the led_classdev
+when asus_hid_register_listener() gets called between the unlock
+and the lock...  I'm not sure what the best way is to fix this.
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhQiMACgkQj4D7WH0S
-/k4Z/ggAoa7oTUS1+r9sZyGVLuPO3maZ+Xr1MkBXOWdq1spUdApZr3FG0W8XCtm4
-cy8icKVYTMx9fbJV/6uMJrukF44CfoCPv9kg4X7DyI/xDjot65Kr5b7OD4tq/jib
-BnKqIS++JiWSoDc687J5rCLlfX8gFRNuIEh9yIT1VvXFECnJy3TCScaru326aErm
-iwB2DXezk4ekQhfnEbO++AQ3y2f11qaa0w9z4oOedJuaSvXYKkRq6u9m/oq9bOxY
-SvgSN2/GYj0TnGzvE62yi8dCC2wllcKRzUMdY7jbVHRa55iLrRbmKXINPDFAZ+f6
-BQovM/yYdbuIzjEmSvCvR2bxYXlVlQ==
-=UNuV
------END PGP SIGNATURE-----
+Hans
 
---qalzlpcxz2i65esg--
+
+
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
+> +
+>  	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_WIRELESS_LED)
+>  			&& (asus->driver->quirks->wapf > 0)) {
+>  		INIT_WORK(&asus->wlan_led_work, wlan_led_update);
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 783e2a336861b..ec8b0c585a63f 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -157,14 +157,30 @@
+>  #define ASUS_WMI_DSTS_MAX_BRIGTH_MASK	0x0000FF00
+>  #define ASUS_WMI_DSTS_LIGHTBAR_MASK	0x0000000F
+>  
+> +struct asus_hid_listener {
+> +	struct list_head list;
+> +	void (*brightness_set)(struct asus_hid_listener *listener, int brightness);
+> +};
+> +
+>  #if IS_REACHABLE(CONFIG_ASUS_WMI)
+>  int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+> +
+> +int asus_hid_register_listener(struct asus_hid_listener *cdev);
+> +void asus_hid_unregister_listener(struct asus_hid_listener *cdev);
+>  #else
+>  static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+>  					   u32 *retval)
+>  {
+>  	return -ENODEV;
+>  }
+> +
+> +static inline int asus_hid_register_listener(struct asus_hid_listener *bdev)
+> +{
+> +	return -ENODEV;
+> +}
+> +static inline void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
+> +{
+> +}
+>  #endif
+>  
+>  /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+
 
