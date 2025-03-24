@@ -1,167 +1,117 @@
-Return-Path: <linux-kernel+bounces-573857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FA5A6DD3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:41:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CE5A6DD3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85E4169E89
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACC5169394
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9319D25FA15;
-	Mon, 24 Mar 2025 14:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7124725FA03;
+	Mon, 24 Mar 2025 14:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TXDFYQ66";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kn0Coouh"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXO8nEZM"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E016C25C6FE;
-	Mon, 24 Mar 2025 14:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B8A25C6FE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827238; cv=none; b=YMViJuVDsXxYOcgOP9mB288xHk9RdstSjSOkJQKhhZ7Do2cVgJe7vWRlDUdYEg6Yn4YHh2Q1CXlIwsvFdxUVHWsFDwBZpTNRdQVLrTtshrt7HY/dYSdQHTu4JmCRD88NowVvb7Not9b51dma0DBABXZAHPBjvx4OV0hjT8cuEks=
+	t=1742827281; cv=none; b=Pm0zJHaHJ6VEDN5VYSidIhb9XL6umVfHU0FwrCEr01SG3TEfgfAklF84WRe/4p4092hFr2hROVunCeK7WqNDHIEWLJMkyMMdhiRETGMBgxDwE6NBKU3vj6cHid4zudYFP+c9pLeOSN6632pAOc2BR1kHloJxReWZ1v/lKfWMZII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827238; c=relaxed/simple;
-	bh=OETh/t0TuaywTDU7ioRsqi5fw0soxg7OWwoPE2zMDuQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=frxRQu6Uu92M37YbV6WgRyFkr7PgHFxk8YqsY6WFyI4wlCERaoszcVjkhqNJE22WH6GmFoLKJFQgeDI4a/vq5+h1Lwka2iS2iGVRVxVQ7fYi0H9XQ8+ctExoWF0XSE3nVMZWnDXlNfDtU2xUFZ82OhRdxvpX7gLAUtPCP1ETEhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TXDFYQ66; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kn0Coouh; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id EBAE61383B18;
-	Mon, 24 Mar 2025 10:40:34 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 10:40:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742827234;
-	 x=1742913634; bh=n76Uj10bdEPtDvI3mHeDGPdivbBmYZRpkA5AZkl/TEg=; b=
-	TXDFYQ66pGiemkLg+N3hVLyohz+9d+K45Q1eRTdvfkgO+rZDNmva/hGeG7jbCR9t
-	h6fVyNu7MLfDa1oAAdoMTqAuX9nSyGjxbtX3K9/Qfi/DzcqE0A3aiOBpy4SvPCsu
-	V4CL0TsnpGQBniyn8bss3zfMnHZ/CM6u5kcgpRgx48efo6u9npGwJEb4TyQR82Qf
-	zrRzYO2ydN9+1R3hcPHPnI/blDwXDPTksUPiGZEa64bDmu+bED8k4UADMmFIMnjI
-	D2TyEyC6jESUgnTE3vMxv41UlB5KoqdTRlfrw6+Uip9AZCVe6lIrKMU9xwln/V2G
-	CGG0gXCBudPVHTTt4pWgiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742827234; x=
-	1742913634; bh=n76Uj10bdEPtDvI3mHeDGPdivbBmYZRpkA5AZkl/TEg=; b=K
-	n0Coouh6co6nnWuJMZEo5y1Ha2vMNqs3vbOZUWJswU90Hopfj3MG6rB6FnB2Vli7
-	RRZsv8R0TdK713T0/WcXihtphM5LKKeIAw9Wnhe3rXW5OshdOT6HMSoinEFlJV3J
-	RXl4QRjCf1k4i0pUEahU7mCpGnmbY1AhwkizG0mvPIw4F49X5V3M/6l3TsX8qFjZ
-	Hv8UPukyzgBRnXuSfhwuGKn6oklz1SuYf8nfGIczO3OXo9c7A1k+fn7eVDno2Aj+
-	Uav/zqIcpdOPc+KjeDMiNerZDw5Xvjozcla7KSOdFboJy2wu1HUBy6w83YFSiDwT
-	8HOTCBWoguGOKQg1Nc8Kg==
-X-ME-Sender: <xms:4G7hZ9opzXWYYMMLprNdNZhWR3VnkTXZ5cjbLNjAz-xGqD_KJy2Iew>
-    <xme:4G7hZ_rJ4mSpPBo57ulAbHucCMzRBu1qWRrxposD98WEVrCffJOVspkHdvORW_UwU
-    SdDQxL4fBBAp4EFuxQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    vdeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrghlph
-    hhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghr
-    ohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrih
-    gurdgruhdprhgtphhtthhopehmrghtthhsthekkeesghhmrghilhdrtghomhdprhgtphht
-    thhopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggvlhhlvghrse
-    hgmhigrdguvgdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepjhgrmhgvshdrsghothhtohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrh
-    hshhhiphdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:4G7hZ6Pz3qtnB2guwtcbIMy5BnBXoH5jmsWnq3qulB4EBStql0deXQ>
-    <xmx:4G7hZ46a-bVZ0ZEb6b97EFB1c_OoktumAMPu0aFS8LZeRT_m9ZN2Zw>
-    <xmx:4G7hZ84mTpfuxjXkjyc9KUpZL_eJTar_uNkNoB9HVp8_V6P9Z9vH1g>
-    <xmx:4G7hZwg28o1A40L-m7WKyS3nxEgQr-4Uy9U6SqjG2z0lhXoYf2xJlQ>
-    <xmx:4m7hZ3x_r4JGE8fZpLpxh3gan8DRthDVv3ooEN5rzbh5pW5q6SnxmMEt>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BC8B02220073; Mon, 24 Mar 2025 10:40:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742827281; c=relaxed/simple;
+	bh=QMKV+YQB6q348K7itjiKyjN8edH1aruaEjBd+2BIwc8=;
+	h=Message-ID:Date:Content-Type:MIME-Version:to:from:subject; b=jtY8thQTOqRV/4mDQ0DqKjThOwKEBbhhu3nC95NBa9X5AoZU87OT0HcZEAv66lDrc4Gemm7lyKXVPqoKwn/qb4zxOCX+dGsTQ9GocDQgppN872xxcqnUzOplJ2GDSYuMCt7Q8j0E3uYJISTl5y0iQaJmRUgz/wCwgUVCQXd8KOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXO8nEZM; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-225477548e1so81025425ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742827279; x=1743432079; darn=vger.kernel.org;
+        h=priority:importance:subject:from:to:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QMKV+YQB6q348K7itjiKyjN8edH1aruaEjBd+2BIwc8=;
+        b=EXO8nEZMUriUefJHtiUBEj0hZgQ7xAMF6TR1d7oXxK/msQZ1bRUqBKO6aHxDKlu5SZ
+         kYdfoFjFaNoQx6mGbM7dhdQCTR1esU7t/sKXFtRNxpLbeC8vjsQKydI1vbWnieqR7qn+
+         zRp7r9s6Iw7QBV7ztUCeAXi9dGTPNVcebLBhR1racDnfSGY2VHW6eURsAbLc3tldkfXc
+         oZqU3/UJKB5JiW8yKBB03ia9zJ0eV7Fw4P7MsrDHnNS/EmK62XVEhKFUAm1iBXjWglop
+         lJADmYmcEWMw9ErRTnsSFFCODv0lPenMRmTXUUhoiiEifgxNOjZ1TljtqJvmkcFsnlbc
+         0zEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742827279; x=1743432079;
+        h=priority:importance:subject:from:to:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMKV+YQB6q348K7itjiKyjN8edH1aruaEjBd+2BIwc8=;
+        b=vMQeUmtrsAnv8hQ2AnvXquphBcZMAoAXR0uiYSx+I/ZZC+klfoCejCN9e2WwNutGC0
+         EmSKzFrhmcOdKzpZhjILr4THhCzTkI1dFr+qIMrpKp++auDxNF81LxZmO0BFiRUCYSRw
+         BWFJ9ltGB0SDY2v0S/djpUhPkTLbMLdlq78gVAd2f4b26qOFqPj4ls3vpvB8Z/83dGGX
+         UWwRDWxCU6J8FOHEQujmB1BEv2q94h0kDfyMAHdL7Xg1pERxwhh4cvI4w2R/D1yRxDZN
+         zEv3FFZlImJ3jE7J1Xb0pOOWCxSetT3/SkDAJnrHHtgb3PwiQ+LwNe5Tv+zmqCTuHAGw
+         h4xw==
+X-Gm-Message-State: AOJu0YxIWg25RSY8mE1Qhob4ZGmkVO7ZA+2DuAww8l3R00yYOl8Z9wTZ
+	YH/crfKx0KzQk+iTbWxEkFk4FCmH5J66PhPE77q9VI0g3CR8PAaM2hMl4p6HYxY=
+X-Gm-Gg: ASbGncuv5/m8hbuP/tUIEEntPGUUXEsoNylDzC1SF1HStiPGsCzcFgA7/qTCxJnsRL4
+	PG7QmYAD6c+DxWrjR2b6QqdMLjzIZJiPZCsihPxZnAfOLFMvzaEhl2tnHcAvHbq+g/b+QoGrLxi
+	nl1gi2P4yu4fHYR1rAzSZZ/p13PFO9gHGFBFdNwOXViEKyL8sf9nZXMqZCZ8JcpZn36aLG76zjd
+	LscPQTx4SpuT5K+tHAgHyb4p7asB7ejxs7ze1+m0H4GFBwrZ57xY78hYMeJpieGIuScxDYLd14f
+	VYZ2plXWYqx3Y3F0cHh1zIaLpJSMH4eMS5Cn9c0cYF/DL9CPQceFrobvbPl3nF/gSDsa/ho=
+X-Google-Smtp-Source: AGHT+IHNQcByieFuYT0f7Aveo37pmX1yNQj36c14IhzWC9IiUGEEcZ2jpup6gcjEvhVdQSQwkUdjJg==
+X-Received: by 2002:a05:6a20:e196:b0:1f5:7873:3053 with SMTP id adf61e73a8af0-1fe430100e3mr23510527637.29.1742827279127;
+        Mon, 24 Mar 2025 07:41:19 -0700 (PDT)
+Received: from [10.201.0.127] ([43.128.216.136])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2805e0esm7147976a12.29.2025.03.24.07.41.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 07:41:18 -0700 (PDT)
+Message-ID: <67e16f0e.630a0220.1bdef5.29de@mx.google.com>
+Date: Mon, 24 Mar 2025 07:41:18 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="===============4986939862290202661=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T53f4a10e7512c522
-Date: Mon, 24 Mar 2025 15:40:12 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Greg Ungerer" <gerg@linux-m68k.org>, "Arnd Bergmann" <arnd@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Cc: "Richard Henderson" <richard.henderson@linaro.org>,
- "Matt Turner" <mattst88@gmail.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Helge Deller" <deller@gmx.de>, "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Yoshinori Sato" <ysato@users.sourceforge.jp>,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Julian Vetter" <julian@outer-limits.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
-Message-Id: <a41f1b20-a76c-43d8-8c36-f12744327a54@app.fastmail.com>
-In-Reply-To: <9076d00e-c469-4a05-a686-94e3e55c8389@linux-m68k.org>
-References: <20250315105907.1275012-1-arnd@kernel.org>
- <20250315105907.1275012-7-arnd@kernel.org>
- <64f226e5-7931-40ba-878a-a28688da82fd@linux-m68k.org>
- <4a31c6a8-7c99-4d8f-8248-92e0e52b8db6@app.fastmail.com>
- <9076d00e-c469-4a05-a686-94e3e55c8389@linux-m68k.org>
-Subject: Re: [PATCH 6/6] m68k/nommu: stop using GENERIC_IOMAP
-Content-Type: text/plain
+to: Dear Customer <linux-kernel@vger.kernel.org>
+from: Dear Customer <msbm85983@gmail.com>
+subject: Shipment 779 is currently being processed.
+Importance: normal
+Priority: normal
+X-Mailer: X-Mailer AeroDispatch [v2.0]
+X-MimeOLE: X-MimeOLE MailMaster
+
+--===============4986939862290202661==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025, at 14:50, Greg Ungerer wrote:
-> On 24/3/25 18:02, Arnd Bergmann wrote:
->> On Mon, Mar 24, 2025, at 02:33, Greg Ungerer wrote:
->>> On 15/3/25 20:59, Arnd Bergmann wrote:
->> 
->> Does this fixup work for you?
->
-> Yes, this looks good, works for me.
-> Feel free to add this if you like:
->
-> Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+Subject: Your McAfee Subscription Renewal for 4 Year Has Been Successfully Processed!
 
-Added now, thanks!
+Dear Dear Customer,
 
->> On a related note, I'm curious about how the MCF54xx chips are
->> used in practice, as I see that they are the only coldfire chips
->> with PCI and they all have an MMU. Are there actual users of these
->> chips that have PCI but choose not to use the MMU?
->
-> No, I think everyone with these uses them with MMU enabled.
->
-> It is probably more of an historical curiosity to use them with
-> the MMU disabled. That supported pre-dated mainline kernels having
-> full ColdFire MMU support by a good few years.
+We're excited to inform you that the renewal of your McAfee subscription for the year 4 Year has been successfully completed. Thank you for choosing McAfee for your McAfee needs. We sincerely value your continued trust and support.
 
-Ok, good to know. Given that there are no other chips that allow
-PCI on !MMU kernels, I wonder if we should just make PCI itself
-depend on MMU, and remove the "depends on MMU" for any PCI
-drivers that currently have it.
+Here are the details of your renewal:
 
-There is no fundamental dependency here, but it is something that
-breaks occasionally because of in-kernel interfaces that don't
-work as expected on !MMU configurations, and with an extra
-dependency we could stop fixing those.
+Product Code: 1579-rdnbwuq
 
-      Arnd
+Service/Product: Web Guard-ABC
+
+Renewal Amount: USD319.10
+
+The renewal fee of USD319.10 will be processed and credited to your account within the next 12 business hours. Alternatively, it will reflect on your next billing statement.
+
+If you have any questions or require assistance, our customer support team is ready to help at 888-350 2394.
+
+Thank you once again for being an integral part of the McAfee community!
+
+Best regards,
+McAfee Inc.
+(c) 2025 All rights reserved.
+--===============4986939862290202661==--
 
