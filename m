@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-574368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9B3A6E489
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:34:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800AAA6E47B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 229CB3A8718
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9CF07A68A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5741D95B4;
-	Mon, 24 Mar 2025 20:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BAD199FAB;
+	Mon, 24 Mar 2025 20:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+Uan55P"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJthRY5f"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15D52E3374;
-	Mon, 24 Mar 2025 20:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D104918FDD8;
+	Mon, 24 Mar 2025 20:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742848362; cv=none; b=P3Ns2pPNAd8jDeEOb0kHAq4Az1hRn1OPTRnSLzAsMqdfjRB5SzmILeBv/U+sCt15XvA/OiwWgiOdugQ+gvmagCCwG0pXhS+ny42aYcnYFElRlKG7v0gllkUst8zL5zMz8VmI126rT/i4fY749P5lakAIFex1KKTc2aieQSHsa9M=
+	t=1742848335; cv=none; b=jOrQjoD5zb81rkB0hNikcXQmbE0Md84DRbKt+UkXAoiwsd13OLbohAnwwdfL7Uuv2Jsn0VccIlVwSXWA77x0n5nnY0FgSe2/S05ZhHfpwhC+HWwTJSZh8eQhvVlamkeDnU9/hqjRTKlG/FHeH02uz4QQkLd571FAL6NPxdkTu8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742848362; c=relaxed/simple;
-	bh=H55dapffsuhjnE0Ly7V+beIwVQmmUr/D2N7ZOtll3cM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OmlymxOVjWjnd9os6HhpDsaQyNdHC2vCiw7kd2bbyf0BhG2mDxXYEdLy2PThDTZHG52nPA4tzXJm3w/98eg04I1qUPyqFpPN2RPZdfLZ4k0jxE3FCQYQTPsXShGZCxG5+kVLlN2kwbqRJnrErpxNIQnaCQfSlqVmuEx+8EK+OBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+Uan55P; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1742848335; c=relaxed/simple;
+	bh=XVX8FQkr9SlsH8uzchlcuOqHLWzlLBEAPLfd9ELg3Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYV38IZiqHzqVGgjH+GVki4YwL6wkKtMjd5MCi9/h6B/mfE2p+r+ULRcJnx91b3wLtHlBlHbDEfaRosBD0EpsixNtGKtPwA/fn+VvKi7TWF2vvNW/LphDdS9ajZatzvlcrGztcxwZi22WNT2cgdv7+MkITyW+9rmudHtXCE57O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJthRY5f; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223f4c06e9fso79970025ad.1;
-        Mon, 24 Mar 2025 13:32:40 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3014ae35534so7493533a91.0;
+        Mon, 24 Mar 2025 13:32:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742848360; x=1743453160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jj5y725C6U/JdWVBPtUFbjlsM0gGbVGWPvReveqEWoM=;
-        b=c+Uan55P0d1ep78xTiOqKUqcgZHl5jW2OP2oXQrIHIu2XTkJsHsgPizRDRfbb1jZN4
-         ghNYGddnzFh63AkG2rNJHyyV3QnFgXEXEIIsyU9bW1eV7ITXOculEm0sZ+LXfV+QpQVc
-         U3Q07NWQoF/+0XFXC9CzUjWRPQPHyZLwswQxncag5JbYg8L9ebAZ8W8FbdPn7IiglemB
-         gNlVk7EKRS8XfJ6JUEn65X3hwDFsZ5HrpL/sxmF+YLUGGQJEMKYmkPKwqfhsNHIrvZa8
-         1kgChNXq/pCeSpCi/6Nl3pdAvBYeIvcotAnGvxzglbo1Rs2qccfU6T02PhsD/n+iDw2x
-         JH6g==
+        d=gmail.com; s=20230601; t=1742848333; x=1743453133; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XVX8FQkr9SlsH8uzchlcuOqHLWzlLBEAPLfd9ELg3Qc=;
+        b=fJthRY5fo9QFxJr0KWL0rh0UtHB0APpVut5T9S4rUFzo953jgsOVR0LcTKQrSkMgk1
+         MX6n9vXHt5L9tI13FBrD6pntfpgEBF2TsGHAUbYwdUT4URjqJzQOA36hTdpP5AnT8Qfe
+         VYYsQtasZIsV+/UPMwsEfoUcVX4GSlHmDog5YdgH40cSe9Au7URvoObkUqyUoh+EFDhT
+         uwHUMCoJnX/VVQikpXEtj4YGGDjdVf3cEfT1Lxblg0/FgKtPS5uKuA9bZ/euBaKjz6yw
+         YT5cen+pMDK0FzGyi6OsveMmnQBghK1q6gHaLNYYTjrDa7w/ZpqGSzwTPhxJC4O4ryDN
+         AF8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742848360; x=1743453160;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jj5y725C6U/JdWVBPtUFbjlsM0gGbVGWPvReveqEWoM=;
-        b=JO3YsE4k8uhQAyCUFODVxecuM4751STvNu9FdzHNRmjGQRdGqtLirxvUtywko9yhm0
-         58pN/UUwBaSXpg/V8hQ6X6FHSTNqhD+9SSyUIWALmwbIggHgO7h9Ab7nFDSLszPokwXC
-         LNzi8XPa36qvTrlKMebToeXV6QPBcLImLJNXUYmfY2xwkmaDusbTt5Zb6HH0dFTdcT/e
-         ax2AzaES2RvJ4ToHNe0TKQ9mt/uLu0/X135lZOr2v7UGrWVT0G57Kn2MjfnHAf2pPNrD
-         1pJHCPuUxMoiUaBT/3Of3D0KBMQS40PebUyLvQxgE9FPsj1pkzmLvpyFMrXsK08UFMtS
-         Qewg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzGMGB1Au8TKudLb1pMZDfEGj69OiGtpbhJeJthpXZ3d+DDC6ScKTPz9t3+e747O7D9z61ZDU9AFg/Gat0@vger.kernel.org, AJvYcCWo7ouOu/u43xavED0X2wSMKc0ZH/ofd6/TOXouIX5+7UaylKrRNJsNshSvWa3NpMM5vseO+8NtBkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlbszofh1nOxWMnMmdMFQjeTA2iPWZ9xym8L1Yzv5qG48uvL5/
-	RxkL03jV0Mmsndb90QOGqh4StdBSS9rG5t4sAixq/HewcogzNdpw
-X-Gm-Gg: ASbGncuLxG433o63tNo12kTh8cDHAHqTMGu8njG7fOCAJKAmFrPho2S+UYPNoU3ny6e
-	vy0injDU22kgOHU+/zEoOdlfO0ZfDjK6fzNO9EH6gpedYE7HarjO3uNMxl6sEQTZ4vPwYKXgZRl
-	ExxQrQM+6w4RWFs19/vHoh02jboI5i0Sb0q6oVyJS5oXDN5J+G+pw4zsFV+2h8JIteuN8AR4Wb0
-	BZnRwPGEUb4Z+ysFa8dvatNtqTCJ4/7EyOy5gF45maQrFQlrr/tlMtkAkBNwUCHgwrSAhGtK/vc
-	GtcZz/g7zZ9BG97eizD/EYerNpkXX0IhURrIrcGjD4TtZLC1KzrRoF98u39cUbNafP7NYWvy5QZ
-	BJvk9xXIoge1h3HCuv/W/LK2uBNCb7NklGaXdF3LxrA==
-X-Google-Smtp-Source: AGHT+IEkkZwglT7x6V0AyhOCINFRmYgH5G77Wb4O3lcI2Jw9QeTNeTSW9Kfa9CP4TsKw2I2S1Lo4Xg==
-X-Received: by 2002:a17:902:da8c:b0:21f:6dcf:fd2b with SMTP id d9443c01a7336-2265e67f76dmr240914285ad.1.1742848359660;
-        Mon, 24 Mar 2025 13:32:39 -0700 (PDT)
-Received: from elbadrym.c.googlers.com.com (34.125.168.34.bc.googleusercontent.com. [34.168.125.34])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a23c31sm7593981a12.54.2025.03.24.13.32.39
+        d=1e100.net; s=20230601; t=1742848333; x=1743453133;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVX8FQkr9SlsH8uzchlcuOqHLWzlLBEAPLfd9ELg3Qc=;
+        b=bFgGACjUvR3HT4r0YojSOheZ2GpXh9GstKQ+ZCk8dMRAE5r6J4q91ZQVLhl3FujpdP
+         pmS99rtdztdyDGCGgWpFUBj8+0N77mu01Sz/Tih1W28LulBiBxlHAXJC/E2g9sl+hbUY
+         CaQdtjeeYvgc3yfBqzSs9w8ami2nZIt2YoP/L3uEt8KBY49UNcavsTGVu60fwnPhyTM1
+         xLrSjJKZJFYVXAc1e4znz6kXwwNcRlNKyiJMzsvJsmNpc/rpBlKxbwJK9KOz/aW9JGCn
+         VGVrP0LN1jpH5LjmTXCoKw1N5//LJ7GUU2KaCZ9XxceuobRy4bTX1QPUBzo3vENPkcW8
+         sheg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDQzDDhUYeq0pxGryEVOKX1xLMtEnbjjNz7naJITS6EDiJ5p+5ZVn9pwQ4z6QcraPSklnbVz3pPr9vwLr5ZX2I@vger.kernel.org, AJvYcCXhRGS+cgSrDWkXyi4Po/iwdOD6ZCRP351L92rkUtuNxdng/91nxbihPhEbhkLkmYY6IyMkyef2IsmmVQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkFKrogLSHBQvfDWVU/Uf6qjiAwkg89ruHumHAxyVStFicCYtO
+	CLvfyktU45z8Q3J3n0oodNSzbpp9iHjEHanFY3v58suB/6O+SFzj
+X-Gm-Gg: ASbGnctFRYE56AYmD/LTT88+3uhhkyWNdRG4+x5VVuiUVxNNuHHnBh7q8CPZiBHZTmr
+	6+5DXEPa2CGW9/j/9BOTSEHOvw7AG3JaVwVErktc3TD+gYqOHZ59podr8l/1duv1LiAIty1IswA
+	UItyNriiNNBn6Riuiw1NzNOOcuKEV2dl1XKK/mUuZNDbyyjfsbcqN/vxT8rFpLBXHZBocRrrLug
+	ELeIxfXEI3ElcAMZiLlg0R7viy8vPlcu6DkpIKsOef7zd8TtORaHhn3NbrOVD/BZeCTuA07e649
+	GwuVdy4clizVGpdby4CHE958hrGmwIQSvhmRIQ2KTAQLdtTcRGoeLJ64C+q524OrH9A9YPtOjKY
+	rUF0=
+X-Google-Smtp-Source: AGHT+IEl94P5ryl0oiQlFs0i4xhbZ49ukxG7UTpiDPwU1kFz3OhT5yzplFI/ngX8B0sL1UAEezKEUQ==
+X-Received: by 2002:a17:90b:5105:b0:2ea:37b4:5373 with SMTP id 98e67ed59e1d1-3030fea47e8mr24740371a91.10.1742848332879;
+        Mon, 24 Mar 2025 13:32:12 -0700 (PDT)
+Received: from gmail.com (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a49bsm12690751a91.34.2025.03.24.13.32.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 13:32:39 -0700 (PDT)
-From: mohammed.0.elbadry@gmail.com
-To: 
-Cc: Tali Perry <tali.perry1@gmail.com>,
-	Mohammed Elbadry <mohammed.0.elbadry@gmail.com>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Patrick Venture <venture@google.com>,
-	Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	openbmc@lists.ozlabs.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/1] i2c: npcm: Add clock toggle in case of stuck bus during init in npcm_i2c_init_module
-Date: Mon, 24 Mar 2025 20:32:03 +0000
-Message-ID: <20250324203233.1266772-2-mohammed.0.elbadry@gmail.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250324203233.1266772-1-mohammed.0.elbadry@gmail.com>
-References: <mohammed.0.elbadry@gmail.com>
- <20250324203233.1266772-1-mohammed.0.elbadry@gmail.com>
+        Mon, 24 Mar 2025 13:32:12 -0700 (PDT)
+Date: Mon, 24 Mar 2025 13:32:09 -0700
+From: Howard Chu <howardchu95@gmail.com>
+To: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com, james.clark@linaro.org,
+	agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+	hca@linux.ibm.com
+Subject: Re: [PATCH] perf trace: Fix wrong size to bpf_map__update_elem call
+Message-ID: <Z-HBSReviPphH2LJ@gmail.com>
+References: <20250324152756.3879571-1-tmricht@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250324152756.3879571-1-tmricht@linux.ibm.com>
 
-From: Tali Perry <tali.perry1@gmail.com>
+On Mon, Mar 24, 2025 at 04:27:56PM +0100, Thomas Richter wrote:
+> In linux-next
+> commit c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
+> causes the perf tests 100 126 to fail on s390:
+>
+> Output before:
+>  # ./perf test 100
+>  100: perf trace BTF general tests         : FAILED!
 
-Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-Signed-off-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>
----
- drivers/i2c/busses/i2c-npcm7xx.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Arnaldo encountered similar failure, but I couldn't reproduce it, so the
+fix was stalled.
 
-diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-index 3ad6124be80f..78c85015d955 100644
---- a/drivers/i2c/busses/i2c-npcm7xx.c
-+++ b/drivers/i2c/busses/i2c-npcm7xx.c
-@@ -2043,10 +2043,14 @@ static int npcm_i2c_init_module(struct npcm_i2c *bus, enum i2c_mode mode,
- 
- 	/* Check HW is OK: SDA and SCL should be high at this point. */
- 	if ((npcm_i2c_get_SDA(&bus->adap) == 0) || (npcm_i2c_get_SCL(&bus->adap) == 0)) {
--		dev_err(bus->dev, "I2C%d init fail: lines are low\n", bus->num);
--		dev_err(bus->dev, "SDA=%d SCL=%d\n", npcm_i2c_get_SDA(&bus->adap),
--			npcm_i2c_get_SCL(&bus->adap));
--		return -ENXIO;
-+		dev_warn(bus->dev, " I2C%d SDA=%d SCL=%d, attempt recover\n", bus->num,
-+				 npcm_i2c_get_SDA(&bus->adap), npcm_i2c_get_SCL(&bus->adap));
-+		if (npcm_i2c_recovery_tgclk(&bus->adap)) {
-+			dev_err(bus->dev, "I2C%d init fail: lines are low\n", bus->num);
-+			dev_err(bus->dev, "SDA=%d SCL=%d\n", npcm_i2c_get_SDA(&bus->adap),
-+				npcm_i2c_get_SCL(&bus->adap));
-+			return -ENXIO;
-+		}
- 	}
- 
- 	npcm_i2c_int_enable(bus, true);
--- 
-2.34.1
+>  #
+>
+> The root cause is the change from int to int16_t for the
+> cpu maps. The size of the CPU key value pair changes from
+> four bytes to two bytes. However a two byte key size is
+> not supported for bpf_map__update_elem().
+> Note: validate_map_op() in libbpf.c emits warning
+>  libbpf: map '__augmented_syscalls__': \
+>        unexpected key size 2 provided, expected 4
+> when key size is set to int16_t.
+>
+> Therefore change to variable size back to 4 bytes for
+> invocation of bpf_map__update_elem().
 
-**Reported-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>**
-**Tested-by: Mohammed Elbadry <mohammed.0.elbadry@gmail.com>**
+Makes sense, thank you so much for digging into this and fixing it.
+
+>
+> Output after:
+>  # ./perf test 100
+>  100: perf trace BTF general tests         : Ok
+>  #
+>
+> Fixes: c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/builtin-trace.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 092c5f6404ba..464c97a11852 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -4375,10 +4375,12 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+>                * CPU the bpf-output event's file descriptor.
+>                */
+>               perf_cpu_map__for_each_cpu(cpu, i, trace->syscalls.events.bpf_output->core.cpus) {
+> +                     int mycpu = cpu.cpu;
+> +
+>                       bpf_map__update_elem(trace->skel->maps.__augmented_syscalls__,
+> -                                     &cpu.cpu, sizeof(int),
+> +                                     &mycpu, sizeof(int),
+>                                       xyarray__entry(trace->syscalls.events.bpf_output->core.fd,
+> -                                                    cpu.cpu, 0),
+> +                                                    mycpu, 0),
+>                                       sizeof(__u32), BPF_ANY);
+>               }
+>       }
+> --
+> 2.48.1
+>
+>
+
+Acked-by: Howard Chu <howardchu95@gmail.com>
+
+Thanks,
+Howard
 
