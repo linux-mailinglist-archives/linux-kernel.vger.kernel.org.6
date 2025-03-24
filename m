@@ -1,250 +1,185 @@
-Return-Path: <linux-kernel+bounces-574322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034B6A6E3E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:04:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47B6A6E3EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:05:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5557F189093B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:04:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BE03B304F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A191B3F3D;
-	Mon, 24 Mar 2025 20:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE3E1B0406;
+	Mon, 24 Mar 2025 20:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir4HnYiT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XjFxuX6w"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C05157A46;
-	Mon, 24 Mar 2025 20:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742846679; cv=none; b=aDwsUg6VWyTCO3T5ZPKYXneB2eklRY+nHdRqCtZ9n8yud5m8Rr7zRalhgh11vex4kWXgAiWRkWKSTJB/LS17ituIWRtt6/egukVSvKyfHSS09Xa0ZtGewPqFUtb9hTzDlxl2lMU2fgBdZysVL2KzJWYeDSSSjLGVR07yYzGfUw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742846679; c=relaxed/simple;
-	bh=zxmtxJA+3RpFU/Hf5MWAcrc6kL1d19pYvJFVOyd3j58=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hO20TK5eBe9DyqS05rU5abWifAuXkaszMxbn76AHyBJWjswqYY9dbAQZjLrVG3ZyVJLfbkCCmU+kAdp3Okj9PpdA+7WvxcNzDDAwpM8ONzSjpsdASh7lOWpkehQE7KcBqI0SdHhaYHRIb4k4Abtkwe2hYr7fI4+4j5XrRB8HlgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir4HnYiT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15781C4CEDD;
-	Mon, 24 Mar 2025 20:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742846679;
-	bh=zxmtxJA+3RpFU/Hf5MWAcrc6kL1d19pYvJFVOyd3j58=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ir4HnYiTuYT/ai0rJIcleFJsWExMp9ZpWaRwj7+63VVwCK46PgXa0be18Ci1eIm49
-	 bYu3M/v62UAR2hjJJn+ykZOhnfRBVDvrhSwOzCR2nOW4x9NNPqwpsLIcviOBXzjZwz
-	 1I6rdOWMyasnuyjoCCp36hSVh83Ho8A3oNkpNk5TA0yJnSUwQZdMIVj1QxgrYmvsvr
-	 VypkSNJq2c5mqRzX1u65o80YA15c9fZGU1F75/gC9EjKlq5N23A08mdLtQsBM+HdQ1
-	 ukkv7RV93Jl9n7VU2yIjPXwzPUMkEjYIpunR/1jJdKvCEvXD5hdOzmATu+1ZLxuQ37
-	 VrANkVTI8xK0Q==
-Date: Mon, 24 Mar 2025 15:04:37 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v12 06/13] PCI: dwc: Add dw_pcie_parent_bus_offset()
- checking and debug
-Message-ID: <20250324200437.GA1257874@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C8F192D77
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742846708; cv=fail; b=Xs5Oc2UZf/cTQrv19eqwn6NHPX4fWR/fVbluTyChSskPrOgYX5/86rBOJnpySehXqUKDAfVtLOC8+MuoUiZPEusf59iuf9m6Nvga8EEPvDFzaA3eBXfVDLvFB8euXUH/N2Sop3BQVSGDxM5JkhWJyt8eloH0ZeeHpfX8k9iOvtk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742846708; c=relaxed/simple;
+	bh=oK/MXMeQxncMNQEaxBgjvXK6nTcMj4Zzyu0ktfvF47c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=p/wwoZnbocH5Loe7K7/WzykbpIncsVLqL36ffl/dbzXeZyfDzzJi4H1rCD9O1LwMwXWb7gVb653JrULhTJSsO9yTc/6FA6zfrztu2rKq7gE/rqytnKDqXT0RngL6sfOjpsepkAPcqCyr51QVxU9R7a7PFrtnumqvHcSkl/29RF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XjFxuX6w; arc=fail smtp.client-ip=40.107.92.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZG+wKSYkQpNLEZNpr7pzAFq037ji91j4LzG9f9KVX8hZk2csyQxtI/DosAsL8OtDSBwW6/SMG7fnIq1KThDkLSVOkR8zJitS0ZuXqyGLpMo+46IQ0yx3dxPWWYZB5abtR2EFnEnkqGyr220ZBV+XsfIFWaoolw+ktztOBpxHxx78oMcoB3MxNGH+t9gona8d21SLTUffnAboAF7t1zSSD3nxjZCMkko9XUibXT/Z47AzlsX2o+BA22Vi0l8nmWkMyKih5ZRZmsEBOVn9jtijJ5megbai2ycLQlEqDFLw1C9TdYSA7CMU0VsIne7GNRZKJPf/H43vergJMQHy4UB6PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L0ypRq7qQaQv3o5hgvtE9AOFUZIant2UU7f7OVVPH1c=;
+ b=jCWVpUoBBIZvfRE0Pc1DSv5W3jRqbgrawT446ofyTB9uq10zmMPtBJR3M72qn5KSLqhVKQJgI6cBYaDKTUhxF1PK61ozGYhY9Nz65+O3c696pyEyadLreQ3pWdAqRfszfguvjPBtULQN0XuhcEZKEnntfxoji/c21rUVOFA3YaUmyH9HJx32/mJisOxanlQjWZzuXReR4SM4PXEZLpB1LV6Kgl91IU1gyYKYYa+MB4tfAJPitY3pKV6a7CWFR3qVoPlkmQgfzm1ql14AXQzmXxxXCM1rrN7xOD69l5rD+p+GuLbu5gecWF6uBfErQPv9Q83dPRlzBfvL+QkzxX6/ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L0ypRq7qQaQv3o5hgvtE9AOFUZIant2UU7f7OVVPH1c=;
+ b=XjFxuX6w49RJL8lhheVawTmo8WxEeTPBlP93x04iTAqPFsf0GuRA2nsffPtAcaNlh3gRtP5cQ07e6KNHaqOJJTKmwfnbFzQMX6CGgPyvsvIG4lpy/y/I9xfV1Lwxv2usfRxCb6LmLPsWK0XyeAXPdOJKve8LT4MFQF33E12KwAzHa/LwT0J4/tIV3jWZAwwmCovd3DbxNwaVAuGuM7LqqwdSYq61JR3ifN65Zu6ci1b7yt86MnLH17veapVHcbSv8jFBj1tKtCO+y9v0jquVx9p4O7gupXztuz2nDmIeFmYR8EDTodXtJEW9qtG/1N3JPWV+8E8fpV9SGh/faFGt6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by BL3PR12MB6474.namprd12.prod.outlook.com (2603:10b6:208:3ba::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 20:05:03 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 20:05:02 +0000
+Date: Mon, 24 Mar 2025 17:05:01 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, kevin.tian@intel.com,
+	robin.murphy@arm.com, joro@8bytes.org, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iommu: Drop sw_msi from iommu_domain
+Message-ID: <Z+G67avxHQt5L+62@nvidia.com>
+References: <cover.1741294235.git.nicolinc@nvidia.com>
+ <6d4b493d20926c8d14e29bc776639cdcf2095146.1741294235.git.nicolinc@nvidia.com>
+ <20250324162558.GA198799@ax162>
+ <Z+GK98/VSvYl518j@nvidia.com>
+ <Z+GOkl21ZLtE3B/e@nvidia.com>
+ <20250324170743.GA1339275@ax162>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324170743.GA1339275@ax162>
+X-ClientProxiedBy: MN0PR04CA0012.namprd04.prod.outlook.com
+ (2603:10b6:208:52d::31) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x2r2xfxrnkihvpoqiamgjmvppverjugp5r4we7lcfpz6jloxzy@7kdfzxiwv2po>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BL3PR12MB6474:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7cde9b2-6d69-499a-69f6-08dd6b0f29cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tZsLugLuy6ZDS3IDo/L7wvVNSg4tDJsrY2s/zcGJyh91DC9W4LQ5zSijDBvN?=
+ =?us-ascii?Q?QaxIqARSNsgkVv5Upr42fYXoUJZFg8F6WnhNTZ2qhSWOPKgZwX7MxMI9JQCP?=
+ =?us-ascii?Q?J2QXiPW+X+ADfez5SsdGwy9w2pZoJziqwocb8oqNDJWqoIh3vS5d6XFuwHV0?=
+ =?us-ascii?Q?vYnux10v5Cpihx4+k8sHg1JaYYhyZmr7sd/Jc9vWS8f0dC+UqC+pN3+mGeKq?=
+ =?us-ascii?Q?gXAHGp5uPJTLsLXUXB8IcIyNUoTfMqqdIf2U7al3VHX0u8C+wANSFewG+tFb?=
+ =?us-ascii?Q?fqQKmX0EuzYe/qu60tvWWgZgM+b7ttckYF7EFqssXU2P9ccichUU/UvVSx08?=
+ =?us-ascii?Q?DbvJ5bFg9/fqKGowYJGRluhay3Aa4fouCjk4f/bh/I5VOlL2vgK8J+2CeZAy?=
+ =?us-ascii?Q?Zzn/zg8gDFM62qA8LmxYL72PEDhmognAQ6e9iUXOGIB9XGkXcgGC7Syk2loV?=
+ =?us-ascii?Q?eRqKJzuiJhlz43ZPDcYhVhWVipyb6pHbo4Rl4GgnkLrKKOgmkA/rZsoS+CkD?=
+ =?us-ascii?Q?SnzNI8/yNtwz4ExEMMQT2FQvdVIXvNw7iRffvGvmazkFlBsZiNdZ3pG4VUDG?=
+ =?us-ascii?Q?8OLhxEELPmzerniOHhHgDOcovV/BYoY9KRqlCnDPa4Mph4oO3M1B6Gn4nxK3?=
+ =?us-ascii?Q?lGOu6XbxugF8y19bjBFLS+HcY+mpuljKSasxHozSVE0P7xAMFrA+3fKV+f30?=
+ =?us-ascii?Q?p7mWAhHZ6ToCt75YSl1h2J5vK4L8DxIimcWmysAUQTxLAcoYhQ8L9vPiwWGE?=
+ =?us-ascii?Q?lOZ4rWKKKCY+U6CqftDINqy8iBU+BaO7fJn89OlvcEcBgm7XDP+NPDa8IaGW?=
+ =?us-ascii?Q?rNN2QfgExhGZPnipndq9rsYzYCOfneVVVDp/3pxABSoqmFa1FFZXXvMLT18a?=
+ =?us-ascii?Q?NZoP2uqwYoXgS+5qLfs6MCjEgqrYZtDP8wJRoOkHS5GFeihl/VFL0bsd2wbB?=
+ =?us-ascii?Q?LKXdTF3pWSV8DZ+Dzq4TsfcogXUtVXPjAYvWhQ4BCelqpv97wbdypAFNV9rm?=
+ =?us-ascii?Q?c3SWkhQm/8lM46jrMvfJhRtmbThwJU7hm3OTH9LWXuQJyNOPmr8kDLaYbD9u?=
+ =?us-ascii?Q?fzusDsj6yb7riXOzFE/2R+dowRvxrFmJOYpZLh3hS1pCIDnzHiqLaLeNiYBt?=
+ =?us-ascii?Q?QXIx9J0XUx/5BqOwPPxSxVSRAvC9JXaC5IRgfSDQgHQjhncSFD51qBCl3Ye5?=
+ =?us-ascii?Q?e8KpEBLgzqZm/H00lDmxSC7d9ZjHdBPAn4AMo/OGa73GURCWWTGbq9oWHsUS?=
+ =?us-ascii?Q?zV9fBiAi8O2l9bqLlw/Qy+c87NAPG++whpt62oN2BNXRjQAm1f0bH18Sb+JB?=
+ =?us-ascii?Q?ZAH0ZbIG/JxmXCCok4qYvCp2BENixsGRd4hhw32PeyjOVCP7miGe7MKwyPtr?=
+ =?us-ascii?Q?68eLUfqCPlWKji+LEPhzgqA+RmLqIH8JnxSPqMidrIPZHnDsmY3LN8oEhFiN?=
+ =?us-ascii?Q?hKzloCdYbro=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uKS/VFxVDntv3oQyRzGUzwQCnmpZYyL6mmXFbaUxWPA/LU9HkHT8Zkg/0Bu7?=
+ =?us-ascii?Q?qk/95xcjSwO1gTsVK/euHr583QmzEuDF5Un98ZJ+XrJAPHOqb4jAgULJgyjZ?=
+ =?us-ascii?Q?TjUFS0fw/4aMtJuYA2jY3doIfb7zPLxFcYH7cWm/JkAVNAyg+jfdqyqhjHpG?=
+ =?us-ascii?Q?tt0QdEF9Ck1FOk5vJanc1OHK+8vwBcI0efb8Wk5GfQwmkBNQZCK/uerWqHal?=
+ =?us-ascii?Q?YjszyvbiK8ff+HoI51J7TTwpaKueeTw99aPqWPbAw+guNUxiuzk2DTkuc0NK?=
+ =?us-ascii?Q?/+whzox7JCXo1UXou2aIEb5y9RKoZze7/SFHni01OalZXx+7D9gfytsaFild?=
+ =?us-ascii?Q?1h8f1KjE7E63p2yC5kFJsvmapDuyaPzgx6u/0F8TEzb2O5OBSWH3E4hEh3Oe?=
+ =?us-ascii?Q?QXvn0QaY8H5lYOg9u4B0/LP2Wp20CqkqSJx598StvEKo/K/rZO08I+e6mK9p?=
+ =?us-ascii?Q?GuHgmRNWSVzgo/7XCHLCirymL9QMMztkVAhAI8Pvrs7GPVdIMbVBe6kKrRFx?=
+ =?us-ascii?Q?Ef56hjeTyV9wl8i3H7VXMedLrC1MquRd5TPccrTHDsbQdiDZ1qxeG0Q4Q0bQ?=
+ =?us-ascii?Q?if6GcEIotQNoDg3V1HwxMLQBEW/8gUK+ikwrS2o5XqftA8oBjo+83xtjbBNe?=
+ =?us-ascii?Q?6VFcJnEMFkkGjcfIDx4a85fQ/K/Vhg92deXulBO9Ia+7OrZqEkeeyYj3EpFG?=
+ =?us-ascii?Q?H93NdWObAQ4wr5DoeZhpXWNxJjDcrVanM9Bqh69YTxYSMOKjD5+jcC5F/Kuv?=
+ =?us-ascii?Q?MlfvASoh1KqkOK2IXbUv4fHyelXYNBBGq/mBb1LFlhNqpf9cHG/veBjNQGHE?=
+ =?us-ascii?Q?EFwYYTqw3zE5O8HT2koyf0FsTlWBWmxDA+92CgR3KAKYw+3EnU2oytWmGOd9?=
+ =?us-ascii?Q?39O6CxuNRw3xs/urL/mF+EuqB84r+aA/IT65wyS1i0dyYUTQewfQfpGr0RcU?=
+ =?us-ascii?Q?x9aY735X2snTdaMgwcpG/xj9+X7HCKbv1IZFjM6WzEhF0uZzwKkKc6LFytzR?=
+ =?us-ascii?Q?9AMpr8be2pSKCd3T1jNej9LmPsP7v/Q82JyPKTFFsWc6f4rupDuHgiwLf8iT?=
+ =?us-ascii?Q?cEs8/poUdWrrwMxePqDDXLDnZaM5yb704pkgs34hF9C7kbsAaA/yyWzaS+D4?=
+ =?us-ascii?Q?M0lnr415R+cx7u+X+EAKptjujQ21Sh5Imoiz7lpqLozorUo4OAzVEn6Q+0Aw?=
+ =?us-ascii?Q?ZvEocBnkyeEregeMAmZeLfmTUI8M6LznK70tmTtnnpmvJUyhifqYtRc4sZQL?=
+ =?us-ascii?Q?FSrj830jTn1dofI8od/OdA78xsOQxGSpRpejQtmqUYtvM6PiQz110ZbF5D3c?=
+ =?us-ascii?Q?0qPuWTB4IbLtume6SISUU8peCHHRfnHK/lnZeSDuzwoezQg6fRCrgexiNfJm?=
+ =?us-ascii?Q?6H228Vv+Y9I4K+kQwc88PhOA11MA2L75vD34qpjyWlxT8XYO0yW4jEj0ynry?=
+ =?us-ascii?Q?Ve2M5WpRcAsRF6PjmP5JoYAW4jXIOa57KUiq7HHAtWA5XcE7PkRvPvCJtQkL?=
+ =?us-ascii?Q?4TeUVORdhyAZid3fu45CqsBqAKMvJvUUk0A9J78KZiG0aNjgtLMFHwhSbofT?=
+ =?us-ascii?Q?P8/hqKaRKszDtQ7LVNk=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7cde9b2-6d69-499a-69f6-08dd6b0f29cd
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 20:05:02.8778
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ueToQ6WsaMG+exdwN84/bT1noLwOBGwoLqT6ZWArHzlb2FkCA2leCMVc3SbYrAs+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6474
 
-On Mon, Mar 24, 2025 at 11:00:24PM +0530, Manivannan Sadhasivam wrote:
-> On Sat, Mar 15, 2025 at 03:15:41PM -0500, Bjorn Helgaas wrote:
-> > From: Frank Li <Frank.Li@nxp.com>
-> > 
-> > dw_pcie_parent_bus_offset() looks up the parent bus address of a PCI
-> > controller 'reg' property in devicetree.  If implemented, .cpu_addr_fixup()
-> > is a hard-coded way to get the parent bus address corresponding to a CPU
-> > physical address.
-> > 
-> > Add debug code to compare the address from .cpu_addr_fixup() with the
-> > address from devicetree.  If they match, warn that .cpu_addr_fixup() is
-> > redundant and should be removed; if they differ, warn that something is
-> > wrong with the devicetree.
-> > 
-> > If .cpu_addr_fixup() is not implemented, the parent bus address should be
-> > identical to the CPU physical address because we previously ignored the
-> > parent bus address from devicetree.  If the devicetree has a different
-> > parent bus address, warn about it being broken.
-> > 
-> > [bhelgaas: split debug to separate patch for easier future revert, commit
-> > log]
-> > Link: https://lore.kernel.org/r/20250313-pci_fixup_addr-v11-5-01d2313502ab@nxp.com
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware.c | 26 +++++++++++++++++++-
-> >  drivers/pci/controller/dwc/pcie-designware.h | 13 ++++++++++
-> >  2 files changed, 38 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index 0a35e36da703..985264c88b92 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -1114,7 +1114,8 @@ resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
-> >  	struct device *dev = pci->dev;
-> >  	struct device_node *np = dev->of_node;
-> >  	int index;
-> > -	u64 reg_addr;
-> > +	u64 reg_addr, fixup_addr;
-> > +	u64 (*fixup)(struct dw_pcie *pcie, u64 cpu_addr);
-> >  
-> >  	/* Look up reg_name address on parent bus */
-> >  	index = of_property_match_string(np, "reg-names", reg_name);
-> > @@ -1126,5 +1127,28 @@ resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
-> >  
-> >  	of_property_read_reg(np, index, &reg_addr, NULL);
-> >  
-> > +	fixup = pci->ops->cpu_addr_fixup;
-> > +	if (fixup) {
-> > +		fixup_addr = fixup(pci, cpu_phy_addr);
-> > +		if (reg_addr == fixup_addr) {
-> > +			dev_warn(dev, "%#010llx %s reg[%d] == %#010llx; %ps is redundant\n",
-> > +				 cpu_phy_addr, reg_name, index,
-> > +				 fixup_addr, fixup);
-> > +		} else {
-> > +			dev_warn(dev, "%#010llx %s reg[%d] != %#010llx fixed up addr; devicetree is broken\n",
-> > +				 cpu_phy_addr, reg_name,
-> > +				 index, fixup_addr);
-> > +			reg_addr = fixup_addr;
-> > +		}
-> > +	} else if (!pci->use_parent_dt_ranges) {
-> 
-> Is this check still valid? 'use_parent_dt_ranges' is only used here for
-> validation. Moreover, if the fixup is not available, we should be able to
-> safely return 'cpu_phy_addr - reg_addr' unconditionally.
+On Mon, Mar 24, 2025 at 10:07:43AM -0700, Nathan Chancellor wrote:
 
-Yes, that's true IF the devicetree has the correct 'ranges'
-translation.  This is to avoid breaking platforms with broken
-devicetrees.
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 0f4cc15ded1c..2b81166350ae 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -3661,7 +3661,6 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
+>  			ret = iommufd_sw_msi(group->domain, desc, msi_addr);
+>  			break;
+>  		default:
+> -			ret = -EOPNOTSUPP;
+>  			break;
+>  		}
+>  	}
 
-> > +		if (reg_addr != cpu_phy_addr) {
-> > +			dev_warn(dev, "devicetree has incorrect translation; please check parent \"ranges\" property. CPU physical addr %#010llx, parent bus addr %#010llx\n",
-> > +				 cpu_phy_addr, reg_addr);
-> > +			return 0;
-> > +		}
-> > +	}
-> > +
-> > +	dev_info(dev, "%s parent bus offset is %#010llx\n",
-> > +		 reg_name, cpu_phy_addr - reg_addr);
-> 
-> This info is useless on platforms having no translation between CPU and PCI
-> controller. The offset will always be 0.
+Can we explain why this scenario has a 0 cookie_type?
 
-You're right.  This was probably an overzealous message for any
-possible issues.
+Actually.. Is it just an identity domain? Nicolin did you test this on
+your arm system with a device using identity (iommu=pt kernel param)?
+I would expect identity to end up with a 0 cookie because we never
+setup dma-iommu.c code on it.
 
-What would you think of the below as a replacement?  It should emit at
-most one message, and none for platforms where devicetree describes no
-translation and there never was a .cpu_addr_fixup().
+Should we be testing for identity to return 0 instead?
 
-It's still pretty aggressive logging, but I'm just concerned about
-being able to quickly debug and fix any regressions.  Ideally we can
-revert the whole thing eventually.
-
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 27b464a405a4..4b442d1aa55b 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -1114,7 +1114,8 @@ resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
- 	struct device *dev = pci->dev;
- 	struct device_node *np = dev->of_node;
- 	int index;
--	u64 reg_addr;
-+	u64 reg_addr, fixup_addr;
-+	u64 (*fixup)(struct dw_pcie *pcie, u64 cpu_addr);
- 
- 	/* Look up reg_name address on parent bus */
- 	index = of_property_match_string(np, "reg-names", reg_name);
-@@ -1126,5 +1127,42 @@ resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
- 
- 	of_property_read_reg(np, index, &reg_addr, NULL);
- 
-+	fixup = pci->ops ? pci->ops->cpu_addr_fixup : NULL;
-+	if (fixup) {
-+		fixup_addr = fixup(pci, cpu_phys_addr);
-+		if (reg_addr == fixup_addr) {
-+			dev_info(dev, "%s reg[%d] %#010llx == %#010llx == fixup(cpu %#010llx); %ps is redundant with this devicetree\n",
-+				 reg_name, index, reg_addr, fixup_addr,
-+				 (unsigned long long) cpu_phys_addr, fixup);
-+		} else {
-+			dev_warn(dev, "%s reg[%d] %#010llx != %#010llx == fixup(cpu %#010llx); devicetree is broken\n",
-+				 reg_name, index, reg_addr, fixup_addr,
-+				 (unsigned long long) cpu_phys_addr);
-+			reg_addr = fixup_addr;
-+		}
-+
-+		return cpu_phys_addr - reg_addr;
-+	}
-+
-+	if (pci->use_parent_dt_ranges) {
-+
-+		/*
-+		 * This platform once had a fixup, presumably because it
-+		 * translates between CPU and PCI controller addresses.
-+		 * Log a note if devicetree didn't describe a translation.
-+		 */
-+		if (reg_addr == cpu_phys_addr)
-+			dev_info(dev, "%s reg[%d] %#010llx == cpu %#010llx\n; no fixup was ever needed for this devicetree\n",
-+				 reg_name, index, reg_addr,
-+				 (unsigned long long) cpu_phys_addr);
-+	} else {
-+		if (reg_addr != cpu_phys_addr) {
-+			dev_warn(dev, "%s reg[%d] %#010llx != cpu %#010llx; no fixup and devicetree \"ranges\" is broken, assuming no translation\n",
-+				 reg_name, index, reg_addr,
-+				 (unsigned long long) cpu_phys_addr);
-+			return 0;
-+		}
-+	}
-+
- 	return cpu_phys_addr - reg_addr;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 16548b01347d..f08d2852cfd5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -465,6 +465,19 @@ struct dw_pcie {
- 	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
- 	struct gpio_desc		*pe_rst;
- 	bool			suspended;
-+
-+	/*
-+	 * If iATU input addresses are offset from CPU physical addresses,
-+	 * we previously required .cpu_addr_fixup() to convert them.  We
-+	 * now rely on the devicetree instead.  If .cpu_addr_fixup()
-+	 * exists, we compare its results with devicetree.
-+	 *
-+	 * If .cpu_addr_fixup() does not exist, we assume the offset is
-+	 * zero and warn if devicetree claims otherwise.  If we know all
-+	 * devicetrees correctly describe the offset, set
-+	 * use_parent_dt_ranges to true to avoid this warning.
-+	 */
-+	bool			use_parent_dt_ranges;
- };
- 
- #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+Jason
 
