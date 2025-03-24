@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-574433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BDBA6E53C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:14:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556F7A6E541
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2889189C2A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:11:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 428B0176810
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC221D7E2F;
-	Mon, 24 Mar 2025 21:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1363211CBA;
+	Mon, 24 Mar 2025 21:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3wU6m+d"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXz47oRP"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19A01E3DE0;
-	Mon, 24 Mar 2025 21:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16A1EE7C4;
+	Mon, 24 Mar 2025 21:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742850446; cv=none; b=FSxKfTotLtUqfceNBiozAw1rdJ3YDxv4vM/K5m0KA0w/iAaibZCt2VPrvQFAVATYZP3KgbkTjO0bQSxLFVGQ3biQ4RJN0AEhCXAdHGsO63ydZBEwiAvWnDvXKj/O/NxlD5+k7V5sNPQOyM/LW5IMdFKbTXf9jTVtlDwhIqJBtaY=
+	t=1742850472; cv=none; b=HxXgSuFjXXSXAu/1D5FENNK5+FeSwuZ3/GWqDdPfewz0Evm+PDyDVj/vDqnCODH7CXcJ+F41t2tEO2x0Zf+WqpV9v1BvHWmNYPfwcTf7/e8/0FIZfZt7rDRg1j9jvV45fnvJOU2cX252bG/DJUaN30xmR7RjsV8kMYJ3BNYxyWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742850446; c=relaxed/simple;
-	bh=HIM146H+SmGtSNE78iI/F0ZJKaItnpxecxGkKXyUKvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fhYqtQ3CseV+xZ4qGQsxnebrsN+zZ++Y3+ptuvOEGquz1mUQdgpWyK5OvUbhU5Hk8FoeOwKf9/GEpYjWSmEEglnHmqx6Cc6ywwXa8QeD7Zb2evExtD0vMmV41e85ifjI6gCnaoeYt3UWMRyZRiyMGohV1+xLkseJrnzVL8AyLx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3wU6m+d; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1742850472; c=relaxed/simple;
+	bh=37sGBhOsw4bP+v4LQYWRdTvRompqepkc1tQkVxa12XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PvS4+pOtEtoT0OMKXLb8jLlFFidokgIzAMEt8xMocTO2+RU047ejeDXP1zGnmVEeIO3zNFbwHfoK9q9xviEw2pgFl0a8L3x+ba85rFz5GWrsZtNtoMdNpCVY1g3UAFEfzkgDvzyrpIe6jH1W8GjixCRP70NGc/9EaOo/cYixyCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXz47oRP; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-301001bc6a8so1356129a91.1;
-        Mon, 24 Mar 2025 14:07:24 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-399676b7c41so2593395f8f.3;
+        Mon, 24 Mar 2025 14:07:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742850444; x=1743455244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742850469; x=1743455269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0f4oMKaqWF/1RYznP9bKhltlGtX64Ox9tuugsDhbh/I=;
-        b=j3wU6m+dYfAWK7s6DQDCSSWB/wlH8iI8OgIt7mOvZpW+g2jkn0q2uPQBL/3/zrX+nm
-         V/CJ31BA5MxVHk74T1+lc3qxUlhJUtlkXvUoscDvjBZesgNmh/imP6nScIsuRQUh8Tfl
-         ZUwrJC+Dlm6vvVLPJEvU7r4cHHfnkZ3rgYLLyPmqBot7wofYWCbXR+zkSV1YMl5m4laO
-         HwQ9SnRfLtT5z2QOMbXfzmSg8z4G6fkIRSpyu6LeRU3acWVj9/a9g27Uxt1393ci1/Ms
-         Dc/Ys1bTLbU5Hij6LxBD1n1TBVAlrt4mtMt5r6m+pbm69uqRlBbT7CbZ6KdhPQI/KHd8
-         U2Sg==
+        bh=bNLMtPGszyEgjRV8zOXLE9UQ5Tf8yvUAMYZZzFa01jo=;
+        b=EXz47oRPBCYRHcNAz/tD1mclTFqFQJiSPidkK4FHbo1P7zPey7LsPf0HGCQq5mxVav
+         S2xiiF+yMuE8rijjjzmD3TR+E0+tHgXDtTf5geOLT3PdBd4HCy6W6ulO3kqklfuLjMTo
+         hElWbeqB81rJGKmsyKZRCEe/JkzXU85ao99fGj+RRazleTJeNWyEeEMOnA2T0+rov+9x
+         LEOEtuDnjPYXXbrbjs1Jahlgv8GW4mPF1qPfxn06U9mLtSug4P4EE00gGFcKhosScvrQ
+         hDlHnp46elFxJiG1YQW0UZg11B5/Up2bZSl/cRD/1WsCn+sd9Iy/3mI50G81UelZmb40
+         5Jeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742850444; x=1743455244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742850469; x=1743455269;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0f4oMKaqWF/1RYznP9bKhltlGtX64Ox9tuugsDhbh/I=;
-        b=xDGw3XMiJc2M8V4P7pS77tyx7t3lG/LjQPZKTOge1R/OAOdCz/tp3odqbsPSgf8vcY
-         oKIYU1FiRf9uNadGu3k/kIksyeK93/9ltGvLSd/u31HUPcD8xb33eRLY5Aj585VD4mi8
-         V1dvkFAdt9ycVrjBr3vqk0hZv71SEb/YTz1bIlVIR41Wfno1UWayQv7VhbKHoG9fbeiq
-         g7Q4S8IroRzsdlpfCCAffjgzWwA0Uu+l4VUolTBbddbvtJqwg7TZypb2I8bmW/OVFf6L
-         VTo0S3zOMAfciHWNp1NCXJYkBtp8bT+iVaLTu2ymdnqlZfQjsKD38dYMdz2F0djk8ok/
-         eEvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDDTgC69uZ9wgYP0mDo1Kjs+XOULctPo1XNJSvRRsd/3uKZE2YKuhbn6qdSUi9XAOD+Vo5P62Iu66pCJE=@vger.kernel.org, AJvYcCWauFiy3cQI7S4MpU/xr7O2MGAwHySMYKfLJB3JtU+4yigGI2zORfF1yMqF6f9wIAWi33Rgi4aIy319RUNlqKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygfiNhUqz32eqlYoyhodwvBLOrCVhdVvg6dpu7gViHb5gP7VFc
-	2TPtLurK183kq+jHubmG5605QnokA0HcqS7YViWjHtk3E95ifTiJ+hnlDiSX80L0/enNJjLgdSU
-	s+/Sb+loBsJrYrFURdjYqhGucdq4=
-X-Gm-Gg: ASbGncvVUbkoTIeL33jIXvLeamgJ4c55nRGqE9KXYfWCvbEiyGpBESMwV00EBbi2VKo
-	qSn5J5z1Tql4RYPV67reSdJFDBJ1IR+Gtugs8pOwe1Dro+kKSHYauyx0SpG9mloqSrzsNW0wakV
-	+jvOWrWj8YSUnz+k7MX4/fjtNAHw==
-X-Google-Smtp-Source: AGHT+IFFjtafG0wMuZOrq5yJdlInKcUlyDtdZ577YwhsNZ3Yq5ctbw5CS07D7387Hjb2bVPr/RDfiCq2gCBAQwtQGQk=
-X-Received: by 2002:a17:90b:2250:b0:2fe:b972:a2c3 with SMTP id
- 98e67ed59e1d1-3030fd37008mr8714903a91.0.1742850443707; Mon, 24 Mar 2025
- 14:07:23 -0700 (PDT)
+        bh=bNLMtPGszyEgjRV8zOXLE9UQ5Tf8yvUAMYZZzFa01jo=;
+        b=XNcUaMPdZH0B9PJnuJ6fmgRiIecYn67hwwNckPag1Y7W6tN1TQmVRL0K7Ai9lXfIBC
+         kAaWSu5pLSz11v5iTPHy3qQKEd+23dcKt177fZ9OymGd6YKB8qLEHzla066Q3D2GfBgB
+         WYRGAKm5i5CDGFNdIZmmb/LB9QIHoAklK1AZKMp/KTvbSDRW1apDIT8dFXvV/epVU2LZ
+         soqtfXhK/xNiM3Eh0c2bMXgPsQSt2DNmBHwrMWsN6P3Gb0L7KI5mkd8EtymvPLwQarTa
+         w+FkTt/ic0syyrVsDskN2vLBrAGYxcsqWVcibYgf4fhglEKmaAsqsEZOba+ZB9p4tsVH
+         bjAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiU30xH9yPIHV3mMrJnraVr6AKWSyHGtEYkcN/i/PyEPt846siCOSqU7AK04x2x3dnGN966Jqu28TEpJGd@vger.kernel.org, AJvYcCWcvR40YwrmPQ4pxXzLZHzEhsoZJCREF1Le/oEiypx6CZHsDZojecXH1wHl4Vlv7QiCZsuYEDbHytuZ@vger.kernel.org, AJvYcCXvPckH/c1zw7RPo/CBKfwth4DC6uOSUZ1M78griasaN5qoXHfYXt1Yj9cB7OSm0Pbzo/J3LONp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGpWH6Hh8BvHjRpD9DIZbuSvlJOU0HBha7CnK5JEq4JXsR3871
+	wVYLsNEscFHAF5mekS90eXF1vp9sReBzJ6Fe5yuAFnBjk6SAIB/0
+X-Gm-Gg: ASbGnctlOPp3qkhPCZFiu4IrNI60c0EnJOvjYXbglskCiWhItcyReGKO5akIPyonG3G
+	fnDy6/0f7oI/L2cS1VyJ0TtOGoz4mW+duH4ci339m0xMhNtnELHnMCoGgWlTRAj5I+ssyutA4/H
+	QCmGONOuJLQSWvzO9PNjNu0//8xx1iDDmoskghSTnUcNmINeqnoKLu2rpXvQ6QixxNeM75n6tOz
+	qR1GkFUjy0zpISP9GFCayO3Kk7J/o3Y7L8kj65lXlLl0dgIkySi/XB1bXEbC70IKgC/ehiOeBXM
+	2sBfdwI8xv1Eg2k7pf5IOG1C4aitXudoZS2dybEi0KEvqviqPgLfobD8yWkwfOW2FySSNo8Xiyi
+	kSv1fSLSspJab6YHl0Q==
+X-Google-Smtp-Source: AGHT+IGT4BKuV7YDOj2O5u8BDxdWnIdabnTB3Mg4ZWsHzsCa72YOZvcYauJbOI4f+AlFZJRYw41viw==
+X-Received: by 2002:a05:6000:156f:b0:391:ffc:2413 with SMTP id ffacd0b85a97d-3997f92d5ccmr16502719f8f.40.1742850468674;
+        Mon, 24 Mar 2025 14:07:48 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9eff9asm12152488f8f.92.2025.03.24.14.07.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 14:07:48 -0700 (PDT)
+Date: Mon, 24 Mar 2025 21:07:47 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: chenxiaosong@chenxiaosong.com
+Cc: linkinjeon@kernel.org, sfrench@samba.org, senozhatsky@chromium.org,
+ tom@talpey.com, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ChenXiaoSong <chenxiaosong@kylinos.cn>, netdev@vger.kernel.org
+Subject: Re: [PATCH] smb/server: use sock_create_kern() in create_socket()
+Message-ID: <20250324210747.3dc899b9@pumpkin>
+In-Reply-To: <20250324065155.665290-1-chenxiaosong@chenxiaosong.com>
+References: <20250324065155.665290-1-chenxiaosong@chenxiaosong.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-gpuvm-v1-0-7f8213eebb56@collabora.com>
- <20250324-gpuvm-v1-2-7f8213eebb56@collabora.com> <CANiq72mQ3zuYmsq1PD-49kKLNji8OJwuvxK5QWkNaBMuC-PHQg@mail.gmail.com>
- <509EADD7-607B-4DED-ADAC-152D7338EB50@collabora.com> <CANiq72=aVRMvOaU48DBLL=p+VoG3RvHK+K48XQhvHw3ARc0BNg@mail.gmail.com>
-In-Reply-To: <CANiq72=aVRMvOaU48DBLL=p+VoG3RvHK+K48XQhvHw3ARc0BNg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 24 Mar 2025 22:07:10 +0100
-X-Gm-Features: AQ5f1JpZ2zvfI8VoAwy2TeonYlCMJU7HVQ7vBEitKnbxHHICGiRlv1x9aYjaYgE
-Message-ID: <CANiq72=4+ubh0F5y2QMobFoyQPs4Aj7bOL8n4y9LzHxrb9Z2sQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: drm: Add GPUVM abstraction
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Asahi Lina <lina@asahilina.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 8:38=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Yeah, I asked upstream if we could have something that at least
-> detects what could have been intra-doc links, because that should not
-> have too many false positives since it is a subset:
->
->     https://github.com/rust-lang/rust/issues/131510
->
-> It is still tricky, because e.g. `Some` or `None` would need to be
-> excluded, even if you require the exact same case. So it probably
-> still requires extra heuristics.
->
-> Then there is:
->
->     https://rust-lang.github.io/rust-clippy/master/index.html#doc_markdow=
-n
->
-> which is closer to your idea. It has a few false positives (e.g.
-> KUnit) from a quick try, so probably we cannot enable it for
-> everything, unless we commit to maintain a list of terms in the
-> config. It spots a handful of things we should fix, though -- I can
-> send a few patches or create good first issues.
+On Mon, 24 Mar 2025 06:51:55 +0000
+chenxiaosong@chenxiaosong.com wrote:
 
-I went ahead and sent a quick series for the latter:
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> 
+> The socket resides in kernel space, so use sock_create_kern()
+> instead of sock_create().
 
-    https://lore.kernel.org/rust-for-linux/20250324210359.1199574-1-ojeda@k=
-ernel.org/
+As in the other patches you need to worry about whether the socket
+holds a reference to the network namespace.
 
-Cheers,
-Miguel
+	David
+
+> 
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> ---
+>  fs/smb/server/transport_tcp.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/smb/server/transport_tcp.c b/fs/smb/server/transport_tcp.c
+> index 7f38a3c3f5bd..e5f46a91c3fc 100644
+> --- a/fs/smb/server/transport_tcp.c
+> +++ b/fs/smb/server/transport_tcp.c
+> @@ -429,12 +429,13 @@ static int create_socket(struct interface *iface)
+>  	struct socket *ksmbd_socket;
+>  	bool ipv4 = false;
+>  
+> -	ret = sock_create(PF_INET6, SOCK_STREAM, IPPROTO_TCP, &ksmbd_socket);
+> +	ret = sock_create_kern(current->nsproxy->net_ns, PF_INET6, SOCK_STREAM,
+> +			       IPPROTO_TCP, &ksmbd_socket);
+>  	if (ret) {
+>  		if (ret != -EAFNOSUPPORT)
+>  			pr_err("Can't create socket for ipv6, fallback to ipv4: %d\n", ret);
+> -		ret = sock_create(PF_INET, SOCK_STREAM, IPPROTO_TCP,
+> -				  &ksmbd_socket);
+> +		ret = sock_create_kern(current->nsproxy->net_ns, PF_INET,
+> +				       SOCK_STREAM, IPPROTO_TCP, &ksmbd_socket);
+>  		if (ret) {
+>  			pr_err("Can't create socket for ipv4: %d\n", ret);
+>  			goto out_clear;
+
 
