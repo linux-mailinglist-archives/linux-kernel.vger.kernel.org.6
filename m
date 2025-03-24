@@ -1,175 +1,112 @@
-Return-Path: <linux-kernel+bounces-573962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281C7A6DEED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:40:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF85BA6DEEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E21E3AB834
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F0C4167F90
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728A6261561;
-	Mon, 24 Mar 2025 15:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE57261561;
+	Mon, 24 Mar 2025 15:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Zg+A9gOI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y0sKUAiC"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYpjCXGQ"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABE02E3392;
-	Mon, 24 Mar 2025 15:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BB72E3392;
+	Mon, 24 Mar 2025 15:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742830837; cv=none; b=g4jAhEp8eba6r2PmrQG92FMtYr+QEVMCXXqWPyrBjuXmD5QK7Z+PU6DwOzHlyO+Uu9hjjTklMTYf5l1kOq66JlqP9vmr4Vakim2rHLYyYbvOUXvosrQKO41VpamgqX2wpDwdfW2EcnGLDfHLdxV0XZXRQumXqpUIZzF0BKThy7I=
+	t=1742830870; cv=none; b=X70dDGHUUan07OAn9603IFD2a8aBFll9g3HetMCGgJAMCpFY7PGBigb0HDg/l9l4VkSxfJN/SOGSCC5wnJ2vIPyNVrsoV0fBbyH6NicrEsmbxsPywl2JDQvVteo8MrjQna/CZlY3y/Sm1lFV0vhZCwsK9GWaP9ePEYbwCVmiKdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742830837; c=relaxed/simple;
-	bh=l4I6098IvP7v5LzbanRLrtAxL/0MyIYzt2nxEeuqjww=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=nYu3zBtEAal3EXnNzuvf4NgwrUGiJmrlujXo00WA1PuqFVUBkVB63hdt5kcCbnyf4Fa1ioZW3Tyxlh7egBqiF6/eEFU8/dflYsvX0zU0gpAwCPlF2dB0RFuFPWBYMcV7oZSK6DfpOX84S8A6IVFVwPhBUJmU6Tn47kHiWzNR4TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Zg+A9gOI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y0sKUAiC; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 80A031383F4E;
-	Mon, 24 Mar 2025 11:40:34 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 11:40:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742830834;
-	 x=1742917234; bh=a6mL6ZV55LpLoF+o5FMn2VcT5nSELH0L7ai1+VLjQvY=; b=
-	Zg+A9gOIxGeDQJ348LFVyaIf7A85kObEfXFEidZpNLmXLr8fWGVJLDCkRACIk+ao
-	Z9kK68wRepkSmJfizPFRrTAkNNe9qGez/Qz0yhHzXeTtzofpW5+8GfRSpqJRiKHQ
-	DEhBrmI4u9uL4oi05C5hlHdf8g2g1cGEAuSVfAuDBptjz4Gu5Gt6OaZUntZD0uVI
-	CEM+hhYLZEEB1U9gPPjKrRVppIwoAJi6DIrlBBFwtAVj839DByVloWcE8U7Gaywy
-	Jx8Syzuq/G5u3HwDFbea8EW4fvCgwhDCQe92R7ToEAkPIjOPiO5faI0yEG+xwUT9
-	ve3tq1ywozmvfs1PtVbDMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742830834; x=
-	1742917234; bh=a6mL6ZV55LpLoF+o5FMn2VcT5nSELH0L7ai1+VLjQvY=; b=Y
-	0sKUAiCU6LFA/I1wSWTUCI0QHuhWMhikvz5KFlImSa0MjAOeMXX++L9qqr8Hb65A
-	sxX/zvEJq+BXRrqOSKXs8sWJ+d07pp+cQwgIsWJFefRnzanqf4ky8A43ifU2echE
-	2SWttls0GYdTpPFGkURhVk5nKEgbJ8NThu5VjSpWNt5Ss5sMbS1SxCv/RRIQMLjC
-	u8oW89v6qEkJJ8g7578cs6JgQbj7S1Lx30fWA81q7WaHdL6Ky+sqSMsWOf5lG9N2
-	JAULvVfUd/tFkl5pPhl9PzzLv5kHDqbwchdWu1KV5ssgK1xhdmbesg5dNkdUtJbr
-	waYBBeCYFw9y70uBF0gAQ==
-X-ME-Sender: <xms:8nzhZ-83mmEHo7gbo6l0XlEdj9lHcYBSv6mZ2y1uu5HCacFiX3txjg>
-    <xme:8nzhZ-umNDdkNJ2siNCVLjwbt1qzzKJFmuUpKh6eTKcD-YIwQfVv3iPWVWZZ_belW
-    WrzoiBaQIaulxdGeTo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrg
-    esrghmugdrtghomhdprhgtphhtthhopegrnhgrnhgurdhumhgrrhhjihesrghmugdrtgho
-    mhdprhgtphhtthhopehgrghuthhhrghmrdhshhgvnhhohiesrghmugdrtghomhdprhgtph
-    htthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthht
-    ohepnhgrvhgvvghnkhhrihhshhhnrgdrtghhrghtrhgrughhihesrghmugdrtghomhdprh
-    gtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomhdprhgtphht
-    thhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
-    hopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhh
-    fihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:8nzhZ0CMZnF96zX-GUeoPHNqmtfLd6WrRy_pXwexG_O_2vCfSzwHag>
-    <xmx:8nzhZ2ejjnpYx9hX1XYuBzB287MoEb6YpJhCr2oPFYW_r84-MHjpuA>
-    <xmx:8nzhZzPhwYYnu7WKn1q8dKVwULefEJCW_Ejy3UW9zMcV_V9CBwtsXA>
-    <xmx:8nzhZwlRy-Z69iJkIENcXCo6uM0UKAKYvCLmZ-uTJ0tO0kTMG12JIg>
-    <xmx:8nzhZ-prPwP8WUJrThhpHzVWnnODBBuukQlo1U5cJOkv7RBxLXLZA-ZU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 43DB62220072; Mon, 24 Mar 2025 11:40:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742830870; c=relaxed/simple;
+	bh=CUlMWvKBRXz2cXYE7T73wDHkbh5hXcN4FEkxEdhUajw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+1zdeJDo9VVaUVPwrFK5u6VH1kY7yII7A8pWGQDAC4AIe4Bk5fGB+nWSmSxbkTWJE221TXPOTbi9OtzK9yBq9rXbpHB/SJtBh/PzNYw5YY3i3xG0td95cXkM8fOnvg7NX9Iwp/5IxFKa6g6Y5K+pfn9AKDpdmKekX6hO/tI44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYpjCXGQ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff6b9a7f91so1409833a91.3;
+        Mon, 24 Mar 2025 08:41:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742830868; x=1743435668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CUlMWvKBRXz2cXYE7T73wDHkbh5hXcN4FEkxEdhUajw=;
+        b=gYpjCXGQkieytDPXJhEEFBL//iIArSTna2i6JiyS534/XhXjfzdHHjrivY3WQyimE+
+         3A2eYcrHOO1fIT6daego4peH3p/n8h5nIjyxL12gvJ3ZNl1Ft57QuVGGF1kcaLYA1bz+
+         r+Nnz07RsoHUUInsJEXmf2YsDN7xDAY7xJWJH5Tf9B1u92zTMOZSzJLZJSYQLo6+yTn2
+         8FUZTJuET0rXtsmOPh6ZgKKupNhW74jCmViWsqOdWU7wTSgZ34/aqtxSzF6TIcYZkCae
+         mJqFBUQQZiPYnJ3Me7Bp9GxTdEfxp8bIixY6EUGo0vw6XKJvyc4VXaonbucOPQ9pcOXR
+         cTuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742830868; x=1743435668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CUlMWvKBRXz2cXYE7T73wDHkbh5hXcN4FEkxEdhUajw=;
+        b=Co9p46w4ML7WIddwwWgV2k9rMKLQLC9qcSop6JTb8UQpsx2rhzEx+MdJDd5d0gsBOS
+         NkdQSk16tMwhZ1/75AY1/rr0Dpzqa9Ts1P7Yv5R+0VYmQqddWMAcAXO7BlU4P186Wgz6
+         i51knj4HqoE59hV0k+PUN9qO+XlWgBo2sY6gv+0yl39gbdSQOLfBmyAO/ugylKVneVys
+         aJcZ/cfShzZJ59jRHT3WM/YJgUjh0Pz9/G/QbFiTocewfQE9qxGbYrqQRQ7xzXZeF3Bp
+         8sGvPgy+5qo7h05LIEBHTPCUi1Og+Ic+D4oCi8kFbR1cnuzzsiO2KDHJAF3oz7mdJafg
+         gF3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW8JM0NMB8cup6A8O82jN/VBRLJulaZXMOeoj/bVsijyde/w6kUwcV2s3H/JxBKOKQCZJDT1sRmsJZmyD4=@vger.kernel.org, AJvYcCWUWI/8JFSH5ETg+TGkE5eJ20nh43WmlePxiwLZrSsPiwQ4UH/K/BaDFgVMto3pGHBd/+4hHPQlkv7Nfg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym4akTN4eIjQwoHJZ2CmlhGHJ3YaG9ddbwY5cFCJbyeGojDBSA
+	rgKifb77KErd9hiEcScMhG+MCh3hDgLHAki1YfLWxjPPsbO1V4Gz2x7XqeyEYho6ypDams2IYQd
+	ygURf9biXhWPaqx7AfsAXSmXXp/g=
+X-Gm-Gg: ASbGnctyN4RA28MsM0yoZJa3SG89yvjBwshW/Bh3UoyvI9hgJDOeezBUsC2/QdO58ox
+	xE3fxCdZLRL9rY+ZDQlGd70lqKqwCtVE3nmWfpjh8JOvj87DhplB/PTM51A+Tzbe2aBP+ovHEen
+	UQjOspMLPYabAIEKgCdVj12jy1MQ==
+X-Google-Smtp-Source: AGHT+IG6Q6z9wMcHDCYb1cBmWDfhXGHKsesdIiFjpGG6rqmLRdWOvvRtp1pxwCwfNPtXnbEpochGYO/1bNSU9Cc/96c=
+X-Received: by 2002:a17:90b:33c3:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-3031f1156f8mr6102286a91.0.1742830868111; Mon, 24 Mar 2025
+ 08:41:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T9168aded715bd4fc
-Date: Mon, 24 Mar 2025 16:40:12 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: "Guenter Roeck" <linux@roeck-us.net>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
- gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
- naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
-Message-Id: <c9138dd3-6a09-47a2-a8fe-716c8894042e@app.fastmail.com>
-In-Reply-To: <20250324145815.1026314-7-akshay.gupta@amd.com>
-References: <20250324145815.1026314-1-akshay.gupta@amd.com>
- <20250324145815.1026314-7-akshay.gupta@amd.com>
-Subject: Re: [PATCH v6 06/11] misc: amd-sbi: Add support for AMD_SBI IOCTL
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250324215702.1515ba92@canb.auug.org.au> <20250324220629.1665236b@canb.auug.org.au>
+ <Z-FJH628-j2HCuaE@cassiopeiae> <2025032443-recharger-legacy-93bf@gregkh>
+ <Z-Fhf3Cn8w2oh1_z@cassiopeiae> <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
+ <Z-F54IQXiY9IHjeM@cassiopeiae>
+In-Reply-To: <Z-F54IQXiY9IHjeM@cassiopeiae>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 24 Mar 2025 16:40:55 +0100
+X-Gm-Features: AQ5f1JopEtr2VqbNHsvQYqxUsdq1wAwrueeKD2yegsnJrEA4WZX8EqAgrBoHOIg
+Message-ID: <CANiq72kd1ZCb8X+s0wWT0ENjPUJ_P8iiUa2gZ==X2_r1V0t-JA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Miguel Ojeda <ojeda@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025, at 15:58, Akshay Gupta wrote:
-> ---
-> Changes since v5:
-> - Address review comment
->  - Address Arnd comments
->  - Add check for cmd in ioctl
+On Mon, Mar 24, 2025 at 4:27=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> Correct, it is the full conflict resolution of the current rust and drive=
+r-core
+> tree.
+>
+> Thanks, the attached patch looks perfectly fine to me to add on top.
 
-I think you missed one of my comments.
+Thanks for the quick reply, then I will send it and add it.
 
-> +static long sbrmi_ioctl(struct file *fp, unsigned int cmd, unsigned 
-> long arg)
-> +{
-> +	struct apml_message msg = { 0 };
-> +	struct sbrmi_data *data;
-> +	bool read = false;
-> +	int ret;
-> +
-> +	if (cmd != SBRMI_IOCTL_CMD)
-> +		return -ENOTTY;
-> +
-> +	if (_IOC_SIZE(cmd) != sizeof(msg))
-> +		return -EINVAL;
+> One small nit: The "Link:" tag should rather be "Closes:".
 
-You are checking the 'cmd' argument to the function now, which
-is good. There is no need to also check _IOC_SIZE, since
-that is implied by the definition.
-rue;
+Sure, will change -- I didn't use that since I am still not sure it
+counts as a fix or not (so Reported-by vs. "Found-by", Closes vs. Link
+etc.), given it is "in the future" :)
 
-> +
-> +	switch (msg.cmd) {
-> +	case 0 ... 0x999:
-> +		/* Mailbox protocol */
-> +		ret = rmi_mailbox_xfer(data, &msg);
-> +		break;
-
-What is however missing here is a specific check for the
-individual commands: I don't think it's a good idea to
-treat all 2458 mailbox commands the same way and just
-pass them through unfiltered here, and I would also not
-pass the specific 'cmd' as part of a multiplexer structure.
-
-Instead, I think there should be a separate ioctl command
-for each thing you can do with the mailbox. From the existing
-driver it appears that these are the commands currently
-supported:
-
-enum sbrmi_msg_id {
-        SBRMI_READ_PKG_PWR_CONSUMPTION = 0x1,
-        SBRMI_WRITE_PKG_PWR_LIMIT,
-        SBRMI_READ_PKG_PWR_LIMIT,
-        SBRMI_READ_PKG_MAX_PWR_LIMIT,
-};
-
-which is just the first four out of the 2458, and clearly small
-enough to justify one ioctl command each. I don't know what
-the command specific arguments would look like, so it's
-possible you may also want to define a separate structure
-for each one.
-
-       Arnd
+Cheers,
+Miguel
 
