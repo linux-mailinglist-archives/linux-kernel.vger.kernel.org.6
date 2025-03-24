@@ -1,87 +1,131 @@
-Return-Path: <linux-kernel+bounces-573536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9D3A6D8CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:01:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210F9A6D8C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F271891E98
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:01:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454A316A164
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD0A1A317E;
-	Mon, 24 Mar 2025 11:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939E01E5B95;
+	Mon, 24 Mar 2025 11:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="mb56Tlnp"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZVFjCCZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B682C80
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462901487D1
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814092; cv=none; b=egUNOfshU1ZaEGtRMKLj5PnCuS9QnXeHRWu+em9RqsXS4QA2TEEQVdrI3BnEFrBIDcNnMXhWSCCf37dAikQxniKcQpbfT4n+g+qg85ESUiHPLQOHqugUDuUCMfk6KgmNZnd7ajAl/BiAzhIHNZII3RIWVyQYcu067iQhLdI4+ZI=
+	t=1742814070; cv=none; b=d+eouOOOmWIKLT8YiQ/u0ddAk6aVgvPy0DiE2dDsQQTsIptyoVe7E7lWWTqNXQTJOj8oeUhZnVBTCoQz9qpc7CFI3ky/Nrf9UAKTzLUq4/X35kDJ/ojqmP7w8SG+hxtkC8ufaQwpj2Sg+OwoIEm8aQJlPbZrBcj83ierlzp8zOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814092; c=relaxed/simple;
-	bh=fNcJg85jb8uy9BPEHwY/03BnrTApgjljAhujB76L3OQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To:
-	 References:In-Reply-To; b=L14woXVdFPYwJ6+oFiYvkNfby2asw61hvUPnoMEQ573IGFui+fZ+wfUHZmjSeU3Ix3Rg85u13/FI6eZJY/uXi4e/ZaA9KRBiIXRI/ZpOTCsI4w1x0fut9Cn7bLbkzoQ1SRwcejtvQ1e4zhROwuJXxs58wNcNHRBm4iYRGXkCZ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=mb56Tlnp; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1742814070; c=relaxed/simple;
+	bh=LDsJSlPtXgnODZ+ldr2KxIShTemz/tVXnReb9HkLtQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCX+nuKXlhRCv5RdRJqHW//GKvGu7XpPodivO9pdkMKPyln6FvkBu+5JGp1esHG0x9Q+FMK0jk/KzBr+6Esrp2q1RAkuamBzkRAXGrNHuvGmniPEARiFnSa69hcfOtphuXddIsePP15lSdItqbkkmox1P32OOgtEj3qrllL8jcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZVFjCCZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742814067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PS69gZ7L0QPn+MJNrvH0ZaDSrgaKGsoM7m8BjefV88=;
+	b=eZVFjCCZlH/mv/q1uVho4+6yYZ1KF8kP2l7hV0jqDkcg2IcdPWvOyYwBAVF+ZhyBT4lZdQ
+	60N8taWo/RbEnBkLvu6Sd87/tHJnbfjGSKGYfJjmocoiWsy81c4Ql+wxV2l/7k/g6O3ASQ
+	xVK4KTkRuXhZl8khV2kAwRlEJNhdx8M=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-515-uB3P39bgPWWtQdZfxMmeVA-1; Mon,
+ 24 Mar 2025 07:01:02 -0400
+X-MC-Unique: uB3P39bgPWWtQdZfxMmeVA-1
+X-Mimecast-MFC-AGG-ID: uB3P39bgPWWtQdZfxMmeVA_1742814060
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09060196B370;
+	Mon, 24 Mar 2025 11:01:00 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.24])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC52719560AD;
+	Mon, 24 Mar 2025 11:00:56 +0000 (UTC)
+Date: Mon, 24 Mar 2025 19:00:47 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
+ execute
+Message-ID: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-7-chenste@linux.microsoft.com>
+ <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
+ <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1742814078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fNcJg85jb8uy9BPEHwY/03BnrTApgjljAhujB76L3OQ=;
-	b=mb56TlnpQ2C7KhQEa60Jci1EhHvGjef7HtEcDICRX1TD0r4ooU1qaLVYYQfo8ZkzrnjA6W
-	hOXNmmclCAYps//MT6KIy1u3rRLz+++/Arlt8PHXLtrsH43IRK3fRXdeiuB4/DGailAm0W
-	Og7X5LJ7Bl7RxBw7USIAe8iEwYPaQAsWiIinnHBcwZ1XG31KEJRDXHAdiuY18+/F8IoMcx
-	ov/J2tLfPc8xY6I9sj48SWZwXB51DK9VGy7qtt6NltNAakWwKys9H071NSvnKJcCTfs/B3
-	R51GnMEODCmGELfdr8t02ff/sN22pU/zixEqsrC0a72BAF+FjmUSdt4EETa+vA==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 11:00:47 +0000
-Message-Id: <D8OG0OI3HO2V.326AQZHJWCBAI@postmarketos.org>
-Subject: Re: [PATCH v5 2/2] arm64: dts: amlogic: add support for
- xiaomi-aquaman/Mi TV Stick
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Ferass El Hafidi" <funderscore@postmarketos.org>
-Cc: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <~postmarketos/upstreaming@lists.sr.ht>,
- "Artur Weber" <aweber.kernel@gmail.com>, "Karl Chan"
- <exxxxkc@getgoogleoff.me>, "Christian Hewitt" <christianshewitt@gmail.com>
-To: <neil.armstrong@linaro.org>, "Kevin Hilman" <khilman@baylibre.com>,
- "Jerome Brunet" <jbrunet@baylibre.com>, "Martin Blumenstingl"
- <martin.blumenstingl@googlemail.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, <linux-amlogic@lists.infradead.org>
-References: <20250319190150.31529-2-funderscore@postmarketos.org>
- <20250319190150.31529-4-funderscore@postmarketos.org>
- <f36875c5-73bb-4bf8-a59f-5df30043bbbe@linaro.org>
-In-Reply-To: <f36875c5-73bb-4bf8-a59f-5df30043bbbe@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon Mar 24, 2025 at 7:02 AM UTC, Neil Armstrong wrote:
-> I get:
-> Error: arch/arm64/boot/dts/amlogic/meson-gxl-s805y-xiaomi-aquaman.dts:243=
-.1-2 syntax error
-> FATAL ERROR: Unable to parse input tree
+On 03/21/25 at 09:23am, steven chen wrote:
+> On 3/19/2025 7:06 PM, Baoquan He wrote:
+> > On 03/17/25 at 06:04pm, steven chen wrote:
+> > ...snip...
+> > > ---
+> > >   kernel/kexec_file.c                | 10 ++++++
+> > >   security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
+> > >   2 files changed, 40 insertions(+), 21 deletions(-)
+> > > 
+> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > index 606132253c79..ab449b43aaee 100644
+> > > --- a/kernel/kexec_file.c
+> > > +++ b/kernel/kexec_file.c
+> > > @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
+> > >   }
+> > >   #endif
+> > > +static void kimage_file_post_load(struct kimage *image)
+> > > +{
+> > > +#ifdef CONFIG_IMA_KEXEC
+> > > +	ima_kexec_post_load(image);
+> > > +#endif
+> > > +}
+> > > +
+> > >   /*
+> > >    * In file mode list of segments is prepared by kernel. Copy relevant
+> > >    * data from user space, do error checking, prepare segment list
+> > > @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+> > >   	kimage_terminate(image);
+> > > +	if (!(flags & KEXEC_FILE_ON_CRASH))
+> > > +		kimage_file_post_load(image);
+> > machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
+> > we should use it to do things post load, but not introducing another
+> > kimage_file_post_load().
+> 
+> Hi Baoquan,
+> 
+> Could you give me more detail about this?
 
-Yes, somehow a ";" is missing.
-
->
-> whil building, could you fix that ?
->
-> Neil
+I mean machine_kexec_post_load() is the place where post load operations
+are done, including kexec_load and kexec_file_load. There's no need to
+specifically introduce a kimage_file_post_load() to do post load
+operaton for kexec_file_load.
 
 
