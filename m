@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-573551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211B1A6D8F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:15:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF31FA6D8FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EEA16DC32
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A03A8FB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4508925DD1E;
-	Mon, 24 Mar 2025 11:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB13025DD0B;
+	Mon, 24 Mar 2025 11:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qtZNJJNZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rEc6EP4K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDgUxHx6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11E025DD19
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F666200CB;
+	Mon, 24 Mar 2025 11:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814915; cv=none; b=a6CsPwAgXsRNv8e3nry2f6LZoTZBK7/kBYwumDobYa1yofd1flW67SPnrLflHVcw5qVOkvyeYu0tNNjPP50wegfNxatrJSY5j9rGSk2o/M3XTI8HmK/LcBz4TTpcvcQVp8sZCRL8ACrW3G0vsU3VMtUZn1DT5CZgYZXifbvjB5s=
+	t=1742815094; cv=none; b=l9teI7a38E08rFDbgdpeyHGMMQBQ6EN7soy/ru8OlTBQPlQ/gvDs59UHNATpb/ht6wi+b1oi1Qe22V3tBei7TGPvqZkKvuxr97kYjIbH9lz3cWuq1BQr8H7o+dlscAXigtWt1kyzF/Poni7/GmmSTBBYdvuEPr5CoN4F+p9ZsEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814915; c=relaxed/simple;
-	bh=hZ5GbCzl/Fw4XjbhusZchqQNyyvFLq+89EztqsUraO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GedREjDblyT18739HkWRQ4yRtGQj4+j6YO8UrPWY6HpakpV3NNTbuIVsvQsIYTKXmpJDYs7kwjJn/VGyW1ZX59Cq14IuUeXh1uB/gjuP+Eavnvz2Ir6wjcZ8iW47k10AdI8twmCdbt5+VItaOzR+JEdFlIPXwEnLDDHPzfbZ3+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qtZNJJNZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rEc6EP4K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Mar 2025 12:15:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742814911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=86m/cLxXP9bfNs1Ln11D5y3dZxfnOk7qTOhdH9UMKxk=;
-	b=qtZNJJNZ0xux8VOBm84Ls0CCUhvjW5xt0HKjoR8ebj71eSGy+VSwFogWGspDaUrgVC+79c
-	wUP1mwAIqvH6Rpc2sDAIo+FSG7j0Ne2E75uaOOYjKIBAUvhiCofQbjrtdD0E3k+T++wQ87
-	1DQPfFyNXb1WpWNlyC8xNailwbYRUhDGOf3mpmmBmUUTiGETZWmYkwB2JIFdu6yc5rIU+w
-	j7zscMi/7J+KWhfOGDn8MvAG3vLvxF4MVvOhGOeIvWNqoxXkTWh9RwalVl/vrZ8y+x4X4g
-	iatO+lIJD0/d/mNNv71r/oR6wiKZJAm6NOf12xwmNjqxjQ/zxMtgEukJz6NY2Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742814911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=86m/cLxXP9bfNs1Ln11D5y3dZxfnOk7qTOhdH9UMKxk=;
-	b=rEc6EP4KLiJw5DPcwsIAdDU0oL1zCwm7e0CxHExT4ByjW2oe0vs1aRtV8jFwxu9OgXOAcT
-	LbUhQgAmx3TKI1CQ==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev
-Subject: Re: [PATCH v3 22/29] x86/cpu: Use consolidated leaf 0x2 descriptor
- table
-Message-ID: <Z-E-vXHVl3dLFYx0@lx-t490>
-References: <20250319122137.4004-23-darwi@linutronix.de>
- <202503241523.6b53646b-lkp@intel.com>
+	s=arc-20240116; t=1742815094; c=relaxed/simple;
+	bh=CxXJC2B67ym1SyMIg/if96ldf/F164p7rhWaGHPsDbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pg6Ho/Aaev1hq+lo9ahF7BqNh5d20JS1yqkPk+ysPjctcrowbpUE0FqvXpEqwCQQ+xeg2op/7S8y19yOrlTUkeVVlgHH7RTnhXpAOc3UVd1/26rIU6KjnrGKHFpY2W/wZt2ZoT5EJFBGyzfvFtBk0kluDI0akW7sWM+yCSeTU38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDgUxHx6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD37C4CEDD;
+	Mon, 24 Mar 2025 11:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742815093;
+	bh=CxXJC2B67ym1SyMIg/if96ldf/F164p7rhWaGHPsDbs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PDgUxHx6h3Icy3ncr5Y9vhH9Zd72rRvJU6TErHxvtGSbuyhPEp1qi8FDXBArK9XNv
+	 W6xEFFcI2/rABKjSitcCWWnaqOyxUNTZDPWsv7DKmkFgf8DJz/GiMkU4VPDNoUkHC0
+	 aqESZFVM9f6I5gedHrs4L6wTQqN0KseG0k+mIYtyuEGCbAqUWcMzXLCbA0JGxInQ/7
+	 dess321kEQb4oCJIzoY21bmR4t6A0TMjTzaM82U5Q42ZUG0QUze9W3QeVq0tJj72PB
+	 GopHOhhxqG/9XNZZELTAn/z1OkyXes5BKrpYzB8pMZlgapJagjkJgaoSNjkUoNSnqt
+	 SoNcwYzIKyR6g==
+Message-ID: <201dc2a7-e031-47d7-9c17-c4275365b477@kernel.org>
+Date: Mon, 24 Mar 2025 12:18:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202503241523.6b53646b-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] ASoC: dt-bindings: wcd93xx: add bindings for audio
+ mux controlling hp
+To: srinivas.kandagatla@linaro.org, peda@axentia.se, broonie@kernel.org,
+ andersson@kernel.org, krzk+dt@kernel.org
+Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com,
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ johan+linaro@kernel.org, Christopher Obbard <christopher.obbard@linaro.org>
+References: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
+ <20250324110606.32001-5-srinivas.kandagatla@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250324110606.32001-5-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 24/03/2025 12:06, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> On some platforms to minimise pop and click during switching between
+> CTIA and OMTP headset an additional HiFi mux is used. Most common
+> case is that this switch is switched on by default, but on some
+> platforms this needs a regulator enable.
+> 
+> Move to using mux-controls so that both the gpio and regulators can be
+> driven correctly, rather than adding regulator handing in the codec.
+> 
+> This patch adds required bindings to add such mux controls.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
 
-On Mon, 24 Mar 2025, kernel test robot wrote:
->
-> [ 5.001760][ T0] BUG: KASAN: stack-out-of-bounds in intel_detect_tlb (arch/x86/kernel/cpu/intel.c:698 arch/x86/kernel/cpu/intel.c:688)
-> [    5.001760][    T0] Read of size 1 at addr ffffffff8a607e80 by task swapper/0/0
-> [    5.001760][    T0]
-> [    5.001760][    T0] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.14.0-rc5-00152-ge114ca069e27 #1
-> [    5.001760][    T0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [    5.001760][    T0] Call Trace:
-> [    5.001760][    T0]  <TASK>
-> [ 5.001760][ T0] dump_stack_lvl (lib/dump_stack.c:124)
-> [ 5.001760][ T0] print_address_description+0x2c/0x3f0
-> [ 5.001760][ T0] ? intel_detect_tlb (arch/x86/kernel/cpu/intel.c:698 arch/x86/kernel/cpu/intel.c:688)
->
+I claim you cannot test a binding in the way we understand Tested-by
+tags. Testing a binding is part of the build process and we do not have
+tested-by for builds...
 
-I've reproduced the KASAN report and below hunk fixes it:
+Anyway,
 
- | --- a/arch/x86/include/asm/cpuid/leaf_0x2_api.h
- | +++ b/arch/x86/include/asm/cpuid/leaf_0x2_api.h
- | @@ -88,9 +88,9 @@ static inline void cpuid_get_leaf_0x2_regs(union leaf_0x2_regs *regs)
- |   *		}
- |   *	}
- |   */
- | -#define for_each_leaf_0x2_entry(regs, __ptr, entry)			\
- | -	for (__ptr = &(regs).desc[1], entry = &cpuid_0x2_table[*__ptr];	\
- | -	     __ptr < &(regs).desc[16];					\
- | -	     __ptr++, entry = &cpuid_0x2_table[*__ptr])
- | +#define for_each_leaf_0x2_entry(regs, __ptr, entry)				\
- | +	for (__ptr = &(regs).desc[1];						\
- | +	     __ptr < &(regs).desc[16] && (entry = &cpuid_0x2_table[*__ptr]);	\
- | +	     __ptr++)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I'll include the fix in v4.
-
-(It also makes sense that this was triggered at x86/cpu intel.c and not
- x86/cacheinfo, since in cacheinfo.c, CPUID(4) when available is always
- preferred to CPUID(2).)
-
-Thanks!
-
---
-Ahmed S. Darwish
-Linutronix GmbH
+Best regards,
+Krzysztof
 
