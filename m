@@ -1,117 +1,216 @@
-Return-Path: <linux-kernel+bounces-574205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A481DA6E1F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:01:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9307A6E1CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DAD18932E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:58:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171B87A2374
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DD126280C;
-	Mon, 24 Mar 2025 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20012641D1;
+	Mon, 24 Mar 2025 17:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R5Dauses"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ey8acH8B"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD2E25D915;
-	Mon, 24 Mar 2025 17:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F371DC985;
+	Mon, 24 Mar 2025 17:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742839068; cv=none; b=my8g9pC/O8VYxTddBuztEqADZwEJWP9tJngukgltTNTVLrMuDm9Q9JREJB9wikHYvTIutpl4485mIWlKj7QI277h16eF8kn1S6gCbwmiGhR7Xr28pOdegmYcphOvbld7nTOa+/LwSIFxpODmHI0pivhRbLJXTz99bmF3IBgETF8=
+	t=1742838977; cv=none; b=Wcv3jV7XrHF65iP/vTtmygOt6PbSpI6Hrrs4W3KQtn48ya+9qVvf0ocp778Rp0PNUvHl/TuTGMeljWvRi/2vIpKZ7fiesoaei350XXRaUPE0JqOVAScxRpgRCgXvsHp2Ie5f+aecaytCqjA0JYv0SOdDuLxq8kTAu3cZCiVoR3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742839068; c=relaxed/simple;
-	bh=Ugip4fd8Pdklj4B/ZVd31QAyVX2ztU3G46zy5Bsha/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBrvXlT+6YRdruaz+8m/VhSlNfwhh1pCewJ/8c235IM4ZHSmbAXa9DpAkuKEehVfcDNoUc+svgB8/2JA5nbNJiIEyrGLzQrN4YqyWIZiPDVzRIrXenNw5b7IV2jo/BTFZYFGMxiJE1P0nn4HdjDAeq2n7m249eSeqDXyXk8M0qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R5Dauses; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742838922; x=1743443722; i=markus.elfring@web.de;
-	bh=Ugip4fd8Pdklj4B/ZVd31QAyVX2ztU3G46zy5Bsha/Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=R5DausesgqbnhBZ9rriIR+mzrPsczUdHyoPkP7gCpaLxbKtU0GaeSX4nK42hF+Iz
-	 QFl66AscEF8xM6xdPzSd67aIUtkySqhUedJm1Wr6eoNksFtw32Ab4Levn4iZO4Uly
-	 c/s6DkWtQwnHtr98OFGFm5uBnbRnfEPn4o/J5Il3qRkitiWAApeTA+1IMMhzdNG8H
-	 0D0DduJ7SYcEjx6WywjIECE+B/lJEVe7G+RI8ie+sY/cTHvKCqA510Nmy385k2QPZ
-	 qzBFlcDf4TcQSEN1ccMZyVcdwd7o7gqggwtqh+ShoOzX7X5DfehWqZq2l82dYrkFC
-	 H6fGBEUThwwEnhFQ8Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cHJ-1t2Lap0xrp-018IAt; Mon, 24
- Mar 2025 18:55:22 +0100
-Message-ID: <92772f63-52c9-4979-9b60-37c8320ca009@web.de>
-Date: Mon, 24 Mar 2025 18:55:20 +0100
+	s=arc-20240116; t=1742838977; c=relaxed/simple;
+	bh=55aSHf+XbnaEkNNtZWAap9c2eiaxcY92LDR82+5KUkE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I1U/7IGDhHXntW0kDWRxDQ88i/NCnPBRjyIShpL68NTUsUWr4uhqecc4C0RA+v1Bj7nPe9ab88FjANvcTB0p+t8nLIMIfvdE6oA8Oz042JOuZxdnQeDkjQNRBw0hH80YzsuaVKlcEBen572yjSZXLfYdMAjqjLqLmHPIvVisDtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ey8acH8B; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OHBZPn027062;
+	Mon, 24 Mar 2025 17:56:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=prxcL7
+	Ol0gDHWADygOhfxw4rXA3/txwyq4L2EIdtr0o=; b=ey8acH8BhQQpV7Rkkcv3qk
+	iYB1qdSCJmXBJGd5tKEllxA4e4tHn0M8AaS5H/npjL1f62a34tG0sEoSVSmmvkGo
+	/g+qF9pA6KqTiYYMh/8IqXXEByZvU8t6HNij+2AwOXo4fVEpKZGZyfVgYs3K5QNw
+	858npq/6lkGam1ZJ8E/osa1RPW4zcKFLJ5aDph5BZzVe1oizfHkY3wS3aJUFHeik
+	r8irsF+5AfGF8s0f5my4vKdFcu1HykPo+9L183UaOSMJO1fKRbhBtT7RXDng1LJD
+	+SPOA7N6PkSBOGzaElIOq6FlJA5LY+06l3eHd9I/4gzGsLBdeSPRPuVV2kvU93yA
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjwr6v4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 17:56:06 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52OFKECV030330;
+	Mon, 24 Mar 2025 17:56:06 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7ht7nw4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 17:56:06 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OHu4RE33292630
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Mar 2025 17:56:04 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5DF7220043;
+	Mon, 24 Mar 2025 17:56:04 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3654120040;
+	Mon, 24 Mar 2025 17:56:04 +0000 (GMT)
+Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.boeblingen.de.ibm.com (unknown [9.155.199.15])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 24 Mar 2025 17:56:04 +0000 (GMT)
+Message-ID: <3920c0f0da1b6e324d6367cbff22d313d6981742.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] virtio_console: fix missing byte order handling for
+ cols and rows
+From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
+To: Halil Pasic <pasic@linux.ibm.com>, Amit Shah <amit@kernel.org>,
+        Arnd
+ Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: stable@vger.kernel.org
+Date: Mon, 24 Mar 2025 18:56:03 +0100
+In-Reply-To: <20250322002954.3129282-1-pasic@linux.ibm.com>
+References: <20250322002954.3129282-1-pasic@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] dma-engine: sun4i: Simplify error handling in probe()
-To: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
-References: <20250324172026.370253-2-csokas.bence@prolan.hu>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250324172026.370253-2-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SAbuJubhSHN4pH7HvyQuZsAhyfLQIhB/cY7Fku1PM7dBzzJ+znK
- KFJIy7rF7WIjRryO3MpAP0TzRJAeZLmlMou8bUAV83VJoJbg0+uOTk+MgAbaj3WwpvFH/Xu
- 1ntkxxFmrGDxiek9nc4IzlE2vfQxeD8sOv0ZFEzA6AOJCD0Us5b4u8pTugFyU/PbLJ7xfMh
- cDxfSzpNuEeihAtctNcyw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Zndp+Xt2ZBc=;FT5IcWgiEDFexAVkd/U8C2waAjY
- NhEJydSVA4u8sdlQJ9/KtqhxElzLhdWlygPYw8a/dUe8nIOBZivJEwSLMpUR7yiNFq8rQGu+f
- L9eWKq/BItQMtDJA9vCzZPpgQap2eWhCPaaDybV9ctbrKntOKWkjgG56pu8V7oR9MpyU5Qnjx
- uQMS9m+9Y0N3e2FNhVmVlQw9UJiQkLydGQtBJ+vfUrBdx9AmmJFSvIfumv+HnrANvPIGtkV2U
- S71KzKgPxnAWJolLsJ87detQZoFkGl2FKIvcezcS4D8k8mVvUPL3fMV4B0NDryXnrJIRp3hrr
- jj6O9aE26iNOBy+VyTL3t4mFYyAtxqw69f6jLAXLWP4+lktAVv05W4S/Fl29ntdBNehfCD7Ii
- yyTbMkQw8tEyQghtf3f6rDom0OHJXFPnxkmISGgvwVWzzu7OBjKfzmbOsXKxZbyKkV6EbMK2T
- 0LNKiPtwyRyL3KED0KX325rTswaQT1tMWs7y36nAOEPzdcUDvK94SfzDvja+UICKKguCo/Kl8
- JYQDMM0zaLJT13Js+pvyvUFbLUlHTzeQJTJJmZJAwCixYD2Gi3Op573en1TbmmDE0apkIC4uL
- 9ag6yBxHRKnRoRNLVP6MBimbagbeJJHQISdqZHR4F4Op32kBrlZglxSTUmpI4q0JZDuEfCPCs
- xiLniaEz7magxGmf1GLYFvPH37iiy9nvUx33P5KWLlQI6W6IrpSPRLwNvEvdFGYd6aUldCQrW
- UH4r+jLM0ZbUTtESTFx+lua2x4feIfKy8E+AYovYXH3WCNZQs6Un8GXzpRevhR6H5GLNGyJSF
- ABLNBooS4EOaaE8xNJmnsNgJ8qcAh6KHwBUHhsCrKDj4fEloKzKNoDAOrULAEtyb8+NPqOKAW
- 87g5sBduWTBH+/z/Sq3Tlu5SK0WTmhgLdFdP5woX5iEa6KuaGsH+JhmyABkoWYIt4pvZ5PJsu
- JcoZm32Z77NrVNJj0nXdl9stgqyBrAViASlUiivW+dffqkLpZs/oyc6N+9l6FrB0F80Qd2TPc
- nrzUARcymTL+dX++S5hBiewrSzJjbWOF8sCWz/sxhxW7823VrT9bjA7vq46rKScCdF8xLkeEy
- xZtaqnfs7Pzp7sAvijUWwNJfAy654Ee0K7DyEa28fXJztYnKvWlI/pTM5ZG1TmvFAuWCDHm6q
- f4CpqAdAuuw9TB3uW2M8iN0ise7i6qnFG8/VAo3LI4uZg41r0VNC18wirs58nH46HoPZw8yyR
- y4erIdlVSDlVvV2zHBxtT4QTellxRba9YLEL8SPXN2N4JKds8kuTNZ2NghR5ePD2uA94LJd2Q
- SzgaUmfJWX2GdDTykrjQ3y7yci/vhZVgfWPQIs9MMeNlycLkh6aqJJkvr+rdSVASk9xIPRU0Z
- hbYleqa1/YK1zKecOeECTpmiKPZ8F4baAMRVLtUAB8WUxxyLShlAgjNiFbFo8Y3Q/46/3v73g
- JFaAE+lOy0g0FOqUF5Clb/9sFBo5LADokelkYwS+t2SGOizY/
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: INZKdWk_pasSNB8PIaiuDorK7o5Zx59a
+X-Proofpoint-ORIG-GUID: INZKdWk_pasSNB8PIaiuDorK7o5Zx59a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_06,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503240125
 
-> Clean up error handling by using devm functions and dev_err_probe().
-=E2=80=A6
+On Sat, 2025-03-22 at 01:29 +0100, Halil Pasic wrote:
+> As per virtio spec the fields cols and rows are specified as little
+> endian. Although there is no legacy interface requirement that would
+> state that cols and rows need to be handled as native endian when
+> legacy
+> interface is used, unlike for the fields of the adjacent struct
+> virtio_console_control, I decided to err on the side of caution based
+> on some non-conclusive virtio spec repo archaeology and opt for using
+> virtio16_to_cpu() much like for virtio_console_control.event.
+> Strictly
+> by the letter of the spec virtio_le_to_cpu() would have been
+> sufficient.
+> But when the legacy interface is not used, it boils down to the same.
+>=20
+> And when using the legacy interface, the device formatting these as
+> little endian when the guest is big endian would surprise me more
+> than
+> it using guest native byte order (which would make it compatible with
+> the current implementation). Nevertheless somebody trying to
+> implement
+> the spec following it to the letter could end up forcing little
+> endian
+> byte order when the legacy interface is in use. So IMHO this
+> ultimately
+> needs a judgement call by the maintainers.
+>=20
+> Fixes: 8345adbf96fc1 ("virtio: console: Accept console size along
+> with resize control message")
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> Cc: stable@vger.kernel.org=C2=A0# v2.6.35+
+> ---
+>=20
+> @Michael: I think it would be nice to add a clarification on the byte
+> order to be used for cols and rows when the legacy interface is used
+> to
+> the spec, regardless of what we decide the right byte order is. If
+> it is native endian that shall be stated much like it is stated for
+> virtio_console_control. If it is little endian, I would like to add
+> a sentence that states that unlike for the fields of
+> virtio_console_control
+> the byte order of the fields of struct virtio_console_resize is
+> little
+> endian also when the legacy interface is used.
+>=20
+> @Maximilian: Would you mind giving this a spin with your
+> implementation
+> on the device side of things in QEMU?
+> ---
+> =C2=A0drivers/char/virtio_console.c | 7 ++++---
+> =C2=A01 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/char/virtio_console.c
+> b/drivers/char/virtio_console.c
+> index 18f92dd44d45..fc698e2b1da1 100644
+> --- a/drivers/char/virtio_console.c
+> +++ b/drivers/char/virtio_console.c
+> @@ -1579,8 +1579,8 @@ static void handle_control_message(struct
+> virtio_device *vdev,
+> =C2=A0		break;
+> =C2=A0	case VIRTIO_CONSOLE_RESIZE: {
+> =C2=A0		struct {
+> -			__u16 rows;
+> -			__u16 cols;
+> +			__virtio16 rows;
+> +			__virtio16 cols;
+> =C2=A0		} size;
+> =C2=A0
+> =C2=A0		if (!is_console_port(port))
+> @@ -1588,7 +1588,8 @@ static void handle_control_message(struct
+> virtio_device *vdev,
+> =C2=A0
+> =C2=A0		memcpy(&size, buf->buf + buf->offset +
+> sizeof(*cpkt),
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sizeof(size));
+> -		set_console_size(port, size.rows, size.cols);
+> +		set_console_size(port, virtio16_to_cpu(vdev,
+> size.rows),
+> +				 virtio16_to_cpu(vdev, size.cols));
+> =C2=A0
+> =C2=A0		port->cons.hvc->irq_requested =3D 1;
+> =C2=A0		resize_console(port);
+>=20
+> base-commit: b3ee1e4609512dfff642a96b34d7e5dfcdc92d05
 
-Do any contributors care for a different patch granularity?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14#n81
+It took me a while to recompile the kernel, but now that it has
+compiled it works! Unfortunately, images don't lend themselves well to
+mailing lists, but here is tmux running at 18x55(you'll just have to
+trust me that it's over a virtio serial console)
 
+                           =E2=94=82top - 12:54:04 up 4 min,  1
+~                          =E2=94=82Tasks: 222 total,   1 runni
+~                          =E2=94=82%Cpu(s):  0.0 us,  0.0 sy,=20
+~                          =E2=94=82MiB Mem :  15987.2 total, =20
+~                          =E2=94=82MiB Swap:   8192.0 total, =20
+~                          =E2=94=82
+~                          =E2=94=82    PID USER      PR  NI=20
+~                          =E2=94=82      1 root      20   0=20
+~                          =E2=94=82      2 root      20   0=20
+~                          =E2=94=82      3 root      20   0=20
+~                          =E2=94=82      4 root       0 -20=20
+~                          =E2=94=82      5 root       0 -20=20
+~                          =E2=94=82      6 root       0 -20=20
+~                          =E2=94=82      7 root       0 -20=20
+~                          =E2=94=82      8 root       0 -20=20
+[No Name]     0,0-1     All=E2=94=82      9 root      20   0=20
+                           =E2=94=82     10 root       0 -20=20
+[0] 0:zsh*                     "fedora" 12:53 24-Mar-25
 
-Will it be clearer to mention also the function name =E2=80=9Csun4i_dma_pr=
-obe=E2=80=9D
-in the summary phrases?
+Cheers,
+Max
 
-Regards,
-Markus
 
