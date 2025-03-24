@@ -1,190 +1,194 @@
-Return-Path: <linux-kernel+bounces-573120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58871A6D33E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D71A6D341
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81B01893677
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:06:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FEE1893334
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6221F5FD;
-	Mon, 24 Mar 2025 03:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35881624DE;
+	Mon, 24 Mar 2025 03:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bWcStMq6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMmt5A+3"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EED11EB3E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 03:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB36314386D;
+	Mon, 24 Mar 2025 03:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742785591; cv=none; b=Te4TH6R0a3iNMpdamcb757C2SbQkhA3wyfdL+NrW8ySKfHJkJWsaIkTc1/oLWCfk4IaoJl76GDFJKX4ex4xRqw5RRd3DUrvG6H/pcvziKbrLArrNXap8/LfKyKPaoaOdu2qFvvceS+YuPq7OD0SBwScKTE/TvdNeypFG2LJy4gU=
+	t=1742785971; cv=none; b=KmA8Jayn2wcZcs9lqD21G13n6Gv0dQuomGHekPl81Uru0A0TjUk9+I5AeMsOjtfF4v5urJV22BrVBHi7xyohM4zj6h5c+5yehuBBsyi8qaF2WEwELONkL66cAsD7+4b8JGZkPjogO6F1u7psftzx950RVxmqxp3qjSdF3P3RIMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742785591; c=relaxed/simple;
-	bh=cQ/+BuFgh8ifSSjwrR2F8Qrqth7BeiVSwMcenOz8q3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lRR4ITvcHCwmo1+dQJIgSGYgmZRUmUD6vy/vKRIk8jioYbTCu5tvAuDvhwRCcOpTdTYYbIFbenPHhMSBcuBWLzIPuMIvRAwqpDXlGa2qsWsoqBFspQl+yxgJVr3ixnzj//N1LyW/0vy/DQGz5sEeASBGMAEKVmb9nFwyLXskce0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bWcStMq6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52NNBJWr026443;
-	Mon, 24 Mar 2025 03:06:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yn3OIPbJ2BfGNi6VepCZhcG7LpO0DMthtLBQHQq6hd0=; b=bWcStMq6F/RANJya
-	9F0/3VJkCUfu9gMYxBj205yBe5yBW2i2tpIb8T1p4dEqP+shVehnXpLJWqSpoc+O
-	mEWOxl0lKrHsoQuIxS7vf8njfueMbES22dthUVnjtDlYmbjOPkSifUcEeHglIWcJ
-	KveDtWEz826Y/I7/vZhuiGE/k47DQguF1SSKJatUVYWNqx/MD4yAPGAaVxSMAsuf
-	24ODlqguJmVKwHFHBgNJ4oiX9c8+htB1UP/386tdneWqL9Pcfc4psXCzbKy/rX5C
-	a1s0luuRiP9qB4kNLJ5/bOUctwqCr10gA3g5yO2jUaHhjv4Dcvo5Xymq80WuzZA0
-	IUWHRw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjatw9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 03:06:22 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O36LNQ010366
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 03:06:21 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Mar
- 2025 20:06:19 -0700
-Message-ID: <bc3601ae-5639-4ee4-bbcb-4e39b542bfbe@quicinc.com>
-Date: Mon, 24 Mar 2025 11:06:16 +0800
+	s=arc-20240116; t=1742785971; c=relaxed/simple;
+	bh=J+hMmHqyIo6zEGpGHB+QTEiRNpKQC9RZPUd7hFpsiV0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ahstNuGpJhs6DkkqcCPy7/e4kVkhQxkD2J3GkUm/MEHAzC2D5uG8mxhwSqyT7fPIq9RxHUViuY0n7rVc+9IhkYwV76CqlIpJ59p9WVockrzKuQGFWeKjOPeZVIufmniZyvj/gxHobklUKGBWlS4c+57tMFN/n4y3C8VBhCYB9BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMmt5A+3; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff4a4f901fso6966115a91.2;
+        Sun, 23 Mar 2025 20:12:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742785969; x=1743390769; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tea/ozfNH1Ujz9+Pt/AIl/58j38z2XpiNMnZ79tiKCM=;
+        b=cMmt5A+3g6rNGydQIA1kdKrhnXhi0vfxq7g8x+U11evrPAy0OkyVcF/vElv02BdeaH
+         OV6pMU3zKcEthxxqtpVSshKQ2IlUsjAA3WRuGgBJLNl6/8M0FbfJ8GrY1MaZqKeeJk9A
+         x8UDlAo37pTjy3/XODcION9VN6q06FudPSm9KlGgvNOpkEWUvktfkwQkMyXKGVrM84uS
+         h0PnGQgOOGFOWXoCdc/9QGFvJM6Tg/U1FQ2GroozIZ393T+w3EUfU0LJX3fLteyB07Kk
+         XsZdFLpAmDjv7Ph/dOgYBB0QZwjwv1geX20FLXyA+YtLR01htHxE4A0m2bG03GZNa7+C
+         73/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742785969; x=1743390769;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Tea/ozfNH1Ujz9+Pt/AIl/58j38z2XpiNMnZ79tiKCM=;
+        b=em5rufelqzY3QZ8+eUGjJ8fxx+kKgzWWdew45rAhbi0MJfyVK2RBX8tPNHnvF80Jnq
+         HkbRZVcTetaSTlaLX920/m9GUCIVbmaQ0izljXQJMcFYWaqqtmvQEaGNJZX2wrAdrQnh
+         NP5ySgzjd5hf7VlWf60oWXwp99glwTL89TNJ7zAWtuPFr3ZmnbOUFCtq9F/RUP7JFK7D
+         caLHq47/bSgDgH7S8U6jhl+dZ1b9FpXnWFNTANZ+mNqNA7J3uGWWJz5l7CtGcICdm3iI
+         5iF1t7PU/92RVbymHxZCT0pY4FsMdSZ1x+noFO/fbrL1/tn+nRC1m1Fkb+MbldvaYSRP
+         4UAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCZ+eIpBoKSa11qLQjWav5KiXIwFTM6su5vDZWLHwxziaT/XaE5IRwCirNocW7Z+4L//1z2jHCKCvJxWg=@vger.kernel.org, AJvYcCVZpxphfEWYhIvu3vIsYbZPVydbnLv7KHTPECCfyTTUoAVJpAF0bNO4cqDd96tdaWLF21t334Ek@vger.kernel.org, AJvYcCXnBNMikGzy2rPR7qSgjsY+csMzWmZHAAbuzXInnj16grp16MaUqHZVKncoZjH6xuqG+k7L/eOYmudfy23YCs7+0y2Gow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxRs1xcTdpqSRk6Kh9rOApGB6w6cFDW536TU12HixkfwVBJALD
+	+8eZxgvm7mZy09GW/VHFYUyCBKwii1CIUr+QZoW1747YzjLJf23A
+X-Gm-Gg: ASbGncuaWQceKv/bzUYJIucOSPtfbidqgQuscRXHR6njzJJPX++nqmXIbAGy5C75+QW
+	krsB7EBf0xcyTkSSFk72wXOn6JehHU8a0uBeqEMFYQ//01JMHVTw0a2/MFLdxUV2D0iOqZJ0bGy
+	MKpnUdmD9BAVz4XZ9rZPmtzbE8FFxDRXMp4XAkO+FdFspSMZK8DHM5eWZX3XlW9d7jKBE0zVx/t
+	HKImT+jyCOMmGbofCj5leay9JwJGhd8TD4SwYRTG5DbcOqi0UPNdUqm9vZ5RjwITlkQ/uP1K2iO
+	9WMS477jDEVWlxpM1FiMYEMCwJ9UqxASmO+ddQ==
+X-Google-Smtp-Source: AGHT+IEn+9qYJQnWY98h1MLFYD024IQB4Y4D/jzquQCHfmfgDvDvH40NQfXJETuT2lCsQp1RzMQlpQ==
+X-Received: by 2002:a17:90b:53d0:b0:2ee:90a1:5d42 with SMTP id 98e67ed59e1d1-3030fd4b078mr22842917a91.0.1742785968650;
+        Sun, 23 Mar 2025 20:12:48 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf58b343sm10873298a91.15.2025.03.23.20.12.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Mar 2025 20:12:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: extend dma mask to 36 bits
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-CC: Stephan Gerhold <stephan.gerhold@linaro.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250321162331.19507-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <20250321162331.19507-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e0cc2e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=iWmvWweA6ERdS6TH5IQA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: aDGgXnktQTRB6GnI0YhZJFpmDJGqdpJB
-X-Proofpoint-ORIG-GUID: aDGgXnktQTRB6GnI0YhZJFpmDJGqdpJB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_01,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1011
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240022
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 24 Mar 2025 00:12:44 -0300
+Message-Id: <D8O62BJFWT7P.23HRFHB8PX7JN@gmail.com>
+Cc: <ibm-acpi-devel@lists.sourceforge.net>,
+ <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Seyediman Seyedarab" <ImanDevel@gmail.com>, <stable@vger.kernel.org>,
+ "Vlastimil Holer" <vlastimil.holer@gmail.com>, "crok" <crok.bic@gmail.com>,
+ "Alireza Elikahi" <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>, "Eduard Christian
+ Dumitrescu" <eduard.c.dumitrescu@gmail.com>
+Subject: Re: [PATCH v2] platform/x86: thinkpad_acpi: disable ACPI fan access
+ for T495* and E560
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Seyediman Seyedarab" <imandevel@gmail.com>, <hmh@hmh.eng.br>,
+ <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250324012911.68343-1-ImanDevel@gmail.com>
+In-Reply-To: <20250324012911.68343-1-ImanDevel@gmail.com>
 
+On Sun Mar 23, 2025 at 10:29 PM -03, Seyediman Seyedarab wrote:
+> From: Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com>
+>
+> The bug was introduced in commit 57d0557dfa49 ("platform/x86:
+> thinkpad_acpi: Add Thinkpad Edge E531 fan support") which adds a new
+> fan control method via the FANG and FANW ACPI methods.
+>
+> T945, T495s, and E560 laptops have the FANG+FANW ACPI methods (therefore
+> fang_handle and fanw_handle are not NULL) but they do not actually work,
+> which results in the dreaded "No such device or address" error. Fan acces=
+s
+> and control is restored after forcing the legacy non-ACPI fan control
+> method by setting both fang_handle and fanw_handle to NULL.
+>
+> The DSDT table code for the FANG+FANW methods doesn't seem to do anything
+> special regarding the fan being secondary.
+>
+> This patch adds a quirk for T495, T495s, and E560 to make them avoid the
+> FANG/FANW methods.
 
+Reviewed-by: Kurt Borja <kuurtb@gmail.com>
 
-On 3/22/2025 12:23 AM, Johan Hovold wrote:
-> Extend the DMA mask to 36 bits to avoid using bounce buffers on machines
-> without an iommu (under OS control) similar to what was done for ath11k
-> in commit dbd73acb22d8 ("wifi: ath11k: enable 36 bit mask for stream
-> DMA").
-> 
-> This specifically avoids using bounce buffers on Qualcomm Snapdragon X
-> Elite machines like the Lenovo ThinkPad T14s when running at EL1.
-
-why bounce buffer is used at EL1? is it because IOMMU is not working at EL1?
-or even because IOMMU is not present on Elite machines?
-
-> 
-> Note that the mask could possibly be extended further but unresolved DMA
-> issues with 64 GiB X Elite machines currently prevents that from being
-> tested.
-
-could you help elaborate how it could be extended?
-
-> 
-> Also note that the driver is limited to 32 bits for coherent
-> allocations and that there is no need to check for errors when setting
-> masks larger than 32 bits.
-
-why is it not necessary to check error?
-
-> 
-> Tested-on: WCN7850 hw2.0 WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-> 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 57d0557dfa49 ("platform/x86: thinkpad_acpi: Add Thinkpad Edge E531=
+ fan support")
+> Reported-by: Vlastimil Holer <vlastimil.holer@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219643
+> Tested-by: crok <crok.bic@gmail.com>
+> Tested-by: Alireza Elikahi <scr0lll0ck1s4b0v3h0m3k3y@gmail.com>
+> Signed-off-by: Eduard Christian Dumitrescu <eduard.c.dumitrescu@gmail.com=
+>
+> Co-developed-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
 > ---
->  drivers/net/wireless/ath/ath12k/mhi.c |  2 +-
->  drivers/net/wireless/ath/ath12k/pci.c | 12 ++++--------
->  drivers/net/wireless/ath/ath12k/pci.h |  1 +
->  3 files changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/mhi.c b/drivers/net/wireless/ath/ath12k/mhi.c
-> index 2f6d14382ed7..9c929c4ad8a8 100644
-> --- a/drivers/net/wireless/ath/ath12k/mhi.c
-> +++ b/drivers/net/wireless/ath/ath12k/mhi.c
-> @@ -379,7 +379,7 @@ int ath12k_mhi_register(struct ath12k_pci *ab_pci)
->  		mhi_ctrl->irq_flags = IRQF_SHARED | IRQF_NOBALANCING;
->  
->  	mhi_ctrl->iova_start = 0;
-> -	mhi_ctrl->iova_stop = 0xffffffff;
-> +	mhi_ctrl->iova_stop = ab_pci->dma_mask;
->  	mhi_ctrl->sbl_size = SZ_512K;
->  	mhi_ctrl->seg_len = SZ_512K;
->  	mhi_ctrl->fbc_download = true;
-> diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-> index 06cff3849ab8..e77c50fc48ca 100644
-> --- a/drivers/net/wireless/ath/ath12k/pci.c
-> +++ b/drivers/net/wireless/ath/ath12k/pci.c
-> @@ -17,7 +17,7 @@
->  #include "debug.h"
->  
->  #define ATH12K_PCI_BAR_NUM		0
-> -#define ATH12K_PCI_DMA_MASK		32
-> +#define ATH12K_PCI_DMA_MASK		36
->  
->  #define ATH12K_PCI_IRQ_CE0_OFFSET		3
->  
-> @@ -874,13 +874,9 @@ static int ath12k_pci_claim(struct ath12k_pci *ab_pci, struct pci_dev *pdev)
->  		goto disable_device;
->  	}
->  
-> -	ret = dma_set_mask_and_coherent(&pdev->dev,
-> -					DMA_BIT_MASK(ATH12K_PCI_DMA_MASK));
-> -	if (ret) {
-> -		ath12k_err(ab, "failed to set pci dma mask to %d: %d\n",
-> -			   ATH12K_PCI_DMA_MASK, ret);
-> -		goto release_region;
-> -	}
-> +	ab_pci->dma_mask = DMA_BIT_MASK(ATH12K_PCI_DMA_MASK);
-> +	dma_set_mask(&pdev->dev, ab_pci->dma_mask);
-> +	dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
->  
->  	pci_set_master(pdev);
->  
-> diff --git a/drivers/net/wireless/ath/ath12k/pci.h b/drivers/net/wireless/ath/ath12k/pci.h
-> index 31584a7ad80e..9e89b64b3545 100644
-> --- a/drivers/net/wireless/ath/ath12k/pci.h
-> +++ b/drivers/net/wireless/ath/ath12k/pci.h
-> @@ -116,6 +116,7 @@ struct ath12k_pci {
->  	unsigned long irq_flags;
->  	const struct ath12k_pci_ops *pci_ops;
->  	u32 qmi_instance;
-> +	u64 dma_mask;
+> Changes in v2:
+> - Added the From: tag for the original author
+> - Replaced the Co-authored-by tag with Co-developed-by
+> - Cc'd stable@vger.kernel.org
+> - Removed the extra space inside the comment
+> - Dropped nullification of sfan/gfan_handle, as it's unrelated to
+>   the current fix
+>
+> Kindest Regards,
+> Seyediman
+>
+>  drivers/platform/x86/thinkpad_acpi.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/=
+thinkpad_acpi.c
+> index d8df1405edfa..27fd67a2f2d1 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -8793,6 +8793,7 @@ static const struct attribute_group fan_driver_attr=
+_group =3D {
+>  #define TPACPI_FAN_NS		0x0010		/* For EC with non-Standard register addr=
+esses */
+>  #define TPACPI_FAN_DECRPM	0x0020		/* For ECFW's with RPM in register as =
+decimal */
+>  #define TPACPI_FAN_TPR		0x0040		/* Fan speed is in Ticks Per Revolution =
+*/
+> +#define TPACPI_FAN_NOACPI	0x0080		/* Don't use ACPI methods even if dete=
+cted */
+> =20
+>  static const struct tpacpi_quirk fan_quirk_table[] __initconst =3D {
+>  	TPACPI_QEC_IBM('1', 'Y', TPACPI_FAN_Q1),
+> @@ -8823,6 +8824,9 @@ static const struct tpacpi_quirk fan_quirk_table[] =
+__initconst =3D {
+>  	TPACPI_Q_LNV3('N', '1', 'O', TPACPI_FAN_NOFAN),	/* X1 Tablet (2nd gen) =
+*/
+>  	TPACPI_Q_LNV3('R', '0', 'Q', TPACPI_FAN_DECRPM),/* L480 */
+>  	TPACPI_Q_LNV('8', 'F', TPACPI_FAN_TPR),		/* ThinkPad x120e */
+> +	TPACPI_Q_LNV3('R', '0', '0', TPACPI_FAN_NOACPI),/* E560 */
+> +	TPACPI_Q_LNV3('R', '1', '2', TPACPI_FAN_NOACPI),/* T495 */
+> +	TPACPI_Q_LNV3('R', '1', '3', TPACPI_FAN_NOACPI),/* T495s */
 >  };
->  
->  static inline struct ath12k_pci *ath12k_pci_priv(struct ath12k_base *ab)
-
-
+> =20
+>  static int __init fan_init(struct ibm_init_struct *iibm)
+> @@ -8874,6 +8878,13 @@ static int __init fan_init(struct ibm_init_struct =
+*iibm)
+>  		tp_features.fan_ctrl_status_undef =3D 1;
+>  	}
+> =20
+> +	if (quirks & TPACPI_FAN_NOACPI) {
+> +		/* E560, T495, T495s */
+> +		pr_info("Ignoring buggy ACPI fan access method\n");
+> +		fang_handle =3D NULL;
+> +		fanw_handle =3D NULL;
+> +	}
+> +
+>  	if (gfan_handle) {
+>  		/* 570, 600e/x, 770e, 770x */
+>  		fan_status_access_mode =3D TPACPI_FAN_RD_ACPI_GFAN;
 
 
