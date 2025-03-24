@@ -1,210 +1,163 @@
-Return-Path: <linux-kernel+bounces-573556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09D3A6D90C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:21:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD25BA6D910
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA41C16CF86
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D163AAB0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FAB1E0DB3;
-	Mon, 24 Mar 2025 11:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC43625DD13;
+	Mon, 24 Mar 2025 11:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T8TzlJhp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="nOHGIm21"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF5118DB02
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B211EEE0;
+	Mon, 24 Mar 2025 11:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815253; cv=none; b=Tb3emAnRbkDQSSX63MMPnwhyvrcsqN28YostTJxlPW/Da5xemyk6biU1GbBoffOqTjYEH4hVj8pmaozdkz59o0yuDg9nCkKuzKEeopTld4P3muSsmcxo6ZTbQKaOjUQkQhZSS7tWTBCxbYWYAJqcYLVGeydQ9zkQGUUhd3YDOR8=
+	t=1742815449; cv=none; b=UbADBDWRfSYmj/ajM6HgX6cf8PzNDzwh5KdgKeQ51LmJPkQ/BHk+wZN/u58e1d0Ial6BoaBXyZSfthMF4fM+AuCqomobCQnGyaRlHEx6/EZ3MzJrTfwN9ISMonBqbIecmzr+xanF/l08OJgDDnLGoTCDMa471ndzvaxzjKEKjIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815253; c=relaxed/simple;
-	bh=hyOqZJxorcLzIQqbVwfmpBHHqLRW4jToxdkY5UTNu34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEuQ7Ck5Bj56UB7gFa5oWA5iZ//FeSN70EmYIf/YPT00UJc3Ot99xeiFExrU989RxbwqYENCXdxSaY+uRLd9hXyy26zAvQqyvkAf3T7Xvp3V2Gl7gwWcb1RdeQ5GkbJYXIH4CK9rgwrMRrqHG1HYmV2UYRVOXHjD4YT/J42mr6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T8TzlJhp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PLvo004138
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:20:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0Omyzt0+3s9T/Lcy+ZIwCMHKO6499mJSDlZjjA79KkE=; b=T8TzlJhpRfkH16Vz
-	wrPOxndYKlsRmNku4cy1s7bcBH/L97bxfiHOXDYt7Dl+13qRv885jOdAXnZjrJja
-	be4lomLSqKDbAz2klZTA7tFVfEydTcRTGGr8LjbNbeO00XiIiCOQlQ69+M31i67k
-	Iigoey1sRbXI5vF4d1KlpihHygFGcB+hNNn7kHslc6j4KUZmQw9nKPKUgT2sFQy1
-	GF93ThWCGGOWuSWMNgu8O2MByfILdcQeWK6qNrqom5zX3zOVJGQS8HyqI2Q22k1m
-	TL7an/kp35Fp9x4skL/BOljxl3/AL54eVONabffSisdvFSLpl28PmhTIxRW2rAaq
-	oXC6Dw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnk8m5qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:20:50 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8f99a9524so124051956d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:20:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742815250; x=1743420050;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Omyzt0+3s9T/Lcy+ZIwCMHKO6499mJSDlZjjA79KkE=;
-        b=B7zi+m5RkFZDmIPtvoiaHaW7mEv3jY0h9MEh8tjQvhd193pF4hY5YxcHeNAetpv7fP
-         i7P9z7ZBFpmN4W7JzxMUoH4lgdDeh4LZ2yCrJJ/z4v/SbxNtQBYxOLjU8DAa95NMGyp9
-         GOjgk7IRRHBR4bgSMsaNZZ+adPUij9T9rY44JiXJG2dRh6bITxyS/qirQSUUia3/SCz+
-         i0vHwAR/yBGtcr+qaPblUyOlX8n9xesYnAbaxGrs59dWHpMIhnaKzaDlzi6CJo6kPA3v
-         TpyyHp+0kvOuL7uV0AM2YM0+CC0Qw63tCeU2jo6KoUJFKl5Y7aDkgzgTniVem6XIyx9j
-         XYUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe0CrIfrGfk9SAaVFksOgdh2fSz5xFF8T9qwQ4lMPZgfHEf+eFiTVvP/gTb1O/Z6QZf50C98k6h9IA9yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzROadq5Abcoa4ITkgYBoKaIjJEtqnohhzSGyaaw22hdJhsvRz8
-	i1XDUyrKfBjSaAthlPF2+NsZtg06EHhqa4NqqJB3lcELooT73HFnNdgt8AHQ1iADBASpGSPB/HR
-	mYlmdpm9eHsoGDZCvWpHSMcT9kW7qdz2OQHz06rfGy1bcet4TbnTITuzKzlpj6Fo=
-X-Gm-Gg: ASbGncuGgOVurf/X+8hsh4EpfzACEuWA5pNKwamo5proCCfJ0sBwFzT5vNVKWCdchch
-	k/XssquoCD5WDV08EST1bWSeTHR/VMPg9lHaZxr0lohRa7TULf0Ln+6Smw6ol8yjqaRhkXm5hnr
-	RDFi854mrzWCj2lCqokx4oxv7RUZZt8kEyvH2rPN5Ps5AzSf28UHI8vx8VSjgZ2VmPGGRAuzH92
-	JrPz710IWfrD0ambiMvt3c0f2LVRB8BWvdgxxQBtvjsV+TVjaE0/zAlp700WjB78g4UDeXGY2c0
-	GX6PV6AiOYxb6RYCjCihPHXzPq1HZd1a7FzNQstd7rLSCwCdxC7mkTgZ7+0zpXiUPm6tMKQDTrZ
-	DhB8S/bOy6l+axcyxmenqT37G34LfMqqhZhsgBkeBZJZhjHo++T+u8FOEfUp0PAb26tSv
-X-Received: by 2002:a05:6214:240a:b0:6e8:f470:2b0d with SMTP id 6a1803df08f44-6eb3f2ea042mr241595496d6.19.1742815249799;
-        Mon, 24 Mar 2025 04:20:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYlu+ZxtD5PiAQVQVaDuGeEL8PIAH2N2h5B+UI11MbkEtNy7DmV9TNxhz1r4q9ByMX8PffOg==
-X-Received: by 2002:a05:6214:240a:b0:6e8:f470:2b0d with SMTP id 6a1803df08f44-6eb3f2ea042mr241594736d6.19.1742815249260;
-        Mon, 24 Mar 2025 04:20:49 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:11c:bb1f:bc99:5dd2:1e47:705? (2001-14bb-11c-bb1f-bc99-5dd2-1e47-705.rev.dnainternet.fi. [2001:14bb:11c:bb1f:bc99:5dd2:1e47:705])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad650b89bsm1101765e87.208.2025.03.24.04.20.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 04:20:47 -0700 (PDT)
-Message-ID: <7fc622e8-6f9d-4a14-bf5f-3122e6f81808@oss.qualcomm.com>
-Date: Mon, 24 Mar 2025 13:20:44 +0200
+	s=arc-20240116; t=1742815449; c=relaxed/simple;
+	bh=0t3+RoY0LigkPiTbfM/nTM5FzSBZdbGY+aPCdynnMOo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=t7DAcPXTXOFavo4daRuEKAgFga0r6vJQqgXx2Yr7E36ThKPdcpv/zfmMmSCu2+1kh+H+y5bHQrwjF+0g+q5IwPy1FE+6oC+jJeeqFytQmWU1gJClEbK3Pf4fsq/It2deS/NvHFWG1AkmhWpj1wYkFwexMb1x4M9BXvVU+Qw5gQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=nOHGIm21; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O8CXFp017889;
+	Mon, 24 Mar 2025 07:23:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=48DdnN6DF0JrUeBD/I3LjvGLS0F
+	v2oAp5LC/oUIFVCs=; b=nOHGIm21JSCnjXgqQ6P++38bCxZnzJ1TafmSxzQnc0U
+	5InTSwri3wgukO1wc+pdjKFncJ15k6JQFISpKHKG919CAXIwCIxqkJs9VkcQCFlp
+	O2gizdGkerfDrBUOoSM5UjpLYFDT1fg4luD1ieIVt8jqbO7BT9KiGigV6cHWbeIS
+	ApMm4lhVOVF166eujIpXJ6OxJIztTLxJYSZCSPMWTTIRp4f2IIf9CqeMH9BriHwp
+	mLT4i+AnvSRbniM2vKlt1g51bPjjvet9mwEr+KRZ4NiM+oMKKHs6/TFcafBOEIB5
+	hUQKuD99z/awd46Mc01RCKPVCmjX1W1Ayb1/pF4/Ecg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45ht4aa6fj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 07:23:52 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52OBNpHR052238
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Mar 2025 07:23:51 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 24 Mar 2025 07:23:51 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Mon, 24 Mar 2025 07:23:51 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 24 Mar 2025 07:23:51 -0400
+Received: from [10.0.2.15] (KPALLER2-L03.ad.analog.com [10.117.223.46])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52OBNb9g007643;
+	Mon, 24 Mar 2025 07:23:41 -0400
+From: Kim Seer Paller <kimseer.paller@analog.com>
+Subject: [PATCH v2 0/4] Add driver for AD3530R and AD3531R DACs
+Date: Mon, 24 Mar 2025 19:22:54 +0800
+Message-ID: <20250324-togreg-v2-0-f211d781923e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] ASoC: codecs: wcd938x: add mux control support for
- hp audio mux
-To: srinivas.kandagatla@linaro.org, peda@axentia.se, broonie@kernel.org,
-        andersson@kernel.org, krzk+dt@kernel.org
-Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
-        zhoubinbin@loongson.cn, paulha@opensource.cirrus.com,
-        lgirdwood@gmail.com, robh@kernel.org, conor+dt@kernel.org,
-        konradybcio@kernel.org, perex@perex.cz, tiwai@suse.com,
-        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        johan+linaro@kernel.org,
-        Christopher Obbard <christopher.obbard@linaro.org>
-References: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
- <20250324110606.32001-6-srinivas.kandagatla@linaro.org>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <20250324110606.32001-6-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: y_CAf0Q7Rx5TlZUhOJiW1DQfXnuf0B6P
-X-Authority-Analysis: v=2.4 cv=KMlaDEFo c=1 sm=1 tr=0 ts=67e14012 cx=c_pps a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=O8kJzBLDCMT3sX5uReoA:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: y_CAf0Q7Rx5TlZUhOJiW1DQfXnuf0B6P
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAI5A4WcC/2XMQQ7CIBCF4as0sxYDY9tYV72H6WICAyVRMNAQT
+ cPdxW5d/i8v3w6Zk+cMt26HxMVnH0MLPHWgVwqOhTetASUO8qImsUWX2AmrR5Jkp1GxgXZ+Jbb
+ +fUD3pfXq8xbT53CL+q1/RFFCCnPFvqdBokU9U6BHdGcdn7DUWr/fCXfOnQAAAA==
+X-Change-ID: 20250319-togreg-fc6a0af961ed
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Kim Seer Paller <kimseer.paller@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742815405; l=1985;
+ i=kimseer.paller@analog.com; s=20250213; h=from:subject:message-id;
+ bh=0t3+RoY0LigkPiTbfM/nTM5FzSBZdbGY+aPCdynnMOo=;
+ b=zDxY2U9/cRX3MgtUFj/QCf/O+dgp2GwyAq4gweZHq9rlCehbdM0t8lTsckAW4DX4oVascpwug
+ L23MpgHeGrJBJ9SY2XlJjgJ8pbruBaOjtuzYlxeWpwcU1EXof4/+9EP
+X-Developer-Key: i=kimseer.paller@analog.com; a=ed25519;
+ pk=SPXIwGLg4GFKUNfuAavY+YhSDsx+Q+NwGLceiKwm8Ac=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: oZ8ozqMWhqglxQPahPcjXdyRx3d6zFH2
+X-Authority-Analysis: v=2.4 cv=YNCfyQGx c=1 sm=1 tr=0 ts=67e140c8 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=Bz3p57LwOhYugZDU6K4A:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: oZ8ozqMWhqglxQPahPcjXdyRx3d6zFH2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- bulkscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=959 adultscore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2503240082
 
-On 24/03/2025 13:06, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> On some platforms to minimise pop and click during switching between
-> CTIA and OMTP headset an additional HiFi mux is used. Most common
-> case is that this switch is switched on by default, but on some
-> platforms this needs a regulator enable.
-> 
-> move to using mux control to enable both regulator and handle gpios,
-> deprecate the usage of gpio.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
->   sound/soc/codecs/Kconfig   |  1 +
->   sound/soc/codecs/wcd938x.c | 38 ++++++++++++++++++++++++++++++--------
->   2 files changed, 31 insertions(+), 8 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> index ee35f3aa5521..a2829d76e108 100644
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -2226,6 +2226,7 @@ config SND_SOC_WCD938X
->   	tristate
->   	depends on SOUNDWIRE || !SOUNDWIRE
->   	select SND_SOC_WCD_CLASSH
-> +	select MULTIPLEXER
->   
->   config SND_SOC_WCD938X_SDW
->   	tristate "WCD9380/WCD9385 Codec - SDW"
-> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-> index dfaa3de31164..948b5f6cc45a 100644
-> --- a/sound/soc/codecs/wcd938x.c
-> +++ b/sound/soc/codecs/wcd938x.c
-> @@ -19,6 +19,7 @@
->   #include <linux/regmap.h>
->   #include <sound/soc.h>
->   #include <sound/soc-dapm.h>
-> +#include <linux/mux/consumer.h>
->   #include <linux/regulator/consumer.h>
->   
->   #include "wcd-clsh-v2.h"
-> @@ -178,6 +179,8 @@ struct wcd938x_priv {
->   	int variant;
->   	int reset_gpio;
->   	struct gpio_desc *us_euro_gpio;
-> +	struct mux_control *us_euro_mux;
-> +	u32 mux_state;
->   	u32 micb1_mv;
->   	u32 micb2_mv;
->   	u32 micb3_mv;
-> @@ -3243,9 +3246,16 @@ static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
->   
->   	wcd938x = snd_soc_component_get_drvdata(component);
->   
-> -	value = gpiod_get_value(wcd938x->us_euro_gpio);
-> +	if (!wcd938x->us_euro_mux) {
-> +		value = gpiod_get_value(wcd938x->us_euro_gpio);
->   
-> -	gpiod_set_value(wcd938x->us_euro_gpio, !value);
-> +		gpiod_set_value(wcd938x->us_euro_gpio, !value);
+The AD3530R/AD3530 is an 8-Channel, 16-Bit Voltage Output DAC, while the
+AD3531R/AD3531 is a 4-Channel, 16-Bit Voltage Output DAC. These devices
+include software-programmable gain controls that provide full-scale
+output spans of 2.5V or 5V for reference voltages of 2.5V. They operate
+from a single supply voltage range of 2.7V to 5.5V and are guaranteed to
+be monotonic by design. Additionally, these devices features a 2.5V,
+5ppm/°C internal reference, which is disabled by default.
 
-Is it possible to use mux_state for both GPIO and MUX paths?
+The AD3531R/AD3531 is not yet released, so the only available datasheet
+for now is the AD3530R/AD3530. The only differences between the two is
+the number of channels, and register addresses of some registers.
 
-> +	} else {
-> +		mux_control_deselect(wcd938x->us_euro_mux);
-> +		wcd938x->mux_state = !wcd938x->mux_state;
-> +		if (mux_control_select(wcd938x->us_euro_mux, wcd938x->mux_state))
-> +			dev_err(component->dev, "Unable to select us/euro mux state\n");
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+---
+Changes in v2:
+Bindings:
+- Updated commit message.
+- Changed adi,double-output-range to adi,range-double property.
 
-This can lead to mux being deselected next time even if the 
-mux_control_select returned an error. I think mux_control API needs a 
-way to toggle the state without deselecting it first. Anyway, an error 
-from mux_control_select() must prevent you from calling 
-mux_control_deselect() next time.
+ad3530r:
+- Changed data type to __be16 to resolve sparse warnings related to
+  type mismatches.
 
-> +	}
->   
->   	return true;
->   }
+- Link to v1: https://lore.kernel.org/r/20250319-togreg-v1-0-d8244a502f2c@analog.com
 
+---
+Kim Seer Paller (4):
+      iio: ABI: add new DAC powerdown mode
+      iio: dac: ad3530r: Add ABI file for the AD3530R DAC
+      dt-bindings: iio: dac: Add adi,ad3530r.yaml
+      iio: dac: ad3530r: Add driver for AD3530R and AD3531R
 
+ Documentation/ABI/testing/sysfs-bus-iio            |   2 +
+ .../ABI/testing/sysfs-bus-iio-dac-ad3530r          |  68 +++
+ .../devicetree/bindings/iio/dac/adi,ad3530r.yaml   |  91 ++++
+ MAINTAINERS                                        |   9 +
+ drivers/iio/dac/Kconfig                            |  11 +
+ drivers/iio/dac/Makefile                           |   1 +
+ drivers/iio/dac/ad3530r.c                          | 586 +++++++++++++++++++++
+ 7 files changed, 768 insertions(+)
+---
+base-commit: 8dbeb413806f9f810d97d25284f585b201aa3bdc
+change-id: 20250319-togreg-fc6a0af961ed
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Kim Seer Paller <kimseer.paller@analog.com>
+
 
