@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-574047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1619A6DFF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:40:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 607A9A6E007
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88FD16B2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E109D16F940
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCD2263F2C;
-	Mon, 24 Mar 2025 16:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353832641C0;
+	Mon, 24 Mar 2025 16:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEHhlF1+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bIYthxNn"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC60F25F96B;
-	Mon, 24 Mar 2025 16:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38A53B1A4;
+	Mon, 24 Mar 2025 16:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834386; cv=none; b=NCTiEpbeH+3tU/v7DxgexyI0iU3UDG/Hu+yF8vKj0xc4d10OgXF26h6mrAt2Y+5zfmUU1w3PB9D2Sx0Kz87Hi8nvKGIqhaACeJF0TrJ8R4zMWUokGYZY8JqsJ2qk1/eXfmtdCoiOIBdnV3fRb0qGz4LydzV2YCivQR5cW7dI3Yo=
+	t=1742834461; cv=none; b=nwN0ssC7xx2hhH4oEcV2/LG5ICZr6S4rZUsAh14gw1aSzCHeUXGOSaeNPgLyKYzYFI0uu7c6rmGw2pRnwlUCTOhFxR/eL7njc62TgzsjLGlH3UhtVQuI5hZSIak93uhzuLamy/F89T1wBHgOgzWFoZhJiN5+QrvdI2mvqH5CF1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834386; c=relaxed/simple;
-	bh=PkU41z1npHU361mFlL7uOSF2RgIZLrl2UcM2T4+kpTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eiCZS3qE1DP3i3Cs+gAM9EAdoX8sM14297RFmmhIQdqhlK1iQ7FrAL4BvDMOL2FCz7rDJd/dS+ZC8dhPH4/Ky8ZjldIg3inyZPsevEicZ28xFhs5MTxC0Qk2Sgi8Pvn+BB3JygVNaFJ86s3qOp251fg27Y7xAgr/Urv4P/SIOzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEHhlF1+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E47C4CEEA;
-	Mon, 24 Mar 2025 16:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742834386;
-	bh=PkU41z1npHU361mFlL7uOSF2RgIZLrl2UcM2T4+kpTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oEHhlF1+KjBN6VZ6R3OqvS0W9SotslDejwxbnt+zH6pZ52NTWTnx8QHhx2U3/sSQj
-	 r1L5bzp3hFx/6tas4BM1CRZd4gG8XtLw6FAvI97qvhxxIrAOnm6TBCxoTD72UEhIlI
-	 /MH6y0jOcYGdSfIDefC1dr+lrlZBj4drPIUsSAp01jTMFuMA/ZzqxhWWI8q9A60XhJ
-	 LvK4la4O0nq3ISKlqXpV4OB08co+9tzQgliYleonJWD2tT+ZHCcXxExGJFvt895/zg
-	 nB49fbHtc9TtnR5zrMzOlhjip2lFVTFRPpTw5PVzi8FP2LunktYpBJ+jQrmMX8QSBj
-	 GclopDQUx+69g==
-Date: Mon, 24 Mar 2025 11:39:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH 1/3] dt-bindings: PCI: qcom: Move phy, wake & reset
- gpio's to root port
-Message-ID: <20250324163945.GA304502-robh@kernel.org>
-References: <20250322-perst-v1-0-e5e4da74a204@oss.qualcomm.com>
- <20250322-perst-v1-1-e5e4da74a204@oss.qualcomm.com>
+	s=arc-20240116; t=1742834461; c=relaxed/simple;
+	bh=/rRjucx91ifCHglFRPYOdFhd3kU4du9TzWNb328YWEs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=OIU/bRWqYvQ9CnXkWEamcp4Lr31cQcIN73uWaLKU+tCgKjSn9Q5qH26N1nmGv7pQafs5OQuNrlvStX7LRpldt8A0MPx6BSII0QhI7nQahgTpGkL5OEWGBPDka2kBT+sSyb9R6vUrdnFjioEsept0VpXtO3niU9XY00MUjb9FY6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bIYthxNn; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742834418; x=1743439218; i=markus.elfring@web.de;
+	bh=/rRjucx91ifCHglFRPYOdFhd3kU4du9TzWNb328YWEs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bIYthxNni1NNrGMtMBN4yZXVCA+VCmXcIVuEM+FE75hRirrtu5QpGw10SZvfIy3u
+	 PtylrD4161N7xNz4AsWweuL486niZvLl9GtRQj3aGRa0WgvrKFfopAHmvYbtTiLMj
+	 /Af1ncCOTPIFbx9/DPYTXYI5I3MnXUo8itnNRUEOGiGBGEKQl0R/AIbZ5hobp5Xj9
+	 bLm6M0P0MMo8KMc1AIJFyLFtV9lQ6XKWvmS66s6tJtcd0qIWmJmUWiK2+uyiRGJOq
+	 gf5vZsDZy0MxD2bAjv6qdkV1nb6wPsFnG8NkZfKt/HESqrXredfrYQJZmlCdp6W3s
+	 fERaYlKDvH8zdZtHAQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSIJA-1tYeNe0plw-00R0lK; Mon, 24
+ Mar 2025 17:40:18 +0100
+Message-ID: <fca457c2-f0af-4fb8-9771-06916737f9db@web.de>
+Date: Mon, 24 Mar 2025 17:40:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250322-perst-v1-1-e5e4da74a204@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+To: Rakie Kim <rakie.kim@sk.com>, linux-mm@kvack.org,
+ linux-cxl@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel_team@skhynix.com,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dan Williams <dan.j.williams@intel.com>, David Hildenbrand
+ <david@redhat.com>, Gregory Price <gourry@gourry.net>,
+ Honggyu Kim <honggyu.kim@sk.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Ying Huang <ying.huang@linux.alibaba.com>, Yunjeong Mun <yunjeong.mun@sk.com>
+References: <20250320041749.881-2-rakie.kim@sk.com>
+Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted
+ interleave sysfs
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250320041749.881-2-rakie.kim@sk.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vxBGvwS+EWZlmP/W7uoetSnf9UKACodThYGYygfRGKVZk+mygbS
+ CwF0SCA3f02mHf8S3wRybjPH9CLqmVtfaSIuXSiJ+jzmuKXf0WJCUvUabLrLG6WvgMqAF70
+ gRrEifpNTMNgMkmBzve8Itic2FUr8LVFriHQQ40zgkMFGB7bWYXkJEaAVs/AC9l264f5jvU
+ 78FKWmQPh6/bu38Hjq8bw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CS8vjuGqyOY=;Bl6LXBxXiN8N+Uk50ucBm4GLFDZ
+ nEQJGuaoAv7iHslz2wf1KzVrid4ay9FW//7ridLaa7XqNRk9e1Wlsl7eUYdgSRgn4E6jdPLqw
+ PoTGuGThAK2CS4co8K3MC8NFYCkMRAwBHcA1bC/RFdeXGVZHaDY+8beFbbNz+w8sztCy//w0k
+ 1DDLj3KtoxkJboeL+6bIchcsHRDXfB1/TpNjQBrauuiPsPblxwE5MCizlzHyBcWipb8o8sRvF
+ r8B/ReOAjlqu6gEaR2FbaopBhP/4S+vmWACkUcnXg0AZhs2w2TykNWNK7RvSs0orwEHFfx4dd
+ 4dv222dDMbJuOuEpm13dMhqL2k2ZnLEpu40BgCLGv4VGUwYEp77t2pLtFwI9h4kLIa5jKwLSh
+ bIoy9Nbg07o/iT0qkBhXXZTEtcW3JN9t24uS1V+aHCEvnYWpshSmdK8+pSwIs/OhCdpqk6lq8
+ uUfxiTKASkx1B0i9Z0dc6zs5UgnEF8BiaaSON8K419G5JiUbZpNWOvM1BMiXIwg+K5OI/vcf1
+ o/bGR1d09jQBcQCOrVNdSJ5Tx8Kd001ygGFftQXbgdUHV3n/GVqsUYbcRMWZ84TNrL0neKWjg
+ cwALEzRJATiKzLKdcsti8JK/gbKGwDfgz7TyxsZM/Aq8XIOZ5zrvE1cEU4mYRYm0Z5a9+XiB+
+ pfRjPyBRWBG3XIyXl8JDY0Vdo17I0OQWqHaYDmhK/CjeNPfjQXCQF80MKhH04IcjN3gje32J6
+ qQYZhyscB9dOvm0bim9LXC3krMs2AD5y63VRw3CQ/6U5X1v+Qc1kw47ETIsoLXg2k1l3jjVcH
+ 9IUGtR9Zw/+J6pVxeyajthdlnmm3ISPp3QhCVPMpu8s5ysJwLhCZDB5SSHjBOEcI1xhzjd8nQ
+ tH29+h+41BWdbQUozPaewEe2c2XoHUXlu9uxW1SYktqehcXM6LBoSoGhVCx6LFz61ESu0f8Sv
+ t+CK4e0439vPHD7qPQ2ID8DmplS44Q28B0COzYbn9W+mQF3qYIjlq0pvHdyQCOAsff9BBYAeS
+ lnstsWpECJJNsjvPWFxGMCsU89fjv5cdTVRTkIvwug1cJT0L+P3SDbJlzbtm9dJaEUKinT0ne
+ UWp27HlM2pLJe5lI0qY8CX6XQfb0AAxX3xuCXn7/UItjAPI1YUNhxmq7xd0uv0GUVRTvDbG16
+ 5kzFu/i/DCenoU/dPC2hqjNZxgVwUQw6DWz+JFPLpwNcXUOIAe3PIrbMvXhY4V+OXlCBuGHr5
+ u7d9h/i3gWCWdSakCsGN1dKAjMVvAHPAG5p7UdsP5IMJ//DZQ4gaiu/CenmCrLkxwE4qQ2I9E
+ th0ZyAO8KkFaVQ0Q1scPXhvui22ElRUcxuRvzRg9/rof1Brut1KVPQVxZhNGZdkHlHr2oYyzd
+ 9plwUimYymvOdeKcONMixv2Zp0K6FuIpAj1bmjITdkdbIkPAWINWcntcHaeIs8PGG93wEZYtT
+ reCZtZSPncqE/4OFbWTto0TedlyLBwHJKq7D6YLeMEi5FxVEz
 
-On Sat, Mar 22, 2025 at 08:30:43AM +0530, Krishna Chaitanya Chundru wrote:
-> Move the phy, phy-names, wake-gpio's to the pcie root port node instead of
-> the bridge node, as agreed upon in multiple places one instance is[1].
+=E2=80=A6
+> This patch resolves the issue =E2=80=A6
 
-You aren't really moving them except in the example. This is an ABI 
-break for sc7280. Is anyone going to care?
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14#n94
 
-You need to deprecate the properties in the old location.
-
-> Update the qcom,pcie-common.yaml to include the phy, phy-names, and
-> wake-gpios properties in the root port node. There is already reset-gpio
-> defined for PERST# in pci-bus-common.yaml, start using that property
-> instead of perst-gpio.
-> 
-> For backward compatibility, do not remove any existing properties in the
-> bridge node.
-> 
-> [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
-> 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/pci/qcom,pcie-common.yaml  | 22 ++++++++++++++++++++++
->  .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  | 18 ++++++++++++++----
->  2 files changed, 36 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> index 0480c58f7d99..258c21c01c72 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-> @@ -85,6 +85,28 @@ properties:
->    opp-table:
->      type: object
->  
-> +patternProperties:
-> +  "^pcie@":
-> +    type: object
-> +    $ref: /schemas/pci/pci-pci-bridge.yaml#
-> +
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +      phys:
-> +        maxItems: 1
-> +
-> +      phy-names:
-> +        items:
-> +          - const: pciephy
-
-Just drop phy-names in the new location. It's pointless especially when 
-foo-names is just "${module}foo".
-
-> +
-> +      wake-gpios:
-> +        description: GPIO controlled connection to WAKE# signal
-> +        maxItems: 1
-> +
-> +    unevaluatedProperties: false
-> +
->  required:
->    - reg
->    - reg-names
+Regards,
+Markus
 
