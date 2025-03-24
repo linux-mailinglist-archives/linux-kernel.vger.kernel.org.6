@@ -1,181 +1,223 @@
-Return-Path: <linux-kernel+bounces-574248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA391A6E290
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:41:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1B9A6E293
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C9B188EF9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0833169232
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED9264F8B;
-	Mon, 24 Mar 2025 18:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFCE264F8A;
+	Mon, 24 Mar 2025 18:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FVWcJ/DA"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="XwVZMftb"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E6D2627E9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A5C261568
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742841657; cv=none; b=gguU4TGbrxxiKuLRkZVNESlaNerZTPuNYEZ0IyaMIYEmZowCPO80GC3ZMlnjMZ1h3i0pAbo39oiIvS6WrXZVUBOCviSBKKn+vOkzcEmghNm+IgkW499k4pWK00mgxizsgNbhWhEQ28ZvQ2UVcMzVN2FCMOJGFq1Fm7VhFUqIDCY=
+	t=1742841806; cv=none; b=SMS8XqyYOMrgHJ5lTKbpP4Z66HpCyplHUFmRkFdOkevydvIraqCyT+0U1YAz/7NbPKxettqehLnITi4mR/i4togSlCh3Y0sPSFibRWRGTMUAu7H+1CTD4KFvc2Ry4xzmSU5nG4UBs29bWSckxuXyi+m/QKcnV3xddaxhCbuQkFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742841657; c=relaxed/simple;
-	bh=f4DdomVr0nagMtgc+/I4m7RjU+SfBMD1Z8bRaM4ug24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sllmBCY622n/s3UcCgBYgXd+Z4wyZpncNC6gbkQcWNzEhbVPWo/RrxKFW4THW6sq4oDGVrjbBi3cIpMvgdgtU94adtcW+qLYBfmuxBKI1+HSEP9yzCZCXmEmG9ifTEO+bZyJqAcXFIPUpwJO/ni0SWE1dghltslJroSB1o+ojrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FVWcJ/DA; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47666573242so82161cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742841655; x=1743446455; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KVFFcWh5dZoKRR9sK5sDoRV9h4cdUzLL2+BzZ81kSD4=;
-        b=FVWcJ/DAyPeQjruz6D0IltEw1GE2o5uBRFsoT1jO48Qw4gOTOLTyG6rbPCL/7ZoK7W
-         zIs5woQMJhmqkx7tWt+t3+tlwxgDvnievXBp2csINaHtd7S0yhsFAJqu64AIoxl4xSuu
-         d0GPi4R2LjoUW7GwtdnK7r5b/+5e/FRTraE5VU5iLHrvOsq1+ARUKHGZradRVsUEz9u9
-         W2kFWIfTeplAb8TEOUrIgHrSJnRs09QMNX/xSNritvK40SfhcjwIdD1QetKu+QdJZ07d
-         fwAB4driL99492Fv++wB6axZSRH2SMseCinuu8SSSSKL2G5Vr7dVWztsKmpeZXiSa0WW
-         Ystg==
+	s=arc-20240116; t=1742841806; c=relaxed/simple;
+	bh=DyPdR8XejOdJArHhChOKI1F1uccExW7lMxKjafwnONI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Au5q3oXR/ExJZc/AIPyPV+QZS3iK/HVERTV6h6AZ6PfnC3ho+C0ND1ixkvHUqoVtnT/2p2Qe/i3rsfhpsl/l73jlR1nGg5YQ03N/RP8QaHg0lXZ+kA3yfYRTrDE1hzKAU1aPrLyKXYVsQBYB0oKYq4z50K7F4deApvEy4cMcxQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=XwVZMftb; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 73FBE3F46B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742841801;
+	bh=bmsw4ewzcXLmD+pkXVGwFfrm6ow1zJu7eLFjnQrlG3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=XwVZMftbXu33p987QScv1DFwyCH/D1i8TOqE6FJaOG6YD/k02o2jnArAK8OpP13Lk
+	 b6wEqgQKYqkQCBeLbx0hunBkytERir0RZXQR+qtoPPk14Wcek3upEZr5Vwvk4nZ3HT
+	 5XByMnsTk4iV04jn5FmETXx5Vr5p0C0CHPmxLTTlhpzvz/W8iuD+guUnqBg+1eanVg
+	 0xCrGc5+BVHYE3tEyd23UxvhQq8R+jvq66HcnNKLjyLg8d8crFv68E3Ehzqbt0qixp
+	 V0KyXJvygEt0HK2rl8Yw4StMmIAQLLBS8MmkgQVJbmjCTmLWS9kEP8huG7ZHD5swSC
+	 w62LM81cuJ1Ng==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac297c7a0c2so356096366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:43:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742841655; x=1743446455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742841801; x=1743446601;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KVFFcWh5dZoKRR9sK5sDoRV9h4cdUzLL2+BzZ81kSD4=;
-        b=s7pYamUUoITzCGOZYvqJwCXjW5cP4FXVOMiMuwGjdtjXA2rnmQ1r6oRR2Zhh90sRPX
-         gzpQXo5tPAKvXBr/IJQ3X9mRlK/owyMRFIBmmkJ3dR4eDL7qhJMowCtBanJO2kmeWGze
-         /4zDZmO9sKYxRJSFnrPlGF+jj2SQVjFDiLfWY2SOVrwtRakcKrogCRsQwDi2MmlEsJ+p
-         2E8dvtWHJURDxJgNk9pVhF3SMMsf4wx0PEynKY1njUPSsKVA1PdGwr2Xw4gGIh6gCmW/
-         Qk0+RNI9LQFaqOZi0sPcBAEw2KclWrA1hbBtq+XHMGqTmNrpaM9HFqTHGom4MJRWwuHD
-         izOA==
-X-Gm-Message-State: AOJu0Yz0EHDSVkkHMsAFflI4HoekI7HaJsxTkdDMCtPmgCcjoaQ7Ovpe
-	yYJluX1c4EZ/dMd1dKkjd6hFRsbh61EcJ+kW4FnK9qdJHUneMJvj2H/36XBP2s/7OJ47Qa6+3Io
-	v2twk+AfqVeSYyhbEK8idqsfDxpB5frjlbEp4
-X-Gm-Gg: ASbGnctPX2Bz04cGC+W4Kr8klu1axmDzpy9cXphT5WOaNyJ7otxF/rxvEBvo5DLbr7g
-	S6gCdse2kPUud7GJVEv3nJuGpdzz6HL3kyNN9R5b+r8mYXDPHXHd9LOvlwHGqz3jZ/d9HGZIl5D
-	sQv3FbkwQ/UgoHYl5LcOVshOQ=
-X-Google-Smtp-Source: AGHT+IE5+gZ94fZfEMa4/mu+5y69Keqgf6GYglfVDQZk9TGfgwTjD/V2nGDREwNflvI0c0qaa+IqDh+lZikxQgFL/jU=
-X-Received: by 2002:a05:622a:17c4:b0:475:1410:2ca3 with SMTP id
- d75a77b69052e-4772be23f26mr9607281cf.15.1742841654660; Mon, 24 Mar 2025
- 11:40:54 -0700 (PDT)
+        bh=bmsw4ewzcXLmD+pkXVGwFfrm6ow1zJu7eLFjnQrlG3k=;
+        b=NZp6otT+ne7jS2RhGf15aPB2LH28cv2Cg8b/rTjQaPxfzGD1TELkWJtVgDWsvP0E2b
+         YPbQuoAF5Kb7RZem9Hhbz8qE/z0w4knMQQVcJK9gnpNZkGrxVokT63dcrOtTLXWct/Rh
+         eCfIANhhxBFq2ke1gleRBU1LFtmJ2M4bI2XZuf/655KZrSMPuCab6pI2SzrBuVD9UNvS
+         frhobO9WvM6N5izEbQoekJTa6eAUbZnbas2PcIXp00kRhTemIn7lD6eP4gaqzaCdcPle
+         o1EmelFDdIN7ZqrVAFnByGSMg1Qckg+grlN0uD8SDULbaK+JLQ2p4k2mOt189VivUBno
+         WnVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtRn6pLKLlRteYVNjbk7ye6v7Pr3ckJAYv4Deh48Ch108EljnJ/KQc7QqNT0E39wAX5WjpsYtPASMx3Ks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsItCm+DJxCGs6sFkNPH9m6CvBIJoFXPZF6dvO31G5BOBFmXKa
+	8R1BPaXggpama4f+TPOFiKeByEzMsZGkxaFPVw900Ahlc3ufNWEgL/VGv9V1YjrhOs7SATr23qP
+	JJej1f3gAZPcbkKNwdaGhBqux2W0pikN5QPGlo5xMcX5IfHwSMDgUPWJkCDKwl7b3f+a/qyGIWN
+	UB+g==
+X-Gm-Gg: ASbGncsVqjA+eTxXBk3XC3uPJIS0Y+P1yFEdWPoF9EmFgo+JVwNiEWazyJzVGWl5maK
+	0FpxvVkAYs7uoMO5Dz8ZPcFM635rW+mmVTMUZQjWSvyR20sIGekxLfTNrpZGuKX6tiYM49mWx6d
+	mh9ijVhFNAcFAPriRx0zo/WIL8VyHh2cRqONA5EbVjgS88zG1z+LB1Zmt2HdmCAznnr1O11nZ5v
+	XgnCJhvtyO+dUnDtOpVwDA1s1UqLHTESOYsfkNS9AdMuvMNfcDTnQDxo2FwoBrd6sWci18Eu3w2
+	qOeSij4ZGRHBpSDgSU0=
+X-Received: by 2002:a17:907:da4:b0:ac1:e332:b1f5 with SMTP id a640c23a62f3a-ac3f2502f3amr1331213766b.37.1742841800704;
+        Mon, 24 Mar 2025 11:43:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB+I+1R+JqYek+Q0I5+9nDVaAEO0lpIglG7jRbh+7uyr3OSYJUS/du9QNLk3uBN/js20IAkQ==
+X-Received: by 2002:a17:907:da4:b0:ac1:e332:b1f5 with SMTP id a640c23a62f3a-ac3f2502f3amr1331210066b.37.1742841800156;
+        Mon, 24 Mar 2025 11:43:20 -0700 (PDT)
+Received: from localhost ([176.88.101.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb6483fsm721247366b.112.2025.03.24.11.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 11:43:19 -0700 (PDT)
+Date: Mon, 24 Mar 2025 21:43:18 +0300
+From: Cengiz Can <cengiz.can@canonical.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Salvatore Bonaccorso <carnil@debian.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
+	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com> <20250320015551.2157511-8-changyuanl@google.com>
-In-Reply-To: <20250320015551.2157511-8-changyuanl@google.com>
-From: Frank van der Linden <fvdl@google.com>
-Date: Mon, 24 Mar 2025 11:40:43 -0700
-X-Gm-Features: AQ5f1JqgK3t9nzg4mdWiXWpH_sA43D2BNXiBuTZpvx6PAjAQCpPGjdYAtW64c_s
-Message-ID: <CAPTztWbFXajArSN8yKu32eSoR=xsk1CHM_4V7MJ0eQxydFqPUQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/16] kexec: add Kexec HandOver (KHO) generation helpers
-To: Changyuan Lyu <changyuanl@google.com>
-Cc: linux-kernel@vger.kernel.org, graf@amazon.com, akpm@linux-foundation.org, 
-	luto@kernel.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
-	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
-	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org, 
-	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, saravanak@google.com, 
-	skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, will@kernel.org, 
-	devicetree@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025032402-jam-immovable-2d57@gregkh>
+User-Agent: NeoMutt/20231103
 
-On Wed, Mar 19, 2025 at 6:56=E2=80=AFPM Changyuan Lyu <changyuanl@google.co=
-m> wrote:
->
-> From: Alexander Graf <graf@amazon.com>
->
-> Add the core infrastructure to generate Kexec HandOver metadata. Kexec
-> HandOver is a mechanism that allows Linux to preserve state - arbitrary
-> properties as well as memory locations - across kexec.
->
-> It does so using 2 concepts:
->
->   1) State Tree - Every KHO kexec carries a state tree that describes the
->      state of the system. The state tree is represented as hash-tables.
->      Device drivers can add/remove their data into/from the state tree at
->      system runtime. On kexec, the tree is converted to FDT (flattened
->      device tree).
->
->   2) Scratch Regions - CMA regions that we allocate in the first kernel.
->      CMA gives us the guarantee that no handover pages land in those
->      regions, because handover pages must be at a static physical memory
->      location. We use these regions as the place to load future kexec
->      images so that they won't collide with any handover data.
->
-> Signed-off-by: Alexander Graf <graf@amazon.com>
-> Co-developed-by: Pratyush Yadav <ptyadav@amazon.de>
-> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
-> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> ---
->  MAINTAINERS                    |   2 +-
->  include/linux/kexec_handover.h | 109 +++++
->  kernel/Makefile                |   1 +
->  kernel/kexec_handover.c        | 865 +++++++++++++++++++++++++++++++++
->  mm/mm_init.c                   |   8 +
->  5 files changed, 984 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/kexec_handover.h
->  create mode 100644 kernel/kexec_handover.c
-[...]
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 04441c258b05..757659b7a26b 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -30,6 +30,7 @@
->  #include <linux/crash_dump.h>
->  #include <linux/execmem.h>
->  #include <linux/vmstat.h>
-> +#include <linux/kexec_handover.h>
->  #include "internal.h"
->  #include "slab.h"
->  #include "shuffle.h"
-> @@ -2661,6 +2662,13 @@ void __init mm_core_init(void)
->         report_meminit();
->         kmsan_init_shadow();
->         stack_depot_early_init();
-> +
-> +       /*
-> +        * KHO memory setup must happen while memblock is still active, b=
-ut
-> +        * as close as possible to buddy initialization
-> +        */
-> +       kho_memory_init();
-> +
->         mem_init();
->         kmem_cache_init();
->         /*
+On 24-03-25 09:17:05, Greg KH wrote:
+> On Mon, Mar 24, 2025 at 07:14:07PM +0300, Cengiz Can wrote:
+> > On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
+> > > Hi
+> > > 
+> > 
+> > Hello Salvatore,
+> > 
+> > > On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
+> > > > Syzbot reported an issue in hfs subsystem:
+> > > > 
+> > > > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+> > > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > > > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > > > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+> > > > 
+> > > > Call Trace:
+> > > >  <TASK>
+> > > >  __dump_stack lib/dump_stack.c:94 [inline]
+> > > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> > > >  print_address_description mm/kasan/report.c:377 [inline]
+> > > >  print_report+0x169/0x550 mm/kasan/report.c:488
+> > > >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> > > >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> > > >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+> > > >  memcpy_from_page include/linux/highmem.h:423 [inline]
+> > > >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > > >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > > >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+> > > >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+> > > >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+> > > >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> > > >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> > > >  __do_sys_mkdir fs/namei.c:4300 [inline]
+> > > >  __se_sys_mkdir fs/namei.c:4298 [inline]
+> > > >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > RIP: 0033:0x7fbdd6057a99
+> > > > 
+> > > > Add a check for key length in hfs_bnode_read_key to prevent
+> > > > out-of-bounds memory access. If the key length is invalid, the
+> > > > key buffer is cleared, improving stability and reliability.
+> > > > 
+> > > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+> > > > ---
+> > > >  fs/hfs/bnode.c     | 6 ++++++
+> > > >  fs/hfsplus/bnode.c | 6 ++++++
+> > > >  2 files changed, 12 insertions(+)
+> > > > 
+> > > > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+> > > > index 6add6ebfef8967..cb823a8a6ba960 100644
+> > > > --- a/fs/hfs/bnode.c
+> > > > +++ b/fs/hfs/bnode.c
+> > > > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> > > >  	else
+> > > >  		key_len = tree->max_key_len + 1;
+> > > >  
+> > > > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
+> > > > +		memset(key, 0, sizeof(hfs_btree_key));
+> > > > +		pr_err("hfs: Invalid key length: %d\n", key_len);
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > >  	hfs_bnode_read(node, key, off, key_len);
+> > > >  }
+> > 
+> > Simpler the better. 
+> > 
+> > Our fix was released back in February. (There are other issues in our attempt I
+> > admit).
+> > 
+> > https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
+> > 
+> > If someone can pick this submission, I will be happy to replace our version.
+> 
+> any specific reason why you didn't submit this upstream?  Or did that
+> happen and it somehow not get picked up?
 
+It was mentioned by the researchers that previous attempts were unanswered. I
+didn't question the validity of that statement.
 
-Thanks for the work on this.
+I received excerpts from a private email communication indicating that the
+HFSPlus filesystem currently has no maintainers, and that at least one of the
+decision-makers does not consider filesystem corruption flaws to be particularly
+sensitive.
 
-Obviously it needs to happen while memblock is still active - but why
-as close as possible to buddy initialization?
+Re-sharing this publicly on linux-fsdevel probably won't get picked up and would
+definitely put Ubuntu users at risk, as we were the only ones shipping the
+'enabling' policy lines at org.freedesktop.udisks2.filesystem-mount. 
 
-Ordering is always a sticky issue when it comes to doing things during
-boot, of course. In this case, I can see scenarios where code that
-runs a little earlier may want to use some preserved memory. The
-current requirement in the patch set seems to be "after sparse/page
-init", but I'm not sure why it needs to be as close as possibly to
-buddy init.
+So I proceeded with downstream fix and we released the fix before announcement
+date.
 
-- Frank
+> 
+> And why assign a CVE for an issue that is in the mainline kernel, last I
+> checked, Canonical was NOT allowed to do that.
+
+This was not ideal, you're right. It should be assigned by kernel.org.
+
+> 
+> Please work to revoke that CVE and ask for one properly.
+
+Will do. Thanks.
+
+In the meantime, can we get this fix applied?
+
+> 
+> thanks,
+> 
+> greg k-h
 
