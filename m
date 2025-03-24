@@ -1,184 +1,194 @@
-Return-Path: <linux-kernel+bounces-573263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1DBA6D4FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:23:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F75FA6D509
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51DB1188DB1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA163B0FF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D7B250C0F;
-	Mon, 24 Mar 2025 07:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHV52Z5m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B803B17BEBF;
+	Mon, 24 Mar 2025 07:24:20 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EA418D65E;
-	Mon, 24 Mar 2025 07:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A4D747F;
+	Mon, 24 Mar 2025 07:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742801002; cv=none; b=oWFiibHdnHyxxs5sK6k0U+WPM6qNvOLf6mbZVK9ja6UwCzpqsqm8aq+yfvV2BFxWxymblSQTAuJogkD/jUMYWOesMVO3RlkoVU8QdSaN0Vb/fn/T1PbDEZ1zS1OBqCGdGLlkNf09P2ladapzmOyGY2e2spKHX72owcLZ9Fu7Slw=
+	t=1742801060; cv=none; b=tIjrt5K1PwOeoXkAOXFFIyv+k1owLu2Wg/mPUJbAUvyUfwFHXOAnJZaZ6aOujjcYehzOQKmdJRJn5xdeY9w2YM3Q/IBGUT2GhC4iqEoZ11JthWYczam2Iab2Ws1Nogy1uZrnriEqWLRTKrMpYurkE3pl6THLJbO2zcXtOod9/e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742801002; c=relaxed/simple;
-	bh=rpacFajQmnF5jVC9M6bEwsXc0x3PG4bR6WjOaYeWR3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQM/+TZm9YRCQ/8VFgD2Cu8Yi9R8IpND5iIg7LAaP6Ss+DhpTOcH0LGlkXsrkV5Mu7+B+GenKz1jDZc7cqvJTMCFlr2a8hApALnEVwuWNtcbN3Hkhjr/2XiwpQbGNaasX9Fw+JhJUfr/4oaB9pW4eOOV3pEKkIEXG7QCcakUSAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHV52Z5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D68FBC4CEE4;
-	Mon, 24 Mar 2025 07:23:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742801001;
-	bh=rpacFajQmnF5jVC9M6bEwsXc0x3PG4bR6WjOaYeWR3I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WHV52Z5mueIEeKyjSCQE5yZvtpoepiA3LImk9pMIVARR6WRmQbCssqenJl+KtfIDL
-	 e1WnKlpcLFOf9/PdXvXn5ukLUjrIgdtePi6q5jxxFpiBTe+bmLsJXuWF9+DOGXpAeE
-	 85owSCBYk7xB9N3/LNfBaBajRoVcBurb6RP5PRJzgSX7V4IPk71xEdkQZ5ICtbcSd0
-	 uhUbXJYw3pXc7zWAMOrzKkDDKKxIgKZNep9ql05q67ymmu391YMzQYvLi19jwrs2z0
-	 u7aJsHYoQhLrcvYxOMqLcglQfPRRy25E0W9sz9Uram1aDm1hNFpi78yJ7/l/PauQgw
-	 ZAEFgr3Uz9IDw==
-Message-ID: <a2397c92-2884-4f4d-b036-808208892af5@kernel.org>
-Date: Mon, 24 Mar 2025 08:23:13 +0100
+	s=arc-20240116; t=1742801060; c=relaxed/simple;
+	bh=zuS+oHD3rFoZ8oG5/la2bXWYbCop2ycdrxK3niCI/JY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cOMdtA/MR2bWS4rmhZGDKHLQqx2C4rUZNpC5kV4SCHXoO0+tfz4ioea3AYGWNj72Sb3zyRX8KKm+/g5UqHjkxxYOX7aAqRk+WSfTvnK/cfH+vmM0/gQ8SfUCFNboxgJFo7KRCkA5QVImvpWEwY2jTL91fjx9GyoyBVIKuBonHaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6MvWq012667;
+	Mon, 24 Mar 2025 07:24:10 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45hm68hskq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 24 Mar 2025 07:24:10 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 24 Mar 2025 00:24:09 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 24 Mar 2025 00:24:05 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>,
+        <gregory.greenman@intel.com>, <kvalo@kernel.org>,
+        <johannes.berg@intel.com>, <sashal@kernel.org>,
+        <miriam.rachel.korenblit@intel.com>, <yedidya.ben.shimol@intel.com>,
+        <daniel.gabay@intel.com>, <shaul.triebitz@intel.com>,
+        <benjamin.berg@intel.com>, <linux-wireless@vger.kernel.org>
+Subject: [PATCH 6.6.y] wifi: iwlwifi: mvm: ensure offloading TID queue exists
+Date: Mon, 24 Mar 2025 15:24:04 +0800
+Message-ID: <20250324072404.3796160-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: misc: bist: Add BIST dt-binding for TI
- K3 devices
-To: Neha Malcom Francis <n-francis@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, u-kumar1@ti.com
-References: <20241128140825.263216-1-n-francis@ti.com>
- <20241128140825.263216-2-n-francis@ti.com>
- <ho7ktcnbtl7mvamfthqho23co2fc4z7bgjha7pu4wivxm6ndhu@tfbpveonhckz>
- <837d329b-bcdd-4c3b-b508-e916b110ce25@ti.com>
- <e57dfc3e-b702-4803-b776-20c6dbd98fef@kernel.org>
- <8e58b093-1c64-45b9-a9d3-9835a3bbc4fd@ti.com>
- <1da4e402-62f3-4bad-9129-1f5a08148987@kernel.org>
- <f39d80fc-3600-4c2c-b09c-980288f86fa2@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <f39d80fc-3600-4c2c-b09c-980288f86fa2@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: PNzTTe2AUCEqgp6DmQRlzTVzMHmQ8oiD
+X-Authority-Analysis: v=2.4 cv=etjfzppX c=1 sm=1 tr=0 ts=67e1089a cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=Vs1iUdzkB0EA:10 a=bC-a23v3AAAA:8 a=QyXUC8HyAAAA:8 a=t7CeM3EgAAAA:8 a=NfUTzc1LGNvJgRzytgEA:9 a=-FEs8UIgK8oA:10
+ a=FO4_E8m0qiDe52t0p3_H:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: PNzTTe2AUCEqgp6DmQRlzTVzMHmQ8oiD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2503240053
 
-On 19/03/2025 10:02, Neha Malcom Francis wrote:
-> Hi Krzysztof,
-> 
-> On 19/03/25 13:16, Krzysztof Kozlowski wrote:
->> On 13/03/2025 12:14, Neha Malcom Francis wrote:
->>> Hi Krzysztof
->>>
->>> On 29/11/24 14:45, Krzysztof Kozlowski wrote:
->>>> On 29/11/2024 08:43, Neha Malcom Francis wrote:
->>>>>>> +
->>>>>>> +  power-domains:
->>>>>>> +    maxItems: 1
->>>>>>> +
->>>>>>> +  ti,bist-instance:
->>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>>> +    description:
->>>>>>> +      the BIST instance in the SoC represented as an integer
->>>>>>
->>>>>> No instance indices are allowed. Drop.
->>>>>>
->>>>>
->>>>> Question on this, this is not a property that is driven by software but rather 
->>>>> indicates which register sequences have to be picked up for triggering this test 
->>>>> from this instance. So I don't see how I can workaround this without getting 
->>>>> this number. Or maybe call it ID rather than instance?
->>>>
->>>> I don't understand how the device operates, so what is exactly behind
->>>> some sequences of registers for triggering this test. You described
->>>> property as index or ID of one instance of the block. That's not what we
->>>> want in the binding. That's said maybe other, different hardware
->>>> characteristic is behind, who knows. Or maybe it's about callers... or
->>>> maybe that's not hardware property at all, but runtime OS, who knows.
->>>>
->>>
->>> Sorry for such a late reply, but I was hoping to get more details on
->>> this "ID" and never got back to the thread...
->>>
->>> The best way I can describe is this device (BIST) runs a safety
->>> diagnostic test on a bunch of processors/blocks (let's call them
->>> targets). There's a mapping between the instance of this device and the
->>> targets it will run the test. This ID was essentially letting the BIST
->>> driver know which are these targets.
->>
->>
->> So you want to configure some target? Then this is your property. If you
->> want to configure 'foo' difference in DT, you do not write 'bar'...
->>
-> 
-> So the difficulty in doing this is, what I mentioned in the earlier
-> email just copying it over again:
-> 
-> "Yet another way would be the BIST points out the targets it controls via
-> their phandles in its node... but this approach would trigger the probe
+From: Benjamin Berg <benjamin.berg@intel.com>
 
-No, it would not. Which part of OF kernel code causes probe ordering
-(device links) if some random phandle appears?
+[ Upstream commit 78f65fbf421a61894c14a1b91fe2fb4437b3fe5f ]
 
-> of these targets before the test runs on them. And in hardware, the test
-> must run only one before the device is used, else we see indefinite
-> behavior."
-> 
-> Property that has a list of strings (targets) instead of phandles maybe?
-> Would that be acceptable?
+The resume code path assumes that the TX queue for the offloading TID
+has been configured. At resume time it then tries to sync the write
+pointer as it may have been updated by the firmware.
 
+In the unusual event that no packets have been send on TID 0, the queue
+will not have been allocated and this causes a crash. Fix this by
+ensuring the queue exist at suspend time.
 
+Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+Signed-off-by: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Link: https://msgid.link/20240218194912.6632e6dc7b35.Ie6e6a7488c9c7d4529f13d48f752b5439d8ac3c4@changeid
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c  |  9 ++++++-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 28 ++++++++++++++++++++
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.h |  3 ++-
+ 3 files changed, 38 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+index 592b9157d50c..a82cdd897173 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+@@ -1293,7 +1293,9 @@ static int __iwl_mvm_suspend(struct ieee80211_hw *hw,
+ 
+ 		mvm->net_detect = true;
+ 	} else {
+-		struct iwl_wowlan_config_cmd wowlan_config_cmd = {};
++		struct iwl_wowlan_config_cmd wowlan_config_cmd = {
++			.offloading_tid = 0,
++		};
+ 
+ 		wowlan_config_cmd.sta_id = mvmvif->deflink.ap_sta_id;
+ 
+@@ -1305,6 +1307,11 @@ static int __iwl_mvm_suspend(struct ieee80211_hw *hw,
+ 			goto out_noreset;
+ 		}
+ 
++		ret = iwl_mvm_sta_ensure_queue(
++			mvm, ap_sta->txq[wowlan_config_cmd.offloading_tid]);
++		if (ret)
++			goto out_noreset;
++
+ 		ret = iwl_mvm_get_wowlan_config(mvm, wowlan, &wowlan_config_cmd,
+ 						vif, mvmvif, ap_sta);
+ 		if (ret)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
+index 84f4a9576cbd..662efded3125 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
+@@ -1501,6 +1501,34 @@ static int iwl_mvm_sta_alloc_queue(struct iwl_mvm *mvm,
+ 	return ret;
+ }
+ 
++int iwl_mvm_sta_ensure_queue(struct iwl_mvm *mvm,
++			     struct ieee80211_txq *txq)
++{
++	struct iwl_mvm_txq *mvmtxq = iwl_mvm_txq_from_mac80211(txq);
++	int ret = -EINVAL;
++
++	lockdep_assert_held(&mvm->mutex);
++
++	if (likely(test_bit(IWL_MVM_TXQ_STATE_READY, &mvmtxq->state)) ||
++	    !txq->sta) {
++		return 0;
++	}
++
++	if (!iwl_mvm_sta_alloc_queue(mvm, txq->sta, txq->ac, txq->tid)) {
++		set_bit(IWL_MVM_TXQ_STATE_READY, &mvmtxq->state);
++		ret = 0;
++	}
++
++	local_bh_disable();
++	spin_lock(&mvm->add_stream_lock);
++	if (!list_empty(&mvmtxq->list))
++		list_del_init(&mvmtxq->list);
++	spin_unlock(&mvm->add_stream_lock);
++	local_bh_enable();
++
++	return ret;
++}
++
+ void iwl_mvm_add_new_dqa_stream_wk(struct work_struct *wk)
+ {
+ 	struct iwl_mvm *mvm = container_of(wk, struct iwl_mvm,
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.h b/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
+index 95ef60daa62f..799ea7675e01 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
+ /*
+- * Copyright (C) 2012-2014, 2018-2022 Intel Corporation
++ * Copyright (C) 2012-2014, 2018-2024 Intel Corporation
+  * Copyright (C) 2013-2014 Intel Mobile Communications GmbH
+  * Copyright (C) 2015-2016 Intel Deutschland GmbH
+  */
+@@ -577,6 +577,7 @@ void iwl_mvm_modify_all_sta_disable_tx(struct iwl_mvm *mvm,
+ 				       bool disable);
+ 
+ void iwl_mvm_csa_client_absent(struct iwl_mvm *mvm, struct ieee80211_vif *vif);
++int iwl_mvm_sta_ensure_queue(struct iwl_mvm *mvm, struct ieee80211_txq *txq);
+ void iwl_mvm_add_new_dqa_stream_wk(struct work_struct *wk);
+ int iwl_mvm_add_pasn_sta(struct iwl_mvm *mvm, struct ieee80211_vif *vif,
+ 			 struct iwl_mvm_int_sta *sta, u8 *addr, u32 cipher,
+-- 
+2.25.1
+
 
