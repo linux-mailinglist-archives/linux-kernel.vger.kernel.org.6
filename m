@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85C0A6DDAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:03:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFB8A6DDB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:03:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8482F3B778E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 486BC170123
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE8261576;
-	Mon, 24 Mar 2025 15:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE28A2620C6;
+	Mon, 24 Mar 2025 15:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FnYT/XF6"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Og/tRQHK"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31326261572
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2AB26157E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828434; cv=none; b=OoIbPie45dIdI+NxNNBYHAasnjjNr1Nf/GOVFYWMWqdV5o8/us4N984+H+fusiAc2Bb162ScxpFDoOxDtkK4DH6zvUattjCrydeZbzbrezNwq5xxA/Khj8FL0otVsOgt+92/WAOce7/pzr6g+ptZxFpGyOZM0LQ13R+IueZZpmE=
+	t=1742828441; cv=none; b=cUZIurInnhcGr6yZ18EEBS20UrVAWBc9AC4A2TRjKL78YydeBNTL25g0PViVCP2+FA9VMPfk6wQbbz5ui0FF/BcGL2qdoJzLbhAOgTPPI1n69ZckumCWbh/ra+2hJrsnUuw1GninflbkjuIU0yigoeVhcKrj1efsXgpZL/p3IIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828434; c=relaxed/simple;
-	bh=ictf1ycJymaTZ5FGAg1FycsB1a7MezAji+H63w94ERM=;
+	s=arc-20240116; t=1742828441; c=relaxed/simple;
+	bh=LstMxJL/BR4Ks0iojkl5yEAozcQtW+pLlSiYd8MEidU=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YZ/yIQ7WQErS2IB6+oScCcD614aI7JfHBUyDJ8wdptkA63cyRBeL/sU7fO+g5aomjpjwUCmJcHT0O8Ejti2pOKFQcHO/PD/J6DpAaG2HQmtotfgf+pJdZGBo22yluIRTFgqF6FxZR3nkYO26D8sg59tnBxs/UwShE//JkDYcaaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FnYT/XF6; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:Content-Type; b=eeT2ez46dqt0TssKSSOx082z3rXiI6aAQlE7dADmxyduoTyfhqyChLrijFO8pCDV+b9OzNuRx1snbnZDElPS1f54Bdta4rUwbl0iCGj25w2i61elG+itG7JbeSVgLE/OhtFydz0w946RUNwtEHV9V9dSlGLoMror96C1jovky6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Og/tRQHK; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D69B020580;
-	Mon, 24 Mar 2025 15:00:26 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ED5DC204D0;
+	Mon, 24 Mar 2025 15:00:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742828430;
+	t=1742828436;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VoNeECd8AGacQG8fn0ps6uJcfV86SWBRLS3mJuoFWG8=;
-	b=FnYT/XF6bSw+EhT0CAtHoiZyBRtaZfhbXuBMgp6YVr5x54JW7sXucT4h2F6AEr2taenaPU
-	OzuV//KqjviI60Mdm8P3SsBaVSWFNP00WI2r3CUU/yWWh4NCpmacGhSFxKHO53yNEp+SCC
-	3PDwpUhgcgao6DFqSe7j7smgk0FgSbpXlk9KEPJevl+JYSGad/Bz0vGKVjb7+EYWNondk3
-	Sug1hlU3t5TPPdzNN64JBcmuz1V4Cmgtce9xcHEpKmNzmaPUopveeP7M7DnWAwCQmxl6fG
-	p8uDX2KhVBNmmY48hkeKP2CV4g1qkLqeGwf6I9SeB62ziy4nC03l9A4rmeb/Dw==
-Message-ID: <783e4ea5-9adb-450e-b292-c52292714ded@bootlin.com>
-Date: Mon, 24 Mar 2025 16:00:26 +0100
+	bh=a49Yb5fkYlB2+kLcSjQdS74pwZfwIgOiMdkF7VmdL5k=;
+	b=Og/tRQHK9X8X1sE4GkAqB58qHWSsQK2lDzYzac0wgDp8Gb2lSlDuj9sD8ckx6vV+VlnozD
+	9hZ8lqRenZJmfxy1X4veIOA5ucMa3x+eVgVPBaxHwFS61UORg5j1v1i6iKz+D9FQTTU4fz
+	7LUIOZpj7Po7uLGJfkXsXbhREQIfvZBMCDCCQnBySwpBdu7NGj1fcIPOCeC5qCUGjuPvA5
+	JONY7IlAoQ964bgaQk3uJFzXhn1N3HixyiFbGqGQlJVUNGqIuPlx78yB96qUMy2idxPtz5
+	QrPP7ka+q/BuxYAcbwEX8kFR6XIF5zBBvVrOusAsu/zjBimufx/o+6mdIqDt8w==
+Message-ID: <2310238a-adb9-4189-b848-6f3df5ddd152@bootlin.com>
+Date: Mon, 24 Mar 2025 16:00:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 53/59] drm-dyndbg: add DRM_CLASSMAP_USE to udl driver
+Subject: Re: [PATCH v2 52/59] drm-dyndbg: add DRM_CLASSMAP_USE to vkms driver
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -63,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-54-jim.cromie@gmail.com>
+ <20250320185238.447458-53-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -119,45 +119,43 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-54-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-53-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> The udl driver has a number of DRM_UT_* debugs, make them
+> The vkms driver has a number of DRM_UT_* debugs, make them
 > controllable when CONFIG_DRM_USE_DYNAMIC_DEBUG=y by telling dyndbg
 > that the module uses them.
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
 > ---
->   drivers/gpu/drm/udl/udl_main.c | 2 ++
+>   drivers/gpu/drm/vkms/vkms_drv.c | 2 ++
 >   1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/udl/udl_main.c b/drivers/gpu/drm/udl/udl_main.c
-> index 3ebe2ce55dfd..ba57c14454e5 100644
-> --- a/drivers/gpu/drm/udl/udl_main.c
-> +++ b/drivers/gpu/drm/udl/udl_main.c
-> @@ -19,6 +19,8 @@
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index e0409aba9349..4b9da64661fb 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -39,6 +39,8 @@
 >   
->   #define NR_USB_REQUEST_CHANNEL 0x12
+>   static struct vkms_config *default_config;
 >   
 > +DRM_CLASSMAP_USE(drm_debug_classes);
-
-ditto, is it better to put it near the module entry point [1]?
-
-[1]:https://elixir.bootlin.com/linux/v6.13.7/source/drivers/gpu/drm/udl/udl_drv.c
-
 > +
->   #define MAX_TRANSFER (PAGE_SIZE*16 - BULK_SIZE)
->   #define WRITES_IN_FLIGHT (20)
->   #define MAX_VENDOR_DESCRIPTOR_SIZE 256
+>   static bool enable_cursor = true;
+>   module_param_named(enable_cursor, enable_cursor, bool, 0444);
+>   MODULE_PARM_DESC(enable_cursor, "Enable/Disable cursor support");
 
 -- 
 Louis Chauvet, Bootlin
