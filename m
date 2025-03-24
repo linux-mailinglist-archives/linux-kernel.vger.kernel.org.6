@@ -1,189 +1,97 @@
-Return-Path: <linux-kernel+bounces-573414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D54A6D6E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A996AA6D6E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D6216D3D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3562116D97A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9E25D8F1;
-	Mon, 24 Mar 2025 09:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F63A25D54D;
+	Mon, 24 Mar 2025 09:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0OB4Pb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uLTNeC3D"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBF9197A68;
-	Mon, 24 Mar 2025 09:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B25B197A68
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742807251; cv=none; b=DgUNb+RJFKgou3cI3i2pOnEM0pTBVPefbe3mbPy9EW9aTxUPW1ddOnsmu2SmhKXWwZHabpbB+sM6iE6xjPNNkUKLJ83ycnxmi2Q+/LYGVlishU7v9X2Dr8XqfJ3p1VzOqOWusFWXMDySVCUAS0DL1CylDLwW2NkWQNhQEgwltlI=
+	t=1742807294; cv=none; b=BT/uk74WEz5D9jvAu2tVQwXfmErr513X+z8buNtm7YGm3U/KdF8ZQyl4cKdQYxE/M1xKWQL7Aib27QQuO6UxS8R3A9IaYAkZoo9HSp/Vhs79rS6vtjzF8IOPmngFn1Mud8CSqQludOPFXUaFUW3N1v9CoiU0mnMwnAdP0LiLTDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742807251; c=relaxed/simple;
-	bh=BTpr/xKyMbID/mfk2G3kaCpevUKnRtaW+ey2UsAOI6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fbu6VRCCglxUNQxTPmJHPSdBXj2EIqzEeTgllH1oZYu6uqVJdgW+qRVRa1Lpy3xbVRYb8eLA3sCJpIZUppScePOUzGvKTB/MMb6pZ3TrXZrXLu+2BYnnY5gPpG1nx/PKXaNfTbLHzJ2wv2fItQNouHbwMtWYwWzxOs1ygGFIoyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0OB4Pb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBA4C4CEDD;
-	Mon, 24 Mar 2025 09:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742807250;
-	bh=BTpr/xKyMbID/mfk2G3kaCpevUKnRtaW+ey2UsAOI6E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f0OB4Pb35nUhcXZhCBCSRewAqNK2Xhvrgmdwb/9fVpgDIdnh0125n1W4E86MdNuMb
-	 ZBXHQkB4GDy2fOQQ6FA14iRWHAA+pQMvKqM5K/r7MKt58z3k+GcL4K13VI2h1n9kPZ
-	 XXu/MPKHJXdGg12NcHSPzjHa5KOvHLujIg1BVSFTdEN61Tmjg9gYLuiMxRblRpxRhP
-	 KkQ6pCBpk3raDNs6lgBuS3w3hq4vUJGq4aO9ueIJN24l5aAq/YqxB6Jk+HJh25Nj+H
-	 LqtPJj6gH01xJSybftNaqwKHdmeLBWVVA20wH0RInTb6d+yVGfKKVi2rSYDBIZkbqm
-	 L76iINlYXna2g==
-Message-ID: <4523caea-3406-4de0-9ab5-424fb7a0a474@kernel.org>
-Date: Mon, 24 Mar 2025 10:07:21 +0100
+	s=arc-20240116; t=1742807294; c=relaxed/simple;
+	bh=9c0qnNBwL4W511xnM7lQi+ej4Ln4wLS4+aPk+T0Tkpg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tYXFEW/UA0urYCAoMiIUE1mxz/duyQm3EeS/CLVjagcKAYe8IaMtgBJyhVDQwh7JS4p0mOow2EoOTRrBCaFIwfH6oH7xpXjdhMhXrc+zK1T6L7vm969UnqSMwSNiTK3fp6OhaznaVvKxNu79QsP00MJ/RJ1HwHtbTi13nd8f1Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uLTNeC3D; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742807290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ju8YhxAeIWVks58bb5bS15Y91bhn7jS/clG4jnFtOa8=;
+	b=uLTNeC3DSItybl2bwGf7B8bMm4mKVbm+ZZ53Y+Ieqz+b0S1SAgkuMyU69DGsrdGyxpg4UQ
+	y9evjluonBkoR3l7Q+o/wd/ENLgd28w7uhTRXXi9cvduUxirwPk5Vx83hvtRQXas+apCsT
+	3/Fr1t73HXf3WDK2+rp8zQ7uXMLaV6s=
+From: Ye Liu <ye.liu@linux.dev>
+To: tj@kernel.org
+Cc: jiangshanlai@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Ye Liu <liuye@kylinos.cn>
+Subject: [PATCH] workqueue: Fix incorrect error return value in apply_workqueue_attrs_locked
+Date: Mon, 24 Mar 2025 17:07:48 +0800
+Message-Id: <20250324090748.753195-1-ye.liu@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Mo Elbadry <elbadrym@google.com>
-References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
- <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
- <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
- <OS8PR06MB75415E95342F26F576B5CF8AF2C22@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <50327725-f3b8-4a8b-94a2-85afccd2868a@kernel.org>
- <OS8PR06MB7541B0DBC64B3EF6838DFE74F2CD2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <d1b184c5-84c1-4d76-a1d0-a9f37f1e363c@kernel.org>
- <OS8PR06MB7541D1D2E16C5E77037F3BB0F2CB2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <069b9fe4-c54a-4efd-923e-1558c59fe3f4@kernel.org>
- <OS8PR06MB7541C69AB8E6425313DA8606F2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <677cb075-24ae-45d8-bfb4-9b23fbacc5df@kernel.org>
- <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <994cb954-f3c4-4a44-800e-9303787c1be9@kernel.org>
- <SI6PR06MB753542037E1D6BBF5CE8D2E7F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <SI6PR06MB753542037E1D6BBF5CE8D2E7F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 24/03/2025 09:30, Ryan Chen wrote:
->> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
->> AST2600-i2cv2
->>
->> On 19/03/2025 12:12, Ryan Chen wrote:
->>>> Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
->>>> AST2600-i2cv2
->>>>
->>>> On 17/03/2025 10:21, Ryan Chen wrote:
->>>>>> Neither this.
->>>>>>
->>>>>> So it seems you describe already existing and documented I2C, but
->>>>>> for some reason you want second compatible. The problem is that you
->>>>>> do not provide reason from the point of view of bindings.
->>>>>>
->>>>>> To summarize: what your users want - don't care. Start properly
->>>>>> describing hardware and your SoC.
->>>>>
->>>>> OK, for ast2600 i2c controller have two register mode setting.
->>>>> One, I call it is old register setting, that is right now
->>>>> i2c-aspeed.c .compatible = "aspeed,ast2600-i2c-bus", And there have
->>>>> a global register
->>>> that can set i2c controller as new mode register set.
->>>>> That I am going to drive. That I post is all register in new an old register
->> list.
->>>>>
->>>>> For example,
->>>>> Global register [2] = 0 => i2c present as old register set Global
->>>>> register [2] = 1 => i2c present as new register set
->>>> It's the same device though, so the same compatible.
->>>
->>> Sorry, it is different design, and it share the same register space.
->>> So that the reason add new compatible "aspeed,ast2600-i2cv2" for this
->> driver.
->>> It is different register layout.
->>
->> Which device is described by the existing "aspeed,ast2600-i2c-bus"
->> compatible? And which device is described by new compatible?
->>
-> On the AST2600 SoC, there are up to 16 I2C controller instances (I2C1 ~ I2C16).
+From: Ye Liu <liuye@kylinos.cn>
 
-So you have 16 same devices.
+Commit 84193c07105c ("workqueue: Generalize unbound CPU pods") introduced
+a change that caused apply_workqueue_attrs_locked() to return error
+pointers using PTR_ERR() on failure instead of a negative error code.
+This caused unexpected behavior in functions that rely on the return value
+of apply_workqueue_attrs_locked, such as alloc_and_link_pwqs().
 
-> Each of these controllers is hardwired at the SoC level to use either the legacy register layout or the new v2 register layout.
-> The mode is selected by a bit in the global register, these represent two different hardware blocks:
-> "aspeed,ast2600-i2c-bus" describes controllers using the legacy register layout.
-> "aspeed,ast2600-i2cv2" describes controllers using the new register layout
+Specifically, alloc_and_link_pwqs() expects apply_workqueue_attrs_locked()
+to return 0 on success and a negative error code on failure. However,
+returning PTR_ERR(ctx) instead of -ENOMEM led to incorrect error handling
+in __alloc_workqueue, potentially causing system instability or crashes.
 
-Which part of "same device" is not clear? You have one device, one
-compatible. Whatever you do with register layout, is already defined by
-that compatible. It does not matter that you forgot to implement it in
-the Linux kernel.
+This patch ensures apply_workqueue_attrs_locked() returns a proper negative
+error code (-ENOMEM) in case of failure, restoring expected behavior.
 
-Best regards,
-Krzysztof
+Fixes: 84193c07105c ("workqueue: Generalize unbound CPU pods")
+Signed-off-by: Ye Liu <liuye@kylinos.cn>
+---
+ kernel/workqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index bfe030b443e2..8ba679d9b566 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5363,7 +5363,7 @@ static int apply_workqueue_attrs_locked(struct workqueue_struct *wq,
+ 
+ 	ctx = apply_wqattrs_prepare(wq, attrs, wq_unbound_cpumask);
+ 	if (IS_ERR(ctx))
+-		return PTR_ERR(ctx);
++		return -ENOMEM;
+ 
+ 	/* the ctx has been prepared successfully, let's commit it */
+ 	apply_wqattrs_commit(ctx);
+-- 
+2.25.1
+
 
