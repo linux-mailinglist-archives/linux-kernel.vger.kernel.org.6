@@ -1,231 +1,258 @@
-Return-Path: <linux-kernel+bounces-574193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3677A6E1AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:54:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179DBA6E1F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0907A2F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3CA3B9360
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47A6264FA2;
-	Mon, 24 Mar 2025 17:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD16264A84;
+	Mon, 24 Mar 2025 17:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ILdBPfBw"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="OTdVFt5X"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F0A264A7C;
-	Mon, 24 Mar 2025 17:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACC25EFBA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838554; cv=none; b=FrsLiaFnQ7/6UAlyEE10ssk614KPGXYE3slrBtEL+yyz0vfPtwRzj6l+ID9cHqVQ/iCLay2PbRPejYpFyr9UYT5IZbVtX6zFs1GW3VTXBkiWnno1Bs3taL3JuD/VQIcOXg89/sOzcKZ1JvvikDZF4FWIPwYvd9/3bKuSsl2v4QM=
+	t=1742838723; cv=none; b=EZH0BvCdPl0C90mAaUz9hLXERYXbGDWd+Wvl85y9i6mHGepbTFDNKeHFRC1GeB3LnWZJBqWTfPEcEdCr0x+7XWb/e71eyjr25mabro1M8LzMfsrQHye0e2FYYmB2Dt+UnrRInr5/SS7zuDmxcMtJsSfd2VUSlNP841q7k1FUizk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838554; c=relaxed/simple;
-	bh=zehG0hVjOYg1/tDV+yvNPZobIUe5t9ArdAqwSYUqvIE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=h+gBB2xMitY8I7/dwAfPSQV1In4yvIddHxpN5CLtPZofurrz1ET7ZcAqj10efseLrrMQ1SOkSC+aVoSjRtNXUY18KPfMzzTZnDQWElwHUOWWVA6jU4VD9ndwqFk2zSjlgXVmyLTLO6QGcClfQoAqBXqYy93OfcCVgxzeT0JHdJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ILdBPfBw; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 763A944346;
-	Mon, 24 Mar 2025 17:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742838549;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N1co+hewvkHIAplFR3edQapFDqNXgn6Qh8Bh0s6Wls8=;
-	b=ILdBPfBwjDB6/i9FTF9i30HeNSmixqDNKdGblbcS4i9t2sLXeOp5FG+QgyOU32qSB1+F5F
-	7G9rkeO90zADgQ+rnU1dOgtm8+YfOPYu9jpY0t+YCXHScFmZ0BH/4JrjrLQ3LmKwidjHId
-	HR4OZKF6V00ajD3rHljdQxoMe5mlenxUy2lZfuefwBTKvp0fcmf1kg3ufCziKCgCnpSYGj
-	8U1BbgfQ9S3DEQNsyS42/gkGUXtf8M2dsl5l8DEesVi2FDdIuJbnqVm30On3W4Yn12maU9
-	L3BKaUnAld55T2YJog8v6Ui8vpsf+mfvkvXMu29AdhG8qNA4Jbz3o3Gh5QDDNw==
+	s=arc-20240116; t=1742838723; c=relaxed/simple;
+	bh=SKIi9GQfzmduS4+Ymp6A6OWDijEX6xFabSnFdUY4nH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xscc8tAiBQk16jrz8L66bRtlnqQVnZJ4elKudij+VNjXP+WXJZtNzvIVokxCRd1eIi931i2M/BpBYMYru6gNXnP55EpuGHptWT14N1JyvwM4UYgYGOkCH7YpERfNRuOQUyvWvf52w4ToRcFXuMkjb3V4QfKOUUDGYuiuVJ68n74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=OTdVFt5X; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so8093238a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1742838721; x=1743443521; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CNWzWAcgP5osgtlC/YKpdqjJe9Mr06cqx1fXZbFGTuc=;
+        b=OTdVFt5XAfjqnR5tmiuRVvRborVj0tITk4wpCAzUrV60yf9St65RprNqIFbJOxCB9v
+         8HJtDbGDQxP3S76NnbadSsgxymSgyJdJKvpYxDZZMGEYKQ+khoyJN+2/YYRS5WRMDUbo
+         1y8fkwDOws+5N3JPD6c/MhkBTSbUKTiXWVF54=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742838721; x=1743443521;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNWzWAcgP5osgtlC/YKpdqjJe9Mr06cqx1fXZbFGTuc=;
+        b=OKh8CnMmSY+ZVWZhz1Lxjj/P3p1HciaqwkZbH1jX9S8tho797/aju0jURKOxBS6vug
+         73lWjdsdQMmVW2OR26iEDfvGW6rV4xdxu/Hi5fVfmYXfJ8kNoBG0U4A4XXT2T0WndJNH
+         OZI0qrAigpsgCHWlxjwY6HmYIsppC0t4XUvnCLKk1SuXsgH1nd1nbZkMT6ZXXQdRCDJE
+         oLHn0gEysT6RH1gg+GaAjL7+jPQiEOO6iewva6bQJbQ4acqtY/GVZ+PrrifWlq1KAxRw
+         Y5d3UfkTd1t1vek5mNwZyySdVGlwWGRpOR+KfgU53ELB+iRTK/Qb+dzuaGDoJ17dKuhM
+         nXnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxf+q7USU0IQhVP5inePJk8vdyxIt6UEMXCNEdBxrS43s7eNNdEkUi0uHtf9Y9u/oaJgZvJOk3AvwXoIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2OA3muMA+JpWJY8zw5D1Gp2KoNbxCh3aIVIbvV+pPvUf69/Of
+	TNhYeOth03LFGELfOV0sTWWtaW3uiOj7D6vumR9DS6n+fg5Nk0xCp9ZHIWJaXwA=
+X-Gm-Gg: ASbGncsvi0EnFgFZzH0dL0RI3J1yf8+5UQ7j4iB+aDGAunu/tPFDpV61WixHMppCmSe
+	CWwVGu4hAZMTwsUczHMR5blYLSY16JszgJeS5Kerpq0eGAqur98X5XW8Y6+aEE8X+QAkBsvwP4R
+	mCrWbiyIERuG8EFQzDa4L9ZuxoUgui5aiiG+Uts73KkA/vCa/iQV57El0R/c6j54vYdlAhoNiXb
+	6PCZefsbdexO6XIQmWSw/O7lZco4lCUGJL6J8y2/jMBbDGKSfsQznHVfpYzzHIaGLG6JmFqWWmx
+	FLNl9Zbr8sER5Nx0quM7r8U1lahlHw/J1QIJTg1gKuIlCvBP6S4nloh5spD/
+X-Google-Smtp-Source: AGHT+IFyWUJjrXu1IsyCVjHhL289CPz98eVvVSsMjLEg+OjduUCs1rADwPTvWVrkRcJWj9d2Uk4q2g==
+X-Received: by 2002:a17:90b:2647:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-3030fe95343mr26877301a91.12.1742838720394;
+        Mon, 24 Mar 2025 10:52:00 -0700 (PDT)
+Received: from localhost ([84.78.159.3])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3030f806fb9sm8458911a91.45.2025.03.24.10.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 10:51:59 -0700 (PDT)
+Date: Mon, 24 Mar 2025 18:51:54 +0100
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+	Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
+ domain flag
+Message-ID: <Z-GbuiIYEdqVRsHj@macbook.local>
+References: <20250320210741.GA1099701@bhelgaas>
+ <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
+ <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 18:49:05 +0100
-Message-Id: <D8OOPAXK16CI.3TE75O760JRSL@bootlin.com>
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
- Ghiti" <alex@ghiti.fr>, "Samuel Holland" <samuel.holland@sifive.com>,
- "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
- <linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <linux-mips@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Andrew Lunn" <andrew@lunn.ch>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net-next 07/13] net: macb: move HW IP alignment value to
- macb_config
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-7-537b7e37971d@bootlin.com>
- <45b3e613-90c6-4499-b50b-383106172184@lunn.ch>
-In-Reply-To: <45b3e613-90c6-4499-b50b-383106172184@lunn.ch>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtgeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefvhffuofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeigfelffeuffetteetuddufffghefhudeuteeigeekteevgeeileejgfdvffelheenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpr
- ggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
 
-Hello Andrew,
+On Mon, Mar 24, 2025 at 03:29:46PM +0100, Daniel Gomez wrote:
+> 
+> Hi,
+> 
+> On Fri, Mar 21, 2025 at 09:00:09AM +0100, Jürgen Groß wrote:
+> > On 20.03.25 22:07, Bjorn Helgaas wrote:
+> > > On Wed, Feb 19, 2025 at 10:20:57AM +0100, Roger Pau Monne wrote:
+> > > > Setting pci_msi_ignore_mask inhibits the toggling of the mask bit for both
+> > > > MSI and MSI-X entries globally, regardless of the IRQ chip they are using.
+> > > > Only Xen sets the pci_msi_ignore_mask when routing physical interrupts over
+> > > > event channels, to prevent PCI code from attempting to toggle the maskbit,
+> > > > as it's Xen that controls the bit.
+> > > > 
+> > > > However, the pci_msi_ignore_mask being global will affect devices that use
+> > > > MSI interrupts but are not routing those interrupts over event channels
+> > > > (not using the Xen pIRQ chip).  One example is devices behind a VMD PCI
+> > > > bridge.  In that scenario the VMD bridge configures MSI(-X) using the
+> > > > normal IRQ chip (the pIRQ one in the Xen case), and devices behind the
+> > > > bridge configure the MSI entries using indexes into the VMD bridge MSI
+> > > > table.  The VMD bridge then demultiplexes such interrupts and delivers to
+> > > > the destination device(s).  Having pci_msi_ignore_mask set in that scenario
+> > > > prevents (un)masking of MSI entries for devices behind the VMD bridge.
+> > > > 
+> > > > Move the signaling of no entry masking into the MSI domain flags, as that
+> > > > allows setting it on a per-domain basis.  Set it for the Xen MSI domain
+> > > > that uses the pIRQ chip, while leaving it unset for the rest of the
+> > > > cases.
+> > > > 
+> > > > Remove pci_msi_ignore_mask at once, since it was only used by Xen code, and
+> > > > with Xen dropping usage the variable is unneeded.
+> > > > 
+> > > > This fixes using devices behind a VMD bridge on Xen PV hardware domains.
+> > > > 
+> > > > Albeit Devices behind a VMD bridge are not known to Xen, that doesn't mean
+> > > > Linux cannot use them.  By inhibiting the usage of
+> > > > VMD_FEAT_CAN_BYPASS_MSI_REMAP and the removal of the pci_msi_ignore_mask
+> > > > bodge devices behind a VMD bridge do work fine when use from a Linux Xen
+> > > > hardware domain.  That's the whole point of the series.
+> > > > 
+> > > > Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> > > > Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> > > > Acked-by: Juergen Gross <jgross@suse.com>
+> > > 
+> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> > > 
+> > > I assume you'll merge this series via the Xen tree.  Let me know if
+> > > otherwise.
+> > 
+> > I've pushed the series to the linux-next branch of the Xen tree.
+> > 
+> > 
+> > Juergen
+> 
+> This patch landed in latest next-20250324 tag causing this crash:
+> 
+> [    0.753426] BUG: kernel NULL pointer dereference, address: 0000000000000002
+> [    0.753921] #PF: supervisor read access in kernel mode
+> [    0.754286] #PF: error_code(0x0000) - not-present page
+> [    0.754656] PGD 0 P4D 0
+> [    0.754842] Oops: Oops: 0000 [#1]
+> [    0.755080] CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.14.0-rc7-next-20250324 #1 NONE
+> [    0.755691] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [    0.756349] RIP: 0010:msix_prepare_msi_desc+0x39/0x80
+> [    0.756390] Code: 20 c7 46 04 01 00 00 00 8b 56 4c 89 d0 0d 01 01 00 00 66 89 46 4c 8b 8f 64 02 00 00 89 4e 50 48 8b 8f 70 06 00 00 48 89 4e 58 <41> f6 40 02 40 75 2a c1 ea 02 bf 80 00 00 00 21 fa 25 7f ff ff ff
+> [    0.756390] RSP: 0000:ffff8881002a76e0 EFLAGS: 00010202
+> [    0.756390] RAX: 0000000000000101 RBX: ffff88810074d000 RCX: ffffc9000002e000
+> [    0.756390] RDX: 0000000000000000 RSI: ffff8881002a7710 RDI: ffff88810074d000
+> [    0.756390] RBP: ffff8881002a7710 R08: 0000000000000000 R09: ffff8881002a76b4
+> [    0.756390] R10: 000000701000c001 R11: ffffffff82a3dc01 R12: 0000000000000000
+> [    0.756390] R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000002
+> [    0.756390] FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+> [    0.756390] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.756390] CR2: 0000000000000002 CR3: 0000000002a3d001 CR4: 00000000003706b0
+> [    0.756390] Call Trace:
+> [    0.756390]  <TASK>
+> [    0.756390]  ? __die_body+0x1b/0x60
+> [    0.756390]  ? page_fault_oops+0x2d0/0x310
+> [    0.756390]  ? exc_page_fault+0x59/0xc0
+> [    0.756390]  ? asm_exc_page_fault+0x22/0x30
+> [    0.756390]  ? msix_prepare_msi_desc+0x39/0x80
+> [    0.756390]  ? msix_capability_init+0x172/0x2c0
+> [    0.756390]  ? __pci_enable_msix_range+0x1a8/0x1d0
+> [    0.756390]  ? pci_alloc_irq_vectors_affinity+0x7c/0xf0
+> [    0.756390]  ? vp_find_vqs_msix+0x187/0x400
+> [    0.756390]  ? vp_find_vqs+0x2f/0x250
+> [    0.756390]  ? snprintf+0x3e/0x50
+> [    0.756390]  ? vp_modern_find_vqs+0x13/0x60
+> [    0.756390]  ? init_vq+0x184/0x1e0
+> [    0.756390]  ? vp_get_status+0x20/0x20
+> [    0.756390]  ? virtblk_probe+0xeb/0x8d0
+> [    0.756390]  ? __kernfs_new_node+0x122/0x160
+> [    0.756390]  ? vp_get_status+0x20/0x20
+> [    0.756390]  ? virtio_dev_probe+0x171/0x1c0
+> [    0.756390]  ? really_probe+0xc2/0x240
+> [    0.756390]  ? driver_probe_device+0x1d/0x70
+> [    0.756390]  ? __driver_attach+0x96/0xe0
+> [    0.756390]  ? driver_attach+0x20/0x20
+> [    0.756390]  ? bus_for_each_dev+0x7b/0xb0
+> [    0.756390]  ? bus_add_driver+0xe6/0x200
+> [    0.756390]  ? driver_register+0x5e/0xf0
+> [    0.756390]  ? virtio_blk_init+0x4d/0x90
+> [    0.756390]  ? add_boot_memory_block+0x90/0x90
+> [    0.756390]  ? do_one_initcall+0xe2/0x250
+> [    0.756390]  ? xas_store+0x4b/0x4b0
+> [    0.756390]  ? number+0x13b/0x260
+> [    0.756390]  ? ida_alloc_range+0x36a/0x3b0
+> [    0.756390]  ? parameq+0x13/0x90
+> [    0.756390]  ? parse_args+0x10f/0x2a0
+> [    0.756390]  ? do_initcall_level+0x83/0xb0
+> [    0.756390]  ? do_initcalls+0x43/0x70
+> [    0.756390]  ? rest_init+0x80/0x80
+> [    0.756390]  ? kernel_init_freeable+0x70/0xb0
+> [    0.756390]  ? kernel_init+0x16/0x110
+> [    0.756390]  ? ret_from_fork+0x30/0x40
+> [    0.756390]  ? rest_init+0x80/0x80
+> [    0.756390]  ? ret_from_fork_asm+0x11/0x20
+> [    0.756390]  </TASK>
+> [    0.756390] Modules linked in:
+> [    0.756390] CR2: 0000000000000002
+> [    0.756390] ---[ end trace 0000000000000000 ]---
+> [    0.756390] RIP: 0010:msix_prepare_msi_desc+0x39/0x80
+> [    0.756390] Code: 20 c7 46 04 01 00 00 00 8b 56 4c 89 d0 0d 01 01 00 00 66 89 46 4c 8b 8f 64 02 00 00 89 4e 50 48 8b 8f 70 06 00 00 48 89 4e 58 <41> f6 40 02 40 75 2a c1 ea 02 bf 80 00 00 00 21 fa 25 7f ff ff ff
+> [    0.756390] RSP: 0000:ffff8881002a76e0 EFLAGS: 00010202
+> [    0.756390] RAX: 0000000000000101 RBX: ffff88810074d000 RCX: ffffc9000002e000
+> [    0.756390] RDX: 0000000000000000 RSI: ffff8881002a7710 RDI: ffff88810074d000
+> [    0.756390] RBP: ffff8881002a7710 R08: 0000000000000000 R09: ffff8881002a76b4
+> [    0.756390] R10: 000000701000c001 R11: ffffffff82a3dc01 R12: 0000000000000000
+> [    0.756390] R13: 0000000000000005 R14: 0000000000000000 R15: 0000000000000002
+> [    0.756390] FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+> [    0.756390] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.756390] CR2: 0000000000000002 CR3: 0000000002a3d001 CR4: 00000000003706b0
+> [    0.756390] note: swapper[1] exited with irqs disabled
+> [    0.782774] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+> [    0.783560] Kernel Offset: disabled
+> [    0.783909] ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009 ]---
+> 
+> 
+> msix_prepare_msi_desc+0x39/0x80:
+> msix_prepare_msi_desc at drivers/pci/msi/msi.c:616
+>  611            desc->nvec_used                         = 1;
+>  612            desc->pci.msi_attrib.is_msix            = 1;
+>  613            desc->pci.msi_attrib.is_64              = 1;
+>  614            desc->pci.msi_attrib.default_irq        = dev->irq;
+>  615            desc->pci.mask_base                     = dev->msix_base;
+> >616<           desc->pci.msi_attrib.can_mask           = !(info->flags & MSI_FLAG_NO_MASK) &&
+>  617                                                      !desc->pci.msi_attrib.is_virtual;
+>  618
+>  619            if (desc->pci.msi_attrib.can_mask) {
+>  620                    void __iomem *addr = pci_msix_desc_addr(desc);
+>  621
+> 
+> Reverting patch 3 fixes the issue.
 
-On Fri Mar 21, 2025 at 10:06 PM CET, Andrew Lunn wrote:
-> On Fri, Mar 21, 2025 at 08:09:38PM +0100, Th=C3=A9o Lebrun wrote:
->> The controller does IP alignment (two bytes).
->
-> I'm a bit confused here. Is this hard coded, baked into the silicon?
-> It will always do IP alignment? It cannot be turned off?
+Thanks for the report and sorry for the breakage.  Do you have a QEMU
+command line I can use to try to reproduce this locally?
 
-Yes, the alignment is baked inside the silicon.
-I looked but haven't seen any register to configure the alignment.
+Will work on a patch ASAP.
 
-Sorry the commit message isn't clear, it needs improvements.
-
->> 	skb_reserve(skb, NET_IP_ALIGN);
->
-> Why not just replace this with
->
->         skb_reserve(skb, 2);
-
-On arm64, NET_IP_ALIGN=3D0. I don't have HW to test, but the current code
-is telling us that the silicon doesn't do alignment on those:
-
-   skb =3D netdev_alloc_skb(...);
-   paddr =3D dma_map_single(..., skb->data, ...);
-   macb_set_addr(..., paddr);
-
-   // arm   =3D> NET_IP_ALIGN=3D2 =3D> silicon does alignment
-   // arm64 =3D> NET_IP_ALIGN=3D0 =3D> silicon doesn't do alignment
-   skb_reserve(skb, NET_IP_ALIGN);
-
-The platform we introduce is the first one where the silicon alignment
-(0 bytes) is different from the NET_IP_ALIGN value (MIPS, 2 bytes).
-
-Does that clarify things?
-
->> The NET_IP_ALIGN value is arch-dependent and picked based on unaligned
->> CPU access performance. The hardware alignment value should be
->> compatible-specific rather than arch-specific. Offer a path forward by
->> adding a hw_ip_align field inside macb_config.
->>=20
->> Values for macb_config->hw_ip_align are picked based on upstream
->> devicetrees:
->>=20
->>     Compatible             |  DTS folders              |  hw_ip_align
->>    ------------------------|---------------------------|----------------
->>    cdns,at91sam9260-macb   | arch/arm/                 | 2
->>    cdns,macb               | arch/{arm,riscv}/         | NET_IP_ALIGN
->>    cdns,np4-macb           | NULL                      | NET_IP_ALIGN
->>    cdns,pc302-gem          | NULL                      | NET_IP_ALIGN
->>    cdns,gem                | arch/{arm,arm64}/         | NET_IP_ALIGN
->>    cdns,sam9x60-macb       | arch/arm/                 | 2
->>    atmel,sama5d2-gem       | arch/arm/                 | 2
->>    atmel,sama5d29-gem      | arch/arm/                 | 2
->>    atmel,sama5d3-gem       | arch/arm/                 | 2
->>    atmel,sama5d3-macb      | arch/arm/                 | 2
->>    atmel,sama5d4-gem       | arch/arm/                 | 2
->>    cdns,at91rm9200-emac    | arch/arm/                 | 2
->>    cdns,emac               | arch/arm/                 | 2
->>    cdns,zynqmp-gem         | *same as xlnx,zynqmp-gem* | 0
->>    cdns,zynq-gem           | *same as xlnx,zynq-gem*   | 2
->>    sifive,fu540-c000-gem   | arch/riscv/               | 2
->>    microchip,mpfs-macb     | arch/riscv/               | 2
->>    microchip,sama7g5-gem   | arch/arm/                 | 2
->>    microchip,sama7g5-emac  | arch/arm/                 | 2
->>    xlnx,zynqmp-gem         | arch/arm64/               | 0
->>    xlnx,zynq-gem           | arch/arm/                 | 2
->>    xlnx,versal-gem         | NULL                      | NET_IP_ALIGN
->
-> I don't remember seeing any other driver doing anything like
-> this. That often means it is wrong....
-
-Good question, let's look at skb_reserve() that follow dma_map_single():
-
-   =E2=9F=A9 git grep -A20 dma_map_single drivers/net/ethernet/ | \
-      rg skb_reserve | grep -v macb_main
-   drivers/net/ethernet/sun/sunbmac.c:          skb_reserve(copy_skb, 2);
-   drivers/net/ethernet/sun/sunhme.c:           skb_reserve(skb, RX_OFFSET)=
-;
-   drivers/net/ethernet/sun/sunhme.c:           skb_reserve(new_skb, RX_OFF=
-SET);
-   drivers/net/ethernet/sgi/ioc3-eth.c:         skb_reserve(new_skb, RX_OFF=
-SET);
-   drivers/net/ethernet/chelsio/cxgb/sge.c:     skb_reserve(skb, sge->rx_pk=
-t_pad);
-   drivers/net/ethernet/marvell/mv643xx_eth.c:  skb_reserve(skb, 2);
-   drivers/net/ethernet/dec/tulip/de2104x.c:    skb_reserve(copy_skb, RX_OF=
-FSET);
-   drivers/net/ethernet/marvell/pxa168_eth.c:   skb_reserve(skb, ETH_HW_IP_=
-ALIGN);
-   drivers/net/ethernet/alacritech/slicoss.c:   skb_reserve(skb, offset);
-   drivers/net/ethernet/toshiba/tc35815.c:      skb_reserve(skb, 2); /* mak=
-e IP header 4byte aligned */
-   drivers/net/ethernet/lantiq_etop.c:          skb_reserve(ch->skb[ch->dma=
-.desc], NET_IP_ALIGN);
-
-Out of those, two are using dynamic values:
-
-   // In drivers/net/ethernet/chelsio/cxgb/sge.c
-   // The value comes from [0]:
-   sge->rx_pkt_pad =3D t1_is_T1B(adapter) ? 0 : 2;
-   // The macro resolves to something like [1]:
-   adap->params.chip_version =3D=3D CHBT_TERM_T1 && adap->params.chip_revis=
-ion =3D=3D TERM_T1B
-
-   // In drivers/net/ethernet/alacritech/slicoss.c
-   // In slic_refill_rx_queue() [2]
-   /* ensure head buffer descriptors are 256 byte aligned */
-   offset =3D 0;
-   misalign =3D paddr & ALIGN_MASK;
-   if (misalign) {
-      offset =3D SLIC_RX_BUFF_ALIGN - misalign;
-      skb_reserve(skb, offset);
-   }
-
-Conclusion:
- - one is HW revision dependent,
- - the other knows that HW always aligns its buffer to 256.
-
-We aren't alone, but pretty lonely.
-
-Maybe I missed a common denominator that could be used to identify
-compatibles that do or do not have hardcoded alignemnt. Without such
-info, the approach taken (have alignment stored inside match data)
-sounds reasonable to me.
-
-Do you agree?
-
-Thanks,
-
-[0]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/net/ethernet/c=
-helsio/cxgb/sge.c#L2106
-[1]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/net/ethernet/c=
-helsio/cxgb/common.h#L292-L299
-[2]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/net/ethernet/a=
-lacritech/slicoss.c#L418-L424
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Regards, Roger.
 
