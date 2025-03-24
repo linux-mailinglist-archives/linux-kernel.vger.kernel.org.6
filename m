@@ -1,73 +1,114 @@
-Return-Path: <linux-kernel+bounces-573625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38071A6D9EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:15:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD772A6D9F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2E31891834
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:15:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C3EA3A6100
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859EC25E440;
-	Mon, 24 Mar 2025 12:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEAF25E808;
+	Mon, 24 Mar 2025 12:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhLHd5ZF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="NJ6iQPl5"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE882F2E;
-	Mon, 24 Mar 2025 12:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98418A6C1;
+	Mon, 24 Mar 2025 12:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742818544; cv=none; b=e/hu+EwEDUYvR7EqAJayl9rmPE0Q8H+BzNv5a0ukU4F0iLxzmQ7/AXENQ9aqNnOs8TE712WGhRfgGl7sw+qIvVcwXwcZG/0b90XeXcLLZdvQ1I8lpiPqCTu/HwA6GblUGGqzO/vdLKa1fpyGZlE9+r1I0tZAVxU0gsF67jNSw/k=
+	t=1742818633; cv=none; b=PGaYVb3TzINPUfsLJDk+DQ7jtsvzr24DxJuOvMl7G0BTHOsl+VovtC3PTGUlwMjvGWjb/ZET/BgLqTDzzo60be6dg++QIereF8VLBzh64oGpSLdNUa2qGzwoK/plgFMfcqiTCeUuL+vJZ4sQPnnlYbC3SpWsWpijm1rn34x+jI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742818544; c=relaxed/simple;
-	bh=7Od0yigsdi3G7FXfza92XqylwRszAu+pduq2G1plwKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rOf+mNrDGuBN9keOCQwA9NnRNvjtBbLRn6V8XWMn07u4b3ZgEhdhYkjX+uCLmcWlvR/03kGRXr0VhPx7lkXLfJ9XvJtHB8Ugjot4PhXKu5ahLy/fuCSsj4RWb/Wc1f4+rrlQApzZf31ipV1VdYYMSyCUIMiBQ+sYHuJ9sUUDFno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhLHd5ZF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75458C4CEDD;
-	Mon, 24 Mar 2025 12:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742818543;
-	bh=7Od0yigsdi3G7FXfza92XqylwRszAu+pduq2G1plwKk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IhLHd5ZFO3bnGW6NMKJqZYdSFMOhTl+p0Sep80717xASyYrNa0tGUYIdq0HtIot2Q
-	 Vgtz2hSqNIT2CGnJ8oQHjXEEQt9+7Jg041i/jPx9aNk76aQMrfN3XDefh4U4a9G4P8
-	 ne7PqqzNxlYxNd72/BaEtaeoOU6E4NwEdJlku3G8yzt/xYKNg0Fxlbuol9vgcr6HQL
-	 e5agd49o7hUeoSNQH54NSqMfldi9Hiu828BZYg7cgtQ2ssrmt09Gk+zQYsk6pYnQNs
-	 6yJ3TXz+po+pG6yMbMv8MvWqro90HD6hzjtnfZfDn07JUYTXSpCLa+G6p6SwNYwOgp
-	 bZt6+B3cSiHkw==
-Date: Mon, 24 Mar 2025 05:15:35 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Russell King
- <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next] MAINTAINERS: Add dedicated entries for
- phy_link_topology
-Message-ID: <20250324051535.2ea9f3b6@kernel.org>
-In-Reply-To: <20250313153008.112069-1-maxime.chevallier@bootlin.com>
-References: <20250313153008.112069-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1742818633; c=relaxed/simple;
+	bh=OyJjb52U6SPYBHglOWIXqWpN8UNu0dZeWIIh91MnVXE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GOutc7R1QyJRyQ7tTgSEGhlHPgpG45bONQtrd6xMrCSCUeHD1xP8Op14AXhDKeSXkb/dAoV06RiUNZjxgryadYpoApyZ3MsFGYk6sDiy8kHwqGep/uvo6Ml+O54VCJlEZdG9+xezJEQcPeit0df+t/preXbg7OB0J2fy2Bsuang=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=NJ6iQPl5; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=W6RQz0Iak2RKskEFG9tsWaSiFWE6qmsHQP5eJ4e7afM=;
+	t=1742818631; x=1744028231; b=NJ6iQPl5L7XWlR6HnxcEdxWRaiLDMWvu8LwIx5051qLI3IV
+	dxOFDT6AX6mXqSpcQuqham0u1I/8bixnwBAcH2Mo756UlboppBFehYEY+lKj9r3nShRUIHbpKIk5m
+	auKrVZ7EGABHTPV2/QG2VyznN+n6tzE2KWOTyviZS6OI2SkuHN3GtXy2ml19GCgxR+q4nsml0V2Rc
+	tuDir54fWKYJwKr8aofqyV3mBOSn6E8uYpIkFXNRrCiuZOoChABXXsyWtNP/mWsvZBOZ98nf+/BBZ
+	fBoKYY0ahW2g3pTEmyVyf/nxEZbe3lOqSIwbm9dOEnB0dlgA69b6bo6GkvtAk0pg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1twgjt-00000003zJA-0m97;
+	Mon, 24 Mar 2025 13:17:09 +0100
+Message-ID: <754c24f1b1f7d37cb616478c57a85af18d119c21.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] wifi: mac80211: Update skb's NULL key in
+ ieee80211_tx_h_select_key()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Remi Pommarel <repk@triplefau.lt>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 24 Mar 2025 13:17:08 +0100
+In-Reply-To: <95269f93724a94ee0b22f8107fe5b5e8f2fbea76.1741950009.git.repk@triplefau.lt>
+References: <cover.1741950009.git.repk@triplefau.lt>
+	 <95269f93724a94ee0b22f8107fe5b5e8f2fbea76.1741950009.git.repk@triplefau.lt>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-On Thu, 13 Mar 2025 16:30:06 +0100 Maxime Chevallier wrote:
-> The infrastructure to handle multi-phy devices is fairly standalone.
-> Add myself as maintainer for that part as well as the netlink uAPI
-> that exposes it.
+On Fri, 2025-03-14 at 12:04 +0100, Remi Pommarel wrote:
+> The ieee80211 skb control block key (set when skb was queued) could have
+> been removed before ieee80211_tx_dequeue() call. ieee80211_tx_dequeue()
+> already called ieee80211_tx_h_select_key() to get the current key, but
+> the latter do not update the key in skb control block in case it is
+> NULL. Because some drivers actually use this key in their TX callbacks
+> (e.g. ath1{1,2}k_mac_op_tx()) this could lead to the use after free
+> below:
+>=20
+>   BUG: KASAN: slab-use-after-free in ath11k_mac_op_tx+0x590/0x61c
+>   Read of size 4 at addr ffffff803083c248 by task kworker/u16:4/1440
 
-Makes sense!
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
+Maybe should have a Fixes: tag?
+
+And please also tag the subject "[PATCH wireless NN/MM]".
+
+> +++ b/net/mac80211/tx.c
+> @@ -668,6 +668,12 @@ ieee80211_tx_h_select_key(struct ieee80211_tx_data *=
+tx)
+>  	} else if (ieee80211_is_data_present(hdr->frame_control) && tx->sta &&
+>  		   test_sta_flag(tx->sta, WLAN_STA_USES_ENCRYPTION)) {
+>  		return TX_DROP;
+> +	} else {
+> +		/* Clear SKB CB key reference, ieee80211_tx_h_select_key()
+> +		 * could have been called to update key info after its removal
+> +		 * (e.g. by ieee80211_tx_dequeue()).
+> +		 */
+> +		info->control.hw_key =3D NULL;
+>  	}
+
+I'm not sure this looks like the right place - should probably be done
+around line 3897 before the call:
+
+        /*
+         * The key can be removed while the packet was queued, so need to c=
+all
+         * this here to get the current key.
+         */
+        r =3D ieee80211_tx_h_select_key(&tx);
+
+
+I'd think?
+
+johannes
 
