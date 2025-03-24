@@ -1,201 +1,182 @@
-Return-Path: <linux-kernel+bounces-573473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF46A6D7DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:54:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41B4A6D7E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7AE7A55AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:53:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A79416A771
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724B325DAE9;
-	Mon, 24 Mar 2025 09:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0E71411DE;
+	Mon, 24 Mar 2025 09:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="FobUkMLH"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="spfymTR+"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6038E8494;
-	Mon, 24 Mar 2025 09:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604941A3173
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742810034; cv=none; b=g4ceRSxEvEfW6CqdmlD5WFH+s97Ni23Q0Gszc0U/5ssSpI3I4aKPZs+sZFRnzYf8gWQXY7HFXVHznoEgxChwhD7L38kD0AFmsTkclHHRQCCvnuKmn9EYmEOKiglbneZ8fb3z/JX4RXwbX82WJsz0ewBKBl/OY4tX/mVbSCZG6tk=
+	t=1742810289; cv=none; b=n2TppJ2BaivGRpIx7CXuYyEUe5E0Ywqh+IZFUwC4a+UsAacnfGyxNpeKtvOJH04m1EFE4OLia6HAWZersN0ZIsSWimEQamFbQ8cOU3DANE+veyAtQK8Gomj7w7+vcSDyNGDryqCCTVaViyIk39PoaKGjuubJb7UIsVoPssGbBrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742810034; c=relaxed/simple;
-	bh=qgqPMtRSr40Ccfot6UgbHPRueY6p7D9B661XBz7lvAM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=sYRfbg7/qbirok1pJ1MT3kCaF6Et49b8bY2tCVPXUoT/1kO8A/q7TAYFUFzlzX3er/hbBgqpycAmgHECZt03ZhUZHty29s8dsUEsNuz8YonYZRK7/ZyR5xbp1J0YClCBGWwipBbDkFQwwmXdAC/vnH2jPwfKAr5hKsqc0UWSG6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=FobUkMLH; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1742810289; c=relaxed/simple;
+	bh=OHg1Gocf3MVAxryxLA/xQ+5RT7slspVi+KujcHZqyMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l+G79IKvymw6vLqXJfmbvZj3KK4UxAIG7aZ9jaQetz78mKOIH20kmQwzgEuDvKHVx1GvmegNoGBmD0mkZzE7d4o6IrvQ1WD5BNJTSDW3ehM5pICWJ2nCSDrorzBL3chM7ScIE1lwOlkzpCCzkeyu+YiwmjS072t2HbsLIVo9y3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=spfymTR+; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54963160818so4995698e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 02:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742810285; x=1743415085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MPGPUbUSiYN5rbP1AyBJpFJROiY6lURz5npYEhG7kPM=;
+        b=spfymTR+q2YO9IXeQV8zJTlk/fIsFgVaMze6osPrwJPUQ0qDzci/WNcZtknTp12fJO
+         F3jFAwmvfmlkscYBJaySGc70Q75XTj00+5/ujXBHBYyd6y2g2mhUeMMYnnWvINbGpbdZ
+         PJbJsPQhzW3uRb+4YjmsQOTPXzhRGgk/GLfsuPa3wjUiNvYJU+bsWjsNpH6KF5zAuxea
+         FwOeEHRHY8/YeD0Uqdx5/CafvuYb0B7OCPaTvjLgrKIlHN8lLHCGadzkavwC9U79I68j
+         cfLuNgXM7FEMHolTvlHx3IWDG7nQ/2mklNASV1V7s5BGGrlIsMN360hcbElSD5/OZtTt
+         s69g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742810285; x=1743415085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MPGPUbUSiYN5rbP1AyBJpFJROiY6lURz5npYEhG7kPM=;
+        b=hggYchfu4hHF50FsDCnGWoKcisdlZ0jQ803bIcwO2w+3rxRnu5ayInhLx1AdDPLXb4
+         4Lcy64CFjJQC4NMX+IoRt1MT4kzGjB09YhnOM2QCf1JT91iSuDrTS2LkGOPFXRrGWpPc
+         UPk9D0GUfU7llTLU9LqzbGoe2rY2tWDncWUZmZPO2o8pwa3DUobAfH1dJkWGNLt7RbSa
+         qfF/Lxz1JZ2H38FFUOzGL/nHC+VPLVsHgGOuo0V7GnxuDq5CKqC9a2QIb5TaQTOhbl8n
+         DEUUak+qApZCf05Zc96uTTazHEY/ghvUZx6xTljstI5jdmC1Ogp2oHuubg+LDAYb9JW9
+         eB4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWmDyBmKtCyzf6Jk8PLRW+iGAxWGKwPiDjeMCxCWaTlGV5PaMf3FMem4IevCYEh7V6miGyb/A1c5czEzME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqXgntPrbsqO5KKwfid0nRRBAybiTusV/HcpIPoyqhvf8vEIAW
+	mHh4Fa8ljEdrqkU23gZvgbiqMus10jaK2w98PsEGhyGQ/eLoeUxe4nziNJofSvCMhiBzQIa54ha
+	6zNaby+1zMdsw2gvZOvEBGs8O9cPriNB+ugi97g==
+X-Gm-Gg: ASbGncvz4oWlDd6TEU8mz95r45ubCGDB2KlZ5/gZ1upxb0BnDG4twqyN+y5dVF/LGSh
+	8kf9LGQ7qH5A3eM4K44SYo5Gd5I7d8ZGrEL2hmhrdf0SXvpeHe1BH+9YS0GXdILRx9pf2mR594M
+	rPoG3MfGnDwQD1J4ICaLwWrYY=
+X-Google-Smtp-Source: AGHT+IGFsn3NoPz0najqV+IyhexXJLWBrCkDs/jIJqPrU8OWba6VOwjZMM5PPRVIKcz1oO7UGeYDUXXGPDpt9IuYXJ4=
+X-Received: by 2002:a05:6512:1589:b0:549:7590:ff24 with SMTP id
+ 2adb3069b0e04-54ad648589amr4088805e87.22.1742810285409; Mon, 24 Mar 2025
+ 02:58:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1742810030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XERG4fHTRlBSKZ7O9h54QbkOrIztH+Lz87Rz4mphs4o=;
-	b=FobUkMLHzOSyOc4vvxt3chAceAe1ueFbrWsmTvLcLgLFx6DMMUAhCGlPBGdfebE2Xstk0x
-	cJ8CDVdI3836LwlxSq8VN6AGAVGCu78x/jzI+aDgpAniinYsuelmTsdcbwAZ8qB+0MXaa3
-	YUn+eTXy1rPLPvLp35oVNOb0t+jZUFbJjwqwAyp4J/VfrTnKeKwwXTl5sBJTfUgWH84iBq
-	nZ9Nz5aFtN1PH2IJo6IwVmCLx9bAfntiZ4AH+eB17tyZYQc6ZQ2KUFOqtoXKILr63YX+5+
-	04yl2AjaiVUyJAhsp32aKUocxWx4ZpCiMRhXlGa7dNMh5xiJSUTWM0ekHBnCXQ==
-Date: Mon, 24 Mar 2025 10:53:49 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, stable@vger.kernel.org, Alexey Charkov
- <alchark@gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Remove overdrive-mode OPPs from
- RK3588J SoC dtsi
-In-Reply-To: <2ece5cca-50ea-4ec9-927e-e757c9c10c18@cherry.de>
-References: <f929da061de35925ea591c969f985430e23c4a7e.1742526811.git.dsimic@manjaro.org>
- <71b7c81b-6a4e-442b-a661-04d63639962a@cherry.de>
- <960c038ad9f7b83fe14d0ded388b42f7@manjaro.org>
- <2ece5cca-50ea-4ec9-927e-e757c9c10c18@cherry.de>
-Message-ID: <4d25c9af4380598b35a0d55e7c77ac3d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20250324-wcd-gpiod-v1-0-27afa472e331@nxp.com> <20250324-wcd-gpiod-v1-2-27afa472e331@nxp.com>
+ <CAKXuJqht5ZiFyt2uWXwPSEdszYQWKHm22+mAQCPQXn8b7AbL-w@mail.gmail.com>
+ <PAXPR04MB8459D61091A8BF9ABD94DA7E88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <CACRpkdZXG0JC7_-Mg6Dpq08Y=Kr3M+fRWQF_bPG8c-WH8pA9Mg@mail.gmail.com>
+ <Z-ER6elHDYtIY0ap@hovoldconsulting.com> <PAXPR04MB8459B60880CC19480C5902B388A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <CACRpkdagFrz=5fRUfVuaZJRsBao4UrObNa7VknS_hmOAsWFO+Q@mail.gmail.com> <PAXPR04MB8459F7BE5AD43E0685C74A6C88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB8459F7BE5AD43E0685C74A6C88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 24 Mar 2025 10:57:53 +0100
+X-Gm-Features: AQ5f1Jq7SF51RGQ0IJIEpnbKXCAd1Gopipv6p1fkqvQKEyRcyxOHT8HxFUdiM2Q
+Message-ID: <CACRpkdZ_f2EHjTJtkOdAmdAOUsh2Xi0hsToCWuTGkoh1aCZwtA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ASoC: codec: wcd938x: Convert to GPIO descriptors
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Johan Hovold <johan@kernel.org>, Steev Klimaszewski <steev@kali.org>, 
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Quentin,
+On Mon, Mar 24, 2025 at 9:34=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
 
-On 2025-03-24 10:23, Quentin Schulz wrote:
-> On 3/23/25 11:19 AM, Dragan Simic wrote:
->> On 2025-03-21 10:53, Quentin Schulz wrote:
->>> On 3/21/25 4:28 AM, Dragan Simic wrote:
->>>> The differences in the vendor-approved CPU and GPU OPPs for the 
->>>> standard
->>>> Rockchip RK3588 variant [1] and the industrial Rockchip RK3588J 
->>>> variant [2]
->>>> come from the latter, presumably, supporting an extended temperature 
->>>> range
->>>> that's usually associated with industrial applications, despite the 
->>>> two SoC
->>>> variant datasheets specifying the same upper limit for the allowed 
->>>> ambient
->>>> temperature for both variants.  However, the lower temperature limit 
->>>> is
->>> 
->>> RK3588 is rated for 0-80°C, RK3588J for -40-85°C, c.f. Recommended
->>> Operating Conditions, Table 3-2, Ambient Operating Temperature.
->> 
->> Indeed, which is why I specifically wrote "specifying the same upper
->> limit", because having a lower negative temperature limit could hardly
->> put the RK3588J in danger of overheating or running hotter. :)
-> 
-> """
-> despite the two SoC variant datasheets specifying the same upper limit
-> for the allowed temperature for both variants
-> """
-> 
-> is incorrect. The whole range is different, yes it's only a 5°C
-> difference for the upper limit, but they still are different.
+> > Subject: Re: [PATCH 2/3] ASoC: codec: wcd938x: Convert to GPIO
+> > descriptors
+> >
+> > On Mon, Mar 24, 2025 at 9:09=E2=80=AFAM Peng Fan <peng.fan@nxp.com>
+> > wrote:
+> >
+> > > ok, then the only suspecting point is
+> > > wcd938x->reset_gpio =3D devm_gpiod_get(dev, "reset", GPIOD_ASIS);
+> > >
+> > > I may need to use GPIOD_OUT_LOW to configure it to output as set
+> > raw
+> > > set value as 1.
+> >
+> > I think there may be a bug in gpiod_configure_flags() in gpiolib.c:
+> >
+> >         /* Process flags */
+> >         if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
+> >                 ret =3D gpiod_direction_output_nonotify(desc,
+> >                                 !!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
+> >         else
+> >                 ret =3D gpiod_direction_input_nonotify(desc);
+> >
+> > Shouldn't this be:
+> >
+> >         if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
+> >                 ret =3D gpiod_direction_output_nonotify(desc,
+> >                                 !!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
+> >         else if (dflags & GPIOD_FLAGS_BIT_DIR_SET)
+> >                 ret =3D gpiod_direction_input_nonotify(desc);
+>
+> Using GPIO_ASIS should not change direction.
+> This change makes sense.
 
-I just commented on this separately, with a couple of datasheet
-screenshots, before I saw your latest response.  Please, have
-a look at that message.
+Actually when looking closer at it I was wrong.
 
->>>> specified much lower for the RK3588J variant. [1][2]
->>>> 
->>>> To be on the safe side and to ensure maximum longevity of the 
->>>> RK3588J SoCs,
->>>> only the CPU and GPU OPPs that are declared by the vendor to be 
->>>> always safe
->>>> for this SoC variant may be provided.  As explained by the vendor 
->>>> [3] and
->>>> according to its datasheet, [2] the RK3588J variant can actually run 
->>>> safely
->>>> at higher CPU and GPU OPPs as well, but only when not enjoying the 
->>>> assumed
->>>> extended temperature range that the RK3588J, as an SoC variant 
->>>> targeted
->>> 
->>> "only when not enjoying the assumed extended temperature range" is
->>> extrapolated by me/us and not confirmed by Rockchip themselves. I've
->>> asked for a statement on what "industrial environment" they specify 
->>> in
->>> the Normal Mode explanation means since it's the only time they use
->>> the term. I've yet to receive an answer. The only thing Rockchip in
->>> their datasheet is that the overdrive mode will shorten lifetime when
->>> used for a long time, especially in high temperature conditions. It's
->>> not clear whether we can use the overdrive mode even within the 
->>> RK3588
->>> typical range of operation.
->> 
->> True.  I'll see to rephrase the patch description a bit in the v2,
->> to avoid this kind of speculation.  I mean, perhaps the speculation
->> is right, but it hasn't been confirmed officially by Rockchip.
-> 
-> Speculation is fine, but it should be worded as such.
+From <linux/gpio/consumer.h>:
 
-Agreed, because that's our understanding so far, but it needs
-to be explained a bit better.
+enum gpiod_flags {
+    GPIOD_ASIS    =3D 0,
+    GPIOD_IN    =3D GPIOD_FLAGS_BIT_DIR_SET,
+    GPIOD_OUT_LOW    =3D GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT,
+    GPIOD_OUT_HIGH    =3D GPIOD_FLAGS_BIT_DIR_SET | GPIOD_FLAGS_BIT_DIR_OUT=
+ |
+              GPIOD_FLAGS_BIT_DIR_VAL,
+    GPIOD_OUT_LOW_OPEN_DRAIN =3D GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_OPEN_DRAIN=
+,
+    GPIOD_OUT_HIGH_OPEN_DRAIN =3D GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_OPEN_DRA=
+IN,
+};
 
->>>> The provided RK3588J CPU OPPs follow the slightly debatable "provide 
->>>> only
->>>> the highest-frequency OPP from the same-voltage group" approach 
->>>> that's been
->>> 
->>> Interesting that we went for a different strategy for the GPU OPPs :)
->> 
->> Good point, and I'm fully aware of that. :)  Actually, I'm rather
->> sure that omitting the additional CPU OPPs does no good to us, but
->> I didn't want to argue about that when they were dropped originally,
->> before I can have some hard numbers to prove it in a repeatable way.
-> 
-> I assume we'll have some patch in the future with those added and
-> those hard numbers you're talking about, so looking forward to seeing
-> it on the ML :)
+So GPIOD_ASIS does not set GPIOD_FLAGS_BIT_DIR_SET.
 
-Indeed, that's the plan, and there should be even more patches,
-which should remove the slightly annoying "xyz OPP is inefficient"
-warnings emitted by the IPA governor. :)
+Then gpiod_configure_flags() has:
 
->>>> Helped-by: Quentin Schulz <quentin.schulz@cherry.de>
->>> 
->>> Reported-by/Suggested-by?
->>> 
->>> I don't see Helped-by in
->>> https://eur02.safelinks.protection.outlook.com/? 
->>> url=https%3A%2F%2Fwww.kernel.org%2Fdoc%2Fhtml%2Flatest%2Fprocess%2Fsubmitting-patches.html%23using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes&data=05%7C02%7Cquentin.schulz%40cherry.de%7Cdc754791b6844506b11c08dd69f444a7%7C5e0e1b5221b54e7b83bb514ec460677e%7C0%7C0%7C638783220330058516%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=4bv9pUh6aSD0GVLJ4Zvuyvox1K0xxwf83KXX86QsvMo%3D&reserved=0
->>> 
->>> I see 2496b2aaacf137250f4ca449f465e2cadaabb0e8 got the Helped-by
->>> replaced by a Suggested-by for example, but I see other patches with
->>> Helped-by... if that is a standard trailer for kernel patches, then
->>> maybe we should add it to that doc?
->> 
->> Actually, I already tried to get the Helped-by tag added to the
->> kernel documentation, by submitting a small patch series. [*]
->> Unfortunately, it got rejected. :/
->> 
->> However, Heiko accepts Helped-by tags and nobody higher up the
->> tree seems to complain, so we should be fine. :)  It isn't the
->> case with all maintainers, though.
->> 
->> [*] https://eur02.safelinks.protection.outlook.com/? 
->> url=https%3A%2F%2Flore.kernel.org%2Fall%2Fcover.1730874296.git.dsimic%40manjaro.org%2FT%2F%23u&data=05%7C02%7Cquentin.schulz%40cherry.de%7Cdc754791b6844506b11c08dd69f444a7%7C5e0e1b5221b54e7b83bb514ec460677e%7C0%7C0%7C638783220330070422%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3dZgSG%2FBT6f%2Ffqs7D30HvEl18SzqYPwNeUGWBZfMAqM%3D&reserved=0
-> 
-> Are you trying to up the numbers of Helped-by in commit logs to make
-> it a reasonable request to add the trailer in the documentation :) ?
+    /* No particular flag request, return here... */
+    if (!(dflags & GPIOD_FLAGS_BIT_DIR_SET)) {
+        gpiod_dbg(desc, "no flags found for GPIO %s\n", name);
+        return 0;
+    }
 
-It's just that Helped-by is, to me, of a bit "higher value" than
-Suggested-by or Reported-by, because Helped-by means that the
-tagged person contributed more to the patch than just suggesting
-it or reporting a bug.  In addition, having more Helped-by tags
-present in various commits can help a bit with, possibly, making
-it officially supported at some point in the future. :)
+    /* Process flags */
+    if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
+        ret =3D gpiod_direction_output_nonotify(desc,
+                !!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
+    else
+        ret =3D gpiod_direction_input_nonotify(desc);
+
+So the function bails out right above (you could check the debug
+print there if in doubt.)
+
+So the behaviour is correct.
+
+So now I have no idea what is going on again :/
+
+But I would suggest trying to set GPIOD_OUT_LOW when requesting
+the line and just check if that solves Steev:s problem
+(trial-and-error).
+
+Yours,
+Linus Walleij
 
