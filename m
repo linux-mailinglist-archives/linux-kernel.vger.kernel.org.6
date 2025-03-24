@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E35CA6DE92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEB7A6DE99
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:28:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4420172A58
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F40018986E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EBA2627F6;
-	Mon, 24 Mar 2025 15:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5901E26280C;
+	Mon, 24 Mar 2025 15:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="igY6St4i"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j6L9ZM5U"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28B72627E1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D4F261364
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829851; cv=none; b=m1jQkdvf4f80HIHzeuORIl2tzijdMAhDQx3/8ciXixN2H6J7m9JbKyi/060rGjji2SLUw+r8+jPA53EGtVPkwzKDlEZOLuE6Yx53m5BUY9teEPWFOR6uMu2zmIse7iOi1gI0DgX8G4l3ayEjHPdS0GHQVl5DVK5HndWxavrrr/Y=
+	t=1742829860; cv=none; b=t/L+UZ9OLjhKK25smiqd8ecjcEaJUSosX3EjhO1mrAqkgOD3QSpzwbQ5YAl4doMh7I9soRMr/SkDmiD7rdU5wyhZrFlJrWtJdRordBfteAKABJYYOxGnXJVxGn+xCFqKLkMrksu9o1TSIbeQnn1mOQH1droyO1peevCJ5h4NZII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829851; c=relaxed/simple;
-	bh=KUkOGNsvpN1Ovl8QZ/tArCnRQQzrNigmsQEMOu1fQd4=;
+	s=arc-20240116; t=1742829860; c=relaxed/simple;
+	bh=dlE39LS7EIw4MzYoit7/YZv7aZoM3ZWiC0jGwMaNTjg=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LQ3WXKXqI9TILMY186cFj5AuD+ShGlpYV9ONxFovfu90jXFOip1RfNf22Chglki/ke7mMOBqDRYze3MOIpgu0H4plwea7zJqnFLlO5BpDBC8SdsfKTJxvkEW2u8xqloOKQWX40b1biDPEw/No5xSNDegKppIRfugok7iTIePodM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=igY6St4i; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:Content-Type; b=UgIF5+EC+vv1FGLtGCdabgUMv8T38K+42mLCpli7SA8Za3Dgivx2yjeRmqjLkmPT/lLDT6eoLj2I6VITF9ue6tXvn6mh4DWjf6r8wJrayBA5L9gDKMp4ED0diRHnfxD6QyzhCtbC9PvB/jj1gMQjYwn3u9gaAfXTlW/RokBRmkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j6L9ZM5U; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 34B21444FA;
-	Mon, 24 Mar 2025 15:24:07 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E687D442AE;
+	Mon, 24 Mar 2025 15:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829848;
+	t=1742829857;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=znQ6C3HekGECmSVuDKXSu1PS/if+KGW5y1bOHwpc0Cg=;
-	b=igY6St4i/ls+yELFg/X6dCG4hA734vxkTv5zkFWdMtQn9UF/DzI4Ft479mjj3iSrfpjz/K
-	dLJyVkbu9UQb9n5xBu1ncIGezg4eTAcs5UG8O13GCY+m/uMpdYPvyAqKm3d9Kmpwr3hSXw
-	3tp2zguwGFASo99DNSl+MJGbMoYX1GNy/NniV9HrKSbIa5aHYcO4yX2Kq+hdamd653D1SX
-	eY3ATEi9a4nkFHkzr2Dnw5IULaiW2qGofzJybBhR8OOhQC/Su3wZQ5smy2gBFWThc3l5gU
-	eD5Kz4jYMHOrA+cUxKk7+BrV0mTlFnq9oJXQwdyj5fMI2SQi625dMbkodcgkWw==
-Message-ID: <440c70ac-1d0f-4ad3-86dc-5c81893467a8@bootlin.com>
-Date: Mon, 24 Mar 2025 16:24:07 +0100
+	bh=OUCMsogd2JcHOhURuNcJUY62vXvySlkpC1K+uVHERsM=;
+	b=j6L9ZM5U8Iyo+X4cAL4w4IvBuFHywSLeytp8bpI5OU+JuTMgUZ6TxCmo9FavcHtCJC/VJB
+	PZRcEl2jHoOhd+0VD68yR5CYkANyZWVe+2B0FhMKyfxJ7gnVTrDwzz0+8owBGRvJEMVkUz
+	JL9v3ToEdo2P6qfApkXsk3/JgPakCNcpmsPxx/pMox+E9xho4bVSTERI/J8zsCtc5GBOVj
+	RIoFGESPLNfklqoWKzBvQBBwZ8eFKe6+ds7pe+/HgZMgRn9jlqDM24F6yCcM/c3s47qu+C
+	PiLBrtiIpVhtn15I5qaQxojhELq7a85bbrn4BXi7rUMEOUucBuycZ9pbA7Z2wg==
+Message-ID: <c3514758-5a22-4acb-8ff0-1f4ddade02f4@bootlin.com>
+Date: Mon, 24 Mar 2025 16:24:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 42/59] drm-dyndbg: DRM_CLASSMAP_USE in drm_dp_helper
+Subject: Re: [PATCH v2 44/59] drm-dyndbg: add DRM_CLASSMAP_USE to Xe driver
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -63,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-43-jim.cromie@gmail.com>
+ <20250320185238.447458-45-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -119,58 +119,46 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-43-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-45-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> Following the dyndbg-api-fix, replace DECLARE_DYNDBG_CLASSMAP with
-> DRM_CLASSMAP_USE.  This refs the defined & exported classmap, rather
-> than re-declaring it redundantly, and error-prone-ly.
-> 
-> This resolves the appearance of "class:_UNKNOWN_" in the control file
-> for the driver's drm_dbg()s.
-> 
-> Fixes: f158936b60a7 ("drm: POC drm on dyndbg - use in core, 2 helpers, 3 drivers.")
+> Invoke DRM_CLASSMAP_USE from xe_drm_client.c.  When built with
+> CONFIG_DRM_USE_DYNAMIC_DEBUG=y, this tells dydnbg that Xe uses
+> has drm.debug calls.
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
 > ---
->   drivers/gpu/drm/display/drm_dp_helper.c | 12 +-----------
->   1 file changed, 1 insertion(+), 11 deletions(-)
+>   drivers/gpu/drm/xe/xe_drm_client.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-> index 61c7c2c588c6..68ba17eb2541 100644
-> --- a/drivers/gpu/drm/display/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
-> @@ -43,17 +43,7 @@
+> diff --git a/drivers/gpu/drm/xe/xe_drm_client.c b/drivers/gpu/drm/xe/xe_drm_client.c
+> index 2d4874d2b922..756dba5c88f8 100644
+> --- a/drivers/gpu/drm/xe/xe_drm_client.c
+> +++ b/drivers/gpu/drm/xe/xe_drm_client.c
+> @@ -21,6 +21,8 @@
+>   #include "xe_pm.h"
+>   #include "xe_trace.h"
 >   
->   #include "drm_dp_helper_internal.h"
->   
-> -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
-> -			"DRM_UT_CORE",
-> -			"DRM_UT_DRIVER",
-> -			"DRM_UT_KMS",
-> -			"DRM_UT_PRIME",
-> -			"DRM_UT_ATOMIC",
-> -			"DRM_UT_VBL",
-> -			"DRM_UT_STATE",
-> -			"DRM_UT_LEASE",
-> -			"DRM_UT_DP",
-> -			"DRM_UT_DRMRES");
 > +DRM_CLASSMAP_USE(drm_debug_classes);
->   
->   struct dp_aux_backlight {
->   	struct backlight_device *base;
+> +
+
+Is xe_drm_client.c the best place to do it? I think the module entry 
+point is a bit better [1].
+
+[1]:https://elixir.bootlin.com/linux/v6.13.7/source/drivers/gpu/drm/xe/xe_module.c
+
+>   /**
+>    * DOC: DRM Client usage stats
+>    *
 
 -- 
 Louis Chauvet, Bootlin
