@@ -1,131 +1,197 @@
-Return-Path: <linux-kernel+bounces-574106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A749A6E0A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:10:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F29A6E09E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:09:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C903ABB25
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BEC016FC51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66E026461A;
-	Mon, 24 Mar 2025 17:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC762641D4;
+	Mon, 24 Mar 2025 17:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVAkbcYL"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDt5jIm/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7319263F3E;
-	Mon, 24 Mar 2025 17:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263E02638AD;
+	Mon, 24 Mar 2025 17:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742836184; cv=none; b=spNPuZtk9eW84WezLmI5cpCGnRdRy0Y5KGHlJQsQVsM6MI5AhxgsiCgXGlgN59ku94d7WQBgRM3JISH5sfdgDHj8fuPVDMivHVtsG8roalEN9eOF4QQPUeu7jsR7X1sY1ZHcsFW3y+3EGBo/m+ULn8UcyjT3st6jpaHFFdGMdGs=
+	t=1742836178; cv=none; b=F5WJGDJSNxsXsMehXGAc9WQKjJXRYT4YyZ1BuahgAYRhdZp+oynOI36rn3HC7ss3hsYz7iRR2P/1hY5ocVszN49wwe3WGwTW1NPPa+90UeXL7H/3Nz1gnoS+5sJMy69mVI8tMGQW3a6B1FYseHFuH993qydrRAcVbRSUibBLV+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742836184; c=relaxed/simple;
-	bh=YtM1xccQ9b4jm0BYJlLYAyhgiwHHbsx3miX3KYmfG5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DEtElEaxZcvRx2mpROxizjDgXIya3oTbWg7XS8cP5M+hvTgUXoh2o0QnwN63tGnb79yXO0weB2VmJ3UluxHUwIGmIIe5BR5BUbFvYeFhtqBV5jOKmOauH/k/cggsc7gVK9cN9cs5ps3PyPdZcP2QP5gxg/g5KxnypXt65vgy8/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVAkbcYL; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso782829166b.1;
-        Mon, 24 Mar 2025 10:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742836180; x=1743440980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xkzaRWdI/oLc0o3QPM8pJTyhISa2Grm6xBDcFcXBazs=;
-        b=WVAkbcYLjc7Y8lvcMl/VavVQcHgGjsLPIxnFp9ETObTzKXxj4WZWGPz0U4QCrqfhxR
-         9ZNyhfUgmg759VROsFitZqw617VKi9OIr+K6WXMcQAkxxhiHexoIU7DoBly+HYjgfh5M
-         4CMMn5jL25peoxjCdEYf1x/Iou2cLS/mEhD6W1bLAHcP4XyI+hN49OOIq3d03TIZ1Ra6
-         6C27B3x4586ewwdmBTMMg4nc194ONiZRmDEtWvsd+KKrxCYsxsJiFOgOrweKS1lhzawR
-         VVjB7vU8W0lEhsE+9fBXuLJVvIiWykYwmFBVAvVYy9JiLB7LgV8GcPExbH5FE3BeIjdh
-         oNEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742836180; x=1743440980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xkzaRWdI/oLc0o3QPM8pJTyhISa2Grm6xBDcFcXBazs=;
-        b=U4azpD/KcyRRu2tSivN+S7XJ2wKyvfvcTtstF8FDGotL+iA/FPZKlr3E0n5iX8ZTOm
-         hKGX5hdHqyFGbJVL2DeE1ZXexY6HMMDewA+eSoiOl1vGbruZRmof5BDGutx9f5VE3GOg
-         I5Rav8VqGVTtTnIV7FQfq3l933ocgaO43OXgl0NHy/r8gh5Ekkic/YY2EOlK4Ht5EqnT
-         j/5ma4zYHAvJCzJGziXd014JhQRPgH0puAKDG1azKtWopgwqER6au4BNIp3Qm4Dc5Nqw
-         T4iuWYvPsi+h8fd2cA9/gb4UaZxHSQUp/zU982r9GAxepHs52FRLG/XsmLDbzeZ6u8QZ
-         HZNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCqSf/ZmcfR7NXxr1eMXc5ai/7RalUCQ43l10/kIdpdLgBAbNN57tNSNw/UrheAu9EXhBwH0YzZr4itjgS@vger.kernel.org, AJvYcCWkCCN1DaRRj1+Mli66nfGyydE3BxjR+q2lC/vMqndcMUGJrIMcjScRVQakav9Gs0X6HwOojipxvzxME62R@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDTXLnb4PKO7JkEBX79B6EaN2FR9Mog1VXUtvGdASRGNnFpZq9
-	0gDhhvUCCc1yqAnkkuvUlYIp+hXnhz1bvkI+gmSOY4e3DKkVoyNIhMzXJHQSEbY58nCfxWb5XUk
-	kiRNIOVKtuEbXgx4+96OqFRqkaX4=
-X-Gm-Gg: ASbGncuoSAFj7F1rOrlxac+v5XPt43AvB0n3gL1dTig4/X6fV5e4bNyAvb+wOUGOd1I
-	1IXQ5lOzvr3JEYQR3CZ9hKRwlrDboqz5ceuq7gQDRE1908n3Kv2NMTISCdMpIT6wwneqnFgRpbT
-	Og6MP6pOxgFPYRaS42272X1vZdZw==
-X-Google-Smtp-Source: AGHT+IEWWIniopIYLKMSFAkoZXn00ztXTo+NuYLzSRTxqIy8VtPspTFZgF8v7zShU8+voiuALLFpEkuTXNcUjHkY6VQ=
-X-Received: by 2002:a17:907:97ce:b0:ac3:3f13:4b98 with SMTP id
- a640c23a62f3a-ac3f251f516mr1448880366b.39.1742836179687; Mon, 24 Mar 2025
- 10:09:39 -0700 (PDT)
+	s=arc-20240116; t=1742836178; c=relaxed/simple;
+	bh=oS/jVNiBr+Qb2HZtLsR6LBU3TK7KODsBV2+Ozy0ozVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFOQlRHHUU3VPq5xZH1vDyw0waBuVI1NrlFaIr8QXMKYTcrAoiXLvmZPHaBHz6KCLdlZ1yN6lEbZCXA84o0CJHPanobPWfOH/IMsE7sbu7L0z93isryOlyH5kFhlEgXf2uZ2Vs6Tg5CQa3N32dFsjBd/BWxeK2NzMxO+cT+9OQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDt5jIm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B52BC4CEDD;
+	Mon, 24 Mar 2025 17:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742836177;
+	bh=oS/jVNiBr+Qb2HZtLsR6LBU3TK7KODsBV2+Ozy0ozVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MDt5jIm/fSyr45MFjY+aw3XjhcUNk6TRMOuOfey2/9+sRdJ3QD0bhFAiNUi02mMc5
+	 ZbGSHNncsx7pctqwGTQwHyrum7EYESiq/lrkP+I67l4iJvwOUGQW2/ONEFlEBNJxb+
+	 WpKlm8IOtR0r6URfwrsVcwAir6X8fWPBPzBLB7TaOMQ4pY6x3BtuVkT1fFwGkNLwnW
+	 +pdtWamuMT+1G1wg5cXBhDM/tsCBe5tRWwLG92bbycPTXpAhy0pp99Sn2eiLp/ojck
+	 rTixPqR1BRonNMBVnpwu1awZQgIUhTQ0rmsl+AH10E1ussO74fCJdR+Ic0RNXDAKpk
+	 OKDEgEuj9ELWA==
+Date: Mon, 24 Mar 2025 12:09:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH 2/2] dt-bindings: net: Document support for
+ Aeonsemi PHYs
+Message-ID: <20250324170936.GA584083-robh@kernel.org>
+References: <20250323225439.32400-1-ansuelsmth@gmail.com>
+ <20250323225439.32400-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-vfs-misc-77bd9633b854@brauner> <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
-In-Reply-To: <CAHk-=wjNojYGmik93aB5UG1Nd5h2VHcVhKfBoYu9jVv_zh6Zng@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 24 Mar 2025 18:09:27 +0100
-X-Gm-Features: AQ5f1JrUKxVxpDn8a0zpEGv_bY9k5PsGe8CVPNBkl-LPY_z5m10EaLygiCD9l1I
-Message-ID: <CAGudoHGJ-z2pYw2ydJcu1LnL=C6Lzozw05QEAgBfj7FEn+4dcA@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs misc
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323225439.32400-2-ansuelsmth@gmail.com>
 
-On Mon, Mar 24, 2025 at 5:20=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sat, 22 Mar 2025 at 03:13, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > Merge conflicts with mainline
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> >
-> > This contains a minor merge conflict for include/linux/fs.h.
->
-> Hmm. My resolution here was to just take the plain VFS_WARN_ON_INODE()
-> side, which basically drops commit 37d11cfc6360 ("vfs: sanity check
-> the length passed to inode_set_cached_link()") entirely, because that
-> one had a "TODO" that implies it's now replaced by the new
-> VFS_WARN_ON_INODE() interface.
->
-> This is just a note to make sure that if anybody was expecting
-> something else, you can now speak up and say "can you please do X".
->
-> Or, better yet, send a patch.
->
+On Sun, Mar 23, 2025 at 11:54:27PM +0100, Christian Marangi wrote:
+> Document support for Aeonsemi PHYs and the requirement of a firmware to
+> correctly work. Also document the max number of LEDs supported and what
+> PHY ID expose when no firmware is loaded.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/net/aeonsemi,as21xxx.yaml        | 87 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml b/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+> new file mode 100644
+> index 000000000000..0549abcd3929
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/aeonsemi,as21xxx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Aeonsemi AS21XXX Ethernet PHY
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |
+> +  Aeonsemi AS21xxx Ethernet PHYs requires a firmware to be loaded to actually
+> +  work. The same firmware is compatible with various PHYs of the same family.
+> +
+> +  A PHY with not firmware loaded will be exposed on the MDIO bus with ID
+> +  0x7500 0x7500
+> +
+> +  This can be done and is implemented by OEM in 2 different way:
+> +    - Attached SPI flash directly to the PHY with the firmware. The PHY
+> +      will self load the firmware in the presence of this configuration.
+> +    - Manually provided firmware loaded from a file in the filesystem.
+> +
+> +  Each PHY can support up to 5 LEDs.
+> +
+> +allOf:
+> +  - $ref: ethernet-phy.yaml#
+> +
+> +select:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - ethernet-phy-id7500.7500
+> +  required:
+> +    - compatible
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    description: specify the name of PHY firmware to load
 
-That TODO thing was a temporary fixup for the release and indeed it is
-sorted out in this pull request.
+maxItems: 1
 
-If inode_set_cached_link() looks like this:
-static inline void inode_set_cached_link(struct inode *inode, char
-*link, int linklen)
-{
-        VFS_WARN_ON_INODE(strlen(link) !=3D linklen, inode);
-        VFS_WARN_ON_INODE(inode->i_opflags & IOP_CACHED_LINK, inode);
-        inode->i_link =3D link;
-        inode->i_linklen =3D linklen;
-        inode->i_opflags |=3D IOP_CACHED_LINK;
-}
+as I think we allow more than 1. 
 
-then you got the right version.
+Not required? Then what is the default name (default: ???)?
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    mdio {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        ethernet-phy@1f {
+> +            compatible = "ethernet-phy-id7500.7500",
+> +                         "ethernet-phy-ieee802.3-c45";
+> +
+> +            reg = <31>;
+> +            firmware-name = "as21x1x_fw.bin";
+> +
+> +            leds {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@0 {
+> +                    reg = <0>;
+> +                    color = <LED_COLOR_ID_GREEN>;
+> +                    function = LED_FUNCTION_LAN;
+> +                    function-enumerator = <0>;
+> +                    default-state = "keep";
+> +                };
+> +
+> +                led@1 {
+> +                    reg = <1>;
+> +                    color = <LED_COLOR_ID_GREEN>;
+> +                    function = LED_FUNCTION_LAN;
+> +                    function-enumerator = <1>;
+> +                    default-state = "keep";
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9a2df6d221bd..59a863dd3b70 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -649,6 +649,7 @@ AEONSEMI PHY DRIVER
+>  M:	Christian Marangi <ansuelsmth@gmail.com>
+>  L:	netdev@vger.kernel.org
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/net/aeonsemi,as21xxx.yaml
+>  F:	drivers/net/phy/as21xxx.c
+>  
+>  AF8133J THREE-AXIS MAGNETOMETER DRIVER
+> -- 
+> 2.48.1
+> 
 
