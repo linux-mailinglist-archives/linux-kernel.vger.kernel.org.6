@@ -1,414 +1,141 @@
-Return-Path: <linux-kernel+bounces-574241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E83A6E273
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:35:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A562A6E267
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589A11888B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3073B24E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8915826656C;
-	Mon, 24 Mar 2025 18:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D1F265608;
+	Mon, 24 Mar 2025 18:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="allZUpEK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AHBdPPyR"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE252264FA2;
-	Mon, 24 Mar 2025 18:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EC0264FAE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742841206; cv=none; b=NrnhwT58/zY35EX7gZpwLoBi3MwPmx3JZ89930BAkSvVFTe9SuAQhM16JMSJRzwOHHdVwMafBy54y1haz5zDlk6V2vs0loUsXIkhyonbQfyEV0QlaURUt5snhYF5HA5YuxqtqWCGXJXBtzf0zWJNDOI4jYAlSkbrgWK38UHxQFA=
+	t=1742841183; cv=none; b=IxrbmM0ASWXrI4sptPSgz8hG5s4cabm/r9l7WrePefSPxZeHA9Zy4k6aO1djrng5xPZaN03AV9Kr2IRSNBKXUVxLYu2/lUrmQyeSEhmPQj3T30IXpKJoo+h2qxfZFmrrEJCRWDws3hIHHIYUo8smXHOxT4afnA778CtGjkh4UHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742841206; c=relaxed/simple;
-	bh=HQVaoKeLJIMvyka7KZjeeqVSFpWeaMP7pkfUCVc/zjA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b9W7Mz4Ua3X/OFvayxdYwLmLby4q+Uf7PuPn8xKMaxA0tDiVubopBvf/30Pn92DdonhUOtnQqgPMg0vJxKr8Vjo9QnVbao7XJpSy0XMLV7rQ4snb4SCdK13AcZGBFm14SK4WAJB+KxjSBKhYrGvXt1l2zi5t8FEeatHnspU7Bos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=allZUpEK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9Ppg8031056;
-	Mon, 24 Mar 2025 18:33:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fHD2W/5kvVrN33/uCKRhWiWJWYFFeHoqcCzF0h1th/A=; b=allZUpEKFliXDYj5
-	RQMy1huLlQ9lAM8sRYsvAEAoJvLb7M5ICtFfQN0WkGtWcvE1R5DB3HOgOHPtcxyG
-	gROuQlos08Hpv5TEzFCkKQ+X5bPxFwvR2bUR3Q4ZpnsQaY+b0bi5WRsR5ISs0KgH
-	iSZOQcDYIcb56Woa5jXS0tfc4IQCUIp0/DMrgPpkFP3ndA9UnXfKe6CtUDgvANnR
-	rIF8O7A8Nn6zH08T4CA5T/yHt9+uygFv05A0DTTE6WloL0Qs0TrZMbcOXTLIM6po
-	NAgOoYahZ0AJB1GN1p3PtGGP18mMZourDosyx5F/umxpR/EuF1J+jsm/5IIShXc6
-	LfQ+MA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hmt058rm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 18:33:20 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52OIXJmm024887
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 18:33:19 GMT
-Received: from 6cb0ec70778b.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Mar 2025 11:33:14 -0700
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Raviteja
- Laggyshetty" <quic_rlaggysh@quicinc.com>,
-        Odelu Kukatla
-	<quic_okukatla@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        Sibi Sankar
-	<quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: [PATCH V10 7/7] arm64: dts: qcom: sa8775p: Add CPU OPP tables to scale DDR/L3
-Date: Mon, 24 Mar 2025 18:32:03 +0000
-Message-ID: <20250324183203.30127-8-quic_rlaggysh@quicinc.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250324183203.30127-1-quic_rlaggysh@quicinc.com>
-References: <20250324183203.30127-1-quic_rlaggysh@quicinc.com>
+	s=arc-20240116; t=1742841183; c=relaxed/simple;
+	bh=giOVo/hMU9EM1ySCHMr8Kfg9AjH/yxV3BztyAZ+Mcc8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s4R90G1QpC6AGR298mP7GerPS5cVcIQ5DUTPmnNHckuqvvrsAmxnsUG0EUn4P36nD2ROBdrslrcXVG10c3fH8M8ZFXV+6RTdvFfANwO5N0kT26tohfBkiQfGftMJ/iPq9mwXcG3teMGcRa//J4va8RbZtdtmidg7cQeBzvJDmGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=AHBdPPyR; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742841178; x=1743100378;
+	bh=3JQmVZ7nQgL0C1nvQoKUI780iq8dM/BIdl9nGsDpqHI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=AHBdPPyRQ4Kj+DHt71Btr9k2vTlKtwhIqDhJEo2/YnHbu54qTIx4WlHv7AsgYXZWK
+	 Nc4RAzPk1r4WLFWlQFLelVacFDNLSF4l5K5fV9eFIz1Z8S/7ahBwsUoZ73KbsTOez9
+	 DLNVeZa+XEnAMmVeWb7O1Yb4hJeute3rL3SzXnlWdV3GXyVwzBZITQkZjKSUUDdLOO
+	 a95WbqubEFazBc1hrv960lST4Zr3vbZX0vBbCNJhNGhAFVCOeXPeigvxbR6HrxGxG7
+	 Tf++Q+SMy3pVnTQRs9pDSaTW9V1Ic26es+aN7dRSZVgZ/AJLgcZrFDQIzwTBGWwKK9
+	 2hkZ3qFMRUgMA==
+Date: Mon, 24 Mar 2025 18:32:53 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <D8OPMRYE0SO5.2JQD6ZIYXHP68@proton.me>
+In-Reply-To: <Z-Ggu_YZBPM2Kf8J@cassiopeiae>
+References: <20250321214826.140946-1-dakr@kernel.org> <20250321214826.140946-3-dakr@kernel.org> <2025032158-embezzle-life-8810@gregkh> <Z96MrGQvpVrFqWYJ@pollux> <Z-CG01QzSJjp46ad@pollux> <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me> <Z-GNDE68vwhk0gaV@cassiopeiae> <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me> <Z-Ggu_YZBPM2Kf8J@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 76de513fbfba2241a6334f65c143226078d51e1b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Y9S3yz2qQZ8siLg3VSKhUAo3Z9OQ3zo4
-X-Proofpoint-ORIG-GUID: Y9S3yz2qQZ8siLg3VSKhUAo3Z9OQ3zo4
-X-Authority-Analysis: v=2.4 cv=aqGyCTZV c=1 sm=1 tr=0 ts=67e1a570 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=UERuPk7d7HPuaWx_DlYA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_06,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=999 bulkscore=0
- impostorscore=0 suspectscore=0 mlxscore=0 phishscore=0 adultscore=0
- spamscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240132
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
+On Mon Mar 24, 2025 at 7:13 PM CET, Danilo Krummrich wrote:
+> On Mon, Mar 24, 2025 at 05:36:45PM +0000, Benno Lossin wrote:
+>> On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
+>> > On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
+>> >> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
+>> >> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
+>> >> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
+>> >> >> > Along these lines, if you can convince me that this is something=
+ that we
+>> >> >> > really should be doing, in that we should always be checking eve=
+ry time
+>> >> >> > someone would want to call to_pci_dev(), that the return value i=
+s
+>> >> >> > checked, then why don't we also do this in C if it's going to be
+>> >> >> > something to assure people it is going to be correct?  I don't w=
+ant to
+>> >> >> > see the rust and C sides get "out of sync" here for things that =
+can be
+>> >> >> > kept in sync, as that reduces the mental load of all of us as we=
+ travers
+>> >> >> > across the boundry for the next 20+ years.
+>> >> >>=20
+>> >> >> I think in this case it is good when the C and Rust side get a bit
+>> >> >> "out of sync":
+>> >> >
+>> >> > A bit more clarification on this:
+>> >> >
+>> >> > What I want to say with this is, since we can cover a lot of the co=
+mmon cases
+>> >> > through abstractions and the type system, we're left with the not s=
+o common
+>> >> > ones, where the "upcasts" are not made in the context of common and=
+ well
+>> >> > established patterns, but, for instance, depend on the semantics of=
+ the driver;
+>> >> > those should not be unsafe IMHO.
+>> >>=20
+>> >> I don't think that we should use `TryFrom` for stuff that should only=
+ be
+>> >> used seldomly. A function that we can document properly is a much bet=
+ter
+>> >> fit, since we can point users to the "correct" API.
+>> >
+>> > Most of the cases where drivers would do this conversion should be cov=
+ered by
+>> > the abstraction to already provide that actual bus specific device, ra=
+ther than
+>> > a generic one or some priv pointer, etc.
+>> >
+>> > So, the point is that the APIs we design won't leave drivers with a re=
+ason to
+>> > make this conversion in the first place. For the cases where they have=
+ to
+>> > (which should be rare), it's the right thing to do. There is not an al=
+ternative
+>> > API to point to.
+>>=20
+>> Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
+>> trait to me is a sign of a canonical way to convert a value.
+>
+> Well, it is the canonical way to convert, it's just that by the design of=
+ other
+> abstractions drivers should very rarely get in the situation of needing i=
+t in
+> the first place.
 
-Add OPP tables required to scale DDR and L3 per freq-domain
-on SA8775P platform.
+I'd still prefer it though, since one can spot a
 
-If a single OPP table is used for both CPU domains, then
-_allocate_opp_table() won't be invoked for CPU4 but instead
-CPU4 will be added as device under the CPU0 OPP table. Due
-to this, dev_pm_opp_of_find_icc_paths() won't be invoked for
-CPU4 device and hence CPU4 won't be able to independently scale
-it's interconnects. Both CPU0 and CPU4 devices will scale the
-same ICC path which can lead to one device overwriting the BW
-vote placed by other device. Hence CPU0 and CPU4 require separate
-OPP tables to allow independent scaling of DDR and L3 frequencies
-for each CPU domain, with the final DDR and L3 frequencies being
-an aggregate of both.
+    let dev =3D CustomDevice::checked_from(dev)?
 
-Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+much better in review than the `try_from` conversion. It also prevents
+one from giving it to a generic interface expecting the `TryFrom` trait.
+
 ---
- arch/arm64/boot/dts/qcom/sa8775p.dtsi | 210 ++++++++++++++++++++++++++
- 1 file changed, 210 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index fac5dfb147fd..800db236a1e0 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -52,6 +52,11 @@ cpu0: cpu@0 {
- 			next-level-cache = <&l2_0>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_0: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -76,6 +81,11 @@ cpu1: cpu@100 {
- 			next-level-cache = <&l2_1>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_1: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -95,6 +105,11 @@ cpu2: cpu@200 {
- 			next-level-cache = <&l2_2>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_2: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -114,6 +129,11 @@ cpu3: cpu@300 {
- 			next-level-cache = <&l2_3>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl0 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl0 SLAVE_EPSS_L3_SHARED>;
- 			l2_3: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -133,6 +153,11 @@ cpu4: cpu@10000 {
- 			next-level-cache = <&l2_4>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_4: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -158,6 +183,11 @@ cpu5: cpu@10100 {
- 			next-level-cache = <&l2_5>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_5: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -177,6 +207,11 @@ cpu6: cpu@10200 {
- 			next-level-cache = <&l2_6>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_6: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -196,6 +231,11 @@ cpu7: cpu@10300 {
- 			next-level-cache = <&l2_7>;
- 			capacity-dmips-mhz = <1024>;
- 			dynamic-power-coefficient = <100>;
-+			operating-points-v2 = <&cpu4_opp_table>;
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>,
-+					<&epss_l3_cl1 MASTER_EPSS_L3_APPS
-+					 &epss_l3_cl1 SLAVE_EPSS_L3_SHARED>;
- 			l2_7: l2-cache {
- 				compatible = "cache";
- 				cache-level = <2>;
-@@ -285,6 +325,176 @@ cluster_sleep_apss_rsc_pc: cluster-sleep-1 {
- 		};
- 	};
- 
-+	cpu0_opp_table: opp-table-cpu0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-1267200000 {
-+			opp-hz = /bits/ 64 <1267200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1459200000 {
-+			opp-hz = /bits/ 64 <1459200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1536000000 {
-+			opp-hz = /bits/ 64 <1536000000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1862400000 {
-+			opp-hz = /bits/ 64 <1862400000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1939200000 {
-+			opp-hz = /bits/ 64 <1939200000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2016000000 {
-+			opp-hz = /bits/ 64 <2016000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2265600000 {
-+			opp-hz = /bits/ 64 <2265600000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2361600000 {
-+			opp-hz = /bits/ 64 <2361600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2457600000 {
-+			opp-hz = /bits/ 64 <2457600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2553600000 {
-+			opp-hz = /bits/ 64 <2553600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1708800 * 32)>;
-+		};
-+	};
-+
-+	cpu4_opp_table: opp-table-cpu4 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-1267200000 {
-+			opp-hz = /bits/ 64 <1267200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1363200000 {
-+			opp-hz = /bits/ 64 <1363200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1459200000 {
-+			opp-hz = /bits/ 64 <1459200000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1536000000 {
-+			opp-hz = /bits/ 64 <1536000000>;
-+			opp-peak-kBps = <(1555200 * 4) (921600 * 32)>;
-+		};
-+
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1862400000 {
-+			opp-hz = /bits/ 64 <1862400000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-1939200000 {
-+			opp-hz = /bits/ 64 <1939200000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2016000000 {
-+			opp-hz = /bits/ 64 <2016000000>;
-+			opp-peak-kBps = <(1708800 * 4) (1228800 * 32)>;
-+		};
-+
-+		opp-2112000000 {
-+			opp-hz = /bits/ 64 <2112000000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2188800000 {
-+			opp-hz = /bits/ 64 <2188800000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2265600000 {
-+			opp-hz = /bits/ 64 <2265600000>;
-+			opp-peak-kBps = <(2092800 * 4) (1555200 * 32)>;
-+		};
-+
-+		opp-2361600000 {
-+			opp-hz = /bits/ 64 <2361600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2457600000 {
-+			opp-hz = /bits/ 64 <2457600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1612800 * 32)>;
-+		};
-+
-+		opp-2553600000 {
-+			opp-hz = /bits/ 64 <2553600000>;
-+			opp-peak-kBps = <(3196800 * 4) (1708800 * 32)>;
-+		};
-+	};
-+
- 	dummy-sink {
- 		compatible = "arm,coresight-dummy-sink";
- 
--- 
-2.43.0
+Cheers,
+Benno
 
 
