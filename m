@@ -1,178 +1,194 @@
-Return-Path: <linux-kernel+bounces-574072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52184A6E04B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:55:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8924CA6E04C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7757F3AC221
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E121888341
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228D7263F47;
-	Mon, 24 Mar 2025 16:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7217D263F45;
+	Mon, 24 Mar 2025 16:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYSAXdYo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o44wxi8w"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ECA33C5;
-	Mon, 24 Mar 2025 16:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742835335; cv=none; b=qkgjxLWGW9GOPymqt1YpG8ISaecs1QQkgnz2WqWjFnhX2MStwupu7DJOgxzBU0IqTNJ8BNxlUo3fpUVQFbcGpHsxPLCqlvvV0xOVoYGZIVvRQAFeoxoBaem10IYNS9POEMXVxNwUMvC5GphEVa5fVbQQxqTgjazp9arTemmeShA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742835335; c=relaxed/simple;
-	bh=leI/26fAMdgexlql7vDFs6dgMQzJt9QqAf7u9gfEMO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oiy+sQV3XNqBxV3Yt5CTbuH1xeWzl+vcRl09a53jwRbfbmnSfRU0yxYOXLmY+MGfTEKm2eueamdWIzOJ+zZwH0gx2UcVqxGbyei7EVHH4ah/qYHtAE3AJNMVzqUfVLxOOF1SJXXMDr4xdtZEBNFbk1yL6SzBeq+844rKsSKbDD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYSAXdYo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3487C4CEE9;
-	Mon, 24 Mar 2025 16:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742835334;
-	bh=leI/26fAMdgexlql7vDFs6dgMQzJt9QqAf7u9gfEMO4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JYSAXdYoQskTzAicwQysyjewZ7NgWvm2mB+vWKjVTyvbGNjJC6Mab0i8SvwvUHRe9
-	 MKJcJgxQ5E2WckMD4Sm54HxuHHBk+u+IFwN0Iq83FhptK9Sa3Kxa6dStg4XQibQRzT
-	 rGPzsm1oSPNaeDBF/tjXjbbvpttx6xLEfAtAhkQ58ljQn4nmasDhHb641OnLmKFla0
-	 YB1YcJ+r3nxZGoZH6Dqiu8i1lofuhvZViOqh4B0JEY5pTMwyYxZ6+bEx1166zmm9Uf
-	 P3ejB1+JDH+XGkSpJtIvSJ4lGMXl3ycbwTrjzP1drYVbfctBYrDnIgQyrYLxSA1g0j
-	 rp4SKjETLLi8g==
-Date: Mon, 24 Mar 2025 11:55:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 01/34] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-Message-ID: <20250324165533.GA521455-robh@kernel.org>
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-1-d08943702707@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2878F263F32
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742835359; cv=fail; b=f8IpeCctS0soFL3ZGHXfFkoXjv2BTlpqgqbpbuWwKgsujP96evlQeYXiSXNUblMo/ZtIJkgxEBqPhx/OL307d6GnpFvcqPqIx9Hhv5AO/yD/8nW4acIOPL9PICRL+5aw2rHCY7Cj3cdDOZLcJaOuIgP0EzxgrG5Nhpp+iPK2oYA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742835359; c=relaxed/simple;
+	bh=XcXL9+HPq6psH7z9yI5S6utKfcdy6p6NEB28edFpKIU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ViuX29MUmHWP1EUTPOPle/VY9CkChpE+4tJPSXAZg/DdY9FVGlPDTYihmk1f/urp86fmhZohTkpSemYJbZEF7CQDCDAY/dJ22dPAxevNOC5YlexSMQNGthAU8JdH2gpj6K1RPZs/+pvGt1dOHHAE8PGP0Ur0Ea9ueH0sfluAmJI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=o44wxi8w; arc=fail smtp.client-ip=40.107.223.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qKOUDxcxt4zB5sxeCOZEiMht0m+pRwBTEXdJJ+VeJB/VizxjlePIFZoBYapLKFvcTYADggCqmmffiShIyPHyzFw30xd24KWlOGfqG8Kx2DfLnXrRdBnaEYR92tGZy7vfsA3iFVBYXN2DnBj8YNOi98HT7yEWhkxCKOSyiX2tVyD3fpxwia//l+PkQQy0AFC+YKvUEnU6c2HD8sus92KnHYVFuWsNwsuhlb+n6GiIqOcyCgbVSlKr+H2Ox1jSVtM0qN4o4Y5V6byyJpReO40p3OzXgU9SoxCNo+uosAwZ2MOPRL4Eam538s+OchhXhF+lM5gfLGrBhX5zEVDR3kaUaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RD8OCyuo2IfhufN/0WYez2LQ8LNp8oHHFeezgpKotyg=;
+ b=WalURjekN1NwRCpASgGHS6n5wrW5cQVc8fMsCxpB50kSGgmOJLCXiZOfqrryar+6HuMMio4zrsVp5XGLnklWNfKsbgR+Ga+TRE1xk97IYMvj0f+Czfu7/GEPbswliXQRG4O8ZFVsiauPdxnntT7Ked41rg9aw/K3DWo5XOVqleI1xY2QIYIkYtC1zpcpQBRfLNQ8HQDxLmi1pf+2LHPSrxY0BphKzv9OrLNA++2MPbs2VHzRnFGNNPtM8JmpMk4p5pM5t0iOKMLXM3mOC3tgZsHG6W5wcEcggq9fWZZMWx5gBCK73kTA6rp6S5AqRf9V0F0Prd8JvjnBk8BFDruicw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RD8OCyuo2IfhufN/0WYez2LQ8LNp8oHHFeezgpKotyg=;
+ b=o44wxi8wWDTuAyfJx/yyjlGAY+ZDa7u/PWFN+uEYIJPWmGRwa1hJKaLQKQoYqBIFPrUI5YXJo5/XRuhENBFQhnu7u6G+puqJwcXmTazEkDH9p/rL7H0TKkui/Y7d7HfIb5O5WmBOooHj+OZZMlL2C3olF3Jm17u9fVSRvapzSrJ9bX6m4OEhyJ8XkS94iZlIbUE84oigbJvfwE89FTsGrHMFsaTYXJtvCEZXilLt+qe1JNYJwJkCRURjLoyPzuMVJURoN3zEEKE6klW488J/NjDCjALmXkRHqk6YefUvREsYbaduGC5QD8yWr44j7mVi5+C/FrcwkdvgbuGzdrt/nQ==
+Received: from DS7PR03CA0271.namprd03.prod.outlook.com (2603:10b6:5:3ad::6) by
+ CH2PR12MB4216.namprd12.prod.outlook.com (2603:10b6:610:a8::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.42; Mon, 24 Mar 2025 16:55:55 +0000
+Received: from DS3PEPF000099E0.namprd04.prod.outlook.com
+ (2603:10b6:5:3ad:cafe::e8) by DS7PR03CA0271.outlook.office365.com
+ (2603:10b6:5:3ad::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.40 via Frontend Transport; Mon,
+ 24 Mar 2025 16:55:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS3PEPF000099E0.mail.protection.outlook.com (10.167.17.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 16:55:54 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
+ 2025 09:55:48 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Mar 2025 09:55:47 -0700
+Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 24 Mar 2025 09:55:47 -0700
+Date: Mon, 24 Mar 2025 09:55:46 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Nathan Chancellor <nathan@kernel.org>, <kevin.tian@intel.com>,
+	<robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] iommu: Drop sw_msi from iommu_domain
+Message-ID: <Z+GOkl21ZLtE3B/e@nvidia.com>
+References: <cover.1741294235.git.nicolinc@nvidia.com>
+ <6d4b493d20926c8d14e29bc776639cdcf2095146.1741294235.git.nicolinc@nvidia.com>
+ <20250324162558.GA198799@ax162>
+ <Z+GK98/VSvYl518j@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250323-s2mpg10-v1-1-d08943702707@linaro.org>
+In-Reply-To: <Z+GK98/VSvYl518j@nvidia.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099E0:EE_|CH2PR12MB4216:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e213eed-756a-4505-57ac-08dd6af4bdfd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G5yvqneJApnO/WGwY8JS4kHBrqjg0+WzSLIfmeLZGNi2Xne4YAyYojR9XJ/L?=
+ =?us-ascii?Q?8RbL8/eYIl4r4TTHY0v52I1HOOxWnbRcNkPsqRSMRrzM97HumHx4J0Ubww3X?=
+ =?us-ascii?Q?741NBvT7vnGJ3q2+tmCBcIVkGq9KqFhTmXtt6+0jOXHQnC9uVOZOzS2qSpDd?=
+ =?us-ascii?Q?eskXIk92qzr9K23zqxOrmFkyiZJ4bosGmwbZtCi7wzB5aUwnYL1cBe0A7HWa?=
+ =?us-ascii?Q?tGLT+ljjfKVItMgOc2avGCpjHWhM6iaDs2On/HMKEkV8NfH0gXOjyV+ghtU9?=
+ =?us-ascii?Q?RnNTDuepp3s8I1/f80YIeBR85aDotOEADj82gY6O69egsYL3lY4Qapyqe5cl?=
+ =?us-ascii?Q?kKUXdt1KVNYLk3fBlXE00uBTrBRIIglyMR6UDNLApQaC28dDNipbJNQLsvUU?=
+ =?us-ascii?Q?UFHZNRxN3eYVHwrSGM/bExxnlGan+34mLSlhJvoZqd2maApXcOt+zJvyUN7e?=
+ =?us-ascii?Q?9JQ7cyeU+S95xxesmeev21FfCBApLLxllUmEpbOpy/BlGE2IT7ecBIFtEHq+?=
+ =?us-ascii?Q?MZCnP8VsQThHcmhQmUxlGd9nJ7kTRhtCK8BF4zljdK8io7L4mU9QrhfqhFl6?=
+ =?us-ascii?Q?nIy2DAvHK1x4rF9nR7HkFZt2/qxTKl5xTYo8DJBmIaRZJrrtdz3uJ3m1cBy8?=
+ =?us-ascii?Q?c+0XV5OzNWm8AgQoz3dhx8mQDunDWoD05z2DPAr/NE6urtJl+SNZWdhOfLLs?=
+ =?us-ascii?Q?bjQZaRL5UrtR+M2LH2/xwBS9GDgjPbu0TclFZh1z0T3lrFXF16Nxd/+cph8+?=
+ =?us-ascii?Q?oNDQd/eyn+FMLK8kQl1Zdm4WaeAIDPG/7FfLiONr4VFJlwZTEehc1wSSrW4L?=
+ =?us-ascii?Q?uELP1nVRqyDKbBSQuhV8H/iJCCyza9PtrFpfTWCUFNiDmewVsvsKzVcDvHSA?=
+ =?us-ascii?Q?grzh1kuuA+JcFEsFPpg0ZGyMXxiAC7F1KUCkVqsBO4mqLxOsYcl+JMAdx38B?=
+ =?us-ascii?Q?zLMmeIUugJR7SpNbBP/oF0RaMM2A56yoIV8xbrFXkuw6FKHglAnxXxikCkKp?=
+ =?us-ascii?Q?hNfTKPivaabKjuKWF4LJYTACV3pz7AvSTjEfrI90QniXELFYGD9HWRnJB4Dl?=
+ =?us-ascii?Q?fVjVWZfnZGElcZI5POJhHiOCB0uj9lpsMYU7dTK+jt1oX1cMie5rRfp/cmaT?=
+ =?us-ascii?Q?1AtNuW2a9PhiOuTJe5hpoE6EGpi9exqSEZPMba8LeRfgCOlQmF7paMqw0Oqz?=
+ =?us-ascii?Q?LW8079KKD5KPuEHzIVmb6NDOfFys92TlLDIuFb1dfovFdxI5E44PtlEsuosm?=
+ =?us-ascii?Q?xr7RVmOji3VxKsSXvL83weSKUC1xArJxwsvCM9GtmCfk6BV7W30gO16SDTdy?=
+ =?us-ascii?Q?S8Eq0ib+N+frvqISMq3rreAKQnkqtKaRgn4QC92b56IKD0KRZp2oDzl9OPQA?=
+ =?us-ascii?Q?rWEsYc7antfoGcnDUAO8llCvYjmRyymDdH3lU9V3gUpo8IAbRvHOrbHksl3y?=
+ =?us-ascii?Q?DpRqjl8eCIqUL7UsdtPUBNr8bzY/coGf9nCwK7DwFEkL+RPBCgHO1vDSO+i2?=
+ =?us-ascii?Q?/K+MUFK5T8kSN28=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 16:55:54.7446
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e213eed-756a-4505-57ac-08dd6af4bdfd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099E0.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4216
 
-On Sun, Mar 23, 2025 at 10:39:17PM +0000, André Draszik wrote:
-> The Samsung S2MPG10 PMIC is similar to the existing PMICs supported by
-> this binding.
+On Mon, Mar 24, 2025 at 01:40:23PM -0300, Jason Gunthorpe wrote:
+> On Mon, Mar 24, 2025 at 09:25:58AM -0700, Nathan Chancellor wrote:
 > 
-> It is a Power Management IC for mobile applications with buck
-> converters, various LDOs, power meters, RTC, clock outputs, and
-> additional GPIOs interfaces.
+> > I bisected a loss of networking on one of my machines to this change as
+> > commit e009e088d88e ("iommu: Drop sw_msi from iommu_domain") in -next.
 > 
-> Unlike other Samsung PMICs, communication is not via I2C, but via the
-> Samsung ACPM firmware, it therefore doesn't need a 'reg' property but a
-> handle to the ACPM firmware node instead.
+> Okay wow, I will drop this series from the tree if I don't see a
+> resolution in a few days. We can try again next cycle, thank you for
+> testing and bisect!
+> 
+> > At this change, I see:
+> > 
+> >   [  +0.000000] Linux version 6.14.0-rc2-00033-ge009e088d88e (nathan@ax162) (aarch64-linux-gcc (GCC) 14.2.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT_DYNAMIC Mon Mar 24 08:57:49 MST 2025
+> >   ...
+> >   [  +0.002355] fsl_mc_bus NXP0008:00: Adding to iommu group 0
+> >   [  +0.000533] fsl_mc_bus NXP0008:00: MC firmware version: 10.28.1
+> >   [  +0.002565] fsl_mc_dprc dprc.1: DMA mask not set
+> >   [  +0.019255] fsl_mc_dprc dprc.1: Adding to iommu group 1
+> >   [  +0.046820] fsl_mc_dprc dprc.1: Failed to allocate IRQs
+> 
+> I guess it is tripping up going through iommu_dma_prepare_msi()
+> somehow?
+> 
+> Maybe fsl bus is special and doesn't manage to set
+> IOMMU_COOKIE_DMA_IOVA for some reason?
+> 
+> I wonder if this is not right:
+> 
+> +               default:
+> +                       ret = -EOPNOTSUPP;
+> +                       break;
+> 
+> And it should be just break instead (return 0) which is what was
+> happening before?
 
-Can it be a child node of the ACPM node instead?
+Yea, I found the diff here too.
 
-> 
-> S2MPG10 can also act as a system power controller allowing
-> implementation of a true cold-reset of the system.
-> 
-> Support for the other components will be added in subsequent future
-> patches.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  .../devicetree/bindings/mfd/samsung,s2mps11.yaml   | 34 ++++++++++++++++++++--
->  1 file changed, 32 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> index ac5d0c149796b6a4034b5d4245bfa8be0433cfab..ae8adb80b3af7ec3722c2a5718ad8fddf0a5df34 100644
-> --- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> @@ -20,6 +20,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - samsung,s2mpg10-pmic
->        - samsung,s2mps11-pmic
->        - samsung,s2mps13-pmic
->        - samsung,s2mps14-pmic
-> @@ -43,6 +44,12 @@ properties:
->      description:
->        List of child nodes that specify the regulators.
->  
-> +  exynos,acpm-ipc:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
+Nathan, would you please give it a try by removing this
+	ret = -EOPNOTSUPP;
+?
 
-Don't need '|' if no formatting to preserve.
-
-> +      Phandle to the ACPM node for when ACPM is used to communicate with the
-> +      PMIC, rather than I2C.
-> +
->    samsung,s2mps11-acokb-ground:
->      description: |
->        Indicates that ACOKB pin of S2MPS11 PMIC is connected to the ground so
-> @@ -58,16 +65,39 @@ properties:
->        reset (setting buck voltages to default values).
->      type: boolean
->  
-> +  system-power-controller: true
-> +
->    wakeup-source: true
->  
->  required:
->    - compatible
-> -  - reg
-> -  - regulators
->  
->  additionalProperties: false
->  
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,s2mpg10-pmic
-> +    then:
-> +      properties:
-> +        regulators: false
-> +        samsung,s2mps11-acokb-ground: false
-> +        samsung,s2mps11-wrstbi-ground: false
-> +
-> +      required:
-> +        - exynos,acpm-ipc
-> +
-> +    else:
-> +      properties:
-> +        exynos,acpm-ipc: false
-> +        system-power-controller: false
-> +
-> +      required:
-> +        - reg
-> +        - regulators
-> +
->    - if:
->        properties:
->          compatible:
-> 
-> -- 
-> 2.49.0.395.g12beb8f557-goog
-> 
+Thanks
+Nicolin
 
