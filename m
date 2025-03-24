@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-573412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA65A6D6DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:03:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAD7A6D694
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DABD188EC3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D6A73B18BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7B325D526;
-	Mon, 24 Mar 2025 09:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027A225D219;
+	Mon, 24 Mar 2025 08:48:36 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C129ABA36;
-	Mon, 24 Mar 2025 09:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B080A136E37;
+	Mon, 24 Mar 2025 08:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806996; cv=none; b=qiPRPF7+ILMv1H5kOXMaFShOw8HvbicmlLcoaf4XEwyufhtWk6/jUfk9NUHW6wiw5Jh0hdw31p+XPTtuuQB0QJ/C9AogMIFUCAM8+HN9zIC7/dvkcc3EKyDK/CmU27/vfMAiSYK9jYh2yHkDPFD5SMemTJN/lJAr2WmnZD/v8S4=
+	t=1742806115; cv=none; b=SxpZS5ennKrsgCwjm2xGo6I+ALuE5xvSnV91jAeclPssauu8k4yugqgJ0hmv0guYKSVSsPtkYJim4ea1kBJY8I8FOi4Vof+f17TWyJnSKn0oPqdnbAkATr2Xm6Kjsl2pSndCoXWt0kZmTgHgBA86TawhVxx45+mGnMZCYdC1lgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806996; c=relaxed/simple;
-	bh=hnvXGF50uBsNkaYmmEw/Gu4b4XAYpCJ1akHPT7SsV5s=;
+	s=arc-20240116; t=1742806115; c=relaxed/simple;
+	bh=wkcrYRaEYcsN4FhJWihvW9cIGCTYtG5ubFrbcw3oRWA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=URTDvxNchs5J9xEhlEa41WJxyyQeQl80ErShQ5G9tBbMQ3GGJZu5UoqfcqDvBccKYN0ja57bVAVnoedfYstprcFfumhmBoYUyYXP0mr4ij/AkcQYusHdQXNXU3lOTDGONzbsP0Au794uFptl62nBrTXQ+Jek4E2JDUa1iaKTFb0=
+	 MIME-Version; b=f2SJ8YkYEqXJ/fifXEehDcWPApu1RG7qhDLDr1RBNZ3K3+9k3K1J3hQ+fXcUfDeHPoqqI7MXo9obau6zwEFqTAuFeIVngE3njIK4gyhO6CqVXUXwK67rc2LAQPhBLZoKU7Kf/G2dWV2IWImBVVYMkG0QMbnf83Gd729wRg5EYdQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-85-67e11c41a64b
+X-AuditID: a67dfc5b-681ff7000002311f-cf-67e11c5ac948
 From: Rakie Kim <rakie.kim@sk.com>
 To: Gregory Price <gourry@gourry.net>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>,
-	akpm@linux-foundation.org,
+Cc: akpm@linux-foundation.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
 	dan.j.williams@intel.com,
 	ying.huang@linux.alibaba.com,
 	david@redhat.com,
@@ -42,11 +42,11 @@ Cc: Joshua Hahn <joshua.hahnjy@gmail.com>,
 	honggyu.kim@sk.com,
 	yunjeong.mun@sk.com,
 	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
-Date: Mon, 24 Mar 2025 17:47:50 +0900
-Message-ID: <20250324084757.965-1-rakie.kim@sk.com>
+Subject: Re: [PATCH v3 2/3] mm/mempolicy: Support dynamic sysfs updates for weighted interleave
+Date: Mon, 24 Mar 2025 17:48:15 +0900
+Message-ID: <20250324084822.976-1-rakie.kim@sk.com>
 X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z91xsVv98wp7TVrq@gourry-fedora-PF4VCD3F>
+In-Reply-To: <Z91zCELAdts-l3Zp@gourry-fedora-PF4VCD3F>
 References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,70 +55,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXC9ZZnka6jzMN0g83bVC3mrF/DZjF96gVG
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsXC9ZZnkW6UzMN0gzU32CzmrF/DZjF96gVG
 	i6/rfzFb/Lx7nN1i1cJrbBbHt85jtzg/6xSLxeVdc9gs7q35z2qxek2GA5fHzll32T262y6z
-	e7QcecvqsXjPSyaPTZ8msXucmPGbxWPnQ0uP9/uusnl83iQXwBnFZZOSmpNZllqkb5fAlfF7
-	cjdzwS3eij37J7E0MN7i6mLk5JAQMJH4ePo4K4y97v4cxi5GDg42ASWJY3tjQEwRAVWJtivu
-	XYxcHMwCH5gk9m1tYAWJCwuES7TOEAXpZAEqmf/rOiOIzStgLLF06gsWiImaEg2X7jGBlHMK
-	mEmcX+UIEhYS4JF4tWE/VLmgxMmZT8DKmQXkJZq3zmYGWSUh8JxN4u2rl4wQcyQlDq64wTKB
-	kX8Wkp5ZSHoWMDKtYhTKzCvLTczMMdHLqMzLrNBLzs/dxAgM9WW1f6J3MH66EHyIUYCDUYmH
-	d8PL++lCrIllxZW5hxglOJiVRHiPsT5MF+JNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUgg
-	PbEkNTs1tSC1CCbLxMEp1cBoomy/k/PK7pl9mbv/BYf/XMncraHx5PLicEflLu6edxM/Lavs
-	iJarq/j4226/lYHJ4rzaPuUfd2J8j7HP4dC7mBTjKe+xrPgDS/2nY9p3tDKXzI2+IVy9X0PE
-	3X9HG1/v1qmsL3hmm79/nZ12weR203IGtYsmMRd2Rr3Pnq9oW332Unra4h1KLMUZiYZazEXF
-	iQBCdcCvcQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsXCNUNNS9dR5mG6wfOtUhZz1q9hs5g+9QKj
-	xdf1v5gtft49zm7x+dlrZotVC6+xWRzfOo/d4vDck6wW52edYrG4vGsOm8W9Nf9ZLQ5de85q
-	sXpNhsXvbSvYHPg8ds66y+7R3XaZ3aPlyFtWj8V7XjJ5bPo0id3jxIzfLB47H1p6vN93lc3j
-	220Pj8UvPjB5fN4kF8AdxWWTkpqTWZZapG+XwJXxe3I3c8Et3oo9+yexNDDe4upi5OSQEDCR
-	WHd/DmMXIwcHm4CSxLG9MSCmiICqRNsV9y5GLg5mgQ9MEvu2NrCCxIUFwiVaZ4iCdLIAlcz/
-	dZ0RxOYVMJZYOvUFC8RETYmGS/eYQMo5Bcwkzq9yBAkLCfBIvNqwH6pcUOLkzCdg5cwC8hLN
-	W2czT2DkmYUkNQtJagEj0ypGkcy8stzEzBxTveLsjMq8zAq95PzcTYzA8F5W+2fiDsYvl90P
-	MQpwMCrx8G54eT9diDWxrLgy9xCjBAezkgjvMdaH6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-	vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MOUdX2J74/Pivvup9GdOaryqx4kYGtVzrJq177Xmw
-	9szUimtNUraOHoueWN0yqpr9Vnjyr/hVsx8q77fRtTNKNfL88vxvhnwUL8+cSdd8On8WbVz1
-	c9UcV8kjm9zXhJ0X2H3Lnmf7s50Hwuz7y5m61s4+tfVyTem8J7ofVe9xJy+6fO91+eZyNyWW
-	4oxEQy3mouJEAGffsUdrAgAA
+	e7QcecvqsXjPSyaPTZ8msXucmPGbxWPnQ0uP9/uusnl83iQXwBnFZZOSmpNZllqkb5fAlfF4
+	xiu2giM8FS0bmxgbGH9xdjFyckgImEisWraeuYuRA8xuOF8OYrIJKEkc2xsDYooIqEq0XXHv
+	YuTiYBZ4xCRxun0pK0insEC8xJsr1xlBaliAapr2pICEeQWMJV6tO8YIMVxTouHSPSYQm1PA
+	TOL56iawViEBHolXG/YzQtQLSpyc+YQFxGYWkJdo3jqbGaL3OZvEvK5yCFtS4uCKGywTGPln
+	IWmZhaRlASPTKkahzLyy3MTMHBO9jMq8zAq95PzcTYzAQF9W+yd6B+OnC8GHGAU4GJV4eDe8
+	vJ8uxJpYVlyZe4hRgoNZSYT3GOvDdCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8Rt/KU4QE0hNL
+	UrNTUwtSi2CyTBycUg2MEh/k+Zf8d7i7M+vUQuPGdb+a/36pjjz+V3mKN/Prl1kCHVohc/mz
+	PLyTDK7u2bLrF7vgx5ipksapv0JX6009+cwt88On47ce7apaf+Xk2cNZ6TfMdve6zzbQYSru
+	nPVV9/OF7s23r16/oCAydd981d9XhbbYt3+rCeDJkA/KkrpkZmGebW/cqcRSnJFoqMVcVJwI
+	AJVHpOBwAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsXCNUNNSzdS5mG6QcNsG4s569ewWUyfeoHR
+	4uv6X8wWP+8eZ7f4/Ow1s8WqhdfYLI5vncducXjuSVaL87NOsVhc3jWHzeLemv+sFoeuPWe1
+	WL0mw+L3thVsDnweO2fdZffobrvM7tFy5C2rx+I9L5k8Nn2axO5xYsZvFo+dDy093u+7yubx
+	7baHx+IXH5g8Pm+SC+CO4rJJSc3JLEst0rdL4Mp4POMVW8ERnoqWjU2MDYy/OLsYOTgkBEwk
+	Gs6Xg5hsAkoSx/bGgJgiAqoSbVfcuxi5OJgFHjFJnG5fytrFyMkhLBAv8ebKdUaQGhagmqY9
+	KSBhXgFjiVfrjjGC2BICmhINl+4xgdicAmYSz1c3gbUKCfBIvNqwnxGiXlDi5MwnLCA2s4C8
+	RPPW2cwTGHlmIUnNQpJawMi0ilEkM68sNzEzx1SvODujMi+zQi85P3cTIzC8l9X+mbiD8ctl
+	90OMAhyMSjy8G17eTxdiTSwrrsw9xCjBwawkwnuM9WG6EG9KYmVValF+fFFpTmrxIUZpDhYl
+	cV6v8NQEIYH0xJLU7NTUgtQimCwTB6dUA2P33lOcxb8trv9bXZwmXGR/2vTX0sWGZ758vmBS
+	o29v5rngndNfU0FB7SxlthVT5ufeC2j3ZVdPb5WxOFEoVr7ooLyzdwHzTsY/rj8stZR/uV87
+	vyDMWLajaPub1tPHGtymNPqoF0U827JdP8RWYY/fU+788M7jCx91u1nb/TlpzCLRJG0WqMRS
+	nJFoqMVcVJwIAF5tHjlrAgAA
 X-CFilter-Loop: Reflected
 
-On Fri, 21 Mar 2025 10:03:29 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Fri, Mar 21, 2025 at 01:37:22PM +0900, Rakie Kim wrote:
-> > As you mentioned, I agree that Patch 1 may be a bit unclear.
-> > In fact, Patch 1 and Patch 2 share similar goals, and in my view,
-> > they only provide complete functionality when applied together.
+On Fri, 21 Mar 2025 10:09:12 -0400 Gregory Price <gourry@gourry.net> wrote:
+> On Thu, Mar 20, 2025 at 01:17:47PM +0900, Rakie Kim wrote:
+> > Previously, the weighted interleave sysfs structure was statically
+> > managed, preventing dynamic updates when nodes were added or removed.
 > > 
-> > Initially, I thought that Patch 1 was the fix for the original issue and
-> > considered it the candidate for a backport.
-> > However, upon further reflection, I believe that all changes in Patch 1
-> > through Patch 3 are necessary to fully address the underlying problem.
+> > This patch restructures the weighted interleave sysfs to support
+> > dynamic insertion and deletion. The sysfs that was part of
+> > the 'weighted_interleave_group' is now globally accessible,
+> > allowing external access to that sysfs.
 > > 
+> > With this change, sysfs management for weighted interleave is
+> > more flexible, supporting hotplug events and runtime updates
+> > more effectively.
+> > 
+> > Signed-off-by: Rakie Kim <rakie.kim@sk.com>
 > 
-> Patch 1 does address the immediate issue of calling kfree instead of the
-> appropriate put() routine, so it is fine to keep this separate.
-
-Understood. I will keep this patch as-is for now, as you suggested.
-
+> Reviewed-by: Gregory Price <gourry@gourry.net>
 > 
-> > Therefore, I now think it makes more sense to merge Patch 1 and Patch 2
-> > into a single patch, then renumber the current Patch 3 as Patch 2,
-> > and treat the entire set as a proper -stable backport candidate.
-> >
+> 1 nit
 > 
-> The set adds functionality and changes the original behavior of the
-> interface - I'm not clear on the rules on backports in this way.
+> > ---
+> >  mm/mempolicy.c | 70 ++++++++++++++++++++++----------------------------
+> >  1 file changed, 30 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > index 5950d5d5b85e..6c8843114afd 100644
+> > --- a/mm/mempolicy.c
+> > +++ b/mm/mempolicy.c
+> > @@ -3388,6 +3388,13 @@ struct iw_node_attr {
+> >  	int nid;
+> >  };
+> >  
+> > +struct sysfs_wi_group {
+> > +	struct kobject wi_kobj;
+> > +	struct iw_node_attr *nattrs[];
+> > +};
+> > +
+> > +static struct sysfs_wi_group *sgrp;
+> > +
 > 
-> Would need input from another maintainer on that.
+> sgrp -> wi_group?  Or something similar, sgrp is not very descriptive
+> for a global.
 > 
-> Either way, I would keep it separate for now in case just the first
-> patch is desired for backport.  Maintainers can always pick up the set
-> if that's desired.
-> 
-> (It also makes these changes easier to review)
 > ~Gregory
 
-In that case, I agree it's better to treat only Patch 1 as a backport
-candidate for now. As for the remaining patches, it would be more appropriate
-to discuss their inclusion with other maintainers at a later point.
+Yes, I agree. `wi_group` is more descriptive than `sgrp`. I will rename the
+structure to `wi_group` as suggested.
 
 Rakie
 
