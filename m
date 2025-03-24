@@ -1,72 +1,63 @@
-Return-Path: <linux-kernel+bounces-573976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538FAA6DF2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:01:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F82DA6DF34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4DB27A53D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4123A7C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA2D26156C;
-	Mon, 24 Mar 2025 16:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD24261584;
+	Mon, 24 Mar 2025 16:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqmepITp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYwYfGSZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB98250BEB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021E51CD1E4;
+	Mon, 24 Mar 2025 16:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832050; cv=none; b=diFr/sJhlc1f9trOhWOtCoqh6Zdz4TSNbuinTERtonL+79fILFWxb2LTHUyeaacuUfqycKUH8LkUdfez8ssV0ZXxpQq0YzCf5uv4HZAlYeHbmfial/+HRbhfy0yLcSNAdkireBg/m1vkJjOtv13O/DULSr5UeBI403SOrAFWPEQ=
+	t=1742832156; cv=none; b=ijQA8rdP2GDTQmzrUHSjo0fAJwVtm7HINBEGozSO3MEC93VX04mYvNb7Ikz9hbApAEyNLyO/Gbplq4M0gNzg54eCl5L7MdwknvRbJFKSDBjafcoTm30BpbNCMPAQtsxrkZtkQTAQc+HOJhVvPIvuqVxsfLsa4XViBK450w3aCjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832050; c=relaxed/simple;
-	bh=nsepdpyI/2xuzKhuRDEqeV/G99EfCkZ+x2I7tt8a45g=;
+	s=arc-20240116; t=1742832156; c=relaxed/simple;
+	bh=lO70/EyOTHsSUCsToe3wwdpu/s9KqX41Qnit5o85758=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLVuEOvU/aR/uddcur1JzP64KUkYg0ttfZEK9f3F+ROXK5NjUcaJP1wk0esW2bQBWx7wHlS18irrDe8cUAAlYIrzGVo4XpbymY6fwa7+Aqw8yhYtCSOBflC5eRiRDhAVHW7Z2zxljh4p6Bq//GHUAGuWCfV6GIuug4fVb7hpS3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqmepITp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742832047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MEzePZHL5YOYb8ZhIKkkzL7fHN+3KRqzc+zq67vlHtI=;
-	b=RqmepITpa6zkp/QFvuF18N2dvZCvaB5ocZqoBEbUdvOduqTd2EHZsKg3B+LrICrTjIHljK
-	MvI24OsXbnxXkG9HryIzFDcRKbJRNnvgMOVa2RRyxDaznAFZL3ndP0yJpUTOo41EVeUhCa
-	gegDifTiHf8yxatTow7kLPVDDnze6jU=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-cF6EvRTIOYSZ3zi_G86ECw-1; Mon,
- 24 Mar 2025 12:00:43 -0400
-X-MC-Unique: cF6EvRTIOYSZ3zi_G86ECw-1
-X-Mimecast-MFC-AGG-ID: cF6EvRTIOYSZ3zi_G86ECw_1742832042
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70E571800EC5;
-	Mon, 24 Mar 2025 16:00:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7E901180175F;
-	Mon, 24 Mar 2025 16:00:37 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 24 Mar 2025 17:00:08 +0100 (CET)
-Date: Mon, 24 Mar 2025 17:00:03 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
-	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com, mjguzik@gmail.com
-Subject: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-Message-ID: <20250324160003.GA8878@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V42JDEuTS1kfuPMLiVOnuz57rRzB//JemqB80UurZKDon6g2T11K4JtJz/ZvPHWVtzikWTJ5RLXQ80HfK3dNDTESqzU1OsJHjDFxqgeMe2Nt97jjKnq+mVeZVCxBpKi9cd6Hr1sRL/2pk6i5lyf5AUjBYVVcpGl0IkEvfBtmdlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYwYfGSZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EC6C4CEDD;
+	Mon, 24 Mar 2025 16:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742832155;
+	bh=lO70/EyOTHsSUCsToe3wwdpu/s9KqX41Qnit5o85758=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fYwYfGSZVzY31upbyL96Mn2jcC6wRm9sskzWthKcQ05zB6hH9VZVivy37hpuecwwl
+	 xc2cFdT2vZ5M7IjIYVJ6TZuD6OUHfwsb26FmHK6iijmHFu2rBYCrdXeACBHEqImCbu
+	 OH06I7Goiyrr9tiCwAvThh7vEAbwwHqzkhjTRWGsDcDJ0Jhr/y6cL6cEme8Wz8+/pO
+	 Yqe5AYNV3x7zfSs1n3TOg8GMJluf8wXbd9OiiqYwdjq0lhiy93wOFoWpfycs8xnFL0
+	 5XqidcdArCoZQE38NAu06CxseJ9qKIeK02KWZG/Sk34UbSU9a6zm2heVsfXUyDqjPY
+	 ew4royVay7aKw==
+Date: Mon, 24 Mar 2025 11:02:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: "paul-pl.chen" <paul-pl.chen@mediatek.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, chunkuang.hu@kernel.org,
+	angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com,
+	p.zabel@pengutronix.de, jason-jh.lin@mediatek.com,
+	nancy.lin@mediatek.com, singo.chang@mediatek.com,
+	xiandong.wang@mediatek.com, sirius.wang@mediatek.com,
+	sunny.shen@mediatek.com, fshao@chromium.org, treapking@chromium.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v2 05/15] dt-bindings: display: mediatek: add OUTPROC
+ yaml for MT8196
+Message-ID: <20250324160234.GA113887-robh@kernel.org>
+References: <20250321093435.94835-1-paul-pl.chen@mediatek.com>
+ <20250321093435.94835-6-paul-pl.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,91 +66,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250321093435.94835-6-paul-pl.chen@mediatek.com>
 
-check_unsafe_exec() sets fs->in_exec under cred_guard_mutex, then execve()
-paths clear fs->in_exec lockless. This is fine if exec succeeds, but if it
-fails we have the following race:
+On Fri, Mar 21, 2025 at 05:33:34PM +0800, paul-pl.chen wrote:
+> From: Paul-pl Chen <paul-pl.chen@mediatek.com>
+> 
+> Add mediate,outproc.yaml to support OUTPROC for MT8196.
+> MediaTek display overlap output processor, namely OVL_OUTPROC
+> or OUTPROC,handles the post-stage of pixel processing in the
+> overlapping procedure.
+> 
+> Signed-off-by: Paul-pl Chen <paul-pl.chen@mediatek.com>
+> ---
+>  .../display/mediatek/mediatek,outproc.yaml    | 54 +++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,outproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,outproc.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,outproc.yaml
+> new file mode 100644
+> index 000000000000..f42e9abc1436
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,outproc.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/mediatek/mediatek,outproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek display overlap output processor
+> +
+> +maintainers:
+> +  - Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> +  - Philipp Zabel <p.zabel@pengutronix.de>
+> +
+> +description: |
 
-	T1 sets fs->in_exec = 1, fails, drops cred_guard_mutex
+Don't need '|' if no formatting to preserve.
 
-	T2 sets fs->in_exec = 1
+> +  MediaTek display overlap output processor, namely OVL_OUTPROC or OUTPROC,
+> +  handles the post-stage of pixel processing in the overlapping procedure.
+> +  OVL_OUTPROC manages pixels for gamma correction and ensures that pixel
+> +  values are within the correct range.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8196-outproc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        disp_ovl0_outproc0: outproc@32970000 {
 
-	T1 clears fs->in_exec
+Drop unused labels.
 
-	T2 continues with fs->in_exec == 0
-
-Change fs/exec.c to clear fs->in_exec with cred_guard_mutex held.
-
-Reported-by: syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/67dc67f0.050a0220.25ae54.001f.GAE@google.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- fs/exec.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 506cd411f4ac..17047210be46 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1229,13 +1229,12 @@ int begin_new_exec(struct linux_binprm * bprm)
- 	 */
- 	bprm->point_of_no_return = true;
- 
--	/*
--	 * Make this the only thread in the thread group.
--	 */
-+	/* Make this the only thread in the thread group */
- 	retval = de_thread(me);
- 	if (retval)
- 		goto out;
--
-+	/* see the comment in check_unsafe_exec() */
-+	current->fs->in_exec = 0;
- 	/*
- 	 * Cancel any io_uring activity across execve
- 	 */
-@@ -1497,6 +1496,8 @@ static void free_bprm(struct linux_binprm *bprm)
- 	}
- 	free_arg_pages(bprm);
- 	if (bprm->cred) {
-+		/* in case exec fails before de_thread() succeeds */
-+		current->fs->in_exec = 0;
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
-@@ -1618,6 +1619,10 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
- 	 * suid exec because the differently privileged task
- 	 * will be able to manipulate the current directory, etc.
- 	 * It would be nice to force an unshare instead...
-+	 *
-+	 * Otherwise we set fs->in_exec = 1 to deny clone(CLONE_FS)
-+	 * from another sub-thread until de_thread() succeeds, this
-+	 * state is protected by cred_guard_mutex we hold.
- 	 */
- 	n_fs = 1;
- 	spin_lock(&p->fs->lock);
-@@ -1862,7 +1867,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 
- 	sched_mm_cid_after_execve(current);
- 	/* execve succeeded */
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 	rseq_execve(current);
- 	user_events_execve(current);
-@@ -1881,7 +1885,6 @@ static int bprm_execve(struct linux_binprm *bprm)
- 		force_fatal_sig(SIGSEGV);
- 
- 	sched_mm_cid_after_execve(current);
--	current->fs->in_exec = 0;
- 	current->in_execve = 0;
- 
- 	return retval;
--- 
-2.25.1.362.g51ebf55
-
-
+> +            compatible = "mediatek,mt8196-outproc";
+> +            reg = <0 0x32970000 0 0x1000>;
+> +            clocks = <&ovlsys_config_clk 49>;
+> +            interrupts = <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH 0>;
+> +        };
+> +    };
+> -- 
+> 2.45.2
+> 
 
