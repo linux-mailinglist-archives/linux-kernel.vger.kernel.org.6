@@ -1,102 +1,68 @@
-Return-Path: <linux-kernel+bounces-573984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D40A6DF3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D80A6DF3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D563AC1FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71246188639E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A28E2620D8;
-	Mon, 24 Mar 2025 16:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THW8rtgm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F34261586;
+	Mon, 24 Mar 2025 16:05:59 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613BF25D1E1;
-	Mon, 24 Mar 2025 16:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA716F06B;
+	Mon, 24 Mar 2025 16:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832382; cv=none; b=FZs/qwA4ibCrl4bnM6Lwk0BYVEBbKokgcEdXJ7H/ZNPY4w+F8mdc6/vEHYqIk/qZqUh/mgRQmc67OolQ68Gojcc+D1z7H4xt28dHfnvpg7iCPP6aaxX0eIJCfSalnIq0qLBKx6j6uMfahB/41NP3cfOVYCdUwJgKu3kVJtFj8QI=
+	t=1742832358; cv=none; b=DasXn/34LAZEqNqZoenD5KZfOFM5tit/+wS2OirgDqn0FOCGWlva/zg9sI/SYlCrl8wDihSVxCxCvXgekfxwDt3qcqw5oOVSEK7nPz/dR26CY3IUymLyF3w81TnIWQSzU66S9ik6AWdOIf4fDk1tH0u1w142nlp8yzn7k+7ajwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832382; c=relaxed/simple;
-	bh=NBr9hauWH0hXl44CcQwq1LSrc1ZJnCp50KRC5y+Qgg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g5eX4wUFMQakfGxniSK4Z0a/JQ3Ca8jFs/ILjKORuZ0gDoz9zvdGAx3/+it3+txNCsxpPLAcXWkL7INMfdbJlsz4MCHu2BBsibSdf0a7vE2uLQ9YBcvecKRBY4LTT0a3QX8cFGtvV5OzA4Ce7Bpmr+vFK9zNLsPcRtauDCa8pW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THW8rtgm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4131C4CEDD;
-	Mon, 24 Mar 2025 16:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742832382;
-	bh=NBr9hauWH0hXl44CcQwq1LSrc1ZJnCp50KRC5y+Qgg4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=THW8rtgmTexXtErwlE/Ud8rm2P6b/IxelVZg24TshIRoAlKTxBAvrz+yNMeGO8yi6
-	 0AWNS+7R9ZxPJD2jk0QPJfqNUNXV5ZOnRAV/IU9H8PHsAoU6YFmOsed+SE+F9e5PFD
-	 lAlIWfMRYrIobUw2H3PzlFSdfiW93akUa5P4PCHk7EuFoCLFvHJ3OHRbCkR8Qf136G
-	 i83cgMFTISSUGH8MKkpfRXCwG5DoiU5nAD3Hcic2jia7pocpHSmBHonERCSVU89sk8
-	 3dZLg9W+5jWNb4y2jgdsE6rjRg2P2fV6tSFYbwNdFou2FyzR0/5Xd9aV6YGOOpRj6Z
-	 1CyBu+J6NhTnw==
-From: Borislav Petkov <bp@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: X86 ML <x86@kernel.org>,
-	KVM <kvm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] KVM: x86: Sort CPUID_8000_0021_EAX leaf bits properly
-Date: Mon, 24 Mar 2025 17:06:17 +0100
-Message-ID: <20250324160617.15379-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742832358; c=relaxed/simple;
+	bh=vL1/tCyN9FMgwjecz6QvgI4hFByZC2lX3OvWrZRKY3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iH0dpWtP9bWj/cKJ09LHw/QSFGCnm74x+3Psc0Wk1TNTV0+csNga8FWpwX2LSgm4zf74rsinVAEMcz/ZdTSNxo+mJGU6ikjMgByKgj4u0IJCmGfNc6+xVuF49RUtEYea99Mi8sKsYk2nVCrggRtMSpdO1+lKW8ieivJRz1G2f7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F28C4CEDD;
+	Mon, 24 Mar 2025 16:05:56 +0000 (UTC)
+Date: Mon, 24 Mar 2025 12:06:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: John Kacur <jkacur@redhat.com>
+Cc: Tomas Glozar <tglozar@redhat.com>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luis Goncalves <lgoncalv@redhat.com>
+Subject: Re: [PATCH 1/6] rtla/osnoise: Unify params struct
+Message-ID: <20250324120638.0629d4ee@gandalf.local.home>
+In-Reply-To: <e6a2d061-42bf-72c0-0e40-75bbe5b1e831@redhat.com>
+References: <20250320092500.101385-1-tglozar@redhat.com>
+	<20250320092500.101385-2-tglozar@redhat.com>
+	<e6a2d061-42bf-72c0-0e40-75bbe5b1e831@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On Thu, 20 Mar 2025 15:00:08 -0400 (EDT)
+John Kacur <jkacur@redhat.com> wrote:
 
-WRMSR_XX_BASE_NS is bit 1 so put it there, add some new bits as
-comments only.
+> > -#include "utils.h"
+> >  #include "osnoise.h"
+> >  
+> >  struct timerlat_params {
+> > --   
+> 
+> Reviewed-by: John Kacur <jkacur@redhat.com>
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kvm/cpuid.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Please trim your replies. I tend to stop scrolling if there's no comment
+after three page downs. But it is very annoying to have to scroll down an
+entire long patch to see a single reviewed-by tag :-/
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 121edf1f2a79..e98ab18f784b 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1160,6 +1160,7 @@ void kvm_set_cpu_caps(void)
- 
- 	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
- 		F(NO_NESTED_DATA_BP),
-+		F(WRMSR_XX_BASE_NS),
- 		/*
- 		 * Synthesize "LFENCE is serializing" into the AMD-defined entry
- 		 * in KVM's supported CPUID, i.e. if the feature is reported as
-@@ -1173,10 +1174,14 @@ void kvm_set_cpu_caps(void)
- 		SYNTHESIZED_F(LFENCE_RDTSC),
- 		/* SmmPgCfgLock */
- 		F(NULL_SEL_CLR_BASE),
-+		/* UpperAddressIgnore */
- 		F(AUTOIBRS),
- 		EMULATED_F(NO_SMM_CTL_MSR),
-+		/* FSRS */
-+		/* FSRC */
- 		/* PrefetchCtlMsr */
--		F(WRMSR_XX_BASE_NS),
-+		/* GpOnUserCpuid */
-+		/* EPSF */
- 		SYNTHESIZED_F(SBPB),
- 		SYNTHESIZED_F(IBPB_BRTYPE),
- 		SYNTHESIZED_F(SRSO_NO),
--- 
-2.43.0
-
+-- Steve
 
