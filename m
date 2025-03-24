@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-574225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F83A6E236
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:23:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC60A6E23B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FBF7A55B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428AE3A973C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A1626463E;
-	Mon, 24 Mar 2025 18:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573862641C8;
+	Mon, 24 Mar 2025 18:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B2mmLRCt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RqDxtzo2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F31EB5B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB23210FB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840587; cv=none; b=Qcc7B+gGwOn+towgL4ti16788pheZS5SOm+MOswRsu6TMNwkWSVwlWUDCXKXQcdf4gg+Roz7mopMYWrB/Kj8JsU2m5kFrhWvE4Yt+vPuxu81/gfkRSTVWMOAGhj4DiDi/Od6ibCOqaq1+ZYHLPhTGE3Ba3kGZZU0NcLCLtdqURE=
+	t=1742840679; cv=none; b=JU3yEN86rz7U7JMMEhzPHt0ntDA1jFWE5J/S4dg31DqXo+8qsYS0VhFU5j3ynD2FJn0IJA9OPdHNMTgmlp66ur6qabNdEJKpO1Fx06FSQAW8S29KV2ZZbPA2TsaB8cQWNXMlaGE4WL5IPSWrxfDojnHTFNvmbQ0Lb82Z2FNrK4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840587; c=relaxed/simple;
-	bh=ZeRY07bNCq4ht4qtQOC4e9VFCeSCnYwVqOaj75U64GY=;
+	s=arc-20240116; t=1742840679; c=relaxed/simple;
+	bh=xXzfj9fQLP7hjMh90JgOK+ainmvisxrWtghTMWsJ100=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApWeSQIs7O1eA4sEMqSUf45ANcagjK3+m5yylRcYn/2l7hU65FtZfRWih8NsGtZC3CHdGv94dAPrjjcHoopxvOjhHGll8BN2bGF148US08eP/BnJ3NNc5nKWGJKLtxEHTYO80lVHly3ok3BcSKcp0Txt9zWU2PlMDjVaaI3kiJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B2mmLRCt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742840584;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q5FUeUf5qZFkxlfZh7QgAlQGxD5fCVQ/217Dc1NXrL8=;
-	b=B2mmLRCtpQvxM/WcG1XBtomhuOaHKUoldhAdU/N47Uv0nE4uQVhK9G92ZuwwLU4j90wpT3
-	KnU+HHRMtS98za+c3DNZa0UkGIScrff5yD7OmsLUS0+jD1CRMVfyKKoJOd1n9lVeLr7VJT
-	eFclFRR2FspiOMS1MSl948ZBJjlHEgM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-QeRIsDMqMCGxfRC2gqpXvQ-1; Mon,
- 24 Mar 2025 14:23:00 -0400
-X-MC-Unique: QeRIsDMqMCGxfRC2gqpXvQ-1
-X-Mimecast-MFC-AGG-ID: QeRIsDMqMCGxfRC2gqpXvQ_1742840579
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFB73196B356;
-	Mon, 24 Mar 2025 18:22:58 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.81.75])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 463C330001A1;
-	Mon, 24 Mar 2025 18:22:56 +0000 (UTC)
-Date: Mon, 24 Mar 2025 14:22:53 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: Filipe Xavier <felipeaggger@gmail.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, felipe_life@live.com
-Subject: Re: [PATCH v2 1/2] selftests: livepatch: add new ftrace helpers
- functions
-Message-ID: <Z+Gi/QEFPffEonTE@redhat.com>
-References: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
- <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUfsMg/8fMEfq1GA5vt45uKq856vBvj067ZktofjBa8r4oWnwrmld3pTmkYlrYna1v+C7BL/G/N0NFlSOKtgYs6mnHGTJUKLxNV28DjjrUAKWopGE2K7bFHKJSOhJEGqUgsmxbicyRhZBoCilcA7VS6qi+53H8qqbGJktUE3eAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RqDxtzo2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBE78C4CEDD;
+	Mon, 24 Mar 2025 18:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742840679;
+	bh=xXzfj9fQLP7hjMh90JgOK+ainmvisxrWtghTMWsJ100=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RqDxtzo2CL5SfoMu2IkjOsYyJqbZd+Gj9u6f9IHVhteFl9gHI+ip6cAYVAiAu6cjK
+	 +dEIljTLIDU4zY7Y5gAhE/PsztXy2C6ilGcLDx2F7kz/vpicPRlQxlOujsE2bhYA3/
+	 TIX5bUZQ/YpSP0MOA/z/DRTaMBvfkpI0rTzIlfpI=
+Date: Mon, 24 Mar 2025 11:23:16 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Tiffany Y. Yang" <ynaffit@google.com>
+Cc: Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2] binder: use buffer offsets in debug logs
+Message-ID: <2025032403-spout-unabashed-5df1@gregkh>
+References: <20250324180716.1012478-3-ynaffit@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,108 +58,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20250324180716.1012478-3-ynaffit@google.com>
 
-On Tue, Mar 18, 2025 at 06:20:35PM -0300, Filipe Xavier wrote:
-> Add new ftrace helpers functions cleanup_tracing, trace_function and
-> check_traced_functions.
+On Mon, Mar 24, 2025 at 06:07:18PM +0000, Tiffany Y. Yang wrote:
+> Identify buffer addresses using vma offsets instead of full user
+> addresses in debug logs.
 > 
-> Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+> Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
 > ---
->  tools/testing/selftests/livepatch/functions.sh | 49 ++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
+>  drivers/android/binder.c | 31 ++++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
-> index 15601402dee6567837c2c49ba342eb357e410d18..dea9cc10a3f09662c57c2593cff49423302c8a5c 100644
-> --- a/tools/testing/selftests/livepatch/functions.sh
-> +++ b/tools/testing/selftests/livepatch/functions.sh
-> @@ -10,6 +10,7 @@ SYSFS_KERNEL_DIR="/sys/kernel"
->  SYSFS_KLP_DIR="$SYSFS_KERNEL_DIR/livepatch"
->  SYSFS_DEBUG_DIR="$SYSFS_KERNEL_DIR/debug"
->  SYSFS_KPROBES_DIR="$SYSFS_DEBUG_DIR/kprobes"
-> +SYSFS_TRACING_DIR="$SYSFS_DEBUG_DIR/tracing"
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index d1aa6d24450a..994ae205aa07 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -3261,20 +3261,20 @@ static void binder_transaction(struct binder_proc *proc,
 >  
->  # Kselftest framework requirement - SKIP code is 4
->  ksft_skip=4
-> @@ -62,6 +63,9 @@ function push_config() {
->  			awk -F'[: ]' '{print "file " $1 " line " $2 " " $4}')
->  	FTRACE_ENABLED=$(sysctl --values kernel.ftrace_enabled)
->  	KPROBE_ENABLED=$(cat "$SYSFS_KPROBES_DIR/enabled")
-> +	TRACING_ON=$(cat "$SYSFS_TRACING_DIR/tracing_on")
-> +	CURRENT_TRACER=$(cat "$SYSFS_TRACING_DIR/current_tracer")
-> +	FTRACE_FILTER=$(cat "$SYSFS_TRACING_DIR/set_ftrace_filter")
->  }
+>  	if (reply)
+>  		binder_debug(BINDER_DEBUG_TRANSACTION,
+> -			     "%d:%d BC_REPLY %d -> %d:%d, data %016llx-%016llx size %lld-%lld-%lld\n",
+> +			     "%d:%d BC_REPLY %d -> %d:%d, buffer offset %lx-%lx size %lld-%lld-%lld\n",
+>  			     proc->pid, thread->pid, t->debug_id,
+>  			     target_proc->pid, target_thread->pid,
+> -			     (u64)tr->data.ptr.buffer,
+> -			     (u64)tr->data.ptr.offsets,
+> +			     (unsigned long)tr->data.ptr.buffer - proc->alloc.buffer,
+> +			     (unsigned long)tr->data.ptr.offsets - proc->alloc.buffer,
+>  			     (u64)tr->data_size, (u64)tr->offsets_size,
+>  			     (u64)extra_buffers_size);
+>  	else
+>  		binder_debug(BINDER_DEBUG_TRANSACTION,
+> -			     "%d:%d BC_TRANSACTION %d -> %d - node %d, data %016llx-%016llx size %lld-%lld-%lld\n",
+> +			     "%d:%d BC_TRANSACTION %d -> %d - node %d, buffer offset %lx-%lx size %lld-%lld-%lld\n",
+>  			     proc->pid, thread->pid, t->debug_id,
+>  			     target_proc->pid, target_node->debug_id,
+> -			     (u64)tr->data.ptr.buffer,
+> -			     (u64)tr->data.ptr.offsets,
+> +			     (unsigned long)tr->data.ptr.buffer - proc->alloc.buffer,
+> +			     (unsigned long)tr->data.ptr.offsets - proc->alloc.buffer,
+>  			     (u64)tr->data_size, (u64)tr->offsets_size,
+>  			     (u64)extra_buffers_size);
 >  
->  function pop_config() {
-> @@ -74,6 +78,17 @@ function pop_config() {
->  	if [[ -n "$KPROBE_ENABLED" ]]; then
->  		echo "$KPROBE_ENABLED" > "$SYSFS_KPROBES_DIR/enabled"
->  	fi
-> +	if [[ -n "$TRACING_ON" ]]; then
-> +		echo "$TRACING_ON" > "$SYSFS_TRACING_DIR/tracing_on"
-> +	fi
-> +	if [[ -n "$CURRENT_TRACER" ]]; then
-> +		echo "$CURRENT_TRACER" > "$SYSFS_TRACING_DIR/current_tracer"
-> +	fi
-> +	if [[ -n "$FTRACE_FILTER" ]]; then
-> +		echo "$FTRACE_FILTER" \
-> +			| sed -e "/#### all functions enabled ####/d"
-> +			> "$SYSFS_TRACING_DIR/set_ftrace_filter"
-> +	fi
->  }
+> @@ -4223,20 +4223,21 @@ static int binder_thread_write(struct binder_proc *proc,
+>  			if (IS_ERR_OR_NULL(buffer)) {
+>  				if (PTR_ERR(buffer) == -EPERM) {
+>  					binder_user_error(
+> -						"%d:%d BC_FREE_BUFFER u%016llx matched unreturned or currently freeing buffer\n",
+> +						"%d:%d BC_FREE_BUFFER matched unreturned or currently freeing buffer at offset %lx\n",
+>  						proc->pid, thread->pid,
+> -						(u64)data_ptr);
+> +						(unsigned long)data_ptr - proc->alloc.buffer);
+>  				} else {
+>  					binder_user_error(
+> -						"%d:%d BC_FREE_BUFFER u%016llx no match\n",
+> +						"%d:%d BC_FREE_BUFFER no match for buffer at offset %lx\n",
+>  						proc->pid, thread->pid,
+> -						(u64)data_ptr);
+> +						(unsigned long)data_ptr - proc->alloc.buffer);
+>  				}
+>  				break;
+>  			}
+>  			binder_debug(BINDER_DEBUG_FREE_BUFFER,
+> -				     "%d:%d BC_FREE_BUFFER u%016llx found buffer %d for %s transaction\n",
+> -				     proc->pid, thread->pid, (u64)data_ptr,
+> +				     "%d:%d BC_FREE_BUFFER at offset %lx found buffer %d for %s transaction\n",
+> +				     proc->pid, thread->pid,
+> +				     (unsigned long)data_ptr - proc->alloc.buffer,
+>  				     buffer->debug_id,
+>  				     buffer->transaction ? "active" : "finished");
+>  			binder_free_buf(proc, thread, buffer, false);
+> @@ -5053,7 +5054,7 @@ static int binder_thread_read(struct binder_proc *proc,
+>  		trace_binder_transaction_received(t);
+>  		binder_stat_br(proc, thread, cmd);
+>  		binder_debug(BINDER_DEBUG_TRANSACTION,
+> -			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd ptr %016llx-%016llx\n",
+> +			     "%d:%d %s %d %d:%d, cmd %u size %zd-%zd ptr offset %lx-%lx\n",
+>  			     proc->pid, thread->pid,
+>  			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
+>  				(cmd == BR_TRANSACTION_SEC_CTX) ?
+> @@ -5061,8 +5062,8 @@ static int binder_thread_read(struct binder_proc *proc,
+>  			     t->debug_id, t_from ? t_from->proc->pid : 0,
+>  			     t_from ? t_from->pid : 0, cmd,
+>  			     t->buffer->data_size, t->buffer->offsets_size,
+> -			     (u64)trd->data.ptr.buffer,
+> -			     (u64)trd->data.ptr.offsets);
+> +			     (unsigned long)trd->data.ptr.buffer - proc->alloc.buffer,
+> +			     (unsigned long)trd->data.ptr.offsets - proc->alloc.buffer);
 >  
->  function set_dynamic_debug() {
-> @@ -352,3 +367,37 @@ function check_sysfs_value() {
->  		die "Unexpected value in $path: $expected_value vs. $value"
->  	fi
->  }
-> +
-> +# cleanup_tracing() - stop and clean up function tracing
-> +function cleanup_tracing() {
-> +	echo 0 > "$SYSFS_TRACING_DIR/tracing_on"
-> +	echo "" > "$SYSFS_TRACING_DIR/set_ftrace_filter"
-> +	echo "nop" > "$SYSFS_TRACING_DIR/current_tracer"
-> +	echo "" > "$SYSFS_TRACING_DIR/trace"
-> +}
-> +
-> +# trace_function(function) - start tracing of a function
-> +#	function - to be traced function
-> +function trace_function() {
-> +	local function="$1"; shift
-> +
-> +	cleanup_tracing
-> +
-> +	echo "function" > "$SYSFS_TRACING_DIR/current_tracer"
-> +	echo "$function" > "$SYSFS_TRACING_DIR/set_ftrace_filter"
-> +	echo 1 > "$SYSFS_TRACING_DIR/tracing_on"
-> +}
-> +
-> +# check_traced_functions(functions...) - check whether each function appeared in the trace log
-> +#	functions - list of functions to be checked
-> +function check_traced_functions() {
-> +	local function
-> +
-> +	for function in "$@"; do
-> +		if ! grep -q "$function" "$SYSFS_TRACING_DIR/trace" ; then
+>  		if (t_from)
+>  			binder_thread_dec_tmpref(t_from);
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
-Small suggestion here: grep on "$function" may find partial string
-matches, like:
+Hi,
 
-  $ echo 'hamburger' | grep 'ham'
-  hamburger
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-so it's probably safer to user --word-regexp to avoid longer function
-names inadvertently matching:
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-  $ echo 'hamburger' | grep -w 'ham'
-  $ echo 'ham' | grep -w 'ham'
-  ham
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
-Also, maybe also --fixed-strings for the extra paranoid?  Off the top of
-my head, I don't think any C function characters are special regex (like
-$ ^ [ ] etc.) so it's probably safe w/o.
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
--- Joe
+thanks,
 
+greg k-h's patch email bot
 
