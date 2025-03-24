@@ -1,301 +1,255 @@
-Return-Path: <linux-kernel+bounces-573877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D65A6DD7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:54:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF42A6DD7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39467A65C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CEB3AFA9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC7E261385;
-	Mon, 24 Mar 2025 14:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F93025FA24;
+	Mon, 24 Mar 2025 14:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WeiKvLJ7"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aoIKSfYk"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2064.outbound.protection.outlook.com [40.107.237.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A43C25FA0E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828035; cv=none; b=cUvvMCVqE2KsZ3Qloix57tNKTb75FL6T7P4XYqW+HdyAH1+zjfoThzXeUftGop/PV4sIFaCpRTxO6XIGscfu1+vApLDhHG6C+ao6XexsGMV3hggra0uhAi3v0WFjpTup31LUMnMCpVVAuGY9MHRQwxceWWYvE0H+VfS0zHu006A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828035; c=relaxed/simple;
-	bh=VXjWCYi/FucuhzSs5PTSDrkPnV147MkSBxHinUM3cYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nr5ztEMsW+3LdcumX8V0l7AfoRjG/dNF8yRZjxrqjTezLBDiA8D+ox3FT6zHZhkluARB8nPbmDP/0SJEeSiJRwyY4ZEr9ybbzMrFwYICK+q3L5ED0dZOmy4iptWigyDH1nbbYIVOlAaBrsBrj20apGGZnB8QF/01lcAQh9PdLwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WeiKvLJ7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394a823036so45969625e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742828031; x=1743432831; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UP3A7AzTUdDx2k3cc0G/GBxzIeo6h3cZdgbt8xy+hJE=;
-        b=WeiKvLJ7bLaHc9ecae9xVfdvvuVRvQURjFVs3P3KWp4pczEEEyT5Sen//mrsG5zDty
-         2ENi7AgLrjm3d8iavTWrZWC3U0W5JLGWpAqEB/ielJozGMlAPlUgjzbUxdxp6gs52OLQ
-         TRWbRHKa+/tATeUEzdf3TuYQcs1DWF4a+OrMoyGQISqxxHAHcffeb2E8k0blgK08mjGg
-         MFM6OUiGcqEFWqvvMapMBQ5G/Umo8Jr/W0G51WWKO8HPJvCQ2ALRHHgM7S3F9bvfrb49
-         vzkeUeWHenwoOhTDAONyKH8yI7nUO8dZNMDdFMeNRmcJisXg46eC17sJdpF5vgWRexj5
-         JGwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742828031; x=1743432831;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UP3A7AzTUdDx2k3cc0G/GBxzIeo6h3cZdgbt8xy+hJE=;
-        b=AQ4zKE5GgqWQd0yNAN37zygC8MAdgwRv/GbHdDVdcixiJ3diVNkdU5tlhnM6XhmdH+
-         gP7JxZDzc5vVNjdC4PNodBKl2cJlStH79sel3oUklRT3KdarHq7/vbsCBG6oxH0+zpeQ
-         gFYL399oxANoQ9IviCwInDTX1sixaLtTnU5K9G4SLyKSYX8oGw7lHXEGlDOghq06yoYB
-         Q+Izf1ETDoggXGR0Y+l2HCq4+LTTBrnYKacKUoIFdzwCZxzm/gDB0ATBm5wUmbuu4jzl
-         R4RaL7qUvTPaxeE/p1S+ec55OD0v2jZah0/EfFlrM6QFrhY3eve9i/xwBD8grippnoky
-         9BBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHBvIPHrK3hPwNanOk9/5vOeSrLwBtuIiT+RzoYvh0nhu+HtLa1xa2dSdoVmRe9o/e0sYEd7u4G72WENc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVOceRoko/wvaIxvPUYYd6Kwts4dFY9AWuHwKre3u/On6nMwWr
-	3LzKsnbtQna/hQPsP7Yy9zD2krS6AkVDB5QkFOdSAmDAqMv6PrIHXvIr9bUW6yw=
-X-Gm-Gg: ASbGncslI2A1fXph1J9l8GU/7lliUAmLK3YteqjcEcCKuOQU5qGQKkLjF+9YoqXHUWo
-	hWjRtvl1qB1LwMKGGfSiBDdhB+uFVkKjzNF8YtVfATI6vhqb5gZ0g6yQzHPcfbYHGe1/S/kQNOJ
-	RAuDPId7c2VdlZ+Fx+5We0rNHhu7ie9jUCp8sbhu2pIljUEqkY3gSsNqLf+pIgBsqTwJE+WjpCZ
-	ODm3xtj703Lx6/v2aEtR82KsKSHV0S2M6zCEyHTwAJADFgHumKgtdsnKONnI9rWMUtJyalmG3Z1
-	nPLlcjh84ov0EBSZK+m0d7lidN/ZesvkZMEdJEjM8v3Zk4ahdCqkxA==
-X-Google-Smtp-Source: AGHT+IERD/lwgktHe1Gj0uOoU3mqIfghEPMcgOZyKwvdtvQ2ECRJ6/LWjoGQZyKkvoSi7h0+Iw8HAg==
-X-Received: by 2002:a05:600c:4503:b0:43c:fa24:873e with SMTP id 5b1f17b1804b1-43d509f4fc0mr119622315e9.13.1742828031427;
-        Mon, 24 Mar 2025 07:53:51 -0700 (PDT)
-Received: from [192.168.1.247] ([145.224.90.136])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd27980sm124839625e9.21.2025.03.24.07.53.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 07:53:51 -0700 (PDT)
-Message-ID: <d018f56a-15c3-4739-b8f4-aea863006765@linaro.org>
-Date: Mon, 24 Mar 2025 14:53:49 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7A725F987
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742828099; cv=fail; b=VRQvm6ndjt8Xc4e7crcSfupLfmHERZpa0xVa6sK8YoxFq1SszB9bB6FQRNcy6PSzss9o/ctXBhEyrpa8S3ivUlfCJTTpswbev3++ud2+As0/Ezt47oObyc57c/f9sc82/lGwoCS+7NLYuamGJOsoTfCj2L0dT7Crfwo/AZHzhos=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742828099; c=relaxed/simple;
+	bh=HuT3zb6/2P4sELVNzSDaif1BcAuDTv+dQ8p3rcBMXTw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=b6vfEkDtKsr/amVPswN4q/nGbtN8zAmqCy8wTuu1jAulavjRhFglRG9AfMCSUzujpwdXTqvcdexmvBsTTSP8iFRYVJvRju59gfzNiSLTpe9NDNkGAG8RWgJ9OWh07atH024vhw5tIVBKNtOailvP/8thMhjXEN2d3ywglE0dohc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aoIKSfYk; arc=fail smtp.client-ip=40.107.237.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GoaX+4K1ArRLnyD2VvM3A+dIbW+AnEpiYeOM51j4zwleVWMafKTnLQeQw1Ul3dQt2Hl+MS7eVq9JaA+T5N7N0r/uSj4a8UGF+zu9tTJQjej+jni4lnWYMYidD6mzw7ebglDhuxeIbw/YwI0PXPpTS7LnEuQzo75VlBjVLeNlBXo3NU9mXqr8DsimY2Bc5i9CSpZeCYdr9VjmGmrLc5AAKKXcIcz3Edd9oIalp7Y5wxhR/ec8h3/dc0Lmi5WI5LMoc1UqhoxXZJOtTtEj0A65jM10039Gy6n9NlMDOfaKQIYx8AuOkHygTimG4LTXGzuLACVmbNa+2LZSb0bZiOVGYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XMgn6b/EE0qpQZIH5dJaxg7EA8qLgYPqyyBZcDwlEX0=;
+ b=H7qJpKMp26cAO+sHfRsbMg177VdrH3Dd71iMhh3OBUECVsQjYLX9YosdtZaK/XInWni/balWr0gdHWg6FMB4gahjBbKmonVyUald7CIajq/KDPGnqCs7nJnemmuloqgUoNTwo2W/RgbWr6LN7gUOGSE/DitkBORcS6P/UQjGsMQFpo4uNE2aEpSZ0SJll0git5ThqdqxBMugdJt91qyN9rqyu+GZQMLe2fRA6Dm3/Vl8mleAPH4Tw6tNA0LKjLLfxbE6dww66IWgTinjjdF3tDFSUh8x//6nwU0hP3XBT+M0CUCIOcWIRyNPyRS05aYPIPkXJf8rst90ITb/mZmhYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XMgn6b/EE0qpQZIH5dJaxg7EA8qLgYPqyyBZcDwlEX0=;
+ b=aoIKSfYkVdGdjL438VBs+fJ6Gt/C8PyT75O5L5j/xmOHGsbx2MR9J5gwR2ipuyQPxBKHfDDeIggl2IkjkDzIFIAAVRMhG/LYunJAXr7fdKKT4qfL3nPL8U7yhUOPjeCgMABJVWXsXToq91cJ0wse0nX1+6ZqXd0Awgvj3LJpvSI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
+ by CH2PR12MB4070.namprd12.prod.outlook.com (2603:10b6:610:ae::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 14:54:55 +0000
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3%3]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 14:54:55 +0000
+Message-ID: <17b5d869-d1f7-4427-a293-aef42a37d639@amd.com>
+Date: Mon, 24 Mar 2025 20:24:49 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V1 09/13] mm: Add heuristic to calculate target node
+To: Hillf Danton <hdanton@sina.com>
+Cc: dave.hansen@intel.com, david@redhat.com, hannes@cmpxchg.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, ziy@nvidia.com
+References: <20250319193028.29514-1-raghavendra.kt@amd.com>
+ <20250321105309.3521-1-hdanton@sina.com>
+ <20250324110543.3599-1-hdanton@sina.com>
+Content-Language: en-US
+From: Raghavendra K T <raghavendra.kt@amd.com>
+In-Reply-To: <20250324110543.3599-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:3:17::14) To PH7PR12MB5805.namprd12.prod.outlook.com
+ (2603:10b6:510:1d1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 5/8] KVM: arm64: Introduce module param to
- partition the PMU
-To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20250213180317.3205285-1-coltonlewis@google.com>
- <20250213180317.3205285-6-coltonlewis@google.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250213180317.3205285-6-coltonlewis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|CH2PR12MB4070:EE_
+X-MS-Office365-Filtering-Correlation-Id: e25d5b4c-b4e8-4fe3-848d-08dd6ae3d6b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M2dUdk5TOHhqOEUrek5rWXFpb2JpNjdHQklKUlQwejZSSEthTW1RclNFdGxy?=
+ =?utf-8?B?REEzSVk4SW9ZLy9SdlNBdnJQK1dIVXNHcjF3YTZwZUpXQ1VkbkJpR29KUzRv?=
+ =?utf-8?B?c2pOWUdWd3ZKbSs3Um9YUWpBbnMvMWF0VmxKRmNwUXV3VEZkQVB0VWs4WWN0?=
+ =?utf-8?B?VWJSd2VQNUJjOXVpTi9JaGU2OHlXaEwyQTVrLy96TVlKV2FnTzczNy82M2o5?=
+ =?utf-8?B?czRMRFNFVkZYZ1ZlTWI0TFhZSWZBdkZqWkM1USt2VVNaM2JSTG52cWRVTGs4?=
+ =?utf-8?B?RWgxVWNicmJZUFBURHEyaVV1VVNESzVxdDAxWFg2cUt6SDk0elFVUnRCSEdh?=
+ =?utf-8?B?M3BxazNKb0lpS09qcG4yWGFaU2gyazFiNWFDbFZkV3pwS0VIVXErUEdhdTZw?=
+ =?utf-8?B?allTWmpMVEVIWU90Wm55Ump5U055UU5lc0N6QnEzYVZsemlKalJKUGZibGNC?=
+ =?utf-8?B?RFNVUTJURzgybncwZ3pXMzk2TWVXUkwvc00vOWtjd1lWemw1bDJIUExSUnc2?=
+ =?utf-8?B?QThVN0x3SUJob3RZTFYzaUFXbFhjdW5TakxxRUpNcFVaSThldGNtbFUxZlNU?=
+ =?utf-8?B?alNNaHpUd2pLc0xReEFLeVd0N3crdUVtU1Z4Ti9QcWRubzVuRE1CTUZodVVB?=
+ =?utf-8?B?cnpMQ0d2TnFxYnJNVW5nOTh6N3k2cEM3OStTaFF6TXVPd1JZMXp4ekF2N0Z1?=
+ =?utf-8?B?L3dGR2tmOVZkMnNjL0p4TndUWGJHRlhGaUtkQTlKakxqSGp0dnN0WGg1TFIy?=
+ =?utf-8?B?VzhDYUQycStaVFVuWXVKSTRuaXk1T080OFJLdmI2T2krcVVZbGM2SnlTdEFl?=
+ =?utf-8?B?R2pwcU9IczZnbllEczZlaHRVSW5vZ2g0VVNNSXdiTmg4ZnNKUm5sZjBhZUIr?=
+ =?utf-8?B?NkZrb21WR3l2NDF6Z3JYS25qbFRwNnJUS0hZdVJZWDhKNy9ET1ZWaUhHQjho?=
+ =?utf-8?B?aHBqakhRR3l1ZEJuck1hVnh6Qm10NkNINHdSZEc2QVBXZlNmbGtqVXVWUVJ2?=
+ =?utf-8?B?bnJyMWFOWGxjUlJXcnNOKy8wbGZJQW9ONHJZbU0rMk9TNzNDRjVaQjVWclBt?=
+ =?utf-8?B?YXJ1QVVLTUUwQm42dGRueUhORnpWR1BLNEFEN2NGNnVBck96Vjk1dWdLOUpR?=
+ =?utf-8?B?RlpPTGx0WlFRY2NmOUJvS3JYZzFZemZRYjZXMHVRa2FVOWRBSENZMis2aDJm?=
+ =?utf-8?B?bmhFZXVvd3k0c01BY28zRFU1Y1FWT0FMWEUxcnVOaStRZ1RMdUdETERrM3BR?=
+ =?utf-8?B?RFQ5T09LTFkrT2daQ2xZME1XeFpHY3ZleWpaTERDWDlrSzAzaTgyNktMVnZy?=
+ =?utf-8?B?Y3FkYndJR3owS2huWkc5Y3JvY1NpVG9RYklpQ2VHQ3pVZWcyUm1KTWdnZEVI?=
+ =?utf-8?B?eGFEc0Y3K09MVDhYSGE2K1JKRlNKclNjT1h2L0dZNERwU1VuekJHZUsrdlZ0?=
+ =?utf-8?B?bFFEdEg5T2NUNVhQZ2Nmb3FhcHFvVHluZzdORjJpa3p6a1ZYMEpTSExDTTM0?=
+ =?utf-8?B?SUFrYnJ3YXZ5VktDRnpidGR5cWFTc2lQQ0VFcGVaL0ltSU4reFJValdha3Yr?=
+ =?utf-8?B?WjROWnlrMXNCMmdzQ1RNekZyUE1qZ21KNjBBaXJpdER4clcyQjJoTVY5dE1p?=
+ =?utf-8?B?M1VsQlk1U3ZMUEFaNEJFTjNTemVVY1k0OWt5MDR5L0hxVXpROWdHTjk0dlFn?=
+ =?utf-8?B?ZGR4RXpsRW1FVjVITnIwYm1oWjBwbSs1UklRN213ZlBWNE1MYnVpYlZpdkVK?=
+ =?utf-8?B?Mm9rT25kVUFURVg0Z2NYOVpXS0kzSmJXNDRzREVWbVQ1RFFaQ1ArdnR1MWRy?=
+ =?utf-8?B?cGRoYXFsMFRPOXpSUFJQTzlQTlhxM2g0bFFZKzR1Z3BxYzg3eXU2NG12SlhU?=
+ =?utf-8?B?cGxrc1RMRmFrYnUzVEVtUytnMTFOZk1VNHZyNWx4S3BSVTFvb0RrQUpQdFVX?=
+ =?utf-8?Q?SRvn9SKcSy8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SnlYQzN0dXJFbG5tTGVvVnMycXdLenFYbzJMM0trMWpGeldGazBOcnFxNnI0?=
+ =?utf-8?B?NXY4Ty8vWmtuRUVpUkNsbStRazFUeUp5aFk5bzZyQWh1QzVPLzBpbmNVejk0?=
+ =?utf-8?B?NmJ0aEdMdlJZWWIvRHRDYk01NmpxeUFCYUwwTlllSUY0T1FnUWFXbEFLNnE2?=
+ =?utf-8?B?V0NxT3V3dDA4QnVKQ0luWXQ1cmlXNzRxUlFGNlFNM1ZGSjVrZmtBOG53N3ow?=
+ =?utf-8?B?TE9XY1BhV0FkZ000bFZrQzVibUFxY0VrRk5IVEoxM1l1ZFNpU1Z2M1YyRDAr?=
+ =?utf-8?B?WFpxNVN2NWNaZ1ExS3ZiaS9tSUlxOUZUMXFvSTNiOWVLd2xnTlJZdDltZFdZ?=
+ =?utf-8?B?L0hFZ25DV1hTUE1vejhRN0VLQ3JKRVpEemluUE02TnNmVlhZS3B0bkM2UWZR?=
+ =?utf-8?B?dFNiUkxFSGRwNzRKNlB2UTVmUUZQUUFVblExRmNmWE93bmJ6WldUVHB2Szhi?=
+ =?utf-8?B?MlNFQyszN0thbXlFemg1QUJkaVVsZ29QUTQxUTJwTVp1Y3hmV1BxYzZzL05z?=
+ =?utf-8?B?cmg2TGw5bEFycUhtS1Q3bkxYUFJFTnlWc1gvanZBaWlORlk5UUVSRys1UGdn?=
+ =?utf-8?B?VmNuRC9OSTZXbytaVlFUckdZcTIvREIvR0laZDNvV0prVEZpRjlKUG1pRElC?=
+ =?utf-8?B?VmpBRkw1SklPUHkyaVBhbDJJQ1dwZytWQS84WTlqNjBvVXo3TlpBbDVhWlVl?=
+ =?utf-8?B?eWllZ0JGT3dsUDhqVlNhMUxqMTRyS2pRU0c3djZ0azdEMFNvdXFKNHhWK1FS?=
+ =?utf-8?B?Q1k4VEdkRm5kT3hmUUhxTGdCZHRQQzkyMS9mays3OWYweUJGRzNkK1lnN3g0?=
+ =?utf-8?B?SzhmU2YvSmRDam1EYmFBMUZjZitiVHc0ZWhMM3ZaTXZYS1dWNlBQdS9EZC91?=
+ =?utf-8?B?T3JWR2NaS3NPTkVwSEwrT1QxelBNSU03RkhJS2JUS0o5Q1dWT0JOYi9KVVR2?=
+ =?utf-8?B?K3BoOGk1bXoyVHorbHNPTmNJRzhNYng3WGxHQkpFMEtFU2lWdVRzRjBQU3NT?=
+ =?utf-8?B?MEtJVHQrTWUyekZGdWF3ampucnVPVzJhb1RQY04xWW05KzRydFFYR2FVRUFU?=
+ =?utf-8?B?bldWWWd4UzIzNXdCSDNCdWYrYXZGR3ZwendJTVRVekI0bzdaTVBObmtETkVq?=
+ =?utf-8?B?OWc4a3JzSU5SdDhGY2FNWjN1bHZOZHRwbWpKak5ZblU2SFZMUDNOTXJiWEM2?=
+ =?utf-8?B?c3QxTWdRaEVleGd5a2h0WTdNcTdZWXJHWnFkQVgwTElRRHhiSWc0QlgvZDcy?=
+ =?utf-8?B?elNkRktGYURlQ0phNUpIN1pXZnN1YmZCTE16aDZobjByc2tFZUwrUUo2amVy?=
+ =?utf-8?B?cEFYUWVubHg5MVpVOFpMcW1TMFJDWGNtV04yaDRrTzVsSldITE80UHh3bmFF?=
+ =?utf-8?B?S2syZVl3K3Jlc1h1MkluaVNYTjBsWCtNd2NLQXZtM21MRW9MSDdYZEd4TXNO?=
+ =?utf-8?B?Ri9OUDB0dk4vSy82ZGFPWmtCejNxNHFtZHFPYTh4MnNnRUJIWGlCYUE4aHEr?=
+ =?utf-8?B?cHlnUDNlR1J5RzdOZmRnUW53bThtVCtEaGZydWNWbERGWUJKS04vS1Rxa25T?=
+ =?utf-8?B?OXlpTkpCbk1NVGI0ZG5QR0hFNy96S0g4Z0JMS0x1TlJ1THliOWVpdHBjeEFV?=
+ =?utf-8?B?YXhzSkp2cllOc1ZoRWpIeWdaM2tDUnB6QllJK1haRU03Z2xKejRMZG12dHVi?=
+ =?utf-8?B?VVlaQ1pQWFhXUzhpQXJOK0d3bFlYaVZDMG9ibmFjT1NqcThsU3FXK0NTTCtP?=
+ =?utf-8?B?R1A0V0dEY3BTYUI4Y25lV3BKbm41ZXozdjVxeTdYWmtFN1JkalJ2RWRqNmlG?=
+ =?utf-8?B?ck1nanF2aWh2YWVzQkdTNnFpNUF0blduRUY1Syt2K3BDYXVPUUVHN2N0bWZE?=
+ =?utf-8?B?S1pRcDYwTkYyLzdUU2pNQlNoRnZIcGNuNitqbWJzcFRpWENlaUhXNERmNElW?=
+ =?utf-8?B?MnpKQTR6SHF4Vi9DcnZWYXF4S3c4Q3J3cXVpdlJoSHVid3laZVBhVHE1VFRn?=
+ =?utf-8?B?L1d4OUJSaTZyNW9FMzFEY3ZBVzdmUUgrTVhrVndlWWtBVDZxMXlOQUxiL3M4?=
+ =?utf-8?B?WmpQMTNoK3Bxbk1sSTVPRkFubm0rdE8wczFERXpsTU9WV29rNEs5Ynpod01o?=
+ =?utf-8?Q?QW4tyXTufmEtZIpTNvHSlvLXF?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e25d5b4c-b4e8-4fe3-848d-08dd6ae3d6b8
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 14:54:55.2114
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hJQ9D37Kt+JCicOpqWvmO//7+HMh+P288K1gcyPvkD7nAlwgPQueMKqn6z2ZqXalFLB2uT/cSxZlx6LSs4IzUQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4070
 
 
 
-On 13/02/2025 6:03 pm, Colton Lewis wrote:
-> For PMUv3, the register MDCR_EL2.HPMN partitiones the PMU counters
-> into two ranges where counters 0..HPMN-1 are accessible by EL1 and, if
-> allowed, EL0 while counters HPMN..N are only accessible by EL2.
+On 3/24/2025 4:35 PM, Hillf Danton wrote:
+> On Sun, 23 Mar 2025 23:44:02 +0530 Raghavendra K T wrote
+>> On 3/21/2025 4:23 PM, Hillf Danton wrote:
+>>> On Wed, 19 Mar 2025 19:30:24 +0000 Raghavendra K T wrote
+>>>> One of the key challenges in PTE A bit based scanning is to find right
+>>>> target node to promote to.
+>>>>
+>>>> Here is a simple heuristic based approach:
+>>>>      While scanning pages of any mm we also scan toptier pages that belong
+>>>> to that mm. We get an insight on the distribution of pages that potentially
+>>>> belonging to particular toptier node and also its recent access.
+>>>>
+>>>> Current logic walks all the toptier node, and picks the one with highest
+>>>> accesses.
+>>>>
+>>> My $.02 for selecting promotion target node given a simple multi tier system.
+>>>
+>>> 	Tk /* top Tierk (k > 0) has K (K > 0) nodes */
+>>> 	...
+>>> 	Tj /* Tierj (j > 0) has J (J > 0) nodes */
+>>> 	...
+>>> 	T0 /* bottom Tier0 has O (O > 0) nodes */
+>>>
+>>> Unless config comes from user space (sysfs window for example should be opened),
+>>>
+>>> 1, adopt the data flow pattern of L3 cache <--> DRAM <--> SSD, to only
+>>> select Tj+1 when promoting pages in Tj.
+>>>
+>>
+>> Hello Hillf ,
+>> Thanks for giving a thought on this. This looks to be good idea in
+>> general. Mostly be able to implement with reverse of preferred demotion
+>> target?
+>>
+>> Thinking loud, Can there be exception cases similar to non-temporal copy
+>> operations, where we don't want to pollute cache?
+>> I mean cases we don't want to hop via middle tier node..?
+>>
+> Given page cache, direct IO and coherent DMA have their roles to play.
+>
+
+Agree.
+
+>>> 2, select the node in Tj+1 that has the most free pages for promotion
+>>> by default.
+>>
+>> Not sure if this is productive always.
+>>
+> Trying to cure all pains with ONE pill wastes minutes I think.
 > 
-> Introduce a module parameter in KVM to set this register. The name
-> reserved_host_counters reflects the intent to reserve some counters
-> for the host so the guest may eventually be allowed direct access to a
-> subset of PMU functionality for increased performance.
+
+Very much true.
+
+> To achive reliable high order pages, page allocator can not work well in
+> combination with kswapd and kcompactd without clear boundaries drawn in
+> between the tree parties for example.
 > 
-> Track HPMN and whether the pmu is partitioned in struct arm_pmu
-> because both KVM and the PMUv3 driver will need to know that to handle
-> guests correctly.
+>> for e.g.
+>> node 0-1 toptier (100GB)
+>> node2 slowtier
+>>
+>> suppose a workload (that occupies 80GB in total) running on CPU of node1
+>> where 40GB is already in node1 rest of 40GB is in node2.
+>>
+>> Now it is preferred to consolidate workload on node1 when slowtier
+>> data becomes hot?
+>>
+> Yes and no (say, a couple seconds later mm pressure rises in node0).
 > 
-> Due to the difficulty this feature would create for the driver running
-> at EL1 on the host, partitioning is only allowed in VHE mode. Working
-> on nVHE mode would require a hypercall for every register access
-> because the counters reserved for the host by HPMN are now only
-> accessible to EL2.
-> 
-> The parameter is only configurable at boot time. Making the parameter
-> configurable on a running system is dangerous due to the difficulty of
-> knowing for sure no counters are in use anywhere so it is safe to
-> reporgram HPMN.
-> 
+> In case of yes, I would like to turn on autonuma in the toptier instead
+> without bothering to select the target node. You see a line is drawn
+> between autonma and slowtier promotion now.
 
-Hi Colton,
+Yes, the goal has been slow tier promotion without much overhead to the
+system + co-cooperatively work with NUMAB1 for top-tier balancing.
+(for e.g., providing hints of hot VMAs).
 
-For some high level feedback for the RFC, it probably makes sense to 
-include the other half of the feature at the same time. I think there is 
-a risk that it requires something slightly different than what's here 
-and there ends up being some churn.
 
-Other than that I think it looks ok apart from some minor code review nits.
-
-I was also thinking about how BRBE interacts with this. Alex has done 
-some analysis that finds that it's difficult to use BRBE in guests with 
-virtualized counters due to the fact that BRBE freezes on any counter 
-overflow, rather than just guest ones. That leaves the guest with branch 
-blackout windows in the delay between a host counter overflowing and the 
-interrupt being taken and BRBE being restarted.
-
-But with HPMN, BRBE does allow freeze on overflow of only one partition 
-or the other (or both, but I don't think we'd want that) e.g.:
-
-  RNXCWF: If EL2 is implemented, a BRBE freeze event occurs when all of
-  the following are true:
-
-  * BRBCR_EL1.FZP is 1.
-  * Generation of Branch records is not paused.
-  * PMOVSCLR_EL0[(MDCR_EL2.HPMN-1):0] is nonzero.
-  * The PE is in a BRBE Non-prohibited region.
-
-Unfortunately that means we could only let guests use BRBE with a 
-partitioned PMU, which would massively reduce flexibility if hosts have 
-to lose counters just so the guest can use BRBE.
-
-I don't know if this is a stupid idea, but instead of having a fixed 
-number for the partition, wouldn't it be nice if we could trap and 
-increment HPMN on the first guest use of a counter, then decrement it on 
-guest exit depending on what's still in use? The host would always 
-assign its counters from the top down, and guests go bottom up if they 
-want PMU passthrough. Maybe it's too complicated or won't work for 
-various reasons, but because of BRBE the counter partitioning changes go 
-from an optimization to almost a necessity.
-
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> ---
->   arch/arm64/include/asm/kvm_pmu.h |  4 +++
->   arch/arm64/kvm/Makefile          |  2 +-
->   arch/arm64/kvm/debug.c           |  9 ++++--
->   arch/arm64/kvm/pmu-part.c        | 47 ++++++++++++++++++++++++++++++++
->   arch/arm64/kvm/pmu.c             |  2 ++
->   include/linux/perf/arm_pmu.h     |  2 ++
->   6 files changed, 62 insertions(+), 4 deletions(-)
->   create mode 100644 arch/arm64/kvm/pmu-part.c
-> 
-> diff --git a/arch/arm64/include/asm/kvm_pmu.h b/arch/arm64/include/asm/kvm_pmu.h
-> index 613cddbdbdd8..174b7f376d95 100644
-> --- a/arch/arm64/include/asm/kvm_pmu.h
-> +++ b/arch/arm64/include/asm/kvm_pmu.h
-> @@ -22,6 +22,10 @@ bool kvm_set_pmuserenr(u64 val);
->   void kvm_vcpu_pmu_resync_el0(void);
->   void kvm_host_pmu_init(struct arm_pmu *pmu);
->   
-> +u8 kvm_pmu_get_reserved_counters(void);
-> +u8 kvm_pmu_hpmn(u8 nr_counters);
-> +void kvm_pmu_partition(struct arm_pmu *pmu);
-> +
->   #else
->   
->   static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
-> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
-> index 3cf7adb2b503..065a6b804c84 100644
-> --- a/arch/arm64/kvm/Makefile
-> +++ b/arch/arm64/kvm/Makefile
-> @@ -25,7 +25,7 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
->   	 vgic/vgic-mmio-v3.o vgic/vgic-kvm-device.o \
->   	 vgic/vgic-its.o vgic/vgic-debug.o
->   
-> -kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
-> +kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu-part.o pmu.o
->   kvm-$(CONFIG_ARM64_PTR_AUTH)  += pauth.o
->   kvm-$(CONFIG_PTDUMP_STAGE2_DEBUGFS) += ptdump.o
->   
-> diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
-> index 7fb1d9e7180f..b5ac5a213877 100644
-> --- a/arch/arm64/kvm/debug.c
-> +++ b/arch/arm64/kvm/debug.c
-> @@ -31,15 +31,18 @@
->    */
->   static void kvm_arm_setup_mdcr_el2(struct kvm_vcpu *vcpu)
->   {
-> +	u8 counters = *host_data_ptr(nr_event_counters);
-> +	u8 hpmn = kvm_pmu_hpmn(counters);
-> +
->   	preempt_disable();
->   
-
-Would you not need to use vcpu->cpu here to access host_data? The 
-preempt_disable() after the access seems suspicious. I think you'll end 
-up with the same issue as here:
-
-https://lore.kernel.org/kvmarm/5edb7c69-f548-4651-8b63-1643c5b13dac@linaro.org/
-
->   	/*
->   	 * This also clears MDCR_EL2_E2PB_MASK and MDCR_EL2_E2TB_MASK
->   	 * to disable guest access to the profiling and trace buffers
->   	 */
-> -	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN,
-> -					 *host_data_ptr(nr_event_counters));
-> -	vcpu->arch.mdcr_el2 |= (MDCR_EL2_TPM |
-> +	vcpu->arch.mdcr_el2 = FIELD_PREP(MDCR_EL2_HPMN, hpmn);
-> +	vcpu->arch.mdcr_el2 |= (MDCR_EL2_HPMD |
-> +				MDCR_EL2_TPM |
->   				MDCR_EL2_TPMS |
->   				MDCR_EL2_TTRF |
->   				MDCR_EL2_TPMCR |
-> diff --git a/arch/arm64/kvm/pmu-part.c b/arch/arm64/kvm/pmu-part.c
-> new file mode 100644
-> index 000000000000..e74fecc67e37
-> --- /dev/null
-> +++ b/arch/arm64/kvm/pmu-part.c
-> @@ -0,0 +1,47 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Google LLC
-> + * Author: Colton Lewis <coltonlewis@google.com>
-> + */
-> +
-> +#include <linux/kvm_host.h>
-> +#include <linux/perf/arm_pmu.h>
-> +
-> +#include <asm/kvm_pmu.h>
-> +
-> +static u8 reserved_host_counters __read_mostly;
-> +
-> +module_param(reserved_host_counters, byte, 0);
-> +MODULE_PARM_DESC(reserved_host_counters,
-> +		 "Partition the PMU into host and guest counters");
-> +
-> +u8 kvm_pmu_get_reserved_counters(void)
-> +{
-> +	return reserved_host_counters;
-> +}
-> +
-> +u8 kvm_pmu_hpmn(u8 nr_counters)
-> +{
-> +	if (reserved_host_counters >= nr_counters) {
-> +		if (this_cpu_has_cap(ARM64_HAS_HPMN0))
-> +			return 0;
-> +
-> +		return 1;
-> +	}
-> +
-> +	return nr_counters - reserved_host_counters;
-> +}
-> +
-> +void kvm_pmu_partition(struct arm_pmu *pmu)
-> +{
-> +	u8 nr_counters = *host_data_ptr(nr_event_counters);
-> +	u8 hpmn = kvm_pmu_hpmn(nr_counters);
-> +
-> +	if (hpmn < nr_counters) {
-> +		pmu->hpmn = hpmn;
-> +		pmu->partitioned = true;
-
-Looks like Rob's point about pmu->partitioned being duplicate data 
-stands again. On the previous version you mentioned that saving it was 
-to avoid reading PMCR.N, but now it's not based on PMCR.N anymore.
-
-Thanks
-James
 
 
