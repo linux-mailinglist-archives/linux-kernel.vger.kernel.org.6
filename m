@@ -1,809 +1,251 @@
-Return-Path: <linux-kernel+bounces-573186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EAEA6D3F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:03:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0471A6D3F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74160189249D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:03:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9628C7A5999
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2719DF77;
-	Mon, 24 Mar 2025 06:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEC61993B7;
+	Mon, 24 Mar 2025 06:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jLq9nAM/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v2Y6RCIL"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592F919D891
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796128; cv=none; b=rv9X7yPMXS/ftcP94AjBk8n8a7aaFwpCNoyEZPDqSjrTD/wgc2VxxSLJqSyyaR22LgqhAZ+ucusBvoZ3M8NXt2sX2+ds2Nc6AaY2/ay5ANxggArZy8kXEC7Xi9lbKaMo5Xx6VByPmw69xAy2z8vbcmL8Kn9xIE62MntNalXRnlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796128; c=relaxed/simple;
-	bh=eb4zfgoqrUoHsA1IKUHl+rvs9sM/sWJqs5cMZ/lWZ9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=Q0lY+So9jD2tda/1qA2xWKvOvpWEPKqXQZfoX5LWn2ZSMP98XVUcqTWmC/ta8NUMeSyQddf6YdwpR1UiVZddikSH6CbmTESSJNIyo7FnzX6cdCL9hF881pJ6TddAnOe2+Cgp0OQEP82MXcOxdCi7vD1g+GbBUV30CDOAMgMD0MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jLq9nAM/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742796124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AFf1y7rSG0aaixiUJ9FXI01wdX33Ii9P/J3vi62gCbU=;
-	b=jLq9nAM/A5wb3i+FmV1hoeU37GOtRybuqh/UCwiWEGgl5D3IaI/n1gh8SXdjlbQVHQVw/q
-	fbmJ+K9Pk/KlY4jzKIIBmlN/NISLQIysifFbUBJN3LuGGE4caYkSCp7LVBwXrwLnS1eRBG
-	uURIldWPSOgy+l7lkwKjTCwGyQ32Ihk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-149-qoFpSjfSP4eln84YnoyICQ-1; Mon,
- 24 Mar 2025 02:02:02 -0400
-X-MC-Unique: qoFpSjfSP4eln84YnoyICQ-1
-X-Mimecast-MFC-AGG-ID: qoFpSjfSP4eln84YnoyICQ_1742796121
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A3DF180AF50;
-	Mon, 24 Mar 2025 06:02:01 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.200])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B29CB195609D;
-	Mon, 24 Mar 2025 06:01:57 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com
-Cc: xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] virtio_ring: add in order support
-Date: Mon, 24 Mar 2025 14:01:27 +0800
-Message-ID: <20250324060127.2358-7-jasowang@redhat.com>
-In-Reply-To: <20250324054333.1954-1-jasowang@redhat.com>
-References: <20250324054333.1954-1-jasowang@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BBC194C75
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742796120; cv=fail; b=SrJg0mt4Ltpqixq8amuzCtPuvYmiAxN48vwZftOPwD3hiC4h+My1BaFLJ8bEhtI2bUhf20stXTDDfWYCakpffEVFA1qyUt3h/KjnyWVMKkGJFaohKtH4xQ/gj7aLe2wFT1tUW4Zfeo3ddzrwQ30jQ1jDrBOrLdBxe3g1GMsvEKc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742796120; c=relaxed/simple;
+	bh=7o5nTalAcS8OHNkzU4pTBAxyAZHavqEh4/UYh7cD+14=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rh395Auyp0Uwtji86pxoSX+WYRo4xHxSA5w0+7cs81rhrvvrfxKNw+GwnOu+ViTN761GmaV8h2JFCTafpkW6NI6cwuerRLaXd+T4gj/eTlAMAE/jrI2KTXzOmnA8hZ1cW/g9swuI+LKOZxhRkhxvk2HES2CdhfV/drK49pI58po=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=v2Y6RCIL; arc=fail smtp.client-ip=40.107.244.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LUr140qAGa4TgLecgvEWcBrKI/WkWmTghxMS/luQSBJHa01eeC4GSjwqrRetvig1YlMQTXomm1HAIQoOk+ZGEkf1Hd2hh8vRZ3P0q8ccGMxB6NTzg43bZIB7AwTFlYAVH4VluTsEXLdxinDCDxLRfwQp16cPBwgsIF6kk/3LNwP4WcAF/0KolNwWpoJzbHDHr4tqGXnBh6klKvLBi02cOZNT4QVC0kda2s2YYhO41eTWguugV6d0D5v2fcMNXNJa7el2301l38Bi2wZdJhpn4R7V3Bd74oVw1uMXFOrst8LFU/9ONHasSsLGzgIMb/cSWP7oXET96DcoKNF3N9ntKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iCwFttyLgOMinoE0UnSYl+cWQ048KSF903N2XKJwlO8=;
+ b=FsdbMu3KlvD4sRokpl49Nx2RQ+B42Vi6Tld+H7X9BWInq39mwyR3GCEdHxdsq1WsRvi44YclxaZFKZRxArRFfbgFXscZmygOVENrOf57MkKftLWcQelehtLKTqIDzwFc+uaSeTPo7pxmP4wBJIVJhPiLVQ1R1W9+9JhbO6x1RJuXcwci0e+qh8ccRZ9XPzNzzcm3iSeJyx6KnuTGCpjAN5xZbsTp1J1UnWZBZjIP1uybO79kXvx69NHJL9lrsdnWG3PUnuPm2DYGnEVC2GaSfuTyYlrs3S24USp5B+Z5j49SGXZ2Ibb1SGcnl2tuXf8J1tKpGPuUJ431M1KHlXaZCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iCwFttyLgOMinoE0UnSYl+cWQ048KSF903N2XKJwlO8=;
+ b=v2Y6RCIL8FFlmzk469VoSogVdrIKwLcbsOGWBs2iPQxjYcCsmrPwXMXo9AQqy9qWBGekaOiPJwRytLFKNDHginLmfW+SGdpkGd7qKdtuLiFlFciMIfQJrxeBUML5v4EQlzbdkK1lu2wTkIALylhTokKiXymlaLj16ndwfbmpUSc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
+ by BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 06:01:54 +0000
+Received: from CH2PR12MB4262.namprd12.prod.outlook.com
+ ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
+ ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 06:01:48 +0000
+Message-ID: <0f9e697e-d01c-4559-9c1c-7dd2ce76045b@amd.com>
+Date: Mon, 24 Mar 2025 11:31:36 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] Enhancements to Page Migration with
+ Multi-threading and Batch Offloading to DMA
+To: akpm@linux-foundation.org, lsf-pc@lists.linux-foundation.org,
+ linux-mm@kvack.org, ziy@nvidia.com
+Cc: AneeshKumar.KizhakeVeetil@arm.com, baolin.wang@linux.alibaba.com,
+ bharata@amd.com, david@redhat.com, gregory.price@memverge.com,
+ honggyu.kim@sk.com, jane.chu@oracle.com, jhubbard@nvidia.com,
+ jon.grimm@amd.com, k.shutemov@gmail.com, leesuyeon0506@gmail.com,
+ leillc@google.com, liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
+ mel.gorman@gmail.com, Michael.Day@amd.com,
+ Raghavendra.KodsaraThimmappa@amd.com, riel@surriel.com, rientjes@google.com,
+ santosh.shukla@amd.com, shy828301@gmail.com, sj@kernel.org,
+ wangkefeng.wang@huawei.com, weixugc@google.com, willy@infradead.org,
+ ying.huang@linux.alibaba.com, wei.huang2@amd.com,
+ Jonathan.Cameron@huawei.com, byungchul@sk.com
+References: <cf6fc05d-c0b0-4de3-985e-5403977aa3aa@amd.com>
+Content-Language: en-US
+From: Shivank Garg <shivankg@amd.com>
+In-Reply-To: <cf6fc05d-c0b0-4de3-985e-5403977aa3aa@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0147.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:c8::12) To CH2PR12MB4262.namprd12.prod.outlook.com
+ (2603:10b6:610:af::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|BL4PR12MB9478:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ea9cbc2-737a-45cf-173e-08dd6a995d03
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?THJtOVVNTkFudUtVWk9iWVdFL3NDbDJ5TXVnRWVhL1V5UWd0WFVYY3hTdXor?=
+ =?utf-8?B?eEkxSkRzM04vbVp3WmlVbEttZHdJK1hNbno4VmRHZjRqQkRHcE5KWENEOU1u?=
+ =?utf-8?B?RXhCYzBlMStnTWN6YU9EamRoQlREOFd4ZURDSWtTR1RodVlrY1BDcnZ2OXd0?=
+ =?utf-8?B?T3ZmY0hHWFJqM0Vrb3V0dkI2aTlDM1M5dmVVR0lzdkRYNDhTQmM5VTc4RUdM?=
+ =?utf-8?B?ek8zbWl3NXNUQ05LaXZNM21zWjljdnc1TU1aWk5jRE9lTVBqRkZyY1MwbWlI?=
+ =?utf-8?B?ZzduZnNaazlRODRwM203SWdCbk9uTlFxOEI1OWh1Yjd2ZHV4VWdpTDdoalkw?=
+ =?utf-8?B?amZoNXZ2b1I5RVJWU3g4QWJZTkpaRGJzTC83dm1Wdkw5NWFrTjNzSWdDUVRL?=
+ =?utf-8?B?UGR1N2Y0aXVtcXg2VGNCbndzbU9Fb0htME0vREppOTZSUGRJS0V3NXp3N1Bl?=
+ =?utf-8?B?ZWZsZWRhTUNSNXRDK1VMbjdVSUJLSmNUekVkbFVwSkdDenRxZTd0dXhkRlJ5?=
+ =?utf-8?B?WlQ4ODQyM1pxdTdsT09kTG1RSGFRSHlvZzlweDVVdVpzcnQyTlYyaWFQTVJO?=
+ =?utf-8?B?ZW1UL3ZVSGRLSlJnRU5hYWhLcXI5enBaaTMrb3EwWGVCS2pFR2VHbldRYVVx?=
+ =?utf-8?B?NlAvaVpyUERrejdQRkJGSmpOQUJwNEhvdW5iWFJLQVA4QjNDQ001R3lwYitm?=
+ =?utf-8?B?cVhUT2t1UEVIcnYxTTFsRWoxRmNISGpidnlkRGFWYVRmVXg5RC9Pc0dxYXVZ?=
+ =?utf-8?B?UVJCK1A3eWpoOC8yY3VaVktOVytiUlJDclRMZEFqZ1p1Z0I3VjAxK2VwTkNR?=
+ =?utf-8?B?TjRUbHBxN2RkSDFjdzNTSit5d1p4UEJCTkdmYStIaEZMcXVSMXJuZURTbHhO?=
+ =?utf-8?B?eXVLTGREcUNHM3VlWjBKbER1SzgzMzlvZlZjbFErRkZBQkxNS0FEZWRxeEFt?=
+ =?utf-8?B?M1J4VS8vc3EvOTlYK3l2ZXJqeGtQYVpONlZyRThseldRTXJhcVkrZWJzL1g1?=
+ =?utf-8?B?YWhoeEE1Q0FjNWFNcVV0MFlkbzM2K2VlMFd1a2xoNmFySmNWMFRrVCs3RGgr?=
+ =?utf-8?B?VmtmOFBnZE9Zd2MrN3ptVVFFVWlxd1U0VWx6N3ErWlpieW04b3NCeUJLalhm?=
+ =?utf-8?B?K0hNZzJ3bVVhN05qZ2N2MHBrTElWd1FXTStYeGR3NGdXT0hhczc5MytobWo0?=
+ =?utf-8?B?T1F2WERwL2dlanJjRnhFYnVBazl2b3hGKzgyVmxXRlF3UmhWWmZNdk56R2U5?=
+ =?utf-8?B?M053ZUpsdE9BSnVRVzByWUtVQzh2RUM0UGFrRnY4SXk1ME53WmVjaTl4NjRs?=
+ =?utf-8?B?eURWa3pXTEh2M25CYXE4clhFcW91VlQ0dkQ2ekIzOTFEVEcveGpqeUJBL21k?=
+ =?utf-8?B?dXV2dzM0ckdmSm9STE1JK0xlaVdqRHZiTGR3eVBwbU1iVGZMc1N0VDNJQjNJ?=
+ =?utf-8?B?RUR5VEFUb1JJMVRSRXFmcFp0amZXNjR0b2hyRmc0M2pWbUZwSUZSK3RmU2pQ?=
+ =?utf-8?B?WjNlcWtqVWhBRUZFanZ5M3ZpWXJ6SVF6SC82R2VEQ29oMGR3NXhkZzRjRU4z?=
+ =?utf-8?B?d3MzUE54cnQvYUUrcm9kY3NUZUdBQ0NMUDlROWJqRzRETEdQVG9NclNqcDB2?=
+ =?utf-8?B?S0Z6LzFueHZ0YUdnUWlqY2tPU1BvckJnUzNQOXAyNWsxNUYrUXB4MHQyWjlR?=
+ =?utf-8?B?OFNvcGJGb3ZFbHVNbUthejdCM0N6QzErTTI5d0E5VXlXUFdOWXZHcDdPT2RM?=
+ =?utf-8?B?c3N6OUt0YW1VRmNHWFQ3Q3dYRGNvaUlqOUZzNGtrKytDQkx0b1AyZlozTDcy?=
+ =?utf-8?B?KzlOS3JBa2xSUXJQVEtaeGhCTHFUM0JHbk9rdjV1TFZFUFYxOHp5YnNMZ3Vw?=
+ =?utf-8?B?cXFDYzBqV2lCQ1BXa2x1RTFqUnBYMEl3NU1WU052cjRCNFE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SHpoVE5FQnpHaUQvVlRxWkZPNldZMUMrOXYrZXNEV3paWDBoWVh0V3FoeFQx?=
+ =?utf-8?B?WGtOdy9FaTVOT2doSWhLdmJGWVhJQXlxQmhRTVYwU2REK0QwQlYwRWhyRFY1?=
+ =?utf-8?B?djBaVVBrWEd2MVA5UGdHWnJicndYbGptT3l1c1NQT2FTWm1xNHlPQkFwQXcr?=
+ =?utf-8?B?OFNCakQzTWtXZUJtbVFCcjdGVGFNeXpOS0loWnZsWVYyb3hVNWo5TXZpb21U?=
+ =?utf-8?B?ZUJ3YmUyS053YWJNTUpJbVNnOVBObmhMaEdDQ1hudkU1Zmw1UEt6N0hya3Yr?=
+ =?utf-8?B?Tkp5Z0NXOEZ6cVJ2ekYyK2VHdzlLNTBOa0NGd2ZIbGFOSXN4ODNVaDdtdzh3?=
+ =?utf-8?B?ZzR4OXd1bHdwRlJPd21EVUVpdUdKcHdZUWJORWxxTWVJS3VkOUp4cHBjeTBz?=
+ =?utf-8?B?MEZNaHNGc2JUUEdSM0tzSkd2WEhRTXZGVWd2RGFhSStvdWJqSDRrV05uQldQ?=
+ =?utf-8?B?bUxpa0ttc2Q4dUh0eFdjMUo5N2dYKzlrOEsxTElFWEVDMHBucks1TFRuZmh5?=
+ =?utf-8?B?VzNrWm5URWpwOG9ML0NLTXhoRlUrSmwrWVFDbzZXMVRlbHg1MzMvb2JpSFFy?=
+ =?utf-8?B?eW5JeEZIdzRreE1BbUtqMmVZTThRUis1Q0YyRWFBWVJ3Y2ZkbTJWTE1USTdD?=
+ =?utf-8?B?NTVDV3BseG1BU1dvL2lSNkxVSXlpVXZrYlhMcVhCWi9naDd4RlRUdWdHbDhr?=
+ =?utf-8?B?YWhRRHEwRU5OWURheC9mS2wrZXVMNDkwRFpxeWRSTEZEUnJTcVdiUzdGcmxO?=
+ =?utf-8?B?ZS9NNzNBSVFGSmtzSDFmcEhMOTBuRFdMd1pTMTNRUkcvNTZHblk1Ynhybi94?=
+ =?utf-8?B?QlFFb1lvSHZYdnBha01FZE5ycjJtaG1zc05ndUIvSnZnUUwzTGxBR3JSb3Bw?=
+ =?utf-8?B?a25TUlpaeE9IZ0NuOUR3S3p4OWtHcWd5ZlYxWkprUVlub05KTUp5Y0ZNbE5j?=
+ =?utf-8?B?VzkrQ0ZHUkNGa0NzenM4Q0k1QjVZajM4QjdFa0hXL2lIMHNTY091R1h4eHA3?=
+ =?utf-8?B?cXdxdlNyaHBRZ0FuL2lFVW01RE5oWHVhYit6Q093dDIwTElPNnJmREtkOE5Y?=
+ =?utf-8?B?eWVtbWk0WlltWlkxK29JdUQ3R0IvQzRHV0EveFFXUkw4d3NyYVhrMTRYRGZR?=
+ =?utf-8?B?N0VWMmZieEN4VUFMcHBkSXJVTWZ4SEFGY3NOOGd4TmtXRDRyS3Bwd1NsRUNL?=
+ =?utf-8?B?bnNvaXBSVERBNWJkblh0T2hyUWVBWndDOHRxZDBYTUtyRlVXajVmQ0FYUU9m?=
+ =?utf-8?B?RFNXNHQ1Q1NqQ0owTG5xRTVvOUNQWVM1dGE4Vi9sck9jODFZMXRYTVRIajJk?=
+ =?utf-8?B?SlBVeVUxdkpMSVBPd0R5Snh2UC9SY09JSlgyR1BuN3RRNGE2V000VCtSdlUz?=
+ =?utf-8?B?cFZKcUMrVGlreXZQdEdaU0tDYm5UTHQ0cnBqYThoUjdDZWlvYXJpblo2OTMy?=
+ =?utf-8?B?QnY1bFVJaDYxakJwUjFUbmNQSzFScy9ndDFHeHA3K1Zub1d1MThlZGJ1d3BP?=
+ =?utf-8?B?TU1PNXI5RHRMTnRuaWVSOGZ3VmRIZko4VnNiemkvKytuUXNnMjdhYU1VN1cz?=
+ =?utf-8?B?Q3RGK0dOd1owWUw3T0UweExWVWJSbEZvRXVXTjlwSk1QejAyNE1pbXZIaUlL?=
+ =?utf-8?B?VGdpclJKMzVNdEVXYkhtQmU1aTREclA4NHBOR09xQnNreTNCQnU5S0o0OEls?=
+ =?utf-8?B?UXFmZys2cVJocHk0alRWaDBGbkYvSTNmRlVkYVlYNlNrT3NRWjB4ZnBmRG9X?=
+ =?utf-8?B?YXZxa3NsbjZsVTZoRUNQWlBEdTdJYmJyR0k3VVZrdzUwN2c1cENueGhrYTAw?=
+ =?utf-8?B?TWVzRHpNblFKbjc3NlV1TzFFeitlb0hQYmgxdzZDalN1MGZsZUVtcmQ5VmpE?=
+ =?utf-8?B?SU1EcU1LS2ZkemRCVnI3ZUZzQWNLSXEyOE5uanN1VFViQmJTQ3A0UEI0VHJ4?=
+ =?utf-8?B?NG1iL2lYYUV6alU5eDlROWhGelp0RUl4aFhrZjliNkZIclZqRlBJZmZxZDNu?=
+ =?utf-8?B?anBycFFGN3FBQlpGTU1YMlRjNHR5M3M1a2pabEM4MURraHFCbXZzWjZtdi9n?=
+ =?utf-8?B?eE9XMDRoWlJEbjZHeGQzMDFDeTRQa0lvbTdTNjM0RmtZSmpZQjZCVmRNZ0Fq?=
+ =?utf-8?Q?lpitEVOXI6wLLanOMQhDkk9Dq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ea9cbc2-737a-45cf-173e-08dd6a995d03
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 06:01:48.3671
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 715WZ68elh/eUbkA+zAxkQ/5IxfDzjHIEXe9LOSY6UnVR7u8dHr2TLnuB6o75OdihE5Bf+Jrh2Ofc0qlhJW3iQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9478
 
-This patch implements in order support for both split virtqueue and
-packed virtqueue. Dedicate virtqueue ops are introduced for the packed
-virtqueue. Most of the ops were reused but the ones that have major
-difference.
 
-KVM guest + testpmd on the host shows 5% improvement in packed
-virtqueue TX PPS. No obvious changes in other test cases.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/virtio/virtio_ring.c | 451 +++++++++++++++++++++++++++++++++--
- 1 file changed, 434 insertions(+), 17 deletions(-)
+On 1/23/2025 11:25 AM, Shivank Garg wrote:
+> Hi all,
+> 
+> Zi Yan and I would like to propose the topic: Enhancements to Page
+> Migration with Multi-threading and Batch Offloading to DMA.
+> 
+> Page migration is a critical operation in NUMA systems that can incur
+> significant overheads, affecting memory management performance across
+> various workloads. For example, copying folios between DRAM NUMA nodes
+> can take ~25% of the total migration cost for migrating 256MB of data.
+> 
+> Modern systems are equipped with powerful DMA engines for bulk data
+> copying, GPUs, and high CPU core counts. Leveraging these hardware
+> capabilities becomes essential for systems where frequent page promotion
+> and demotion occur - from large-scale tiered-memory systems with CXL nodes
+> to CPU-GPU coherent system with GPU memory exposed as NUMA nodes.
+> 
+> Existing page migration performs sequential page copying, underutilizing
+> modern CPU architectures and high-bandwidth memory subsystems.
+> 
+> We have proposed and posted RFCs to enhance page migration through three
+> key techniques:
+> 1. Batching migration operations for bulk copying data [1]
+> 2. Multi-threaded folio copying [2]
+> 3. DMA offloading to hardware accelerators [1]
+> 
+> By employing batching and multi-threaded folio copying, we are able to
+> achieve significant improvements in page migration throughput for large
+> pages.
+> 
+> Discussion points:
+> 1. Performance:
+>    a. Policy decision for DMA and CPU selection
+>    b. Platform-specific scheduling of folio-copy worker threads for better
+>       bandwidth utilization
+>    c. Using Non-temporal instructions for CPU-based memcpy
+>    d. Upscaling/downscaling worker threads based on migration size, CPU
+>       availability (system load), bandwidth saturation, etc.
+> 2. Interface requirements with DMA hardware:
+>    a. Standardizing APIs for DMA drivers and support for different DMA
+>       drivers
+>    b. Enhancing DMA drivers for bulk copying (e.g., SDXi Engine)
+> 3. Resources Accounting:
+>    a. CPU cgroups accounting and fairness [3]
+>    b. Who bears migration cost? - (Migration cost attribution)
+> 
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 0fad8e8419c8..4341c178d53f 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -74,6 +74,7 @@ struct vring_desc_state_split {
- 	 * allocated together. So we won't stress more to the memory allocator.
- 	 */
- 	struct vring_desc *indir_desc;
-+	u32 total_len;			/* Buffer Length */
- };
- 
- struct vring_desc_state_packed {
-@@ -85,6 +86,7 @@ struct vring_desc_state_packed {
- 	struct vring_packed_desc *indir_desc;
- 	u16 num;			/* Descriptor list length. */
- 	u16 last;			/* The last desc state in a list. */
-+	u32 total_len;			/* Buffer Length */
- };
- 
- struct vring_desc_extra {
-@@ -198,8 +200,15 @@ struct vring_virtqueue {
- 	/* Host publishes avail event idx */
- 	bool event;
- 
-+	/* Device supports in order */
-+	bool in_order;
-+
- 	/* Head of free buffer list. */
- 	unsigned int free_head;
-+
-+	/* Head of the batched used buffers, vq->num means no batching */
-+	unsigned int batch_head;
-+
- 	/* Number we've added since last sync. */
- 	unsigned int num_added;
- 
-@@ -562,7 +571,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
- 	struct vring_desc_extra *extra;
- 	struct scatterlist *sg;
- 	struct vring_desc *desc;
--	unsigned int i, n, c, avail, descs_used, err_idx;
-+	unsigned int i, n, c, avail, descs_used, err_idx, total_len = 0;
- 	int head;
- 	bool indirect;
- 
-@@ -638,6 +647,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
- 			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
- 						     flags,
- 						     premapped);
-+			total_len += len;
- 		}
- 	}
- 	for (; n < (out_sgs + in_sgs); n++) {
-@@ -657,6 +667,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
- 			 */
- 			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
- 						     flags, premapped);
-+			total_len += len;
- 		}
- 	}
- 
-@@ -679,7 +690,12 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
- 	vq->vq.num_free -= descs_used;
- 
- 	/* Update free pointer */
--	if (indirect)
-+	if (vq->in_order) {
-+		vq->free_head += descs_used;
-+		if (vq->free_head >= vq->split.vring.num)
-+			vq->free_head -= vq->split.vring.num;
-+		vq->split.desc_state[head].total_len = total_len;;
-+	} else if (indirect)
- 		vq->free_head = vq->split.desc_extra[head].next;
- 	else
- 		vq->free_head = i;
-@@ -816,8 +832,8 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
- 		i = vq->split.desc_extra[i].next;
- 		vq->vq.num_free++;
- 	}
--
- 	vring_unmap_one_split(vq, &extra[i]);
-+
- 	vq->split.desc_extra[i].next = vq->free_head;
- 	vq->free_head = head;
- 
-@@ -830,6 +846,40 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
- 		*ctx = vq->split.desc_state[head].indir_desc;
- }
- 
-+static void detach_buf_split_in_order(struct vring_virtqueue *vq, unsigned int head,
-+				      void **ctx)
-+{
-+	struct vring_desc_extra *extra;
-+	unsigned int i;
-+	__virtio16 nextflag = cpu_to_virtio16(vq->vq.vdev, VRING_DESC_F_NEXT);
-+
-+	/* Clear data ptr. */
-+	vq->split.desc_state[head].data = NULL;
-+
-+	extra = vq->split.desc_extra;
-+
-+	/* Put back on free list: unmap first-level descriptors and find end */
-+	i = head;
-+
-+	while (vq->split.vring.desc[i].flags & nextflag) {
-+		vring_unmap_one_split(vq, &extra[i]);
-+		i++;
-+		if (i >= vq->split.vring.num)
-+			i = 0;
-+		vq->vq.num_free++;
-+	}
-+
-+	vring_unmap_one_split(vq, &extra[i]);
-+
-+	/* Plus final descriptor */
-+	vq->vq.num_free++;
-+
-+	if (vq->indirect)
-+		detach_indirect_split(vq, head);
-+	else if (ctx)
-+		*ctx = vq->split.desc_state[head].indir_desc;
-+}
-+
- static bool virtqueue_poll_split(const struct vring_virtqueue *vq,
- 				 u16 last_used_idx)
- {
-@@ -899,6 +949,83 @@ static void *virtqueue_get_buf_ctx_split(struct vring_virtqueue *vq,
- 	return ret;
- }
- 
-+static void *virtqueue_get_buf_ctx_split_in_order(struct vring_virtqueue *vq,
-+						  unsigned int *len,
-+						  void **ctx)
-+{
-+	void *ret;
-+	unsigned int i, num = vq->split.vring.num, num_free = vq->vq.num_free;
-+	u16 last_used;
-+
-+	START_USE(vq);
-+
-+	if (unlikely(vq->broken)) {
-+		END_USE(vq);
-+		return NULL;
-+	}
-+
-+	last_used = (vq->last_used_idx & (vq->split.vring.num - 1));
-+
-+	if (vq->batch_head == num) {
-+		if (!more_used_split(vq)) {
-+			pr_debug("No more buffers in queue\n");
-+			END_USE(vq);
-+			return NULL;
-+		}
-+
-+		/* Only get used array entries after they have been
-+		 * exposed by host. */
-+		virtio_rmb(vq->weak_barriers);
-+
-+		i = virtio32_to_cpu(vq->vq.vdev,
-+				    vq->split.vring.used->ring[last_used].id);
-+		if (i != last_used) {
-+			vq->batch_head = i;
-+			i = last_used;
-+			*len = vq->split.desc_state[i].total_len;
-+		} else {
-+			*len = virtio32_to_cpu(vq->vq.vdev,
-+					vq->split.vring.used->ring[last_used].len);
-+		}
-+	} else {
-+		i = vq->next_avail_idx;
-+		*len = vq->split.desc_state[i].total_len;
-+		if (i == vq->batch_head)
-+			vq->batch_head = num;
-+	}
-+
-+	if (unlikely(i >= num)) {
-+		BAD_RING(vq, "id %u out of range\n", i);
-+		return NULL;
-+	}
-+	if (unlikely(!vq->split.desc_state[i].data)) {
-+		BAD_RING(vq, "id %u is not a head!\n", i);
-+		return NULL;
-+	}
-+
-+	/* detach_buf_split clears data, so grab it now. */
-+	ret = vq->split.desc_state[i].data;
-+	detach_buf_split_in_order(vq, i, ctx);
-+
-+	vq->next_avail_idx += vq->vq.num_free - num_free;
-+	if (vq->next_avail_idx >= num)
-+		vq->next_avail_idx -= num;
-+
-+	vq->last_used_idx++;
-+	/* If we expect an interrupt for the next entry, tell host
-+	 * by writing event index and flush out the write before
-+	 * the read in the next get_buf call. */
-+	if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT))
-+		virtio_store_mb(vq->weak_barriers,
-+				&vring_used_event(&vq->split.vring),
-+				cpu_to_virtio16(vq->vq.vdev, vq->last_used_idx));
-+
-+	LAST_ADD_TIME_INVALID(vq);
-+
-+	END_USE(vq);
-+	return ret;
-+}
-+
- static void virtqueue_disable_cb_split(struct vring_virtqueue *vq)
- {
- 	if (!(vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT)) {
-@@ -992,7 +1119,10 @@ static void *virtqueue_detach_unused_buf_split(struct vring_virtqueue *vq)
- 			continue;
- 		/* detach_buf_split clears data, so grab it now. */
- 		buf = vq->split.desc_state[i].data;
--		detach_buf_split(vq, i, NULL);
-+		if (vq->in_order)
-+			detach_buf_split_in_order(vq, i, NULL);
-+		else
-+			detach_buf_split(vq, i, NULL);
- 		vq->split.avail_idx_shadow--;
- 		vq->split.vring.avail->idx = cpu_to_virtio16(vq->vq.vdev,
- 				vq->split.avail_idx_shadow);
-@@ -1055,6 +1185,7 @@ static void virtqueue_vring_attach_split(struct vring_virtqueue *vq,
- 
- 	/* Put everything in free lists. */
- 	vq->free_head = 0;
-+	vq->batch_head = vq->split.vring.num;
- }
- 
- static int vring_alloc_state_extra_split(struct vring_virtqueue_split *vring_split)
-@@ -1147,6 +1278,7 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
- }
- 
- struct virtqueue_ops split_ops;
-+struct virtqueue_ops split_in_order_ops;
- 
- static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
- 					       struct vring_virtqueue_split *vring_split,
-@@ -1166,7 +1298,6 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
- 		return NULL;
- 
- 	vq->packed_ring = false;
--	vq->ops = &split_ops;
- 	vq->vq.callback = callback;
- 	vq->vq.vdev = vdev;
- 	vq->vq.name = name;
-@@ -1186,6 +1317,9 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
- 	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
- 		!context;
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-+	vq->in_order = virtio_has_feature(vdev, VIRTIO_F_IN_ORDER);
-+
-+	vq->ops = vq->in_order ? &split_in_order_ops : &split_ops;
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
- 		vq->weak_barriers = false;
-@@ -1349,13 +1483,14 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
- 					 unsigned int in_sgs,
- 					 void *data,
- 					 bool premapped,
--					 gfp_t gfp)
-+					 gfp_t gfp,
-+					 u16 id)
- {
- 	struct vring_desc_extra *extra;
- 	struct vring_packed_desc *desc;
- 	struct scatterlist *sg;
--	unsigned int i, n, err_idx, len;
--	u16 head, id;
-+	unsigned int i, n, err_idx, len, total_len = 0;
-+	u16 head;
- 	dma_addr_t addr;
- 
- 	head = vq->next_avail_idx;
-@@ -1373,8 +1508,6 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
- 	}
- 
- 	i = 0;
--	id = vq->free_head;
--	BUG_ON(id == vq->packed.vring.num);
- 
- 	for (n = 0; n < out_sgs + in_sgs; n++) {
- 		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-@@ -1394,6 +1527,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
- 				extra[i].flags = n < out_sgs ?  0 : VRING_DESC_F_WRITE;
- 			}
- 
-+			total_len += len;
- 			i++;
- 		}
- 	}
-@@ -1447,6 +1581,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
- 	vq->packed.desc_state[id].data = data;
- 	vq->packed.desc_state[id].indir_desc = desc;
- 	vq->packed.desc_state[id].last = id;
-+	vq->packed.desc_state[id].total_len = total_len;
- 
- 	vq->num_added += 1;
- 
-@@ -1499,8 +1634,11 @@ static inline int virtqueue_add_packed(struct vring_virtqueue *vq,
- 	BUG_ON(total_sg == 0);
- 
- 	if (virtqueue_use_indirect(vq, total_sg)) {
-+		id = vq->free_head;
-+		BUG_ON(id == vq->packed.vring.num);
- 		err = virtqueue_add_indirect_packed(vq, sgs, total_sg, out_sgs,
--						    in_sgs, data, premapped, gfp);
-+						    in_sgs, data, premapped,
-+						    gfp, id);
- 		if (err != -ENOMEM) {
- 			END_USE(vq);
- 			return err;
-@@ -1621,6 +1759,152 @@ static inline int virtqueue_add_packed(struct vring_virtqueue *vq,
- 	return -EIO;
- }
- 
-+static inline int virtqueue_add_packed_in_order(struct vring_virtqueue *vq,
-+						struct scatterlist *sgs[],
-+						unsigned int total_sg,
-+						unsigned int out_sgs,
-+						unsigned int in_sgs,
-+						void *data,
-+						void *ctx,
-+						bool premapped,
-+						gfp_t gfp)
-+{
-+	struct vring_packed_desc *desc;
-+	struct scatterlist *sg;
-+	unsigned int i, n, c, err_idx, total_len = 0;
-+	__le16 head_flags, flags;
-+	u16 head, avail_used_flags;
-+	int err;
-+
-+	START_USE(vq);
-+
-+	BUG_ON(data == NULL);
-+	BUG_ON(ctx && vq->indirect);
-+
-+	if (unlikely(vq->broken)) {
-+		END_USE(vq);
-+		return -EIO;
-+	}
-+
-+	LAST_ADD_TIME_UPDATE(vq);
-+
-+	BUG_ON(total_sg == 0);
-+
-+	if (virtqueue_use_indirect(vq, total_sg)) {
-+		err = virtqueue_add_indirect_packed(vq, sgs, total_sg, out_sgs,
-+						    in_sgs, data, premapped, gfp,
-+						    vq->next_avail_idx);
-+		if (err != -ENOMEM) {
-+			END_USE(vq);
-+			return err;
-+		}
-+
-+		/* fall back on direct */
-+	}
-+
-+	head = vq->next_avail_idx;
-+	avail_used_flags = vq->packed.avail_used_flags;
-+
-+	WARN_ON_ONCE(total_sg > vq->packed.vring.num && !vq->indirect);
-+
-+	desc = vq->packed.vring.desc;
-+	i = head;
-+
-+	if (unlikely(vq->vq.num_free < total_sg)) {
-+		pr_debug("Can't add buf len %i - avail = %i\n",
-+			 total_sg, vq->vq.num_free);
-+		END_USE(vq);
-+		return -ENOSPC;
-+	}
-+
-+	c = 0;
-+	for (n = 0; n < out_sgs + in_sgs; n++) {
-+		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-+			dma_addr_t addr;
-+			u32 len;
-+
-+			if (vring_map_one_sg(vq, sg, n < out_sgs ?
-+					     DMA_TO_DEVICE : DMA_FROM_DEVICE,
-+					     &addr, &len, premapped))
-+				goto unmap_release;
-+
-+			flags = cpu_to_le16(vq->packed.avail_used_flags |
-+				    (++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
-+				    (n < out_sgs ? 0 : VRING_DESC_F_WRITE));
-+			if (i == head)
-+				head_flags = flags;
-+			else
-+				desc[i].flags = flags;
-+
-+
-+			desc[i].addr = cpu_to_le64(addr);
-+			desc[i].len = cpu_to_le32(len);
-+			desc[i].id = cpu_to_le16(head);
-+
-+			if (unlikely(vq->use_dma_api)) {
-+				vq->packed.desc_extra[i].addr = premapped ?
-+				      DMA_MAPPING_ERROR: addr;
-+				vq->packed.desc_extra[i].len = len;
-+				vq->packed.desc_extra[i].flags =
-+					le16_to_cpu(flags);
-+			}
-+
-+			if ((unlikely(++i >= vq->packed.vring.num))) {
-+				i = 0;
-+				vq->packed.avail_used_flags ^=
-+					1 << VRING_PACKED_DESC_F_AVAIL |
-+					1 << VRING_PACKED_DESC_F_USED;
-+				vq->packed.avail_wrap_counter ^= 1;
-+			}
-+
-+			total_len += len;
-+		}
-+	}
-+
-+	/* We're using some buffers from the free list. */
-+	vq->vq.num_free -= total_sg;
-+
-+	/* Update free pointer */
-+	vq->next_avail_idx = i;
-+
-+	/* Store token. */
-+	vq->packed.desc_state[head].num = total_sg;
-+	vq->packed.desc_state[head].data = data;
-+	vq->packed.desc_state[head].indir_desc = ctx;
-+	vq->packed.desc_state[head].total_len = total_len;
-+
-+	/*
-+	 * A driver MUST NOT make the first descriptor in the list
-+	 * available before all subsequent descriptors comprising
-+	 * the list are made available.
-+	 */
-+	virtio_wmb(vq->weak_barriers);
-+	vq->packed.vring.desc[head].flags = head_flags;
-+	vq->num_added += total_sg;
-+
-+	pr_debug("Added buffer head %i to %p\n", head, vq);
-+	END_USE(vq);
-+
-+	return 0;
-+
-+unmap_release:
-+	err_idx = i;
-+	i = head;
-+	vq->packed.avail_used_flags = avail_used_flags;
-+
-+	for (n = 0; n < total_sg; n++) {
-+		if (i == err_idx)
-+			break;
-+		vring_unmap_extra_packed(vq, &vq->packed.desc_extra[i]);
-+		i++;
-+		if (i >= vq->packed.vring.num)
-+			i = 0;
-+	}
-+
-+	END_USE(vq);
-+	return -EIO;
-+}
-+
- static bool virtqueue_kick_prepare_packed(struct vring_virtqueue *vq)
- {
- 	u16 new, old, off_wrap, flags, wrap_counter, event_idx;
-@@ -1741,7 +2025,7 @@ static inline bool is_used_desc_packed(const struct vring_virtqueue *vq,
- 	return avail == used && used == used_wrap_counter;
- }
- 
--static bool virtqueue_poll_packed(const struct vring_virtqueue *vq, u16 off_wrap)
-+static bool __virtqueue_poll_packed(const struct vring_virtqueue *vq, u16 off_wrap)
- {
- 	bool wrap_counter;
- 	u16 used_idx;
-@@ -1752,6 +2036,20 @@ static bool virtqueue_poll_packed(const struct vring_virtqueue *vq, u16 off_wrap
- 	return is_used_desc_packed(vq, used_idx, wrap_counter);
- }
- 
-+static bool virtqueue_poll_packed(const struct vring_virtqueue *vq, u16 off_wrap)
-+{
-+	return __virtqueue_poll_packed(vq, off_wrap);
-+}
-+
-+static bool virtqueue_poll_packed_in_order(const struct vring_virtqueue *vq,
-+					   u16 off_wrap)
-+{
-+	if (vq->batch_head != vq->packed.vring.num)
-+		return true;
-+
-+	return __virtqueue_poll_packed(vq, off_wrap);
-+}
-+
- static bool more_used_packed(const struct vring_virtqueue *vq)
- {
- 	return virtqueue_poll_packed(vq, READ_ONCE(vq->last_used_idx));
-@@ -1781,10 +2079,88 @@ static void update_last_used_idx_packed(struct vring_virtqueue *vq,
- 				cpu_to_le16(vq->last_used_idx));
- }
- 
-+static bool more_used_packed_in_order(const struct vring_virtqueue *vq)
-+{
-+	return virtqueue_poll_packed_in_order(vq, READ_ONCE(vq->last_used_idx));
-+}
-+
-+static bool __more_used_packed(const struct vring_virtqueue *vq)
-+{
-+	return __virtqueue_poll_packed(vq, READ_ONCE(vq->last_used_idx));
-+}
-+
-+static void *virtqueue_get_buf_ctx_packed_in_order(struct vring_virtqueue *vq,
-+						   unsigned int *len,
-+						   void **ctx)
-+{
-+	unsigned int num = vq->packed.vring.num;
-+	u16 last_used, id, last_used_idx, batch_head;
-+	bool used_wrap_counter;
-+	void *ret;
-+
-+	START_USE(vq);
-+
-+	batch_head = READ_ONCE(vq->batch_head);
-+
-+	if (unlikely(vq->broken)) {
-+		END_USE(vq);
-+		return NULL;
-+	}
-+
-+	last_used_idx = vq->last_used_idx;
-+	used_wrap_counter = packed_used_wrap_counter(last_used_idx);
-+	last_used = packed_last_used(last_used_idx);
-+
-+	if (batch_head == num) {
-+		if (!__more_used_packed(vq)) {
-+			pr_debug("No more buffers in queue\n");
-+			END_USE(vq);
-+			return NULL;
-+		}
-+		/* Only get used elements after they have been exposed by host. */
-+		virtio_rmb(vq->weak_barriers);
-+
-+		id = le16_to_cpu(vq->packed.vring.desc[last_used].id);
-+		if (id != last_used) {
-+			vq->batch_head = id;
-+			id = last_used;
-+			*len = vq->packed.desc_state[id].total_len;
-+		} else {
-+			*len = le32_to_cpu(vq->packed.vring.desc[last_used].len);
-+		}
-+	} else {
-+		id = last_used;
-+		*len = vq->packed.desc_state[id].total_len;
-+		if (id == batch_head)
-+			vq->batch_head = num;
-+	}
-+
-+	if (unlikely(id >= num)) {
-+		BAD_RING(vq, "id %u out of range\n", id);
-+		return NULL;
-+	}
-+	if (unlikely(!vq->packed.desc_state[id].data)) {
-+		BAD_RING(vq, "id %u is not a head!\n", id);
-+		return NULL;
-+	}
-+
-+	/* detach_buf_packed clears data, so grab it now. */
-+	ret = vq->packed.desc_state[id].data;
-+	__detach_buf_packed(vq, id, ctx);
-+
-+	update_last_used_idx_packed(vq, id, last_used, used_wrap_counter);
-+
-+	LAST_ADD_TIME_INVALID(vq);
-+
-+	END_USE(vq);
-+	return ret;
-+}
-+
- static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
- 					  unsigned int *len,
- 					  void **ctx)
- {
-+	unsigned int num = vq->packed.vring.num;
- 	u16 last_used, id, last_used_idx;
- 	bool used_wrap_counter;
- 	void *ret;
-@@ -1796,7 +2172,7 @@ static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
- 		return NULL;
- 	}
- 
--	if (!more_used_packed(vq)) {
-+	if (!__more_used_packed(vq)) {
- 		pr_debug("No more buffers in queue\n");
- 		END_USE(vq);
- 		return NULL;
-@@ -1811,7 +2187,7 @@ static void *virtqueue_get_buf_ctx_packed(struct vring_virtqueue *vq,
- 	id = le16_to_cpu(vq->packed.vring.desc[last_used].id);
- 	*len = le32_to_cpu(vq->packed.vring.desc[last_used].len);
- 
--	if (unlikely(id >= vq->packed.vring.num)) {
-+	if (unlikely(id >= num)) {
- 		BAD_RING(vq, "id %u out of range\n", id);
- 		return NULL;
- 	}
-@@ -1931,6 +2307,7 @@ static bool virtqueue_enable_cb_delayed_packed(struct vring_virtqueue *vq)
- 	last_used_idx = READ_ONCE(vq->last_used_idx);
- 	wrap_counter = packed_used_wrap_counter(last_used_idx);
- 	used_idx = packed_last_used(last_used_idx);
-+
- 	if (is_used_desc_packed(vq, used_idx, wrap_counter)) {
- 		END_USE(vq);
- 		return false;
-@@ -1952,7 +2329,7 @@ static void *virtqueue_detach_unused_buf_packed(struct vring_virtqueue *vq)
- 			continue;
- 		/* detach_buf clears data, so grab it now. */
- 		buf = vq->packed.desc_state[i].data;
--		detach_buf_packed(vq, i, NULL);
-+		__detach_buf_packed(vq, i, NULL);
- 		END_USE(vq);
- 		return buf;
- 	}
-@@ -1978,6 +2355,8 @@ static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num)
- 	for (i = 0; i < num - 1; i++)
- 		desc_extra[i].next = i + 1;
- 
-+	desc_extra[num - 1].next = 0;
-+
- 	return desc_extra;
- }
- 
-@@ -2108,8 +2487,12 @@ static void virtqueue_vring_attach_packed(struct vring_virtqueue *vq,
- {
- 	vq->packed = *vring_packed;
- 
--	/* Put everything in free lists. */
--	vq->free_head = 0;
-+	if (vq->in_order)
-+		vq->batch_head = vq->split.vring.num;
-+	else {
-+		/* Put everything in free lists. */
-+		vq->free_head = 0;
-+	}
- }
- 
- static void virtqueue_reset_packed(struct vring_virtqueue *vq)
-@@ -2125,6 +2508,7 @@ static void virtqueue_reset_packed(struct vring_virtqueue *vq)
- }
- 
- struct virtqueue_ops packed_ops;
-+struct virtqueue_ops packed_in_order_ops;
- 
- static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
- 					       struct vring_virtqueue_packed *vring_packed,
-@@ -2164,6 +2548,9 @@ static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
- 	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
- 		!context;
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-+	vq->in_order = virtio_has_feature(vdev, VIRTIO_F_IN_ORDER);
-+
-+	vq->ops = vq->in_order ? &packed_in_order_ops : &packed_ops;
- 
- 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
- 		vq->weak_barriers = false;
-@@ -2259,6 +2646,20 @@ struct virtqueue_ops split_ops = {
- 	.reset = virtqueue_reset_split,
- };
- 
-+struct virtqueue_ops split_in_order_ops = {
-+	.add = virtqueue_add_split,
-+	.get = virtqueue_get_buf_ctx_split_in_order,
-+	.kick_prepare = virtqueue_kick_prepare_split,
-+	.disable_cb = virtqueue_disable_cb_split,
-+	.enable_cb_delayed = virtqueue_enable_cb_delayed_split,
-+	.enable_cb_prepare = virtqueue_enable_cb_prepare_split,
-+	.poll = virtqueue_poll_split,
-+	.detach_unused_buf = virtqueue_detach_unused_buf_split,
-+	.more_used = more_used_split,
-+	.resize = virtqueue_resize_split,
-+	.reset = virtqueue_reset_split,
-+};
-+
- struct virtqueue_ops packed_ops = {
- 	.add = virtqueue_add_packed,
- 	.get = virtqueue_get_buf_ctx_packed,
-@@ -2273,6 +2674,20 @@ struct virtqueue_ops packed_ops = {
- 	.reset = virtqueue_reset_packed,
- };
- 
-+struct virtqueue_ops packed_in_order_ops = {
-+	.add = virtqueue_add_packed_in_order,
-+	.get = virtqueue_get_buf_ctx_packed_in_order,
-+	.kick_prepare = virtqueue_kick_prepare_packed,
-+	.disable_cb = virtqueue_disable_cb_packed,
-+	.enable_cb_delayed = virtqueue_enable_cb_delayed_packed,
-+	.enable_cb_prepare = virtqueue_enable_cb_prepare_packed,
-+	.poll = virtqueue_poll_packed_in_order,
-+	.detach_unused_buf = virtqueue_detach_unused_buf_packed,
-+	.more_used = more_used_packed_in_order,
-+	.resize = virtqueue_resize_packed,
-+	.reset = virtqueue_reset_packed,
-+};
-+
- static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
- 					 void (*recycle)(struct virtqueue *vq, void *buf))
- {
-@@ -3016,6 +3431,8 @@ void vring_transport_features(struct virtio_device *vdev)
- 			break;
- 		case VIRTIO_F_NOTIFICATION_DATA:
- 			break;
-+		case VIRTIO_F_IN_ORDER:
-+			break;
- 		default:
- 			/* We don't understand this bit. */
- 			__virtio_clear_bit(vdev, i);
--- 
-2.42.0
+Hi all,
 
+For reference, here is the link to the latest RFC v2:
+
+https://lore.kernel.org/linux-mm/20250319192211.10092-1-shivankg@amd.com
+
+This version combines the ideas discussed in [1] and [2] and includes details
+on performance improvements and experimental findings to provide more context
+for discussion.
+
+> References:
+> [1] https://lore.kernel.org/all/20240614221525.19170-1-shivankg@amd.com
+> [2] https://lore.kernel.org/all/20250103172419.4148674-1-ziy@nvidia.com
+> [3] https://lore.kernel.org/all/CAHbLzkpoKP0fVZP5b10wdzAMDLWysDy7oH0qaUssiUXj80R6bw@mail.gmail.com
+
+Looking forward to your feedback!
+
+Thanks,
+Shivank
+ 
 
