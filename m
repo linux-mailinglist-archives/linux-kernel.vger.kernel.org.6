@@ -1,275 +1,324 @@
-Return-Path: <linux-kernel+bounces-573831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC8FA6DCF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:28:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9CDA6DCF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF30D3B7B33
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A271161D40
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FE5261375;
-	Mon, 24 Mar 2025 14:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486CC25FA0D;
+	Mon, 24 Mar 2025 14:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eqhd3ejs"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cVDSjf9V"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA125FA31;
-	Mon, 24 Mar 2025 14:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9C526137B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826218; cv=none; b=tsLGPR+6KUeqArQC1MKrMlcZ2c3ZvhKdEPBI7dOcG1dG8JmfjhzLGXo8dn7LbQ/QRnFD0Y4R/84VFcQJBNVN+KIFGzkFSSsfIzVvHsRUn7V5vIgCyPhXIjO3Q4mIE2mgdI3m1JgzMZXMe0upB2JG236/f/PFWMcJK39j3nuIOrE=
+	t=1742826254; cv=none; b=RLINFz0vU2bba5fSf/JCXsOfkRb9I78X6NcZcySI1+hRHi5XCieEbhfz+IF2BsOCm2DAIhiKu7N5oloPWYx/9lfWBLS52Gq8duS26ijbEGsH6bE76edBJ4RxvBsS4yLLNzDotMODSIu2IL6e11YC1PRFg6rzI6NNM8BNE70hUB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826218; c=relaxed/simple;
-	bh=T9O+OjyuYsEWsaV/u/I8OgmvvRYdBzOmioIB3KGGE5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TOfMIKiTY8dWG3kbkQDAawfAMb4z4kHQVQnS7Z9GNRXPIZpe/np35UEcSAfNKjSwLQF02BvBikPzSvuUF4x54hlt1V7QWa24cmk4+lUntn4BSoZejQOEymAGFMT5YqucNUnEBouKyVjI5+lyZp1vJ92CujEbkfvr2K2ORKD+HZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eqhd3ejs; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff6a98c638so9284725a91.0;
-        Mon, 24 Mar 2025 07:23:36 -0700 (PDT)
+	s=arc-20240116; t=1742826254; c=relaxed/simple;
+	bh=O14EyF9A15Ru315HFl4HSzQuAQcmW2SYomPhPWdbxQE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UT3jE+WKXoFGBIY+MvoWuohpj9rPGGsTw65Z+FY6Hf9XZ7yusWKw9c6TuLYP8FFSp0NHWCwlnkZ7uLwjBVyEIp7/1FizMujBkfZXux8B8oJwA/ylN2w1DJ0KPVX+SFatyMtSk9lySPNadan1UqzGmrGq3s00jhXOWoWPzAWgGKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cVDSjf9V; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso429277966b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:24:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742826216; x=1743431016; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOoT+rzf7f9RJXhKC/sBumAdpW8J/gLTaNzVv677dTg=;
-        b=Eqhd3ejs0RvS9VNEUlYoEAq2dav4rwenCaHI5S9dD3qdb1U/SPyzI4Dqk1eYluzqJU
-         eB7EQYEgrcS/y5tr9e107uFE8glnZD7/ypqJnm00lOun9S0CD7RxyhWeT5h2/jsMX4YR
-         Kb5tITe6yEYj7QWlSrd8KCZFunLynmFaBYEcBu45XmqYHSv+KDTQqNkoS02eJfV1l0SW
-         rgv7t5m5cJNFi5O4W4rWuss9E0foAv8+tR3jM+zeFRIw5JwvBZ++36XxTaCCMbB9ZmDF
-         ZNTbImi9iyNrDIUxqXVIk+sl8WhjCwm+OSu1nvupXyqeNcF747a5d8hlkFiVjjBzmWWa
-         ziXg==
+        d=linaro.org; s=google; t=1742826249; x=1743431049; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5W5g6PwOvS4pLaf93NgeHPK0lEFRnE/rz638Ra6x+s=;
+        b=cVDSjf9VPxGzjL308ZAfWjhsXRpm62MSWa8DyI39iJYCYX8usktM1w07xANhZrHLtu
+         U4N3AduM5obAwOrzk3L+12MSR4xqSCc+mdYXvWCOCZSu2AzArQiHrqWRX7unW7XEXfbu
+         NWmlSW+MJ+xHCyCUIzeOj5Sq9niQbWgDRCVhZUI/PBGaVviNwH5qm/JmLz+HVL+9kbSA
+         KJkXX84DwHPbKw3bIlWRL5xbr3rwJeodAD9ZS3sDFiBenuKDEA8ymyVnMPa4IiMdrryw
+         lVilEwyiaODIA94AAwnQ4Bf4F2Q+Qo/rsLNHd36VtGD2rVjS6KZ+uc0aDDg88LhhXFQu
+         e8TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742826216; x=1743431016;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JOoT+rzf7f9RJXhKC/sBumAdpW8J/gLTaNzVv677dTg=;
-        b=FqmNmM5X0yvcAcb3uOuJz4wCLk1X+V1eEPjCtZoYMvYs79fFeqwWVLDyV4HuKR8G9j
-         PVRgrv7ZNoDu7hksQUE6K386bfed2CI+fFOPSBy9/ztB6KYCCzKDuyQuduTeT3CzcP4j
-         jKDCwqw/yn1FC5XG0es/+ayRzb7nya+nv7ow0nIYCWCc0DkjuS/eQlDGAUq+Li/1wV3K
-         i0UoLMWrXx0olpEm6ULsLq8B41FqUAW4IecyldZ63ue6GP6n7lnBGKYEY7UB9Baj6QBG
-         auCBwiEO3KkSGc0fenj//GNT5hkE8TS8/jUcktKW7jMf73QBZN0DIUK9XsOm3xGWGR+x
-         HrOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWJ++bYWiSv5I0V4w9wnZasEJ++OaF9+E9k7YTkqhdGEke17F1P09iXA/exDG6AagiI6zld0LpeaQ2t6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg5xrR5vURb3HZfxYnJ/H5CL45HqfbKR8MNT76y51MkkPiP4ir
-	wra5MfH/MnmgB2A4KBU6rLRmbrh0k8OUFFqzdLyu6aXNLtBrroQTjLrQow==
-X-Gm-Gg: ASbGncuQG3o47goYlZPMa+f9N2ZqigN3/nSymDScooH6JXmbUZwzzf1iknfe0q/La1W
-	/hg2J5zd2AyWpcVZ82DEp25CEItVbKBkG7J3jJnK3cOVmg6+at8dj2jY1SeRWSsN0xGHcmmbS32
-	Q2oN71Uzlz1g0fwrvbCBiVLcydKSHSaObamDg+oAjvrlBVIzAwShMtr2xdd/zqOWxGexC6yNzpf
-	e++8veLzo4L/xM3UrIG1N4tSzmkFjCsEz7LTK/N2Z+8NNa+REb/9OMy/piXnqjX3YAtetxKdhZe
-	3uMJv6vekyn0bWw8pFzVXMAJp0sxcLEy35FAmAKD/JPFaFMD35wY4vhfjqQ3hNRzFKKNZw8P7Jf
-	absIkzxw1ig5lHvbOEA==
-X-Google-Smtp-Source: AGHT+IH/zqC9VCVyDaxAL4MjsnixAiUijI43atRLNJuXpRjOdgn8/agjo02Ivk9OcXcrbW7oy7LwMA==
-X-Received: by 2002:a17:90b:48ca:b0:2ee:db1a:2e3c with SMTP id 98e67ed59e1d1-3030fe6e1dfmr19934733a91.1.1742826215354;
-        Mon, 24 Mar 2025 07:23:35 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf5a1d80sm12256019a91.26.2025.03.24.07.23.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 07:23:34 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <851fe398-28da-4ca7-8b0d-b8111811779c@roeck-us.net>
-Date: Mon, 24 Mar 2025 07:23:34 -0700
+        d=1e100.net; s=20230601; t=1742826249; x=1743431049;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N5W5g6PwOvS4pLaf93NgeHPK0lEFRnE/rz638Ra6x+s=;
+        b=imGYkeP8Ff0jr9ILtMnduLBTTqYlzoEmsDnuvM+09fqM7URqW4IVB2KZVQNl1BIKtO
+         joUZ4neaLzaUVUxP0XwTR4E+nwtoNiUS21sOAZ28oeO1KYHLuS3F7z1FD4jUGaaWhUMf
+         PetAwRWuOqWuttojMTPL6uXGcb6g73ZquVssy+Bb2DWAvc5CV24+LoK47BY5SXEFl1FX
+         ZrkhhbySFh35GSxXwJbGT5NVSUPg6k60oO0A0DxqyssYvPhGEu17LWnecF8ZTsDq7rCF
+         B1p9V3T+XE9o14RemutwCDOhKS1sbT8DuSxrh4kS+cRSQCqUX3a2ueMy8lAj2DXOR9j5
+         ypMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjHQFCJlz9pRxxvj9XIy5pWOArr5Ak6/5zLVat52OC45A6YBqYnZ3LuU8ZwBW22th/Gn1xlTwAGBm1nio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOXKL93m/cv7GD83CU+aJz18XyJdsQdXHHTUJFa+kT0ULE0UGP
+	i9pVXm+siiPRVmiFE2LAkKjknH7YU/FpQtxXda3NIt0cKrLdzJ9R7gNnoCGkpOA=
+X-Gm-Gg: ASbGncu+s+EuZtW5Bpn+0scFFU5U8KNnPPsBz79YIUIfX4o+nh8m8LrV1Z78PPSuHB3
+	IL8ESN4VwkycYrX9uSayyIqN4gHeP8BGq9cBt2rsb0MPKoLsvvPUsMx3unlwvBrYh11ls2EujzT
+	/xoL3CvWJLzw9jTSBrYDndKiw7judiQn2j8xyO3yoRntr1047GbgiyvGx5m5YVqGj5lRvJsELtu
+	L8d1iifRLL+ejOvx0eH1qtF75r9iqY9Z642Usw+sYCYyrlXI+rRNn9UxPN1OW29bx/3pF2jV5ln
+	g/QiVEfm9sP2yGPhMMJapKd/npIRTH5mnN2oEEymGzY=
+X-Google-Smtp-Source: AGHT+IHYJjQcnvC0ryFrppXbwzy2MaIiK3p54ZynX0xZ5IkhjX/bqQbS4oI+0KQ1kd+n1FhIDqGwjQ==
+X-Received: by 2002:a17:907:971d:b0:ac3:eb24:ab26 with SMTP id a640c23a62f3a-ac3f2559a6bmr1240855366b.51.1742826249519;
+        Mon, 24 Mar 2025 07:24:09 -0700 (PDT)
+Received: from [127.0.1.1] ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbde4bfsm680626166b.143.2025.03.24.07.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 07:24:08 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 24 Mar 2025 16:24:01 +0200
+Subject: [PATCH] arm64: dts: qcom: x1e001de-devkit: Add Wi-Fi and Bluetooth
+ pwrseq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] hwmon: (gpio-fan) Add regulator support
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324124550.989292-1-alexander.stein@ew.tq-group.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250324124550.989292-1-alexander.stein@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250324-x1e001de-devkit-dts-pwrseq-v1-1-530f69b39a16@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAABr4WcC/x3MwQqCQBAG4FeROTcws1obvUp4kPbfGgKzHTFBf
+ HeXjt/l28hRDE63ZqOCxdw+Y4WeGnq8hvEJtlRNQcJZ2tDxqhDRBE5Y3jZzmp2nX3F8OYq2+ZK
+ vGuNANZgKsq3//N7v+wG9DlY1bAAAAA==
+X-Change-ID: 20250324-x1e001de-devkit-dts-pwrseq-7013f6f8177a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5152; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=O14EyF9A15Ru315HFl4HSzQuAQcmW2SYomPhPWdbxQE=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBn4WsGG0VF7w1+dgKH6eEdutb6UZHbVya4No+Ri
+ S6c61U7cRuJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ+FrBgAKCRAbX0TJAJUV
+ Vqc4D/0U1dIQourgy19gD5wTGYlPrHZRa3ex10RSv45I1t/e+qVJpqfvBp30A3jg1mX2gEmD3+7
+ z4kjTIAb3R51r3113LTo6dQv4Iv786jchKcwsWL7OMWJGF/5KJ4gqf/YGOBPXS0PMtxtq5x6DQj
+ kAItRhDrWGjcbO6LUSmQDjK9gJhMvW98vKhpylPIAHRJOeYXbSMQOrBsXkq3HkRYkAPg43KJrhM
+ /ecG1G1JsMCcwmbpanX4HrCwkUNOvWWrZ6rn00DkVXps6/jdsxw0W6J1fNFVsfBRSjUhpepyJLo
+ X2eyy/TxWtU+BC56BAnztrQwdKLLJ4W5QmneOiyjdmF/3Eqh2NKrdsg8pacAorAclvzmcBSbGD+
+ c0pEFW6JkYTieYKr0xFsQqNuERYvuIUjzw10AKIWXkp+UbCGyU+gFb9DkNnyKD19+vUfzjhOUFD
+ gNRbb6OwFBrLsrtVPdnlcNIZW9flZLZL2F7zBH0uLQsAW4b4kWC0cwCg0keIzQ1dKo1QjRaiSc8
+ lVMHM+1E3azfToXRHmyn0/dAvQ4wsVKsXI7EmVK813sXpo+EKzF017ST/cTidmEqLasBiFH/w1e
+ ASip1C16+YWIfD6GTGrIWk0+uoWOGXA3TZfPrWRP/ZbDrtNQtLhLIXriP3tDY4MGgwzTNmNyEy9
+ aYCSB7V7Nx2quSQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On 3/24/25 05:45, Alexander Stein wrote:
-> FANs might be supplied by a regulator which needs to be enabled as well.
-> This is implemented using runtime PM. Every time speed_index changes from
-> 0 to non-zero and vise versa RPM is resumed or suspended.
-> Intitial RPM state is determined by initial value of speed_index.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
-> Patch 1 & 2 from v1 [1] have already been applied, although number 2 [2] is not
-> yet showing in next-20250305. Patches 3 & 4 (just removing comments) from v1
-> have been dropped, so only this patch remains.
-> 
-> Changes in v3:
-> * Remove noisy dev_err calls related to runtime pm
-> * Properly propagate return codes from set_fan_speed
-> 
-> Changes in v2:
-> * Make regulator non-optional
-> 
-> [1] https://lore.kernel.org/all/20250210145934.761280-1-alexander.stein@ew.tq-group.com/
-> [2] https://web.git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git/commit/?h=hwmon-next&id=9fee7d19bab635f89223cc40dfd2c8797fdc4988
-> ---
->   drivers/hwmon/gpio-fan.c | 104 +++++++++++++++++++++++++++++++++------
->   1 file changed, 90 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
-> index cee3fa146d69a..4c736b7eb5473 100644
-> --- a/drivers/hwmon/gpio-fan.c
-> +++ b/drivers/hwmon/gpio-fan.c
-> @@ -20,6 +20,9 @@
->   #include <linux/gpio/consumer.h>
->   #include <linux/of.h>
->   #include <linux/of_platform.h>
-> +#include <linux/pm.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
->   #include <linux/thermal.h>
->   
->   struct gpio_fan_speed {
-> @@ -42,6 +45,7 @@ struct gpio_fan_data {
->   	bool			pwm_enable;
->   	struct gpio_desc	*alarm_gpio;
->   	struct work_struct	alarm_work;
-> +	struct regulator	*supply;
->   };
->   
->   /*
-> @@ -125,13 +129,32 @@ static int __get_fan_ctrl(struct gpio_fan_data *fan_data)
->   }
->   
->   /* Must be called with fan_data->lock held, except during initialization. */
-> -static void set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
-> +static int set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
->   {
->   	if (fan_data->speed_index == speed_index)
-> -		return;
-> +		return 0;
-> +
-> +	if (fan_data->speed_index == 0 && speed_index > 0) {
-> +		int ret;
-> +
-> +		ret = pm_runtime_resume_and_get(fan_data->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
->   
->   	__set_fan_ctrl(fan_data, fan_data->speed[speed_index].ctrl_val);
-> +
-> +	if (fan_data->speed_index > 0 && speed_index == 0) {
-> +		int ret;
-> +
-> +		ret = pm_runtime_put_sync(fan_data->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	fan_data->speed_index = speed_index;
-> +
-> +	return 0;
->   }
->   
->   static int get_fan_speed_index(struct gpio_fan_data *fan_data)
-> @@ -189,7 +212,9 @@ static ssize_t pwm1_store(struct device *dev, struct device_attribute *attr,
->   	}
->   
->   	speed_index = DIV_ROUND_UP(pwm * (fan_data->num_speed - 1), 255);
-> -	set_fan_speed(fan_data, speed_index);
-> +	ret = set_fan_speed(fan_data, speed_index);
+The Qualcomm X Elite Devkit comes with a WCN7850 combo chip which provides
+Wi-fi and Bluetooth, similar to the CRD and QCP.
 
-That means pre-initializing ret is no longer necessary.
+Describe the nodes for the Wi-Fi, Bluetooth, the related regulators and
+the PMU.
 
-> +	if (!ret)
-> +		ret = count;
->   
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 144 +++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
 
-This is confusing. Please use the same error handling everywhere.
-I would suggest
-	return ret ? : count;
-or
-	return ret ? ret : count;
+diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+index 74911861a3bf2606add8cf4aaa3816542e837513..8f288a138c4cb6e21725fdf726eb2a2489bfbc38 100644
+--- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
++++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+@@ -17,6 +17,7 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &uart21;
++		serial1 = &uart14;
+ 	};
+ 
+ 	wcd938x: audio-codec {
+@@ -392,6 +393,42 @@ vph_pwr: regulator-vph-pwr {
+ 		regulator-boot-on;
+ 	};
+ 
++	vreg_wcn_0p95: regulator-wcn-0p95 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_WCN_0P95";
++		regulator-min-microvolt = <950000>;
++		regulator-max-microvolt = <950000>;
++
++		vin-supply = <&vreg_wcn_3p3>;
++	};
++
++	vreg_wcn_1p9: regulator-wcn-1p9 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_WCN_1P9";
++		regulator-min-microvolt = <1900000>;
++		regulator-max-microvolt = <1900000>;
++
++		vin-supply = <&vreg_wcn_3p3>;
++	};
++
++	vreg_wcn_3p3: regulator-wcn-3p3 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_WCN_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-0 = <&wcn_sw_en>;
++		pinctrl-names = "default";
++
++		regulator-boot-on;
++	};
++
+ 	vreg_wwan: regulator-wwan {
+ 		compatible = "regulator-fixed";
+ 
+@@ -407,6 +444,65 @@ vreg_wwan: regulator-wwan {
+ 
+ 		regulator-boot-on;
+ 	};
++
++	wcn7850-pmu {
++		compatible = "qcom,wcn7850-pmu";
++
++		vdd-supply = <&vreg_wcn_0p95>;
++		vddio-supply = <&vreg_l15b_1p8>;
++		vddaon-supply = <&vreg_wcn_0p95>;
++		vdddig-supply = <&vreg_wcn_0p95>;
++		vddrfa1p2-supply = <&vreg_wcn_1p9>;
++		vddrfa1p8-supply = <&vreg_wcn_1p9>;
++
++		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
++		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-0 = <&wcn_wlan_bt_en>;
++		pinctrl-names = "default";
++
++		regulators {
++			vreg_pmu_rfa_cmn: ldo0 {
++				regulator-name = "vreg_pmu_rfa_cmn";
++			};
++
++			vreg_pmu_aon_0p59: ldo1 {
++				regulator-name = "vreg_pmu_aon_0p59";
++			};
++
++			vreg_pmu_wlcx_0p8: ldo2 {
++				regulator-name = "vreg_pmu_wlcx_0p8";
++			};
++
++			vreg_pmu_wlmx_0p85: ldo3 {
++				regulator-name = "vreg_pmu_wlmx_0p85";
++			};
++
++			vreg_pmu_btcmx_0p85: ldo4 {
++				regulator-name = "vreg_pmu_btcmx_0p85";
++			};
++
++			vreg_pmu_rfa_0p8: ldo5 {
++				regulator-name = "vreg_pmu_rfa_0p8";
++			};
++
++			vreg_pmu_rfa_1p2: ldo6 {
++				regulator-name = "vreg_pmu_rfa_1p2";
++			};
++
++			vreg_pmu_rfa_1p8: ldo7 {
++				regulator-name = "vreg_pmu_rfa_1p8";
++			};
++
++			vreg_pmu_pcie_0p9: ldo8 {
++				regulator-name = "vreg_pmu_pcie_0p9";
++			};
++
++			vreg_pmu_pcie_1p8: ldo9 {
++				regulator-name = "vreg_pmu_pcie_1p8";
++			};
++		};
++	};
+ };
+ 
+ &apps_rsc {
+@@ -979,6 +1075,23 @@ &pcie4_phy {
+ 	status = "okay";
+ };
+ 
++&pcie4_port0 {
++	wifi@0 {
++		compatible = "pci17cb,1107";
++		reg = <0x10000 0x0 0x0 0x0 0x0>;
++
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
++		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
++		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
++	};
++};
++
+ &pcie5 {
+ 	perst-gpios = <&tlmm 149 GPIO_ACTIVE_LOW>;
+ 	wake-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
+@@ -1262,6 +1375,20 @@ wcd_default: wcd-reset-n-active-state {
+ 		output-low;
+ 	};
+ 
++	wcn_wlan_bt_en: wcn-wlan-bt-en-state {
++		pins = "gpio116", "gpio117";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	wcn_sw_en: wcn-sw-en-state {
++		pins = "gpio214";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
+ 	wwan_sw_en: wwan-sw-en-state {
+ 		pins = "gpio221";
+ 		function = "gpio";
+@@ -1270,6 +1397,23 @@ wwan_sw_en: wwan-sw-en-state {
+ 	};
+ };
+ 
++&uart14 {
++	status = "okay";
++
++	bluetooth {
++		compatible = "qcom,wcn7850-bt";
++		max-speed = <3200000>;
++
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
++	};
++};
++
+ &uart21 {
+ 	compatible = "qcom,geni-debug-uart";
+ 	status = "okay";
 
->   exit_unlock:
->   	mutex_unlock(&fan_data->lock);
-> @@ -211,6 +236,7 @@ static ssize_t pwm1_enable_store(struct device *dev,
->   {
->   	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
->   	unsigned long val;
-> +	int ret;
->   
->   	if (kstrtoul(buf, 10, &val) || val > 1)
->   		return -EINVAL;
-> @@ -224,11 +250,14 @@ static ssize_t pwm1_enable_store(struct device *dev,
->   
->   	/* Disable manual control mode: set fan at full speed. */
->   	if (val == 0)
-> -		set_fan_speed(fan_data, fan_data->num_speed - 1);
-> +		ret = set_fan_speed(fan_data, fan_data->num_speed - 1);
->   
->   	mutex_unlock(&fan_data->lock);
->   
-> -	return count;
-> +	if (ret)
-> +		return ret;
-> +	else
-> +		return count;
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250324-x1e001de-devkit-dts-pwrseq-7013f6f8177a
 
-Static analyzers will rightfully complain that else after return is pointless.
-Try
-	return ret ? : count;
-or at least
-	return ret ? ret : count;
-
-Thanks,
-Guenter
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
 
