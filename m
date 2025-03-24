@@ -1,170 +1,216 @@
-Return-Path: <linux-kernel+bounces-573854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D03A6DD2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E37E9A6DD11
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BDC3A2777
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9E23A3D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F0325F999;
-	Mon, 24 Mar 2025 14:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B726125;
+	Mon, 24 Mar 2025 14:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BxOcWAyP"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="YsxM+OXM"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD69A469D;
-	Mon, 24 Mar 2025 14:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827028; cv=none; b=QqdssxeWTxgKxAVmBeCkiAR5AxI0YYh2DwA8FAh943+zkb/LOb+GtgEHCa+4uUeAteal3HjkBblFRrvM16EgnWAVGKSdw0KKJtlAYdqNLGbyqvg3m1VzQKcwvi/Rlay2tIe79E0q8e/Uk2vK6IAPDK88DlQjL+4XToUWD6RnZus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827028; c=relaxed/simple;
-	bh=w4usWJ0THkg46w1N4lNwuAFhLjNZVRI59MyTMA6sUgw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ASHLT/IyznBLnlYP7Y3QkkQZUJkRj1d8pwp2B5NU8sSnff5YLRbCJhkeZk/jL1l6OLFQ/l7RIDcG6yGqru5uufW3iKwcGYOPRS8+cn6ZW0El3kazER/6GhwXQ15xeB6xDFxMYPbBHw3y0jD0EVVjdFXcbS2NuaCZxS2uXv2oP0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BxOcWAyP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O88erE013699;
-	Mon, 24 Mar 2025 14:31:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Wsnfio
-	ygdKj/JbaeD/Jr1iGKaGn9+/X1K++K57nGSSk=; b=BxOcWAyPk/zO/lSyqmEQ1e
-	7hLBNqIEamSXIuG8ZOcpTqajqCClwkO0WEdEvRvb7bsydQggUlBeZJUNdxkRKCoD
-	OiOEWyS0gYJj+5S0hWMkf64MmsBNjsxBkflxlnbiVGZG3BN+l9MuSdXvVEyEir6Y
-	5KHPU8Ni66AqNyEBykOt9CElT9/PVeM8UW5FfxpTmHupC3pq6Sb+8fIDfMigYDu/
-	FJnSTCIOqJco6V5jQIzy8CRYVZ5360/DJLOahNYRRYBPvfU51Q9E5bKT8w3KBG7V
-	WMlvktwen5h7YXgp53+r4oJ2cxMA4BpDLlqDbwnBZj9dCLVTgi04dQ3AgWwJReew
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jpfwvjua-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 14:31:50 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52ODo87Q030801;
-	Mon, 24 Mar 2025 14:31:49 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jpfwvju7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 14:31:49 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52OBWISZ025485;
-	Mon, 24 Mar 2025 14:31:49 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j7wyxrnp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 14:31:49 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OEVmsp24249000
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Mar 2025 14:31:48 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 98BBF58054;
-	Mon, 24 Mar 2025 14:31:48 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 99D425804E;
-	Mon, 24 Mar 2025 14:31:47 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.112.208])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Mar 2025 14:31:47 +0000 (GMT)
-Message-ID: <35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
- sysfs file for ima_hash
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Stange <nstange@suse.de>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen
- <jarkko@kernel.org>,
-        James Bottomley
- <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 24 Mar 2025 10:31:47 -0400
-In-Reply-To: <20250323140911.226137-3-nstange@suse.de>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-3-nstange@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110C41EB5B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742826758; cv=pass; b=L6u/DcI3NqTZIe6BS6KnEFLNie0gEaA4BlJEiRcEzcp18I3lzzgOW5IWpVlM1RIjXMKrxm3WH46E/pGX0ZnhB5TTfZ2zjL1p1zTqv/ccP+Ib9in58NpWHe4kEQNzzlrVzT+8y2+eQTCsVUbpkXWY2NuB5aWHZEfCynE90VqGbQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742826758; c=relaxed/simple;
+	bh=66EkyTQmpcIC8aTOhpjJxy4pAqusR50Ax+2wasHka8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n79JAlRc8wy9i3dxAuaTohBC9QzCMrZtFjJSou4Fx4vUN1BN/8GtmyYODycEPI0GpzHvDNBcPzaZqlXvzTuHC34MmNYd7UItB52a1oIduvi1jhODTcIyvFCIeP2u2Is19W4obFvoijart0WbssWZkP5AIClGxM32P6TFjwt3z+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=YsxM+OXM; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742826729; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UJb3QO0wV1A9dmMtS84pAwAZqrpokweiVYDHHn07fPiTRvYM3g+LA8+RzY+iyS9BhyQCAD8NOnLGn5d90LvyCdsNfVJLSY8WN7cXP5pPHysf5d0GkaukCJCCGXKVvTM3LCruh1HdfMzJqWSTn4bqdNT6e+yhaQ2tJQ5M0P9vz7k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742826729; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SNLgmjKkF9HdKsSTg4UhoAV7KOdbPAwtKyrL4TyYQNU=; 
+	b=I5dKCBthi0uH1GkTYNNdR0Kz1fkio5/RR5VHyZrOobM/fBay0vxFi+DLmqRhPsWluI3ttfk2I+Nda5lLwqALM+z4x/JuO/3G/GgLminwylSDlGyALSw24KjlFAadWlh3CoBhQG/tzFaR4P+XmVLKNdAitZUAke9CPQJvAwxW8GM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742826728;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=SNLgmjKkF9HdKsSTg4UhoAV7KOdbPAwtKyrL4TyYQNU=;
+	b=YsxM+OXMxuHWGZRdECmjH4xKssGqHdS9tc5IQ4KDk73mgQgDPXAfY2zX9Va7TORR
+	UPZNoH1Wqd5DcP27VZNRbBXCrdBAolZpzZ3l/1GKi2KwiKaLbdnLk7Z3jNrO3yG6XaV
+	y103yCcBlFgJJumfr+wsgBVQ/MtX+wI5c+Rgk5eQ=
+Received: by mx.zohomail.com with SMTPS id 1742826726754801.1556988716859;
+	Mon, 24 Mar 2025 07:32:06 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, Jonas Karlman <jonas@kwiboo.se>
+Subject: Re: [PATCH] iommu/rockchip: Add flush_iotlb_all ops
+Date: Mon, 24 Mar 2025 10:32:04 -0400
+Message-ID: <5003710.31r3eYUQgx@trenzalore>
+In-Reply-To: <9bd56bd6-ce7d-495f-9bb3-ce7f07975f62@arm.com>
+References:
+ <20250318152049.14781-1-detlev.casanova@collabora.com>
+ <9bd56bd6-ce7d-495f-9bb3-ce7f07975f62@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WFHKhhaMsSffxRQcD5Fs2CYz8utV4MQh
-X-Proofpoint-GUID: JAVphQZoba47LGGKGFYvuN0vJoAmYbkw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503240105
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
-> runtime_measurements_<hash-algo> sysfs files are getting created for
-> each PCR bank + for SHA-1.
->=20
-> Now that runtime_measurements_<hash-algo> sysfs file creation is being
-> skipped for unsupported hash algorithms, it will become possible that no
-> such file would be provided at all once SHA-1 is made optional in a
-> later patch.
->=20
-> Always create the file for the 'ima_hash' algorithm, even if it's not
-> associated with any of the PCR banks. As IMA initialization will
-> continue to fail if the ima_hash algorithm is not available to the
-> kernel, this guarantees that at least one such file will always be
-> there.
->=20
-> Signed-off-by: Nicolai Stange <nstange@suse.de>
-> ---
->  security/integrity/ima/ima_fs.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima=
-_fs.c
-> index a8df2fe5f4cb..f030ff7f56da 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -436,10 +436,8 @@ static int __init create_securityfs_measurement_list=
-s(void)
->  	u16 algo;
->  	int i;
-> =20
-> -	securityfs_measurement_list_count =3D NR_BANKS(ima_tpm_chip);
-> -
-> -	if (ima_sha1_idx >=3D NR_BANKS(ima_tpm_chip))
-> -		securityfs_measurement_list_count++;
-> +	securityfs_measurement_list_count =3D
-> +		NR_BANKS(ima_tpm_chip) + ima_extra_slots;
-> =20
->  	ascii_securityfs_measurement_lists =3D
->  	    kcalloc(securityfs_measurement_list_count, sizeof(struct dentry *),
+Hi Robin,
+On Tuesday, 18 March 2025 14:40:20 EDT Robin Murphy wrote:
+> On 18/03/2025 3:20 pm, Detlev Casanova wrote:
+> > From: Jonas Karlman <jonas@kwiboo.se>
+> > 
+> > On some Rockchip cores (like the vdpu34x video decoder), the IOMMU device
+> > is inside the the device that uses it.
+> > 
+> > The IOMMU device can still be driven by the iommu driver, but when an
+> > error occurs in the main device (e.g. a decoding error that resets the
+> > decoder), the IOMMU device will also be reseted.
+> > In such situation, the IOMMU driver and the hardware are out of sync and
+> > IOMMU errors will start popping up.
+> > 
+> > To avoid that, add a flush_iotlb_all function that will let the main
+> > drivers (e.g. rkvdec) tell the IOMMU driver to write all its cached
+> > mappings into the IOMMU hardware when such an error occured.
+> 
+> Eww, this is the exact opposite of what flush_iotlb_all represents, and
+> I really don't like the idea of the public IOMMU API being abused for
+> inter-driver communication.
 
-"ima_hash" is the default file hash algorithm.  Re-using it as the default
-complete measurement list assumes that the subsequent kexec'ed kernels conf=
-igure
-and define it as the default file hash algorithm as well, which might not b=
-e the
-case.  Drop this patch.
+I see, so "Synchronously flush all hardware TLBs for this domain" means that it 
+is supposed to clear everything that is set in hardware then, right ?
 
-Defer allocating the "extra" non-sha1 bank.  A subsequent patch will select
-SHA256.  Based on the chosen algorithm, define the "extra" non-sha1 bank.
+> Please have some kind of proper reset
+> notifier mechanism - in fact with runtime PM could you not already
+> invoke a suspend/resume cycle via the device links? AFAICS it would also
+> work to attach to a different domain then switch back again. Or at worst
+> just export a public interface for the other driver to invoke
+> rk_iommu_resume() directly.
 
-thanks,
+Thank you for the suggestions. PM runtime is a bit overkill as it can also 
+manage power and clocks related to the iommu but also other devices in the 
+tree.
 
-Mimi
+I went with an "empty domain" and switching between them works as expected.
+
+> Just don't hide it in something completely
+> inappropriate - I mean, consider if someone wants to implement
+> IOMMU_CAP_DEFERRED_FLUSH support here in future...
+
+I don't know what that does exactly. As I don't have enough of the picture on 
+IOMMU drivers, I'm glad we could find a solution that doesn't change anything 
+in the IOMMU tree :)
+
+Regards,
+Detlev
+
+> 
+> > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >   drivers/iommu/rockchip-iommu.c | 45 ++++++++++++++++++++++++++++++----
+> >   1 file changed, 40 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/rockchip-iommu.c
+> > b/drivers/iommu/rockchip-iommu.c index 323cc665c357..7086716cb8fc 100644
+> > --- a/drivers/iommu/rockchip-iommu.c
+> > +++ b/drivers/iommu/rockchip-iommu.c
+> > @@ -899,6 +899,40 @@ static size_t rk_iommu_unmap(struct iommu_domain
+> > *domain, unsigned long _iova,> 
+> >   	return unmap_size;
+> >   
+> >   }
+> > 
+> > +static void rk_iommu_flush_iotlb_all(struct iommu_domain *domain)
+> > +{
+> > +	struct rk_iommu_domain *rk_domain = to_rk_domain(domain);
+> > +	struct list_head *pos;
+> > +	unsigned long flags;
+> > +	int i, ret;
+> > +
+> > +	spin_lock_irqsave(&rk_domain->iommus_lock, flags);
+> > +	list_for_each(pos, &rk_domain->iommus) {
+> > +		struct rk_iommu *iommu = list_entry(pos, struct 
+rk_iommu, node);
+> > +
+> > +		ret = pm_runtime_get_if_in_use(iommu->dev);
+> > +		if (!ret || WARN_ON_ONCE(ret < 0))
+> > +			continue;
+> > +
+> > +		if (WARN_ON(clk_bulk_enable(iommu->num_clocks, iommu-
+>clocks)))
+> > +			continue;
+> > +
+> > +		rk_iommu_enable_stall(iommu);
+> > +		for (i = 0; i < iommu->num_mmu; i++) {
+> > +			rk_iommu_write(iommu->bases[i], 
+RK_MMU_DTE_ADDR,
+> > +				rk_ops->mk_dtentries(rk_domain-
+>dt_dma));
+> > +			rk_iommu_base_command(iommu->bases[i], 
+RK_MMU_CMD_ZAP_CACHE);
+> > +			rk_iommu_write(iommu->bases[i], 
+RK_MMU_INT_MASK, RK_MMU_IRQ_MASK);
+> > +		}
+> > +		rk_iommu_enable_paging(iommu);
+> > +		rk_iommu_disable_stall(iommu);
+> > +
+> > +		clk_bulk_disable(iommu->num_clocks, iommu->clocks);
+> > +		pm_runtime_put(iommu->dev);
+> > +	}
+> > +	spin_unlock_irqrestore(&rk_domain->iommus_lock, flags);
+> > +}
+> > +
+> > 
+> >   static struct rk_iommu *rk_iommu_from_dev(struct device *dev)
+> >   {
+> >   
+> >   	struct rk_iommudata *data = dev_iommu_priv_get(dev);
+> > 
+> > @@ -1172,11 +1206,12 @@ static const struct iommu_ops rk_iommu_ops = {
+> > 
+> >   	.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP,
+> >   	.of_xlate = rk_iommu_of_xlate,
+> >   	.default_domain_ops = &(const struct iommu_domain_ops) {
+> > 
+> > -		.attach_dev	= rk_iommu_attach_device,
+> > -		.map_pages	= rk_iommu_map,
+> > -		.unmap_pages	= rk_iommu_unmap,
+> > -		.iova_to_phys	= rk_iommu_iova_to_phys,
+> > -		.free		= rk_iommu_domain_free,
+> > +		.attach_dev		= rk_iommu_attach_device,
+> > +		.map_pages		= rk_iommu_map,
+> > +		.unmap_pages		= rk_iommu_unmap,
+> > +		.flush_iotlb_all	= rk_iommu_flush_iotlb_all,
+> > +		.iova_to_phys		= 
+rk_iommu_iova_to_phys,
+> > +		.free			= 
+rk_iommu_domain_free,
+> > 
+> >   	}
+> >   
+> >   };
+
+
+
+
 
