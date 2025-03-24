@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-573819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28CAA6DCD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:23:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EC9A6DCDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00660188DDB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 161C4189122D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EC8262810;
-	Mon, 24 Mar 2025 14:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC67262D15;
+	Mon, 24 Mar 2025 14:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEp+e2S2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIYa30e5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A07262805;
-	Mon, 24 Mar 2025 14:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A8126281E;
+	Mon, 24 Mar 2025 14:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826085; cv=none; b=PX92ZoHsp0U9l3pkLsofiIhqtJA7fg9QD6p4/btXLoppU4VAwjjITAhxglEIz+E4VNpoWpU5k9eQitiG7aT/eYW2yg1MzY27567XUH1jiJxxdU8LoNMnCmF6YnXNjHmHOdz188TvfEMlgAl1hjaJjKqzTcay2lpyWDsMyJia/Bs=
+	t=1742826087; cv=none; b=Yjc0Flvhd9h1oPIQSC06L6Xs0An3lPOPZkH5TQgzOufYC7mH1h53ur6ZWdtnlXKU6AgaKvPSI/mOV9ygFb4qt8Qrjs9JBkVoPDwO2fj2E3J+ay6HN/Gkq4ao4f21WnK73K84kMiy1zHORu8PBJyuRmHO53VAkTjnaz6fcs+wXM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826085; c=relaxed/simple;
-	bh=BUz8zYXf16hLfQPBxgTj8QMJv/VwcmDZZs0OAPRiMrc=;
+	s=arc-20240116; t=1742826087; c=relaxed/simple;
+	bh=dCI8OSKIxwwr1ihOWrRWoMsJjtQccnPBuJUUErjyEUU=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=VoDvHQj/9VkdaxGiwJ/rN0jy9iqA2Ty/yYfqSYn06pfTgdbwszWzBGnsEs0qVRsihA8yqhzPYIZvGkV3NDuq1K14nRgl8T7siG5sb19PM8wSWomgraxy1cnVJC3bTDtXQZvIDcc9ZKbiNxVQ6OdRdfS1ji7PJvjQ/1xSncaiK5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEp+e2S2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F4EC4CEDD;
-	Mon, 24 Mar 2025 14:21:24 +0000 (UTC)
+	 Message-Id:Subject; b=SLvton0Rn2PeytFMMs7JgI4ahSmBfYUy9UtRcEYuPG3BL4zfMoAOnwc5tJ+McoWOSEEsD4VjDpiuBVQirWfe/uhMS/yvRRSq9KSGMn8TcOoxq+cBPIilSX7/zSTudZhU0PJ68KtAFU0Ves12f04tBPmRphxHFw7z8LpGEol97WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIYa30e5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4FCC4CEE9;
+	Mon, 24 Mar 2025 14:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742826084;
-	bh=BUz8zYXf16hLfQPBxgTj8QMJv/VwcmDZZs0OAPRiMrc=;
+	s=k20201202; t=1742826086;
+	bh=dCI8OSKIxwwr1ihOWrRWoMsJjtQccnPBuJUUErjyEUU=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aEp+e2S2Mt5oiqdGcYgXj22r5GuOik2+/7oBiJTp3js7wmt6R/EPVP7RrmIsPjT/d
-	 RtEXQPJXegXw9zanTSfpD1IMnJNDP3kDC2b31xYnNpLbUJRVYnFl8VedB9MH/HwsRK
-	 ajc7p/shnr8u603dLAsvdrNl7lqm0CvOg4MxaY98Zu314I3cEgjQr1Jx/HSmoC7gsy
-	 qIyKp4Efh70CMLHQ14x2hfmeYYspmORhbX7q3xFfINGgnM8xn/8r3OYIQXeY59qrlL
-	 NAiYUH3UmsSKI7gGFfkNsUy75IMg7sEnvrrQE9VSP7f2IvC0CX/CdOFzzYpuP01R5C
-	 GG7PkYK2LXqsg==
-Date: Mon, 24 Mar 2025 09:21:23 -0500
+	b=LIYa30e5tYKCYgBaox0Rz26b4cPeJNI16cmoMT7/nDSBYc9y5Vvoob+acSoPqD+3y
+	 6bT3fiitpOSgWL4USFBcHjxFKmFB+7Nq/WSdEC9hf1ICUh9M5Izu8GMAc2+clWPtGs
+	 7pNxjCC7Xruz5Kwj/pbIEQx0oTfKo7AhquWkfckW7iRSSKVSpbjuELDl0a3vN8aPJ6
+	 AEZf0zKIYKYnbI0o4BCdkTQWT4fCYCb877ho5YN7Kb82aUhgoMbNNY9nB3K/pJbLfG
+	 hXIYmS+i8mzPY5/gLb8wVMzeO0mOawp7K2xIPbKs70pyc9loWEYmsmJBR7OnlSw4Lr
+	 i7+Dhe4gwOHvw==
+Date: Mon, 24 Mar 2025 09:21:24 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,35 +50,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, 
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Thomas Fossati <thomas.fossati@linaro.org>, tglx@linutronix.de, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- linux-stm32@st-md-mailman.stormreply.com
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250324100008.346009-1-daniel.lezcano@linaro.org>
-References: <20250324100008.346009-1-daniel.lezcano@linaro.org>
-Message-Id: <174282608006.6289.10388719224772938093.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: NXP System Timer Module
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+In-Reply-To: <20250324-togreg-v2-3-f211d781923e@analog.com>
+References: <20250324-togreg-v2-0-f211d781923e@analog.com>
+ <20250324-togreg-v2-3-f211d781923e@analog.com>
+Message-Id: <174282608144.6314.4370780992261179576.robh@kernel.org>
+Subject: Re: [PATCH v2 3/4] dt-bindings: iio: dac: Add adi,ad3530r.yaml
 
 
-On Mon, 24 Mar 2025 11:00:05 +0100, Daniel Lezcano wrote:
-> Add the System Timer Module description found on the NXP s32 platform
-> and the compatible for the s32g2 variant.
+On Mon, 24 Mar 2025 19:22:57 +0800, Kim Seer Paller wrote:
+> Document the AD3530R/AD3530, an 8-Channel, 16-bit Voltage Output DAC,
+> while the AD3531R/AD3531 is a 4-Channel, 16-Bit Voltage Output DAC.
+> These devices include software-programmable gain controls that provide
+> full-scale output spans of 2.5V or 5V for reference voltages of 2.5V.
+> They operate from a single supply voltage range of 2.7V to 5.5V and are
+> guaranteed to be monotonic by design. Additionally, these devices
+> features a 2.5V, 5ppm/°C internal reference, which is disabled by default.
 > 
-> Cc: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Cc: Thomas Fossati <thomas.fossati@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > ---
->  .../bindings/timer/nxp,stm-timer.yaml         | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nxp,stm-timer.yaml
+>  .../devicetree/bindings/iio/dac/adi,ad3530r.yaml   | 91 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 92 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -86,12 +85,16 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/timer/nxp,stm-timer.example.dtb: stm@4011c000: compatible: ['nxp,s32g2-stm'] is valid under each of {'items': [{'const': 'nxp,s32g2-stm'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'const': 'nxp,s32g2-stm'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}
-	from schema $id: http://devicetree.org/schemas/timer/nxp,stm-timer.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.example.dtb: adc@0: pwm-names: ['convst1'] is too short
+	from schema $id: http://devicetree.org/schemas/iio/adc/adi,ad7606.yaml#
 
 doc reference errors (make refcheckdocs):
+Warning: Documentation/arch/powerpc/cxl.rst references a file that doesn't exist: Documentation/ABI/testing/sysfs-class-cxl
+Warning: lib/Kconfig.debug references a file that doesn't exist: Documentation/dev-tools/fault-injection/fault-injection.rst
+Documentation/arch/powerpc/cxl.rst: Documentation/ABI/testing/sysfs-class-cxl
+lib/Kconfig.debug: Documentation/dev-tools/fault-injection/fault-injection.rst
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250324100008.346009-1-daniel.lezcano@linaro.org
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250324-togreg-v2-3-f211d781923e@analog.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
