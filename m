@@ -1,570 +1,518 @@
-Return-Path: <linux-kernel+bounces-573688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D42A6DABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:04:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6FFA6DACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71263AFD75
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D028F3AEA47
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D4225EFAB;
-	Mon, 24 Mar 2025 13:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABA25F784;
+	Mon, 24 Mar 2025 13:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0ljeSYU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YNF2XMoS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A912E5D;
-	Mon, 24 Mar 2025 13:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5AE25EFB4;
+	Mon, 24 Mar 2025 13:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742821318; cv=none; b=CF6Jm64nqhh3U7HYX8ICmOYJ9nwfS1/+FqSD7SBIxi5DIZpCSFQUrORkRjn1uSlxDgwwCJlxXLlZozIK3TJ/e8oG4zMj0iZ7CdodmkkPjvd5Z0Tq1ftxQi01KNK3lZsS8XFVsNtVEJIKM1GjfjsjadYsKGs2F/DB9dhEk/5kdak=
+	t=1742821411; cv=none; b=geQH9666i2Ewgfowql8SsGXTp03KG9y1ikZuIIwNhvG8LOVX6Xy4RaCqL9+r7Fen46gEzoMtSDc50buJKvqGPiAcWZXVwKyJzOJqNdYHy3rwXujOghuknbye7qX4Q21WrMYAhFDO5GuQAGjUoYj1E/lBfayTi7eRAJYGMSlC2PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742821318; c=relaxed/simple;
-	bh=ihBBmgUT3W5CaMbV4NU7zDMRbH2bfP7HN3NG9B1tM4o=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bM22Gty/xB1caynvisEKFeBTvPKqGecyMTt5IUxlbUz0Ju2LF9HSivz9H6sf2ucsr9uHc8EzTiHl88L72qE8VU8ROO5qeJL44u786YsISuGJNOYjeeVIvbQrc3or602oEjPZC92KynthLQe2WIC3lzmv9NQjUwLw/OsiO54RMYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0ljeSYU; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742821317; x=1774357317;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=ihBBmgUT3W5CaMbV4NU7zDMRbH2bfP7HN3NG9B1tM4o=;
-  b=m0ljeSYU8+PPQZFybrcYyr8rJ7cdt9vxZn3wNhUwp7HfnAwnKQhhlH51
-   cKhXWA2XfDEkjzjzyT59wJMzHzNdKm06SvNZS2fw2jEJByhFDjutFMGea
-   RGL5UyDA28Asbisb9f4P0DYj69bz45deD4ZaYkCLoluUnLbrxM0v5agkj
-   Erqaqk+4H/JYBIZZoDW6eqCMgyLTCYWjgMSPUZx1b/nyF4QoI+54x5S1B
-   vsuBnsNIANswKSKbxi7YfgmXAhwNebwnXoNydsAvmSZ6XDf/q4LriR+kA
-   HUr/iUNpfKzXWC/0vfMmwS/qrF5GmmD5bB7ROwNUV4Gp+y5rzP0thkkyJ
-   w==;
-X-CSE-ConnectionGUID: NWQNh7G8Qg+j15nMAkKNOw==
-X-CSE-MsgGUID: lfGwjyZdQoWYsRn98hK1qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="54228959"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="54228959"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:01:55 -0700
-X-CSE-ConnectionGUID: DJT30I4WRZu2KAgoYAKwog==
-X-CSE-MsgGUID: OLzwkDmvRRaCtgyeTtuRUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124055961"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:01:53 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Mar 2025 15:01:49 +0200 (EET)
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-    Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] PCI: Add sysfs support for exposing PTM context
-In-Reply-To: <20250324-pcie-ptm-v2-1-c7d8c3644b4a@linaro.org>
-Message-ID: <b76aaf39-1a03-ffbf-ae44-66dd01753bc7@linux.intel.com>
-References: <20250324-pcie-ptm-v2-0-c7d8c3644b4a@linaro.org> <20250324-pcie-ptm-v2-1-c7d8c3644b4a@linaro.org>
+	s=arc-20240116; t=1742821411; c=relaxed/simple;
+	bh=eos6W+9ir6pEgCNp1c8QmUJfmmzea1hANIHnNv6ejH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=urd1oxDFOSj9diY8NYGmtU4PI5fK1uXZEY3Ejh8TcXA1mGFMg/QFwhppuC98buv5Yd5v/y5zqCoXojRps1qGAPq0Pnjmg6GSbtBBkJTuwpVo5JQ8o4RUVGuyB5AtcgpriYZYWjkU7vY7MAiBIkfk6KiUKyQ6klwAoFDKiexO+Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=YNF2XMoS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D9E2D2C6;
+	Mon, 24 Mar 2025 14:01:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742821301;
+	bh=eos6W+9ir6pEgCNp1c8QmUJfmmzea1hANIHnNv6ejH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YNF2XMoSxwT4Yx+jjaag38dPG2tWYfX/QmAsCY/Y+XSrA35i/zrDkOHoSF1GWER5c
+	 E47luNt80TOHi67jvn/8+ApN3l7DgVXDAdgYFfO6XgpPaS1y8J2S3i0QMb8fgcex7b
+	 MBqVXo3jIsy4n4PIayQXPe4WctkgqCQ1J/mXRzNs=
+Date: Mon, 24 Mar 2025 15:03:05 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Sander Vanheule <sander@svanheule.net>,
+	Bert Vermeulen <bert@biot.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: Correct indentation and style in DTS
+ example
+Message-ID: <20250324130305.GD5113@pendragon.ideasonboard.com>
+References: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
 
-On Mon, 24 Mar 2025, Manivannan Sadhasivam via B4 Relay wrote:
+Hi Krzysztof,
 
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> Precision Time Management (PTM) mechanism defined in PCIe spec r6.0,
-> sec 6.22 allows precise coordination of timing information across multiple
-> components in a PCIe hierarchy with independent local time clocks.
+Thank you for the patch.
 
-Hi Mani,
+On Mon, Mar 24, 2025 at 01:53:26PM +0100, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
+> unused labels.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-PCIe r6.0.1 sec 6.22 is about Readiness Notification (RN) and PTM is 6.21, 
-did you perhaps mistype the section number?
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-> PCI core already supports enabling PTM in the root port and endpoint
-> devices through PTM Extended Capability registers. But the PTM context
-> supported by the PTM capable components such as Root Complex (RC) and
-> Endpoint (EP) controllers were not exposed as of now.
-> 
-> Hence, add the sysfs support to expose the PTM context to userspace from
-> both PCIe RC and EP controllers. Controller drivers are expected to call
-> pcie_ptm_create_sysfs() to create the sysfs attributes for the PTM context
-> and call pcie_ptm_destroy_sysfs() to destroy them. The drivers should also
-> populate the relevant callbacks in the 'struct pcie_ptm_ops' structure
-> based on the controller implementation.
-> 
-> Below PTM context are exposed through sysfs:
-> 
-> PCIe RC
-> =======
-> 
-> 1. PTM Local clock
-> 2. PTM T2 timestamp
-> 3. PTM T3 timestamp
-> 4. PTM Context valid
-> 
-> PCIe EP
-> =======
-> 
-> 1. PTM Local clock
-> 2. PTM T1 timestamp
-> 3. PTM T4 timestamp
-> 4. PTM Master clock
-> 5. PTM Context update
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  Documentation/ABI/testing/sysfs-platform-pcie-ptm |  70 ++++++
->  MAINTAINERS                                       |   1 +
->  drivers/pci/pcie/ptm.c                            | 268 ++++++++++++++++++++++
->  include/linux/pci.h                               |  35 +++
->  4 files changed, 374 insertions(+)
+>  .../bindings/gpio/atmel,at91rm9200-gpio.yaml  | 16 ++---
+>  .../bindings/gpio/fairchild,74hc595.yaml      | 20 +++---
+>  .../devicetree/bindings/gpio/gpio-mxs.yaml    | 70 +++++++++----------
+>  .../devicetree/bindings/gpio/nxp,pcf8575.yaml | 24 +++----
+>  .../bindings/gpio/realtek,otto-gpio.yaml      |  8 +--
+>  .../bindings/gpio/renesas,em-gio.yaml         | 20 +++---
+>  .../bindings/gpio/renesas,rcar-gpio.yaml      | 24 +++----
+>  .../devicetree/bindings/gpio/sifive,gpio.yaml |  6 +-
+>  .../bindings/gpio/toshiba,gpio-visconti.yaml  | 24 +++----
+>  .../bindings/gpio/xlnx,gpio-xilinx.yaml       | 48 ++++++-------
+>  10 files changed, 130 insertions(+), 130 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-pcie-ptm b/Documentation/ABI/testing/sysfs-platform-pcie-ptm
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..010c3e32e2b8eaf352a8e1aad7420d8a3e948dae
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-platform-pcie-ptm
-> @@ -0,0 +1,70 @@
-> +What:		/sys/devices/platform/*/ptm/local_clock
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM local clock in nanoseconds. Applicable for both Root
-> +		Complex and Endpoint controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/master_clock
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM master clock in nanoseconds. Applicable only for
-> +		Endpoint controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/t1
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM T1 timestamp in nanoseconds. Applicable only for
-> +		Endpoint controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/t2
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM T2 timestamp in nanoseconds. Applicable only for
-> +		Root Complex controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/t3
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM T3 timestamp in nanoseconds. Applicable only for
-> +		Root Complex controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/t4
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RO) PTM T4 timestamp in nanoseconds. Applicable only for
-> +		Endpoint controllers.
-> +
-> +What:		/sys/devices/platform/*/ptm/context_update
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RW) Control the PTM context update mode. Applicable only for
-> +		Endpoint controllers.
-> +
-> +		Following values are supported:
-> +
-> +		* auto = PTM context auto update trigger for every 10ms
-> +
-> +		* manual = PTM context manual update. Writing 'manual' to this
-> +			   file triggers PTM context update (default)
-> +
-> +What:		/sys/devices/platform/*/ptm/context_valid
-> +Date:		February 2025
-> +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +Description:
-> +		(RW) Control the PTM context validity (local clock timing).
-> +		Applicable only for Root Complex controllers. PTM context is
-> +		invalidated by hardware if the Root Complex enters low power
-> +		mode or changes link frequency.
-> +
-> +		Following values are supported:
-> +
-> +		* 0 = PTM context invalid (default)
-> +
-> +		* 1 = PTM context valid
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b4d09d52a750b320f689c1365791cdfa6e719fde..f1bac092877df739328347481bd14f6701a7df19 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18213,6 +18213,7 @@ Q:	https://patchwork.kernel.org/project/linux-pci/list/
->  B:	https://bugzilla.kernel.org
->  C:	irc://irc.oftc.net/linux-pci
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
-> +F:	Documentation/ABI/testing/sysfs-platform-pcie-ptm
->  F:	Documentation/devicetree/bindings/pci/
->  F:	drivers/pci/controller/
->  F:	drivers/pci/pci-bridge-emul.c
-> diff --git a/drivers/pci/pcie/ptm.c b/drivers/pci/pcie/ptm.c
-> index 7cfb6c0d5dcb6de2a759b56d6877c95102b3d10f..bfa632b76a87ad304e966a8edfb5dba14d58a23c 100644
-> --- a/drivers/pci/pcie/ptm.c
-> +++ b/drivers/pci/pcie/ptm.c
-> @@ -10,6 +10,8 @@
->  #include <linux/pci.h>
->  #include "../pci.h"
+> diff --git a/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml b/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+> index 3dd70933ed8e..d810043b56b6 100644
+> --- a/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+> @@ -69,13 +69,13 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
 >  
-> +struct device *ptm_device;
-> +
->  /*
->   * If the next upstream device supports PTM, return it; otherwise return
->   * NULL.  PTM Messages are local, so both link partners must support it.
-> @@ -252,3 +254,269 @@ bool pcie_ptm_enabled(struct pci_dev *dev)
->  	return dev->ptm_enabled;
->  }
->  EXPORT_SYMBOL(pcie_ptm_enabled);
-> +
-> +static ssize_t context_update_store(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      const char *buf, size_t count)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	if (!ptm->ops->context_update_store)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = ptm->ops->context_update_store(ptm->pdata, buf);
-
-Do these store funcs need some locking? Who is responsible about it?
-
-Why isn't buf parsed here and converted to some define/enum values, what 
-is the advantage of passing it on as char *?
+>      gpio@fffff400 {
+> -            compatible = "atmel,at91rm9200-gpio";
+> -            reg = <0xfffff400 0x200>;
+> -            interrupts = <2 IRQ_TYPE_LEVEL_HIGH 1>;
+> -            #gpio-cells = <2>;
+> -            gpio-controller;
+> -            interrupt-controller;
+> -            #interrupt-cells = <2>;
+> -            clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
+> +        compatible = "atmel,at91rm9200-gpio";
+> +        reg = <0xfffff400 0x200>;
+> +        interrupts = <2 IRQ_TYPE_LEVEL_HIGH 1>;
+> +        #gpio-cells = <2>;
+> +        gpio-controller;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +        clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> index 0e5c22929bde..ab35bcf98101 100644
+> --- a/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/fairchild,74hc595.yaml
+> @@ -71,15 +71,15 @@ unevaluatedProperties: false
+>  examples:
+>    - |
+>      spi {
+> -            #address-cells = <1>;
+> -            #size-cells = <0>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+>  
+> -            gpio5: gpio5@0 {
+> -                    compatible = "fairchild,74hc595";
+> -                    reg = <0>;
+> -                    gpio-controller;
+> -                    #gpio-cells = <2>;
+> -                    registers-number = <4>;
+> -                    spi-max-frequency = <100000>;
+> -            };
+> +        gpio5@0 {
+> +            compatible = "fairchild,74hc595";
+> +            reg = <0>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            registers-number = <4>;
+> +            spi-max-frequency = <100000>;
+> +        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+> index 8ff54369d16c..b58e08c8ecd8 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+> @@ -84,52 +84,52 @@ examples:
+>          reg = <0x80018000 0x2000>;
+>  
+>          gpio@0 {
+> -                compatible = "fsl,imx28-gpio";
+> -                reg = <0>;
+> -                interrupts = <127>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            compatible = "fsl,imx28-gpio";
+> +            reg = <0>;
+> +            interrupts = <127>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>          };
+>  
+>          gpio@1 {
+> -                compatible = "fsl,imx28-gpio";
+> -                reg = <1>;
+> -                interrupts = <126>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            compatible = "fsl,imx28-gpio";
+> +            reg = <1>;
+> +            interrupts = <126>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>          };
+>  
+>          gpio@2 {
+> -                compatible = "fsl,imx28-gpio";
+> -                reg = <2>;
+> -                interrupts = <125>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            compatible = "fsl,imx28-gpio";
+> +            reg = <2>;
+> +            interrupts = <125>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>          };
+>  
+>          gpio@3 {
+> -                compatible = "fsl,imx28-gpio";
+> -                reg = <3>;
+> -                interrupts = <124>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            compatible = "fsl,imx28-gpio";
+> +            reg = <3>;
+> +            interrupts = <124>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>          };
+>  
+>          gpio@4 {
+> -                compatible = "fsl,imx28-gpio";
+> -                reg = <4>;
+> -                interrupts = <123>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> +            compatible = "fsl,imx28-gpio";
+> +            reg = <4>;
+> +            interrupts = <123>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> index 8bca574bb66d..5a6ecaa7b44b 100644
+> --- a/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml
+> @@ -128,17 +128,17 @@ additionalProperties: false
+>  examples:
+>    - |
+>      i2c {
+> -            #address-cells = <1>;
+> -            #size-cells = <0>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+>  
+> -            pcf8575: gpio@20 {
+> -                    compatible = "nxp,pcf8575";
+> -                    reg = <0x20>;
+> -                    interrupt-parent = <&irqpin2>;
+> -                    interrupts = <3 0>;
+> -                    gpio-controller;
+> -                    #gpio-cells = <2>;
+> -                    interrupt-controller;
+> -                    #interrupt-cells = <2>;
+> -            };
+> +        gpio@20 {
+> +            compatible = "nxp,pcf8575";
+> +            reg = <0x20>;
+> +            interrupt-parent = <&irqpin2>;
+> +            interrupts = <3 0>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+> index 39fd959c45d2..728099c65824 100644
+> --- a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
+> @@ -81,7 +81,7 @@ dependencies:
+>  
+>  examples:
+>    - |
+> -      gpio@3500 {
+> +    gpio@3500 {
+>          compatible = "realtek,rtl8380-gpio", "realtek,otto-gpio";
+>          reg = <0x3500 0x1c>;
+>          gpio-controller;
+> @@ -91,9 +91,9 @@ examples:
+>          #interrupt-cells = <2>;
+>          interrupt-parent = <&rtlintc>;
+>          interrupts = <23>;
+> -      };
+> +    };
+>    - |
+> -      gpio@3300 {
+> +    gpio@3300 {
+>          compatible = "realtek,rtl9300-gpio", "realtek,otto-gpio";
+>          reg = <0x3300 0x1c>, <0x3338 0x8>;
+>          gpio-controller;
+> @@ -103,6 +103,6 @@ examples:
+>          #interrupt-cells = <2>;
+>          interrupt-parent = <&rtlintc>;
+>          interrupts = <13>;
+> -      };
+> +    };
+>  
+>  ...
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,em-gio.yaml b/Documentation/devicetree/bindings/gpio/renesas,em-gio.yaml
+> index 8bdef812c87c..49fb8f613ead 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,em-gio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,em-gio.yaml
+> @@ -57,14 +57,14 @@ examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      gpio0: gpio@e0050000 {
+> -            compatible = "renesas,em-gio";
+> -            reg = <0xe0050000 0x2c>, <0xe0050040 0x20>;
+> -            interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> -                         <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> -            gpio-controller;
+> -            #gpio-cells = <2>;
+> -            gpio-ranges = <&pfc 0 0 32>;
+> -            ngpios = <32>;
+> -            interrupt-controller;
+> -            #interrupt-cells = <2>;
+> +        compatible = "renesas,em-gio";
+> +        reg = <0xe0050000 0x2c>, <0xe0050040 0x20>;
+> +        interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&pfc 0 0 32>;
+> +        ngpios = <32>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+>      };
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> index cc7a950a6030..d32e103a64aa 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+> @@ -138,16 +138,16 @@ examples:
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      #include <dt-bindings/power/r8a77470-sysc.h>
+>      gpio3: gpio@e6053000 {
+> -            compatible = "renesas,gpio-r8a77470", "renesas,rcar-gen2-gpio";
+> -            reg = <0xe6053000 0x50>;
+> -            interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> -            clocks = <&cpg CPG_MOD 909>;
+> -            power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> -            resets = <&cpg 909>;
+> -            gpio-controller;
+> -            #gpio-cells = <2>;
+> -            gpio-ranges = <&pfc 0 96 30>;
+> -            gpio-reserved-ranges = <17 10>;
+> -            interrupt-controller;
+> -            #interrupt-cells = <2>;
+> +        compatible = "renesas,gpio-r8a77470", "renesas,rcar-gen2-gpio";
+> +        reg = <0xe6053000 0x50>;
+> +        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&cpg CPG_MOD 909>;
+> +        power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +        resets = <&cpg 909>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&pfc 0 96 30>;
+> +        gpio-reserved-ranges = <17 10>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+>       };
+> diff --git a/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+> index fc095646adea..4bdc201b719e 100644
+> --- a/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/sifive,gpio.yaml
+> @@ -76,8 +76,8 @@ additionalProperties: false
+>  
+>  examples:
+>    - |
+> -      #include <dt-bindings/clock/sifive-fu540-prci.h>
+> -      gpio@10060000 {
+> +    #include <dt-bindings/clock/sifive-fu540-prci.h>
+> +    gpio@10060000 {
+>          compatible = "sifive,fu540-c000-gpio", "sifive,gpio0";
+>          interrupt-parent = <&plic>;
+>          interrupts = <7>, <8>, <9>, <10>, <11>, <12>, <13>, <14>, <15>, <16>,
+> @@ -88,6 +88,6 @@ examples:
+>          #gpio-cells = <2>;
+>          interrupt-controller;
+>          #interrupt-cells = <2>;
+> -      };
+> +    };
+>  
+>  ...
+> diff --git a/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+> index b085450b527f..712063417bc8 100644
+> --- a/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/toshiba,gpio-visconti.yaml
+> @@ -48,22 +48,22 @@ additionalProperties: false
+>  
+>  examples:
+>    - |
+> -      #include <dt-bindings/interrupt-controller/irq.h>
+> -      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -      soc {
+> +    soc {
+>          #address-cells = <2>;
+>          #size-cells = <2>;
+>  
+>          gpio: gpio@28020000 {
+> -          compatible = "toshiba,gpio-tmpv7708";
+> -          reg = <0 0x28020000 0 0x1000>;
+> -          #gpio-cells = <0x2>;
+> -          gpio-ranges = <&pmux 0 0 32>;
+> -          gpio-controller;
+> -          interrupt-controller;
+> -          #interrupt-cells = <2>;
+> -          interrupt-parent = <&gic>;
+> +            compatible = "toshiba,gpio-tmpv7708";
+> +            reg = <0 0x28020000 0 0x1000>;
+> +            #gpio-cells = <0x2>;
+> +            gpio-ranges = <&pmux 0 0 32>;
+> +            gpio-controller;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +            interrupt-parent = <&gic>;
+>          };
+> -      };
+> +    };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml b/Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
+> index d3d8a2e143ed..8fbf12ca067e 100644
+> --- a/Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml
+> @@ -126,29 +126,29 @@ examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -        gpio@a0020000 {
+> -            compatible = "xlnx,xps-gpio-1.00.a";
+> -            reg = <0xa0020000 0x10000>;
+> -            #gpio-cells = <2>;
+> -            #interrupt-cells = <0x2>;
+> -            clocks = <&zynqmp_clk 71>;
+> -            gpio-controller;
+> -            interrupt-controller;
+> -            interrupt-names = "ip2intc_irpt";
+> -            interrupt-parent = <&gic>;
+> -            interrupts = <0 89 4>;
+> -            xlnx,all-inputs = <0x0>;
+> -            xlnx,all-inputs-2 = <0x0>;
+> -            xlnx,all-outputs = <0x0>;
+> -            xlnx,all-outputs-2 = <0x0>;
+> -            xlnx,dout-default = <0x0>;
+> -            xlnx,dout-default-2 = <0x0>;
+> -            xlnx,gpio-width = <0x20>;
+> -            xlnx,gpio2-width = <0x20>;
+> -            xlnx,interrupt-present = <0x1>;
+> -            xlnx,is-dual = <0x1>;
+> -            xlnx,tri-default = <0xFFFFFFFF>;
+> -            xlnx,tri-default-2 = <0xFFFFFFFF>;
+> -        };
+> +    gpio@a0020000 {
+> +        compatible = "xlnx,xps-gpio-1.00.a";
+> +        reg = <0xa0020000 0x10000>;
+> +        #gpio-cells = <2>;
+> +        #interrupt-cells = <0x2>;
+> +        clocks = <&zynqmp_clk 71>;
+> +        gpio-controller;
+> +        interrupt-controller;
+> +        interrupt-names = "ip2intc_irpt";
+> +        interrupt-parent = <&gic>;
+> +        interrupts = <0 89 4>;
+> +        xlnx,all-inputs = <0x0>;
+> +        xlnx,all-inputs-2 = <0x0>;
+> +        xlnx,all-outputs = <0x0>;
+> +        xlnx,all-outputs-2 = <0x0>;
+> +        xlnx,dout-default = <0x0>;
+> +        xlnx,dout-default-2 = <0x0>;
+> +        xlnx,gpio-width = <0x20>;
+> +        xlnx,gpio2-width = <0x20>;
+> +        xlnx,interrupt-present = <0x1>;
+> +        xlnx,is-dual = <0x1>;
+> +        xlnx,tri-default = <0xFFFFFFFF>;
+> +        xlnx,tri-default-2 = <0xFFFFFFFF>;
+> +    };
+>  
+>  ...
 
 -- 
- i.
+Regards,
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t context_update_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->context_update_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->context_update_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t context_valid_store(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      const char *buf, size_t count)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +	unsigned long arg;
-> +	int ret;
-> +
-> +	if (kstrtoul(buf, 0, &arg) < 0)
-> +		return -EINVAL;
-> +
-> +	if (!ptm->ops->context_valid_store)
-> +		return -EOPNOTSUPP;
-> +
-> +	ret = ptm->ops->context_valid_store(ptm->pdata, !!arg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t context_valid_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->context_valid_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->context_valid_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t local_clock_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->local_clock_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->local_clock_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t master_clock_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->master_clock_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->master_clock_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t t1_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->t1_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->t1_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t t2_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->t2_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->t2_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t t3_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->t3_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->t3_show(ptm->pdata, buf);
-> +}
-> +
-> +static ssize_t t4_show(struct device *dev,
-> +			      struct device_attribute *attr, char *buf)
-> +{
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if (!ptm->ops->t4_show)
-> +		return -EOPNOTSUPP;
-> +
-> +	return ptm->ops->t4_show(ptm->pdata, buf);
-> +}
-> +
-> +static DEVICE_ATTR_RW(context_update);
-> +static DEVICE_ATTR_RW(context_valid);
-> +static DEVICE_ATTR_RO(local_clock);
-> +static DEVICE_ATTR_RO(master_clock);
-> +static DEVICE_ATTR_RO(t1);
-> +static DEVICE_ATTR_RO(t2);
-> +static DEVICE_ATTR_RO(t3);
-> +static DEVICE_ATTR_RO(t4);
-> +
-> +static struct attribute *pcie_ptm_attrs[] = {
-> +	&dev_attr_context_update.attr,
-> +	&dev_attr_context_valid.attr,
-> +	&dev_attr_local_clock.attr,
-> +	&dev_attr_master_clock.attr,
-> +	&dev_attr_t1.attr,
-> +	&dev_attr_t2.attr,
-> +	&dev_attr_t3.attr,
-> +	&dev_attr_t4.attr,
-> +	NULL
-> +};
-> +
-> +static umode_t pcie_ptm_attr_visible(struct kobject *kobj, struct attribute *attr,
-> +				int n)
-> +{
-> +	struct device *dev = container_of(kobj, struct device, kobj);
-> +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
-> +
-> +	if ((attr == &dev_attr_t1.attr && ptm->ops->t1_visible &&
-> +	     ptm->ops->t1_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_t2.attr && ptm->ops->t2_visible &&
-> +	     ptm->ops->t2_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_t3.attr && ptm->ops->t3_visible &&
-> +	     ptm->ops->t3_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_t4.attr && ptm->ops->t4_visible &&
-> +	     ptm->ops->t4_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_local_clock.attr &&
-> +	     ptm->ops->local_clock_visible &&
-> +	     ptm->ops->local_clock_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_master_clock.attr &&
-> +	     ptm->ops->master_clock_visible &&
-> +	     ptm->ops->master_clock_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_context_update.attr &&
-> +	     ptm->ops->context_update_visible &&
-> +	     ptm->ops->context_update_visible(ptm->pdata)) ||
-> +	    (attr == &dev_attr_context_valid.attr &&
-> +	     ptm->ops->context_valid_visible &&
-> +	     ptm->ops->context_valid_visible(ptm->pdata)))
-> +		return attr->mode;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct attribute_group pcie_ptm_attr_group = {
-> +	.attrs = pcie_ptm_attrs,
-> +	.is_visible = pcie_ptm_attr_visible,
-> +};
-> +
-> +static const struct attribute_group *pcie_ptm_attr_groups[] = {
-> +	&pcie_ptm_attr_group,
-> +	NULL,
-> +};
-> +
-> +static void pcie_ptm_release(struct device *dev)
-> +{
-> +	struct pcie_ptm *ptm = container_of(dev, struct pcie_ptm, dev);
-> +
-> +	kfree(ptm);
-> +}
-> +
-> +/*
-> + * pcie_ptm_create_sysfs() - Create sysfs entries for the PTM context
-> + * @dev: PTM capable component device
-> + * @pdata: Private data of the PTM capable component device
-> + * @ops: PTM callback structure
-> + *
-> + * Create sysfs entries for exposing the PTM context of the PTM capable
-> + * components such as Root Complex and Endpoint controllers.
-> + */
-> +int pcie_ptm_create_sysfs(struct device *dev, void *pdata,
-> +			  struct pcie_ptm_ops *ops)
-> +{
-> +	struct pcie_ptm *ptm;
-> +	int ret;
-> +
-> +	/* Caller must provide check_capability() callback */
-> +	if (!ops->check_capability)
-> +		return -EINVAL;
-> +
-> +	/* Check for PTM capability before creating sysfs attrbutes */
-> +	ret = ops->check_capability(pdata);
-> +	if (!ret) {
-> +		dev_dbg(dev, "PTM capability not present\n");
-> +		return -ENODATA;
-> +	}
-> +
-> +	ptm = kzalloc(sizeof(*ptm), GFP_KERNEL);
-> +	if (!ptm)
-> +		return -ENOMEM;
-> +
-> +	ptm->pdata = pdata;
-> +	ptm->ops = ops;
-> +
-> +	device_initialize(&ptm->dev);
-> +	ptm->dev.groups = pcie_ptm_attr_groups;
-> +	ptm->dev.release = pcie_ptm_release;
-> +	ptm->dev.parent = dev;
-> +	dev_set_drvdata(&ptm->dev, ptm);
-> +	device_set_pm_not_required(&ptm->dev);
-> +
-> +	ret = dev_set_name(&ptm->dev, "ptm");
-> +	if (ret)
-> +		goto err_put_device;
-> +
-> +	ret = device_add(&ptm->dev);
-> +	if (ret)
-> +		goto err_put_device;
-> +
-> +	ptm_device = &ptm->dev;
-> +
-> +	return 0;
-> +
-> +err_put_device:
-> +	put_device(&ptm->dev);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(pci_ptm_init);
-> +
-> +/*
-> + * pcie_ptm_destroy_sysfs() - Destroy sysfs entries for the PTM context
-> + */
-> +void pcie_ptm_destroy_sysfs(void)
-> +{
-> +	if (ptm_device) {
-> +		device_unregister(ptm_device);
-> +		ptm_device = NULL;
-> +	}
-> +}
-> +EXPORT_SYMBOL(pcie_ptm_destroy_sysfs);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 47b31ad724fa5bf7abd7c3dc572947551b0f2148..42bb3cf0212e96fd65a1f01410ef70c82491c9eb 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1857,16 +1857,51 @@ static inline bool pci_aer_available(void) { return false; }
->  
->  bool pci_ats_disabled(void);
->  
-> +struct pcie_ptm_ops {
-> +	int (*check_capability)(void *drvdata);
-> +	int (*context_update_store)(void *drvdata, const char *buf);
-> +	ssize_t (*context_update_show)(void *drvdata, char *buf);
-> +	int (*context_valid_store)(void *drvdata, bool valid);
-> +	ssize_t (*context_valid_show)(void *drvdata, char *buf);
-> +	ssize_t (*local_clock_show)(void *drvdata, char *buf);
-> +	ssize_t (*master_clock_show)(void *drvdata, char *buf);
-> +	ssize_t (*t1_show)(void *drvdata, char *buf);
-> +	ssize_t (*t2_show)(void *drvdata, char *buf);
-> +	ssize_t (*t3_show)(void *drvdata, char *buf);
-> +	ssize_t (*t4_show)(void *drvdata, char *buf);
-> +
-> +	bool (*context_update_visible)(void *drvdata);
-> +	bool (*context_valid_visible)(void *drvdata);
-> +	bool (*local_clock_visible)(void *drvdata);
-> +	bool (*master_clock_visible)(void *drvdata);
-> +	bool (*t1_visible)(void *drvdata);
-> +	bool (*t2_visible)(void *drvdata);
-> +	bool (*t3_visible)(void *drvdata);
-> +	bool (*t4_visible)(void *drvdata);
-> +};
-> +
-> +struct pcie_ptm {
-> +	struct device dev;
-> +	struct pcie_ptm_ops *ops;
-> +	void *pdata;
-> +};
-> +
->  #ifdef CONFIG_PCIE_PTM
->  int pci_enable_ptm(struct pci_dev *dev, u8 *granularity);
->  void pci_disable_ptm(struct pci_dev *dev);
->  bool pcie_ptm_enabled(struct pci_dev *dev);
-> +int pcie_ptm_create_sysfs(struct device *dev, void *pdata, struct pcie_ptm_ops *ops);
-> +void pcie_ptm_destroy_sysfs(void);
->  #else
->  static inline int pci_enable_ptm(struct pci_dev *dev, u8 *granularity)
->  { return -EINVAL; }
->  static inline void pci_disable_ptm(struct pci_dev *dev) { }
->  static inline bool pcie_ptm_enabled(struct pci_dev *dev)
->  { return false; }
-> +static inline int pcie_ptm_create_sysfs(struct device *dev, void *pdata,
-> +				 struct pcie_ptm_ops *ops)
-> +{ return 0; }
-> +static inline void pcie_ptm_destroy_sysfs(void) { }
->  #endif
->  
->  void pci_cfg_access_lock(struct pci_dev *dev);
-> 
-> 
+Laurent Pinchart
 
