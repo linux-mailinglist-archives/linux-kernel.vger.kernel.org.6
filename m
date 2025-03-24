@@ -1,351 +1,255 @@
-Return-Path: <linux-kernel+bounces-573873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FA1A6DD73
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:52:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C2CA6DD75
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034FF18832FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F23C2170659
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620025FA32;
-	Mon, 24 Mar 2025 14:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900D825FA1F;
+	Mon, 24 Mar 2025 14:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bhiBnJHV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yhasYz0H"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263332E3366;
-	Mon, 24 Mar 2025 14:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F2625FA0E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827942; cv=none; b=DPKZ+Z4us91+STDbGlY7KLR28KZ5/7Qggd7pIboUT+NGDF45n8eap5IAK0Ms9jn9tqCCTjWXkPCo8bDCQ58PgxKQHON3n+5hf+eTc7hzug4f6BGBF5i3sHt1vjJ2c+DWi+zj9i4ECqhpvKq3q597B1rQ0me3DuCtBxA2N500rBc=
+	t=1742827952; cv=none; b=CIlIJiQfSIj9Dq7rKDI3g0DpeTEqm2s0w55kh8gGGppWMEvRKB7N3CMgb6an9BRMYPz4jSkWAdeLaQllMj1odhhiiax9yBO+bdDbkuBrK/kY9B9q7qxD5FH/LTYAZiRFskr99YnrLhvrGIJy/7HrVPz9W/VN9LHLj2ZtJSxAH9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827942; c=relaxed/simple;
-	bh=QnTAv60/5/hw0d1Arp04mU2s9WavB8mo3z60p0fv7LY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sbmSBhAFr28odTQMo89hdKbgMgqccT1u/VMjALCL89PdSGuKP2wQiA8GmdIIaHoAYGqm+ACGmC5gBDJc3az3QteEWSS3ZqE+F0TmRw1N5mu0o45cx5hNyP0sh5Rl4ORlOjvMRzt6qiO1UgB04AKYonNLMOajdfAwwGO2bl2R/5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bhiBnJHV; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742827941; x=1774363941;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=QnTAv60/5/hw0d1Arp04mU2s9WavB8mo3z60p0fv7LY=;
-  b=bhiBnJHVrMON2O7TL9mmWzyf/f7J4pr+mwkXChFKGphXcr2jMJk1fpys
-   TLPfljkmDwXZBj1xZYpfK014uy6Ca35AoFZt4SPjhc2cRYZDUdGChwKDv
-   VwzBNqn5VFbmnmG+VYSuPI+3tYEO9+EPjqTyLKPGVrQWsOu8W1kufCD72
-   rw4+IswI01tZBSezkWs0YDWUwoh/MYzMhphUB+4Hv7B3oUlr0lCcTizFT
-   1yP57v+qiIVWtsKF+N2UEvSvZkvjIaehk15hRw+Kt4G8nDmnOCBy+MSel
-   T1e3jYmMR0y8BQBds0/scPB+7/IQ+kajYezDe6CrmXq3eerESv6Mk0sxb
-   w==;
-X-CSE-ConnectionGUID: KW0IIdOzQPW3PnymBPuvVg==
-X-CSE-MsgGUID: 6vJDBc60SuaIJg6vxh1vQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43192740"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="43192740"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:52:15 -0700
-X-CSE-ConnectionGUID: R5K74Hi9R5SMKL98YhGPeA==
-X-CSE-MsgGUID: JohHAexBT1+PvcGBTTWQZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124232088"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:52:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Mar 2025 16:52:00 +0200 (EET)
-To: Hans Zhang <18255117159@163.com>
-cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
-    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [v6 1/5] PCI: Introduce generic capability search functions
-In-Reply-To: <b846123d-a161-4380-b7c7-24d7066f8d25@163.com>
-Message-ID: <1846e0b6-e743-f743-b972-723ee81fd434@linux.intel.com>
-References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-2-18255117159@163.com> <f89f3d00-4423-f65d-293e-8aec3be14418@linux.intel.com> <b846123d-a161-4380-b7c7-24d7066f8d25@163.com>
+	s=arc-20240116; t=1742827952; c=relaxed/simple;
+	bh=nD/Dn1FXRe/gRT9ezb+krNed0FvxLmf7DtmDXLb5T7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ESSJB1+sDD5tYbkaag5ysuNIjOSCakVaScxIBK78gNiymRPCrJPoqrCVavQS1NyFeBiu6if3n21LwqTGTnN9YcisZqjilUBZySADqur+839rfl4vzjMlLGOtvQ2/eT5m+X4nOTGll92xkN9cqtY2CJ/0i5MYLH9YnOXGOlYJ1Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yhasYz0H; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso4263163f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742827949; x=1743432749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=exBH9+0EKJsJU5vfoNtnKHgSzJ0TgqGbPxyoWRS+XAk=;
+        b=yhasYz0HU4YzW2JGRcXL0JPtLhT6L/NQ/Nv69TiQ2w+v1B3nOqBVb/Ggv9R9k+k7gO
+         vAL8X+p88vofiE4qUv7ktyAlDriw6ecbLueJxXbVj5hxNIBMKEJqGSJPHOlh/F3i2Ka7
+         tEz9o6AbYWqrtdzP2fx2TPRDG/8afvttgtClFRyh5qBV/5mvuTPiDADreoUJHxwwtcUj
+         MSaU7InqTfvE5IcSiYGFZDRRUmartQOUQ6Tol6h4Qbj2pt2MrKFRFxIexPSC19e6K4hu
+         RZAjtfBGWaa0jgc/LmGyQpKObJG4MMUyK+EbXiFL/vt7aVReu2H1xO9SQKyPP9jCEVOQ
+         ZeyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742827949; x=1743432749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=exBH9+0EKJsJU5vfoNtnKHgSzJ0TgqGbPxyoWRS+XAk=;
+        b=FdJBpxox9X8KHRMQaxBmUmHui5ZO5QTGHsD6CI6z58+Ex9ckT9P2cfftsYpnHyIshn
+         ZHKrWxmUr23+zv1nF7L/YvpWEYFMwjYB0Et6fphW3i4+nVrkEU64a6IWy23Dl+nkixSI
+         BKvRNdS3A9JUULJY3QamZWDMtuoWZfUmFdmVhAu+JmHwA8q33+fw1jQzLmYAJxjTNQFF
+         ySMKV25Maa/DcpzzsqK0HNtQNqBiYoIIZu5yupmgkSvtY+MCjS/Plh7jZq17ps8RODei
+         hePhkjXqIarS5uubyIydQkKQbubm23u7F4XIdVVlZLUb5Abqn4MISolMEAtK1DDfcRtP
+         4ArA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFp+e2WsH6/XSPF09W6imuYGCEehLGkt6KlAZj2mxuvg/d5NhzXTt4QMv9P5s03xraBm4LvljK22hNIrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxonfTYD1YlXKi4t4sCjMp2YMu2THXontgv8YkuC2KyHhyjiZbf
+	+w1MXeBWMl+dBffSlWcDlt4n1CoZH5/x2nkltmnQLadvBHIpIk3ryK/3udfbWMA=
+X-Gm-Gg: ASbGnctiC5Y8OaJIDVBmYqGZBU3olGhphuK5a0R6C+W7i0BoCFGXCqTvVbE8req6YHO
+	d7CVBUqgRENnfxqx418SDB/v2hj/N5q86f+swgBhoo4VyByqS7NjioONnUJWYwU6CPcFeRlEBqP
+	79oMuQRTVulBA/AO0EpjwYyiPcZcbvPsYZ4hmk0Qu01NMAlAZJulOe0wbLCMcduSTWcjLXJvYOb
+	e3BaDzQZTzFUqUP+vFu720DkXC+kPEgNzXSQl8Tr6cJazrQQgw3lUI/on16N2hYJmFIwus7OpMu
+	GXD4qSTfpz7lFSSHs+5rgqh/gdOqbAn2jVlXs+oavI3KNOwkTj3aOg==
+X-Google-Smtp-Source: AGHT+IFTBMeJe4wjjtoaON7OuOYX1jtnqozAP2nBEU07iBzqR9DmsR32rxUII8xRcaN91P8qiaEz3g==
+X-Received: by 2002:a5d:5f96:0:b0:391:fcc:9ee8 with SMTP id ffacd0b85a97d-3997f912529mr11083564f8f.23.1742827948855;
+        Mon, 24 Mar 2025 07:52:28 -0700 (PDT)
+Received: from [192.168.1.247] ([145.224.90.136])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9957c3sm11448421f8f.18.2025.03.24.07.52.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 07:52:28 -0700 (PDT)
+Message-ID: <8450a182-5c62-4546-ab91-5d39eb252254@linaro.org>
+Date: Mon, 24 Mar 2025 14:52:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-734090953-1742827405=:1100"
-Content-ID: <7331034a-f0f5-d770-0e1d-50c40594bb48@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 7/8] perf: arm_pmuv3: Keep out of guest counter
+ partition
+To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Mark Rutland <mark.rutland@arm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20250213180317.3205285-1-coltonlewis@google.com>
+ <20250213180317.3205285-8-coltonlewis@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250213180317.3205285-8-coltonlewis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-734090953-1742827405=:1100
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <4d2eba8b-16d9-5f4a-ced4-149830c157a3@linux.intel.com>
 
-On Mon, 24 Mar 2025, Hans Zhang wrote:
-> On 2025/3/24 21:28, Ilpo J=E4rvinen wrote:
-> > On Mon, 24 Mar 2025, Hans Zhang wrote:
-> >=20
-> > > Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
-> > > duplicate logic for scanning PCI capability lists. This creates
-> > > maintenance burdens and risks inconsistencies.
-> > >=20
-> > > To resolve this:
-> > >=20
-> > > Add pci_host_bridge_find_*capability() in pci-host-helpers.c, accepti=
-ng
-> > > controller-specific read functions and device data as parameters.
-> > >=20
-> > > This approach:
-> > > - Centralizes critical PCI capability scanning logic
-> > > - Allows flexible adaptation to varied hardware access methods
-> > > - Reduces future maintenance overhead
-> > > - Aligns with kernel code reuse best practices
-> > >=20
-> > > Signed-off-by: Hans Zhang <18255117159@163.com>
-> > > ---
-> > > Changes since v5:
-> > > https://lore.kernel.org/linux-pci/20250321163803.391056-2-18255117159=
-@163.com
-> > >=20
-> > > - If you put the helpers in drivers/pci/pci.c, they unnecessarily enl=
-arge
-> > >    the kernel's .text section even if it's known already at compile t=
-ime
-> > >    that they're never going to be used (e.g. on x86).
-> > >=20
-> > > - Move the API for find capabilitys to a new file called
-> > >    pci-host-helpers.c.
-> > >=20
-> > > Changes since v4:
-> > > https://lore.kernel.org/linux-pci/20250321101710.371480-2-18255117159=
-@163.com
-> > >=20
-> > > - Resolved [v4 1/4] compilation warning.
-> > > - The patch commit message were modified.
-> > > ---
-> > >   drivers/pci/controller/Kconfig            | 17 ++++
-> > >   drivers/pci/controller/Makefile           |  1 +
-> > >   drivers/pci/controller/pci-host-helpers.c | 98 ++++++++++++++++++++=
-+++
-> > >   drivers/pci/pci.h                         |  7 ++
-> > >   4 files changed, 123 insertions(+)
-> > >   create mode 100644 drivers/pci/controller/pci-host-helpers.c
-> > >=20
-> > > diff --git a/drivers/pci/controller/Kconfig
-> > > b/drivers/pci/controller/Kconfig
-> > > index 9800b7681054..0020a892a55b 100644
-> > > --- a/drivers/pci/controller/Kconfig
-> > > +++ b/drivers/pci/controller/Kconfig
-> > > @@ -132,6 +132,23 @@ config PCI_HOST_GENERIC
-> > >   =09  Say Y here if you want to support a simple generic PCI host
-> > >   =09  controller, such as the one emulated by kvmtool.
-> > >   +config PCI_HOST_HELPERS
-> > > +=09bool
-> > > +=09prompt "PCI Host Controller Helper Functions" if EXPERT
-> > > + =09help
-> > > +=09  This provides common infrastructure for PCI host controller dri=
-vers
-> > > to
-> > > +=09  handle PCI capability scanning and other shared operations. The
-> > > helper
-> > > +=09  functions eliminate code duplication across controller drivers.
-> > > +
-> > > +=09  These functions are used by PCI controller drivers that need to=
- scan
-> > > +=09  PCI capabilities using controller-specific access methods (e.g.=
- when
-> > > +=09  the controller is behind a non-standard configuration space).
-> > > +
-> > > +=09  If you are using any PCI host controller drivers that require t=
-hese
-> > > +=09  helpers (such as DesignWare, Cadence, etc), this will be
-> > > +=09  automatically selected. Say N unless you are developing a custo=
-m PCI
-> > > +=09  host controller driver.
-> >=20
-> > Hi,
-> >=20
-> > Does this need to be user selectable at all? What's the benefit? If
-> > somebody is developing a driver, they can just as well add the select
-> > clause in that driver to get it built.
-> >=20
->=20
-> Dear Ilpo,
->=20
-> Thanks your for reply. Only DWC and CDNS drivers are used here, what do y=
-ou
-> suggest should be done?
+On 13/02/2025 6:03 pm, Colton Lewis wrote:
+> If the PMU is partitioned, keep the driver out of the guest counter
+> partition and only use the host counter partition. Partitioning is
+> defined by the MDCR_EL2.HPMN register field and saved in
+> cpu_pmu->hpmn. The range 0..HPMN-1 is accessible by EL1 and EL0 while
+> HPMN..PMCR.N is reserved for EL2.
+> 
+> Define some macros that take HPMN as an argument and construct
+> mutually exclusive bitmaps for testing which partition a particular
+> counter is in. Note that despite their different position in the
+> bitmap, the cycle and instruction counters are always in the guest
+> partition.
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+>   arch/arm/include/asm/arm_pmuv3.h |  2 +
+>   arch/arm64/include/asm/kvm_pmu.h |  5 +++
+>   arch/arm64/kvm/pmu-part.c        | 16 +++++++
+>   drivers/perf/arm_pmuv3.c         | 73 +++++++++++++++++++++++++++-----
+>   include/linux/perf/arm_pmuv3.h   |  8 ++++
+>   5 files changed, 94 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/arm_pmuv3.h b/arch/arm/include/asm/arm_pmuv3.h
+> index 2ec0e5e83fc9..dadd4ddf51af 100644
+> --- a/arch/arm/include/asm/arm_pmuv3.h
+> +++ b/arch/arm/include/asm/arm_pmuv3.h
+> @@ -227,6 +227,8 @@ static inline bool kvm_set_pmuserenr(u64 val)
+>   }
+>   
+>   static inline void kvm_vcpu_pmu_resync_el0(void) {}
+> +static inline void kvm_pmu_host_counters_enable(void) {}
+> +static inline void kvm_pmu_host_counters_disable(void) {}
+>   
+>   /* PMU Version in DFR Register */
+>   #define ARMV8_PMU_DFR_VER_NI        0
+> diff --git a/arch/arm64/include/asm/kvm_pmu.h b/arch/arm64/include/asm/kvm_pmu.h
+> index 174b7f376d95..8f25754fde47 100644
+> --- a/arch/arm64/include/asm/kvm_pmu.h
+> +++ b/arch/arm64/include/asm/kvm_pmu.h
+> @@ -25,6 +25,8 @@ void kvm_host_pmu_init(struct arm_pmu *pmu);
+>   u8 kvm_pmu_get_reserved_counters(void);
+>   u8 kvm_pmu_hpmn(u8 nr_counters);
+>   void kvm_pmu_partition(struct arm_pmu *pmu);
+> +void kvm_pmu_host_counters_enable(void);
+> +void kvm_pmu_host_counters_disable(void);
+>   
+>   #else
+>   
+> @@ -37,6 +39,9 @@ static inline bool kvm_set_pmuserenr(u64 val)
+>   static inline void kvm_vcpu_pmu_resync_el0(void) {}
+>   static inline void kvm_host_pmu_init(struct arm_pmu *pmu) {}
+>   
+> +static inline void kvm_pmu_host_counters_enable(void) {}
+> +static inline void kvm_pmu_host_counters_disable(void) {}
+> +
+>   #endif
+>   
+>   #endif
+> diff --git a/arch/arm64/kvm/pmu-part.c b/arch/arm64/kvm/pmu-part.c
+> index e74fecc67e37..51da65c678f9 100644
+> --- a/arch/arm64/kvm/pmu-part.c
+> +++ b/arch/arm64/kvm/pmu-part.c
+> @@ -45,3 +45,19 @@ void kvm_pmu_partition(struct arm_pmu *pmu)
+>   		pmu->partitioned = false;
+>   	}
+>   }
+> +
+> +void kvm_pmu_host_counters_enable(void)
+> +{
+> +	u64 mdcr = read_sysreg(mdcr_el2);
+> +
+> +	mdcr |= MDCR_EL2_HPME;
+> +	write_sysreg(mdcr, mdcr_el2);
+> +}
+> +
+> +void kvm_pmu_host_counters_disable(void)
+> +{
+> +	u64 mdcr = read_sysreg(mdcr_el2);
+> +
+> +	mdcr &= ~MDCR_EL2_HPME;
+> +	write_sysreg(mdcr, mdcr_el2);
+> +}
+> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+> index 0e360feb3432..442dcff56d5b 100644
+> --- a/drivers/perf/arm_pmuv3.c
+> +++ b/drivers/perf/arm_pmuv3.c
+> @@ -730,15 +730,19 @@ static void armv8pmu_disable_event_irq(struct perf_event *event)
+>   	armv8pmu_disable_intens(BIT(event->hw.idx));
+>   }
+>   
+> -static u64 armv8pmu_getreset_flags(void)
+> +static u64 armv8pmu_getreset_flags(struct arm_pmu *cpu_pmu)
+>   {
+>   	u64 value;
+>   
+>   	/* Read */
+>   	value = read_pmovsclr();
+>   
+> +	if (cpu_pmu->partitioned)
+> +		value &= ARMV8_PMU_HOST_CNT_PART(cpu_pmu->hpmn);
+> +	else
+> +		value &= ARMV8_PMU_OVERFLOWED_MASK;
+> +
+>   	/* Write to clear flags */
+> -	value &= ARMV8_PMU_OVERFLOWED_MASK;
+>   	write_pmovsclr(value);
+>   
+>   	return value;
+> @@ -765,6 +769,18 @@ static void armv8pmu_disable_user_access(void)
+>   	update_pmuserenr(0);
+>   }
+>   
+> +static bool armv8pmu_is_guest_part(struct arm_pmu *cpu_pmu, u8 idx)
+> +{
+> +	return cpu_pmu->partitioned &&
+> +		(BIT(idx) & ARMV8_PMU_GUEST_CNT_PART(cpu_pmu->hpmn));
+> +}
+> +
+> +static bool armv8pmu_is_host_part(struct arm_pmu *cpu_pmu, u8 idx)
+> +{
+> +	return !cpu_pmu->partitioned ||
+> +		(BIT(idx) & ARMV8_PMU_HOST_CNT_PART(cpu_pmu->hpmn));
+> +}
+> +
+>   static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
+>   {
+>   	int i;
+> @@ -773,6 +789,8 @@ static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
+>   	if (is_pmuv3p9(cpu_pmu->pmuver)) {
+>   		u64 mask = 0;
+>   		for_each_set_bit(i, cpuc->used_mask, ARMPMU_MAX_HWEVENTS) {
+> +			if (armv8pmu_is_guest_part(cpu_pmu, i))
+> +				continue;
 
-Just make it only Kconfig select'able and not user selectable at all.
+Hi Colton,
 
-> > > +
-> > >   config PCIE_HISI_ERR
-> > >   =09depends on ACPI_APEI_GHES && (ARM64 || COMPILE_TEST)
-> > >   =09bool "HiSilicon HIP PCIe controller error handling driver"
-> > > diff --git a/drivers/pci/controller/Makefile
-> > > b/drivers/pci/controller/Makefile
-> > > index 038ccbd9e3ba..e80091eb7597 100644
-> > > --- a/drivers/pci/controller/Makefile
-> > > +++ b/drivers/pci/controller/Makefile
-> > > @@ -12,6 +12,7 @@ obj-$(CONFIG_PCIE_RCAR_HOST) +=3D pcie-rcar.o
-> > > pcie-rcar-host.o
-> > >   obj-$(CONFIG_PCIE_RCAR_EP) +=3D pcie-rcar.o pcie-rcar-ep.o
-> > >   obj-$(CONFIG_PCI_HOST_COMMON) +=3D pci-host-common.o
-> > >   obj-$(CONFIG_PCI_HOST_GENERIC) +=3D pci-host-generic.o
-> > > +obj-$(CONFIG_PCI_HOST_HELPERS) +=3D pci-host-helpers.o
-> > >   obj-$(CONFIG_PCI_HOST_THUNDER_ECAM) +=3D pci-thunder-ecam.o
-> > >   obj-$(CONFIG_PCI_HOST_THUNDER_PEM) +=3D pci-thunder-pem.o
-> > >   obj-$(CONFIG_PCIE_XILINX) +=3D pcie-xilinx.o
-> > > diff --git a/drivers/pci/controller/pci-host-helpers.c
-> > > b/drivers/pci/controller/pci-host-helpers.c
-> > > new file mode 100644
-> > > index 000000000000..cd261a281c60
-> > > --- /dev/null
-> > > +++ b/drivers/pci/controller/pci-host-helpers.c
-> > > @@ -0,0 +1,98 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * PCI Host Controller Helper Functions
-> > > + *
-> > > + * Copyright (C) 2025 Hans Zhang
-> > > + *
-> > > + * Author: Hans Zhang <18255117159@163.com>
-> > > + */
-> > > +
-> > > +#include <linux/pci.h>
-> > > +
-> > > +#include "../pci.h"
-> > > +
-> > > +/*
-> > > + * These interfaces resemble the pci_find_*capability() interfaces, =
-but
-> > > these
-> > > + * are for configuring host controllers, which are bridges *to* PCI
-> > > devices but
-> > > + * are not PCI devices themselves.
-> > > + */
-> > > +static u8 __pci_host_bridge_find_next_cap(void *priv,
-> > > +=09=09=09=09=09  pci_host_bridge_read_cfg read_cfg,
-> > > +=09=09=09=09=09  u8 cap_ptr, u8 cap)
-> > > +{
-> > > +=09u8 cap_id, next_cap_ptr;
-> > > +=09u16 reg;
-> > > +
-> > > +=09if (!cap_ptr)
-> > > +=09=09return 0;
-> > > +
-> > > +=09reg =3D read_cfg(priv, cap_ptr, 2);
-> > > +=09cap_id =3D (reg & 0x00ff);
-> > > +
-> > > +=09if (cap_id > PCI_CAP_ID_MAX)
-> > > +=09=09return 0;
-> > > +
-> > > +=09if (cap_id =3D=3D cap)
-> > > +=09=09return cap_ptr;
-> > > +
-> > > +=09next_cap_ptr =3D (reg & 0xff00) >> 8;
-> > > +=09return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_p=
-tr,
-> > > +=09=09=09=09=09       cap);
-> >=20
-> > This is doing (tail) recursion?? Why??
-> >=20
-> > What should be done, IMO, is that code in __pci_find_next_cap_ttl()
-> > refactored such that it can be reused instead of duplicating it in a
-> > slightly different form here and the functions below.
-> >=20
-> > The capability list parser should be the same?
-> >=20
->=20
-> The original function is in the following file:
-> drivers/pci/controller/dwc/pcie-designware.c
-> u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
-> u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
->=20
-> CDNS has the same need to find the offset of the capability.
->=20
-> We don't have pci_dev before calling pci_host_probe, but we want to get t=
-he
-> offset of the capability and configure some registers to initialize the r=
-oot
-> port. Therefore, the __pci_find_next_cap_ttl function cannot be used. Thi=
-s is
-> also the purpose of dw_pcie_find_*capability.
+Is it possible to keep the guest bits out of used_mask and cntr_mask in 
+the first place? Then all these loops don't need to have the logic for 
+is_guest_part()/is_host_part().
 
-__pci_find_next_cap_ttl() does not take pci_dev so I'm unsure if the=20
-problem is real or not?!?
+That leads me to wonder about updating the printout:
 
-> The CDNS driver does not have a cdns_pcie_find_*capability function.
-> Therefore, separate the find capability, and then DWC and CDNS can be use=
-d at
-> the same time to reduce duplicate code.
->=20
->=20
-> Communication history:
->=20
-> Bjorn HelgaasMarch 14, 2025, 8:31 p.m. UTC | #8
-> On Fri, Mar 14, 2025 at 06:35:11PM +0530, Manivannan Sadhasivam wrote:
-> > ...
->=20
-> > Even though this patch is mostly for an out of tree controller
-> > driver which is not going to be upstreamed, the patch itself is
-> > serving some purpose. I really like to avoid the hardcoded offsets
-> > wherever possible. So I'm in favor of this patch.
-> >
-> > However, these newly introduced functions are a duplicated version
-> > of DWC functions. So we will end up with duplicated functions in
-> > multiple places. I'd like them to be moved (both this and DWC) to
-> > drivers/pci/pci.c if possible. The generic function
-> > *_find_capability() can accept the controller specific readl/ readw
-> > APIs and the controller specific private data.
->=20
-> I agree, it would be really nice to share this code.
->=20
-> It looks a little messy to deal with passing around pointers to
-> controller read ops, and we'll still end up with a lot of duplicated
-> code between __pci_find_next_cap() and __cdns_pcie_find_next_cap(),
-> etc.
->=20
-> Maybe someday we'll make a generic way to access non-PCI "config"
-> space like this host controller space and PCIe RCRBs.
->=20
-> Or if you add interfaces that accept read/write ops, maybe the
-> existing pci_find_capability() etc could be refactored on top of them
-> by passing in pci_bus_read_config_word() as the accessor.
+  hw perfevents: enabled with armv8_pmuv3_0 PMU driver, 7 (0,8000003f)
+    counters available
 
-At minimum, the loop in __pci_find_next_cap_ttl() could be turned into a=20
-macro similar to eg. read_poll_timeout() that takes the read function as=20
-an argument (read_poll_timeout() looks messy because it doesn't align=20
-backslashed to far right). That would avoid duplicating the parsing logic
-on C code level.
+It might be a bit confusing if that doesn't quite reflect reality anymore.
 
-> > > +}
-> > > +
-> > > +u8 pci_host_bridge_find_capability(void *priv,
-> > > +=09=09=09=09   pci_host_bridge_read_cfg read_cfg, u8 cap)
-> > > +{
-> > > +=09u8 next_cap_ptr;
-> > > +=09u16 reg;
-> > > +
-> > > +=09reg =3D read_cfg(priv, PCI_CAPABILITY_LIST, 2);
-> > > +=09next_cap_ptr =3D (reg & 0x00ff);
-> > > +
-> > > +=09return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_p=
-tr,
-> > > +=09=09=09=09=09       cap);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(pci_host_bridge_find_capability);
->=20
->=20
-> Best regards,
-> Hans
->=20
+Thanks
+James
 
---=20
- i.
---8323328-734090953-1742827405=:1100--
 
