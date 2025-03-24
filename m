@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-574149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651FAA6E123
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41E8A6E13F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00DE37A4BF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B933174C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3241C269AE4;
-	Mon, 24 Mar 2025 17:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE19D264A95;
+	Mon, 24 Mar 2025 17:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JyQJFp7t"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zcbco0U3"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A571A268C6F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CC426989A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837613; cv=none; b=N+8N9S07BFVlnke9aTfHENzMRuQBErURJr50ZG+l8nFV5EkIpVW3DKoE1rfjpqYQm5YzYMQQMHMOlpnbMTSRqClraq29b5c2VBMbPBpMYFQF2F7MS9vfCU0nvTlVYXyu9vWeZKZWRidbPXR3omty9X/MLVmeNi0sLiXuyvw1xTE=
+	t=1742837615; cv=none; b=a1FiEJ1akB30RIkPY8KwBvrbT1GR+76lv9qygXBIeWQRv3kXBWPMfQS3JG8h7P2gNHjQIsYvh0zfwHuoTPbif84OJg0m4S0ichOYdcS63IQFybrbNMornXjUjPlP/r3Zap9HryrHM3dFFwQdsrT8dQIxs0qY45GFuOakmBmBof8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837613; c=relaxed/simple;
-	bh=e5TykSXhWcjiHTlVnT5EVQdmrLLoGQPyiymnk17gYkY=;
+	s=arc-20240116; t=1742837615; c=relaxed/simple;
+	bh=FoH7tcwE2GeOWEZefq9DrN/eLcHxhIICNsQu5pyoq5E=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oczg/G6petnqMgPYSDYcrSm+asfrnF9Mvr3+tpblwwFHbPaumEkvXU8cHWhp1RS7/3N4jm5FEL44HEmr+8lA/16sMXK+7ii9bFjR/SLOgHjbqMVcqsIXD8Ksz6jOyFbLaA+aSOFwnjssanmvJNYqLv+TV0QAdUdkMBsdEiBeN9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JyQJFp7t; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=lTzrZX2li4UWkgSQO+g132CaBYSRIOefA5v0FIjnAIUNhTSK0ynxY+prr+VbHlOYSlTpLDtJt8J+cP3+z+J1/DwXFgbXz+dAI7XBdBqOwsYI8Z2XaL2bKGeAhpT9NK7lXoT5ehyQyc5Zn842vLRy+ZzcEYkEGRFToHN19BhV55A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zcbco0U3; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff58318acaso13392776a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:31 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-22647ff3cf5so65613235ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742837611; x=1743442411; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742837612; x=1743442412; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEyrlidpGrXPVy+91ZT3XWvyzIHfkJ7R/xos7wEnLbQ=;
-        b=JyQJFp7tk5/XUK/YI0VTxLgfOFlFJFpSYykUuH3oDnuwf2ZePUDvcBK0LQk5MLAwSL
-         LMVYpCl7nTTGmMGWyj2Va0oObNMO6gaqSmxYaXksYP/vIIIHPFtoae6blKRE8HbTDlo7
-         stOwKKoITG6wbD8DrR/pJWt3754FADxEBVFn+C0C+w5aHHEDRyfFIdB15DY80RdT6AqB
-         PitHdWdoa2OqZWBDjO/9swmNW4ZKzpYEfQuLoIIqskB+nkIvT+BBCH+Np6zu4ZJiMmgd
-         f9+YhNI/um+VpSpfbeGrEZKCcdfb45yRwjKKVbRov+HCAQfsMLGjN4oSCqY0OxzrPKRM
-         V8hA==
+        bh=4OJAB7txnhcLTcXVYrfnb5vnccIxSZ8DO2qJNaOYpK0=;
+        b=zcbco0U3TX5qrbjFdtCpf+5jZIbdBVS0xbLIab9r9HToLxKrkgCxe0oTA0nEUXujd+
+         Ft6k7K4iQbVnW865TAQbBDFhcqgwEaXY2uPlwvegZBqOaMMNML1Gb17Luxb3EK7iTUeN
+         8jA5sqykKHzcPL+YApgKBQIu8O+tN0Atm/RetygYqD/JbeoQMsdQ89fNkhfNUAQSlgYS
+         LqRg9s4JGH8vQKX1WKUHfKqFaL2iLTyebEqkpey8y4Xz0YHxts1WkxMpFZ3P3x3+/N1H
+         qLnHECavEVOOPp8gq12fo2b8xQsf/G2Cb5sMoVLZYsNdbx50c4fDfyW3AAmAY5VySzeE
+         Y6AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742837611; x=1743442411;
+        d=1e100.net; s=20230601; t=1742837612; x=1743442412;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XEyrlidpGrXPVy+91ZT3XWvyzIHfkJ7R/xos7wEnLbQ=;
-        b=PnzkBv9E/0ZVBZlPx2mVwsBwUNeHIGMLu89oUMIPVFsj6jWqHvp8EjJTH/QXGIfHqs
-         DuGssSZSoGeeXbhseNZliM+oixwJb5aziSc4D3Q8isobNlIPfBkUHURq86PW1N1ZzwxI
-         7ryFO1lV1qpqhp3jpu9nndsmTkDUlEkRF0X9r9/K4ClNM6rvRMlTWzxcqyNSfbPQZL22
-         dNhTBYEwQwEnsuZJbhJhuBUqnd6S/+tLCX9TEuCX+35jJimkHz7LkDR40IUsOhM41sHs
-         C3jTzF0uoEh2BhYYW8oqiVkPH41Fz3VuvrIi/su/pbqOUC0LvOz9XS2IFkp3QlWzxYji
-         TNMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVezvd3NudIhPYTZhYyQHqJEZ48NV3Wy3oWmwqgmxgrK1KnRdrN3ZrX+b/DeJdBNyCmZy/sbTiXppO0a0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvM3uwzreYROcX7MqBJKntMY8dMJp5YJjwh2HgR3BQc2E081/r
-	9iIOSm9qsVS6f2bJ14MVoNqtNv4ad5agiZhzL3VEyMBsJ7fkQqdFm42oNSL2wXRZ5oA8OhACR7k
-	+CR1FMw==
-X-Google-Smtp-Source: AGHT+IHd9nbaxHBmU/fV94phikYnv83+4tNG/MgzkHkbPYI6qikEaqz7CMK9KVUvtgRvzrdBVwsQp4ULQLs1
-X-Received: from pjtd15.prod.google.com ([2002:a17:90b:4f:b0:2f7:d453:e587])
- (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c43:b0:2fa:137f:5c61
- with SMTP id 98e67ed59e1d1-3030fe856edmr26058407a91.12.1742837611219; Mon, 24
- Mar 2025 10:33:31 -0700 (PDT)
+        bh=4OJAB7txnhcLTcXVYrfnb5vnccIxSZ8DO2qJNaOYpK0=;
+        b=uY/pxaqINL2pxGKpFxWOTg2iKFNGrqI/PVCLz8yUklm5l5X/SGKrYCEauQeuduLR8L
+         L+yUYQzBPCftHtXi1PMBS2lmP751HXaBqDXh1OZeOh4nuxlDJFOwnYMcTotf/hkrxvi3
+         TXVTv5u5A0gPxa30fRKoNGVQ8uWI26VpfbeCYafIj7j/8i72S7kRR1gAdrTeaPpcnOtT
+         AohAQJxdErTu6Lt7idf3hbGiVPg+iGgAEWnnXkpFu2iPEBIoyl7rhoTuizp6cihqs+PT
+         rxE8oMHXaHqrf9Z28KuyXFngAnFkwKEQJQk+zNwy3P/M7X3E44TxVYmrc7l+BkqspXfM
+         Ne8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfBXVPRI5pj59L4mcLi+bR5p1aE4VHNSlklPfTjunnptRSYf0k2ZbsSGDfp0hmerLgcgsKs/tbhzvjSuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWT93aFGEbUljx7ADs6Lm7BMGfj8w0r9Xl4iZsK72awg8qENYR
+	ZSaPx9xdtHufQPAmEnCJLEpASlSFT1g9gE7JSruZvqY+TeFke87mmKo7We4Q4d4V3Q6dUtV/4S9
+	Q1VTU4g==
+X-Google-Smtp-Source: AGHT+IEWTl/R0f1qfRJlE3emUEFa0yj+sOW5pbNSYV28FCQ8VzTuf09ewlLJoB3GkYH0qtajqpf5IDFU59K+
+X-Received: from plbkw5.prod.google.com ([2002:a17:902:f905:b0:226:342c:5750])
+ (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:985:b0:220:c813:dfce
+ with SMTP id d9443c01a7336-22780e0a965mr250833335ad.39.1742837612577; Mon, 24
+ Mar 2025 10:33:32 -0700 (PDT)
 Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Mon, 24 Mar 2025 17:31:04 +0000
+Date: Mon, 24 Mar 2025 17:31:05 +0000
 In-Reply-To: <20250324173121.1275209-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250324173121.1275209-1-mizhang@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250324173121.1275209-25-mizhang@google.com>
-Subject: [PATCH v4 24/38] KVM: x86/pmu: Exclude PMU MSRs in vmx_get_passthrough_msr_slot()
+Message-ID: <20250324173121.1275209-26-mizhang@google.com>
+Subject: [PATCH v4 25/38] KVM: x86/pmu: Add AMD PMU registers to direct access list
 From: Mingwei Zhang <mizhang@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -95,47 +95,67 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	Nikunj Dadhania <nikunj.dadhania@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Reject PMU MSRs interception explicitly in
-vmx_get_passthrough_msr_slot() since interception of PMU MSRs are
-specially handled in intel_passthrough_pmu_msrs().
+From: Sandipan Das <sandipan.das@amd.com>
 
+Add all PMU-related MSRs (including legacy K7 MSRs) to the list of
+possible direct access MSRs.  Most of them will not be intercepted when
+using passthrough PMU.
+
+Signed-off-by: Sandipan Das <sandipan.das@amd.com>
 Signed-off-by: Mingwei Zhang <mizhang@google.com>
-Co-developed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 ---
- arch/x86/kvm/vmx/vmx.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm/svm.c | 24 ++++++++++++++++++++++++
+ arch/x86/kvm/svm/svm.h |  2 +-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 38ecf3c116bd..7bb16bed08da 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -165,7 +165,7 @@ module_param(allow_smaller_maxphyaddr, bool, S_IRUGO);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index a713c803a3a3..bff351992468 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -143,6 +143,30 @@ static const struct svm_direct_access_msrs {
+ 	{ .index = X2APIC_MSR(APIC_TMICT),		.always = false },
+ 	{ .index = X2APIC_MSR(APIC_TMCCT),		.always = false },
+ 	{ .index = X2APIC_MSR(APIC_TDCR),		.always = false },
++	{ .index = MSR_K7_EVNTSEL0,			.always = false },
++	{ .index = MSR_K7_PERFCTR0,			.always = false },
++	{ .index = MSR_K7_EVNTSEL1,			.always = false },
++	{ .index = MSR_K7_PERFCTR1,			.always = false },
++	{ .index = MSR_K7_EVNTSEL2,			.always = false },
++	{ .index = MSR_K7_PERFCTR2,			.always = false },
++	{ .index = MSR_K7_EVNTSEL3,			.always = false },
++	{ .index = MSR_K7_PERFCTR3,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL0,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR0,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL1,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR1,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL2,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR2,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL3,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR3,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL4,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR4,			.always = false },
++	{ .index = MSR_F15H_PERF_CTL5,			.always = false },
++	{ .index = MSR_F15H_PERF_CTR5,			.always = false },
++	{ .index = MSR_AMD64_PERF_CNTR_GLOBAL_CTL,	.always = false },
++	{ .index = MSR_AMD64_PERF_CNTR_GLOBAL_STATUS,	.always = false },
++	{ .index = MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR,	.always = false },
++	{ .index = MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_SET,	.always = false },
+ 	{ .index = MSR_INVALID,				.always = false },
+ };
  
- /*
-  * List of MSRs that can be directly passed to the guest.
-- * In addition to these x2apic, PT and LBR MSRs are handled specially.
-+ * In addition to these x2apic, PMU, PT and LBR MSRs are handled specially.
-  */
- static u32 vmx_possible_passthrough_msrs[MAX_POSSIBLE_PASSTHROUGH_MSRS] = {
- 	MSR_IA32_SPEC_CTRL,
-@@ -691,6 +691,16 @@ static int vmx_get_passthrough_msr_slot(u32 msr)
- 	case MSR_LBR_CORE_FROM ... MSR_LBR_CORE_FROM + 8:
- 	case MSR_LBR_CORE_TO ... MSR_LBR_CORE_TO + 8:
- 		/* LBR MSRs. These are handled in vmx_update_intercept_for_lbr_msrs() */
-+	case MSR_IA32_PMC0 ...
-+		MSR_IA32_PMC0 + KVM_MAX_NR_GP_COUNTERS - 1:
-+	case MSR_IA32_PERFCTR0 ...
-+		MSR_IA32_PERFCTR0 + KVM_MAX_NR_GP_COUNTERS - 1:
-+	case MSR_CORE_PERF_FIXED_CTR0 ...
-+		MSR_CORE_PERF_FIXED_CTR0 + KVM_MAX_NR_FIXED_COUNTERS - 1:
-+	case MSR_CORE_PERF_GLOBAL_STATUS:
-+	case MSR_CORE_PERF_GLOBAL_CTRL:
-+	case MSR_CORE_PERF_GLOBAL_OVF_CTRL:
-+		/* PMU MSRs. These are handled in intel_passthrough_pmu_msrs() */
- 		return -ENOENT;
- 	}
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 9d7cdb8fbf87..ae71bf5f12d0 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -44,7 +44,7 @@ static inline struct page *__sme_pa_to_page(unsigned long pa)
+ #define	IOPM_SIZE PAGE_SIZE * 3
+ #define	MSRPM_SIZE PAGE_SIZE * 2
  
+-#define MAX_DIRECT_ACCESS_MSRS	48
++#define MAX_DIRECT_ACCESS_MSRS	72
+ #define MSRPM_OFFSETS	32
+ extern u32 msrpm_offsets[MSRPM_OFFSETS] __read_mostly;
+ extern bool npt_enabled;
 -- 
 2.49.0.395.g12beb8f557-goog
 
