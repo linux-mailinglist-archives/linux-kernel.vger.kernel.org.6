@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-574046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D9EA6DFF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:39:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C976BA6E006
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B3B16F2E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC9916C698
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EAA2263F2C;
-	Mon, 24 Mar 2025 16:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A32263C90;
+	Mon, 24 Mar 2025 16:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JpDdT+ey"
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="plw1bbqE"
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A802620E7;
-	Mon, 24 Mar 2025 16:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC7125F96B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834375; cv=none; b=BwcUlt+bYJfZwgeNIuNNng4Sq7quwBqt55zpj6XKrMkCBG0Y+kTk5qC2MMrOhwD5Zr1t8/udHv78X9avZMa4aKndnpd6kG1qr7sS/VquCv/goBDhWUEby/KFDW8JIiuLBbtIqt96moD/0C5YFJ0YIpxN3aINlQZyLlAOUkfSdHY=
+	t=1742834458; cv=none; b=kOALYOTiB8J84D0BvdymJileS43GIvS+nFXlRvElotkTjm2m9zmkSJ2qhchkQoktxJSssNrmXyVQkvIsOCBAOgevFUHKbScqfg108g3xZHESLc7vzJRup4v9O/VVYDIopGR245yoJZ6pLpB61i5S6tHSNzMxyzhW5vhTdSUsD8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834375; c=relaxed/simple;
-	bh=M/tu2Elne1pWCI/q5zOSWCRw9rqFQ6EcGfnZYmdRtps=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oImnMhlFxNSJVy8gnfTZxM5kumg17D2ZTPYxy38efpsRqidG+P6Nik2/n/pGMjbId1JqNOHdwY12bpYDgGk+5i8gZMtcxZoEayCL58KK76Tripw3LBzAjVRW+/KQwobT5yQonjadPIF7V98oAJW6276xwRfqBklhv75CKRJBDeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JpDdT+ey; arc=none smtp.client-ip=79.135.106.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=p6yri6f4p5ayrdaj5tyc2fv74e.protonmail; t=1742834371; x=1743093571;
-	bh=ifYKmdtaNhgtRfXf0+4J1IB0aZUSdquuIytSMsdwDBw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=JpDdT+eypr4OP96ZK64A5HYyRjzFlQDDZ9EX6uSqBqEQl1gPc6F5N1Pb6APbYhZuU
-	 rF8KHQ4TKNCP7PT5JQzuAtOlGdGn5kwPsgzZPIXloLCeT2k8KhsBDxdwkk06IbfLV8
-	 L4fOwUalBfKtJ8WfWS5g1GU7clcfQO4yfS8yJ1Kd/EspvHv2WctBGyVaK2EaaURw0J
-	 pCNSKzlHqQdsiT0Cbx3PWsUa6vrK6TEI8DMR6oknMXuaqn7ndSLz9gujAbEo4UzxGw
-	 KZ1O7Afyjo0S2iCTh0V84x2jOSS2MFAonAhOLWUqAlFqaiwYbw6Xs+4ROfZOWxwmZM
-	 1hjUQ8hDWE58A==
-Date: Mon, 24 Mar 2025 16:39:25 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Greg KH <gregkh@linuxfoundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: bhelgaas@google.com, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
-Message-ID: <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
-In-Reply-To: <Z-CG01QzSJjp46ad@pollux>
-References: <20250321214826.140946-1-dakr@kernel.org> <20250321214826.140946-3-dakr@kernel.org> <2025032158-embezzle-life-8810@gregkh> <Z96MrGQvpVrFqWYJ@pollux> <Z-CG01QzSJjp46ad@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 990da4dcde6434a006d722b52b205a8f1cadb5ec
+	s=arc-20240116; t=1742834458; c=relaxed/simple;
+	bh=97EUThDR2UybhnFKxS5EDbv/vBzfjXZFng3bm+j/nF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TBuyJ041o7YdftyqJc8FJYVpELkP9dRi+JZtKI/iK6fRg/6+Mc3ycBzy9PPQXjMQAZPl4IJDTybSbxLc1xq1l1lmg8iZ9UYsAA8NlRQ3rRZmTEARFQOd95hRcKazQgz0DoyFRePhcAedYXl58pzA0y3/TCPev9ua9f/VA6kOqvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=plw1bbqE; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id wkphtqyvuqGhjwkpntp5DD; Mon, 24 Mar 2025 17:39:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742834382;
+	bh=fWDg5sAJRa5yGnJsUjCGug0MakuT+w++shbZerB1ON4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=plw1bbqE0z5rfrjQQw+4DOFlYoe4aXV3HOaYnSLm4RqTOwzMgwQKESyqhPy7pOEzI
+	 RzgjMUqxC8ZfAHGz5LF9ADf/97gKqsFaQHLOpeDQdBoj4wEjt64flQbW5nouKULz4h
+	 93zAhY4igdCOqZ4ALMnPyRm7wTEm2NxGiFBIckIwP30Sw8w6NISDz4h2kjuJfSikGp
+	 jxqoEh4a/Cd8GSM30qRtkSdvYka3Cbow7j8N4sYl43NVW1kqgfg5H+HN8Fna2ogrA1
+	 KA7ghA72CgLM2GpLM8NRIsgQ88QLvJBI8rk4/9xmMj4RW6KI9x4skpd9321SXaLNBp
+	 ozWdbaJ0vBkRQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 24 Mar 2025 17:39:42 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <1f9ea3e3-e348-46d7-9b15-8c017762b12f@wanadoo.fr>
+Date: Tue, 25 Mar 2025 01:39:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] bits: Split asm and non-asm GENMASK*() and unify
+ definitions
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@aculab.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org,
+ Catalin Marinas <catalin.marinas@arm.com>
+References: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
+ <Z-GEFcciqCwxL88W@thinkpad>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <Z-GEFcciqCwxL88W@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
-> On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
->> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
->> > Along these lines, if you can convince me that this is something that =
-we
->> > really should be doing, in that we should always be checking every tim=
-e
->> > someone would want to call to_pci_dev(), that the return value is
->> > checked, then why don't we also do this in C if it's going to be
->> > something to assure people it is going to be correct?  I don't want to
->> > see the rust and C sides get "out of sync" here for things that can be
->> > kept in sync, as that reduces the mental load of all of us as we trave=
-rs
->> > across the boundry for the next 20+ years.
->>=20
->> I think in this case it is good when the C and Rust side get a bit
->> "out of sync":
->
-> A bit more clarification on this:
->
-> What I want to say with this is, since we can cover a lot of the common c=
-ases
-> through abstractions and the type system, we're left with the not so comm=
-on
-> ones, where the "upcasts" are not made in the context of common and well
-> established patterns, but, for instance, depend on the semantics of the d=
-river;
-> those should not be unsafe IMHO.
+On 25/03/2025 at 01:11, Yury Norov wrote:
+> + Anshuman Khandual, Catalin Marinas, linux-arm-kernel@lists.infradead.org
+> 
+> This series moves GENMASK_U128 out of uapi. ARM is the only proposed
+> user. Add ARM people for visibility.
 
-I don't think that we should use `TryFrom` for stuff that should only be
-used seldomly. A function that we can document properly is a much better
-fit, since we can point users to the "correct" API.
+Actually, not yet. Here, I am decoupling GENMASK_U128() from
+__GENMASK_U128(), but I did not touch the uapi.
 
----
-Cheers,
-Benno
+After this series, __GENMASK_U128() is not used anymore in the kernel,
+but I am not brave enough to remove it myself because there is always a
+risk that some userland code somewhere is relying on it…
+
+(...)
+
+Yours sincerely,
+Vincent Mailhol
 
 
