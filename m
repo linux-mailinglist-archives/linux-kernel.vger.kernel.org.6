@@ -1,135 +1,172 @@
-Return-Path: <linux-kernel+bounces-573380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DF3A6D692
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:46:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67695A6D691
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEBB93B1400
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F92516EBA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF3E25D8EA;
-	Mon, 24 Mar 2025 08:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B81A0739;
+	Mon, 24 Mar 2025 08:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOAIKahB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m23E7Swc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E477082F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19825D545;
+	Mon, 24 Mar 2025 08:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805957; cv=none; b=EWYfaQ/7ijEfu6AR2Iv2Kr7g9FFKfHQhXMJp+j37LDZEkkZbDth+Z5vG8kCcEYnppm7Uu8Dt6bLF1JkKyxT9NjGwNk3cT9Hh4Dwxy683gF5p0sGu2FxeCMoWxqPNdFW9+VgzPslyG+9vlPLAMQSZjfKv9MnIUJmhQ4SMAc1ZFdE=
+	t=1742805948; cv=none; b=ZxvfXLs2blXBIAKPD3lFdPV3dRB8+SwU394zZSlMll4J5xnvJbixeIP5WR8DbJ9n+l9mVIpE4xOZCmEVMyFUAh78CKZYMLrlzza817xfih4Ie6NG1kNuqIMrJpMap/ZUYC3EkirKbkHwU7o3IjFATKTbHqjpjnTZao6c14UyTow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805957; c=relaxed/simple;
-	bh=OzC4/T/DUX/GTvlqXYftTZA4RAOyB/rwDW48NTGa1Ko=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bX5+qfji/xbUbbRv4YJNSbKaUKgTmAkG3t7Sg7J+9liiGOv757zUtekS9o9b50Nok5dDkVldnZeqYOYLw3mZxbQrqXkkw5KpdT3dP1kmYkr8Os8TxqhDbLZE+rs7Xmp9bGfg9euNS8ZJHgF0yNbR8lXDd+vUMAWVMO5CAmNEGRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOAIKahB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28409C4AF0B;
-	Mon, 24 Mar 2025 08:45:56 +0000 (UTC)
+	s=arc-20240116; t=1742805948; c=relaxed/simple;
+	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdqYM3iNIflmLKpRsP3Ja4NbqJ0kDxLvjTdBaR0B7/NCbkkeMQyxDt1AjinsNDBgw+Pta1935aBhDiJsnHwq28pXHkdpShxGEYAiGXD0URp/KbdosRgzdhEZ/ol4MiGpCZe7zeATW4SSeBNoWKzcr+q4R7HmsSyDVdNrPeLTCGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m23E7Swc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DC8C4CEDD;
+	Mon, 24 Mar 2025 08:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742805956;
-	bh=OzC4/T/DUX/GTvlqXYftTZA4RAOyB/rwDW48NTGa1Ko=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=UOAIKahBNTW3jWp50XqK0UBRALbDXMbkQPMjRmRw7XVxiy2Z9qCCj3dR8mLgUxTk0
-	 i1RQ++OqiWxNa0wvk8h4whkFbPipGfGmRx4Fnfn6W+5u9Ja+JcCWkxtp069NQYiAWm
-	 /99jGEUDzl7wnkbnPRvk8D5hMLUhpRTzzYz/2A83D97abS1yd2G9DUcF2QT6goqfHg
-	 OL1G0hoAwgWcC7C4LEZFRrrb9QJ2aBwzvcJzPQ+8ZNVpCBRIezyy1bpznXcboaLWQt
-	 2W5Mkxg4GPk7n2yKB0ScOBw7cYBQy8rbmzYnhsTcAVKHd4BFoDTUJCVR4DtP5wREPA
-	 1TbpISq2+LK8Q==
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 35FB2120007C;
-	Mon, 24 Mar 2025 04:45:55 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 04:45:55 -0400
-X-ME-Sender: <xms:wxvhZ3EoOPQvOZRDG_7j6rrI99TwaZCB4_c3Rm7uHzDPX0x81xMRNQ>
-    <xme:wxvhZ0XaYP4538X6BOkG9QL2xgzPPjaslmHiw8xLRVK59VG1559g5W0fG2xHeqww2
-    RhPFryDxfhy4F0gyS8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelfedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
-    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfef
-    feeitdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
-    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepgiekie
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidr
-    uggvpdhrtghpthhtohepthhorhhvihgtleesmhgrihhlsghogidrohhrghdprhgtphhtth
-    hopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhphgrseiihihtoh
-    hrrdgtohhm
-X-ME-Proxy: <xmx:wxvhZ5JFU1gZU_lg_ExVvBaP3VWOxOUCdasFtrdS2ehfKnOMHEOPhQ>
-    <xmx:wxvhZ1E3cW_DUXQ-SypN0IRjOwM0Z0o2s8uDMsRWYUEM_XdLjcNd8w>
-    <xmx:wxvhZ9UX16N3oH2GvbaQOwnE3iGI4sct3xqPao2TE2AhY-e7WmHQlg>
-    <xmx:wxvhZwMgQTHPPa9ep648JDjyvPXDEviGHt6TZFkZ3Uc5gpxDX5X0bw>
-    <xmx:wxvhZ83k3goTWsEl7orJrRb_RtfdBgg5R2mpQKX7SWsH_bciHFlBg6PE>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 02DC02220074; Mon, 24 Mar 2025 04:45:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20201202; t=1742805947;
+	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m23E7Swc3Q6IX3VQrsQq4knOxscSc5QpOFtZ2VF/UvbAZOfdos4/gk8U+FUyF0VcQ
+	 h4mmvs44GI80VAM6JsHSbN4wb82izFA0vTkrKBwSsq/KuPgbF+vxBYka1ZD+UiN7XA
+	 91KeVY8qL3V9iH0P67xZbSp/VkXwOIJSbmIbx8K8aBuVSDC75x7MCQS2v4vfY6vCcn
+	 N2k14OMys6gTKMuUydqJclmb5R8DCSR2JAYE65mvU3x+Ozd4hUVzT5dtfnjYhA70Lv
+	 T0pJJn93/P14Vsx70udZPNdd7MRXteSVJGEga6RqGWB3U2moP51+sl7B4W+7WJq3NP
+	 ZzTxEBIsk8WZA==
+Date: Mon, 24 Mar 2025 09:45:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: phy: add exynos2200 eusb2 phy
+ support
+Message-ID: <20250324-important-kangaroo-of-prowess-0d2c30@krzk-bin>
+References: <20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T54c1b8b1cd0488d2
-Date: Mon, 24 Mar 2025 09:45:14 +0100
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Tor Vic" <torvic9@mailbox.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: "Borislav Petkov" <bp@alien8.de>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Ingo Molnar" <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
-Message-Id: <106aacc5-e863-4e74-b223-34b7a0be60a0@app.fastmail.com>
-In-Reply-To: <b67fad41-3849-446e-8982-1485f42e61eb@mailbox.org>
-References: <20250321142859.13889-1-torvic9@mailbox.org>
- <e37ee471-0b10-48d4-ad20-871e585c98f6@app.fastmail.com>
- <b67fad41-3849-446e-8982-1485f42e61eb@mailbox.org>
-Subject: Re: [PATCH] arch/x86: Add an option to build the kernel with '-march=native'
- on x86-64
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
 
-On Sun, Mar 23, 2025, at 16:14, Tor Vic wrote:
-> On 3/22/25 12:40, Arnd Bergmann wrote:
->> On Fri, Mar 21, 2025, at 15:28, Tor Vic wrote:
->>
->> Are you able to quickly run the same tests again using
->> just one of the two?
->> 
->> a) -march=x86-64 -mtune=skylake
->> b) -march=skylake -mtune=generic
->> 
->
-> I ran the tests on Zen2 (znver2), but this time the kernel was built 
-> with clang-20+lto (the skylake tests were with gcc-14).
->
-> It turned out that with '-march=native', there is almost no difference 
-> compared to '-march=x86-64'.
-> All results are within +0.8% and -0.6%, most of which are probably 
-> noise. Hackbench, stress-ng fork and xz compression seem to profit the 
-> most from 'native'.
->
-> The vmlinux image is 0.03% bigger with 'native'.
->
-> I guess that 'native' can be somewhat useful on some architectures, but 
-> not on all...
+On Fri, Mar 21, 2025 at 03:58:45PM +0200, Ivaylo Ivanov wrote:
+>  description:
+> -  eUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+> +  eUSB2 controller supports LS/FS/HS usb connectivity.
+>  
+>  properties:
+>    compatible:
+> @@ -23,6 +23,7 @@ properties:
+>                - qcom,x1e80100-snps-eusb2-phy
+>            - const: qcom,sm8550-snps-eusb2-phy
+>        - const: qcom,sm8550-snps-eusb2-phy
+> +      - const: samsung,exynos2200-snps-eusb2-phy
 
-It certainly depends on configuration, toolchain and target machine,
-so it's very hard to say anything general about -march=native.
-znver2 and skylake are quite similar in the supported instructions,
-so my guess would be that the clang-20+lto doesn't behave that differently
-between march=x86-64 and march=znver2.
+These two entries is just an enum.
 
-Of course if you don't have the same kernel version and configuration
-that you are testing, the results between the two machines, the
-results would be fairly random as well.
+>  
+>    reg:
+>      maxItems: 1
+> @@ -31,12 +32,12 @@ properties:
+>      const: 0
+>  
+>    clocks:
+> -    items:
+> -      - description: ref
+> +    minItems: 1
+> +    maxItems: 3
 
-     Arnd
+I am still not conviced that creating one schema for these devices
+brings benefits. If this is going to be one binding, then keep the list
+here with three items and add minItems, so the list is the same for all
+variants.
+
+>  
+>    clock-names:
+> -    items:
+> -      - const: ref
+> +    minItems: 1
+> +    maxItems: 3
+
+Keep the list here with three items and add minItems.
+
+
+>  
+>    resets:
+>      maxItems: 1
+> @@ -62,7 +63,52 @@ required:
+>    - clock-names
+>    - vdd-supply
+>    - vdda12-supply
+> -  - resets
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sm8550-snps-eusb2-phy
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+
+Not much improved, my comment is still valid.
+
+
+> +
+> +        clocks:
+> +          items:
+> +            - description: ref
+
+maxItems: 1
+
+> +
+> +        clock-names:
+> +          items:
+> +            - const: ref
+
+maxItems: 1
+
+> +
+> +      required:
+> +        - resets
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,exynos2200-snps-eusb2-phy
+> +
+> +    then:
+> +      properties:
+> +
+
+Drop blank line.
+
+and the clocks get here minItems: 3
+
+Best regards,
+Krzysztof
+
 
