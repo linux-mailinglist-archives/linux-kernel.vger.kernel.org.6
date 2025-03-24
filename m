@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-574455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873FDA6E58B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:21:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E7EA6E5A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:26:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF54189664F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C823B8A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA0D1DEFD7;
-	Mon, 24 Mar 2025 21:17:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C72C1F12E8;
+	Mon, 24 Mar 2025 21:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="VHbt574b"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC69193402
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846FD1EDA1E;
+	Mon, 24 Mar 2025 21:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742851075; cv=none; b=ZZ0HZDb1cdiRN2rlomB3peOJ29puVGPHUVIWTytoztNdoxYbGF73NV/w7Kj6ksadOaD+gjxX5nMg/wr9zICn40jvrt3Rd0k3b+76G/jB6xz6wKBzTa5+cE6oa5s2KE+7Gm5YnnszPgJE51WLwSYHAtt8pWREsYLqTqjfRFG4+tA=
+	t=1742851112; cv=none; b=FjxprbkvST9tGFQm0go0VQvG1/b1fYxv0DFjpL8foR010lTstRxXHPoaCQbLs77efhaqqWlxZGEZ1KQlK/gpazuMq0VaxMQLF5a/18oxoT6/P1qM8NuKXfTxj/05N3qpT1dx5wVckbJoVYBEDKcfq3o9ullNSR9JOj2jC4UPcT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742851075; c=relaxed/simple;
-	bh=vfyr5k1ytxbqD5dDvZv/NHqPDJ06Jbpq2YW1jgz8ODE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=te2G/c1NCecq88dfJwtX8sGBhWjYR7oF2E52xKHcZxeij25OxX0tUeceoplPDQbAzqgcChEAbuXb1HKOg9h4gkjZer87IVx/VYOxS8Gkcda0MLnW1DuXpxGqJINRaYkr2/pBZUkI7OUpm1kmOAbRgjCFbHhovPO5wJrIiNfzEEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEABFC4CEE4;
-	Mon, 24 Mar 2025 21:17:54 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1twpBt-00000002Acp-1Lzs;
-	Mon, 24 Mar 2025 17:18:37 -0400
-Message-ID: <20250324211837.171611564@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 24 Mar 2025 17:18:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Abaci Robot <abaci@linux.alibaba.com>,
- Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Subject: [for-next][PATCH 1/3] function_graph: Remove the unused variable func
-References: <20250324211821.731702961@goodmis.org>
+	s=arc-20240116; t=1742851112; c=relaxed/simple;
+	bh=c4E++3f2MDMsNPMEJdXDfgwYQoGSbwjYzUZTLh3w6c8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=usiATzEEvqcGz+WsnHrAE8J6vJniXmnOv8CQ7I/SQEwd3oVJ1yl1a2iIYmuWwNeErD0Wp30/JPPg6kizcSDy6uQ5/NNylkDYymLfezwAH47YAX6ufibTZLqxIKGMjIuTewSwqTtt+avxDaPkEpRS9BUiShoUm6mzbJ1hXolWM04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=VHbt574b; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1742851108; x=1743110308;
+	bh=6DixGtBaeZaFqPX3S+avGICBN1tFkPrHCpETt4l8pPk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=VHbt574by1tm+h6WWTttP9EZ0CDO0qnamTy58fhMkSXXhL58G4XT/HWkeVfmHTyAp
+	 JDLhRYtRJeBPoSGj4+3ZMZttB842ZXOIATbw58O5j4kRra/u/YpnTIsw9gky12bj7t
+	 LmDAr2CbIzHQJBybqGFJNAC4RZn2+5W+reYTT9v2Uv6yflv7Z4Vi8Y7OK68ymaTtDN
+	 TPpIO5mSOcOVgnQr0GjxYYKrnytoqbCNsmtcoi0e2oRnlzRf0X9d26xtzt/l1OYzmF
+	 TCQlyO/I1AG+2WrwQyy5MRdwfFziCDfpZ2P2ZMjF6oczeNVXX0jRezRep85IBlNvqx
+	 F8w1dAoWSIACA==
+Date: Mon, 24 Mar 2025 21:18:23 +0000
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH v2 5/6] USB: serial: ftdi_sio: Fix misaligned block comment
+Message-ID: <20250324211619.166988-6-dominik.karol.piatkowski@protonmail.com>
+In-Reply-To: <20250324211619.166988-1-dominik.karol.piatkowski@protonmail.com>
+References: <20250324211619.166988-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: f611cdb4109628a58b1b61b518af79d1bb384640
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+One of the block comments was misaligned. Fix it to align with code
+style.
 
-Variable func is not effectively used, so delete it.
-
-kernel/trace/trace_functions_graph.c:925:16: warning: variable ‘func’ set but not used.
-
-This happened because the variable "func" which came from "call->func" was
-replaced by "ret_func" coming from "graph_ret->func" but "func" wasn't
-removed after the replacement.
-
-Link: https://lore.kernel.org/20250307021412.119107-1-jiapeng.chong@linux.alibaba.com
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19250
-Fixes: ff5c9c576e754 ("ftrace: Add support for function argument to graph tracer")
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
 ---
- kernel/trace/trace_functions_graph.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 71b2fb068b6b..ed61ff719aa4 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -922,7 +922,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 	struct ftrace_graph_ent *call;
- 	unsigned long long duration;
- 	unsigned long ret_func;
--	unsigned long func;
- 	int args_size;
- 	int cpu = iter->cpu;
- 	int i;
-@@ -933,8 +932,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
- 	call = &entry->graph_ent;
- 	duration = ret_entry->rettime - ret_entry->calltime;
- 
--	func = call->func + iter->tr->text_delta;
--
- 	if (data) {
- 		struct fgraph_cpu_data *cpu_data;
- 
--- 
-2.47.2
+v2: Split the patch into smaller patches
+
+ drivers/usb/serial/ftdi_sio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+index 55ea61264f91..d671d2194c64 100644
+--- a/drivers/usb/serial/ftdi_sio.h
++++ b/drivers/usb/serial/ftdi_sio.h
+@@ -95,7 +95,7 @@
+  *
+  * The Purge RX and TX buffer commands affect nothing except the buffers
+  *
+-   */
++ */
+=20
+ /* FTDI_SIO_SET_BAUDRATE */
+ #define FTDI_SIO_SET_BAUDRATE_REQUEST_TYPE 0x40
+--=20
+2.34.1
 
 
 
