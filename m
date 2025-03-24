@@ -1,72 +1,64 @@
-Return-Path: <linux-kernel+bounces-573901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB47FA6DDD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:08:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D311A6DDC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E863B6C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:06:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92938188AB1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C1426139F;
-	Mon, 24 Mar 2025 15:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3C725FA24;
+	Mon, 24 Mar 2025 15:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BiT/byg0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZlp/Oi+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD85925EFA4;
-	Mon, 24 Mar 2025 15:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BB725EFA4;
+	Mon, 24 Mar 2025 15:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828789; cv=none; b=LjtQ8kny+DkyQ7070DCLftF/HAsKyNCOXrntZjKiCYT1ZB82uTPbi2v/gRGDaAFPBk+ceMNVyCTv2cWQS0uuMmwplfXYt2RPUERBegDHCwt0lMTHPw89Liqg5W/eyUQUeNMybU6i2Xn0BaX73nukFqFw21asry9QnsAbViggO4Y=
+	t=1742828819; cv=none; b=t9tykTq3AUdpMjybcGTDTvbFE6fVaPiTRkStWv+L4+YzZVSziMPwSoJZ0d69d/QppcxYIuKVTTP1+9LNl52yA/ybxGAv7Z4vjFKMCGd3rwbCFKechzkG8RrBaYJ5JUEIFBzfa1GSwGhYpHV2tfF8O9JdHe4eOEGTkNMYs6YNMQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828789; c=relaxed/simple;
-	bh=2UyfWKa1A2bwYrJ10f3fMq8znNoxlz7+Gf9TQZYX9No=;
+	s=arc-20240116; t=1742828819; c=relaxed/simple;
+	bh=SnVSl6CFkIX1PkG6+5tqHKeiuhjmt7k8KNcJ9EMCjNc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pW2V6nk5g+FCViWEHSTfSPveIF3ptYIpUg6r/QorZ4jp4I2wRdLYxlE1moAtUUN+8WVEYOKojixaQ3ajLVcaoyoDJbDe4uvdpqcdJyid11dNomMfnyLRS4yBQdsBb924LrOT+u3sGt6e/B6vp7QJ1NGUTHQBDSk8ia93I/lihzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BiT/byg0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oyNYGh8iDDAgrKD6zIW/UpG4qhZ5QDpo+/PKSwJbzqo=; b=BiT/byg04IMEiIji5AnLNVWDZ+
-	O0JDn8GlapzNVFvbp0e0BvS/bHoU4YN/N9lqz820J6wW8mDqwKLkUAy4OnoHWdCVXCdHIvh909i+1
-	qTMOGzcrHub8FBkP8uOevLrxwn6bLF2QrBCvQxJSTNX5eey0Ic81XYcEixEDHnxyRfu3czAQ4R7co
-	qGCEr4CCdN6sgkzLNisrbJTfX+7h9TBmQizzKWphCfsWrowKXZGMxYWE5BVMdL4k9mTSBXh43U43d
-	sw0tdTv+Xf10lQEf32MTqTkaKnhPHmaJLArdh9B0GkxJITO78pcbMhEJ5P0ssYJIXVYRj4+c96KMA
-	xUQk5ouQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52790)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1twjNg-0003hd-11;
-	Mon, 24 Mar 2025 15:06:24 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1twjNe-0002KN-1Q;
-	Mon, 24 Mar 2025 15:06:22 +0000
-Date: Mon, 24 Mar 2025 15:06:22 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net v3 1/2] net: =?utf-8?Q?phy?=
- =?utf-8?Q?=3A_Introduce_PHY=5FID=5FSIZE_?= =?utf-8?B?4oCU?= minimum size for
- PHY ID string
-Message-ID: <Z-F07j7tlez_94aK@shell.armlinux.org.uk>
-References: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
- <20250324144751.1271761-2-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUGQ9G9GQdWVMuvJnP1yxYGPa9bk2zfCWgKEf76mbO64NYrjqr4sLbkG/o4yZFPaMmuKIo5QtKChI+BRkZ6AtYCF0zKuo6iH5pv5ufoV7/l8YuIDJ4JJf5YNr4bjqb4KfQ5pLe6oxEjwVPLc5M3nDj3glmhhmjyKE+Pzia7KVWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZlp/Oi+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79172C4CEE9;
+	Mon, 24 Mar 2025 15:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742828818;
+	bh=SnVSl6CFkIX1PkG6+5tqHKeiuhjmt7k8KNcJ9EMCjNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZlp/Oi+lydf9fiE3l+P76ctLCKI9DERztCr2kxIwLt7Ou1/j/s0QZgnAL7o5XsPT
+	 E5BxaWDmH7DKF+FiQlAiXFizJnopkoU1ZCpK6HukkTk5ICp5Y1aTEW5/bhsmJgP41M
+	 WqdU6bO7H5DuQ9iTokQq8f+FuamvnIFX4Eefljjcq3/cPMVJ23USkIXNmaWDICJSDk
+	 tCSSJAntvyA+JNk6sZlaJ2OZa6gjfaxFs+XD1sCNVfdFVdo7tx4qw7OvNrg+NmvBpJ
+	 ORKs96t2zrEmRZweCqfRqPiVpFkZZhTnR4FP1F+UUhcQTTDxf4SDhubHSPQkSywXtZ
+	 p7o/ce2miSkwQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1twjOE-000000002vu-0XPG;
+	Mon, 24 Mar 2025 16:06:58 +0100
+Date: Mon, 24 Mar 2025 16:06:58 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Miaoqing Pan <quic_miaoqing@quicinc.com>,
+	Steev Klimaszewski <steev@kali.org>,
+	Clayton Craft <clayton@craftyguy.net>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] wifi: ath11k: fix rx completion meta data corruption
+Message-ID: <Z-F1EoFxY3qVZiXZ@hovoldconsulting.com>
+References: <20250321145302.4775-1-johan+linaro@kernel.org>
+ <5d872cf0-ca57-4017-b06e-fce9c11813dc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,28 +67,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324144751.1271761-2-andriy.shevchenko@linux.intel.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <5d872cf0-ca57-4017-b06e-fce9c11813dc@oss.qualcomm.com>
 
-On Mon, Mar 24, 2025 at 04:39:29PM +0200, Andy Shevchenko wrote:
-> The PHY_ID_FMT defines the format specifier "%s:%02x" to form
-> the PHY ID string, where the maximum of the first part is defined
-> in MII_BUS_ID_SIZE, including NUL terminator, and the second part
-> is implied to be 3 as the maximum address is limited to 32, meaning
-> that 2 hex digits is more than enough, plus ':' (colon) delimiter.
-> However, some drivers, which are using PHY_ID_FMT, customise buffer
-> size and do that incorrectly. Introduce a new constant PHY_ID_SIZE
-> that makes the minimum required size explicit, so drivers are
-> encouraged to use it.
+On Mon, Mar 24, 2025 at 08:03:15AM -0700, Jeff Johnson wrote:
+> On 3/21/2025 7:53 AM, Johan Hovold wrote:
+> > Add the missing memory barrier to make sure that the REO dest ring
+> > descriptor is read after the head pointer to avoid using stale data on
+> > weakly ordered architectures like aarch64.
+> > 
+> > This may fix the ring-buffer corruption worked around by commit
+> > f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
+> > ring") by silently discarding data, and may possibly also address user
+> > reported errors like:
+> > 
+> > 	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
+> > 
+> > Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> > 
+> > Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> > Cc: stable@vger.kernel.org	# 5.6
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > 
-> Suggested-by: "Russell King (Oracle)" <linux@armlinux.org.uk>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Does this supersede:
+> [PATCH] wifi: ath11k: fix ring-buffer corruption
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+No, this is a separate fix. There are more places where barriers are
+missing, I'll try send some further fixes during the week as well.
 
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Johan
 
