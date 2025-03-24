@@ -1,116 +1,219 @@
-Return-Path: <linux-kernel+bounces-573995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF841A6DF60
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:14:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63905A6DF63
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613503B1662
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6648E16F75F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2302620FA;
-	Mon, 24 Mar 2025 16:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42F22627E1;
+	Mon, 24 Mar 2025 16:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gf68N48I"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ez+DjuDo"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2391D261583;
-	Mon, 24 Mar 2025 16:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6562620F7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832849; cv=none; b=TJYu+NA+XAMi7j+PlP0R41+jiTJbnadY/Ei5T2zfAvo/sHefBSwLfsyJ0pYcifLbdgTYeyPxiJAkNp4/Vkajw0kFy2Qc63zDWp7hrztR2ApXe+3S40UBjiNZXlnaiZMDUtQwn4++X3yZw3rct1B8t3dIOlwAlpBdp/JVt3kKJKk=
+	t=1742832865; cv=none; b=mESKpRqm1K2fPJRmbwKxMxK8Y7IVJI2Gp/kEKCPjJIFpaMksOqyI6xdOVfLLIeQ97CNkgKo5ctnCoIbGA+Q2UFkfZ4oalUY9W2SfBQUR+JHHgL1INJfjsm0shRqmLJYfZU50bL07+CRW1nZ/ZeyBlEF8sQ3MMYb/IorEV1vZQqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832849; c=relaxed/simple;
-	bh=qWUcDEvNPwe+MVToQY1UJqIGr2oMYuSjPCHLZBofknA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=luHPy+XmVpkyTl91yrZpLfQ/eNQqwdQx4m+/4Wk2GTQEKO0VN29b9MrlQIHyukPqaT5rMWGgcHY5fDL3j5D/iPlr5jP+VMSzcsy26/u2KZb/JRwOswBy94Oq9dD9vl5ynU5KIGC4yEmw6nqRuEru3eL0arqkF3AVlgKBGvegxSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gf68N48I; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C9EB62047D;
-	Mon, 24 Mar 2025 16:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742832845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N6KzmIi53X4fObYuJrA4GCKCHJLPzFl8bnqM+4sgwCQ=;
-	b=Gf68N48IxHGYxw5YhiOZutJryK0qFHSxJJeAYRbkVLq+oNDSGW0qesENhdVAAjAfxKxj9D
-	ZE/cLxKqWuH93q2c0TTha9uIb72TJzQnCArJ60qE9rphdjgh2rXoahvIdv8WFP6+7om7f1
-	fHSKvAZ4eKzHpX4Us105kKzkdm35JbDjF4lr72btvKLJSU3WG2SZ2KULSLV5mQUM7D509K
-	Wbt9VlL2xLhEtaqv6+fe+BwzpPU02bkyjLbZ+DrlOmwxQ0Abn+cT68213S1R07uGTL+j4N
-	n2336Y+3wBww2TlzhtGWwataCUV4jvefAI8JSJyL1IjQHIcV/tFTyTlKYk6tEw==
+	s=arc-20240116; t=1742832865; c=relaxed/simple;
+	bh=OVx5qEzHDwHumfbtV5HYHgl6QC/zhZ7PJD7CJVooSts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gX7kpD3tIyjwdmbQNC7JXHxe++ryYBSsgaRaRy/yfSyl2y8sP+z7rriILVEj4v7QhvuAShuZTwxslyzMw6QZ6YpUEIfTv5TyoOiCfdKofQSOT2Y1ESEFPqXiDRLq13aJJzPBtm6RbKwudsqPAbuuzbUosUcQQfPXCuKvMN09cvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ez+DjuDo; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BBC7E3F6B3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1742832853;
+	bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=ez+DjuDozZbB4k1BxvxPDwDjluwmaYtoRIUuhGkVbqXes1HPgU7D/Z8QYzdIbgoax
+	 MAOpjqGLXjG/lCcG7mRgiV3G9IKhbBBL6YPQFe62xqFUUugiRCipmDCAlDBUyTgjqZ
+	 IDLZhcKTpHvCinR/lj0z0aw43KZ7Xu3r8hVrceuINhu6cJ75NFiyA61pVXVcosMgO0
+	 H/b5Z42gE+6YHZ1PCvwTZEgWXC0pDkrUzkw8D7zsUEDE/2cZ5xdvC/7HigWfO8q2g1
+	 2QI+i61uI7lH4hgYuI2yRhVOe+mbuo1DxV1bu8ikTW+YLVDwfsICmPw5P9FBSNeANK
+	 yMh/CJyhyozow==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac3c16d6199so406702466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:14:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742832852; x=1743437652;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vrCEXjms1HEeHeCcBRgtI9vYOaSHDCJqhJDM0xoNcLM=;
+        b=OcjEg47brU2Ss8Fo6rwbg6zG9DfH9Q6KrXAxO2rJmfNpAayLVl6HFtAvDhhSAgq9Og
+         BwTF1rkhrKPUGBMjJiBcH4HflPynQvnggO0FFUI9IFSobW3lTcRsL1XuEOCVVsYudbdV
+         t4Cvtr/d1advxjNn+eIURRg3VbLflR/bK0PGHei4tgr/IRbRm+uXCJ+bl0XMIjc31EV4
+         HVnw4udSOhCAfPj7BU61Fn+ll84kNTRLa2jL8g5r6t6TvDHQovIc0Rr+f97xMKColaU+
+         LB8GjQ4Y16wticdUbq7ErIJAEaVQVLz19dU2uFAp+OsS3EDc8WZ2t2Hcz/MeJJNLp/4J
+         R47Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWKq+06o9PEoGH+VjBY6iIkFaWHR7gSfnSHG09x5SfiwqKAE7SRBwS551oHB9PRW6h/F9r4EBnck3ozB8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8pqtSNx77dRn7agkbsjtNsRAErEBrseAM8x3kDmO4olRXBoxO
+	JrliFOx5CSeveefWSAAfAfw4cSOZK9vA4XNWq1z4DRm445d0dDSr/0I1vTThl2RUJdoeK+BAvpp
+	wOr8bARekA396DTkr1wSomzFBGN1oh+Pfs7WttjJl+OnMnkZsHl/9e4XeSqjvZK91we9foLd8ag
+	QkH+XJig7GwsdpxITCqQ==
+X-Gm-Gg: ASbGncv1cQp8+h+A2P/fWFOQf16K39ppkvqC7+bqCWuh686gnKhEL9q5S5qWET6ItlU
+	k687f8rehvIN3LdRoMb5DHcx4hB/UCSUhKIupj+qSZMK9VVWff8Y3BCaZqhQ7YrNSkp1lqZil81
+	1ZKFsLMiPqRhW2I1heeQIPae2uWWCianlv2cMY7YC4WX7h3l1y4kqeQXkS4fagUG4k1xqY3Qwo7
+	e5FGzo2qvXYlgTzLei8z58KgjjZakgb5pa83pEMb893cAfqfNib20kr6FIGs5q7KBq377IAnX6U
+	915uJAw6LZXiB0PSATU=
+X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390896466b.35.1742832852503;
+        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBoAqH0NuQib7zD9bnBjLQS0nzGw/Lcb59ZJ35t8yUAZYJ88GwfFPzoOrDGVL+L95eR27PQg==
+X-Received: by 2002:a17:907:d58c:b0:ac3:c05d:3083 with SMTP id a640c23a62f3a-ac3f24d6f4cmr1390893966b.35.1742832852056;
+        Mon, 24 Mar 2025 09:14:12 -0700 (PDT)
+Received: from localhost ([176.88.101.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd24f6esm694852166b.154.2025.03.24.09.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 09:14:11 -0700 (PDT)
+Date: Mon, 24 Mar 2025 19:14:07 +0300
+From: Cengiz Can <cengiz.can@canonical.com>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: Vasiliy Kovalev <kovalev@altlinux.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, dutyrok@altlinux.org, 
+	gerben@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 17:14:01 +0100
-Message-Id: <D8OMOI980I2X.1JH4RKWL1V86E@bootlin.com>
-Subject: Re: [PATCH net-next 01/13] dt-bindings: net: cdns,macb: add
- Mobileye EyeQ5 ethernet interface
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
- Ghiti" <alex@ghiti.fr>, "Samuel Holland" <samuel.holland@sifive.com>,
- "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
- <linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <linux-mips@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Andrew Lunn" <andrew@lunn.ch>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-1-537b7e37971d@bootlin.com>
- <2dbbd6c0-84d0-4846-a48d-31891f395c7c@lunn.ch>
-In-Reply-To: <2dbbd6c0-84d0-4846-a48d-31891f395c7c@lunn.ch>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevvffhofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduteeltdevjedvkeelueejhfdvleeiueetvdfgveffffekueeghffhieduleejveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpr
- ggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9xsx-w4YCBuYjx5@eldamar.lan>
+User-Agent: NeoMutt/20231103
 
-On Fri Mar 21, 2025 at 9:49 PM CET, Andrew Lunn wrote:
->>            - atmel,sama5d2-gem         # GEM IP (10/100) on Atmel sama5d=
-2 SoCs
->>            - atmel,sama5d3-gem         # Gigabit IP on Atmel sama5d3 SoC=
-s
->>            - atmel,sama5d4-gem         # GEM IP (10/100) on Atmel sama5d=
-4 SoCs
->> +          - mobileye,eyeq5-gem        # Mobileye EyeQ5 SoCs
->>            - cdns,np4-macb             # NP4 SoC devices
->>            - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet inte=
-rface
->>            - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ether=
-net interface
->
-> These are kind of sorted. Maybe put mobileye after microchip?
+On 20-03-25 20:30:15, Salvatore Bonaccorso wrote:
+> Hi
+> 
 
-I never understood how most lists end up mostly sorted. Changes for V2:
- - add a "dt-bindings: net: cdns,macb: sort compatibles" patch,
- - add the mobileye compatible below microchip's.
+Hello Salvatore,
 
-Thanks,
+> On Sat, Oct 19, 2024 at 10:13:03PM +0300, Vasiliy Kovalev wrote:
+> > Syzbot reported an issue in hfs subsystem:
+> > 
+> > BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> > BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> > Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+> > 
+> > Call Trace:
+> >  <TASK>
+> >  __dump_stack lib/dump_stack.c:94 [inline]
+> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> >  print_address_description mm/kasan/report.c:377 [inline]
+> >  print_report+0x169/0x550 mm/kasan/report.c:488
+> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> >  __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+> >  memcpy_from_page include/linux/highmem.h:423 [inline]
+> >  hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+> >  hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+> >  hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+> >  hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+> >  hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+> >  vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+> >  do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+> >  __do_sys_mkdir fs/namei.c:4300 [inline]
+> >  __se_sys_mkdir fs/namei.c:4298 [inline]
+> >  __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7fbdd6057a99
+> > 
+> > Add a check for key length in hfs_bnode_read_key to prevent
+> > out-of-bounds memory access. If the key length is invalid, the
+> > key buffer is cleared, improving stability and reliability.
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+> > ---
+> >  fs/hfs/bnode.c     | 6 ++++++
+> >  fs/hfsplus/bnode.c | 6 ++++++
+> >  2 files changed, 12 insertions(+)
+> > 
+> > diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+> > index 6add6ebfef8967..cb823a8a6ba960 100644
+> > --- a/fs/hfs/bnode.c
+> > +++ b/fs/hfs/bnode.c
+> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> >  	else
+> >  		key_len = tree->max_key_len + 1;
+> >  
+> > +	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
+> > +		memset(key, 0, sizeof(hfs_btree_key));
+> > +		pr_err("hfs: Invalid key length: %d\n", key_len);
+> > +		return;
+> > +	}
+> > +
+> >  	hfs_bnode_read(node, key, off, key_len);
+> >  }
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Simpler the better. 
 
+Our fix was released back in February. (There are other issues in our attempt I
+admit).
+
+https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/jammy/commit/?id=2e8d8dffa2e0b5291522548309ec70428be7cf5a
+
+If someone can pick this submission, I will be happy to replace our version.
+
+> >  
+> > diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+> > index 87974d5e679156..079ea80534f7de 100644
+> > --- a/fs/hfsplus/bnode.c
+> > +++ b/fs/hfsplus/bnode.c
+> > @@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+> >  	else
+> >  		key_len = tree->max_key_len + 2;
+> >  
+> > +	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
+> > +		memset(key, 0, sizeof(hfsplus_btree_key));
+> > +		pr_err("hfsplus: Invalid key length: %d\n", key_len);
+> > +		return;
+> > +	}
+> > +
+> >  	hfs_bnode_read(node, key, off, key_len);
+> >  }
+> >  
+> > -- 
+> > 2.33.8
+
+Reviewed-by: Cengiz Can <cengiz.can@canonical.com>
+
+> 
+> I do realize that the HFS filesystem is "Orphan". But in the light of
+> the disclosure in
+> https://ssd-disclosure.com/ssd-advisory-linux-kernel-hfsplus-slab-out-of-bounds-write/
+> is there still something which needs to be done here?
+> 
+> Does the above needs to be picked in mainline and then propagated to
+> the supported stable versions?
+> 
+> Regards,
+> Salvatore
+> 
 
