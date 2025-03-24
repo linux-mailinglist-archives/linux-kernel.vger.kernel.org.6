@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-573377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A1BA6D68A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:45:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D21AA6D68D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8BA7188D0A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0A93AF15D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816A925D545;
-	Mon, 24 Mar 2025 08:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58BB25D8F8;
+	Mon, 24 Mar 2025 08:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="0Qv2X5vX"
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="RpFTgJ0c"
 Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA2C7082F;
-	Mon, 24 Mar 2025 08:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D225725D54A;
+	Mon, 24 Mar 2025 08:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805922; cv=fail; b=gSK8zscPLL8yoWd5cAr1WhKyTczyxgdsX6OwCPIM9bEL0emUfGMedQ2Nx9MXij2zsH+Qa5vL+sNVqQazYEzCWCzGhIl4f61Lx07hf5Sjfn+WyGSSmVT3XQF1ElbGDnhTvlYnh9OHA5k+UZ6PBy+02UM4ZlDRn8J5i4XcrEFs/Bs=
+	t=1742805925; cv=fail; b=sftOm+M3bpJn01buSY9TVX760EP1YfkBaJPuvvnbUQT9zkyKrooUt4CvqCmCGVr+2FB20rE+BfX+LBndA7N/zq8agNE/TMBK2+k5lZjSle0hSLhQMsOF0YdRMVgaXRG21KScLd0CCS/i1GgS6bAyu0jLzOQkmE7pR3JqFO0WiPs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805922; c=relaxed/simple;
-	bh=2ttscVwupyeQ6BDDaSEI9sEmTJCqbSaUfhtGR4Fk6iw=;
+	s=arc-20240116; t=1742805925; c=relaxed/simple;
+	bh=xkFRXjf8dw9OrqMe8IwBXZdjszqE9MMXgd5kttkgNZs=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ABY4BIeub45fniOqwxIwnCdbK5Yiv6eDUyHUPVXH+s6ofO6ABFwA6qvmDipS663oUBKI67ddXxv/iAdJRbcbfzUH30OLbe7AZOw7y3Fb4lhCyjqYP5alcXag00+hVHDDIseoL7foKsoH6YlwxcA0yafWeWdQGXJRipPC1G7OQPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=0Qv2X5vX; arc=fail smtp.client-ip=148.163.139.77
+	 Content-Type:MIME-Version; b=UYPGznnCDqzELEo+nL+l8y8hD0o/QjADTEUcYtldQxxqDXsqPylAGaPCxIbKdrh11XcV9s0MhfQG063ZFECCjdn6u6exP5jQnBx1Oc3At+QgAw4gIw7obh+HPr+1LOw+HlHPXyaBZL+QVJ7PU0FkVZ1xrC2zmnAf9XBplyEG8RM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=RpFTgJ0c; arc=fail smtp.client-ip=148.163.139.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O85jRw010581;
-	Mon, 24 Mar 2025 04:45:05 -0400
+Received: from pps.filterd (m0375854.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6A9fa011774;
+	Mon, 24 Mar 2025 04:45:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=2ttsc
-	VwupyeQ6BDDaSEI9sEmTJCqbSaUfhtGR4Fk6iw=; b=0Qv2X5vXCE6M0hNt4qHCY
-	ErVk4w/0oDgks1e3fHsElleWrmMoX6nIDmAygmdb7QoD5l+XbCWGDIsoagBSFFtf
-	y+nCfIMwAhP8MmSwnla3+xRKEaEoXJOnzEOnLtKI8k06A8tRsdkZuEMt0RTJPgji
-	IjjK9cUOgck+Ogx+ieiiUwBcMiJVcObCk9O1kueuZFquWuFzeH5HWOzfCaPjZQPN
-	fH8HK4yXQK2sAuO0QeCXFPxaqw7NIB0vCg20E7JfakLgBsZAS1IuRFIBuZcLBLUU
-	WIAbTVK+HVwGwHnLqhYagG6Ihb+911wTk+VxqZc/7wGNwdYnbnKavLbjrTGpEtJv
-	Q==
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2048.outbound.protection.outlook.com [104.47.70.48])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45hpyc8veg-1
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=3wiYl
+	iFZBP3+sg7C9qXgnjdGypfV35Qd7xwwj8Bw55Q=; b=RpFTgJ0cg4rwHnNfnfIFi
+	dLzYq0ZRj/fj0xo+C4CqfMECgKwUmf31ORgzJQS9Y4mlPtpEMVjgAFsBM9mdDvgy
+	8yfDTV/XMNeeSRD+0lSrBAiM/Cd5AwMEQ3b1LqEk06z8CbBJ0flOdkvGWyDCP+0Q
+	TPWa3qUgVTr46OVPRJ/owiKQA5tHI0g+SzpKOmdbg8AvP9nmuEW6Wa51qp/gFIB+
+	ijzOODAA2+Aha+9LFrjdIxtzpQ7RCaBODpJaHWqUO4nI91HiIgRfoVONfMpVm90G
+	rhIXj8ziMU8Nb76aGlabCXTmaOJbfBIpKhbsL0zbXDN0tsRqEZ6D+5fIS/UbVL1k
+	A==
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2049.outbound.protection.outlook.com [104.47.70.49])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45k1vw8jtx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 04:45:04 -0400 (EDT)
+	Mon, 24 Mar 2025 04:45:06 -0400 (EDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P7hlpRcTSFZSUOjFXz1pmubXnZgdvoPS53ZOpo7MXNG+sCZjiLADyAa07y292fGvUv+ySKKBAUjiIsLIN3Q321QnPEm1rtqDUeyrr1d/skhexCeabeoePKJP5b1G1ZgcE2fqVbGMrtItRCTnen8eJFQ6C+Q8/2Qrq10mzsTwyhmu5rD0KZPKTDovvX6AUgrNR4892MLnZuMKFVs9LjjcxiK0gE494ixau2e8haD2HV63RkwQdHhZ3AKE/cp1JrLZTpde8iutUlAPJl51uBz0ym6wIAylGfxulJwfejV7bEBY7qbo7cB9VscGaGx2F2kxVokbVBPMdZqhXrSTpGLWIQ==
+ b=MhrwV+Nszpi4KcDd1aLXtjNVm9kJLT12KOF3mdagX/NYrvTmNTMbj/+paB5GJUvA4Js9rDygIEc4cRlogRATdnHrXXyb2nB5FP4qRC3/0+B5YrmIVYKBt7yRp7xVCOik0W73u8DIzYEI3bycMW/z7MT5fjcY1zx9sS7hRBWapsNwJz0PDh0H4SXIVsb+O0CM+PP/V4ShRTdxSgntF3A2t1u/8Ff38+7Pc8ypU1TPDSqCmzveZiNcR0TfGM/Og6MwX/idbftXT3hV43Bel2eqyx+s2TadocmxYi54nPcm+CQxItBBGj+YlXl2NmCDQWciBoAp0s0y5Fjlh3qyDuL1aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ttscVwupyeQ6BDDaSEI9sEmTJCqbSaUfhtGR4Fk6iw=;
- b=e3LD+9YK5NDSF/Ws6D/Hev1ikMUP32u0o8Q/B7U6bIIYUUMR2o8YVjKu2S4BG8o5HIbkV+tFuN07PX7f04ezbq9F18wKvmJCC+e0Ms5p+kZrcqeQV7ZOaaxynVyEtW/EMUnLOU4z5bLJ+V/W1LBAavObPCakgPXH2CJJl86cEmls0HvN7VrE+8BDya1QrFYj7q9EsFd/1mlqSB4J7wHWehBPa841EiIbFn97O8yxh0dQx0jtJimV7X7CbUMK5JDaT2B6+FI1xZ/oodS29LAR7DA7X0Ddud7DkYkpKt0Lq8kYid//Er0tF7JP/6PRsCFEThind5XfFdQkQPscTp1Y/w==
+ bh=3wiYliFZBP3+sg7C9qXgnjdGypfV35Qd7xwwj8Bw55Q=;
+ b=gTOYbTfwSid4H3escz0RhAOF4jMWCiCyOSD0I/btnUEEfdlv/7NtaN1xFKgiP5l2iGd/POrR7U060ASHwHrUFCZ75v0/lqjQDGtaln/gwiC2U3eKengBn7IL1YINzgiVg1tkvOEo7QQn3sAZnBCT9eErVZH2XQrT9Ww51d3mkV0mo1s/bQZwH1Xt88zItVQgvmLlY8fYHtDnG/QU0b8MpUR46027N/y7p6oMTSydoeHUB9k30E44d5rLu8giOzVILZCt+AQi6wcfOQMCBru3IeNNFAmEvI5PDpAJ2O3eAbDQn/NN2O6ld5mDGF9P403ef8pHqtiqktuzHbpUeLkqXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
  dkim=pass header.d=analog.com; arc=none
@@ -61,116 +61,102 @@ Received: from PH0PR03MB6351.namprd03.prod.outlook.com (2603:10b6:510:ab::18)
  by LV8PR03MB7493.namprd03.prod.outlook.com (2603:10b6:408:185::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 08:45:03 +0000
+ 2025 08:45:05 +0000
 Received: from PH0PR03MB6351.namprd03.prod.outlook.com
  ([fe80::71f7:8e63:e91:a354]) by PH0PR03MB6351.namprd03.prod.outlook.com
  ([fe80::71f7:8e63:e91:a354%5]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 08:45:03 +0000
+ 08:45:05 +0000
 From: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
         "linux-kernel@vger.kernel.org"
 	<linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
+	<devicetree@vger.kernel.org>
 Subject: RE: [PATCH v2 1/2] dt-bindings: regulator: add adi,adp5055-regulator
 Thread-Topic: [PATCH v2 1/2] dt-bindings: regulator: add adi,adp5055-regulator
-Thread-Index: AQHbmWTs0tq9YZuaRU+BZzr0M0+ierN7sYCAgAXWiKA=
-Date: Mon, 24 Mar 2025 08:45:02 +0000
+Thread-Index: AQHbmWTs0tq9YZuaRU+BZzr0M0+ierN7vA6AgAYUWSA=
+Date: Mon, 24 Mar 2025 08:45:05 +0000
 Message-ID:
- <PH0PR03MB6351789B0AA5464755D98049F1A42@PH0PR03MB6351.namprd03.prod.outlook.com>
+ <PH0PR03MB6351B2DCD6C87F1ACCD043D6F1A42@PH0PR03MB6351.namprd03.prod.outlook.com>
 References: <20250320-upstream-adp5055-v2-0-aac2d3705802@analog.com>
  <20250320-upstream-adp5055-v2-1-aac2d3705802@analog.com>
- <174245934743.3732121.176471277866008029.robh@kernel.org>
-In-Reply-To: <174245934743.3732121.176471277866008029.robh@kernel.org>
+ <20250320-unbiased-cooperative-coyote-e7e255@krzk-bin>
+In-Reply-To: <20250320-unbiased-cooperative-coyote-e7e255@krzk-bin>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: PH0PR03MB6351:EE_|LV8PR03MB7493:EE_
-x-ms-office365-filtering-correlation-id: 89797d00-1aca-40b3-a015-08dd6ab02b4d
+x-ms-office365-filtering-correlation-id: c777de76-ea66-4255-e112-08dd6ab02ca5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
 x-microsoft-antispam-message-info:
- =?utf-8?B?VHhOcWVuRW1iaWtDajVtbWtUdVovbTVWaDd3M1J0ODQwR2NxV0lSUGRBT3F6?=
- =?utf-8?B?L2UxTVBtK2VDOW9ldytvTEtPaDhzK3puaVFMMGdaVm45dEZyTDFObktXbU9Y?=
- =?utf-8?B?b2FrWmw4U3B4YWJaNXVXbW5tRTFXR1crNS8yNkpSc3V3Vy95YkVxNzVDaUhV?=
- =?utf-8?B?V01rcDlVVHhYenFkTnl3cE5qMU1JTFBvSnlieGdrWWZ0eU1DMURVZmtMUmxT?=
- =?utf-8?B?NmYvZGdrdkZwS25aMWNOZGFRSHFSYUtmV3pPbDRMejlodzhlQ3VNSGhzeG1W?=
- =?utf-8?B?ZXBpbVE5UnpQT1IrSTlINGMzVmpEZ3hxSW83OUE4SXVlMkpGVnNubnZ2ZkdC?=
- =?utf-8?B?eVJoUnVkdG5SVjZ0d1lYUEJpeHF5cWZiZUhNcWw3LzBFa0ZjVmhuUll0YXF2?=
- =?utf-8?B?K1k2OTVSYUFacjkyYXZGeldTT3JwMlpFU3E1WWYwQ0RZWll6V2Y4MkRrNklN?=
- =?utf-8?B?MUxoakh5Zk5tcVQyZHkveWM0VGFmc0ZjM2ltanRKR1pTQzJrTWUwTERTMFVQ?=
- =?utf-8?B?SUJPeERCQlRiUGVZaTNnQ20zTkJJbDErU1pJOXNZZVB2NlFMSmJOOE5QdFVa?=
- =?utf-8?B?NzBhaXltZzRXVjBwNTdJalZLQ1h6WnNpMlFJMjVhV3hNWFFhbTBvQTI5SjdD?=
- =?utf-8?B?QURrVDRuZHRNcGxUTVlraDVkOGdSVzlLWGlwK0ZWVWFrVUFGZG9ZZDR4Z1JY?=
- =?utf-8?B?SXVTeUgrdElDZzBJYjVFcHA0SThXQkpSL252U1JmSytLWTZMa2VnOWFoVFl1?=
- =?utf-8?B?akZmeWVpV3Zvbk5TTWZrOXVXOVFKN3Ezb25BRUs5SjA2dnhQWHBJZFBOTW0v?=
- =?utf-8?B?cTcza28yTHkySGx4aDlVcHFyNU5DTndNUWZ5TWkzenRMTW9od1A5ejFOVCtW?=
- =?utf-8?B?V3c2UDQ2ZEtCU3I0amZYYUJTckxvaGJZNVAzY1RlbldzWXNXK3JrbGc3Q2hN?=
- =?utf-8?B?MUl5NGg0K2pYSUpyeW5sUGJWSEVFN3h2eXp2cVpGcjduaU5HRVdRRGVUU3ZR?=
- =?utf-8?B?d25lNWZPMXZ0aVcxYXRPbXNKT1poM3FJb3RKTWwzUWEyUmxSZzRKMmE0ZUFE?=
- =?utf-8?B?K0ZEaWFlQmt1alNpc1J4b1R1a0NCQUNGQnhiZjVySSt1ZUlCZGd1VzR3eUNO?=
- =?utf-8?B?L1JXRWp1cWJHYi80M3NGblNLRWZoemp2bUZQV3dJSzR2d0tWVlp3VVh0bWVz?=
- =?utf-8?B?WGhyZDZwR2lTZDltNUpFUUdMbkQrRGZZeFpIVlJlZlpObEJ4WXVSbWYrZkRk?=
- =?utf-8?B?ODRHNnZ5MGpVNmxoaENFS0d5ZUd5b3NWaUtQbDdnMXlCMlBjdXFRQk9lcEln?=
- =?utf-8?B?YmhkcUdyVW84NFhFNjU0UkF2T2pyVk01SkZDZWN5YnE4UDAyYnpMbzVaQVhX?=
- =?utf-8?B?Sk5LT1g0cEtJWVN6OVRvSGlCUG85dzlUZXFJUDM0YTJmNGdhNUdCeWFhRjc2?=
- =?utf-8?B?cXFKK0tETldhS1c1d1ZldklHL3hnZDU1TFUwaFRha3dSamszZy8wVVZzRDEy?=
- =?utf-8?B?aDh6NHJiWXlhMUNqZHd6NGZQUUlVS00rcC9lQlV2ZVRBOXRkaWx5aEx2bWxI?=
- =?utf-8?B?UzhDRXlua0p4UHpwSU43ZWYweisvNkYxdHJnQmg2L1ZYL0VXblNuMDRFeGl5?=
- =?utf-8?B?U2Mza2VWYkNqd1dML1diUS9weTNMaDI0ejQ4UjQ4TDhkSWUrNmplV0dWVHpy?=
- =?utf-8?B?c09qNHU4bDRXVXhFWCtXRldIREtMS2wzOWNNM1FhcGFrRGFZR3VRcWtLQ0NF?=
- =?utf-8?B?cnBxd0I1dlNSR0tlMmlHMVduOU1lWE0wbys0U2pTM2h2MWpzQnpyTkVBaG5i?=
- =?utf-8?B?SUZxNlVjemtKcTZ3eVgzL1FxbG1OcjdlM0RmOHRjZkpLVTArTUc1N0F5N0VI?=
- =?utf-8?B?WFI4VnlhY0cwcXZQaUdPV3dPT1NvVy94UitDZjZnSUk4dUE9PQ==?=
+ =?us-ascii?Q?FsjB40mf/wFBnQKzAR+eMs9aI5C2m1e7am61vnmSthzeCjwiv5m3HpVT6NwH?=
+ =?us-ascii?Q?cyOsBChZ290AABerYLCFX0iAdZGOYBmp1gD/5tHX4ksXd1cPBhCdT+b7SZau?=
+ =?us-ascii?Q?y9n57Usm/B9C2DyvzoCYeZDwyCzfM3xQ7ZK7Zaop2SeUOdsGUtxBh2xFcZUn?=
+ =?us-ascii?Q?Yb5eohi/VhmAs/I96AUlzmZRUIhGl+Zi2i+EJgGDisuwhdtCMvfRd1jNRR0j?=
+ =?us-ascii?Q?dnCdbEQDVHwTCF+O9i6/23Or5Vjv3vJns/RbAh9987xKYc1O80POb7Fv7c8D?=
+ =?us-ascii?Q?YZFvH+30CRZdfEdq9aRlINzBII/Z83VzgvWw6OFY7r1Dey4JTLIHvlxS1FWz?=
+ =?us-ascii?Q?PAmPDaGM3YE1j/fBICxWCvkxjJ40ThnYITooiv4sGFv2boRSXyA2eOIlGfri?=
+ =?us-ascii?Q?JjJzEBtcpJ39YzNfVe1afWW3tMYZ0yw385NomlWxp3oSekqcNEO43azyy2Fy?=
+ =?us-ascii?Q?jC/lyynLIgygLSWGbg0lPb//34ha5eJPBSuOQtrjpAtWYDXpnFTsC74Wf4Yb?=
+ =?us-ascii?Q?Zubat1xmlEHrb5Ql94xYOTbTd4UoiDT8/DP+X4/Xyr5+TR7UD63l1YNe1mi8?=
+ =?us-ascii?Q?BDMZkSYkYVaAJRX7gAMeqvZwH3qQA3gjAK1KiRposjubzBAYIVIvyl4IxuXP?=
+ =?us-ascii?Q?jqyzS2SvOlpFYnW5EOVBYvvXxwhI1OnANnf4NYBqgb/cqPz9199k6vNdq19u?=
+ =?us-ascii?Q?XlVVfL8n7bXG1F9yPpdpZTlnYHbzJ4yyQt6FC/2RZE8ZBtyVeiguV1DRZo5q?=
+ =?us-ascii?Q?/QdnAYYBRY1aiYgLkDSTbYm3/vXRAK2AbhWWZs9N5bHHGtHO+vV/NLL2yOUW?=
+ =?us-ascii?Q?i6gJPJu3PPe8upm8zpZCc4zuHaOaIkosq+Vz5C3LfwAyJbjA8uAiLq9+uxD2?=
+ =?us-ascii?Q?ZLh1gXD8WFfKkeioU2mSd9TLkvPddpPwpNzZXczi3d1YwSgQT2IZr9uB2ISu?=
+ =?us-ascii?Q?AuWu3MebuWlGSzUsj2xHIRAxsM3GnMkdzQIXu5qPNP5E8Tkx9luEU5xmrLKF?=
+ =?us-ascii?Q?dygR55bynKiYtLn5q8w6lqsPvSd9Ylc5qaj7nFQ5/A/1cq6nEU1rbB2d/vO5?=
+ =?us-ascii?Q?woXbTxKOxL594vz042gjpa57hrsGnj7cPLNGRMWkm11npYfNpGBCOxz4jNoG?=
+ =?us-ascii?Q?4TfIzQvZMOTOuHxfhwgemBJk8OpLZDPesr3+ZaGcv8ut+RU05MesyNaH9s1v?=
+ =?us-ascii?Q?Zr4oDON9e8OEdPrm7eHcW4W3r8XIRpmNh6+P6ZeYYVWWfoH8xdUz5HaGgTd8?=
+ =?us-ascii?Q?jhKuVjPhKSd8cCvqnmks1wkGMkJ+tSwvCyfK83XvyyhwBfjEnKcYvMhCyZdZ?=
+ =?us-ascii?Q?Bb3LetfGNY0YQBBDODBAnAVJffCDMPthBvYQuoLoXNJyAVRsggSqzel2E2hN?=
+ =?us-ascii?Q?RM+mCZF/DckYD18MalSjRazZNhSYXQNWyQnW4JKYyInq6/8dsw=3D=3D?=
 x-forefront-antispam-report:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB6351.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VWNxWXB4TXgzT3NObThndWs0L01BRHJIS2p6eHU2eWFpaFBrSlRYcEZOQ0RN?=
- =?utf-8?B?NnI5TEZQaUlRSFRwa09WNC9jWVFGN0Mxb0MxMHN3NzBrQkFGb0QyOW43bXlm?=
- =?utf-8?B?U0hxaDhUQVB1ZGlaK3U1T0EySTh4N0w3VnZuZnhOUVZIaG9ycnFuVU83dnpY?=
- =?utf-8?B?ZlJydVJLMnNFMTlUdnhKUzVUVlROdXJSWkVyQmZGZzZtMGNiOGRyT2lyd3BH?=
- =?utf-8?B?VndNdDBSanBxNk52Y1p5Nks5VlJiaDNUcXZwNjYwYjQ5SW5mQ3N3MUxJM2F3?=
- =?utf-8?B?RFN6WjU3MmtNWFQ1NTJvVk9rVGhsa3YvYVB5aUNvZXRTb09YZkVRS2hYai9u?=
- =?utf-8?B?UkhrMTd0TW1YWTBhUXZ2KzZIbFhuTVBOd0l0b1lwLzV6N2FoQVRJRmU1R0xm?=
- =?utf-8?B?VWRRYnJac09Ud2d5U1pjQm52c1FwUGhVNWMvK2pBMG9BbDY5Snpqc3hqM290?=
- =?utf-8?B?azZxM2VUcDQvci9sVHZGOU5hQTRrM2g4alVOeWtsZG1saWVFSUZtVFZyM0d4?=
- =?utf-8?B?emZ5bkd1eWRuU0JDc0lXUllhL01sSmdGVTNEWXBMMnlkMDlIUitmTlpHRU9O?=
- =?utf-8?B?RWFoalA4TkRuM1JhR3BDV0luNUFlOTBicVNEeFM4bkNXbS8rV3ZyQXFuczJL?=
- =?utf-8?B?M2txdGpjWFljN2dvdXZaQUJsZ3BZRzI5cTZkK0RaYjhyKzJEa0dFNVBTcmhk?=
- =?utf-8?B?OXhpL2pjT2cyQkNHVVN0Q3RSNW0vWFBDNzVnQjlLcmk3dDF0TUs3MWlnU2t6?=
- =?utf-8?B?R2xNbDdPSTdUQW1jRDZ0ejVrUG1CTTU1ZW9XQXIvWHhWNHNZQ1ZRRkNBM2lI?=
- =?utf-8?B?Tmx6dkY2MTR1bXNaNGp1UHNhY0hrcEVUQnRzNjk2clFmc3lpbitIeXJhUUYy?=
- =?utf-8?B?R01CM0k5aUVqTldZMG9NUUdUMEVRTDBIUW94UExQRm5xS0pHczIvajgxYm50?=
- =?utf-8?B?Z04yTDlDanczOG8zMDIxOUZuTEFUZE5UQVZDa2dXdTRnWldpTzRhQitHWUxL?=
- =?utf-8?B?NDN6MC8yNHdJMXhOSlpPWXdyT1Fsb2IrU3B4QmllWER1amswWDVEbkw5ZkxH?=
- =?utf-8?B?WTE4R1BhcnJVMWZHcFgzdWRnYlk0MlhoTW03ck9EcllmRVFLcTg2aDFnczQw?=
- =?utf-8?B?cEQ4N08vYXVtSjFwa3E0SU1idmJ1M0NPckZydTh1WG03YnRnMGxvM2ZtbDhS?=
- =?utf-8?B?eWZxbnZpZlVTT2g3TG1yNUhmQlpZWGtQVnA3Z2FDMCtkUFoyeVNRN2lJSGFn?=
- =?utf-8?B?Zmh0SEFuNlg4ODg2K0k1S05iOGlKN2IrVWc5Ly9UejVGWGN2UUhpbFdpRGVP?=
- =?utf-8?B?bWRHOXFQUUcwbzBHNzVFNHg3UzVmSHo0RUgzL3FIMTdjYW5hNk1ZdVNBUUhF?=
- =?utf-8?B?eGtRN0p4dEw4SkFSQ3FOdnZCRWR1Rmw2YTU0WXpPYTdYL2YyMSs3MmVNNmlk?=
- =?utf-8?B?bmwrMUs4Nkt6aEQ2VmFoT1BFV3diU25keWhERGFHUVpvMENMNEhpMGJUbldY?=
- =?utf-8?B?NWlBVDRuVVF0MXVIRzBKQ3h0MFE0eENoM09jVmRLelVaZGNXRThGV1dXM3U3?=
- =?utf-8?B?R25Od0hYVVJJbVlGbGRraXVDa3dkNHl4Y0xRT0JKTmVxNkZYaXg3d0ZNWnJD?=
- =?utf-8?B?VTk0eVltZFJieU13OW1UeFRpczArelNoMFdycmh3YXE4djh0SENIaHVMT2Jx?=
- =?utf-8?B?MTNqZjJNbi8xRUVpaGg5Q3lqcVVIVHc3S0dpT0RPNjVOSTlLZXpyb0EydkF0?=
- =?utf-8?B?TXc4TGZKLzVKMGZHaW92dlRpU3M2OG1IZHpuUGovRGdzZ1EzdjdFWVcrTS9m?=
- =?utf-8?B?R29ab1JkeHRUMGNyVGl2YWtId1hqRThONGh3Z1RmVVh1eCtXaTlEN2doVkts?=
- =?utf-8?B?NjFMTG9BaStGMUxpeUp1NjdOQTR6R2x3SnlWYUhUUW53S0RIZTJ4dGhGZDhQ?=
- =?utf-8?B?TGFmWmlZa3FiSWlFbmhiWVlrZjh2Sit5RnphMlRXdzRLY014UFFIVXRwQ0J2?=
- =?utf-8?B?aGhzNkM4Ym0xZlFXbm5BTVd3VmJmb3NLV1ZVNVhxdjFwSWdaZ0ptR1d2ZVNC?=
- =?utf-8?B?SzVNL1k0VC9xWnlrY3gzeCtVaForaFZzRmJYL1VVWmpIa3BSV24zRXJScTFL?=
- =?utf-8?B?YWdxUUgrL1JVZ2hpMkJkR2FHdlBYMGVTR0RWQ0lPOExhNWEwbUl3Szh5WU1H?=
- =?utf-8?B?SUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ =?us-ascii?Q?AwoEuHVaTKJRiHAVzb1SnSZV8EyE2G53nrq2N5k/VPcUBagWY/luAKqkFFnQ?=
+ =?us-ascii?Q?daRZ6FoGJoyFz3ayXPDIzEuOvBtOpouHf7+JQ648WxtZUkaefnAIc9Y4E56P?=
+ =?us-ascii?Q?tAdnbdbbaB9TVlSCq9VJcSnrUS324UuzvxY0ZhzMvkC3XqZZE3uNIKST0s8q?=
+ =?us-ascii?Q?qlaC1vYoejK5WU9JEyrDFTNsEiLhq+P2XFo50k3Ap8/R6UFDGJ9KESFmrDIh?=
+ =?us-ascii?Q?dBshnY5rjDX6bEEPIcKr4ZslCM6FXnFVJRuRl56LMfN28QPQE+gCHEOQsOTr?=
+ =?us-ascii?Q?tX+KjLWCQc4+O8n3jzBtgOB4a9xAxA5F58T9WEw//TOzjWXEZPENNXDao16r?=
+ =?us-ascii?Q?bK8GwIdFBuMR7/YZJTykikDNNRpAuzRbpRTePpilVOvreHQjdvb9610Cs+t7?=
+ =?us-ascii?Q?KYyF8WlBzpcahRq2r1VZrWA2yX0WOqcbpvorFOxAdD37vttDUwVfMJYX1KeH?=
+ =?us-ascii?Q?c2EbT9F2ttxdMx949LZvbM3A0Z3fp8iBUqVMo57tONQX3ZHiRkPk46EFOw3c?=
+ =?us-ascii?Q?jpaj7T177VDM/aEruSp1g5eSEKqpf9uH5r09vLtRvtayMK/Gsb7Hr690qlc1?=
+ =?us-ascii?Q?FzYLuenegXZTEmFQvwxgeO3XPBxmn9Aacvdhd+QUC8ebAGCESFZVAbwavxds?=
+ =?us-ascii?Q?STNWiEM3AUAYS+yqceW7nmsLfOSETbhZSUY/3L3k0qpUvPlw9BqjUV4TR1h7?=
+ =?us-ascii?Q?8QAm7XWwIjr3+s8NkKEc/dPstl/xOHNU7H/imz980IL6LAfgVdgd/M2OUc3D?=
+ =?us-ascii?Q?/fC7bzTTdBKKgkmdRKcF7ZqXICcS7ryMfQqlBgI4NHNF5x+7HCXNb2lEjbLJ?=
+ =?us-ascii?Q?qpqWXwZDPawHQEk65i7mLq+6pAqpQwlYefdhNUp57V1+bNjo9EKLO892mMt1?=
+ =?us-ascii?Q?P1JzMO3VvhJXzEuezcvb9rsqtGbl/gR+0C/+dLTERMmah3ubzbi0M5XRJZTt?=
+ =?us-ascii?Q?kGd1MmkprnJooJ8uVFgDsgUmNtoaw6f3w7FsKxZSTS+YY2rv6M/X02vNbkQU?=
+ =?us-ascii?Q?k2jS4vJwX5UvhcCqFMnxH/I2NerPWEfFHP5PXYCcxCRyqMoZ8BDySM7eE5xg?=
+ =?us-ascii?Q?SDBWNZPI8PWGtXR0hTm3FeAodg7UQwALU2V3ZAofWNFvDT2BSA/6U0Y3C7GQ?=
+ =?us-ascii?Q?EthGtU3gDgsDdrgOTMg2b+y2ZrBQm+KL6BvGOELtZ02mSfDgYUzZMaOmkFyU?=
+ =?us-ascii?Q?J2l5me8UH4X32ejaiJ0kftyoyRTMTcjUsYypxxnp+elumYjuxD0e2GAjBScS?=
+ =?us-ascii?Q?krvVTjJ1SGOcqr3lzXj/p016SU6SBWdoZ1j/9cZeg0XB/E4mkNWa5ejm2goY?=
+ =?us-ascii?Q?PyJ6cgwVLaK6FfeCdhpjG4hhDgfB8ucGGU4wT4pp324st5oZUBrfVn3gFzr7?=
+ =?us-ascii?Q?TmyFGfYDL8c3eECnVxhGo4pUXOh5zejwqODRQEs7KFdYwOU5wE29Bw8QG+3c?=
+ =?us-ascii?Q?rZHkrOZ+b16Dlvn0EGnLelXKVKJya5jFavzEiPUS2QYRGMOMj4X9IalOzri+?=
+ =?us-ascii?Q?BzWEJAVlrHDxwtMD//HjpMz/clsMBJhApxU8ZBQZrCfcaxg91zuinN4hf8RM?=
+ =?us-ascii?Q?stxXj8cxLbjgVFUVOkrc13HW1FLwBSWpr6hTgKJOQLd3lX96tAH/5ieDXz1o?=
+ =?us-ascii?Q?Hw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -180,77 +166,343 @@ MIME-Version: 1.0
 X-OriginatorOrg: analog.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB6351.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89797d00-1aca-40b3-a015-08dd6ab02b4d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 08:45:02.8975
+X-MS-Exchange-CrossTenant-Network-Message-Id: c777de76-ea66-4255-e112-08dd6ab02ca5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 08:45:05.2221
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zFWkJS/moc/KbdzAdD4Q2WTq8Rl4Cj2ROBDz4JyJKg+oFxL17BGQAkJP4pvAD5Y0bUT3KHh9jZKZ0r+Z/UjpSMItKTe5a/NauBEcwyachek=
+X-MS-Exchange-CrossTenant-userprincipalname: 7VJH1KzSGH4dHOdQ2oe6eDc2V5dtRTmntlfoX2Fxx9l1WX3CD4ONDz4iCzJwZsfFx7UGQRJxLERB1qg2rWcEYjpdAGUaW8VZCeL4eoic0+o=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR03MB7493
-X-Proofpoint-ORIG-GUID: OWIW-BEgTpV59jfJqoNiW9uj1bEjITN2
-X-Proofpoint-GUID: OWIW-BEgTpV59jfJqoNiW9uj1bEjITN2
-X-Authority-Analysis: v=2.4 cv=P5g6hjAu c=1 sm=1 tr=0 ts=67e11b90 cx=c_pps a=PK5aExQQjalka8oDlC/sVA==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=uherdBYGAAAA:8 a=gEfo2CItAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=pGLkceISAAAA:8 a=0awkmHLjsCMGZ7zvgVIA:9 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-ORIG-GUID: KIIbexAgmRH7hEu5HoCNGLyuFAQ9XFrv
+X-Proofpoint-GUID: KIIbexAgmRH7hEu5HoCNGLyuFAQ9XFrv
+X-Authority-Analysis: v=2.4 cv=QNxoRhLL c=1 sm=1 tr=0 ts=67e11b92 cx=c_pps a=YkRwJB1Lcas13D3J5+BQ6w==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=uherdBYGAAAA:8 a=VwQbUJbxAAAA:8 a=gEfo2CItAAAA:8 a=gAnH3GRIAAAA:8 a=pGLkceISAAAA:8 a=rxxM7_75LvPRzBu7-vIA:9 a=CjuIK1q_8ugA:10 a=sptkURWiP4Gy88Gu7hUp:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=999 mlxscore=0 suspectscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0 mlxscore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2503240063
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgKEFy
-bSkgPHJvYmhAa2VybmVsLm9yZz4NCj4gU2VudDogVGh1cnNkYXksIE1hcmNoIDIwLCAyMDI1IDQ6
-MjkgUE0NCj4gVG86IFRvcnJlbm8sIEFsZXhpcyBDemV6YXIgPEFsZXhpc0N6ZXphci5Ub3JyZW5v
-QGFuYWxvZy5jb20+DQo+IENjOiBDb25vciBEb29sZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+OyBM
-aWFtIEdpcmR3b29kDQo+IDxsZ2lyZHdvb2RAZ21haWwuY29tPjsgTWFyayBCcm93biA8YnJvb25p
-ZUBrZXJuZWwub3JnPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRy
-ZWVAdmdlci5rZXJuZWwub3JnOyBLcnp5c3p0b2YgS296bG93c2tpDQo+IDxrcnprK2R0QGtlcm5l
-bC5vcmc+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgMS8yXSBkdC1iaW5kaW5nczogcmVndWxh
-dG9yOiBhZGQgYWRpLGFkcDUwNTUtcmVndWxhdG9yDQo+IA0KPiBbRXh0ZXJuYWxdDQo+IA0KPiAN
-Cj4gT24gVGh1LCAyMCBNYXIgMjAyNSAxNDo1Mzo1NCArMDgwMCwgQWxleGlzIEN6ZXphciBUb3Jy
-ZW5vIHdyb3RlOg0KPiA+IEFkZCBkb2N1bWVudGF0aW9uIGZvciBkZXZpY2V0cmVlIGJpbmRpbmdz
-IGZvciBBRFA1MDU1LiBUaGUgZGV2aWNlDQo+ID4gY29uc2lzdHMgb2YgMyBidWNrIHJlZ3VsYXRv
-cnMgYWJsZSB0byBjb25uZWN0IHRvIGhpZ2ggaW5wdXQgdm9sdGFnZXMNCj4gPiBvZiB1cCB0byAx
-OFYgd2l0aCBubyBwcmVyZWd1bGF0b3JzLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQWxleGlz
-IEN6ZXphciBUb3JyZW5vIDxhbGV4aXNjemV6YXIudG9ycmVub0BhbmFsb2cuY29tPg0KPiA+IC0t
-LQ0KPiA+ICAuLi4vYmluZGluZ3MvcmVndWxhdG9yL2FkaSxhZHA1MDU1LXJlZ3VsYXRvci55YW1s
-ICB8IDE2MQ0KPiArKysrKysrKysrKysrKysrKysrKysNCj4gPiAgTUFJTlRBSU5FUlMgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKw0KPiA+ICAyIGZpbGVzIGNo
-YW5nZWQsIDE2NyBpbnNlcnRpb25zKCspDQo+ID4NCj4gDQo+IE15IGJvdCBmb3VuZCBlcnJvcnMg
-cnVubmluZyAnbWFrZSBkdF9iaW5kaW5nX2NoZWNrJyBvbiB5b3VyIHBhdGNoOg0KPiANCj4geWFt
-bGxpbnQgd2FybmluZ3MvZXJyb3JzOg0KPiANCj4gZHRzY2hlbWEvZHRjIHdhcm5pbmdzL2Vycm9y
-czoNCj4gL2J1aWxkcy9yb2JoZXJyaW5nL2R0LXJldmlldy0NCj4gY2kvbGludXgvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3JlZ3VsYXRvci9hZGksYWRwNTA1NS0NCj4gcmVndWxh
-dG9yLmV4YW1wbGUuZHRiOiByZWd1bGF0b3JANzA6IFVuZXZhbHVhdGVkIHByb3BlcnRpZXMgYXJl
-IG5vdCBhbGxvd2VkDQo+ICgnRENEQzAnLCAnRENEQzEnLCAnRENEQzInIHdlcmUgdW5leHBlY3Rl
-ZCkNCj4gCWZyb20gc2NoZW1hICRpZDoNCj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0
-dHA6Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL3JlZ3VsYXRvci9hZGksYQ0KPiBkcDUwNTUtcmVn
-dWxhdG9yLnlhbWwqX187SXchIUEzTmk4Q1MweTJZIS1lV2pOLQ0KPiAydzJmMHVQdGtmYjRoSDlz
-MXRsblhycUF2akJ3MmlWVXlnM2dzSThnSXU5b2JrMFdOeFJBN2lDdm1UVGxVTGsNCj4gR0dwUTZ0
-dHhXYzJWd1BmNEEkDQo+IA0KPiBkb2MgcmVmZXJlbmNlIGVycm9ycyAobWFrZSByZWZjaGVja2Rv
-Y3MpOg0KPiANCj4gU2VlDQo+IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczovL3Bh
-dGNod29yay5vemxhYnMub3JnL3Byb2plY3QvZGV2aWNldHINCj4gZWUtYmluZGluZ3MvcGF0Y2gv
-MjAyNTAzMjAtdXBzdHJlYW0tYWRwNTA1NS12Mi0xLQ0KPiBhYWMyZDM3MDU4MDJAYW5hbG9nLmNv
-bV9fOyEhQTNOaThDUzB5MlkhLWVXak4tDQo+IDJ3MmYwdVB0a2ZiNGhIOXMxdGxuWHJxQXZqQncy
-aVZVeWczZ3NJOGdJdTlvYmswV054UkE3aUN2bVRUbFVMaw0KPiBHR3BRNnR0eFdmSFoyN1o0dyQN
-Cj4gDQo+IFRoZSBiYXNlIGZvciB0aGUgc2VyaWVzIGlzIGdlbmVyYWxseSB0aGUgbGF0ZXN0IHJj
-MS4gQSBkaWZmZXJlbnQgZGVwZW5kZW5jeQ0KPiBzaG91bGQgYmUgbm90ZWQgaW4gKnRoaXMqIHBh
-dGNoLg0KPiANCj4gSWYgeW91IGFscmVhZHkgcmFuICdtYWtlIGR0X2JpbmRpbmdfY2hlY2snIGFu
-ZCBkaWRuJ3Qgc2VlIHRoZSBhYm92ZSBlcnJvcihzKSwNCj4gdGhlbiBtYWtlIHN1cmUgJ3lhbWxs
-aW50JyBpcyBpbnN0YWxsZWQgYW5kIGR0LXNjaGVtYSBpcyB1cCB0bw0KPiBkYXRlOg0KPiANCj4g
-cGlwMyBpbnN0YWxsIGR0c2NoZW1hIC0tdXBncmFkZQ0KPiANCj4gUGxlYXNlIGNoZWNrIGFuZCBy
-ZS1zdWJtaXQgYWZ0ZXIgcnVubmluZyB0aGUgYWJvdmUgY29tbWFuZCB5b3Vyc2VsZi4gTm90ZQ0K
-PiB0aGF0IERUX1NDSEVNQV9GSUxFUyBjYW4gYmUgc2V0IHRvIHlvdXIgc2NoZW1hIGZpbGUgdG8g
-c3BlZWQgdXAgY2hlY2tpbmcNCj4geW91ciBzY2hlbWEuIEhvd2V2ZXIsIGl0IG11c3QgYmUgdW5z
-ZXQgdG8gdGVzdCBhbGwgZXhhbXBsZXMgd2l0aCB5b3VyDQo+IHNjaGVtYS4NCg0KTXkgZmF1bHQs
-IGl0IHNlZW1zIHRoYXQgSSByZWFsbHkgZm9yZ290IHRvIHJ1biAnbWFrZSBkdF9iaW5kaW5nX2No
-ZWNrJyBmb3IgdjIuIEkgb25seQ0KcmFuIGI0IHByZXAgLS1jaGVjayAoZm9yIGNoZWNrcGF0Y2gu
-cGwpIGJlZm9yZSBJIHN1Ym1pdHRlZC4NCg0KV2lsbCByZXN1Ym1pdCBhZnRlciBJIGFwcGx5IHRo
-ZSByZXZpZXdzIGZyb20gdGhlIG90aGVyIG1haW50YWluZXJzLg0KDQpUaGFuayB5b3UgZm9yIHRo
-ZSBzdWdnZXN0aW9uIG9uIHlhbWxsaW50IGFuZCBkdHNjaGVtYSwgd2lsbCBhZGQgdGhpcyBpbiBv
-dXIgZG9jcy4NCg==
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Thursday, March 20, 2025 5:07 PM
+> To: Torreno, Alexis Czezar <AlexisCzezar.Torreno@analog.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
+> <broonie@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; linux-
+> kernel@vger.kernel.org; devicetree@vger.kernel.org
+> Subject: Re: [PATCH v2 1/2] dt-bindings: regulator: add adi,adp5055-regul=
+ator
+>=20
+> [External]
+>=20
+> On Thu, Mar 20, 2025 at 02:53:54PM +0800, Alexis Czezar Torreno wrote:
+> > Add documentation for devicetree bindings for ADP5055. The device
+> > consists of 3 buck regulators able to connect to high input voltages
+> > of up to 18V with no preregulators.
+> >
+>=20
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory yo=
+ur
+> patch is touching. For bindings, the preferred subjects are explained her=
+e:
+> https://urldefense.com/v3/__https://www.kernel.org/doc/html/latest/devic
+> etree/bindings/submitting-patches.html*i-for-patch-
+> submitters__;Iw!!A3Ni8CS0y2Y!-
+> jfDnjTsrIleNV3xmOgakxTfgfPymC_1VWaNuF4unhOr23s35UCRin2d9qUc5Zo
+> 4m92ovjLsDFzFBmdfkrzhqg$
+>=20
+
+Will take note, I guess 'dt_bindings' and 'sub_system' are switched on a fe=
+w=20
+subsystem like regulators/etc
+
+>=20
+> > Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> > ---
+> >  .../bindings/regulator/adi,adp5055-regulator.yaml  | 161
+> +++++++++++++++++++++
+> >  MAINTAINERS                                        |   6 +
+> >  2 files changed, 167 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/regulator/adi,adp5055-regulator.ya
+> > ml
+> > b/Documentation/devicetree/bindings/regulator/adi,adp5055-regulator.ya
+> > ml
+> > new file mode 100644
+> > index
+> >
+> 0000000000000000000000000000000000000000..fc8f1e61ba321f8b4c6f
+> 8c1e3d0e
+> > 91d570fb4953
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/regulator/adi,adp5055-regulato
+> > +++ r.yaml
+> > @@ -0,0 +1,161 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +https://urldefense.com/v3/__http://devicetree.org/schemas/regulator/a
+> > +di,adp5055-regulator.yaml*__;Iw!!A3Ni8CS0y2Y!-
+> jfDnjTsrIleNV3xmOgakxTf
+> >
+> +gfPymC_1VWaNuF4unhOr23s35UCRin2d9qUc5Zo4m92ovjLsDFzFBmdSUR
+> y26w$
+> > +$schema:
+> > +https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.y
+> > +aml*__;Iw!!A3Ni8CS0y2Y!-
+> jfDnjTsrIleNV3xmOgakxTfgfPymC_1VWaNuF4unhOr23
+> > +s35UCRin2d9qUc5Zo4m92ovjLsDFzFBmdXh_3TTw$
+> > +
+> > +title: Analog Devices ADP5055 Triple Buck Regulator
+> > +
+> > +maintainers:
+> > +  - Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> > +
+> > +description: |
+> > +  The ADP5055 combines three high performance buck regulators.
+> > +  The device enables direct connection to high input voltages
+> > +  up to 18 V with no preregulators.
+> > +
+> > +https://www.analog.com/media/en/technical-documentation/data-
+> sheets/a
+> > +dp5055.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,adp5055
+> > +
+> > +  reg:
+> > +    enum:
+> > +      - 0x70
+> > +      - 0x71
+> > +
+> > +  adi,tset-us:
+> > +    description:
+> > +      Setting time used by the device. This is changed via soldering
+> > +      specific resistor values on the CFG2 pin.
+> > +    enum: [2600, 20800]
+> > +    default: 2600
+> > +
+> > +  adi,hw-en-array-gpios:
+>=20
+> Drop prefix, drop "array" and this probably will be changed anyway.
+
+Noted but yes, will probably move/change depending on discussion below
+on the gpios/enables
+
+>=20
+> > +    description:
+> > +      Asserted during driver probe. Each array entry acts as the
+>=20
+> s/Asserted during driver probe.//
+> If driver moves this code to other place, does it mean bindings are wrong=
+?
+
+Will remove/edit. You're right, it shouldn't imply the bindings are wrong i=
+f ever.
+
+>=20
+> > +      hardware enable for channels 0-2. Should be marked 0 for active
+>=20
+> What does it mean "0" for active low? No, active low has its own flag.
+>=20
+> Use proper flags and implement it properly in the driver.
+
+I was using GPIO_ACTIVE_LOW before just '0' and it was generating errors.
+I ended up wording the property this way due to it.
+
+I was only made aware today of my colleagues that I was supposed to place
+the flag back before sending my patch as this was more standard.=20
+The error is due to our setup.
+Will correct it and be more careful.
+
+>=20
+> What is hardware enable and software enable? Is it enable-gpios per
+> regulator? Then why this isn't in the regulator node, just like we expect=
+ for all
+> regulator bindings?
+
+There's a register called CTRL_MODE1 and 2 bits of it configures how "enabl=
+ing"
+works. This is not per regulator but for the whole device
+00 - only HW or gpios enables each regulator
+01 - only SW ie register writes
+10 - both gpio and register are needed to enable
+11 - either sw/hw=20
+
+We decided to support 00 and 01, but the fact that all regulators are affec=
+ted
+there can't be 1 regulator enabled via software but the others are via gpio=
+.
+
+To handle this, our first idea was to create a gpio array to make sure all =
+three gpios
+are declared. If it is not exactly 3 gpios, the driver automatically uses S=
+W enable.
+
+Can move this to each regulator node as enable-gpios.
+
+>=20
+>=20
+> > +      low. Requires all three channels to be initialized. Not adding
+> > +      the property turns the system to a software only enable mode.
+> > +    minItems: 3
+> > +    maxItems: 3
+> > +
+> > +  adi,ocp-blanking:
+> > +    description:
+> > +      If present, the over current protection
+> > +      blanking (OCP) for all channels is on.
+>=20
+> Don't
+> wrap
+> at
+> random
+> places, plese.
+
+My bad, edited the first line without considering the next.
+
+>=20
+> > +    type: boolean
+> > +
+> > +  adi,delay-power-good:
+> > +    description:
+> > +      Configures delay timer of the power good (PWRGD) pin.
+> > +      Delay is based on Tset which can be 2.6 ms or 20.8 ms.
+> > +    type: boolean
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +patternProperties:
+> > +  "^channel@([0-2])$":
+>=20
+> This is a mess... never tested and makes no sense. Either this is a regul=
+ator or a
+> channel. Looks like regulator, but you called it a channel. If regulator,=
+ then
+> missing ref to regulator schema.
+
+I approached this as a channel initially but understood later that it shoul=
+d be=20
+treated as a regulator instead and failed to completely update the doc afte=
+r.=20
+Will fix, including other properties that called it channel.
+
+>=20
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: The channel number representing each buck convert=
+er.
+> > +        maximum: 2
+> > +
+> > +      adi,dvs-limit-upper-microvolt:
+> > +        description:
+> > +          Configure the allowable upper side limit of the
+> > +          voltage output of each channel in microvolt.
+> > +          Voltages are in 12mV steps, value is autoadjusted.
+> > +          Vout_high =3D Vout + DVS_upper_limit.
+>=20
+> And how do you configure vout?
+
+Calling this vout seem inaccurate when I read the datasheet again, might ch=
+ange.
+But this vout is tied to some feedback resistors (600mV x (1 + Rt/Rb))
+I added the equation for context, but the interest is only on DVS_upper_lim=
+it
+
+>=20
+> > +        minimum: 12000
+> > +        maximum: 192000
+> > +        default: 192000
+> > +
+> > +      adi,dvs-limit-lower-microvolt:
+> > +        description:
+> > +          Configure the allowable lower side limit of the
+> > +          voltage output of each channel in microvolt.
+> > +          Voltages are in 12mV steps, value is autoadjusted.
+> > +          Vout_low =3D Vout + DVS_lower_limit.
+> > +        minimum: -190500
+> > +        maximum: -10500
+> > +        default: -190500
+> > +
+> > +      adi,fast-transient:
+> > +        description:
+> > +          Configures the fast transient sensitivity for each channel.
+> > +          "none"    - No fast transient.
+> > +          "3G_1.5%" - 1.5% window with 3*350uA/V
+> > +          "5G_1.5%" - 1.5% window with 5*350uA/V
+> > +          "5G_2.5%" - 2.5% window with 5*350uA/V
+> > +        enum: [none, 3G_1.5%, 5G_1.5%, 5G_2.5%]
+> > +        default: 5G_2.5%
+> > +
+> > +      adi,mask-power-good:
+> > +        description:
+> > +          If present, masks individual channels to the external
+> > +          PWRGD hardware pin.
+> > +        type: boolean
+> > +
+> > +    required:
+> > +      - regulator-name
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        regulator@70 {
+> > +            compatible =3D "adi,adp5055";
+> > +            reg =3D <0x70>;
+> > +            #address-cells =3D <1>;
+> > +            #size-cells =3D <0>;
+> > +
+> > +            adi,tset-us =3D <2600>;
+> > +            adi,hw-en-array-gpios =3D <&gpio 17 0>,
+> > +                                    <&gpio 18 0>,
+> > +                                    <&gpio 19 0>;
+>=20
+> No, use proper defines and proper flags.
+
+Yes will fix as discussed above
+
+>=20
+> > +
+> > +            adi,ocp-blanking;
+> > +            adi,delay-power-good;
+> > +
+> > +            DCDC0 {
+>=20
+> Your schema said something else. Test your patches before sending, not
+> through our systems.
+
+Apology on this again, I forgot to run the dt_binding_check for v2
+
+>=20
+> Best regards,
+> Krzysztof
+
 
