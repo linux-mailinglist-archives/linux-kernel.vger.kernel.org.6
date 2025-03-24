@@ -1,87 +1,115 @@
-Return-Path: <linux-kernel+bounces-574227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322E4A6E241
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:26:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FE5A6E246
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554463A9B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 686117A1E96
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB7D264A7C;
-	Mon, 24 Mar 2025 18:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF078264A75;
+	Mon, 24 Mar 2025 18:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iP2VTDwz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QzUlCVO+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD99263F59;
-	Mon, 24 Mar 2025 18:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBDE2E3374
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840779; cv=none; b=lfhC2GQIqlsU2LjJ2lQKlSifQtpryJqlEycaK7q3Fw+Kq8XdsthOut5Xzd4kZQyS9vZVyz3QItTzodi1Sz2C515ztvWbd9nfHCqKNbEGDtiITTlDUddqrZf3Bk2r8MN0MUSiiziCBguXKizN7xc+bxkwe4sQzLiXcCna5MwFms0=
+	t=1742840888; cv=none; b=L0e3nE5ZJzwbI3oHf+jK72GUUtkeaw5/dsLc1uCqe4pz8pBiX7muoFixIc1S4eYybOfMr/UkklptxNpSVlwxPr+M478ks2GaxISxRFfnbIofBzWrx++5lmR1+RYt+/OwYJ7QFbTg3kd5qaUOI/w7rOOuDlT+3UUcW4ETGfaM9GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840779; c=relaxed/simple;
-	bh=iwATA+Qn6Ifas2JD09TOZptJ0vS/eM5Ffuc+wJCxIvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MdP2YhVaTI37ljHZ0RgQJDAkaV+WtLRQvpLPmZhXfhQHYnK6wLgIPLg1cra7h6n81EXJFXAs4IatnKUku6S1zz2O9vfNV9jpvnZszOPmCCQHtEGqsNOL8EFhKtFeEMBtHj276QyNQZjt0ZjnYZ8fVzPEK1gUnp4rogGNLy5Njsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iP2VTDwz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7B0C4CEDD;
-	Mon, 24 Mar 2025 18:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742840778;
-	bh=iwATA+Qn6Ifas2JD09TOZptJ0vS/eM5Ffuc+wJCxIvI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iP2VTDwzmXqLWhG+ptlDEO7KWTJGwF7OJfyLAuSBPfEOOT6C0yv4lK0Vi6U6Twly3
-	 8SqeJr+ZgB2BA/QkkjJbw73N0gbB39OJSsn7woEn5P2TL1RsGMn/LOfxiu5NoeCGxe
-	 HcvWrwgZnbxZcGF/qDc5WMJ6SntjQOiz7/5C6CC7qmmJ92KCuLkK81alYCxuKB7YC+
-	 5k0PGOJhu/61RuWeeEw6SscV5SBrG+BWNvhU6mxiMJg7f6kqmyXhCYOZ3CzhUBq2Ap
-	 /7Z9qG25Hq3K3r/5YotV0eBJHt8QBAczbVt+GES7ffspQKX5YKRXtyXvT8icG8oNCa
-	 m2iY/T/E4Sr0Q==
-Date: Mon, 24 Mar 2025 11:26:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lubomir Rintel <lkundrak@v3.sk>
-Cc: linux-usb@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Eric Dumazet
- <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>
-Subject: Re: [PATCH v2 net-next] rndis_host: Flag RNDIS modems as WWAN
- devices
-Message-ID: <20250324112611.0eb6fdc3@kernel.org>
-In-Reply-To: <20250317150739.2986057-1-lkundrak@v3.sk>
-References: <20250317150739.2986057-1-lkundrak@v3.sk>
+	s=arc-20240116; t=1742840888; c=relaxed/simple;
+	bh=xKXLckG3JcEYiJLm25eTT4GpebPkKVPJ6WMyBA2uJV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nOKHlTNhs8qQFr4JXR/ZM30yfhH9jNOpwtbTEaGmWvgzLXXf5Lo2z1Am0Du3umJTU3cMkUjE5zoAtuFaAcfanOvSzmXg4rbGStwR1wmO65/e0pqQGPizLWDLWiCRUQcL1SoT3aRPC7Au2Pw6EJ3gYcAAzYMb6s34yM7kExRfrsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QzUlCVO+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742840884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xKXLckG3JcEYiJLm25eTT4GpebPkKVPJ6WMyBA2uJV0=;
+	b=QzUlCVO+BaNuRbnIGVnGznBXZtk/XW+N3lfGz+VMu0ENVS2lSuEAPPn86hnmYWThJCeZK/
+	zPnEFixY0L1MThgGgl49KH4iBkOW6d/QBwBY3T/dNGFU9LijnXTw7tima7TuknnKCE44Gu
+	a8QrmTlj/glOaC4jOTje6XH7nwCi8JI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-Nv2AS9tqP9uVkEWzJ_qCJA-1; Mon,
+ 24 Mar 2025 14:28:02 -0400
+X-MC-Unique: Nv2AS9tqP9uVkEWzJ_qCJA-1
+X-Mimecast-MFC-AGG-ID: Nv2AS9tqP9uVkEWzJ_qCJA_1742840881
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1534180AF55;
+	Mon, 24 Mar 2025 18:28:00 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B5869180B48C;
+	Mon, 24 Mar 2025 18:27:56 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 24 Mar 2025 19:27:27 +0100 (CET)
+Date: Mon, 24 Mar 2025 19:27:22 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
+	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+Message-ID: <20250324182722.GA29185@redhat.com>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, 17 Mar 2025 16:07:37 +0100 Lubomir Rintel wrote:
-> Set FLAG_WWAN instead of FLAG_ETHERNET for RNDIS interfaces on Mobile
-> Broadband Modems, as opposed to regular Ethernet adapters.
-> 
-> Otherwise NetworkManager gets confused, misjudges the device type,
-> and wouldn't know it should connect a modem to get the device to work.
-> What would be the result depends on ModemManager version -- older
-> ModemManager would end up disconnecting a device after an unsuccessful
-> probe attempt (if it connected without needing to unlock a SIM), while
-> a newer one might spawn a separate PPP connection over a tty interface
-> instead, resulting in a general confusion and no end of chaos.
-> 
-> The only way to get this work reliably is to fix the device type
-> and have good enough version ModemManager (or equivalent).
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Fixes: 475ddf05ce2d ("rndis_host: Flag RNDIS modems as WWAN devices")
+On 03/24, Mateusz Guzik wrote:
+>
+> I had cursory glances at this code earlier and the more I try to
+> understand it the more confused I am.
 
-This should point to the commit you're fixing. Judging purely by the
-touched lines perhaps 63ba395cd7a5 ("rndis_host: support Novatel Verizon
-USB730L") ?
--- 
-pw-bot: cr
+You are not alone ;)
+
+> Per my other e-mail the obvious scheme would serialize all execs
+> sharing ->fs and make copy_fs do a killable wait for execs to finish.
+> Arguably this would also improve userspace-visible behavior as a
+> transient -EBUSY would be eliminated.
+
+I had the same feeling years ago. Why didn't I do it? I can't recall.
+Perhaps because I found some problem in this idea, but most probably
+because I failed to make the correct and simple patch.
+
+> is there a problem getting this done even for stable kernels? I
+> understand it would be harder to backport churn-wise, but should be
+> much easier to reason about?
+
+I won't argue with another solution. But this problem is quite old,
+unless I am totally confused this logic was wrong from the very
+beginning when fs->in_exec was introduced by 498052bba55ec.
+
+So to me it would be better to have the trivial fix for stable,
+exactly because it is trivially backportable. Then cleanup/simplify
+this logic on top of it.
+
+Oleg.
+
 
