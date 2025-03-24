@@ -1,147 +1,160 @@
-Return-Path: <linux-kernel+bounces-573950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21B3A6DEA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C22A6DEAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71EF18931EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635A018968A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3D925F97B;
-	Mon, 24 Mar 2025 15:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24733261364;
+	Mon, 24 Mar 2025 15:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUt0tQQe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F7oC7x30"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1484964E;
-	Mon, 24 Mar 2025 15:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AED257448;
+	Mon, 24 Mar 2025 15:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742830053; cv=none; b=fOb32zTvUA6FrFMosAAuElSO19wkyrx7dGeu8waF5s+nyDWZFKrD5dkp0jwuFKlDxc6HTN3VWbrnil3xZzxxRhefjj5R3e8kVY0tR8YL0L8kj7yyu8wFmzCwYQC7BTlTMcfvanJ3EfqtGjIJHJBXQvFzlxbwmOx4OTl0ZChyDMI=
+	t=1742830094; cv=none; b=PmK+h8hV4NpnV4eYQcGmm3p7Rn+9+lB+ncnrTDANqeNQ4FXoLPDfpemXJUL88qtzMcMXenqedzaJpgEqcqsHRVbCuNw+FUKnIUSlA60k/+mmOoZX5jmZPwMYFFfSfOV6oBwS4Bf6KqqKb3yzLOfngyhnjKSaLdXm7C1OtQWbznA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742830053; c=relaxed/simple;
-	bh=MyJPgttOop9GSoEGOLEhcQ5HHbF3X3DBdLYSg4Piq6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EhwJnIyYgHNrP7tclusFl7EnA/kj+xHEboIsCSaY4ATyg7UGrlAcymK/PEDkN8z5K3aXpDm5GlR0bC7LRUVl73bUB0K6S3l7WnHJiX/VOwiTS5w6Ih1HTn+arhVRQP5XkMuwpZXrw3XFMFj/qFgvHCOTk+tnwlHSI4SnuSockpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUt0tQQe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DC8C4CEDD;
-	Mon, 24 Mar 2025 15:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742830052;
-	bh=MyJPgttOop9GSoEGOLEhcQ5HHbF3X3DBdLYSg4Piq6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GUt0tQQeVxdhOQJAq8A0nJvr2aWUlf6aUTqhobSF0gYHEUskTGEGenAO5ElxOQQgD
-	 jyz0tW/WP/kxDO1d/xsDuQuTnXHiPw2Ml5YFVqIQeK+lYJRXVJXgtozGCZw5NZAZFK
-	 0E0vBibauK6LRyyr8YdjCxSFA1EF5/VfuER7WMjSgeHXFdqiUhn9yh3EEpvXzwta+4
-	 PxiVnMrcwADSWwCzc7eU+fBm5fTk/AJksUsTvl82+9sqUa605g/VOONW6M3/adAl7P
-	 MKQKcdckK5Fs/KSQWgHJahO4tQxshoSN/b7PUVStyqzpipV8/K6P01NugVqXHkJG0l
-	 X4tqfeA4LlMGg==
-Date: Mon, 24 Mar 2025 16:27:28 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <Z-F54IQXiY9IHjeM@cassiopeiae>
-References: <20250324215702.1515ba92@canb.auug.org.au>
- <20250324220629.1665236b@canb.auug.org.au>
- <Z-FJH628-j2HCuaE@cassiopeiae>
- <2025032443-recharger-legacy-93bf@gregkh>
- <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
- <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
+	s=arc-20240116; t=1742830094; c=relaxed/simple;
+	bh=cqMO73am4Bc9cZMTcysm5XHve1x61DpjXMsSPTeDOXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kcCM6sBldGyeKP3H6ciNlroZJnQQFqN/Yu3Rsd/hZbG52pjtzMT9K09doWLQVakeET3j/LiZJnLK10UxqXUnZ8BWYlKvE8ZA42i6hIyaw0X6sXQouUhbi1f/HtfogcB9hNCfLjnGL4XgQpSPX3DpqQkS+y98ifxPlpYagNwSUfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F7oC7x30; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9qBGA011754;
+	Mon, 24 Mar 2025 15:28:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6KBh66XSYbfoHzXoObK9YPJS8KJVf8KWJEG4ORUaa
+	v4=; b=F7oC7x306wEqvSZ6SJJ+CcaM6HPJ7r3NqP1FCliTF0iyXHA8w/lqDZI5P
+	N2ri/vfml9OHeEdtbCQh8HoWLL+jwEK9MRaPK1tNM6zQYNXGGj13tlncGm+g601t
+	JzeR9/ZG5RbLLlb2zvbG0PgNwGijn2MRRySMTlczFTXF8vGWNIocPF2OZzgJP4AG
+	2+f9T9mZkh1AwAc0JOUxvVxntgV5d86PgZzCFxFQG7ofAQ4yuQDbWkhXfUBEeH4o
+	vZrGPeVn0SNRLO8eoF0A8AHodxuZJzCEom+QjxJcjJ3iAJX/UMtbBrKMv/X32f9a
+	gWuVEkwS9f+/PUqCaEEnzeeBE6Khg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsh04cc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 15:28:08 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52OF4j3f011715;
+	Mon, 24 Mar 2025 15:28:08 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45jsh04cc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 15:28:08 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52ODEI7W009737;
+	Mon, 24 Mar 2025 15:28:07 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rkemgy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 15:28:07 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OFS4YW9175464
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Mar 2025 15:28:04 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3D3DD20049;
+	Mon, 24 Mar 2025 15:28:04 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0569620040;
+	Mon, 24 Mar 2025 15:28:04 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Mar 2025 15:28:03 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
+        irogers@google.com, james.clark@linaro.org
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf trace: Fix wrong size to bpf_map__update_elem call
+Date: Mon, 24 Mar 2025 16:27:56 +0100
+Message-ID: <20250324152756.3879571-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tVYJXf0O80kRZA_uEUXg36habZPJSido
+X-Proofpoint-GUID: UgLw_rgWeC3n3kF4SmRo3CF77DFCAdyX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=979 suspectscore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503240112
 
-On Mon, Mar 24, 2025 at 04:18:40PM +0100, Miguel Ojeda wrote:
-> On Mon, Mar 24, 2025 at 2:43 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > It's the DMA commit that has a bug, that was revealed by the fix in the
-> > driver-core tree. So, the patch to drop is in the rust tree (not sure if Miguel
-> > changes history at this point though).
-> 
-> Just to double-check, the diff you show below is the combined one,
-> right? i.e. it is the one that Stephen already had the previous week +
-> the fix you posted above (`Send` `impl`), right?
+In linux-next
+commit c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
+causes the perf tests 100 126 to fail on s390:
 
-Correct, it is the full conflict resolution of the current rust and driver-core
-tree.
+Output before:
+ # ./perf test 100
+ 100: perf trace BTF general tests         : FAILED!
+ #
 
-> 
-> If so, I think it is OK, and we could put the new `Send` impl on top
-> of `rust-next` -- given the trees on their own are OK until they
-> arrive to Linus, I am not sure if it counts as a fix.
-> 
-> i.e. something like the attached patch (crediting Danilo and Stephen).
+The root cause is the change from int to int16_t for the
+cpu maps. The size of the CPU key value pair changes from
+four bytes to two bytes. However a two byte key size is
+not supported for bpf_map__update_elem().
+Note: validate_map_op() in libbpf.c emits warning
+ libbpf: map '__augmented_syscalls__': \
+	 unexpected key size 2 provided, expected 4
+when key size is set to int16_t.
 
-Thanks, the attached patch looks perfectly fine to me to add on top.
+Therefore change to variable size back to 4 bytes for
+invocation of bpf_map__update_elem().
 
-One small nit: The "Link:" tag should rather be "Closes:".
+Output after:
+ # ./perf test 100
+ 100: perf trace BTF general tests         : Ok
+ #
 
-> 
-> Cheers,
-> Miguel
+Fixes: c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+---
+ tools/perf/builtin-trace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> From 6a152af23cb49a3bcbb8c4457a612ffa27d54693 Mon Sep 17 00:00:00 2001
-> From: Danilo Krummrich <dakr@kernel.org>
-> Date: Mon, 24 Mar 2025 16:01:00 +0100
-> Subject: [PATCH] rust: dma: add `Send` implementation for `CoherentAllocation`
-> 
-> Stephen found a future build failure in linux-next [1]:
-> 
->     error[E0277]: `*mut MyStruct` cannot be sent between threads safely
->       --> samples/rust/rust_dma.rs:47:22
->        |
->     47 | impl pci::Driver for DmaSampleDriver {
->        |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be sent between threads safely
-> 
-> It is caused by the interaction between commit 935e1d90bf6f ("rust: pci:
-> require Send for Driver trait implementers") from the driver-core tree,
-> which fixes a missing concurrency requirement, and commit 9901addae63b
-> ("samples: rust: add Rust dma test sample driver") which adds a sample
-> that does not satisfy that requirement.
-> 
-> Add a `Send` implementation to `CoherentAllocation`, which allows the
-> sample (and other future users) to satisfy it.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Link: https://lore.kernel.org/linux-next/20250324215702.1515ba92@canb.auug.org.au/
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/kernel/dma.rs | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 9d00f9c49f47..18de693c4924 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -301,6 +301,10 @@ fn drop(&mut self) {
->      }
->  }
->  
-> +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-> +// can be send to another thread.
-> +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-> +
->  /// Reads a field of an item from an allocated region of structs.
->  ///
->  /// # Examples
-> -- 
-> 2.49.0
-> 
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 092c5f6404ba..464c97a11852 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -4375,10 +4375,12 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		 * CPU the bpf-output event's file descriptor.
+ 		 */
+ 		perf_cpu_map__for_each_cpu(cpu, i, trace->syscalls.events.bpf_output->core.cpus) {
++			int mycpu = cpu.cpu;
++
+ 			bpf_map__update_elem(trace->skel->maps.__augmented_syscalls__,
+-					&cpu.cpu, sizeof(int),
++					&mycpu, sizeof(int),
+ 					xyarray__entry(trace->syscalls.events.bpf_output->core.fd,
+-						       cpu.cpu, 0),
++						       mycpu, 0),
+ 					sizeof(__u32), BPF_ANY);
+ 		}
+ 	}
+-- 
+2.48.1
 
 
