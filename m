@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-573118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858CCA6D336
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:02:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5B7A6D33B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C875516DC92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4971893703
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE07158524;
-	Mon, 24 Mar 2025 03:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9190155743;
+	Mon, 24 Mar 2025 03:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/CipjFj"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hM6PkbTU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEA83F9D2;
-	Mon, 24 Mar 2025 03:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DDD134D4;
+	Mon, 24 Mar 2025 03:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742785366; cv=none; b=YrxelGF8dqlr4mwZ98aDKcy4+7rQZSEislpTwZANNhBGMyJmxU+iCkB+2dAY5OPg1ckNeBKSejWqpO3ESqsYngHXvuBF4qzl1kGhZuqN7I3X6AgBGhdaU8LEAA/vw4SgKk7QwtLWAMO7fiXahsFfqWCr7mlii1D11XYDvjuxiPw=
+	t=1742785575; cv=none; b=LVmqpDi3NLuXfZUYGS70/UK0yJ3B8GTaRXuUMKqeEeLH9V/gcr7zmhaI8d4A0XS/WlWd178VZ9uAcL28v9pU+oxFnXjNxN7tDAvHbJAubXPJmHdXAEpLw9oGs2cysJ0Jv96Q5ZpR1QI3WSJbCDnuAf41ETBvHQa2s/uSeNjm5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742785366; c=relaxed/simple;
-	bh=Jdg9Ie4tupQEDdKE6ha8cjq3LZaVT10vZJv2WgB5PaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MbGrDb2EdBvKg54nlsy4wL6L5K6n5hp0CWlnW7Gj4ZPngX3zQy5HW/krFuouYBFEYBLAg5arDxN5tIpJGqsMbGBkJv1jHRPpF7VfsGs0l0/HWqWCsJuFlnMbTRmmCPB9Pfn04RQIogmenBZQiKdKQexe31QciH8Hr4/cjYNlxW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/CipjFj; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-523eb86b31aso1610674e0c.0;
-        Sun, 23 Mar 2025 20:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742785364; x=1743390164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0SrNXGDrwHjRsqs5k+yb+hLQTlI2OJi6KsI6anZ+wbc=;
-        b=X/CipjFjmIkG+D4BMw4/G0scjqchkah2BlDyngxZ/ru2WKCFjSBVgz2iH4p9mYxYLI
-         1sF8LJ0iI8+QsOhAnpuF1jaySl/9PhzYZS1WLV5+KEwLKxz0f+DREW+a5drtmjT/xXQF
-         Sjl0gTYoaxhXc+5qvewdNCqkiXUU4Vdn4IzssUBXYx3O14zwXUQHqtMP7bWcv4Y1C2sz
-         nMzrlPE/Xm6b2ypSI3xH6evY3JpQk6DAbflB8zOFZrOCTLjaRYFizLAuzPUA8Hv8HFzA
-         PG4c0YWflMs1m60AqPJFRgPgzR0fwcjnxPqlfjVzfSU8Xt2PLRE7AWZyctSXJP8O+zYO
-         vNXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742785364; x=1743390164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0SrNXGDrwHjRsqs5k+yb+hLQTlI2OJi6KsI6anZ+wbc=;
-        b=f6W84Ed/unrLTw83bV+Xbp3b2Rt2HMtkUG5huQjovdN4KONKHG55f0vz1OlKRIGZ4g
-         ngpiZ25VK+4O2oxw6wXUk0SSqeCkKa53gaRWCBd271w9i3+e78LMAHk++2i1ABuTtxXa
-         jGwZ8iwd3CdpBeoipNaRtLLeVfvjblxUytOjK+Qt3QMpwDA4wHF8it1nepKUtZiNLPnV
-         aIsByFgA5jQr7dcOtbjWIoURLnIYXML5nUOv95Gz6Lgh71Wr9CWINg/0Ldqo6NHo/FhD
-         KbEaMy1WWe6ihLKFP85W7DjQ6EwaXHNl71LUNllfxPBshZKW45vRmbA2oX0Nr1+bYl21
-         WUTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9WaD7tzmqTlTt4mWUCLvKXjIlDVvG5WRLY4gMdgrzodB3tnzI7yGhX7Oi6JBj5gVrxh8x7spvczWsDo=@vger.kernel.org, AJvYcCXDDOaxTi5B9pH2En6MDf1bEgBf1pJY59P8w+obysXSgjqkUx2ifV64N3Qfs1OcYagixI4IC75bLTwZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPY1L0cGO/p5g8SQf+fOu6sVVYy+bsOfwA5n3qKNis+mm7KkXK
-	atqyB2d3krlg+KKtFeNpSMufCLPIrYZ6sMJ9WhpjRHHMMOftIrWLYySOr9lZxM8L6xsOlLS51zq
-	cEXzP3J/LaPlwqJ3gX1x/CoDRKkg=
-X-Gm-Gg: ASbGncuzHnihFg6tjiwVgT3eSjObqRahYSVg1WxK8ZI1HFOVKG88Cr1U07NromQMpiq
-	f6c09BEDRZz1Riy1gbAnvuVifkqy+XtYkLj3WdQg7ueT1GVwXDYiNDWhalnhKTLlkX6hZ9as5Bl
-	FaIj7qVZEXi0jtLx0S3MrA1B4HWvJTK8Cz2THThSC9mp5jIxAEvncpHKOYRZli8bYyPQ==
-X-Google-Smtp-Source: AGHT+IHKGpeTYLoB8DaPoFqCfjGVCWaObSzVfxqX+JuEJ+cAjPF7UyNO+06AU6tEgsrCIYRWGyRH901MaJL64KpHTeM=
-X-Received: by 2002:a05:6102:54ac:b0:4c1:9526:a635 with SMTP id
- ada2fe7eead31-4c50d62702emr7645909137.17.1742785364081; Sun, 23 Mar 2025
- 20:02:44 -0700 (PDT)
+	s=arc-20240116; t=1742785575; c=relaxed/simple;
+	bh=VjAArbcein7n6jkxA8kkItfJAVHkEUWAu1U00aP4eCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R96lvGJjE5Ja6krqXGr6CP5IFI6KU0WhZv3gUzqZAoOm19GyqBIogq6DdWgNazJjsWm3/yhvQeQMiOkY9ZAKqnL5av+NIDwW07MIt0sYeVSw3ADqmOI3gh1Q7W2wLDF7WyWNwLeH5djQU50XAKyEWbCoiJZ3uMTlOp2SGI8wDQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hM6PkbTU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742785567;
+	bh=PDcit8P670kcmY2ktuwUGkkvaDYFCfnPTpn5lWSchjQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hM6PkbTUO9UQVE5Ii9MmQgHfOe/UqN1aoJCBq32qVpe5nHjnUBWbVP9C+hIeqTPFz
+	 dkHYcIxpDnH1Jb86JesSjRoPKaZ/H7InudTD0Y4Wm6OmkFfCjsAVhjB6514o5V7PFr
+	 zvVQQKE+OxjK5l6b5vvG732vACnM40tVQVNSH7l/5Ry6TmtJtg9OovsEbM6slTpUgq
+	 +tojH5XHGcqvo7rF5K6VfqUo1oJij4Ol27YVRdkXmRhz5KE1mr7fpeRgoIK2nMGIZj
+	 53V2YGFyBjbAhY8N1YiShl9e8w7z8018ojLHHfH81FWRy7vNkBhBBHMBdf7AQwMCsa
+	 FG65ALZNZpnbQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLdH24pSHz4wc4;
+	Mon, 24 Mar 2025 14:06:06 +1100 (AEDT)
+Date: Mon, 24 Mar 2025 14:06:06 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Tomasz Rusinowicz
+ <tomasz.rusinowicz@intel.com>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20250324140606.7b87b0a2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306075211.1855177-3-alistair@alistair23.me> <20250321214158.GA1162292@bhelgaas>
-In-Reply-To: <20250321214158.GA1162292@bhelgaas>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Mon, 24 Mar 2025 13:02:17 +1000
-X-Gm-Features: AQ5f1Jq_Ck5J9IXrCr1u-CLR_Nwd77YRgnErAOXE_D7wvvttijFnAvBx2vN0BUA
-Message-ID: <CAKmqyKOOvE978qsWccXm5TYp2=FSg4Kc8xtk1nLd+KrhQA56Qw@mail.gmail.com>
-Subject: Re: [PATCH v17 3/4] PCI/DOE: Expose the DOE features via sysfs
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Alistair Francis <alistair@alistair23.me>, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	Jonathan.Cameron@huawei.com, lukas@wunner.de, alex.williamson@redhat.com, 
-	christian.koenig@amd.com, kch@nvidia.com, gregkh@linuxfoundation.org, 
-	logang@deltatee.com, linux-kernel@vger.kernel.org, chaitanyak@nvidia.com, 
-	rdunlap@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/y4rNmdJV7kst=r8jX9Qxs3f";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/y4rNmdJV7kst=r8jX9Qxs3f
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 22, 2025 at 7:42=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Thu, Mar 06, 2025 at 05:52:10PM +1000, Alistair Francis wrote:
-> > The PCIe 6 specification added support for the Data Object
-> > Exchange (DOE).
-> > When DOE is supported the DOE Discovery Feature must be implemented per
-> > PCIe r6.1 sec 6.30.1.1. DOE allows a requester to obtain
-> > information about the other DOE features supported by the device.
->
-> > +#ifdef CONFIG_SYSFS
-> > +static ssize_t doe_discovery_show(struct device *dev,
-> > +                               struct device_attribute *attr,
-> > +                               char *buf)
-> > +{
-> > +     return sysfs_emit(buf, "0001:00\n");
-> > +}
-> > +DEVICE_ATTR_RO(doe_discovery);
->
-> I think this needs:
->
->   static DEVICE_ATTR_RO(doe_discovery);
->
-> Otherwise sparse complains:
->
->   $ make C=3D2 drivers/pci/doe.o
->     CHECK   scripts/mod/empty.c
->     CALL    scripts/checksyscalls.sh
->     DESCEND objtool
->     INSTALL libsubcmd_headers
->     CHECK   drivers/pci/doe.c
->   drivers/pci/doe.c:109:1: warning: symbol 'dev_attr_doe_discovery' was n=
-ot declared. Should it be static?
->
->
-> Right?  I added this in, so we're all set unless you think that's
-> wrong.
+Hi all,
 
-Yeah, I think it's missing a `static`. Thanks for adding it, sorry
-that I missed this in the first place
+Today's linux-next merge of the drm tree got a conflict in:
 
-Alistair
+  drivers/gpu/drm/xe/xe_bo.h
 
->
-> Bjorn
+between commit:
+
+  50af7cab7520 ("drm/xe: Fix exporting xe buffers multiple times")
+
+from Linus' tree and commit:
+
+  00c8efc3180f ("drm/xe: Add a shrinker for xe bos")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/xe/xe_bo.h
+index 43bf6f140d40,bda3fdd408da..000000000000
+--- a/drivers/gpu/drm/xe/xe_bo.h
++++ b/drivers/gpu/drm/xe/xe_bo.h
+@@@ -341,6 -391,21 +391,20 @@@ static inline unsigned int xe_sg_segmen
+  	return round_down(max / 2, PAGE_SIZE);
+  }
+ =20
++ /**
++  * struct xe_bo_shrink_flags - flags governing the shrink behaviour.
++  * @purge: Only purging allowed. Don't shrink if bo not purgeable.
++  * @writeback: Attempt to immediately move content to swap.
++  */
++ struct xe_bo_shrink_flags {
++ 	u32 purge : 1;
++ 	u32 writeback : 1;
++ };
++=20
++ long xe_bo_shrink(struct ttm_operation_ctx *ctx, struct ttm_buffer_object=
+ *bo,
++ 		  const struct xe_bo_shrink_flags flags,
++ 		  unsigned long *scanned);
++=20
+ -#if IS_ENABLED(CONFIG_DRM_XE_KUNIT_TEST)
+  /**
+   * xe_bo_is_mem_type - Whether the bo currently resides in the given
+   * TTM memory type
+
+--Sig_/y4rNmdJV7kst=r8jX9Qxs3f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfgzB4ACgkQAVBC80lX
+0GzWjwf/bSrWDiwsCQOcVwYqZOEZwlgGSQiLzZlhQHa/w4wfQ52F+dI2yGGrB16v
+ROfYg0icwyqz3Mpb72yrT0/TSIBz1RPDgAd2iZkexA/d+TCyuzKbsgGnKUwMCu91
+CsNHQ2NJFwnOhP5dylVqgrq9JcfHSUp3MCst5VmhAYpNEhoKiO+K7VEcQcxRKNRq
+aeG4xyeBmdNUK9gs6TT11+tV49nKxNjjuPkW3M+4l1Ws7BfAqhUhAtzYh5ZvJ/E2
+uHKCGuY5Z6Mr68JpoggLcwArqp9+wIx/x53HboCUYxGDA6THWzte0zs0zReM38ff
+TLmYkjDQchaRbr2+iVuFifu9C1x8LA==
+=RhGm
+-----END PGP SIGNATURE-----
+
+--Sig_/y4rNmdJV7kst=r8jX9Qxs3f--
 
