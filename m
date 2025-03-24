@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-573638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748F4A6DA0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:25:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19CA9A6DA10
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9ED1893502
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B67E16E425
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5C225D908;
-	Mon, 24 Mar 2025 12:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B6225E833;
+	Mon, 24 Mar 2025 12:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="VBhlyXIB"
-Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="TPUqGKdj"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D5625E81D;
-	Mon, 24 Mar 2025 12:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57F25E818
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742819141; cv=none; b=FGEfYYh9RWfyzbyBXMCoF7RtA5xX4Fv8XjpvZULf2FoNL2VpxgOp/o+UYs+Yley7jgzIoerHnbq5SE7IANT3NS1Xx1L/XvAhpapgV4s/bmaIcux8fic3T8TDtbDwhk+i8Mvf3Iq6C7trH2RdinlPofCPRrcYoTHcQuLEDzlJUUA=
+	t=1742819203; cv=none; b=cshYAkDn7ZYieVR+Zfr+en3jHZ9yil9ioXbsb+Y+mFDx8hgb01ODk5cak9DGy7mBbaGqbiIyeAEnay4OZ6sgS1eAhxkY6PsOfJDcvmBa+6ydF3hxsqEjRchBMCq/90BXu2Mc1wC2LO7TBGsGeEBVbJArpYnrd0cYfGlAF5Nss0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742819141; c=relaxed/simple;
-	bh=AMYE+1I/yOpxWnGJfI5UUdY1aUw0MEixbTcQYKG3ztc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSE4FYJK+NN2fd45B520wWcEboZFCNKmpzleMCmTldjZWoFtjljkCfhNKgZzS3K690b0oXw6Sg8y4kyP9rVjoY6CUGJRms3ad4KhbGHJsLhuV095dxgrMd+lrVtsFNXTcTDNLmlm3tRMxmKr4QxXjmxbyl63Cbw26TNWMKpG78E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=VBhlyXIB; arc=none smtp.client-ip=5.135.140.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A4522B2F11;
-	Mon, 24 Mar 2025 13:25:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
-	t=1742819131; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=kA8B7ILRQjbrf7vZCpIq+EjV0GTPDQ45jh2Yc92ZEFQ=;
-	b=VBhlyXIBFTdyC6vVDFd8THg2EDDIryPPVZQHDU6uDYMW86/kWbvAPg4tTYo2UnKgdQPf6C
-	HnJEiqmujfJ5B4PDWSc1x5nwttMZqdi5o1fD/JgWgabi3y1NCv7SQ+dfLH2CVJ/7zH+BNb
-	V/XSKQzb4qXI3fyj7GHQGMKy6PeV/9L7k4tLUkGcj1fZ8qblwZrhAmNrXFHOhC73Z71wKm
-	a6sDm7zKEnyAiQePQF8FRwkTBXZpNrzqxjR+n3ASWR2P/E4Rqt1Zc/dUJLZBJf3gt4jSlM
-	fbKa7jWPGhXvwoJkkdzi1I4KU0D2/GBqAj+w7o91WUriRBw9n6yAVj4lqEtDvg==
-Message-ID: <f4bb786d-09b2-4237-84bd-cdfe297f8165@cjdns.fr>
-Date: Mon, 24 Mar 2025 13:25:27 +0100
+	s=arc-20240116; t=1742819203; c=relaxed/simple;
+	bh=hzKJikXi8Sdam4B/PqIlud3Ck4EKL/r9ynDMwDVjci8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ao+4n46rg3yRneq+9oTqExuFEo0IwqUFV2Y8iQ18/fG+BXTpboKptnYtVOjIyVdMDNo5Wwhdo3npLoZY3VXCnZYZjMgLwthRzNZSBgX8+WfT9RPlnQjiTDxi+pjaAPVMuxd+Tnr7WqqfO/Aq1/PORPc+Ki4/weKz3a5l1FRALMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=TPUqGKdj; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso31730575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:26:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1742819200; x=1743424000; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Phk711bqqwQtp/5ohR16dSgoW1rYqnvCMt8zHzDni7g=;
+        b=TPUqGKdjygNWlcpTeLDimpy36254zyMMHrxh46im4G4Hmffkmwu1jtBrbfq7ktCC3C
+         2CpL2RLHBN+kNk9Xyyk7y/020NqVIIvk4ZrC+6UeMF/9H9fJntFsrg9+kRPd2+8MLB3u
+         Sq7nRCqLp1dlAzd2PkcdX0ID3p9QyKncuciI5lLqP0QH+GSvo7BXoZZ4em0dkmgbULvz
+         Sg11lcZzqyJZ58CE327X9vibX+God7my9kMr6tWRPvgMngDWaIm2lZlhoW9LQcPOjVnJ
+         qkrY6kNaL3ufKGDvqSx6md4W5CWuI9ClcqNLe7jcXSW1niOvufI8AKBWXVLteZrANrhg
+         lMXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742819200; x=1743424000;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Phk711bqqwQtp/5ohR16dSgoW1rYqnvCMt8zHzDni7g=;
+        b=dxG/P31IxtRkO76Yp4+1Q4LzuZSfmv/CtJXY1JFtoZ5zMS2766nNZfNiyurCzLag0v
+         zQ7/qnEYJJf2PD8HPgTwFueV7tID4nabIBR+w1s6t87uBiHRIx9+7ulcmqtt+Wb5jVrZ
+         7y5AY52/D3NCMh7fco/+heCftcchbw8S5YCzk9ofvAOOYb8XGXgOfmBwY1FMstbzpw/G
+         QcvDbFDW/RTbfygnLAmjuP6LYMGmB6Cz3cH2HLGllxxw42hVMOP53Ix9EknzckLYI2VY
+         wAM/PxxaM97JJKvCY1l0KW56lk7o+f0Oavjmg0mt3QwUm9WdGupaVadILlkXwtVMlsQ7
+         jVCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuH28vPMS0pQfuM7FRDI7Y0C+DnJUNfFuZHYDamKHHQ895FLN5FDkoujkZ9Wk0pTIjqnNTp0tpcZjlNW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQkySYUowfh2pZwCZdY66KZwiEB8LCIKybcAcK5iQMabjJTcRO
+	YJb7GtS84P0XTaqmXLUCCNkHh0WSSzbYIE/SpwLSUqi0+iiD0JNlucj1VC/XI9I=
+X-Gm-Gg: ASbGnctjly6QylqgJuwM5QzI0UHOPPLhaf870lI45bYgRaDTRdDKSS0hqNONi+h1RYk
+	ZPsp/nNJ7XmcKdl1T9bjLb8TLeO6GAJyQj/ddrlvdalKz06KD2jCURl9rQxF0WnqXmiC6yRTAl5
+	HEuRe9gjYC7B3gGxhVtF1LrkaeWUMt+2axy02O2Ll6VLXOqSRuCOJhtAjBqouxUyzlO/FAwfuXV
+	rPK3C1BDn54DPr8zViOE96QHC4G93EV5LADhBY7Y9lrb04782GuM8NEBujTrywNxR2FYOMHwBOQ
+	VbPwXkEnhB5lsFpPu+LLx74Vl0D+I3WsBIks0KHglNLmPXWjbLTyrfO5D2x2NudBMkQXJRTNlw=
+	=
+X-Google-Smtp-Source: AGHT+IFyAHj/IByQ5z9fmeWSfg359IdFmkN1k1RzZoQFKjZ1j9affxNGuCzLwR/XkeM9MsmBLjG4aA==
+X-Received: by 2002:a5d:5f46:0:b0:399:7918:541a with SMTP id ffacd0b85a97d-3997f8f5c13mr11994851f8f.10.1742819199656;
+        Mon, 24 Mar 2025 05:26:39 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.46])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9ef16csm10729080f8f.86.2025.03.24.05.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 05:26:39 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: prabhakar.mahadev-lad.rj@bp.renesas.com,
+	jic23@kernel.org,
+	lars@metafoo.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v4 0/2] iio: rzg2l_adc: Cleanups for rzg2l_adc driver
+Date: Mon, 24 Mar 2025 14:26:25 +0200
+Message-ID: <20250324122627.32336-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v1 4/8] dt-bindings: timer: Add EcoNet HPT CPU Timer
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-mips@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.larsson@genexis.eu
-References: <20250321134633.2155141-1-cjd@cjdns.fr>
- <20250321134633.2155141-5-cjd@cjdns.fr>
- <c1791b2e-bdf6-448c-88d3-c97511af3357@kernel.org>
- <8f095a56-a188-45e9-945a-1d77ef175dc8@cjdns.fr>
- <f2738225-564e-479b-a4f0-fac0ba6b6d53@kernel.org>
- <d419bcd2-fa78-4390-88b0-64ed54b87081@cjdns.fr>
- <b3fea7b9-b7ea-4987-9fe7-b0adb9346f07@kernel.org>
-Content-Language: en-US
-From: Caleb James DeLisle <cjd@cjdns.fr>
-In-Reply-To: <b3fea7b9-b7ea-4987-9fe7-b0adb9346f07@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On 24/03/2025 08:13, Krzysztof Kozlowski wrote:
-> On 24/03/2025 00:53, Caleb James DeLisle wrote:
->>>>>> +  compatible:
->>>>>> +    const: econet,timer-hpt
->>>>> Soc components must have soc-based compatible and then filename matching
->>>>> whatever you use as fallback.
->>>> I have so far been unable to find good documentation on writing DT bindings
->>>> specifically for SoC devices. If you have anything to point me to, I will read it.
->>>> If not, even a good example of someone else doing it right is helpful.
->>>>
->>>> Currently, I see qcom,pdc.yaml appears to do what you say, so I in absence
->>>> of any other advice, I can try to do what they do.
->>> Just don't use generic fallback.
->>
->> Ok I watched your "Accepted in Less Than 10 Iterations" lecture (I'm doing my
->> homework). If I understand this correctly, you prefer that I use something specific
->> like econet,en751221-timer as the fallback case, so for example on EN751627,
->> it would be:
->>
->> compatible = "econet,en751627-timer", "econet,en751221-timer";
-> Yes
->
->> The reason why I didn't do this is because this timer seems to show up in a lot of
->> places. Vendor code says that it's older than EN751221, and (if my reading is
-> Just like every other SoC component for every other SoC.
->
->> correct) it has found it's way into chips branded TrendChip, MediaTek and Ralink
->> as well as EcoNet.
->>
->> Now that I'll be adding strict checks on the number of register blocks, this way
->> also has the advantage of allowing a case for users of the timer in SoCs we don't
->> know about:
->>
->> // Only valid with 2 register blocks
->> compatible = "econet,en751627-timer", "econet,timer-hpt";
->>
->> // Only valid with 1 register block
->> compatible = "econet,en751612-timer", "econet,timer-hpt";
-> Above do not differ...
->
->> // No restriction because we don't know how many timers the SoC has
->> compatible = "econet,timer-hpt";
-> How can you not know? This is strictly defined on given hardware.
->
-I mean I don't know, the person writing the DTS for that SoC needs to know.
+Hi,
 
+Series adds some cleanups for the RZ/G2L ADC driver after the support
+for the RZ/G3S SoC.
 
-Per your preference, I'll do the following:
+Thank you,
+Claudiu Beznea
 
+Changes in v4:
+- open the devres group in its own function and rename the
+  rzg2l_adc_probe() to rzg2l_adc_probe_helper() to have simpler code
+- collected tags
 
-// 2 blocks accepted
+Changes in v3:
+- in patch 2/2 use a devres group for all the devm resources
+  acquired in the driver's probe
 
-compatible = "econet,en751627-timer", "econet,en751221-timer";
+Changes in v2:
+- updated cover letter
+- collected tags
+- updated patch 1/2 to drop devres APIs from the point the
+  runtime PM is enabled
 
-// 1 block accepted
+Claudiu Beznea (2):
+  iio: adc: rzg2l_adc: Open a devres group
+  iio: adc: rzg2l: Cleanup suspend/resume path
 
-compatible = "econet,en751221-timer";
+ drivers/iio/adc/rzg2l_adc.c | 67 +++++++++++++++++++++++++------------
+ 1 file changed, 45 insertions(+), 22 deletions(-)
 
-
-If someone has an SoC with more than 2 timers, it is not supported so they
-should update the binding, or (in downstream) they might write an invalid
-DTS. FWIW I have no evidence of any >2 core processor which uses this, so
-2 timers is probably the maximum.
-
-
-Lastly I'll change the driver name to timer-econet-en751221.c to avoid the
-proliferation of different names.
-
-
-Thanks,
-
-Caleb
+-- 
+2.43.0
 
 
