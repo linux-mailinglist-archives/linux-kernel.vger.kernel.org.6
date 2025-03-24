@@ -1,227 +1,91 @@
-Return-Path: <linux-kernel+bounces-573068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E164BA6D2BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:52:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA5BA6D2C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639B116E19F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 00:52:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6C2B16D596
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E42EEC5;
-	Mon, 24 Mar 2025 00:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B/XBg6ZG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A72C8E0;
+	Mon, 24 Mar 2025 01:01:46 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59181799F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB742F2F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742777557; cv=none; b=Nt6zf3sbuGGbzexebW2izAJ+SnegbcgX2wJZQYCC0xOGD2HXrHLR9drrRAP1qZgfHXpChvXObtvd2A9MdnkQw5gTJoydZLCr0sUkTN7yEXB/UOqDwi+rJmKIE/S2nakH6yzGvg4OYY1h17u0VEbZm2XpJC3BNILbxRmWdiK9oLc=
+	t=1742778106; cv=none; b=G/6YuAeOmyuK5+pwdX7Pag9LmPbcLPmaN1sBCrrkBIrwd4SDeOwDsC3uUatxNomjQTqDtMABV0isBMFcDesdiSy1h1Q0NohFp8hpy+x/2O1oeb2ic/GvDE4z1+ABNZg/qjlXPjdq2bjrof5n3LD69/cjE51Mww/g+ieQxdkHoKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742777557; c=relaxed/simple;
-	bh=4Nfkwq4jtQTclKMjEWQWqzsh3FD49Bu0//TRBfI1njY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drFk/pB7nZJ1SgxHYGezYIeeSzjdIuPjEucNS8PQjqglFufL3KQ9aZm26AS6Jg3w6+T5SI9x6GTk6uOVdrL0Df2r3lNiE6iyInz+/YZUilOovu4AAjdUbxcCKKBfqhRoAbTvbznI+3oOXRNAW9A23wmrQVZPbWeSNRklSSfQfdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B/XBg6ZG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742777553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gRW32NXP4xvdf4PqCm7224jsnVvYQgn/PFL+RPL5lbI=;
-	b=B/XBg6ZG/tniwvk87R2hUJqQXYNBAp+3hxg9x5lsU4hiZij/fuUAxOw8IELyAMlDktIwfT
-	JnlUOStDAIXFvHzjlxOfl7f2x3OSKDClGdp1ck8SPnJ3Efk86+/wc7OR4jPw4qRZqKkRzr
-	aerSOO1PW6MaH6IesRPrcggttAzfeSM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-131-pTxoLLXmPduOvObK4m1NMg-1; Sun,
- 23 Mar 2025 20:52:30 -0400
-X-MC-Unique: pTxoLLXmPduOvObK4m1NMg-1
-X-Mimecast-MFC-AGG-ID: pTxoLLXmPduOvObK4m1NMg_1742777549
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77A78180049D;
-	Mon, 24 Mar 2025 00:52:28 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.24])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E8E4180A801;
-	Mon, 24 Mar 2025 00:52:26 +0000 (UTC)
-Date: Mon, 24 Mar 2025 08:52:16 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: akpm@linux-foundation.org, kasong@tencent.com,
-	tim.c.chen@linux.intel.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] mm: swap: free each cluster individually in
- swap_entries_put_map_nr()
-Message-ID: <Z+CswNiG/QVPcYB1@MiWiFi-R3L-srv>
-References: <20250320114829.25751-1-shikemeng@huaweicloud.com>
- <20250320114829.25751-7-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1742778106; c=relaxed/simple;
+	bh=ZPypl70RmryQJ99rsBMpVzKrPrEs9pgfSCay+ksmuuY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j7dfZMCL3fyQuHH8soPNsS0j7jGudiIOM5v+Zy3nJJvxlsoWZpZE63bXF3wW6ySx7QystEJuTrL3MDDTqzlqMy0A2C+b5bV6kz4x7fpxi/Cj+kHc2f8wkDafNAAGIo/950TtDj32trHDABn2ySr+d0dhZGmkEQEvQEe9SHEWEvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d43621bb7eso47382875ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:01:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742778104; x=1743382904;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h2cpqAHPztZ89XlKz1rnL1cPb1uwahHd29N0j69/Qxk=;
+        b=j1f8skMzMT0irReJeA/Xf5GdTgPIcxqeIJxcenwOaOTyCbKbINsqgttImYxc+9CuSR
+         /71HrIAGM9PwhN0U/h58HuyufeYuCURaYot5yoRbmOFgPsjjJZ5SjdUlyjFGSZzzCXI8
+         pLj2/I19EaQ4qkIPGNU+sg4VCEe48QeRM5tCnSMaKpJ8lyiTBDWVMYahQpvUNUjZVwdw
+         XnUwBBhHuXGdwf/Nc99buBZOtybhmwP8s1MAMhEOAwp2JeGJsojLXqSciVTqR0CWoeVi
+         jGxITenTUnrNNpe64L4rnEc3h5AlzZ7emeLz5BWKlM/RYq6uT6n1b5sM3On9uei+mXg8
+         3GAA==
+X-Gm-Message-State: AOJu0Yxob/5WV5kRpxyQ7b5tnQ/nbU35PvMtybXegj0QfAZQuTzM6Z9X
+	l0PjClyHo+vLPL4B+ZiCwurCBD9UKby9cX94YAR+jjMWocEAWOKuU/VdJlnvVagjEusiQZJ8E/a
+	sozObf/KhE2wb4MNmhngKHhbviHbLZUGaaL6wtXfoe9fyAy0/L4AJk9I=
+X-Google-Smtp-Source: AGHT+IHyYMYpQSAuC+Ivd90qhjJ0OeYJzpFte2X8Lk0dunSSh1OukqtK6BjPewm4FLO2wGwskSlMaW+7DNfm3/3PAe8eELo18ww+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250320114829.25751-7-shikemeng@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Received: by 2002:a05:6e02:18cc:b0:3d4:6ed4:e0a with SMTP id
+ e9e14a558f8ab-3d595eddce7mr91123065ab.4.1742778103816; Sun, 23 Mar 2025
+ 18:01:43 -0700 (PDT)
+Date: Sun, 23 Mar 2025 18:01:43 -0700
+In-Reply-To: <67ddd191.050a0220.25ae54.006a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e0aef7.050a0220.a7ebc.0007.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+From: syzbot <syzbot+7ea0b96c4ddb49fd1a70@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/20/25 at 07:48pm, Kemeng Shi wrote:
-> 1. Factor out general swap_entries_put_map() helper to drop entries belong
-                                                                      ~~~~~
-   s/belong/belonging/
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> to one cluster. If entries are last map, free entries in batch, otherwise
-> put entries with cluster lock acquired and released only once.
-> 2. Iterate and call swap_entries_put_map() for each cluster in
-> swap_entries_put_nr() to leverage batch-remove for last map belong to one
-                                                              ~~~~~
-    ditto
+***
 
-> cluster and reduce lock acquire/release in fallback case.
-> 3. As swap_entries_put_nr() won't handle SWAP_HSA_CACHE drop, rename it to
-> swap_entries_put_map_nr().
-> 4. As we won't drop each entry invidually with swap_entry_put() now, do
-> reclaim in free_swap_and_cache_nr() is because swap_entries_put_map_nr()
-                                     ~~~ remove 'is' ?
-> is general routine to drop reference and the relcaim work should only be
-> done in free_swap_and_cache_nr(). Remove stale comment accordingly.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  mm/swapfile.c | 70 +++++++++++++++++++++++----------------------------
->  1 file changed, 32 insertions(+), 38 deletions(-)
-> 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 6f11619665e8..646efccdd2ec 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1455,25 +1455,10 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
->  	return NULL;
->  }
->  
-> -static unsigned char swap_entry_put(struct swap_info_struct *si,
-> -				    swp_entry_t entry)
-> -{
-> -	struct swap_cluster_info *ci;
-> -	unsigned long offset = swp_offset(entry);
-> -	unsigned char usage;
-> -
-> -	ci = lock_cluster(si, offset);
-> -	usage = swap_entry_put_locked(si, ci, entry, 1);
-> -	unlock_cluster(ci);
-> -
-> -	return usage;
-> -}
-> -
-> -static bool swap_entries_put_nr(struct swap_info_struct *si,
-> -				swp_entry_t entry, int nr)
-> +static bool swap_entries_put_map(struct swap_info_struct *si,
-> +				 swp_entry_t entry, int nr)
->  {
->  	unsigned long offset = swp_offset(entry);
-> -	unsigned int type = swp_type(entry);
->  	struct swap_cluster_info *ci;
->  	bool has_cache = false;
->  	unsigned char count;
-> @@ -1484,14 +1469,10 @@ static bool swap_entries_put_nr(struct swap_info_struct *si,
->  	count = swap_count(data_race(si->swap_map[offset]));
->  	if (count != 1 && count != SWAP_MAP_SHMEM)
->  		goto fallback;
-> -	/* cross into another cluster */
-> -	if (nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER)
-> -		goto fallback;
->  
->  	ci = lock_cluster(si, offset);
->  	if (!swap_is_last_map(si, offset, nr, &has_cache)) {
-> -		unlock_cluster(ci);
-> -		goto fallback;
-> +		goto locked_fallback;
->  	}
->  	if (!has_cache)
->  		swap_entries_free(si, ci, entry, nr);
-> @@ -1503,15 +1484,34 @@ static bool swap_entries_put_nr(struct swap_info_struct *si,
->  	return has_cache;
->  
->  fallback:
-> -	for (i = 0; i < nr; i++) {
-> -		if (data_race(si->swap_map[offset + i])) {
-> -			count = swap_entry_put(si, swp_entry(type, offset + i));
-> -			if (count == SWAP_HAS_CACHE)
-> -				has_cache = true;
-> -		} else {
-> -			WARN_ON_ONCE(1);
-> -		}
-> +	ci = lock_cluster(si, offset);
-> +locked_fallback:
-> +	for (i = 0; i < nr; i++, entry.val++) {
-> +		count = swap_entry_put_locked(si, ci, entry, 1);
-> +		if (count == SWAP_HAS_CACHE)
-> +			has_cache = true;
-> +	}
-> +	unlock_cluster(ci);
-> +	return has_cache;
-> +
-> +}
-> +
-> +static bool swap_entries_put_map_nr(struct swap_info_struct *si,
-> +				    swp_entry_t entry, int nr)
-> +{
-> +	int cluster_nr, cluster_rest;
-> +	unsigned long offset = swp_offset(entry);
-> +	bool has_cache = false;
-> +
-> +	cluster_rest = SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER;
-> +	while (nr) {
-> +		cluster_nr = min(nr, cluster_rest);
-> +		has_cache |= swap_entries_put_map(si, entry, cluster_nr);
-> +		cluster_rest = SWAPFILE_CLUSTER;
-> +		nr -= cluster_nr;
-> +		entry.val += cluster_nr;
->  	}
-> +
->  	return has_cache;
->  }
->  
-> @@ -1806,7 +1806,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
->  	/*
->  	 * First free all entries in the range.
->  	 */
-> -	any_only_cache = swap_entries_put_nr(si, entry, nr);
-> +	any_only_cache = swap_entries_put_map_nr(si, entry, nr);
->  
->  	/*
->  	 * Short-circuit the below loop if none of the entries had their
-> @@ -1816,13 +1816,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int nr)
->  		goto out;
->  
->  	/*
-> -	 * Now go back over the range trying to reclaim the swap cache. This is
-> -	 * more efficient for large folios because we will only try to reclaim
-> -	 * the swap once per folio in the common case. If we do
-> -	 * swap_entry_put() and __try_to_reclaim_swap() in the same loop, the
-> -	 * latter will get a reference and lock the folio for every individual
-> -	 * page but will only succeed once the swap slot for every subpage is
-> -	 * zero.
-> +	 * Now go back over the range trying to reclaim the swap cache.
->  	 */
->  	for (offset = start_offset; offset < end_offset; offset += nr) {
->  		nr = 1;
-> -- 
-> 2.30.0
-> 
-> 
+Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in _find_next_bit
+Author: lizhi.xu@windriver.com
 
+#syz test
+
+diff --git a/fs/ocfs2/quota_local.c b/fs/ocfs2/quota_local.c
+index 2956d888c131..cc8bb0650b8f 100644
+--- a/fs/ocfs2/quota_local.c
++++ b/fs/ocfs2/quota_local.c
+@@ -309,6 +309,9 @@ static int ocfs2_add_recovery_chunk(struct super_block *sb,
+ 	}
+ 	memcpy(rc->rc_bitmap, dchunk->dqc_bitmap,
+ 	       (ol_chunk_entries(sb) + 7) >> 3);
++	printk("bitmap has been memcpy to rc, %s\n", __func__);
++	for_each_set_bit(bit, rc->rc_bitmap, ol_chunk_entries(sb));
++	printk("bitmap has been inited, %s\n", __func__);
+ 	list_add_tail(&rc->rc_list, head);
+ 	return 0;
+ }
 
