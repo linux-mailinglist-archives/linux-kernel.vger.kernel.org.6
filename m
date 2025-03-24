@@ -1,259 +1,316 @@
-Return-Path: <linux-kernel+bounces-573775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3118A6DC2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FE6A6DC2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9900188E691
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D60F1890C3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772A125EF90;
-	Mon, 24 Mar 2025 13:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9241425F782;
+	Mon, 24 Mar 2025 13:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="kEXltbdT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q9qafpuQ"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O6OFBJXk"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D832E338C;
-	Mon, 24 Mar 2025 13:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9578A25DCE8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742824443; cv=none; b=EduOs39g6FwYqTVuY2w+DWRA9WD/qzXYT1/ytIehb+mEkNsRi/lXC0CrrQP12xEPGQj+PHq6dHMeNFbs7uRscuihJgKUtTBXoampkrZYUmzTnTZJjdZVpSinZYXBTEiM8M8heVK26oi45cEJ76ltAIFBl6igHOJy/kM8plhddlM=
+	t=1742824460; cv=none; b=OO7WFercS07hbVnFWi9arPisMIZgAbsGTtrQoeyHVvHppU5tHkQ6prP1iU8/upN6bCa0vJPAxbQ9T0NP5XGa8e9WSkEuDE8bF1+Dxx4rx9Pu8dI6YLTAvlukGyVdm7+ZBZAhgCPth6HbIwnX733O4KzDJB+ROriY3/FdoqL1ECA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742824443; c=relaxed/simple;
-	bh=Kmp7q7muijy5PDUpTqYUFZH+1Bc9SWa2MmawQDIz7VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tWhE0dGpaXclhhWHhr8AonTouLJKikQm0C6HwT8Pkb7LRAv5yAfwAgas5KiTPvF851Ws/NXfT4yn0g9d7S5Jw9y6/Fg4o24p+06dtPkK9/seWuCqNHd3g3LMvR/AZHbGlLNHYzjd4zAETHhMsmqTxFYin5Wu3R/EFwwjWX739bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=kEXltbdT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q9qafpuQ; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id AA49F13833C9;
-	Mon, 24 Mar 2025 09:54:00 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 09:54:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1742824440; x=1742910840; bh=Bl6gkTxvIB
-	0xJ6m+Hxm4tvymVdUpWUDWjHTmY2yGdC0=; b=kEXltbdTavVfT0dMJ7NIzAXaiL
-	b0EtMHPJfjq7FdKEcm5Rd6q3MdR5uq6XidOMYByD9PUGXrCZEpZuI3C6L7t9O8N2
-	gkH2giBU76gPsgj2biiT3NR/Q6BDr8u3e6NKbeOpUeHmqypvLcM3b1/Mi4Q9efZd
-	0g1qXzqb6wnAkWrivwTyUjqHbwKx6haZ3S7vty5l53debxMoLfeEoS9wIgHMiWv7
-	9cut1HFvtH1RPmiMfszBQG9baW6W4dutNlOMP8pESrW5QmD0kRoSA3yOzKSLoq0c
-	uQrutA/JniVeLJdhikXGiyE0E7zpoeJkC510rCueDrPW1p6p1ByZp5QoVRJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1742824440; x=1742910840; bh=Bl6gkTxvIB0xJ6m+Hxm4tvymVdUpWUDWjHT
-	mY2yGdC0=; b=Q9qafpuQ5yXQgxKhWm0GxevoNGkUF3kvNRANShVorPVCxQGPrMD
-	lCuFNjM2oYXPgsNoFAPDzLMyqjpt2mMtt9AYFA6J3g3gGmLxqqMUccCOQvQqbTfr
-	1okRYcg4GCoPGfOhyh2Vgr5+1LENYVC/cmRoQp1LMyBaAgcsB4lhVF1e3lkBsk9U
-	3qRSaL10syYE3PodVBulXwbBs8UnR+0IEsGzwrHtMmZnSx3dzGTHTCBiA+I50B6b
-	4iJ8ifkJHtiqkVDCERg8fz7TW6wuTYjmGRolz5rRLkOBUk0RFbPck+uTZyHWnCMX
-	8KBRVuhMAbv91GT2caV8jNHk4oIBeary+IA==
-X-ME-Sender: <xms:92PhZwNLofVLNhuOOSyRPhDDQEYnQUeIx1HEB9rSjMOpwopFCoQsow>
-    <xme:92PhZ2--y4dHMbCLXkR33UsIoCD1pboJG8J7dFHXM0M3UZGAkk_0wWt4BTNSMPSGn
-    O44RiC5iXkjow>
-X-ME-Received: <xmr:92PhZ3QnjKapyDkSorPVzvw1WhTm0FwzR0VBsh8YBrlNxrHwyKTI5xSGPXON>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelleegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
-    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
-    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopehojhgv
-    uggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnvgigthesvhhg
-    vghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:92PhZ4tw8hAYCmJwbo7XnXENuGdMm-N2U_SUtcjAZlvaVmpJc_u6Ew>
-    <xmx:92PhZ4eRvo5ZqIwakaP8PQq9gwlNLQQ_RmyWDTcSyepEzw04ROJUdw>
-    <xmx:92PhZ83cPblPzzrxRBOFOJaBknYyfgk-BsiFsxbWtt77YGZZhBb04A>
-    <xmx:92PhZ8_CUDmlEXae0KYYYBh_SZJwEahNGj3_ouqd_QfHG_D3vnWBKQ>
-    <xmx:-GPhZ5WTGN1AK7P8VSlaEZsweMMrcO4waavaK5YRwzH5ol-tnnGSJyGM>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 09:53:59 -0400 (EDT)
-Date: Mon, 24 Mar 2025 06:52:38 -0700
-From: Greg KH <greg@kroah.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <2025032429-curliness-unblock-7240@gregkh>
-References: <20250324215702.1515ba92@canb.auug.org.au>
- <20250324220629.1665236b@canb.auug.org.au>
- <Z-FJH628-j2HCuaE@cassiopeiae>
- <2025032443-recharger-legacy-93bf@gregkh>
- <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
+	s=arc-20240116; t=1742824460; c=relaxed/simple;
+	bh=tVdOnKU51B2x4WqhOEirUsHUGpi24fZC4xipg7NMb4A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ahblUcykQJUbpCYc3tcQSjAT2C57917oODfXCaqtX987jxuqVREwHV6N1SBpRIMLUC5l21hy0eAgXug2VkLpqqOhm4pGSOsHIB35ANR/nXOufmdLIt5kSlQyPBzx02hal9jiDWKsssdL6BagSBJVN6f828IYvMS+zRaDiofY9/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O6OFBJXk; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so27268095e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742824456; x=1743429256; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JR3Vjat4//MGEukixFZKwpNgnByay/aE/Yu8JW2MD0s=;
+        b=O6OFBJXkcJMNt9cGZxkIbk6Ke/EpOupnh93rTKePIipNAM8PzhnicE0ImzIpi6S1q5
+         K1rvQLMnoJ1zRjFKwCaC10nR+oHdohxYOt4uFTluxQ63YxQhWj51blDOVRpOImbJu6wJ
+         mHXwSC7PTnPm3DSKYDQUbM/Z4ALskZzTvcolzE25stJsGb6lE+yiapKUK+KA/xWJsmKk
+         o/4iOsvet5njiYENA2I+w6j/s4cfoog8EC0GnNFX/1iJGc2+DGH7p/QoMaUKihjG7aMn
+         lNe5l4iby/dvml30ZEKvwCDK2Bvz1Pc3DkWPR7H9lVhlgQzfZsi5b07WkMcmKPVNQ/38
+         IyBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742824456; x=1743429256;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JR3Vjat4//MGEukixFZKwpNgnByay/aE/Yu8JW2MD0s=;
+        b=Yr7YldJUC0UUVfF2+T+Se13IpEuM8hDEtmf7WxdcK/RQ8q6L8Z+Lc3kRJaz3vRj2+y
+         aXBhp+/ji9YkeZcGCAxqZf028IrteIswjcwS6UuFiIANyAH73799c2pEIQSk+HhgD/UK
+         zYrsmvITHmNwuj+UX10HanifuFCbRPvcFtFR/7VZaK6zkvy9WEtJ1DD/WbyXni/1l36L
+         HQHds7IHlMlGqLO/lTHRiaJBaozAkcAmmdmiBJWAqECr6hv/fcVWeJ2GIH6bNTW5fYYk
+         NRjSV5tF6CojhLBN39otkwaDE9wYodt6lVnZtcqQYrPizusLJU1D3fqQi5AqeSrlIFlM
+         ZPKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOaQsUf8pKx+MpvbD6imcL2KEI2+CI9oOoQ2YSzc77sR+l9sd2jX4JJwxkt9JxrBpVPYCZUpo4ss/iArk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7lE3j4/KQwIXphnfDVYP0+NCWY++uPxAhZPW99zQmBO3wVHrW
+	x1pND8faTFqQVlRrSq5USpVnlfLEyD9rT9KPsKUNTn4EMaIxe+Q34UbdcRYd/xY=
+X-Gm-Gg: ASbGnctWjH9YpQZX7KdZS62q4SMZRbMiDrHQjHvOtYA4psSsTJH2v/43UtZihuFj5n3
+	hgGcv87ro7ZKipWWclQY0o3W15NktPCiFZzdKpGuAdMSYNtOXuOlUmqDBeq68Qmx7jyagX2eCW2
+	w3F6akDMpTkpo7qv2ljMjeDpY9B46Pxl1tk6W1aIyfOGWD1WMfrDNTTqVQoGhaAhnu4CCrvY4bF
+	/3iN73manFK51UsRBNQco2RRGXUaVeM+0sv2BOK7xZU62aRMMzXdUIo3yHbJHZlHUCyNTQCVvUa
+	UYXoMi59PsubfYQKvOHAyC19Ab0jLcdBJkBfhfS2AchwzVA=
+X-Google-Smtp-Source: AGHT+IFH33RxIKZKH2JbP0YaKUVRu316Wyz1RxNXnEWmCEW34UaKhoXJkjdKNuiOfa4Hg3Dd/jontA==
+X-Received: by 2002:a05:600c:3b29:b0:43d:683:8ca3 with SMTP id 5b1f17b1804b1-43d509e2df8mr89756545e9.5.1742824455740;
+        Mon, 24 Mar 2025 06:54:15 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:e0a:5ee:79d0:c587:ed44:4dac:278])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43d43f43ecbsm170929235e9.10.2025.03.24.06.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 06:54:15 -0700 (PDT)
+From: Alexandre Mergnat <amergnat@baylibre.com>
+Date: Mon, 24 Mar 2025 14:54:08 +0100
+Subject: [PATCH RESEND v2] arm64: dts: mediatek: add mmc2 support for
+ mt8365-evk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250109-mmc2-support-v2-1-5f660c809610@baylibre.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ macpaul.Lin@mediatek.com
+Cc: vsatoes@baylibre.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Alexandre Mergnat <amergnat@baylibre.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6037; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=tVdOnKU51B2x4WqhOEirUsHUGpi24fZC4xipg7NMb4A=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBn4WQGonmqWbjvvOOnuWnTu4FnwVU7xp4VVEVlV95m
+ 3/HxwSaJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZ+FkBgAKCRArRkmdfjHURVzyD/
+ 0eP8LRNlYpVHgwi3HS2/xN1N9cM+aemGFjdADD0BCVXrDM2npRTrHYB5/aDfwdRamAZO2VUIHR1t/c
+ yFAGWCqxYLL2dzIYtW05ZfcbVpB3L0mHZ8Wl/29w4p9omGN3mJdNnpvZaMhz2gdPmRskgUmLUkMQy0
+ 3VJ7/+01qrMZZuM5Jk9QF2tdwCwBTQGUh2LKgIUMWtxsnrIpBah8zPR6WbGqxmPSp6q/L+XLTpgMMn
+ 9QurzShlkRBcrixPdTYmxcaocHLT1S4kfeC2obRaAp6C2ynmjkjDXJHS6lGYgU6JA6mNCeN+8Psl7v
+ KMNaSioC/i3uCUKJ9/535rHdc34LrluE6LxYxH53L8BPMR9zL7YQd4oMlntERr7d/YW4IkPtrcR8CX
+ cVYVWNqjUmcAa/ee0/Wwf2yaw8s5x+DZuN6X9DfLzLCoXH780bz0AMzY8yikO2ZC5yzGKOnCya4i5Y
+ aJJ5Kn3brO92pEMhdNjBUkfm+9kspBKlR2swOnfxSauVu+3cuF/yRiPhEqKx7Xy32/ItQGsEhRA/DA
+ DxnS6qKAWihMmpGQ3WbuASdGvqq79aRaVit2BPKjgC3fd/q4nj3qRR5zkJLLaqci4/OKup371gdwPp
+ Fgbto/RHc7A9hy3sOEi6VA6fzLuo0TBjijhcxtpqsfe+9Gsry/XhdgUMcDzg==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-On Mon, Mar 24, 2025 at 02:43:27PM +0100, Danilo Krummrich wrote:
-> On Mon, Mar 24, 2025 at 06:29:30AM -0700, Greg KH wrote:
-> > On Mon, Mar 24, 2025 at 12:59:27PM +0100, Danilo Krummrich wrote:
-> > > Hi Stephen,
-> > > 
-> > > On Mon, Mar 24, 2025 at 10:06:29PM +1100, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > On Mon, 24 Mar 2025 21:57:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > >
-> > > > > After merging the rust tree, today's linux-next build (x86_64
-> > > > > allmodconfig) failed like this:
-> > > > > 
-> > > > > error[E0277]: `*mut MyStruct` cannot be sent between threads safely
-> > > > >   --> samples/rust/rust_dma.rs:47:22  
-> > > > >    |
-> > > > > 47 | impl pci::Driver for DmaSampleDriver {
-> > > > >    |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be sent between threads safely
-> > > > >    |
-> > > > >    = help: within `DmaSampleDriver`, the trait `Send` is not implemented for `*mut MyStruct`, which is required by `DmaSampleDriver: Send`
-> > > > > note: required because it appears within the type `CoherentAllocation<MyStruct>`
-> > > > >   --> rust/kernel/dma.rs:132:12  
-> > > > > note: required because it appears within the type `DmaSampleDriver`
-> > > > >   --> samples/rust/rust_dma.rs:9:8  
-> > > > >    |
-> > > > > 9  | struct DmaSampleDriver {
-> > > > >    |        ^^^^^^^^^^^^^^^
-> > > > > note: required by a bound in `kernel::pci::Driver`
-> > > > >   --> rust/kernel/pci.rs:225:1  
-> > > > > 
-> > > > > error: aborting due to 1 previous error
-> > > > > 
-> > > > > For more information about this error, try `rustc --explain E0277`.
-> > > > > 
-> > > > > I have no idea what caused this - it built in next-20250321, but that
-> > > > > no longer builds, so I have reset to the version of the rust tree in
-> > > > > next-20250320 (commit 4a47eec07be6).
-> > > > 
-> > > > Actually, the driver-core tree gained these commits over the weekend:
-> > > > 
-> > > >   51d0de7596a4 ("rust: platform: require Send for Driver trait implementers")
-> > > >   935e1d90bf6f ("rust: pci: require Send for Driver trait implementers")
-> > > >   455943aa187f ("rust: platform: impl Send + Sync for platform::Device")
-> > > >   e2942bb4e629 ("rust: pci: impl Send + Sync for pci::Device")
-> > > > 
-> > > > A heads up would have been nice ... and maybe even a test merge and
-> > > > build against -next (given how late we are in the cycle).
-> > > 
-> > > Commit 935e1d90bf6f ("rust: pci: require Send for Driver trait implementers")
-> > > from the driver-core tree fixes a missing concurrency requirement, which commit
-> > > 9901addae63b ("samples: rust: add Rust dma test sample driver") from the Rust
-> > > tree did not yet consider.
-> > > 
-> > > Technically, it did what it is supposed to do -- catch a concurrency issue at
-> > > compile time. However, since I was involved into both sides, I could have
-> > > thought of this, but unfortunately in this case it was too subtle for me to
-> > > spot -- sorry.
-> > > 
-> > > There are two options, 1. simply drop the commit [1] that introduces the
-> > > affected sample DMA code, or 2. apply the fix below to [2]. My preference would
-> > > be (2).
-> > > 
-> > > --
-> > > 
-> > > diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> > > index 9d00f9c49f47..18de693c4924 100644
-> > > --- a/rust/kernel/dma.rs
-> > > +++ b/rust/kernel/dma.rs
-> > > @@ -301,6 +301,10 @@ fn drop(&mut self) {
-> > >      }
-> > >  }
-> > > 
-> > > +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-> > > +// can be send to another thread.
-> > > +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-> > > +
-> > >  /// Reads a field of an item from an allocated region of structs.
-> > >  ///
-> > >  /// # Examples
-> > > 
-> > 
-> > I can't "drop" anything here as that would be a mess.
-> 
-> It's the DMA commit that has a bug, that was revealed by the fix in the
-> driver-core tree. So, the patch to drop is in the rust tree (not sure if Miguel
-> changes history at this point though).
-> 
-> Anyways, I think the fix is simple enough.
-> 
-> > Maybe we just
-> > consider a merge of the driver core and rust trees at this point in time
-> > and fix things up and do a combined pull request to Linus so he doesn't
-> > have to deal with the fixups?
-> 
-> I think it's not that bad, the full diff for the conflicts between driver-core
-> and rust is:
-> 
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 9d00f9c49f47..18de693c4924 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -301,6 +301,10 @@ fn drop(&mut self) {
->      }
->  }
-> 
-> +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
-> +// can be send to another thread.
-> +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
-> +
->  /// Reads a field of an item from an allocated region of structs.
->  ///
->  /// # Examples
-> diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-> index 908acd34b8db..874c2c964afa 100644
-> --- a/samples/rust/rust_dma.rs
-> +++ b/samples/rust/rust_dma.rs
-> @@ -4,10 +4,10 @@
->  //!
->  //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
-> 
-> -use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
-> +use kernel::{bindings, device::Core, dma::CoherentAllocation, pci, prelude::*, types::ARef};
-> 
->  struct DmaSampleDriver {
-> -    pdev: pci::Device,
-> +    pdev: ARef<pci::Device>,
->      ca: CoherentAllocation<MyStruct>,
->  }
-> 
-> @@ -48,7 +48,7 @@ impl pci::Driver for DmaSampleDriver {
->      type IdInfo = ();
->      const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
-> 
-> -    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-> +    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
->          dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
-> 
->          let ca: CoherentAllocation<MyStruct> =
-> @@ -64,7 +64,7 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>
-> 
->          let drvdata = KBox::new(
->              Self {
-> -                pdev: pdev.clone(),
-> +                pdev: pdev.into(),
->                  ca,
->              },
->              GFP_KERNEL,
+Adds support for the MMC2 interface on the MT8365 EVK board.
+It introduces a fixed regulator for the MMC2 VDD33 supply and configures
+the MMC2 node with a 4-bit bus width, high-speed capabilities, UHS
+modes, and appropriate power supplies. Enabled SDIO IRQ, wakeup source,
+and kept power during suspend (to save firmware module) for wireless
+chip functionality.
 
-Ok, let's just leave it as-is for now...
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+Changes in v2:
+- Apply alphabetical order to pinctrl property items.
+- Improve commit message
+- Link to v1: https://lore.kernel.org/r/20250109-mmc2-support-v1-1-9b9d1b1ae35d@baylibre.com
+---
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 103 +++++++++++++++++++++++++---
+ 1 file changed, 94 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+index 7d90112a7e274..a87f1b3ed6500 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+@@ -53,6 +53,15 @@ memory@40000000 {
+ 		reg = <0 0x40000000 0 0xc0000000>;
+ 	};
+ 
++	mmc2_vdd33: mmc2_vdd33-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "mmc2_vdd33";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pio 121 0>;
++		enable-active-high;
++	};
++
+ 	usb_otg_vbus: regulator-0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "otg_vbus";
+@@ -197,6 +206,28 @@ &mmc1 {
+ 	status = "okay";
+ };
+ 
++&mmc2 {
++	assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
++	assigned-clocks = <&topckgen CLK_TOP_MSDC50_2_SEL>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	hs400-ds-delay = <0x12012>;
++	keep-power-in-suspend;
++	max-frequency = <200000000>;
++	non-removable;
++	pinctrl-0 = <&mmc2_default_pins>;
++	pinctrl-1 = <&mmc2_uhs_pins>;
++	pinctrl-names = "default", "state_uhs";
++	sd-uhs-sdr104;
++	sd-uhs-sdr25;
++	sd-uhs-sdr50;
++	vmmc-supply = <&mmc2_vdd33>;
++	vqmmc-supply = <&mt6357_vcn18_reg>;
++	wakeup-source;
++	status = "okay";
++};
++
+ &mt6357_pmic {
+ 	interrupts-extended = <&pio 145 IRQ_TYPE_LEVEL_HIGH>;
+ 	interrupt-controller;
+@@ -324,8 +355,8 @@ cmd-dat-pins {
+ 				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+ 				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+ 				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+-			input-enable;
+ 			bias-pull-up;
++			input-enable;
+ 		};
+ 
+ 		rst-pins {
+@@ -337,8 +368,8 @@ rst-pins {
+ 	mmc0_uhs_pins: mmc0-uhs-pins {
+ 		clk-pins {
+ 			pinmux = <MT8365_PIN_99_MSDC0_CLK__FUNC_MSDC0_CLK>;
+-			drive-strength = <MTK_DRIVE_10mA>;
+ 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <MTK_DRIVE_10mA>;
+ 		};
+ 
+ 		cmd-dat-pins {
+@@ -351,21 +382,21 @@ cmd-dat-pins {
+ 				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
+ 				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
+ 				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
+-			input-enable;
+-			drive-strength = <MTK_DRIVE_10mA>;
+ 			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
++			drive-strength = <MTK_DRIVE_10mA>;
++			input-enable;
+ 		};
+ 
+ 		ds-pins {
+ 			pinmux = <MT8365_PIN_104_MSDC0_DSL__FUNC_MSDC0_DSL>;
+-			drive-strength = <MTK_DRIVE_10mA>;
+ 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <MTK_DRIVE_10mA>;
+ 		};
+ 
+ 		rst-pins {
+ 			pinmux = <MT8365_PIN_97_MSDC0_RSTB__FUNC_MSDC0_RSTB>;
+-			drive-strength = <MTK_DRIVE_10mA>;
+ 			bias-pull-up;
++			drive-strength = <MTK_DRIVE_10mA>;
+ 		};
+ 	};
+ 
+@@ -386,16 +417,16 @@ cmd-dat-pins {
+ 				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+ 				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+ 				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+-			input-enable;
+ 			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
++			input-enable;
+ 		};
+ 	};
+ 
+ 	mmc1_uhs_pins: mmc1-uhs-pins {
+ 		clk-pins {
+ 			pinmux = <MT8365_PIN_88_MSDC1_CLK__FUNC_MSDC1_CLK>;
+-			drive-strength = <8>;
+ 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <8>;
+ 		};
+ 
+ 		cmd-dat-pins {
+@@ -404,9 +435,63 @@ cmd-dat-pins {
+ 				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
+ 				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
+ 				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
+-			input-enable;
++			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+ 			drive-strength = <6>;
++			input-enable;
++		};
++	};
++
++	mmc2_default_pins: mmc2-default-pins {
++		clk-pins {
++			pinmux = <MT8365_PIN_81_MSDC2_CLK__FUNC_MSDC2_CLK>;
++			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <4>;
++		};
++
++		cmd-dat-pins {
++			pinmux = <MT8365_PIN_82_MSDC2_DAT0__FUNC_MSDC2_DAT0>,
++				 <MT8365_PIN_83_MSDC2_DAT1__FUNC_MSDC2_DAT1>,
++				 <MT8365_PIN_84_MSDC2_DAT2__FUNC_MSDC2_DAT2>,
++				 <MT8365_PIN_85_MSDC2_DAT3__FUNC_MSDC2_DAT3>,
++				 <MT8365_PIN_80_MSDC2_CMD__FUNC_MSDC2_CMD>;
+ 			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
++			drive-strength = <4>;
++			input-enable;
++		};
++
++		sys-en-pins {
++			pinmux = <MT8365_PIN_120_DMIC1_CLK__FUNC_GPIO120>;
++			output-low;
++		};
++	};
++
++	mmc2_uhs_pins: mmc2-uhs-pins {
++		clk-pins {
++			pinmux = <MT8365_PIN_81_MSDC2_CLK__FUNC_MSDC2_CLK>;
++			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <8>;
++		};
++
++		cmd-dat-pins {
++			pinmux = <MT8365_PIN_82_MSDC2_DAT0__FUNC_MSDC2_DAT0>,
++				 <MT8365_PIN_83_MSDC2_DAT1__FUNC_MSDC2_DAT1>,
++				 <MT8365_PIN_84_MSDC2_DAT2__FUNC_MSDC2_DAT2>,
++				 <MT8365_PIN_85_MSDC2_DAT3__FUNC_MSDC2_DAT3>,
++				 <MT8365_PIN_80_MSDC2_CMD__FUNC_MSDC2_CMD>;
++			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
++			drive-strength = <8>;
++			input-enable;
++		};
++
++		ds-pins {
++			pinmux = <MT8365_PIN_86_MSDC2_DSL__FUNC_MSDC2_DSL>;
++			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
++			drive-strength = <8>;
++		};
++
++		sys-en-pins {
++			pinmux = <MT8365_PIN_120_DMIC1_CLK__FUNC_GPIO120>;
++			output-high;
+ 		};
+ 	};
+ 
+
+---
+base-commit: 9d89551994a430b50c4fffcb1e617a057fa76e20
+change-id: 20250109-mmc2-support-96b3ea516186
+
+Best regards,
+-- 
+Alexandre Mergnat <amergnat@baylibre.com>
+
 
