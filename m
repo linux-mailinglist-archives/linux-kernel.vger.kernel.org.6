@@ -1,380 +1,225 @@
-Return-Path: <linux-kernel+bounces-573879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25238A6DD82
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:56:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54647A6DD86
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF9D83B1858
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2551887DE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7190E26136B;
-	Mon, 24 Mar 2025 14:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E82825FA3C;
+	Mon, 24 Mar 2025 14:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RNxgZ5NE"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EUYLEyJp"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1218C25F986;
-	Mon, 24 Mar 2025 14:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828166; cv=none; b=soPINecXnYbAtxswArNzb/C4a94k36xJIlfzX0yFHCRNCky45gTaT9zuFw0LNzyJiOxsYB51Oh+fE8ISMQw8D4dawLbwipVKKQWcNcKamziHcmpngD/yeetX6Gr1aGfl1cc7p+zZnOGe7JP2sjSLUxB7UOOKGaOPa6/1E0ADO5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828166; c=relaxed/simple;
-	bh=aJtROEr0p4QqFHVIFesS50f9Sn8u07RSp+2NpoUYgtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmdje9mJJrBWb/bRSDU2yTqXbTUPt1lDjwrDv+vYDz7ETQf516Kt2vo1TY81jz/6+1Pj+4nvnZ+aU5/6Zx9TnAOZ+hhyP9IqhmchlitfZcPJLLEbxVcDXp3jsB+7aq5H9bJauCnflqpUbl40ToIxbBgCUo/C6zOxtYcgpOtz/4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RNxgZ5NE; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=z0WKSF5GzBb+pmeXkSnUp4O1kxJLVDjr8oStmoA+P7c=; b=RNxgZ5NEnVGPgjYZu79iK/oB6F
-	HN3lPNZVjpH42XQWXmDubPn8tTMIus7z7HiAYeO2LFmLBo9JSHcKrF9R80CERENuV1Nwl8Gxj46v3
-	vEYCZrj+lP3ZlIIgnWqxYNWK3rIWqcZfSE2KeBe+M1xEY+FVTHUrGyyvM2RrxkQJFDFNVZ0VY/LQT
-	HAimw1IhPlud60qVuACBuRTURPXsyxclsfkatdjO6y9AKwS+hDkOCsUqluRGT/Ogxo5dlSSScy8hb
-	Ttwlsj9iThqF8goILtfVpItrp7JamSnGcri1z6SPoZ6jEruAAa9qhhTFoKVgL2p5cYdREUYh+Uwj5
-	wZLvDqVA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46752)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1twjDR-0003gk-10;
-	Mon, 24 Mar 2025 14:55:49 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1twjDO-0002KC-1V;
-	Mon, 24 Mar 2025 14:55:46 +0000
-Date: Mon, 24 Mar 2025 14:55:46 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH 1/2] net: phy: Add support for new Aeonsemi PHYs
-Message-ID: <Z-FycizAnGoxQLOj@shell.armlinux.org.uk>
-References: <20250323225439.32400-1-ansuelsmth@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2022628C;
+	Mon, 24 Mar 2025 14:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742828321; cv=fail; b=nTRBvyvKgRvz1UXwQUIp4RdZr3WbrDkjAFufJ+zZPmEdHTGhEfMbHAF1TIRIyfIto5P1ZjFAom44NshhBnI+gUtBPXZTxB9ZLQtMMm5MPSvzpjyt7Isz/RuNz+Anxae6Lj01fPn46bwrgV4T1FXEV6drkhV8gUTMu4dwwwo4lrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742828321; c=relaxed/simple;
+	bh=XG+DZbBGrb4zWpB+B/ArI6ofApxffZGn+UGi8ZJBZro=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nYkfqpUInCaOtxcvdllmf7/Nku+ycI2OQD1Ci0RoDhGoEygJ51TyaaFljLWArb0ZAj3e+Z06r0n6Zz2k2j//gdY3tMX9KTK7657nghI/Dtb5SOkWA/plLnP6BRwxftwX+EfFO4jHKZkR3ISx5lQI3vtIDWKTp9qyHqn5EspTQv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EUYLEyJp; arc=fail smtp.client-ip=40.107.237.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=al85IZeWmmM3MHUYgC0xAeqjUc2eaiT8UqwgMOZP8D+9n6si+vSmNbmmIEmJ65/neJjux1EZG7YwBJiZ/vHPbXkjN+tPvJQSLkbR+9s7L1wBCBcRNq+YjdEyTo1L6MqdRx/pqI20nIqcBM8i/mCnUoPdnI3DMsXnraJzB87rxsm2rl+mBMMtgA8d39RWx4PVpxQ2FlLjSOob+E/N5KZzWWWanGurH7FYs+1hiX5ugQqpsj1GAXL8iRHYMfjavy+Jx6+aE99udtdSyaidn5EiOUZcvijoZ0aJAr4wkCm03+Fdvtv9FUogrkKAYmo6cOCjnTot1EeMaHfFz4l4NEayLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Wsw1nHaGO3JoznedQOVKe8/Vv40OWNGJjbDL3MxZpzo=;
+ b=UJf35WAqIKnm6QmwsqpcQVnz/tnznEH0YCtZe6bwzuDsSyLxC2bw72iKln3vUWDkXnpg0YrBMD/wZcKzX0kqO2i+0IPcY6KMDt9131aCjdZDRpvko+20wXZbVuhfSy8VHgqv3uYiSD4hv2Z2/k0ASx6TDZm76Ur5Y/SoLW/x6I4T3kX4d96rRQD+6hVxihcgE7WC56/2JwlKG6XWj7Uff76JcfcUcNh5df4LMd35hMc72nssSqMmoOWxXZnHlMs/0jqvXm0UbMVcVoclsBVuJHuVGK8RqbFmiQqWTvKauQQxcKvgwqpXD+hLWd2Y++m24BSuRIMejb9Y4XncpAOFaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wsw1nHaGO3JoznedQOVKe8/Vv40OWNGJjbDL3MxZpzo=;
+ b=EUYLEyJpQepkbFnVbaY0lDd9yNE/j03eqt//cy3NB0loPvt6lYEB1+uDaVVG6nEr2p/aIqcn0Dct/DZihv0SVShVAoSnrP3dHpYBXl2cBRClOEYoPIvaFZBt8BCcknmBOLE1gocogugOfP/9iGzgSqDST+0+XJThxSYkGs1mJXY=
+Received: from PH8PR07CA0011.namprd07.prod.outlook.com (2603:10b6:510:2cd::19)
+ by SJ1PR12MB6242.namprd12.prod.outlook.com (2603:10b6:a03:457::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 14:58:34 +0000
+Received: from CY4PEPF0000EE3A.namprd03.prod.outlook.com
+ (2603:10b6:510:2cd:cafe::2d) by PH8PR07CA0011.outlook.office365.com
+ (2603:10b6:510:2cd::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.40 via Frontend Transport; Mon,
+ 24 Mar 2025 14:58:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE3A.mail.protection.outlook.com (10.167.242.12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 14:58:34 +0000
+Received: from amd.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
+ 2025 09:58:30 -0500
+From: Akshay Gupta <akshay.gupta@amd.com>
+To: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linux@roeck-us.net>, <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
+	<shyam-sundar.s-k@amd.com>, <gautham.shenoy@amd.com>,
+	<mario.limonciello@amd.com>, <naveenkrishna.chatradhi@amd.com>,
+	<anand.umarji@amd.com>, Akshay Gupta <akshay.gupta@amd.com>
+Subject: [PATCH v6 00/11] misc: Move AMD side band interface(SBI) functionality
+Date: Mon, 24 Mar 2025 14:58:04 +0000
+Message-ID: <20250324145815.1026314-1-akshay.gupta@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323225439.32400-1-ansuelsmth@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3A:EE_|SJ1PR12MB6242:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2413564-ba6e-42d6-9737-08dd6ae4598e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sVAWd8GGOpxelglHvsBABnX5t2LuRE6kJhAGT1UB8nLfDsnEsoCPlZfH+/sc?=
+ =?us-ascii?Q?PwkY7yn+Zm13UYoD61odUuLP+veHA7ODSgOcfasIncoPT+4QoCIqSfoOQP9o?=
+ =?us-ascii?Q?2kuVjp1q3XXiALtDPSX6Ic9X7hE4i3DoAVmrYv5ZYCRv8buc3PzWbtYi3GtR?=
+ =?us-ascii?Q?Aeazw/PnYxJ5QxxYjdT3GINHGFWA7RSUuXcA+KC/rwrBMjgls/iHYrNmp4lz?=
+ =?us-ascii?Q?mUggXFRJxxqy/GjZNK+KQN3ZvWH7HKbEahpjYASVdWK/I6yqrOhtN3f0dN3K?=
+ =?us-ascii?Q?U4hPrg7MeMHUQ46wPczVxD3hHOWP9zn12lfp+YWnxblgAXLzD2ezdOnwqWyu?=
+ =?us-ascii?Q?VVUVG9EUBF4927725dGWwfZPUwuBhdMDMyWPXLqo623kyPgbAK4wy/CQk/vs?=
+ =?us-ascii?Q?DfofxC0IVNQT/PLeHm5TuH5UsYB+XBgNpqLrvUC7Azn/kHuUPOHp/Dm3IsME?=
+ =?us-ascii?Q?opLIxt/nXHslDWfCEwV/sUwuR7cjPoJCm60Y5Cn03ziGZfuie84/CH1IB15Q?=
+ =?us-ascii?Q?El2LURWQ0AnSJ1oe/IOe5wb2Al3ZSJBaKz/PSe2vS4ENrzOhGid/xLiG6evG?=
+ =?us-ascii?Q?ZPVL7ZoU88DdwwlC80pdWPF6JwGJsxGJ42eIblK/a7gfOXpuV8SwAz/EA33P?=
+ =?us-ascii?Q?kp4Ojuse3/pIogA0cSbMbvHxUYQSK4UqTe0snGIvGHSGf094YAid3/HPl3sc?=
+ =?us-ascii?Q?Bf1oCgOiLQ7JY1K3dWRX14ib5hCubFdhsuWJm+pXp8ZcDYaJzqCFkg0IbNlR?=
+ =?us-ascii?Q?Zz3dJlg+Xh73pNDWpTpK4eEGcWH3ilGnQ9OvCy23TFcfPZZ5WtzyVJR8o/48?=
+ =?us-ascii?Q?tZ3p1AuZ6FDvPUHja9A/A//8xUZUp6DQrC19v/1RtiwBjYlJIyJO3tJX2Fnf?=
+ =?us-ascii?Q?vpyadR3zhukslUjWm/qY2SRt9MBf53V/jXa1IKHyJN3C2N3NY6kw/Al39ZK/?=
+ =?us-ascii?Q?6z8opMeR1M2eQzcT8roglFc2ICPzvrmKQYeIakuOHbt+bGP6khYsTrNOwZBk?=
+ =?us-ascii?Q?QeEJp3wpOpBErng05nHVssXsWv7h0XKiZetci7O8P2L/o9qu4P9ukQVUQXsn?=
+ =?us-ascii?Q?SkP77UDgkXhV0bzZ8Cd+KM8A5U9S9cm57N5dY2JpPrPQ/YVBducw+rnPXc7J?=
+ =?us-ascii?Q?bZMWXX564SEf04a4cu5lwg89o6qqvDIqb+NS3cdO2vjYVLpTIqVWn0Vr4y+O?=
+ =?us-ascii?Q?dRPsUSgMUNQcX/M7URf+8QMRb71dUwuRCEha2FCykrjLk7E+HUoAndPyvk11?=
+ =?us-ascii?Q?z+1Yy3MgUlA5Ti9f1NgiTOEQKYWM45VZ42YK627RScotdJ5FTk/7xJSbRS5K?=
+ =?us-ascii?Q?WbhNIFNw2E+eFu7m2NXFcb5+xNLiqxw63mtpZy/l8y3z9r8X6SGlIycKxs8W?=
+ =?us-ascii?Q?JnU4k0ZUj74V572E2sIZwyr9D2xFtvMXVpQEfGx98ehZGOxjxmZEHprorUvo?=
+ =?us-ascii?Q?ZYNY1V0YNNDXgjv3K3UAVYq+PmOGWltgSfx4MsB2rRkQjdrWFs9iN4LiMYNt?=
+ =?us-ascii?Q?0ppAWKgZBBD1xL0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 14:58:34.2676
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2413564-ba6e-42d6-9737-08dd6ae4598e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE3A.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6242
 
-First, please include a cover message whenever you send a patch series.
+At present, sbrmi driver under hwmon subsystem, is probed as an i2c driver,
+fetches data using APML specified protocol and reports through hwmon power sensor.
 
-On Sun, Mar 23, 2025 at 11:54:26PM +0100, Christian Marangi wrote:
-> Add support for new Aeonsemi 10G C45 PHYs. These PHYs intergate an IPC
-> to setup some configuration and require special handling to sync with
-> the parity bit. The parity bit is a way the IPC use to follow correct
-> order of command sent.
-> 
-> Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
-> AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
-> AS21210PB1 that all register with the PHY ID 0x7500 0x7500
-> before the firmware is loaded.
+AMD provides additional information using custom protocols, which cannot be
+enumerated as hwmon sensors. Hence, move the existing functionality from hwmon/
+to misc/ and add support for following custom protocols
+  - read Processor feature capabilities and configuration information
+    through side band.
+  - read Machine Check Architecture(MCA) registers over sideband.
+    The information is accessed for range of MCA registers by passing
+    register address and thread ID to the protocol.
 
-Hmm. That behaviour is really not nice for the kernel to deal with. C45
-PHYs have multiple IDs (there's registers 2,3 and also 14,15, each is
-per MMD). Do they all have the same value? Do any of them indicate any
-kind of valid OUI ?
+NOTE: AMD defines Advanced Platform Management Link (APML) interface which provides
+system management functionality access to the baseboard management
+controller (BMC).
 
-If there is no way to sanely detect this PHY, then I would suggest that
-it is beyond the ability of the kernel, and at the very least, an
-initial firmware version needs to be loaded by board boot firmware so
-the PHY _can_ be properly identified.
+This patchset is an attempt to keep all APML core functionality in one place,
+provide hwmon and IOCTL interface to user space
+1. [Patch 1] Move the i2c client probe, hwmon sensors and sbrmi core functionality
+   from drivers/hwmon to drivers/misc/
+2. [Patch 2] Move sbrmi core functionality to new core file to export core functionality
+3. [Patch 3] Move hwmon device sensor as separate entity
+4. [Patch 4] Convert i2c to regmap which provides multiple benefits
+   over direct smbus APIs.
+    a. i2c/i3c support and
+    b. 1 byte/2 byte RMI register size addressing
+5. [Patch 5] Optimize wait condition with regmap API regmap_read_poll_timeout as per
+   suggestion from Arnd
+6. [Patch 6, 7] Register a misc device which provides
+    a. An ioctl interface through node /dev/sbrmiX
+    b. Register sets is common across APML protocols. IOCTL is providing
+       synchronization among protocols as transactions may create
+       race condition.
+7. [Subsequent patches 8, 9 and 10] add support for AMD custom protocols
+    a. CPUID
+    b. MCAMSR
+    c. Register xfer
+8. [Patch 11] AMD side band description document
 
-Basically, it isn't the kernel's job to fix such broken hardware.
+Open-sourced and widely used [1]_ will continue to provide user-space programmable API.
 
-> +#define VEND1_LED_REG(_n)		(0x1800 + ((_n) * 0x10))
-> +#define   VEND1_LED_REG_A_EVENT		GENMASK(15, 11)
-> +#define     VEND1_LED_REG_A_EVENT_ON_10 FIELD_PREP_CONST(VEND1_LED_REG_A_EVENT, 0x0)
-> +#define     VEND1_LED_REG_A_EVENT_ON_100 FIELD_PREP_CONST(VEND1_LED_REG_A_EVENT, 0x1)
+.. [1] https://github.com/amd/esmi_oob_library
 
-I really don't like the pattern of "define constants using
-FIELD_PREP*()". It seems to me it misses the entire point of the
-bitfield macros, which is to prepare and extract bitfields.
+Akshay Gupta (11):
+  hwmon/misc: amd-sbi: Move core sbrmi from hwmon to misc
+  misc: amd-sbi: Move protocol functionality to core file
+  misc: amd-sbi: Move hwmon device sensor as separate entity
+  misc: amd-sbi: Use regmap subsystem
+  misc: amd-sbi: Optimize the wait condition for mailbox command
+    completion
+  misc: amd-sbi: Add support for AMD_SBI IOCTL
+  misc: amd-sbi: Add support for mailbox error codes
+  misc: amd-sbi: Add support for CPUID protocol
+  misc: amd-sbi: Add support for read MCA register protocol
+  misc: amd-sbi: Add support for register xfer
+  misc: amd-sbi: Add document for AMD SB IOCTL description
 
-When I see:
-
-	swith (foo & BLAH_MASK) {
-	case BLAH_OPTION_1:
-		...
-
-where BLAH_OPTION_1 is defined using FIELD_PREP*(), it just
-makes me shudder.
-
-	SWITCH (FIELD_GET(BLAH_MASK, foo)) {
-	case BLAH_OPTION_1:
-		...
-
-where BLAH_OPTION_1 is defined as the numerical field value is much
-more how the bitfield stuff is supposed to be used.
-
-> +enum {
-> +	MDIO_AN_C22 = 0xffe0,
-
-I'd suggest defining this in a driver private namespace, rather than
-using the MDIO_xxx which is used by linux/mdio.h
-
-> +	/* Exit condition logic:
-> +	 * - Wait for parity bit equal
-> +	 * - Wait for status success, error OR ready
-> +	 */
-> +	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1, VEND1_IPC_STS, val,
-> +					FIELD_GET(AEON_IPC_STS_PARITY, val) ==
-> +						curr_parity &&
-> +					(val & AEON_IPC_STS_STATUS) !=
-> +						AEON_IPC_STS_STATUS_RCVD &&
-> +					(val & AEON_IPC_STS_STATUS) !=
-> +						AEON_IPC_STS_STATUS_PROCESS &&
-> +					(val & AEON_IPC_STS_STATUS) !=
-> +						AEON_IPC_STS_STATUS_BUSY,
-> +					10000, 2000000, false);
-
-Use an inline function, and also please wrap a bit tighter, val seems to
-wrap.
-
-	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1, VEND1_IPC_STS,
-					val, aeon_cmd_done(curr_parity, val),
-					10000, 2000000, false);
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	*ret_sts = val;
-> +	if ((val & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_SUCCESS)
-> +		return -EFAULT;
-
-EFAULT means "Bad address". Does not returning successful status mean
-that there was a bad address? If not, please don't do this.
-
-EFAULT is specifically used to return to userspace to tell it that it
-passed the kernel a bad address.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int aeon_ipc_send_msg(struct phy_device *phydev, u16 opcode,
-> +			     u16 *data, unsigned int data_len, u16 *ret_sts)
-> +{
-> +	u32 cmd;
-> +	int ret;
-> +	int i;
-> +
-> +	if (data_len > AEON_IPC_DATA_MAX)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < data_len / sizeof(u16); i++)
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i),
-> +			      data[i]);
-
-What ensures that this won't overflow the number of registers?
-
-> +
-> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, data_len) |
-> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, opcode);
-> +	ret = aeon_ipc_send_cmd(phydev, cmd, ret_sts);
-> +	if (ret)
-> +		phydev_err(phydev, "failed to send ipc msg for %x: %d\n", opcode, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int aeon_ipc_rcv_msg(struct phy_device *phydev, u16 ret_sts,
-> +			    u16 *data)
-> +{
-> +	unsigned int size = FIELD_GET(AEON_IPC_STS_SIZE, ret_sts);
-> +	int ret;
-> +	int i;
-> +
-> +	if ((ret_sts & AEON_IPC_STS_STATUS) == AEON_IPC_STS_STATUS_ERROR)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < DIV_ROUND_UP(size, sizeof(u16)); i++) {
-> +		ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_IPC_DATA(i));
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		data[i] = ret;
-
-Unsafe. AEON_IPC_STS_SIZE is 5 bits in size, which means this can write
-indexes 0..31. You pass in a buffer of 8 u16's on the stack. What stops
-the hardware engaging in stack smashing... nothing. Please code more
-carefully.
-
-> +	}
-> +
-> +	return size;
-> +}
-> +
-> +/* Logic to sync parity bit with IPC.
-> + * We send 2 NOP cmd with same partity and we wait for IPC
-> + * to handle the packet only for the second one. This way
-> + * we make sure we are sync for every next cmd.
-> + */
-> +static int aeon_ipc_sync_parity(struct phy_device *phydev)
-> +{
-> +	struct as21xxx_priv *priv = phydev->priv;
-> +	u16 ret_sts;
-> +	u32 cmd;
-> +	int ret;
-> +
-> +	/* Send NOP with no parity */
-> +	cmd = FIELD_PREP(AEON_IPC_CMD_SIZE, 0) |
-> +	      FIELD_PREP(AEON_IPC_CMD_OPCODE, IPC_CMD_NOOP);
-> +	aeon_ipc_send_cmd(phydev, cmd, NULL);
-> +
-> +	/* Reset packet parity */
-> +	priv->parity_status = false;
-> +
-> +	/* Send second NOP with no parity */
-> +	ret = aeon_ipc_send_cmd(phydev, cmd, &ret_sts);
-> +	/* We expect to return -EFAULT */
-> +	if (ret != -EFAULT)
-> +		return ret;
-> +
-> +	if ((ret_sts & AEON_IPC_STS_STATUS) != AEON_IPC_STS_STATUS_READY)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int aeon_ipc_get_fw_version(struct phy_device *phydev)
-> +{
-> +	u16 ret_data[8], data[1];
-> +	u16 ret_sts;
-> +	int ret;
-> +
-> +	data[0] = IPC_INFO_VERSION;
-> +	ret = aeon_ipc_send_msg(phydev, IPC_CMD_INFO, data, sizeof(data),
-> +				&ret_sts);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = aeon_ipc_rcv_msg(phydev, ret_sts, ret_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	phydev_info(phydev, "Firmware Version: %s\n", (char *)ret_data);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aeon_dpc_ra_enable(struct phy_device *phydev)
-> +{
-> +	u16 data[2];
-> +	u16 ret_sts;
-> +
-> +	data[0] = IPC_CFG_PARAM_DIRECT;
-> +	data[1] = IPC_CFG_PARAM_DIRECT_DPC_RA;
-> +
-> +	return aeon_ipc_send_msg(phydev, IPC_CMD_CFG_PARAM, data,
-> +				 sizeof(data), &ret_sts);
-> +}
-> +
-> +static int as21xxx_probe(struct phy_device *phydev)
-> +{
-> +	struct as21xxx_priv *priv;
-> +	int ret;
-> +
-> +	phydev->priv = devm_kzalloc(&phydev->mdio.dev,
-> +				    sizeof(*priv), GFP_KERNEL);
-> +	if (!phydev->priv)
-> +		return -ENOMEM;
-> +
-> +	ret = aeon_firmware_load(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = aeon_ipc_sync_parity(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enable PTP clk if not already Enabled */
-> +	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, VEND1_PTP_CLK,
-> +			       VEND1_PTP_CLK_EN);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = aeon_dpc_ra_enable(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = aeon_ipc_get_fw_version(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int as21xxx_get_features(struct phy_device *phydev)
-> +{
-> +	int ret;
-> +
-> +	ret = genphy_read_abilities(phydev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* AS21xxx supports 100M/1G/2.5G/5G/10G speed. */
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
-> +			   phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
-> +			   phydev->supported);
-> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-> +			   phydev->supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
-> +			 phydev->supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-> +			 phydev->supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-> +			 phydev->supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-> +			 phydev->supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
-> +			 phydev->supported);
-
-Given all this, does genphy_read_abilities() actually read anything
-useful from the PHY?
-
-> +static struct phy_driver as21xxx_drivers[] = {
-> +	{
-> +		PHY_ID_MATCH_EXACT(PHY_ID_AS21XXX),
-> +		.name		= "Aeonsemi AS21xxx",
-> +		.probe		= as21xxx_probe,
-> +		.get_features	= as21xxx_get_features,
-> +		.read_status	= as21xxx_read_status,
-> +		.led_brightness_set = as21xxx_led_brightness_set,
-> +		.led_hw_is_supported = as21xxx_led_hw_is_supported,
-> +		.led_hw_control_set = as21xxx_led_hw_control_set,
-> +		.led_hw_control_get = as21xxx_led_hw_control_get,
-> +		.led_polarity_set = as21xxx_led_polarity_set,
-> +	},
-
-What if firmware was already loaded? I think you implied that this
-ID is only present when firmware hasn't been loaded.
-
-Thanks.
+ Documentation/misc-devices/amd-sbi.rst        |  87 ++++
+ Documentation/misc-devices/index.rst          |   1 +
+ .../userspace-api/ioctl/ioctl-number.rst      |   2 +
+ drivers/hwmon/Kconfig                         |  10 -
+ drivers/hwmon/sbrmi.c                         | 357 --------------
+ drivers/misc/Kconfig                          |   1 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/amd-sbi/Kconfig                  |   9 +
+ drivers/misc/amd-sbi/Makefile                 |   3 +
+ drivers/misc/amd-sbi/rmi-core.c               | 449 ++++++++++++++++++
+ drivers/misc/amd-sbi/rmi-core.h               |  67 +++
+ drivers/misc/amd-sbi/rmi-hwmon.c              | 124 +++++
+ drivers/misc/amd-sbi/rmi-i2c.c                | 134 ++++++
+ include/uapi/misc/amd-apml.h                  |  95 ++++
+ 14 files changed, 973 insertions(+), 367 deletions(-)
+ create mode 100644 Documentation/misc-devices/amd-sbi.rst
+ delete mode 100644 drivers/hwmon/sbrmi.c
+ create mode 100644 drivers/misc/amd-sbi/Kconfig
+ create mode 100644 drivers/misc/amd-sbi/Makefile
+ create mode 100644 drivers/misc/amd-sbi/rmi-core.c
+ create mode 100644 drivers/misc/amd-sbi/rmi-core.h
+ create mode 100644 drivers/misc/amd-sbi/rmi-hwmon.c
+ create mode 100644 drivers/misc/amd-sbi/rmi-i2c.c
+ create mode 100644 include/uapi/misc/amd-apml.h
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.25.1
+
 
