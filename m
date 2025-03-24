@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-573830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCB2A6DCF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E39A6DCD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33FA3AF994
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04313B31EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9B9263C9E;
-	Mon, 24 Mar 2025 14:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966D2620DA;
+	Mon, 24 Mar 2025 14:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UtNKb9pu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rPZjC/se"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ6J91Zr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCDA263F21
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FEF2620C7;
+	Mon, 24 Mar 2025 14:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826112; cv=none; b=qIYkfe0X9FCP1JW3f5C3iq4tIUo/e1PhERYzI3iplakC6TLV0XVJE5tKsOcE38+YFQLR0YP00wVqQvfUyikFvcOvraspj+l8YicZ+rNS0G6Il9PzxXTayvhb4DUHP9HTyvqPg2dRltc5UV0iYgb182AIa7HMwNnikQMDVP9iM/k=
+	t=1742826079; cv=none; b=KpM7hsc/66Oba/ssKrHQYZdR85Wsww6mfz39f7qb5DzBMp4qq5uONKQBhwEOXjy79vIfpnawDWNC+aver8lPubtaBMPYMUjZb+o+HkIS+Jt0/bhOdmz1/2WKwEm/zEnjN6l0LYplr1d3EuQuwdH+xrFm59vt2vhIVSBo+UpyAjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826112; c=relaxed/simple;
-	bh=orEF3ElbFiE+HwWTPI0u5RxMzDv56Yxx3YBuRtJzP9o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QCKXVYLGW47g6LDIrJxHSVh0kdasSlvsS000zPjaKnwUVM6QQyinwN2bV5aerBfIjO4vak/xCKyNOtVNdknmrjx4/d3BM4uCRHRf8XpeakhkV/m81LUkLPlGSrFHVc30vhT/m6365kDjw/KYH4ZUMfGiLIeEYb5Sf31WQ3qIicM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UtNKb9pu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rPZjC/se; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742826109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uvV+fE9cnvutiFe3bOPEKqMevSmxtNJHCBehIzVQ3U=;
-	b=UtNKb9puDACp0Qt0bmU6pNAVy6dwNZD5kbDhagiZq4H9cQzOkvOkYAZhyyZAIahQd2luJU
-	G+DCMuu3fQd3/owZ7GpZ4sL4I6BUjYQ57p3GpjU2+5u6iyhrp/zDwiEj8dkpvJK39q81ZK
-	Hawd4XFMY3ww0liCnEYXnFLyGJ52Q0wYtBLbF+WhFDSOIA0I9g4AKPws2lW4PLyk6/CFg2
-	ZISFQloa3Ssz1dh590FM/le8qQVfwPGQGtLo5xPSbNbnKIohrF5jJE2TwXKB6YJ7IJvp3V
-	l72kHVgcrhif1N0MMICfRjR3cet2TP0fBoKJQo7STp0ATBgZ6wAqCTmMruZrhg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742826109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uvV+fE9cnvutiFe3bOPEKqMevSmxtNJHCBehIzVQ3U=;
-	b=rPZjC/seXPq7JTz0kIsF2hkbPgfSFpdh2QO3sIF377fwmLsz0gOe9nkImYvr+VUbSb2flu
-	oyfEgDFCwj0SNjBw==
-To: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v3 20/20] MAINTAINERS: Include kcpuid under X86 CPUID DATABASE
-Date: Mon, 24 Mar 2025 15:20:41 +0100
-Message-ID: <20250324142042.29010-21-darwi@linutronix.de>
-In-Reply-To: <20250324142042.29010-1-darwi@linutronix.de>
-References: <20250324142042.29010-1-darwi@linutronix.de>
+	s=arc-20240116; t=1742826079; c=relaxed/simple;
+	bh=draAG8GfDmHMcX/XsjGWjVRvTRUqqLXrGbpf2rsAgKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyUi8PsLPnk7hqh8ATjIY922h80MY8d8KY+YuyfVoXLm2DdvuoXP0LLdt8J9Uf2uSxW7bsBsE2yQmY2ehreDnd9js9Ndlg/w71V+DKkzo3o5EoaXw0O18OYD/D0/VptYG3kAbPmfGdN2skhO2bcn2iE0zFm3nhwTuS9shN1TkoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ6J91Zr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 709E4C4CEED;
+	Mon, 24 Mar 2025 14:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742826078;
+	bh=draAG8GfDmHMcX/XsjGWjVRvTRUqqLXrGbpf2rsAgKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VJ6J91ZrC7VMso5isoQYexPCAtmWubRMPoZ2XoMsY1K4/ECauDAJEaqaC5x7CU2y6
+	 6uarbJdeb5/I1FmI0Ihgw7UYkWIo/GIcrAMVGY82NNMN/AxbbF8oLbC9qAepQjGZzS
+	 4d647UfRupWxdRElE/XO8LDpVz5w/av5GS/feeIaTwN2iOBirv61tEdpv407mDYgvz
+	 VkQTh8UdItcA3Fn4OLXbgm9C8cit22LxI6MXjKdVZg5YMkCtBPoJsu7zY2uXLDNRbM
+	 ThePL59Oc+9lAJI67zGJoepVtQrmz+CI0j7fRwcqE3RvDFJ1XdmhZ2QzwM/zGJRneK
+	 cruSOO9Gblk8A==
+Date: Mon, 24 Mar 2025 14:21:15 +0000
+From: Simon Horman <horms@kernel.org>
+To: Yu-Chun Lin <eleanor15x@gmail.com>
+Cc: isdn@linux-pingi.de, kuba@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	visitorckw@gmail.com
+Subject: Re: [PATCH] mISDN: hfcsusb: Optimize performance by replacing
+ rw_lock with spinlock
+Message-ID: <20250324142115.GF892515@horms.kernel.org>
+References: <20250321172024.3372381-1-eleanor15x@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321172024.3372381-1-eleanor15x@gmail.com>
 
-kcpuid's CSV file is covered by the "x86 CPUID database" MAINTAINERS
-entry.  Recent patches have shown that changes to that file may require
-updates to the kcpuid code, so include the whole of tools/x86/kcpuid
-under the same entry.
+On Sat, Mar 22, 2025 at 01:20:24AM +0800, Yu-Chun Lin wrote:
+> The 'HFClock', an rwlock, is only used by writers, making it functionally
+> equivalent to a spinlock.
+> 
+> According to Documentation/locking/spinlocks.rst:
+> 
+> "Reader-writer locks require more atomic memory operations than simple
+> spinlocks. Unless the reader critical section is long, you are better
+> off just using spinlocks."
+> 
+> Since read_lock() is never called, switching to a spinlock reduces
+> overhead and improves efficiency.
+> 
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> ---
+> Build tested only, as I don't have the hardware. 
+> Ensured all rw_lock -> spinlock conversions are complete, and replacing
+> rw_lock with spinlock should always be safe.
+> 
+>  drivers/isdn/hardware/mISDN/hfcsusb.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-This also ensures that myself and the x86-cpuid mailing list are CCed on
-future kcpuid patches.
+Hi Yu-Chun Lin,
 
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your patch.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c9763412a508..2a7b54b83052 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25713,7 +25713,7 @@ R:	Ahmed S. Darwish <darwi@linutronix.de>
- L:	x86-cpuid@lists.linux.dev
- S:	Maintained
- W:	https://x86-cpuid.org
--F:	tools/arch/x86/kcpuid/cpuid.csv
-+F:	tools/arch/x86/kcpuid/
- 
- X86 ENTRY CODE
- M:	Andy Lutomirski <luto@kernel.org>
+Unfortunately I think it would be best to leave this rather old
+and probably little used driver as-is in this regard unless there
+is a demonstrable improvement on real hardware.
+
+Otherwise the small risk of regression and overhead of driver
+changes seems to outweigh the theoretical benefit.
+
 -- 
-2.48.1
-
+pw-bot: deferred
 
