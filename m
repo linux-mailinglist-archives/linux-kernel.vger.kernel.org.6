@@ -1,141 +1,153 @@
-Return-Path: <linux-kernel+bounces-573538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35B5A6D8D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:03:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC97FA6D8D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2A417A62C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5712A16B45F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A127250BFD;
-	Mon, 24 Mar 2025 11:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B01E25DD00;
+	Mon, 24 Mar 2025 11:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="d5wk2Bnp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lIu38uaB"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fYvT1/Ls"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5402C80;
-	Mon, 24 Mar 2025 11:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBE21487D1
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814168; cv=none; b=CQkpgTQevKcKEnQboEYDvOdd6abO696xLJ2Nj0xyLbEdW72s/1qx+setYWOEarKx0m0c37dV0FGjrND1iWaWgUhanYXLMjf2e+B1Y0tBe9xCnJGesogec3qsF+tefoqoXjjwfI3xfUT6ShoZDkIuLenhcGv9rU24ZsufVCXJFME=
+	t=1742814382; cv=none; b=KxVWcAlghvcQ8crf275tz884BSXtM7SJIF/qecNNAMlNEBy5gjSyAM0RpJJVSG6f0DXzMhzF/Xe92QusZZdkklOi8y5xgy0bD7XD9NNNFCqWOXAiKz5pZn0hnNAEpHz+mbG3uXxa72tSRoWZbX5oZyBx1jGLjv7p8pEil5w4AZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814168; c=relaxed/simple;
-	bh=VI/QlYUCAaTIIpXrXll+ObIf2vvUK8jQbyoXVdBsOiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cp1p3Qm/kRXiJqHY4bPZA61bd9nxa5RCZiiyp39e/laNDfffhQ6WwzDCGWqb2yOrwTI0Aw0AfoqAdPhsLCiflMv1IzTxKwvEZ/ufI00n83pUSNvGuZ0ZReHYTAfxkb9JSJNe8kVoCyLy1webFgvzyvPAO6WyhPbyuGA/Sl50bnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=d5wk2Bnp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lIu38uaB; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id AA3BF1382C51;
-	Mon, 24 Mar 2025 07:02:44 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 24 Mar 2025 07:02:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1742814164; x=
-	1742900564; bh=1GVyjF+cNaK2a06PURQAqI3y445XU6p/QCUMWiHbhbo=; b=d
-	5wk2BnpTz5X25NvlwevUNay0dltJ+FFvhGLrDwhA7SbD7b+MvpflpluDer2dmhFI
-	5yyXB+hK6dgpX3t/wl9GEp2GuJmYjtPYy8QZaxI/EwhqM8cfBGSow2D11MuQtes6
-	zv7OD1UGSR4ut6lRPCcqBTEgAMW0A32b0j4qifjRn/gwkmooyTuubLPZEnsTPdu0
-	mPoYWXc0L7k9f2/gIyDWWHP3vNtSNMqbF/MnVFokXPOztnI43yY1rNCI+DaOBH6w
-	bgtHclXyCZYoBVZZ4oVPeIDPMKvcf7yFqlvid1yM76abFs5HYIj1gQRAqGafVnib
-	ZvmCIP4SdgcDlDykF/lfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1742814164; x=1742900564; bh=1GVyjF+cNaK2a06PURQAqI3y445XU6p/QCU
-	MWiHbhbo=; b=lIu38uaBFHX0MD8YVZPmymdDQ5nm82hH1+hygQkL8ljmtd7zl9l
-	JwSzzFC3PIasKLgFmXMFs/d3v/npOotk0SVwP9xmA4rJGNrYcMtKDnxH42ESKjeM
-	M4HiWO3YlkZVRQwpupOzLMn/SMagkNrq+OF4Bwvap35AKdJCNso16r9Cy1saoXdK
-	9UNtw7EWbqOgGPLZRDeYekpVit0AAUdoenbiLrerZMF0/b5dtYvnDTvJmBocS36I
-	LIrAYQbD6+HSFP/E1zKpCyKBhClguBpklC8x8Qym93/oq8hnkelT8SRM3XOe5SGG
-	/pV/I+4OfZbXsH6cErpISa9rnr93pLXuo/Q==
-X-ME-Sender: <xms:1DvhZypm_hsm_tmGgrJDraeIM5qMGyraOsqrtVP_QIXI_fEHFIORYw>
-    <xme:1DvhZwpYyV3zxPHOk_dUf0FWC0H0SwntVcovZTHq0m3y8t792BT_WGC8hRe2GzSim
-    91lJBp0xjSJy-6yb4Q>
-X-ME-Received: <xmr:1DvhZ3PQa6DmFzusnE0ece4DzKI2Icf3Hu8biNvIo7_xRpAWQYMAbFP1XCXa>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelheelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:1DvhZx5_FlQIkINyk4uEb_pU0xy_a0Y4D9DIStB5_4bwCZMvq9Y1-A>
-    <xmx:1DvhZx7YtHO3AD3zyukaiNn2Ou8mTW_G1vWeFT-vXd7sbjBJPGs60Q>
-    <xmx:1DvhZxiVuX7b_bM0P5R5EPrQOzDQ9N-DVwab0uQJVtRqMGjajLv42A>
-    <xmx:1DvhZ76ctWUyquiOwhCFe6DCUc7XRnS3T7uS8HXwk2f5NH79h098Lg>
-    <xmx:1DvhZwKOnpmyQTByuHlWE2tlOwHPGIwF5dNuvd0gg4sAD3L38X68NZq_>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 07:02:43 -0400 (EDT)
-Date: Mon, 24 Mar 2025 12:02:42 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
-Message-ID: <Z-E70n1tkzKdepTo@krikkit>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+	s=arc-20240116; t=1742814382; c=relaxed/simple;
+	bh=Fajt6GQE8QH5YN/HGXfsUTV/hu9B35JpoBIyhgJYBZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hC7HtHu1ppMVxAquoYqU1wrzZ1NA9jneZcw5BOPMnVX6zCNxLXVqTQIax8mGaZ022wScjqmmTcnT70IFbmv1i3RphV07BeXKbCs9qU08dQ7Sz3CRb0IUjRg7aYI8XOSbe3DIABogYP5XtRibQvT4XUDrMnQ2rmfSxigGWTi6n+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fYvT1/Ls; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so44986915e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742814378; x=1743419178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WP0bnIzPp/bKVB6iCB93JUW+VRZsKoHPmvfeJJHBNw=;
+        b=fYvT1/LsLbI6OxTYIU6p7yL4L3OgGeAHqF011CqWDGii24eCK4/QBfrpT5W4bdOsmv
+         RODIMrgPASe4Tj2/7d7HPA4BO0jUhWMS/Izvf9Hlq9OawvC2NIbrs8JgvKdsq4xYZ4xR
+         gVx/3TAXsmNbTJbWVzLz9OHQVicrxa/u7HGgtrOec0i+Up+q+weYUfrHsvuPudrcZxQU
+         Afr9S8H/S0xDr9hzrBvXrKyf8U2g1uW65pjPcewGf52DYMk3s52zQaja5q+nvqYJJXNv
+         igWcCs5yu9yTexvAvf7LPJk7OzLZyeTdagnP+frY09aEsifH3KqOJt75nHiuwk79491a
+         4cbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742814378; x=1743419178;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3WP0bnIzPp/bKVB6iCB93JUW+VRZsKoHPmvfeJJHBNw=;
+        b=uxnzdjJ7qUz2zNcdjv2kiBATwFw33rX+H0gdQWLfYKHkQu57EnFo1ON9SCg6V8OvXv
+         4J3F3n+8ywsqS0d8VyA5bsFy9Ajsp6cKEnFerep8lFGqgrYQScuq369R+lSk5iKsxeVQ
+         b673zWkZVevRu1sbe3rL95LMSbq5Z3TJMURES4kUOV4XQoL3jKsYKqejhUT3dqO7j117
+         /sKj3LWNL/2Ywc8vfxpACPcQr3vDScWr1ggCn8fabgwudLGXBgu3dz2vnrMU+7fE3oho
+         8Zp/C+DTcIHXrN89ZVrusvouml3vKZwi85IZFh2wJms8XFZRSJS0Ke7DC2UldmC1n1J2
+         3Y3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuftLD774a6xnE0bJK6BVcn+rcBYVuTLQPuSwfsuM0jjtPfPTIqXmogj+ZTeLPZ2NEgNohBO8QvWtcprc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOVHUplIRU+U0uB9/0MXexIhdtnpbs36a793vK/bCx0BsOl6oP
+	2bSfki9Qhj8LRRFBJEKranDKgYcB8s1sb6/vdqgjFpfFYBQWIPcdK2BJ7yUhU/g=
+X-Gm-Gg: ASbGncsvmi9Y9PCRTMp8YPrglFZFbfg9sdl3Z7eFm0SphT8sMSOgarsUJvTuNcp4Io3
+	Hb7X24EZsBTvrTqIlcLhU3ZYDHv1D5nKitgcIzOZnMwsgLgy+BrbYL4l+QP3vyDZBCjlKfooIjs
+	10u0ryQUulHTKcuotQNmr/KViwTCnaAVub1XGSTNdVHN2ivhNll5jICHEnyKkXqt4ow5n9fZcuE
+	qsSidcv4GoQf1eL4u3jOzLVQ4y8lSI1eRp0ZgM2e8nkfLnZjgCpJOt61Ag4u0znS2q1OhnkH2Fx
+	yfth8rkz/vKIdZqefF7Y+l3hhEMm8BLs52mrHrwkiO32u7g86zjLeCdXdfkTxpGMVAm8SQGv4/Z
+	r9kNJ
+X-Google-Smtp-Source: AGHT+IGW+HXesDe2Nb6k7C43YiVAVslLNYvXirFy+tXP9WmjZ+UJP/9gumiDNsak+/cyJra/6fapvg==
+X-Received: by 2002:a05:6000:1566:b0:391:3291:e416 with SMTP id ffacd0b85a97d-3997f903a53mr11643747f8f.19.1742814377893;
+        Mon, 24 Mar 2025 04:06:17 -0700 (PDT)
+Received: from localhost.localdomain ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd28a46sm117236055e9.24.2025.03.24.04.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 04:06:17 -0700 (PDT)
+From: srinivas.kandagatla@linaro.org
+To: peda@axentia.se,
+	broonie@kernel.org,
+	andersson@kernel.org,
+	krzk+dt@kernel.org
+Cc: ivprusov@salutedevices.com,
+	luca.ceresoli@bootlin.com,
+	zhoubinbin@loongson.cn,
+	paulha@opensource.cirrus.com,
+	lgirdwood@gmail.com,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	konradybcio@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	johan+linaro@kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 0/6] ASoC: wcd938x: enable t14s audio headset
+Date: Mon, 24 Mar 2025 11:06:00 +0000
+Message-Id: <20250324110606.32001-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+Content-Transfer-Encoding: 8bit
 
-2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
-> +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
-> +			    const struct ovpn_peer_key_reset *pkr)
-> +{
-> +	struct ovpn_crypto_key_slot *old = NULL, *new;
-> +	u8 idx;
-> +
-> +	if (pkr->slot != OVPN_KEY_SLOT_PRIMARY &&
-> +	    pkr->slot != OVPN_KEY_SLOT_SECONDARY)
-> +		return -EINVAL;
-> +
-> +	new = ovpn_aead_crypto_key_slot_new(&pkr->key);
-> +	if (IS_ERR(new))
-> +		return PTR_ERR(new);
-> +
-> +	spin_lock_bh(&cs->lock);
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-At this point, should there be a check that we're not installing 2
-keys with the same key_id at the same time? I expect a well-behaved
-userspace never does that, but it would confuse
-ovpn_crypto_key_id_to_slot if it ever happened.
+On Lenovo ThinkPad T14s, the headset is connected via a HiFi Switch to
+support CTIA and OMTP headsets. This switch is used to minimise pop and
+click during headset type switching.
 
-["well, then the tunnel is broken. if userspace sets up a broken
-config that's not the kernel's problem." is an acceptable answer]
+This patchset adds required bindings and changes to codec and dts to   
+tnable the regulator required to power this switch along with wiring up
+gpio that control the headset switching.
+
+Without this patchset, there will be lots of noise on headset and mic
+will not we functional.
+   
+Changes since v2:
+	- udpated bindings as suggested by Rob and Krzysztof
+	- cleaned up swap_gnd_mic callback
+	- updated mux gpio to use dev_err_probe.
+	- added Tested-by and reviewed-by tags 
+
+Changes since v1:
+	- moved to using mux-controls.
+	- fixed typo in regulator naming.
+
+Srinivas Kandagatla (6):
+  dt-bindings: mux: add optional regulator binding to gpio mux
+  mux: gpio: add optional regulator support
+  ASoC: codecs: wcd-mbhc: cleanup swap_gnd_mic api
+  ASoC: dt-bindings: wcd93xx: add bindings for audio mux controlling hp
+  ASoC: codecs: wcd938x: add mux control support for hp audio mux
+  arm64: dts: qcom: x1e78100-t14s: Enable audio headset support
+
+ .../devicetree/bindings/mux/gpio-mux.yaml     |  4 ++
+ .../bindings/sound/qcom,wcd938x.yaml          |  6 +++
+ .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   | 25 ++++++++++++
+ drivers/mux/gpio.c                            |  5 +++
+ sound/soc/codecs/Kconfig                      |  1 +
+ sound/soc/codecs/wcd-mbhc-v2.c                |  2 +-
+ sound/soc/codecs/wcd-mbhc-v2.h                |  2 +-
+ sound/soc/codecs/wcd937x.c                    |  2 +-
+ sound/soc/codecs/wcd938x.c                    | 40 ++++++++++++++-----
+ sound/soc/codecs/wcd939x.c                    |  2 +-
+ 10 files changed, 76 insertions(+), 13 deletions(-)
 
 -- 
-Sabrina
+2.39.5
+
 
