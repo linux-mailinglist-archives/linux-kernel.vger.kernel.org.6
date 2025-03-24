@@ -1,124 +1,207 @@
-Return-Path: <linux-kernel+bounces-573207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F7BA6D44A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:30:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB39A6D448
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88EC03B11B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332AB16BA39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533918FDD8;
-	Mon, 24 Mar 2025 06:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CFF18FC80;
+	Mon, 24 Mar 2025 06:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="CWFZ056b"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PD92DmTf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF88291E;
-	Mon, 24 Mar 2025 06:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00655291E;
+	Mon, 24 Mar 2025 06:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742797799; cv=none; b=PH+HrKBCNDhHJGGMDvmBgfzZtmyeEtefomzL8JUyg9nhM1MEeGAnOQ7ih/NK4ojfZiolqEQTanfeb+CZIxGOC5/1kCgQG7yy+8To+p8PH7IPadSgS3CPrioqz5Ci7oLrmMcVY0UNTrFkqNgGU/eYTPHiP/R3F/ykZ6hLNc5XXwY=
+	t=1742797790; cv=none; b=dqViy40hnIbFyevpdxRNoKvJfbTsAjj0m9zrPr3F8l5YgeYd1RLDo8THB08aQY6fUFew73bHoSBRcabwqmdlSpilB1euhR9jmhCMGHj4G4UOtdhak+SJXOJvfpS8EPypNNcPqgif1dOEZE6l46UlLWYrB45R2t+ORQX/oz+pc6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742797799; c=relaxed/simple;
-	bh=Lm4uRu63/KJJw2DC5oteNhnhTDOIM+cXANS37kk/mac=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=IlA08TyFyaFjEqok/GvILXIrCqF6ixQRhDzaQJ3x6GItBLvYasJ2g6L3Ymqm4Epi75L3qic7d7nVIrryUDtErTHo71VcRy017uKMgQtljwTZG4NZ0/yiYjaaS23g0mo3BWL0kRGfLRpn9LU6Xg5zvbJnyviZuAaUOwv+RNwXs9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=CWFZ056b; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52O6TKu34126578
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 23 Mar 2025 23:29:21 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52O6TKu34126578
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1742797761;
-	bh=ZSd/+ojTYINNRGW4Jz8s2mPHc2J111xKaaTn8tja+wQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=CWFZ056bdNnOMjeX2/RJytFNeN4TOC0ttQgXPv4Qi6JD9T8uG3JdZpUP0eLcpbG7t
-	 r2RTJE1mioGwc0031Wy3o8aGEAymzVVEg7RHbCmt8cRw6y7sJla+c1P/I92FhelQ3Q
-	 7ZObXH42GcNvq0fS1Eu6f7EHCTHD3i9hM7k5dlDZPHfdwYrzm6/Tw4sz0QRHt1kjwo
-	 n7ImHb39Ti9DOj9HSelP7z24wEyvRyTEhIZV4AdnB/D7+pHhhyg1jw4EoObeBRbRuq
-	 UXbVZKuRIkiGiwQEidY1EJVQOkviknT+f/g+DHfWLzKBIwIkOV6DWYKM61R3hsz/cc
-	 5+mG/mXIA/Qmg==
-Date: Sun, 23 Mar 2025 23:29:20 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@kernel.org>, Tor Vic <torvic9@mailbox.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250324172723.49fb0416@canb.auug.org.au>
-References: <20250324172723.49fb0416@canb.auug.org.au>
-Message-ID: <6227FBC4-AF53-4992-9E29-C0D1DCAFA136@zytor.com>
+	s=arc-20240116; t=1742797790; c=relaxed/simple;
+	bh=j0HuqL2AATJYFT1QnDwQ3aiw/QaT5J8zqE2ndjJtY08=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pq0kRxq7cRuWcG8qIgr/sP0vyqrO11pR87kIlmLtjG5KLEnqzNqpAGHeaPIua0V58TTJh4l13jvFPzw1WUHkwDmUSz1YPwlGGQq6qtfddSDXGepu21SElSDKVpdd2W5aylXKm2TWbmV38oLXPzQRZ2Hgxj4L1n/uGcEVt6BnLC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PD92DmTf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07146C4CEDD;
+	Mon, 24 Mar 2025 06:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742797789;
+	bh=j0HuqL2AATJYFT1QnDwQ3aiw/QaT5J8zqE2ndjJtY08=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PD92DmTfeHHUViTaKsg4gXy2B3Opb/QErZHWTU6FbufFeVAF2JTM8z7E4PJ2qLAuy
+	 uMl5IbDC232zBgxxlgWAvlg4NSr9MqJr3TTrKv1L8vU6oFqA+3pQHkbUDRMlo1eNju
+	 GOdFLB3+sdEHfD7UvQkciz6J7FKrH7w9gMNHSeP6kT62h8t8RdCIUcIVKiLWRlWzYZ
+	 qkyen+gniFLSvZpZIQcIwQNPfqme6/OpGiQkPFEUwwUphWfAyq/vrCtZsUnfOCHRvT
+	 Ae+IA/J0cHvpkcyZCZLANrasx5cBGV7Fx++jnzEjDCdTNc8+ESVFgAtBUcR8yljyOl
+	 LN38tv9nmR0Ww==
+Date: Mon, 24 Mar 2025 15:29:45 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Douglas Raillard <douglas.raillard@arm.com>
+Cc: rostedt@goodmis.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to
+ synth_event_trace2()
+Message-Id: <20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
+In-Reply-To: <3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
+References: <20250318180814.226644-1-douglas.raillard@arm.com>
+	<20250318180814.226644-3-douglas.raillard@arm.com>
+	<20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
+	<3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On March 23, 2025 11:27:23 PM PDT, Stephen Rothwell <sfr@canb=2Eauug=2Eorg=
-=2Eau> wrote:
->Hi all,
->
->After merging the tip tree, today's linux-next build (x86_64 allmodconfig=
-)
->failed like this:
->
->cc1: error: bad value 'native' for '-march=3D' switch
->cc1: note: valid arguments to '-march=3D' switch are: nocona core2 nehale=
-m corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-=
-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client rocketlake =
-icelake-server cascadelake tigerlake cooperlake sapphirerapids emeraldrapid=
-s alderlake raptorlake meteorlake graniterapids graniterapids-d arrowlake a=
-rrowlake-s lunarlake pantherlake bonnell atom silvermont slm goldmont goldm=
-ont-plus tremont gracemont sierraforest grandridge clearwaterforest knl knm=
- x86-64 x86-64-v2 x86-64-v3 x86-64-v4 eden-x2 nano nano-1000 nano-2000 nano=
--3000 nano-x2 eden-x4 nano-x4 lujiazui yongfeng k8 k8-sse3 opteron opteron-=
-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdve=
-r3 bdver4 znver1 znver2 znver3 znver4 znver5 btver1 btver2
->make[3]: *** [scripts/Makefile=2Ebuild:203: scripts/mod/empty=2Eo] Error =
-1
->cc1: error: bad value 'native' for '-march=3D' switch
->cc1: note: valid arguments to '-march=3D' switch are: nocona core2 nehale=
-m corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-=
-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client rocketlake =
-icelake-server cascadelake tigerlake cooperlake sapphirerapids emeraldrapid=
-s alderlake raptorlake meteorlake graniterapids graniterapids-d arrowlake a=
-rrowlake-s lunarlake pantherlake bonnell atom silvermont slm goldmont goldm=
-ont-plus tremont gracemont sierraforest grandridge clearwaterforest knl knm=
- x86-64 x86-64-v2 x86-64-v3 x86-64-v4 eden-x2 nano nano-1000 nano-2000 nano=
--3000 nano-x2 eden-x4 nano-x4 lujiazui yongfeng k8 k8-sse3 opteron opteron-=
-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdve=
-r3 bdver4 znver1 znver2 znver3 znver4 znver5 btver1 btver2
->make[3]: *** [scripts/Makefile=2Ebuild:98: scripts/mod/devicetable-offset=
-s=2Es] Error 1
->make[2]: *** [Makefile:1276: prepare0] Error 2
->
->Caused by commit
->
->  0480bc7e65dc ("x86/kbuild/64: Add the CONFIG_X86_NATIVE_CPU option to l=
-ocally optimize the kernel with '-march=3Dnative'")
->
->I have reverted that commit for today=2E
->
->$ x86_64-linux-gnu-gcc --version
->x86_64-linux-gnu-gcc (Debian 14=2E2=2E0-12) 14=2E2=2E0
->
->cross build - ppc hosted
->
+On Wed, 19 Mar 2025 14:51:42 +0000
+Douglas Raillard <douglas.raillard@arm.com> wrote:
 
-Cross compiling?
+> On 19-03-2025 13:37, Masami Hiramatsu (Google) wrote:
+> > On Tue, 18 Mar 2025 18:08:12 +0000
+> > Douglas RAILLARD <douglas.raillard@arm.com> wrote:
+> > 
+> >> From: Douglas Raillard <douglas.raillard@arm.com>
+> >>
+> >> Rename the frehsly exposed trace_synth() to synth_event_trace2() to
+> >> comply with the existing naming convention. Since synth_event_trace()
+> >> already exists (and operates on a "struct trace_event_file *"), use a
+> >> new name for it.
+> >>
+> > 
+> > I don't like this '2' and similar version digit naming for the functions.
+> > Can you choose another better name?
+> 
+> I was hoping for some suggestions as I don't like it either :)
+> 
+> The natural prefix for functions operating on "struct synth_event *" would by "synth_event_*",
+> but most of the existing API already uses the "synth_event_*" prefix, and is using
+> "struct trace_event_file*".
+> 
+> > BTW, can you also write a cover mail so that what is the goal of this
+> > series, background and results? 
+> 
+> Ok, I'll respin the series with a proper cover letter. The gist is I was following the doc [1] on how
+> to create a synthetic event, trying to apply that to a kernel module we have that needs to create new events.
+> 
+> Unfortunately, it turned out that all the exposed APIs to emit the events (such as synth_event_trace()) require
+> getting a "struct trace_event_file*" before the call. This breaks when a user starts creating instances in tracefs,
+> as each instance will have its own "struct trace_event_file*".
+
+Yeah, because those are mainly for the tests, and we are expecting that if
+any modules wants to emit its events, it will define new trace-events and
+use it instead of synthetic events. The synthetic events are for
+programming via tracefs, not reporting from the kernel modules.
+It is confusing if any synthetic events are reported without any origin of
+real trace event. (so, it is an intermadiate event type.) IOW, We expect
+that synthetic event is reported by other events via event trigger.
+The current APIs are just for testing.
+
+Hmm, I should hide those by CONFIG_SYNTH_EVENT_TESTS.
+
+> The way this is done for normal trace events is
+> that each instance registers a probe on the tracepoint with the struct trace_event_file* as the void *data pointer.
+> Then when the tracepoint is called, all the probes are called and the event data is copied in all instances in which
+> it was enabled.
+> 
+> Although the synthetic event API does create that tracepoint and has an appropriate probe function, none of the exposed API
+> I could find make use of it. The exception is trace_events_hist.c had its own private version of it that actually calls all
+> the probes of the tracepoint "manually", so that the event is correctly emitted in all the instances it was enabled in. This
+> is the function touched by this patch.
+
+No, please don't touch the synthetic events for reporting any events via
+kernel modules. Those should use normal trace events for avoiding the
+confusion.
+
+Would you have any reason not to use normal trace events?
+
+Thank you,
+
+> 
+> So that means that as it stands:
+> 1. The exposed API is only really usable with the "NULL" struct trace_event_file*, which maps to the top-level one.
+> 2. If a user creates an instance and enables the event in it using tracefs, the code that emits the event using the existing API
+>     will completely ignore that and keep emitting the event in the top-level instance that it was wired to do.
+> 
+> Approximately nothing in the synth event API that takes a "struct trace_event_file*" will work properly with user-created instances.
+> 
+> [1] https://docs.kernel.org/trace/events.html#dyamically-creating-synthetic-event-definitions
+> 
+> > 
+> > Thank you,
+> > 
+> >> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
+> >> ---
+> >>   include/linux/trace_events.h      | 2 +-
+> >>   kernel/trace/trace_events_hist.c  | 2 +-
+> >>   kernel/trace/trace_events_synth.c | 4 ++--
+> >>   3 files changed, 4 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> >> index e069d84a73f0..753ce8aecfe4 100644
+> >> --- a/include/linux/trace_events.h
+> >> +++ b/include/linux/trace_events.h
+> >> @@ -521,7 +521,7 @@ struct synth_event;
+> >>   
+> >>   extern struct synth_event *synth_event_find(const char *name);
+> >>   
+> >> -extern void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+> >> +extern void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
+> >>   			       unsigned int *var_ref_idx);
+> >>   
+> >>   extern int synth_event_delete(const char *name);
+> >> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> >> index 7067f6fedb1a..ee0fee123c91 100644
+> >> --- a/kernel/trace/trace_events_hist.c
+> >> +++ b/kernel/trace/trace_events_hist.c
+> >> @@ -822,7 +822,7 @@ static void action_trace(struct hist_trigger_data *hist_data,
+> >>   {
+> >>   	struct synth_event *event = data->synth_event;
+> >>   
+> >> -	trace_synth(event, var_ref_vals, data->var_ref_idx);
+> >> +	synth_event_trace2(event, var_ref_vals, data->var_ref_idx);
+> >>   }
+> >>   
+> >>   struct hist_var_data {
+> >> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+> >> index 4a9a44d37ffc..8837aa258479 100644
+> >> --- a/kernel/trace/trace_events_synth.c
+> >> +++ b/kernel/trace/trace_events_synth.c
+> >> @@ -850,7 +850,7 @@ EXPORT_SYMBOL_GPL(synth_event_find);
+> >>   typedef void (*synth_probe_func_t) (void *__data, u64 *var_ref_vals,
+> >>   				    unsigned int *var_ref_idx);
+> >>   
+> >> -void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+> >> +void synth_event_trace2(struct synth_event *event, u64 *var_ref_vals,
+> >>   			       unsigned int *var_ref_idx)
+> >>   {
+> >>   	struct tracepoint *tp = event->tp;
+> >> @@ -873,7 +873,7 @@ void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+> >>   		}
+> >>   	}
+> >>   }
+> >> -EXPORT_SYMBOL_GPL(trace_synth);
+> >> +EXPORT_SYMBOL_GPL(synth_event_trace2);
+> >>   
+> >>   static struct trace_event_fields synth_event_fields_array[] = {
+> >>   	{ .type = TRACE_FUNCTION_TYPE,
+> >> -- 
+> >> 2.43.0
+> >>
+> > 
+> > 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
