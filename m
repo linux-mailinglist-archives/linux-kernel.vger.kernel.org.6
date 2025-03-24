@@ -1,167 +1,195 @@
-Return-Path: <linux-kernel+bounces-574111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4857EA6E0B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:18:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622B1A6E0D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E7E168820
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3297D16905B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B7525E461;
-	Mon, 24 Mar 2025 17:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B42B2641F5;
+	Mon, 24 Mar 2025 17:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymqhujPM"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="N/We4BvY"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8320261568
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFD22641D1;
+	Mon, 24 Mar 2025 17:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742836713; cv=none; b=ubsuCtj8KAKU4B2JF757hhILQ5Zuw4UW9JaQsQ4SgJfDDxy8TMAgQzlWlFw0AtDQU37+Trmsny5Y6ulhsQIIQZmUOgz6Q6cqAD4AMKGl4dokM7HbEdokwAdmuWKfvzg5RRUmbPrMkQC9mA6445MZClmBcEL8LGiTmH6OpiSKbkk=
+	t=1742837426; cv=none; b=uEsvmst0Nn62BPHqpzpRKKxF3FDttdWFd6dA2QYnNW8LRgzp2C8bhYW+agPfImRcfsCd3LXB2cjshKlgLBvZK60oNTllnW000p6DO8DSuXP3vmBCiT5tBj0EA5YzM90yjih/f10qq1xyxVrX1BuKSZQs4afXbeBVVEPNC+efLQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742836713; c=relaxed/simple;
-	bh=OO4f4+Q0rzt9wElVeMHssbBupiD7LRrwqaMbqJE61yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLczxpTTu2qlXtqpkfb7ayTgxO/e3DxxeZBA47rk6kYDOHdZ7fkKSDaT7BQ+K3lIetGeGD8erhzWw14c8Z2DQNz0JIpJ6BDdwbtSSJ+0BKe9fE6mNLQ99t9dx5H/uWTCV4JfGrldJ1qYHiw11dXW6pI42a3qQsQUhNM5Qlrzob8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ymqhujPM; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22548a28d0cso90544135ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742836711; x=1743441511; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HZEbKpA1frJBrkSoz9cnFIH7frubQfuf2pOMnH5himQ=;
-        b=ymqhujPMejytN3hGhaPOFgEwdmbPFw+LU/ZrxBVZ/zeSR+t9uomiWIdaZ4WeWx1z62
-         EDm7IUmJurV+QLTZEFIIFa+lzucxN231CvKPMzCx7QDjb8nJcvD5TBaY2H90uEfl/Y2V
-         28ER1h4eI6QdijFjo17/m7KpypX3N7uqBj7ICsZCLv/jTdoUniqHDV4QpdSgjPxltY0B
-         tcMI61hjhV7daoeAVc1bjxoYG5vo86I6NXZE1zTbvF0SSAF5Y19ufUxbzFjlNy9AksNB
-         Wp3Bo3G3MI52s12Ngvg5OvUck05+BaUbpBt5ZnIquGPe1Rb48ipqFu/g18qqSYTA+gjc
-         aB4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742836711; x=1743441511;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZEbKpA1frJBrkSoz9cnFIH7frubQfuf2pOMnH5himQ=;
-        b=pMWBauYKfcPYCw3VcgLTB+fFY1094JTpynZhpZYceO9yNQPy2rcOzxNoNY2kaTW7fq
-         A2xJ2Q6SwGs34h4MQVg9pOMy5zrg2mjm9KH64QNyYqvx9FjL/v8mTuJj9ouD+fwmpLXX
-         w65WigTfTOwUwDwrQgO/faMq6i2Kmp9h/1hZM7sra11OMdXCaM2s2YKFa3NFDSHHuTV1
-         6A33LC20Ky07O47uVE09XBbf7vq2PmxjLMx49hzfFOdrdbHS4zZxS5pbRn9AL+ENgSk/
-         cqpJSGmYHiTSmF3IKOsweIE4s/0HrG9iyBH9hkiekCmZDE0e0Mfv1+PRMya0mdpB5gLW
-         szhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6nspeiFcAuAeqqQ+0up5y0l2QsWtRg8gHgTIGiS8kKpdUE5MDJcR6N0OERcPptc5deWfwRT0zLrC61Xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjxTAnraxTJpJ1TTyNSsDul+X/Rw08KkSOf/NAtrn1WUFueMYn
-	J8Oo+WrDI8rxlPsTfMF0QyUhsaWjKWl/LVP0IZY1Xf7i7x01I6oZNwNF1eo/rOGUqr5Yuc+LDmM
-	=
-X-Gm-Gg: ASbGnctEwomgeU0XJSdDIHNR8VKhTWAunIs9sNljOBRui+L3EwMwDEzLdpuKh9WmaoQ
-	eUo+op5rRwIuDUnA9EsbnD4B/j53M3W1uI61txlnqGUvZe1NDJk+FugudDwHBU+GxFUFbD8ufHt
-	c9AsbEpJix5+yvRf47yvYHj+SCNhEJJ5a2K1XWhb4OagltJbH4WoYtZPd4X//pAekcbtpylIYJ2
-	hNUpng/ej0i7HkiNc6EAjvXCiIBhrGU9ge/NoE3+yBLcmwCo+HhehC9zEF66pzPzUIy2tG418kS
-	uP2VQzPkuJhkpxAT/K4nAFsi1nB+z/TFmmyRSqWwWlmwACS5H75ExoLrnZsviu+IHg==
-X-Google-Smtp-Source: AGHT+IG/+IMOKh9mdPF7QL4qAJQoeDmcoGNXXl94gtnk4lfwQykOcdsW47jIFy2/Z8VlBPbmIKO/Sg==
-X-Received: by 2002:a17:902:f648:b0:224:fa0:36da with SMTP id d9443c01a7336-22780c7c06fmr184562345ad.18.1742836710841;
-        Mon, 24 Mar 2025 10:18:30 -0700 (PDT)
-Received: from thinkpad ([120.60.67.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3bbedsm73934205ad.3.2025.03.24.10.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 10:18:30 -0700 (PDT)
-Date: Mon, 24 Mar 2025 22:48:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Niklas Cassel <cassel@kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v12 05/13] PCI: dwc: Add dw_pcie_parent_bus_offset()
-Message-ID: <j3qw4zmopulpn3iqq5wsjt6dbs4z3micoeoxkw3354txkx22ml@67ip5sfo6wwd>
-References: <20250315201548.858189-1-helgaas@kernel.org>
- <20250315201548.858189-6-helgaas@kernel.org>
+	s=arc-20240116; t=1742837426; c=relaxed/simple;
+	bh=a18JP2W8KQVW4PEFPdnixiYC42ZqHhBz7RYwa8V3mfM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kj2cF5TgkzbwEANBnzl7yR6UtnyjOnmWkILjqIXLpxFBzBmwlDUNsMTJGCmontEZBjjYDTKDiL05x2/w3M02ZytXjMjdAgAKWGAMiHl5+FK2JbSOizwezSeyIlM5zQBzu/uHhMGvyHgYF5/f3X2OfEp5F0AlfROIkURCG8ftbl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=N/We4BvY; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4BB15A0611;
+	Mon, 24 Mar 2025 18:21:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=sn+9WvrfHWY+2IqdbQcpXc2meRV7F6T0M7XWCp5U8+M=; b=
+	N/We4BvY8xp9qmON0WwaSaZZNPVnV/yejxsPz9uP3dS7fmbOucHgc5Lwhkvurdtb
+	hLt0ZsdhHzkY0N0kIJdUFqVqw022p4fNFukJe/qQ23crkUnfuwNqYR2IV94v5cXI
+	1fu7/U8K4gNfEMMnPvMCS9Brc7JWkiD1vetg/jqfzrKWreKWM96mIWnbCQf2QuK4
+	EhmWOHGz36PBv4NM107zb5+sdulhuKcucJTFK1sAZHW6W3yhexHWxxdcbtXU+Fc6
+	ndC1ZBaExHo9xpPmvEyuryBisoKQE494Oou76iSRmyH6j//tBl3tGnXCzqnuTBTu
+	0doMda47UZOfavOpy8ssII3vGdLqOZ/Ey+dCnu/kBvqeN31ZJH5aeeuBH/elocFh
+	/v9hE8DH9Ohrc8FEqCtyxG06DBTHopfSX1LIELaREiEoGt2XNWh1FOg+qLwlnfMv
+	A4oremgjR9wuiQyiyFBEp7w8xR8pW9ybQ7ytVyqIGysYU4EFLeiacQdM84//5E4N
+	gbVtmHJBWAYLjI/nyeN8ZAnRPKMtzFnUmR3DGtOMI7DiClapOL+7drfkeg6LH37m
+	bxXNZDlnmqtrnJP2pfFcu0dYepGU/isu4s2DyOQlSPkzvVZxt0HYQ//1zoZAiS9z
+	5qBtvyusORs8TtLrW7jR1LmMmNWmDMvS76TRenHsctg=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Markus
+ Elfring" <Markus.Elfring@web.de>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>, Chen-Yu Tsai <wens@kernel.org>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Vinod Koul
+	<vkoul@kernel.org>, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v6] dma-engine: sun4i: Simplify error handling in probe()
+Date: Mon, 24 Mar 2025 18:20:25 +0100
+Message-ID: <20250324172026.370253-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315201548.858189-6-helgaas@kernel.org>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1742836890;VERSION=7987;MC=2160210615;ID=85768;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D948526D7C62
 
-On Sat, Mar 15, 2025 at 03:15:40PM -0500, Bjorn Helgaas wrote:
-> From: Frank Li <Frank.Li@nxp.com>
-> 
-> Return the offset from CPU physical address to the parent bus address of
-> the specified element of the devicetree 'reg' property.
-> 
-> [bhelgaas: return offset, split .cpu_addr_fixup() checking and debug to
-> separate patch]
-> Link: https://lore.kernel.org/r/20250313-pci_fixup_addr-v11-5-01d2313502ab@nxp.com
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 23 ++++++++++++++++++++
->  drivers/pci/controller/dwc/pcie-designware.h |  3 +++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 9d0a5f75effc..0a35e36da703 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -16,6 +16,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/ioport.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/platform_device.h>
->  #include <linux/sizes.h>
->  #include <linux/types.h>
-> @@ -1105,3 +1106,25 @@ void dw_pcie_setup(struct dw_pcie *pci)
->  
->  	dw_pcie_link_set_max_link_width(pci, pci->num_lanes);
->  }
-> +
-> +resource_size_t dw_pcie_parent_bus_offset(struct dw_pcie *pci,
-> +					  const char *reg_name,
-> +					  resource_size_t cpu_phy_addr)
-> +{
+Clean up error handling by using devm functions and dev_err_probe(). This
+should make it easier to add new code, as we can eliminate the "goto
+ladder" in sun4i_dma_probe().
 
-s/cpu_phy_addr/cpu_phys_addr/g
+Suggested-by: Chen-Yu Tsai <wens@kernel.org>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
 
-'phy' usually refers to the physical layer IP block. So 'cpu_phy_addr' sounds
-like the address of the CPU PHY.
+Notes:
+    Changes in v2:
+    * rebase on current next
+    Changes in v3:
+    * rebase on current next
+    * collect Jernej's tag
+    Changes in v4:
+    * rebase on current next
+    * collect Chen-Yu's tag
+    Changes in v5:
+    * reformat msg to 75 cols
+    * keep `\n`s in error messages
+    Changes in v6:
+    * remove redundant braces
+    * break lines to stay under 85 cols
+    * reword subject and message
 
-> +	struct device *dev = pci->dev;
-> +	struct device_node *np = dev->of_node;
-> +	int index;
-> +	u64 reg_addr;
-> +
-> +	/* Look up reg_name address on parent bus */
+ drivers/dma/sun4i-dma.c | 46 ++++++++++++-----------------------------
+ 1 file changed, 13 insertions(+), 33 deletions(-)
 
-'parent bus' is not accurate as the below code checks for the 'reg_name' in
-current PCI controller node.
-
-> +	index = of_property_match_string(np, "reg-names", reg_name);
-> +
-> +	if (index < 0) {
-> +		dev_err(dev, "No %s in devicetree \"reg\" property\n", reg_name);
-
-Both of these callers are checking for the existence of the 'reg_name' property
-before calling this API. So this check seems to be redundant (for now).
-
-- Mani
-
+diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+index 24796aaaddfa..00d2fd38d17f 100644
+--- a/drivers/dma/sun4i-dma.c
++++ b/drivers/dma/sun4i-dma.c
+@@ -1249,11 +1249,10 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 	if (priv->irq < 0)
+ 		return priv->irq;
+ 
+-	priv->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		dev_err(&pdev->dev, "No clock specified\n");
+-		return PTR_ERR(priv->clk);
+-	}
++	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
++	if (IS_ERR(priv->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk),
++				     "Couldn't start the clock\n");
+ 
+ 	if (priv->cfg->has_reset) {
+ 		priv->rst = devm_reset_control_get_exclusive_deasserted(&pdev->dev, NULL);
+@@ -1328,12 +1327,6 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 		vchan_init(&vchan->vc, &priv->slave);
+ 	}
+ 
+-	ret = clk_prepare_enable(priv->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Couldn't enable the clock\n");
+-		return ret;
+-	}
+-
+ 	/*
+ 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
+ 	 * likes to leave these dirty
+@@ -1343,33 +1336,23 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_request_irq(&pdev->dev, priv->irq, sun4i_dma_interrupt,
+ 			       0, dev_name(&pdev->dev), priv);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Cannot request IRQ\n");
+-		goto err_clk_disable;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Cannot request IRQ\n");
+ 
+-	ret = dma_async_device_register(&priv->slave);
+-	if (ret) {
+-		dev_warn(&pdev->dev, "Failed to register DMA engine device\n");
+-		goto err_clk_disable;
+-	}
++	ret = dmaenginem_async_device_register(&priv->slave);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to register DMA engine device\n");
+ 
+ 	ret = of_dma_controller_register(pdev->dev.of_node, sun4i_dma_of_xlate,
+ 					 priv);
+-	if (ret) {
+-		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
+-		goto err_dma_unregister;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to register translation function\n");
+ 
+ 	dev_dbg(&pdev->dev, "Successfully probed SUN4I_DMA\n");
+ 
+ 	return 0;
+-
+-err_dma_unregister:
+-	dma_async_device_unregister(&priv->slave);
+-err_clk_disable:
+-	clk_disable_unprepare(priv->clk);
+-	return ret;
+ }
+ 
+ static void sun4i_dma_remove(struct platform_device *pdev)
+@@ -1380,9 +1363,6 @@ static void sun4i_dma_remove(struct platform_device *pdev)
+ 	disable_irq(priv->irq);
+ 
+ 	of_dma_controller_free(pdev->dev.of_node);
+-	dma_async_device_unregister(&priv->slave);
+-
+-	clk_disable_unprepare(priv->clk);
+ }
+ 
+ static struct sun4i_dma_config sun4i_a10_dma_cfg = {
 -- 
-மணிவண்ணன் சதாசிவம்
+2.49.0
+
+
 
