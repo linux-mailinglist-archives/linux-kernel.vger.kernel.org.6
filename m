@@ -1,224 +1,150 @@
-Return-Path: <linux-kernel+bounces-573070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3947EA6D2C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:03:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D93A6D2C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1BE189360E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101A11894686
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7E11187;
-	Mon, 24 Mar 2025 01:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456EE171C9;
+	Mon, 24 Mar 2025 01:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N0xnuUlt"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fqS9zwmF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D55EC8E0;
-	Mon, 24 Mar 2025 01:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742778217; cv=fail; b=n0r7Qu9aP84+XkEHbLaWjbcaU39lEU7SHRpqVIgJ5//QgJc92P5Hf5gSwmgoi5gmboGo2EMCALrBb4kVMR9qQaLr66cF42CJt7YJ8a/GaA1jgByAkcEp4YERY92lbjyfqTSDkhl1pSU34PlGmO4P+/6ON4uKL0Idq03aZ9RsbeA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742778217; c=relaxed/simple;
-	bh=zpaL8riQFPTkOchZiSWD0f2gcv6YkSc9CCGy88fBwVc=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=O/v6SyFf/TqgwkWR9V5bRc8tLyZ/5i22ZqpDHVnXI9PQ739E0fPZtyHXAE+rSIDEOUrRuHpljWJN7LC1S6YXr1G/4SQqhYKaCLYFfVG7pQ0OXTgINVc9C3hMlRg58zFtGQSx6F9K9akUmBr0WlFOg6LIek/MpCJm8Xp46mmpnDQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N0xnuUlt; arc=fail smtp.client-ip=40.107.94.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QtMsBnoXmPyNT7KeM/SNcRQbl69N48v8k7S6MEC2/cUiYACeVipRfFN/1UBH7fcUkCLhujXwQqK/QNGpWDthTZoNCVgUajOOXxRAYhp4n8PHwtR6PznK4gzPDcO2iV4cRDt7ol+oqenIfX35DZmLTkZxX8LLby24gbF3DrCUp/8Teny1eyYXEUdOhjztbkAu8lRujqvrJ092+FLN8Ih9IZqCLriz5zzY7aYD+JQ9u5u++otOewJznnN/qtbNL4sfaBO6pHmadhnYNH+vIWJL1qT5NaxxpUXLR+AH6M/Wjur7IgW0bNiSp/+DAL2vgZv8roDm/l9TmMSrA4gaidlJxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=luQqx1BMOT3rBcFW1spHs+SRlLWFlDh5qSAvNtfWkuo=;
- b=lqN518S+eAm0zJ/8uDxfnY6av8OlAt7K29M/RglR7dhymEpYnB0muzqQvp7JBEwA3u9c2OFKsc0K5Y1G1HS1uj2sqZmBAp1j7QHbUPBkLT+kfFrxAncCCJIRHR4mMNeKhREucIMin9mrTfFFLYc+yLoBEe2XsgPNI2LCNaYZGXYIrBGXh1FbDkUfgKA/ST7NPqmuC5ES4QRS0r2Gfv19OSTsguePPAtyvXc9xqMX0tVfB2cEiaRXjNxKo/am++jTahxhu5u3oFeAhrhas5hhapwJebXznUNUgdUCvkmZ7Wr6st3CHFou75Qj3FSEJ4p4YaDE+2m68cyg/EIdulMeAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=luQqx1BMOT3rBcFW1spHs+SRlLWFlDh5qSAvNtfWkuo=;
- b=N0xnuUltYRO56GEbgR/9dumjyb7Dm//OgCdXSMbRn8/hbt9TpSnWE0xI32+xr/ArLynWEHqJ5Ntjg1MKvsxhUtndcCeMdrEJQizvhlHpVU1sae06JMycgoVofv0tVkXbmh5Y/m5G8DEGhjbI++L1Kj+3eGrITAVMOwsr2icTGGVWF7wSLf+WefeHO6gMjghTnKeZ5XrSqTj1XMdZW/uS8UElVuTvo2hydYH/SR7jWyG7qlofQsiKAdBXeyEP55ufVI4TD3LYijCLho/lde4VnV2+R0qDs8/axEw3dtah05PDPMw46zEfrWSMfVYHFUrCsspGiNEsKQvtGbJAoz5t3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DM4PR12MB6010.namprd12.prod.outlook.com (2603:10b6:8:6a::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.42; Mon, 24 Mar 2025 01:03:31 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 01:03:31 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 10:03:27 +0900
-Message-Id: <D8O3BBP1RR5Q.2S2NBBCAEX1KI@nvidia.com>
-Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Danilo Krummrich"
- <dakr@kernel.org>, "David Airlie" <airlied@gmail.com>, "John Hubbard"
- <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl"
- <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Simona Vetter"
- <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH RFC v3 6/7] gpu: nova-core: add basic timer device
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Daniel Brooks" <db48x@db48x.net>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250320-nova_timer-v3-0-79aa2ad25a79@nvidia.com>
- <20250320-nova_timer-v3-6-79aa2ad25a79@nvidia.com>
- <Z9xb1r1x5tOzAIZT@boqun-archlinux> <D8LPCCP6JNYU.28DYTEK5BB74K@nvidia.com>
- <87r02qz77h.fsf@db48x.net>
-In-Reply-To: <87r02qz77h.fsf@db48x.net>
-X-ClientProxiedBy: TYWPR01CA0044.jpnprd01.prod.outlook.com
- (2603:1096:400:17f::11) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D2E2E3381
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742778498; cv=none; b=C+laB4lc0BoCcMzlnLVjErHMwTV6BwI7y7x5pu6joEMZtd6/xKITVkP5wb7URV5Kgxi+kJ/K5RuqXlig5jnyCEOyYDdPZBDwnkUbzU3qIwbyVY/4B0q8q7ehKJ4/Fv8ye4NrLq9wcLQFe9MXFweJ9kK2Iqpi49fRCVBFGV28fpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742778498; c=relaxed/simple;
+	bh=f/R/yUiTOBUoCj9WY7YVryxcoDDHuwcFhanvZzyi6G4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDCeNTxi6hAqtLfmWdW9WpWqVmf5QuNeXU73ppygiCC4ywmjb1ybbMYS32kcmntbnorELjkF335lyHpGDV9NZEHGB+6J9LxTE5FBZJzuRF+GEJM9UVIVSf1MtM33MSGtiwsKNJyI5vM6jivJ6xOYRhPqvV4GCqq0xkFjCDcy3LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fqS9zwmF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742778495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C0ry4lY4x2+hqK6ZCLNUPERIg6iDxjpwe3Lrc8jTe4U=;
+	b=fqS9zwmFgInniI1W4zmQ1v5JzMBsQme2Q9P9/m+S5FF+yKdPDUJuSrQvgqWDM7sOG+WNzq
+	xKiqMnv5mMMgOLRJZkouSdKa+93B+Mr5mdwm5UXR70+jRmN1EWcJ9aqCsUfbV5NSDT6Jkk
+	/KA4Nb2ANIX5mJvKXrhAI2QI3DN4EQw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-UvbDM-vLPTSlfUuZVyFCjA-1; Sun,
+ 23 Mar 2025 21:08:12 -0400
+X-MC-Unique: UvbDM-vLPTSlfUuZVyFCjA-1
+X-Mimecast-MFC-AGG-ID: UvbDM-vLPTSlfUuZVyFCjA_1742778490
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 595A61800257;
+	Mon, 24 Mar 2025 01:08:10 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.24])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 539FF180A801;
+	Mon, 24 Mar 2025 01:07:56 +0000 (UTC)
+Date: Mon, 24 Mar 2025 09:07:10 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: akpm@linux-foundation.org, kasong@tencent.com,
+	tim.c.chen@linux.intel.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] mm: swap: factor out helper to drop cache of
+ entries within a single cluster
+Message-ID: <Z+CwPsZyVqYH1Ijb@MiWiFi-R3L-srv>
+References: <20250320114829.25751-1-shikemeng@huaweicloud.com>
+ <20250320114829.25751-8-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DM4PR12MB6010:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b361b55-d368-4485-ec05-08dd6a6fb13d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dUgrOCtqSUt4L2NwSEFqK0FKdzlnSktzT2FBUnlJblBUemoxUkVnbWljbWpZ?=
- =?utf-8?B?N2FVVXBPaHptZ3lzd3ZrNFZ3WncvQTliVXV4bHB0WlY1QktmZlRDTWZEb1dm?=
- =?utf-8?B?dGQrUStxNXcwOE9MRlMza1ZKSENaTytOVG41aW1Dc3lRdHZSNi9XQWE1UzNU?=
- =?utf-8?B?L0J1Rk1QNEVxWHZqbkVhejVwWUxEVkk5SE0xT0NMTTlIV2U3UlVFQXR2Kzky?=
- =?utf-8?B?ZDFtdnBsNXR6ZUtDZXBZZ1V5ZkFKaFhHMGE5bFZ3Sk9YOGYrb1IyZmVib05T?=
- =?utf-8?B?ZnhsR0hqTWdEWS84Y1EvTTRjZk0wN1lScjQ1ZlpReW04NHZjWksxVjdHTTJ1?=
- =?utf-8?B?MFUrNWp5UE85OEVTcXZDUHFqRzNYMVprQzgycHBBdXM4U3pINDhUYjkwNDlB?=
- =?utf-8?B?R2U5ZGJVaGtrZlpNWHlaRTFjZ0tkYTA1RnpPWUZUeHdiSE5VOFpNcklMMlRX?=
- =?utf-8?B?V0M4aVBSUkhNSEpQNm9INWVFR1lad1NOTTk2VzZ2RmhlYjQ5VWRic2YxQW5s?=
- =?utf-8?B?MU4wb21JV3BZVjVOalNTSEhvVVZ5NzEvOTJiVDhzTWdhUi9sd0t6Y3ZHN05o?=
- =?utf-8?B?N2ptcTMzQ2MvYURNZG1QQmVVUFNiZHpOd0VJSkF2Vk1Rbk1ZcWFEYXRrMXF2?=
- =?utf-8?B?bU41Q0k4dytlQmkvS1lMbjdXdFJwRC9JMXNNS1YxbEtWL1FDUHJ6em5pNFFu?=
- =?utf-8?B?anBKUUljM3lPUXJPVDR0dDBEMmFUd0RLQU80ZVRuT1ZGRS8yekRyZE1MNUtE?=
- =?utf-8?B?aTFuK1ZwdFlLVGFNbFpiMGcxeW1sSHJIankrQnRQRmhYRWY2RWdJTys5Vmo5?=
- =?utf-8?B?WTl6YlZZYlhyM0h3MW4zRjhLL2tIYk5HVGI5RTJTbys1TFM2SVZOR1Vadk9O?=
- =?utf-8?B?blBoaUFNWktOanVBN2xZbkM4RDBaaklZcGMxM2N2STkvYk42eHZIdjRSTTlM?=
- =?utf-8?B?QkU3THJZMitsbThJMEJJTjZ6QzFRZ2QvU3lvcmx5T0ltbklpWC9NRmpXRjMz?=
- =?utf-8?B?bUJMclpkZ1dyWHVYNnpMNjNTOElFVEN3K1h6M01Bc3ltcVRPV3h4a3BxUUsw?=
- =?utf-8?B?b2RkTFpSZ2hPU3J2aEZDc3NPS1l5bTNpTldPSVN0Vno5NHo1MzJoMk1LbkdP?=
- =?utf-8?B?K3FsU2txSnhYOVR6SWNrN1ZOcG1TT3hOSE5BSFZkaUZEL3h3cUdxd1E4YXVr?=
- =?utf-8?B?OWhzaTZ5Q3Byc3dtVjEwNHd5Wnh1clc1RnEwVVJJVGFWM25tSHFRbFpGTzlR?=
- =?utf-8?B?SWI3Y3hVQVpsQW0veFZ2NnVTRTRJdmZ5TEF1ZnhVZVAyNEFmVktMblRQbGlR?=
- =?utf-8?B?R3JkaVViR2gra0FVNEZ4ZS9pN1dERHoyRSs2ZjgrbmU4Z214amxLNlhoU29O?=
- =?utf-8?B?TlRsV1VPOFEySldQNUE1WXBIaUlQZlFLeFNicU1HdGNEa3ppWHVYRDFqRDlC?=
- =?utf-8?B?eEd1RXJsSDcwb0QzcVN0VVByZGFyZGVwNkFBMjV1M0VmeEtEYnhkTlFERWtx?=
- =?utf-8?B?Mll6b2xnTFBNKzRNRGZtZ1lETXp6STE2M1dYODJVZjlycEZwNVMxVHFqVjdm?=
- =?utf-8?B?bjBEdDVVc1BhdTA3cHpDUk1lWERob2JBbUxEdFU3SElDcTIrY3J2TkRodlkw?=
- =?utf-8?B?Y1R6SWJFTFlPOVBFMXFTeDhIbkJUNTZEVGIzSkhBb3o4dHE1SWg1Qk1ub1JO?=
- =?utf-8?B?dFJaYWVsVWREc1BMRjVPbElBeGd0Z2VWQUxySkpwMWlYWWJ0TnlGMnlNaGgw?=
- =?utf-8?B?MWFYUUJleFFTY1pkckxYcmJiaXRuTk54YjJzWUhkaHBGQmhKR3pwZkIvSzls?=
- =?utf-8?B?bCt2RXQ2OUxHeUZwcmxYTEg4d2tKa25FcWt2KzNIa2FlakRZQVpQTEEvYzVJ?=
- =?utf-8?Q?rZMtIhENZ9tJL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MDk2MnlkM1FIajZBcHFjWFBIeHgzNVU5TExqVk1PTGc1L2g3dHZqcmh4RnVj?=
- =?utf-8?B?bTcxaHJQbGFXNGxmMVJCTVhaZGhhTVNRSjA1TFhqSHFobERzdGpHTm00aGZw?=
- =?utf-8?B?QlE5aVltN2haQktOYVNSMmpydklmWlRwNjVPa1NhZDF6U2VMNXJrOWFnN3hT?=
- =?utf-8?B?NDF4ek1LZDJrdDQzaWp4RiswRExBZzY4YnBPRlM1cGw0b0pGd3FKdWk5WExJ?=
- =?utf-8?B?TDlFVkxZKzBHN25TdytGbUNKSDZJYXFHQzc3c004UlQvQ0RSVlVVZHdpZzl5?=
- =?utf-8?B?ckcvZlBGQ1FHWWpJY2tVLzVJdWFNRGVNY1lCd20zclMvSGZLQ3lzK0lPUmM1?=
- =?utf-8?B?blhKdUhxUHpveGpiRDNwaGdPcWNRVFVUMklROHlpczZSUHFZL3ZmOG01eDlD?=
- =?utf-8?B?Tlp2bU9OUWptbHFtOUlsWnBoT1dEeVhhcTdsaWt2UjBGUlVhc0dQc1JPTk50?=
- =?utf-8?B?VVJDRVRUYnZOalprelNsMzlkblJGVkhCVnVveW1GWGlQUVRPYU5Sa21NNzZG?=
- =?utf-8?B?Y1grbnZCb3VsSFVXdUFFTEZ1aXVtY2p6NUl4Y0R5WkcvWGFFV2sxZEczQWRU?=
- =?utf-8?B?K0JsanYyd2RKK3NscW8wb05STVVQZ0hJUWI5aGFaYnZNTkwrVEtnbTgvYktH?=
- =?utf-8?B?Y1drMnh5SjJJdXdnWGp1VW1ZNzFaSHl0N3g5cVI3bW5nTWczeVlyNGtKTWhn?=
- =?utf-8?B?Uy9vdU5mSmhjVE5GbmVJSHkxVWhlSDFKcUd4cU5RVFNIZ28wczdiaUNZZ2Rn?=
- =?utf-8?B?aHBBWXhWdmVvYnNSL2dlL3ZWcjhJUUpZaHl6Y0taT2NyRUJyY1o1MkNEVFVp?=
- =?utf-8?B?dlB0VG9RWTJiQ21hY091QWZBOHdjMkkycUpGL1RQNHY4Nk1rb1VYazZ5TzNh?=
- =?utf-8?B?TUhsSEV0RS9CMnRuTkt2OFZhU2tUT1czV0ljVzJKOU03Mnd0QUNVaXNlN3hU?=
- =?utf-8?B?RzVZWmhuWFdIdGF5YVl3Nmc4Y2ZYOGMxK3RLcTlUSW02d2xHMDdxNHFISXpF?=
- =?utf-8?B?Mk5PaTdrU0wyMko5MWNFblhLQjIxWE04YlliZTQvbzBNZElXUFNSelI4M0pi?=
- =?utf-8?B?dzAza1FRZ1dUaW52TSt1N3RtdnpoN29kNXVYZFh4b3ZOc3psSFptUzFvNTkx?=
- =?utf-8?B?SXUvcmZGci9jalBXU1ZwQTUxLzl4cTlpNGJ0dDhvZW54U0VkM0tKVzNlMjRD?=
- =?utf-8?B?WVlPWGlyWVpyQ3NOVnpaaUFmaWV6U250ZG5TQVlzaThFU0ZySXB3OTBtNDBP?=
- =?utf-8?B?cVVFWFJIcEtMM1M5OG1rTUplOXBEQ3llakxtR2g0Mkx6ZTNrSGZTWjNwaVNt?=
- =?utf-8?B?ekpkQTVhdTBXZTdoWmVsU2NHMTdtVks3clVqbkxJQ21yWGVHNFRQSmFhSXha?=
- =?utf-8?B?UEx4cXRRM3BvSjV4Vjk4Rjk2TGxFK3JpczNTZkVpZXpza3BEVm1sSnZYK0hp?=
- =?utf-8?B?cnJKa2lzUm92ZW5zUXpDc3ZWbUY0OE8ramRCZTliSVBiY3k5Y1lCU0hIS3pD?=
- =?utf-8?B?QXVUMnJFR0IvMW5DdjhHVWI1cjVaVFR6YkNmYUF2YnFWMThmdWQ0dnZOUjEy?=
- =?utf-8?B?SldBc0h2S1doRUNhSWg1WE1WSzBSSHNWaDBPYTNZaFo0dyswUnhtMHdRSC82?=
- =?utf-8?B?cEh5WTlMeXVIZVJHZk9HVnhwdzBRYVQ4a0ZLNXZ6ZVRTbGJjb0dpa2gzOU1k?=
- =?utf-8?B?ZFcwdjRMR2NMWGlVeklTRFk3WVoxdzA4RHVKdVBqTVdMNHRhc0Jta3RENUQ3?=
- =?utf-8?B?ajZxYXU3YXVmSUR1Zy95NXg4TGx0NXBjVTRucHB0TVJYV3hkUDZ1bFZvUWx2?=
- =?utf-8?B?YThSdkpsVlVnSkU4QzNhd21WWkRjREtzMEg5QkhHNENRanRiTmVuRnZsdGtm?=
- =?utf-8?B?OU80dktyeEVoMC84TnlWVEhwdEpOS0lITXdnU0F3dkVMcTJrY1BrdzdHVndr?=
- =?utf-8?B?SU5LY2dtZk9CQk5Ra1g0N0RqQnUxZFJyZW5WdzJiTVFXUlJDY2ZwWC9XR3U1?=
- =?utf-8?B?WDZuT3doQUtpRHpEdlgxNkJ6NkVNTHVwbWZieFQ3L2VlSjRsTEtEYjVJRGMr?=
- =?utf-8?B?NFZGNXQrU2lBdEtGMzFLd0tpOTlmampEQVFYSmkwZU1ja1JSTXoyREJVd1c0?=
- =?utf-8?Q?K+d9RlwRf+6EIA57UqiSymdK4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b361b55-d368-4485-ec05-08dd6a6fb13d
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 01:03:30.9497
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6bawlSataYlr9L+WN+uhmndzwpqRysVmUfL9+JxQZiZdYVBhNWBV/A8U9ICDNUhHjkb+IRqeaF0YZTkmezZk5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6010
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320114829.25751-8-shikemeng@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat Mar 22, 2025 at 1:20 AM JST, Daniel Brooks wrote:
-> "Alexandre Courbot" <acourbot@nvidia.com> writes:
->
->> Hi Boqun,
->>
->> On Fri Mar 21, 2025 at 3:17 AM JST, Boqun Feng wrote:
->>> Also an Instant type has been proposed and reviewed for a while:
->>>
->>> 	https://lore.kernel.org/rust-for-linux/20250220070611.214262-5-fujita.=
-tomonori@gmail.com/
->>>
->>> we should use that type instead of re-inventing the wheel here. Of
->>> course, it's currently not quite working because Instant is only for
->>> CLOCK_MONOTONIC. But there was a proposal to make `Instant` generic ove=
-r
->>> clock:
->>>
->>> 	https://lore.kernel.org/rust-for-linux/20230714-rust-time-v2-1-f5aed84=
-218c4@asahilina.net/
->>>
->>> if you follow that design, you can implement a `Instant<NovaGpu>`, wher=
-e
->>>
->>>     ipml Now for NovaGpu {
->>>         fn now() -> Instant<Self> {
->>> 	    // your Timer::read() implementation.
->>> 	}
->>>     }
->>
->> Ah, thanks for pointing this out. I'll keep track of these patches,
->> hopefully they get merged soon!
->
-> Would that actually work though? Instant is a ktime_t, which is a signed
-> i64 rather than a u64. When I read your patch I assumed that you had to
-> add your own Timestamp because the value had to be whatever was read
-> from the GPU, independent of the clock value kept by the system or other
-> hardware.
+On 03/20/25 at 07:48pm, Kemeng Shi wrote:
+> Factor out helper swap_entries_put_cache() from put_swap_folio() to server
+                                                                      ~~~~~
+                                                              s/server/serve/?
+> as a general-purpose routine for dropping cache flag of entries within a
+> single cluster.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  mm/swapfile.c | 27 +++++++++++++++++----------
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 646efccdd2ec..40a7d75c01e8 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1455,6 +1455,22 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
+>  	return NULL;
+>  }
+>  
+> +static void swap_entries_put_cache(struct swap_info_struct *si,
+> +				   swp_entry_t entry, int nr)
+> +{
+> +	unsigned long offset = swp_offset(entry);
+> +	struct swap_cluster_info *ci;
+> +
+> +	ci = lock_cluster(si, offset);
+> +	if (swap_only_has_cache(si, offset, nr))
+> +		swap_entries_free(si, ci, entry, nr);
+> +	else {
+> +		for (int i = 0; i < nr; i++, entry.val++)
+> +			swap_entry_put_locked(si, ci, entry, SWAP_HAS_CACHE);
+> +	}
+> +	unlock_cluster(ci);
+> +}
+> +
+>  static bool swap_entries_put_map(struct swap_info_struct *si,
+>  				 swp_entry_t entry, int nr)
+>  {
+> @@ -1595,8 +1611,6 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+>   */
+>  void put_swap_folio(struct folio *folio, swp_entry_t entry)
+>  {
+> -	unsigned long offset = swp_offset(entry);
+> -	struct swap_cluster_info *ci;
+>  	struct swap_info_struct *si;
+>  	int size = 1 << swap_entry_order(folio_order(folio));
+>  
+> @@ -1604,14 +1618,7 @@ void put_swap_folio(struct folio *folio, swp_entry_t entry)
+>  	if (!si)
+>  		return;
+>  
+> -	ci = lock_cluster(si, offset);
+> -	if (swap_only_has_cache(si, offset, size))
+> -		swap_entries_free(si, ci, entry, size);
+> -	else {
+> -		for (int i = 0; i < size; i++, entry.val++)
+> -			swap_entry_put_locked(si, ci, entry, SWAP_HAS_CACHE);
+> -	}
+> -	unlock_cluster(ci);
+> +	swap_entries_put_cache(si, entry, size);
+>  }
+>  
+>  int __swap_count(swp_entry_t entry)
+> -- 
+> 2.30.0
+> 
+> 
 
-That's correct, and honestly there would be little benefit in using an
-already existing type outside of not re-writing very similar code as GPU
-time stamps are only used locally anyway. I'll keep an eye on these
-patches though in case we can harmonize things a bit.
 
