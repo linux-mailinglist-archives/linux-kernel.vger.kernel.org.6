@@ -1,131 +1,78 @@
-Return-Path: <linux-kernel+bounces-573571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28142A6D937
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:35:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C20A6D939
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029371676F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B613167850
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14C225E44D;
-	Mon, 24 Mar 2025 11:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001C825E440;
+	Mon, 24 Mar 2025 11:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9EBxBp5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qwYnnJty"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1EC1E633C;
-	Mon, 24 Mar 2025 11:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836B61E633C;
+	Mon, 24 Mar 2025 11:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742816107; cv=none; b=Nu3YgI6qWg+IpOOHRwZ7LRthqEOZxzVWcm1dlnuswCteoIb7YjDP+rY9mvP9MXujgR+X0D5oRSXu3ZXTL1am9/4RGgQyxOMrCzXMHTeRWDP7v2iCT7WqSSz8vAcnVtPb3Ez90RgOkVAC2/9Y6IYfZ4u4uHNOnB4DcfxW9EY5qZU=
+	t=1742816164; cv=none; b=hKttQixCHda/0lOLdxfHWrPTMdFNf6970Bv/L8+WamgxeSpU5LDndgxt6vRRdiCSUWJfshDoVdxWJfFZPngAd3+PoBhZ/8L2n7AKDmIacct9YxmNH013dSJEZ32U8jZcZG7IrZt3yks+3fscxdSekiko4MRJGfvUh7EoggHldmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742816107; c=relaxed/simple;
-	bh=luEqyOul0WqVAc0jY9GtMfomrX5FF3FygVVz954eNBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YAOZfvUPV7JzH4yyAtyY6ipaaYgBtwy2tTSx1RN549c9S0V7v7asdqxJLtU2IRvzY94sgD21IldBA7mqkxwk4Sgjlu4RjeAd7NHVUmilm8BWIDwRAJsttOrawo0u+ZfXZRskjSQQPZbC4o0bzo6d/APVpWJCBj9pArPZWQjA+gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9EBxBp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7860C4CEDD;
-	Mon, 24 Mar 2025 11:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742816106;
-	bh=luEqyOul0WqVAc0jY9GtMfomrX5FF3FygVVz954eNBU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j9EBxBp5hN7pZmeMyysFRzU+bTx+uRv9sa3D6C0u7OGHjipp7jG1LIEgru3x6jNg9
-	 h0tZ31vK2qGZRl6AiCU8E3mh2Qwn6TZd2VP/vGGgXV4G5uyJ3esXc7sSkIlG2UW/FM
-	 /lVNHP5dCM1eYp5fEpryHbbsiwE4qDN3kPcGe5Q+wu3lVBqSSowPI24bL8UL4kSIar
-	 bjm2i227otTNQA4vzDwe9tXa103lKlqHtWFBCiFYyWEal5SRsIZPQ6O4AT9fTSzMQw
-	 QcqOv5zlu0Cto3xt1VqfUk+iAGI5VrmrIg/VDP3SlCbFjg1PU2ZNPXrZiiaIld0ngD
-	 srUpq8YwiBXmw==
-Message-ID: <09ed2eaa-70b5-4414-ae7d-71031c235cf2@kernel.org>
-Date: Mon, 24 Mar 2025 12:35:00 +0100
+	s=arc-20240116; t=1742816164; c=relaxed/simple;
+	bh=ytcy48div7CFIbiXZhMFGrSyuBr3KX93xUGDCThz93c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imcV92wNz8BwJWkoo34kbH1B52vr2J3b5jzVrAEBcWxnpRySpgzIo3mXJD/rV+1XzZw2INRfOhdf7JIcCtlhpqXwC9kV39ZZ5IKpN1ofjfMlXv5PfNWl7NG/I0npwMlFBBZqxkyQnEl1g9HR/yI46Mjlt7Om7NEiC88zgjre1t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qwYnnJty; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sYdr3C6pKaGDkQFwyBPg1o8YgdweUacsqf/nfU8wmZA=; b=qwYnnJtyMgyVR/DP2CDRSItzSG
+	2Vg3Xj6DNrZpFId4M7Wq+gxxfaS6MOojxl0U1h70dTME+6O4rdWOLkD5i9StgqBdX5jnm2oGOz6eh
+	FfQtaOhcjwErU0yCyBM6gecfiJmn6kr0URPcxkKWCXdtGjwkwJxrh9O6RXWi8zenYbil/FvsF1Wdm
+	nDCgfZFb0sbxCnHvfOQO2RPvGek7sUzGGsTloJ593f4cex5v2e2CUqM8+xJxUAP+9k8RDrG/gD2kK
+	ikTU5bdKnugKv3yll+htPv/Ew3fBOgoHGNMEO0kkVaq3t0AfOmZVr5+IESbMj+Z0RBFSmsnJX0F8d
+	2v4+musw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1twg60-00000000YJI-0w10;
+	Mon, 24 Mar 2025 11:35:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3C95E3004AF; Mon, 24 Mar 2025 12:35:55 +0100 (CET)
+Date: Mon, 24 Mar 2025 12:35:55 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v5 1/9] sched: Add sched tracepoints for RV task model
+Message-ID: <20250324113555.GC14944@noisy.programming.kicks-ass.net>
+References: <20250305140406.350227-1-gmonaco@redhat.com>
+ <20250305140406.350227-2-gmonaco@redhat.com>
+ <20250307123849.1e5d7543@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: iio: dac: Add adi,ad3530r.yaml
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250324-togreg-v2-0-f211d781923e@analog.com>
- <20250324-togreg-v2-3-f211d781923e@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250324-togreg-v2-3-f211d781923e@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307123849.1e5d7543@gandalf.local.home>
 
-On 24/03/2025 12:22, Kim Seer Paller wrote:
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - iovdd-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +additionalProperties: false
+On Fri, Mar 07, 2025 at 12:38:49PM -0500, Steven Rostedt wrote:
+> 
+> Can I get an Acked-by from one of the scheduler maintainers?
 
-This should be unevaluatedProperties. I don't get why you switched to
-additionalProps here and your other bindings like ltc26*.yaml
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
