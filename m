@@ -1,169 +1,186 @@
-Return-Path: <linux-kernel+bounces-573959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317FFA6DEE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:38:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C88A6DEE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F5718885D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92DB3AB94D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF35D261396;
-	Mon, 24 Mar 2025 15:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2037261569;
+	Mon, 24 Mar 2025 15:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PW6GnF/9"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="oWMYQB7E"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B3517E8E2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907F526138C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742830713; cv=none; b=qF2Sl+WfPXJBZ+zZVn1Jly/imXLwPmEtibZLkMnUTJWWzp8eIJ0FJMVD8pS+GEmiJxTkk9ex17KEihKyHSrK2KSt/UfMR3xz+oi5C+EcLCxgPICliUnl7TkGw8DZaQD+MfBWl828AB0AEP32kmyXrJGQh3iYqSoy7rsz3FrgDnk=
+	t=1742830749; cv=none; b=l5ipr92+Twhl0RIAXgpn9mVEY7AzXSEJkSWGelwouxB+r1U8259SLYx+pgrLTKxMuacdMFbSQrMk+YnNs7NIXlEIfoCiiZDAfLtFXLHoMzK8KImBX6d9phcC/ZOvmDv8dl5gJKv5McCV3XCBQVmV6V0b9j3B0TADYQ0SFz+MSr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742830713; c=relaxed/simple;
-	bh=7tFPKr5B28kVVnB/cruAoC3a2L3PVQkAdc77QpKuC8A=;
+	s=arc-20240116; t=1742830749; c=relaxed/simple;
+	bh=lW8q0MENHUug9UrAhpJH+j6S0fM0oUPQWPy/B+Q20ow=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EyySWwqzhfvO4Jy6cTFah+/RZ5zG9U3VnmRfB4J82f4ZrI4SRamc6adxOhJCiwJ3YXpSaqkPyCCqkRWSekyIlfS8TqNiiC5GkxquIJd+/aMYeQq4q7NgmkhXOIpNFIUXcgCaj8kEfhs9wBylnEWt8pugPKylM5nSqoCSRT5QBAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PW6GnF/9; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2263428c8baso415295ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:38:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=AmNOAb0hm6CWx0q7CKDe2a5ziy+syZ+EqwKqqBfd+PePp7yTRXfnBFDOtzq8NWQN89SueSxVw/RX4EaULnpcMPUQeasC73o0q4+HRPyTKNWrjvLnmn7N6yCr/eukrUlwl4jVsT9/2z9eLb5kqZ9384F+7ov0p3xJmU8V+eiYKII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=oWMYQB7E; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so8329555a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742830711; x=1743435511; darn=vger.kernel.org;
+        d=kali.org; s=google; t=1742830745; x=1743435545; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=COkzJxkZqJhvzNHBGE3D9fP9/TE+wWSTDgVE4d1zPOc=;
-        b=PW6GnF/9JHS+fPzLvw8tXKTUATOwRF5vOzd+BUXCA0Sw7b6WNE7RJM/xxv5U0K7y22
-         4akE++r0y+kO7FpbrqauoaNLHK/TUkxeiEvjwiyM0Sj0q8plGRJDLcHcimOC91voaZUl
-         WGaqj4puHEtr9xCgf4hgWeJaFvUWwM9MfQdQQCMw96engae+fusVvzFmb9t0CZ2PN2uB
-         6KkoSgfgjAFeMi0Oe8zQ6nXNoDZ2JCRVNeIL2Ql94DEwDEOHe5+k1rLwdUQLdQePsnSc
-         VnOJg/5O105T8+9qTzXpcsGEaPCAChXCaMaIBHy5jj7gfBb+iIZybRmzxs7vZKovzEzw
-         tg8Q==
+        bh=okATwyvKKlKUGnAkA78cBa2tOjkMCo1pGnnMETcH4DU=;
+        b=oWMYQB7EWSCH3sTurW2bsHzlm4+S6bqBC1X7K70ybpm8Cmw0fvEQdGJThTdn0rnliD
+         LQ9IDoLW2KAAXzyf5MxuIXt/eCuXhGEBRNsdBnbO54AHhkz1j7H0cEIz1hz5OjmRxQgS
+         8GQh6Dbisa7NzSdjQkFQ2SPabHmD4v4CBasiCcYgXlDGbdRjZMqe26A3PfLzbfRjLwn5
+         9meDEjXmRlA2tEB6suaeTVbGQpCiPwAjLrCnC0FZw4WtPE+Wvstaw5KUP8vBBe30ekV4
+         YLXI43MFbWChaWc9S/t+j3heogH8zKKUS0X18Jmf6hI/fMYAyucbVZfOKQkpvNYuclOS
+         dSOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742830711; x=1743435511;
+        d=1e100.net; s=20230601; t=1742830745; x=1743435545;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=COkzJxkZqJhvzNHBGE3D9fP9/TE+wWSTDgVE4d1zPOc=;
-        b=aCMvCG7/jwK43+kDQOw3dACaKzns1DaHhGc8jFKs0WYsJ5eFYNful/KzuVOSRLOxv4
-         Qv5V8Tbxjw4Su5v8oq6NhEueMvvH0t4EX2RVrEIc4Y8eJzDFXw/NsJmG1FA3z/h3DOr/
-         kIo5hZQpBTt0kf7SsuYLdDEJ7lXuT9J8tfNUTkesNa2CabyALg91ZLZ7Qv4Hw5CAifJ7
-         VgCrSl7o0Q/ya++NQQD71WhzW7HAbifxrjboNGoZPH8NY3zpru7RJIH9N53XUO4vYvSa
-         FvJyfWkQvYPHbSCFtHucXSQ6pc6jsMH9iE5m6O2aW34ecf1rFMipIqFIMO1dkmi0kfUL
-         TUBw==
-X-Gm-Message-State: AOJu0YyDQLyFNRZgW6FgsbKjBda65ABT8JeywLL1JL2EzmhMU7x6SUwS
-	Srt0ogn3ePd17aL6/FFC9KzxGPdG9TnMr8AjDUfjucoMASW9FDhVS9eJh6P3BxILhL/gKVWPqRP
-	vulWVg1niQeNbA2jhm6ttfns28YpwFtA5oDL7
-X-Gm-Gg: ASbGnctwNv3GDI1G5vG9TQLIPfiHnExKmLrZE3p1rHmyq1IKikQvCNxLT/xKBKAGb9z
-	kaTPFHas5rKMycxXPLWz2rnNiClPNIcAKtg0vmIMYHX/xpu+xoXRFcmjg0fL0dl9U0/g9KxAVdU
-	MlNX1okXrc98cP0A2Nj1lXqp+5vX+cdViP1VRBmSm7qMYWQafSMdfaEiU=
-X-Google-Smtp-Source: AGHT+IGC6OhQhLhblQDXlW7T4oZnxNtKmyg52BRRYG7Eecnu7rJEDTmRZl6hO4pMB5TJ2eza8MtiCvnCoiAvt74Vtu0=
-X-Received: by 2002:a17:902:d50b:b0:223:7f8f:439b with SMTP id
- d9443c01a7336-22799f85804mr3222075ad.29.1742830710575; Mon, 24 Mar 2025
- 08:38:30 -0700 (PDT)
+        bh=okATwyvKKlKUGnAkA78cBa2tOjkMCo1pGnnMETcH4DU=;
+        b=qwnJaSldshPReT3DQ2UI9VMLIwuuyFErHYcvCLRgX6IHj4SvRUjWtOuq/Hc/tZOGK/
+         EoBnIJdPc3IkyFwu1ukYHctZi0m2mZv/eY4aAcfp7c0I83DyvvyWdF4AQGpVhx1j9tiU
+         I/t7cavQLaTBgRhdaxCzzLcHKGBwgAtlqit1++VvGSiLf84MSn0sai/mEUo2OcqzBgzt
+         cSli0y/NJXENQzRgio2xZGBZ28xjWdYwVACXk3EtoxNSzidivmIycqtsNZz+JRVD/JFG
+         JZSwMTQ1kakSOGQqXMi1HkmH88XRIB6VXZ3YkulhlE5qbEPUBQlwpVFDVlI32Snlc6q3
+         fv2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXdwGqPLs3U8+wfiF0pBnV9jT3cCWLkf0EceQ2W1xc4UrjHOHi3jtUPSU3uIPplKD7mkKpcJRczc1y+ieM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybZXulvFFp8HOyHegUjxspA+rSM2ILrlXlr8SQSOGYtddEGnCk
+	KtBHGAFGUcbZcimuklSSnxLO+dCEr5nfq9NQzP8RChLezVIw7OOVOmfHzAqK+St4+uvCoS9kORk
+	/El7/I+Y4sZZiGWZbocw9BOK08AO6/0ftrdLhDg==
+X-Gm-Gg: ASbGnct1Gl+gkUxtcXohazseo7k3Rz+r2hCw6Lx0ZclP26aMWFFCZvEMhh+lq48z86J
+	CnHfnJMSm2wWjn4GKNVTWjddJABd4Qydy3p538kbtmEi+LqIrkIMIVtSJqVMMdtwkOlG+WwoQcF
+	DxFAsdk0bmgmhr/O0uYq3RqrlKo+I=
+X-Google-Smtp-Source: AGHT+IF5kUm8YAwl4UJ6X1UrmVjPAu9Rc6SplysTW4SUfxt8w5mDzh/ofYQBCrdqW12xHDRFpOPk9M2fvNYvBePGH40=
+X-Received: by 2002:a05:6402:1ece:b0:5e5:4807:545f with SMTP id
+ 4fb4d7f45d1cf-5ebccde28efmr12756943a12.12.1742830744616; Mon, 24 Mar 2025
+ 08:39:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324152756.3879571-1-tmricht@linux.ibm.com>
-In-Reply-To: <20250324152756.3879571-1-tmricht@linux.ibm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 24 Mar 2025 08:38:19 -0700
-X-Gm-Features: AQ5f1JoRuG3A3vNzieof0Dx0hE6xP7IbfvSZ9Sgmli56VVBGPS-QMQOikuNcZEc
-Message-ID: <CAP-5=fXPgoocDSRxzYpkzcLsPwKsp9b80b1KPDWv-obkmiX-fA@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Fix wrong size to bpf_map__update_elem call
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org, 
-	james.clark@linaro.org, agordeev@linux.ibm.com, gor@linux.ibm.com, 
-	sumanthk@linux.ibm.com, hca@linux.ibm.com
+References: <20250324-wcd-gpiod-v2-0-773f67ce3b56@nxp.com> <20250324-wcd-gpiod-v2-2-773f67ce3b56@nxp.com>
+In-Reply-To: <20250324-wcd-gpiod-v2-2-773f67ce3b56@nxp.com>
+From: Steev Klimaszewski <steev@kali.org>
+Date: Mon, 24 Mar 2025 10:38:53 -0500
+X-Gm-Features: AQ5f1JpkDFG5SyOkw6uUhO3oUv_QewWJKaHPmeTo9CbeqBhrMZL3HS1FVGfM5mA
+Message-ID: <CAKXuJqiwWzC9Zhnnujq+EugJw75EqYL=AmDUUMs8LHOnbBNsyw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ASoC: codec: wcd938x: Convert to GPIO descriptors
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 8:28=E2=80=AFAM Thomas Richter <tmricht@linux.ibm.c=
-om> wrote:
->
-> In linux-next
-> commit c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
-> causes the perf tests 100 126 to fail on s390:
->
-> Output before:
->  # ./perf test 100
->  100: perf trace BTF general tests         : FAILED!
->  #
->
-> The root cause is the change from int to int16_t for the
-> cpu maps. The size of the CPU key value pair changes from
-> four bytes to two bytes. However a two byte key size is
-> not supported for bpf_map__update_elem().
+Hi Peng,
 
-Nice catch!
-
-> Note: validate_map_op() in libbpf.c emits warning
->  libbpf: map '__augmented_syscalls__': \
->          unexpected key size 2 provided, expected 4
-> when key size is set to int16_t.
-
-Wow, weird.
-
-> Therefore change to variable size back to 4 bytes for
-> invocation of bpf_map__update_elem().
+On Mon, Mar 24, 2025 at 6:52=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
 >
-> Output after:
->  # ./perf test 100
->  100: perf trace BTF general tests         : Ok
->  #
+> From: Peng Fan <peng.fan@nxp.com>
 >
-> Fixes: c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t")
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: James Clark <james.clark@linaro.org>
+> of_gpio.h is deprecated, update the driver to use GPIO descriptors.
+>  - Use dev_gpiod_get to get GPIO descriptor.
+>  - Use gpiod_set_value to configure output value.
+>
+> With legacy of_gpio API, the driver set gpio value 0 to assert reset,
+> and 1 to deassert reset. And the reset-gpios use GPIO_ACTIVE_LOW flag in
+> DTS, so set GPIOD_OUT_LOW when get GPIO descriptors, and set value 1 mean=
+s
+> output low, set value 0 means output high with gpiod API.
+>
+> The in-tree DTS files have the right polarity set up already so we
+> can expect this to "just work".
+>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  tools/perf/builtin-trace.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  sound/soc/codecs/wcd938x.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 >
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 092c5f6404ba..464c97a11852 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -4375,10 +4375,12 @@ static int trace__run(struct trace *trace, int ar=
-gc, const char **argv)
->                  * CPU the bpf-output event's file descriptor.
->                  */
->                 perf_cpu_map__for_each_cpu(cpu, i, trace->syscalls.events=
-.bpf_output->core.cpus) {
-> +                       int mycpu =3D cpu.cpu;
-> +
->                         bpf_map__update_elem(trace->skel->maps.__augmente=
-d_syscalls__,
-> -                                       &cpu.cpu, sizeof(int),
-> +                                       &mycpu, sizeof(int),
-
-nit: It is usually preferred to do "sizeof(mycpu)" to avoid the
-problems like the one this fix is fixing. And I'm blamed for the bad
-code in:
-5e6da6be3082 perf trace: Migrate BPF augmentation to use a skeleton
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks for the fixes!
-Ian
-
->                                         xyarray__entry(trace->syscalls.ev=
-ents.bpf_output->core.fd,
-> -                                                      cpu.cpu, 0),
-> +                                                      mycpu, 0),
->                                         sizeof(__u32), BPF_ANY);
->                 }
->         }
+> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+> index 1ae498c323912ed799dcc033e7777936d90c9284..955a0d3a77d7cb45932faa0c7=
+a6f5060232d33b4 100644
+> --- a/sound/soc/codecs/wcd938x.c
+> +++ b/sound/soc/codecs/wcd938x.c
+> @@ -11,7 +11,6 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/component.h>
+>  #include <sound/tlv.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/of.h>
+>  #include <sound/jack.h>
+>  #include <sound/pcm.h>
+> @@ -171,7 +170,7 @@ struct wcd938x_priv {
+>         int flyback_cur_det_disable;
+>         int ear_rx_path;
+>         int variant;
+> -       int reset_gpio;
+> +       struct gpio_desc *reset_gpio;
+>         struct gpio_desc *us_euro_gpio;
+>         u32 micb1_mv;
+>         u32 micb2_mv;
+> @@ -3251,9 +3250,9 @@ static int wcd938x_populate_dt_data(struct wcd938x_=
+priv *wcd938x, struct device
+>         struct wcd_mbhc_config *cfg =3D &wcd938x->mbhc_cfg;
+>         int ret;
+>
+> -       wcd938x->reset_gpio =3D of_get_named_gpio(dev->of_node, "reset-gp=
+ios", 0);
+> -       if (wcd938x->reset_gpio < 0)
+> -               return dev_err_probe(dev, wcd938x->reset_gpio,
+> +       wcd938x->reset_gpio =3D devm_gpiod_get(dev, "reset", GPIOD_OUT_LO=
+W);
+> +       if (IS_ERR(wcd938x->reset_gpio))
+> +               return dev_err_probe(dev, PTR_ERR(wcd938x->reset_gpio),
+>                                      "Failed to get reset gpio\n");
+>
+>         wcd938x->us_euro_gpio =3D devm_gpiod_get_optional(dev, "us-euro",
+> @@ -3297,10 +3296,10 @@ static int wcd938x_populate_dt_data(struct wcd938=
+x_priv *wcd938x, struct device
+>
+>  static int wcd938x_reset(struct wcd938x_priv *wcd938x)
+>  {
+> -       gpio_direction_output(wcd938x->reset_gpio, 0);
+> +       gpiod_set_value(wcd938x->reset_gpio, 1);
+>         /* 20us sleep required after pulling the reset gpio to LOW */
+>         usleep_range(20, 30);
+> -       gpio_set_value(wcd938x->reset_gpio, 1);
+> +       gpiod_set_value(wcd938x->reset_gpio, 0);
+>         /* 20us sleep required after pulling the reset gpio to HIGH */
+>         usleep_range(20, 30);
+>
+>
 > --
-> 2.48.1
+> 2.37.1
 >
+I can verify that with v2 applied, I do still have working audio on
+the Thinkpad X13s.  Apologies for not replying earlier, it was
+unfortunately my night time.  For the record though, I do not use the
+firmware dtb files, but explicitly list the kernel that I am using
+and/or testing to be used on each boot.
+
+Tested-by: Steev Klimaszewski <steev@kali.org>
+
+Thanks!
+-- steev
 
