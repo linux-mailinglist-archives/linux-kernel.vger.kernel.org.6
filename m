@@ -1,493 +1,204 @@
-Return-Path: <linux-kernel+bounces-573905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C42A6DDD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD3EA6DDDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092BC166CA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646F216A7C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF1525FA24;
-	Mon, 24 Mar 2025 15:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E8B25FA2B;
+	Mon, 24 Mar 2025 15:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Rf6JGQfQ"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2059.outbound.protection.outlook.com [40.107.94.59])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XT625T4x"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD77486334
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829015; cv=fail; b=t2c/9M6BBbMfcb7LRr55Rc8lJ8w8rU+vcnlW5Pl28nPEFAOAL3Bikb1jw285ljrwWKbvB2qpyUR9xzI5ebf6GuCIL0Yz/9tEU1h3hQHRTMtcnUVQQSxLXkCuy1PVDchowfJ6cBuMGZoZuBcBk4/MSSfieImeyxYkXoUzJYOZNck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829015; c=relaxed/simple;
-	bh=L4pxkdRWXHkjiVIkiu2NGrF9e0ED7pQiGFsKOLmkgts=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dsyr/f958wSM/hw6gJOLpywQcT0AKK0vAX5oKBzXvg5GKZ36vDVKXjPg/4TSkzXqaPYrqIseHm8lqVqJ9M5Zpovlbi5STwbJ0FCmJDxZhF95P6MwR1+xH63imWldIFyp1noIsaG9C6D+O1wWHXoYOqdzTcdxyO4KQlRb+deBxiU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Rf6JGQfQ; arc=fail smtp.client-ip=40.107.94.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lXSd20sUqwOkaCEEKCsOvVnXjiFpz7kJz8+Vlgd4z5liLbcyw6Y65Cr4g+fQZ8UypyV8cBWKqncLlZzHu1sjMffgH05bhKNFV4B9q0XdE6QoYcXv6s8d1mfxdtKkDZ8hliCVlzfU+Fb1wY3ID5pOKjJ7nwWjCCay29fcavwRRKijtXrOxzY5WpTXrq2g2KrxGW7l4JCni3eYH7eoD78duQYh/OcL/vKEnLvmZhqdEVq0UCl/qWylcRgp9W37fBwhrMg7lfTQoF/M0iy1Yc62INTcFWvcrSFlCh69e7n2ZoUPEZ0tgYZl2SiofRnKXZ0n7W7I1jD759JBwQIaEoQfNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k+ni8kPYyUV4BUouINireW5ecA6CiFm1uG+/Fck8yLQ=;
- b=iE3Rb4TdJ6jcKgEdsqYhoAJv2A0PdV/yn3s8ajnn7xZxvoZJ5i+ZpRRDzQ6mfgvHdOspDA+yJHCswCv6iQpuVpFmm4nehintkg1x+9F2rWHCdBbcEnYwcmkLDsmNDdbTo51IN/RfWJBr8ER3oXkZavnu1T5JNiLbSpGIn2Mo1IN86y61LyF7eJe2jmtJRpeQwdZ1rCdGOwK64zqC6fJYSn9kIFiKk3ET2hXDJx1rcbl6mgeDJGpGWauZ6FdF752bFYi9ifRZrdpXlAU49Avl7Yt4Uj1yxlcBLXk/ijGeGbdko50c0VC/UnqsOm5x8igqxZTB+verKWQqleVsYuZLyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k+ni8kPYyUV4BUouINireW5ecA6CiFm1uG+/Fck8yLQ=;
- b=Rf6JGQfQp9BxGYaD4qN9mRR6Fr70Acr8ExqbG9Z/bsl8w/mZklAWHX3U28ycG3IrmInd+1yf1mikbCHAcW+DOTzkQp22cVhMNzi/sE7Nj99DyoX0s3ommnN2P0zlEHXHrqBSw6Ss3Vks8wl9WKCeGVX7ChOdFK+CCb9bBvP5qrk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
- by SN7PR12MB8103.namprd12.prod.outlook.com (2603:10b6:806:355::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 15:10:11 +0000
-Received: from PH7PR12MB5805.namprd12.prod.outlook.com
- ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
- ([fe80::11c7:4914:62f4:f4a3%3]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 15:10:11 +0000
-Message-ID: <0901abdf-19b3-4266-9bcb-466a7432a457@amd.com>
-Date: Mon, 24 Mar 2025 20:39:55 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V1 01/13] mm: Add kmmscand kernel daemon
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
- Michael.Day@amd.com, akpm@linux-foundation.org, bharata@amd.com,
- dave.hansen@intel.com, david@redhat.com, dongjoo.linux.dev@gmail.com,
- feng.tang@intel.com, gourry@gourry.net, hannes@cmpxchg.org,
- honggyu.kim@sk.com, hughd@google.com, jhubbard@nvidia.com,
- jon.grimm@amd.com, k.shutemov@gmail.com, kbusch@meta.com,
- kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com, leillc@google.com,
- liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
- nphamcs@gmail.com, peterz@infradead.org, riel@surriel.com,
- rientjes@google.com, rppt@kernel.org, santosh.shukla@amd.com,
- shivankg@amd.com, shy828301@gmail.com, sj@kernel.org, vbabka@suse.cz,
- weixugc@google.com, willy@infradead.org, ying.huang@linux.alibaba.com,
- ziy@nvidia.com, dave@stgolabs.net
-References: <20250319193028.29514-1-raghavendra.kt@amd.com>
- <20250319193028.29514-2-raghavendra.kt@amd.com>
- <20250321160628.000033a9@huawei.com>
-Content-Language: en-US
-From: Raghavendra K T <raghavendra.kt@amd.com>
-In-Reply-To: <20250321160628.000033a9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1P287CA0019.INDP287.PROD.OUTLOOK.COM
- (2603:1096:b00:40::30) To PH7PR12MB5805.namprd12.prod.outlook.com
- (2603:10b6:510:1d1::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F9CBE5E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742829041; cv=none; b=m/qPlGGIdkKwJB4k0+pjjnVVkDQ6FmcKmoOUgrpCEZP4z6YvZ9D4nLSKCOjK7qGJjFXDHQ+Iw18d1aMweUgVTsNkjbNnrhA586XBPtbGLTm/wVxweqPpohW7trGxtiH9UEnLulOk95KFFsyApRTH/7sauA1t26jPSWi31POOKos=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742829041; c=relaxed/simple;
+	bh=JfxurlRQ+XS6kE1lqTytl7uxNy9xKLkg83XX5LvS+kg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kLh2/B8iSOhfmvLK301pDAEZhbiIItRVzhLMhB1jJTDZhZ4tB8l4oJqTP8mXBcLyMGt2GYMw2g0seDhMUOE/t8tNvJMycCM37pbvgruR6z3tn+hd6wzq+yAK7ImV62Ymi75TWE4MlPrhqpSI0pnTfDdbnKjng0bbqxhOCeqmpa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XT625T4x; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 459914438E;
+	Mon, 24 Mar 2025 15:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742829032;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ymxOGVKKP6tHT25NA5aYFP9BSXgTjzIC5jPqWQl7U6U=;
+	b=XT625T4xCTnYAWN2jH6rXqWVXtg1Ik8xpZg8ZF1jYGCi8HfW0qaOoIOlk3RBFcpKNiC3WK
+	KCBI7Vn8q7eD1OAIT/5g7nd8IQGW01QCNANcyVe3Iyw6MZ7/3HKhfUGztTE4egiu3lkGRk
+	84Z6KkgeqUL0CCc8VPlMhnvhhGckL4hu//5hMB2yzCGpPHTWKBST4sCPnj9S4exAqhECjB
+	meZOIspk/ovwOxuMkUd8+cbmXx6sqB6AlWfvq7xAs0bqVqe5Wp9Bnc3tI025clPd44+6qi
+	Z55PZsOUgxzll7gTq7mGLEuEE1uuNzqfpVYEVsQKWpdB51DA/f9W/uRjJvcg/Q==
+Message-ID: <b5799fe4-9191-4ad3-9aa1-db7e2d57db99@bootlin.com>
+Date: Mon, 24 Mar 2025 16:10:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|SN7PR12MB8103:EE_
-X-MS-Office365-Filtering-Correlation-Id: c04ef6ae-b3fc-4f7c-f29c-08dd6ae5f872
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aERwVnJvOE5KMG1UeFVxUm43VG1VMWhyUXpPcml0b0s2SjZybnNEcHFIbmla?=
- =?utf-8?B?cC9xUjVnOXI5OUVXTGR5RGx4ZmdqM2Jyalh1TGxRVUMvT1lQQmtYbFNPYzBJ?=
- =?utf-8?B?TStsVC9iZEhIWnEvdDZRRnFvczlocGFpcnBxTERoOU1jWGkwa3BMTEhIcTMr?=
- =?utf-8?B?T0NpUDQ0K2FLZW5VU1FwT3JBV1d1ek9TUVlEVmR1dGlteHk5UGdKUzNBVnVQ?=
- =?utf-8?B?cTg0cXUxaytZTkpja0loSWplWGdYcC9PaGxnSTMyVEE3SDdpYnBSY21QbnlO?=
- =?utf-8?B?RlluQVMvcXZWZy8vTkJBVEJsZ1luMW5Fb1dPS3drZWR1dGwzTDBBa1dVNFox?=
- =?utf-8?B?Mmx1cHN3elZvWjhPM1lwUmFWbWdQbHJ3emdxZEREa2dHS3htOFBod1hueFJ3?=
- =?utf-8?B?UmlhNnBGeTVCWUNtajNUVUp5b0d2cHlUVmxCbVhNa2NnS0ZWZWtiNjFIOStj?=
- =?utf-8?B?RTB4OFdXUDZFUWpvUTRUaVpjTGtSM0kzM1QxdFN5TDZleE9MSUtLK0VSck0w?=
- =?utf-8?B?bHJRMzVTaVpXeUl0L0FoakR5bk5sTEZEVlJNMTZZa3lPbWhJdG1kd1VsNGo4?=
- =?utf-8?B?TThjdFNXdmFaU2hLdFNPeC9kQmkrT2VDSHJzY2s4S3lKbExOUTJvaFRWTVIy?=
- =?utf-8?B?Um1DVytJcmJmL0FIemxJRUN2bytGbVFkS1R1aStBZHFjNVBkTFZOcXF4bGpj?=
- =?utf-8?B?cWdRaVdUWXZEM0kxUitJZzlYMEczandGcnV3THpLUWk1SncvM1RLT3FHRXJY?=
- =?utf-8?B?SThGcGk4WWVNZ1YzZkxqbHlvN1R0b3ZFS0lxQTZjMjZabmJnSUV2TXA2VEZL?=
- =?utf-8?B?SU10SHYvYnpSSHBjanhXZ3hxdnNoZ2hJZThZLzdEVmFpVG14OHFyUWl5SjNx?=
- =?utf-8?B?VlZoem5Hd25FRlZSbFZhOWRBRk5ZRFVnbHBZZXVaeC8xei9VRVplRXVyai9r?=
- =?utf-8?B?L2FtMW0zbWN1MzNXTXNMS1Nmd2djMWYvOGZwcHhRQ2xxK1BXYmphSHV0R1ZH?=
- =?utf-8?B?Zk5FNGlXazI2LzFXeTJQOU5FVm9hdlhQLzRNUVFaWWIxZ214bENacUhFakJo?=
- =?utf-8?B?NC9UV05RNU9FTG9pdHBqWE9wb3FuRGRxS3lLWnovVVFRNzVndnUzOE5FMTFs?=
- =?utf-8?B?MVdPWHc1NzNtK0wreWUzZjFZRUxYSFUwQ2tzRkVia1NFNFJnczJEbEpLU0xZ?=
- =?utf-8?B?dEZXVXFaOXo5c1JTbTh1b0RnS0RKRE9ySmI1TWhUM0FsZ3NMb1ltekcyLzdt?=
- =?utf-8?B?dnplWjg4bjg4S3JHL1pTM3ZpdWJiejV6VytJMEhPN1BzUU5hUEltRlpYc29I?=
- =?utf-8?B?Y3VIVEVWTlpBOStSUUFSWUhTUi94b1UzQ0UzRW9qY2JNZmpmVHFrRU9JSDNl?=
- =?utf-8?B?UnNIUVFCQ1FQYzU4WEdkMnFjb2IrTkJiS3kvbmVpUVNaNkRNcEswejIrbzFv?=
- =?utf-8?B?YmI1WFgyMHVlalI5TXFFR2hCaXpXTHFwNXUwNXNYSm1IK0FDeUtXcUtpeGhm?=
- =?utf-8?B?cDVSZ0dMZ2NQdHNhWlpRU0p1a1dudXFOOWNua0lnSXl0am5XaEdMby83Rmdy?=
- =?utf-8?B?RXRQM2JHdVR2eEtkN1BranNrSWlrdVQ3UFM4dzBWaCtmU2luYVZsMmN6aG5H?=
- =?utf-8?B?eW03L1VwVXZNYTBydmhuVFgxd01tSUd2TmdqWEhnSDV4Qm94cUtKZHdIbmdn?=
- =?utf-8?B?NTZjT3gwMHlpcDR5VnQ2ZXlJOUxxaXZ1bnlRNVR0dUMxM2F2cVI2WW9tU1RG?=
- =?utf-8?B?R0VQRVo4OC8xVUd5aFhuUGlwd0ZLVzVMMnl5R0dPUnBlSExFZ0ZnMXh0TmQw?=
- =?utf-8?B?bDdzOXRKc0NETHJlaDJ5UmMxandOYnRqMy9BN1JuWWdyY1FRWk00SnBuZXVQ?=
- =?utf-8?Q?1N7tA1/EPyvL3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T0s2bTdXcEc1YXhJT1pKbGtuYW1pUXN2TVMzNS9HOUhham1WT2FNbUNtK2VU?=
- =?utf-8?B?UjhFTG1HekIxRnJBcGhPOS9URWorSU5HWEJxNFRNOWtpNHJ5d0RCK2UrN2Z3?=
- =?utf-8?B?RXJaSzhSQU5TMjhjWkxIdjY4a3ZMdXBaTVF2Y0hiVVdkQlRUR2VLOFUrN05R?=
- =?utf-8?B?b2ZNd2pxTmdRLytwUXdEUHJITHJQWEtmYVZKUTh5OE9iZUdPYWVZMS91Q2U3?=
- =?utf-8?B?a21vckJFVHovcEthb2pwOGs5ejZFQUZBZU9Bb0lzT2E0cnNUbVJyMFNsbVNW?=
- =?utf-8?B?SkVPbllxQ2lreUtqdlNaNE1FM2JTVTNyWmljOWJoRTJoZ3dSMG1FUVZFSEFJ?=
- =?utf-8?B?KzNFZnJGdk1CUDhMZTZLM0M2S01pUFNHN0M5c2t2dVNyYXg3Ulp3MVRQWlhT?=
- =?utf-8?B?MXg2R0l6REJuQllFZThzMmVtQUxiRXpnL1BpdmUrQWpjZDd1RWs3YXNBZ1BK?=
- =?utf-8?B?VFNzZDE4bStOUmlTejVPQmNicjNZZmV5S3B5c0FQQXZ5ZVVjSjlISTBvb2R3?=
- =?utf-8?B?RVZ5ODZhUmgreDJHRElFNU16WG9hdEhiWHFwTXJXM3NKUzdDOEYyWHVCWTBV?=
- =?utf-8?B?RngwRFFraHl3V0M5NTFoNnVnUlhZL0dmOHpGVVNFeXg0MCtUTk9hNUFsK3A2?=
- =?utf-8?B?MzM2SmFxa1UwUjNlWUpWdHRWTnhuR1RQZkJqMlRxTDRra2lBZlFIdVREaTJ6?=
- =?utf-8?B?SDd3Q1VDMzNFYS9pZ1NXdTg5V1BncDNxNk56MC9SL1dDbGE4dTN1N2hIY09l?=
- =?utf-8?B?NEhWUVpTN01PcTNGdG5CWmhtWEQ0T0QzNms1djQ4MVVRT25LcHBCcVU4LzZw?=
- =?utf-8?B?R3FlVmtRTGJ5VWhMR08wL0ZwRFdNeEpqSEtOT2VqMW9xNVRtMmFkMFBrVXI4?=
- =?utf-8?B?OStjaVIvTW4xNXhTZUc1RHN5Rkt3MHRaMDA3M2RtRXBKVjNXS0FUdmFUS0lW?=
- =?utf-8?B?NDlyYjB4NUdIVlcyNjAzQy9sZFVOeE45RUxTVDJMcFF1QUZSOTNyQ1orMWY4?=
- =?utf-8?B?bFB6QUhRdUFsWVFxMVR6OFVHSGw5ZXBxUlRJL3ZZVlR0T3BJUlhDa2dITVdi?=
- =?utf-8?B?eFBDbGhFWUZDSmFyWTl2SmltS0JVNzB1Vll1M0ZsU3I1S0JQU1FJdlRZdHlj?=
- =?utf-8?B?MGlOM1BHY2MxV01rcHhNaEc1SlVRckswMkdTNWw0bGJ3Y1ZHdGZlaFpQMlcw?=
- =?utf-8?B?M09qWWlNcjk1NHk3MUNXUmhPZHJvbmtzZ2RlckhzUm5nTysyR2c2Um1NenB0?=
- =?utf-8?B?eDhsMFdEUi9KTVpTVjJCVGl4b0tYN21NakRURUE4bU9hMU1WakZUTGFXR0FY?=
- =?utf-8?B?eGhVeHN1am9HaUs5UnBZR0J2UUloNnZmNUpYZVhLNGFTU1Bqd0ZqRXBiamtQ?=
- =?utf-8?B?NUd2aDJQd3FWZnhORWtFTmU2ZDFCdjJadkxiNEplSnRFcmFydy94Z293Sitw?=
- =?utf-8?B?SEtRSWp1K2pGa1pZTzdQaGxSZjdlSG9rR2cyLzZlNW9URnU4SzdjTkxtU2pQ?=
- =?utf-8?B?TFRhNGVmZXdBY3NrblE5cXFZc3ZiVXRYNGJqckNDRFFiT3Q1ZW9GalRoOHhB?=
- =?utf-8?B?V2JtUmFZQnpxaEUyYkM2eU5UMG1LUkNEdHh3eVRXVHhrNDBuVE9jaHI4WC9a?=
- =?utf-8?B?WWp5c0tlaGJrWjcwWkE5VWp2dXE5WWd1blB2L2VXV1pZQ1VFa3VraHNIaUxz?=
- =?utf-8?B?NWNPOHh1a0JaSkcvcVVSOTJhUG9UQnpKL0FQdDVIQ0ZwaVFoeTJmcDdqOHBY?=
- =?utf-8?B?OWhLQkxGMWV3Z29QczZwVTRYWFZQSm9RWHRMdENsZmFhbG9SODJaeXdSMDNl?=
- =?utf-8?B?U1RzZkh6SWdMNHdnQWxvd1pEbkRoR3NJV2Rxd25aY0M0d2k2QWFMZERoZDRz?=
- =?utf-8?B?OVBwc1UyZUIwTjZTVW1FQVhDNW1Kb1d0bEZzSk5ZYWJTbjVCNmNuUGVPL3lK?=
- =?utf-8?B?YjFHNWVqM0hyREJVcXhYdSs3UDU2clVITDVYdWprRFJEbTNaQVFjeEgxY0M2?=
- =?utf-8?B?UXIyZkNIVDlIY2E4STBSaUtpMDBmd2loSCtyRWN5THcxV1ZYdm9tRkpRUUpU?=
- =?utf-8?B?Vld6Zkd2ODdsSFRXSzUxS3I2Rkh5QXFvV2w2S0F3d0pzcUpHdTlmTFlNOEMx?=
- =?utf-8?Q?2vNHaEuXK3Ug30bR3dk3NDeNi?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c04ef6ae-b3fc-4f7c-f29c-08dd6ae5f872
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 15:10:10.8813
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bfuLC9+tjm9t6+At3+Ui+tOYKlOYebuuxHkViPSwzRW6i5y+svg99GmJGaEubsLxtb4eF/nxKmB4vYkp7+EB4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8103
+User-Agent: Mozilla Thunderbird
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH v2 11/59] dyndbg: macrofy a 2-index for-loop pattern
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-gfx-trybot@lists.freedesktop.org
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250320185238.447458-1-jim.cromie@gmail.com>
+ <20250320185238.447458-12-jim.cromie@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250320185238.447458-12-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+ dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
-On 3/21/2025 9:36 PM, Jonathan Cameron wrote:
-> On Wed, 19 Mar 2025 19:30:16 +0000
-> Raghavendra K T <raghavendra.kt@amd.com> wrote:
+Le 20/03/2025 à 19:51, Jim Cromie a écrit :
+> dynamic-debug has several __sections, each with <vecname>,
+> num_<vecname>, and it iterates over these with a 2-index for-loop.
+> These loops are fiddly with the 2 names.
 > 
->> Add a skeleton to support scanning and migration.
->> Also add a config option for the same.
->>
->> High level design:
->>
->> While (1):
->>    scan the slowtier pages belonging to VMAs of a task.
->>    Add to migation list
->>
->> Separate thread:
->>    migrate scanned pages to a toptier node based on heuristics
->>
->> The overall code is heavily influenced by khugepaged design.
->>
->> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+> We have only 2 such loops now, but are getting more soon; lets
+> embed/abstract the fiddlyness in the for_subvec() macro, and avoid
+> repeating it going forward.
 > 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> ---
+>   lib/dynamic_debug.c | 20 +++++++++++++++++---
+>   1 file changed, 17 insertions(+), 3 deletions(-)
 > 
-> I'm really bad and reading code and not commenting on the 'small'
-> stuff.  So feel free to ignore this given the RFC status!
-> This sort of read through helps me get my head around a series.
-> 
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index d5572712ce55..94f6c8fd787b 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -128,6 +128,21 @@ do {								\
+>   #define v3pr_info(fmt, ...)	vnpr_info(3, fmt, ##__VA_ARGS__)
+>   #define v4pr_info(fmt, ...)	vnpr_info(4, fmt, ##__VA_ARGS__)
+>   
+> +
+> +/*
+> + * simplify a repeated for-loop pattern walking N steps in a T _vec
+> + * member inside a struct _box.  It expects int i and T *_sp to be
+> + * declared in the caller.
+> + * @_i:  caller provided counter.
+> + * @_sp: cursor into _vec, to examine each item.
+> + * @_box: ptr to a struct containing @_vec member
+> + * @_vec: name of a sub-struct member in _box, with array-ref and length
+> + */
 
-Hello Jonathan,
-I do agree that my goal till was mostly POC, and yet to harden lot of
-code. But your effort reviewing this code will help miles in converging 
-to good code faster.
+Nice macro to make the code easier to read!
 
-Thank you alot and appreciate.
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
->> ---
->>   mm/Kconfig    |   8 +++
->>   mm/Makefile   |   1 +
->>   mm/kmmscand.c | 176 ++++++++++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 185 insertions(+)
->>   create mode 100644 mm/kmmscand.c
->>
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index 1b501db06417..5a4931633e15 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -783,6 +783,14 @@ config KSM
->>   	  until a program has madvised that an area is MADV_MERGEABLE, and
->>   	  root has set /sys/kernel/mm/ksm/run to 1 (if CONFIG_SYSFS is set).
->>   
->> +config KMMSCAND
->> +	bool "Enable PTE A bit scanning and Migration"
->> +	depends on NUMA_BALANCING
->> +	help
->> +	  Enable PTE A bit scanning of page. CXL pages accessed are migrated to
-> 
-> Trivial but don't mention CXL.  "Other memory tier solutions are available"
+> +#define for_subvec(_i, _sp, _box, _vec)				       \
+> +	for ((_i) = 0, (_sp) = (_box)->_vec;			       \
+> +	     (_i) < (_box)->num_##_vec;				       \
+> +	     (_i)++, (_sp)++)
+> +
+>   static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+>   {
+>   	/* trim any trailing newlines */
+> @@ -156,7 +171,7 @@ static struct ddebug_class_map *ddebug_find_valid_class(struct ddebug_table cons
+>   	struct ddebug_class_map *map;
+>   	int i, idx;
+>   
+> -	for (map = dt->classes, i = 0; i < dt->num_classes; i++, map++) {
+> +	for_subvec(i, map, dt, classes) {
+>   		idx = match_string(map->class_names, map->length, class_string);
+>   		if (idx >= 0) {
+>   			*class_id = idx + map->base;
+> @@ -1221,8 +1236,7 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt, struct _ddebug
+>   	 * the builtin/modular classmap vector/section.  Save the start
+>   	 * and length of the subrange at its edges.
+>   	 */
+> -	for (cm = di->classes, i = 0; i < di->num_classes; i++, cm++) {
+> -
+> +	for_subvec(i, cm, di, classes) {
+>   		if (!strcmp(cm->mod_name, dt->mod_name)) {
+>   			if (!nc) {
+>   				v2pr_info("start subrange, class[%d]: module:%s base:%d len:%d ty:%d\n",
 
-Sure.
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> 
->> +	  a regular NUMA node. The option creates a separate kthread for
->> +	  scanning and migration.
->> +
-> 
->> diff --git a/mm/kmmscand.c b/mm/kmmscand.c
->> new file mode 100644
->> index 000000000000..6c55250b5cfb
->> --- /dev/null
->> +++ b/mm/kmmscand.c
-> 
->> +
->> +struct kmmscand_scan kmmscand_scan = {
->> +	.mm_head = LIST_HEAD_INIT(kmmscand_scan.mm_head),
->> +};
->> +
->> +static int kmmscand_has_work(void)
->> +{
-> 
-> Unless this is going to get more complex, I'd just put
-> the implementation inline.  Kind of obvious what is doing
-> so the wrapper doesn't add much.
-> 
-
-Sure.
-
->> +	return !list_empty(&kmmscand_scan.mm_head);
->> +}
->> +
->> +static bool kmmscand_should_wakeup(void)
->> +{
->> +	bool wakeup =  kthread_should_stop() || need_wakeup ||
-> 
-> bonus space after =
-> 
-
-+1
-
->> +	       time_after_eq(jiffies, kmmscand_sleep_expire);
->> +	if (need_wakeup)
->> +		need_wakeup = false;
-> 
-> Why not set it unconditionally?  If it is false already, no
-> harm done and removes need to check.
->
-
-Agree. will change. This code had wakeup from sysfs variable setting
-in mind :).
-
->> +
->> +	return wakeup;
->> +}
->> +
->> +static void kmmscand_wait_work(void)
->> +{
->> +	const unsigned long scan_sleep_jiffies =
->> +		msecs_to_jiffies(kmmscand_scan_sleep_ms);
->> +
->> +	if (!scan_sleep_jiffies)
->> +		return;
->> +
->> +	kmmscand_sleep_expire = jiffies + scan_sleep_jiffies;
->> +	wait_event_timeout(kmmscand_wait,
->> +			kmmscand_should_wakeup(),
->> +			scan_sleep_jiffies);
-> 
-> strange wrap.  Maybe add a comment on why we don't care if
-> this timed out or not.
-> 
-
-You mean why timeout is not harmful? sure .. will do.
-
->> +	return;
->> +}
->> +
->> +static unsigned long kmmscand_scan_mm_slot(void)
->> +{
->> +	/* placeholder for scanning */
-> 
-> I guess this will make sense later in series!
-> 
-
-Agree.
-I will surely have to think about right splitting that
-does not hog when bisected separately.
-
->> +	msleep(100);
->> +	return 0;
->> +}
->> +
->> +static void kmmscand_do_scan(void)
->> +{
->> +	unsigned long iter = 0, mms_to_scan;
->> +
-> 
-> 	unsigned long mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
-> 
->> +	mms_to_scan = READ_ONCE(kmmscand_mms_to_scan);
->> +
->> +	while (true) {
->> +		cond_resched();
-> 
-> Odd to do this at start. Maybe at end of loop?
-> 
-
-+1
-
->> +
->> +		if (unlikely(kthread_should_stop()) ||
->> +			!READ_ONCE(kmmscand_scan_enabled))
->> +			break;
-> return;  Then we don't need to read on to see if anything else happens.
->> +
->> +		if (kmmscand_has_work())
->> +			kmmscand_scan_mm_slot();
->> +
->> +		iter++;
->> +		if (iter >= mms_to_scan)
->> +			break;
-> 			return;
-> Same argument as above.
-> 
-
-Thanks. Will think about above.
-
->> +	}
->> +}
->> +
->> +static int kmmscand(void *none)
->> +{
->> +	for (;;) {
-> 
-> while (true) maybe.  Feels more natural to me for a loop
-> with no terminating condition.   Obviously same thing in practice.
-> 
-
-+1
-
->> +		if (unlikely(kthread_should_stop()))
-> 			return;
->> +			break;
->> +
->> +		kmmscand_do_scan();
->> +
->> +		while (!READ_ONCE(kmmscand_scan_enabled)) {
->> +			cpu_relax();
->> +			kmmscand_wait_work();
->> +		}
->> +
->> +		kmmscand_wait_work();
->> +	}
->> +	return 0;
->> +}
->> +
->> +static int start_kmmscand(void)
->> +{
->> +	int err = 0;
->> +
->> +	guard(mutex)(&kmmscand_mutex);
->> +
->> +	/* Some one already succeeded in starting daemon */
->> +	if (kmmscand_thread)
-> return 0;
-+1
-
->> +		goto end;
->> +
->> +	kmmscand_thread = kthread_run(kmmscand, NULL, "kmmscand");
->> +	if (IS_ERR(kmmscand_thread)) {
->> +		pr_err("kmmscand: kthread_run(kmmscand) failed\n");
->> +		err = PTR_ERR(kmmscand_thread);
->> +		kmmscand_thread = NULL;
-> 
-> Use a local variable instead and only assign on success. That
-> way you don't need to null it out in this path.
-> 
-
-Agree
-
->> +		goto end;
-> 
-> return PTR_ERR(kmmscand_thread_local);
-> 
->> +	} else {
->> +		pr_info("kmmscand: Successfully started kmmscand");
-> No need for else give the other path exits.
-> 
-
-Agree.
-
->> +	}
->> +
->> +	if (!list_empty(&kmmscand_scan.mm_head))
->> +		wake_up_interruptible(&kmmscand_wait);
->> +
->> +end:
->> +	return err;
->> +}
->> +
->> +static int stop_kmmscand(void)
->> +{
->> +	int err = 0;
-> 
-> No point in err if always 0.
-> 
-
-Yes.
-
->> +
->> +	guard(mutex)(&kmmscand_mutex);
->> +
->> +	if (kmmscand_thread) {
->> +		kthread_stop(kmmscand_thread);
->> +		kmmscand_thread = NULL;
->> +	}
->> +
->> +	return err;
->> +}
->> +
->> +static int __init kmmscand_init(void)
->> +{
->> +	int err;
->> +
->> +	err = start_kmmscand();
->> +	if (err)
->> +		goto err_kmmscand;
-> 
-> start_kmmscand() should be side effect free if it is returning an
-> error.  Not doing that makes for hard to read code.
-> 
-> Superficially looks like it is already side effect free so you
-> can probably just return here.
-> 
-
-There is one scanctrl free added later in stop_kmmscand part.
-
-> 
->> +
->> +	return 0;
->> +
->> +err_kmmscand:
->> +	stop_kmmscand();
->> +
->> +	return err;
->> +}
->> +subsys_initcall(kmmscand_init);
-> 
 
 
