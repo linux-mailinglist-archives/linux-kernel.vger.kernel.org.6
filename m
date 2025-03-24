@@ -1,191 +1,251 @@
-Return-Path: <linux-kernel+bounces-573439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5716A6D738
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:26:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E900A6D73A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:26:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2C51891E77
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA04F3AA609
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A23325D915;
-	Mon, 24 Mar 2025 09:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98FC25DAE3;
+	Mon, 24 Mar 2025 09:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VgCCbMV8"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAHXs+2d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E1B198845
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742808362; cv=none; b=pvMNvdqbElS5crB56bZTL3E8CUVMQpJ743L2jSZST59EGhDEB4oFZ6x3GhhIpmdEmKYwTJd+F9qAbNxGEucFNqcYoiPZ+2XJb7aVBxi/mIKGYBdoGLw+J0Lxx9/8hKXbIBugB8lL69jVNXS13cyHq3+uyhXJi5R5K0UO8hlrtE4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742808362; c=relaxed/simple;
-	bh=bXzWlcGSjsEWQ68IzFcnBpij2zd/PeSHOnwycoVjz/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3YL8DhA4/3QpM4M4hXx/FFO5/TkDvnmUSE6V7MgRCMPFxON7dWRhl6BcuJkKdVZb+aEp0fRfbQd6MiNU+EVtVsJqDTC+V9b3rEptGK0N+pfKJ8T3JofsVCtHQ0SD1DnVoCfMNUwA3JeH5IIstwuqdsguJE3dzhSzABQ0iCWkAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VgCCbMV8; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=1Be7
-	wSq5LewJPH8TYYO4ZF9M8T/CeCfoqvhmc0odLmE=; b=VgCCbMV8Aujq2mm0vQCi
-	dwnvQn+4Asxa9MbZJ/uEWabOyAef150pnzY8QumOUzaTmAGtin5W4AV4Kx4dp8Ui
-	pXfcQUlSctbWotuEZZTFu+Z8mAtGf2uwPxYf2Vm7C3JML/jI3kXtDGioG7P+EAg6
-	NomuaDH73ZN7ZqGc/AB7HjL4hktG5lQEENeHN84nUUIn+ZB50X98ehf3QAGOfZOF
-	Vc0+srxApze0i15jT64ZuW1/bZB+ywI6iBvhj+lfrmMUJvOm/8IHuTjlDezqENtP
-	+RH9zPzIACoqzsif5dG7wYBKHURH77RjnY43+hHdjfFrgOGc5CU6AQRWrAolRhby
-	7A==
-Received: (qmail 2478914 invoked from network); 24 Mar 2025 10:25:49 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 10:25:49 +0100
-X-UD-Smtp-Session: l3s3148p1@rhqNMBMx7lZtKPH/
-Date: Mon, 24 Mar 2025 10:25:48 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v4 08/13] serial: sh-sci: Introduced function pointers
-Message-ID: <Z-ElHPod77Py1DPH@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-9-thierry.bultel.yh@bp.renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEDD18FC80;
+	Mon, 24 Mar 2025 09:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742808381; cv=fail; b=ThLOwRO+9p/RcpIXWfvr8+YASO4Ira1JfeTlQAdKgAnr3avjBJ4P2Yfp0KTZs1LoBI6iwIUwdlrMhOgo3yMuSmzWWiGw1ir3YHRw4gTLZxFdrGrUTtx3Sc+AfgslBNF9hLDCJqpc33d8Y2Vq/tlReNYL2EZnT0KtT+dOlTrnmlw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742808381; c=relaxed/simple;
+	bh=RhkWsWpN8dAiM9WmV6lRO3uz9MtKl98gu+8iCfPY/vo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ePc7pkzAIKWwgpEGKH6TZ3jAOocZ1l+zQgViDoNOM+YhRjYOZ0UZXArGLVnolQlX88uoVacAQbuFFxm/zZRoJ2LDo5rmiW6MEBYV/gkZL3/JRaKgm5c63U91bgUHwls/v5NnwPlmyQ11yzeSgEMLZxDv2zKsTUFsBJ99AtF/xOA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAHXs+2d; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742808379; x=1774344379;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=RhkWsWpN8dAiM9WmV6lRO3uz9MtKl98gu+8iCfPY/vo=;
+  b=PAHXs+2d0cuGUToj9RkqfWyzYFs7NwYNv3eFUE5plcM13K39fnLRYQFy
+   Aoj4sL3BybBAdTY14mVThpdUS9jVs+MAdRq/aCxKcM0FmmN0me0r0gWMN
+   49AtSHZMx5vL1/Wx2OJ6K2s51uqKM+PUKi/E8w11DG+vBEv/feFvrbkQp
+   i8ARUt6+aco1Vbr6TqVXiaw8km6oQvrd7+sHp5NJDrWBqmJqWGJkQdaC5
+   yLjC/azwjhZw0HP9/g/ni4Y14v8M+/wHiAbX3FGzNVDZyEdUI3MR5Yhu+
+   EJmzyoqhWwVbs5sk34MHykdTodUlPtJTW3gFeoN5fZR2SfYfVJo/1UrRp
+   g==;
+X-CSE-ConnectionGUID: kfmE73mxQLCdmT9J5DXanw==
+X-CSE-MsgGUID: lat3a59aRnyZfy//koYeAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="55001858"
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="55001858"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:26:17 -0700
+X-CSE-ConnectionGUID: xVL8cjnAQwWrg9I076P8MQ==
+X-CSE-MsgGUID: sryCiz72T4O7P3gMQb/tVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="129104881"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 02:26:16 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Mar 2025 02:26:16 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 24 Mar 2025 02:26:16 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 24 Mar 2025 02:26:15 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NO/eZGaf4M3Myv2i7LD4K9mFO9/bxREAnWuPUq+IiUaorJREBDm9aXdE4zImqbwY3tScp4yV036MWftptlAy/QPJk+jd13ojF2GwQK5XIMmrsrfYHbpD8741rgzHB4+9P0r2OXlraNcK/PlT+pLYDTIi+oP71Lfg26UElCknxrx0BbaJ56O5xCeKiAwxj90BJPu8Zx22PLnizlxy/pZlUi7Oa+MhQzyK+zsY9xr4D6W7V6V6yLyOQKTRQoqwTKLWaVeizyPu+cWoFSNi5AkPAef1IWnlWxwN+YCgqTQMgjnKvUlYvLf1LU5bdt31E0tGkTj+ERKiaQPUBh0dJLy0gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dEtHvnmZIGikwh8STSkwfxj4G82yYqWvJN4mtYZzGqw=;
+ b=R97Z8DyNK7uKP7Eu9Tr1pQuRezYH0gxDoSuwC36XGf9ny6L4xCms6+31MmngG3P5wQd441JdfIkM2zjHQZXqhhXipFhlZpszwaPwmdgPy6F5vHK9D6cB2qPTReLBF/RiYWcJKXNG42ywtfdrTuAipDCfPnVegOKt2Bo8gkkRTdzm9cNiMJpk58TRqEmJ9AjDAEU2TAdC5w4K/7W5+djlcQOhFEqLzPb8P7epnMf18EqBsKZLHBPT5WAUKBclHBpzEx8wNEIZe1Ede3i+t2thjKuiATd4d6RfG5aSoo5bh9XmkQG0k3T7VCopEZlJ0lqEHeffLWVTrD63eHDQcLk5lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by BL3PR11MB6529.namprd11.prod.outlook.com (2603:10b6:208:38c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 09:26:13 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 09:26:13 +0000
+Date: Mon, 24 Mar 2025 17:26:05 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Yosry Ahmed <yosry.ahmed@linux.dev>
+Subject: Re: [PATCH v2 3/3] KVM: x86: Add a module param to control and
+ enumerate device posted IRQs
+Message-ID: <Z+ElLSmJHkBqDPIT@intel.com>
+References: <20250320142022.766201-1-seanjc@google.com>
+ <20250320142022.766201-4-seanjc@google.com>
+ <Z9xXd5CoHh5Eo2TK@google.com>
+ <Z9zHju4PIJ+eunli@intel.com>
+ <Z93Pv0HWYvq9Nz2h@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z93Pv0HWYvq9Nz2h@google.com>
+X-ClientProxiedBy: SI2PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:4:194::6) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DND0bWGSWizbPD8t"
-Content-Disposition: inline
-In-Reply-To: <20250306152451.2356762-9-thierry.bultel.yh@bp.renesas.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|BL3PR11MB6529:EE_
+X-MS-Office365-Filtering-Correlation-Id: b79bf542-d268-42ef-1041-08dd6ab5ebc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mqEnbvIjAwJ44TFlKlLAtJSYtxnkfNyiz8tBMcmPgct4/dzYfTAu2PCRLV3x?=
+ =?us-ascii?Q?B3+2KQwjOZgrHXnU7uOPep4UQcz2QqduUwEJoDMyM2Uam/2pmzcaMS7XbHny?=
+ =?us-ascii?Q?JgGFlOJDbl6KIYNPuXwSvfcEnjnkQ2keu8kHthqwtNDx4gRkxDfOTnXNuXMG?=
+ =?us-ascii?Q?6wtxQBstHJ8WzTulbltUflq7GfAVb6WWkrYVlXfe7TB0u530RzdqSJbNDkNW?=
+ =?us-ascii?Q?nCU/CsfoxTVQnr4n8ZEqaWbdjGl8Y6mhtKQAnEI80hMI5JK1hAuShDSSu78J?=
+ =?us-ascii?Q?JZBWdqW9a3nIhdW39braXQ4Fd8mHoFmdCGTQpMR8lGZfcF9rYMzYez4yzee0?=
+ =?us-ascii?Q?fu/K15MKZS8TDItX+fqZXBXCjTt9kfVu+FXcrHQpMxe9jMKGfvRVtdQkL6Ix?=
+ =?us-ascii?Q?MMErPhFLsMcG8h6V7xxBntOARTSuiHiP1AC58eEV4jqxxaGYTelxsitdsXN9?=
+ =?us-ascii?Q?UoYEAtFpbfbRcPA46UYAFcgypGjhZk2fxz4mWjJvmUjDA0u1ZABTfi01XscT?=
+ =?us-ascii?Q?CicAKACNGy/X9Y/FoZLgEX4f2b7RF5obfl57hIYj+a5dS0uWYzpIxEYmluUJ?=
+ =?us-ascii?Q?EXOS2hzcRaQ6p97ocYZzb7HpKCgRZZwgO9z+3ayeu5MP8P1udokKRI4cD7px?=
+ =?us-ascii?Q?kK4QKZySEKGHS75N/1HpVzxYQuWZAy85gOcSRic9DEAa78ROCwBJsQnmwh40?=
+ =?us-ascii?Q?GdKYLVy7oH46Ld+rGaoIyDu/olSXTf0Mfd+5EtBsXpTG23vfPJLIur0qPasj?=
+ =?us-ascii?Q?zH1EWzjDKwqzRz1D3xxPkdjArLPDExEuLOHC4DFAN6maU2WP/SsVSLfW1r94?=
+ =?us-ascii?Q?MKAwnkwZE9hd4mcKZEV+ag5uZj6LOG6mJjJqVeHGmCiXx9VCw15Mz69s5RAP?=
+ =?us-ascii?Q?cj8E7Nb0uS0f9brvuRs/yjXHhyypHVvTgv/Usg14zTWyIIavw120RjAP+oti?=
+ =?us-ascii?Q?Ex/+Kmso4X9CQmBI8fWtL6bvVHxxggcQCM9R2kZdEqMMXWyOogufiXrIUW3n?=
+ =?us-ascii?Q?vZKdIkQ+Rz88jpZNv0yoC/FKjnl6F91hD+FkiNhwwbxD6vRPA49QSdTFWTMC?=
+ =?us-ascii?Q?6c0zs/AAICNSUb1pgbVFRo3ROr1ZFeuuketGZEuJ7XHY4BQU6rZ4uOc8h0uz?=
+ =?us-ascii?Q?4gjKCTnMFZB+un/MiCtpNY3VQrpGouwAFql05YgbrtnYgsrchdecvJcB1mUx?=
+ =?us-ascii?Q?yLRb+q04C0Ie2PxzA0rfNCmPzM0BG1v8yVw2vX0yX3+LNrbsNc2PSC8UtpNM?=
+ =?us-ascii?Q?VgOSvqgqHOxFG5Kavu+R3vrucfGD0Aslz0ochbakxZhM7iKQ+VICyI8ChzVg?=
+ =?us-ascii?Q?CtwusWTayGrD8GP6KDw5GplkEL1ax81wADxgaM0sdedwjg/3UmvtcBwGzRep?=
+ =?us-ascii?Q?TJYlluJK2luVxvr0wwVgv4R93Mib?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cPWrh9luZ4AZaBwMJlblUQg/plN7f0MQWB+TIbGgMmMPbB/1hDsNY46daYIy?=
+ =?us-ascii?Q?vbqCDMTBCea76anYcWywphHSVX1R3bdRHkw86OH0sc5VJTmNs9IlfwnTCzhA?=
+ =?us-ascii?Q?5nMCCiByqXNJYgpMo1OcpSsTFvI/jZhcIcEznd59gp3IMBep0owdDJ2VuVWC?=
+ =?us-ascii?Q?+opTnf028OZ3mydF0BfcwNU5BtYFZMscxhuuvF76L8Mb9Uhwy4k4Ps+BXcs2?=
+ =?us-ascii?Q?B8PPJ9ZLnavqLLnE65ngL9cPll9IgftyRdpV2CECBY6YP7tkc/bPcLYo6x+h?=
+ =?us-ascii?Q?Vvr+MxEVh+AZXG81HXUlo/eBChmOeuzgBR8gmCWqqJLeSAWvXlBhR7XieoeR?=
+ =?us-ascii?Q?a2GpAhnYj1yiUKSGsNkBn9U2Hk+cfcWgTUA7Sa+GwC4zty8LkVNn73VhF/Ts?=
+ =?us-ascii?Q?8Ty6wfJ+cYNxEO8iuefO4B2rThjC57foaHmibFnmoLaY5z5ObSo1iTrEXrvm?=
+ =?us-ascii?Q?SrUS+FBmSaJiUw2ttmcXQLYbPDmj5ZAKgxT5l8sQaReitM8EvByYFoCvbA8I?=
+ =?us-ascii?Q?/FUfw3F3+S/ZO0E2GY/feIwNnm/0beXFEr26A2mEd4x+d0cVvCrIC3n+uasX?=
+ =?us-ascii?Q?lvebbyALW5cICWlBNsW6Ct0OGWx6SzesWxW1IdsWaDQ7yruI+HtVwqP++kVZ?=
+ =?us-ascii?Q?7jAp6kXFk/20iCKT5CrO20HEDVBsDluETfIUj7ii/kgkE7XkH8GY/Z3smWv4?=
+ =?us-ascii?Q?FL6A8GG0r9eSDTPSLIJtzHxAvJzE2uNU/vhKaQljdy4v4EH78U98xWbUbKlS?=
+ =?us-ascii?Q?fZeyUe8Zlf1eNkyKzrm1pmHuWktFnbB5FFVi0/uDPMiwV6fB29ax4OWS5hvT?=
+ =?us-ascii?Q?WrU7z9sanFoPyWs6lMRzoomMVj8zYkuHfUlkuvJzzYwPCRuc3Pu/pA4qKlVR?=
+ =?us-ascii?Q?NBZ+JYzzzxgEFIpU3PvvrAk753o+LOrJsKsHoeSZXVpkkzxqkQCr9pq1ZAij?=
+ =?us-ascii?Q?bmy8Y2k11EueIYF5SD1AuEr2HbUhD7ttNrd3JNitgHiLoqeq3/dTH1TBA/ng?=
+ =?us-ascii?Q?dzZE0ca6KC5qdSlJFz9fA87bi22q4HWca/z2/QFH50u0TsYoYGG7ExyBYbtJ?=
+ =?us-ascii?Q?bRU/yaOFsbYTlDqAn8DAslzstP/YE700QV/pRL0fO1THn/j3pXmroE8Dxv5/?=
+ =?us-ascii?Q?2ImEN1eckEXOuDUsF5HWNSv3Br73M9T4OoKiu2eC3eY18+v6tYTLJq9o5+g5?=
+ =?us-ascii?Q?AZuy2AKo1wAtsCngxXoY928IIHswQUF3QNbHRGVjPOrEzSXqcdhc+PkC8NKl?=
+ =?us-ascii?Q?fxT3UddeAHqbUCHzWSntl1qdnRI4lEr0nfaw5RvJG6+3vrIq4VoOQtgj2py5?=
+ =?us-ascii?Q?GA5aUnWGOXYrV0taoAzoqn1WpaBbeVWtSarb3Xj0V8//Vfb8ezFojUo6od21?=
+ =?us-ascii?Q?lg7WVxfgM70uVs8av3UAwgk+QvUi9usXxOrdQdwMq6H0PML/xdKZ8d06VI0M?=
+ =?us-ascii?Q?iZJQW4gAGl3HPJe78hGV4HHs5QLQugJuyRw2bL0dWA7k/Ulmj/rDe83SZNcQ?=
+ =?us-ascii?Q?eo7Pm7jn21tVzbxAiB1Nxdsbl5fzCXaJAopNMVgak8IaV+hsEA4E06jabEMv?=
+ =?us-ascii?Q?uXiTb2/qtEt9pTQGGwh04RvWz/xFARxE54ZZONFx?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b79bf542-d268-42ef-1041-08dd6ab5ebc3
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 09:26:13.4718
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Eq3MIV3Ejkj5AzsjIsL+roACyEDRAsr+xHyWrL9VCvM1VoFqEyFDJsiTA4D4DZQOOd/+YRj9BX6angrjEwqi2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6529
+X-OriginatorOrg: intel.com
 
+On Fri, Mar 21, 2025 at 01:44:47PM -0700, Sean Christopherson wrote:
+>On Fri, Mar 21, 2025, Chao Gao wrote:
+>> On Thu, Mar 20, 2025 at 10:59:19AM -0700, Sean Christopherson wrote:
+>> >@@ -9776,8 +9777,8 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+>> >        if (r != 0)
+>> >                goto out_mmu_exit;
+>> > 
+>> >-       enable_device_posted_irqs &= enable_apicv &&
+>> >-                                    irq_remapping_cap(IRQ_POSTING_CAP);
+>> >+       enable_device_posted_irqs = allow_device_posted_irqs && enable_apicv &&
+>> >+                                   irq_remapping_cap(IRQ_POSTING_CAP);
+>> 
+>> Can we simply drop this ...
+>> 
+>> > 
+>> >        kvm_ops_update(ops);
+>> > 
+>> >@@ -14033,6 +14034,8 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(kvm_rmp_fault);
+>> > 
+>> > static int __init kvm_x86_init(void)
+>> > {
+>> >+       allow_device_posted_irqs = enable_device_posted_irqs;
+>> >+
+>> >        kvm_init_xstate_sizes();
+>> > 
+>> >        kvm_mmu_x86_module_init();
+>> >
+>> >
+>> >Option #2 is to shove the module param into vendor code, but leave the variable
+>> >in kvm.ko, like we do for enable_apicv.
+>> >
+>> >I'm leaning toward option #2, as it's more flexible, arguably more intuitive, and
+>> >doesn't prevent putting the logic in kvm_x86_vendor_init().
+>> >
+>> 
+>> and do
+>> 
+>> bool kvm_arch_has_irq_bypass(void)
+>> {
+>> 	return enable_device_posted_irqs && enable_apicv &&
+>> 	       irq_remapping_cap(IRQ_POSTING_CAP);
+>> }
+>
+>That would avoid the vendor module issues, but it would result in
+>allow_device_posted_irqs not reflecting the state of KVM.  We could partially
 
---DND0bWGSWizbPD8t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok. I missed that.
 
-On Thu, Mar 06, 2025 at 04:24:42PM +0100, Thierry Bultel wrote:
-> The aim here is to prepare support for new sci controllers like
-> the T2H/RSCI whose registers are too much different for being
-> handled in common code.
->=20
-> This named serial controller also has 32 bits register,
-> so some return types had to be changed.
->=20
-> The needed generic functions are no longer static, with prototypes
-> defined in sh-sci-common.h so that they can be used from specific
-> implementation in a separate file, to keep this driver as little
-> changed as possible.
->=20
-> For doing so, a set of 'ops' is added to struct sci_port.
->=20
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+btw, is using module_param_cb() a bad idea? like:
 
-Okay, the discussion about the general approach convinced me that we can
-go this road. I will not do a line-by-line review of these patches, but
-just check that it looks good to me in general. This patch here merely
-shuffles code around and adds some inderection. If it works, it seems
-good enough for me and we can improve on it incrementally:
+module_param_cb(nx_huge_pages, &nx_huge_pages_ops, &nx_huge_pages, 0644);
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+with a proper .get callback, we can reflect the state of KVM to userspace
+accurately.
 
-That means, though, that testing this series on a variety of SoCs is
-especially important and I'd like to get confirmed that you did these
-tests on SCI variations which are available on RZ hardware. According to
-my research it would be those:
-
-	[SCIx_SCI_REGTYPE]
-		/* RZ/Five, RZ/G2UL, RZ/V2L */
-		.compatible =3D "renesas,sci",
-
-	[SCIx_RZ_SCIFA_REGTYPE]
-		 /* The "SCIFA" that is in RZ/A2, RZ/G2L and RZ/T1 */
-		.compatible =3D "renesas,scif-r7s9210",
-		.compatible =3D "renesas,scif-r9a07g044",
-
-	[SCIx_RZV2H_SCIF_REGTYPE]
-		 /* RZ/V2H */
-		.compatible =3D "renesas,scif-r9a09g057",
-
-	[SCIx_SH4_SCIF_BRG_REGTYPE]
-		/* a lot of RZ, too */
-		.compatible =3D "renesas,rcar-gen1-scif",
-		.compatible =3D "renesas,rcar-gen2-scif",
-		.compatible =3D "renesas,rcar-gen3-scif",
-		.compatible =3D "renesas,rcar-gen4-scif",
-
-	[SCIx_HSCIF_REGTYPE]
-		/* R-Car Gen2-5 */
-		/* a lot of RZ */
-		.compatible =3D "renesas,hscif",
-
-Please double check that I did not make a mistake. I'd think Geert tests
-these on in his board farm anyway:
-
-	[SCIx_SH4_SCIF_REGTYPE]
-		/* landisk */
-		.compatible =3D "renesas,scif",
-
-	[SCIx_SCIFA_REGTYPE]
-		/* R-Car Gen2 */
-		.compatible =3D "renesas,scifa",
-
-	[SCIx_SCIFB_REGTYPE]
-		/* R-Car Gen2 */
-		.compatible =3D "renesas,scifb",
-
-	[SCIx_SH2_SCIF_FIFODATA_REGTYPE]
-		/* RZ/A1 */
-		.compatible =3D "renesas,scif-r7s72100",
-
-We maybe can get hold of the next board. I will figure this out
-internally (not super important for this series, but nice to have):
-
-	[SCIx_SH4_SCIF_NO_SCSPTR_REGTYPE]
-	/* SH Ecovec */
-	arch/sh/kernel/cpu/sh4a/setup-sh7723.c: .regtype        =3D SCIx_SH4_SCIF_=
-NO_SCSPTR_REGTYPE,
-
-That leaves some older SH boards out of the loop, but I think this is
-OK. A quick research didn't let me obtain boards for these anymore.
-
-So far, so good? Comments?
-
-Happy hacking,
-
-   Wolfram
-
-
---DND0bWGSWizbPD8t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfhJRgACgkQFA3kzBSg
-KbbSKw/+N9OsSyV34D6J2L74Th3KIV/2RufjZwsHsg5WtBK/OIZAT2k6PRV7Yr7k
-0Agmr+1pDDtLo7eiHlMJZhlbWuGnEhyIwBryrrmSxgwbWo/6NSDJANMVHnGJa7mc
-MJLofQQMd/6oYTt7xf/o34eMb5E78WGMvG7Qr7AhURJo40tCXB1OTunSk8QOBa7Y
-MfGpSwGSHClvNUzJZLI6rxOe4Ow+blhaBv0nUNa6r2FjmT8S3yUr7l+DSr7hnkCK
-/IGFLlfIbK3YJ9jmoPYRBJl07Gmqhlz34IcihZKLm6DygU6gIWoFAEY9O/5e9I9U
-CUAZBkOF9FsuMnGhbWGaguUOPBWbCPpkuvs8bccNkrZtqsmLy5MPfQ3EthEVq7BR
-ArNZOGRl8+SiVrAyAZKcZYouDdTauHKzhJF6aWypJrZa7KaHjCh4N2fWyYEoH2Yc
-LzMUVUotTRTWTU4aghHbicp+ym7kSNbH5tE9OhSH2zqsmwapISTbA/230c6eaiFs
-p0J4BwDFJHyZfZTfwaCvyVJzJlMpSKWmfIZCtKFPoivPIQi1LMc3/vsxw3GJZgtf
-t2kewY7Uca3PhCj9HuyJG/tLp3xSwMR/hGLeiBcr9dP7ov2V+D93p2oVmxItXRyb
-tCU5WViobu5CiWHTKmMjWoFFuJ54HJMDTungXxbfqmGoI61kCXQ=
-=mLXO
------END PGP SIGNATURE-----
-
---DND0bWGSWizbPD8t--
+>address that by having the variable incorporate irq_remapping_cap(IRQ_POSTING_CAP)
+>but not enable_apicv, but that's still a bit funky.
+>
+>Given that enable_apicv already has the "variable in kvm.ko, module param in
+>kvm-{amd,intel}.ko" behavior, and that I am planning on giving enable_ipiv the
+>same treatment (long story), my strong vote is to go with option #2 as it's the
+>most flexibile, most accurate, and consistent with existing knobs.
 
