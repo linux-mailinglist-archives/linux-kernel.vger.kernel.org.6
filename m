@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-573402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F52A6D6C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:59:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A47EA6D6CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:00:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F9867A66B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:57:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDC4C7A69C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD10125D558;
-	Mon, 24 Mar 2025 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F9E25DAF4;
+	Mon, 24 Mar 2025 08:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQv9sp/5"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPmhHB3h"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F96525D1F3;
-	Mon, 24 Mar 2025 08:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC9725D8E6;
+	Mon, 24 Mar 2025 08:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806630; cv=none; b=SvohB/6Sd5Ogn79uzoPb2D3LIneky6NJYIZ5oHai5et/nPYRH+oaz3CZEQCH8ZIegFQ5FBYvv9Tfwbu78/dE1I1OB+0zicEx7qPGpTZr+3VxCRBr0flFpEJ6KS/984hyefq6aj2r6mELAbn8XzZTJoAEbWQtYaFsY1EYyY/ozzw=
+	t=1742806642; cv=none; b=Y5xw0all/XWUSSbK2bfDle0jF6KpYCI/Aa11Ta6aonvQzcqRBEGYXrZdqdkPxSHpggXdBdOTL5ndRVAXLB0kSFNgajbKw8mMWRHRK0Xds4UcNUFh7j4av4+MIsRXwioTkPRr2otcPwfgmjMW3ySfbd7CtVL7xWzsta9dQX6VuC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806630; c=relaxed/simple;
-	bh=jp6GIe4SvlBD3jK5D25GUlnPAlTE05/tZ8hDye76W+w=;
+	s=arc-20240116; t=1742806642; c=relaxed/simple;
+	bh=LKu5sWL23vU5QilNqIZE7oISlgSG575mDkyaQRUukSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z50MuNU+i8r0WWy7/uHwxPyoRoXVkeTrwGmFI7hSHuMtr4JT9b2sDO1EzD+e9L+Gu2q62366mc2AySGn/fBsecQh88Q9eosK6w5Cjh38gRtyXJqj7ZotFFlMkO/5PerOs64aSfZJgXi56eVJMEcztdW2dqZ5hfYJTYAnkKiWE8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQv9sp/5; arc=none smtp.client-ip=209.85.208.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=k++iHlIXrKYnDuXnsD8zR+DC4LmykViYcVc0DM19PRtfLfKknoGYhZ56rY8L31A0gjUfoL6HpP2eX6UiihNXq6WkPnqXv4uELOwrel4uFXESGZVgFu3Ov/TCSIgES3xMnHO/LX5aH0TCthGfucCKNaDrHcQ/KyBlivXdLI/a6ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPmhHB3h; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bfed67e08so46374991fa.2;
-        Mon, 24 Mar 2025 01:57:07 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so4789961e87.3;
+        Mon, 24 Mar 2025 01:57:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742806626; x=1743411426; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742806638; x=1743411438; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AWucvm9NaGNeYXaakaS0Sv7wrQXTDWGmsMTOybZx7fY=;
-        b=CQv9sp/5vGF2qrWjc3CWgcZAwWzwhsUB3PJZT9P4OddEIJFKawmnmZJqVUS06LGYQW
-         nRU9h3SiEax2qjUs/gebKgCiTaoNnNseSaZ73GiYBwETbtIPHm6cRpJ0aFfwKNOyakNP
-         HRU5lTaoQngyXH6nOm/DerOB5gHywtOvdqW77DSmtex/x3mIQhkAZmFEfSXLzUhOgRhX
-         UMdRYzkOS/q3/XxRFvZoQVDgxdFR5DjjuDh5IuKoN1NhAAJlVm5j8HfsP3fB7bbGtIJU
-         O83Y1zmAjoHhDC0bcAG0MuTCSNA1sZqsZe9Ae7Z+R7pE+qx9Hx0PoSXe1vxo9BGu4O/o
-         GoQw==
+        bh=D8ksMsEKDJZAoJ22WKD1YIJRpzXnDKbM31Jrfa4KbmU=;
+        b=WPmhHB3h4ol8Zswf15NBw3ykG2dRtdYKlfeH697QcEc1QLl8l00+IuJuR9ShZA4IC/
+         MJFcAj2YgqWYWTlMe+/c+HLhisSrvqaWoSoJIuR3ifKtGezljY3WRKsV4h/S0x+2r1iq
+         pEbMID+/pA3RGCs+hKU0QTzT+jpuBCrTia/peg6VPpwiejQDFf8IDFCnWBLlELmFTPrf
+         f3BTA9tpDWN8jzxs5IWUZkKG9pnSqqJhiwt15Bl8oemGGTqGYxR85xsgTTSDMJR+wv2m
+         73OryGfM465V79rZqWVkVACl+jp+hAkfrshEzQrvtnmhFZCYCRe2f4LQcoBohy0qOI6c
+         YcLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742806626; x=1743411426;
+        d=1e100.net; s=20230601; t=1742806638; x=1743411438;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AWucvm9NaGNeYXaakaS0Sv7wrQXTDWGmsMTOybZx7fY=;
-        b=bIHnb0EvyMSVlPBCVnjsn0X5MebK6A2c5Y6ZqwjqckanEYz+VtTBh2RG3k458iRqIe
-         AqUQytYdvembnHLa0po4N3/H/QXnbvgj+dS8jZmWUVEgCe1DG/Hl5xyXnTBjfO875ner
-         ny0A+fCLbZfFCFQk+EN7RS5SIvhO7Wq2ibPD3SVVyiL0hgPVbNuJ646BlL+Ez/c8ACQ4
-         UMU6Fiu+dXm9nrAivIIGl9BOrOyCZGfd/eHS+E/BAWxKK1YQX12887WSt6xtrfuU8/CZ
-         IOyYkZ90EzghWOmcewVezfInUr5+efB6dKnpd6wtrJCmKUYWXz4z8iu6ez9tAWaaQzax
-         Uplw==
-X-Forwarded-Encrypted: i=1; AJvYcCULzQcMezavKhYT51hwD/tv7H0jijxoi0qSa4N/BxUCzFmK9umBMoHXZ2xK1oIZMRyUyxKb+3UmZvNK@vger.kernel.org, AJvYcCW6n5SsusJ7X790y2UoK6FzM8UwwjZu/y315igVDtPUmqACfwC48MNj7DLJbfty4fCsZ8eQZ2P7Xkn7FaBz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYxuE0YGjAhS3F/j2K+C/y/yobph0/xl1QVT2EAU23CZzmoFzY
-	B1U5q8sQoMC7PLMtgB6RTsGTcs3NG4ttMFk0iUA5xvKq0U/ytwCMpxhNIg==
-X-Gm-Gg: ASbGncuMqGfUDMTE8z0eqgnu46flnw++8D6zwAMrBMVcECWtDyu+XQLuffWoouoKgV4
-	ktEaIUl/cJ3YZ2ZtQFnjsuPJQfxuMMF31sVFTIGnM9MZRd1xbLv2KNcy8IBKNGWzsa5TDfev+dS
-	cm171nUg+zPJdMucQ9p2T2QDx4BuA/SazphK+9lkuY2zsOf6VJGibckpFVZ8gfYpFvZXTX4SxXf
-	FoR9/MASyci0cK70Gx6ngnDmPgJawP7QiU5+/nGo4HYhrN2iF6w+TopL/tFaG/eMLGqjS41AeZ6
-	EO7MVlx3QcMwR+qQEHAv51abzn3XpkNB8FXNg/y+tJzGW39qbX4=
-X-Google-Smtp-Source: AGHT+IGhSkg6sZudd7WL+JIhoq3uTnvPYNMrVwdgMiNaSnFM4tfEbRIz0Yb+65deJpqdoi+2eo4gig==
-X-Received: by 2002:a05:651c:a0b:b0:30b:ba06:b6f9 with SMTP id 38308e7fff4ca-30d7e3001e5mr41670821fa.26.1742806626038;
-        Mon, 24 Mar 2025 01:57:06 -0700 (PDT)
+        bh=D8ksMsEKDJZAoJ22WKD1YIJRpzXnDKbM31Jrfa4KbmU=;
+        b=aIbM7R5lZCU+djpoLNjuBkcuS6Q1K5ijGEPGrvMP1Q/+pFESANiqpEiMLNqxd4x9XU
+         sAhnvDO3CbPVxHRgDN1oOqjeZW3e0atvaM2GVC9PWPiybOIFoL24uYIWIkFfDFUK2AQW
+         yaQAynos/RC+BdK0jnChjwGC3Y8O7IPafLFK67S4mvD7E/BiXw20SS3nJnXTbS/cwlZp
+         LnrUU7HRNJ3e5dVDxA33IUYCXCg6CamHnlJtG58JdGbk3BLMnSkZ6k4BctkzqVdjHwY/
+         shUDgLeoycQ1+ofR7DcuJLTZ2q0H9uUSQUkDMUnUBwGl6yyUrsxZMbJlssAi0MT8xvgK
+         0Wxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIFMQLZI8jfaj1c3/LdnGzsjQtJNWIb8VkmA/7yIVYswYmluzIHIRr/I2/pugwlfNVa3FxyEe3ATb+@vger.kernel.org, AJvYcCXUKv6FpA0CIyCRv4uL/dDLFpkPwMZ/Qxea0CsPq92clmGL9LdvAvoI82hF/91p+RUfIVohXQsd5wU+pJTY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAVx0VKSEO/J6YynSlGh5aZ/mRvOxcuhQg1wOuWtr3lq39xbug
+	CY9763tFdP51boZRbx8El7N+/zq7S8jgojpE0R31XQ8nG/vb63KQ
+X-Gm-Gg: ASbGncv/XUdy3DVRV86x0jjYvT2dzXLb1t6ycS3FtbBucElKRHZKw1uQKdAo/0ZwY2e
+	RtoQc0nxganrbwD9ZDnxppTQrM/NAmC43o5cJ6D/urwaiidfoTmvY/f+Ki00Sw2ElxueJUfkqe8
+	52d3h8Oa5cVlWwkPv5nN/PNlvvma4ZyOUpyb7+G3kGcsCE9A8mL11u8pGyw9sdq+BNWu2dIsXzp
+	8bZfDfZSi9erwGcEr4BwcCEcst6x/g7wOpw5USdeAQ4u9vI53cuLPDQw8sAxDyaJVU996GE1+bp
+	EWEJ1b5Tme9xdrpEy5O76jrn9iuB15acNqUQDso1yPv2ZvBsypo=
+X-Google-Smtp-Source: AGHT+IF7ZXU29vsWaG+6+MSp5aBPP6eU41oSGmzTr9s91X36gaoryMRUoP3h5PJgq/WnN7Oho1/tkQ==
+X-Received: by 2002:a05:6512:2351:b0:549:91d3:4f0f with SMTP id 2adb3069b0e04-54ad646ce76mr3787451e87.11.1742806638083;
+        Mon, 24 Mar 2025 01:57:18 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d925949sm13095131fa.112.2025.03.24.01.57.04
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647cadfsm1066678e87.72.2025.03.24.01.57.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 01:57:05 -0700 (PDT)
-Date: Mon, 24 Mar 2025 10:57:01 +0200
+        Mon, 24 Mar 2025 01:57:15 -0700 (PDT)
+Date: Mon, 24 Mar 2025 10:57:12 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -81,8 +81,8 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/14] mfd: bd96801: Support ROHM BD96806
-Message-ID: <41eb1a3b174bce6bb979bfae0e2fb486be51d70b.1742802856.git.mazziesaccount@gmail.com>
+Subject: [PATCH v2 13/14] regulator: bd96801: Support ROHM BD96806 PMIC
+Message-ID: <734397c8bdb86419fbced3432c7074badaad6657.1742802856.git.mazziesaccount@gmail.com>
 References: <cover.1742802856.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,123 +91,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dqWsc0l52iLFBRzy"
+	protocol="application/pgp-signature"; boundary="IV+ZmV8GLV4FtVYi"
 Content-Disposition: inline
 In-Reply-To: <cover.1742802856.git.mazziesaccount@gmail.com>
 
 
---dqWsc0l52iLFBRzy
+--IV+ZmV8GLV4FtVYi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 The ROHM BD96806 is from the software perspective almost identical to
 the ROHM BD96802. The main difference is different voltage tuning
-ranges. Add support differentiating these PMICs based on the compatible,
-and invoking the regulator driver with correct IC type.
+ranges.
+
+Add support differentiating these PMICs and provide correct voltages
+for both models.
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 ---
 Revision history:
-v1 =3D> v2:
- - Use chip_type enum
+v1 =3D> :
+ - No changes
 ---
- drivers/mfd/rohm-bd96801.c       | 23 +++++++++++++++++++++++
- include/linux/mfd/rohm-generic.h |  1 +
- 2 files changed, 24 insertions(+)
+ drivers/regulator/bd96801-regulator.c | 65 +++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
-index dd0be7d675b8..66fa017ad568 100644
---- a/drivers/mfd/rohm-bd96801.c
-+++ b/drivers/mfd/rohm-bd96801.c
-@@ -225,6 +225,11 @@ static struct mfd_cell bd96805_cells[] =3D {
- 	[REGULATOR_CELL] =3D { .name =3D "bd96805-regulator", },
+diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96=
+801-regulator.c
+index d829289942f9..fb9e7c3314a3 100644
+--- a/drivers/regulator/bd96801-regulator.c
++++ b/drivers/regulator/bd96801-regulator.c
+@@ -962,6 +962,70 @@ static const struct bd96801_pmic_data bd96805_data =3D=
+ {
+ 	.num_regulators =3D 7,
  };
 =20
-+static struct mfd_cell bd96806_cells[] =3D {
-+	[WDG_CELL] =3D { .name =3D "bd96806-wdt", },
-+	[REGULATOR_CELL] =3D { .name =3D "bd96806-regulator", },
++static const struct bd96801_pmic_data bd96806_data =3D {
++	.regulator_data =3D {
++	{
++		.desc =3D {
++			.name =3D "buck1",
++			.of_match =3D of_match_ptr("buck1"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK1,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96805_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96805_tune_volts),
++			.n_voltages =3D BD96805_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK1_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK1_VSEL_REG,
++			.vsel_mask =3D BD96805_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK1_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck1_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck1_irqinfo),
++		},
++	},
++	{
++		.desc =3D {
++			.name =3D "buck2",
++			.of_match =3D of_match_ptr("buck2"),
++			.regulators_node =3D of_match_ptr("regulators"),
++			.id =3D BD96801_BUCK2,
++			.ops =3D &bd96801_buck_ops,
++			.type =3D REGULATOR_VOLTAGE,
++			.linear_ranges =3D bd96805_tune_volts,
++			.n_linear_ranges =3D ARRAY_SIZE(bd96805_tune_volts),
++			.n_voltages =3D BD96805_BUCK_VOLTS,
++			.enable_reg =3D BD96801_REG_ENABLE,
++			.enable_mask =3D BD96801_BUCK2_EN_MASK,
++			.enable_is_inverted =3D true,
++			.vsel_reg =3D BD96801_BUCK2_VSEL_REG,
++			.vsel_mask =3D BD96805_BUCK_VSEL_MASK,
++			.ramp_reg =3D BD96801_BUCK2_VSEL_REG,
++			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
++			.ramp_delay_table =3D &buck_ramp_table[0],
++			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
++			.owner =3D THIS_MODULE,
++		},
++		.irq_desc =3D {
++			.irqinfo =3D (struct bd96801_irqinfo *)&buck2_irqinfo[0],
++			.num_irqs =3D ARRAY_SIZE(buck2_irqinfo),
++		},
++		.init_ranges =3D bd96801_buck_init_volts,
++		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
++	},
++	},
++	.num_regulators =3D 2,
 +};
 +
- static const struct regmap_range bd96801_volatile_ranges[] =3D {
- 	/* Status registers */
- 	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
-@@ -617,6 +622,20 @@ static const struct bd968xx bd96805_data =3D {
- 	.unlock_val =3D BD96801_UNLOCK,
- };
-=20
-+static struct bd968xx bd96806_data =3D {
-+	.errb_irqs =3D bd96802_reg_errb_irqs,
-+	.intb_irqs =3D bd96802_reg_intb_irqs,
-+	.num_errb_irqs =3D ARRAY_SIZE(bd96802_reg_errb_irqs),
-+	.num_intb_irqs =3D ARRAY_SIZE(bd96802_reg_intb_irqs),
-+	.errb_irq_chip =3D &bd96802_irq_chip_errb,
-+	.intb_irq_chip =3D &bd96802_irq_chip_intb,
-+	.regmap_config =3D &bd96802_regmap_config,
-+	.cells =3D bd96806_cells,
-+	.num_cells =3D ARRAY_SIZE(bd96806_cells),
-+	.unlock_reg =3D BD96801_LOCK_REG,
-+	.unlock_val =3D BD96801_UNLOCK,
-+};
-+
- static int bd96801_i2c_probe(struct i2c_client *i2c)
+ static int initialize_pmic_data(struct platform_device *pdev,
+ 				struct bd96801_pmic_data *pdata)
  {
- 	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
-@@ -642,6 +661,9 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- 	case ROHM_CHIP_TYPE_BD96805:
- 		ddata =3D &bd96805_data;
- 		break;
-+	case ROHM_CHIP_TYPE_BD96806:
-+		ddata =3D &bd96806_data;
-+		break;
- 	default:
- 		dev_err(&i2c->dev, "Unknown IC\n");
- 		return -EINVAL;
-@@ -739,6 +761,7 @@ static const struct of_device_id bd96801_of_match[] =3D=
- {
- 	{ .compatible =3D "rohm,bd96801", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
-1 },
- 	{ .compatible =3D "rohm,bd96802", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
-2 },
- 	{ .compatible =3D "rohm,bd96805", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
-5 },
-+	{ .compatible =3D "rohm,bd96806", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
-6 },
- 	{ }
+@@ -1260,6 +1324,7 @@ static const struct platform_device_id bd96801_pmic_i=
+d[] =3D {
+ 	{ "bd96801-regulator", (kernel_ulong_t)&bd96801_data },
+ 	{ "bd96802-regulator", (kernel_ulong_t)&bd96802_data },
+ 	{ "bd96805-regulator", (kernel_ulong_t)&bd96805_data },
++	{ "bd96806-regulator", (kernel_ulong_t)&bd96806_data },
+ 	{ },
  };
- MODULE_DEVICE_TABLE(of, bd96801_of_match);
-diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-gene=
-ric.h
-index 867acf5baefc..579e8dcfcca4 100644
---- a/include/linux/mfd/rohm-generic.h
-+++ b/include/linux/mfd/rohm-generic.h
-@@ -19,6 +19,7 @@ enum rohm_chip_type {
- 	ROHM_CHIP_TYPE_BD96801,
- 	ROHM_CHIP_TYPE_BD96802,
- 	ROHM_CHIP_TYPE_BD96805,
-+	ROHM_CHIP_TYPE_BD96806,
- 	ROHM_CHIP_TYPE_AMOUNT
- };
-=20
+ MODULE_DEVICE_TABLE(platform, bd96801_pmic_id);
 --=20
 2.49.0
 
 
---dqWsc0l52iLFBRzy
+--IV+ZmV8GLV4FtVYi
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhHl0ACgkQeFA3/03a
-ocU0NAf/dj7gGLZfDyLqcWFvgKZ6R6k0xlvYh9WD+IzqX0neyFVciVQGZiFgTZAY
-DPTFMOLBqE4fr6D5a6ckhJvuvVHLSEF0ppGjSzjxXG5Z/Xg5ClYyWpe7GQ0eDkLZ
-wFfcZqgVsBWG5WQ76bVQqMJm8cPqGgC5Ac0qBJvRRMmSWSyDSXmklkhRZQgLjao/
-seYYA1+wtHIS+I8iPKYfEfgbMAsO0spAVxN2iYA5h/W0lJoH4yVXZGjYc0Xymw6V
-tHzxMLa02mGmzkglLydstOviScAuqcvtTG9zzTYj6Z6EV3doYHHhdxJ3cg4SUXFV
-SBiIm568l0R5aNn5pTj8hNRtWZb7Ng==
-=zKiv
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhHmgACgkQeFA3/03a
+ocU1kgf/ZcY3vO1UHvmeClZccbQwo5xRfocgywJatw+EN9lH48lrAw5F/n69NORk
+HAfcWzPfrTl0arZwVCLNB9gIUsiJWV1KEd3UbRfE1Gt++ZpIqJCjtnjdQawjsK57
+4HgMVtPEWMVf/3pNxF8Mt5P5eys5EiI+ZrCKHJPrlcz2AKVWDn0HMeXUw93yJ6U6
+R896sbEhJy79LrLojwvzUakc29WJ9Ft+K3MvV2SCHLEaFPBApsJ7yOdc9LGQCbJe
+/uWSwhIKCQ16HkssvuGco17GgD5XM0exA/jrNTzt0hSwcl+Oae6pE5AuhzQkI7Q/
+YzH6Ib3I9GC57QZRU3cy5iPSSy50kQ==
+=+BCp
 -----END PGP SIGNATURE-----
 
---dqWsc0l52iLFBRzy--
+--IV+ZmV8GLV4FtVYi--
 
