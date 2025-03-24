@@ -1,91 +1,117 @@
-Return-Path: <linux-kernel+bounces-573106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EE3A6D317
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:36:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F82EA6D316
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A2418928DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:36:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D0816D4A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1633F1442F4;
-	Mon, 24 Mar 2025 02:35:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9981615E96
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 02:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8E012E1CD;
+	Mon, 24 Mar 2025 02:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="stwLUf4R"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E98B667;
+	Mon, 24 Mar 2025 02:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742783742; cv=none; b=V+YYXdirmooHpOQse8jYSjr5jfT3qGFXmvPetrUqIy0f0ANCWkvSPnVXPXJ3ATd6Rp2Jrh4B2mz4/TSRN4rGpN9QbZWnkhryTsRRaeG2GS3wgkxmuHivyJdD66MD/ESykmVedJGQLQ3oGwOgxUkKLcv52HknFkk1cPqzS5EAGcc=
+	t=1742783741; cv=none; b=XhqSPYaIPnIIyKJeSZXFQEX0UbykS8tu2wcKwpDrjih/rg5hrVNrbNP/EA4zV0XD+ytPJX1HlJAdQwdddKS7SBMPy/KN9wvtKBr/YZfHGctuKcVcnhr+vyu8/ZB9C1usWNPi+BVXbUIBGvc4hVjLmAWrcW3NcG5nIaXBq8K9Y64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742783742; c=relaxed/simple;
-	bh=WXP6pAWdo0VZuP3UbIqZt/JoWchYvGMkSjCSQIDez5I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dM8RMThVMt6qQbZmSTH1JCCOF+nlGCvNNofHJjfkFgeQqj8iHhmSeX7LnS2D2XGSets5ND9atqCN6QzmFoYGqunFE14H35oDU3qgV4u/jdMrmxF3bOJJsUlxwCNpFm/MuVCxfL83EsYs3FaGdo5w1VsZCgvVbs/yigwEQN6cuoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 175B5106F;
-	Sun, 23 Mar 2025 19:35:45 -0700 (PDT)
-Received: from entos-yitian-01.. (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9AB443F63F;
-	Sun, 23 Mar 2025 19:35:34 -0700 (PDT)
-From: Jia He <justin.he@arm.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Jia He <justin.he@arm.com>
-Subject: [PATCH v2] KVM: arm64: Skip the KVM pmu initialization when hyp is unavailable
-Date: Mon, 24 Mar 2025 02:34:50 +0000
-Message-Id: <20250324023450.109312-1-justin.he@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742783741; c=relaxed/simple;
+	bh=cd2bpQ6rijtiBRYe6NFanE/4aq7Kj7bh8XMG5u6H9H4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gaNYN+0LBUhB2d+g5AnMFB/fbE4W3hV1CMEF6l8A65uAmA1Op+DJgmJAnrR13V5EtbWO+AxuZ9e8gaODFM+M8Y1Y1GIK2NkziZfCM0toz7jvVhSr3sxDPBXAtTmFATyJge0xhKr5GIX9rbPLadgp1ejLOSrZE90KLhjl6ng6ijI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=stwLUf4R; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742783734;
+	bh=2Mx2/2FC58YVJr9d818o0qZgffvByW3aFvXCysFxuco=;
+	h=Date:From:To:Cc:Subject:From;
+	b=stwLUf4RwSkOQRNZFRINFVtu0r0WidAzJgfQQT5OsMnw3rUWJv/L5mVeu9kywBDw1
+	 q47Ii4NwdefT6vja1hZL6VkFUJcTD3XMBzQRPBCWnOBxBMB/+pK7ZaGEdYe4uga0RN
+	 Orcwi0ZNOf+lPtdbCBDg90mctWV1fq+WGBTHdF5FuYY1P2866WCZitASVLdBBwWl4w
+	 KrPsNB5rnBh0FgaHOoq8Q2AYSbF53A6qozU37/kGazoMV3JSVv4fY0we4p5DrePXni
+	 ApORiMHNm0ZWIp9JlCJrC0XkAavmaR0PuB3s0zLLPcBPZfOceGE9p6PTL8sD0V81XV
+	 +cCJT7aqeolZg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLcbp5w8wz4wbW;
+	Mon, 24 Mar 2025 13:35:34 +1100 (AEDT)
+Date: Mon, 24 Mar 2025 13:35:33 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the ftrace tree
+Message-ID: <20250324133533.19b88cbf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/XnVrQ7/KDNCcgIV/_F4DLZf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When Hyp mode is unavailable (e.g., the kernel boots from EL1), skip the
-unnecessary KVM pmu initialization.
+--Sig_/XnVrQ7/KDNCcgIV/_F4DLZf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jia He <justin.he@arm.com>
----
-v2: 
- - Utilize is_hyp_mode_available() for improved accuracy when detecting the
- guest VM case, as it accounts for scenarios where the kernel boots from EL1.
+Hi all,
 
- arch/arm64/kvm/pmu-emul.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+In commit
 
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 6c5950b9ceac..81b1a84ee1b3 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -779,6 +779,13 @@ void kvm_host_pmu_init(struct arm_pmu *pmu)
- {
- 	struct arm_pmu_entry *entry;
- 
-+	/*
-+	 * When Hyp mode is unavailable (e.g., the kernel boots from EL1),
-+	 * skip the unnecessary KVM PMU initialization.
-+	 */
-+	if (!is_hyp_mode_available())
-+		return;
-+
- 	/*
- 	 * Check the sanitised PMU version for the system, as KVM does not
- 	 * support implementations where PMUv3 exists on a subset of CPUs.
--- 
-2.34.1
+  6d5934331009 ("tracing: Do not use PERF enums when perf is not defined")
 
+Fixes tag
+
+  Fixes: a1e3ad43115e ("tracing: Ensure module defining synth event cannot =
+be unloaded while tracing")
+
+has these problem(s):
+
+  - Subject does not match target commit subject
+    Just use
+        git log -1 --format=3D'Fixes: %h ("%s")'
+
+Did you mean
+
+Fixes: a1e3ad43115e ("tracing: Fix synth event printk format for str fields=
+")
+
+or
+
+Fixes: 21581dd4e7ff ("tracing: Ensure module defining synth event cannot be=
+ unloaded while tracing")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XnVrQ7/KDNCcgIV/_F4DLZf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfgxPUACgkQAVBC80lX
+0GzgDQf/Xtidb5z/KBSP6T52Ire/VospzP+5Rof9XcCsvK4MQktJeQUhyry8/rFy
+N/xZg+J0N8b9S0/+keqlnOAtGu2lRxAnyjXoZIpAlOad0bVi+2eAjhyMOV29E+Z3
+i2eOTIp4ipVVV+MSFEXISzmkmrPVRHtg8hghyeSb0PeLXkrahAVLlGJcsgj0HBPA
+1Ao7FA0+3QuHjqRObCDnsHGVFyhtQFpHXu967pXdbQc/juFdTkau2NSpe9Ww2bIn
+4XeH5y6hcK7Xg51NTxP6CFtZOyMt+zJlnu4hWTroAQtRXchKfVC26IMs7g2ar958
+wFM3O39yg8hDYWtbi3Yc9sQgEI8HJQ==
+=Edl9
+-----END PGP SIGNATURE-----
+
+--Sig_/XnVrQ7/KDNCcgIV/_F4DLZf--
 
