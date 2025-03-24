@@ -1,148 +1,297 @@
-Return-Path: <linux-kernel+bounces-573867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E27FA6DD5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36127A6DD33
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2461E1700DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DA21696DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A840F261588;
-	Mon, 24 Mar 2025 14:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C17225FA15;
+	Mon, 24 Mar 2025 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fcj2sh+c"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802D825F963;
-	Mon, 24 Mar 2025 14:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kWWqMBl4"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30C325E83E;
+	Mon, 24 Mar 2025 14:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827686; cv=none; b=f60dmhrLs1I1q75ZK70hjCA28Ikuim66CplwVaj54oGORYiXoofODqJi8wi7dVqJhiDPowK+k9jPucGpyOYlgkqAOia/cjjywLO6spjoyFDAFiVfDYH61S4c4VFkCP6kk7Sg7P6BPjv+QfaWzzn99pOFbqtQQq3ysC86KmkWLeQ=
+	t=1742827231; cv=none; b=RyOtzitPV/A0pZc/RGOws8ar0VX3ZIUsSppMnQYUjddq4MlUy8sFtnQe9SVI8TPKZMbxCMFKbb20GaM20EcA9or93hR4VTuX6bOlvRWwRm0CY78rFoILTGv2r0dzLxC+QIs9Xpzm/x8ZTjcJbZRiQr+FLpUc+s1q6rVbpftVFco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827686; c=relaxed/simple;
-	bh=3AoBMuDjV81vhPG3ltHHMg8tIknPaFrOKcZl2GSjRig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hpss/M/2nmrKFskSU9M+nGn+c684/rSx4h7fagJiiCo3vhovVJJKLbiXngGJePpWqZxqN20nnL3oH3RATqX+CgXzngJX/WWqtsnwKNl1tcXjPKbea7m2xS3YcB8i1x4BXSzhMf7T7OA9XjidSydqZWZ80lHi26KXhby4IonnRu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fcj2sh+c; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742827685; x=1774363685;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3AoBMuDjV81vhPG3ltHHMg8tIknPaFrOKcZl2GSjRig=;
-  b=Fcj2sh+cyesTyP4OJkuwF1ducDDIemDjFHzMSQeaGi8WblghF5eeBT2F
-   v8qJrytBKZY9o5Jb2OUNJwHtZOf5Wqhfb+Dcc4RB1fc6LFbUUO10K9V7r
-   jRThSoqACXWAeyg0hbmnuozCtmFw9vkh92P2M0mzCHVTLiXvuYqQkoucr
-   AVjI54oh/KM4HyZnl3U8/Fk3kkFicnkUj5U5pzjdDWG8YMTqgOGYSNgCq
-   dvrYmVP0Z3b3orkJR/D0rQOgOu7oJ6yFhO6DMs+JNZ16SMlTIKYzVpYDx
-   b5CvCwGhk/FUXVEjhK6LoYk3EgR7ZEPbdg2IOGeM8JZMgkEvG6qsW6pqI
-   g==;
-X-CSE-ConnectionGUID: 094Xe7flRWOHX1565XYHeg==
-X-CSE-MsgGUID: 8H4ssAWyQOuAI9tom9yZxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43911857"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="43911857"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 07:47:57 -0700
-X-CSE-ConnectionGUID: zYUpcwEhTdS6aMIWWkSheg==
-X-CSE-MsgGUID: NM4llLpORbmPADcLAwli/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124057064"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 24 Mar 2025 07:47:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 012DF2A7; Mon, 24 Mar 2025 16:47:52 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH net v3 2/2] net: usb: asix: ax88772: Increase phy_name size
-Date: Mon, 24 Mar 2025 16:39:30 +0200
-Message-ID: <20250324144751.1271761-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
-References: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1742827231; c=relaxed/simple;
+	bh=0uqHDc4NDA1PZMegFpvDGKUYSKubz/uQSIQ+hG6yk2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ksq0cSt0ZNg2931NLFgvbnztxRXu2bD0RoaT+c0wlJEQUpaQRoj/cFllN5TQWXlcorE8TZR5GDdp12sPed/3452Kn58gSmOTatj1i0C5bJVMOfq2p/DzlOGQA+3k8Q/EuntJeVNQFizJMilhEkEb6V2lkl0DS0IGpOTE/NBOKjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kWWqMBl4; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=swD230yY2eiEAmVV0aOuAIgLhYzjzT72TMgpEjDgkjc=;
+	b=kWWqMBl4aTBPaocX4b+4y0A8YWNSfEUNHhg4oTOg1VHocsEH0nBS/SCNgXdKP7
+	dI7KgyXHsV71oUkAlmHHesjEWNCsXDr2p94NtWTSFP2TRNjqV7dXyW8Iko1acgKV
+	HvTDUdda5SX/IOQPtpI0gbVfrNhW3q3JK8UjUVlEUwkdw=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCHzDq1buFnpug5Bg--.14531S2;
+	Mon, 24 Mar 2025 22:39:50 +0800 (CST)
+Message-ID: <b846123d-a161-4380-b7c7-24d7066f8d25@163.com>
+Date: Mon, 24 Mar 2025 22:39:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 1/5] PCI: Introduce generic capability search functions
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250323164852.430546-1-18255117159@163.com>
+ <20250323164852.430546-2-18255117159@163.com>
+ <f89f3d00-4423-f65d-293e-8aec3be14418@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <f89f3d00-4423-f65d-293e-8aec3be14418@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHzDq1buFnpug5Bg--.14531S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtw4UWF4rAF4xCF1fCryxGrg_yoW3uw1DpF
+	WrX3WakF48JF4ayanFv3W0kFyaqa97AryUG395KwnxZrsxuasrXr9Fk345tF9rAr42qF1Y
+	yFWjq3Z2krn0ya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9VysUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxoao2fhbpsC1wAAsK
 
-GCC compiler (Debian 14.2.0-17) is not happy about printing
-into a too short buffer (when build with `make W=1`):
 
- drivers/net/usb/ax88172a.c:311:9: note: ‘snprintf’ output between 4 and 66 bytes into a destination of size 20
 
-Indeed, the buffer size is chosen based on some assumptions,
-while in general the assigned name might not fit. Increase
-the buffer size to cover the minimum required one. With that,
-change snprintf() to use sizeof() instead of the hard coded
-value.
+On 2025/3/24 21:28, Ilpo Järvinen wrote:
+> On Mon, 24 Mar 2025, Hans Zhang wrote:
+> 
+>> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
+>> duplicate logic for scanning PCI capability lists. This creates
+>> maintenance burdens and risks inconsistencies.
+>>
+>> To resolve this:
+>>
+>> Add pci_host_bridge_find_*capability() in pci-host-helpers.c, accepting
+>> controller-specific read functions and device data as parameters.
+>>
+>> This approach:
+>> - Centralizes critical PCI capability scanning logic
+>> - Allows flexible adaptation to varied hardware access methods
+>> - Reduces future maintenance overhead
+>> - Aligns with kernel code reuse best practices
+>>
+>> Signed-off-by: Hans Zhang <18255117159@163.com>
+>> ---
+>> Changes since v5:
+>> https://lore.kernel.org/linux-pci/20250321163803.391056-2-18255117159@163.com
+>>
+>> - If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
+>>    the kernel's .text section even if it's known already at compile time
+>>    that they're never going to be used (e.g. on x86).
+>>
+>> - Move the API for find capabilitys to a new file called
+>>    pci-host-helpers.c.
+>>
+>> Changes since v4:
+>> https://lore.kernel.org/linux-pci/20250321101710.371480-2-18255117159@163.com
+>>
+>> - Resolved [v4 1/4] compilation warning.
+>> - The patch commit message were modified.
+>> ---
+>>   drivers/pci/controller/Kconfig            | 17 ++++
+>>   drivers/pci/controller/Makefile           |  1 +
+>>   drivers/pci/controller/pci-host-helpers.c | 98 +++++++++++++++++++++++
+>>   drivers/pci/pci.h                         |  7 ++
+>>   4 files changed, 123 insertions(+)
+>>   create mode 100644 drivers/pci/controller/pci-host-helpers.c
+>>
+>> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+>> index 9800b7681054..0020a892a55b 100644
+>> --- a/drivers/pci/controller/Kconfig
+>> +++ b/drivers/pci/controller/Kconfig
+>> @@ -132,6 +132,23 @@ config PCI_HOST_GENERIC
+>>   	  Say Y here if you want to support a simple generic PCI host
+>>   	  controller, such as the one emulated by kvmtool.
+>>   
+>> +config PCI_HOST_HELPERS
+>> +	bool
+>> +	prompt "PCI Host Controller Helper Functions" if EXPERT
+>> + 	help
+>> +	  This provides common infrastructure for PCI host controller drivers to
+>> +	  handle PCI capability scanning and other shared operations. The helper
+>> +	  functions eliminate code duplication across controller drivers.
+>> +
+>> +	  These functions are used by PCI controller drivers that need to scan
+>> +	  PCI capabilities using controller-specific access methods (e.g. when
+>> +	  the controller is behind a non-standard configuration space).
+>> +
+>> +	  If you are using any PCI host controller drivers that require these
+>> +	  helpers (such as DesignWare, Cadence, etc), this will be
+>> +	  automatically selected. Say N unless you are developing a custom PCI
+>> +	  host controller driver.
+> 
+> Hi,
+> 
+> Does this need to be user selectable at all? What's the benefit? If
+> somebody is developing a driver, they can just as well add the select
+> clause in that driver to get it built.
+> 
 
-While at it, make sure that the PHY address is not bigger than
-the allowed maximum.
+Dear Ilpo,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/net/usb/ax88172a.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Thanks your for reply. Only DWC and CDNS drivers are used here, what do 
+you suggest should be done?
 
-diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
-index e47bb125048d..f613e4bc68c8 100644
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -18,8 +18,8 @@
- struct ax88172a_private {
- 	struct mii_bus *mdio;
- 	struct phy_device *phydev;
--	char phy_name[20];
--	u16 phy_addr;
-+	char phy_name[PHY_ID_SIZE];
-+	u8 phy_addr;
- 	u16 oldmode;
- 	int use_embdphy;
- 	struct asix_rx_fixup_info rx_fixup_info;
-@@ -210,7 +210,11 @@ static int ax88172a_bind(struct usbnet *dev, struct usb_interface *intf)
- 	ret = asix_read_phy_addr(dev, priv->use_embdphy);
- 	if (ret < 0)
- 		goto free;
--
-+	if (ret >= PHY_MAX_ADDR) {
-+		netdev_err(dev->net, "Invalid PHY address %#x\n", ret);
-+		ret = -ENODEV;
-+		goto free;
-+	}
- 	priv->phy_addr = ret;
- 
- 	ax88172a_reset_phy(dev, priv->use_embdphy);
-@@ -308,7 +312,7 @@ static int ax88172a_reset(struct usbnet *dev)
- 		   rx_ctl);
- 
- 	/* Connect to PHY */
--	snprintf(priv->phy_name, 20, PHY_ID_FMT,
-+	snprintf(priv->phy_name, sizeof(priv->phy_name), PHY_ID_FMT,
- 		 priv->mdio->id, priv->phy_addr);
- 
- 	priv->phydev = phy_connect(dev->net, priv->phy_name,
--- 
-2.47.2
+
+> 
+>> +
+>>   config PCIE_HISI_ERR
+>>   	depends on ACPI_APEI_GHES && (ARM64 || COMPILE_TEST)
+>>   	bool "HiSilicon HIP PCIe controller error handling driver"
+>> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
+>> index 038ccbd9e3ba..e80091eb7597 100644
+>> --- a/drivers/pci/controller/Makefile
+>> +++ b/drivers/pci/controller/Makefile
+>> @@ -12,6 +12,7 @@ obj-$(CONFIG_PCIE_RCAR_HOST) += pcie-rcar.o pcie-rcar-host.o
+>>   obj-$(CONFIG_PCIE_RCAR_EP) += pcie-rcar.o pcie-rcar-ep.o
+>>   obj-$(CONFIG_PCI_HOST_COMMON) += pci-host-common.o
+>>   obj-$(CONFIG_PCI_HOST_GENERIC) += pci-host-generic.o
+>> +obj-$(CONFIG_PCI_HOST_HELPERS) += pci-host-helpers.o
+>>   obj-$(CONFIG_PCI_HOST_THUNDER_ECAM) += pci-thunder-ecam.o
+>>   obj-$(CONFIG_PCI_HOST_THUNDER_PEM) += pci-thunder-pem.o
+>>   obj-$(CONFIG_PCIE_XILINX) += pcie-xilinx.o
+>> diff --git a/drivers/pci/controller/pci-host-helpers.c b/drivers/pci/controller/pci-host-helpers.c
+>> new file mode 100644
+>> index 000000000000..cd261a281c60
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/pci-host-helpers.c
+>> @@ -0,0 +1,98 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PCI Host Controller Helper Functions
+>> + *
+>> + * Copyright (C) 2025 Hans Zhang
+>> + *
+>> + * Author: Hans Zhang <18255117159@163.com>
+>> + */
+>> +
+>> +#include <linux/pci.h>
+>> +
+>> +#include "../pci.h"
+>> +
+>> +/*
+>> + * These interfaces resemble the pci_find_*capability() interfaces, but these
+>> + * are for configuring host controllers, which are bridges *to* PCI devices but
+>> + * are not PCI devices themselves.
+>> + */
+>> +static u8 __pci_host_bridge_find_next_cap(void *priv,
+>> +					  pci_host_bridge_read_cfg read_cfg,
+>> +					  u8 cap_ptr, u8 cap)
+>> +{
+>> +	u8 cap_id, next_cap_ptr;
+>> +	u16 reg;
+>> +
+>> +	if (!cap_ptr)
+>> +		return 0;
+>> +
+>> +	reg = read_cfg(priv, cap_ptr, 2);
+>> +	cap_id = (reg & 0x00ff);
+>> +
+>> +	if (cap_id > PCI_CAP_ID_MAX)
+>> +		return 0;
+>> +
+>> +	if (cap_id == cap)
+>> +		return cap_ptr;
+>> +
+>> +	next_cap_ptr = (reg & 0xff00) >> 8;
+>> +	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
+>> +					       cap);
+> 
+> This is doing (tail) recursion?? Why??
+> 
+> What should be done, IMO, is that code in __pci_find_next_cap_ttl()
+> refactored such that it can be reused instead of duplicating it in a
+> slightly different form here and the functions below.
+> 
+> The capability list parser should be the same?
+> 
+
+The original function is in the following file:
+drivers/pci/controller/dwc/pcie-designware.c
+u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap)
+
+CDNS has the same need to find the offset of the capability.
+
+We don't have pci_dev before calling pci_host_probe, but we want to get 
+the offset of the capability and configure some registers to initialize 
+the root port. Therefore, the __pci_find_next_cap_ttl function cannot be 
+used. This is also the purpose of dw_pcie_find_*capability.
+
+
+The CDNS driver does not have a cdns_pcie_find_*capability function. 
+Therefore, separate the find capability, and then DWC and CDNS can be 
+used at the same time to reduce duplicate code.
+
+
+Communication history:
+
+Bjorn HelgaasMarch 14, 2025, 8:31 p.m. UTC | #8
+On Fri, Mar 14, 2025 at 06:35:11PM +0530, Manivannan Sadhasivam wrote:
+ > ...
+
+ > Even though this patch is mostly for an out of tree controller
+ > driver which is not going to be upstreamed, the patch itself is
+ > serving some purpose. I really like to avoid the hardcoded offsets
+ > wherever possible. So I'm in favor of this patch.
+ >
+ > However, these newly introduced functions are a duplicated version
+ > of DWC functions. So we will end up with duplicated functions in
+ > multiple places. I'd like them to be moved (both this and DWC) to
+ > drivers/pci/pci.c if possible. The generic function
+ > *_find_capability() can accept the controller specific readl/ readw
+ > APIs and the controller specific private data.
+
+I agree, it would be really nice to share this code.
+
+It looks a little messy to deal with passing around pointers to
+controller read ops, and we'll still end up with a lot of duplicated
+code between __pci_find_next_cap() and __cdns_pcie_find_next_cap(),
+etc.
+
+Maybe someday we'll make a generic way to access non-PCI "config"
+space like this host controller space and PCIe RCRBs.
+
+Or if you add interfaces that accept read/write ops, maybe the
+existing pci_find_capability() etc could be refactored on top of them
+by passing in pci_bus_read_config_word() as the accessor.
+
+
+>> +}
+>> +
+>> +u8 pci_host_bridge_find_capability(void *priv,
+>> +				   pci_host_bridge_read_cfg read_cfg, u8 cap)
+>> +{
+>> +	u8 next_cap_ptr;
+>> +	u16 reg;
+>> +
+>> +	reg = read_cfg(priv, PCI_CAPABILITY_LIST, 2);
+>> +	next_cap_ptr = (reg & 0x00ff);
+>> +
+>> +	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
+>> +					       cap);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_host_bridge_find_capability);
+
+
+Best regards,
+Hans
 
 
