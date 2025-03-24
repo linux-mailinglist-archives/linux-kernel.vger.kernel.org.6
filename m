@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-573088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC1AA6D2F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DFCA6D2F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9A287A53C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5FE189277F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8924178F52;
-	Mon, 24 Mar 2025 02:06:44 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D98378F44;
+	Mon, 24 Mar 2025 02:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wlm9x1M6"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3DA1362;
-	Mon, 24 Mar 2025 02:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E61B1362
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 02:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742782004; cv=none; b=oH8nWnjwkAd0oOqxkUEX4p191yTaiG2zubPAZUz0oTF7KRzqJsOQrHr2iQnA5lLF4UDc/YSlcENK/7ydrkprVMWQLdnuoOrhy0Btmy3uwdDIwntnjTklWfoGx3rgqxUNsuF0blqL3U9jCcoupdAVvBVWKRdLak7O0SueGFJSM3c=
+	t=1742782166; cv=none; b=dJTwO0BK5qoy0muFsM41TimDodA6WpNs15HcgswLJ0dGiB8utrC54wzMQR70ysnkp4fI0snQj/d2hjuNtoGQUMWK9s3Y3v5h2H1gmcEsTuMDSyWugX3M1sFND5AIe0+tg8jnodnRzbw6A46W/PDGDrdO4lXAH0Y0ppHnAg0k5nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742782004; c=relaxed/simple;
-	bh=Hi4oW6GyVoQTk60WFu4HDfjDhU2apN+Ms5+ZxheYusE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=C/7BsMjVEKiXMC2cukMWkDZoNZSyA3tvpS/CXF1iJ3DzxghvytIsgNwMlfT93RzZum+yy/6CSjUCBaYgcZ0wmC8dmToEaeXX65/uuJ3len2/kwf+GUxSc3dzPeTJEw9Q1CzDZWvcRVt2sHNWgfWO0VHk9ecphC2abWkUn7Jxh2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZLbxy28Jhz4f3jtJ;
-	Mon, 24 Mar 2025 10:06:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BB7341A1CA8;
-	Mon, 24 Mar 2025 10:06:31 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl8lvuBnEoqPHQ--.16986S3;
-	Mon, 24 Mar 2025 10:06:31 +0800 (CST)
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk, josef@toxicpanda.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
- <Z8sZyElaHQQwKqpB@slm.duckdns.org>
- <5fc124c9-e202-99ca-418d-0f52d027640f@huaweicloud.com>
- <Z85LjhvkCzlqBVZy@fedora> <Z88K5JtR4rhhIFsY@slm.duckdns.org>
- <baba2f82-6c35-8c24-847c-32a002009b63@huaweicloud.com>
- <Z9CQOuJA-bo4xZkH@slm.duckdns.org>
- <c1e467a9-7499-e42b-88ed-b8e34b831515@huaweicloud.com>
- <Z9GrD-7tW6tKVimk@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <9d87351a-8ea6-9ed9-7359-3963672cdc17@huaweicloud.com>
-Date: Mon, 24 Mar 2025 10:06:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1742782166; c=relaxed/simple;
+	bh=aQndsgFh0ls7ZiU3AM1Ti998DPtvCFNQqX8RJ/XTbec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j9wdJ5ntsuLQ9FYJv5S6yFpSGaUlzYDFfpB0uKPT5g66dzSDZyEKyD7zCBUtMP2eLHgNovwy8rnu8tLVkAPVLdCdGTZHGCDisXId4fH+RK0wZUC3y9bEh+7hejG9MJ1zi6TcLWBa+WEagflmLPzEXppqtFxovfKP4i4SKIKypgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wlm9x1M6; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0d0b186d-6e07-4a46-b8e2-698a97796e44@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742782151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WtkT2sFPkvaRr2EpQOKnyEL8TzZftahOePw5vU1CoQs=;
+	b=Wlm9x1M6ZZBe+EmmRP4KUu36JDl7bW+ukb9U42OLzSc9bg1yOhkw/CVgK6nvBvwqE+Ani5
+	VGCnmBc9lSJvCe2smWf13fSajRyuhh1xLlHZUSWrijPGw02b85B1jfXihNHO0BXOGHQTFH
+	zGJ3x0CVfA0U6qHhPwFbvsK4kUWg57Q=
+Date: Mon, 24 Mar 2025 10:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z9GrD-7tW6tKVimk@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl8lvuBnEoqPHQ--.16986S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrW8Kw1xuw4fGw1UtF4Dtwb_yoW5Jw15pa
-	yfGwnayFs5W3ZrCFn3ur4xuryF9rZ5Gw45Jrn5Gr4DZr4Y93WxJr4xtayrAF929r4Sya42
-	qwn5Xas8Xas8Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Subject: Re: [PATCH] rust: sync: optimize rust symbol generation for CondVar
+Content-Language: en-US
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>,
+ Grace Deng <Grace.Deng006@gmail.com>
+References: <20250317081351.2503049-1-kunwu.chan@linux.dev>
+ <Z-BL_DFA3afcRYGE@Mac.home>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <Z-BL_DFA3afcRYGE@Mac.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi, Tejun!
-
-ÔÚ 2025/03/12 23:41, Tejun Heo Ð´µÀ:
-> Hello,
-> 
-> On Wed, Mar 12, 2025 at 09:51:30AM +0800, Yu Kuai wrote:
-> ...
->> In the case of dirty pages writeback, BIO is 4k, while RQ can be up to
->> hw_sectors_kb. Our user are limiting iops based on real disk capacity
->> and they found BIO merge will be broken.
+On 2025/3/24 01:59, Boqun Feng wrote:
+> On Mon, Mar 17, 2025 at 04:13:50PM +0800, Kunwu Chan wrote:
+>> From: Kunwu Chan <kunwu.chan@hotmail.com>
 >>
->> The idea way really is rq-qos based iops limit, which is after BIO merge
->> and BIO merge is ensured not borken. In this case, I have to suggest
->> them set a high iops limit or just remove the iops limit.
-> 
+>> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+>> with ARCH=arm64, the following symbols are generated:
+>>
+>> $nm vmlinux | grep ' _R'.*CondVar | rustfilt
+>> ... T <kernel::sync::condvar::CondVar>::notify_all
+>> ... T <kernel::sync::condvar::CondVar>::notify_one
+>> ... T <kernel::sync::condvar::CondVar>::notify_sync
+>> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+>> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+>> ... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+>> ... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
+>>
+>> These notify* symbols are trivial wrappers around the C functions
+>> __wake_up and __wake_up_sync.
+>> It doesn't make sense to go through a trivial wrapper for these
+>> functions, so mark them inline.
+>>
+>> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+>> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+>> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+>> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+>> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+>> ---
+>>   rust/kernel/sync/condvar.rs | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
+>> index 7df565038d7d..a826896ba3f0 100644
+>> --- a/rust/kernel/sync/condvar.rs
+>> +++ b/rust/kernel/sync/condvar.rs
+>> @@ -181,6 +181,7 @@ pub fn wait_interruptible_timeout<T: ?Sized, B: Backend>(
+>>       }
+>>   
+>>       /// Calls the kernel function to notify the appropriate number of threads.
+>> +    #[inline]
+>>       fn notify(&self, count: c_int) {
+> Hmm.. I think CondVar::notify() gets inlined even without this
+> `#[inline]` attribute, do we need this actually?
 
-My apology for the late reply.
+Actualy, after add '#[inline]', the build result is (compilecmd is 'make 
+ARCH=arm64 LLVM=1-j8' ):
 
-> I get that that particular situation may be worked around with what you're
-> suggesting but you should be able to see that this would create the exact
-> opposite problem for people who are limiting by the IOs they issue, which
-> would be the majority of the existing users, so I don't think we can flip
-> the meaning of the existing knobs.
+$nm vmlinux | grep ' _R'.*CondVar | rustfilt
+ffff800080019e90 T 
+<kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_ex
+plicit
+ffff800080019e90 T 
+<kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_ex
+plicit
+ffff800080019e90 T 
+<kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_e
+xplicit
+ffff8000805b8c7c T <kernel::sync::poll::PollCondVar as 
+core::ops::drop::Drop>::drop
 
-Yes, I understand the current situation. I just feel blk-throttle have
-no such capacity to limit IOs that are issuing from user. There could
-also be filesystems, and data blocks can be fragmented.
-> 
-> re. introducing new knobs or a switch, one thing to consider is that
-> independent iops limits are not that useful to begin with. A device's iops
-> capacity can vary drastically depending on e.g. IO sizes and there usually
-> is no one good iops limit value that both doesn't get in the way and
-> isolates the impact on other users, so it does feel like trying to polish
-> something which is fundamentally flawed.
 
-It's not just fundamentally flawed, and the implementation is just too
-one-sided. So what is the next step?
+And before add '#[inline]',the 'nm vmlinux | grep ' _R'.*CondVar | 
+rustfilt' appear 'notify' function,
 
-- remove iops limit since it's not that useful;
-- swith iops limit to against disk;
-- do nothing?
-> 
-> Whether bio or rq based, can you actually achieve meaningful isolation with
-> blk-throtl's iops/bw limits? If switching to rq based (or something
-> approximating that) substantially improves the situation, adding new sets of
-> knobs would make sense, but I'm skeptical this will be all that useful. If
-> this is just going to be a coarse safety mechanism to guard against things
-> going completely out of hands or throttle already known IO patterns, whether
-> the limits are based on bio or rq doesn't make whole lot of difference.
+Seems like the LLVM didn't make it inline.
 
-Most of our users will just set meaningful bps limit, however, since
-iops limit is supported they will set it as well, without much knowledge
-how it really works, causing some unexpected phenomenon. And for now,
-we'll suggest not to set iops limit, no even a high limit.
 
+> Regards,
+> Boqun
+>
+>>           // SAFETY: `wait_queue_head` points to valid memory.
+>>           unsafe {
+> [...]
+
+-- 
 Thanks,
-Kuai
-
-> 
-> Thanks.
-> 
+   Kunwu.Chan(Tao.Chan)
 
 
