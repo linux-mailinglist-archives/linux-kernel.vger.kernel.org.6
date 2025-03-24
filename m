@@ -1,126 +1,203 @@
-Return-Path: <linux-kernel+bounces-573863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17D2A6DD49
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:46:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E900EA6DD48
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C783A98C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16E4A3A7F80
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000FD2628C;
-	Mon, 24 Mar 2025 14:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62D925F79B;
+	Mon, 24 Mar 2025 14:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqsnhrgl"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PQ5YVIIS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D873B7A8;
-	Mon, 24 Mar 2025 14:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33D43B7A8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742827548; cv=none; b=iE3GQCVIG2CyVKlQtdvSvWLO6Ei/fStB35NNIWsjEJyvYbh4psSyqLOR4OFvQZtcOhYujchxY7x99RQzCD4/zHqQyP5KpyYk7YnZl5MTzMfT0glK9+gXZqaZnMyPnNMRWBJn5RKK8LUpQfXm9xhw8JIjKPKTMMF5x7fQ6sHMPRA=
+	t=1742827541; cv=none; b=Hk0lEf1GRUSIU82KzZ1HOSDdQol5eruTJSh7OLhq1cf4D81lx4/ihg2tIMa3c17oCf4GTb4L1j1JdFpHTq8t1v8Pr69Q6gROcIvHYfR8j0880RD1WNWDh6cUvwo/xGUdzkl2e0fwFoHJuDvdln6y4OFSI46ct+F0416nz6L43Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742827548; c=relaxed/simple;
-	bh=rMIDekdgu7k+w3o8KxlJ2MhnfGm0bZTtGCdWxSGqOTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HRZUJX8zMbB/SjA0/wKgs4if3PsNITNkIyoOrkh74UlGErgefFPnLfoJg+5QpLzes9viWYL9wrggFShLdzTn9MBZFn8cRHQkcpSZnxUIOFccMey60GfW3FK7Mwo0wQx40FxqvUlmT3JsdU8nkpcBikw3czNCq9YG+cxh6s51GXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqsnhrgl; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso46848411fa.3;
-        Mon, 24 Mar 2025 07:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742827545; x=1743432345; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
-        b=dqsnhrglCaGX/uQGUWAs2NrspxZWhpEIMJKBkXMjuX7CcvEG88R3HNlcUCQCYWnddc
-         yKAHsQmap+AvbuOkGXZeuoESmz8KUEH8oSrW4Un4U/ZwcVS1Qntf3+XEFSQ4LFtJlwdr
-         ppCD/OdDoICYgEsgmwyv2EkbAwTpE9spSJp3hn4H37pLCRh540ksOfUI+9IwXVCZ1MsA
-         26EPlXdxufdH8wm+8/3ECtXW8txc/R86VS/X8AkQButqBosQXcT1gvNJhPf6x9ncOP/0
-         TSO1mYpOMIJ22K9/HvhQYoScJP73M8N9ag75LGWQG6DCHz0CVGeElA+enRsLKIqFvrfo
-         w5CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742827545; x=1743432345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YySDT6NdhdJKGPUFeJR1/DEX+p2cFBnIzeE/4PTN8fk=;
-        b=nij6Jsr6VxniPHQcm2OeiWOEmOuCeVfSUcPhqoa2Z3lWCQhJ/kXIXzpyWIG3bTZZjN
-         FZ0CGKREwGjEqyyVnjTZqlfLBgylCQAdDgd9qkLgyKOQ9WCCdLvSP/+DdYouiWj3EOxT
-         bxPbERIiIQ6knAqZSq0uv26PbyUx8nP9vvRW78aqyw+Tnpw7S9Mm2C/ew8FVELrUW1My
-         MZZyK1Ju16S7Mhmz8jCoHqJaLwA3Zrvk9YZSwLkoua6SsGMqLguvXagUnAxSWe89xrF5
-         nGSvmcster7FzwphxVZfrhIhkjiBIP2mNPaqpZl9D+x1uZuzqcNFMPT24/CNUfjCzhCF
-         /V7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUNnVWCgWNYCgzInCbau1rI60wDXI5B6ofP4C32aRKkl+PjP9dhEYy0GiPDE8Ftvmuqw7qcEi4zEOYbPCmG@vger.kernel.org, AJvYcCUtSPl2lQsl8793sJ6AR35wafMXLqbL/T973/jTBYoTjaPlb5wPRfpFLkcK4uFfQqO0YC8ZDhwcuLXSCdC0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEgXCOL2x3vVbgMkhv/VRj3/zfbGMJFeizukiRSyw4LKEw6/Z/
-	EELZaYRcbDZQcLDmjVH6v8C90dLi4QaBoD+A5X+Pk2QJXhtUI34f5/pRhBKfh/+mWHiE6LrnwG1
-	sBKcvvJhJDXYmMjCmom7+jmtSxAksTUtPD80=
-X-Gm-Gg: ASbGncuCgBz595JXbEdfXfbucXV+Lqr2LYPN0PpSmKxJVB0rL4Ao+vMLApfjC3KoNr1
-	G+bdBEbrpb2a8hMmJRCpGDy/vXacskoCLrPqnf/1h9lLpqRfEFW6IAnxdRRB054KRs9XBgjM9EG
-	wu2WbNgo/OA+BsFgtvPokknO6eUZQvlXgIFa/IwPExX7gdCzDS4heB
-X-Google-Smtp-Source: AGHT+IHl9dwplhezNLn7IB7Sq3eiZyr65Hj6aswx7up7md4DBgKJttJkhnAhxsOY6v3v1JjbW7Pfci2rEpaF23aoXNM=
-X-Received: by 2002:a2e:b8c8:0:b0:308:eb34:103a with SMTP id
- 38308e7fff4ca-30d7e2a722cmr57009151fa.28.1742827544473; Mon, 24 Mar 2025
- 07:45:44 -0700 (PDT)
+	s=arc-20240116; t=1742827541; c=relaxed/simple;
+	bh=M1hWD/oSou+r5X9ScN+rHnKhewbykMu1plQom+IBOPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eKyq5osu67faVfnk07f83WniCf8t8mepA9JxLuHHpHQB70B8M21KdoIVT3pgi4ZbeKDz3qnrEfC45QPaYl2UfHGt37b5XzzARJxQzHrAAqZ/A4/OUBe0lrsTVEvwx+Q28X8QMjAHK/PjYLImy2IM6PkgofDeg7l2oJGYp/T7X9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PQ5YVIIS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742827538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ECA6zhUqnyZiEyBYCMUo+zUIFQyB0/m7K5nNM3gOBd8=;
+	b=PQ5YVIISV7GTa8IHJlvbbds7oCD5btkyP+6ALsH78mbSxdA0ww2OPtVLQIJHwgdxhHd25/
+	lKg76ew9ppRZxqDKayfd3n2FnvUOgLJBsr/xh7nVpqw25gy22xh6EkCbcfVnjIQN/AuLkT
+	kDvqpcWeaoMnFE5kuZT8WwbEAXRoMtc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-BAnIxituMdOFwTuiTKpHiA-1; Mon,
+ 24 Mar 2025 10:45:33 -0400
+X-MC-Unique: BAnIxituMdOFwTuiTKpHiA-1
+X-Mimecast-MFC-AGG-ID: BAnIxituMdOFwTuiTKpHiA_1742827531
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0BF5618001FC;
+	Mon, 24 Mar 2025 14:45:31 +0000 (UTC)
+Received: from jbrnak-thinkpadx1carbongen9.tpbc.com (unknown [10.43.17.192])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35794180A802;
+	Mon, 24 Mar 2025 14:45:25 +0000 (UTC)
+From: Jakub Brnak <jbrnak@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	kan.liang@linux.intel.com,
+	mpetlan@redhat.com,
+	tglozar@redhat.com,
+	jbrnak@redhat.com,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v3] perf test probe_vfs_getname: Skip if no suitable line detected
+Date: Mon, 24 Mar 2025 15:45:23 +0100
+Message-ID: <20250324144523.597557-1-jbrnak@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321-xarray-fix-destroy-v1-1-7154bed93e84@gmail.com> <Z98oChgU7Z9wyTw1@casper.infradead.org>
-In-Reply-To: <Z98oChgU7Z9wyTw1@casper.infradead.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 24 Mar 2025 10:45:07 -0400
-X-Gm-Features: AQ5f1JrW68Vn_B0jmPyAT5zcOLPzNVAsAnicIcYueNfueTreXg8ST6v187cy9-0
-Message-ID: <CAJ-ks9kZ-745x2_U00xwwG6nsJbcd=Fg-n8-X6oS+z=CsGy5VA@mail.gmail.com>
-Subject: Re: [PATCH] XArray: revert (unintentional?) behavior change
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat, Mar 22, 2025 at 5:13=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Fri, Mar 21, 2025 at 10:17:08PM -0400, Tamir Duberstein wrote:
-> > Partially revert commit 6684aba0780d ("XArray: Add extra debugging chec=
-k
-> > to xas_lock and friends"), fixing test failures in check_xa_alloc.
-> >
-> > Fixes: 6684aba0780d ("XArray: Add extra debugging check to xas_lock and=
- friends")
->
-> This doesn't fix anything.  The first failure is:
->
-> #6  0x0000555555649979 in XAS_INVALID (xas=3Dxas@entry=3D0x7ffff4a003a0)
->     at ../shared/linux/../../../../include/linux/xarray.h:1434
-> #7  0x000055555564f545 in check_xas_retry (xa=3Dxa@entry=3D0x55555591ba00=
- <array>)
-> --Type <RET> for more, q to quit, c to continue without paging--
->     at ../../../lib/test_xarray.c:131
-> #8  0x0000555555663869 in xarray_checks () at ../../../lib/test_xarray.c:=
-2221
-> #9  0x00005555556639ab in xarray_tests () at xarray.c:15
+In some cases when calling function add_probe_vfs_getname, line number
+can't be detected by perf probe -L getname_flags:
 
-That's not what I see when I boot a kernel with CONFIG_TEST_XARRAY=3Dy.
+  78         atomic_set(&result->refcnt, 1);
 
-> That has nothing to do with xa_destroy().  What on earth are you doing?
+	     // one of the following lines should have line number
+	     // but sometimes it does not because of optimization
+	     result->uptr = filename;
+             result->aname = NULL;
 
-I'm running the kernel in a VM on arm64. What are you doing?
+  81         audit_getname(result);
 
-> Anyway, I'm at LSFMM and it'a Saturday.  I shan't be looking at this
-> until the 27th.  There's clearly no urgency since you're the first one
-> to notice in six months.
+To prevent false failures, skip the affected tests
+if no suitable line numbers can be detected.
 
-Sure. I misunderstood the purpose of linux-next, thinking that if a
-commit is in there then it will soon head to mainline. I realize now
-this isn't the case.
+Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
+---
+v3:
+- ensure POSIX compliance
+
+v2: 
+https://lore.kernel.org/linux-perf-users/Z9tKat6vvC1XUj0U@google.com/
+- check if return from add_vfs_getname equals to 1
+sice it is only option in case of fail 
+
+v1:
+ https://lore.kernel.org/linux-perf-users/Z8pAep0GJsMFTyEi@google.com/T/#t
+---
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh          | 8 +++++++-
+ tools/perf/tests/shell/probe_vfs_getname.sh              | 8 +++++++-
+ .../perf/tests/shell/record+script_probe_vfs_getname.sh  | 8 +++++++-
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh        | 9 +++++++--
+ 4 files changed, 28 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 5c33ec7a5a63..89f72a4c818c 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -19,8 +19,14 @@ add_probe_vfs_getname() {
+ 			result_aname_re="[[:space:]]+([[:digit:]]+)[[:space:]]+result->aname = NULL;"
+ 			line=$(perf probe -L getname_flags 2>&1 | grep -E "$result_aname_re" | sed -r "s/$result_aname_re/\1/")
+ 		fi
++
++		if [ -z "$line" ] ; then
++			echo "Could not find probeable line"
++			return 2
++		fi
++
+ 		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
+-		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring"
++		perf probe $add_probe_verbose "vfs_getname=getname_flags:${line} pathname=filename:ustring" || return 1
+ 	fi
+ }
+ 
+diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
+index c51a32931af6..0f52654c914a 100755
+--- a/tools/perf/tests/shell/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/probe_vfs_getname.sh
+@@ -13,7 +13,13 @@ skip_if_no_perf_probe || exit 2
+ # shellcheck source=lib/probe_vfs_getname.sh
+ . "$(dirname $0)"/lib/probe_vfs_getname.sh
+ 
+-add_probe_vfs_getname || skip_if_no_debuginfo
++add_probe_vfs_getname
+ err=$?
++
++if [ $err -eq 1 ] ; then
++	skip_if_no_debuginfo
++	err=$?
++fi
++
+ cleanup_probe_vfs_getname
+ exit $err
+diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+index fd5b10d46915..1ad252f0d36e 100755
+--- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+@@ -35,8 +35,14 @@ perf_script_filenames() {
+ 	grep -E " +touch +[0-9]+ +\[[0-9]+\] +[0-9]+\.[0-9]+: +probe:vfs_getname[_0-9]*: +\([[:xdigit:]]+\) +pathname=\"${file}\""
+ }
+ 
+-add_probe_vfs_getname || skip_if_no_debuginfo
++add_probe_vfs_getname
+ err=$?
++
++if [ $err -eq 1 ] ; then
++        skip_if_no_debuginfo
++        err=$?
++fi
++
+ if [ $err -ne 0 ] ; then
+ 	exit $err
+ fi
+diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+index 60fccb62c540..5d5019988d61 100755
+--- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+@@ -25,9 +25,14 @@ trace_open_vfs_getname() {
+ 	grep -E " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +\"?${file}\"?, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
+ }
+ 
+-
+-add_probe_vfs_getname || skip_if_no_debuginfo
++add_probe_vfs_getname
+ err=$?
++
++if [ $err -eq 1 ] ; then
++        skip_if_no_debuginfo
++        err=$?
++fi
++
+ if [ $err -ne 0 ] ; then
+ 	exit $err
+ fi
+-- 
+2.48.1
+
 
