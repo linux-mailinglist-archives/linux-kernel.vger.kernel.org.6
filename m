@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6520EA6DE90
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:26:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8636EA6DE91
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBAFB3AC001
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E7831728A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF1B2620EA;
-	Mon, 24 Mar 2025 15:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A7425FA3C;
+	Mon, 24 Mar 2025 15:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fTvLOCLM"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gUUA9EIM"
 Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B825FA25
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AEA1CD1E4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829834; cv=none; b=eWuf9XhAKQpoVH9rEUIV1jgNkcdKbFbhKOLw4WgDayQHkJWge7JOodoQEW5eRXa/dXspKNIknulCArinbBO/xmmYf8rbUjCYU3+vjx9hXEBewnOVGRY4GTOS4p3FsTVXy0f+s45iPdn53Mq3yK+vnRrI67NVrt+drrlek0MTB3c=
+	t=1742829845; cv=none; b=kSdoFvJ2NRFJ3PUYQOiOgMyY53U81bZpHIq7tsLuB1S2O8tskFZyn3N5X0ykVRyo5/i+Mm5K4PwfdIvlsKpqdAer2RvLdj0MfjsQWkoxob5BuJi2FCFOMu7Ij/I5Qrjdobll4LVBhTe/piplsYve/KQZetkIpjOe+H0188eyDBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829834; c=relaxed/simple;
-	bh=WjCml66t6XQlzmqhqCcOw/GtpIcZLsVv0dc5bBFvk/Q=;
+	s=arc-20240116; t=1742829845; c=relaxed/simple;
+	bh=+XaHVGb5CnBdDcd3mZuSZCJYRpYzTPA7bhRndWmeitg=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MAVb7cStqEx0nDuXrOwESADfWNHMAqfF+33OS/MYlOsMZR6hvRIOIKLlRDcSCRAMqCCsIoLlsBcXlOJ73h1P4iV2cfAw+EvtjwQJPNWe6UPKERiyB+AyQEMsJZMFw5PU+lwDfIRrqdSSTPiVMkJKOLkTYwOZyBO39lgMcHd6dAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fTvLOCLM; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:Content-Type; b=Jk4ET6CJIJzQG7rSSAWV/18LnNgnw4kmptEjlDmlXVe03PH+QI9EJUaHQv89uy6FhUFjOhl/xPvgpy8xaXjC8aEmxg+Xvm/NlDcdqzeVtWQu+bwowIRTTTL18GSJB0T1BOHr8e/HMonFW2DQNj4aZXAfnQgtwwKUsFw6HPrQYIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gUUA9EIM; arc=none smtp.client-ip=217.70.183.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3B1CC44526;
-	Mon, 24 Mar 2025 15:23:49 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0935D444FF;
+	Mon, 24 Mar 2025 15:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829830;
+	t=1742829842;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/xTYPYnZKw/zn+lOtwqN18Xw/4DC/6wvSFiErohen68=;
-	b=fTvLOCLMW7t/4Cownp9qgl1DU8iAAZCA1WTooZGWaI+ylJWOBj8OIAPNDqubnsC9qkYqX9
-	fLopFVhkHwAcR6otIO9lrARb4Mbc049TJgd6bXyKCiNvcJgby2MZzCiCAA1enx6Qv6zk0a
-	00IhKyCPzYfuamdc9IKM2NCFrWeiTsEIazlieryIaAFTl+ppjdKU0246YtgI69rUzGseHr
-	7st7FdaaKZhngrfs1H0cATFW7j5A/Enl2K023jPf4F+xkvf+Ywvrs5edWx0ysxxSpY5H5O
-	ugOxVb8Uo3kEXa2bGCnHaOvJLzJZ1e1DwUP3QD04q7eWF7JAKil0c1csG8kIHg==
-Message-ID: <82885419-a39a-4268-aa9a-7b0a8e04a46d@bootlin.com>
-Date: Mon, 24 Mar 2025 16:23:48 +0100
+	bh=5nLJC1piQdi1Calma3c8W3bfkGH0ET0U/93f09eBubs=;
+	b=gUUA9EIM6HAgdDJTKZ3cQOicAh7gGm4VQaOEgw4nIpMlHeIdXsUr7JRkIrf2nZ69Iwprse
+	uC/sXSaVm67NwiOAdBh+q2sPubturBefHGYFghVACO3/LUEg3UgvlndhIWF0/bRHtbETmb
+	vPvxnO82O2JwoMBCtm8+WOsM+Oq39somk2Osk+dSn8Rt59z+3Zp9kF3wrHtqhVifpxc+rx
+	/ravKp8td9vIVBN27dOYH0QHMaLtSlmyQp0c/+dkVGzj/ytLwXgiwlpU6pbOtzdOfxe5oA
+	DIkNCvItKd/R6cHcEI2HEzpe1Le9/66JUi5v988haDxBkr4iP7+CzuQBLiqurw==
+Message-ID: <a9ce372c-2a6b-406e-a14c-00b7e9655980@bootlin.com>
+Date: Mon, 24 Mar 2025 16:23:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,8 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 36/59] drm-dyndbg: adapt drm core to use dyndbg
- classmaps-v2
+Subject: Re: [PATCH v2 41/59] drm-dyndbg: DRM_CLASSMAP_USE in drm_crtc_helper
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -64,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-37-jim.cromie@gmail.com>
+ <20250320185238.447458-42-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -120,56 +119,43 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-37-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-42-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> dyndbg's CLASSMAP-v1 api was broken; DECLARE_DYNDBG_CLASSMAP tried to
-> do too much.  Its replaced by DRM_CLASSMAP_DEFINE, which creates &
-> EXPORTs a classmap (in DRM core), and DRM_CLASSMAP_USE which refers to
-> the classmap defined elsewhere.
+> Following the dyndbg-api-fix, replace DECLARE_DYNDBG_CLASSMAP with
+> DRM_CLASSMAP_USE.  This refs the defined & exported classmap, rather
+> than re-declaring it redundantly, and error-prone-ly.
 > 
-> The drivers still use DECLARE_DYNDBG_CLASSMAP for now, so they still
-> redundantly re-declare the classmap, but we can convert the drivers
-> later to DYNDBG_CLASSMAP_USE
+> This resolves the appearance of "class:_UNKNOWN_" in the control file
+> for the driver's drm_dbg()s.
+> 
+> Fixes: f158936b60a7 ("drm: POC drm on dyndbg - use in core, 2 helpers, 3 drivers.")
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
-> this ignores a checkpatch
->   WARNING: Argument 'name' is not used in function-like macro
->   #70: FILE: include/drm/drm_print.h:148:
->   +#define DRM_CLASSMAP_USE(name)
+>   drivers/gpu/drm/drm_crtc_helper.c | 12 +-----------
+>   1 file changed, 1 insertion(+), 11 deletions(-)
 > 
-> the macro is empty, and correct. only 1 arg is expected.
-
-The patch to remove this warning is before, so I think this is not an 
-issue anymore.
-
-> ---
->   drivers/gpu/drm/drm_print.c | 25 +++++++++++++------------
->   include/drm/drm_print.h     |  8 ++++++++
->   2 files changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> index 79517bd4418f..a3b70d104afa 100644
-> --- a/drivers/gpu/drm/drm_print.c
-> +++ b/drivers/gpu/drm/drm_print.c
-> @@ -55,18 +55,19 @@ MODULE_PARM_DESC(debug, "Enable debug output, where each bit enables a debug cat
->   #if !defined(CONFIG_DRM_USE_DYNAMIC_DEBUG)
->   module_param_named(debug, __drm_debug, ulong, 0600);
->   #else
-> -/* classnames must match vals of enum drm_debug_category */
+> diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
+> index 0955f1c385dd..1d08d759f238 100644
+> --- a/drivers/gpu/drm/drm_crtc_helper.c
+> +++ b/drivers/gpu/drm/drm_crtc_helper.c
+> @@ -50,17 +50,7 @@
+>   
+>   #include "drm_crtc_helper_internal.h"
+>   
 > -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
 > -			"DRM_UT_CORE",
 > -			"DRM_UT_DRIVER",
@@ -181,41 +167,10 @@ issue anymore.
 > -			"DRM_UT_LEASE",
 > -			"DRM_UT_DP",
 > -			"DRM_UT_DRMRES");
-> +/* classnames must match value-symbols of enum drm_debug_category */
-> +DRM_CLASSMAP_DEFINE(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS,
-> +		    DRM_UT_CORE,
-> +		    "DRM_UT_CORE",
-> +		    "DRM_UT_DRIVER",
-> +		    "DRM_UT_KMS",
-> +		    "DRM_UT_PRIME",
-> +		    "DRM_UT_ATOMIC",
-> +		    "DRM_UT_VBL",
-> +		    "DRM_UT_STATE",
-> +		    "DRM_UT_LEASE",
-> +		    "DRM_UT_DP",
-> +		    "DRM_UT_DRMRES");
+> +DRM_CLASSMAP_USE(drm_debug_classes);
 >   
->   static struct ddebug_class_param drm_debug_bitmap = {
->   	.bits = &__drm_debug,
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index 9732f514566d..e86ebb716b4c 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -141,6 +141,14 @@ enum drm_debug_category {
->   	DRM_UT_DRMRES
->   };
->   
-> +#ifdef CONFIG_DRM_USE_DYNAMIC_DEBUG
-> +#define DRM_CLASSMAP_DEFINE(...)    DYNAMIC_DEBUG_CLASSMAP_DEFINE(__VA_ARGS__)
-> +#define DRM_CLASSMAP_USE(name)      DYNAMIC_DEBUG_CLASSMAP_USE(name)
-> +#else
-> +#define DRM_CLASSMAP_DEFINE(...)
-> +#define DRM_CLASSMAP_USE(name)
-> +#endif
-> +
->   static inline bool drm_debug_enabled_raw(enum drm_debug_category category)
->   {
->   	return unlikely(__drm_debug & BIT(category));
+>   /**
+>    * DOC: overview
 
 -- 
 Louis Chauvet, Bootlin
