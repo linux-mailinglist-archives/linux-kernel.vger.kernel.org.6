@@ -1,297 +1,225 @@
-Return-Path: <linux-kernel+bounces-573515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CADA6D882
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:44:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86D1A6D888
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913503AB7E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7933A3EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF51425DCF7;
-	Mon, 24 Mar 2025 10:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1BB25DCE2;
+	Mon, 24 Mar 2025 10:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xl5QVuBp"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L/bP3aXG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABBB25C6FE;
-	Mon, 24 Mar 2025 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742813062; cv=fail; b=YadTxaGnYc5mjW67hhFMIVwwmq3kiKvQ+REJqSOr4RI/1F0tWeQ/H+dmhCRt9IsZlK38yekbhCgdXP9hVseO0FmlZFpmROop1jPRCiX4hRiiI2cLM8aVaFp/KZNNyaVobJiyNPn6uB3iN9jTayAEpt9UqELtZLMz1xrBGGrTsMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742813062; c=relaxed/simple;
-	bh=y+eIHS36PoYjQwW61HqrBPLmdGkfYoZWLsCaHVslS7g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GGUMVVivjyb9XDw62qO6YtTj98n5mO7g+PCxjHNb9Ry0mrs89KjT1mCAFapkAPp0Ph6kpwZ9ijo2zKQMT4GRanidc2LNu1O6FjDkFW3dJeHQKVenl2dQY0h22ShEzyumyzX1ne6qLlyCO5T9JHe6monR7Eyz8rkzFp0b4oDoN98=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xl5QVuBp; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sPe5HxszUs0skKrcc1KiGQdl+z6GQwN25mF4OuYDdnBfjytDHNrA7i+cyULCuVhh19ZnMpF9ExC6q7UDx7JcK+7uqrUd8rHHRh6ugdZ9veDfuXP0lVKMWPNOdgygCMpUP+tNFKr545DBS0m9cGKdkAQHNTe9Cj6pA4lonW26lG8A4axVbeTFAxnix1yf9HCQj5ArkCsiE5rdOsBy0yNE2aDcjMYgkd7sQKshZBziTYqv2il+6jgpeL6sTZu3kDsOntZAmxTs0z/73oNumAxmLcXfAVI6XkkQQXKBKkoIKEB8XrNUKUZUgHzWcb3aY1PU5AZqmR9BhQV5UgHlaflRzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dlrzc0+bYuPfgCBhijqa8YqiEEjPyi4wfZqRc7m+NN8=;
- b=N6FuitwjCkTQpdenxEqcPFhr37nt6yMLCJ5PaQvgCDzeA6s59Wymdm3DSlCer4QrQRmd4HRmQX8zIDKd7LElkLS/tKVDlWojTYii4xRmb6PDF+XDpYyegeb2cfvucK08Yg6VYB+ilGEqy2yzRezGp67ab+/Awtga1udgOL+l8LjBMNZehqXsj9cAx2EmFjJOGWRaDR9hwtCzNYFWablOQmwOqMtf870KSgxT+qEoKcmWZfICfNxyJ2OGqFCR7iAQ+cUJwGA7kYqws1KgRLJG7k+R8j6Aiqu6jLeAHeANpFPghQ0pLUNcMQSfJLatH5IuEYSHsG8sxvjiRBvQsO40mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dlrzc0+bYuPfgCBhijqa8YqiEEjPyi4wfZqRc7m+NN8=;
- b=xl5QVuBpK+x8z7QonWNLxo2rhA1yCqmNXOXdjESpdr9xVfo0nuEKzk6+70eiVGFAVZD363HMB4X2Txnu68obOpwD28JP6PsQ3/iFxPE5CchAJ4KIzNgZ9/uyF9S8+KpPjMEFxbxCSkDRe3XVb30I3lO/CnbisZj+ksl1Gl8bqZI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by CY5PR12MB6298.namprd12.prod.outlook.com (2603:10b6:930:21::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 10:44:18 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
- 10:44:18 +0000
-Message-ID: <301ad0d4-f8be-4787-ba3d-e4311e5c386f@amd.com>
-Date: Mon, 24 Mar 2025 16:14:11 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] cpufreq/amd-pstate: Add support for raw EPP writes
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250321022858.1538173-1-superm1@kernel.org>
- <20250321022858.1538173-5-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20250321022858.1538173-5-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0192.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:e8::17) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14039205E26
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742813223; cv=none; b=KQqkOH5EAQ9bJqL4g6p1HsEhqnAb4+l3g3YqccT2OllPVgQnbAVep3Rxb81DMDfG6OKSotIQikcRe2rZBLY0bnQYnrdoA3ozJxqgxT2RumH/a0XrM7nwS9JbuUb4zd8sGro3lFmO1AXA5PBzWDIb4xn9rmyAsPuA7rBuo59gg1I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742813223; c=relaxed/simple;
+	bh=4Mqx6j1jEgu3ftEu9pNFMxQ/rycz0f5ou4C4LnYwews=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=noqNw7cFf4rW8eFuotVTGZ9zRpJv0aEfujZqa9Hdl9ig6kN4F8qiiR7QKlnG1uMn63uAaYZ9aoIySLZ2ugZq+XrkgPnzrfap0MHEOW3v+fT3X9Pk5O/AiVZM/D2T1M3BHASf79r6XNxRgYx9rH4nVexfsGVkXEqT3Khm7EpeHG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L/bP3aXG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742813221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gu+IHy3eWsxqSL7KQBKuMTqUX8nLvgcOBpryY3nmz5I=;
+	b=L/bP3aXGDJmfW6mGsHSwdQbZr/KXlCUMMzKGm4MiN4wTzn7Q4iuW7MZ12eSmnpP3zZr1iZ
+	F7VPZSMAYtvPAIKuJZLH2wvxPgFsvSESaQK5BjuT453dYoyKhdkbqB+d+GFW2Kd1JhygIn
+	nCC0dlEloB24HQab50Slw8jWGVXgQTQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-278-HvVdvrJbP4Wgm50xXzPqVQ-1; Mon, 24 Mar 2025 06:46:59 -0400
+X-MC-Unique: HvVdvrJbP4Wgm50xXzPqVQ-1
+X-Mimecast-MFC-AGG-ID: HvVdvrJbP4Wgm50xXzPqVQ_1742813218
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43935e09897so27010785e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 03:46:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742813218; x=1743418018;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gu+IHy3eWsxqSL7KQBKuMTqUX8nLvgcOBpryY3nmz5I=;
+        b=FChIBNHVtZHUeeJG+ThkU+MacL6gJ/w203tLTeNgF2Aykx6wrdj5ydy/Xjvf2TfYyG
+         jVfmUdCwe7J7o8euBq2MI5x4A6w9LzKlvO+z7l05igEB8dybi+UoUM5MYO++tFOg8pdC
+         3naQEtGj2/FXFQbSXXrM7oe7Dv94Kz4ApLX+HPENGYIlZpxoXZEg6hLm4dWPuEBHZ+Ti
+         xXxQgRo9H8jTS48JyEiB14iXgdAvuaen61QIA5L3rwsu5OPRjUZDTMSc4f284qWhycaf
+         sMngXek1Se3Kq2B0jmJXkXXE1w2LDW1ISTbXZPM4ql2Nq0fPuMfUJNKNWBpIqMZJQ7gV
+         OUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzBQTCVjFR7geUSeNYGfzxl4vUVOzghcRgrzpLqJxPKsTGwWxWpE8MqnIDGkNdayrCalKFWnwTg62br2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5thQ8d84bP/f+puxH5XBMSwOP91da2+rWkHDDBdq9SfVm3Lyz
+	9LXgScvPv3M/12FFCfHu40dnYBXwS1WNPq3tSxQ7Lq2HoLNYLmUYBa+Se1SMiUn3b40+2KP6E/8
+	cIW4bYf4ixLsJ8p/GlbiT37I87zXIzf39o1SiRwLxxv78DMe3HoieNdoWeKBAjw==
+X-Gm-Gg: ASbGnctWHURYED3UUPC19OpabMnNdzX4Wb2xwJjWcvEfNCTy33f1RPtKgMe/HElloV6
+	lluVFLs91A60Z9h1WZpyuXrRuVRezCJVYeWzM+aWbyWbAGZBDI5Sct+rB/rmf/DKs6qCZGa2AE6
+	9w0dHRNH/vKN4Rx3A35v9zzh4HjlJlxUdhW2nqUHpnupiW3j4BRt+R8w7wyiEka75fxUtyGu6JB
+	l37+BSkAzpgRWlem0Fc7B42GxxhFl5y6HZu62WVRF4nca2sP5OVDMIrkjPbs1xegcjcACElxgKX
+	FpUWT1/705vaz9GuooPFQRKpFG9JYc8KWi3suvkSZOyh8fAe9EUAR3S2QH+aEqlm8g==
+X-Received: by 2002:a05:600c:3c82:b0:43d:45a:8fbb with SMTP id 5b1f17b1804b1-43d50a1d1ebmr93437535e9.22.1742813218240;
+        Mon, 24 Mar 2025 03:46:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGANQB3rvIgZOSWD0gaPpOgHDkFySb04GZTBXL6jb8c8aJd3br4jmx1zWOwoz7jHrhpRHPjag==
+X-Received: by 2002:a05:600c:3c82:b0:43d:45a:8fbb with SMTP id 5b1f17b1804b1-43d50a1d1ebmr93437075e9.22.1742813217491;
+        Mon, 24 Mar 2025 03:46:57 -0700 (PDT)
+Received: from stex1.redhat.com (host-87-12-25-55.business.telecomitalia.it. [87.12.25.55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e645bsm10678195f8f.67.2025.03.24.03.46.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 03:46:56 -0700 (PDT)
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-coco@lists.linux.dev,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Dov Murik <dovmurik@linux.ibm.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	linux-integrity@vger.kernel.org,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH v4 0/4] Enlightened vTPM support for SVSM on SEV-SNP
+Date: Mon, 24 Mar 2025 11:46:45 +0100
+Message-ID: <20250324104653.138663-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.49.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|CY5PR12MB6298:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae261365-00b8-4a93-532f-08dd6ac0d411
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cS9yOHJhMUFieHB6cGlCZkRXRkdqV2ZjNUNIOHhUR3Awd0YybVJkNm9scFRX?=
- =?utf-8?B?N1NLaWU4YWJIUzZTbGhIclhRUmJQMGc4Q1dyZ1VPT0IydXlyVC9aV3Y5SkZX?=
- =?utf-8?B?Y3ZUaDhoa0JQbDZHdEZDLytzVEVHVURuYTUzWUFVVDlTOVJTcExxOE5GUm1l?=
- =?utf-8?B?L2NKekxMUUxNYnhWdmxnSW00ZnNydW1CWWZEU0hBZnM5NmNNblV4T1p4N1Az?=
- =?utf-8?B?Z2tuakdsV1NVeDNDdlJTYkF5eTcwZ1hVU3MxZ05yVHk2WTJIRWRUTWNUNzA3?=
- =?utf-8?B?TFFSazNGK1dVR25Bd3EwdnNpQVFzcnovM0Q1Wmc1L2lXZ1lOUW1LU0tPWTh4?=
- =?utf-8?B?cUFJbTJZUDVMYWFSVEVlaStLN1krOHk5Ylh0RHJLRlhvbHIxcmYzdjVNZEJQ?=
- =?utf-8?B?UWdUNENvSWZ2Qi95QzZYc3lYR1N1RkJnM1U3K1VxV290TGl6SWZYcTk2QmJB?=
- =?utf-8?B?MzA5dFlKcEYzeEQ2cTNiR3h1Wjk2bFNwd0c3QUo0N2J3aU9PcFJMQ01rMm1B?=
- =?utf-8?B?NkZBcmdMdkljTjZYZ1Y4Mk1zRUtvQUk2a09CWXhoYnlIUEM5OEpGMStyeG9p?=
- =?utf-8?B?RHV6TGdzMm12T1JidmZuMFVPVWsvZkdqYXhvSlVaMEFzcmZ0RUxyOWxoWk9T?=
- =?utf-8?B?ZTNhVWxBd0V1eHFoeEEwanl5UHhLZ0cvTi92dHZjUWNhUThFT1FnOUVVc1JI?=
- =?utf-8?B?Z0FYSG9iOG5MRVBLZWp5RFVOSCs2VTlFdm9UZ2NFWEI1eXJzdjdTaTlGTW5t?=
- =?utf-8?B?Vk9KcnBpQ3Bkd0pOOXNVY3ZFREcwVUJDNHNYZ0t5Q0tJZUdqZEtiV1pxL0Fk?=
- =?utf-8?B?SFYrb3ZRM3VJd29SNERUbVNJTy9GdDZxejFPNUZpaGxLVXpFVndPVTZXNWFV?=
- =?utf-8?B?NDlXWUVqZ1BTS2czWWJ4ckN1SUFkMS9vMzcwcDJ5RXovYUxJTkd3c3VXdjNP?=
- =?utf-8?B?cWZKaXVPdUVzeEM2REVybDg4WTQrMXVaV25zV3hLb3c5Y0JweHFJYXFJNjhz?=
- =?utf-8?B?LzJlNnFXVEVNd3Q3d1c3TGorWG41TVZvNlNuaEw2VDZPUGdrZk1TSWVnaldI?=
- =?utf-8?B?Z08relM0S3djSmlyU1NkdmY0ZGJ6R0ZzU2hMdmlZYm1WRWZFa0FUQ3lmb04y?=
- =?utf-8?B?UnA5ZGRRejhLTkVsNEE2SnZ5UVFEc0drY0I1aituWjk4YXRhOE5HNG1ISVN1?=
- =?utf-8?B?d1Q0b2xISG5jRURMdzFOL3d3ZzE5VkpPVVNkMjBtNzNOQWF0RTBra1lwaTA0?=
- =?utf-8?B?Mkw3TTRlK3h1SjI0Z2xvdU5RdWpTekxvckVnTlZFUVVBUnQ3T3JyYTZNNHBE?=
- =?utf-8?B?S2hKaVVRbyttZkJPelhCRm8vSTJIUWtpc2IyNitqWVpLdTBvUkJEV0lVRVV1?=
- =?utf-8?B?a285QUtDZDU2MkpGcW5xVFM5VDB5RTFFKzROQ2hPaGJoSTNDOVZRbVFHRmhH?=
- =?utf-8?B?S3dNUzBFQjhWdkVpM0tycmVDYjhpK2RCWjN1UDdXV003Nnl0aXFCWUIySmhk?=
- =?utf-8?B?UXZJS0RHeVJtTjFjODZheExoSm1nSXFZRmQzT0lOSWhwbXFOK0NDQkl2K3pM?=
- =?utf-8?B?Nk9iVno3Zm94ak1laXFZR2ova2NmakRIdnZUYzJabXg3bVM2ZVlIV1pEZ21W?=
- =?utf-8?B?NXdSWmN5ZzdhVTYxNWY4NVFMUW9wSEhOVGsrcXdUL1pCRUt3dDFPSUdBc2I4?=
- =?utf-8?B?MkZVU3B2NlRrT0ZpMEo2RW40T3luVWdpOWlLOVh2WWJHbXArRGZGYUxQRWsz?=
- =?utf-8?B?Y251T2pFc3hzdjRWM3BPY0JWelFpdDN3d1lnNGdLaWFLWnFGUmdDRTVYVHkz?=
- =?utf-8?B?VE45NjFZMUR1b01Vd3d0WmFxV0pHdnYrcUxTOFB0SnlrRUNydVltY3N5MUFm?=
- =?utf-8?Q?HQ8ZPRT2Lob7D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bUZIUkVvMFZNUFNLMlZUVERpdVNkV0NvNlZYVzFWVXluSVRDVndHTFZta0tK?=
- =?utf-8?B?T2Ixck1uUmUxSW9RbC85WUlRZXNTMjJlWUxjSW93KzQ5Nlozdnk4WkdxU3Rl?=
- =?utf-8?B?b28vRGhiQ2lxbUFVY3EyTnZLV20zY1BOS1h2Z2w5TlVyMkQxWHdpeHJFVjlk?=
- =?utf-8?B?VDJHRVRHcXhBQ0FpWVJvcVdJRlpyczdCS09jSFRtamhSTnF4YlVqd3Rkb3Zr?=
- =?utf-8?B?Skl0SzBvYllpeTZpV2NVNkdkU2dINDBpc1hQSm0zWEdPeEx6QUdrTWQ0bU5h?=
- =?utf-8?B?cDZ3VkN5QW9kMWFWcFhnazB2amp6TjFqcHZSY2lPcTNJb0NlMGl2eUEvZ2cw?=
- =?utf-8?B?MnRIbWRIS3p5eWZNb1ZqMlY2V3Q4UWVzYU5vY05rRXNDdmFuNGN3c2ZDRlQr?=
- =?utf-8?B?MEg4UVAvWnRKTnlGNEZTS29UMzRHVDhacnd0djc2OGVyNWJDUHVzNXZDaGtJ?=
- =?utf-8?B?N1NGWDR4VDg2Q0NYMWdZU29yNkNHNG56ZUd5U08rWkJYSHNSMnFJNDdITVAw?=
- =?utf-8?B?dk13T3VJRy9PTWk3QUg0VFordkVuVUt1WHZrTG45QjBCcE5HQjVRY3BmTDNG?=
- =?utf-8?B?WmZRUlpTa0pTUGZmeG0yWXF4a3d4aVNpMzRieDUvczdvUXpwMm9tWHFMakly?=
- =?utf-8?B?TEVkWnpaQjNadDJhRTVrL3ZUZTBlRU5rVWc4SncvSktIcVFKaVV5elgySldS?=
- =?utf-8?B?OXVjZTlSYldmSkxzaXArQ2pBTFVGVW05OWdiWUYwby81VE9GS2pFTFErazB6?=
- =?utf-8?B?ZGI4SkRsQitneHVadythOXpZTm9Bd2FhaXpqWU50WDhUK2RqSExRclRZZFRn?=
- =?utf-8?B?QzVaRnUwL3Z4Q1lBazc4Yk5NWExyTFZZeDhuUE1qeVoyTHBVWkZoR083bjk1?=
- =?utf-8?B?aGQvbHdQNVNmNERlSjRUUXl4SzcrNUNpTlRtMStDUXAwMXN1MXlHOC9DRUh3?=
- =?utf-8?B?VjdWaFJibC8ycVhMc203YWNaYUFyc2xKL2dXMU5EQWVsS0FESWR2RlBqcWZU?=
- =?utf-8?B?U2QrNGlzOVdmQW4vd0dZa2VYbmJwQnpwVTZMTWI0aDRNWUl0Tzk1M1RlQWQr?=
- =?utf-8?B?ZnJqdUcwdUZZcnFZWitMUklpZ2RQaGVPVFpMNEMyb1hlendreHJDUTlpRzJZ?=
- =?utf-8?B?UmdKeXVPYXpUTFY0cTk4YzFhZzR0MzRTMUNkMVRTZUROOXZEZFdJUjNON2Fp?=
- =?utf-8?B?MFhadVZLQnNsNjVLV1FsUGhGbDhWQVRBWkFUQ3luUXc5ZjV6M0p2Mis3YmtU?=
- =?utf-8?B?ZnoyWlNXZDloOVdlaHBwZE5ISzlYQnhSMkVoWjdRL2dBcDNqbjlPMlZkdXRB?=
- =?utf-8?B?dXp5YUlQUnNES2lSUUh5MU5jWXFUR25scnQ4RWgvS0xBVStzRFQ0R0wyVnBD?=
- =?utf-8?B?VDdIMzV1S3hsMEE1KzhpTi9CcDc1L3U0bXVWMDZGbERac2NrYnZtN2dRNStq?=
- =?utf-8?B?SDNjWFNTK2puWUx3eGJSYzhvL0toVjlYVkFWM3JBQXNFS25WSitoTzVXam43?=
- =?utf-8?B?ZDFsRkdmZEI3REdGTzh5U09yMHhRNTBkenFYNnhiWFJERGJJRlZTVWc4WStI?=
- =?utf-8?B?U2Y1U0tWTWgvbjR4ZG5jU2p3WGZvQW11L0tFeEVGcnJtcktxQmNpSkhYOW9O?=
- =?utf-8?B?aWlwRnIxOE9XVHhmTm5VUDc0OGIwRUpLc0NaSHRJMm9lcjM1YUJzL3oyZ3Vj?=
- =?utf-8?B?a0EvaWlnMGYrenFuNDhRMkcxZjFTamk3dHlhK2IrWW9hR2JDZGpVeExTbDhJ?=
- =?utf-8?B?STdGTlYvWlZ3NEJqZlBvS0JRUnBaMGMrSy9PU2pzTkJvcmVCTjIwY0tUT1Rp?=
- =?utf-8?B?TGROa2M5VlBkZ2ZSbnVXeFFGdFJpQVV6bUJ6MWwzZmxsQVRCUS9KUG9aL0Fs?=
- =?utf-8?B?dHhTdlJORUYxUmxxbDhJUUhFZVpHWm9TaVlnUlRHMGxycks5QXNVZm1OWGRk?=
- =?utf-8?B?cHh2NGY5d0FWa0pka1JjYjRkekw2NDJ5dWhYOFlDcXBPM2M2RmpTV3ZibXJO?=
- =?utf-8?B?UytQV0FHakhsVk5uWTdrYVo0YjB6eGdIQVJIQmlXKzEwaXFrc2xVYVMrOXRJ?=
- =?utf-8?B?L1ZNc2pJMmhFZnU3cms5YmR4YXlBa0ozZFZvMWtJK0tVeHVpaDFLVElZMFRw?=
- =?utf-8?Q?Bp7DR9/wQLaTbSsvZgTBKkP46?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae261365-00b8-4a93-532f-08dd6ac0d411
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 10:44:18.2055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: en+UlC6Mmp3rMsnAhlQSOqrABZDbsBzgaYautqenEUV7TkMnf2j0Zx9W6gojO4WXnvXfr7HO/GWwZDVzKGho9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6298
+Content-Transfer-Encoding: 8bit
 
-On 3/21/2025 7:58 AM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> The energy performance preference field of the CPPC request MSR
-> supports values from 0 to 255, but the strings only offer 4 values.
-> 
-> The other values are useful for tuning the performance of some
-> workloads.
-> 
-> Add support for writing the raw energy performance preference value
-> to the sysfs file.  If the last value written was an integer then
-> an integer will be returned.  If the last value written was a string
-> then a string will be returned.
+AMD SEV-SNP defined a new mechanism for adding privileged levels (VMPLs)
+in the context of a Confidential VM. These levels can be used to run the
+guest OS at a lower privilege level than a Secure VM Service Module (SVSM).
+In this way SVSM can be used to emulate those devices (such as TPM) that
+cannot be delegated to an untrusted host.
 
-LGTM
+The guest OS can talk to SVSM using a specific calling convention and
+instructions (a kind of system call/hyper call) and request services such
+as TPM emulation.
 
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+The main goal of this series is to add a driver for the vTPM defined by
+the AMD SVSM spec [3]. The specification defines a protocol that a
+SEV-SNP guest OS (running on VMPL >= 1) can use to discover and talk to
+a vTPM emulated by the SVSM in the guest context, but at a more
+privileged level (VMPL0).
 
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  Documentation/admin-guide/pm/amd-pstate.rst | 16 +++++++++++-----
->  drivers/cpufreq/amd-pstate.c                | 11 +++++++++--
->  drivers/cpufreq/amd-pstate.h                |  1 +
->  3 files changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
-> index 36950fb6568c0..0e4d2e0aaeff7 100644
-> --- a/Documentation/admin-guide/pm/amd-pstate.rst
-> +++ b/Documentation/admin-guide/pm/amd-pstate.rst
-> @@ -280,16 +280,22 @@ A list of all the supported EPP preferences that could be used for
->  These profiles represent different hints that are provided
->  to the low-level firmware about the user's desired energy vs efficiency
->  tradeoff.  ``default`` represents the epp value is set by platform
-> -firmware. This attribute is read-only.
-> +firmware. ``custom`` designates that integer values 0-255 may be written
-> +as well.  This attribute is read-only.
->  
->  ``energy_performance_preference``
->  
->  The current energy performance preference can be read from this attribute.
->  and user can change current preference according to energy or performance needs
-> -Please get all support profiles list from
-> -``energy_performance_available_preferences`` attribute, all the profiles are
-> -integer values defined between 0 to 255 when EPP feature is enabled by platform
-> -firmware, but if the dynamic EPP feature is enabled, driver will block writes.
-> +Coarse named profiles are available in the attribute
-> +``energy_performance_available_preferences``.
-> +Users can also write individual integer values between 0 to 255.
-> +When EPP feature is enabled by platform firmware but if the dynamic EPP feature is
-> +enabled, driver will ignore the written value. Lower epp values shift the bias
-> +towards improved performance while a higher epp value shifts the bias towards
-> +power-savings. The exact impact can change from one platform to the other.
-> +If a valid integer was last written, then a number will be returned on future reads.
-> +If a valid string was last written then a string will be returned on future reads.
->  This attribute is read-write.
->  
->  ``boost``
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 2a62b12148544..b0de50f390e07 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1318,6 +1318,7 @@ ssize_t store_energy_performance_preference(struct cpufreq_policy *policy,
->  	struct amd_cpudata *cpudata = policy->driver_data;
->  	char str_preference[21];
->  	ssize_t ret;
-> +	bool raw_epp = FALSE;
->  	u8 epp;
->  
->  	if (cpudata->dynamic_epp) {
-> @@ -1334,6 +1335,7 @@ ssize_t store_energy_performance_preference(struct cpufreq_policy *policy,
->  	 * matches an index in the energy_perf_strings array
->  	 */
->  	ret = kstrtou8(str_preference, 0, &epp);
-> +	raw_epp = !ret;
->  	if (ret) {
->  		ret = match_string(energy_perf_strings, -1, str_preference);
->  		if (ret < 0 || ret == EPP_INDEX_CUSTOM)
-> @@ -1353,7 +1355,9 @@ ssize_t store_energy_performance_preference(struct cpufreq_policy *policy,
->  	if (ret)
->  		return ret;
->  
-> -	return ret ? ret : count;
-> +	cpudata->raw_epp = raw_epp;
-> +
-> +	return count;
->  }
->  EXPORT_SYMBOL_GPL(store_energy_performance_preference);
->  
-> @@ -1364,6 +1368,9 @@ ssize_t show_energy_performance_preference(struct cpufreq_policy *policy, char *
->  
->  	epp = FIELD_GET(AMD_CPPC_EPP_PERF_MASK, cpudata->cppc_req_cached);
->  
-> +	if (cpudata->raw_epp)
-> +		return sysfs_emit(buf, "%u\n", epp);
-> +
->  	switch (epp) {
->  	case AMD_CPPC_EPP_PERFORMANCE:
->  		preference = EPP_INDEX_PERFORMANCE;
-> @@ -1378,7 +1385,7 @@ ssize_t show_energy_performance_preference(struct cpufreq_policy *policy, char *
->  		preference = EPP_INDEX_POWERSAVE;
->  		break;
->  	default:
-> -		return sysfs_emit(buf, "%u\n", epp);
-> +		return -EINVAL;
->  	}
->  
->  	return sysfs_emit(buf, "%s\n", energy_perf_strings[preference]);
-> diff --git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
-> index b4c5374762110..b6be2b8fbffbf 100644
-> --- a/drivers/cpufreq/amd-pstate.h
-> +++ b/drivers/cpufreq/amd-pstate.h
-> @@ -108,6 +108,7 @@ struct amd_cpudata {
->  	u8	epp_default_ac;
->  	u8	epp_default_dc;
->  	bool	dynamic_epp;
-> +	bool	raw_epp;
->  	struct notifier_block power_nb;
->  
->  	/* platform profile */
+This series is based on the RFC sent by James last year [1].
+In the meantime, the patches have been maintained and tested in the
+Coconut Linux fork [2] along with the work to support the vTPM
+emulation in Coconut SVSM.
+
+The first patch adds public APIs to use AMD SVSM vTPM. They use
+SVSM_VTPM_QUERY call to probe for the vTPM device and SVSM_VTPM_CMD call
+to execute vTPM operations as defined in the AMD SVSM spec [3].
+The second patch adds an interface with helpers for the SVSM_VTPM_CMD calls
+used by the vTPM protocol defined by the AMD SVSM spec and then used by the
+third patch to implement the SVSM vTPM driver. The fourth patch simply
+registers the platform device.
+
+Since all SEV-SNP dependencies are now upstream, this series can be
+applied directly to the Linus' tree.
+
+These patches were tested in an AMD SEV-SNP guest running:
+- a recent version of Coconut SVSM [4] containing an ephemeral vTPM
+- a PoC [5] containing a stateful vTPM used for sealing/unsealing a LUKS key
+
+Changelog:
+
+v3 -> v4
+- Added more documentation around public API [Jarkko]
+- Simplified TPM_SEND_COMMAND check [Tom/Jarkko]
+- Renamed header in tpm_svsm.h so it will fall under TPM DEVICE DRIVER
+  section [Borislav, Jarkko]
+- Fixed several comments to improve svsm_vtpm_ helpers and structures [Jarkko]
+- Moved "asm" includes after the "linux" includes [Tom]
+- Allocated buffer used in the driver separately [Tom/Jarkko/Jason]
+- Explained better why we register tpm-svsm device anyway in the commit message
+
+v2 RFC -> v3: https://lore.kernel.org/linux-integrity/20250311094225.35129-1-sgarzare@redhat.com/
+- Removed send_recv() ops and followed the ftpm driver implementing .status,
+  .req_complete_mask, .req_complete_val, etc. [Jarkko]
+  As we agreed, I will send another series with that patch to continue the
+  discussion along with the changes in this driver and ftpm driver.
+- Renamed fill/parse functions [Tom]
+- Renamed helpers header and prefix to make clear it's related to the
+  SVSM vTPM protocol and not to the TCG TPM Simulator
+- Slimmed down snp_svsm_vtpm_probe() [Borislav]
+- Removed link to the spec because those URLs are unstable [Borislav]
+- Removed features check and any print related [Tom]
+- Squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
+  with the next one [Borislav]
+
+v1 -> v2 RFC: https://lore.kernel.org/linux-integrity/20250228170720.144739-1-sgarzare@redhat.com/
+- Added send_recv() tpm_class_ops callback
+- Removed the intermediate tpm_platform.ko driver
+- Renamed tpm_platform.h to tpm_tcgsim.h and included some API to fill
+  TPM_SEND_COMMAND requests and parse responses from a device emulated using
+  the TCG Simulatore reference implementation
+- Added public API in x86/sev usable to discover and talk with the SVSM vTPM
+- Added the tpm-svsm platform driver in driver/char/tpm/
+- Fixed some SVSM TPM related issues (resp_size as u32, don't fail on
+  features !=0, s/VTPM/vTPM)
+
+v0 RFC -> v1: https://lore.kernel.org/linux-integrity/20241210143423.101774-1-sgarzare@redhat.com/
+- Used SVSM_VTPM_QUERY to probe the TPM as Tom Lendacky suggested
+- Changed references/links to TCG TPM repo since in the last year MS
+  donated the reference TPM implementation to the TCG.
+- Addressed Dov Murik's comments:
+  https://lore.kernel.org/all/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
+- Added a new patch with SVSM call macros for the vTPM protocol, following
+  what we already have for SVSM_CORE and SVSM_ATTEST
+- Rebased on v6.13-rc2
+
+Thanks,
+Stefano
+
+[1] https://lore.kernel.org/all/acb06bc7f329dfee21afa1b2ff080fe29b799021.camel@linux.ibm.com/
+[2] https://github.com/coconut-svsm/linux/tree/svsm
+[3] "Secure VM Service Module for SEV-SNP Guests"
+    Publication # 58019 Revision: 1.00
+    https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/58019.pdf
+[4] https://github.com/coconut-svsm/svsm/commit/6522c67e1e414f192a6f014b122ca8a1066e3bf5
+[5] https://github.com/stefano-garzarella/snp-svsm-vtpm
+
+Stefano Garzarella (4):
+  x86/sev: add SVSM vTPM probe/send_command functions
+  svsm: add header with SVSM_VTPM_CMD helpers
+  tpm: add SNP SVSM vTPM driver
+  x86/sev: register tpm-svsm platform device
+
+ arch/x86/include/asm/sev.h  |   7 ++
+ include/linux/tpm_svsm.h    | 149 ++++++++++++++++++++++++++++++++++
+ arch/x86/coco/sev/core.c    |  67 ++++++++++++++++
+ drivers/char/tpm/tpm_svsm.c | 155 ++++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/Kconfig    |  10 +++
+ drivers/char/tpm/Makefile   |   1 +
+ 6 files changed, 389 insertions(+)
+ create mode 100644 include/linux/tpm_svsm.h
+ create mode 100644 drivers/char/tpm/tpm_svsm.c
+
+-- 
+2.49.0
 
 
