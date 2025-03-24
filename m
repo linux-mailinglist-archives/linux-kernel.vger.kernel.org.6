@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-574299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F59A6E36A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:24:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384C6A6E368
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F197F3A56B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5321895FA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBD4194C75;
-	Mon, 24 Mar 2025 19:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BA6197558;
+	Mon, 24 Mar 2025 19:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="mw3UaA9m"
-Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fw0UGAxS"
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2420818B03;
-	Mon, 24 Mar 2025 19:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06C81946BC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742844154; cv=none; b=NlcHrPj/8NrfbGK8B1DUmVGkYprw3tnzhOxge4E9mgMoPnVzHxvIE6rNMcFmjEvCWaP++68IVyqGFvj/F7aSoV8HoVAxZQFb+LRJDLjRclasY9gEbI/wxaWPnSCVgC4Rj6WXd4x8MpxUGefhYGU06rn27exRKQimu69m0Vtp/Kc=
+	t=1742844116; cv=none; b=U2Qs1t8mkis81h755VPV4r05VEk8SBxp7nAEMCubB5rDACOtP8DqikmUpzxv4yHGGltUJrK926c8PuyGXTnp21Wdjb2bNQRKDYriIOiNolB1hS0VwGw99/raAMulPm0cHYaONMOTPXS/+zmlijp5L4hEipotJ3Dnrptyv1bGa8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742844154; c=relaxed/simple;
-	bh=yJDMXLZzTHk3EZq76Q74N4Zwvzvre3uZR9K9t14AwoU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GZb06jcpsQiixzvGMNmb+db/0mrqYAgld0J7AAVnHHHhWzeYxSguJku+eRVnqCC8qQUGEmuQ3mJuyJOK26m8R+lABGwk2E+ubLv2B+UjqIMkvB6a2KIrXQn0w7dXOKwnRzdroY7OW+9db9+613vqzWjbECpedWzdqU2BN+/52JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=mw3UaA9m; arc=none smtp.client-ip=148.163.142.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
-Received: from pps.filterd (m0144091.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OD2W3k001531;
-	Mon, 24 Mar 2025 19:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=PPS11142024;
-	 bh=czoJ/paFLCwaFLFspLyWITZgqMgVHu04NTA7upDGRSA=; b=mw3UaA9mQlkg
-	feFrrKbQUnnLUvi3tboPLvOxNHUWq9adcNw0nYEx5wppKjXpTw17V3AaLA8JtUaN
-	dHTNg870Ks9t7lmPzOcBxmZz+IECm73T09QIwzv7EGd/T9vsc0NbAwKPiXAE1R8i
-	eadHiolb9sB1Za1+UAg8O9OVPDY2Om6HUf8lo9yhTvrz84Hq0FHdqTvMYCCMrBdg
-	i7yqCalwNgQQP6vjTHEDonluLcUjBEypP8tXpLm5FJuMyM7+liOh12tZ+rLYymrs
-	muB7yuIduWxmsJsTl/w6DQZT/Y0NnJTbBI/RNSST3A1WHRzldK1EiyjyB7rhIBWJ
-	jhOQitHP1w==
-Received: from us-aus-excas-p1.ni.corp.natinst.com ([130.164.94.73])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 45k7x1w8gq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 19:22:02 +0000 (GMT)
-Received: from us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) by
- us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Mon, 24 Mar 2025 14:21:16 -0500
-Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.33) by
- us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
- Server id 15.2.1258.28 via Frontend Transport; Mon, 24 Mar 2025 14:21:16
- -0500
-From: Erick Shepherd <erick.shepherd@ni.com>
-To: <ulf.hansson@linaro.org>
-CC: <adrian.hunter@intel.com>, <andy-ld.lu@mediatek.com>,
-        <avri.altman@wdc.com>, <dsimic@manjaro.org>, <erick.shepherd@ni.com>,
-        <jason.lai@genesyslogic.com.tw>, <jeff.johnson@oss.qualcomm.com>,
-        <jonathan@raspberrypi.com>, <keita.aihara@sony.com>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <victor.shih@genesyslogic.com.tw>, <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH] mmc: Add quirk to disable DDR50 tuning
-Date: Mon, 24 Mar 2025 14:21:16 -0500
-Message-ID: <20250324192116.1756281-1-erick.shepherd@ni.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAPDyKFqrT0zXVRya=sgEOdjmn7D6xb-e+nD9Q4JpVnh1ddu_Fw@mail.gmail.com>
-References: <CAPDyKFqrT0zXVRya=sgEOdjmn7D6xb-e+nD9Q4JpVnh1ddu_Fw@mail.gmail.com>
+	s=arc-20240116; t=1742844116; c=relaxed/simple;
+	bh=TvB1EnMBcuPAfn2Ia82TJUwmEuxauLYHO6I+MZ04fBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2yIludbyGfDFswmjjIvWrTTHRWe/lxXDlEuWXUAeMXOPwWArNZNs+D3Zgwx8O1Gt0HTaBn17z4J4gEsXFCP8tX7lVVUXL1sySH9cGIW/iYUXTJtzYhsucbjzNSrwpXTZiY+DM1lYRvAYBqth1q3MZVGMhpQVXlXVBKERFdmYzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fw0UGAxS; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZM2wm1cTKz9kh;
+	Mon, 24 Mar 2025 20:21:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1742844104;
+	bh=KP5tQfq9jTZoEX5oO13eq6Eoqzftit1HmO0SOuoKa2E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fw0UGAxSsxyEHu4mAuVmj2W5BTDwTRKTUgpOIwFPcKgqCbgVLPf5mFIsd6M+a9TJ/
+	 CWMoIuNRwGsOREtC4ItQgIbaVZmF3Mrh7oq2hoog4Nkq2g5T7oVn/0MP94m6kx+zNO
+	 Zm92qRXtcEkLcCPRtv8St5nzyW7SucJ7LLndfX6w=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZM2wg62TjzhW0;
+	Mon, 24 Mar 2025 20:21:39 +0100 (CET)
+Date: Mon, 24 Mar 2025 20:21:38 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	selinux@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH v4 1/3] lsm: introduce new hooks for setting/getting
+ inode fsxattr
+Message-ID: <20250324.Sai1Chahyauw@digikod.net>
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-1-3e82e6fb3264@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: ambo5f-lN4Bq9HsUUGgFt5ONALa__j-F
-X-Proofpoint-GUID: ambo5f-lN4Bq9HsUUGgFt5ONALa__j-F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_06,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=728
- lowpriorityscore=0 mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- spamscore=0 malwarescore=0 priorityscore=1501 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240138
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250321-xattrat-syscall-v4-1-3e82e6fb3264@kernel.org>
+X-Infomaniak-Routing: alpha
 
-> Please move this to mmc_sd_init_uhs_card() instead. Moreover, please=0D
-> add a helper in drivers/mmc/core/card.h for=0D
-> MMC_QUIRK_NO_UHS_DDR50_TUNING, similar to other quirks.=0D
-=0D
-Sorry for the late response, how does this look? I can change the=0D
-MMC_QUIRK_NO_UHS_DDR50_TUNING check to be before the tuning=0D
-if-statement instead of within it if that seems more appropriate.=0D
-=0D
---- a/drivers/mmc/core/card.h=0D
-+++ b/drivers/mmc/core/card.h=0D
-@@ -89,6 +89,7 @@ struct mmc_fixup {=0D
- #define CID_MANFID_MICRON       0x13=0D
- #define CID_MANFID_SAMSUNG      0x15=0D
- #define CID_MANFID_APACER       0x27=0D
-+#define CID_MANFID_SWISSBIT     0x5D=0D
- #define CID_MANFID_KINGSTON     0x70=0D
- #define CID_MANFID_HYNIX	0x90=0D
- #define CID_MANFID_KINGSTON_SD	0x9F=0D
-@@ -294,4 +295,9 @@ static inline int mmc_card_broken_sd_poweroff_notify(co=
-nst struct mmc_card *c)=0D
- 	return c->quirks & MMC_QUIRK_BROKEN_SD_POWEROFF_NOTIFY;=0D
- }=0D
- =0D
-+static inline int mmc_card_no_uhs_ddr50_tuning(const struct mmc_card *c)=0D
-+{=0D
-+	return c->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING;=0D
-+}=0D
-+=0D
-=0D
---- a/drivers/mmc/core/sd.c=0D
-+++ b/drivers/mmc/core/sd.c=0D
-@@ -664,6 +664,10 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)=
-=0D
-	if (!mmc_host_is_spi(card->host) &&=0D
- 		(card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR50 ||=0D
- 		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50 ||=0D
- 		 card->host->ios.timing =3D=3D MMC_TIMING_UHS_SDR104)) {=0D
-+		if ((card->quirks & MMC_QUIRK_NO_UHS_DDR50_TUNING) &&=0D
-+		    card->host->ios.timing =3D=3D MMC_TIMING_UHS_DDR50)=0D
-+			goto out;=0D
-+=0D
- 		err =3D mmc_execute_tuning(card);=0D
- =0D
- 		/*=0D
-=0D
-Regards,=0D
-Erick=0D
+On Fri, Mar 21, 2025 at 08:48:40PM +0100, Andrey Albershteyn wrote:
+> Introduce new hooks for setting and getting filesystem extended
+> attributes on inode (FS_IOC_FSGETXATTR).
+> 
+> Cc: selinux@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/ioctl.c                    |  7 ++++++-
+>  include/linux/lsm_hook_defs.h |  4 ++++
+>  include/linux/security.h      | 16 ++++++++++++++++
+>  security/security.c           | 32 ++++++++++++++++++++++++++++++++
+>  4 files changed, 58 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 638a36be31c14afc66a7fd6eb237d9545e8ad997..4434c97bc5dff5a3e8635e28745cd99404ff353e 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -525,10 +525,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
+>  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+>  {
+>  	struct inode *inode = d_inode(dentry);
+> +	int error;
+>  
+>  	if (!inode->i_op->fileattr_get)
+>  		return -ENOIOCTLCMD;
+>  
+> +	error = security_inode_getfsxattr(inode, fa);
+
+It would help for both of these hooks to pass the dentry instead of the
+inode.
+
+> +	if (error)
+> +		return error;
+> +
+>  	return inode->i_op->fileattr_get(dentry, fa);
+>  }
+>  EXPORT_SYMBOL(vfs_fileattr_get);
+> @@ -692,7 +697,7 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+>  			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+>  		}
+>  		err = fileattr_set_prepare(inode, &old_ma, fa);
+> -		if (!err)
+> +		if (!err && !security_inode_setfsxattr(inode, fa))
+>  			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+>  	}
+>  	inode_unlock(inode);
+
 
