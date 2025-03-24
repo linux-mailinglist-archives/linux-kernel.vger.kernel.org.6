@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-574347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5818CA6E440
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:24:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233EAA6E446
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455FA166D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D50F73B50F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6C21C861E;
-	Mon, 24 Mar 2025 20:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A611DB548;
+	Mon, 24 Mar 2025 20:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ejdlva0s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xAny8cAd"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE3019CC08;
-	Mon, 24 Mar 2025 20:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0E8158520
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742847782; cv=none; b=CrCm8GuJHtg9Xwp8F6UvXhOGm66fPB/CwawIF8wBWujO0O+ICiiv1buY8PpitWw+bX4PdRz6l5EPE/dqXpzGVTSFnQwnyKWEp9HyeFw/CsFP30iePu/i/pJD0/1Z8rF8ujNgEDVxODeodBW18sxdSQKfc8ytsJcZDGj1Z2F4z8c=
+	t=1742847812; cv=none; b=akH8Cbyoz11Turq1aIseAnrjuQEdnU6+WVZykeNHd+a5U/wD/xscOY5MpWkPGq9Jd6fOkZg7hJtg4s8pHxvIzj6coqNUMUEIBdl0WuS1N92i5ckJyILrKnaOKvaDO6pnyKz53LtWRSmVIIyaFIeaK8Edloiat3KG0jq8goojFTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742847782; c=relaxed/simple;
-	bh=ncQqNWoVKSEqFbwPcK2In9RG6rSS6r5IytFyAcwNeig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P45COeCr+zBfIHsNmm242rvvOWyAGNttYa6/yG9lZjT1lVkqfnYUPjc78pPf1RWQcyomYPsZreZP9YK5RqygcXd6z+2xVS6p1nBgfIk6rj8XJGXGoriBny6C6O5Vv0qkdiP7lMmhFUttT9ZhnfmT8CaaE/J1SWvXEZZtPn/hyOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ejdlva0s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83861C4CEDD;
-	Mon, 24 Mar 2025 20:23:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742847781;
-	bh=ncQqNWoVKSEqFbwPcK2In9RG6rSS6r5IytFyAcwNeig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ejdlva0sboLce56+dojF4alyQ3vY8mOJn8F6yLgWJGTF/CcudDO3RVMp5mP75rcD6
-	 G+1clGY+geRG3CDgrjFOYaVkzKpT6q2xh0KqWSoxKUTlA4Z60ejkSttvQY2qO/XCHL
-	 3aUG4WA/EhAHgNf1nogUFmWyg3lM3I8Zh8RH8zeZvk9LL9XyjdEySvVApXpSCuLx/0
-	 LhwcrKg1+0TGmeqr33zDUDpZ6CQR1iV0P+ehOebOOT9s4tiIvuTr2BBdwXQAMzbV2w
-	 1tTXf/bbdgfmjKRdn2o82+/D4wI3opV0ARajLgWq0jZORADZkDDcG9Qm6puTtvM1p3
-	 bRimxV8JuiCsw==
-Date: Mon, 24 Mar 2025 15:23:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Andy Teng <andy.teng@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: mediatek: Correct indentation
- and style in DTS example
-Message-ID: <20250324202300.GA804681-robh@kernel.org>
-References: <20250324125105.81774-1-krzysztof.kozlowski@linaro.org>
- <20250324125105.81774-2-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1742847812; c=relaxed/simple;
+	bh=FTVvZcbXSCRG4isEJ37AdJ6AjKt0CLK/juUcRo4yxHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=taWp9MVeazMgtMrGRozU2YPsvvxu7msfYGx+pk7mOik/sKfvywrQaMp1f7PVC8FVI5p7eR8yXWetAmjJtaEQho5S1IhU60BfKKoTvYnSrZ25DQ9VgKOvNsv9y/ixCvPGqgh3xXQQnQED8qoIEIIjOlrU1sO4J0Gc6wP6R1fPZLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xAny8cAd; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2240aad70f2so65065ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742847810; x=1743452610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tw8MdqEuI16bDGqrLJKWmzL8QotMRkbFBhxUcalD3S8=;
+        b=xAny8cAdpyLGz8FUPbg/Xkc/2JdpFcMT4Iq1fwc4Rd1LKW+B2L1v2PFOastIO88mTA
+         Q25moB+M3tju0iEvtxi4ze4UgtOB6ObFFZPkZcWYtUyJxnLrddEIK0uKscct6O8/UpmP
+         cSBQKak6iYnMrjUDCUc44BrjHWbtLWDGde41VBzVDKQhXnJjc/nRcwCD2TWhwhmMz/J2
+         16ZTDmg/tP4B5WrOLYrLMXJtX8Zf6zO1wbPkogvP5t9HWYFCKVT4s5gIgQXDdE0cU3MN
+         bntkFdna4O5rUC+nDCNYbDQ9a6Rje469GEYSdOykbrb/gNra7vDkf4MCq7a/U3bx2nFE
+         5NRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742847810; x=1743452610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tw8MdqEuI16bDGqrLJKWmzL8QotMRkbFBhxUcalD3S8=;
+        b=ePwGGl8lzJ62T32VSRWp7FleRYjrK7OKx5DNqPfvXJm4cOxE+gpC+j/PUApjBROPWG
+         HnQmV8Qg9P6ZHcbtvEurwNSv6c4+ywHpwM1osJRhta+w66Q3B3inACtb95tK4/5x6T92
+         /FMjn7bErlOI2MU5g8mj0pKULd2spvPh+AZimeW5Rr7pIyIT8K60csUQJqwM47VIFHjt
+         RdhCGRMR5POHE8s2KauLYwF6NBArLnkMpFOi7KZKKpKcB7tbTz161S6r50Q11Betb0Bc
+         zGdV/je2xycjXLyR8dhPQI3D/oVuGGnPlJXFOIko4LJ74CJydb9ZNuUyPrcDj2Gf9MRQ
+         SNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFWCQokzSrqMTN5oHaG/m3TI72y2oKGBUEPHdN2FpUo6k9H1cZMFpKpXvHevexu89jCLYOdY8edgYHqh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ916vHKoSTvpbh37TY/wUG7voo/QmFClwPcW9wOmldHfQCOgq
+	4iU8Jo9oS2Vq5DtprIhiKT8GSJ0A944GCZ1U853BYz6vk8Afp0AjFh8vHNOg1IQ4DnWFHkMDLXs
+	o9dlij75PXHWo6C/d9a1lOs+RiHnrHV/exYvt
+X-Gm-Gg: ASbGnctzSd1Zn369w7cxpcB/r2D6UdzCEBYxMd59/uoX0MDb866up2pnrAD45mnfnI2
+	n6GIOrVgrn/Z7yCcDCVKlt1fgy3NiiH8AteEnPeGWzSOLAkn6mr7JdcGT91k6OxL6iq+9ld88u1
+	Ydu6yTIO6mnU0/bCadFmoyhN/V02Zmlae7TmMlhqnpjRDAfSn04mDrgwG5
+X-Google-Smtp-Source: AGHT+IFLZV57rHCQSpiZkuDB2IWC15ckkgVSb8eGoGJ0utu9e+eN/tXjQwdtpGXfCiQi+TJYjIfu/4mIRu5qEpxoc74=
+X-Received: by 2002:a17:902:eccc:b0:223:3b76:4e25 with SMTP id
+ d9443c01a7336-22799f781fbmr4578925ad.17.1742847809328; Mon, 24 Mar 2025
+ 13:23:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324125105.81774-2-krzysztof.kozlowski@linaro.org>
+References: <20250309084118.3080950-1-almasrymina@google.com> <87a59txn3v.fsf@toke.dk>
+In-Reply-To: <87a59txn3v.fsf@toke.dk>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 24 Mar 2025 13:23:16 -0700
+X-Gm-Features: AQ5f1JrIxy1e_i27ZockKLHmrfEKrX2c10NDCEOTcJajcc6hpoW3WD2cL4qKx3I
+Message-ID: <CAHS8izM30jZ+bKkpeKQLKk3BGj8nBFLpUFgS2qM7x8EPMV7KOQ@mail.gmail.com>
+Subject: Re: [PATCH RFC net-next v1] page_pool: import Jesper's page_pool benchmark
+To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jakub Kicinski <kuba@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 01:51:05PM +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
-> 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../pinctrl/mediatek,mt65xx-pinctrl.yaml      | 83 +++++++------------
->  .../pinctrl/mediatek,mt7622-pinctrl.yaml      | 48 +++++------
->  .../pinctrl/mediatek,mt8183-pinctrl.yaml      | 68 +++++++--------
->  .../pinctrl/mediatek,mt8192-pinctrl.yaml      | 76 ++++++++---------
->  4 files changed, 127 insertions(+), 148 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> index 5f2808212f39..b9680b896f12 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> @@ -137,64 +137,43 @@ examples:
->          #size-cells = <2>;
->  
->          pinctrl@1c20800 {
-> -          compatible = "mediatek,mt8135-pinctrl";
-> -          reg = <0 0x1000B000 0 0x1000>;
-> -          mediatek,pctl-regmap = <&syscfg_pctl_a>, <&syscfg_pctl_b>;
-> -          gpio-controller;
-> -          #gpio-cells = <2>;
-> -          interrupt-controller;
-> -          #interrupt-cells = <2>;
-> -          interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> -              <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> -              <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> +            compatible = "mediatek,mt8135-pinctrl";
-> +            reg = <0 0x1000B000 0 0x1000>;
-> +            mediatek,pctl-regmap = <&syscfg_pctl_a>, <&syscfg_pctl_b>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +            interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
->  
-> -          i2c0_pins_a: i2c0-pins {
-> -            pins1 {
-> -              pinmux = <MT8135_PIN_100_SDA0__FUNC_SDA0>,
-> -                <MT8135_PIN_101_SCL0__FUNC_SCL0>;
-> -              bias-disable;
-> -            };
-> -          };
-> -
-> -          i2c1_pins_a: i2c1-pins {
-> -            pins {
-> -              pinmux = <MT8135_PIN_195_SDA1__FUNC_SDA1>,
-> -                <MT8135_PIN_196_SCL1__FUNC_SCL1>;
-> -              bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-> -            };
-> -          };
-> -
-> -          i2c2_pins_a: i2c2-pins {
-> -            pins1 {
-> -              pinmux = <MT8135_PIN_193_SDA2__FUNC_SDA2>;
-> -              bias-pull-down;
-> +            i2c0_pins_a: i2c0-pins {
+On Mon, Mar 10, 2025 at 2:15=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <t=
+oke@toke.dk> wrote:
+>
+> Mina Almasry <almasrymina@google.com> writes:
+>
+> > From: Jesper Dangaard Brouer <hawk@kernel.org>
+> >
+> > We frequently consult with Jesper's out-of-tree page_pool benchmark to
+> > evaluate page_pool changes.
+> >
+> > Consider importing the benchmark into the upstream linux kernel tree so
+> > that (a) we're all running the same version, (b) pave the way for share=
+d
+> > improvements, and (c) maybe one day integrate it with nipa, if possible=
+.
+> >
+> > I imported the bench_page_pool_simple from commit 35b1716d0c30 ("Add
+> > page_bench06_walk_all"), from this repository:
+> > https://github.com/netoptimizer/prototype-kernel.git
+> >
+> > I imported the benchmark, largely as-is. I only fixed build or
+> > checkpatch issues.
+> >
+> > Cc: Jesper Dangaard Brouer <hawk@kernel.org>
+> > Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> > Cc: Jakub Kicinski <kuba@kernel.org>
+> > Cc: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk>
+> > Cc: netdev@vger.kernel.org
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> >
+> > ---
+> >
+> > RFC discussion points:
+> > - Desirable to import it?
+>
+> I think so, yeah.
+>
+> > - Can the benchmark be imported as-is for an initial version? Or needs
+> >   lots of modifications?
+>
+> One thing that I was discussing with Jesper the other day is that the
+> current version allocates the page_pool itself in softirq context, which
+> leads to some "may sleep" warning. I think we should fix that before
+> upstreaming.
+>
 
-Perhaps drop the unused labels while you are here. Either way,
+I don't think I saw that warning for whatever reason. Do you by any
+chance have a fix that I can squash? Or do you think it is very
+critical to fix this before upstreaming? I.e. not follow up with a
+fix?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
+--=20
+Thanks,
+Mina
 
