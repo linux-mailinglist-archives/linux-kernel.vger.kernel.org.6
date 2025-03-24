@@ -1,164 +1,117 @@
-Return-Path: <linux-kernel+bounces-574245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3DFA6E282
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:37:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603C6A6E27B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2440116EB74
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:36:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C38218885A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C80264FBA;
-	Mon, 24 Mar 2025 18:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE4D263C90;
+	Mon, 24 Mar 2025 18:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="O1ktSCBf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ix0kqUe+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B2C264F84;
-	Mon, 24 Mar 2025 18:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069BD257448
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742841390; cv=none; b=W0BvPYv0eF76wl6ZzrIdQE+6iyyv6jUgulSk6ODvl3jg6pcVjFnY9d+lm+f0jPQePtwTDcDq1pt4/HT9YrjxK6B59tiO3PsSmSXR8DieSjnFDb+FHh/rJ7FRfP/ZHLpRFP9psrBoKL2slx5KMv+24EKGGQOxhv9hcrLAA047P2A=
+	t=1742841382; cv=none; b=T83xu2rmezUX4zUXgLbKC2/CMTcMcF0rhW2sKkP3FReSzkbyrNiYjg6Q6MwAXQoluUFXbxBBuqLpa3slipzo/UC37DBsjnaCkpzg18IaEseQwisQ4rTOBI0DAfqCn/LGyy1Htha3aae0N997xui5+hvxcUhzXWTcjy7a8bXNICE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742841390; c=relaxed/simple;
-	bh=+tHTwQCl+rKNDLbsUQWAeB9cYvBtkmAj1qT/QM8FuTM=;
+	s=arc-20240116; t=1742841382; c=relaxed/simple;
+	bh=ZOWLfl7LRUSe/2ZMujR1d7bxu0RxzXf5mmn9Rc/VfoY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUZnkyZ9Qh2oQ2ctxKJfGtfU+IWZ4wV4KNQHPaTutFVMV4zvTThmZ4756VCpc4yvNcAPKH4xl9PPFn3EwRaKd3OBa1Y/A3GYgXP3p5b7r0yVSzo8Nvgo13/KHGjNv6l2SQpEzFWT4PZfcz9IkMeiPkjcEN1x3niMJOtrxM16ZE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=O1ktSCBf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=X4F3sqvTWUFr3hm2OdD/nyNotX8RIX6/b7P9siq4rRk=; b=O1
-	ktSCBftk6ilHFHI8FsPU/AMeKO4wrvczxzcGq4nXakKm9e7dUZrW2uwOeycO6IoajlOuCHcT9ITm1
-	CT7GrwHUOAwCtujspynPvj2k6kGpmUDJSLQxtiygO89/y9H7VqqA6JkRwAMraFHOi6pFGb0hgYqCg
-	guyfF9TnKcsQ75s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1twmec-006y0k-WC; Mon, 24 Mar 2025 19:36:07 +0100
-Date: Mon, 24 Mar 2025 19:36:06 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH net-next 07/13] net: macb: move HW IP alignment value to
- macb_config
-Message-ID: <967fcb66-6a64-4e97-8293-a38b0ef1bc01@lunn.ch>
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-7-537b7e37971d@bootlin.com>
- <45b3e613-90c6-4499-b50b-383106172184@lunn.ch>
- <D8OOPAXK16CI.3TE75O760JRSL@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R89rXD1dpEW/BKqi1rFlpmn3L10KSvvIHxQctJ83c8pGAQ8o9FB3YotDXdkdqJsGntMMHYZ85fS0tXrqS8/JOBUmvoKEul0A32TyiEy2MBvNWoD10Qgm4QKAlSWAvoe9tsxPQqtrZP6d0+QDiLMzTIcd2mlO0cStdC3KF2jLKQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ix0kqUe+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742841380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8R1fhpCFsssJ/t2dthzX4ainTU9Kl3aOGNFVRr+jFug=;
+	b=Ix0kqUe+sCWht1+FUvtxDH+8rgWo0xMvVFgVgEQRctITfY4tQRCWnRIsJwgRFZZZFIM56M
+	GPqAr9Yx365q4C81cg91zfozkd7xpJfxtps5zcc0MWxn9w4OJDnbmQSgRGujRD+R/PFhr6
+	j+8ETxIqcoKt+v+iQjYEA3AeUZUu8s0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-lOe9r2n1OWa8sAE0mD5GXA-1; Mon,
+ 24 Mar 2025 14:36:16 -0400
+X-MC-Unique: lOe9r2n1OWa8sAE0mD5GXA-1
+X-Mimecast-MFC-AGG-ID: lOe9r2n1OWa8sAE0mD5GXA_1742841374
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7084196D2CC;
+	Mon, 24 Mar 2025 18:36:14 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.81.75])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59476180A802;
+	Mon, 24 Mar 2025 18:36:12 +0000 (UTC)
+Date: Mon, 24 Mar 2025 14:36:09 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Filipe Xavier <felipeaggger@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH v2 1/2] selftests: livepatch: add new ftrace helpers
+ functions
+Message-ID: <Z+GmGfcdEceUzTQc@redhat.com>
+References: <20250318-ftrace-sftest-livepatch-v2-0-60cb0aa95cca@gmail.com>
+ <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D8OOPAXK16CI.3TE75O760JRSL@bootlin.com>
+In-Reply-To: <20250318-ftrace-sftest-livepatch-v2-1-60cb0aa95cca@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Mar 24, 2025 at 06:49:05PM +0100, Théo Lebrun wrote:
-> Hello Andrew,
+On Tue, Mar 18, 2025 at 06:20:35PM -0300, Filipe Xavier wrote:
+> [ ... snip ... ]
 > 
-> On Fri Mar 21, 2025 at 10:06 PM CET, Andrew Lunn wrote:
-> > On Fri, Mar 21, 2025 at 08:09:38PM +0100, Théo Lebrun wrote:
-> >> The controller does IP alignment (two bytes).
-> >
-> > I'm a bit confused here. Is this hard coded, baked into the silicon?
-> > It will always do IP alignment? It cannot be turned off?
-> 
-> Yes, the alignment is baked inside the silicon.
-> I looked but haven't seen any register to configure the alignment.
-> 
-> Sorry the commit message isn't clear, it needs improvements.
-> 
-> >> 	skb_reserve(skb, NET_IP_ALIGN);
-> >
-> > Why not just replace this with
-> >
-> >         skb_reserve(skb, 2);
-> 
-> On arm64, NET_IP_ALIGN=0. I don't have HW to test, but the current code
-> is telling us that the silicon doesn't do alignment on those:
+> +	if [[ -n "$FTRACE_FILTER" ]]; then
+> +		echo "$FTRACE_FILTER" \
+> +			| sed -e "/#### all functions enabled ####/d"
+> +			> "$SYSFS_TRACING_DIR/set_ftrace_filter"
+> +	fi
+  
+Also, this may be more stylistic than a functional nit (I don't know for
+sure), but shellcheck [1] seemed confused about these lines:
 
-This is part of the confusion. You say the hardware does alignment,
-and then say it does not....
+   In tools/testing/selftests/livepatch/functions.sh line 90:
+                          > "$SYSFS_TRACING_DIR/set_ftrace_filter"
+                          ^-- SC2188 (warning): This redirection doesn't have a command. Move to its command (or use 'true' as no-op).
 
->    skb = netdev_alloc_skb(...);
->    paddr = dma_map_single(..., skb->data, ...);
->    macb_set_addr(..., paddr);
-> 
->    // arm   => NET_IP_ALIGN=2 => silicon does alignment
->    // arm64 => NET_IP_ALIGN=0 => silicon doesn't do alignment
->    skb_reserve(skb, NET_IP_ALIGN);
-> 
-> The platform we introduce is the first one where the silicon alignment
-> (0 bytes) is different from the NET_IP_ALIGN value (MIPS, 2 bytes).
+I wasn't going to comment on these until I saw shellcheck note them, but
+I thought shell script convention was typically to end the line with the
+redirection/pipe then escape the end of line like:
 
-This is starting to make it clearer. So the first statement that the
-controller does IP alignment (two bytes) is not the full story. I
-would start there, explain the full story, otherwise readers get the
-wrong idea.
+  commands | commands > \
+      tee output.txt
 
-> >>     Compatible             |  DTS folders              |  hw_ip_align
-> >>    ------------------------|---------------------------|----------------
-> >>    cdns,at91sam9260-macb   | arch/arm/                 | 2
-> >>    cdns,macb               | arch/{arm,riscv}/         | NET_IP_ALIGN
-> >>    cdns,np4-macb           | NULL                      | NET_IP_ALIGN
-> >>    cdns,pc302-gem          | NULL                      | NET_IP_ALIGN
-> >>    cdns,gem                | arch/{arm,arm64}/         | NET_IP_ALIGN
-> >>    cdns,sam9x60-macb       | arch/arm/                 | 2
-> >>    atmel,sama5d2-gem       | arch/arm/                 | 2
-> >>    atmel,sama5d29-gem      | arch/arm/                 | 2
-> >>    atmel,sama5d3-gem       | arch/arm/                 | 2
-> >>    atmel,sama5d3-macb      | arch/arm/                 | 2
-> >>    atmel,sama5d4-gem       | arch/arm/                 | 2
-> >>    cdns,at91rm9200-emac    | arch/arm/                 | 2
-> >>    cdns,emac               | arch/arm/                 | 2
-> >>    cdns,zynqmp-gem         | *same as xlnx,zynqmp-gem* | 0
-> >>    cdns,zynq-gem           | *same as xlnx,zynq-gem*   | 2
-> >>    sifive,fu540-c000-gem   | arch/riscv/               | 2
-> >>    microchip,mpfs-macb     | arch/riscv/               | 2
-> >>    microchip,sama7g5-gem   | arch/arm/                 | 2
-> >>    microchip,sama7g5-emac  | arch/arm/                 | 2
-> >>    xlnx,zynqmp-gem         | arch/arm64/               | 0
-> >>    xlnx,zynq-gem           | arch/arm/                 | 2
-> >>    xlnx,versal-gem         | NULL                      | NET_IP_ALIGN
+There are a few existing examples of this pattern if you grep the
+functions.sh file for '\\$'.
 
-I'm not sure this table is useful. What might be more interesting is
+That said, I'm far from certain whether which order is better than the
+other.  The only reason for bringing it up is that shellcheck warns on
+this patch's usage.
 
-     Compatible             |  architecture |  hw_ip_align | value of NET_IP_ALIGN
+[1] https://www.shellcheck.net/
 
-We can then see if there are cases when the 3rd and 4th column differ.
+-- Joe
 
-	Andrew
 
