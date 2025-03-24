@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896E5A6DE94
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B4FA6DE98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E62D16E828
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3729172419
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86555262D01;
-	Mon, 24 Mar 2025 15:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E44F262D17;
+	Mon, 24 Mar 2025 15:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mVaWY4Nz"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HzRntRTI"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E22262815
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC458262D0F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829868; cv=none; b=RcFLLDd5hvlfhCcs/2qh8Y1XbfrEfp5cQxs931t26Vw5wJU7tlMMMN2j0BUwtzS3BlcqPGfuHUyNBUnJrbqriBBwwN4KHWtwNy+gOGKga3icPubPaqY3/heaEQYoKR3XGrLCkPbrkz1LL+UZN2VwRzlG1+wFvUO5ByKdP7J3okY=
+	t=1742829874; cv=none; b=Qcp6b+bclvTc9iwCL/TgtJS3l9uLJj191uZwn518Z9toAUDybxIuGqq6cZ3zOiOe4aQwTcqZxwbRiC0kb6KU7gCQ82FlU+SQWvwPOwY1q3RGOh57yKFM5UyiMnHlbL/GySVLG9Kb4qxuQpgD758w2BMQLHEHbf4Dux6ZIvXeYDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829868; c=relaxed/simple;
-	bh=VktfRK3VzoNKmLZgzjeic8DJNHI8hxyV7q8Mpzaa0pg=;
+	s=arc-20240116; t=1742829874; c=relaxed/simple;
+	bh=KQXlza06a/qUhICMKdC7Iz8jWUbyXRik5lrUZe41Zk4=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EzvUrzh/g7FUfhjbiMYlNqCoIEqQqbG617ycJPmlsjWHnDxpy3gH0A3z7t9mls8H3tu1ccdQWYyGu53Hb/YIQ0dzgMcpoqXqodL3miItiE72xOQ0/x36+5P/Rwa6mVjxdVTG/5mB95PZc8L+lcv1KCiXrmuSruWzSA4smUzqNeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mVaWY4Nz; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:Content-Type; b=YB1L/FfFFHPjCz7zi+BZw6HuiMM4f0gBriWkGjOxVdYry5T37xqfQdQuMFlzX869Zte57ImsFlnX4x4KEr8CXHUsLvgEiz60MEEbQi3rmhtjVhxyXjXCTUE2j20/cJtQ4DVG+Xzs+XsgvaNnNBQ9HTgeP9RA4eimY9Phs6nR1iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HzRntRTI; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 10978442A2;
-	Mon, 24 Mar 2025 15:24:21 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F580431EA;
+	Mon, 24 Mar 2025 15:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829865;
+	t=1742829870;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MN2goKeoGuvQfVEcs16DdowyfuUf4fhiY6wQYYUdHD0=;
-	b=mVaWY4NzsQu8H3UewIVVJ2dHMuyEwe1yH44jNKm1gW+fS9KM8kcx9K4r2YOj8aB/UzrFG9
-	P3lUMqKnjQY/9oayiOlPgRSusO2u20Xp4ujHZ05PBliCHxCf0uvTF5cjJYXcce/ozg2QOL
-	kEuomD6jyvuO52LuWs3QRZHFsNhd8aj4ISBcsDK37ca5z1sNlrEKFH2Skdj9HTE3hye78A
-	+VyAZgfOX81uHvujjO9dsHiU3zPmXKa3rbJpSpccVlj8tVotwUtBLIGUP2kyfGHYWW6g2s
-	Kb4l/1TZ4ygwNcjtQ5yVh62Cv0AmLczyfh2K6idPoIPMN7hvsJDqC6M3+icnHQ==
-Message-ID: <d6918ca0-f661-4b1c-af61-cc863a794a66@bootlin.com>
-Date: Mon, 24 Mar 2025 16:24:21 +0100
+	bh=qq8EpEiG1aC5Z/IjfsMqD91CxuYdkrpsKElewh0trrc=;
+	b=HzRntRTIKg4fLJyjgfZTixNKmLhq822wf0K5foYb4X2cRUgxn0PLQUU4hPLxst0D35OdE+
+	CqYuSaBhmof4OO/roafXPdPVcIT9ZV2Oj7iaNssm3lWouInC/EOod+m3KzDFW7XhOerlXW
+	tCIGRxXb98yNFm6L7LidILYeKfWeuT0ZVcCljYOBnxe+rxYtQQKVaNhi7LS2QuolizWOES
+	vbmDUtul2gNsSmnHZfaJIZSoCTH3bjGrUi3+WSceOJw/M7KjJir/tNXBAdRbs6U64pgQ0N
+	7cW7xziJHn7jY13PAUOIkrPnY0z3mJZDglSyV0v013GZvm8lkj/eKGCsm0mZQg==
+Message-ID: <d8af7ba3-d7c9-4ed9-b3ed-118ea189ea49@bootlin.com>
+Date: Mon, 24 Mar 2025 16:24:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 39/59] drm-dyndbg: DRM_CLASSMAP_USE in amdgpu driver
+Subject: Re: [PATCH v2 40/59] drm-dyndbg: DRM_CLASSMAP_USE in i915 driver
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -63,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-40-jim.cromie@gmail.com>
+ <20250320185238.447458-41-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -119,12 +119,12 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-40-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-41-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
  dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
 X-GND-Sasl: louis.chauvet@bootlin.com
 
@@ -145,16 +145,16 @@ Le 20/03/2025 à 19:52, Jim Cromie a écrit :
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 12 +-----------
+>   drivers/gpu/drm/i915/i915_params.c | 12 +-----------
 >   1 file changed, 1 insertion(+), 11 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> index c0ddbe7d6f0b..e1367f66c4d2 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-> @@ -234,17 +234,7 @@ int amdgpu_wbrf = -1;
->   int amdgpu_damage_clips = -1; /* auto */
->   int amdgpu_umsch_mm_fwlog;
+> diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i915_params.c
+> index 37746dd619fd..2dc0e2c06e09 100644
+> --- a/drivers/gpu/drm/i915/i915_params.c
+> +++ b/drivers/gpu/drm/i915/i915_params.c
+> @@ -29,17 +29,7 @@
+>   #include "i915_params.h"
+>   #include "i915_drv.h"
 >   
 > -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
 > -			"DRM_UT_CORE",
@@ -169,8 +169,8 @@ Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > -			"DRM_UT_DRMRES");
 > +DRM_CLASSMAP_USE(drm_debug_classes);
 >   
->   struct amdgpu_mgpu_info mgpu_info = {
->   	.mutex = __MUTEX_INITIALIZER(mgpu_info.mutex),
+>   #define i915_param_named(name, T, perm, desc) \
+>   	module_param_named(name, i915_modparams.name, T, perm); \
 
 -- 
 Louis Chauvet, Bootlin
