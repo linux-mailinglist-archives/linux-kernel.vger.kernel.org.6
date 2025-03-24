@@ -1,116 +1,55 @@
-Return-Path: <linux-kernel+bounces-573664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101B6A6DA60
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D90A6DA83
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034A71893215
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88DD818961C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0BF25F982;
-	Mon, 24 Mar 2025 12:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDBC261376;
+	Mon, 24 Mar 2025 12:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V9816ev+"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3038825F96B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XuHjMZ4H"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F60425FA33;
+	Mon, 24 Mar 2025 12:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820733; cv=none; b=kGFkv3uWXfHQWGxOg9p+Jp6BkK6j9wvf+mGmR8dZyLw5m+ZvjG7+xXhUF5zRxRwt3cKhNybiQU9Igfi8hnwvBRlBYvW8owc0kdGGCLOhyN9SjaxB8s09W+ol68okN48FkwyfxgXkCiV/2S2dYEdS/q3RsGMpH8v7n922Yw5Y86c=
+	t=1742820772; cv=none; b=KckOfAv5L0yk2qj30Szfiv1xQQC/LaufLR2m5wW1bip0QrYe8Gm5PwZIt0QzL3E912fLXeIJHrAYwfN1jTf70AG8fv/unlvvwsH3lBx52BWByWPXho79mbkB55/Q6MfellFJKNQaccv0IfXNPK7wnXJglxD8/Qorf7bj1aKWqbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820733; c=relaxed/simple;
-	bh=i1xTXb/kURab0z/vsFoOuKtPU1o69hNH5a43i79jDDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QaPYj0VNQ6AuNG5ZZGRv9TvtcfkjM1T0Vm8GTMaxP9pDeMxUWg60iVVzG/1qIewlFDhL+wyCFv/B8yViN8iO4ktQcs8Cxvo4rR7X+83QvAgwitlqVNVipQlPe4joC2bJiIpn+Ymmbf6+AMxwVZJd097Qi3uNjqeucLJC3hE2+BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V9816ev+; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39127effa72so528131f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742820729; x=1743425529; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mjmaPyBHSXf8PuBe3jKy6bt1Qi4MPOA66CdtkxcGuKQ=;
-        b=V9816ev+iIvP8PJoHQNsZbn/DnulgrHyK/jP3X0O5p36Y2wUgG75gl6GhVCs+ZkQ2y
-         8seId9KmtMzf8yBlPhLob1EMCBTjPJ/EFasFr72VAdgDwzlgCI6teCNgiX+Nb2DWSrm6
-         R9Lo/oGb8UqbawMFsU1n4RblxlNDrQMCRe2aXag0ZwoZpUm/hxMG8f0YPzNPcatmrWu8
-         tfuGIDcoj8m5Ttm8c/JqRiBvzMUDIOSbbVyG6QgnXag7zlxX4j2kj9vh8BY+uOidnvCb
-         3+0Jf7InItCMEXrllWXwmFb984TT4TdwNmr7q01xz2ZLLSuwo7toAhdctAmjSykskuIz
-         9t2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742820729; x=1743425529;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mjmaPyBHSXf8PuBe3jKy6bt1Qi4MPOA66CdtkxcGuKQ=;
-        b=ExWpKlDDRx0N4qaDhTadcJA4vdHSohoYMYuEb89ZYqNe/LJqAZ9jZ9FipE4LideDgS
-         Aau5Q1w+rvASri7vdu94unSRmTPuXvjFexCiDQLaqg3mazHcrhEvgYOQwg914K55vAGC
-         nXygBCe9FW3k8IvX7UQNIeCzy+uiFuLUc0J7iIb93/pp4OLj6uc+BptCzT80KeCfEeza
-         RzcrW6meH5FXy/kynOOoD0pdrnnN0Ecq02BcXPoQnil1bSiptr32VcLFOZXCCuQlEr+N
-         erd1iW2Y0yWOsLfg934J6sucluKCzMMbRV7WNsLI2iwW7xFREpDtCL9UMRL8VerOlGkS
-         p5Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9bbrdKkKCSgpuB5qrafYwo4SfM2kjc9k8NiYPzoSjwwL8D8UBBdnBceVh4j/b6vNmfC5WubMUraUIILQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaP3bGkD77+vZRAeIGIDEtlv49dajJru9E9kcFBbHRm6p8oAT0
-	6S66FpLKIhbAZLmgopqa7uiT6j/UeAzS1Y4lOtvmnmsUqT5gDDeE1E7D79Xv4OQ=
-X-Gm-Gg: ASbGncu2+22FuxOo+j8kWcYlnRcpX+BmcLjUKpOj4eLFN3SyJKYMxprTunq97bP9hio
-	i61KiMTWQRqi0bl7oXpNiEOQth8uoAXdzqD6NWShXOHk9+tkBS5uvJVYO6IUuB4xpJucVtR4HcM
-	puLysU9Mxam6Md+DDsaSpJC7D4I0+x76aQ6920L3DBLs/aXXjVxnvYg8dRQAuczNEmFxrPWvPCB
-	VKIroqU4jQ++TiJYllxOT5ZV0uqsudnYJ9b2x/PCDljmuPXfbVQTFBr8M0SbbjdCboFd188028r
-	uhhZ0R7xQRcfxozuFg47exOPxqJ5QPG+55+6vK5XRxsK0MOvWdfuGrpYrw==
-X-Google-Smtp-Source: AGHT+IEqvip+CcbtHMcAP3ZwBIgJtEmf4kkkBavjhgyRCafFGFSCWjHrpx6YQVQWOVUsbGUmdeCJag==
-X-Received: by 2002:a05:6000:2c8:b0:391:320d:95de with SMTP id ffacd0b85a97d-3997f8fd165mr4483091f8f.4.1742820729282;
-        Mon, 24 Mar 2025 05:52:09 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd2704bsm118704565e9.18.2025.03.24.05.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 05:52:08 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Tom Joseph <tjoseph@cadence.com>,
-	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1742820772; c=relaxed/simple;
+	bh=DGpU04yKPRoOZy0YVkJWqS/S+9o26k7SQZrWuf3KMcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TskoDnwY2jgI/4+vAIYfCK1AdjP4+w/9dv1Qz2pwaEQXyFepGWzg9lNfQ5UIllHYa+fCqjHKwVwp4c/IQyOrOZQB2XMzEd2CIwkX0YVNK8/4lcrTbnlnjySP6INVnKPw4rIud7VTBcY8fIaxYb5fob7TZo62oENenPdNHzdPJCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XuHjMZ4H; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=PHKuR
+	DmBKYPk3+KtVV7z/lVVayQrARu4WFny395S+VM=; b=XuHjMZ4HXjyo2LiJLFL/6
+	udAg/qCviGk94zLDk1nyK8+NvlfwSEO9Tljhwg4EHfObmZCK0PBf85mPEvnoJTWs
+	xULr6PoEvaxgANf+FluZJGMMDTdkLJ6FZWuhj8v1tCgE7Im3yjS3U1cnMH5tzV7u
+	HO1QUdR8DmhPDnDC5cFarE=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnL9mAVeFnOfyBBg--.24149S2;
+	Mon, 24 Mar 2025 20:52:19 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: PCI: sifive,fu740-pcie: Fix include placement in DTS example
-Date: Mon, 24 Mar 2025 13:52:02 +0100
-Message-ID: <20250324125202.81986-2-krzysztof.kozlowski@linaro.org>
+	inux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] ARM: dts: rockchip: Add aliases for MMC devices
+Date: Mon, 24 Mar 2025 20:52:11 +0800
+Message-ID: <20250324125215.160616-1-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250324125202.81986-1-krzysztof.kozlowski@linaro.org>
-References: <20250324125202.81986-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,31 +57,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnL9mAVeFnOfyBBg--.24149S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF1DuF47tFW3WFy7uFy8Zrb_yoW3tFg_ta
+	43Cw1rJa18GFy5Xw1Dt3yrW343Awn7Kay3G3WDAF18GF1vqa1kXF4kJas7t3WYyFW29rZ3
+	JFWfXa1Yqa13CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1LvKUUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gYaXmfhTQKPYwADs2
 
-Coding style and common logic dictates that headers should not be
-included in device nodes.  No functional impact.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Add aliases for the MMC devices so that after the system starts up,
+they will all have fixed device numbers.
+
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 ---
- Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-index 844fc7142302..d35ff807936b 100644
---- a/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/sifive,fu740-pcie.yaml
-@@ -81,10 +81,10 @@ unevaluatedProperties: false
+ arch/arm/boot/dts/rockchip/rk3036-kylin.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rockchip/rk3036-kylin.dts b/arch/arm/boot/dts/rockchip/rk3036-kylin.dts
+index 15a8860c7ae47..a2d7ec2729116 100644
+--- a/arch/arm/boot/dts/rockchip/rk3036-kylin.dts
++++ b/arch/arm/boot/dts/rockchip/rk3036-kylin.dts
+@@ -8,6 +8,12 @@ / {
+ 	model = "Rockchip RK3036 KylinBoard";
+ 	compatible = "rockchip,rk3036-kylin", "rockchip,rk3036";
  
- examples:
-   - |
-+    #include <dt-bindings/clock/sifive-fu740-prci.h>
-     bus {
-         #address-cells = <2>;
-         #size-cells = <2>;
--        #include <dt-bindings/clock/sifive-fu740-prci.h>
- 
-         pcie@e00000000 {
-             compatible = "sifive,fu740-pcie";
++	aliases {
++		mmc0 = &emmc;
++		mmc1 = &sdmmc;
++		mmc2 = &sdio;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial2:115200n8";
+ 	};
 -- 
 2.43.0
 
