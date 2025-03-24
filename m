@@ -1,60 +1,76 @@
-Return-Path: <linux-kernel+bounces-573698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B417A6DAEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBF5A6DAF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3779B3AE860
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4BEF3A6151
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B216925DD0A;
-	Mon, 24 Mar 2025 13:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D65025DD14;
+	Mon, 24 Mar 2025 13:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R3W4Emdm"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WaYd0dMe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCB8EEC5
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB62802
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822311; cv=none; b=jRdxh0K9otAsxGsZBQ5AJOUbSxyQ7jZAk31cFegIj8Em8mzKfnqk1reKk310Ayt4+D4clqTPtqJb/wwtxfY34+SoAJrY4J6C7CFAqXtAlQdybiua51O5uWmY9+HZ1k8VA/Mg+y3a3JFeh4B9CiP4vSH+y2a+ky2YKIv1I1DzA0Q=
+	t=1742822454; cv=none; b=B/0DCiwhAmE+M8HpahtwEPf7zLcVl+RpPXUEVtjIn6AsFRq/eMo/chWtUkghLJc/3VAN6fpUkZ+G1fppBvbDZeNrGdr6H+/TBjbBKskMlPFciSFrWa9NQH/IhDcGIBXUDkDAebXrFk1PTt8UqYCnCofdR6+31KVaJhe8d+kzfy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822311; c=relaxed/simple;
-	bh=faIuof2bnzW67oXVuBrYIpaMR6d/9J3/MBt7/pgmqUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NfRUPI4SVysN5BWpzGcGHKkxMk9L26E3vwBwD4g0h5i+rIkSQyZA1iPrcEsdafgx2LExrrzuKjdlvkIm0U0o8cwhXK/kMreiSnqc+yPTQWvTniQluuSliLRO5CRdp060neYx9sC3kkLsN5XpuskRfHErX5zdHvG8G5HHdWwZzmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R3W4Emdm; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742822305;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=arVVZeeqZTaqIGfn9u6dowfrXYyiC4MWEKz0N9ovA/8=;
-	b=R3W4Emdmc9Sid1dh2oAh9Ifw1p9FDGceIqGUczTsswwsFTYpBgK2yjpCjMWXGQTVM1aWSO
-	5Oa2zAoGW1LdhqqmVuyDQYgcOutADGJTzLhsHMVgqkHE1PZEW4cr42HntikXmkU4iLX65+
-	tjDyEuOhJDo6TYBHG1kbRvJtoWLJX+s=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	edumazet@google.com,
-	kuniyu@amazon.com,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	ncardwell@google.com,
-	mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>
-Subject: [PATCH net-next v1] tcp: Support skb PAWS drop reason when TIME-WAIT
-Date: Mon, 24 Mar 2025 21:18:05 +0800
-Message-ID: <20250324131805.23103-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1742822454; c=relaxed/simple;
+	bh=LDryJ/koN5PVnpPfoeCZiSqHvm1q98AVVU3TBiTrOQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U0jvZFBZZotx967bNXwaPoN+Kr5HL71jHiN0IyDiSugkC6qkhMZfSUju5RRoC6/n399FECO4TUHgsDub6H5hI3JfxZEQWuGj05DhoM1PbJOVa+8WFMbNxqJZ7g6uAGawrpEhcR/GdY39kgN/RQe5KgFnBv2B/TpSzY+H+VbIVpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WaYd0dMe; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742822453; x=1774358453;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LDryJ/koN5PVnpPfoeCZiSqHvm1q98AVVU3TBiTrOQc=;
+  b=WaYd0dMeyZ3LlZjWnhRTGu6Nu/n2hJzEXsDRPQJs634yXWZ8UKHJ0AhX
+   FCcW7YavxLnS77dwzLvkfAAL6zFTD5D+oKFJ8VHicvCjT5m8j5Ibzb98D
+   NNed12Oq8BkyGIjid96TNvNnROtsu9igYQbH9sSX4kEvMqdHR6Ao7J2NU
+   v4Hb4ee+ZwktxxTbf4tAlh4Nb8ys/48PpX1th5NoRkpKLiqyjgLmeUGhw
+   2zjtLg45+RxY1XiWpuNT24U2m9KjbaFQKYhWytZkXRi80JrobnXALJgko
+   Xje4oxd50mbfViFbIe0aIg/ObTKr+LMSk9WJtutMUBgJcjNHJjyQlK9mA
+   g==;
+X-CSE-ConnectionGUID: /valnXdvScOc9X/5+M0x/A==
+X-CSE-MsgGUID: zhw6TCdfT529IprOMeKmfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="54231069"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="54231069"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:16:50 -0700
+X-CSE-ConnectionGUID: 1/r3lys9Q4OR3UmlFyBOyA==
+X-CSE-MsgGUID: PdzfmcdeRnW9AUASALfC/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="124059963"
+Received: from spr.sh.intel.com ([10.239.53.19])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:16:46 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chao Gao <chao.gao@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Stanislav Spassov <stanspas@amazon.de>
+Subject: [PATCH] x86/fpu: Update the outdated comment above fpstate_init_user()
+Date: Mon, 24 Mar 2025 21:19:27 +0800
+Message-ID: <20250324131931.2097905-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,112 +78,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-When the server actively closes a connection and enters the TIME_WAIT
-state, if PAWS validation fails, the discarded skb previously lacked a
-corresponding reason identifier. This commit assigns the existing
-SKB_DROP_REASON_TCP_RFC7323_PAWS as the reason for such drops.
+fpu_init_fpstate_user() was removed in
 
-We use 'pwru' to capture drop reason.
+  commit 582b01b6ab27 ("x86/fpu: Remove old KVM FPU interface").
 
-Before this commit:
-''''
-./pwru 'port 9999'
-2025/03/24 13:46:03 Listening for events..
-TUPLE                                        FUNC
-172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_REASON_NOT_SPECIFIED)
-'''
+Update that comment to accurately reflect the current state regarding its
+callers.
 
-After this commit:
-'''
-./pwru 'port 9999'
-2025/03/24 16:06:59 Listening for events..
-TUPLE                                        FUNC
-172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_REASON_TCP_RFC7323_PAWS)
-'''
-
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-
+Signed-off-by: Chao Gao <chao.gao@intel.com>
 ---
-My apologize.
-I struggled for a long time to get packetdrill to fix the client port, but
-ultimately failed to do so, which is why I couldn't provide a packetdrill
-script.
-Instead, I wrote my own program to trigger PAWS, which can be found at
-https://github.com/mrpre/nettrigger/tree/main
----
- include/net/tcp.h        | 2 +-
- net/ipv4/tcp_ipv4.c      | 2 +-
- net/ipv4/tcp_minisocks.c | 6 ++++--
- net/ipv6/tcp_ipv6.c      | 2 +-
- 4 files changed, 7 insertions(+), 5 deletions(-)
+ arch/x86/kernel/fpu/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 2d08473a6dc0..16e6efef939a 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -388,7 +388,7 @@ enum tcp_tw_status {
- enum tcp_tw_status tcp_timewait_state_process(struct inet_timewait_sock *tw,
- 					      struct sk_buff *skb,
- 					      const struct tcphdr *th,
--					      u32 *tw_isn);
-+					      u32 *tw_isn, enum skb_drop_reason *drop_reason);
- struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
- 			   struct request_sock *req, bool fastopen,
- 			   bool *lost_race);
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index 2632844d2c35..ad168a3a73bb 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -2406,7 +2406,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
- 		inet_twsk_put(inet_twsk(sk));
- 		goto csum_error;
- 	}
--	switch (tcp_timewait_state_process(inet_twsk(sk), skb, th, &isn)) {
-+	switch (tcp_timewait_state_process(inet_twsk(sk), skb, th, &isn, &drop_reason)) {
- 	case TCP_TW_SYN: {
- 		struct sock *sk2 = inet_lookup_listener(net,
- 							net->ipv4.tcp_death_row.hashinfo,
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index b089b08e9617..39e5b55041f1 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -97,7 +97,7 @@ static void twsk_rcv_nxt_update(struct tcp_timewait_sock *tcptw, u32 seq,
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index b00e4032d75f..91dabfcaea20 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -516,7 +516,7 @@ static inline void fpstate_init_fstate(struct fpstate *fpstate)
+ /*
+  * Used in two places:
+  * 1) Early boot to setup init_fpstate for non XSAVE systems
+- * 2) fpu_init_fpstate_user() which is invoked from KVM
++ * 2) fpu_alloc_guest_fpstate() which is invoked from KVM
   */
- enum tcp_tw_status
- tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
--			   const struct tcphdr *th, u32 *tw_isn)
-+			   const struct tcphdr *th, u32 *tw_isn, enum skb_drop_reason *drop_reason)
+ void fpstate_init_user(struct fpstate *fpstate)
  {
- 	struct tcp_timewait_sock *tcptw = tcp_twsk((struct sock *)tw);
- 	u32 rcv_nxt = READ_ONCE(tcptw->tw_rcv_nxt);
-@@ -245,8 +245,10 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
- 		return TCP_TW_SYN;
- 	}
- 
--	if (paws_reject)
-+	if (paws_reject) {
-+		*drop_reason = SKB_DROP_REASON_TCP_RFC7323_PAWS;
- 		__NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED);
-+	}
- 
- 	if (!th->rst) {
- 		/* In this case we must reset the TIMEWAIT timer.
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 2debdf085a3b..66d30df95f7a 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -1965,7 +1965,7 @@ INDIRECT_CALLABLE_SCOPE int tcp_v6_rcv(struct sk_buff *skb)
- 		goto csum_error;
- 	}
- 
--	switch (tcp_timewait_state_process(inet_twsk(sk), skb, th, &isn)) {
-+	switch (tcp_timewait_state_process(inet_twsk(sk), skb, th, &isn, &drop_reason)) {
- 	case TCP_TW_SYN:
- 	{
- 		struct sock *sk2;
 -- 
-2.47.1
+2.46.1
 
 
