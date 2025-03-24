@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-574174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DDFA6E17E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:50:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4C6A6E19C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD81163CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721FF3BC249
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF155264A6C;
-	Mon, 24 Mar 2025 17:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A0C26659E;
+	Mon, 24 Mar 2025 17:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DXmzlsWg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HhLS0TR7"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MRlHneAd"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8378026463B;
-	Mon, 24 Mar 2025 17:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D05226658C;
+	Mon, 24 Mar 2025 17:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837891; cv=none; b=u80IsG8cKMONyx+vdpMv0a+MC2EmBX7iz5DR8GsZhiVog25viskB39rW4j0/RsAZuaL0WqKdw/UoauudVlZUBEiudOcOMj5i7g+NkNeZRoNG985r1gtCMngcfjTcXvQU8KnuTvyBuf6PPyPcjJOKblzGeVWXhVpstnkASyISO9c=
+	t=1742837907; cv=none; b=qSTAaSbg6PFhCq3xDonW/3mPxO9Pc6zs1gC0m8wN8Ihw/6F4H2eEje+oDjNzQk7bPSgLH4kpPzLrCenIe5Zu3/f/pkmcVZnJanslBswuKKlffMDktBJGaJMpcUzOi1Y8xvVBLJKQQPBHjeqOpKQkrgtVH6/+5TUxc4RIibumdJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837891; c=relaxed/simple;
-	bh=Pl8ZVDDj01kH0entjLJU7sWrwBBGgSDZhTkUajTovBM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jbIh1LCzaznTgT1vPTJBc0nBXzRL+1O+Il/pRkPbKFhYD+upLlm2kFH6lXdwP+BnM+GYbfMwUMvNwt6W3wQq5uPqzMFVRFFrjYQ4utyGccdHlF48jcW0vqxH3HhxYCd55oZY8edBdcV6wgrYoGHrzhBg0Xm5MBvtgQDJAeMZGp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DXmzlsWg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HhLS0TR7; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7DB531140163;
-	Mon, 24 Mar 2025 13:38:08 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 13:38:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742837888;
-	 x=1742924288; bh=0ikk+C+FnOn4DT6thNF5NrWTB/loSybHk2l4v3CzNfQ=; b=
-	DXmzlsWgRAVmHzXqk4SjUmKq3FroqR3wamyO1xhLiIoH1BCtOwRp/723XkJr+IWS
-	YfNDkxGPljYRF1L3FsB1aIwgHGp2lLmC51X6Ajl/l2nH1urg+dmGolpPfHGibzb8
-	FP+nSUCqE6G/ULs93aa1prZF4bVcT8FMOOJBbPisuq4/hQ52dc3DoqUCYa9LLpvP
-	lHt5eJdW/AvRxH+o4icyrQpXBNNiNzlnAru8j6yl2CvXv/O231cxeKvakDjw9iPw
-	buqv8dNt7V/dIBenTiWIezoPI7Bq3lJ9Pdw2BfDUQp/Zs+ppzT8QWr8NhRpwLX/a
-	g1EJza4BtYJWUQnZwM5lUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742837888; x=
-	1742924288; bh=0ikk+C+FnOn4DT6thNF5NrWTB/loSybHk2l4v3CzNfQ=; b=H
-	hLS0TR7gvCubWTavhyXtaYcVxakySgop13VtLB2oOw7mNiKDiCHYiaOdiEib0rvA
-	sLzLyq9hk5VU3+HI6za+sK9GfNuc1U1aPxujcnhAVZwSve4aR6Aze3Rt1+D+oHnb
-	9GRto9q/POQaUXq5jPbpZIoeXQHKrCy95Q9FFITyVQFPUx5dfyMHIVSDYDojvM85
-	FGulHEuOMVMJ5oUlyyFDZ6J8jI2XJ0WQypyn8QOz0kHxGE2U0HM8wlwxN8wZXQej
-	VSh1GRBcwuzfTfLqHuc78SB8Kv12sLg/j45SVDaJnNNJaxbSGYD+ieEFQnJdzZ8e
-	xRwXI/sDmmAulywlKnCjw==
-X-ME-Sender: <xms:f5jhZ1zjV0SjtJpFsHeYs74lk2MifsgWnORrRrtZfj-ULvkKNwhReQ>
-    <xme:f5jhZ1SSdrjuFsLhI9OGt4VposD2bNUcbcqUfRewKRnk7Jl0xn_p968CTwFc9JIN3
-    lhRlruqxXjJcLamcLo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtfeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhugh
-    drohhrghdrrghupdhrtghpthhtohepghhlihhtthgrohesghhmrghilhdrtghomhdprhgt
-    phhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkh
-    hpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhgvfhhf
-    rdhjohhhnhhsohhnsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopegrtg
-    grrhhmihhnrgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrhhovggt
-    khdquhhsrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:f5jhZ_UdxMaTbbr822PQ4ilOV-zNjLhEOUvKq9Z_gSC20B_Mq6rlEA>
-    <xmx:f5jhZ3hLKi3uMXlmdhtnNrz87fog1yed7I4Cx6l1rMd8cRDo2VDVHA>
-    <xmx:f5jhZ3C2sxlh8WcCEfiJBiGliLCLbvCfDfkgMTPpIKXVA2oCRqY7vA>
-    <xmx:f5jhZwLqkzeD6YExqg5GyBFZYrosCjHPc7FfcZ3RiEQ_s2M-VnSIdA>
-    <xmx:gJjhZzs6yRsRSLuVgAaWmuRqhGbDXrpkemStinyl8WRzuRVM8K71hlu9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8773E2220072; Mon, 24 Mar 2025 13:38:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742837907; c=relaxed/simple;
+	bh=t6sR+wx+/rmQqNgwFv004AN/gLFYDmi/rJQlweN4q4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BVdVqFYbMV+NPPqjr2tSmAMrf6v0xNLhoItAAi1ql0DzV5RzkJOONhMqMk/xZp5L2F0o8QCk1DTH08I2ATnr19hWwOBq12hvuBnBYedwn+n4jVJC8yRYMDtwBMFGvBuEB/I1XVmk21lbThheHuV1OEkBo7DxFtmxE51tMCU29ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=MRlHneAd; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0U+IOhAGSaWncMWr/2hE8r/FR6Wiw+nBu5VXy4Qmqwc=; b=MRlHneAddWRZUUWjUF5a0+9gm6
+	JYM5TGNJ+o+RsAI3POwXgni1ytvhWJ9QjAk9SdbayLqJ2sDOrP4kWSUo/6F5R+B1G7Kb36JPcMOOC
+	q4sG3MhdR1j1TQYyq/LqedInXojDUO/Wkzel6NgvJWcDQYLYCVkKZPbqEEAXlCP2RUfjPxg0SHOEd
+	uGJVQQm068tsr2mUUi7Q12pO6emK3hqHr6YObCgUk8yhRB5kPfOKL5TD4qLo44ubMqtIIboRrXQWz
+	V192wUGpMUa9PJxsXO1LTzXEg41RRoKPt4vOMtQUfykrp3Nb66fXF8rbXUGCtxDxLf07KxaVJVaCF
+	UKSlnYWw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35314)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1twlkg-0003t8-2r;
+	Mon, 24 Mar 2025 17:38:19 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1twlkd-0002R9-1F;
+	Mon, 24 Mar 2025 17:38:15 +0000
+Date: Mon, 24 Mar 2025 17:38:15 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net v3 1/2] net: =?utf-8?Q?phy?=
+ =?utf-8?Q?=3A_Introduce_PHY=5FID=5FSIZE_?= =?utf-8?B?4oCU?= minimum size for
+ PHY ID string
+Message-ID: <Z-GYh7tWq6dNDDqt@shell.armlinux.org.uk>
+References: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
+ <20250324144751.1271761-2-andriy.shevchenko@linux.intel.com>
+ <Z-F07j7tlez_94aK@shell.armlinux.org.uk>
+ <Z-GAzlPEVR8p5l7-@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 24 Mar 2025 18:37:47 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jeff Johnson" <jeff.johnson@oss.qualcomm.com>,
- "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>
-Cc: "Oliver Glitta" <glittao@gmail.com>,
- "Alessandro Carminati" <acarmina@redhat.com>,
- "Guenter Roeck" <linux@roeck-us.net>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Message-Id: <5d58bda3-4f6f-435e-962d-a8a5724112f5@app.fastmail.com>
-In-Reply-To: <9faf14a1-ba47-46bf-9ddb-629782b8b52d@oss.qualcomm.com>
-References: <20250324103048.3d8230f9@canb.auug.org.au>
- <9faf14a1-ba47-46bf-9ddb-629782b8b52d@oss.qualcomm.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-GAzlPEVR8p5l7-@smile.fi.intel.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Mar 24, 2025, at 14:52, Jeff Johnson wrote:
-> On 3/23/2025 4:30 PM, Stephen Rothwell wrote:
->> 
->> I have temporarily reverted the latter commit until the former are
->> fixed up.
->> 
->
-> +Arnd, will you post your changes for these?
+On Mon, Mar 24, 2025 at 05:57:02PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 24, 2025 at 03:06:22PM +0000, Russell King (Oracle) wrote:
+> > On Mon, Mar 24, 2025 at 04:39:29PM +0200, Andy Shevchenko wrote:
+> > > The PHY_ID_FMT defines the format specifier "%s:%02x" to form
+> > > the PHY ID string, where the maximum of the first part is defined
+> > > in MII_BUS_ID_SIZE, including NUL terminator, and the second part
+> > > is implied to be 3 as the maximum address is limited to 32, meaning
+> > > that 2 hex digits is more than enough, plus ':' (colon) delimiter.
+> > > However, some drivers, which are using PHY_ID_FMT, customise buffer
+> > > size and do that incorrectly. Introduce a new constant PHY_ID_SIZE
+> > > that makes the minimum required size explicit, so drivers are
+> > > encouraged to use it.
+> > > 
+> > > Suggested-by: "Russell King (Oracle)" <linux@armlinux.org.uk>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > 
+> > Thanks!
+> 
+> Thank you!
+> 
+> And just a bit of offtopic, can you look at
+> 20250312194921.103004-1-andriy.shevchenko@linux.intel.com
+> and comment / apply?
 
-I have sent out the last 10 module description patches
-I had in my tree now.
+That needs to go into my patch system please. Thanks.
 
-      Arnd
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
