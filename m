@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-573994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E92A6DF5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:12:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF841A6DF60
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F86E7A7191
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 613503B1662
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D6B2620C7;
-	Mon, 24 Mar 2025 16:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2302620FA;
+	Mon, 24 Mar 2025 16:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLkVnsGr"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gf68N48I"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A4A26158E;
-	Mon, 24 Mar 2025 16:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2391D261583;
+	Mon, 24 Mar 2025 16:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742832733; cv=none; b=DXWfK9JsnMSqH+eEHRJLnvIA40CPdRXNG14Walu0kzSBf2nXFIC3/0+v4mc0hmEALqMiN7rGoS3IPY8XSL6vBD+dnO6VJuElz8GADzR1VcDLBrf+4q5lLKjxs/R73tIVaW9dbonnnWO58P6AWtwlB81X+W/Q5gHeFcK9gfwcgLE=
+	t=1742832849; cv=none; b=TJYu+NA+XAMi7j+PlP0R41+jiTJbnadY/Ei5T2zfAvo/sHefBSwLfsyJ0pYcifLbdgTYeyPxiJAkNp4/Vkajw0kFy2Qc63zDWp7hrztR2ApXe+3S40UBjiNZXlnaiZMDUtQwn4++X3yZw3rct1B8t3dIOlwAlpBdp/JVt3kKJKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742832733; c=relaxed/simple;
-	bh=QG6XTY6hPpeWjaNYJLY6bvREGZypEO+xDVvz3yN4QYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioBiyI6AYZ4SzMbsG77HKxz0VKCQJlMCJVsebPtZAcqxVWbmoKgryZ8v4+f7op6CY7ntiKA4Co7JBIGt/qOH8dOXuZF/Slfz9wWx6M4P24mtOzSP5UjzUg+X96vzIOakTtHrk8Fu0qddDcxTDEtT3UtJDCJDrGS7qncEjrSxTho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLkVnsGr; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so644274166b.3;
-        Mon, 24 Mar 2025 09:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742832730; x=1743437530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h2wkPmRgHq2bLqP0oD2Mx07MkxAskvfdfv2BP5iExu4=;
-        b=gLkVnsGrq/U9MKrgApld+IyvB+TwOi8QQYXPI7dcQ5RjVJgUbBj4lFnFvQOg8R/IGj
-         1iO5zQ5rKKcl6xO6aanDx/9T5dssAlDNfII4IC9WyVL75XUAlTmZOPuAIoFT2u1XMusp
-         AcRbv+eikjqi1QHew5/ZS77XKZVNXefHVaXNR6ZOmjWUam9KJaSKN5unBcx7Wp3zhLt9
-         1sR1KWJ7QIQPbla6uZE3uswbCENix1MI/WX4Cs8sMwb//X77RHEZD1DdYl9tDZglGvn+
-         hvBQq9EzSEhTOJXl5L6cZrnO34y++Iz/Z2Cnv2lr6ufdGF3BsH2/L4kVPamChRdqGLa7
-         ZoTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742832730; x=1743437530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h2wkPmRgHq2bLqP0oD2Mx07MkxAskvfdfv2BP5iExu4=;
-        b=KWmUckxuAT7cL2ZjIoTSYvchDrLXE1v/gTk0G+Dnefjd6AKWJyLCBZM6+KEX/8Lzs/
-         TniV2cPm9dqxu/LH+rFfv3uXVQsvloiISqyD945ubljkb8XhmaeHlcd/ZIlfyEdIbBa7
-         MTu5x1aOtB6S9VpQv0pShf8Bam8IXLNc23QNb6K7xdi/XR06KVG/EMi823sNUoEpO5+P
-         aGS9ZsP86eXkg5QZasAeWESyV39su1903wHK7bJFCG1S0qg6ckHhXz1NrxHyjtDdzx9o
-         RUdYykXzfm1maf8YcHzildLDvX2PahmcXr0o+auQvSW5TtlP09Qa5/oJU7vk8+A0Q2oL
-         Pg5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVLrlpgJAwLytGdSYABj5QWQABVQHW+n1rE0BcmdQibIL0x8F3GiMiUzgL/xdUDmsAHnBVfDXCesiCsd57AHiY=@vger.kernel.org, AJvYcCVP/5C/0OlHybYKf091q3oNEAiTinhjroaQYrhkPmv4ldeJeyKHYAy3YMBWB92JiqlYFijD9hAe5fiA99YGcbdrYMCA@vger.kernel.org, AJvYcCWluo7THV7rISSRcK7XSxHjhZVB8dqh5SZTOVkaoRZX9whxHFxnZFsExcTfz9rsy/+OCzckp1RTLc2CLdFL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRRzqioYp0l3GijRl7j0nDwU4qUxIhpy6vpxwBELeUroKQfdTI
-	GupT2VEbS3H6N5GWDNKyHhlJx2IDqh9JKWRsPuHTdYyRD9f9yY+CXpSR6OE6QuCMFeqY4FVNVKN
-	TBcZm8tQXB+PphTHDlaqoDH9r0l8=
-X-Gm-Gg: ASbGnctWaSQ/dWVO5JaeplbGdNaOxssbNi3cV1BbtL/E8tJTzBnN3PRVJstd/ezKJQz
-	y4q9fEalN7fZaJOvNeQDcHtgyOD9xQc97Lfjsd+zzZnB275/pOre0CSNYVo3gBlP9NxVMgHK8Gq
-	RjWKbTLO13Y+ntm+v+JjJ4IHXPhEkM4aum1JwEgZ8=
-X-Google-Smtp-Source: AGHT+IFL9U0A7ifaDxb77XvQrFD13twdirQrJx6mPjwmEa1d/1S0+ELWJS9/e4tUZ5jQfM+wBjL4GvBurog2oHRtTWE=
-X-Received: by 2002:a17:907:3d8e:b0:ac3:f0b7:6ad3 with SMTP id
- a640c23a62f3a-ac3f24c835emr1407053266b.40.1742832730122; Mon, 24 Mar 2025
- 09:12:10 -0700 (PDT)
+	s=arc-20240116; t=1742832849; c=relaxed/simple;
+	bh=qWUcDEvNPwe+MVToQY1UJqIGr2oMYuSjPCHLZBofknA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=luHPy+XmVpkyTl91yrZpLfQ/eNQqwdQx4m+/4Wk2GTQEKO0VN29b9MrlQIHyukPqaT5rMWGgcHY5fDL3j5D/iPlr5jP+VMSzcsy26/u2KZb/JRwOswBy94Oq9dD9vl5ynU5KIGC4yEmw6nqRuEru3eL0arqkF3AVlgKBGvegxSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gf68N48I; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C9EB62047D;
+	Mon, 24 Mar 2025 16:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742832845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6KzmIi53X4fObYuJrA4GCKCHJLPzFl8bnqM+4sgwCQ=;
+	b=Gf68N48IxHGYxw5YhiOZutJryK0qFHSxJJeAYRbkVLq+oNDSGW0qesENhdVAAjAfxKxj9D
+	ZE/cLxKqWuH93q2c0TTha9uIb72TJzQnCArJ60qE9rphdjgh2rXoahvIdv8WFP6+7om7f1
+	fHSKvAZ4eKzHpX4Us105kKzkdm35JbDjF4lr72btvKLJSU3WG2SZ2KULSLV5mQUM7D509K
+	Wbt9VlL2xLhEtaqv6+fe+BwzpPU02bkyjLbZ+DrlOmwxQ0Abn+cT68213S1R07uGTL+j4N
+	n2336Y+3wBww2TlzhtGWwataCUV4jvefAI8JSJyL1IjQHIcV/tFTyTlKYk6tEw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250320180926.4002817-1-andriy.shevchenko@linux.intel.com>
- <20250320180926.4002817-4-andriy.shevchenko@linux.intel.com> <20250324120242.49253139@gandalf.local.home>
-In-Reply-To: <20250324120242.49253139@gandalf.local.home>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 24 Mar 2025 18:11:34 +0200
-X-Gm-Features: AQ5f1Jp0nTy6YtQdWpgYNFERUuCWiqzYfALslgyMReY4_LUZxGK9AwEgFIzK7WY
-Message-ID: <CAHp75VfnGKJ-2L-+rTxR=qf=vxJ-nnhBQv9um8z8wYKbio9nZg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] tracing: Mark binary printing functions with
- __printf() attribute
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Petr Mladek <pmladek@suse.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Kees Cook <kees@kernel.org>, 
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andy Shevchenko <andy@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 24 Mar 2025 17:14:01 +0100
+Message-Id: <D8OMOI980I2X.1JH4RKWL1V86E@bootlin.com>
+Subject: Re: [PATCH net-next 01/13] dt-bindings: net: cdns,macb: add
+ Mobileye EyeQ5 ethernet interface
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Samuel Holland" <samuel.holland@sifive.com>,
+ "Richard Cochran" <richardcochran@gmail.com>, "Russell King"
+ <linux@armlinux.org.uk>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, <netdev@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <linux-mips@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Andrew Lunn" <andrew@lunn.ch>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
+ <20250321-macb-v1-1-537b7e37971d@bootlin.com>
+ <2dbbd6c0-84d0-4846-a48d-31891f395c7c@lunn.ch>
+In-Reply-To: <2dbbd6c0-84d0-4846-a48d-31891f395c7c@lunn.ch>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevvffhofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduteeltdevjedvkeelueejhfdvleeiueetvdfgveffffekueeghffhieduleejveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpr
+ ggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Mon, Mar 24, 2025 at 6:02=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
-> On Thu, 20 Mar 2025 20:04:24 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> > -static inline void
-> > +static inline __printf(2, 0)
-> > +void
-> >  trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *bin=
-ary)
-> >  {
-> >  }
+On Fri Mar 21, 2025 at 9:49 PM CET, Andrew Lunn wrote:
+>>            - atmel,sama5d2-gem         # GEM IP (10/100) on Atmel sama5d=
+2 SoCs
+>>            - atmel,sama5d3-gem         # Gigabit IP on Atmel sama5d3 SoC=
+s
+>>            - atmel,sama5d4-gem         # GEM IP (10/100) on Atmel sama5d=
+4 SoCs
+>> +          - mobileye,eyeq5-gem        # Mobileye EyeQ5 SoCs
+>>            - cdns,np4-macb             # NP4 SoC devices
+>>            - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet inte=
+rface
+>>            - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ether=
+net interface
 >
-> Do we need to split the line after the __printf()? Can't the above be:
->
-> static inline __printf(2, 0) void
-> trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary=
-)
->
-> Or even:
->
-> __printf(2, 0)
-> static inline void
-> trace_seq_bprintf(struct trace_seq *s, const char *fmt, const u32 *binary=
-)
+> These are kind of sorted. Maybe put mobileye after microchip?
 
-I really tried hard to be consistent with something. tracing code is
-most inconsistent in the regard to attributes and other things (at
-least in this patch series).
+I never understood how most lists end up mostly sorted. Changes for V2:
+ - add a "dt-bindings: net: cdns,macb: sort compatibles" patch,
+ - add the mobileye compatible below microchip's.
 
-> I rather not split the prefix elements of a function over two lines. I
-> rather not even split them from the function itself, but tend to do that =
-if
-> space is needed.
+Thanks,
 
-I also looked at the approaches that are used in include/linux and
-tried to follow that when in doubt. And I think the way to leave
-static inline leading the stub is most used, followed by attribute.
-Then for the declaration is all the same, leading attribute followed
-by the returning type and so on...
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-
-
---=20
-With Best Regards,
-Andy Shevchenko
 
