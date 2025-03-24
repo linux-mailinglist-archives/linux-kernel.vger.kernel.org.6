@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-573654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AE4A6DA40
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:48:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E118A6DABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 927457A41D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484DE3B2040
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA44D25E445;
-	Mon, 24 Mar 2025 12:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AB225F7AC;
+	Mon, 24 Mar 2025 13:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LS/MXNuw"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IbamtVFi"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EEB199FA8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1481C6FF4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820517; cv=none; b=tvqFLoy3We/gFqH+4HhSDZePh3WqKo7IPzReafk+354bBou3XUoo+e8X56vIzVCGNaFbg6g40WN0maRA6t+BLJmdkXxOFdwCguSsULr80TfGSXYnFkoeTIoAJ3amWxRjUlD0fINOMUpoyk7FmW3WURhloC8DjkT51LS2EPvxLM8=
+	t=1742821327; cv=none; b=JgWFCYMAHyq9/cKXy6fNyvvYS98COM9+mpVS8BWaAabymabLlnqZfvrims6gyyoxOTYDnUHGhkH3MX2+D9tQ+oJDbK7dhKFISDp8vIXxbe0uVvbqMkaQZIik5jVV8z2QK2Ydjv7BBht6L7No3F5BVbWNBTI7UmeVIt+Sn3iNMLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820517; c=relaxed/simple;
-	bh=ArE4ydroaGImbLU6zoYStMozDoA0kRvUW/UhXRHzMP8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=gtxHOmVaF3vngC+7jBYV7/MDPeSfqnhQIYw340nTUQbFuzc4JrsCFGYkV20Cgav/tI5u9KCFmVdHi87AOVmKI7+i3oI/HRZ/rlg6aKJZtrQu3aNPhWCtMHUWk22kO7H4aROp83Op/dMgZcOjlwi2AlxSfUB5vodU00g3kSb8FzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LS/MXNuw; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pHTmMEnxZUEDyBf0DAQd7RJHOP3VZiu1Lw6Ul3RUnz8=; b=LS/MXNuwATSLm0xaiTMAJCd8a5
-	vr1EN5jMT44XIsvsCD0DAo4X4wXvoLzYZj81xhIVffyV4yfDdyCB9uzkjZOos0Icqjk9i97lUS+4v
-	P7r1lTsmrewHN4qfRAlv4+qdlhDVijQReqc+FxrrS0I5oKTZkDdvBGgdzB42ZlLLaQFsmYR9CQwwk
-	CGQ/qok6C8f62QrRmjFjhzBTxiYNi7MUHdA48eUyp1e01/buYBN05uiO7nRSddnFyrd0zq6BnA+km
-	rUbcn+XNBtbVpeJCrOZ8GE9euZrSwOVa85trdDmhuq6f43crusDZgUmamdf1fdYW/M8UfLCSEbC+A
-	7Gy+Htiw==;
-Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtps 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1twhE9-005i0c-UI; Mon, 24 Mar 2025 13:48:25 +0100
-Received: from webmail.service.igalia.com ([192.168.21.45])
-	by mail.igalia.com with esmtp (Exim)
-	id 1twhE8-007ydN-3T; Mon, 24 Mar 2025 13:48:25 +0100
-Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
-	by webmail with esmtp (Exim 4.96)
-	(envelope-from <changwoo@igalia.com>)
-	id 1twhDw-00ArZU-1P;
-	Mon, 24 Mar 2025 13:48:23 +0100
+	s=arc-20240116; t=1742821327; c=relaxed/simple;
+	bh=Y/FjfnWa+UQSPhqlykCOWz1lOmRheCUDAFGBEYFhcvc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=pj2rh+pTz/0CtGMUpol2iPF+f/KsJiyR4hTEgaIJPPIFeVXVKHr5M8qWewMPwp+7Po9FpKRmyF4eh4hGsRC23sWrusvwjV9K3DGzs5LgE+5dpKgnevRSkxduF6x8/YVdJZX58sW/9M4hZ2ROU68S+MYCtiFxpQMEnNuBum9KdX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=IbamtVFi; arc=none smtp.client-ip=43.163.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1742820921; bh=+RzKwyK9Vuh/fyCjmPrG6ccN09SXq3szO9bLjSALOk4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=IbamtVFibZSGzOI2ApQV3eVg+CajaDKrGQgyKrj17I18IaYon2BeCblTSmyy93+WP
+	 LFiMwq6bCaTwsZG9zJr9Alo8VFwEsSRHVTEv2Lp9sms6R41LReLNWqlnB8xdtcZDk2
+	 8FadAqsjl/LQtkNWv2IAGHqYhQKwVRxwmrxQ28oQ=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id C493F662; Mon, 24 Mar 2025 20:49:09 +0800
+X-QQ-mid: xmsmtpt1742820549t3qhbpyi1
+Message-ID: <tencent_BE4FFF8D8C259C0DE7126FDD8A5D96992507@qq.com>
+X-QQ-XMAILINFO: OdIVOfqOaVcrbZktt3mjEBVXFMnglbwDdyTizjmy8sXDG/MPDVuiFfTfS4Dsya
+	 vFZxMJTKFaYV5TrqMSKZwkCt1F8a7z5Nu6f9tXYQTeEaBMJtTDL4ipkEC0Jd3LoxoS2ChQ1Mybz5
+	 hlIbTgAbh9YVfaELDLpp6ajRG5Nhxsv+f+6nyYdiszl1UGf6UXSYBZWEvz4aVVK8rAml6eF/QP26
+	 /PnAKGJ5N+D9O2gS3dmQ1mRWOtrGEJULAnJmz7hC8RjHddP+LsdKhLYlf97BBqjnNPeQGKRcZJEz
+	 QUMDMOB2l+txx3rCkT9kU4K/A97lqQkN8vRn6qRT6WeeNcRuXPpgDGCzERDcmzXg65UPRnx2vYc8
+	 Qf1Sim5jUPbAuZoNhQ7FDPQ0fJgpyzVUtDEZD92DJFyeXjQP0yuQuxPKUBuyHxNGQaghKhj79fmT
+	 fic5H0OC/JhbDiV3Tjy2UlRYhVmtFGonYohbKdDpNuxFliFf7MTQW11fOxoNh3Jr0HImOEjaVtNo
+	 JdpGvxAys/foNg03DIoWjbTQYbABX2NNnsygla6gxZrh6PtTEX8NPz1YY4sGVzFpX1IgHXs7eRnp
+	 MLS2TMj9RF9LLhHioz7qgxZlVXlui/7XaNvpu3A5y3RURHVP0rmlb1KZSP37RWQKfKP6LA2Zwg5H
+	 0PUcVZVpw+txguTs6KhNeleEBDTCEyIMnG/IH8V3Ob4IXj77h2camrXKwrd8Nlg8dnNXXd7jKuqX
+	 7hl65IdZVLZv30V/941aNvhuK0sfClt7JhifvKMJ/BGvScJJHM+zfFoYHaFhjI/cAGtw0XnBdKJG
+	 vNRe+RfGg6BT2Rq8CDn973GQjf5hCxswlPvDigDTfxtj1t6gFiXsI3oduXuZj6lgzYYoYzPC5U2O
+	 WbTzRbTx4IeAfgqfQp6nH5Qf6ttro6+w==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+Date: Mon, 24 Mar 2025 20:49:10 +0800
+X-OQ-MSGID: <20250324124909.1549575-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
+References: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 24 Mar 2025 21:48:23 +0900
-From: Changwoo Min <changwoo@igalia.com>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, Joel
- Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.15] sched_ext: initialize built-in idle
- state before ops.init()
-In-Reply-To: <20250324085753.27112-1-arighi@nvidia.com>
-References: <20250324085753.27112-1-arighi@nvidia.com>
-Message-ID: <1fcbaeee8b49b1c5f81cd01ba59a00a2@igalia.com>
-X-Sender: changwoo@igalia.com
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Report: NO, Score=-2.2, Tests=ALL_TRUSTED=-3,AWL=0.000,BAYES_50=0.8
-X-Spam-Score: -21
-X-Spam-Bar: --
+Content-Transfer-Encoding: 8bit
 
-Hi Andrea,
+#syz test: upstream aaec5a95d
 
-This is a nice catch! Looks good to me.
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 4d0799e4e719..bc683599a5bf 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -396,6 +396,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 	}
+ 	if (pipe_is_empty(pipe))
+ 		wake_next_reader = false;
++
++	wake_writer = pipe_full(pipe->head, pipe->tail, pipe->max_usage);;
++
+ 	mutex_unlock(&pipe->mutex);
+ 
+ 	if (wake_writer)
 
-Regards,
-Changwoo Min
-
-On 2025-03-24 17:57, Andrea Righi wrote:
-> A BPF scheduler may want to use the built-in idle cpumasks in ops.init()
-> before the scheduler is fully initialized, either directly or through a
-> BPF timer for example.
-> 
-> However, this would result in an error, since the idle state has not
-> been properly initialized yet.
-> 
-> This can be easily verified by modifying scx_simple to call
-> scx_bpf_get_idle_cpumask() in ops.init():
-> 
-> $ sudo scx_simple
-> 
-> DEBUG DUMP
-> ===========================================================================
-> 
-> scx_simple[121] triggered exit kind 1024:
->   runtime error (built-in idle tracking is disabled)
-> ...
-> 
-> Fix this by properly initializing the idle state before ops.init() is
-> called. With this change applied:
-> 
-> $ sudo scx_simple
-> local=2 global=0
-> local=19 global=11
-> local=23 global=11
-> ...
-> 
-> Fixes: d73249f88743d ("sched_ext: idle: Make idle static keys private")
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
->  kernel/sched/ext.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 06561d6717c9a..1ba02755ae8ad 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -5361,6 +5361,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  	 */
->  	cpus_read_lock();
->  
-> +	scx_idle_enable(ops);
-> +
->  	if (scx_ops.init) {
->  		ret = SCX_CALL_OP_RET(SCX_KF_UNLOCKED, init);
->  		if (ret) {
-> @@ -5427,8 +5429,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  	if (scx_ops.cpu_acquire || scx_ops.cpu_release)
->  		static_branch_enable(&scx_ops_cpu_preempt);
->  
-> -	scx_idle_enable(ops);
-> -
->  	/*
->  	 * Lock out forks, cgroup on/offlining and moves before opening the
->  	 * floodgate so that they don't wander into the operations prematurely.
 
