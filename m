@@ -1,137 +1,259 @@
-Return-Path: <linux-kernel+bounces-573836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 583E0A6DCF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F9BA6DD01
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986507A20CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA80B1664EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697425E83E;
-	Mon, 24 Mar 2025 14:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BFB25FA3F;
+	Mon, 24 Mar 2025 14:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TaBcbcyf"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NB3TF04q"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6466B25EFAC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8625FA19;
+	Mon, 24 Mar 2025 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826456; cv=none; b=TZFz00/z8MycLOhh1QLF7CBDGXsSJ6XWkm1MI8K79RHmFpmq6mNxUqc1n0i/qRyz8cBIHaGUq7BCcLFtJD5MwCM/wMuYNVrOegLRKUgkFkI2B4hmHgingOhQvvkTtjbKdVX5CSlGq6fAgLtCxAGnCN2PZ16vIL1ErDSFJbG53gg=
+	t=1742826541; cv=none; b=AGJWAH5JTbt2Ng2Ja3KD0CiDcmSJ5uvBCHCwB4dXAuIGZAfZhq2T52F2QKZvQ+U06HnKAXom+8d90ebYEDzUbkY3LfhY81p/Mfx4NRib/UiikNuoqQ5gWE7UPM6RNUIhKqHcU9PDEtoAQwI9bAJzT/WluS7BYpc1jhQfuLFnWdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826456; c=relaxed/simple;
-	bh=3lwdxDscI0P0ZCMuOz3AECl4c71z2E4Iq712q68T6Gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Al6UbWwtKsFFzI52i6Ey8mgDR0V/cjL/JVXbZ1KP/7BE4xvq9HxuRmGnh46TFi7m3XJjqN0kXV51xcSBwWA34ZnpNxQn2pC8UJ4hYnDJIeBKUzSs8P3NatHkxnLsYxuyoUCxSr75YBH8drKKazkq2S5DZ8D7PpLOZXd6R9IhvOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TaBcbcyf; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=3lwd
-	xDscI0P0ZCMuOz3AECl4c71z2E4Iq712q68T6Gw=; b=TaBcbcyfn17ehXsQl5pq
-	c60ns5SvPypjnQ28B9IEP0kM7A+C2LnTPMldKFeAlCUo58odEBTVFDMJGnLiUWUW
-	vfYHoXaNkJtCTR/51V86SlMhQ5Y8EoSyAzWSXVvwzy2zG97Emp2XNGFmVK0ixxmM
-	ke3qxhMTqqhd1GA1gcecNMEjkShQy0i2J7/t92Fu96YL6ura1MFI0ABzh0A2lTqX
-	z3Wozl43oTD6iNF/zTeL+wAkpRHaeJaiKpVf7WWIn311Wru3dw1GcXAeep7WFwBW
-	pb5bohzFsjxU1+DNLtGf3Quc1cP3Eo6i9JeAuS5GHcRWgKLRpfRhsCOv3uEA3pzL
-	Tw==
-Received: (qmail 2593770 invoked from network); 24 Mar 2025 15:27:27 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 15:27:27 +0100
-X-UD-Smtp-Session: l3s3148p1@fKtPZxcxxlZtKPC9
-Date: Mon, 24 Mar 2025 15:27:27 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1742826541; c=relaxed/simple;
+	bh=U4fxdp7fkGpc3gIlH2FlKiwelKAw+dKySiCd7cmcnNU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HD72Mo99rZJoM9faumpO1492NeqjpuPu/52JAR6Avu7B/jS5DPuNs5FqacSUwqfHLL3e+goBzHt2t3UwAOVgc+V7jJHYAnZ3mTmRzNV6Z0ZnEvLUliovNrCx+H3E3e2Skn9hlLNmlkDE1U5PduZWfoJa8zKtZqOo0dXgxFZs80s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NB3TF04q; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2264aefc45dso70572195ad.0;
+        Mon, 24 Mar 2025 07:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742826539; x=1743431339; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
+        b=NB3TF04qbkJfB/N+64T3d4OkNJXrSsPPcnFLJDgXW1EhAZyvCT950CbOQGF3VJI6Lp
+         1ZsZZ6kMibM5YjPjLDIBWBeUqPE7ALEdLDvBt+vLuKVx3NYr8/CKsUj6c6slCKiZFZyD
+         lQsw6Xxkm2zv6JG/1bvfxuONYB/AuJC/irSqVeLHV5bprQTSC3l4oreUkOSNlI7uMsg8
+         y8issfM4ZaUWvsfvsctwgtUCV3/1m63c0VDNp3AlFoL40Ie/JPkjpcELmQs6sI4NRzcF
+         4QnvWSQo8rlOBum2KHozykZETxZVze4vs6Sb4Xd/n8aV1V6/mCNHtKGQDJ3WQmSunVtP
+         UOAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742826539; x=1743431339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
+        b=B43aP8UHKZm6ulh5f20BuV1m7u5H/cu3Hpf9bjRo1+u4T5zk5ZV72roRJsA3jBA+7M
+         jVYoxp8YHYqfzS129prTmNFt+8b9MpjD23x52q3Pm+OcKseRH5ZFjeCZEPTQql+5BPa5
+         eGei742CJRUEQePGzfZQhwydF0xGviTuG6Z/Isu04S1vzPrkaHPgi2hz70Db9DZb5UVa
+         1jLQpVfzRhKMcVBOKfy7Jmxr9TtVOIzDNtpamYi1Q4/Tb+b7QcdQTzPD6Pw2RPpHvzs+
+         77cJ4qJBXc6+EOq3Pwx6ZnxABaGW84LXwt7K0JvsFAjqXniTTlDgqYepKmyVLt2bOc1h
+         a6eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNa3AEc43XimSiEbhEKKHPEOhChqOVfmPUmHXRMpzDdGEa8q2QLVT58D8uxv2HPkdNNmHOtwjqS0a0TpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydJPEReDs7E4A6gyA/Tlj4C+CSyhusiQ1rHE/P2G9eaeyFmMHb
+	GWXoww0THQZkPmTEKpB8we89oNdBngUHrs9vz4o5dwpsf0ZGFVcIl2+yJvo=
+X-Gm-Gg: ASbGncs2MOsLO8sDebtfZ6x0LtQpDz44Iqvsz08c+jsVA+tI9AU6yDsbqbY8zGzpj2P
+	dJfwZlnGiUvs4NhYzyf6ijM93gUleX5T37Vw08OuZq9BgJ+NYLzUfdSsTlLCFp52h0cZ2d08U11
+	YUKFv38mbqTdHVg1HL8GRg4mXYUCxILwBTECOb27bQIkD+SpPPMN6Va5FpTz34z8/1LDH5eSbvB
+	t83dF2xyxb+ApWswMkaXo2D0G8Bycs7dub2knUdZN+wxRjtGt5qSJsCyp54soG4Vr4VDy7grh9g
+	u/DHBMdAT/ogCIiTkTmehfHlkOMSBku5RGylDXOVqzYCLarQJYOCB8hIibGvKhIce17SZiFxR/h
+	vPk9NZa2O9bbA1r5ijqUAYsyvkBLz+RFePa1V5A==
+X-Google-Smtp-Source: AGHT+IEe75MycBECfIae4/6dHjUL9F5p5LkYV50FC7MSq5/jGwZp4hjjauRFN8gODeMfiJXKuhjviw==
+X-Received: by 2002:a17:903:32ca:b0:223:4b88:780f with SMTP id d9443c01a7336-22780c7ceeemr184345305ad.17.1742826538594;
+        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
+Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da97esm70978815ad.192.2025.03.24.07.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
+From: "Lucien.Jheng" <lucienx123@gmail.com>
+To: linux-clk@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	daniel@makrotopia.org,
+	ericwouds@gmail.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
- device-tree
-Message-ID: <Z-FrzyEY-bgvyKvs@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
-References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
+	joseph.lin@airoha.com,
+	wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com,
+	"Lucien.Jheng" <lucienx123@gmail.com>
+Subject: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk provider for CKO pin
+Date: Mon, 24 Mar 2025 22:27:59 +0800
+Message-Id: <20250324142759.35141-1-lucienx123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4uO9i9cow/SSxmpj"
-Content-Disposition: inline
-In-Reply-To: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+CKO clock operates continuously from power-up through md32 loading.
+Implement clk provider driver so we can disable the clock output in case
+it isn't needed, which also helps to reduce EMF noise
 
---4uO9i9cow/SSxmpj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+---
+Change in PATCH v6:
+air_en8811h.c:
+ * Adjust space indentation to tab stops.
 
-On Fri, Mar 14, 2025 at 07:56:29PM +0100, Thomas Bonnefille wrote:
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since this
-> configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
-> It adds support for the 2 additional switch ports (port C and D) that are
-> available on that board.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> [Thomas moved the dts to the renesas directory and declared the leds in
-> each phy]
->=20
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+ drivers/net/phy/air_en8811h.c | 97 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
-Niklas and I made it and could run all 4 ports of the switch. Leds work,
-too. So, with the whitespace issue fixed.
+diff --git a/drivers/net/phy/air_en8811h.c b/drivers/net/phy/air_en8811h.c
+index e9fd24cb7270..de49bb200926 100644
+--- a/drivers/net/phy/air_en8811h.c
++++ b/drivers/net/phy/air_en8811h.c
+@@ -16,6 +16,7 @@
+ #include <linux/property.h>
+ #include <linux/wordpart.h>
+ #include <linux/unaligned.h>
++#include <linux/clk-provider.h>
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+ #define EN8811H_PHY_ID		0x03a2a411
 
-Thank you for picking up this patch again!
+@@ -112,6 +113,11 @@
+ #define   EN8811H_POLARITY_TX_NORMAL		BIT(0)
+ #define   EN8811H_POLARITY_RX_REVERSE		BIT(1)
 
++#define EN8811H_CLK_CGM		0xcf958
++#define   EN8811H_CLK_CGM_CKO		BIT(26)
++#define EN8811H_HWTRAP1		0xcf914
++#define   EN8811H_HWTRAP1_CKO		BIT(12)
++
+ #define EN8811H_GPIO_OUTPUT		0xcf8b8
+ #define   EN8811H_GPIO_OUTPUT_345		(BIT(3) | BIT(4) | BIT(5))
 
---4uO9i9cow/SSxmpj
-Content-Type: application/pgp-signature; name="signature.asc"
+@@ -142,10 +148,15 @@ struct led {
+ 	unsigned long state;
+ };
 
------BEGIN PGP SIGNATURE-----
++#define clk_hw_to_en8811h_priv(_hw)			\
++	container_of(_hw, struct en8811h_priv, hw)
++
+ struct en8811h_priv {
+ 	u32		firmware_version;
+ 	bool		mcu_needs_restart;
+ 	struct led	led[EN8811H_LED_COUNT];
++	struct clk_hw		hw;
++	struct phy_device	*phydev;
+ };
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfha8sACgkQFA3kzBSg
-KbYx+g//Y7dU8PiFHB/QtCllzLzHedrhZonVblaLwmzhRlQwz37WCUj6dTQgQSCH
-RZ6dpa7m+Ldk63MP0v/uh5a18X+DhGMijFJGElxMWv30DpWD1xo4EomNVaSOJHWS
-hzmK89YAvoThKc3l4sk0MvpVYDYo4AZftDApldx7RBY8RuWGaqi0MfLNZvo/ZMq3
-NUlW4Dfm7t5xdlH1SBMnxMnYaWbnxF57XNsQAwTO/NNcRNnK8MEVaBDBed9nPAC/
-2sTzJVua80OWKj9kfbYSylRhE4+fgcmrC4CXS9WDtuMgxQs56lFULPQft6diBxuT
-wNoiADAk71GFdOBtrJXDjDtKD/jt1/z+KFHaM3A+Mx2MFsYWYx4Y0F6KQnh8+oL4
-drkFhI44LFnVcYuJuyrGGPWQdmctwLbY11mQcsSRH9PnrGCL8AqcfRYsNQYfQOAa
-pRBQRTue+pzl5i4y8gGN7PlZux0kHbe4lqZnjgGnApCgAyAlAsC3AUXkWhvcepbC
-UvTIxUbnuPvG1Vev7YTBBYMy9pbPugdsc7DFgdK/nOgDLE6l4P2emYv9MLUMCc+k
-OXaAtSTmbLO7yPC08DQDZLkx68eRBIMKgr2xHoxrSMJVRczfhaYoXeoIezG+m0z0
-0GYhSoVFfL6T79E37bojctn21ET0LtUR8C3n/sCUKAFdlwLRg/M=
-=8zdt
------END PGP SIGNATURE-----
+ enum {
+@@ -806,6 +817,86 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
+ 	return 0;
+ };
 
---4uO9i9cow/SSxmpj--
++static unsigned long en8811h_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	u32 pbus_value;
++	int ret;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
++}
++
++static int en8811h_clk_enable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
++}
++
++static void en8811h_clk_disable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				EN8811H_CLK_CGM_CKO, 0);
++}
++
++static int en8811h_clk_is_enabled(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	int ret = 0;
++	u32 pbus_value;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_CLK_CGM_CKO);
++}
++
++static const struct clk_ops en8811h_clk_ops = {
++	.recalc_rate = en8811h_clk_recalc_rate,
++	.enable = en8811h_clk_enable,
++	.disable = en8811h_clk_disable,
++	.is_enabled	= en8811h_clk_is_enabled,
++};
++
++static int en8811h_clk_provider_setup(struct device *dev,
++				      struct clk_hw *hw)
++{
++	struct clk_init_data init;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_COMMON_CLK))
++		return 0;
++
++	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
++				    fwnode_get_name(dev_fwnode(dev)));
++	if (!init.name)
++		return -ENOMEM;
++
++	init.ops = &en8811h_clk_ops;
++	init.flags = 0;
++	init.num_parents = 0;
++	hw->init = &init;
++
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++}
++
+ static int en8811h_probe(struct phy_device *phydev)
+ {
+ 	struct en8811h_priv *priv;
+@@ -838,6 +929,12 @@ static int en8811h_probe(struct phy_device *phydev)
+ 		return ret;
+ 	}
+
++	priv->phydev = phydev;
++	/* Co-Clock Output */
++	ret = en8811h_clk_provider_setup(&phydev->mdio.dev, &priv->hw);
++	if (ret)
++		return ret;
++
+ 	/* Configure led gpio pins as output */
+ 	ret = air_buckpbus_reg_modify(phydev, EN8811H_GPIO_OUTPUT,
+ 				      EN8811H_GPIO_OUTPUT_345,
+--
+2.34.1
+
 
