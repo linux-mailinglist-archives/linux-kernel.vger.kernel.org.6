@@ -1,135 +1,94 @@
-Return-Path: <linux-kernel+bounces-573566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EFEA6D929
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E80A6D92E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6AE16D26E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:33:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FCC16D5F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075B325DB03;
-	Mon, 24 Mar 2025 11:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA33425E445;
+	Mon, 24 Mar 2025 11:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4UfHK+O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nvo9EfCF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF51E633C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE91DDC08;
+	Mon, 24 Mar 2025 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815977; cv=none; b=QIFGPcbXjY84oP9WaLO3a8qYUjdRib5h0+eDKVPPsSFGwOIR741vUzaaDiaf7lK2myzBPer9njpI2g1dqvsOSVnJlBKXOyytbFyRjv+diubkL7Q2TMOkWfUzLZTYBKzcc40sywk/zHOkKQiqQDhyDm4IVN4xXlcJrWiUtGZCeRE=
+	t=1742816002; cv=none; b=uHrbw6UcOb5XxuWRDKY1mM9JdQ7vWA9VBuh/ET+SrYwCEmeTeiiwJyelobsKdFfdjtx//jrFSQrt4NO7occyxX2g5zFdgJgbzGircmV7M3LUclrhqgwH4PgzKb6m6/D3t20NZQDxyV5t9L0n+sSeLOZJOuV+YU0M15EFldE9D4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815977; c=relaxed/simple;
-	bh=5Yn65Sps6cRl4jPJWN59bRCzqlR4K0otJY2F4LcuGwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dSxwGkEPA9Hk5y1kYPV+90QvXB3TxG9z3BUAoFEV+CSmioflZhp/R7G08J5X70bePtKJ65FjyKk8eJ4UZNZ2Y3Y5187h+dK1u9h1/Sx0qttiC3nEnf8FDeGKeyLjSD8mbO/nsrzhlI8h6e0V6WLbFJKko4CQTwqVb2g0n7PA6ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4UfHK+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA609C4CEDD;
-	Mon, 24 Mar 2025 11:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742815976;
-	bh=5Yn65Sps6cRl4jPJWN59bRCzqlR4K0otJY2F4LcuGwA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=e4UfHK+OL8Q31jb9UOaEEVElbrxhRKASLh4wB1HYs2ZsANBQ39vGcP37D3Yl+XK0a
-	 aPUtIeO0y4OFyjyCFPf1JM40sA0FbNAoLjvmrw/RV4TBfZGidEBh5R52UU//R+wfyO
-	 wpwZGTm2p53ZBS63iBHxO8DdX4Psa2UsARRx/tuQQX+TkwaurMbojdkEnG/7WI++Oc
-	 5azHQxhw8GWC8PAWm2lcyOWJU3u5BVBXGZmj/axKgTHoEPffVOa6NNbEkBiFpFc0TX
-	 xEDeqCYDKRdd4sSPAHDH8PjxL0jmrFS3q23fuGXSmSWqnyDVqO07bOA8P0VrNd69vk
-	 9u4vh2ZSC3V3w==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: add a fast path in finish_preallocate_blocks()
-Date: Mon, 24 Mar 2025 19:32:49 +0800
-Message-ID: <20250324113249.3084413-1-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+	s=arc-20240116; t=1742816002; c=relaxed/simple;
+	bh=LNqKKaEMLDRc5uTdAT5VBNT4/Fzv/R+FSPFkWmRjSrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OV1CRe9hPc6PL0bZv/zW9EGUY46IVx3lZM1As+SpVI2Hdw/nPTse8s0c7BYg7RVoM0gsrOIZytAxtp4P+R9T8WZlGDmZPIQbzz4lNt5rjJs+6bIF3IxT3p7mZjtkgNagnEmM1l37V+Wg5brFDAxnkIDWkrvfRZp/kNhpbfSm5ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nvo9EfCF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LNqKKaEMLDRc5uTdAT5VBNT4/Fzv/R+FSPFkWmRjSrw=; b=nvo9EfCFlrSuk8fEW7PdcghMqL
+	KtYr32/DfEul0FHdd1PyB+5Miar/PlB40hTsJLPl+vgiioBeoQIZIjtdw59XjHrZfIlkNDXnvnZV3
+	8smSJsWs7wZH2PnW/86pw6SyD7zoNTEWRmVr+UOWMLiSpXVK9/VO2E9+/Re8dERv2ROGvaDREzHR9
+	2f+hVJjxvJCr9bYrWDBWXPEekJS/V6nxaXgnknikQIXsrd6vvzzBWiJVOpruQGcNvg4IqJNxNiy6d
+	kp9KvtDKgBQjJ8kMSeW8qFdLIfCDUMoRdisTkUfsbiTisx39s5fK7c3ucMmYPo5SAl7b8ok9QKdl8
+	S/6XMS5A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1twg3F-00000005Duz-2CgV;
+	Mon, 24 Mar 2025 11:33:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7D72B3004AF; Mon, 24 Mar 2025 12:33:04 +0100 (CET)
+Date: Mon, 24 Mar 2025 12:33:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <20250324113304.GB14944@noisy.programming.kicks-ass.net>
+References: <20250323072511.2353342-1-edumazet@google.com>
+ <Z-B_R737uM31m6_K@gmail.com>
+ <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
+ <Z-EGvjhkg6llyX24@gmail.com>
+ <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
+ <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
 
-This patch uses i_sem to protect access/update on f2fs_inode_info.flag
-in finish_preallocate_blocks(), it avoids grabbing inode_lock() in
-each open().
+On Mon, Mar 24, 2025 at 08:53:31AM +0100, Eric Dumazet wrote:
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/file.c | 40 +++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+> BTW the atomic_cond_read_acquire() part is never called even during my
+> stress test.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index abbcbb5865a3..bb6ba3269de0 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -554,19 +554,24 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 
- static int finish_preallocate_blocks(struct inode *inode)
- {
--	int ret;
-+	int ret = 0;
-+	bool opened;
- 
--	inode_lock(inode);
--	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
--		inode_unlock(inode);
-+	f2fs_down_read(&F2FS_I(inode)->i_sem);
-+	opened = is_inode_flag_set(inode, FI_OPENED_FILE);
-+	f2fs_up_read(&F2FS_I(inode)->i_sem);
-+	if (opened)
- 		return 0;
--	}
- 
--	if (!file_should_truncate(inode)) {
--		set_inode_flag(inode, FI_OPENED_FILE);
--		inode_unlock(inode);
--		return 0;
--	}
-+	inode_lock(inode);
-+	f2fs_down_read(&F2FS_I(inode)->i_sem);
-+	opened = is_inode_flag_set(inode, FI_OPENED_FILE);
-+	f2fs_up_read(&F2FS_I(inode)->i_sem);
-+	if (opened)
-+		goto out_unlock;
-+
-+	if (!file_should_truncate(inode))
-+		goto out_update;
- 
- 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	filemap_invalidate_lock(inode->i_mapping);
-@@ -576,16 +581,17 @@ static int finish_preallocate_blocks(struct inode *inode)
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
- 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--
--	if (!ret)
--		set_inode_flag(inode, FI_OPENED_FILE);
--
--	inode_unlock(inode);
- 	if (ret)
--		return ret;
-+		goto out_unlock;
- 
- 	file_dont_truncate(inode);
--	return 0;
-+out_update:
-+	f2fs_down_write(&F2FS_I(inode)->i_sem);
-+	set_inode_flag(inode, FI_OPENED_FILE);
-+	f2fs_up_write(&F2FS_I(inode)->i_sem);
-+out_unlock:
-+	inode_unlock(inode);
-+	return ret;
- }
- 
- static int f2fs_file_open(struct inode *inode, struct file *filp)
--- 
-2.48.1
+Yes, IIRC this is due to text_poke_sync() serializing the state, as that
+does a synchronous IPI broadcast, which by necessity requires all
+previous INT3 handlers to complete.
 
+You can only hit that case if the INT3 remains after step-3 (IOW you're
+actively writing INT3 into the text). This is exceedingly rare.
 
