@@ -1,74 +1,80 @@
-Return-Path: <linux-kernel+bounces-574363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09400A6E47F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:33:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E60EA6E478
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F81918948F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:32:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B64397A3D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6953E1DB13E;
-	Mon, 24 Mar 2025 20:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0570F1D95B4;
+	Mon, 24 Mar 2025 20:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFuZW06F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT4IM+bM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE3B1C8623;
-	Mon, 24 Mar 2025 20:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA5B2E3374;
+	Mon, 24 Mar 2025 20:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742848275; cv=none; b=mXbG0om92lrnyHqic56jvy5oFZnrXej5DzYc+z7mvDPS/MLTxgMLn7AQqbCsaTkfrBpj7YerY7tWAynJK+9G/mMZs2LF9aKd71wHV9WY7r8uNhlKwUfaoSnJrK+QmE1ylv+HUBaSAneDG/8kfOeXB/pirA3cKUSV3zLRoGzEYeI=
+	t=1742848319; cv=none; b=vDOthIMSE4Mi/nvtw0xumAU/NivjFowaKSZrjipsT5Kqi88NtpZm07GhDDHp5/yBkvYRVmpQPDwAxJ8LY9CMdY/9GKoYE23qt4sKVnU7SV4PRpUHLeHz/cR4PqqcJqkbhSrX90pQzzpZb7bQ1yE1Z4SJPPNWAbRO4jWBA39fi5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742848275; c=relaxed/simple;
-	bh=XZ2Yktl6mmKJfiTNy+Z4/IvVxFgIZo5WawcMrRO2Vbw=;
+	s=arc-20240116; t=1742848319; c=relaxed/simple;
+	bh=LDTKp3W7h188ixr/vX4U7f5V6ZusmxQCsTGFE63qb20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R404G8+9RMjnRIEfAyMdsu+7JZfBshzi2cKj+OgLFmGgCFQE+iFz0h7x23LUepwSVlJcb4kutUck2VTF0LB3qDfC2slj5XJ44bd0NR+EdBNHTTLlxDslHQe6GXdhLaynx6coCCeIii6Ci+VHPPADYwbYk1QdwK10nTB3NMtcQJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KFuZW06F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC1FC4CEDD;
-	Mon, 24 Mar 2025 20:31:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2Qr9vwEKj8MCs/WUk5gFlYgG50i0avt5XQ16+YG6pQb199LqrbxyKmsmIQb3q/0isPrpT8Em+bMyCh4ejKpNL4qzOcgFhZQkBu5GOVRIYaz3W3AkNvclxHEjavzalsu5Us4z7VZUypd3KWG5Of1iUChzFfT0PiZa9t6KdJINpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT4IM+bM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD08C4CEDD;
+	Mon, 24 Mar 2025 20:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742848275;
-	bh=XZ2Yktl6mmKJfiTNy+Z4/IvVxFgIZo5WawcMrRO2Vbw=;
+	s=k20201202; t=1742848318;
+	bh=LDTKp3W7h188ixr/vX4U7f5V6ZusmxQCsTGFE63qb20=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KFuZW06FF/l/+XccYW9mOLm0/T/y+rQ5Qey1sx5gf4IDaXAPgVGHQnHICkOj2UmZU
-	 PDykSuBwUEVADe6TdOjuKw5QO577NinlTsZimjhVNndV+uT/QF2NWLD0KNSrhsi0MI
-	 KO6BpOsq9Hl8egajcNvUPEudOv9SNJhFWRHqJQFRyzT1WHtvDIrlMg9stNwULybj+M
-	 BrUElG7Trs8lG1eluh+AtsXNGzvNnGeOi0P7Dlji1cjRBLjpqvGDXDk+yLmDF92QVM
-	 HY89MNPoMV56QNAw8di8kHyUcASHkvgva7nx0zVefH0OjCTcc2EeKbkkR51Kcbzo7D
-	 YfL6AJQifexgw==
-Date: Mon, 24 Mar 2025 15:31:14 -0500
+	b=LT4IM+bMgEYMcruZeVIseTw5+f/xunSV2APT5kPRxD76MAc1Wg24Tz9VlF5iGCEJ8
+	 YGA3pU5hhz60cKgndPvFxfYPqSfkx+uKYR8Ng1dEAgUkAuntkDeqdCo3O6sv9oZCQT
+	 BHq12rVUyZKUjeLPjwOBkXH67myUVkzMBvIMF1tI162dpJ164PUMYyCtgJEvOJ6+XD
+	 Ieh4KXL553HZi1EfaxUqE9ucsNEN6JV/54/KoUh5zaDIwxvyEDeXgIfttMQh0fCKGu
+	 2QSf4KQPT+3uNDxjNU8LfOuup5OaEntF3WyDC49zxcpk7BtqntxOwdwWjdFc4D43NO
+	 527MT5yxxsFBg==
+Date: Mon, 24 Mar 2025 15:31:57 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-stm32@st-md-mailman.stormreply.com,
-	Jonathan Cameron <jic23@kernel.org>,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	devicetree@vger.kernel.org,
-	Petre Rodan <petre.rodan@subdimension.ro>,
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bert Vermeulen <bert@biot.com>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-gpio@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Maxime Ripard <mripard@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	linux-riscv@lists.infradead.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Anshul Dalal <anshulusr@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	linux-iio@vger.kernel.org,
-	Ramona Gradinariu <ramona.gradinariu@analog.com>,
-	Robert Budai <robert.budai@analog.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andreas Klinger <ak@it-klinger.de>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: iio: Use unevaluatedProperties for SPI
- devices
-Message-ID: <174284827311.819192.14616231717400662961.robh@kernel.org>
-References: <20250324125313.82226-1-krzysztof.kozlowski@linaro.org>
- <20250324125313.82226-2-krzysztof.kozlowski@linaro.org>
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-kernel@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sander Vanheule <sander@svanheule.net>
+Subject: Re: [PATCH] dt-bindings: gpio: Correct indentation and style in DTS
+ example
+Message-ID: <174284830296.819870.8907081146872259608.robh@kernel.org>
+References: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,25 +83,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324125313.82226-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
 
 
-On Mon, 24 Mar 2025 13:53:13 +0100, Krzysztof Kozlowski wrote:
-> SPI devices should use unevaluatedProperties:false instead of
-> additionalProperties:false, to allow any SPI device properties listed in
-> spi-peripheral-props.yaml.
+On Mon, 24 Mar 2025 13:53:26 +0100, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
+> unused labels.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml      | 2 +-
->  Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml      | 2 +-
->  Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml      | 2 +-
->  .../devicetree/bindings/iio/dac/microchip,mcp4821.yaml          | 2 +-
->  Documentation/devicetree/bindings/iio/dac/rohm,bd79703.yaml     | 2 +-
->  Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml    | 2 +-
->  .../devicetree/bindings/iio/pressure/honeywell,hsc030pa.yaml    | 2 +-
->  .../devicetree/bindings/iio/pressure/honeywell,mprls0025pa.yaml | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
+>  .../bindings/gpio/atmel,at91rm9200-gpio.yaml  | 16 ++---
+>  .../bindings/gpio/fairchild,74hc595.yaml      | 20 +++---
+>  .../devicetree/bindings/gpio/gpio-mxs.yaml    | 70 +++++++++----------
+>  .../devicetree/bindings/gpio/nxp,pcf8575.yaml | 24 +++----
+>  .../bindings/gpio/realtek,otto-gpio.yaml      |  8 +--
+>  .../bindings/gpio/renesas,em-gio.yaml         | 20 +++---
+>  .../bindings/gpio/renesas,rcar-gpio.yaml      | 24 +++----
+>  .../devicetree/bindings/gpio/sifive,gpio.yaml |  6 +-
+>  .../bindings/gpio/toshiba,gpio-visconti.yaml  | 24 +++----
+>  .../bindings/gpio/xlnx,gpio-xilinx.yaml       | 48 ++++++-------
+>  10 files changed, 130 insertions(+), 130 deletions(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
