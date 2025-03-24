@@ -1,229 +1,153 @@
-Return-Path: <linux-kernel+bounces-574112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A42A6E0C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:23:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120FDA6E0C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7738D3ACBE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:23:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A5616F909
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3487C263F49;
-	Mon, 24 Mar 2025 17:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02136263C75;
+	Mon, 24 Mar 2025 17:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U+VDPyKA"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NXOjrb8u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7640125EFB9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83C015E96
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742836987; cv=none; b=YZ/sZuEy1VHTMtjiRGK6YBS9ogLFV1dbB81vO9QMSLbdseQRtiAhzpQCfxkVZvo/SuE6pJT00Mc4Y7zdRxWy2aHl9hUUpNoiEoCM6Mck67nPhDSseiCypda+i+F+fV8jNnjTbk8i/6DgvL6eE/6BKDRDA9Nt2JiLDAqNWhhN5ag=
+	t=1742837188; cv=none; b=NJlF7DBHM1CP5stoSn5kEPwoUkVjFpfQL+mD2HFpodAqg9dF0m1eeTCI2Y6Tn4lS+3oWzl0j/ZO5BFC4zBOJH+82bfBAEmhzN379P5fFjb0BBmuf0+4zvvVFoZtjmj5cKtCGr9clyyY+wHhVtbOLhQ9HoUmBh8GDqgKECIEPTd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742836987; c=relaxed/simple;
-	bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ldHSe75rv36/RQ/m7z1X/mK4lUyeq+YJeQWTVpDXQPnW8r7C8LnoFMlu2XqWGJgBdTrOdeHVkqXkgQbJAF7Kl9diX1H0IoYYpf+kqMAljM/NuIVt0PS2/fh4TzZNqCFPHMUOZ2SVDiHGabjrO4bKxUV2zayHqJb/tT5PGu9Xkzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U+VDPyKA; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso32824335e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742836984; x=1743441784; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-        b=U+VDPyKAxA/0uYzrU73vVChQ2bgZFoGLlSC3ukE7xR+054kYpMfJuiNnw6LzqrhHP5
-         lo2DvoQ32J94Wb6dqXInz0eXuIOWhFHt2bMPS525/imujMmOTW2DgwZswdjNSew98NvG
-         G51LxM86maSbXZdDqM46uezP9NhyRVH8y/iDfjUzxu8jqCHqFqJCyKaAFHWvU7D6cU1o
-         g0iir9uXWVaF2egHeAzRsGLkIZ4DyIMEWFw/dXv+UVXizRQi+uZGO405YHMIZVc6oo0T
-         MHvNOnvD7KyOU6BbTNx3pXIk7/NaF8dT8aUnD6JwhH1pXYwl380L4Kb8O8r9Y+D9w1kh
-         vy/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742836984; x=1743441784;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-        b=YBXYM4v9IGYLTLigW5/LjPtePqeMrF8HomL7NkHj5xpmGdv21wYzRRkDX2hWGstfZr
-         MTmZxXkrGFjp0/QxG81cJLBbauKamYMCohl52Ck5Gf/v12xMDB5X33ffT2ksBWFztt2J
-         TJQyGru2JkrHrAChOWJ/8dyLhZAE+VMx0LxJiJGAPzKiqgiGpBf9+51OTkLoMpF3gVNH
-         MM5+UQHecW/VA//3+T9nJ0lpxEU7Cs3HZXOci+YrWhbMIZ9sdmFhgT4sAkoj3KizsKVF
-         8TZBFhy0PLdNifSrF6/QarP3smGlVi9GX7SA6GX+/HbHI3s2V5llY3oEb3PWzDz6j0OS
-         XV1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUx11cuArmpZu6HhbVm0YK9sNmJmYs66hB366TxFjFC0HDEmuTeXSHfeWw85PONF04YexIY5Mp472hR7Es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuprUHJABa3nNmr6xs+QbjEwW4Fu8CnYydqOBE1yiIoQe9Mhzo
-	r3VQnnIXkq8XnQvCnQWnyHsY67GEvt9w5BGWIduNh/uR4XgpKymtj+8Swc/xaI4=
-X-Gm-Gg: ASbGncveY2hgMfyrHqHBtZtU18CnsLGJij5wjvThFisX/Mna1oas0kQSVTB7cOWABmc
-	Xv4kBPCQzXdNozyUG2bGQqjxEO4jGydTyjnhmv2lbWwSfmy9u3SdpDIHEQwf/TmbdPb+wdZXzIf
-	0evZEOo+9tGRgKVCA8hHIwJo6HuSXRBObplIQdDq+7AG/1horl452CL07TIgfjZGa6O06cwDsKS
-	Oq8rrkvOhlSH3/GbGSeq/1ZhShFYX17Gqsc3h6gdRbE7CpX4+VXNNnGI7Fo41fg7JK195TDrAGx
-	z3LPYAfzsgmcZyuRK+46lsb/MpxPHa4qchuHHTjlWBf0V80=
-X-Google-Smtp-Source: AGHT+IHfEsqVrCp9uQuTAuS3ap1nR417rILjVAh7N1JNOE8t++oFUPwfBJvs4SjxnMYZNeDOSpPNtQ==
-X-Received: by 2002:a05:6000:18a2:b0:391:3028:c779 with SMTP id ffacd0b85a97d-3997f95956cmr12682045f8f.45.1742836983616;
-        Mon, 24 Mar 2025 10:23:03 -0700 (PDT)
-Received: from salami.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f556a4sm177445795e9.22.2025.03.24.10.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 10:23:03 -0700 (PDT)
-Message-ID: <26037d49069309915d6ac3dc4d0aff90175754de.camel@linaro.org>
-Subject: Re: [PATCH 01/34] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi	 <cw00.choi@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King	 <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Date: Mon, 24 Mar 2025 17:23:01 +0000
-In-Reply-To: <20250324165533.GA521455-robh@kernel.org>
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
-	 <20250323-s2mpg10-v1-1-d08943702707@linaro.org>
-	 <20250324165533.GA521455-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.55.3-1 
+	s=arc-20240116; t=1742837188; c=relaxed/simple;
+	bh=PxTSQJR/zd+m6rTehyE+LwNLaSBt8BP7YOp92sznOuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Abm3npMDauQUJ7e/C6IHqC6jsxFcCTp383ny37G74bpw50G2Z2IXQ1kjG85ANURQSgJmiOOnrqiWHoZaoIIAlL7cZMlgshKdo0C4tTF+c4j152jDvHsPc2M4GzZu+vaQ+ZJSW2i5N7Paf5/9qAjEw7xa4jfp/uYkSle7w/sEddY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NXOjrb8u; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742837187; x=1774373187;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PxTSQJR/zd+m6rTehyE+LwNLaSBt8BP7YOp92sznOuM=;
+  b=NXOjrb8uyT2G2Opx+F6Sh32W5Wd2Ly6PJLKlSdOLeOhR8bUWTdJ1laRZ
+   a6tE3f+YZjokejc/78mxzJUkEfMEbAMKu2w5wIlt5YFqUp5Md1ivHHbpu
+   QSzm+mgvL4kqQyDib08691sfhFT/AhxdPXqUl/458mJGk4WFAPfyq55lA
+   nYbZ6fHf24u9myM1gEtr/gJj8J2IKtUCUEdcjZrUgGZTauvbFHqsy3Qpd
+   m3Cjki4dMSBZKpcP17CRr7GMN5lUxLZx/tI4Qsus4N7UaVIXcCNTsSICO
+   ZK+EOUcSh90g+Eh7i3RIbgbBIOhkrOH0uWqvEKub4abBi6ingCnipJae3
+   g==;
+X-CSE-ConnectionGUID: VIqI3nK5QMCFP92asgIY4w==
+X-CSE-MsgGUID: 5BcqWsbMRhO5dyMDJDN3kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43944825"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="43944825"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 10:26:27 -0700
+X-CSE-ConnectionGUID: R27JcKqzTqSoMlCUaPBIGA==
+X-CSE-MsgGUID: mhN3/9SpSbyYFsWE7JzFGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="129308397"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 10:26:26 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 08F6620B5736;
+	Mon, 24 Mar 2025 10:26:24 -0700 (PDT)
+Message-ID: <d084e81c-19eb-4424-9fa9-868b75786527@linux.intel.com>
+Date: Mon, 24 Mar 2025 13:26:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel/ds: Fix counter backwards of non-precise
+ events counters-snapshotting
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com, eranian@google.com, dapeng1.mi@linux.intel.com
+References: <20250204210514.4089680-1-kan.liang@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250204210514.4089680-1-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+Hi Peter,
 
-Thanks for your review!
+The patch is to fix a counters-snapshotting backwards issue with
+non-precise events in freq mode. Could you please pick it up as well?
 
-On Mon, 2025-03-24 at 11:55 -0500, Rob Herring wrote:
-> On Sun, Mar 23, 2025 at 10:39:17PM +0000, Andr=C3=A9 Draszik wrote:
-> > The Samsung S2MPG10 PMIC is similar to the existing PMICs supported by
-> > this binding.
-> >=20
-> > It is a Power Management IC for mobile applications with buck
-> > converters, various LDOs, power meters, RTC, clock outputs, and
-> > additional GPIOs interfaces.
-> >=20
-> > Unlike other Samsung PMICs, communication is not via I2C, but via the
-> > Samsung ACPM firmware, it therefore doesn't need a 'reg' property but a
-> > handle to the ACPM firmware node instead.
->=20
-> Can it be a child node of the ACPM node instead?
+Thanks,
+Kan
 
-That should work, I'll do that instead so.
+On 2025-02-04 4:05 p.m., kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> The counter backwards may be observed in the PMI handler when
+> counters-snapshotting some non-precise events in the freq mode.
+> 
+> For the non-precise events, it's possible the counters-snapshotting
+> records a positive value for an overflowed PEBS event. Then the HW
+> auto-reload mechanism reset the counter to 0 immediately. Because the
+> pebs_event_reset is cleared in the freq mode, which doesn't set the
+> PERF_X86_EVENT_AUTO_RELOAD.
+> In the PMI handler, 0 will be read rather than the positive value
+> recorded in the counters-snapshotting record.
+> 
+> The counters-snapshotting case has to be specially handled. Since the
+> event value has been updated when processing the counters-snapshotting
+> record, only needs to set the new period for the counter via
+> x86_pmu_set_period().
+> 
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  arch/x86/events/intel/ds.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index 46aaaeae0c8d..e8f808905871 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -2377,8 +2377,25 @@ __intel_pmu_pebs_last_event(struct perf_event *event,
+>  			 */
+>  			intel_pmu_save_and_restart_reload(event, count);
+>  		}
+> -	} else
+> -		intel_pmu_save_and_restart(event);
+> +	} else {
+> +		/*
+> +		 * For a non-precise event, it's possible the
+> +		 * counters-snapshotting records a positive value for the
+> +		 * overflowed event. Then the HW auto-reload mechanism
+> +		 * reset the counter to 0 immediately, because the
+> +		 * pebs_event_reset is cleared if the PERF_X86_EVENT_AUTO_RELOAD
+> +		 * is not set. The counter backwards may be observed in a
+> +		 * PMI handler.
+> +		 *
+> +		 * Since the event value has been updated when processing the
+> +		 * counters-snapshotting record, only needs to set the new
+> +		 * period for the counter.
+> +		 */
+> +		if (is_pebs_counter_event_group(event))
+> +			static_call(x86_pmu_set_period)(event);
+> +		else
+> +			intel_pmu_save_and_restart(event);
+> +	}
+>  }
+>  
+>  static __always_inline void
 
-> >=20
-> > S2MPG10 can also act as a system power controller allowing
-> > implementation of a true cold-reset of the system.
-> >=20
-> > Support for the other components will be added in subsequent future
-> > patches.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../devicetree/bindings/mfd/samsung,s2mps11.yaml=C2=A0=C2=A0 | 34=
- ++++++++++++++++++++--
-> > =C2=A01 file changed, 32 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml=
- b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > index ac5d0c149796b6a4034b5d4245bfa8be0433cfab..ae8adb80b3af7ec3722c2a5=
-718ad8fddf0a5df34 100644
-> > --- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > @@ -20,6 +20,7 @@ description: |
-> > =C2=A0properties:
-> > =C2=A0=C2=A0 compatible:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mpg10-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps11-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps13-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps14-pmic
-> > @@ -43,6 +44,12 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 description:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 List of child nodes that specify t=
-he regulators.
-> > =C2=A0
-> > +=C2=A0 exynos,acpm-ipc:
-> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/phandle
-> > +=C2=A0=C2=A0=C2=A0 description: |
->=20
-> Don't need '|' if no formatting to preserve.
-
-Oops, yes, sorry.
-
-Cheers,
-Andre'
-
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Phandle to the ACPM node for when ACPM =
-is used to communicate with the
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMIC, rather than I2C.
-> > +
-> > =C2=A0=C2=A0 samsung,s2mps11-acokb-ground:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 description: |
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Indicates that ACOKB pin of S2MPS1=
-1 PMIC is connected to the ground so
-> > @@ -58,16 +65,39 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reset (setting buck voltages to de=
-fault values).
-> > =C2=A0=C2=A0=C2=A0=C2=A0 type: boolean
-> > =C2=A0
-> > +=C2=A0 system-power-controller: true
-> > +
-> > =C2=A0=C2=A0 wakeup-source: true
-> > =C2=A0
-> > =C2=A0required:
-> > =C2=A0=C2=A0 - compatible
-> > -=C2=A0 - reg
-> > -=C2=A0 - regulators
-> > =C2=A0
-> > =C2=A0additionalProperties: false
-> > =C2=A0
-> > =C2=A0allOf:
-> > +=C2=A0 - if:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
-st: samsung,s2mpg10-pmic
-> > +=C2=A0=C2=A0=C2=A0 then:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulators: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-acokb-groun=
-d: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-wrstbi-grou=
-nd: false
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - exynos,acpm-ipc
-> > +
-> > +=C2=A0=C2=A0=C2=A0 else:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 exynos,acpm-ipc: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 system-power-controller: fa=
-lse
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - regulators
-> > +
-> > =C2=A0=C2=A0 - if:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> >=20
-> > --=20
-> > 2.49.0.395.g12beb8f557-goog
-> >=20
 
