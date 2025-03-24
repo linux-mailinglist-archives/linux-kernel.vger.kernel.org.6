@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-574291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F6EA6E341
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:21:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E930A6E33C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3B1188C849
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F423B4082
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB64519ABA3;
-	Mon, 24 Mar 2025 19:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eaRDCsZY"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9894E19309E;
+	Mon, 24 Mar 2025 19:19:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7969198A29
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3042F84D08;
+	Mon, 24 Mar 2025 19:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742843977; cv=none; b=c6gu3H9p1txQBNOyYm48n7zxAWwUH0+Js78OGp9om884g7LOxDaxcQxznEh6/roShPsWd1XayTapmTCrmRgVkeyCbxmNFDutUnPGNbWcaRTIRJ6crXHljVCjLBN9zgNr80FgKIApHjqE20VgOLgUGZNUCCa6CoH8AY7fDpPIpo4=
+	t=1742843973; cv=none; b=MvXrzHp4KyL8Q+Rg5I3+KahuMFLlVBI1a5ccTuR8ZHghB1d4Sdw+HDXv7Du1LbRa5HJURuZpgtbfRV82JzJcS/mYpNEsBSqNKjIExZtTeX6iIr9KRKL2nkzuRNByn3aUnXy3HDrNU4mX1TuiZXSEKZIMGB/PfpJHlVkp8J/iAFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742843977; c=relaxed/simple;
-	bh=P/hwBBn+ky1Zya+g5OHKD1ly/i5ipwUmNOgXdV7PMjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kr2rb2umVSPikvpWSv9XuwD1SU/Mxjq9O9Nx1KVduXWNo6KPaFidj3l/pHGMAXFnmeFTPdfJqqVBTr5TCUPClZxYkQSnmnJTwynGfyn4sHlHbkolqILcOoBU+tD8/gPBJKDFZUFwkvbu7YYL81Fv7KAQUDfuQeFwaU3NJXl+JnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eaRDCsZY; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=R9G+
-	9YMCrVAXcN/A7C/bnMd2N4uDf2n66715z7MwFmw=; b=eaRDCsZYKRjAOXENBFxD
-	NUusBd6dFIL3ifBFA03P08hKISn6A9QsJRRvbuQNOU0oJl+/YXquxnokwvGh2CJE
-	sOu3xT/5XDTIBL0Y367UgEDsSiBKjAP1yoiQzIoFcXgEP228pEQEhvQXQJ0mHJw9
-	T93En2Cxp/qcceaHSzTk916pvva4ydL1Y9FybICqPe5JTCzPIxi9tYNwCibAd7j0
-	lbtrdNyts/7aDGip5RWvWRL9KFXjQe/BKVD0y5N4WQeQ6pHrwAHECnrg+8zHqATE
-	aBPvLQSirazxWy7oe1ro2eQGIkZv9Ezm5reeDQfITAiJrfKT2/cUwY2e6r8ubkEh
-	iA==
-Received: (qmail 2701050 invoked from network); 24 Mar 2025 20:19:32 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 20:19:32 +0100
-X-UD-Smtp-Session: l3s3148p1@u5LfexsxQF1tKPAv
-Date: Mon, 24 Mar 2025 20:19:32 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-i2c@vger.kernel.org
-Subject: Re: [syzbot] [usb?] WARNING in dib0700_i2c_xfer/usb_submit_urb
-Message-ID: <Z-GwRNe8NIigXYtS@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	linux-i2c@vger.kernel.org
-References: <67e1a1f5.050a0220.a7ebc.0029.GAE@google.com>
- <acfa19a7-9d24-4cd6-9d1d-580a9ac7473c@rowland.harvard.edu>
+	s=arc-20240116; t=1742843973; c=relaxed/simple;
+	bh=fqnEprHyp29eEzNNsQAHHHd77WVKBIYKI6z30Kl4dAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iut4RkIFEo4ge5CrdBzwnQ2K49K15O0zgWO843wSZgyGVTUT/koReelhmMwX6M3Hq1s59qIZ7vU1Rk96Fo7R9un2K6XrO0hx3N2XpOos9hjWQ9mokr4SH7Wp5jJQVHqYtu9yh4RvIzrgs6X4SVKJS0NL/KtpqtSyQ+wovALnbgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395E5C4CEDD;
+	Mon, 24 Mar 2025 19:19:31 +0000 (UTC)
+Date: Mon, 24 Mar 2025 15:20:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Kees Cook
+ <kees@kernel.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 4/6] vsnprintf: Mark binary printing functions with
+ __printf() attribute
+Message-ID: <20250324152012.413380d8@gandalf.local.home>
+In-Reply-To: <20250321144822.324050-5-andriy.shevchenko@linux.intel.com>
+References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
+	<20250321144822.324050-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="D3w7yJPKb+YSZTp1"
-Content-Disposition: inline
-In-Reply-To: <acfa19a7-9d24-4cd6-9d1d-580a9ac7473c@rowland.harvard.edu>
-
-
---D3w7yJPKb+YSZTp1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
+On Fri, 21 Mar 2025 16:40:50 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-> As far as I can tell from the source code, the dib0700 simply isn't able=
-=20
-> to handle 0-length reads.  Should the dib0700_ctrl_rd() routine be=20
-> changed simply to return 0 in such cases?
+> Binary printf() functions are using printf() type of format, and compiler
+> is not happy about them as is:
+>=20
+> lib/vsprintf.c:3130:47: error: function =E2=80=98vbin_printf=E2=80=99 mig=
+ht be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute [-Werro=
+r=3Dsuggest-attribute=3Dformat]
+> lib/vsprintf.c:3298:33: error: function =E2=80=98bstr_printf=E2=80=99 mig=
+ht be a candidate for =E2=80=98gnu_printf=E2=80=99 format attribute [-Werro=
+r=3Dsuggest-attribute=3Dformat]
 
-The adapter (I assume the one in dvb-usb-i2c.c) should populate an
-i2c_adapter_quirks struct with I2C_AQ_NO_ZERO_LEN and then the core will
-bail out for you.
+BTW, I find it disturbing that the compiler is set to "error" on a warning
+that "might be a candidate". What happens if it is not? We have to play
+games to quiet it.
+
+Adding __printf() attributes to stubs seems to be a case of the compiler
+causing more problems than its worth :-/
+
+I honestly hate this error on warning because it causes real pain when
+debugging. There's a lot of times I don't know if the value is long or long
+long, and when I get it wrong, my printk() causes the build to fail. It's
+especially annoying when both long and long long are the same size!
+
+Fixing theses stupid errors takes a non trivial amount of time away from
+actual debugging.
+
+-- Steve
 
 
---D3w7yJPKb+YSZTp1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfhsEAACgkQFA3kzBSg
-KbZviRAAgwc9tdRFJkCUrclcfUuNms0E4rHrMGo76Al74WtC9ycZe4+exceZP1F2
-mtb2SM6PGPKsYkx0vsOej7tUW6uNBeVNFH/3xIhjJTXq4n5JFRaw9kB3DU93qaMt
-Zi57qC2fsJtKW7Zbu3AWtN9cyWf4qw7ihjOH+bGYl9244oUSpbqaum/GlErPkPdq
-S6k4mKtAsNvN+KvSB8m7HqdGknO8Ma6UJBIr2T+/X8ywKa+Dp7RgHcPYAT41eYWP
-aDxwJvIlKKK7JsIz+/f8knqRbTND15tcPfgTEeL6EFUp86u9ppa0UM9eYS4VC7AC
-kvwq9qwmHCOVfye+nc4iO6mQRjIW/V1MWqiQvLXH3V/aig8DC12mSLA/JnWcJ+n8
-6KVPfVEymOKXn0W+GiKRnlFuxdd6SkKN6K3G5nssV9Jmbn891T6LX3QPeIfUqGyf
-avDqHKpBfv59HacrKdsxzd6IYx773UqUELkTanFfcIfn9BSQa1DwUxdvDaI5YPze
-+IB0JiW7vFERAv/qje38LKI5iFAzidSHbam4k5GH8Q+nkXG6wv+fDLJSQvm7TFiY
-1YLwn0KmiAJKLeEJTgUOnc61E2I5Dc0yUZVRpeMLrR85v8zNLvy8IMU8E85utgyu
-YogWdIhRXHdKZR4Ql7STBE7gwHcPoCQf2v5jL88vzKRMRWB2u3w=
-=Ixnu
------END PGP SIGNATURE-----
-
---D3w7yJPKb+YSZTp1--
+>=20
+> Fix the compilation errors by adding __printf() attribute.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
