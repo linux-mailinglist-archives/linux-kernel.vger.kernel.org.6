@@ -1,137 +1,154 @@
-Return-Path: <linux-kernel+bounces-573348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35ED6A6D61A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:24:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4DDA6D61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF08D3AF171
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49FAF16EA4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DE0257453;
-	Mon, 24 Mar 2025 08:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB7B25D209;
+	Mon, 24 Mar 2025 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="udngQfln"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYvLjoj6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FA125C6FB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055FB25C6FB;
+	Mon, 24 Mar 2025 08:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742804634; cv=none; b=JZ6Cuh4rI2AHj3eJcdQKcT9oDBcRT+N2GuI/1aWm23jh3kskYoTXXUjF7fMENH7h1pNKGxP4NcYicOq5AM+oxZIygzThZHbhw7VKRV56M209o8GllFF0YzqkfY+TxT+lTWU0Tj4d1jw7JCG7d/ob0dPPiZ0oOi+PYvydmbjPHLM=
+	t=1742804642; cv=none; b=NUx7vQZgNnJ9ZWknQvoPbpzayl89z0I0ZaGvWnKuKoCEVNji1oUaea3GhLIt/DVEnsJf8HwBes4+VS8qVPn6ukTHtOxpZFm+PcuDVphmxAWJyOWcQ+BWXMdV5xNnjUzE0LHioK7jHq/Zr2L1xtwsFDB8nIRFFZzNzcfCiSgaYZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742804634; c=relaxed/simple;
-	bh=7bDgvrnoRlrYBwaB5QA15Z1GcjEcWdwDWBx4tg0YEzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S+TAUtBXIVA04iwk2eseMgF6DBShkGlgyoWSY0uT+WtJrBz7mWEE7EZYIcNeyiY+Plb8l6bpaqK30WmnXfv2swqtZiaHBq66rplf5cOcWHBgGHDurNbvP7PeGa2OBkNNLVEGPnQowLB0OdUCAYV6efWDu6oN+DWY8YDC5bTY2wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=udngQfln; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54acc0cd458so4471371e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742804630; x=1743409430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7nJur69nwLGZEuv7kca7NWGISubr7DxGJQXvrRC0WCI=;
-        b=udngQflnq3v3uQZIyurnFBW7KcubxnMAVPPHIkibF9txFnqyz56ElM8TDSyqQ4gnpb
-         e0yp1dw8BJ7lic/4ECxgBLDiGUkkbwWtl0qsFbC93JyrK6Aysrx1+3wjOYn7jJr9K5R8
-         XbDsW0ZYLHFduLIYXJAEsm01WDST9p/13al71hF9hBRHgW0NctZ3Rh8kj8DQCnxj4LWr
-         RgGFjuOfjJjmhCxE7wJscQSbyxLQ0mu6Cgxh24B+ZIz9DSpCIpDr3xp1b0KRc2uJGwnl
-         aVM/nFUyU3yI5nmgpqMTsftHS6zpqsExhj9zH6yMEwCVHN/JLsK0i11aXIDu6leo0wZW
-         EPNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742804630; x=1743409430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7nJur69nwLGZEuv7kca7NWGISubr7DxGJQXvrRC0WCI=;
-        b=vQKXxEajjRm8lWHo+ZKtoEyU9/d9RHY5beZOFlq6gOpNlyNTtqiwqEw3FbZEkuy39S
-         rJiSVl/RC3074mm6Q/LwUjQTSM9baKbwDJ6Rliv1JbCZE9A8It/XjnQOH03cKehwdQdU
-         AiEW2QyoQNoxk5CfkPh8jxV472ySG5dEihkFGqeySMn7rBIdkDyHFCLC4h4cXFQFqExC
-         QVe1WNguwsJxGr0sZfcRPDbxQtgu8O1k8HDuXCR5nxO7VclriY+UgPCtYFV2kAecP5Dv
-         7JgRsusvMRx+MnCTyzwSDmI3LFXY90i5GJ+LhJe1Vt5k32p9O2sut+ISOIhLKzfCVJah
-         C5yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOLgBiQzQaLPThtfQu9HWRYKR+vyB58g7hNZ3sxswjKDutbm8SVn/pBDCtjwz8j6L22HtaME6Iu74V30U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCoMGnndSQCg+8y1Yn0T1CgZbWmhYeSVQ1+736kLYzZ6amWi57
-	qMce4cAz8NTqMSKcFvlTY8aJWO97bIZLKKmdGazGa0EKQt0Axu+iSw4ysyUG0pZcQB+WrhSzyp1
-	E9kq74wdZYq98iQE0I7lbX9SqVEFWBMPC+aEdhg==
-X-Gm-Gg: ASbGncsURiwupbsY6odZBw9Kp7YUrapF6JNHkpFGL51tYm3kC2o0Jus74N/T4/cTuoN
-	wOGvs7FvoyxtdqLm0+4mD90ryNoGkXIBbiHqHJZX/alneBTQay6EfbzgILW7HITIO/HpmOQCUJI
-	DgWWtez88x3Y+pvqsnE+wPa2Y=
-X-Google-Smtp-Source: AGHT+IEUNuiXsK28DcHdqG1WX9IZVYS3HmbU7AeEJJZJAoK7D9V3OmcEGMH3wLfdWG71ykhftl48P90KIq2rWvBQudM=
-X-Received: by 2002:a05:6512:a94:b0:545:93b:30bf with SMTP id
- 2adb3069b0e04-54ad64f08e6mr4576213e87.41.1742804630434; Mon, 24 Mar 2025
- 01:23:50 -0700 (PDT)
+	s=arc-20240116; t=1742804642; c=relaxed/simple;
+	bh=wH9pjtxftMfZbkxAZn+96fnjiloTUPZbgvD/rvrrtms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkOPY6oOMSgS4+x93IcGU4Llsg2EZhqQt3E483vJq5PYY3yf0NCN90Tk+B83/JErvVp5bSZsbaqDVgAxkRQnK+QvdyotaFfvcM4NkR8WercFbVd+Q7D208tvrRAb4LwgfR6OedtdliAoptp7sJC8RCXm/78ch0E6vm/kvq4ujUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYvLjoj6; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742804641; x=1774340641;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wH9pjtxftMfZbkxAZn+96fnjiloTUPZbgvD/rvrrtms=;
+  b=WYvLjoj60Wk5Rty/guTxe5/Ilb3rAYyDU/dBGFYcZdG7R1Xk3e5aVrhD
+   KcDYmb1bW81S844+o8/X7QWpe/Q9p+aC3OfyynW9yV3HuxeWXxku8y47V
+   LiJVMKlOA5KpcirM41PKTmFi83V9XK23ccMh3PlmINDaPHdcKx9jVC/ru
+   3+B9a/AFNED9CPwLoLRzCRmn3J03r4RRyZvtSYgggEVk5bLzjbIRH2xQi
+   IaIrUbBvgh20C/KugGdlEG/JmYym5Z9twD0g4W7sJeYzKNjEwy6EoIi+C
+   XcUY6BpsS/uqQ45u/9ecAHC4EBAV7/N8SVpoTsuYEa1HpK7b/vDYtxGJa
+   Q==;
+X-CSE-ConnectionGUID: lA8Rqt+oTkmQW10eKxEWqQ==
+X-CSE-MsgGUID: trg4LZakTLWm7+Dq9QgMqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="54630231"
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="54630231"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 01:24:00 -0700
+X-CSE-ConnectionGUID: AZuZmgKeSqWww/tdcbPBmg==
+X-CSE-MsgGUID: 3AjjyY6HSd+NFQzimbjgDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
+   d="scan'208";a="123963906"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 01:23:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1twd68-00000005HjR-3wtP;
+	Mon, 24 Mar 2025 10:23:52 +0200
+Date: Mon, 24 Mar 2025 10:23:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v10 6/8] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <Z-EWmK2r6VgmPAqa@smile.fi.intel.com>
+References: <cover.1742560649.git.mazziesaccount@gmail.com>
+ <ca3886c9abcb268ca976e62cd7da28bf5d6e6382.1742560649.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-wcd-gpiod-v1-0-27afa472e331@nxp.com> <20250324-wcd-gpiod-v1-2-27afa472e331@nxp.com>
- <CAKXuJqht5ZiFyt2uWXwPSEdszYQWKHm22+mAQCPQXn8b7AbL-w@mail.gmail.com>
- <PAXPR04MB8459D61091A8BF9ABD94DA7E88A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <CACRpkdZXG0JC7_-Mg6Dpq08Y=Kr3M+fRWQF_bPG8c-WH8pA9Mg@mail.gmail.com>
- <Z-ER6elHDYtIY0ap@hovoldconsulting.com> <PAXPR04MB8459B60880CC19480C5902B388A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB8459B60880CC19480C5902B388A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 24 Mar 2025 09:23:39 +0100
-X-Gm-Features: AQ5f1JqdI2uLqhfgx4QepLSst36sJW56R8LoYIG4KSFVVLp6D64VvNqLS9X6y5Y
-Message-ID: <CACRpkdagFrz=5fRUfVuaZJRsBao4UrObNa7VknS_hmOAsWFO+Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ASoC: codec: wcd938x: Convert to GPIO descriptors
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Johan Hovold <johan@kernel.org>, Steev Klimaszewski <steev@kali.org>, 
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca3886c9abcb268ca976e62cd7da28bf5d6e6382.1742560649.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Mar 24, 2025 at 9:09=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+On Mon, Mar 24, 2025 at 09:13:42AM +0200, Matti Vaittinen wrote:
+> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> an automatic measurement mode, with an alarm interrupt for out-of-window
+> measurements. The window is configurable for each channel.
+> 
+> The I2C protocol for manual start of the measurement and data reading is
+> somewhat peculiar. It requires the master to do clock stretching after
+> sending the I2C slave-address until the slave has captured the data.
+> Needless to say this is not well suopported by the I2C controllers.
+> 
+> Thus do not support the BD79124's manual measurement mode but implement
+> the measurements using automatic measurement mode, relying on the
+> BD79124's ability of storing latest measurements into register.
+> 
+> Support also configuring the threshold events for detecting the
+> out-of-window events.
+> 
+> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> out of the configured window. Thus, prevent the user-space from choking
+> on the events and mask the received event for a fixed duration (1 second)
+> when an event is handled.
+> 
+> The ADC input pins can be also configured as general purpose outputs.
+> Make those pins which don't have corresponding ADC channel node in the
+> device-tree controllable as GPO.
 
-> ok, then the only suspecting point is
-> wcd938x->reset_gpio =3D devm_gpiod_get(dev, "reset", GPIOD_ASIS);
->
-> I may need to use GPIOD_OUT_LOW to configure it
-> to output as set raw set value as 1.
+Thank you for the nicely written driver!
+However, I have one big issue with it (see below).
 
-I think there may be a bug in gpiod_configure_flags() in gpiolib.c:
+...
 
-        /* Process flags */
-        if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
-                ret =3D gpiod_direction_output_nonotify(desc,
-                                !!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
-        else
-                ret =3D gpiod_direction_input_nonotify(desc);
+> +static void bd79124gpo_set(struct gpio_chip *gc, unsigned int offset, int value)
+> +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> +				    unsigned long *bits)
 
-Shouldn't this be:
+These will be _rv variants anyway as there is no chance this series goes before that.
 
-        if (dflags & GPIOD_FLAGS_BIT_DIR_OUT)
-                ret =3D gpiod_direction_output_nonotify(desc,
-                                !!(dflags & GPIOD_FLAGS_BIT_DIR_VAL));
-        else if (dflags & GPIOD_FLAGS_BIT_DIR_SET)
-                ret =3D gpiod_direction_input_nonotify(desc);
+...
 
-?
+> +struct bd79124_raw {
+> +	u8 val_bit3_0; /* Is set in high bits of the byte */
+> +	u8 val_bit11_4;
+> +};
+> +#define BD79124_RAW_TO_INT(r) ((r.val_bit11_4 << 4) | (r.val_bit3_0 >> 4))
+> +#define BD79124_INT_TO_RAW(val) {					\
+> +	.val_bit11_4 = (val) >> 4,					\
+> +	.val_bit3_0 = (val) << 4,					\
+> +}
 
-As it looks, the line will be set into input mode unless explicitly
-requested as output...
+All the rest is fine to me and looks good, but above is a principal impediment
+to give you my tag. In case you update the type to __le16, feel free to add
+my Reviewed-by tag.
 
-However this means the patch also has another bug: you need
-to either:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-1. Specify GPIO_OUT_LOW when requesting it or
-2. Explicitly call gpiod_direction_out() before setting the value.
 
-Yours,
-Linus Walleij
 
