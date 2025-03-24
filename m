@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-573685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2974BA6DAB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:03:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE27AA6DAAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:02:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6C51895A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80A33AEFC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7699E25F992;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2688E25F986;
 	Mon, 24 Mar 2025 13:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yF4H97lg"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="USCzd8Sg"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16FC25F7BF
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F30D25F7BE
 	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742821273; cv=none; b=EGvReRIN3PV1480fI1Ley55guUjCdmoul7+a+g8r1pfctJ8YYzgdelqHPzyDytEMDETsQHG6LJBYHr1Lc4EVV2EBJCttPcrw5usl05qIylhr3xlHNyi3nluPdUjQgWV8pTtrWaRa86ffrLSz2cqdVcZ9KdpFR9yppmEdsea3dvM=
+	t=1742821273; cv=none; b=EoprBxl2ejyKy2JdWcXLRYa3a/ed9UaoFamNhJRpAGLS7NNsj7/VuUapNzUc65M9JivOe0Zgs+Vzpyrxh/H8b6SjcFAiiW01gMHr8jrwjGEqhKnlx8MorulvhxnSXdOYKF+0OM32vy4oWnjVG3jS3prO8i/YokOXQlHYMulsaj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742821273; c=relaxed/simple;
-	bh=hJEhHBHgmcwkLGn7ADU+TBJtnvqkH4aaspjSeICJrEo=;
+	bh=SaEurHg9my0SgGDfooWj4uP1HnHehhMQjbSphU85xtU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JIC4hi+4Qdcgbe6lyybg8zEyMAcvXAyisfdZn7V5R7p+MG+XzB1RgC2RfdtFyS81cNELMeDfxW3VsSif7u6pDoBMT2IYPLGpjKP6Rjyuupdp7TcOZJ7+r3uAWutJP+MeB1aLkRhyTxvre5TW6LMkApEhuWGOo63P7uk8Rra0KvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yF4H97lg; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version; b=PrZSGbbJHqYqNJqxXeN395ydrKI1Yde95GBAZfXE1QivXwzJ+C58L0x/BIwANxFJYfHDD3sYEMlakuwAg/vJ5BcT7AN41PWlxBd+kuz2LduLC4PsslLnMjo9zR/G9fjnm5PW24vZ8tZhB0ehHSv7ESWSrVlnZyk6UzFPwHdFb00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=USCzd8Sg; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so42097495e9.2
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3913d45a148so3525347f8f.3
         for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:01:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1742821270; x=1743426070; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QPKG26aBT6MGmMvi54w+dEW5MMoDzMUIu/y68UikHrA=;
-        b=yF4H97lgOgtwoiahjN4IJAz+CdapyCJKa+TvD3oWLnsleyRiM1SNDAXOf13AFmOooJ
-         DXvu32z7f5I6B9KMyVHKwfzEL2Ja0LUHKhJdaIjO5T2TFBmFRTIYcB+QYYvZkklEcohj
-         WQQKbLN3ssmGJPM/4UE3oLjSIeHPcxHQdfjU9/KzT8pHhe73RRa8pXnXAXGbuAVE2LMn
-         mDYS9po+8jGYAQHE9PLh+IBFKGPej3uaxlfXgsk49jbJP5FwjUZuJWgF7/iiVsUb3oGk
-         fAe04U3AvsQsO0rZMH2mOJfPPrA7vuZjEloUmYsDojA6vqCv9HsGoSxZc/eXF/gZUbzt
-         qndA==
+        bh=GZ6QvHirUebkLT0cLpo0Lkee0nQc81mUaPIyQl+HrrA=;
+        b=USCzd8SgUyK+4T5OGNRjWcE9P2X/46kDuMXxngjsxOunZN39YbJ0nNHzx/I4Y2Ss4D
+         uXfr/eFZlR9QvLJK/MWB+IYtsjrOH07/WvT3WBOgdsZXaVvLgCkcirV12cHBS075ZROx
+         PZ8C5GQAJwz9Ga0S8tkgTNCSzw3PpqNElTpjfBRatFnENWDzGkVPlD8BHDUQsi+8hwXa
+         3KF6Tb8Y+5uHYRC+LKXY1fW/QqNwcMmeNhChyM6S6/zZTEq+by3D9/QCUmr4R2ofHqGn
+         JLf+sedF0UJW3G13D+wN0NZbEPFI6UWGUdSCoOQ+DJhlNPr/wVBulBkhkf0urATb4jRv
+         HqEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1742821270; x=1743426070;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QPKG26aBT6MGmMvi54w+dEW5MMoDzMUIu/y68UikHrA=;
-        b=bngDVndqfn8cIQmBR4XWPA3M03xvxKWpykJUzx8E6jThSQNce665QumY6H6mWECs/k
-         eytIjxa/1HERT7MrT9LK2bI2MF4y5raQ1u66DuNnyybVwLMLkJ7BTKpZiuMvvElrsMol
-         +WLnspYk23a6qxogxxlGlKUsxyYyoatsom7wTfhRcamfWibHZoI27xP/JLgIuaJmIJOf
-         AGrfi/e7M5Dow6ShCsULFpt/gFin+fo95DjBq/SvfJYn03YdYPu+4qrCxYed4SSn4lRu
-         3VucgkEh/w+VdXaIsdHMuSLvek6SeBMZ998uCQeHhyL5nOw7MMprdM2HBiIiN5oAECT3
-         Lvdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW50zfS+4lgbrtMGcQf9QOVoC8ER7H3/ZYpmFnRkEI/iB9JgPtP1OkjDowUsCdMg0rnxqCa9y6y69fHY+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6+/Z5tDI7Lg6v5YiTUu98Qe+n5KdmHGC/bqzuEB1xxDzGB+kr
-	fGbo19aRUFLgtf3tGNs4mx5FsBbJGf7sPXWWD1T7TEj/uCTfGQsNkoLWgoMNtpY=
-X-Gm-Gg: ASbGncvwdzcESVP/RSLdlzfoCdjOcUTBd+9QbyFRUWAIIGmWZFj/r7VlDp2sLg3jzoI
-	XpyUKdXl37XzWomfDZuQsEtBEvKzmBg8imDhwP8VKa21mhnBsJCkuWSif3qu6z7yArR0B1fHBt9
-	M3+nMCUb4o5n41kElzAmsnKrsTFrtJGZW/cdWpIFOYdEjuWfcLXsHt4y8baErpOSliZ2nzDaKFo
-	1Cm4pUDMVDNoVCb3UNL1EO2tvTBamXofvth9eVPojav/9qKWho8UYOeomhhVU+lw1zMCBNCTOFz
-	EW1GV3ssE0P3sf0FeQX7cT7PBPm7sbB/gxXmjYtQxfZZlvBQcK5irliZubRDZZ6D+fwECg==
-X-Google-Smtp-Source: AGHT+IEHylwx4qlkPIxjxGRM/SsWCTC+RRiS7Z7WGB581zySgV9XmANjiM7Hap33tyQHXG7s4q3FgA==
-X-Received: by 2002:a05:600c:3c82:b0:43d:45a:8fbb with SMTP id 5b1f17b1804b1-43d50a1d1ebmr98894065e9.22.1742821268315;
-        Mon, 24 Mar 2025 06:01:08 -0700 (PDT)
+        bh=GZ6QvHirUebkLT0cLpo0Lkee0nQc81mUaPIyQl+HrrA=;
+        b=HjfJmhaIxtvEwSLrwrM1g+5FFkGtQ/esABI3jCCdFWkTVgEwLQ19JtYVbu/+pGOFeM
+         svygWcUSOu0LpxxiyQD0R0vu7jUEmGMTer47of1hTNDefyJvjOOuU1pKAso1LZXhIsdV
+         xwHRq9DEFYqgKeNZTVq+QTiCCmetRSRBn6UAOwLfARTtTOxe50lGxcW5dOWOiwRYJX2z
+         6wrPXavex/aEyPEZAgQa9LJKiaD/Zckey6EKOki+liBxcHj7Xoini3B/n7dJu5Q9kaBp
+         vC/WNVAGAv9C5R2MW92JGPmVUDNiva82kGF6jlScy1YOs20xKgGqrs4sMByxaQCWTbss
+         iW9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWzOLBL3O8FW4kTjgxmcE7TmDflvOmfkac8ADjJWhXL5JXvbzKSidsR/NP320NlQ1DhjLtIUdlH+Xyooag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCpHgpawYcIBpPc6eFN1JOrMzxOZzRhhcRDPL3Do7b9PNmrM81
+	xj7LU22YNqk8AB7tbFhvfPrY5Qlxhx+8DoPcNBTMhwymCuOMyNSN5mzPzT+K3Xo=
+X-Gm-Gg: ASbGncvGzQEJR76QlU5VAbpji/vXD5id26MorzLHoYh1c3amNG90I/nM/3n12qmrs23
+	/AjAjK0NLO2REm9IMTMlOvMPUh4ZCl1SSxhORiiWrkh+T6fa1U/lyC0Z/gIF0ZeMrcwW+mKQmRI
+	dFtPHmRF/mb4agyb2EUV8Bs1cgvIyhl/RJltXrydAYY20qjBAUeVEzPVww7I5ZZit2fMzzr5c0C
+	VtO/73GxYa/rTFAE5ylonkkmDIp2QlWsrkf5fOEeaVorZ26pqCufQMszHIwACaHQmfS+1tMANes
+	D/jtKgoVa/n0++aMKvvgNRBXy36uMhbIxStYKF2XR0mkncE0PkQqF/RUBciRJlKXI2R20U/YCWm
+	OtOpS
+X-Google-Smtp-Source: AGHT+IHcZdjKo+W60+E0889CUCSjzvCnQTNGHROcaLcw11SC7gzeWcB55np64KwhSuLoUJuyekwy5g==
+X-Received: by 2002:a05:6000:2107:b0:391:3d12:9afa with SMTP id ffacd0b85a97d-3997f90391emr10016304f8f.21.1742821269598;
+        Mon, 24 Mar 2025 06:01:09 -0700 (PDT)
 Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd1c7sm122275975e9.40.2025.03.24.06.01.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fdbd1c7sm122275975e9.40.2025.03.24.06.01.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 06:01:07 -0700 (PDT)
+        Mon, 24 Mar 2025 06:01:08 -0700 (PDT)
 From: srinivas.kandagatla@linaro.org
 To: peda@axentia.se,
 	broonie@kernel.org,
@@ -92,10 +93,11 @@ Cc: ivprusov@salutedevices.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	johan+linaro@kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 3/6] ASoC: codecs: wcd-mbhc: cleanup swap_gnd_mic api
-Date: Mon, 24 Mar 2025 13:00:54 +0000
-Message-Id: <20250324130057.4855-4-srinivas.kandagatla@linaro.org>
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 4/6] ASoC: dt-bindings: wcd93xx: add bindings for audio mux controlling hp
+Date: Mon, 24 Mar 2025 13:00:55 +0000
+Message-Id: <20250324130057.4855-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
 References: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
@@ -109,88 +111,42 @@ Content-Transfer-Encoding: 8bit
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Remove confusing and unused argument in swap_gnd_mic api, the second
-argument active is not really used, and always set to true in the mbhc
-drivers.
+On some platforms to minimise pop and click during switching between
+CTIA and OMTP headset an additional HiFi mux is used. Most common
+case is that this switch is switched on by default, but on some
+platforms this needs a regulator enable.
 
-The callback itself is used to toggle the gnd_mic lines when a cross
-connection is detected by mbhc circuits, so there is no need of this
-argument.
+Move to using mux-controls so that both the gpio and regulators can be
+driven correctly, rather than adding regulator handing in the codec.
+
+This patch adds required bindings to add such mux controls.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/codecs/wcd-mbhc-v2.c | 2 +-
- sound/soc/codecs/wcd-mbhc-v2.h | 2 +-
- sound/soc/codecs/wcd937x.c     | 2 +-
- sound/soc/codecs/wcd938x.c     | 2 +-
- sound/soc/codecs/wcd939x.c     | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/wcd-mbhc-v2.c b/sound/soc/codecs/wcd-mbhc-v2.c
-index d589a212b768..4b7c3d6080a1 100644
---- a/sound/soc/codecs/wcd-mbhc-v2.c
-+++ b/sound/soc/codecs/wcd-mbhc-v2.c
-@@ -1260,7 +1260,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
- 			if (pt_gnd_mic_swap_cnt == mbhc->swap_thr) {
- 				/* US_EU gpio present, flip switch */
- 				if (mbhc->cfg->swap_gnd_mic) {
--					if (mbhc->cfg->swap_gnd_mic(component, true))
-+					if (mbhc->cfg->swap_gnd_mic(component))
- 						continue;
- 				}
- 			}
-diff --git a/sound/soc/codecs/wcd-mbhc-v2.h b/sound/soc/codecs/wcd-mbhc-v2.h
-index b977e8f87d7c..a5d52b9643f5 100644
---- a/sound/soc/codecs/wcd-mbhc-v2.h
-+++ b/sound/soc/codecs/wcd-mbhc-v2.h
-@@ -194,7 +194,7 @@ struct wcd_mbhc_config {
- 	int num_btn;
- 	bool mono_stero_detection;
- 	bool typec_analog_mux;
--	bool (*swap_gnd_mic)(struct snd_soc_component *component, bool active);
-+	bool (*swap_gnd_mic)(struct snd_soc_component *component);
- 	bool hs_ext_micbias;
- 	bool gnd_det_en;
- 	uint32_t linein_th;
-diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-index c9d5e67bf66e..b2fb8520c823 100644
---- a/sound/soc/codecs/wcd937x.c
-+++ b/sound/soc/codecs/wcd937x.c
-@@ -2646,7 +2646,7 @@ static void wcd937x_dt_parse_micbias_info(struct device *dev, struct wcd937x_pri
- 		dev_warn(dev, "Micbias3 DT property not found\n");
- }
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
+index 10531350c336..ab1c6285dbf8 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,wcd938x.yaml
+@@ -23,9 +23,15 @@ properties:
+       - qcom,wcd9380-codec
+       - qcom,wcd9385-codec
  
--static bool wcd937x_swap_gnd_mic(struct snd_soc_component *component, bool active)
-+static bool wcd937x_swap_gnd_mic(struct snd_soc_component *component)
- {
- 	int value;
- 	struct wcd937x_priv *wcd937x;
-diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
-index f2a4f3262bdb..dfaa3de31164 100644
---- a/sound/soc/codecs/wcd938x.c
-+++ b/sound/soc/codecs/wcd938x.c
-@@ -3235,7 +3235,7 @@ static void wcd938x_dt_parse_micbias_info(struct device *dev, struct wcd938x_pri
- 		dev_info(dev, "%s: Micbias4 DT property not found\n", __func__);
- }
++  mux-controls:
++    description: A reference to the audio mux switch for
++      switching CTIA/OMTP Headset types
++    maxItems: 1
++
+   us-euro-gpios:
+     description: GPIO spec for swapping gnd and mic segments
+     maxItems: 1
++    deprecated: true
  
--static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component, bool active)
-+static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
- {
- 	int value;
- 
-diff --git a/sound/soc/codecs/wcd939x.c b/sound/soc/codecs/wcd939x.c
-index 4a417a92514d..546aa88a398c 100644
---- a/sound/soc/codecs/wcd939x.c
-+++ b/sound/soc/codecs/wcd939x.c
-@@ -3215,7 +3215,7 @@ static void wcd939x_dt_parse_micbias_info(struct device *dev, struct wcd939x_pri
- }
- 
- #if IS_ENABLED(CONFIG_TYPEC)
--static bool wcd939x_swap_gnd_mic(struct snd_soc_component *component, bool active)
-+static bool wcd939x_swap_gnd_mic(struct snd_soc_component *component)
- {
- 	struct wcd939x_priv *wcd939x = snd_soc_component_get_drvdata(component);
- 
+ required:
+   - compatible
 -- 
 2.39.5
 
