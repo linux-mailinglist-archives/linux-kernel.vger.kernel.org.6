@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-574052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C976BA6E006
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:41:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1619A6DFF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC9916C698
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88FD16B2DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A32263C90;
-	Mon, 24 Mar 2025 16:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCD2263F2C;
+	Mon, 24 Mar 2025 16:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="plw1bbqE"
-Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEHhlF1+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC7125F96B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC60F25F96B;
+	Mon, 24 Mar 2025 16:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834458; cv=none; b=kOALYOTiB8J84D0BvdymJileS43GIvS+nFXlRvElotkTjm2m9zmkSJ2qhchkQoktxJSssNrmXyVQkvIsOCBAOgevFUHKbScqfg108g3xZHESLc7vzJRup4v9O/VVYDIopGR245yoJZ6pLpB61i5S6tHSNzMxyzhW5vhTdSUsD8s=
+	t=1742834386; cv=none; b=NCTiEpbeH+3tU/v7DxgexyI0iU3UDG/Hu+yF8vKj0xc4d10OgXF26h6mrAt2Y+5zfmUU1w3PB9D2Sx0Kz87Hi8nvKGIqhaACeJF0TrJ8R4zMWUokGYZY8JqsJ2qk1/eXfmtdCoiOIBdnV3fRb0qGz4LydzV2YCivQR5cW7dI3Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834458; c=relaxed/simple;
-	bh=97EUThDR2UybhnFKxS5EDbv/vBzfjXZFng3bm+j/nF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBuyJ041o7YdftyqJc8FJYVpELkP9dRi+JZtKI/iK6fRg/6+Mc3ycBzy9PPQXjMQAZPl4IJDTybSbxLc1xq1l1lmg8iZ9UYsAA8NlRQ3rRZmTEARFQOd95hRcKazQgz0DoyFRePhcAedYXl58pzA0y3/TCPev9ua9f/VA6kOqvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=plw1bbqE; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id wkphtqyvuqGhjwkpntp5DD; Mon, 24 Mar 2025 17:39:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742834382;
-	bh=fWDg5sAJRa5yGnJsUjCGug0MakuT+w++shbZerB1ON4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=plw1bbqE0z5rfrjQQw+4DOFlYoe4aXV3HOaYnSLm4RqTOwzMgwQKESyqhPy7pOEzI
-	 RzgjMUqxC8ZfAHGz5LF9ADf/97gKqsFaQHLOpeDQdBoj4wEjt64flQbW5nouKULz4h
-	 93zAhY4igdCOqZ4ALMnPyRm7wTEm2NxGiFBIckIwP30Sw8w6NISDz4h2kjuJfSikGp
-	 jxqoEh4a/Cd8GSM30qRtkSdvYka3Cbow7j8N4sYl43NVW1kqgfg5H+HN8Fna2ogrA1
-	 KA7ghA72CgLM2GpLM8NRIsgQ88QLvJBI8rk4/9xmMj4RW6KI9x4skpd9321SXaLNBp
-	 ozWdbaJ0vBkRQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Mar 2025 17:39:42 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <1f9ea3e3-e348-46d7-9b15-8c017762b12f@wanadoo.fr>
-Date: Tue, 25 Mar 2025 01:39:25 +0900
+	s=arc-20240116; t=1742834386; c=relaxed/simple;
+	bh=PkU41z1npHU361mFlL7uOSF2RgIZLrl2UcM2T4+kpTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiCZS3qE1DP3i3Cs+gAM9EAdoX8sM14297RFmmhIQdqhlK1iQ7FrAL4BvDMOL2FCz7rDJd/dS+ZC8dhPH4/Ky8ZjldIg3inyZPsevEicZ28xFhs5MTxC0Qk2Sgi8Pvn+BB3JygVNaFJ86s3qOp251fg27Y7xAgr/Urv4P/SIOzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEHhlF1+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E47C4CEEA;
+	Mon, 24 Mar 2025 16:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742834386;
+	bh=PkU41z1npHU361mFlL7uOSF2RgIZLrl2UcM2T4+kpTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oEHhlF1+KjBN6VZ6R3OqvS0W9SotslDejwxbnt+zH6pZ52NTWTnx8QHhx2U3/sSQj
+	 r1L5bzp3hFx/6tas4BM1CRZd4gG8XtLw6FAvI97qvhxxIrAOnm6TBCxoTD72UEhIlI
+	 /MH6y0jOcYGdSfIDefC1dr+lrlZBj4drPIUsSAp01jTMFuMA/ZzqxhWWI8q9A60XhJ
+	 LvK4la4O0nq3ISKlqXpV4OB08co+9tzQgliYleonJWD2tT+ZHCcXxExGJFvt895/zg
+	 nB49fbHtc9TtnR5zrMzOlhjip2lFVTFRPpTw5PVzi8FP2LunktYpBJ+jQrmMX8QSBj
+	 GclopDQUx+69g==
+Date: Mon, 24 Mar 2025 11:39:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com,
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH 1/3] dt-bindings: PCI: qcom: Move phy, wake & reset
+ gpio's to root port
+Message-ID: <20250324163945.GA304502-robh@kernel.org>
+References: <20250322-perst-v1-0-e5e4da74a204@oss.qualcomm.com>
+ <20250322-perst-v1-1-e5e4da74a204@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] bits: Split asm and non-asm GENMASK*() and unify
- definitions
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20250322-consolidate-genmask-v1-0-54bfd36c5643@wanadoo.fr>
- <Z-GEFcciqCwxL88W@thinkpad>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z-GEFcciqCwxL88W@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250322-perst-v1-1-e5e4da74a204@oss.qualcomm.com>
 
-On 25/03/2025 at 01:11, Yury Norov wrote:
-> + Anshuman Khandual, Catalin Marinas, linux-arm-kernel@lists.infradead.org
+On Sat, Mar 22, 2025 at 08:30:43AM +0530, Krishna Chaitanya Chundru wrote:
+> Move the phy, phy-names, wake-gpio's to the pcie root port node instead of
+> the bridge node, as agreed upon in multiple places one instance is[1].
+
+You aren't really moving them except in the example. This is an ABI 
+break for sc7280. Is anyone going to care?
+
+You need to deprecate the properties in the old location.
+
+> Update the qcom,pcie-common.yaml to include the phy, phy-names, and
+> wake-gpios properties in the root port node. There is already reset-gpio
+> defined for PERST# in pci-bus-common.yaml, start using that property
+> instead of perst-gpio.
 > 
-> This series moves GENMASK_U128 out of uapi. ARM is the only proposed
-> user. Add ARM people for visibility.
+> For backward compatibility, do not remove any existing properties in the
+> bridge node.
+> 
+> [1] https://lore.kernel.org/linux-pci/20241211192014.GA3302752@bhelgaas/
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,pcie-common.yaml  | 22 ++++++++++++++++++++++
+>  .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  | 18 ++++++++++++++----
+>  2 files changed, 36 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> index 0480c58f7d99..258c21c01c72 100644
+> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
+> @@ -85,6 +85,28 @@ properties:
+>    opp-table:
+>      type: object
+>  
+> +patternProperties:
+> +  "^pcie@":
+> +    type: object
+> +    $ref: /schemas/pci/pci-pci-bridge.yaml#
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      phys:
+> +        maxItems: 1
+> +
+> +      phy-names:
+> +        items:
+> +          - const: pciephy
 
-Actually, not yet. Here, I am decoupling GENMASK_U128() from
-__GENMASK_U128(), but I did not touch the uapi.
+Just drop phy-names in the new location. It's pointless especially when 
+foo-names is just "${module}foo".
 
-After this series, __GENMASK_U128() is not used anymore in the kernel,
-but I am not brave enough to remove it myself because there is always a
-risk that some userland code somewhere is relying on it…
-
-(...)
-
-Yours sincerely,
-Vincent Mailhol
-
+> +
+> +      wake-gpios:
+> +        description: GPIO controlled connection to WAKE# signal
+> +        maxItems: 1
+> +
+> +    unevaluatedProperties: false
+> +
+>  required:
+>    - reg
+>    - reg-names
 
