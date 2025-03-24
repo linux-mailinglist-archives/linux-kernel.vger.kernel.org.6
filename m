@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-573970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D5BA6DF1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:55:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38557A6DF1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17DF57A594D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C837188CA3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8BB26156D;
-	Mon, 24 Mar 2025 15:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="slU4z1fO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488E4261569;
+	Mon, 24 Mar 2025 15:55:58 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E912425EFA3;
-	Mon, 24 Mar 2025 15:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B4525EFA3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742831736; cv=none; b=miY0f38EP4zXgoYy4CHzhp77CJ9VbjDO9mjrWbeb2Roe+FXSEwKRZnqjWAswalENV9TTtzZ63ysRMoyn/QO0xNi6+Y6PQXU2uVi1np7s5na3NFQyQSV//FDDK2k2eV9QFDNXGveVcKpW0VuGKiw+J1qYzP7UbZitkcocEGWhEpM=
+	t=1742831757; cv=none; b=hWA0W7XnK6FjZOYGEpC5UxnIyQ2ORA2a/er/FdMBV7u+mZBhRlNl4FmsqFHp1XCHjCdYJ+r5jFPAZdRmUX9kLZ06qRx9jgyVnJPQkJELUtuCcksa4FoTCAYcKQMvqLcQChlo6nkdz3zght8xIv2Tvcqv+0pq/8jorH1I+KLM204=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742831736; c=relaxed/simple;
-	bh=+NvCRMW5ROIVpKI6SRARIqzmezFBTN8z5YZU5EI2Q3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAz/nAQlIAvTXvFJ8HE8yYoGuGUzWzcFoL1fe3L8uRCy29al6+YxzdgrSKBVf897eSwvlRCPF8kLl3o3rdEZc+UqGCcp7jIi8oiDxwABaP10uTePV/LJdC1maxyxDFLnFdphe4rULYpAcf8vUvp0VrQsnfyKG55v3j+k6HAruSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=slU4z1fO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OCRwYf026840;
-	Mon, 24 Mar 2025 15:55:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=1rJXdj
-	QWgt7e1qHOvdDS2AQvHPF/x2DFNRCGBAIimRM=; b=slU4z1fOo++xhl0TnHuEF1
-	bRH7xBhB/t2ll7t8h/rL1H4A8o/OEA2zJMHqbrHMDZErhnP2sEwkJ0Iy5ovn3Jmh
-	10YE8iOxTHNbss7Jjb7XWRt79pruWHqfCCXI6nM1mclFD/x0q3WkbTy1qfBcVXYb
-	XzKeHJH6X9BMb8xL6iuTxfIJm1/S7CV/OcATknvFDBvDNqtJIAItj2GdCB4ypuFz
-	EB2aL56AtDDZzD/qGa/IGSz8VgSvrhUUw5w4YCycDNUz8RWisnOJLVaUJwNESSyV
-	KCCLrk4VB1GnP5RzOh2pxk9656QPzJ0dCJgva3J1bff9CPloLGSdOyvAHQh3gOjw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45k7e394vt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:55:17 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52OFHAip030325;
-	Mon, 24 Mar 2025 15:55:16 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7ht7626-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:55:16 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52OFtFJq21103066
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Mar 2025 15:55:15 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2868F20043;
-	Mon, 24 Mar 2025 15:55:15 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B901C20040;
-	Mon, 24 Mar 2025 15:55:14 +0000 (GMT)
-Received: from osiris (unknown [9.179.14.66])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 24 Mar 2025 15:55:14 +0000 (GMT)
-Date: Mon, 24 Mar 2025 16:55:13 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Shuah Khan <shuah@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH 3/3] selftests: vDSO: chacha: Provide default definition
- of HWCAP_S390_VXRS
-Message-ID: <20250324155513.12139G44-hca@linux.ibm.com>
-References: <20250324-s390-vdso-hwcap-v1-0-cb9ad001ceba@linutronix.de>
- <20250324-s390-vdso-hwcap-v1-3-cb9ad001ceba@linutronix.de>
+	s=arc-20240116; t=1742831757; c=relaxed/simple;
+	bh=E7MXANfcSJrvYujKHPC17ZdDs45EXn/081PhwnmONyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X9xamodCZjMMvnD9lN017CionDxROeQ3D/5qYfV7wlLK2TtUyt8IIBmWrHqQkNVtetnwwbR0Lw9msooTm4+j97FPP613IP1J5gdLCeCAmtUpG2pWxo9ER7IB63+NKg8Fvh+JTg6/Vj2KavAbto/7Tt56js3EPI7SzPsq1uAZp/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC70AC4CEDD;
+	Mon, 24 Mar 2025 15:55:55 +0000 (UTC)
+Date: Mon, 24 Mar 2025 11:56:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Pat Cody <patcody@meta.com>
+Cc: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+ <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+ <bsegall@google.com>, <mgorman@suse.de>, <vschneid@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <riel@surriel.com>, <kernel-team@meta.com>,
+ <stable@kernel.org>
+Subject: Re: [PATCH] sched/fair: Add null pointer check to
+ pick_next_entity()
+Message-ID: <20250324115637.26379f8c@gandalf.local.home>
+In-Reply-To: <20250320173438.3562449-2-patcody@meta.com>
+References: <20250320173438.3562449-2-patcody@meta.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250324-s390-vdso-hwcap-v1-3-cb9ad001ceba@linutronix.de>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _KUvzStrdFxpiUUDujmjVBeoTJ8Ndv6N
-X-Proofpoint-GUID: _KUvzStrdFxpiUUDujmjVBeoTJ8Ndv6N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxscore=0 suspectscore=0 phishscore=0 adultscore=0 impostorscore=0
- mlxlogscore=575 lowpriorityscore=0 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503240112
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 03:03:17PM +0100, Thomas Weiﬂschuh wrote:
-> s390 does not provide a hwcap.h UAPI header.
+On Thu, 20 Mar 2025 10:34:39 -0700
+Pat Cody <patcody@meta.com> wrote:
+
+> pick_eevdf() can return null, resulting in a null pointer dereference
+> crash in pick_next_entity()
 > 
-> Add an inline definition for the constant HWCAP_S390_VXRS until a proper
-> UAPI header is introduced.
+> The other call site of pick_eevdf() can already handle a null pointer,
+> and pick_next_entity() can already return null as well. Add an extra
+> check to handle the null return here.
+
+Have you actually triggered this?
+
 > 
-> Fixes: 210860e7f733 ("selftests: vDSO: check cpu caps before running chacha test")
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> Cc: stable@kernel.org
+> Fixes: f12e148892ed ("sched/fair: Prepare pick_next_task() for delayed dequeue")
+
+
+No signed-off-by.
+
 > ---
->  tools/testing/selftests/vDSO/vdso_test_chacha.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  kernel/sched/fair.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> index fd5c5108b42f04ec459d39b74f33edc2ceafbba1..0ce5189718ce35b0a4d69b71559db8379b598b93 100644
-> --- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> +++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-> @@ -19,6 +19,9 @@ static bool cpu_has_capabilities(void)
->  	return getauxval(AT_HWCAP) & HWCAP_ASIMD;
->  }
->  #elif defined(__s390x__)
-> +#ifndef HWCAP_S390_VXRS
-> +#define HWCAP_S390_VXRS	(1 << 11)
-> +#endif
->  static bool cpu_has_capabilities(void)
->  {
->  	return getauxval(AT_HWCAP) & HWCAP_S390_VXRS;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index a553181dc764..f2157298cbce 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5560,6 +5560,8 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+>  	}
+>  
+>  	struct sched_entity *se = pick_eevdf(cfs_rq);
+> +	if (!se)
+> +		return NULL;
 
-How did this cause a problem?
+So the place that this is called is in pick_task_fair() which has:
 
-Did you use something different than glibc(-devel) on your test
-system? Just wondering since glibc-devel provides the define since
-ages and is also required for getauxval().
+	cfs_rq = &rq->cfs;
+	if (!cfs_rq->nr_queued)
+		return NULL;
+
+Where I believe it's a bug if cfs_rq->nr_queued > 0 and pick_eevdf() returns NULL.
+
+Which means in should never happen. Now, to be more robust, we could add a
+check for NULL, but this is not a fix, nor should it go to stable.
+
+-- Steve
+
+
+
+>  	if (se->sched_delayed) {
+>  		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+>  		/*
+
 
