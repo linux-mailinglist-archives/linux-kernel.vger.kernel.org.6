@@ -1,141 +1,174 @@
-Return-Path: <linux-kernel+bounces-574057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4A2A6E015
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:44:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F0AA6E017
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:46:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A830016D552
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A4616D775
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F09263F37;
-	Mon, 24 Mar 2025 16:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52BD263C9F;
+	Mon, 24 Mar 2025 16:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BRHwpmNI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uOpBFxHV"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7CD261570;
-	Mon, 24 Mar 2025 16:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECFD33C5
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834657; cv=none; b=HEb9Wgs3m7vOiz+xqY5zE5ocQBYHhqAZ5xEW8rmNbdbefQqSq+23O/S/8q5eeZAiG8d6I0j5IYQgq3IUdeyRKNv8MqUDUR/dTj/Vnx1UBy9OlhOwbFUHHMezXcdZVIx4YQPtPbRoLp0dJyOuwlXNbFbtl9O8waREJOpqJjYQh4g=
+	t=1742834764; cv=none; b=K00s6J5MEGkKVBoVQ8rYR/hpqrE4OWul9Y0hC2OUoLpgeZtiatmqHGWVbth1e71dzFukmpA3ipKQZ6FrQ5ygsWGe5/GeYRb5M6HhAZ7mN5bOucWKmzlKG3kZN9K8qWzxJXxm33/KtxXJPVItzCTPxiQY5oHWHLetKAJF3xgQ64U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834657; c=relaxed/simple;
-	bh=WlcHSCuCE+B5oPFbUZhbIX6BCUYFF/YgHjdqP/AExfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VktPFj7DiTmrEvBrwYPBAk8PWjOiA8PWkA5tIlu5JVAWOF/X2Rx0nsdq1SNrF3i9sZ7wwJNBc+wU2vcF72jztSWBnpr4jV36AATIK3m/F/66jjgXJPIChrSmPDYDwRh4A+k9nBLrCoe13OLYVDkiF0xYOGJetu3H8apj7HIhyOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BRHwpmNI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PSxE015755;
-	Mon, 24 Mar 2025 16:44:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1DIxwp36ktfPlrjG2+HU7c3QBj3w7DAkJ+2V61M5xr8=; b=BRHwpmNIv6Y9u5Pq
-	sZoEL9PS4NEn24D3RJzk52AMNmTuXPUct77oFCpgLemkPpA4LztENVzJepovqHSz
-	1U6eS63TL0y3VRQ2Szg9uRAXvS1+AN8hAu+4tGAP264Ri/L7uthr3MnT05aet7k5
-	Tw8NH5VpV56CtHw0Jh9wPrO9l89KytBhih6Rx2mwq7ta0FCmgKxaMk6maUeUPSIl
-	+hg+6Iz4jMratxWDxQK9DmU0RaWpCFh4tt8IB96MATRcvgwW0zg7QQR1PDpsv7F5
-	ug5SdoYUnwMCVkRIcJXuTdGqXdTqVGxzyhpaV7ig3mS2BqVU9WlzNqfwcb/wQUAe
-	PEFZ6g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wcyr8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 16:44:11 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52OGiAYl027527
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 16:44:10 GMT
-Received: from [10.216.17.237] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 09:44:06 -0700
-Message-ID: <f565fee7-b222-4e6b-b022-68aed9a7d9ea@quicinc.com>
-Date: Mon, 24 Mar 2025 22:14:03 +0530
+	s=arc-20240116; t=1742834764; c=relaxed/simple;
+	bh=kGGm0hHX97r5Hlte6ukMiRM+d5X7SguOOWvGRL5+nOg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Rext1ODEdzp5s3/gKCoJ+NFHKPkr15JoSWMnupk7lTFPuSbUE+sQU1UCnCpQFDy7LMF7TVhQgmQouvmiorri/s1zrh36C5VRNiSOQgL8nItJoFSiisucfozfsPSaZrczjua6kgtqE1cZJvB4HH6q4wyd0tMVkIXdHWV1grONuyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uOpBFxHV; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2233b764fc8so75794815ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742834760; x=1743439560; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4DoYbS0EKj0UryA+/vVWIl7aYLqF4j2vWeOth/Be3Fc=;
+        b=uOpBFxHVlq9fIjL5njeOJ0JFIgUpaUBsx/a5uRamubKeMkikEuqu+1ytSG0ZlkgEt+
+         bgMTNmcPUs1MB0Vv0pT937pTNlvIFakrnRWqFqp1LKbWkPZvlVmD+JlNcUZhQ2JHKaBK
+         n3y7yyYgIE0NRJO2l3xckEpOSqqmHCYgjf4NSWwJvMCnILzYyvXR2eFGVzNPSl8LSpZw
+         p6KAjXgkXZwBiG4GtCsL2JwdmeNaZXAOiDj6vU83QfEPZ24EWCPwLZtIoDUlFhpiuHHf
+         oMjsd+d4rGpC1I2h8HJaedPm4yAGd5Qw9cs11Vxs2e2gAUlrB+YGcfVDxGfPngGGWUBk
+         PSOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742834760; x=1743439560;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4DoYbS0EKj0UryA+/vVWIl7aYLqF4j2vWeOth/Be3Fc=;
+        b=pcQSkNBmNNIlHpJUeaSV/65hnty9GmIPhQx3hgCZqL3CcVD0KwDV5svdu1KtLBOgTc
+         PYUE/aPaPOJiOiAlXJ0/QM7edQvX7S3K0zwWXjn5g3wAHH8pfyXWBJCxmXq83kwJxvcw
+         Zmis9GdloIQmeMP9l5i3BXP0Qd/3FVDeyhDvn0VyasXoz88uQkeuDUFpkZh4cMdnlLWe
+         8uOzhIJKL1uRilKBHiYiuWjvZotrdhDZJT+EFaSRykY9ZW8jx0XLPxYPAF+bkGJ4SFgu
+         qPkR+5XpS3s4q4VRAFqt2jjs7Nlg73+yU0NDWZK4sXkXh4R/vhjvmGi8f4K1iSC/x2Dv
+         /rjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxA664SuNZiIDxYroBUGd6DEXJRRP6U9OgTrnuuOz70C8M0B7+kAFRMjbZgeUZVNhfOcd0riurw/sYiPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO4tULEZ/hWh3KTirM+F4UF1fynqnvW8RSfZy4X7KAIYMGzOc2
+	rZDfRxx1QF+OuLPtHYRQuX5J4UwUnULp+z6Pj9L4Z2tAXWAyzCxPXwcubhIjhuUkowUnp0+Qboe
+	TWPi4qg==
+X-Google-Smtp-Source: AGHT+IEeiuHTxFvewILH6wDwbFMGhKcv5zYy0sVfAdJuDf+15o2LQaZG/NbWHw71gAdjQTxb5tpvI0QIZV2X
+X-Received: from pfbhx24.prod.google.com ([2002:a05:6a00:8998:b0:736:5b36:db8f])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f606:b0:215:89a0:416f
+ with SMTP id d9443c01a7336-22780dbb8c5mr201419115ad.30.1742834760680; Mon, 24
+ Mar 2025 09:46:00 -0700 (PDT)
+Date: Mon, 24 Mar 2025 09:45:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Add default pin
- configurations for QUP SEs
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20250225154136.3052757-1-quic_vdadhani@quicinc.com>
- <keszvik5mrobfkdpgdz5rnl5l7tihgbpyd4en3dflmaflyl7io@d4my7wdrtkyg>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <keszvik5mrobfkdpgdz5rnl5l7tihgbpyd4en3dflmaflyl7io@d4my7wdrtkyg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ikxVXsEEZAd1-hjUiVAsxZMkQpXz-xsw
-X-Proofpoint-ORIG-GUID: ikxVXsEEZAd1-hjUiVAsxZMkQpXz-xsw
-X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e18bdb cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Fu_YwIdgIx9_JamtqNsA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=988
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240120
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250324164543.62574-1-irogers@google.com>
+Subject: [PATCH v6 0/2] Prefer sysfs/JSON events also when no PMU is provided
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 
+At the RISC-V summit the topic of avoiding event data being in the
+RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+events being the priority when no PMU is provided so that legacy
+events maybe supported via json. Originally Mark Rutland also
+expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+M? processors, but James Clark more recently tested this and believes
+the driver issues there may not have existed or have been resolved. In
+any case, it is inconsistent that with a PMU event names avoid legacy
+encodings, but when wildcarding PMUs (ie without a PMU with the event
+name) the legacy encodings have priority.
 
+The patch doing this work was reverted in a v6.10 release candidate
+as, even though the patch was posted for weeks and had been on
+linux-next for weeks without issue, Linus was in the habit of using
+explicit legacy events with unsupported precision options on his
+Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+where ARM decided to call the events bus_cycles and cycles, the latter
+being also a legacy event name. ARM haven't renamed the cycles event
+to a more consistent cpu_cycles and avoided the problem. With these
+changes the problematic event will now be skipped, a large warning
+produced, and perf record will continue for the other PMU events. This
+solution was proposed by Arnaldo.
 
-On 3/4/2025 10:05 AM, Bjorn Andersson wrote:
-> On Tue, Feb 25, 2025 at 09:11:36PM +0530, Viken Dadhaniya wrote:
->> Default pinctrl configurations for all QUP (Qualcomm Universal Peripheral)
->> Serial Engines (SEs) are missing in the SoC device tree. These
->> configurations are required by client teams when enabling any SEs as I2C,
->> SPI, or Serial protocols.
->>
->> Add default pin configurations for Serial Engines (SEs) for all supported
->> protocols, including I2C, SPI, and UART, to the sa8775p device tree.  This
->> change facilitates slave device driver clients to enable usecase with
->> minimal modifications.
->>
->> Additionally, move default pin configurations from target-specific files to
->> the SoC device tree file, as all possible pin configurations are now
->> comprehensively included in the SoC device tree, similar to other SoCs.
->>
->> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  88 --
->>   arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 908 +++++++++++++++++++++
->>   2 files changed, 908 insertions(+), 88 deletions(-)
->>
-> [..]
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> [..]
->> +			qup_i2c0_default: qup-i2c0-state {
->> +				pins = "gpio20", "gpio21";
->> +				function = "qup0_se0";
->> +				drive-strength = <2>;
->> +				bias-pull-up;
-> 
-> Look at other examples, such as sc7280.dtsi, and you will see that
-> drive-strength and bias are considered board-specific properties and
-> should thereby not go in the soc.dtsi file.
-> 
+v6: Rebase of v5 (dropping already merged patches):
+    https://lore.kernel.org/lkml/20250109222109.567031-1-irogers@google.com/
+    that unusually had an RFC posted for it:
+    https://lore.kernel.org/lkml/Z7Z5kv75BMML2A1q@google.com/
+    Note, this patch conflicts/contradicts:
+    https://lore.kernel.org/lkml/20250312211623.2495798-1-irogers@google.com/
+    that I posted so that we could either consistently prioritize
+    sysfs/json (these patches) or legacy events (the other
+    patches). That lack of event printing and encoding inconsistency
+    is most prominent in the encoding of events like "instructions"
+    which on hybrid are reported as "cpu_core/instructions/" but
+    "instructions" before these patches gets a legacy encoding while
+    "cpu_core/instructions/" gets a sysfs/json encoding. These patches
+    make "instructions" always get a sysfs/json encoding while the
+    alternate patches make it always get a legacy encoding.
 
-Removed drive-strength and bias in v2.
+v5: Follow Namhyung's suggestion and ignore the case where command
+    line dummy events fail to open alongside other events that all
+    fail to open. Note, the Tested-by tags are left on the series as
+    v4 and v5 were changing an error case that doesn't occur in
+    testing but was manually tested by myself.
 
-> Thanks,
-> Bjorn
+v4: Rework the no events opening change from v3 to make it handle
+    multiple dummy events. Sadly an evlist isn't empty if it just
+    contains dummy events as the dummy event may be used with "perf
+    record -e dummy .." as a way to determine whether permission
+    issues exist. Other software events like cpu-clock would suffice
+    for this, but the using dummy genie has left the bottle.
+
+    Another problem is that we appear to have an excessive number of
+    dummy events added, for example, we can likely avoid a dummy event
+    and add sideband data to the original event. For auxtrace more
+    dummy events may be opened too. Anyway, this has led to the
+    approach taken in patch 3 where the number of dummy parsed events
+    is computed. If the number of removed/failing-to-open non-dummy
+    events matches the number of non-dummy events then we want to
+    fail, but only if there are no parsed dummy events or if there was
+    one then it must have opened. The math here is hard to read, but
+    passes my manual testing.
+
+v3: Make no events opening for perf record a failure as suggested by
+    James Clark and Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>. Also,
+    rebase.
+
+v2: Rebase and add tested-by tags from James Clark, Leo Yan and Atish
+    Patra who have tested on RISC-V and ARM CPUs, including the
+    problem case from before.
+
+Ian Rogers (2):
+  perf record: Skip don't fail for events that don't open
+  perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+    legacy"
+
+ tools/perf/builtin-record.c    | 47 ++++++++++++++++++---
+ tools/perf/util/parse-events.c | 26 +++++++++---
+ tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
+ tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
+ 4 files changed, 139 insertions(+), 70 deletions(-)
+
+-- 
+2.49.0.395.g12beb8f557-goog
+
 
