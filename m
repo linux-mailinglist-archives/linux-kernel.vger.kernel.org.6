@@ -1,441 +1,283 @@
-Return-Path: <linux-kernel+bounces-574316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372ECA6E3CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:46:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C59A6E3CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F25188E25B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A1A188E2E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E351A83E2;
-	Mon, 24 Mar 2025 19:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kFOYXEQU"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1211715199A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 19:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ADB19F421;
+	Mon, 24 Mar 2025 19:48:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7D4746E;
+	Mon, 24 Mar 2025 19:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742845599; cv=none; b=oYe5F/E7NOwh9IYnd+oKawjsWugCkng8nC5Qdm7nrAfprgvQn7nH6jQIGPYFBCi6T6rK/ygrX5XgHjqv4CjU0OvDexctByZEge68B7kq49LeLkOF6NMy3uVZDK5aS+uYnTd09fekHfjcWn180e4/bz9LRW39Zf0zumdQnuSX/QA=
+	t=1742845689; cv=none; b=KSoqXeNDeHfHG9jyKE3Lh/3SvtVSQkoHvprOKnnhZAd2oyFYZIqikTqD3QkLyrgBxOZj9gqpiaf+UC0OpoJBG0jMk9kRcqhlERb172lbGeX3a6pr7ydJ+nYEhg0zr0L5p4vRVShkn2KEOoy+ncrCVodwvZIngU3pMyrk27ZvGmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742845599; c=relaxed/simple;
-	bh=MGa9Z+XMKoNXcWSNjsXUJf9A9dDcVntcNWws2ioK92A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bymeK4assCEmO1hj8lfUNY+F8QSq/Gnk2JoA/lauO60IKYcEjRUS1/pBNY+240YYO+PVVad9eDYw0muIe13B9v+zIGIBjUMOvQgZPScG0zoMNg1x0ciZDdZYCYx8M/zt/frkavaQsg0TuGNvfRlxt3ZDMD7yxRd2YpZOalwyjMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kFOYXEQU; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2263428c8baso5895ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742845596; x=1743450396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZrzTfUAD+ubxSxcRWiQNVlkzHInPHF8YG9aMVD/9Buo=;
-        b=kFOYXEQUaLOfPvK9E7NnID/IrgsrXlTmNV5AEugouJhCm/draC8WTwiSf45EOLMMrt
-         ENaSeUUF2fxqAfHSgFHJ2MTBFEdSAFf+n9qp/98tKa96FhcEkFBQQEoV7N3Gsxgk2Iie
-         Ri6Qw45aH9N2d5WWFstingQBZta6UOsGQOgHATffMOtUFDgUb/WnIY6aXI56jOkrjdvT
-         JB5tHvwXRhkkS1SB+Ag6bmo5OjO6JcXX6NZt5JYYXwaHa1t+t+47DThuQUEQsr73Nf5W
-         JlAx3uIKWhVueaCwBpmyMFFaNO113xTc/ue08zVQm9oxbvNSl/b7CvlxAFHNAfFFt1a4
-         Zv2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742845596; x=1743450396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZrzTfUAD+ubxSxcRWiQNVlkzHInPHF8YG9aMVD/9Buo=;
-        b=QJN6nlIRQHzXWcNpbHepfjftWxf80rcJwsgdVc5oZ5mEg7So9OBTEC0Rc3sgktUxln
-         /KT2T1pdj+AzHOe2u3aEv/lz2ZeHAdFHPT/bocHuQfUICg/qzjpTx7ZAK63mCiOwG+hP
-         3tHP0+rD5L7mpiiewgxNzWCjcj2uMC7j/DmltUXohCxE16fjvFKhyI1BZfwdUCC0RUOm
-         G/XDFLRjqoH+okMISjL+miJHoOWNLKR8QHevmGtMIgckFldS+hXJRtUrLzgQqEj+3+8q
-         a0XIxqFa4uQjoLcl9YQNeRSMSQzNWwwkNxq7UvmhOhGdX7+bOmkF0oe22CRjsFw4siGV
-         L0Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuidoSU8nSAPbbwUFbsnOAc5EyuITDk/TWH/24/oB9gI1cvJYYfX9V5A8HEJ7AS92jcgoeVf+ULxDEHyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe08HzNMeqJSsxQTTyED/UnXnkfVieZKKEtXwh6W6gdXUvjdXn
-	tyJk712sEHH9pbEy8IyT9eokc1WgNbst9mpYQfPFAE51zeWmVW10UihuLKDzETPt+BOhwofyKgJ
-	KG9sEjJuKLLSiIsK6WpkILQ0pQiiu7sIG/W/q
-X-Gm-Gg: ASbGnctagRo6wv0T9dw/2OgaZXxSXotiu8s6mXtcWZMjTbZqbgSFBCAsOIHUau156Pg
-	uS4VUuDB8s9PM7yYfFKLV4ASYZyHflGhdrUs87h7YLV11u2HI4yA8nlxvmot/G61uC3P5B6aOA0
-	S4uE7imDz9eA2cuW1cOy8U2I3diAM1Y7QtlE818FliPZ2TEax8QOAzskoIOxBzv6w6NTQ=
-X-Google-Smtp-Source: AGHT+IEzEJbvdguVz7wlOoAmjYfMgRXxuV/ZTxzCdgp0SxDyPLpdbn3v2LVYJxcHF97qNoir/CYkElC2NXK5jb1a7HE=
-X-Received: by 2002:a17:902:d505:b0:223:ff93:322f with SMTP id
- d9443c01a7336-227982abd4fmr5356755ad.2.1742845595786; Mon, 24 Mar 2025
- 12:46:35 -0700 (PDT)
+	s=arc-20240116; t=1742845689; c=relaxed/simple;
+	bh=E56yXudRMn4CnBQsOnMzIwpbSLLijU+XGcqTLunaYcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5nfa8+fUvNC8SfPnUoTgV2KMqwvtx9lLF/HJ7uqA+/i843AQ1QPaOKIFpuiglbkXz2Gb1LDfXTZCdqOuZXSBOY1PBdZpFOuaSNz4HAayYu0NdFd5i1fBjVTcQ2c15NpJCgdGiGe5WqbhsPAPvlyyaZhy6Onzbt/W/3WNEXnbEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FCAD16F3;
+	Mon, 24 Mar 2025 12:48:11 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B31D3F694;
+	Mon, 24 Mar 2025 12:48:04 -0700 (PDT)
+Date: Mon, 24 Mar 2025 19:47:58 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: mingo@kernel.org, peterz@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, Mark.Rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@linaro.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] events/core: fix acoount failure for event's
+ child_total_enable_time at task exit
+Message-ID: <20250324194758.GB604566@e132581.arm.com>
+References: <20250306123350.1650114-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250308214045.1160445-1-almasrymina@google.com>
- <20250308214045.1160445-5-almasrymina@google.com> <Z-GHXCOgP0pZBSlS@mini-arch>
-In-Reply-To: <Z-GHXCOgP0pZBSlS@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 24 Mar 2025 12:46:23 -0700
-X-Gm-Features: AQ5f1Jq28M7yfy88YYEv6Cp39eNsmSWafLu0RQhyhop8yesTxg9Zcsyp-y3frMU
-Message-ID: <CAHS8izNjdDwtf-Zb+wbmWW4k6+9=fnpY4XO_G=xMu4M-TaMw5Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 4/9] net: devmem: Implement TX path
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
-	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306123350.1650114-1-yeoreum.yun@arm.com>
 
-On Mon, Mar 24, 2025 at 9:25=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
->
-> On 03/08, Mina Almasry wrote:
-> > Augment dmabuf binding to be able to handle TX. Additional to all the R=
-X
-> > binding, we also create tx_vec needed for the TX path.
-> >
-> > Provide API for sendmsg to be able to send dmabufs bound to this device=
-:
-> >
-> > - Provide a new dmabuf_tx_cmsg which includes the dmabuf to send from.
-> > - MSG_ZEROCOPY with SCM_DEVMEM_DMABUF cmsg indicates send from dma-buf.
-> >
-> > Devmem is uncopyable, so piggyback off the existing MSG_ZEROCOPY
-> > implementation, while disabling instances where MSG_ZEROCOPY falls back
-> > to copying.
-> >
-> > We additionally pipe the binding down to the new
-> > zerocopy_fill_skb_from_devmem which fills a TX skb with net_iov netmems
-> > instead of the traditional page netmems.
-> >
-> > We also special case skb_frag_dma_map to return the dma-address of thes=
-e
-> > dmabuf net_iovs instead of attempting to map pages.
-> >
-> > The TX path may release the dmabuf in a context where we cannot wait.
-> > This happens when the user unbinds a TX dmabuf while there are still
-> > references to its netmems in the TX path. In that case, the netmems wil=
-l
-> > be put_netmem'd from a context where we can't unmap the dmabuf, Resolve
-> > this by making __net_devmem_dmabuf_binding_free schedule_work'd.
-> >
-> > Based on work by Stanislav Fomichev <sdf@fomichev.me>. A lot of the mea=
-t
-> > of the implementation came from devmem TCP RFC v1[1], which included th=
-e
-> > TX path, but Stan did all the rebasing on top of netmem/net_iov.
-> >
-> > Cc: Stanislav Fomichev <sdf@fomichev.me>
-> > Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> > Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-> >
-> > ---
-> >
-> > v6:
-> > - Retain behavior that MSG_FASTOPEN succeeds even if cmsg is invalid
-> >   (Paolo).
-> > - Rework the freeing of tx_vec slightly to improve readability. Now it
-> >   has its own err label (Paolo).
-> > - Squash making unbinding scheduled work (Paolo).
-> > - Add comment to clarify that net_iovs stuck in the transmit path hold
-> >   a ref on the underlying dmabuf binding (David).
-> > - Fix the comment on how binding refcounting works on RX (the comment
-> >   was not matching the existing code behavior).
-> >
-> > v5:
-> > - Return -EFAULT from zerocopy_fill_skb_from_devmem (Stan)
-> > - don't null check before kvfree (stan).
-> >
-> > v4:
-> > - Remove dmabuf_tx_cmsg definition and just use __u32 for the dma-buf i=
-d
-> >   (Willem).
-> > - Check that iov_iter_type() is ITER_IOVEC in
-> >   zerocopy_fill_skb_from_iter() (Pavel).
-> > - Fix binding->tx_vec not being freed on error paths (Paolo).
-> > - Make devmem patch mutually exclusive with msg->ubuf_info path (Pavel)=
-.
-> > - Check that MSG_ZEROCOPY and SOCK_ZEROCOPY are provided when
-> >   sockc.dmabuf_id is provided.
-> > - Don't mm_account_pinned_pages() on devmem TX (Pavel).
-> >
-> > v3:
-> > - Use kvmalloc_array instead of kcalloc (Stan).
-> > - Fix unreachable code warning (Simon).
-> >
-> > v2:
-> > - Remove dmabuf_offset from the dmabuf cmsg.
-> > - Update zerocopy_fill_skb_from_devmem to interpret the
-> >   iov_base/iter_iov_addr as the offset into the dmabuf to send from
-> >   (Stan).
-> > - Remove the confusing binding->tx_iter which is not needed if we
-> >   interpret the iov_base/iter_iov_addr as offset into the dmabuf (Stan)=
-.
-> > - Remove check for binding->sgt and binding->sgt->nents in dmabuf
-> >   binding.
-> > - Simplify the calculation of binding->tx_vec.
-> > - Check in net_devmem_get_binding that the binding we're returning
-> >   has ifindex matching the sending socket (Willem).
-> > ---
-> >  include/linux/skbuff.h                  |  17 +++-
-> >  include/net/sock.h                      |   1 +
-> >  net/core/datagram.c                     |  48 ++++++++++-
-> >  net/core/devmem.c                       | 105 ++++++++++++++++++++++--
-> >  net/core/devmem.h                       |  61 +++++++++++---
-> >  net/core/netdev-genl.c                  |  64 ++++++++++++++-
-> >  net/core/skbuff.c                       |  18 ++--
-> >  net/core/sock.c                         |   6 ++
-> >  net/ipv4/ip_output.c                    |   3 +-
-> >  net/ipv4/tcp.c                          |  50 ++++++++---
-> >  net/ipv6/ip6_output.c                   |   3 +-
-> >  net/vmw_vsock/virtio_transport_common.c |   5 +-
-> >  12 files changed, 330 insertions(+), 51 deletions(-)
-> >
-> > diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> > index 14517e95a46c..67a7e069a9bf 100644
-> > --- a/include/linux/skbuff.h
-> > +++ b/include/linux/skbuff.h
-> > @@ -1707,13 +1707,16 @@ static inline void skb_set_end_offset(struct sk=
-_buff *skb, unsigned int offset)
-> >  extern const struct ubuf_info_ops msg_zerocopy_ubuf_ops;
-> >
-> >  struct ubuf_info *msg_zerocopy_realloc(struct sock *sk, size_t size,
-> > -                                    struct ubuf_info *uarg);
-> > +                                    struct ubuf_info *uarg, bool devme=
-m);
-> >
-> >  void msg_zerocopy_put_abort(struct ubuf_info *uarg, bool have_uref);
-> >
-> > +struct net_devmem_dmabuf_binding;
-> > +
-> >  int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
-> >                           struct sk_buff *skb, struct iov_iter *from,
-> > -                         size_t length);
-> > +                         size_t length,
-> > +                         struct net_devmem_dmabuf_binding *binding);
-> >
-> >  int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
-> >                               struct iov_iter *from, size_t length);
-> > @@ -1721,12 +1724,14 @@ int zerocopy_fill_skb_from_iter(struct sk_buff =
-*skb,
-> >  static inline int skb_zerocopy_iter_dgram(struct sk_buff *skb,
-> >                                         struct msghdr *msg, int len)
-> >  {
-> > -     return __zerocopy_sg_from_iter(msg, skb->sk, skb, &msg->msg_iter,=
- len);
-> > +     return __zerocopy_sg_from_iter(msg, skb->sk, skb, &msg->msg_iter,=
- len,
-> > +                                    NULL);
-> >  }
-> >
-> >  int skb_zerocopy_iter_stream(struct sock *sk, struct sk_buff *skb,
-> >                            struct msghdr *msg, int len,
-> > -                          struct ubuf_info *uarg);
-> > +                          struct ubuf_info *uarg,
-> > +                          struct net_devmem_dmabuf_binding *binding);
-> >
-> >  /* Internal */
-> >  #define skb_shinfo(SKB)      ((struct skb_shared_info *)(skb_end_point=
-er(SKB)))
-> > @@ -3697,6 +3702,10 @@ static inline dma_addr_t __skb_frag_dma_map(stru=
-ct device *dev,
-> >                                           size_t offset, size_t size,
-> >                                           enum dma_data_direction dir)
-> >  {
-> > +     if (skb_frag_is_net_iov(frag)) {
-> > +             return netmem_to_net_iov(frag->netmem)->dma_addr + offset=
- +
-> > +                    frag->offset;
-> > +     }
-> >       return dma_map_page(dev, skb_frag_page(frag),
-> >                           skb_frag_off(frag) + offset, size, dir);
-> >  }
-> > diff --git a/include/net/sock.h b/include/net/sock.h
-> > index 8daf1b3b12c6..59875bed75e7 100644
-> > --- a/include/net/sock.h
-> > +++ b/include/net/sock.h
-> > @@ -1816,6 +1816,7 @@ struct sockcm_cookie {
-> >       u32 tsflags;
-> >       u32 ts_opt_id;
-> >       u32 priority;
-> > +     u32 dmabuf_id;
-> >  };
-> >
-> >  static inline void sockcm_init(struct sockcm_cookie *sockc,
-> > diff --git a/net/core/datagram.c b/net/core/datagram.c
-> > index f0693707aece..09c74a1d836b 100644
-> > --- a/net/core/datagram.c
-> > +++ b/net/core/datagram.c
-> > @@ -63,6 +63,8 @@
-> >  #include <net/busy_poll.h>
-> >  #include <crypto/hash.h>
-> >
-> > +#include "devmem.h"
-> > +
-> >  /*
-> >   *   Is a socket 'connection oriented' ?
-> >   */
-> > @@ -692,9 +694,49 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *sk=
-b,
-> >       return 0;
-> >  }
-> >
-> > +static int
-> > +zerocopy_fill_skb_from_devmem(struct sk_buff *skb, struct iov_iter *fr=
-om,
-> > +                           int length,
-> > +                           struct net_devmem_dmabuf_binding *binding)
-> > +{
-> > +     int i =3D skb_shinfo(skb)->nr_frags;
-> > +     size_t virt_addr, size, off;
-> > +     struct net_iov *niov;
-> > +
-> > +     /* Devmem filling works by taking an IOVEC from the user where th=
-e
-> > +      * iov_addrs are interpreted as an offset in bytes into the dma-b=
-uf to
-> > +      * send from. We do not support other iter types.
-> > +      */
-> > +     if (iov_iter_type(from) !=3D ITER_IOVEC)
-> > +             return -EFAULT;
-> > +
-> > +     while (length && iov_iter_count(from)) {
-> > +             if (i =3D=3D MAX_SKB_FRAGS)
-> > +                     return -EMSGSIZE;
-> > +
-> > +             virt_addr =3D (size_t)iter_iov_addr(from);
-> > +             niov =3D net_devmem_get_niov_at(binding, virt_addr, &off,=
- &size);
-> > +             if (!niov)
-> > +                     return -EFAULT;
-> > +
-> > +             size =3D min_t(size_t, size, length);
-> > +             size =3D min_t(size_t, size, iter_iov_len(from));
-> > +
-> > +             get_netmem(net_iov_to_netmem(niov));
-> > +             skb_add_rx_frag_netmem(skb, i, net_iov_to_netmem(niov), o=
-ff,
-> > +                                    size, PAGE_SIZE);
-> > +             iov_iter_advance(from, size);
-> > +             length -=3D size;
-> > +             i++;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
-> >                           struct sk_buff *skb, struct iov_iter *from,
-> > -                         size_t length)
-> > +                         size_t length,
-> > +                         struct net_devmem_dmabuf_binding *binding)
-> >  {
-> >       unsigned long orig_size =3D skb->truesize;
-> >       unsigned long truesize;
-> > @@ -702,6 +744,8 @@ int __zerocopy_sg_from_iter(struct msghdr *msg, str=
-uct sock *sk,
-> >
-> >       if (msg && msg->msg_ubuf && msg->sg_from_iter)
-> >               ret =3D msg->sg_from_iter(skb, from, length);
-> > +     else if (unlikely(binding))
-> > +             ret =3D zerocopy_fill_skb_from_devmem(skb, from, length, =
-binding);
-> >       else
-> >               ret =3D zerocopy_fill_skb_from_iter(skb, from, length);
-> >
-> > @@ -735,7 +779,7 @@ int zerocopy_sg_from_iter(struct sk_buff *skb, stru=
-ct iov_iter *from)
-> >       if (skb_copy_datagram_from_iter(skb, 0, from, copy))
-> >               return -EFAULT;
-> >
-> > -     return __zerocopy_sg_from_iter(NULL, NULL, skb, from, ~0U);
-> > +     return __zerocopy_sg_from_iter(NULL, NULL, skb, from, ~0U, NULL);
-> >  }
-> >  EXPORT_SYMBOL(zerocopy_sg_from_iter);
-> >
-> > diff --git a/net/core/devmem.c b/net/core/devmem.c
-> > index 0cf3d189f06c..393e30d72dc8 100644
-> > --- a/net/core/devmem.c
-> > +++ b/net/core/devmem.c
-> > @@ -17,6 +17,7 @@
-> >  #include <net/netdev_rx_queue.h>
-> >  #include <net/page_pool/helpers.h>
-> >  #include <net/page_pool/memory_provider.h>
-> > +#include <net/sock.h>
-> >  #include <trace/events/page_pool.h>
-> >
-> >  #include "devmem.h"
-> > @@ -54,8 +55,10 @@ static dma_addr_t net_devmem_get_dma_addr(const stru=
-ct net_iov *niov)
-> >              ((dma_addr_t)net_iov_idx(niov) << PAGE_SHIFT);
-> >  }
-> >
-> > -void __net_devmem_dmabuf_binding_free(struct net_devmem_dmabuf_binding=
- *binding)
-> > +void __net_devmem_dmabuf_binding_free(struct work_struct *wq)
-> >  {
-> > +     struct net_devmem_dmabuf_binding *binding =3D container_of(wq, ty=
-peof(*binding), unbind_w);
-> > +
-> >       size_t size, avail;
-> >
-> >       gen_pool_for_each_chunk(binding->chunk_pool,
-> > @@ -73,8 +76,10 @@ void __net_devmem_dmabuf_binding_free(struct net_dev=
-mem_dmabuf_binding *binding)
-> >       dma_buf_detach(binding->dmabuf, binding->attachment);
-> >       dma_buf_put(binding->dmabuf);
-> >       xa_destroy(&binding->bound_rxqs);
-> > +     kvfree(binding->tx_vec);
-> >       kfree(binding);
-> >  }
-> > +EXPORT_SYMBOL(__net_devmem_dmabuf_binding_free);
-> >
-> >  struct net_iov *
-> >  net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding)
-> > @@ -119,6 +124,13 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dm=
-abuf_binding *binding)
-> >       unsigned long xa_idx;
-> >       unsigned int rxq_idx;
-> >
-> > +     xa_erase(&net_devmem_dmabuf_bindings, binding->id);
-> > +
-> > +     /* Ensure no tx net_devmem_lookup_dmabuf() are in flight after th=
-e
-> > +      * erase.
-> > +      */
-> > +     synchronize_net();
-> > +
-> >       if (binding->list.next)
-> >               list_del(&binding->list);
-> >
->
-> One thing forgot to mention: we should probably do the same for the
-> allocation path? Move the binding->id allocation to the end of the
-> routine to make sure we 'post' fully initialized bindings? Otherwise,
-> net_devmem_bind_dmabuf migh race with the sendmsg?
+Hi Levi,
 
-Ah, good point. Although sane userspace will wait for the bind to
-finish to get the id, and then pass the id to sendmsg. Only userspace
-looking for trouble will be able to trigger any race here, but yes we
-should handle that a bit better.
+I tested this patch and it works for me.
 
---
+I would suggestion to improve a bit commit log for easier understanding.
+And a minor comment for the code, otherwise, LGTM.
+
+On Thu, Mar 06, 2025 at 12:33:50PM +0000, Yeoreum Yun wrote:
+> The perf core code fails to account for total_enable_time of event
+> when its state is inactive.
+> 
+> Here is the error case for failure to account for total_enable_time for
+> core event:
+
+Here is a failure case for accouting total_enable_time for CPU PMU
+events:
+
+> sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 2s
+> ...
+> 
+> /*
+>  * three number represetns each
+>  *   scaled count / total_enable_time / total_total_running_time
+>  */
+> armv8_pmuv3_0/event=0x08/: 1138698008 2289429840 2174835740
+>                                       ^^^^^^^^^^
+> armv8_pmuv3_1/event=0x08/: 1826791390 1950025700 847648440
+>                                       ^^^^^^^^^^
+
+You could use below syntax like:
+
+  armv8_pmuv3_0/event=0x08/: 1138698008 2289429840 2174835740
+  armv8_pmuv3_1/event=0x08/: 1826791390 1950025700 847648440
+                              `          `          `> child_total_time_running
+                               `          `> child_total_time_enabled
+                                `> child_count
+> 
+>  Performance counter stats for 'stress-ng --pthread=2 -t 2s':
+> 
+>      1,138,698,008      armv8_pmuv3_0/event=0x08/                                               (94.99%)
+>      1,826,791,390      armv8_pmuv3_1/event=0x08/                                               (43.47%)
+> 
+> Since above two events are belong to the same task context and
+> mutually-exclusive per cpu (they couldn't be active at the same time on the same cpu),
+> the total_enable_time should be the same (marked with ^^^^^^^^^^^)
+> and the summation of ratio should be 100%.
+
+The two events above are opened on two different CPU PMUs, for example,
+each event is opened for a cluster in an Arm big.LITTLE system, they
+will never run on the same CPU.  In theory, the total enabled time should
+be same for both events, as two events are opened and closed together.
+
+> This account failure of total_enable_time because of
+> account failure of child_total_enable_time of child event when
+> child task exit.
+
+As the result show, the two events' child total enabled time are
+different (2289429840 vs 1950025700).  This is because child events
+are not accounted properly if a event is INACTIVE state when the
+task exits.
+
+> Below table explains how the child_total_enable_time is failed to account at
+> exiting child task which switch cpus as time passes by (CPU0 -> CPU1 -> CPU0)
+> 
+>  - in means sched_in.
+>  - out means sched_out.
+>  - exit means at the exit of child task.
+>    NOTE: the value is before calling list_del_event(). which mean
+>          the value at exit column will be added at parent event's
+>           child_total_enable_time when child task exit.
+>  - ctx is the child_task_ctx,
+>  - e0 is the child_event which set with cpu == -1 and opened with pmu0 only
+>    added in CPU0,
+>  - e1 is the child_event which set with cpu == -1 and opened with pmu1 only
+>    added in CPU1,
+>  - e0 and e1 belongs to same child_task_ctx.
+> 
+>           CPU0 (run t1)        CPU1 (run t2)          CPU0 (run t3)
+>           |  in | out |       | in  | out     |       | in      | exit        |
+> ------------------------------------------------------------------------------
+> ctx->time |  0  | t1  |       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2 + t3|
+> ------------------------------------------------------------------------------
+> e0->ena   |  0  | t1  |       | t1  | t1     *|       | t1 + t2 | t1 + t2 + t3|
+> ------------------------------------------------------------------------------
+> e0->run   |  0  | t1  |       | t1  | t1     *|       | t1      | t1 + t3     |
+> ------------------------------------------------------------------------------
+> e1->ena   |  0  | 0  *|       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2    X|
+> ------------------------------------------------------------------------------
+> e1->run   |  0  | 0  *|       | 0   | t2      |       | t2      | t2         X|
+> ------------------------------------------------------------------------------
+> 
+> The value marked with * means it doesn't updates since event->state was
+> INACTIVE.
+> 
+> Please see the last CPU0's column with exit (marked with X).
+> Since e1's state is INACTIVE its total_enable_time doesn't update
+> and it remains with former value without accounting t3 time.
+> 
+> In this situation, at __perf_remove_from_context() while exit child_task,
+> sync_child_event() where adds child_event's total_enable_time to
+> parent event's child_total_enable_time in perf_child_detach() is called
+> before list_del_event() in which event time is updated by setting
+> the event state as OFF.
+
+In this case, the call sequence is:
+
+  perf_event_exit_event()
+    `> perf_remove_from_context()
+         `> __perf_remove_from_context()
+              `> perf_child_detach()   -> Accumulate child_total_time_enabled
+              `> list_del_event()      -> Update child event's time
+
+The problem is the time accumulation happens prior to child event's time
+updating.  Thus, it misses to account the last period's time when event
+exits.
+
+> That means child_total_enable_time is added with missing
+> amount of last enable time -- t3.
+> 
+> In case of parent event's total_enable_time is updated properly in
+> list_del_event() when the task exit.
+> However, the child_total_enable_time is missed when child_task exited,
+> the perf prints error amount of enable_time (which is summation of
+> total_enable_time + child_total_enable_time).
+> 
+> To address this, update event state via perf_event_state() in
+> __perf_remove_from_context() and call it before perf_child_detach()
+> where parent's total_enable_time is updated.
+> 
+
+The perf core layer follows the rule that timekeeping is tied to state
+change.  To address the issue, invokes perf_event_state() for updating
+state alongside with accouting the time.  Then, perf_child_detach()
+populates the time into parent's time metrics.
+
+> After this patch, this problem is gone like:
+> 
+> sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
+> ...
+> armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
+> armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
+> 
+>  Performance counter stats for 'stress-ng --pthread=2 -t 10s':
+> 
+>     15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
+>     22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> Suggsted-by: Peter Zijlstra <peterz@infradead.org>
+
+/Suggsted-by/Suggested-by/
+
+> ---
+>  kernel/events/core.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 6364319e2f88..058533a50493 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
+>  #define DETACH_GROUP	0x01UL
+>  #define DETACH_CHILD	0x02UL
+>  #define DETACH_DEAD	0x04UL
+> +#define DETACH_EXIT	0x08UL
+> 
+>  /*
+>   * Cross CPU call to remove a performance event
+> @@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
+>  			   void *info)
+>  {
+>  	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
+> +	enum perf_event_state state = PERF_EVENT_STATE_OFF;
+>  	unsigned long flags = (unsigned long)info;
+> 
+>  	ctx_time_update(cpuctx, ctx);
+> @@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
+>  	 * Ensure event_sched_out() switches to OFF, at the very least
+>  	 * this avoids raising perf_pending_task() at this time.
+>  	 */
+> -	if (flags & DETACH_DEAD)
+> +	if (flags & DETACH_EXIT)
+> +		state = PERF_EVENT_STATE_EXIT;
+> +	if (flags & DETACH_DEAD) {
+>  		event->pending_disable = 1;
+> +		state = PERF_EVENT_STATE_DEAD;
+> +	}
+>  	event_sched_out(event, ctx);
+> +	perf_event_set_state(event, min(event->state, state));
+
+Nitpick: can we move perf_event_set_state() before event_sched_out()?
+
+So the function handles the state machine ahead, then proceed for
+other operations.
+
 Thanks,
-Mina
+Leo
+
+>  	if (flags & DETACH_GROUP)
+>  		perf_group_detach(event);
+>  	if (flags & DETACH_CHILD)
+>  		perf_child_detach(event);
+>  	list_del_event(event, ctx);
+> -	if (flags & DETACH_DEAD)
+> -		event->state = PERF_EVENT_STATE_DEAD;
+> 
+>  	if (!pmu_ctx->nr_events) {
+>  		pmu_ctx->rotate_necessary = 0;
+> @@ -13424,12 +13429,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
+>  		mutex_lock(&parent_event->child_mutex);
+>  	}
+> 
+> -	perf_remove_from_context(event, detach_flags);
+> -
+> -	raw_spin_lock_irq(&ctx->lock);
+> -	if (event->state > PERF_EVENT_STATE_EXIT)
+> -		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
+> -	raw_spin_unlock_irq(&ctx->lock);
+> +	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
+> 
+>  	/*
+>  	 * Child events can be freed.
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
 
