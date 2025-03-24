@@ -1,182 +1,103 @@
-Return-Path: <linux-kernel+bounces-573145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E425FA6D38A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:31:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC9BA6D38D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FF416DD8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 783EC7A632E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE891552E0;
-	Mon, 24 Mar 2025 04:31:50 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107BF2E3383
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A2917B502;
+	Mon, 24 Mar 2025 04:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfBPplIw"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D762E3383;
+	Mon, 24 Mar 2025 04:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742790710; cv=none; b=Hl7I/1E9cdUwvt00xJYNO2mAu9WB5uKl9sjqL1fFbZHicKdTViTGAbJLqKWqGRnJ4SejFEptfqPLSeEfd+YOPu01vS8sE84h14/5bNDQGHoBQdM6zen8SqJ7AXYvSyzanDTTsuuiiszlCGLlE8Y4lTu3SGw+R7j6mXFYV1hF6m8=
+	t=1742790873; cv=none; b=kl84Flgl2r3FdTToODeWuU6EFg6H/9a7u5I1oMWf20TR/i3EMMW8b3v31+8iVlr+xDa24Png24uOAzWErMjVvjy0Rt4M9aZmGe2W/hb8o7TqMIp4WYEHRWvbKrerSvLpDHxHx6fT0G797zK2C1Ffw8AYvNya+V8kOjqLtKhjKoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742790710; c=relaxed/simple;
-	bh=hxQg9HlwvzfhGni7ezD0U429mcZreD+ANTevvZDApzE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QmGIU5dc4vF9pXsJG2s0llmbrcmAXk814p7BeLIvaIjfuNp0KDUhw0v+8L9YjKEOTbHzcyOHKDbwa7if+SCWkMgSi787lX4X9Ha/9Mqq58qROGoXov5Xjv9ZLYulSRPAh0LQTDFtX0t4u9FMaS1FZiskvrxen4UpsVqCTrkQeYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.9.175.10])
-	by gateway (Coremail) with SMTP id _____8DxjXIw4OBn4rijAA--.12796S3;
-	Mon, 24 Mar 2025 12:31:44 +0800 (CST)
-Received: from [10.136.12.26] (unknown [111.9.175.10])
-	by front1 (Coremail) with SMTP id qMiowMCx_cYs4OBn0ShdAA--.15158S3;
-	Mon, 24 Mar 2025 12:31:42 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: KGDB: Rework arch_kgdb_breakpoint()
- implementation
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WangYuli <wangyuli@uniontech.com>, kernel@xen0n.name,
- guanwentao@uniontech.com, wentao@uniontech.com, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, zhoubinbin@loongson.cn, lihui@loongson.cn,
- rdunlap@infradead.org, chenhuacai@loongson.cn, zhanjun@uniontech.com,
- niecheng1@uniontech.com, Tiezhu Yang <yangtiezhu@loongson.cn>
-References: <943E06D656E4E707+20250321141001.109916-1-wangyuli@uniontech.com>
- <CAAhV-H71aEKj2V8mAqbUuAe1JiHngWHW3rSaJ_Dx_CzoQC7TgQ@mail.gmail.com>
- <545ed081-bec3-395c-e0dd-a45146e00cd1@loongson.cn>
- <CAAhV-H51AxAjhhge=w4Y=p0XnuW-RyuvA5dPpPc-F0N9YPYHrg@mail.gmail.com>
-From: Jinyang He <hejinyang@loongson.cn>
-Message-ID: <30b25aa7-106f-7ebf-296d-0e05d7da75eb@loongson.cn>
-Date: Mon, 24 Mar 2025 12:31:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1742790873; c=relaxed/simple;
+	bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fN6S9giLEeSqr/z33l2JXVPdMPydZCLKpTEGOpi0x0IYuCzi5BxzMh8oDwhv2sj+QWY38rSQzeAbzgifB073ilZ1LV2uggMJmqId6CyLZrDLZ9Js6dWNlkuC97ta0X3FE3OafnkV1TpvKM50sgWkb0AOtjT6sFrpD9pM2MhScWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfBPplIw; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fb0f619dso75810215ad.1;
+        Sun, 23 Mar 2025 21:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742790872; x=1743395672; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
+        b=AfBPplIw/bS3025GXAkardXMGFiXtwa9qGRfRgDSNr1GA1LGFbALjkM7CH5PMOSn3M
+         jRlGWMAtE4eGiVi7q4/org9K9zyKp2I7tUQl9ofCrWEFb/T8jbDtmEiM2LJN2MVr+53G
+         FxIiGPm4F0BCHOUNyrr3zRE+PmIsAC9nxLVNn/HLZIQISu+6Fq1y8OvJE7K1hKzzJmHK
+         H5EwwOyXghZHO6wCePouiOsV94r8yiO5qTk6IKkja7UG62m4eAI+KCndQ0RtGA3P/6M2
+         +5JFXluQ4WQL7wZsjfbnUbSdNy5PLBg8JQWIfOE2JHtiDT/w/ILFad60tOVn0A0qmt1c
+         RbBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742790872; x=1743395672;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I/KauccPAuIUUyygZIwODYR2nJ2wCjMs4XIaCqzCPPU=;
+        b=J0Xu80Zx6KolWBwyk3T45q1D/svSDZLuB1ou482gzY47pHvjHaqPtJAnb/i2gk8QBt
+         vcTu+4iemTBQ0HuAImdenQMaJyJfdtEZEpNKuZjeRapXJRbo9ml5L/7CGrojQ6E3qz5t
+         xnlxVzWcE5yPwdQHf5cnRqCO/NsJjYdJ2VAYc9zwWf7WgXMbFwsPNEq8Sat/uiUj3eL9
+         IfFI2C8DH1HlzO0I08yUIi2ODXAI+MZRjI/P0Yehlaq3Gsu02ZxS5bvXMl+uEQxVjk8A
+         z4kRDY5NXo5S1iWFNX9B4zVfIK/HzvFD9FhTo7j16U6CCHmh37tvWwaoeRXK1C7JVWJI
+         mScg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm1C3o3BL9tqy+0moRXlQPkja1f2RUAkjCVvGHHD+7H5HwqQh5GUYGtPlhcRN/rbdZc3wO2FLRnntCmEdS@vger.kernel.org, AJvYcCVpSwR1GVOsTByfxpfRAAtjSBt7SCaJ4HYh50KQemfUOmK7d9x2bcfAczzi3cH486Q/ggsx202Dfltn@vger.kernel.org, AJvYcCVseX/3f9C6Bj8Ms6fSm15oMoooc3x61nmG/q+OARRX3AUm9w/QMV2OMzhxG6HCb0jjilhONBXcicpFqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLPjaLdbkmXsPYlkffsA7VjhXCs3KT53VbYcIedFRAXJ6dRIRq
+	BP10/je+G79aHF7aYqAiUuZFrfcYwot92zZ3e61h5M+xitk4xs29W1raaYF2
+X-Gm-Gg: ASbGnctzSqIu4kZu2fDzcd0alCWmj3SyUl81Mo6FoHiR4Tm1SuWwozXMXhVFxwOnlfZ
+	SZmyzHLh0aqlkUPRvJBSYumvPeY+FkVYSJIr4vIYJEwB+P0+UdWUSy27Gd5/AYDhgfTZkQs0p7C
+	qPrMdkPkP6koDr8dYESVSrQnLH//iybDZyjXybaZOTRK4ulnqqE2ZRyqTORJg1C14N5E2YXmHQY
+	tT19lLfadsOZjsdAxxtULGQ/VfKBoK9SLokLZe/4YbbTuovp/3IpjQxFfLKyHXgkFfH7iM8lrQB
+	m9VVdmaW4ek7r7gTeSAdcQ/SmbAb4KgKCLsJ42gpTKttcz5NvmrdmYEoeAitBaveZSU0
+X-Google-Smtp-Source: AGHT+IEA2YgUDTs4JndOkGPpH9t1CsF5sL3RwabFC5JDF8x48W//RtHV9Udnl71HEc7Nh14BhQz2fw==
+X-Received: by 2002:a17:903:1aac:b0:223:5945:ffd5 with SMTP id d9443c01a7336-22780e110b1mr197060465ad.32.1742790871418;
+        Sun, 23 Mar 2025 21:34:31 -0700 (PDT)
+Received: from localhost.localdomain ([27.70.184.106])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811e3132sm60696135ad.200.2025.03.23.21.34.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 21:34:30 -0700 (PDT)
+From: Nam Tran <trannamatk@gmail.com>
+To: lee@kernel.org
+Cc: pavel@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
+Date: Mon, 24 Mar 2025 11:34:04 +0700
+Message-Id: <20250324043404.14078-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250320155012.GT3890718@google.com>
+References: <20250320155012.GT3890718@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H51AxAjhhge=w4Y=p0XnuW-RyuvA5dPpPc-F0N9YPYHrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowMCx_cYs4OBn0ShdAA--.15158S3
-X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxWry7ur13XrW7tw1UXFWfCrX_yoW5KF45pF
-	W8C3WqyF48Jry8CwnxtrWYvr1ayws7Ww1xXan8K34xCa4qq3W3Jr12yFnrua42gr1xKw10
-	vFyYga4Iq3WUA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUxUGYDU
-	UUU
 
-On 2025-03-24 12:09, Huacai Chen wrote:
+Thank you for your suggestion. I appreciate your guidance on proper email formatting.
+I will ensure my future responses follow this standard.
+Your feedback is very helpful for me to improve my contributions.
 
-> Hi, Jinyang,
->
-> On Mon, Mar 24, 2025 at 9:42 AM Jinyang He <hejinyang@loongson.cn> wrote:
->> On 2025-03-22 20:51, Huacai Chen wrote:
->>
->>> Hi, Tiezhu & Jinyang,
->>>
->>> On Fri, Mar 21, 2025 at 10:11 PM WangYuli <wangyuli@uniontech.com> wrote:
->>>> The arch_kgdb_breakpoint() function defines the kgdb_breakinst
->>>> symbol using inline assembly.
->>>>
->>>> There's a potential issue where the compiler might inline
->>>> arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
->>>> symbol multiple times, leading to a linker error.
->>>>
->>>> To prevent this, declare arch_kgdb_breakpoint() as noline.
->>>>
->>>> Fix follow error with LLVM-19 *only* when LTO_CLANG_FULL:
->>>>       LD      vmlinux.o
->>>>     ld.lld-19: error: ld-temp.o <inline asm>:3:1: symbol 'kgdb_breakinst' is already defined
->>>>     kgdb_breakinst: break 2
->>>>     ^
->>>>
->>>> Additionally, remove "nop" here because it's meaningless for LoongArch
->>>> here.
->>>>
->>>> Fixes: e14dd076964e ("LoongArch: Add basic KGDB & KDB support")
->>>> Co-developed-by: Winston Wen <wentao@uniontech.com>
->>>> Signed-off-by: Winston Wen <wentao@uniontech.com>
->>>> Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
->>>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
->>>> Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
->>>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
->>>> Tested-by: Yuli Wang <wangyuli@uniontech.com>
->>>> Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
->>>> Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
->>>> ---
->>>> Changelog:
->>>>    *v1->v2:
->>>>       1. Drop the nop which is no effect for LoongArch here.
->>>>       2. Add "STACK_FRAME_NON_STANDARD" for arch_kgdb_breakpoint() to
->>>> avoid the objtool warning.
->>>> ---
->>>>    arch/loongarch/kernel/kgdb.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/loongarch/kernel/kgdb.c b/arch/loongarch/kernel/kgdb.c
->>>> index 445c452d72a7..38bd0561d7d5 100644
->>>> --- a/arch/loongarch/kernel/kgdb.c
->>>> +++ b/arch/loongarch/kernel/kgdb.c
->>>> @@ -224,13 +224,13 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long pc)
->>>>           regs->csr_era = pc;
->>>>    }
->>>>
->>>> -void arch_kgdb_breakpoint(void)
->>>> +noinline void arch_kgdb_breakpoint(void)
->>>>    {
->>>>           __asm__ __volatile__ (                  \
->>>>                   ".globl kgdb_breakinst\n\t"     \
->>>> -               "nop\n"                         \
->>>>                   "kgdb_breakinst:\tbreak 2\n\t"); /* BRK_KDB = 2 */
->>>>    }
->>>> +STACK_FRAME_NON_STANDARD(arch_kgdb_breakpoint);
->>> Is there a better solution than STACK_FRAME_NON_STANDARD()? In the
->>> past we can use annotate_reachable() in arch_kgdb_breakpoint(), but
->>> annotate_reachable() is no longer exist.
->> Maybe we can parse the imm-code of `break` and set diffrent insn_type in
->> objtool.
->> The BRK_KDB imply the PC will go head, while the BRK_BUG imply PC stop.
->> (arch/loongarch/include/uapi/asm/break.h)
->>
->> Tiezhu, how do you think?
-> Touching objtool may be a little complicated, is ANNOTATE_REACHABLE()
-> the successor of annotate_reachable()? I tried
-> ANNOTATE_REACHABLE(kgdb_breakinst) but there was still a warning.
-Should it annotate to the next insn of `break`?
-Like,
-
-     kgdb_breakinst:
-     break 2
-     another_label:
-
-ANNOTATE_REACHABLE(another_label)
-
-Jinyang
->
-> Huacai
->
->>
->>> Huacai
->>>
->>>>    /*
->>>>     * Calls linux_debug_hook before the kernel dies. If KGDB is enabled,
->>>> --
->>>> 2.49.0
->>>>
-
+Best regards,
+Nam Tran
 
