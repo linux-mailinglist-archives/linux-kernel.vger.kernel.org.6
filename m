@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-573105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F82EA6D316
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B06EFA6D318
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D0816D4A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA0D16D621
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8E012E1CD;
-	Mon, 24 Mar 2025 02:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728113B1A4;
+	Mon, 24 Mar 2025 02:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="stwLUf4R"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBAO8AHM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E98B667;
-	Mon, 24 Mar 2025 02:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C402314F98;
+	Mon, 24 Mar 2025 02:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742783741; cv=none; b=XhqSPYaIPnIIyKJeSZXFQEX0UbykS8tu2wcKwpDrjih/rg5hrVNrbNP/EA4zV0XD+ytPJX1HlJAdQwdddKS7SBMPy/KN9wvtKBr/YZfHGctuKcVcnhr+vyu8/ZB9C1usWNPi+BVXbUIBGvc4hVjLmAWrcW3NcG5nIaXBq8K9Y64=
+	t=1742783751; cv=none; b=jo4LKu1NUmc+Ev8U6oUsRCUpo+5wHYMuqtsgESE3dTzrDIcP46rcaZsbm+9tPL+CQFvrYm9hufc2d8hmPSqOD1Rbi6KIcXh88NDGS7i6JpscTjfq7WeuO39LMwCBZlPuiLTQDJXVHdDvtyUaAPQQk9IM9GuHdAM2lR779+/d/uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742783741; c=relaxed/simple;
-	bh=cd2bpQ6rijtiBRYe6NFanE/4aq7Kj7bh8XMG5u6H9H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gaNYN+0LBUhB2d+g5AnMFB/fbE4W3hV1CMEF6l8A65uAmA1Op+DJgmJAnrR13V5EtbWO+AxuZ9e8gaODFM+M8Y1Y1GIK2NkziZfCM0toz7jvVhSr3sxDPBXAtTmFATyJge0xhKr5GIX9rbPLadgp1ejLOSrZE90KLhjl6ng6ijI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=stwLUf4R; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742783734;
-	bh=2Mx2/2FC58YVJr9d818o0qZgffvByW3aFvXCysFxuco=;
-	h=Date:From:To:Cc:Subject:From;
-	b=stwLUf4RwSkOQRNZFRINFVtu0r0WidAzJgfQQT5OsMnw3rUWJv/L5mVeu9kywBDw1
-	 q47Ii4NwdefT6vja1hZL6VkFUJcTD3XMBzQRPBCWnOBxBMB/+pK7ZaGEdYe4uga0RN
-	 Orcwi0ZNOf+lPtdbCBDg90mctWV1fq+WGBTHdF5FuYY1P2866WCZitASVLdBBwWl4w
-	 KrPsNB5rnBh0FgaHOoq8Q2AYSbF53A6qozU37/kGazoMV3JSVv4fY0we4p5DrePXni
-	 ApORiMHNm0ZWIp9JlCJrC0XkAavmaR0PuB3s0zLLPcBPZfOceGE9p6PTL8sD0V81XV
-	 +cCJT7aqeolZg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLcbp5w8wz4wbW;
-	Mon, 24 Mar 2025 13:35:34 +1100 (AEDT)
-Date: Mon, 24 Mar 2025 13:35:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the ftrace tree
-Message-ID: <20250324133533.19b88cbf@canb.auug.org.au>
+	s=arc-20240116; t=1742783751; c=relaxed/simple;
+	bh=xAFn0lYBGzrmag+aR3lSQ/jnbdF7nDNylnf7HpAI05U=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IDesyb9R4mpa1MZ/DN4pQbTRn/2yL2PIeDFdhTRVvY5sjNX0mC68ZqpqvGTkKO7zhJbaUr364qDkpjYwhkLHhuWNPybnYLIk1J52kYsWLusYBfxteCsgdIvO25JDODWKGDz5LbQhSNAnk7TQe+/xlz4v/aT4+afxUf1kT5uTozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBAO8AHM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070CBC4CEE8;
+	Mon, 24 Mar 2025 02:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742783751;
+	bh=xAFn0lYBGzrmag+aR3lSQ/jnbdF7nDNylnf7HpAI05U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WBAO8AHMOxOeZjkDJmvhOuBONAVHCS2C3jtZSx/UZyEqFnCgQq0mLv49MYg5jJQD0
+	 tiHHfXHdW7X4kclgspl7Q4PbT0bX0q54fnpSMWRhpdtu0KGw5jTiql5iFFne8+EoZO
+	 +LZjhgRM3/wLA2kdJrnYcCeosHcVdQx0PNkF4ZgZ3kierqCR0keocHgRTLDp2fhEUL
+	 z3FXwGKdTIbQneZCg0GBSg319fevISnYeEmYcHj248mCsApkOGiq1IXHmaa0ki9MTK
+	 L/HLM8lqgcoSWMVu3DVZlSQogOF6WeErP45etQewAhQfeUzeHbvy6Hmpz0OUn1sAiQ
+	 S8Z+AOflrHGYQ==
+Date: Mon, 24 Mar 2025 11:35:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] tracing: Show last module text symbols in the
+ stacktrace
+Message-Id: <20250324113547.681fe2cd2f90a00a1e74c1a0@kernel.org>
+In-Reply-To: <20250321125203.61585a02@batman.local.home>
+References: <174230514441.2909896.16487286892751735867.stgit@mhiramat.tok.corp.google.com>
+	<174230516153.2909896.11459658533253319657.stgit@mhiramat.tok.corp.google.com>
+	<20250321125203.61585a02@batman.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/XnVrQ7/KDNCcgIV/_F4DLZf";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/XnVrQ7/KDNCcgIV/_F4DLZf
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Fri, 21 Mar 2025 12:52:03 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-In commit
+> On Tue, 18 Mar 2025 22:39:21 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> 
+> > +/**
+> > + * trace_adjust_address() - Adjust prev boot address to current address.
+> > + * @tr: Persistent ring buffer's trace_array.
+> > + * @addr: Address in @tr which is adjusted.
+> > + */
+> > +unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
+> > +{
+> > +	struct trace_scratch *tscratch;
+> > +	struct trace_mod_entry *entry;
+> > +	long *module_delta;
+> > +	int idx = 0, nr_entries;
+> > +
+> > +	/* If we don't have last boot delta, return the address */
+> > +	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
+> > +		return addr;
+> > +
+> > +	tscratch = tr->scratch;
+> > +	/* if there is no tscrach, module_delta must be NULL. */
+> > +	module_delta = READ_ONCE(tr->module_delta);
+> 
+> What protects this from being freed after it is read?
+> 
+> > +	if (!module_delta || tscratch->entries[0].mod_addr > addr)
+> > +		return addr + tr->text_delta;
+> > +
+> > +	/* Note that entries must be sorted. */
+> > +	nr_entries = tscratch->nr_entries;
+> > +	if (nr_entries == 1 ||
+> > +	    tscratch->entries[nr_entries - 1].mod_addr < addr)
+> > +		idx = nr_entries - 1;
+> > +	else {
+> > +		entry = __inline_bsearch((void *)addr,
+> > +				tscratch->entries,
+> > +				nr_entries - 1,
+> > +				sizeof(tscratch->entries[0]),
+> > +				cmp_mod_entry);
+> > +		if (entry)
+> > +			idx = entry - tscratch->entries;
+> > +	}
+> > +
+> > +	return addr + module_delta[idx];
+> > +}
+> > +
+> >  #ifdef CONFIG_MODULES
+> >  static int save_mod(struct module *mod, void *data)
+> >  {
+> > @@ -6036,6 +6088,7 @@ static int save_mod(struct module *mod, void *data)
+> >  static void update_last_data(struct trace_array *tr)
+> >  {
+> >  	struct trace_scratch *tscratch;
+> > +	long *module_delta;
+> >  
+> >  	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
+> >  		return;
+> > @@ -6070,6 +6123,8 @@ static void update_last_data(struct trace_array *tr)
+> >  		return;
+> >  
+> >  	tscratch = tr->scratch;
+> > +	module_delta = READ_ONCE(tr->module_delta);
+> 
+> Say if a reader read tr->module_delta before the NULL write.
+> 
+> > +	WRITE_ONCE(tr->module_delta, NULL);
+> >  
+> >  	/* Set the persistent ring buffer meta data to this address */
+> >  #ifdef CONFIG_RANDOMIZE_BASE
+> > @@ -6078,6 +6133,8 @@ static void update_last_data(struct trace_array *tr)
+> >  	tscratch->kaslr_addr = 0;
+> >  #endif
+> >  	tr->flags &= ~TRACE_ARRAY_FL_LAST_BOOT;
+> > +
+> > +	kfree(module_delta);
+> 
+> Why is this safe?
+> 
+> I don't see any synchronization between setting NULL and freeing this,
+> like RCU would do.
 
-  6d5934331009 ("tracing: Do not use PERF enums when perf is not defined")
+Ah, I thought it is OK that module_delta = NULL for kfree(), but
+there could be UAF case?  update_last_data() is protected by trace_types_lock,
+so update_last_data() itself is serialized. But trace_adjust_address() is
+not. Hmm, yeah, it is not enough checking by TRACE_ARRAY_FL_LAST_BOOT flag.
 
-Fixes tag
+OK, then what about this?
 
-  Fixes: a1e3ad43115e ("tracing: Ensure module defining synth event cannot =
-be unloaded while tracing")
+- free module_delta with rcu_free()
+- protect trace_adjust_address() by rcu_read_lock()
 
-has these problem(s):
+Thank you,
 
-  - Subject does not match target commit subject
-    Just use
-        git log -1 --format=3D'Fixes: %h ("%s")'
+> 
+> -- Steve
+> 
+> 
+> >  }
+> > 
 
-Did you mean
 
-Fixes: a1e3ad43115e ("tracing: Fix synth event printk format for str fields=
-")
-
-or
-
-Fixes: 21581dd4e7ff ("tracing: Ensure module defining synth event cannot be=
- unloaded while tracing")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XnVrQ7/KDNCcgIV/_F4DLZf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfgxPUACgkQAVBC80lX
-0GzgDQf/Xtidb5z/KBSP6T52Ire/VospzP+5Rof9XcCsvK4MQktJeQUhyry8/rFy
-N/xZg+J0N8b9S0/+keqlnOAtGu2lRxAnyjXoZIpAlOad0bVi+2eAjhyMOV29E+Z3
-i2eOTIp4ipVVV+MSFEXISzmkmrPVRHtg8hghyeSb0PeLXkrahAVLlGJcsgj0HBPA
-1Ao7FA0+3QuHjqRObCDnsHGVFyhtQFpHXu967pXdbQc/juFdTkau2NSpe9Ww2bIn
-4XeH5y6hcK7Xg51NTxP6CFtZOyMt+zJlnu4hWTroAQtRXchKfVC26IMs7g2ar958
-wFM3O39yg8hDYWtbi3Yc9sQgEI8HJQ==
-=Edl9
------END PGP SIGNATURE-----
-
---Sig_/XnVrQ7/KDNCcgIV/_F4DLZf--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
