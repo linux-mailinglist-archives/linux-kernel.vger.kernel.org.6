@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-574181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E178DA6E175
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:49:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A406BA6E1AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 783B87A42E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067091720FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BF02676CB;
-	Mon, 24 Mar 2025 17:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44E4267B0D;
+	Mon, 24 Mar 2025 17:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m0qrWwBq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggXUZl2D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1B626462B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F7026462B;
+	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838085; cv=none; b=IB4zFqOWzweTYJ3DTfkh0hHNMPeTLhcF8MVBI92z/oYm0bGa+ot6Sp4cU1+6t3MfGGx9mN6xe1Eyfqd/5yOUn3O3p9p2nSd4eOiK43O08wgCY0kUDTGoVVfzEVqN97kxpNEOlPin8nLSOG2zuOR1O+T7/ZawRq36O5gksktsJ7I=
+	t=1742838103; cv=none; b=j7b87UMzzA9ikHO4kSl6s1p7k1OC+K5UDCGB08cTUwYOIsr7CSV2EhBpS2aM/FKmd/Yp6CQWVRzkTrGJCu71hAzCe2O5D24TRRA2ZXMnJj5uiqfOzqzh8xxal0lljtu6lrC+1s7pUx07zsvuc3vB6Tt7/rQoMnCceAoPcx9dpxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838085; c=relaxed/simple;
-	bh=hy9anLT+yso7HLVYKMgm3lQib/ckrtMmioGEPpx4hus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KcvIzPGCjKarIpgoqjKzP7NpZP5lAodHFeoIM/ltDiycfkFbqQMc+7NbQrB4DerzsWAOv1YZnABCIEWVaVM+W+VHJfa1owirvkiMgzXNUNn3krqdW9UHwwXEhYaj6tI2uvi4LaKBM987JiWLag57sfk0Km4TyF1oINlCtWTK3o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m0qrWwBq; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742838084; x=1774374084;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hy9anLT+yso7HLVYKMgm3lQib/ckrtMmioGEPpx4hus=;
-  b=m0qrWwBqNu1BcdumapwnA7OwYw6j/eQMYNOfsNAcEWYiPsB9chTS+9Nr
-   Xer7/W0Jk/2cjTie+BKXvQfQ8cWZ/QnWPhaKVxm0KP9r7ck5G75heTVyN
-   TQ/Cz45BMMumzWHXTlonYTlMCUExw46SkghfTe3cnFvmupEgCXN3iCz7m
-   IYgvjhWwebMBExs5rMzXIMhzbSfACnZM1Q82Hm1fUNAZgyInFJXoUEfuf
-   zOBI8/e0tEJZ5tYe1MEtzRT0vhO8iriqWg7DiovuDvAYIvf130K0vuEE7
-   tsBPncIhfwxf6Q7Aq6ETWH76IgEzOfvudbWHioaea0AszEqgBh5/2HXS2
-   g==;
-X-CSE-ConnectionGUID: Kp3tgertRvilWY67IgsZaw==
-X-CSE-MsgGUID: A5rbG2k0QUGzywmcUCYtBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="61583214"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="61583214"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 10:41:23 -0700
-X-CSE-ConnectionGUID: AWPngOkURvy4A35d0cpDAw==
-X-CSE-MsgGUID: 6teCpmLqTPSutk2e5RuVBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124280593"
-Received: from pmsonava-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.197])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 10:41:22 -0700
-Date: Mon, 24 Mar 2025 10:41:15 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Brendan Jackman <jackmanb@google.com>,
-	Derek Manwaring <derekmn@amazon.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH v4 03/36] x86/bugs: Restructure mmio mitigation
-Message-ID: <20250324174115.ogelbfgdmeoybi3b@desk>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-4-david.kaplan@amd.com>
- <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
- <20250313192606.iijythngqtpx4tyy@desk>
- <20250324092915.GAZ-El68JG2BVuMK0K@fat_crate.local>
+	s=arc-20240116; t=1742838103; c=relaxed/simple;
+	bh=sdcuRNAQFYtob6yEPETsohJyFlIPNbv+Zn2NcH7jrWI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W+arckCWzn42MWxDuHCr6N4ol7IqLGgy2WEeJILehQBb/XsbzJRsVc12sE7ij9C3sKZhQfUwLMlMLS9s2vymwVcjCdmrexjV6YnaIBk/vP6JpoOl9lBg3fR9DVsZBd0NqrsQmxoEERnH/pSJU+o3B7vE8w0FISGP2k5CMR/WsvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggXUZl2D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 59F0DC4CEDD;
+	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742838102;
+	bh=sdcuRNAQFYtob6yEPETsohJyFlIPNbv+Zn2NcH7jrWI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ggXUZl2Dd5l7WjVO+CYEAbKgabvZGg99YA5B/EVisoMp2IRaUmrU9NsnSCxseMTja
+	 MHpKvbLiZQzsyVMLCtfa7Cdtm3RT4t4tXWSdWiH+LnwAsDD6Qj3kD8SE2MeFHeiqI5
+	 ZanSVghZAvvxz8FKy/fcxzoeSIwA7V0ut54LTHiUQzP04L4sB9juoEn2JG6ay5tUPe
+	 kbd9JqYK1M3HYW55W6nK9JEw8fiuF5TpOVSnwBu+QUUZBxIwKn8OQUBbuKKptGjSIk
+	 /Zg7yJkNCjHr+CVRFvUCqYN8J8rtz+K/dvpANp6p7zh1yDvHO0Ck7DKqllXeaeF5n4
+	 Nbe8z7IyFfXlg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F2EC36002;
+	Mon, 24 Mar 2025 17:41:42 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
+Date: Mon, 24 Mar 2025 18:41:37 +0100
+Message-Id: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324092915.GAZ-El68JG2BVuMK0K@fat_crate.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFKZ4WcC/43O20oEMQwG4FdZem2WNJlDx6t9D/GiM4m7VelAW
+ 8fDMu9uRxEFYdmrEPjz/TmbrCloNre7s0m6hBzmWJf2Zmemk49HhSB1N4TESMggBcYQJcRjhqj
+ ldU5PMD37nMFx16tI1w9Cpt6PPiuMycfptAmICFIbJi1JFYqzlqq2JU8hlzm9fz2x2DrurulbL
+ CA0LSly3xKiHB59jP5lX2PmvrILXU3RRg1D5+r3Lfb8j+IfqkW27hLFGyVOsBF5GDt7CG+h7Ke
+ Pb6f56wyXnKY6xDQwdw5pbH6ddV0/AcDuXAC4AQAA
+X-Change-ID: 20230203-dt-bindings-network-class-8367edd679d2
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
+ =?utf-8?q?J=C3=A9r=C3=B4me_Pouiller?= <jerome.pouiller@silabs.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Mailing List <devicetree-spec@vger.kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2987; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=sdcuRNAQFYtob6yEPETsohJyFlIPNbv+Zn2NcH7jrWI=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn4ZlTrhhrbvdN7q/q0xl8VBJwCdheUpabZJum5
+ tkfNRJDy32JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ+GZUwAKCRBgAj/E00kg
+ cjJoD/445obenDkJ2ww6j/V4OnGgHkP5M0egpahzT0SriANaT7QkIObfDbx9udE25Un6znndbgt
+ 8vUbYA91FAokbS4DkynY4cXKxi46j7HOYnAicew45FZGRZaLajzGiIXVwvuQXn/F7hJtLDmUBUK
+ XrOlCDQrtMRKfH06dxoZITN9SWhp3aBm6Huq+9nBnw+xIkQUblfcWFdnRWkcyn/6tuuYZMvBnwJ
+ K66LZW3tL8nHZiEzrIMX3CD63GUo2kGfzqK3cmB7j9Dp3WGC0jh8iCgjUY2bsZije1q8K1m40OQ
+ LSmgTZJctX903izdObj6fvhuOl0nqvVBv+X9IZbL7EA9ykSdACJE4S4NoLnt6knBmcDJOCYwO/o
+ JaHIQh7VP9OuBX2raJcNMy3XcM3N+EdP6wH7omOzTeFMPiR299/EFLUnSl49NTdho+792cDHc9f
+ 46IwQ0P3TDkfxNAtFAR2rXkzwwdWNASfz5JuvrpnUvY1NI5PpUwjQ30sG088EOPKdBUMlrOEIKL
+ ee20LJGG2aOL0vD+dJnzrqXQv2uCr7P3Edm/ea+ZPXOJ89mOF0gGw5cuGXH3AYAUIFTpLd1rXQW
+ 0D4esR1/YpfKoxq/0S2FUFdpqCk+MhTF/FQy+rcfD7PtVhecHx9VZZBqZKP+KYAJCfbXCS4AVwp
+ haOaR4i1hClUEsA==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-On Mon, Mar 24, 2025 at 10:29:15AM +0100, Borislav Petkov wrote:
-> On Thu, Mar 13, 2025 at 12:26:06PM -0700, Pawan Gupta wrote:
-> > Hmm, that would not be straightforward, specially for sysfs status.
-> 
-> See below:
-> 
-> - the unknown thing is done only for this vuln and not for the others
-> 
-> - it doesn't do anything besides reporting things differently - it doesn't
->   apply any mitigations - it is simply causing unnecessary complications which
->   don't bring anything besides maintenance overhead. Unless I'm missing an
->   angle...
+The Devicetree Specification, Release v0.3 specifies in section 4.3.1
+a "Network Class Binding". This covers MAC address and maximal frame
+size properties. "local-mac-address" and "mac-address" with a fixed
+"address-size" of 48 bits are already in the ethernet-controller.yaml
+schema so move those over.
 
-"Unknown" status reporting was requested by Andrew Cooper. I am not able to
-find that conversation though. IIRC, the reason was out-of-service CPUs
-were not tested for the presence of vulnerability. Adding Andrew to Cc.
+Keep "address-size" fixed to 48 bits as it's unclear if network protocols
+using 64-bit mac addresses like ZigBee, 6LoWPAN and others are relevant for
+this binding. This allows mac address array size validation for ethernet
+and wireless lan devices.
 
-> - all the currently unaffected CPUs can also be in "unknown" status so why is
->   this special?
+"max-frame-size" in the Devicetree Specification is written to cover the
+whole layer 2 ethernet frame but actual use for this property is the
+payload size. Keep the description from ethernet-controller.yaml which
+specifies the property as MTU.
 
-Makes sense.
+Signed-off-by: Janne Grunau <j@jannau.net>
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+Changes in v5:
+- Incorrect DCO chain, missing SoB. (Krzysztof)
+- Improved address-bits description. (Krzysztof)
+- Link to v4: https://lore.kernel.org/r/20250319-dt-bindings-network-class-v4-0-2329336802b4@ixit.cz
 
-> IOW, just whack the thing.
+Changes in v4:
+- Changed the mailing list address (Rob)
+- Copyied the whole description for the max-frame-size, including the
+  MTU x max-frame-size contradiction. (Rob)
+- Link to v3: https://lore.kernel.org/r/20250318-dt-bindings-network-class-v3-0-4d8d04ddfb61@ixit.cz
 
-I will let Andrew comment on this.
+Changes in v3:
+- Incorporated wireless-controller.yaml suggestion (Andrew)
+- Link to v2: https://lore.kernel.org/r/20230203-dt-bindings-network-class-v2-0-499686795073@jannau.net
+
+Changes in v2:
+- Added "max-frame-size" with the description from ethernet-controller.yaml
+- Restrict "address-size" to 48-bits
+- Fix the mac-address array size to 6 bytes
+- Drop duplicate default value from "max-frame-size" description
+- Link to v1: https://lore.kernel.org/r/20230203-dt-bindings-network-class-v1-0-452e0375200d@jannau.net
+
+---
+David Heidelberg (2):
+      dt-bindings: net: Add generic wireless controller
+      dt-bindings: wireless: qcom,wcnss: Use wireless-controller.yaml
+
+Janne Grunau (3):
+      dt-bindings: net: Add network-class schema for mac-address properties
+      dt-bindings: wireless: bcm4329-fmac: Use wireless-controller.yaml schema
+      dt-bindings: wireless: silabs,wfx: Use wireless-controller.yaml
+
+ .../bindings/net/ethernet-controller.yaml          | 25 +-----------
+ .../devicetree/bindings/net/network-class.yaml     | 46 ++++++++++++++++++++++
+ .../bindings/net/wireless/brcm,bcm4329-fmac.yaml   |  2 +-
+ .../bindings/net/wireless/silabs,wfx.yaml          |  5 +--
+ .../bindings/net/wireless/wireless-controller.yaml | 23 +++++++++++
+ .../devicetree/bindings/soc/qcom/qcom,wcnss.yaml   |  5 ++-
+ 6 files changed, 76 insertions(+), 30 deletions(-)
+---
+base-commit: 882a18c2c14fc79adb30fe57a9758283aa20efaa
+change-id: 20230203-dt-bindings-network-class-8367edd679d2
+
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
+
+
 
