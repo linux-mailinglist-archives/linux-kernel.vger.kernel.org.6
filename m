@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-574580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEDAA6E719
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:02:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A78CA6E71C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEA21893AA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF0118939E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D51B1F03E8;
-	Mon, 24 Mar 2025 23:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E821F0E31;
+	Mon, 24 Mar 2025 23:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHitfKLM"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOttCeAU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C774A0C;
-	Mon, 24 Mar 2025 23:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BB018C930;
+	Mon, 24 Mar 2025 23:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742857328; cv=none; b=c/Q+GyJ9N+M5spWMbU7w/tWrh1lfk2zoi7VxWwsXdL43aHMSGJNhOVT3OpC+xaVENLVgEgI5mCu+hxfUqlFeiIEdG3jYRSHXw579j4DLJqA3iJAh+f0z36vWfz9rWDtpoTQbbbc8iZqd0+D9eR72F0DOIDekFkbz2z6v8rQIt08=
+	t=1742857517; cv=none; b=JCtPps9wJila+pQpzNyBal6TRHXEZFUmh/ezrQrOqEvhT6PbVMVePs7xm+cmUFHS+vxjZIlPms/qrIrWNZ9HkL11oI1fithm6ntHSLyLiJ5551D5pV+4r0/rKXquPEjbsWbUNGrR/vVdKIrHAqIH5umkTLhxthePG+0DFXZzxH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742857328; c=relaxed/simple;
-	bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccOvhTolSGLk5I5v3Id0g2A1GrfGNtkigck0mauU5cjETwp+phsKr4ofPf6mr8I6um6wrTuZv5KNjrn8EXWM6aQsBaYKEqVkDW3WrVWQ6kNFR/un0GonjjoCvksMz5aYG5C7K2b15JCXOwZgB6h6s8zVJmT/BHtpMDkGloHjyOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHitfKLM; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301b4f97cc1so1529025a91.2;
-        Mon, 24 Mar 2025 16:02:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742857326; x=1743462126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
-        b=nHitfKLMBT/ce7wg4xDeBwxjmfITI4fs1wSdi6WQhjbM2smaL7MXilBpPRIWWURaon
-         5xfm2CnjbDC2U/KJVktyfkgH6eb9f/Fpr1V0OajzbqlMmmKR/JEv0t/hHl+GkmETLLCj
-         Mnlbs1+39eyXIkYYdgEbA+WZLR3GTP+ShFXxZGXnZTzdv5b5nBLUZyRrckL6TlXS64qY
-         O4p3Iq/US7IzYbCgmioMQOsjqZD1aPNTm3ZLoRVP9oBhVL6i+rel4SSGdX9m2FoS132Q
-         0fEQ2sxx6Mg5dj8y8UsA+Awdn1YruzLIHfMJkdwSHa77VKmmYufgWY0XFvCDxndQva+Y
-         CN5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742857326; x=1743462126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
-        b=ICBLHAzuoQ8iLFj1hDfb9e00VTImkAMnGyipBkBtV4CVx38Pv0OBdQ1ZRdkOnqXfgf
-         jJhpMj3iDhu3Bc6gFpeUZCEbqzB7yWrZWyoW8pSju0qVrMNXJdG5toZHQvpJDyySSaT9
-         kD8FxD6LUXZ0RxCYQTzI9sZsakaM3Q/6y+cUx/WuSvS0qHIlovVjTXGl19iReH9APVSg
-         9kxgjA8+OnfrhnT3bgiT5wiG1Cm9W1A2Hoi/vBx9h7fpk54BXIOWdGRYzqB99GlVl0fb
-         M8krYD78D0PO9BKmzeHUMSpV3X5kLicjVfWI4hvdOCz8BkDAySVTrdL1z05C5MP9LRoJ
-         fi3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUm5uTDtYG+eYNmrXPThhkkxeQ5NND7dgRsPgpqaCnpJrtSPoS6DnEI5Y+nzG+yykv5zZcYFrC1CJL0VkhsdGM=@vger.kernel.org, AJvYcCWbvFoFNXe/gJDdqacmM5luCtwlebjRIKk6cQtf1PZeIKPNPXXyMhWgbicRcWGklvhMFmkBhvj/sZhrSCc=@vger.kernel.org, AJvYcCXhAhzgxcqaHCGFpepilSefRyOJ/l/zc009VWpqaKL7wBVP4PxdAoO/pzff//XydusI0TRugNSjxlPA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOjpr5Tz2pjdq4oP5CPgvc16GOB3VIWs3QAb77AU/nJZQuRUNc
-	C5+bx23E5Y90JENg2l8BUC0KNVCsr6ifYFyA/VYJ8BpjvUJB7I+tqGIGAyOZ/pJkLMnNaFJOCKu
-	pUcb15gk82mB2vBjgls1fmU1Cj2U=
-X-Gm-Gg: ASbGnctSimxiS0SmrYblTj1UkbWap/biZYdcm8GGNCq8FCfSH6yM0DPSE+OpMuytnlB
-	bleoq5ndY65vGXH8R6y2pq7V3W2kECi9+QC/1v/KjfY6UJCo7599+8teSPBHvI38iC1lPUQ/5sx
-	BwRJAeCucJLFdVqQQUpp0/7tqJfg==
-X-Google-Smtp-Source: AGHT+IF0N3IVoZm41r+EPPfeHaAlJgTDOk4ghAT1O/mKxGfrCPY/HsBSeXWetofbrS+dczLITSUjUfjwMphj7YT+nAY=
-X-Received: by 2002:a17:90b:33d2:b0:2fe:91d0:f781 with SMTP id
- 98e67ed59e1d1-3030fe534b9mr8779881a91.2.1742857326284; Mon, 24 Mar 2025
- 16:02:06 -0700 (PDT)
+	s=arc-20240116; t=1742857517; c=relaxed/simple;
+	bh=OwYsfyuskTjApvW7yDAsLEh534saPHvQL2Nj5uhaC7o=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=DAgujjjFn2Kah0A4d1GRtkDuliEj95dFnTKJN+xZKvBb4YumyL1qfqKyOyuncKRqhiuUOmgW590oCNybCy9sfLSt/ydA2njNVhQN5m978uvq99jFQgyuseKx+NTzR7vRh/z/+fSwBmsXAM4McDdXfLUXX3RgZvqgyrjgHTvv9c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOttCeAU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BCDC4CEDD;
+	Mon, 24 Mar 2025 23:05:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742857515;
+	bh=OwYsfyuskTjApvW7yDAsLEh534saPHvQL2Nj5uhaC7o=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=NOttCeAUxLlixkV9Vnff6ulrU6dN74p5cj4stKxcM6MH+LLMK2yVnEAQMLZGyivJ4
+	 E6hR0TkLH/k5tNkFZ/iInBTuwzROybHTYO+pKeoDkRd1NPyD0ALGoxK4BBW7Fch2jR
+	 pUXz3u0ChL8hZZFaXUfj+JIfazklTlrzHDrnrD9R9BGw5P2fabyft1jNh/f9hZkeQb
+	 MGWmPklbOmY+hs0Oz78poCp91lYRvUugocTsDXD105Mt0d9DT4r44104DvKgiAUhWj
+	 DUnTLXr4TqbwgltuSBy0D7iZhRm6aRCnw+em4SBuVL3v315K/6Ka0LDcr/tjzFj/E6
+	 GuhQXK5Hi3KFQ==
+Date: Mon, 24 Mar 2025 18:05:13 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324210359.1199574-1-ojeda@kernel.org> <20250324210359.1199574-8-ojeda@kernel.org>
- <D8OV6JF1S63H.NG5CXUZDQQP6@proton.me>
-In-Reply-To: <D8OV6JF1S63H.NG5CXUZDQQP6@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Mar 2025 00:01:54 +0100
-X-Gm-Features: AQ5f1Jp-b9ijstGk-lJRPks97YVdRTn8tjg1pmMJXHRdMAlOigQ_u0TkE93n4J0
-Message-ID: <CANiq72kMGLYP9RzraKy8wSSYJ2e3PmBLyoSPjUbkhTT308Yr5w@mail.gmail.com>
-Subject: Re: [PATCH 07/10] rust: pci: fix docs related to missing Markdown
- code spans
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Bjorn Helgaas <bhelgaas@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Jakub Klama <jakub@conclusive.pl>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Wojciech Kloska <wojciech@conclusive.pl>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Ulf Axelsson <ulf.axelsson@nordicsemi.no>, linux-wireless@vger.kernel.org
+To: Artur Rojek <artur@conclusive.pl>
+In-Reply-To: <20250324211045.3508952-3-artur@conclusive.pl>
+References: <20250324211045.3508952-1-artur@conclusive.pl>
+ <20250324211045.3508952-3-artur@conclusive.pl>
+Message-Id: <174285751372.1003267.5777705239972389695.robh@kernel.org>
+Subject: Re: [RFC PATCH 2/2] dt-bindings: wireless: Document Nordic nRF70
+ bindings
 
-On Mon, Mar 24, 2025 at 11:54=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> Wouldn't "([`struct pci_device_id`])" make more sense?
 
-Yeah, definitely, it should have the `struct` to be consistent with
-our usual style.
+On Mon, 24 Mar 2025 22:10:45 +0100, Artur Rojek wrote:
+> Add a documentation file to describe the Device Tree bindings for the
+> Nordic Semiconductor nRF70 series wireless companion IC.
+> 
+> Signed-off-by: Artur Rojek <artur@conclusive.pl>
+> ---
+>  .../bindings/net/wireless/nordic,nrf70.yaml   | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml
+> 
 
-Cheers,
-Miguel
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml: properties:compatible: 'anyOf' conditional failed, one must be fixed:
+	'req' is not one of ['$ref', 'additionalItems', 'additionalProperties', 'allOf', 'anyOf', 'const', 'contains', 'default', 'dependencies', 'dependentRequired', 'dependentSchemas', 'deprecated', 'description', 'else', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'items', 'if', 'minItems', 'minimum', 'maxItems', 'maximum', 'multipleOf', 'not', 'oneOf', 'pattern', 'patternProperties', 'properties', 'required', 'then', 'typeSize', 'unevaluatedProperties', 'uniqueItems']
+	'type' was expected
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml: 'oneOf' conditional failed, one must be fixed:
+	'unevaluatedProperties' is a required property
+	'additionalProperties' is a required property
+	hint: Either unevaluatedProperties or additionalProperties must be present
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/nordic,nrf70.yaml: properties:compatible: Additional properties are not allowed ('req' was unexpected)
+	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250324211045.3508952-3-artur@conclusive.pl
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
