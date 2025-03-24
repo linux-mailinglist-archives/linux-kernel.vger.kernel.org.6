@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-573089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5DFCA6D2F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:09:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0BCA6D2F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 03:10:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5FE189277F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4C71892AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D98378F44;
-	Mon, 24 Mar 2025 02:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2541978F52;
+	Mon, 24 Mar 2025 02:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wlm9x1M6"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b="quo6wPGG"
+Received: from va-1-17.ptr.blmpb.com (va-1-17.ptr.blmpb.com [209.127.230.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E61B1362
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 02:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AB3208A9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 02:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742782166; cv=none; b=dJTwO0BK5qoy0muFsM41TimDodA6WpNs15HcgswLJ0dGiB8utrC54wzMQR70ysnkp4fI0snQj/d2hjuNtoGQUMWK9s3Y3v5h2H1gmcEsTuMDSyWugX3M1sFND5AIe0+tg8jnodnRzbw6A46W/PDGDrdO4lXAH0Y0ppHnAg0k5nM=
+	t=1742782240; cv=none; b=ehEx+YrLRiZNg3dQ2moGmmCbCYa4APi2Y5nfY2YPFgspPFwB3V6GP24qKvZ4xiArncx4zC4g0AdAuFqyfZQ0H2AlynePlL6vPwk4vEL89ie3WVpz3ABUxfCU4wR5cCDH6jMLL98A3Fz6GBjqhex96Uzpes/V/ReMDuARcpnvDWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742782166; c=relaxed/simple;
-	bh=aQndsgFh0ls7ZiU3AM1Ti998DPtvCFNQqX8RJ/XTbec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j9wdJ5ntsuLQ9FYJv5S6yFpSGaUlzYDFfpB0uKPT5g66dzSDZyEKyD7zCBUtMP2eLHgNovwy8rnu8tLVkAPVLdCdGTZHGCDisXId4fH+RK0wZUC3y9bEh+7hejG9MJ1zi6TcLWBa+WEagflmLPzEXppqtFxovfKP4i4SKIKypgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wlm9x1M6; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0d0b186d-6e07-4a46-b8e2-698a97796e44@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742782151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WtkT2sFPkvaRr2EpQOKnyEL8TzZftahOePw5vU1CoQs=;
-	b=Wlm9x1M6ZZBe+EmmRP4KUu36JDl7bW+ukb9U42OLzSc9bg1yOhkw/CVgK6nvBvwqE+Ani5
-	VGCnmBc9lSJvCe2smWf13fSajRyuhh1xLlHZUSWrijPGw02b85B1jfXihNHO0BXOGHQTFH
-	zGJ3x0CVfA0U6qHhPwFbvsK4kUWg57Q=
-Date: Mon, 24 Mar 2025 10:08:29 +0800
+	s=arc-20240116; t=1742782240; c=relaxed/simple;
+	bh=033tZL8LYKIbpjhcTCdCfXtvCyYOA00Wn65D5T7jpE4=;
+	h=Subject:Date:Message-Id:Cc:To:Mime-Version:From:Content-Type; b=M+2IuUOa2L9ABOw1RbvH2A10n3WW1/nOo2sohQDmOHkWBgz5Jec76sU0vmNvsccHz2FntF3f+GRiCDha5lBBgEm5IfJiUnqjPDTq43xoQBV2q5cMgEFMLNIhwO0zf+bPhB0ezEnOkDDtQIQ23gJ72qHuPfk+CFmljBmdbd/NDb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io; spf=pass smtp.mailfrom=deepcomputing.io; dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b=quo6wPGG; arc=none smtp.client-ip=209.127.230.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepcomputing.io
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=deepcomputing-io.20200927.dkim.feishu.cn; t=1742782226;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=MHPZt36x34vKdZAyw073ovIPsPHQlX62Odd0waj2844=;
+ b=quo6wPGGLhcfyASii/E/Jvy8gO00cdYWvQB6/vYC0FoQLmipXB44NDbn3wYc29TBEdU71T
+ Tv+iMGW1ntm8Iu88PHVj9OasAiFFYFmopCTpFA8BK432Dupe9/evlVE/X98KJKYURqJBPg
+ KVSrja/BuL1dQLMKjhJZgFptjpWwg7PzThhJwJqXvNDYpV4c6GFHjEnQ88T4V4R80nm8dG
+ ZZT0AGSPKvOMh33Enb403LseM03sjzg6rX2tpRZgjwElDOtWaQKdcO+9zkvfZBaRL4ofxi
+ FVZam48ocRnozQtLQ4HW6H6LukkeYv2cqf5dG469+6imC0raGzgKyPh6/a0HHQ==
+Subject: [PATCH v2 RESEND] riscv: dts: starfive: fml13v01: enable USB 3.0 port
+Date: Mon, 24 Mar 2025 10:09:58 +0800
+Message-Id: <20250324020958.2235802-1-sandie.cao@deepcomputing.io>
+X-Lms-Return-Path: <lba+267e0bf10+8cbd95+vger.kernel.org+sandie.cao@deepcomputing.io>
+Received: from roma-MacBookPro.. ([61.141.249.154]) by smtp.feishu.cn with ESMTPS; Mon, 24 Mar 2025 10:10:23 +0800
+Cc: "Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Albert Ou" <aou@eecs.berkeley.edu>, <linux-riscv@lists.infradead.org>, 
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<sandie.cao@deepcomputing.io>, 
+	"Maud Spierings" <maud_spierings@hotmail.com>
+X-Mailer: git-send-email 2.34.1
+X-Original-From: Sandie Cao <sandie.cao@deepcomputing.io>
+To: "Emil Renner Berthing" <kernel@esmil.dk>, 
+	"Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] rust: sync: optimize rust symbol generation for CondVar
-Content-Language: en-US
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
- aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org,
- nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>,
- Grace Deng <Grace.Deng006@gmail.com>
-References: <20250317081351.2503049-1-kunwu.chan@linux.dev>
- <Z-BL_DFA3afcRYGE@Mac.home>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <Z-BL_DFA3afcRYGE@Mac.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+From: "Sandie Cao" <sandie.cao@deepcomputing.io>
+Content-Type: text/plain; charset=UTF-8
 
-On 2025/3/24 01:59, Boqun Feng wrote:
-> On Mon, Mar 17, 2025 at 04:13:50PM +0800, Kunwu Chan wrote:
->> From: Kunwu Chan <kunwu.chan@hotmail.com>
->>
->> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
->> with ARCH=arm64, the following symbols are generated:
->>
->> $nm vmlinux | grep ' _R'.*CondVar | rustfilt
->> ... T <kernel::sync::condvar::CondVar>::notify_all
->> ... T <kernel::sync::condvar::CondVar>::notify_one
->> ... T <kernel::sync::condvar::CondVar>::notify_sync
->> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
->> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
->> ... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
->> ... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
->>
->> These notify* symbols are trivial wrappers around the C functions
->> __wake_up and __wake_up_sync.
->> It doesn't make sense to go through a trivial wrapper for these
->> functions, so mark them inline.
->>
->> Link: https://github.com/Rust-for-Linux/linux/issues/1145
->> Suggested-by: Alice Ryhl <aliceryhl@google.com>
->> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
->> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
->> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
->> ---
->>   rust/kernel/sync/condvar.rs | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
->> index 7df565038d7d..a826896ba3f0 100644
->> --- a/rust/kernel/sync/condvar.rs
->> +++ b/rust/kernel/sync/condvar.rs
->> @@ -181,6 +181,7 @@ pub fn wait_interruptible_timeout<T: ?Sized, B: Backend>(
->>       }
->>   
->>       /// Calls the kernel function to notify the appropriate number of threads.
->> +    #[inline]
->>       fn notify(&self, count: c_int) {
-> Hmm.. I think CondVar::notify() gets inlined even without this
-> `#[inline]` attribute, do we need this actually?
+Add usb_cdns3 and usb0_pins configuration to support super speed USB 
+device on the FML13V01 board.
 
-Actualy, after add '#[inline]', the build result is (compilecmd is 'make 
-ARCH=arm64 LLVM=1-j8' ):
+Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+Tested-by: Maud Spierings <maud_spierings@hotmail.com>
+---
 
-$nm vmlinux | grep ' _R'.*CondVar | rustfilt
-ffff800080019e90 T 
-<kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_ex
-plicit
-ffff800080019e90 T 
-<kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_ex
-plicit
-ffff800080019e90 T 
-<kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_e
-xplicit
-ffff8000805b8c7c T <kernel::sync::poll::PollCondVar as 
-core::ops::drop::Drop>::drop
+Changes in v2:
+- Remove space to pass checkpatch.pl.
+- Add usb0_pins and pass test on board.
 
+ .../jh7110-deepcomputing-fml13v01.dts         | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-And before add '#[inline]',the 'nm vmlinux | grep ' _R'.*CondVar | 
-rustfilt' appear 'notify' function,
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+index 8d9ce8b69a71..f2857d021d68 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+@@ -43,9 +43,28 @@ GPOEN_DISABLE,
+ 			slew-rate = <0>;
+ 		};
+ 	};
++
++	usb0_pins: usb0-0 {
++		vbus-pins {
++			pinmux = <GPIOMUX(25,  GPOUT_SYS_USB_DRIVE_VBUS,
++					       GPOEN_ENABLE,
++					       GPI_NONE)>;
++			bias-disable;
++			input-disable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++	};
+ };
+ 
+ &usb0 {
+ 	dr_mode = "host";
++	pinctrl-names = "default";
++	pinctrl-0 = <&usb0_pins>;
+ 	status = "okay";
+ };
++
++&usb_cdns3 {
++	phys = <&usbphy0>, <&pciephy0>;
++	phy-names = "cdns3,usb2-phy", "cdns3,usb3-phy";
++};
 
-Seems like the LLVM didn't make it inline.
-
-
-> Regards,
-> Boqun
->
->>           // SAFETY: `wait_queue_head` points to valid memory.
->>           unsafe {
-> [...]
-
+base-commit: 38818f7c9c179351334b1faffc4d40bd28cc9c72
 -- 
-Thanks,
-   Kunwu.Chan(Tao.Chan)
-
+2.34.1
 
