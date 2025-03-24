@@ -1,92 +1,57 @@
-Return-Path: <linux-kernel+bounces-573313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75EEA6D595
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:58:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 419AEA6D5A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5941889E98
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68BCB3ADF02
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1DA257443;
-	Mon, 24 Mar 2025 07:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FEB25C6FE;
+	Mon, 24 Mar 2025 07:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ItzZ73oc"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="j2gIYRSZ"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF9225C70E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483B5148838
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742803112; cv=none; b=HKYCD2JaRGTxTX/WN7n1PuUYjIH15MwZRRQkS28nz0tah7sMb6O9gMXzlCur9WO2yXvRX/yTD93d009MxEcU+wsBc1bD+phNf9njdXTPOzHE06PUj5AFWrH4pKnNkJ9KE2pwFnasasVk7PccxO+Plwwmd3gc+7aSJzpThCd8USQ=
+	t=1742803156; cv=none; b=WA99SGmEXm6MQNeEU8AR4+e3QoWO1R5yLSr7Pc2R0yhIypWGXnMg03yv5NVpbYxeLUbNcyEHzXz9GWggC+kbxtVJlLuAq4mz2gaE4IT3Ql7TyTcrietfs/6BAgdulP65pX3/KbTqyq+XeLMrso7KGZeesvTUfus2oXoqgo14ROM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742803112; c=relaxed/simple;
-	bh=Hk67b2jK62ZrHw9NUvbj5w/WBx3baQ3ZYwl/y/2m83U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vA6jGVoO9Dl9US75I0U75ZR5lHWWP5SWMmqgVscg/UrO+xX4sH7Lh2G89AFVJGQs37Zgvzszv7StvfSXlLe0TkaKpW72BCoEu6g1ha03hQh0H2drSjJpToqXqEvat2QzFwy6GgkvgPavW55WTYklY9QX22ENRTUIpO8fHm1toa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ItzZ73oc; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so6639764a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742803110; x=1743407910; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bp4ddfe4Vf8vx05tu7Jns3bwbMSMgp5+mmtijBmV9ns=;
-        b=ItzZ73ocVt57h4fentpQz2W62Su7vsa1vcDxoC52emYjha9wyPfL/rBFnk/nvSUDQO
-         TIMVVaK+tmK2MX3f38qiu/J9IqfV2cSEV32GA51PZpuSEmrdNyBOZxQ18fjBLL83VkHg
-         cC5GgvoWmYVN4x/2VaVVjaC6kI0kY2ZSBFuLNFWC3Z6BgQwVGZGfyT6YrE+9h9RaGdFU
-         EqTGGMKRoeVr1hLMCD5QilM5jPolm06UGSXYep4Y8noM8sNs0fsFdjm+D+SSG+ta19ih
-         80+QQmPij00JAFuFVLcO2Pl/oGbXHtndTnatzq2kOhJ2zwPbhhFxbP29e6CTe9mzrKlQ
-         I3GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742803110; x=1743407910;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bp4ddfe4Vf8vx05tu7Jns3bwbMSMgp5+mmtijBmV9ns=;
-        b=pOVIp7skyG1yQuFyMQctcx+8rNwVdKObSYUNKL3e+pVNSD/Kl2+uEbioO3PtIobTs/
-         FEz3jlZbMdK5Ee+y7DvSCy634iL8KqS1NE5axnBaMBQOM1eIp9cprpu5iMwg5c4e7OoU
-         zSoxXdX6RY6UYdahx0QhmDSb0wxS0tf4xFGVFaWllrz/F0hiC+sQuiSTqnQnjUlzBccl
-         f772/xcA2NRrCrjfCkWidbX3AQbiX8ZdGFNbtbovcf7VgpQK7r+9TmsOuGwuoJSDOuFg
-         WpvfeMl8cmz63HMw4owvj5dJyODU1avug8MU9B+aMERWWrtU8W5lpAK5nTzdDhjDqkZ6
-         HdJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPz74d3DzCkMQXhRPx8zET/J6dX/V13UXdc7bhL+jYqq/5Ap5UxIR9W77aEN6pPYIZN5UOOCfmfcuUWwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOMc1P5x7jtzp8DezINawSTXHyGvIqisyXgKqv5R78/XyN+0++
-	gsoU6Xr/84fx+hToshE93Q6/tP3/7SBbRJ1WNB7GV22Un56YnncwcmZalNO3/w==
-X-Gm-Gg: ASbGncv3waBZ/QtxOP5gCLGkYBHlXiIIpyBtqd55a0gyYidtMVgjnrnLA8fTnZ1p0Tw
-	DeHRPaJNmDohgEneY3hHN1UEVd173HH8FBprmjDdjx/65ypMNhhKf5+gyHI6Bs/EfleiO10p8Gb
-	1EbBF3oH2TyUm/NmZmOMLotfpFVcsHthCy3xKmGrBclTG+HRqb0+3DwVRBbz8z/SMoXxLKE1g3T
-	P9VnmV2eHf/52REvVEOT01QRe3D8C95KRjEhVQ6lD2a0hATN9QUm9KS1FJwu7oY1/e7LsblJpUX
-	4okkmpsJmfc8SUJ2wBGCVuDfhXya6pNa8NbuFPZofzkNFI4ZnVVikEmn
-X-Google-Smtp-Source: AGHT+IFaEEcjY/AaCnl8GGjUdE+Ran73MpkIfwVAljqCouhk2XWNRH1ssUSjHwSPezwzAjIBoXcYhw==
-X-Received: by 2002:a17:90b:2647:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-3030fe95343mr23608416a91.12.1742803110159;
-        Mon, 24 Mar 2025 00:58:30 -0700 (PDT)
-Received: from thinkpad ([220.158.156.91])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf576bf0sm11434777a91.7.2025.03.24.00.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 00:58:29 -0700 (PDT)
-Date: Mon, 24 Mar 2025 13:28:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: george.moussalem@outlook.com
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nitheesh Sekar <quic_nsekar@quicinc.com>, Varadarajan Narayanan <quic_varada@quicinc.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	20250317100029.881286-2-quic_varada@quicinc.com, Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Subject: Re: [PATCH v6 6/6] arm64: dts: qcom: ipq5018: Enable PCIe
-Message-ID: <bn74cvfyprkwdw3moh3qqwxjnoa4nff7ycm63pqvoe7g5efplj@u7t3tmmbqapk>
-References: <20250321-ipq5018-pcie-v6-0-b7d659a76205@outlook.com>
- <20250321-ipq5018-pcie-v6-6-b7d659a76205@outlook.com>
+	s=arc-20240116; t=1742803156; c=relaxed/simple;
+	bh=cQv7TD29YFOXq9eSJ7bWcsI3cggdcLl5k5/BLWPJuos=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z1nGEO2hkpvJAckMWAXVFOZ5E6T55zWRrbnwVJYHrVPTfFtyQdmJV2PE+x1UFXHFHO3xgOIKWjcJ+HjqqPJDjVpGXNW5yyR7D8HWW2dUyU9AsC7x8FhjST7ynj/si3f4svZaUufYDu0v0WGTa3/X5pLCXqzr0bWg2ASAjoaEJjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=j2gIYRSZ; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1742803146; x=1743062346;
+	bh=0TjUvF28ALbT0hUt0OU2d7JN+ZbneHIxGYIojNxdUeU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=j2gIYRSZ6scbJN1NIHamQenYBFPt8lmz0Y2INjcVknRypmhmmVcbAEpc2p2eX0KPk
+	 bpT5K4xH+8Bl8QMjg1wiMjX3FO4i2KtGH+mYQa7jjdURtdnFWCSofYrmdfH2sKFLSs
+	 w+/xvvcZZz2eiNEB9iZDfi5u0b6fjR6Xq6r06EVWzj8o/VE9eX6GmYf0kb7oXB7C2n
+	 v8ZLnEWus0kloK1bqwpnVEFIexK/CgZ/5yuuup2zGV3sP3qA7uwHwvYl/4A3Uvih4A
+	 TsnQeBQ0XuzTyMvY1xUE4I2jwavhqhfTy5/grUcX5Dk9Z70ZR1wcxm5fE+2EWu6CfY
+	 jwUQztvXI2GEQ==
+Date: Mon, 24 Mar 2025 07:59:01 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 4/4] rust: adding OwnableRefCounted and SimpleOwnableRefCounted
+Message-ID: <Z-EQwgxLC2-iFtz7@mango>
+In-Reply-To: <67dd95be.050a0220.ff22e.716f@mx.google.com>
+References: <20250313-unique-ref-v8-0-3082ffc67a31@pm.me> <20250313-unique-ref-v8-4-3082ffc67a31@pm.me> <67dd95be.050a0220.ff22e.716f@mx.google.com>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 385175752ba1fc1cf604748e4c3c05d8a6789ed3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,98 +59,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250321-ipq5018-pcie-v6-6-b7d659a76205@outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 21, 2025 at 04:14:44PM +0400, George Moussalem via B4 Relay wrote:
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> 
-> Enable the PCIe controller and PHY nodes for RDP 432-c2.
-> 
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+On 250321 0937, Boqun Feng wrote:
+> >
+> > +/// A trait for objects that can be wrapped in either one of the refer=
+ence types [`Owned`] and
+> > +/// [`ARef`].
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// Implementers must ensure that:
+> > +///
+> > +/// - Both the safety requirements for [`Ownable`] and [`RefCounted`] =
+are fulfilled.
+> > +/// - The uniqueness invariant of [`Owned`] is upheld until dropped.
+>=20
+> Could you explain what this safety requirement means? Isn't this part of
+> the safe requirement of `impl Ownable`?
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To be honest, I don't remember. Right now I also can't see a good reason
+for it. Might be I was confused by the documentation of the safety
+requirements for Ownable.
 
-- Mani
+Thinking about it, there seems to be something wrong with these:
 
-> ---
->  arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 40 ++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-> index 8460b538eb6a..43def95e9275 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-> +++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-> @@ -9,6 +9,8 @@
->  
->  #include "ipq5018.dtsi"
->  
-> +#include <dt-bindings/gpio/gpio.h>
-> +
->  / {
->  	model = "Qualcomm Technologies, Inc. IPQ5018/AP-RDP432.1-C2";
->  	compatible = "qcom,ipq5018-rdp432-c2", "qcom,ipq5018";
-> @@ -28,6 +30,20 @@ &blsp1_uart1 {
->  	status = "okay";
->  };
->  
-> +&pcie0 {
-> +	pinctrl-0 = <&pcie0_default>;
-> +	pinctrl-names = "default";
-> +
-> +	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 16 GPIO_ACTIVE_LOW>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&pcie0_phy {
-> +	status = "okay";
-> +};
-> +
->  &sdhc_1 {
->  	pinctrl-0 = <&sdc_default_state>;
->  	pinctrl-names = "default";
-> @@ -43,6 +59,30 @@ &sleep_clk {
->  };
->  
->  &tlmm {
-> +	pcie0_default: pcie0-default-state {
-> +		clkreq-n-pins {
-> +			pins = "gpio14";
-> +			function = "pcie0_clk";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		perst-n-pins {
-> +			pins = "gpio15";
-> +			function = "gpio";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +			output-low;
-> +		};
-> +
-> +		wake-n-pins {
-> +			pins = "gpio16";
-> +			function = "pcie0_wake";
-> +			drive-strength = <8>;
-> +			bias-pull-up;
-> +		};
-> +	};
-> +
->  	sdc_default_state: sdc-default-state {
->  		clk-pins {
->  			pins = "gpio9";
-> 
-> -- 
-> 2.48.1
-> 
-> 
+> /// # Safety
+> ///
+> /// Implementers must ensure that any objects borrowed directly as `&T` s=
+tay alive for the duration
+> /// of the lifetime, and that any objects owned by Rust as [`Owned<T>`] s=
+tay alive while that owned
+> /// reference exists, until the [`Ownable::release()`] trait method is ca=
+lled.
+> pub unsafe trait Ownable {
+>     /// Releases the object (frees it or returns it to foreign ownership)=
+.
+>     ///
+>     /// # Safety
+>     ///
+>     /// Callers must ensure that the object is no longer referenced after=
+ this call.
+>     unsafe fn release(this: NonNull<Self>);
+> }
+>=20
+> /// A subtrait of Ownable that asserts that an [`Owned<T>`] Rust referenc=
+e is not only unique
+> /// within Rust and keeps the `T` alive, but also guarantees that the C c=
+ode follows the
+> /// usual mutable reference requirements. That is, the kernel will never =
+mutate the
+> /// `T` (excluding internal mutability that follows the usual rules) whil=
+e Rust owns it.
+> ///
+> /// When this type is implemented for an [`Ownable`] type, it allows [`Ow=
+ned<T>`] to be
+> /// dereferenced into a &mut T.
+> ///
+> /// # Safety
+> ///
+> /// Implementers must ensure that the kernel never mutates the underlying=
+ type while
+> /// Rust owns it.
+> pub unsafe trait OwnableMut: Ownable {}
 
--- 
-மணிவண்ணன் சதாசிவம்
+As an Owned hands out an `&` to an Ownable, the requirement about the kerne=
+l
+not mutating it should apply to an Ownable just the same as to an OwnableMu=
+t.
+
+The point of OwnableMut should by to declare that it is safe to hand out an
+`&mut` which implies that it is not pinned.
+
+I didn't want to mess too much with Asahi Lina's patch, so I left it as is.
+Maybe she wanted to assign a different meaning of these traits.
+
+Thoughts?
+
+> > +///
+> > +/// struct Foo {
+> > +///     refcount: Cell<usize>,
+>=20
+> It's fine to use a Cell for now, but eventually we want to replace this
+> with either Gary's Refcount [1] or LKMM atomics.
+>=20
+> [1]: https://lore.kernel.org/rust-for-linux/20250219201602.1898383-1-gary=
+@garyguo.net/
+>=20
+> (just keeping a note here)
+
+Ok, then I will leave it as is. I was wondering if I should make it atomic,
+but I didn't because of the recent Rust atomics vs. kernel atomics
+discussion, which I understood as there being some unresolved questions.
+
+> > +pub unsafe trait OwnableRefCounted: RefCounted + Ownable + Sized {
+> > +    /// Checks if the [`ARef`] is unique and convert it to an [`Owned`=
+] it that is that case.
+> > +    /// Otherwise it returns again an [`ARef`] to the same underlying =
+object.
+> > +    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<S=
+elf>>;
+> > +    /// Converts the [`Owned`] into an [`ARef`].
+> > +
+>=20
+> ^ this blanket line seems to be at the wrong place.
+
+Right. Thanks.
+
+Best regards,
+
+Oliver
+
 
