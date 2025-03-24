@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-573699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C79EA6DAF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:20:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F93A6DAE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841AA1699D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 706F87A2EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D725EF91;
-	Mon, 24 Mar 2025 13:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="lU3l+Ig2"
-Received: from smtpdh17-1.aruba.it (smtpdh17-1.aruba.it [62.149.155.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6912B25DAFA;
+	Mon, 24 Mar 2025 13:16:22 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECB238DE9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4215666B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822331; cv=none; b=X/Lz4esHrwBgT7AuoOUmLjowQIiqNAIL7wwL6433wAOtpW3mVKuAQriDhsqg+ChSXHN7yBjaScaTHVJujY6dsNvO3E4em2GCRbPJZcD9RlkBNdkEfRYwd60zF4ARK9f/AnWFRkbhk3rXeLPnuxuGIuumYZXxl68A9Q3o1rszf58=
+	t=1742822182; cv=none; b=RZ3mC+4Gtf/ZlCcWMhimOlCLMtiuE4IfRq2OiiytWV5uIaWCt0ds8/OpeKQ72k1fTAGfJ7fIKQYUFHMpILxTfRnJEK+93J9eghYkfQtqJ3l+DruSR0wyORE1/xIrxG8vI9Nnp4kg93+n3vR1K6Yyg2uf2JOugUXaaAlU2AXVCr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822331; c=relaxed/simple;
-	bh=SDiqh0ysPGzyCfjrTu72lDTTTS2qXy/UjlB5vc/Sayk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CCtXj3P+1KxYexpqF1qxRdtry3qWcTl3QHfFkUwnq/G64y/21IIRceJbEep8vUHR5FDY2q2RibAUaCSSgtDx+i09IuiPVm3nuILyYKJLijy6Zyr0HIVOLjRof+WjHDbbBPOi9bg+TLIKjIHGJVOjj7wKVYNWMVqNHvTFTDlWFNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=lU3l+Ig2; arc=none smtp.client-ip=62.149.155.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id wheVtfUP6tfOnwheVt0Wdr; Mon, 24 Mar 2025 14:15:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1742822140; bh=SDiqh0ysPGzyCfjrTu72lDTTTS2qXy/UjlB5vc/Sayk=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=lU3l+Ig2sse+tbumA0SVjxNyqRwt9VRCOOK7vGvNnqxheuInnrGE+QSg23Ao9b2zv
-	 F+gzTcNL9kHUF8Wek40TcLmB9lhU9hrsA6gxq2zeDXHj+R8AtXvILnCyo8gQuIrBdy
-	 GTdGYyPq0T62lQ9EOfpafCYqsZxzeZ3VAexJDFFpa0bq2rulX/sq7RstsWDF0x5evZ
-	 tkGAcE7Yr4cem0lQBl+HoXKD7LhBqTNSpDGIhgBT2joes5ybu+ihPjawpjacM3CzDn
-	 20sce6NvZrER8TRUVKvjkiXILbjgfkgujPhkurMV/iZ/Byol0pQcstyJ0ds+hZaOtH
-	 9Qq1bQCHwklJQ==
-Message-ID: <8bd8ca96-1334-42c7-8dc4-2db1785301b9@enneenne.com>
-Date: Mon, 24 Mar 2025 14:15:39 +0100
+	s=arc-20240116; t=1742822182; c=relaxed/simple;
+	bh=zWa3147KsrZ6whgHHaGYdYSkNDy6PyAY3OS5VX58pdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ibRaPsI0lfBffycecgvX2Uf9Vliqm1alM/Gx18CR8jq7Gb0xEhj2XfpOaK8GCOVbvrpgxOZC5jG/gLTkBwvMC2RdIc0/5TDCJttc8Km9pL5pl6tm0nAnH59k4M0ZWZBU8ItTdynyxeUHXNw2HWSmhuo/FmEQ3fd5V3XkTvyECeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2432e8dc08b211f0a216b1d71e6e1362-20250324
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:0578c1db-ea39-4a13-877f-ddac18d94548,IP:0,U
+	RL:0,TC:0,Content:12,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:12
+X-CID-META: VersionHash:6493067,CLOUDID:92416e222b85cdef289d1b3157898085,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:4|8|50,ED
+	M:-3,IP:nil,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,O
+	SA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 2432e8dc08b211f0a216b1d71e6e1362-20250324
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <cuiguoqi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1019829283; Mon, 24 Mar 2025 21:16:05 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 1E024E008902;
+	Mon, 24 Mar 2025 21:16:05 +0800 (CST)
+X-ns-mid: postfix-67E15B14-9837241
+Received: from localhost.localdomain (unknown [10.41.103.97])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 50DADE008901;
+	Mon, 24 Mar 2025 21:15:58 +0800 (CST)
+From: cuiguoqi <cuiguoqi@kylinos.cn>
+To: bigeasy@linutronix.de
+Cc: anna-maria@linutronix.de,
+	clrkwllms@kernel.org,
+	cuiguoqi@kylinos.cn,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	rostedt@goodmis.org,
+	tglx@linutronix.de,
+	guoqi0226@163.com
+Subject: Re: [PATCH] hrtimer: Fix the incorrect initialization of timer->is_hard
+Date: Mon, 24 Mar 2025 21:15:58 +0800
+Message-Id: <20250324131558.1633796-1-cuiguoqi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250324084944.z1J0Kf8c@linutronix.de>
+References: <20250324084944.z1J0Kf8c@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: pps: gpio: Correct indentation and style in
- DTS example
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324125122.81810-1-krzysztof.kozlowski@linaro.org>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20250324125122.81810-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfFwkio3Nsm9t/3K+JUXUTLnymPuZfWkyLodVABraDib2lMMuehDO7OtHqyP9/f5bCkqq7xu5U1aZzkLd4sCZJ75twsEE1HlWKJgOHZd01GBHLG1dn+pd
- lfApRn4G9tJo+YDpH0BHxaXqA45z4zxogwbXE6yaKt9ibi3KgubXMa0pFGtLV8DQ8QQ8iYyQJDWaWlbP7bNwArK/KAYa9onPHWAQV58ZbAYplOqBBey/mi/y
- 9ZZZTwwCsVxY47LKhI7e1uN8Jb6rQchYz5PJ659q76uxscWOYFsaxPibqqDWYrBTA4vbwzhOiPZsE0rIEFRL5SjgtAXeoiCkSQpe3BECk0pioaPqnFLLMuhb
- /lSRwkRl1ncZ/uYMneDWju17ujzOrV40SnQyV0IQrTamhDMUqTs=
+Content-Transfer-Encoding: quoted-printable
 
-On 24/03/25 13:51, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
-> 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Here,it is not set but referenced. When !PREEMPT, is_hard does not match
+the actual situation.In the original logic, the actual mode selection is=20
+mainly based on softtimer.
 
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+When the HARD/SOFT mode is not explicitly configured, the following logic=
+=20
+is used to select the hard/soft mode:
 
-> ---
->   .../devicetree/bindings/pps/pps-gpio.yaml     | 20 +++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.yaml b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> index fd4adfa8d2d4..383a838744eb 100644
-> --- a/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> @@ -36,14 +36,14 @@ additionalProperties: false
->   
->   examples:
->     - |
-> -      #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/gpio/gpio.h>
->   
-> -      pps {
-> -          compatible = "pps-gpio";
-> -          pinctrl-names = "default";
-> -          pinctrl-0 = <&pinctrl_pps>;
-> -          gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-> -          assert-falling-edge;
-> -          echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-> -          echo-active-ms = <100>;
-> -      };
-> +    pps {
-> +        compatible = "pps-gpio";
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&pinctrl_pps>;
-> +        gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-> +        assert-falling-edge;
-> +        echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-> +        echo-active-ms = <100>;
-> +    };
+> bool softtimer =3D !!(mode & HRTIMER_MODE_SOFT); //PREEMPT_RT:flase/!PR=
+EEMPT_RT: flase
+> if (IS_ENABLED(CONFIG_PREEMPT_RT) && !(mode & HRTIMER_MODE_HARD))
+	softtimer =3D true;                        //PREEMPT_RT:true =20
+> base =3D softtimer ? HRTIMER_MAX_CLOCK_BASES/2:0;//PREEMPT_RT:soft mode=
+/!PREEMPT_RT: hard mode
+> base +=3D hrtimer_clockid_to_base(clock_id);
+> timer->base =3D &cpu_base->clock_base[base];
+> timer->is_soft =3D softtimer;                   //PREEMPT_RT:true /!PRE=
+EMPT_RT: false
+- timer->is_hard =3D !!(mode & HRTIMER_MODE_HARD);//PREEMPT_RT:false/!PRE=
+EMPT_RT: false
++ timer->is_hard =3D !softtimer;                  //PREEMPT_RT:false/!PRE=
+EMPT_RT: true=20
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+Thus, under !PREEMPT, the distinction in is_hard is clear.
+while it does not affect the logic of the hrtimer_start_range_ns:=20
+>	if (!IS_ENABLED(CONFIG_PREEMPT_RT))            =20
+>		WARN_ON_ONCE(!(mode & HRTIMER_MODE_SOFT) ^ !timer->is_soft);
+>	else
+>		WARN_ON_ONCE(!(mode & HRTIMER_MODE_HARD) ^ !timer->is_hard);
 
 
