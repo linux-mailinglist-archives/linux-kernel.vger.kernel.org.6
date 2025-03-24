@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-574134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759EFA6E111
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:39:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C27A6E113
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58302172C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D033B6DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE722264638;
-	Mon, 24 Mar 2025 17:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA582641C5;
+	Mon, 24 Mar 2025 17:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCadjtt+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYMaB95W"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A7B267399
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B961B2676C3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 17:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837594; cv=none; b=g5TN6/R9b1f8koRwK00nOyrZmpJ97kPdCGppQWWj14BugwFMxJcIfrupXDTHVP8hvRXKl13DQgDX3/lmT1AMi4cjlBK3R2DEEpz7dl+ZB67DJ3tN/lQPMpLBBRM2ZHBMXJrH/5yFl8hM3Y6U9UReLDv9JUVrdcm+eGAze1vD96E=
+	t=1742837596; cv=none; b=B9muI3qRxrrYsVs6RUmm12wTV8iNHWyVN3Q1R//EttqaWWgPttVzgvoPmY+ajxRTElIVGoonNJKRD38Jlep0CnGtCD6A0hVv7loqkrDj0wliAZnObEX+HdBol80K5+NV30z7KYvz+b3bgT0jBSZKvSN9mOBb2uLuJzxdzIOb/SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837594; c=relaxed/simple;
-	bh=aKPDqW/NC3IvupYuKRIdymXqUgDQVOkH4kyaS7aodbE=;
+	s=arc-20240116; t=1742837596; c=relaxed/simple;
+	bh=xgxYVwZdjRquH478VTURKv/ZwPIL/P+KKLaH5KZ8A0k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fYwH1kahRvORBltT0xwoKuLn4D7NtUxrzogpxO7ATBPwLD3WZ5JGEMi1+JF2qMxW5IbyWknywexRKEMcgRL66SaBSshUq6pWZp/E0tZzh0djv0mMM3NYTMxSvqU7vUF9+W6UnXofjFJYC55VRxcKxpZXWOP69+xtZ8CnNcPvLLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YCadjtt+; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=R05MQgJnxFHm3fN+DhoqbBLe9ZCPyYn6HrVkOmi6/8oUygjBuv9zZIXFcUAKK8dCEEU/tNEFJ3n4SI/W28vRZkQK24cPufQzP25l4HnzI9/TTg16yVqLyeqyxRhHydM1GKLSLW8Zio/YZFgeVoyWF9MioTgV/ulk6qD7stbvabU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rYMaB95W; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff69646218so12406764a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:12 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3032ea03448so3599323a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 10:33:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742837592; x=1743442392; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742837593; x=1743442393; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnRSUNVr3rnNCPEtvYKiZWXoNmnUmRmeili7I7gz5MU=;
-        b=YCadjtt+xNLo2kEuettF4P4eY0pvfsAeFyXOW/vW61BR1K7hZ5viOPAJvOH40hsci8
-         1pWilOaplTmSFDf3oQLJJtpiSSWxUuRejwYp5Ermueug8s5buJooEqJu1OqZejiDxUnJ
-         YD6jiCferK7djoEpfKXL7kURpMHfkernIqfVtdmI9baYS1XoZWbJULOe78iyU1mTiTru
-         +etBCNTpTvbhYS0ROP2tWqGb+s+HOfI1Dx989POW8fLs6Kg4+OcRP3jPtpkwCEb/QQQn
-         GHyg0S5mducRRavtwn0MKqyyUsh3gjZ7/vyy4G3pj6avK88S2cGiuWaMndsDRJ2hsC8q
-         205w==
+        bh=5OIbd6+hOx7hGMg1T3kEmCwLM9O3N837RBR3OmTqUzg=;
+        b=rYMaB95WbcGG1k1CIUlndOliRt3vEQHamyedYYykG3bBU06zS++5geWA6MOkt8RXt9
+         lkbnjL2bSVN6B/BC3+aK7K3blAFEj6CqsBVcB3h1fs9qPCkNxQ91sTElP01qBuwLYXNQ
+         yzYDKNEuKRlpnWnFYqXC5o9gnAPLS9O07+trxq6t9OEwf4rfxNypDdLhTrsd/eqP/w9w
+         LwTEObju00+w2nVTEpsdGy87/Iguz0oT/XNS5GqIoSQdqQfO8mDy03KH1WLCBmA0ShF6
+         y0AtHmvptkceRfwIru9D9bbQ9dzqC57CzAd8/II/4CqO2BQgn4pPsHpBszqLeV7OISRl
+         VyRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742837592; x=1743442392;
+        d=1e100.net; s=20230601; t=1742837593; x=1743442393;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PnRSUNVr3rnNCPEtvYKiZWXoNmnUmRmeili7I7gz5MU=;
-        b=sw+gZROrDFzzRXLF1L7fL0SsHv5N1a4Z6RU/1W8/A4mqCKJOaclv6qM3R+ic5mq1vt
-         c4pziYVDc8gcQebeS05LlQio28WE/wADmhyy+ciET3e6q2LoI9vuJY75/JiLY9NS8Fe9
-         gFWDi6i9Zt09SVihwn3LDla+9iT4Wgk+z9E2lfo3jXz4w2AMjkdCRoc3nKwsaLqxQ2LP
-         niaOPR1sNIbK6rdc84jjtKXdgWkA6XiCqcll9uWLlxo8CIrORD1SkSWq+9BFngu0QivG
-         ysyx22q4QgwXwYO1Jzo0uSC55SnPVJgPKXHg8iKOh/sYpwOCZfJpWjyWEzOR8iszytpa
-         PUkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLglmAnLUB+wdiS8Lt+aofgibFMsttc93oTXIN0bAZBr2F1F9eBuRs9g6XqYOwPmJIDSW1IWF7kLQ5PFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcWKBXY6gBSgEwZQkpkTvQ74Ub2KKn+4Orwpm1FN9bSCJ7mjUq
-	XX/ne27E1II9KFhqhfBvQpwcKe2wQqh2D5mmwnJutMYUCzALy2x5OAwfx/YsFqbIMfCh1MPP8al
-	BrHqKGg==
-X-Google-Smtp-Source: AGHT+IEW+7GJcDXGG6CURiKG3q1Lc5zKORtSrc56gB/zRY+t9aZM8BPwlqJUyaIgVCLGS/H1C2BVYJ2TtCKc
-X-Received: from pjbqx3.prod.google.com ([2002:a17:90b:3e43:b0:2ff:5f6a:835c])
- (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4fcc:b0:2f4:434d:c7ed
- with SMTP id 98e67ed59e1d1-3030fea7d0cmr26492841a91.16.1742837591632; Mon, 24
- Mar 2025 10:33:11 -0700 (PDT)
+        bh=5OIbd6+hOx7hGMg1T3kEmCwLM9O3N837RBR3OmTqUzg=;
+        b=X2foPd6tLZywo1EpCTlJTWTUjbt7Ryu3AEJBjC/ugvG63MOtDNDXBfabzIlD2zEkYt
+         FlBAdct9FRZVVJ8GNuxSjj6j4GeP5FTFfzVcAEUjkddmeZS5DXJ/5ixgkZ5s3Wb9Tro1
+         5cRWaZFHzbw4xTDytRFIoTB89ui2rCckXwz4GwFXTsvwUZMMHHmiLc1K8YnMJc531icv
+         N65/z1aF/8dt5tOLYx37L//BaJjeX30LJ6BmNJi0G33VwaHIHlI4tsrkaOhXJ70mCMRz
+         ozTyQSKdaVgxta4TlNvt0el6Wy45zmsYveiYDi2IS0mJbr389i6Y0hLW84B79kQA77xs
+         Xu8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU7UoRE3EXyCcLMZNxlTSQ2xwYOCuG9C4UgWx6kkUP95aC+bhh9d3dXPmdF3KA9PssFNMlUgWZ7p1mE9IM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSVlDj9w7phl8q5m91OJEnyjy3aNc7zDSdWllFNm2uS9cqoya6
+	3+WbHxJFTyfNDYuznTygFUzyjfCVUmvRa1WPI9vII4VrSX1hh3Ujk/kjJRwzuCtjH52MfN/dGRo
+	abXaFoA==
+X-Google-Smtp-Source: AGHT+IEdo7ypzX77GetTJ9C36fdgW9oGowukok+4d1hBh9wD+ALdjl7qpWu1TMmZXtF4P0hSuyHVg9HGlwBC
+X-Received: from pjc7.prod.google.com ([2002:a17:90b:2f47:b0:2f9:e05f:187f])
+ (user=mizhang job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b10:b0:2ff:796b:4d05
+ with SMTP id 98e67ed59e1d1-3030fea7630mr23371014a91.11.1742837593268; Mon, 24
+ Mar 2025 10:33:13 -0700 (PDT)
 Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Mon, 24 Mar 2025 17:30:52 +0000
+Date: Mon, 24 Mar 2025 17:30:53 +0000
 In-Reply-To: <20250324173121.1275209-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250324173121.1275209-1-mizhang@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250324173121.1275209-13-mizhang@google.com>
-Subject: [PATCH v4 12/38] perf/x86/core: Do not set bit width for unavailable counters
+Message-ID: <20250324173121.1275209-14-mizhang@google.com>
+Subject: [PATCH v4 13/38] perf/x86/core: Plumb mediated PMU capability from
+ x86_pmu to x86_pmu_cap
 From: Mingwei Zhang <mizhang@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -95,37 +96,40 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	Nikunj Dadhania <nikunj.dadhania@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Sandipan Das <sandipan.das@amd.com>
+Plumb mediated PMU capability to x86_pmu_cap in order to let any kernel
+entity such as KVM know that host PMU support mediated PMU mode and has
+the implementation.
 
-Not all x86 processors have fixed counters. It may also be the case that
-a processor has only fixed counters and no general-purpose counters. Set
-the bit widths corresponding to each counter type only if such counters
-are available.
-
-Fixes: b3d9468a8bd2 ("perf, x86: Expose perf capability to other modules")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
-Co-developed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 Signed-off-by: Mingwei Zhang <mizhang@google.com>
 ---
- arch/x86/events/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c            | 1 +
+ arch/x86/include/asm/perf_event.h | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 96a173bbbec2..7c852ee3e217 100644
+index 7c852ee3e217..7a792486d9fb 100644
 --- a/arch/x86/events/core.c
 +++ b/arch/x86/events/core.c
-@@ -3107,8 +3107,8 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
- 	cap->version		= x86_pmu.version;
- 	cap->num_counters_gp	= x86_pmu_num_counters(NULL);
- 	cap->num_counters_fixed	= x86_pmu_num_counters_fixed(NULL);
--	cap->bit_width_gp	= x86_pmu.cntval_bits;
--	cap->bit_width_fixed	= x86_pmu.cntval_bits;
-+	cap->bit_width_gp	= cap->num_counters_gp ? x86_pmu.cntval_bits : 0;
-+	cap->bit_width_fixed	= cap->num_counters_fixed ? x86_pmu.cntval_bits : 0;
+@@ -3112,6 +3112,7 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
  	cap->events_mask	= (unsigned int)x86_pmu.events_maskl;
  	cap->events_mask_len	= x86_pmu.events_mask_len;
  	cap->pebs_ept		= x86_pmu.pebs_ept;
++	cap->mediated		= !!(pmu.capabilities & PERF_PMU_CAP_MEDIATED_VPMU);
+ }
+ EXPORT_SYMBOL_GPL(perf_get_x86_pmu_capability);
+ 
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 0ba8d20f2d1d..3aee76f3316c 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -285,6 +285,7 @@ struct x86_pmu_capability {
+ 	unsigned int	events_mask;
+ 	int		events_mask_len;
+ 	unsigned int	pebs_ept	:1;
++	unsigned int	mediated	:1;
+ };
+ 
+ /*
 -- 
 2.49.0.395.g12beb8f557-goog
 
