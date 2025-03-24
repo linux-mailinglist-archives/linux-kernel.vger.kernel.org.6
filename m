@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-574175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4C6A6E19C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:53:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A687A6E19F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 721FF3BC249
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE6F3B770F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A0C26659E;
-	Mon, 24 Mar 2025 17:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAC5266B71;
+	Mon, 24 Mar 2025 17:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MRlHneAd"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlS907EE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D05226658C;
-	Mon, 24 Mar 2025 17:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869E9263C8A;
+	Mon, 24 Mar 2025 17:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742837907; cv=none; b=qSTAaSbg6PFhCq3xDonW/3mPxO9Pc6zs1gC0m8wN8Ihw/6F4H2eEje+oDjNzQk7bPSgLH4kpPzLrCenIe5Zu3/f/pkmcVZnJanslBswuKKlffMDktBJGaJMpcUzOi1Y8xvVBLJKQQPBHjeqOpKQkrgtVH6/+5TUxc4RIibumdJ4=
+	t=1742837982; cv=none; b=G0MhiFZN20ZSHJBfO6zrfJzdYEhJi0KV3PjL9l4pjxpi9iKwS4X+0/OBEzJub1WH5QmCTRQB0SSEfqJRMHYY4d1q1qVq1mc+m9bwFji+SrC0pIJXKa1hlsIgYWN3umK1mcFKzdUkz9t6jJEF4JhMzpelq13vE0wvznOfmtdDwA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742837907; c=relaxed/simple;
-	bh=t6sR+wx+/rmQqNgwFv004AN/gLFYDmi/rJQlweN4q4k=;
+	s=arc-20240116; t=1742837982; c=relaxed/simple;
+	bh=TpBBvCJ5ZhLUY72PJ/tPDIoeVdpnOq59e3Sk63JXbz4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVdVqFYbMV+NPPqjr2tSmAMrf6v0xNLhoItAAi1ql0DzV5RzkJOONhMqMk/xZp5L2F0o8QCk1DTH08I2ATnr19hWwOBq12hvuBnBYedwn+n4jVJC8yRYMDtwBMFGvBuEB/I1XVmk21lbThheHuV1OEkBo7DxFtmxE51tMCU29ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=MRlHneAd; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0U+IOhAGSaWncMWr/2hE8r/FR6Wiw+nBu5VXy4Qmqwc=; b=MRlHneAddWRZUUWjUF5a0+9gm6
-	JYM5TGNJ+o+RsAI3POwXgni1ytvhWJ9QjAk9SdbayLqJ2sDOrP4kWSUo/6F5R+B1G7Kb36JPcMOOC
-	q4sG3MhdR1j1TQYyq/LqedInXojDUO/Wkzel6NgvJWcDQYLYCVkKZPbqEEAXlCP2RUfjPxg0SHOEd
-	uGJVQQm068tsr2mUUi7Q12pO6emK3hqHr6YObCgUk8yhRB5kPfOKL5TD4qLo44ubMqtIIboRrXQWz
-	V192wUGpMUa9PJxsXO1LTzXEg41RRoKPt4vOMtQUfykrp3Nb66fXF8rbXUGCtxDxLf07KxaVJVaCF
-	UKSlnYWw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35314)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1twlkg-0003t8-2r;
-	Mon, 24 Mar 2025 17:38:19 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1twlkd-0002R9-1F;
-	Mon, 24 Mar 2025 17:38:15 +0000
-Date: Mon, 24 Mar 2025 17:38:15 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH net v3 1/2] net: =?utf-8?Q?phy?=
- =?utf-8?Q?=3A_Introduce_PHY=5FID=5FSIZE_?= =?utf-8?B?4oCU?= minimum size for
- PHY ID string
-Message-ID: <Z-GYh7tWq6dNDDqt@shell.armlinux.org.uk>
-References: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
- <20250324144751.1271761-2-andriy.shevchenko@linux.intel.com>
- <Z-F07j7tlez_94aK@shell.armlinux.org.uk>
- <Z-GAzlPEVR8p5l7-@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxw6zboQFJeUwDc66JW0WxBOEmK7lWVezKwvxVdWI2fISnvD6HxiY10FaW0eT/tNr8wP2mzcY82kBGaYpDQxswg+ZnLRGQJEWzv+CakBGPoPLTjGZjIJrQIjPB7KmhBuZJNjslCc93UpzXVY592J79JorXHlanXYq6izWUoEfOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlS907EE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE38C4CEDD;
+	Mon, 24 Mar 2025 17:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742837982;
+	bh=TpBBvCJ5ZhLUY72PJ/tPDIoeVdpnOq59e3Sk63JXbz4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YlS907EEgEzOO9RyiCaA1JjXWU9YxgwXxSFcoAckkje+zIdNuclrAT+2fx1M9FPyR
+	 o2UtmQENlyQ1Z6S8HaEhSW0xYf0/RpqoeHokl5PQLHXQESQ47WX53yx2ounkjNq0Le
+	 iVg3DaCLoURTWxzH5xy2BbqEri1VBi8MDiiF89o0=
+Date: Mon, 24 Mar 2025 10:38:19 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dominik Karol =?utf-8?Q?Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: ftdi_sio: Code style cleanup
+Message-ID: <2025032402-slideshow-storewide-2230@gregkh>
+References: <20250324163358.134541-1-dominik.karol.piatkowski@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z-GAzlPEVR8p5l7-@smile.fi.intel.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250324163358.134541-1-dominik.karol.piatkowski@protonmail.com>
 
-On Mon, Mar 24, 2025 at 05:57:02PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 24, 2025 at 03:06:22PM +0000, Russell King (Oracle) wrote:
-> > On Mon, Mar 24, 2025 at 04:39:29PM +0200, Andy Shevchenko wrote:
-> > > The PHY_ID_FMT defines the format specifier "%s:%02x" to form
-> > > the PHY ID string, where the maximum of the first part is defined
-> > > in MII_BUS_ID_SIZE, including NUL terminator, and the second part
-> > > is implied to be 3 as the maximum address is limited to 32, meaning
-> > > that 2 hex digits is more than enough, plus ':' (colon) delimiter.
-> > > However, some drivers, which are using PHY_ID_FMT, customise buffer
-> > > size and do that incorrectly. Introduce a new constant PHY_ID_SIZE
-> > > that makes the minimum required size explicit, so drivers are
-> > > encouraged to use it.
-> > > 
-> > > Suggested-by: "Russell King (Oracle)" <linux@armlinux.org.uk>
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > 
-> > Thanks!
+On Mon, Mar 24, 2025 at 04:34:50PM +0000, Dominik Karol Piątkowski wrote:
+> Fix the following code style issues:
+> - Space before comma
+> - Missing blank line after declarations
+> - Superfluous space before statement
+> - Spaces used for indentation instead of tabs
+> - Misaligned block comment
+> - Space before tabs
 > 
-> Thank you!
-> 
-> And just a bit of offtopic, can you look at
-> 20250312194921.103004-1-andriy.shevchenko@linux.intel.com
-> and comment / apply?
+> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
+> ---
+>  drivers/usb/serial/ftdi_sio.c     | 16 ++++++++++------
+>  drivers/usb/serial/ftdi_sio.h     |  2 +-
+>  drivers/usb/serial/ftdi_sio_ids.h |  4 ++--
+>  3 files changed, 13 insertions(+), 9 deletions(-)
 
-That needs to go into my patch system please. Thanks.
+Hi,
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
