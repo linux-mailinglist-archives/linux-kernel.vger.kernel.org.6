@@ -1,126 +1,187 @@
-Return-Path: <linux-kernel+bounces-573806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0A0A6DCB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:16:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E406EA6DCC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0771891202
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:17:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FA8188A6F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E5825F98B;
-	Mon, 24 Mar 2025 14:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A028C25F99B;
+	Mon, 24 Mar 2025 14:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gPyLl6ON"
-Received: from out.smtpout.orange.fr (out-73.smtpout.orange.fr [193.252.22.73])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S//D4shh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W7UhmJcU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D9025F985
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD0F25F988
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742825806; cv=none; b=uU42o7c7BCDKKUwFvoE1U2pHO/yUSIFq6gV2F433wakD5eHzn39SleO25MHvjmrV5n2cCO/Ve0bUPvJRfmB/jSSViMcUiX5A6y5AifgyJ/bvnWShK2ehkbRdxsKgEggh5HhdSc7/d1RrpJz5o3RZ4RW+ZrU15JBANbOOpQOM9X0=
+	t=1742826050; cv=none; b=Xzp8ZjJk5t8LFTSOpseqekDhtVrcY62EFnzoDVJLfmeBw6wk45Gcei9rnoaxB7TZH2utE8FtiqPl3Two9Y5I2v5ZBNSOd9WSS9XuZOWjV+yitAwBY675L3+zL5AIh+b+caz4QG8Yi1t5SZUoOPQWfytIQrhV9itnOPR+wmIOPkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742825806; c=relaxed/simple;
-	bh=4d5Y8VnmXxqTqWdoHM1MTNlrsMXLqO+0F6s/Rj4tq/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdF7P9GJKs8xIrJl0jzODoil/U1mvDaBqWWlVF0toAEE9dhLecAlj7zd9B27p2m+5b/X/E/inEaTAI/vuHuuIUR8PMrfukMYCS6gagdsP8ESxncW/vIp1dLNsDZyTqJmJI1r2yEDSWwNZhGcg+gvvKT5qC5TRiV4FqMaINPPJj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gPyLl6ON; arc=none smtp.client-ip=193.252.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id wibPtJX7SDCLUwibTt1T2D; Mon, 24 Mar 2025 15:16:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742825801;
-	bh=egUK+dbpZVYgJPQn6MKkKaGWaNgUdGqJbx9HzRoLv+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=gPyLl6ONTXBqceVZuW49IO48jRjxyFD2mBVHAnirQWmi3JAy4pROWYU7mbO+h52ga
-	 5aMy0ACiFVkVvrRJY7JhnW5I5KHEGBD/XGXHZiTZrmAP4AZPeG4+9eaUtyqPLkpdJb
-	 avmMZuOqQ3aPGsaVl7JQOXEQ33ipEKLhu8D8zgY63R/eSuOIi/jQdp9Ng6Eo36xuf5
-	 Hv6pjfVhUO6Mh9tjkXA8hrrRk8cUku/9xZQRhVh1hj6U5vZc6z6FWB1VeNnfBR1Pck
-	 PyK6pDWYMQvnBKNxTCbW2jZAZFlYBqoniolyDlt6U8CCDLJFetZ8F5zxI6hyeGclbe
-	 Oxu+T89q3Jnww==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Mar 2025 15:16:41 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <b7718c92-3934-4ce7-b9a1-0d8ac03dadc3@wanadoo.fr>
-Date: Mon, 24 Mar 2025 23:16:30 +0900
+	s=arc-20240116; t=1742826050; c=relaxed/simple;
+	bh=8zRoZAXogwlBji/UWt4mMNr6Uvadh0VBi4dUWDajiYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dssgqp8LzQFDZq2RgB2ejG6WdHVJ8HmU76LJ2C7HIvFJ5kSdefO4xw0zWl3LLTNHbw8z2yJChUQ/RyYE4Lb+NSTP9QWj3TKeVR8JvZWhy6d5/GGanlYJ4f/IgMTZgbStAgUAFSkLV1K2mVlU/DYslcS+e1Wg0Q+VFZpvGDze8TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S//D4shh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W7UhmJcU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742826046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Grju03sx9orm1mTdTO1OhdyFiS7PDdSVqz0RDanZY50=;
+	b=S//D4shhEB7abU7sf3jOOYz9Gm2VDvYc2pzwy1Tj0BdA+tHrvzRnIS2kFtWx9O4kLTXonQ
+	BBYgVSyUbEBIsFTq7+c9XC0rC4BPannnNbtEK8YbQ9eLBHs1oQ1S4U78TJGsHARocg30n1
+	E48NkbyB2ohfwlsG2Gq9GleR6JVsTTIwr7iYWpB31qj/Ti4V/4WhgveyKY6gUoVeJfYhav
+	PZ6KkYQII8UJHigE30TdMJfyjY4GQeJX3xFqluRPQ3T/tNDm5Tmfj4rczijQgtIzs2578R
+	IK4ZIcVT785lPk/fe5ayn3W5yTxJlE4SpDE/SXo6nAqXiIOdZ74KQBgkqlJlEQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742826046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Grju03sx9orm1mTdTO1OhdyFiS7PDdSVqz0RDanZY50=;
+	b=W7UhmJcUThHFs9FALyf/yrWmCGiqA/LUnQHPSdw2ZNAL8SVLVavuDTWlVS29fdoobmX5v/
+	hnmlcXxMegNhhRCA==
+To: Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v3 00/20] tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.3
+Date: Mon, 24 Mar 2025 15:20:21 +0100
+Message-ID: <20250324142042.29010-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/5] bits: introduce fixed-type BIT_U*()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>, Jani Nikula <jani.nikula@intel.com>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
- <20250322-fixed-type-genmasks-v7-2-da380ff1c5b9@wanadoo.fr>
- <Z-FhHRWtaYgTbILa@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z-FhHRWtaYgTbILa@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24/03/2025 at 22:41, Andy Shevchenko wrote:
-> On Sat, Mar 22, 2025 at 06:23:13PM +0900, Vincent Mailhol via B4 Relay wrote:
->> From: Lucas De Marchi <lucas.demarchi@intel.com>
->>
->> Implement fixed-type BIT_U*() to help drivers add stricter checks,
->> like it was done for GENMASK_U*().
-> 
-> ...
-> 
->> +/*
->> + * Fixed-type variants of BIT(), with additional checks like GENMASK_TYPE(). The
->> + * following examples generate compiler warnings due to shift-count-overflow:
-> 
-> "...due to -Wshift-count-overflow:" ?
-> 
-> Same idea — if you need a new version, since it's just a nit-pick.
+Hi,
 
-If you want. I staged this change locally, so if there is a v8, it will
-be addressed. I applied the same to the previous patch which also
-mentioned shift-count-overflow without the -W prefix.
+Update kcpuid's CSV file to latest x86-cpuid-db release. [*]
 
-But honestly, I am not convinced of the added value. This is from Lucas
-original patch one year ago, and no one was bothered by this. IMHO, when
-writing:
+Changelog v3
+------------
 
-  (...) generate compiler warnings due to shift-count-overflow:
+* Fix a rebase issue that was detected here:
 
-I do not see where the ambiguity is. The sentence clearly say that this
-is a compiler warning, so with or without the -W prefix, the sentence is
-equally understandable.
+    https://lore.kernel.org/x86-cpuid/Z9GlyaR-oFEur1zy@lx-t490
 
+  This is now fixed at:
 
-Yours sincerely,
-Vincent Mailhol
+    patch 13/20 ("tools/x86/kcpuid: Consolidate index validity checks")
 
+* Answer HPA's review remark regarding PSN leaf 0x3:
+
+    https://lore.kernel.org/x86-cpuid/Z9qwzVuvV1p6MjRw@lx-t490
+
+Changelog v2
+------------
+
+https://lore.kernel.org/x86-cpuid/20250312143738.458507-1-darwi@linutronix.de
+
+* Patches 2, 4->5, 8->10, 13, 14, and 18->19 are new in v2.
+
+* More bug fixes: patches 2, 4-5.
+
+* More refactorings over what's already there at v1, to make the code
+  easier to work with.  Patches 8->10, 13.
+
+* Apply Dave Hansen review remark by avoiding explicit vendor detection
+  and just trying all CPUID ranges, and see if the CPU responds back with
+  something sensible.  Patch 14.
+
+* Apply HPA's review remark regarding Leaf 0x3 not being unique to
+  Transmeta.  Patch 19 applies x86-cpuid-db v2.3 release, which has this
+  leaf removed and explains why.
+
+* Patches 16->19, apply x86-cpuid-db v2.0 -> v2.3 changes.  One release
+  per commit to make the kcpuid CSV diffs more sensible.
+
+Changelog v1
+------------
+
+https://lore.kernel.org/x86-cpuid/20250306205000.227399-1-darwi@linutronix.de
+
+This series updates kcpuid's CSV file from v1.0 to v2.2, as generated by
+the x86-cpuid-db project. [*]
+
+The new CSV adds multiple new leaves for Transmeta and Centaur/Zhaoxin.
+It also introduces new bitfields at leaves 0x7, 0x80000001, 0x80000020,
+and 0x80000021.  More details about the CSV changes are at the actual
+commit logs.
+
+PQ Summary:
+
+* Patch 1 is a generic kcpuid bugfix.
+
+* Patches 2-4 are preparatory cleanups.
+
+* Patches 5-9 add rudimentary x86 vendor detection and filtering to
+  kcpuid, as the CSV file is updated with indices that are exclusive to
+  certain CPU vendors.
+
+* Patch 10 updates the CSV file to x86-cpuid-db v2.0.
+
+* Patch 11 updates the CSV file to x86-cpuid-db v2.2.
+
+  Patch 10 and 11 are separated on purpose, to make the CSV commit log
+  diffs more sensible.
+
+* Patch 12 puts the whole kcpuid tool under MAINTAINERS' X86 CPUID entry,
+  since changes to the CSV file may require updates to the kcpuid code.
+  This will also make myself and the x86-cpuid mailing list CCed for all
+  future kcpuid patches.
+
+[*] https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+    https://x86-cpuid.org
+
+8<-----
+
+Ahmed S. Darwish (20):
+  tools/x86/kcpuid: Fix error handling
+  tools/x86/kcpuid: Exit the program on invalid parameters
+  tools/x86/kcpuid: Simplify usage() handling
+  tools/x86/kcpuid: Save CPUID output in an array
+  tools/x86/kcpuid: Print correct CPUID output register names
+  tools/x86/kcpuid: Remove unused local variable
+  tools/x86/kcpuid: Remove unused global variable
+  tools/x86/kcpuid: Set function return type to void
+  tools/x86/kcpuid: Use C99-style for loops
+  tools/x86/kcpuid: Use <cpuid.h> intrinsics
+  tools/x86/kcpuid: Refactor CPUID range handling for future expansion
+  tools/x86/kcpuid: Extend CPUID index mask macro
+  tools/x86/kcpuid: Consolidate index validity checks
+  tools/x86/kcpuid: Filter valid CPUID ranges
+  tools/x86/kcpuid: Define Transmeta and Centaur index ranges
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.0
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.1
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.2
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.3
+  MAINTAINERS: Include kcpuid under X86 CPUID DATABASE
+
+ MAINTAINERS                     |   2 +-
+ tools/arch/x86/kcpuid/cpuid.csv | 791 ++++++++++++++++++--------------
+ tools/arch/x86/kcpuid/kcpuid.c  | 375 ++++++++-------
+ 3 files changed, 636 insertions(+), 532 deletions(-)
+
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+--
+2.48.1
 
