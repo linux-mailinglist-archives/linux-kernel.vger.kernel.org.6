@@ -1,257 +1,117 @@
-Return-Path: <linux-kernel+bounces-573801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA0CA6DC9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:09:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F765A6DCA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F0F3ADA22
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55AA63AA09D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4225F7BD;
-	Mon, 24 Mar 2025 14:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ACC25F96A;
+	Mon, 24 Mar 2025 14:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hGbYObwC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="dgM8qoQK"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206FC1AAA1D;
-	Mon, 24 Mar 2025 14:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CE52505C5
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742825369; cv=none; b=EAw/i3Xro/yK9EAx+K6npv2PV1j16YODpWgLXB/bgROasz/J3OR339WA4b+hfhjfZS1iJkoJdWTxuzTgoDt8oQVwk6g8SYb6D56iEqO7OqfPslVAthszo2khO/6j7OvfTqgb5qNz05xuR9Up0LL+mTCKNta0vnfp+rHHDs2r8vA=
+	t=1742825464; cv=none; b=VWf5xkp4IiT5dlrEpsStAhTnkS+uLQBpGgAaJ51ciF/lu5aSOqVb2ujRI/xAkMtmM8rh5/YoYg2N50t88VGV/18vXJAna9Xrk1dxXb5QZwEW5It59LsGiDtzjv4qKK4DJh3cpOafjHk++8Z+pOTFkYFqhCziPFFtWDJRzLv5snA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742825369; c=relaxed/simple;
-	bh=zEZSfIN6Fl3MEvV/0zekr5/YFxEumJScw7YduuaZH0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7NW9JWyp9t0B8p983jyzsFyg2NtxGibgI+suJitGqjVEZLxCa0fMtE3nZ/jQbmVcOLP4vgnb+uSq9TRH84gEcjyFkOv0d9XLFIi/TZN/BqLuuttTtPpuYgd3sy6P28Mf5r9fntDAsLvdX/lXgsSaIdk0b1f3XK1VwCKCocvFH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hGbYObwC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742825365;
-	bh=zEZSfIN6Fl3MEvV/0zekr5/YFxEumJScw7YduuaZH0w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hGbYObwCSzoMoUuei5KO2c0n1ogWFHwWv6dnJYjUJzp/5l+wPKvHZ2G4z8mlpLgQS
-	 gUfa8uFaVqfwsgcb/DCgmYTCWHMDSCFcsbIoAtycwxOvyRJbtwg6omYK4fjg2dtEWq
-	 mg2drmy/m3aCanjQGo4c4lTRec86x6pf5sQJLrH3PnnwNVErpkCCk/9MVW84K9AID5
-	 W+cNucu8TyZzZv/Suzy1L4icNc+1YxwsNBf1UrfpMmPNnwABHYz3h60UYJ1EYPmtDH
-	 au+C3CMjPvV9tI785lT6f3JWQDE4eOk9FMZ7MXQTpRy6tYDyaa+Q0cZwrVsYGVF2zu
-	 4L/0gkykc2IYg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AC28F17E088D;
-	Mon, 24 Mar 2025 15:09:24 +0100 (CET)
-Message-ID: <ecd8a46e-0f87-498e-8a12-fdeae6f5791d@collabora.com>
-Date: Mon, 24 Mar 2025 15:09:24 +0100
+	s=arc-20240116; t=1742825464; c=relaxed/simple;
+	bh=NqNPPpCkaZkUwbNQKKvy64w/LnM2Bd6Jjp5jMp418XA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3fONGA0CcB77olAcN+0+WiQicLO+ZJpAZkyMKxJjzL+WADAqKgLuOpMYT1Rmkdzc/H/RAHj2wWZPJ9senXg79s0F+BeET+C8fwyzBWQB9hMXA9H9B7I542mqojsuaNISQ5AwftdwyfT94vqLPXlmLWPGwRiGOg2QGSiog4XRYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=dgM8qoQK; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+Date: Mon, 24 Mar 2025 10:10:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1742825449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5QavDf4YfF4g6incDfR8g3M+4C53fdbJxU8hmz4md/c=;
+	b=dgM8qoQKNJIEi0dY32L6hBabt7HjG8XUm1NhIZaImSKprfR8JXsfBfhH9cTCPrcLg9wfGD
+	o23+bo8cMWxTi36khM1fvKGG4apkYQpsaXdP8sgYZRtIQ6jZU1waJ/RfnEJxDXhZnj6hMt
+	l4zSCzE8vSv3ylcINppjWvFaV7fjmBwjcieTx3E9R4I0dwULWMbcw+IcB7uU72j8Pi/ESl
+	15pJTFdt9S+sGypIz635REFAIlyLDRUk/TZpfAg/E3oncgVQLclL0tPPh5xQu2kDhPTHMJ
+	CFfNp00ClfbxNtP9JaOZCdso+fJ06mjS+jj+Drg6EAouBFLpdKHMNTre/Gp2cA==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Faith Ekstrand <faith.ekstrand@collabora.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Janne Grunau <j@jannau.net>, Sven Peter <sven@svenpeter.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sergio Lopez Pascual <slp@sinrega.org>,
+	Ryan Houdek <sonicadvance1@gmail.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	asahi <asahi@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-doc <linux-doc@vger.kernel.org>,
+	Asahi Lina <lina@asahilina.net>
+Subject: Re: [PATCH v3] drm: Add UAPI for the Asahi driver
+Message-ID: <Z-Fn4niI6_Yd06Ze@blossom>
+References: <20250314-agx-uapi-v3-1-3abf7e74ea2f@rosenzweig.io>
+ <195b507d4b3.b25d0dad175771.7566427576910952468@collabora.com>
+ <195b582682b.121ba4d5e219032.3109114844776468245@collabora.com>
+ <Z-B6uc7EEAdBPXmt@blossom>
+ <260D98E1-7204-4535-A84F-D55A4527FF7E@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2] arm64: dts: mediatek: add mmc2 support for
- mt8365-evk
-To: Alexandre Mergnat <amergnat@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- macpaul.Lin@mediatek.com
-Cc: vsatoes@baylibre.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250109-mmc2-support-v2-1-5f660c809610@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250109-mmc2-support-v2-1-5f660c809610@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <260D98E1-7204-4535-A84F-D55A4527FF7E@collabora.com>
+X-Migadu-Flow: FLOW_OUT
 
-Il 24/03/25 14:54, Alexandre Mergnat ha scritto:
-> Adds support for the MMC2 interface on the MT8365 EVK board.
-> It introduces a fixed regulator for the MMC2 VDD33 supply and configures
-> the MMC2 node with a 4-bit bus width, high-speed capabilities, UHS
-> modes, and appropriate power supplies. Enabled SDIO IRQ, wakeup source,
-> and kept power during suspend (to save firmware module) for wireless
-> chip functionality.
+> >>>> +    /** 
+> >>>> +     * @DRM_ASAHI_BIND_SINGLE_PAGE: Map a single page of the BO repeatedly 
+> >>>> +     * across the VA range. 
+> >>>> +     * 
+> >>>> +     * This is useful to fill a VA range with scratch pages or zero pages. 
+> >>>> +     * It is intended as a mechanism to accelerate sparse. 
+> >>>> +     */ 
+> >>>> +    DRM_ASAHI_BIND_SINGLE_PAGE = (1L << 2),
+> >> 
+> >> Does this require the BO to be a single page? If so, does it require offset==0? Or does it just take whatever page is at the specified offset?
+> > 
+> > I believe the intention is that it takes whatever page is at the
+> > specified offset and just maps that a bunch of times. HK doesn't use
+> > this yet though it probably should (this was added to help reduce
+> > overhead when emulating sparse with scratch/zero pages, which is still
+> > very new functionality in hk).
+> > 
+> > Accelerating this properly involves GPUVM patches - although even without
+> > that, moving the loop into the kernel so it's only a single ioctl
+> > (user-kernel roundtrip) seems worth keeping the flag for.
 > 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
-> Changes in v2:
-> - Apply alphabetical order to pinctrl property items.
-> - Improve commit message
-> - Link to v1: https://lore.kernel.org/r/20250109-mmc2-support-v1-1-9b9d1b1ae35d@baylibre.com
-> ---
->   arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 103 +++++++++++++++++++++++++---
->   1 file changed, 94 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> index 7d90112a7e274..a87f1b3ed6500 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> @@ -53,6 +53,15 @@ memory@40000000 {
->   		reg = <0 0x40000000 0 0xc0000000>;
->   	};
->   
-> +	mmc2_vdd33: mmc2_vdd33-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "mmc2_vdd33";
+> FYI: I will be posting a patch for the GPUVM abstraction soon.
 
-mmc2-vdd33 please
-
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 121 0>;
-> +		enable-active-high;
-> +	};
-> +
->   	usb_otg_vbus: regulator-0 {
->   		compatible = "regulator-fixed";
->   		regulator-name = "otg_vbus";
-> @@ -197,6 +206,28 @@ &mmc1 {
->   	status = "okay";
->   };
->   
-> +&mmc2 {
-> +	assigned-clock-parents = <&topckgen CLK_TOP_MSDCPLL>;
-> +	assigned-clocks = <&topckgen CLK_TOP_MSDC50_2_SEL>;
-> +	bus-width = <4>;
-> +	cap-sd-highspeed;
-> +	cap-sdio-irq;
-> +	hs400-ds-delay = <0x12012>;
-> +	keep-power-in-suspend;
-> +	max-frequency = <200000000>;
-> +	non-removable;
-> +	pinctrl-0 = <&mmc2_default_pins>;
-> +	pinctrl-1 = <&mmc2_uhs_pins>;
-> +	pinctrl-names = "default", "state_uhs";
-> +	sd-uhs-sdr104;
-> +	sd-uhs-sdr25;
-> +	sd-uhs-sdr50;
-> +	vmmc-supply = <&mmc2_vdd33>;
-> +	vqmmc-supply = <&mt6357_vcn18_reg>;
-> +	wakeup-source;
-> +	status = "okay";
-> +};
-> +
->   &mt6357_pmic {
->   	interrupts-extended = <&pio 145 IRQ_TYPE_LEVEL_HIGH>;
->   	interrupt-controller;
-> @@ -324,8 +355,8 @@ cmd-dat-pins {
->   				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
->   				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
->   				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
-> -			input-enable;
->   			bias-pull-up;
-> +			input-enable;
-
-This is a cleanup and goes to a different commit
-
->   		};
->   
->   		rst-pins {
-> @@ -337,8 +368,8 @@ rst-pins {
->   	mmc0_uhs_pins: mmc0-uhs-pins {
->   		clk-pins {
->   			pinmux = <MT8365_PIN_99_MSDC0_CLK__FUNC_MSDC0_CLK>;
-> -			drive-strength = <MTK_DRIVE_10mA>;
->   			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-> +			drive-strength = <MTK_DRIVE_10mA>;
-
-While at it, in a cleanup commit, if you could also remove those MTK_DRIVE_xxx and
-use just the number that'd be great.
-
->   		};
->   
->   		cmd-dat-pins {
-> @@ -351,21 +382,21 @@ cmd-dat-pins {
->   				 <MT8365_PIN_94_MSDC0_DAT6__FUNC_MSDC0_DAT6>,
->   				 <MT8365_PIN_93_MSDC0_DAT7__FUNC_MSDC0_DAT7>,
->   				 <MT8365_PIN_98_MSDC0_CMD__FUNC_MSDC0_CMD>;
-> -			input-enable;
-> -			drive-strength = <MTK_DRIVE_10mA>;
->   			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-> +			drive-strength = <MTK_DRIVE_10mA>;
-> +			input-enable;
->   		};
->   
->   		ds-pins {
->   			pinmux = <MT8365_PIN_104_MSDC0_DSL__FUNC_MSDC0_DSL>;
-> -			drive-strength = <MTK_DRIVE_10mA>;
->   			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-> +			drive-strength = <MTK_DRIVE_10mA>;
->   		};
->   
->   		rst-pins {
->   			pinmux = <MT8365_PIN_97_MSDC0_RSTB__FUNC_MSDC0_RSTB>;
-> -			drive-strength = <MTK_DRIVE_10mA>;
->   			bias-pull-up;
-> +			drive-strength = <MTK_DRIVE_10mA>;
->   		};
->   	};
->   
-> @@ -386,16 +417,16 @@ cmd-dat-pins {
->   				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
->   				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
->   				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
-> -			input-enable;
->   			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-> +			input-enable;
->   		};
->   	};
->   
->   	mmc1_uhs_pins: mmc1-uhs-pins {
->   		clk-pins {
->   			pinmux = <MT8365_PIN_88_MSDC1_CLK__FUNC_MSDC1_CLK>;
-> -			drive-strength = <8>;
->   			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-> +			drive-strength = <8>;
->   		};
->   
->   		cmd-dat-pins {
-> @@ -404,9 +435,63 @@ cmd-dat-pins {
->   				 <MT8365_PIN_91_MSDC1_DAT2__FUNC_MSDC1_DAT2>,
->   				 <MT8365_PIN_92_MSDC1_DAT3__FUNC_MSDC1_DAT3>,
->   				 <MT8365_PIN_87_MSDC1_CMD__FUNC_MSDC1_CMD>;
-> -			input-enable;
-> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
->   			drive-strength = <6>;
-> +			input-enable;
-> +		};
-> +	};
-> +
-> +	mmc2_default_pins: mmc2-default-pins {
-> +		clk-pins {
-> +			pinmux = <MT8365_PIN_81_MSDC2_CLK__FUNC_MSDC2_CLK>;
-> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
-> +			drive-strength = <4>;
-> +		};
-> +
-> +		cmd-dat-pins {
-> +			pinmux = <MT8365_PIN_82_MSDC2_DAT0__FUNC_MSDC2_DAT0>,
-> +				 <MT8365_PIN_83_MSDC2_DAT1__FUNC_MSDC2_DAT1>,
-> +				 <MT8365_PIN_84_MSDC2_DAT2__FUNC_MSDC2_DAT2>,
-> +				 <MT8365_PIN_85_MSDC2_DAT3__FUNC_MSDC2_DAT3>,
-> +				 <MT8365_PIN_80_MSDC2_CMD__FUNC_MSDC2_CMD>;
->   			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
-> +			drive-strength = <4>;
-> +			input-enable;
-> +		};
-> +
-> +		sys-en-pins {
-> +			pinmux = <MT8365_PIN_120_DMIC1_CLK__FUNC_GPIO120>;
-
-My schematics say that the DMIC1_CLK pin is PERST_N, DMIC_DAT0 is PWR_EN: what's
-the intention here?!
-
-In any case, this is not a mmc2 pin, but something else :-)
-
-Cheers,
-Angelo
-
+Great to hear :) Although in this case, I meant that accelerating
+DRM_ASAHI_BIND_SINGLE_PAGE requires patches to extend the actual C
+implementation of drm/gpuvm, not just the Rust abstraction. Which is a
+bit annoying for non-essential functionality with regards to upstreaming
+things...
 
