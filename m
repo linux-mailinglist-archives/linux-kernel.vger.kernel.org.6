@@ -1,108 +1,141 @@
-Return-Path: <linux-kernel+bounces-573537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57628A6D8CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:02:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35B5A6D8D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120311891EDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2A417A62C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C4D1E7C08;
-	Mon, 24 Mar 2025 11:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A127250BFD;
+	Mon, 24 Mar 2025 11:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="yOI7/oRW"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="d5wk2Bnp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lIu38uaB"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA252C80;
-	Mon, 24 Mar 2025 11:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5402C80;
+	Mon, 24 Mar 2025 11:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814160; cv=none; b=bWC6rx4e3O+0lS/t9n9LfCoZmFgf4BV4GsIoCMwqoXaLyAC1CsKW4P9BvTT0hc+AU3QA6sRAaoj1nOOdLkAHnTFKr9VBMCg7C335rF/NOMyRB466XnSy8CCwGlLS0eAKN+k+b8BEC0whvZmWAZOcZN3cXt6Dt1JNiRxA+q4IVf4=
+	t=1742814168; cv=none; b=CQkpgTQevKcKEnQboEYDvOdd6abO696xLJ2Nj0xyLbEdW72s/1qx+setYWOEarKx0m0c37dV0FGjrND1iWaWgUhanYXLMjf2e+B1Y0tBe9xCnJGesogec3qsF+tefoqoXjjwfI3xfUT6ShoZDkIuLenhcGv9rU24ZsufVCXJFME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814160; c=relaxed/simple;
-	bh=1JesYhBF8Hs5fgCeMj1bwvbhhCqj11DO9tdHIVFb1Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUg+qhRjEF/aoeNSQzbpNmxIgveuNr8fmx+Zl7GoapYBY9riOZ/XoN2lN4n7HubKnvsX/3Y5GXMshR+1lKsLxjHt9BwqJXQrwMC6jrFdUe55Xy/0B6TYvnMreBcKj6tARvqAvPRrAqTBeOrBDuVSgvtSh6Qi1e1iOd138Wwty1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=yOI7/oRW; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZLqrs2LSTzlrnRb;
-	Mon, 24 Mar 2025 11:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742814155; x=1745406156; bh=AHVZb8o6xuG6edhOIrcokBGX
-	1qq9SAaDQUp+MtVAobs=; b=yOI7/oRWbEdY8h+Q2AzHj84P2zpRfC8oEyrPGWLr
-	RdHKQYpLEX7Knunn/C6wVaby9+vXfAjkqXwLa9+ZT9T2F3xsuqBBV0eSH4uzEr8W
-	7vf7rZczG/+wz4WZN2GHs95Dk91ZP09uxYatS1giQIJJnhbsmfdhlg8q4f+fCUmN
-	hqPY0Zp6DpD85Ld/snXwHs0s626II3qnciP1kfwCB3QBTddHZH0X2cDrwIRS23uD
-	X+009ZfA92wyuZAR8O+F63ENcQLhvD/F9QFYiBoPfmS6iLaBfdXdSadWiyQQASte
-	sfx1lihrPUK2UOzLM3PtEBiYYwIsf+ulPHqXGa1bFWBZlA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Sv3ohFgoL4sO; Mon, 24 Mar 2025 11:02:35 +0000 (UTC)
-Received: from [172.22.32.156] (unknown [99.209.85.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZLqrh17H8zm8kvP;
-	Mon, 24 Mar 2025 11:02:26 +0000 (UTC)
-Message-ID: <e9f33f59-da1f-426b-8bdd-3c47397abf29@acm.org>
-Date: Mon, 24 Mar 2025 07:02:25 -0400
+	s=arc-20240116; t=1742814168; c=relaxed/simple;
+	bh=VI/QlYUCAaTIIpXrXll+ObIf2vvUK8jQbyoXVdBsOiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cp1p3Qm/kRXiJqHY4bPZA61bd9nxa5RCZiiyp39e/laNDfffhQ6WwzDCGWqb2yOrwTI0Aw0AfoqAdPhsLCiflMv1IzTxKwvEZ/ufI00n83pUSNvGuZ0ZReHYTAfxkb9JSJNe8kVoCyLy1webFgvzyvPAO6WyhPbyuGA/Sl50bnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=d5wk2Bnp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lIu38uaB; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id AA3BF1382C51;
+	Mon, 24 Mar 2025 07:02:44 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 24 Mar 2025 07:02:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1742814164; x=
+	1742900564; bh=1GVyjF+cNaK2a06PURQAqI3y445XU6p/QCUMWiHbhbo=; b=d
+	5wk2BnpTz5X25NvlwevUNay0dltJ+FFvhGLrDwhA7SbD7b+MvpflpluDer2dmhFI
+	5yyXB+hK6dgpX3t/wl9GEp2GuJmYjtPYy8QZaxI/EwhqM8cfBGSow2D11MuQtes6
+	zv7OD1UGSR4ut6lRPCcqBTEgAMW0A32b0j4qifjRn/gwkmooyTuubLPZEnsTPdu0
+	mPoYWXc0L7k9f2/gIyDWWHP3vNtSNMqbF/MnVFokXPOztnI43yY1rNCI+DaOBH6w
+	bgtHclXyCZYoBVZZ4oVPeIDPMKvcf7yFqlvid1yM76abFs5HYIj1gQRAqGafVnib
+	ZvmCIP4SdgcDlDykF/lfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1742814164; x=1742900564; bh=1GVyjF+cNaK2a06PURQAqI3y445XU6p/QCU
+	MWiHbhbo=; b=lIu38uaBFHX0MD8YVZPmymdDQ5nm82hH1+hygQkL8ljmtd7zl9l
+	JwSzzFC3PIasKLgFmXMFs/d3v/npOotk0SVwP9xmA4rJGNrYcMtKDnxH42ESKjeM
+	M4HiWO3YlkZVRQwpupOzLMn/SMagkNrq+OF4Bwvap35AKdJCNso16r9Cy1saoXdK
+	9UNtw7EWbqOgGPLZRDeYekpVit0AAUdoenbiLrerZMF0/b5dtYvnDTvJmBocS36I
+	LIrAYQbD6+HSFP/E1zKpCyKBhClguBpklC8x8Qym93/oq8hnkelT8SRM3XOe5SGG
+	/pV/I+4OfZbXsH6cErpISa9rnr93pLXuo/Q==
+X-ME-Sender: <xms:1DvhZypm_hsm_tmGgrJDraeIM5qMGyraOsqrtVP_QIXI_fEHFIORYw>
+    <xme:1DvhZwpYyV3zxPHOk_dUf0FWC0H0SwntVcovZTHq0m3y8t792BT_WGC8hRe2GzSim
+    91lJBp0xjSJy-6yb4Q>
+X-ME-Received: <xmr:1DvhZ3PQa6DmFzusnE0ece4DzKI2Icf3Hu8biNvIo7_xRpAWQYMAbFP1XCXa>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:1DvhZx5_FlQIkINyk4uEb_pU0xy_a0Y4D9DIStB5_4bwCZMvq9Y1-A>
+    <xmx:1DvhZx7YtHO3AD3zyukaiNn2Ou8mTW_G1vWeFT-vXd7sbjBJPGs60Q>
+    <xmx:1DvhZxiVuX7b_bM0P5R5EPrQOzDQ9N-DVwab0uQJVtRqMGjajLv42A>
+    <xmx:1DvhZ76ctWUyquiOwhCFe6DCUc7XRnS3T7uS8HXwk2f5NH79h098Lg>
+    <xmx:1DvhZwKOnpmyQTByuHlWE2tlOwHPGIwF5dNuvd0gg4sAD3L38X68NZq_>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Mar 2025 07:02:43 -0400 (EDT)
+Date: Mon, 24 Mar 2025 12:02:42 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
+Message-ID: <Z-E70n1tkzKdepTo@krikkit>
+References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
+ <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] ufs: delegate the interrupt service routine to a
- threaded irq handler
-To: neil.armstrong@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250321-topic-ufs-use-threaded-irq-v1-1-7a55816a4b1d@linaro.org>
- <31b46812-72d5-4f9d-b55d-16a6e10afe7d@acm.org>
- <d084e50e-8b2b-4820-a5e7-25ec440d128e@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <d084e50e-8b2b-4820-a5e7-25ec440d128e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
 
-On 3/24/25 5:31 AM, Neil Armstrong wrote:
-> On 21/03/2025 17:20, Bart Van Assche wrote:
->> - Instead of retaining hba->ufs_stats.last_intr_status and
->> =C2=A0=C2=A0 hba->ufs_stats.last_intr_ts, please remove both members a=
-nd also
->> =C2=A0=C2=A0 the debug code that reports the values of these member va=
-riables.
->> =C2=A0=C2=A0 Please also remove hba->intr_en.
->=20
-> Hmm ok so no need for the IRQ debug code anymore ? I guess this should
-> be in a separate cleanup patch.
+2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
+> +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
+> +			    const struct ovpn_peer_key_reset *pkr)
+> +{
+> +	struct ovpn_crypto_key_slot *old = NULL, *new;
+> +	u8 idx;
+> +
+> +	if (pkr->slot != OVPN_KEY_SLOT_PRIMARY &&
+> +	    pkr->slot != OVPN_KEY_SLOT_SECONDARY)
+> +		return -EINVAL;
+> +
+> +	new = ovpn_aead_crypto_key_slot_new(&pkr->key);
+> +	if (IS_ERR(new))
+> +		return PTR_ERR(new);
+> +
+> +	spin_lock_bh(&cs->lock);
 
-Hi Neil,
+At this point, should there be a check that we're not installing 2
+keys with the same key_id at the same time? I expect a well-behaved
+userspace never does that, but it would confuse
+ovpn_crypto_key_id_to_slot if it ever happened.
 
-There are two reasons why I propose to remove that code:
-- I don't think that it is possible to keep that code and switch to
-   threaded interrupts without a measurable negative performance impact.
-- That debug code is primarily useful for hardware (SoC) debugging,
-   something that falls outside the scope of the UFS driver.
+["well, then the tunnel is broken. if userspace sets up a broken
+config that's not the kernel's problem." is an acceptable answer]
 
-Thanks,
-
-Bart.
+-- 
+Sabrina
 
