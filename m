@@ -1,209 +1,196 @@
-Return-Path: <linux-kernel+bounces-573152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFDFA6D3A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:48:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C65A6D3A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4605118944D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06F81680EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1356418CC13;
-	Mon, 24 Mar 2025 04:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9127218A93F;
+	Mon, 24 Mar 2025 04:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J54RU1LL"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElVkj4ox"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC27A7E110;
-	Mon, 24 Mar 2025 04:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBC2188591
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742791679; cv=none; b=fgQDIaSYa8Lj4fPzaqg6+9zBlZha2wxOBW6u93kOEWe66pIEEmTUcNBX/fA+adTlIbf+KZO0f0ZAQlqvxBaDgnYkUJhLxUI8DIoiMRlo1NcctJpSEf7RX9lZGFnpD/y3wPZ/DUyqFD5GLqQPhyFlWXyIy5SW+fz+fMpyfCu9OBk=
+	t=1742792013; cv=none; b=WvKl2csT36kqkDq6Up5naBAjQF7u/KB1DPu/vnGVzzPhdrAttJ929fXAoEXIerccMSFDqo54S5sJyACUmZOixkRBwAHVpKTs94YI/4RxoXT21ho/oPFzPZUB4NlQJLiiFQvxKhwiyLm0D16hIZKX1FddQ7AsN6u+9iYuK6NNW7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742791679; c=relaxed/simple;
-	bh=oebWO/ZrGI6QIP5rK12oT36vAOsde3sQA+5FPtJA3g8=;
+	s=arc-20240116; t=1742792013; c=relaxed/simple;
+	bh=3/x51t1fgMs7fG3nO/H3wOuj/LwA71vuP96gmtfJ5N8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ToLwriaGhGouq0+xCaf0QyQLG9cphsl9Oxm0TKBHFKV8OBshiP3clxSLXVZu98JdAPGhuaxkRx5+pxjLDR8okWhMHR1ofRZkft82wN4Lrvit34YWTpO7XlAyGzWDxQy0TJ7d4OUFaWSQrQcJNOatXj6+6vHM4QQEvDk4+V7wNj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J54RU1LL; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e64165ae78cso2840395276.0;
-        Sun, 23 Mar 2025 21:47:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742791676; x=1743396476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=irOA4kDWv4T7ma/36tjF6MRUdZOvW8mgL9gXhU3hjJY=;
-        b=J54RU1LLMiE3J9MbJlM4ZYZdLFmfbeQz/URYpOpBKSPoscFGMh/3gXzcTZLfTiQ3JO
-         KYIN4mHobU5fIS9LVN8k4Gq4gl3ODGuaXjASbJ9xo81F4SZH/Bbk4q0kvTNmNV6jt8no
-         BV8bzOrAYTQ2ibpPh3hlYHBmVcWu8XCOOjk+k7yUuzyzXLbO0NPexYUWcOnnFNPWYbJ1
-         ws0LcER3XWYU2/IkGsORf3C65q7G/awBYYmkUDLKn6FcL7vGF97+iFdW1FP+b/QmeO4c
-         jTTMYDeKomUqQ2Pq0QnaxINBab64S7lFUYG4o8cLc1+d6m4hjXtE8Nxb58rQdMiWy/kJ
-         WNxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742791676; x=1743396476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=irOA4kDWv4T7ma/36tjF6MRUdZOvW8mgL9gXhU3hjJY=;
-        b=M8Pbb+AnB2Fw79Um762hSPaT4EdCrcWNrVMHwDVrnzugRLR2szrid6Zf3U6cmUEKim
-         dG+SoCWo66KnNqg7B1r9QdRGFA1sed2rrK+mc3ztw7YLAMpsdYQGFuwhe37ilcpnyZ0r
-         j+wXT+FlvK7tVSwUpXJoFnsFUnQMgzXJ8xoWPB5jbFUxdjKFVHy1DEGzY6MbHbBgpNMR
-         tAbCEBd1s7LEhsHUM+Yg1rsItR4NccxDiO6U2+TTTeB6BquI7ExSAziznsROxDsCZD4V
-         eiGa60YBAPm1Gh/Uj6ShIT6Pq/HEHqtt7RBBq19DSalGMfHGGkmVlcCcEj22jj1k52Oj
-         Pp7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFNaTn3lHBvd7fg6cef0pnPIq4Iceso3eMF/MRTeDmY+0jnByS581lamV5PaCtaAA4/MLS096QmRdlHLBB@vger.kernel.org, AJvYcCUhbTbS1KJ/B17rkS44ljI63SG8HhRqrVv4vVPnkvSpGPuhV1zdRMzidEqnbMZGDx+dV60KbdKhJNS2BxHlNvtrKg==@vger.kernel.org, AJvYcCWlvt417cGVlc4pmhcKV1WPXDZM4Rx1NsliCIUfvdWpu39VNbq3jVSErLSFLEWoPMPH3oQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2v9Aqgk3J4aJ9cXaHLc9DXkQFlM8HPh6Xlz6jbf9KsOaBbGQ1
-	fjlYcWbZzMDOqgOuYf9wYJbU4UEQ11w9gAmPaiqqjW5D2OC5tWLqBdBpmlhHEFZqUfp006jxxnh
-	ZHy+mabmGhGyCPs30LmwntkOo93I=
-X-Gm-Gg: ASbGncsDg+gghoOfxaW8uuZ43uvLnjCy3b6k/9teMFQ19wzo2XONpS5nRtyiKPTMI1d
-	eUY7BdtCJth6nUdkH7+yloOTKJdUY8LcthL9FN4wll8I9RUedCgDzhK8lBIi4w31RLNks2ikkXw
-	IGvN5uS84zHqOQUxg/M4AGJoc1
-X-Google-Smtp-Source: AGHT+IG0Q3vCe9YM49MiXZIdS6r7vCU8YR/bYrCYkh14g7ZyUIxlwy86RnParcxNaxtT4W6k7/Gx84f/1Tcc90+kssE=
-X-Received: by 2002:a05:6902:2e0e:b0:e5a:e39d:c2ad with SMTP id
- 3f1490d57ef6-e66a4ab615fmr13672444276.0.1742791676384; Sun, 23 Mar 2025
- 21:47:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=EtFQnu2/gj6zXuudfxwkggwCX3Efqbnlp04SyTg+g6340EWgYxvURy8svgl/yMK/IN6t5kKsfx0HY9o9Q8G2PDoe3EUME0xt3AuN6kM8UXNAI0L+bEu5J8rsACGaN6MauXmbh22B1fewLbeK0hFs/6lGAInYmWvhmW0eo/vGVLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElVkj4ox; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50850C4CEDD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742792013;
+	bh=3/x51t1fgMs7fG3nO/H3wOuj/LwA71vuP96gmtfJ5N8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ElVkj4oxjiUDE8Jf2TYni4mqvrZOUVEa1H9YBl3mV9p9XOpM3IyDItAZIkAGn2rjU
+	 gaDZKdj4KqGk//s4+KRejPQ0NVLyfjc3gTmJec9bmB134nZZooAsV17le8EKy7MdtE
+	 bHAAKiqUPY2WRzxOpwkB5B5x9OlXOxxmhj+qnesTkZZEoANqmXXDsYfhLlnSKGLXz0
+	 SRvhyqdsuO/FCbUSKUxkSN2Nl7wBHeDhOUAyH9FBGw75P9qo7J/qKINVMpW6mEqTEx
+	 WoHysty7OuDKGpxX8HxypRFuwHMocSI6//GJkYU5x1y5wm+Vagw3/p889YuFkosLJF
+	 6FJs0Noss4A1Q==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e34f4e89so7283165a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 21:53:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXCPFyndQcETDxw4tZai+0sPUOGTkeYWcZSaTvXhs1uOKSxnsiIJ1vtzvbfFcFeF+sIBXjmnsQr6jZdiz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCynavB5OW+PFt0OqYQzcIxyc8aR/6Bj6aGDdclbvyuhLltyBw
+	t4GPfnsiY28Cu0CC4uyKmtvX+UvU+V57zF/M74JD0/eQ8iLvZfMNcEUOX3JM3Yy6GxLww0fT5BZ
+	GcPdEWgtI2xNF0T9po0/vvPsnRPQ=
+X-Google-Smtp-Source: AGHT+IEP1ircE6G4cPMByDubGspMRhA3CZjhb9zKhyd+06Q3bN0hXbP3l0NU/iTEQh8CQD9cE52Bcm4omqeeQ4pkr/c=
+X-Received: by 2002:a17:907:f508:b0:ac4:16a:1863 with SMTP id
+ a640c23a62f3a-ac4016a41ebmr785684866b.26.1742792011930; Sun, 23 Mar 2025
+ 21:53:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321184255.2809370-1-namhyung@kernel.org> <Z-C6CdVXohPJSjzu@gmail.com>
-In-Reply-To: <Z-C6CdVXohPJSjzu@gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Sun, 23 Mar 2025 21:47:45 -0700
-X-Gm-Features: AQ5f1JrRvD_8pxSfdLWXEHG4xGXMpSiVYWEb2Kfava-aAZ_cOZ5-0-xGinxFRSI
-Message-ID: <CAH0uvogCka=hXsyPXboZS7znOgFHYhaMQ0H0VGMEM_z_AdBZYw@mail.gmail.com>
-Subject: Re: [PATCH v3] perf trace: Implement syscall summary in BPF
-To: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org
+References: <943E06D656E4E707+20250321141001.109916-1-wangyuli@uniontech.com>
+ <CAAhV-H71aEKj2V8mAqbUuAe1JiHngWHW3rSaJ_Dx_CzoQC7TgQ@mail.gmail.com>
+ <545ed081-bec3-395c-e0dd-a45146e00cd1@loongson.cn> <CAAhV-H51AxAjhhge=w4Y=p0XnuW-RyuvA5dPpPc-F0N9YPYHrg@mail.gmail.com>
+ <30b25aa7-106f-7ebf-296d-0e05d7da75eb@loongson.cn>
+In-Reply-To: <30b25aa7-106f-7ebf-296d-0e05d7da75eb@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 24 Mar 2025 12:53:22 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7vg=Vh40phqu4btsZU39o+Rfo0mAsrKF9P0nX=UvaO_g@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr8QjD_hmfBUlBT0UGfcl7wC9EzAeqvktoYVEve1vvUXDYM6tLiQn51sMw
+Message-ID: <CAAhV-H7vg=Vh40phqu4btsZU39o+Rfo0mAsrKF9P0nX=UvaO_g@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: KGDB: Rework arch_kgdb_breakpoint() implementation
+To: Jinyang He <hejinyang@loongson.cn>
+Cc: WangYuli <wangyuli@uniontech.com>, kernel@xen0n.name, guanwentao@uniontech.com, 
+	wentao@uniontech.com, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	zhoubinbin@loongson.cn, lihui@loongson.cn, rdunlap@infradead.org, 
+	chenhuacai@loongson.cn, zhanjun@uniontech.com, niecheng1@uniontech.com, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Sun, Mar 23, 2025 at 6:49=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
+On Mon, Mar 24, 2025 at 12:31=E2=80=AFPM Jinyang He <hejinyang@loongson.cn>=
+ wrote:
 >
-> Hello Namhyung,
+> On 2025-03-24 12:09, Huacai Chen wrote:
 >
-> On Fri, Mar 21, 2025 at 11:42:55AM -0700, Namhyung Kim wrote:
-> > When -s/--summary option is used, it doesn't need (augmented) arguments
-> > of syscalls.  Let's skip the augmentation and load another small BPF
-> > program to collect the statistics in the kernel instead of copying the
-> > data to the ring-buffer to calculate the stats in userspace.  This will
-> > be much more light-weight than the existing approach and remove any los=
-t
-> > events.
+> > Hi, Jinyang,
 > >
-> > Let's add a new option --bpf-summary to control this behavior.  I canno=
-t
-> > make it default because there's no way to get e_machine in the BPF whic=
-h
-> > is needed for detecting different ABIs like 32-bit compat mode.
-> >
-> > No functional changes intended except for no more LOST events. :)  But
-> > it only works with -a/--all-cpus for now.
-> >
-> >   $ sudo ./perf trace -as --summary-mode=3Dtotal --bpf-summary sleep 1
-> >
-> >    Summary of events:
-> >
-> >    total, 6194 events
-> >
-> >      syscall            calls  errors  total       min       avg       =
-max       stddev
-> >                                        (msec)    (msec)    (msec)    (m=
-sec)        (%)
-> >      --------------- --------  ------ -------- --------- --------- ----=
------     ------
-> >      epoll_wait           561      0  4530.843     0.000     8.076   52=
-0.941     18.75%
-> >      futex                693     45  4317.231     0.000     6.230   50=
-0.077     21.98%
-> >      poll                 300      0  1040.109     0.000     3.467   12=
-0.928     17.02%
-> >      clock_nanosleep        1      0  1000.172  1000.172  1000.172  100=
-0.172      0.00%
-> >      ppoll                360      0   872.386     0.001     2.423   25=
-3.275     41.91%
-> >      epoll_pwait           14      0   384.349     0.001    27.453   38=
-0.002     98.79%
-> >      pselect6              14      0   108.130     7.198     7.724     =
-8.206      0.85%
-> >      nanosleep             39      0    43.378     0.069     1.112    1=
-0.084     44.23%
-> >      ...
-> >
-> > Cc: Howard Chu <howardchu95@gmail.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> > v3)
-> >  * support -S/--with-summary option too  (Howard)
+> > On Mon, Mar 24, 2025 at 9:42=E2=80=AFAM Jinyang He <hejinyang@loongson.=
+cn> wrote:
+> >> On 2025-03-22 20:51, Huacai Chen wrote:
+> >>
+> >>> Hi, Tiezhu & Jinyang,
+> >>>
+> >>> On Fri, Mar 21, 2025 at 10:11=E2=80=AFPM WangYuli <wangyuli@uniontech=
+.com> wrote:
+> >>>> The arch_kgdb_breakpoint() function defines the kgdb_breakinst
+> >>>> symbol using inline assembly.
+> >>>>
+> >>>> There's a potential issue where the compiler might inline
+> >>>> arch_kgdb_breakpoint(), which would then define the kgdb_breakinst
+> >>>> symbol multiple times, leading to a linker error.
+> >>>>
+> >>>> To prevent this, declare arch_kgdb_breakpoint() as noline.
+> >>>>
+> >>>> Fix follow error with LLVM-19 *only* when LTO_CLANG_FULL:
+> >>>>       LD      vmlinux.o
+> >>>>     ld.lld-19: error: ld-temp.o <inline asm>:3:1: symbol 'kgdb_break=
+inst' is already defined
+> >>>>     kgdb_breakinst: break 2
+> >>>>     ^
+> >>>>
+> >>>> Additionally, remove "nop" here because it's meaningless for LoongAr=
+ch
+> >>>> here.
+> >>>>
+> >>>> Fixes: e14dd076964e ("LoongArch: Add basic KGDB & KDB support")
+> >>>> Co-developed-by: Winston Wen <wentao@uniontech.com>
+> >>>> Signed-off-by: Winston Wen <wentao@uniontech.com>
+> >>>> Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+> >>>> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> >>>> Co-developed-by: Huacai Chen <chenhuacai@loongson.cn>
+> >>>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> >>>> Tested-by: Yuli Wang <wangyuli@uniontech.com>
+> >>>> Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> >>>> Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+> >>>> ---
+> >>>> Changelog:
+> >>>>    *v1->v2:
+> >>>>       1. Drop the nop which is no effect for LoongArch here.
+> >>>>       2. Add "STACK_FRAME_NON_STANDARD" for arch_kgdb_breakpoint() t=
+o
+> >>>> avoid the objtool warning.
+> >>>> ---
+> >>>>    arch/loongarch/kernel/kgdb.c | 4 ++--
+> >>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/loongarch/kernel/kgdb.c b/arch/loongarch/kernel/kg=
+db.c
+> >>>> index 445c452d72a7..38bd0561d7d5 100644
+> >>>> --- a/arch/loongarch/kernel/kgdb.c
+> >>>> +++ b/arch/loongarch/kernel/kgdb.c
+> >>>> @@ -224,13 +224,13 @@ void kgdb_arch_set_pc(struct pt_regs *regs, un=
+signed long pc)
+> >>>>           regs->csr_era =3D pc;
+> >>>>    }
+> >>>>
+> >>>> -void arch_kgdb_breakpoint(void)
+> >>>> +noinline void arch_kgdb_breakpoint(void)
+> >>>>    {
+> >>>>           __asm__ __volatile__ (                  \
+> >>>>                   ".globl kgdb_breakinst\n\t"     \
+> >>>> -               "nop\n"                         \
+> >>>>                   "kgdb_breakinst:\tbreak 2\n\t"); /* BRK_KDB =3D 2 =
+*/
+> >>>>    }
+> >>>> +STACK_FRAME_NON_STANDARD(arch_kgdb_breakpoint);
+> >>> Is there a better solution than STACK_FRAME_NON_STANDARD()? In the
+> >>> past we can use annotate_reachable() in arch_kgdb_breakpoint(), but
+> >>> annotate_reachable() is no longer exist.
+> >> Maybe we can parse the imm-code of `break` and set diffrent insn_type =
+in
+> >> objtool.
+> >> The BRK_KDB imply the PC will go head, while the BRK_BUG imply PC stop=
+.
+> >> (arch/loongarch/include/uapi/asm/break.h)
+> >>
+> >> Tiezhu, how do you think?
+> > Touching objtool may be a little complicated, is ANNOTATE_REACHABLE()
+> > the successor of annotate_reachable()? I tried
+> > ANNOTATE_REACHABLE(kgdb_breakinst) but there was still a warning.
+> Should it annotate to the next insn of `break`?
+> Like,
 >
-> It gave me segfault somehow.
+>      kgdb_breakinst:
+>      break 2
+>      another_label:
 >
-> (gdb) bt
-> #0  sighandler_dump_stack (sig=3D32767) at util/debug.c:322
-> #1  <signal handler called>
-> #2  0x00005555556d2383 in hashmap_find ()
-> #3  0x000055555567474a in thread__update_stats (thread=3D0x5555564acc60, =
-ttrace=3D0x5555564ad7a0, id=3D0, sample=3D0x7fffffff8f10, err=3D1,
->     trace=3D0x7fffffffb1a0) at builtin-trace.c:2616
-> #4  0x00005555556757cb in trace__sys_exit (trace=3D0x7fffffffb1a0, evsel=
-=3D0x5555561879d0, event=3D0x7fffed980000, sample=3D0x7fffffff8f10)
->     at builtin-trace.c:2924
-> #5  0x0000555555677e1b in trace__handle_event (trace=3D0x7fffffffb1a0, ev=
-ent=3D0x7fffed980000, sample=3D0x7fffffff8f10) at builtin-trace.c:3619
-> #6  0x00005555556796fb in __trace__deliver_event (trace=3D0x7fffffffb1a0,=
- event=3D0x7fffed980000) at builtin-trace.c:4173
-> #7  0x0000555555679859 in trace__deliver_event (trace=3D0x7fffffffb1a0, e=
-vent=3D0x7fffed980000) at builtin-trace.c:4201
-> #8  0x000055555567abed in trace__run (trace=3D0x7fffffffb1a0, argc=3D2, a=
-rgv=3D0x7fffffffeb30) at builtin-trace.c:4590
-> #9  0x000055555567f102 in cmd_trace (argc=3D2, argv=3D0x7fffffffeb30) at =
-builtin-trace.c:5803
-> #10 0x0000555555685252 in run_builtin (p=3D0x5555560eaf28 <commands+648>,=
- argc=3D7, argv=3D0x7fffffffeb30) at perf.c:351
-> #11 0x00005555556854fd in handle_internal_command (argc=3D7, argv=3D0x7ff=
-fffffeb30) at perf.c:404
-> #12 0x000055555568565e in run_argv (argcp=3D0x7fffffffe91c, argv=3D0x7fff=
-ffffe910) at perf.c:448
-> #13 0x00005555556859af in main (argc=3D7, argv=3D0x7fffffffeb30) at perf.=
-c:556
+> ANNOTATE_REACHABLE(another_label)
+Still no help.
 
-the command I used is:
+Huacai
 
-perf $ sudo ./perf trace -aS --summary-mode=3Dtotal --bpf-summary -- sleep =
-1
-[sudo] password for howard:
-perf: Segmentation fault
-Obtained 14 stack frames.
-./perf(dump_stack+0x35) [0x591e26c8a735]
-./perf(sighandler_dump_stack+0x2d) [0x591e26c8a7dd]
-/lib/x86_64-linux-gnu/libc.so.6(+0x45250) [0x737072045250]
-./perf(+0x1543ed) [0x591e26ba43ed]
-./perf(+0xff616) [0x591e26b4f616]
-./perf(+0xfc3f4) [0x591e26b4c3f4]
-./perf(+0x10193b) [0x591e26b5193b]
-./perf(cmd_trace+0x205e) [0x591e26b56a9e]
-./perf(+0x10b0e0) [0x591e26b5b0e0]
-./perf(+0x10b3fb) [0x591e26b5b3fb]
-./perf(main+0x2fb) [0x591e26ad63eb]
-/lib/x86_64-linux-gnu/libc.so.6(+0x2a3b8) [0x73707202a3b8]
-/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b) [0x73707202a47b]
-./perf(_start+0x25) [0x591e26ad6a35]
-Segmentation fault
-
-Thanks,
-Howard
+>
+> Jinyang
+> >
+> > Huacai
+> >
+> >>
+> >>> Huacai
+> >>>
+> >>>>    /*
+> >>>>     * Calls linux_debug_hook before the kernel dies. If KGDB is enab=
+led,
+> >>>> --
+> >>>> 2.49.0
+> >>>>
+>
 
