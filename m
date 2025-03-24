@@ -1,180 +1,276 @@
-Return-Path: <linux-kernel+bounces-573533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93B1A6D8C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:00:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB31AA6D8C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B4D316A1E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:00:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DC77A5E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C466E1E0DB3;
-	Mon, 24 Mar 2025 11:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81C1250BFD;
+	Mon, 24 Mar 2025 11:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jr/oRkwB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mninbDkJ"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A135C2E337E;
-	Mon, 24 Mar 2025 11:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BA010A3E;
+	Mon, 24 Mar 2025 11:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814041; cv=none; b=ebnfiwOnw9kc/eeysDYwhJXfVLEGnVW4y3L9AkNieFjdrCzEmFa/1IvYPVhirHQSlMu0xskf4YVaegp/P8yjhOhqvANudzas0tUUYVXbgmCaN24xSiSWAnk2xEHE0KnYCPBUy1eRJZWxlHrhse6ObEJvZoT+tKvFw0QXMueZthU=
+	t=1742814053; cv=none; b=uB71R02DBEPyABSe2cEoEuNaMmCaqKPlPkhR0K43xdIstwFmJm0ss+KxfaP1AKkij/kIaS8MBTPT9Q+pkcnHK1VfTgXyNDRNEQgtPNTVIHzstOuAEdiW3lG2LuyZ5WQZc1KezXn12XY4KpVKEDLATWqgDK8Vwmz3nbveP73tdyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814041; c=relaxed/simple;
-	bh=EjvNWj2bu9mDgzWHLlrFrR4A2jejj1JVVbCwu0bDSig=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=f5RGYaCw6OEuknxCSJpyCCM3odLvTV1Jm0TRzhboKKLstOU0kOAnR+98rArxABua+gKXJezZXQ7ko123OsGMFu8Rh3dpfbPuixw+WuWBoa2dgZXmoB7W9bHG1aLElQ0sOjUDiIcQGQiMuSxp590KEd80rcwjsDCZpssG3EYeCmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jr/oRkwB; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742814040; x=1774350040;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=EjvNWj2bu9mDgzWHLlrFrR4A2jejj1JVVbCwu0bDSig=;
-  b=Jr/oRkwBaiDtaH9UrCPqAk4Akd1MpVDw8q3wSakKBO6cynJuL30QZU2l
-   hK7sAsb6ajcl+tlM1TsjkEcm38i6/HX9N45nlMIL8mMJ4kans7zZHmzTv
-   GjDPlHuORMBcayeG43B3aEqEaPvzzPelSN/+NqmbMi7ruVgRTKGxQ6u+e
-   nhb3yUEOXLuTPn6LtV5TH/a+RlyCbgXKQFJ5x2VKUVQswZpGFJigPwY4r
-   Xn3vgNX8aykJxtSG1dLtXGfQ+HiiZNPqqe/hcXMwgqIZZD+oymXZm3QcD
-   lM2mT4z6wLklKHSRgVkl6usdR7USbreb37FW0DgvAeB5MJSq26Nky7QkR
-   w==;
-X-CSE-ConnectionGUID: 9/4d2/hcQTejOj97wZW5Kg==
-X-CSE-MsgGUID: jcS4b/mTQVuQl+RaOgJkhg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="54676231"
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="54676231"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 04:00:39 -0700
-X-CSE-ConnectionGUID: rm+Udpj5SPKxIK5tTJfTVA==
-X-CSE-MsgGUID: S/auv3rTQMSOodTCW+mPtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="124024087"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 04:00:37 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Mar 2025 13:00:33 +0200 (EET)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] PCI/hotplug: Don't enable HPIE in poll mode
-In-Reply-To: <20250321205114.GA1144421@bhelgaas>
-Message-ID: <005837ad-e7dd-85c8-b0d3-ce5aa0257354@linux.intel.com>
-References: <20250321205114.GA1144421@bhelgaas>
+	s=arc-20240116; t=1742814053; c=relaxed/simple;
+	bh=dBLODITVg4xgq7yY5gLDq9AnZBGEPLBs0csATx5eMaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pqUhIQyuUxPN5eig1RqOOKCuTTZOynmBiM/W2xP69J5ErXDILZhiXPtYVxOschK4DYYNcjMMCw+YacM+ogi3vbiiS51ZLrU1evN0zB6kwGJS+AjUg6vQABtx7DFWmWkkrj/zjYGAPhL1LztiN/aGupikB7PIL0ZGt5D2Z6yunn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mninbDkJ; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1742814047;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rHuROZnnYS52NtcI84OVTo9RCXp2wpkeXDDVlfPt4bY=;
+	b=mninbDkJMZh1hKxGonj2VDg1jotY3Rbe7BbbAYgxm1amZz1zas26XyE1/2CfsgLVgqT2YT
+	xII3MVh+AD0CxKqlSUNoiYIwONjWjt4vZqwLvReT+8HsgowpWv/9bhwpPvu+n4Lw/ZbeNL
+	fqMyeLrS0Ypyem7rfeFKgf+c3MS5QzaWZBWO0k1uUk6dRr6DGL5Vy2e2H10ykRCCvj/J01
+	mZWYgCNw+g+BNGNuMeDI5RflRISP7u6tfjSbaIEUor+H4Ofz2R6TfSClkJDfYQh3JeCC+z
+	Gbz6+S9XzLdKSdcv+htFZt4+D41SW/SUJfIJUxPoP0UQjgUBPf0P6lOxbIVIjg==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	stable@vger.kernel.org,
+	Alexey Charkov <alchark@gmail.com>,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Subject: [PATCH v2] arm64: dts: rockchip: Remove overdrive-mode OPPs from RK3588J SoC dtsi
+Date: Mon, 24 Mar 2025 12:00:43 +0100
+Message-Id: <eeec0d30d79b019d111b3f0aa2456e69896b2caa.1742813866.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, 21 Mar 2025, Bjorn Helgaas wrote:
+The differences in the vendor-approved CPU and GPU OPPs for the standard
+Rockchip RK3588 variant [1] and the industrial Rockchip RK3588J variant [2]
+come from the latter, presumably, supporting an extended temperature range
+that's usually associated with industrial applications, despite the two SoC
+variant datasheets specifying the same upper limit for the allowed ambient
+temperature for both variants.  However, the lower temperature limit is
+specified much lower for the RK3588J variant. [1][2]
 
-> On Fri, Mar 21, 2025 at 07:07:47PM +0100, Lukas Wunner wrote:
-> > On Fri, Mar 21, 2025 at 12:09:19PM -0500, Bjorn Helgaas wrote:
-> > ...
-> 
-> > >   - It's annoying that pcie_enable_interrupt() and
-> > >     pcie_disable_interrupt() are global symbols, a consequence of
-> > >     pciehp being split across five files instead of being one, which
-> > >     is also a nuisance for code browsing.
-> > 
-> > Roughly,
-> > pciehp_core.c contains the interface to the PCI hotplug core
-> >   (registering the hotplug_slot_ops etc),
+To be on the safe side and to ensure maximum longevity of the RK3588J SoCs,
+only the CPU and GPU OPPs that are declared by the vendor to be always safe
+for this SoC variant may be provided.  As explained by the vendor [3] and
+according to the RK3588J datasheet, [2] higher-frequency/higher-voltage
+CPU and GPU OPPs can be used as well, but at the risk of reducing the SoC
+lifetime expectancy.  Presumably, using the higher OPPs may be safe only
+when not enjoying the assumed extended temperature range that the RK3588J,
+as an SoC variant targeted specifically at higher-temperature, industrial
+applications, is made (or binned) for.
 
-This is at least oneway as it contains only static functions if 
-init func is not counted.
+Anyone able to keep their RK3588J-based board outside the above-presumed
+extended temperature range at all times, and willing to take the associated
+risk of possibly reducing the SoC lifetime expectancy, is free to apply
+a DT overlay that adds the higher CPU and GPU OPPs.
 
-But it has things like pciehp_check_presence() and set_attention_status()
-that aren't about interfacing to the hp core.
+With all this and the downstream RK3588(J) DT definitions [4][5] in mind,
+let's delete the RK3588J CPU and GPU OPPs that are not considered belonging
+to the normal operation mode for this SoC variant.  To quote the RK3588J
+datasheet [2], "normal mode means the chipset works under safety voltage
+and frequency;  for the industrial environment, highly recommend to keep in
+normal mode, the lifetime is reasonably guaranteed", while "overdrive mode
+brings higher frequency, and the voltage will increase accordingly;  under
+the overdrive mode for a long time, the chipset may shorten the lifetime,
+especially in high-temperature condition".
 
-> > pciehp_hpc.c contains the interaction with hardware registers,
-> > pciehp_core.c contains the state machine,
+To sum the RK3588J datasheet [2] and the vendor-provided DTs up, [4][5]
+the maximum allowed CPU core, GPU and NPU frequencies are as follows:
 
-pciehp_ctrl.c is full of PCI_EXP_* usage so it definitely is deeply 
-intertwined with hardware registers and does HW related waits, etc.
-Thus, the split between hpc and ctrl feels especially artificial and
-that's where the back and forth calls also are.
+   IP core    | Normal mode | Overdrive mode
+  ------------+-------------+----------------
+   Cortex-A55 |   1,296 MHz |      1,704 MHz
+   Cortex-A76 |   1,608 MHz |      2,016 MHz
+   GPU        |     700 MHz |        850 MHz
+   NPU        |     800 MHz |        950 MHz
 
-> > pciehp_pci.c contains the interaction with the PCI core
-> >   (enumeration / de-enumeration of devices on slot bringup / bringdown).
+Unfortunately, when it comes to the actual voltages for the RK3588J CPU and
+GPU OPPs, there's a discrepancy between the RK3588J datasheet [2] and the
+downstream kernel code. [4][5]  The RK3588J datasheet states that "the max.
+working voltage of CPU/GPU/NPU is 0.75 V under the normal mode", while the
+downstream kernel code actually allows voltage ranges that go up to 0.95 V,
+which is still within the voltage range allowed by the datasheet.  However,
+the RK3588J datasheet also tells us to "strictly refer to the software
+configuration of SDK and the hardware reference design", so let's embrace
+the voltage ranges provided by the downstream kernel code, which also
+prevents the undesirable theoretical outcome of ending up with no usable
+OPPs on a particular board, as a result of the board's voltage regulator(s)
+being unable to deliver the exact voltages, for whatever reason.
 
-+ it plays with the reset_lock deep down in the long call chain. It's
-also a very short file.
+The above-described voltage ranges for the RK3588J CPU OPPs remain taken
+from the downstream kernel code [4][5] by picking the highest, worst-bin
+values, which ensure that all RK3588J bins will work reliably.  Yes, with
+some power inevitably wasted as unnecessarily generated heat, but the
+reliability is paramount, together with the longevity.  This deficiency
+may be revisited separately at some point in the future.
 
-> > The only reason I've refrained from making major adjustments to this
-> > structure in the past was that it would make "git blame" a little more
-> > difficult and applying fixes to stable kernels would also become somewhat
-> > more painful as it would require backporting.
-> 
-> Yeah, that's the main reason I haven't tried to do anything either.
-> On the other hand, the browsing nuisance is an everyday thing forever
-> if we leave it as-is.
+The provided RK3588J CPU OPPs follow the slightly debatable "provide only
+the highest-frequency OPP from the same-voltage group" approach that's been
+established earlier, [6] as a result of the "same-voltage, lower-frequency"
+OPPs being considered inefficient from the IPA governor's standpoint, which
+may also be revisited separately at some point in the future.
 
-I get half mad every time I need to browse code under hotplug/. I even 
-started doing:
+[1] https://wiki.friendlyelec.com/wiki/images/e/ee/Rockchip_RK3588_Datasheet_V1.6-20231016.pdf
+[2] https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403201054_Rockchip-RK3588J_C22364189.pdf
+[3] https://lore.kernel.org/linux-rockchip/e55125ed-64fb-455e-b1e4-cebe2cf006e4@cherry.de/T/#u
+[4] https://raw.githubusercontent.com/rockchip-linux/kernel/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+[5] https://raw.githubusercontent.com/rockchip-linux/kernel/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+[6] https://lore.kernel.org/all/20240229-rk-dts-additions-v3-5-6afe8473a631@gmail.com/
 
-  cat ./pciehp*.[hc] | less -S 
+Fixes: 667885a68658 ("arm64: dts: rockchip: Add OPP data for CPU cores on RK3588j")
+Fixes: a7b2070505a2 ("arm64: dts: rockchip: Split GPU OPPs of RK3588 and RK3588j")
+Cc: stable@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Alexey Charkov <alchark@gmail.com>
+Helped-by: Quentin Schulz <quentin.schulz@cherry.de>
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
 
-...to workaround the constant need to jump between those files. I 
-certainly would like to see the split gone especially between ctrl and 
-hpc.
+Notes:
+    Changes in v2:
+      - Reworded and expanded the patch description a bit, to include some
+        more information and to make it more clear what are the implied
+        speculations and assumptions, and what are the available official
+        statements from Rockchip, as suggested by Quentin [7]
+      - Collected Reviewed-by tag from Quentin [7]
+    
+    Link to v1: https://lore.kernel.org/linux-rockchip/f929da061de35925ea591c969f985430e23c4a7e.1742526811.git.dsimic@manjaro.org/T/#u
+    
+    [7] https://lore.kernel.org/linux-rockchip/71b7c81b-6a4e-442b-a661-04d63639962a@cherry.de/
 
-There are also some forward declaration within a file which are mostly not 
-needed I think if the functions are shuffled around.
+ arch/arm64/boot/dts/rockchip/rk3588j.dtsi | 53 ++++++++---------------
+ 1 file changed, 17 insertions(+), 36 deletions(-)
 
-> I did consolidate portdrv.c a couple years ago
-> and don't regret it.  But moving things definitely makes "git blame" a
-> bit of a hassle; my notes are full of things like this:
-> 
->   a1ccd3d91138 ("PCI/portdrv: Squash into portdrv.c")
->     squash drivers/pci/pcie/portdrv_pci.c and portdrv_core.c into portdrv.c
->   950bf6388bc2 ("PCI: Move DesignWare IP support to new drivers/pci/dwc/ directory")
->     mv drivers/pci/host/pci-imx6.c drivers/pci/dwc/pci-imx6.c
->   6e0832fa432e ("PCI: Collect all native drivers under drivers/pci/controller/")
->     mv drivers/pci/dwc/pci-imx6.c drivers/pci/controller/dwc/pci-imx6.c
-
-Can't git blame be given -M -C to deal with this? Or are those truly lines 
-that were introduced by the consolidation commit?
-
-I usually need to look older changes as well since there is plenty of API 
-reworks and other noise beyond such consolidations, so I tend to end up 
-doing this a lot while browing the history of some code fragment with 
-increasingly old commit IDs:
-
-git annotate a1ccd3d911382^ portdrv_core.c
-
-...to find the next points of interest in the history. So those commits 
-don't stand out as much for me.
-
--- 
- i.
-
-> > >   - I forgot why we have both pcie_write_cmd() and
-> > >     pcie_write_cmd_nowait() and how to decide which to use.
-> > 
-> > pcie_write_cmd_nowait() is the "fire and forget" variant,
-> > whereas pcie_write_cmd() can be thought of as the "_sync" variant,
-> > i.e. the control flow doesn't continue until the command has been
-> > processed by the slot.
-> > 
-> > E.g. pciehp_power_on_slot() waits for the slot command to complete
-> > before making sure the Link Disable bit is clear.  It wouldn't make
-> > much sense to do the latter when the former hasn't been completed yet.
-> 
-> Right, I know what the difference is; I guess I just don't know how to
-> figure out when pcie_write_cmd_nowait() is safe.
-> 
-> Bjorn
-> 
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+index bce72bac4503..3045cb3bd68c 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588j.dtsi
+@@ -11,74 +11,59 @@ cluster0_opp_table: opp-table-cluster0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+-		opp-1416000000 {
+-			opp-hz = /bits/ 64 <1416000000>;
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
+ 			opp-microvolt = <750000 750000 950000>;
+ 			clock-latency-ns = <40000>;
+ 			opp-suspend;
+ 		};
+-		opp-1608000000 {
+-			opp-hz = /bits/ 64 <1608000000>;
+-			opp-microvolt = <887500 887500 950000>;
+-			clock-latency-ns = <40000>;
+-		};
+-		opp-1704000000 {
+-			opp-hz = /bits/ 64 <1704000000>;
+-			opp-microvolt = <937500 937500 950000>;
++		opp-1296000000 {
++			opp-hz = /bits/ 64 <1296000000>;
++			opp-microvolt = <775000 775000 950000>;
+ 			clock-latency-ns = <40000>;
+ 		};
+ 	};
+ 
+ 	cluster1_opp_table: opp-table-cluster1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
++		opp-1200000000{
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <750000 750000 950000>;
++			clock-latency-ns = <40000>;
++		};
+ 		opp-1416000000 {
+ 			opp-hz = /bits/ 64 <1416000000>;
+-			opp-microvolt = <750000 750000 950000>;
++			opp-microvolt = <762500 762500 950000>;
+ 			clock-latency-ns = <40000>;
+ 		};
+ 		opp-1608000000 {
+ 			opp-hz = /bits/ 64 <1608000000>;
+ 			opp-microvolt = <787500 787500 950000>;
+ 			clock-latency-ns = <40000>;
+ 		};
+-		opp-1800000000 {
+-			opp-hz = /bits/ 64 <1800000000>;
+-			opp-microvolt = <875000 875000 950000>;
+-			clock-latency-ns = <40000>;
+-		};
+-		opp-2016000000 {
+-			opp-hz = /bits/ 64 <2016000000>;
+-			opp-microvolt = <950000 950000 950000>;
+-			clock-latency-ns = <40000>;
+-		};
+ 	};
+ 
+ 	cluster2_opp_table: opp-table-cluster2 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
++		opp-1200000000{
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <750000 750000 950000>;
++			clock-latency-ns = <40000>;
++		};
+ 		opp-1416000000 {
+ 			opp-hz = /bits/ 64 <1416000000>;
+-			opp-microvolt = <750000 750000 950000>;
++			opp-microvolt = <762500 762500 950000>;
+ 			clock-latency-ns = <40000>;
+ 		};
+ 		opp-1608000000 {
+ 			opp-hz = /bits/ 64 <1608000000>;
+ 			opp-microvolt = <787500 787500 950000>;
+ 			clock-latency-ns = <40000>;
+ 		};
+-		opp-1800000000 {
+-			opp-hz = /bits/ 64 <1800000000>;
+-			opp-microvolt = <875000 875000 950000>;
+-			clock-latency-ns = <40000>;
+-		};
+-		opp-2016000000 {
+-			opp-hz = /bits/ 64 <2016000000>;
+-			opp-microvolt = <950000 950000 950000>;
+-			clock-latency-ns = <40000>;
+-		};
+ 	};
+ 
+ 	gpu_opp_table: opp-table {
+@@ -104,10 +89,6 @@ opp-700000000 {
+ 			opp-hz = /bits/ 64 <700000000>;
+ 			opp-microvolt = <750000 750000 850000>;
+ 		};
+-		opp-850000000 {
+-			opp-hz = /bits/ 64 <800000000>;
+-			opp-microvolt = <787500 787500 850000>;
+-		};
+ 	};
+ };
+ 
 
