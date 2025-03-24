@@ -1,447 +1,274 @@
-Return-Path: <linux-kernel+bounces-573926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCB4A6DE2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:19:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D779EA6DE23
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33CF13A68AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6F816FC93
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892B825E444;
-	Mon, 24 Mar 2025 15:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DFA25FA0D;
+	Mon, 24 Mar 2025 15:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q+vUCL4i"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Doa9pHwZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9417325D909;
-	Mon, 24 Mar 2025 15:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901A24964E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829507; cv=none; b=auBqGs6OdwkT7eJNx9BETadeQFQZxE0GXb8HYIBLylnmkQKzeUx+aFZp+b04xZO/Vuckb1hjosmC6DDUP1Ep+YCFxS2r+Fjcz/isPDPZaB3KjaZdsvcYB+T9p0Wl9E967PIv0AWvgsGxrkLStZ+dgs6rT5dlVHalr1wJ8h3zaN0=
+	t=1742829501; cv=none; b=Nn/3s/hdtNMzN3iSCrvkxSJwqN7ySDV2budLIgbFkEqpcxj2NZFhaOoXN+8qByRiIciKm82d6+GyLv+RIcT2CKO33CXH3JLw9+1kEawHpKs3BeTbr9iF3Oze2Vt2Fj9wxto5q61TJmJnMHK/XnZHvXwcKGiPOl7mPwaaQxyks2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829507; c=relaxed/simple;
-	bh=stqt25ZbF3ZcvrSKTc/36lWixlDmfWaWlAItyCL5LYc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cjOuqdre7/Saw0KpRgNyRO3slFv7Wbs9i2wCRVINpOH9FYRjMVuuaW5fzB8AxqoQumW663ZE2SynGrkIoRGoKloD+56MY+JKllcaJ6jBZGDNc2Yzd12ce+HDM8xJUJ4x4FxyZrFDgOXkI8xnh+cMDy2SgmEarv9Kl2UDqpEhhTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q+vUCL4i; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B2CC344415;
-	Mon, 24 Mar 2025 15:18:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1lnYYQF2Da5bhK449M9p241+N1NU2jnqfDGxn1yDIeA=;
-	b=Q+vUCL4iLjWVP23kD5zuWYnab/yBVS9Up/lsqKO5pUL4mVIZiG++QE30PH4Lu6Rk9PVyEC
-	1DarxPEj2pc/BshKWcCkD5pjzeiKlgdtRguz2lyePBB6iSRjDPjDuouREmB4qbq8XN8YCc
-	VEG9MHDPovHcEQQLDexDfiadtE+8Jk5vZhNJC+VxHzynEc29AHPGyZzZeo0NIR41ylEY9l
-	nCEUHkbChhIO9yP5uz3G76guiyRu9l3cpzSgTnVZzhFwK9jo8H3amYa1hzJYkrJWx6MUq/
-	h9M9CmAjjJHRY3a3cKqQd5iZW/3TbJe7vB1NBdsG0nsrDD6y4X+ajIAMNH/u6g==
-Message-ID: <40ba21cb-1faa-49e8-bf1e-fb4e34d15cdb@bootlin.com>
-Date: Mon, 24 Mar 2025 16:18:11 +0100
+	s=arc-20240116; t=1742829501; c=relaxed/simple;
+	bh=XHQMUjEjbZLDgavTvCJiZqSwRVqVRVlMSHmpp7AADuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUh1hFy5xdsvTjbteR8i+Imy699kgBNAQ2sa+vzSmDt4j9jgi1sNfIr7gd/glLiwUobqV99NHtrtWkRqJKOHUrSYLckZ/wtHPpbl3LZOJruZS5AIwyOoA92vlaZVvaAUykkPm1VOREyAXyhJr2KUyezbkZjOcn9qJsE7/RkRdmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Doa9pHwZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PP13017954
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:18:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=RBj5wpEg+SrAwIscXXtQbPvh
+	Mb2gJI4cBrfY/nN2XHA=; b=Doa9pHwZCAMi1z2j69wrbna8FnDI9v5C8z4d9+p9
+	cm/JQ4HPT8OT6XSMPvtuKCXFWTdoOtg2pOVbdGa8QxBTX59O6bJswOrmvt3SReV7
+	pFWPjjxDeeecKGJDqR0F376hVI8gEDin5CiJ6x0hoT0p/6Y474NTQlz/BfbsalI/
+	n1Q/XoX1uJHDW2LwBAYefLBeyGq3FBx1Q/gXKAnWEOpvMlDycYZRKT2rv0W46X9Q
+	cxkamiZeX+IqBcnJ/RlJgSYwdKny3mAa79lIBOIankNCc703wqNCF+Kskd9lj+zI
+	N6c/dgd1Gp/Le5gnyAFN22G2iMtwUdWvaFWt17EtoLg2RQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hne5vsg9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:18:17 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5ac559cbaso834251785a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742829496; x=1743434296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RBj5wpEg+SrAwIscXXtQbPvhMb2gJI4cBrfY/nN2XHA=;
+        b=sFd5tKECu+1rb8dS10ntjbF2V1+XkKh9ef0EDfE3EBW3RXNN1I2vLI0fcajGHR+KrK
+         AwmROYfMlMAb5SZ6h5PIZmu3HSQfLhUwAKb6z7a5a8XWkWavlVTZzvx8WWy5JAkfiBEz
+         XGlRDbr6A7DfWVSTqhC4h1IpLd9fvZspO3jAUHRqJ0kb/mvjb+yziTXeURJqWoITN4ss
+         3M3cuqVNPpOnNa0bjfpr4Umzsxiot1Cp9XVraHuK9E68uGSMPGlVf4XPORZVx/OUYKef
+         s5MPDIOoJyvzCWXO6rEzn5a4PkrhLxjXpiUCcejkwo9qq5WbBAct5bKAN51hHFcRADOw
+         BnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURqImh1HvV/z/KMJPgIXncKHS8FFQWk+7MqgkwUmgbM3i9CVdd3L/q6LIqfhfPVZZXUKCo4atD2wU9BWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4q4IQoZm7dAyRbk3Rk2PWTbKKk8HO616JeLNW5oesdR65OCZS
+	d2SPXmfz/EZN8U2/pK7nWPGXWLlsd2Va3rfpPU2hk4Vp2pPxs9Xmo8tLDpFn1B0Oe/UC6hvMFVW
+	D/JPMfkMRG3HO3YnGkSvpLVvvCKvKyPRRlkeatqFQAticWmyiXUXd4AMXROEfLrY=
+X-Gm-Gg: ASbGncu9pXry+72Bd5qKU9uzTazTpzbfqRvFFVkKMbQsBjChFXJO8xJ87Fo9uiN7Rdb
+	PDq5s30acmuJc+1lf9G4LefD4o6yGoxVKT4pnq6bYkwmGtv7XKFarCqCjfLpamsMreTws0iy2bn
+	m44jw2Jq9Ic3P/UfAlss6CF+spidf6I4yiHLUMv4qLeUZ200yAfgbjiNgWfPTCG4inq6tKCNWZe
+	uDffxqEHuMFCaYiQ4wXNOFqrsKvNbR059bAzAyMKE61B4paB5nKoJkJ9IaMVNqfWBY5opbIF6sY
+	vVLKCNyOc3q+AWCnp4aDvO5gAEMjacKEQMQBKArBK5xbfjMhh9lNlGKuTkxPEO36xeJ9KmA5VnB
+	oawc=
+X-Received: by 2002:a05:620a:258e:b0:7c5:a2be:6e4c with SMTP id af79cd13be357-7c5ba247882mr2372635485a.55.1742829496064;
+        Mon, 24 Mar 2025 08:18:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFARjdRe711E7Dx0Shw9oLzlq33M5bIuw7jDsDdDa4jCC7zZ67lPaBlBULAAs8KAUp7bJnqSg==
+X-Received: by 2002:a05:620a:258e:b0:7c5:a2be:6e4c with SMTP id af79cd13be357-7c5ba247882mr2372627385a.55.1742829495443;
+        Mon, 24 Mar 2025 08:18:15 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7df853sm14218491fa.29.2025.03.24.08.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 08:18:14 -0700 (PDT)
+Date: Mon, 24 Mar 2025 17:18:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: peda@axentia.se, broonie@kernel.org, andersson@kernel.org,
+        krzk+dt@kernel.org, ivprusov@salutedevices.com,
+        luca.ceresoli@bootlin.com, zhoubinbin@loongson.cn,
+        paulha@opensource.cirrus.com, lgirdwood@gmail.com, robh@kernel.org,
+        conor+dt@kernel.org, konradybcio@kernel.org, perex@perex.cz,
+        tiwai@suse.com, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
+        Christopher Obbard <christopher.obbard@linaro.org>
+Subject: Re: [PATCH v4 5/6] ASoC: codecs: wcd938x: add mux control support
+ for hp audio mux
+Message-ID: <ctcqkdbv6zh2rabkkr7tlhxlcfsn5nazjfbsnbbu4l4blyakft@pejdsvnazfh6>
+References: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
+ <20250324130057.4855-6-srinivas.kandagatla@linaro.org>
+ <CAO9ioeX9RTBAeL3+9STn+=oEYR0wtaF6yoa=esNddEvqLQyO9Q@mail.gmail.com>
+ <e4e94fbf-172f-4cfd-becc-cb2836ac1fb1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 22/59] dyndbg-API: promote DYNAMIC_DEBUG_CLASSMAP_PARAM
- to API
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-gfx-trybot@lists.freedesktop.org
-Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com,
- linux-doc@vger.kernel.org
-References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-23-jim.cromie@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250320185238.447458-23-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
- dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4e94fbf-172f-4cfd-becc-cb2836ac1fb1@linaro.org>
+X-Proofpoint-GUID: gx4r-TJfy6zkuMmqcnYTmiVoAQ00Z1lc
+X-Proofpoint-ORIG-GUID: gx4r-TJfy6zkuMmqcnYTmiVoAQ00Z1lc
+X-Authority-Analysis: v=2.4 cv=JvPxrN4C c=1 sm=1 tr=0 ts=67e177b9 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=lNgCk4es9Rhgkq0fFtoA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240110
 
+On Mon, Mar 24, 2025 at 01:58:06PM +0000, Srinivas Kandagatla wrote:
+> 
+> 
+> On 24/03/2025 13:50, Dmitry Baryshkov wrote:
+> > On Mon, 24 Mar 2025 at 15:01, <srinivas.kandagatla@linaro.org> wrote:
+> > > 
+> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > 
+> > > On some platforms to minimise pop and click during switching between
+> > > CTIA and OMTP headset an additional HiFi mux is used. Most common
+> > > case is that this switch is switched on by default, but on some
+> > > platforms this needs a regulator enable.
+> > > 
+> > > move to using mux control to enable both regulator and handle gpios,
+> > > deprecate the usage of gpio.
+> > > 
+> > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
+> > > ---
+> > >   sound/soc/codecs/Kconfig   |  1 +
+> > >   sound/soc/codecs/wcd938x.c | 50 +++++++++++++++++++++++++++++---------
+> > >   2 files changed, 40 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> > > index ee35f3aa5521..a2829d76e108 100644
+> > > --- a/sound/soc/codecs/Kconfig
+> > > +++ b/sound/soc/codecs/Kconfig
+> > > @@ -2226,6 +2226,7 @@ config SND_SOC_WCD938X
+> > >          tristate
+> > >          depends on SOUNDWIRE || !SOUNDWIRE
+> > >          select SND_SOC_WCD_CLASSH
+> > > +       select MULTIPLEXER
+> > > 
+> > >   config SND_SOC_WCD938X_SDW
+> > >          tristate "WCD9380/WCD9385 Codec - SDW"
+> > > diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+> > > index dfaa3de31164..88c758efe40d 100644
+> > > --- a/sound/soc/codecs/wcd938x.c
+> > > +++ b/sound/soc/codecs/wcd938x.c
+> > > @@ -19,6 +19,7 @@
+> > >   #include <linux/regmap.h>
+> > >   #include <sound/soc.h>
+> > >   #include <sound/soc-dapm.h>
+> > > +#include <linux/mux/consumer.h>
+> > >   #include <linux/regulator/consumer.h>
+> > > 
+> > >   #include "wcd-clsh-v2.h"
+> > > @@ -178,6 +179,8 @@ struct wcd938x_priv {
+> > >          int variant;
+> > >          int reset_gpio;
+> > >          struct gpio_desc *us_euro_gpio;
+> > > +       struct mux_control *us_euro_mux;
+> > > +       u32 mux_state;
+> > >          u32 micb1_mv;
+> > >          u32 micb2_mv;
+> > >          u32 micb3_mv;
+> > > @@ -3235,17 +3238,31 @@ static void wcd938x_dt_parse_micbias_info(struct device *dev, struct wcd938x_pri
+> > >                  dev_info(dev, "%s: Micbias4 DT property not found\n", __func__);
+> > >   }
+> > > 
+> > > -static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
+> > > +static int wcd938x_select_mux_state(struct device *dev, struct wcd938x_priv *wcd938x, int state)
+> > >   {
+> > > -       int value;
+> > > +       int ret = mux_control_try_select(wcd938x->us_euro_mux, state);
+> > 
+> > Hmm. Does this really work? You have selected the mux in probe
+> > function, now you are trying to select it again. If I'm reading the
+> > code correctly, you will get -EBUSY here.
+> 
+> On successful selection of mux state, the mux will be kept available
+> (mux_control_deselect) for any new callers.
+> 
+> So we will not get EBUSY for the second caller.
 
+No. wcd938x_populate_dt_data() selects the state by calling
+wcd938x_select_mux_state(). Then you call mux_control_try_select() here.
+As far as I understand, it will return -EBUSY as the sempahore is
+already taken. Moreover, this is not how the MUX API is supposed to be
+used. The driver is supposed to hold a state while it is still in use.
 
-Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> move the DYNAMIC_DEBUG_CLASSMAP_PARAM macro from test-dynamic-debug.c into
-> the header, and refine it, by distinguishing the 2 use cases:
 > 
-> 1.DYNAMIC_DEBUG_CLASSMAP_PARAM_REF
->      for DRM, to pass in extern __drm_debug by name.
->      dyndbg keeps bits in it, so drm can still use it as before
-> 
-> 2.DYNAMIC_DEBUG_CLASSMAP_PARAM
->      new user (test_dynamic_debug) doesn't need to share state,
->      decls a static long unsigned int to store the bitvec.
-> 
-> __DYNAMIC_DEBUG_CLASSMAP_PARAM
->     bottom layer - allocate,init a ddebug-class-param, module-param-cb.
-> 
-> Modify ddebug_sync_classbits() argtype deref inside the fn, to give
-> access to all kp members.
-> 
-> Also clean up and improve comments in test-code, and add
-> MODULE_DESCRIPTIONs.
-> 
-> cc: linux-doc@vger.kernel.org
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> ---
-> 
-> -v9
->   - fixup drm-print.h  add PARAM_REF forwarding macros
->     with DYNAMIC_DEBUG_CLASSMAP_PARAM_REF in the API, add DRM_ variant
-> ---
->   include/linux/dynamic_debug.h   | 38 +++++++++++++++++++++
->   lib/dynamic_debug.c             | 60 ++++++++++++++++++++++-----------
->   lib/test_dynamic_debug.c        | 47 ++++++++++----------------
->   lib/test_dynamic_debug_submod.c |  9 ++++-
->   4 files changed, 104 insertions(+), 50 deletions(-)
-> 
-> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-> index da2d677947ee..03a83a83b621 100644
-> --- a/include/linux/dynamic_debug.h
-> +++ b/include/linux/dynamic_debug.h
-> @@ -212,6 +212,44 @@ struct _ddebug_class_param {
->   	const struct _ddebug_class_map *map;
->   };
->   
-> +/**
-> + * DYNAMIC_DEBUG_CLASSMAP_PARAM - control a ddebug-classmap from a sys-param
-> + * @_name:  sysfs node name
-> + * @_var:   name of the classmap var defining the controlled classes/bits
-> + * @_flags: flags to be toggled, typically just 'p'
-> + *
-> + * Creates a sysfs-param to control the classes defined by the
-> + * exported classmap, with bits 0..N-1 mapped to the classes named.
-> + * This version keeps class-state in a private long int.
-> + */
-> +#define DYNAMIC_DEBUG_CLASSMAP_PARAM(_name, _var, _flags)		\
-> +	static unsigned long _name##_bvec;				\
-> +	__DYNAMIC_DEBUG_CLASSMAP_PARAM(_name, _name##_bvec, _var, _flags)
-> +
-> +/**
-> + * DYNAMIC_DEBUG_CLASSMAP_PARAM_REF - wrap a classmap with a controlling sys-param
-> + * @_name:  sysfs node name
-> + * @_bits:  name of the module's unsigned long bit-vector, ex: __drm_debug
-> + * @_var:   name of the (exported) classmap var defining the classes/bits
-> + * @_flags: flags to be toggled, typically just 'p'
-> + *
-> + * Creates a sysfs-param to control the classes defined by the
-> + * exported clasmap, with bits 0..N-1 mapped to the classes named.
-> + * This version keeps class-state in user @_bits.  This lets drm check
-> + * __drm_debug elsewhere too.
-> + */
-> +#define DYNAMIC_DEBUG_CLASSMAP_PARAM_REF(_name, _bits, _var, _flags)	\
-> +	__DYNAMIC_DEBUG_CLASSMAP_PARAM(_name, _bits, _var, _flags)
-> +
-> +#define __DYNAMIC_DEBUG_CLASSMAP_PARAM(_name, _bits, _var, _flags)	\
-> +	static struct _ddebug_class_param _name##_##_flags = {		\
-> +		.bits = &(_bits),					\
-> +		.flags = #_flags,					\
-> +		.map = &(_var),						\
-> +	};								\
-> +	module_param_cb(_name, &param_ops_dyndbg_classes,		\
-> +			&_name##_##_flags, 0600)
-> +
->   /*
->    * pr_debug() and friends are globally enabled or modules have selectively
->    * enabled them.
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index e84b6677e94d..3c9fb8324ad6 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -661,6 +661,30 @@ static int ddebug_apply_class_bitmap(const struct _ddebug_class_param *dcp,
->   
->   #define CLASSMAP_BITMASK(width) ((1UL << (width)) - 1)
->   
-> +static void ddebug_class_param_clamp_input(unsigned long *inrep, const struct kernel_param *kp)
-> +{
-> +	const struct _ddebug_class_param *dcp = kp->arg;
-> +	const struct _ddebug_class_map *map = dcp->map;
-> +
-> +	switch (map->map_type) {
-> +	case DD_CLASS_TYPE_DISJOINT_BITS:
-> +		/* expect bits. mask and warn if too many */
-> +		if (*inrep & ~CLASSMAP_BITMASK(map->length)) {
-> +			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
-> +				KP_NAME(kp), *inrep, CLASSMAP_BITMASK(map->length));
-> +			*inrep &= CLASSMAP_BITMASK(map->length);
-> +		}
-> +		break;
-> +	case DD_CLASS_TYPE_LEVEL_NUM:
-> +		/* input is bitpos, of highest verbosity to be enabled */
-> +		if (*inrep > map->length) {
-> +			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
-> +				KP_NAME(kp), *inrep, map->length);
-> +			*inrep = map->length;
-> +		}
-> +		break;
-> +	}
-> +}
->   static int param_set_dyndbg_module_classes(const char *instr,
->   					   const struct kernel_param *kp,
->   					   const char *modnm)
-> @@ -679,26 +703,15 @@ static int param_set_dyndbg_module_classes(const char *instr,
->   		pr_err("expecting numeric input, not: %s > %s\n", instr, KP_NAME(kp));
->   		return -EINVAL;
->   	}
-> +	ddebug_class_param_clamp_input(&inrep, kp);
->   
->   	switch (map->map_type) {
->   	case DD_CLASS_TYPE_DISJOINT_BITS:
-> -		/* expect bits. mask and warn if too many */
-> -		if (inrep & ~CLASSMAP_BITMASK(map->length)) {
-> -			pr_warn("%s: input: 0x%lx exceeds mask: 0x%lx, masking\n",
-> -				KP_NAME(kp), inrep, CLASSMAP_BITMASK(map->length));
-> -			inrep &= CLASSMAP_BITMASK(map->length);
-> -		}
->   		v2pr_info("bits:0x%lx > %s.%s\n", inrep, modnm ?: "*", KP_NAME(kp));
->   		totct += ddebug_apply_class_bitmap(dcp, &inrep, *dcp->bits, modnm);
->   		*dcp->bits = inrep;
->   		break;
->   	case DD_CLASS_TYPE_LEVEL_NUM:
-> -		/* input is bitpos, of highest verbosity to be enabled */
-> -		if (inrep > map->length) {
-> -			pr_warn("%s: level:%ld exceeds max:%d, clamping\n",
-> -				KP_NAME(kp), inrep, map->length);
-> -			inrep = map->length;
-> -		}
->   		old_bits = CLASSMAP_BITMASK(*dcp->lvl);
->   		new_bits = CLASSMAP_BITMASK(inrep);
->   		v2pr_info("lvl:%ld bits:0x%lx > %s\n", inrep, new_bits, KP_NAME(kp));
-> @@ -1176,15 +1189,24 @@ static const struct proc_ops proc_fops = {
->   static void ddebug_sync_classbits(const struct kernel_param *kp, const char *modname)
->   {
->   	const struct _ddebug_class_param *dcp = kp->arg;
-> +	unsigned long new_bits;
->   
-> -	/* clamp initial bitvec, mask off hi-bits */
-> -	if (*dcp->bits & ~CLASSMAP_BITMASK(dcp->map->length)) {
-> -		*dcp->bits &= CLASSMAP_BITMASK(dcp->map->length);
-> -		v2pr_info("preset classbits: %lx\n", *dcp->bits);
-> +	ddebug_class_param_clamp_input(dcp->bits, kp);
-> +
-> +	switch (dcp->map->map_type) {
-> +	case DD_CLASS_TYPE_DISJOINT_BITS:
-> +		v2pr_info("  %s: classbits: 0x%lx\n", KP_NAME(kp), *dcp->bits);
-> +		ddebug_apply_class_bitmap(dcp, dcp->bits, 0UL, modname);
-> +		break;
-> +	case DD_CLASS_TYPE_LEVEL_NUM:
-> +		new_bits = CLASSMAP_BITMASK(*dcp->lvl);
-> +		v2pr_info("  %s: lvl:%ld bits:0x%lx\n", KP_NAME(kp), *dcp->lvl, new_bits);
-> +		ddebug_apply_class_bitmap(dcp, &new_bits, 0UL, modname);
-> +		break;
-> +	default:
-> +		pr_err("bad map type %d\n", dcp->map->map_type);
-> +		return;
->   	}
-> -	/* force class'd prdbgs (in USEr module) to match (DEFINEr module) class-param */
-> -	ddebug_apply_class_bitmap(dcp, dcp->bits, ~0, modname);
-> -	ddebug_apply_class_bitmap(dcp, dcp->bits, 0, modname);
->   }
->   
->   static void ddebug_match_apply_kparam(const struct kernel_param *kp,
-> diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
-> index 4a3d2612ef60..78cf5420770a 100644
-> --- a/lib/test_dynamic_debug.c
-> +++ b/lib/test_dynamic_debug.c
-> @@ -1,6 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
-> - * Kernel module for testing dynamic_debug
-> + * Kernel module to test/demonstrate dynamic_debug features,
-> + * particularly classmaps and their support for subsystems like DRM.
->    *
->    * Authors:
->    *      Jim Cromie	<jim.cromie@gmail.com>
-> @@ -62,24 +63,6 @@ module_param_cb(do_prints, &param_ops_do_prints, NULL, 0600);
->   
->   #define CLASSMAP_BITMASK(width, base) (((1UL << (width)) - 1) << (base))
->   
-> -/* sysfs param wrapper, proto-API */
-> -#define DYNAMIC_DEBUG_CLASSMAP_PARAM_(_model, _flags, _init)		\
-> -	static unsigned long bits_##_model = _init;			\
-> -	static struct _ddebug_class_param _flags##_##_model = {		\
-> -		.bits = &bits_##_model,					\
-> -		.flags = #_flags,					\
-> -		.map = &map_##_model,					\
-> -	};								\
-> -	module_param_cb(_flags##_##_model, &param_ops_dyndbg_classes,	\
-> -			&_flags##_##_model, 0600)
-> -#ifdef DEBUG
-> -#define DYNAMIC_DEBUG_CLASSMAP_PARAM(_model, _flags)		\
-> -	DYNAMIC_DEBUG_CLASSMAP_PARAM_(_model, _flags, ~0)
-> -#else
-> -#define DYNAMIC_DEBUG_CLASSMAP_PARAM(_model, _flags)		\
-> -	DYNAMIC_DEBUG_CLASSMAP_PARAM_(_model, _flags, 0)
-> -#endif
-> -
->   /*
->    * Demonstrate/test DISJOINT & LEVEL typed classmaps with a sys-param.
->    *
-> @@ -110,12 +93,15 @@ enum cat_disjoint_bits {
->   /* numeric verbosity, V2 > V1 related.  V0 is > D2_DRM_RES */
->   enum cat_level_num { V0 = 16, V1, V2, V3, V4, V5, V6, V7 };
->   
-> -/* recapitulate DRM's multi-classmap setup */
-> +/*
-> + * use/demonstrate multi-module-group classmaps, as for DRM
-> + */
->   #if !defined(TEST_DYNAMIC_DEBUG_SUBMOD)
->   /*
-> - * In single user, or parent / coordinator (drm.ko) modules, define
-> - * classmaps on the client enums above, and then declares the PARAMS
-> - * ref'g the classmaps.  Each is exported.
-> + * For module-groups of 1+, define classmaps with names (stringified
-> + * enum-symbols) copied from above. 1-to-1 mapping is recommended.
-> + * The classmap is exported, so that other modules in the group can
-> + * link to it and control their prdbgs.
->    */
->   DYNAMIC_DEBUG_CLASSMAP_DEFINE(map_disjoint_bits, DD_CLASS_TYPE_DISJOINT_BITS,
->   			      D2_CORE,
-> @@ -134,11 +120,13 @@ DYNAMIC_DEBUG_CLASSMAP_DEFINE(map_level_num, DD_CLASS_TYPE_LEVEL_NUM,
->   			      V0, "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7");
->   
->   /*
-> - * now add the sysfs-params
-> + * for use-cases that want it, provide a sysfs-param to set the
-> + * classes in the classmap.  It is at this interface where the
-> + * "v3>v2" property is applied to DD_CLASS_TYPE_LEVEL_NUM inputs.
->    */
->   
-> -DYNAMIC_DEBUG_CLASSMAP_PARAM(disjoint_bits, p);
-> -DYNAMIC_DEBUG_CLASSMAP_PARAM(level_num, p);
-> +DYNAMIC_DEBUG_CLASSMAP_PARAM(p_disjoint_bits,	map_disjoint_bits, p);
-> +DYNAMIC_DEBUG_CLASSMAP_PARAM(p_level_num,	map_level_num, p);
->   
->   #ifdef FORCE_CLASSID_CONFLICT
->   /*
-> @@ -149,12 +137,10 @@ DYNDBG_CLASSMAP_DEFINE(classid_range_conflict, 0, D2_CORE + 1, "D3_CORE");
->   #endif
->   
->   #else /* TEST_DYNAMIC_DEBUG_SUBMOD */
-> -
->   /*
-> - * in submod/drm-drivers, use the classmaps defined in top/parent
-> - * module above.
-> + * the +1 members of a multi-module group refer to the classmap
-> + * DEFINEd (and exported) above.
->    */
-> -
->   DYNAMIC_DEBUG_CLASSMAP_USE(map_disjoint_bits);
->   DYNAMIC_DEBUG_CLASSMAP_USE(map_level_num);
->   
-> @@ -229,6 +215,7 @@ static void __exit test_dynamic_debug_exit(void)
->   module_init(test_dynamic_debug_init);
->   module_exit(test_dynamic_debug_exit);
->   
-> +MODULE_DESCRIPTION("test/demonstrate dynamic-debug features");
-
-I think this belongs to the patch introducing test_dynamic_debug_submod.c
-
->   MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
->   MODULE_DESCRIPTION("Kernel module for testing dynamic_debug");
->   MODULE_LICENSE("GPL");
-> diff --git a/lib/test_dynamic_debug_submod.c b/lib/test_dynamic_debug_submod.c
-> index 672aabf40160..3adf3925fb86 100644
-> --- a/lib/test_dynamic_debug_submod.c
-> +++ b/lib/test_dynamic_debug_submod.c
-> @@ -1,6 +1,9 @@
->   // SPDX-License-Identifier: GPL-2.0
->   /*
-> - * Kernel module for testing dynamic_debug
-> + * Kernel module to test/demonstrate dynamic_debug features,
-> + * particularly classmaps and their support for subsystems, like DRM,
-> + * which defines its drm_debug classmap in drm module, and uses it in
-> + * helpers & drivers.
->    *
->    * Authors:
->    *      Jim Cromie	<jim.cromie@gmail.com>
-> @@ -12,3 +15,7 @@
->    */
->   #define TEST_DYNAMIC_DEBUG_SUBMOD
->   #include "test_dynamic_debug.c"
-> +
-> +MODULE_DESCRIPTION("test/demonstrate dynamic-debug subsystem support");
-> +MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
-> +MODULE_LICENSE("GPL");
-
-I think this belongs to the patch introducing test_dynamic_debug_submod.c
+> --srini
+> > 
+> > > 
+> > > -       struct wcd938x_priv *wcd938x;
+> > > +       if (ret) {
+> > > +               dev_err(dev, "Error (%d) Unable to select us/euro mux state\n", ret);
+> > > +               return ret;
+> > > +       }
+> > > 
+> > > -       wcd938x = snd_soc_component_get_drvdata(component);
+> > > +       wcd938x->mux_state = state;
+> > > +       mux_control_deselect(wcd938x->us_euro_mux);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > 
+> > > -       value = gpiod_get_value(wcd938x->us_euro_gpio);
+> > > +static bool wcd938x_swap_gnd_mic(struct snd_soc_component *component)
+> > > +{
+> > > +       struct wcd938x_priv *wcd938x = snd_soc_component_get_drvdata(component);
+> > > 
+> > > -       gpiod_set_value(wcd938x->us_euro_gpio, !value);
+> > > +       if (wcd938x->us_euro_mux) {
+> > > +               if (wcd938x_select_mux_state(component->dev, wcd938x, !wcd938x->mux_state))
+> > > +                       return false;
+> > > +       } else {
+> > > +               gpiod_set_value(wcd938x->us_euro_gpio, !wcd938x->mux_state);
+> > > +       }
+> > > 
+> > >          return true;
+> > >   }
+> > > @@ -3261,11 +3278,22 @@ static int wcd938x_populate_dt_data(struct wcd938x_priv *wcd938x, struct device
+> > >                  return dev_err_probe(dev, wcd938x->reset_gpio,
+> > >                                       "Failed to get reset gpio\n");
+> > > 
+> > > -       wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro",
+> > > -                                               GPIOD_OUT_LOW);
+> > > -       if (IS_ERR(wcd938x->us_euro_gpio))
+> > > -               return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
+> > > -                                    "us-euro swap Control GPIO not found\n");
+> > > +       wcd938x->us_euro_mux = devm_mux_control_get(dev, NULL);
+> > > +       if (IS_ERR(wcd938x->us_euro_mux)) {
+> > > +               if (PTR_ERR(wcd938x->us_euro_mux) == -EPROBE_DEFER)
+> > > +                       return -EPROBE_DEFER;
+> > > +
+> > > +               /* mux is optional and now fallback to using gpio */
+> > > +               wcd938x->us_euro_mux = NULL;
+> > > +               wcd938x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro", GPIOD_OUT_LOW);
+> > > +               if (IS_ERR(wcd938x->us_euro_gpio))
+> > > +                       return dev_err_probe(dev, PTR_ERR(wcd938x->us_euro_gpio),
+> > > +                                            "us-euro swap Control GPIO not found\n");
+> > > +       } else {
+> > > +               ret = wcd938x_select_mux_state(dev, wcd938x, wcd938x->mux_state);
+> > > +               if (ret)
+> > > +                       return ret;
+> > > +       }
+> > > 
+> > >          cfg->swap_gnd_mic = wcd938x_swap_gnd_mic;
+> > > 
+> > > --
+> > > 2.39.5
+> > > 
+> > 
+> > 
 
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
+With best wishes
+Dmitry
 
