@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-573379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67695A6D691
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:46:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA65A6D6DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F92516EBA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DABD188EC3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B81A0739;
-	Mon, 24 Mar 2025 08:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m23E7Swc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A19825D545;
-	Mon, 24 Mar 2025 08:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7B325D526;
+	Mon, 24 Mar 2025 09:03:16 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C129ABA36;
+	Mon, 24 Mar 2025 09:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805948; cv=none; b=ZxvfXLs2blXBIAKPD3lFdPV3dRB8+SwU394zZSlMll4J5xnvJbixeIP5WR8DbJ9n+l9mVIpE4xOZCmEVMyFUAh78CKZYMLrlzza817xfih4Ie6NG1kNuqIMrJpMap/ZUYC3EkirKbkHwU7o3IjFATKTbHqjpjnTZao6c14UyTow=
+	t=1742806996; cv=none; b=qiPRPF7+ILMv1H5kOXMaFShOw8HvbicmlLcoaf4XEwyufhtWk6/jUfk9NUHW6wiw5Jh0hdw31p+XPTtuuQB0QJ/C9AogMIFUCAM8+HN9zIC7/dvkcc3EKyDK/CmU27/vfMAiSYK9jYh2yHkDPFD5SMemTJN/lJAr2WmnZD/v8S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805948; c=relaxed/simple;
-	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdqYM3iNIflmLKpRsP3Ja4NbqJ0kDxLvjTdBaR0B7/NCbkkeMQyxDt1AjinsNDBgw+Pta1935aBhDiJsnHwq28pXHkdpShxGEYAiGXD0URp/KbdosRgzdhEZ/ol4MiGpCZe7zeATW4SSeBNoWKzcr+q4R7HmsSyDVdNrPeLTCGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m23E7Swc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DC8C4CEDD;
-	Mon, 24 Mar 2025 08:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742805947;
-	bh=My3iW3rQTVfHmWaiaXBjl0AqO8eaZeyr5K3v+jogMwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m23E7Swc3Q6IX3VQrsQq4knOxscSc5QpOFtZ2VF/UvbAZOfdos4/gk8U+FUyF0VcQ
-	 h4mmvs44GI80VAM6JsHSbN4wb82izFA0vTkrKBwSsq/KuPgbF+vxBYka1ZD+UiN7XA
-	 91KeVY8qL3V9iH0P67xZbSp/VkXwOIJSbmIbx8K8aBuVSDC75x7MCQS2v4vfY6vCcn
-	 N2k14OMys6gTKMuUydqJclmb5R8DCSR2JAYE65mvU3x+Ozd4hUVzT5dtfnjYhA70Lv
-	 T0pJJn93/P14Vsx70udZPNdd7MRXteSVJGEga6RqGWB3U2moP51+sl7B4W+7WJq3NP
-	 ZzTxEBIsk8WZA==
-Date: Mon, 24 Mar 2025 09:45:43 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] dt-bindings: phy: add exynos2200 eusb2 phy
- support
-Message-ID: <20250324-important-kangaroo-of-prowess-0d2c30@krzk-bin>
-References: <20250321135854.1431375-1-ivo.ivanov.ivanov1@gmail.com>
- <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1742806996; c=relaxed/simple;
+	bh=hnvXGF50uBsNkaYmmEw/Gu4b4XAYpCJ1akHPT7SsV5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=URTDvxNchs5J9xEhlEa41WJxyyQeQl80ErShQ5G9tBbMQ3GGJZu5UoqfcqDvBccKYN0ja57bVAVnoedfYstprcFfumhmBoYUyYXP0mr4ij/AkcQYusHdQXNXU3lOTDGONzbsP0Au794uFptl62nBrTXQ+Jek4E2JDUa1iaKTFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-85-67e11c41a64b
+From: Rakie Kim <rakie.kim@sk.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH v3 1/3] mm/mempolicy: Fix memory leaks in weighted interleave sysfs
+Date: Mon, 24 Mar 2025 17:47:50 +0900
+Message-ID: <20250324084757.965-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z91xsVv98wp7TVrq@gourry-fedora-PF4VCD3F>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250321135854.1431375-2-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXC9ZZnka6jzMN0g83bVC3mrF/DZjF96gVG
+	i6/rfzFb/Lx7nN1i1cJrbBbHt85jtzg/6xSLxeVdc9gs7q35z2qxek2GA5fHzll32T262y6z
+	e7QcecvqsXjPSyaPTZ8msXucmPGbxWPnQ0uP9/uusnl83iQXwBnFZZOSmpNZllqkb5fAlfF7
+	cjdzwS3eij37J7E0MN7i6mLk5JAQMJH4ePo4K4y97v4cxi5GDg42ASWJY3tjQEwRAVWJtivu
+	XYxcHMwCH5gk9m1tYAWJCwuES7TOEAXpZAEqmf/rOiOIzStgLLF06gsWiImaEg2X7jGBlHMK
+	mEmcX+UIEhYS4JF4tWE/VLmgxMmZT8DKmQXkJZq3zmYGWSUh8JxN4u2rl4wQcyQlDq64wTKB
+	kX8Wkp5ZSHoWMDKtYhTKzCvLTczMMdHLqMzLrNBLzs/dxAgM9WW1f6J3MH66EHyIUYCDUYmH
+	d8PL++lCrIllxZW5hxglOJiVRHiPsT5MF+JNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUgg
+	PbEkNTs1tSC1CCbLxMEp1cBoomy/k/PK7pl9mbv/BYf/XMncraHx5PLicEflLu6edxM/Lavs
+	iJarq/j4226/lYHJ4rzaPuUfd2J8j7HP4dC7mBTjKe+xrPgDS/2nY9p3tDKXzI2+IVy9X0PE
+	3X9HG1/v1qmsL3hmm79/nZ12weR203IGtYsmMRd2Rr3Pnq9oW332Unra4h1KLMUZiYZazEXF
+	iQBCdcCvcQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBLMWRmVeSWpSXmKPExsXCNUNNS9dR5mG6wfOtUhZz1q9hs5g+9QKj
+	xdf1v5gtft49zm7x+dlrZotVC6+xWRzfOo/d4vDck6wW52edYrG4vGsOm8W9Nf9ZLQ5de85q
+	sXpNhsXvbSvYHPg8ds66y+7R3XaZ3aPlyFtWj8V7XjJ5bPo0id3jxIzfLB47H1p6vN93lc3j
+	220Pj8UvPjB5fN4kF8AdxWWTkpqTWZZapG+XwJXxe3I3c8Et3oo9+yexNDDe4upi5OSQEDCR
+	WHd/DmMXIwcHm4CSxLG9MSCmiICqRNsV9y5GLg5mgQ9MEvu2NrCCxIUFwiVaZ4iCdLIAlcz/
+	dZ0RxOYVMJZYOvUFC8RETYmGS/eYQMo5Bcwkzq9yBAkLCfBIvNqwH6pcUOLkzCdg5cwC8hLN
+	W2czT2DkmYUkNQtJagEj0ypGkcy8stzEzBxTveLsjMq8zAq95PzcTYzA8F5W+2fiDsYvl90P
+	MQpwMCrx8G54eT9diDWxrLgy9xCjBAezkgjvMdaH6UK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+	vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MOUdX2J74/Pivvup9GdOaryqx4kYGtVzrJq177Xmw
+	9szUimtNUraOHoueWN0yqpr9Vnjyr/hVsx8q77fRtTNKNfL88vxvhnwUL8+cSdd8On8WbVz1
+	c9UcV8kjm9zXhJ0X2H3Lnmf7s50Hwuz7y5m61s4+tfVyTem8J7ofVe9xJy+6fO91+eZyNyWW
+	4oxEQy3mouJEAGffsUdrAgAA
+X-CFilter-Loop: Reflected
 
-On Fri, Mar 21, 2025 at 03:58:45PM +0200, Ivaylo Ivanov wrote:
->  description:
-> -  eUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
-> +  eUSB2 controller supports LS/FS/HS usb connectivity.
->  
->  properties:
->    compatible:
-> @@ -23,6 +23,7 @@ properties:
->                - qcom,x1e80100-snps-eusb2-phy
->            - const: qcom,sm8550-snps-eusb2-phy
->        - const: qcom,sm8550-snps-eusb2-phy
-> +      - const: samsung,exynos2200-snps-eusb2-phy
+On Fri, 21 Mar 2025 10:03:29 -0400 Gregory Price <gourry@gourry.net> wrote:
+> On Fri, Mar 21, 2025 at 01:37:22PM +0900, Rakie Kim wrote:
+> > As you mentioned, I agree that Patch 1 may be a bit unclear.
+> > In fact, Patch 1 and Patch 2 share similar goals, and in my view,
+> > they only provide complete functionality when applied together.
+> > 
+> > Initially, I thought that Patch 1 was the fix for the original issue and
+> > considered it the candidate for a backport.
+> > However, upon further reflection, I believe that all changes in Patch 1
+> > through Patch 3 are necessary to fully address the underlying problem.
+> > 
+> 
+> Patch 1 does address the immediate issue of calling kfree instead of the
+> appropriate put() routine, so it is fine to keep this separate.
 
-These two entries is just an enum.
+Understood. I will keep this patch as-is for now, as you suggested.
 
->  
->    reg:
->      maxItems: 1
-> @@ -31,12 +32,12 @@ properties:
->      const: 0
->  
->    clocks:
-> -    items:
-> -      - description: ref
-> +    minItems: 1
-> +    maxItems: 3
+> 
+> > Therefore, I now think it makes more sense to merge Patch 1 and Patch 2
+> > into a single patch, then renumber the current Patch 3 as Patch 2,
+> > and treat the entire set as a proper -stable backport candidate.
+> >
+> 
+> The set adds functionality and changes the original behavior of the
+> interface - I'm not clear on the rules on backports in this way.
+> 
+> Would need input from another maintainer on that.
+> 
+> Either way, I would keep it separate for now in case just the first
+> patch is desired for backport.  Maintainers can always pick up the set
+> if that's desired.
+> 
+> (It also makes these changes easier to review)
+> ~Gregory
 
-I am still not conviced that creating one schema for these devices
-brings benefits. If this is going to be one binding, then keep the list
-here with three items and add minItems, so the list is the same for all
-variants.
+In that case, I agree it's better to treat only Patch 1 as a backport
+candidate for now. As for the remaining patches, it would be more appropriate
+to discuss their inclusion with other maintainers at a later point.
 
->  
->    clock-names:
-> -    items:
-> -      - const: ref
-> +    minItems: 1
-> +    maxItems: 3
-
-Keep the list here with three items and add minItems.
-
-
->  
->    resets:
->      maxItems: 1
-> @@ -62,7 +63,52 @@ required:
->    - clock-names
->    - vdd-supply
->    - vdda12-supply
-> -  - resets
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sm8550-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-
-Not much improved, my comment is still valid.
-
-
-> +
-> +        clocks:
-> +          items:
-> +            - description: ref
-
-maxItems: 1
-
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
-
-maxItems: 1
-
-> +
-> +      required:
-> +        - resets
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos2200-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +
-
-Drop blank line.
-
-and the clocks get here minItems: 3
-
-Best regards,
-Krzysztof
+Rakie
 
 
