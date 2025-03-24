@@ -1,271 +1,219 @@
-Return-Path: <linux-kernel+bounces-573194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB8DA6D422
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:21:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD18FA6D42C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31DE188E074
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:21:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBFED188FE4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309F518FC80;
-	Mon, 24 Mar 2025 06:21:37 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30F319309E;
+	Mon, 24 Mar 2025 06:24:29 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2120.outbound.protection.outlook.com [40.107.215.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A28D189919;
-	Mon, 24 Mar 2025 06:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742797296; cv=none; b=RvDkLHtBYeTVj1nOPRSAB0Ug8puZfWNAWMWXlMiTppg7lvcFtlLpgnoFFEvvYZOv78b2xgGT5yQcMrjMEYtR0orc+g4lHg1e4X/VhqlJ45YStGYx0nUq6wyErO/VZCOQKmFcPN06fnNq8ULyV3FS97QG6Ns4SJXaRm77Uy8EDxw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742797296; c=relaxed/simple;
-	bh=Tlj9VvXILtWn+p7on4L5BkMzIkf6ETB+uWCXF9joqrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rq9C7lncFG1UMwspJ5Au802SO7t0UZYxD06SerD3Db0cZmshK+ZUkO8sKwq3ULdqhGEs5+0z2NfoCfjXY7DBxJeExU5zS6IaihXu76kzr59msZfeXrOQKjqXT0xzNIbAFIfDGsTtS5NMNvxboyqC7GGuU4DadQcpzff2CsIXRpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id DB3C83432B0;
-	Mon, 24 Mar 2025 06:21:33 +0000 (UTC)
-Date: Mon, 24 Mar 2025 06:21:29 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 6/7] clk: spacemit: define new syscons with only
- resets
-Message-ID: <20250324062129-GYA19363@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-7-elder@riscstar.com>
- <20250322164247-GYD11633@gentoo>
- <c080eb55-943e-4564-8dcc-dd5f27b296a9@riscstar.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8585518C01E;
+	Mon, 24 Mar 2025 06:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742797469; cv=fail; b=CkYxvmqQNknZAQAL81NfkFMvtbI3rqBjygiZYJwwcx+q1xssqmqr0hTuRuxN42Ms6LZHZZ4V1uwbhk0mMAl54zkZ+yeUi6L0b7ZemYpPz+gzpgX6OTvqpbdBepKE8Rz6Vb3aHmEpldjDzJP9ox4IoUKvQFoZ66MukNA0dZp1GX8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742797469; c=relaxed/simple;
+	bh=VvJEFv+WpDw+gcoIJw7cU1TTOAytGkl7HVfp2h6xAPs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bqjLFc4rmj+5hV4Xpzg2mf6WoWBET0KdRli5WdPj8/FI3PFgaWmggNZ6hoQKuGKJKCQ6W3iLfRZsA8S0sBKfz3MI1ZrqKuojGPv0keJkChxkGF+vX8/xGzB8Hgl4mKKhAK3Gp3GSAls2lUHHxot2J2td6JWUmLWiY9fQ5QyS/4I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oBgkaHzL4/TzlblDh/O/+Ps7hHyZDI7BwZqCSPvBsrOtoA0r43uGifhupb2D846jYMkKxrE7GtE9F+Lwp4JTevfSghndFqd66SYnUmReyDQrvICOUk9dGq50qtXe9TdVCMT2o6fCLL3CN/8G6cTVJNO1ag2BXwqnJRUIrM+cakgqBTLVgE0RbbsYKDW7h8jddvNlSZWiNUcaS01F49lftZvUOV0B8T73HCyUZBVkMRyNrUBPfNz8uWFhSBZ8Z0+0Kvsp1izto8+5QZ9KP1t5jjXehlO1rt2U+3oGZNVotnJMGOe+RbFhrab7P+klubT9NPpaZiTkvFto/TG5Sy95lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9RFRBn2VnpgFWXHuXsbCQsU5gbzEpsmVDcCbQ4hBQ3Q=;
+ b=ousC33mGyexid8o2ZOjRxPlolVJmxBXVAWPEw9wWJicXjZBgkRxeVgzvr8z8UUFv2mgFi2uqFUKI2LqaaZvgZYwngnTu59AxTxoJvPjamFu3iNJfyqr5Nep37y6nxjChmHdQSA1bX/JvzHkRTdoKi3W/XmedBM6PNzxExTxmcXJnTukeTe85o6XPqes3+IB0/PjqDrywFDn04RyVQvV/BpzsoXPiK+njX3yxToBuZXk6FgViTYQpQOds5HBaiJ58yipH/Lqp+s4PiZZzERjpJB+GSHSfej/K6gg2tW5Whim4UzjvUH/2ad9CLgPRRfsTE72y59B2Ci7NDW4KxCLbPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from PS2PR01CA0069.apcprd01.prod.exchangelabs.com
+ (2603:1096:300:57::33) by SEZPR06MB5666.apcprd06.prod.outlook.com
+ (2603:1096:101:a9::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 06:24:22 +0000
+Received: from HK3PEPF00000221.apcprd03.prod.outlook.com
+ (2603:1096:300:57:cafe::49) by PS2PR01CA0069.outlook.office365.com
+ (2603:1096:300:57::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.40 via Frontend Transport; Mon,
+ 24 Mar 2025 06:24:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ HK3PEPF00000221.mail.protection.outlook.com (10.167.8.43) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 06:24:21 +0000
+Received: from localhost.localdomain (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 87FB94160CA0;
+	Mon, 24 Mar 2025 14:24:20 +0800 (CST)
+From: Peter Chen <peter.chen@cixtech.com>
+To: soc@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cix-kernel-upstream@cixtech.com,
+	marcin@juszkiewicz.com.pl,
+	maz@kernel.org,
+	kajetan.puchalski@arm.com,
+	Peter Chen <peter.chen@cixtech.com>
+Subject: [PATCH v5 0/6] arm64: Introduce CIX P1 (SKY1) SoC
+Date: Mon, 24 Mar 2025 14:24:14 +0800
+Message-Id: <20250324062420.360289-1-peter.chen@cixtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c080eb55-943e-4564-8dcc-dd5f27b296a9@riscstar.com>
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF00000221:EE_|SEZPR06MB5666:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 0a31bb33-98e9-4c92-2986-08dd6a9c83fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HgndCy0VHb+4Y+MjC7sjYpcJQuDW0OmyJYu5K4Oqi47Wj6Zo2sBx1Cg0HA/C?=
+ =?us-ascii?Q?pZFIzPC+wk/U3FGyzkIAo7k56iB6qoSRJ8wb5pxg0x38WrlJslntP8gGi90A?=
+ =?us-ascii?Q?phql4IEYxlk/u0ehldtL0pXutv7swHVwC3KHYa9KlxbGDGVSmP7tCWT/P5fL?=
+ =?us-ascii?Q?nZA2CCzCzeTDnMxMgCSk6f9TCLjEoF3712guJ/Xe/BeWMFfZiVFS8DVO8jPh?=
+ =?us-ascii?Q?wMM/0QBFc1zjrhdJ62XPgJp9X8CTtEhGA6hqNJn4bLkKniSLlxjCIOLvhTyZ?=
+ =?us-ascii?Q?CBIjv/YKGEPEqVw9emxu+v4JeoNwaiK19fCv6v+0YPjrgTYTL2/8kQphKVnH?=
+ =?us-ascii?Q?bA8hmdyCiyD+h8Bzquwjyhwq75MchzIClCXtCvF0i9qCLn9Z8rhPQUC6bIOy?=
+ =?us-ascii?Q?K1cWi++3BM+6Y0cgkV0PQ/EL1qoXpF5GAAmfZPucrx4Wyhii1+lvRvO1qJkt?=
+ =?us-ascii?Q?5jaAHIg4hbUlJUq/NJ4KsGG1jMQsqJ+NW+UC4Wn7SQ1GwHEHCMjyrZJcQMiq?=
+ =?us-ascii?Q?Q4FPJ3153lGFJiQNghpZ5rKY6SnK8J7KKUvm9gP7uj6GQ0aLQ4QgMUr0I3UZ?=
+ =?us-ascii?Q?xb368rkb7jib5ygjcidqO5icWFtxzmKRrBad+k6F5SBM8hJa80D9aX/I8+dA?=
+ =?us-ascii?Q?oX8uoglNeGEP5J98avjCaABrgahQcjT7Xa30LXIkjb91DCnwa/Xnx6MjbGWk?=
+ =?us-ascii?Q?nJaemB6cVcn7yo35OaQF3KqfE1myvJnVJ9rVJiNAHY80uE7jUIfA7oSAJ1mA?=
+ =?us-ascii?Q?+oYBa4kjFqcd+PXz+jyHTPrep0NLQb7H0+NyRp4USMYehBuIAuxDHb9gmNiA?=
+ =?us-ascii?Q?mVp1G6Fn1tLE0eain+Gon1MI/GNenD/x+ta68Aun43DrkH7GZCBAAbF8MU3r?=
+ =?us-ascii?Q?DvM+0P81D6Ulh/gCbTho1FvQZWxjaD9w3Eqi5g2UMdN4CLktoF5am6Tj+CjZ?=
+ =?us-ascii?Q?EOLGwl4IfjV4mrNy5/c2+qkQycjD70zkbIDeTAo0+afQ3JTkMQ4zUEpx/s2a?=
+ =?us-ascii?Q?IfUVD7AzoDd0tJ0JcITYIR+pWTMxJpdDLFdNKFY2SeqogSJ6kx+G1YWKeJdn?=
+ =?us-ascii?Q?TCp/0yLs4WiUSOwqNFm4u2VSQ8KliO5VXhCHhfYyHRiNXh85Xgts9r3ofbQG?=
+ =?us-ascii?Q?VKciFF6QBCcy+NLPNI5qXLAUckZp9y/As4q9EYdCtTQqF5x4wMGxclOJWsxq?=
+ =?us-ascii?Q?IuRwvF7a9l8B9BuhcWDtkk17/gq/iXpt0eTUnY02XcGp0OjfEDEQU/P2Pbeg?=
+ =?us-ascii?Q?sRPvBLthJiUa8kyZo19x6HN+4Ob+Tu/Vcx8KXR6sdUQ1rNGO3hvdlX/BtyVd?=
+ =?us-ascii?Q?AEU8nXjYfV2KvnkKeODYFlpAheGSVYqbnvbi+W7oTs+OKPOHmxj5NEGft0lO?=
+ =?us-ascii?Q?CEgqe0S8MioQ85clGV7B+KWXdSvMS0GcKYIO/KViNmOg5D8zTNUUYJ882auo?=
+ =?us-ascii?Q?fFfSpUVhY86q9GbXejIkn2DxB29C+/jO?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 06:24:21.6049
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a31bb33-98e9-4c92-2986-08dd6a9c83fe
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: HK3PEPF00000221.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5666
 
-Hi Alex:
+Cixtech P1 (internal name sky1) is high performance generic Armv9 SoC.
+Orion O6 is the world's first open source Arm V9 Motherboard built by
+Radxa. You could find brief introduction for SoC and related boards at:
+https://radxa.com/products/orion/o6#overview
 
-On 08:23 Sun 23 Mar     , Alex Elder wrote:
-> On 3/22/25 11:42 AM, Yixun Lan wrote:
-> > Hi Alex:
-> > 
-> > It occur to me it's a little odd to implemnt reset driver
-> > for RCPU block, but after check with vendor the RCPU region can
-> > be accessed both by ACPU and RCPU, then I'm fine with this.
-> 
-> I implemented just the resets that were found in the downstream
-> code.
-> 
-> I first implemented a separate reset driver, very simple, which
-> only implemented the resets.  I had a separate DTS binding (like
-> was done for the PLLs).  I was ready to post it for review, then
-> noticed that the registers used were shared with clocks.  So I
-> merged all of that separate code into the clock driver, as you
-> see here.
-> 
-ok
+In this series, we add initial SoC and board support for Kernel building.
+Patch 1-2: add dt-binding doc for CIX and its sky1 SoC
+Patch 3-4: add Arm64 build support
+Patch 5: add initial dts support for SoC and Orion O6 board
+Patch 6: add MAINTAINERS entry
 
-> > ACPU - RISC-V Main CPU, with mmu, running Linux
-> > RCPU - real time CPU, without mmu, running RT-OS
-> 
-> I didn't realize there was a separate CPU running its
-> own OS.  Is this managed as a remoteproc by the RISC-V AP?
-> The reset signals, I hope, are only touched by the AP
-> and not the real-time CPU.  Can you provide any further
-> information about this?
-> 
-As far as I know, the RCPU region can be acccesed via AP and real-time CPU
-from hardware perspective, there is no guarantee of isolation,
-so maybe software should take care of this in case only one side can touch
+To run upstream kernel at Orion O6 board, you need to use BIOS
+released by Radxa:
+https://docs.radxa.com/en/orion/o6/bios/install-bios
 
-for remoteproc, I haven't checked, and it's unrelated to this discussion
-(doesn't change shared resource fact whether remoteproc supported or not)
+Changes for v5:
+- Patch 5: Delete pmu-spe node which need to refine, and add it in future
+- Patch 6: Refine MAINTAINERS for all CIX SoC and adding code tree location
 
-> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> >> Enable support for three additional syscon CCUs which support reset
-> >> controls but no clocks:  ARCPU, RCPU2, and APBC2.
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   drivers/clk/spacemit/ccu-k1.c | 106 ++++++++++++++++++++++++++++++++++
-> >>   1 file changed, 106 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> >> index 17e321c25959a..bf5a3e2048619 100644
-> >> --- a/drivers/clk/spacemit/ccu-k1.c
-> >> +++ b/drivers/clk/spacemit/ccu-k1.c
-> >> @@ -130,6 +130,37 @@
-> >>   #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
-> >>   #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
-> >>   
-> >> +/* RCPU register offsets */
-> >> +#define RCPU_SSP0_CLK_RST		0x0028
-> >> +#define RCPU_I2C0_CLK_RST		0x0030
-> >> +#define RCPU_UART1_CLK_RST		0x003c
-> >> +#define RCPU_CAN_CLK_RST		0x0048
-> >> +#define RCPU_IR_CLK_RST			0x004c
-> >> +#define RCPU_UART0_CLK_RST		0x00d8
-> >> +/* XXX Next one is part of the AUD_AUDCLOCK region @ 0xc0882000 */
-> > this comment looks odd, XXX?
-> 
-> Yeah, I meant to remove that before sending but I forgot.
-> 
-> The downstream code treats this one register as being
-> part of the RCPU memory region, and extends that region
-> to be 0x2048 bytes to "fit" it.
-> 
-> The hardware documentation actually defines a different
-> "RCPU Audio Clock" memory region, and it might be more
-> correct (though less convenient) to define that as a
-> distinct region of memory.
-> 
-> What do you think?
-> 
-I'm not sure, but from DT perspective, is it an independent device?
-if yes, then need to describe as a distinct region..
-> 					-Alex
-> 
-> >> +#define AUDIO_HDMI_CLK_CTRL		0x2044
-> >> +
-> >> +/* RCPU2 register offsets */
-> >> +#define RCPU2_PWM0_CLK_RST		0x0000
-> >> +#define RCPU2_PWM1_CLK_RST		0x0004
-> >> +#define RCPU2_PWM2_CLK_RST		0x0008
-> >> +#define RCPU2_PWM3_CLK_RST		0x000c
-> >> +#define RCPU2_PWM4_CLK_RST		0x0010
-> >> +#define RCPU2_PWM5_CLK_RST		0x0014
-> >> +#define RCPU2_PWM6_CLK_RST		0x0018
-> >> +#define RCPU2_PWM7_CLK_RST		0x001c
-> >> +#define RCPU2_PWM8_CLK_RST		0x0020
-> >> +#define RCPU2_PWM9_CLK_RST		0x0024
-> >> +
-> >> +/* APBC2 register offsets */
-> >> +#define APBC2_UART1_CLK_RST		0x0000
-> >> +#define APBC2_SSP2_CLK_RST		0x0004
-> >> +#define APBC2_TWSI3_CLK_RST		0x0008
-> >> +#define APBC2_RTC_CLK_RST		0x000c
-> >> +#define APBC2_TIMERS0_CLK_RST		0x0010
-> >> +#define APBC2_KPC_CLK_RST		0x0014
-> >> +#define APBC2_GPIO_CLK_RST		0x001c
-> >> +
-> >>   struct spacemit_ccu_clk {
-> >>   	int id;
-> >>   	struct clk_hw *hw;
-> >> @@ -1781,6 +1812,69 @@ static const struct k1_ccu_data k1_ccu_apmu_data = {
-> >>   	.rst_data	= &apmu_reset_controller_data,
-> >>   };
-> >>   
-> >> +static const struct ccu_reset_data rcpu_reset_data[] = {
-> >> +	[RST_RCPU_SSP0]		= RST_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_I2C0]		= RST_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_UART1]	= RST_DATA(RCPU_UART1_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_IR]		= RST_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_CAN]		= RST_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_UART0]	= RST_DATA(RCPU_UART0_CLK_RST,	0, BIT(0)),
-> >> +	[RST_RCPU_HDMI_AUDIO]	= RST_DATA(AUDIO_HDMI_CLK_CTRL,	0, BIT(0)),
-> >> +};
-> >> +
-> >> +static const struct ccu_reset_controller_data rcpu_reset_controller_data = {
-> >> +	.count		= ARRAY_SIZE(rcpu_reset_data),
-> >> +	.data		= rcpu_reset_data,
-> >> +};
-> >> +
-> >> +static struct k1_ccu_data k1_ccu_rcpu_data = {
-> >> +	/* No clocks in the RCPU CCU */
-> >> +	.rst_data	= &rcpu_reset_controller_data,
-> >> +};
-> >> +
-> >> +static const struct ccu_reset_data rcpu2_reset_data[] = {
-> >> +	[RST_RCPU2_PWM0]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM1]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM2]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM3]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM4]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM5]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM6]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM7]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM8]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +	[RST_RCPU2_PWM9]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
-> >> +};
-> >> +
-> >> +static const struct ccu_reset_controller_data rcpu2_reset_controller_data = {
-> >> +	.count		= ARRAY_SIZE(rcpu2_reset_data),
-> >> +	.data		= rcpu2_reset_data,
-> >> +};
-> >> +
-> >> +static struct k1_ccu_data k1_ccu_rcpu2_data = {
-> >> +	/* No clocks in the RCPU2 CCU */
-> >> +	.rst_data	= &rcpu2_reset_controller_data,
-> >> +};
-> >> +
-> >> +static const struct ccu_reset_data apbc2_reset_data[] = {
-> >> +	[RST_APBC2_UART1]	= RST_DATA(APBC2_UART1_CLK_RST,	BIT(2), (0)),
-> >> +	[RST_APBC2_SSP2]	= RST_DATA(APBC2_SSP2_CLK_RST,	BIT(2), (0)),
-> >> +	[RST_APBC2_TWSI3]	= RST_DATA(APBC2_TWSI3_CLK_RST,	BIT(2), (0)),
-> >> +	[RST_APBC2_RTC]		= RST_DATA(APBC2_RTC_CLK_RST,	BIT(2), (0)),
-> >> +	[RST_APBC2_TIMERS0]	= RST_DATA(APBC2_TIMERS0_CLK_RST, BIT(2), (0)),
-> >> +	[RST_APBC2_KPC]		= RST_DATA(APBC2_KPC_CLK_RST,	BIT(2), (0)),
-> >> +	[RST_APBC2_GPIO]	= RST_DATA(APBC2_GPIO_CLK_RST,	BIT(2), (0)),
-> >> +};
-> >> +
-> >> +static const struct ccu_reset_controller_data apbc2_reset_controller_data = {
-> >> +	.count		= ARRAY_SIZE(apbc2_reset_data),
-> >> +	.data		= apbc2_reset_data,
-> >> +};
-> >> +
-> >> +static struct k1_ccu_data k1_ccu_apbc2_data = {
-> >> +	/* No clocks in the RCPU2 CCU */
-> >> +	.rst_data	= &apbc2_reset_controller_data,
-> >> +};
-> >> +
-> >>   static struct ccu_reset_controller *
-> >>   rcdev_to_controller(struct reset_controller_dev *rcdev)
-> >>   {
-> >> @@ -1959,6 +2053,18 @@ static const struct of_device_id of_k1_ccu_match[] = {
-> >>   		.compatible	= "spacemit,k1-syscon-apmu",
-> >>   		.data		= &k1_ccu_apmu_data,
-> >>   	},
-> >> +	{
-> >> +		.compatible	= "spacemit,k1-syscon-rcpu",
-> >> +		.data		= &k1_ccu_rcpu_data,
-> >> +	},
-> >> +	{
-> >> +		.compatible	= "spacemit,k1-syscon-rcpu2",
-> >> +		.data		= &k1_ccu_rcpu2_data,
-> >> +	},
-> >> +	{
-> >> +		.compatible	= "spacemit,k1-syscon-apbc2",
-> >> +		.data		= &k1_ccu_apbc2_data,
-> >> +	},
-> >>   	{ }
-> >>   };
-> >>   MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
-> >> -- 
-> >> 2.43.0
-> >>
-> > 
-> 
+Changes for v4:
+- Move add MAINTAINERS entry patch to the last, and add two dts files entry in it. 
+- Add three Krzysztof Kozlowski's Reviewed-by Tags
+- For sky1.dtsi, makes below changes:
+	- Add ppi-partition entry for gic-v3 node, and let pmu-a520 and pmu-a720's interrupt entry
+	get its handle
+	- Remove gic-v3's #redistributor-regions and redistributor-stride properties
+	- Change gic-v3's #interrupt-cells as 4, and change all interrupt specifiers accordingly
+	- Remove "arm,no-tick-in-suspend" for timer due to global counter is at always-on power domain
+	- Remove timer's clock frequency due to firmware has already set it
+
+Changes for v3:
+- Patch 1: Add Krzysztof Kozlowski's Acked-by Tag
+- Patch 2: Add Krzysztof Kozlowski's Reviewed-by Tag
+- Patch 6: Fix two dts coding sytle issues
+
+Changes for v2:
+- Pass dts build check with below commands:
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=vendor-prefixes.yaml
+make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=arm/cix.yaml
+make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+- Re-order the patch set, and move vendor-perfixes to the 1st patch.
+- Patch 4: Ordered Kconfig config entry by alpha-numerically
+- Patch 5: Corrects the Ack tag's name
+- Patch 6: see below.
+1) Corrects the SoF tag's name
+2) Fix several coding sytle issues
+3) move linux,cma node to dts file
+4) delete memory node, memory size is passed by firmware
+5) delete uart2 node which will be added in future patches
+6) Improve for pmu and cpu node to stands for more specific cpu model
+7) Improve the timer node and add hypervisor virtual timer irq
+
+Fugang Duan (1):
+  arm64: Kconfig: add ARCH_CIX for cix silicons
+
+Peter Chen (5):
+  dt-bindings: vendor-prefixes: Add CIX Technology Group Co., Ltd.
+  dt-bindings: arm: add CIX P1 (SKY1) SoC
+  arm64: defconfig: Enable CIX SoC
+  arm64: dts: cix: add initial CIX P1(SKY1) dts support
+  MAINTAINERS: Add CIX SoC maintainer entry
+
+ .../devicetree/bindings/arm/cix.yaml          |  26 +++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  11 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/cix/Makefile              |   2 +
+ arch/arm64/boot/dts/cix/sky1-orion-o6.dts     |  26 +++
+ arch/arm64/boot/dts/cix/sky1.dtsi             | 217 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ 9 files changed, 292 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/cix.yaml
+ create mode 100644 arch/arm64/boot/dts/cix/Makefile
+ create mode 100644 arch/arm64/boot/dts/cix/sky1-orion-o6.dts
+ create mode 100644 arch/arm64/boot/dts/cix/sky1.dtsi
 
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.25.1
+
 
