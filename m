@@ -1,143 +1,217 @@
-Return-Path: <linux-kernel+bounces-573073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BD1A6D2C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:09:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D13A6D2CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 02:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF8323B3C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8459188F8CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 01:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3424578F36;
-	Mon, 24 Mar 2025 01:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DB1179BD;
+	Mon, 24 Mar 2025 01:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p8UX+9Qu"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F35208D0;
-	Mon, 24 Mar 2025 01:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N49xQGTo"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9852A4C76
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742778533; cv=none; b=J2GlaMjnIE38AydV2Y4KktrGLqOMMnklSKSgycQ3gQ1tY7ui5mcCFqqyjrZpiGhqM+lVBlM5kO9AkIrs0ITkfZQZYNDyIjLwgN3r65M6IEYwdFhFf8OG+1Q+GRZwwctqmQwSq25Chqtma8EveaBphY8m964tII//gw9F7iy+Z08=
+	t=1742778586; cv=none; b=r9I59xxY/0FarKVj85JkuuYLUfZsMgdqHc6QcvaXR99xdyqIepIGdC6F4HrjbGlzlb1c90G5USarrdvrg003ANNR5mZAjkPsy3omLSgUqSct/rTTdZwLFqFjL6kIrzI3ZgPqPc8mUjptdj92tnnj0MZ/hKNLLFxlIeDzIaShxhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742778533; c=relaxed/simple;
-	bh=xZ+pCej0n1telaaFuyKirVR02AyDzrdLROxI4LOfeZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FrtnH2kTBLbYFuAJQMMurbULQOaCDOSIMLjoIQKpetWUAzxKc3yBN9GnYaKNN0VgASZCm+aZyovNC4hi7bHjdgHOdFZ2dqPqEZ/BRl/FVt49uxvi+3Xb4Y8vB4YJfSNGJnS5dDiVW8JLBNG1wBceR658ByBSKHOzeXSMGEErY7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p8UX+9Qu; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=HiL7gVC8MkjxpZ/3L5U1u+10daiFFSGKHJFX7rM/5xU=;
-	b=p8UX+9QuFFIz3z2j97q+WvXuqAa6Ug8CrFUkDXU5RvugmBXeXQeEkgDoo82kCp
-	EYT0wn5h5zoonj0BN4E/aMaAsCzncMusF6Kdl8HPZXUEmwSAAbu6CPv8FOqGGe7z
-	fJTFZzkMAXQ5kwnaPoAw5s3/TsZLAUg+ROfbBsrd2lOFs=
-Received: from [192.168.60.52] (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAnFXB1sOBnVXrKBQ--.19964S2;
-	Mon, 24 Mar 2025 09:08:07 +0800 (CST)
-Message-ID: <5bb50ad5-5eb4-40e5-86d0-7645eab78e2b@163.com>
-Date: Mon, 24 Mar 2025 09:08:05 +0800
+	s=arc-20240116; t=1742778586; c=relaxed/simple;
+	bh=CAbn5Kul+JjubCYBmgXfb4uRBo4yTlHs8gAM4cJ9AMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JzZ5V74FjRC501raha0UdJdjMMW82Mnc2m6u846db/8+vKaAnnXEUg1801FUHOj8b2mmO8un6UEJis6AL7t4Ov5NNvAl75BDhE8tVpaSF/uYM3x22CWVpjWdBgparOgp/Jpa+V8kTf9S/HxhHXCx3ADnJyzxlHvlrhl/Yjl64uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N49xQGTo; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so22789095e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 18:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742778583; x=1743383383; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wRfmMTiV30ALZvulcccEG+A+D/DDAsQnRZ2wT4RHUEA=;
+        b=N49xQGToZ5BsKyqZ6gl5OW53Ig5A5qveOCJ2rSuBF5czmsmxArASzsBZgLrkgPVxlt
+         b2N6D84JrAgMBtPNvcNVQPp7YMSz/zQ+e5rfx1tO+SBCszBuXapMlmC4vD8PQGwde5LO
+         dPxXKwVCRvmjtbmqeTfZ4JTdSPCwBcUiuarwC/oeG69kcFbEvxRTzrmjcFzPGu0+RaeY
+         ij3F796Iz/bZ0izlkH+3DxZGifR1x4TMXxlNBjsTAMCBATZTaS0Ebukcv9evVRF7qKiX
+         OlNYsDHXfwSVbOwJNTUf7p7szfnunKygcZyXoAASPJQ+cjgfZbXGdoKxEKIGqgTmZpUj
+         3sdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742778583; x=1743383383;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wRfmMTiV30ALZvulcccEG+A+D/DDAsQnRZ2wT4RHUEA=;
+        b=C5WwZ6ajBXAp1OFvU8dQTcJssZCWceb1Z8OzDeOxliWuD7eRWERzL3Poo2r6gEdnp7
+         50DdoC8/Vn/X2AEwDA8q/TVyX9wALJVYl/pysX+qr4L3PoUCPkf9VC6CYkFM2ztvE1oN
+         iBgX7gY38PaEOoCQEflQXpEbSWwybs9uljXkNfHOREN29lFpOyTxRQx+XmrwLvjmrHxb
+         faGn1JphTKRxP6GfbwD2hUnRhSVv7/rnC0Pf3oVn+0KZ6eYXv1cinJlIKe3PsJYkrjDB
+         gJLJK0DaU/vxx9tFJNQhgKyc2k8wFG+SrROjeRiRRxLDMFbmqTRfkqL70oOCDkJjwF2Y
+         JkLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbogTrpG/Gi9ualB9HHN0ECkNWfg/u6FDRRyOAq4fzEyo/EXXazPF+kCNaJiEfgz1qVQJfB0P/9yN6vMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvvIYD0iU8MuxrqkAhA6uvuV+wy0wNYCqA/efcvl7ftUVm+lUt
+	ssEGtvNpSzc8Q6U+fLjlCuZdZg8B1wGaUcO3E78qqZanM9KQy/OS
+X-Gm-Gg: ASbGnctb88GP7IhMsKBXEuxVayPjxmhlhB7UXeGmke2oX3xowL6qNNfCW2MPxxWe0Lr
+	XecSNBCjOixVrlzSGT1kdBpOeza0SyNaT861LPcJyIUrhlk3Pu4s0yB7qGrJBbUg3CzwOJgRcJn
+	KmLEhcwhY+o/wuNHfX6NtibA0HW5U+Lu73jKa8yxaQ9JzxWHLcb6dF8AC8ntl/CjqoWIFojSaxV
+	CgNPLYo/anCPtcorDo2V57nUJ52ku8YvmnB+jk1KFau2y5sbQXi8TayzPrsvVLEopikpTc78bA0
+	IGbu5g//I2QP8hDCETpNtDvAfB0Hqs7+EvRE+DGM0+/I742ZwwY0DunF
+X-Google-Smtp-Source: AGHT+IE33xEsoykBSVsygT8pa6YMbMTFPnFBBX6KpYMpIHJt+/YaaVxArWJI2HKWi/eEz9+p1SKkhA==
+X-Received: by 2002:a05:600c:1989:b0:43c:e7ae:4bcf with SMTP id 5b1f17b1804b1-43d508725ecmr92657095e9.0.1742778582519;
+        Sun, 23 Mar 2025 18:09:42 -0700 (PDT)
+Received: from debian.local ([2a0a:ef40:4d4:f101:e41a:977a:f788:910f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3adc4488sm119483545e9.0.2025.03.23.18.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 18:09:42 -0700 (PDT)
+Date: Mon, 24 Mar 2025 01:09:39 +0000
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+To: amd-gfx@lists.freedesktop.org
+Cc: dakr@kernel.org, christian.koenig@amd.com, mario.limonciello@amd.com,
+	daniel@ffwll.ch, ville.syrjala@linux.intel.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	lyude@redhat.com, sumit.semwal@linaro.org,
+	AMD-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [BUG] drm_connector reference counting and USB-C docks
+Message-ID: <Z-Cw0x7wa5w7tliO@debian.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
- finding the capabilities
-To: kernel test robot <lkp@intel.com>, lpieralisi@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
- jingoohan1@gmail.com, thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250323164852.430546-4-18255117159@163.com>
- <202503240338.N37HXlm9-lkp@intel.com>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <202503240338.N37HXlm9-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wAnFXB1sOBnVXrKBQ--.19964S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAr17tF17ur1kAFy7uF4fuFg_yoWrGr48pa
-	48C347GFyrXr4avwn7A3Wjvw15Kr98J347A3ykCw17ZF47ua4qgF4IyFW5KFsxCrsrKr1a
-	qFW7JFyvyr1FyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UqiihUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhIao2fgq4vhpAABsy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+There is a reference couting / lifecycle issue with drm_connector when used
+with a USB-C dock. The problem has been previously reproduced on both Intel and
+AMD GPUs.
 
+On both Intel and AMD, the symptoms are:
 
-On 2025/3/24 03:26, kernel test robot wrote:
-> Hi Hans,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on a1cffe8cc8aef85f1b07c4464f0998b9785b795a]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-Introduce-generic-capability-search-functions/20250324-005300
-> base:   a1cffe8cc8aef85f1b07c4464f0998b9785b795a
-> patch link:    https://lore.kernel.org/r/20250323164852.430546-4-18255117159%40163.com
-> patch subject: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for finding the capabilities
-> config: riscv-randconfig-001-20250324 (https://download.01.org/0day-ci/archive/20250324/202503240338.N37HXlm9-lkp@intel.com/config)
-> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project c2692afc0a92cd5da140dfcdfff7818a5b8ce997)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250324/202503240338.N37HXlm9-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503240338.N37HXlm9-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     drivers/pci/controller/cadence/pcie-cadence.c:20:11: warning: variable 'val' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->        20 |         else if (size == 1)
->           |                  ^~~~~~~~~
->     drivers/pci/controller/cadence/pcie-cadence.c:23:9: note: uninitialized use occurs here
->        23 |         return val;
->           |                ^~~
->     drivers/pci/controller/cadence/pcie-cadence.c:20:7: note: remove the 'if' if its condition is always true
->        20 |         else if (size == 1)
->           |              ^~~~~~~~~~~~~~
->        21 |                 val = readb(pcie->reg_base + where);
->     drivers/pci/controller/cadence/pcie-cadence.c:14:9: note: initialize the variable 'val' to silence this warning
->        14 |         u32 val;
->           |                ^
->           |                 = 0
+  - multiple connectors being listed in sysfs `sys/class/drm/cardX/` (because
+    the old connectors are not removed when the dock is unplugged)
+  - no display on the external monitors.
+  - "Payload for VCPI 1 not in topology, not sending remove" error if drm.debug
+    is enabled
 
-Will change. u32 val = 0;
+On AMD, this issue is the root cause of a number of errors when re-plugging in
+a dock:
 
->>> drivers/pci/controller/cadence/pcie-cadence.c:28:9: error: call to undeclared function 'pci_host_bridge_find_capability'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->        28 |         return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
->           |                ^
->>> drivers/pci/controller/cadence/pcie-cadence.c:33:9: error: call to undeclared function 'pci_host_bridge_find_ext_capability'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->        33 |         return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
->           |                ^
->     drivers/pci/controller/cadence/pcie-cadence.c:33:9: note: did you mean 'cdns_pcie_find_ext_capability'?
->     drivers/pci/controller/cadence/pcie-cadence.c:31:5: note: 'cdns_pcie_find_ext_capability' declared here
->        31 | u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
->           |     ^
->        32 | {
->        33 |         return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
->           |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->           |                cdns_pcie_find_ext_capability
->     1 warning and 2 errors generated.
-> 
-> 
-> vim +/pci_host_bridge_find_capability +28 drivers/pci/controller/cadence/pcie-cadence.c
-> 
->      25	
->      26	u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
->      27	{
->    > 28		return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
->      29	}
->      30	
->      31	u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
->      32	{
->    > 33		return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
->      34	}
->      35	
-> 
+  - *ERROR* Failed to get ACT after 3000ms
+  - kernel NULL pointer dereference calling setcrtc
+  - UBSAN: shift-out-of-bounds in drivers/gpu/drm/display/drm_dp_mst_topology.c
+  - use-after-free in dc_stream_release
+  - refcount_t: underflow; use-after-free.
+  - slab-use-after-free in event_property_validate
+  - WARNING display/dc/dcn21/dcn21_link_encoder.c:215 dcn21_link_encoder_acquire_phy
+  - Part 1 of payload creation for DP-2 failed, skipping part 2
+  - probably most bug reports relating to suspend/resume and a dock
 
+This bug has been reproduced on both Ubuntu/Gnome and Debian/XFCE. The symptoms
+are intermittent and vary (as above), but the consistent initial symptom is
+multiple connectors being listed in sysfs.
+
+To reproduce, annotate drm_dp_delayed_destroy_port with something like:
+
+--- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
+@@ -5014,6 +5014,9 @@ drm_dp_delayed_destroy_port(struct drm_dp_mst_port *port)
+ 
+        if (port->connector) {
+                drm_connector_unregister(port->connector);
++               printk("drm_dp_delayed_destroy_port %s refcount=%d\n",
++                               port->connector->name,
++                               kref_read(&port->connector->base.refcount));
+                drm_connector_put(port->connector);
+        }
+ 
+Boot laptop with dock connected, activate external monitors, suspend, unplug
+the dock, and resume. This problem is intermittent, so these steps may need to
+be repeated. But when the problem is hit, the drm_dp_mst_port will be
+destroyed, but the drm_connector will still be alive. (This can also be
+reproduced with just plugging and unplugging without suspend/resume, but, on my
+laptop, it happens almost every time with suspend/resume).
+
+The cause of this problem appears to be:
+
+  - calling setcrtc to enable a CRTC results in the drm_connector refcount
+    being incremented:
+  - drm_atomic_get_connector_state appears to add connectors into
+    drm_atomic_state->connectors, and increments the refcount
+
+  - on disabling the external monitors, a call to drm_mode_setcrtc results in
+    the drm_connector being destroyed via call chain:
+
+    amdgpu_drm_ioctl
+      drm_ioctl
+        drm_ioctl_kernel
+          drm_mode_setcrtc (via func)
+            drm_atomic_helper_set_config (via crtc->funcs->set_config)
+              drm_atomic_state_put
+                __drm_atomic_state_free (via kref_put)
+                  drm_atomic_state_clear
+                    drm_atomic_state_default_clear
+                      drm_connector_put
+                        drm_mode_object_put
+                          drm_connector_free (via ->free_cb put destroyer)
+                            dm_dp_mst_connector_destroy
+
+  - so the drm_connector is not destroyed until/if userspace calls setcrtc to
+    clear the CRTC (set.num_connectors=0). If this does not happen for whatever
+    reason (userspace process is terminated, frozen due to suspend, etc.) then
+    the drm_connector object will still be alive even though the corresponding
+    drm_dp_mst_port is dead.
+
+  - in normal usage, drm_connector_cleanup releases the connector ID:
+
+    ida_free(&dev->mode_config.connector_ida, connector->index);
+
+  - when dock is replugged, a connector ID is allocated:
+
+    connector->connector_type_id = ida_alloc_min(connector_ida, 1, GFP_KERNEL);
+
+  - if setcrtc has not been called to free the old ID, then ida_alloc_min
+    allocates a new connector ID instead of reusing the old one. This explains
+    the "multiple connectors being listed in sysfs" problem.
+
+  - the other problems occur after this, due to the multiple half-dead
+    connector objects.
+
+  - UBSAN: shift-out-of-bounds in drivers/gpu/drm/display/drm_dp_mst_topology.c:4568
+    occurs because vcpi==0 in this payload, so BIT op is a left-shift by -1.
+
+  - slab-use-after-free in event_property_validate: looks like it happens
+    because hdcp_update_display, hdcp_remove_display copy references to
+    amdgpu_dm_connector (which contains a nested drm_connector) in to the
+    delayed_work struct hdcp_workqueue without incrementing the reference count
+    (see pair of lines "hdcp_w->aconnector[conn_index] = aconnector;").
+    If the connector is freed, &aconnector[conn_index] will become a dangling
+    pointer. Actually, I can reproduce this easily by just booting to
+    gdm then plugging and unplugging the dock a few times, so it's
+    possible this is an independent issue that also needs fixing.
+
+  - use-after-free in dc_stream_release - there appears to be a few
+    points where a dc_stream_state pointer is copied without refcounting
+    ("pipe_ctx->stream = stream;") but I don't know if this is the problem. It
+    could also just be that earlier failures have left something in a bad state.
+
+I'm unsure of the best approach to fix the root cause. One way is to try
+and release the references by disabling the CRTC. I tried calling
+drm_mode_crtc from drm_dp_delayed_destroy_port. This was a bit hacky,
+but did seem to work, the reference count got reduced to 0, and the
+drm_connector was destroyed. Another option would be to call the
+drm_connector destructor from drm_dp_delayed_destroy_port (protected by
+some mutex so that it doesn't get called twice when the actual refcount
+goes to 0) - that might work to free up the connector ID, but I suspect
+there could be other issues with having the drm_connector object still
+alive and potentially holding references to other objects, even though
+the dock has been physically disconnected.
 
