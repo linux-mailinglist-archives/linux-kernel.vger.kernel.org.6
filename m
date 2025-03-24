@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-573717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73802A6DB6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:27:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7B1A6DB64
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348301716DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAFED170DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498DF25F785;
-	Mon, 24 Mar 2025 13:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA9B25F98D;
+	Mon, 24 Mar 2025 13:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Qrd00X1w"
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJIlr8IE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C3925EFBA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A326325EF8E;
+	Mon, 24 Mar 2025 13:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822737; cv=none; b=Fe9snZOlrE8S58FWTlAm0Sj4Y0tiZPlF9rFqc/1rp/wKD3pbt/ljBmiWstOBHNBOmXXRiOggY/QM7KZS/D5kWxidajhtmZgM4CLaCUOLqc8Y+8KqGSsa/ywsJOCrKEHA0NeDp0G//aSX7j5VIdsceNm0cfHPREDyMRRIJ5tdtEM=
+	t=1742822726; cv=none; b=Ipgkcsyop2rQK64+1gayzvqe0IyEl0fT1C2XL1xiP4ES12CTQSa+egCRmMalkR89YyS6fLLZmwqjR/68xMPzuaOhLYbkYGG6RdoDFZbZhtz6PgNxFONqSLDQeFffegg6l+8xh6PbyUPexsLaR0IA5E5B8x/Kt9t/rm7hlUZgWPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822737; c=relaxed/simple;
-	bh=yL3lmgobLEBKRSsH+4V1Nb+xmQ7s1p+yCn95ZWhAPEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oG4lP0JE8BJhlXLdIhx100Bkggm+19yYGiUgWt8GsCi0QQVP/4QNWQvUHo0+d7kGgfXFdy9+R8USzP9bUvVybadXgGdz4ZWo50wa15v/SY3Nj41dFOd3/uQ5wmmTRLDCi9fTxhaDzH6mK6T+SnK4Wbkrvw717GXF3paMZpu7dXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Qrd00X1w; arc=none smtp.client-ip=178.154.239.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:644d:0:640:2ef6:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 73D9B60E8E;
-	Mon, 24 Mar 2025 16:25:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NPOHhg1LoeA0-FChmd9O9;
-	Mon, 24 Mar 2025 16:25:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1742822724; bh=jgnev3j32nPtiW6Wpj/qKrnMsAM6tbWnUWS2Lh6tQ9Q=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=Qrd00X1wSSJZCq+foYGpKsA08Qc9dgyAbyP8L1ekEnnWoUi3CillELzip/qgVT5qg
-	 Ff3Ii6ILN+z7QSB0ogdzJ1aTLBupmKIDKgpA1TwohkwA1Kw26PRI6A6dwz/IRe9ibP
-	 EbovGOyuzbPwZEcaS27SIgOa91Weho6esvOwQiSI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
+	s=arc-20240116; t=1742822726; c=relaxed/simple;
+	bh=vxSgfp4SAGwj8pW9/pjz9+PbBk6qOxXhxUFHyUJJJfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJrdEj9WgL51Ww+lmXf76xXlCKsywKYhHlN5+TZlBMvxHsDYuzyTz11HpnFIE7Hy0XJoaLM+1MDCqG3vGsrLrnfr2JacIrHZD8cqDcJaYD14JB9T4yJjZtegeghnZupNHDZTH/2dVfsgTWBZS1Sh17Y4NzsiCRPcHc734hf+990=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJIlr8IE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BEFC4CEDD;
+	Mon, 24 Mar 2025 13:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742822726;
+	bh=vxSgfp4SAGwj8pW9/pjz9+PbBk6qOxXhxUFHyUJJJfE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HJIlr8IEDm+quXlfbSjZDKXtzj1xNT+IgttbRQjlcNzZnnUMwAxQIpaand/+BaKTI
+	 ugjVwG88Sa53de4lc+zhVy8Y/ze18J15qf17ASvcAVlukv8Omf+U5TpdJ7J2a/dTf5
+	 8ijNsARi0keigLbTuABcWTq2jS75nV4m5X9DiyeX/BgVq8gFq7wnhZodKsFMtNsD7k
+	 Fx3PCHA2Uowgl+GsmgzmLAFhwxKFajxMTUEz0gJCsvr+oAvip+pLZk2ByiQ+ququJV
+	 VqzEja2RN53JrPbGteG6bXBWD2NrCGhOGsCNVRTXFVahhs4d9xoOCtqnIl6yBvCZ4s
+	 60Ff/ukBwN1hQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1twhnx-000000001bd-3C5m;
+	Mon, 24 Mar 2025 14:25:25 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	syzbot+353d7b75658a95aa955a@syzkaller.appspotmail.com
-Subject: [PATCH] binder: fix use-after-free in binderfs_evict_inode()
-Date: Mon, 24 Mar 2025 16:24:27 +0300
-Message-ID: <20250324132427.922495-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.49.0
+	Johan Hovold <johan+linaro@kernel.org>,
+	stable@vger.kernel.org,
+	Clayton Craft <clayton@craftyguy.net>
+Subject: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug events
+Date: Mon, 24 Mar 2025 14:24:48 +0100
+Message-ID: <20250324132448.6134-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,190 +63,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Running 'stress-ng --binderfs 16 --timeout 300' under KASAN-enabled
-kernel, I've noticed the following:
+The PMIC GLINK driver is currently generating DisplayPort hotplug
+notifications whenever something is connected to (or disconnected from)
+a port regardless of the type of notification sent by the firmware.
 
-BUG: KASAN: slab-use-after-free in binderfs_evict_inode+0x1de/0x2d0
-Write of size 8 at addr ffff88807379bc08 by task stress-ng-binde/1699
+These notifications are forwarded to user space by the DRM subsystem as
+connector "change" uevents:
 
-CPU: 0 UID: 0 PID: 1699 Comm: stress-ng-binde Not tainted 6.14.0-rc7-g586de92313fc-dirty #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x1c2/0x2a0
- ? __pfx_dump_stack_lvl+0x10/0x10
- ? __pfx__printk+0x10/0x10
- ? __pfx_lock_release+0x10/0x10
- ? __virt_addr_valid+0x18c/0x540
- ? __virt_addr_valid+0x469/0x540
- print_report+0x155/0x840
- ? __virt_addr_valid+0x18c/0x540
- ? __virt_addr_valid+0x469/0x540
- ? __phys_addr+0xba/0x170
- ? binderfs_evict_inode+0x1de/0x2d0
- kasan_report+0x147/0x180
- ? binderfs_evict_inode+0x1de/0x2d0
- binderfs_evict_inode+0x1de/0x2d0
- ? __pfx_binderfs_evict_inode+0x10/0x10
- evict+0x524/0x9f0
- ? __pfx_lock_release+0x10/0x10
- ? __pfx_evict+0x10/0x10
- ? do_raw_spin_unlock+0x4d/0x210
- ? _raw_spin_unlock+0x28/0x50
- ? iput+0x697/0x9b0
- __dentry_kill+0x209/0x660
- ? shrink_kill+0x8d/0x2c0
- shrink_kill+0xa9/0x2c0
- shrink_dentry_list+0x2e0/0x5e0
- shrink_dcache_parent+0xa2/0x2c0
- ? __pfx_shrink_dcache_parent+0x10/0x10
- ? __pfx_lock_release+0x10/0x10
- ? __pfx_do_raw_spin_lock+0x10/0x10
- do_one_tree+0x23/0xe0
- shrink_dcache_for_umount+0xa0/0x170
- generic_shutdown_super+0x67/0x390
- kill_litter_super+0x76/0xb0
- binderfs_kill_super+0x44/0x90
- deactivate_locked_super+0xb9/0x130
- cleanup_mnt+0x422/0x4c0
- ? lockdep_hardirqs_on+0x9d/0x150
- task_work_run+0x1d2/0x260
- ? __pfx_task_work_run+0x10/0x10
- resume_user_mode_work+0x52/0x60
- syscall_exit_to_user_mode+0x9a/0x120
- do_syscall_64+0x103/0x210
- ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0xcac57b
-Code: c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8
-RSP: 002b:00007ffecf4226a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007ffecf422720 RCX: 0000000000cac57b
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffecf422850
-RBP: 00007ffecf422850 R08: 0000000028d06ab1 R09: 7fffffffffffffff
-R10: 3fffffffffffffff R11: 0000000000000246 R12: 00007ffecf422718
-R13: 00007ffecf422710 R14: 00007f478f87b658 R15: 00007ffecf422830
- </TASK>
+    KERNEL[1556.223776] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
+    ACTION=change
+    DEVPATH=/devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0
+    SUBSYSTEM=drm
+    HOTPLUG=1
+    CONNECTOR=36
+    DEVNAME=/dev/dri/card0
+    DEVTYPE=drm_minor
+    SEQNUM=4176
+    MAJOR=226
+    MINOR=0
 
-Allocated by task 1705:
- kasan_save_track+0x3e/0x80
- __kasan_kmalloc+0x8f/0xa0
- __kmalloc_cache_noprof+0x213/0x3e0
- binderfs_binder_device_create+0x183/0xa80
- binder_ctl_ioctl+0x138/0x190
- __x64_sys_ioctl+0x120/0x1b0
- do_syscall_64+0xf6/0x210
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On the Lenovo ThinkPad X13s and T14s, the PMIC GLINK firmware sends two
+identical notifications with orientation information when connecting a
+charger, each generating a bogus DRM hotplug event. On the X13s, two
+such notification are also sent every 90 seconds while a charger remains
+connected, which again are forwarded to user space:
 
-Freed by task 1705:
- kasan_save_track+0x3e/0x80
- kasan_save_free_info+0x46/0x50
- __kasan_slab_free+0x62/0x70
- kfree+0x194/0x440
- evict+0x524/0x9f0
- do_unlinkat+0x390/0x5b0
- __x64_sys_unlink+0x47/0x50
- do_syscall_64+0xf6/0x210
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+    port = 1, svid = ff00, mode = 255, hpd_state = 0
+    payload = 01 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00
 
-This 'stress-ng' workload causes the concurrent deletions from
-'binder_devices' and so requires full-featured synchronization
-to prevent list corruption.
+Note that the firmware only sends on of these when connecting an
+ethernet adapter.
 
-I've found this issue independently but pretty sure that syzbot did
-the same, so Reported-by: and Closes: should be applicable here as well.
+Fix the spurious hotplug events by only forwarding hotplug notifications
+for the Type-C DisplayPort service id. This also reduces the number of
+uevents from four to two when an actual DisplayPort altmode device is
+connected:
 
-Reported-by: syzbot+353d7b75658a95aa955a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=353d7b75658a95aa955a
-Fixes: e77aff5528a18 ("binderfs: fix use-after-free in binder_devices")
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+    port = 0, svid = ff01, mode = 2, hpd_state = 0
+    payload = 00 01 02 00 f2 0c 01 ff 03 00 00 00 00 00 00 00
+    port = 0, svid = ff01, mode = 2, hpd_state = 1
+    payload = 00 01 02 00 f2 0c 01 ff 43 00 00 00 00 00 00 00
+
+Fixes: 080b4e24852b ("soc: qcom: pmic_glink: Introduce altmode support")
+Cc: stable@vger.kernel.org	# 6.3
+Cc: Bjorn Andersson <andersson@kernel.org>
+Reported-by: Clayton Craft <clayton@craftyguy.net>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/android/binder.c          | 15 +++++++++++++--
- drivers/android/binder_internal.h |  8 ++++++--
- drivers/android/binderfs.c        |  2 +-
- 3 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 76052006bd87..bf79a0e339fe 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -79,6 +79,8 @@ static HLIST_HEAD(binder_deferred_list);
- static DEFINE_MUTEX(binder_deferred_lock);
- 
- static HLIST_HEAD(binder_devices);
-+static DEFINE_SPINLOCK(binder_devices_lock);
-+
- static HLIST_HEAD(binder_procs);
- static DEFINE_MUTEX(binder_procs_lock);
- 
-@@ -6929,7 +6931,16 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
- 
- void binder_add_device(struct binder_device *device)
+Clayton reported seeing display flickering with recent RC kernels, which
+may possibly be related to these spurious events being generated with
+even greater frequency.
+
+That still remains to be fully understood, but the spurious events, that
+on the X13s are generated every 90 seconds, should be fixed either way.
+
+Johan
+
+
+ drivers/soc/qcom/pmic_glink_altmode.c | 30 +++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink_altmode.c b/drivers/soc/qcom/pmic_glink_altmode.c
+index bd06ce161804..7f11acd33323 100644
+--- a/drivers/soc/qcom/pmic_glink_altmode.c
++++ b/drivers/soc/qcom/pmic_glink_altmode.c
+@@ -218,21 +218,29 @@ static void pmic_glink_altmode_worker(struct work_struct *work)
  {
-+	spin_lock(&binder_devices_lock);
- 	hlist_add_head(&device->hlist, &binder_devices);
-+	spin_unlock(&binder_devices_lock);
-+}
+ 	struct pmic_glink_altmode_port *alt_port = work_to_altmode_port(work);
+ 	struct pmic_glink_altmode *altmode = alt_port->altmode;
++	enum drm_connector_status conn_status;
+ 
+ 	typec_switch_set(alt_port->typec_switch, alt_port->orientation);
+ 
+-	if (alt_port->svid == USB_TYPEC_DP_SID && alt_port->mode == 0xff)
+-		pmic_glink_altmode_safe(altmode, alt_port);
+-	else if (alt_port->svid == USB_TYPEC_DP_SID)
+-		pmic_glink_altmode_enable_dp(altmode, alt_port, alt_port->mode,
+-					     alt_port->hpd_state, alt_port->hpd_irq);
+-	else
+-		pmic_glink_altmode_enable_usb(altmode, alt_port);
++	if (alt_port->svid == USB_TYPEC_DP_SID) {
++		if (alt_port->mode == 0xff) {
++			pmic_glink_altmode_safe(altmode, alt_port);
++		} else {
++			pmic_glink_altmode_enable_dp(altmode, alt_port,
++						     alt_port->mode,
++						     alt_port->hpd_state,
++						     alt_port->hpd_irq);
++		}
+ 
+-	drm_aux_hpd_bridge_notify(&alt_port->bridge->dev,
+-				  alt_port->hpd_state ?
+-				  connector_status_connected :
+-				  connector_status_disconnected);
++		if (alt_port->hpd_state)
++			conn_status = connector_status_connected;
++		else
++			conn_status = connector_status_disconnected;
 +
-+void binder_remove_device(struct binder_device *device)
-+{
-+	spin_lock(&binder_devices_lock);
-+	hlist_del_init(&device->hlist);
-+	spin_unlock(&binder_devices_lock);
++		drm_aux_hpd_bridge_notify(&alt_port->bridge->dev, conn_status);
++	} else {
++		pmic_glink_altmode_enable_usb(altmode, alt_port);
++	}
+ 
+ 	pmic_glink_altmode_request(altmode, ALTMODE_PAN_ACK, alt_port->index);
  }
- 
- static int __init init_binder_device(const char *name)
-@@ -6956,7 +6967,7 @@ static int __init init_binder_device(const char *name)
- 		return ret;
- 	}
- 
--	hlist_add_head(&binder_device->hlist, &binder_devices);
-+	binder_add_device(binder_device);
- 
- 	return ret;
- }
-@@ -7018,7 +7029,7 @@ static int __init binder_init(void)
- err_init_binder_device_failed:
- 	hlist_for_each_entry_safe(device, tmp, &binder_devices, hlist) {
- 		misc_deregister(&device->miscdev);
--		hlist_del(&device->hlist);
-+		binder_remove_device(device);
- 		kfree(device);
- 	}
- 
-diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-index e4eb8357989c..c5d68c1d3780 100644
---- a/drivers/android/binder_internal.h
-+++ b/drivers/android/binder_internal.h
-@@ -584,9 +584,13 @@ struct binder_object {
- /**
-  * Add a binder device to binder_devices
-  * @device: the new binder device to add to the global list
-- *
-- * Not reentrant as the list is not protected by any locks
-  */
- void binder_add_device(struct binder_device *device);
- 
-+/**
-+ * Remove a binder device to binder_devices
-+ * @device: the binder device to remove from the global list
-+ */
-+void binder_remove_device(struct binder_device *device);
-+
- #endif /* _LINUX_BINDER_INTERNAL_H */
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 94c6446604fc..44d430c4ebef 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -274,7 +274,7 @@ static void binderfs_evict_inode(struct inode *inode)
- 	mutex_unlock(&binderfs_minors_mutex);
- 
- 	if (refcount_dec_and_test(&device->ref)) {
--		hlist_del_init(&device->hlist);
-+		binder_remove_device(device);
- 		kfree(device->context.name);
- 		kfree(device);
- 	}
 -- 
-2.49.0
+2.48.1
 
 
