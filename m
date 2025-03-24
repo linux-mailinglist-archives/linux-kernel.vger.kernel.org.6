@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-574292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800FDA6E349
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:21:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA11A6E348
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:21:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA0D189575F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7273B3A5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1184D194C61;
-	Mon, 24 Mar 2025 19:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64EE19309E;
+	Mon, 24 Mar 2025 19:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY4UkiXX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezBXWM2G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F8B9444;
-	Mon, 24 Mar 2025 19:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0651619CCEA;
+	Mon, 24 Mar 2025 19:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742843996; cv=none; b=t+hhzl9b6rjE0ahcxE1wdert1CKg0NNH+VFIN7Tj29GLvURh5lXX+ANeU3vYioej76UfML8gU8FCV6h7bXyMrkiow8cpCTVjaP6ajEvVLx/pj17FMgmsj+0NrMvztlQiLnGccbmUs3dslIW3+7Hdmk/BZxIr565+spPHsTT0b/U=
+	t=1742844002; cv=none; b=OeDzRjeq85h61TBGxi2NQggBsC6X7hoHf7n5sDbzjg9nPsu7IG7dSxPhp501TThGSVm/g+/H1GYcI/qhvy8szVwzDK0qROi9O5mB/J1PHtbIpgjWI/hq/Zhk9jgEERq2jQJgzvicYmlnU/UppzM2ui/Gl1Tt3Hqj5vDcZ9r95Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742843996; c=relaxed/simple;
-	bh=tCQwg+ILmxSv/vZ1mMK34olzXUWqG3EfmuPCjXaXCR0=;
+	s=arc-20240116; t=1742844002; c=relaxed/simple;
+	bh=cGarqQM7eN/YzTgeHfhkcgOUGMSBEhE4Iw6fsmgMAOE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=svVjAdHqmdipcRysIdD+Qqnt21Zw0vwlRy3Ks2Yx9Ke8RLhFQ271MHKXeUdK0FeXff6dud0XEaPQ++st1A3b18ZX5va+VBknW/BkJf7kHDqQ223ybPsZsJIsMbTmek23F5WhHdMTw4G5BOfBxXMWNx6fufRZiSqEhlbZULZzb2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY4UkiXX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6BD0C4CEDD;
-	Mon, 24 Mar 2025 19:19:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=GY3eILdsRnpRrERKvOszCuQzurJZtYdCrunqooG+KqB3BJN9BXYos549fJJs9X6qKkirIMZNB2rn6G1pjwOy1t4LfAAmjw5dil3ZbOV1x+4jVQXEyIylAkVQI6XW7RM35+Wm78Xjof9qjiBwcoAVEW3orqgusxpOA+L8ZyHSb/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezBXWM2G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40220C4CEED;
+	Mon, 24 Mar 2025 19:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742843995;
-	bh=tCQwg+ILmxSv/vZ1mMK34olzXUWqG3EfmuPCjXaXCR0=;
+	s=k20201202; t=1742844001;
+	bh=cGarqQM7eN/YzTgeHfhkcgOUGMSBEhE4Iw6fsmgMAOE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZY4UkiXX9S/UfOKf6NcPX7pE8IfyjnVqTZArcCPhkywuts4g6UnK4rx0khYOLdAyn
-	 jqNhA9bfpGgKKsWKZaL6jF6AVaiWsjo+XZbaX0S9KRWvbYPUWv0s7QJCd+TdSssMrZ
-	 G6f4AfICcTvNanogU34dS2Vku51xa2jaJs1Wo3FoasppBKtyhQLYf3UI34DNAbDbpT
-	 IRotqtcruDfASUZKbzid3zpLBw5OWEeEt2qeiN6f3FfQGVgyexfkoVyQcboXo0kV8O
-	 mvGbWUCjS05wv/YDjin8TOCuIXBb8D0ZiKSSoKj5J/5lKTInU+gJbbOcU5jURUfd2a
-	 dN5c98lxFSzKA==
+	b=ezBXWM2GuM2Ver1fZfrxZh/EgtY57ROZcahDj4MYr9fXMKLIqXLxDma4CCE9LAkiR
+	 mvJWlfP8bNdl8MafiVOTkRCpG36K0kg52scPowN7W7AUjUq9O5uDeFIgd19Hf+cxte
+	 tzACTJzQMrZFXO3B2qYJvnZ+b7hb55ToaHqg69gvLahxVwpRoVPiWTZJ21Ljk3J0TZ
+	 j14+zDliruG145yuPZlYY4HvfDNstuuzDXxEimhTMtCuJYu2r+9yIa/l7+ybVfdKlL
+	 lKtbBKFW1e5UgrWICMI7H3NOHp0R3KNd3rav4aadQ1898LVdWePe7XcuD+QtHl40Zl
+	 CZL5MGQrNRktA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D08380664D;
-	Mon, 24 Mar 2025 19:20:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B7D380664D;
+	Mon, 24 Mar 2025 19:20:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] gve: unlink old napi only if page pool exists
+Subject: Re: [PATCH net-next v1 1/2] net: pktgen: add strict buffer parsing index
+ check
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174284403204.4140851.713015694194753583.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Mar 2025 19:20:32 +0000
-References: <20250317214141.286854-1-hramamurthy@google.com>
-In-Reply-To: <20250317214141.286854-1-hramamurthy@google.com>
-To: Harshitha Ramamurthy <hramamurthy@google.com>
-Cc: netdev@vger.kernel.org, jeroendb@google.com, andrew+netdev@lunn.ch,
+ <174284403701.4140851.5482210239740401759.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Mar 2025 19:20:37 +0000
+References: <20250317090401.1240704-1-ps.report@gmx.net>
+In-Reply-To: <20250317090401.1240704-1-ps.report@gmx.net>
+To: Peter Seiderer <ps.report@gmx.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, dan.carpenter@linaro.org,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- pkaligineedi@google.com, shailend@google.com, willemb@google.com,
- jacob.e.keller@intel.com, joshwash@google.com, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
+ horms@kernel.org, shuah@kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 17 Mar 2025 21:41:41 +0000 you wrote:
-> Commit de70981f295e ("gve: unlink old napi when stopping a queue using
-> queue API") unlinks the old napi when stopping a queue. But this breaks
-> QPL mode of the driver which does not use page pool. Fix this by checking
-> that there's a page pool associated with the ring.
+On Mon, 17 Mar 2025 10:04:00 +0100 you wrote:
+> Add strict buffer parsing index check to avoid the following Smatch
+> warning:
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: de70981f295e ("gve: unlink old napi when stopping a queue using queue API")
-> Reviewed-by: Joshua Washington <joshwash@google.com>
-> Signed-off-by: Harshitha Ramamurthy <hramamurthy@google.com>
+>   net/core/pktgen.c:877 get_imix_entries()
+>   warn: check that incremented offset 'i' is capped
+> 
+> Checking the buffer index i after every get_user/i++ step and returning
+> with error code immediately avoids the current indirect (but correct)
+> error handling.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] gve: unlink old napi only if page pool exists
-    https://git.kernel.org/netdev/net/c/81273eb87af8
+  - [net-next,v1,1/2] net: pktgen: add strict buffer parsing index check
+    https://git.kernel.org/netdev/net-next/c/7151062c297c
+  - [net-next,v1,2/2] selftest: net: update proc_net_pktgen (add more imix_weights test cases)
+    https://git.kernel.org/netdev/net-next/c/3099f9e156b3
 
 You are awesome, thank you!
 -- 
