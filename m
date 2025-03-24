@@ -1,196 +1,102 @@
-Return-Path: <linux-kernel+bounces-574477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0919A6E5CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:39:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65733A6E5D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33F40188657D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA5E6171B12
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E311DB128;
-	Mon, 24 Mar 2025 21:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CE01A23B1;
+	Mon, 24 Mar 2025 21:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fa/kOYFK"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="j3HaoXx7"
+Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887D7EC4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742852344; cv=fail; b=bbZuS0f3B9e8dFM9tZlyfC4hEuuHbaUDI7GtV+U9trMqbptksLVfWUgPaRw+ulxBrDQ92T+bbPp201GoQNFi+daZFkWStMmFZtHlnYbX7Uux1CZRgij1U+UA06GhU+N8xS8jO1s1QKJ3FXF48XGcIOYqe6Z+DlgFXjPM0yNdn5o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742852344; c=relaxed/simple;
-	bh=2EXPxSH21qb821cpcXOLeNTTeXlqIhFa9Cy/BqkUzOA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MQy/T3/QAMh9eewiRki4/IgXbVbg/BWsk/B799Q2j8D0SJhz9UBLacPddOhXHQdDMyr0EZI1D/1hHYPBwvDIkL4varK4yMNOkQQUkEoELjBNYAZE7opaoIgYjMjB4wYFjgBv7DdivdayoGPscJ7zTIa0kMavoxEnEj7PqKmtdnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fa/kOYFK; arc=fail smtp.client-ip=40.107.243.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uUpBpmX0HxNV0rW0iGDQOp931ZWtZ0JMkHCtGFwj2W/CzIbxfUt/ugGClphxyhEoTsw2qgO6Pj6MC3yGFeDl9eDHVD2VxXTO/M8qmQ2oe4MZl709XYSx1/kP59h3cLhDHsxWxmDzaVsqb1MdR51uQxQSfVY6esGN3hU4WZ576E3lVNghxnQ+ykGdu2EvzK4MvJxf3SHoB4kekGohcVHaoXeDkNpqm/urzjldZoilBTJnL1LngwsVqxRB1PzsJU/Alx/hKifOOD8pbb1j8hBMkWpows9wU+9MSOWiLp+ejybGPom8MsmqqQrOL8YTqtDCqFpNteJLZJ1FABK4auTFSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=np7Y+Yw7sWVjteo4nnAawY9csHMMEbzq+zjSZtZ5Xhs=;
- b=q1nWLNfdC6FxIeqtVSw6r/Ty3BKY5TPGVTAdUsd1lI4dtwqdDWSwWovGQNDuyAdTxjnSUIPRUZnmSJZPiR0EK2hf34upbT0oLJjFEWrhf9/lopRhOdjOlzkcb+H6hOcS271NBxbCDRvvImaEpRkEgTvRW59Y1QdZl8Op+TatULmdhv6NNyghuAs5DYg1infsaJtO9Z0SvHYQ5xCNPRmX2MatOQ/Z3sIQLcSLn1sVmCUSy/3YaBW/GA4LtetdCNxUK+ED1x3thhxgRHiHNjEmjc5YrytvAKfrvNDyHbQV7g/lUYS3AiU9xOmRKJVKguAoe9zOtNVP3zLcFkfyEg9ZZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=np7Y+Yw7sWVjteo4nnAawY9csHMMEbzq+zjSZtZ5Xhs=;
- b=Fa/kOYFK8eTb94Mh6PFXgtB9EdQ+Rlrg397TeVGpDsoxr3Aa42LzwZgSW3G73YZzMtxWeA8GtMQ/wJ6yT0mxDn4DFqX9QTSjSV5wl5tKuQTxqdKnCYwaDulflqhnqntD+s6Gbb4UzD/m1IQG3pnK6xTRsVW3CbZvFUB4zho5pIMuDQ1ZCmwAZhk6Bzmh19epAdpZkDoN0dn+lawHBFD50MZ24/hKeBuE38ijQeB8EkuGITjdzzZ5E6ycYzsxvjWdJLYx+3ZKLP7xAOLXTGOyed7GHcdj8z5q5Lr5UtrlCmo6qJiSwYhcwGQQaxuoqkOGk1sG9Bv5aD+hAKvLnEPbrw==
-Received: from BYAPR07CA0078.namprd07.prod.outlook.com (2603:10b6:a03:12b::19)
- by SJ2PR12MB9243.namprd12.prod.outlook.com (2603:10b6:a03:578::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
- 2025 21:38:59 +0000
-Received: from SJ5PEPF000001CB.namprd05.prod.outlook.com
- (2603:10b6:a03:12b:cafe::5a) by BYAPR07CA0078.outlook.office365.com
- (2603:10b6:a03:12b::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.40 via Frontend Transport; Mon,
- 24 Mar 2025 21:38:59 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001CB.mail.protection.outlook.com (10.167.242.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Mon, 24 Mar 2025 21:38:59 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Mar
- 2025 14:38:47 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Mar
- 2025 14:38:47 -0700
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 24 Mar 2025 14:38:40 -0700
-Date: Mon, 24 Mar 2025 14:38:33 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>, Nathan Chancellor <nathan@kernel.org>
-CC: <kevin.tian@intel.com>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<will@kernel.org>, <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] iommu: Drop sw_msi from iommu_domain
-Message-ID: <Z+HQ2QkitMPVAtmc@nvidia.com>
-References: <cover.1741294235.git.nicolinc@nvidia.com>
- <6d4b493d20926c8d14e29bc776639cdcf2095146.1741294235.git.nicolinc@nvidia.com>
- <20250324162558.GA198799@ax162>
- <Z+GK98/VSvYl518j@nvidia.com>
- <Z+GOkl21ZLtE3B/e@nvidia.com>
- <20250324170743.GA1339275@ax162>
- <Z+G67avxHQt5L+62@nvidia.com>
- <20250324204352.GA2734321@ax162>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD091DB128;
+	Mon, 24 Mar 2025 21:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742852407; cv=none; b=s3EeaKJHJbAbeR67wxinMitXR190OdYrhLr9qu0rKECNEt7rmrnyAg/3QXWqa309z52Muwjj+TI4hxljUBokCp5ivFN7zZiASMOK1egHbU5f40pvNSr1bIvn2VQtPNRB8AQHbhHwyNXqiMkQT9FGnYYX2NAdWFowC+otpluPyXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742852407; c=relaxed/simple;
+	bh=Ff9vxzQFsYYmBP7mNUmZ7VaYGCldUsK729tH4hqpcYM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=csgoAGr1YLbqloTHInrCDXcEDRbbucdPkTuhQdExexGWDHdz14qNLyY0/PbgIiLiWlszCUvUkKnAxg4sx2mDwq6rendcOQjCkYwi94rchPe3RCcUv3R2Jvt6nIij4Y63DbC4a7nSDY6aPgCqXGl1uGpKJAnQVYYPMyareAe3HiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=j3HaoXx7; arc=none smtp.client-ip=109.224.244.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742852402; x=1743111602;
+	bh=Ff9vxzQFsYYmBP7mNUmZ7VaYGCldUsK729tH4hqpcYM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=j3HaoXx7jRjDWDhMQy0JlOXly+RPP8IaiVGOwMS1F3JvPWlPAeVkyFdJeOmECHQXW
+	 olGM5gTx20Bltw7BQqTtxi3Q12QOLoSCd7WliKRAb+XoAvE5LkGXk4wIZ0whsfXH7L
+	 pHsDnVNCmS4RTSJkmd/m+9EJVaMfOvsdbiDKKA//CILir1KiTRc5FkEqIQCFQTJ84o
+	 U5CEFhZlDLbifQD0yml59rmwK53JIo640qtorg7oBDpEsj4U7o1RKjwXIjOIX6zBX9
+	 tKaEvZwWcdcgdnQgR2i/wl0QcSLDr2w4ecPlhM4ba2QJ++RnbH/fH6MEa85Iff+IJi
+	 4/SPpDZrK4urw==
+Date: Mon, 24 Mar 2025 21:39:56 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
+Message-ID: <D8OTLYD0HE5G.NJBV7DIDWHAM@proton.me>
+In-Reply-To: <CAJ-ks9=sGRYAEs4eBCqwHPTvfL6Fa4_3fcrXCohHp6PsJsM1Fw@mail.gmail.com>
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com> <CAJ-ks9=sGRYAEs4eBCqwHPTvfL6Fa4_3fcrXCohHp6PsJsM1Fw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 03eb1378f1412e8ddf65999c54a4e62369fca92a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250324204352.GA2734321@ax162>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CB:EE_|SJ2PR12MB9243:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1020caff-2ebe-406b-35eb-08dd6b1c49aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nnRZfI3N6xPCC9OZyjv3myCLp/7jswso32b2PZi137p6wRszqRgQ1FlmkxH6?=
- =?us-ascii?Q?kegtUVH/GqLGiQPPh5BCZPLo8+s0RstzVGq546u6KyS8zU0FCLp9UArQVdsO?=
- =?us-ascii?Q?1Ysl0L3lHFtwK116aPpg73yCZNZFd3mnhGzNpIHZnCSZ/+f4VgdN4Oh2h6LU?=
- =?us-ascii?Q?8Gct76QXt9QAVWZL16iPK+qO/6UVielLtcjRP9fTCrC3z/pGRrZuS4b7xaaz?=
- =?us-ascii?Q?hOV8zJ+7X2qWuJayyPEJ5f3uNNinJBdTX2dkXm17xmzCohteL+M1F4enzh88?=
- =?us-ascii?Q?695zref8EkVnanA9VbRrv4+QdvFJkWIeEaqXBGgTv9+4hFt1iRRAFXVe0c4h?=
- =?us-ascii?Q?JCAPp4fk9D0bYrY8sLf1TiDFShQfFuWp/6IpyLfQmm2cBKeJVZk1D8V20u0n?=
- =?us-ascii?Q?Cf0GU7qV+Bnn1D5FHBzNX6xZAqWQREYNsvPMkr3kmjKNKl9SYaLZmOQZdUKa?=
- =?us-ascii?Q?jphWKXfAQ8TzXPCMwx24mSB4i+JzKoho/Uw2eM6NwVHQtFe0CH8cmcH02nVN?=
- =?us-ascii?Q?+YMg3wV2ZTyFeNOaRPjUlTvsanDyii+Ae1Z8freOnlK6FJFZiYgTUL4dNp8B?=
- =?us-ascii?Q?t+qaC6sms5JOGGaFtgqosh6YBWGE+7Ddu6llhlv9Omj28iHZnH4n8RoWVZex?=
- =?us-ascii?Q?OKnSHnuvg9T4/ZdoPtUtc2QrA/NB8BFHjkCaiBRx6P3FlLpHnvN6KIxzFvgS?=
- =?us-ascii?Q?mv1+yjCSIB9XLcjgjCoSiovabRUIRz/BApsH84kl5ig3gtXRvAT2ol184+/E?=
- =?us-ascii?Q?lm9LKIFc7YQS9m6LyjaCBSDT+9LIntRpqHYs6bUgZZOwDrTTuR57YYEIKD5S?=
- =?us-ascii?Q?gtuR/iAh7DMyw4isRSO9a6NWq5TmxAxP69R+Z639Odn35jE1WhEenNcd6UJW?=
- =?us-ascii?Q?bCLynFstt9+ZLqnwNksIiWDbG6E7DuP7Vkefv386cEj/x3KYjfFUV6jHdNVe?=
- =?us-ascii?Q?IYBLtV25XxDMbJyzwxaA+ZrMkaDX1G6tLBMj0qqZ/P7PI//NrikTbGyDlcB3?=
- =?us-ascii?Q?SEsnSo6Bx7flxkaubBswfQweG8exuznjikFQRhfqXxK/3KP1ftTPgwkDMIBm?=
- =?us-ascii?Q?Uv9vLApgoGxT4sXqLKuPt27K5C4XK9nqcAIWoqdx7hoNzOXXLHjU3jAe6CjU?=
- =?us-ascii?Q?JAlI4ZoiUj+tnqoEtS/4mO/7TkrOIML4aJVisgwOJHTZ+qWfSnWmqlhVStE8?=
- =?us-ascii?Q?jJ0BtzNmaPjmaGlx5wVrTm/DeFFm2Y0U8NIJWIs97vCcS+TaRJo6W0XU1+0/?=
- =?us-ascii?Q?yCDG9aa5n21IuqC0KrWQwwPGatDh/kwn9NWvkt1yYpmgjgrUg3CcljO2c03q?=
- =?us-ascii?Q?R6ij0P3xdTH5pe+XQDeBeS+dsHi8k2iHnKch2o2b/CPoINZVn/mYcpz0OG7n?=
- =?us-ascii?Q?qFSNfW47wp/ir0fxeibbN02EbS8f/N1OrAKSNu+Vxf+ImlNTosNz/pwUa5Fm?=
- =?us-ascii?Q?BfNsYZ16n7O1YvmGbLTWKV1WKZJUBaAcG4ImW+jZlTdpf1wsO/dw3fRjOXBt?=
- =?us-ascii?Q?JHfUPdEjjve130Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2025 21:38:59.5313
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1020caff-2ebe-406b-35eb-08dd6b1c49aa
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CB.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9243
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 01:43:52PM -0700, Nathan Chancellor wrote:
-> On Mon, Mar 24, 2025 at 05:05:01PM -0300, Jason Gunthorpe wrote:
-> > On Mon, Mar 24, 2025 at 10:07:43AM -0700, Nathan Chancellor wrote:
-> > 
-> > > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> > > index 0f4cc15ded1c..2b81166350ae 100644
-> > > --- a/drivers/iommu/iommu.c
-> > > +++ b/drivers/iommu/iommu.c
-> > > @@ -3661,7 +3661,6 @@ int iommu_dma_prepare_msi(struct msi_desc *desc, phys_addr_t msi_addr)
-> > >  			ret = iommufd_sw_msi(group->domain, desc, msi_addr);
-> > >  			break;
-> > >  		default:
-> > > -			ret = -EOPNOTSUPP;
-> > >  			break;
-> > >  		}
-> > >  	}
-> > 
-> > Can we explain why this scenario has a 0 cookie_type?
-> > 
-> > Actually.. Is it just an identity domain? Nicolin did you test this on
-> > your arm system with a device using identity (iommu=pt kernel param)?
-> > I would expect identity to end up with a 0 cookie because we never
-> > setup dma-iommu.c code on it.
-> > 
-> > Should we be testing for identity to return 0 instead?
+On Mon Mar 24, 2025 at 10:16 PM CET, Tamir Duberstein wrote:
+> On Mon, Mar 24, 2025 at 4:55=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
+m> wrote:
+>> On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> > On Mon Mar 17, 2025 at 3:23 PM CET, Tamir Duberstein wrote:
+>> > > This started with a patch that enabled `clippy::ptr_as_ptr`. Benno
+>> > > Lossin suggested I also look into `clippy::ptr_cast_constness` and I
+>> > > discovered `clippy::as_ptr_cast_mut`. This series now enables all 3
+>> > > lints. It also enables `clippy::as_underscore` which ensures other
+>> > > pointer casts weren't missed. The first commit reduces the need for
+>> > > pointer casts and is shared with another series[1].
+>> > >
+>> > > The final patch also enables pointer provenance lints and fixes
+>> > > violations. See that commit message for details. The build system
+>> > > portion of that commit is pretty messy but I couldn't find a better =
+way
+>> > > to convincingly ensure that these lints were applied globally.
+>> > > Suggestions would be very welcome.
+>> >
+>> > I applied the patches to v6.14-rc7 and did a quick pass with
+>
+> So I rebased this on rust-next and fixed a few more instances (in
+> addition to enabling the extra lint), but I realized that rust-next is
+> still based on v6.14-rc5. I think we're going to have the same problem
+> here as in the &raw series; either Miguel is going to have to apply
+> fixups when picking these patches, or we have to split the fixes out
+> from the lints and land it over several cycles. Thoughts?
 
-My feeling is that we should just let all other cases return 0
-like the previous function did, as this seems to be commonly on
-the IRQ allocation path that shouldn't fail like this. E.g. if
-we fail a blocked domain, would it retry switching domains?
+One option is to pick the patches early in the cycle and then ask
+authors of patches to rebase. We did that with the alloc changes in the
+past.
 
-> For the record, the particular system I noticed the issue on does need
-> "iommu.passthrough=1" (which is the ARM equivalent to "iommu=pt" IIUC?)
-> to boot due to a lack of firmware support for IORT RMR, so I think the
-> answer to your first question is probably yes?
+---
+Cheers,
+Benno
 
-Yea, I confirmed that identity domain on ARM fails too. My bad
-that I didn't catch this case.
-
-Thanks
-Nicolin
 
