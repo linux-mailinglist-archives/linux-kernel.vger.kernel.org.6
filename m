@@ -1,134 +1,147 @@
-Return-Path: <linux-kernel+bounces-574484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AFAA6E5EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027E7A6E5F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF363A7080
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F5118919C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA79C1EDA22;
-	Mon, 24 Mar 2025 21:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943C01EA7E7;
+	Mon, 24 Mar 2025 21:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="jujO5eke"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZP+HBebW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9337F195985;
-	Mon, 24 Mar 2025 21:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D9B2E3374
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853319; cv=none; b=arndTUjMlviSGz60DSHe6xZpi/K5Rg3cz7Wxues1HWGyY7GVjL1z5BDipiSaaRw/bJ3MLZ4k+MOXxMv5woiDA1X5bz4NwdenGCp8NnIEM9122rIXHhTwrZD+axtaD76povLjHCvwv9FuerR/gYrL0MoiQG1oPU8MqZN03W6AfFI=
+	t=1742853382; cv=none; b=rdQ4xUhtYlIhXWdKiR/aabp2Q3xortqdwCL6JnQbxQbqhmXkejWlGbwGDAvkJImClo/ZjBLSDWMiqRCPmHS73Z2Qz2v2MQE69eek6T9DSk54vwK/VQsQKiOJTpO2hnfnMWkAgi4fYLiMBF7A+kbUx9kfvTrsjx4Nwm8V1hCYsJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853319; c=relaxed/simple;
-	bh=Mk+Jy6obczSsui9N2w3+mWKRdKV4LQx0AozKVOgq7mk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qwf1CQU8+P7r0GwyBTtT/HQmnd1K25tijqhhPvlJZvY54DUkoX+YAQX9viblhDY4eb6sUpCIpofKfMy4TCzrnjRJkH1yGjG+NnEppVSs+S1DzStSPTFJRVAGztamuO07PZX60mZ0zjYx/dk+o6HIvX1mFhNyf/LhMmUp25IH8aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=jujO5eke; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=vr34gjp32bbrfloqgpbh4zscjy.protonmail; t=1742853315; x=1743112515;
-	bh=jFlgYtTgaApXQf15gVtlBflG0q/Na55R6gwEZA69CjA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=jujO5ekeV6TdqaqwWNW0m7TsTWb8+ZHaeyd3batFMxSxe1mB47NFgEAjqFFb4lnWp
-	 P6H2xKPSToHyYW+vJQf216tgFYDWq+pze9nIZZznwdyYIXkZH7BRIYHby1uxPChxbV
-	 vXkYB2unjO6dFG8BrXcSdac3h64lxmlwdCAsFywzpus8bh2GqqGmZnQPgigrvTWOLL
-	 2DY1B/iVUiaone/7bUvYjc9DntSnZ4zE68W52o2OE/YiJwEMWjilnKFnI3wNi509M5
-	 Mj094BfNUykEl5pKhzPJ/6k1lhqU6TCrzhi1FW4A89SVGts1Vai8zAy65Fnf/Mk4Dd
-	 1Ob2S4MERWgxQ==
-Date: Mon, 24 Mar 2025 21:55:08 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
-Message-ID: <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me>
-In-Reply-To: <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com>
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 256a1e146cdbaffd9f65f108c66cb871b36ed6b0
+	s=arc-20240116; t=1742853382; c=relaxed/simple;
+	bh=3FKHjzF/gbESgMd+FKLxuKmtdTGVSH0vXl4Qsmrd38Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VjTtRRQzrwBEA3GIxVyhltYJcICZm3EG7Gf+n6czInMle504NSe0AP+5gGp/PP60kqYrYuEKk0MMHtR5jTSRBlTMHKLjlWhuL2uTWAYIjOnbuopnXBhueNCpGwZUuWfUF5E6KHOaVODZutMGL93SfoTY5tjH1AQoZayk+eKZuzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZP+HBebW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA03C4CEDD;
+	Mon, 24 Mar 2025 21:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742853381;
+	bh=3FKHjzF/gbESgMd+FKLxuKmtdTGVSH0vXl4Qsmrd38Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZP+HBebWkTpPWMSerecjHtM37mLB/JnRJPKANb+puZTsnbNPeGIlfO9Gp0ScEri8E
+	 WOd8afjZqeW+6OukeCPQwf/ipMlnOCpqKvOnZsLbYxRLAPmjtvR9lm/78Qe81dUwH8
+	 F41gDce7Hfdi/XuCBKbL69Gj2GY0jAnc5Rr6DAXg/BZQShJtUGI8H0xXKYXcb3Hexn
+	 8XNZdXyq7+MILVSga/tiqeTrMTOYpGWlHUEyuVLxlgax3IhFD4AvpUF3aX/P5ekRJC
+	 8b/sOl1a+Sqp7n5w1KzWtogWRGfATXxlE4p4gqhc0eWc52Ri84vHaXZQAr6hmf4XaE
+	 xQjSWqJlT1aRQ==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Miroslav Benes <mbenes@suse.cz>,
+	Brendan Jackman <jackmanb@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Raju Rangoju <Raju.Rangoju@amd.com>,
+	Mark Brown <broonie@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH 00/22] objtool: CONFIG_OBJTOOL_WERROR fixes and cleanups
+Date: Mon, 24 Mar 2025 14:55:50 -0700
+Message-ID: <cover.1742852846.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon Mar 24, 2025 at 9:55 PM CET, Tamir Duberstein wrote:
-> On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->> * `shared_ref as *const _` (for example in rust/kernel/uaccess.rs:247,
->>   rust/kernel/str.rs:32 and rust/kernel/fs/file.rs:367), these we can
->>   replace with `let ptr: *const ... =3D shared_ref;`. Don't know if ther=
-e
->>   is a clippy lint for this.
->
-> I think there's not a focused one. There's a nuclear option:
-> https://rust-lang.github.io/rust-clippy/master/index.html?levels=3Dallow#=
-as_conversions
+Since CONFIG_OBJTOOL_WERROR got merged into -tip, a lot of warnings have
+been reported.  Fix those along with several other improvements.
 
-Yeah I saw that one, I don't think it's a good idea, since there will be
-false positives.
+Cc: Raju Rangoju <Raju.Rangoju@amd.com>
+CC: Mark Brown <broonie@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
 
->> * some pointer casts in rust/kernel/list/impl_list_item_mod.rs:{253,254}
->>   not sure if they can be converted though (maybe they are unsizing the
->>   pointer?)
->
-> I have a local series that gets rid of these by doing similar things
-> to https://lore.kernel.org/all/20250307-no-offset-v1-0-0c728f63b69c@gmail=
-.com/.
-> I can send it later this week but it probably can't land until Alice
-> is back from vacation; she was the author of this code.
+Josh Poimboeuf (22):
+  objtool: Fix detection of consecutive jump tables
+  objtool: Warn when disabling unreachable warnings
+  objtool: Ignore entire functions rather than instructions
+  objtool: Fix X86_FEATURE_SMAP alternative handling
+  objtool: Fix CONFIG_OBJTOOL_WERROR for vmlinux.o
+  objtool: Fix init_module() handling
+  objtool: Silence more KCOV warnings
+  objtool: Properly disable uaccess validation
+  objtool: Improve error handling
+  objtool: Reduce CONFIG_OBJTOOL_WERROR verbosity
+  objtool: Fix up some outdated references to ENTRY/ENDPROC
+  objtool: Remove --no-unreachable for noinstr-only vmlinux.o runs
+  objtool: Remove redundant opts.noinstr dependency
+  spi: amd: Fix out-of-bounds stack access in amd_set_spi_freq()
+  nvmet: Fix out-of-bounds stack access in nvmet_ctrl_state_show()
+  media: dib8000: Prevent divide-by-zero in dib8000_set_dds()
+  panic: Disable SMAP in __stack_chk_fail()
+  Input: cyapa - remove undefined behavior in cyapa_update_fw_store()
+  ASoC: codecs: wcd934x: Remove undefined behavior in
+    wcd934x_slim_irq_handler()
+  regulator: rk808: Remove undefined behavior in rk806_set_mode_dcdc()
+  pwm: mediatek: Prevent divide-by-zero in pwm_mediatek_config()
+  lkdtm: Obfuscate do_nothing() pointer
 
-No worries, as I wrote below, I think it's fine to do that in a new
-series.
+ arch/x86/include/asm/arch_hweight.h     |   8 +-
+ arch/x86/include/asm/smap.h             |  23 +-
+ arch/x86/include/asm/xen/hypercall.h    |   6 +-
+ drivers/input/mouse/cyapa.c             |   4 +-
+ drivers/media/dvb-frontends/dib8000.c   |   5 +-
+ drivers/misc/lkdtm/perms.c              |  14 +-
+ drivers/nvme/target/debugfs.c           |   2 +-
+ drivers/pwm/pwm-mediatek.c              |   8 +-
+ drivers/regulator/rk808-regulator.c     |   4 +-
+ drivers/spi/spi-amd.c                   |   2 +-
+ include/linux/linkage.h                 |   4 -
+ include/linux/objtool.h                 |   2 +-
+ kernel/panic.c                          |   6 +
+ scripts/Makefile.lib                    |   2 +-
+ scripts/Makefile.vmlinux_o              |  15 +-
+ sound/soc/codecs/wcd934x.c              |   2 +-
+ tools/objtool/Documentation/objtool.txt |  10 +-
+ tools/objtool/arch/x86/special.c        |  38 +-
+ tools/objtool/builtin-check.c           | 146 ++++---
+ tools/objtool/check.c                   | 525 ++++++++++++------------
+ tools/objtool/elf.c                     |  28 +-
+ tools/objtool/include/objtool/builtin.h |   6 +-
+ tools/objtool/include/objtool/check.h   |   3 +-
+ tools/objtool/include/objtool/elf.h     |  28 +-
+ tools/objtool/include/objtool/objtool.h |   2 +-
+ tools/objtool/include/objtool/special.h |   4 +-
+ tools/objtool/include/objtool/warn.h    |  13 +-
+ tools/objtool/objtool.c                 |  11 +-
+ tools/objtool/special.c                 |  12 +-
+ 29 files changed, 477 insertions(+), 456 deletions(-)
 
->>   Another pointer cast in rust/kernel/driver.rs:81 (I'm pretty sure this
->>   one can be replaced by a `.cast()`)
->>
->> Some clippy lints that we could also enable that share the spirit of
->> this series:
->>
->> * `char_lit_as_u8` (maybe that also covers the `'|' as u32` case from
->>   above?)
->
-> It's already enabled, it's warn-by-default.
-
-Ah I see, didn't look :)
-
->> * `cast_lossless` (maybe this catches some of the `num as int_type`
->>   conversions I mentioned above)
->
-> Yeah, suggested the same above. I had hoped this would deal with the
-> char as u32 pattern but it did not.
-
-Aw that's a shame. Maybe we should create a clippy issue for that,
-thoughts?
-
->> I'll leave it up to you what you want to do with this: add it to this
->> series, make a new one, or let someone else handle it. If you don't want
->> to handle it, let me know, then I'll create a good-first-issue :)
->
-> I'll add a patch for `cast_lossless` -- the rest should probably go
-> into an issue.
-
-Do you mind filing the issue? Then you can decide yourself what you want
-to do yourself vs what you want to leave for others. Feel free to copy
-from my mail summary.
-
-Also I wouldn't mark it as a good-first-issue yet, since it's pretty
-complicated and needs to be delayed/based on this series.
-
----
-Cheers,
-Benno
+-- 
+2.48.1
 
 
