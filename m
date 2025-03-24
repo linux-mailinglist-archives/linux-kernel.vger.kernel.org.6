@@ -1,122 +1,128 @@
-Return-Path: <linux-kernel+bounces-574533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB22A6E67E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:22:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEEA6E680
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAF63ACC43
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89630171F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2533A1EE7B3;
-	Mon, 24 Mar 2025 22:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5E21EE7C4;
+	Mon, 24 Mar 2025 22:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZhbQFx1"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eX2s1bde"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B573143895;
-	Mon, 24 Mar 2025 22:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B491531C5;
+	Mon, 24 Mar 2025 22:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742854941; cv=none; b=XPP7Y1aFGDmUy0l8IYDIpxT73/53Mi/VmxckfHFOlbZ3wm+vk0FTMqUesqb1XJBJdNniL+qTVP2mi17VShKCSBjmqqJT1taeo1Pe1csVwrE3LjYlNAopQXTnGKdhcOZc+JlN9OAQK5wWF5XXi/paeeKZrLHw8eS3SMZkiw3w+8E=
+	t=1742855056; cv=none; b=p91iFvav6fun+YT5IRIsbKmh6yVMxPyPuv2spahKExPscNp6wIl2f09+eorInBPUpiX6KGvRN5tzrHT3cw6KVpj3E3mKK3+FHZRnqfQdFGtj5EjcnLXkesrFA1uytbubF5VYTRoLUu5FCIQ6zXPmffFZJVYs59A3s1R3wcoLGY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742854941; c=relaxed/simple;
-	bh=36O/04zHoF+wQxX2Ckb3NLz0Ilkpuh+YIk10NNNkv2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2GnMu58Tes+WErwLYGmG2qd3JCan3iRo5nXjnA+yt9+knViG/iMCMeeZUriI2OCdDHL7X6zRxH0MPE1T7JnMk9el1EgcjrkSrVh9TitbGkw4JFT0I/Ie0IMt9h9uiKix29L4Lz7CcEAt3tK3I5y6KjjW3Gdr+Zhnv7I5oV3+y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZhbQFx1; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1742855056; c=relaxed/simple;
+	bh=Q+Zzt8pzMsAcoKZidlF7hVur3wO7pd1WawlETRsumfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IT6Ql+CKQx/Zyy9vDrStMD7/rlGMFqdunuei/+iimDsFfN5xK0f/QMkeUdcVmgI7dnyHJF5ebBy0iz4XPU1Z22DMNoB5UbR6pm9Fn7J+RnFTJqZ58J5h/ge82wwsBaG9UC8a4mXILCfhKg6HeaNWiam081dfCgn1VB2zXIbbrGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eX2s1bde; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2264aefc45dso82651035ad.0;
-        Mon, 24 Mar 2025 15:22:19 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so746849466b.0;
+        Mon, 24 Mar 2025 15:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742854939; x=1743459739; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eS3RjMaLCNqgiJaSVm2ywS8sGzGuV/kwQoAzrZ5qh+E=;
-        b=CZhbQFx1EFWk97XxXJLA31hxyl091uzzigdSXJBAUMv4FunyA0OJIjSqIRUjSeqM4u
-         sgX5MbyDphX9EXZCiR/8swNNrkE1NlLK1LvfByE+MfjigtVf3VlLefi1e4CJIt441hL/
-         TJ4wqmm5G4CG6HQcjhsJBg95qtG+NCKyS9odoL8f87KlKHOtME2aWAWczdMlbdH+8yUg
-         pWUm9umNGDpEMhNUmkspyvyTLiqEFQuGfuIzzWu92RhOSi1Bi+2ouhYuKJYYAIErpazN
-         bmmqTJTeQgwcCJEEztCFmUfO1e+AYg2eApBw2+WBRdN0bQ1HbPeh/iAQzZcORG3XmsgY
-         3yrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742854939; x=1743459739;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742855053; x=1743459853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eS3RjMaLCNqgiJaSVm2ywS8sGzGuV/kwQoAzrZ5qh+E=;
-        b=ct4w+Wy3cKz931nwp1Uit5LlyZjysm4kJih3H+C3ZmCUb6W1HQgzzTorXTmfoEggi3
-         DQBorX9tZz2pJ2SHnN7rSPNeVUXbEHufodYDokvv8YH9pUNyMFNLsZiFjJFbUc75Ia1b
-         OcdY7mB+zpb4Q1jvQwr0FRT3xWTGARtYZbCmgaco+pFOoJzseRylrfkjELRe47PWFAsK
-         qYqzhFtsqkuHqbwvSOMgYYq4lE26yhVVqZHKQR00/1XfIKIjB6DKfAd1EmwyLe44i72g
-         fHqelqDfSbQ1UuTUc0YpVAaFf86gm6w/PTvL4fYmswtK2t48+F6fE/nsVoqBL6eAaY1s
-         5HgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnYpSwjObtupz3XyLVe5YYG892Y3BeGm1Sj+hjfkmUGrgIbpQtnrbuqENhQNRlUxffsIvCdcrd@vger.kernel.org, AJvYcCWNTxDCDX+3jJPTymqAHX9BabH+f4seJCGMZCuvnikpI9GZrPF2Y+2o+7pWhHM7fLMCw6J3ST/iLfTuYzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo78to8dXgZkMpGaVSdf0/qUFodHBgC3/fRffXL1+Xy3r/7pt3
-	f8N5b7NSF3+I/G34e/T9ZoDT/kSTn9rYr41Ied4lBBvL94NCDcQ=
-X-Gm-Gg: ASbGncsxQm8TqaW+UY+EBJJ0sZHD+xFJYMvEaV5bnbZWnYWzt+xSpBgd4KpydI1ekHF
-	3ZbZ6Ip2wCmne0Y6CDjBTgEo6Ph8GpPk8E0O43VsWU0UJcFD9+yxK3t8SuczPXYpTLf9MskaBbv
-	uVV766EscOa8oGtGWgqGsxIYEVxKxVapJW0sxPsdfYYWotiChbT5I5cendvnRKeynBGYrs/iaoM
-	g9bzzttL50yX/j3CUsEZ/irrbGOky5F9WVbLTWkE1r+r2LH8IrZaWmTh00BZSQZRTwGrlI01uZa
-	GEBkGLTo4hsv4r5LkK7og9aEYa2iATlnV8SehuQfOCrA
-X-Google-Smtp-Source: AGHT+IECCXC+ptBi040j35MfNJo5JtUv9wBBHlu+wU953vEwOW2eurI9K3olTMdLbIb/AUlddVbpZA==
-X-Received: by 2002:a17:902:cec8:b0:223:668d:eba9 with SMTP id d9443c01a7336-22780c5587bmr295483215ad.10.1742854939234;
-        Mon, 24 Mar 2025 15:22:19 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22780f3b493sm76522685ad.34.2025.03.24.15.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 15:22:18 -0700 (PDT)
-Date: Mon, 24 Mar 2025 15:22:17 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com, jiri@resnulli.us, horms@kernel.org
-Subject: Re: [PATCH net-next v2] net: hold netdev reference during
- qdisc_create request_module
-Message-ID: <Z-HbGR1V9-1Fwf0H@mini-arch>
-References: <20250320165103.3926946-1-sdf@fomichev.me>
- <20250324150425.32b3ec10@kernel.org>
+        bh=Q+Zzt8pzMsAcoKZidlF7hVur3wO7pd1WawlETRsumfg=;
+        b=eX2s1bdeX10GJm8/ebSozgehnICtcgBdKbF0ve7R1Aif6LGBOUBSHYhtSIkr8CaGQG
+         tEmE4f7kZa+z4XoJcqttjhscF6+0FC0oqELdAOrVVQXz1MyZDA1oZdlQi+SKjF0T2Mvs
+         zzkpd6H1RbpDPD2mm5u9OhSbbXunTsMsr3RoPHaiR54LIF2ERDJxiQ0wDGY2ljXHlsBl
+         sAdR8Z9roAIKCF2yPZ9wG2KqJCd+Ws+tDOp3QR39Au/Ck/2WegSw+j3L4X1tFa0InQDP
+         HiwL+L0ANUjiACIlNQhSjwR9ma+nwtQHym+rbYlLF9DRiFyHbxW1EGML5NNsICgJTcpG
+         do5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742855053; x=1743459853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q+Zzt8pzMsAcoKZidlF7hVur3wO7pd1WawlETRsumfg=;
+        b=h1toUhJMqLaYSZKqpjZf6yE3zMXq3j8z2PWIj54idqdBDxXrMd/sZfexm6NFCSN1B2
+         yBBeJP0srYdJPbQd7OuCB/gxQjV0Kh/qL3oJoMfQ+tNkQlt8o4gKLtwZ6QAND4diZNCM
+         2RCCb0Aix+YQaRkWzXMoaL0bV2tCg2b33YRlbay05maeBTE1HAr2mB5r2kXuP0oON0bz
+         HZWQ7PqBUU8pVOe0CQspAsziP8NZOdxPZ3NB4A5eyqCHWk1RmIeYnWlMq5zanFbswMk4
+         R7+vkgyzbQFmfK5PKe2CP0pE7kpVJjislZ6y/Q9lK9NeqT8xsYWa4J6P3lwKAjaCznwG
+         u4Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUzUQJirAXyIZT1sIEwkD36DmBiAQLxN8i4kjSvo7Kdd9N/l12cYUwk2u9uUTpC1WyemlU/2GPIh7bvL9W@vger.kernel.org, AJvYcCXpif2XKNOw7MGq0twnyY7hVLmCn4eazHj0GGYqJ8O/zkCuXaM0dLDAAHhnUL77VpGSrdhj6mlhX1fbVx+G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWW81OPsl7pMRvfZWwXa/F4I1p6SA7wfK1o4oTL7PbTgVF+bc0
+	k/3QgqjfOF6iqnqzQduxHRvaonQB/oWDfO+MpRH1F6xhrgKGFm90G2dmE4l4rttyoGMPZGMmQy4
+	t2c0/FFojfHOkJ1sBCQ11kYue9nM=
+X-Gm-Gg: ASbGncvDMlgIqdzIhEnvH8XxGSVb3chg/mh1Lu3XSqYuej2Fw+bOBcLCSiuOfKPAHNz
+	/LIwU9xtN5Luktnjd0VTALRkbp/AQz6k2afQL5Nz/3xe7etqKiVIaWefk+tUqIDwQhE69vQkjUf
+	fLY4RqStA0cHO6JtY60NhrWh3PkA==
+X-Google-Smtp-Source: AGHT+IE7vveODIuMKV9mImaQQMaSQBJD/AJ0Dw0I1is557b1m41KLoVw99cZoHBh/gGY9eMG1dYS5Y0XXSIMBC/Sae0=
+X-Received: by 2002:a17:907:2dac:b0:ac3:bd68:24eb with SMTP id
+ a640c23a62f3a-ac3f20b07a7mr1538727466b.1.1742855052484; Mon, 24 Mar 2025
+ 15:24:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250324150425.32b3ec10@kernel.org>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
+ <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com> <20250324182722.GA29185@redhat.com>
+In-Reply-To: <20250324182722.GA29185@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 24 Mar 2025 23:24:00 +0100
+X-Gm-Features: AQ5f1JoKAM6ik3I_g3NlPZ0VGOs4ToUGcUruZAghViz1VGc7L4lzi9B3A1nZink
+Message-ID: <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, 
+	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/24, Jakub Kicinski wrote:
-> On Thu, 20 Mar 2025 09:51:03 -0700 Stanislav Fomichev wrote:
-> >  			rtnl_lock();
-> >  			netdev_lock_ops(dev);
-> > +			dev_put(dev);
-> >  			ops = qdisc_lookup_ops(kind);
-> 
-> I'm not sure if this is a correct sequence. Do we guarantee that locks
-> will be taken before device is freed? I mean we do:
-> 
-> 	dev = netdev_wait_allrefs_any()
-> 	free_netdev(dev)
-> 		mutex_destroy(dev->lock)
-> 
-> without explicitly taking rtnl_lock() or netdev_lock(), so the moment
-> that dev_put() is called the device may get freed from another thread
-> - while its locked here.
-> 
-> My mental model is that taking the instance lock on a dev for which we
-> only have a ref requires a dance implemented in __netdev_put_lock().
+On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+> I won't argue with another solution. But this problem is quite old,
+> unless I am totally confused this logic was wrong from the very
+> beginning when fs->in_exec was introduced by 498052bba55ec.
+>
+> So to me it would be better to have the trivial fix for stable,
+> exactly because it is trivially backportable. Then cleanup/simplify
+> this logic on top of it.
+>
 
-Good point, didn't think about it. In this case, I think I need to
-get back to exposing locked/unlocked signal back to the callers.
-Even with __netdev_put_lock, there is a case where the netdev is
-dead and can't be relocked. Will add some new 'bool *locked' argument
-and reset it here; the caller will skip unlock when 'locked == false'.
-LMK if you have better ideas, otherwise will post something tomorrow.
+So I got myself a crap testcase with a CLONE_FS'ed task which can
+execve and sanity-checked that suid is indeed not honored as expected.
+
+The most convenient way out of planting a mutex in there does not work
+because of the size -- fs_struct is already at 56 bytes and I'm not
+going to push it past 64.
+
+However, looks like "wait on bit" machinery can be employed here,
+based on what I had seen with inodes (see __wait_on_freeing_inode) and
+that should avoid growing the struct, unless I'm grossly misreading
+something.
+
+Anyhow, the plan would be to serialize on the bit, synchronized with
+the current spin lock. copy_fs would call a helper to wait for it to
+clear, would still bump ->users under the spin lock.
+
+This would decouple the handling from cred_mutex and avoid weirdness
+like clearing the ->in_exec flag when we never set it.
+
+Should be easy enough and viable for backports, I'll try to hack it up
+tomorrow unless the idea is NAKed. The crapper mentioned above will be
+used to validate exec vs clone work as expected.
+
+--
+Mateusz Guzik <mjguzik gmail.com>
 
