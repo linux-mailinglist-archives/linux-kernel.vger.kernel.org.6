@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-573951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31450A6DE9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:29:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21B3A6DEA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647C516EE38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71EF18931EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A69825F980;
-	Mon, 24 Mar 2025 15:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3D925F97B;
+	Mon, 24 Mar 2025 15:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="caidp4SU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l6+oLaNG"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUt0tQQe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605141CD1E4;
-	Mon, 24 Mar 2025 15:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1484964E;
+	Mon, 24 Mar 2025 15:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742830070; cv=none; b=s6wAsKUZCMACvVWhA0A1iI/MfQWj8NWcdBDukq2km8uehOrjSTemmOYyr67hRYwqam+68ReS8H0+C13NfxMPq4r2PJO+J13hJdJRqNblApkZ9LdBOfQj2SXtR8RaHk6PRpdylGacR4RdHFDlK5UPpnU11aPifj63PWL5Ko/zM+w=
+	t=1742830053; cv=none; b=fOb32zTvUA6FrFMosAAuElSO19wkyrx7dGeu8waF5s+nyDWZFKrD5dkp0jwuFKlDxc6HTN3VWbrnil3xZzxxRhefjj5R3e8kVY0tR8YL0L8kj7yyu8wFmzCwYQC7BTlTMcfvanJ3EfqtGjIJHJBXQvFzlxbwmOx4OTl0ZChyDMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742830070; c=relaxed/simple;
-	bh=jMK51qpqp2ziCZmYizfEEJEUTX2M9Hw3x+1Sg9tbZbY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=V/ZreuS13sFJpB1w6YqkDRi+Q8HxSl0+RZ0VVVbAHWZ1dNRt7etREz07h9CO8g6FOgiFiiNPtUPY9AMhn3IeNA4CXOs5e0PkxCviDaQDHiaB0eMFz/lJip8nDhPuiNbjMx3rIgpc2W3gOf1IXDjFYFNFXje7hJUkg6AkSJCy3/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=caidp4SU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l6+oLaNG; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5268E1140198;
-	Mon, 24 Mar 2025 11:27:47 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 24 Mar 2025 11:27:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742830067;
-	 x=1742916467; bh=niaWtuJR+RDMZS1SxQP8TZHcP0Y57WpvpM/jrkXeYis=; b=
-	caidp4SUY2DKMEFzU143PBGw/xsFXzCpVo1V5m82OHSptxTG8bPRqcLWzB5+r9As
-	6NRSvb0WBOxt7lbfr/DxpopyzmwFQfZWt6jJHyfOCk5gFQO75Bl5h+Wjbteek2cR
-	H02327yrz3fyjS4PduOSY01S50j9b4VDZtdJ/E5SrYAJF5cnDm3DxLXNpIt+jq9b
-	C1v6E5PqygvJM+9e5jRf1PPmiNQFOsgA6rsLtuMfOMtybpRNUMCMeRP5SAViJgEs
-	Ds670IOMjyQa2o9rHLaLg8P2HC0rCLHAoRTKCqZC4U0ihFPEvvxRZ//vq1UwNPAy
-	UKN7cO73zdEth+lLtYsn7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742830067; x=
-	1742916467; bh=niaWtuJR+RDMZS1SxQP8TZHcP0Y57WpvpM/jrkXeYis=; b=l
-	6+oLaNGYeSvWoyBv/HCelbuChe3G6NwCghvbGBLpMJ9C3pMY82iUsVYVCMjIlbRZ
-	Ca8RT9+sIm7nR2LhYQHSDw+J/+ntq7DR3K/zCbl5kJEGyNfWvK3zJ4e71Aa2k938
-	hDKPkyvV89AssEXvmKC8sZtTbe3oYd7Lvw6wpTL8PHTS05Jw5Ge1j+PsmcGD8AU/
-	ZfxKAsCi5mvUHtsLkntwFYlLV89joTwJra6ooiSFJ6+AdQgqb6XtR9mZlFiBv/5o
-	tSDGCxmCh6Q0w+qQF94GQ/in/sBB/c5EnmMZ0IlxZpNhJWFy8wmFKLGvxbuCcX6S
-	1OPJndcbU6QjFyCLgFOLQ==
-X-ME-Sender: <xms:83nhZ7y1ge7GXexBZtjGC5Uk9dYN9U7GvZr3hHiJciX1Uq2qu-pvsA>
-    <xme:83nhZzRlx-_1rEhcDeG9FXXAOymEqBBh23ztWNU7c9OVp8Mt479AEeieHshJDM4gR
-    ihTZLwSIruEdpfvO7s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    uddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrg
-    esrghmugdrtghomhdprhgtphhtthhopegrnhgrnhgurdhumhgrrhhjihesrghmugdrtgho
-    mhdprhgtphhtthhopehgrghuthhhrghmrdhshhgvnhhohiesrghmugdrtghomhdprhgtph
-    htthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthht
-    ohepnhgrvhgvvghnkhhrihhshhhnrgdrtghhrghtrhgrughhihesrghmugdrtghomhdprh
-    gtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrghmugdrtghomhdprhgtphht
-    thhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtth
-    hopehlihhnuhigsehrohgvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhh
-    fihmohhnsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:83nhZ1UnI5gl297tHfzM0dN64H-xtSRbA7getDwXeH4jpYSJerSh5Q>
-    <xmx:83nhZ1iJjZkJqdmowTEIa4N5iwev55ZqfGKq9BHtfTTZR_5EFOcUvg>
-    <xmx:83nhZ9BODLSxzouc_NTFduUQ62ENB6Dy2mJRNJVyyPo7lb7DCHGufA>
-    <xmx:83nhZ-IKs0DaZZ0sb82xJvo-esppLHEDWiV3ecsXJAGjq8cpWIOABA>
-    <xmx:83nhZxuw93Ds37NR2bVvdRHvYkPEnHqpLZhcDTV_CsRtsWUrwyUqKpBI>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id ED1DB2220072; Mon, 24 Mar 2025 11:27:46 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742830053; c=relaxed/simple;
+	bh=MyJPgttOop9GSoEGOLEhcQ5HHbF3X3DBdLYSg4Piq6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EhwJnIyYgHNrP7tclusFl7EnA/kj+xHEboIsCSaY4ATyg7UGrlAcymK/PEDkN8z5K3aXpDm5GlR0bC7LRUVl73bUB0K6S3l7WnHJiX/VOwiTS5w6Ih1HTn+arhVRQP5XkMuwpZXrw3XFMFj/qFgvHCOTk+tnwlHSI4SnuSockpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUt0tQQe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DC8C4CEDD;
+	Mon, 24 Mar 2025 15:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742830052;
+	bh=MyJPgttOop9GSoEGOLEhcQ5HHbF3X3DBdLYSg4Piq6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GUt0tQQeVxdhOQJAq8A0nJvr2aWUlf6aUTqhobSF0gYHEUskTGEGenAO5ElxOQQgD
+	 jyz0tW/WP/kxDO1d/xsDuQuTnXHiPw2Ml5YFVqIQeK+lYJRXVJXgtozGCZw5NZAZFK
+	 0E0vBibauK6LRyyr8YdjCxSFA1EF5/VfuER7WMjSgeHXFdqiUhn9yh3EEpvXzwta+4
+	 PxiVnMrcwADSWwCzc7eU+fBm5fTk/AJksUsTvl82+9sqUa605g/VOONW6M3/adAl7P
+	 MKQKcdckK5Fs/KSQWgHJahO4tQxshoSN/b7PUVStyqzpipV8/K6P01NugVqXHkJG0l
+	 X4tqfeA4LlMGg==
+Date: Mon, 24 Mar 2025 16:27:28 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust tree
+Message-ID: <Z-F54IQXiY9IHjeM@cassiopeiae>
+References: <20250324215702.1515ba92@canb.auug.org.au>
+ <20250324220629.1665236b@canb.auug.org.au>
+ <Z-FJH628-j2HCuaE@cassiopeiae>
+ <2025032443-recharger-legacy-93bf@gregkh>
+ <Z-Fhf3Cn8w2oh1_z@cassiopeiae>
+ <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tdf915bd5cef52fc2
-Date: Mon, 24 Mar 2025 16:26:40 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Akshay Gupta" <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: "Guenter Roeck" <linux@roeck-us.net>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shyam-sundar.s-k@amd.com,
- gautham.shenoy@amd.com, "Mario Limonciello" <mario.limonciello@amd.com>,
- naveenkrishna.chatradhi@amd.com, anand.umarji@amd.com
-Message-Id: <d05242e6-4706-4abd-973f-230d143137e8@app.fastmail.com>
-In-Reply-To: <20250324145815.1026314-8-akshay.gupta@amd.com>
-References: <20250324145815.1026314-1-akshay.gupta@amd.com>
- <20250324145815.1026314-8-akshay.gupta@amd.com>
-Subject: Re: [PATCH v6 07/11] misc: amd-sbi: Add support for mailbox error codes
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72n3Xe8JcnEjirDhCwQgvWoE65dddWecXnfdnbrmuah-RQ@mail.gmail.com>
 
-On Mon, Mar 24, 2025, at 15:58, Akshay Gupta wrote:
-> APML mailbox protocol returns additional error codes written by
-> SMU firmware in the out-bound register 0x37. These errors include,
-> invalid core, message not supported over platform and
-> others. This additional error codes can be used to provide more
-> details to user space.
->
-> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
+On Mon, Mar 24, 2025 at 04:18:40PM +0100, Miguel Ojeda wrote:
+> On Mon, Mar 24, 2025 at 2:43 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > It's the DMA commit that has a bug, that was revealed by the fix in the
+> > driver-core tree. So, the patch to drop is in the rust tree (not sure if Miguel
+> > changes history at this point though).
+> 
+> Just to double-check, the diff you show below is the combined one,
+> right? i.e. it is the one that Stephen already had the previous week +
+> the fix you posted above (`Send` `impl`), right?
 
-This is an incompatible change to the uapi definition, which you
-should never do. Just merge it into the previous patch that
-adds the api in the first place.
+Correct, it is the full conflict resolution of the current rust and driver-core
+tree.
 
-      Arnd
+> 
+> If so, I think it is OK, and we could put the new `Send` impl on top
+> of `rust-next` -- given the trees on their own are OK until they
+> arrive to Linus, I am not sure if it counts as a fix.
+> 
+> i.e. something like the attached patch (crediting Danilo and Stephen).
+
+Thanks, the attached patch looks perfectly fine to me to add on top.
+
+One small nit: The "Link:" tag should rather be "Closes:".
+
+> 
+> Cheers,
+> Miguel
+
+> From 6a152af23cb49a3bcbb8c4457a612ffa27d54693 Mon Sep 17 00:00:00 2001
+> From: Danilo Krummrich <dakr@kernel.org>
+> Date: Mon, 24 Mar 2025 16:01:00 +0100
+> Subject: [PATCH] rust: dma: add `Send` implementation for `CoherentAllocation`
+> 
+> Stephen found a future build failure in linux-next [1]:
+> 
+>     error[E0277]: `*mut MyStruct` cannot be sent between threads safely
+>       --> samples/rust/rust_dma.rs:47:22
+>        |
+>     47 | impl pci::Driver for DmaSampleDriver {
+>        |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be sent between threads safely
+> 
+> It is caused by the interaction between commit 935e1d90bf6f ("rust: pci:
+> require Send for Driver trait implementers") from the driver-core tree,
+> which fixes a missing concurrency requirement, and commit 9901addae63b
+> ("samples: rust: add Rust dma test sample driver") which adds a sample
+> that does not satisfy that requirement.
+> 
+> Add a `Send` implementation to `CoherentAllocation`, which allows the
+> sample (and other future users) to satisfy it.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Link: https://lore.kernel.org/linux-next/20250324215702.1515ba92@canb.auug.org.au/
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  rust/kernel/dma.rs | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 9d00f9c49f47..18de693c4924 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -301,6 +301,10 @@ fn drop(&mut self) {
+>      }
+>  }
+>  
+> +// SAFETY: It is safe to send a `CoherentAllocation` to another thread if `T`
+> +// can be send to another thread.
+> +unsafe impl<T: AsBytes + FromBytes + Send> Send for CoherentAllocation<T> {}
+> +
+>  /// Reads a field of an item from an allocated region of structs.
+>  ///
+>  /// # Examples
+> -- 
+> 2.49.0
+> 
+
 
