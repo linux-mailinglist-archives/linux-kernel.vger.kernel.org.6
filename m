@@ -1,424 +1,187 @@
-Return-Path: <linux-kernel+bounces-573345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41675A6D609
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:20:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DC6A6D60C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB94016D28F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFAC3AE8A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233D325D1FA;
-	Mon, 24 Mar 2025 08:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD8D25D20C;
+	Mon, 24 Mar 2025 08:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dVcEfcQN"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TYYnAoTn"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CD018FDA5
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5746E25D1FD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742804417; cv=none; b=E6QxTd+Vqi+nIDjWAHciFqPboyQ47SPG/0c51um4ldPvpBEg6T/mo3I3FEpLOdLLKL8wjdBnRcpChMgOkreB/WcH3PjFDBPU8l8wJL3sMjhL/k3a9vMo1i2h1Dsp65oNDusk3DO7iATHjx7pBHUg4paTVlEeUjs6EQCOVWPcMaA=
+	t=1742804432; cv=none; b=Bmy+ZMnnaXZa9bULGuqgSwSv1c6+6U00LfpyO8qN8ydnHiQCevFnlO6GcVWcJglEFNJleegrBOl/pMLiBJgPpT5oqz0QvdZvWfsBdBwB73pvcE6oxR7TCUZ17C/UvrER1swdNcj5hsFsG/XBi/CmPgVnndO+LyUAAat8WypGvDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742804417; c=relaxed/simple;
-	bh=M4+k6YD1mCXTwas5eL+hsY8I+hzUqzWAWG8iyXWAySg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQ1KD8dJcERJ33KbrUGbdohm11bkypYoKc9Rzn6ZWyt6IwBwwPBE5rEsHafszHpQ5mUpps8vWkdAx0Wdlt4asMcYZzFmzmkza7URhmICJTnJHsU/9url4iRgTLuVl+Kdm6ZRoCmLHUMeUMFWPTV31yWjU11ZNuq/txnrP0Ql9n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dVcEfcQN; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3913fdd003bso1951171f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:20:15 -0700 (PDT)
+	s=arc-20240116; t=1742804432; c=relaxed/simple;
+	bh=bvJLWrUebpGV6FDtNE0QGcbeP26Bs8OHf+Yq+BDE/5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ronx7q2PFKOOz1XLGyHGRLnsa8Bx2LvN7xzOqPgFJDY5B/DV7dHe5ISWZiR2iZfcxNl+NaV3aCMJGnBNfGEwjYNrwSjRMNJdlQ2xSjOWAKZzh5TeOQPyT5jJkldKqpPZXs3/rO1Z563870Ry5zuC6a0e9HUf2YmKrE5RfaxGlGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TYYnAoTn; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-476ae781d21so37373291cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:20:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1742804413; x=1743409213; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X5KNi5vv+WwUHgiOiAE1zT6bKqb5UxIw1xZcRyktkIE=;
-        b=dVcEfcQNMPXouD0q0BpB4ThpSHYpMCJhVEpJx7bGecKDgtxWyZfxVQnC10XOI2tdLK
-         LlYuY/dTTHvePypS+csW3lF6uBhou/xAxSmYdmkVDcdk9S3CmW+zuORU8X0K4Eji7Tcg
-         Ax8A697eKrVVzoBc+TwxOK6btMciCbOXeDnOv/A4Ucq+LdrbyvxxRCAswuH/r8a2MjMZ
-         S43+imhKk1AGgVUtQyTUCmHrtWP/WXL077B8Mz414HUp25KVZ4j/IbzSw/LA/tNkVZOC
-         kmiwc2GuZFguEj6qf+5M2lkEfNBl/n7NsSJQt7CQc2xjsq81njWMbK65WL1G+a5mEiYV
-         KiSQ==
+        d=google.com; s=20230601; t=1742804430; x=1743409230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sIX6vnpb6jg1VF+cazhNY7gMi3sGru+8oXiV5dHUNp4=;
+        b=TYYnAoTnYw+rcP+qrCM46XqbkFecl+Za+eFe7UOWVLxaKm2JWw0N/dukDPoxscvLcE
+         SGDcz70X5XuSgQoKooMQ+C850mWZ+towohuBZ1NoqnkDmg5CxnVCL4DtQPeXNFcjfRmp
+         /6cw3Frn1b88FleBxlz/CfygjUagU6i+oWVbsVsBodDY/ZdAjly+7laQE2kaFe5qU55R
+         ZM6wMHRJ1nwMVUP7su6M+0bM61DyXh3MiacTq9CD0eRUBQurrCbN8/qu+gkWFh/d9eOH
+         iHWjaAhK1WygVYcJdswu43kT1C6UtNBuINE4cCNf7qr9ztO2KQWuS/A2gPSGt06qhg6T
+         GYBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742804413; x=1743409213;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X5KNi5vv+WwUHgiOiAE1zT6bKqb5UxIw1xZcRyktkIE=;
-        b=IcsBz0gryr0ESUaQnrkFwhEof/rpnphfQ6J4eyEMlMzyVoIYiWLF9AMVQnpdNdeZFN
-         AJCtiTDmMJYQu/BOsIVZXAWcj7amTEdHTI3DRHL8vBaQ2X14us789veGmqr+6kIzo0wl
-         s/otZT2pe8YpH9D5DeQiDlRqlkJtiMEiEIVxIZNHB3ugm9v0QkXOKkyUVc15C9RMFod4
-         wF7krM89uubO+Em8Fkp3rSIT/gSmi6KBorQw+WkoeEgnbcX1NANlVObzbQHtmHyJpzOE
-         fIcW+eAGr8YLGz6jh/AeNb+wVzPldzoY7uvOhBqTFQJ6881RTXrtE2CJCIlevcfC2SQO
-         kMXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTpPHbWtTnPnKizuOISacyA4BQoEE4G56fIRF8I6O6FqafcXq5+qjC9aoWRSnQvmRUF5d6wLXtVycGcpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEpvjpAuj4wkYtZPojtC6rau3Whsz7NPUnm/ywjD6sepKtIQkh
-	/H6L1pIPvlok3iRy4WiV/6wcGtjhqbdWOttQtfbiauR07WLU2OcpZuT0Le4bgTU=
-X-Gm-Gg: ASbGnctccsuUh1Pb9rl5tv7kzb0yBI5mScqQPcUMWij+fdE+PSbcK6etrSmYFR/YWdv
-	qQZyeifyuqMBYB9MjiJwV1dJgaYLHvtEA82ElyWUx428i19mzi84sIIcksLm21nxzlEGa0qHv5h
-	wJjGRJkFLMRpDOEE9dapEAqyawgPwfU0NKYD8NmnX9yLLF+6nsmB5tyy8bFqM8J+DFAQ7kfz+Kb
-	qy6Cj6F4szneeXyrvaqHUz2V8gGl1V7nb1CODqhcvcz4nU/XqQAa4OtzhsKO+vge8aseVfDTfOx
-	Xb1RDfDeXbNmtxYJ6eecAVk4/Wc7XLQKVF0bcMNshzWLpACotNpCy5kDb9szljA=
-X-Google-Smtp-Source: AGHT+IHieGvYY9xYsJ+hRcTxELd3WHjGIze3RgAfmcczbmeULThLVKV6pyFoFLcvCmypyhY+f3n/4w==
-X-Received: by 2002:a5d:584f:0:b0:38d:e0a9:7e5e with SMTP id ffacd0b85a97d-399795567ebmr13722154f8f.6.1742804413383;
-        Mon, 24 Mar 2025 01:20:13 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efc90sm10337434f8f.98.2025.03.24.01.20.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 01:20:12 -0700 (PDT)
-Message-ID: <1f5b71d6-872f-486d-9b06-7b5e407f8482@tuxon.dev>
-Date: Mon, 24 Mar 2025 10:20:10 +0200
+        d=1e100.net; s=20230601; t=1742804430; x=1743409230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sIX6vnpb6jg1VF+cazhNY7gMi3sGru+8oXiV5dHUNp4=;
+        b=dLIHyyEfJBkUz4XVyQWvEVnvFFcxIERd4oy3ULbyKOqGFEK8CFOMxeO677Zggk+rkb
+         ligEyKBBGdrEajf2bXPXX3Zv0QzcEIcmfFoJdjgHpUpZsjKCmiyKAsy0ra33es0phiJc
+         4Cn9+wmFTo1BsFaaR9hd6BklsTdGWUr71vewRPYjXH+PnDEee0hP+AgFs0oMZ4pfaL6S
+         HIv225PQ0ahdrY2cFD0kfWKH70BOLhM742ZKEYlc9Ol32qo5s+fXO3h90NZ7GuTe/opc
+         7AJHBc6gQwqzAZnF2gXt5c7JBbCWNLdREy9aVzExSBFuIMgEZhuGQw26sJFf9rHwoHxP
+         m3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoDYIamxR4gfJT4rmU0ttugK79lNlclnsB+Vcs72Jc++fJLAGxAkL3uyI97mf/bWZXlkeM4/ok3BfhOuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLhD6Vw4u4TAJAJdFKK+Yy0lq+SBgRGohJHPVOy5qHY51Es1HX
+	OAlzwllJYJbZEe59c8FjMFmmpaakBHecxJeW3tn/8UD8WWl1BZPdux8ogbC3fUH+t8WkyoNXAkx
+	Ht8A6NnOsbxsg33Yjq03ZXY6R+SYD7IQJaFA5
+X-Gm-Gg: ASbGncsQTUsDb0fw519u4EEkz+xcYu2KzPdZtl2o3GRZel7aem1VhSuwuV1g7J7B04x
+	/J+MsiVZLux4Yg0V6izqgf6HRf+7QPDqhOoTScsAzflFjJI/RMO1p40L1OtNBKgrBkoA7hKNmfc
+	pXXlEW8ZEC26h5BjN8unxe9y1QIXxSfin3u8zPtQ==
+X-Google-Smtp-Source: AGHT+IFrw8BZjCuFOhVuzoGoPggvVoVPDjLQI9IquDm89HE/yE1Cc7iKOjXMbMu33z6N/acS7eu/8v8uiC8o3Cr4QNA=
+X-Received: by 2002:a05:622a:5c9a:b0:476:5fd5:4de6 with SMTP id
+ d75a77b69052e-4771de31d7cmr179792471cf.40.1742804429994; Mon, 24 Mar 2025
+ 01:20:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 08/13] net: macb: introduce DMA descriptor
- helpers (is 64bit? is PTP?)
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Samuel Holland <samuel.holland@sifive.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-mips@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-8-537b7e37971d@bootlin.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250321-macb-v1-8-537b7e37971d@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250323072511.2353342-1-edumazet@google.com> <Z-B_R737uM31m6_K@gmail.com>
+ <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
+ <Z-EGvjhkg6llyX24@gmail.com> <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
+ <Z-ERhIEtrVpTIdJb@gmail.com>
+In-Reply-To: <Z-ERhIEtrVpTIdJb@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 24 Mar 2025 09:20:19 +0100
+X-Gm-Features: AQ5f1JoeBJ2YoHAwqNQPuYM4cFwyNDx_0TESh55iDTyLRnIzHIb9sowT5jpoRqg
+Message-ID: <CANn89iK56=V+YQRUx_a0ax4jy0NkDMRfmXPq8Mh8Qg5esCKBVA@mail.gmail.com>
+Subject: Re: [PATCH] x86/alternatives: remove false sharing in poke_int3_handler()
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, 
+	Greg Thelen <gthelen@google.com>, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I think the "(is 64bit? is PTP?)" from title could be dropped.
+On Mon, Mar 24, 2025 at 9:02=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Eric Dumazet <edumazet@google.com> wrote:
+>
+> > Do you have a specific case in mind that I can test on these big
+> > platforms ?
+>
+> No. I was thinking of large-scale kprobes or ftrace patching - but you
+> are right that the text_mutex should naturally serialize all the
+> write-side code here.
+>
+> Mind adding your second round of test results to the changelog as well,
+> which improved per call overhead from 36 to 28 nsecs?
 
-On 21.03.2025 21:09, Théo Lebrun wrote:
-> Introduce macb_dma_is_64b() and macb_dma_is_ptp() helper functions.
-> Many codepaths are made simpler by dropping conditional compilation.
-> 
-> This implies three changes:
->  - Always compile related structure definitions inside <macb.h>.
->  - Make the field hw_dma_cap in struct macb always present.
->  - MACB_EXT_DESC can be dropped as it is useless now.
-> 
-> The common case is:
-> 
-> 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> 		struct macb_dma_desc_64 *desc_64;
-> 		if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
-> 			desc_64 = macb_64b_desc(bp, desc);
-> 			// ...
-> 		}
-> 	#endif
-> 
-> And replaced by:
-> 
-> 	struct macb_dma_desc_64 *desc_64;
-> 	if (macb_dma_is_64b(bp)) {
-> 		desc_64 = macb_64b_desc(bp, desc);
-> 		// ...
-> 	}
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  drivers/net/ethernet/cadence/macb.h      |   8 ---
->  drivers/net/ethernet/cadence/macb_main.c | 110 +++++++++++--------------------
->  2 files changed, 38 insertions(+), 80 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 5bf7e7ff70490cdb068bfdbe7cfd5bb8e1db7f86..26e0af44a45926c782cf0f72184332ab3605a178 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -15,10 +15,6 @@
->  #include <linux/phy/phy.h>
->  #include <linux/workqueue.h>
->  
-> -#if defined(CONFIG_ARCH_DMA_ADDR_T_64BIT) || defined(CONFIG_MACB_USE_HWSTAMP)
-> -#define MACB_EXT_DESC
-> -#endif
-> -
->  #define MACB_GREGS_NBR 16
->  #define MACB_GREGS_VERSION 2
->  #define MACB_MAX_QUEUES 8
-> @@ -824,7 +820,6 @@ struct macb_dma_desc {
->  	u32	ctrl;
->  };
->  
-> -#ifdef MACB_EXT_DESC
->  #define HW_DMA_CAP_32B		0
->  #define HW_DMA_CAP_64B		(1 << 0)
->  #define HW_DMA_CAP_PTP		(1 << 1)
-> @@ -839,7 +834,6 @@ struct macb_dma_desc_ptp {
->  	u32	ts_1;
->  	u32	ts_2;
->  };
-> -#endif
->  
->  /* DMA descriptor bitfields */
->  #define MACB_RX_USED_OFFSET			0
-> @@ -1319,9 +1313,7 @@ struct macb {
->  
->  	struct phy		*sgmii_phy;	/* for ZynqMP SGMII mode */
->  
-> -#ifdef MACB_EXT_DESC
->  	uint8_t hw_dma_cap;
-> -#endif
->  	spinlock_t tsu_clk_lock; /* gem tsu clock locking */
->  	unsigned int tsu_rate;
->  	struct ptp_clock *ptp_clock;
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index b32363ba1ec3be0fc42866c8585f0b465d178220..ad154cfe29106f642b32922fd4a03ca63112f4a7 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -98,6 +98,18 @@ struct sifive_fu540_macb_mgmt {
->  
->  #define MACB_MDIO_TIMEOUT	1000000 /* in usecs */
->  
-> +static bool macb_dma_is_64b(struct macb *bp)
-> +{
-> +	return IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) &&
-> +	       bp->hw_dma_cap & HW_DMA_CAP_64B;
-> +}
-> +
-> +static bool macb_dma_is_ptp(struct macb *bp)
-> +{
-> +	return IS_ENABLED(CONFIG_MACB_USE_HWSTAMP) &&
-> +	       bp->hw_dma_cap & HW_DMA_CAP_PTP;
-> +}
-> +
->  /* DMA buffer descriptor might be different size
->   * depends on hardware configuration:
->   *
-> @@ -127,56 +139,31 @@ struct sifive_fu540_macb_mgmt {
->   */
->  static unsigned int macb_dma_desc_get_size(struct macb *bp)
->  {
-> -#ifdef MACB_EXT_DESC
-> -	unsigned int desc_size;
-> +	unsigned int desc_size = sizeof(struct macb_dma_desc);
-> +
-> +	if (macb_dma_is_64b(bp))
-> +		desc_size += sizeof(struct macb_dma_desc_64);
-> +	if (macb_dma_is_ptp(bp))
-> +		desc_size += sizeof(struct macb_dma_desc_ptp);
->  
-> -	switch (bp->hw_dma_cap) {
-> -	case HW_DMA_CAP_64B:
-> -		desc_size = sizeof(struct macb_dma_desc)
-> -			+ sizeof(struct macb_dma_desc_64);
-> -		break;
-> -	case HW_DMA_CAP_PTP:
-> -		desc_size = sizeof(struct macb_dma_desc)
-> -			+ sizeof(struct macb_dma_desc_ptp);
-> -		break;
-> -	case HW_DMA_CAP_64B_PTP:
-> -		desc_size = sizeof(struct macb_dma_desc)
-> -			+ sizeof(struct macb_dma_desc_64)
-> -			+ sizeof(struct macb_dma_desc_ptp);
-> -		break;
-> -	default:
-> -		desc_size = sizeof(struct macb_dma_desc);
-> -	}
->  	return desc_size;
-> -#endif
-> -	return sizeof(struct macb_dma_desc);
->  }
->  
->  static unsigned int macb_adj_dma_desc_idx(struct macb *bp, unsigned int desc_idx)
->  {
-> -#ifdef MACB_EXT_DESC
-> -	switch (bp->hw_dma_cap) {
-> -	case HW_DMA_CAP_64B:
-> -	case HW_DMA_CAP_PTP:
-> -		desc_idx <<= 1;
-> -		break;
-> -	case HW_DMA_CAP_64B_PTP:
-> -		desc_idx *= 3;
-> -		break;
-> -	default:
-> -		break;
-> -	}
-> -#endif
-> -	return desc_idx;
-> +	if (macb_dma_is_64b(bp) && macb_dma_is_ptp(bp))
-> +		return desc_idx * 3;
-> +	else if (macb_dma_is_64b(bp) || macb_dma_is_ptp(bp))
-> +		return desc_idx << 1;
-> +	else
-> +		return desc_idx;
->  }
->  
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->  static struct macb_dma_desc_64 *macb_64b_desc(struct macb *bp, struct macb_dma_desc *desc)
->  {
->  	return (struct macb_dma_desc_64 *)((void *)desc
->  		+ sizeof(struct macb_dma_desc));
->  }
-> -#endif
->  
->  /* Ring buffer accessors */
->  static unsigned int macb_tx_ring_wrap(struct macb *bp, unsigned int index)
-> @@ -500,17 +487,13 @@ static void macb_init_buffers(struct macb *bp)
->  
->  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
->  		queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dma));
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> +		if (macb_dma_is_64b(bp))
->  			queue_writel(queue, RBQPH,
->  				     upper_32_bits(queue->rx_ring_dma));
-> -#endif
->  		queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> +		if (macb_dma_is_64b(bp))
->  			queue_writel(queue, TBQPH,
->  				     upper_32_bits(queue->tx_ring_dma));
-> -#endif
->  	}
->  }
->  
-> @@ -1038,10 +1021,9 @@ static void macb_tx_unmap(struct macb *bp, struct macb_tx_skb *tx_skb, int budge
->  
->  static void macb_set_addr(struct macb *bp, struct macb_dma_desc *desc, dma_addr_t addr)
->  {
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->  	struct macb_dma_desc_64 *desc_64;
+Sure thing, thanks !
 
-This can be moved
->  
-> -	if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
-> +	if (macb_dma_is_64b(bp)) {
+Note the 36 to 28 nsec was on a test host, not really under production stre=
+ss.
 
-here.
+As all of our production runs with the old code, I can not really tell
+what would be the effective change once new kernels are rolled out.
 
->  		desc_64 = macb_64b_desc(bp, desc);
->  		desc_64->addrh = upper_32_bits(addr);
->  		/* The low bits of RX address contain the RX_USED bit, clearing
-> @@ -1050,26 +1032,22 @@ static void macb_set_addr(struct macb *bp, struct macb_dma_desc *desc, dma_addr_
->  		 */
->  		dma_wmb();
->  	}
-> -#endif
-> +
->  	desc->addr = lower_32_bits(addr);
->  }
->  
->  static dma_addr_t macb_get_addr(struct macb *bp, struct macb_dma_desc *desc)
->  {
-> -	dma_addr_t addr = 0;
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->  	struct macb_dma_desc_64 *desc_64;
+When updating an unique and shared atomic_t from 480 cpus (worst case
+scenario), we need more than 40000 cycles per operation.
 
-Same for this one.
+perf stat atomic_bench -T480
 
-> +	dma_addr_t addr = 0;
->  
-> -	if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
-> +	if (macb_dma_is_64b(bp)) {
->  		desc_64 = macb_64b_desc(bp, desc);
->  		addr = ((u64)(desc_64->addrh) << 32);
->  	}
-> -#endif
->  	addr |= MACB_BF(RX_WADDR, MACB_BFEXT(RX_WADDR, desc->addr));
-> -#ifdef CONFIG_MACB_USE_HWSTAMP
-> -	if (bp->hw_dma_cap & HW_DMA_CAP_PTP)
-> +	if (macb_dma_is_ptp(bp))
->  		addr &= ~GEM_BIT(DMA_RXVALID);
-> -#endif
->  	return addr;
->  }
->  
-> @@ -1176,10 +1154,8 @@ static void macb_tx_error_task(struct work_struct *work)
->  
->  	/* Reinitialize the TX desc queue */
->  	queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -	if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> +	if (macb_dma_is_64b(bp))
->  		queue_writel(queue, TBQPH, upper_32_bits(queue->tx_ring_dma));
-> -#endif
->  	/* Make TX ring reflect state of hardware */
->  	queue->tx_head = 0;
->  	queue->tx_tail = 0;
-> @@ -2349,11 +2325,9 @@ static netdev_tx_t macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
->  		return ret;
->  	}
->  
-> -#ifdef CONFIG_MACB_USE_HWSTAMP
-> -	if ((skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) &&
-> -	    (bp->hw_dma_cap & HW_DMA_CAP_PTP))
-> +	if (macb_dma_is_ptp(bp) &&
-> +	    (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP))
->  		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-> -#endif
->  
->  	is_lso = (skb_shinfo(skb)->gso_size != 0);
->  
-> @@ -2813,14 +2787,10 @@ static void macb_configure_dma(struct macb *bp)
->  			dmacfg &= ~GEM_BIT(TXCOEN);
->  
->  		dmacfg &= ~GEM_BIT(ADDR64);
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> +		if (macb_dma_is_64b(bp))
->  			dmacfg |= GEM_BIT(ADDR64);
-> -#endif
-> -#ifdef CONFIG_MACB_USE_HWSTAMP
-> -		if (bp->hw_dma_cap & HW_DMA_CAP_PTP)
-> +		if (macb_dma_is_ptp(bp))
->  			dmacfg |= GEM_BIT(RXEXT) | GEM_BIT(TXEXT);
-> -#endif
->  		netdev_dbg(bp->dev, "Cadence configure DMA with 0x%08x\n",
->  			   dmacfg);
->  		gem_writel(bp, DMACFG, dmacfg);
-> @@ -4326,12 +4296,10 @@ static int macb_init(struct platform_device *pdev)
->  			queue->TBQP = GEM_TBQP(hw_q - 1);
->  			queue->RBQP = GEM_RBQP(hw_q - 1);
->  			queue->RBQS = GEM_RBQS(hw_q - 1);
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -			if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
-> +			if (macb_dma_is_64b(bp)) {
->  				queue->TBQPH = GEM_TBQPH(hw_q - 1);
->  				queue->RBQPH = GEM_RBQPH(hw_q - 1);
->  			}
-> -#endif
->  		} else {
->  			/* queue0 uses legacy registers */
->  			queue->ISR  = MACB_ISR;
-> @@ -4340,12 +4308,10 @@ static int macb_init(struct platform_device *pdev)
->  			queue->IMR  = MACB_IMR;
->  			queue->TBQP = MACB_TBQP;
->  			queue->RBQP = MACB_RBQP;
-> -#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> -			if (bp->hw_dma_cap & HW_DMA_CAP_64B) {
-> +			if (macb_dma_is_64b(bp)) {
->  				queue->TBQPH = MACB_TBQPH;
->  				queue->RBQPH = MACB_RBQPH;
->  			}
-> -#endif
->  		}
->  
->  		/* get irq: here we use the linux queue index, not the hardware
-> 
+The atomic counter is 21904528, total_cycles=3D2095231571464, 95652 avg
+cycles per update
+[05]                                                    7866 in
+[32,64[ cycles (53 avg)
+[06]                                                    2196 in
+[64,128[ cycles (81 avg)
+[07]                                                    2942 in
+[128,256[ cycles (202 avg)
+[08]                                                    1865 in
+[256,512[ cycles (383 avg)
+[09]                                                    4251 in
+[512,1024[ cycles (780 avg)
+[10]                                                    72248 in
+[1024,2048[ cycles (1722 avg)
+[11] ***                                                438110 in
+[2048,4096[ cycles (3217 avg)
+[12] ***********                                        1703927 in
+[4096,8192[ cycles (6199 avg)
+[13] **************************                         3869889 in
+[8192,16384[ cycles (12320 avg)
+[14] ***************************                        4040952 in
+[16384,32768[ cycles (25185 avg)
+[15] ************************************************** 7261596 in
+[32768,65536[ cycles (46884 avg)
+[16] ******************                                 2688791 in
+[65536,131072[ cycles (83552 avg)
+[17] *                                                  253104 in
+[131072,262144[ cycles (189642 avg)
+[18] **                                                 326075 in
+[262144,524288[ cycles (349319 avg)
+[19] ******                                             901293 in
+[524288,1048576[ cycles (890724 avg)
+[20] **                                                 321711 in
+[1048576,2097152[ cycles (1205250 avg)
+[21]                                                    6616 in
+[2097152,4194304[ cycles (2436096 avg)
 
+ Performance counter stats for './atomic_bench -T480':
+
+        964,194.88 msec task-clock                #  467.120 CPUs
+utilized
+            13,795      context-switches          #   14.307 M/sec
+               480      cpu-migrations            #    0.498 M/sec
+             1,605      page-faults               #    1.665 M/sec
+ 3,182,241,468,867      cycles                    # 3300416.170 GHz
+    11,077,646,267      instructions              #    0.00  insn per
+cycle
+     1,711,894,269      branches                  # 1775466.627 M/sec
+         3,747,877      branch-misses             #    0.22% of all
+branches
+
+       2.064128692 seconds time elapsed
+
+
+I said the  atomic_cond_read_acquire(refs, !VAL) was not called in my tests=
+,
+but it is a valid situation, we should not add a WARN_ON_ONCE().
+
+I will simply add the unlikely()
+
+Thanks.
 
