@@ -1,511 +1,266 @@
-Return-Path: <linux-kernel+bounces-573758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758F4A6DBC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:41:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAE8A6DBC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CCD16B38D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68871885F6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783ED263F37;
-	Mon, 24 Mar 2025 13:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3w+a9ihd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="usilZrHf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3302505C3;
+	Mon, 24 Mar 2025 13:37:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2C2263F23
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F2225E456
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823304; cv=none; b=i7yL/SUyji5UEge8HxFIpx5X3JJ8s7sflJRjkLiHMthby6oCtNFb2lEktUeAFDJRFtQKcPVQaHKEqfHliHlrKXbMSsFq+q0OqgtT/kC8+tGG3Pht1/6QybFrshQbUN7qH3YQOVMEePmQYTn3Als52we+crSnU3g1pZscl/VCMTQ=
+	t=1742823426; cv=none; b=pdufRhR6s4NgV7U5h/6OMorPV9dfqGBIjf3ncxc4FZV3W4dW3bhN0/qi/7Pdp6L4TzqQDlRwKpbMCdGS1Bkj9hcJ9u1Zgscm/T9ymbh8EsXBSBOrKiJsQc3nuKaWX13QgIH4Y51YCdD5+0sjm36e42ED/ueWZEO+3gkkUBBDPtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823304; c=relaxed/simple;
-	bh=O5fwoGUir2sJrl4CT0DSG4QJbscmWRWltiKSUfcWM6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tijz136j1iTZCdhWcUjwh92wAjmj93qgSrhB0PXGvN7tzHhij+IMCFzgGofzX0XKaq8lPrIdD+yJswMtRLtWzbrpynv0l/fVXg3NsPpgZnZET0s/tOJoIfxcnwYY1C8+NODZVaspayO9uzyS3NY7IAp0M0R9rzW78uaQnKqX8aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3w+a9ihd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=usilZrHf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742823301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsDNajMuLUSUWVFOMt+H94Y8ummXa+oY4OeyGeOksL0=;
-	b=3w+a9ihdVNehJzgMDc85HOKoL/VXmv7O6pcjY41gaPVrrb+RlC40jw5NgmrKAYLp3j77sP
-	7n3yjrp71aifz5HckahiliPiYsmUTsi6JeBpehK8KOTT02fYfX5/MlNif1qOgUV/TTULtd
-	Oc/DWG4ztefo9sIBh2xJOTqz4AYdZopR3Oojwy096JkpB41DPwJbw7XUYSXZFY0kvDKuYf
-	AeckMjqNxRWGqe812cmtqdVvVoCkLoxG7omB0hFZRjykGeBvjnswto8XEFoE7Kwc18AA4a
-	v6jlZ5IX45rE2P7jhdp3St4gYLLsIpGyf1hLpsLKiKnGRp2LFRmz6V/nSaM/hg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742823301;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsDNajMuLUSUWVFOMt+H94Y8ummXa+oY4OeyGeOksL0=;
-	b=usilZrHf5+Hyp14fg0RBK8jznwufiHWsCVmdXCEytU+7r6LHKnRS3VvWhqEirm6TmmC2US
-	fS/ebEHg3OdqNTDA==
-To: Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v4 29/29] x86/cacheinfo: Apply maintainer-tip coding style fixes
-Date: Mon, 24 Mar 2025 14:33:24 +0100
-Message-ID: <20250324133324.23458-30-darwi@linutronix.de>
-In-Reply-To: <20250324133324.23458-1-darwi@linutronix.de>
-References: <20250324133324.23458-1-darwi@linutronix.de>
+	s=arc-20240116; t=1742823426; c=relaxed/simple;
+	bh=0HD+kvyRqheulEmQt5J2F5hoR/TQxy+o3/6jWlDCrm8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uf/w9dYTmiMPttnDd8va34NVwNrsxuAWKIrMXgOVRQkjLQ/T5IvwGH7DGWyklSYPrXK+lM/+25QbHtgdlkieJ4+blWvfcpNcuWAcxmWDieMW5i3dRP86uuGJijUoMfUCpHiW8Cug3L7OVi3QchXUqtEcqpcV2lxYOjJSyGTE+yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d5a9e7dd5aso9330635ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:37:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742823424; x=1743428224;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8y7roFtZCO8wN9pj99Y+xVnY1xS2JX2J702xsawiyBY=;
+        b=oxxKGbwt3kj6axmgr7lazHO2Bva3/UikMWQsew8Y5DUonPrS9PsJoJJBJ5qAQODJXG
+         +E443tC9HhXjnEnWiuyRydAI6jIxsyWi5VXv+Vy/5qg/CJNvaFxipofvauB/3IeL+ysG
+         qmzfH3XRTHsI/c/028j5KAb4/reVfzybbEit6q40GoHbZb4HfXZKOcJ5VL+mewX7LZeI
+         SIuKbmj7bpwn7D+c+gikGDO+VD/W2ruIzCZyD0FGLwZI495BmJj5xD6oXaNXfTUp6MU8
+         ju2O4119z+1HOM31w+vLzw4Fh//xHPfGfwjkA9/ImHNbr0EFRccvW2/CK9uCJvGiFhAi
+         dILQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBrs6rNOFMzXdaMmezb2x8JdcsngN4kj8LPaNSnKrMKvGMdu80D5Yr2/8iiYRqHD6VKXhiJI0oz2TwqXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHAbs/vXKezUlO8b/E/TXjHfP5HrtrA1RCi/R1jC7IkXpxQ2HN
+	3GY/6z89srDUyI0N7afHI1EGYwAzqQlCXhbWYgxxtunv3Fr++lhepjNR7od20rKU88Ap3XJX0f+
+	F/Z/ZrQVH76ZIcTpJA7SD6VB3Ad64/GIPmupFwFUpytqmn9sNhuSGiJ0=
+X-Google-Smtp-Source: AGHT+IEGjXgLs+2Jt6VBljMbIUYIthTIE5v0VUi5n7Bcf3aMy+rS3X78TVVyRtMW5QAQqO5s+r8UXTnKXPHP9YhhAeWT22/74mwN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:348b:b0:3d3:dd32:73d5 with SMTP id
+ e9e14a558f8ab-3d5960cd11cmr140933865ab.4.1742823423972; Mon, 24 Mar 2025
+ 06:37:03 -0700 (PDT)
+Date: Mon, 24 Mar 2025 06:37:03 -0700
+In-Reply-To: <tencent_BE4FFF8D8C259C0DE7126FDD8A5D96992507@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e15fff.050a0220.a7ebc.0020.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
+From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The x86/cacheinfo code has been heavily refactored and fleshed out at
-parent commits, where any necessary coding style fixes were also done
-in place.
+Hello,
 
-Apply Documentation/process/maintainer-tip.rst coding style fixes to the
-rest of the code, and align its assignment expressions for readability.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Standardize on CPUID(n) when mentioning leaf queries.
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_amd64/syz-execprog" "root@10.128.10.52:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.10.52, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.10.52 [10.128.10.52] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.10.52:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:g5LT3corcdQiP3+7S3QNYL7lzLWO1gp=
+/6X86Qtf82jk
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.10.52' (ED25519) to the list of known ho=
+sts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.10.52 ([10.128.10.52]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
-Avoid breaking long lines when doing so helps readability.
 
-At cacheinfo_amd_init_llc_id(), rename variable 'msb' to 'index_msb' as
-this is how it's called at the rest of cacheinfo.c code.
 
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/kernel/cpu/cacheinfo.c | 215 ++++++++++++++++----------------
- 1 file changed, 107 insertions(+), 108 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 71587570705f..cd48d34ac04b 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -1,11 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- *	Routines to identify caches on Intel CPU.
-+ * x86 CPU caches detection and configuration
-  *
-- *	Changes:
-- *	Venkatesh Pallipadi	: Adding cache identification through cpuid(4)
-- *	Ashok Raj <ashok.raj@intel.com>: Work with CPU hotplug infrastructure.
-- *	Andi Kleen / Andreas Herrmann	: CPUID4 emulation on AMD.
-+ * Previous changes
-+ * - Venkatesh Pallipadi:		Cache identification through CPUID(4)
-+ * - Ashok Raj <ashok.raj@intel.com>:	Work with CPU hotplug infrastructure
-+ * - Andi Kleen / Andreas Herrmann:	CPUID(4) emulation on AMD
-  */
- 
- #include <linux/cacheinfo.h>
-@@ -35,37 +35,37 @@ static cpumask_var_t cpu_cacheinfo_mask;
- unsigned int memory_caching_control __ro_after_init;
- 
- enum _cache_type {
--	CTYPE_NULL = 0,
--	CTYPE_DATA = 1,
--	CTYPE_INST = 2,
--	CTYPE_UNIFIED = 3
-+	CTYPE_NULL	= 0,
-+	CTYPE_DATA	= 1,
-+	CTYPE_INST	= 2,
-+	CTYPE_UNIFIED	= 3
- };
- 
- union _cpuid4_leaf_eax {
- 	struct {
--		enum _cache_type	type:5;
--		unsigned int		level:3;
--		unsigned int		is_self_initializing:1;
--		unsigned int		is_fully_associative:1;
--		unsigned int		reserved:4;
--		unsigned int		num_threads_sharing:12;
--		unsigned int		num_cores_on_die:6;
-+		enum _cache_type	type			:5;
-+		unsigned int		level			:3;
-+		unsigned int		is_self_initializing	:1;
-+		unsigned int		is_fully_associative	:1;
-+		unsigned int		reserved		:4;
-+		unsigned int		num_threads_sharing	:12;
-+		unsigned int		num_cores_on_die	:6;
- 	} split;
- 	u32 full;
- };
- 
- union _cpuid4_leaf_ebx {
- 	struct {
--		unsigned int		coherency_line_size:12;
--		unsigned int		physical_line_partition:10;
--		unsigned int		ways_of_associativity:10;
-+		unsigned int		coherency_line_size	:12;
-+		unsigned int		physical_line_partition	:10;
-+		unsigned int		ways_of_associativity	:10;
- 	} split;
- 	u32 full;
- };
- 
- union _cpuid4_leaf_ecx {
- 	struct {
--		unsigned int		number_of_sets:32;
-+		unsigned int		number_of_sets		:32;
- 	} split;
- 	u32 full;
- };
-@@ -93,60 +93,59 @@ static const enum cache_type cache_type_map[] = {
- 
- union l1_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:8;
--		unsigned assoc:8;
--		unsigned size_in_kb:8;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:8;
-+		unsigned assoc		:8;
-+		unsigned size_in_kb	:8;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- union l2_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:4;
--		unsigned assoc:4;
--		unsigned size_in_kb:16;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:4;
-+		unsigned assoc		:4;
-+		unsigned size_in_kb	:16;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- union l3_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:4;
--		unsigned assoc:4;
--		unsigned res:2;
--		unsigned size_encoded:14;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:4;
-+		unsigned assoc		:4;
-+		unsigned res		:2;
-+		unsigned size_encoded	:14;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- static const unsigned short assocs[] = {
--	[1] = 1,
--	[2] = 2,
--	[4] = 4,
--	[6] = 8,
--	[8] = 16,
--	[0xa] = 32,
--	[0xb] = 48,
--	[0xc] = 64,
--	[0xd] = 96,
--	[0xe] = 128,
--	[0xf] = 0xffff /* fully associative - no way to show this currently */
-+	[1]		= 1,
-+	[2]		= 2,
-+	[4]		= 4,
-+	[6]		= 8,
-+	[8]		= 16,
-+	[0xa]		= 32,
-+	[0xb]		= 48,
-+	[0xc]		= 64,
-+	[0xd]		= 96,
-+	[0xe]		= 128,
-+	[0xf]		= 0xffff	/* Fully associative */
- };
- 
- static const unsigned char levels[] = { 1, 1, 2, 3 };
--static const unsigned char types[] = { 1, 2, 3, 3 };
-+static const unsigned char types[]  = { 1, 2, 3, 3 };
- 
- static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 			      union _cpuid4_leaf_ebx *ebx, union _cpuid4_leaf_ecx *ecx)
- {
- 	unsigned int dummy, line_size, lines_per_tag, assoc, size_in_kb;
--	union l1_cache l1i, l1d;
-+	union l1_cache l1i, l1d, *l1;
- 	union l2_cache l2;
- 	union l3_cache l3;
--	union l1_cache *l1 = &l1d;
- 
- 	eax->full = 0;
- 	ebx->full = 0;
-@@ -155,6 +154,7 @@ static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 	cpuid(0x80000005, &dummy, &dummy, &l1d.val, &l1i.val);
- 	cpuid(0x80000006, &dummy, &dummy, &l2.val, &l3.val);
- 
-+	l1 = &l1d;
- 	switch (index) {
- 	case 1:
- 		l1 = &l1i;
-@@ -162,48 +162,52 @@ static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 	case 0:
- 		if (!l1->val)
- 			return;
--		assoc = assocs[l1->assoc];
--		line_size = l1->line_size;
--		lines_per_tag = l1->lines_per_tag;
--		size_in_kb = l1->size_in_kb;
-+
-+		assoc		= assocs[l1->assoc];
-+		line_size	= l1->line_size;
-+		lines_per_tag	= l1->lines_per_tag;
-+		size_in_kb	= l1->size_in_kb;
- 		break;
- 	case 2:
- 		if (!l2.val)
- 			return;
--		assoc = assocs[l2.assoc];
--		line_size = l2.line_size;
--		lines_per_tag = l2.lines_per_tag;
--		/* cpu_data has errata corrections for K7 applied */
--		size_in_kb = __this_cpu_read(cpu_info.x86_cache_size);
-+
-+		/* Use x86_cache_size as it might have K7 errata fixes */
-+		assoc		= assocs[l2.assoc];
-+		line_size	= l2.line_size;
-+		lines_per_tag	= l2.lines_per_tag;
-+		size_in_kb	= __this_cpu_read(cpu_info.x86_cache_size);
- 		break;
- 	case 3:
- 		if (!l3.val)
- 			return;
--		assoc = assocs[l3.assoc];
--		line_size = l3.line_size;
--		lines_per_tag = l3.lines_per_tag;
--		size_in_kb = l3.size_encoded * 512;
-+
-+		assoc		= assocs[l3.assoc];
-+		line_size	= l3.line_size;
-+		lines_per_tag	= l3.lines_per_tag;
-+		size_in_kb	= l3.size_encoded * 512;
- 		if (boot_cpu_has(X86_FEATURE_AMD_DCM)) {
--			size_in_kb = size_in_kb >> 1;
--			assoc = assoc >> 1;
-+			size_in_kb	= size_in_kb >> 1;
-+			assoc		= assoc >> 1;
- 		}
- 		break;
- 	default:
- 		return;
- 	}
- 
--	eax->split.is_self_initializing = 1;
--	eax->split.type = types[index];
--	eax->split.level = levels[index];
--	eax->split.num_threads_sharing = 0;
--	eax->split.num_cores_on_die = topology_num_cores_per_package();
-+	eax->split.is_self_initializing		= 1;
-+	eax->split.type				= types[index];
-+	eax->split.level			= levels[index];
-+	eax->split.num_threads_sharing		= 0;
-+	eax->split.num_cores_on_die		= topology_num_cores_per_package();
- 
- 	if (assoc == 0xffff)
- 		eax->split.is_fully_associative = 1;
--	ebx->split.coherency_line_size = line_size - 1;
--	ebx->split.ways_of_associativity = assoc - 1;
--	ebx->split.physical_line_partition = lines_per_tag - 1;
--	ecx->split.number_of_sets = (size_in_kb * 1024) / line_size /
-+
-+	ebx->split.coherency_line_size		= line_size - 1;
-+	ebx->split.ways_of_associativity	= assoc - 1;
-+	ebx->split.physical_line_partition	= lines_per_tag - 1;
-+	ecx->split.number_of_sets		= (size_in_kb * 1024) / line_size /
- 		(ebx->split.ways_of_associativity + 1) - 1;
- }
- 
-@@ -262,19 +266,14 @@ static int fill_cpuid4_info(int index, struct _cpuid4_info *id4)
- 
- static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- {
--	unsigned int		eax, ebx, ecx, edx, op;
--	union _cpuid4_leaf_eax	cache_eax;
--	int 			i = -1;
--
--	if (c->x86_vendor == X86_VENDOR_AMD ||
--	    c->x86_vendor == X86_VENDOR_HYGON)
--		op = 0x8000001d;
--	else
--		op = 4;
-+	unsigned int eax, ebx, ecx, edx, op;
-+	union _cpuid4_leaf_eax cache_eax;
-+	int i = -1;
- 
-+	/* Do a CPUID(op) loop to calculate num_cache_leaves */
-+	op = (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) ? 0x8000001d : 4;
- 	do {
- 		++i;
--		/* Do cpuid(op) loop to find out num_cache_leaves */
- 		cpuid_count(op, i, &eax, &ebx, &ecx, &edx);
- 		cache_eax.full = eax;
- 	} while (cache_eax.split.type != CTYPE_NULL);
-@@ -312,9 +311,9 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id)
- 			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
- 
- 		if (num_sharing_cache) {
--			int bits = get_count_order(num_sharing_cache);
-+			int index_msb = get_count_order(num_sharing_cache);
- 
--			c->topo.llc_id = c->topo.apicid >> bits;
-+			c->topo.llc_id = c->topo.apicid >> index_msb;
- 		}
- 	}
- }
-@@ -335,14 +334,10 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
- 
--	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT))
- 		ci->num_leaves = find_num_cache_leaves(c);
--	} else if (c->extended_cpuid_level >= 0x80000006) {
--		if (cpuid_edx(0x80000006) & 0xf000)
--			ci->num_leaves = 4;
--		else
--			ci->num_leaves = 3;
--	}
-+	else if (c->extended_cpuid_level >= 0x80000006)
-+		ci->num_leaves = (cpuid_edx(0x80000006) & 0xf000) ? 4 : 3;
- }
- 
- void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
-@@ -469,6 +464,9 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 	intel_cacheinfo_0x2(c);
- }
- 
-+/*
-+ * linux/cacheinfo.h shared_cpu_map setup, AMD/Hygon
-+ */
- static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 				    const struct _cpuid4_info *id4)
- {
-@@ -485,12 +483,12 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 			this_cpu_ci = get_cpu_cacheinfo(i);
- 			if (!this_cpu_ci->info_list)
- 				continue;
-+
- 			ci = this_cpu_ci->info_list + index;
- 			for_each_cpu(sibling, cpu_llc_shared_mask(cpu)) {
- 				if (!cpu_online(sibling))
- 					continue;
--				cpumask_set_cpu(sibling,
--						&ci->shared_cpu_map);
-+				cpumask_set_cpu(sibling, &ci->shared_cpu_map);
- 			}
- 		}
- 	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
-@@ -516,8 +514,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 				apicid = cpu_data(sibling).topo.apicid;
- 				if ((apicid < first) || (apicid > last))
- 					continue;
--				cpumask_set_cpu(sibling,
--						&ci->shared_cpu_map);
-+				cpumask_set_cpu(sibling, &ci->shared_cpu_map);
- 			}
- 		}
- 	} else
-@@ -526,17 +523,19 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 	return 1;
- }
- 
-+/*
-+ * linux/cacheinfo.h shared_cpu_map setup, Intel + fallback AMD/Hygon
-+ */
- static void __cache_cpumap_setup(unsigned int cpu, int index,
- 				 const struct _cpuid4_info *id4)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct cacheinfo *ci, *sibling_ci;
- 	unsigned long num_threads_sharing;
- 	int index_msb, i;
--	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 
--	if (c->x86_vendor == X86_VENDOR_AMD ||
--	    c->x86_vendor == X86_VENDOR_HYGON) {
-+	if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) {
- 		if (__cache_amd_cpumap_setup(cpu, index, id4))
- 			return;
- 	}
-@@ -554,8 +553,10 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 		if (cpu_data(i).topo.apicid >> index_msb == c->topo.apicid >> index_msb) {
- 			struct cpu_cacheinfo *sib_cpu_ci = get_cpu_cacheinfo(i);
- 
-+			/* Skip if itself or no cacheinfo */
- 			if (i == cpu || !sib_cpu_ci->info_list)
--				continue;/* skip if itself or no cacheinfo */
-+				continue;
-+
- 			sibling_ci = sib_cpu_ci->info_list + index;
- 			cpumask_set_cpu(i, &ci->shared_cpu_map);
- 			cpumask_set_cpu(cpu, &sibling_ci->shared_cpu_map);
-@@ -589,7 +590,7 @@ int init_cache_level(unsigned int cpu)
- }
- 
- /*
-- * The max shared threads number comes from CPUID.4:EAX[25-14] with input
-+ * The max shared threads number comes from CPUID(4) EAX[25-14] with input
-  * ECX as cache index. Then right shift apicid by the number's order to get
-  * cache id for this cache node.
-  */
-@@ -626,8 +627,8 @@ int populate_cache_leaves(unsigned int cpu)
- 		ci_info_init(ci++, &id4, nb);
- 		__cache_cpumap_setup(cpu, idx, &id4);
- 	}
--	this_cpu_ci->cpu_map_populated = true;
- 
-+	this_cpu_ci->cpu_map_populated = true;
- 	return 0;
- }
- 
-@@ -659,12 +660,10 @@ void cache_disable(void) __acquires(cache_disable_lock)
- 	unsigned long cr0;
- 
- 	/*
--	 * Note that this is not ideal
--	 * since the cache is only flushed/disabled for this CPU while the
--	 * MTRRs are changed, but changing this requires more invasive
--	 * changes to the way the kernel boots
-+	 * This is not ideal since the cache is only flushed/disabled
-+	 * for this CPU while the MTRRs are changed, but changing this
-+	 * requires more invasive changes to the way the kernel boots.
- 	 */
--
- 	raw_spin_lock(&cache_disable_lock);
- 
- 	/* Enter the no-fill (CD=1, NW=0) cache mode and flush caches. */
--- 
-2.48.1
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build2508708583=3D/tmp/go-build -gno-record-gc=
+c-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 22a6c2b175
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D22a6c2b1752ef57d8d612e233d35f6be8c3bf7df -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250318-101307'" -o ./b=
+in/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"22a6c2b1752ef57d8d612e233d35f6be8c=
+3bf7df\"
+/usr/bin/ld: /tmp/ccDKjVDd.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+
+Tested on:
+
+commit:         aaec5a95 pipe_read: don't wake up the writer if the pi..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
+x.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D8d5a2956e94d797=
+2
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D62262fdc0e01d9957=
+3fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1543243f9800=
+00
 
 
