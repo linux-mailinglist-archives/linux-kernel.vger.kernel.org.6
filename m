@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-573463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133EBA6D7A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:38:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB14A6D7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8149F3A7838
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833CF166A98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEE525DAE3;
-	Mon, 24 Mar 2025 09:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9F725DCFF;
+	Mon, 24 Mar 2025 09:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4ZJw7Cy"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="o0SeTaSK"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F5725D554;
-	Mon, 24 Mar 2025 09:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0A325DAEF;
+	Mon, 24 Mar 2025 09:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742809073; cv=none; b=kn9UjWc4irCHgg8lq42TeNBMfQrZaIaOk7godI5H+nWE/uxurJXbkMvAV70qI/snywdCEde6MChTgyF41iqpLzhPmtNHbdfw9Pb5Mi/pqvy5J3jdCmy8XEeIelo18/roXJvGIQ87zP6VHp6b/8QX+iKZgMfkGz0vszINUl9kPbQ=
+	t=1742809410; cv=none; b=j31hR0i16zkgmqVzOypUjAg5XqL9ffxvCA7EYAGr08gK3TgqLuyVKv4ErBDiTcugsUsF9Wg1T6dgatnLNWftvx4RYsJI5RUsQYuEXvA8UeXazrMRyyA5u59BkrigpHEjJ73NqCr2Y3L3lurlbtYh10fj1scdGdtnEfjOSEZA1xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742809073; c=relaxed/simple;
-	bh=F09joWCE15FJHzvmnuhZZDe0J85P+cppG5qFK6Ig3eM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dfMaQy9qWFYD8rL3NE5g0aXxcwPQtKzHqbTwS4OcYDVSYutXODo18e+iFjBNPO0qeJGYsz8DzzjudRajEWlszs8Ge5GpgdzVypOgZs6Pi1HOYWkYyEGd6qLYOGaWFv0gkGntOQaq6gP0AQmOpvToSFw7c4q6heqLgKxxFbK/8+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4ZJw7Cy; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f7b10cbbso8334445ad.3;
-        Mon, 24 Mar 2025 02:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742809071; x=1743413871; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F09joWCE15FJHzvmnuhZZDe0J85P+cppG5qFK6Ig3eM=;
-        b=D4ZJw7Cy/8X4UceQ/sr5/i1UkJwvFgmwbmGCXrE6fpvVsnGKXPZ+wCao6mSd+OFCZX
-         UDh7hZWks75PpP0fzWsIuBE/xeezilGx/vynFevDDy32YrCZq35SMqTJ5niweX/g47gN
-         aqz+555xbi/SyCUxPP3D8Rh9mzaXnb4uvgnit0K4TxIzv8et+bOgAntyYYxJ3d5Osn8T
-         Q3e/+yjwr47GFHgupJCO8CYpHPXMj1UuC2oR+S+DFMsGr4UjU3Mtl/lMd1jGApbxpjYZ
-         t8r9sFNXmpOyQUyCD0IupQRaZXeRDPweDGbsh4AnJZIDRSkYe+orKtthzi1ph3OTHNTO
-         5bbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742809071; x=1743413871;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F09joWCE15FJHzvmnuhZZDe0J85P+cppG5qFK6Ig3eM=;
-        b=GeYiLzPe6v9+Y6B72KwpAYpW2CXw595mXGXbkspiyAOXt6DMhmnBbMdjl7JiKT6JGD
-         WJae1h6ZjdmN8XHXL0ZdQCN3xto1HyMp+D7md2ApV4IiS7d/Bvo41gIL5PtYycZPOBVW
-         JQORKSkwCdiQLkftU9x7KK/Wq+bg9hsaEW8miqaifqCycFh5RbJMgMmeWZ3t0QduFo/2
-         Grs/k9PQiHhBstRk1p+6EqcAygniQtHnfPzqTdAvKQ67ZaEX1OaTUAwl70/K0DXJxekW
-         hh7bhnCCgmGnd4tpMy14Q+0BAO2YilClIdlcym22xNBYKOOQWdRj2Id8KuxXFZw/tXjQ
-         mZUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2sFhe8+XFzm9TmNl8KGV/Y8Lz3Ujaq1uEnOj31ucfq6e+RtKOvUpZuU4YO8DXkkQYsJnBq515ulqNUAgGkwY=@vger.kernel.org, AJvYcCWa8z3+t+Xt8gx40aFKVLFIU9Xlerzkao/6epFk8Iu/+Y91jqz0hjFCIASoWnAHvWkd4oDXIeoL17BJ++E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGwIEZiPnoARsEVEegDgWZ9u6JZ55/BESbGcg3vNczsdpAkq5p
-	gnkKRxjVQBevfE+XqBCTDDVwdKFOww2IWOhEwtLab4x7KgZRWy3OPP6zqpiezVQ5Ns4EuJem6Xe
-	dV7T/hOi5Muencqf148bFhpCJBwU=
-X-Gm-Gg: ASbGncuqP9jKKI3Am3BaGugtMrY0uI1i02fTQfhaK+0BzNjhcW3JXdAG/w+AttdPqYT
-	12N860Ekcws8tzObFiaEO8ecxsVPF0eLO5s+wctXOwZ3T0f8zlC9P2Dp6OzEr1MGQEs8yt9W4+o
-	jOz4Jz1oZKQCRFvdN/idno9UIkQg==
-X-Google-Smtp-Source: AGHT+IEdykui222hm/ZWYGLSJ8TexC3iOARKnbXgoXKpded+UXemeqbT/BZzY3q6RLfstwRMsEnNOERjQExhvXa3/JQ=
-X-Received: by 2002:a17:902:d511:b0:223:364f:7a5 with SMTP id
- d9443c01a7336-227913b871dmr50503065ad.11.1742809070900; Mon, 24 Mar 2025
- 02:37:50 -0700 (PDT)
+	s=arc-20240116; t=1742809410; c=relaxed/simple;
+	bh=n3Nby/fIzs+O/ZqCo+jpEq1LFeyxYS3UFTduSwDh0Ks=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=MwbEmnOwRott/JRxb6MJ90S29b9QhLra/fMHq/ApJwoH460hmkUAvwiuBnofPpOyuskWmr3M8c+1UQl0WmsJGBOdiwMdqbgFC0Q2H+w2mW7rkZpSlejzhuvUHGbcFqauI8cHKzhRU3gUMTMoWY/xN0EjoEJx+fN5d2jpi5PmRl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=o0SeTaSK; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O7ELVd032168;
+	Mon, 24 Mar 2025 10:42:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=5fV2R1E3CKBb4WFfRo1d9P
+	Yp2TC8wiqYUiEwsJbh6Qc=; b=o0SeTaSKKMUsYOUmOa4/jofgvOu2CbNHqPZR4J
+	0590RDqcPG3Niu91HZ96V9+SDVJLcRZEQxzXpO+NqAsm1OdYKg7GrrGWPHiB5sCq
+	eS32CMq9KCaOAzG0KB64861IdL8niNlDmjJiJdaWejHtDhX/i8alovllZCCZyVu5
+	YamOpIJRGcro4TNuZ9uI25C0c8Gjk+12Lc+FN9BtTMY7/NUvNvDG9O34TtlN2U7F
+	H4LWx37jWYYfr8jMweBJRTkARmFIVR4W3VmvEpYMLV8vFKZgS3jjBxWuygR5X+go
+	ufO4+/kzPAsIOeYUpViumltgWd4rZih9TcGGtSNkPku75yvQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j7n84eqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 10:42:59 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E3BD1400DA;
+	Mon, 24 Mar 2025 10:41:40 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 14FE17EE902;
+	Mon, 24 Mar 2025 10:40:16 +0100 (CET)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
+ 2025 10:40:15 +0100
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Subject: [PATCH v2 0/2] spi: spi-stm32-ospi: dt-bindings fixes
+Date: Mon, 24 Mar 2025 10:40:12 +0100
+Message-ID: <20250324-upstream_ospi_required_resets-v2-0-85a48afcedec@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324061835.1693125-1-kunwu.chan@linux.dev>
-In-Reply-To: <20250324061835.1693125-1-kunwu.chan@linux.dev>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 24 Mar 2025 10:37:38 +0100
-X-Gm-Features: AQ5f1Jqf8saODp4jWXHiWsm4m-HG1gDbjXnY9txF5lZmpm0WlV9pTLQSxoUMJEE
-Message-ID: <CANiq72=KjT8HRJA0NStHeqm-9286gay496CU8edNALPQ9_N+ww@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: sync: optimize rust symbol generation for CondVar
-To: Kunwu Chan <kunwu.chan@linux.dev>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	dakr@kernel.org, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, 
-	morbo@google.com, justinstitt@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Kunwu Chan <kunwu.chan@hotmail.com>, Grace Deng <Grace.Deng006@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHwo4WcC/42NQQ6CMBBFr0JmbUlbENSV9zCEFBhkFlCcKURDu
+ LuVE7j77y/e20CQCQVuyQaMKwn5KYI9JdAObnqioi4yWG3POrNGLbMERjfWXmaqGV8LMXZxCAZ
+ RWe4ujSkLY5oComNm7Ol9+B9V5IEkeP4cudX83n/Nq1FaXZ3LS20xc2jvvRdJJaStH6Ha9/0LN
+ jJtXcwAAAA=
+X-Change-ID: 20250321-upstream_ospi_required_resets-34a8b17611b6
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <christophe.kerello@foss.st.com>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
 
-On Mon, Mar 24, 2025 at 7:19=E2=80=AFAM Kunwu Chan <kunwu.chan@linux.dev> w=
-rote:
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Make "resets" property mandatory.
+Update spi-stm32-ospi driver and dt-bindings accordingly.
 
-Nit: I typically use Link after Suggested-by, to mimic what the docs
-require about Reported-by with Link. (No need to resend a new version
-just for this :)
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+Changes in v2:
+- Update dt-bindings commit message to explain why OSPI's resets becomes
+  a required property.
+- Link to v1: https://lore.kernel.org/r/20250321-upstream_ospi_required_resets-v1-0-9aa4702e3ae2@foss.st.com
 
-> - Remove '#[inline]' for notify()
+---
+Patrice Chotard (2):
+      spi: dt-bindings: st,stm32mp25-ospi: Make "resets" a required property
+      spi: spi-stm32-ospi: Make "resets" a required property
 
-It is good that the commit matches the log now, though I wonder if in
-the future we may want the `#[inline]` for `notify` anyway, even if
-LLVM does that one on its own today.
+ Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml | 1 +
+ drivers/spi/spi-stm32-ospi.c                                 | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: e94bd4ec45ac156616da285a0bf03056cd7430fc
+change-id: 20250321-upstream_ospi_required_resets-34a8b17611b6
 
-Cheers,
-Miguel
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
+
 
