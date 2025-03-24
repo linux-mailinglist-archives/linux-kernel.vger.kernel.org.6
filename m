@@ -1,155 +1,95 @@
-Return-Path: <linux-kernel+bounces-573257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80299A6D4E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF85A6D4DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA783B1BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164C318921E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856812512DF;
-	Mon, 24 Mar 2025 07:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC198250C0F;
+	Mon, 24 Mar 2025 07:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OFt5tfT+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBj5LZfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72935250C04;
-	Mon, 24 Mar 2025 07:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D3A2505CF;
+	Mon, 24 Mar 2025 07:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800583; cv=none; b=S0jZsJmCxnHGp7D7Zy1Jya3baxPQLQ2aqpzUiihJCLUmakg3zCpUn0xjUPR4nlWj6DONY/HBelPi535OseTtv0tRCCENaSkWuXugpy9CCMJq5BsUj4Vemp6KlB4XpdfTUgpQrDdCMlWC/DaW+K6vHlPOU3E8NTgPKmtiJIvfZyw=
+	t=1742800582; cv=none; b=FSiKagDJsxsx/25SWU/yMUwQ43a9E7tIinBJP0QlgsNxOlQmlNGS3JgGqf5hHUvxD5CrY0MrOb7Cz5i4DM1q2qo1G8r2l7uwJNRR13FmPhOFsyS/LXphTU+5AV280Cd3D+TJXxaR75CJCpqkg6SsORIzIIt8kPz4QjtWtmlHlYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800583; c=relaxed/simple;
-	bh=fs8CzO1K9MjTFGnpsaH21J3uneP81UTm6gTR0JK4478=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=skANtmYg44aV07xYVf9VOtu9g8RvYUeHWZvDUla2alVa/2SYhmYVHeCR5prIvdn+uZIUWoT3kuTTiPCkEi6NfCr0uI8npsoeMDKZ/Wh0SiBNrxhLRhfjDLEWc78ImvJra9GixA6S4IzxRmm8cpEBRLMoxuMVsNeAtwqtaMHb6JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OFt5tfT+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O6cTMe022710;
-	Mon, 24 Mar 2025 07:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	L2fUcpJuoMYMYBv2me7UrE3bL9Ib1bHjvNUviqyRdA0=; b=OFt5tfT+GxSP44gn
-	ELaOcUgJ3AuWOAe1aayDiu/BppoFLt90s52Qgq2NhTbSCzHrXnPYpQXBvi8CV+Wm
-	NwzhVEJ1mvf6aD4IgUXdPYvs8a+/tbEIapbZYFMfIWUGHZD42l+eShYmm3BxigGZ
-	RWOr0l9g+PXfJ6+g19aZUcY39lfPK1BG6fTJ9rk8D/8XHXEbWkhzu1GapWrM6gMK
-	4aiqXY1SFHyWTwtNeZKtcSFo0STOaWEeQ6AFZ3vfXLHJbslbUyfOet3+gEjjDL2B
-	CEC/Fqnom3wGOKIX7VXHI16SFrAuFuBJ9Oiye0s/vt0Xolp2BbEKVPSpOySiddHA
-	69jeiw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hmhk3ecj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 07:16:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O7GIpG022422
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 07:16:18 GMT
-Received: from [10.231.216.225] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 00:16:14 -0700
-Message-ID: <e085027f-2ec9-439a-be07-66f2cad1baaf@quicinc.com>
-Date: Mon, 24 Mar 2025 15:16:12 +0800
+	s=arc-20240116; t=1742800582; c=relaxed/simple;
+	bh=JSUdGazAmz6LBM0jLnWsCHf3QHtK7b1YmV5op+kF/eM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTQSe6d05qxUNkfhpqsk9lPAbcEQD29IaiEaTchiy4IKCHAUuvoid4XRcLyImyUtLzR89pXydGBoG5Z7uEJ2IxeeGoS/NWcKWL6RHtgI7+UWGtLSyJjSibWPDkvgi0fBZhQgcCf3pJlorIHyODU62NIDWZY4V5mrSgh0z5zoWaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBj5LZfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF39C4CEE4;
+	Mon, 24 Mar 2025 07:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742800581;
+	bh=JSUdGazAmz6LBM0jLnWsCHf3QHtK7b1YmV5op+kF/eM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qBj5LZfxve5cmrhWDISfxEo6blCjzsrMdBrjY0CKRQz4ssHHtAjp/Kx5I10Mj+l6x
+	 cMhw1SRAJUKOVfP9+9PFxVLxyy7Fkr96mejZoYU4N+h6CndON3jVfQ0cckS+dzZclj
+	 BNjCcZNJSjmCC+lRH1Dw7Psvp3zlx844TcKewPbnuee5v/BO/PHeVl3IS5pc3jMEzw
+	 dUZ22wBAeX0da+VKwwmdSOiuLV9/44HK78astaCWEa5YK/2oRgE6/8rWCSWJsmwfei
+	 HDv4oau33VLhzz/Zqam98rl7UlElbKLySvghgc2ZxYOfgF/ClRcyLJm/jbb/MZAXVq
+	 yoVNSE3/0plWA==
+Date: Mon, 24 Mar 2025 08:16:14 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <Z-EGvjhkg6llyX24@gmail.com>
+References: <20250323072511.2353342-1-edumazet@google.com>
+ <Z-B_R737uM31m6_K@gmail.com>
+ <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs8300-ride: enable WLAN on
- qcs8300-ride
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_miaoqing@quicinc.com>, <quic_zhichen@quicinc.com>,
-        <quic_yuzha@quicinc.com>
-References: <20250318093350.2682132-1-quic_stonez@quicinc.com>
- <20250318093350.2682132-3-quic_stonez@quicinc.com>
- <fhpsphwz65dlsqhyycwabofamacynshz5e5ez4gafkmdain5dp@32dpgc5mrhdr>
-Content-Language: en-US
-From: Stone Zhang <quic_stonez@quicinc.com>
-In-Reply-To: <fhpsphwz65dlsqhyycwabofamacynshz5e5ez4gafkmdain5dp@32dpgc5mrhdr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=C4PpyRP+ c=1 sm=1 tr=0 ts=67e106c3 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=d2MxNM1SO2chPncIAK4A:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: WbAHe_Oht4L-SFvuHzJPq03Q3oRNoYfV
-X-Proofpoint-ORIG-GUID: WbAHe_Oht4L-SFvuHzJPq03Q3oRNoYfV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_03,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- phishscore=0 mlxlogscore=892 priorityscore=1501 impostorscore=0
- bulkscore=0 clxscore=1015 spamscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
 
 
+* Eric Dumazet <edumazet@google.com> wrote:
 
-On 3/19/2025 6:13 PM, Dmitry Baryshkov wrote:
-> On Tue, Mar 18, 2025 at 05:33:50PM +0800, Stone Zhang wrote:
->> Enable WLAN on qcs8300-ride by adding a node for the PMU module
->> of the WCN6855 and assigning its LDO power outputs to the existing
->> WiFi module.
->>
->> Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
->>   1 file changed, 108 insertions(+)
->>
->> @@ -320,6 +402,25 @@ &pcie1_phy {
->>   	status = "okay";
->>   };
->>   
->> +&pcieport0 {
->> +	wifi@0 {
->> +		compatible = "pci17cb,1103";
->> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
->> +
->> +		qcom,ath11k-calibration-variant = "QC_QCS8300_Ride";
-> 
-> Almost missed it. What is your baseline? Krzysztof has sent his
-> qcom,calibration-variant patches [1] in February. Bjorn has picked them
-> up on March 4th.
-> 
-> This needs to be rebased on top of [1].
-Understood.
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20250225-dts-qcom-wifi-calibration-v1-0-347e9c72dcfc@linaro.org/
-> 
->> +
->> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
->> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
->> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
->> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
->> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
->> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
->> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
->> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
->> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
->> +	};
->> +};
->> +
->>   &qupv3_id_0 {
->>   	status = "okay";
->>   };
+> > What's the adversarial workload here? Spamming bpf_stats_enabled on all
+> > CPUs in parallel? Or mixing it with some other text_poke_bp_batch()
+> > user if bpf_stats_enabled serializes access?
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+> > Does anything undesirable happen in that case?
+> 
+> The case of multiple threads trying to flip bpf_stats_enabled is
+> handled by bpf_stats_enabled_mutex.
+
+So my suggested workload wasn't adversarial enough due to 
+bpf_stats_enabled_mutex: how about some other workload that doesn't 
+serialize access to text_poke_bp_batch()?
+
+Thanks,
+
+	Ingo
 
