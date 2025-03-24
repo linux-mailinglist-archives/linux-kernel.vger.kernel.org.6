@@ -1,81 +1,64 @@
-Return-Path: <linux-kernel+bounces-574379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D6CA6E4B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F4BA6E4C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE13A3A634B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3674C3A6343
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C771DE2DB;
-	Mon, 24 Mar 2025 20:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989B11DD543;
+	Mon, 24 Mar 2025 20:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="HGQYR5in"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAEuEXtJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80CB2E3378
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BAC1C8613;
+	Mon, 24 Mar 2025 20:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742849587; cv=none; b=FpB8xnN/l8YEZ+rTeZEdkjod5mMxDy7oEW79aTlUM8Rj2Fm83EMQmrTw5dthTSK1hZClQqpU3tpQgMg1TLBCkUGn16BYVefEqTEeFr+CKyWJI5f6yX5KtRE24osxiEUAaIsR9hlc2z8HAOSHOAlcHOIJGnKNn6Vc+fz1FlHxlEM=
+	t=1742849696; cv=none; b=Ho7vVGCr/dxIdGMHgUFZZwxE/69by0iOZLL8jXl6ipY7bRWtMdQEzU8AsXFPvNZhbGzy7ycxdHIUU7DB1mqN9AQzV6ocLsc345mTYsV2OafrSu7odIFk21RR01ac8QVX0mZaN+gcV3ef2bvNn/fG8V6MbxoJGa6ydOVWDq3Az8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742849587; c=relaxed/simple;
-	bh=i8aZYde1B3RChKKVLyzjLczhEobtRPovvSD01gK4Tbc=;
+	s=arc-20240116; t=1742849696; c=relaxed/simple;
+	bh=Ih3dm7Ri0bjLLtlXwUEcgqHbaGBSlGEP0HDK6EZifIc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bBhKRN1Y8+HHhh8JeDHgsiofKJZrKejTeyblxmG0HfYzcvXk3NMWyYb6GQLFHFdF3DoyCSHlCLv7RnP1+6wq7JUdv43ec4vC9LFZG+lx4lfiBOjCZ8jkooeXbgnjzJiMzgnfLXfSZoHcIf8BZdQZrr2PUlgOlinbql8AsttLXLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=HGQYR5in; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf3d64849dso802097266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1742849584; x=1743454384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=I38U0FrU7lXZPgGiiC6xH++pECXJ1njDUw5kOS4q8JU=;
-        b=HGQYR5inf2Plw68ViKAxuDQZZoQiC6rCKf2opcf+B1LCjUujDSG/XGQU2H21epneqA
-         QRIG94oanorKWwh32ppV0BGRYdWhDPDyVaV6CmSe+rxoaal7tzbold7iamDO0aMFwnlA
-         l5tgkzpwV1GIHx8+5wpvUvj6ivZlCH4oKc+Z7zz6qxlmzffi6WB1kyFp/UC1uGMduxvr
-         /1HWnrJiDSWHWpGA45QpDltoD0hRk3xIJwl3MMd4oqRbc9xhWWQitsM5YdHO9MKDnnYw
-         xRq3RxaPxHka788hotCFht1wHmKV4VJYJHDK67BFu7FvM/Pmb/ZsPIrsjyeRV9TEzb0F
-         7XVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742849584; x=1743454384;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I38U0FrU7lXZPgGiiC6xH++pECXJ1njDUw5kOS4q8JU=;
-        b=gGHP+SwxOkbo2kiBr+dYBJqUty+b4zsEz7uMVx5L1/cyQer+SgJV7InipYqnlFppPL
-         p90bxi6iJHrIX+CHbP1K6sS9B+FbOJI27tQzTCeUOsNL9+/NJQAh3KgoKQ2XPOwyMO5e
-         Ux0Vjp4q6rYu5oMBJsrg5QYzh1I7IGqOIZ69XmzoEmYIUnkKkBXlKebXRWn+11gyDO5a
-         pE5p+gVl3p8LEXWuALRtja1SW2SCcRF5DBo2CPFHmdzLQWW7G6+zCi9lH7A5LT2GYKFQ
-         PTwEJGcU77CXjIzuoH0ZrxjG+vJf6bqJli/6rp2/7jKI/9J6MkOaSTqD2Mkvi8zVV88w
-         5Zrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoq8+Cr9XFVS+aD2td8bdsWhhzenv10F2VAv8xUXlIKo/Cr5ewpHgt9wDij//HmlH4HHb5sGYBx3TTMUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+kjMYUwotLZ3GmHacYK03F3N2mYmDFyCeXKv4XxQLGHkjassg
-	n6sWSkBscJk/ZH7wRRgwpCUTsw0MsvKaDydnvsI00/MaIazz2FgR9Wd0wcK07ksLq1+ARI7QZlA
-	IgXfF85JebDUY+lwo+hr8vAcCwC+g2yt5yf2SEO3xlsKzALQvnR5WPFU=
-X-Gm-Gg: ASbGncv0ONgRSQSYMTFeKgPqgq00h+b2qvlCxwFDhVkkGCMLtTTAfvIYyAfcxXY0Jdu
-	LbxYnoFuFbv0/O5Pe6UpP1ZbILxSjXhUiNWlZxDcIDmVGeDkIWMCmTJHEPHxrpMn4SMH3sLI81D
-	2OB/0Td8+dtole72TCooV71zR8OY2L3IcAn01WJJP174IcM6Pqg2GAbIT96FHkSbKz5AALYGNZd
-	11aPLaU5Y6Rq3k8Ocpzh6lsOm5yBaExwajvPYmCt5uOVakctaZpH5++cLHTZsDcxRra/LA0Z2+c
-	KIRkJxp5rcRiN/NyYq+42mfUd6PzoX07KiG/hkjC5hkOr7FI0wZg9km7T4Xh365dgftvg9i0STw
-	IDqyJQPylMy5GoH6W1Q==
-X-Google-Smtp-Source: AGHT+IFstL4cl4J1iYAxXwRy6hoDu2dOycCyl006ObbtprBV0TprEgXJ2rIAwgqdRUKc9/q3kDAang==
-X-Received: by 2002:a17:907:8686:b0:abe:f48c:bcd with SMTP id a640c23a62f3a-ac3f27fd5fbmr1662647866b.50.1742849583835;
-        Mon, 24 Mar 2025 13:53:03 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:4ced:7dc0:1dc5:471a? ([2001:67c:2fbc:1:4ced:7dc0:1dc5:471a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd3b34fsm733226466b.157.2025.03.24.13.53.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 13:53:03 -0700 (PDT)
-Message-ID: <ae9f3c18-7b03-4a49-83a4-a3e7d8c52a3e@openvpn.net>
-Date: Mon, 24 Mar 2025 21:53:02 +0100
+	 In-Reply-To:Content-Type; b=fymaCqjZm5sZHeuXZHr/gNq11phCZs35JfciXU2D4vQW7pF5H/oCb7GRnYdG6wonxO1R+IzWZ8Xu9YGAdtefxqsbUWsiyFv9gGU7BjS9fbVdqwN4ZGy65SKrh/LTMOJgklIlsrDnIlGhMHG4nUGrTCYIjBEeK4Xpp7hafLdWyhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAEuEXtJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742849694; x=1774385694;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ih3dm7Ri0bjLLtlXwUEcgqHbaGBSlGEP0HDK6EZifIc=;
+  b=SAEuEXtJ+PP4rnaToDDQ5xCzUyy7sK4I1atJCPkxzU4eeYIM75kZD+I5
+   Q3pbW79lWQMFtTuIyzRzb7NxflmLKtNve3rH7fOYzcghdrKSQtIr6MM34
+   gu5zKo74+dmQCJeHo12pluf30PLTGzLDHBGPdDgeK02/joVbQlLy7ag/u
+   PKzQVp6H3tOwS0HMLD/3ZoZZZRrS1iUcA9lEjFxocWM+u0Kp3/Tw69Wbm
+   0reOHhHLzARpu+jySUH90lVH3PIVecFsgn77ljfmZS9Xc/XICD+Qx/5Jc
+   OgMEhd9DShPu1hvh2CCITiXTZTcFJOBV/QgpZfeXaBeFCtdFhmpIyv2SE
+   w==;
+X-CSE-ConnectionGUID: yS8gWklDQgWgKzlxZUFOAw==
+X-CSE-MsgGUID: JY/TDvcXR2yKYBVEyLLRCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43234423"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="43234423"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 13:54:52 -0700
+X-CSE-ConnectionGUID: Zmeu89P2QuSLb8C/HFnKng==
+X-CSE-MsgGUID: UofD0F5QTGu80NmV8o/snw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="124186393"
+Received: from xpardee-mobl.amr.corp.intel.com (HELO [10.124.17.122]) ([10.124.17.122])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 13:54:52 -0700
+Message-ID: <1405ee5c-de05-4f67-a747-98412e4b0017@linux.intel.com>
+Date: Mon, 24 Mar 2025 13:54:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,103 +66,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
- <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net> <Z-E70n1tkzKdepTo@krikkit>
+Subject: Re: [PATCH] platform/x86: intel/pmc: Fix iounmap call for valid
+ addresses
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
+ Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+References: <20250319224410.788273-1-xi.pardee@linux.intel.com>
+ <66c1a0f1-7d7a-da07-e80f-027964c503b8@linux.intel.com>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z-E70n1tkzKdepTo@krikkit>
+From: Xi Pardee <xi.pardee@linux.intel.com>
+In-Reply-To: <66c1a0f1-7d7a-da07-e80f-027964c503b8@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 24/03/2025 12:02, Sabrina Dubroca wrote:
-> 2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
->> +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
->> +			    const struct ovpn_peer_key_reset *pkr)
->> +{
->> +	struct ovpn_crypto_key_slot *old = NULL, *new;
->> +	u8 idx;
->> +
->> +	if (pkr->slot != OVPN_KEY_SLOT_PRIMARY &&
->> +	    pkr->slot != OVPN_KEY_SLOT_SECONDARY)
->> +		return -EINVAL;
->> +
->> +	new = ovpn_aead_crypto_key_slot_new(&pkr->key);
->> +	if (IS_ERR(new))
->> +		return PTR_ERR(new);
->> +
->> +	spin_lock_bh(&cs->lock);
-> 
-> At this point, should there be a check that we're not installing 2
-> keys with the same key_id at the same time? I expect a well-behaved
-> userspace never does that, but it would confuse
-> ovpn_crypto_key_id_to_slot if it ever happened.
-> 
-> ["well, then the tunnel is broken. if userspace sets up a broken
-> config that's not the kernel's problem." is an acceptable answer]
-> 
-
-The behaviour of ovpn_crypto_key_id_to_slot() is still "deterministic" 
-as we will first lookup the primary key.
-
-Therefore we will simply always use the primary key and never the other, 
-which is what we should expect in this situation from the code.
-
-I'd say this is just an ill-formed configuration, yet not invalid.
-As per your statement, I'd say it's userspace's problem.
-
-Cheers,
+Content-Transfer-Encoding: 8bit
 
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+On 3/21/2025 7:49 AM, Ilpo Järvinen wrote:
+> On Wed, 19 Mar 2025, Xi Pardee wrote:
+>
+>> pmc_core_clean_structure() is called when generic_core_init() fails.
+>> generic_core_init() could fail before ioremap() is called to get
+>> a valid regbase for pmc structure. The current code does not check
+>> regbase before calling iounmap(). Add a check to fix it.
+> Hi,
+>
+> The approach that calls the same "full cleanup" function as deinit uses
+> when init function fails midway is very error prone as once again is
+> demonstrated. Is this the only error handling problem? Are you 100% sure?
+>
+> Think about it, init is x% (<100%) done when it fails, then it calls a
+> function that tries to undo 100%. One needs to add lots of special logic
+> to handle 0-100% rollback into that cleanup function. The init function,
+> on the other hand, knows exactly where it was so it can rollback just what
+> is needed and not even try to rollback for more.
+>
+> It's also very inconsistent to rollback ssram_pcidev in this file as ssram
+> code was moved into core_ssram so I think the ssram deinit should be moved
+> there too.
+>
+> I think these init functions should be converted to do proper rollback
+> within the init function(s) to avoid very hard to track error handling.
+> I tried to check the error handling now in the pmc driver and after I
+> would have needed to jump between the files, I gave up.
 
+Hi,
+
+Thanks for the comments! Will move the error handing code for init 
+function to init function in next cycle.
+
+I will send out a new version to separate SSRAM device handling code to 
+a new PCI driver and remove ssram_pcidev field from pmcdev in next cycle.
+
+
+Thanks!
+
+Xi
+
+>> Fixes: 1b8c7b843c00 ("platform/x86:intel/pmc: Discover PMC devices")
+>> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+>> ---
+>>   drivers/platform/x86/intel/pmc/core.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+>> index 7a1d11f2914f..de5fc06232e5 100644
+>> --- a/drivers/platform/x86/intel/pmc/core.c
+>> +++ b/drivers/platform/x86/intel/pmc/core.c
+>> @@ -1471,7 +1471,7 @@ static void pmc_core_clean_structure(struct platform_device *pdev)
+>>   	for (i = 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
+>>   		struct pmc *pmc = pmcdev->pmcs[i];
+>>   
+>> -		if (pmc)
+>> +		if (pmc && pmc->regbase)
+>>   			iounmap(pmc->regbase);
 
