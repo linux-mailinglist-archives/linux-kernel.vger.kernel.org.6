@@ -1,144 +1,235 @@
-Return-Path: <linux-kernel+bounces-573260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC36A6D4F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 316F9A6D500
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53C93A998F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:22:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E4C3AFF63
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B6A19307F;
-	Mon, 24 Mar 2025 07:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C76C2500C9;
+	Mon, 24 Mar 2025 07:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="co4hRIRG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcfwUvPn"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C749433B3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD8C18D65E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742800934; cv=none; b=f2WvD7l579NiiaeyrlF54R2SEB+umPWpUQlattjAbvFkDUDB3+W0gAkMNo/Q1J7QlMXMQbG6qR0+o0t0NsSlDwmwdsMpvko97csWWkYxOLinVXnrdCehVl41kkOaF2ZIIEDHUqKw8T/Newuwf2SGqRlklDrR6dQ38i/rICKFaq8=
+	t=1742800996; cv=none; b=ZIZToKLjNYXlvj66vDqreCtG0OkQjs/8n4o2EzLRJbIJhkhhKgnrKrVRt4LYu5DOWvU3yA+fAiHQDxs+iGV2d/q83RsqIR+MtT5zLmMA6ZwNwSWFHCcKJW1lELI7OeV5wSI91XrHTOVmsisvFWRINuKbcJTcLWijTPKgpaTOsrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742800934; c=relaxed/simple;
-	bh=Bi0VOtxBb5PPiHhSEn+o+czd1m/PRweXqLBe9D7NXXo=;
+	s=arc-20240116; t=1742800996; c=relaxed/simple;
+	bh=Rq5Qsj+vtD9TgfS3gUgFhd0FdKFXn64WXTOxKmO6hBs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1khcBg3NpZplLh7KXuvmfH0J8hqV5LuVqMSWM+7YB1n6ObI+GdYBqN+oj9j5duJHM02rdGBBWY41Twaf5NzivCTQWe+lbN0lGVVxH7biGg3NUO6koErWD2yNoUko3amJTEf9DpbNCsMDdJvLivL9ubew9YrEr1trUNcKYRoMoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=co4hRIRG; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742800932; x=1774336932;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Bi0VOtxBb5PPiHhSEn+o+czd1m/PRweXqLBe9D7NXXo=;
-  b=co4hRIRG6MqXG4aGn90ZnMsrMPAHBWQXP88KL5eEmyrGxa8aSZEwgUYc
-   f+PAD7b2F2cTiYI7sH79RU9Eu+VbVrxsUAqyX8DHo18DR2L6OPDphF9pm
-   EVFBpEuzgbHi7UQhb1DV7jesmxT1+KKTITvTw8VZ1at5tv2S+0I964gEP
-   j1ae7FHmc1WjlqllgIfV06hVS2X791GlBBTMNQ+GP/YMImqD8k/KDFPJl
-   k2KEmtKt+u2fcZ5xa691etCresbQVlWNxwJOpnMWVfQHItHifLqyc/NGG
-   swjtjxRBKxBndilQWzejkcaY5j1Z3WmQ09PoQfHRuVdBDU3u+QAkpzG3U
-   g==;
-X-CSE-ConnectionGUID: AvwDpnVCSoC4VAB5ushNwQ==
-X-CSE-MsgGUID: jzOD0vykTRaXuI3soHWV6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11382"; a="43867246"
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="43867246"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 00:22:12 -0700
-X-CSE-ConnectionGUID: sUVwKoHDQxyIOIn75Tj2xw==
-X-CSE-MsgGUID: 4tE2DzzsS9mDO64YU8DZ3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,271,1736841600"; 
-   d="scan'208";a="124916036"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 00:22:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1twc8K-00000005Gbk-2ZyD;
-	Mon, 24 Mar 2025 09:22:04 +0200
-Date: Mon, 24 Mar 2025 09:22:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v7 1/5] bits: introduce fixed-type GENMASK_U*()
-Message-ID: <Z-EIHBCkUiBh63JE@smile.fi.intel.com>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
- <20250322-fixed-type-genmasks-v7-1-da380ff1c5b9@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYNrq8NeHMrMy00oN9n49l/jwvJ7zaZ3jBMMx+wbBit6rxH3cmec13RIYt1pYqneIYTI04Jt4Sp+XOJZggSmqoA9wpYfFtYwTlv1pWBw6WEVwCsGSSPm9qesA4RB6AUE6NwppeSvEJWZDXXgjhJ/s/lQEwqsASjSBzPxYHGfCNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AcfwUvPn; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-227d6b530d8so575415ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742800993; x=1743405793; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qe/MCCvdJLYJ3g+QnwJQUU6NC2SI4IaMPwysTrJxuV0=;
+        b=AcfwUvPnzD8feBoFMYcGQDZr8gNGhElE2P9+5TlfXfzozRkql5+6bPoYp6tG7dBJH/
+         tARAKzEXxuxrn49DEGkksvFJtgk0cXjWq4O9/ZIOKEoHlENv1NzM6+PL2eWATFdh6x+i
+         NpwqxgWRndt5AITQs6ml/xpxPGQYpLnBGdgnUaNOs5MJmqoA2+QJn0C+PyyoqBRsw/FY
+         yH5PqmuT5QIsaDh7kjEvsNlBrhUIyN/sBzk0X6b/B8M/mhL00QIkxQzZ3UZRWTw+NblC
+         Rmo2+2cu9/VOOSVVjCqjAStp81GNNP9fYEE8NmZQ9FJ/fId/YYj5kNJGBBi9tlH280h7
+         qvCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742800993; x=1743405793;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qe/MCCvdJLYJ3g+QnwJQUU6NC2SI4IaMPwysTrJxuV0=;
+        b=cMjS9VjocGekvv44RuTHeqGq79tz7kCMvM4gf3eoAAUa7xJiBr/4CKEjxBVDqZFlMi
+         3oeUYLFuid/jmNzeLvjnF06fZimPF8Q+/AH4ZdJ9e55DoZ+r2hVIpd6ff8Pg1DVrhMC8
+         tjbceZGxyExU5NsVc9kHnxry12Tn6OtLhtjK7i55Ndgp8+51UCOGTa0+jN2qkCkIdrKl
+         vRc0AfIx2pHzjF5Pq2VuxAmUiGOFsHhSEk4HP17w3sVNdADna9lHGyoSDwZhyVroixRX
+         uncuGNTa78NpkKSYc5tgHx6GxTed3/ako+U+unyXvClzGZ+ycEwdyK9ftTej5UkGvpgP
+         5MTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlXeMAFXirGjEGdxp0/BycefueQwni7iFNAIkw0M0sLJ/DDuhx3raVElf8bNkai+WbIJgKCBakKDqTm+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIthU1wO46KHSZ+gs/ivlfdOZR6V/7PGcVdcoAXJoXXE1Diqpf
+	tPtcZRshSW5wS2HdDWQDWXwhwWwpayVVjcUvL8GC3el12jtmlB/l5ZkgY5bJ+A==
+X-Gm-Gg: ASbGncsy2/zs5X+rdfMRqpvesplnj6RDwmqgqqUdp+YT0JYrh/hPgqAfOAKMaAWwlQJ
+	ZjErmNm3KUMxpywlm3Du1Erv6whmO2fTdttuTtY1R1a4JW727LnAWFSJiHIT8N4+I8BfF99DqjU
+	dyYjq3ZBljarD8uqZ8hGKeWMijHVtnqsjUO8py3U0zk2xcNquOunXN3QgFOvc69lpNCRTHWlcyV
+	LEaSR1dXTCeg5DJZt0VzE+K9l1bmUBSo794zX0aqQBwP3UWHc56hDVKXt1HXGMht/fHanghD7os
+	3NRPYpzEFp7FSbogh5MxofRIDVwtFWoonute42xeLShaORalCVNLOmhud3l9ySCnoN0=
+X-Google-Smtp-Source: AGHT+IEVDoBTCHOODzvBGMAnc/Iok1j6AhaExydrGDQgnCUirKAYBNkCKwG2t70sQoq1tMM3o02m1Q==
+X-Received: by 2002:a17:903:230d:b0:220:e9ac:e746 with SMTP id d9443c01a7336-22780e46648mr200826765ad.53.1742800992590;
+        Mon, 24 Mar 2025 00:23:12 -0700 (PDT)
+Received: from thinkpad ([220.158.156.91])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22781208966sm63304325ad.254.2025.03.24.00.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 00:23:12 -0700 (PDT)
+Date: Mon, 24 Mar 2025 12:53:05 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Frank Li <Frank.Li@nxp.com>, Tony Lindgren <tony@atomide.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH PATCH RFC NOT TESTED 1/2] ARM: dts: ti: dra7: Correct
+ ranges for PCIe and parent bus nodes
+Message-ID: <hhvst2uvlymcyir5sb5vwd4ezko7yawwp5cnosluaz2hkabcna@ywr4thtjpdps>
+References: <20250305-dra-v1-0-8dc6d9a0e1c0@nxp.com>
+ <20250305-dra-v1-1-8dc6d9a0e1c0@nxp.com>
+ <20250313165311.2fj7aus3pcsg4m2c@thinkpad>
+ <20250314064642.fyf3jqylmc6meft7@uda0492258>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250322-fixed-type-genmasks-v7-1-da380ff1c5b9@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250314064642.fyf3jqylmc6meft7@uda0492258>
 
-On Sat, Mar 22, 2025 at 06:23:12PM +0900, Vincent Mailhol via B4 Relay wrote:
+On Fri, Mar 14, 2025 at 12:16:42PM +0530, Siddharth Vadapalli wrote:
+> On Thu, Mar 13, 2025 at 10:23:11PM +0530, Manivannan Sadhasivam wrote:
 > 
-> Add GENMASK_TYPE() which generalizes __GENMASK() to support different
-> types, and implement fixed-types versions of GENMASK() based on it.
-> The fixed-type version allows more strict checks to the min/max values
-> accepted, which is useful for defining registers like implemented by
-> i915 and xe drivers with their REG_GENMASK*() macros.
+> Hello Mani,
 > 
-> The strict checks rely on shift-count-overflow compiler check to fail
-> the build if a number outside of the range allowed is passed.
-> Example:
+> > On Wed, Mar 05, 2025 at 11:20:22AM -0500, Frank Li wrote:
+> > 
+> > If you want a specific patch to be tested, you can add [PATCH RFT] tag.C
+> > 
+> > > According to code in drivers/pci/controller/dwc/pci-dra7xx.c
+> > > 
+> > > dra7xx_pcie_cpu_addr_fixup()
+> > > {
+> > > 	return cpu_addr & DRA7XX_CPU_TO_BUS_ADDR;  //0x0FFFFFFF
+> > > }
+> > > 
+> > > PCI parent bus trim high 4 bits address to 0. Correct ranges in
+> > > target-module@51000000 to algin hardware behavior, which translate PCIe
+> > > outbound address 0..0x0fff_ffff to 0x2000_0000..0x2fff_ffff.
+> > > 
+> > > Set 'config' and 'addr_space' reg values to 0.
+> > > Change parent bus address of downstream I/O and non-prefetchable memory to
+> > > 0.
+> > > 
+> > > Ensure no functional impact on the final address translation result.
+> > > 
+> > > Prepare for the removal of the driver’s cpu_addr_fixup().
+> > > 
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > >  arch/arm/boot/dts/ti/omap/dra7.dtsi | 18 +++++++++---------
+> > >  1 file changed, 9 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/ti/omap/dra7.dtsi b/arch/arm/boot/dts/ti/omap/dra7.dtsi
+> > > index b709703f6c0d4..9213fdd25330b 100644
+> > > --- a/arch/arm/boot/dts/ti/omap/dra7.dtsi
+> > > +++ b/arch/arm/boot/dts/ti/omap/dra7.dtsi
+> > > @@ -196,7 +196,7 @@ axi0: target-module@51000000 {
+> > >  			#size-cells = <1>;
+> > >  			#address-cells = <1>;
+> > >  			ranges = <0x51000000 0x51000000 0x3000>,
+> > > -				 <0x20000000 0x20000000 0x10000000>;
+> > > +				 <0x00000000 0x20000000 0x10000000>;
+> > 
+> > I'm not able to interpret this properly. So this essentially means that the
+> > parent address 0x20000000 is mapped to child address 0x00000000. And the child
+> > address is same for other controller as well.
+> > 
+> > Also, the cpu_addr_fixup() is doing the same by masking out the upper 4 bits. I
+> > tried looking into the DRA7 TRM, but it says (ECAM_Param_Base_Addr +
+> > 0x20000000) where ECAM_Param_Base_Addr = 0x0000_0000 to 0x0FFF_F000.
+> > 
+> > I couldn't relate TRM with the cpu_addr_fixup() callback. Can someone from TI
+> > shed light on this?
 > 
->   #define FOO_MASK GENMASK_U32(33, 4)
+> A "git blame" on the line being modified in dra7.dtsi gives the
+> following commit:
+> https://github.com/torvalds/linux/commit/c761028ef5e2
+> prior to which the ranges is exactly the same as the one being added by
+> this patch.
 > 
-> will generate a warning like:
+> The cpu_addr_fixup() function was introduced by the following commit:
+> https://github.com/torvalds/linux/commit/2ed6cc71e6f7
+> with the reason described in
+> Section 24.9.4.3.2 PCIe Controller Slave Port
+> of the T.R.M. at:
+> https://www.ti.com/lit/ug/spruic2d/spruic2d.pdf
+> ---------------------------------------------------------------------------
+> NOTE:
+> The PCIe controller remains fully functional, and able to send transactions
+> to, for example, anywhere within the 64-bit PCIe memory space, with the
+> appropriate remapping of the 28-bit address by the outbound address
+> translation unit (iATU). The limitation is that the total size of addressed
+> PCIe regions (in config, memory, IO spaces) must be less than 2^28 bytes.
+> ---------------------------------------------------------------------------
 > 
->   include/linux/bits.h:51:27: error: right shift count >= width of type [-Werror=shift-count-overflow]
->      51 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
->         |                           ^~
+> The entire sequence is:
+> 0) dra7.dtsi had ranges which match the ranges in the current patch.
+> 1) cpu_addr_fixup() was added by
+> https://github.com/torvalds/linux/commit/2ed6cc71e6f7
+> 2) ranges was updated to <0x20000000 0x20000000 0x10000000> by:
+> https://github.com/torvalds/linux/commit/c761028ef5e2
+> 3) ranges is being changed back to its original state of "0)" above.
 > 
-> While GENMASK_TYPE() is crafted to cover all variants, including the
-> already existing GENMASK(), GENMASK_ULL() and GENMASK_U128(), for the
-> moment, only use it for the newly introduced GENMASK_U*(). The
-> consolidation will be done in a separate change.
 
-...
+Thanks a lot for the reference.
 
->  #if !defined(__ASSEMBLY__)
-> +
+> cpu_addr_fixup() was introduced to remove the following:
+> 	pp->io_base &= DRA7XX_CPU_TO_BUS_ADDR;
+> 	pp->mem_base &= DRA7XX_CPU_TO_BUS_ADDR;
+> 	pp->cfg0_base &= DRA7XX_CPU_TO_BUS_ADDR;
+> 	pp->cfg1_base &= DRA7XX_CPU_TO_BUS_ADDR;
+> in dra7xx_pcie_host_init(). The reason for the above is mentioned in the
+> "NOTE" as:
+> ---------------------------------------------------------------------------
+> The limitation is that the total size of addressed PCIe regions
+> (in config, memory, IO spaces) must be less than 2^28 bytes.
+> ---------------------------------------------------------------------------
+> 
 
-> -#else
+I don't think so. This note is for the *size* of the addressed regions. The
+fixup corresponds to the sentence in your above note from TRM:
 
-> +#else /* defined(__ASSEMBLY__) */
+"able to send transactions to, for example, anywhere within the 64-bit PCIe
+memory space, with the appropriate remapping of the 28-bit address by the
+outbound address translation unit (iATU)"
 
-> -#endif
-> +
-> +#endif /* !defined(__ASSEMBLY__) */
+I think the limitation is due to the 29-bit address bus width of the PCIe
+controller slave port as mentionend in section, 24.9.4.3.2. And that correlates
+to the truncation of the upper 4 bits of the IO/CFG/MEM addresses. So even if
+the CPU passes address range relative to offset 0, PCIe controller converts it
+to 0x20000000/0x30000000 based on the instance.
 
-Up to you, but if new version is needed or maintainer require, I would move the
-above changes either to a separate patch (prerequisite) or dropped them at all.
-These are not big but unneeded churn,
+If my understanding is correct, then commit, c761028ef5e2 should be reverted and
+this patch can be applied.
 
+> I am not sure if Frank is accounting for all of this in the current patch
+> as well as the dependent patch series associated with removing
+> cpu_addr_fixup().
+> 
+> Regarding testing the series, I unfortunately don't have the hardware so
+> I cannot test it.
+> 
+
+That's a pity. If TI employee doesn't have access to an upstream supported
+platform, then I'm not sure whom we should ask for testing.
+
+Could you please ask around and see if you can get access to one? I'm sure that
+the hardware will be available somewhere :)
+
+- Mani
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+மணிவண்ணன் சதாசிவம்
 
