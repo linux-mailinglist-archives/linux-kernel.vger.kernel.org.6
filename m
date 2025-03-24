@@ -1,205 +1,353 @@
-Return-Path: <linux-kernel+bounces-573651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EAAA6DA39
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:41:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95FCA6DA3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:46:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261821894312
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:41:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 651787A6CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF56925E838;
-	Mon, 24 Mar 2025 12:41:17 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A691199FA8;
+	Mon, 24 Mar 2025 12:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YijUECz6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mwNeQ+iB"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7624A4A05
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C49C4400;
+	Mon, 24 Mar 2025 12:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820077; cv=none; b=sHG9Noc6I5eq/cvgX3lrjzT0s02vCBPbk3BJmUqzUaIxguQIRlDqBbTK8qqzf42T/+rRIEVdob1yvjNe7AnqX42P7MY3K1fabi8NewURU5UE9AGIoa7vDjs1mUUtjilfxBM6T3vX6lRCghpG/RHbbfvXYwPr16GdXqpjkYrnKRg=
+	t=1742820369; cv=none; b=Rkd0Na+kMdO7LeLLKLc7jhqiPOPkvcgfa9dQLa5vWYiUGLNyB+mVkD7CEJAaTimgaL8Nj8LwJGQvndoR7PX+MY4Lfy7wNhf8CeayzA84w1/f087acXf/poUPfzQxTF6fEhmgR4T5wCwYh78emqsGzX7kGL8Jz3hgYOywO5fWfOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820077; c=relaxed/simple;
-	bh=YMr8A1MXy/5ea3WPzuUp4F0jarvLktbbVfEpLA71n28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LkM9210Oiqvo2yo6zy5zoQJNzcBLsVxy0i9ldzJPJYgbBeYXA0YmshpjWbJ41z8gXCoZEFP8io3OW6l7VBEUDFbMxx7czmA6dIfEVFkkUH/14TODxCujKbkffhHpwn1FttXfh1D/f70T2oXfbedzmjBAbkWbxdUJBgvyfihOTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZLsyh2dVWzHrGM;
-	Mon, 24 Mar 2025 20:37:48 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id B8C0A140123;
-	Mon, 24 Mar 2025 20:41:04 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 24 Mar 2025 20:41:03 +0800
-Message-ID: <ff11c8ac-7eb4-42cb-86d3-ad9924c9374b@huawei.com>
-Date: Mon, 24 Mar 2025 20:41:02 +0800
+	s=arc-20240116; t=1742820369; c=relaxed/simple;
+	bh=oxTW1PrI7zxnvTAfviKT5O2OKh8U6bxkdbvldlFaQFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uU4EYL4ZdQNflGTZZo3Wh6xst3mfiglmYeiIlH2ZmwVr3LvMKhMI1NIlC5OXRFUfKnuRQmxpwc2yDI6fGyNlhPoDCMKS54ig1rlaveNH1EUuDRybOwNQeA8GOQ4hlnNMAY37XfZSJ34dnE9balmENo6vTMw3wZlVcSfepChSc/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YijUECz6; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mwNeQ+iB reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1742820365; x=1774356365;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DX4/VO3OnQRr65r3k5zsXrc0QjpoAW2FHYBe64Wv3so=;
+  b=YijUECz6vu7a/SAuwv/PWFFSr6qzWMg1+ijRE02a5zi40ceQ9z9F1Cmi
+   SlqlGDNrZbJzLU8H3U6NBYNjxvCc4JJ+o5Xb8Y/JayLrdQMex2Vxi5VEf
+   LF39GVc9SbEjRJrG/H84NxhaGtEkQOsFxptnsDKv8/+Xp3wfzcw/PhcHn
+   T1FGuILbQQzo8grwuTdvk/+mHd3/QVqBnxUiwjsyMwAv4Stq3tr2FugzI
+   7rO2ZX2F7JnjzBPF9vYUJ1geI1Lb6593PZdgiujGUW57vAWGzMBFJqS/t
+   7CyDm3OpJdzW1nLfYkhyTvCf3Fxv1YMnSRwSVuEnOMmE7CCPxupUjtYd2
+   A==;
+X-CSE-ConnectionGUID: YJDNgeQkQxq1mymXzWzL4g==
+X-CSE-MsgGUID: FQhoTfolT++Nv+KvZ+nvag==
+X-IronPort-AV: E=Sophos;i="6.14,272,1736809200"; 
+   d="scan'208";a="43121863"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 24 Mar 2025 13:46:01 +0100
+X-CheckPoint: {67E15409-B-F35B2447-E1635CDE}
+X-MAIL-CPID: BA32B4495DC1B31DA7A57D267F96BBF6_1
+X-Control-Analysis: str=0001.0A006398.67E15403.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 55114167297;
+	Mon, 24 Mar 2025 13:45:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1742820357;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DX4/VO3OnQRr65r3k5zsXrc0QjpoAW2FHYBe64Wv3so=;
+	b=mwNeQ+iBSVgfKds9QENrlVpJcFiuapYgpm7B1+bObeVbZK8K5HXlb8QBpYkNi7PtGbb2AR
+	MJpiqTgvsie91/s+cPwfc7ygbDJEy7Qt3an1dS8HXYgKQIDhZP0ItX+SyBSwV2+ml1ClLw
+	WzY6dtcONxuRgkzCUsQ99X3tPDVUcOhL6g92eQ9WQwuXYgaBmaeyMKEnbyZNA1VOlFTjd6
+	gcaURLZ9sBIfvqIV03DXnRbq4sZ2szY82ze2go+FGAVm6/+Gw42VVcW8YcOQ8O1ANWUM9b
+	EJFjG/ks+0uQpz/0P8Fp5kJlxSsz0wJxgYYmmyg+QKw6D9br0DWEkZj13QpTwA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/1] hwmon: (gpio-fan) Add regulator support
+Date: Mon, 24 Mar 2025 13:45:49 +0100
+Message-ID: <20250324124550.989292-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 drm-dp 5/9] drm/hisilicon/hibmc: Getting connector info
- and EDID by using AUX channel
-To: Jani Nikula <jani.nikula@linux.intel.com>, <xinliang.liu@linaro.org>,
-	<tiantao6@hisilicon.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
-	<shaojijie@huawei.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
-References: <20250319032435.1119469-1-shiyongbang@huawei.com>
- <20250319032435.1119469-6-shiyongbang@huawei.com> <87frj8c9ol.fsf@intel.com>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <87frj8c9ol.fsf@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+FANs might be supplied by a regulator which needs to be enabled as well.
+This is implemented using runtime PM. Every time speed_index changes from
+0 to non-zero and vise versa RPM is resumed or suspended.
+Intitial RPM state is determined by initial value of speed_index.
 
-> On Wed, 19 Mar 2025, Yongbang Shi <shiyongbang@huawei.com> wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> Add registering drm_aux and use it to get connector edid with drm
->> functions. Add ddc channel in connector initialization to put drm_aux
->> in drm_connector.
->>
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->> ChangeLog:
->> v6 -> v7:
->>    - add if statement about drm aux in hibmc_dp_connector_get_modes(), suggested by Jani Nikula
-> I don't understand this, and I did not suggest such a thing.
->
-> BR,
-> Jani.
->
-Hi Jani,
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Patch 1 & 2 from v1 [1] have already been applied, although number 2 [2] is not
+yet showing in next-20250305. Patches 3 & 4 (just removing comments) from v1
+have been dropped, so only this patch remains.
 
-Is the modification of v8 correct?
+Changes in v3:
+* Remove noisy dev_err calls related to runtime pm
+* Properly propagate return codes from set_fan_speed
 
+Changes in v2:
+* Make regulator non-optional
 
->> v5 -> v6:
->>    - move the detect_ctx() to the patch 7/9.
->> v2 -> v3:
->>    - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
->> v1 -> v2:
->>    - deleting type conversion, suggested by Dmitry Baryshkov.
->>    - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  3 +-
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 35 ++++++++++++++++---
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  5 +++
->>   3 files changed, 37 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> index ded9e7ce887a..e0bb9b14d9d8 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> @@ -161,7 +161,8 @@ void hibmc_dp_aux_init(struct hibmc_dp *dp)
->>   				 HIBMC_DP_MIN_PULSE_NUM);
->>   
->>   	dp->aux.transfer = hibmc_dp_aux_xfer;
->> -	dp->aux.is_remote = 0;
->> +	dp->aux.name = kasprintf(GFP_KERNEL, "HIBMC DRM dp aux");
->> +	dp->aux.drm_dev = dp->drm_dev;
->>   	drm_dp_aux_init(&dp->aux);
->>   	dp->dp_dev->aux = &dp->aux;
->>   }
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> index 603d6b198a54..0256724d8b9b 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> @@ -15,11 +15,20 @@
->>   
->>   static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>   {
->> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->> +	const struct drm_edid *drm_edid;
->>   	int count;
->>   
->> -	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
->> -				     connector->dev->mode_config.max_height);
->> -	drm_set_preferred_mode(connector, 1024, 768); // temporary implementation
->> +	if (!dp->aux.name)
->> +		return 0;
->> +
->> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
->> +
->> +	drm_edid_connector_update(connector, drm_edid);
->> +
->> +	count = drm_edid_connector_add_modes(connector);
->> +
->> +	drm_edid_free(drm_edid);
->>   
->>   	return count;
->>   }
->> @@ -28,12 +37,28 @@ static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->>   	.get_modes = hibmc_dp_connector_get_modes,
->>   };
->>   
->> +static int hibmc_dp_late_register(struct drm_connector *connector)
->> +{
->> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->> +
->> +	return drm_dp_aux_register(&dp->aux);
->> +}
->> +
->> +static void hibmc_dp_early_unregister(struct drm_connector *connector)
->> +{
->> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->> +
->> +	drm_dp_aux_unregister(&dp->aux);
->> +}
->> +
->>   static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
->>   	.reset = drm_atomic_helper_connector_reset,
->>   	.fill_modes = drm_helper_probe_single_connector_modes,
->>   	.destroy = drm_connector_cleanup,
->>   	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->>   	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> +	.late_register = hibmc_dp_late_register,
->> +	.early_unregister = hibmc_dp_early_unregister,
->>   };
->>   
->>   static inline int hibmc_dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
->> @@ -103,8 +128,8 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
->>   
->>   	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
->>   
->> -	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
->> -				 DRM_MODE_CONNECTOR_DisplayPort);
->> +	ret = drm_connector_init_with_ddc(dev, connector, &hibmc_dp_conn_funcs,
->> +					  DRM_MODE_CONNECTOR_DisplayPort, &dp->aux.ddc);
->>   	if (ret) {
->>   		drm_err(dev, "init dp connector failed: %d\n", ret);
->>   		return ret;
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> index d982f1e4b958..3ddd71aada66 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> @@ -47,6 +47,11 @@ static inline struct hibmc_vdac *to_hibmc_vdac(struct drm_connector *connector)
->>   	return container_of(connector, struct hibmc_vdac, connector);
->>   }
->>   
->> +static inline struct hibmc_dp *to_hibmc_dp(struct drm_connector *connector)
->> +{
->> +	return container_of(connector, struct hibmc_dp, connector);
->> +}
->> +
->>   static inline struct hibmc_drm_private *to_hibmc_drm_private(struct drm_device *dev)
->>   {
->>   	return container_of(dev, struct hibmc_drm_private, dev);
+[1] https://lore.kernel.org/all/20250210145934.761280-1-alexander.stein@ew.tq-group.com/
+[2] https://web.git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git/commit/?h=hwmon-next&id=9fee7d19bab635f89223cc40dfd2c8797fdc4988
+---
+ drivers/hwmon/gpio-fan.c | 104 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 90 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
+index cee3fa146d69a..4c736b7eb5473 100644
+--- a/drivers/hwmon/gpio-fan.c
++++ b/drivers/hwmon/gpio-fan.c
+@@ -20,6 +20,9 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
++#include <linux/pm.h>
++#include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/thermal.h>
+ 
+ struct gpio_fan_speed {
+@@ -42,6 +45,7 @@ struct gpio_fan_data {
+ 	bool			pwm_enable;
+ 	struct gpio_desc	*alarm_gpio;
+ 	struct work_struct	alarm_work;
++	struct regulator	*supply;
+ };
+ 
+ /*
+@@ -125,13 +129,32 @@ static int __get_fan_ctrl(struct gpio_fan_data *fan_data)
+ }
+ 
+ /* Must be called with fan_data->lock held, except during initialization. */
+-static void set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
++static int set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
+ {
+ 	if (fan_data->speed_index == speed_index)
+-		return;
++		return 0;
++
++	if (fan_data->speed_index == 0 && speed_index > 0) {
++		int ret;
++
++		ret = pm_runtime_resume_and_get(fan_data->dev);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	__set_fan_ctrl(fan_data, fan_data->speed[speed_index].ctrl_val);
++
++	if (fan_data->speed_index > 0 && speed_index == 0) {
++		int ret;
++
++		ret = pm_runtime_put_sync(fan_data->dev);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	fan_data->speed_index = speed_index;
++
++	return 0;
+ }
+ 
+ static int get_fan_speed_index(struct gpio_fan_data *fan_data)
+@@ -189,7 +212,9 @@ static ssize_t pwm1_store(struct device *dev, struct device_attribute *attr,
+ 	}
+ 
+ 	speed_index = DIV_ROUND_UP(pwm * (fan_data->num_speed - 1), 255);
+-	set_fan_speed(fan_data, speed_index);
++	ret = set_fan_speed(fan_data, speed_index);
++	if (!ret)
++		ret = count;
+ 
+ exit_unlock:
+ 	mutex_unlock(&fan_data->lock);
+@@ -211,6 +236,7 @@ static ssize_t pwm1_enable_store(struct device *dev,
+ {
+ 	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
+ 	unsigned long val;
++	int ret;
+ 
+ 	if (kstrtoul(buf, 10, &val) || val > 1)
+ 		return -EINVAL;
+@@ -224,11 +250,14 @@ static ssize_t pwm1_enable_store(struct device *dev,
+ 
+ 	/* Disable manual control mode: set fan at full speed. */
+ 	if (val == 0)
+-		set_fan_speed(fan_data, fan_data->num_speed - 1);
++		ret = set_fan_speed(fan_data, fan_data->num_speed - 1);
+ 
+ 	mutex_unlock(&fan_data->lock);
+ 
+-	return count;
++	if (ret)
++		return ret;
++	else
++		return count;
+ }
+ 
+ static ssize_t pwm1_mode_show(struct device *dev,
+@@ -279,7 +308,7 @@ static ssize_t set_rpm(struct device *dev, struct device_attribute *attr,
+ 		goto exit_unlock;
+ 	}
+ 
+-	set_fan_speed(fan_data, rpm_to_speed_index(fan_data, rpm));
++	ret = set_fan_speed(fan_data, rpm_to_speed_index(fan_data, rpm));
+ 
+ exit_unlock:
+ 	mutex_unlock(&fan_data->lock);
+@@ -386,6 +415,7 @@ static int gpio_fan_set_cur_state(struct thermal_cooling_device *cdev,
+ 				  unsigned long state)
+ {
+ 	struct gpio_fan_data *fan_data = cdev->devdata;
++	int ret;
+ 
+ 	if (!fan_data)
+ 		return -EINVAL;
+@@ -395,11 +425,11 @@ static int gpio_fan_set_cur_state(struct thermal_cooling_device *cdev,
+ 
+ 	mutex_lock(&fan_data->lock);
+ 
+-	set_fan_speed(fan_data, state);
++	ret = set_fan_speed(fan_data, state);
+ 
+ 	mutex_unlock(&fan_data->lock);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static const struct thermal_cooling_device_ops gpio_fan_cool_ops = {
+@@ -499,6 +529,8 @@ static void gpio_fan_stop(void *data)
+ 	mutex_lock(&fan_data->lock);
+ 	set_fan_speed(data, 0);
+ 	mutex_unlock(&fan_data->lock);
++
++	pm_runtime_disable(fan_data->dev);
+ }
+ 
+ static int gpio_fan_probe(struct platform_device *pdev)
+@@ -521,6 +553,11 @@ static int gpio_fan_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, fan_data);
+ 	mutex_init(&fan_data->lock);
+ 
++	fan_data->supply = devm_regulator_get(dev, "fan");
++	if (IS_ERR(fan_data->supply))
++		return dev_err_probe(dev, PTR_ERR(fan_data->supply),
++				     "Failed to get fan-supply");
++
+ 	/* Configure control GPIOs if available. */
+ 	if (fan_data->gpios && fan_data->num_gpios > 0) {
+ 		if (!fan_data->speed || fan_data->num_speed <= 1)
+@@ -548,6 +585,17 @@ static int gpio_fan_probe(struct platform_device *pdev)
+ 			return err;
+ 	}
+ 
++	pm_runtime_set_suspended(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++	/* If current GPIO state is active, mark RPM as active as well */
++	if (fan_data->speed_index > 0) {
++		int ret;
++
++		ret = pm_runtime_resume_and_get(&pdev->dev);
++		if (ret)
++			return ret;
++	}
++
+ 	/* Optional cooling device register for Device tree platforms */
+ 	fan_data->cdev = devm_thermal_of_cooling_device_register(dev, np,
+ 				"gpio-fan", fan_data, &gpio_fan_cool_ops);
+@@ -568,41 +616,69 @@ static void gpio_fan_shutdown(struct platform_device *pdev)
+ 	}
+ }
+ 
++static int gpio_fan_runtime_suspend(struct device *dev)
++{
++	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
++	int ret = 0;
++
++	if (fan_data->supply)
++		ret = regulator_disable(fan_data->supply);
++
++	return ret;
++}
++
++static int gpio_fan_runtime_resume(struct device *dev)
++{
++	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
++	int ret = 0;
++
++	if (fan_data->supply)
++		ret = regulator_enable(fan_data->supply);
++
++	return ret;
++}
++
+ static int gpio_fan_suspend(struct device *dev)
+ {
+ 	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
++	int ret = 0;
+ 
+ 	if (fan_data->gpios) {
+ 		fan_data->resume_speed = fan_data->speed_index;
+ 		mutex_lock(&fan_data->lock);
+-		set_fan_speed(fan_data, 0);
++		ret = set_fan_speed(fan_data, 0);
+ 		mutex_unlock(&fan_data->lock);
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int gpio_fan_resume(struct device *dev)
+ {
+ 	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
++	int ret = 0;
+ 
+ 	if (fan_data->gpios) {
+ 		mutex_lock(&fan_data->lock);
+-		set_fan_speed(fan_data, fan_data->resume_speed);
++		ret = set_fan_speed(fan_data, fan_data->resume_speed);
+ 		mutex_unlock(&fan_data->lock);
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(gpio_fan_pm, gpio_fan_suspend, gpio_fan_resume);
++static const struct dev_pm_ops gpio_fan_pm = {
++	RUNTIME_PM_OPS(gpio_fan_runtime_suspend,
++		       gpio_fan_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(gpio_fan_suspend, gpio_fan_resume)
++};
+ 
+ static struct platform_driver gpio_fan_driver = {
+ 	.probe		= gpio_fan_probe,
+ 	.shutdown	= gpio_fan_shutdown,
+ 	.driver	= {
+ 		.name	= "gpio-fan",
+-		.pm	= pm_sleep_ptr(&gpio_fan_pm),
++		.pm	= pm_ptr(&gpio_fan_pm),
+ 		.of_match_table = of_gpio_fan_match,
+ 	},
+ };
+-- 
+2.43.0
+
 
