@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-573794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D40A6DC85
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:04:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872FEA6DC8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ADDE1888BC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DDCA3B2DBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFAE25FA20;
-	Mon, 24 Mar 2025 14:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F273C25F973;
+	Mon, 24 Mar 2025 14:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3XJJCaFd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wLfI4hnZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jZjE5V4M"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD1925F7A4;
-	Mon, 24 Mar 2025 14:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C11219C569;
+	Mon, 24 Mar 2025 14:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742825009; cv=none; b=H+kUHtw5E6D9jg1ksCrtIacpUh8yjQh3ZdSUN2cBBrl9pJ10yRqtwhE0Dgy7LIlUScXujgZkQXjXjyu/kEwLch3L8jrjN7fjzzaBX1QSTrY1UsXTMwBb6xKkSCWpeOPH17kb7ht6DzYI/onyTc7P3u9xduFKPfOhW3Kh/N5bYtk=
+	t=1742825055; cv=none; b=SeF8vY7DDWLk1bTXCMF+Hf8CNPUJSpdW0pY+30tHwjoozAUL2v8gvy7eBrjLOTWevuA8OEoDXEnH7PV6WDvbf/ltLpJuveDHChaeWX0TW2yT1ZD2uTgCOhpFYf3iovBYhlfq/ncCRMeUuSNc6EoKTiFjJKU3SWy/NXDJW+y9YEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742825009; c=relaxed/simple;
-	bh=aM4JcR3866WrCbYTHlk8iWIrMznIfA9/J8oATxvESHs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SsFMGPzfMJ4FOvfsj/XJK2yKqqkjYlgwHV362gvygxmc/FKFBIBxkVSqY993ZRAh/fasg+LZCFG7fd66sCd2Nvqz/OK93YzNEGpFppN+3Qx4bIx94TwotMf/pTMz4jkUYe9IHkVE4hwh7Y35MgboDckubwn9w9m1EDYZEmOQ4A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3XJJCaFd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wLfI4hnZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742825005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qj8y0TcZWBHDPwJrLqATbmFxejNYXTMZhfjNczSoSVE=;
-	b=3XJJCaFdkXm+QYPX/vthk0TDjyeoYkhXlf3y8Dj9SdklN0EzhdHBgL/ato2AH7IefIaBpU
-	YJSvkPOYzk8xoonUpKiVxuLWsnTTq1MIJlsCN3vdSW9vFC/M7PTNVHQH1lpf6pNlkHPbBw
-	PcJrNCkxJvsW7UDiTThd+TS4cOVc2CICXfChBPC50hUjMkmwK3/o9vYpaJ+qmXcNrnVx2G
-	PC5qkCg+YaSkuwb/oBawx+Oz2SqJ2m47tqD32tGwJ+57D8bNok2jpRt74PO4ts+rOv++Q5
-	rIU9APdietC970maR5NbqaXpOlI8TCsaQGfBds5wSQfOi7odrq5JYs8nF0hTDQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742825005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qj8y0TcZWBHDPwJrLqATbmFxejNYXTMZhfjNczSoSVE=;
-	b=wLfI4hnZJg2uUCk87WAHgXKIA++xJA+AVboP+WaAOGoGzR/kF+DAsov+8ZGCH7CphXv4in
-	Ru9NPQJdlzDjaACw==
-Date: Mon, 24 Mar 2025 15:03:17 +0100
-Subject: [PATCH 3/3] selftests: vDSO: chacha: Provide default definition of
- HWCAP_S390_VXRS
+	s=arc-20240116; t=1742825055; c=relaxed/simple;
+	bh=QZRyHaer4aVTsJACugml0QiF0ENOWqtGXsMcJVhuviY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QaqDmx9/lucJv2OK/GfemCVgouVx73UIzi8y17rmRqAYkfZpPeC+3UtpyUA90Iaa1j4vhUbGsAm7BUG2BZmB27rPF4b3wEidyZfwrwoNjnAtglpKTLt6XYzwb9FBB1qz6Evl0ZGnHyY+E7f2BByBfrUJzs6uQH0RH3lqgI4NniI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jZjE5V4M; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+reJuCbLkyPvkpR8TOLTyAMnNK1tq2tJBBQi3tYUQ9o=; b=jZjE5V4MBYSqGrnZjRfhUasREq
+	M3aD0DMus0d84LKGN8je7NwmG+egyqT73PWJO1brt6wf3HqiXreND05BwZ5wCm0rR9yTdr63P8TY1
+	eaEdYT2/5Nu0+f1Ilil4guY6OoX+Y/+rF/QFg2Atbbf65cRVbAgpJn59wt1IGy++Ojg4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1twiP9-006wSY-Ji; Mon, 24 Mar 2025 15:03:51 +0100
+Date: Mon, 24 Mar 2025 15:03:51 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH 1/2] net: phy: Add support for new Aeonsemi PHYs
+Message-ID: <f0c685b0-b543-4038-a9bd-9db7fc00c808@lunn.ch>
+References: <20250323225439.32400-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250324-s390-vdso-hwcap-v1-3-cb9ad001ceba@linutronix.de>
-References: <20250324-s390-vdso-hwcap-v1-0-cb9ad001ceba@linutronix.de>
-In-Reply-To: <20250324-s390-vdso-hwcap-v1-0-cb9ad001ceba@linutronix.de>
-To: Shuah Khan <shuah@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Andy Lutomirski <luto@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742825002; l=1036;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=aM4JcR3866WrCbYTHlk8iWIrMznIfA9/J8oATxvESHs=;
- b=viBYPTwPx1ECWXIR3TyrNZisIuV6STuzuZCaWmK1duWGrECRobn/tdn6COju7kd9AZlsQgpb0
- B55WnQz4kjrCNMaI9rAewd+r46UaNCicIe8E6GPEkgtGZIUmujeCXGe
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323225439.32400-1-ansuelsmth@gmail.com>
 
-s390 does not provide a hwcap.h UAPI header.
+> Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
+> AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
+> AS21210PB1 that all register with the PHY ID 0x7500 0x7500
+> before the firmware is loaded.
 
-Add an inline definition for the constant HWCAP_S390_VXRS until a proper
-UAPI header is introduced.
+Does the value change after the firmware is loaded? Is the same
+firmware used for all variants?
 
-Fixes: 210860e7f733 ("selftests: vDSO: check cpu caps before running chacha test")
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/selftests/vDSO/vdso_test_chacha.c | 3 +++
- 1 file changed, 3 insertions(+)
+> +++ b/drivers/net/phy/Kconfig
+> @@ -121,6 +121,18 @@ config AMCC_QT2025_PHY
+>  
+>  source "drivers/net/phy/aquantia/Kconfig"
+>  
+> +config AS21XXX_PHY
+> +	tristate "Aeonsemi AS21xxx PHYs"
 
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-index fd5c5108b42f04ec459d39b74f33edc2ceafbba1..0ce5189718ce35b0a4d69b71559db8379b598b93 100644
---- a/tools/testing/selftests/vDSO/vdso_test_chacha.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -19,6 +19,9 @@ static bool cpu_has_capabilities(void)
- 	return getauxval(AT_HWCAP) & HWCAP_ASIMD;
- }
- #elif defined(__s390x__)
-+#ifndef HWCAP_S390_VXRS
-+#define HWCAP_S390_VXRS	(1 << 11)
-+#endif
- static bool cpu_has_capabilities(void)
- {
- 	return getauxval(AT_HWCAP) & HWCAP_S390_VXRS;
+The sorting is based on the tristate value, so that when you look at
+'make menuconfig' the menu is in alphabetical order. So this goes
+before aquantia.
 
--- 
-2.48.1
+> +/* 5 LED at step of 0x20
+> + * FE: Fast-Ethernet (100)
+> + * GE: Gigabit-Ethernet (1000)
+> + * NG: New-Generation (2500/5000/10000)
+> + * (Lovely ChatGPT managed to translate meaning of NG)
 
+It might be a reference to NBase-T Gigabit.
+
+Please add a comment somewhere about how locking works for IPCs. As
+far as i see, the current locking scheme is that IPCs are only called
+from probe, so no locking is actually required. But:
+
+> +#define IPC_CMD_NG_TESTMODE		0x1b /* Set NG test mode and tone */
+> +#define IPC_CMD_TEMP_MON		0x15 /* Temperature monitoring function */
+> +#define IPC_CMD_SET_LED			0x23 /* Set led */
+
+suggests IPCs might in the future be needed outside of probe, and then
+a different locking scheme might be needed, particularly for
+temperature monitoring.
+
+> +static int as21xxx_get_features(struct phy_device *phydev)
+> +{
+> +	int ret;
+> +
+> +	ret = genphy_read_abilities(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* AS21xxx supports 100M/1G/2.5G/5G/10G speed. */
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+> +			   phydev->supported);
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+> +			   phydev->supported);
+> +	linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
+> +			   phydev->supported);
+
+Does this mean the registers genphy_read_abilities() reads are broken
+and report link modes it does not actually support?
+
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+> +			 phydev->supported);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+> +			 phydev->supported);
+
+and it is also not reporting modes it does actually support? Is
+genphy_read_abilities() actually doing anything useful? Some more
+comments would be good here.
+
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
+> +			 phydev->supported);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
+> +			 phydev->supported);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
+> +			 phydev->supported);
+
+Does this mean genphy_c45_pma_read_abilities() also returns the wrong
+values?
+
+> +static int as21xxx_read_link(struct phy_device *phydev, int *bmcr)
+> +{
+> +	int status;
+> +
+> +	*bmcr = phy_read_mmd(phydev, MDIO_MMD_AN,
+> +			     MDIO_AN_C22 + MII_BMCR);
+> +	if (*bmcr < 0)
+> +		return *bmcr;
+> +
+> +	/* Autoneg is being started, therefore disregard current
+> +	 * link status and report link as down.
+> +	 */
+> +	if (*bmcr & BMCR_ANRESTART) {
+> +		phydev->link = 0;
+> +		return 0;
+> +	}
+> +
+> +	status = phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_STAT1);
+
+No MDIO_AN_C22 + here? Maybe add a comment about which C22 registers
+are mapped into C45 space.
+
+	Andrew
 
