@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-573490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F28A6D828
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:20:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB65A6D832
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5550B3ACA08
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D947A2FC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6025DB03;
-	Mon, 24 Mar 2025 10:19:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A8725D8E1;
-	Mon, 24 Mar 2025 10:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E5525DCFD;
+	Mon, 24 Mar 2025 10:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="XdTQiGyN"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4091E522;
+	Mon, 24 Mar 2025 10:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742811543; cv=none; b=m8LZH1Ww7qCxboRFF0gM4u/Kz2rn20C2YcLI5JhWM6PKrlcdbIC+exF0OaXLHc/1hAYR1RaPtqbeBA/env6gARTUg04tXjc/vuIkwGcaK0oYi0mgXkBAewvmUsvDSYdNy1dDU42WiMl1EV+3GlkkIbsqlRvZGwCtQ42UANXWIVU=
+	t=1742811686; cv=none; b=MOuQ6ShN24i4AlKjgxBtOejnKl7/+HCCP/40CMKQdEVCWbgtF8h3g0ACBNLG8vRkdkQkmP9rHlWROGvB+l/Y8tT6Y65fepK12baLsBrXLDXZf2qmCzywC3hX1OScJV7/+TbaXu+1hzZOkuJ1C9kLYFycDF1R8L/4JZorkhq6xvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742811543; c=relaxed/simple;
-	bh=9rq2nJDVTpNtebFu0O0NSHqfeNp/dCiYbreZxeitcxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfadF9lcijCKSBu28d1tMmhXkd+EvZGvgjvyBOSn3BDkUpZCVpD9V+Mv6pUGA7Js0Fm59zqHJjArz+uD2vrjFAnpDEG8NYCXvLFNRFb5mAYhDpSjJ7LUukUi9L+d2fTZ2Nf+3ecg9Gz09wxSUWANLlvnyYs61cWDChckJNBDePA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E15F1A2D;
-	Mon, 24 Mar 2025 03:19:00 -0700 (PDT)
-Received: from [10.1.38.52] (e132430.arm.com [10.1.38.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBB273F63F;
-	Mon, 24 Mar 2025 03:18:51 -0700 (PDT)
-Message-ID: <a5af352b-9f0d-4280-8d7b-e72597e6265d@arm.com>
-Date: Mon, 24 Mar 2025 10:18:50 +0000
+	s=arc-20240116; t=1742811686; c=relaxed/simple;
+	bh=ox3nsjplR00PH6bCPDedTPwGXbTcF87dCS2/KJ6ajis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MyLoNAZ+b6dh+NSEuPqPjtwP8Vn1acuoaEoEaG39e1thJJCyrt3bM7/NOD/N8apFg0whSy5Uvgr+CmQBFp9LJcyB1ACIxKAMGOuRmpKv9OER+Bvh4n6vINxvdkU0iNf9A9P5ieD7RQbKv1FrNI/ir8mPKdrede25AGtkC0gb34U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=XdTQiGyN; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O7ilKu011526;
+	Mon, 24 Mar 2025 11:21:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VgcK61C1ClW+Bsv+nkLDe43OxgHSNo7fk3rpTcQgFK8=; b=XdTQiGyNpFJcJ7Yz
+	4ms/Nfk+xdVzp//FaxZbXEnnZlCWPLaMUALtg+cNzN1CFTwz5Aad33+EEUWSjJfT
+	i0Bc5Qdo9DQmkk1Y2Z7Xh2CQ2Hj8ePd7NFad5mlw4wc/u6NCeWpOuyicdiPrA/Li
+	6LjfyNBHNrMcpX38nb33bNf0Hs97xU9PbqmfHaSN0iNiGM3zMiJKITo37bGKytwl
+	0sW4leqlqZQF0R57dPQTBPzFAvyn4UDKTczlBiW7HAJ86cf9NJ30AvueWDApCTR/
+	z4tY9Nku9xrIBUiJ3gjyx1t/A3ZA30OkLvCUUyN61k3+wybe8uYsUnPgVVj4NkYc
+	svyLpQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45hkgr78c4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 11:21:09 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4E7114004A;
+	Mon, 24 Mar 2025 11:20:00 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 359C580B78C;
+	Mon, 24 Mar 2025 11:19:07 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
+ 2025 11:19:06 +0100
+Message-ID: <b99576c5-cc9f-455a-aa58-ce5a0489a5a9@foss.st.com>
+Date: Mon, 24 Mar 2025 11:19:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,107 +66,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing: Fix synth event printk format for str fields
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250318180939.227696-1-douglas.raillard@arm.com>
- <20250319211858.6d8166e3fb202e6e5a658557@kernel.org>
- <9d234136-05b9-46b6-849f-901df83bf54c@arm.com>
- <20250324144551.fc290f9cf9f57b3d2f205354@kernel.org>
+Subject: Re: [PATCH 1/2] spi: dt-bindings: st,stm32mp25-ospi: Make "resets" a
+ required property
+To: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <christophe.kerello@foss.st.com>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250321-upstream_ospi_required_resets-v1-0-9aa4702e3ae2@foss.st.com>
+ <20250321-upstream_ospi_required_resets-v1-1-9aa4702e3ae2@foss.st.com>
+ <688c619d-0e20-496a-ae24-d62ab34f93ab@kernel.org>
 Content-Language: en-US
-From: Douglas Raillard <douglas.raillard@arm.com>
-In-Reply-To: <20250324144551.fc290f9cf9f57b3d2f205354@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <688c619d-0e20-496a-ae24-d62ab34f93ab@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
 
-On 24-03-2025 05:45, Masami Hiramatsu (Google) wrote:
-> On Wed, 19 Mar 2025 14:34:19 +0000
-> Douglas Raillard <douglas.raillard@arm.com> wrote:
-> 
->> Hi,
->>
->> On 19-03-2025 12:18, Masami Hiramatsu (Google) wrote:
->>> Hi,
->>>
->>> On Tue, 18 Mar 2025 18:09:38 +0000
->>> Douglas RAILLARD <douglas.raillard@arm.com> wrote:
->>>
->>>> From: Douglas Raillard <douglas.raillard@arm.com>
->>>>
->>>> The printk format for synth event uses "%.*s" to print string fields,
->>>> but then only passes the pointer part as var arg.
->>>>
->>>> Add the missing precision var arg.
->>>
->>> I'm not sure what you want to. Would you mean showing the string length too?
->>> But I think actual output(*) shows only string, right?
->>>
->>> (*) the output data which can be read from `trace` file.
->>
->> The "%.*s" printf/printk format specifier has 2 components:
->> 1. the "*" part that in printf documentation called the "precision"
->> 2. the "s" part that is called the "specifier"
->>
->> For a "s" specifier, the precision is interpreted as the number of chars to display from that string.
->> In any case, using "*" as precision means the value is passed dynamically, as a parameter to printf/printk,
->> before the actual char *. Both those args are consumed by printk to display "%.*s", the precision is never
->> displayed on its own.
->>
->> In the current state, synthetic event use "%.*s" for string fields, but then only a single `__get_str(field)`
->> is passed to printk, so it's missing the precision arg. Both trace-cmd and our parser report an error because of that.
->>
->> The alternative would be to just use "%s" instead of "%.*s", but I assume whoever wrote the code initially had a reason
->> to use the precision (maybe to print non-null-terminated strings ?), so I simply fixed the arguments.
-> 
-> Ah, got it. It seems that the first precision parameter is for limiting
-> the length of the string according to the commit;
-> 
-> https://lore.kernel.org/all/b6bdb34e70d970e8026daa3503db6b8e5cdad524.1601848695.git.zanussi@kernel.org/T/#u
-> 
-> So, I think it should always print the STR_VAR_LEN_MAX value.
 
-That makes sense. It's tempting to keep the actual length value though as native Rust strings are not null-terminated, so
-it could make it nicer to emit events from Rust code. From a cursory look, the in-tree Rust code seems to be using both
-&str and &CStr (the latter being null-terminated for FFI needs) so I'm not sure what's the plan around those
-and what's the established convention if any.
 
-> Steve, can you check it?
+On 3/21/25 11:13, Krzysztof Kozlowski wrote:
+> On 21/03/2025 10:44, Patrice Chotard wrote:
+>> Make "resets" a required property.
 > 
-> Thank you,
+> Please explain why. This is technically an ABI break, so you please
+> provide explanation what sort of issue is being fixed.
+
+Hi
+
+Right, i will add more details
+
+Thanks
+Patrice
+
 > 
 >>
->>>
->>> Thank you,
->>>
->>>>
->>>> Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
->>>> ---
->>>>    kernel/trace/trace_events_synth.c | 3 ++-
->>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
->>>> index e3f7d09e5512..274b9b1d9f7d 100644
->>>> --- a/kernel/trace/trace_events_synth.c
->>>> +++ b/kernel/trace/trace_events_synth.c
->>>> @@ -620,7 +620,8 @@ static int __set_synth_event_print_fmt(struct synth_event *event,
->>>>    		if (event->fields[i]->is_string &&
->>>>    		    event->fields[i]->is_dynamic)
->>>>    			pos += snprintf(buf + pos, LEN_OR_ZERO,
->>>> -				", __get_str(%s)", event->fields[i]->name);
->>>> +				", (int)__get_dynamic_array_len(%s), __get_str(%s)",
->>>> +				event->fields[i]->name, event->fields[i]->name);
->>>>    		else if (event->fields[i]->is_stack)
->>>>    			pos += snprintf(buf + pos, LEN_OR_ZERO,
->>>>    				", __get_stacktrace(%s)", event->fields[i]->name);
->>>> -- 
->>>> 2.43.0
->>>>
->>
-
-Thank you,
-
-Douglas
-
+>> Fixes: bed97e35786a ("dt-bindings: spi: Add STM32 OSPI controller")
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>>  Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> 
+> Best regards,
+> Krzysztof
 
