@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-574266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56697A6E2D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:58:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3040FA6E2F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B2F17032D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB8827A6F34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8945E266F1A;
-	Mon, 24 Mar 2025 18:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58F7266F1C;
+	Mon, 24 Mar 2025 18:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="FyaYr9nE"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="N/hCGrSm"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752C266F12
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742842690; cv=none; b=tZLQgRaaTnaiw9N23+OsIHn0reahlEIxs7J/bYdolPOcIiADaLrJkQal9+MXJagp5aMu+K1I01eoivRRBtQ3nWFZsJZmQN37gNRD3g79n6yEAYsb9QSfzcoDNo/uLSl2CJ8hRZNk97mSqLG4T/gnk8uX1QGLRsAwu5L/XaGxOtg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742842690; c=relaxed/simple;
-	bh=JtCj9yaYLLnbWrZGwWO77vDysRJOjp9RTmqAEhYmjTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWbOlGV/H8xQIhusIDhZQK8G/bcacIZkhyErUK/Y4VpEb+VgJzFkRR7JPH5BWngU9E5RKrQc2+wocb57y/PqA7YLmpBuFXo+viOoqbQ9ccJYLVa7es/LWvxUcue86a/l2fXykL2DI/gEo8SpElzFRScLz5ByvxKKzZ0L1jZqBmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=FyaYr9nE; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso52155835e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1742842687; x=1743447487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9PuYVarMebmU2p+Nlydwxr1Lr80Vi57j8nI2AO9zgc=;
-        b=FyaYr9nEpH05qGNR+I0h0Pguc3NHzfikDKuPwLvwvfFJhO+ds6WJTb/IKmPBcWptUf
-         SssIpcSGjplPYjarV4bnddOge475Jm8iKfC5cjU8U1EEaCvClNeWouZ87A3tqGrlxd+f
-         zdppviVKKQ38y8YljQ7GcSzvuu0pKHQZ/TmPeW8/5Jx+TkwqLfbLkxUPfq8pAKnJYzVO
-         ESvqX7tYwdHe4B6R42JLqSixz7h0hGV3+jVTGGZdqU/DgL0fMEGKIxl3f8es0N1w3SLc
-         jMhJSlZOJ2JOGU+ZrBVxrWSLdjuiBHhg0DEYUcY3kkCQum5raX/fwKaydk21DgNmtLdp
-         jX8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742842687; x=1743447487;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G9PuYVarMebmU2p+Nlydwxr1Lr80Vi57j8nI2AO9zgc=;
-        b=BqFl83fOD6AtnTzJNjmbh45Ra25Cok8duPzzjBFGlUdYYH/7K0MO2lJ9AQQNXXZVcD
-         WqKKA81M/ORQurxUf8i1LDJfVr2rLDQApZgvFRx1xgnF8gK83NFAOZas4cZl/kitRsCo
-         TB8m1J7Pt3qjA7IYgJ4GedjVVy7E+bkYGci4bZOOD8Lxfm2deF6W3FEhJiagT50BrHbr
-         HSt08aV1ObmZxiHeWJ09hHn5y2Vn2wQ/HLdrTPVrTopCfJ70gKq0co6CPz0vo1KOwVY6
-         ybqpNH1EdjqCsKFyCY9ztZmP3LdOckxRpb/Ra0mMqlTKrW1hGP6KHuiuahV3uVwUDfVA
-         tNSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGxG+GagjSNu8fAu0V9FcwiwWUQOT90eSHzJdxV0+gyD4EIbuueaz2dw1UjyQIkp51r+TVxvOXoz26n/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcEzperTOgF1DrqCEaOPqKM9JWiHHS24e8+aYj5fEMTgbcIRGm
-	No4pF8w44r1wUQPpH6m/5301U1/Hk5U0/ujaEpcV2y9GrVHYAn82kg0XmkN0tO/yHSNLdBbOYtM
-	Q
-X-Gm-Gg: ASbGncv63r8N2n61Ph1+taoJQG/yJB9pbptLpDh41CEIdD1HbtuzqUE7uK82Q2doCi6
-	Z4WQHnXPyiU2Xn8p1pF7loomIyzyfW68yNsa+KKtft+BCbv4jOl5f+KJzRT+45SRMIFnWSbYrVq
-	T6kXnux9DdyBHDc7LRQFWmX+m6GT+dKWtpmkfsMnpRy513p7fCcSK4cBl0KL5L6xoR9Yi8qHhsI
-	0kd2Tdf9ZwQbUMB8LgdPutMnmsm/4NvC4CQ0NCKDHixDJ9fZuJEhFGtz6jFkjxp1+bqAC/clBRU
-	2ahrQW/oxq3ApIE79aqtp8UxopuPuYI1SUd511PqAPRByY4sehvv8vbpU+z+DsG+zDnIr7ayPG4
-	A2uqvvNdy1pYttwgf9k08oOQ=
-X-Google-Smtp-Source: AGHT+IF1prRGm/Bf5jF5cqB1ZVz5ARRbqEYu2aNlBhCbEo50tZLCWap2fGA+duSbPS2otwQmiAJ+Og==
-X-Received: by 2002:a05:6000:178b:b0:391:4c0c:c807 with SMTP id ffacd0b85a97d-3997f942453mr13583965f8f.53.1742842686783;
-        Mon, 24 Mar 2025 11:58:06 -0700 (PDT)
-Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3bb2b2ffsm156670915e9.1.2025.03.24.11.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 11:58:06 -0700 (PDT)
-From: Your Name <naresh.solanki@9elements.com>
-X-Google-Original-From: Your Name <you@example.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7BF267709
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742842794; cv=pass; b=GAWpcHRWhK/jflJZSPrwZOBS3fmeOpHL65PBg2nM5WuI3m3Tsm4fYW/cxfi6uxbSOjA1gHlvA6TMcipI5kGz1Y3ncVjgXJTaIUfTP0Hxkf1CvlW2eIy3b2jeIJrS3BRAyxBsi+3iz3bhfhC1XQHNmKpA8OMVzzQRTLztdzSBfd4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742842794; c=relaxed/simple;
+	bh=YkSyPXy0FDhL9kKjmA/CCDkeAo/PQN6nTet3SHPAiko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FloLWYbHcgQtM7b86vHIlwd4NdiQ/AmAiuRNqbF6NNagAc0ewptln1GbjGJ2EusG/UJxTymwLHPNtXOkuU4TQnImzGbBbdjjAKhct/lSIeWeb4LfPLiNuWekHuigurWfi7TZy9sCpkSg4Qja4gR5uk/ky88N2PVgDCgDxJbat5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=N/hCGrSm; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742842768; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cD3WUrOIAcXNg8o2fxPX4FwP488rTUSmr9Aibn68YIXoATCrVgqjdvKgFp/UoPRmwFVOgyr6Bq9NH8J8PTubSW2hmygoMPPpgvlxvFNOq5Cq7qXDHERc5QTL1Q5bSRH2l9FCJx1iV+CTEYH3eRaj3C0/dpSExAUB23jB9FWjVOk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742842768; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+0Qpm6G3dM4dW12QfuflWvN7JYPYS0esNhImh/Wdovw=; 
+	b=ekbSviQbbytGTSDHn80ZVfPLX/vvOGosbGnzcVWAJGt5pGI2i+c8MlL5g4Bnvwj8pTTiVu6QTR6E2aV7q20R6blcz3ML9RSCTVOhkPc+MHrAiDYoOsLg8Mt1d3FLlAQfNa2juR360iRl1ZH8nktMy/t+BVJ6Dr2GV8B2Hz0lRg0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742842768;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=+0Qpm6G3dM4dW12QfuflWvN7JYPYS0esNhImh/Wdovw=;
+	b=N/hCGrSmQ61/H8DLOm5U+0nwLvb3NgJlV2YylG+F8zg2HJysYxJxqSi5xFASS6BY
+	Rl9G2tiq/HCVQz2f2a+IbnOy3B0fY+iBlfnc2cFmNnpRXPUXNolp4POEoSoZmDQIXuO
+	NN9qExbkTdleRagvUI+MFZVzLBzHuaTNuKdcgET4=
+Received: by mx.zohomail.com with SMTPS id 1742842766824425.22107114928986;
+	Mon, 24 Mar 2025 11:59:26 -0700 (PDT)
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+To: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Cc: Naresh Solanki <naresh.solanki@9elements.com>
-Subject: [PATCH] hwmon: (max6639) : Allow setting target RPM
-Date: Tue, 25 Mar 2025 00:27:44 +0530
-Message-ID: <20250324185744.2421462-1-you@example.com>
-X-Mailer: git-send-email 2.42.0
+Cc: boris.brezillon@collabora.com,
+	robh@kernel.org,
+	steven.price@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	kernel@collabora.com,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	sjoerd@collabora.com,
+	angelogioacchino.delregno@collabora.com,
+	Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Subject: [PATCH v5 0/6] drm/panfrost: Add support for AARCH64_4K page table format
+Date: Mon, 24 Mar 2025 15:57:55 -0300
+Message-ID: <20250324185801.168664-1-ariel.dalessandro@collabora.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-From: Naresh Solanki <naresh.solanki@9elements.com>
+Hi all,
 
-Currently, during startup, the fan is set to its maximum RPM by default,
-which may not be suitable for all use cases.
-This patch introduces support for specifying a target RPM via the Device
-Tree property "target-rpm".
+This is a new iteration on Panfrost support for AARCH64_4K page table
+format. The main reason behind this patchset is that MediaTek MT8188 SoC
+(ARM Mali-G57 MC3 GPU) constantly faults due to the actual Panfrost cache
+configuration.
 
-Changes:
-- Added `target_rpm` field to `max6639_data` structure to store the
-  target RPM for each fan channel.
-- Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
-  property from the Device Tree and set `target_rpm` accordingly.
-- Updated `max6639_init_client()` to use `target_rpm` to compute the
-  initial PWM duty cycle instead of defaulting to full speed (120/120).
+Currently, Panfrost only supports MMU configuration in "LEGACY" (as Bifrost
+calls it) mode, a (modified) version of LPAE "Large Physical Address
+Extension", which in Linux we've called "mali_lpae".
 
-Behavior:
-- If `"target-rpm"` is specified, the fan speed is set accordingly.
-- If `"target-rpm"` is not specified, the previous behavior (full speed
-  at startup) is retained.
+This patchset adds support for conditionally enabling AARCH64_4K page table
+format. To achieve that, a "GPU optional quirks" field was added to
+`struct panfrost_features` with the related flag.
 
-This allows better control over fan speed during system initialization.
+Note that, in order to enable AARCH64_4K mode, the GPU variant must have
+the HW_FEATURE_AARCH64_MMU feature flag present.
 
-Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
----
- drivers/hwmon/max6639.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+The patchset only enables the new format on Mediatek MT8188 and MT8192,
+which have been tested on a Mediatek Genio 700 EVK (MT8390) and Mediatek
+Genio 1200 EVK (MT8395) boards respectively.
 
-diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
-index 32b4d54b2076..ca8a8f58d133 100644
---- a/drivers/hwmon/max6639.c
-+++ b/drivers/hwmon/max6639.c
-@@ -80,6 +80,7 @@ struct max6639_data {
- 	/* Register values initialized only once */
- 	u8 ppr[MAX6639_NUM_CHANNELS];	/* Pulses per rotation 0..3 for 1..4 ppr */
- 	u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
-+	u32 target_rpm[MAX6639_NUM_CHANNELS];
- 
- 	/* Optional regulator for FAN supply */
- 	struct regulator *reg;
-@@ -560,8 +561,14 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
- 	}
- 
- 	err = of_property_read_u32(child, "max-rpm", &val);
--	if (!err)
-+	if (!err) {
- 		data->rpm_range[i] = rpm_range_to_reg(val);
-+		data->target_rpm[i] = val;
-+	}
-+
-+	err = of_property_read_u32(child, "target-rpm", &val);
-+	if (!err)
-+		data->target_rpm[i] = val;
- 
- 	return 0;
- }
-@@ -573,6 +580,7 @@ static int max6639_init_client(struct i2c_client *client,
- 	const struct device_node *np = dev->of_node;
- 	struct device_node *child;
- 	int i, err;
-+	u8 target_duty;
- 
- 	/* Reset chip to default values, see below for GCONFIG setup */
- 	err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
-@@ -639,8 +647,9 @@ static int max6639_init_client(struct i2c_client *client,
- 		if (err)
- 			return err;
- 
--		/* PWM 120/120 (i.e. 100%) */
--		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
-+		/* Set PWM based on target RPM if specified */
-+		target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
-+		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), target_duty);
- 		if (err)
- 			return err;
- 	}
+Thanks!
 
-base-commit: 2115cbeec8a3ccc69e3b7ecdf97b4472b0829cfc
+Changes in v5:
+* Fixed drm_WARN() in panfrost_mmu_cfg_init().
+
+Changes in v4:
+* Fixed panfrost_mmu_cfg_init() return value on warning.
+
+Changes in v3:
+* Fixed error handling in panfrost_mmu_ctx_create().
+
+Changes in v2:
+* Dropped panfrost_mmu_enable/disable unification.
+* Rename gpu_configs as gpu_quirks.
+* Added error handling on page table not properly aligned.
+* Enabled AARCH64_4K format on MediaTek MT8192 as well.
+* Minor fixes.
+
+Changes in v1:
+* Added "Set IOMMU_CACHE flag" patch.
+* Replaced `panfrost_mmu->enable()` function pointer by `cfg` struct
+prepared during init time.
+* Made mali_lpae/aarch64_4k name more clear.
+* Added GPU_CONFIG_AARCH64_4K flag to enable AARCH64_4K page table
+  format.
+* Enabled AARCH64_4K mode only on mediatek-mt8188.
+
+Ariel D'Alessandro (6):
+  drm/panfrost: Set IOMMU_CACHE flag
+  drm/panfrost: Use GPU_MMU_FEATURES_VA_BITS/PA_BITS macros
+  drm/panfrost: Set HW_FEATURE_AARCH64_MMU feature flag on Bifrost
+    models
+  drm/panfrost: Add support for AARCH64_4K page table format
+  drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8188
+  drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8192
+
+ drivers/gpu/drm/panfrost/panfrost_device.h   |  16 ++
+ drivers/gpu/drm/panfrost/panfrost_drv.c      |   2 +
+ drivers/gpu/drm/panfrost/panfrost_features.h |   3 +
+ drivers/gpu/drm/panfrost/panfrost_mmu.c      | 150 +++++++++++++++++--
+ drivers/gpu/drm/panfrost/panfrost_regs.h     |  36 +++++
+ 5 files changed, 196 insertions(+), 11 deletions(-)
+
 -- 
-2.42.0
+2.49.0
 
 
