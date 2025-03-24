@@ -1,326 +1,256 @@
-Return-Path: <linux-kernel+bounces-573760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD90A6DBCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:41:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73802A6DB6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765DD171116
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348301716DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7222A25F7AF;
-	Mon, 24 Mar 2025 13:38:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498DF25F785;
+	Mon, 24 Mar 2025 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Qrd00X1w"
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF04A38DE9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C3925EFBA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823534; cv=none; b=cgN3hUOXC4vagb1HyB8Ihog+fV2+4hEHuEkjCdhfYO5zBv7mmuBIEbRXrZLGQ6y0xaAabdZjaj3UjJjblxA29vo9rTQvKkYMc23hdmLfRx95xG9otTd6jPuw/cvchfrz3RllsM7lWJXYOggJ3dqL3Fmhzl59NLZ/87+dZPGpdSU=
+	t=1742822737; cv=none; b=Fe9snZOlrE8S58FWTlAm0Sj4Y0tiZPlF9rFqc/1rp/wKD3pbt/ljBmiWstOBHNBOmXXRiOggY/QM7KZS/D5kWxidajhtmZgM4CLaCUOLqc8Y+8KqGSsa/ywsJOCrKEHA0NeDp0G//aSX7j5VIdsceNm0cfHPREDyMRRIJ5tdtEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823534; c=relaxed/simple;
-	bh=7A84H6I6MEG2JXRxa+f82FT3Pri//DTVDuwsBhx9whY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N6KRx/G45O1n7fBg9A47huLKGdjy4kpl6sieC++a9qGQPKgc4CkOqVDKPBn4rdyYe7BnkTX8soC6ViOjPuLHaRYjShT1B9QcwQzChLH1nKP8FGTn47QL6jJOJzcEqBL1DhgCF956iG9FV0U0BFAWMW730DDXZQFOcO7HBW7y7xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1twi0u-0006Gm-J0; Mon, 24 Mar 2025 14:38:48 +0100
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1twi0t-001Q4y-1S;
-	Mon, 24 Mar 2025 14:38:47 +0100
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1twhml-004Vqr-1M;
-	Mon, 24 Mar 2025 14:24:11 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Mon, 24 Mar 2025 14:24:11 +0100
-Subject: [PATCH wireless-next v5 10/10] wifi: mwifiex: drop asynchronous
- init waiting code
+	s=arc-20240116; t=1742822737; c=relaxed/simple;
+	bh=yL3lmgobLEBKRSsH+4V1Nb+xmQ7s1p+yCn95ZWhAPEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oG4lP0JE8BJhlXLdIhx100Bkggm+19yYGiUgWt8GsCi0QQVP/4QNWQvUHo0+d7kGgfXFdy9+R8USzP9bUvVybadXgGdz4ZWo50wa15v/SY3Nj41dFOd3/uQ5wmmTRLDCi9fTxhaDzH6mK6T+SnK4Wbkrvw717GXF3paMZpu7dXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Qrd00X1w; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:644d:0:640:2ef6:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 73D9B60E8E;
+	Mon, 24 Mar 2025 16:25:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NPOHhg1LoeA0-FChmd9O9;
+	Mon, 24 Mar 2025 16:25:24 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1742822724; bh=jgnev3j32nPtiW6Wpj/qKrnMsAM6tbWnUWS2Lh6tQ9Q=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=Qrd00X1wSSJZCq+foYGpKsA08Qc9dgyAbyP8L1ekEnnWoUi3CillELzip/qgVT5qg
+	 Ff3Ii6ILN+z7QSB0ogdzJ1aTLBupmKIDKgpA1TwohkwA1Kw26PRI6A6dwz/IRe9ibP
+	 EbovGOyuzbPwZEcaS27SIgOa91Weho6esvOwQiSI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-95.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+353d7b75658a95aa955a@syzkaller.appspotmail.com
+Subject: [PATCH] binder: fix use-after-free in binderfs_evict_inode()
+Date: Mon, 24 Mar 2025 16:24:27 +0300
+Message-ID: <20250324132427.922495-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250324-mwifiex-cleanup-1-v5-10-1128a2be02af@pengutronix.de>
-References: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
-In-Reply-To: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>, 
- Francesco Dolcini <francesco@dolcini.it>
-Cc: Johannes Berg <johannes.berg@intel.com>, linux-wireless@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>, 
- kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742822651; l=9066;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=7A84H6I6MEG2JXRxa+f82FT3Pri//DTVDuwsBhx9whY=;
- b=DsBHja1M4RqjJf+FUTxqWbNLHoehdKkLv0Iur0nsp997Y4Ct6RZSPC1//8qSgJvTp1PuKiivm
- +7wDzdTL0WGAVnC8yji6WOYew/qI55eHPo8ov4t1pTX03r+uWHCMTCk
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Historically all commands sent to the mwifiex driver have been
-asynchronous. The different commands sent during driver initialization
-have been queued at once and only the final command has been waited
-for being ready before finally starting the driver.
+Running 'stress-ng --binderfs 16 --timeout 300' under KASAN-enabled
+kernel, I've noticed the following:
 
-This has been changed in 7bff9c974e1a ("mwifiex: send firmware
-initialization commands synchronously"). With this the initialization
-is finished once the last mwifiex_send_cmd_sync() (now
-mwifiex_send_cmd()) has returned. This makes all the code used to
-wait for the last initialization command to be finished unnecessary,
-so it's removed in this patch.
+BUG: KASAN: slab-use-after-free in binderfs_evict_inode+0x1de/0x2d0
+Write of size 8 at addr ffff88807379bc08 by task stress-ng-binde/1699
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+CPU: 0 UID: 0 PID: 1699 Comm: stress-ng-binde Not tainted 6.14.0-rc7-g586de92313fc-dirty #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-3.fc41 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x1c2/0x2a0
+ ? __pfx_dump_stack_lvl+0x10/0x10
+ ? __pfx__printk+0x10/0x10
+ ? __pfx_lock_release+0x10/0x10
+ ? __virt_addr_valid+0x18c/0x540
+ ? __virt_addr_valid+0x469/0x540
+ print_report+0x155/0x840
+ ? __virt_addr_valid+0x18c/0x540
+ ? __virt_addr_valid+0x469/0x540
+ ? __phys_addr+0xba/0x170
+ ? binderfs_evict_inode+0x1de/0x2d0
+ kasan_report+0x147/0x180
+ ? binderfs_evict_inode+0x1de/0x2d0
+ binderfs_evict_inode+0x1de/0x2d0
+ ? __pfx_binderfs_evict_inode+0x10/0x10
+ evict+0x524/0x9f0
+ ? __pfx_lock_release+0x10/0x10
+ ? __pfx_evict+0x10/0x10
+ ? do_raw_spin_unlock+0x4d/0x210
+ ? _raw_spin_unlock+0x28/0x50
+ ? iput+0x697/0x9b0
+ __dentry_kill+0x209/0x660
+ ? shrink_kill+0x8d/0x2c0
+ shrink_kill+0xa9/0x2c0
+ shrink_dentry_list+0x2e0/0x5e0
+ shrink_dcache_parent+0xa2/0x2c0
+ ? __pfx_shrink_dcache_parent+0x10/0x10
+ ? __pfx_lock_release+0x10/0x10
+ ? __pfx_do_raw_spin_lock+0x10/0x10
+ do_one_tree+0x23/0xe0
+ shrink_dcache_for_umount+0xa0/0x170
+ generic_shutdown_super+0x67/0x390
+ kill_litter_super+0x76/0xb0
+ binderfs_kill_super+0x44/0x90
+ deactivate_locked_super+0xb9/0x130
+ cleanup_mnt+0x422/0x4c0
+ ? lockdep_hardirqs_on+0x9d/0x150
+ task_work_run+0x1d2/0x260
+ ? __pfx_task_work_run+0x10/0x10
+ resume_user_mode_work+0x52/0x60
+ syscall_exit_to_user_mode+0x9a/0x120
+ do_syscall_64+0x103/0x210
+ ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0xcac57b
+Code: c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 31 f6 e9 05 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8
+RSP: 002b:00007ffecf4226a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 00007ffecf422720 RCX: 0000000000cac57b
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffecf422850
+RBP: 00007ffecf422850 R08: 0000000028d06ab1 R09: 7fffffffffffffff
+R10: 3fffffffffffffff R11: 0000000000000246 R12: 00007ffecf422718
+R13: 00007ffecf422710 R14: 00007f478f87b658 R15: 00007ffecf422830
+ </TASK>
+
+Allocated by task 1705:
+ kasan_save_track+0x3e/0x80
+ __kasan_kmalloc+0x8f/0xa0
+ __kmalloc_cache_noprof+0x213/0x3e0
+ binderfs_binder_device_create+0x183/0xa80
+ binder_ctl_ioctl+0x138/0x190
+ __x64_sys_ioctl+0x120/0x1b0
+ do_syscall_64+0xf6/0x210
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 1705:
+ kasan_save_track+0x3e/0x80
+ kasan_save_free_info+0x46/0x50
+ __kasan_slab_free+0x62/0x70
+ kfree+0x194/0x440
+ evict+0x524/0x9f0
+ do_unlinkat+0x390/0x5b0
+ __x64_sys_unlink+0x47/0x50
+ do_syscall_64+0xf6/0x210
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+This 'stress-ng' workload causes the concurrent deletions from
+'binder_devices' and so requires full-featured synchronization
+to prevent list corruption.
+
+I've found this issue independently but pretty sure that syzbot did
+the same, so Reported-by: and Closes: should be applicable here as well.
+
+Reported-by: syzbot+353d7b75658a95aa955a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=353d7b75658a95aa955a
+Fixes: e77aff5528a18 ("binderfs: fix use-after-free in binder_devices")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
 ---
- drivers/net/wireless/marvell/mwifiex/cmdevt.c  | 16 ----------------
- drivers/net/wireless/marvell/mwifiex/init.c    | 18 +++++-------------
- drivers/net/wireless/marvell/mwifiex/main.c    | 25 +++----------------------
- drivers/net/wireless/marvell/mwifiex/main.h    |  6 ------
- drivers/net/wireless/marvell/mwifiex/sta_cmd.c |  6 ------
- drivers/net/wireless/marvell/mwifiex/util.c    | 18 ------------------
- 6 files changed, 8 insertions(+), 81 deletions(-)
+ drivers/android/binder.c          | 15 +++++++++++++--
+ drivers/android/binder_internal.h |  8 ++++++--
+ drivers/android/binderfs.c        |  2 +-
+ 3 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cmdevt.c b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-index 90cb469c897eb..fa7641f09719b 100644
---- a/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cmdevt.c
-@@ -892,18 +892,6 @@ int mwifiex_process_cmdresp(struct mwifiex_adapter *adapter)
- 		ret = mwifiex_process_sta_cmdresp(priv, cmdresp_no, resp);
- 	}
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 76052006bd87..bf79a0e339fe 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -79,6 +79,8 @@ static HLIST_HEAD(binder_deferred_list);
+ static DEFINE_MUTEX(binder_deferred_lock);
  
--	/* Check init command response */
--	if (adapter->hw_status == MWIFIEX_HW_STATUS_INITIALIZING) {
--		if (ret) {
--			mwifiex_dbg(adapter, ERROR,
--				    "%s: cmd %#x failed during\t"
--				    "initialization\n", __func__, cmdresp_no);
--			mwifiex_init_fw_complete(adapter);
--			return -1;
--		} else if (adapter->last_init_cmd == cmdresp_no)
--			adapter->hw_status = MWIFIEX_HW_STATUS_INIT_DONE;
--	}
--
- 	if (adapter->curr_cmd) {
- 		if (adapter->curr_cmd->wait_q_enabled)
- 			adapter->cmd_wait_q.status = ret;
-@@ -1022,10 +1010,6 @@ mwifiex_cmd_timeout_func(struct timer_list *t)
- 			mwifiex_cancel_pending_ioctl(adapter);
- 		}
- 	}
--	if (adapter->hw_status == MWIFIEX_HW_STATUS_INITIALIZING) {
--		mwifiex_init_fw_complete(adapter);
--		return;
--	}
- 
- 	if (adapter->if_ops.device_dump)
- 		adapter->if_ops.device_dump(adapter);
-diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
-index 8b61e45cd6678..fc58ca1a60ca8 100644
---- a/drivers/net/wireless/marvell/mwifiex/init.c
-+++ b/drivers/net/wireless/marvell/mwifiex/init.c
-@@ -487,7 +487,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
- 	int ret;
- 	struct mwifiex_private *priv;
- 	u8 i, first_sta = true;
--	int is_cmd_pend_q_empty;
- 
- 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
- 
-@@ -509,7 +508,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
- 	}
- 	if (adapter->mfg_mode) {
- 		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
--		ret = -EINPROGRESS;
- 	} else {
- 		for (i = 0; i < adapter->priv_num; i++) {
- 			ret = mwifiex_sta_init_cmd(adapter->priv[i],
-@@ -521,18 +519,12 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
- 		}
- 	}
- 
--	spin_lock_bh(&adapter->cmd_pending_q_lock);
--	is_cmd_pend_q_empty = list_empty(&adapter->cmd_pending_q);
--	spin_unlock_bh(&adapter->cmd_pending_q_lock);
--	if (!is_cmd_pend_q_empty) {
--		/* Send the first command in queue and return */
--		if (mwifiex_main_process(adapter) != -1)
--			ret = -EINPROGRESS;
--	} else {
--		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
--	}
-+	adapter->hw_status = MWIFIEX_HW_STATUS_READY;
- 
--	return ret;
-+	if (adapter->if_ops.init_fw_port)
-+		adapter->if_ops.init_fw_port(adapter);
+ static HLIST_HEAD(binder_devices);
++static DEFINE_SPINLOCK(binder_devices_lock);
 +
-+	return 0;
+ static HLIST_HEAD(binder_procs);
+ static DEFINE_MUTEX(binder_procs_lock);
+ 
+@@ -6929,7 +6931,16 @@ const struct binder_debugfs_entry binder_debugfs_entries[] = {
+ 
+ void binder_add_device(struct binder_device *device)
+ {
++	spin_lock(&binder_devices_lock);
+ 	hlist_add_head(&device->hlist, &binder_devices);
++	spin_unlock(&binder_devices_lock);
++}
++
++void binder_remove_device(struct binder_device *device)
++{
++	spin_lock(&binder_devices_lock);
++	hlist_del_init(&device->hlist);
++	spin_unlock(&binder_devices_lock);
  }
  
- /*
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
-index 3cb3db7a089b8..8d7384cfe80a1 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.c
-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
-@@ -354,13 +354,6 @@ int mwifiex_main_process(struct mwifiex_adapter *adapter)
- 		if (adapter->cmd_resp_received) {
- 			adapter->cmd_resp_received = false;
- 			mwifiex_process_cmdresp(adapter);
--
--			/* call mwifiex back when init_fw is done */
--			if (adapter->hw_status == MWIFIEX_HW_STATUS_INIT_DONE) {
--				adapter->hw_status = MWIFIEX_HW_STATUS_READY;
--				mwifiex_init_fw_complete(adapter);
--				maybe_quirk_fw_disable_ds(adapter);
--			}
- 		}
- 
- 		/* Check if we need to confirm Sleep Request
-@@ -578,21 +571,11 @@ static int _mwifiex_fw_dpc(const struct firmware *firmware, void *context)
- 			goto err_dnld_fw;
+ static int __init init_binder_device(const char *name)
+@@ -6956,7 +6967,7 @@ static int __init init_binder_device(const char *name)
+ 		return ret;
  	}
  
--	adapter->init_wait_q_woken = false;
- 	ret = mwifiex_init_fw(adapter);
--	if (ret == -1) {
-+	if (ret < 0)
- 		goto err_init_fw;
--	} else if (!ret) {
--		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
--		goto done;
--	}
--	/* Wait for mwifiex_init to complete */
--	if (!adapter->mfg_mode) {
--		wait_event_interruptible(adapter->init_wait_q,
--					 adapter->init_wait_q_woken);
--		if (adapter->hw_status != MWIFIEX_HW_STATUS_READY)
--			goto err_init_fw;
--	}
-+
-+	maybe_quirk_fw_disable_ds(adapter);
+-	hlist_add_head(&binder_device->hlist, &binder_devices);
++	binder_add_device(binder_device);
  
- 	if (!adapter->wiphy) {
- 		if (mwifiex_register_cfg80211(adapter)) {
-@@ -1549,7 +1532,6 @@ mwifiex_reinit_sw(struct mwifiex_adapter *adapter)
- 
- 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
- 	clear_bit(MWIFIEX_SURPRISE_REMOVED, &adapter->work_flags);
--	init_waitqueue_head(&adapter->init_wait_q);
- 	clear_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags);
- 	adapter->hs_activated = false;
- 	clear_bit(MWIFIEX_IS_CMD_TIMEDOUT, &adapter->work_flags);
-@@ -1717,7 +1699,6 @@ mwifiex_add_card(void *card, struct completion *fw_done,
- 
- 	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
- 	clear_bit(MWIFIEX_SURPRISE_REMOVED, &adapter->work_flags);
--	init_waitqueue_head(&adapter->init_wait_q);
- 	clear_bit(MWIFIEX_IS_SUSPENDED, &adapter->work_flags);
- 	adapter->hs_activated = false;
- 	init_waitqueue_head(&adapter->hs_activate_wait_q);
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index e566470226d8f..7fe268761b074 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -239,7 +239,6 @@ struct mwifiex_dbg {
- enum MWIFIEX_HARDWARE_STATUS {
- 	MWIFIEX_HW_STATUS_READY,
- 	MWIFIEX_HW_STATUS_INITIALIZING,
--	MWIFIEX_HW_STATUS_INIT_DONE,
- 	MWIFIEX_HW_STATUS_RESET,
- 	MWIFIEX_HW_STATUS_NOT_READY
- };
-@@ -865,8 +864,6 @@ struct mwifiex_adapter {
- 	unsigned long work_flags;
- 	u32 fw_release_number;
- 	u8 intf_hdr_len;
--	u16 init_wait_q_woken;
--	wait_queue_head_t init_wait_q;
- 	void *card;
- 	struct mwifiex_if_ops if_ops;
- 	atomic_t bypass_tx_pending;
-@@ -919,7 +916,6 @@ struct mwifiex_adapter {
- 	struct cmd_ctrl_node *curr_cmd;
- 	/* spin lock for command */
- 	spinlock_t mwifiex_cmd_lock;
--	u16 last_init_cmd;
- 	struct timer_list cmd_timer;
- 	struct list_head cmd_free_q;
- 	/* spin lock for cmd_free_q */
-@@ -1060,8 +1056,6 @@ void mwifiex_free_priv(struct mwifiex_private *priv);
- 
- int mwifiex_init_fw(struct mwifiex_adapter *adapter);
- 
--int mwifiex_init_fw_complete(struct mwifiex_adapter *adapter);
--
- void mwifiex_shutdown_drv(struct mwifiex_adapter *adapter);
- 
- int mwifiex_dnld_fw(struct mwifiex_adapter *, struct mwifiex_fw_image *);
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-index f2e9f582ae818..199a8e52e5b16 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-@@ -2418,11 +2418,5 @@ int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta, bool init)
- 	ret = mwifiex_send_cmd(priv, HostCmd_CMD_11N_CFG,
- 			       HostCmd_ACT_GEN_SET, 0, &tx_cfg, true);
- 
--	if (init) {
--		/* set last_init_cmd before sending the command */
--		priv->adapter->last_init_cmd = HostCmd_CMD_11N_CFG;
--		ret = -EINPROGRESS;
--	}
--
  	return ret;
  }
-diff --git a/drivers/net/wireless/marvell/mwifiex/util.c b/drivers/net/wireless/marvell/mwifiex/util.c
-index ea28d604ee69c..4c5b1de0e936c 100644
---- a/drivers/net/wireless/marvell/mwifiex/util.c
-+++ b/drivers/net/wireless/marvell/mwifiex/util.c
-@@ -115,24 +115,6 @@ static struct mwifiex_debug_data items[] = {
+@@ -7018,7 +7029,7 @@ static int __init binder_init(void)
+ err_init_binder_device_failed:
+ 	hlist_for_each_entry_safe(device, tmp, &binder_devices, hlist) {
+ 		misc_deregister(&device->miscdev);
+-		hlist_del(&device->hlist);
++		binder_remove_device(device);
+ 		kfree(device);
+ 	}
  
- static int num_of_items = ARRAY_SIZE(items);
- 
--/*
-- * Firmware initialization complete callback handler.
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+index e4eb8357989c..c5d68c1d3780 100644
+--- a/drivers/android/binder_internal.h
++++ b/drivers/android/binder_internal.h
+@@ -584,9 +584,13 @@ struct binder_object {
+ /**
+  * Add a binder device to binder_devices
+  * @device: the new binder device to add to the global list
 - *
-- * This function wakes up the function waiting on the init
-- * wait queue for the firmware initialization to complete.
-- */
--int mwifiex_init_fw_complete(struct mwifiex_adapter *adapter)
--{
--
--	if (adapter->hw_status == MWIFIEX_HW_STATUS_READY)
--		if (adapter->if_ops.init_fw_port)
--			adapter->if_ops.init_fw_port(adapter);
--
--	adapter->init_wait_q_woken = true;
--	wake_up_interruptible(&adapter->init_wait_q);
--	return 0;
--}
--
- /*
-  * This function sends init/shutdown command
-  * to firmware.
-
+- * Not reentrant as the list is not protected by any locks
+  */
+ void binder_add_device(struct binder_device *device);
+ 
++/**
++ * Remove a binder device to binder_devices
++ * @device: the binder device to remove from the global list
++ */
++void binder_remove_device(struct binder_device *device);
++
+ #endif /* _LINUX_BINDER_INTERNAL_H */
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+index 94c6446604fc..44d430c4ebef 100644
+--- a/drivers/android/binderfs.c
++++ b/drivers/android/binderfs.c
+@@ -274,7 +274,7 @@ static void binderfs_evict_inode(struct inode *inode)
+ 	mutex_unlock(&binderfs_minors_mutex);
+ 
+ 	if (refcount_dec_and_test(&device->ref)) {
+-		hlist_del_init(&device->hlist);
++		binder_remove_device(device);
+ 		kfree(device->context.name);
+ 		kfree(device);
+ 	}
 -- 
-2.39.5
+2.49.0
 
 
