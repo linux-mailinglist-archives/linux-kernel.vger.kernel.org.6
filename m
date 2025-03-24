@@ -1,66 +1,87 @@
-Return-Path: <linux-kernel+bounces-574273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F075A6E2F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 20:00:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56697A6E2D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3643B434A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B2F17032D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB1F2676E5;
-	Mon, 24 Mar 2025 18:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8945E266F1A;
+	Mon, 24 Mar 2025 18:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEI+S8ti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="FyaYr9nE"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D03267395
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C752C266F12
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742842786; cv=none; b=S1S4D2gefi7yvb98l5qVjpWahlC/G+B349Ro0Flc3YIlHUkAtSxtfh8f2kBUAJhENc+pI4fk0hBwa63nO97L9gS2vbICD9IMkhTe7VniCKsb7c5f/bxGKkHSLM6kNUdIA+s3RyHAxzJktg8BGKyOB5NN9mFpDLORgkDWG8rk+Cc=
+	t=1742842690; cv=none; b=tZLQgRaaTnaiw9N23+OsIHn0reahlEIxs7J/bYdolPOcIiADaLrJkQal9+MXJagp5aMu+K1I01eoivRRBtQ3nWFZsJZmQN37gNRD3g79n6yEAYsb9QSfzcoDNo/uLSl2CJ8hRZNk97mSqLG4T/gnk8uX1QGLRsAwu5L/XaGxOtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742842786; c=relaxed/simple;
-	bh=P28JeNDdfIsHs0Yhi2or+iZJOlxhsSMOqlD2e6764qc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UzkKzIfH7uVbO6nb6d0oenj8B0Nn7vJz9PnJzJb4E+Pa8BiRhUQrMGdAOgoPi7/3bjUtDiYUrnyAXg1m+KXRAHH+1ZcpXvYHh2EwHzWQ224+s/LHSw29wlJy9c2+9YLd9uiRj7XZ9xFwumF0yoUEGvWunU0Yoh2QTjWmxC02Nv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEI+S8ti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E580EC4CEDD;
-	Mon, 24 Mar 2025 18:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742842786;
-	bh=P28JeNDdfIsHs0Yhi2or+iZJOlxhsSMOqlD2e6764qc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hEI+S8tiXB6lfLuJVkI0sE26Hhm+jk4CtP8cYz87BVegLJIt0bT9M+kilzBThiz/G
-	 0I2bW94NAHsXkC68F49mB7kWekK5GY7z4ejygaTPUUHReCk5hX33Z/uPhtENnLo4Pe
-	 UEZTPz1jqCC6X/bm06/8sTNQPbr4E6X/ac3uEYdfuS6mAbEaNRquBUCAsSio5ScyKb
-	 tQTCyqCBKWTrDanoXtuqvkYPL4wYUHJEGeRgJV7N8WNieaqmhCyfQl1RbDRWamVu+s
-	 bAozn0aavxXUo503y+LkELMhIjivJ07kptjOrxbJC/qDYBaYc1MSE4vsk4kMUVlf2/
-	 ZxDQbaoiqxj6w==
-From: Philipp Stanner <phasta@kernel.org>
-To: Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
+	s=arc-20240116; t=1742842690; c=relaxed/simple;
+	bh=JtCj9yaYLLnbWrZGwWO77vDysRJOjp9RTmqAEhYmjTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWbOlGV/H8xQIhusIDhZQK8G/bcacIZkhyErUK/Y4VpEb+VgJzFkRR7JPH5BWngU9E5RKrQc2+wocb57y/PqA7YLmpBuFXo+viOoqbQ9ccJYLVa7es/LWvxUcue86a/l2fXykL2DI/gEo8SpElzFRScLz5ByvxKKzZ0L1jZqBmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=FyaYr9nE; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso52155835e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1742842687; x=1743447487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G9PuYVarMebmU2p+Nlydwxr1Lr80Vi57j8nI2AO9zgc=;
+        b=FyaYr9nEpH05qGNR+I0h0Pguc3NHzfikDKuPwLvwvfFJhO+ds6WJTb/IKmPBcWptUf
+         SssIpcSGjplPYjarV4bnddOge475Jm8iKfC5cjU8U1EEaCvClNeWouZ87A3tqGrlxd+f
+         zdppviVKKQ38y8YljQ7GcSzvuu0pKHQZ/TmPeW8/5Jx+TkwqLfbLkxUPfq8pAKnJYzVO
+         ESvqX7tYwdHe4B6R42JLqSixz7h0hGV3+jVTGGZdqU/DgL0fMEGKIxl3f8es0N1w3SLc
+         jMhJSlZOJ2JOGU+ZrBVxrWSLdjuiBHhg0DEYUcY3kkCQum5raX/fwKaydk21DgNmtLdp
+         jX8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742842687; x=1743447487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G9PuYVarMebmU2p+Nlydwxr1Lr80Vi57j8nI2AO9zgc=;
+        b=BqFl83fOD6AtnTzJNjmbh45Ra25Cok8duPzzjBFGlUdYYH/7K0MO2lJ9AQQNXXZVcD
+         WqKKA81M/ORQurxUf8i1LDJfVr2rLDQApZgvFRx1xgnF8gK83NFAOZas4cZl/kitRsCo
+         TB8m1J7Pt3qjA7IYgJ4GedjVVy7E+bkYGci4bZOOD8Lxfm2deF6W3FEhJiagT50BrHbr
+         HSt08aV1ObmZxiHeWJ09hHn5y2Vn2wQ/HLdrTPVrTopCfJ70gKq0co6CPz0vo1KOwVY6
+         ybqpNH1EdjqCsKFyCY9ztZmP3LdOckxRpb/Ra0mMqlTKrW1hGP6KHuiuahV3uVwUDfVA
+         tNSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGxG+GagjSNu8fAu0V9FcwiwWUQOT90eSHzJdxV0+gyD4EIbuueaz2dw1UjyQIkp51r+TVxvOXoz26n/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcEzperTOgF1DrqCEaOPqKM9JWiHHS24e8+aYj5fEMTgbcIRGm
+	No4pF8w44r1wUQPpH6m/5301U1/Hk5U0/ujaEpcV2y9GrVHYAn82kg0XmkN0tO/yHSNLdBbOYtM
+	Q
+X-Gm-Gg: ASbGncv63r8N2n61Ph1+taoJQG/yJB9pbptLpDh41CEIdD1HbtuzqUE7uK82Q2doCi6
+	Z4WQHnXPyiU2Xn8p1pF7loomIyzyfW68yNsa+KKtft+BCbv4jOl5f+KJzRT+45SRMIFnWSbYrVq
+	T6kXnux9DdyBHDc7LRQFWmX+m6GT+dKWtpmkfsMnpRy513p7fCcSK4cBl0KL5L6xoR9Yi8qHhsI
+	0kd2Tdf9ZwQbUMB8LgdPutMnmsm/4NvC4CQ0NCKDHixDJ9fZuJEhFGtz6jFkjxp1+bqAC/clBRU
+	2ahrQW/oxq3ApIE79aqtp8UxopuPuYI1SUd511PqAPRByY4sehvv8vbpU+z+DsG+zDnIr7ayPG4
+	A2uqvvNdy1pYttwgf9k08oOQ=
+X-Google-Smtp-Source: AGHT+IF1prRGm/Bf5jF5cqB1ZVz5ARRbqEYu2aNlBhCbEo50tZLCWap2fGA+duSbPS2otwQmiAJ+Og==
+X-Received: by 2002:a05:6000:178b:b0:391:4c0c:c807 with SMTP id ffacd0b85a97d-3997f942453mr13583965f8f.53.1742842686783;
+        Mon, 24 Mar 2025 11:58:06 -0700 (PDT)
+Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3bb2b2ffsm156670915e9.1.2025.03.24.11.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 11:58:06 -0700 (PDT)
+From: Your Name <naresh.solanki@9elements.com>
+X-Google-Original-From: Your Name <you@example.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 5/5] drm/nouveau: Remove waitque for sched teardown
-Date: Mon, 24 Mar 2025 19:57:29 +0100
-Message-ID: <20250324185728.45857-7-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250324185728.45857-2-phasta@kernel.org>
-References: <20250324185728.45857-2-phasta@kernel.org>
+Cc: Naresh Solanki <naresh.solanki@9elements.com>
+Subject: [PATCH] hwmon: (max6639) : Allow setting target RPM
+Date: Tue, 25 Mar 2025 00:27:44 +0530
+Message-ID: <20250324185744.2421462-1-you@example.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,130 +90,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-struct nouveau_sched contains a waitque needed to prevent
-drm_sched_fini() from being called while there are still jobs pending.
-Doing so so far would have caused memory leaks.
+From: Naresh Solanki <naresh.solanki@9elements.com>
 
-With the new memleak-free mode of operation switched on in
-drm_sched_fini() by providing the callback
-nouveau_sched_fence_context_kill() the waitque is not necessary anymore.
+Currently, during startup, the fan is set to its maximum RPM by default,
+which may not be suitable for all use cases.
+This patch introduces support for specifying a target RPM via the Device
+Tree property "target-rpm".
 
-Remove the waitque.
+Changes:
+- Added `target_rpm` field to `max6639_data` structure to store the
+  target RPM for each fan channel.
+- Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
+  property from the Device Tree and set `target_rpm` accordingly.
+- Updated `max6639_init_client()` to use `target_rpm` to compute the
+  initial PWM duty cycle instead of defaulting to full speed (120/120).
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Behavior:
+- If `"target-rpm"` is specified, the fan speed is set accordingly.
+- If `"target-rpm"` is not specified, the previous behavior (full speed
+  at startup) is retained.
+
+This allows better control over fan speed during system initialization.
+
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_sched.c | 20 +++++++-------------
- drivers/gpu/drm/nouveau/nouveau_sched.h |  9 +++------
- drivers/gpu/drm/nouveau/nouveau_uvmm.c  |  8 ++++----
- 3 files changed, 14 insertions(+), 23 deletions(-)
+ drivers/hwmon/max6639.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index 3659ac78bb3e..d9ac76198616 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -121,11 +121,9 @@ nouveau_job_done(struct nouveau_job *job)
- {
- 	struct nouveau_sched *sched = job->sched;
+diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
+index 32b4d54b2076..ca8a8f58d133 100644
+--- a/drivers/hwmon/max6639.c
++++ b/drivers/hwmon/max6639.c
+@@ -80,6 +80,7 @@ struct max6639_data {
+ 	/* Register values initialized only once */
+ 	u8 ppr[MAX6639_NUM_CHANNELS];	/* Pulses per rotation 0..3 for 1..4 ppr */
+ 	u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
++	u32 target_rpm[MAX6639_NUM_CHANNELS];
  
--	spin_lock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
- 	list_del(&job->entry);
--	spin_unlock(&sched->job.list.lock);
--
--	wake_up(&sched->job.wq);
-+	spin_unlock(&sched->job_list.lock);
- }
- 
- void
-@@ -306,9 +304,9 @@ nouveau_job_submit(struct nouveau_job *job)
+ 	/* Optional regulator for FAN supply */
+ 	struct regulator *reg;
+@@ -560,8 +561,14 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
  	}
  
- 	/* Submit was successful; add the job to the schedulers job list. */
--	spin_lock(&sched->job.list.lock);
--	list_add(&job->entry, &sched->job.list.head);
--	spin_unlock(&sched->job.list.lock);
-+	spin_lock(&sched->job_list.lock);
-+	list_add(&job->entry, &sched->job_list.head);
-+	spin_unlock(&sched->job_list.lock);
- 
- 	drm_sched_job_arm(&job->base);
- 	job->done_fence = dma_fence_get(&job->base.s_fence->finished);
-@@ -458,9 +456,8 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 		goto fail_sched;
- 
- 	mutex_init(&sched->mutex);
--	spin_lock_init(&sched->job.list.lock);
--	INIT_LIST_HEAD(&sched->job.list.head);
--	init_waitqueue_head(&sched->job.wq);
-+	spin_lock_init(&sched->job_list.lock);
-+	INIT_LIST_HEAD(&sched->job_list.head);
+ 	err = of_property_read_u32(child, "max-rpm", &val);
+-	if (!err)
++	if (!err) {
+ 		data->rpm_range[i] = rpm_range_to_reg(val);
++		data->target_rpm[i] = val;
++	}
++
++	err = of_property_read_u32(child, "target-rpm", &val);
++	if (!err)
++		data->target_rpm[i] = val;
  
  	return 0;
- 
-@@ -503,9 +500,6 @@ nouveau_sched_fini(struct nouveau_sched *sched)
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
- 
--	rmb(); /* for list_empty to work without lock */
--	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
--
- 	drm_sched_entity_fini(entity);
- 	drm_sched_fini(drm_sched);
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
-index e6e2016a3569..339a14563fbb 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-@@ -105,12 +105,9 @@ struct nouveau_sched {
- 	struct nouveau_channel *chan;
- 
- 	struct {
--		struct {
--			struct list_head head;
--			spinlock_t lock;
--		} list;
--		struct wait_queue_head wq;
--	} job;
-+		struct list_head head;
-+		spinlock_t lock;
-+	} job_list;
- };
- 
- int nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
-diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-index 48f105239f42..ddfc46bc1b3e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-@@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 	u64 end = addr + range;
- 
- again:
--	spin_lock(&sched->job.list.lock);
--	list_for_each_entry(__job, &sched->job.list.head, entry) {
-+	spin_lock(&sched->job_list.lock);
-+	list_for_each_entry(__job, &sched->job_list.head, entry) {
- 		struct nouveau_uvmm_bind_job *bind_job = to_uvmm_bind_job(__job);
- 
- 		list_for_each_op(op, &bind_job->ops) {
-@@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 
- 				if (!(end <= op_addr || addr >= op_end)) {
- 					nouveau_uvmm_bind_job_get(bind_job);
--					spin_unlock(&sched->job.list.lock);
-+					spin_unlock(&sched->job_list.lock);
- 					wait_for_completion(&bind_job->complete);
- 					nouveau_uvmm_bind_job_put(bind_job);
- 					goto again;
-@@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job, u64 addr, u64 range)
- 			}
- 		}
- 	}
--	spin_unlock(&sched->job.list.lock);
-+	spin_unlock(&sched->job_list.lock);
  }
+@@ -573,6 +580,7 @@ static int max6639_init_client(struct i2c_client *client,
+ 	const struct device_node *np = dev->of_node;
+ 	struct device_node *child;
+ 	int i, err;
++	u8 target_duty;
  
- static int
+ 	/* Reset chip to default values, see below for GCONFIG setup */
+ 	err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
+@@ -639,8 +647,9 @@ static int max6639_init_client(struct i2c_client *client,
+ 		if (err)
+ 			return err;
+ 
+-		/* PWM 120/120 (i.e. 100%) */
+-		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
++		/* Set PWM based on target RPM if specified */
++		target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
++		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), target_duty);
+ 		if (err)
+ 			return err;
+ 	}
+
+base-commit: 2115cbeec8a3ccc69e3b7ecdf97b4472b0829cfc
 -- 
-2.48.1
+2.42.0
 
 
