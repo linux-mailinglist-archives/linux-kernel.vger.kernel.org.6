@@ -1,100 +1,92 @@
-Return-Path: <linux-kernel+bounces-573672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AD7A6DA76
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:55:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906F6A6DA7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914353AC9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:55:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2904616B50F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FF125F7A1;
-	Mon, 24 Mar 2025 12:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF3525F975;
+	Mon, 24 Mar 2025 12:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bMzAPTZk"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gm2f9qjb"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC9226157E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C5926157E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820782; cv=none; b=HJGvkffMyPTn+cZBjJYxoLEiKgJYa5ATGlGUUEUUmqSUnIyRPqZOuuoCtrMaOsymyhgRiJH4KBoYq4HJD1o8DCoVFjmOrXMxWkrycGIQaet04wEv0S67///vwXN0w0wbYnGt6pnskdAMPsdq0UBN1CF6D9opnk9dX01O/bylZrs=
+	t=1742820790; cv=none; b=YLGzbigTT45JQlmrhexmXoCE7lTnGmc9nwJrHhB7aRwzJEOZb4m9tbm+30Io394SSozSH68wbyB1Fl4a1OmENyLqa+Bnv4S5tcdRBV7GqUGl9Z57wfwrEcVvryod3HeadG6uUAZJNdhVd3S92Zsn2u7Xb8HCzCVyBr0lNhbRz9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820782; c=relaxed/simple;
-	bh=TMohEHJYtiKqK0QbIroGrKg9TkVJrqxKDbkvZhKqhrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XGQkRnD6HAVhAcVd6AGo1KPgIS9reB83z6oOO+QCgxU2O3zAHYFRLdkU733sbZvomR86XHW7Pw5xrwd8HZCLwuVfCTtjZB0EzkSRp8scvXjLPj1qPtI47AFw2WlOfNbifRcC05mxLOzjbRNa+myjWJLgPpU8bRYIJKpVn6VkpoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bMzAPTZk; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1742820790; c=relaxed/simple;
+	bh=rbqS5rDyjhAr0cFlh6cZN2ee3PXweGA4qM7ad4MATTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TkW+XzeHKutVk9WNBQobL3CRIs+oMK+tjyUn0JKjoBuf5bnGtpSRW6snTesLTGYGxU2vLI7q4Un2d0MDaRW7+bufvb14ruxm2LlznLcaWvxcRcJWk6yEoydr0MKChWEX3uDt5Zw1yfVPQzAHEjDo/gVp0JP9LYwX6+RYiFSOMyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gm2f9qjb; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so2414555e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:53:00 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0953d3e1so3899045e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 05:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742820779; x=1743425579; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742820786; x=1743425586; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0KdXJF27mp6zumhGhPwYMpFXFYh4NX8AS29XMRUS7KY=;
-        b=bMzAPTZkNXqiToC/rKIygZtbA2QvG/ksDqk/sCmwUv9Z+MvoQX4qtwwtGe542A5pxX
-         VdzIgaPZ/+0kAmWHIJ70MWCN8UQ2TkVVyN9EfrUeKyfHUiYnunfYl/hhE/kGUlqJk3yi
-         NthTVc9yiwhem9+oj/4R3p8W2LJic181Lv1F7+KSRO3vQ4hneI2BEaB1FD632s6OqV9r
-         ah+wOVLfHdicinkKVy1QNSrMPybQkWgozjhGDLnv55gk3Uyb5jq+bP09ZBGxJlMlEC/1
-         UZemviVnI6rzm121kSTxaqNcaG7nL7tsJvzZYb9qjzdq987JFrpgQaezQs/0eRJty7s8
-         lfXQ==
+        bh=SwCok12sX9NbWRz4qhUA5h3zsbyOHF7oWQm31idZcPE=;
+        b=Gm2f9qjbBAWXjnRit39m+tfugcpjSRtlx/xEmZx0Szdg7ZHPRRcKf6VwSG+rUSrZOh
+         G2me8x3iiRvwvR/UEO8XDxIPjMgapgHb9pdxVB6KUyoxRqcepuCv44Hul7McUfbrM1WF
+         TOcSuDla9N6rnHzajtH9l/1k8FiEmsmIxp9DYmbcNCm+56fNCdOckoU5oVrU0WToJ1k4
+         xMZwwo9tHzQtVirLj+Td3tyXs3z9gKBd4ol3j1zshFgyw9HGVn9kayGK8XYJ0TkHFDx9
+         hJ10sJGD86QJCG9XQ5eYyJW8ALlkR1et4AFLQn1sJbjQ9UkvrqsTTdU0ZJzymT1NzGhI
+         /TUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742820779; x=1743425579;
+        d=1e100.net; s=20230601; t=1742820786; x=1743425586;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0KdXJF27mp6zumhGhPwYMpFXFYh4NX8AS29XMRUS7KY=;
-        b=EXqOUrZ+TjL2sc9iNUFKm5AniLYqVJqcsnafr8axkBiMUSkkO0Ltz8sZMd/Nn+YYjj
-         lJzw6GPJPro/jWzOPmaNn+D/a1ls7If26k+JZQ+0j3cJBiRPQ/q/rSFSKlZAM4Aa2zqw
-         onCcGqPWhL+dtlp8UiSFfVhXhGk/XLswUuMEq3ymnvRvuhR4tsfX11iTAlIzENqpYfKQ
-         s8wqB1m09+IfqVj3jH7+5g3nZL4QfJ3W2S5NTxfdEO3AtiabEEOvgzdPg9/bbNRiuNzQ
-         LqoGZlXCcMAGzeY7A7jA+8VJ6VpEqSPtw+12oJOFxPYH/W3jrnSfp6SIg9RS4HsNuuUe
-         eCRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6E6AOmkY0khHVxVIEGoQ7lCLFs5xJbEdQaItMJVRm4bL3zAnq0i8NrEbbySFCqww+LBxUi0tmUdhOTO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzKih18dznJiWtP77YqylxDv5XQzGxdjz/a/Zqqa/3y4xzIQPF
-	DOqaQW6SO/N8Ajul/bDgJO6QPyUIuT3oaR93o4JWbvRX4XrazHEdpWaaCOusUgo=
-X-Gm-Gg: ASbGncvgRVrMGzh/igTFWTNsVIaPXbPyXulOmw2IKKZhgSz66rLWDeoB16wgLVophZT
-	hYUJ8418lvAgV3dHYvqeFdPqZdtf3tTiIJ5+dMVPkNntSUqoY3SKtRNv+MN/Vc7XoH4puzReU6v
-	mEZ96toOZOHygzSR1iWDwCJ/iuNYewlu0M2TmZfoFzjVWy+sVOUSddkK7VoyhurKoumiit44EU8
-	sWvgV0gefDzJEGRrUtlhhuANxqxsAfpWkCFgpf0WuuUGssX37Qznri93mpbY6hi4jSJsoOkzd19
-	U6S3AKcpA9sr+THgHWcmfVdpa9JveZKE3C4+Q7Bn4QB+ATKzG4VCFnzJzA==
-X-Google-Smtp-Source: AGHT+IHMYjwcP6IQLAQEeK4JGYmy7U3UUT8QxLTRI83cizBxKScOV+rOEFHkV2KbRv9UquSBZq4bDQ==
-X-Received: by 2002:a05:600c:350b:b0:439:9909:c785 with SMTP id 5b1f17b1804b1-43d56dc2af2mr36266185e9.7.1742820778571;
-        Mon, 24 Mar 2025 05:52:58 -0700 (PDT)
+        bh=SwCok12sX9NbWRz4qhUA5h3zsbyOHF7oWQm31idZcPE=;
+        b=dTqTnPkTODe2+WVkwqgRG2YIsTp6hnMA7LBEScForRSWnA6IF73Bnf3wzZwEx53RRM
+         9Q5z6XcV5qNnyhekRAeiPYLxYhLRI8mftlWUcquUfCMPosVmNOeBN2YkIwzkZAs9gTKQ
+         AABn7TAdFuhUDH0z2IR0g++JOemZs9E6ckxjrEwJaXCNIoK8/Z0WJQb/odl6uXOIRKAO
+         nYI2Ci5AHFhQtTjmk0F/+URT36766aVjWjKys7/xuhiTABXLKfBfCFSWtyc7GLolalc2
+         P3uaKm7ooDhRW0mVkcAT6ZEWsPY++0e4Oc2YEYaGSWSdrV8yvV3xIP+lau7zFEwwimHI
+         K3WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRnVPcch27TuOHnjmODs/rPTcchMeuD39mv37oHQc74izNOXk0Ilb7n62W+A0haxN9gy3PZfE95QHhJTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGfxt43SQnrYWD9ev8CD+qBki7d3tZ+Qf8Kux3HPvrkusaHnoc
+	TKp6O1C5PvtKVq2nKxK8Rq5Iv3CnVIs4ofYcW5nN/cumngkTZQr+DaUWZOQajHM=
+X-Gm-Gg: ASbGncuW75MIbcJRCQ9x+3DWNM4y/qGfyo5kBFdVBr7FZxQBTd3lOnMeFcaYkNiLWlW
+	1nukq+VJpcvHwyzdcrI1DSCX9GgUtELQVgEEiQlzspgrdV1Ox/3WuZjk5/BJwn8/L4sXUY7vNh3
+	9K7Uh780bvbd/Tc72uGyp1xds81qoz0M5f3CVKfNsUCZSCBAfr+hK4OeM/6TLehr77bqZ+Dvs/N
+	EWrxA85pu6XcNTpmUVRegpHwlhwmn83hl380eqPjAwJ3mCJAxKne4NPSI/4907lTgWrqeyEq+/I
+	OKXjWiz0dy1XUQZ/Bv1tsQvcFic8Ig+NzS0VXeRHkoLFf2dO2gQqAQ+uBgEr5Hl68F/v
+X-Google-Smtp-Source: AGHT+IEZtcOQ6XXGYyC8h5oFZTZe66HCgwwQp/S+UZCCHfUIYSyU4Nysg4iUWn4IaFpqshLaOPlPSw==
+X-Received: by 2002:a05:600c:1d1c:b0:439:88bb:d00b with SMTP id 5b1f17b1804b1-43d50a3d1c6mr35133295e9.5.1742820786323;
+        Mon, 24 Mar 2025 05:53:06 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efcb1sm11087576f8f.94.2025.03.24.05.52.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9efdedsm11003553f8f.96.2025.03.24.05.53.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 05:52:58 -0700 (PDT)
+        Mon, 24 Mar 2025 05:53:05 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
+To: Georgi Djakov <djakov@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Heidelberg <david@ixit.cz>,
-	iommu@lists.linux.dev,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	Brian Masney <masneyb@onstation.org>,
+	Odelu Kukatla <quic_okukatla@quicinc.com>,
+	Rohit Agarwal <quic_rohiagar@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
+	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: iommu: Correct indentation and style in DTS example
-Date: Mon, 24 Mar 2025 13:52:50 +0100
-Message-ID: <20250324125250.82137-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: interconnect: Correct indentation and style in DTS example
+Date: Mon, 24 Mar 2025 13:53:02 +0100
+Message-ID: <20250324125302.82167-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -114,280 +106,176 @@ new patches built on existing code.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../iommu/allwinner,sun50i-h6-iommu.yaml      |  24 ++--
- .../bindings/iommu/arm,smmu-v3.yaml           |  20 ++--
- .../devicetree/bindings/iommu/arm,smmu.yaml   | 104 +++++++++---------
- .../bindings/iommu/mediatek,iommu.yaml        |  18 +--
- .../bindings/iommu/qcom,apq8064-iommu.yaml    |  20 ++--
- 5 files changed, 92 insertions(+), 94 deletions(-)
+ .../bindings/interconnect/qcom,msm8939.yaml   |  8 +++---
+ .../bindings/interconnect/qcom,msm8953.yaml   | 20 ++++++-------
+ .../bindings/interconnect/qcom,msm8974.yaml   | 18 ++++++------
+ .../bindings/interconnect/qcom,rpm.yaml       | 12 ++++----
+ .../bindings/interconnect/qcom,rpmh.yaml      | 28 +++++++++----------
+ .../interconnect/qcom,sdx75-rpmh.yaml         | 16 +++++------
+ 6 files changed, 51 insertions(+), 51 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
-index a8409db4a3e3..ad51ace9ca09 100644
---- a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml
-@@ -48,19 +48,19 @@ additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+index 4b08be72bbd7..534644cccdcb 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+@@ -70,8 +70,8 @@ examples:
+         reg = <0x00580000 0x14000>;
+         #interconnect-cells = <1>;
+ 
+-          snoc_mm: interconnect-snoc {
+-              compatible = "qcom,msm8939-snoc-mm";
+-              #interconnect-cells = <1>;
+-          };
++        snoc_mm: interconnect-snoc {
++            compatible = "qcom,msm8939-snoc-mm";
++            #interconnect-cells = <1>;
++        };
+     };
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8953.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8953.yaml
+index 343ff62d7b65..56cdb77b369a 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8953.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8953.yaml
+@@ -84,17 +84,17 @@ additionalProperties: false
  
  examples:
    - |
--      #include <dt-bindings/interrupt-controller/arm-gic.h>
--      #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
+-      #include <dt-bindings/clock/qcom,gcc-msm8953.h>
++    #include <dt-bindings/clock/qcom,gcc-msm8953.h>
  
--      #include <dt-bindings/clock/sun50i-h6-ccu.h>
--      #include <dt-bindings/reset/sun50i-h6-ccu.h>
-+    #include <dt-bindings/clock/sun50i-h6-ccu.h>
-+    #include <dt-bindings/reset/sun50i-h6-ccu.h>
+-      snoc: interconnect@580000 {
+-          compatible = "qcom,msm8953-snoc";
+-          reg = <0x580000 0x16080>;
++    interconnect@580000 {
++        compatible = "qcom,msm8953-snoc";
++        reg = <0x580000 0x16080>;
  
--      iommu: iommu@30f0000 {
--          compatible = "allwinner,sun50i-h6-iommu";
--          reg = <0x030f0000 0x10000>;
--          interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
--          clocks = <&ccu CLK_BUS_IOMMU>;
--          resets = <&ccu RST_BUS_IOMMU>;
--          #iommu-cells = <1>;
+-          #interconnect-cells = <2>;
++        #interconnect-cells = <2>;
+ 
+-          snoc_mm: interconnect-snoc {
+-              compatible = "qcom,msm8953-snoc-mm";
++        interconnect-snoc {
++            compatible = "qcom,msm8953-snoc-mm";
+ 
+-              #interconnect-cells = <2>;
+-          };
 -      };
-+    iommu@30f0000 {
-+        compatible = "allwinner,sun50i-h6-iommu";
-+        reg = <0x030f0000 0x10000>;
-+        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&ccu CLK_BUS_IOMMU>;
-+        resets = <&ccu RST_BUS_IOMMU>;
-+        #iommu-cells = <1>;
++            #interconnect-cells = <2>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+index 8004c4baf397..95ce25ce1f7d 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8974.yaml
+@@ -50,13 +50,13 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-      #include <dt-bindings/clock/qcom,rpmcc.h>
++    #include <dt-bindings/clock/qcom,rpmcc.h>
+ 
+-      bimc: interconnect@fc380000 {
+-              reg = <0xfc380000 0x6a000>;
+-              compatible = "qcom,msm8974-bimc";
+-              #interconnect-cells = <1>;
+-              clock-names = "bus", "bus_a";
+-              clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
+-                       <&rpmcc RPM_SMD_BIMC_A_CLK>;
+-      };
++    interconnect@fc380000 {
++        reg = <0xfc380000 0x6a000>;
++        compatible = "qcom,msm8974-bimc";
++        #interconnect-cells = <1>;
++        clock-names = "bus", "bus_a";
++        clocks = <&rpmcc RPM_SMD_BIMC_CLK>,
++                 <&rpmcc RPM_SMD_BIMC_A_CLK>;
++    };
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,rpm.yaml b/Documentation/devicetree/bindings/interconnect/qcom,rpm.yaml
+index 5aaa92a7cef7..01d436d4a553 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,rpm.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,rpm.yaml
+@@ -41,10 +41,10 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-      #include <dt-bindings/clock/qcom,rpmcc.h>
++    #include <dt-bindings/clock/qcom,rpmcc.h>
+ 
+-      bimc: interconnect@400000 {
+-          compatible = "qcom,msm8916-bimc";
+-          reg = <0x00400000 0x62000>;
+-          #interconnect-cells = <1>;
+-      };
++    interconnect@400000 {
++        compatible = "qcom,msm8916-bimc";
++        reg = <0x00400000 0x62000>;
++        #interconnect-cells = <1>;
++    };
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
+index 1b9164dc162f..dad3ad2fd93b 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,rpmh.yaml
+@@ -127,19 +127,19 @@ unevaluatedProperties: false
+ 
+ examples:
+   - |
+-      #include <dt-bindings/interconnect/qcom,sdm845.h>
++    #include <dt-bindings/interconnect/qcom,sdm845.h>
+ 
+-      mem_noc: interconnect@1380000 {
+-             compatible = "qcom,sdm845-mem-noc";
+-             reg = <0x01380000 0x27200>;
+-             #interconnect-cells = <1>;
+-             qcom,bcm-voters = <&apps_bcm_voter>;
+-      };
++    interconnect@1380000 {
++        compatible = "qcom,sdm845-mem-noc";
++        reg = <0x01380000 0x27200>;
++        #interconnect-cells = <1>;
++        qcom,bcm-voters = <&apps_bcm_voter>;
 +    };
  
- ...
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-index 75fcf4cb52d9..36b31197c908 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
-@@ -82,14 +82,14 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
+-      mmss_noc: interconnect@1740000 {
+-             compatible = "qcom,sdm845-mmss-noc";
+-             reg = <0x01740000 0x1c1000>;
+-             #interconnect-cells = <1>;
+-             qcom,bcm-voter-names = "apps", "disp";
+-             qcom,bcm-voters = <&apps_bcm_voter>, <&disp_bcm_voter>;
+-      };
++    interconnect@1740000 {
++        compatible = "qcom,sdm845-mmss-noc";
++        reg = <0x01740000 0x1c1000>;
++        #interconnect-cells = <1>;
++        qcom,bcm-voter-names = "apps", "disp";
++        qcom,bcm-voters = <&apps_bcm_voter>, <&disp_bcm_voter>;
++    };
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sdx75-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,sdx75-rpmh.yaml
+index 71cf7e252bfc..4b5e9f9b07ec 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,sdx75-rpmh.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,sdx75-rpmh.yaml
+@@ -78,15 +78,15 @@ examples:
+     #include <dt-bindings/clock/qcom,rpmh.h>
  
-     iommu@2b400000 {
--            compatible = "arm,smmu-v3";
--            reg = <0x2b400000 0x20000>;
--            interrupts = <GIC_SPI 74 IRQ_TYPE_EDGE_RISING>,
--                         <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>,
--                         <GIC_SPI 77 IRQ_TYPE_EDGE_RISING>,
--                         <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>;
--            interrupt-names = "eventq", "gerror", "priq", "cmdq-sync";
--            dma-coherent;
--            #iommu-cells = <1>;
--            msi-parent = <&its 0xff0000>;
-+        compatible = "arm,smmu-v3";
-+        reg = <0x2b400000 0x20000>;
-+        interrupts = <GIC_SPI 74 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 75 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 77 IRQ_TYPE_EDGE_RISING>,
-+                     <GIC_SPI 79 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "eventq", "gerror", "priq", "cmdq-sync";
-+        dma-coherent;
-+        #iommu-cells = <1>;
-+        msi-parent = <&its 0xff0000>;
-     };
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index 7b9d5507d6cc..5b56e4f9d106 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -621,73 +621,71 @@ examples:
-   - |+
-     /* SMMU with stream matching or stream indexing */
-     smmu1: iommu@ba5e0000 {
--            compatible = "arm,smmu-v1";
--            reg = <0xba5e0000 0x10000>;
--            #global-interrupts = <2>;
--            interrupts = <0 32 4>,
--                         <0 33 4>,
--                         <0 34 4>, /* This is the first context interrupt */
--                         <0 35 4>,
--                         <0 36 4>,
--                         <0 37 4>;
--            #iommu-cells = <1>;
-+        compatible = "arm,smmu-v1";
-+        reg = <0xba5e0000 0x10000>;
-+        #global-interrupts = <2>;
-+        interrupts = <0 32 4>,
-+                     <0 33 4>,
-+                     <0 34 4>, /* This is the first context interrupt */
-+                     <0 35 4>,
-+                     <0 36 4>,
-+                     <0 37 4>;
-+        #iommu-cells = <1>;
+     clk_virt: interconnect-0 {
+-            compatible = "qcom,sdx75-clk-virt";
+-            #interconnect-cells = <2>;
+-            qcom,bcm-voters = <&apps_bcm_voter>;
+-            clocks = <&rpmhcc RPMH_QPIC_CLK>;
++        compatible = "qcom,sdx75-clk-virt";
++        #interconnect-cells = <2>;
++        qcom,bcm-voters = <&apps_bcm_voter>;
++        clocks = <&rpmhcc RPMH_QPIC_CLK>;
      };
  
-     /* device with two stream IDs, 0 and 7 */
-     master1 {
--            iommus = <&smmu1 0>,
--                     <&smmu1 7>;
-+        iommus = <&smmu1 0>,
-+                 <&smmu1 7>;
-     };
- 
- 
-     /* SMMU with stream matching */
-     smmu2: iommu@ba5f0000 {
--            compatible = "arm,smmu-v1";
--            reg = <0xba5f0000 0x10000>;
--            #global-interrupts = <2>;
--            interrupts = <0 38 4>,
--                         <0 39 4>,
--                         <0 40 4>, /* This is the first context interrupt */
--                         <0 41 4>,
--                         <0 42 4>,
--                         <0 43 4>;
--            #iommu-cells = <2>;
-+        compatible = "arm,smmu-v1";
-+        reg = <0xba5f0000 0x10000>;
-+        #global-interrupts = <2>;
-+        interrupts = <0 38 4>,
-+                     <0 39 4>,
-+                     <0 40 4>, /* This is the first context interrupt */
-+                     <0 41 4>,
-+                     <0 42 4>,
-+                     <0 43 4>;
-+        #iommu-cells = <2>;
-     };
- 
-     /* device with stream IDs 0 and 7 */
-     master2 {
--            iommus = <&smmu2 0 0>,
--                     <&smmu2 7 0>;
-+        iommus = <&smmu2 0 0>,
-+                 <&smmu2 7 0>;
-     };
- 
-     /* device with stream IDs 1, 17, 33 and 49 */
-     master3 {
--            iommus = <&smmu2 1 0x30>;
-+        iommus = <&smmu2 1 0x30>;
-     };
- 
- 
-     /* ARM MMU-500 with 10-bit stream ID input configuration */
-     smmu3: iommu@ba600000 {
--            compatible = "arm,mmu-500", "arm,smmu-v2";
--            reg = <0xba600000 0x10000>;
--            #global-interrupts = <2>;
--            interrupts = <0 44 4>,
--                         <0 45 4>,
--                         <0 46 4>, /* This is the first context interrupt */
--                         <0 47 4>,
--                         <0 48 4>,
--                         <0 49 4>;
--            #iommu-cells = <1>;
--            /* always ignore appended 5-bit TBU number */
--            stream-match-mask = <0x7c00>;
-+        compatible = "arm,mmu-500", "arm,smmu-v2";
-+        reg = <0xba600000 0x10000>;
-+        #global-interrupts = <2>;
-+        interrupts = <0 44 4>,
-+                     <0 45 4>,
-+                     <0 46 4>, /* This is the first context interrupt */
-+                     <0 47 4>,
-+                     <0 48 4>,
-+                     <0 49 4>;
-+        #iommu-cells = <1>;
-+        /* always ignore appended 5-bit TBU number */
-+        stream-match-mask = <0x7c00>;
-     };
- 
-     bus {
--            /* bus whose child devices emit one unique 10-bit stream
--               ID each, but may master through multiple SMMU TBUs */
--            iommu-map = <0 &smmu3 0 0x400>;
--
--
-+        /* bus whose child devices emit one unique 10-bit stream
-+           ID each, but may master through multiple SMMU TBUs */
-+        iommu-map = <0 &smmu3 0 0x400>;
-     };
- 
-   - |+
-@@ -695,17 +693,17 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
-     smmu4: iommu@d00000 {
--      compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
--      reg = <0xd00000 0x10000>;
-+        compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-+        reg = <0xd00000 0x10000>;
- 
--      #global-interrupts = <1>;
--      interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
--             <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
--             <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
--      #iommu-cells = <1>;
--      power-domains = <&mmcc 0>;
-+        #global-interrupts = <1>;
-+        interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-+        #iommu-cells = <1>;
-+        power-domains = <&mmcc 0>;
- 
--      clocks = <&mmcc 123>,
--        <&mmcc 124>;
--      clock-names = "bus", "iface";
-+        clocks = <&mmcc 123>,
-+                 <&mmcc 124>;
-+        clock-names = "bus", "iface";
-     };
-diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-index ea6b0f5f24de..1eac27893b03 100644
---- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-@@ -218,13 +218,13 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     iommu: iommu@10205000 {
--            compatible = "mediatek,mt8173-m4u";
--            reg = <0x10205000 0x1000>;
--            interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_LOW>;
--            clocks = <&infracfg CLK_INFRA_M4U>;
--            clock-names = "bclk";
--            mediatek,infracfg = <&infracfg>;
--            mediatek,larbs = <&larb0>, <&larb1>, <&larb2>,
--                             <&larb3>, <&larb4>, <&larb5>;
--            #iommu-cells = <1>;
-+        compatible = "mediatek,mt8173-m4u";
-+        reg = <0x10205000 0x1000>;
-+        interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_LOW>;
-+        clocks = <&infracfg CLK_INFRA_M4U>;
-+        clock-names = "bclk";
-+        mediatek,infracfg = <&infracfg>;
-+        mediatek,larbs = <&larb0>, <&larb1>, <&larb2>,
-+                         <&larb3>, <&larb4>, <&larb5>;
-+        #iommu-cells = <1>;
-     };
-diff --git a/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml b/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-index 9f83f851e61a..aaecad32dc9d 100644
---- a/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/qcom,apq8064-iommu.yaml
-@@ -65,14 +65,14 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     iommu@7500000 {
--            compatible = "qcom,apq8064-iommu";
--            reg = <0x07500000 0x100000>;
--            interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
--            clocks = <&clk SMMU_AHB_CLK>,
--                     <&clk MDP_AXI_CLK>;
--            clock-names = "smmu_pclk",
--                          "iommu_clk";
--            #iommu-cells = <1>;
--            qcom,ncb = <2>;
-+        compatible = "qcom,apq8064-iommu";
-+        reg = <0x07500000 0x100000>;
-+        interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clk SMMU_AHB_CLK>,
-+                 <&clk MDP_AXI_CLK>;
-+        clock-names = "smmu_pclk",
-+                      "iommu_clk";
-+        #iommu-cells = <1>;
-+        qcom,ncb = <2>;
+     system_noc: interconnect@1640000 {
+-            compatible = "qcom,sdx75-system-noc";
+-            reg = <0x1640000 0x4b400>;
+-            #interconnect-cells = <2>;
+-            qcom,bcm-voters = <&apps_bcm_voter>;
++        compatible = "qcom,sdx75-system-noc";
++        reg = <0x1640000 0x4b400>;
++        #interconnect-cells = <2>;
++        qcom,bcm-voters = <&apps_bcm_voter>;
      };
 -- 
 2.43.0
