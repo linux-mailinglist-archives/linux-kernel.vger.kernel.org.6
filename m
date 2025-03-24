@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-573295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CDDA6D557
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:43:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11FDA6D584
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7992A1884199
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27AB716A3F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B22825745F;
-	Mon, 24 Mar 2025 07:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8530D25A2BC;
+	Mon, 24 Mar 2025 07:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNjgYoIo"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sdI268tj"
+Received: from out.smtpout.orange.fr (out-65.smtpout.orange.fr [193.252.22.65])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C4D19ADBA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02AC13B797
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742802217; cv=none; b=KugXEUvJeqqeN+R5+lv2AuBAKq3ft4c2oIeO+sw9i7eSl9IIr76ncAupLlrjg235/C9aMOQqsNLQTi3sW2aCOBphmbZZ2kyltajj1WTCeLJJutqD0rOTV8wcI1hw/T9g/Aq6bE6wN/vkcfssdtEvmyGhwbNIUV6GRWoSEt/Iuyw=
+	t=1742802847; cv=none; b=Ne2Kbl7DsZSQo0AA2lLm4/B2uvVIKtvCbdj65oErp6Xu9vlNOFv9ciSRVw+ADppm/uTHAwtrJmAjvPVj8VJW3ce/xNJPYM6rzbBngMa6Pi1n5fQqbH9SBJGNIAjyJDBe6PxVk4woMmIyPEFl638Gy0Rcb2VN9O8+9IEmdYhWv3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742802217; c=relaxed/simple;
-	bh=Wja2HIkcCc/qn+fhg7yuV0A96iCH9nSXOnTIZdyzsNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VyfaqQb2cbWh+gz4zrOxERnoonCkuJjWa0sxWrDCTln5m9IYVYu4vdzzWermp128lBs12p+nVdHrysNpKwxSc4N4Q4K+547murt8QR/XIM9vlOENfs4AL1zb2MixMjYA2oMWs57QNLb79ERpLjXiwTs93icf0NIPtUJTiSCgF4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TNjgYoIo; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfe574976so22103985e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 00:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742802214; x=1743407014; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ENeTUflag0l1WgJ9MraeaFTIx2U/M6/MceOO9Gs6H40=;
-        b=TNjgYoIoyymn/4+AglCvAOvp4FaS/0FG8fA9O9PbdR/7fN9vrgyJjmc/SPY3lV8xlr
-         8/joueCTVzHixOvZN6frHL4ivVU/SsOsdNrawpEFsfFJX8Ye8aa8whkthKUs7mLen5w7
-         /mdFYAc64y6rOx7U4HGM27lvHLIqdGhs1KN61LnUwG7/Iil9yo7MSDHqhru4CPTbSyxm
-         RpZs9KA1TUh9A4GU1yGOuOJpeW7Myd7x4gsr/5+lo1M29K44IQgunwSBxZL1x3ZTX9wX
-         Qv7ykq1CMHn/DbwsVw006bHR3pW2kLj131sRb06ODHwzJRUyO15uRXw3eHQFKCLX66Fe
-         mOYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742802214; x=1743407014;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ENeTUflag0l1WgJ9MraeaFTIx2U/M6/MceOO9Gs6H40=;
-        b=l53dlOxjcOB0mOBuFHUw+SO0Vwnl0cBeEFQQL+F3X4PPXtgcG7/BPyV8m5BsQr/E/m
-         mJnwAVDJKqeA47IDdP20kRjKaV1h1AytNME0c2GIoescGe09dZFRUTA/ziwfIxX5lMLm
-         IqL/99SvgdRUjF2Db3zSL7nLyqJn9TIbfEnWt7BiqeoMDA6vK9NVw6+zpNEDxdiVi4UM
-         rE8p+g+onm+2hGEV/fiJVa8QwK6WX1IQgGmKCLlFQh0uQIKIexs6SoJqooB/BbuiP9Uz
-         BOxFKDWrGnDoHb2ZJfIzWWoRrgVsFJZJsfh256JojHuhzZtgTgZyiKJA6T+FW5Ngesw+
-         AfDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGWaHQiRagr5KDqCBVMO4wz/sHKJRPdPB6DCvKIPzyQW19cpNOK08AtEpHr2o8gn1KFimzsVo2uPe7kCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEAqlrjYoAmvP0htbxCirzJ9G11IrL/zCM9OfY/ezPVVemxke6
-	UjsNU7OAQgWpzxYSm2vbtrINfgdMbOP3qpyKl1c3fjdViWwlTkJjuo98e3mkrbM=
-X-Gm-Gg: ASbGncu0hxFO6R6sGkg9tafT+kUHuXTIuxi9vWHEClsugYSsZlwTxPXsr1i9zPk161y
-	bhWcvKNs7Hbr76aiZiVimi+UV7TClzpahAKXs6ShbM5e3ky5kk7K0qoIbkh0p3ffZG/oIXGpRdK
-	QdjaucvDqvvurLg3p3gCLJ1UGSJvDnEvnwKAOsOHOjvfj4SxRsnSehuMVIIhMNhh2C+OpHPaG8W
-	nsl3QJLHR8UBAUR3BdKF0HFgUp9ZGuJtslTNK6xkHTVYkR0zggYHxLUXP8k7CkUsv4b9Lgqn/LO
-	/jfZoO4FSw53N94WaLQNM+K2Q+IxuVZY5KxWW8oukMPShai7hg==
-X-Google-Smtp-Source: AGHT+IGmGmS5ufUfMSrgfk7DIRjiH+iIQAHj6POw/bNjEYZrqwMBfch1zIjXMn5LOd+CGNnKdNiELw==
-X-Received: by 2002:a05:6000:2a2:b0:390:f400:2083 with SMTP id ffacd0b85a97d-3997f89a039mr9195803f8f.0.1742802214396;
-        Mon, 24 Mar 2025 00:43:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9eff9asm10311692f8f.92.2025.03.24.00.43.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 00:43:33 -0700 (PDT)
-Date: Mon, 24 Mar 2025 10:43:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Qasim Ijaz <qasdev00@gmail.com>, linux-wireless@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bo Jiao <bo.jiao@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
-	James Dutton <james.dutton@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Jonas Gorski <jonas.gorski@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Peter Chiu <chui-hao.chiu@mediatek.com>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>
-Subject: Re: wifi: mt76: mt7996: avoid potential null deref in
- mt7996_get_et_stats()
-Message-ID: <d723d5c1-ed17-41b8-9bc4-274fd8e2b615@stanley.mountain>
-References: <20250322141910.4461-1-qasdev00@gmail.com>
- <d1df5d97-4691-40d4-a6cc-416505f35164@web.de>
- <92d1a410788c54facedec033474046dda6a1a2cc.camel@sipsolutions.net>
- <CAAMvbhGrJ9b3Aab9+2a5zmvEgf0GZFmHLCC7Hud+egUE28voHQ@mail.gmail.com>
- <223c7280-443d-49b4-96b2-90472339dcd4@stanley.mountain>
- <46a53498-6c20-48fd-b090-02163baefddd@web.de>
+	s=arc-20240116; t=1742802847; c=relaxed/simple;
+	bh=tvAIIuR1iPe/70LBC/XK+o9+54IQoWvVHvcnYdC+BSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eGr/0+NFfbPYw+t9lUdkx9iufbg47YrMvEXpGuuV/8h9LZSmoYSaOTNUZQaOsi62za4n7taYIhMm2URexPY0Cp2sichwL259/exE/BEk8hk2VcHyKcQAkwUtOrC8VQfTkfWEgfb3ktpy+JJigrnDEaFe1xi7tGhnv8vwG2tPfrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sdI268tj; arc=none smtp.client-ip=193.252.22.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id wcU2tGWSCo3Z8wcU6tISto; Mon, 24 Mar 2025 08:44:41 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742802281;
+	bh=XsGk3ixhSurfkLIH5o1CSD/Ev7zogu3EYa8+C/nPa0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=sdI268tj5lyVJtO3fEwynmKPbQg09PuOecq2JJCSdjSp7N1NgJ6fcy6XKYbjGhr/1
+	 2gk2XM/VMpWoxAKiiAcbhewU0pEJZB6nFv5S2ZlayCpKZ18kjNF05DGW9vwRi6bIcz
+	 z3ul2hSwmRTaF10207d/yfQSpK0HTU8rrtuJjS1jHE0+UHG38ESd4ian45uXMWsPxj
+	 KymUZv00SMfq99I4IgfJQJjFAQJ0EUxtmscmuGjmFOjH0YeShHtWdQ/rPkGEvecps8
+	 CUFUtHhORoskiP35auEhZb9UakXJ6ypJq3LVyLDwRigo50w+Z7LRWCyAlaZpmWdz9O
+	 j0TF2QXUwzPnw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 24 Mar 2025 08:44:41 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <202c97b2-e99e-4b88-9ac5-171db244b7d0@wanadoo.fr>
+Date: Mon, 24 Mar 2025 16:44:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46a53498-6c20-48fd-b090-02163baefddd@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/5] bits: introduce fixed-type GENMASK_U*()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@aculab.com>, Jani Nikula <jani.nikula@intel.com>
+References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
+ <20250322-fixed-type-genmasks-v7-1-da380ff1c5b9@wanadoo.fr>
+ <Z-EIHBCkUiBh63JE@smile.fi.intel.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <Z-EIHBCkUiBh63JE@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 24, 2025 at 08:33:39AM +0100, Markus Elfring wrote:
-> > Also the "phy" point will never be NULL so the check should be removed.
-> How many tools can help to determine such a software aspect with
-> inter-procedural analyses?
+On 24/03/2025 at 16:22, Andy Shevchenko wrote:
+> On Sat, Mar 22, 2025 at 06:23:12PM +0900, Vincent Mailhol via B4 Relay wrote:
+>>
+>> Add GENMASK_TYPE() which generalizes __GENMASK() to support different
+>> types, and implement fixed-types versions of GENMASK() based on it.
+>> The fixed-type version allows more strict checks to the min/max values
+>> accepted, which is useful for defining registers like implemented by
+>> i915 and xe drivers with their REG_GENMASK*() macros.
+>>
+>> The strict checks rely on shift-count-overflow compiler check to fail
+>> the build if a number outside of the range allowed is passed.
+>> Example:
+>>
+>>   #define FOO_MASK GENMASK_U32(33, 4)
+>>
+>> will generate a warning like:
+>>
+>>   include/linux/bits.h:51:27: error: right shift count >= width of type [-Werror=shift-count-overflow]
+>>      51 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+>>         |                           ^~
+>>
+>> While GENMASK_TYPE() is crafted to cover all variants, including the
+>> already existing GENMASK(), GENMASK_ULL() and GENMASK_U128(), for the
+>> moment, only use it for the newly introduced GENMASK_U*(). The
+>> consolidation will be done in a separate change.
 > 
+> ...
+> 
+>>  #if !defined(__ASSEMBLY__)
+>> +
+> 
+>> -#else
+> 
+>> +#else /* defined(__ASSEMBLY__) */
+> 
+>> -#endif
+>> +
+>> +#endif /* !defined(__ASSEMBLY__) */
+> 
+> Up to you, but if new version is needed or maintainer require, I would move the
+> above changes either to a separate patch (prerequisite) or dropped them at all.
+> These are not big but unneeded churn,
 
-You can just review the code.  There is only one caller.
+I do not want to drop this. After all the changes, there is a lot of
+scrolling between the #if, #else and #endif, and the comments helps to
+keep track of which context we are in.
 
-Btw, it's fine to have unnecessary NULL checks so long as they're done
-consistently.  Generally, we prefer people not add unnecessary code,
-but if it makes you feel safer, most maintainers aren't going to nit-pick
-you about it.  If you are doing the work then you get some say your own
-code.
+As for putting this into another patch, OK but only if there is a need
+for new version for other reasons.
 
-regards,
-dan carpenter
+
+Yours sincerely,
+Vincent Mailhol
+
 
