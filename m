@@ -1,110 +1,230 @@
-Return-Path: <linux-kernel+bounces-573324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B46A6D5BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:03:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8CFA6D5C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC0716A613
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 063453AED38
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B47D25D1F0;
-	Mon, 24 Mar 2025 08:03:12 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B02025C711;
+	Mon, 24 Mar 2025 08:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qAgI3rwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB630EEAB;
-	Mon, 24 Mar 2025 08:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BC818B470;
+	Mon, 24 Mar 2025 08:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742803391; cv=none; b=lsCHq+6xTSJHNvA/kkHb+GoseFZxusF86LSsz9MmYiIrAqcaOHuvoZ2a3KFIixOSEpqPFgAlIl6vhKauZcrsEKi/vjOkwh0RLIsZ4IIFwdkQmF9GozVKOQArmTXcZs0ySWAP0/bI9IEkN70pIRhemr1j2sWdHIBgUij84hxr0mk=
+	t=1742803390; cv=none; b=ZPFW72mIPXprBbSGQN/PzNR77Nq8aBWYoCE2eXX+8bKU4I092aT49tsu2upoke3yKfZTuhnB6DJ05GXIUqreQ1sGfO11gAAdccocJ05EiUNgt3YYM9wzYW/2of89iOICEgtMge4Mn9tXmGgBXMnJHv49Xy+gA9/Z/u+niZ3PmL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742803391; c=relaxed/simple;
-	bh=FJY3fJQcYQfxI8Zea0PmPCWsuDdPzJkMEb6ylvOn5V0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BAjlI2ZpOYkRAnDwR/DhE/xSXkMmiYkS/NzYy3xrYRhwY0Vf9gpWtIfkukCKgfrB9Xi/QeBHR6I6teREAAz3x6cnV1jUgsznyQG125kfgUha825jqrGNHEJaBynciBdZfKbk224TrkmLFVpMNhuF9gyH+ODUbae4MU9ZbPTVv/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowADnkj+5EeFnzivTAA--.3732S2;
-	Mon, 24 Mar 2025 16:03:05 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: pkshih@realtek.com,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] wifi: rtw88: usb: Remove redundant 'flush_workqueue()' calls
-Date: Mon, 24 Mar 2025 16:03:03 +0800
-Message-Id: <20250324080303.408084-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742803390; c=relaxed/simple;
+	bh=V6gXN+lnnN9Zem1lt+OB0BhDkOVQosdaVMCSxBi43NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddsf0qkR8OPHwbmnYC+lvWRl77hwaXtzf2+Uz+rF6G27mv5grLiAckEWiPtOyNeUQYuwYDBDpsb4lkO17ooCK3zz1eYmkDDxGG7UAzqyh9Rd4DyLlTwK+91+VThdyVjNdBvpeHJT2Vs38xXGYo4P9LXu0nR2gFqVFmiPc/cB9j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qAgI3rwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 373B9C4CEDD;
+	Mon, 24 Mar 2025 08:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742803390;
+	bh=V6gXN+lnnN9Zem1lt+OB0BhDkOVQosdaVMCSxBi43NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qAgI3rwZ9umV8rO/biDGWse0Ey26PHU4tmpjYoo6Hj/VdUEZb7Vsq64Wcia91FUb7
+	 NqQZpqxs6gBD0GGj6pkrbPqCrnpoHmXkmAIHOtCSdZUd28j1NHWvBSkAJbC0RsNbiR
+	 wGLENGNrVmSjOUzOujZL/8qZcD6E4ROlnkcGrtMwsFGv1pJuNH2bvqMeqQEXYOyBGD
+	 v+YQq6YdddTwg7hRMP3uolKmuVDC/QQi48K3Sg6O4qYfiTRU+xwgHVds8PDpoOeAxw
+	 jDFro4Lp8eJNrITUkeAVr/vavtsclDRp51rL7a4um1oW8ljovwgpV5sYOZDZ2reuyQ
+	 GFCVQow/PD3ZA==
+Date: Mon, 24 Mar 2025 09:03:06 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Cathy Xu <ot_cathy.xu@mediatek.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, Lei Xue <lei.xue@mediatek.com>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, yong.mao@mediatek.com, 
+	Axe.Yang@mediatek.com, Jimin.Wang@mediatek.com, Wenbin.Mei@mediatek.com, 
+	Guodong Liu <guodong.liu@mediatek.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: mediatek: Add support for
+ mt8196
+Message-ID: <20250324-sly-smart-impala-9fb09e@krzk-bin>
+References: <20250321084142.18563-1-ot_cathy.xu@mediatek.com>
+ <20250321084142.18563-2-ot_cathy.xu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADnkj+5EeFnzivTAA--.3732S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF1xZFy7tr1DuryrtFyxZrb_yoWkuwbE9r
-	WxKFsrKFWUGr1S9w4Utr1rZFy0vrWDZF43Xa93try5K3yjq3y5Zrs7Zr1kGrWDWw4UCF17
-	C34kX3W8X393WjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	JF0_Jw1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUjnXo7UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250321084142.18563-2-ot_cathy.xu@mediatek.com>
 
-'destroy_workqueue()' already drains the queue before destroying it, so
-there is no need to flush it explicitly.
+On Fri, Mar 21, 2025 at 04:39:12PM +0800, Cathy Xu wrote:
+> +  reg:
+> +    items:
+> +      - description: gpio registers base address
+> +      - description: rt group io configuration registers base address
 
-Remove the redundant 'flush_workqueue()' calls.
+s/io configuration registers base address/IO/
+?
 
-This was generated with coccinelle:
+Why repeating so much of redundant information?
 
-@@
-expression E;
-@@
+> +      - description: rm1 group io configuration registers base address
+> +      - description: rm2 group io configuration registers base address
+> +      - description: rb group io configuration registers base address
+> +      - description: bm1 group io configuration registers base address
+> +      - description: bm2 group io configuration registers base address
+> +      - description: bm3 group io configuration registers base address
+> +      - description: lt group io configuration registers base address
+> +      - description: lm1 group io configuration registers base address
+> +      - description: lm2 group io configuration registers base address
+> +      - description: lb1 group io configuration registers base address
+> +      - description: lb2 group io configuration registers base address
+> +      - description: tm1 group io configuration registers base address
+> +      - description: tm2 group io configuration registers base address
+> +      - description: tm3 group io configuration registers base address
+> +
+> +  reg-names:
+> +    items:
+> +      - const: iocfg0
+> +      - const: iocfg_rt
+> +      - const: iocfg_rm1
+> +      - const: iocfg_rm2
+> +      - const: iocfg_rb
+> +      - const: iocfg_bm1
+> +      - const: iocfg_bm2
+> +      - const: iocfg_bm3
+> +      - const: iocfg_lt
+> +      - const: iocfg_lm1
+> +      - const: iocfg_lm2
+> +      - const: iocfg_lb1
+> +      - const: iocfg_lb2
+> +      - const: iocfg_tm1
+> +      - const: iocfg_tm2
+> +      - const: iocfg_tm3
 
-- flush_workqueue(E);
-  destroy_workqueue(E);
+Same here, drop iocfg_ prefix everywhere. The first entry becames then
+"base" or whatever else meaningful ("0" is not meaningful).
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/net/wireless/realtek/rtw88/usb.c | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw88/usb.c b/drivers/net/wireless/realtek/rtw88/usb.c
-index c8092fa0d9f1..667473b7a9f5 100644
---- a/drivers/net/wireless/realtek/rtw88/usb.c
-+++ b/drivers/net/wireless/realtek/rtw88/usb.c
-@@ -948,7 +948,6 @@ static void rtw_usb_deinit_rx(struct rtw_dev *rtwdev)
- 
- 	skb_queue_purge(&rtwusb->rx_queue);
- 
--	flush_workqueue(rtwusb->rxwq);
- 	destroy_workqueue(rtwusb->rxwq);
- 
- 	skb_queue_purge(&rtwusb->rx_free_queue);
-@@ -977,7 +976,6 @@ static void rtw_usb_deinit_tx(struct rtw_dev *rtwdev)
- {
- 	struct rtw_usb *rtwusb = rtw_get_usb_priv(rtwdev);
- 
--	flush_workqueue(rtwusb->txwq);
- 	destroy_workqueue(rtwusb->txwq);
- 	rtw_usb_tx_queue_purge(rtwusb);
- }
--- 
-2.25.1
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  interrupts:
+> +    description: The interrupt outputs to sysirq.
+> +    maxItems: 1
+> +
+> +# PIN CONFIGURATION NODES
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      '^pins':
+> +        type: object
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> +        additionalProperties: false
+> +        description:
+> +          A pinctrl node should contain at least one subnode representing the
+> +          pinctrl groups available on the machine. Each subnode will list the
+> +          pins it needs, and how they should be configured, with regard to muxer
+> +          configuration, pullups, drive strength, input enable/disable and input
+> +          schmitt.
+> +
+> +        properties:
+> +          pinmux:
+> +            description:
+> +              Integer array, represents gpio pin number and mux setting.
+> +              Supported pin number and mux varies for different SoCs, and are
+> +              defined as macros in arch/arm64/boot/dts/mediatek/mt8196-pinfunc.h
+> +              directly, for this SoC.
+> +
+> +          drive-strength:
+> +            enum: [2, 4, 6, 8, 10, 12, 14, 16]
+> +
+> +          bias-pull-down:
+> +            oneOf:
+> +              - type: boolean
+> +              - enum: [100, 101, 102, 103]
+> +                description: mt8196 pull down PUPD/R0/R1 type define value.
+> +              - enum: [75000, 5000]
+> +                description: mt8196 pull down RSEL type si unit value(ohm).
+> +            description: |
+> +              For pull down type is normal, it doesn't need add R1R0 define
+> +              and resistance value.
+> +              For pull down type is PUPD/R0/R1 type, it can add R1R0 define to
+> +              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
+> +              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
+> +              "MTK_PUPD_SET_R1R0_11" define in mt8196.
+> +              For pull down type is PD/RSEL, it can add resistance value(ohm)
+> +              to set different resistance by identifying property
+> +              "mediatek,rsel-resistance-in-si-unit". It can support resistance
+> +              value(ohm) "75000" & "5000" in mt8196.
+> +
+> +          bias-pull-up:
+> +            oneOf:
+> +              - type: boolean
+> +              - enum: [100, 101, 102, 103]
+> +                description: mt8196 pull up PUPD/R0/R1 type define value.
+> +              - enum: [1000, 1500, 2000, 3000, 4000, 5000, 75000]
+> +                description: mt8196 pull up RSEL type si unit value(ohm).
+> +            description: |
+> +              For pull up type is normal, it don't need add R1R0 define
+> +              and resistance value.
+> +              For pull up type is PUPD/R0/R1 type, it can add R1R0 define to
+> +              set different resistance. It can support "MTK_PUPD_SET_R1R0_00" &
+> +              "MTK_PUPD_SET_R1R0_01" & "MTK_PUPD_SET_R1R0_10" &
+> +              "MTK_PUPD_SET_R1R0_11" define in mt8196.
+> +              For pull up type is PU/RSEL, it can add resistance value(ohm)
+> +              to set different resistance by identifying property
+> +              "mediatek,rsel-resistance-in-si-unit". It can support resistance
+> +              value(ohm) "1000" & "1500" & "2000" & "3000" & "4000" & "5000" &
+> +              "75000" in mt8196.
+> +
+> +          bias-disable: true
+> +
+> +          output-high: true
+> +
+> +          output-low: true
+> +
+> +          input-enable: true
+> +
+> +          input-disable: true
+> +
+> +          input-schmitt-enable: true
+> +
+> +          input-schmitt-disable: true
+> +
+> +        required:
+> +          - pinmux
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+
+Same order as in properties list. The order here looks correct, so the
+properties needs to be fixed.
+
+
+Best regards,
+Krzysztof
 
 
