@@ -1,177 +1,129 @@
-Return-Path: <linux-kernel+bounces-573574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B43DA6D943
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:40:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257E7A6D946
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC7616D6A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:40:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEFC87A513E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6050325E445;
-	Mon, 24 Mar 2025 11:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBA825E44D;
+	Mon, 24 Mar 2025 11:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLlFYht6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpRkCDX0"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF33197A68;
-	Mon, 24 Mar 2025 11:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E92C4400;
+	Mon, 24 Mar 2025 11:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742816441; cv=none; b=IUYI+SnFw3u7uunalYpy9083ISl9Gx9Z3GpEn6buRP5Et2HWrwcf5L2BYlvTu/tjUmn4jCHpZ6+k/xvEIN6iN6GwWYRj7kpUGjZHCENP4H/n+3Aq9/aX2HRPngYBm7Hoen84piltFEYlsOvsXhibxbCf8xAaKBjDLVvJ7XqhF48=
+	t=1742816684; cv=none; b=JljdzKhUWfH9eikDVkpOxeS5H10YJflDPQrNVSdezkJXJK0L8IdKSEuXGrqDGjFHJqxduBU7ZLvKMz4xhS1dno98k+5iFy8R1w1d3j+iujMk56HKRLXINmXb4LhEEOvDjNl36SbCwlreGgLFvOLNgYVdATRia5M2WVxzUPt1ydU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742816441; c=relaxed/simple;
-	bh=1i0QDMqKfiVbHmoZ6j3RaZ9SuoswG1kMCF7gS9L1lRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iw0NQh7nZnYPeZ3SC+7hnZMGAJFWCx7J1J5RoLVvuTfNHqaZP9yzQZym5Gojv7lr1ydGZxr6Jak/rVw3IVuPt58seZ9R5XFkr5nD2WfTHx2l4UME11r7laGXGme02FJd6hhPGd/awCip/TbKjWiieXLu5GWt/qEYPg09Xqb5dBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLlFYht6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36DEFC4CEDD;
-	Mon, 24 Mar 2025 11:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742816441;
-	bh=1i0QDMqKfiVbHmoZ6j3RaZ9SuoswG1kMCF7gS9L1lRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PLlFYht6WtT+po2JvGnc8GYr55OK4Ya2aBMFBkevmixYy6IhviZNZKThloY5FEQKR
-	 K7/zHuAhedPMziMAPM7PjhGYWqXR6N2fMqz2Me76EOir1ofTmVoc7fDN4j9/l+eInd
-	 kwW7JNOUQyxc6I3F47x4c/uiYnjrGCj4+tP1aVqh7p5RHERKCsB7tGFyHDbL2AAO2a
-	 VYTNyDvhrY8D8dgWpO6TbXM19AL4LJweGqrp9usOXT4OUwCHJHFBSUdp/qXV31yAp8
-	 E7eOt8P7ZhXxAvRJx/XXylCmBmFYDgV1EhMTOhfi4ixC280SNFXjkEVW55I7wjerA8
-	 X/QHXGoLLsY+A==
-Date: Mon, 24 Mar 2025 12:40:39 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Mubin Sayyed <mubin.sayyed@amd.com>
-Cc: krzysztof.kozlowski+dt@linaro.org, daniel.lezcano@linaro.org, 
-	tglx@linutronix.de, michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, git@amd.com
-Subject: Re: [PATCH v4 2/3] clocksource: timer-cadence-ttc: Support TTC
- device configured as PWM
-Message-ID: <hwnhz4yr6vzz3oav4gq7qptejjy3rdwff7iveawaxexf3tbngr@pnrxi6jkpw3k>
-References: <20250115113556.2832282-1-mubin.sayyed@amd.com>
- <20250115113556.2832282-3-mubin.sayyed@amd.com>
+	s=arc-20240116; t=1742816684; c=relaxed/simple;
+	bh=aH7jqNfcPpylN30vQMLnJO5n2GS+8MCwZkeDGGutTak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MqfgEdKLhSBMNpbstuBG8mnUXvDra0khpikWQ7xoxqU5hwCDe73NhhI2PRVRD3oghgKPHOy8Gg2KuhI2LnDLknQcYs+L3DI5glhdwwO6Mpjz8s76lbLDFKdHBfdXznVDP0s3lJzyf0WQWN1YwbKHDOcYFtqWofpqgLC/Zb1r9Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpRkCDX0; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22548a28d0cso74756135ad.3;
+        Mon, 24 Mar 2025 04:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742816683; x=1743421483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FclWDOpQYZIOEMCx+3mDgK8c9fGIMqHvQ2gE2LcXKrg=;
+        b=bpRkCDX0Z9TTiyiLniYc0WSWcC2q+Tx9VqirpaBvGDh4zSFWa4DyZLfl9aVEeXMeLi
+         G0AG0NLJsgnvprMZk0QpDdr8W0xZaPePc8Pw8fOUR6wZyBIjR/SUEvJ+LdHOOfsf4vDV
+         WpI8cRPu7OliP95r0+bdUch2UsDshsjb6bUS1uJ1WvfVg57qWQ9O1PJJQr/t3Mikhi6J
+         B/9Xhrz8jyexi3N4FCT08iQ65DWETsDoOlIlw3I6nvV+yBQhdmEuok3+MxnG4bdT6rGt
+         BzvQQ6LDxorXEkNBW4GzTyXtvKiwtrjopBJ1XdvxCZyc6I8JIiXcqEiEpQnEU2eZfVar
+         E7+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742816683; x=1743421483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FclWDOpQYZIOEMCx+3mDgK8c9fGIMqHvQ2gE2LcXKrg=;
+        b=gq0/dwUfVTGHU0qNZCnoTFRtlH/acrd9QwgiiT0q+xENFVQ1pYJjKAZo7XTotm+cUa
+         fpK8/e4HQ7kWlkpFVQTXDm0mcSz56OLMkyNTQtctk3kvVwbi7n6yw9OQt+b6yeCA97Kf
+         YRKqcDjPArm6uEVi6YtZmrAi2hdgtc8VnDDIlTnJZ2O+4AylmilyE1ZCZbbHnJpX6Bri
+         iXMVSFb2RCM6Tl2Otmw0FBWO6iBUI7ePO4kU9ilI6Uo33uJ/TEHth5/BQEIDucD8cOpP
+         6tdPwsDHSLmfzjeis6jvAoEDt5Ablaq4gf6rNDxRa6JnP6WfOveSG0YemBXFRBvsxSML
+         rdXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxKkYnhkM7IwQAqXTgQWQ89MQwUZZDpWkLjELTFtW6zBaSOq/duoFn646cFsUKfYJ85IUJf7NTPNoUftEq@vger.kernel.org, AJvYcCXs3fOqRQNIVK8Ey/HMoG2ml8W6Q8sl2KbcRC0/84z9ADW5Uo/GMpupheq+as3E/n3axd/zV8E0giA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpSt3OfyvKqJGagd1DR3gvofBrIetC7e8c90dCAsfQMlqJDVDh
+	AzsqUBAgJZEh+4IMxsFahug7ZhAhmj3NRg1vu9dA2NPw7CniWboE7L6+8CHeXAg=
+X-Gm-Gg: ASbGncvIXN+q8MVxkqH3Yh7FoxtFs1leL2DySZx61v3FqVRzQJnPAT4x5s4J0KGppIZ
+	A15jESc/R9E1zVINq7CbjuTHVFgnr7NxiE5ZJTZoWjEOuGbzYXAG5M3ikniI4ZxAWnDsd2w3R25
+	+jAac2aC0EZGpC5xwpRpTZ5pQCv2XFdk8fagjUZuPd4MSkBGReLAvpe8aANa+OEXIUgADTPqhKo
+	AH3zZvbh0qC6vBvu33bIC0LlZRlVh2JGxZEPKWbSqQ7ZpobZXAGSLH1tIuKt/EVJxAE7bW0bO8K
+	mzkU7pWA703FN0pX3/O766xcHmi3PeoIfOKqAI+93l5Dr6YVBofSayjC
+X-Google-Smtp-Source: AGHT+IG0hePrJhwSgn3rCtEA92WDnZVJ/VYMDjPzw/eThcvEnlBPxwvaFn6CraVYwHOXq4RoU8sdHw==
+X-Received: by 2002:a17:903:292:b0:220:c813:dfcc with SMTP id d9443c01a7336-22780e08cf6mr223591475ad.40.1742816682459;
+        Mon, 24 Mar 2025 04:44:42 -0700 (PDT)
+Received: from ownia.localdomain ([156.226.172.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f3b242sm68618715ad.41.2025.03.24.04.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 04:44:42 -0700 (PDT)
+From: Weizhao Ouyang <o451686892@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: kernel@pengutronix.de,
+	linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Weizhao Ouyang <o451686892@gmail.com>
+Subject: [PATCH] can: rockchip_canfd: fix broken quirks checks
+Date: Mon, 24 Mar 2025 19:44:16 +0800
+Message-ID: <20250324114416.10160-1-o451686892@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pzd7tzhb5lmj2cym"
-Content-Disposition: inline
-In-Reply-To: <20250115113556.2832282-3-mubin.sayyed@amd.com>
+Content-Transfer-Encoding: 8bit
 
+First get the devtype_data then check quirks.
 
---pzd7tzhb5lmj2cym
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/3] clocksource: timer-cadence-ttc: Support TTC
- device configured as PWM
-MIME-Version: 1.0
+Fixes: bbdffb341498 ("can: rockchip_canfd: add quirk for broken CAN-FD support")
+Signed-off-by: Weizhao Ouyang <o451686892@gmail.com>
+---
+ drivers/net/can/rockchip/rockchip_canfd-core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-On Wed, Jan 15, 2025 at 05:05:55PM +0530, Mubin Sayyed wrote:
-> TTC device can act either as clocksource/clockevent or PWM generator,
-> it would be decided by pwm-cells property. If pwm-cells property is
-> present in TTC node, it would be treated as PWM device, and clocksource
-> driver just calls probe function for PWM functionality, so that TTC
-> device would be registered with PWM framework.
->=20
-> Signed-off-by: Mubin Sayyed <mubin.sayyed@amd.com>
-> ---
-> Changes for v4:
->     - In case of pwm-cells property call probe function for PWM
->       feature instead of returning error.
-> Changes for v3:
->     - None
-> Changes for v2:
->     - Added comment regarding pwm-cells property
-> ---
->  drivers/clocksource/timer-cadence-ttc.c | 34 +++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->=20
-> diff --git a/drivers/clocksource/timer-cadence-ttc.c b/drivers/clocksourc=
-e/timer-cadence-ttc.c
-> index 2f33d4c40153..c5ecad9332c9 100644
-> --- a/drivers/clocksource/timer-cadence-ttc.c
-> +++ b/drivers/clocksource/timer-cadence-ttc.c
-> @@ -35,6 +35,10 @@
->   * obtained from device tree. The pre-scaler of 32 is used.
->   */
-> =20
-> +struct ttc_timer_config {
-> +	bool is_pwm_mode;
-> +};
-> +
->  /**
->   * struct ttc_timer - This definition defines local timer structure
->   *
-> @@ -453,6 +457,7 @@ static int __init ttc_setup_clockevent(struct clk *cl=
-k,
-> =20
->  static int __init ttc_timer_probe(struct platform_device *pdev)
->  {
-> +	struct ttc_timer_config *ttc_config;
->  	unsigned int irq;
->  	void __iomem *timer_baseaddr;
->  	struct clk *clk_cs, *clk_ce;
-> @@ -461,6 +466,24 @@ static int __init ttc_timer_probe(struct platform_de=
-vice *pdev)
->  	u32 timer_width =3D 16;
->  	struct device_node *timer =3D pdev->dev.of_node;
-> =20
-> +	ttc_config =3D devm_kzalloc(&pdev->dev, sizeof(*ttc_config), GFP_KERNEL=
-);
-> +	if (!ttc_config)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * If pwm-cells property is present in TTC node,
-> +	 * it would be treated as PWM device.
-> +	 */
-> +	if (of_property_read_bool(timer, "#pwm-cells")) {
-> +		#if defined(CONFIG_PWM_CADENCE)
-> +		ttc_config->is_pwm_mode =3D true;
-> +			return ttc_pwm_probe(pdev);
+diff --git a/drivers/net/can/rockchip/rockchip_canfd-core.c b/drivers/net/can/rockchip/rockchip_canfd-core.c
+index d9a937ba126c..ac514766d431 100644
+--- a/drivers/net/can/rockchip/rockchip_canfd-core.c
++++ b/drivers/net/can/rockchip/rockchip_canfd-core.c
+@@ -907,15 +907,16 @@ static int rkcanfd_probe(struct platform_device *pdev)
+ 	priv->can.data_bittiming_const = &rkcanfd_data_bittiming_const;
+ 	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK |
+ 		CAN_CTRLMODE_BERR_REPORTING;
+-	if (!(priv->devtype_data.quirks & RKCANFD_QUIRK_CANFD_BROKEN))
+-		priv->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
+ 	priv->can.do_set_mode = rkcanfd_set_mode;
+ 	priv->can.do_get_berr_counter = rkcanfd_get_berr_counter;
+ 	priv->ndev = ndev;
+ 
+ 	match = device_get_match_data(&pdev->dev);
+-	if (match)
++	if (match) {
+ 		priv->devtype_data = *(struct rkcanfd_devtype_data *)match;
++		if (!(priv->devtype_data.quirks & RKCANFD_QUIRK_CANFD_BROKEN))
++			priv->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
++	}
+ 
+ 	err = can_rx_offload_add_manual(ndev, &priv->offload,
+ 					RKCANFD_NAPI_WEIGHT);
+-- 
+2.45.2
 
-strange indention. Maybe use
-
-	if (IS_REACHABLE(CONFIG_PWM_CADENCE))
-
-This is an unusal way to bind the PWM driver. I'd prefer creation of separa=
-te
-device in the PWM case. I wonder if it can happen that ttc_pwm_probe() is
-called during boot before pwm_init() completed. Or use an auxbus device
-to distinguish between timer and pwm?
-
-> +		#else
-> +			return -ENODEV;
-> +		#endif
-> +	}
-> +	dev_set_drvdata(&pdev->dev, ttc_config);
-> +
->  	if (initialized)
->  		return 0;
-> =20
-
-Best regards
-Uwe
-
---pzd7tzhb5lmj2cym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfhRLQACgkQj4D7WH0S
-/k4sqwf/cPZOgKEZ8UNhWo8+7B84fciGOJsR7JSGHrR8Ds3OzoSsSo2SL1hEBRJC
-qRC7A/Ymvfm+VL+819XXNYXtCEtIe0Sdb5LZlUB4V+4muo4uhuOJtZCoj8Op0c8q
-AlDpNDM3W0itt6BUe2gyTWwqwbUHXgdDHggexb+2Q3+h8qUoslfWQxxHC9xGTQvi
-kqeLKzVhEQPY652y50JYDbS2QAi1bnI67inJFIHxUNCDg/ps/Br3w1xxO0/uKyE0
-8xCRHh781T1g7F3gac9uXN5LZq1SX+X4vwQCO9S2UDIv1Oz4IrPrPRiFANASnXva
-OzxvtMFDrG2IDLps1l2L0rn94pSeyA==
-=Aeyv
------END PGP SIGNATURE-----
-
---pzd7tzhb5lmj2cym--
 
