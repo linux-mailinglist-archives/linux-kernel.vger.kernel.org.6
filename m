@@ -1,186 +1,104 @@
-Return-Path: <linux-kernel+bounces-574036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41A5A6DFD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:36:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE2EA6DF9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446A6171898
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:35:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E05BE7A5876
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4E9263F4D;
-	Mon, 24 Mar 2025 16:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785E2638AA;
+	Mon, 24 Mar 2025 16:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="z+IxxBkr";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="I1n8e6S7"
-Received: from e3i165.smtp2go.com (e3i165.smtp2go.com [158.120.84.165])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3Bn6TkT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BB7263F4B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.84.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3427F2638AD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834074; cv=none; b=XJZ3ezQmT/SqeF/I2HmOPeHhDGsT1FV1v/7ED7T744CF5dDQPMDtBj+1V2gQ4Dpnkv5KbyPdgo/5v8VynwhHd+UYOU3WsYS8IIJIB+1RPC03RpPwyQIcMcRryZ8XrcV9SLsecnB1X+jEWaS8rOdcVdLkvvPs8QN0MuyTTGOtjDQ=
+	t=1742833726; cv=none; b=oFoQlN9uIvA/0I9WgNSzB+U1wasgw4E/W9ppeNW8ALoYtx3uM7FvjZfTQocdKzJU0X3fopzn6Kl4dPBt4ZD3mZd/vBsdJA60zNUX20840Xx0NkqyOQrVA7RlaJW3F+yU3eJVEj9csQInIIBWbpBa4X+f8aPmnhh5+5orv+cWxIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834074; c=relaxed/simple;
-	bh=pisJCmXutX3WKwnfaDBSqKdwJKeXZKOOQwNKBQF2pMs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q8i2R8PRAsC1UWTBnDUWQ+dwF9mYpmbGEOsAdTUb3ILgoapDz76h4MPYuAJV7R0zjrRmkmkOM1EIvCWcScg5hZpOx7trWowJZowuVNDqLllLifW8+S9KHWsFJXi8fizLvKbeweDBiIErWlOnNwPIEhx8ZS/xqL2Olbj+GqFqT1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=z+IxxBkr; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=I1n8e6S7; arc=none smtp.client-ip=158.120.84.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1742834066; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=FAxtQOdipdzJfzWqMTjMUuyF5PVy2Z3B7Fmnm9GNVKI=;
- b=z+IxxBkrqZ/xS5uHZb0qn9IkDUHlQz0GIqqtRDu5KKCKzWeGG4anw1I2YWN8WvEU5SMuZ
- K8nspCkfJ4eOiW4He7TvA+EhIqLGH/hsCmZWBS1h8XEUoXd/0OaKtYnJjQteruqZnVR+Pti
- oI6igYDNhnpraXTityKZaqsuH98c7mutHkZnK7OUjAngcMQPJw8OulPXK+GjoJm0yv/HI/G
- XxuFPrrF2m3BSzbCGfKDFpWZebbPTG4W3dtsZtCg8SpAgXomgdev3IZvyccajgE7NMxdZtW
- NPKTtBPCJFQaVqZoYBYZa0U0HPMYMBEZXqt8Ya2oAIVXEUuePKP45y8ti3Ig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1742834066; h=from : subject
- : to : message-id : date;
- bh=FAxtQOdipdzJfzWqMTjMUuyF5PVy2Z3B7Fmnm9GNVKI=;
- b=I1n8e6S7/wVN/9ujUJfg0X1S63TTmaRkNpSu7ZvDo2lLCipClgC01/3id87jwWnjjrbLE
- V8jb9cUKjji/fp+rYAmxOi9RbPQNavNvrDRzu2mFQ4uQ8jp5qXzwkUzlxVZw/vETfdfsQn+
- ZgO6hCD+QGT2DENoYxJHsupifsvnZBgt9IP7j2NEZNoP3g/6tmp8WlbK+WpPXME/qygn9O9
- X8VIuZkFzoAmPYfxbw7lDwp37WYtUTQE3n+stw6V8PWaEG4uedaTp/H79nfj4v9cndAyGD9
- RxpxOxB34evM8QLAEF7mYb/fn5+MYn0Y+2/KfC0qtBue06sNFB0S+Rboiw+Q==
-Received: from [10.12.239.196] (helo=localhost)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97.1-S2G)
-	(envelope-from <repk@triplefau.lt>)
-	id 1twkkm-FnQW0hQ0J4D-mkpw;
-	Mon, 24 Mar 2025 16:34:20 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH wireless v2 2/2] wifi: mac80211: Purge vif txq in ieee80211_do_stop()
-Date: Mon, 24 Mar 2025 17:28:21 +0100
-Message-Id: <ff7849e268562456274213c0476e09481a48f489.1742833382.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1742833382.git.repk@triplefau.lt>
-References: <cover.1742833382.git.repk@triplefau.lt>
+	s=arc-20240116; t=1742833726; c=relaxed/simple;
+	bh=aqrTfLY/lrY8xTfxHcwLv+bhNXJYhqwQeO1RoOh0ZDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvWwxHwUZWM1LjCIUI0EhfOXRcGcZ9bD78xalDbz8qg4/ae0XEhzc06Z0UIrKlnI43E/ji1qaMhvs5yxnkxX+tS7fPM44DUcqJKU6nN3jHH0eQGjCJ1cezkNffhujLHwZQK6G7ms+5BbRIT90qrBjB3ETxIS3UqrK1XxC0X5cyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3Bn6TkT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6923EC4CEDD;
+	Mon, 24 Mar 2025 16:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742833725;
+	bh=aqrTfLY/lrY8xTfxHcwLv+bhNXJYhqwQeO1RoOh0ZDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E3Bn6TkTgcdqsU5DfZ1FRKhsgAYnp8/9A7XfFyKdWmMGez/mlI7wWkmtaEAiEa406
+	 OxbpuTpu8/eO6hAqUAEssea9Us64zqmj9piH4jV8YvUEWOHg1rZjIBonvIZa6EMYV2
+	 K/KMKTecVCjLY7/odCyHUB/PC66cwzNG6FhHE9KzRfbIY7ZX8erLfMBRZ8DNVs8X+O
+	 bHA7TJtEuyvNh8Lb3Y0rZk5Qz+bD1xhCSkVMlLnOCz26THmDaxbYn3/o7q6+62fr4e
+	 H8DDtT0WYLgQvMIFtiP1KeqaurtxyMa1kK1dH4C5/tJiHwxtRRo7ROIx7scC4zTLAO
+	 /e4mA4eXi6+Jw==
+Date: Mon, 24 Mar 2025 16:28:43 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Daeho Jeong <daeho43@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [PATCH v2] f2fs: support zero sized file truncate for device
+ aliasing files
+Message-ID: <Z-GIOxj1reO87F6E@google.com>
+References: <20250321213328.1170234-1-daeho43@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 510616m:510616apGKSTK:510616sP7fTJjXc7
-X-smtpcorp-track: T0JQB_4Lmk5K.K8FPjsmx2BPD.2ogljARYpO9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321213328.1170234-1-daeho43@gmail.com>
 
-After ieee80211_do_stop() SKB from vif's txq could still be processed.
-Indeed another concurrent vif schedule_and_wake_txq call could cause
-those packets to be dequeued (see ieee80211_handle_wake_tx_queue())
-without checking the sdata current state.
+Do we still need this patch?
 
-Because vif.drv_priv is now cleared in this function, this could lead to
-driver crash.
-
-For example in ath12k, ahvif is store in vif.drv_priv. Thus if
-ath12k_mac_op_tx() is called after ieee80211_do_stop(), ahvif->ah can be
-NULL, leading the ath12k_warn(ahvif->ah,...) call in this function to
-trigger the NULL deref below.
-
-  Unable to handle kernel paging request at virtual address dfffffc000000001
-  KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-  batman_adv: bat0: Interface deactivated: brbh1337
-  Mem abort info:
-    ESR = 0x0000000096000004
-    EC = 0x25: DABT (current EL), IL = 32 bits
-    SET = 0, FnV = 0
-    EA = 0, S1PTW = 0
-    FSC = 0x04: level 0 translation fault
-  Data abort info:
-    ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-  [dfffffc000000001] address between user and kernel address ranges
-  Internal error: Oops: 0000000096000004 [#1] SMP
-  CPU: 1 UID: 0 PID: 978 Comm: lbd Not tainted 6.13.0-g633f875b8f1e #114
-  Hardware name: HW (DT)
-  pstate: 10000005 (nzcV daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : ath12k_mac_op_tx+0x6cc/0x29b8 [ath12k]
-  lr : ath12k_mac_op_tx+0x174/0x29b8 [ath12k]
-  sp : ffffffc086ace450
-  x29: ffffffc086ace450 x28: 0000000000000000 x27: 1ffffff810d59ca4
-  x26: ffffff801d05f7c0 x25: 0000000000000000 x24: 000000004000001e
-  x23: ffffff8009ce4926 x22: ffffff801f9c0800 x21: ffffff801d05f7f0
-  x20: ffffff8034a19f40 x19: 0000000000000000 x18: ffffff801f9c0958
-  x17: ffffff800bc0a504 x16: dfffffc000000000 x15: ffffffc086ace4f8
-  x14: ffffff801d05f83c x13: 0000000000000000 x12: ffffffb003a0bf03
-  x11: 0000000000000000 x10: ffffffb003a0bf02 x9 : ffffff8034a19f40
-  x8 : ffffff801d05f818 x7 : 1ffffff0069433dc x6 : ffffff8034a19ee0
-  x5 : ffffff801d05f7f0 x4 : 0000000000000000 x3 : 0000000000000001
-  x2 : 0000000000000000 x1 : dfffffc000000000 x0 : 0000000000000008
-  Call trace:
-   ath12k_mac_op_tx+0x6cc/0x29b8 [ath12k] (P)
-   ieee80211_handle_wake_tx_queue+0x16c/0x260
-   ieee80211_queue_skb+0xeec/0x1d20
-   ieee80211_tx+0x200/0x2c8
-   ieee80211_xmit+0x22c/0x338
-   __ieee80211_subif_start_xmit+0x7e8/0xc60
-   ieee80211_subif_start_xmit+0xc4/0xee0
-   __ieee80211_subif_start_xmit_8023.isra.0+0x854/0x17a0
-   ieee80211_subif_start_xmit_8023+0x124/0x488
-   dev_hard_start_xmit+0x160/0x5a8
-   __dev_queue_xmit+0x6f8/0x3120
-   br_dev_queue_push_xmit+0x120/0x4a8
-   __br_forward+0xe4/0x2b0
-   deliver_clone+0x5c/0xd0
-   br_flood+0x398/0x580
-   br_dev_xmit+0x454/0x9f8
-   dev_hard_start_xmit+0x160/0x5a8
-   __dev_queue_xmit+0x6f8/0x3120
-   ip6_finish_output2+0xc28/0x1b60
-   __ip6_finish_output+0x38c/0x638
-   ip6_output+0x1b4/0x338
-   ip6_local_out+0x7c/0xa8
-   ip6_send_skb+0x7c/0x1b0
-   ip6_push_pending_frames+0x94/0xd0
-   rawv6_sendmsg+0x1a98/0x2898
-   inet_sendmsg+0x94/0xe0
-   __sys_sendto+0x1e4/0x308
-   __arm64_sys_sendto+0xc4/0x140
-   do_el0_svc+0x110/0x280
-   el0_svc+0x20/0x60
-   el0t_64_sync_handler+0x104/0x138
-   el0t_64_sync+0x154/0x158
-
-To avoid that, empty vif's txq at ieee80211_do_stop() so no packet could
-be dequeued after ieee80211_do_stop() (new packets cannot be queued
-because SDATA_STATE_RUNNING is cleared at this point).
-
-Fixes: ba8c3d6f16a1 ("mac80211: add an intermediate software queue implementation")
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- net/mac80211/iface.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index 738de269e13f..e60c1ffebaea 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -660,6 +660,9 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata, bool going_do
- 	if (sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
- 		ieee80211_txq_remove_vlan(local, sdata);
- 
-+	if (sdata->vif.txq)
-+		ieee80211_txq_purge(sdata->local, to_txq_info(sdata->vif.txq));
-+
- 	sdata->bss = NULL;
- 
- 	if (local->open_count == 0)
--- 
-2.40.0
-
+On 03/21, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> support a file truncation to zero size for device aliasing files.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+> v2: make the extent length zero
+> ---
+>  fs/f2fs/file.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index f92a9fba9991..69952f208086 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -775,6 +775,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>  		f2fs_update_time(sbi, REQ_TIME);
+>  
+>  		f2fs_put_page(ipage, 1);
+> +
+> +		write_lock(&et->lock);
+> +		et->largest.len = 0;
+> +		write_unlock(&et->lock);
+> +
+>  		goto out;
+>  	}
+>  
+> @@ -1036,7 +1041,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  
+>  	if ((attr->ia_valid & ATTR_SIZE)) {
+>  		if (!f2fs_is_compress_backend_ready(inode) ||
+> -				IS_DEVICE_ALIASING(inode))
+> +				(IS_DEVICE_ALIASING(inode) && attr->ia_size))
+>  			return -EOPNOTSUPP;
+>  		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+>  			!IS_ALIGNED(attr->ia_size,
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
