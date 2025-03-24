@@ -1,207 +1,265 @@
-Return-Path: <linux-kernel+bounces-573967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E166A6DF01
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:51:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913CFA6DF09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DEB616C615
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:51:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994127A3A52
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7C71E531;
-	Mon, 24 Mar 2025 15:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D20426156D;
+	Mon, 24 Mar 2025 15:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rg5dx8Zw"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g+JbKjDD"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B3625F979
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD91DDE9;
+	Mon, 24 Mar 2025 15:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742831451; cv=none; b=SCZaTyXOP0S9339bfFkV2XjHHf/0bDfmxpVbYUE94MXhQfCBmW51UGrmJ8H2yGZpVQnQpjKVCC27PyVI6xkrNz8v6fr1iUZu77X+QTKOwRUMJu2PYySO9Vbo1e0tiSIAQTcOfIZ/mMXik0SnxgghnsEv9HyJjm3VzDLgPOj+RCg=
+	t=1742831545; cv=none; b=owsRrGJif/61Q9m35MDBTxZEMcpzGLsFwzE4ikVWSuK+nosWu9GCD6RjX6R8tYIKGasgQtDR+HDENSpPOE7bIEyWtfLko4lEOJxziUSkRQPaG8Az4p2Hfg9FyEe2fb3YmvrAfnGi9APvRYNi3VI/Pd670h8CQfljPj6I+40xhz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742831451; c=relaxed/simple;
-	bh=iC7dfpUdHfAvWLxMF1a4lZ6q0xl4Aagkf2KHFMc1yQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMCUYIbuyN2+YnaNRlKNS3gcA4YwWow891ZTtwqrOVsQj/mjCZwzn+GN9Gufbr7tTJSS1rCcLTIRO6FII1sTCqi8qm/k0Hb7tp9SjwVGLdfX3KtuReKsDkgM4jA7x+IDTt2fbGA1mjRJ/VSK66+08VRBAM14tIuBapa58pI2ucM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rg5dx8Zw; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2242ac37caeso383375ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742831448; x=1743436248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yvP8eWaYqIznmmYZkIkwVCH6qx4RfXMKSXMvsdyGlPc=;
-        b=rg5dx8ZwvOpHWpDBltf3XmmCma5wVBVWmjd9EBG5OhhgnUJUexMaQ9NQ64fRC2VrW+
-         vF6/M3e+G2k8quIdG32xPIXDxe7FFRLFVShWKuINTiJjbvIo5zwQWwEqkERHHZdS34RL
-         hMZm/6zKYIP1dpXmQKI/qso4xxpD6IAeHo2lBrehFhdhQkEjq+ORUlpWJDgx/i9dyFCQ
-         o0qTIo1LzPoD+qpu8FBt5gAdEqm8EDXVRg5pew6HQAXG5yxBpXiBLExyb8+AVNB/wvgI
-         zzG8Sb4L/nv5rtmjr2V7GxHe0hUiuCboyntMfqJsIKSo7Rndyzdv7w7jtBn0zeM219TT
-         9UaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742831448; x=1743436248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yvP8eWaYqIznmmYZkIkwVCH6qx4RfXMKSXMvsdyGlPc=;
-        b=K4iU1YBhR/eeQt7ALUN6NFattqs/NeS/rxjpQAZDvn0e7etfcx3b1iM45xVf6ms0cB
-         9rSAg2wGtHBLV3WWa2GiHUpN/tx7v3IQ4jJQPZ0WFTyYijJyz+ioWOzvCyIZfxC1QZH6
-         3xUx1sPsHWz75m8hqSAUWh74QP4ZYZiAy3taFmIdPTgIpbvckMyTZtFrE2k8/GvS1RXT
-         YU9per18FT/ugai0niclRglfWtgwE5b/4PBwhrubP0rzZEC+UX3P9sdJI8rECuatmiYA
-         3jy0Hirdn7KKh9ILEVlc8L88iy/3Pe/x22UE9TBTKF3skSR/9FgxiNUj8LGLhGOstEdz
-         CEHw==
-X-Gm-Message-State: AOJu0YxcAygGV7A7iyYuYm9x8g5/ml5JNEXt3MSEsiDBY0krPg8rs9pN
-	5ZTS7ZAYB/xk8AEAKdclD7lp/rJosR32eKOjZKVviRR8L+fUCnPD5syvhWlW0/ApXC87MZqrhQ+
-	Q+SPeaF/wbSA3azGg20R2aCTG6DlmhlX4T8yR
-X-Gm-Gg: ASbGncuHin9j6QpHrQmt2bo6rBgFA44Q77VHUrqpDedsHy46vyZxUw7bd865ThZtZP1
-	cxpJckVjmtcMAsgGtR24rMlTCZoJSKZGXm05q6TuYDOlqUfUkvf+SlghJx1jqCcHHnlNQQv4L34
-	A/o/uVf5s5EzbhaYHNViSVzFvrInlw1bsu2tSr5wVm6+6Dmn/Psz6piPKkhK5qPt7Zwg==
-X-Google-Smtp-Source: AGHT+IEkqLjkjkKV0BoryNLZCKYsJZuoARtK320e+r0SizuUym1WHCy1JsYihCnG35nWDbqzuoSwrGMxS3kMcOx8ipg=
-X-Received: by 2002:a17:902:f707:b0:21f:40e8:6398 with SMTP id
- d9443c01a7336-22798319d4emr5412215ad.26.1742831447311; Mon, 24 Mar 2025
- 08:50:47 -0700 (PDT)
+	s=arc-20240116; t=1742831545; c=relaxed/simple;
+	bh=vkIiwsJdXEcjnGjPBRffuNkzKftq4ghjHicNJhbkszE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jqone/vCAVs1AZ+gYchgo5aFlqH8ulxydMsLncQGRbIvo3s+a0v/JDV9BbdRb/HUl+cKOQeggLMwEo+R1r2bs9RAiJXMp7X3O3am97APo3FxX635zFYA3U40K3sDpzfh5q8bzS5Zu6g7dqvgRk0QxkrqHA+mc8F8RPc0oNKTaYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=g+JbKjDD; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DDEB7455;
+	Mon, 24 Mar 2025 16:50:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1742831435;
+	bh=vkIiwsJdXEcjnGjPBRffuNkzKftq4ghjHicNJhbkszE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g+JbKjDDE5eu+Qg2Fn4azelXmAdEtKhv29SaVefd57+2POrgsAMgygBeVvfgHTS6J
+	 ntGDEoqfXy8yExRnUhj2mMf8ik4bvyc2uwawmx4eEhAgJ3blBWXUoknrGR/TX8tLoz
+	 Y8FKKExuLUj/UD1kCx8CNi25UhXPmkD19wThrSyk=
+Date: Mon, 24 Mar 2025 17:51:59 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: niklas soderlund <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] media: vsp1: pipe: Add RAW Bayer formats mapping
+Message-ID: <20250324155159.GH5113@pendragon.ideasonboard.com>
+References: <20250321-v4h-iif-v6-0-361e9043026a@ideasonboard.com>
+ <20250321-v4h-iif-v6-7-361e9043026a@ideasonboard.com>
+ <20250321215634.GB11255@pendragon.ideasonboard.com>
+ <dkatmlnysvsy3g4n3m53bzxcqx4avklzfctxgjv4hl6sd7fte3@vlfsvasn53d7>
+ <20250324083513.GA2884853@ragnatech.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324152756.3879571-1-tmricht@linux.ibm.com> <CAP-5=fXPgoocDSRxzYpkzcLsPwKsp9b80b1KPDWv-obkmiX-fA@mail.gmail.com>
-In-Reply-To: <CAP-5=fXPgoocDSRxzYpkzcLsPwKsp9b80b1KPDWv-obkmiX-fA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 24 Mar 2025 08:50:36 -0700
-X-Gm-Features: AQ5f1JoLnJ6gBw7l0R3pxQ2BDt_h9unn7xjMEHDp0sSAorOpWJxUv0zpcHKd3tU
-Message-ID: <CAP-5=fU+9EQKT2fOuBQ5ds6s4Bh6rWrvco1ow6B-CQ92XuO1kQ@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Fix wrong size to bpf_map__update_elem call
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org, 
-	james.clark@linaro.org, agordeev@linux.ibm.com, gor@linux.ibm.com, 
-	sumanthk@linux.ibm.com, hca@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250324083513.GA2884853@ragnatech.se>
 
-On Mon, Mar 24, 2025 at 8:38=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Mon, Mar 24, 2025 at 8:28=E2=80=AFAM Thomas Richter <tmricht@linux.ibm=
-.com> wrote:
-> >
-> > In linux-next
-> > commit c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t"=
-)
-> > causes the perf tests 100 126 to fail on s390:
-> >
-> > Output before:
-> >  # ./perf test 100
-> >  100: perf trace BTF general tests         : FAILED!
-> >  #
-> >
-> > The root cause is the change from int to int16_t for the
-> > cpu maps. The size of the CPU key value pair changes from
-> > four bytes to two bytes. However a two byte key size is
-> > not supported for bpf_map__update_elem().
->
-> Nice catch!
->
-> > Note: validate_map_op() in libbpf.c emits warning
-> >  libbpf: map '__augmented_syscalls__': \
-> >          unexpected key size 2 provided, expected 4
-> > when key size is set to int16_t.
->
-> Wow, weird.
+On Mon, Mar 24, 2025 at 09:35:13AM +0100, Niklas Söderlund wrote:
+> On 2025-03-24 09:27:56 +0100, Jacopo Mondi wrote:
+> > On Fri, Mar 21, 2025 at 11:56:34PM +0200, Laurent Pinchart wrote:
+> > > On Fri, Mar 21, 2025 at 04:45:39PM +0100, Jacopo Mondi wrote:
+> > > > Add formats definition for RAW Bayer formats in vsp1_pipe.c.
+> > > >
+> > > > 8-bits RAW Bayer pixel formats map on VSP format RGB332.
+> > >
+> > > s/map on/map to/
+> > >
+> > > > 10, 12 and 16 bits RAW Bayer pixel formats map on RGB565 insted.
+> > > >
+> > > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> > > > ---
+> > > > v3->v4:
+> > > > - Fix SWAP bits for RAW 10, 12 and 16
+> > > > ---
+> > > >  drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 72 ++++++++++++++++++++++++-
+> > > >  1 file changed, 71 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > > index 8e9be3ec1b4d..a51061738edc 100644
+> > > > --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > > +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > > @@ -30,10 +30,80 @@
+> > > >   */
+> > > >
+> > > >  static const struct vsp1_format_info vsp1_video_formats[] = {
+> > > > -	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > > +	/* Raw Bayer 8-bit: Maps on RGB332 */
+> > > > +	{ V4L2_PIX_FMT_SBGGR8, MEDIA_BUS_FMT_Y8_1X8,
+> > > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGBRG8, MEDIA_BUS_FMT_Y8_1X8,
+> > > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGRBG8, MEDIA_BUS_FMT_Y8_1X8,
+> > > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SRGGB8, MEDIA_BUS_FMT_Y8_1X8,
+> > > >  	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > >  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > >  	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > >
+> > > Similarly to the media bus codes, could we have a single entry, using
+> > > V4L2_PIX_FMT_GREY ? Same below with V4L2_PIX_FMT_Y10, V4L2_PIX_FMT_Y12
+> > > and V4L2_PIX_FMT_Y16.
+> > 
+> > mmm, the SRGB mbus codes come from the R-Car ISP input image format.
+> > I understand these are multiple identical entries, but having
+> > somewhere a translation from SRGB->Y formats just to have fewer
+> > entries here it feels a bit of an hack
 
-Ah, I guess it is a mismatch with the declaration in
-tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c?h=3Dperf-tools=
--next#n31
-```
-/* bpf-output associated map */
-struct __augmented_syscalls__ {
-       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-       __type(key, int);
-       __type(value, __u32);
-       __uint(max_entries, MAX_CPUS);
-} __augmented_syscalls__ SEC(".maps");
-```
-but this looks wrong. The values are file descriptors, so should be
-ints. I think it should be:
-```
-struct __augmented_syscalls__ {
-       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-       __type(key, int16_t);
-       __type(value, int);
-       __uint(max_entries, MAX_CPUS);
-} __augmented_syscalls__ SEC(".maps");
-```
-I'm not sure if max_entries can be a uint16_t too. I suspect this may
-well interfere with BPF_MAP_TYPE_PERF_EVENT_ARRAY and its use by
-bpf_perf_event_output. Probably best to keep things in the BPF code as
-they are and do your builtin-trace.c fix. Perhaps someone else can
-clean this up.
+handling the CFA pattern in the media bus code and pixel format was a
+historical mistake that we're slowly addressing for new drivers. Sakari
+has for instance posted patches to use the Y formats only on sensor
+subdevs that will follow the new raw camera sensor subdev model. I think
+we should use Y formats in the VSP and ISP drivers already.
 
-Thanks,
-Ian
+> > > This would still duplicate entries, as V4L2_PIX_FMT_Y1[026] are
+> > > essentially treated the same, and they are identical to
+> > > V4L2_PIX_FMT_RGB565. We could ask the ISP driver to use
+> > > V4L2_PIX_FMT_RGB565 (and V4L2_PIX_FMT_RGB332 for 8-bit raw) when
+> > > configuring the VSPX, but that's a bit of a hack.
+> > 
+> > Indeed, but I don't think 3 "duplicated" entries are any bad, if
+> > that's how the HW work.
+> > 
+> > > Another option would be to handle the translation in
+> > > vsp1_vspx_rwpf_set_subdev_fmt(). I would still in that case only expect
+> > > the V4L2_PIX_FMT_GREY and V4L2_PIX_FMT_Y* 4CCs from the ISP driver. This
+> > 
+> > Do you expect the ISP driver to translate SRGB to Y formats ?
 
-> > Therefore change to variable size back to 4 bytes for
-> > invocation of bpf_map__update_elem().
-> >
-> > Output after:
-> >  # ./perf test 100
-> >  100: perf trace BTF general tests         : Ok
-> >  #
-> >
-> > Fixes: c760174401f6 ("perf cpumap: Reduce cpu size from int to int16_t"=
-)
-> > Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: James Clark <james.clark@linaro.org>
-> > ---
-> >  tools/perf/builtin-trace.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > index 092c5f6404ba..464c97a11852 100644
-> > --- a/tools/perf/builtin-trace.c
-> > +++ b/tools/perf/builtin-trace.c
-> > @@ -4375,10 +4375,12 @@ static int trace__run(struct trace *trace, int =
-argc, const char **argv)
-> >                  * CPU the bpf-output event's file descriptor.
-> >                  */
-> >                 perf_cpu_map__for_each_cpu(cpu, i, trace->syscalls.even=
-ts.bpf_output->core.cpus) {
-> > +                       int mycpu =3D cpu.cpu;
-> > +
-> >                         bpf_map__update_elem(trace->skel->maps.__augmen=
-ted_syscalls__,
-> > -                                       &cpu.cpu, sizeof(int),
-> > +                                       &mycpu, sizeof(int),
->
-> nit: It is usually preferred to do "sizeof(mycpu)" to avoid the
-> problems like the one this fix is fixing. And I'm blamed for the bad
-> code in:
-> 5e6da6be3082 perf trace: Migrate BPF augmentation to use a skeleton
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
->
-> Thanks for the fixes!
-> Ian
->
-> >                                         xyarray__entry(trace->syscalls.=
-events.bpf_output->core.fd,
-> > -                                                      cpu.cpu, 0),
-> > +                                                      mycpu, 0),
-> >                                         sizeof(__u32), BPF_ANY);
-> >                 }
-> >         }
-> > --
-> > 2.48.1
-> >
+I actually expect the ISP driver to expose Y formats only to userspace,
+and get the CFA pattern from the ISP parameters buffers.
+
+> > > patch could then be dropped.
+> > 
+> > So are you suggesting to translate in the ISP driver
+> > 
+> >         SRGB8 -> RGB332
+> > 
+> >         SRGB10/12/16 -> RGB565
+
+No quite, the ISP driver would give us Y formats, and the translation to
+RGB332 and RGB565 would be handled within the VSP1 driver, in the
+vsp1_vspx_rwpf_set_subdev_fmt() function.
+
+> > Niklas, what do you think ?
+> 
+> I would rather keep the true formats in the API between the VSP and ISP, 
+> that is keep it as is. If really needed maybe a translation in the VSP 
+> driver prior to querying vsp1_video_formats[] could be added? But this 
+> driver is complex enough as-is :-)
+> 
+> > > What's your preference ?
+> > >
+> > > > +
+> > > > +	/* Raw Bayer 10/12/16-bit: Maps on RGB565 */
+> > > > +	{ V4L2_PIX_FMT_SBGGR10, MEDIA_BUS_FMT_Y10_1X10,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > >
+> > > The bpp values are used to calculate memory offsets. Unless I'm
+> > > mistaken, you should use 16 here, not 10.
+> > 
+> > I'm rounding up in the vspx driver. However it is true these formats
+> > are sampled in 16bpp chunks, so I can use 16 here.
+> > 
+> > > > +	{ V4L2_PIX_FMT_SGBRG10, MEDIA_BUS_FMT_Y10_1X10,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGRBG10, MEDIA_BUS_FMT_Y10_1X10,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SRGGB10, MEDIA_BUS_FMT_Y10_1X10,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > > +
+> > > > +	{ V4L2_PIX_FMT_SBGGR12, MEDIA_BUS_FMT_Y12_1X12,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGBRG12, MEDIA_BUS_FMT_Y12_1X12,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGRBG12, MEDIA_BUS_FMT_Y12_1X12,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SRGGB12, MEDIA_BUS_FMT_Y12_1X12,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > > +
+> > > > +	{ V4L2_PIX_FMT_SBGGR16, MEDIA_BUS_FMT_Y16_1X16,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGBRG16, MEDIA_BUS_FMT_Y16_1X16,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SGRBG16, MEDIA_BUS_FMT_Y16_1X16,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > > +	{ V4L2_PIX_FMT_SRGGB16, MEDIA_BUS_FMT_Y16_1X16,
+> > > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > > +
+> > > > +	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > >
+> > > This doesn't seem right, the patch is changing the V4L2_PIX_FMT_RGB332.
+> > 
+> > If I'm not mistaken V4L2_PIX_FMT_RGB332 was
+> > 
+> >         { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> >           VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >           VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> >           1, { 8, 0, 0 }, false, false, 1, 1, false }
+> > 
+> > and is now
+> > 
+> >         { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> >           VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >           VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> >           1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > 
+> > Seems like I messed up the bpp
+> > 
+> > With that fixed the diff looks saner. Thanks for spotting.
+> > 
+> > > >  	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > >  	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > >  	  VI6_RPF_DSWAP_P_WDS,
+
+-- 
+Regards,
+
+Laurent Pinchart
 
