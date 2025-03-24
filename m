@@ -1,305 +1,433 @@
-Return-Path: <linux-kernel+bounces-573720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B13A6DB71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:29:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC34A6DB9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8C83A4C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6971D16ABBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF9325EFB9;
-	Mon, 24 Mar 2025 13:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E925E838;
+	Mon, 24 Mar 2025 13:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFjUYwnT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nLRu+6Gf"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F791C5D59;
-	Mon, 24 Mar 2025 13:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD4E54723;
+	Mon, 24 Mar 2025 13:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742822944; cv=none; b=UA7iFWoDBsYxyJVuy4os5HrhP8NE+SHlNZwA/cDSchBERS3g0PYwRViB1JpliUVRPsScDoooGtVWu21nCsQn+AXnctDFmGNvUctEUV2230ixntvsEcDtqsuFRhWKd3qVWnpk4pv/6Uxy3nqS1JPo32V+Myiw5OPyD20vDmuXsQc=
+	t=1742823103; cv=none; b=iKRi3PB2HyXEPeVm/twfwXLxc4w/OseKoVVcNUw/pXvrUKm1+IP6O2MCFJ2MiW4XbU4fYvdrhetZ8HUMQunXGXSsBPMqm60DdpsrBafrEMG6+hWL+EfmRI6Fx3aia0Tlq6ElviInheAlS3lJq7YRKSRTI6r5SX5cCDOFH2st/sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742822944; c=relaxed/simple;
-	bh=Y46iSW+LggtctaAZhopKw9PxNLiHWQLWxsy0lpN4BA0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fvYaQP/5U7H8MY8LCMcQUu6uVqh+iUaVfwmMZtA8+MHvt6UgCSyjp4wiv534O9uErPzpgHQWYnfxSjqPo/vSDRK5sy4rjb7nZU0UPI3oN5Al4QJMw6Ssq2DlQkaYD9hyqD1Gw81pYFotjMqFhN48LV0SZvfDA1R+/IkvfUsyGW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFjUYwnT; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742822942; x=1774358942;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Y46iSW+LggtctaAZhopKw9PxNLiHWQLWxsy0lpN4BA0=;
-  b=mFjUYwnTvZfhsnh4U/JUBi3KF3DvV6orhdb9qy0ke/y4tLYkGeAEWWLP
-   +YHv42X/vh2TibCVayGhpQpwavYEqAmPVDKz1KOUrFflSIzo84/y7elKC
-   /i0rk1LV6SuZ8mYi8/2BoRaB5QELh1mr2KBQMylrbhDZmIitDb0xoZq31
-   Z7T1qh6U6xM5OHsO+uXEh+qpcIwAKTP0maNsZoRv4pnHUlo9B3SZbz4bG
-   GSwLp7jo8psJmjVKd9HBMH+bSmjlVh9NEaPzm0tF00QYu/UHOE8BIjbrx
-   Is05H9xun1+O+Vu+Ng8NAUIeQmcfheVkCOY0+4mfQWE3xHj/Ii3EPjbJM
-   w==;
-X-CSE-ConnectionGUID: oscZYqJZSbmGO0Z87ak5kQ==
-X-CSE-MsgGUID: /Mon8GBET3CRBJsEwruFAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="55024490"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="55024490"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:29:01 -0700
-X-CSE-ConnectionGUID: edUV5faiTliZm7AoBf2oBQ==
-X-CSE-MsgGUID: 5UO6frbsRq248I0YRPwwmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="124033273"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:28:58 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Mar 2025 15:28:55 +0200 (EET)
-To: Hans Zhang <18255117159@163.com>
-cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
-    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [v6 1/5] PCI: Introduce generic capability search functions
-In-Reply-To: <20250323164852.430546-2-18255117159@163.com>
-Message-ID: <f89f3d00-4423-f65d-293e-8aec3be14418@linux.intel.com>
-References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-2-18255117159@163.com>
+	s=arc-20240116; t=1742823103; c=relaxed/simple;
+	bh=orn9mvyvLj5xQ1Zi0yFBaxkVGVo1Lm59ZtXDAnQLfHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bu/uUmkFY6mfoQhaKIlRkNG6GCoXHQc7HV6RamwjSrA/f4oFwrOrXAq8psFsxTXKeUih0uWmoiaA2wh2KlJp2I+MdIHNFdL4gyb+jMfzFjHT5Hn+DiHiG3wwITAuztufrO5wjpSJWQhD6UXWSqY1hluUg/0BkuTfK2W9HFzhHbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nLRu+6Gf; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OCRDKD001903;
+	Mon, 24 Mar 2025 14:31:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	kSdXsZiED4fkcnHUKGZvpPMKQPJrtj864VRAicKuNT4=; b=nLRu+6Gfqa41Zfbl
+	p9bMEORlLHdDFeZUkjRTHHyCx9gsn+Nw0vzPPj+Om37czdfOLl2DP65pRRxFuHN0
+	OpGiG33UWVurcDAwr4ZzlLAJPCF8QQZPcAHqyK4wOCDMcOE4tgGpB94PqiWCnULO
+	PaHYUdH1hIsrEV1A5Ujri0ziMoNjeNqoMJc2mJdTWQesUdQeay3QyqEgCj3Tjci/
+	Zlhy6oTYYWDJWl9cZB8cyHMKsNfOkEkgFlCzUNDNQy10LR2gDZiWuOB30XMLBGcW
+	O01anFQdjiOL5kZpPOCn1MrPbE8JSecCI25RHjDtjXwlpi2pk/ptULklrDtEYpua
+	oxstuw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j7n85gm7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 14:31:23 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E5FB040048;
+	Mon, 24 Mar 2025 14:30:12 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34BEA85122C;
+	Mon, 24 Mar 2025 14:29:08 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Mar
+ 2025 14:29:07 +0100
+Message-ID: <322a2687-eae3-44da-adb4-8a6422f690e5@foss.st.com>
+Date: Mon, 24 Mar 2025 14:29:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/7] dt-bindings: memory-controllers: Add STM32 Octo
+ Memory Manager controller
+To: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <christophe.kerello@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250321-upstream_ospi_v6-v6-0-37bbcab43439@foss.st.com>
+ <20250321-upstream_ospi_v6-v6-2-37bbcab43439@foss.st.com>
+ <20250321140200.GA3192411-robh@kernel.org>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20250321140200.GA3192411-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
 
-On Mon, 24 Mar 2025, Hans Zhang wrote:
 
-> Existing controller drivers (e.g., DWC, custom out-of-tree drivers)
-> duplicate logic for scanning PCI capability lists. This creates
-> maintenance burdens and risks inconsistencies.
+
+On 3/21/25 15:02, Rob Herring wrote:
+> On Fri, Mar 21, 2025 at 10:32:22AM +0100, Patrice Chotard wrote:
+>> Add bindings for STM32 Octo Memory Manager (OMM) controller.
+>>
+>> OMM manages:
+>>   - the muxing between 2 OSPI busses and 2 output ports.
+>>     There are 4 possible muxing configurations:
+>>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>>         output is on port 2
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>>         OSPI2 output is on port 1
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>>   - the split of the memory area shared between the 2 OSPI instances.
+>>   - chip select selection override.
+>>   - the time between 2 transactions in multiplexed mode.
+>>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>>  .../memory-controllers/st,stm32mp25-omm.yaml       | 227 +++++++++++++++++++++
+>>  1 file changed, 227 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..2f8fa7569009369ebd077e4c6f4ab409a91838a5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/st,stm32mp25-omm.yaml
+>> @@ -0,0 +1,227 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/memory-controllers/st,stm32mp25-omm.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: STM32 Octo Memory Manager (OMM)
+>> +
+>> +maintainers:
+>> +  - Patrice Chotard <patrice.chotard@foss.st.com>
+>> +
+>> +description: |
+>> +  The STM32 Octo Memory Manager is a low-level interface that enables an
+>> +  efficient OCTOSPI pin assignment with a full I/O matrix (before alternate
+>> +  function map) and multiplex of single/dual/quad/octal SPI interfaces over
+>> +  the same bus. It Supports up to:
+>> +    - Two single/dual/quad/octal SPI interfaces
+>> +    - Two ports for pin assignment
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: st,stm32mp25-omm
+>> +
+>> +  "#address-cells":
+>> +    const: 2
+>> +
+>> +  "#size-cells":
+>> +    const: 1
+>> +
+>> +  ranges:
+>> +    description: |
+>> +      Reflects the memory layout with four integer values per OSPI instance.
 > 
-> To resolve this:
+> You say 4 here...
+
+Hi Rob,
+
+Yes, each range is composed by 4 integers: 
+
+ranges = <0 0 0x40430000 0x400>,
+         <1 0 0x40440000 0x400>;
+
+And we got 2 ranges entry, one for each OSPI instance.
+
+Maybe to avoid confusion, i can just update the description as following:
++    description: |
++      Reflects the memory layout per OSPI instance.
+
+Is it ok for you ?
+
 > 
-> Add pci_host_bridge_find_*capability() in pci-host-helpers.c, accepting
-> controller-specific read functions and device data as parameters.
+>> +      Format:
+>> +      <chip-select> 0 <registers base address> <size>
+>> +    minItems: 2
+>> +    maxItems: 2
 > 
-> This approach:
-> - Centralizes critical PCI capability scanning logic
-> - Allows flexible adaptation to varied hardware access methods
-> - Reduces future maintenance overhead
-> - Aligns with kernel code reuse best practices
+> And 2 here. I'm confused. From the example it doesn't look like you are 
+
+see my answer just above.
+
+> using ranges correctly. If you are parsing it yourself, that's wrong. 
+> More below.
 > 
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> ---
-> Changes since v5:
-> https://lore.kernel.org/linux-pci/20250321163803.391056-2-18255117159@163.com
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: OMM registers
+>> +      - description: OMM memory map area
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: regs
+>> +      - const: memory_map
+>> +
+>> +  memory-region:
+>> +    description: |
+>> +      Memory region shared between the 2 OCTOSPI instance.
+>> +      One or two phandle to a node describing a memory mapped region
+>> +      depending of child number.
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  memory-region-names:
+>> +    description: |
 > 
-> - If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
->   the kernel's .text section even if it's known already at compile time
->   that they're never going to be used (e.g. on x86).
+> Don't need '|'.
+
+Ok
+
 > 
-> - Move the API for find capabilitys to a new file called
->   pci-host-helpers.c.
+>> +      OCTOSPI instance's name to which memory region is associated
 > 
-> Changes since v4:
-> https://lore.kernel.org/linux-pci/20250321101710.371480-2-18255117159@163.com
+> That doesn't really tell me anything.
+
+We must identify to which OSPI instance the memory region belongs to.
+This is needed to configure/check the memory region area split between
+these 2 OSPI instance.
+
+Must i update the description ?
+
 > 
-> - Resolved [v4 1/4] compilation warning.
-> - The patch commit message were modified.
-> ---
->  drivers/pci/controller/Kconfig            | 17 ++++
->  drivers/pci/controller/Makefile           |  1 +
->  drivers/pci/controller/pci-host-helpers.c | 98 +++++++++++++++++++++++
->  drivers/pci/pci.h                         |  7 ++
->  4 files changed, 123 insertions(+)
->  create mode 100644 drivers/pci/controller/pci-host-helpers.c
+>> +    items:
+>> +      enum: [ospi1, ospi2]
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +
+>> +  clocks:
+>> +    minItems: 3
+>> +    maxItems: 3
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      enum: [omm, ospi1, ospi2]
 > 
-> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> index 9800b7681054..0020a892a55b 100644
-> --- a/drivers/pci/controller/Kconfig
-> +++ b/drivers/pci/controller/Kconfig
-> @@ -132,6 +132,23 @@ config PCI_HOST_GENERIC
->  	  Say Y here if you want to support a simple generic PCI host
->  	  controller, such as the one emulated by kvmtool.
->  
-> +config PCI_HOST_HELPERS
-> +	bool
-> +	prompt "PCI Host Controller Helper Functions" if EXPERT
-> + 	help
-> +	  This provides common infrastructure for PCI host controller drivers to
-> +	  handle PCI capability scanning and other shared operations. The helper
-> +	  functions eliminate code duplication across controller drivers.
-> +
-> +	  These functions are used by PCI controller drivers that need to scan
-> +	  PCI capabilities using controller-specific access methods (e.g. when
-> +	  the controller is behind a non-standard configuration space).
-> +
-> +	  If you are using any PCI host controller drivers that require these
-> +	  helpers (such as DesignWare, Cadence, etc), this will be
-> +	  automatically selected. Say N unless you are developing a custom PCI
-> +	  host controller driver.
+> Define the order.
 
-Hi,
+Ok, i will update as following:
 
-Does this need to be user selectable at all? What's the benefit? If 
-somebody is developing a driver, they can just as well add the select 
-clause in that driver to get it built.
+  clock-names:
+    items:
+      - const: omm
+      - const: ospi1
+      - const: ospi2
 
---
- i.
-
-> +
->  config PCIE_HISI_ERR
->  	depends on ACPI_APEI_GHES && (ARM64 || COMPILE_TEST)
->  	bool "HiSilicon HIP PCIe controller error handling driver"
-> diff --git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
-> index 038ccbd9e3ba..e80091eb7597 100644
-> --- a/drivers/pci/controller/Makefile
-> +++ b/drivers/pci/controller/Makefile
-> @@ -12,6 +12,7 @@ obj-$(CONFIG_PCIE_RCAR_HOST) += pcie-rcar.o pcie-rcar-host.o
->  obj-$(CONFIG_PCIE_RCAR_EP) += pcie-rcar.o pcie-rcar-ep.o
->  obj-$(CONFIG_PCI_HOST_COMMON) += pci-host-common.o
->  obj-$(CONFIG_PCI_HOST_GENERIC) += pci-host-generic.o
-> +obj-$(CONFIG_PCI_HOST_HELPERS) += pci-host-helpers.o
->  obj-$(CONFIG_PCI_HOST_THUNDER_ECAM) += pci-thunder-ecam.o
->  obj-$(CONFIG_PCI_HOST_THUNDER_PEM) += pci-thunder-pem.o
->  obj-$(CONFIG_PCIE_XILINX) += pcie-xilinx.o
-> diff --git a/drivers/pci/controller/pci-host-helpers.c b/drivers/pci/controller/pci-host-helpers.c
-> new file mode 100644
-> index 000000000000..cd261a281c60
-> --- /dev/null
-> +++ b/drivers/pci/controller/pci-host-helpers.c
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PCI Host Controller Helper Functions
-> + *
-> + * Copyright (C) 2025 Hans Zhang
-> + *
-> + * Author: Hans Zhang <18255117159@163.com>
-> + */
-> +
-> +#include <linux/pci.h>
-> +
-> +#include "../pci.h"
-> +
-> +/*
-> + * These interfaces resemble the pci_find_*capability() interfaces, but these
-> + * are for configuring host controllers, which are bridges *to* PCI devices but
-> + * are not PCI devices themselves.
-> + */
-> +static u8 __pci_host_bridge_find_next_cap(void *priv,
-> +					  pci_host_bridge_read_cfg read_cfg,
-> +					  u8 cap_ptr, u8 cap)
-> +{
-> +	u8 cap_id, next_cap_ptr;
-> +	u16 reg;
-> +
-> +	if (!cap_ptr)
-> +		return 0;
-> +
-> +	reg = read_cfg(priv, cap_ptr, 2);
-> +	cap_id = (reg & 0x00ff);
-> +
-> +	if (cap_id > PCI_CAP_ID_MAX)
-> +		return 0;
-> +
-> +	if (cap_id == cap)
-> +		return cap_ptr;
-> +
-> +	next_cap_ptr = (reg & 0xff00) >> 8;
-> +	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
-> +					       cap);
-
-This is doing (tail) recursion?? Why??
-
-What should be done, IMO, is that code in __pci_find_next_cap_ttl() 
-refactored such that it can be reused instead of duplicating it in a 
-slightly different form here and the functions below.
-
-The capability list parser should be the same?
-
-> +}
-> +
-> +u8 pci_host_bridge_find_capability(void *priv,
-> +				   pci_host_bridge_read_cfg read_cfg, u8 cap)
-> +{
-> +	u8 next_cap_ptr;
-> +	u16 reg;
-> +
-> +	reg = read_cfg(priv, PCI_CAPABILITY_LIST, 2);
-> +	next_cap_ptr = (reg & 0x00ff);
-> +
-> +	return __pci_host_bridge_find_next_cap(priv, read_cfg, next_cap_ptr,
-> +					       cap);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_host_bridge_find_capability);
-> +
-> +static u16 pci_host_bridge_find_next_ext_capability(
-> +	void *priv, pci_host_bridge_read_cfg read_cfg, u16 start, u8 cap)
-> +{
-> +	u32 header;
-> +	int ttl;
-> +	int pos = PCI_CFG_SPACE_SIZE;
-> +
-> +	/* minimum 8 bytes per capability */
-> +	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> +
-> +	if (start)
-> +		pos = start;
-> +
-> +	header = read_cfg(priv, pos, 4);
-> +	/*
-> +	 * If we have no capabilities, this is indicated by cap ID,
-> +	 * cap version and next pointer all being 0.
-> +	 */
-> +	if (header == 0)
-> +		return 0;
-> +
-> +	while (ttl-- > 0) {
-> +		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-> +			return pos;
-> +
-> +		pos = PCI_EXT_CAP_NEXT(header);
-> +		if (pos < PCI_CFG_SPACE_SIZE)
-> +			break;
-> +
-> +		header = read_cfg(priv, pos, 4);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +u16 pci_host_bridge_find_ext_capability(void *priv,
-> +					pci_host_bridge_read_cfg read_cfg,
-> +					u8 cap)
-> +{
-> +	return pci_host_bridge_find_next_ext_capability(priv, read_cfg, 0, cap);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_host_bridge_find_ext_capability);
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 01e51db8d285..8d1c919cbfef 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -1034,4 +1034,11 @@ void pcim_release_region(struct pci_dev *pdev, int bar);
->  	(PCI_CONF1_ADDRESS(bus, dev, func, reg) | \
->  	 PCI_CONF1_EXT_REG(reg))
->  
-> +typedef u32 (*pci_host_bridge_read_cfg)(void *priv, int where, int size);
-> +u8 pci_host_bridge_find_capability(void *priv,
-> +				   pci_host_bridge_read_cfg read_cfg, u8 cap);
-> +u16 pci_host_bridge_find_ext_capability(void *priv,
-> +					pci_host_bridge_read_cfg read_cfg,
-> +					u8 cap);
-> +
->  #endif /* DRIVERS_PCI_H */
 > 
+>> +    minItems: 3
+>> +    maxItems: 3
+>> +
+>> +  resets:
+>> +    minItems: 3
+>> +    maxItems: 3
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      enum: [omm, ospi1, ospi2]
+> 
+> Define the order.
 
--- 
- i.
+ok, will update as below:
 
+  reset-names:
+    items:
+      - const: omm
+      - const: ospi1
+      - const: ospi2
+
+> 
+>> +    minItems: 3
+>> +    maxItems: 3
+>> +
+>> +  access-controllers:
+>> +    maxItems: 1
+>> +
+>> +  st,syscfg-amcr:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description: |
+>> +      The Address Mapping Control Register (AMCR) is used to split the 256MB
+>> +      memory map area shared between the 2 OSPI instance. The Octo Memory
+>> +      Manager sets the AMCR depending of the memory-region configuration.
+>> +      The memory split bitmask description is:
+>> +        - 000: OCTOSPI1 (256 Mbytes), OCTOSPI2 unmapped
+>> +        - 001: OCTOSPI1 (192 Mbytes), OCTOSPI2 (64 Mbytes)
+>> +        - 010: OCTOSPI1 (128 Mbytes), OCTOSPI2 (128 Mbytes)
+>> +        - 011: OCTOSPI1 (64 Mbytes), OCTOSPI2 (192 Mbytes)
+>> +        - 1xx: OCTOSPI1 unmapped, OCTOSPI2 (256 Mbytes)
+>> +    items:
+>> +      - description: phandle to syscfg
+>> +      - description: register offset within syscfg
+>> +      - description: register bitmask for memory split
+>> +
+>> +  st,omm-req2ack-ns:
+>> +    description: |
+> 
+> Don't need '|'.
+
+ok
+
+> 
+>> +      In multiplexed mode (MUXEN = 1), this field defines the time in
+>> +      nanoseconds between two transactions.
+>> +    default: 0
+>> +
+>> +  st,omm-cssel-ovr:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Configure the chip select selector override for the 2 OCTOSPIs.
+>> +      - 0: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS1
+>> +      - 1: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS1
+>> +      - 2: OCTOSPI1 chip select send to NCS1 OCTOSPI2 chip select send to NCS2
+>> +      - 3: OCTOSPI1 chip select send to NCS2 OCTOSPI2 chip select send to NCS2
+>> +    minimum: 0
+>> +    maximum: 3
+>> +    default: 0
+>> +
+>> +  st,omm-mux:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description: |
+>> +      Configure the muxing between the 2 OCTOSPIs busses and the 2 output ports.
+>> +      - 0: direct mode
+>> +      - 1: mux OCTOSPI1 and OCTOSPI2 to port 1
+>> +      - 2: swapped mode
+>> +      - 3: mux OCTOSPI1 and OCTOSPI2 to port 2
+>> +    minimum: 0
+>> +    maximum: 3
+>> +    default: 0
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +patternProperties:
+>> +  ^spi@[a-f0-9]+$:
+
+Due to your comments below, schema will be updated as following:
+    ^spi@[0-9]:
+
+>> +    type: object
+>> +    $ref: /schemas/spi/st,stm32mp25-ospi.yaml#
+>> +    description: Required spi child node
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+>> +  - clocks
+>> +  - clock-names
+>> +  - resets
+>> +  - reset-names
+>> +  - st,syscfg-amcr
+>> +  - ranges
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+>> +    ommanager@40500000 {
+>> +      compatible = "st,stm32mp25-omm";
+>> +      reg = <0x40500000 0x400>, <0x60000000 0x10000000>;
+>> +      reg-names = "regs", "memory_map";
+>> +      ranges = <0 0 0x40430000 0x400>,
+>> +               <1 0 0x40440000 0x400>;
+> 
+>> +      #address-cells = <2>;
+>> +      #size-cells = <1>;
+>> +
+> 
+>> +      spi@40430000 {
+> 
+> ranges is okay, but the unit-address is wrong here. It should be based 
+> on reg below. So 'spi@0' or 'spi@0,0' since chip select is a distinct 
+> field. It's up to you, but you need to define the format in the schema.
+
+
+Ok i will use spi@0
+
+> 
+>> +        compatible = "st,stm32mp25-ospi";
+>> +        reg = <0 0 0x400>;
+>> +        memory-region = <&mm_ospi1>;
+>> +        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+>> +        dmas = <&hpdma 2 0x62 0x00003121 0x0>,
+>> +               <&hpdma 2 0x42 0x00003112 0x0>;
+>> +        dma-names = "tx", "rx";
+>> +        clocks = <&scmi_clk CK_SCMI_OSPI1>;
+>> +        resets = <&scmi_reset RST_SCMI_OSPI1>, <&scmi_reset RST_SCMI_OSPI1DLL>;
+>> +        access-controllers = <&rifsc 74>;
+>> +        power-domains = <&CLUSTER_PD>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        st,syscfg-dlyb = <&syscfg 0x1000>;
+>> +      };
+>> +
+>> +      spi@40440000 {
+> 
+> spi@1,0
+
+ok, will use spi@1
+
+Thanks
+Patrice
+
+> 
+>> +        compatible = "st,stm32mp25-ospi";
+>> +        reg = <1 0 0x400>;
+>> +        memory-region = <&mm_ospi1>;
+>> +        interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+>> +        dmas = <&hpdma 3 0x62 0x00003121 0x0>,
+>> +               <&hpdma 3 0x42 0x00003112 0x0>;
+>> +        dma-names = "tx", "rx";
+>> +        clocks = <&scmi_clk CK_KER_OSPI2>;
+>> +        resets = <&scmi_reset RST_SCMI_OSPI2>, <&scmi_reset RST_SCMI_OSPI1DLL>;
+>> +        access-controllers = <&rifsc 75>;
+>> +        power-domains = <&CLUSTER_PD>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +        st,syscfg-dlyb = <&syscfg 0x1000>;
+>> +      };
+>> +    };
+>>
+>> -- 
+>> 2.25.1
+>>
 
