@@ -1,169 +1,164 @@
-Return-Path: <linux-kernel+bounces-574067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F75A6E02E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:50:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CDFA6E035
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:52:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2163B21A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6934B188C927
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA078263F4D;
-	Mon, 24 Mar 2025 16:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B8A2641D5;
+	Mon, 24 Mar 2025 16:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3w6GWDs"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GByonw+x"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD46263F37;
-	Mon, 24 Mar 2025 16:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7EE2638A0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834977; cv=none; b=UBy81Geq3tJnfZFo2a4mOND/bNL0P5Jv+zfpqox41oYoBMqM2q4xE0i7zltciDqseWUTFCSW8Uh2b9ASbsmCA3kWxHS8e9dNC8etRg4UfREkpnUGh12SYQuslqJZvEWwvsXmgCrqqWcDMbZ8IYTDo3SuLQxrWJOO8RZIidR/JDM=
+	t=1742834995; cv=none; b=A1/LGd0nxN6abNQx7hFMrPbEWNc5/H/1SujvsWnO7TtyfHV7DvRVj2U4EYJNb9Gt3jNdX2XwPKgOBn8FCCmXKJMLJ5rC4qyI+Vx/sa4MXe/pA3EVrtigAdGdH4cQYA7Y1U3MOAL0KHr/n9bHoF6nZY8OmVJ/3CpRRwGOEcqkxxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834977; c=relaxed/simple;
-	bh=1cW3XXPLhenC0aPM0QTbraRgM3ezYhhg4cN/zcLWDKc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgHalYWeCkup/L3jaB2TIH5K+yehaVDqJzT0XrWzihiz9jmX2FI13WOkfIMa4uqVM2sWEZlmN0R7LNvHB20p/IWVVRbHn11C34hwxQ5Ak0GovGKoWoBleI/vh8eUCHtBBwX8yAC1mcD0/GKW5A7a9mKYIONFy7OEG0o/B7rPToQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3w6GWDs; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8ffa00555so38294336d6.0;
-        Mon, 24 Mar 2025 09:49:35 -0700 (PDT)
+	s=arc-20240116; t=1742834995; c=relaxed/simple;
+	bh=LviRtfZ2Zkhdvc1v2tQGyN26tUVva3KWP4SpMnY0qFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ku7Fjp+3x8MCyhmJlVDTvMw2EI6027lvXkongqD9q+J3nLvDEG+x1mEgI7R6eZ2pk70RH/FTXYyiCMTijKUC9RhcD3V5wkHClClpux+GjRXitzm3Rq8GTqy5SLsaj746j+aurUBEmkF+shO9uxSGklGRVi2s+4qlhcJOVr8NiQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GByonw+x; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0618746bso31438295e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742834974; x=1743439774; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bf2kh6G05pGLPdSuj7dYJ6UhpBm6ycRh7eYTtN26Igs=;
-        b=M3w6GWDsa6uBbIYHuR7jKiTEBiTllhdsmO8rTaBo+q6sz3xuYjRLd4twMeyehgXaWm
-         A+7sZCMNr1o65gLOWPE79dy/9KfT20X60hitsyOVd24GnxqyUVUPLjgpB7zqOdqg+UqU
-         ToN2dSPRLe80Qo3ErLyfQW4WNSAUSZALVdobLsp9ISj9Q+3JCRVs0haMponXNGlLkbYm
-         nh5VssGfmqDTtUCZQu3A3g0riUR+WUKQRPzKi8pVw2oFeXUCZuJ8aDwyDcvVyJsJ+8mY
-         BOLGHdHg339lukeGBTlYLIRjJee2QC6YWruG+kDUdmLQF9DwqgAyJ5I/RL8xy9ilAt2z
-         A3jg==
+        d=linaro.org; s=google; t=1742834991; x=1743439791; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PKZOx3qp50UyeT4k9CXml4Zn6aQsxicd61ejBpyhlHw=;
+        b=GByonw+x/a/1AjebGTc6VSwGRiKm7N6ggsMu7tsYjwDCnzPoQ3pTN+GwxNg+BQeKbb
+         R4joKHKJNfmX6J4sEklmxh+ZaCVdghWhObGMgPQkCva8cJIUsi+ZtNO4Iu1yabCQ5xBe
+         iGBYkJYT18sflhoL5FkDkvAwddFWLehrTTJtGrv5fvCbfQueDreLBYO8aUkGedaY2Q1p
+         bqx/BwS2alQ3YIpxljP0GrlRJ/ncNXIoV4c46Ka5SgWsEYaGJAiSg65bc8LI3BXiycWz
+         WWc9UNK0u1qN/uzTeZkfZRz+vUJXZBH4hshzOIjTttoMoUqj2+djiYxdfzdBRH3+8AGs
+         iRiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742834974; x=1743439774;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Bf2kh6G05pGLPdSuj7dYJ6UhpBm6ycRh7eYTtN26Igs=;
-        b=V3ZV3WxwKjL0llUnEtCmA4AVF824LGrakkzeOAXe8zAKiMnYmKLLUH6k97mOloZENB
-         tNukCXihFgE1YZs7jJ2UR1Y+80tX07qysOuhnXxk+pU3lHDpdVLS4p0xfHOI3DfDAz/3
-         7Q3pn86lHFgiwrO++//DtTPJ96gvyedk3oU3M5Ok+Zm7vqrffvcNR7Qsc8DA+dA5rzBr
-         3A0IR/anZj7bq2LOj54CnFFFuaIU7s2sM0SU7twlShPNXlRVTK1IGAbJZrKc+kjNHF8f
-         vrEGbLe8+Fkyej0dDq05HHv6uIpg8dq1EZpT3DgKMTqo2xMqQe2CnGTqg/95zxtun8RV
-         ei1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnjg+1UW6UQX35Fv+yiJWTQ2Zl/C/2cGv4pPxpV6canVDe8BWBlWt02c+u/zPj7gl6n/1dI+gNcqPwOEBQQvU=@vger.kernel.org, AJvYcCWxBumoUadlScVDOhNhXRY9FdHAMkZzTC2MP+vKMNe+VBimwUSigpBXOdtKgBjwHDibfI/BrJCbDtZLfr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAwfd8hompdcPLQRCKoKwPJIkAR3kEXukLx617mKPzpj1P+zd9
-	kkyEf44j8wP+eD8HZiTg/5hetdrLaUAUpcrQFRcyYYkKxsKnvOqD
-X-Gm-Gg: ASbGncugc7inQOZsrOONDeR8cynIajMujwsZJQkdL1NCcn2LQJGzYZz8QMK79efcYkO
-	CmryplU6G0qNfme1/h20TgXkGs7EHSJkEJ+oG4bWyTQMnio1owStSCh2YKDHu2PLA3jGjFhWP+L
-	vmeo7/e+MsKfdCQSrHEq0BFYBPX6sFf6cnCZE2kJm/l3wyW20ZvDvi9ar6WLiI7ky4rau0xoUvI
-	tRKJLhZkUqB9YF1SOdPziqgppOq6X9Smq+fuJfBXJ3zhNLlyygcdxfHYaVYwz/hGnEvhg4LqyW0
-	IPs4B4goEUIcxA6hzNB0I8VHzquyKaptYkBR/v1p+8CacGZmmvm5Sl89SSnIKB+JUGebWlhiLjI
-	JG6dmiRMshVGyVrTJ3F69uNSs4N4QAVixy4s=
-X-Google-Smtp-Source: AGHT+IF7uIUBThvsY+ZL5DCMtDH932EJZ9y8lXz+Nizlpbf5Qr1xvu8w9feQIVuqiS66Bs6YbhNFdw==
-X-Received: by 2002:a05:6214:2407:b0:6e8:c713:321f with SMTP id 6a1803df08f44-6eb3f339e06mr247763406d6.35.1742834974211;
-        Mon, 24 Mar 2025 09:49:34 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef0eceesm46989946d6.22.2025.03.24.09.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 09:49:33 -0700 (PDT)
-Message-ID: <67e18d1d.d40a0220.1a1e10.296f@mx.google.com>
-X-Google-Original-Message-ID: <Z-GNGwN8Kv29ybB0@winterfell.>
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E6C1A120007C;
-	Mon, 24 Mar 2025 12:49:32 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Mon, 24 Mar 2025 12:49:32 -0400
-X-ME-Sender: <xms:HI3hZ6Ieop_8G7-9NdMDSsHUixqR7Neaupd93Om_wcFdI_TT4TZTag>
-    <xme:HI3hZyKz2qDOJcjciBZaqvu34CogmjdRZEyXiEwFrbasfPlgUbXiarXuV6hje97oQ
-    kcjY7fwniTGgLIAWA>
-X-ME-Received: <xmr:HI3hZ6spx5AvU5WKhvGcLile6HxgGoZ_T1lq7pfv6CuuuoHkMrvbBo2d6mU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtvdelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepgeekgeettdelffekfedtveelueeiudev
-    jeegieekvdegkedufeetfeeiiedvueelnecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhq
-    uhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqud
-    ejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgv
-    rdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguohhnihhssehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepkhhunhifuhdrtghhrghnsehlihhnuhigrdguvghvpdhrtghpthhtoh
-    epohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhho
-    rhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvth
-    dprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgt
-    phhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhope
-    grrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghr
-    hihhlhesghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:HI3hZ_bLw4zxWGG2Z5E7mtt8nF3OXydAO1yPsOuhiQRMU_tOhNnTgQ>
-    <xmx:HI3hZxagqG_VmqT0vVzHga_RR_X4t0cLBZLPNhS-39Ahfebw9eDfpA>
-    <xmx:HI3hZ7CJzjMNIEmsX36lbsoHgtONPJLr-0ZoCNyPLmQrNKdCSW_3KQ>
-    <xmx:HI3hZ3ZRgp8DbZEpbTfKe7EZ03CXWqIwHuNAYRitvdkKeuK2xj3goQ>
-    <xmx:HI3hZxqAJXWJJFCR17qdW8iyOKgUk6UvcvDUWa2mJMOofWma99U260aZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 12:49:32 -0400 (EDT)
-Date: Mon, 24 Mar 2025 09:49:31 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Kunwu Chan <kunwu.chan@linux.dev>, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	justinstitt@google.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Kunwu Chan <kunwu.chan@hotmail.com>,
-	Grace Deng <Grace.Deng006@gmail.com>
-Subject: Re: [PATCH v2] rust: sync: optimize rust symbol generation for
- CondVar
-References: <20250324061835.1693125-1-kunwu.chan@linux.dev>
- <CANiq72=KjT8HRJA0NStHeqm-9286gay496CU8edNALPQ9_N+ww@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1742834991; x=1743439791;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PKZOx3qp50UyeT4k9CXml4Zn6aQsxicd61ejBpyhlHw=;
+        b=j5HIECIEoljzp54k70nUD0RLRxGfV31d94O6+Q8ZJtc2NImWZVVoc+7Ep/HbifQ54H
+         bAeUzAMTlpVUchD+JXJREb9u3mln1U17QqczN1fPIZ7ZCwOt/zF6rGt1yTYQw3NG7+LJ
+         eq7v0GhNtdSGMWvNpekPYvyZ6ye3BaolZ2euqjLVONGpT9vc9FIAHjdj6emQbhyt+dhE
+         Fg1q7FGxYqUuZB8DlfztcEKXQWnGTY7V2KA70/LJRSzjqYceF24RK/sovB8QthTLu+FL
+         504DobQoENIbePGyDlNtMQwNz26KUwOxD/pk4NQj2MbiyooEgDnG3/xvcgYb4Y5ajbrB
+         0D2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUBn/ef0QFZq5uWCBvLTP8mvgFFzwZIaoEEDNgSgLxC/MdubLbfUF225omSHTuVZWzuYNAwW+4AY1CQApg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHNWcIoO4nfh5qlm8fwvW+7HTI9OyFWuW0e+qatwLQqvGCHcV
+	31Zdc8M0TUaJqEUdmYZhk0tpsUZIpYm6NzfkgAE3Yk439E+8lTNKvlJyj6Dmybc=
+X-Gm-Gg: ASbGncuPst1CJGxcT+rvRXLeYF7S3Sk/FIkeolkscJw9Fp38sJ2wHLxcDz6OocS3q0U
+	5Ta1kJcgA5xRLtJQBfEn05go9lXvkid93WlC0cwG7qdRM/rlw3FlNcdbO4q4NUW91bTBh5Qnj6l
+	ypnFSkLsD/PxdGSbij1Z4OynH7IhylyXN0dOvXylmta/m7bhqj1L4Bm24YZKNquLw99gsm/54UX
+	E6Wt2DrTf+Xz17VYmj7TntIUCaPsP+RsmiOkol2D31uIU6Nv7Sz5kLBsSohDwcw98t+SzNgrsj5
+	vEFla46irXqEDOnjaPcvIlX89VV/zrxWjs2oOrL47C0mxAYS+ga0aLvAgErK/SyLv9+W8WE5aw=
+	=
+X-Google-Smtp-Source: AGHT+IEgPD+xDa6jr2Is2O2+Xj32Sel7N6UWscGct1y1fK9hAAcLY0xxiUzIYdVwngw880A7Z6/vOw==
+X-Received: by 2002:a5d:6da5:0:b0:391:2f71:bbb3 with SMTP id ffacd0b85a97d-3997f958f34mr10938614f8f.46.1742834991401;
+        Mon, 24 Mar 2025 09:49:51 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3997f9e6450sm11505850f8f.70.2025.03.24.09.49.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 09:49:50 -0700 (PDT)
+Message-ID: <1f090804-2ad6-4ab4-a6a3-aa5d482f320b@linaro.org>
+Date: Mon, 24 Mar 2025 16:49:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] ASoC: codecs: wcd938x: add mux control support for
+ hp audio mux
+To: Peter Rosin <peda@axentia.se>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: broonie@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
+ ivprusov@salutedevices.com, luca.ceresoli@bootlin.com,
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, johan+linaro@kernel.org,
+ Christopher Obbard <christopher.obbard@linaro.org>
+References: <20250324130057.4855-1-srinivas.kandagatla@linaro.org>
+ <20250324130057.4855-6-srinivas.kandagatla@linaro.org>
+ <CAO9ioeX9RTBAeL3+9STn+=oEYR0wtaF6yoa=esNddEvqLQyO9Q@mail.gmail.com>
+ <e4e94fbf-172f-4cfd-becc-cb2836ac1fb1@linaro.org>
+ <ctcqkdbv6zh2rabkkr7tlhxlcfsn5nazjfbsnbbu4l4blyakft@pejdsvnazfh6>
+ <324d5789-6309-4a64-bbfa-3afa0632e7ff@linaro.org>
+ <8fbc8cd7-f8e7-e33b-74df-cdea389ac9a4@axentia.se>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <8fbc8cd7-f8e7-e33b-74df-cdea389ac9a4@axentia.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=KjT8HRJA0NStHeqm-9286gay496CU8edNALPQ9_N+ww@mail.gmail.com>
 
-On Mon, Mar 24, 2025 at 10:37:38AM +0100, Miguel Ojeda wrote:
-> On Mon, Mar 24, 2025 at 7:19 AM Kunwu Chan <kunwu.chan@linux.dev> wrote:
-> >
-> > Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> > Suggested-by: Alice Ryhl <aliceryhl@google.com>
+
+
+On 24/03/2025 16:33, Peter Rosin wrote:
+> Hi!
 > 
-> Nit: I typically use Link after Suggested-by, to mimic what the docs
-> require about Reported-by with Link. (No need to resend a new version
-> just for this :)
+> 2025-03-24 at 16:58, Srinivas Kandagatla wrote:
+>>
+>>
+>> On 24/03/2025 15:18, Dmitry Baryshkov wrote:
+>>> On Mon, Mar 24, 2025 at 01:58:06PM +0000, Srinivas Kandagatla wrote:
+>>>>
+>>>>
+>>>> On 24/03/2025 13:50, Dmitry Baryshkov wrote:
+>>>>> On Mon, 24 Mar 2025 at 15:01, <srinivas.kandagatla@linaro.org> wrote:
+>>>>>>
+>>>>>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> > - Remove '#[inline]' for notify()
+> *snip*
 > 
-> It is good that the commit matches the log now, though I wonder if in
-> the future we may want the `#[inline]` for `notify` anyway, even if
-> LLVM does that one on its own today.
+>>>>>> +       int ret = mux_control_try_select(wcd938x->us_euro_mux, state);
+>>>>>
+>>>>> Hmm. Does this really work? You have selected the mux in probe
+>>>>> function, now you are trying to select it again. If I'm reading the
+>>>>> code correctly, you will get -EBUSY here.
+>>>>
+>>>> On successful selection of mux state, the mux will be kept available
+>>>> (mux_control_deselect) for any new callers.
+>>>>
+>>>> So we will not get EBUSY for the second caller.
+>>>
+>>> No. wcd938x_populate_dt_data() selects the state by calling
+>>> wcd938x_select_mux_state().
+>>
+>> At this point we also released it (both in success and error case).
+>>
+>> This will hold on to the previous state unless we have defined a fallback idle-state.
+>>
+>>
+>>   Then you call mux_control_try_select() here.
+>>> As far as I understand, it will return -EBUSY as the sempahore is > already taken. Moreover, this is not how the MUX API is supposed to be
+>>> used. The driver is supposed to hold a state while it is still in use.
 > 
+> Dmitry is correct. A mux consumer is supposed to keep the mux selected
+> while it needs the mux to remain in a certain state. Relying on details
+> such as idle as-is and that no other consumer butts in and clobbers the
+> state is fragile. Mux access is not exclusive, at least not until a
+> mux state is selected.
+Thanks Peter,  I agree that its fragile to depend on idle as-is flags.
 
-IMO, inlining should be mostly decided by compilers instead of
-programmers, so if we don't have evidences that compilers need some
-guidance, we shouldn't introduce the `#[inline]` attribute.
+Will update accordingly.
 
-Maybe Kunwu has an example saying otherwise?
-
-Regards,
-Boqun
-
+--srini
+> 
 > Cheers,
-> Miguel
+> Peter
 
