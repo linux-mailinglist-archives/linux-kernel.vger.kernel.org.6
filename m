@@ -1,133 +1,137 @@
-Return-Path: <linux-kernel+bounces-573835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F70A6DCE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583E0A6DCF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 604AE7A490B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:25:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986507A20CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C810A25FA16;
-	Mon, 24 Mar 2025 14:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A697425E83E;
+	Mon, 24 Mar 2025 14:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Gmg/8sTf"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TaBcbcyf"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A3625DAF0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6466B25EFAC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 14:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826343; cv=none; b=cOleMzgOWsh9jQHD0Q64Y/f1YSphc5vosQU3OP+1I76piCQ7vwF2HL6TIzFvPtP1b4yhQtRTRMGmGInjmtf+3IrYDXFZM6s3FM06XxRAk0u/Ub6N3L+v981j90106C9C+IM96u06u0N8mnEzqWktzq/gHP2t6z3A1a+vK/7C8DM=
+	t=1742826456; cv=none; b=TZFz00/z8MycLOhh1QLF7CBDGXsSJ6XWkm1MI8K79RHmFpmq6mNxUqc1n0i/qRyz8cBIHaGUq7BCcLFtJD5MwCM/wMuYNVrOegLRKUgkFkI2B4hmHgingOhQvvkTtjbKdVX5CSlGq6fAgLtCxAGnCN2PZ16vIL1ErDSFJbG53gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826343; c=relaxed/simple;
-	bh=IoiJglPwGwlJpMC0UMeANARMm2kcf7CCM08KAayvmOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulQ4z/crbyo7H9hNWIAw4keojmgH5iVU67PYCL8UbxTUi8zIlBza9PleO1bHVD5yUHLQ01Sal9IUA89woaGokZz7eOtwllxUfHmYuXBPBOdBecBgfgRyclvGk0vNOEmlb43870goe0pRmhRJzWf9peEujwAxg+nJ+kdIqwPvZqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Gmg/8sTf; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso33333735e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 07:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1742826338; x=1743431138; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jNdG9O5jTJR2BZ94MdoCjTahgOrdl4gZ3SIR34gpAIA=;
-        b=Gmg/8sTfsyom6GXNFz3D5cwXI/pwPd3gGm+8dHn6yGbqxZAqxFtneZONSMw37tYPT8
-         aVDZ0YCAjhXxDVuk9D/5KauYINP/jLXUk6b8Ys+VQT/4Ian5eF7tKCNFsoPb/l6gA54p
-         pOVVDn8pJ0J+QJRL1lNz+rkO2oumd8rqc/i3KJ6GeqEQp5e0jijYu1A7E0QSZtsfHMNW
-         yapczrLRXrhYQen0coO/gu4JMMYL1xuzkw7kijnFrSqCTEIVRhxuMdAPRMjbSBCdnKwe
-         pCg0p7M6Jd4YrLwP0C3dtps1TO1xFQFhNV7TUx9wCLSJm1XTEu5ibY5yY/FnH6+VcEqR
-         gnRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742826338; x=1743431138;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNdG9O5jTJR2BZ94MdoCjTahgOrdl4gZ3SIR34gpAIA=;
-        b=HgTYNBszDrY/6nyODFE2JynsCqi48FP3ipYrDMRMZVq8Nob6XmW9EudJwI4xhWpudA
-         e/bc3ivo4aVeV/62DtL2aK2APB55vEgMqYYA+GqhB0B6fyT0vjXu6vR/wt6Z04n3Uceo
-         cBZH/EWMKZCb4+6/Ti6DZMQt1ZDgiG2/25ZZQhEHya4D+/MfcRm9GHtObhcEqpcLgfum
-         y+rzFMEhGecK++4ydH1jwWZ+lVfjWhLqzuBEECb/lsyYgPNuLOB/hQ3btuLaxYewieg7
-         D3tjQCGgZv8ktL2Z1Ddsip8V9Pggm+cJYs2RA+kTaBUUBp8dX0YHOOdELg78mrsNlV7j
-         S6sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV7XL2sFUqTk+9bhfduQRaDMQdQoV5pbelBfPES7tGY22Zvt07OUIizIrAnQP99s4sQFeoHALg+Sy/0Mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYxIQdm53cEJ8bFiEToyTeKqg8CmxgVodvSww/Fu+qwEcRrpNm
-	OIb+7iVJR609IcI7WRzQpDWzOKXEaxZqDchMnEl77SCTwQuYbbF91dtrJ5/Y7fA=
-X-Gm-Gg: ASbGncsjgtTad6+XPYq5lQ4yx3G9cUmNTwjBdjlt2yJLv5epqKGndCpZgcTX7m3cxxP
-	8aUNJAJA5g+xL9mufPQh4zxekSiEOgHg/0+qdS3+dLFvHAjYKnZh3/+3MiKio+Ps5gJnQ2dh+Rg
-	SZloGgSQHtrBmWltqs8eApvDxpmm9FmYB5iBTic3kiQYk2ZODCKw5MJlZEM1VY8fE9CPfg4NaHg
-	WqP1kZHHryoSCc/2u+BWR3Zk6Lq+Wj/CtisxtNW9MCgkv0XzwWPof9oS+Zjb/WeKX/nnz5EKCx5
-	g/QylA40eUlz5Eb6iZltyOhydcaevs4bSk0M/4JYjdKwzWpad6JK
-X-Google-Smtp-Source: AGHT+IFacJgdL0YCtYfMpOjSJaGjYTLUuJu+RCC/1A/kfH6d1pa/dPUdShqy13vrh/HjglhK4TnpBw==
-X-Received: by 2002:a05:600c:45d4:b0:43c:e8ca:5140 with SMTP id 5b1f17b1804b1-43d50a3189fmr122312855e9.23.1742826338160;
-        Mon, 24 Mar 2025 07:25:38 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4453227dsm178498245e9.40.2025.03.24.07.25.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 07:25:37 -0700 (PDT)
-Message-ID: <3ea4b352-c679-45e8-8ab9-84ba074c3e88@tuxon.dev>
-Date: Mon, 24 Mar 2025 16:25:35 +0200
+	s=arc-20240116; t=1742826456; c=relaxed/simple;
+	bh=3lwdxDscI0P0ZCMuOz3AECl4c71z2E4Iq712q68T6Gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Al6UbWwtKsFFzI52i6Ey8mgDR0V/cjL/JVXbZ1KP/7BE4xvq9HxuRmGnh46TFi7m3XJjqN0kXV51xcSBwWA34ZnpNxQn2pC8UJ4hYnDJIeBKUzSs8P3NatHkxnLsYxuyoUCxSr75YBH8drKKazkq2S5DZ8D7PpLOZXd6R9IhvOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TaBcbcyf; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=3lwd
+	xDscI0P0ZCMuOz3AECl4c71z2E4Iq712q68T6Gw=; b=TaBcbcyfn17ehXsQl5pq
+	c60ns5SvPypjnQ28B9IEP0kM7A+C2LnTPMldKFeAlCUo58odEBTVFDMJGnLiUWUW
+	vfYHoXaNkJtCTR/51V86SlMhQ5Y8EoSyAzWSXVvwzy2zG97Emp2XNGFmVK0ixxmM
+	ke3qxhMTqqhd1GA1gcecNMEjkShQy0i2J7/t92Fu96YL6ura1MFI0ABzh0A2lTqX
+	z3Wozl43oTD6iNF/zTeL+wAkpRHaeJaiKpVf7WWIn311Wru3dw1GcXAeep7WFwBW
+	pb5bohzFsjxU1+DNLtGf3Quc1cP3Eo6i9JeAuS5GHcRWgKLRpfRhsCOv3uEA3pzL
+	Tw==
+Received: (qmail 2593770 invoked from network); 24 Mar 2025 15:27:27 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 15:27:27 +0100
+X-UD-Smtp-Session: l3s3148p1@fKtPZxcxxlZtKPC9
+Date: Mon, 24 Mar 2025 15:27:27 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
+ device-tree
+Message-ID: <Z-FrzyEY-bgvyKvs@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: page_alloc: Add kernel parameter to select
- maximum PCP batch scale number
-To: corbet@lwn.net, akpm@linux-foundation.org, thuth@redhat.com,
- rostedt@goodmis.org, paulmck@kernel.org, xiongwei.song@windriver.com,
- ying.huang@intel.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, geert+renesas@glider.be,
- wsa+renesas@sang-engineering.com,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241126095138.1832464-1-claudiu.beznea.uj@bp.renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20241126095138.1832464-1-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4uO9i9cow/SSxmpj"
+Content-Disposition: inline
+In-Reply-To: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
 
-Hi,
 
-On 26.11.2024 11:51, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid
-> too long latency") introduced default PCP (Per-CPU Pageset) batch size as
-> a configuration flag. The configuration flag is CONFIG_PCP_BATCH_SCALE_MAX.
-> 
-> The ARM64 defconfig has CONFIG_PCP_BATCH_SCALE_MAX=5. This defconfig
-> is used by a high range of SoCs.
-> 
-> The Renesas RZ/G3S SoC is a single CPU SoC, with L1$ (I-cache 32Kbytes,
-> D-cache 32 Kbytes), L3$ (256 Kbytes), but no L2$. It is currently used in
-> a configuration with 1 GiB RAM size. In this configuration, starting with
-> commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid too
-> long latency") the "bonnie++ -d /mnt -u root" benchmark takes ~14 minutes
-> while previously it took ~10 minutes. The /mnt directory is mounted on SD
-> card. Same behavior is reproduced on similar Renesas single core devices
-> (e.g., Renesas RZ/G2UL).
-> 
-> Add a new kernel parameter to allow systems like Renesas RZ/G3S to
-> continue have the same performance numbers with the default mainline
-> ARM64 config. With pcp_batch_scale_max=5 (the default value) the bonnie++
-> benchmark takes ~14 minutes while with pcp_batch_scale_max=0 it takes
-> ~10 minutes.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+--4uO9i9cow/SSxmpj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you please let me know your input on this patch?
+On Fri, Mar 14, 2025 at 07:56:29PM +0100, Thomas Bonnefille wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since this
+> configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
+> It adds support for the 2 additional switch ports (port C and D) that are
+> available on that board.
+>=20
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> [Thomas moved the dts to the renesas directory and declared the leds in
+> each phy]
+>=20
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
-Thank you,
-Claudiu
+Niklas and I made it and could run all 4 ports of the switch. Leds work,
+too. So, with the whitespace issue fixed.
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Thank you for picking up this patch again!
+
+
+--4uO9i9cow/SSxmpj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfha8sACgkQFA3kzBSg
+KbYx+g//Y7dU8PiFHB/QtCllzLzHedrhZonVblaLwmzhRlQwz37WCUj6dTQgQSCH
+RZ6dpa7m+Ldk63MP0v/uh5a18X+DhGMijFJGElxMWv30DpWD1xo4EomNVaSOJHWS
+hzmK89YAvoThKc3l4sk0MvpVYDYo4AZftDApldx7RBY8RuWGaqi0MfLNZvo/ZMq3
+NUlW4Dfm7t5xdlH1SBMnxMnYaWbnxF57XNsQAwTO/NNcRNnK8MEVaBDBed9nPAC/
+2sTzJVua80OWKj9kfbYSylRhE4+fgcmrC4CXS9WDtuMgxQs56lFULPQft6diBxuT
+wNoiADAk71GFdOBtrJXDjDtKD/jt1/z+KFHaM3A+Mx2MFsYWYx4Y0F6KQnh8+oL4
+drkFhI44LFnVcYuJuyrGGPWQdmctwLbY11mQcsSRH9PnrGCL8AqcfRYsNQYfQOAa
+pRBQRTue+pzl5i4y8gGN7PlZux0kHbe4lqZnjgGnApCgAyAlAsC3AUXkWhvcepbC
+UvTIxUbnuPvG1Vev7YTBBYMy9pbPugdsc7DFgdK/nOgDLE6l4P2emYv9MLUMCc+k
+OXaAtSTmbLO7yPC08DQDZLkx68eRBIMKgr2xHoxrSMJVRczfhaYoXeoIezG+m0z0
+0GYhSoVFfL6T79E37bojctn21ET0LtUR8C3n/sCUKAFdlwLRg/M=
+=8zdt
+-----END PGP SIGNATURE-----
+
+--4uO9i9cow/SSxmpj--
 
