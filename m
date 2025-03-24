@@ -1,773 +1,279 @@
-Return-Path: <linux-kernel+bounces-573562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882B1A6D91E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:25:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B7DA6D91B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB6918910A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:25:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548351890A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79CA25E469;
-	Mon, 24 Mar 2025 11:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448D725E448;
+	Mon, 24 Mar 2025 11:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="qf3vbu5Y"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="KNwC1Hgc"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC18525DCE0;
-	Mon, 24 Mar 2025 11:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F81D25E821
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742815474; cv=none; b=RggkPLnj7igAUmop3vaSFwvtAQHV4Of0FgWy+RYRNyMuZTaH7V1mJ/HQwrG5licU1PBopLdftqamRpt7ieKg1+leIsg7HLJbinFvNG02G11Vr6yoP9IqEWOTM2hDrlcc5fP3z6j7v1TUbkJzRcbho5XPcEkjIy3N16zDPf+pY8k=
+	t=1742815462; cv=none; b=rMFoJzdjhaGi6XJCXkNKNC8ZJLd/rI1nZjQw4nJut9lH0v089NpnN21F9kmYTNFH0cOFIDkH7SuQOJYXOnObyRvl0dxJptsJ0AwPfhP9pH3HtaRMtTO87K+GIZSNKES4HdImPYxufTtI+6QLaeeaEGUeFlkngDFUPhbv5JYB6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742815474; c=relaxed/simple;
-	bh=o3NCOydOHsPLfm+8UDPnC3MoUQTW6nUYIgKliVukn2w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=qlwZugPjW+Fq8IlTUpViInkQYT1L9z0sO7oaB4jNWzRdDRWvMCPI/PWmJQUyeOL1Da1cumYy58gB4kmFcV3wOb/S2OPThZzRVp9tXX0hJciIj8eK9pwQAjC/Hsyl0+CVGShGskPSy54NnZWyejY7ZN3HkbywnJDMuYCcUsZHU80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=qf3vbu5Y; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OBC3JY015962;
-	Mon, 24 Mar 2025 07:24:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=U8D9o
-	yJaBoVLYsYhEIrspyWdRYgmqxGK3HO+Vzip2+s=; b=qf3vbu5YTDQZMpMtQQ8KM
-	FCK2VUMZ8VyH7VN1Ie2+NdyAJqUtQHoLwjnmPoyMx+9C1Y6RI4S46PWjZvpWf16p
-	qDa4QekgYuq6QXZjD+r4ae7pVp5sHlMmpbp57imHVHafrMy5mL/GuLyC277g4PIh
-	KBGXqFrf6AD9+RSfUrIwaYU9905JmligXF4uofNXqFtArpp1dpfjA44jewDanCap
-	rsHPSMA3S1JZMgVya5xpsdKNhUDwA449WVo2BfwfybBEuRWrpflxz8jsPwKiDhR3
-	WeBzHFt7Rsb+2T7wKViReQJGmKHursemyzRMIsCT6i95Q3rdPPU0vVTRShNJSh3n
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45k6af825a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 07:24:18 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52OBO5kt052283
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 24 Mar 2025 07:24:05 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 24 Mar 2025 07:24:05 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 24 Mar 2025 07:24:05 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 24 Mar 2025 07:24:05 -0400
-Received: from [10.0.2.15] (KPALLER2-L03.ad.analog.com [10.117.223.46])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52OBNb9k007643;
-	Mon, 24 Mar 2025 07:23:56 -0400
-From: Kim Seer Paller <kimseer.paller@analog.com>
-Date: Mon, 24 Mar 2025 19:22:58 +0800
-Subject: [PATCH v2 4/4] iio: dac: ad3530r: Add driver for AD3530R and
- AD3531R
+	s=arc-20240116; t=1742815462; c=relaxed/simple;
+	bh=CJuhWe5ZZQUGcK2thsHhtLd9q0I50vr6PP8HUcW2ctA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kgwYMRqPT47OAIKUDHoFfqmEBx2Dyad20JizkrYS1fqvdFEow+6AVsACkNGvPIdmanWBPX3oRQB2Z12Mk4A3VLmQ+alZM11k0XpuyJgk6OW+SAV05MVcELeoET6+oqdCN5Fr7lhVYMwz8G8mE7dFnu4KwvkJMjHZyPVcKWk1GiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=KNwC1Hgc; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742815412; x=1743420212; i=spasswolf@web.de;
+	bh=t4Cpapl3baAmiTt6x14k0Cj3EFlot8neELappOm/z8c=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KNwC1HgcuMKyAOyEe329rsDXD3TXLIV09LnmZSnTIgrxl5bin0+66nZWDuGj77GX
+	 Mat2V9+bhSWeV5BMSTHIEYouYt17C8X/yG3FB8Y5NX7lWjVHRieYEIRyalC667XPN
+	 2x+B7kMFV3mIjS9rW1vU9LX/kjMARQlxIwzapx42KrudUCryTlEPug8qe+IC8+/hh
+	 z7jt2s6IlvsQmameb8alTYjsUj8Y4+oIARV1RoiUrpYdmuq0t8RsdUG7qep2/I6I9
+	 vdsW/wdCfhE8jZPu2zplfb1Hu43dGZZc6arwrFapN8oLcrLY/ozOvUbqztKgHPbnr
+	 ya+Xn+6Je1vr07Ha1g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MNwfK-1tldIS2Hfs-00S1h5; Mon, 24
+ Mar 2025 12:23:32 +0100
+Message-ID: <6e8ad3cd27b570aaefd85395810cc90bb3120734.camel@web.de>
+Subject: Re: commit 7ffb791423c7 breaks steam game
+From: Bert Karwatzki <spasswolf@web.de>
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>, Bjorn
+ Helgaas	 <bhelgaas@google.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ Andy Lutomirski <luto@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=	
+ <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ spasswolf@web.de
+Date: Mon, 24 Mar 2025 12:23:31 +0100
+In-Reply-To: <688f2757-e364-45db-ad54-daa6ff1c4f3c@nvidia.com>
+References: <20250322122351.3268-1-spasswolf@web.de>
+	 <688f2757-e364-45db-ad54-daa6ff1c4f3c@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250324-togreg-v2-4-f211d781923e@analog.com>
-References: <20250324-togreg-v2-0-f211d781923e@analog.com>
-In-Reply-To: <20250324-togreg-v2-0-f211d781923e@analog.com>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Kim Seer Paller <kimseer.paller@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742815405; l=19591;
- i=kimseer.paller@analog.com; s=20250213; h=from:subject:message-id;
- bh=o3NCOydOHsPLfm+8UDPnC3MoUQTW6nUYIgKliVukn2w=;
- b=cc0pRLq3ENNFUsNM9eSNjsarGsauzl5gQ8jawHJdDFOR++54zlYG6XzbeuWWOxYGsITNb04xN
- lfTpWvUQ4NwAn4lr1yDarxquMV8/50dv/5U4NXa1s1YMbFH9bHqkISH
-X-Developer-Key: i=kimseer.paller@analog.com; a=ed25519;
- pk=SPXIwGLg4GFKUNfuAavY+YhSDsx+Q+NwGLceiKwm8Ac=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: zgXjHMtCjTgWQv7fR7E-ve8Z61aoqW8t
-X-Proofpoint-GUID: zgXjHMtCjTgWQv7fR7E-ve8Z61aoqW8t
-X-Authority-Analysis: v=2.4 cv=FPEbx/os c=1 sm=1 tr=0 ts=67e140e2 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=Kq99qKDDN7JEbRGF57kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 lowpriorityscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240083
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dDemjBujtQn+6tqcgh5+3Dn7V+R82lNECNi2xUYzGYyaT15Xyy4
+ eB2q7XijRtTQiqBJ97bjJV0L9yTvjmB//qk38VzoA9EZTaOQKi6LMfrcoXPXBqluWnhqAcf
+ NBJrW5/tNAguX3rF1iE276i6lQfh0ldtz531PylqfJQrlb8g+/Ja25VwMHjbrHKhHnd/aTx
+ 9qDCMTpwNdyMA11HA29jg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZVVzgLEz+V4=;ZDBHC3VnPMdTgCtmwVxGT/xw0D0
+ 8DMWxVSBPAtsF15jovB4oIr4iG27XXoylRfp+oDPWq46JfwwHiMl6ifK35VqLYdWKChhm1C6h
+ +8jQ6yVnd3AvvSklJ2rD0wUfeOevBk47Mm2drDm3w39xecG3NQ9ORaPagJEJjbn5Oz/tWZdeh
+ iJRIPwYAbD0ZF0pDcIBZIa3CsgsTqe7rLse/TX8MjDDwGlsb9OAbpPr8/peO2h9SMytIiNAu0
+ LOt97PjwAJpoFxrx9ANlAm7ONRbx21Slx/KCgUO/MMt5DF1mlIxiEea86trfpcO24HmXp+TkR
+ eR91kly6oHdbgGzYII04Me935jlFg5sk1hnfIAzEOORPKUGZuTBU9XUXORD9/8Sl2Bv5xwOnS
+ YRj9KmTzGDl4b7Ph9FumTPm2hGkO3qBVh/ou64xbkN36a15wOHOkeoenrNUkah8S8KnbUwio5
+ pDcYg+aiPNN5KElj7Ti+J3f9zt7XKFRi+7ZuFwirUF1tpUGKUBiXqVcCO20C7zLzWaUxx6PLO
+ YU4TYQIWnB2eRmsy+tjQbXAOVU7RharHYrVoEy7C/dnkZPb7EdmAQCW3Hw5gSc23z+UMKCdwj
+ UluUBlv2YcFU4gzHjrjE/h8Q8MJErR/ncv1aUKle2SBRm3zeXbVTrryDCQ9nKG660ZzluLES5
+ we6U9N5pVfFQYPNVg3QZutcN6p8v8lNySjg7o3cESoFunYvZSHj6t0IG/OS7fIRSkmagcHrGu
+ sKfJdWDG0RJUkttp9CUGzcuo7Tg1Hu65HPmXw23IjW/L/ijf3h6POLYkMF3Fnnna8bG5TKbMg
+ M3ezyPzlvh7HD+H4KoOeaKvTEiUUKh+xVtZDZsJLw3oJHlybqglEhAHtybuujOdPYc3YWDtT7
+ NYSz/na5IfCwHRuAFVlCMgTME+NHlqteOjJlL1VgPs6JBeq6W5VT54D6OLS5mMk4hfEHliozQ
+ Nfji/naJJFRmyauuO5JBOhKy8ms1F2BInS5vT6FyU7OaqPWkdwoylyCZJnUhWAegturKLxILO
+ 0YQcCmABre3pmF10gg+usWAt3TZM6VS5/GksKVdT7n8nqi57v/A9FpIScfU8qzeYkiikf7s9O
+ Vssz4UZ8Sj1+PTJ8LFl+SiKQMjwpzmjyE93exAWf3WNfnZ5AGAbH6WZDaD/5L5L8HrakJ/Jiu
+ HbD7ql2ASXxbEgaOuT3wBcYeRFOwNEfPxq2Y+vNOkdNOXprWy5mB0qf8/7hFVjAQxwpwyQ+Cj
+ HIOHbHzgM6YU1xe8OPcoBVqEaN+SJQzZ3dHGFnN8i5lNSOXXbwe8tRB1syknDwFSHmyayfovH
+ v7bAGro23OPguPKhEUX3PFuI1IQrSotzW91JOS8JRNLpn5WnvOKyNuydHMAnpni5x5Zmcio+c
+ g9jWCpGJausz6j/+UEKeP7dm1uhWygPtHpDgCP+TmriLgbFO6oIY7zI3/2UlTaqWFLM+hKQdb
+ SVii/rOhIr2N8jKNSv+HJ3eeR5PY=
 
-The AD3530R/AD3530 is an 8-Channel, 16-Bit Voltage Output DAC, while the
-AD3531R/AD3531 is a 4-Channel, 16-Bit Voltage Output DAC. These devices
-include software-programmable gain controls that provide full-scale
-output spans of 2.5V or 5V for reference voltages of 2.5V. They operate
-from a single supply voltage range of 2.7V to 5.5V and are guaranteed to
-be monotonic by design. Additionally, these devices features a 2.5V,
-5ppm/°C internal reference, which is disabled by default.
+Am Sonntag, dem 23.03.2025 um 17:51 +1100 schrieb Balbir Singh:
+> On 3/22/25 23:23, Bert Karwatzki wrote:
+> > The problem occurs in this part of ttm_tt_populate(), in the nokaslr c=
+ase
+> > the loop is entered and repeatedly run because ttm_dma32_pages allocat=
+ed exceeds
+> > the ttm_dma32_pages_limit which leads to lots of calls to ttm_global_s=
+wapout().
+> >
+> > if (!strcmp(get_current()->comm, "stellaris"))
+> > 	printk(KERN_INFO "%s: ttm_pages_allocated=3D0x%llx ttm_pages_limit=3D=
+0x%lx ttm_dma32_pages_allocated=3D0x%llx ttm_dma32_pages_limit=3D0x%lx\n",
+> > 			__func__, ttm_pages_allocated.counter, ttm_pages_limit, ttm_dma32_p=
+ages_allocated.counter, ttm_dma32_pages_limit);
+> > while (atomic_long_read(&ttm_pages_allocated) > ttm_pages_limit ||
+> >        atomic_long_read(&ttm_dma32_pages_allocated) >
+> >        ttm_dma32_pages_limit) {
+> >
+> > 	if (!strcmp(get_current()->comm, "stellaris"))
+> > 	printk(KERN_INFO "%s: count=3D%d ttm_pages_allocated=3D0x%llx ttm_pag=
+es_limit=3D0x%lx ttm_dma32_pages_allocated=3D0x%llx ttm_dma32_pages_limit=
+=3D0x%lx\n",
+> > 			__func__, count++, ttm_pages_allocated.counter, ttm_pages_limit, tt=
+m_dma32_pages_allocated.counter, ttm_dma32_pages_limit);
+> > 	ret =3D ttm_global_swapout(ctx, GFP_KERNEL);
+> > 	if (ret =3D=3D 0)
+> > 		break;
+> > 	if (ret < 0)
+> > 		goto error;
+> > }
+> >
+> > In the case without nokaslr on the number of ttm_dma32_pages_allocated=
+ is 0 because
+> > use_dma32 =3D=3D false in this case.
+> >
+> > So why is use_dma32 enabled with nokaslr? Some more printk()s give thi=
+s result:
+> >
+> > The GPUs:
+> > built-in:
+> > 08:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/A=
+TI] Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c5)
+> > discrete:
+> > 03:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Nav=
+i 23 [Radeon RX 6600/6600 XT/6600M] (rev c3)
+> >
+> > With nokaslr:
+> > [    1.266517] [    T328] dma_addressing_limited: mask =3D 0xfffffffff=
+ff bus_dma_limit =3D 0x0 required_mask =3D 0xfffffffff
+> > [    1.266519] [    T328] dma_addressing_limited: ops =3D 000000000000=
+0000 use_dma_iommu(dev) =3D 0
+> > [    1.266520] [    T328] dma_direct_all_ram_mapped: returning true
+> > [    1.266521] [    T328] dma_addressing_limited: returning ret =3D 0
+> > [    1.266521] [    T328] amdgpu 0000:03:00.0: amdgpu: amdgpu_ttm_init=
+: calling ttm_device_init() with use_dma32 =3D 0
+> > [    1.266525] [    T328] entering ttm_device_init, use_dma32 =3D 0
+> > [    1.267115] [    T328] entering ttm_pool_init, use_dma32 =3D 0
+> >
+> > [    3.965669] [    T328] dma_addressing_limited: mask =3D 0xfffffffff=
+ff bus_dma_limit =3D 0x0 required_mask =3D 0x3fffffffffff
+> > [    3.965671] [    T328] dma_addressing_limited: returning true
+> > [    3.965672] [    T328] amdgpu 0000:08:00.0: amdgpu: amdgpu_ttm_init=
+: calling ttm_device_init() with use_dma32 =3D 1
+> > [    3.965674] [    T328] entering ttm_device_init, use_dma32 =3D 1
+> > [    3.965747] [    T328] entering ttm_pool_init, use_dma32 =3D 1
+> >
+> > Without nokaslr:
+> > [    1.300907] [    T351] dma_addressing_limited: mask =3D 0xfffffffff=
+ff bus_dma_limit =3D 0x0 required_mask =3D 0xfffffffff
+> > [    1.300909] [    T351] dma_addressing_limited: ops =3D 000000000000=
+0000 use_dma_iommu(dev) =3D 0
+> > [    1.300910] [    T351] dma_direct_all_ram_mapped: returning true
+> > [    1.300910] [    T351] dma_addressing_limited: returning ret =3D 0
+> > [    1.300911] [    T351] amdgpu 0000:03:00.0: amdgpu: amdgpu_ttm_init=
+: calling ttm_device_init() with use_dma32 =3D 0
+> > [    1.300915] [    T351] entering ttm_device_init, use_dma32 =3D 0
+> > [    1.301210] [    T351] entering ttm_pool_init, use_dma32 =3D 0
+> >
+> > [    4.000602] [    T351] dma_addressing_limited: mask =3D 0xfffffffff=
+ff bus_dma_limit =3D 0x0 required_mask =3D 0xfffffffffff
+> > [    4.000603] [    T351] dma_addressing_limited: ops =3D 000000000000=
+0000 use_dma_iommu(dev) =3D 0
+> > [    4.000604] [    T351] dma_direct_all_ram_mapped: returning true
+> > [    4.000605] [    T351] dma_addressing_limited: returning ret =3D 0
+> > [    4.000606] [    T351] amdgpu 0000:08:00.0: amdgpu: amdgpu_ttm_init=
+: calling ttm_device_init() with use_dma32 =3D 0
+> > [    4.000610] [    T351] entering ttm_device_init, use_dma32 =3D 0
+> > [    4.000687] [    T351] entering ttm_pool_init, use_dma32 =3D 0
+> >
+> > So with nokaslr the reuqired mask for the built-in GPU changes from 0x=
+fffffffffff
+> > to 0x3fffffffffff which causes dma_addressing_limited to return true w=
+hich causes
+> > the ttm_device init to be called with use_dma32 =3D true.
+>
+> Thanks, this is really the root cause, from what I understand.
+>
+> >  It also show that for the discreate GPU nothing changes so the bug do=
+es not occur
+> > there.
+> >
+> > I also was able to work around the bug by calling ttm_device_init() wi=
+th use_dma32=3Dfalse
+> > from amdgpu_ttm_init()  (drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c) but =
+I'm not sure if this
+> > has unwanted side effects.
+> >
+> > int amdgpu_ttm_init(struct amdgpu_device *adev)
+> > {
+> > 	uint64_t gtt_size;
+> > 	int r;
+> >
+> > 	mutex_init(&adev->mman.gtt_window_lock);
+> >
+> > 	dma_set_max_seg_size(adev->dev, UINT_MAX);
+> > 	/* No others user of address space so set it to 0 */
+> > 	dev_info(adev->dev, "%s: calling ttm_device_init() with use_dma32 =3D=
+ 0 ignoring %d\n", __func__, dma_addressing_limited(adev->dev));
+> > 	r =3D ttm_device_init(&adev->mman.bdev, &amdgpu_bo_driver, adev->dev,
+> > 			       adev_to_drm(adev)->anon_inode->i_mapping,
+> > 			       adev_to_drm(adev)->vma_offset_manager,
+> > 			       adev->need_swiotlb,
+> > 			       false /* use_dma32 */);
+> > 	if (r) {
+> > 		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
+> > 		return r;
+> > 	}
+> >
+>
+> I think this brings us really close, instead of forcing use_dma32 to fal=
+se, I wonder if we need something like
+>
+> uin64_t dma_bits =3D fls64(dma_get_mask(adev->dev));
+>
+> to ttm_device_init, pass the last argument (use_dma32) as dma_bits < 32?
+>
+>
+> Thanks,
+> Balbir Singh
+>
 
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
- MAINTAINERS               |   1 +
- drivers/iio/dac/Kconfig   |  11 +
- drivers/iio/dac/Makefile  |   1 +
- drivers/iio/dac/ad3530r.c | 586 ++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 599 insertions(+)
+Do these address bits have to shift when using nokaslr or PCI_P2PDMA, I th=
+ink
+this shift cause the increase of the required_dma_mask to 0x3fffffffffff?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7862469226f52375adc219115ef68d03662127be..ff99f4fb3d675d6012dc5d30ef4d6b17b11313b4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1296,6 +1296,7 @@ S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/ABI/testing/sysfs-bus-iio-dac-ad3530r
- F:	Documentation/devicetree/bindings/iio/dac/adi,ad3530r.yaml
-+F:	drivers/iio/dac/ad3530r.c
- 
- ANALOG DEVICES INC AD3552R DRIVER
- M:	Nuno Sá <nuno.sa@analog.com>
-diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-index 4811ea973125a0dea1f8a9cdee1e0c045bc21981..e0996dc014a3d538ab6b4e0d50ff54ede50f1527 100644
---- a/drivers/iio/dac/Kconfig
-+++ b/drivers/iio/dac/Kconfig
-@@ -6,6 +6,17 @@
- 
- menu "Digital to analog converters"
- 
-+config AD3530R
-+	tristate "Analog Devices AD3530R and Similar DACs driver"
-+	depends on SPI
-+	select REGMAP_SPI
-+	help
-+	  Say yes here to build support for Analog Devices AD3530R, AD3531R
-+	  Digital to Analog Converter.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ad3530r.
-+
- config AD3552R_HS
- 	tristate "Analog Devices AD3552R DAC High Speed driver"
- 	select AD3552R_LIB
-diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-index 8dd6cce81ed1152be4cf0af9ef877b5482ceb347..3684cd52b7fa9bc0ad9f855323dcbb2e4965c404 100644
---- a/drivers/iio/dac/Makefile
-+++ b/drivers/iio/dac/Makefile
-@@ -4,6 +4,7 @@
- #
- 
- # When adding new entries keep the list in alphabetical order
-+obj-$(CONFIG_AD3530R) += ad3530r.o
- obj-$(CONFIG_AD3552R_HS) += ad3552r-hs.o
- obj-$(CONFIG_AD3552R_LIB) += ad3552r-common.o
- obj-$(CONFIG_AD3552R) += ad3552r.o
-diff --git a/drivers/iio/dac/ad3530r.c b/drivers/iio/dac/ad3530r.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..6fe657220f33d7adb41b1307a514f509127ebbe4
---- /dev/null
-+++ b/drivers/iio/dac/ad3530r.c
-@@ -0,0 +1,586 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * AD3530R/AD3530 8-channel, 16-bit Voltage Output DAC Driver
-+ * AD3531R/AD3531 4-channel, 16-bit Voltage Output DAC Driver
-+ *
-+ * Copyright 2025 Analog Devices Inc.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/iio/iio.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/mutex.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+
-+#define AD3530R_INTERFACE_CONFIG_A		0x00
-+#define AD3530R_OUTPUT_OPERATING_MODE_0		0x20
-+#define AD3530R_OUTPUT_OPERATING_MODE_1		0x21
-+#define AD3530R_OUTPUT_CONTROL_0		0x2A
-+#define AD3530R_REFERENCE_CONTROL_0		0x3C
-+#define AD3530R_MUX_OUT_SELECT			0x93
-+#define AD3530R_SW_LDAC_TRIG_A			0xE5
-+#define AD3530R_INPUT_CH(c)			(2 * (c) + 0xEB)
-+
-+#define AD3531R_SW_LDAC_TRIG_A			0xDD
-+#define AD3531R_INPUT_CH(c)			(2 * (c) + 0xE3)
-+
-+#define AD3530R_SW_LDAC_TRIG_MASK		BIT(7)
-+#define AD3530R_OUTPUT_CONTROL_MASK		BIT(2)
-+#define AD3530R_REFERENCE_CONTROL_MASK		BIT(0)
-+#define AD3530R_REG_VAL_MASK			GENMASK(15, 0)
-+
-+#define AD3530R_SW_RESET			(BIT(7) | BIT(0))
-+#define AD3530R_MAX_CHANNELS			8
-+#define AD3531R_MAX_CHANNELS			4
-+#define AD3530R_CH(c)				(c)
-+#define AD3530R_32KOHM_POWERDOWN_MODE		3
-+#define AD3530R_INTERNAL_VREF_MV		2500
-+#define AD3530R_LDAC_PULSE_US			100
-+
-+enum {
-+	AD3530R_MUXOUT_POWERED_DOWN,
-+	AD3530R_MUXOUT_VOUT0,
-+	AD3530R_MUXOUT_IOUT0_SOURCE,
-+	AD3530R_MUXOUT_IOUT0_SINK,
-+	AD3530R_MUXOUT_VOUT1,
-+	AD3530R_MUXOUT_IOUT1_SOURCE,
-+	AD3530R_MUXOUT_IOUT1_SINK,
-+	AD3530R_MUXOUT_VOUT2,
-+	AD3530R_MUXOUT_IOUT2_SOURCE,
-+	AD3530R_MUXOUT_IOUT2_SINK,
-+	AD3530R_MUXOUT_VOUT3,
-+	AD3530R_MUXOUT_IOUT3_SOURCE,
-+	AD3530R_MUXOUT_IOUT3_SINK,
-+	AD3530R_MUXOUT_VOUT4,
-+	AD3530R_MUXOUT_IOUT4_SOURCE,
-+	AD3530R_MUXOUT_IOUT4_SINK,
-+	AD3530R_MUXOUT_VOUT5,
-+	AD3530R_MUXOUT_IOUT5_SOURCE,
-+	AD3530R_MUXOUT_IOUT5_SINK,
-+	AD3530R_MUXOUT_VOUT6,
-+	AD3530R_MUXOUT_IOUT6_SOURCE,
-+	AD3530R_MUXOUT_IOUT6_SINK,
-+	AD3530R_MUXOUT_VOUT7,
-+	AD3530R_MUXOUT_IOUT7_SOURCE,
-+	AD3530R_MUXOUT_IOUT7_SINK,
-+	AD3530R_MUXOUT_DIE_TEMP,
-+	AD3530R_MUXOUT_AGND,
-+};
-+
-+struct ad3530r_chan {
-+	unsigned int powerdown_mode;
-+	bool powerdown;
-+};
-+
-+struct ad3530r_chip_info {
-+	const char *name;
-+	const struct iio_chan_spec *channels;
-+	int (*input_ch_reg)(unsigned int c);
-+	const int iio_chan;
-+	unsigned int num_channels;
-+	unsigned int sw_ldac_trig_reg;
-+};
-+
-+struct ad3530r_state {
-+	struct spi_device *spi;
-+	struct regmap *regmap;
-+	struct mutex lock; /* protect the state of the device */
-+	struct ad3530r_chan chan[AD3530R_MAX_CHANNELS];
-+	const struct ad3530r_chip_info *chip_info;
-+	struct gpio_desc *ldac_gpio;
-+	int vref_mv;
-+	u8 ldac;
-+	bool range_multiplier;
-+};
-+
-+static int ad3530r_input_ch_reg(unsigned int c)
-+{
-+	return AD3530R_INPUT_CH(c);
-+}
-+
-+static int ad3531r_input_ch_reg(unsigned int c)
-+{
-+	return AD3531R_INPUT_CH(c);
-+}
-+
-+static const char * const ad3530r_powerdown_modes[] = {
-+	"1kohm_to_gnd",
-+	"7.7kohm_to_gnd",
-+	"32kohm_to_gnd",
-+};
-+
-+static int ad3530r_get_powerdown_mode(struct iio_dev *indio_dev,
-+				      const struct iio_chan_spec *chan)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	guard(mutex)(&st->lock);
-+	return st->chan[chan->channel].powerdown_mode - 1;
-+}
-+
-+static int ad3530r_set_powerdown_mode(struct iio_dev *indio_dev,
-+				      const struct iio_chan_spec *chan,
-+				      unsigned int mode)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	guard(mutex)(&st->lock);
-+	st->chan[chan->channel].powerdown_mode = mode + 1;
-+
-+	return 0;
-+}
-+
-+static const struct iio_enum ad3530r_powerdown_mode_enum = {
-+	.items = ad3530r_powerdown_modes,
-+	.num_items = ARRAY_SIZE(ad3530r_powerdown_modes),
-+	.get = ad3530r_get_powerdown_mode,
-+	.set = ad3530r_set_powerdown_mode,
-+};
-+
-+static ssize_t ad3530r_get_dac_powerdown(struct iio_dev *indio_dev,
-+					 uintptr_t private,
-+					 const struct iio_chan_spec *chan,
-+					 char *buf)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	guard(mutex)(&st->lock);
-+	return sysfs_emit(buf, "%d\n", st->chan[chan->channel].powerdown);
-+}
-+
-+static ssize_t ad3530r_set_dac_powerdown(struct iio_dev *indio_dev,
-+					 uintptr_t private,
-+					 const struct iio_chan_spec *chan,
-+					 const char *buf, size_t len)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+	int ret;
-+	unsigned int mask, val;
-+	bool powerdown;
-+
-+	ret = kstrtobool(buf, &powerdown);
-+	if (ret)
-+		return ret;
-+
-+	guard(mutex)(&st->lock);
-+	switch (chan->channel) {
-+	case AD3530R_CH(0) ... AD3530R_CH(AD3531R_MAX_CHANNELS - 1):
-+		mask = GENMASK(chan->channel * 2 + 1, chan->channel * 2);
-+		val = (powerdown ? st->chan[chan->channel].powerdown_mode : 0)
-+		      << (chan->channel * 2);
-+
-+		ret = regmap_update_bits(st->regmap,
-+					 AD3530R_OUTPUT_OPERATING_MODE_0,
-+					 mask, val);
-+		if (ret)
-+			return ret;
-+
-+		st->chan[chan->channel].powerdown = powerdown;
-+		return len;
-+	case AD3530R_CH(AD3531R_MAX_CHANNELS) ...
-+	     AD3530R_CH(AD3530R_MAX_CHANNELS - 1):
-+		mask = GENMASK((chan->channel - 4) * 2 + 1,
-+			       (chan->channel - 4) * 2);
-+		val = (powerdown ? st->chan[chan->channel].powerdown_mode : 0)
-+		      << ((chan->channel - 4) * 2);
-+
-+		ret = regmap_update_bits(st->regmap,
-+					 AD3530R_OUTPUT_OPERATING_MODE_1,
-+					 mask, val);
-+		if (ret)
-+			return ret;
-+
-+		st->chan[chan->channel].powerdown = powerdown;
-+		return len;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const char * const ad3530r_muxout_select[] = {
-+	[AD3530R_MUXOUT_POWERED_DOWN] = "powered_down",
-+	[AD3530R_MUXOUT_VOUT0] = "vout0",
-+	[AD3530R_MUXOUT_IOUT0_SOURCE] = "iout0_source",
-+	[AD3530R_MUXOUT_IOUT0_SINK] = "iout0_sink",
-+	[AD3530R_MUXOUT_VOUT1] = "vout1",
-+	[AD3530R_MUXOUT_IOUT1_SOURCE] = "iout1_source",
-+	[AD3530R_MUXOUT_IOUT1_SINK] = "iout1_sink",
-+	[AD3530R_MUXOUT_VOUT2] = "vout2",
-+	[AD3530R_MUXOUT_IOUT2_SOURCE] = "iout2_source",
-+	[AD3530R_MUXOUT_IOUT2_SINK] = "iout2_sink",
-+	[AD3530R_MUXOUT_VOUT3] = "vout3",
-+	[AD3530R_MUXOUT_IOUT3_SOURCE] = "iout3_source",
-+	[AD3530R_MUXOUT_IOUT3_SINK] = "iout3_sink",
-+	[AD3530R_MUXOUT_VOUT4] = "vout4",
-+	[AD3530R_MUXOUT_IOUT4_SOURCE] = "iout4_source",
-+	[AD3530R_MUXOUT_IOUT4_SINK] = "iout4_sink",
-+	[AD3530R_MUXOUT_VOUT5] = "vout5",
-+	[AD3530R_MUXOUT_IOUT5_SOURCE] = "iout5_source",
-+	[AD3530R_MUXOUT_IOUT5_SINK] = "iout5_sink",
-+	[AD3530R_MUXOUT_VOUT6] = "vout6",
-+	[AD3530R_MUXOUT_IOUT6_SOURCE] = "iout6_source",
-+	[AD3530R_MUXOUT_IOUT6_SINK] = "iout6_sink",
-+	[AD3530R_MUXOUT_VOUT7] = "vout7",
-+	[AD3530R_MUXOUT_IOUT7_SOURCE] = "iout7_source",
-+	[AD3530R_MUXOUT_IOUT7_SINK] = "iout7_sink",
-+	[AD3530R_MUXOUT_DIE_TEMP] = "die_temp",
-+	[AD3530R_MUXOUT_AGND] = "agnd",
-+};
-+
-+static int ad3530r_get_muxout_select(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(st->regmap, AD3530R_MUX_OUT_SELECT, &val);
-+	if (ret)
-+		return ret;
-+
-+	return val;
-+}
-+
-+static int ad3530r_set_muxout_select(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     unsigned int val)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	return regmap_write(st->regmap, AD3530R_MUX_OUT_SELECT, val);
-+}
-+
-+static const struct iio_enum ad3530r_muxout_select_enum = {
-+	.items = ad3530r_muxout_select,
-+	.num_items = ARRAY_SIZE(ad3530r_muxout_select),
-+	.get = ad3530r_get_muxout_select,
-+	.set = ad3530r_set_muxout_select,
-+};
-+
-+static int ad3530r_trigger_hw_ldac(struct gpio_desc *ldac_gpio)
-+{
-+	gpiod_set_value_cansleep(ldac_gpio, 0);
-+	usleep_range(AD3530R_LDAC_PULSE_US, AD3530R_LDAC_PULSE_US + 10);
-+	gpiod_set_value_cansleep(ldac_gpio, 1);
-+
-+	return 0;
-+}
-+
-+static int ad3530r_dac_write(struct ad3530r_state *st, unsigned int chan,
-+			     unsigned int val)
-+{
-+	int ret;
-+	__be16 reg_val;
-+
-+	guard(mutex)(&st->lock);
-+	reg_val = cpu_to_be16(val);
-+
-+	ret = regmap_bulk_write(st->regmap, st->chip_info->input_ch_reg(chan),
-+				&reg_val, 2);
-+	if (ret)
-+		return ret;
-+
-+	if (st->ldac_gpio)
-+		return ad3530r_trigger_hw_ldac(st->ldac_gpio);
-+
-+	return regmap_update_bits(st->regmap, st->chip_info->sw_ldac_trig_reg,
-+				  AD3530R_SW_LDAC_TRIG_MASK,
-+				  FIELD_PREP(AD3530R_SW_LDAC_TRIG_MASK, 1));
-+}
-+
-+static int ad3530r_read_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan,
-+			    int *val, int *val2, long info)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+	int ret;
-+	__be16 reg_val;
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = regmap_bulk_read(st->regmap,
-+				       st->chip_info->input_ch_reg(chan->channel),
-+				       &reg_val, 2);
-+		if (ret)
-+			return ret;
-+
-+		*val = FIELD_GET(AD3530R_REG_VAL_MASK, be16_to_cpu(reg_val));
-+
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = st->vref_mv;
-+		*val2 = 16;
-+
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	case IIO_CHAN_INFO_OFFSET:
-+		*val = 0;
-+
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad3530r_write_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     int val, int val2, long info)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		if (val < 0 || val > U16_MAX)
-+			return -EINVAL;
-+
-+		return ad3530r_dac_write(st, chan->channel, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad3530r_reg_access(struct iio_dev *indio_dev, unsigned int reg,
-+			      unsigned int writeval, unsigned int *readval)
-+{
-+	struct ad3530r_state *st = iio_priv(indio_dev);
-+
-+	if (readval)
-+		return regmap_read(st->regmap, reg, readval);
-+
-+	return regmap_write(st->regmap, reg, writeval);
-+}
-+
-+#define AD3530R_CHAN_EXT_INFO(_name, _what, _read, _write) {		\
-+	.name = (_name),						\
-+	.read = (_read),						\
-+	.write = (_write),						\
-+	.private = (_what),						\
-+	.shared = IIO_SEPARATE,						\
-+}
-+
-+static const struct iio_chan_spec_ext_info ad3530r_ext_info[] = {
-+	AD3530R_CHAN_EXT_INFO("powerdown", 0, ad3530r_get_dac_powerdown,
-+			      ad3530r_set_dac_powerdown),
-+	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad3530r_powerdown_mode_enum),
-+	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
-+			   &ad3530r_powerdown_mode_enum),
-+	IIO_ENUM("muxout_select", IIO_SHARED_BY_ALL, &ad3530r_muxout_select_enum),
-+	IIO_ENUM_AVAILABLE("muxout_select", IIO_SHARED_BY_ALL,
-+			   &ad3530r_muxout_select_enum),
-+	{ },
-+};
-+
-+#define AD3530R_CHAN(_chan) {						\
-+	.type = IIO_VOLTAGE,						\
-+	.indexed = 1,							\
-+	.channel = _chan,						\
-+	.output = 1,							\
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
-+			      BIT(IIO_CHAN_INFO_SCALE) |		\
-+			      BIT(IIO_CHAN_INFO_OFFSET),		\
-+	.ext_info = ad3530r_ext_info,					\
-+}
-+
-+static const struct iio_chan_spec ad3530r_channels[] = {
-+	AD3530R_CHAN(0),
-+	AD3530R_CHAN(1),
-+	AD3530R_CHAN(2),
-+	AD3530R_CHAN(3),
-+	AD3530R_CHAN(4),
-+	AD3530R_CHAN(5),
-+	AD3530R_CHAN(6),
-+	AD3530R_CHAN(7),
-+};
-+
-+static const struct iio_chan_spec ad3531r_channels[] = {
-+	AD3530R_CHAN(0),
-+	AD3530R_CHAN(1),
-+	AD3530R_CHAN(2),
-+	AD3530R_CHAN(3),
-+};
-+
-+static const struct ad3530r_chip_info ad3530r_chip = {
-+	.name = "ad3530r",
-+	.channels = ad3530r_channels,
-+	.num_channels = ARRAY_SIZE(ad3530r_channels),
-+	.sw_ldac_trig_reg = AD3530R_SW_LDAC_TRIG_A,
-+	.input_ch_reg = ad3530r_input_ch_reg,
-+};
-+
-+static const struct ad3530r_chip_info ad3531r_chip = {
-+	.name = "ad3531r",
-+	.channels = ad3531r_channels,
-+	.num_channels = ARRAY_SIZE(ad3531r_channels),
-+	.sw_ldac_trig_reg = AD3531R_SW_LDAC_TRIG_A,
-+	.input_ch_reg = ad3531r_input_ch_reg,
-+};
-+
-+static int ad3530r_setup(struct ad3530r_state *st)
-+{
-+	const struct ad3530r_chip_info *chip_info = st->chip_info;
-+	struct device *dev = &st->spi->dev;
-+	struct gpio_desc *reset_gpio;
-+	int i, ret;
-+
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-+				     "Failed to get reset GPIO\n");
-+
-+	if (reset_gpio) {
-+		/* Perform hardware reset */
-+		usleep_range(20, 25);
-+		gpiod_set_value_cansleep(reset_gpio, 0);
-+	} else {
-+		/* Perform software reset */
-+		ret = regmap_update_bits(st->regmap, AD3530R_INTERFACE_CONFIG_A,
-+					 AD3530R_SW_RESET, AD3530R_SW_RESET);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	usleep_range(10000, 15000);
-+
-+	/* Set operating mode to normal operation. */
-+	ret = regmap_write(st->regmap, AD3530R_OUTPUT_OPERATING_MODE_0, 0);
-+	if (ret)
-+		return ret;
-+
-+	if (chip_info->num_channels > AD3531R_MAX_CHANNELS) {
-+		ret = regmap_write(st->regmap, AD3530R_OUTPUT_OPERATING_MODE_1, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < chip_info->num_channels; i++)
-+		st->chan[i].powerdown_mode = AD3530R_32KOHM_POWERDOWN_MODE;
-+
-+	st->ldac_gpio = devm_gpiod_get_optional(dev, "ldac", GPIOD_OUT_HIGH);
-+	if (IS_ERR(st->ldac_gpio))
-+		return dev_err_probe(&st->spi->dev, PTR_ERR(st->ldac_gpio),
-+				     "Failed to get ldac GPIO\n");
-+
-+	if (device_property_present(dev, "adi,double-output-range")) {
-+		st->range_multiplier = true;
-+
-+		return regmap_update_bits(st->regmap, AD3530R_OUTPUT_CONTROL_0,
-+					  AD3530R_OUTPUT_CONTROL_MASK,
-+					  FIELD_PREP(AD3530R_OUTPUT_CONTROL_MASK, 1));
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct regmap_config ad3530r_regmap_config = {
-+	.reg_bits = 16,
-+	.val_bits = 8,
-+};
-+
-+static const struct iio_info ad3530r_info = {
-+	.read_raw = ad3530r_read_raw,
-+	.write_raw = ad3530r_write_raw,
-+	.debugfs_reg_access = &ad3530r_reg_access,
-+};
-+
-+static int ad3530r_probe(struct spi_device *spi)
-+{
-+	static const char * const regulators[] = { "vdd", "iovdd" };
-+	const struct ad3530r_chip_info *chip_info;
-+	struct device *dev = &spi->dev;
-+	struct iio_dev *indio_dev;
-+	struct ad3530r_state *st;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+
-+	st->regmap = devm_regmap_init_spi(spi, &ad3530r_regmap_config);
-+	if (IS_ERR(st->regmap))
-+		return dev_err_probe(dev, PTR_ERR(st->regmap),
-+				     "Failed to init regmap");
-+
-+	mutex_init(&st->lock);
-+
-+	chip_info = spi_get_device_match_data(spi);
-+	if (!chip_info)
-+		return -ENODEV;
-+
-+	st->chip_info = chip_info;
-+
-+	ret = ad3530r_setup(st);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators),
-+					     regulators);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable regulators\n");
-+
-+	ret = devm_regulator_get_enable_read_voltage(dev, "ref");
-+	if (ret < 0 && ret != -ENODEV)
-+		return ret;
-+
-+	if (ret > 0) {
-+		st->vref_mv = st->range_multiplier ? 2 * ret / 1000 : ret / 1000;
-+	} else {
-+		/* Internal reference. */
-+		ret = regmap_update_bits(st->regmap, AD3530R_REFERENCE_CONTROL_0,
-+					 AD3530R_REFERENCE_CONTROL_MASK,
-+					 FIELD_PREP(AD3530R_REFERENCE_CONTROL_MASK, 1));
-+		if (ret)
-+			return ret;
-+
-+		st->vref_mv = st->range_multiplier ?
-+			      2 * AD3530R_INTERNAL_VREF_MV :
-+			      AD3530R_INTERNAL_VREF_MV;
-+	}
-+
-+	indio_dev->name = chip_info->name;
-+	indio_dev->info = &ad3530r_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = chip_info->channels;
-+	indio_dev->num_channels = chip_info->num_channels;
-+
-+	return devm_iio_device_register(&spi->dev, indio_dev);
-+}
-+
-+static const struct spi_device_id ad3530r_id[] = {
-+	{ "ad3530r", (kernel_ulong_t)&ad3530r_chip },
-+	{ "ad3531r", (kernel_ulong_t)&ad3531r_chip },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, ad3530r_id);
-+
-+static const struct of_device_id ad3530r_of_match[] = {
-+	{ .compatible = "adi,ad3530r", .data = &ad3530r_chip },
-+	{ .compatible = "adi,ad3531r", .data = &ad3531r_chip },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ad3530r_of_match);
-+
-+static struct spi_driver ad3530r_driver = {
-+	.driver = {
-+		.name = "ad3530r",
-+		.of_match_table = ad3530r_of_match,
-+	},
-+	.probe = ad3530r_probe,
-+	.id_table = ad3530r_id,
-+};
-+module_spi_driver(ad3530r_driver);
-+
-+MODULE_AUTHOR("Kim Seer Paller <kimseer.paller@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD3530R and Similar DACs Driver");
-+MODULE_LICENSE("GPL");
+@@ -104,4 +104,4 @@
+       fe30300000-fe303fffff : 0000:04:00.0
+     fe30400000-fe30403fff : 0000:04:00.0
+     fe30404000-fe30404fff : 0000:04:00.0
+-afe00000000-affffffffff : 0000:03:00.0
++3ffe00000000-3fffffffffff : 0000:03:00.0
 
--- 
-2.34.1
+And what memory is this? It's 8G in size so it could be the RAM of the dis=
+crete
+GPU (which is at PCI 0000:03:00.0), but that is already here (part of
+/proc/iomem):
+
+1010000000-ffffffffff : PCI Bus 0000:00
+  fc00000000-fe0fffffff : PCI Bus 0000:01
+    fc00000000-fe0fffffff : PCI Bus 0000:02
+      fc00000000-fe0fffffff : PCI Bus 0000:03
+        fc00000000-fdffffffff : 0000:03:00.0  GPU RAM
+        fe00000000-fe0fffffff : 0000:03:00.0
+
+lspci -v reports 8G of memory at 0xfc00000000 so I assmumed that is the GP=
+U RAM.
+03:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi 23
+[Radeon RX 6600/6600 XT/6600M] (rev c3)
+	Subsystem: Micro-Star International Co., Ltd. [MSI] Device 1313
+	Flags: bus master, fast devsel, latency 0, IRQ 107, IOMMU group 14
+	Memory at fc00000000 (64-bit, prefetchable) [size=3D8G]
+	Memory at fe00000000 (64-bit, prefetchable) [size=3D256M]
+	Memory at fca00000 (32-bit, non-prefetchable) [size=3D1M]
+	Expansion ROM at fcb00000 [disabled] [size=3D128K]
+
+Bert Karwatzki
 
 
