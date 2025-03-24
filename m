@@ -1,145 +1,103 @@
-Return-Path: <linux-kernel+bounces-574457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AE8A6E592
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:22:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A61DA6E5AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670821739B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:18:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59463B90A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A061E5B7C;
-	Mon, 24 Mar 2025 21:17:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717D81EEA34;
+	Mon, 24 Mar 2025 21:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="dUzln99c"
+Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683CD1DE8A3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514D21EDA1E;
+	Mon, 24 Mar 2025 21:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742851075; cv=none; b=trnk0LwmWZJvHRPbSwUOtzCnZf06NmgJUzjv3YAH8q+td5qPo9/GwkJikNuEHcxDYXRTRGq3ByTucIlqBHvddvRE6P5lAkE+i6LYDA8Jq4FZF4pWZ2zZ2ZcZ1LD3nZcn6jQWtfWvOa9Z2dkiRUwYc4a8n5k0GuSyZtB++Uyj7Co=
+	t=1742851119; cv=none; b=WaIDaW4qZX1TqSsSYFttoYYDw199/Ep+KHWf4RKj9iWkZ/eJGix7vSYF42xhyv+7PgIKYxEE0VoYuDATf0koxDTljEuOJRrNhUdDRpFd19HqTNW4JnijgEKzV5lYU6sDB5zeY4DDEf+IQhpG5DntXPFTHAEfIgJQfbEllE/dQg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742851075; c=relaxed/simple;
-	bh=VJZAN0fwL3zSxjDC4mGtPIZ020Fz1tf7o/Urck4bUcs=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=FOePGj1gzlV6dkl5/XxFq7OLgVUtGnwJ2wEK5CZEUui+X44TT3YJ4P0CLij7GF0uEifZGO4wppylNwPGxgL/Y8vEXCsgI34i3dP3jGGI/xHC7YGz5cf397iWDOszqKbls0zBo8Y9LrsxbULnRpbAow3FkMiz9poIMaWLV7Cb1Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA11C4CEF2;
-	Mon, 24 Mar 2025 21:17:54 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1twpBt-00000002Ado-2l4d;
-	Mon, 24 Mar 2025 17:18:37 -0400
-Message-ID: <20250324211837.513945060@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 24 Mar 2025 17:18:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sasha Levin <sashal@kernel.org>
-Subject: [for-next][PATCH 3/3] tracing: Use hashtable.h for event_hash
-References: <20250324211821.731702961@goodmis.org>
+	s=arc-20240116; t=1742851119; c=relaxed/simple;
+	bh=GNu+kahqRURr3jBKGFOwVS7xGN4jr0+9cKSPvRimRUQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QzLRWobammrOpzXv2X3Z+ElPtSq0fv/Rrv3Tpc6Ilvr37L5HHQfEncWEPRhkCGKG7m26ZheiaynOGh6tIA8zaHTQ9ecRZV11m7V5UIwz05g+S4jM4Ha6VzAZy2xMftxavwrO37gsZ+lg/5FTC39Kx8ADWdGRulcTsnPuJaDTmQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=dUzln99c; arc=none smtp.client-ip=109.224.244.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1742851115; x=1743110315;
+	bh=u5mBsTab4mA8udrpnBydbaZhEo5uyqSSg9IwaotnLuw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=dUzln99cYsduJc1JPJFs2t9R6DdFA0hQLoznShP70y3KJlwftbbP7EIzpByVkJwn6
+	 Q5XY3uTwo3UI/FORzd95Ox/MOM7R2TPGlYl0Szr+9ntJzQEgIplO3t1/9mRsGSKnrn
+	 o1a+eiVtR2UCk7RNsUguNK9W16/NOlDFR1hcce4wVRqAWNN4Qre/GCqYDwqQswqsa7
+	 1U9TN5z/XY38U7yDUoVj+z6orukqQ/kDgxzCcIrDZBOtDXyw0Y6jIUgKQtMwBfXvfg
+	 +wBQgnWcpQ5b/JzDnb2GN4iuqkUhQ9tuGAKa1LKWu+3vgnZ1tNdGrArlC4NxL4PC2H
+	 IwoNaedSUlnbg==
+Date: Mon, 24 Mar 2025 21:18:28 +0000
+To: Johan Hovold <johan@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH v2 6/6] USB: serial: ftdi_sio: Remove space before tabs
+Message-ID: <20250324211619.166988-7-dominik.karol.piatkowski@protonmail.com>
+In-Reply-To: <20250324211619.166988-1-dominik.karol.piatkowski@protonmail.com>
+References: <20250324211619.166988-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 267b8bb410963ff7234fc5380080453abd6773c9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Sasha Levin <sashal@kernel.org>
+Remove superfluous space before tabs in defines to align with code
+style.
 
-Convert the event_hash array in trace_output.c to use the generic
-hashtable implementation from hashtable.h instead of the manually
-implemented hash table.
-
-This simplifies the code and makes it more maintainable by using the
-standard hashtable API defined in hashtable.h.
-
-Rename EVENT_HASHSIZE to EVENT_HASH_BITS to properly reflect its new
-meaning as the number of bits for the hashtable size.
-
-Link: https://lore.kernel.org/20250323132800.3010783-1-sashal@kernel.org
-Link: https://lore.kernel.org/20250319190545.3058319-1-sashal@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
 ---
- kernel/trace/trace_output.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index b51ee9373773..72b699f909e8 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -14,16 +14,17 @@
- #include <linux/idr.h>
- #include <linux/btf.h>
- #include <linux/bpf.h>
-+#include <linux/hashtable.h>
- 
- #include "trace_output.h"
- #include "trace_btf.h"
- 
--/* must be a power of 2 */
--#define EVENT_HASHSIZE	128
-+/* 2^7 = 128 */
-+#define EVENT_HASH_BITS 7
- 
- DECLARE_RWSEM(trace_event_sem);
- 
--static struct hlist_head event_hash[EVENT_HASHSIZE] __read_mostly;
-+static DEFINE_HASHTABLE(event_hash, EVENT_HASH_BITS);
- 
- enum print_line_t trace_print_bputs_msg_only(struct trace_iterator *iter)
- {
-@@ -779,11 +780,8 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
- struct trace_event *ftrace_find_event(int type)
- {
- 	struct trace_event *event;
--	unsigned key;
- 
--	key = type & (EVENT_HASHSIZE - 1);
--
--	hlist_for_each_entry(event, &event_hash[key], node) {
-+	hash_for_each_possible(event_hash, event, node, type) {
- 		if (event->type == type)
- 			return event;
- 	}
-@@ -838,7 +836,6 @@ void trace_event_read_unlock(void)
+v2: Split the patch into smaller patches
+
+ drivers/usb/serial/ftdi_sio_ids.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/serial/ftdi_sio_ids.h b/drivers/usb/serial/ftdi_si=
+o_ids.h
+index 52be47d684ea..3d9f6ed97783 100644
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -1022,7 +1022,7 @@
+  * Kondo Kagaku Co.Ltd.
+  * http://www.kondo-robot.com/EN
   */
- int register_trace_event(struct trace_event *event)
- {
--	unsigned key;
- 	int ret = 0;
- 
- 	down_write(&trace_event_sem);
-@@ -871,9 +868,7 @@ int register_trace_event(struct trace_event *event)
- 	if (event->funcs->binary == NULL)
- 		event->funcs->binary = trace_nop_print;
- 
--	key = event->type & (EVENT_HASHSIZE - 1);
--
--	hlist_add_head(&event->node, &event_hash[key]);
-+	hash_add(event_hash, &event->node, event->type);
- 
- 	ret = event->type;
-  out:
-@@ -888,7 +883,7 @@ EXPORT_SYMBOL_GPL(register_trace_event);
+-#define KONDO_VID =09=090x165c
++#define KONDO_VID=09=090x165c
+ #define KONDO_USB_SERIAL_PID=090x0002
+=20
+ /*
+@@ -1446,7 +1446,7 @@
+ /*
+  * Accesio USB Data Acquisition products (http://www.accesio.com/)
   */
- int __unregister_trace_event(struct trace_event *event)
- {
--	hlist_del(&event->node);
-+	hash_del(&event->node);
- 	free_trace_event_type(event->type);
- 	return 0;
- }
--- 
-2.47.2
+-#define ACCESIO_COM4SM_PID =090xD578
++#define ACCESIO_COM4SM_PID=090xD578
+=20
+ /* www.sciencescope.co.uk educational dataloggers */
+ #define FTDI_SCIENCESCOPE_LOGBOOKML_PID=09=090xFF18
+--=20
+2.34.1
 
 
 
