@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-574056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465D9A6E00E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:42:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C4A2A6E015
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484F63B2174
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A830016D552
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416A62641C1;
-	Mon, 24 Mar 2025 16:41:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F8F263F25
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F09263F37;
+	Mon, 24 Mar 2025 16:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BRHwpmNI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7CD261570;
+	Mon, 24 Mar 2025 16:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834515; cv=none; b=sex67GMNE0weJhvwxOIPGKlFxvHMDu/EeQ8XhhXTRjKa0Sb2W+8oK3vUakWk/3pPIKNeWsdh/lWQrTESHEptixLknsj14xN3tIi+OJWWujy4zdLA8C99/tFv9Qtaoz75yM7nTO7hg5Q8o3HTelU16Rq2uFEbVqAcqE3gCkodLYI=
+	t=1742834657; cv=none; b=HEb9Wgs3m7vOiz+xqY5zE5ocQBYHhqAZ5xEW8rmNbdbefQqSq+23O/S/8q5eeZAiG8d6I0j5IYQgq3IUdeyRKNv8MqUDUR/dTj/Vnx1UBy9OlhOwbFUHHMezXcdZVIx4YQPtPbRoLp0dJyOuwlXNbFbtl9O8waREJOpqJjYQh4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834515; c=relaxed/simple;
-	bh=vaAoFB4c62lRNfCN9DTkU/aGYILAYpjuERsBbE4FR+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WxsyeTGmD9y5RgPOIz4gFiC111KbpT8bK8K2p2OxeQLKKIEBWtNkclF1la5ifu3+5DqDFdhrLcDgp3HTnLB8aRiikgz1+wttFRMYF/tMVWQ/RbaYo1pIGNjatguNgg+iThtNwLm8U76eQrDG7PyZGcm7a1eAzZgjeadOS24tZhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47DA116F3;
-	Mon, 24 Mar 2025 09:41:59 -0700 (PDT)
-Received: from [192.168.188.123] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5888D3F58B;
-	Mon, 24 Mar 2025 09:41:49 -0700 (PDT)
-Message-ID: <9f9d876b-ed06-4053-91f6-a323f47d6c4c@arm.com>
-Date: Mon, 24 Mar 2025 16:41:47 +0000
+	s=arc-20240116; t=1742834657; c=relaxed/simple;
+	bh=WlcHSCuCE+B5oPFbUZhbIX6BCUYFF/YgHjdqP/AExfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VktPFj7DiTmrEvBrwYPBAk8PWjOiA8PWkA5tIlu5JVAWOF/X2Rx0nsdq1SNrF3i9sZ7wwJNBc+wU2vcF72jztSWBnpr4jV36AATIK3m/F/66jjgXJPIChrSmPDYDwRh4A+k9nBLrCoe13OLYVDkiF0xYOGJetu3H8apj7HIhyOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BRHwpmNI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PSxE015755;
+	Mon, 24 Mar 2025 16:44:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1DIxwp36ktfPlrjG2+HU7c3QBj3w7DAkJ+2V61M5xr8=; b=BRHwpmNIv6Y9u5Pq
+	sZoEL9PS4NEn24D3RJzk52AMNmTuXPUct77oFCpgLemkPpA4LztENVzJepovqHSz
+	1U6eS63TL0y3VRQ2Szg9uRAXvS1+AN8hAu+4tGAP264Ri/L7uthr3MnT05aet7k5
+	Tw8NH5VpV56CtHw0Jh9wPrO9l89KytBhih6Rx2mwq7ta0FCmgKxaMk6maUeUPSIl
+	+hg+6Iz4jMratxWDxQK9DmU0RaWpCFh4tt8IB96MATRcvgwW0zg7QQR1PDpsv7F5
+	ug5SdoYUnwMCVkRIcJXuTdGqXdTqVGxzyhpaV7ig3mS2BqVU9WlzNqfwcb/wQUAe
+	PEFZ6g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wcyr8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 16:44:11 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52OGiAYl027527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 16:44:10 GMT
+Received: from [10.216.17.237] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 09:44:06 -0700
+Message-ID: <f565fee7-b222-4e6b-b022-68aed9a7d9ea@quicinc.com>
+Date: Mon, 24 Mar 2025 22:14:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,147 +64,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7 v5] sched/fair: Rework EAS to handle more cases
-To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
- pierre.gondois@arm.com, linux-kernel@vger.kernel.org
-Cc: qyousef@layalina.io, hongyan.xia2@arm.com, luis.machado@arm.com,
- qperret@google.com
-References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Add default pin
+ configurations for QUP SEs
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
+References: <20250225154136.3052757-1-quic_vdadhani@quicinc.com>
+ <keszvik5mrobfkdpgdz5rnl5l7tihgbpyd4en3dflmaflyl7io@d4my7wdrtkyg>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250302210539.1563190-1-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+In-Reply-To: <keszvik5mrobfkdpgdz5rnl5l7tihgbpyd4en3dflmaflyl7io@d4my7wdrtkyg>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ikxVXsEEZAd1-hjUiVAsxZMkQpXz-xsw
+X-Proofpoint-ORIG-GUID: ikxVXsEEZAd1-hjUiVAsxZMkQpXz-xsw
+X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e18bdb cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Fu_YwIdgIx9_JamtqNsA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=988
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240120
 
-On 3/2/25 21:05, Vincent Guittot wrote:
-> The current Energy Aware Scheduler has some known limitations which have
-> became more and more visible with features like uclamp as an example. This
-> serie tries to fix some of those issues:
-> - tasks stacked on the same CPU of a PD
-> - tasks stuck on the wrong CPU.
+
+
+On 3/4/2025 10:05 AM, Bjorn Andersson wrote:
+> On Tue, Feb 25, 2025 at 09:11:36PM +0530, Viken Dadhaniya wrote:
+>> Default pinctrl configurations for all QUP (Qualcomm Universal Peripheral)
+>> Serial Engines (SEs) are missing in the SoC device tree. These
+>> configurations are required by client teams when enabling any SEs as I2C,
+>> SPI, or Serial protocols.
+>>
+>> Add default pin configurations for Serial Engines (SEs) for all supported
+>> protocols, including I2C, SPI, and UART, to the sa8775p device tree.  This
+>> change facilitates slave device driver clients to enable usecase with
+>> minimal modifications.
+>>
+>> Additionally, move default pin configurations from target-specific files to
+>> the SoC device tree file, as all possible pin configurations are now
+>> comprehensively included in the SoC device tree, similar to other SoCs.
+>>
+>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  88 --
+>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 908 +++++++++++++++++++++
+>>   2 files changed, 908 insertions(+), 88 deletions(-)
+>>
+> [..]
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> [..]
+>> +			qup_i2c0_default: qup-i2c0-state {
+>> +				pins = "gpio20", "gpio21";
+>> +				function = "qup0_se0";
+>> +				drive-strength = <2>;
+>> +				bias-pull-up;
 > 
-> Patch 1 fixes the case where a CPU is wrongly classified as overloaded
-> whereas it is capped to a lower compute capacity. This wrong classification
-> can prevent periodic load balancer to select a group_misfit_task CPU
-> because group_overloaded has higher priority.
-> 
-> Patch 2 creates a new EM interface that will be used by Patch 3
-> 
-> Patch 3 fixes the issue of tasks being stacked on same CPU of a PD whereas
-> others might be a better choice. feec() looks for the CPU with the highest
-> spare capacity in a PD assuming that it will be the best CPU from a energy
-> efficiency PoV because it will require the smallest increase of OPP.
-> This is often but not always true, this policy filters some others CPUs
-> which would be as efficients because of using the same OPP but with less
-> running tasks as an example.
-> In fact, we only care about the cost of the new OPP that will be
-> selected to handle the waking task. In many cases, several CPUs will end
-> up selecting the same OPP and as a result having the same energy cost. In
-> such cases, we can use other metrics to select the best CPU with the same
-> energy cost. Patch 3 rework feec() to look 1st for the lowest cost in a PD
-> and then the most performant CPU between CPUs. At now, this only tries to
-> evenly spread the number of runnable tasks on CPUs but this can be
-> improved with other metric like the sched slice duration in a follow up
-> series.
-> 
-> perf sched pipe on a dragonboard rb5 has been used to compare the overhead
-> of the new feec() vs current implementation.
-> 
-> 9 iterations of perf bench sched pipe -T -l 80000
->                 ops/sec  stdev 
-> tip/sched/core  16634    (+/- 0.5%)
-> + patches 1-3   17434    (+/- 1.2%)  +4.8%
-> 
-> 
-> Patch 4 removed the now unused em_cpu_energy()
-> 
-> Patch 5 solves another problem with tasks being stuck on a CPU forever
-> because it doesn't sleep anymore and as a result never wakeup and call
-> feec(). Such task can be detected by comparing util_avg or runnable_avg
-> with the compute capacity of the CPU. Once detected, we can call feec() to
-> check if there is a better CPU for the stuck task. The call can be done in
-> 2 places:
-> - When the task is put back in the runnnable list after its running slice
->   with the balance callback mecanism similarly to the rt/dl push callback.
-> - During cfs tick when there is only 1 running task stuck on the CPU in
->   which case the balance callback can't be used.
-> 
-> This push callback mecanism with the new feec() algorithm ensures that
-> tasks always get a chance to migrate on the best suitable CPU and don't
-> stay stuck on a CPU which is no more the most suitable one. As examples:
-> - A task waking on a big CPU with a uclamp max preventing it to sleep and
->   wake up, can migrate on a smaller CPU once it's more power efficient.
-> - The tasks are spread on CPUs in the PD when they target the same OPP.
-> 
-> Patch 6 adds task misfit migration case in the cfs tick and push callback
-> mecanism to prevent waking up an idle cpu unnecessarily.
-> 
-> Patch 7 removes the need of testing uclamp_min in cpu_overutilized to
-> trigger the active migration of a task on another CPU.
-> 
-> Compared to v4:
-> - Fixed check_pushable_task for !SMP
-> 
-> Compared to v3:
-> - Fixed the empty functions
-> 
-> Compared to v2:
-> - Renamed the push and tick functions to ease understanding what they do.
->   Both are kept in the same patch as they solve the same problem.
-> - Created some helper functions
-> - Fixing some typos and comments
-> - The task_stuck_on_cpu() condition remains unchanged. Pierre suggested to
->   take into account the min capacity of the CPU but the is not directly
->   available right now. It can trigger feec() when uclamp_max is very low
->   compare to the min capacity of the CPU but the feec() should keep 
->   returning the same CPU. This can be handled in a follow on patch
-> 
-> Compared to v1:
-> - The call to feec() even when overutilized has been removed
-> from this serie and will be adressed in a separate series. Only the case
-> of uclamp_min has been kept as it is now handled by push callback and
-> tick mecanism.
-> - The push mecanism has been cleanup, fixed and simplified.
-> 
-> This series implements some of the topics discussed at OSPM [1]. Other
-> topics will be part of an other serie
-> 
-> [1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
-> 
-> Vincent Guittot (7):
->   sched/fair: Filter false overloaded_group case for EAS
->   energy model: Add a get previous state function
->   sched/fair: Rework feec() to use cost instead of spare capacity
->   energy model: Remove unused em_cpu_energy()
->   sched/fair: Add push task mechanism for EAS
->   sched/fair: Add misfit case to push task mecanism for EAS
->   sched/fair: Update overutilized detection
-> 
->  include/linux/energy_model.h | 111 ++----
->  kernel/sched/fair.c          | 721 ++++++++++++++++++++++++-----------
->  kernel/sched/sched.h         |   2 +
->  3 files changed, 518 insertions(+), 316 deletions(-)
+> Look at other examples, such as sc7280.dtsi, and you will see that
+> drive-strength and bias are considered board-specific properties and
+> should thereby not go in the soc.dtsi file.
 > 
 
-Hi Vincent,
-I'm giving this another go of reviewing after our OSPM discussions.
-One thing which bothered me in the past is that it's just a lot going
-on in this series, almost rewriting all of the EAS code in fair.c ;)
+Removed drive-strength and bias in v2.
 
-For easier reviewing I suggest splitting the series:
-1. sched/fair: Filter false overloaded_group case for EAS
-(Or actually just get this merged, no need carrying this around, is there?)
-2. Rework feec to use more factors than just max_spare_cap to improve
-responsiveness / reduce load (Patches 2,3,4)
-3. Add push mechanism and make use of it for misfit migration (Patches
-5,6,7)
-
-In particular 2 & 3 could be separated, reviewed and tested on their own,
-this would make it much easier to discuss what's being tackled here IMO.
-
-Best regards,
-Christian
+> Thanks,
+> Bjorn
 
