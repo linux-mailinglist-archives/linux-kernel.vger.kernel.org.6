@@ -1,210 +1,131 @@
-Return-Path: <linux-kernel+bounces-573497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B4CA6D856
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:34:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B48A6D859
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 11:34:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11D70169E40
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31F903B0986
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACCB25DCE7;
-	Mon, 24 Mar 2025 10:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AA625DCFD;
+	Mon, 24 Mar 2025 10:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="gbPC/B0K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EYuipvf5"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="tzBmpe6y"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94679433A8;
-	Mon, 24 Mar 2025 10:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD21953A9;
+	Mon, 24 Mar 2025 10:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742812443; cv=none; b=B69wwULe5V9R9oB3gZ6TRqHodgjS1LEjnZT+gUthp9zvrGDrtDSg3CQwrWoJvpObH5UhsvKWi30VjjS3nXTqoJqifSB1xnrpNPSRC/jUB0uN3Yfj1+ibnTptJn68ETqZzaUGofuXEEPpSUArmMb9z8nFP+b8y5c7iGqMQA4YWmc=
+	t=1742812444; cv=none; b=DsUqtElZiwmCKXQh/oH4umt7l73uTO+nL8rMUTzD1l107HBP/2of09LgJLoDt7QLD01Cetgthe5UBEBVsy9mOMgOVabhay+u9a41MgHTMXKhnvZ80pWk8ET5GOG7RdrvalWs4WUD/7zJI1YQMniQhSvXlafOIDOhB2sMax/6Tlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742812443; c=relaxed/simple;
-	bh=MDaWS369zyU3ft/VPAGvF4/93oOsT0WshVGyyTRZSrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e03UIktGD3eaz6kfXMCRZnDP16terEWSkHFKhsm8F2TXO5eKCF3/YpDh8LLY5f53xm6c6l+JSQSe0RKSknrVHaIaKOh6AfairU8gS8cto7CC0FTwbouz5E/3UvU5LebIInExjTnqy6yPsDVXbD7G+O0dIE0YtiZHYFz9v1BNREs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=gbPC/B0K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EYuipvf5; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3EC3125401BF;
-	Mon, 24 Mar 2025 06:33:59 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 24 Mar 2025 06:33:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1742812439;
-	 x=1742898839; bh=EU6NpT9oUCnxAd5/BZlw3N/2VuBMArT0EOYmB1+ztpw=; b=
-	gbPC/B0KKVvTVndlHSXDhXYKQZVRMjupHmAZgLQmT3x5q3I1NdTtsqyLPgx5JYWs
-	1Ey2BWIoujmL7KoUSPHkokjthtEwQU9ERi3A+yntgtbixiFJl0BVPhNbyvCZevtL
-	SQo2g1jOa2fs5c7jrNm+bEhURw+awiuRJ5ujZUoLaKTQOmRVCIxFmoHtc+SKiBHi
-	uan6x0q438KHRG2ps3sywCmz6D41SCYGnIppOZijAtPQd9emvtU0B09BcM6z3g4Q
-	5YIaJQxI3G0CPANDboHcKA72Pull3IdkNuTBwi6YwrFKDdXpnlDJvPI2sRT5MMMR
-	o09Zab/haa1fzzWAqzMXgg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742812439; x=
-	1742898839; bh=EU6NpT9oUCnxAd5/BZlw3N/2VuBMArT0EOYmB1+ztpw=; b=E
-	Yuipvf5Ljq4mxTggUARgnUqQbb1IZvwCjuhXS42u3h7tjOwRyJFXEvGDJi1siYXu
-	PeMh6IAd3SdXuuO/8AUmicBGzPARCbBcUdhpujYSS2/V4NoqDpLHgRNIUraYWhCg
-	H1DiTtLTOdT1MLv3GbPnKGY6IlTPw2JQIQTioo+dGfB34n6BQEc9+LQyRPu0xFwr
-	vk1kwGZZw3CqbYidIjs/nAUWHzbOJK6SQguBjR7aUOS8NsmNh4mmxbE8T+gvXmnw
-	vOQ6Wlkmz4XAjXMs4M8RhbNfll0jo0P1DfE3D6gJV0PMI2mTEHK0fHuJMKV7mUFF
-	EbqUrgw/gRbo2j3ulzyBA==
-X-ME-Sender: <xms:FjXhZ9MFyh1fzVLbftTUZMh25anBRDeITzUmqGysmhjREN2O5QSDEA>
-    <xme:FjXhZ_8outC7TKMDUx8yeE5dhkNx3zV1GQEx_qGtfIU4bZvkTDgRrsBgTMzXOTbGd
-    sdAkKPlXcRxXoDDNBc>
-X-ME-Received: <xmr:FjXhZ8TmjATNuRQctBqAKf1YNU1PHn67HbKXHDombqDKx6tKe3IsKNQDsPhrG_sF5CH5FrX->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelheehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefkff
-    ggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepfdfnuhhkvgcuffdrucfl
-    ohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtthgvrhhnpe
-    eigeekveevffelfedtieegudfhkeefudeuleduhfehfffhtdekhfekffefteduvdenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhkmhhlsegrnhhthh
-    gvrghsrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomh
-    dprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgt
-    ohhmpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgr
-    rhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomh
-X-ME-Proxy: <xmx:FjXhZ5vF5YB2Lu_hD6Y1eBpvQBBiEmeB8NRq5p0TC-ay5eVUjCYrOg>
-    <xmx:FjXhZ1cphiLDqpiwJXR0xmRHAf1HrKSp5iwm2t9RmH2gh7PIBLCFLw>
-    <xmx:FjXhZ11gXkuBKutrpwUK0yxg4XcI6cj9VfHu6fN57I53_x-I3sCEmw>
-    <xmx:FjXhZx8nHNC8otTgLcLgBd7wJoXZKBkiDi3K42J9qLKBxa3j7Q92cQ>
-    <xmx:FzXhZ0wIE4rgD6ONYk6c3tz-cC-qmCQiPQwy2jlJGGNZUJjLeEsWkT-N>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 06:33:54 -0400 (EDT)
-Message-ID: <41bf9d87-be11-4814-bc3e-c6c9297e0cc4@ljones.dev>
-Date: Mon, 24 Mar 2025 23:33:52 +1300
+	s=arc-20240116; t=1742812444; c=relaxed/simple;
+	bh=yWHN60OPmraLqhtBq5lhjheIQXR/F7iBUPLr7BPi7R8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=S+n4n1vJE2NJc8xowjeAmJi0I1t7yZjRkmKyBU9N15vkA4h0HqJcdzbAb7Nn3y3kGA7wiY1Jzpihnilteccrv/lFDMS4dflOUGNaZy9XTb3mwlOKx0B7vptMKJhe6fxkBC3kaY54B5DceJigqfjKVm2Gju5HhkYPTwnN8dQQNvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=tzBmpe6y; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] hid-asus: asus-wmi: refactor Ally suspend/resume
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
- linux-input@vger.kernel.org, bentiss@kernel.org, jikos@kernel.org,
- mario.limonciello@amd.com
-References: <20250323023421.78012-1-luke@ljones.dev>
- <CAGwozwE4oXmFMRO5jZJC4d11TstTqSC8ZUZ1CCkZMWYZKTKF_w@mail.gmail.com>
- <deeb4946-dd66-4a82-a8f0-5e8b1751899e@ljones.dev>
- <CAGwozwGPVJznyX4Vp5vNfb1JOP7AGoZV3vOkRwT_W=_0g+gkJQ@mail.gmail.com>
-Content-Language: en-US
-From: "Luke D. Jones" <luke@ljones.dev>
-In-Reply-To: <CAGwozwGPVJznyX4Vp5vNfb1JOP7AGoZV3vOkRwT_W=_0g+gkJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1742812433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eI7gPyQYRsRBMrw/lvACQBiN3JsT2YD+lfGEOC2JxYU=;
+	b=tzBmpe6y4C9C1mC187Q2hITuYbsywdQEk9ISEptzHhtaaMWMEXT9wyejk/K91P70RuDFt0
+	yh7LOLNj0Jig/SUKDRxlqgdmqpmo0oMmeKIK+xwWSbNxWJvDZzxuDLw3c6wLJ/E1WGOGGb
+	pD3aBw//mpNMo6fV55zHDAWQde+ldynndHLyeALFMMmKhlOk4AcDxIJegLTXfDXjcvBPbf
+	8y2M8OTgqv4oGnaNXRnoe31cVUh3p/UVivt/saEZKVSXm6SlwMWeDd/yvLXwB55zljrROj
+	ibghbX+nD1lzry+Y3YGz+tUT2YxukwHAEsvzw5tGERCd5xpDHei8z2x4TjtOBg==
+Date: Mon, 24 Mar 2025 11:33:53 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, stable@vger.kernel.org, Alexey Charkov
+ <alchark@gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Remove overdrive-mode OPPs from
+ RK3588J SoC dtsi
+In-Reply-To: <170e4d8d-33ca-4c53-9ae7-ca9d674540a9@cherry.de>
+References: <f929da061de35925ea591c969f985430e23c4a7e.1742526811.git.dsimic@manjaro.org>
+ <71b7c81b-6a4e-442b-a661-04d63639962a@cherry.de>
+ <960c038ad9f7b83fe14d0ded388b42f7@manjaro.org>
+ <2ece5cca-50ea-4ec9-927e-e757c9c10c18@cherry.de>
+ <4d25c9af4380598b35a0d55e7c77ac3d@manjaro.org>
+ <170e4d8d-33ca-4c53-9ae7-ca9d674540a9@cherry.de>
+Message-ID: <17b55e889838f2c989bd0efc6528801b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 24/03/25 21:11, Antheas Kapenekakis wrote:
-> On Mon, 24 Mar 2025 at 02:41, Luke D. Jones <luke@ljones.dev> wrote:
->>
->> On 24/03/25 00:41, Antheas Kapenekakis wrote:
->>> On Sun, 23 Mar 2025 at 03:34, Luke Jones <luke@ljones.dev> wrote:
->>>>
->>>> This short series refactors the Ally suspend/resume functionality in the
->>>> asus-wmi driver along with adding support for ROG Ally MCU version checking.
->>>>
->>>> The version checking is then used to toggle the use of older CSEE call hacks
->>>> that were initially used to combat Ally suspend/wake issues arising from the MCU
->>>> not clearing a particular flag on resume. ASUS have since corrected this
->>>> especially for Linux in newer firmware versions.
->>>>
->>>> - hid-asus requests the MCU version and displays a warning if the version is
->>>>     older than the one that fixes the issue.
->>>> - hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
->>>> version is high enough.
->>>>
->>>> *Note: In review it was requested by Mario that I try strsep() for parsing
->>>> the version. I did try this and a few variations but the result was much
->>>> more code due to having to check more edge cases due to the input being
->>>> raw bytes. In the end the cleaned up while loop proved more robust.
->>>>
->>>> - Changelog:
->>>>     + V2: https://lore.kernel.org/platform-driver-x86/20250226010129.32043-1-luke@ljones.dev/T/#t
->>>>       - Adjust warning message to explicitly mention suspend issues
->>>
->>> How did the testing go with this one, especially with mcu_powersave 0?
->>
->> Appears to be good. Checked a few reboots with powersave off - it is
->> setting on as I expect every time. Did modules unload/load also. And
->> tested with it set off after boot plus suspend resumes.
+On 2025-03-24 11:20, Quentin Schulz wrote:
+> On 3/24/25 10:53 AM, Dragan Simic wrote:
+>> On 2025-03-24 10:23, Quentin Schulz wrote:
+>>> On 3/23/25 11:19 AM, Dragan Simic wrote:
+>>>> On 2025-03-21 10:53, Quentin Schulz wrote:
+>>>>> On 3/21/25 4:28 AM, Dragan Simic wrote:
+>>>>>> The differences in the vendor-approved CPU and GPU OPPs for the 
+>>>>>> standard
+>>>>>> Rockchip RK3588 variant [1] and the industrial Rockchip RK3588J 
+>>>>>> variant [2]
+>>>>>> come from the latter, presumably, supporting an extended 
+>>>>>> temperature range
+>>>>>> that's usually associated with industrial applications, despite 
+>>>>>> the two SoC
+>>>>>> variant datasheets specifying the same upper limit for the allowed 
+>>>>>> ambient
+>>>>>> temperature for both variants.  However, the lower temperature 
+>>>>>> limit is
+>>>>> 
+>>>>> RK3588 is rated for 0-80°C, RK3588J for -40-85°C, c.f. Recommended
+>>>>> Operating Conditions, Table 3-2, Ambient Operating Temperature.
+>>>> 
+>>>> Indeed, which is why I specifically wrote "specifying the same upper
+>>>> limit", because having a lower negative temperature limit could 
+>>>> hardly
+>>>> put the RK3588J in danger of overheating or running hotter. :)
+>>> 
+>>> """
+>>> despite the two SoC variant datasheets specifying the same upper 
+>>> limit
+>>> for the allowed temperature for both variants
+>>> """
+>>> 
+>>> is incorrect. The whole range is different, yes it's only a 5°C
+>>> difference for the upper limit, but they still are different.
+>> 
+>> I just commented on this separately, with a couple of datasheet
+>> screenshots, before I saw your latest response.  Please, have
+>> a look at that message.
 > 
-> Did you test suspends with mcu_powersave to 0 and rgb on? I had a few
-> issues you can reference the previous version for and I want to see if
-> you have them.
+> I see, I had a v1.3 datasheet opened:
 > 
-> Even with powersave set to 1, the RGB does not fade anymore without the quirk
+> https://github.com/FanX-Tek/rk3588-TRM-and-Datasheet/blob/master/Rockchip_RK3588_Datasheet_V1.3-20220328.pdf
 
-Yes I tested every scenario I could think of. I don't think the fade is 
-something to worry about - seems like it happening at all previously was 
-just due to suspend being held up for a bit longer and now that the hack 
-is disabled for new FW, it relies fully on Linux suspend (async? 
-Honestly it's never been fully clear how async it really is).
+Yup, the v1.6 of the RK3588 datasheet increased the upper ambient
+temperature limit from 80 to 85 oC.
 
-I'd rather the faster suspend/resume. And so far I've heard no 
-complaints (although my userbase is smaller than bazzites).
-
-Cheers,
-Luke.
-
-> Antheas
+> Interestingly, it seems the RK3588S (still?) has a smaller operating 
+> range:
 > 
->> Very much hope this is the end of that particular saga, and with
->> bazzites help we can hopefully get everyone on November MCU FW or later,
->> then finally remove the hack completely this year.
->>
->> A small side note - I expect ASUS to fully reuse the X hardware, or at
->> least the bios/acpi/mcu-fw for that new windows handheld they've doing,
->> so fingers crossed that they actually do, and there will be nomore
->> suspend issues with current kernels plus this patch.
->>
->> Cheers,
->> Luke.
->>
->>>>       - Use switch/case block to set min_version
->>>>         - Set min_version to 0 by default and toggle hacks off
->>>>     + V3
->>>>       - Remove noise (excess pr_info)
->>>>       - Use kstrtoint, not kstrtolong
->>>>       - Use __free(kfree) for allocated mem and drop goto + logging
->>>>       - Use print_hex_dump() to show failed data after pr_err in mcu_request_version()
->>>>       - Use pr_debug in set_ally_mcu_hack() and set_ally_mcu_powersave() plus
->>>>         correct the message.
->>>>     + V4
->>>>       - Change use_ally_mcu_hack var to enum to track init state and
->>>>         prevent a race condition
->>>>
->>>> Luke D. Jones (2):
->>>>     hid-asus: check ROG Ally MCU version and warn
->>>>     platform/x86: asus-wmi: Refactor Ally suspend/resume
->>>>
->>>>    drivers/hid/hid-asus.c                     | 111 ++++++++++++++++-
->>>>    drivers/platform/x86/asus-wmi.c            | 133 +++++++++++++++------
->>>>    include/linux/platform_data/x86/asus-wmi.h |  19 +++
->>>>    3 files changed, 222 insertions(+), 41 deletions(-)
->>>>
->>>> --
->>>> 2.49.0
->>>>
->>
+> https://www.armboard.cn/download/Rockchip_RK3588S_Datasheet_V1.6-20240821.pdf
 
+Oh, that's quite interesting, I had the v1.5 as the newest version.
+The v1.6 of the RK3588S datasheet actually lowered the upper ambient
+temperature limit from 85 down to 80 oC.
 
