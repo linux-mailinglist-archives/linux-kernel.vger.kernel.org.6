@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-573731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E10A6DBAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:34:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8BFA6DBAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59884188D239
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA8B1660BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBE725F973;
-	Mon, 24 Mar 2025 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA7E25F79E;
+	Mon, 24 Mar 2025 13:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UaahKskW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LLIBhuhE"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="etNWPIDI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y0Alil/M"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A738725F7BA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA5925EFB8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823220; cv=none; b=BbOKQTyn2EAcx1cpDp0YVMobLo680TTxMt402AcSXlgFL8MK8UtIUP23G13wSuEgiBgEN40fyWTm1wlPTCPUqGBzCjK1po1ayht3m9L+wP2rk4nb3wpKED7Y2pnr1qpfRkTj9Ed3f4U2HS8TKPZnIzFPM+nZdG0r3rtLEs+AvM4=
+	t=1742823223; cv=none; b=GrUlzCZBnBUqChj9R9rUNkJH2Des/dGlQYbhjSoj/9M5lUtshkTdfYqD8GGoGqtwU1zrLpipnribOm8qteGdwizfF7UtlE2JvhWkLLPjCLneQrjpTJAUL3hkqHqiI8y7/RdEzLuC8M7SLQZPaBIpabU+AoUA/7eps0008KPU4OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823220; c=relaxed/simple;
-	bh=nU4OSc713+t3FWKAhY+Xi2Wo/7zTOFNOruBVPTD2Wi0=;
+	s=arc-20240116; t=1742823223; c=relaxed/simple;
+	bh=HlC2VyZgCA26vEg1uzqeEX+cghnr3JEFvxlGFcxFtS4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OFNVXazy9yt0hvOc5GBP1hs4tCnAH9MP6aWl+ZmBO456519WU9BM7ddcocoY/EU/mf30FgQl60MBrHvxmzi7o+oOidwPjfperiuKgbh7BxTWU/w+K34jGl5BYcRXcn1L99mrUge+wm/aw7KtkQyIJBSsPNsu3dajtigmdXqVnVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UaahKskW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LLIBhuhE; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=KDRHsSrd9slsKFDutCQf2UTOIMAUszp+ZoTqwJqggUk//sDyeA5HHVKqhCeH4nFYAKcQbkpUt432D9l2G1rxHMn95wDKV2Q+S8d0UhH1p2+GaqpPulWrX80VBTdO8YLpc/zf5vWbQevZlgKx3g2rBAOzBWghLFuZvn+t3N+ey2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=etNWPIDI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y0Alil/M; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742823216;
+	s=2020; t=1742823219;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xOEE5Ws6vnNWGAOctr95ZFkXsWR7b1uBZjnhDXrVsZY=;
-	b=UaahKskWhE31C/T/VyNHhC3t8Iln3bT0Wqu060yOfECvf3F5LsHnWzUiG/wzHgXDxZR9mN
-	MynKgg4nZ3rRrRDo3iKlCVZQxN87cIliY3h/oVZlB4w+mLvzidTUnIgcBjIZbiAK4zZyUa
-	tpCLPNo9IpsmaX3MVwcNy7gtaIfXo+LWOCiiJb3aJ9MOj8VBNjkIL3UUKx6ia15dML4soS
-	qEeMq5Bd1RyTZc7N8jsu4y7SrHYjcxGT2h5H/W1vZcV/jR8s4hdMBNuaLozDHG6cSUd8JQ
-	mnGiI5OB1iYPhrVmcM4gIADRNOvYByl/yjxn7umBn8ybYdthYl/TasibuAM4FQ==
+	bh=/3kKrwykp7K2hYkCCBfT55S/xZ2U7zEFrml/gv7Bp/0=;
+	b=etNWPIDIW42GRp+/vXTDn0KZ0qNIaK9LM7hc8yjAIeZot8WhMVzizfogp8tVs3QVVyWro6
+	dr1PDSSA/9OWUb6b0k9rYva/d2z9qHQtLLbbBZPwPhzk1JF+aMSWWP7c1eWDaGJ1MZ/Is3
+	qWE8yIh4y25ofQRAwSSF64GFRFI9PFvNZRvu7MsWByJcaQglRu9soD2L6zYaVW91pLACQ5
+	gd6lygOVacxYtBDt0sxMAokjrdm5LV3oicOllbiJn7tLugeHewkdqtGTOp5LpCPVOelK6B
+	AdA6S+2nB+QPDpRLUPu3cjIKYSO+OrZr/CzIlrv760x5N0Hrih4siTZwKSFD1A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742823216;
+	s=2020e; t=1742823219;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xOEE5Ws6vnNWGAOctr95ZFkXsWR7b1uBZjnhDXrVsZY=;
-	b=LLIBhuhESHMWmj3ypme6I/Wqh3Fwv02eMZHXGARUO/7tnV2ekR8JtCInw1K52fLaA7Svbo
-	tQRLDtC8jYoQr5Aw==
+	bh=/3kKrwykp7K2hYkCCBfT55S/xZ2U7zEFrml/gv7Bp/0=;
+	b=Y0Alil/MB1I96Yd3tFH4wd5vXI+tF2Ud/kOaRXmuymeZn3FxJsucR7Fr+QuphBYeNbUS5e
+	BkgaMfH3UroeDiAw==
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v4 02/29] x86/cacheinfo: Remove leaf 0x2 parsing loop
-Date: Mon, 24 Mar 2025 14:32:57 +0100
-Message-ID: <20250324133324.23458-3-darwi@linutronix.de>
+Subject: [PATCH v4 03/29] x86/cpu: Introduce and use leaf 0x2 parsing helpers
+Date: Mon, 24 Mar 2025 14:32:58 +0100
+Message-ID: <20250324133324.23458-4-darwi@linutronix.de>
 In-Reply-To: <20250324133324.23458-1-darwi@linutronix.de>
 References: <20250324133324.23458-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,125 +77,173 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Leaf 0x2 output includes a "query count" byte where it was supposed to
-specify the number of repeated CPUID leaf 0x2 subleaf 0 queries needed to
-extract all of the CPU's cache and TLB descriptors.
+Introduce CPUID leaf 0x2 parsing helpers at <asm/cpuid/leaf_0x2_api.h>.
+This allows sharing the leaf 0x2's output validation and iteration logic
+across both x86/cpu intel.c and cacheinfo.c.
 
-Per current Intel manuals, all CPUs supporting this leaf "will always"
-return an iteration count of 1.
+Start by converting intel.c to the new API.
 
-Remove the leaf 0x2 query loop and just query the hardware once.
-
-Note, as previously done at commit aec28d852ed2 ("x86/cpuid: Standardize
-on u32 in <asm/cpuid/api.h>"), standardize on using 'u32' and 'u8' types.
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 77 ++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 40 deletions(-)
+ arch/x86/include/asm/cpuid.h              |  1 +
+ arch/x86/include/asm/cpuid/leaf_0x2_api.h | 65 +++++++++++++++++++++++
+ arch/x86/include/asm/cpuid/types.h        | 16 ++++++
+ arch/x86/kernel/cpu/intel.c               | 23 +++-----
+ 4 files changed, 88 insertions(+), 17 deletions(-)
+ create mode 100644 arch/x86/include/asm/cpuid/leaf_0x2_api.h
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index b3a520959b51..36782fd017b3 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -42,7 +42,7 @@ static cpumask_var_t cpu_cacheinfo_mask;
- unsigned int memory_caching_control __ro_after_init;
+diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
+index d5749b25fa10..585819331dc6 100644
+--- a/arch/x86/include/asm/cpuid.h
++++ b/arch/x86/include/asm/cpuid.h
+@@ -4,5 +4,6 @@
+ #define _ASM_X86_CPUID_H
  
- struct _cache_table {
--	unsigned char descriptor;
-+	u8 descriptor;
- 	char cache_type;
- 	short size;
- };
-@@ -783,50 +783,47 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ #include <asm/cpuid/api.h>
++#include <asm/cpuid/leaf_0x2_api.h>
  
- 	/* Don't use CPUID(2) if CPUID(4) is supported. */
- 	if (!ci->num_leaves && c->cpuid_level > 1) {
--		/* supports eax=2  call */
--		int j, n;
--		unsigned int regs[4];
--		unsigned char *dp = (unsigned char *)regs;
--
--		/* Number of times to iterate */
--		n = cpuid_eax(2) & 0xFF;
--
--		for (i = 0 ; i < n ; i++) {
--			cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
--
--			/* If bit 31 is set, this is an unknown format */
--			for (j = 0 ; j < 4 ; j++)
--				if (regs[j] & (1 << 31))
--					regs[j] = 0;
--
--			/* Byte 0 is level count, not a descriptor */
--			for (j = 1 ; j < 16 ; j++) {
--				unsigned char des = dp[j];
--				unsigned char k = 0;
--
--				/* look up this descriptor in the table */
--				while (cache_table[k].descriptor != 0) {
--					if (cache_table[k].descriptor == des) {
--						switch (cache_table[k].cache_type) {
--						case LVL_1_INST:
--							l1i += cache_table[k].size;
--							break;
--						case LVL_1_DATA:
--							l1d += cache_table[k].size;
--							break;
--						case LVL_2:
--							l2 += cache_table[k].size;
--							break;
--						case LVL_3:
--							l3 += cache_table[k].size;
--							break;
--						}
-+		u32 regs[4];
-+		u8 *desc = (u8 *)regs;
+ #endif /* _ASM_X86_CPUID_H */
+diff --git a/arch/x86/include/asm/cpuid/leaf_0x2_api.h b/arch/x86/include/asm/cpuid/leaf_0x2_api.h
+new file mode 100644
+index 000000000000..4c845fc96716
+--- /dev/null
++++ b/arch/x86/include/asm/cpuid/leaf_0x2_api.h
+@@ -0,0 +1,65 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_CPUID_LEAF_0x2_API_H
++#define _ASM_X86_CPUID_LEAF_0x2_API_H
++
++#include <asm/cpuid/api.h>
++#include <asm/cpuid/types.h>
++
++/**
++ * cpuid_get_leaf_0x2_regs() - Return sanitized leaf 0x2 register output
++ * @regs:	Output parameter
++ *
++ * Query CPUID leaf 0x2 and store its output in @regs.	Force set any
++ * invalid 1-byte descriptor returned by the hardware to zero (the NULL
++ * cache/TLB descriptor) before returning it to the caller.
++ *
++ * Use for_each_leaf_0x2_desc() to iterate over the returned output.
++ */
++static inline void cpuid_get_leaf_0x2_regs(union leaf_0x2_regs *regs)
++{
++	cpuid_leaf(0x2, regs);
++
++	/*
++	 * All Intel CPUs must report an iteration count of 1.	In case
++	 * of bogus hardware, treat all returned descriptors as NULL.
++	 */
++	if (regs->desc[0] != 0x01) {
++		for (int i = 0; i < 4; i++)
++			regs->regv[i] = 0;
++		return;
++	}
++
++	/*
++	 * The most significant bit (MSB) of each register must be clear.
++	 * If a register is invalid, replace its descriptors with NULL.
++	 */
++	for (int i = 0; i < 4; i++) {
++		if (regs->reg[i].invalid)
++			regs->regv[i] = 0;
++	}
++}
++
++/**
++ * for_each_leaf_0x2_desc() - Iterator for CPUID leaf 0x2 descriptors
++ * @regs:	Leaf 0x2 output, as returned by cpuid_get_leaf_0x2_regs()
++ * @desc:	Pointer to the returned descriptor for each iteration
++ *
++ * Loop over the 1-byte descriptors in the passed leaf 0x2 output registers
++ * @regs.  Provide each descriptor through @desc.
++ *
++ * Note that the first byte is skipped as it is not a descriptor.
++ *
++ * Sample usage::
++ *
++ *	union leaf_0x2_regs regs;
++ *	u8 *desc;
++ *
++ *	cpuid_get_leaf_0x2_regs(&regs);
++ *	for_each_leaf_0x2_desc(regs, desc) {
++ *		// Handle *desc value
++ *	}
++ */
++#define for_each_leaf_0x2_desc(regs, desc)				\
++	for (desc = &(regs).desc[1]; desc < &(regs).desc[16]; desc++)
++
++#endif /* _ASM_X86_CPUID_LEAF_0x2_API_H */
+diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
+index 8582e27e836d..753f6c4514f4 100644
+--- a/arch/x86/include/asm/cpuid/types.h
++++ b/arch/x86/include/asm/cpuid/types.h
+@@ -29,4 +29,20 @@ enum cpuid_regs_idx {
+ #define CPUID_LEAF_FREQ		0x16
+ #define CPUID_LEAF_TILE		0x1d
  
-+		cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
++/*
++ * Types for CPUID(0x2) parsing
++ * Check <asm/cpuid/leaf_0x2_api.h>
++ */
 +
-+		/* Intel CPUs must report an iteration count of 1 */
-+		if (desc[0] != 0x01)
-+			return;
++struct leaf_0x2_reg {
++		u32		: 31,
++			invalid	: 1;
++};
 +
-+		/* If a register's bit 31 is set, it is an unknown format */
-+		for (int i = 0; i < 4; i++) {
-+			if (regs[i] & (1 << 31))
-+				regs[i] = 0;
-+		}
++union leaf_0x2_regs {
++	struct leaf_0x2_reg	reg[4];
++	u32			regv[4];
++	u8			desc[16];
++};
 +
-+		/* Skip the first byte as it is not a descriptor */
-+		for (int i = 1; i < 16; i++) {
-+			u8 des = desc[i];
-+			u8 k = 0;
-+
-+			/* look up this descriptor in the table */
-+			while (cache_table[k].descriptor != 0) {
-+				if (cache_table[k].descriptor == des) {
-+					switch (cache_table[k].cache_type) {
-+					case LVL_1_INST:
-+						l1i += cache_table[k].size;
-+						break;
-+					case LVL_1_DATA:
-+						l1d += cache_table[k].size;
-+						break;
-+					case LVL_2:
-+						l2 += cache_table[k].size;
-+						break;
-+					case LVL_3:
-+						l3 += cache_table[k].size;
- 						break;
- 					}
+ #endif /* _ASM_X86_CPUID_TYPES_H */
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 0570d4d86006..aeb7d6d48379 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -16,6 +16,7 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/cpufeature.h>
+ #include <asm/cpu.h>
++#include <asm/cpuid.h>
+ #include <asm/hwcap2.h>
+ #include <asm/intel-family.h>
+ #include <asm/microcode.h>
+@@ -778,27 +779,15 @@ static void intel_tlb_lookup(const unsigned char desc)
  
--					k++;
-+					break;
- 				}
-+				k++;
- 			}
- 		}
- 	}
+ static void intel_detect_tlb(struct cpuinfo_x86 *c)
+ {
+-	u32 regs[4];
+-	u8 *desc = (u8 *)regs;
++	union leaf_0x2_regs regs;
++	u8 *desc;
+ 
+ 	if (c->cpuid_level < 2)
+ 		return;
+ 
+-	cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
+-
+-	/* Intel CPUs must report an iteration count of 1 */
+-	if (desc[0] != 0x01)
+-		return;
+-
+-	/* If a register's bit 31 is set, it is an unknown format */
+-	for (int i = 0; i < 4; i++) {
+-		if (regs[i] & (1 << 31))
+-			regs[i] = 0;
+-	}
+-
+-	/* Skip the first byte as it is not a descriptor */
+-	for (int i = 1; i < 16; i++)
+-		intel_tlb_lookup(desc[i]);
++	cpuid_get_leaf_0x2_regs(&regs);
++	for_each_leaf_0x2_desc(regs, desc)
++		intel_tlb_lookup(*desc);
+ }
+ 
+ static const struct cpu_dev intel_cpu_dev = {
 -- 
 2.48.1
 
