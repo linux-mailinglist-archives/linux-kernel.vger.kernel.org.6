@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-574579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8150FA6E6FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:00:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEDAA6E719
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 00:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0133F16AB2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AEA21893AA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228C01F0E5C;
-	Mon, 24 Mar 2025 22:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D51B1F03E8;
+	Mon, 24 Mar 2025 23:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvgPWPRc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHitfKLM"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C391198A34;
-	Mon, 24 Mar 2025 22:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C774A0C;
+	Mon, 24 Mar 2025 23:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742857193; cv=none; b=FaPSe23ou30lB53ANY0e/FJYIZ4k4sf7JemGs34N6arH0aOnbCAcApYae43pPE+vfKoxkVn4AjNEFsE+gC7ZFmMxsCNrfY+c1OoEub9AfoWdkD6Eu0GRHrOg2SNY3jH01VnL3tFMbxpfYW/AY4A4hZ9rBHm2SJ1wPkIOYIDoJwI=
+	t=1742857328; cv=none; b=c/Q+GyJ9N+M5spWMbU7w/tWrh1lfk2zoi7VxWwsXdL43aHMSGJNhOVT3OpC+xaVENLVgEgI5mCu+hxfUqlFeiIEdG3jYRSHXw579j4DLJqA3iJAh+f0z36vWfz9rWDtpoTQbbbc8iZqd0+D9eR72F0DOIDekFkbz2z6v8rQIt08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742857193; c=relaxed/simple;
-	bh=Lw1mP4qAeaD2JWWbT/o7f/jVHtDLVrGkTT7I1/dyG1A=;
+	s=arc-20240116; t=1742857328; c=relaxed/simple;
+	bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QbD3CNdzw42mLaz/rAvA4hUm0fva3wA1OORWSUzUlNkZwrrONIscvAYQG0bp6hqJxIFgF61CZqKQCS3dugEgNhfgQhmKbqM73+qoxk3jShgqJMrsaFE6Tc2khme5z2+LYhnCV6KJ14Yynft40wO0evrH4a4suAhNJVFGnWY7CEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvgPWPRc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1063C4CEF0;
-	Mon, 24 Mar 2025 22:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742857192;
-	bh=Lw1mP4qAeaD2JWWbT/o7f/jVHtDLVrGkTT7I1/dyG1A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kvgPWPRcCAwczrYTg8HGdP9ePFv0PUMVMuiEiNTNBR6BagvCuXvhR8IwKaWnDyueA
-	 CqOQ1FAfY3znCDXqVmMxVTcDf+Mj9r7oXP9qIuQSq6ODFViw6fyqqQFZlBq3Wk84ML
-	 GuH4WqrqCKcMF1hItKbNJFHn+nHfkfVnzgWCEuugSG38PzZx1DlMck2TXf57CvyKZ7
-	 48uUi/LbipSHxBT8JK4fsqHZoIr07kjWT/oQx2VZWXeVtJQrrnvlK8U77ikuZPPrw2
-	 crgLVAI1xUj1LZSTa+7vX3QKEszseKJH9lDTsus8JdombMXir9gX7udJSBWXy0OZiX
-	 GTWYCU8z8BZAA==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e60cfef9cfso7384943a12.2;
-        Mon, 24 Mar 2025 15:59:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjLK1QykkOH1bBS4H+3eJS35Bt20MTXB11UqwUeXj3Cu6bowEG2Xa+TwGLY+wlGawJ135fyXHEJw6tl2My@vger.kernel.org, AJvYcCVqGio8g587gbSRl8K9TBoXMwO3itOgl7bbak4t/+VYq0znrwe0pYGBNfZwiQfyzzEnsRI5QxeWctquiVHUcw4=@vger.kernel.org, AJvYcCW20IMCF++9h1mR3/jDPQaE/jqCRilwOK+OpuvQLYurwYGb98BjjdH7kauqnlgULrjpUSuRTSLBrOmEZjZtkQ==@vger.kernel.org, AJvYcCWMnE4qHNf07O2pPvt7FZYEGalkhCqoXcYMlIp6nR1b1oCG7mzRWTbU4MYWTRvtVy5PxKD+84XD@vger.kernel.org, AJvYcCWSYXFVHEWLNXUkfupe65Plc3GK7fLsivBoA0POroTTqxekuk7BTP1HYGcHZ4W5IfXCAohZA1yexo8XuvZIBuY=@vger.kernel.org, AJvYcCWel3+sfxmz1ZwITc674B/3zkEod87Kzou5qpIGIfUriNvUjHLoiAlaHEVgQZQWslQf1NGr0/DtIpB+kw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze+TPpx4XP5yO/9BzmRuaKTVBBrTwTS5z25DpkUZdEu+78bMwH
-	WE8mDdsNpjVhdVXXHkpqVJ7e6Y+8idm+TVrSd47+LQdWvWuhRcVQdXYkaTFTH7ezOU+sRadf2hV
-	ek1yGG57glbtLoguKCd2Z9fcEsw==
-X-Google-Smtp-Source: AGHT+IGMI1Cl7DYidw+DSHuEV1LN/O9iU02wqw1tml5Iu5KEnu3G+HWexYp+f0u6TjbJC81n8Ym/RO+LHqMzqmOjC8w=
-X-Received: by 2002:a05:6402:13d0:b0:5eb:9673:feb with SMTP id
- 4fb4d7f45d1cf-5ebcd4f8250mr12537192a12.25.1742857191292; Mon, 24 Mar 2025
- 15:59:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=ccOvhTolSGLk5I5v3Id0g2A1GrfGNtkigck0mauU5cjETwp+phsKr4ofPf6mr8I6um6wrTuZv5KNjrn8EXWM6aQsBaYKEqVkDW3WrVWQ6kNFR/un0GonjjoCvksMz5aYG5C7K2b15JCXOwZgB6h6s8zVJmT/BHtpMDkGloHjyOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHitfKLM; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301b4f97cc1so1529025a91.2;
+        Mon, 24 Mar 2025 16:02:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742857326; x=1743462126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
+        b=nHitfKLMBT/ce7wg4xDeBwxjmfITI4fs1wSdi6WQhjbM2smaL7MXilBpPRIWWURaon
+         5xfm2CnjbDC2U/KJVktyfkgH6eb9f/Fpr1V0OajzbqlMmmKR/JEv0t/hHl+GkmETLLCj
+         Mnlbs1+39eyXIkYYdgEbA+WZLR3GTP+ShFXxZGXnZTzdv5b5nBLUZyRrckL6TlXS64qY
+         O4p3Iq/US7IzYbCgmioMQOsjqZD1aPNTm3ZLoRVP9oBhVL6i+rel4SSGdX9m2FoS132Q
+         0fEQ2sxx6Mg5dj8y8UsA+Awdn1YruzLIHfMJkdwSHa77VKmmYufgWY0XFvCDxndQva+Y
+         CN5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742857326; x=1743462126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sm/shJ53dQVUaek3eh5J6vClMZ+mhRTsX2hjr08eZAo=;
+        b=ICBLHAzuoQ8iLFj1hDfb9e00VTImkAMnGyipBkBtV4CVx38Pv0OBdQ1ZRdkOnqXfgf
+         jJhpMj3iDhu3Bc6gFpeUZCEbqzB7yWrZWyoW8pSju0qVrMNXJdG5toZHQvpJDyySSaT9
+         kD8FxD6LUXZ0RxCYQTzI9sZsakaM3Q/6y+cUx/WuSvS0qHIlovVjTXGl19iReH9APVSg
+         9kxgjA8+OnfrhnT3bgiT5wiG1Cm9W1A2Hoi/vBx9h7fpk54BXIOWdGRYzqB99GlVl0fb
+         M8krYD78D0PO9BKmzeHUMSpV3X5kLicjVfWI4hvdOCz8BkDAySVTrdL1z05C5MP9LRoJ
+         fi3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUm5uTDtYG+eYNmrXPThhkkxeQ5NND7dgRsPgpqaCnpJrtSPoS6DnEI5Y+nzG+yykv5zZcYFrC1CJL0VkhsdGM=@vger.kernel.org, AJvYcCWbvFoFNXe/gJDdqacmM5luCtwlebjRIKk6cQtf1PZeIKPNPXXyMhWgbicRcWGklvhMFmkBhvj/sZhrSCc=@vger.kernel.org, AJvYcCXhAhzgxcqaHCGFpepilSefRyOJ/l/zc009VWpqaKL7wBVP4PxdAoO/pzff//XydusI0TRugNSjxlPA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOjpr5Tz2pjdq4oP5CPgvc16GOB3VIWs3QAb77AU/nJZQuRUNc
+	C5+bx23E5Y90JENg2l8BUC0KNVCsr6ifYFyA/VYJ8BpjvUJB7I+tqGIGAyOZ/pJkLMnNaFJOCKu
+	pUcb15gk82mB2vBjgls1fmU1Cj2U=
+X-Gm-Gg: ASbGnctSimxiS0SmrYblTj1UkbWap/biZYdcm8GGNCq8FCfSH6yM0DPSE+OpMuytnlB
+	bleoq5ndY65vGXH8R6y2pq7V3W2kECi9+QC/1v/KjfY6UJCo7599+8teSPBHvI38iC1lPUQ/5sx
+	BwRJAeCucJLFdVqQQUpp0/7tqJfg==
+X-Google-Smtp-Source: AGHT+IF0N3IVoZm41r+EPPfeHaAlJgTDOk4ghAT1O/mKxGfrCPY/HsBSeXWetofbrS+dczLITSUjUfjwMphj7YT+nAY=
+X-Received: by 2002:a17:90b:33d2:b0:2fe:91d0:f781 with SMTP id
+ 98e67ed59e1d1-3030fe534b9mr8779881a91.2.1742857326284; Mon, 24 Mar 2025
+ 16:02:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz> <20250324-dt-bindings-network-class-v5-1-f5c3fe00e8f0@ixit.cz>
-In-Reply-To: <20250324-dt-bindings-network-class-v5-1-f5c3fe00e8f0@ixit.cz>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Mar 2025 17:59:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJt-3mA4mnfMkS10pbPoAPKJ=Q4P3r0P0fzTZDLX+H5NA@mail.gmail.com>
-X-Gm-Features: AQ5f1Jol00ghFWSCxCHKge5D28bVFmC4YsOFGlu-gViPVE2B_vZ9pKfwkJkFqNk
-Message-ID: <CAL_JsqJt-3mA4mnfMkS10pbPoAPKJ=Q4P3r0P0fzTZDLX+H5NA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] dt-bindings: net: Add network-class schema for
- mac-address properties
-To: david@ixit.cz
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	van Spriel <arend@broadcom.com>, =?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Andy Gross <agross@kernel.org>, Mailing List <devicetree-spec@vger.kernel.org>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>
+References: <20250324210359.1199574-1-ojeda@kernel.org> <20250324210359.1199574-8-ojeda@kernel.org>
+ <D8OV6JF1S63H.NG5CXUZDQQP6@proton.me>
+In-Reply-To: <D8OV6JF1S63H.NG5CXUZDQQP6@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 25 Mar 2025 00:01:54 +0100
+X-Gm-Features: AQ5f1Jp-b9ijstGk-lJRPks97YVdRTn8tjg1pmMJXHRdMAlOigQ_u0TkE93n4J0
+Message-ID: <CANiq72kMGLYP9RzraKy8wSSYJ2e3PmBLyoSPjUbkhTT308Yr5w@mail.gmail.com>
+Subject: Re: [PATCH 07/10] rust: pci: fix docs related to missing Markdown
+ code spans
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Bjorn Helgaas <bhelgaas@google.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 12:41=E2=80=AFPM David Heidelberg via B4 Relay
-<devnull+david.ixit.cz@kernel.org> wrote:
+On Mon, Mar 24, 2025 at 11:54=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
 >
-> From: Janne Grunau <j@jannau.net>
->
-> The ethernet-controller schema specifies "mac-address" and
-> "local-mac-address" but other network devices such as wireless network
-> adapters use mac addresses as well.
-> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
-> a generic "Network Class Binding" with "address-bits", "mac-address",
-> "local-mac-address" and "max-frame-size". This schema specifies the
-> "address-bits" property and moves the remaining properties over from
-> the ethernet-controller.yaml schema.
->
-> The "max-frame-size" property is used to describe the maximal payload
-> size despite its name. Keep the description from ethernet-controller
-> specifying this property as MTU. The contradictory description in the
-> Devicetree Specification is ignored.
->
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  .../bindings/net/ethernet-controller.yaml          | 25 +-----------
->  .../devicetree/bindings/net/network-class.yaml     | 46 ++++++++++++++++=
-++++++
->  2 files changed, 47 insertions(+), 24 deletions(-)
+> Wouldn't "([`struct pci_device_id`])" make more sense?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Yeah, definitely, it should have the `struct` to be consistent with
+our usual style.
+
+Cheers,
+Miguel
 
