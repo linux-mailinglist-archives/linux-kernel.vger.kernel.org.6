@@ -1,153 +1,129 @@
-Return-Path: <linux-kernel+bounces-574572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E716A6E6DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:51:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BC4A6E6E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C3D17146B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277F6171587
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F80D1F1510;
-	Mon, 24 Mar 2025 22:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25251F0E4B;
+	Mon, 24 Mar 2025 22:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaQUCsLI"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="R5ZQXgFH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFB31F0980;
-	Mon, 24 Mar 2025 22:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8740B1EFFA2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742856658; cv=none; b=RYDCYFUWcqyX8+dgdwl9QtL/kaDRHdTlmpx/eSnlf/X7d1Mxk6vhAK1G+M4DOtJkcMbdvLDDMxk2P6u6PTK6u3MPvJ70VJET6gJosgxzkuNef4KZekCs82CKwNg9UZAM6+IMEeUSZgkqGzJ9s+HzkI8jU8ETACuk6bSziGxmndk=
+	t=1742856708; cv=none; b=fN7y/9kgaR92D70hq7vRV0xFaX21Np5YSracQgmAiZGXIgWTUu+BJGXpJev3M+hAr5Zs1jeTDMX8LU6UCRH8JIAyd4q3I5kulzlzR0gwCZ6vkicsB5z3ANsL1XITOcxYgnjFQnN3Kea+d+XG6hhWaOv0lDVAd9gMKYdE9Bwel34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742856658; c=relaxed/simple;
-	bh=OFnfZFOvRFjLF8yLMJ78CR39P8ues9cZwGeS5uxP9jQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FvWDrJxvjzpa9IswbC3L7gw6n83pgZNm8Yt2BJpXsRfoQauDjFSpIJxjpTUp3Q3nSzHcnXFqaprtDbsCOdAOOrmESqhV28XNE8M86DygwqQO6WStqkjtVU/wLnJ2fKKh0itjmKXgJkfYZhVKsXcZFAX1FKhP8obhX4AFKCzVH3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaQUCsLI; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301c4850194so7212147a91.2;
-        Mon, 24 Mar 2025 15:50:55 -0700 (PDT)
+	s=arc-20240116; t=1742856708; c=relaxed/simple;
+	bh=sINURG8TPjWTJ6BG4UIC+MEa4u8qbkJLpUIbNvmW9/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nh55mCUx2AslHDRNSglcfadyThkc4BarYGue0ImPBOLkdm6sEABuFrW+AXbGd3xbmE3wZkwCvz1SJEnUwkE/xtjg9MCkrA5jLCUnUB8u+xiNHwaAciSY6YbRryaAWbShacbKKd1v/F+/MGXi1xnfzzNm0rvp4mSqaC65DdgfiXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=R5ZQXgFH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223f4c06e9fso81627895ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742856655; x=1743461455; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HIcZnMnjQF2uW7JNXrODHoycRkxw07WZdEbj6dXyb74=;
-        b=EaQUCsLIlGpzPM02p9D+12RTz63/NRMxzrmGRxiXB2IgzC5rtBTRZGRl/Kc8v9Xbrp
-         ejuoDBQfZSwg6UnT74RHfE038RsonG6x/I66WIALx45NV/QVyZlF4+EZqmRstVUrR7Dk
-         3YJ8YbpRcm/g2NcX016DpvFEXigrb3ur/lVv0l/D0cUlO5fXfOx+p66pHLchPDSt0FVT
-         pb6G/fL3waeBxrJ05d8J5aIy676Pzp/ihZeeJ7Zuh/wM3fAI1uHEbscWuXVbTCXqJiG7
-         4SJOvQ1cPOOIQJbcHQIQJY9I2P9Ow5DgM7pz0PCef4d4wZnoUgrwTAJi569SdUWGnAyS
-         NZUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742856655; x=1743461455;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1742856706; x=1743461506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HIcZnMnjQF2uW7JNXrODHoycRkxw07WZdEbj6dXyb74=;
-        b=dvnQwMN3c+eoEkgbWGcs5HQs5dLlwdMdJN7/w45ggZoUwTo4urPcu3+HYE3knGxZ7A
-         HaHekuiiJLNEMkEPj8mjjug8KGhklSHMkNBbQ+2CVzvI2PIWhE9aIwErS1HURWwhYLmz
-         RIrtHQK/GMxWKAdbphFl89DMp2a2qoSU2tXkGzY7OjM0tR/E17Tk8fR5hx3ROnaLKiYi
-         sVeYjqXNDaaWsVbqFJ6zRWTWkanmNTXxVwhFwmJHrV84lstVhCn6RH2JYQ6+dGa5sVBP
-         3fe4QbqjuVjLLIaQqgTrg2JmMJPbWKUP+sjy3UCSGpL7+qxSpTpUX6fCdQwjZ4YzM7VM
-         56Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5VMbZ/7bcmCDRKgy7/ZvVVfibPKREqqz8tWf/PRX8Wv2WGgrRzxBBK2pP+QFQDEwh68IZM7IDpbndxwzyzlCa@vger.kernel.org, AJvYcCWCvTkjxmG9ufsIdtEEnC2GGtDSg8AX6LC47+hYz4KQuVurDsyVL1LChIhT8SP26IEVndpdsKFqGAKldvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8C+vAU6x8bGke/bFMHnwPDPNJnroKPCxu6MaY0r1NZOsTX/bp
-	dbpEmZGxzknujU/LpF0MVuQt6DBF4qY5BS6Bw2NQQIVgh0o+1+Dd
-X-Gm-Gg: ASbGncu30gb+Fp3qXzcO1HV8NeKA/AyVi/xhWxhtsuLjbrsrjmE+Tzb1zP1SiC7wewH
-	LfeFEUEqW3eVkrky+tOSTI7jp68ISfUuJF9o9fifpi+15sX/0tbunEXoco0xklOBzXhoNgdLFOM
-	JYbbyE9vXy6yN1qUeF7Mdk/SVhuoxApQ31T3KWS8D2ZkTZu39e/BXbMS19wH3R6IuJmC3+wE6NG
-	h9abfUhAT6DDpvi+MwzUKFft5yPFx0AqOP/g3aG4FgJMHtmmDbYPqQOvYUu9kzOxipAvVfFWeqr
-	Qi6OdXqssFpKvt69TFmY7IpR5/MrbqP2Lkqcp+xCxgyhVMWs3Vom
-X-Google-Smtp-Source: AGHT+IF8iWTONHUd8aV2dDQzwo6/Z6bKjkb4Rz6knucNIpNah98QGJl0Hvie4EV6FW8ZoGTIxMbdqA==
-X-Received: by 2002:a17:90b:2e83:b0:2fa:1a23:c01d with SMTP id 98e67ed59e1d1-3030fec62damr21880841a91.21.1742856654672;
-        Mon, 24 Mar 2025 15:50:54 -0700 (PDT)
-Received: from fedora.local ([2804:d57:4e50:a700:f33d:65d1:e22e:109b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f5b7823sm8801477a91.10.2025.03.24.15.50.50
+        bh=SNZIAuzYTTeAort3nrknmAePklLNuzFFtDGjptmIzOM=;
+        b=R5ZQXgFH/IDyjy3UBj0w19mK5ZDC+DjlVjMwDSIHJyS6F4GLejnOuNfJ1SZn0Iwe5T
+         GaAOHiiP2uu/0y7hhQOqecYdko/krtPlGRXY/xCuhiZ1JYdgLq7GH40kJtJql6Tqt1Lx
+         96wdRclw007Mg07QOD4qOZk0jmp59eIa6DpNA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742856706; x=1743461506;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SNZIAuzYTTeAort3nrknmAePklLNuzFFtDGjptmIzOM=;
+        b=L51ZmtjmgQrG9OpOtGQGZbh1zfXe3q12xVj0LYvhDjkV2PSV7lsx1ERkpV2iYiKsxb
+         70vLmcIdNfIOMtcIm4vZZCctYk7FRw2wqK0vzZmla+7dGcsGE4ynbEZJwIOGPMiF6bMV
+         qeEvLyCEkeORIoOWj/Yuczh/ySSkq520zZ6yVdadJH4BPZ3fBuM05Zw8kYuPPvmETltx
+         +56Zk45+zqjIQIs9vdBx0Pr1eQ3NNZxj7/xSbyMYjw9Ut2hO8VyX94IbptF7Xr9dHHmR
+         +XIukqxyMdSEy3BtvKnfJfR4mTJO0sKXFe/5/9saxZEvepgHXJRGXt9a8z7eeUIpMMIA
+         J5eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDYvoerL3EUNbQfKvOjGEl4yF7JdVwkEl7Be8CAY+lB2p2YiXsyj2jNk2+aYSAGiraSazc54UaM1Pm3G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV764mMCZPdrv4j8EwdpUcOL1E81u30WViAgEf+34XUIpamTjR
+	Q9upOi55v6L5xx0czcNTlQMXlf6DViATq1Mctie915pQ7Ml0QKyOejYLApuRgLE=
+X-Gm-Gg: ASbGncsKpPxSAvFt1PmYCsv1paMotLS5MWZQnI7A1ehlbba16E/Z/57lIHvpp3pJhzJ
+	SYXHbC+GwLXSGt/S7alJ9sbKZ7u+slWV/o9v4PCwxvxg2jo0ZR1hJKnmuIa7iD2Bc0KDYnYzgL+
+	BID8XAfUOPiINHC2YkFzlVE6Dz+ol7DzK+mznlMMB9CS8ko4x0WPxcqigSzfeqKYmC968VMGSJC
+	PCZWeYfkfIrvaVYhuwGMQdkwG7DnOlrnBsQNCkhyYmnfwFfSbrw28ajvSYrfVxXTfc92MP+NyX0
+	cKlOcoD25/SHskrzxldLubFkueCmKfcWD47x/4lRntY4nwFgtG7n797JGhy6L9aeXNypy6CX6U5
+	s4lBCnqlJplRRXsKp
+X-Google-Smtp-Source: AGHT+IGqXWgEabyAByCjIRB2NF7rK0U6Sarr7ZTc0iSTwNsAGyxmm1uJ7rzIH0GnCtZReoLi/YLCHg==
+X-Received: by 2002:a17:903:41d2:b0:223:607c:1d99 with SMTP id d9443c01a7336-227805b73d3mr264042385ad.0.1742856705650;
+        Mon, 24 Mar 2025 15:51:45 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4597csm77237325ad.75.2025.03.24.15.51.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 15:50:54 -0700 (PDT)
-From: Filipe Xavier <felipeaggger@gmail.com>
-Date: Mon, 24 Mar 2025 19:50:19 -0300
-Subject: [PATCH v3 2/2] selftests: livepatch: test if ftrace can trace a
- livepatched function
+        Mon, 24 Mar 2025 15:51:45 -0700 (PDT)
+Date: Mon, 24 Mar 2025 15:51:42 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	brauner@kernel.org, asml.silence@gmail.com, hch@infradead.org,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH vfs/for-next 0/3] Move splice_to_socket to net/socket.c
+Message-ID: <Z-Hh_rUT1LgBbzZ8@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+	netdev@vger.kernel.org, brauner@kernel.org, asml.silence@gmail.com,
+	hch@infradead.org, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>, Jan Kara <jack@suse.cz>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20250322203558.206411-1-jdamato@fastly.com>
+ <80835395-d43d-46de-8ed6-2cc5c2268b19@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250324-ftrace-sftest-livepatch-v3-2-d9d7cc386c75@gmail.com>
-References: <20250324-ftrace-sftest-livepatch-v3-0-d9d7cc386c75@gmail.com>
-In-Reply-To: <20250324-ftrace-sftest-livepatch-v3-0-d9d7cc386c75@gmail.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
- Joe Lawrence <joe.lawrence@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, felipe_life@live.com, 
- Filipe Xavier <felipeaggger@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80835395-d43d-46de-8ed6-2cc5c2268b19@kernel.dk>
 
-This new test makes sure that ftrace can trace a
-function that was introduced by a livepatch.
+On Mon, Mar 24, 2025 at 04:14:06PM -0600, Jens Axboe wrote:
+> On 3/22/25 2:35 PM, Joe Damato wrote:
+> > Greetings:
+> > 
+> > While reading through the splice and socket code I noticed that some
+> > splice helpers (like sock_splice_read and sock_splice_eof) live in
+> > net/socket.c, but splice_to_socket does not.
+> > 
+> > I am not sure if there is a reason for this, but it seems like moving
+> > this code provides some advantages:
+> >   - Eliminates the #ifdef CONFIG_NET from fs/splice.c
+> >   - Keeps the socket related splice helpers together in net/socket.c
+> >     where it seems (IMHO) more logical for them to live
+> 
+> Not sure I think this is a good idea. Always nice to get rid of some
+> ifdefs, but the code really should be where it's mostly related to, and
+> the socket splice helpers have very little to do with the networking
+> code, it's mostly just pure splice code.
 
-Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
----
- tools/testing/selftests/livepatch/test-ftrace.sh | 34 ++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+OK, if you prefer not to merge this I totally understand.
 
-diff --git a/tools/testing/selftests/livepatch/test-ftrace.sh b/tools/testing/selftests/livepatch/test-ftrace.sh
-index fe14f248913acbec46fb6c0fec38a2fc84209d39..094176f1a46aee8cf08667ae9e31ae8720bc1ae1 100755
---- a/tools/testing/selftests/livepatch/test-ftrace.sh
-+++ b/tools/testing/selftests/livepatch/test-ftrace.sh
-@@ -61,4 +61,38 @@ livepatch: '$MOD_LIVEPATCH': unpatching complete
- % rmmod $MOD_LIVEPATCH"
- 
- 
-+# - verify livepatch can load
-+# - check if traces have a patched function
-+# - reset trace and unload livepatch
-+
-+start_test "trace livepatched function and check that the live patch remains in effect"
-+
-+FUNCTION_NAME="livepatch_cmdline_proc_show"
-+
-+load_lp $MOD_LIVEPATCH
-+trace_function "$FUNCTION_NAME"
-+
-+if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
-+	log "livepatch: ok"
-+fi
-+
-+check_traced_functions "$FUNCTION_NAME"
-+
-+disable_lp $MOD_LIVEPATCH
-+unload_lp $MOD_LIVEPATCH
-+
-+check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
-+livepatch: enabling patch '$MOD_LIVEPATCH'
-+livepatch: '$MOD_LIVEPATCH': initializing patching transition
-+livepatch: '$MOD_LIVEPATCH': starting patching transition
-+livepatch: '$MOD_LIVEPATCH': completing patching transition
-+livepatch: '$MOD_LIVEPATCH': patching complete
-+livepatch: ok
-+% echo 0 > $SYSFS_KLP_DIR/$MOD_LIVEPATCH/enabled
-+livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-+livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-+livepatch: '$MOD_LIVEPATCH': unpatching complete
-+% rmmod $MOD_LIVEPATCH"
-+
- exit 0
+I am not aware of the history behind it all and I can definitely see
+the argument for leaving it as is because the code might be more
+"splice-related" than networking.
 
--- 
-2.46.2
-
+In which case: sorry for the noise.
 
