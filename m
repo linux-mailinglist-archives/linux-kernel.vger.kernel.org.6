@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-573179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47311A6D3EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:01:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1566BA6D3F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A915A7A5485
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:00:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31A1C7A5549
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B3213AA2D;
-	Mon, 24 Mar 2025 06:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8471917E7;
+	Mon, 24 Mar 2025 06:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MrWYokew"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WAHul/Sd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506854C92
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931BE78F4C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796101; cv=none; b=C06Hgi+EHyBIxeGYBJr09hf6/Q/K1zGkA1oQRg0kcdt7e0HV0mRcNkKwgekJycFmJeR9r7e2sO52Og+HqSyKV3VZcKQu/4ORgFBIZ7oIWmQl/QogQX2lvDIFKjtSRv5T3dNEudxRFzLJMJOZ2l/ZBCo93NwxkwkinNIGMEYWqb0=
+	t=1742796110; cv=none; b=TxJGDhnCKP2Gc5Mox4LrwxZUk+CX8z3shqfW6CZMuCDzP/Cm+wrx6Baei6qAM7lyqFnMREb1lnA/LKspOgjZO7XKMLLoy5oL0atbhg3F3cy53Qi0ep+/zxLPb1LlE/T58Hak1kBvWWuao/xqTCvobJT7uZH5YSrPnYUw3gJmYok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796101; c=relaxed/simple;
-	bh=OuNt9+hDie5r6ArjlBvG5ifTkqcH2+hPugYa99BdGB8=;
+	s=arc-20240116; t=1742796110; c=relaxed/simple;
+	bh=tE+c+SXYh2P9sttHPvjMkbIKeC9fFHgwzLbuMpSfVNU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=XUZt6VplcTUtzO9i/z5EuRXxlsDkQ+BgF3qujThvC2GByLH/RWGAX2LOJ1HyIKJK+BR4ilNtJgq1e+EaDEpsCWMV2oxTPlk0ZD07v2Tty/b4X9JMdQ+2JhkyXHZ2/7ppZQHqpeTUxl/QzjlW5oLVCb0UAqVYZWaSVPkyJdrZMKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MrWYokew; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-type; b=NMrA5kD+FUurpjvP7Xl75bC3qst8N7mgEs++EonUJg+uNJvOBnFSVEbSOi4Pgc+3JZMn0y9EMVjiv2jTngRqYXa3uh3dwsE8934XrV+LEcOLHIrITICmrL/Wnvckyaxa9dyRiKV7tgSfUT2e9WuzL8zk7JBFEWF7Pg3/0HkAdDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WAHul/Sd; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742796098;
+	s=mimecast20190719; t=1742796106;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=srWHszPUHBDmYMTgnKpxVCfXF+Z/YXzGNxKbi9mYgtI=;
-	b=MrWYokewKEw5+5P6Bviq6BgqoCZEYz3N20TTEjToTVbtqRXQnO/WfYbjIOh07wshwJ1Knu
-	K72gVX2XJoWYlm1urHhZnwWmgoMpWooBcQx4BhNeK44YryPQHFQJATWxPQZLSXOaaAkQEe
-	PdNk4W6C50gi26GGVlgoLmPaNu6plvs=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=EXdS1I2WzJ3SNZt0dpXrs0+Kug2Lj3vwApQMGFIA7F0=;
+	b=WAHul/Sd3LTiB90plTRwjiL84w0qCuJFUVna6G90T9PxgEdWn6q+lY+cQqRSxbrfY33yYS
+	GNmqDIAzZ4YhDQaqOwT7esbmQGBnqKh9di2nLZJvo6I2YkvCBnAqTauegUn1vQIO7CmNQG
+	4fuNFG5f7M2aPJ43SGWeJvkewA1bm4g=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-no_hPh0LMrWwkgQzjlvzPA-1; Mon,
- 24 Mar 2025 02:01:35 -0400
-X-MC-Unique: no_hPh0LMrWwkgQzjlvzPA-1
-X-Mimecast-MFC-AGG-ID: no_hPh0LMrWwkgQzjlvzPA_1742796094
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-447-5O5Upp09PU2L2SWUreIjIQ-1; Mon,
+ 24 Mar 2025 02:01:40 -0400
+X-MC-Unique: 5O5Upp09PU2L2SWUreIjIQ-1
+X-Mimecast-MFC-AGG-ID: 5O5Upp09PU2L2SWUreIjIQ_1742796099
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 772BE18EBE99;
-	Mon, 24 Mar 2025 06:01:34 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0DDD180AF72;
+	Mon, 24 Mar 2025 06:01:38 +0000 (UTC)
 Received: from localhost.localdomain (unknown [10.72.112.200])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C4E64195609D;
-	Mon, 24 Mar 2025 06:01:30 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5495E195609D;
+	Mon, 24 Mar 2025 06:01:34 +0000 (UTC)
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com,
 	jasowang@redhat.com
@@ -63,9 +63,9 @@ Cc: xuanzhuo@linux.alibaba.com,
 	eperezma@redhat.com,
 	virtualization@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/19] virtio_ring: introduce virtqueue ops
-Date: Mon, 24 Mar 2025 14:01:21 +0800
-Message-ID: <20250324060127.2358-1-jasowang@redhat.com>
+Subject: [PATCH 14/19] virtio_ring: determine descriptor flags at one time
+Date: Mon, 24 Mar 2025 14:01:22 +0800
+Message-ID: <20250324060127.2358-2-jasowang@redhat.com>
 In-Reply-To: <20250324054333.1954-1-jasowang@redhat.com>
 References: <20250324054333.1954-1-jasowang@redhat.com>
 Precedence: bulk
@@ -78,236 +78,87 @@ Content-type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-This patch introduces virtqueue ops which is a set of the callbacks
-that will be called for different queue layout or features. This would
-help to avoid branches for split/packed and will ease the future
-implementation like in order.
+Let's determine the last descriptor by counting the number of sg. This
+would be consistent with packed virtqueue implementation and ease the
+future in-order implementation.
 
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/virtio/virtio_ring.c | 96 +++++++++++++++++++++++++-----------
- 1 file changed, 67 insertions(+), 29 deletions(-)
+ drivers/virtio/virtio_ring.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index a2884eae14d9..ce1dc90ee89d 100644
+index ce1dc90ee89d..31aa4a935c27 100644
 --- a/drivers/virtio/virtio_ring.c
 +++ b/drivers/virtio/virtio_ring.c
-@@ -159,9 +159,30 @@ struct vring_virtqueue_packed {
- 	size_t event_size_in_bytes;
- };
+@@ -561,7 +561,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+ 	struct vring_desc_extra *extra;
+ 	struct scatterlist *sg;
+ 	struct vring_desc *desc;
+-	unsigned int i, n, avail, descs_used, prev, err_idx;
++	unsigned int i, n, c, avail, descs_used, err_idx;
+ 	int head;
+ 	bool indirect;
  
-+struct vring_virtqueue;
+@@ -617,46 +617,47 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
+ 		return -ENOSPC;
+ 	}
+ 
++	c = 0;
+ 	for (n = 0; n < out_sgs; n++) {
++		sg = sgs[n];
+ 		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+ 			dma_addr_t addr;
+ 			u32 len;
++			u16 flags = 0;
+ 
+ 			if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr, &len, premapped))
+ 				goto unmap_release;
+ 
+-			prev = i;
++			if (++c != total_sg)
++				flags = VRING_DESC_F_NEXT;
 +
-+struct virtqueue_ops {
-+	int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[],
-+		   unsigned int total_sg, unsigned int out_sgs,
-+		   unsigned int in_sgs,	void *data,
-+		   void *ctx, bool premapped, gfp_t gfp);
-+	void *(*get)(struct vring_virtqueue *vq, unsigned int *len, void **ctx);
-+	bool (*kick_prepare)(struct vring_virtqueue *vq);
-+	void (*disable_cb)(struct vring_virtqueue *vq);
-+	bool (*enable_cb_delayed)(struct vring_virtqueue *vq);
-+	unsigned int (*enable_cb_prepare)(struct vring_virtqueue *vq);
-+	bool (*poll)(const struct vring_virtqueue *vq, u16 last_used_idx);
-+	void *(*detach_unused_buf)(struct vring_virtqueue *vq);
-+	bool (*more_used)(const struct vring_virtqueue *vq);
-+	int (*resize)(struct vring_virtqueue *vq, u32 num);
-+	void (*reset)(struct vring_virtqueue *vq);
-+};
+ 			/* Note that we trust indirect descriptor
+ 			 * table since it use stream DMA mapping.
+ 			 */
+ 			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+-						     VRING_DESC_F_NEXT,
++						     flags,
+ 						     premapped);
+ 		}
+ 	}
+ 	for (; n < (out_sgs + in_sgs); n++) {
+ 		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
++			u16 flags = VRING_DESC_F_WRITE;
+ 			dma_addr_t addr;
+ 			u32 len;
+ 
+ 			if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &addr, &len, premapped))
+ 				goto unmap_release;
+ 
+-			prev = i;
++			if (++c != total_sg)
++				flags |= VRING_DESC_F_NEXT;
 +
- struct vring_virtqueue {
- 	struct virtqueue vq;
+ 			/* Note that we trust indirect descriptor
+ 			 * table since it use stream DMA mapping.
+ 			 */
+ 			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
+-						     VRING_DESC_F_NEXT |
+-						     VRING_DESC_F_WRITE,
+-						     premapped);
++						     flags, premapped);
+ 		}
+ 	}
+-	/* Last one doesn't continue. */
+-	desc[prev].flags &= cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_NEXT);
+-	if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
+-		vq->split.desc_extra[prev & (vq->split.vring.num - 1)].flags &=
+-			~VRING_DESC_F_NEXT;
  
-+	struct virtqueue_ops *ops;
-+
- 	/* Is this a packed ring? */
- 	bool packed_ring;
- 
-@@ -1116,6 +1137,8 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
- 	return 0;
- }
- 
-+struct virtqueue_ops split_ops;
-+
- static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
- 					       struct vring_virtqueue_split *vring_split,
- 					       struct virtio_device *vdev,
-@@ -1134,6 +1157,7 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
- 		return NULL;
- 
- 	vq->packed_ring = false;
-+	vq->ops = &split_ops;
- 	vq->vq.callback = callback;
- 	vq->vq.vdev = vdev;
- 	vq->vq.name = name;
-@@ -2076,6 +2100,8 @@ static void virtqueue_reset_packed(struct vring_virtqueue *vq)
- 	virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
- }
- 
-+struct virtqueue_ops packed_ops;
-+
- static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
- 					       struct vring_virtqueue_packed *vring_packed,
- 					       struct virtio_device *vdev,
-@@ -2107,6 +2133,7 @@ static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
- 	vq->broken = false;
- #endif
- 	vq->packed_ring = true;
-+	vq->ops = &packed_ops;
- 	vq->dma_dev = dma_dev;
- 	vq->use_dma_api = vring_use_dma_api(vdev);
- 
-@@ -2194,6 +2221,34 @@ static int virtqueue_resize_packed(struct vring_virtqueue *vq, u32 num)
- 	return -ENOMEM;
- }
- 
-+struct virtqueue_ops split_ops = {
-+	.add = virtqueue_add_split,
-+	.get = virtqueue_get_buf_ctx_split,
-+	.kick_prepare = virtqueue_kick_prepare_split,
-+	.disable_cb = virtqueue_disable_cb_split,
-+	.enable_cb_delayed = virtqueue_enable_cb_delayed_split,
-+	.enable_cb_prepare = virtqueue_enable_cb_prepare_split,
-+	.poll = virtqueue_poll_split,
-+	.detach_unused_buf = virtqueue_detach_unused_buf_split,
-+	.more_used = more_used_split,
-+	.resize = virtqueue_resize_split,
-+	.reset = virtqueue_reset_split,
-+};
-+
-+struct virtqueue_ops packed_ops = {
-+	.add = virtqueue_add_packed,
-+	.get = virtqueue_get_buf_ctx_packed,
-+	.kick_prepare = virtqueue_kick_prepare_packed,
-+	.disable_cb = virtqueue_disable_cb_packed,
-+	.enable_cb_delayed = virtqueue_enable_cb_delayed_packed,
-+	.enable_cb_prepare = virtqueue_enable_cb_prepare_packed,
-+	.poll = virtqueue_poll_packed,
-+	.detach_unused_buf = virtqueue_detach_unused_buf_packed,
-+	.more_used = more_used_packed,
-+	.resize = virtqueue_resize_packed,
-+	.reset = virtqueue_reset_packed,
-+};
-+
- static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
- 					 void (*recycle)(struct virtqueue *vq, void *buf))
- {
-@@ -2248,10 +2303,8 @@ static inline int virtqueue_add(struct virtqueue *_vq,
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	return vq->packed_ring ? virtqueue_add_packed(vq, sgs, total_sg,
--					out_sgs, in_sgs, data, ctx, premapped, gfp) :
--				 virtqueue_add_split(vq, sgs, total_sg,
--					out_sgs, in_sgs, data, ctx, premapped, gfp);
-+	return vq->ops->add(vq, sgs, total_sg,
-+			    out_sgs, in_sgs, data, ctx, premapped, gfp);
- }
- 
- /**
-@@ -2437,8 +2490,7 @@ bool virtqueue_kick_prepare(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	return vq->packed_ring ? virtqueue_kick_prepare_packed(vq) :
--				 virtqueue_kick_prepare_split(vq);
-+	return vq->ops->kick_prepare(vq);
- }
- EXPORT_SYMBOL_GPL(virtqueue_kick_prepare);
- 
-@@ -2508,8 +2560,7 @@ void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	return vq->packed_ring ? virtqueue_get_buf_ctx_packed(vq, len, ctx) :
--				 virtqueue_get_buf_ctx_split(vq, len, ctx);
-+	return vq->ops->get(vq, len, ctx);
- }
- EXPORT_SYMBOL_GPL(virtqueue_get_buf_ctx);
- 
-@@ -2531,10 +2582,7 @@ void virtqueue_disable_cb(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	if (vq->packed_ring)
--		virtqueue_disable_cb_packed(vq);
--	else
--		virtqueue_disable_cb_split(vq);
-+	return vq->ops->disable_cb(vq);
- }
- EXPORT_SYMBOL_GPL(virtqueue_disable_cb);
- 
-@@ -2557,8 +2605,7 @@ unsigned int virtqueue_enable_cb_prepare(struct virtqueue *_vq)
- 	if (vq->event_triggered)
- 		vq->event_triggered = false;
- 
--	return vq->packed_ring ? virtqueue_enable_cb_prepare_packed(vq) :
--				 virtqueue_enable_cb_prepare_split(vq);
-+	return vq->ops->enable_cb_prepare(vq);
- }
- EXPORT_SYMBOL_GPL(virtqueue_enable_cb_prepare);
- 
-@@ -2579,8 +2626,7 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned int last_used_idx)
- 		return false;
- 
- 	virtio_mb(vq->weak_barriers);
--	return vq->packed_ring ? virtqueue_poll_packed(vq, last_used_idx) :
--				 virtqueue_poll_split(vq, last_used_idx);
-+	return vq->ops->poll(vq, last_used_idx);
- }
- EXPORT_SYMBOL_GPL(virtqueue_poll);
- 
-@@ -2623,8 +2669,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
- 	if (vq->event_triggered)
- 		vq->event_triggered = false;
- 
--	return vq->packed_ring ? virtqueue_enable_cb_delayed_packed(vq) :
--				 virtqueue_enable_cb_delayed_split(vq);
-+	return vq->ops->enable_cb_delayed(vq);
- }
- EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
- 
-@@ -2640,14 +2685,13 @@ void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
- {
- 	struct vring_virtqueue *vq = to_vvq(_vq);
- 
--	return vq->packed_ring ? virtqueue_detach_unused_buf_packed(vq) :
--				 virtqueue_detach_unused_buf_split(vq);
-+	return vq->ops->detach_unused_buf(vq);
- }
- EXPORT_SYMBOL_GPL(virtqueue_detach_unused_buf);
- 
- static inline bool more_used(const struct vring_virtqueue *vq)
- {
--	return vq->packed_ring ? more_used_packed(vq) : more_used_split(vq);
-+	return vq->ops->more_used(vq);
- }
- 
- /**
-@@ -2785,10 +2829,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
- 	if (recycle_done)
- 		recycle_done(_vq);
- 
--	if (vq->packed_ring)
--		err = virtqueue_resize_packed(vq, num);
--	else
--		err = virtqueue_resize_split(vq, num);
-+	err = vq->ops->resize(vq, num);
- 
- 	return virtqueue_enable_after_reset(_vq);
- }
-@@ -2822,10 +2863,7 @@ int virtqueue_reset(struct virtqueue *_vq,
- 	if (recycle_done)
- 		recycle_done(_vq);
- 
--	if (vq->packed_ring)
--		virtqueue_reset_packed(vq);
--	else
--		virtqueue_reset_split(vq);
-+	vq->ops->reset(vq);
- 
- 	return virtqueue_enable_after_reset(_vq);
- }
+ 	if (indirect) {
+ 		/* Now that the indirect table is filled in, map it. */
 -- 
 2.42.0
 
