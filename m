@@ -1,78 +1,118 @@
-Return-Path: <linux-kernel+bounces-573646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6880A6DA23
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:31:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEC3A6DA01
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19B4A7A6D06
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24F31892559
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B9425E834;
-	Mon, 24 Mar 2025 12:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ddFZq+P/"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE53225E825;
+	Mon, 24 Mar 2025 12:21:34 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C5825DCE7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 12:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95AE25C71A;
+	Mon, 24 Mar 2025 12:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742819487; cv=none; b=YoS7CPBVTFq9CjsKtgj2X9a5bXiNwMRfzxlN53adypedGJtaJHQ+kRS1PJAQYNUzUL939bmrWJSpDTa7Ec19hgMGTMOACv4XfEG0RMTZ4uUQTUDmvxAO8llCucOjU8yFpeb5alMQzsOskkM+/cZGzyDjAFrVSbP5nMePlzh6K0k=
+	t=1742818894; cv=none; b=BELr3xQYdQxIfGfj/CMPBr4DWeOLTrigoiHW4QcMmIJBtOGokTRmYW/dOP5a/nvS4Z1rjIeWhYDX0RUxiUuFbZu5fYeDtb2tBmJ/GwEeOqLs+vZ2PaAZYFLkud43KBKt522YWTJ0MR29KAY7N+1G2BO/UbrOIytow5uhtV2FXBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742819487; c=relaxed/simple;
-	bh=NuicZ6pMTHKd420gNNtUSpBvyZhaCYcXPXM+C3NCd1o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sjrRSkpmx/H5th9sgF54N8YlTsZIIy4LXBaMFC6t5f0rPfOj+R7mg0Aivh/QUQs86agKsQZ0F+GXX5ylOQSHFJhmdF+4eqtV6koTnGZ/rD4G5uTK1hSIfTM7A1f1c4yZ8i7SFfFLtXK7Q1518w1+Jcq5ZxQ7fgtB3G8Vbwh7DYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ddFZq+P/; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742819477; x=1743078677;
-	bh=NuicZ6pMTHKd420gNNtUSpBvyZhaCYcXPXM+C3NCd1o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=ddFZq+P/+U4O8bYdGYhXE5tCbvn4dK2e8Pcs1XB+c+85fzPxEdulVoh4DLj4DprU5
-	 ml+D8dmJXH8IazZ+lnoAZ/K3bJETzMjjOPvENskxPe7Bu71V6ZGSROQVjLAc8PqsoF
-	 n1a9e4Rl99rvEjoqk0kIYJK/aeiWcFcuBV6D1LI4kdXc8srENE8pX6sD4g6kK/vDlo
-	 MpRPdBP6a1BQPAX5BNPa6/1sYzqSAyLowRIkdJEV3R/PkTmdrnWM7FN8fcexOAFhUu
-	 SkhLS3prf2V1X8iJy9YF7HUqPt9kDO1MUR1ZzmlpV399qBwxlnE8S1HCr/IRRNSxib
-	 Kj8vpGvDOaWxg==
-Date: Mon, 24 Mar 2025 12:31:12 +0000
-To: Christian <christiansantoslima21@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, ~lkcamp/patches@lists.sr.ht, richard120310@gmail.com
-Subject: Re: [PATCH v5] rust: transmute: Add methods for FromBytes trait
-Message-ID: <D8OHXV29F60Q.1ZFH84LLM60VS@proton.me>
-In-Reply-To: <CABm2a9crNdCLnHLZ3pHQ--roaAKtM0FGL-tskyvR6rH97exqwg@mail.gmail.com>
-References: <20250320014041.101470-1-christiansantoslima21@gmail.com> <D8L494ONWVO6.1V6NNJIPG7UU9@proton.me> <CABm2a9crNdCLnHLZ3pHQ--roaAKtM0FGL-tskyvR6rH97exqwg@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a5132c379818f1bf5afea6d5451299c535d02ac6
+	s=arc-20240116; t=1742818894; c=relaxed/simple;
+	bh=xcH93BuTXSeThzyCLhWwh/pd26QAyseEOfRU8T9s1V4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TRrp9HCPDRGcH0MxF0PYlGxH1STR7LaZGjJBftpi98+Cna7bneJpEMtbHlqeFpreuOq3oI481tG+KFq47zhWzKP1YWLlJdRSztPoFEmUA9tngwAY0KphXTWz1BCL+JziouCkvn/pjTcTc0Y9jbcLHEebDj/dUMWWYpZqPH8gFgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZLsYb5kZPz2PVXn;
+	Mon, 24 Mar 2025 20:19:31 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4AFA8180044;
+	Mon, 24 Mar 2025 20:21:18 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 24 Mar
+ 2025 20:21:17 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <benve@cisco.com>, <neescoba@cisco.com>, <jgg@ziepe.ca>,
+	<leon@kernel.org>, <liyuyu6@huawei.com>, <roland@purestorage.com>,
+	<umalhi@cisco.com>
+CC: <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <yanjun.zhu@linux.dev>
+Subject: [PATCH v2 -next] RDMA/usnic: Fix passing zero to PTR_ERR in usnic_ib_pci_probe()
+Date: Mon, 24 Mar 2025 20:31:32 +0800
+Message-ID: <20250324123132.2392077-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Mon Mar 24, 2025 at 3:41 AM CET, Christian wrote:
->> What changed in version 5? Or does "Changes in v4" mean "Changes done to
->> v4"?
->
-> Changes done to v4. I misinterpreted it? If that's the case, I'll
-> change in the next patch.
+drivers/infiniband/hw/usnic/usnic_ib_main.c:590
+ usnic_ib_pci_probe() warn: passing zero to 'PTR_ERR'
 
-I was just confused by the labeling, I've normally seen headings like
-"What changed in v5" as opposed to "What changed from v4".
+Make usnic_ib_device_add() return NULL on fail path, also remove
+useless NULL check for usnic_ib_discover_pf()
 
+Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 ---
-Cheers,
-Benno
+v2: remove useless null check for usnic_ib_discover_pf
+---
+ drivers/infiniband/hw/usnic/usnic_ib_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_main.c b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+index 4ddcd5860e0f..11eca39b73a9 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_main.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_main.c
+@@ -397,7 +397,7 @@ static void *usnic_ib_device_add(struct pci_dev *dev)
+ 	if (!us_ibdev) {
+ 		usnic_err("Device %s context alloc failed\n",
+ 				netdev_name(pci_get_drvdata(dev)));
+-		return ERR_PTR(-EFAULT);
++		return NULL;
+ 	}
+ 
+ 	us_ibdev->ufdev = usnic_fwd_dev_alloc(dev);
+@@ -517,8 +517,8 @@ static struct usnic_ib_dev *usnic_ib_discover_pf(struct usnic_vnic *vnic)
+ 	}
+ 
+ 	us_ibdev = usnic_ib_device_add(parent_pci);
+-	if (IS_ERR_OR_NULL(us_ibdev)) {
+-		us_ibdev = us_ibdev ? us_ibdev : ERR_PTR(-EFAULT);
++	if (!us_ibdev) {
++		us_ibdev = ERR_PTR(-EFAULT);
+ 		goto out;
+ 	}
+ 
+@@ -586,10 +586,10 @@ static int usnic_ib_pci_probe(struct pci_dev *pdev,
+ 	}
+ 
+ 	pf = usnic_ib_discover_pf(vf->vnic);
+-	if (IS_ERR_OR_NULL(pf)) {
+-		usnic_err("Failed to discover pf of vnic %s with err%ld\n",
+-				pci_name(pdev), PTR_ERR(pf));
+-		err = pf ? PTR_ERR(pf) : -EFAULT;
++	if (IS_ERR(pf)) {
++		err = PTR_ERR(pf);
++		usnic_err("Failed to discover pf of vnic %s with err%d\n",
++				pci_name(pdev), err);
+ 		goto out_clean_vnic;
+ 	}
+ 
+-- 
+2.34.1
 
 
