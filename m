@@ -1,131 +1,106 @@
-Return-Path: <linux-kernel+bounces-574531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8838BA6E677
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:16:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88C4A6E679
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:16:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687C716C70A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:15:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F35F7A36B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DE21EEA34;
-	Mon, 24 Mar 2025 22:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB52D1EEA51;
+	Mon, 24 Mar 2025 22:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jUG+VDmU"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwRc6W8X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7376319066D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1121E3DC9;
+	Mon, 24 Mar 2025 22:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742854551; cv=none; b=sVeMLdIwI1P6Fwa5wzebSlpphd1wjO8lX004Pq5LOqvsEfSvm+0k5jJg9DAJ8g14sFFrWwSWDHRkxsG7b0ohLEzRC8xptuZzuYamIgNGzuQvqZoDuPs79pgcyrhjRqKqLU07+m3YBDtR8vLWMvCGGhaMjOGKURjZhuUh4SMXztA=
+	t=1742854559; cv=none; b=e3U+Ek9sU8iLWNVkfJU1IRh9MYombDfusLp1mBP3U5CliRU6jIMXFJSatoDB01rSlOcKWSu5irmtH3bN0gZE+H0essZMcwa0sqaaCNFyUh70I/PzRHYgN6OMNhrnCaWYJxaMSs/MLBeeDEtNx4OZD9DAE7dBJy1EmFobIA5TUG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742854551; c=relaxed/simple;
-	bh=e/r4Zlp/KHSwdvwEkIA042d1FAjKutPhBALAVYylnJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XKMO2WWYWCMkqzjsaOIowtoNGtGYykynjaWX5C/LfIqxBEvI7OuqmaHHh00aARH7bgpUewVfd8tl/9Xpyy0IH279kNeaq1X9n6lNHnEI+1YoWwI6pnR1HNVkXfpl1HdhbPoIxxZL7Ons4MvQVyQ4az73sgKJCcdQNNSlxKSTu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jUG+VDmU; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8fd49b85eso78175426d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:15:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742854547; x=1743459347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LqCK4xrieYy8rHSMdxk0HMnzbYnnEsVe7CVfVt5N210=;
-        b=jUG+VDmUNoV0CH8XZxglb+ZpiOmq6NTrnjn+9mGZk00XjGehUgWMMLN+rYUWvYx6NP
-         l1kPyDiDtgYgjAW4sUcyJ3caT0rHiDGn8RnmDz1dUvUqqP5ju7kFmVHCstGnWI3FmmKT
-         NMFuXGPjwDhRL6/+YQ4cMEQkFghCjC9vpI1kY7omXtgKRck8SuW52gdq/wydMlsyJBJs
-         6LM6SMGIXqKJjJGCosKlBwNNTBHM9fSw91zKT0V6Rl+wpnTzal9Cz0xfpB+T7RLG76+Q
-         Q5bUxTO1kDqkIuXYubFDC8b20zipg2RXfzctIMfshfQJ9bPxJKdKfm5tAw/UsykCwE3I
-         2Ikg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742854547; x=1743459347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LqCK4xrieYy8rHSMdxk0HMnzbYnnEsVe7CVfVt5N210=;
-        b=Shp+DZcTe2jvvFkJy15mML+ogI022m0bUfK0xRjq1pIXU/vC+MlrHtXaaSf7/Ve/px
-         WIwfo1GV169TF+e9+xCjTnha5z8fJ6/aLnna2CGUaq3XhauxupYTKpYjeDRMEcDXf9m6
-         Yyl225ULGlOuLKfgq6ZIl3YSEgktZuuwYP8sTqlq5ivLlbCxVsVLSZ4+pkLfZwN0EaQs
-         oCnw8DjR8sFiFmlXRShwJ+zrjBlOd0XY7OsU2tn157nwJP+0N022RiqP1o0ocQQ10q3J
-         FBqsjYvSme9jbNUQDpYnlImpwDin4rCJ2Gy6MyP6tSipGrFINUCkUh6EzccAFeYKXR+G
-         83fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVJUPAJZegUZ0AAB1fulQb1VxtCGf37Eby92K0pzjF9jWR8S7fakEqnaIJLDwMpLSu8ARRcvw8a2b/16c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVs37cjcqu4CzErn/zxZG+YxMwz4PCwKLZb0Sqh66i5yifkwZ8
-	fa/0BqMegn9h5qBh5xQ4097ePaFtiBhBxiOj5rGOXpP8nYQTW8yOW/BBnodd3JA=
-X-Gm-Gg: ASbGncuICFhl7qzCZQhuY+XsIkLKrpLIAmueNbRoUH8NGaa08nlCKaQGELE5y3VvjkW
-	D6wmMvi1TrD83lur2fc8qX33LynXknUrFRI05oplBnSu9nM4TMDaoRzCquybwSHiwe6MrnWPdMV
-	clbObmGHhUyWocVS5voAIG1bQsZ1kQw/X1fIxr+x4bJqg64LNXWvVUQuRxjqUtzRqqVmBCJk3aj
-	DIUUCihBcXjT5M4zgbFuNB9nWzE7fmVmphGMVK0B3jiz6K4VddlXFsb8c/C2fleKES3OydHer7e
-	vl0w7004rWG7ZgVZGel6EmdO3wAd8H4twwVRFXkthUJPDAWToQ==
-X-Google-Smtp-Source: AGHT+IEQMqkj+FtpcZxgGtU488+dXoq+VgOKiN+59B24M1O2EfiLKvd38B84Qx7Els7TCQbDEjBbUQ==
-X-Received: by 2002:a05:6214:f65:b0:6ea:face:e33f with SMTP id 6a1803df08f44-6eb3f2bad2emr231217546d6.3.1742854547178;
-        Mon, 24 Mar 2025 15:15:47 -0700 (PDT)
-Received: from [172.20.6.96] ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef1f51esm49592736d6.26.2025.03.24.15.15.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 15:15:46 -0700 (PDT)
-Message-ID: <fc0f1f19-f7e6-45d8-abff-a98305ce5bb7@kernel.dk>
-Date: Mon, 24 Mar 2025 16:15:45 -0600
+	s=arc-20240116; t=1742854559; c=relaxed/simple;
+	bh=7hssLqXra0EtdFlVqqKTDr+8oGTjg6jkdSrUMz3mwCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FuRgEz2M8sJvxzdjWpnahItw57zy/rZ9ZQRs20oYNI38QdPJqOjzgEJvDxhlUoGCc24TbAQ8DPoQyx8ir6XWz6jHQIZjsXEkEJ9oCH9F0FDIPdiDYwtsl4QkiMdCA8aVBDIknq5BDvD266ncfnpbT0LVRZWNYj+08SqZIE5IDww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwRc6W8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F4BC4CEDD;
+	Mon, 24 Mar 2025 22:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742854558;
+	bh=7hssLqXra0EtdFlVqqKTDr+8oGTjg6jkdSrUMz3mwCg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QwRc6W8Xl+JhPwMgvjkDRnSQo1DNMTM4pHLJBaT9E2QQDNi5aBSdiPQwxLuZvHDSE
+	 jkPBpHAMlZqFLyjG2E8hv065Z+MXU/2lGMGEFIFmRli7ULpd2fbpKhouW+nrpOxUQ8
+	 CKIExxe3RlBvnoHT8XHszGoGpVwa2muHMBkSK7BW8Ob5Sv5c9TChhg3yoyys8wGE6c
+	 BlFMWixD6/Cl6BHn6u0i2u91HyNTMKqU44RuxxE19MXWiorxMgCjb4Z32sf/ZPzjpj
+	 TffG8NbexdoNmuj061PpDJoHbdtfbWPcl28OfZ+5Rj3AQAr3cy0VS214pVtmS746HN
+	 Y+YJU2jE2IEHw==
+Date: Mon, 24 Mar 2025 15:15:51 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michael Klein <michael@fossekall.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next v4 1/3] net: phy: realtek: Clean up RTL8211E ExtPage
+ access
+Message-ID: <20250324151551.76869d80@kernel.org>
+In-Reply-To: <20250317200532.93620-2-michael@fossekall.de>
+References: <20250317200532.93620-1-michael@fossekall.de>
+	<20250317200532.93620-2-michael@fossekall.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH vfs/for-next 1/3] pipe: Move pipe wakeup helpers out of
- splice
-To: Joe Damato <jdamato@fastly.com>, linux-fsdevel@vger.kernel.org
-Cc: netdev@vger.kernel.org, brauner@kernel.org, asml.silence@gmail.com,
- hch@infradead.org, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, open list <linux-kernel@vger.kernel.org>
-References: <20250322203558.206411-1-jdamato@fastly.com>
- <20250322203558.206411-2-jdamato@fastly.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250322203558.206411-2-jdamato@fastly.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 3/22/25 2:35 PM, Joe Damato wrote:
-> Splice code has helpers to wakeup pipe readers and writers. Move these
-> helpers out of splice, rename them from "wakeup_pipe_*" to
-> "pipe_wakeup_*" and update call sites in splice.
+Sorry for the delay, unfortunately this no longer applies:
 
-This looks good to me, as it's moving the code to where it belongs.
-One minor note:
+Applying: net: phy: realtek: Clean up RTL8211E ExtPage access
+error: patch failed: drivers/net/phy/realtek/realtek_main.c:28
+error: drivers/net/phy/realtek/realtek_main.c: patch does not apply
+Patch failed at 0001 net: phy: realtek: Clean up RTL8211E ExtPage access
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
 
-> +void pipe_wakeup_readers(struct pipe_inode_info *pipe)
-> +{
-> +	smp_mb();
-> +	if (waitqueue_active(&pipe->rd_wait))
-> +		wake_up_interruptible(&pipe->rd_wait);
-> +	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
-> +}
-> +
-> +void pipe_wakeup_writers(struct pipe_inode_info *pipe)
-> +{
-> +	smp_mb();
-> +	if (waitqueue_active(&pipe->wr_wait))
-> +		wake_up_interruptible(&pipe->wr_wait);
-> +	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
-> +}
+Given that some nits before you send v5 below..
 
-Both of these really should use wq_has_sleeper() - not related to your
-change, as it makes more sense to keep the code while moving it. But
-just spotted it while looking at it, just a note for the future... In
-any case:
+On Mon, 17 Mar 2025 21:05:30 +0100 Michael Klein wrote:
+> - Factor out RTL8211E extension page access code to
+>   rtl8211e_modify_ext_page()/rtl8211e_read_ext_page() and add some
+>   related #define:s
+> - Group RTL8211E_* and RTL8211F_* #define:s
+> - Clean up rtl8211e_config_init()
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Sounds like this should be split into at least 2 patches.
 
+>  static int rtl821x_probe(struct phy_device *phydev)
+>  {
+>  	struct device *dev = &phydev->mdio.dev;
+> @@ -600,7 +617,8 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
+>  
+>  static int rtl8211e_config_init(struct phy_device *phydev)
+>  {
+> -	int ret = 0, oldpage;
+> +	const u16 delay_mask = RTL8211E_CTRL_DELAY |
+> +		RTL8211E_TX_DELAY | RTL8211E_RX_DELAY;
+
+This would probably be easier to read if alinged.
+
+	const u16 delay_mask = RTL8211E_CTRL_DELAY |
+			       RTL8211E_TX_DELAY | 
+			       RTL8211E_RX_DELAY;
 -- 
-Jens Axboe
+pw-bot: cr
 
