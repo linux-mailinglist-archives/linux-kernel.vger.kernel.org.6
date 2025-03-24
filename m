@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-574507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F61A6E60F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:01:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0D0A6E61C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706CC176769
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB24B3B7ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA9C1F561B;
-	Mon, 24 Mar 2025 21:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA051EDA2E;
+	Mon, 24 Mar 2025 21:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdKhrnUO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="D518kiaT"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E44F1F5408
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2EC1F76B4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853392; cv=none; b=o4pWR3P+2o2YTOpA5hudbJBF0GSkkr7rykwobWXJ1DUK/vzzOsgFcXPSZxRHJtzeiqsMyvEmDog2wKnlBMiLJh4KSW5mZY5D9qjUM0bXcBEVDY+XRkhgZV2c4QVpX8UUUQ/i6WUHk5/sbH03Fa2LLF+DgxhKmtyxTbIs41iUkmc=
+	t=1742853399; cv=none; b=IdcTcsRY7Y5NnUhT2AaWNOuvu7MUN7Sq6hebpYyKAJtVrKVrtx2SpNac1/ViRPrv3W/Dar5H37I8D5Ov7Af1XMotGh40CC314JDgVpwQoolGp1V1xA6aL3FJl6hzx3B0dW0DnR3KkHg5ehZ6C5NkwSrBSNYQ+qrsaLxJxfEHgts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853392; c=relaxed/simple;
-	bh=DnvNW34wKVbDzGcEkkl8RsUUyZnTIp8TkKvklbn36Ws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=quYNBpOT4nyZ0i2G4nhAf/+ydr0jCVQkLooc/2vbj6ppJA4fHOmApniO8g+PlpQaL08WlHnlfMK6TeyZ1mAFfscpOIIWa85UR4rB6Rgk4XwndDq8azYQZehBG/wfG/BpustzYEERK55glwmnYgjAp27jOMo7CXB/E6He2VvK6wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdKhrnUO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA49C4CEDD;
-	Mon, 24 Mar 2025 21:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742853391;
-	bh=DnvNW34wKVbDzGcEkkl8RsUUyZnTIp8TkKvklbn36Ws=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hdKhrnUO+9H86+tZGJaHp/2LarDqHaeG9fNcqinkm42y336x0n73DZRG6h/MI3w9I
-	 ZUC0JfG4PtB5LVDcCEatGlu0MRsQVGC6wRGm4pmmcd4tnraw1pTfuuD8XGNaTuI/d5
-	 mC+z/bmARiEbZBzsqvFSEAbJGYEWbh52PoKARwI8b5oZl3GcUScUKpLjorQ6RjlQOn
-	 NQ9aAvuOfo/RVzheRo0PdDnR3DxrvQX+bLebizC5RsLWWifnLFx7j1Q6kRO2fpYhME
-	 gEdGcDrzyF136v7KZWXSp46LJcZeitCCqF2UhuLJWOJaERl7kVdtThqV2GnwMang4l
-	 CVuckExGFOnFw==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Brendan Jackman <jackmanb@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 22/22] lkdtm: Obfuscate do_nothing() pointer
-Date: Mon, 24 Mar 2025 14:56:12 -0700
-Message-ID: <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1742852846.git.jpoimboe@kernel.org>
-References: <cover.1742852846.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742853399; c=relaxed/simple;
+	bh=SM6sdY5T+QKz+/fiVZHNjwvpk2/9yKPvmhdaPHMDHXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=diXfERxERTI59DFX0/d1cZDjDG4Oad8zvI1rRoDeig1lUsGQ+ggoHDym+HVLrP1riz+TqxFDibnji+rBKuurfFjswrfIhTLkpP/+cPzEhcpAFhqUHWTMkboXHNihffP6jkXbIwKJ2/xDfMv/dlabuCsPc8jugvg1MSiTvl7TUj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=D518kiaT; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=MY/c
+	Jdj3HHeJ5FKGqJtcRT28eqdbI++lt8ZBUFbMbDs=; b=D518kiaTkYcrHgHKVl8p
+	nihk+goEO4bFjd6Lrp+83kZyA9fP4+1VI0D1UGLlyzbjaQBWKfqlxZrWTM0BDe98
+	gf0TGcg5zsJ0wSIq8KSpJFpCRxMh5tgoOau6K0uGgDwpuoEyYutkLmXPnqCkCEhv
+	3dLDabLSjz3T6HOWJGAhsE7zv8XoIl3c0HbSK/pWQ4C0aRmtdb5cTMftLUfrO3Rl
+	31eUqtbUUjhacMA09wrItX01EZB942FSuyOYJHBUGZh1/omlNNAIyYLJxL2w3k+I
+	w+8Bn8G6bnVWKGfP+hfepZRaWdkbc6bll7KWlxyhBVcExk04x9QGfHScCSGkh96K
+	Zw==
+Received: (qmail 2752366 invoked from network); 24 Mar 2025 22:56:32 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Mar 2025 22:56:32 +0100
+X-UD-Smtp-Session: l3s3148p1@QpVTrR0xAOcujnsv
+Date: Mon, 24 Mar 2025 22:56:31 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"geert@linux-m68k.org" <geert@linux-m68k.org>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+Message-ID: <Z-HVD6w6ivYR6pt5@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"geert@linux-m68k.org" <geert@linux-m68k.org>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
+ <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
+ <Z-EpPL3tn54E8KG5@shikoro>
+ <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VNk6bS00O/5/s11l"
+Content-Disposition: inline
+In-Reply-To: <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
 
-If execute_location()'s memcpy of do_nothing() gets inlined and unrolled
-by the compiler, it copies one word at a time:
 
-    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x1374
-    mov    %rax,0x38(%rbx)
-    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x136c
-    mov    %rax,0x30(%rbx)
-    ...
+--VNk6bS00O/5/s11l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Those .text references point to the middle of the function, causing
-objtool to complain about their lack of ENDBR.
 
-Prevent that by resolving the function pointer at runtime rather than
-build time.  This fixes the following warning:
+> > > +config SERIAL_RZ_SCI
+> >=20
+> > I think this name is too generic. Most RZ-variants so far do not have t=
+his
+> > SoC. Would 'RZT2H' work or is it too narrow then?
+>=20
+> This is too narrow, because for instance the RZ/N2H , which is very simil=
+ar, has the same SCI
 
-  drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x23: relocation to !ENDBR: .text+0x1378
+You know the differences better, what could be a suitable name?
 
-Cc: Kees Cook <kees@kernel.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202503191453.uFfxQy5R-lkp@intel.com/
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- drivers/misc/lkdtm/perms.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+> > >  #define PORT_GENERIC	(-1)
+> >=20
+> > Does userspace need to know this port? Can't we use PORT_GENERIC?
+>=20
+> Userspace unlikely needs it. But unfortunately, the port type needs to
+> be checked at a number (5) of places in the driver, so the definition
+> is needed.
 
-diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
-index 5b861dbff27e..6c24426104ba 100644
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -28,6 +28,13 @@ static const unsigned long rodata = 0xAA55AA55;
- /* This is marked __ro_after_init, so it should ultimately be .rodata. */
- static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
- 
-+/*
-+ * This is a pointer to do_nothing() which is initialized at runtime rather
-+ * than build time to avoid objtool IBT validation warnings caused by an
-+ * inlined unrolled memcpy() in execute_location().
-+ */
-+static void __ro_after_init *do_nothing_ptr;
-+
- /*
-  * This just returns to the caller. It is designed to be copied into
-  * non-executable memory regions.
-@@ -65,13 +72,12 @@ static noinline __nocfi void execute_location(void *dst, bool write)
- {
- 	void (*func)(void);
- 	func_desc_t fdesc;
--	void *do_nothing_text = dereference_function_descriptor(do_nothing);
- 
--	pr_info("attempting ok execution at %px\n", do_nothing_text);
-+	pr_info("attempting ok execution at %px\n", do_nothing_ptr);
- 	do_nothing();
- 
- 	if (write == CODE_WRITE) {
--		memcpy(dst, do_nothing_text, EXEC_SIZE);
-+		memcpy(dst, do_nothing_ptr, EXEC_SIZE);
- 		flush_icache_range((unsigned long)dst,
- 				   (unsigned long)dst + EXEC_SIZE);
- 	}
-@@ -267,6 +273,8 @@ static void lkdtm_ACCESS_NULL(void)
- 
- void __init lkdtm_perms_init(void)
- {
-+	do_nothing_ptr = dereference_function_descriptor(do_nothing);
-+
- 	/* Make sure we can write to __ro_after_init values during __init */
- 	ro_after_init |= 0xAA;
- }
--- 
-2.48.1
+Yes, true. You just keep consistent with the driver. OK.
 
+
+--VNk6bS00O/5/s11l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfh1QsACgkQFA3kzBSg
+KbYojQ/9FB5gvB5RvOW8xCsWQjBt9kBNA/r6jPiJof4cC6pgXwKUadKOPLO/uK9k
+G+XdjU+i2rX/sMxw7MQwvg5n+9q9RmPu6gpb57WMezAfitEc3lvVyDu/FReLAHw/
+QX42qa3Fd5sGg2WM4NLKlek0BIUO96bdAdhmGkQd825EjNfESTJ+8tKFbJDESKp8
+bHssgSpAUVmSDjCby4h0IgKuRG8kdPLus7wQul6/olnA0x0wArFOeKqrYrocOxmz
+E29D13zfVPQ0PtArkKc7ThAmw2L1R1DXDDWdO7SJ3Tau52aCVweHewSKoX4UPv4n
+nQBnNG1IWytG2dTHBN8Vy8o8KKxxmuWOi8ZcjQFhXXTDtQbT9LCnJaMf9wlZoO06
+emLUolu3rgHdQzqsm8T1DHHGmaTte/8rjtUNtRI3ZxZwn/gtTR8u62UTcOAGxwts
+woXtxBR+FX7tsnAnmSzahO0BMiBxG+mjLI3eQTQznkL/wtyRz8EvS4zm/BaZAQrP
+3EeF4e/pc9n7g8Fk/o24XaYyB5hrc0jsKyDRRTfnNTts4G6hIgF88w8Ol4+/WNWo
+oopRL2Bbr+rqxbI6b5deafTY8tZSgJYuJxkJUjey5pkUQvjL/BIuDp6S+NYAeiaL
+0HasqeVoQiu1NYpNT0EuhM+N3fdZLuxKasH0iHx6QteoIksSAGc=
+=rVjt
+-----END PGP SIGNATURE-----
+
+--VNk6bS00O/5/s11l--
 
