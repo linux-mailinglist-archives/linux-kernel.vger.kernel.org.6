@@ -1,236 +1,176 @@
-Return-Path: <linux-kernel+bounces-573908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A80FA6DDE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB438A6DDEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF07F16AC86
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510F116AF2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9E1261392;
-	Mon, 24 Mar 2025 15:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8984425FA3C;
+	Mon, 24 Mar 2025 15:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jn+0Pamw"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="D2oBLnXO"
+Received: from mail-io1-f98.google.com (mail-io1-f98.google.com [209.85.166.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52B325DB0C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619CC25E45A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829067; cv=none; b=PrQ2D/04pGu+FYw35DMqspZ6n75/x1RY4BFMuhomJ9XPMropjhJ0+wJ9aoKLcqiJ9KcEv381R+pdOSknLeRYE9CNiAgYyAjp4wqNg4GgIivAB7uxiprX54WTmoB1CrLIoxgeNpKIBz800H7BnEsPiHJxF1lghY1yebDS8qD9PLU=
+	t=1742829125; cv=none; b=RBaNbIf5TwNIPqmxMOuQz+5TWSlyUj2EOqLNxY2cFw4IgUWXndECDttfYw3JAec0gI6PcszgvxnF4eK9AEy1V6PfVcwaLR6aJRFdP7cDui9wjBBOxbj8HAV6IBEceNMqvFqNdbPiHZYPpNOpOoEpwwb9YIMqNpzt6uFRtbfptC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829067; c=relaxed/simple;
-	bh=oZcZt4wEgrlwJnIv9bVItENfQ06ThkMlOTw5N/N7bSo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=sJ3La/f/HFmRyXU0foX1/43pOTFxrjnn2CX1HU8KqNStUCes+F/Ukr69q+09xMrCBfePr/cQqKyMeWb1hgXX9DFoWZltofnRLXZ4VGxQODHnFTQ/QQoj3E6TH/uLO9coigmUsfJWgV7++WPN8Y/yG360YyQ54Fjm4BgUkMWEhaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jn+0Pamw; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 772C14326A;
-	Mon, 24 Mar 2025 15:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lzB/MlgxFjVB17b0nuzk9808ANg/fDT6q8Zmuo0nM5Y=;
-	b=Jn+0Pamw6ofwIye7MSSPeuhzKA2zm25rWso7M414k36whV3aWumXa6B7giK9zjFlLzBLMJ
-	TuK2MjlKoJq75WrrROMj/Lp3RAaw+xOmOQFDhKLwibBQBbAvJCOXumvsOIvFyzXbJ+vSAi
-	bAfeJDrD6eiLQyef/IDQKr/8mPLIdHffXRr0omJLGnjwuLOrqmLUWNJHWtPIEcexnzg8F5
-	Z4q2Tju5Yg7dR3UFlZO7gc232XaXNjNSjZxxkj7tdAaTR0Y4zsjlqOiD2wflRgU+7k216n
-	a94UV99MJUv5TyaZCJzbvQ10V/qTAPpF8jirk6SdZTxY8FClyFuLMNV4megncA==
-Message-ID: <5ceff8ec-daba-4eaa-8834-ed9276bda7fa@bootlin.com>
-Date: Mon, 24 Mar 2025 16:11:02 +0100
+	s=arc-20240116; t=1742829125; c=relaxed/simple;
+	bh=6PyiGn4SiEiCYGvy1jMGKDenohF/ERsQojmyCgoW04c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMxBI5Nyy2eJ9Ln7+HA5TAVK6dBr80LcL2sI0imyYSUeoS9CDzzgwSvGu3mfB3UUDRUW0KnE6qgO4ZEo1n93MPNKIzKEPNKUGIGzX9cDPdkZsU33NCefGHE+ZNjO12ssyENXwOYnGU7jeru/gFB0DYMdNAcbQh7NPlF2oSEMQis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=D2oBLnXO; arc=none smtp.client-ip=209.85.166.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-io1-f98.google.com with SMTP id ca18e2360f4ac-85dc8b74a93so14931039f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1742829122; x=1743433922; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DaDTHAl/xpFy64mz/KVdnuIp1nPGqaX22/7mVtls3M=;
+        b=D2oBLnXOREGQCWL5no2MErDlkJBvVi81X3KLd4ARXPo4UPzPll96+9EBFr6Ft/62Cg
+         HxrRogJV73TuVhLDHA3IZoYal8NwvU9SMmSaNG02E7FKNhGfCo8aO9pgUGQQFsNRJNCV
+         OYPdbZsmBEO3lH+aUH5BWQk3YwM2c0NSqM9x/N6fXKVQY95zG/LGgA2bHvzg26Th2jCg
+         XYo04wNq8b/EQlgXKtaiMFcTiC4Qssua6Vpt8UBTuDuUZxv0uYZieiNv4Pu8FpNtYsKo
+         0mb0X9UYP5Yw+OYiF67/PQ1tq5DsZEIrS8AgqbbblEj2iWpKu0LlgBSCuwuxf52hmEdj
+         mZzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742829122; x=1743433922;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DaDTHAl/xpFy64mz/KVdnuIp1nPGqaX22/7mVtls3M=;
+        b=RJk7UNm2gBWW9CcaypbhHDa1Bc94m6oufezF/sauUeCR/AuoWmfJ9bkqAmf06FlWYa
+         V4mv4jvKvbu/4D4kYBc0jxmYLT1gNNkg70WT8np1jvGkTp361glJOsvH35xyUaPRx3lY
+         3lfLmySHQ0koq/hl6F0Cnh9SvtqmzokFpxcaBNxiBe+nmqWNnXMg3X5X6CKoL+Kh8PXx
+         vhAa8ru0/U1lrGNRvzXN1xgnNv7xJViuy7w9fvZ7TKvtPQoT7ILK3mPo2RtrAmacDGD8
+         iyppbU8G9G4SdVm6Cjiimu1hj8cKNLtOia9Ru9k9dEfmwxob8kcAM6PhzZyUX/7k92c6
+         QmcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg4oxAn5zzP6sUS6vTr+w5QRunXDX6FAvet8Vwpj+b/eDc9cugs83lksZLMSWE5saKF42TwZfbukvX/bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp8N70qkV5ppfnCkZjetLuLntfys4NrF28MfyR/aH4xY58AE2R
+	M00tzxyV3QyCF1l9g2wuPm91LANU7MErBrhv4OX/1NrHNLWp2PbrQ1X42Kx5kR1rjt2cfsvUkar
+	FieF6eYfrYPMCIqf5ZaV8uPwGddSa+OEdsTDq9qm+h4dIm3Jg
+X-Gm-Gg: ASbGnctHCMzzdAlh3+cui2AoW7ZpzevoB4h805+o+vzjVEjX2SgN+swb4xmyxU1ATdo
+	YA+KQwZzNpF1QggYY+yfOPvGlmBt/E9BDgieasQweXJTIrHP5RzmLLwmJPW1NLAfUfYFcPS7kzD
+	4l088oX6p5m1Gu4SFCMgZiLeQ1xUbFB5bX5b1J8wmNinqqwTX9n+vA/3wZ9nUrsJIqavQ5QCA8r
+	pIrGegBJWxngr/fUuo2dc7+2DBLC4h5RpZpFs5L+JkAyPIJwbiZ5nsav2l+We1P9lVWf7e6knAk
+	2+wfpv/BIp+roXArj7pwCISz+GyFZxAUwQ==
+X-Google-Smtp-Source: AGHT+IEvGhdaNr00BzWWE+mFFMquDvVXhD7sNzqsigex3tx68oVgpBapaJD6isuNNk8GdMEGzNSPd+kJk7na
+X-Received: by 2002:a05:6e02:1c25:b0:3d5:8928:20e3 with SMTP id e9e14a558f8ab-3d5960bf9d3mr38272455ab.2.1742829122158;
+        Mon, 24 Mar 2025 08:12:02 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d59607f822sm3708795ab.17.2025.03.24.08.12.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 08:12:02 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3EC3B3400DB;
+	Mon, 24 Mar 2025 09:12:01 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 31926E41921; Mon, 24 Mar 2025 09:11:31 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
+Date: Mon, 24 Mar 2025 09:11:21 -0600
+Message-ID: <20250324151123.726124-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 13/59] dyndbg: add 2 new _DPRINTK_FLAGS_: INCL_LOOKUP,
- PREFIX_CACHED
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-gfx-trybot@lists.freedesktop.org
-Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
- daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
- jani.nikula@intel.com, ville.syrjala@linux.intel.com
-References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-14-jim.cromie@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250320185238.447458-14-jim.cromie@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
- dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
 
+Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
+track whether io_send_zc() has already imported the buffer. This flag
+already serves a similar purpose for sendmsg_zc and {read,write}v_fixed.
 
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ include/linux/io_uring_types.h | 5 ++++-
+ io_uring/net.c                 | 8 +++-----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-Le 20/03/2025 à 19:51, Jim Cromie a écrit :
-> Add _INCL_LOOKUP condition to separate +mfsl flags from +t, allowing
-> (after refactoring) to avoid a needless call-return.
-> 
-> Add a PREFIX_CACHED bit to remember that a pr-debug callsite is:
-> 
-> - enabled, with +p
-> - wants a dynamic-prefix, with _INCL_LOOKUP
-> - was previously called
-> - was thus saved in the prefix cache. NOT YET.
-  >
-> This allows (later) to cache part/all of the dynamic-prefix for each
-> pr_debug that gets called.
-> 
-> NOTES:
-> 
-> dyndbg's dynamic prefixing can get expensive; each enabled callsite's
-> prefix is sprintf'd into stack-mem, every time a pr_debug is called.
-> 
-> A cache would help, if callsites mark _DPRINTK_FLAGS_PREFIX_CACHED
-> after saving the prefix string.  But not yet.
-> 
-> -t  thread-id. not part of the "callsite" info, derived from current.
->      doesn't belong in the cache. it would be wrong.
->      can be done in outer: dynamic_emit_prefix()
-> 
-> -mfsl  module, function, source-file, line
->      we cache these, composed into a sub-string.
->      they are "lookups", currently to descriptor fields,.
->      could be accessor macros to "compressed" tables.
-> 
-> All enabled together, they compose a prefix string like:
-> 
->    # outer   -----inner-------------------
->    "[tid] module:function:sourcfile:line: "
-
-s/sourcfile/sourcesfile/
-
-> 
-> So this patch extracts _DPRINTK_FLAGS_INCL_LOOKUP macro out of
-> _DPRINTK_FLAGS_INCL_ANY macro, then redefs latter.
-> 
-> Next re-refactor dynamic_emit_prefix inner/outer fns accordingly.
-
-This commit introduces two things:
-
-- introduction of _DPRINTK_FLAGS_INCL_LOOKUP, used in a future patch
-- introduction of _DPRINTK_FLAGS_PREFIX_CACHED, not used in this series
-
-I don't think those changes are needed to fix DYNDBG_CLASSMAP, it seems 
-to be an (unfinished?) optimization, so it could make sense to move it 
-to an independent series. Please tell me if I overlooked something!
-
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> ---
->   include/linux/dynamic_debug.h | 10 ++++++----
->   1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-> index c388ab05a6e1..82eabaa6e827 100644
-> --- a/include/linux/dynamic_debug.h
-> +++ b/include/linux/dynamic_debug.h
-> @@ -38,11 +38,13 @@ struct _ddebug {
->   #define _DPRINTK_FLAGS_INCL_LINENO	(1<<3)
->   #define _DPRINTK_FLAGS_INCL_TID		(1<<4)
->   #define _DPRINTK_FLAGS_INCL_SOURCENAME	(1<<5)
-> +#define _DPRINTK_FLAGS_PREFIX_CACHED	(1<<7)
-
-Is there a reason to skip 1 << 6? I don't see any usage of this flag in 
-this series, maybe you can skip it for now and introduce it with the 
-actual implementation of the cache system?
-
-Also, I think it make sense to add some documentation on this define. 
-All the other are controlled by the user, but PREFIX_CACHED is 
-controlled by the "dyndbg core", so maybe add something like:
-
-	/**
-	 * _DPRINTK_FLAGS_PREFIX_CACHED - Mark a printk prefix as cached
-	 * This bit is set by the callsite to avoid regenerating fixed
-	 * part of the prefix at each call
-	 */
-
->   
-> -#define _DPRINTK_FLAGS_INCL_ANY		\
-> -	(_DPRINTK_FLAGS_INCL_MODNAME | _DPRINTK_FLAGS_INCL_FUNCNAME |\
-> -	 _DPRINTK_FLAGS_INCL_LINENO  | _DPRINTK_FLAGS_INCL_TID |\
-> -	 _DPRINTK_FLAGS_INCL_SOURCENAME)
-> +#define _DPRINTK_FLAGS_INCL_LOOKUP					\
-> +	(_DPRINTK_FLAGS_INCL_MODNAME | _DPRINTK_FLAGS_INCL_FUNCNAME |	\
-> +	 _DPRINTK_FLAGS_INCL_SOURCENAME | _DPRINTK_FLAGS_INCL_LINENO)
-> +#define _DPRINTK_FLAGS_INCL_ANY						\
-> +	(_DPRINTK_FLAGS_INCL_TID | _DPRINTK_FLAGS_INCL_LOOKUP)
->   
->   #if defined DEBUG
->   #define _DPRINTK_FLAGS_DEFAULT _DPRINTK_FLAGS_PRINT
-
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index c17d2eedf478..699e2c0895ae 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -583,11 +583,14 @@ enum {
+ 	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
+ 	/* buf node is valid */
+ 	REQ_F_BUF_NODE		= IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
+ 	/* request has read/write metadata assigned */
+ 	REQ_F_HAS_METADATA	= IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
+-	/* resolve padded iovec to registered buffers */
++	/*
++	 * For vectored fixed buffers, resolve iovec to registered buffers.
++	 * For SEND_ZC, whether to import buffers (i.e. the first issue).
++	 */
+ 	REQ_F_IMPORT_BUFFER	= IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
+ };
+ 
+ typedef void (*io_req_tw_func_t)(struct io_kiocb *req, io_tw_token_t tw);
+ 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index c87af980b98e..b221abe2600e 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -75,11 +75,10 @@ struct io_sr_msg {
+ 	unsigned			nr_multishot_loops;
+ 	u16				flags;
+ 	/* initialised and used only by !msg send variants */
+ 	u16				buf_group;
+ 	bool				retry;
+-	bool				imported; /* only for io_send_zc */
+ 	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
+ };
+ 
+@@ -1305,12 +1304,11 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *notif;
+ 
+ 	zc->done_io = 0;
+ 	zc->retry = false;
+-	zc->imported = false;
+-	req->flags |= REQ_F_POLL_NO_LAZY;
++	req->flags |= REQ_F_POLL_NO_LAZY | REQ_F_IMPORT_BUFFER;
+ 
+ 	if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
+ 		return -EINVAL;
+ 	/* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
+ 	if (req->flags & REQ_F_CQE_SKIP)
+@@ -1447,12 +1445,12 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (unlikely(!sock))
+ 		return -ENOTSOCK;
+ 	if (!test_bit(SOCK_SUPPORT_ZC, &sock->flags))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!zc->imported) {
+-		zc->imported = true;
++	if (req->flags & REQ_F_IMPORT_BUFFER) {
++		req->flags &= ~REQ_F_IMPORT_BUFFER;
+ 		ret = io_send_zc_import(req, issue_flags);
+ 		if (unlikely(ret))
+ 			return ret;
+ 	}
+ 
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+2.45.2
 
 
