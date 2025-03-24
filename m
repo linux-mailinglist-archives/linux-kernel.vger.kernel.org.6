@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-574065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 393BDA6E032
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:51:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4637A6E02F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF5A1893777
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0407188F1DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19932641DA;
-	Mon, 24 Mar 2025 16:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6681263F41;
+	Mon, 24 Mar 2025 16:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="wTRGOOI5";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="DCPnz+Gj"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1Z6IMN+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BB3261586;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069052620C3;
 	Mon, 24 Mar 2025 16:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834967; cv=none; b=XXHwurOEwX7+LzM/HRtFoENrtbaL1kOvU0ktGu30ybLNc6ePubDQy90vavh7IQRps5mIx7wyQUbsQrWEH8O4Id7Qf6g3xgPVZbPKKYfFOb1GEKSjvzqcDTcvLAdNf5VAXcHVgfBDHll+9v8hw3Kl38AbGpB+dTHk99Xh61OYNI8=
+	t=1742834963; cv=none; b=a4R/VVjTVjiNxm6IrAutfdtUmNkRzS+NuHRQnj84vH9FCiw7WDWJALSyXaDxvJtcUbtCRVehqHRaeAENrnIkQb0QhenSYHwGCTkvz8S0G8hNWmverDgV/m6HvnJynTeQjLFu1O+imsBkS2cm+5G5+L3gAf0kEHuwOETYrfSZa1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834967; c=relaxed/simple;
-	bh=5fRaRRqoLXk9VvHYdcvASGdB+1Jt16QfeJgofkT4YqM=;
+	s=arc-20240116; t=1742834963; c=relaxed/simple;
+	bh=KJqgtiZ5ZdlB750vGe4zUjRFX7IN6DR7LFII+F/opFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxN6Yyy6iext76ZYR5VWb8JhNm4yZXDxk1QLBI5YUqznYZyp7GvTcVoQ8UkYSCIqXBKvCoix6WsU7K1/Sv8wXZcU2Nl50TJ7xfjrpKrHYPyrFg/vi3+VMJI+Zbrg9D+DtwCEDUBwvLuWufE3NVdXc6xdDi2QDhICZU6rFImYd9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=wTRGOOI5; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=DCPnz+Gj; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 7E48860390; Mon, 24 Mar 2025 17:49:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742834955;
-	bh=GGDJ9ToJtDJw+S47TSdM9cpM1oN2wQQEXFzOumVzNjU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibECJvvgYOafanJWubwM291DMczISUTicgP0UUggWrseZnTrEW0K8HFtTqAIl5XtkCfd8EX7b8ZvQ4NAA4hA/7FEv+2GVqzkuvOJxcecEbZSUxDlc78oSPpbJ8Y7DJgqAlo5BbWul3QyzoXgaLO7KjYCZlXN7lP3GRE6nytWuJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1Z6IMN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AD2C4CEDD;
+	Mon, 24 Mar 2025 16:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742834962;
+	bh=KJqgtiZ5ZdlB750vGe4zUjRFX7IN6DR7LFII+F/opFU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wTRGOOI5j5ondXNwLDawdD4j82Ru2vOHGWWppgQwjHax3kidJsU01JPVyWMvJWUuo
-	 mTlzALu2ndA/PN1/PV3qbS1jtE0gIN4MZn9Px+MTY3f1ooPuHrejXseAm98hsak18I
-	 0ILH2j9IWbHG2oFFPSGwrTcaTurXdJLWbXKXQfInp8slWtBuf4gkUm1Ew72dTEhXBa
-	 mKrOPVtkR5ATvo3p/FZHS+q1ji+LyRr5TGNJKBCTM3gWAH0U6soNJVcMjgv2eJhA+m
-	 +aTajPruzLQkeBcZLdm0gHq9G1Ipv+72SP/3qZgQJ3KpiidC7bHjO+0Et/bjpTUOR9
-	 S1H1zkeyaSRPQ==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id DB85C6034A;
-	Mon, 24 Mar 2025 17:49:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742834952;
-	bh=GGDJ9ToJtDJw+S47TSdM9cpM1oN2wQQEXFzOumVzNjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DCPnz+GjATTwDRX3cEAXYvzpHMgEbhxo+Um4+G4iZp77oga/M9H5MquqVeX/BV9IY
-	 KBZNU0v6OevhOTNQ3Zt+sPKh3MbwtFLMevwQc7cFBfhhymq0TR+bZ2u+knkWHspR4D
-	 FjNxNetEur4h+TmKXvzrUWhyyFKZ99Fcf0W3w6sTMgrrEbNKJEl3X4rhs+VPAEEigu
-	 NhJNR9cQ37cusjxHiPxAqgV2ODW4wl3GVVmq/ey9BgQAWCOgrALHDvsz87SUcheLH2
-	 6ZOb5qYNROVcBaoqnRK5zV1FTYqtwHgPv5JjHiun/ZZ6xcOvlRS4hnOlzdsn3c215i
-	 ncHJcpfKEceYw==
-Date: Mon, 24 Mar 2025 17:49:09 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org,
-	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
-Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-Message-ID: <Z-GNBeCX0dg-rxgQ@calendula>
-References: <20250305170935.80558-1-mkoutny@suse.com>
- <Z9_SSuPu2TXeN2TD@calendula>
- <rpu5hl3jyvwhbvamjykjpxdxdvfmqllj4zyh7vygwdxhkpblbz@5i2abljyp2ts>
+	b=h1Z6IMN+gzcXp78xjN9Nz7rDBrBS1QswNCk7WK8ESxNOrWujJyeza3GcQrTfIf37S
+	 2lelpI7YanKBeKFlRvkThrBaXOYvrJohirHQvR9RfHWbIn/zNzD0io7b71eJnkps+d
+	 uHe0awWqgGx0aL5BHfwu8JPwsqPTs5f1TbsnFqJiqTRKJ2rXA2S+dnV3aKxCou0W2b
+	 foXKV0Jh20xLNCLiWr9DOMTsQxiFjBLhGv+iv9Cu3ON9cPLizbME3C+jEZPGLcrmWE
+	 IbfmxoIBr/hFklaCe37r84kuauHt8FUqXYsN68pw1l8G4GLbce7Ie7XrjED7n/YPXJ
+	 Zs5f6xNLK34cA==
+Date: Mon, 24 Mar 2025 17:49:16 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com,
+	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
+Message-ID: <Z-GNDE68vwhk0gaV@cassiopeiae>
+References: <20250321214826.140946-1-dakr@kernel.org>
+ <20250321214826.140946-3-dakr@kernel.org>
+ <2025032158-embezzle-life-8810@gregkh>
+ <Z96MrGQvpVrFqWYJ@pollux>
+ <Z-CG01QzSJjp46ad@pollux>
+ <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <rpu5hl3jyvwhbvamjykjpxdxdvfmqllj4zyh7vygwdxhkpblbz@5i2abljyp2ts>
+In-Reply-To: <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
 
-On Mon, Mar 24, 2025 at 01:56:07PM +0100, Michal Koutný wrote:
-> Hello Pablo.
+On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
+> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
+> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
+> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
+> >> > Along these lines, if you can convince me that this is something that we
+> >> > really should be doing, in that we should always be checking every time
+> >> > someone would want to call to_pci_dev(), that the return value is
+> >> > checked, then why don't we also do this in C if it's going to be
+> >> > something to assure people it is going to be correct?  I don't want to
+> >> > see the rust and C sides get "out of sync" here for things that can be
+> >> > kept in sync, as that reduces the mental load of all of us as we travers
+> >> > across the boundry for the next 20+ years.
+> >> 
+> >> I think in this case it is good when the C and Rust side get a bit
+> >> "out of sync":
+> >
+> > A bit more clarification on this:
+> >
+> > What I want to say with this is, since we can cover a lot of the common cases
+> > through abstractions and the type system, we're left with the not so common
+> > ones, where the "upcasts" are not made in the context of common and well
+> > established patterns, but, for instance, depend on the semantics of the driver;
+> > those should not be unsafe IMHO.
 > 
-> On Sun, Mar 23, 2025 at 10:20:10AM +0100, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > why classid != 0 is accepted for cgroup_mt_check_v0()?
-> 
-> It is opposite, only classid == 0 is accepted (that should be same for
-> all of v0..v2). (OTOH, there should be no change in validation with
-> CONFIG_CGROUP_NET_CLASSID.)
+> I don't think that we should use `TryFrom` for stuff that should only be
+> used seldomly. A function that we can document properly is a much better
+> fit, since we can point users to the "correct" API.
 
-Thanks for clarifying this, more questions below.
+Most of the cases where drivers would do this conversion should be covered by
+the abstraction to already provide that actual bus specific device, rather than
+a generic one or some priv pointer, etc.
 
-> > cgroup_mt_check_v0 represents revision 0 of this match, and this match
-> > only supports for clsid (groupsv1).
-> > 
-> > History of revisions of cgroupsv2:
-> > 
-> > - cgroup_mt_check_v0 added to match on clsid (initial version of this match)
-> > - cgroup_mt_check_v1 is added to support cgroupsv2 matching 
-> > - cgroup_mt_check_v2 is added to make cgroupsv2 matching more flexible
->  
-> > I mean, if !IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) then xt_cgroup
-> > should fail for cgroup_mt_check_v0.
-> 
-> 
-> I considered classid == 0 valid (regardless of CONFIG_*) as counterpart
-> to implementation of sock_cgroup_classid() that collapses to 0 when
-> !CONFIG_CGROUP_NET_CLASSID (thus at least rules with classid=0 remain
-> acceptable).
-
-That is, 0 is the default value when !CONFIG_CGROUP_NET_CLASSID.
-
-> > But a more general question: why this check for classid == 0 in
-> > cgroup_mt_check_v1 and cgroup_mt_check_v2?
-> 
-> cgroup_mt_check_v1 is for cgroupv2 OR classid matching. Similar with
-> cgroup_mt_check_v2.
-
-Yes, and cgroup_mt_check_v0 only supports for classid matching.
-
-> IOW, all three versions accept classid=0 with !CONFIG_CGROUP_NET_CLASSID
-> equally because that is the value that sockets reported classid falls
-> back to.
-
-If !CONFIG_CGROUP_NET_CLASSID, then no classid matching is possible.
-
-So why allow a rule to match on cgroup with classid == 0?
-
-Maybe simply do this instead?
-
-static bool possible_classid(u32 classid)
-{
-       return IS_ENABLED(CONFIG_CGROUP_NET_CLASSID);
-}
-
-Thanks.
+So, the point is that the APIs we design won't leave drivers with a reason to
+make this conversion in the first place. For the cases where they have to
+(which should be rare), it's the right thing to do. There is not an alternative
+API to point to.
 
