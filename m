@@ -1,94 +1,178 @@
-Return-Path: <linux-kernel+bounces-573766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D4AA6DBE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649EDA6DBF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96043AF74C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9F93B0CC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1025EFB4;
-	Mon, 24 Mar 2025 13:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9542E3387;
+	Mon, 24 Mar 2025 13:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bpuE5Nrm"
-Received: from out.smtpout.orange.fr (out-73.smtpout.orange.fr [193.252.22.73])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K6/EF/JJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D270A1AAA1D;
-	Mon, 24 Mar 2025 13:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3A525F790;
+	Mon, 24 Mar 2025 13:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823900; cv=none; b=T8mxrfjE2ywg9GgDi8xY06jdUFrnLkjvHhGjlnk0Gr6oNYTR/m3VgOLGHyCAU6gEi8KP7wvdEiV845LpWx258ZBHScYNWRp8nxI1RWojJ4dpYBeBP/uGlDDDAxNWMZ2OV4vKLa3FwfzBe0O7VU0FRnIsI/bP/eOOJQvX469b+Lw=
+	t=1742823906; cv=none; b=RLvLD+MuFzsP1lkpD2o6ScYoCeu+DVX/hE7NcITAWO1g9Z/ZsPux4OQrrQMSVsLdMcDjQ95Vfv6pcjtW5v0FDHpnVzDaCEFWE6mWWvGTg9eI3RyzYB/PJzV9H1OWlGYZosvFxVFbFifXJehGKM33pHEA7YMFb63ussuzWxQGj8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823900; c=relaxed/simple;
-	bh=AZ0c9OIdotHoDebUThp+x5UVtk1mvnXCXWFbvrCj0WM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BnWtLGQWe29z8s+qn+/7WFhwlIowCw++W6apGAj2O22Cm8stNzYrjuBR+Qeo8o9X6bM1BlyAU2ZqvpwfHotzKXC5IJ2bVmWep/ff3afldh1kOWtwpY/ZX5QckpqIfTwRNhLbJ5fHWWEakdO6hhpQogAnDfipiwyXGftJcM0+pyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bpuE5Nrm; arc=none smtp.client-ip=193.252.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id wi6atJBomDCLUwi6etz7Et; Mon, 24 Mar 2025 14:44:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742823888;
-	bh=Qa5om3v9/K/7zpjm5PKgDCV9u2Wr47TRWbPt/isnl+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=bpuE5NrmWf/UsjAJvVswgv0icGAZ1zyNynsHEzuvm89LLVUx0xIx9BhCFwWp8uKPC
-	 Z3/O8ApaxqLmSCFiXI3/b401O60aYYUqXVsW/l5eqjjpwPvNkj1jpnCaJGvpzdt4fy
-	 1uI6dECsMxCUronlLn9I5tVTU45CmFvJS6GK76XglxdP60k+zO72JxoAyntyWugfkF
-	 2+daiMQ91FhVaW1N4hGPVnbeWqH7NhAq/R2uCiKA28hz22L6Qiyk/QG9fAQudEJHll
-	 xoT853egqorC8pmtINZ1pC291TXclCLQlqpvkg5l8F+aaMRAjrBVFzwc0VmxVc+9kL
-	 U7DsYiG6c0lfw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Mar 2025 14:44:48 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <8bd91034-cc4f-435d-86ef-cc76fa0a3612@wanadoo.fr>
-Date: Mon, 24 Mar 2025 22:44:39 +0900
+	s=arc-20240116; t=1742823906; c=relaxed/simple;
+	bh=qZzhN5RLrcv7Pqw/OV2MUkyFj+vDFWWDArzJQNCkcw8=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eGC+DDqDXiHNXDlB+aW8Z6Mncho8KG3PVIWNW3QnxTwKtBeXzQW2fSz8BXkhgHlWqLgnzB3WZ8Cku97XyrPf1PtNoOgIIl7FjEZAzs/UDcP4wblosAn+HNaxuC07YG4QTTrMpqoSw1Htt2WCooberLpTm3kAUXroobnvW6LBu14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K6/EF/JJ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742823904; x=1774359904;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=qZzhN5RLrcv7Pqw/OV2MUkyFj+vDFWWDArzJQNCkcw8=;
+  b=K6/EF/JJ14lIWzu95CeC6wB3Z0IoAvYhjpcqi+p6iXk3VoiiOjD+3Wg+
+   2eaSPx8sTAc9pBlERwcGe2jBq7HB2eznXj/uXAaQu3i/Ln5MySC0074Wl
+   hczl7MAApZ1EcjQkQymF50uVvOtquD4HrcE8QJSSbqhtFtzebpgxMhKJC
+   OT4sQsVc0nOwvmkVFGcZSl2kyB4R5hfSxIfW+o/wcyHNyuBt9zB95UEod
+   dFFnpVP82/5svtbmIdWXySzLKAWLQge9jY6HyZicbDAUEu7BqXhcXPdjB
+   eK+X+y7L4ctx3AXzBe91EiQCn0Cm0DNo7CBqtdTOKWlznY3aaOTdebRGu
+   Q==;
+X-CSE-ConnectionGUID: GQsbNXG8TPSO1EEpmGcuEQ==
+X-CSE-MsgGUID: 6zzMnwAqR4y5ucashnL4jw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43955745"
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="43955745"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:45:04 -0700
+X-CSE-ConnectionGUID: xJTkbHVMSF2qX9V89ypIZg==
+X-CSE-MsgGUID: oIwZvSw6TrC57euv0S4F/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
+   d="scan'208";a="124040691"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.251])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 06:44:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 24 Mar 2025 15:44:56 +0200 (EET)
+To: Hans Zhang <18255117159@163.com>
+cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
+    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
+ finding the capabilities
+In-Reply-To: <20250323164852.430546-4-18255117159@163.com>
+Message-ID: <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com>
+References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-4-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] can: rockchip_canfd: fix broken quirks checks
-To: Weizhao Ouyang <o451686892@gmail.com>
-Cc: kernel@pengutronix.de, linux-can@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-References: <20250324114416.10160-1-o451686892@gmail.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250324114416.10160-1-o451686892@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Weizhao,
+On Mon, 24 Mar 2025, Hans Zhang wrote:
 
-Thanks for the patch.
+> Since the PCI core is now exposing generic APIs for the host bridges to
 
-On 24/03/2025 at 20:44, Weizhao Ouyang wrote:
-> First get the devtype_data then check quirks.
+No need to say "since ... is now exposing". Just say "Use ..." as if the 
+API has always existed even if you just added it.
+
+> search for the PCIe capabilities, make use of them in the CDNS driver.
 > 
-> Fixes: bbdffb341498 ("can: rockchip_canfd: add quirk for broken CAN-FD support")
-> Signed-off-by: Weizhao Ouyang <o451686892@gmail.com>
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+> Changes since v5:
+> https://lore.kernel.org/linux-pci/20250321163803.391056-4-18255117159@163.com
+> 
+> - Kconfig add "select PCI_HOST_HELPERS"
+> ---
+>  drivers/pci/controller/cadence/Kconfig        |  1 +
+>  drivers/pci/controller/cadence/pcie-cadence.c | 25 +++++++++++++++++++
+>  drivers/pci/controller/cadence/pcie-cadence.h |  3 +++
+>  3 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
+> index 8a0044bb3989..0a4f245bbeb0 100644
+> --- a/drivers/pci/controller/cadence/Kconfig
+> +++ b/drivers/pci/controller/cadence/Kconfig
+> @@ -5,6 +5,7 @@ menu "Cadence-based PCIe controllers"
+>  
+>  config PCIE_CADENCE
+>  	bool
+> +	select PCI_HOST_HELPERS
+>  
+>  config PCIE_CADENCE_HOST
+>  	bool
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index 204e045aed8c..329dab4ff813 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -8,6 +8,31 @@
+>  
+>  #include "pcie-cadence.h"
+>  
+> +static u32 cdns_pcie_read_cfg(void *priv, int where, int size)
+> +{
+> +	struct cdns_pcie *pcie = priv;
+> +	u32 val;
+> +
+> +	if (size == 4)
+> +		val = readl(pcie->reg_base + where);
 
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Should this use cdns_pcie_readl() ?
+
+> +	else if (size == 2)
+> +		val = readw(pcie->reg_base + where);
+> +	else if (size == 1)
+> +		val = readb(pcie->reg_base + where);
+> +
+> +	return val;
+> +}
+> +
+> +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
+> +{
+> +	return pci_host_bridge_find_capability(pcie, cdns_pcie_read_cfg, cap);
+> +}
+> +
+> +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap)
+> +{
+> +	return pci_host_bridge_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
+> +}
+
+I'm really wondering why the read config function is provided directly as 
+an argument. Shouldn't struct pci_host_bridge have some ops that can read 
+config so wouldn't it make much more sense to pass it and use the func 
+from there? There seems to ops in pci_host_bridge that has read(), does 
+that work? If not, why?
+
+> +
+>  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
+>  {
+>  	u32 delay = 0x3;
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index f5eeff834ec1..6f4981fccb94 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -557,6 +557,9 @@ static inline int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+>  }
+>  #endif
+>  
+> +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap);
+> +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap);
+> +
+>  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
+>  
+>  void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+> 
+
+-- 
+ i.
 
 
