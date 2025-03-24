@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-573158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBBAA6D3BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:38:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC4BA6D3C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:41:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F86167FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34D03AEC12
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158F718B484;
-	Mon, 24 Mar 2025 05:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E1F18C903;
+	Mon, 24 Mar 2025 05:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="FIKPGMiK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XPjjb/eJ"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K0UcNrx7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D1F2E3392;
-	Mon, 24 Mar 2025 05:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BA12E3392;
+	Mon, 24 Mar 2025 05:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742794703; cv=none; b=b6Mf3gK+73kggmS2czeo7KqU6PX+rCgdacxXeukZg1yJAD4fqHquzJQaaoegcxFtqtEoa1MF+ujnWoq9xznXLa79SVni8QMdlxBqjwTWQHLVmDyWlH76Cd7Rs0kjRC94OsVlqBuXfZ0eRosW1r8sE26e92lX6NaGfNlNl8ruMOg=
+	t=1742794881; cv=none; b=pPS45e9cP6jXDCHsEqeFCOSq1BEfQH/qO27j0MPXuqdNWlVon9qCGi2Bm+0sCLqayNkJ1pQFsqP2AE24cnfOVIi0fOCf56zGRuEh0pxAJ+R4lEH65eP6ztw6k2PT2SR/uZXR5xEvIhdMNriqWNEO7bnaYOqyXvUdQMvBANYtbb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742794703; c=relaxed/simple;
-	bh=g/VzOJfo7GzzqaZ2wRFuw+/ngchPBkepmxgltEoYduE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TTxNHeR/YNyLGXVibT34G4Ym7XHzq2n1y1E8vhSwCBo+aEoM/t0VfydafDBlErvR29WOBbKh4ydsNUjAebl4AxB5dd9mQNlhQ77c7OsI/vxu1sQCT8IthgwY27qHzuzAEe/BG02yYUxMFsL242EeK7vvBxVVVjjAf5/Cl7tlsC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=FIKPGMiK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XPjjb/eJ; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1464F1140107;
-	Mon, 24 Mar 2025 01:38:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 24 Mar 2025 01:38:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
-	 t=1742794699; x=1742881099; bh=VHN8RYiVxdh4pY4Zl3p5WIG0J/h0Gyla
-	y4ga31AVAxE=; b=FIKPGMiKtJJniRksri0AwmOMUMlWrasoyTihBgKcK/Yedhr1
-	R9voc7a3cYu+/3ETZYPnVaPWc9ooykqrcUtq+DoOGcaaH0CHwo7ttWAoF2iiSheT
-	GepJD96JPGnFOV35C2bXvHXKLOQfQcY4Q5hZNeVZossMosJr5nixeYroywt9XJwV
-	bUxgp6vIVanaVlQwlrSNuyGL3Y7cDxltmUGI6EZ9Y24RR6jRCmirDrWq79rAsg/o
-	MzP6NUb6YE4HqVAjNpZE51q6yTM1ZWDv+XACiIn4vATSiL8bRh9ENODnrCWouWg2
-	kRE7bfrfpxYdyj3bkmT4OPYGWE9i7AbuGDjk2A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742794699; x=
-	1742881099; bh=VHN8RYiVxdh4pY4Zl3p5WIG0J/h0Gylay4ga31AVAxE=; b=X
-	Pjjb/eJQvzNjtcbNU04NNxBFt7eRq35yzD9x5wMCOLiEs/uY2kACpqxZ7X3uYNtC
-	fAXfWNhsbsCgbXy85kXnxT55oe7OUlHkCqe3Hai1kqQlicy95IYBMo2imal705nD
-	UwbyR7F48iDemMdnGtwyDgwxd5cV5qJoQ86XS7tA7yIO1v/f1iuMnk0kJO+s9TQb
-	x+PboxZIf5cz8sWjwyqHmhW0Z9y0ZGIAXOdtfmY+E38aXBSin3cz1v53Y8F8F+PB
-	h2jIf1yJPtI90mXEk7NUIz2QA46aGFMTxYe0eSJ3qbKbD8udGWyvHyOFw9/VeH5B
-	1EJDmvMAV2CMi2XXCfaNw==
-X-ME-Sender: <xms:y-_gZzZurhd9eUDCoiCrYOrT5uOiEUfX8zBHOcJDFsl8pHV7ybKyCQ>
-    <xme:y-_gZyaNB4K_akqwNPASnwa4Ko2QyCnsoDIVA3ze-1AkChY4PC_dZqg3JjIRLsMZB
-    AwU3n1VJRKZn1zLLXI>
-X-ME-Received: <xmr:y-_gZ1-VbzBphl45fIHdVSJJPzrC63NRG23z0MpppJj4ukro7DLHOx57bRr5PaGJMiFvqAhxONRPBlAOt5mXPQtTqEyu-ppQPxHH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheekleeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkgggtugesthdtredttddtvden
-    ucfhrhhomheprfgvthgvrhcujfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvg
-    hrseifhhhoqdhtrdhnvghtqeenucggtffrrghtthgvrhhnpeeiueeuueeltdetuddtudeg
-    tdduvdfgieduteevlefgudefteduudegtddtffdtfeenucffohhmrghinhepfhhrvggvug
-    gvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgep
-    tdenucfrrghrrghmpehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseifhh
-    hoqdhtrdhnvghtpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhish
-    hssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:y-_gZ5pfLTr_YcovJj1aTPilRN55uuH3GJS9lNJZYwAjSn_HbYgjRQ>
-    <xmx:y-_gZ-rUcXPyP5bryIESXqbW6MRHzNk5B--HQRAwwiSgukz60LPvmA>
-    <xmx:y-_gZ_R_YCHALdMbZT2_hxkIP62J6-iXQesfqJQDdKCSNk5O3k2b6w>
-    <xmx:y-_gZ2pEmejqdL5heCGyN1QPfdjuGtCwf7o16C7TrLDpEA4MlA2zhg>
-    <xmx:y-_gZ3k2gzsLmNCzc-jiGvkU7C86UzpQvREvgCXPpqJ_188WKHVtlNZv>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Mar 2025 01:38:17 -0400 (EDT)
-Date: Mon, 24 Mar 2025 15:36:25 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [PATCH] HID: bpf: fix BTN_STYLUS for the XP Pen ACK05 remote
-Message-ID: <20250324053625.GA79579@quokka>
+	s=arc-20240116; t=1742794881; c=relaxed/simple;
+	bh=b984k2OgR/8IM2gmxVu07aUMQ8qc79G6SBXx14h0Sqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RWa+cKevNPtjgOigiaTTgbOcwcPPjSwjbF2oNB2sPGKiNU17uHAi1TcOYTBgEqkbosDttlMexEJpQDGmWpFSBpXIyHdwoPsSLVjx/iJWLZzOpUqJuEqAvZz7Ij1xf4EMaVxcnO34qnhznTPhG5HJifXtVZSt3I1LPLCMwKUjsuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=K0UcNrx7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742794872;
+	bh=rfUALjdQJ1/td1s2AxGvECCWq2bHv8pIquJ3lUwqmUs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=K0UcNrx7bLB14MTOZcJtFdtcD+ZNCABUpsmxwf15ErbOdih46/r8BzgW7c/4d0X8i
+	 CuI6iajJqINp84NE9iCxKaoSFOKcNsdvOTEZDKXlIYwjwleLYOsx2lZdmt5f8jwAb/
+	 BdClFnrqXnKrg1PBDODWmQcSb+iTtK6osz5yDuUPeWvOaeQfbCI3CA4aH/FGH6yTCw
+	 sy1dF6/QQ77i6KpKKUqF1yROWfqmpl0wyuQKXv8sSseq9EcYzer47BWUi5+wZOSzvW
+	 vJdLBEi9clhRakQV5WLyyuc69Qd9pxvc9h7lrN4zyKLthis44BsDKu8kXZPjC2sZkq
+	 OOxgro2KZxNNA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLhk05Gcgz4x8X;
+	Mon, 24 Mar 2025 16:41:12 +1100 (AEDT)
+Date: Mon, 24 Mar 2025 16:41:11 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Uday Shankar
+ <ushankar@purestorage.com>
+Subject: linux-next: manual merge of the ftrace tree with the kbuild tree
+Message-ID: <20250324164111.20c92791@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/U8jX5QCO.0mG9Hap++FRQdH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Usage_Dig_BarrelSwitch was applied in the UsagePage_Button
-which incorrectly mapped to BTN_TOOL_PENCIL
+--Sig_/U8jX5QCO.0mG9Hap++FRQdH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Link: https://gitlab.freedesktop.org/libevdev/udev-hid-bpf/-/merge_requests/193
-Fixes: 834da375 ("bpf: add a v6.11+ compatible BPF fixup for the XPPen ACK05 remote")
-Link: https://patchwork.kernel.org/project/linux-input/patch/20250207-bpf-import-2025-02-07-v1-7-6048fdd5a206@kernel.org/
+Hi all,
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
----
-Please feel free to squash this one into the 834da375 if that's an
-option.
+Today's linux-next merge of the ftrace tree got a conflict in:
 
- drivers/hid/bpf/progs/XPPen__ACK05.bpf.c | 1 +
- 1 file changed, 1 insertion(+)
+  scripts/tracing/draw_functrace.py
 
-diff --git ./drivers/hid/bpf/progs/XPPen__ACK05.bpf.c ../drivers/hid/bpf/progs/XPPen__ACK05.bpf.c
-index 1a0aeea6a081..a754710fc90b 100644
---- ./drivers/hid/bpf/progs/XPPen__ACK05.bpf.c
-+++ ../drivers/hid/bpf/progs/XPPen__ACK05.bpf.c
-@@ -157,6 +157,7 @@ static const __u8 fixed_rdesc_vendor[] = {
- 			ReportCount(5) // padding
- 			Input(Const)
- 			// Byte 4 in report - just exists so we get to be a tablet pad
-+			UsagePage_Digitizers
- 			Usage_Dig_BarrelSwitch // BTN_STYLUS
- 			ReportCount(1)
- 			ReportSize(1)
--- 
-2.49.0
+between commit:
 
+  9d702bb1d3c0 ("scripts: make python shebangs specific about desired versi=
+on")
+
+from the kbuild tree and commit:
+
+  a926d15a799a ("scripts/tracing: Remove scripts/tracing/draw_functrace.py")
+
+from the ftrace tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/U8jX5QCO.0mG9Hap++FRQdH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfg8HcACgkQAVBC80lX
+0GzfCQgAmqUERGDJXbX9jfbOtIeY21yRb+glHLdbVedfZGMHaE5NchDD+fYbPpCo
+oAqtvXHOgxBEVXRbPUxrpztovGkywBqp9BvTpqZdRch1FahSNP2B/RQDjzfJanEt
+yfa5V6PSUWbmvAFwjcInzugisAfJCtBCgN9rwwKdJx36dNBQT8jrt0PcZPzu3lG7
+qoVskSXowC6s1OEMDH5lCt6MD3QLZreDmFn8zQ8zBvzrsYCUL2uugmvcqoX2J8Jf
+X/MeOPw6zNeaTF7xDIw57t8qaoeiJXypAkZuwyj5/9EUcu9dJVr/UiJEu/Ouxc8a
+NZnWQi4HFyP2mIQe4IKsJGdYqNHLZQ==
+=Tv+Z
+-----END PGP SIGNATURE-----
+
+--Sig_/U8jX5QCO.0mG9Hap++FRQdH--
 
