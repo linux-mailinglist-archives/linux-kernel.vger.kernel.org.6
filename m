@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-573352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30458A6D62A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:30:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813BAA6D625
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A6E188D87C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16A53B0143
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A1225D218;
-	Mon, 24 Mar 2025 08:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A437325D213;
+	Mon, 24 Mar 2025 08:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gMsoovib"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MWGdIghh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A7725D1F3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F74125D1FB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742804989; cv=none; b=YsTdsP/CKCC3mh5728GCpAShwIk8t/AB8f+PJuOd3hIujVVDexNJ/WYConvyMGlOv1LwD8C5f10ihBg2KZqpR8i+iCrecwgzK4hjk5/zFrNFociOmqbGJOOk1E79tckNWGwpQauzA41MTj/Ryg8NAM6MhSVUWtfx73/LaExc10s=
+	t=1742805000; cv=none; b=lireCulL0ekpACBDDNWvP3CTPhV/xpqSa9SG3yc9rbAsix+XTsCWSRSvJySVBnvbjYSe14q0YW3vfh2XCj7MCa9Auwsw/n0C+cDOZF3/+sVRIyKGy9o37xblW2ilZelfRUxblg0f7A1UWq3GXE3PcDHSZf570L0v3rpMTcwt5Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742804989; c=relaxed/simple;
-	bh=NzJP8TqEb08WGj9kYfvDbx+CpZLoCO3wvBykc6g+6mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvQ8laPlv0W1GB+DnoBKOxwqdTCfrD6COtY4pnuazvsFgG9Ar+xxrpPdhTtkJ82af46jMF6neh5gwQs+ksLqSccX+DI8LwK5tcZtAvO+d0lbrd8UkxwPg5A5PDtZO5eATOwYem0xtZSSjP5g9FVbUuxuWd9mzw1Rb/hiEh944Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gMsoovib; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22435603572so69527025ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742804986; x=1743409786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2qMUlDAaek7Ax30c0AGSTiyhNrDt/tYOpdl5MsMoLow=;
-        b=gMsoovibKmSv81FaIAbJ9TjBXOxhesE6qDSuZej0OaUgJK9k9PZ43q2GBOsJ50HJSo
-         BYlXxmAt2EBq60V91lo6qmWoOn0u4ZqDiCk75leuCFnH0zqpcKfhaAHbs9By3tswSTN8
-         FPNGMuA6ndcnQkQ9JbLkSMR3WHZ2q4aQFQ02bLbfmTt2bIb2a9+UY2bLUjQ+75Socqol
-         VuiT85EyHZ0AN1NHVNdSSDxBm9sJGn8UAK6tGtMGXqI4BR+2AMb9sMTBqaYAsugBxydW
-         e1pTLS7nN4aKWsSUWv5d9DOYThG+qTy11Fi6a4Q2eZngH2BeEVLNl2Noq+E3cVZ11Rdm
-         KA/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742804986; x=1743409786;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2qMUlDAaek7Ax30c0AGSTiyhNrDt/tYOpdl5MsMoLow=;
-        b=pLdZz0mTTZxp66G9zXPK1aXYkDmiMbMkOIhsM3/OrJSXj61S11MD8bpAHZeJ54ptH/
-         sg6nsE6PtvgY4ZliaDB77UlMCVzDV+RM1H6RV6VsgGtKwi/u+uNGRq1QudHn7HPB1/4a
-         0vu20C2h44TLYt1/UvQGtiFyRy3v1BtR77BSluxt1LcrFa1f/oIOLZTQMU4OVirPbivp
-         to+W/lOhxzs274lLVVSmBALulFdHinrc+baUyPGyRJhQY5JmB2HWKbkxSwbcRnZXifta
-         rd/MmbfvU791w3+2TEaHpuRhZrq+m3RBIY9g6ny5vuMwHwltKpDNbferQsPQBr7XN/J8
-         hA1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyr+Sdbk7uZs+ARUqChrH8epXsyQsw7UXwmPcSUcqKJpqgjgT/qCeHgA8B1ad+jAqDX00XsIIu3WLVyaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW/Hj/XVhRgGT7NkjnfhTXpyvi7m0kTLqmfo2t4pXia4cr2so2
-	3KcbT01877xw0yxdCm/vvIZB4D1ufyxXemQJnRKbX4yUDVa37uDhyudAJP210z4=
-X-Gm-Gg: ASbGncsAWTwG61lMLKgks68rO8Fbax5N8NmTHlT2j+beRHrJ/hJwVFls4vCcQdIkxAO
-	Ur4SkqQE1k8qLqUk1TC9Q/LuueIFR968E46suA5CGattxfFCplosp7tunEulSWVPJl+ytP26qbV
-	yDJkkuW2JA+7F5wBXFHZpuIEja35m9/wH3EqeMguP7SfBQSLAd2dneFeS8QTf5cJywPCiTaxkyX
-	cyJi0dU5W2l/z0qosrQAXnSd+Ncslkcr/AcZlF3tPuhNguh5mKkptEAiB7tP66zTCXhCi9BJ4tZ
-	t8rFeY5qV530LMhvAplDZniaLayRVEBUhg0nWwgeKgqtdD0GTNBPz+KpQGJBZl79NdpuskBOCU/
-	1RwOp6odUSfMFCQ==
-X-Google-Smtp-Source: AGHT+IE/svKRMr10qo5TWA29tMIKA3okBWKKu6uK4vQbAlDiEPBzS0bf2OPavcRs7sE+zsZm2iXV3g==
-X-Received: by 2002:a05:6a20:a109:b0:1f5:7007:9eb7 with SMTP id adf61e73a8af0-1fe433193c6mr24677051637.37.1742804986196;
-        Mon, 24 Mar 2025 01:29:46 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2a4747bsm6509935a12.68.2025.03.24.01.29.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 01:29:45 -0700 (PDT)
-Message-ID: <779c137d-5030-4212-b957-3d2620448ea9@rivosinc.com>
-Date: Mon, 24 Mar 2025 09:29:33 +0100
+	s=arc-20240116; t=1742805000; c=relaxed/simple;
+	bh=Sxi6QWEJ195DH+Y5ivOYbvDIfggMwiBXal7Xe7m1ghk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V2awLgLXVHjel61DgqJDxfSsIVl5x7PxixCN1lCN6EvXepi5ew0ZYUnGi+a0unEp17TNAJwgdJJnRZ8w93VFkkMwDZseka8prKj6Q5E7JrKE5dR48AfLFjDKQYZpZ8a+YzHxLzbLhZVyxQJgF8CLI5Q7InOB8CKRS+LJ+tgAcHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MWGdIghh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O8NZXG015046;
+	Mon, 24 Mar 2025 08:29:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rONCS7bB7sM/9ZUOYO4ll/WXA4TLwIOoxudfJLJCwnE=; b=MWGdIghhBaeDqX/k
+	ThOjCTG2O4CYs+8hbRa18spT1+xgRxYfnHhq8iQauRuYSPGR1AcvCikab8KdiCa8
+	uU8vd8lAFGNQ9MAzmBfNUrzBd7Yx8uyN5nH2KnYsIEeCnhCbmcO0M/S2BhA3/nY+
+	eT4chSzIygZWgJ5a7YjtcLJHsMCoNFnZM+DzW7xaAO2XjTkVLYYj93HSA73bufw9
+	DiDyb4g7pr9adMCUPk9c6kxTauIE8zIeX1Od2K9UapZ8+DC+F44RhkTf0WWXfVb5
+	hm4OqIAs4Fkaf5ncUZ39w0aZNgt9SJFLpZ3WumXfhNDgt1L4rwcpbTs0m4iL1E9G
+	pSqdEg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hpgbbgae-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 08:29:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52O8TrI4004033
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Mar 2025 08:29:53 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 01:29:51 -0700
+Message-ID: <a661f86c-7ecc-46fc-a3af-90ad05a0c603@quicinc.com>
+Date: Mon, 24 Mar 2025 16:29:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,81 +64,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/18] riscv: sbi: add new SBI error mappings
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <20250317170625.1142870-1-cleger@rivosinc.com>
- <20250317170625.1142870-3-cleger@rivosinc.com>
- <20250322-cce038c88db88dd119a49846@orel>
+Subject: Re: [PATCH] wifi: ath12k: extend dma mask to 36 bits
+To: Johan Hovold <johan@kernel.org>
+CC: Johan Hovold <johan+linaro@kernel.org>,
+        Jeff Johnson
+	<jjohnson@kernel.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        <ath12k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250321162331.19507-1-johan+linaro@kernel.org>
+ <bc3601ae-5639-4ee4-bbcb-4e39b542bfbe@quicinc.com>
+ <Z-EMgPg5Gp-JtTZp@hovoldconsulting.com>
+ <a1aa02e8-7f58-46ae-b3df-ae43288cf683@quicinc.com>
+ <Z-EV21KDfMHds73Q@hovoldconsulting.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250322-cce038c88db88dd119a49846@orel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+In-Reply-To: <Z-EV21KDfMHds73Q@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=BoydwZX5 c=1 sm=1 tr=0 ts=67e11801 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=UeQ6FwR1gd7q9h-8i14A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: r0qJsfyVh6xZTopEqkXPRjRqzQzd8leJ
+X-Proofpoint-ORIG-GUID: r0qJsfyVh6xZTopEqkXPRjRqzQzd8leJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ spamscore=0 adultscore=0 bulkscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=760 lowpriorityscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503240061
 
 
 
-On 22/03/2025 13:06, Andrew Jones wrote:
-> On Mon, Mar 17, 2025 at 06:06:08PM +0100, Clément Léger wrote:
->> A few new errors have been added with SBI V3.0, maps them as close as
->> possible to errno values.
->>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/sbi.h | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->> index bb077d0c912f..d11d22717b49 100644
->> --- a/arch/riscv/include/asm/sbi.h
->> +++ b/arch/riscv/include/asm/sbi.h
->> @@ -536,11 +536,20 @@ static inline int sbi_err_map_linux_errno(int err)
->>  	case SBI_SUCCESS:
->>  		return 0;
->>  	case SBI_ERR_DENIED:
->> +	case SBI_ERR_DENIED_LOCKED:
->>  		return -EPERM;
->>  	case SBI_ERR_INVALID_PARAM:
->> +	case SBI_ERR_INVALID_STATE:
->> +	case SBI_ERR_BAD_RANGE:
->>  		return -EINVAL;
->>  	case SBI_ERR_INVALID_ADDRESS:
->>  		return -EFAULT;
->> +	case SBI_ERR_NO_SHMEM:
->> +		return -ENOMEM;
->> +	case SBI_ERR_TIMEOUT:
->> +		return -ETIME;
->> +	case SBI_ERR_IO:
->> +		return -EIO;
->>  	case SBI_ERR_NOT_SUPPORTED:
->>  	case SBI_ERR_FAILURE:
->>  	default:
->> -- 
->> 2.47.2
->>
+On 3/24/2025 4:20 PM, Johan Hovold wrote:
+> On Mon, Mar 24, 2025 at 04:05:33PM +0800, Baochen Qiang wrote:
+>> On 3/24/2025 3:40 PM, Johan Hovold wrote:
+>>> On Mon, Mar 24, 2025 at 11:06:16AM +0800, Baochen Qiang wrote:
+>>>> On 3/22/2025 12:23 AM, Johan Hovold wrote:
+>>>>> Extend the DMA mask to 36 bits to avoid using bounce buffers on machines
+>>>>> without an iommu (under OS control) similar to what was done for ath11k
+>>>>> in commit dbd73acb22d8 ("wifi: ath11k: enable 36 bit mask for stream
+>>>>> DMA").
+>>>>>
+>>>>> This specifically avoids using bounce buffers on Qualcomm Snapdragon X
+>>>>> Elite machines like the Lenovo ThinkPad T14s when running at EL1.
 > 
-> I'm not a huge fan sbi_err_map_linux_errno() since the mappings seem a bit
-> arbitrary, but if we're going to do it, then these look pretty good to me.
-> Only other thought I had was E2BIG for bad-range, but nah...
+>>>>> Note that the mask could possibly be extended further but unresolved DMA
+>>>>> issues with 64 GiB X Elite machines currently prevents that from being
+>>>>> tested.
+>>>>
+>>>> could you help elaborate how it could be extended?
+>>>
+>>> The mask should reflect the capability of the device. That may be
+>>> 64 (or 40) bits, but I've only been able to test using 36 bits.
+>>
+>> are you talking about QCN9274? As far as I know, WCN7850 does not support 40 bits or more.
+> 
+> Or really all devices handled by ath12k since they at least currently
+> use a common mask.
+> 
+> The T14s has a:
+> 
+> 	0004:01:00.0 Network controller: Qualcomm Technologies, Inc WCN785x Wi-Fi 7(802.11be) 320MHz 2x2 [FastConnect 7800] (rev 01)
+> 
+> 	ath12k_pci 0004:01:00.0: Hardware name: wcn7850 hw2.0
+> 	ath12k_pci 0004:01:00.0: chip_id 0x2 chip_family 0x4 board_id 0xff soc_id 0x40170200
+> 
+> Sounds like 36 bits is the correct choice for now then.
 
-Yeah I also think some mappings are a bit odd even though I skimmed
-through the whole errno list to find the best possible mappings. I'd be
-happy to find something better though.
-
-Thanks,
-
-Clément
+yes, let's keep it as 36 for now.
 
 > 
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> 
-> Thanks,
-> drew
+> Johan
 
 
