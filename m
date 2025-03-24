@@ -1,207 +1,147 @@
-Return-Path: <linux-kernel+bounces-573677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8733A6DA96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F46BA6DA9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:59:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820B21895F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3100D1896CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 12:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F396F25EFA2;
-	Mon, 24 Mar 2025 12:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A1F25F965;
+	Mon, 24 Mar 2025 12:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cjqGr3+m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnGdIw95"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3732625E445;
-	Mon, 24 Mar 2025 12:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC625E47C;
+	Mon, 24 Mar 2025 12:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820887; cv=none; b=r/T/IAfWTHvayZgw2rtP/4fK1yc59ZYWh2wie7LtKM5XXt0saib7Q28c3w0KI0xTZ3zTVYA9wMfEyxLB0T/K2WGlmpjYGHFtHWodHXSX+LATglguqoaCCYW4FgPgNUVcgEcXJeD1pdc/YVllJ66Fz00PwK2kazbuw5RHKQ6Spzc=
+	t=1742820991; cv=none; b=KFssJdKOhi3HUkwIxNszVRBamSW/vMzRaOqso1WECHW/3XjLLIXx+ZhugHW9G6Ete2Mx4vEIrDO2FVzr2hGkGBcigr5JP9KHBiB1jOeJQhHqcS6MWGZRKIagnFQ+g2jkDTrSZxNMmkFuO4j3jf65qGjEb018PDMhp0nrn17qE8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820887; c=relaxed/simple;
-	bh=5Yofkm1dNa6vGniR8xlKP/z1QwhPxmHysFr4OgO1Qtk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KvOdr5FCeoveD/RgdMJ+hFBWRQ1Qh9sJC0lHSzfNWFi2F+U7I1OSTY0e7ZZrG8aShzRiOBUZnSvbJziItm6e/8zVSmCrdMppJfbfQhHitXrdTPBSgdXgdiaMy03FjaYZM59hnAJJrH8hyMU87lz6AK2lT5kqJ5LwTop0Bj0CBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cjqGr3+m; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742820885; x=1774356885;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=5Yofkm1dNa6vGniR8xlKP/z1QwhPxmHysFr4OgO1Qtk=;
-  b=cjqGr3+m94657UAMQLtc5dieGJiIS9TGNrVmcPeWCHxonAzFoWvgzKC7
-   oSA1NoGK3s4tb8MfTVtFk7tnFn91Ehd/+tfihgLuk/NEspALOADXCQHQO
-   iw5rUlIOMX7wfIs9SXxcrKpteJNuibdYOFTjK4s0f/oTpB4Oz6/b6rkUf
-   KWNHXCqv4hbDYd9hBe6QkpnT+5sJSVC47yvgsgeJl9tOdPglfBN+gKtjM
-   36IFyU9Pv3BBednbov7TmpTHc5vXm2Yj7HUvbMWa0A6s8yViGHrkMWQ7H
-   UqMzx3qGzM1tv9OjAaJHp2W/i18PkAtxRp+OUPyMyR2/jp7P9TY/kadl5
-   Q==;
-X-CSE-ConnectionGUID: 4sMa5BH5R4KQpoGGRdBzxQ==
-X-CSE-MsgGUID: 4ANoNXOOQvi3w988TJ2ABw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43178727"
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="43178727"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:54:44 -0700
-X-CSE-ConnectionGUID: YsdPNGcISjGrFVNme+iMeg==
-X-CSE-MsgGUID: IBn7zjQUQz60GGLw/GwisQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,272,1736841600"; 
-   d="scan'208";a="147243419"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.30])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 05:54:39 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Damian Tometzki <damian@riscv-rocks.de>, Kees Cook <kees@kernel.org>
-Cc: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang
- <zhi.wang.linux@gmail.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, intel-gvt-dev@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] drm/i915/gvt: Add __nonstring annotations for
- unterminated strings
-In-Reply-To: <01070195c306db7f-9f28efdd-9456-4db3-b6c6-343298bd571b-000000@eu-central-1.amazonses.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250310222355.work.417-kees@kernel.org>
- <01070195c306db7f-9f28efdd-9456-4db3-b6c6-343298bd571b-000000@eu-central-1.amazonses.com>
-Date: Mon, 24 Mar 2025 14:54:36 +0200
-Message-ID: <87r02ma8s3.fsf@intel.com>
+	s=arc-20240116; t=1742820991; c=relaxed/simple;
+	bh=ezGvbO1wqUoNHwv+PN6VCungnRScJm/t4mGyq5mDsTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aMlPdksYyy21972xDZ1u6bF0bZTs+5nKE5GI2azvJtfqyr8u6w2cgyq9ilITIcNYeeekD0pSTgABUV4iitSaOX9IQwY0w3heMwc87qD81EWpyrJ71xMsv3OKDnRXIYtjMH8lJwkI/eGcCb2MemYyJZTFGi5UpVMxgto4Vt5ogJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnGdIw95; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2240d930f13so7846015ad.3;
+        Mon, 24 Mar 2025 05:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742820989; x=1743425789; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zxh53Yydk3txbsGDbkvLklPCWbXYfybueW5aMTdDXaw=;
+        b=hnGdIw95IZgqiH/s4AcEJvoPUUlzx7Xmxgq1wetjzxivoqFQSjHCL4AjWqcDbqJob/
+         nILRTbKyYN6Mlc95VBFXdw9mvTGuM0tIzk1EcHhbaRed1z1ERCvoyfQ/iPd+Ubnzj4CN
+         D39oqjyMck9WYbQpnqTp08699xQzcqjFQ0oGOyHPVJqPyRz5X7QVXh1+DNaA0rkLUvjV
+         NkpAZQsPDxABnsMxQguon9C6loIBDyAuQIEvFxiNtu9ciYqQJMKg/7IjJ9D3nMGdIbGa
+         Qr1SiVCXeYHpGsSzxiEWACnU3AcEbotJsVIXWOKZv9dDDPXJTYbcoS9o5YpwImBK0OH4
+         84QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742820989; x=1743425789;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zxh53Yydk3txbsGDbkvLklPCWbXYfybueW5aMTdDXaw=;
+        b=HXlHAxkIYTeYRVCM0ipa5vQnU0d9knFFj4U0STsDrnwDabrbmghDe5umgFZo3zD70V
+         rm2k1g3gY7juxCtTR2Kq/yYivAYJMAMBEGWHvnC09i8lo8McZhzxBR/6W2aOOxtIIJq5
+         y287HwKerJbyWmffHh9PzdG5YglcnJgaFWPY0Anoiklq5Dwp4z8PnETNcY+YrwiPJ8E4
+         ZFpykqG2Rst1FV/6Pe/nWXZy3zo2N68YhqFSjgaqk/2cDgov2cFCJEE1f5CVHoFJx5VC
+         MqtYD6pAJh8uhodFoPGKXN9PU4mTmK6FDv1ptIoHpbPsJlcmQ7R/eYTVGkIplqNJPztO
+         Bv3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWN/1ntPsARgJ8GVIZf1tp3/ZEmkzGLeW+gprB1ETN6JdLA2scu/sdhx8vZOh3vC6LnvpVj/1KH@vger.kernel.org, AJvYcCXom/unPKpLgZo7Mn2GhX+XIumcXtzF8H2gy6UBKXcq6iNSb5+mtFim5Cwl+Qs2OI8NFNMVihZT+ioRDvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnLefX4bC0FD4rkoWpf8TNs8SCJ72YNFYL8PXMeiUbvJRM3eOy
+	esCuAOVWVly6v90EMHMy1rn4NIca4db1xlWICKNIAVIPh11Sg75AzDJIuRUo
+X-Gm-Gg: ASbGnctojP7KKjs4aF+R+vkQtKIXvX2PMAJpEIg3+5rsJePcST9bz4LGm1VR2OYAkyp
+	yyEcRtJL4Yf64wGFvBddIXvLEBczOL+6OGtdzkedfBkNEdDYp5a9KrWsBhNnOB/CxloIXbdUn8y
+	G0gJPqF7XG3vFq8VbVjqGL9bMu/4wE8rz/0PKCkzm387X8t5tdr6dnwThPXaEzoovtYbIzWYzZ0
+	F9wMLZJeW8fWy3TbUCHFkM+WF28JPxR1YKpGcMLVx+o0+SPXuvVQ6DRmS04cKq8XSH7NhkDvdVV
+	tYTKrLSgUnQcil5SFb/DNosdsl4MAl2R88HcXKJ/e3I8nACAPJ5PmfwqtyDC/XQZdbJXe1cBWTC
+	0D9juSwNZ
+X-Google-Smtp-Source: AGHT+IELD3OXpCg41ArCduhKMvNWj039uDftBpiIIy4uFbX+0C/gGjBEXV3FiTVRks/a2rOSsAVzJg==
+X-Received: by 2002:a17:903:2306:b0:223:49ce:67a2 with SMTP id d9443c01a7336-22780def8e7mr75066035ad.9.1742820989397;
+        Mon, 24 Mar 2025 05:56:29 -0700 (PDT)
+Received: from crabo-Latitude-7350.. (1-34-73-169.hinet-ip.hinet.net. [1.34.73.169])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-227811bafabsm69308745ad.139.2025.03.24.05.56.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 05:56:29 -0700 (PDT)
+From: Crag Wang <crag0715@gmail.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+	nic_swsd@realtek.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: crag.wang@dell.com,
+	dell.client.kernel@dell.com,
+	Crag Wang <crag0715@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] r8169: add module parameter aspm_en_force
+Date: Mon, 24 Mar 2025 20:55:19 +0800
+Message-ID: <20250324125543.6723-1-crag0715@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, 23 Mar 2025, Damian Tometzki <damian@riscv-rocks.de> wrote:
-> On Mon, 10. Mar 15:23, Kees Cook wrote:
->> When a character array without a terminating NUL character has a static
->> initializer, GCC 15's -Wunterminated-string-initialization will only
->> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
->> with __nonstring to and correctly identify the char array as "not a C
->> string" and thereby eliminate the warning.
->>=20
->> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
->> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
->> Cc: Zhi Wang <zhi.wang.linux@gmail.com>
->> Cc: Jani Nikula <jani.nikula@linux.intel.com>
->> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
->> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
->> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: intel-gvt-dev@lists.freedesktop.org
->> Cc: intel-gfx@lists.freedesktop.org
->> Cc: dri-devel@lists.freedesktop.org
->> Signed-off-by: Kees Cook <kees@kernel.org>
->> ---
->>  drivers/gpu/drm/i915/gvt/opregion.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/=
-gvt/opregion.c
->> index 509f9ccae3a9..f701638d3145 100644
->> --- a/drivers/gpu/drm/i915/gvt/opregion.c
->> +++ b/drivers/gpu/drm/i915/gvt/opregion.c
->> @@ -43,7 +43,7 @@
->>  #define DEVICE_TYPE_EFP4   0x10
->>=20=20
->>  struct opregion_header {
->> -	u8 signature[16];
->> +	u8 signature[16] __nonstring;
+ASPM is disabled by default and is enabled if the chip register is
+pre-configured, as explained in #c217ab7.
 
-Why would this annotation be needed? It's not treated as a string
-anywhere, and it's u8 not char.
+A module parameter is being added to the driver to allow users to
+override the default setting. This allows users to opt in and forcefully
+enable or disable ASPM power-saving mode.
 
->>  	u32 size;
->>  	u32 opregion_ver;
->>  	u8 bios_ver[32];
->> @@ -222,7 +222,7 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
->>  	u8 *buf;
->>  	struct opregion_header *header;
->>  	struct vbt v;
->> -	const char opregion_signature[16] =3D OPREGION_SIGNATURE;
->> +	const char opregion_signature[16] __nonstring =3D OPREGION_SIGNATURE;
->>=20=20
->>  	gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
->>  	vgpu_opregion(vgpu)->va =3D (void *)__get_free_pages(GFP_KERNEL |
->> --=20
->> 2.34.1
->>=20
-> Hello together,
->
-> it doesnt resolve the build issue with gcc15 gcc (GCC) 15.0.1 20250228
->
-> CC [M]  drivers/gpu/drm/i915/gvt/scheduler.o
-> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c: In functio=
-n =E2=80=98intel_vgpu_init_opregion=E2=80=99:
-> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:35:28: erro=
-r: initializer-string for array of =E2=80=98char=E2=80=99 is too long [-Wer=
-ror=3Dunterminated-string-initialization]
->    35 | #define OPREGION_SIGNATURE "IntelGraphicsMem"
->       |                            ^~~~~~~~~~~~~~~~~~
-> /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:225:57: not=
-e: in expansion of macro =E2=80=98OPREGION_SIGNATURE=E2=80=99
->   225 |         const char opregion_signature[16] __nonstring =3D OPREGIO=
-N_SIGNATURE;
->       |                                                         ^~~~~~~~~=
-~~~~~~~~~
->   CC [M]  drivers/gpu/drm/i915/gvt/trace_points.o
-> cc1: all warnings being treated as errors
-> make[7]: *** [/home/damian/kernel/linux/scripts/Makefile.build:207: drive=
-rs/gpu/drm/i915/gvt/opregion.o] Error 1
-> make[7]: *** Waiting for unfinished jobs....
->   CC [M]  drivers/gpu/drm/i915/gvt/vgpu.o
-> make[6]: *** [/home/damian/kernel/linux/scripts/Makefile.build:465: drive=
-rs/gpu/drm/i915] Error 2
-> make[5]: *** [/home/damian/kernel/linux/s
+-1: default unset
+ 0: ASPM disabled forcefully
+ 1: ASPM enabled forcefully
 
-What about this?
+Signed-off-by: Crag Wang <crag0715@gmail.com>
+---
+ drivers/net/ethernet/realtek/r8169_main.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-IMO it's anyway good practice to use sizeof(dest) rather than
-sizeof(src) for memcpy.
-
-
-diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/gvt=
-/opregion.c
-index 509f9ccae3a9..dbad4d853d3a 100644
---- a/drivers/gpu/drm/i915/gvt/opregion.c
-+++ b/drivers/gpu/drm/i915/gvt/opregion.c
-@@ -222,7 +222,6 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
- 	u8 *buf;
- 	struct opregion_header *header;
- 	struct vbt v;
--	const char opregion_signature[16] =3D OPREGION_SIGNATURE;
-=20
- 	gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
- 	vgpu_opregion(vgpu)->va =3D (void *)__get_free_pages(GFP_KERNEL |
-@@ -236,8 +235,10 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
- 	/* emulated opregion with VBT mailbox only */
- 	buf =3D (u8 *)vgpu_opregion(vgpu)->va;
- 	header =3D (struct opregion_header *)buf;
--	memcpy(header->signature, opregion_signature,
--	       sizeof(opregion_signature));
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 53e541ddb439..161b2f2edf52 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -35,6 +35,10 @@
+ #include "r8169.h"
+ #include "r8169_firmware.h"
+ 
++static int aspm_en_force = -1;
++module_param(aspm_en_force, int, 0444);
++MODULE_PARM_DESC(aspm_en_force, "r8169: An integer, set 1 to force enable link ASPM");
 +
-+	static_assert(sizeof(header->signature) =3D=3D sizeof(OPREGION_SIGNATURE)=
- - 1);
-+	memcpy(header->signature, OPREGION_SIGNATURE, sizeof(header->signature));
+ #define FIRMWARE_8168D_1	"rtl_nic/rtl8168d-1.fw"
+ #define FIRMWARE_8168D_2	"rtl_nic/rtl8168d-2.fw"
+ #define FIRMWARE_8168E_1	"rtl_nic/rtl8168e-1.fw"
+@@ -5398,6 +5402,14 @@ static void rtl_init_mac_address(struct rtl8169_private *tp)
+ /* register is set if system vendor successfully tested ASPM 1.2 */
+ static bool rtl_aspm_is_safe(struct rtl8169_private *tp)
+ {
++	if (aspm_en_force == 0) {
++		dev_info(tp_to_dev(tp), "ASPM disabled forcefully");
++		return false;
++	} else if (aspm_en_force > 0) {
++		dev_info(tp_to_dev(tp), "ASPM enabled forcefully");
++		return true;
++	}
 +
- 	header->size =3D 0x8;
- 	header->opregion_ver =3D 0x02000000;
- 	header->mboxes =3D MBOX_VBT;
+ 	if (tp->mac_version >= RTL_GIGA_MAC_VER_61 &&
+ 	    r8168_mac_ocp_read(tp, 0xc0b2) & 0xf)
+ 		return true;
+-- 
+2.43.0
 
-
-
---=20
-Jani Nikula, Intel
 
