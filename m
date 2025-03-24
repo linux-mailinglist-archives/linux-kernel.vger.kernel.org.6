@@ -1,183 +1,132 @@
-Return-Path: <linux-kernel+bounces-573382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18DAA6D695
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AEEA6D69C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:52:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B0D188F6FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E957A16D107
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4882D25D20E;
-	Mon, 24 Mar 2025 08:49:32 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5C71DFF0;
-	Mon, 24 Mar 2025 08:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702B725D8E7;
+	Mon, 24 Mar 2025 08:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="C0XZuoT9";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="v8/6KfCN"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011041EA7C7;
+	Mon, 24 Mar 2025 08:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806171; cv=none; b=rDI6vHOGZCZlTLbcFNmjTz5MTGfcagTm7sxKTzGmFByjAQkNGNS2qUF0KrEKJz2LlBlZDmW74/yZBg+3ZtHKWpDzw1iSyVrY+fbLWsRQ/7sIQZ8V0K4H0i/ISKPVHgr7r1w9NM5/KjoIg/OJXDsRrQn96gNzmQWhhbYHTyA5iH8=
+	t=1742806302; cv=none; b=g+5e/5l6/zFDIU/pTi0jHM4FrRjj6bfH7Loa/BlfceheaZMncxTJgDTM7YAY0GOwkeGgCNL5SBrb4Z7qM5igrs6SVe7sZyRErq867+HGY0HGnJzq8w/ErWzdCl3W8XPV1Z0iDEU/yq4FR2+hfAqyXR7ZfXhaRIQyujNyVYdRoR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806171; c=relaxed/simple;
-	bh=tgHSdLmcu+BTlohdPKf8RQNBJRwJvD587RFMtRPn/Ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jC4GfRudhxNe4fMfCnhM4P+GXUjKYxl1ic4mpxnTPuZCwVzPs4xzpcbL84ScVzIMJBoPZU98rVIUae9LGFrZRY4JAgg58x0Glm4lbFb6TFA+gCwOqeoFigFW9RAfn6LEHOh92HJIcOpoufgd5KE5xygNVBOttM1Rx8hMHK54aFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-a9-67e11c94e9b9
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	david@redhat.com,
-	Jonathan.Cameron@huawei.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [PATCH v3 3/3] mm/mempolicy: Support memory hotplug in weighted interleave
-Date: Mon, 24 Mar 2025 17:48:39 +0900
-Message-ID: <20250324084920.987-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z912rrV4xTOBwEP7@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1742806302; c=relaxed/simple;
+	bh=to3IjdK/aZxIDidItr1Z1X98BJCv5/doq2FXz5bxzxc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EzZ4jltLFejEpBRJAgoc63Oseiob5UGAW9OCxvuzI+UwxmDVeM7GMYc1XAqJK7U5iEwL9B4u5aDjm5T+Jj+nZHLBPn+mEvhzAEsYQ8Tq7MB/IOQ5Zk0nJwgyh0S+vI+c6DqfBuLcTkB+NkWkQMQP4aMT8I3a7dG4Q/WXJdW5oN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=C0XZuoT9; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=v8/6KfCN; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 5BF36E0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1742806284; bh=b/coSPRwVAO18LknwNn+NW81MVSEIOnW/h0dRACfRRA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=C0XZuoT9XWn+86QpBSRvmf/ZO9tF9D6XL+2Ja7DcZDA3JBoXGAIF2FpqCySk5JKs/
+	 YjSM6TnfuKNxdBUE+3c7MOB0Qj7EKCj0oZ08lBC+jatN6JJfl6gMJrV8bmjQ1mF9WG
+	 Q7/IFBmrL8xvh4dDLRaZdplN5cz0oBsCopS9hXdrsDGobgckOdR0YasGfsKCJhFF43
+	 Up/UHVyQUFdgNgy8/b7r+yfjY4xE744Gl2MUEiZ7iyvat8GAVcgDWRryByLIh2bySC
+	 5SoSnNRAYKITQAe3iIm4VRLIV3m3XjxWVvYkAPlBasVSHHKPwTL0ehVl4EMp8phkss
+	 /T+E5NLN4ZDZw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1742806284; bh=b/coSPRwVAO18LknwNn+NW81MVSEIOnW/h0dRACfRRA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=v8/6KfCNj0CyebnwGEt0dKxEE2tPbgEXvAp1nPfl6gBhiYEQacUtPSK7NSXLroACI
+	 M2hkl2qKEdgnZHPgXT7Hziehc7cC3E84QPleLS33vOwCZbnUn9qc5hdGFNyhGzJAqp
+	 RY8/fEPmkfVXEBcSj9zLbBL1pvjKU7HAHzBJUo/YVzZvCa5No1/kSkGqhxh7Rqtirb
+	 W07owI7FlS26iJobRELimMS3h2D+boLyDFh4z9QKMgaMR//FVS+sp/z/Z7h51ZZ50k
+	 7DoQ91EcvhThLJal/FoyzSKVGHx1V+Kr8Qg6NGoAdVhxm+p8y7JxXrtvJc8TbwqtEU
+	 xWa4WPPPygAMQ==
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<hare@suse.de>, <axboe@kernel.dk>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux@yadro.com>
+Subject: [PATCH 0/1] Fix not fully initialized SCSI commands
+Date: Mon, 24 Mar 2025 11:49:32 +0300
+Message-ID: <20250324084933.15932-1-a.kovaleva@yadro.com>
+X-Mailer: git-send-email 2.40.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXC9ZZnke5UmYfpBt3NLBZz1q9hs5g+9QKj
-	xdf1v5gtft49zm6xauE1NovjW+exW5yfdYrF4vKuOWwW99b8Z7VYvSbDgctj56y77B7dbZfZ
-	PVqOvGX1WLznJZPHpk+T2D1OzPjN4rHzoaXH+31X2Tw+b5IL4IzisklJzcksSy3St0vgyph+
-	/T1TwWWpikPnFzE2ML4R6WLk5JAQMJF4sGYmE4x9YNNc1i5GDg42ASWJY3tjQEwRAVWJtivu
-	XYxcHMwCj5gkTrcvZQUpFxYIl+g++JAFpIYFqObGu1yQMK+AscTvxysZISZqSjRcugc2nVPA
-	TOLt27XsILaQAI/Eqw37GSHqBSVOznzCAmIzC8hLNG+dzQyyS0LgNZtEx7tNzBCDJCUOrrjB
-	MoGRfxaSnllIehYwMq1iFMrMK8tNzMwx0cuozMus0EvOz93ECAz2ZbV/oncwfroQfIhRgINR
-	iYd3w8v76UKsiWXFlbmHGCU4mJVEeI+xPkwX4k1JrKxKLcqPLyrNSS0+xCjNwaIkzmv0rTxF
-	SCA9sSQ1OzW1ILUIJsvEwSnVwDi/5khosGTS3u/dp1ojWoUuRq90LZfcFjS34c3y1v8GJ2v2
-	nPyn41y8tvTVgt6/jY8U45aqFB7X2sZ5jCvJm/1xVNIJg2Vr5KuEloVFF2+Tq1auDo9J0uJY
-	J3l3zpHniXJPDIJXrf4ocmD1pq1fHjWePjvRfp/nmQD1UxM5Qv5zXTlemS9nsleJpTgj0VCL
-	uag4EQCiZuT9cgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsXCNUNNS3eKzMN0g7szLC3mrF/DZjF96gVG
-	i6/rfzFb/Lx7nN3i87PXzBarFl5jszi+dR67xeG5J1ktzs86xWJxedccNot7a/6zWhy69pzV
-	YvWaDIvf21awOfB57Jx1l92ju+0yu0fLkbesHov3vGTy2PRpErvHiRm/WTx2PrT0eL/vKpvH
-	t9seHotffGDy+LxJLoA7issmJTUnsyy1SN8ugStj+vX3TAWXpSoOnV/E2MD4RqSLkZNDQsBE
-	4sCmuaxdjBwcbAJKEsf2xoCYIgKqEm1X3LsYuTiYBR4xSZxuX8oKUi4sEC7RffAhC0gNC1DN
-	jXe5IGFeAWOJ349XMkJM1JRouHSPCcTmFDCTePt2LTuILSTAI/Fqw35GiHpBiZMzn7CA2MwC
-	8hLNW2czT2DkmYUkNQtJagEj0ypGkcy8stzEzBxTveLsjMq8zAq95PzcTYzAAF9W+2fiDsYv
-	l90PMQpwMCrx8G54eT9diDWxrLgy9xCjBAezkgjvMdaH6UK8KYmVValF+fFFpTmpxYcYpTlY
-	lMR5vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MPVNSbBRftsWeP/v9arb1v4i082b3fqoW84TO
-	m6xbfOHF/xUnvdeJd2m8SP6zPaHCZ32GlbKRjxrznkcdp3Y0eascmJLh1JO6otv08HSJLZ3C
-	3e6pF4o37Mt6bhsUPT9NpSomac+bBLnm2qvXRZcYZze9S8kSri/qvH6i+IizwblTZuxdJcxK
-	LMUZiYZazEXFiQA6gMb5bAIAAA==
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTM-EXCH-04.corp.yadro.com (10.34.9.204) To
+ T-EXCH-09.corp.yadro.com (172.17.11.59)
 
-On Fri, 21 Mar 2025 10:24:46 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Thu, Mar 20, 2025 at 01:17:48PM +0900, Rakie Kim wrote:
-> ... snip ...
-> > +	mutex_lock(&sgrp->kobj_lock);
-> > +	if (sgrp->nattrs[nid]) {
-> > +		mutex_unlock(&sgrp->kobj_lock);
-> > +		pr_info("Node [%d] already exists\n", nid);
-> > +		kfree(new_attr);
-> > +		kfree(name);
-> > +		return 0;
-> > +	}
-> >  
-> > -	if (sysfs_create_file(&sgrp->wi_kobj, &node_attr->kobj_attr.attr)) {
-> > -		kfree(node_attr->kobj_attr.attr.name);
-> > -		kfree(node_attr);
-> > -		pr_err("failed to add attribute to weighted_interleave\n");
-> > -		return -ENOMEM;
-> > +	sgrp->nattrs[nid] = new_attr;
-> > +	mutex_unlock(&sgrp->kobj_lock);
-> > +
-> > +	sysfs_attr_init(&sgrp->nattrs[nid]->kobj_attr.attr);
-> > +	sgrp->nattrs[nid]->kobj_attr.attr.name = name;
-> > +	sgrp->nattrs[nid]->kobj_attr.attr.mode = 0644;
-> > +	sgrp->nattrs[nid]->kobj_attr.show = node_show;
-> > +	sgrp->nattrs[nid]->kobj_attr.store = node_store;
-> > +	sgrp->nattrs[nid]->nid = nid;
-> 
-> These accesses need to be inside the lock as well.  Probably we can't
-> get here concurrently, but I can't so so definitively that I'm
-> comfortable blind-accessing it outside the lock.
+We have encountered the following type of logs on initiators:
 
-You're right, and I appreciate your point. It's not difficult to apply your
-suggestion, so I plan to update the code as follows:
+kernel: sd 16:0:1:84: [sdts] tag#405 timing out command, waited 720s
+kernel: sd 16:0:1:84: [sdts] tag#405 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_OK cmd_age=66636s
 
-    sgrp->nattrs[nid] = new_attr;
+The initiator uses dm-mpath for multipathing, the SCSI mid layer, and
+the QLogic FC HBA driver (qla2xxx). After debugging, the following call
+stack was identified:
 
-    sysfs_attr_init(&sgrp->nattrs[nid]->kobj_attr.attr);
-    sgrp->nattrs[nid]->kobj_attr.attr.name = name;
-    sgrp->nattrs[nid]->kobj_attr.attr.mode = 0644;
-    sgrp->nattrs[nid]->kobj_attr.show = node_show;
-    sgrp->nattrs[nid]->kobj_attr.store = node_store;
-    sgrp->nattrs[nid]->nid = nid;
+blk_mq_sched_dispatch_requests()
+  blk_mq_dispatch_rq_list()
+    dm_mq_queue_rq()
+      map_request()
+        ti->type->clone_and_map_rq()    // New cloned request with tag 405
+        blk_insert_cloned_request()
+          scsi_queue_rq()
+            qla2xxx_mqueuecommand()
+              qla2xxx_dif_start_scsi_mq()
 
-    ret = sysfs_create_file(&sgrp->wi_kobj,
-           &sgrp->nattrs[nid]->kobj_attr.attr);
-    if (ret) {
-        mutex_unlock(&sgrp->kobj_lock);
-        ...
-    }
-    mutex_unlock(&sgrp->kobj_lock);
+If qla2xxx_dif_start_scsi_mq() returns an error for any reason (e.g.,
+due to extremely heavy traffic causing the driver to exhaust its
+handles), scsi_done() -> scsi_end_request() is not called within
+qla2xxx_mqueuecommand(). As a result, the SCMD_INITIALIZED flag
+remains set. Next, map_request() releases the cloned request and
+requeues the original request. While the cloned request is released, the
+associated SCSI command retains stale data from the previous command.
 
-> 
-> > +static int wi_node_notifier(struct notifier_block *nb,
-> > +			       unsigned long action, void *data)
-> > +{
-> ... snip ...
-> > +	case MEM_OFFLINE:
-> > +		sysfs_wi_node_release(nid);
-> 
-> I'm still not convinced this is correct.  `offline_pages()` says this:
-> 
-> /*
->  * {on,off}lining is constrained to full memory sections (or more
->  * precisely to memory blocks from the user space POV).
->  */
-> 
-> And that is the function calling:
-> 	memory_notify(MEM_OFFLINE, &arg);
-> 
-> David pointed out that this should be called when offlining each memory
-> block.  This is not the same as simply doing `echo 0 > online`, you need
-> to remove the dax device associated with the memory.
-> 
-> For example:
-> 
->       node1
->     /       \
->  dax0.0    dax1.0
->    |          |
->   mb1        mb2
-> 
-> 
-> With this code, if I `daxctl reconfigure-device devmem dax0.0` it will
-> remove the first memory block, causing MEM_OFFLINE event to fire and
-> removing the node - despite the fact that dax1.0 is still present.
-> 
-> This matters for systems with memory holes in CXL hotplug memory and
-> also for systems with Dynamic Capacity Devices surfacing capacity as
-> separate dax devices.
-> 
-> ~Gregory
+If all I/O traffic stops for some extended period of time, and later
+resumes, the following scenario may occur:
 
-If all memory blocks belonging to a node are offlined, the node will lose its
-`N_MEMORY` state before the notifier callback is invoked. This should help avoid
-the issue you mentioned.
-Please let me know your thoughts on this approach.
+blk_mq_sched_dispatch_requests()
+  blk_mq_dispatch_rq_list()
+    dm_mq_queue_rq()
+      map_request()
+        ti->type->clone_and_map_rq()    // New cloned request uses tag 405 again
+        blk_insert_cloned_request()
+          scsi_queue_rq()
 
-Rakie
+
+Within scsi_queue_rq(), the scsi_init_command() function does not call
+scsi_initialize_rq() because the SCMD_INITIALIZED flag is already set.
+Because of that, when the command completes in scsi_complete(), the
+scsi_cmd_runtime_exceeded() check returns true, causing the command to
+fail.
+
+This issue appears after the commit 4abafdc4360d ("block: remove the
+initialize_rq_fn blk_mq_ops method"). Before this change, the
+initialize_rq_fn method forcibly initialized the SCSI command in
+blk_get_request(). There may be other places where a command is queued
+in scsi_queue_rq() but scsi_done() is not called.
+
+Anastasia Kovaleva (1):
+  scsi: uninit not completed scsi cmd
+
+ drivers/scsi/scsi_lib.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--
+2.40.3
 
 
