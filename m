@@ -1,106 +1,181 @@
-Return-Path: <linux-kernel+bounces-574247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C26A6E28A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:38:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA391A6E290
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3740E168AA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C9B188EF9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39047264F84;
-	Mon, 24 Mar 2025 18:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED9264F8B;
+	Mon, 24 Mar 2025 18:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ae1h2rNa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FVWcJ/DA"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B180210FB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E6D2627E9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742841513; cv=none; b=DDMkpXazkG0smJ26LKGV1iD+Q0tEUMlARC172wuLRYfQZRmLCHSfKXHpdVzmIPk/XqwTOEwF9dyOvrRbB3js3UL8izutHwjf/Ka8K8m9cnYVJhvqPxCef4tXl7B+s0IZr51ubu5NwbXjuAHJPJ4Vwi5ONi/DlogBEa6brlmJwjk=
+	t=1742841657; cv=none; b=gguU4TGbrxxiKuLRkZVNESlaNerZTPuNYEZ0IyaMIYEmZowCPO80GC3ZMlnjMZ1h3i0pAbo39oiIvS6WrXZVUBOCviSBKKn+vOkzcEmghNm+IgkW499k4pWK00mgxizsgNbhWhEQ28ZvQ2UVcMzVN2FCMOJGFq1Fm7VhFUqIDCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742841513; c=relaxed/simple;
-	bh=DFhrkLzWPbRqqwd2LvqqhcGL6D6+0BOVFC/oAWTGg8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJxpEFa6HrCH7YOYZwhmqsj4UB/lGjtqbp3CdfTeyuQTVSzi6p50uivtKFLzL8N11iyg3rVsc5JIK02VWo6bEvFqIvr8OAt/Qd8TJS+RcH/gOPnPrjsJWdU0UA2poSMZ7qzWmq9b8Af0vy1vohVy8ZjIkKU7yWCDKQDrItF3D5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ae1h2rNa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742841511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DFhrkLzWPbRqqwd2LvqqhcGL6D6+0BOVFC/oAWTGg8o=;
-	b=Ae1h2rNahQOuZh0naeFrmkijljKfRFOk80UpBTp7EueYia8OoonXXhbGknVj3HXWH+F+13
-	5K0tzrFEzjImPodPGj/6rxnB3wCxI/km6/iqbClGZQW8dKl0bljsGR+wm6xHvnBvlvVy9L
-	8lf4M0IpvaTonN8Qg+aqLs6b2HaeVGc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-So49VpcsPLSk5FJJVtoabw-1; Mon,
- 24 Mar 2025 14:38:27 -0400
-X-MC-Unique: So49VpcsPLSk5FJJVtoabw-1
-X-Mimecast-MFC-AGG-ID: So49VpcsPLSk5FJJVtoabw_1742841506
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D9E218EBE99;
-	Mon, 24 Mar 2025 18:38:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 906A6180A801;
-	Mon, 24 Mar 2025 18:38:21 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 24 Mar 2025 19:37:52 +0100 (CET)
-Date: Mon, 24 Mar 2025 19:37:47 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
-	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-Message-ID: <20250324183746.GB29185@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <20250324160003.GA8878@redhat.com>
- <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
- <20250324182722.GA29185@redhat.com>
+	s=arc-20240116; t=1742841657; c=relaxed/simple;
+	bh=f4DdomVr0nagMtgc+/I4m7RjU+SfBMD1Z8bRaM4ug24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sllmBCY622n/s3UcCgBYgXd+Z4wyZpncNC6gbkQcWNzEhbVPWo/RrxKFW4THW6sq4oDGVrjbBi3cIpMvgdgtU94adtcW+qLYBfmuxBKI1+HSEP9yzCZCXmEmG9ifTEO+bZyJqAcXFIPUpwJO/ni0SWE1dghltslJroSB1o+ojrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FVWcJ/DA; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47666573242so82161cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 11:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742841655; x=1743446455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KVFFcWh5dZoKRR9sK5sDoRV9h4cdUzLL2+BzZ81kSD4=;
+        b=FVWcJ/DAyPeQjruz6D0IltEw1GE2o5uBRFsoT1jO48Qw4gOTOLTyG6rbPCL/7ZoK7W
+         zIs5woQMJhmqkx7tWt+t3+tlwxgDvnievXBp2csINaHtd7S0yhsFAJqu64AIoxl4xSuu
+         d0GPi4R2LjoUW7GwtdnK7r5b/+5e/FRTraE5VU5iLHrvOsq1+ARUKHGZradRVsUEz9u9
+         W2kFWIfTeplAb8TEOUrIgHrSJnRs09QMNX/xSNritvK40SfhcjwIdD1QetKu+QdJZ07d
+         fwAB4driL99492Fv++wB6axZSRH2SMseCinuu8SSSSKL2G5Vr7dVWztsKmpeZXiSa0WW
+         Ystg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742841655; x=1743446455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KVFFcWh5dZoKRR9sK5sDoRV9h4cdUzLL2+BzZ81kSD4=;
+        b=s7pYamUUoITzCGOZYvqJwCXjW5cP4FXVOMiMuwGjdtjXA2rnmQ1r6oRR2Zhh90sRPX
+         gzpQXo5tPAKvXBr/IJQ3X9mRlK/owyMRFIBmmkJ3dR4eDL7qhJMowCtBanJO2kmeWGze
+         /4zDZmO9sKYxRJSFnrPlGF+jj2SQVjFDiLfWY2SOVrwtRakcKrogCRsQwDi2MmlEsJ+p
+         2E8dvtWHJURDxJgNk9pVhF3SMMsf4wx0PEynKY1njUPSsKVA1PdGwr2Xw4gGIh6gCmW/
+         Qk0+RNI9LQFaqOZi0sPcBAEw2KclWrA1hbBtq+XHMGqTmNrpaM9HFqTHGom4MJRWwuHD
+         izOA==
+X-Gm-Message-State: AOJu0Yz0EHDSVkkHMsAFflI4HoekI7HaJsxTkdDMCtPmgCcjoaQ7Ovpe
+	yYJluX1c4EZ/dMd1dKkjd6hFRsbh61EcJ+kW4FnK9qdJHUneMJvj2H/36XBP2s/7OJ47Qa6+3Io
+	v2twk+AfqVeSYyhbEK8idqsfDxpB5frjlbEp4
+X-Gm-Gg: ASbGnctPX2Bz04cGC+W4Kr8klu1axmDzpy9cXphT5WOaNyJ7otxF/rxvEBvo5DLbr7g
+	S6gCdse2kPUud7GJVEv3nJuGpdzz6HL3kyNN9R5b+r8mYXDPHXHd9LOvlwHGqz3jZ/d9HGZIl5D
+	sQv3FbkwQ/UgoHYl5LcOVshOQ=
+X-Google-Smtp-Source: AGHT+IE5+gZ94fZfEMa4/mu+5y69Keqgf6GYglfVDQZk9TGfgwTjD/V2nGDREwNflvI0c0qaa+IqDh+lZikxQgFL/jU=
+X-Received: by 2002:a05:622a:17c4:b0:475:1410:2ca3 with SMTP id
+ d75a77b69052e-4772be23f26mr9607281cf.15.1742841654660; Mon, 24 Mar 2025
+ 11:40:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324182722.GA29185@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250320015551.2157511-1-changyuanl@google.com> <20250320015551.2157511-8-changyuanl@google.com>
+In-Reply-To: <20250320015551.2157511-8-changyuanl@google.com>
+From: Frank van der Linden <fvdl@google.com>
+Date: Mon, 24 Mar 2025 11:40:43 -0700
+X-Gm-Features: AQ5f1JqgK3t9nzg4mdWiXWpH_sA43D2BNXiBuTZpvx6PAjAQCpPGjdYAtW64c_s
+Message-ID: <CAPTztWbFXajArSN8yKu32eSoR=xsk1CHM_4V7MJ0eQxydFqPUQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/16] kexec: add Kexec HandOver (KHO) generation helpers
+To: Changyuan Lyu <changyuanl@google.com>
+Cc: linux-kernel@vger.kernel.org, graf@amazon.com, akpm@linux-foundation.org, 
+	luto@kernel.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
+	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
+	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
+	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
+	pasha.tatashin@soleen.com, hpa@zytor.com, peterz@infradead.org, 
+	ptyadav@amazon.de, robh+dt@kernel.org, robh@kernel.org, saravanak@google.com, 
+	skinsburskii@linux.microsoft.com, rostedt@goodmis.org, tglx@linutronix.de, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, will@kernel.org, 
+	devicetree@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/24, Oleg Nesterov wrote:
+On Wed, Mar 19, 2025 at 6:56=E2=80=AFPM Changyuan Lyu <changyuanl@google.co=
+m> wrote:
 >
-> I won't argue with another solution. But this problem is quite old,
+> From: Alexander Graf <graf@amazon.com>
+>
+> Add the core infrastructure to generate Kexec HandOver metadata. Kexec
+> HandOver is a mechanism that allows Linux to preserve state - arbitrary
+> properties as well as memory locations - across kexec.
+>
+> It does so using 2 concepts:
+>
+>   1) State Tree - Every KHO kexec carries a state tree that describes the
+>      state of the system. The state tree is represented as hash-tables.
+>      Device drivers can add/remove their data into/from the state tree at
+>      system runtime. On kexec, the tree is converted to FDT (flattened
+>      device tree).
+>
+>   2) Scratch Regions - CMA regions that we allocate in the first kernel.
+>      CMA gives us the guarantee that no handover pages land in those
+>      regions, because handover pages must be at a static physical memory
+>      location. We use these regions as the place to load future kexec
+>      images so that they won't collide with any handover data.
+>
+> Signed-off-by: Alexander Graf <graf@amazon.com>
+> Co-developed-by: Pratyush Yadav <ptyadav@amazon.de>
+> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+> Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Co-developed-by: Changyuan Lyu <changyuanl@google.com>
+> Signed-off-by: Changyuan Lyu <changyuanl@google.com>
+> ---
+>  MAINTAINERS                    |   2 +-
+>  include/linux/kexec_handover.h | 109 +++++
+>  kernel/Makefile                |   1 +
+>  kernel/kexec_handover.c        | 865 +++++++++++++++++++++++++++++++++
+>  mm/mm_init.c                   |   8 +
+>  5 files changed, 984 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/kexec_handover.h
+>  create mode 100644 kernel/kexec_handover.c
+[...]
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 04441c258b05..757659b7a26b 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/crash_dump.h>
+>  #include <linux/execmem.h>
+>  #include <linux/vmstat.h>
+> +#include <linux/kexec_handover.h>
+>  #include "internal.h"
+>  #include "slab.h"
+>  #include "shuffle.h"
+> @@ -2661,6 +2662,13 @@ void __init mm_core_init(void)
+>         report_meminit();
+>         kmsan_init_shadow();
+>         stack_depot_early_init();
+> +
+> +       /*
+> +        * KHO memory setup must happen while memblock is still active, b=
+ut
+> +        * as close as possible to buddy initialization
+> +        */
+> +       kho_memory_init();
+> +
+>         mem_init();
+>         kmem_cache_init();
+>         /*
 
-Yes, but...
 
-> unless I am totally confused this logic was wrong from the very
-> beginning when fs->in_exec was introduced by 498052bba55ec.
+Thanks for the work on this.
 
-OK, I was wrong. According to git show 498052bba55ec:fs/exec.c
-this patch was correct in this respect. Sorry for the noise.
+Obviously it needs to happen while memblock is still active - but why
+as close as possible to buddy initialization?
 
-> So to me it would be better to have the trivial fix for stable,
-> exactly because it is trivially backportable. Then cleanup/simplify
-> this logic on top of it.
+Ordering is always a sticky issue when it comes to doing things during
+boot, of course. In this case, I can see scenarios where code that
+runs a little earlier may want to use some preserved memory. The
+current requirement in the patch set seems to be "after sparse/page
+init", but I'm not sure why it needs to be as close as possibly to
+buddy init.
 
-Yes...
-
-Oleg.
-
+- Frank
 
