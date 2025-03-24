@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-574189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43B2A6E1D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:58:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D565CA6E199
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D80B3AD5F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:51:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEAF67A7C9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B226268FC2;
-	Mon, 24 Mar 2025 17:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96763268FF6;
+	Mon, 24 Mar 2025 17:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RQwIXqJB"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E19F2641E9;
-	Mon, 24 Mar 2025 17:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnjTW6lo"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B122641FE;
+	Mon, 24 Mar 2025 17:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838221; cv=none; b=BhrFzI2OdffKdpjyrV0uF6E/vmn7Ua/bAlla9P8j/buSpA8UFIVnEAom5pbTnT89RVOlh2/OqxxVmLBXbyPz0nFac55xLnE/UPo5yALjnTEWNN7nbBgeWoRHm2408DSqySiUb7jUXm046oCoGWwDpqL6rmZbdc4d1r2UXjQTaIo=
+	t=1742838250; cv=none; b=ovIqQi7PweNT9QnOHgy4dnihV+3HOySMQhu8PHGPUKaQ+CeUQp9Yzg3aSGgr6Qz4/pRoqR7Egf9myezLbWlJT+GT/jLzfpvJ5e19nwMK5Zh8nCPHOppr2YJa5ufOa4mEVNvzBlFTdk7KAzUGcoroHJarqAXP/5ryUBU+kBA0rgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838221; c=relaxed/simple;
-	bh=IEbZX5LHrjNjLHzpwBGHTfQ+kmLMtFidxbWZveAryjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBVyJErLEUqXaI+bKlXlqSat45cJz3QgOHNM68SilBskzQYVetg9ayi8NqpTrWW4GRnpb9BgPmwWDcKGgFDm15NqcqjqOU+0LqUZejJ0gX/N8lF2ZZ5dey4gcWBmNTzQeRhHuNYe8KVXS1dgnfTIiP10VstXcQ4qzySAWWp8aKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RQwIXqJB; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id A2BA1211AA01; Mon, 24 Mar 2025 10:43:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A2BA1211AA01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742838219;
-	bh=R0yptjoilxJTorB2L0W8GLNAJvxs/9K84UNE0zqBuPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RQwIXqJBSTQ+Fzolz8VNvpueVTY2MJrPe63NQ3B5cOjnV/K+0x7jZ5i8TJsft8Ewa
-	 88X/IiZGs4Qs1d0bosnLp5bpEhlmPCUHGoNS1fRF5UcMsDbfRfhmUHMO/NItBNrIhu
-	 gCUPmQ8KgiPX8gtMIjSGiLteYPuRztvQE9bSI9SE=
-Date: Mon, 24 Mar 2025 10:43:39 -0700
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
-	brett.creeley@amd.com, surenb@google.com,
-	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
-	shradhagupta@linux.microsoft.com, erick.archer@outlook.com,
-	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: mana: Add speed support in
- mana_get_link_ksettings
-Message-ID: <20250324174339.GA29274@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
- <1742473341-15262-2-git-send-email-ernis@linux.microsoft.com>
- <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
+	s=arc-20240116; t=1742838250; c=relaxed/simple;
+	bh=P/9XwcXsOVbKjjIK2Rpo++6HrgceuJ+gEbpX1cDqB18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qIEbetx80x/IvYPRp1btq7AGMNXSaZAf5F/XC5u237Q6HSXhZUYNk/3vclvkexXeCAh8FPMEu5m7njZuObOgXDLAcrI8Mo2pYNjV5+mOCAEMajODSMRsJJdU7IJmYVUYUL9YTH7bY3789ajhkzGjyaI7hfHCwOlIUTwpY48TWac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnjTW6lo; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-227c7e4d5feso3214925ad.2;
+        Mon, 24 Mar 2025 10:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742838248; x=1743443048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tr7fz1vFTN6V3l8Oj56sNPcrXIYTQ8WnJdNMz8DEkSI=;
+        b=GnjTW6loFPfGbjIi2FRhMPLkBRNxbOPi2yfELgTLmnL0eL1iw63loekxfl8LiuUJfO
+         csyJY9xwmVzmQqDxkqAlQd38rXnwNEGbkFtbrFyGbM8llYOu7fnqKW9V1nXqowL1GyGd
+         qyx8upCZE3XorVJ2/eqCAhH2lmBe+1KXcKCOspGkfmI1WApaynNi2zVLs41oTO60OV2q
+         FuU0NN6xVHhduOXbSZkunODgNZt4duRTi6Iun1hOP7/qTnjuQzkIIW3Tx3haTcH8N8Lk
+         3GnPnxKICIu4Xqy5hbfZ1xdYGqE1Z4S9gCwLF148+yzqqyExycihAXQRwiDFOdrOgyL2
+         1fFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742838248; x=1743443048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tr7fz1vFTN6V3l8Oj56sNPcrXIYTQ8WnJdNMz8DEkSI=;
+        b=fAqAn/ukwAxU+ms8m331LcmheVEevjpI8Bpw2kjVnzIMSmGgyL8A8NTqmNZf0bQIu/
+         Xtx+u+e6f5ufjOx0idyA5ndMi/Rs9rmHIg5E1pgc0UgbhD8UvEeIwGfU+Yr8FOzUCoY/
+         rTNTVydcGtRKlk0LI+m9KwQm2IQKnqgD3/GqdwrWmGQEEdkw5cNbvWlgUvsmkMuNffAk
+         CB3Tt03/12iW3Zq49a0+XXVt7f12Fqd9mDtwMGNg7NyuMgVPOLooOQTN+Ybyn+9rx2Gk
+         iED24RgWuRj6gwmogvnno0X6UzzertC3EkjQFex2uH56oONJ9Aveoh9fuiU0CyVaADZG
+         jnxg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Hc06OmpEKRR7QDOZWnXQ+Xo5YqxfAhYIT++D9N8HuSnLOG0SJyr1Zo9YHzsqONNyBbXnJ1sfBpDv6EM=@vger.kernel.org, AJvYcCV1kyKzp7pluegcWhYvYLDIEfO4A8vtin/xuHhL2nWa3dJTk5qRCmyKMRHV8zRS2OAQuYsdBZiDVVJeRA==@vger.kernel.org, AJvYcCWhZuCtcfF0ELxaKAO1TiDSc9k1nfJnanHbq9S3u4Rmz62R1aoWGrhFXq2S4hx7FitF/Lg6fCNwiAtmZSSGjdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF12CHVIgfdrynkqSzP/yfGRnGcxER9wZckIbknu8Lj+phfF3T
+	2aerHdujNmeK5kFKYZpYTsr6ls0b3t9YyRhbNnbsOBM47PYNIRMvwMPblFyKlpBDQ99R82Hy8m+
+	fiKYXUQVIzNkrEjH+oW0vxFUXc+A=
+X-Gm-Gg: ASbGncuKTOYFkDgRo4UnMOa9/UyrwTZ/JIwOy+E+1VxSEnTbRu5uQBSQqFt+mPZO7Py
+	gh1kMu+BaEy/gWAXfO6pqmsBm+vMSwohLqTUV3lWsBbgcwW4311U2740H68dtUP024Wjix+tOjM
+	nh4Lge6TVxdUmn+4GkkDHpLQK4C0nHIKV1vs1x
+X-Google-Smtp-Source: AGHT+IHYp9P9Hd3H4WMAsbHt6gCS/M91bXqwUYnS4WNJN4VZ7p6l1yhJAh3NdyRbzI1+vwpRSq5rBe1g++hktt0Og2E=
+X-Received: by 2002:a17:902:ce90:b0:224:10a2:cad1 with SMTP id
+ d9443c01a7336-227913b859fmr49736135ad.10.1742838248360; Mon, 24 Mar 2025
+ 10:44:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20250324174048.1075597-1-ojeda@kernel.org>
+In-Reply-To: <20250324174048.1075597-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 24 Mar 2025 18:43:56 +0100
+X-Gm-Features: AQ5f1JoAdDo2FferEGh4NhTQm25Yv727k5xcAQZM5n2ArJ6hFCIees06wSeNwIE
+Message-ID: <CANiq72n-eP=gkfjLRA+F56WqaQwRZE2B0x4G9eF3W_U5eGxBbg@mail.gmail.com>
+Subject: Re: [PATCH] rust: dma: add `Send` implementation for `CoherentAllocation`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	rust-for-linux@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 02:37:47PM +0100, Andrew Lunn wrote:
-> > +int mana_query_link_cfg(struct mana_port_context *apc)
-> > +{
-> > +	struct net_device *ndev = apc->ndev;
-> > +	struct mana_query_link_config_req req = {};
-> > +	struct mana_query_link_config_resp resp = {};
-> > +	int err;
-> > +
-> > +	mana_gd_init_req_hdr(&req.hdr, MANA_QUERY_LINK_CONFIG,
-> > +			     sizeof(req), sizeof(resp));
-> > +
-> > +	req.vport = apc->port_handle;
-> > +
-> > +	err = mana_send_request(apc->ac, &req, sizeof(req), &resp,
-> > +				sizeof(resp));
-> > +
-> > +	if (err) {
-> > +		netdev_err(ndev, "Failed to query link config: %d\n", err);
-> > +		goto out;
-> > +	}
-> > +
-> > +	err = mana_verify_resp_hdr(&resp.hdr, MANA_QUERY_LINK_CONFIG,
-> > +				   sizeof(resp));
-> > +
-> > +	if (err || resp.hdr.status) {
-> > +		netdev_err(ndev, "Failed to query link config: %d, 0x%x\n", err,
-> > +			   resp.hdr.status);
-> > +		if (!err)
-> > +			err = -EPROTO;
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (resp.qos_unconfigured) {
-> > +		err = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +	apc->speed = resp.link_speed;
-> 
-> Might be worth adding a comment that the firmware is returning speed
-> in Mbps.
-> 
-> Or name the struct member link_speed_mbps.
-> 
-Thank you for your suggestion. I'll make this change for the next
-version of this patchset.
-> 	Andrew
+On Mon, Mar 24, 2025 at 6:41=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> From: Danilo Krummrich <dakr@kernel.org>
+>
+> Stephen found a future build failure in linux-next [1]:
+>
+>     error[E0277]: `*mut MyStruct` cannot be sent between threads safely
+>       --> samples/rust/rust_dma.rs:47:22
+>        |
+>     47 | impl pci::Driver for DmaSampleDriver {
+>        |                      ^^^^^^^^^^^^^^^ `*mut MyStruct` cannot be s=
+ent between threads safely
+>
+> It is caused by the interaction between commit 935e1d90bf6f ("rust: pci:
+> require Send for Driver trait implementers") from the driver-core tree,
+> which fixes a missing concurrency requirement, and commit 9901addae63b
+> ("samples: rust: add Rust dma test sample driver") which adds a sample
+> that does not satisfy that requirement.
+>
+> Add a `Send` implementation to `CoherentAllocation`, which allows the
+> sample (and other future users) to satisfy it.
+>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20250324215702.1515ba92@canb.a=
+uug.org.au/
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+
+If nobody shouts in the next few hours, I will apply it to `rust-next`
+to clean the build failure for tomorrow's linux-next.
+
+Abdiel: if you can give an Acked-by, that would be great.
+
+Thanks!
+
+Cheers,
+Miguel
 
