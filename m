@@ -1,189 +1,114 @@
-Return-Path: <linux-kernel+bounces-573726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C7BA6DBA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:32:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C684A6DBA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 14:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D913A4563
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EBB16AF31
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 13:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8425DAF7;
-	Mon, 24 Mar 2025 13:32:03 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD7C25EFAB;
+	Mon, 24 Mar 2025 13:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="gebCyklj"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B3319C569;
-	Mon, 24 Mar 2025 13:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6565F1A08AF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 13:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742823123; cv=none; b=H2K6w4HQEzIoidAdmUdIzrpg4hNZjzHw1mekCZeOkSNzdi3a4nY8XHzV8Z8iMGgNiuCob3sAiyfJHxkHWIaBreF1uL++BF4dojFTQRNgo0u5Kn2NYESs50rwdsQuA6VpX/LBunZxhPjz7rfQ6EOoVU6CrReeJTCKfLujnvsRu6c=
+	t=1742823176; cv=none; b=SA8Ort9ZutM3lsaZD/xqi0LB/4Kiws2yVLjYvrId8EOEBWThBN6wMPwHviQjb+gSgbpEV7D53TM9j8BcpeJDmJyfgbdGcjBee6FqDiGNuRpuRiRwkWraXpn3FO1BryHD9N7tznJ6QDrIiKf0HGkGLGa2uWI7xCIQ/LkAjIbg2Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742823123; c=relaxed/simple;
-	bh=U7Sm8drjhhuf0oB9XuCn4Y6s8zWfPJWtUiwm4WERSR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ui7LqJjuCJwOEfCm9QbzLx3qNhjmWP2GE/2KC+U6KERjUI3KYqv+S/cchev9xdKZ9QGfx6K4rxC2LR3lOdZE5RBvaYOzrg3HNnfgthJKt+oR92TxGtl8XVIqUIDjnpdIuEDSbf4uo5zFYA7Rh1zsMS6nxdBegpo/mxQJnGW3O/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-525b44ec88aso1103659e0c.3;
-        Mon, 24 Mar 2025 06:32:01 -0700 (PDT)
+	s=arc-20240116; t=1742823176; c=relaxed/simple;
+	bh=jyMXTLyNgoR+3Mh43uHX54/Ii8JgrwxoERkKPkXm7H4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eDko4D2edYApp37FQIPqPZQdN+VrHYUpsBMg4N94YRq6yRLMXrgz8Ue7wDXU/0QGOj9qDR+gzuTIWJsDdhYrKSZW/R9FqC1l10KlJoe5SLIwO3XKKvPZVCGg6orkPeZlu1AZXOnzSzoQdtD98FhWL2zeNIlJKttFO/NwkuHKpz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=gebCyklj; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f254b875so39398976d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742823172; x=1743427972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJ3k7yEhYDRnLKFARJZHNQlKgfuegZSgLZhOzT1gU3A=;
+        b=gebCykljom64PRfiMPz5Rb9bwBFSxX4MbQEFO4m0eDTy1ODTtv7k2XjH5dbV+AbV7u
+         zZ3amKMtNneMeV1wkqgiFzzyw8YM4U1W2B0Fy43wDwW1EI77HywLVsNXTdZE7/LV8NF8
+         03sN9uW9TYZei4WYTYk46yqqw9++n/XE7zRLGrWpCrz2VCeOJz76rpnL8UVHukXESsQB
+         eBOk3RwNvLJeOWJ0ggxUageoixKLtNeXFdHptLKL5M1QJc7ELe2A2v0DmrXrJ9N6Soxo
+         HM49bWCVUVcWbXxcEl6d9o/VcMVQfz1gKA4ECGSdDbCpNKwQ5m3dVYsOaT3LtoPFIvDw
+         6d6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742823120; x=1743427920;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JnTkaFn1tZplUqMgdVjTtixweNlaqZzoddw8gwDBD6A=;
-        b=rhpYaWm7Uk/rCJMHzz6nrooFQymAUQTW5Z7DR5INf2jFBoEut657deei0HejgzykVN
-         H/G1ergu/P+Gu0G0dgc2g8WI3NhLkiC3mk/25AOw2DR8O1fRUSOiIKDmEv1pdh6saAdU
-         QOsPUsgk3QWUrALGUjnpwFk1k5yibxDrxC8S+r0uaYBN3HG5v9f22cqplP6KWNXGt3D5
-         HX5cGLEmQNVkfBLxUfNhpcKhIWyrAm/XFLepK4Mk8gQUIDBCZIDuCx6ezrYUc615yt2h
-         z4aVIlzajsA1HMTj5HYb9igwjEKz68j6tkb+MPP149Ki+Bh94DtObUhXh2vR9ft8AD3q
-         Casw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIvZW58xZV8Hu/9irKOLuKCoRcKjWDFJ8o7stQt43eP4mfFaj3qQQycJ9eouOy2AbQSn9vZFfvi98Pk9ClWZMsdLk=@vger.kernel.org, AJvYcCUo9BfSqFK26ijcaLf4p9m4Qr7UKURJWWEFkWEEfSccP4Tg9geg+30687QURphdpb6oM9CwCS4XQr50@vger.kernel.org, AJvYcCUoTRjGnQt6P+qGuO7tItZ8oF/z53dST8SkssiuRNotwDl026x6pChCGNim81WRAUZkAk6ilTem/IO5Y5dD@vger.kernel.org
-X-Gm-Message-State: AOJu0YziBZOG41Vdk10bayvy10z562Zh+cXuKMuyUO2JBI90utpud08F
-	cruVYXTmKLOOfnANOQgQpuJxRNVAXhQsihZWlqM9js5NIBXPocFD38HIUdY1
-X-Gm-Gg: ASbGncsvj5KN4O1yYbzN1X3nFrNjXe2IZr68E+SlHvl78G5cJOxFAU8YLl/ZuI/nTuu
-	8iS/ynV7E/qApOw9wvqGDK3nQkTCejsoM0i83vBiKrc4t99jz3UZGNlZeOpea3F4UiONrPQDyI4
-	FnD2H6AwJj+tjblCQD/NOFM4tLDTVaoQ1I2iIozTSyPhKerJv8tI49oyNuCmlaztalmomBrQycW
-	au3pr6RdUVGoXPin76rG1KgUQpz2Z88mMUuFwZkg7No2Kr9lgWcdq1lv1cFZDm4ToJhsD+PjH+O
-	4zPeA7Fk0eJMpDEVWhjEQOhxcb0rI4rLIiZN6D5XFXJS3OJf3jlvGS3j2A4TAse4yoCEyOge7Pl
-	rHGU1GdRJdPc=
-X-Google-Smtp-Source: AGHT+IHmKPnSUcLRyxNG4lXDJnIdwA1P2Ib2REO1ZyDXTngMRotthkjP9n8WBkPvUm1tqY+Kv3rEFw==
-X-Received: by 2002:a05:6122:8493:b0:525:bf40:e628 with SMTP id 71dfb90a1353d-525bf40f5bbmr2179238e0c.6.1742823119796;
-        Mon, 24 Mar 2025 06:31:59 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-525a767186fsm1373373e0c.46.2025.03.24.06.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 06:31:59 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5241abb9761so1776849e0c.1;
-        Mon, 24 Mar 2025 06:31:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/4hgSIulQ9i0yBFi2E9W+N8yxlWwedGDjJehkg7sQwk/REIFkF4hhh7qBqEchgwumsCNtKcZZNlx+pVXZ@vger.kernel.org, AJvYcCUlre5lK6lVdcElgTPNFTEBQHXgsz4EhxDxZJubN4oMmk/asbhTPv7J1Z3OWKRDLvuRlDXm6+R4a2mW@vger.kernel.org, AJvYcCUu20hJdarOuDicRKfax5fWWQ8TM8fWFKvESCinoDT24xLUEyuRiz1foYYNGNGxxdOrjw+11w6gOmdCW7X8ZQYbiLQ=@vger.kernel.org
-X-Received: by 2002:a05:6122:660c:b0:51f:3eee:89f2 with SMTP id
- 71dfb90a1353d-525a82f6994mr9180028e0c.2.1742823119399; Mon, 24 Mar 2025
- 06:31:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742823172; x=1743427972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iJ3k7yEhYDRnLKFARJZHNQlKgfuegZSgLZhOzT1gU3A=;
+        b=RnHLEkaAcUfas9rrLrfMY6OCZ++wV7xKuMDe1JT+K2ek2oI/NxsoMzZxNUcsVPp4sj
+         Y5BN74L9+3xsJ3BTAiO5Ynzk97c3WR49Mskjo8HQ6DW7fwNxAH61uBVLbuEex9e5jVE+
+         zwTHA0nSXaTGLP7ulvlMxzbXwXxtt3sk/vD+hzn/0rNzKGgkQ4ESsnEhrx9B35Yds4g7
+         dmZTIfnE2wY57thAnGproaMuwmZ5TH0Sg1v2sbvgPg9NNrFjgasdDyvYyLa09g1xK5ed
+         BUgkudrcC4u+D1d034CS7WY/mn687S9Whlj6+8uZKGrTkClVoRNZNq3QvVQF7bMvEhFF
+         j6LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWKcJ37cSMYt1XlIDd5lkgW45rjTK/+ruBWrEhNRnWo5ABhzyHc5DHPFN0P0U0fpKnzEpya6PVVszFEKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8yu5fpXYkC6hxH0UksUJZ54wGlKDrwKkzeiezEoUeVQ5oWwIl
+	4nystgHr9YP1f4rOISZUVf5A+k16wlCMekSBmm9m4okYbUTHn8QzaapZ33OQ+zA=
+X-Gm-Gg: ASbGnctYPQ5lxSoz2Cyml6/ex7ySvZN29XPC5Q6xo2OqYZZFcCgVXXF9IgJxEj9wc9B
+	z8wpjvIQibGSC3Sp1QA8dDjXihXgQ8TziN5oms9IHGUp2iz9PKWdk+Ydtn/Y51NQsZhBtrXeNa2
+	TMJPthcFQX/Pf6r6GgqEjwiJV1qmSCgGZp/9YJheOv9lo34q5pl7pwcW+o80kiQUJjt9mxDTWof
+	4rtDaLeH18Qzt4lNKetdGYgM/RIF9PR9Wx87++CB65ZRSJjhxaU9bZCIx7a1Yj0PgPdltKXqym+
+	UnA962wo5Rydn2rZOszriEu/ygc6aKio0AIWYL9cD3YYfel91Ta1ZQ==
+X-Google-Smtp-Source: AGHT+IH6AI2Hu4EvLbPfd+tJ+iT15wj0QMHGeMvnf+rKbGzhr8KsnPvdxaL8QbRANSa5d3GYbYPvMA==
+X-Received: by 2002:ad4:5f4f:0:b0:6e8:fe16:4d45 with SMTP id 6a1803df08f44-6eb3f3446bemr145244976d6.41.1742823171962;
+        Mon, 24 Mar 2025 06:32:51 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef34792sm44450036d6.68.2025.03.24.06.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 06:32:51 -0700 (PDT)
+Date: Mon, 24 Mar 2025 09:32:49 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, david@redhat.com,
+	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v3 3/3] mm/mempolicy: Support memory hotplug in weighted
+ interleave
+Message-ID: <Z-FfAUiGePF9mnPS@gourry-fedora-PF4VCD3F>
+References: <20250324084920.987-1-rakie.kim@sk.com>
+ <20250324085433.998-1-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324125239.82098-1-krzysztof.kozlowski@linaro.org> <20250324125239.82098-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250324125239.82098-2-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Mar 2025 14:31:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jql5zVib3xf6ikzA9vsEblCUa1jRbqsyGwqM1WFnlicozMsfGBqYmldRFc
-Message-ID: <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: Correct indentation and style in
- DTS example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Colin Foster <colin.foster@in-advantage.com>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jeff LaBundy <jeff@labundy.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324085433.998-1-rakie.kim@sk.com>
 
-Hi Krzysztof,
+On Mon, Mar 24, 2025 at 05:54:27PM +0900, Rakie Kim wrote:
+> 
+> I'm sorry, the code is missing.
+> I may not fully understand the scenario you described, but I think your concern
+> can be addressed by adding a simple check like the following:
+> 
+>     case MEM_OFFLINE:
+>         if (!node_state(nid, N_MEMORY)) --> this point
+>             sysfs_wi_node_release(nid);
+>
 
-On Mon, 24 Mar 2025 at 13:55, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
-> unused labels.
->
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This should work.  I have some questions about whether there might be
+some subtle race conditions with this implementation, but I can take a
+look after LSFMM.  (Example: Two blocks being offlined/onlined at the
+same time, is state(nid, N_MEMORY) a raced value?)
 
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/mfd/iqs62x.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/iqs62x.yaml
-> @@ -60,43 +60,34 @@ examples:
->      #include <dt-bindings/interrupt-controller/irq.h>
->
->      i2c {
-> -            #address-cells = <1>;
-> -            #size-cells = <0>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
->
-> -            iqs620a@44 {
-> -                    compatible = "azoteq,iqs620a";
-> -                    reg = <0x44>;
-> -                    interrupt-parent = <&gpio>;
-> -                    interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
-> +        iqs620a@44 {
-> +            compatible = "azoteq,iqs620a";
-> +            reg = <0x44>;
-> +            interrupt-parent = <&gpio>;
-> +            interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
->
-> -                    keys {
-> -                            compatible = "azoteq,iqs620a-keys";
-> +            keys {
-> +                compatible = "azoteq,iqs620a-keys";
->
-> -                            linux,keycodes = <KEY_SELECT>,
-> -                                             <KEY_MENU>,
-> -                                             <KEY_OK>,
-> -                                             <KEY_MENU>;
-> +                linux,keycodes = <KEY_SELECT>,
-> +                                 <KEY_MENU>,
-> +                                 <KEY_OK>,
-> +                                 <KEY_MENU>;
->
-> -                            hall-switch-south {
-> -                                    linux,code = <SW_LID>;
-> -                                    azoteq,use-prox;
-> -                            };
-> -                    };
-> -
-> -                    iqs620a_pwm: pwm {
-> -                            compatible = "azoteq,iqs620a-pwm";
-> -                            #pwm-cells = <2>;
-> -                    };
-> +                hall-switch-south {
-> +                    linux,code = <SW_LID>;
-> +                    azoteq,use-prox;
-> +                };
->              };
-> -    };
->
-> -    pwmleds {
-> -            compatible = "pwm-leds";
-> -
-> -            led-1 {
-> -                    pwms = <&iqs620a_pwm 0 1000000>;
-> -                    max-brightness = <255>;
-> +            iqs620a_pwm: pwm {
-> +                compatible = "azoteq,iqs620a-pwm";
-> +                #pwm-cells = <2>;
->              };
-> +        };
->      };
->
->    - |
-
-The removal of the pwmleds node belongs in patch [1/2].
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+~Gregory
 
