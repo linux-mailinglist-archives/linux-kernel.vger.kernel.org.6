@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-573368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD97A6D66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:41:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE687A6D671
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 235997A315E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E223A7EEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D1625D542;
-	Mon, 24 Mar 2025 08:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DB725D55B;
+	Mon, 24 Mar 2025 08:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bwXhBRvA"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="ba+Qdy02"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9E525D20E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4931B25D527
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805667; cv=none; b=ZOwwdNB+9jEfyisx2nxt5c5h0uu9qHengpACJ7sGG/wvXQoTL2dtFyhXgGbSrrhTF2L0lpb9wkzYgpcrlQz1pDIKOxPxN1lwQSm9cYsPgkJ538CNIIueZ9JxCJTF7n1uPkje7AURW7LrnQ1HtUbSYYL21rwSvLZ6aWu3q3K+dbQ=
+	t=1742805670; cv=none; b=D/w4g4jddjMjcy1K4s97MMsOnatOPZsw8l9QjJLWTChFaWk5Jkk95BSSGncIhROHMF15QJIm7KXcIiSW6x9gV0kehmXdnz2KaWBE37psiiuIm5TPtyqKC3K6rE3tG/bMlCZ75F2Ciq4PN+YPyCoQT8pCW2/eZSzjksSaA3fGvx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805667; c=relaxed/simple;
-	bh=EQ9AC539GNhH9+gAeB++MkWZFfFNy+69yprAeYh9KIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5ikINh4CkgrlG9q0nieSyhQu9fsxRPxL02J4oiHBQvTvUalAQR07F6ujBU05hHh/oD5NpOuXg/DkbeYSiMvuiy7YuMkn3TjhzmXo1RpSzXt/FTiGx5kn1Hyg6JvEQDX4EgTU6SOkweFfl4UjweA2uDnw+fnwL85Y6c2RzfHyF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bwXhBRvA; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso6198280a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:41:05 -0700 (PDT)
+	s=arc-20240116; t=1742805670; c=relaxed/simple;
+	bh=+RNPkMlZKx3NJ+3YCG0FD3p8moXxVtBHXDEF3timP3Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LpD4sccjaUC4MPRy705d5BM6vzIrGXIcWRffNuoF7MNXquuBC21LztaSqOHLC3jSWlD6M3V9/zIfFGsAiX9rWGI/SSyxbKzRRRAfDDpPZNweLwZU+jvODFs7bf3f+buFz6XLHkY+eG1WI1nsSsraB9bQ3tdzRIqgKfLbt8iuC8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=ba+Qdy02; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so5957013a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742805665; x=1743410465; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v3uw5Z9jtzCHbHI92vRIdMw4q+7D7K0HGUyXcM2dV4I=;
-        b=bwXhBRvAoKa4MAAG4vnJUhGtJu1xELwfNspOFDUlfvx5arD2LoIuyDM9xVjqrn501v
-         5ucnIRJagTy9JP4hFnFdAyUoc7WOXeHTYHc3Ghffoj7ukUqkyWY9RvBVsM1k3yL8W8f4
-         5VHhFlg40Tv465RbSJoZ7unU0g/ixI69rr0ZKmsl0GLjf0MJnCikPfcj7kZBMQzxqs8I
-         QJp7OFD6UKG+hMmajx/hNoHF7mN2ykV7Pry5lpd5mN00iio9P3k+vWF/Ve1FB3cEAjfx
-         Rhdys8hcd0k0PhZYy53BsDBDnYBG7LdFNllpQZnh+3M/E5zr8ty5ws0SP7QQVQnP1cxq
-         MTvQ==
+        d=fairphone.com; s=fair; t=1742805665; x=1743410465; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7yAl2Q0nLohT9vZl0hqyj3prGYXo8JS24o94BwYJufQ=;
+        b=ba+Qdy02uHb1RVsCeDccjjWm1PH8tFtVpzS5K/qXCPc9aX6eS5dT77gm6UK+HRxAG8
+         jSEz1Bb9t5NM305dtn/aHISC7j1mxtqvhMKYbfAwoyGgpoO9CGTbKkhTslIxGTh5E9zR
+         B+blM5r8G96OvqlQgNcbNZ7c1gHd9fjqr0x17a1B4KYn7EAoX7G7jutBcON5YOTStc8t
+         c6G1SC0bbDq0EA9oDiWAu+3eT2FhjgQdW3vSvTj8/4sLDDAi540N23m++8WdOMjUV0ww
+         f0SxSxD0odp5is+7WOVkszRl0mh3LSIfNHlRlynGxtm/Eq+Kmk9ryuZUtsc69XR2+zbD
+         Pzdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1742805665; x=1743410465;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3uw5Z9jtzCHbHI92vRIdMw4q+7D7K0HGUyXcM2dV4I=;
-        b=MjEPxE9rxJTknlqY2NXrUrMOQh6ZhxEUewOEyBkykSNEUrgrUDJyj8KaIR1TXvsJP/
-         0pTH054hagdEaYu4un7XG9By0ixO5W/mIbx28XuUmzboPN3xo1qw+vY2Nb0OORCkveW3
-         znc50iaIlMjix0aNLAMwQ4XrCqMkS5don0I755fE46P5a8RB6SE4L7M5BzDxv3P4lzG6
-         ZW1Ldh8pO3gb7lQvzEeRZdmX/C8kSDjsVJJcWqBKg6VEe18Z9k0SeQYGws6N8qw1QxHH
-         48p0tM16a85Q9f6yedNgSap6qs0gp5cl8kj/wVIhGgSx60uOLuqLhVbPdiBmuhmnwrnL
-         D0zA==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2YJ3PB0jqzHTV4MsXeXt9FFK8URUvxUNL9wX6EGQn1+OvUxFGyOyDB5bmo8fkO0jQ/Lkbuuf05emIv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweb8qQB4GykZUlNJmEiOvi4XNLVbtJpNnPx3QekwipA1UwGJP6
-	XJR0KSWFEUtfypohhboA6ohMtC6xfQjWkW2BtTUzynvXOIKuZihF7JSuDP926X8=
-X-Gm-Gg: ASbGncuEeHd55ucwBnUVoCjPHdd+1r0zgiHsORMCck9R15f2D7SSuThNv4DxjNHMr7k
-	D1ix7ppwoxT9734av8yPFpesxRPu/Gqm9q7obCR0eES5sQpScxbyeP93MeYhlpgrX+5dLiXpdJw
-	Aai5d7vIdRYRxxZhO/juxpvouiZfz2Iq7caBCAhl4HK2/yGgWluD8N/vqdy5cYJ0BYS1jBYB0qQ
-	7UvxDkEDNCpvbM1Q1kJai/GTpOsjpIOHmNbdjl97fq3v/rfskeBxAYr00096dn//vaLbVABmNsZ
-	Qj4KaVj/OW9bA9bbpguMWIHpobjLZLe4PwdVhwIQPOSmgt1e6EYt4T/htdMdO4pC+kOTR1x34rC
-	YDtVCE1ufpCLqNQ==
-X-Google-Smtp-Source: AGHT+IH+xgozTyBMkBlyP74TERrNWkyYdKcQs55orpOAP7tn2ARvtV/+JWl6ctnTGkBpb3mEArC3yQ==
-X-Received: by 2002:a17:90b:4d:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-3030ff00e7bmr17510813a91.30.1742805664916;
-        Mon, 24 Mar 2025 01:41:04 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f7e9bbasm7435204a91.39.2025.03.24.01.40.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 01:41:04 -0700 (PDT)
-Message-ID: <0597da6f-cc28-497f-a49e-3f1c99a4e6e1@rivosinc.com>
-Date: Mon, 24 Mar 2025 09:40:52 +0100
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7yAl2Q0nLohT9vZl0hqyj3prGYXo8JS24o94BwYJufQ=;
+        b=GoV59OMeAVAusOlIZoLUAe9My6Y99r91/ZEqrummbzneoWCotAYbA7+bD8iSWi5dm5
+         1xf92IGGGhkcxINxrFWTUG9otCSW6JiBl827a/bamr6aMgCBZKK6wGaZQqKLTsUvT375
+         LtQnIbRUXqcKoUQTBExqhaejNF3PlijniYptV7eer/E54FMp5NOAF3dxjet3kuLHMlaD
+         Je4FDYgCfaV5gOK7soYridW5VhxoeUtttszOthz1fyJmPgkhamnuUVk/ABJgP513PCP8
+         pR6fSjjjGlmLmba78JNPnD+0cJ96GGfFAjRJYfmMWrVcvHZBMSHBXefF2jw0Fzqosfbj
+         Jung==
+X-Forwarded-Encrypted: i=1; AJvYcCVeqfLU1shi1zBWR//OqRuubihZOCvOA7/mqSjmm7MnAOcYgfWAWmzboMbhgtwpRn13mqJJVyfXbOnJcMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqhk9oM6aIg2Tl3b5iR82K+gyApCWHVqO+pkMG25tjAcjKEHtg
+	1MuUF7jOXd3+q8TDpHe1QyNi9VOYQ4h+9IbWf1LEm+IF4P3bGNul5GelAlVAa3I=
+X-Gm-Gg: ASbGnctsFhJDoNCtXEPMTLElhRUiRWy3Qdmwk6DWMtQhjZCCOjMKtWJgdhDSWOLxKNN
+	g9w2kymwXYOFLB7F+gDqozNpxTK+OfnwL+Qx98kGXV2mxP2/jT/QtmFI1afgJ1xeNzplZAPcis3
+	XvWlHWnPiinzjo1dmG4lHjERf65KWbn68dTSD0ExMUaySJzL23zXRJNSFnbfvNLfEzjKPiG1y3F
+	x9GRON9sTUz2+NkLOiZFOMI95DTVCqT4b+hCqYI0Z3KSPtGEockLrUMFVOL1//W/fsk/cqDZeuC
+	4bw1PT+o8lpTtozaPXnY00uzr1Deg1ojdrXPS2Llg3PVzcwLVMoS/B6Z4VCXVzsZKLTyFtsxQFo
+	WOxBGx56oxqoBKnL7LA==
+X-Google-Smtp-Source: AGHT+IH2pFE6i0Zm5wyOinKwndN5SuBfWx9dBH2pv1rqCqFeE+5G+h9xZXN6o5/fzRd7duxeGjB9pg==
+X-Received: by 2002:a05:6402:909:b0:5e6:e68c:b6e5 with SMTP id 4fb4d7f45d1cf-5ebcd51c105mr9408156a12.32.1742805665487;
+        Mon, 24 Mar 2025 01:41:05 -0700 (PDT)
+Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0dfb33sm5715937a12.68.2025.03.24.01.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 01:41:05 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH v2 0/4] Add video clock controller for SM6350
+Date: Mon, 24 Mar 2025 09:41:00 +0100
+Message-Id: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/18] riscv: sbi: add new SBI error mappings
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Shuah Khan <shuah@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kselftest@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>
-References: <20250317170625.1142870-1-cleger@rivosinc.com>
- <20250317170625.1142870-3-cleger@rivosinc.com>
- <20250322-cce038c88db88dd119a49846@orel>
- <779c137d-5030-4212-b957-3d2620448ea9@rivosinc.com>
- <20250324-5d1d09fc9e50d2276ba56b6f@orel>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250324-5d1d09fc9e50d2276ba56b6f@orel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJwa4WcC/3XMyw7CIBCF4VdpZi2Gi9TLyvcwXdBhsLNoacAQT
+ cO7i927/E9yvg0yJaYMt26DRIUzx6WFPnSAk1ueJNi3Bi21lUYrkefeWCkKe4qIoif049WN+mx
+ 7aKc1UeD3Dj6G1hPnV0yf3S/qt/6lihJSoEVSQZ0uhugeHKd1igsdMc4w1Fq/6e/4LbAAAAA=
+X-Change-ID: 20250321-sm6350-videocc-6ecdb9ab2756
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
 
+The driver for the SM6350 videocc has been lying around in some branches
+of my git tree for a long time, let's upstream it. It doesn't get any
+better by letting it age!
 
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Changes in v2:
+- Fix an uppercase hex in driver (Dmitry)
+- Use hex numbers for reg in dtsi (Dmitry)
+- Add patch to convert all reg = <0 0x123 0 0x123> to reg = <0x0 0x123 0x0 0x123> (Dmitry)
+- Link to v1: https://lore.kernel.org/r/20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com
 
-On 24/03/2025 09:38, Andrew Jones wrote:
-> On Mon, Mar 24, 2025 at 09:29:33AM +0100, Clément Léger wrote:
->>
->>
->> On 22/03/2025 13:06, Andrew Jones wrote:
->>> On Mon, Mar 17, 2025 at 06:06:08PM +0100, Clément Léger wrote:
->>>> A few new errors have been added with SBI V3.0, maps them as close as
->>>> possible to errno values.
->>>>
->>>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->>>> ---
->>>>  arch/riscv/include/asm/sbi.h | 9 +++++++++
->>>>  1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->>>> index bb077d0c912f..d11d22717b49 100644
->>>> --- a/arch/riscv/include/asm/sbi.h
->>>> +++ b/arch/riscv/include/asm/sbi.h
->>>> @@ -536,11 +536,20 @@ static inline int sbi_err_map_linux_errno(int err)
->>>>  	case SBI_SUCCESS:
->>>>  		return 0;
->>>>  	case SBI_ERR_DENIED:
->>>> +	case SBI_ERR_DENIED_LOCKED:
->>>>  		return -EPERM;
->>>>  	case SBI_ERR_INVALID_PARAM:
->>>> +	case SBI_ERR_INVALID_STATE:
->>>> +	case SBI_ERR_BAD_RANGE:
->>>>  		return -EINVAL;
->>>>  	case SBI_ERR_INVALID_ADDRESS:
->>>>  		return -EFAULT;
->>>> +	case SBI_ERR_NO_SHMEM:
->>>> +		return -ENOMEM;
->>>> +	case SBI_ERR_TIMEOUT:
->>>> +		return -ETIME;
->>>> +	case SBI_ERR_IO:
->>>> +		return -EIO;
->>>>  	case SBI_ERR_NOT_SUPPORTED:
->>>>  	case SBI_ERR_FAILURE:
->>>>  	default:
->>>> -- 
->>>> 2.47.2
->>>>
->>>
->>> I'm not a huge fan sbi_err_map_linux_errno() since the mappings seem a bit
->>> arbitrary, but if we're going to do it, then these look pretty good to me.
->>> Only other thought I had was E2BIG for bad-range, but nah...
-> 
-> Actually, I just recalled that there is an ERANGE, which would probably be
-> a better match for bad-range than EINVAL, but I'm not sure it matters much
-> anyway since this function doesn't promise 1-to-1 mappings.
+---
+Konrad Dybcio (2):
+      dt-bindings: clock: add SM6350 QCOM video clock bindings
+      clk: qcom: Add video clock controller driver for SM6350
 
-Yes, but ERANGE description is actually "results are too large", but at
-least it's name is more descriptive. Let's go with it.
+Luca Weiss (2):
+      arm64: dts: qcom: sm6350: Align reg properties with latest style
+      arm64: dts: qcom: sm6350: Add video clock controller
 
-> 
-> Thanks,
-> drew
-> 
->>
->> Yeah I also think some mappings are a bit odd even though I skimmed
->> through the whole errno list to find the best possible mappings. I'd be
->> happy to find something better though.
->>
->> Thanks,
->>
->> Clément
->>
->>>
->>> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
->>>
->>> Thanks,
->>> drew
->>
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  20 ++
+ arch/arm64/boot/dts/qcom/sm6350.dtsi               | 218 +++++++------
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/videocc-sm6350.c                  | 355 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm6350-videocc.h    |  27 ++
+ 6 files changed, 528 insertions(+), 102 deletions(-)
+---
+base-commit: 73b8c1dbc2508188e383023080ce6a582ff5f279
+change-id: 20250321-sm6350-videocc-6ecdb9ab2756
+
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
 
