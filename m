@@ -1,1341 +1,560 @@
-Return-Path: <linux-kernel+bounces-573909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24E1A6DDE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EE2A6DDE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6796F16A956
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:11:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B755B3B1F1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A62261396;
-	Mon, 24 Mar 2025 15:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6D225FA31;
+	Mon, 24 Mar 2025 15:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YxsWpeJM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bqN17VuV"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B8E25D54D;
-	Mon, 24 Mar 2025 15:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B20A25D54D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829078; cv=none; b=qqjk8Rkk3W2h1CiXEuluNqoDwTtXUfzT4LWM+ZdbBqN/cJw4jMYaB73evF1Ov9HV7Y0pn8g+CCd3xT4W9Q4sEiN1KB32tFV27Sn0v4w18iuMYQxL+JK3u6/kRUJ9YkoGS6uqjvsYG7ZZ4zCs+LRqfbxun9I7GHHL2FjJdhjmt/c=
+	t=1742829064; cv=none; b=loxd07GyP3dZ4dO88ysygsK0lo/QnB7GEglxCe1pTnx+mdv4Qcb0RTzfnZ18byWNUdNtNBlUI4W2vjiadN2nB1t6SuiPqCjqAm1Emjy9z8/+T/6LjyeP52zsQUbq9poC0H1GCEUBm0HvD41y8vxKmjxRjgLY5cIe0ayobvr22qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829078; c=relaxed/simple;
-	bh=8ThSDpJe7cHjWYLkg9Mdx7u2TjG9+MqIwJ3X4Qp3HqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OsG5+5mDmEwHDNY8q6PbwmwsxHLKTgpvmvliD0P4yNOMWv44acV5zcbdFYFGwYqkzL1paYn5YMuEtU6Zenq3AQuYSHFJEA8zLf2K7XKQPkkfjkpG94moPUeWlm/M9xHIpmPgKCOYXUpHkLw3iQSAEpFlvQ6T75ldWYMSo0Pa+zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YxsWpeJM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9POqO022028;
-	Mon, 24 Mar 2025 15:11:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=7bFTMd+FCxCKpqW6NkHTCt2jQ8L0eW/tkj1
-	j6DJdrPY=; b=YxsWpeJM44j5metPYAexA9D/bnwDN3+wfcUL5UTu9+eCBZM6XD0
-	nVoFxiFC7UBnXok7Exs+Nty+SE85IROPjJ2aXJu0NCZW2Men32ivWyWRaUGuS3pl
-	SX5M8Jhz5DBCCs6UKEIUPSt9uHroe9qbEeuqTdEoE6GeBrAYd8DU8nee8A9yAkbB
-	6H0TA7aOnFHH51GMqNDOAKK9BEcSa2R3OGrPG8KIBF8OPPLw5bvHVWOvzoNT9Epw
-	sqa0Eht8bQMH1ccr1H5sr8vGh5YCGXWjSwavooM7m1Lt936zp8ypCICbQUddIPbW
-	XRLJQYslhOnwRJx3Jq2GALIgyON6GtsCd3Q==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hpcp4n0n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:11:10 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52OFAnsM000927;
-	Mon, 24 Mar 2025 15:10:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 45hp9kvwpf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:10:49 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52OF85Ta029053;
-	Mon, 24 Mar 2025 15:10:49 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 52OFAnes000922
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Mar 2025 15:10:49 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
-	id D9E3F516; Mon, 24 Mar 2025 20:40:48 +0530 (+0530)
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: [PATCH v2] arm64: dts: qcom: sa8775p: Add default pin configurations for QUP SEs
-Date: Mon, 24 Mar 2025 20:40:47 +0530
-Message-Id: <20250324151047.842648-1-quic_vdadhani@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742829064; c=relaxed/simple;
+	bh=2rbktPs0Q3b5KGozIMV+Mb9YoMww46/9t9ETPPsyvCY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ln8Lm8znGJuNwt2AwEzvDFn8p+UhhujHV5vjwRGLQNDB8nagn64Br68jr/Dg8ZrHRcMuRf1ULvX+AOzT4RwXFPzL1eNqtEI8acqYJ2WDK35C8nxYEkAjrJv7L1ISN7lybUjf4Qgtdsc4hBKsDiplVzTNmmYV+e5vryX1dgajqWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bqN17VuV; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2620544382;
+	Mon, 24 Mar 2025 15:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742829059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cTueSEr0lFdtQ0GYgfW1TdeydEVF56fsLwNzPWuFrM0=;
+	b=bqN17VuV5aESQfyzLF1OkT9fSVJLH7smeiToB3mfp6pwsq8lQ5yrmzxOrcYVkw1kfoeyyc
+	om4gepJ/9qtgKXFQC4jCNq/Uey3OguuJwmUmE+YyLiAIw4VCx3R9B1pnKiFkk5FC83Ig82
+	e0JVi1/KwuMJVs57WXqSxvqvFFOuNMzmvNF2MTxT3Xsg7RHduOEkrpfW9ilop8VtlVLUjG
+	Rl4emCQ6kKP1q+uDWXP2XvM2u/Pp3kuT54FwC4ROSx0DhwfBEAqrHNNuIsg8Uilkd2jKip
+	knivs3JZPUDlj8t7KeZ8ektm1oHA4lsUIQQ9KHYu5ipJMwYftkYJinSPWOUyhA==
+Message-ID: <cd08651e-3f6a-4c73-abd4-3dc09d7d8dc7@bootlin.com>
+Date: Mon, 24 Mar 2025 16:10:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH v2 12/59] dyndbg, module: make proper substructs in
+ _ddebug_info
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-gfx-trybot@lists.freedesktop.org
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250320185238.447458-1-jim.cromie@gmail.com>
+ <20250320185238.447458-13-jim.cromie@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250320185238.447458-13-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TZw0o4uFETk4LQl2AHqtYlFuHhonHSrw
-X-Proofpoint-ORIG-GUID: TZw0o4uFETk4LQl2AHqtYlFuHhonHSrw
-X-Authority-Analysis: v=2.4 cv=PLYP+eqC c=1 sm=1 tr=0 ts=67e1760f cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=YeqPUcc6HoBad94UkNAA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240110
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+ dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Default pinctrl configurations for all QUP (Qualcomm Universal Peripheral)
-Serial Engines (SEs) are missing in the SoC device tree. These
-configurations are required by client teams when enabling any SEs as I2C,
-SPI, or Serial protocols.
 
-Add default pin configurations for Serial Engines (SEs) for all supported
-protocols, including I2C, SPI, and UART, to the sa8775p device tree.  This
-change facilitates slave device driver clients to enable usecase with
-minimal modifications.
 
-Remove duplicate pin configurations from target-specific file as same pin
-configuration is included in the SoC device tree.
+Le 20/03/2025 à 19:51, Jim Cromie a écrit :
+> recompose struct _ddebug_info, inserting proper sub-structs.
+> 
+> The struct currently has 2 pairs of fields: descs, num_descs and
+> classes, num_classes.  Several for-loops operate on these field pairs,
+> soon many more will be added.
+> 
+> Looping over these blocks by respective field-pairs is repetitive and
+> fiddly, differing only by the field-names.  Before adding a 3rd
+> section and compounding the fiddly details problem, make proper
+> substructs of each section, with the same named fields.
+> 
+> So this patch does:
+> 
+> Adds 3 "vector<T>" structs, each with { <T> *start, int len; }
+> components, for _ddebug_descriptors, _ddebug_class_maps, and
+> _ddebug_class_users respectively.
+> 
+> Invariant: These vectors ref a contiguous subrange of __section memory
+> in builtin/DATA or in loadable modules via mod->dyndbg_info; with
+> guaranteed life-time for us.
+> 
+> Bundles these 3 vectors (subrange-refs) struct (reformed) _ddebug_info,
+> where they're __packed to close the paholes introduced otherwise.
+> 
+> The common fields allow improving the for_subvec() macro by dropping
+> the ugly num_##<T> paste-up.
+> 
+> Also recompose struct ddebug_table to contain a _ddebug_info.  This
+> reinforces its use as a cursor into relevant data for a builtin
+> module, and access to the full _ddebug state for modules.
+> 
+> NOTES:
+> 
+> Fixup names: section names improved, struct names normalized to
+> _ddebug_*
 
-Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
----
-v1 -> v2:
+Maybe this should be in a separate patch?
 
-- Drop drive-strength and bias property from soc dtsi.
-- Update commit log.
+> struct module contains a _ddebug_info field and module/main.c sets it
+> up, so that gets adjusted.
+  >
+> The __packed attribute on _ddebug_info and the 3 contained structs
+> closes the holes otherwise created by the structification (which was
+> my excuse for not doing it originally).
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> ---
+> -v2 rework towards front of series
+> ---
+>   include/asm-generic/vmlinux.lds.h |  4 +-
+>   include/linux/dynamic_debug.h     | 28 +++++++---
+>   kernel/module/main.c              | 12 ++--
+>   lib/dynamic_debug.c               | 91 ++++++++++++++++---------------
+>   4 files changed, 74 insertions(+), 61 deletions(-)
+> 
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index c9c66089ea2f..f834ad1fb8c4 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -366,8 +366,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>   	*(__tracepoints)						\
+>   	/* implement dynamic printk debug */				\
+>   	. = ALIGN(8);							\
+> -	BOUNDED_SECTION_BY(__dyndbg_classes, ___dyndbg_classes)		\
+> -	BOUNDED_SECTION_BY(__dyndbg, ___dyndbg)				\
+> +	BOUNDED_SECTION_BY(__dyndbg_class_maps, ___dyndbg_class_maps)	\
+> +	BOUNDED_SECTION_BY(__dyndbg_descriptors, ___dyndbg_descs)	\
+>   	CODETAG_SECTIONS()						\
+>   	LIKELY_PROFILE()		       				\
+>   	BRANCH_PROFILE()						\
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index e458d4b838ac..c388ab05a6e1 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -110,13 +110,23 @@ struct ddebug_class_map {
+>   		.class_names = _var##_classnames,			\
+>   	}
+>   
+> -/* encapsulate linker provided built-in (or module) dyndbg data */
+> +/*
+> + * @_ddebug_info: gathers module/builtin dyndbg_* __sections together.
+> + * For builtins, it is used as a cursor, with the inner structs
+> + * marking sub-vectors of the builtin __sections in DATA.
+> + */
+> +struct _ddebug_descs {
+> +	struct _ddebug *start;
+> +	int len;
+> +} __packed;
+> +struct _ddebug_class_maps {
+> +	struct ddebug_class_map *start;
+> +	int len;
+> +} __packed;
+>   struct _ddebug_info {
+> -	struct _ddebug *descs;
+> -	struct ddebug_class_map *classes;
+> -	unsigned int num_descs;
+> -	unsigned int num_classes;
+> -};
+> +	struct _ddebug_descs descs;
+> +	struct _ddebug_class_maps maps;
+> +} __packed;
+>   
+>   struct ddebug_class_param {
+>   	union {
+> @@ -159,7 +169,7 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+>   
+>   #define DEFINE_DYNAMIC_DEBUG_METADATA_CLS(name, cls, fmt)	\
+>   	static struct _ddebug  __aligned(8)			\
+> -	__section("__dyndbg") name = {				\
+> +	__section("__dyndbg_descriptors") name = {		\
+>   		.modname = KBUILD_MODNAME,			\
+>   		.function = __func__,				\
+>   		.filename = __FILE__,				\
+> @@ -242,7 +252,7 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+>    * macro.
+>    */
+>   #define _dynamic_func_call_cls(cls, fmt, func, ...)			\
+> -	__dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+> +	__dynamic_func_call_cls(__UNIQUE_ID(_ddebug), cls, fmt, func, ##__VA_ARGS__)
+>   #define _dynamic_func_call(fmt, func, ...)				\
+>   	_dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+>   
+> @@ -252,7 +262,7 @@ void __dynamic_ibdev_dbg(struct _ddebug *descriptor,
+>    * with precisely the macro's varargs.
+>    */
+>   #define _dynamic_func_call_cls_no_desc(cls, fmt, func, ...)		\
+> -	__dynamic_func_call_cls_no_desc(__UNIQUE_ID(ddebug), cls, fmt,	\
+> +	__dynamic_func_call_cls_no_desc(__UNIQUE_ID(_ddebug), cls, fmt,	\
+>   					func, ##__VA_ARGS__)
+>   #define _dynamic_func_call_no_desc(fmt, func, ...)			\
+>   	_dynamic_func_call_cls_no_desc(_DPRINTK_CLASS_DFLT, fmt,	\
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 1fb9ad289a6f..b60f728e36ac 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2621,12 +2621,12 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+>   		pr_warn("%s: Ignoring obsolete parameters\n", mod->name);
+>   
+>   #ifdef CONFIG_DYNAMIC_DEBUG_CORE
+> -	mod->dyndbg_info.descs = section_objs(info, "__dyndbg",
+> -					      sizeof(*mod->dyndbg_info.descs),
+> -					      &mod->dyndbg_info.num_descs);
+> -	mod->dyndbg_info.classes = section_objs(info, "__dyndbg_classes",
+> -						sizeof(*mod->dyndbg_info.classes),
+> -						&mod->dyndbg_info.num_classes);
+> +	mod->dyndbg_info.descs.start = section_objs(info, "__dyndbg_descriptors",
+> +						    sizeof(*mod->dyndbg_info.descs.start),
+> +						    &mod->dyndbg_info.descs.len);
+> +	mod->dyndbg_info.maps.start = section_objs(info, "__dyndbg_class_maps",
+> +						   sizeof(*mod->dyndbg_info.maps.start),
+> +						   &mod->dyndbg_info.maps.len);
+>   #endif
+>   
+>   	return 0;
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 94f6c8fd787b..663c125006d0 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -39,17 +39,15 @@
+>   
+>   #include <rdma/ib_verbs.h>
+>   
+> -extern struct _ddebug __start___dyndbg[];
+> -extern struct _ddebug __stop___dyndbg[];
+> -extern struct ddebug_class_map __start___dyndbg_classes[];
+> -extern struct ddebug_class_map __stop___dyndbg_classes[];
+> +extern struct _ddebug __start___dyndbg_descs[];
+> +extern struct _ddebug __stop___dyndbg_descs[];
+> +extern struct ddebug_class_map __start___dyndbg_class_maps[];
+> +extern struct ddebug_class_map __stop___dyndbg_class_maps[];
+>   
+>   struct ddebug_table {
+>   	struct list_head link;
+>   	const char *mod_name;
+> -	struct _ddebug *ddebugs;
+> -	struct ddebug_class_map *classes;
+> -	unsigned int num_ddebugs, num_classes;
+> +	struct _ddebug_info info;
+>   };
+>   
+>   struct ddebug_query {
+> @@ -128,7 +126,6 @@ do {								\
+>   #define v3pr_info(fmt, ...)	vnpr_info(3, fmt, ##__VA_ARGS__)
+>   #define v4pr_info(fmt, ...)	vnpr_info(4, fmt, ##__VA_ARGS__)
+>   
+> -
+>   /*
+>    * simplify a repeated for-loop pattern walking N steps in a T _vec
+>    * member inside a struct _box.  It expects int i and T *_sp to be
+> @@ -139,8 +136,8 @@ do {								\
+>    * @_vec: name of a sub-struct member in _box, with array-ref and length
+>    */
+>   #define for_subvec(_i, _sp, _box, _vec)				       \
+> -	for ((_i) = 0, (_sp) = (_box)->_vec;			       \
+> -	     (_i) < (_box)->num_##_vec;				       \
+> +	for ((_i) = 0, (_sp) = (_box)->_vec.start;		       \
+> +	     (_i) < (_box)->_vec.len;				       \
+>   	     (_i)++, (_sp)++)
+>   
+>   static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+> @@ -163,6 +160,13 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+>   		  query->first_lineno, query->last_lineno, query->class_string);
+>   }
+>   
+> +#define vpr_dt_info(dt_p, msg_p, ...) ({				\
+> +	struct ddebug_table const *_dt = dt_p;				\
+> +	v2pr_info(msg_p " module:%s nd:%d nc:%d nu:%d\n", ##__VA_ARGS__, \
+> +		  _dt->mod_name, _dt->info.descs.len, _dt->info.maps.len, \
+> +		  _dt->info.users.len);					\
+> +	})
+> +
 
-v1 Link: https://lore.kernel.org/lkml/20250225154136.3052757-1-quic_vdadhani@quicinc.com/
----
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |   7 -
- arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 750 +++++++++++++++++++++
- 2 files changed, 750 insertions(+), 7 deletions(-)
+This macro is not used before PATCH 17/59, maybe move it there?
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 175f8b1e3b2d..97e2d2998a7b 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -714,11 +714,6 @@ ethernet0_mdio: ethernet0-mdio-pins {
- 		};
- 	};
- 
--	qup_uart10_default: qup-uart10-state {
--		pins = "gpio46", "gpio47";
--		function = "qup1_se3";
--	};
--
- 	qup_spi16_default: qup-spi16-state {
- 		pins = "gpio86", "gpio87", "gpio88", "gpio89";
- 		function = "qup2_se2";
-@@ -919,8 +914,6 @@ &remoteproc_gpdsp1 {
- 
- &uart10 {
- 	compatible = "qcom,geni-debug-uart";
--	pinctrl-0 = <&qup_uart10_default>;
--	pinctrl-names = "default";
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index 3394ae2d1300..4a829431cae5 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -913,6 +913,8 @@ i2c14: i2c@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -938,6 +940,8 @@ spi14: spi@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -961,6 +965,8 @@ uart14: serial@880000 {
- 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart14_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -978,6 +984,8 @@ i2c15: i2c@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1003,6 +1011,8 @@ spi15: spi@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1026,6 +1036,8 @@ uart15: serial@884000 {
- 				interrupts = <GIC_SPI 583 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart15_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1043,6 +1055,8 @@ i2c16: i2c@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1066,6 +1080,8 @@ spi16: spi@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1091,6 +1107,8 @@ uart16: serial@888000 {
- 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart16_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1108,6 +1126,8 @@ i2c17: i2c@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1133,6 +1153,8 @@ spi17: spi@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1156,6 +1178,8 @@ uart17: serial@88c000 {
- 				interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart17_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1171,6 +1195,8 @@ i2c18: i2c@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1198,6 +1224,8 @@ spi18: spi@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1221,6 +1249,8 @@ uart18: serial@890000 {
- 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart18_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1238,6 +1268,8 @@ i2c19: i2c@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1263,6 +1295,8 @@ spi19: spi@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1286,6 +1320,8 @@ uart19: serial@894000 {
- 				interrupts = <GIC_SPI 587 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart19_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1303,6 +1339,8 @@ i2c20: i2c@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1328,6 +1366,8 @@ spi20: spi@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1351,6 +1391,8 @@ uart20: serial@898000 {
- 				interrupts = <GIC_SPI 834 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart20_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1404,6 +1446,8 @@ i2c0: i2c@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1429,6 +1473,8 @@ spi0: spi@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1452,6 +1498,8 @@ uart0: serial@980000 {
- 				interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart0_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1469,6 +1517,8 @@ i2c1: i2c@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1494,6 +1544,8 @@ spi1: spi@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1517,6 +1569,8 @@ uart1: serial@984000 {
- 				interrupts = <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart1_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1534,6 +1588,8 @@ i2c2: i2c@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1559,6 +1615,8 @@ spi2: spi@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1582,6 +1640,8 @@ uart2: serial@988000 {
- 				interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart2_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1599,6 +1659,8 @@ i2c3: i2c@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1624,6 +1686,8 @@ spi3: spi@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1647,6 +1711,8 @@ uart3: serial@98c000 {
- 				interrupts = <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart3_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1664,6 +1730,8 @@ i2c4: i2c@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1689,6 +1757,8 @@ spi4: spi@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1712,6 +1782,8 @@ uart4: serial@990000 {
- 				interrupts = <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart4_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1729,6 +1801,8 @@ i2c5: i2c@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1754,6 +1828,8 @@ spi5: spi@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1777,6 +1853,8 @@ uart5: serial@994000 {
- 				interrupts = <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart5_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_0 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1829,6 +1907,8 @@ i2c7: i2c@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c7_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1854,6 +1934,8 @@ spi7: spi@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi7_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1877,6 +1959,8 @@ uart7: serial@a80000 {
- 				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
-+				pinctrl-0 = <&qup_uart7_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -1895,6 +1979,8 @@ i2c8: i2c@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c8_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1920,6 +2006,8 @@ spi8: spi@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi8_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1943,6 +2031,8 @@ uart8: serial@a84000 {
- 				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
-+				pinctrl-0 = <&qup_uart8_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -1961,6 +2051,8 @@ i2c9: i2c@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -1986,6 +2078,8 @@ spi9: spi@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2009,6 +2103,8 @@ uart9: serial@a88000 {
- 				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart9_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2026,6 +2122,8 @@ i2c10: i2c@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c10_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2051,6 +2149,8 @@ spi10: spi@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi10_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2074,6 +2174,8 @@ uart10: serial@a8c000 {
- 				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
-+				pinctrl-0 = <&qup_uart10_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 0
- 						 &clk_virt SLAVE_QUP_CORE_1 0>,
-@@ -2092,6 +2194,8 @@ i2c11: i2c@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c11_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2117,6 +2221,8 @@ spi11: spi@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi11_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2140,6 +2246,8 @@ uart11: serial@a90000 {
- 				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
-+				pinctrl-0 = <&qup_uart11_default>;
-+				pinctrl-names = "default";
- 				interconnect-names = "qup-core", "qup-config";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
-@@ -2158,6 +2266,8 @@ i2c12: i2c@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2183,6 +2293,8 @@ spi12: spi@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2206,6 +2318,8 @@ uart12: serial@a94000 {
- 				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_uart12_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2223,6 +2337,8 @@ i2c13: i2c@a98000 {
- 				interrupts = <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c13_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_1 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2276,6 +2392,8 @@ i2c21: i2c@b80000 {
- 				interrupts = <GIC_SPI 831 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_i2c21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						&clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 					   <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2301,6 +2419,8 @@ spi21: spi@b80000 {
- 				interrupts = <GIC_SPI 831 IRQ_TYPE_LEVEL_HIGH>;
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				clock-names = "se";
-+				pinctrl-0 = <&qup_spi21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						&clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 					   <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -2325,6 +2445,8 @@ uart21: serial@b80000 {
- 				clock-names = "se";
- 				clocks = <&gcc GCC_QUPV3_WRAP3_S0_CLK>;
- 				interconnect-names = "qup-core", "qup-config";
-+				pinctrl-0 = <&qup_uart21_default>;
-+				pinctrl-names = "default";
- 				interconnects = <&clk_virt MASTER_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS
- 						 &clk_virt SLAVE_QUP_CORE_3 QCOM_ICC_TAG_ALWAYS>,
- 						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-@@ -4268,6 +4390,634 @@ tlmm: pinctrl@f000000 {
- 			#interrupt-cells = <2>;
- 			gpio-ranges = <&tlmm 0 0 149>;
- 			wakeup-parent = <&pdc>;
-+
-+			qup_i2c0_default: qup-i2c0-state {
-+				pins = "gpio20", "gpio21";
-+				function = "qup0_se0";
-+			};
-+
-+			qup_i2c1_default: qup-i2c1-state {
-+				pins = "gpio24", "gpio25";
-+				function = "qup0_se1";
-+			};
-+
-+			qup_i2c2_default: qup-i2c2-state {
-+				pins = "gpio36", "gpio37";
-+				function = "qup0_se2";
-+			};
-+
-+			qup_i2c3_default: qup-i2c3-state {
-+				pins = "gpio28", "gpio29";
-+				function = "qup0_se3";
-+			};
-+
-+			qup_i2c4_default: qup-i2c4-state {
-+				pins = "gpio32", "gpio33";
-+				function = "qup0_se4";
-+			};
-+
-+			qup_i2c5_default: qup-i2c5-state {
-+				pins = "gpio36", "gpio37";
-+				function = "qup0_se5";
-+			};
-+
-+			qup_i2c7_default: qup-i2c7-state {
-+				pins = "gpio40", "gpio41";
-+				function = "qup1_se0";
-+			};
-+
-+			qup_i2c8_default: qup-i2c8-state {
-+				pins = "gpio42", "gpio43";
-+				function = "qup1_se1";
-+			};
-+
-+			qup_i2c9_default: qup-i2c9-state {
-+				pins = "gpio46", "gpio47";
-+				function = "qup1_se2";
-+			};
-+
-+			qup_i2c10_default: qup-i2c10-state {
-+				pins = "gpio44", "gpio45";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_i2c11_default: qup-i2c11-state {
-+				pins = "gpio48", "gpio49";
-+				function = "qup1_se4";
-+			};
-+
-+			qup_i2c12_default: qup-i2c12-state {
-+				pins = "gpio52", "gpio53";
-+				function = "qup1_se5";
-+			};
-+
-+			qup_i2c13_default: qup-i2c13-state {
-+				pins = "gpio56", "gpio57";
-+				function = "qup1_se6";
-+			};
-+
-+			qup_i2c14_default: qup-i2c14-state {
-+				pins = "gpio80", "gpio81";
-+				function = "qup2_se0";
-+			};
-+
-+			qup_i2c15_default: qup-i2c15-state {
-+				pins = "gpio84", "gpio85";
-+				function = "qup2_se1";
-+			};
-+
-+			qup_i2c16_default: qup-i2c16-state {
-+				pins = "gpio86", "gpio87";
-+				function = "qup2_se2";
-+			};
-+
-+			qup_i2c17_default: qup-i2c17-state {
-+				pins = "gpio91", "gpio92";
-+				function = "qup2_se3";
-+			};
-+
-+			qup_i2c18_default: qup-i2c18-state {
-+				pins = "gpio95", "gpio96";
-+				function = "qup2_se4";
-+			};
-+
-+			qup_i2c19_default: qup-i2c19-state {
-+				pins = "gpio99", "gpio100";
-+				function = "qup2_se5";
-+			};
-+
-+			qup_i2c20_default: qup-i2c20-state {
-+				pins = "gpio97", "gpio98";
-+				function = "qup2_se6";
-+			};
-+
-+			qup_i2c21_default: qup-i2c21-state {
-+				pins = "gpio13", "gpio14";
-+				function = "qup3_se0";
-+			};
-+
-+			qup_spi0_default: qup-spi0-state {
-+				pins = "gpio20", "gpio21", "gpio22", "gpio23";
-+				function = "qup0_se0";
-+			};
-+
-+			qup_spi1_default: qup-spi1-state {
-+				pins = "gpio24", "gpio25", "gpio26", "gpio27";
-+				function = "qup0_se1";
-+			};
-+
-+			qup_spi2_default: qup-spi2-state {
-+				pins = "gpio36", "gpio37", "gpio38", "gpio39";
-+				function = "qup0_se2";
-+			};
-+
-+			qup_spi3_default: qup-spi3-state {
-+				pins = "gpio28", "gpio29", "gpio30", "gpio31";
-+				function = "qup0_se3";
-+			};
-+
-+			qup_spi4_default: qup-spi4-state {
-+				pins = "gpio32", "gpio33", "gpio34", "gpio35";
-+				function = "qup0_se4";
-+			};
-+
-+			qup_spi5_default: qup-spi5-state {
-+				pins = "gpio36", "gpio37", "gpio38", "gpio39";
-+				function = "qup0_se5";
-+			};
-+
-+			qup_spi7_default: qup-spi7-state {
-+				pins = "gpio40", "gpio41", "gpio42", "gpio43";
-+				function = "qup1_se0";
-+			};
-+
-+			qup_spi8_default: qup-spi8-state {
-+				pins = "gpio42", "gpio43", "gpio40", "gpio41";
-+				function = "qup1_se1";
-+			};
-+
-+			qup_spi9_default: qup-spi9-state {
-+				pins = "gpio46", "gpio47", "gpio44", "gpio45";
-+				function = "qup1_se2";
-+			};
-+
-+			qup_spi10_default: qup-spi10-state {
-+				pins = "gpio44", "gpio45", "gpio46", "gpio47";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_spi11_default: qup-spi11-state {
-+				pins = "gpio48", "gpio49", "gpio50", "gpio51";
-+				function = "qup1_se4";
-+			};
-+
-+			qup_spi12_default: qup-spi12-state {
-+				pins = "gpio52", "gpio53", "gpio54", "gpio55";
-+				function = "qup1_se5";
-+			};
-+
-+			qup_spi14_default: qup-spi14-state {
-+				pins = "gpio80", "gpio81", "gpio82", "gpio83";
-+				function = "qup2_se0";
-+			};
-+
-+			qup_spi15_default: qup-spi15-state {
-+				pins = "gpio84", "gpio85", "gpio99", "gpio100";
-+				function = "qup2_se1";
-+			};
-+
-+			qup_spi16_default: qup-spi16-state {
-+				pins = "gpio86", "gpio87", "gpio88", "gpio89";
-+				function = "qup2_se2";
-+			};
-+
-+			qup_spi17_default: qup-spi17-state {
-+				pins = "gpio91", "gpio92", "gpio93", "gpio94";
-+				function = "qup2_se3";
-+			};
-+
-+			qup_spi18_default: qup-spi18-state {
-+				pins = "gpio95", "gpio96", "gpio97", "gpio98";
-+				function = "qup2_se4";
-+			};
-+
-+			qup_spi19_default: qup-spi19-state {
-+				pins = "gpio99", "gpio100", "gpio84", "gpio85";
-+				function = "qup2_se5";
-+			};
-+
-+			qup_spi20_default: qup-spi20-state {
-+				pins = "gpio97", "gpio98", "gpio95", "gpio96";
-+				function = "qup2_se6";
-+			};
-+
-+			qup_spi21_default: qup-spi21-state {
-+				pins = "gpio13", "gpio14", "gpio15", "gpio16";
-+				function = "qup3_se0";
-+			};
-+
-+			qup_uart0_default: qup-uart0-state {
-+				qup_uart0_cts: qup-uart0-cts-pins {
-+					pins = "gpio20";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_rts: qup-uart0-rts-pins {
-+					pins = "gpio21";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_tx: qup-uart0-tx-pins {
-+					pins = "gpio22";
-+					function = "qup0_se0";
-+				};
-+
-+				qup_uart0_rx: qup-uart0-rx-pins {
-+					pins = "gpio23";
-+					function = "qup0_se0";
-+				};
-+			};
-+
-+			qup_uart1_default: qup-uart1-state {
-+				qup_uart1_cts: qup-uart1-cts-pins {
-+					pins = "gpio24";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_rts: qup-uart1-rts-pins {
-+					pins = "gpio25";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_tx: qup-uart1-tx-pins {
-+					pins = "gpio26";
-+					function = "qup0_se1";
-+				};
-+
-+				qup_uart1_rx: qup-uart1-rx-pins {
-+					pins = "gpio27";
-+					function = "qup0_se1";
-+				};
-+			};
-+
-+			qup_uart2_default: qup-uart2-state {
-+				qup_uart2_cts: qup-uart2-cts-pins {
-+					pins = "gpio36";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_rts: qup-uart2-rts-pins {
-+					pins = "gpio37";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_tx: qup-uart2-tx-pins {
-+					pins = "gpio38";
-+					function = "qup0_se2";
-+				};
-+
-+				qup_uart2_rx: qup-uart2-rx-pins {
-+					pins = "gpio39";
-+					function = "qup0_se2";
-+				};
-+			};
-+
-+			qup_uart3_default: qup-uart3-state {
-+				qup_uart3_cts: qup-uart3-cts-pins {
-+					pins = "gpio28";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_rts: qup-uart3-rts-pins {
-+					pins = "gpio29";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_tx: qup-uart3-tx-pins {
-+					pins = "gpio30";
-+					function = "qup0_se3";
-+				};
-+
-+				qup_uart3_rx: qup-uart3-rx-pins {
-+					pins = "gpio31";
-+					function = "qup0_se3";
-+				};
-+			};
-+
-+			qup_uart4_default: qup-uart4-state {
-+				qup_uart4_cts: qup-uart4-cts-pins {
-+					pins = "gpio32";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_rts: qup-uart4-rts-pins {
-+					pins = "gpio33";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_tx: qup-uart4-tx-pins {
-+					pins = "gpio34";
-+					function = "qup0_se4";
-+				};
-+
-+				qup_uart4_rx: qup-uart4-rx-pins {
-+					pins = "gpio35";
-+					function = "qup0_se4";
-+				};
-+			};
-+
-+			qup_uart5_default: qup-uart5-state {
-+				qup_uart5_cts: qup-uart5-cts-pins {
-+					pins = "gpio36";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_rts: qup-uart5-rts-pins {
-+					pins = "gpio37";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_tx: qup-uart5-tx-pins {
-+					pins = "gpio38";
-+					function = "qup0_se5";
-+				};
-+
-+				qup_uart5_rx: qup-uart5-rx-pins {
-+					pins = "gpio39";
-+					function = "qup0_se5";
-+				};
-+			};
-+
-+			qup_uart7_default: qup-uart7-state {
-+				qup_uart7_cts: qup-uart7-cts-pins {
-+					pins = "gpio40";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_rts: qup-uart7-rts-pins {
-+					pins = "gpio41";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_tx: qup-uart7-tx-pins {
-+					pins = "gpio42";
-+					function = "qup1_se0";
-+				};
-+
-+				qup_uart7_rx: qup-uart7-rx-pins {
-+					pins = "gpio43";
-+					function = "qup1_se0";
-+				};
-+			};
-+
-+			qup_uart8_default: qup-uart8-state {
-+				qup_uart8_cts: qup-uart8-cts-pins {
-+					pins = "gpio42";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_rts: qup-uart8-rts-pins {
-+					pins = "gpio43";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_tx: qup-uart8-tx-pins {
-+					pins = "gpio40";
-+					function = "qup1_se1";
-+				};
-+
-+				qup_uart8_rx: qup-uart8-rx-pins {
-+					pins = "gpio41";
-+					function = "qup1_se1";
-+				};
-+			};
-+
-+			qup_uart9_default: qup-uart9-state {
-+				qup_uart9_cts: qup-uart9-cts-pins {
-+					pins = "gpio46";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_rts: qup-uart9-rts-pins {
-+					pins = "gpio47";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_tx: qup-uart9-tx-pins {
-+					pins = "gpio44";
-+					function = "qup1_se2";
-+				};
-+
-+				qup_uart9_rx: qup-uart9-rx-pins {
-+					pins = "gpio45";
-+					function = "qup1_se2";
-+				};
-+			};
-+
-+			qup_uart10_default: qup-uart10-state {
-+				pins = "gpio46", "gpio47";
-+				function = "qup1_se3";
-+			};
-+
-+			qup_uart11_default: qup-uart11-state {
-+				qup_uart11_cts: qup-uart11-cts-pins {
-+					pins = "gpio48";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_rts: qup-uart11-rts-pins {
-+					pins = "gpio49";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_tx: qup-uart11-tx-pins {
-+					pins = "gpio50";
-+					function = "qup1_se4";
-+				};
-+
-+				qup_uart11_rx: qup-uart11-rx-pins {
-+					pins = "gpio51";
-+					function = "qup1_se4";
-+				};
-+			};
-+
-+			qup_uart12_default: qup-uart12-state {
-+				qup_uart12_cts: qup-uart12-cts-pins {
-+					pins = "gpio52";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_rts: qup-uart12-rts-pins {
-+					pins = "gpio53";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_tx: qup-uart12-tx-pins {
-+					pins = "gpio54";
-+					function = "qup1_se5";
-+				};
-+
-+				qup_uart12_rx: qup-uart12-rx-pins {
-+					pins = "gpio55";
-+					function = "qup1_se5";
-+				};
-+			};
-+
-+			qup_uart14_default: qup-uart14-state {
-+				qup_uart14_cts: qup-uart14-cts-pins {
-+					pins = "gpio80";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_rts: qup-uart14-rts-pins {
-+					pins = "gpio81";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_tx: qup-uart14-tx-pins {
-+					pins = "gpio82";
-+					function = "qup2_se0";
-+				};
-+
-+				qup_uart14_rx: qup-uart14-rx-pins {
-+					pins = "gpio83";
-+					function = "qup2_se0";
-+				};
-+			};
-+
-+			qup_uart15_default: qup-uart15-state {
-+				qup_uart15_cts: qup-uart15-cts-pins {
-+					pins = "gpio84";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_rts: qup-uart15-rts-pins {
-+					pins = "gpio85";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_tx: qup-uart15-tx-pins {
-+					pins = "gpio99";
-+					function = "qup2_se1";
-+				};
-+
-+				qup_uart15_rx: qup-uart15-rx-pins {
-+					pins = "gpio100";
-+					function = "qup2_se1";
-+				};
-+			};
-+
-+			qup_uart16_default: qup-uart16-state {
-+				qup_uart16_cts: qup-uart16-cts-pins {
-+					pins = "gpio86";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_rts: qup-uart16-rts-pins {
-+					pins = "gpio87";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_tx: qup-uart16-tx-pins {
-+					pins = "gpio88";
-+					function = "qup2_se2";
-+				};
-+
-+				qup_uart16_rx: qup-uart16-rx-pins {
-+					pins = "gpio89";
-+					function = "qup2_se2";
-+				};
-+			};
-+
-+			qup_uart17_default: qup-uart17-state {
-+				qup_uart17_cts: qup-uart17-cts-pins {
-+					pins = "gpio91";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_rts: qup0-uart17-rts-pins {
-+					pins = "gpio92";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_tx: qup0-uart17-tx-pins {
-+					pins = "gpio93";
-+					function = "qup2_se3";
-+				};
-+
-+				qup_uart17_rx: qup0-uart17-rx-pins {
-+					pins = "gpio94";
-+					function = "qup2_se3";
-+				};
-+			};
-+
-+			qup_uart18_default: qup-uart18-state {
-+				qup_uart18_cts: qup-uart18-cts-pins {
-+					pins = "gpio95";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_rts: qup-uart18-rts-pins {
-+					pins = "gpio96";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_tx: qup-uart18-tx-pins {
-+					pins = "gpio97";
-+					function = "qup2_se4";
-+				};
-+
-+				qup_uart18_rx: qup-uart18-rx-pins {
-+					pins = "gpio98";
-+					function = "qup2_se4";
-+				};
-+			};
-+
-+			qup_uart19_default: qup-uart19-state {
-+				qup_uart19_cts: qup-uart19-cts-pins {
-+					pins = "gpio99";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_rts: qup-uart19-rts-pins {
-+					pins = "gpio100";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_tx: qup-uart19-tx-pins {
-+					pins = "gpio84";
-+					function = "qup2_se5";
-+				};
-+
-+				qup_uart19_rx: qup-uart19-rx-pins {
-+					pins = "gpio85";
-+					function = "qup2_se5";
-+				};
-+			};
-+
-+			qup_uart20_default: qup-uart20-state {
-+				qup_uart20_cts: qup-uart20-cts-pins {
-+					pins = "gpio97";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_rts: qup-uart20-rts-pins {
-+					pins = "gpio98";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_tx: qup-uart20-tx-pins {
-+					pins = "gpio95";
-+					function = "qup2_se6";
-+				};
-+
-+				qup_uart20_rx: qup-uart20-rx-pins {
-+					pins = "gpio96";
-+					function = "qup2_se6";
-+				};
-+			};
-+
-+			qup_uart21_default: qup-uart21-state {
-+				qup_uart21_cts: qup-uart21-cts-pins {
-+					pins = "gpio13";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_rts: qup-uart21-rts-pins {
-+					pins = "gpio14";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_tx: qup-uart21-tx-pins {
-+					pins = "gpio15";
-+					function = "qup3_se0";
-+				};
-+
-+				qup_uart21_rx: qup-uart21-rx-pins {
-+					pins = "gpio16";
-+					function = "qup3_se0";
-+				};
-+			};
- 		};
- 
- 		sram: sram@146d8000 {
+By curiosity, do you know why the `verbose` parameter was introduced? It 
+is not possible to use dyndbg on dyndbg?
+
+>   #define __outvar /* filled by callee */
+>   static struct ddebug_class_map *ddebug_find_valid_class(struct ddebug_table const *dt,
+>   							const char *class_string,
+> @@ -171,7 +175,7 @@ static struct ddebug_class_map *ddebug_find_valid_class(struct ddebug_table cons
+>   	struct ddebug_class_map *map;
+>   	int i, idx;
+>   
+> -	for_subvec(i, map, dt, classes) {
+> +	for_subvec(i, map, &dt->info, maps) {
+>   		idx = match_string(map->class_names, map->length, class_string);
+>   		if (idx >= 0) {
+>   			*class_id = idx + map->base;
+> @@ -217,8 +221,8 @@ static int ddebug_change(const struct ddebug_query *query,
+>   			valid_class = _DPRINTK_CLASS_DFLT;
+>   		}
+>   
+> -		for (i = 0; i < dt->num_ddebugs; i++) {
+> -			struct _ddebug *dp = &dt->ddebugs[i];
+> +		for (i = 0; i < dt->info.descs.len; i++) {
+> +			struct _ddebug *dp = &dt->info.descs.start[i];
+>   
+>   			/* match site against query-class */
+>   			if (dp->class_id != valid_class)
+> @@ -1065,8 +1069,8 @@ static struct _ddebug *ddebug_iter_first(struct ddebug_iter *iter)
+>   	}
+>   	iter->table = list_entry(ddebug_tables.next,
+>   				 struct ddebug_table, link);
+> -	iter->idx = iter->table->num_ddebugs;
+> -	return &iter->table->ddebugs[--iter->idx];
+> +	iter->idx = iter->table->info.descs.len;
+> +	return &iter->table->info.descs.start[--iter->idx];
+>   }
+>   
+>   /*
+> @@ -1087,10 +1091,10 @@ static struct _ddebug *ddebug_iter_next(struct ddebug_iter *iter)
+>   		}
+>   		iter->table = list_entry(iter->table->link.next,
+>   					 struct ddebug_table, link);
+> -		iter->idx = iter->table->num_ddebugs;
+> +		iter->idx = iter->table->info.descs.len;
+>   		--iter->idx;
+>   	}
+> -	return &iter->table->ddebugs[iter->idx];
+> +	return &iter->table->info.descs.start[iter->idx];
+>   }
+>   
+>   /*
+> @@ -1137,12 +1141,12 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
+>   #define class_in_range(class_id, map)					\
+>   	(class_id >= map->base && class_id < map->base + map->length)
+>   
+> -static const char *ddebug_class_name(struct ddebug_iter *iter, struct _ddebug *dp)
+> +static const char *ddebug_class_name(struct ddebug_table *dt, struct _ddebug *dp)
+>   {
+> -	struct ddebug_class_map *map = iter->table->classes;
+> -	int i, nc = iter->table->num_classes;
+> +	struct ddebug_class_map *map;
+> +	int i;
+>   
+> -	for (i = 0; i < nc; i++, map++)
+> +	for_subvec(i, map, &dt->info, maps)
+
+This change can't be done in 11/59? (perhaps with classes and not maps).
+
+>   		if (class_in_range(dp->class_id, map))
+>   			return map->class_names[dp->class_id - map->base];
+>   
+> @@ -1176,7 +1180,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+>   	seq_putc(m, '"');
+>   
+>   	if (dp->class_id != _DPRINTK_CLASS_DFLT) {
+> -		class = ddebug_class_name(iter, dp);
+> +		class = ddebug_class_name(iter->table, dp);
+>   		if (class)
+>   			seq_printf(m, " class:%s", class);
+>   		else
+> @@ -1236,18 +1240,18 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt, struct _ddebug
+>   	 * the builtin/modular classmap vector/section.  Save the start
+>   	 * and length of the subrange at its edges.
+>   	 */
+> -	for_subvec(i, cm, di, classes) {
+> +	for_subvec(i, cm, di, maps) {
+>   		if (!strcmp(cm->mod_name, dt->mod_name)) {
+>   			if (!nc) {
+>   				v2pr_info("start subrange, class[%d]: module:%s base:%d len:%d ty:%d\n",
+>   					  i, cm->mod_name, cm->base, cm->length, cm->map_type);
+> -				dt->classes = cm;
+> +				dt->info.maps.start = cm;
+>   			}
+>   			nc++;
+>   		}
+>   	}
+>   	if (nc) {
+> -		dt->num_classes = nc;
+> +		dt->info.maps.len = nc;
+>   		vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
+>   	}
+>   }
+> @@ -1260,10 +1264,10 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   {
+>   	struct ddebug_table *dt;
+>   
+> -	if (!di->num_descs)
+> +	if (!di->descs.len)
+>   		return 0;
+>   
+> -	v3pr_info("add-module: %s %d sites\n", modname, di->num_descs);
+> +	v3pr_info("add-module: %s %d sites\n", modname, di->descs.len);
+>   
+>   	dt = kzalloc(sizeof(*dt), GFP_KERNEL);
+>   	if (dt == NULL) {
+> @@ -1277,19 +1281,18 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   	 * this struct ddebug_table.
+>   	 */
+>   	dt->mod_name = modname;
+> -	dt->ddebugs = di->descs;
+> -	dt->num_ddebugs = di->num_descs;
+> +	dt->info = *di;
+>   
+>   	INIT_LIST_HEAD(&dt->link);
+>   
+> -	if (di->classes && di->num_classes)
+> +	if (di->maps.len)
+>   		ddebug_attach_module_classes(dt, di);
+>   
+>   	mutex_lock(&ddebug_lock);
+>   	list_add_tail(&dt->link, &ddebug_tables);
+>   	mutex_unlock(&ddebug_lock);
+>   
+> -	vpr_info("%3u debug prints in module %s\n", di->num_descs, modname);
+> +	vpr_info("%3u debug prints in module %s\n", di->descs.len, modname);
+>   	return 0;
+>   }
+>   
+> @@ -1436,10 +1439,10 @@ static int __init dynamic_debug_init(void)
+>   	char *cmdline;
+>   
+>   	struct _ddebug_info di = {
+> -		.descs = __start___dyndbg,
+> -		.classes = __start___dyndbg_classes,
+> -		.num_descs = __stop___dyndbg - __start___dyndbg,
+> -		.num_classes = __stop___dyndbg_classes - __start___dyndbg_classes,
+> +		.descs.start = __start___dyndbg_descs,
+> +		.maps.start  = __start___dyndbg_class_maps,
+> +		.descs.len = __stop___dyndbg_descs - __start___dyndbg_descs,
+> +		.maps.len  = __stop___dyndbg_class_maps - __start___dyndbg_class_maps,
+>   	};
+>   
+>   #ifdef CONFIG_MODULES
+> @@ -1450,7 +1453,7 @@ static int __init dynamic_debug_init(void)
+>   	}
+>   #endif /* CONFIG_MODULES */
+>   
+> -	if (&__start___dyndbg == &__stop___dyndbg) {
+> +	if (&__start___dyndbg_descs == &__stop___dyndbg_descs) {
+>   		if (IS_ENABLED(CONFIG_DYNAMIC_DEBUG)) {
+>   			pr_warn("_ddebug table is empty in a CONFIG_DYNAMIC_DEBUG build\n");
+>   			return 1;
+> @@ -1460,16 +1463,16 @@ static int __init dynamic_debug_init(void)
+>   		return 0;
+>   	}
+>   
+> -	iter = iter_mod_start = __start___dyndbg;
+> +	iter = iter_mod_start = __start___dyndbg_descs;
+>   	modname = iter->modname;
+>   	i = mod_sites = mod_ct = 0;
+>   
+> -	for (; iter < __stop___dyndbg; iter++, i++, mod_sites++) {
+> +	for (; iter < __stop___dyndbg_descs; iter++, i++, mod_sites++) {
+>   
+>   		if (strcmp(modname, iter->modname)) {
+>   			mod_ct++;
+> -			di.num_descs = mod_sites;
+> -			di.descs = iter_mod_start;
+> +			di.descs.len = mod_sites;
+> +			di.descs.start = iter_mod_start;
+>   			ret = ddebug_add_module(&di, modname);
+>   			if (ret)
+>   				goto out_err;
+> @@ -1479,8 +1482,8 @@ static int __init dynamic_debug_init(void)
+>   			iter_mod_start = iter;
+>   		}
+>   	}
+> -	di.num_descs = mod_sites;
+> -	di.descs = iter_mod_start;
+> +	di.descs.len = mod_sites;
+> +	di.descs.start = iter_mod_start;
+>   	ret = ddebug_add_module(&di, modname);
+>   	if (ret)
+>   		goto out_err;
+> @@ -1490,8 +1493,8 @@ static int __init dynamic_debug_init(void)
+>   		 i, mod_ct, (int)((mod_ct * sizeof(struct ddebug_table)) >> 10),
+>   		 (int)((i * sizeof(struct _ddebug)) >> 10));
+>   
+> -	if (di.num_classes)
+> -		v2pr_info("  %d builtin ddebug class-maps\n", di.num_classes);
+> +	if (di.maps.len)
+> +		v2pr_info("  %d builtin ddebug class-maps\n", di.maps.len);
+>   
+>   	/* now that ddebug tables are loaded, process all boot args
+>   	 * again to find and activate queries given in dyndbg params.
+
 -- 
-2.34.1
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
 
