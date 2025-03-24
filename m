@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-573931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1301A6DE4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:21:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEECA6DE4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4871685D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988963B6E19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4553725E444;
-	Mon, 24 Mar 2025 15:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6919F25DD13;
+	Mon, 24 Mar 2025 15:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Bt3alWHn"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mWFfVv7D"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5878E8460
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1161726AFC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829573; cv=none; b=VndtQKZFMJik+bvU72nE4t1b8tzFYdZw1sLkfyQlcqHm9QN42X+LQrP9hXRVfmX7jUs0wJZp4mtmDcUws2Z43Bky9yjR7NBHCzlxKuxcH1nH7gRTl4K4MoEhVR2COnQhy6wH34I7xqqXrERZv137V3puFGcXNwXW5JIjbX21a5k=
+	t=1742829589; cv=none; b=WF7JliyFrKwd+X3jcpLVs7T5c4VXZpI4KMlndjIHU8gZnOOINv7mIfWs7unITE1AlE/z7hcyNiQLjPswXa3ElUI0nD1eWu7EP6nxjlnJdft7UQkhg98gagSBn7QtnG5F0EESDJJzB+hGSp0NG3PocLhFCcB6BPRCA1ZDMC1nv54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829573; c=relaxed/simple;
-	bh=QrVnzfUf9807NU+t6GHTuY1bj5+B6MrXXEb03KcnJyE=;
+	s=arc-20240116; t=1742829589; c=relaxed/simple;
+	bh=jgZ+yRFX4kTkv28Ic6gW1UMLBtZutVU+26oB7YyFvvY=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=o+cXfnaGHtPhShqDdhSsNSDln4RYj6XS9lrhDE4VuhgYlpKoEH18glGTj1Kr8yrbxCBTllFJ6RYFOt8V8hjudo8UIb3D3rzEuHZ7n+F/DJuZq0GcE3j+0DQKPRtsO5sQcRcX2wTyLgO/J0ULbcC5EE198hFvZWQMuu7ZljTGsas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Bt3alWHn; arc=none smtp.client-ip=217.70.183.196
+	 In-Reply-To:Content-Type; b=prZo8KBQZW1vLpncMn2klmC8wCfrmFur/bByA0y6J3gKNYY71+ljl4oGSrfkX5FUYkt7MXBAbHoicm8QFILZZ601nUEG+FhXaekAAM0PEK7zwQyD4qp9POELUcaNbz0/Z64PqKW7Bgu6tQBDmgOaTN28tJsuSPrj7AhvBo0hFOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mWFfVv7D; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30A27433D6;
-	Mon, 24 Mar 2025 15:19:29 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C5F404438F;
+	Mon, 24 Mar 2025 15:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742829570;
+	t=1742829586;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NIOYBuXA29JWaJv/xjWrr9a955L2cegWId9tye+HKUc=;
-	b=Bt3alWHnJF9JgRhmjJTHyjz2KArUxAf94WHg2BjKNHY2yp6DPb48y3l6SbM1fGy9b0cbxw
-	Ey4x03tIdRJgJZWB0DT+n0I/LlHiLxBvLaNErxjtZzlUQkp8C5c1pooxs+DPGmaCvrWlmN
-	6XDZRINI+Boq7jUpdkUxo5S2BRZOTGPV0WaphS2xI2r9dFKh/RypaAwIErqZR3jPL0m/HF
-	aDTOUUahstN7fA76err7a5EptZ7HN5z8hn4Qx7RjCYXl4OJnrAkZ/GR3/w9ZbEFsROuGA7
-	XC59vZWMj6gBkOAUs8hoQtTST1tBXWQzL0ku9EFqVNXwkAeKC5FDuKVaWq8kLg==
-Message-ID: <1765e57c-ddaa-4e5b-a017-63bed2b0c9cf@bootlin.com>
-Date: Mon, 24 Mar 2025 16:19:28 +0100
+	bh=iSeLWfn2zTzm2+I9AbU856yampOl2CZ4qu9B36HB8qc=;
+	b=mWFfVv7Dl2JG9UmLkvK7OvQGYWzT8yb5ndjIEtMfU9RpfOgioEX/crNyxeU0uBeAsOvD5a
+	kO0kpoyCsM3+iTLHDzrjrL3hjZwjuNNgMaw0lMDhzkGdP7Zjtcs9lKrnBaW3eHSgJznqwj
+	Ka+WtiJfJiJraWCEdgBGV5P28rMpksLWHjPXOvQAZPrSl1RNnq9dPdF5y2iX11su6//UlS
+	RmYquMs7jGPAgilRNSEL/YCfCHv/JiURd4BTxDnsGphUOU/UMchlXlNakT8adGazp8Dqnb
+	bg35w0ynGBc2yY8/xnPcr4CR9mudbTYKIFVyjprHy4UduIHCQHMq3N/BN2PGqQ==
+Message-ID: <614fc6aa-dfa9-4a5b-bc93-1374fa460b98@bootlin.com>
+Date: Mon, 24 Mar 2025 16:19:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,8 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v2 23/59] dyndbg: move .mod_name from/to structs
- ddebug_table/_ddebug_info
+Subject: Re: [PATCH v2 27/59] selftests-dyndbg: test_percent_splitting
 To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
  dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
@@ -64,7 +63,7 @@ Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
  daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
  jani.nikula@intel.com, ville.syrjala@linux.intel.com
 References: <20250320185238.447458-1-jim.cromie@gmail.com>
- <20250320185238.447458-24-jim.cromie@gmail.com>
+ <20250320185238.447458-28-jim.cromie@gmail.com>
 Content-Language: en-US
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -120,7 +119,7 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  PdjUMWb5Ld21PSyCrtGc/hTKwxMoHsOZPy6UB8YJ5omZdsavcjKMrDpybguOfxUmGYs2H3MJ
  ghIUQMMOe0267uQcmMNDPRueGWTLXcuyz0Tpe62Whekc3gNMl0JrNz6Gty8OBb/ETijfSHPE
  qGHYuyAZJo9A/IazHuJ+4n+gm4kQl1WLfxoRMzYHCA==
-In-Reply-To: <20250320185238.447458-24-jim.cromie@gmail.com>
+In-Reply-To: <20250320185238.447458-28-jim.cromie@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-GND-State: clean
@@ -132,185 +131,53 @@ X-GND-Sasl: louis.chauvet@bootlin.com
 
 
 Le 20/03/2025 à 19:52, Jim Cromie a écrit :
-> struct _ddebug_info already has almost all dyndbg's info for a module,
-> so finish the encapsulation.  This puts the datum closer to where its
-> needed, improving the chance that we can obsolete the _ddebug.modame
-> field with a desc_modname(dp) accessor fn.
-> 
-> In static ddebug_add_module(&_ddebug_info_cursor..), force the
-> cursor-model by dropping the modname arg, and setting it explicitly
-> into the cursor before the 3 calls to it.
-> 
-> struct ddebug_table only uses .mod_name when applying >control
-> changes, and it has a _ddebug_info member anyway, so it keeps access
-> to the field, just with a different offset.
+> This does basic testing of classmaps using '%' separated
+> multi-queries.  It modprobes test_dynamic_debug with several classes
+> enabled, and counts to verify that the expected sites show the
+> enablement in the control file.
 > 
 > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->   include/linux/dynamic_debug.h |  1 +
->   lib/dynamic_debug.c           | 41 ++++++++++++++++++-----------------
->   2 files changed, 22 insertions(+), 20 deletions(-)
+>   .../dynamic_debug/dyndbg_selftest.sh          | 20 +++++++++++++++++++
+>   1 file changed, 20 insertions(+)
 > 
-> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-> index 03a83a83b621..8043966a0fd6 100644
-> --- a/include/linux/dynamic_debug.h
-> +++ b/include/linux/dynamic_debug.h
-> @@ -198,6 +198,7 @@ struct _ddebug_class_users {
->   } __packed;
+> diff --git a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> index 368d10a691a0..c97c9391d0f4 100755
+> --- a/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> +++ b/tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+> @@ -256,9 +256,29 @@ function comma_terminator_tests {
+>       ddcmd =_
+>   }
 >   
->   struct _ddebug_info {
-> +	const char *mod_name;
->   	struct _ddebug_descs descs;
->   	struct _ddebug_class_maps maps;
->   	struct _ddebug_class_users users;
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index 3c9fb8324ad6..cd3eec5bb81c 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -49,7 +49,6 @@ extern struct _ddebug_class_user __stop___dyndbg_class_users[];
+> +function test_percent_splitting {
+> +    echo -e "${GREEN}# TEST_PERCENT_SPLITTING - multi-command splitting on % ${NC}"
+> +    ifrmmod test_dynamic_debug_submod
+> +    ifrmmod test_dynamic_debug
+> +    ddcmd =_
+> +    modprobe test_dynamic_debug dyndbg=class,D2_CORE,+pf%class,D2_KMS,+pt%class,D2_ATOMIC,+pm
+> +    check_match_ct =pf 1
+> +    check_match_ct =pt 1
+> +    check_match_ct =pm 1
+> +    check_match_ct test_dynamic_debug 23 -r
+> +    # add flags to those callsites
+> +    ddcmd class,D2_CORE,+mf%class,D2_KMS,+lt%class,D2_ATOMIC,+ml
+> +    check_match_ct =pmf 1
+> +    check_match_ct =plt 1
+> +    check_match_ct =pml 1
+> +    check_match_ct test_dynamic_debug 23 -r
+> +    ifrmmod test_dynamic_debug
+> +}
+> +
+>   tests_list=(
+>       basic_tests
+>       comma_terminator_tests
+> +    test_percent_splitting
+>   )
 >   
->   struct ddebug_table {
->   	struct list_head link;
-> -	const char *mod_name;
->   	struct _ddebug_info info;
->   };
->   
-> @@ -166,7 +165,7 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
->   #define vpr_dt_info(dt_p, msg_p, ...) ({				\
->   	struct ddebug_table const *_dt = dt_p;				\
->   	v2pr_info(msg_p " module:%s nd:%d nc:%d nu:%d\n", ##__VA_ARGS__, \
-> -		  _dt->mod_name, _dt->info.descs.len, _dt->info.maps.len, \
-> +		  _dt->info.mod_name, _dt->info.descs.len, _dt->info.maps.len, \
->   		  _dt->info.users.len);					\
->   	})
->   
-> @@ -215,7 +214,7 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
->   
->   		/* match against the module name */
->   		if (query->module &&
-> -		    !match_wildcard(query->module, dt->mod_name))
-> +		    !match_wildcard(query->module, dt->info.mod_name))
->   			continue;
->   
->   		if (query->class_string) {
-> @@ -283,7 +282,7 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
->   #endif
->   			v4pr_info("changed %s:%d [%s]%s %s => %s\n",
->   				  trim_prefix(dp->filename), dp->lineno,
-> -				  dt->mod_name, dp->function,
-> +				  dt->info.mod_name, dp->function,
->   				  ddebug_describe_flags(dp->flags, &fbuf),
->   				  ddebug_describe_flags(newflags, &nbuf));
->   			dp->flags = newflags;
-> @@ -1123,7 +1122,7 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
->   
->   	seq_printf(m, "%s:%u [%s]%s =%s \"",
->   		   trim_prefix(dp->filename), dp->lineno,
-> -		   iter->table->mod_name, dp->function,
-> +		   iter->table->info.mod_name, dp->function,
->   		   ddebug_describe_flags(dp->flags, &flags));
->   	seq_escape_str(m, dp->format, ESCAPE_SPACE, "\t\r\n\"");
->   	seq_putc(m, '"');
-> @@ -1283,7 +1282,7 @@ static void ddebug_apply_class_users(const struct ddebug_table *dt)
->   #define dd_mark_vector_subrange(_i, _dst, _sp, _box, _vec) ({	\
->   	int nc = 0;							\
->   	for_subvec(_i, _sp, _box, _vec) {				\
-> -		if (!strcmp((_sp)->mod_name, (_dst)->mod_name)) {	\
-> +		if (!strcmp((_sp)->mod_name, (_dst)->info.mod_name)) {	\
->   			if (!nc++)					\
->   				(_dst)->info._vec.start = (_sp);	\
->   		} else {						\
-> @@ -1314,7 +1313,7 @@ ddebug_class_range_overlap(struct _ddebug_class_map *cm,
->    * Allocate a new ddebug_table for the given module
->    * and add it to the global list.
->    */
-> -static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
-> +static int ddebug_add_module(struct _ddebug_info *di)
->   {
->   	struct ddebug_table *dt;
->   	struct _ddebug_class_map *cm;
-> @@ -1325,20 +1324,19 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   	if (!di->descs.len)
->   		return 0;
->   
-> -	v3pr_info("add-module: %s %d sites\n", modname, di->descs.len);
-> +	v3pr_info("add-module: %s %d sites\n", di->mod_name, di->descs.len);
->   
->   	dt = kzalloc(sizeof(*dt), GFP_KERNEL);
->   	if (dt == NULL) {
-> -		pr_err("error adding module: %s\n", modname);
-> +		pr_err("error adding module: %s\n", di->mod_name);
->   		return -ENOMEM;
->   	}
->   	/*
-> -	 * For built-in modules, name lives in .rodata and is
-> -	 * immortal. For loaded modules, name points at the name[]
-> -	 * member of struct module, which lives at least as long as
-> -	 * this struct ddebug_table.
-> +	 * For built-in modules, name (as supplied in di by its
-> +	 * callers) lives in .rodata and is immortal. For loaded
-> +	 * modules, name points at the name[] member of struct module,
-> +	 * which lives at least as long as this struct ddebug_table.
->   	 */
-> -	dt->mod_name = modname;
->   	dt->info = *di;
->   
->   	INIT_LIST_HEAD(&dt->link);
-> @@ -1368,10 +1366,10 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   	if (dt->info.users.len)
->   		ddebug_apply_class_users(dt);
->   
-> -	vpr_info("%3u debug prints in module %s\n", di->descs.len, modname);
-> +	vpr_info("%3u debug prints in module %s\n", di->descs.len, di->mod_name);
->   	return 0;
->   cleanup:
-> -	WARN_ONCE("dyndbg multi-classmap conflict in %s\n", modname);
-> +	WARN_ONCE("dyndbg multi-classmap conflict in %s\n", di->mod_name);
->   	kfree(dt);
->   	return -EINVAL;
->   
-> @@ -1436,7 +1434,7 @@ static int ddebug_remove_module(const char *mod_name)
->   
->   	mutex_lock(&ddebug_lock);
->   	list_for_each_entry_safe(dt, nextdt, &ddebug_tables, link) {
-> -		if (dt->mod_name == mod_name) {
-> +		if (dt->info.mod_name == mod_name) {
->   			ddebug_table_free(dt);
->   			ret = 0;
->   			break;
-> @@ -1456,7 +1454,8 @@ static int ddebug_module_notify(struct notifier_block *self, unsigned long val,
->   
->   	switch (val) {
->   	case MODULE_STATE_COMING:
-> -		ret = ddebug_add_module(&mod->dyndbg_info, mod->name);
-> +		mod->dyndbg_info.mod_name = mod->name;
-> +		ret = ddebug_add_module(&mod->dyndbg_info);
->   		if (ret)
->   			WARN(1, "Failed to allocate memory: dyndbg may not work properly.\n");
->   		break;
-> @@ -1556,7 +1555,8 @@ static int __init dynamic_debug_init(void)
->   			mod_ct++;
->   			di.descs.len = mod_sites;
->   			di.descs.start = iter_mod_start;
-> -			ret = ddebug_add_module(&di, modname);
-> +			di.mod_name = modname;
-> +			ret = ddebug_add_module(&di);
->   			if (ret)
->   				goto out_err;
->   
-> @@ -1567,7 +1567,8 @@ static int __init dynamic_debug_init(void)
->   	}
->   	di.descs.len = mod_sites;
->   	di.descs.start = iter_mod_start;
-> -	ret = ddebug_add_module(&di, modname);
-> +	di.mod_name = modname;
-> +	ret = ddebug_add_module(&di);
->   	if (ret)
->   		goto out_err;
->   
+>   # Run tests
 
 -- 
 Louis Chauvet, Bootlin
