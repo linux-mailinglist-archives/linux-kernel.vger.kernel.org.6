@@ -1,174 +1,321 @@
-Return-Path: <linux-kernel+bounces-573360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D8AA6D63E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:35:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F487A6D640
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2115188E775
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F133716B027
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E925D551;
-	Mon, 24 Mar 2025 08:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B627C25D52B;
+	Mon, 24 Mar 2025 08:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="g3nnqUVa"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="SfCAn7tE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xiBH4ekJ"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B08925D21E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A229433A6;
+	Mon, 24 Mar 2025 08:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742805305; cv=none; b=Tw/OBV+FEgL/Xh8v173oU1kVDkaY5h61be8VWaBN2DugM5ZA+z2opTG7yOcA4fuMl9qyKk0hV7hWmGeptSqukboS+WYR05UXNGZuhkjOzxP16KBBhodIuEkfZlKiwMCCTt9kZbzmPpKdam23couZWXn0dG7a4TmdALxicyfWC6A=
+	t=1742805320; cv=none; b=vEa+fgZHm4lw28FZP/gp/irpi5YCyetWDNZ9pLpo9F/Tg5qruqeDVERpsrKFAfRT9GDgy7vc7EZzLa61CMpmc43CBlZ1hI4HXYU9DhwOwKsFHVChz9B1K2uM29BdKLsGKQsN3PQ73DhQMbYrFtG+sfGDMXPeRrad5tE6haZ/bqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742805305; c=relaxed/simple;
-	bh=K3YpedOgsq+C31b7tTZPOvr8kmsx7aRuaqrW18HIxhw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Cx7tpkePg2TycPqcyzxcmt/S9AkaUkq9cNN5DVMtwqr3IdYaaGLo8wzCrnfiXl2s2OA3SEfEYFCO6Su+ohjE5TjNZAVkO2/gQCz2dLc6xhM41cDi0x6FfXgetsKkAjNWYhEs/SWGjqjS0/F0U1QofJM70KULH6LU+UPFl08i/YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=g3nnqUVa; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so696276966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 01:35:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1742805302; x=1743410102; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MtM2jPewpBB1GtxH9hLs2BIeUeV4rFif5sXTsAELetg=;
-        b=g3nnqUVayA+f7NYeLW4hAiJ6sS4fK2KZa2bpyAoDXBkba+jQIKQUUEDXz0ESBMSWcM
-         iWza+ATFopkHY5JcRWdt8zXpxCYU1gFaiinP6lHr2xTe+lY37Lb/77hCsBVLsJwx58N9
-         TjgxXO95Z+vb0DX1z865cDKAE8MWlhrvSxJmINVv10KIaXQB/fw/B2TDhvC7cc+MuFtj
-         MIw9a9YhKpcpLOTGKiC4xodgN3K3AOcvtbGx6WLLbV22kld7Uv5EbyH4zp1dBWOLN15o
-         vyaBFZeufh9eZIbOm4TwBctTezPT6Xb099svTmaDB/j7e56g5Uc62cJ76AAIwI0sNnmz
-         ZMqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742805302; x=1743410102;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MtM2jPewpBB1GtxH9hLs2BIeUeV4rFif5sXTsAELetg=;
-        b=hnWFymLiwKyqEWogTCkJ4+LUpU5lWzCUsu1gSqITAoOWY190mWDwCmLh6FaC4ZerHl
-         1YtzlCdCTyWHmbeatTpWV5AcQNxcJwCc+YzaPapXfOGXgH1AyHo7zl0dXkLhLuVsyi/f
-         J4FV83A9HGoc/nGDTmrLucQ1u/f/dtfx0YoF5TnrFSu5XnQfxcqGyRTRuhqzx0NvSMLZ
-         1IF+IiplSdgwFVZrFEba+hr1sldW9MkY8wweQLktPCDDQZEBW5H/btopkPFjzbDrKu6h
-         fLEX52zMDfq2hlPHLFqNJ94PN7R7jkJbL6Dnm7hGffy42lX5ldoVD74EVCmgQqIC/sQA
-         zEUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdJFDXTT2T7VEm9gOlbV09y7r+4r95Du223320DmPajbkJCTXXen44OYphLFoRq+iF203VQwlyYd9lT2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw3zDlp/S5b2T59sIY8zFqnYYmLY7Y+UUr27ttp4QiA4wmmjLJ
-	+7TCQEu3O3CpyI8WQNra1sZ5Xbzp1DRvIX4oPhhWMI/ccJXAIuAbEa4arGYlLFs=
-X-Gm-Gg: ASbGnct06kJ5kWzQRVzBGOGjkOEp8jJfouLhg0i67vqx08nRxezaCppDnP0TLBz5RJs
-	HbMHfNB827R1WDofkkOdcEJKhvJaob7pZahoAmQuMUdwfmeiDCVupKFj//wH4WEyCrQzO5Oi1jT
-	E2KZefeyYy+alFNbYFbSZWooZfyDMwWQxRLzqO8enzon6DNBsioxqdTujyoCooEFl28U3Xtvc8U
-	hDqwvJg4ujOZONiHYGuX+CnVlCgme5zn8Lev+hacwtfd/i0bTe6ok5Z2xWNM0UNb/H1r4hG+kn6
-	Bo9OiXU1pnoET5JungyDjrqOuqjIiuUzww1zZCvIkIR2P5BkINaFFaKDb4VnT3r79CBV56rXjD9
-	4kjjtdA/aYol5WLX6hkFNGEWl
-X-Google-Smtp-Source: AGHT+IGB5qcChPuaAQdfX+14ZggTxmYRK+LL7JdV3Pt+9T+i1b9nMe6nfbPAb3Nqpg2BGHGLPaSOUw==
-X-Received: by 2002:a17:907:971e:b0:ac2:622f:39c1 with SMTP id a640c23a62f3a-ac3f20f3e88mr932569966b.22.1742805301737;
-        Mon, 24 Mar 2025 01:35:01 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd8f37asm645336266b.179.2025.03.24.01.35.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 01:35:01 -0700 (PDT)
+	s=arc-20240116; t=1742805320; c=relaxed/simple;
+	bh=cwYcZRPCXPa9emtvchfdiZ66o4ChkzTRAs+VQebJAwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTp2P2d+JgUmt+wYaaDyfCwIDziZXUDA2hEiILH8On3sP8/iOg9s55CkLlnbTBi+sXAXX9XtxTk9qumyj1yKr6iN339rUWJ7IaDcv8bcliP3sLTaFo5eicuUix3X1Io1NfYN3a/qFEEH2u9Suz+7WSO556QnY2iF633huXXAEJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=SfCAn7tE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xiBH4ekJ; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4C5BA11400D4;
+	Mon, 24 Mar 2025 04:35:16 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 24 Mar 2025 04:35:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742805316;
+	 x=1742891716; bh=HNAvz1h/RancO+tAPGxOIbKhxi5ud3TT5gGiuFDk/Gk=; b=
+	SfCAn7tEbPjF8yz83ZCXa1g2Ruy6rCNcPUiewQ7yuTg2mNb39gAESafAqJbuGhZX
+	GYaFNZDBO6QZUQBUpuE2kDZVNZZUk+SUJPqKcFzFK7330aFNAoNoX2N47mfhx6XR
+	Z6VYqn5KLDTwk4UB162rGVrxGSsFK1TFSfLaWzbZVrGiBrTpZvJgw/pv1z//LPJ0
+	eR9uq78PeySoHy9EuaexDJ0g+mXJNSrsf6ccrULDoHvGhWSTeYyeMC6iIttVYKHw
+	wHD+0LM4yiakjlnaioSSm+EIv8PVyw6dU+g5trxD9A9VQBE4ew4NfAfDOsalpn1G
+	vKD4f/G4KXQkWzWV49m2Cg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742805316; x=
+	1742891716; bh=HNAvz1h/RancO+tAPGxOIbKhxi5ud3TT5gGiuFDk/Gk=; b=x
+	iBH4ekJv+ipmT3CCUF7vpBuE/PcVlb2ARBAjfopG8q0iHOfbtFGP1S+83mLUewAw
+	hxMlN+QKFnuqle9lkgKpdoxi9djnHIkn0p43wLQRZw4x+K0RByRvOOhb+aOW8xs8
+	25DqYKrEdleiJwiZKHkNR9YYDcGznz5dsYqoa+bVGy4rqMjI0sztss2j4eAWEcGB
+	TSS48pqEJKlfmVcaxGfDzGhGikauWKBP74quwY5knx12bE0rYUVX8j/Pq5qaH8sR
+	Bt7sS8xKDmDplfg5KoeS+Us5dwHmS+1Kzc3RmmTz2ZLczb41c/tlVDY0EiB8yZCb
+	VqOK6U+nV6J48oofVGL1Q==
+X-ME-Sender: <xms:RBnhZ89Kt0IuPLZplJCv41C31cytLM-1O-ORJdiXH8QVwiyiPGbSag>
+    <xme:RBnhZ0vwCtYHqOpz3VrVEnZZ8DyvsXcfnfXyUxzmuFpu89-4Se4ILUKg0nj65IdH2
+    TnnVNPw3EdGbSI2rds>
+X-ME-Received: <xmr:RBnhZyAKEH3CcHCXZDn3U-zHCIn2e0LOSGFEqFw_iPwRSDFlCQAx48OqH7jVxrVRjMirTZQ-ChRqpXMbRdfZYymZ25X_ARZbyA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheelfeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
+    tdejnecuhfhrohhmpehnihhklhgrshcushhouggvrhhluhhnugcuoehnihhklhgrshdrsh
+    houggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpefg
+    vedtueejhefgueekuedtjedtheeijefgieffgeevveeuvdejheefvdeiuefgleenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdr
+    shhouggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeejpd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihgu
+    vggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthh
+    grrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjrggtohhpohdr
+    mhhonhguihdorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpth
+    htohepkhhivghrrghnrdgsihhnghhhrghmodhrvghnvghsrghssehiuggvrghsohhnsgho
+    rghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvh
+    hgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:RBnhZ8d7UAM_IHge2oLepkQ808LcxT5nfa6amoh1sbYFUXVE3OtsSg>
+    <xmx:RBnhZxNCMaJx79RA-e0JebwIMCb4drOaWqCnj3wcEiqfVWU6uhr7ZQ>
+    <xmx:RBnhZ2nQwDQk4OvrIycG9KxO1Qpop2QWb6Ob_3XSzWIh99rho1T5tw>
+    <xmx:RBnhZzukwFJDNjOhVwgFl8iBPt9FFEV0gagitEzLqk5kqa12hYCSPA>
+    <xmx:RBnhZ0cjDWPcvF3AQ7LaoDwpILFKoBJmVDXqmwh2LwpfYM5kFfQMFgJ4>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Mar 2025 04:35:15 -0400 (EDT)
+Date: Mon, 24 Mar 2025 09:35:13 +0100
+From: niklas soderlund <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] media: vsp1: pipe: Add RAW Bayer formats mapping
+Message-ID: <20250324083513.GA2884853@ragnatech.se>
+References: <20250321-v4h-iif-v6-0-361e9043026a@ideasonboard.com>
+ <20250321-v4h-iif-v6-7-361e9043026a@ideasonboard.com>
+ <20250321215634.GB11255@pendragon.ideasonboard.com>
+ <dkatmlnysvsy3g4n3m53bzxcqx4avklzfctxgjv4hl6sd7fte3@vlfsvasn53d7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Mar 2025 09:35:00 +0100
-Message-Id: <D8OCX2BM20CX.J365MYKB5ECZ@fairphone.com>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Taniya Das" <quic_tdas@quicinc.com>,
- "Konrad Dybcio" <konradybcio@kernel.org>,
- <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm6350: Add video clock
- controller
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
- <20250321-sm6350-videocc-v1-3-c5ce1f1483ee@fairphone.com>
- <wjq7sxdc5enfu6zhp4d53mpyevzbuwm6qc73kwiu2v3v5p4zkk@mevxbzosjai5>
- <D8M2U2EUF169.MWRPXFYRBXMM@fairphone.com>
- <dbdc13ec-13ca-4d80-8c96-26e5e7b4ab3e@oss.qualcomm.com>
-In-Reply-To: <dbdc13ec-13ca-4d80-8c96-26e5e7b4ab3e@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dkatmlnysvsy3g4n3m53bzxcqx4avklzfctxgjv4hl6sd7fte3@vlfsvasn53d7>
 
-On Fri Mar 21, 2025 at 5:23 PM CET, Dmitry Baryshkov wrote:
-> On 21/03/2025 18:15, Luca Weiss wrote:
->> Hi Dmitry,
->>=20
->> On Fri Mar 21, 2025 at 4:56 PM CET, Dmitry Baryshkov wrote:
->>> On Fri, Mar 21, 2025 at 03:45:01PM +0100, Luca Weiss wrote:
->>>> Add a node for the videocc found on the SM6350 SoC.
->>>>
->>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 ++++++++++++++
->>>>   1 file changed, 14 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dt=
-s/qcom/sm6350.dtsi
->>>> index 00ad1d09a19558d9e2bc61f1a81a36d466adc88e..ab7118b4f8f8cea56a3957=
-e9df67ee1cd74820a6 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>>> @@ -1952,6 +1952,20 @@ usb_1_dwc3_ss_out: endpoint {
->>>>   			};
->>>>   		};
->>>>  =20
->>>> +		videocc: clock-controller@aaf0000 {
->>>> +			compatible =3D "qcom,sm6350-videocc";
->>>> +			reg =3D <0 0x0aaf0000 0 0x10000>;
->>>
->>> 0x0, please.
->>=20
->> There's currently 80 cases of 0 and 20 of 0x0 in this file, is 0x0
->> the preferred way nowadays?
->>=20
->> If so, shall I also change 0 to 0x0 for reg in a separate patch?
->
-> I'd say, yes, please, if Bjorn / Konrad do not object.
+Hello Jacopo,
 
-Sure, I'll just send a patch as part of v2, there's no explicit
-dependency of the series on it, so it can also just be NACKed and
-ignored if so desired.
+On 2025-03-24 09:27:56 +0100, Jacopo Mondi wrote:
+> Hi Laurent
+> 
+> On Fri, Mar 21, 2025 at 11:56:34PM +0200, Laurent Pinchart wrote:
+> > Hi Jacopo,
+> >
+> > Thank you for the patch.
+> >
+> > On Fri, Mar 21, 2025 at 04:45:39PM +0100, Jacopo Mondi wrote:
+> > > Add formats definition for RAW Bayer formats in vsp1_pipe.c.
+> > >
+> > > 8-bits RAW Bayer pixel formats map on VSP format RGB332.
+> >
+> > s/map on/map to/
+> >
+> > > 10, 12 and 16 bits RAW Bayer pixel formats map on RGB565 insted.
+> > >
+> > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> > > ---
+> > > v3->v4:
+> > > - Fix SWAP bits for RAW 10, 12 and 16
+> > > ---
+> > >  drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 72 ++++++++++++++++++++++++-
+> > >  1 file changed, 71 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > index 8e9be3ec1b4d..a51061738edc 100644
+> > > --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
+> > > @@ -30,10 +30,80 @@
+> > >   */
+> > >
+> > >  static const struct vsp1_format_info vsp1_video_formats[] = {
+> > > -	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	/* Raw Bayer 8-bit: Maps on RGB332 */
+> > > +	{ V4L2_PIX_FMT_SBGGR8, MEDIA_BUS_FMT_Y8_1X8,
+> > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGBRG8, MEDIA_BUS_FMT_Y8_1X8,
+> > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGRBG8, MEDIA_BUS_FMT_Y8_1X8,
+> > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > +	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SRGGB8, MEDIA_BUS_FMT_Y8_1X8,
+> > >  	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > >  	  1, { 8, 0, 0 }, false, false, 1, 1, false },
+> >
+> > Similarly to the media bus codes, could we have a single entry, using
+> > V4L2_PIX_FMT_GREY ? Same below with V4L2_PIX_FMT_Y10, V4L2_PIX_FMT_Y12
+> > and V4L2_PIX_FMT_Y16.
+> 
+> mmm, the SRGB mbus codes come from the R-Car ISP input image format.
+> I understand these are multiple identical entries, but having
+> somewhere a translation from SRGB->Y formats just to have fewer
+> entries here it feels a bit of an hack
+> 
+> >
+> > This would still duplicate entries, as V4L2_PIX_FMT_Y1[026] are
+> > essentially treated the same, and they are identical to
+> > V4L2_PIX_FMT_RGB565. We could ask the ISP driver to use
+> > V4L2_PIX_FMT_RGB565 (and V4L2_PIX_FMT_RGB332 for 8-bit raw) when
+> > configuring the VSPX, but that's a bit of a hack.
+> 
+> Indeed, but I don't think 3 "duplicated" entries are any bad, if
+> that's how the HW work.
+> 
+> >
+> > Another option would be to handle the translation in
+> > vsp1_vspx_rwpf_set_subdev_fmt(). I would still in that case only expect
+> > the V4L2_PIX_FMT_GREY and V4L2_PIX_FMT_Y* 4CCs from the ISP driver. This
+> 
+> Do you expect the ISP driver to translate SRGB to Y formats ?
+> 
+> 
+> > patch could then be dropped.
+> 
+> So are you suggesting to translate in the ISP driver
+> 
+>         SRGB8 -> RGB332
+> 
+>         SRGB10/12/16 -> RGB565
+> 
+> Niklas, what do you think ?
 
-Regards
-Luca
+I would rather keep the true formats in the API between the VSP and ISP, 
+that is keep it as is. If really needed maybe a translation in the VSP 
+driver prior to querying vsp1_video_formats[] could be added? But this 
+driver is complex enough as-is :-)
 
->
->>=20
->> Regards
->> Luca
->>=20
->>>
->>>> +			clocks =3D <&gcc GCC_VIDEO_AHB_CLK>,
->>>> +				 <&rpmhcc RPMH_CXO_CLK>,
->>>> +				 <&sleep_clk>;
->>>> +			clock-names =3D "iface",
->>>> +				      "bi_tcxo",
->>>> +				      "sleep_clk";
->>>> +			#clock-cells =3D <1>;
->>>> +			#reset-cells =3D <1>;
->>>> +			#power-domain-cells =3D <1>;
->>>> +		};
->>>> +
->>>>   		cci0: cci@ac4a000 {
->>>>   			compatible =3D "qcom,sm6350-cci", "qcom,msm8996-cci";
->>>>   			reg =3D <0 0x0ac4a000 0 0x1000>;
->>>>
->>>> --=20
->>>> 2.49.0
->>>>
->>=20
+> 
+> 
+> >
+> > What's your preference ?
+> >
+> > > +
+> > > +	/* Raw Bayer 10/12/16-bit: Maps on RGB565 */
+> > > +	{ V4L2_PIX_FMT_SBGGR10, MEDIA_BUS_FMT_Y10_1X10,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> >
+> > The bpp values are used to calculate memory offsets. Unless I'm
+> > mistaken, you should use 16 here, not 10.
+> >
+> 
+> I'm rounding up in the vspx driver. However it is true these formats
+> are sampled in 16bpp chunks, so I can use 16 here.
+> 
+> > > +	{ V4L2_PIX_FMT_SGBRG10, MEDIA_BUS_FMT_Y10_1X10,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGRBG10, MEDIA_BUS_FMT_Y10_1X10,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SRGGB10, MEDIA_BUS_FMT_Y10_1X10,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> > > +
+> > > +	{ V4L2_PIX_FMT_SBGGR12, MEDIA_BUS_FMT_Y12_1X12,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGBRG12, MEDIA_BUS_FMT_Y12_1X12,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGRBG12, MEDIA_BUS_FMT_Y12_1X12,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SRGGB12, MEDIA_BUS_FMT_Y12_1X12,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 12, 0, 0 }, false, false, 1, 1, false },
+> > > +
+> > > +	{ V4L2_PIX_FMT_SBGGR16, MEDIA_BUS_FMT_Y16_1X16,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGBRG16, MEDIA_BUS_FMT_Y16_1X16,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SGRBG16, MEDIA_BUS_FMT_Y16_1X16,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +	{ V4L2_PIX_FMT_SRGGB16, MEDIA_BUS_FMT_Y16_1X16,
+> > > +	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +
+> > > +	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> > > +	  1, { 10, 0, 0 }, false, false, 1, 1, false },
+> >
+> > This doesn't seem right, the patch is changing the V4L2_PIX_FMT_RGB332.
+> 
+> If I'm not mistaken V4L2_PIX_FMT_RGB332 was
+> 
+>         { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+>           VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+>           VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+>           1, { 8, 0, 0 }, false, false, 1, 1, false }
+> 
+> and is now
+> 
+>         { V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
+>           VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+>           VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+>           1, { 10, 0, 0 }, false, false, 1, 1, false },
+> 
+> Seems like I messed up the bpp
+> 
+> With that fixed the diff looks saner. Thanks for spotting.
+> 
+> 
+> >
+> > >  	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > >  	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS,
+> >
+> > --
+> > Regards,
+> >
+> > Laurent Pinchart
 
+-- 
+Kind Regards,
+Niklas Söderlund
 
