@@ -1,382 +1,221 @@
-Return-Path: <linux-kernel+bounces-573138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92943A6D376
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:06:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D8CA6D37B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 05:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD9C5189001E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5E416FCF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 04:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA31189BB5;
-	Mon, 24 Mar 2025 04:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477FC18A93F;
+	Mon, 24 Mar 2025 04:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hbXbpGjt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NWVpVG5V"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2049.outbound.protection.outlook.com [40.107.244.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0017BB6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 04:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742789154; cv=none; b=E7/p4Z4+8AP5C0vSGsPrQNR5RXB+dA5uxQ3kp5y2zyJv4hQ4N+FfpqNpDZU/C35UCnkE1NV8U+CS4KVcESArMZ+8cBH0IB2oPXlPoDXIb+I7rZvklxCRPQfxds3NT8TmKFRDTGLwA2OgElakftJs6kO66TN3yi+4bGJ979lxB+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742789154; c=relaxed/simple;
-	bh=aet9vxFSnxe8aFM1s9AV67Zwavy2t3D9TNLmRVq8SJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGIjUNfkr9ZnfDdOn4dRTXYPt6mugMbwNB+LSXblxgjKz5WJ6LXjO4cRwJrwdj+o/NHueKq3dDqtylaEkpqmZ7VPq3gRHvOqIPy2Vcm1qpnEz9FFJoYJOX5bDkYDR+3jNVHDvY2x3qW9zIj0t0bZhjyHLuIBD2mwQBvPHVDGw1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hbXbpGjt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742789151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1x1hY/1rtDy9MjAhzqye2i9aiAJTHF35sT4hEN0FVn8=;
-	b=hbXbpGjtRouxThQ+cDP3OVyhWBPQNoQnCSnI0E0kO7S412j539N31O/jBlEvZcFUasFMLH
-	GcaMmXiPib/8lholJMztyeB0jRj4Oha0fouc3tn8yM9cDp+p1M7DCmroCu5uleOJAzrq35
-	0Ngc4+fJvWQAZ49NBMNXELezQRuNp08=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-529-yVrQlDtQMEml6k3qccm7ng-1; Mon, 24 Mar 2025 00:05:49 -0400
-X-MC-Unique: yVrQlDtQMEml6k3qccm7ng-1
-X-Mimecast-MFC-AGG-ID: yVrQlDtQMEml6k3qccm7ng_1742789149
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-225107fbdc7so64276635ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Mar 2025 21:05:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742789149; x=1743393949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1x1hY/1rtDy9MjAhzqye2i9aiAJTHF35sT4hEN0FVn8=;
-        b=aRJwqObESufnPtSvYHMRFs1IfybE7L7hazBziGwODzNfZhd535vtwhfy5ZqSLrrH0r
-         1/j5mPRPDppfXoDF0/MSlDwEfR2+8NkDlr3pyhu4y8+01jQNpcoXmnHM2XwF9Z7l+e1Z
-         1guRtQKShGpRYWPMOsUG1o4/duBIBvz1tklIKapOsLMGI0Px2ojMSKg3rtsWXRTFmvM0
-         VkdukuzrQ8g6xO8anZyQBm20lF8nj/JcAAIjNayLQgd1XmEg5g4niteqQwSFWAadxpii
-         45frFoIcSsFxBtSxFOf/KKYKS6SRmxXUOVtSoNP5lhn21PUfY8B05G8FBiwpyBvGC6aG
-         tKQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVr1koZIOvhyXZOozlgoC9xW7Dehda+jJSamjgG9iHtREy+c9BSPekIrbx1rj/5GoidDudankM/clAnh/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIEQND8i3OQ35Q6O/of+8YTiyoc3kcZlfcC0txYkWjbI2sR9aX
-	mvpxqkW2AJnbEopQpCOA9yWZuVF8c2BH5MvgCgLK/Lnx12aanbD4tBKCU/bsOhTn7IXwKQijMaZ
-	4WuzeSbRMIn5dLhMVnFXzKl3LhtarzUj8TMR2ynF+VfwzbxMHYhKzu8VdrOhMguYYtkZHKXz+DE
-	ELaUCcXSO+KRWtyJI4tUI6nGxGDZNHlPNU1Gac
-X-Gm-Gg: ASbGncuzr82fE3T5TO+gQujNtsnHhlNhjWeFS7VLqEtrmr5qduO/EzqtBfqc2xxLDoA
-	1RVpAIK4zibVCsUcoalttHg+69PFNEF3WO8VnTfibc+F2GWs7MOXhz7fzHgiRTEugF4eGT7o=
-X-Received: by 2002:a17:902:ce0f:b0:216:2bd7:1c2f with SMTP id d9443c01a7336-22780c7ba39mr141626475ad.18.1742789148398;
-        Sun, 23 Mar 2025 21:05:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzfjhheKeqCofKoGx2ILS7JuiKGk75svOUU8Qjb+DNoGmGIQw0tKFz8tgPNN1o+lc+3igAiVcvV60oJJW/uGA=
-X-Received: by 2002:a17:902:ce0f:b0:216:2bd7:1c2f with SMTP id
- d9443c01a7336-22780c7ba39mr141626145ad.18.1742789147809; Sun, 23 Mar 2025
- 21:05:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52DE53BE;
+	Mon, 24 Mar 2025 04:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742789274; cv=fail; b=gLGlJ064xWWL0WKWsZNFutbrYcjTNRACspyWKEgk9FVRwhhFHpsG7C5wac+7mzkclKnzUQLSF7WYyM89z2WSoQggkbBFVZKQYte+VkrLwNrfZdV/xkDowiD8Jsz2CxEVOlTE+652ZQVD6c0NVEQdW+8iPmIA3Ru+FNw0yb6l6E0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742789274; c=relaxed/simple;
+	bh=zG3H8P/d2zHS8NTfQ74ZzIC7d4hh82C+fCgpGbSdmRA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aJTi5vGHLI9J82/gR6TzPOBRn9P235QTorkPIZmrSPmI1zQZPTd50jThhHiAql7+7/RZhpSQpqY6ywhsTx0GIEfiU4cRZ/+HOKZXVr/zsHnyofNwt/inV5Vn/VPtdTpML+SNyeWOWRVLtg3ny9KaXJNGxvCIGNqYc+0TAnnk1nU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NWVpVG5V; arc=fail smtp.client-ip=40.107.244.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gwf6zMgeJZyASXb4Gk5LGxZng4pVSRJFUN0+Bw8smzbmmqstbwPGDj0SmWcj4/N6CHYQbQh7jNI8uB+L1sEG/SUmEeIpqN8WYnsiOa7dMLOV1SMjhTWra71RD0GUaw1qyrG+U9yeY8obrUzYV0tmXB2uQNOR071lYyqt+d9mtrZPLLZ5uAHBDHLo+KReYadUX//GQvoQsYYlpAaEdDJTgPX1wguS6QRdg/Deg5jsZY+VY+uEvM5x/IJ2xHfHbG/bjwE86NLK19fmCd2Y/CZPQQzEJVIXNTYYAFZR1kEOSycin+h6dOBWWAyyZSC/iDMLfkfSlBIBTcdg3qQWov729Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TOjZ8kTsVC+gDs3sqGpp6Zql5OH8M1G2vey+YjwnAFI=;
+ b=MtYxJZD1dSceAX/st7RPDl9nq+X6raglRBCeHHlBB/AxTV0W7qfBnTYE1EiaIQktQA5D7e+/Ffdp0Jrk9h6a20imOpRrHljBxZxBBM/PmDA09q/RRnTwh+iDU9UwMvkfsMPUHWloh3hdYMyHUAmLx4MRp6W39LaeLmZX7wi0mQxZql0494DjsspCj89ZnrVOa+R1mi1S7jgAIzUUgiNQIorO0blXx4QTCv/ngZ4yZ+XlbOSmexu0jxLIOq8aZHH4eCJIgq4PG59Gb0c9HmgtWJTRiW3XQQd4Bj2cG4IvMwz1qeqOzn37RzydFRlUx/PaldGMbM3gqdKAp6pPvtwL4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TOjZ8kTsVC+gDs3sqGpp6Zql5OH8M1G2vey+YjwnAFI=;
+ b=NWVpVG5VBOnBy2H8UoflQjC4masM/fgsUNXQ+Ta0v9NszYD8iiIjUtpFisrUx12rvTNpMGAjuLz7VsoV3pgB9SsXa/pGS/3lsxNeD4YCRu0gojr6/wcqSDoTU/n3nc04qypgxB2Zrq11tEZRxRHCZLn1hPfl1L+gjWrQBDiulsCeWSap/QlkKVcReK89h9XYvD39562sO/qLsWzxWG1My+VSG+zILhXpi3JFvPkYHK0HRnkW6B+u1RCNJLef8d1GNDo6dSJT04ojEEap45165I7x8spUJx9olv275yTw6GNWtHP+A/RYUL0aoY3ovLR70fCuRV4bWJx2nubA1pFDIA==
+Received: from PH7PR12MB8178.namprd12.prod.outlook.com (2603:10b6:510:2b3::19)
+ by CH2PR12MB4326.namprd12.prod.outlook.com (2603:10b6:610:af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 04:07:50 +0000
+Received: from PH7PR12MB8178.namprd12.prod.outlook.com
+ ([fe80::77bb:a9fb:c75b:f530]) by PH7PR12MB8178.namprd12.prod.outlook.com
+ ([fe80::77bb:a9fb:c75b:f530%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 04:07:50 +0000
+From: Akhil R <akhilrajeev@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Laxman Dewangan <ldewangan@nvidia.com>, "digetx@gmail.com"
+	<digetx@gmail.com>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>, Jon
+ Hunter <jonathanh@nvidia.com>, "wsa@kernel.org" <wsa@kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+Thread-Topic: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+Thread-Index: AQHbmZsSu5QL/Zn+WkqVduI32ERdILN9hiuAgAAIzUCABB+C4A==
+Date: Mon, 24 Mar 2025 04:07:50 +0000
+Message-ID:
+ <PH7PR12MB81781DAABA5BF502A4CEAD72C0A42@PH7PR12MB8178.namprd12.prod.outlook.com>
+References: <20250320132144.34764-1-akhilrajeev@nvidia.com>
+ <2rlnnjixgd65u6gbqxfuhzu5humehvjth7iysj23xvuv5fi2ft@i5su6kfrqnt5>
+ <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
+In-Reply-To:
+ <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR12MB8178:EE_|CH2PR12MB4326:EE_
+x-ms-office365-filtering-correlation-id: 9fd088d1-5b80-4a12-35ae-08dd6a89718d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?S0im1z6H6KXgAqXW3hcX3zObFxYax3KZXIuwUSwBIyETlVLfgDXCUqgbX8Qq?=
+ =?us-ascii?Q?MAjS87EaUigOpgHw0nFHY2LjXx6xmhrZK69buZLuppeIzt8wYQpdvZS/0T5/?=
+ =?us-ascii?Q?WLxlm9fK5KNpN3LZI9IgKQZ8CZF0S+I91aJgxys8DOnzDj1Xvu46dfTShsHp?=
+ =?us-ascii?Q?f0+vYaN/d9UEfHBlZ9T70GoLzK4mBQFMdk1mY1Q3dJKuuh8AVZu7+HT9Uqgk?=
+ =?us-ascii?Q?Pp+VCLSoDeRfQ8PzuFgqK3R4aodEEgwv/F2QdvZgmdJkj83p7XCRiGym2ebK?=
+ =?us-ascii?Q?Y8Rp8i3Z4hstOurqha4c8rKymcB0DaHKI52ZwE5nYoXD3a++K40DA6oodKho?=
+ =?us-ascii?Q?QoYun7LN538HBhggv6VqJSJA1R2EO3LXT3IX3W54oVKXNxPsCbszTgtlfuZ0?=
+ =?us-ascii?Q?bejwb5LCsmbFLYoJtSiKo2EuKMnpeCVVi37aY207ltP/BDao0614J7u+6FHc?=
+ =?us-ascii?Q?4FfVN0sK1WEInFzNuCEzMMWMOI4ywHDy3c069MRBRhJKi9A0/m2AIPrPjUCO?=
+ =?us-ascii?Q?YUotLpbvow//8U+p1yX8lcMk6KPX8r5Ozxkv4IO3EFLNUnwsp5tpq6h/fxie?=
+ =?us-ascii?Q?uBfnqN7VJpFogi0zZwAdWnIZsfkJfr3TxEja5aLXy4Cnh8DiY4nlMzsHTqpL?=
+ =?us-ascii?Q?3KXBtYtdmMUTdhrUjGaZJ+ZMlvUWZbExuRe1rF18LM8rGQMzf3ZufTy/9QzL?=
+ =?us-ascii?Q?vk+X0+SGf8uGhyZ/ClSbKdQ04c74dQD1x0WhIpZN6emmKloiju1WN96868LZ?=
+ =?us-ascii?Q?4lG/tf27XC5Yg90+UfCBC4+cEMD+v6JTUIiP2psU/9g0ikM4jihHbSzzByFF?=
+ =?us-ascii?Q?FmmDVi1tr18VksD/SRuG+MWlkmhaWHWr1GCioMXruFMqOktzSoyokGxveg+V?=
+ =?us-ascii?Q?Xc3bLOCncwNxa9AjVK7NrdlvxcTjS2/JuStxJYvE+mNrBZbsY374KaBFccHY?=
+ =?us-ascii?Q?nJplWgiMJn/DuduHHVvCoZxPBIQeb1al5Duj1LdpKJV+dP3qwLQL6RiE0VHH?=
+ =?us-ascii?Q?flIg0e/E2z6aYDzKsE6+0RDr7hm1rrC8nsyvpZ6OxzIY6Wlnh3KX4nFLxgOz?=
+ =?us-ascii?Q?DxIUU4zWtWuD12S0f7c635M1XhTATqpbLIr4xxF+7LQ8ULaeaD6gmD3IOhv9?=
+ =?us-ascii?Q?hRllZkrvbqzmqgik8nRvMZBjSK+yy3iZSbNvykefLMYQAOL/o1NRdDeflvKn?=
+ =?us-ascii?Q?zbAZd+Eejy3RDCsu7C4tIMv9HpefgXgTTdmSjShx+vNp/GBY1F/S18bUM4el?=
+ =?us-ascii?Q?ZGYnjccIAolSFo97QE2to8YezdWOULRvL3MS6aKg8YqB6m+K/tmO3H2/1Cuk?=
+ =?us-ascii?Q?awCAD1tXUezl25oQfkeA3D+jid54iJkxta4JmHgclX/HKBNSo0RVKRXgTmB6?=
+ =?us-ascii?Q?kcnsZ+WR5Nq9bo3VwHbJNQbLJO998f+yaYlAQUm1LNZoz/8ibMl/WcqnarRz?=
+ =?us-ascii?Q?2kfHXG106YmdCRFN5CmxadkMjvu0+s2G?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8178.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ZHJPU6qWvKTOQ+InK4G+fNQDVVQ244KPWZywke+1jfRUfNH73jjxiUqyHjvs?=
+ =?us-ascii?Q?mCZMeNA+W3xLrd3LtBpOpV5lKjTqpJLZwIB9vZp6BlgXYVW1nnjLBVIf+Thj?=
+ =?us-ascii?Q?ypLm625TOaPwK/hbp+G+JYrHRqBbi8lR1FG6xfUB2FLt96U/V5XtpoBuQMuo?=
+ =?us-ascii?Q?N8r0yvdoTeEiP/tDtu/+8iwLy8GnIBirISwhuijgzC6a9t5q3MP4hTvDvkhW?=
+ =?us-ascii?Q?pTYGABO8QVzZNi5HqOzjmYVl5V7Sd+YpWvZQQktmELoVeicQc398i97ehx7I?=
+ =?us-ascii?Q?9o2i7Ap3ZIUnml3FhvKnuFwll292LGmLdABXYV/j/V7MIG1cxBUOo/ang3jN?=
+ =?us-ascii?Q?7kyLIrcuyLxNbalAXH3PQTcY8Y6iNU+km7YPFCoN7jCqqGMsBSBACasLnqir?=
+ =?us-ascii?Q?4Dwpj72Arx50UtBmX78HzFJZb/lpLXSrWv5aboPw3hZnGhKT4/wyAlwfczS7?=
+ =?us-ascii?Q?XZRO4MzWS7x6gX8BZRgCWIDUm7hep+fiAqGQ7g5Z511nmrDJCivtTgNAxIs3?=
+ =?us-ascii?Q?0r+n13F9xJwiHiUWGMk/FgmPG/+1ONBU7lJ+wCR77wYuWMp3Bxkczlq4iKl4?=
+ =?us-ascii?Q?WWjU4U91SizW34IS3lPczSeFB2XpN9Ydqlc2gVXW53LOKb9tQIGV6TaqGkJy?=
+ =?us-ascii?Q?sDUfOsScMTFptpEnY1UYKmLAAgHJgYx8Cy3O/G1KT6cyutZxie2xE/165fAy?=
+ =?us-ascii?Q?MKveU8y8qBC8nocrYMfb2yrUwZ/tiwzDiaUinWlByqzTDGGasu100HyfGrUY?=
+ =?us-ascii?Q?CjzMbwhXQdOvbKRxSGkDW5GIkYJIWaeLHxFh5sRYT8xyBGlPPqh7rZ4hN5Kh?=
+ =?us-ascii?Q?ARhbbqMvz8Dmwy0vzr22BBz6da+RgTP5liMZ0cSKHPeQ4OoxGUNPMDq6rFBF?=
+ =?us-ascii?Q?wVyBtPeyqFhvsQeygUuF/fGHMxtvGBAKc2xzxCQbGDW+gOI2fxzWTG7d1ZL4?=
+ =?us-ascii?Q?w63bRuNku0VWBPLIAqoJtSTQ6E1GCAnPpGDuB8Egr53cdqBL9Vz9rD2Z0l9I?=
+ =?us-ascii?Q?46tMJ4InF7gpaFKKQzdJ/u7DFFtciV4CtBnm0/jFFr0NgjtKNA7bJLHvmt7w?=
+ =?us-ascii?Q?tb5AK8V+BgcjvZ6CN4P3ResmyhGNMyov5Jsa8J3+LdGCK9X1LNEMvsRAATgc?=
+ =?us-ascii?Q?CgAEaGyKQd0W+NZre/FKyX0lqCFgibFdYfPJvAq375GxoaCB4IzCbaZz6AeI?=
+ =?us-ascii?Q?k1A3Ii+EOKKnbpWjNVQaStE/H8OkL/C5iNa3lkcoZ949Il3SCqn8jR9Ooice?=
+ =?us-ascii?Q?4lPFBg24nC7iCumEJrRZ401k42u6J3Xhv14Ti+b633ti5tC07SBxFZDMOPnZ?=
+ =?us-ascii?Q?84rCqYJRBRshCKJY1QpVYoHTf+ARvP8xvOQPbmzGcBBv8U710dlHe4DCBvSc?=
+ =?us-ascii?Q?CmHF6LKd8ejfSMxuzWIsMZn7uK1xrKrt0WFFI/ESXsWnQeUSlmkOZyhLGvlO?=
+ =?us-ascii?Q?IOKAuBG+dgSAab+fVqjnHniuyshKcba1iMiDkQiPspP2gRiiQTJxHngmLyIo?=
+ =?us-ascii?Q?i119EKGqj6B7KH6yth4ahRAxNZ6XwuhHMLHrkoGuLbUs2b2HsQAXYFoFYC/f?=
+ =?us-ascii?Q?cEoZLfMK0Um+5QKtZkAy+2g0hs176YDOyyyqBKan?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318-virtio-v1-0-344caf336ddd@daynix.com> <20250318-virtio-v1-3-344caf336ddd@daynix.com>
- <CACGkMEv1TTXHd_JGb_vyN8pfTAMLbsTE6oU9_phrdpaZBrE97Q@mail.gmail.com>
- <b6eec81d-618f-4a59-8680-8e22f1a798bf@daynix.com> <CACGkMEsEaUzAeEaBzX6zQC-gVMjS_0tSegBKUrhX4R6c3MW2hQ@mail.gmail.com>
- <83a5ab7b-7b29-413e-a854-31c7893f3c4a@daynix.com> <CACGkMEvbs9NnHhjaiiD4hc-bOAm9+-ry3xfdZET3HqJ=_1k6Lg@mail.gmail.com>
- <764ca4a4-3587-4dd4-93a4-23542b32dbf9@daynix.com>
-In-Reply-To: <764ca4a4-3587-4dd4-93a4-23542b32dbf9@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 24 Mar 2025 12:05:36 +0800
-X-Gm-Features: AQ5f1Jo0oR0RYzJE70FldPxBoE1wqtTxWWGuGc3i0-xP2EFlGv5DKGx9Q1oDxBU
-Message-ID: <CACGkMEstpXSyxXNr7CymfK8L3xXX40o+QQf80sPYNjtZjWkR3g@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/4] virtio_net: Use new RSS config structs
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>, 
-	Philo Lu <lulie@linux.alibaba.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, devel@daynix.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8178.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fd088d1-5b80-4a12-35ae-08dd6a89718d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 04:07:50.4488
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GGxQZ+NGysHULIn7UTXsnqnRjx9BhC7u66sOjUjpcAqZkU15xFXED9i0gkJg387Unkmu/yQE9BBbd7FNOWTnyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4326
 
-On Fri, Mar 21, 2025 at 2:35=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
-.com> wrote:
->
-> On 2025/03/21 9:35, Jason Wang wrote:
-> > On Thu, Mar 20, 2025 at 1:36=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
-ynix.com> wrote:
-> >>
-> >> On 2025/03/20 10:50, Jason Wang wrote:
-> >>> On Wed, Mar 19, 2025 at 12:48=E2=80=AFPM Akihiko Odaki <akihiko.odaki=
-@daynix.com> wrote:
-> >>>>
-> >>>> On 2025/03/19 10:43, Jason Wang wrote:
-> >>>>> On Tue, Mar 18, 2025 at 5:57=E2=80=AFPM Akihiko Odaki <akihiko.odak=
-i@daynix.com> wrote:
-> >>>>>>
-> >>>>>> The new RSS configuration structures allow easily constructing dat=
-a for
-> >>>>>> VIRTIO_NET_CTRL_MQ_RSS_CONFIG as they strictly follow the order of=
- data
-> >>>>>> for the command.
-> >>>>>>
-> >>>>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> >>>>>> ---
-> >>>>>>     drivers/net/virtio_net.c | 117 +++++++++++++++++--------------=
-----------------
-> >>>>>>     1 file changed, 43 insertions(+), 74 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> >>>>>> index d1ed544ba03a..4153a0a5f278 100644
-> >>>>>> --- a/drivers/net/virtio_net.c
-> >>>>>> +++ b/drivers/net/virtio_net.c
-> >>>>>> @@ -360,24 +360,7 @@ struct receive_queue {
-> >>>>>>            struct xdp_buff **xsk_buffs;
-> >>>>>>     };
-> >>>>>>
-> >>>>>> -/* This structure can contain rss message with maximum settings f=
-or indirection table and keysize
-> >>>>>> - * Note, that default structure that describes RSS configuration =
-virtio_net_rss_config
-> >>>>>> - * contains same info but can't handle table values.
-> >>>>>> - * In any case, structure would be passed to virtio hw through sg=
-_buf split by parts
-> >>>>>> - * because table sizes may be differ according to the device conf=
-iguration.
-> >>>>>> - */
-> >>>>>>     #define VIRTIO_NET_RSS_MAX_KEY_SIZE     40
-> >>>>>> -struct virtio_net_ctrl_rss {
-> >>>>>> -       __le32 hash_types;
-> >>>>>> -       __le16 indirection_table_mask;
-> >>>>>> -       __le16 unclassified_queue;
-> >>>>>> -       __le16 hash_cfg_reserved; /* for HASH_CONFIG (see virtio_n=
-et_hash_config for details) */
-> >>>>>> -       __le16 max_tx_vq;
-> >>>>>> -       u8 hash_key_length;
-> >>>>>> -       u8 key[VIRTIO_NET_RSS_MAX_KEY_SIZE];
-> >>>>>> -
-> >>>>>> -       __le16 *indirection_table;
-> >>>>>> -};
-> >>>>>>
-> >>>>>>     /* Control VQ buffers: protected by the rtnl lock */
-> >>>>>>     struct control_buf {
-> >>>>>> @@ -421,7 +404,9 @@ struct virtnet_info {
-> >>>>>>            u16 rss_indir_table_size;
-> >>>>>>            u32 rss_hash_types_supported;
-> >>>>>>            u32 rss_hash_types_saved;
-> >>>>>> -       struct virtio_net_ctrl_rss rss;
-> >>>>>> +       struct virtio_net_rss_config_hdr *rss_hdr;
-> >>>>>> +       struct virtio_net_rss_config_trailer rss_trailer;
-> >>>>>> +       u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];
-> >>>>>>
-> >>>>>>            /* Has control virtqueue */
-> >>>>>>            bool has_cvq;
-> >>>>>> @@ -523,23 +508,16 @@ enum virtnet_xmit_type {
-> >>>>>>            VIRTNET_XMIT_TYPE_XSK,
-> >>>>>>     };
-> >>>>>>
-> >>>>>> -static int rss_indirection_table_alloc(struct virtio_net_ctrl_rss=
- *rss, u16 indir_table_size)
-> >>>>>> +static size_t virtnet_rss_hdr_size(const struct virtnet_info *vi)
-> >>>>>>     {
-> >>>>>> -       if (!indir_table_size) {
-> >>>>>> -               rss->indirection_table =3D NULL;
-> >>>>>> -               return 0;
-> >>>>>> -       }
-> >>>>>> +       u16 indir_table_size =3D vi->has_rss ? vi->rss_indir_table=
-_size : 1;
-> >>>>>>
-> >>>>>> -       rss->indirection_table =3D kmalloc_array(indir_table_size,=
- sizeof(u16), GFP_KERNEL);
-> >>>>>> -       if (!rss->indirection_table)
-> >>>>>> -               return -ENOMEM;
-> >>>>>> -
-> >>>>>> -       return 0;
-> >>>>>> +       return struct_size(vi->rss_hdr, indirection_table, indir_t=
-able_size);
-> >>>>>>     }
-> >>>>>>
-> >>>>>> -static void rss_indirection_table_free(struct virtio_net_ctrl_rss=
- *rss)
-> >>>>>> +static size_t virtnet_rss_trailer_size(const struct virtnet_info =
-*vi)
-> >>>>>>     {
-> >>>>>> -       kfree(rss->indirection_table);
-> >>>>>> +       return struct_size(&vi->rss_trailer, hash_key_data, vi->rs=
-s_key_size);
-> >>>>>>     }
-> >>>>>>
-> >>>>>>     /* We use the last two bits of the pointer to distinguish the =
-xmit type. */
-> >>>>>> @@ -3576,15 +3554,16 @@ static void virtnet_rss_update_by_qpairs(s=
-truct virtnet_info *vi, u16 queue_pair
-> >>>>>>
-> >>>>>>            for (; i < vi->rss_indir_table_size; ++i) {
-> >>>>>>                    indir_val =3D ethtool_rxfh_indir_default(i, que=
-ue_pairs);
-> >>>>>> -               vi->rss.indirection_table[i] =3D cpu_to_le16(indir=
-_val);
-> >>>>>> +               vi->rss_hdr->indirection_table[i] =3D cpu_to_le16(=
-indir_val);
-> >>>>>>            }
-> >>>>>> -       vi->rss.max_tx_vq =3D cpu_to_le16(queue_pairs);
-> >>>>>> +       vi->rss_trailer.max_tx_vq =3D cpu_to_le16(queue_pairs);
-> >>>>>>     }
-> >>>>>>
-> >>>>>>     static int virtnet_set_queues(struct virtnet_info *vi, u16 que=
-ue_pairs)
-> >>>>>>     {
-> >>>>>>            struct virtio_net_ctrl_mq *mq __free(kfree) =3D NULL;
-> >>>>>> -       struct virtio_net_ctrl_rss old_rss;
-> >>>>>> +       struct virtio_net_rss_config_hdr *old_rss_hdr;
-> >>>>>> +       struct virtio_net_rss_config_trailer old_rss_trailer;
-> >>>>>>            struct net_device *dev =3D vi->dev;
-> >>>>>>            struct scatterlist sg;
-> >>>>>>
-> >>>>>> @@ -3599,24 +3578,28 @@ static int virtnet_set_queues(struct virtn=
-et_info *vi, u16 queue_pairs)
-> >>>>>>             * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and r=
-eturn directly.
-> >>>>>>             */
-> >>>>>>            if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
-> >>>>>> -               memcpy(&old_rss, &vi->rss, sizeof(old_rss));
-> >>>>>> -               if (rss_indirection_table_alloc(&vi->rss, vi->rss_=
-indir_table_size)) {
-> >>>>>> -                       vi->rss.indirection_table =3D old_rss.indi=
-rection_table;
-> >>>>>> +               old_rss_hdr =3D vi->rss_hdr;
-> >>>>>> +               old_rss_trailer =3D vi->rss_trailer;
-> >>>>>> +               vi->rss_hdr =3D kmalloc(virtnet_rss_hdr_size(vi), =
-GFP_KERNEL);
-> >>>>>> +               if (!vi->rss_hdr) {
-> >>>>>> +                       vi->rss_hdr =3D old_rss_hdr;
-> >>>>>>                            return -ENOMEM;
-> >>>>>>                    }
-> >>>>>>
-> >>>>>> +               *vi->rss_hdr =3D *old_rss_hdr;
-> >>>>>>                    virtnet_rss_update_by_qpairs(vi, queue_pairs);
-> >>>>>>
-> >>>>>>                    if (!virtnet_commit_rss_command(vi)) {
-> >>>>>>                            /* restore ctrl_rss if commit_rss_comma=
-nd failed */
-> >>>>>> -                       rss_indirection_table_free(&vi->rss);
-> >>>>>> -                       memcpy(&vi->rss, &old_rss, sizeof(old_rss)=
-);
-> >>>>>> +                       kfree(vi->rss_hdr);
-> >>>>>> +                       vi->rss_hdr =3D old_rss_hdr;
-> >>>>>> +                       vi->rss_trailer =3D old_rss_trailer;
-> >>>>>>
-> >>>>>>                            dev_warn(&dev->dev, "Fail to set num of=
- queue pairs to %d, because committing RSS failed\n",
-> >>>>>>                                     queue_pairs);
-> >>>>>>                            return -EINVAL;
-> >>>>>>                    }
-> >>>>>> -               rss_indirection_table_free(&old_rss);
-> >>>>>> +               kfree(old_rss_hdr);
-> >>>>>>                    goto succ;
-> >>>>>>            }
-> >>>>>>
-> >>>>>> @@ -4059,28 +4042,12 @@ static int virtnet_set_ringparam(struct ne=
-t_device *dev,
-> >>>>>>     static bool virtnet_commit_rss_command(struct virtnet_info *vi=
-)
-> >>>>>>     {
-> >>>>>>            struct net_device *dev =3D vi->dev;
-> >>>>>> -       struct scatterlist sgs[4];
-> >>>>>> -       unsigned int sg_buf_size;
-> >>>>>> +       struct scatterlist sgs[2];
-> >>>>>>
-> >>>>>>            /* prepare sgs */
-> >>>>>> -       sg_init_table(sgs, 4);
-> >>>>>> -
-> >>>>>> -       sg_buf_size =3D offsetof(struct virtio_net_ctrl_rss, hash_=
-cfg_reserved);
-> >>>>>> -       sg_set_buf(&sgs[0], &vi->rss, sg_buf_size);
-> >>>>>> -
-> >>>>>> -       if (vi->has_rss) {
-> >>>>>> -               sg_buf_size =3D sizeof(uint16_t) * vi->rss_indir_t=
-able_size;
-> >>>>>> -               sg_set_buf(&sgs[1], vi->rss.indirection_table, sg_=
-buf_size);
-> >>>>>> -       } else {
-> >>>>>> -               sg_set_buf(&sgs[1], &vi->rss.hash_cfg_reserved, si=
-zeof(uint16_t));
-> >>>>>> -       }
-> >>>>>> -
-> >>>>>> -       sg_buf_size =3D offsetof(struct virtio_net_ctrl_rss, key)
-> >>>>>> -                       - offsetof(struct virtio_net_ctrl_rss, max=
-_tx_vq);
-> >>>>>> -       sg_set_buf(&sgs[2], &vi->rss.max_tx_vq, sg_buf_size);
-> >>>>>> -
-> >>>>>> -       sg_buf_size =3D vi->rss_key_size;
-> >>>>>> -       sg_set_buf(&sgs[3], vi->rss.key, sg_buf_size);
-> >>>>>> +       sg_init_table(sgs, 2);
-> >>>>>> +       sg_set_buf(&sgs[0], vi->rss_hdr, virtnet_rss_hdr_size(vi))=
-;
-> >>>>>> +       sg_set_buf(&sgs[1], &vi->rss_trailer, virtnet_rss_trailer_=
-size(vi));
-> >>>>>
-> >>>>> So I still see this:
-> >>>>>
-> >>>>>            if (vi->has_rss || vi->has_rss_hash_report) {
-> >>>>>                    if (!virtnet_commit_rss_command(vi)) {
-> >>>>>
-> >>>>> Should we introduce a hash config helper instead?
-> >>>>
-> >>>> I think it's fine to use virtnet_commit_rss_command() for hash
-> >>>> reporting. struct virtio_net_hash_config and struct
-> >>>> virtio_net_rss_config are defined to have a common layout to allow
-> >>>> sharing this kind of logic.
-> >>>
-> >>> Well, this trick won't work if the reserved field in hash_config is
-> >>> used in the future.
-> >>
-> >> Right, but we can add a hash config helper when that happens. It will
-> >> only result in a duplication of logic for now.
-> >>
-> >> Regards,
-> >> Akihiko Odaki
+> > > For SMBUS block read, do not continue to read if the message length
+> > > passed from the device is '0' or greater than the maximum allowed byt=
+es.
+> > >
+> > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > > ---
+> > > v1->v2: Add check for the maximum data as well.
+> > >
+> > >  drivers/i2c/busses/i2c-tegra.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-=
+tegra.c
+> > > index 87976e99e6d0..049b4d154c23 100644
+> > > --- a/drivers/i2c/busses/i2c-tegra.c
+> > > +++ b/drivers/i2c/busses/i2c-tegra.c
+> > > @@ -1395,6 +1395,11 @@ static int tegra_i2c_xfer(struct i2c_adapter
+> *adap,
+> > struct i2c_msg msgs[],
+> > >  			ret =3D tegra_i2c_xfer_msg(i2c_dev, &msgs[i],
+> > MSG_END_CONTINUE);
+> > >  			if (ret)
+> > >  				break;
+> > > +
+> > > +			/* Validate message length before proceeding */
+> > > +			if (msgs[i].buf[0] =3D=3D 0 || msgs[i].buf[0] >
+> > I2C_SMBUS_BLOCK_MAX)
 > >
-> > That's tricky as the cvq commands were designed to be used separately.
-> > Let's use a separate helper and virtio_net_hash_config uAPIs now.
->
-> It's not tricky but is explicitly stated in the spec. 5.1.6.5.6.4 "Hash
-> calculation" says:
->  > Field reserved MUST contain zeroes. It is defined to make the
->  > structure to match the layout of virtio_net_rss_config structure,
->  > defined in 5.1.6.5.7.
-
-This is kind of not elegant, but it's too late to fix.
-
-Thanks
-
->
-> By the way, I found it says field reserved MUST contain zeros but we do
-> nothing to ensure that. I'll write a fix for that.
->
-> Regards,
-> Akihiko Odaki
->
+> > I wonder if this can ever happen. Looking at the implementation of the
+> > i2c_smbus_{read,write}_i2c_block_data() functions, they already cap the
+> > length at I2C_SMBUS_BLOCK_MAX.
 > >
-> > Thanks
-> >
-> >>
-> >>>
-> >>> Thanks
-> >>>
-> >>>>
-> >>>> Regards,
-> >>>> Akihiko Odaki
-> >>>>
-> >>>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>
-> >>>
-> >>
-> >
->
+> > I suppose some user could be explicitly sending off messages with bad
+> > lengths, but wouldn't it be better to return an error in that case
+> > instead of just aborting silently?
+>=20
+> For SMBUS read, if I understood it correctly, the check happens after the=
+ whole
+> data is read. So, I believe it makes sense to abort the operation before =
+an erroneous
+> read. I have not verified this violation, but I think the error for I2C_S=
+MBUS_BLOCK_MAX
+> will also be printed at i2c_smbus_read_i2c_block_data() functions even th=
+ough we
+> return silently from the driver.
+>=20
+> The check for '0' is not printed anywhere, but it is probably, okay? Ther=
+e is no data
+> to be read anyway. Please let me know your thoughts.
 
+For context, I was referring to the check in the function i2c_smbus_xfer_em=
+ulated() at the
+line 502. This gets called for i2c_smbus_read_block_data() as well.
+
+Regards,
+Akhil
 
