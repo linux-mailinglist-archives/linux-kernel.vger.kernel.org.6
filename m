@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-573192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7A3A6D413
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B491A6D410
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 07:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6793A838B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:16:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F288118882AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 06:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D5017E01B;
-	Mon, 24 Mar 2025 06:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73D484037;
+	Mon, 24 Mar 2025 06:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="ITGIpFyp"
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b="AW+seEM8"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD62A1CA;
-	Mon, 24 Mar 2025 06:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2602CBE5E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 06:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796998; cv=none; b=BA1bHO7KVOl+FCoIfF72fIlYMFZwWuvPWfhhzqkkgxKU+5zv7BCxje91pzFjZrtqo50RU2gYZ+D0idaJZwuyZbC1ckLoby0MT+aim9TTX2heXmOe9MbMpRpu1pmeQGly9db6ITD85Dj8eWF3VKhMLm33h3apwEa4lFSRxq9JmB0=
+	t=1742796974; cv=none; b=IrzZrdl8Q9+J2Y7aB/xfB0f1jgQOwDRjNcm2hzQgbofxNP9JWen96bxfaIB0kW6+rtgPOYVNsIOnLF125o/xJuhbVjA/uSZlNfOXvQ+fq3pN4SW8NMEloVRFgLY2MNvYD0x4WbB5Q9MnFikZAsz8I9dK4ofudmW0PGRY2mgCDfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796998; c=relaxed/simple;
-	bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=N7SdqVpFsxU0t+9+cWch6pww6EHz+5EDEBH5x5XoUxpAI81MJ7pKkL/xTjunXsk6SuZp1Rs3ZySYOo5wXLAaSPBC75YyRxPb7wOYoP5dIooQrn2ieqfQ36+yf82POWRbtVFG33OW4kznM3JaSTF5SXoj2Rg71EY9xAYZMn7uiD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=ITGIpFyp; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.3])
-	by mail.crpt.ru  with ESMTP id 52O6FoPN018457-52O6FoPP018457
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Mon, 24 Mar 2025 09:15:50 +0300
-Received: from EX2.crpt.local (192.168.60.4) by ex1.crpt.local (192.168.60.3)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 24 Mar
- 2025 09:15:50 +0300
-Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
- ([192.168.60.4]) with mapi id 15.01.2507.044; Mon, 24 Mar 2025 09:15:50 +0300
-From: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
-	<a.vatoropin@crpt.ru>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
-	<a.vatoropin@crpt.ru>, Stephen Boyd <sboyd@kernel.org>, Michal Simek
-	<michal.simek@amd.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] soc: xilinx: vcu: modify the order of devices unregistration
-Thread-Topic: [PATCH] soc: xilinx: vcu: modify the order of devices
- unregistration
-Thread-Index: AQHbnIQwE54gprkZdUqVTZP34SoMOg==
-Date: Mon, 24 Mar 2025 06:15:49 +0000
-Message-ID: <20250324061543.15150-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX1.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1742796974; c=relaxed/simple;
+	bh=T0fMoQbxKTs+J5RN/iwSWQZM40qUvOQCb8V4cNqTR+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcPgmdRL1LVk6Azg3lzaD6rU4BZjWZ6bMzBuIHZdeNYabnN7eGEtwPCgGyL/H9wRU6RWf8tiwTfKUVBbp9csKRPHjryCZejQDS8Un+MoujIqp4HjWPQBUuoUklSitEZyVCkURITDnQTuWwVehXIUpKqPqvuGCDkkFrYC3+DDv1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net; spf=pass smtp.mailfrom=craftyguy.net; dkim=pass (2048-bit key) header.d=craftyguy.net header.i=@craftyguy.net header.b=AW+seEM8; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=craftyguy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=craftyguy.net
+Message-ID: <51a59b41-4214-4e24-bfe8-3d8174ba1a3b@craftyguy.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=craftyguy.net;
+	s=key1; t=1742796960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C8JLMiI733S4xTq1mEOv/zfYlCWUzTNqm+0T4v8oraU=;
+	b=AW+seEM8/syKljhEMGkSA3KPt7Al/dEjX1dKgxcynyPa3TzM90Nkz9NV5h8KEnLn5A68h3
+	FxZ6EH8ioKxSvJL8hLKfdMixNTsT1QFvBtLxgxyOianttCUaek8gCrrGfuPeTP8L4ClgDk
+	/oflXwoN9AcoCuO9PVKg40w3+QxUYU0r/IkmqPYasPmFdRgNfNiDACSNNgGvkkf3+046cO
+	4Wv+hZdpFk9byAk/ls69EtsmpsGckON7smiMeAU+T6Mrv3dhjmYhxhQrl9bNv3OcFeluYF
+	2Z5lRmC8sbkYx5+7Aj/ikPyxRWFKIhxg2f3ojVkpM27iEeSnQZIfZ/kXVurXSA==
+Date: Sun, 23 Mar 2025 23:15:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.3
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
- b=ITGIpFypKaB6RSoCLt1/wetbTrDJMw+CmjIoqPiHBS5QO/3pp4Mcdri1sahof3hzEDt7wquw5fAR
-	AYRSdBTgKbOoargnFt83PAPCT6GqQMCnUP/xR4vPs9qwtcy6/OTD/PkFacUgxbUdjjv4wyK7CKmA
-	cAAMRaZsrW1WS2np15fSBSK5ENdFaxVMBROJ8spJPKbXAVHwcukg3hLj4POA+hokV1wnJsS3/EJN
-	XF+LhWtB7gjKeO1fY2o4Q3C3ZYYEyHXBAtSRPyqjohsQARiT9YsEaAk4fo9eqkpJn18rKwMuoMnE
-	3W0oVQo7l55qoSkufvQwwKUQA/1Ppoc5+9yBNg==
+Subject: Re: [PATCH] wifi: ath11k: fix rx completion meta data corruption
+To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
+ Steev Klimaszewski <steev@kali.org>,
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250321145302.4775-1-johan+linaro@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Clayton Craft <clayton@craftyguy.net>
+In-Reply-To: <20250321145302.4775-1-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-RnJvbTogQW5kcmV5IFZhdG9yb3BpbiA8YS52YXRvcm9waW5AY3JwdC5ydT4NCg0KVGhlIG9yZGVy
-IG9mIHJlZ2lzdHJhdGlvbiBvZiAnc3RydWN0IGNsa19odycgaGFuZGxlcyBpbg0KeHZjdV9jbGtf
-aHdfcmVnaXN0ZXJfbGVhZigpIGRvZXMgbm90IGNvcnJlc3BvbmQgdGhlIG9yZGVyIG9mDQp1bnJl
-Z2lzdHJhdGlvbiBwZXJmb3JtZWQgaW4geHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFmKCkuDQoN
-CkNsZWFuIHVwIHRoZSBvcmRlciBhbmQgcmVwbGFjZSB0aGUgZHVwbGljYXRlICFkaXZpZGVyIGNo
-ZWNrIHdpdGggYSBtb3JlDQphcHByb3ByaWF0ZSBvbmUuDQoNCkZvdW5kIGJ5IExpbnV4IFZlcmlm
-aWNhdGlvbiBDZW50ZXIgKGxpbnV4dGVzdGluZy5vcmcpIHdpdGggU1ZBQ0UuDQoNClNpZ25lZC1v
-ZmYtYnk6IEFuZHJleSBWYXRvcm9waW4gPGEudmF0b3JvcGluQGNycHQucnU+DQotLS0NCiBkcml2
-ZXJzL2Nsay94aWxpbngveGxueF92Y3UuYyB8IDYgKysrLS0tDQogMSBmaWxlIGNoYW5nZWQsIDMg
-aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
-L3hpbGlueC94bG54X3ZjdS5jIGIvZHJpdmVycy9jbGsveGlsaW54L3hsbnhfdmN1LmMNCmluZGV4
-IDgxNTAxYjQ4NDEyZS4uZTRiMDhmNTAxOTU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsveGls
-aW54L3hsbnhfdmN1LmMNCisrKyBiL2RyaXZlcnMvY2xrL3hpbGlueC94bG54X3ZjdS5jDQpAQCAt
-NTExLDExICs1MTEsMTEgQEAgc3RhdGljIHZvaWQgeHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFm
-KHN0cnVjdCBjbGtfaHcgKmh3KQ0KIAkJcmV0dXJuOw0KIA0KIAltdXggPSBjbGtfaHdfZ2V0X3Bh
-cmVudChkaXZpZGVyKTsNCi0JY2xrX2h3X3VucmVnaXN0ZXJfbXV4KG11eCk7DQotCWlmICghZGl2
-aWRlcikNCisJY2xrX2h3X3VucmVnaXN0ZXJfZGl2aWRlcihkaXZpZGVyKTsNCisJaWYgKCFtdXgp
-DQogCQlyZXR1cm47DQogDQotCWNsa19od191bnJlZ2lzdGVyX2RpdmlkZXIoZGl2aWRlcik7DQor
-CWNsa19od191bnJlZ2lzdGVyX211eChtdXgpOw0KIH0NCiANCiBzdGF0aWMgaW50IHh2Y3VfcmVn
-aXN0ZXJfY2xvY2tfcHJvdmlkZXIoc3RydWN0IHh2Y3VfZGV2aWNlICp4dmN1KQ0KLS0gDQoyLjQz
-LjANCg==
+On 3/21/25 07:53, Johan Hovold wrote:
+> Add the missing memory barrier to make sure that the REO dest ring
+> descriptor is read after the head pointer to avoid using stale data on
+> weakly ordered architectures like aarch64.
+> 
+> This may fix the ring-buffer corruption worked around by commit
+> f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
+> ring") by silently discarding data, and may possibly also address user
+> reported errors like:
+> 
+> 	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
+> 
+> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Cc: stable@vger.kernel.org	# 5.6
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+> 
+> As I reported here:
+> 
+> 	https://lore.kernel.org/lkml/Z9G5zEOcTdGKm7Ei@hovoldconsulting.com/
+> 
+> the ath11k and ath12k appear to be missing a number of memory barriers
+> that are required on weakly ordered architectures like aarch64 to avoid
+> memory corruption issues.
+> 
+> Here's a fix for one more such case which people already seem to be
+> hitting.
+> 
+> Note that I've seen one "msdu_done" bit not set warning also with this
+> patch so whether it helps with that at all remains to be seen. I'm CCing
+> Jens and Steev that see these warnings frequently and that may be able
+> to help out with testing.
+> 
+
+Before this patch I was seeing this "msdu_done bit" an average of about 
+40 times per hour... e.g. a recent boot period of 43hrs saw 1600 of 
+these msgs. I've been testing this patch for about 10 hours now 
+connected to the same network etc, and haven't seen this "msdu_done bit" 
+message once. So, even if it's not completely resolving this for 
+everyone, it seems to be a huge improvement for me.
+
+0006:01:00.0 Network controller: Qualcomm Technologies, Inc QCNFA765 
+Wireless Network Adapter (rev 01)
+ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c 
+soc_id 0x400c0210
+ath11k_pci 0006:01:00.0: fw_version 0x11088c35 fw_build_timestamp 
+2024-04-17 08:34 fw_build_id 
+WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
+
+Tested-by: Clayton Craft <clayton@craftyguy.net>
 
