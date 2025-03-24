@@ -1,460 +1,199 @@
-Return-Path: <linux-kernel+bounces-574060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D622A6E019
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:46:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3368EA6E01E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ADDD16EFED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913D53A5CBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E741E2641E0;
-	Mon, 24 Mar 2025 16:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD556263C91;
+	Mon, 24 Mar 2025 16:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1INgl1Un"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Zt3+UOOH"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2069.outbound.protection.outlook.com [40.107.103.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F36263F40
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742834766; cv=none; b=r8NF5Iw4ei8BSvPKi/YkCuYXaCFPxE/UInwv3zKX/fGk1qu1mAz756WMkyFFXw973S4dXN1YFL/xQADuxY0CAzzYUg5HaDBQ6L1VV83X5lsu5djTBubiWUwTvw85pDzxgVWBLmJFlZe212RgqbC2403cie8n6dpqvZIFhKEK0dY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742834766; c=relaxed/simple;
-	bh=xO9XeqO4FUSuYO61Dfds0tzBhFOyw8Et+cqs1nSl4Hw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AwH4dB5GB3zJgc20/JdYUkvqPsqtH45nTTwqLgmmebnva0EF7jPGquleAX4wh8l7yBd/3g2h7Og5GdYOT11bYq9o3Yj8BVGMu/QnnQF3160EoeEg+CZoqTRAgjhMzf1QgANmadJNMs5rSU9dr/5Vuh6HKimJMqEIdPEQB52gQJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1INgl1Un; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fec3e38c2dso12364461a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 09:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742834764; x=1743439564; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lyWvHd4BtbK+3yGaCjWTrHoIvu1HDim/7/52tq5OE9U=;
-        b=1INgl1UnTv57zf/lFC9/n87rZcnhxwnmAJK0NXUu56HrN1UZDfJpy0f2G9WBK12G/T
-         kWXlJ4S2HKFMNfM6z4jD3mx4KNKe8ombap9NN01QwUcTMGn1iq4VsHazgEfN3y5ZUO0Z
-         rNYKNkD89D3jKmB6K3UGS/aRQQ4S64Qvzx6uu6hBmXxS+fyGNHjlYkLaOJt6BPwvitIQ
-         1+TdPyh/g/ssaRzCGgZ7InbCQv9l2x7ckAuEJunK9Jza8oe/TX5avzGQeObOsKO5BQUr
-         EQC7HvNJ4IWlKDN/EgXfVQx4Zp4uc2wb3j2is3IfiUSBb12dlcwjwGn6jdg0LdRdMe2O
-         jd1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742834764; x=1743439564;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lyWvHd4BtbK+3yGaCjWTrHoIvu1HDim/7/52tq5OE9U=;
-        b=bpV8a50Fb4bhXG2ejAmIpnjAX61rOpKvG01iNNa7zecXv2l2TqguB/liPfwnbJGLIv
-         GExZX3sqv9m/oqRY0ufS/eOKk0Lb7xdpt8/lBx3UCVcx7AQWH+UlR/eTawg2Yz1pePLs
-         Og6ewERvsAuR9OaOWSfreKONHHSdgSEWrlsxsj/82QT24dX/dw33CoK3XpScU6DcASzC
-         68QwjFPZ+rzDqbO75VtH0rmIoYQTcfD0mjYqWgixOOAjbf9rB5DplcF7RFByzJq071+n
-         0YVRCKCca5y7dYVVtIJbswbm8Ye7rPtA5BDUD9uYA6YVodyyCv3CVZ0Nc4Ye+KwKRQBS
-         A3Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWbGY2mqMt6q6mg4XCinSKt4YlM5Ih0MU8HJT6CiU+snVnzTD0L1QWgaWQ1iOM1SD7KviM2d4AmuFKFCw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkLBEceIKLmfuQE2xKj7Yqk6MkZzIJNyQihjSihtLmDWVCca6n
-	lah5VrbRj04DvJYfm5mDvW2orlXqxaDX1P3Pw8xkVqbo1fgQc5uNnCWPlO12jivcDT7P8pqqi5g
-	UkmJUvg==
-X-Google-Smtp-Source: AGHT+IEH8uDIa3ThDPIKOKWNfJrvulB8GlFJeT25fcBnQjgw5EmXt6jC2y681fLkwj3GSPfbGSpNv/jwWBRS
-X-Received: from pjur15.prod.google.com ([2002:a17:90a:d40f:b0:2fa:210c:d068])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f81:b0:2ee:b8ac:73b0
- with SMTP id 98e67ed59e1d1-3030fe6df0amr24783166a91.2.1742834764248; Mon, 24
- Mar 2025 09:46:04 -0700 (PDT)
-Date: Mon, 24 Mar 2025 09:45:42 -0700
-In-Reply-To: <20250324164543.62574-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E44625D1E1;
+	Mon, 24 Mar 2025 16:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742834860; cv=fail; b=IhJy7NDdKZMe8H/Oh8UKDr+iiYTkvPpAZlpTZhoS/bxafu39lxkXUJ52CYaVnyGfIj13b0h5ntXYrilhgM74yAhLMqiF0EdTbDgVg4+6iCbMYErRYw8FazgZBK7xxNhqSSJMBpJGyztiX7m6W5+vpW3mtga6+N/t3JZG6JJNbTA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742834860; c=relaxed/simple;
+	bh=ET3XbMlX6Kr7DJdf/cNXHtN90Xpp34d0avV1ClNGllg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C3M0aqoXg85roDCQ6d/wr1QC1pglReyr3sJruuzaC+VMui550nw2Hysi79Jd/AZ4yUkp/6odcgldiWL2rI+ZISBdAUoqtc2c027wkTARnBlXw5GD3GCl6JonMb7v/SbCu4TBf1BehQHdPM71bxyLNdfPWmZAKuRfMr2W4/4tEOM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Zt3+UOOH; arc=fail smtp.client-ip=40.107.103.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YlPF0rq/DmSdnPO7rjnj5St+dkpekV22MIvmKETiYUbPuKBEoOCyhE/UY3gXvjVkuKkZV5p1XMEOzEyDv4Jln8Zn4AobaOozykgnTZZAb4Ef29wjwP+WDmZYntmKonr/7LY1k8CwgRSw5Dpb22C5AQa6NbGbFkd+Fy9XvwEPCebFCx7anitWhMRowtTT75pyD5nErF8XtuFA6YWrzS31cB0A5vHRlXnNgBGhGog3U61yxDPLLb+d5FYcsUuUXr2gOOjRrbvgwM7XypA4FC4D2zhdT3EB5/qGYYmN65AuMUUC8GKXsGfHNnO7BfTfxvqhkYwdG9Ns0FI98a6ukbtpQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ET3XbMlX6Kr7DJdf/cNXHtN90Xpp34d0avV1ClNGllg=;
+ b=X6/+qMwBYR348LOWrfi//nvaIV7bcXeH9WkcVsWMoJBARfqIv3OGkclxytBQFybgUwSUs3fsBkqszXI6ZwKIANa9MxRaGoicBpM0yMFx+IRfUYDLsuprjDb61S+oCdK63pQ2qxmM2ILR/2QMtpH804UvUrOAcVfCEhLBNAn1uRULDm12wBdJPwBDtdN1+wE1LxH84PlKGsbFL0NdIpSxx6QjyFOYKxxvpyeRCvlTvwe25LqUU7juzrEUwiNtFFFJAlJ+IJwnKnUckzU5lBlypbhUkLYLCI5js/ej5mfv8RVBksBYwSHJmaeezaLxKZyodXghxrQF7V1gsF2YhHEdfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ET3XbMlX6Kr7DJdf/cNXHtN90Xpp34d0avV1ClNGllg=;
+ b=Zt3+UOOHicCZNhu6THD4xWvElGjSyObZG5uUyK3kwfvrZ8nxq+trdiXCZYFjBXv66WA/heG5SQ2JYritP78hO3GC8cYu5nHYG2Outr5tornV5FdSYXwAyMtPP3FPaNusbypkEaNClq0fwUnG0LOVlE8rd5r+O3aFuICz1Mk//hOYg1cw/KnxHPlyjwJcFZ8JK8sk0kO4jobGay1113CA0IPHOJWW1lx5/0hE4UhC5rKCWK0F39Xs+Av/4zscMiKeM7AawRqF6tZaD/KXP7ETQJ/25Uvu/kkk9ILNQkAIFiepIw8EmdLFD8/pI/wploVBLdJHr0oNh4wsDOjrN8sWZQ==
+Received: from PAWPR04MB9910.eurprd04.prod.outlook.com (2603:10a6:102:380::7)
+ by PR3PR04MB7482.eurprd04.prod.outlook.com (2603:10a6:102:8f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Mon, 24 Mar
+ 2025 16:47:34 +0000
+Received: from PAWPR04MB9910.eurprd04.prod.outlook.com
+ ([fe80::24b9:b9fd:bcc0:4ee6]) by PAWPR04MB9910.eurprd04.prod.outlook.com
+ ([fe80::24b9:b9fd:bcc0:4ee6%7]) with mapi id 15.20.8534.040; Mon, 24 Mar 2025
+ 16:47:34 +0000
+From: Jeff Chen <jeff.chen_1@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>,
+	"johannes@sipsolutions.net" <johannes@sipsolutions.net>, Pete Hsieh
+	<tsung-hsien.hsieh@nxp.com>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>
+Subject: RE: [EXT] Re: [PATCH v4 2/2] wifi: mwifiex: Fix RF calibration data
+ download from file
+Thread-Topic: [EXT] Re: [PATCH v4 2/2] wifi: mwifiex: Fix RF calibration data
+ download from file
+Thread-Index: AQHbl8POAsvtZwMDWU+9/b7JncVaoLN6qSCAgAffiIA=
+Date: Mon, 24 Mar 2025 16:47:34 +0000
+Message-ID:
+ <PAWPR04MB9910B875495307CD3FC0BD1D9CA42@PAWPR04MB9910.eurprd04.prod.outlook.com>
+References: <20250220061143.1417420-2-jeff.chen_1@nxp.com>
+ <20250318050739.2239376-3-jeff.chen_1@nxp.com>
+ <20250319163113.GB46894@francesco-nb>
+In-Reply-To: <20250319163113.GB46894@francesco-nb>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAWPR04MB9910:EE_|PR3PR04MB7482:EE_
+x-ms-office365-filtering-correlation-id: df7de8ef-c337-4b3d-d9c4-08dd6af393bd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?W8aQxov9df6t4aiYbsMAjrWgM0rfb88FL/mJGD4D/n1faYYWyPU9HY1iCFvW?=
+ =?us-ascii?Q?dGLVkBIBU9iwxVJQR+4m/Fa7CZQeVMo4JZWQCB+Howv7cETQLDXSxGhnJzOM?=
+ =?us-ascii?Q?YzGW9O0NIjAzu/Y7jWyfa3aOwQ6+ey78YiM5iMC5YHTDoLI2tSPyVxBy76Zg?=
+ =?us-ascii?Q?nhwznPybnn2eaCg0SasQShdIKTzIORM6ucC/kDlDiYmOHyyocKIQldu3xfym?=
+ =?us-ascii?Q?etE8vjzGUwRTjoe/1ZhA2Wp/jVTZ1oH2+LFbd0k4zQV7lxSyAxNQbvIc8G2a?=
+ =?us-ascii?Q?CY+fHUIwVKOmkKypUDgAl0mi4LICrdYcQkdzYUFNbHd714UT+I5DKJyHNnhf?=
+ =?us-ascii?Q?cqT2BUAfAHu03ounonUh1Qh5arg5JNh7rJNI6SFWGjyWLUwj/9S2TlS2Q/SN?=
+ =?us-ascii?Q?sgtHstHz3rhZ84WUfA5SNnLJ53TIGu87na6U2+PXrQCgqkZUql3CUW+TJbmz?=
+ =?us-ascii?Q?gEuvJdeS1kwGGbZMwLmttWcrmHFP2nl4JT/aNMP4C6s+5selgOCdlVXdAG7v?=
+ =?us-ascii?Q?WkzstkeEvs9OCVSfzxS2uJoX94Ifd+BYLeI6knYDD8BPiLh101ioDPZfhmz6?=
+ =?us-ascii?Q?ueZa4FwP/I+4b/vYjcw7yYJuP7txIHSUDOIyBPJmpdpUVtrRnSYmY2hO0y4/?=
+ =?us-ascii?Q?M+IBZMr+/Xm32zq0EbwRK+WiZhily9lkSOftSFquk/EUxwiChO1PX8scluHC?=
+ =?us-ascii?Q?idJl/qslQh/D5fAE1Rj9bdAhfxUkbEZ3CFEqxZWP2Pt09JoUlnfnjm3rurcO?=
+ =?us-ascii?Q?EYc5ggaabwQDFXIhFOzyP44PstOJROWsNvGWe/f0+qqW5OYaRJGZTrW2GCj3?=
+ =?us-ascii?Q?WRkTmUmksMA4m+WhcPt9q6dZpcN9l/rE69wVMZ5VFKJoee5e48zl/OsyZb7i?=
+ =?us-ascii?Q?pWqwZ/z8V8KeulVTjvQK8J75gazFsm03sA6HRwY5MmziPPtN97XIA4GkOorZ?=
+ =?us-ascii?Q?NwTUFAzbFulGYslaBMCNWQQgyi7wjDUb+7bTJqQIpOotDrBi3+UT0NBxw/bj?=
+ =?us-ascii?Q?8rSSr7bgfKjcrwPQ6j6uCFhsTRbmbNZVwEv+7JEV3YvkzomyduJO0imdrucf?=
+ =?us-ascii?Q?qr0HkGVeRTYLFPjh5yXgIy1FVmfTvJh4NNVic3z8L5wCM9wfznBkpCLEyVci?=
+ =?us-ascii?Q?u47EtYU42ZObdrpq/S3t9ddIWoCpAOfZiVnq6J0U4Ak4cWvTQT3hvRLg1A4u?=
+ =?us-ascii?Q?mo8qlqPqItXBXNmIBnKW6pB1CspJsDSC10M7T3Tst5Nu+X3Os7hCiWj9VfIk?=
+ =?us-ascii?Q?ebxkD2WZQnSrvPuO8hv0zpIz1BMSWZYzZWFUFSKqzB2yOzvrBgrRhgiDMFjN?=
+ =?us-ascii?Q?b/K89cnQw9NqLaFWLGwwGsP5Qio7tRuiLzoqUxqGrNmtwcgHT1O8rQQBWnvh?=
+ =?us-ascii?Q?dqkSkmT4jzDxEsyA/MggYA6xWDshchliFLK6r8m+wB8r56+uzlxv9NHVkJ7m?=
+ =?us-ascii?Q?O3d1slouudyS4xO3if0+oeJCeUBlkNvP?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR04MB9910.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?wurErTjU4IisiaVyM5RVKexTdbaSMeQFUK2z7g2N6qFq68WuSXGhe16xw6XD?=
+ =?us-ascii?Q?Dlwfhs/Txe6TbTM1I1sbs3kLsKVr79bOzzU4BAZ8a9q8RXXyCSlxJ9T82wai?=
+ =?us-ascii?Q?8Yhvk3eibWhG3pbnI0eccSUNGUM/O6af0ch1kQ8Ul/2zWyXMlgSWG55Evh+s?=
+ =?us-ascii?Q?95POSYvvr5vaac9GOdqgQ5NyuI9GKjQ71QhSbVCLAhOJYtKfjwVQfKec7wqh?=
+ =?us-ascii?Q?v5rkL7dZgWHI4RG4n8xkPl4t54A8aW2yJklBshOMhqTrsJGPyyNwTZCa+FBA?=
+ =?us-ascii?Q?OLEYzC1tUYdk4R9SR6hfaKtUeaH3L77/W0y2Cs/HyDhfmFl9QiEhKGe8BdeR?=
+ =?us-ascii?Q?ydiphHB6Od34pNpX6NZNsKrhwgMSwuGbdpfvQ5d7Pl/fZxYcU+O132fnejh6?=
+ =?us-ascii?Q?njVt4Kiqppq7YOks4ZdKM9pqj2jmibyA9r/O8957C2GTJAR+KiQRWDga9+/r?=
+ =?us-ascii?Q?nZnSJrcIa5bXrEn2Hhz8CFqNeJJDB+bfiS/SoxkO+iMSsRbboWbs6mQzp/XC?=
+ =?us-ascii?Q?hGwERpVLBqTIlO+THZZqm3YKHBrntydUrMuF9ad30DMdfnrNhTkMyBrIEyUs?=
+ =?us-ascii?Q?z/ys3PSnhx8bjwk84cbbtc3zJlltBJwlBAeit6/QP3AxZ1GxqE9eC0fKnx7a?=
+ =?us-ascii?Q?0TcI+bEKDv/nO3ujhgVcO/b58kRCWmUvU0zxByAyCJbG5fQS19n1KZiO9Ops?=
+ =?us-ascii?Q?SZojulNKMP5URFcsvd86jno//ZC10fT1p3+s68/hCaNoszIe7g4KfUtTNFfa?=
+ =?us-ascii?Q?/jF4lfkeynwG5kXolk3coiGG21UqHGDXR9A2jxjIdRBji/4VxZ+Ze5zIZ3vW?=
+ =?us-ascii?Q?6XEZ2jLj8IOOYM9C+qS19l2lul9gPyfLFHDvbkOHKjjYeHxPcfqgvc+tySgf?=
+ =?us-ascii?Q?apzISyktyHH5fkwUqTQ9EcfgrDi5HN2SpwKqLp6HGEHssLL9tNO5/ipk/kzx?=
+ =?us-ascii?Q?dERHXPQr58hEuea8oCr+FYFfixhftrMDX+Y5YsfzDQ0Orxuap1MKsC8DlZYP?=
+ =?us-ascii?Q?2FUFI3cMnUVq2e7HTdCpCMUn2moJJh+PCmQI5I46GCUpkwyVi9K/beUu2pqY?=
+ =?us-ascii?Q?2iw8ZzzjGM3zkYunyMUUgCr6EQMhp0A/0/QWEX3O6dyB3LFqgSHlGpw3ssLQ?=
+ =?us-ascii?Q?Z5OA0kil5m7NziJlOXIRKfePFcDMwLkUZzZYtKiB9hmx2npi4GeLlJF0xH76?=
+ =?us-ascii?Q?G+nNesup6Obh+hqc7ihLIo2c8BL2TicuDAXZQpTAbHJSD4QzfJtgz5StSPG0?=
+ =?us-ascii?Q?OtPhwr4k2x4xC4+FbcJ2025j7ZTZv7TSNGdxdmKvXOeATJ3cv3W+9WyTyQwU?=
+ =?us-ascii?Q?cH2JIIGtonMpJolgC5AbZWK8ECphIP1LzG3jOx+1Q6NO0orhBntq6lAGRoRp?=
+ =?us-ascii?Q?Rncl3JMhD/eoa/x/TdDM9OUSd6HAlh9K6797WrJOqndEunZtXtKhyVA5Pra1?=
+ =?us-ascii?Q?wxxMkvNDmS3r0AYVEiFF0lzBqpzyXHvdmkur7rrgdCxpxdsUvzYHi+MOuo9D?=
+ =?us-ascii?Q?mCz+sLeFy/90L0ielsfyMCKzf7infUdqJ1YGTHlEmkUPHDA513+bc2IoOqoq?=
+ =?us-ascii?Q?PRbenUeyq/yy9qOcoTR9SZvs1WwR0sockr0lKtZP?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324164543.62574-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250324164543.62574-3-irogers@google.com>
-Subject: [PATCH v6 2/2] perf parse-events: Reapply "Prefer sysfs/JSON hardware
- events over legacy"
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>
-Cc: Atish Patra <atishp@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Beeman Strong <beeman@rivosinc.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR04MB9910.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df7de8ef-c337-4b3d-d9c4-08dd6af393bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2025 16:47:34.4684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0vKjihul8eBq801IZclaBIsbGrvD/gnaLEWI97cyeTkqb/7QXHGpWkHkzm/7CbV2fV5XosnzneejT1U4nM7vOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7482
 
-Originally posted and merged from:
-https://lore.kernel.org/r/20240416061533.921723-10-irogers@google.com
-This reverts commit 4f1b067359ac8364cdb7f9fda41085fa85789d0f although
-the patch is now smaller due to related fixes being applied in commit
-22a4db3c3603 ("perf evsel: Add alternate_hw_config and use in
-evsel__match").
-The original commit message was:
+> Hello Jeff,
+>=20
+> On Tue, Mar 18, 2025 at 01:07:39PM +0800, Jeff Chen wrote:
+> > While this patch restores the ability to download RF calibration data
+> > from a file, it may inadvertently break the feature to download
+> > calibration data from the device tree.
+>=20
+> I do not think this is acceptable. Fixing something by adding another bug=
+ is not
+> ok. You should fix the calibration data from file, without breaking the d=
+evice
+> tree calibration functionality.
+>=20
+> Francesco
 
-It was requested that RISC-V be able to add events to the perf tool so
-the PMU driver didn't need to map legacy events to config encodings:
-https://lore.kernel.org/lkml/20240217005738.3744121-1-atishp@rivosinc.com/
+Hello Francesco, =20
 
-This change makes the priority of events specified without a PMU the
-same as those specified with a PMU, namely sysfs and JSON events are
-checked first before using the legacy encoding.
 
-The hw_term is made more generic as a hardware_event that encodes a
-pair of string and int value, allowing parse_events_multi_pmu_add to
-fall back on a known encoding when the sysfs/JSON adding fails for
-core events. As this covers PE_VALUE_SYM_HW, that token is removed and
-related code simplified.
+There seems to be a misunderstanding. The issue with breaking the device tr=
+ee
+calibration functionality was actually introduced in version 3 of the patch=
+. Version 4
+resolves this problem by ensuring that both file-based and device tree-base=
+d
+calibration work as intended. =20
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
-Tested-by: Atish Patra <atishp@rivosinc.com>
-Tested-by: James Clark <james.clark@linaro.org>
-Tested-by: Leo Yan <leo.yan@arm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Beeman Strong <beeman@rivosinc.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/parse-events.c | 26 +++++++++---
- tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
- tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
- 3 files changed, 98 insertions(+), 64 deletions(-)
+The current patch restores the ability to download RF calibration data from=
+ a file=20
+without affecting the device tree functionality. I'll clarify this in the c=
+ommit message
+to avoid further confusion. =20
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 5152fd5a6ead..cc9cd8069cab 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1551,8 +1551,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 	struct list_head *list = NULL;
- 	struct perf_pmu *pmu = NULL;
- 	YYLTYPE *loc = loc_;
--	int ok = 0;
--	const char *config;
-+	int ok = 0, core_ok = 0;
-+	const char *tmp;
- 	struct parse_events_terms parsed_terms;
- 
- 	*listp = NULL;
-@@ -1565,15 +1565,15 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			return ret;
- 	}
- 
--	config = strdup(event_name);
--	if (!config)
-+	tmp = strdup(event_name);
-+	if (!tmp)
- 		goto out_err;
- 
- 	if (parse_events_term__num(&term,
- 				   PARSE_EVENTS__TERM_TYPE_USER,
--				   config, /*num=*/1, /*novalue=*/true,
-+				   tmp, /*num=*/1, /*novalue=*/true,
- 				   loc, /*loc_val=*/NULL) < 0) {
--		zfree(&config);
-+		zfree(&tmp);
- 		goto out_err;
- 	}
- 	list_add_tail(&term->list, &parsed_terms.terms);
-@@ -1604,6 +1604,8 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 			pr_debug("%s -> %s/%s/\n", event_name, pmu->name, sb.buf);
- 			strbuf_release(&sb);
- 			ok++;
-+			if (pmu->is_core)
-+				core_ok++;
- 		}
- 	}
- 
-@@ -1620,6 +1622,18 @@ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
- 		}
- 	}
- 
-+	if (hw_config != PERF_COUNT_HW_MAX && !core_ok) {
-+		/*
-+		 * The event wasn't found on core PMUs but it has a hardware
-+		 * config version to try.
-+		 */
-+		if (!parse_events_add_numeric(parse_state, list,
-+						PERF_TYPE_HARDWARE, hw_config,
-+						const_parsed_terms,
-+						/*wildcard=*/true))
-+			ok++;
-+	}
-+
- out_err:
- 	parse_events_terms__exit(&parsed_terms);
- 	if (ok)
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 7ed86e3e34e3..324b7dc8a0d3 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -117,12 +117,12 @@ do {								\
- 	yyless(0);						\
- } while (0)
- 
--static int sym(yyscan_t scanner, int type, int config)
-+static int sym(yyscan_t scanner, int config)
- {
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 
--	yylval->num = (type << 16) + config;
--	return type == PERF_TYPE_HARDWARE ? PE_VALUE_SYM_HW : PE_VALUE_SYM_SW;
-+	yylval->num = config;
-+	return PE_VALUE_SYM_SW;
- }
- 
- static int term(yyscan_t scanner, enum parse_events__term_type type)
-@@ -133,13 +133,13 @@ static int term(yyscan_t scanner, enum parse_events__term_type type)
- 	return PE_TERM;
- }
- 
--static int hw_term(yyscan_t scanner, int config)
-+static int hw(yyscan_t scanner, int config)
- {
- 	YYSTYPE *yylval = parse_events_get_lval(scanner);
- 	char *text = parse_events_get_text(scanner);
- 
--	yylval->hardware_term.str = strdup(text);
--	yylval->hardware_term.num = PERF_TYPE_HARDWARE + config;
-+	yylval->hardware_event.str = strdup(text);
-+	yylval->hardware_event.num = config;
- 	return PE_TERM_HW;
- }
- 
-@@ -335,16 +335,16 @@ aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
- aux-action		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_ACTION); }
- aux-sample-size		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE); }
- metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
--cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return hw_term(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return hw_term(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return hw_term(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
-+cpu-cycles|cycles				{ return hw(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
-+stalled-cycles-frontend|idle-cycles-frontend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-+stalled-cycles-backend|idle-cycles-backend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-+instructions					{ return hw(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
-+cache-references				{ return hw(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
-+cache-misses					{ return hw(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
-+branch-instructions|branches			{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
-+branch-misses					{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
-+bus-cycles					{ return hw(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
-+ref-cycles					{ return hw(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
- r{num_raw_hex}		{ return str(yyscanner, PE_RAW); }
- r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- ,			{ return ','; }
-@@ -390,28 +390,28 @@ r0x{num_raw_hex}	{ return str(yyscanner, PE_RAW); }
- <<EOF>>			{ BEGIN(INITIAL); }
- }
- 
--cpu-cycles|cycles				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES); }
--stalled-cycles-frontend|idle-cycles-frontend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
--stalled-cycles-backend|idle-cycles-backend	{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
--instructions					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS); }
--cache-references				{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES); }
--cache-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES); }
--branch-instructions|branches			{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
--branch-misses					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_MISSES); }
--bus-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BUS_CYCLES); }
--ref-cycles					{ return sym(yyscanner, PERF_TYPE_HARDWARE, PERF_COUNT_HW_REF_CPU_CYCLES); }
--cpu-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_CLOCK); }
--task-clock					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_TASK_CLOCK); }
--page-faults|faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS); }
--minor-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MIN); }
--major-faults					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS_MAJ); }
--context-switches|cs				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES); }
--cpu-migrations|migrations			{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS); }
--alignment-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_ALIGNMENT_FAULTS); }
--emulation-faults				{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_EMULATION_FAULTS); }
--dummy						{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_DUMMY); }
--bpf-output					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_BPF_OUTPUT); }
--cgroup-switches					{ return sym(yyscanner, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CGROUP_SWITCHES); }
-+cpu-cycles|cycles				{ return hw(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
-+stalled-cycles-frontend|idle-cycles-frontend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
-+stalled-cycles-backend|idle-cycles-backend	{ return hw(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-+instructions					{ return hw(yyscanner, PERF_COUNT_HW_INSTRUCTIONS); }
-+cache-references				{ return hw(yyscanner, PERF_COUNT_HW_CACHE_REFERENCES); }
-+cache-misses					{ return hw(yyscanner, PERF_COUNT_HW_CACHE_MISSES); }
-+branch-instructions|branches			{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_INSTRUCTIONS); }
-+branch-misses					{ return hw(yyscanner, PERF_COUNT_HW_BRANCH_MISSES); }
-+bus-cycles					{ return hw(yyscanner, PERF_COUNT_HW_BUS_CYCLES); }
-+ref-cycles					{ return hw(yyscanner, PERF_COUNT_HW_REF_CPU_CYCLES); }
-+cpu-clock					{ return sym(yyscanner, PERF_COUNT_SW_CPU_CLOCK); }
-+task-clock					{ return sym(yyscanner, PERF_COUNT_SW_TASK_CLOCK); }
-+page-faults|faults				{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS); }
-+minor-faults					{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS_MIN); }
-+major-faults					{ return sym(yyscanner, PERF_COUNT_SW_PAGE_FAULTS_MAJ); }
-+context-switches|cs				{ return sym(yyscanner, PERF_COUNT_SW_CONTEXT_SWITCHES); }
-+cpu-migrations|migrations			{ return sym(yyscanner, PERF_COUNT_SW_CPU_MIGRATIONS); }
-+alignment-faults				{ return sym(yyscanner, PERF_COUNT_SW_ALIGNMENT_FAULTS); }
-+emulation-faults				{ return sym(yyscanner, PERF_COUNT_SW_EMULATION_FAULTS); }
-+dummy						{ return sym(yyscanner, PERF_COUNT_SW_DUMMY); }
-+bpf-output					{ return sym(yyscanner, PERF_COUNT_SW_BPF_OUTPUT); }
-+cgroup-switches					{ return sym(yyscanner, PERF_COUNT_SW_CGROUP_SWITCHES); }
- 
- {lc_type}			{ return str(yyscanner, PE_LEGACY_CACHE); }
- {lc_type}-{lc_op_result}	{ return str(yyscanner, PE_LEGACY_CACHE); }
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index f888cbb076d6..d2ef1890007e 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -55,7 +55,7 @@ static void free_list_evsel(struct list_head* list_evsel)
- %}
- 
- %token PE_START_EVENTS PE_START_TERMS
--%token PE_VALUE PE_VALUE_SYM_HW PE_VALUE_SYM_SW PE_TERM
-+%token PE_VALUE PE_VALUE_SYM_SW PE_TERM
- %token PE_EVENT_NAME
- %token PE_RAW PE_NAME
- %token PE_MODIFIER_EVENT PE_MODIFIER_BP PE_BP_COLON PE_BP_SLASH
-@@ -65,11 +65,9 @@ static void free_list_evsel(struct list_head* list_evsel)
- %token PE_DRV_CFG_TERM
- %token PE_TERM_HW
- %type <num> PE_VALUE
--%type <num> PE_VALUE_SYM_HW
- %type <num> PE_VALUE_SYM_SW
- %type <mod> PE_MODIFIER_EVENT
- %type <term_type> PE_TERM
--%type <num> value_sym
- %type <str> PE_RAW
- %type <str> PE_NAME
- %type <str> PE_LEGACY_CACHE
-@@ -85,6 +83,7 @@ static void free_list_evsel(struct list_head* list_evsel)
- %type <list_terms> opt_pmu_config
- %destructor { parse_events_terms__delete ($$); } <list_terms>
- %type <list_evsel> event_pmu
-+%type <list_evsel> event_legacy_hardware
- %type <list_evsel> event_legacy_symbol
- %type <list_evsel> event_legacy_cache
- %type <list_evsel> event_legacy_mem
-@@ -102,8 +101,8 @@ static void free_list_evsel(struct list_head* list_evsel)
- %destructor { free_list_evsel ($$); } <list_evsel>
- %type <tracepoint_name> tracepoint_name
- %destructor { free ($$.sys); free ($$.event); } <tracepoint_name>
--%type <hardware_term> PE_TERM_HW
--%destructor { free ($$.str); } <hardware_term>
-+%type <hardware_event> PE_TERM_HW
-+%destructor { free ($$.str); } <hardware_event>
- 
- %union
- {
-@@ -118,10 +117,10 @@ static void free_list_evsel(struct list_head* list_evsel)
- 		char *sys;
- 		char *event;
- 	} tracepoint_name;
--	struct hardware_term {
-+	struct hardware_event {
- 		char *str;
- 		u64 num;
--	} hardware_term;
-+	} hardware_event;
- }
- %%
- 
-@@ -264,6 +263,7 @@ PE_EVENT_NAME event_def
- event_def
- 
- event_def: event_pmu |
-+	   event_legacy_hardware |
- 	   event_legacy_symbol |
- 	   event_legacy_cache sep_dc |
- 	   event_legacy_mem sep_dc |
-@@ -306,24 +306,45 @@ PE_NAME sep_dc
- 	$$ = list;
- }
- 
--value_sym:
--PE_VALUE_SYM_HW
-+event_legacy_hardware:
-+PE_TERM_HW opt_pmu_config
-+{
-+	/* List of created evsels. */
-+	struct list_head *list = NULL;
-+	int err = parse_events_multi_pmu_add(_parse_state, $1.str, $1.num, $2, &list, &@1);
-+
-+	free($1.str);
-+	parse_events_terms__delete($2);
-+	if (err)
-+		PE_ABORT(err);
-+
-+	$$ = list;
-+}
- |
--PE_VALUE_SYM_SW
-+PE_TERM_HW sep_dc
-+{
-+	struct list_head *list;
-+	int err;
-+
-+	err = parse_events_multi_pmu_add(_parse_state, $1.str, $1.num, NULL, &list, &@1);
-+	free($1.str);
-+	if (err)
-+		PE_ABORT(err);
-+	$$ = list;
-+}
- 
- event_legacy_symbol:
--value_sym '/' event_config '/'
-+PE_VALUE_SYM_SW '/' event_config '/'
- {
- 	struct list_head *list;
--	int type = $1 >> 16;
--	int config = $1 & 255;
- 	int err;
--	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
- 
- 	list = alloc_list();
- 	if (!list)
- 		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list, type, config, $3, wildcard);
-+	err = parse_events_add_numeric(_parse_state, list,
-+				/*type=*/PERF_TYPE_SOFTWARE, /*config=*/$1,
-+				$3, /*wildcard=*/false);
- 	parse_events_terms__delete($3);
- 	if (err) {
- 		free_list_evsel(list);
-@@ -332,18 +353,17 @@ value_sym '/' event_config '/'
- 	$$ = list;
- }
- |
--value_sym sep_slash_slash_dc
-+PE_VALUE_SYM_SW sep_slash_slash_dc
- {
- 	struct list_head *list;
--	int type = $1 >> 16;
--	int config = $1 & 255;
--	bool wildcard = (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_HW_CACHE);
- 	int err;
- 
- 	list = alloc_list();
- 	if (!list)
- 		YYNOMEM;
--	err = parse_events_add_numeric(_parse_state, list, type, config, /*head_config=*/NULL, wildcard);
-+	err = parse_events_add_numeric(_parse_state, list,
-+				/*type=*/PERF_TYPE_SOFTWARE, /*config=*/$1,
-+				/*head_config=*/NULL, /*wildcard=*/false);
- 	if (err)
- 		PE_ABORT(err);
- 	$$ = list;
--- 
-2.49.0.395.g12beb8f557-goog
-
+Best regards, =20
+Jeff
 
