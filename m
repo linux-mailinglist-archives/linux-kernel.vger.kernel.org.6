@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-573399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDE0A6D6C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:58:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A40BA6D6C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:59:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CDE3B1E4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:57:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 916D07A3DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F6925DD0B;
-	Mon, 24 Mar 2025 08:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE5525DAF0;
+	Mon, 24 Mar 2025 08:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zc+XGBg7"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AO3VsLgA"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407C025DB03;
-	Mon, 24 Mar 2025 08:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C972125D8EA;
+	Mon, 24 Mar 2025 08:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742806594; cv=none; b=b6/SFtdv3IBWAUZWhd3dosODZgjVfu4jCxdFbLSKc0lok0J0ChLxi+jFPQ6RCk/ehVHVJQnUXFjTEuQGpCg2DoJp//r98k4SkP6xadBBi00swXD8CSwkx2rEaBg/QSVMKo9doNp+mch0qGsoLnJ9BQwDxoq6d32O0KMxNsDjwmQ=
+	t=1742806607; cv=none; b=nRwrzKKrk8ROGw1AivolPBVgqm6om+gjqOls4FBWj6BiHo3vOr8vTmFQSiGd25Tvqv+qVdZgKLmNNpjj6ZPrP0AZjJaClZWeQeLPLWRl1C93QYdaZjcvuMOQFv01t3RvjCEYUqOdHwaZfwXdP5zqtmrFuCIzB2SXi5Xv/caUyWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742806594; c=relaxed/simple;
-	bh=l4WWAwEydaPNgF4KjhGROyUK39NyBrA+t9scJbuSYW0=;
+	s=arc-20240116; t=1742806607; c=relaxed/simple;
+	bh=dYYNLBzfwUTPQs2qM5tzmXBZTENgFX+8vrThcSUn1u0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JcqQz/gAQqanxJ9bmSMRTVBGqnwhPCyExZGUd/UrQeOUXtKJN0+cLzO2IeTUlORqUSAnfcSUneuA1Yly2mOvutulxlXlrZRaiVWMMXldmE4/PDMyR+Pzc/LDY5aAW1T38tzu7UlaYKey9tKcHzkVPVXHChDJcQiXg99A2HyiMVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zc+XGBg7; arc=none smtp.client-ip=209.85.167.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhxbKUVVudUbOXkOcO2v2H/iJ+HzlXv6a3LPrtgUkE+Ta5zfT1RdUmqiNYHu/dJUyVr3OMdhRCPCialNJBZJ4SW5tUrxsL6zh7M/UokNqH6yTf8wqGTEUQEIfr4dc4lvrSjdIo+ey1Be1BM6nyPTuEpFOFnQrdI7SCraAESKSSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AO3VsLgA; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54aef877725so248898e87.1;
-        Mon, 24 Mar 2025 01:56:31 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5499614d3d2so4713547e87.3;
+        Mon, 24 Mar 2025 01:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742806590; x=1743411390; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742806604; x=1743411404; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6fdlKmgWUdck7JQxeSbntpoEnLA6wDGGCN4OQ/puqE8=;
-        b=Zc+XGBg7wenf5RiX7VS13S0thNw5KJirBJMtLTG7xt5b5hvIwAP71u6Fcx9RG0olol
-         TEapYmisNq2hOKJwuuf+Z2O+TcY+5Up2LEyUGxPfRB61u+qW2zZ7klyk9TNwJa9D/N4V
-         YIY9j6sQozgYOBrG/IO6nctM6d0K8YnHIhFgtQZZe9tiaMMTzR7KAfaJ8MGF9RFTWB08
-         XsX/lwJKbP0IZSMznJjv8rm+RVTg3O6+n2qQRoYaSCrJbizMCdenYmbyrh8Ss0BlsIiV
-         HuHiUwYcoH2URQCfHIAVMy7tZ8J30E8gGRHBmVw8OO0kx8pC7PBjWxPIkJ2EbrSqFZ1g
-         JC7w==
+        bh=6MBTv8wDbhpjg+5MeOQCqBqfNr19l5kdFji4eWbxmuA=;
+        b=AO3VsLgAo+jXqDzIuDS0ut+qPqTSCtQTyRajl/ggokIlb5Iwyp9I7AZW9qz1Thy3jJ
+         J5c0DJaZwxfHQbrLoKGMV8KRRP9zw6AKt2igKk2bL2lfkKMB/F3D2daVjmpcyzroRRFx
+         dL49bQadH3EPCAbEBwV93Ya7XIEL0RMRKXYWLXH45FU5UrEYtRGPINiZbesetwzMFxzA
+         5NPkIDAcNqhM8Zz4sLO3099Arps4GSODO61xBPqomsOp2W1kk0ckcxeg2mwuk/DCzYwd
+         fX9LU7l12483R9hVKxzhIIr8W5Zo6IWMxr1N+zLxEnAN6Z6NGosHgqaTy5QoEstGot+U
+         W01w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742806590; x=1743411390;
+        d=1e100.net; s=20230601; t=1742806604; x=1743411404;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6fdlKmgWUdck7JQxeSbntpoEnLA6wDGGCN4OQ/puqE8=;
-        b=fKR4N6ix69SGnyDiBDJHdeccfP8ybOXmukjfP2L5S/np/txrOPtQ1W/mbHPGP+Gy7Z
-         2VdvV3RmxGYZ7FPFfV7L5NxLfnba+WRo6WkBQwBXOwl9PFWFBzVci/k0dqJfsbfjJmXk
-         75NzQuP7ZwCK2N+zFF+fj6vAyWfXAXQvYXqWZiEWpPS+oz6TO2ibzpuYeu4JnfVAZKN0
-         KjWmSJALiIFe2KGnwyPSxwo/uhn3JZcwrHTK508TY1dhT+VtZRpqM6fkRrf4kwKyodU4
-         zSP2OXGr7uKgWk9ouny0djfqYFBq7ZTu50PGFtnWE7g8ySeXlCuRzM+t8pX9pxC+rXXN
-         zUWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXErmsuWc/vtNF1Q1H9itL+OMUsEYy1EOmnqu5g0yaZSd8P6Al/oMxRKNcTPWuthV6OM9Jr4sIu+5pR3NhK@vger.kernel.org, AJvYcCXhHw4rNS+acVgR/KWrhJkZhp3FL7+RtqoWci+mET8oOnJjhfEIUTXT190eY13L10l37vZlmnNEGCwX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxJ7TV14kqRwxOYHhl5gEBlaGkSIe31twkL5Jdg1crJ95DkUCo
-	B3RYl4Y2sgB4/Watkk3GUTRk8eUO8BnefdGIglnGYquqKv8WmUal
-X-Gm-Gg: ASbGncsHglcqKw9yrIoLJmH0oCRgtcfemejaYQv8yggd6yBI5zwJt4C0CXUwkrQ/uki
-	ThUViuLyCBG1EL92lLJu7E3+9IvPDyLgBQJtgnIqLDDZ4bT5wnelGgows+igsbBJ/UdeYINZuU+
-	WXLXOgrHfYslEzig5/0VmevvFYbfipz2d3PkJWqdIbwMgxt1bhjETGQLiJ99X+9eL+sko5kTt6h
-	2XjY4UE7Lg7aZMpumyVpSxmSMSDjVko1P7l1Oy/vfAFmu+Mj80XbkhaA3ejc3lRS8Sm7/KBMG1Y
-	/c3HXV0r5Isq4s+Bg1jGCKQX9XvoXtSfCGoUj2ISH/kiC/Mo/Jc=
-X-Google-Smtp-Source: AGHT+IElkGpEGEXGcM5VcpOtUTb8PykQYgDole3Ne06Zo+hRHDi3i0YC/ufNXj0Li5b0fBPW6PVBdw==
-X-Received: by 2002:a05:6512:1103:b0:549:7330:6a5a with SMTP id 2adb3069b0e04-54ad648f09dmr4505290e87.23.1742806589980;
-        Mon, 24 Mar 2025 01:56:29 -0700 (PDT)
+        bh=6MBTv8wDbhpjg+5MeOQCqBqfNr19l5kdFji4eWbxmuA=;
+        b=C4pWR88OTJ4OsxoNWqdxaDKSml5TpxDKGqsHvAG2bMlTwILb7dtk5HKbghMSNVAi3r
+         yCfB9dqrGsWwO8XvSsiX3XFUt7wsKI5onukHCt6IWSxay6b2j90mIxBKwk/9P8kQ0msK
+         Jk7IY69L9jrBcoGNazqWVw0njUZWf7wZcmtmP0Hy63nRpjfgWrnWTtaSyoTB+xH9sSdt
+         lsFp+wDTfIsyBifnR9Jpj2JqV/ggsEpWCVK8EyZoHmRg4FahZw8JSBMcWWdQOuXhf4KM
+         PyBCLBJTNotAB7MfAGW/XjzWhqDxH1zXkobGr8k58l5+PhQNd9nEu8nx5xdsRSGH/pFz
+         1omg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOnwIF+mt1gABKQ8EDhHbI91ci0eDgnc6l9u3YW5H1BPfyBHCbJU+D2mKDnNANwVp0MT+6tZGq99Tm@vger.kernel.org, AJvYcCWm7lheyBySZTmCL87cuqFDCrFOwPIU6rd+euU97cKvm6PGUREkOFbx44+qFYadr0Jw3A2ZTz3x1YAvnKE1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWHoP18YXyAgIm0IEnxVINjNVzhMEtgeYVm2Fg9Ns03FxI5J8T
+	LHRwVZsJw/VEizifYJWbLK3LAI5G4zMmQ7bkotHvDKOvZ31DVOEIiXihOA==
+X-Gm-Gg: ASbGnct+8kaVKt2ePla3XW5PzGm1u7BfzmtJ6/QQcQatR8tf4G12DoQRtvCnjmIrNZd
+	us5bNrd1bR7zKSPGUV7Untg5aG7BZ/ImGBxaQV4cYaAPxc8ADgSbOQaVVL3gIKBdCJX7hah6YK4
+	fDLUj6H0Kws9rAd8pURvOMAe4Mlzw2GCBhFB1dgmnrE6xgtC9nK6S2dv+gLWihWNpLJqjmhLRQ/
+	A1FtvEckaNpaerlcGG4wtLaLTwOcKi1mny47cehfiGEudYA9GfPe8cb/pvCJaUt89qrSboYtvtr
+	sfv2H6L/dHiV8S/2TSZyeFqnY5XqYHkHZPcn81Os4L7UZUGUHTA=
+X-Google-Smtp-Source: AGHT+IGrP6svr/z5pv0/3y5rivGjoodOHh2/Q1nNE1vHxyzQcWhkLTFapi32xNxn7eLpIsagDqswZA==
+X-Received: by 2002:a05:6512:130c:b0:545:b28:2fa2 with SMTP id 2adb3069b0e04-54ad6476fd4mr3637826e87.7.1742806603636;
+        Mon, 24 Mar 2025 01:56:43 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64fbd0asm1054096e87.111.2025.03.24.01.56.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad64685besm1097252e87.33.2025.03.24.01.56.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 01:56:28 -0700 (PDT)
-Date: Mon, 24 Mar 2025 10:56:25 +0200
+        Mon, 24 Mar 2025 01:56:41 -0700 (PDT)
+Date: Mon, 24 Mar 2025 10:56:37 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
@@ -81,8 +81,8 @@ Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Mark Brown <broonie@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 09/14] regulator: bd96801: Support ROHM BD96802
-Message-ID: <ac254491c2d650d263b064142068c282a3f624fa.1742802856.git.mazziesaccount@gmail.com>
+Subject: [PATCH v2 10/14] mfd: bd96801: Support ROHM BD96805
+Message-ID: <7e81709d2ca56d1ee60ee8af5db86109869da862.1742802856.git.mazziesaccount@gmail.com>
 References: <cover.1742802856.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -91,238 +91,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EXNubZP+THGMtcHt"
+	protocol="application/pgp-signature"; boundary="IapNYVAZLjooksJM"
 Content-Disposition: inline
 In-Reply-To: <cover.1742802856.git.mazziesaccount@gmail.com>
 
 
---EXNubZP+THGMtcHt
+--IapNYVAZLjooksJM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The ROHM BD96802 PMIC is primarily intended to be used as a companion
-PMIC extending the capabilities of the BD96802 but it can be used on
-it's own as well. When used as a companion PMIC, the start-up and
-shut-down sequences are usually intitiated by the master PMIC using IF
-pins.
-
-The BD96802 looks from the digital interface point of view pretty much
-like a reduced version of BD96801. It includes only 2 BUCKs and provides
-the same error protection/detection mechanisms as the BD96801. Also, the
-voltage control logic is same up to the register addresses.
-
-Add support for controlling BD96802 using the BD96801 driver.
+The ROHM BD96805 is from the software perspective almost identical to
+the ROHM BD96801. The main difference is different voltage tuning
+ranges. Add support differentiating these PMICs based on the compatible,
+and invoking the regulator driver with correct IC type.
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 ---
 Revision history:
-v1 =3D> :
- - No changes
+v1 =3D> v2:
+ - Use chip_type enum
 ---
- drivers/regulator/bd96801-regulator.c | 92 ++++++++++++++++++++++++---
- 1 file changed, 83 insertions(+), 9 deletions(-)
+ drivers/mfd/rohm-bd96801.c       | 22 ++++++++++++++++++++++
+ include/linux/mfd/rohm-generic.h |  1 +
+ 2 files changed, 23 insertions(+)
 
-diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96=
-801-regulator.c
-index 48cdd583e92d..893efdd92008 100644
---- a/drivers/regulator/bd96801-regulator.c
-+++ b/drivers/regulator/bd96801-regulator.c
-@@ -302,6 +302,7 @@ struct bd96801_pmic_data {
- 	struct bd96801_regulator_data regulator_data[BD96801_NUM_REGULATORS];
- 	struct regmap *regmap;
- 	int fatal_ind;
-+	int num_regulators;
+diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+index e5ee5f556a55..dd0be7d675b8 100644
+--- a/drivers/mfd/rohm-bd96801.c
++++ b/drivers/mfd/rohm-bd96801.c
+@@ -220,6 +220,10 @@ static struct mfd_cell bd96802_cells[] =3D {
+ 	[WDG_CELL] =3D { .name =3D "bd96801-wdt", },
+ 	[REGULATOR_CELL] =3D { .name =3D "bd96802-regulator", },
+ };
++static struct mfd_cell bd96805_cells[] =3D {
++	[WDG_CELL] =3D { .name =3D "bd96801-wdt", },
++	[REGULATOR_CELL] =3D { .name =3D "bd96805-regulator", },
++};
+=20
+ static const struct regmap_range bd96801_volatile_ranges[] =3D {
+ 	/* Status registers */
+@@ -599,6 +603,20 @@ static const struct bd968xx bd96802_data =3D {
+ 	.unlock_val =3D BD96801_UNLOCK,
  };
 =20
- static int ldo_map_notif(int irq, struct regulator_irq_data *rid,
-@@ -503,6 +504,70 @@ static int bd96801_walk_regulator_dt(struct device *de=
-v, struct regmap *regmap,
-  * case later. What we can easly do for preparing is to not use static glo=
-bal
-  * data for regulators though.
-  */
-+static const struct bd96801_pmic_data bd96802_data =3D {
-+	.regulator_data =3D {
-+	{
-+		.desc =3D {
-+			.name =3D "buck1",
-+			.of_match =3D of_match_ptr("buck1"),
-+			.regulators_node =3D of_match_ptr("regulators"),
-+			.id =3D BD96801_BUCK1,
-+			.ops =3D &bd96801_buck_ops,
-+			.type =3D REGULATOR_VOLTAGE,
-+			.linear_ranges =3D bd96801_tune_volts,
-+			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
-+			.n_voltages =3D BD96801_BUCK_VOLTS,
-+			.enable_reg =3D BD96801_REG_ENABLE,
-+			.enable_mask =3D BD96801_BUCK1_EN_MASK,
-+			.enable_is_inverted =3D true,
-+			.vsel_reg =3D BD96801_BUCK1_VSEL_REG,
-+			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
-+			.ramp_reg =3D BD96801_BUCK1_VSEL_REG,
-+			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
-+			.ramp_delay_table =3D &buck_ramp_table[0],
-+			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
-+			.owner =3D THIS_MODULE,
-+		},
-+		.init_ranges =3D bd96801_buck_init_volts,
-+		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
-+		.irq_desc =3D {
-+			.irqinfo =3D (struct bd96801_irqinfo *)&buck1_irqinfo[0],
-+			.num_irqs =3D ARRAY_SIZE(buck1_irqinfo),
-+		},
-+	},
-+	{
-+		.desc =3D {
-+			.name =3D "buck2",
-+			.of_match =3D of_match_ptr("buck2"),
-+			.regulators_node =3D of_match_ptr("regulators"),
-+			.id =3D BD96801_BUCK2,
-+			.ops =3D &bd96801_buck_ops,
-+			.type =3D REGULATOR_VOLTAGE,
-+			.linear_ranges =3D bd96801_tune_volts,
-+			.n_linear_ranges =3D ARRAY_SIZE(bd96801_tune_volts),
-+			.n_voltages =3D BD96801_BUCK_VOLTS,
-+			.enable_reg =3D BD96801_REG_ENABLE,
-+			.enable_mask =3D BD96801_BUCK2_EN_MASK,
-+			.enable_is_inverted =3D true,
-+			.vsel_reg =3D BD96801_BUCK2_VSEL_REG,
-+			.vsel_mask =3D BD96801_BUCK_VSEL_MASK,
-+			.ramp_reg =3D BD96801_BUCK2_VSEL_REG,
-+			.ramp_mask =3D BD96801_MASK_RAMP_DELAY,
-+			.ramp_delay_table =3D &buck_ramp_table[0],
-+			.n_ramp_values =3D ARRAY_SIZE(buck_ramp_table),
-+			.owner =3D THIS_MODULE,
-+		},
-+		.irq_desc =3D {
-+			.irqinfo =3D (struct bd96801_irqinfo *)&buck2_irqinfo[0],
-+			.num_irqs =3D ARRAY_SIZE(buck2_irqinfo),
-+		},
-+		.init_ranges =3D bd96801_buck_init_volts,
-+		.num_ranges =3D ARRAY_SIZE(bd96801_buck_init_volts),
-+	},
-+	},
-+	.num_regulators =3D 2,
++static const struct bd968xx bd96805_data =3D {
++	.errb_irqs =3D bd96801_reg_errb_irqs,
++	.intb_irqs =3D bd96801_reg_intb_irqs,
++	.num_errb_irqs =3D ARRAY_SIZE(bd96801_reg_errb_irqs),
++	.num_intb_irqs =3D ARRAY_SIZE(bd96801_reg_intb_irqs),
++	.errb_irq_chip =3D &bd96801_irq_chip_errb,
++	.intb_irq_chip =3D &bd96801_irq_chip_intb,
++	.regmap_config =3D &bd96801_regmap_config,
++	.cells =3D bd96805_cells,
++	.num_cells =3D ARRAY_SIZE(bd96805_cells),
++	.unlock_reg =3D BD96801_LOCK_REG,
++	.unlock_val =3D BD96801_UNLOCK,
 +};
 +
- static const struct bd96801_pmic_data bd96801_data =3D {
- 	.regulator_data =3D {
- 	{
-@@ -688,11 +753,13 @@ static const struct bd96801_pmic_data bd96801_data =
-=3D {
- 		.ldo_vol_lvl =3D BD96801_LDO7_VOL_LVL_REG,
- 	},
- 	},
-+	.num_regulators =3D 7,
- };
-=20
--static int initialize_pmic_data(struct device *dev,
-+static int initialize_pmic_data(struct platform_device *pdev,
- 				struct bd96801_pmic_data *pdata)
+ static int bd96801_i2c_probe(struct i2c_client *i2c)
  {
-+	struct device *dev =3D &pdev->dev;
- 	int r, i;
-=20
- 	/*
-@@ -700,7 +767,7 @@ static int initialize_pmic_data(struct device *dev,
- 	 * wish to modify IRQ information independently for each driver
- 	 * instance.
- 	 */
--	for (r =3D 0; r < BD96801_NUM_REGULATORS; r++) {
-+	for (r =3D 0; r < pdata->num_regulators; r++) {
- 		const struct bd96801_irqinfo *template;
- 		struct bd96801_irqinfo *new;
- 		int num_infos;
-@@ -866,6 +933,7 @@ static int bd96801_probe(struct platform_device *pdev)
- {
- 	struct regulator_dev *ldo_errs_rdev_arr[BD96801_NUM_LDOS];
- 	struct regulator_dev *all_rdevs[BD96801_NUM_REGULATORS];
-+	struct bd96801_pmic_data *pdata_template;
- 	struct bd96801_regulator_data *rdesc;
- 	struct regulator_config config =3D {};
- 	int ldo_errs_arr[BD96801_NUM_LDOS];
-@@ -878,12 +946,16 @@ static int bd96801_probe(struct platform_device *pdev)
-=20
- 	parent =3D pdev->dev.parent;
-=20
--	pdata =3D devm_kmemdup(&pdev->dev, &bd96801_data, sizeof(bd96801_data),
-+	pdata_template =3D (struct bd96801_pmic_data *)platform_get_device_id(pde=
-v)->driver_data;
-+	if (!pdata_template)
-+		return -ENODEV;
-+
-+	pdata =3D devm_kmemdup(&pdev->dev, pdata_template, sizeof(bd96801_data),
- 			     GFP_KERNEL);
- 	if (!pdata)
- 		return -ENOMEM;
-=20
--	if (initialize_pmic_data(&pdev->dev, pdata))
-+	if (initialize_pmic_data(pdev, pdata))
- 		return -ENOMEM;
-=20
- 	pdata->regmap =3D dev_get_regmap(parent, NULL);
-@@ -906,11 +978,11 @@ static int bd96801_probe(struct platform_device *pdev)
- 		use_errb =3D true;
-=20
- 	ret =3D bd96801_walk_regulator_dt(&pdev->dev, pdata->regmap, rdesc,
--					BD96801_NUM_REGULATORS);
-+					pdata->num_regulators);
- 	if (ret)
- 		return ret;
-=20
--	for (i =3D 0; i < ARRAY_SIZE(pdata->regulator_data); i++) {
-+	for (i =3D 0; i < pdata->num_regulators; i++) {
- 		struct regulator_dev *rdev;
- 		struct bd96801_irq_desc *idesc =3D &rdesc[i].irq_desc;
- 		int j;
-@@ -923,6 +995,7 @@ static int bd96801_probe(struct platform_device *pdev)
- 				rdesc[i].desc.name);
- 			return PTR_ERR(rdev);
- 		}
-+
- 		all_rdevs[i] =3D rdev;
- 		/*
- 		 * LDOs don't have own temperature monitoring. If temperature
-@@ -972,14 +1045,15 @@ static int bd96801_probe(struct platform_device *pde=
-v)
-=20
- 	if (use_errb)
- 		return bd96801_global_errb_irqs(pdev, all_rdevs,
--						ARRAY_SIZE(all_rdevs));
-+						pdata->num_regulators);
-=20
- 	return 0;
- }
-=20
- static const struct platform_device_id bd96801_pmic_id[] =3D {
--	{ "bd96801-regulator", },
--	{ }
-+	{ "bd96801-regulator", (kernel_ulong_t)&bd96801_data },
-+	{ "bd96802-regulator", (kernel_ulong_t)&bd96802_data },
-+	{ },
+ 	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+@@ -621,6 +639,9 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+ 	case ROHM_CHIP_TYPE_BD96802:
+ 		ddata =3D &bd96802_data;
+ 		break;
++	case ROHM_CHIP_TYPE_BD96805:
++		ddata =3D &bd96805_data;
++		break;
+ 	default:
+ 		dev_err(&i2c->dev, "Unknown IC\n");
+ 		return -EINVAL;
+@@ -717,6 +738,7 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+ static const struct of_device_id bd96801_of_match[] =3D {
+ 	{ .compatible =3D "rohm,bd96801", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+1 },
+ 	{ .compatible =3D "rohm,bd96802", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+2 },
++	{ .compatible =3D "rohm,bd96805", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+5 },
+ 	{ }
  };
- MODULE_DEVICE_TABLE(platform, bd96801_pmic_id);
+ MODULE_DEVICE_TABLE(of, bd96801_of_match);
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-gene=
+ric.h
+index 11b86f9129e3..867acf5baefc 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -18,6 +18,7 @@ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71847,
+ 	ROHM_CHIP_TYPE_BD96801,
+ 	ROHM_CHIP_TYPE_BD96802,
++	ROHM_CHIP_TYPE_BD96805,
+ 	ROHM_CHIP_TYPE_AMOUNT
+ };
 =20
 --=20
 2.49.0
 
 
---EXNubZP+THGMtcHt
+--IapNYVAZLjooksJM
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhHjkACgkQeFA3/03a
-ocXWgggApCu9vSoLTovPwKwNr750AuIygBiXB5ZvyF0cHl4WJMLoMe5o6AZs38Xt
-cFabE41c2+eiK961xMf8HkFOe/xGSz4P6LmWWYl4ilfaGX7YJ0IdRJ4fJY9WR7G7
-K7wYFYgqe6kFSwS3oQVGWMKDtIOg5c9K4VxMUORnkgsgWrMO3YiCs2XWrjNlmn6Q
-UJYP0cQ3TbxHjY+B2l/YDCq1qTZuZjsvWmI5Uy40hK/g4ItwaZdQE9JS9CuiSzI/
-HTCd1eQwXxRQ/0fVq5zwv+rd1N1E/f99lKRzJXjmf7qc+mUb19m00dblId9B/cWN
-QCo50l6EtamS9h2vTHl0mE1DQJ46YQ==
-=h/5c
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfhHkUACgkQeFA3/03a
+ocX7YwgAw6q+DZ6p4JVvvT0T/Fe9cDUfN7Po0unmf2SbzcMwCEIX1CYLCBnNz0+B
+La5BV07SCCQGzDhMI++N5WKZdRQBZQJ3rijpb21CCesfcQmAb+GYG7qorvNLHNIO
+1PC4A2Dgz0b5GK1hB0FQ3OB1RfOErra4ghV8h0/aBxmc1DIHj4CLQJa49wpzN2SG
+ddD4acwSL5ZuL/KJNs5K+68H/V5tLXOLwVWOsE3x1Y0M8GO7L+ExwLfCN7ZSN87u
+RztNV5q8x4GNtD6GSJ8nSCGaYjH62d0YZGf7A3RkLjrZ6Nutba2zWCcQqQiDExrA
+5v84Ei30/1gOdZJCEG9wU+657qWm2w==
+=z+UE
 -----END PGP SIGNATURE-----
 
---EXNubZP+THGMtcHt--
+--IapNYVAZLjooksJM--
 
