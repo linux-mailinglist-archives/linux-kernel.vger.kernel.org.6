@@ -1,146 +1,181 @@
-Return-Path: <linux-kernel+bounces-573948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F95AA6DE97
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896E5A6DE94
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D86172FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E62D16E828
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50343263895;
-	Mon, 24 Mar 2025 15:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86555262D01;
+	Mon, 24 Mar 2025 15:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TGeVw+8p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XaiCGOxd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mVaWY4Nz"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003B42627F5;
-	Mon, 24 Mar 2025 15:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E22262815
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742829870; cv=none; b=WTVXlbX5dCjuwj8c/6BCHSXvc3iu47GKzgAY2gfxy5yqAmIfUCSOkBg395/2GIlw9ldD0WdUoezcHnWU+ejjqMn/WarwhDY4yA6crMYKyGGub99TxyR/6qvlYn3G/RvJ5iY24cZY/VorZ6E24kGB0o0rcBy4qAj1KJ2+6ylcHmo=
+	t=1742829868; cv=none; b=RcFLLDd5hvlfhCcs/2qh8Y1XbfrEfp5cQxs931t26Vw5wJU7tlMMMN2j0BUwtzS3BlcqPGfuHUyNBUnJrbqriBBwwN4KHWtwNy+gOGKga3icPubPaqY3/heaEQYoKR3XGrLCkPbrkz1LL+UZN2VwRzlG1+wFvUO5ByKdP7J3okY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742829870; c=relaxed/simple;
-	bh=7q+nKUbKNhyhktIiTR7GrBfCuyLAr0XwfMKzvmg511o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a39nG3ZKLHtgPIIMh7uR2LDblc1xl5NrvhY3Q3GrDSxJsxvgCK5GFV/ne8T/btgNgIq13tGrSarO/xbYLyZESh2/NTM2d/LxUuAJTa1LAFyzOztO20hq9GF/ye57Sk7WeulxeWXsa16taOkjZgBtTTVFwdbER1ffjPGvWVMPu0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TGeVw+8p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XaiCGOxd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742829861;
+	s=arc-20240116; t=1742829868; c=relaxed/simple;
+	bh=VktfRK3VzoNKmLZgzjeic8DJNHI8hxyV7q8Mpzaa0pg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EzvUrzh/g7FUfhjbiMYlNqCoIEqQqbG617ycJPmlsjWHnDxpy3gH0A3z7t9mls8H3tu1ccdQWYyGu53Hb/YIQ0dzgMcpoqXqodL3miItiE72xOQ0/x36+5P/Rwa6mVjxdVTG/5mB95PZc8L+lcv1KCiXrmuSruWzSA4smUzqNeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mVaWY4Nz; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 10978442A2;
+	Mon, 24 Mar 2025 15:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742829865;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jRrIB+zDteaSXRYqxWriyHX454y+VkB0De55x4GzBvk=;
-	b=TGeVw+8pkcSvBNuPmnAf0Ivc1s2XnHagca3sg7spp526UKUSrce30RG8h0aA88YDXbrEiw
-	pwJXg7R757B3Z0GaVLwDZONvnybOJ30Vnac4qpOXTwk34oF+ePSAKU3+ILln/rnVNUXOHS
-	Pi3ukfmp0r0PD2WHvCPpttRugUa/g33TQPmMYMn1RSR8Iew3TcRY5Rkv004jpyA/O4bySF
-	falp5ShQ64bFtNURR2teuoqVys2o1Ky21zqM0tzc2EjWeYJdyFwGWbWuRkayEh+yMdeBX0
-	jyLdwqyHPv7BZyRc+Bh/zUKykF4aNwllVOs/IUI+0+domX7em/hsbhmOnlG/gQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742829861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jRrIB+zDteaSXRYqxWriyHX454y+VkB0De55x4GzBvk=;
-	b=XaiCGOxdtLXu/JxZ/a6rU1g0WPB1Doy+6lzB272lBaC+rGkX/RkUvaXyXKRfofNCOieFw+
-	NvtPGMEA2YDS9BCg==
-To: Ryo Takakura <ryotkkr98@gmail.com>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, paul.walmsley@sifive.com, samuel.holland@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, pmladek@suse.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-riscv@lists.infradead.org, Ryo Takakura <ryotkkr98@gmail.com>
-Subject: Re: [PATCH] serial: sifive: Switch to nbcon console
-In-Reply-To: <20250323060603.388621-1-ryotkkr98@gmail.com>
-References: <20250323060603.388621-1-ryotkkr98@gmail.com>
-Date: Mon, 24 Mar 2025 16:30:20 +0106
-Message-ID: <84sen2fo4b.fsf@jogness.linutronix.de>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MN2goKeoGuvQfVEcs16DdowyfuUf4fhiY6wQYYUdHD0=;
+	b=mVaWY4NzsQu8H3UewIVVJ2dHMuyEwe1yH44jNKm1gW+fS9KM8kcx9K4r2YOj8aB/UzrFG9
+	P3lUMqKnjQY/9oayiOlPgRSusO2u20Xp4ujHZ05PBliCHxCf0uvTF5cjJYXcce/ozg2QOL
+	kEuomD6jyvuO52LuWs3QRZHFsNhd8aj4ISBcsDK37ca5z1sNlrEKFH2Skdj9HTE3hye78A
+	+VyAZgfOX81uHvujjO9dsHiU3zPmXKa3rbJpSpccVlj8tVotwUtBLIGUP2kyfGHYWW6g2s
+	Kb4l/1TZ4ygwNcjtQ5yVh62Cv0AmLczyfh2K6idPoIPMN7hvsJDqC6M3+icnHQ==
+Message-ID: <d6918ca0-f661-4b1c-af61-cc863a794a66@bootlin.com>
+Date: Mon, 24 Mar 2025 16:24:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH v2 39/59] drm-dyndbg: DRM_CLASSMAP_USE in amdgpu driver
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-gfx-trybot@lists.freedesktop.org
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250320185238.447458-1-jim.cromie@gmail.com>
+ <20250320185238.447458-40-jim.cromie@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250320185238.447458-40-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedtudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+ dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Ryo,
 
-On 2025-03-23, Ryo Takakura <ryotkkr98@gmail.com> wrote:
-> Add the necessary callbacks(write_atomic, write_thread, device_lock
-> and device_unlock) and CON_NBCON flag to switch the sifive console
-> driver to perform as nbcon console.
->
-> Both ->write_atomic() and ->write_thread() will check for console
-> ownership whenever they are accessing registers.
->
-> The ->device_lock()/unlock() will provide the additional serilization
-> necessary for ->write_thread() which is called from dedicated printing
-> thread.
->
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
 
-This driver has the same issue that the 8250 previously had. The
-->startup() and ->shutdown() callbacks are called without the port
-lock. However, the sifive driver is accessing SIFIVE_SERIAL_IE_OFFS in
-these callbacks and this register is also accessed by the ->write()
-callback. This needs to be synchronized.
+Le 20/03/2025 à 19:52, Jim Cromie a écrit :
+> Following the dyndbg-api-fix, replace DECLARE_DYNDBG_CLASSMAP with
+> DRM_CLASSMAP_USE.  This refs the defined & exported classmap, rather
+> than re-declaring it redundantly, and error-prone-ly.
+> 
+> This resolves the appearance of "class:_UNKNOWN_" in the control file
+> for the driver's drm_dbg()s.
+> 
+> Fixes: f158936b60a7 ("drm: POC drm on dyndbg - use in core, 2 helpers, 3 drivers.")
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-The related 8250 patches fixing this are startup [0] and shutdown [1]. I
-am assuming the following change would be sufficient:
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
-index d032de6199af..1de1b2a5833d 100644
---- a/drivers/tty/serial/sifive.c
-+++ b/drivers/tty/serial/sifive.c
-@@ -564,8 +564,11 @@ static void sifive_serial_break_ctl(struct uart_port *port, int break_state)
- static int sifive_serial_startup(struct uart_port *port)
- {
- 	struct sifive_serial_port *ssp = port_to_sifive_serial_port(port);
-+	unsigned long flags;
- 
-+	uart_port_lock_irqsave(&ssp->port, &flags);
- 	__ssp_enable_rxwm(ssp);
-+	uart_port_unlock_irqrestore(&ssp->port, flags);
- 
- 	return 0;
- }
-@@ -573,9 +576,12 @@ static int sifive_serial_startup(struct uart_port *port)
- static void sifive_serial_shutdown(struct uart_port *port)
- {
- 	struct sifive_serial_port *ssp = port_to_sifive_serial_port(port);
-+	unsigned long flags;
- 
-+	uart_port_lock_irqsave(&ssp->port, &flags);
- 	__ssp_disable_rxwm(ssp);
- 	__ssp_disable_txwm(ssp);
-+	uart_port_unlock_irqrestore(&ssp->port, flags);
- }
- 
- /**
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 12 +-----------
+>   1 file changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> index c0ddbe7d6f0b..e1367f66c4d2 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -234,17 +234,7 @@ int amdgpu_wbrf = -1;
+>   int amdgpu_damage_clips = -1; /* auto */
+>   int amdgpu_umsch_mm_fwlog;
+>   
+> -DECLARE_DYNDBG_CLASSMAP(drm_debug_classes, DD_CLASS_TYPE_DISJOINT_BITS, 0,
+> -			"DRM_UT_CORE",
+> -			"DRM_UT_DRIVER",
+> -			"DRM_UT_KMS",
+> -			"DRM_UT_PRIME",
+> -			"DRM_UT_ATOMIC",
+> -			"DRM_UT_VBL",
+> -			"DRM_UT_STATE",
+> -			"DRM_UT_LEASE",
+> -			"DRM_UT_DP",
+> -			"DRM_UT_DRMRES");
+> +DRM_CLASSMAP_USE(drm_debug_classes);
+>   
+>   struct amdgpu_mgpu_info mgpu_info = {
+>   	.mutex = __MUTEX_INITIALIZER(mgpu_info.mutex),
 
-The fix should be applied first (and likely Cc stable) since it is
-fixing an existing mainline problem.
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Your patch also needs the synchronization. The ->write_atomic() callback
-does not use the port lock. However, the uart_port_*() functions also
-take the nbcon console ownership, so they synchronize against
-->write_atomic() callbacks.
 
-Otherwise, this patch looks good. If the ->startup() and ->shutdown()
-callbacks are fixed in a previous patch, feel free to add:
-
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
-
-to this patch.
-
-John Ogness
-
-[0] https://lore.kernel.org/lkml/20230525093159.223817-2-john.ogness@linutronix.de
-[1] https://lore.kernel.org/lkml/20230525093159.223817-9-john.ogness@linutronix.de
 
