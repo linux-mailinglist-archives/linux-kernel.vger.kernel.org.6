@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-574522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD9BA6E65D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:08:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC26A6E65E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 23:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 175A7174FD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57BDE3BAE04
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC4F17BED0;
-	Mon, 24 Mar 2025 22:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8191EFF9D;
+	Mon, 24 Mar 2025 22:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jGZ9YGGh"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GtwRpZB1"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10141EA7DB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12721EF09A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742853793; cv=none; b=K3s5NikuCm/0hyzCWuebeSjLDRU2/Kyu9DPqbtwlpv/H8eNgVv7YJBuDior2z+XQMEtiq11SL8eCUZEJKC8KuFGWfHvt08IUnxNg4s6IXTo9Hq5zDvP/xixl+e6vYk2axDFkndlzGW9FJYrUuv276MLAq7X+A5jzhK8z+vsVn0g=
+	t=1742853795; cv=none; b=S0/8pe/bnwWnwFGIRAcBfraY9PGGzRUKI82XKQxhwtEJnm30m7PjzR32T6etuakGemHOhlsk9297f+TXrQcNaYc4ytdddjXCSlD7LzBpdGHfoHucBtBh3LmUmexltLhl5y/pd56beQRLzlnF5r6KlQk3Hwi2KU8MeunzhQzr6E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742853793; c=relaxed/simple;
-	bh=gp9T/F36DdNhP/D9MfW72999RfCukwTxvi2VPy0Z57c=;
+	s=arc-20240116; t=1742853795; c=relaxed/simple;
+	bh=mjAVo0laEj0YedW2kUkFe7ptRqxSDqkwDdnRJi4OMT0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ck681n+cleT9/EauAX8Nv/mm5LQJvooocVgvW6K9EnOXzgUDNusJtTQMn+tJ3EMWCWYVNFlg4qvXDxG/fBPmH56TJRVtmvBJdH3BRcI2LZE4KnKJ373zrcDJ18H3XMK24EqCPo4G07PWs9iqFatRf6VzpWvNRRv6HZBHXkW26+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jGZ9YGGh; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=MwlcqqgtkN20kx8C703UKTVuzfUTfkWtROGU80zrfkj8LsYRzhKrU4eiOSDZZ/M2M5GRwKjVRu8VrnUw6UcGMb9Hv/e7cufTg96qfZiNtzXVQxkbxOWK8jJMOwCE6NzpKBiPaTYTOs+25vZspuyZGcpoN+4wj8f2fr/igLnM4QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GtwRpZB1; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kinseyho.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2242ade807fso138846025ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:11 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2254e500a73so58633745ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742853791; x=1743458591; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742853793; x=1743458593; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H6xLSNMv7dH+XhTTh/MX0iK8IzdaNSHq8WhjOCavuno=;
-        b=jGZ9YGGhY+jzptKBClmZEatcb+9xXjBRPwW73zB8x73vYUsKf30UCybjdtNJ50bQpd
-         JNn6CUe6DbuiznoeUOjY/jtMBFzrPHN6psAohh4LTCPBuhxb/GT8XGqJCxhllB4RaoxA
-         x/VVkGbRqFwVnwGQN/VmN9mTNPPtICzy1GuCgurTGeQoopCrLYZxxI8OTJIGGYGboTp0
-         3R74seguyfticVU9UOy8oPavtIE0OxCdRy3BUhjygStjgCCIXcBuoBELugKVQNSzHp7j
-         89QapkQnYkMvBFD/xpEPB5Lx61iQvDFliKagW3owHPdVNG2rj81aj5dC+z9tIPNExqq6
-         tWZA==
+        bh=HrFPQxQVCxFCJ5eIn/lb4rFAO8+JMUT5L57UjQpjJz0=;
+        b=GtwRpZB1bdcjUojqHXC0i1YgFaZ3EGunn2cD5Q82AHYa6CrgECXiEtyYkMBpeROGuA
+         RmbvYuoUxdjAALKNdfByZhpis+hKkTU6JUMe+quN1cHyjwHgAN8deNZkgIv3z5yZWiKL
+         T4iM6MxW3qoW2CQoSFjBvdZac9lcLJa+mElJC5FlT+9iSE1mOMhwLapOQbhNFaCFW2kH
+         WMnBZhBCDHz9o5x35ApX3//wG0kTYw0TgRdaccTEwp4lCFZ/CkQNZjJSUgYPYiwMWceo
+         NUvVKVRkMqx+3eu5bjWU2Xn1G+UzOteOFZJ+B8++7Xy2gOCVsV7yPmDSmL511/GVjQqf
+         xnyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742853791; x=1743458591;
+        d=1e100.net; s=20230601; t=1742853793; x=1743458593;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H6xLSNMv7dH+XhTTh/MX0iK8IzdaNSHq8WhjOCavuno=;
-        b=F9bqLao/eIZP+4msWLpSwjsZm0SCgfdR/05Tg8UavdAKCA3UQk8x3FSI/HF/pYE6Ai
-         uiF0hjm/ZlTVOy7l97echP7XejNihw8tWLRQXPP6WLfrBQw3CyVgYu46w1u4Dcicq8kF
-         9S+V09ZLLr0FbMfQNCSLzqrQ4Yrsp+EjKyT4J45XGsop8yhqckHvhNcfiGuk8VrAo632
-         dJ5Bbkl5GyFkFhrj/qykOsHaCz9rh+/bLJNtHMrlBP1rnImY5+sfM4Fcqz6044GaP7sU
-         EWTSOsD1m+7ro+DLoFeJ0+PaspU3nPXrGKyaUzbe8doINsW+jdp8RZrn+QwaflPHZbe8
-         kuUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf0zjWEnL3tGVUjKiDXgCG6jlB2PVYby8rwAWaKsTIMU9VCACqA+IElsxXoynz//3k3MTJdRlhx8iJ75w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyoox/uIKPdTeVgFAFQrSeAq1SwIb5yInmM+viAGhmlvusYVpwf
-	HWN9BfGYVC10DDqpCxtHviEpeilDMC03suYkPElJ9vD7Lnf/8dFQMIYLLZ8MC+1B/2C7DrMqYFe
-	RMYaqS5Sgxg==
-X-Google-Smtp-Source: AGHT+IFxcf1ulizGHCmrAYuaueILB7KnJ+mFxdngS8qoVQOFjaGknbkRH4uweWaOG90A2VClWCEi/Qzqir1kug==
-X-Received: from pfbhq26.prod.google.com ([2002:a05:6a00:681a:b0:736:6fb6:7fc])
+        bh=HrFPQxQVCxFCJ5eIn/lb4rFAO8+JMUT5L57UjQpjJz0=;
+        b=WAA0KG7EioTdPx4XPjtbWbs60la4SEEgxNKy3DY0G7pCxYbtyEtebce1VtFeKYx3oA
+         h5v6rUdB8TCenkylawj/2cs+mb+HZtRwQXJgSjk6RBBvey3padtQNDNreI2uDRNSrVwg
+         NGps8ubwsN0KeCWEp16949UAq7mIddMtqd4YHxJNXSFU6b59VrYxbxitZ/KGjk78+dek
+         wQzx4gS4Ola3CNyorm3Zk3TLoJTtjCrIq1yervOv8Li3+oxzLkkONzh3kVBE+FhZa2YA
+         KQzBxmd7SRWY+9wzafcOPJBrNzJ3SfCEtzkTfbbzGSBSmbNjj6I4m7TzxR9vQKLbqwKn
+         OAuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVztMDLDwAmGslxm8NHfZOeoYnawwyT4CxUikc9qoLZ4wOLblo6o0FNi1g5xGRm+FJoWiIMzrmRK9nxZ2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHS9KmYXLt4rPGpmZM8w4nmdwvZMlPIuuJuyvz6v//cmSqlBKu
+	dzG7HLTBtxNpXBUrwnOUc3gMcS2LjG3b4QLAs8qYqnGLquNr8mAmGwE3JXBZIlnaMifsma6xbO1
+	vsmkcVp/mCw==
+X-Google-Smtp-Source: AGHT+IFZ5gFWS0tV3e6VWZdQngRJrAWzxvv1iFdLvWy/bvzelevqq81SzyHG2/91MA2Kj/yFZ5fNgitHPoeVag==
+X-Received: from pglu36.prod.google.com ([2002:a63:1424:0:b0:af2:22fe:cfb3])
  (user=kinseyho job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3a07:b0:736:3768:6d74 with SMTP id d2e1a72fcca58-7390598e60amr22559759b3a.7.1742853791050;
- Mon, 24 Mar 2025 15:03:11 -0700 (PDT)
-Date: Mon, 24 Mar 2025 15:03:00 -0700
+ 2002:a05:6a20:2585:b0:1f5:7eb5:72c7 with SMTP id adf61e73a8af0-1fe4300f7d1mr23507348637.29.1742853793076;
+ Mon, 24 Mar 2025 15:03:13 -0700 (PDT)
+Date: Mon, 24 Mar 2025 15:03:01 -0700
 In-Reply-To: <20250324220301.1273038-1-kinseyho@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250324220301.1273038-1-kinseyho@google.com>
 X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250324220301.1273038-2-kinseyho@google.com>
-Subject: [RFC PATCH v1 1/2] mm: mglru: generalize page table walk
+Message-ID: <20250324220301.1273038-3-kinseyho@google.com>
+Subject: [RFC PATCH v1 2/2] mm: klruscand: use mglru scanning for page promotion
 From: Kinsey Ho <kinseyho@google.com>
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: yuanchu@google.com, AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com, 
@@ -92,440 +92,179 @@ Cc: yuanchu@google.com, AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
 	hyeonggon.yoo@sk.com, bharata@amd.com, Kinsey Ho <kinseyho@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Refactor the existing MGLRU page table walking logic to make it
-resumable.
+Introduce a new kernel daemon, klruscand, that periodically invokes the
+MGLRU page table walk. It leverages the new callbacks to gather access
+information and forwards it to the kpromoted daemon for promotion
+decisions.
 
-Additionally, introduce two hooks into the MGLRU page table walk:
-accessed callback and flush callback. The accessed callback is called
-for each accessed page detected via the scanned accessed bit. The flush
-callback is called when the accessed callback reports an out of space
-error. This allows for processing pages in batches for efficiency.
+This benefits from reusing the existing MGLRU page table walk
+infrastructure, which is optimized with features such as hierarchical
+scanning and bloom filters to reduce CPU overhead.
 
-With a generalised page table walk, introduce a new scan function which
-repeatedly scans on the same young generation and does not add a new
-young generation.
+As an additional optimization to be added in the future, we can tune
+the scan intervals for each memcg.
 
 Signed-off-by: Kinsey Ho <kinseyho@google.com>
 Signed-off-by: Yuanchu Xie <yuanchu@google.com>
 ---
- include/linux/mmzone.h |   5 ++
- mm/internal.h          |   4 +
- mm/vmscan.c            | 177 ++++++++++++++++++++++++++++++-----------
- 3 files changed, 140 insertions(+), 46 deletions(-)
+ mm/Kconfig     |   8 ++++
+ mm/Makefile    |   1 +
+ mm/klruscand.c | 118 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 127 insertions(+)
+ create mode 100644 mm/klruscand.c
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index a5c4e789aa55..bab586961a82 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -511,6 +511,8 @@ struct lru_gen_mm_walk {
- 	unsigned long seq;
- 	/* the next address within an mm to scan */
- 	unsigned long next_addr;
-+	/* called for each accessed pte/pmd */
-+	int (*accessed_cb)(pfn_t pfn);
- 	/* to batch promoted pages */
- 	int nr_pages[MAX_NR_GENS][ANON_AND_FILE][MAX_NR_ZONES];
- 	/* to batch the mm stats */
-@@ -518,6 +520,9 @@ struct lru_gen_mm_walk {
- 	/* total batched items */
- 	int batched;
- 	int swappiness;
-+	/* for the pmd under scanning */
-+	int nr_young_pte;
-+	int nr_total_pte;
- 	bool force_scan;
- };
+diff --git a/mm/Kconfig b/mm/Kconfig
+index ceaa462a0ce6..ed0fa8f2551e 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1366,6 +1366,14 @@ config KPROMOTED
+ 	  Promote hot pages from lower tier to top tier by using the
+ 	  memory access information provided by various sources.
  
-diff --git a/mm/internal.h b/mm/internal.h
-index 20b3535935a3..3bf528af2deb 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -476,6 +476,10 @@ extern unsigned long highest_memmap_pfn;
- bool folio_isolate_lru(struct folio *folio);
- void folio_putback_lru(struct folio *folio);
- extern void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason);
-+void set_task_reclaim_state(struct task_struct *task,
-+				   struct reclaim_state *rs);
-+void lru_gen_scan_lruvec(struct lruvec *lruvec, unsigned long seq,
-+			 int (*accessed_cb)(pfn_t), void (*flush_cb)(void));
- 
- /*
-  * in mm/rmap.c:
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c767d71c43d7..fb828a429645 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -57,6 +57,7 @@
- #include <linux/rculist_nulls.h>
- #include <linux/random.h>
- #include <linux/mmu_notifier.h>
-+#include <linux/pfn_t.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -271,7 +272,7 @@ static int sc_swappiness(struct scan_control *sc, struct mem_cgroup *memcg)
- }
- #endif
- 
--static void set_task_reclaim_state(struct task_struct *task,
-+void set_task_reclaim_state(struct task_struct *task,
- 				   struct reclaim_state *rs)
- {
- 	/* Check for an overwrite */
-@@ -3023,7 +3024,7 @@ static bool iterate_mm_list(struct lru_gen_mm_walk *walk, struct mm_struct **ite
- 
- 	VM_WARN_ON_ONCE(mm_state->seq + 1 < walk->seq);
- 
--	if (walk->seq <= mm_state->seq)
-+	if (!walk->accessed_cb && walk->seq <= mm_state->seq)
- 		goto done;
- 
- 	if (!mm_state->head)
-@@ -3452,16 +3453,14 @@ static void walk_update_folio(struct lru_gen_mm_walk *walk, struct folio *folio,
- 	}
- }
- 
--static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
--			   struct mm_walk *args)
-+static int walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
-+			   struct mm_walk *args, bool *suitable)
- {
--	int i;
-+	int i, err = 0;
- 	bool dirty;
- 	pte_t *pte;
- 	spinlock_t *ptl;
- 	unsigned long addr;
--	int total = 0;
--	int young = 0;
- 	struct folio *last = NULL;
- 	struct lru_gen_mm_walk *walk = args->private;
- 	struct mem_cgroup *memcg = lruvec_memcg(walk->lruvec);
-@@ -3471,17 +3470,21 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 	pmd_t pmdval;
- 
- 	pte = pte_offset_map_rw_nolock(args->mm, pmd, start & PMD_MASK, &pmdval, &ptl);
--	if (!pte)
--		return false;
-+	if (!pte) {
-+		*suitable = false;
-+		return 0;
-+	}
- 
- 	if (!spin_trylock(ptl)) {
- 		pte_unmap(pte);
--		return true;
-+		*suitable = true;
-+		return 0;
- 	}
- 
- 	if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd)))) {
- 		pte_unmap_unlock(pte, ptl);
--		return false;
-+		*suitable = false;
-+		return 0;
- 	}
- 
- 	arch_enter_lazy_mmu_mode();
-@@ -3491,7 +3494,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 		struct folio *folio;
- 		pte_t ptent = ptep_get(pte + i);
- 
--		total++;
-+		walk->nr_total_pte++;
- 		walk->mm_stats[MM_LEAF_TOTAL]++;
- 
- 		pfn = get_pte_pfn(ptent, args->vma, addr, pgdat);
-@@ -3515,23 +3518,34 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
- 		if (pte_dirty(ptent))
- 			dirty = true;
- 
--		young++;
-+		walk->nr_young_pte++;
- 		walk->mm_stats[MM_LEAF_YOUNG]++;
++config KLRUSCAND
++	bool "Kernel lower tier access scan daemon"
++	default y
++	depends on KPROMOTED && LRU_GEN_WALKS_MMU
++	help
++	  Scan for accesses from lower tiers by invoking MGLRU to perform
++	  page table walks.
 +
-+		if (!walk->accessed_cb)
-+			continue;
+ source "mm/damon/Kconfig"
+ 
+ endmenu
+diff --git a/mm/Makefile b/mm/Makefile
+index bf4f5f18f1f9..eb7b76db3b33 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -148,3 +148,4 @@ obj-$(CONFIG_EXECMEM) += execmem.o
+ obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
+ obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
+ obj-$(CONFIG_KPROMOTED) += kpromoted.o
++obj-$(CONFIG_KLRUSCAND) += klruscand.o
+diff --git a/mm/klruscand.c b/mm/klruscand.c
+new file mode 100644
+index 000000000000..a53d43c60155
+--- /dev/null
++++ b/mm/klruscand.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <linux/memcontrol.h>
++#include <linux/kthread.h>
++#include <linux/module.h>
++#include <linux/vmalloc.h>
++#include <linux/random.h>
++#include <linux/migrate.h>
++#include <linux/mm_inline.h>
++#include <linux/slab.h>
++#include <linux/sched/clock.h>
++#include <linux/memory-tiers.h>
++#include <linux/sched/mm.h>
++#include <linux/sched.h>
++#include <linux/kpromoted.h>
 +
-+		err = walk->accessed_cb(pfn_to_pfn_t(pfn));
-+		if (err) {
-+			walk->next_addr = addr + PAGE_SIZE;
-+			break;
-+		}
- 	}
- 
- 	walk_update_folio(walk, last, gen, dirty);
- 	last = NULL;
- 
--	if (i < PTRS_PER_PTE && get_next_vma(PMD_MASK, PAGE_SIZE, args, &start, &end))
-+	if (!err && i < PTRS_PER_PTE &&
-+	    get_next_vma(PMD_MASK, PAGE_SIZE, args, &start, &end))
- 		goto restart;
- 
- 	arch_leave_lazy_mmu_mode();
- 	pte_unmap_unlock(pte, ptl);
- 
--	return suitable_to_scan(total, young);
-+	*suitable = suitable_to_scan(walk->nr_total_pte, walk->nr_young_pte);
-+	return err;
- }
- 
--static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area_struct *vma,
-+static int walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area_struct *vma,
- 				  struct mm_walk *args, unsigned long *bitmap, unsigned long *first)
- {
- 	int i;
-@@ -3544,6 +3558,7 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 	struct pglist_data *pgdat = lruvec_pgdat(walk->lruvec);
- 	DEFINE_MAX_SEQ(walk->lruvec);
- 	int gen = lru_gen_from_seq(max_seq);
-+	int err = 0;
- 
- 	VM_WARN_ON_ONCE(pud_leaf(*pud));
- 
-@@ -3551,13 +3566,13 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 	if (*first == -1) {
- 		*first = addr;
- 		bitmap_zero(bitmap, MIN_LRU_BATCH);
--		return;
-+		return 0;
- 	}
- 
- 	i = addr == -1 ? 0 : pmd_index(addr) - pmd_index(*first);
- 	if (i && i <= MIN_LRU_BATCH) {
- 		__set_bit(i - 1, bitmap);
--		return;
-+		return 0;
- 	}
- 
- 	pmd = pmd_offset(pud, *first);
-@@ -3607,6 +3622,16 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 			dirty = true;
- 
- 		walk->mm_stats[MM_LEAF_YOUNG]++;
-+		if (!walk->accessed_cb)
-+			goto next;
++#include "internal.h"
 +
-+		err = walk->accessed_cb(pfn_to_pfn_t(pfn));
-+		if (err) {
-+			i = find_next_bit(bitmap, MIN_LRU_BATCH, i) + 1;
++#define KLRUSCAND_INTERVAL_MS 4000
++#define BATCH_SIZE (2 << 16)
 +
-+			walk->next_addr = (*first & PMD_MASK) + i * PMD_SIZE;
-+			break;
-+		}
- next:
- 		i = i > MIN_LRU_BATCH ? 0 : find_next_bit(bitmap, MIN_LRU_BATCH, i) + 1;
- 	} while (i <= MIN_LRU_BATCH);
-@@ -3617,9 +3642,10 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 	spin_unlock(ptl);
- done:
- 	*first = -1;
-+	return err;
- }
- 
--static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
-+static int walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 			   struct mm_walk *args)
- {
- 	int i;
-@@ -3631,6 +3657,7 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 	unsigned long first = -1;
- 	struct lru_gen_mm_walk *walk = args->private;
- 	struct lru_gen_mm_state *mm_state = get_mm_state(walk->lruvec);
-+	int err = 0;
- 
- 	VM_WARN_ON_ONCE(pud_leaf(*pud));
- 
-@@ -3644,6 +3671,7 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 	/* walk_pte_range() may call get_next_vma() */
- 	vma = args->vma;
- 	for (i = pmd_index(start), addr = start; addr != end; i++, addr = next) {
-+		bool suitable;
- 		pmd_t val = pmdp_get_lockless(pmd + i);
- 
- 		next = pmd_addr_end(addr, end);
-@@ -3660,7 +3688,10 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 			walk->mm_stats[MM_LEAF_TOTAL]++;
- 
- 			if (pfn != -1)
--				walk_pmd_range_locked(pud, addr, vma, args, bitmap, &first);
-+				err = walk_pmd_range_locked(pud, addr, vma, args,
-+						bitmap, &first);
-+			if (err)
-+				return err;
- 			continue;
- 		}
- 
-@@ -3669,33 +3700,50 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 			if (!pmd_young(val))
- 				continue;
- 
--			walk_pmd_range_locked(pud, addr, vma, args, bitmap, &first);
-+			err = walk_pmd_range_locked(pud, addr, vma, args,
-+						bitmap, &first);
-+			if (err)
-+				return err;
- 		}
- 
- 		if (!walk->force_scan && !test_bloom_filter(mm_state, walk->seq, pmd + i))
- 			continue;
- 
-+		err = walk_pte_range(&val, addr, next, args, &suitable);
-+		if (err && walk->next_addr < next && first == -1)
-+			return err;
++static struct task_struct *scan_thread;
++static pfn_t pfn_batch[BATCH_SIZE];
++static int batch_index;
 +
-+		walk->nr_total_pte = 0;
-+		walk->nr_young_pte = 0;
-+
- 		walk->mm_stats[MM_NONLEAF_FOUND]++;
- 
--		if (!walk_pte_range(&val, addr, next, args))
--			continue;
-+		if (!suitable)
-+			goto next;
- 
- 		walk->mm_stats[MM_NONLEAF_ADDED]++;
- 
- 		/* carry over to the next generation */
- 		update_bloom_filter(mm_state, walk->seq + 1, pmd + i);
-+next:
-+		if (err) {
-+			walk->next_addr = first;
-+			return err;
-+		}
- 	}
- 
--	walk_pmd_range_locked(pud, -1, vma, args, bitmap, &first);
-+	err = walk_pmd_range_locked(pud, -1, vma, args, bitmap, &first);
- 
--	if (i < PTRS_PER_PMD && get_next_vma(PUD_MASK, PMD_SIZE, args, &start, &end))
-+	if (!err && i < PTRS_PER_PMD && get_next_vma(PUD_MASK, PMD_SIZE, args, &start, &end))
- 		goto restart;
-+
-+	return err;
- }
- 
- static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
- 			  struct mm_walk *args)
- {
--	int i;
-+	int i, err;
- 	pud_t *pud;
- 	unsigned long addr;
- 	unsigned long next;
-@@ -3713,7 +3761,9 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
- 		if (!pud_present(val) || WARN_ON_ONCE(pud_leaf(val)))
- 			continue;
- 
--		walk_pmd_range(&val, addr, next, args);
-+		err = walk_pmd_range(&val, addr, next, args);
-+		if (err)
-+			return err;
- 
- 		if (need_resched() || walk->batched >= MAX_LRU_BATCH) {
- 			end = (addr | ~PUD_MASK) + 1;
-@@ -3734,40 +3784,48 @@ static int walk_pud_range(p4d_t *p4d, unsigned long start, unsigned long end,
- 	return -EAGAIN;
- }
- 
--static void walk_mm(struct mm_struct *mm, struct lru_gen_mm_walk *walk)
-+static int try_walk_mm(struct mm_struct *mm, struct lru_gen_mm_walk *walk)
- {
-+	int err;
- 	static const struct mm_walk_ops mm_walk_ops = {
- 		.test_walk = should_skip_vma,
- 		.p4d_entry = walk_pud_range,
- 		.walk_lock = PGWALK_RDLOCK,
- 	};
--	int err;
- 	struct lruvec *lruvec = walk->lruvec;
- 
--	walk->next_addr = FIRST_USER_ADDRESS;
-+	DEFINE_MAX_SEQ(lruvec);
- 
--	do {
--		DEFINE_MAX_SEQ(lruvec);
-+	err = -EBUSY;
- 
--		err = -EBUSY;
-+	/* another thread might have called inc_max_seq() */
-+	if (walk->seq != max_seq)
-+		return err;
- 
--		/* another thread might have called inc_max_seq() */
--		if (walk->seq != max_seq)
--			break;
-+	/* the caller might be holding the lock for write */
-+	if (mmap_read_trylock(mm)) {
-+		err = walk_page_range(mm, walk->next_addr, ULONG_MAX,
-+				      &mm_walk_ops, walk);
- 
--		/* the caller might be holding the lock for write */
--		if (mmap_read_trylock(mm)) {
--			err = walk_page_range(mm, walk->next_addr, ULONG_MAX, &mm_walk_ops, walk);
-+		mmap_read_unlock(mm);
-+	}
- 
--			mmap_read_unlock(mm);
--		}
-+	if (walk->batched) {
-+		spin_lock_irq(&lruvec->lru_lock);
-+		reset_batch_size(walk);
-+		spin_unlock_irq(&lruvec->lru_lock);
-+	}
- 
--		if (walk->batched) {
--			spin_lock_irq(&lruvec->lru_lock);
--			reset_batch_size(walk);
--			spin_unlock_irq(&lruvec->lru_lock);
--		}
-+	return err;
-+}
-+
-+static void walk_mm(struct mm_struct *mm, struct lru_gen_mm_walk *walk)
++static void flush_cb(void)
 +{
-+	int err;
- 
-+	walk->next_addr = FIRST_USER_ADDRESS;
-+	do {
-+		err = try_walk_mm(mm, walk);
- 		cond_resched();
- 	} while (err == -EAGAIN);
- }
-@@ -3964,6 +4022,33 @@ static bool inc_max_seq(struct lruvec *lruvec, unsigned long seq, int swappiness
- 	return success;
- }
- 
-+void lru_gen_scan_lruvec(struct lruvec *lruvec, unsigned long seq,
-+			 int (*accessed_cb)(pfn_t), void (*flush_cb)(void))
-+{
-+	struct lru_gen_mm_walk *walk = current->reclaim_state->mm_walk;
-+	struct mm_struct *mm = NULL;
++	int i = 0;
 +
-+	walk->lruvec = lruvec;
-+	walk->seq = seq;
-+	walk->accessed_cb = accessed_cb;
-+	walk->swappiness = MAX_SWAPPINESS;
++	for (; i < batch_index; i++) {
++		u64 pfn = pfn_batch[i].val;
 +
-+	do {
-+		int err = -EBUSY;
++		kpromoted_record_access((unsigned long)pfn, NUMA_NO_NODE,
++					KPROMOTED_PGTABLE_SCAN, jiffies);
 +
-+		iterate_mm_list(walk, &mm);
-+		if (!mm)
-+			break;
-+
-+		walk->next_addr = FIRST_USER_ADDRESS;
-+		do {
-+			err = try_walk_mm(mm, walk);
++		if (i % 16 == 0)
 +			cond_resched();
-+			flush_cb();
-+		} while (err == -EAGAIN);
-+	} while (mm);
++	}
++	batch_index = 0;
 +}
 +
- static bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq,
- 			       int swappiness, bool force_scan)
- {
++static int accessed_cb(pfn_t pfn)
++{
++	if (batch_index >= BATCH_SIZE)
++		return -EAGAIN;
++
++	pfn_batch[batch_index++] = pfn;
++	return 0;
++}
++
++static int klruscand_run(void *unused)
++{
++	struct lru_gen_mm_walk *walk;
++
++	walk = kzalloc(sizeof(*walk),
++		       __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
++	if (!walk)
++		return -ENOMEM;
++
++	while (!kthread_should_stop()) {
++		unsigned long next_wake_time;
++		long sleep_time;
++		struct mem_cgroup *memcg;
++		int flags;
++		int nid;
++
++		next_wake_time = jiffies + msecs_to_jiffies(KLRUSCAND_INTERVAL_MS);
++
++		for_each_node_state(nid, N_MEMORY) {
++			pg_data_t *pgdat = NODE_DATA(nid);
++			struct reclaim_state rs = { 0 };
++
++			if (node_is_toptier(nid))
++				continue;
++
++			rs.mm_walk = walk;
++			set_task_reclaim_state(current, &rs);
++			flags = memalloc_noreclaim_save();
++
++			memcg = mem_cgroup_iter(NULL, NULL, NULL);
++			do {
++				struct lruvec *lruvec =
++					mem_cgroup_lruvec(memcg, pgdat);
++				unsigned long max_seq =
++					READ_ONCE((lruvec)->lrugen.max_seq);
++
++				lru_gen_scan_lruvec(lruvec, max_seq,
++						    accessed_cb, flush_cb);
++				cond_resched();
++			} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)));
++
++			memalloc_noreclaim_restore(flags);
++			set_task_reclaim_state(current, NULL);
++			memset(walk, 0, sizeof(*walk));
++		}
++
++		sleep_time = next_wake_time - jiffies;
++		if (sleep_time > 0 && sleep_time != MAX_SCHEDULE_TIMEOUT)
++			schedule_timeout_idle(sleep_time);
++	}
++	kfree(walk);
++	return 0;
++}
++
++static int __init klruscand_init(void)
++{
++	struct task_struct *task;
++
++	task = kthread_run(klruscand_run, NULL, "klruscand");
++
++	if (IS_ERR(task)) {
++		pr_err("Failed to create klruscand kthread\n");
++		return PTR_ERR(task);
++	}
++
++	scan_thread = task;
++	return 0;
++}
++module_init(klruscand_init);
 -- 
 2.49.0.395.g12beb8f557-goog
 
