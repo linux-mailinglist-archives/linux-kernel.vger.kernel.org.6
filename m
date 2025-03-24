@@ -1,122 +1,136 @@
-Return-Path: <linux-kernel+bounces-574007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6224A6DF82
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:23:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28385A6DF8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 17:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA72167DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312F93ADB88
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8716D2638B8;
-	Mon, 24 Mar 2025 16:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F1263C6A;
+	Mon, 24 Mar 2025 16:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="inZ+K/0E"
-Received: from out.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAffRKsv"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDE525E81C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 16:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1333425E81C;
+	Mon, 24 Mar 2025 16:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742833424; cv=none; b=XdTDohq9JGwr39hjyVcvlCqWpv6BlN0QyZR+1xyiT7ZjWPYvzWGi0GB/YnB2we8hKSBKvfSd1X+3HguS9bm1OnLYcNZfuNrHnTg0J091DCg6mhiGcMkgjXYpWIX+5ZHyFVWTveVFLwKjY/oKEX1W4Qkk/nGkpreQPrPOFDpN3ws=
+	t=1742833444; cv=none; b=VUXDv846c147f0xnyG8vFhnrROciqLuVpvVf8+vM5Nm+Ktoic38Ell30BEAEWY5gmYC+nvBzllDXW3I6147XQjPzhxtQIfya3cHFMl1qJW6kHJKYq1BNU0bywdi5ubkDHQT5ByHBQOERREMsNPEnX5tLR4uJVITgT49MJQ8cMD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742833424; c=relaxed/simple;
-	bh=LOD+Kltnr1sw9R1SfnDVreU+aIDtLjFDKXoY+tkm9Sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oc2U3WRFNkkJy4+Muu3pOHKdbqswNiDsgZFdLzIi5/fBkvM9xdYA5YXdM25RQ5qnWrK+b7XfyknZUxuic8WbBpdlE3b5/WS5XxJh8itTySvD/8mAmXOEKsRfNZZ9Wyt4FMXfhY5haMcY/7pJLp3YBCo+ME1kUeds6oaY0uzbWlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=inZ+K/0E; arc=none smtp.client-ip=193.252.22.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id wkaBtZDD8cvxXwkaFtVg8z; Mon, 24 Mar 2025 17:23:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742833414;
-	bh=P9nD5PsBLzgHZd2DYjYHZ+C8TI1hL0ZPCCvHPL1SFBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=inZ+K/0EgTl/soIXsWxEWQb6xdeBc/Rx5cqjYRIjKiweIln1j7GhCIAOlLVAEiJee
-	 PUhFCb7py0OhvcDzXafVXIZPpWvSHdN5p/sD0e6oKJbTYo22HXnonZr2PacIYvdEBp
-	 VfQ41VxsX1xLT2ko2TJ4x1lt+j0S5NuyBUUA7Pua8LzN+x4nkFGBvJiNU6Et1xrXYB
-	 USm0ZcLJ9so+g0k949Zb/sgT0WBSpGBhXgQarJdd8L1takI4dBRSuvyHKPwqqdWW0v
-	 WOgdyB5J+GZy5ef+Vyigyc4/eUySAkhk99I3KQymFSxkdWILUPG9VDePy98WL+cXcL
-	 5UuNStq0YyJKQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Mar 2025 17:23:34 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <7e114fdb-0340-4a3c-956f-b26c9373041d@wanadoo.fr>
-Date: Tue, 25 Mar 2025 01:23:22 +0900
+	s=arc-20240116; t=1742833444; c=relaxed/simple;
+	bh=gG2U0rwHUfXmhboLhgXja8zI1PVcLv4TVPPi4iGB9bo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=J4ktAXgSbaL6J2sqT+4gyk8UFgC+oDnlJmXeitRmMMtDcycrI2MROZOC79rJStEhMl60poknWI9QDCWV5B9Hpn2IrFXWRnFxb3Z4PDq6vS3UjN9T0zYl3RD/1ksJq1KA9QHrIOjH1EvXuQ/H/Eivf1zicew99CE22IzpV0+jOaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAffRKsv; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso9936935a91.1;
+        Mon, 24 Mar 2025 09:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742833442; x=1743438242; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kysj7IBo2X0ysdrAKwKae8EbeSBOtCN5Ht/coLd5RSE=;
+        b=TAffRKsvaMXRHuvahCAN04z4pFfmiKoB8PLXzt3FPTVfb+exGb1a2d0wm1LLWwa2RR
+         2OWQaZMgeCNphBvbCz4cvGZQ59jfUIq80WPNf5EWhbF+i9mZhvc60m26c4eQsb38YvN1
+         3NETt5lqN/EYw7pt6F8agVSaAQFTlAmUG4xTEDCSmMytImA25kH0M2nykURgvlj2IVJw
+         NQRbtnW/uNFynqDggGyCL4f+hQWB8sQmHre3WpIYO/itaI6iw8HO7SNls1t13/gHY0Eb
+         d7TusmAmmTE8MflS1/hsR++nfYvaFtCFsWM7ZBP69iL2MigGPQlKM8BBHKSSkO4uaw2l
+         Ho2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742833442; x=1743438242;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kysj7IBo2X0ysdrAKwKae8EbeSBOtCN5Ht/coLd5RSE=;
+        b=jLhfngXpBRqvk23/jgM0Bmz2cpXaAKnplcw6g3hEo+9ifxOXkKEBNgR885gfZlsHTG
+         DlC50ePECsJQOX5oq33ujsR4lWdA5srI66eyLKb7fKwxMIP0Fxk6fU566djkGjSVcyP4
+         Bkf86s9XD2vYGwz25kX/hVjQA3bDPKI2898JK4YfwzyvVlgLLYgIael2Sv0PNLX2E46X
+         ff+7Y01096Nvn6veOmRBIPWuQJcUcx17x6RquSGINVcphJtQwOMYVP2QoXmYYQ/YjXOa
+         qqhtSxnZyuv780+UbdA54CxvwoKgVqtbE7ob8Dqku3YlOCexgZ4aBCrKsq33rvoMdzis
+         ycLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8aayqmSOdLV4ZkAq845deV5+hPgfcr2ybKd/BlfPkmClA63IMVbq3pbtqjdrOn099Cuw8lXwbFmcbVHNJ@vger.kernel.org, AJvYcCWlYgPOXJYqfcH+HJ0ep7WT58UQACcPgdLs+5iIsHFodWt+huCaAugJrlJc99+CSxHr20qrjImeG3c3DHv/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsBHPDMP4xvGJfTRhjWSJ2i8ACfYWYm6bLin64V66JozrO9DeS
+	IPaCPyEbx7QE7e5KaMJ9f/bsrVpRrvlnxARwQg9NJahRnoLVHHHi
+X-Gm-Gg: ASbGncv1lzO6BBSuq3AhORCoseBOd7Hnr5avPbw3IBfazkHFjG//SFEj6ewdzK/9s2D
+	iDipliqsaSTLY2Waiyz8tE/5yCfZ3BfDCPUQpDeYFdIjvMfCk79igeQDuCdgs0ZE6N5EH9ZhFvf
+	uR31vq1Up8ioR8trEy1VWMDMeccxgONCjFocN6K/8Ttdf3mbfCPKDPTwItxlBfQVTjt7Od0y5Tl
+	MaFvCwCMDxc3vPfNVCO3EGoX5R220WtaAAa9zsSYWCCVUXwuUavuqw7hX2392PzYiGwltQ4Eiza
+	rlNh6+GJdEw6VdeGG0eIpVXfH/sII4PQT6Yrq+pS8LhLI7CDgCRx6X/O0SbnYjMNSThysw==
+X-Google-Smtp-Source: AGHT+IEvNnBjw5De5SVjsZeYu7qUy5PqIxNAPMhbDeTvl0ikfBm1tdeg8dNDggku/btrG3cVZ+aOrQ==
+X-Received: by 2002:a17:90b:38d0:b0:2fa:30e9:2051 with SMTP id 98e67ed59e1d1-301d42b3a2dmr26594206a91.5.1742833442081;
+        Mon, 24 Mar 2025 09:24:02 -0700 (PDT)
+Received: from ubuntu.localdomain ([221.214.202.225])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301b9e19ceesm12518210a91.0.2025.03.24.09.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 09:24:01 -0700 (PDT)
+From: Penglei Jiang <superman.xpt@gmail.com>
+To: brauner@kernel.org,
+	akpm@linux-foundation.org,
+	lorenzo.stoakes@oracle.com
+Cc: tglx@linutronix.de,
+	jlayton@kernel.org,
+	viro@zeniv.linux.org.uk,
+	felix.moessbauer@siemens.com,
+	adrian.ratiu@collabora.com,
+	xu.xin16@zte.com.cn,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
+	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
+	Penglei Jiang <superman.xpt@gmail.com>
+Subject: [PATCH] proc: Fix the issue of proc_mem_open returning NULL
+Date: Mon, 24 Mar 2025 09:23:53 -0700
+Message-Id: <20250324162353.72271-1-superman.xpt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/5] bits: Fixed-type GENMASK_U*() and BIT_U*()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
- <Z-FsJPA1aq7KyTlm@thinkpad>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z-FsJPA1aq7KyTlm@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 24/03/2025 at 23:28, Yury Norov wrote:
-> On Sat, Mar 22, 2025 at 06:23:11PM +0900, Vincent Mailhol via B4 Relay wrote:
->> Introduce some fixed width variant of the GENMASK() and the BIT()
->> macros in bits.h. Note that the main goal is not to get the correct
->> type, but rather to enforce more checks at compile time. For example:
-> 
-> You say this, and then typecast both BIT and GENMASK. This may confuse
-> readers. Maybe add few words about promotion rules in C standard, or
-> just drop this note entirely? Doesn't require new submission, of
-> course.
+The following functions call proc_mem_open but do not handle the case
+where it returns NULL:
 
-I do not want to into this level of details in the cover letter, so I
-will remove. Instead, I can add below paragraph to the "bits: introduce
-fixed-type GENMASK_U*()" patch:
+  __mem_open in fs/proc/base.c
+  proc_maps_open in fs/proc/task_mmu.c
+  smaps_rollup_open in fs/proc/task_mmu.c
+  pagemap_open in fs/proc/task_mmu.c
+  maps_open in fs/proc/task_nommu.c
 
-  The result is casted to the corresponding fixed width type. For
-  example, GENMASK_U8() returns an u8. Note that because of the C
-  promotion rules, GENMASK_U8() and GENMASK_U16() will immediately be
-  promoted to int if used in an expression. Regardless, the main goal is
-  not to get the correct type, but rather to enforce more checks at
-  compile time.
+The following reported bugs may be related to this issue:
 
-I staged this change in the v8 together with the other nitpicks from
-Andy. If you want that v8, let me know, it is ready. If you are happy
-enough with the v7 (and if it doesn't receive more comments), then go
-with it!
+  https://lore.kernel.org/all/000000000000f52642060d4e3750@google.com
+  https://lore.kernel.org/all/0000000000001bc4a00612d9a7f4@google.com
 
+Fix:
 
-Yours sincerely,
-Vincent Mailhol
+Modify proc_mem_open to return an error code in case of errors, instead
+of returning NULL.
+
+Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+---
+ fs/proc/base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index cd89e956c322..b5e7317cf0dc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -840,7 +840,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
+ 	put_task_struct(task);
+ 
+ 	if (IS_ERR(mm))
+-		return mm == ERR_PTR(-ESRCH) ? NULL : mm;
++		return mm;
+ 
+ 	/* ensure this mm_struct can't be freed */
+ 	mmgrab(mm);
+-- 
+2.17.1
 
 
