@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-574428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE22CA6E52F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:11:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9253A6E537
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 22:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F3FE165E61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C662F175E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 21:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C891F584A;
-	Mon, 24 Mar 2025 21:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B235B1FDA9E;
+	Mon, 24 Mar 2025 21:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPnkrEsX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtatxKBw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7081F5612;
-	Mon, 24 Mar 2025 21:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E011F63EA;
+	Mon, 24 Mar 2025 21:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742850281; cv=none; b=PHGwjpQ4V8C5bx/SJlidOY/7H1wj9Gi2yUvl44d2Ja0XVjZARdZe2HMrQtY7ttb4V4VnZpHPjIULojkZhHhI+/LYY0ed5p/ylAaJRYMm9aKz/8m+8HNU63jQBwM4dw71R5VFL7AaDth6/IOiKkA1uHdeMxkakcD6RWXA1oW1Z1M=
+	t=1742850294; cv=none; b=JO8dImo6/M/jdY0Vb/HDzAiSqset0Ps44ghf2RIGQyEqAMaYNAfO1inM8Q7zsgs9g/HlQ5zx1Pu6/enWFbcpxOVAA6uGkaxWhxxNJPudlNBiTlrZmW25R5/h1qm/2x+uhMxCqj9HzUGrTnO16Ff7wNZTU6a8rdITQ/kwDs9pRQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742850281; c=relaxed/simple;
-	bh=uzAUre8yuO6JwarGjgA4aQIOBg6xu8RcbsiMQ1Dc8bw=;
+	s=arc-20240116; t=1742850294; c=relaxed/simple;
+	bh=IoWE258jBNh0ra+jL8hEbT1/vCRHyQAdmsEh1LGLEZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=diFSsx87ofeTsj/7V6ZahopNWaNcTQm6H4SdF2g2h9mxJrKXtUf7Auo+1ijTb/aHiK4fZMtcYHRz8qGc3yvSlaxvmDMn7FCjPcZdNQg5S81CnCGp9GmPr2/7PV91Yqe387LlqForlhmv8AAFmmun3fntd/8ctbtipL3AVe2YT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPnkrEsX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A81C4CEE4;
-	Mon, 24 Mar 2025 21:04:37 +0000 (UTC)
+	 MIME-Version; b=PCznK+hMQNdD0seNT4mDCGXBDJUX5pDp76fwTiAgbJ/OYgzM7MKa9NXGElFcSvFsrAZk690Szr3KUg1x7gQ01kctYyxfPdy34JO1mDvlPJ+tPNfnW1v5R8mS49uPc9SKokDJAQkv+fSptqepPJObp9LUdvTugW+iVQPQayizrjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AtatxKBw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F2CC4CEDD;
+	Mon, 24 Mar 2025 21:04:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742850281;
-	bh=uzAUre8yuO6JwarGjgA4aQIOBg6xu8RcbsiMQ1Dc8bw=;
+	s=k20201202; t=1742850293;
+	bh=IoWE258jBNh0ra+jL8hEbT1/vCRHyQAdmsEh1LGLEZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SPnkrEsXOmUDJzEecsqBY8IqTHbrzWVOIVp4ZH0q09kXxD0MATIitKGZPcE+kshve
-	 YKppWsQF7wqCekLU1SkD8x1R8mgXH3UUrR9HKkO89NRseE5hcn/M58CqxHR42TpEpX
-	 aGisoO4BJlS5Sn5gCiSDFSXKpqWonY4muGVaO/0pG0m0FbhY/lskx5PNGFvXxzIBxP
-	 bc+499waM6p/G4zL50h/jrA6NR+LVTCMxAxAFz/H0Gm9qmSnWclSx5dBpOUmnrR7Cp
-	 OHmf+WfFPztgtLq93HQS+9ydFtQvAWE6iNRAH7dDtDDRX5mCh70zPlUZoTJP2R6mCA
-	 ZxICxNHS/iDXQ==
+	b=AtatxKBwUWEFzs9NFsD5TDKT/oTA8vvrlwxDxjjAe5HH2OYZVu2NlD6SdKVLlPgLE
+	 JP3rBeBRHA+CL9XJZKzKdtMO/yVGmm8lS4yU2T14kTBc/IxbWM1IZ+B5Z4IaZcxb47
+	 MqBRNREidIjBaJZKGgD1sWMLa0RyxVIKYQJhOmfcmCwotJxhf5s4wyxxvHYoN7qS7i
+	 ETfXt7id9HDNhCAhqkaZinlZarQdNG3gu+4gc3n8vQ+x8CEdo//KVCAGu5OTzSWkHj
+	 +XTJpHJj9z3tbWqZB6gL94P254qID2RYsr9DVk5IemZku4cAxKdsjFQ7F58x3nNNEf
+	 yjDS4NIBVCvmQ==
 From: Miguel Ojeda <ojeda@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>
@@ -54,13 +54,13 @@ Cc: Boqun Feng <boqun.feng@gmail.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH 07/10] rust: pci: fix docs related to missing Markdown code spans
-Date: Mon, 24 Mar 2025 22:03:54 +0100
-Message-ID: <20250324210359.1199574-8-ojeda@kernel.org>
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org
+Subject: [RFC PATCH 10/10] rust: kbuild: enable `doc_markdown` Clippy lint
+Date: Mon, 24 Mar 2025 22:03:57 +0100
+Message-ID: <20250324210359.1199574-11-ojeda@kernel.org>
 In-Reply-To: <20250324210359.1199574-1-ojeda@kernel.org>
 References: <20250324210359.1199574-1-ojeda@kernel.org>
 Precedence: bulk
@@ -71,65 +71,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In particular:
+Clippy supports the `doc_markdown` lint [1] since 2016 [2]:
 
-  - Add missing Markdown code spans.
+    Checks for the presence of _, :: or camel-case words outside ticks
+    in documentation.
 
-  - Improve title for `DeviceId`, adding a link to the struct in the
-    C side, rather than referring to `bindings::`.
+It is a very common note in Linux kernel reviews to mention that
+documentation is missing a Markdown code span, e.g.:
 
-  - Convert `TODO` from documentation to a normal comment, and put code
-    in block.
+    /// Length of the data must be less than data_size.
 
-This was found using the Clippy `doc_markdown` lint, which we may want
-to enable.
+should have been:
 
-Fixes: 1bd8b6b2c5d3 ("rust: pci: add basic PCI device / driver abstractions")
+    /// Length of the data must be less than `data_size`.
+
+This lint can identify some of those cases automatically for us.
+
+It also caught for us other typos or mis-documentation, such as a missing
+code block.
+
+Thus enable it, now that the tree is sufficiently clean.
+
+Relatedly, it would be nice to have something similar [3] even for
+comments (not just documentation), as well as for possible intra-doc links
+(which should also have less false positives).
+
+Link: https://rust-lang.github.io/rust-clippy/master/index.html#doc_markdown [1]
+Link: https://github.com/rust-lang/rust-clippy/commit/42bf37f49f49829507be4f2dfd6c5db9b8234b66 [2]
+Link: https://github.com/rust-lang/rust/issues/131510 [3]
+Link: https://lore.kernel.org/rust-for-linux/CANiq72=aVRMvOaU48DBLL=p+VoG3RvHK+K48XQhvHw3ARc0BNg@mail.gmail.com/
 Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- rust/kernel/pci.rs | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ .clippy.toml | 4 ++++
+ Makefile     | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index f7b2743828ae..99413607c2b6 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -115,7 +115,9 @@ macro_rules! module_pci_driver {
- };
- }
-
--/// Abstraction for bindings::pci_device_id.
-+/// Abstraction for the PCI device ID structure ([`pci_device_id`]).
-+///
-+/// [`pci_device_id`]: https://docs.kernel.org/PCI/pci.html#c.pci_device_id
- #[repr(transparent)]
- #[derive(Clone, Copy)]
- pub struct DeviceId(bindings::pci_device_id);
-@@ -170,7 +172,7 @@ fn index(&self) -> usize {
-     }
- }
-
--/// IdTable type for PCI
-+/// `IdTable` type for PCI.
- pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
-
- /// Create a PCI `IdTable` with its alias for modpost.
-@@ -221,10 +223,11 @@ macro_rules! pci_device_table {
- /// `Adapter` documentation for an example.
- pub trait Driver {
-     /// The type holding information about each device id supported by the driver.
--    ///
--    /// TODO: Use associated_type_defaults once stabilized:
--    ///
--    /// type IdInfo: 'static = ();
-+    // TODO: Use `associated_type_defaults` once stabilized:
-+    //
-+    // ```
-+    // type IdInfo: 'static = ();
-+    // ```
-     type IdInfo: 'static;
-
-     /// The table of device ids supported by the driver.
+diff --git a/.clippy.toml b/.clippy.toml
+index 815c94732ed7..adc32c88176c 100644
+--- a/.clippy.toml
++++ b/.clippy.toml
+@@ -9,3 +9,7 @@ disallowed-macros = [
+     # it here, see: https://github.com/rust-lang/rust-clippy/issues/11303.
+     { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
+ ]
++
++doc-valid-idents = [
++    "KUnit",
++]
+diff --git a/Makefile b/Makefile
+index 70bdbf2218fc..5d6baedc097f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -477,6 +477,7 @@ export rust_common_flags := --edition=2021 \
+ 			    -Wrust_2018_idioms \
+ 			    -Wunreachable_pub \
+ 			    -Wclippy::all \
++			    -Wclippy::doc_markdown \
+ 			    -Wclippy::ignored_unit_patterns \
+ 			    -Wclippy::mut_mut \
+ 			    -Wclippy::needless_bitwise_bool \
 --
 2.49.0
 
