@@ -1,86 +1,51 @@
-Return-Path: <linux-kernel+bounces-573897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D8DA6DDB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:03:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0BAA6DDB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 16:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8D2B7A26DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE59188A069
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 15:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A1325FA0E;
-	Mon, 24 Mar 2025 15:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7250986334;
+	Mon, 24 Mar 2025 15:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N7Q4LOYX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KOpADIZR"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A34B667
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745FF1EB5B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742828601; cv=none; b=RvibIXrQ8tOg+efGVbXb0J2YwSN42mjrkTZLCC/eHWi6P5gjbzDe/taFarHS8YKUln57zZ98vU4V2OKAuT3ghcgtQu6qMASIXNzxal1OrEbgqqKrZHR/Xq+HaS0d0TkRPvrkkKiaA1yeI0TRNbnEaaeDkbWXfWeiL8OsSrP6HBg=
+	t=1742828621; cv=none; b=M3QeXX0GkxO89lm4n5zQCKnoTgfMivrjZMKiH1JW9pYjuo+3jCcVMqVYF05guvHDWG6O8vQSOA0xvaH4ZteEt79JONbj/oNM0Wo9keEiCuYsSEzOcFMTdQJTh2tFNb1sufmMkxY4ZDKop24LhHGzk3z5S8El8Tpn2+RMN/kTXy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742828601; c=relaxed/simple;
-	bh=65mc09JnOzcVvzzTPHmhpq+II+Xcs2gKiHWnDOta5Xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xza5ELF4D5QRA7gShPaT+DKoWNVsJ9CC5Md8cHMY9W3RujdfyjUyNzJrNN7Wyxz61pwo0VeYY9GdWDRjJmxok0hNpyV3ylkpJQtMLLxVudieIf5l7UiGbyehauIC9Wseqk1nfdHMCdN89IhN6no1N+bJb90aZPTj2VKoXjAKiME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N7Q4LOYX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9Pijj007713
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nH4aeoaJ2bY3RhjpBvj4Vxj6NTdJ/AFDG5izM2nQcDw=; b=N7Q4LOYXUuaaVvgi
-	l1okrk8+L6tEVc8sAsxHzYetGgDplc1MWqBxjnTEowSOjZEgv8QGguRmkZ05WtYb
-	R1mm2WLw0wdrJHTatytur6YWKvL1r2QAFCQhDzhcev9gxk/kEd3tzr63UXa8EMdZ
-	ieYH0z7dYOy8CBc/TfrD+N57+pzYyDkYUmiQ6SiBYZP9a0nii/cg/HraHMLU/RqH
-	ok3LtIVzOKEwDW1mTNoGn8hBQnnvZQ5QBZHdDWf7pxY8IiDk6l2tgA17k64vtKKg
-	dG7c6ezC3oFrXpD+BkUx4C45w6OPZxg38wmz574mWg9ts3f5N1BIrRL0iD+NVklw
-	x7Uw5Q==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjcm9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 15:03:18 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2240c997059so101758085ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 08:03:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742828598; x=1743433398;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nH4aeoaJ2bY3RhjpBvj4Vxj6NTdJ/AFDG5izM2nQcDw=;
-        b=hQs35qG4SXGRZy1Wd0ePW9tYl5zpWXNWJGL3yFKRcAuFeF4zwvC2y+064Hcf0eabKU
-         bxpsUaNC6GcOfkUu77ADz4u0KdLkqRMosCeep8SblufX0q6o75e8kXay5xr7qu5Fpdh3
-         ZG2dA3O+O+QWTpS3uE3ooP7ymrO1BEsMShM5UzRgP3PC8U1yaYkxe7VPwaZL75JkKPEs
-         VkwUx6XIU2NhzjBPhHtlCVKmQIMQ6QqSO/V05ryF0PNrX8KOnQIpHUKZ/knkHMvwSU8q
-         QojWCanVny6cxCssTAtA4iGtDNjdq42hAvUs6QjRWW/X2rOou+Be8jM2QHd+DhOzbGhe
-         ygKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDwlXb+kC0emitdW1THSD/Zou/oUtm17vl/QIpTCncm+DvI8Uhjjs1oAUTHBwX1zTs9d+9QiWL2TbBCvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMmSM46EwmXl5G8myJHmQxTQuXVyrsFluBju3IZdBumyEttePO
-	hyNw8IuBenu465m9BJI3BARh2FdyErMXAZoHXqXg8uWiBGUGoaOmIBtyTdpMtY9pxzJiOzFsUAn
-	tZnqx7tOnyhdQ2S+pwNO0GUEZ+VpPFtieRBs3lnTt/l2urHHCGkbRt3ndUyFf2vk=
-X-Gm-Gg: ASbGncuUbQKgGGUjt4W1IG6FOFC3o1ttg7o2ZI4QgrWsig/RC4SWo3zuSro6afR7Uzr
-	rnKtZvD2ra9YVaiahq0/XBPlan+1rh7wXFXjHeZb5JbfNZy79sgWCrXR/uWmU6JpoV6oVw/IxH4
-	/xl4FAD2My5blF10KIbq9Oanu0hC1Cq3SHJzTIc/HqQPXsomAQHzV/yrNOIvfoT3jCcXVezDTx1
-	eLFdJoTv9DxW9OW+fHO6ifFPyNUVWxl5LqeHkK/htvRJIouTcJ+FHebwCvZH9Xza5UWgh7iDSqJ
-	XqmIPTFPQvq7xLFF21X7Jpdy6hWE/M8eY9MLcivdZJXL8FOnwexrXkFOMLMqUVth89rFXKY=
-X-Received: by 2002:a17:902:f70c:b0:224:c76:5e57 with SMTP id d9443c01a7336-22780e02a4emr237465385ad.39.1742828597677;
-        Mon, 24 Mar 2025 08:03:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH828wzul6klWb3XsCB3+zMsH7vOJ7XnnAtFTDduSHSdwmPgp6DaMF6OMFiOhDbgCT/iquEMg==
-X-Received: by 2002:a17:902:f70c:b0:224:c76:5e57 with SMTP id d9443c01a7336-22780e02a4emr237464745ad.39.1742828597066;
-        Mon, 24 Mar 2025 08:03:17 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f459fbsm72138365ad.78.2025.03.24.08.03.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 08:03:16 -0700 (PDT)
-Message-ID: <5d872cf0-ca57-4017-b06e-fce9c11813dc@oss.qualcomm.com>
-Date: Mon, 24 Mar 2025 08:03:15 -0700
+	s=arc-20240116; t=1742828621; c=relaxed/simple;
+	bh=42Mm2a5Kddp948eBPbv+8iqNbW7OrUUfvbJQDzWg3zQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aefcj1VMwdRd5Plqm62xyWFjNMoKM7Wb2sBHqS9oKugHhncB1SGfyc5uaH8co6Eoelig34A6Aq+lhKqg9ObY6DIElFExlDUv7slekBHjGZfV2Moegj6EW/vWVtrGEPtTgwyjtAZKd5CxSvtDYeODM/eL4Z7Xg/AGviHsl1ie+eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KOpADIZR; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 34C42442FC;
+	Mon, 24 Mar 2025 15:03:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742828611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1dav6Pu9P3vomGYGhQq1BqXkKruomp0uJztHGL2ouzI=;
+	b=KOpADIZRVeB88eTNB/WsI1Y+8gP/W7B/7IW5/Vqc4gOd7qfCoT25ZCZCK/6Ck4nLZOmKC8
+	RNaL8jmQfUwnx4biCUrPfQtbD7mwnNAe7MO7Wlp81f0hudXWfFgzC+PCrFpWHCWDPQOPv9
+	yhx3lyfngLpKeX5ABDIUyr5UIVcT1xJkakDnT++sR6hn3nLdkcFu6bs2tIcl5/BvBwAJaV
+	OvJMSa4BhE49JDCpesFNc6PA445Ja0mXviz81tLpjLpGC+EHXh0JualByVZTiBwDHZgbu/
+	erPNSw7YbKeImnvebgvWmqbXppIdfyNckS3wa1haqSCrQUBsPTCKAHeEuXObyA==
+Message-ID: <bec1c938-aafa-49cb-b173-5b876f77779f@bootlin.com>
+Date: Mon, 24 Mar 2025 16:03:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,53 +53,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: fix rx completion meta data corruption
-To: Johan Hovold <johan+linaro@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: Miaoqing Pan <quic_miaoqing@quicinc.com>,
-        Steev Klimaszewski <steev@kali.org>,
-        Clayton Craft <clayton@craftyguy.net>,
-        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-        ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20250321145302.4775-1-johan+linaro@kernel.org>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH v2 47/59] drm-dyndbg: add DRM_CLASSMAP_USE to bochs
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-gfx-trybot@lists.freedesktop.org
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org,
+ daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com,
+ jani.nikula@intel.com, ville.syrjala@linux.intel.com
+References: <20250320185238.447458-1-jim.cromie@gmail.com>
+ <20250320185238.447458-48-jim.cromie@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20250321145302.4775-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e17436 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=GSe8ykzKO7dVpNIIvtwA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: 5XG3r9ONJlSog9GLmyZ4GuM-B45JPuIr
-X-Proofpoint-ORIG-GUID: 5XG3r9ONJlSog9GLmyZ4GuM-B45JPuIr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503240109
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250320185238.447458-48-jim.cromie@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedttdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfhuffvvehfjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetfffhtdeigfehffduuedvkeefgfdvuddugfffteetffdvteffgfejvedugffgffenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudegpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrmhguqdhgfhigsehlihhsthhsr
+ dhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhvthdquggvvheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepihhnthgvlhdqghhfgidqthhrhigsohhtsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepjhgsrghrohhnsegrkhgrmhgrihdrtghomh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 3/21/2025 7:53 AM, Johan Hovold wrote:
-> Add the missing memory barrier to make sure that the REO dest ring
-> descriptor is read after the head pointer to avoid using stale data on
-> weakly ordered architectures like aarch64.
-> 
-> This may fix the ring-buffer corruption worked around by commit
-> f9fff67d2d7c ("wifi: ath11k: Fix SKB corruption in REO destination
-> ring") by silently discarding data, and may possibly also address user
-> reported errors like:
-> 
-> 	ath11k_pci 0006:01:00.0: msdu_done bit in attention is not set
-> 
-> Tested-on: WCN6855 hw2.1 WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
-> 
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Cc: stable@vger.kernel.org	# 5.6
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=218005
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 
-Does this supersede:
-[PATCH] wifi: ath11k: fix ring-buffer corruption
+
+Le 20/03/2025 à 19:52, Jim Cromie a écrit :
+> tiny/bochs has 5 DRM_UT_* debugs, make them controllable when
+> CONFIG_DRM_USE_DYNAMIC_DEBUG=y by telling dyndbg that the module has
+> class'd debugs.
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+> ---
+>   drivers/gpu/drm/tiny/bochs.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+> index 8706763af8fb..dbcc8ba70dfa 100644
+> --- a/drivers/gpu/drm/tiny/bochs.c
+> +++ b/drivers/gpu/drm/tiny/bochs.c
+> @@ -59,6 +59,8 @@ static int bochs_modeset = -1;
+>   static int defx = 1024;
+>   static int defy = 768;
+>   
+> +DRM_CLASSMAP_USE(drm_debug_classes);
+
+Do we need to add it for each driver that use drm_* print macros? Is it 
+reasonable to add this directly in drm_print.h, so there is no way to 
+miss this call if you use drm_* macros.
+
+>   module_param_named(modeset, bochs_modeset, int, 0444);
+>   MODULE_PARM_DESC(modeset, "enable/disable kernel modesetting");
+>   
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+
 
