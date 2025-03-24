@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-574217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B493A6E21C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:13:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F97A6E22E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 19:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA791889C61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF663AA516
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 18:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45447264638;
-	Mon, 24 Mar 2025 18:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4359F264A8E;
+	Mon, 24 Mar 2025 18:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTopPn3R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="yXfS7BXi"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99776189520;
-	Mon, 24 Mar 2025 18:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F7264A7F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742840001; cv=none; b=hUJrrYpFU1HTIUcPut2FAm+V7/jP6ygJhltTS3sZmw6h/1U5fEgeaiJD0cHUkWOBjIsGjPrIMI7wBa2vCIl5s3jvt7q/DWY+v578dGzorLTULZQK/zmp+uvbPYqPN3NzdfNuSHKFKBpbnr3BDE9SGxgOR9iRn2lm8vFfCiMGWf0=
+	t=1742840450; cv=none; b=kvVEhmqDJHAJS/SOKV144rHUFFKu2hydf0r0VBUfZZeEG82OKEKzphYWvxXe2GwMNaA6ArkOXwegNjBVUsv46RVKZo+BxiOE/QNphUWKlbSQPGelNkzCc/xPvs/vh2046RgT7fhDDKlIdCXRHcvSSUPVcoDVdmbksX/gQjJvO4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742840001; c=relaxed/simple;
-	bh=HxL4j75EqQZXg4nUUxuhCgYtvVucbH/8DgVWCMZjacs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+n+ycl03d+++GEcuR+ur4bddkaynnuq95dPKk4jVVf94kMkiM39qlApOJtM4NXJizhcRiqIP2434x0nRIPVDj+TRs/Tv/nZy+wlYqIWGu7HYvmyRUSI2nIc6BxeFW7Wn68uyUFqmysGYz4+bG6ftk2TfGDvc+2k6phEQXSRdvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTopPn3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAB14C4CEDD;
-	Mon, 24 Mar 2025 18:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742840001;
-	bh=HxL4j75EqQZXg4nUUxuhCgYtvVucbH/8DgVWCMZjacs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTopPn3RAljPZx+g/g5IBXvkmaMMWchrjVzdIS5V9f1ViyUW54vubwIMO5krcXWTw
-	 OZ4UKGnqeSCBtW5zqETbG8Dd0YK/R0pzIruYv/EmUdSCCtWJt0AE6MZhKtzeMEllnx
-	 1nWBCPV8k4QUXdNoaR8sVG6iVYagoSnYXXLAvwanO/tUfJCAyhyTNoNjdH31isHCPD
-	 TLjbvBDUkHiw89+DnTz5Lm8BjqUQ/GHT0yi9QwS5IrQ187nIIucvuA+jt99reEwYXz
-	 DOQINh8mr5aC1FeTB3dIzkvg02/s7PyItJ7fxP3Penwt/LXlpHBQ9sNuszRlsJnNQ7
-	 deC1Xd8wYuDnQ==
-Date: Mon, 24 Mar 2025 19:13:15 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, bhelgaas@google.com,
-	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] rust: pci: impl TryFrom<&Device> for &pci::Device
-Message-ID: <Z-Ggu_YZBPM2Kf8J@cassiopeiae>
-References: <20250321214826.140946-1-dakr@kernel.org>
- <20250321214826.140946-3-dakr@kernel.org>
- <2025032158-embezzle-life-8810@gregkh>
- <Z96MrGQvpVrFqWYJ@pollux>
- <Z-CG01QzSJjp46ad@pollux>
- <D8ON7WC8WMFG.2S2JRK6G9TOSL@proton.me>
- <Z-GNDE68vwhk0gaV@cassiopeiae>
- <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
+	s=arc-20240116; t=1742840450; c=relaxed/simple;
+	bh=jcbglrtrzi4TXdy8lI2uD0gTHxJoZBF6WMdLdLn/8bg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FHIhyAnoPqLj7uSXr9jhyADtOs6RDX4tBol/ikrhAoLsIIFC+yDG79kq4aMcs1bUHEMdz/yotUKKtq9XRM80aBMXOLMKw3lmvooIlYAD7iR9prJlQzugTjViiu5YkSlVG1qYN9IZ/QgjyNJ3IuCOrcClkCnWu0klp1yZiH/lZRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=yXfS7BXi; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C992C2C0526;
+	Tue, 25 Mar 2025 07:14:51 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1742840091;
+	bh=jcbglrtrzi4TXdy8lI2uD0gTHxJoZBF6WMdLdLn/8bg=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=yXfS7BXiu07gVqrEnPKDJV+tpUA+RP9B1vwsK01Q4o0WkZf9hAh96en0SYgvOiIfu
+	 ELSciUfQjKtrUYrccZ/yB3l83QC9gcaFx8l7o3Z1w2yRe8i+ET+YsKpi5AdXMwBIK2
+	 +rzDrdKS6a2XAblax5dxO24IUA9x51I/l96wWJLEbtZF8kY7pkqJXxlrqDKXzB4Pwm
+	 BiY+TnUA7bMkHPH2Wt6oJAmbMK5nOEQJ0cfWnIC+5O2wKbLr/XLQJQy+oyxDUrcodG
+	 JBI9QbakvKlsWSkyfjRVuIFQv0pQGv2UvLNozXTALGGVj2E6wckkwqeA/8AQYg+AMt
+	 xERsGy3aYPyXg==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67e1a11b0001>; Tue, 25 Mar 2025 07:14:51 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 25 Mar 2025 07:14:51 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Tue, 25 Mar 2025 07:14:51 +1300
+From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
+To: "andi.shyti@kernel.org" <andi.shyti@kernel.org>
+CC: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+	"Markus.Elfring@web.de" <Markus.Elfring@web.de>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "rric@kernel.org" <rric@kernel.org>
+Subject: Re: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
+Thread-Topic: [PATCH v13 3/3] i2c: octeon: add block-mode i2c operations
+Thread-Index: AQHbl6vJiHEHFgk1+0C1V3/aq92iNLN6MJoAgAA3DQCAAHxqAIAG4+6A
+Date: Mon, 24 Mar 2025 18:14:51 +0000
+Message-ID: <0b562e42889c67e96e9e8a6d1e59b58ca332dff4.camel@alliedtelesis.co.nz>
+References: <20250318021632.2710792-1-aryan.srivastava@alliedtelesis.co.nz>
+	 <20250318021632.2710792-4-aryan.srivastava@alliedtelesis.co.nz>
+	 <thazi6n7jwqp6xoz4p6ce7ohxts7ubhgs5h6chqsnnexbkiy3j@q6xzdrze6a6f>
+	 <d542d00d25e37a922c0fe9d25bba7bbc7220f580.camel@alliedtelesis.co.nz>
+	 <2enq7ixb5m6nn2hlufsgeh6cqt24l5rmbtceflbtwaep64osxy@ej63czorl2tn>
+In-Reply-To: <2enq7ixb5m6nn2hlufsgeh6cqt24l5rmbtceflbtwaep64osxy@ej63czorl2tn>
+Accept-Language: en-US, en-NZ
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0C2E4E0652FA5A4391B860F124304E22@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8OOFRRSLHP4.1B2FHQRGH3LKW@proton.me>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67e1a11b a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=1T9zNMSQzU2THpBoscgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Mon, Mar 24, 2025 at 05:36:45PM +0000, Benno Lossin wrote:
-> On Mon Mar 24, 2025 at 5:49 PM CET, Danilo Krummrich wrote:
-> > On Mon, Mar 24, 2025 at 04:39:25PM +0000, Benno Lossin wrote:
-> >> On Sun Mar 23, 2025 at 11:10 PM CET, Danilo Krummrich wrote:
-> >> > On Sat, Mar 22, 2025 at 11:10:57AM +0100, Danilo Krummrich wrote:
-> >> >> On Fri, Mar 21, 2025 at 08:25:07PM -0700, Greg KH wrote:
-> >> >> > Along these lines, if you can convince me that this is something that we
-> >> >> > really should be doing, in that we should always be checking every time
-> >> >> > someone would want to call to_pci_dev(), that the return value is
-> >> >> > checked, then why don't we also do this in C if it's going to be
-> >> >> > something to assure people it is going to be correct?  I don't want to
-> >> >> > see the rust and C sides get "out of sync" here for things that can be
-> >> >> > kept in sync, as that reduces the mental load of all of us as we travers
-> >> >> > across the boundry for the next 20+ years.
-> >> >> 
-> >> >> I think in this case it is good when the C and Rust side get a bit
-> >> >> "out of sync":
-> >> >
-> >> > A bit more clarification on this:
-> >> >
-> >> > What I want to say with this is, since we can cover a lot of the common cases
-> >> > through abstractions and the type system, we're left with the not so common
-> >> > ones, where the "upcasts" are not made in the context of common and well
-> >> > established patterns, but, for instance, depend on the semantics of the driver;
-> >> > those should not be unsafe IMHO.
-> >> 
-> >> I don't think that we should use `TryFrom` for stuff that should only be
-> >> used seldomly. A function that we can document properly is a much better
-> >> fit, since we can point users to the "correct" API.
-> >
-> > Most of the cases where drivers would do this conversion should be covered by
-> > the abstraction to already provide that actual bus specific device, rather than
-> > a generic one or some priv pointer, etc.
-> >
-> > So, the point is that the APIs we design won't leave drivers with a reason to
-> > make this conversion in the first place. For the cases where they have to
-> > (which should be rare), it's the right thing to do. There is not an alternative
-> > API to point to.
-> 
-> Yes, but for such a case, I wouldn't want to use `TryFrom`, since that
-> trait to me is a sign of a canonical way to convert a value.
-
-Well, it is the canonical way to convert, it's just that by the design of other
-abstractions drivers should very rarely get in the situation of needing it in
-the first place.
+T24gVGh1LCAyMDI1LTAzLTIwIGF0IDEwOjAxICswMTAwLCBBbmRpIFNoeXRpIHdyb3RlOg0KPiBI
+aSBBcnlhbiwNCj4gDQo+IE9uIFRodSwgTWFyIDIwLCAyMDI1IGF0IDAxOjM2OjEyQU0gKzAwMDAs
+IEFyeWFuIFNyaXZhc3RhdmEgd3JvdGU6DQo+ID4gT24gV2VkLCAyMDI1LTAzLTE5IGF0IDIzOjE5
+ICswMTAwLCBBbmRpIFNoeXRpIHdyb3RlOg0KPiA+ID4gPiArc3RhdGljIGludCBvY3Rlb25faTJj
+X2hsY19ibG9ja19jb21wX3JlYWQoc3RydWN0IG9jdGVvbl9pMmMNCj4gPiA+ID4gKmkyYywNCj4g
+PiA+ID4gc3RydWN0IGkyY19tc2cgKm1zZ3MpDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICvCoMKgwqDC
+oMKgwqDCoGludCByZXQ7DQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoHUxNiBsZW47DQo+ID4gPiA+
+ICvCoMKgwqDCoMKgwqDCoHU2NCBjbWQ7DQo+ID4gPiA+ICsNCj4gPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgb2N0ZW9uX2kyY19obGNfZW5hYmxlKGkyYyk7DQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoG9j
+dGVvbl9pMmNfYmxvY2tfZW5hYmxlKGkyYyk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgLyogV3JpdGUgKHNpemUgLSAxKSBpbnRvIGJsb2NrIGNvbnRyb2wgcmVnaXN0ZXIgKi8N
+Cj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgbGVuID0gbXNnc1sxXS5sZW4gLSAxOw0KPiA+ID4gPiAr
+wqDCoMKgwqDCoMKgwqBvY3Rlb25faTJjX3dyaXRlcV9mbHVzaCgodTY0KWxlbiwgaTJjLT50d3Np
+X2Jhc2UgKw0KPiA+ID4gPiBPQ1RFT05fUkVHX0JMT0NLX0NUTChpMmMpKTsNCj4gPiA+ID4gKw0K
+PiA+ID4gPiArwqDCoMKgwqDCoMKgwqAvKiBQcmVwYXJlIGNvcmUgY29tbWFuZCAqLw0KPiA+ID4g
+PiArwqDCoMKgwqDCoMKgwqBjbWQgPSBTV19UV1NJX1YgfCBTV19UV1NJX1IgfCBTV19UV1NJX1NP
+VlIgfA0KPiA+ID4gPiBTV19UV1NJX09QXzdfSUE7DQo+ID4gPiA+ICvCoMKgwqDCoMKgwqDCoGNt
+ZCB8PSAodTY0KShtc2dzWzBdLmFkZHIgJiAweDdmdWxsKSA8PA0KPiA+ID4gPiBTV19UV1NJX0FE
+RFJfU0hJRlQ7DQo+ID4gPiA+ICsNCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgLyogU2VuZCBjb3Jl
+IGNvbW1hbmQgKi8NCj4gPiA+ID4gK8KgwqDCoMKgwqDCoMKgcmV0ID0gb2N0ZW9uX2kyY19obGNf
+cmVhZF9jbWQoaTJjLCBtc2dzWzBdLCBjbWQpOw0KPiA+ID4gPiArwqDCoMKgwqDCoMKgwqBpZiAo
+cmV0KQ0KPiA+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIHJldDsN
+Cj4gPiA+IA0KPiA+ID4gRG8gd2UgbmVlZCB0byBkaXNhYmxlIHRoZSBibG9jayBtb2RlPw0KPiA+
+ID4gDQo+ID4gRG8geW91IG1lYW4sIGRvIHdlIG5lZWQgdG8gZGlzYWJsZSB0aGUgYmxvY2sgbW9k
+ZSBhdCBhbGw/IGkuZS4gaGF2ZQ0KPiA+IGl0DQo+ID4gb24gYWxsIHRoZSB0aW1lPyBPdGhlcndp
+c2UsIGl0IGdldHMgZGlzYWJsZWQgYXQgdGhlIGJvdHRvbSBvZiB0aGlzDQo+ID4gZnVuYy4NCj4g
+DQo+IHllcywgYnV0IHlvdSByZXR1cm4gZWFybGllciwgcmlnaHQ/DQo+IA0KQWggeWVzLCBnb29k
+IGNhdGNoLiBJIHdpbGwgZml4IHRoaXMgdXAsIHRoYW5rIHlvdSA6KQ0KDQpDaGVlcnMsIEFyeWFu
+Lg0KDQo=
 
