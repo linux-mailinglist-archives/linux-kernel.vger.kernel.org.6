@@ -1,117 +1,81 @@
-Return-Path: <linux-kernel+bounces-573428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-573429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572F1A6D713
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:12:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6E2A6D712
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 10:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD53716B19F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C1C43AACC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Mar 2025 09:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF8B25DD0E;
-	Mon, 24 Mar 2025 09:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD5825DAFA;
+	Mon, 24 Mar 2025 09:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZjLjKw4v"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="FIdz+bY9"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A045925DAE3;
-	Mon, 24 Mar 2025 09:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E1A25DAE3;
+	Mon, 24 Mar 2025 09:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742807479; cv=none; b=HwANiFY17QdJ2AE6o/lq2aTQLY4cVcKmIq0RtYCOymh5+INqEEgorRsnxOxdLrk3KiC/1b0+kVUC2QthOx7MKlvrN6p10lxYyVoiPy9rtTTLuPsIwETgybHqmX6ZPzxgEorHBfmPn4CiRwVIK6fNVpUCZZWFnzs8g8XHusyS2SE=
+	t=1742807505; cv=none; b=bOdjXPm6J4zRGSe9WN89xZzX9wm6f/ezPTgjRaGLJHc/CqqvwGPdlmSDAjeafv+NqWJp9bRFtK20VnQ1QI+w+OiwfSLcEhT3ppG7DazzXYzfRAlRg6G/cGv9mlBPl4ra1nSALPkOAslXxdk65Pv3+0+V9bcr2H2AwvTEGqjunDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742807479; c=relaxed/simple;
-	bh=c2V/foXd8Y8I5J00tmEhAj3HFvHDCfANAXL7yHux4KI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=pGUbLHjEmbsm8qOg5+GVYIrmuzDy4xY7oIOKKV83zGEroA2LzJoV3LoszHmT3wl0Akl8ZrtSu3TVOyGsfuUPVxX8UlwpWGCLFB9v01DheW7AlMFh9aUiVDzm24qk1NxPPYG1J5g0pmx3Atf2J9I3Cf5cWEgTMQWtCKoFXFu/O+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZjLjKw4v; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742807473;
-	bh=8I2Rfki8ck3LGviF8y8uyCWEm9lyS/MFHmJWniVmVYM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZjLjKw4vDlBGnMcUXzVQVb5bCDkKisRY/fH9yOZfqZXGcde+xGCGea5f2O7vVB0Nu
-	 +Lwtc40LX1s/C1nvrDjwbe744XENvYdebr8deiI05I5dHOxRtH4MpGaNp6T65a44yf
-	 /hZjsj0PiBIA++XtNPTNKcyEax8RZe/Mv/odwYKxHu6LB3snSKgi03pjXalGcfg+W0
-	 V8KBDjJR0f+wnqs6ud6tIBQigPrd+fve1V18o52IYbfdlLTmRJWLMid258Bvn8rCEc
-	 dgrWhmmwoEUEnvNUt/sN2o30uK25rOAdcbBDxKlFfhOpK64Y1941q4QkAl3xL7QMDj
-	 mMFBiwf5OY8TQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZLnNJ2CfJz4wcd;
-	Mon, 24 Mar 2025 20:11:12 +1100 (AEDT)
-Date: Mon, 24 Mar 2025 20:11:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Nick Terrell <terrelln@fb.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nick Terrell <terrelln@meta.com>
-Subject: linux-next: manual merge of the zstd tree with the tip tree
-Message-ID: <20250324201111.26dd80db@canb.auug.org.au>
+	s=arc-20240116; t=1742807505; c=relaxed/simple;
+	bh=xtSXh6+Zee/Qft/ZxFihJqkWvvhc0WQOhGMs9uEvn2g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lDPkY0htH7Are60DnyDXNVD97j/L49JiRJZADQlWaRz3vNGwOzymmWSq5B7rGQk6l7ZKJxeu+/aBGwp1poORsXOz68DGDnbPmJLt2WFFicnjNCGShFyGjMyTLQy20pEsQYWpH5qvxvM8hNA2AbrmWkPBBGKAX5KP/j+x1dEr6zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=FIdz+bY9; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=ClmexxLxtozHEJVd1kpHjy+FBvc2bx8jEjpjkQaesy0=;
+	t=1742807503; x=1744017103; b=FIdz+bY9YVYWs87kGsN8m6+Dzbl2uoaQzuqS4CHBlq0I+Ee
+	PnX0OlKV8szjS6h50YiI6Eln0xodcIzfw2bEUQBWbY4nVgnAfjivnmM42R5ilhB+mk3rkaSHZ2m3s
+	EmEhBzw+Srxa+fg46+DQANB6Sp6qqTKYULBzXOAzSEr0+1nCfyq1yGEsQmfKvieKvzMcvLq7VjslD
+	rX9Cc0XcMUYeJubsXaA4NwraXJE3zAMjvCuBPQr08wSfoSL3bc905wVrlFM4vruph6jD8flPqVeql
+	p9AdCnUn4JV+AuFHcvQ3sbTuSxuwduby088LgKn2+mbWA4rYxJk96kOp+Ejw9Dmw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1twdqH-00000003u77-0qg7;
+	Mon, 24 Mar 2025 10:11:33 +0100
+Message-ID: <c1848940ceaf2f716041eefcaba381202f5e50c4.camel@sipsolutions.net>
+Subject: Re: [PATCH wireless] wifi: iwlwifi:: fix spelling errors
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Wang Liang <wangliang74@huawei.com>, miriam.rachel.korenblit@intel.com, 
+	ganjie182@gmail.com, emmanuel.grumbach@intel.com, avraham.stern@intel.com
+Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com, 
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 24 Mar 2025 10:11:31 +0100
+In-Reply-To: <20250324030021.2296493-1-wangliang74@huawei.com>
+References: <20250324030021.2296493-1-wangliang74@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/44KvIFXA.0GcdzM/r.fNVg_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-malware-bazaar: not-scanned
 
---Sig_/44KvIFXA.0GcdzM/r.fNVg_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2025-03-24 at 11:00 +0800, Wang Liang wrote:
+> Fix some spelling errors in comments:
+>  - configuraiton -> configuration
+>  - notificaiton -> notification
+>=20
+> No functional changes.
+>=20
 
-Hi all,
+FWIW, spelling errors really don't need to be fixed on wireless, that
+can wait for wireless-next.
 
-Today's linux-next merge of the zstd tree got a conflict in:
-
-  lib/zstd/common/portability_macros.h
-
-between commit:
-
-  1400c87e6cac ("zstd: Increase DYNAMIC_BMI2 GCC version cutoff from 4.8 to=
- 11.0 to work around compiler segfault")
-
-from the tip tree and commit:
-
-  091697666ab0 ("zstd: Work around gcc segfault on versions older than 11.4=
-")
-
-from the zstd tree.
-
-I fixed it up (I just used the latter) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/44KvIFXA.0GcdzM/r.fNVg_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfhIa8ACgkQAVBC80lX
-0Gw6JggApjtsJnnBx4OH8S0ogv0rgHCZKQ05b88O9BfKPmPsl08Mm+k88N0qBSsk
-pE+LDX2CBICMIB3ykyfxogVHm58Q8zXQF8rIJ6Tp16ob6xC84zYYbcRsWHMU+01V
-NUxFY4UG54vHWWKjlGYXgTQEG1t1P9dDeTBq4BQt9CWMc/+3PSJrKZUB78n1MVh6
-huUxcN2eB6Ol7bpI0WsfT/xXvqseomk61+IvoepR8Ur9p+fz0tciTK0vCALPbQ60
-/F5CxHY2i02N6vymvYFeeORj3D1UqJml1L+/Bfw1lktpNvFZkHr3XNCmZ7xEjehL
-N/RuRhU7R8B6Ldq+ezuV6+HoFdqLpw==
-=fBGW
------END PGP SIGNATURE-----
-
---Sig_/44KvIFXA.0GcdzM/r.fNVg_--
+johannes
 
