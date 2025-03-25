@@ -1,188 +1,190 @@
-Return-Path: <linux-kernel+bounces-575546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFCFA703ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:39:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D699A703F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E1C1891187
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2E016C77B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE9825B667;
-	Tue, 25 Mar 2025 14:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B637025A62B;
+	Tue, 25 Mar 2025 14:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oXVWegIH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="F9x6+6R1"
+Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B459E25A355
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2705125A35E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742913561; cv=none; b=RLetN8g56hQm7jfx1+IzLIMn45umyREZbniutnKJI/TK5H0Y51j/WuKx2TCJIn3uuf/0WXkeezPakxZUM8LM2v+eSGSlPYVU2wmT7jFdqw8C2JuoG+QZ/g/6bDJ6AdrIk2nk9akguBD/bd06L3EqNmFZNwyIa+Ltqmmb+wwGvR8=
+	t=1742913591; cv=none; b=YqCSAkoujMeiXMz0iKhsdSPAjI8i/LB/9hQVGf4+MmTsuKZX1NuMtq0VOp5VDP+hMDNl3JBPGn8qV23IOBJLqmve2mWsRHENPCrJXf+ogCOD1i9A/npA4i67CnKzdhSZeaHeSlcxBafLcZFtjL1G9NeljnXEGl5uUjU2FldpHb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742913561; c=relaxed/simple;
-	bh=BF/9SLoL0/eahxTrlHrP7+kk6jiwP3IV1YiE0RpH0aU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XBSDqgwqJKsc+dXIOFhHyWqRR2rw5EhU1OmoJoOMB+p5wrsX2xZcX4h6cBHd9uXGSm8xHJRiUY1XcwXA08+CTRVp6XKy2zx9IVtxqPujMZM1g+GC8U7kCeELSEwQsdzZb0oNlTsn84BsoE/ulWp5sD+J7aUKdYGStpnMtA6O3Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oXVWegIH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PE028G000588
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:39:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2AR9DLJxuAX5J+vUj9fnqNV1djjf7QFzxQNMwmMHS4A=; b=oXVWegIHey1D7hgo
-	mRkBBDvrEh3YomsjH1AECYJXa3PCMVCFzndXKb1l2dzhimMHtvRcxtM8lIFdL4Mt
-	g1cUvzhOZj4137q2hxw7GCPS0TgV7uzVS0UgOTT46SKIcJTYuZEsLoeUyi5GvM/h
-	j8cEit6MisUlo3SNqKHqLYp5ZQIqMgxvENZhEMN0BUJ7VeM2VCsTmWN8QTzNL6f3
-	payQVb0iXgpdb4FL8UyODIMlWBHBWHj2T9z2inD1BR+6IfL8aYQLfdev5ArrKEd6
-	RFMN63VayVKplC8gdDqA8ckGC3pH1fFbW3iCZXtBc7RoO9UwBWPMOb/gABePN+bh
-	G/Cjrg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hm79r7tr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:39:17 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4766654b0c3so14313661cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:39:17 -0700 (PDT)
+	s=arc-20240116; t=1742913591; c=relaxed/simple;
+	bh=rCLSYeIfXuVSPFtngy9ZTWChJeLAUNk74DjLait3gKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1yE2pxxjDQ8Ljukhy8vP9aDe5ieUvvS2b87HWye8lOZUSD9JiW1D87LCv395yBNMuCgiLZ/byFt1OK/yYu+s5j39H46VgZLvmrhidVb9yf7Wrp67++EVRSBnkpnmyH72qPs1l4/DQwqolf2rUQ3v6gvqWPM8L0Y9+0MbSqBBKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=F9x6+6R1; arc=none smtp.client-ip=209.85.219.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-6eaf348103cso12175646d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:39:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1742913588; x=1743518388; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KvEoHJR3H5rDtrh76cias56A8NX1LxdTDYMAo9ZEIug=;
+        b=F9x6+6R1Cka3xUiCXNJM7VL/QYoEyVEgl4yoptQVdZQT9LMb4AG3P0/2b7LgpFiTG9
+         sIw6PwdH9AEbBMlXs/xWXmd3alDrbi/C+FKndS+ciKXk+lKpxG0XH17NmoUJNfKtQfI5
+         uMae7ucukA/tDcScBDG6O2Li9s31ss1JK8rvH6OpAWDpQVV3gduzFJJbhq7fKXF+lGTg
+         MgGRXeWi3qMim5M6Z0m6KHQNVYgL+G9+NwezI3xgzSYZ/T/Dtj9n9VZRzM+NFgKhA+IJ
+         fVFXII7HfHI1wOz8piiFka6fo1wRvCrj33An8OzM7DHgxyynSavYpw7Ww4YAiu4cUHPf
+         hJFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742913556; x=1743518356;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2AR9DLJxuAX5J+vUj9fnqNV1djjf7QFzxQNMwmMHS4A=;
-        b=FEkHeWn5TVFkz+pyYcz6rRNqKMiwUkoXhAUd+ri5d7B6Wsy8TVvDYM/fv40n9fc9cT
-         CIM0MZlHw+a+9ajxiNyfPr1qSmcQfTLyvW4l9tx7Re6UXelq0NSh9Pe011rmHBQ8Yvge
-         SLO2xhMxKpQugM6Bw8xFy1+AeTEdYXxj3WTh9V6OtjLf5WVN53NOI9jiXtHYoXWm0X+E
-         uPxQhJS+VnYArW0awoXh1P73+MJZy0d9HgGIlId5GaMsp4Y18qx6mpnf5FMLkAZohzi6
-         1eDSym7EOQ/MWL37IGprFqS81F8Rngn5513I/i791v4aUOfI12wpBe5pTrE9YQBZ8IGj
-         yozQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMBX+SSHRaXLrJIlI6b2sbwasf/8G4604C3AIBzTsNkFqg8sMS0TtZVPsEs6Z8SRD2QPjYERa4aqv9oRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq3bjv5HvlrqXbMXz6usZknUW8ANCQOfSWPPYaEGYBVCxx6/zc
-	BvcqmZ5nY2HZlZmTpflgnC4XZ7UiJCUY93S483wOMHfi2eJNYZL8EnFlmpYsKZV4bl/T7BDX3Ns
-	wUB2lOl9sT+tnoNQKEXNSHKumUV/zDmZzCNKzVgg0vFk4S5hVifq4y2SLomCIQZvOeVhU5SY=
-X-Gm-Gg: ASbGncsjdXmDFG3c21GGrWJp8HReOHWosveg83chTb8gv/2msHiwE6+xpXk9P4h91Sr
-	5YSlXQQiN+6uugFCqVuQaKvFiGObtHapbUmQfDVQXIK9G9B6iIfXdRoUliBaLt1YIPiuM1HmYT1
-	cZh7BaGckcXHmXjBBIzxb1If5phZ+2su3Ws4Iyw0xy8vCfYeNFYiTfcMVzNOOL/z4B5rKZQ+Fp1
-	ah4HOKK/rCZk8+pFMgrrawRWFoqGSwo916OOkVzrNI8XwpkH0zz59yle1umjPZMDoijrYg6+CMv
-	RJzYoULnajQ/NKwfJoowjVp3ixS2CIcS5cljjgzsm4HaTmwhL34afB6yGB6SFPoMAnsY/A==
-X-Received: by 2002:a05:622a:1a97:b0:476:af54:503f with SMTP id d75a77b69052e-4771dd6226bmr92953531cf.2.1742913556343;
-        Tue, 25 Mar 2025 07:39:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGR7ZJxcn2AD4UVzPlapOFAWeZjSCT60qNnDD/c5K+/WhuOlamYQaCR57BDtBgMf8xGuiCSWQ==
-X-Received: by 2002:a05:622a:1a97:b0:476:af54:503f with SMTP id d75a77b69052e-4771dd6226bmr92953231cf.2.1742913555748;
-        Tue, 25 Mar 2025 07:39:15 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c7759sm7850418a12.51.2025.03.25.07.39.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 07:39:15 -0700 (PDT)
-Message-ID: <0f700f59-3cbd-424a-84a0-0d23db0ca581@oss.qualcomm.com>
-Date: Tue, 25 Mar 2025 15:39:12 +0100
+        d=1e100.net; s=20230601; t=1742913588; x=1743518388;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KvEoHJR3H5rDtrh76cias56A8NX1LxdTDYMAo9ZEIug=;
+        b=QzWireaLzGVY6zPprxXoJb3BLZqvPdNJIlPgaIph6y1/eSoYAlLHPyyiKSQrN11fEe
+         ZjGMywrDoPxELOyK0OWnJuirji8qO1OpoYqttnXK8w91unLFNxiI++ePMxPPpX+1RcKC
+         +N5LKcMpRs3h1Ci61WSUUU00CWJX20hRf+CykY3taZoTjKfg2Lc0uzmqNdjox9w7GIVm
+         VnVgGURR+QvJMft1mgqHGEuxLNf5PetK0wqgv9rE28g4g2waPA0sX4+osVSj62kxyMgl
+         s3oljDsnedkrabJAvChtnNmvoZ7pCxrJVHEbu5UX3EmCiOW0V97CMDtZGpVqI2lMknh5
+         EgNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlyF5/1WPoI48rxOmeBoEabmsXC2Xflv43LTx8bRF5IrrSwKZ6FPewJEztdBuOydw/9PKHa3tYHA7LAhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1YEX1AKj8gJ/k5seJ8aLbUTONzk+QqI9CnPjEV21XOv9+BEi3
+	Blc/ZZf+OpJVOUwZZt3YNFelxnUqEKpXv0IxKSmt04+ZJJ49LWproN5TGXNJUgdrAWmAu0bD9FJ
+	CTeAhaRtqtGRq/2Jy5UWKEcX2r3n8uNWx3CJ6t3/3xzHGUSjk
+X-Gm-Gg: ASbGncuCYFXMRbJOLNxthuy0U0DVd4tiSYWsald4pAk1rNGfI6yBPDESPJFNnP0iGgQ
+	OA48Rh+o56/pAkeE7ZdeA+QvNI6x6FBAwfUD+Mk4R2cl1NWoYxzs2rfIXFA9N2e6Rc3IESMp9Zc
+	6o4rmdjzK+MXzD8SbI94IFYYj3YnTDY1yxneWCMUR1pz42jXtNIVEvxe9mAKsiTrYUsxCMDWqpA
+	/0M3/FbGdtGl1k3JmrbeKc2WtVtJh6WParq19RNeW8fbzgijiFeS/TWr0iFrCxZ3WerYVRO23Gs
+	LgN4v1bFFkelbbveAJ7oe87Ts9P1XVTwaQ==
+X-Google-Smtp-Source: AGHT+IEhlp6iFJ/nyrhTZLyoIqP0PYN5prYdCkGBn4s3G3ahC1K2ifu4QgQbVRpdOZOSyBRCptdVsrJl6HW/
+X-Received: by 2002:a05:6214:e4e:b0:6e6:9c39:ae44 with SMTP id 6a1803df08f44-6ed0c28045emr16629676d6.10.1742913587787;
+        Tue, 25 Mar 2025 07:39:47 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-6eb3efa9663sm5438656d6.34.2025.03.25.07.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 07:39:47 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 8E6973404BA;
+	Tue, 25 Mar 2025 08:39:46 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 96FC8E40ACF; Tue, 25 Mar 2025 08:39:46 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
+Date: Tue, 25 Mar 2025 08:39:42 -0600
+Message-ID: <20250325143943.1226467-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e001de-devkit: Add Wi-Fi and
- Bluetooth pwrseq
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250324-x1e001de-devkit-dts-pwrseq-v1-1-530f69b39a16@linaro.org>
- <Z-KuG0aOwEnxuhp9@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z-KuG0aOwEnxuhp9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KEXrF77AnCq-tFWvnNFZMiI41HdG3Fik
-X-Proofpoint-ORIG-GUID: KEXrF77AnCq-tFWvnNFZMiI41HdG3Fik
-X-Authority-Analysis: v=2.4 cv=IKYCChvG c=1 sm=1 tr=0 ts=67e2c015 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=RC_zNtMqMYb_0QXlmi0A:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- phishscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 spamscore=0
- priorityscore=1501 adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250103
+Content-Transfer-Encoding: 8bit
 
-On 3/25/25 2:22 PM, Stephan Gerhold wrote:
-> On Mon, Mar 24, 2025 at 04:24:01PM +0200, Abel Vesa wrote:
->> The Qualcomm X Elite Devkit comes with a WCN7850 combo chip which provides
->> Wi-fi and Bluetooth, similar to the CRD and QCP.
->>
->> Describe the nodes for the Wi-Fi, Bluetooth, the related regulators and
->> the PMU.
->>
->> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->> ---
->>  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 144 +++++++++++++++++++++++++++
->>  1 file changed, 144 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->> index 74911861a3bf2606add8cf4aaa3816542e837513..8f288a138c4cb6e21725fdf726eb2a2489bfbc38 100644
->> --- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->> +++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->> @@ -17,6 +17,7 @@ / {
->>  
->>  	aliases {
->>  		serial0 = &uart21;
->> +		serial1 = &uart14;
->>  	};
->>  
->>  	wcd938x: audio-codec {
->> @@ -392,6 +393,42 @@ vph_pwr: regulator-vph-pwr {
->>  		regulator-boot-on;
->>  	};
->>  
->> +	vreg_wcn_0p95: regulator-wcn-0p95 {
->> +		compatible = "regulator-fixed";
->> +
->> +		regulator-name = "VREG_WCN_0P95";
->> +		regulator-min-microvolt = <950000>;
->> +		regulator-max-microvolt = <950000>;
->> +
->> +		vin-supply = <&vreg_wcn_3p3>;
->> +	};
->> +
->> +	vreg_wcn_1p9: regulator-wcn-1p9 {
->> +		compatible = "regulator-fixed";
->> +
->> +		regulator-name = "VREG_WCN_1P9";
->> +		regulator-min-microvolt = <1900000>;
->> +		regulator-max-microvolt = <1900000>;
->> +
->> +		vin-supply = <&vreg_wcn_3p3>;
->> +	};
-> 
-> Hm, on CRD and T14s there is a TODO comment above these two, which is
-> also why I haven't posted these upstream yet:
-> 
-> We still haven't come to a conclusion unfortunately how to model the M.2
-> WiFi/BT cards. QCP doesn't have M.2, which is why it is upstream
-> already. These two regulators don't actually exist on the devkit itself,
-> they are (probably) part of the M.2 card.
-> 
-> The devkit only provides the 3.3V and 1.8V supply to the M.2 card.
-> 
-> We should really find some way forward for this, but just omitting any
-> mention of this is not the best way. :-)
+Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
+track whether io_send_zc() has already imported the buffer. This flag
+already serves a similar purpose for sendmsg_zc and {read,write}v_fixed.
 
-Now that we have a PCI port pwrseq driver, perhaps that could work..
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ include/linux/io_uring_types.h |  5 ++++-
+ io_uring/net.c                 | 10 +++++-----
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-Konrad
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index c17d2eedf478..699e2c0895ae 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -583,11 +583,14 @@ enum {
+ 	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
+ 	/* buf node is valid */
+ 	REQ_F_BUF_NODE		= IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
+ 	/* request has read/write metadata assigned */
+ 	REQ_F_HAS_METADATA	= IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
+-	/* resolve padded iovec to registered buffers */
++	/*
++	 * For vectored fixed buffers, resolve iovec to registered buffers.
++	 * For SEND_ZC, whether to import buffers (i.e. the first issue).
++	 */
+ 	REQ_F_IMPORT_BUFFER	= IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
+ };
+ 
+ typedef void (*io_req_tw_func_t)(struct io_kiocb *req, io_tw_token_t tw);
+ 
+diff --git a/io_uring/net.c b/io_uring/net.c
+index c87af980b98e..a7b3e2688689 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -75,11 +75,10 @@ struct io_sr_msg {
+ 	unsigned			nr_multishot_loops;
+ 	u16				flags;
+ 	/* initialised and used only by !msg send variants */
+ 	u16				buf_group;
+ 	bool				retry;
+-	bool				imported; /* only for io_send_zc */
+ 	void __user			*msg_control;
+ 	/* used only for send zerocopy */
+ 	struct io_kiocb 		*notif;
+ };
+ 
+@@ -1305,11 +1304,10 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *notif;
+ 
+ 	zc->done_io = 0;
+ 	zc->retry = false;
+-	zc->imported = false;
+ 	req->flags |= REQ_F_POLL_NO_LAZY;
+ 
+ 	if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
+ 		return -EINVAL;
+ 	/* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
+@@ -1351,12 +1349,14 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	if (io_is_compat(req->ctx))
+ 		zc->msg_flags |= MSG_CMSG_COMPAT;
+ 
+ 	if (unlikely(!io_msg_alloc_async(req)))
+ 		return -ENOMEM;
+-	if (req->opcode != IORING_OP_SENDMSG_ZC)
++	if (req->opcode == IORING_OP_SEND_ZC) {
++		req->flags |= REQ_F_IMPORT_BUFFER;
+ 		return io_send_setup(req, sqe);
++	}
+ 	return io_sendmsg_zc_setup(req, sqe);
+ }
+ 
+ static int io_sg_from_iter_iovec(struct sk_buff *skb,
+ 				 struct iov_iter *from, size_t length)
+@@ -1447,12 +1447,12 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
+ 	if (unlikely(!sock))
+ 		return -ENOTSOCK;
+ 	if (!test_bit(SOCK_SUPPORT_ZC, &sock->flags))
+ 		return -EOPNOTSUPP;
+ 
+-	if (!zc->imported) {
+-		zc->imported = true;
++	if (req->flags & REQ_F_IMPORT_BUFFER) {
++		req->flags &= ~REQ_F_IMPORT_BUFFER;
+ 		ret = io_send_zc_import(req, issue_flags);
+ 		if (unlikely(ret))
+ 			return ret;
+ 	}
+ 
+-- 
+2.45.2
+
 
