@@ -1,71 +1,52 @@
-Return-Path: <linux-kernel+bounces-574948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA956A6EBDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:41:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A289A6EBE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300F81673D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1EC162DD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079C125484F;
-	Tue, 25 Mar 2025 08:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWrUA0oE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CED8253F2D;
-	Tue, 25 Mar 2025 08:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB62C253B64;
+	Tue, 25 Mar 2025 08:43:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A07D530;
+	Tue, 25 Mar 2025 08:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742892077; cv=none; b=uB/yK9pXThqLjiyTLJ+XaaGcIhtraa3/f5QdEnW0/rt8qNj5i9oD/44xCz0zreCKxJ2GeyKYLcJliIZ/VOW6siKdUGebPxm+bNO38oGyrk1PxF3x8eLfXh0RNtEiscIdPzcC0v0MwhgTPN2xmuV62dr5KPkiWhVOEXwaas90x8E=
+	t=1742892208; cv=none; b=mzwFMYrNoE9vh+se4Kwr3U6UN9pL45aQougrnosL6DZdhqzOrpv1WpBDZo1SlHe9vVUpBuMf+DdX//NrxENqdg0iL+19cL1DaGvTBqnyhXgEcpShXsUFHQOGnjZzuXaYYew7Ai+AboiUD3KSix3FZLa+Qp42w1qGk0DuMzgGdo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742892077; c=relaxed/simple;
-	bh=CY5RP842umNjCXx2QIefjQ/33Qh6ZSa0whh4kFlNOwg=;
+	s=arc-20240116; t=1742892208; c=relaxed/simple;
+	bh=pcjmIUDV1y803v4VNtj2L6DD6Te2Hsbn9Vt/OMzK3Fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcL7E3/OgxkabOlocVIRiq1Bjpz4ktNb6N8MyHSmLElOf9EnhdYe6HiE9Yxr5hs7IDHmHPRZf0jQRG4Ih3d5qGJ/h0TiAyfzHNvSb96uZVghHtdHzL/ZY7GHfWu0WfiJf/VwigGEyLVhQRfQdBXavibtidPo6vZTPRi9TF1E3zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWrUA0oE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2FDBC4CEE4;
-	Tue, 25 Mar 2025 08:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742892076;
-	bh=CY5RP842umNjCXx2QIefjQ/33Qh6ZSa0whh4kFlNOwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fWrUA0oEG3GWgwAvoabVeyqyPfN7/TU9eaLCZoSwA9RhUTZ9Po4eF5siEeVlVF+xI
-	 tX5I2WQ6gz+LaiDsDz5xqhXJMZm894wU3O/nnq2g/RNQJW1ufzcXKTtAbB9A4J8PXd
-	 XY9gymc19bMnu46AZ8Rf+dpKusxA5miFnD2OAYSkUy2KkJX0lnwAF2XMnsUZh0vydv
-	 fOvkZvDsnaBznwusgjP7KZfuEkgV5cAmY1LJMBuSXV2jw71AboL6gEqXDmP0Q/9XOw
-	 ZDLmve8SJ8i6P5VcuqXxvtsqvm68bMooZdDdUc+GHw0lhS4ojEFbmd76T4AbU9db6R
-	 0PUMIaizQMxkg==
-Date: Tue, 25 Mar 2025 09:41:10 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-	Greg Thelen <gthelen@google.com>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] x86/alternatives: remove false sharing in
- poke_int3_handler()
-Message-ID: <Z-JsJruueRgLQ8st@gmail.com>
-References: <20250323072511.2353342-1-edumazet@google.com>
- <Z-B_R737uM31m6_K@gmail.com>
- <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
- <Z-EGvjhkg6llyX24@gmail.com>
- <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
- <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
- <20250324113304.GB14944@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2EmJuvRXChIN1DVy/Xc7kZ9FFZWSRPyu5IfLXXph9Ir9F7NLr+og5eRMN5tE7JHjP1izbc/s3irZJ7LXeJg/0w0X1fDMgnJ9CbRSY0p61UvPFNPan+HDGrqtatwyQYSPfq/JLw6EsdJySGuTLANkZnR43Htu7cO3/5asUldbjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E52FB14BF;
+	Tue, 25 Mar 2025 01:43:30 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7CBD73F58B;
+	Tue, 25 Mar 2025 01:43:24 -0700 (PDT)
+Date: Tue, 25 Mar 2025 08:43:20 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: mingo@kernel.org, peterz@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, Mark.Rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, james.clark@linaro.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] events/core: fix acoount failure for event's
+ child_total_enable_time at task exit
+Message-ID: <20250325084320.GC604566@e132581.arm.com>
+References: <20250306123350.1650114-1-yeoreum.yun@arm.com>
+ <20250324194758.GB604566@e132581.arm.com>
+ <Z+Jdl99Y2EpDHciK@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,38 +55,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324113304.GB14944@noisy.programming.kicks-ass.net>
+In-Reply-To: <Z+Jdl99Y2EpDHciK@e129823.arm.com>
 
+On Tue, Mar 25, 2025 at 07:39:03AM +0000, Yeoreum Yun wrote:
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+[...]
 
-> On Mon, Mar 24, 2025 at 08:53:31AM +0100, Eric Dumazet wrote:
+> > > After this patch, this problem is gone like:
+> > >
+> > > sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
+> > > ...
+> > > armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
+> > > armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
+> > >
+> > >  Performance counter stats for 'stress-ng --pthread=2 -t 10s':
+> > >
+> > >     15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
+> > >     22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
+> > >
+> > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > Suggsted-by: Peter Zijlstra <peterz@infradead.org>
+> >
+> > /Suggsted-by/Suggested-by/
 > 
-> > BTW the atomic_cond_read_acquire() part is never called even during my
-> > stress test.
+> Thanks ;) I'll respin.
+
+Given this patch is a fix, it is good to add a fix tag.
+
+> > > ---
+> > >  kernel/events/core.c | 18 +++++++++---------
+> > >  1 file changed, 9 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > > index 6364319e2f88..058533a50493 100644
+> > > --- a/kernel/events/core.c
+> > > +++ b/kernel/events/core.c
+> > > @@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
+> > >  #define DETACH_GROUP	0x01UL
+> > >  #define DETACH_CHILD	0x02UL
+> > >  #define DETACH_DEAD	0x04UL
+> > > +#define DETACH_EXIT	0x08UL
+> > >
+> > >  /*
+> > >   * Cross CPU call to remove a performance event
+> > > @@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
+> > >  			   void *info)
+> > >  {
+> > >  	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
+> > > +	enum perf_event_state state = PERF_EVENT_STATE_OFF;
+> > >  	unsigned long flags = (unsigned long)info;
+> > >
+> > >  	ctx_time_update(cpuctx, ctx);
+> > > @@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
+> > >  	 * Ensure event_sched_out() switches to OFF, at the very least
+> > >  	 * this avoids raising perf_pending_task() at this time.
+> > >  	 */
+> > > -	if (flags & DETACH_DEAD)
+> > > +	if (flags & DETACH_EXIT)
+> > > +		state = PERF_EVENT_STATE_EXIT;
+> > > +	if (flags & DETACH_DEAD) {
+> > >  		event->pending_disable = 1;
+> > > +		state = PERF_EVENT_STATE_DEAD;
+> > > +	}
+> > >  	event_sched_out(event, ctx);
+> > > +	perf_event_set_state(event, min(event->state, state));
+> >
+> > Nitpick: can we move perf_event_set_state() before event_sched_out()?
+> >
+> > So the function handles the state machine ahead, then proceed for
+> > other operations.
 > 
-> Yes, IIRC this is due to text_poke_sync() serializing the state, as that
-> does a synchronous IPI broadcast, which by necessity requires all
-> previous INT3 handlers to complete.
-> 
-> You can only hit that case if the INT3 remains after step-3 (IOW you're
-> actively writing INT3 into the text). This is exceedingly rare.
+> No It couldn't. IIUC, event_sched_out() disable pmu with ACTIVE state
+> event only.
+> If state is changed first from active state, it wouldn't be sched out by
+> event_sched_out.
 
-Might make sense to add a comment for that.
+Indeed !  Please ignore my comment.
 
-Also, any strong objections against doing this in the namespace:
+> > >  	if (flags & DETACH_GROUP)
+> > >  		perf_group_detach(event);
+> > >  	if (flags & DETACH_CHILD)
+> > >  		perf_child_detach(event);
+> > >  	list_del_event(event, ctx);
+> > > -	if (flags & DETACH_DEAD)
+> > > -		event->state = PERF_EVENT_STATE_DEAD;
+> > >
+> > >  	if (!pmu_ctx->nr_events) {
+> > >  		pmu_ctx->rotate_necessary = 0;
+> > > @@ -13424,12 +13429,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
+> > >  		mutex_lock(&parent_event->child_mutex);
+> > >  	}
+> > >
+> > > -	perf_remove_from_context(event, detach_flags);
+> > > -
+> > > -	raw_spin_lock_irq(&ctx->lock);
+> > > -	if (event->state > PERF_EVENT_STATE_EXIT)
+> > > -		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
+> > > -	raw_spin_unlock_irq(&ctx->lock);
+> > > +	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
 
-  s/bp_/int3_
+It is good to add a description in commit log for why remove the
+code chunk for updating state in the function perf_event_exit_event().
 
-?
-
-Half of the code already calls it a variant of 'int3', half of it 'bp', 
-which I had to think for a couple of seconds goes for breakpoint, not 
-base pointer ... ;-)
-
-Might as well standardize on int3_ and call it a day?
+As we discussed, it uses a central place __perf_remove_from_context()
+to maintain the state when event exits,  this can avoid race
+condition.  To support this, the 'DETACH_EXIT' flag is passed to
+__perf_remove_from_context() instead.
 
 Thanks,
+Leo
 
-	Ingo
+> > >
+> > >  	/*
+> > >  	 * Child events can be freed.
+> > > --
+> > > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> > >
 
