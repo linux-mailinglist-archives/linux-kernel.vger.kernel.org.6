@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-575484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1215A70324
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:05:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E12A70304
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199F816F72A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:58:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED1B7A8BBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC270256C8A;
-	Tue, 25 Mar 2025 13:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9972580C3;
+	Tue, 25 Mar 2025 13:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="A/HONrhz"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdWnqM4j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCCC2566FF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2572566EE;
+	Tue, 25 Mar 2025 13:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742911050; cv=none; b=lPS1OXK0aqjRMFwsiUqQf6L3ot6NswOYE4orPv1InY/U8/FHxxihEpyV6RX1GK0fqSF8cWDnO/SBA8bnUQswWTSoy4IJ2DWICXf0i/C24IutiyVWG1xsk5PJ/VA9tY2bnSjlweAHObGDSae3xE3+GErZuZfpvDCkE7WZdsUieOE=
+	t=1742911070; cv=none; b=Pu9pFIGpPb0S00xyRqTdWOoYOzpfXykb7XPKWpe9D2avQuoRlqoMq0k/Av7HW7csmx2s6PJOLpN+c9+Lnkv2Pl0gdQjYAQmE8/1EIjdY35uOIZ11HnwH3s3K4q2PlsryYCJjZ0VQpA/M3LDMBDizP1lDTH6Ckp1d8vYbyzwzy1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742911050; c=relaxed/simple;
-	bh=5vmsaVmY7RCeBltG3oaYsLyhH00UvyfSdKrADtgNQsQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kW7rBpJJLJUBQQ0ztAyhB+WP9f+4xjT7IBeIFvyQz+YsSHrGdbH/J//RLg0Zl4xtaM3dGwjHMfvJDMYOz+FqSA8Ay0o+Ooo1Cu8RhDkj+6px0V58rtoLnwURkwMvrlKcPBsVJzKwO/EZlCPiMx1QLZmbdPY3tdj97yuhmntU/38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=A/HONrhz; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=39LmuDI9bOxMy0VVpRTL66OIPOopihwRPhpHSWSa6GI=;
-  b=A/HONrhz8qXm5ONveFdISU4jX4UvXz/Gc1mUpyPQl+RjDg0O2v1DPKo4
-   K7nFJQyFxe4L0cO8YTlvjSWcqvEBVlL0q+bWsecPqJGbgboyH+rW6vxuy
-   7WsituMwgC2QJUys0Ro95r2IDbIbbBswpVUdj0wiI/xMIdyKtRye6zjmn
-   M=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,275,1736809200"; 
-   d="scan'208";a="214672416"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 14:57:26 +0100
-Date: Tue, 25 Mar 2025 14:57:26 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Erick Karanja <karanja99erick@gmail.com>
-cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
-    philipp.g.hortmann@gmail.com, davidzalman.101@gmail.com, 
-    vivek6429.ts@gmail.com, viro@zeniv.linux.org.uk, 
-    linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Rename variables
-In-Reply-To: <20250325124712.47577-1-karanja99erick@gmail.com>
-Message-ID: <36f86d43-9c0-56fd-372a-87d8637e9377@inria.fr>
-References: <20250325124712.47577-1-karanja99erick@gmail.com>
+	s=arc-20240116; t=1742911070; c=relaxed/simple;
+	bh=AmXHKKWLlSTvmrFOL6CAXtXybfj1pETdgzSNegqSC3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xt9rQknZDftnu9vILj70BdtoGyPR5DWj8Vd4S4sPZ3OMiHikxRyMvvkpRA6vVlpoHtZ2e5gGjpzsIMg911QjDy2xtBUTGEi41OvOfftbFTZgnbZ55/RsfO0LdZVj1QWDJ62Bs9Vr3jt6ftxfIv0uLJf2AGefhIRHBCL2SdKOfhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdWnqM4j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A500AC4CEE4;
+	Tue, 25 Mar 2025 13:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742911069;
+	bh=AmXHKKWLlSTvmrFOL6CAXtXybfj1pETdgzSNegqSC3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HdWnqM4jnyQ3a41EtqC+7GuUqgUGSkjfUVk9po5AAGAHFE6xXls31ZkALCV8PBKYG
+	 4nY0oQAxKCAlY8/e4qlUkXhlrZe+pOT0zVcylWnKMjXyrM+bW34/ZS7YIYxC7e/CW/
+	 283z+v5gOD7zqj5whFOkSrQwbg/OhFiN5Qyw2ErEk5pt3zBMEEeT/YwxSpIthIhIuA
+	 z5QhWG6g7gVXzgOI1iPNjisAjJB5/DPgvADIrmr+ctdAM10yS8YvQ8jAC26msxxf3L
+	 F9eePRc7ji60eN4GyUIr5PbWiUwGWQ0Lm0wMzbomWkMKsikAWMsI0LO5c6Jw5Wznb1
+	 rXtTj/a/wiVXA==
+Date: Tue, 25 Mar 2025 13:57:43 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Vishwaroop A <va@nvidia.com>,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <fe03cadf-6f3e-4a26-82ce-8027e90bbdec@sirena.org.uk>
+References: <20241126134529.936451-1-va@nvidia.com>
+ <20241126134529.936451-3-va@nvidia.com>
+ <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
+ <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
+ <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
+ <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
+ <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
+ <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
+ <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
+ <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d8dIwMNJoe65WgNW"
+Content-Disposition: inline
+In-Reply-To: <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
+X-Cookie: Visit beautiful Vergas, Minnesota.
 
 
+--d8dIwMNJoe65WgNW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 25 Mar 2025, Erick Karanja wrote:
+On Tue, Mar 25, 2025 at 01:45:26PM +0100, Thierry Reding wrote:
+> On Tue, Mar 25, 2025 at 12:10:19PM +0000, Mark Brown wrote:
+> > On Tue, Mar 25, 2025 at 10:36:29AM +0000, Jon Hunter wrote:
 
-> Rename the variable `mediaStatus` to `media_status` and variable
-> `lpsVal` to `lps_val` to adhere to Linux kernel coding
-> standards by using snake_case instead of CamelCase.
->
-> Fixes checkpatch.pl warning:
-> 	CHECK: Avoid CamelCase: <mediaStatus>
-> 	CHECK: Avoid CamelCase: <lpsVal>
->
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_btcoex.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_btcoex.c b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> index d54095f50113..27dfd00b4249 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_btcoex.c
-> @@ -8,14 +8,14 @@
->  #include <rtw_btcoex.h>
->  #include <hal_btcoex.h>
->
-> -void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 mediaStatus)
-> +void rtw_btcoex_MediaStatusNotify(struct adapter *padapter, u8 media_status)
->  {
-> -	if ((mediaStatus == RT_MEDIA_CONNECT)
-> +	if ((media_status == RT_MEDIA_CONNECT)
->  		&& (check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true)) {
->  		rtw_hal_set_hwreg(padapter, HW_VAR_DL_RSVD_PAGE, NULL);
->  	}
->
-> -	hal_btcoex_MediaStatusNotify(padapter, mediaStatus);
-> +	hal_btcoex_MediaStatusNotify(padapter, media_status);
->  }
->
->  void rtw_btcoex_HaltNotify(struct adapter *padapter)
-> @@ -52,21 +52,19 @@ void rtw_btcoex_RejectApAggregatedPacket(struct adapter *padapter, u8 enable)
->  void rtw_btcoex_LPS_Enter(struct adapter *padapter)
->  {
->  	struct pwrctrl_priv *pwrpriv;
-> -	u8 lpsVal;
-> -
-> +	u8 lps_val;
->
->  	pwrpriv = adapter_to_pwrctl(padapter);
->
->  	pwrpriv->bpower_saving = true;
-> -	lpsVal = hal_btcoex_LpsVal(padapter);
-> -	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lpsVal, "BTCOEX");
-> +	lps_val = hal_btcoex_LpsVal(padapter);
-> +	rtw_set_ps_mode(padapter, PS_MODE_MIN, 0, lps_val, "BTCOEX");
->  }
->
->  void rtw_btcoex_LPS_Leave(struct adapter *padapter)
->  {
->  	struct pwrctrl_priv *pwrpriv;
->
-> -
+> > > We finally got back to this. Looks like just having 'spidev' as the
+> > > compatible does not work. Apparently, it use to work and yes you would get
+> > > the warning, but that no longer seems to be the case. I see a few others
+> > > have been doing similar things and hacking their device-trees in different
+> > > ways [0].
 
-You seem to have done something else here.
+> > Huh, OK.  I don't recall any deliberate SPI change for that.
 
-Were there two blank lines in the original code?
+> People in the discussion that Jon linked to indicated that it was this
+> patch that caused the "regression":
 
-julia
+...
 
->  	pwrpriv = adapter_to_pwrctl(padapter);
->
->  	if (pwrpriv->pwr_mode != PS_MODE_ACTIVE) {
-> --
-> 2.43.0
->
->
->
+> If you say that the regression wasn't deliberate, maybe we should look
+> at fixing this so that people don't have to work around stuff?
+
+I mean, we don't want people to be doing this which is why it generates
+the warning - it's more tolerated than supported.  I don't super mind
+keeping it so long as it's not getting in the way of all the fragility
+with the enumeration stuff.
+
+--d8dIwMNJoe65WgNW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfitlYACgkQJNaLcl1U
+h9Cqxwf9HGDETMR3l+ZctfP4/5wQOUIr76yOGVEM6eshTh4dCLsO+IsCGmwCTgNF
+hoMxt2MD7EC2LB/PXaGNExhtX5rAmvriXYLguIcnYnwH9jhgL+hXchyRtvGIFXfc
+esKdvGkz6jwtD5WUCN3CDlEg/iAl7Uf1fUnFalkcMHxbTEssYPOSsLth8SYtk3Ys
+UJazWvvoszbo9sEeoQWmzn5zgM3k3WHEpNg7mzEbp4lxwX+7DQoo/w8QYkB3x6LT
+8+LWf2mfZWASS71UGfUqDAKG53MGO7ZcDhNmBiKcnkbi1KuY0th7PHWpeHjByaa6
++P/OXa+1axbIZOjdJN5C6z2OXLcMlw==
+=PXbo
+-----END PGP SIGNATURE-----
+
+--d8dIwMNJoe65WgNW--
 
