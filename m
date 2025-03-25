@@ -1,162 +1,108 @@
-Return-Path: <linux-kernel+bounces-575139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845E2A6EE2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:47:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C306BA6EE2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FB03A6D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0786B3A5B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0AE254B0D;
-	Tue, 25 Mar 2025 10:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9181EF0B9;
+	Tue, 25 Mar 2025 10:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwv2jgic"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BbQf5gxz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA1C5D50;
-	Tue, 25 Mar 2025 10:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4157EC4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742899613; cv=none; b=jOdAGbCPTlJ8us7n3aq7HuCvzKNCcz4E5aF413O+E7SS6QjGBsEllaW6d1Gk+aGR2ymlgp9iaV+NvguYB5oaVDUq+Vl6VB0H/MTSO85AE7e2cjoelul0tdrndvp8cqK8HTvZg9KAm6b/eNOQuhyPVHhJwr4Z2gqwaUQH+GVHPBI=
+	t=1742899678; cv=none; b=j2xcsJ87pqypJoW47X/qfJwYPLi9QsPyb9zgVGLZryxu9+ufW6bu2OPccei3y5XBvFRQDPRhJmLbuVGJo7cuskmG+AVOR3wt2sLKfO6oiJ8cXTOLgmS7QuujnE/tOfGdhjzB7HGZ/2G/TuootmEFaCyKNkis6WUJhtwsL62ahKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742899613; c=relaxed/simple;
-	bh=rqVeZKTsfR1Mw1ipXxcLoywYP3wysPSlC0jiSRkwu8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L6CW0uLKRxyropIuMdJRG8iWU+xQt2Ui5tbO1GyOeIMAhhve7nn1h6dYAkNkhlx7u/F6qTxybifobFwzWXdQfsQTnaEzlpH04ib6uKY/wo4gPoaIgDD4OTDEyIpUBmgzDHaQ5woshJXEOS1+ZBr8u5eA647F/SWcmUnvUrycTfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwv2jgic; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD19C4CEE4;
-	Tue, 25 Mar 2025 10:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742899613;
-	bh=rqVeZKTsfR1Mw1ipXxcLoywYP3wysPSlC0jiSRkwu8w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bwv2jgicOKrT+0/PuMPF9JVYRWhWGnsPdExi0sLbALZIYWOLLSxskxBDkhsla5GyA
-	 EZMfb6D7WzVC2jaW5kDfwAXdNjd0dJ3LOwan4R9/mTR6jnpoOK9604glTKzGVKbedS
-	 zfjm6MsenHiUa+rXgA+Wva5BpGOQWSdN8UYH1nd2hR+1MnSb+YtlZYmLAXxdQfkbT1
-	 uGyZLOKh2xC3wLlmMOkZLkDAJEQAXwZ7tD1qOKrhL6SU2wlny48gLCy3GFAZ+Y6Jsi
-	 ED4DquLSM8QnZIj23rLbtF/0AQNUtkkmmR09IrclOq4rzrKxeUrQj4zx3PcWjlStsa
-	 afECIgclpRrwg==
-Date: Tue, 25 Mar 2025 03:46:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Gur Stavi <gur.stavi@huawei.com>
-Cc: Fan Gong <gongfan1@huawei.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Lee Trager
- <lee@trager.us>, <linux-doc@vger.kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>, Cai Huoqing
- <cai.huoqing@linux.dev>, luosifu <luosifu@huawei.com>, Xin Guo
- <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
- <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Suman Ghosh
- <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Joe
- Damato <jdamato@fastly.com>
-Subject: Re: [PATCH net-next v09 1/1] hinic3: module initialization and
- tx/rx logic
-Message-ID: <20250325034641.65536e13@kernel.org>
-In-Reply-To: <60a3c7b146920eee8b15464e0b0d1ea35db0b30e.1742202778.git.gur.stavi@huawei.com>
-References: <cover.1742202778.git.gur.stavi@huawei.com>
-	<60a3c7b146920eee8b15464e0b0d1ea35db0b30e.1742202778.git.gur.stavi@huawei.com>
+	s=arc-20240116; t=1742899678; c=relaxed/simple;
+	bh=pRFdoRxHQv4ASkQQbPf/QJW+Fkq5GR+papCZB7h7xWQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ocVMDmpbeab+Qr5F78t+Cemd3byO4cs8Y/PQHGk8ZUjzMV9oFS3OIM8K/69rUtSErKVPtTwnkYBq+gTqJkiotiqFWFQmwfbiQjEaCPzpvft60BgJcufAHumuHmdTbuQ7YS19nihN7hzcH17w+EIy8HYUmFWDLAnEZaFU9lyLxNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BbQf5gxz; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742899675; x=1774435675;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=pRFdoRxHQv4ASkQQbPf/QJW+Fkq5GR+papCZB7h7xWQ=;
+  b=BbQf5gxzSfGd2K7A/UDhgS+VmlXEqwVwrrb2BZIHPmccKqP7t92iqlxk
+   BoF0kzv7Nqk+TEZFgQripSgR1XmUmZDaVH4Ngn9MrIyXNpMWIInHDizmb
+   QXk2SKR+2T4RYsSlG8/NlevFzZJnQI2pxg7gTsANRvr2drnOvctGPqt9u
+   9Lp29IQSL48FBKh/gFsPMfrJYlE2SUTbcLcH0cLi+nPEorrcWUhJTQk8f
+   CGWeU2bW6TEGgQXraZgyjRdC04EOOZpAUQBxCBWPH4GQzLwkhW6zhNAP8
+   cf0jgAxsyWmWUPjhQ1wMfogxmIq+kRHo2sdL+0Axf/NyHUnLItd+xBmsf
+   A==;
+X-CSE-ConnectionGUID: 3L7Gh7jkQ6yhkS8G8g+qzw==
+X-CSE-MsgGUID: 4L0+4ryQR/+RCTWkLSmE4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43864138"
+X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
+   d="scan'208";a="43864138"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 03:47:55 -0700
+X-CSE-ConnectionGUID: 29i981N9Ru+pvd9UBP+X9w==
+X-CSE-MsgGUID: u86+9+DOQpaMYgpMgvreWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
+   d="scan'208";a="124058557"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.134])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 03:47:52 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: devbrones <jonas.cronholm@protonmail.com>,
+ maarten.lankhorst@linux.intel.com, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+In-Reply-To: <20250325-inquisitive-ebony-mouse-bdf185@houat>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
+ <875xjxa2rk.fsf@intel.com> <20250325-inquisitive-ebony-mouse-bdf185@houat>
+Date: Tue, 25 Mar 2025 12:47:49 +0200
+Message-ID: <87pli58jze.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Mon, 17 Mar 2025 11:40:39 +0200 Gur Stavi wrote:
-> +static int hinic3_poll(struct napi_struct *napi, int budget)
-> +{
-> +	struct hinic3_irq_cfg *irq_cfg =
-> +		container_of(napi, struct hinic3_irq_cfg, napi);
-> +	struct hinic3_nic_dev *nic_dev;
-> +	int tx_pkts, rx_pkts;
-> +
-> +	nic_dev = netdev_priv(irq_cfg->netdev);
-> +	rx_pkts = hinic3_rx_poll(irq_cfg->rxq, budget);
-> +
-> +	tx_pkts = hinic3_tx_poll(irq_cfg->txq, budget);
+On Tue, 25 Mar 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> On Tue, Mar 25, 2025 at 11:16:47AM +0200, Jani Nikula wrote:
+>> On Sat, 22 Mar 2025, devbrones <jonas.cronholm@protonmail.com> wrote:
+>> > This fixes a bug where some Playstation VR Headsets would not be assigned
+>> > the EDID_QUIRK_NON_DESKTOP quirk, causing them to be inaccessible by
+>> > certain software under Wayland.
+>> 
+>> Please file a bug over at [1], and attach the EDID on that bug, so we
+>> have some clue what's going on.
+>>
+>> [1] https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new
+>
+> I'd rather have them in the commit log. Nobody uses gitlab issues for
+> drm-misc, and those kind of issues are just lingering around and
+> becoming stale.
 
-You should service Tx first, it frees skbs into a cache which Rx 
-can then use, while they are hopefully still cache-warm.
+For this one, it's fine as long as we preserve the raw EDID for
+posterity. Unless the EDID does indicate VR and we need to dig deeper,
+that is.
 
-> +	if (tx_pkts >= budget || rx_pkts >= budget)
-> +		return budget;
-> +
-> +	napi_complete(napi);
+BR,
+Jani.
 
-Please use napi_complete_done().
-
-> +	hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
-> +			      HINIC3_MSIX_ENABLE);
-> +
-> +	return max(tx_pkts, rx_pkts);
-> +}
-
-> +static int hinic3_nic_probe(struct auxiliary_device *adev,
-> +			    const struct auxiliary_device_id *id)
-
-> +	err = register_netdev(netdev);
-> +	if (err)
-> +		goto err_register_netdev;
-> +
-> +	netif_carrier_off(netdev);
-
-You should carrier_off before you register
-
-> +	err = pci_enable_device(pdev);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to enable PCI device\n");
-> +		goto err_pci_enable;
-> +	}
-> +
-> +	err = pci_request_regions(pdev, HINIC3_NIC_DRV_NAME);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to request regions\n");
-> +		goto err_pci_regions;
-> +	}
-> +
-> +	pci_set_master(pdev);
-> +
-> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-> +	if (err) {
-> +		dev_warn(&pdev->dev, "Couldn't set 64-bit DMA mask\n");
-> +		/* try 32 bit DMA mask if 64 bit fails */
-> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> +		if (err) {
-> +			dev_err(&pdev->dev, "Failed to set DMA mask\n");
-> +			goto err_dma_mask;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +err_dma_mask:
-> +	pci_clear_master(pdev);
-> +	pci_release_regions(pdev);
-> +
-> +err_pci_regions:
-> +	pci_disable_device(pdev);
-> +
-> +err_pci_enable:
-> +	pci_set_drvdata(pdev, NULL);
-> +	mutex_destroy(&pci_adapter->pdev_mutex);
-> +	kfree(pci_adapter);
-
-Please name the error labels after the target, not the source.
-
-Quoting documentation:
-
-  Choose label names which say what the goto does or why the goto exists.  An
-  example of a good name could be ``out_free_buffer:`` if the goto frees ``buffer``.
-
-See: https://www.kernel.org/doc/html/next/process/coding-style.html#centralized-exiting-of-functions
 -- 
-pw-bot: cr
+Jani Nikula, Intel
 
