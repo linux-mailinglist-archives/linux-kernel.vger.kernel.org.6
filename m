@@ -1,253 +1,177 @@
-Return-Path: <linux-kernel+bounces-575703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8186DA705FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:05:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF91A70602
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBE7A7A6D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:03:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53036189348C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F042571B1;
-	Tue, 25 Mar 2025 16:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmErkoOZ"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE3F2561B8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F099E251790;
+	Tue, 25 Mar 2025 16:05:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F6E2AD13;
+	Tue, 25 Mar 2025 16:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918662; cv=none; b=UVU5rHKu+dsOPTdnZpz+f5LZ1ms1z8rZxULj1+FvuUVRrPfsqFgBDHgOk2sHntLRPdWGFnQ/SEEzSZciBPbyejQ9prsD4KG6E7/sLBJ6431kaQSmHykIBp5Gb0g47r0KM0ieeiZPaYNhun74r1HkAjegQZrkA/pOJvNxMV1vJuQ=
+	t=1742918707; cv=none; b=Sdncs9AST0QXEaFxHmE+6dRsMTotQMzNbB5PkLP3Ahl5GBH28vj4lrApFcpF5igvucHzIPDVCo+rRVEvPBbbAFx1jxl8z051+ZViFTDvKFSX63gVJBN5urIDPOqhPZCMZDKVjTo99caYlvMupW9cAgdAs+nifyQUkmkjvkeAWrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918662; c=relaxed/simple;
-	bh=rCUZnLQ3PGHUDGtLBw8YYNv0Y3LVMYUzPgKKH0CMTmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UlUY78VtmdXTzsdQZatmh8NDNwmT+QxVrQ+B0qeQnjE0LvFdGzBRgx2TlgTgfQsEbCdqZlYYEM4TldjChR6Da4eid9XcKndP0qV/5VDBfjsTJjE06WnFHnZZkDbdX8TcFlSrN7x+2wlBjSyO+pOH+D3Q0KLd2kdjtJDqJOpHwPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmErkoOZ; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ff1814102aso51741537b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742918659; x=1743523459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hsymUyAwd/7+saRMvKt7vls4TQ6B6dvAPD1as5mOOSw=;
-        b=MmErkoOZ48fPQDOKDvHzZ0wMc/z+uzU2aVXFeerZK9E0Srm1oeAXLS26/UXk0y7u+y
-         9NG6q2A9BHuVpWeZ9rYwq3T+tidoLv4/r8wCtyBaW9ZbvgiLCoAkFNmPfd+cGQxBamUJ
-         cGZpMwSPTNjCRbi4txWTQgbpN3CxPLDFpumEE4BXQLPnVIMgCR/zB5jlzEwUZ7WAPbbq
-         fqmmJywBSOIodr2JM+BsaSph7/2Y8EyDl2Crq53HANZzBY3M1a2E3hTXsk99S+8j+gyd
-         vzXB7E0lAQU5MhqU2hUO3f4OiXIKWaSva76EmaQUj+wlI0MTWJtd28NrzI3bWvHnwpRw
-         U/Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742918659; x=1743523459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hsymUyAwd/7+saRMvKt7vls4TQ6B6dvAPD1as5mOOSw=;
-        b=C84sy0GgihdyHbM89vMPws7iSQw2h4TIbmAWUSuWgDvcYdFwIcKTZFhp9Q2kFgSYBe
-         LDobWUb7VZ9aqkJR4IbsLkl7jkqxbLnQTvKV6tWRUoXQWF/tDeKH2kDBJk5wlF6w6FWp
-         suYbvJ3g6qHJdXUv+bPWhAPAr/92tbgMJPbyp1jROS40Joii9Bv71QWZro1lHuTeMLUp
-         UWawTtu4jMr4EB+iU37U6aQwNP5cKfXvSH0gCZIcDjz7Yn9w8gWJgxbQLIpxIdHOe+NQ
-         tfvFSyFxLGUl7EqYWxfjiw2PNQAjceMWyyK01sDtYeTLdyrladyMOTCzTKiSqsEpkEC7
-         tgeA==
-X-Gm-Message-State: AOJu0YxeUVF0r30IudQD4fn67qAlqs93ogmE4iX50cLhOvL8nTu9pRl/
-	XWbf+ORxLKnTXZhC+fgIqP+ucm10Mjgi52X3vLIj0SQMnlpqkChOUTzl45LrTEfi3R54MPvr7Qg
-	2HP4ycHb7Jh5v03p7bbYBhZVKy8YZOTEh
-X-Gm-Gg: ASbGncsKcO50SaNCZ7ltTBWXoTiAvUDWGg0K+KNnhMVn0CNbZMgBnm1A7+vjRk1eI4Z
-	Tjkk6myjU5x6NJnSL+pKgJwyQlfw6LisNE9UpbviEs/S2aSUboLxN3NgekRTJBGzfKlZVMPhlmG
-	3fOfEgY3CEhINLnd8I6RVTgg07
-X-Google-Smtp-Source: AGHT+IFuO7/KsoWda68hHwMp3dp3vTaBY41RtEIHi5DSJzf7/I8Ad1hcWmGz5xn7HPqn5/pt2dj+MfILAPOJgzT4I1k=
-X-Received: by 2002:a05:690c:8d02:b0:6fd:33a1:f4b with SMTP id
- 00721157ae682-7020fd4fc2fmr5275767b3.4.1742918659083; Tue, 25 Mar 2025
- 09:04:19 -0700 (PDT)
+	s=arc-20240116; t=1742918707; c=relaxed/simple;
+	bh=h97BkZ75Kmk+Ke3dQGE/18dFtpUap7mvflXQWlZJXr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qA5ysxsIwZAuThnrx6eCrEgKwbW7fjkkLtbaQjKzNVYz+V5hwRnfHX97xMN/hU0dqsWJhQzBb0RJrUM1bhQSIQuWgwVDxTnxDe+P9/BEx/T4E/M3+RLBYbkuC9msH/zzmhILvsCvyUFKIfdyEZzGYsLEsVjKih9ZAyKK8qnHT0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A86D31756;
+	Tue, 25 Mar 2025 09:05:09 -0700 (PDT)
+Received: from [10.57.85.102] (unknown [10.57.85.102])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4CA43F694;
+	Tue, 25 Mar 2025 09:05:02 -0700 (PDT)
+Message-ID: <9f030639-2ce2-4400-90e4-6c7dfbabf42c@arm.com>
+Date: Tue, 25 Mar 2025 16:05:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250125064619.8305-1-jim.cromie@gmail.com> <20250125064619.8305-17-jim.cromie@gmail.com>
- <b2d9acea-c2ad-45c7-9853-8fac0957c56f@bootlin.com> <CAJfuBxwBZ0a630YH2gbwz971ehZWASH6yXfRrdVCWBNGqA=mMw@mail.gmail.com>
- <a6824252-87be-458f-ba4a-b34bf86d67f4@bootlin.com>
-In-Reply-To: <a6824252-87be-458f-ba4a-b34bf86d67f4@bootlin.com>
-From: jim.cromie@gmail.com
-Date: Tue, 25 Mar 2025 10:03:53 -0600
-X-Gm-Features: AQ5f1JquBnQ-iGybb_4LD4MxqKJLiDkxofsnIfISZQzupn9eWPMArOPgVB9U_e4
-Message-ID: <CAJfuBxw4BuVDh5+xdp5vunQt1=P-5AeSQHtRW16rU4SJLFgK8g@mail.gmail.com>
-Subject: Re: [PATCH 16/63] dyndbg-API: replace DECLARE_DYNDBG_CLASSMAP
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, jbaron@akamai.com, 
-	gregkh@linuxfoundation.org, ukaszb@chromium.org, 
-	intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to synth_event_trace2()
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: rostedt@goodmis.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250318180814.226644-1-douglas.raillard@arm.com>
+ <20250318180814.226644-3-douglas.raillard@arm.com>
+ <20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
+ <3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
+ <20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
+Content-Language: en-US
+From: Douglas Raillard <douglas.raillard@arm.com>
+In-Reply-To: <20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 9:07=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
-n.com> wrote:
->
-trimming
+On 24-03-2025 06:29, Masami Hiramatsu (Google) wrote:
+> On Wed, 19 Mar 2025 14:51:42 +0000
+> Douglas Raillard <douglas.raillard@arm.com> wrote:
+> 
+>> On 19-03-2025 13:37, Masami Hiramatsu (Google) wrote:
+>>> On Tue, 18 Mar 2025 18:08:12 +0000
+>>> Douglas RAILLARD <douglas.raillard@arm.com> wrote:
+>>>
+>>>> From: Douglas Raillard <douglas.raillard@arm.com>
+>>>>
+>>>> Rename the frehsly exposed trace_synth() to synth_event_trace2() to
+>>>> comply with the existing naming convention. Since synth_event_trace()
+>>>> already exists (and operates on a "struct trace_event_file *"), use a
+>>>> new name for it.
+>>>>
+>>>
+>>> I don't like this '2' and similar version digit naming for the functions.
+>>> Can you choose another better name?
+>>
+>> I was hoping for some suggestions as I don't like it either :)
+>>
+>> The natural prefix for functions operating on "struct synth_event *" would by "synth_event_*",
+>> but most of the existing API already uses the "synth_event_*" prefix, and is using
+>> "struct trace_event_file*".
+>>
+>>> BTW, can you also write a cover mail so that what is the goal of this
+>>> series, background and results?
+>>
+>> Ok, I'll respin the series with a proper cover letter. The gist is I was following the doc [1] on how
+>> to create a synthetic event, trying to apply that to a kernel module we have that needs to create new events.
+>>
+>> Unfortunately, it turned out that all the exposed APIs to emit the events (such as synth_event_trace()) require
+>> getting a "struct trace_event_file*" before the call. This breaks when a user starts creating instances in tracefs,
+>> as each instance will have its own "struct trace_event_file*".
+> 
+> Yeah, because those are mainly for the tests, and we are expecting that if
+> any modules wants to emit its events, it will define new trace-events and
+> use it instead of synthetic events. The synthetic events are for
+> programming via tracefs, not reporting from the kernel modules.
+> It is confusing if any synthetic events are reported without any origin of
+> real trace event. (so, it is an intermadiate event type.) IOW, We expect
+> that synthetic event is reported by other events via event trigger.
+> The current APIs are just for testing.
+> 
+> Hmm, I should hide those by CONFIG_SYNTH_EVENT_TESTS.
+> 
+>> The way this is done for normal trace events is
+>> that each instance registers a probe on the tracepoint with the struct trace_event_file* as the void *data pointer.
+>> Then when the tracepoint is called, all the probes are called and the event data is copied in all instances in which
+>> it was enabled.
+>>
+>> Although the synthetic event API does create that tracepoint and has an appropriate probe function, none of the exposed API
+>> I could find make use of it. The exception is trace_events_hist.c had its own private version of it that actually calls all
+>> the probes of the tracepoint "manually", so that the event is correctly emitted in all the instances it was enabled in. This
+>> is the function touched by this patch.
+> 
+> No, please don't touch the synthetic events for reporting any events via
+> kernel modules. Those should use normal trace events for avoiding the
+> confusion.
+> 
+> Would you have any reason not to use normal trace events?
 
-> >>> +     __section("__dyndbg_class_users") _uname =3D {                 =
-   \
-> >>> +             .mod_name =3D KBUILD_MODNAME,                          =
-   \
-> >>> +             .map =3D &(_var),                                      =
-   \
-> >>> +     }
-> >>> +
-> >>
-> >> I'm not sure I understand properly how __section works, but can we use
-> >> multiple DYNDBG_CLASSMAP_USE in one module? Can we also use
-> >> DYNDBG_CLASSMAP_DEFINE while also importing an other classmap
-> >> DYNDBG_CLASSMAP_USE?
-> >>
-> >
-> > Yes, its supposed to work that way.
-> >
-> > I havent tested that specific scenario (yet), but
-> > a _USEr module, like test-dynamic-debug-submod,
-> > could also _DEFINE its own, as long as it honors
-> > the class-id mapping it is using and therefore sharing.
-> > The on-modprobe conflict check should catch this condition.
-> >
-> > And __section (ISTM) accumulates entries, typically static struct var
-> > initializations.
-> > AFAICT, scanning the sections is how these { scoped statics } are
-> > often reachable.
-> >
-> > For example, dd's _METADATA_ builds a { static _ddebug } for every pr_d=
-ebug.
-> > They all go into the __dyndbg section (renamed with _descriptors suffix=
- soon),
-> > in the order their respective definer objects are linked.
-> >
-> > include/asm-generic/vmlinux.lds.h  then places the __dyndbg_* sections
-> > into DATA, along with lots of other freight, for the various
-> > mechanisms they serve.
-> >
-> >
-> >
-> >
-> >> If not, does it make sense to allow it (for example MFD devices can
-> >> touch multiple subsystems)?
-> >
-> > We have another use case !
-> > Do you know your way around that case ?
-> >
->
-> No, I don't have other use cases, I was just thinking about possible
-> scenarios of the "include multiple classmap".
->
-> So, happy to konw it is not an issue with the section, but do I
-> understand properly the code (completly hypotetical example): if drm.ko
-> defines classes 0..10 and spi.ko defines classes 0..4, it means
-> driver.ko can't use both classmap? (I don't have such use-case, and
-> maybe this use-case does not exists!)
->
+Yes, the dynamic API was exactly what I needed unfortunately. I'm porting the kernel module we have to Rust (using our own bindings as
+we cannot mandate CONFIG_RUST=y). While I have some support for C code generation based on the Rust source, it is significantly more
+convenient to simply use a dynamic API. In the current state of my code, defining an event is as simple as:
 
-It sounds realistic on the face of it, so lets break it down:
+   let f = new_event! {
+   	lisa__myevent2,
+   	fields: {
+   		field1: u8,
+   		field3: &CStr,
+   		field2: u64,
+   	}
+   }?;
+   
+   // Emit the event
+   f(1, c"hello", 2);
+   f(3, c"world", 4);
 
-1st off, drm drivers/helpers are full dependents on (core) drm.ko.
-they are the "subsystem" users I considered.
-
-This dependence is "+1" by _USE ref'g the exported DEFINE product.
-If that dependence doesn't suit a situation, it doesn't quite fit.
-The dependence dictates module-load order, amongst other things.
-
-So it follows that spi.ko would never be a dependent module on drm.ko,
-if there is a relationship, DRM would use spi, and whatever classes it defi=
-nes.
-
-Suppose spi.ko DEFINEd a classmap:  with ENDPOINT, TRANSPORT, BULK
-categories of pr_debugs,  those classes would need to map to different clas=
-s-ids
-than DRM_UT_<*>, cuz the callsites only have the classids, not the
-name-->id mapping.
-
-if both DRM_UT_CORE and ENPOINT had class-id =3D 0,
-then both these commands would alter the same set of pr-debugs
-
-  echo class DRM_UT_CORE +p > /proc/dynamic-debug/control
-  echo class SPI_ENDPOINT -p > /proc/dynamic-debug/control
-
-Thats not as troublesome as it might seem:
-
-DRM's DRM_UT_<*> vals are only exposed to userspace
-by the existence of : /sys/module/drm/parameter/debug,
-cuz it exposes the bit values in >debug input.
-
-and this already changed DRM_UT_<*> vals wo anybody caring.
-0406faf25fb1 drm_print: condense enum drm_debug_category
-
-DYNAMIC-DEBUG-CLASSMAP-DEFINE() has _base arg,
-which offsets the natural/obvious 0..N range to allow sharing of 0..62 rang=
-e.
-
-The outer edge of inconvenience in coordinating class-id reservations
-would be N providers and M consumers. ATM, N=3DM=3D1.
-
-Say DRM  used 2 modules defining classmaps:  spi (as discussed),
-and (pure wag) gpu_engine.
-Those 2 modules dont really have any other connection, but would have
-to coordinate
-(but maybe gpu_engine needs spi to control its cooling, and would want
-to anyway)
-
-DRM (or any classmap-definer/user) is also free to define a 2nd "category"
-enum to separate the user facing aspects of DRM_UT_*
-from its name->ID mapping (very internal)
-
-Also:  "classnames" are a public-namespace; theres nothing
-to stop a module from defining their own version of "DRM_UT_CORE",
-and getting their pr_debugs enabled/disabled along with all of DRMs callsit=
-es.
-
-Such a use-case would be obvious in review, and would want some justificati=
-on.
-
-WAG:  a _base arg to the _USE() macro could specify a local user offset.
-
-Theres a saying:  if youre explaining, youre losing.
-
-How'd I do ?
-
-> The only solution I see is to add more stuff in the _ddebug structure
-> (for example a "classmap identifier"). But for now, the current user
-> will be DRM, so we don't really need to fix this issue right now.
->
-> I just found a possible user for dyndbg classes [1], it seems to
-> implement something similar.
->
-> [1]:https://elixir.bootlin.com/linux/v6.13.7/source/drivers/block/drbd/dr=
-bd_polymorph_printk.h
->
-
-thats a pretty impressive stack of macros.
-I like the componentry and assembly
-
-One thing that puts it out of scope is its use of KERN_EMERG, CRIT etc.
-dyndbg is just KERN_DEBUG
-
-Also those #undef *DYNAMIC_DEBUG*
-explicitly unwire  dyndbg apparatus, and plug into __dynamic_pr_debug direc=
-tly.
-Making it an interesting case.
+So it's as non-confusing can be: the event name is stated plainly and the field names and types are mentioned once, with no repetition.
+The result can simply be called to emit the event, and when dropped, the event is unregistered.
 
 
-> > Note that DEFINEr  & USEr calls set up linkage dependencies,
-> > As long as these are consistent with other module deps,
-> > it should work.
-> >
-> >
-> >>
+On top of that in ways unrelated to Rust:
+1. We have some really high traffic event (PELT-related) that include some data that is not always needed (e.g. taskgroup name).
+    We currently regularly hit memory size limitation on our test device (pixel 6), and using trace-cmd record instead of
+    trace-cmd start is not always a good idea as this will have an effect on scheduling, disturbing the very thing we are trying
+    to observe. Having the dynamic API means we could simply omit the fields in the event that we don't care about in a specific
+    experiment via dynamic configuration.
+
+2. Some events may or may not be supported on the system based on some runtime condition. Currently, there is no great way for
+    the module to feed back that info. No matter what, the event exists, even if the machinery that is supposed to emit it is
+    disabled for whatever reason. If some user starts tracing the event "everything will work" and there will be no event in the
+    trace. That may make the user think a condition did not trigger, whereas in fact the whole machinery was simply not operating.
+    Being able to register or not the event dynamically solves that cleanly, as enabling the event will simply fail as it won't
+    have been registered in the first place.
+
+3. We will likely at some point relay events coming from some non-CPU part of the system into the ftrace buffer. If and when that
+    happens, it would be ideal if that producer can simply declare the events it supports, and our module dynamically create the
+    matching synthetic events. That would avoid any problem coming from mismatching source that would otherwise plague such setup.
+
+So considering things seem to work overall with not much tuning needed, it would be sad to have to revert to TRACE_EVENT() macro
+and end up having to do more work for a worse result. If that's the route you choose though, it may be nice to amend the
+documentation to clearly state this API is testing-only and not supported in normal use case, as it currently reads:
+
+   The trace event subsystem provides an in-kernel API allowing modules
+   or other kernel code to generate user-defined 'synthetic' events at
+   will, which can be used to either augment the existing trace stream
+   and/or signal that a particular important state has occurred.
+
+
+> 
+> Thank you,
+> 
+
+Thank you,
+
+Douglas
 
