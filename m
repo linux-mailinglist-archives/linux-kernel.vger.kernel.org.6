@@ -1,116 +1,429 @@
-Return-Path: <linux-kernel+bounces-575184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BB4A6EFE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:13:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D314FA6EFD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:13:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396B7189CD48
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CEB3B8D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB432561A8;
-	Tue, 25 Mar 2025 11:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586D4255E34;
+	Tue, 25 Mar 2025 11:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDk63Gtu"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f0mVPKCA"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA0618E351;
-	Tue, 25 Mar 2025 11:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B03B33EC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742901037; cv=none; b=sXp4vwkv4fzN9ApR1wM+3TENfbXhdpDsffczrCM9WVnlgKWg4S/utXdSldXE4KqjyASct3BZ848SJ20mVgJ8VmZL5uJ/PC+v05m/FwD07Td+j2iTzy4TxGhTmBf2qGEHaBXtFu9Dv10OTQfV8yhNiFcCP5bUOy0g/tTJ+3GOPRg=
+	t=1742901077; cv=none; b=fSu4wU+MwzIGb2U3QfenIkP+oU2ge/Jm6foN4a1H3jlmeDPYpmZpWrTWJwoSNNmNcyVBTV+motxlK0VI+lSokcv6rJP6O09JR5OcDVDlma3H6im0e0TDhQ3uVjRzvueI5UEkhHFqsJFEnDedMr/RjguXDdfHtM11FNrdePc+xFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742901037; c=relaxed/simple;
-	bh=52KHnFLo2jgwjIz3u/2IvJMxndBoJ9B+hywEvn+IgVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SdO3ZgqEOHCtzY5cpdsExJ/+fd+EOESgyN1S/kwzAB0mnkn4JkQsFiSjSj9uu8sXKiy/kwvvQYRwgw4Ze+urcLes+wIxfXZh6jM++FfntrpyK+DX3ZaaTYD3OgohZ8/ezRkD1vMIE2YFkn0s0HYD4KqjcNCxtkvdNgdSe29f42s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDk63Gtu; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227e29b6c55so1956155ad.1;
-        Tue, 25 Mar 2025 04:10:36 -0700 (PDT)
+	s=arc-20240116; t=1742901077; c=relaxed/simple;
+	bh=bnVFgv3YKSHMdsQuClyqCSpGDpXid3cjdBjb64PGkhI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FRTyY+E7e5Z72+vu+YvQv7niLUHW1W6ygFBwIZAy4Ovcl4LtqzIENB7THi1f7UySNUh7Kp8Z2URKigUPPR5H1urv5+4SkNpwl6dazZ8ZgWccBOKBvGtzj50aT2rmkOcwjfXmMcoTCXFicVnUADC296RJm0aDIQ3Vl4Mg7pFeHTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f0mVPKCA; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39149bccb69so4814901f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:11:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742901036; x=1743505836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fpjqO8YLYhKVActbTnIJgvSrcw7QxNRRzPXj8z9Z3+o=;
-        b=VDk63GtulAOYXD/vJpLEKwnngE4o2u6huPP9p1TSIrI2qFRdbMDn7UjuvMNZ/J5IbL
-         74mGff6qeKPRUh7R2STMqBnT9NmUeUYvd8QRIVUWeadoRXdWo9mPvrDHdZpVz+P/L//S
-         qhRuW7MLt5uM4xY8npmdtfw70THQOYYC7uV6dy/Yp5pn5rUFGB68vaF/9TE1TtvnHD+y
-         q2NxzeVdSZlB+Gb6ANY5TyFQvMSSztBsMhqPiqZoxvx9mGHuagwChV3p9H5ZJ/iH6QvS
-         UyX6XVLUswyGCR129O+EVnkmsLfOY2cFPXbB5uPuirnQ2AwVTUAD1M67k5d21cvXGS0G
-         Gprw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1742901072; x=1743505872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qq6osUrzmcbsA62ORjNzuinD+V3sUwdLLrS3i4GEDlA=;
+        b=f0mVPKCAJmCGQwkBME1QcOsYX+XyM1Z22WPKnrIlZk+A4+EAc6PtYWeRUYo9UAl4ok
+         NhRHuRP8I3Qu0WKPPp4yMd+ct7QgL0QgLpVHmL9Kgil4C86wUU5nI8vG5d/lI7RWowFr
+         v5bKKauWOD9+stMxf1lHmW4g8FRjw7RJFrgWxYYY9xKwlKuKAQDytqeK/HNzOEoapOcO
+         CyNr9Y2qPhu7PvzYtxrUQbu+qFKDINNbGwsrlUbL+8Zp3VhEvzS+VIHuYr9euacZnawL
+         N+6YDKTgLF/NrTjAerLvwAMP/qtXjyQRMuu4ZjMxNon8vsriNoZTQU5fsTyqhqBlurDo
+         +JAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742901036; x=1743505836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fpjqO8YLYhKVActbTnIJgvSrcw7QxNRRzPXj8z9Z3+o=;
-        b=n0EktrYkzfBxHZqykwoxx4REXjQIxFayFRr0BaMYygU8vw3a2+BiC+AFKao62h3otE
-         J+PHMJ6RSMdAYMJ1Kv5fNzmhKHgicGUl8AFOrnfVlj0TB2hehAv4Qhpfd6JZuy171YZf
-         +Q3+MoEUVjP5NPeQxhTuwC+e0nTAX2usJq79RekJI1AdthPf5eYsNP1queX6IpmJIOt9
-         lroKh4KvS4jfNiYw5OPY15R2q+m7iizCiJzguNnQ4Ar6rGXiyooykCwutpXPynS5gMiW
-         U2LYCowmvBrOiAu/7svp8P9SBdjm0EU9v8Yov8Qqta+NpZYQgA+z71MmmfzdclGKNF2B
-         oyYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVKESd2Sz0hkrVthGqV43qXPiv4QhIQcZpRG3/tRbUHkRlbZb8+keINoHOvD0tb30gmSMR0sdYVTtaWMQ4TEPN@vger.kernel.org, AJvYcCUYj5lsDhLXpzOCgnxs2hWL6PhcooQMP7JX71jwgIOQuauZr2YWlV5NSu10fnp27mgEtLo3wJbWz6gsgei1@vger.kernel.org, AJvYcCVQk9HZpem8jH4eyoZH0+NlAcCLDxoBUichI+dj4oXVwCFUHntR7SGhpCnhT3/nNS9E2Wj1QB6aIrTpZBhdhXw=@vger.kernel.org, AJvYcCVtRB+nOBsn3YFOtMvkiQ0lFW2qdYQ4fF/iSKNlT24bE9dQVFfv/2ixHzmTY6NkLBfDtq0I8W6rg1VaFFYh@vger.kernel.org, AJvYcCWL398ioetrQb49o+1dEiG/Eg+otblSaHf+hSc7F3/520V+kT3zjgKPGbnS1g/wtkh7wPZf8yeJUYJytVI=@vger.kernel.org, AJvYcCWwq9v+N1+GThNOWiqdDXK3AT83FMp6YLi8XXoBxNXgH8qvuJdgCy9f+NznbV09t7rdGMVBPgzBFg+h@vger.kernel.org, AJvYcCXvOmlYJJQMYJfG7FcfJVtlUwBAfv1PeYE+RE/0vBhGdUHtmbMhkohVGKX5Egn2H4W4PO+xSerFyCpe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNvyl88/5rnnaXv56Cd6E36l5OekKi3TkV5ymrokHgAOVK4Z3p
-	vXel+OBBhjP+lp2/Q0OnFHuv2cJv5XEmkKBjOeWNe2j81X2K+e7Jx3utq4jz9cZuv/pDG1/Ud4d
-	7e+gNcP2mJA7drNbQZDlcvavdDIc=
-X-Gm-Gg: ASbGncu18vKs7vaXx+XspUVg5LSwnua6+rh3mWZRKWQUTO6rwrU04C6wYPxT/dBFPti
-	2H1UwxAt/eKv1G35I+ralxA/2FsId997VrQzGskoqBBjYuSemTL9OZSu9z0TZYBeRrUAjRFD36P
-	GgfXMKvf/4BhbeqOlMrgOQRTsvbfQ+ZjjPUbES
-X-Google-Smtp-Source: AGHT+IHpJwxSmBo6BH0zzung/n6kxmjGM1u7xLnYxyUt7cmgQfavPYj2SsoHyvHVfv9gpydH4oInfkZrmJ+HN6tGAhY=
-X-Received: by 2002:a17:902:d2c4:b0:224:1785:8044 with SMTP id
- d9443c01a7336-22780c6b0c8mr90475055ad.4.1742901035512; Tue, 25 Mar 2025
- 04:10:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742901072; x=1743505872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qq6osUrzmcbsA62ORjNzuinD+V3sUwdLLrS3i4GEDlA=;
+        b=V1M0tDRRX1mMXoQAzeozFDJG5gPvSbWjx/9e8LCc0qbHeyhR0U62RhQvTI9UumSuCI
+         2+/Pso8ctL5Jif0CEazJsjDm30wxKxrqfxCl67C5/QBCcvUYE55LM5Boo8QbBHs18RM+
+         d6GjBX2RLTyRDWMKU2xVoHah9MBGNwIXRcKFGlQN3B+IUmr67Nuz1MYcfNs8FjPbX4Tn
+         gM7s2lRp1oURDgQlpv7VRJ6iptxKPqcUpnKQ6VxEWCbni+gWNuDXYZH72aPHigCCyumz
+         95le2pzT11vApBdQb2TEUS9ErHEoM2s9jOniomLyAX3gw52GesItl4nEVYXQFn6ywqVq
+         bxGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQDskkXdTKkvv0tmjip9lVbL9d+nITayEDmrXPL5JZtmIR9qCr8JZ9WpBoAxqSre0Q1OzCDeNfK+Npq+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKsFKLzAgmzxhdGC+rLXGYAsc9iuOfkKHP1XkL0GFTPKJQFhgF
+	hhR3NtR5wPAlOE9rIdAHPeIrTw4fOqFYDhjzDbv8JM1erySHHXYYAvrnPtTbKh/jOAyJvlU/H/s
+	Y
+X-Gm-Gg: ASbGncuHu9kfe1LmVSG1w3eSPFGMMx4aF/9ZLB/ew0oHpOWvM2as1OzIwzI1oWGd+Ss
+	kMFR+GdnHQHrUzuVH351XTk1YpDpDh7iqa5vmfXk9HuPnXb9H3fgRw7dFeLMYqgasmJsgFJQwwI
+	uWdHcEWPnmpcMWeBJX3Ny8DqZGbjVQrAk9Z6sNuqCJ5teAb3I19PmBlxVg9wiUeGNMBgE1to8ab
+	6KhNVLw3Q9kHO/02tN82ev+yv7EdRMQmR9T+bkBIPi/aOV9Wd8wkbzA4raj6FlQMiH0irt4ak/N
+	9Tl45Ier+op5+48b+p8skfM7w8sN/Cme1wstDmss95WM
+X-Google-Smtp-Source: AGHT+IEDalNg06SAgU1J0x5FreYEndgopRQkeUfu5YC3LGqvMmM/jKdjSH5+LByMY3aGh4NxikIXWw==
+X-Received: by 2002:a5d:6c63:0:b0:38d:e304:7470 with SMTP id ffacd0b85a97d-3997f90aa79mr16625620f8f.25.1742901071396;
+        Tue, 25 Mar 2025 04:11:11 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:de47:e58f:1059:b2fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fcea6ecsm148553465e9.5.2025.03.25.04.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 04:11:10 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio updates for v6.15-rc1
+Date: Tue, 25 Mar 2025 12:11:07 +0100
+Message-ID: <20250325111107.41070-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com>
- <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me> <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com>
- <D8PAQXHJDVQE.36QKQGBVVL4QU@proton.me>
-In-Reply-To: <D8PAQXHJDVQE.36QKQGBVVL4QU@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Mar 2025 12:10:23 +0100
-X-Gm-Features: AQ5f1JqwX_NBrpr_QjwlspVeAWrNOtqXvG7Oj-9W1A9VEei-Tzd_1wGZRvEA414
-Message-ID: <CANiq72kLNYj7HELq4ieSPh7Lnqud63RoAitn-HWfcNUQW-yrrA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 12:05=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> Done: https://github.com/rust-lang/rust-clippy/issues/14469
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Linked in our list:
+Linus,
 
-    https://github.com/Rust-for-Linux/linux/issues/349
+Here's the big pull request from the GPIO tree for this merge window.
 
-Cheers,
-Miguel
+There are no new drivers this time but several changes to the core GPIO
+framework and various driver updates.
+
+This release cycle, we're starting a relatively straightforward but tedious
+rework of the GPIO consumer API: for historical reasons, the gpiod_set_value()
+variants would return void. Not only that but the GPIO provider interface does
+not even allow drivers to return a value to GPIO core. This is because initial
+GPIO controllers would be MMIO based and could not fail. We've had I2C, SPI
+and USB controllers for years too but no way of indicating failures to callers.
+
+This PR changes the consumer interface, adds new provider callbacks and starts
+converting the drivers under drivers/gpio/ to using them. Once this gets
+upstream, we'll keep on converting GPIO drivers that live elsewhere and once
+there are no more users of the old callbacks, we'll remove them and rename the
+new ones to the previous name. I imagine the last step would happen in one
+sweeping change like what you did for the remove_new() -> remove() renaming.
+
+We've also addressed an issue where invalid return values from GPIO drivers
+would get propagated to user-space by adding some GPIO-core-level sanitization.
+Again: not a complex change but way overdue.
+
+Other than that: lots of driver and core refactoring, DT-bindings changes and
+some other minor changes like coding style fixes or header reordering.
+
+All changes (except for the TODO updates which I picked up yesterday) have
+spent at least a week in linux-next (most way more than that) with regressions
+nicely ironed out for most part.
+
+Please pull,
+Bartosz
+
+The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1ae1:
+
+  Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio-updates-for-v6.15-rc1
+
+for you to fetch changes up to af54a2fbdf45b1fd32cdcab916f422e6d097f430:
+
+  gpio: TODO: add an item to track reworking the sysfs interface (2025-03-24 10:35:10 +0100)
+
+----------------------------------------------------------------
+gpio updates for v6.15-rc1
+
+GPIO core:
+- add sanitization of return values of GPIO provider callbacks so that invalid
+  ones don't get propagated to user-space
+- add new variants of the line setter callbacks for GPIO providers that return
+  an integer and allow to indicate driver errors to the GPIO core
+- change the interface of all gpiod_set_value() variants to return an integer
+  thus becoming able to indicate failures in the underlying layer to callers
+- drop unneeded ERR_CAST in gpiolib-acpi
+- use for_each_if() where applicable
+- provide gpiod_multi_set_value_cansleep() as a new, simpler interface to
+  gpiod_set_array_value_cansleep() and use it across several drivers treewide
+- reduce the number of atomic reads of the descriptor flags in gpiolib debugfs
+  code
+- simplify for_each_hwgpio_in_range() and for_each_requested_gpio_in_range()
+- add support for three-cell GPIO specifiers in GPIO OF code
+- don't build HTE (hardware timestamp engine) GPIO code with the HTE subsystem
+  disabled in Kconfig
+- unduplicate calls to gpiod_direction_input_nonotify()
+- rework the handling of the valid_mask property of GPIO chips: don't allow
+  drivers to set it as it should only be handled by GPIO core and start
+  actually enforcing it in GPIO core for *all* drivers, not only the ones
+  implementing a custom request() callback
+- get the `ngpios` property from the fwnode of the GPIO chip, not its device in
+  order to handle multi-bank GPIO chips
+
+Driver improvements:
+- convert a part of the GPIO drivers under drivers/gpio/ to using the new value
+  setter callbacks
+- convert several drivers to using automatic lock guards from cleanup.h
+- allow building gpio-bt8xx with COMPILE_TEST=y
+- refactor gpio-74x164 (use devres, cleanup helpers, __counted_by() and bits.h
+  macros)
+- refactor gpio-latch (use generic device properties, lock guards and some
+  local variables for better readability)
+- refactor gpio-xilinx (improve the usage of the bitmap API)
+- support multiple virtual GPIO controller instances in gpio-virtio
+- allow gpio-regmap to use the standard `ngpios` property from GPIOLIB
+- factor out the common code for synchronous probing of virtual GPIO devices
+  into its own library
+- use str_enable_disable(), str_high_low() and other string helpers where
+  applicable
+- extend the gpio-mmio abstraction layer to allow calling into the pinctrl
+  back-end when setting direction
+- convert gpio-vf610 to using the gpio-mmio library
+- use more devres in gpio-adnp
+- add support for reset-gpios in gpio-pcf857x
+- add support for more models to gpio-loongson-64bit
+
+DT bindings:
+- add new compatibles to gpio-vf610 and gpio-loongson
+- add missing gpio-ranges property to gpio-mvebu
+- add reset-gpios to nxp,pcf8575
+- enable gpio-hog parsing in ast2400-gpio
+
+Misc:
+- coding style improvements
+- kerneldoc fixes
+- includes reordering
+- updates to the TODO list
+
+----------------------------------------------------------------
+Andy Shevchenko (23):
+      gpio: 74x164: Remove unneeded dependency to OF_GPIO
+      gpio: 74x164: Simplify code with cleanup helpers
+      gpio: 74x164: Annotate buffer with __counted_by()
+      gpio: 74x164: Make use of the macros from bits.h
+      gpio: 74x164: Fully convert to use managed resources
+      gpio: 74x164: Switch to use dev_err_probe()
+      gpio: 74x164: Utilise temporary variable for struct device
+      gpiolib: Even more opportunities to use str_high_low() helper
+      gpiolib: Deduplicate gpiod_direction_input_nonotify() call
+      gpio: xilinx: Use better bitmap APIs where appropriate
+      gpio: xilinx: Replace custom variants of bitmap_read()/bitmap_write()
+      gpiolib: Deduplicate some code in for_each_requested_gpio_in_range()
+      gpiolib: Simplify implementation of for_each_hwgpio_in_range()
+      drm: Move for_each_if() to util_macros.h for wider use
+      gpiolib: Switch to use for_each_if() helper
+      gpio: loongson-64bit: Remove unneeded ngpio assignment
+      gpiolib: Extract gpiochip_choose_fwnode() for wider use
+      gpiolib: Use fwnode instead of device in gpiochip_get_ngpios()
+      gpio: regmap: Group optional assignments together for better understanding
+      gpio: regmap: Move optional assignments down in the code
+      gpio: regmap: Allow ngpio to be read from the property
+      gpiolib: Align FLAG_* definitions in the struct gpio_desc
+      gpiolib-acpi: Drop unneeded ERR_CAST() in __acpi_find_gpio()
+
+Bartosz Golaszewski (76):
+      Merge tag 'gpio-set-array-helper-v6.15-rc1' into gpio/for-next
+      gpio: latch: use generic device properties
+      gpio: latch: store the address of pdev->dev in a helper variable
+      gpiolib: move all includes to the top of gpio/consumer.h
+      gpiolib: don't build HTE code with CONFIG_HTE disabled
+      Merge tag 'v6.14-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into HEAD
+      gpiolib: sanitize the return value of gpio_chip::request()
+      gpiolib: sanitize the return value of gpio_chip::set_config()
+      gpiolib: sanitize the return value of gpio_chip::get()
+      gpiolib: sanitize the return value of gpio_chip::get_multiple()
+      gpiolib: sanitize the return value of gpio_chip::direction_output()
+      gpiolib: sanitize the return value of gpio_chip::direction_input()
+      gpiolib: sanitize the return value of gpio_chip::get_direction()
+      gpiolib: read descriptor flags once in gpiolib_dbg_show()
+      gpiolib: use the required minimum set of headers
+      leds: aw200xx: don't use return with gpiod_set_value() variants
+      gpiolib: make value setters have return values
+      gpiolib: wrap gpio_chip::set()
+      gpiolib: rework the wrapper around gpio_chip::set_multiple()
+      gpiolib: introduce gpio_chip setters that return values
+      gpio: sim: use value returning setters
+      gpio: regmap: use value returning setters
+      gpio: pca953x: use value returning setters
+      gpio: mockup: use value returning setters
+      gpio: aggregator: use value returning setters
+      gpio: max77650: use value returning setters
+      gpio: latch: use lock guards
+      gpio: latch: use value returning setters
+      gpio: davinci: use value returning setters
+      gpio: mvebu: use value returning setters
+      gpiolib: don't use gpiochip_get_direction() when registering a chip
+      gpiolib: use a more explicit retval logic in gpiochip_get_direction()
+      gpiolib: don't double-check the gc->get callback's existence
+      Merge tag 'v6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
+      gpiolib: remove unneeded WARN_ON() from gpiochip_set_multiple()
+      gpiolib: deprecate gpio_chip::set and gpio_chip::set_multiple
+      gpiolib: update kerneldocs for value setters
+      gpiolib: fix kerneldoc
+      gpio: 74x164: use new line value setter callbacks
+      gpio: adnp: use devm_mutex_init()
+      gpio: adp5520: use new line value setter callbacks
+      gpio: adp5585: use new line value setter callbacks
+      gpio: altera-a10sr: use new line value setter callbacks
+      gpio: altera: use new line value setter callbacks
+      gpio: amd8111: use new line value setter callbacks
+      gpio: amd-fch: use new line value setter callbacks
+      gpio: arizona: use new line value setter callbacks
+      gpio: aspeed: use lock guards
+      gpio: aspeed: use new line value setter callbacks
+      gpio: aspeed-sgpio: use lock guards
+      gpio: aspeed-sgpio: use new line value setter callbacks
+      gpio: adnp: use lock guards for the I2C lock
+      gpio: adnp: use new line value setter callbacks
+      Merge tag 'intel-gpio-v6.15-1' of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel into gpio/for-next
+      Merge tag 'v6.14-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
+      gpio: bcm-kona: use lock guards
+      gpio: bcm-kona: use new line value setter callbacks
+      gpio: bd71815: use new line value setter callbacks
+      gpio: bd71828: use new line value setter callbacks
+      gpio: bd9571mwv: use new line value setter callbacks
+      gpio: bt8xx: allow to build the module with COMPILE_TEST=y
+      gpio: bt8xx: use lock guards
+      gpio: bt8xx: use new line value setter callbacks
+      gpio: cgbc: use new line value setter callbacks
+      gpio: creg-snps: use new line value setter callbacks
+      gpio: cros-ec: use new line value setter callbacks
+      gpio: crystalcove: use new line value setter callbacks
+      gpio: cs5535: use new line value setter callbacks
+      gpio: da9052: use new line value setter callbacks
+      gpio: da9055: use new line value setter callbacks
+      gpio: TODO: remove the item about the new debugfs interface
+      gpio: TODO: remove task duplication
+      gpio: TODO: remove the pinctrl integration task
+      gpio: TODO: add delimiters between tasks for better readability
+      gpio: TODO: add an item to track the conversion to the new value setters
+      gpio: TODO: add an item to track reworking the sysfs interface
+
+Binbin Zhou (2):
+      dt-bindings: gpio: loongson: Add new loongson gpio chip compatible
+      gpio: loongson-64bit: Add more gpio chip support
+
+David Lechner (5):
+      gpiolib: add gpiod_multi_set_value_cansleep()
+      gpio: max3191x: use gpiod_multi_set_value_cansleep
+      mmc: pwrseq_simple: use gpiod_multi_set_value_cansleep
+      mux: gpio: use gpiod_multi_set_value_cansleep
+      phy: mapphone-mdm6600: use gpiod_multi_set_value_cansleep
+
+Frank Li (1):
+      dt-bindings: gpio: vf610: Add i.MX94 support
+
+Koichiro Den (3):
+      gpio: introduce utilities for synchronous fake device creation
+      gpio: sim: convert to use dev-sync-probe utilities
+      gpio: virtuser: convert to use dev-sync-probe utilities
+
+Krzysztof Kozlowski (1):
+      gpio: Use str_enable_disable-like helpers
+
+Linus Walleij (4):
+      gpio: mmio: Add flag for calling pinctrl back-end
+      gpio: vf610: Switch to gpio-mmio
+      gpiolib: of: Use local variables
+      gpiolib: of: Handle threecell GPIO chips
+
+Matti Vaittinen (4):
+      gpio: Respect valid_mask when requesting GPIOs
+      gpio: Add a valid_mask getter
+      gpio: gpio-rcar: Drop direct use of valid_mask
+      gpio: Hide valid_mask from direct assignments
+
+Ninad Palsule (1):
+      dt-bindings: gpio: ast2400-gpio: Add hogs parsing
+
+Quentin Schulz (2):
+      dt-bindings: gpio: nxp,pcf8575: add reset GPIO
+      gpio: pcf857x: add support for reset-gpios on (most) PCA967x
+
+Rob Herring (Arm) (1):
+      dt-bindings: gpio: mvebu: Add missing 'gpio-ranges' property and hog nodes
+
+hlleng (1):
+      gpio: virtio: support multiple virtio-gpio controller instances
+
+ .../bindings/gpio/aspeed,ast2400-gpio.yaml         |   6 +
+ .../devicetree/bindings/gpio/gpio-mvebu.yaml       |  10 +
+ .../devicetree/bindings/gpio/gpio-vf610.yaml       |   1 +
+ .../devicetree/bindings/gpio/loongson,ls-gpio.yaml |   3 +
+ .../devicetree/bindings/gpio/nxp,pcf8575.yaml      |  37 +++
+ drivers/gpio/Kconfig                               |   9 +-
+ drivers/gpio/Makefile                              |   3 +
+ drivers/gpio/TODO                                  |  89 ++---
+ drivers/gpio/dev-sync-probe.c                      |  97 ++++++
+ drivers/gpio/dev-sync-probe.h                      |  25 ++
+ drivers/gpio/gpio-74x164.c                         |  96 +++---
+ drivers/gpio/gpio-adnp.c                           | 140 ++++----
+ drivers/gpio/gpio-adp5520.c                        |  12 +-
+ drivers/gpio/gpio-adp5585.c                        |  10 +-
+ drivers/gpio/gpio-aggregator.c                     |  38 ++-
+ drivers/gpio/gpio-altera-a10sr.c                   |  14 +-
+ drivers/gpio/gpio-altera.c                         |   6 +-
+ drivers/gpio/gpio-amd-fch.c                        |   7 +-
+ drivers/gpio/gpio-amd8111.c                        |   6 +-
+ drivers/gpio/gpio-arizona.c                        |   9 +-
+ drivers/gpio/gpio-aspeed-sgpio.c                   |  82 ++---
+ drivers/gpio/gpio-aspeed.c                         | 108 +++---
+ drivers/gpio/gpio-bcm-kona.c                       |  69 ++--
+ drivers/gpio/gpio-bd71815.c                        |  15 +-
+ drivers/gpio/gpio-bd71828.c                        |  15 +-
+ drivers/gpio/gpio-bd9571mwv.c                      |   8 +-
+ drivers/gpio/gpio-brcmstb.c                        |   3 +-
+ drivers/gpio/gpio-bt8xx.c                          |  48 +--
+ drivers/gpio/gpio-cgbc.c                           |  24 +-
+ drivers/gpio/gpio-creg-snps.c                      |  10 +-
+ drivers/gpio/gpio-cros-ec.c                        |  13 +-
+ drivers/gpio/gpio-crystalcove.c                    |  15 +-
+ drivers/gpio/gpio-cs5535.c                         |   6 +-
+ drivers/gpio/gpio-da9052.c                         |  34 +-
+ drivers/gpio/gpio-da9055.c                         |  14 +-
+ drivers/gpio/gpio-davinci.c                        |   6 +-
+ drivers/gpio/gpio-grgpio.c                         |   3 +-
+ drivers/gpio/gpio-latch.c                          |  78 ++---
+ drivers/gpio/gpio-loongson-64bit.c                 |  55 ++-
+ drivers/gpio/gpio-max3191x.c                       |  18 +-
+ drivers/gpio/gpio-max77650.c                       |  14 +-
+ drivers/gpio/gpio-mmio.c                           |  37 ++-
+ drivers/gpio/gpio-mockup.c                         |  14 +-
+ drivers/gpio/gpio-mvebu.c                          |  15 +-
+ drivers/gpio/gpio-nomadik.c                        |   3 +-
+ drivers/gpio/gpio-pca953x.c                        |  17 +-
+ drivers/gpio/gpio-pcf857x.c                        |  29 +-
+ drivers/gpio/gpio-rcar.c                           |  13 +-
+ drivers/gpio/gpio-regmap.c                         |  73 ++--
+ drivers/gpio/gpio-sim.c                            |  98 ++----
+ drivers/gpio/gpio-stmpe.c                          |   6 +-
+ drivers/gpio/gpio-vf610.c                          | 105 +-----
+ drivers/gpio/gpio-virtio.c                         |  29 +-
+ drivers/gpio/gpio-virtuser.c                       |  73 +---
+ drivers/gpio/gpio-wcove.c                          |   3 +-
+ drivers/gpio/gpio-wm831x.c                         |   3 +-
+ drivers/gpio/gpio-xilinx.c                         | 102 +++---
+ drivers/gpio/gpio-xra1403.c                        |   3 +-
+ drivers/gpio/gpiolib-acpi.c                        |   2 +-
+ drivers/gpio/gpiolib-of.c                          | 132 ++++++--
+ drivers/gpio/gpiolib.c                             | 367 +++++++++++++++------
+ drivers/gpio/gpiolib.h                             |  39 ++-
+ drivers/leds/leds-aw200xx.c                        |   2 +-
+ drivers/mmc/core/pwrseq_simple.c                   |   3 +-
+ drivers/mux/gpio.c                                 |   4 +-
+ drivers/phy/motorola/phy-mapphone-mdm6600.c        |   4 +-
+ include/drm/drm_util.h                             |  16 +-
+ include/linux/gpio.h                               |   4 +-
+ include/linux/gpio/consumer.h                      |  80 +++--
+ include/linux/gpio/driver.h                        |  92 ++++--
+ include/linux/gpio/regmap.h                        |   4 +-
+ include/linux/util_macros.h                        |  15 +
+ 72 files changed, 1465 insertions(+), 1178 deletions(-)
+ create mode 100644 drivers/gpio/dev-sync-probe.c
+ create mode 100644 drivers/gpio/dev-sync-probe.h
 
