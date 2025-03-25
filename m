@@ -1,94 +1,82 @@
-Return-Path: <linux-kernel+bounces-576275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80CFA70D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:51:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DD0A70D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41366189EC77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1D2175FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B8526A098;
-	Tue, 25 Mar 2025 22:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528D726A089;
+	Tue, 25 Mar 2025 22:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KioAoJlp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxNtYwXE"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03EA18A6A8;
-	Tue, 25 Mar 2025 22:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706261991D2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742942996; cv=none; b=c5W/SxeEj9GpRKywXD2AbhtLbyz2v1PMp+SYvWq+NvIid2c8vKJdyRGrjHo5ucfCpnBfY0olgDFOU1vdRL+D9V4Nxjx+Iv0BSitWxZIjg6Ip57JMWAUbakdsifnYK82Jf3N9sgkB7hhk1TGlCXdoqQkCdj7Y0HYUybwu8g/flXQ=
+	t=1742943074; cv=none; b=edlGhSC9TD8+R8e8691sg/rjO8kXbbmMMNSx7haV14xn1ClkR1HHM/8MimWDtSXrhfvKINWFwtBGO9BD/PSAtb4Lo6/Yuf7Y1PjL9/XNRJE6M66EEwDYa2Fw8NzECTbxO6tfyNntumaaM8i4QRIzAUaioltqC0gbbd/6zPd5Q6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742942996; c=relaxed/simple;
-	bh=co7FgKBtgXbqkUapCkD5XvQqzZnsGyQFzcLTxm73rOE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cGlfjyRjLfsQc5z58A/5Jdz6llBk9J6k3PikKYN5iR/Hdk3qVtZwEx2XWpOumZ3DtVI4hDRT5sxkCe1ktmwlaXqCH8Tler6OkKaauBxqcgQV60oDyYmWMau20sZy7zWODmigtJd4JrRdDLQhPNXs+s45K1d4fGHRAckIysD16a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KioAoJlp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343CCC4CEE4;
-	Tue, 25 Mar 2025 22:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742942996;
-	bh=co7FgKBtgXbqkUapCkD5XvQqzZnsGyQFzcLTxm73rOE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KioAoJlp8TrQ2lQ5PkCok9PrazRfpeEGPMx6KBEy4tapX91RXJMZP22GvxLtutL08
-	 P+kuhq9hHOXNARTF40rFSea7ykhpMNRsL97iQBgUV8+TI8ag6NsnuojGrU3hzRzpee
-	 e1MBAb5CRAxSRrSnB7i+gjsxrvfC4rkRQyj4N9N7bXNhPXcTu5azqAhg0xCV/p79jz
-	 NPJ5tQwvf+Ig85GolUzHmN7qqhl4wstXgD+hUamBWe/Edd3AnAL2zxDLoHxTkFcQvH
-	 YRSla1gBrVi1QZqL9wGA/lkCMhla+Oad4ZUTBe5Me4Sfbi4etbdzl8iO/pwfXoUrVO
-	 +/jc3W+iBmxGw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF66380DBFC;
-	Tue, 25 Mar 2025 22:50:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742943074; c=relaxed/simple;
+	bh=CCGz3+zobApzQyVtTVLrH+hh+bHEa7iMAWzGZnuESp4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=r8aL1qjfuz8wONK/I725qm4G44jf0tBjpzphINqnWy5RA+YfXKeHjrJZr6NnWcJ2+nbV2OsHxDeDFSwYTVSdHW+GpnQrkXVB7zHj7/0m/drjZCIlllUl2o6UYpypIKn+wImLz1LBVJydy676C2i+pqFuWNZ/Xft0yk0vfTE5YqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oxNtYwXE; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff798e8c90so9651395a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742943073; x=1743547873; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CCGz3+zobApzQyVtTVLrH+hh+bHEa7iMAWzGZnuESp4=;
+        b=oxNtYwXEHYzK9cdztDUCt4oWWkBhIL2LYxKWwzwx+GQJ/ToyJNZH6QWc7LTwQmHQLE
+         hOEdXZnejHDDTQ8twECsuRiRVcRvsJCrJ27ZlY8Rx224HkTNcQQdhgqpuu8pdZQfMy1h
+         g6hECwq8a26ieCbw5q3Yx5kyrDeziQ9T727D04sqMzJHEytWofNOBm5zxpKGgCWh1hM0
+         WDqckXWQO3xYyJ8itEPsYEGIU+G6/HxrS7bS8rb5x1EBBvhH+dBZKW90otGT0ii+6zQd
+         vBwwo/RPYkxVMDVKheoZHwKa3zIXBdftREiTDooba+5oI0VQfnqnRZvNTq9rttQBFBK8
+         X0rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742943073; x=1743547873;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCGz3+zobApzQyVtTVLrH+hh+bHEa7iMAWzGZnuESp4=;
+        b=tZVzGeZSYZxmAnkZAgvQn97Lekxnc2rb7yqhKBiv2Gh+KpEJ4T3k7uflT6N5kLNu8v
+         HKogmEM3J/Qst/q+qNj561hw/fqXmnkgdlolixyy7pDL2I831XYlckZeqVlIIyfDVxq1
+         T/QJ9NBdvCXM6kvNqMvRyy/tX41mfqyF6OK7W1N64dLjBqKxHgJOdpRY05O5LqabKko0
+         xqlZJPN5cQqahL2MZb8zyT6PVRBVxL+J0s+SZzHktzuOMbk7xWPyAIwbQ71rTjzwuzlC
+         /w/3mpvLu9Ks09eCbD0DHvkpwqIym3GijvjSS/YceWeoHmvf8ARclg0oA/PtSlj77XCX
+         11ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWcv9J+urb5gNBofR6VMKtxxh4TnGJmmKT2vEIAI6ShZyuILigtgG1z1LFJFyxoAYHQKmQitfR+dU2W7eM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCKN3ZVHAwwTonjj7VNcdJ47HK5BsYL/8Pcfvru60CHW9SqC+m
+	UHk2ATLt+amLGbSxsU1i93lpnZfc1sSE14KbWXL/lqi0GZkBgwcKae6IL4ith04FvF8MBs2iDQ/
+	mOg==
+X-Google-Smtp-Source: AGHT+IHYTk5HZTr91hcf06j9nnJIfVo6oiWibftCNtH/6yykV0si7/iIGPC1/rRmh15JykuM0xe0O65nx6s=
+X-Received: from pghd10.prod.google.com ([2002:a63:fd0a:0:b0:aef:56d4:b718])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:4c85:b0:1f5:9069:e563
+ with SMTP id adf61e73a8af0-1fe42f55966mr33188525637.21.1742943072674; Tue, 25
+ Mar 2025 15:51:12 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 25 Mar 2025 15:51:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 0/2] net: usb: asix: ax88772: Fix potential string cut
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174294303252.764297.2012932671054650861.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Mar 2025 22:50:32 +0000
-References: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20250324144751.1271761-1-andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- hkallweit1@gmail.com, linux@armlinux.org.uk
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250325225110.187914-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2025.03.26 - CANCELED
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 24 Mar 2025 16:39:28 +0200 you wrote:
-> The agreement and also PHY_MAX_ADDR limit suggest that the PHY address
-> can't occupy more than two hex digits. In some cases GCC complains about
-> potential string cut. In course of fixing this, introduce the PHY_ID_SIZE
-> predefined constant to make it easier for the users to know the bare
-> minimum for the buffer that holds PHY ID string (patch 1). With that,
-> fix the ASIX driver that triggers GCC accordingly (patch 2).
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v3,1/2] net: phy: Introduce PHY_ID_SIZE — minimum size for PHY ID string
-    https://git.kernel.org/netdev/net-next/c/2c5ac026fd14
-  - [net,v3,2/2] net: usb: asix: ax88772: Increase phy_name size
-    https://git.kernel.org/netdev/net-next/c/61997271a5a7
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reminder that PUCK is canceled again this week.
 
