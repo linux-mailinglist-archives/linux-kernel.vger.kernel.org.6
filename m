@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-575726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD531A70664
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:13:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8774AA70675
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E41174A82
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AAD7A7293
 	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D925D8EC;
-	Tue, 25 Mar 2025 16:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3616025D8E8;
+	Tue, 25 Mar 2025 16:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aq0uJpy6"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tiJFTH5Y"
+Received: from out.smtpout.orange.fr (out-73.smtpout.orange.fr [193.252.22.73])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6201743169;
-	Tue, 25 Mar 2025 16:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A1B18A6AB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919144; cv=none; b=fFsapxDpJ2PB+0Epwk2Ctt50whCUBGCbkBrD2pr8vjHKes/q17zlLvuNARfDExks/cMqzHWLH77bLcwpJjVdN+sW8F6mk/v9F68fiHdFQ7FVLZ6RXBGZxpHdEOOd1ivFg/cki00RRhcR0lSfcN+BpW+THf6LckwaKHGcF/MgHPA=
+	t=1742919230; cv=none; b=MeJjcWaGk3siQtPvlMgRCSQMr48VDSycCzWa0YtbEbVbi1uA3BpuYPjHtnXhAxfX78rYtsCyICwdXC9wNY1aipIHgT/9Djqf8S5DtKMrJlgP7p2Iuhj5aGII251Bx1xL/3gswcZswum8xKW8s6/VEgn/NnQMG7uFy2ZqfQaSSys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919144; c=relaxed/simple;
-	bh=+KdiDrFiarGEbf3kb9HlXSM9P6HlZDF5FlBfLt0MCHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VHZGXrRhjRLcoSGWkCmqYqn+vJS+RiTbMqEBl0AH0Vj7umEjzbTrgND+DPsxaAyvsXtEv/XW/ILda9RIxqys5VK899F+BPenbCR5fQn++YABbLpB/3re2FeBl2cyvnFbbmbzcLtKHi7DdR2msEYC44JzFCz3j8wpbedzn79fJvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aq0uJpy6; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 564B5102F66E4;
-	Tue, 25 Mar 2025 17:12:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742919139; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=OCuZIdUEm0QWQuqdvQk8bF8aibatk8qGzYP76myy1Xo=;
-	b=aq0uJpy6Wp06yKfxV/hPNUiV24cd6mrnOWV4CE+8kfJBqN4oGmgoSUAcXMxOFAu5K8uoPq
-	aOOJI7VMVVHpQssTy9rh+Zxg+zWIJfrKhPErtAqbMYR1HxyWQ1fYv1i8SJbbOPP+jtWK+I
-	2w1/G0d9pKzC7lrHR+odcAgZqSkBD+uDrQnr9cIejI7sLvvN8PfA7/+HwmHP0ss0U5amVA
-	9uM1StWAo9+ovfCtq9IGG68B3G38MB40YR5IWv+mWqBtE7QZ/JEyCyuG80xA88fZyRURoC
-	scOhKT7Y5tgY+UlS0wn/6+bOVsFLoHR69E+bSx8QssbDMQUuBu3c/Mc/ZHJ3iQ==
-Date: Tue, 25 Mar 2025 17:12:13 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
-Message-ID: <20250325171213.61de8d6b@wsk>
-In-Reply-To: <2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-3-lukma@denx.de>
-	<2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742919230; c=relaxed/simple;
+	bh=crtO4nY030F+MQJ69+CW8A/eV1yW5fNaq8Gf3pToO9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gJZPxrSAqfKNQkW6XAWt1iuVoav2WVN5rPC+xtp+zsZ0h9Fs/XKxyBM3G/tMzSDUJMXTjvgPxzozCfDdKVfSIKcyUIWJY9+U0P3/fnVNGz4EoYBkesur9zDQIXwsunRAg7i5E3MOagOKKWIG7OJcpYcikyDCxRJaAvatNqUi0Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tiJFTH5Y; arc=none smtp.client-ip=193.252.22.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id x6u9t37x6tnYFx6uDtX3uZ; Tue, 25 Mar 2025 17:13:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742919219;
+	bh=crtO4nY030F+MQJ69+CW8A/eV1yW5fNaq8Gf3pToO9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tiJFTH5YxHAUqpQqQSULkIZyMczsMpdCqTLCb7gsFW8wVvLkdi1kR8enq+hUe3bJY
+	 iXAxEn27OwmVubxPGT9f/olt6/Xu5RU3F1J3WrX2UbLqt4VnIrvWmN6dVe1WHhpApB
+	 rO7t7+jKlaQhUjetzWTI/t5cDovG8FcgGiO1tKyfTbP1IBle22KEXyNtxZ8O3C6Vqc
+	 iPCIcNvifh5jyKiV5OM7ItwjVEFD9D4vsvaRYVVzrw+ejuajkXLkOntpWeKwVv94B7
+	 u5zT7zp3n/X5B7/Rfmd8XES4bEovPSog3qixh96KO0vX3AkCVEo5n7uVsDE3GsYa9F
+	 71heKjyR9FgiA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 25 Mar 2025 17:13:39 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <58d6a3ba-4db9-4b17-a2ba-96d7f8b52e85@wanadoo.fr>
+Date: Wed, 26 Mar 2025 01:13:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BTpJUUNgSsmMxe6X4ageVFE";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/5] bits: Fixed-type GENMASK_U*() and BIT_U*()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@aculab.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jani Nikula <jani.nikula@intel.com>
+References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
+ <Z-FsJPA1aq7KyTlm@thinkpad> <7e114fdb-0340-4a3c-956f-b26c9373041d@wanadoo.fr>
+ <Z-LKapMBpMfJwcL7@thinkpad>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <Z-LKapMBpMfJwcL7@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/BTpJUUNgSsmMxe6X4ageVFE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 26/03/2025 at 00:23, Yury Norov wrote:
+> On Tue, Mar 25, 2025 at 01:23:22AM +0900, Vincent Mailhol wrote:
 
-Hi Andrew,
+(...)
 
-> > +  phy-reset-gpios:
-> > +    deprecated: true
-> > +    description:
-> > +      Should specify the gpio for phy reset. =20
->=20
-> It seem odd that a new binding has deprecated properties. Maybe add a
-> comment in the commit message as to why they are there. I assume this
-> is because you are re-using part of the FEC code as is, and it
-> implements them?
+> This series doesn't apply on 6.15-rc1 because test_bits.c has moved to
+> lib/tests. Can you please rebase your v8 and submit? I see no other
+> issues to merge it in bitmap-for-next.
 
-+1
+git was smart enough to rebase everything automatically!
 
->=20
-> 	   Andrew
->=20
+Here is the v8 (which includes the other few nitpicks from you and Andy):
+
+https://lore.kernel.org/all/20250326-fixed-type-genmasks-v8-0-24afed16ca00@wanadoo.fr/
+
+Do you also want me to rebase the other series which consolidates the
+GENMASK(), GENMASK_ULL() and GENMASK_U128() now? Or should I wait a while?
 
 
+Yours sincerely,
+Vincent Mailhol
 
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/BTpJUUNgSsmMxe6X4ageVFE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfi1d0ACgkQAR8vZIA0
-zr2V+gf+JAQoDZbvVcOrU8Xf5yrlKENSX8KVhYJexfgs+qiD+wvn+CS8kUCphBCk
-rDQbqUh8g3qjogX3/PH1NWqIlXvz7EO55+P39PQExyszRX3HpW7ibOaTWMgnnWa4
-Ik2qLNREr7mWs83euMDjk21zx0+SacLsJ9I8A0k60wY720aUaxwAFm7p/uhTIvTo
-TdCeHqeaKWV/2ui8a2fnR5TNaM9LuCF2a+xxbv9OiqYdHlPVLQyFMtm7AZ4RWT+A
-AGnhGvNGIX87TACwdl5FRb85sSxbUbd2jLMzT04w268IgsXKhqMRmXyAxmktKSMx
-Z4U/nFhivYUqaXt05MM8Id9eAZ20/g==
-=vard
------END PGP SIGNATURE-----
-
---Sig_/BTpJUUNgSsmMxe6X4ageVFE--
 
