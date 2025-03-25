@@ -1,73 +1,183 @@
-Return-Path: <linux-kernel+bounces-575863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544DFA70836
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:29:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11009A7083C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A413B38EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:29:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8512916CC08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0E725EFAC;
-	Tue, 25 Mar 2025 17:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039D625E802;
+	Tue, 25 Mar 2025 17:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRch+M7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="eYd7Nzep"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B7B84FAD;
-	Tue, 25 Mar 2025 17:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D93257AFC;
+	Tue, 25 Mar 2025 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923789; cv=none; b=tp6Hi691jpRjevCsppcSeWB4fowlux+oYYRU8Q1nrIrChTZBLGSF8BzkonGIj2SunVfELxYN0ntWmQ70zuccKtNqzi/8ftSzKHIyagZlQ0/o/zy9f6oS+ej5xYlRE49t+NeLvWhj0oAsF3+iE/IkIc+2otrs3drHjHyDh8AO+EQ=
+	t=1742923820; cv=none; b=AaVCs4iUGPpXqa3WQkAWEsdPJnMs53sHNOq4m5BMpmIn4msmW8seDq7ouXRLrYcU7MLpSv7DgCRqdmDrgoFvZVRlhAuyTrzdvL1tnzBNbYeiZjdupcwQBMECmRAG2AXC59+B0idef7EEYQNsMcaZ3z8vEj2gXedo+DiHflWdN0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923789; c=relaxed/simple;
-	bh=BWhodHSI+9yK6kenSRuoJmYMWxeAmWE0pnPItawj8KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGSrbTvAYj0IfULCxiIug2k3AXiSj33wBiC6RGrJWzbz2PvKDClE5NJgCGr1mclJbWBDXawDVqf9pGQF8LvWgcVFIqq5jrZUKkSGYdTW7M1Y7G7mhOzkVJVSvAJCUIx8ds0xTJvr7uKZW9LmY3JhEj1V1QRST7gVxwc15306S4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRch+M7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8422C4CEE4;
-	Tue, 25 Mar 2025 17:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742923788;
-	bh=BWhodHSI+9yK6kenSRuoJmYMWxeAmWE0pnPItawj8KE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lRch+M7MnA3RfGsLGSq09H/FM5LJ9tHz/GouR2XC/1ngxLJ0X2ylbxwJefF0kJs1S
-	 jTQbsOi5n0TJFmh4z70D4SsZM/YxQZl4dBFWTsAR/7Z4Bb4xhtVIPu4upPDZfif2qI
-	 DAdAiymzWL9BP5Q6MIsyh6GR0WPernBw1/kcyT/LTlhuZZU1Rli+d1r5osNCuTGR/z
-	 qzgk+4Nc3qW6I5ibxADok3BlEG1icz6Z+7vhz0RUXt0wKHhJYcysBQTrPRik8heC6G
-	 YnkJ43Rc0tlVamkaVZvs0b1j/ts3oN8ownJCNhLpIMZ1xCQep+4PSTMO7bHYKKv2Rw
-	 Ey01zBf1Mp9wQ==
-Date: Tue, 25 Mar 2025 18:29:44 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Aditya Garg <adityagarg1208@gmail.com>
-Cc: admin@kodeit.net, benjamin.tissoires@redhat.com, gargaditya08@live.com, 
-	jikos@kernel.org, jkosina@suse.com, kekrby@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, orlandoch.dev@gmail.com
-Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple
- Touch Bar
-Message-ID: <bzb6rk7q7rs27kbonihpfftkgueievpux7vpqjgrgsud5pf5g2@tuxymj7vk3it>
-References: <02F14282-87DB-4EF8-80EA-3D0887F3C30E@gmail.com>
+	s=arc-20240116; t=1742923820; c=relaxed/simple;
+	bh=af/qHaAv8wr7ohqEEz6YmtWfQIwybjKt+19CY5VMK/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pKak+AZLfzkM6osG28wthCkNSUuNeYiFMhzHPgbyJuv18wet5Fot4nhagn/5hCE/wC+LQciebpUKGU3gSVWS8vQG3K6Q3I9hpVVmPV+5azB/mACnBpY3h/zA3NGVAXKSgz84/b3ZNYrOa1Euig04JtcaBjXzZOjf9+u1+ByFkz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=eYd7Nzep; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 34D83102F66E4;
+	Tue, 25 Mar 2025 18:30:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1742923815; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=eI14fRc9SgUgLwy7/SzPwK7ui4N4JuoaWPwp0MI9v1w=;
+	b=eYd7NzepKQqK2eSrPI8FEFriEYWhaavSzTZJ4hcetjyIwJx+vVQimsoU9aOfT5VG5+vl6X
+	iCDiYqDiDVvvRetIf3pstTAnVGxtuUydTSc8sJUpPWU4ea8nUIFi8sqqK89G22zhBTUCjY
+	UegnfTP43buAPi1PaCWNEOfrZgoYRA3tIaOLY446g0RdlGQBSa9B2K1B2z8SWDefqSJTGF
+	PrtAMFV08qt85/1bjQOBFE5ud0RGAmt33zkvcC8hQKNmKl5OcvufCWKM29NwWBqhfnnu+B
+	BvATIGVovo0wlnzbyerfviUh+4aYAUtqC0HqH0bRbYcCKNG8BUeKXQk4ERDsgQ==
+Date: Tue, 25 Mar 2025 18:30:09 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Paolo
+ Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, davem@davemloft.net, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+ netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 5/5] net: mtip: The L2 switch driver for imx287
+Message-ID: <20250325183009.3f7e8a1c@wsk>
+In-Reply-To: <39ec01b8-c2d7-47c3-90d9-32fe41f08a5d@kernel.org>
+References: <20250325115736.1732721-1-lukma@denx.de>
+	<20250325115736.1732721-6-lukma@denx.de>
+	<32d93a90-3601-4094-8054-2737a57acbc7@kernel.org>
+	<20250325142810.0aa07912@wsk>
+	<0a908dc7-55eb-4e23-8452-7b7d2e0f4289@lunn.ch>
+	<20250325173846.4c7db33c@wsk>
+	<39ec01b8-c2d7-47c3-90d9-32fe41f08a5d@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02F14282-87DB-4EF8-80EA-3D0887F3C30E@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/mrx3VObtQardV+8O_zt0.CL";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mar 25 2025, Aditya Garg wrote:
-> Yes I can move hid_find_field to the original location as well. But, I would not want to devm_kzalloc as well unnecessarily if the touchbar is in the basic mode instead of drm mode which will cause this -ENODEV to be executed right?
+--Sig_/mrx3VObtQardV+8O_zt0.CL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It shouldn't matter. hid_core calls devres_open_group() before calling
-.probe(), and calls devres_release_group() on failure. So yes, we'll
-allocate a piece of memory and release it after, but it's not something
-uncommon.
+Hi Krzysztof,
 
-Cheers,
-Benjamin
+> On 25/03/2025 17:38, Lukasz Majewski wrote:
+> >>>>
+> >>>> I don't understand this code. Do you want to re-implement
+> >>>> get_optional? But why?   =20
+> >>>
+> >>> Here the get_optional() shall be used.   =20
+> >>
+> >> This is the problem with trying to use old code. It needs more work
+> >> than just making it compile. It needs to be brought up to HEAD of
+> >> mainline standard, which often nearly ends in a re-write. =20
+> >=20
+> > But you cannot rewrite this code from scratch, as the IP block is
+> > not so well documented, and there maybe are some issues that you
+> > are not aware of.
+> >=20
+> > Moreover, this code is already in production use, and you don't
+> > want to be in situation when regression tests cannot be run. =20
+>=20
+> This is a good reason to add it to staging, but not to mainline. Just
+> because someone has somewhere products with poor code is not the
+> reason to accept that poor code.
+
+I've tried to upstream this driver several times. Attempts were
+made for 4.19 and 5.12. The reason the code was not accepted was that
+conceptually the code had to be written in a different way (exact
+discussion is available [1]).
+
+What I've tried to say above - was that I need to have working device
+at any point of development.
+
+And, yes "upstream first" is a great policy, but imx287 based HW was in
+the kernel long time ago.
+
+> Otherwise all the people and
+> companies who upstream BEFORE would be quite disappointed. Why anyone
+> would care to work on upstreaming BEFORE hardware release,=20
+
+Yes, this shall be appreciated.
+
+> if you can
+> ship whatever to production and then ask mainline to pick up "because
+> it is in production use".
+
+Where I've stated this?
+
+My point is that for regression testing I prefer to gradually update
+the code and not start from scratch.
+
+I do appreciate your and Andrew's feedback and try to make the driver
+eligible for upstreaming.
+
+To sum up:
+##########
+
+- Yes, I'm aware that this code needs some more adjustments/update
+
+- Yes, fsl,fec.yaml was the wrong file to use as a starting point
+
+- Yes, bindings are ABI and shall be done right (that was one of the
+  reason the driver from 5.12 was not accepted).
+
+
+Links:
+[1] - https://lore.kernel.org/netdev/20210629140104.70a3da1a@ktm/T/
+
+>=20
+> Best regards,
+> Krzysztof
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/mrx3VObtQardV+8O_zt0.CL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfi6CEACgkQAR8vZIA0
+zr3NAAgAhtMjYHZz0S6KDjq/IEmqopGlqJgFjvjtklfA8BpjDXNA6Is65pgFd6LH
+idHOlhnCV/PAkb0gwJ3VMuG++BluGUsIWV/JZ236mXW9VFoRFYC5zT4IDPJLd4Or
+pObbUtxs3V3ZVpn1ZFQ+y4aDcCYZL0iAIiYWdF36F30xJ821EjeCn5Ah43GfyCWk
+WSTG/uTuCNkOoGXyjeJHD+GG+YshNwd0GyJrdbSlUaPsSaBy1D4tST0QKinduNWq
+nvSvlUXZlL5o7jHPt+XXtWvyfNp3Odh/fdhshgeS4uIjd+3dGFdg0F4jx/TUVoiv
+A9YioUZbLh9npLz19KYNKzaGJDLNsw==
+=GR0R
+-----END PGP SIGNATURE-----
+
+--Sig_/mrx3VObtQardV+8O_zt0.CL--
 
