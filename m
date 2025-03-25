@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-575624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A96A704F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:25:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB908A704FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437521884FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C39B188652B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759B925B683;
-	Tue, 25 Mar 2025 15:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1499C1DED46;
+	Tue, 25 Mar 2025 15:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyqwfU7c"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F24vtrfz"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6976A1DED46
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBD881749
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742916207; cv=none; b=HDTgSVa7X0T85jEgFyqe+hAOiWOm+PJ2HnOfzHuMIrE2xnbBGb8MR7G5zfSjr2bOj+XXedqYqpKEPSZCw5cFJjQzJLI0XumyDQrfBvVIyhHjSJ6gF+BlkwXtMQ0MPdNCCZn6gwF2grXgRyjq25lOu2GHtwf2xq21cz6qavln7n8=
+	t=1742916259; cv=none; b=Bc4CE8zkyafVhNvaH0nzDogcOh9PehksohWrY5fZXhztoG99zRmih9h6+SXqz1+f42vfAW36jGnhelXbzDES/mBLHElTvbQe9j0NKJhlfLZKwGhBedHveTaDWVFIl3VZxdT9oM1jDzuGkHLxSHR2Hy4LbnejSBbKrzaubyGLW0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742916207; c=relaxed/simple;
-	bh=9JW6FJsTncczqcLVQiHmCXymUTVxTiXL/G5JrqR5tRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSmlN1/IPNYKp1ALfuSn+8Nq/DLlhXIEVYxt0Rq2v6hT/8FEx6k1pXC7fR27CsAGhKBJLtKG1XzN6X/xBoN4CuTeBYBqAH1puYYKMRE3Uak9zFZ3m0EwnZO8yQv8Xjj+cYhjFZiwYuVi4pnXnG99FUpjWoTmJmP82dsIaIB90Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyqwfU7c; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-224019ad9edso43521075ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:23:25 -0700 (PDT)
+	s=arc-20240116; t=1742916259; c=relaxed/simple;
+	bh=L7na/8WdST7iNZ4InUa+H5JMUaPlzDdGv1VdBm7+V40=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RIlAjvJaLo80uur9KB1WsfWpN2q3F+HbzkLcRL94oDE3VgZ+thpVaxtEYmK/9Npqfk3B579YidPlppCF5TouHg3PEq+k4CuL8S06/Jim7e0C7dE+5/NLA1dqNFr6iKxCb5Mun8KqdtH7XNA0h2ViU19glAbT5cZv+F3/lW8mzMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F24vtrfz; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-549b159c84cso6452055e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:24:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742916205; x=1743521005; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NDEUa/8k11B8sf0KeIB05SHGhO3FNf6wOS/GzrTKGyA=;
-        b=fyqwfU7cnMYHf1bIJYJH2MkYqlMGUDrSA55fo2Ctk9cFoDCN7cMXQp8+0OwX4qrIXv
-         fbr+F4I/L+cl3e9OTDe6cJNKDALYUO5nuJmNLbr1rWEM6FN8tJR5KB8Tv3CiMr4cTQvr
-         KT+G3JO3MKiKcekwKOCRQbZuxP3a6upnQ3Awx4tHzcke0N7wGXDQwgZpKQo+yTiMD5UL
-         LFEzZvFq6y+ixeBOCV/zFEb/v/c2kEvnTGoVXcKnTdvqvtYbb0hcnHO+ujJvGZg8VhIX
-         WPB0FFoRA6KDy1+wLkNZRIyqvglsFneVrD9ZsmcWR7d2di2UxlLFgW1djCDaJMdni30/
-         dtgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742916205; x=1743521005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1742916250; x=1743521050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NDEUa/8k11B8sf0KeIB05SHGhO3FNf6wOS/GzrTKGyA=;
-        b=fw8lXeN3LYX68gnvvwVu5qVX+PjvdSsgEdJ2lX+TR/GAabhrHyZO/UFgj6W3Ye1+ss
-         qcF2LjH0gfiOjzvC2+H86xhzTBBAlyc6TnqUMKeAZo7jGW6JIL4qWvkXCFT+7x0+wbLB
-         frKENnMk45eKQ2ucVpszLs88FSoYWppyK/W5ZMxAyuQ5SlIOoR2s7zCyign0/24ouwbB
-         5UQIo73SGzs7eK+L1m0kX9Ik4G3CQdCJ0SFZOlm2v0YxvImwudOCHDYfHWfWWFSXrU60
-         zmlCo/dfR8BQDeoDnBRH4Fl9FRQsLZysQUJ318yNrtHd1sRMtIbuQlzYkxAAKmFsVCWr
-         ixeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAB1vIEkZe/0T2i9ntFQC133NMK+TwGRtvIP77ZweAwsma6hE0AKnCPnwyXHydhsXiowPi+VbJGuj/YDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEf4yiGVHA8Ve0HVIMicq5UN5gwkzMFcrUyO0+2NXRmAdWNCyx
-	DZLLpuvmt5LhyH7AgkHGkLL3zU6J5RbtkyAJMIIlaBLX9GPyck65
-X-Gm-Gg: ASbGncshf4BPlZpicC/2iVp5eghzZ1Uv/QMjVcw57R456gidXoztSrl5J90l7oblXDM
-	MmYzD86NMsZr6n6SP14KBvlK1gpBlMpN8bz1xdnWgZfmVfUfY6NeWV4XfBRyIyTA0x0dyhNhCK4
-	7TNBea+BDXTguqj3a5kUVikYNAm3M+68x9SJT+/WI6Wt2JKG9/jNoZ3xLw+UOUEvIrG/7M0aEVi
-	nR7c87KyhxS83o4IaDCzc5aKckIdEMwrZyrq1jl46Eo+svClEG/blHpjZyI5CQ79z22Sl8JlDtx
-	axZNg83Jt77fsqdPAdW7cMtmTKqNAz9E+Y7Y6sircHTjlk0kPv1Li3Q=
-X-Google-Smtp-Source: AGHT+IERqjQ8v4TPmvjqLe2ZRM0h9caz3DbZCtwwWbViglyqvjOgOKurUBCP/tbe3Wa31BZwvLBCcg==
-X-Received: by 2002:a17:903:183:b0:227:e74a:a057 with SMTP id d9443c01a7336-227e74aa5demr23766335ad.44.1742916205178;
-        Tue, 25 Mar 2025 08:23:25 -0700 (PDT)
-Received: from localhost ([216.228.125.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f396fasm91417135ad.27.2025.03.25.08.23.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 08:23:24 -0700 (PDT)
-Date: Tue, 25 Mar 2025 11:23:22 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v7 0/5] bits: Fixed-type GENMASK_U*() and BIT_U*()
-Message-ID: <Z-LKapMBpMfJwcL7@thinkpad>
-References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
- <Z-FsJPA1aq7KyTlm@thinkpad>
- <7e114fdb-0340-4a3c-956f-b26c9373041d@wanadoo.fr>
+        bh=Q3+8bsc2QVqd8YR+1dNBTuUVkIye6hV+ORmbDcd3a38=;
+        b=F24vtrfz72WbsuVQPsuNZX44TD7d9CYiahzUYgBWlJrcb4RcTp9bHiMI1B0/UtcH/n
+         GdgDySABqnUEHSBl+VAY/sXjQHVELr9mzF037BzadVZb1fBm0O0ogNYmUFskR9KC+LN5
+         dqsZZCtbyWigpQMGnrNDYOUkgJbfqQW/Ke2ZQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742916250; x=1743521050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q3+8bsc2QVqd8YR+1dNBTuUVkIye6hV+ORmbDcd3a38=;
+        b=fBCslhKH1SdcHJvOzm3VupjVO+b/bHg9XakVtx9eMF0XtxM3LLTrkX/6+G1AcHIV4u
+         8/q+ujMhp2DXBm3r4ZYyBWoqqaHdNJ9MYkuqyjuGxgARc4FevXkuTSAvOoQJ+ZEjwEbk
+         ZPQfiZa5U/mgm8iERIBp0g06zznPM2BlmHrmO7cYDs1MfN6Q3TRDdrvGiP5NTLEzKwLt
+         Oyh9Cmfnv+4bS/iPUxzQw89xI1d9kKP+eLh4v2oJbc8/hQOiD6gpLS+ifWJtBDCVaHlP
+         GovThnaLeOZQYaVZ9ClTYcmzfKtoi7TsHoUvIS5oyXCqjZ7f8t6XB2YwtOuYm5DYKh2F
+         2Ziw==
+X-Forwarded-Encrypted: i=1; AJvYcCVm8RmknMz5uIJr2BpMd75OZbzHbZeYQNRBJu0mcxgFfrmowVd83UkW0QJ5I0ffyFqqQ268efMGVupyM08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn0Nm2idTExiLDQ10W1XFzhIYybahbIUoeRp/ohbvzUPOrUjBu
+	A/WwOPTvp2apBxpVgnbn6Qh9uVo3cOM/HUZdG3I30DAPOuw5+AdJhqxg2tAQUwnocuaX7DjPrbB
+	v8pO4
+X-Gm-Gg: ASbGnctoY4b+ArQKnVnY820wpprPNwK7gSahGTMz/YA2VKWUjfF/+v4BjpyMxCrz6lQ
+	ohFfrAv28GoPexxK7nBQDwk1O5C27uxps7/1er1LJDL4KMEJJSBk0UnoiXMEwfyZxAthbH9E6mB
+	uu5Zr5hlx3Yn/yXJh9Q/m6LB2oxPEurcxIfrpmFOm1o2dpifcoG/R0+aYjgi/ydP8wrZ7yldNoK
+	RwNU/JoQIo3m8EsRfLctawU4AWZpOXtqYPkfzfJMzpInkM+N3t/kFRT5WJupTV/catx92RR88M8
+	GUCyN2Bei+16T4bB2ieHUwZYZmSmbk/qEtWZfFM7+QCww27Jphu7vRkHTiEXYSn9VQqkl1JDwZN
+	q+OTPr1lcwYaV
+X-Google-Smtp-Source: AGHT+IHdqlKVwhJZ+0FwLnPVDAl7cNGKpgW9Ymq3QkHUYPEa8cAkyf8GckBWYkAkPcyBBXr6dzbicw==
+X-Received: by 2002:a05:6512:3b06:b0:549:b0f3:439c with SMTP id 2adb3069b0e04-54ad64869b7mr5213667e87.21.1742916250370;
+        Tue, 25 Mar 2025 08:24:10 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad647c9e5sm1522930e87.85.2025.03.25.08.24.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 08:24:09 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso57557581fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:24:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLCDAxSgnMyEqgdmHxtL2QNksgl/cS3XZ6Kl3vQDvygZFWnxTOa6dW7Byj25FbZ077LnBS1v7qvtJPz10=@vger.kernel.org
+X-Received: by 2002:a2e:be0a:0:b0:30d:62c1:3bdd with SMTP id
+ 38308e7fff4ca-30d7e2ba26emr74845121fa.23.1742916247223; Tue, 25 Mar 2025
+ 08:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e114fdb-0340-4a3c-956f-b26c9373041d@wanadoo.fr>
+References: <20250325094707.961349-1-tejasvipin76@gmail.com>
+In-Reply-To: <20250325094707.961349-1-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 25 Mar 2025 08:23:55 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WhVYBjGYJFn7Ooszx5Wgk47vLPj_59MWU6t=LQ-iJbTQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrWE2x9JIn0TPRim15TMFG4kF_9Ffm6HQx-1emxlt_BczIgP8cT-z7urPc
+Message-ID: <CAD=FV=WhVYBjGYJFn7Ooszx5Wgk47vLPj_59MWU6t=LQ-iJbTQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel: himax-hx8394: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	megi@xff.cz, javierm@redhat.com, quic_jesszhan@quicinc.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	asrivats@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 01:23:22AM +0900, Vincent Mailhol wrote:
-> On 24/03/2025 at 23:28, Yury Norov wrote:
-> > On Sat, Mar 22, 2025 at 06:23:11PM +0900, Vincent Mailhol via B4 Relay wrote:
-> >> Introduce some fixed width variant of the GENMASK() and the BIT()
-> >> macros in bits.h. Note that the main goal is not to get the correct
-> >> type, but rather to enforce more checks at compile time. For example:
-> > 
-> > You say this, and then typecast both BIT and GENMASK. This may confuse
-> > readers. Maybe add few words about promotion rules in C standard, or
-> > just drop this note entirely? Doesn't require new submission, of
-> > course.
-> 
-> I do not want to into this level of details in the cover letter, so I
-> will remove. Instead, I can add below paragraph to the "bits: introduce
-> fixed-type GENMASK_U*()" patch:
-> 
->   The result is casted to the corresponding fixed width type. For
->   example, GENMASK_U8() returns an u8. Note that because of the C
->   promotion rules, GENMASK_U8() and GENMASK_U16() will immediately be
->   promoted to int if used in an expression. Regardless, the main goal is
->   not to get the correct type, but rather to enforce more checks at
->   compile time.
-> 
-> I staged this change in the v8 together with the other nitpicks from
-> Andy. If you want that v8, let me know, it is ready. If you are happy
-> enough with the v7 (and if it doesn't receive more comments), then go
-> with it!
+Hi,
 
-This series doesn't apply on 6.15-rc1 because test_bits.c has moved to
-lib/tests. Can you please rebase your v8 and submit? I see no other
-issues to merge it in bitmap-for-next.
+On Tue, Mar 25, 2025 at 2:47=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
+> wrote:
+>
+> Changes the himax-hx8394 panel to use multi style functions for
+> improved error handling.
+>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+> Changes in v2:
+>     - Revert behavior change in hx8394_enable
+>     - Move variable declaration to top of function
+>
+> Link to v1: https://lore.kernel.org/all/20250323053007.681346-1-tejasvipi=
+n76@gmail.com/
+> ---
+>  drivers/gpu/drm/panel/panel-himax-hx8394.c | 441 ++++++++++-----------
+>  1 file changed, 210 insertions(+), 231 deletions(-)
 
-Thanks,
-Yury
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
