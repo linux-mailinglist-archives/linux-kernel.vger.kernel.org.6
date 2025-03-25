@@ -1,90 +1,56 @@
-Return-Path: <linux-kernel+bounces-575742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9DBA706BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:25:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF66A706AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AC3172518
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F47618907BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4F2254B09;
-	Tue, 25 Mar 2025 16:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F618256C89;
+	Tue, 25 Mar 2025 16:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OBzdh316"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M4LypvG3"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D821922FA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00E81FAC4E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919661; cv=none; b=m3wbFQ2EM+QUjZxdYM/FtyXOyXmIY1dMWnZ/HQCRksOD3tHPQBoJIrIbvJj79wjBy7NoJS0gW4CdveJOCLMbJK2UMpmMnnRTm6GcgicgHex1sVpQxIyg8pVktBIPSTwUDswhnIWLLRZbIi8Q5qxvpKwMQ1+PuPRracdnAog2Opk=
+	t=1742919675; cv=none; b=mqDguQRCXJQEJ1NFrjuWd+I8BfcBpT8GWMdO4IaW2HEGcmod8MGy7LMSWdYMrcaOLhDD8/ZjpwzJLbnQnFUQlvU7n34ysR2PNybHj7AUExL638XORe5nf3EEK2im68/dB+f1xwt+2zQXLVZzAfBJ3j/OtbrGrSFAyynb4QSvLvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919661; c=relaxed/simple;
-	bh=GjYkRvObWlrImE4cQ7gUuIKV1Cu2lgGMbmIy+oWECk0=;
+	s=arc-20240116; t=1742919675; c=relaxed/simple;
+	bh=1qXbnHV2qk8Y71BXOizilDEhNN/aAPZZl8nOTeF6WC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ViN4tY608NdyVtm/qBixm5yQ8kf/dqwxeVtUBPpYnHw42+7WiBeOJX0PdmJyOgNVVKBRrouQepHe0vQAfbxrhzeAA3gc60kE0EzGPMxQd5yBZL1/3RIRPK07/xGJIzT1+xWb9qwxWH5jjvQzYEZE+QUTNYq5SrMJB+GrRXu+LKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OBzdh316; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742919660; x=1774455660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GjYkRvObWlrImE4cQ7gUuIKV1Cu2lgGMbmIy+oWECk0=;
-  b=OBzdh316KQTOXR5a1HtRVAeLeFYgxw7fBD5aGql6ET4PlmZ22TeLbdCO
-   QRVtVvH1A2SvsX8dI+tNuPuXp92t3Z7sO4S8jn4ysgXowzW7MNutOIqnc
-   uWYVcDeWkjIgl3TyNfm4kU+3ehs/pX10p5BP6aVEw+9iEm1URDC3c202x
-   HY3TZ533ztHtZVjN11LAraa9ZmP8OxMbeY+2Vl6nFZtbt/WTn8uMNa0Iq
-   nxIMFNNLl6d8t8GM1gxiM/IvnpGszDVrcZlhZuy6cJd1JQkojrBlFyfef
-   /s+NV3e5ctWrCg7PIsXwAQAVuhVTDukkWiI4Xq+XQDcP4uev/+32YfrU9
-   Q==;
-X-CSE-ConnectionGUID: flMPTjjMTj+ogf0BMlb5gQ==
-X-CSE-MsgGUID: cMdq78ifTXqf/mL94HhmLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="43904456"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="43904456"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:21:00 -0700
-X-CSE-ConnectionGUID: YfDEOEvTTumX1d8yEn9lKg==
-X-CSE-MsgGUID: Iu6cG0pzTUGMZM0z5IvoLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="128579110"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:20:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tx71H-00000005ngL-40Jm;
-	Tue, 25 Mar 2025 18:20:51 +0200
-Date: Tue, 25 Mar 2025 18:20:51 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/6] bits: add comments and newlines to #if, #else and
- #endif directives
-Message-ID: <Z-LX4y1pw54C_H78@smile.fi.intel.com>
-References: <20250326-fixed-type-genmasks-v8-0-24afed16ca00@wanadoo.fr>
- <20250326-fixed-type-genmasks-v8-1-24afed16ca00@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ucp/zTgwYiBElOHxLdJt96bX6thPXETjtNq8cDPUKNBOUpc25ypqas3hbEdwD3QTgGitlfCzSD19GgQ6HDJQFaD12MH9ZiE3EeOycB2Cc+Eq2y6qFnDsUmXQmfr/pMPPTKgiibsKIA4MMzXKhvynZjuCGiRN5jW4YTH9dk+K2Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M4LypvG3; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Mar 2025 09:20:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742919661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kH82AWI1DJslhjV0Iug+U9xXkzn8ELqhzK9jzJCrPWc=;
+	b=M4LypvG3T8toQIUrvERxsZVnUA5+eQ36UPuhS1X6f5JNdlprDLSjniBaiyNKYW/UgQNwIX
+	eaeymRtM4z2Z91mNNqyzNY04RHsh9LpwE+ReNtxrxuPKxKUb8drKWRY5bUZFMHYeAGsQU/
+	yf4+4dAga4Sy8JusJswBXqZ5pWyO6y8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Jinqian Yang <yangjinqian1@huawei.com>
+Cc: maz@kernel.org, yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, wangzhou1@hisilicon.com,
+	shameerali.kolothum.thodi@huawei.com, liuyonglong@huawei.com,
+	jiangkunkun@huawei.com
+Subject: Re: [PATCH] KVM: arm64: Make HCX writable from userspace
+Message-ID: <Z-LX5H5mjGyTQ9N4@linux.dev>
+References: <20250325121126.1380681-1-yangjinqian1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,26 +59,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250326-fixed-type-genmasks-v8-1-24afed16ca00@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250325121126.1380681-1-yangjinqian1@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 26, 2025 at 12:59:56AM +0900, Vincent Mailhol via B4 Relay wrote:
-> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Hi Jinqian,
+
+On Tue, Mar 25, 2025 at 08:11:26PM +0800, Jinqian Yang wrote:
+> Allow userspace to modify guest visible value for HCX in
+> ID_AA64MMFR1_EL1.
 > 
-> This is a preparation for the upcoming GENMASK_U*() and BIT_U*()
-> changes. After introducing those new macros, there will be a lot of
-> scrolling between the #if, #else and #endif.
+> Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
+
+This is fine, but I would rather we handle all the features like FEAT_HCX
+instead of a trickle of one-off patches.
+
+So, could you please:
+
+ - Identify all of the features that describe an *EL2* feature which
+   we've exposed to non-nested VMs
+ 
+ - Implement patch(es) to make those fields writable (i.e. allow them to
+   be downgraded)
+
+ - Add corresponding test cases to the set_id_regs selftest
+
+Thanks,
+Oliver
+
+> ---
+>  arch/arm64/kvm/sys_regs.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Add a comment to the #else and #endif preprocessor macros to help keep
-> track of which context we are in. Also, add new lines to better
-> visually separate the non-asm and asm sections.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Thanks!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 82430c1e1dd0..b105f156bdf6 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2666,7 +2666,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  					ID_AA64MMFR0_EL1_TGRAN16_2 |
+>  					ID_AA64MMFR0_EL1_ASIDBITS)),
+>  	ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
+> -					ID_AA64MMFR1_EL1_HCX |
+>  					ID_AA64MMFR1_EL1_TWED |
+>  					ID_AA64MMFR1_EL1_XNX |
+>  					ID_AA64MMFR1_EL1_VH |
+> -- 
+> 2.33.0
+> 
 
