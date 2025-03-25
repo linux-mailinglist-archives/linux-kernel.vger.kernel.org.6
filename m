@@ -1,195 +1,165 @@
-Return-Path: <linux-kernel+bounces-575301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC4CA6FC94
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:37:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8371BA6FCC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26C0175C3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:30:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A13C176F8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C454525A631;
-	Tue, 25 Mar 2025 12:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1441E25A659;
+	Tue, 25 Mar 2025 12:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Jf7vlGGR"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvA7D/2P"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6692580CC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C9225A634;
+	Tue, 25 Mar 2025 12:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742905234; cv=none; b=Iq7YPcORrWT3EakRg4lXTUnwLfrXin9sC/x+zX5eCd1VZifV3Wa47cn0p7xUbO+CEHIqfAT/q8fKaBnyl/2/8wrHnVJJXPG4dPgFOcbH4FcOXdQHWQGJ0AJPtW1KuCJmLlj3kWgRwIP5hwwvuXwdgDzUxitQiPBDa5D1IBnDmRE=
+	t=1742905248; cv=none; b=SrE+QlEU/UaZnOPZUXQdwu0nTL6x4Edfd964WflhF8N5GcCL1HKAjFSVHwjJ0ZEfxyWGnBifflR/RgzwQBT67b3jHTsdLfGqkPgflBRu3fXhUB60GvubuidVDKhWHFMpocRRPH6hABthnXIkWTvwTipbb/VdBQwrrBTutGByPCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742905234; c=relaxed/simple;
-	bh=fRI2Owqgw85GmBsf1kqLISTrjN6ADCz0KAC+v9Cbe1M=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=bVoo6Kyay2NRGb+5LvvQT/sMmDie8Tlv7q82NyDeio0CuUTaSN/07TMtDHksnHeNU8rPOUbL59xeGP7eX1MQqr7JM67nakQ3UkXkbhAdkdzGSh9JL88sUww66P95WKY2zdxCnbPS1kosUjJaXHSYdaRUlkHMGfdYwAYihj/jtbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Jf7vlGGR; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1742905248; c=relaxed/simple;
+	bh=+Q6Q8jost6RR+L6/1WQaoG8urBg7K9/rNabjNfsQh20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIeIoNzVkuOcAmUfrdmCbU3lVIHQahIokaNmuPZ9iXg6hZLxHNC/lqJWWevoltXjWJ/5kiDbqodzFeBtspYxJqm2rvKVmTV6kIvu1W9P9ee0X+PZoE10DBkGtaBadp0JpR0vSScq2rifhredoOXGEMNDOKDKwjLWRx6KmzRhEwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvA7D/2P; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e8f05acc13so65875006d6.2;
+        Tue, 25 Mar 2025 05:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742905245; x=1743510045; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Q6Q8jost6RR+L6/1WQaoG8urBg7K9/rNabjNfsQh20=;
+        b=lvA7D/2P1kyd3seOssn0go2hS35d/CRgd6nf4/nIZIzUeicZRqR0XIkciCwLkfJNqd
+         o2XQDNpO+sIF2yNHKBbLwdlkt9dU/MfVQg50SoCIQKyNpS3/KXyVw8n/FKQSFLhaKOFr
+         Qzf8zrfsPoMh5Z2yzIP44a+ujQyxTVK4LpLSWwHWK8pVlT9DoceptsHsVqVkFAc8UL3G
+         tXdp4dkadq5DEuQHNUb3WM0pupv8CN4zDHUiY1/43mA8BySwB/LxHXGVJxh8+qVHd+c3
+         9aI/YPUIjWbqAqH0P/QXpxTmtxWhdJRKaPeaBODZx8k7qWUwp7jMtmPAr7u7IUDxIe05
+         uveA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742905245; x=1743510045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Q6Q8jost6RR+L6/1WQaoG8urBg7K9/rNabjNfsQh20=;
+        b=J0HyZOsW9r3lQqfI53mrTBXhoT0X4FB8hGifHdFLBLiVESLLjdXbfLGEru26onG2GZ
+         0qyQO7UMS8HUHs8q5bxVrYptWkYccIsKI0v/Wsiwm8BDF1RXn1bqPXQHCgb1UcgiunYg
+         gTy2BQYpg7vXZlfchoFiQK+oYyIAZKlJi4VAUQJ7ckaaYOsbjtxxiynkkHaYX4Tx+4KI
+         hGQboY8g8iZ62tWyEJyyMlLYVIOBvhrKky8qXu4MzH7GJByZa++grH8Ox5YSLqXM5iwm
+         yKbmAEQoqPlEvmg+ONh0IQQ3CSI857AppRxAMF3ZBXKsLqcYN6+1y2d3JVGacQQMStl9
+         fRtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDtzXQ0wwE9JVJ2FjbirBvmE0GVd/jrGikx//UyTyuFZEUGkB/G939GQql+4p3qgGc30HDkSinyQ0=@vger.kernel.org, AJvYcCW4eONknek35N+KmpGkZT7U9zlZwDqrHzM6CLOcmabt48VdC0s1G4ftbAbw1tKqbMt6BDaxAnQZ1r3IZM8c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy//p5CFQSohO2lvB+xQvvwh2kJHMAFzvpElVWFpdVwH5hA0hCW
+	Am6dhUCpEcxC3Qvcgz/ye/WG5Hy/6Hn6HbVZKPeeyNqFOsFeqza7A9YFrauoZg/hvAvOiLHEHwM
+	7jgA93H1VSeaIjhx+87yr3lzVoxLxdZM+
+X-Gm-Gg: ASbGncta7olvi8q30lzmpSyFZGipK0QY91WZYRt8l0RXWHXkfLMrXohYM8orEJpMN4N
+	utQ5RhYrItP4rBIg6ogXyCDGLTWCUc7BYmtdRWknFm/f6+8oWtP9kMT95qJqn5Czb/HNi9VWmNg
+	7akBpzz1djV2nhYj6KMUT1aphcUsJbEqBNK/AvIbY5FA==
+X-Google-Smtp-Source: AGHT+IHzPCRF5SOBl5uX+I45ItuIcu7yYqv1UpwkBeNgwvJPwNXZIu0GAxVrZtFs9aKbKMtvCsG5QpWp0f/ADoOZEd0=
+X-Received: by 2002:a05:6214:c64:b0:6e8:f17e:e00d with SMTP id
+ 6a1803df08f44-6eb3f2b884amr196473756d6.14.1742905245447; Tue, 25 Mar 2025
+ 05:20:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742905220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3g0qORwvvABSJ2Rv9GuvfAIXABDwBe5tSMPOLykHwsg=;
-	b=Jf7vlGGRkuuwY6Df1TuEaUfzikmOC1Dz/EVPuFgoj2acjNTNaj0kKju1JCDNsYz39FsBUC
-	H3k/t9v87SUbjw2Xo8r/A6WS9Ujo//l227v7OcoGCLDzUYDYZByIA5LlPu52DYlWjKQovi
-	I3Z4T17Gxs2HEc7/W42mPGZQDGXCPis=
-Date: Tue, 25 Mar 2025 12:20:18 +0000
-Content-Type: text/plain; charset="utf-8"
+References: <20250324172026.370253-2-csokas.bence@prolan.hu>
+ <92772f63-52c9-4979-9b60-37c8320ca009@web.de> <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
+ <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de> <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
+ <26e36378-d393-4fe1-938a-be8c3db94ede@web.de>
+In-Reply-To: <26e36378-d393-4fe1-938a-be8c3db94ede@web.de>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Tue, 25 Mar 2025 23:20:34 +1100
+X-Gm-Features: AQ5f1JqJR8vf390EC146ON7d6-teBUeT_TrrTXamjUUZoP5Hfz81vyeOiEOgepg
+Message-ID: <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
+Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>, 
+	dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, 
+	Chen-Yu Tsai <wens@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
-Message-ID: <5cdc1bdd9caee92a6ae932638a862fd5c67630e8@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH net-next v2] tcp: Support skb PAWS drop reason when
- TIME-WAIT
-To: "Eric Dumazet" <edumazet@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuniyu@amazon.com,
- davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, dsahern@kernel.org, ncardwell@google.com, mrpre@163.com
-In-Reply-To: <CANn89iKxTHZ1JoQ9g9ekWq9=29LjRmhbxsnwkQ2RgPT-yCYMig@mail.gmail.com>
-References: <20250325110325.51958-1-jiayuan.chen@linux.dev>
- <CANn89iKxTHZ1JoQ9g9ekWq9=29LjRmhbxsnwkQ2RgPT-yCYMig@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-March 25, 2025 at 19:29, "Eric Dumazet" <edumazet@google.com> wrote:
+Hi Markus,
 
-> >  ---
-> >=20
->=20>  include/net/tcp.h | 3 ++-
-> >=20
->=20>  net/ipv4/tcp_ipv4.c | 2 +-
-> >=20
->=20>  net/ipv4/tcp_minisocks.c | 7 +++++--
-> >=20
->=20>  net/ipv6/tcp_ipv6.c | 2 +-
-> >=20
->=20>  4 files changed, 9 insertions(+), 5 deletions(-)
-> >=20
->=20>  diff --git a/include/net/tcp.h b/include/net/tcp.h
-> >=20
->=20>  index f8efe56bbccb..e1574e804530 100644
-> >=20
->=20>  --- a/include/net/tcp.h
-> >=20
->=20>  +++ b/include/net/tcp.h
-> >=20
->=20>  @@ -427,7 +427,8 @@ enum tcp_tw_status {
-> >=20
->=20>  enum tcp_tw_status tcp_timewait_state_process(struct inet_timewait=
-_sock *tw,
-> >=20
->=20>  struct sk_buff *skb,
-> >=20
->=20>  const struct tcphdr *th,
-> >=20
->=20>  - u32 *tw_isn);
-> >=20
->=20>  + u32 *tw_isn,
-> >=20
->=20>  + enum skb_drop_reason *drop_reason);
-> >=20
->=20>  struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
-> >=20
->=20>  struct request_sock *req, bool fastopen,
-> >=20
->=20>  bool *lost_race, enum skb_drop_reason *drop_reason);
-> >=20
->=20>  diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-> >=20
->=20>  index 1cd0938d47e0..a9dde473a23f 100644
-> >=20
->=20>  --- a/net/ipv4/tcp_ipv4.c
-> >=20
->=20>  +++ b/net/ipv4/tcp_ipv4.c
-> >=20
->=20>  @@ -2417,7 +2417,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
-> >=20
->=20>  goto csum_error;
-> >=20
->=20>  }
-> >=20
->=20>  - tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th,=
- &isn);
-> >=20
->=20>  + tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th,=
- &isn, &drop_reason);
-> >=20
->=20>  switch (tw_status) {
-> >=20
->=20>  case TCP_TW_SYN: {
-> >=20
->=20>  struct sock *sk2 =3D inet_lookup_listener(net,
-> >=20
->=20>  diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-> >=20
->=20>  index fb9349be36b8..d16dfd41397e 100644
-> >=20
->=20>  --- a/net/ipv4/tcp_minisocks.c
-> >=20
->=20>  +++ b/net/ipv4/tcp_minisocks.c
-> >=20
->=20>  @@ -97,7 +97,8 @@ static void twsk_rcv_nxt_update(struct tcp_timew=
-ait_sock *tcptw, u32 seq,
-> >=20
->=20>  */
-> >=20
->=20>  enum tcp_tw_status
-> >=20
->=20>  tcp_timewait_state_process(struct inet_timewait_sock *tw, struct s=
-k_buff *skb,
-> >=20
->=20>  - const struct tcphdr *th, u32 *tw_isn)
-> >=20
->=20>  + const struct tcphdr *th, u32 *tw_isn,
-> >=20
->=20>  + enum skb_drop_reason *drop_reason)
-> >=20
->=20>  {
-> >=20
->=20>  struct tcp_timewait_sock *tcptw =3D tcp_twsk((struct sock *)tw);
-> >=20
->=20>  u32 rcv_nxt =3D READ_ONCE(tcptw->tw_rcv_nxt);
-> >=20
->=20>  @@ -245,8 +246,10 @@ tcp_timewait_state_process(struct inet_timewa=
-it_sock *tw, struct sk_buff *skb,
-> >=20
->=20>  return TCP_TW_SYN;
-> >=20
->=20>  }
-> >=20
->=20>  - if (paws_reject)
-> >=20
->=20>  + if (paws_reject) {
-> >=20
->=20>  + *drop_reason =3D SKB_DROP_REASON_TCP_RFC7323_PAWS;
-> >=20
->=20>  __NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED);
-> >=20
->=20
-> I think we should add a new SNMP value and drop reason for TW sockets.
->=20
->=20SNMP_MIB_ITEM("PAWSTimewait", LINUX_MIB_PAWSTIMEWAIT),
->=20
->=20and SKB_DROP_REASON_TCP_RFC7323_TW_PAWS ?
+I really wanted to keep out of this, but...
+
+On Tue, Mar 25, 2025 at 8:14=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
 >
+> >> Implementation details are probably worth for another look.
+> >
+> > What don't you like in the implementation? Let's discuss that then.
+>
+> I dare to point concerns out also for the development process.
 
-That makes sense, we've done similar things before, such as adding
-PAWS_OLD_ACK previously.
+You're "concerned" about patch granularity, but this is not the sort
+of thing that some random person would raise, this is the sort of
+thing a maintainer asks for when patches are doing too many things or
+are unreviewable. This is neither. It is a very simple cleanup of a
+probe function as it says in the patch subject.
 
-Thanks for the suggestion!
+Futhermore, this already has an ack from the maintainer of this file.
+This indicates that they're happy with it and no significant changes
+are required. This is also version 6 of the patch, if the maintainer
+was concerned about this, they'd have already provided some clear
+guidance on this. If you check previous versions of this patch, no
+such requests have been made.
+
+Your only other "concern" had already been addressed as has already
+been pointed out to you.
+
+> >> Please distinguish better between information from the =E2=80=9Cchange=
+log=E2=80=9D
+> >> and items in a message subject.
+> >
+> > What do you mean? The email body will be the commit message.
+> See also:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/Documentation/process/submitting-patches.rst?h=3Dv6.14#n623
+
+The email and patch structure are following the format outlined in the
+document you link to _exactly_.
+
+
+Once again your comments are just noise, and your insistence on
+repeating them over and over and over and over and over again is
+borderline harassment.
+
+You have been told to stop this nonsense many many times, here's a
+link to the most recent one:
+
+https://lore.kernel.org/all/92d1a410788c54facedec033474046dda6a1a2cc.camel@=
+sipsolutions.net/
+
+Please stop sending these emails and go do something constructive with
+your life.
+
+* * * * *
+
+Bence Cs=C3=B3k=C3=A1s, (I hope I've got the order of your names correct)
+
+Please block or ignore Markus, at best he's a nuisance and at worst a troll=
+.
+
+Thanks,
+
 --=20
-pw-bot:=20cr
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
 
