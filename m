@@ -1,55 +1,82 @@
-Return-Path: <linux-kernel+bounces-575067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B07A6ED22
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:58:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02C7A6ED3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244BB3A68A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E799F170379
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B8B253B64;
-	Tue, 25 Mar 2025 09:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FA0254AE5;
+	Tue, 25 Mar 2025 10:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="AHFxqWLO"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="C9bnNZUZ"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C1B194094;
-	Tue, 25 Mar 2025 09:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955D119CC08;
+	Tue, 25 Mar 2025 10:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742896675; cv=none; b=l+98bcZYcPUJXOKKEkizDWo4VYR1Dxt0kNh6liqEhN5uPMcMpyinmqXwLnZo6C/7aVh+ymCYV8NZg5dsQy3vtUKTBLXDfso6pWpp1qKyqbaCxNcuoJgSsvIvD6lZff0qqt7w1NuXPXKCnIua1c6F7Cac0chATD6WWtyhqcb4OXg=
+	t=1742896856; cv=none; b=CrDXm09h/+ObBplyLiIvoe8y21dlh9umM8isCcbyEQon/ledALwjdiYIE2BoGiIgAUrpaA9aSgCgH6InFBKtxaLsZeHTpoc+8iXdFETSozwLi9fD+DtCqVA1smaCK55avdl2LhM8e5Yd2MWlgnZe1p/iLNsoscny0mzwt/lQUh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742896675; c=relaxed/simple;
-	bh=BAcGLV2gROaH61d2upyHEAfq6TIAYGSRatBT/GV/s0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KWEP2zD392SEqzPT+XeFb2ydAtcuQd1Y9jLBDi1A/optmHKx/LHhEMPcTuq64AYfhMXriSO4DN11fybMGIEZuBUcJdskRfE4sHSjGMFN69k46KB92L+qvhYrbu2qpVm3s2oti70kBgEfT/Y2tCReeABqTXZeIYznUuN1xDuSFQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=AHFxqWLO; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1742896660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W/iG3eeUUjRo4LRsKssknGqy+N5wFg8aMaSR8xK6czo=;
-	b=AHFxqWLOIbDgzGIhxRRLbvJlC1ZHzMiYYUEftXwKVZIe+fFxvo4uiwad9AeI0kW7g1ctBK
-	FTOzOaxpPchGYO9hVnOYjnQJelzC7oQKfbayNiWjKbUYfQ18GyE6sSMp7TUqXYFa0I0VF0
-	iA0uyO9s8nwgD3fghsODc9ffNDMVs2c=
-To: Corentin Chary <corentin.chary@gmail.com>
-Cc: "Luke D. Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] asus-laptop: Fix an uninitialized variable
-Date: Tue, 25 Mar 2025 12:57:37 +0300
-Message-ID: <20250325095739.20310-1-arefev@swemel.ru>
+	s=arc-20240116; t=1742896856; c=relaxed/simple;
+	bh=3i5iIdP2A5+tdt0wI9VGzafnmLIhDZd2kl+nuqMFEVU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ahiSt4lffKDKhbPC/WyQWOwKLsKXQTpnuP0nLku05N1ZrbWDtl089u7pPE9iqR9SOBERc3bVOMhNhEVYPtfw6Zqk7yreVqvwl9e3P1pSf2nvi3pTZXnJ0QRFYf0VROsZ46C9GYAlDkOMPA65ANvGDRVzuXZioB12/MDQMGkHtQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=C9bnNZUZ; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P69SAF005985;
+	Tue, 25 Mar 2025 11:00:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=pjwodPeGoQRNskM8wRB/+5
+	v/OYaad9fMmX1WtOfP2Ug=; b=C9bnNZUZubciQOiwpWJibY0aPgIVkw+SJaz/Ps
+	aaliIjjvmLR9uWL/nlp/Ji+MyFzxP9K0wOlEifwtYAeIxzvoZ122sCdVnNKL8QhM
+	djJEozRmLNwD5E+tfvlm6Uf12lwGF/CKZEW2ZPo1JJTFkaQ6HqIdPvEaHMf7jEpl
+	WpoiFj25hTD+xgGnz32GwBFrL3j/UNQ3KrQyE28QWMPcM4LUJglxpDfXwOaA0Kbd
+	o8qkKB4yplNtWVJC1/WBzPkfDZUnV6+1NzeFPZKoXd0YS95+ry2LyHz/DuQw80OD
+	rtRAUCu2ywEKG5WHofSfnxGor3fEvZTcdUqg/UR3MsdkyaWw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45hk7d3yg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 11:00:38 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1B07940055;
+	Tue, 25 Mar 2025 10:59:36 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EFBF3823755;
+	Tue, 25 Mar 2025 10:58:44 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 10:58:44 +0100
+Received: from localhost (10.252.12.99) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 10:58:44 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v16 0/6] Introduction of a remoteproc tee to load signed firmware
+Date: Tue, 25 Mar 2025 10:58:27 +0100
+Message-ID: <20250325095833.3059895-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,34 +84,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE1.st.com (10.75.90.11) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_04,2025-03-25_01,2024-11-22_01
 
-The value returned by the acpi_evaluate_integer() function is not
-checked, but the result is not always successful, so an uninitialized
-'val' variable may be used in calculations.
+Main updates from version V15[1]:
+- Removed the rproc_ops:load_fw() operation introduced in the previous version.
+- Returned to managing the remoteproc firmware loading in rproc_tee_parse_fw to
+  load and authenticate the firmware before getting the resource table.
+- Added spinlock and dev_link mechanisms in remoteproc TEE to better manage
+  bind/unbind.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+More details are available in each patch commit message.
 
-Fixes: b23910c2194e ("asus-laptop: Pegatron Lucid accelerometer")
-Cc: stable@vger.kernel.org 
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
- drivers/platform/x86/asus-laptop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1] https://lore.kernel.org/linux-remoteproc/20241128084219.2159197-7-arnaud.pouliquen@foss.st.com/T/
 
-diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
-index d460dd194f19..b74b7d0eb6c2 100644
---- a/drivers/platform/x86/asus-laptop.c
-+++ b/drivers/platform/x86/asus-laptop.c
-@@ -427,7 +427,7 @@ static int asus_pega_lucid_set(struct asus_laptop *asus, int unit, bool enable)
- static int pega_acc_axis(struct asus_laptop *asus, int curr, char *method)
- {
- 	int i, delta;
--	unsigned long long val;
-+	unsigned long long val = PEGA_ACC_CLAMP;
- 	for (i = 0; i < PEGA_ACC_RETRIES; i++) {
- 		acpi_evaluate_integer(asus->handle, method, NULL, &val);
- 
+Tested-on: commit 0a0ba9924445 ("Linux 6.14-rc7")
+
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
+
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact. The user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+
+
+Arnaud Pouliquen (6):
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Add TEE support
+  remoteproc: Introduce release_fw optional operation
+  dt-bindings: remoteproc: Add compatibility for TEE support
+  remoteproc: stm32: Create sub-functions to request shutdown and
+    release
+  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/remoteproc_core.c          |  52 ++
+ drivers/remoteproc/remoteproc_internal.h      |   6 +
+ drivers/remoteproc/remoteproc_tee.c           | 619 ++++++++++++++++++
+ drivers/remoteproc/stm32_rproc.c              | 139 +++-
+ include/linux/remoteproc.h                    |   4 +
+ include/linux/remoteproc_tee.h                |  90 +++
+ 9 files changed, 935 insertions(+), 44 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_tee.c
+ create mode 100644 include/linux/remoteproc_tee.h
+
+
+base-commit: 0a0ba99244455fea8706c4a53f5f66a45d87905d
 -- 
-2.43.0
+2.25.1
 
 
