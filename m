@@ -1,188 +1,127 @@
-Return-Path: <linux-kernel+bounces-575725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0112EA70673
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:15:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD531A70664
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C463B1B2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E41174A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF0125C71F;
-	Tue, 25 Mar 2025 16:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06D925D8EC;
+	Tue, 25 Mar 2025 16:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEspCC3e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="aq0uJpy6"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0FF25D559;
-	Tue, 25 Mar 2025 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6201743169;
+	Tue, 25 Mar 2025 16:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919108; cv=none; b=be3YTVpaLrd3K3uHm9vwrZC32BNOPT0P2sX1SNyAn3ZZrFcO0iNVCDS1WzvkYKaShuLd29iM4NjzdKXio5b/6objg4KYF3vo8/WIx2w80sqW0g5Lr0JNLPyrXb5lKkvkJqAPxIxnsTXViW7gxp6Y4CEoHCdshpGvdeoj105l1pM=
+	t=1742919144; cv=none; b=fFsapxDpJ2PB+0Epwk2Ctt50whCUBGCbkBrD2pr8vjHKes/q17zlLvuNARfDExks/cMqzHWLH77bLcwpJjVdN+sW8F6mk/v9F68fiHdFQ7FVLZ6RXBGZxpHdEOOd1ivFg/cki00RRhcR0lSfcN+BpW+THf6LckwaKHGcF/MgHPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919108; c=relaxed/simple;
-	bh=m5jF2g8RoBZc4vVO3/GHC/ynrmEBlhwNcZTpzse4VGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5VDowfvZEKrKTJRaDdG9pyhDicgzmqMAX4zU7eNSGjtC1czmPeWfaZcLRnsfqkGFmRF9dHAvwSuCRj15Q2pYh3xr4AF5dByozhdujI8DLAbD9CCvk1iDWwcHYcVwfCBzsdRX8Hw0Cg3eQ6iv0sBBr9bHFHvvD4ePo/Pf0t4NCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gEspCC3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AD7C4CEE4;
-	Tue, 25 Mar 2025 16:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742919107;
-	bh=m5jF2g8RoBZc4vVO3/GHC/ynrmEBlhwNcZTpzse4VGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gEspCC3epxPmd1cz5Voz6c7pc7GkViUelUjOQt9T75ttc26SSaCWo2oz+H87fUgVz
-	 zpf0fppV1S8mytUaKg0VmreM7Ral7xvoZsdOTxOJY8M6Ed4+qeFsN2gY2MhEEw86TK
-	 LtP028a9TbShdLvgf4c7aPBRT1NCLgkGhZJZ9XByiKsqn59LdfKxSpTTGVAoh2U/zF
-	 3PggRUlyOf8OLrjOyNZQdB9baKGrdQ97X35DLGVXyHjChu9oJrs2s6PrfmG5LtKhSC
-	 36FhocuH8yxswJxCapwfNcbK5hZCTmyeb18hD+w8VcyoNEfOHJ4hgTUdIbJl9w7Jud
-	 WO4VRchOVz+CQ==
-Date: Tue, 25 Mar 2025 17:11:43 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>, 
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Kerem Karabay <kekrby@gmail.com>, 
-	Orlando Chamberlain <orlandoch.dev@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple
- Touch Bar
-Message-ID: <e3ejlqfxafqrojlaiz3fbbkcira7txbuk4cftrfxvotvbr3xd6@eaes6e6rywyn>
-References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
- <90644A22-3136-4D4E-864E-7F7210D0C713@live.com>
- <vx6hvspvlfsv3palzvjpvsrmkl6s7qut366bhxq3tcwvyf7z63@drzftehh2rew>
- <PN3PR01MB95979F7D629681CBBCB763ACB8A72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1742919144; c=relaxed/simple;
+	bh=+KdiDrFiarGEbf3kb9HlXSM9P6HlZDF5FlBfLt0MCHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VHZGXrRhjRLcoSGWkCmqYqn+vJS+RiTbMqEBl0AH0Vj7umEjzbTrgND+DPsxaAyvsXtEv/XW/ILda9RIxqys5VK899F+BPenbCR5fQn++YABbLpB/3re2FeBl2cyvnFbbmbzcLtKHi7DdR2msEYC44JzFCz3j8wpbedzn79fJvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=aq0uJpy6; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 564B5102F66E4;
+	Tue, 25 Mar 2025 17:12:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1742919139; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=OCuZIdUEm0QWQuqdvQk8bF8aibatk8qGzYP76myy1Xo=;
+	b=aq0uJpy6Wp06yKfxV/hPNUiV24cd6mrnOWV4CE+8kfJBqN4oGmgoSUAcXMxOFAu5K8uoPq
+	aOOJI7VMVVHpQssTy9rh+Zxg+zWIJfrKhPErtAqbMYR1HxyWQ1fYv1i8SJbbOPP+jtWK+I
+	2w1/G0d9pKzC7lrHR+odcAgZqSkBD+uDrQnr9cIejI7sLvvN8PfA7/+HwmHP0ss0U5amVA
+	9uM1StWAo9+ovfCtq9IGG68B3G38MB40YR5IWv+mWqBtE7QZ/JEyCyuG80xA88fZyRURoC
+	scOhKT7Y5tgY+UlS0wn/6+bOVsFLoHR69E+bSx8QssbDMQUuBu3c/Mc/ZHJ3iQ==
+Date: Tue, 25 Mar 2025 17:12:13 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
+ Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
+ (fec,mtip-switch.yaml)
+Message-ID: <20250325171213.61de8d6b@wsk>
+In-Reply-To: <2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
+References: <20250325115736.1732721-1-lukma@denx.de>
+	<20250325115736.1732721-3-lukma@denx.de>
+	<2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB95979F7D629681CBBCB763ACB8A72@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Content-Type: multipart/signed; boundary="Sig_/BTpJUUNgSsmMxe6X4ageVFE";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mar 25 2025, Aditya Garg wrote:
-> 
-> 
-> > On 25 Mar 2025, at 6:43 PM, Benjamin Tissoires <bentiss@kernel.org> wrote:
-> > 
-> > ﻿On Mar 10 2025, Aditya Garg wrote:
-> >> From: Kerem Karabay <kekrby@gmail.com>
-> >> 
-> >> This patch adds the device ID of Apple Touch Bar found on x86 MacBook Pros
-> >> to the hid-multitouch driver.
-> >> 
-> >> Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
-> >> appreciated.
-> >> 
-> >> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
-> >> Co-developed-by: Aditya Garg <gargaditya08@live.com>
-> >> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> >> ---
-> >> drivers/hid/Kconfig          |  1 +
-> >> drivers/hid/hid-multitouch.c | 25 +++++++++++++++++++++----
-> >> 2 files changed, 22 insertions(+), 4 deletions(-)
-> >> 
-> >> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> >> index dfc245867..727a2ed0d 100644
-> >> --- a/drivers/hid/Kconfig
-> >> +++ b/drivers/hid/Kconfig
-> >> @@ -743,6 +743,7 @@ config HID_MULTITOUCH
-> >>      Say Y here if you have one of the following devices:
-> >>      - 3M PCT touch screens
-> >>      - ActionStar dual touch panels
-> >> +      - Apple Touch Bar on x86 MacBook Pros
-> >>      - Atmel panels
-> >>      - Cando dual touch panels
-> >>      - Chunghwa panels
-> >> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> >> index 66e33a482..078ceef62 100644
-> >> --- a/drivers/hid/hid-multitouch.c
-> >> +++ b/drivers/hid/hid-multitouch.c
-> >> @@ -221,6 +221,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
-> >> #define MT_CLS_GOOGLE                0x0111
-> >> #define MT_CLS_RAZER_BLADE_STEALTH        0x0112
-> >> #define MT_CLS_SMART_TECH            0x0113
-> >> +#define MT_CLS_APPLE_TOUCHBAR            0x0114
-> >> #define MT_CLS_SIS                0x0457
-> >> 
-> >> #define MT_DEFAULT_MAXCONTACT    10
-> >> @@ -406,6 +407,12 @@ static const struct mt_class mt_classes[] = {
-> >>            MT_QUIRK_CONTACT_CNT_ACCURATE |
-> >>            MT_QUIRK_SEPARATE_APP_REPORT,
-> >>    },
-> >> +    { .name = MT_CLS_APPLE_TOUCHBAR,
-> >> +        .quirks = MT_QUIRK_HOVERING |
-> >> +            MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE |
-> >> +            MT_QUIRK_APPLE_TOUCHBAR,
-> >> +        .maxcontacts = 11,
-> >> +    },
-> >>    { .name = MT_CLS_SIS,
-> >>        .quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
-> >>            MT_QUIRK_ALWAYS_VALID |
-> >> @@ -1807,6 +1814,15 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >>        }
-> >>    }
-> >> 
-> >> +    ret = hid_parse(hdev);
-> >> +    if (ret != 0)
-> >> +        return ret;
-> >> +
-> >> +    if (mtclass->name == MT_CLS_APPLE_TOUCHBAR &&
-> >> +        !hid_find_field(hdev, HID_INPUT_REPORT,
-> >> +                HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
-> >> +        return -ENODEV;
-> >> +
-> > 
-> > That hunk and the one below make me very nervous. Is there any reason
-> > preventing you to keep hid_parse() at the same place?
-> > 
-> Wouldn't we need to parse in order to do hid_find_field? Although I haven't tried putting it at the same place tbh.
+--Sig_/BTpJUUNgSsmMxe6X4ageVFE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, you need hid_parse() to be able to call hid_find_field(). But you
-can put hid_find_field() after hid_parse() at the original location, no?
+Hi Andrew,
 
-Cheers,
-Benjamin
+> > +  phy-reset-gpios:
+> > +    deprecated: true
+> > +    description:
+> > +      Should specify the gpio for phy reset. =20
+>=20
+> It seem odd that a new binding has deprecated properties. Maybe add a
+> comment in the commit message as to why they are there. I assume this
+> is because you are re-using part of the FEC code as is, and it
+> implements them?
 
-> 
-> > The rest of the series looks fine as everything seems properly guarded
-> > by MT_CLS_APPLE_TOUCHBAR.
-> > 
-> > Cheers,
-> > Benjamin
-> > 
-> >>    td = devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
-> >>    if (!td) {
-> >>        dev_err(&hdev->dev, "cannot allocate multitouch data\n");
-> >> @@ -1854,10 +1870,6 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >> 
-> >>    timer_setup(&td->release_timer, mt_expired_timeout, 0);
-> >> 
-> >> -    ret = hid_parse(hdev);
-> >> -    if (ret != 0)
-> >> -        return ret;
-> >> -
-> >>    if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
-> >>        mt_fix_const_fields(hdev, HID_DG_CONTACTID);
-> >> 
-> >> @@ -2339,6 +2351,11 @@ static const struct hid_device_id mt_devices[] = {
-> >>        MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
-> >>            USB_DEVICE_ID_XIROKU_CSR2) },
-> >> 
-> >> +    /* Apple Touch Bar */
-> >> +    { .driver_data = MT_CLS_APPLE_TOUCHBAR,
-> >> +        HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-> >> +            USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
-> >> +
-> >>    /* Google MT devices */
-> >>    { .driver_data = MT_CLS_GOOGLE,
-> >>        HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
-> >> --
-> >> 2.43.0
-> >> 
++1
+
+>=20
+> 	   Andrew
+>=20
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/BTpJUUNgSsmMxe6X4ageVFE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfi1d0ACgkQAR8vZIA0
+zr2V+gf+JAQoDZbvVcOrU8Xf5yrlKENSX8KVhYJexfgs+qiD+wvn+CS8kUCphBCk
+rDQbqUh8g3qjogX3/PH1NWqIlXvz7EO55+P39PQExyszRX3HpW7ibOaTWMgnnWa4
+Ik2qLNREr7mWs83euMDjk21zx0+SacLsJ9I8A0k60wY720aUaxwAFm7p/uhTIvTo
+TdCeHqeaKWV/2ui8a2fnR5TNaM9LuCF2a+xxbv9OiqYdHlPVLQyFMtm7AZ4RWT+A
+AGnhGvNGIX87TACwdl5FRb85sSxbUbd2jLMzT04w268IgsXKhqMRmXyAxmktKSMx
+Z4U/nFhivYUqaXt05MM8Id9eAZ20/g==
+=vard
+-----END PGP SIGNATURE-----
+
+--Sig_/BTpJUUNgSsmMxe6X4ageVFE--
 
