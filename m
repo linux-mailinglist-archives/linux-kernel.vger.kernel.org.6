@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-575165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4E4A6EEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:07:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EF2A6EEAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B7C1891E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D4A1694EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED03B255E3D;
-	Tue, 25 Mar 2025 11:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BDM6SVMI"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39388254AE7;
-	Tue, 25 Mar 2025 11:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3FC255E34;
+	Tue, 25 Mar 2025 11:06:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E725522B;
+	Tue, 25 Mar 2025 11:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900799; cv=none; b=qFkVJmnZQP2Zq97/Ms8SArS7dTt3u1BVElXcE1a8i65dnAkCJyGg0rVH69F+MV/EHYNuqlioCjcNrehiLQ6m0MQFavHOVtDSLqjIKj+cBYglc+VS2ECW+3L2d2sZXmC1L+xGRNOcO9r5pQ4+vnZkG7hjX95nHpiTrdIOoe4vqSc=
+	t=1742900811; cv=none; b=eyX/XmQ18YEso8BFOIocySL2TeCURhoxcA1nLvY0a2TnKEA4LVv71smZX0ZvEglIAVOkDTeR0VZhiYG3nvtiTLPZ7HtsIjWN7V2GQdIz4se+YREwzxSr8XfRTvVS8G0Op+tciogrwcwpr/bP6CIbJFK/SQIyUT7phUDekjzf0N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900799; c=relaxed/simple;
-	bh=D0N/mgLzCXi4oZJoUT9/lMZngBeCJnMRqCEe8RPVzCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQ05cZxF/aJ2jTEX85ApRfHrCX/P0AlCeLcoouX6swHoEIVMYFHgc2BNepvlWNBNFwmyt2gxqSloVscQAfb5D/s/VAQ1aoIJixbfFOQXqFcuEwe9o4D3UMKhXgfo6z6XcuFEIUyWwKb9jskxt7i5BpC7BXdFXdAg75txaRGUWms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BDM6SVMI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742900795;
-	bh=D0N/mgLzCXi4oZJoUT9/lMZngBeCJnMRqCEe8RPVzCw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BDM6SVMILwPq70pCVbl5bItk8GC0tcw9Yf/34rYFw6mCnsN+0yUhfJ/hjiEeDmn72
-	 U/rtTB5SmTcJGgmK3BZgMDjTc0hOnJaukjn/UNzwgBnVk7brn9q0PkuiUIBfUuZDFV
-	 /zv/Zxa8KTIPQG2taIBBWZ5p/GXotmZq93q8rvpyMR3QhlH9TaqL4UWMJLUDFeiJav
-	 oaWEJjL7EdSh00MXLBQG9R/fO5qaK1ES5NL0feETn5ewOfDXhGrOCpSZC+OTwfLJOL
-	 KAzWvgqVBrQpvPHyVOUJI/5otjdYifxjbuAroFyqWGttAulvH7kZxZ+7Cd/mLVZAPr
-	 QrTihiq9olnjw==
-Received: from [192.168.50.250] (unknown [171.76.87.92])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8ED1117E09D6;
-	Tue, 25 Mar 2025 12:06:30 +0100 (CET)
-Message-ID: <c71855d0-2638-4f06-9b75-cdbd137837bb@collabora.com>
-Date: Tue, 25 Mar 2025 16:36:00 +0530
+	s=arc-20240116; t=1742900811; c=relaxed/simple;
+	bh=1oUtFGtYzogbL0vB7U/WIQ8hwYhjr5hl5aNe3i3p1t8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nArYDGCp7u9DRk7Mmo/soWcrNfqm+6QpP06qsP7H5N0vprGKzBhi/TaknNrM5N4xrRT8B2je8IYMCr8782s8ezoFuFKmxgbrVAlh58ibET+KJjBqcjEIlO+XqFQBJo0+NUZUpbHGdxTdaNqJ+Is/LlXVA869m2H3OND6l8QN+io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D407106F;
+	Tue, 25 Mar 2025 04:06:48 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 182383F58B;
+	Tue, 25 Mar 2025 04:06:38 -0700 (PDT)
+Message-ID: <5e49377e-6a3e-4a48-94c9-db06f13cffe8@arm.com>
+Date: Tue, 25 Mar 2025 11:06:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,47 +41,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] drm/ci: uprev mesa
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
- robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
- lumag@kernel.org, quic_abhinavk@quicinc.com, mripard@kernel.org,
- jani.nikula@linux.intel.com, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
- amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250314085858.39328-1-vignesh.raman@collabora.com>
- <20250314085858.39328-2-vignesh.raman@collabora.com>
- <CAPj87rMjF84yyPqBshuGu=8qx6Xhq9Z-HgEnQe=tRtbu3E8OtQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] arm64: Add BBM Level 2 cpu feature
+To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
+ ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
+ catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
+ robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
+ ardb@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
+ james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
+ baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
+ nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
+ smostafa@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev
+References: <20250325093625.55184-1-miko.lenczewski@arm.com>
+ <20250325093625.55184-2-miko.lenczewski@arm.com>
 Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <CAPj87rMjF84yyPqBshuGu=8qx6Xhq9Z-HgEnQe=tRtbu3E8OtQ@mail.gmail.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250325093625.55184-2-miko.lenczewski@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-On 21/03/25 15:56, Daniel Stone wrote:
-> Hi Vignesh,
+On 25/03/2025 09:36, Mikołaj Lenczewski wrote:
+> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
+> and this commit adds a dedicated BBML2 cpufeature to test against
+> support for, as well as a kernel commandline parameter to optionally
+> disable BBML2 altogether.
 > 
-> On Fri, 14 Mar 2025 at 08:59, Vignesh Raman <vignesh.raman@collabora.com> wrote:
->> LAVA was recently patched [1] with a fix on how parameters are parsed in
->> `lava-test-case`, so we don't need to repeat quotes to send the
->> arguments properly to it. Uprev mesa to fix this issue.
+> This is a system feature as we might have a big.LITTLE architecture
+> where some cores support BBML2 and some don't, but we want all cores to
+> be available and BBM to default to level 0 (as opposed to having cores
+> without BBML2 not coming online).
 > 
-> Thanks a lot; the series is:
-> Acked-by: Daniel Stone <daniels@collabora.com>
-
-Applied to drm-misc-next.
-
-Regards,
-Vignesh
-
+> To support BBML2 in as wide a range of contexts as we can, we want not
+> only the architectural guarantees that BBML2 makes, but additionally
+> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
+> us having to prove that no recursive faults can be induced in any path
+> that uses BBML2, allowing its use for arbitrary kernel mappings.
+> Support detection of such CPUs.
 > 
-> Cheers,
-> Daniel
-> 
+> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
 
 
