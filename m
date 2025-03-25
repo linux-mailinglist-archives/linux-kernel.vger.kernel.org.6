@@ -1,214 +1,195 @@
-Return-Path: <linux-kernel+bounces-575794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B119FA70750
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5BEA70754
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:49:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52473A8580
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95DC93AA78E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D640925F983;
-	Tue, 25 Mar 2025 16:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B160A25E800;
+	Tue, 25 Mar 2025 16:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hq8toATw"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012022.outbound.protection.outlook.com [52.101.66.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cNCGOVAw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF2F25EFBC;
-	Tue, 25 Mar 2025 16:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742921019; cv=fail; b=Ip7XV4rGy4oNP6j23oP4i7TXGkywCG5P0Pl4A+PtiEjptl6BNvFl6+aTeWMOfRlWPT3QMbdvUqd5R+K/YUHPNWB8f/2TSkv8Cdj5anATBXtY6BT7KOF0ND1toy5Sk1ItbEyxkTEGRrQid3vjAHzzZ3sQROCOyXEZk/SwHDOb6Vo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742921019; c=relaxed/simple;
-	bh=gEIqIvjFMAa5a/ikbFdC4yhLqKQBRc2jSfBeUSC3+rA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sjt5RGLViFCUoUOIwCAStafvQrSyQ9lnJ30j6s3hohGocnoXU8RwWpEfNmaJWuEHP1/ucT9eEGAcXhySK8rdJ8jqjQjhZyRZRsbAyM2pIwkJy8v0yQ9jQr0CSBzMZRgu2hXmL15ki1P9+uuPVUJymn/dScjKeGb+CeQd3gFMdsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hq8toATw; arc=fail smtp.client-ip=52.101.66.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RbBFXNuERlrZCAISGp5SaeMyBCgvVX3ujaKWY4F5Wz4Me3qs3S0QMZXD8QyR0TDffyCfzEPwjtK0Wh7NMpVpyBay4+et0KSHWN7EKe8GJZABQ0ZRaT7Mdsckb5314Q0N9Moq89pHase57/ovUI8KkDa04YNrdhnnUNCYtyon2jzU2f/sMddXtgkt00sG+KZOs1qT9QMOg+F2xjdNZhvCiFxaRLERObqJgdOAEZS5b9MhmXr5UMwdKr/45MvHuQYKCoLUICYfrOXFzGyUwz2an2nG2ouyjoqQHFQ5Tqi7t1waRCQKqmD2vLGKnRPACX8e6M+oETzz1k+c/uWrX/8FXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gEIqIvjFMAa5a/ikbFdC4yhLqKQBRc2jSfBeUSC3+rA=;
- b=OgHWlX25/DdaPmsR9ChRXGsFWLjlNq4d3SxyeNzvJKge+3ef6T7jwRbzTfIrzoKpSQ7jJzbDcLRVnsCtWdV/+B1H7AsI4tcLOrFXIs41lNGZT9OtPH/288jBRMLM1d+sgOJEBBuVUBQalICzQodyOWCfkaUH4mrb8j3gPQzkus1CQyXlHfZX9a7+CazTojTH2metgrmFVbDulBcUEobhRfM5WjxPF22X4q2KhvBMc8ZYxRV+h6+X+bpBbpEja21iqNmxoL7rg72UOOudRxzx6B3PJyJOrbnABM9g91vEVZRhqC4sMPRZr9HLoR/vOK7sk/jsVHMfl6ySG+Vl22HoKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gEIqIvjFMAa5a/ikbFdC4yhLqKQBRc2jSfBeUSC3+rA=;
- b=hq8toATwBO5VWjG4N6jw7wwgtBnKR4XPLyM/K2vkV01yGFexbu0Hi0rWAH7w03LWmbIAwTXp0FL2ZbYSkhuNrtH2CuNFVxK0Euf1EaNkq6ZHWvJVeFg1qao93X4Kh9rvMpKSsetdAcWk0d4ymnHOLTamz4w7jHsGPV0I/fCEH9RKzpzC31VuEbbLKFdVAYIDQLyj+yyghY81s5yg8QqyLbUPnIWcHy+tZOdNf7/+dEL4X4BTV1E2Lkf5jXARNG5U7OCxLM/OdAE4sH4K6kemQjb8nZrtDqvsrXqJvqAXvf4F47UsCjJ0o+u03iMvN78sN5WSVbBpdWcUmPZ4Gv9VJA==
-Received: from PAWPR04MB9910.eurprd04.prod.outlook.com (2603:10a6:102:380::7)
- by DU4PR04MB10695.eurprd04.prod.outlook.com (2603:10a6:10:580::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 16:43:34 +0000
-Received: from PAWPR04MB9910.eurprd04.prod.outlook.com
- ([fe80::24b9:b9fd:bcc0:4ee6]) by PAWPR04MB9910.eurprd04.prod.outlook.com
- ([fe80::24b9:b9fd:bcc0:4ee6%7]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 16:43:33 +0000
-From: Jeff Chen <jeff.chen_1@nxp.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>,
-	"johannes@sipsolutions.net" <johannes@sipsolutions.net>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>
-Subject: RE: [EXT] Re: [PATCH v4 1/2] wifi: mwifiex: Fix premature release of
- RF calibration data.
-Thread-Topic: [EXT] Re: [PATCH v4 1/2] wifi: mwifiex: Fix premature release of
- RF calibration data.
-Thread-Index: AQHbl8PMECehi6j1KEedBcEe9Ioz87N6qGwAgAlvj2A=
-Date: Tue, 25 Mar 2025 16:43:33 +0000
-Message-ID:
- <PAWPR04MB9910FE139C88507DE5904ABD9CA72@PAWPR04MB9910.eurprd04.prod.outlook.com>
-References: <20250220061143.1417420-2-jeff.chen_1@nxp.com>
- <20250318050739.2239376-2-jeff.chen_1@nxp.com>
- <20250319162842.GA46894@francesco-nb>
-In-Reply-To: <20250319162842.GA46894@francesco-nb>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAWPR04MB9910:EE_|DU4PR04MB10695:EE_
-x-ms-office365-filtering-correlation-id: 7d50959e-ab21-416a-858f-08dd6bbc2e8c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|7053199007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Qb7EfW0NUl3FVZU0740G4gi0bQExgTTTAZvWyyxqIhzHwSFAE0j5UKaSjrNJ?=
- =?us-ascii?Q?ItjDueZ0KBf2YHOXo8EeYXVNMptMtokHCwPA1gzs6UCHldmXoRE5WfLBUo5O?=
- =?us-ascii?Q?b8KoyBPG8d8vhb6A+ngoTqCDgfJsE5Hgd5Zi023+EsRQyp4wW5sjCkE6fI20?=
- =?us-ascii?Q?faKEolM85uG0Z7zahWubsq8kv5oAwlyOfoo/RNIPP+EPicAtuL3OtrxvuRKg?=
- =?us-ascii?Q?KOk32sXFNeqw/CqPk1t5mFSC9fNWnzF0Hnpw3DBG1cXZe6MJk++JYIm1MigF?=
- =?us-ascii?Q?JlScPA5p7T7aelAddzw/P0JMfl/pkIdnXGWz0PmA12qpIq/cKX/W/WSuvNHh?=
- =?us-ascii?Q?3/FL4QvC4z40WZ6QgYKyjMDHuiklrgDn1tAqI1g7mM8BFuW/5hrbuxt3k7g3?=
- =?us-ascii?Q?QK7xLReRviXLl0yO7lnhyyfaA+pM6rd8ECns5qeBMc06r7Qx5CEEjWY0Q5r3?=
- =?us-ascii?Q?FN8LZxX3hsZ//V65L5ecRvGp+tyouo4gRLlZ9HMTo9dTBEpsJSIfcLthddqP?=
- =?us-ascii?Q?AlJfJ+vNnRMaUjCaYDxKjdwtTM5jePnpaq1n/R1nLs8zQyVH3xXQRPnPbQH5?=
- =?us-ascii?Q?upGP64emXUT4yzTS9NOG811wwJK6Sf8ANnYU77/pIPTxNBxR+yquKUrag5hu?=
- =?us-ascii?Q?PaBeqC5N7H0xK6VltfptJqwBp9FjZ2asWD3kLIT8GIndWqgKNm2tNpA2fMKh?=
- =?us-ascii?Q?znT+Ks/Q/T7LJUb+8iNj3vLnyo9SPLf9BETjG7XFhpw8n5qRV6aRIlRkqO7x?=
- =?us-ascii?Q?lrYliTLlMHsLUJnk6zr4Se9fxhKgbG1hFmuVIc8dx2NLhQ+5XDm/yw/fiNZ8?=
- =?us-ascii?Q?KIfrknU+xnN77hO/AYi7PpXm1FYq9vlJO+cJi8/eEGHx3SuqBUwgAhwcLUv1?=
- =?us-ascii?Q?T8nafovVnf6ETtyWeM0RihAVeGMqP9sqhk2zZeRxcfgYNrseA00Egam/uKYF?=
- =?us-ascii?Q?0DkBPsOu7uXDa4BXTNsEml48VjuvCcmCukAizO7psK9JMLOsqjG1gO2XC5WO?=
- =?us-ascii?Q?dLhatLasTHJUNw4L9Mpe9y7REb/tp/RMSJsQdN5Ew+UsDLdrF2YEc4YX+NIK?=
- =?us-ascii?Q?2j6cCwx+0KAYV4bpN9wp6wlJApwtEFctu2P2hcvUwF6z9eWB0HqgHd4gzOvG?=
- =?us-ascii?Q?hXBa4k13Hl4HBqVUOsSganJlOrNqA9GqatJG4wmnMGlWsceB+Jz2hg9ofcnU?=
- =?us-ascii?Q?WJZkVlmnG4y+cKnZsbuv/OrMKbhTSqJLaiK1DQuxG9Gt563YojXNMtx95nrZ?=
- =?us-ascii?Q?KGNMu/aDsSh/c/AdJ5eXAAGnhcVFq2xxfHvknS2bpNUdlR3l6/Cm4DJQM2k3?=
- =?us-ascii?Q?+l+mW1O1mErhdQsnVIajTefBogFsXq4Q+I2Hdii/xBoQnMHh5IZBuaReyKvY?=
- =?us-ascii?Q?f6xerjIl7L/ABrqjRB84h5XixTCCLo3Fw0OFMMatyu4eQ+XefL+QL7OhstI4?=
- =?us-ascii?Q?HgK27iD+8mN6OEhlsk4dRzIDVHvrmz3r?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR04MB9910.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?fyLdukQ/N63XcUswxOkrrEcgkJg3nMlVjWVhRvh+dIERWVhCJd3rV9Sagwlv?=
- =?us-ascii?Q?vUicwObSgDcPT/53Xbi1fyqNppgSME9VoViffHMrvZxtH09qfas7S+3s/x4v?=
- =?us-ascii?Q?Kon+5HlprGgNqGZ1bx83SwGuBwA3oak9o7Xx3ttEV8ij5JIJB2Xjdewy4Eul?=
- =?us-ascii?Q?km8m9H48ic02qdJf7hMOr1/0re7IguQIf95yMw1kqGPMRF3nGs2y66nYLdpO?=
- =?us-ascii?Q?hfvM5VBJBzEPdXBK+GEGSmjuuxC0bhsrqGcB8I6E9B5drzEJRj+B65EQZVYf?=
- =?us-ascii?Q?m3Lqg6j2Dj3OT0m6hC4xp2twNIKmdZHZiJfsEaRhL9E5/tpdASn7j3HP1zrx?=
- =?us-ascii?Q?h1GyW/AYauunFawhjEDppj0Gw8wSyxhcPjVidBUfAVRFb8GpvJtjIN2o5X5x?=
- =?us-ascii?Q?Raaa8wxUbql7vsQ+7DZ50LyM7SR9tmFpCCmoy+UvY78lNNnL4EaRiTLk3TgE?=
- =?us-ascii?Q?1g0ilaH0sxm34P1T0AvL0mauiOD63l2s/SDNghrh1XwoTUiX9CehbdjLvN5B?=
- =?us-ascii?Q?Fppd+AhNIHQ+VL3wRHQplrH04IjA1iL3vHlpuxK6dA26cwjOFE+imkvAb1Q8?=
- =?us-ascii?Q?oDe6U0YiJN03N3JFrUzsjUfVLr9WMICYJ5HEE6wd/WY5IfBl/MhMh1lp5Eku?=
- =?us-ascii?Q?v2JF0XCezQ3/fDJrwbw1WKXtBciK8hq2TLKspecTtx8iHnuStI5uXrrySDN3?=
- =?us-ascii?Q?0nKGNUctqMqX2zrvu7CNM3tnMEIfi2Wjt1UXDkq7ywE5ve4KE8RJC+ZWZ6kC?=
- =?us-ascii?Q?XECVagKsw9E6vXAqENoH8SNlkWszHbbCqvuycqaph2JdGBbYsxKOdotxLe+p?=
- =?us-ascii?Q?wI7c1PsStt4EJSMwQc8zH/wvm+f5Ji2o6gV2aSnJRutmfteztcTcu+r6DywG?=
- =?us-ascii?Q?7vwh2odd2Nidq8posXELBAeWApIt9r36v+NzB0e0yzYtTEkrQ4GNJekcnGIn?=
- =?us-ascii?Q?baX11yP/jRn/zOr2cvA3az3olPIOSAjg0PN6MeyTDlFR1eu7R1ElpSnmDXyw?=
- =?us-ascii?Q?szh9ILX5E2WahrSvOy5oFQ7nVaMJw2RRrxSbz8E1yjlLxPdgV3A+7o8WGYc/?=
- =?us-ascii?Q?zR74CnbhN17UVHA+fgQs6RHH//QRNYIg7ZkDKwWBaafLxKjjyO+m6jvswPJv?=
- =?us-ascii?Q?yD7SyU6hJCWoSClLYt1rGbW1aWRsWJoYagmUbdtJFSoBe1/tuyg1sl8a8XeL?=
- =?us-ascii?Q?n1L0AdPHobcA9h5e9vChrxfD/Gm5nnldWuMGD0cu1UoHFFEcned10x5Rwn4V?=
- =?us-ascii?Q?HOxzURZu6D4LAMG1lpmfONbkdbTNdpKWSIKCwL/01QwMg34fPW1FwDpP/2+c?=
- =?us-ascii?Q?WbaptW+gJ4wd7g0f9Q+KsC2nvhQXpjKT61rsGm3eutegY5iH2oEs3qPcmO5v?=
- =?us-ascii?Q?Q0PVAvKqz+MzJEpdAlHoYqTzc38Bo8E0oI4mLQvPU4YYj7eUoO4fnhk91Yp4?=
- =?us-ascii?Q?Ene9wz2Oet8bFOMQ9JmFMe+UNrMBjvrYFc+wmzfNWlvcBXWsiTEoCwuGA56e?=
- =?us-ascii?Q?IOw1ROw+fOGGIaahkfsBvg7TcOUk07Ikbgv+5TfBmL1Xc1CcvIKBzz6FnccC?=
- =?us-ascii?Q?ikAXsP2p0ApsYOIWuKO2xYaAyIj8UBUBLbnKz7Rk?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A50F25DCFA;
+	Tue, 25 Mar 2025 16:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742921066; cv=none; b=noiGzeL1mIBwFwD0FP5QWR/ZYU31TlQi0XBvYIVUhdQI/GeeTVVP/hSCMjMRLy8yP9dNGhB/LE3rK2qb1ge/syZkd2zSwofb8p7arN9vEkxdUfRAhW9mPMcehJf9gJjq/BUewHuWzvAiA5uRiTNfc3oMBe2+VKux/O9+zGpZg78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742921066; c=relaxed/simple;
+	bh=PIcZt32qJ9OHs9IeWqZg09HYSD4aJ2QgsyhopDAw0+g=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GprG2l1yrjikzI7N1ldcy8r66aUubFyeWV6S5j0hK8YYdHqfZChYLyNoZfbMHkBL7b2YdqvqFr2N0Z2NqAoVQtOnqdb6EeTm6lVwOf80ktAYOEUTzANtbvHW4Y7nIL0knMdYabSrbiot3DLiLj25PwZjrKe5lclgCFJR+DT/1GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cNCGOVAw; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742921064; x=1774457064;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=PIcZt32qJ9OHs9IeWqZg09HYSD4aJ2QgsyhopDAw0+g=;
+  b=cNCGOVAwUfqU+kG3FTpvjPGNclO2rTt54jjwxUoGvPiGR4cJHRPsCT7e
+   hwZlZ1DGiktlFyrGBRX+KWxzbJ3dZ3w2nYtD00EWUd4ScVpuciJ0VShxO
+   D150f8KlU00fxZ9DqMj14F7xWuff6aggq2uv0QyvOFUlnICpdFlAiyjGm
+   dcTbmhx3pqbD/+F+41Ql7HSBE6WIurK6lBmOackOA9hWwZvvi1bXECpbH
+   7NrvHC0c6VV5uMLBZtW1pQqdwpO0xc9assIGjRXF8O46hZeojH7FNlI4s
+   1yidbGzTlV/nhX5d8wZBrKRT8NXVqB7qEc27C5PIkk/gxUke89GSKz592
+   g==;
+X-CSE-ConnectionGUID: qMCppyDLQ1Kx6VB433ovWg==
+X-CSE-MsgGUID: ob2oK6NcR1muYmxLvspm7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="54828915"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="54828915"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:44:23 -0700
+X-CSE-ConnectionGUID: pH+x6zujRg6v3kGot+mukw==
+X-CSE-MsgGUID: cOvPsRdqTOWCPfUY740Vpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="124902805"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:44:20 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 25 Mar 2025 18:44:16 +0200 (EET)
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v4 07/11] platform/x86: asus-wmi: add keyboard brightness
+ event handler
+In-Reply-To: <20250324210151.6042-8-lkml@antheas.dev>
+Message-ID: <cc762cec-c5a3-2bf4-c877-469d1a9e6c8f@linux.intel.com>
+References: <20250324210151.6042-1-lkml@antheas.dev> <20250324210151.6042-8-lkml@antheas.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR04MB9910.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d50959e-ab21-416a-858f-08dd6bbc2e8c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 16:43:33.5206
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W+iU8wlfDKRAO+VXGr8znuu3Mzivzs86KSlpHbkt/eHTRHd6EEUBLGIXQdpU7FW4vonRkLK1os7ZaBHQX1+DTA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10695
+Content-Type: text/plain; charset=US-ASCII
 
-> -----Original Message-----
-> From: Francesco Dolcini <francesco@dolcini.it>
-> Sent: Thursday, March 20, 2025 12:29 AM
-> To: Jeff Chen <jeff.chen_1@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; johannes@sipsolutions.net; francesco@dolcini.it=
-;
-> Pete Hsieh <tsung-hsien.hsieh@nxp.com>; s.hauer@pengutronix.de
-> Subject: [EXT] Re: [PATCH v4 1/2] wifi: mwifiex: Fix premature release of=
- RF
-> calibration data.
->=20
->=20
-> Hello Jeff,
->=20
-> On Tue, Mar 18, 2025 at 01:07:38PM +0800, Jeff Chen wrote:
-> > This patch resolves an issue where RF calibration data was being
-> > released before the download process. Without this fix, the external
-> > calibration data file would not be downloaded at all.
-> >
-> > Fixes: d39fbc88956e ("mwifiex: remove cfg_data construction")
-> > Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
->=20
-> The code looks ok to me, however I do not understand the commit you
-> selected as fixes tag.
->=20
-> From what I understand releasing the data before using it was done since =
-the
-> initial commit 388ec385d5ce ("mwifiex: add calibration data download
-> feature"). What am I missing?
->=20
-> Francesco
+On Mon, 24 Mar 2025, Antheas Kapenekakis wrote:
 
-Hello Francesco, =20
+> Currenlty, the keyboard brightness control of Asus WMI keyboards is
+> handled in the kernel, which leads to the shortcut going from
+> brightness 0, to 1, to 2, and 3.
+> 
+> However, for HID keyboards it is exposed as a key and handled by the
+> user's desktop environment. For the toggle button, this means that
+> brightness control becomes on/off. In addition, in the absence of a
+> DE, the keyboard brightness does not work.
+> 
+> Therefore, expose an event handler for the keyboard brightness control
+> which can then be used by hid-asus.
+> 
+> Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> Tested-by: Luke D. Jones <luke@ljones.dev>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/platform/x86/asus-wmi.c            | 39 ++++++++++++++++++++++
+>  include/linux/platform_data/x86/asus-wmi.h | 11 ++++++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index ff1d7ccb3982f..27468d67dba09 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -1536,6 +1536,45 @@ void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
+>  }
+>  EXPORT_SYMBOL_GPL(asus_hid_unregister_listener);
+>  
+> +static void do_kbd_led_set(struct led_classdev *led_cdev, int value);
+> +
+> +int asus_hid_event(enum asus_hid_event event)
+> +{
+> +	unsigned long flags;
+> +	int brightness;
+> +
+> +	spin_lock_irqsave(&asus_ref.lock, flags);
+> +	if (!asus_ref.asus || !asus_ref.asus->kbd_led_registered) {
+> +		spin_unlock_irqrestore(&asus_ref.lock, flags);
+> +		return -EBUSY;
+> +	}
+> +	brightness = asus_ref.asus->kbd_led_wk;
+> +
+> +	switch (event) {
+> +	case ASUS_EV_BRTUP:
+> +		brightness += 1;
+> +		break;
+> +	case ASUS_EV_BRTDOWN:
+> +		brightness -= 1;
+> +		break;
+> +	case ASUS_EV_BRTTOGGLE:
+> +		if (brightness >= 3)
 
-Thank you for reviewing the patch. You are correct-the Fixes tag I included=
- was incorrect.
-After re-examining the issue, I found that the premature release of RF cali=
-bration data=20
-cannot be reproduced, which invalidates the problem statement for this patc=
-h. =20
+Add ASUS_EV_MAX_BRIGHTNESS instead of a literal?
 
-I have decided to withdraw the patch. I appreciate your feedback and attent=
-ion to detail,=20
-which helped identify this oversight. =20
+> +			brightness = 0;
+> +		else
+> +			brightness += 1;
+> +		break;
+> +	}
+> +
+> +	do_kbd_led_set(&asus_ref.asus->kbd_led, brightness);
+> +	led_classdev_notify_brightness_hw_changed(&asus_ref.asus->kbd_led,
+> +						  asus_ref.asus->kbd_led_wk);
+> +
+> +	spin_unlock_irqrestore(&asus_ref.lock, flags);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(asus_hid_event);
+> +
+>  /*
+>   * These functions actually update the LED's, and are called from a
+>   * workqueue. By doing this as separate work rather than when the LED
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index c513b5a732323..9adbe8abef090 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -162,11 +162,18 @@ struct asus_hid_listener {
+>  	void (*brightness_set)(struct asus_hid_listener *listener, int brightness);
+>  };
+>  
+> +enum asus_hid_event {
+> +	ASUS_EV_BRTUP,
+> +	ASUS_EV_BRTDOWN,
+> +	ASUS_EV_BRTTOGGLE,
+> +};
+> +
+>  #if IS_REACHABLE(CONFIG_ASUS_WMI)
+>  int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+>  
+>  int asus_hid_register_listener(struct asus_hid_listener *cdev);
+>  void asus_hid_unregister_listener(struct asus_hid_listener *cdev);
+> +int asus_hid_event(enum asus_hid_event event);
+>  #else
+>  static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+>  					   u32 *retval)
+> @@ -181,6 +188,10 @@ static inline int asus_hid_register_listener(struct asus_hid_listener *bdev)
+>  static inline void asus_hid_unregister_listener(struct asus_hid_listener *bdev)
+>  {
+>  }
+> +static inline int asus_hid_event(enum asus_hid_event event)
+> +{
+> +	return -ENODEV;
+> +}
+>  #endif
+>  
+>  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
+> 
 
-Best regards, =20
-Jeff
+-- 
+ i.
+
 
