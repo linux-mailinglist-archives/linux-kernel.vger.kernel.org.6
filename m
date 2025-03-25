@@ -1,116 +1,338 @@
-Return-Path: <linux-kernel+bounces-575164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB05A6EE98
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:06:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF30A6EF21
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:10:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66DE416E3D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3CF3B8091
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BEA25522B;
-	Tue, 25 Mar 2025 11:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C59A255E49;
+	Tue, 25 Mar 2025 11:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GvzDdMjA"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NJSEPNwk"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467A537E9;
-	Tue, 25 Mar 2025 11:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813921F3B8C;
+	Tue, 25 Mar 2025 11:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900750; cv=none; b=MbtqrHTVAT3Y/DxjYtVXMqho0NL6KLBX8PHbJeracjqYo+224QXstkOBoIfDSkVNnsRgpXHy8seIX4dTob0Y9xY9PnGnothze8ovQX4F6nodRcTydax182xP1l3kkKDQDjY88stXe0Rd0jPg5LHP3/vcAJoYhb16uJr7kvIivTo=
+	t=1742900860; cv=none; b=PYBD6Y5lpYAKPNFGScFtHZk1QxJDSir1xgtKj92Ux0Jfvgwghft1QQTXduM0MWagRT4yWrsf9cr35G9wNcwmQgFov9fJlaqmKdjcL00D2HJ8PldM1SnVgaaL+GyPR5E3R3lHWNe4vrD2FJfgeukEVNZPhu5r2w23V0mPYcqAn0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900750; c=relaxed/simple;
-	bh=RE1crkjfDMTRfO9l+NkEoKH5Q2VQv5QCMnn24nrgW2Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R9k3Xf5ek9YMrZJzSJQjkNdSv4pGCe468rPxmqpFqVAkP37gThoraOyxCTIvYKnLHYlwU7R4wVZl3BCzOpKDMnKOF2iTpa/4DSmv3Y4Nt1Ifd4Tl2L+89azCREGEN7Bqofb4JX0iq+YjyeNgub1EdsJRdhFekVtmmCJJWyKQaqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GvzDdMjA; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=hkgfeukzircddjyssmulfeqlhi.protonmail; t=1742900744; x=1743159944;
-	bh=ZTrBETovGBbpxaZItuToVrfYc/UT5EF5gB+KAeul71U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=GvzDdMjAUG7NS1sIsIN2ySv/tEePVztcY+FA/xzy7VQx0a3x+TFR30bbwt2Eu10wU
-	 CGFA0AkdW+g9/NNAC4Wc9SA7LUHKsA30BQuzj9bqyZSmTnFEf7nV7RHigfUJakwEnd
-	 3h2OVFvIvBXZ0VDaaU1b+5wR041AqHZlk8B2jz6SRvOQKzImecs5GrSEVFRvuokfsj
-	 9oiWa9J/5keCoKrgomvku1hsfe9iQyjKB/LaxECf5adMnVsnnQ5aGDqlmeEfwPke9Y
-	 7gPPw50JJ9ssVhSVR3QE7wXr9ivWCGrPqOU+qieHTem5y/S6pG3Lb1hnTBLklO7Aao
-	 D3SMfk/3USJPw==
-Date: Tue, 25 Mar 2025 11:05:40 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
-Message-ID: <D8PAQXHJDVQE.36QKQGBVVL4QU@proton.me>
-In-Reply-To: <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com>
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com> <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me> <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 43fd8f7124349bec9ba6525a35e3b09516fe44d7
+	s=arc-20240116; t=1742900860; c=relaxed/simple;
+	bh=blkVhaJyPYEXmS5/OQ4f6chIHr8Zhz7mgpT4b/Ovl5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VodBflbnMjv/s7Fbdjr3jR+vjG6glLNzWVC3lxm5rDmZEQbzAbdq7R2h+6ZSnj+NsHi8GEZjSII+NIuLIkPUSxk0G3SHD9Prh+803ECdv82vBqDX8IlEP9Lqn4DiqoCBuS/7RWgzziRAV3kyJZg2eRJOHLYlQA5GY/nkvYmSSug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NJSEPNwk; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P8D5mb012512;
+	Tue, 25 Mar 2025 12:07:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	/KukUtJceVhgFPBW8ObUIe2L2Pux41mXB/v8R9UNM+I=; b=NJSEPNwkJ8tkCKwl
+	7VwKYPTpC49WTPydD8yBNcPyNXc00jUAW4YyJL1zzD0l9NiNFW/INkUx84MYjtsL
+	chIg3y9lWqt279iltfNDxHXvv9kbk0Gv9Ikn9Wan+iJNmIShbnTzXjW1K3RJPELI
+	yHZyBsxn92e1cnZRx8vleOQ4erc5Y4+nlTMQsqx5fTBtoFY9RYyNDwLRsD65Z1ck
+	Y7aXQdyo8trGSrF0rjalYuG8UMcQrfU+w95n03pLdiA4unyjC/21s7mHOsIeujKL
+	MDyIyyhHUVfzB4DFqD/+HhMgu92BO2qvP8keuKHQj1lG9wdxjTQRIb8teVyeOaqY
+	hz4HpA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45hne5cavt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 12:07:19 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1858240047;
+	Tue, 25 Mar 2025 12:06:11 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 49FDA84AF5D;
+	Tue, 25 Mar 2025 12:05:14 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 12:05:14 +0100
+Received: from [10.252.12.99] (10.252.12.99) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 12:05:13 +0100
+Message-ID: <a2c8655c-48e8-49e5-8460-175f73729f54@foss.st.com>
+Date: Tue, 25 Mar 2025 12:05:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
+ <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_04,2025-03-25_02,2024-11-22_01
 
-On Mon Mar 24, 2025 at 10:59 PM CET, Tamir Duberstein wrote:
-> On Mon, Mar 24, 2025 at 5:55=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->> On Mon Mar 24, 2025 at 9:55 PM CET, Tamir Duberstein wrote:
->> > On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.lossin@pro=
-ton.me> wrote:
->> >> * `cast_lossless` (maybe this catches some of the `num as int_type`
->> >>   conversions I mentioned above)
->> >
->> > Yeah, suggested the same above. I had hoped this would deal with the
->> > char as u32 pattern but it did not.
+
+
+On 12/6/24 23:07, Bjorn Andersson wrote:
+> On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
+>> Add a remoteproc TEE (Trusted Execution Environment) driver
+>> that will be probed by the TEE bus. If the associated Trusted
+>> application is supported on secure part this driver offers a client
+>> interface to load a firmware by the secure part.
+> 
+> If...else?
+> 
+>> This firmware could be authenticated by the secure trusted application.
 >>
->> Aw that's a shame. Maybe we should create a clippy issue for that,
->> thoughts?
->
-> Yeah, it's not clear to me why it isn't covered by `cast_lossless`.
-> Might just be a bug. Want to file it?
+> 
+> I would like for this to fully describe how this fits with the bus and
+> how it is expected to be used by a specific remoteproc driver.
+> 
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> Updates vs version v13:
+>> - define REMOTEPROC_TEE as bool instead of tristate,
+>> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
+>>   that the firmware is loaded using the load_fw() operation.
+>> ---
+>>  drivers/remoteproc/Kconfig          |  10 +
+>>  drivers/remoteproc/Makefile         |   1 +
+>>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
+>>  include/linux/remoteproc.h          |   4 +
+>>  include/linux/remoteproc_tee.h      | 105 ++++++
+>>  5 files changed, 628 insertions(+)
+>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+>>  create mode 100644 include/linux/remoteproc_tee.h
 
-Done: https://github.com/rust-lang/rust-clippy/issues/14469
+[...]
 
->> >> I'll leave it up to you what you want to do with this: add it to this
->> >> series, make a new one, or let someone else handle it. If you don't w=
-ant
->> >> to handle it, let me know, then I'll create a good-first-issue :)
->> >
->> > I'll add a patch for `cast_lossless` -- the rest should probably go
->> > into an issue.
+>> +
+>> +MODULE_DEVICE_TABLE(tee, rproc_tee_id_table);
+>> +
+>> +static struct tee_client_driver rproc_tee_fw_driver = {
+>> +	.id_table	= rproc_tee_id_table,
+>> +	.driver		= {
+>> +		.name		= KBUILD_MODNAME,
+>> +		.bus		= &tee_bus_type,
+>> +		.probe		= rproc_tee_probe,
+>> +		.remove		= rproc_tee_remove,
+>> +	},
+>> +};
+>> +
+>> +static int __init rproc_tee_fw_mod_init(void)
+>> +{
+>> +	return driver_register(&rproc_tee_fw_driver.driver);
+>> +}
+>> +
+>> +static void __exit rproc_tee_fw_mod_exit(void)
+>> +{
+>> +	driver_unregister(&rproc_tee_fw_driver.driver);
+>> +}
+>> +
+>> +module_init(rproc_tee_fw_mod_init);
+>> +module_exit(rproc_tee_fw_mod_exit);
+> 
+> Please add an equivalent of the module_platform_driver() macro to tee
+> framework instead of open-coding this.
+> 
+
+It is not possible to use equivalent of the module_platform_driver() macro
+as the device is on the TEE bus.
+
+I followed recommendation provided in Documentation/driver-api/tee.rst[1]
+
+Or do you have an alternative in mind?
+
+Thanks,
+Arnaud
+
+[1]https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/driver-api/tee.rst
+
+
+>> +
+>> +MODULE_DESCRIPTION(" remote processor TEE module");
+>> +MODULE_LICENSE("GPL");
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 8fd0d7f63c8e..2e0ddcb2d792 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -503,6 +503,8 @@ enum rproc_features {
+>>  	RPROC_MAX_FEATURES,
+>>  };
+>>  
+>> +struct rproc_tee;
+>> +
+>>  /**
+>>   * struct rproc - represents a physical remote processor device
+>>   * @node: list node of this rproc object
+>> @@ -545,6 +547,7 @@ enum rproc_features {
+>>   * @cdev: character device of the rproc
+>>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+>>   * @features: indicate remoteproc features
+>> + * @rproc_tee_itf: pointer to the remoteproc tee context
+>>   */
+>>  struct rproc {
+>>  	struct list_head node;
+>> @@ -586,6 +589,7 @@ struct rproc {
+>>  	struct cdev cdev;
+>>  	bool cdev_put_on_release;
+>>  	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+>> +	struct rproc_tee *rproc_tee_itf;
+> 
+> TEE is just one specific remoteproc implementation, why does it need to
+> infest the core data structure? Do you want a stm32_rproc here as well?
+> 
+>>  };
+>>  
+>>  /**
+>> diff --git a/include/linux/remoteproc_tee.h b/include/linux/remoteproc_tee.h
+>> new file mode 100644
+>> index 000000000000..9b498a8eff4d
+>> --- /dev/null
+>> +++ b/include/linux/remoteproc_tee.h
+>> @@ -0,0 +1,105 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/*
+>> + * Copyright(c) 2024 STMicroelectronics
+>> + */
+>> +
+>> +#ifndef REMOTEPROC_TEE_H
+>> +#define REMOTEPROC_TEE_H
+>> +
+>> +#include <linux/tee_drv.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/remoteproc.h>
+>> +
+>> +struct rproc;
+>> +
+>> +/**
+>> + * struct rproc_tee - TEE remoteproc structure
+>> + * @node:		Reference in list
+>> + * @rproc:		Remoteproc reference
+>> + * @parent:		Parent device
+> 
+> Isn't that rproc->dev->parent?
+> 
+>> + * @rproc_id:		Identifier of the target firmware
+>> + * @session_id:		TEE session identifier
+>> + */
+>> +struct rproc_tee {
+> 
+> As far as I can tell this isn't dereferenced outside remoteproc_tee.c,
+> can we hide it therein?
+> 
+>> +	struct list_head node;
+>> +	struct rproc *rproc;
+>> +	struct device *parent;
+>> +	u32 rproc_id;
+>> +	u32 session_id;
+>> +};
+>> +
+>> +#if IS_REACHABLE(CONFIG_REMOTEPROC_TEE)
+>> +
+>> +int rproc_tee_register(struct device *dev, struct rproc *rproc, unsigned int rproc_id);
+>> +int rproc_tee_unregister(struct rproc *rproc);
+>> +int rproc_tee_parse_fw(struct rproc *rproc, const struct firmware *fw);
+>> +int rproc_tee_load_fw(struct rproc *rproc, const struct firmware *fw);
+>> +void rproc_tee_release_fw(struct rproc *rproc);
+>> +struct resource_table *rproc_tee_find_loaded_rsc_table(struct rproc *rproc,
+>> +						       const struct firmware *fw);
+>> +int rproc_tee_start(struct rproc *rproc);
+>> +int rproc_tee_stop(struct rproc *rproc);
+>> +
+>> +#else
+>> +
+> 
+> Do we really need yet another bunch of stubs? Can't we just leave
+> CONFIG_REMOTEPROC_TEE non-user-selectable and have the drivers that rely
+> on it do "select REMOTEPROC_TEE"?
+> 
+> If my measurements are correct, it's 3.1kB of code...
+> 
+> Regards,
+> Bjorn
+> 
+>> +static inline int rproc_tee_register(struct device *dev, struct rproc *rproc, unsigned int rproc_id)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static inline int rproc_tee_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int rproc_tee_unregister(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int rproc_tee_load_fw(struct rproc *rproc,  const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int rproc_tee_start(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline int rproc_tee_stop(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline void rproc_tee_release_fw(struct rproc *rproc)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +}
+>> +
+>> +static inline struct resource_table *
+>> +rproc_tee_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return NULL;
+>> +}
+>> +#endif /* CONFIG_REMOTEPROC_TEE */
+>> +#endif /* REMOTEPROC_TEE_H */
+>> -- 
+>> 2.25.1
 >>
->> Do you mind filing the issue? Then you can decide yourself what you want
->> to do yourself vs what you want to leave for others. Feel free to copy
->> from my mail summary.
->
-> Well, I don't really know what's left to do. We're pretty close at
-> this point to having enabled everything but the nukes. Then there's
-> the strict provenance thing, which I suppose we can write down.
-
-Yes, but there are also these from my original mail:
-* `shared_ref as *const _` (for example in rust/kernel/uaccess.rs:247,
-  rust/kernel/str.rs:32 and rust/kernel/fs/file.rs:367), these we can
-  replace with `let ptr: *const ... =3D shared_ref;`. Don't know if there
-  is a clippy lint for this.
-
-And the other points (haven't taken a look at the other series you
-submitted, so I don't know to what extend you fixed the other `as` casts
-I mentioned). So I figured you might know which ones we still have after
-applying all your patches :)
-
----
-Cheers,
-Benno
-
+> 
 
