@@ -1,229 +1,1561 @@
-Return-Path: <linux-kernel+bounces-574664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08492A6E83D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:04:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F978A6E842
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8A618968CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:04:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684AF7A4129
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4257E15E5AE;
-	Tue, 25 Mar 2025 02:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136F17BB35;
+	Tue, 25 Mar 2025 02:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="refjcuem"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2040.outbound.protection.outlook.com [40.107.102.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvl9VMiJ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EC963CB;
-	Tue, 25 Mar 2025 02:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742868247; cv=fail; b=axaAYSymU1cgU749HAgCT9tC6j+OyknTnm9xFL+jTCVzvWLXwQJyj1EnmZJS3mpRHH8J9R/UFoQuN10/8vGwW7z5usIaUfxk5z8JBWP5/4ocbEBDRsH0QwnqJgSYGnrJ5tXYvAKtIsX7A287PRY88SpZ02XRX3FvV+RkZcBxz2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742868247; c=relaxed/simple;
-	bh=55cDh/wjThTApO/Ny5UfdGmbQP1rAMVnGthi0dj2d48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Q5TmwzlcMJ1qGl3Tc/ZPkMS6/iPxUtliyPq7KvZN2GDVOkXuvGJYpmSlFT8BpdGgtbOD97m8pyLJpFJEpAFd50JyXULFZHXgR6fpOJfJyIbQQXUCB5c1BqdazhNskJMU/1iY+lCoTic9RBbOXjtHL7nuTkUkLTwGgAOyvdKrPiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=refjcuem; arc=fail smtp.client-ip=40.107.102.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ugtE6YHkeGOL1i++qGch+E2cKCWMFATShsSTmt8v2ULnYc8P38f8yFx3D8M5zr0TG4pVG1PRFaozhY6wG09bmFZogO4mshRMvPyaz7wyOvduboXRqPR0MGCpwnb5261Zs+FYvFEoHVfQuDche8Vd7Va70FxYXT28cZcp2JZR86AvneLfMdNcdXparyqG+YkFw3BsfsMhMKvHPAUfF/NFeKaNEGtfiopDNx5WyTMHZymI7S9nO7cUIXB3l+F2IT0VuNQ10tzcTon1EKZX7gujnujpQblygiSpsLZBKEg/UjvppuQwdoQHqm4NB5ToktV5dp8j7gb9ATPD8LAiIVEx7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U1NxtoDO6wxYN4skMVvlL0GEVtbRcnK4gMIc8ocACUI=;
- b=vYJRQHt8cKDbcpmWbrVD1WoyTXkJZNDbmCDyaEnAxnt1/yW95KQmYKjGl9H77VcU7mLW21G/OxUADOQsy0bF049RZpNCG/lDCIse5bWwhMZj19S6c7PgEnVw85owu2ZygLduUFo4f4fjzZOMO7g5XcFLX9qRu3ktC+89qKd+Dl5VNhdJKB/Yjr0NPtWlr4XROIkXOp708WEYGm4EyGjQYtxjJm92GBCB/9+VJ2i+OnacK5BJwnUQ7xhVAuEIgsn+MFQHRp9GD5GQlCloJtm/+ZuynLmNDC/ifssvsBL2KezlU5YFYYsuyBuKUoHEXKSWoDu/YQjt6nvMeWcempAX1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U1NxtoDO6wxYN4skMVvlL0GEVtbRcnK4gMIc8ocACUI=;
- b=refjcuema9Op961qrpvB9u/upzwte+NS1B+1Ko14V8BAkJkYX8b/7FxrtXy6SIASnC2UrvhWMlnAVelZCGTVIApM/pHivnZwcTEFGppEbFDidHaye4nCezflFm6r6mctLGWqx6cSRF8m8WKkEq9sMl1mtfUezb2u1VSxvaUvG/ehpVxxbGevg/GPlYDJoPGRUmg6u0D6VmpnrFAN35feZlcm0sQ+gqzPW6+BLip9X1vkmmhzh03EDKs/AKKgU1CgtYDuyLAsKOHaVYnfU/1ipQXuYoOYzs+y+u2tFpGMuCLQYycWBuO+d3aueiEFcGL6qMfszr99CUQb5UalV4AZEw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MW3PR12MB4459.namprd12.prod.outlook.com (2603:10b6:303:56::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 02:04:02 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 02:04:02 +0000
-Date: Mon, 24 Mar 2025 23:04:01 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Changyuan Lyu <changyuanl@google.com>
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com, arnd@arndb.de,
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de,
-	catalin.marinas@arm.com, corbet@lwn.net,
-	dave.hansen@linux.intel.com, devicetree@vger.kernel.org,
-	dwmw2@infradead.org, ebiederm@xmission.com, graf@amazon.com,
-	hpa@zytor.com, jgowans@amazon.com, kexec@lists.infradead.org,
-	krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, luto@kernel.org, mark.rutland@arm.com,
-	mingo@redhat.com, pasha.tatashin@soleen.com, pbonzini@redhat.com,
-	peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org,
-	robh@kernel.org, rostedt@goodmis.org, rppt@kernel.org,
-	saravanak@google.com, skinsburskii@linux.microsoft.com,
-	tglx@linutronix.de, thomas.lendacky@amd.com, will@kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
- preservation
-Message-ID: <Z+IPEeg7jkjrIB+8@nvidia.com>
-References: <20250321134629.GA252045@nvidia.com>
- <20250323190758.743798-1-changyuanl@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250323190758.743798-1-changyuanl@google.com>
-X-ClientProxiedBy: BL1PR13CA0428.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::13) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D357DA73;
+	Tue, 25 Mar 2025 02:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742868492; cv=none; b=pbz2FR1/fVtPSqTVu0iIt6A8eZJRCja9H2TXU/g92NLVQllWN6U9/aRmhuskZJzOw18i9XsnieU9U2yGvU8bPiDMGmhJgiG72nLFnUAgOAgxkcCtPPYNnVpYQTROp+n/Jn1Zl6JFW4JVnD5/LWMnzOjsFt1eYLz5IJp36o6VFnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742868492; c=relaxed/simple;
+	bh=OnblN3QABPTZaJ1YhN9YSCVzSVNpwxCF+uORyPU+Nds=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TwOGw1zV7xS6W3qqTOd88jSn7DyHfVEQXW84ApYERfx8fQTqDAhoRoZVsjeazjeayWB5D4pvidvTLqTifbWKG8uBHBwyjQOfsl5vaEou9it333IX7DmUSECNkYLGukkc6/apdn9bAA3C/HxiQJwq4YQO/vfGBjTICgNEmoWU5zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvl9VMiJ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22398e09e39so101977495ad.3;
+        Mon, 24 Mar 2025 19:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742868489; x=1743473289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ex1tfv4m3FqL4LAb4Y//wasgWoEqszry1gvIWtr9M0=;
+        b=fvl9VMiJThay9U6NYkAhf9n9Zbr05AiMKPAUQAH2mY6A5YWsqgMjd8/LWwcppOrTbh
+         R5vhBOJ0WTzZSSA6vAj+hpZD1WizqPLPqAtn1rTsnTdedwWoNBzUnR/F5YuVdbj7tcKp
+         YSsOCRFmZx0MK0zWg0i5N2moMDl88/LWgcNhVbR276S5fmp67m4FPMb2l8ydl9HeVbKe
+         3XR8TOsAtL0NLHjdINhcOZ6cELxaVt0IyZOMvhukNQHRj9S8AVPrbIr9NR2dbxJT3dZ9
+         93HzpX1RZp3HRTN5wd9q5MWwUKssHk+6JMypeCyBLepS7T8gNllDrbV+btb2LBHQHImb
+         kFyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742868489; x=1743473289;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Ex1tfv4m3FqL4LAb4Y//wasgWoEqszry1gvIWtr9M0=;
+        b=h/Bg4Kpvu8wqEUvBI6GZlZm8VJab0ML64tGdxGNwg3rmeExSpR8ov8TyFlQOeIW/91
+         wmWmx/23jQunxB7HC+CWk2YKjaCGfkffYL6AGuYwl22KNcbhvEOPj7pRE0hIkpo2osuU
+         Z65/TePiYDa7l8cm/9L1O0zMrD2ku0Sq/LgTXkmcvCnG4XxXf76FNP0Y/5E7JNfsn5r8
+         bllZHLhW52KA1Sa4vkb/NokF8A9EzerqYTPEJV0W/SxtMUQcwibgzQ4KNW+Rk319hVOc
+         T5MY0vtfxsjmMp8DpJz3CL/3m/a3UL7pWbUW0He/2AEgzf50bjSd7uy8mWFmyoLeK00g
+         NKig==
+X-Forwarded-Encrypted: i=1; AJvYcCUALexE6B516C/vQqYw5vwuxLG5EPqXpgIYAVuV/pTgbdzxBI3NgUiW2JkdnCZ6Gvsar+BKCdPbCovdu1A=@vger.kernel.org, AJvYcCV94rUJVPLLLVygGt7K3ijcPUpRhA8VgBZUMyu6QDSMVB6bv1vom2feMhRwO993LBEqfAGbRxU7sz1/uc5l4PWL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3cAWNJ0q2X8NsxAXoQ6/2lANCrZGbJDdbGe5L50+u8RoTs9iF
+	Pjt2NmCGEVIfC+fVKsbwoay+9a8oTav3A02VS3k6iTPDXgjQ+KZ/xyMKFM8+WF0=
+X-Gm-Gg: ASbGncuasV8R19cTcj7fxkL5QF4t+xFs5PUfFou8VeEFtBe0AiFHKbuM51le4wWoZHm
+	M9z74roARPBBBwAtT6AX2GBRXt2j9/I2iWgW88MKdyYSV9Nn5tm1LH938WqAcCSseB6axMMFBHV
+	xhvg8exS9tRT/39xNRcRDZuqWOhnoysSFjtx2yYMdbxTS9UD8LrdKgy9tnwF+8E9W70Sj9iLVlX
+	UaGtOx3zBCEwMSEtCeNAlSrCCyp0TSopU717YZMhuTz5FJsDZpXV0N9m+FwAjnTMBUi5gDjrZEY
+	kWW7W9+HMg8+n4bzIU1COrI6oJqEo4Rs3XOqAg==
+X-Google-Smtp-Source: AGHT+IHEGKhUYBnPYRKGPVH7gxu5Naj6+KVAlEwFABcJwJRLn3ooKXu8GQhIPOBcB41I8HOUj9W4Uw==
+X-Received: by 2002:a05:6a20:e196:b0:1f5:7873:3053 with SMTP id adf61e73a8af0-1fe430100e3mr26634562637.29.1742868488711;
+        Mon, 24 Mar 2025 19:08:08 -0700 (PDT)
+Received: from gmail.com ([116.237.135.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611d1f1sm9107987b3a.98.2025.03.24.19.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 19:08:08 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Antonio Quartulli <antonio@openvpn.net>,
+	Shuah Khan <shuah@kernel.org>,
+	sd@queasysnail.net,
+	ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
+Date: Tue, 25 Mar 2025 10:07:54 +0800
+Message-ID: <20250325020802.7632-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+References: <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW3PR12MB4459:EE_
-X-MS-Office365-Filtering-Correlation-Id: d87366f1-fcc1-42dc-22ad-08dd6b415070
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?miGq+b0QQSd2qqaXDsOls4ecFJ0gUORw6mnhWaTx24ckeDf1eEUPxX0QCYvJ?=
- =?us-ascii?Q?HgC7oPynoStYDfBAjEOgDKjcq9wv5pRbCgNtYCwgK8XNpgoDwMh2SdmniQRU?=
- =?us-ascii?Q?9BGxe6u5y3IUOA8kzHPsgdu2LMyRQRdw+5mk60AcvbCPvMNX9XuHgHj6LxHH?=
- =?us-ascii?Q?Sc3WxQtkDGIK9cu2Vrj8CBCfVOxRq+fFOTeBAfUHcFB8+76nM5OGPpW0BFgy?=
- =?us-ascii?Q?E49Yvp1Br4fbTHdDCg1eM7FmIBjhZG2AqomViiCW8zKV11OqERD88e4mRSk4?=
- =?us-ascii?Q?uiWqNc95I3ylzrgk2/JmDYJvkxnMSmZ07mEC4SI7EElsHVaSgO2zCUJLCHXz?=
- =?us-ascii?Q?ZokNublPaeoBTVXBGVRHh5ISzehdbAqwWcfblqD8flXrdYerJWGiibvIKDAN?=
- =?us-ascii?Q?gfqverKq9CBAvCkiG/nNfj0M7j0e2HT70xTniyT9bPT2wZs7scq/8nPlfIHO?=
- =?us-ascii?Q?K47GZvBR3u0dvVu/nDOjnTidGS8S0iL89zMOCH4GREkGEKRBhBvcCC7cQhXE?=
- =?us-ascii?Q?0xcrCjCgsik7Yzc0B0XIyLwM8uxj77eZs3q8MEqAIvg+zV1bajqEsrMXyjSj?=
- =?us-ascii?Q?CXX/5ATUREaINmNRcyHtjDEy1BLfKbME3cTlEb8ohkoTQNylagp2w0IBTGpq?=
- =?us-ascii?Q?qSEQ5c5lSGTuuPvhlkV0zIS2ZL8cZOaTF41buA6vVQ/RuKUKjcPeK8ggHs4Q?=
- =?us-ascii?Q?H0ViekFmEo72DeTYR4ob7S/sU7w0oK4UdARPlEKurBLvOTidJlxJ3/aqOR0I?=
- =?us-ascii?Q?+QkMognJ4CXo5P99Iv63PsQiu6J7W6a429WQx4BCV36QJmi9OhDnNU78/7GC?=
- =?us-ascii?Q?gY4OdIWvGqa0doqGWNTekrrESi/6B+1cx7kE/EdiB51kZMhhIZ+IDex7RiVS?=
- =?us-ascii?Q?IIbIJW0jX4nqMgbGKeECba+lZ83zwfnXJzCE40mk+Wt2X7xTKN87+fY1gpRH?=
- =?us-ascii?Q?A8502uQSLkfJvIEZmzeYIHgcySArYGKfnwr6k1soXRFm7fFuAljIn3q86t5Q?=
- =?us-ascii?Q?yEoNDClxrJS3bzBVzLoJ4EfaMXwZaeUUCDhNchgQqpeed/uydV1oeR0BFirM?=
- =?us-ascii?Q?K/BmLrKTNC9HeAl0VcDeef6RnhJ+LFcD0+8fp12bi/ZqfSJgYTDF58wW3F/N?=
- =?us-ascii?Q?sA2O8VXpQW+QJYvDfaUUgdmtmPDb4fnhKRyKZYVIehwSsFUMXNNaVclbNCM4?=
- =?us-ascii?Q?wcb9CLOmZukbv5sRbDCOj+72iESGUtETtzsjvaL60jtxUF582yJowki+8ArY?=
- =?us-ascii?Q?rHPhXNNGpD4e2NZnEjfyfcCjHEVTOMVCNfSjkJjuL97Z413stqvsPD4f93Ef?=
- =?us-ascii?Q?l7cJTPPgJsiz61ms1wJ2i1YIV1eVPh24mGIgKXm/lbZSl4SYunbDGS8BFhGe?=
- =?us-ascii?Q?d3R8bDiYNRKRm0kSdbSJiu/bD2yn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vUvxkFQ2iPEbNRUKavEnInat3+fqFOuHHaPN7EpiThm9KYUSsKjcZPmfG3Lw?=
- =?us-ascii?Q?2nr54aa/iKHgIBT82CS5DMuIW22Y6MqBUPihwuCSq0Vt8fEIPTMyCjLYlx9q?=
- =?us-ascii?Q?Tbse8uR3Vab9iPKfKMddEMWJ1Ogq8p9syBSZIxOMZn9vY0HcKfj6jt50fYgz?=
- =?us-ascii?Q?zWinJCjGXHNKGITJWJjD9mfwAeKBlrejQ4aprEAgJLHF/4hK0W0n8nS0dkTO?=
- =?us-ascii?Q?1ye/whay3BfqbFBqMHI/M/QgaTabLp+yvWZUtZ9IZ/UZqAYMqyu0KVjtJVdb?=
- =?us-ascii?Q?QqhBBHH9svExIpCqt73EP7vHP/6EEsq6Fbke7LiiJhKoUgJb6pdasFFzeWuN?=
- =?us-ascii?Q?mauzXO2APnz3dgLQFj1F8ch8UxuhFlTeRNUFDV4oyHwrZT+0qoxm6NxM6Zii?=
- =?us-ascii?Q?2KTaK/wr+C5F7PqyItehHxGJ5ZxjKw7q6RrP3umrmv4LU2I69l5b6bKByifv?=
- =?us-ascii?Q?sd45RRNGeLZtmwK29GsJEBUVRWRopJe9LF1VfJCPj1F/iNc0oTk0j7xwJovr?=
- =?us-ascii?Q?iAQR6VwhfmfUchKNXi3GP/+XdpT970XjrCs7W1DuJthwbm80ePFZIvnaEhXg?=
- =?us-ascii?Q?y6x90pRcw2xG6gQbMLCs4MPUNUhvt34Coo6rsSh00bAdLRwxio1vaGrWhhIo?=
- =?us-ascii?Q?gWF2R/wTZcTSKgHKGxw8EmCY0NUdVXqGgxz0pceWBuQVGdXcTRBI+bNdeZoq?=
- =?us-ascii?Q?Pz9Zmza9GcAY0Ctq5komFVJLY5Of1gtj3B8j/kPu0hbtm98qg/JIqV89fhVh?=
- =?us-ascii?Q?bJSBUy77m7PDzSn+ZO2XUmTxtSvD9tylH25QHuZYkqKo+GwNaEOdxgiZYezi?=
- =?us-ascii?Q?yjRNk4y1UH0JwHLgJG1dRs38ldEheZQdSEy615r8fANMQOTP0WxEiA2/T/zD?=
- =?us-ascii?Q?FBJidUFMHjOtXlfNJqgehVA3Y6xYKEECxBq9S7GWmuWrJ3eUq7VeaiBiyLKH?=
- =?us-ascii?Q?O+BOAKbdT40g3sBcFygJymn6LVq0ZKOAsbkZ91JD4Rs6csc+/n/I3qPyUlTj?=
- =?us-ascii?Q?9wDgxKYj/ZdahW3rGzUcR0C/+h9CnikJDhbgnXYF4AXk/g08uqvXGeltFyJx?=
- =?us-ascii?Q?V7yWzFnugalRmC958ZEiL0M3ObJwyIoNyAofE78pX79tRTcSSkPBA5F+lnnY?=
- =?us-ascii?Q?PndlocuBluW17zOPsWEFWu4Yj7pASX08fG42kPtavONwvwY7Enmz4lv19jGv?=
- =?us-ascii?Q?cmW/gYlzkkAVwzFfkb8GxXyc0jWeLbQTMjMRrmg7Vn9xDGNGBI9og0ddZFQU?=
- =?us-ascii?Q?VEpH4IodN9AOOF9A3eDIumQuTOsKKZpLRL+Sxyj8v04twnntzQw2NJb0HgNI?=
- =?us-ascii?Q?/3RIQNjaIaiDN+bHUD22lbvIFaXeoOFw3RwB+dgnO2aCObUx0bG5Cw2lMlQX?=
- =?us-ascii?Q?oNAQ0Gk3KZu02M39qjVUwbL0v3P93hgdYBqkWfguqXTGeYSuTx2pCwIC4+6H?=
- =?us-ascii?Q?jhNILgkYQJg5ivXwPbiO1jBBN32WM8q6dW/C5rTSFPsKT9dLK8LRPij2WGRE?=
- =?us-ascii?Q?TKXP93tmVAbXAgxcDNOXQdPDKYQ5DXDe/RLPmuB9djoomVosr6Yor418RZCB?=
- =?us-ascii?Q?nS93u4lZYS4fkYVOO9g=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d87366f1-fcc1-42dc-22ad-08dd6b415070
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 02:04:02.4815
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Jn2EPKqHB3wmS0ncQoM10efDkbnD2UIXtLEQOXENSH/qBDgokQYvUBfeLWMCq3dA
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4459
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 23, 2025 at 12:07:58PM -0700, Changyuan Lyu wrote:
+Hi Antonio,
 
-> > > +	down_read(&kho_out.tree_lock);
-> > > +	if (kho_out.fdt) {
-> >
-> > What is the lock and fdt test for?
+On Tue, 18 Mar 2025 02:40:44 +0100, Antonio Quartulli wrote:
 > 
-> It is to avoid the competition between the following 2 operations,
-> - converting the hashtables and mem traker to FDT,
-> - adding new data to hashtable/mem tracker.
-
-I think you should strive to prevent this by code construction at a
-higher level.
-
-Do not lock each preserve but lock entire object serializations, operations.
-
-For instance if we do recursive FDT then you'd lock the call that
-builds a single FDT page for a single object.
-
-> In most cases we only need read lock. Different KHO users can adding
-> data into their own subnodes in parallel.
-
-read locks like this are still quite slow in parallel systems, there
-is alot of slow cacheline bouncing as taking a read lock still has to
-write to the lock memory.
-
-> > What do you imagine this is used for? I'm not sure what value there is
-> > in returning a void *? How does the caller "free" this?
+> This change implements encryption/decryption and
+> encapsulation/decapsulation of OpenVPN packets.
 > 
-> This function is also from Mike :)
+> Support for generic crypto state is added along with
+> a wrapper for the AEAD crypto kernel API.
 > 
-> I suppose some KHO users may still
-> preserve memory using memory ranges (instead of folio).
-
-I don't know what that would be, but the folio scheme is all about
-preserving memory from the page buddy allocator, I don't know what
-this is for or how it would be used.
-
-IMHO split this to its own patch and include it in the series that
-would use it.
-
-> I guess the caller can free the ranges by free_pages()?
-
-The folios were not setup right, so no.. And if this is the case then
-you'd just get the struct page and convert it to a void * with some
-helper function, not implement a whole new function...
-
-> > There should be yaml files just like in the normal DT case defining
-> > all of this. This level of documentation and stability was one of the
-> > selling reasons why FDT is being used here!
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+> ---
+>  drivers/net/Kconfig            |   4 +
+>  drivers/net/ovpn/Makefile      |   3 +
+>  drivers/net/ovpn/bind.c        |   9 +-
+>  drivers/net/ovpn/crypto.c      | 152 ++++++++++++++++
+>  drivers/net/ovpn/crypto.h      | 139 +++++++++++++++
+>  drivers/net/ovpn/crypto_aead.c | 392 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/net/ovpn/crypto_aead.h |  27 +++
+>  drivers/net/ovpn/io.c          | 149 ++++++++++++++--
+>  drivers/net/ovpn/io.h          |   3 +
+>  drivers/net/ovpn/peer.c        |  29 +++
+>  drivers/net/ovpn/peer.h        |   5 +
+>  drivers/net/ovpn/pktid.c       | 129 ++++++++++++++
+>  drivers/net/ovpn/pktid.h       |  87 +++++++++
+>  drivers/net/ovpn/proto.h       |  32 ++++
+>  drivers/net/ovpn/skb.h         |   5 +
+>  15 files changed, 1148 insertions(+), 17 deletions(-)
 > 
-> YAML files were dropped because we think it may take a while for our
-> schema to be near stable. So we start from some simple plain text. We
-> can add some prop and node docs (that are considered stable at this point)
-> back to YAML in the next version.
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index b18ff941944e2e92aa769d1ebbc3d1782611fc06..51d77f3c0848c3c9425b586c6a90cff99a744390 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -121,6 +121,10 @@ config OVPN
+>  	depends on IPV6 || !IPV6
+>  	select DST_CACHE
+>  	select NET_UDP_TUNNEL
+> +	select CRYPTO
+> +	select CRYPTO_AES
+> +	select CRYPTO_GCM
+> +	select CRYPTO_CHACHA20POLY1305
+>  	help
+>  	  This module enhances the performance of the OpenVPN userspace software
+>  	  by offloading the data channel processing to kernelspace.
+> diff --git a/drivers/net/ovpn/Makefile b/drivers/net/ovpn/Makefile
+> index 164f2058ea8e6dc5b9287afb59758a268b2f8b56..38c9fdca0e2e8e4af3c369ceb3971b58ab52d77b 100644
+> --- a/drivers/net/ovpn/Makefile
+> +++ b/drivers/net/ovpn/Makefile
+> @@ -8,10 +8,13 @@
+>  
+>  obj-$(CONFIG_OVPN) := ovpn.o
+>  ovpn-y += bind.o
+> +ovpn-y += crypto.o
+> +ovpn-y += crypto_aead.o
+>  ovpn-y += main.o
+>  ovpn-y += io.o
+>  ovpn-y += netlink.o
+>  ovpn-y += netlink-gen.o
+>  ovpn-y += peer.o
+> +ovpn-y += pktid.o
+>  ovpn-y += socket.o
+>  ovpn-y += udp.o
+> diff --git a/drivers/net/ovpn/bind.c b/drivers/net/ovpn/bind.c
+> index d4a1aeed12c99c71eaf5e8e9fc9c0fe61af6aaac..24d2788a277e674bde80b5aac9407c6528b108e5 100644
+> --- a/drivers/net/ovpn/bind.c
+> +++ b/drivers/net/ovpn/bind.c
+> @@ -48,11 +48,8 @@ struct ovpn_bind *ovpn_bind_from_sockaddr(const struct sockaddr_storage *ss)
+>   */
+>  void ovpn_bind_reset(struct ovpn_peer *peer, struct ovpn_bind *new)
+>  {
+> -	struct ovpn_bind *old;
+> +	lockdep_assert_held(&peer->lock);
+>  
+> -	spin_lock_bh(&peer->lock);
+> -	old = rcu_replace_pointer(peer->bind, new, true);
+> -	spin_unlock_bh(&peer->lock);
+> -
+> -	kfree_rcu(old, rcu);
+> +	kfree_rcu(rcu_replace_pointer(peer->bind, new,
+> +				      lockdep_is_held(&peer->lock)), rcu);
+>  }
+> diff --git a/drivers/net/ovpn/crypto.c b/drivers/net/ovpn/crypto.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..db243cb48142f4a20aaf7a29eadda1b19ea344a7
+> --- /dev/null
+> +++ b/drivers/net/ovpn/crypto.c
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/net.h>
+> +#include <linux/netdevice.h>
+> +#include <uapi/linux/ovpn.h>
+> +
+> +#include "ovpnpriv.h"
+> +#include "main.h"
+> +#include "pktid.h"
+> +#include "crypto_aead.h"
+> +#include "crypto.h"
+> +
+> +static void ovpn_ks_destroy_rcu(struct rcu_head *head)
+> +{
+> +	struct ovpn_crypto_key_slot *ks;
+> +
+> +	ks = container_of(head, struct ovpn_crypto_key_slot, rcu);
+> +	ovpn_aead_crypto_key_slot_destroy(ks);
+> +}
+> +
+> +void ovpn_crypto_key_slot_release(struct kref *kref)
+> +{
+> +	struct ovpn_crypto_key_slot *ks;
+> +
+> +	ks = container_of(kref, struct ovpn_crypto_key_slot, refcount);
+> +	call_rcu(&ks->rcu, ovpn_ks_destroy_rcu);
+> +}
+> +
+> +/* can only be invoked when all peer references have been dropped (i.e. RCU
+> + * release routine)
+> + */
+> +void ovpn_crypto_state_release(struct ovpn_crypto_state *cs)
+> +{
+> +	struct ovpn_crypto_key_slot *ks;
+> +
+> +	ks = rcu_access_pointer(cs->slots[0]);
+> +	if (ks) {
+> +		RCU_INIT_POINTER(cs->slots[0], NULL);
+> +		ovpn_crypto_key_slot_put(ks);
+> +	}
+> +
+> +	ks = rcu_access_pointer(cs->slots[1]);
+> +	if (ks) {
+> +		RCU_INIT_POINTER(cs->slots[1], NULL);
+> +		ovpn_crypto_key_slot_put(ks);
+> +	}
+> +}
+> +
+> +/* Reset the ovpn_crypto_state object in a way that is atomic
+> + * to RCU readers.
+> + */
+> +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
+> +			    const struct ovpn_peer_key_reset *pkr)
+> +{
+> +	struct ovpn_crypto_key_slot *old = NULL, *new;
+> +	u8 idx;
+> +
+> +	if (pkr->slot != OVPN_KEY_SLOT_PRIMARY &&
+> +	    pkr->slot != OVPN_KEY_SLOT_SECONDARY)
+> +		return -EINVAL;
+> +
+> +	new = ovpn_aead_crypto_key_slot_new(&pkr->key);
+> +	if (IS_ERR(new))
+> +		return PTR_ERR(new);
+> +
+> +	spin_lock_bh(&cs->lock);
+> +	idx = cs->primary_idx;
+> +	switch (pkr->slot) {
+> +	case OVPN_KEY_SLOT_PRIMARY:
+> +		old = rcu_replace_pointer(cs->slots[idx], new,
+> +					  lockdep_is_held(&cs->lock));
+> +		break;
+> +	case OVPN_KEY_SLOT_SECONDARY:
+> +		old = rcu_replace_pointer(cs->slots[!idx], new,
+> +					  lockdep_is_held(&cs->lock));
+> +		break;
+> +	}
+> +	spin_unlock_bh(&cs->lock);
+> +
+> +	if (old)
+> +		ovpn_crypto_key_slot_put(old);
+> +
+> +	return 0;
+> +}
+> +
+> +void ovpn_crypto_key_slot_delete(struct ovpn_crypto_state *cs,
+> +				 enum ovpn_key_slot slot)
+> +{
+> +	struct ovpn_crypto_key_slot *ks = NULL;
+> +	u8 idx;
+> +
+> +	if (slot != OVPN_KEY_SLOT_PRIMARY &&
+> +	    slot != OVPN_KEY_SLOT_SECONDARY) {
+> +		pr_warn("Invalid slot to release: %u\n", slot);
+> +		return;
+> +	}
+> +
+> +	spin_lock_bh(&cs->lock);
+> +	idx = cs->primary_idx;
+> +	switch (slot) {
+> +	case OVPN_KEY_SLOT_PRIMARY:
+> +		ks = rcu_replace_pointer(cs->slots[idx], NULL,
+> +					 lockdep_is_held(&cs->lock));
+> +		break;
+> +	case OVPN_KEY_SLOT_SECONDARY:
+> +		ks = rcu_replace_pointer(cs->slots[!idx], NULL,
+> +					 lockdep_is_held(&cs->lock));
+> +		break;
+> +	}
+> +	spin_unlock_bh(&cs->lock);
+> +
+> +	if (!ks) {
+> +		pr_debug("Key slot already released: %u\n", slot);
+> +		return;
+> +	}
+> +
+> +	pr_debug("deleting key slot %u, key_id=%u\n", slot, ks->key_id);
+> +	ovpn_crypto_key_slot_put(ks);
+> +}
+> +
+> +/* this swap is not atomic, but there will be a very short time frame where the
+> + * old_secondary key won't be available. This should not be a big deal as most
+> + * likely both peers are already using the new primary at this point.
+> + */
+> +void ovpn_crypto_key_slots_swap(struct ovpn_crypto_state *cs)
+> +{
+> +	const struct ovpn_crypto_key_slot *old_primary, *old_secondary;
+> +	u8 idx;
+> +
+> +	spin_lock_bh(&cs->lock);
+> +	idx = cs->primary_idx;
+> +	old_primary = rcu_dereference_protected(cs->slots[idx],
+> +						lockdep_is_held(&cs->lock));
+> +	old_secondary = rcu_dereference_protected(cs->slots[!idx],
+> +						  lockdep_is_held(&cs->lock));
+> +	/* perform real swap by switching the index of the primary key */
+> +	WRITE_ONCE(cs->primary_idx, !cs->primary_idx);
+> +
+> +	pr_debug("key swapped: (old primary) %d <-> (new primary) %d\n",
+> +		 old_primary ? old_primary->key_id : -1,
+> +		 old_secondary ? old_secondary->key_id : -1);
+> +
+> +	spin_unlock_bh(&cs->lock);
+> +}
+> diff --git a/drivers/net/ovpn/crypto.h b/drivers/net/ovpn/crypto.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5155791b87df7cccc76a011fa751686180074982
+> --- /dev/null
+> +++ b/drivers/net/ovpn/crypto.h
+> @@ -0,0 +1,139 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_OVPNCRYPTO_H_
+> +#define _NET_OVPN_OVPNCRYPTO_H_
+> +
+> +#include "pktid.h"
+> +#include "proto.h"
+> +
+> +/* info needed for both encrypt and decrypt directions */
+> +struct ovpn_key_direction {
+> +	const u8 *cipher_key;
+> +	size_t cipher_key_size;
+> +	const u8 *nonce_tail; /* only needed for GCM modes */
+> +	size_t nonce_tail_size; /* only needed for GCM modes */
+> +};
+> +
+> +/* all info for a particular symmetric key (primary or secondary) */
+> +struct ovpn_key_config {
+> +	enum ovpn_cipher_alg cipher_alg;
+> +	u8 key_id;
+> +	struct ovpn_key_direction encrypt;
+> +	struct ovpn_key_direction decrypt;
+> +};
+> +
+> +/* used to pass settings from netlink to the crypto engine */
+> +struct ovpn_peer_key_reset {
+> +	enum ovpn_key_slot slot;
+> +	struct ovpn_key_config key;
+> +};
+> +
+> +struct ovpn_crypto_key_slot {
+> +	u8 key_id;
+> +
+> +	struct crypto_aead *encrypt;
+> +	struct crypto_aead *decrypt;
+> +	u8 nonce_tail_xmit[OVPN_NONCE_TAIL_SIZE];
+> +	u8 nonce_tail_recv[OVPN_NONCE_TAIL_SIZE];
+> +
+> +	struct ovpn_pktid_recv pid_recv ____cacheline_aligned_in_smp;
+> +	struct ovpn_pktid_xmit pid_xmit ____cacheline_aligned_in_smp;
+> +	struct kref refcount;
+> +	struct rcu_head rcu;
+> +};
+> +
+> +struct ovpn_crypto_state {
+> +	struct ovpn_crypto_key_slot __rcu *slots[2];
+> +	u8 primary_idx;
+> +
+> +	/* protects primary and secondary slots */
+> +	spinlock_t lock;
+> +};
+> +
+> +static inline bool ovpn_crypto_key_slot_hold(struct ovpn_crypto_key_slot *ks)
+> +{
+> +	return kref_get_unless_zero(&ks->refcount);
+> +}
+> +
+> +static inline void ovpn_crypto_state_init(struct ovpn_crypto_state *cs)
+> +{
+> +	RCU_INIT_POINTER(cs->slots[0], NULL);
+> +	RCU_INIT_POINTER(cs->slots[1], NULL);
+> +	cs->primary_idx = 0;
+> +	spin_lock_init(&cs->lock);
+> +}
+> +
+> +static inline struct ovpn_crypto_key_slot *
+> +ovpn_crypto_key_id_to_slot(const struct ovpn_crypto_state *cs, u8 key_id)
+> +{
+> +	struct ovpn_crypto_key_slot *ks;
+> +	u8 idx;
+> +
+> +	if (unlikely(!cs))
+> +		return NULL;
+> +
+> +	rcu_read_lock();
+> +	idx = READ_ONCE(cs->primary_idx);
+> +	ks = rcu_dereference(cs->slots[idx]);
+> +	if (ks && ks->key_id == key_id) {
+> +		if (unlikely(!ovpn_crypto_key_slot_hold(ks)))
+> +			ks = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ks = rcu_dereference(cs->slots[!idx]);
+> +	if (ks && ks->key_id == key_id) {
+> +		if (unlikely(!ovpn_crypto_key_slot_hold(ks)))
+> +			ks = NULL;
+> +		goto out;
+> +	}
+> +
+> +	/* when both key slots are occupied but no matching key ID is found, ks
+> +	 * has to be reset to NULL to avoid carrying a stale pointer
+> +	 */
+> +	ks = NULL;
+> +out:
+> +	rcu_read_unlock();
+> +
+> +	return ks;
+> +}
+> +
+> +static inline struct ovpn_crypto_key_slot *
+> +ovpn_crypto_key_slot_primary(const struct ovpn_crypto_state *cs)
+> +{
+> +	struct ovpn_crypto_key_slot *ks;
+> +
+> +	rcu_read_lock();
+> +	ks = rcu_dereference(cs->slots[cs->primary_idx]);
+> +	if (unlikely(ks && !ovpn_crypto_key_slot_hold(ks)))
+> +		ks = NULL;
+> +	rcu_read_unlock();
+> +
+> +	return ks;
+> +}
+> +
+> +void ovpn_crypto_key_slot_release(struct kref *kref);
+> +
+> +static inline void ovpn_crypto_key_slot_put(struct ovpn_crypto_key_slot *ks)
+> +{
+> +	kref_put(&ks->refcount, ovpn_crypto_key_slot_release);
+> +}
+> +
+> +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
+> +			    const struct ovpn_peer_key_reset *pkr);
+> +
+> +void ovpn_crypto_key_slot_delete(struct ovpn_crypto_state *cs,
+> +				 enum ovpn_key_slot slot);
+> +
+> +void ovpn_crypto_state_release(struct ovpn_crypto_state *cs);
+> +
+> +void ovpn_crypto_key_slots_swap(struct ovpn_crypto_state *cs);
+> +
+> +#endif /* _NET_OVPN_OVPNCRYPTO_H_ */
+> diff --git a/drivers/net/ovpn/crypto_aead.c b/drivers/net/ovpn/crypto_aead.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..e87e33f49c3088a21f7032e9fd9b2bb0aa50ef83
+> --- /dev/null
+> +++ b/drivers/net/ovpn/crypto_aead.c
+> @@ -0,0 +1,392 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#include <crypto/aead.h>
+> +#include <linux/skbuff.h>
+> +#include <net/ip.h>
+> +#include <net/ipv6.h>
+> +#include <net/udp.h>
+> +
+> +#include "ovpnpriv.h"
+> +#include "main.h"
+> +#include "io.h"
+> +#include "pktid.h"
+> +#include "crypto_aead.h"
+> +#include "crypto.h"
+> +#include "peer.h"
+> +#include "proto.h"
+> +#include "skb.h"
+> +
+> +#define OVPN_AUTH_TAG_SIZE	16
+> +#define OVPN_AAD_SIZE		(OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE)
+> +
+> +#define ALG_NAME_AES		"gcm(aes)"
+> +#define ALG_NAME_CHACHAPOLY	"rfc7539(chacha20,poly1305)"
+> +
+> +static int ovpn_aead_encap_overhead(const struct ovpn_crypto_key_slot *ks)
+> +{
+> +	return  OVPN_OPCODE_SIZE +			/* OP header size */
+> +		sizeof(u32) +				/* Packet ID */
+> +		crypto_aead_authsize(ks->encrypt);	/* Auth Tag */
+> +}
+> +
+> +int ovpn_aead_encrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
+> +		      struct sk_buff *skb)
+> +{
+> +	const unsigned int tag_size = crypto_aead_authsize(ks->encrypt);
+> +	struct aead_request *req;
+> +	struct sk_buff *trailer;
+> +	struct scatterlist *sg;
+> +	int nfrags, ret;
+> +	u32 pktid, op;
+> +	u8 *iv;
+> +
+> +	ovpn_skb_cb(skb)->peer = peer;
+> +	ovpn_skb_cb(skb)->ks = ks;
+> +
+> +	/* Sample AEAD header format:
+> +	 * 48000001 00000005 7e7046bd 444a7e28 cc6387b1 64a4d6c1 380275a...
+> +	 * [ OP32 ] [seq # ] [             auth tag            ] [ payload ... ]
+> +	 *          [4-byte
+> +	 *          IV head]
+> +	 */
+> +
+> +	/* check that there's enough headroom in the skb for packet
+> +	 * encapsulation
+> +	 */
+> +	if (unlikely(skb_cow_head(skb, OVPN_HEAD_ROOM)))
+> +		return -ENOBUFS;
+> +
+> +	/* get number of skb frags and ensure that packet data is writable */
+> +	nfrags = skb_cow_data(skb, 0, &trailer);
+> +	if (unlikely(nfrags < 0))
+> +		return nfrags;
+> +
+> +	if (unlikely(nfrags + 2 > (MAX_SKB_FRAGS + 2)))
+> +		return -ENOSPC;
+> +
+> +	/* sg may be required by async crypto */
+> +	ovpn_skb_cb(skb)->sg = kmalloc(sizeof(*ovpn_skb_cb(skb)->sg) *
+> +				       (nfrags + 2), GFP_ATOMIC);
+> +	if (unlikely(!ovpn_skb_cb(skb)->sg))
+> +		return -ENOMEM;
+> +
+> +	sg = ovpn_skb_cb(skb)->sg;
+> +
+> +	/* sg table:
+> +	 * 0: op, wire nonce (AD, len=OVPN_OP_SIZE_V2+OVPN_NONCE_WIRE_SIZE),
+> +	 * 1, 2, 3, ..., n: payload,
+> +	 * n+1: auth_tag (len=tag_size)
+> +	 */
+> +	sg_init_table(sg, nfrags + 2);
+> +
+> +	/* build scatterlist to encrypt packet payload */
+> +	ret = skb_to_sgvec_nomark(skb, sg + 1, 0, skb->len);
+> +	if (unlikely(nfrags != ret)) {
+> +		ret = -EINVAL;
+> +		goto free_sg;
+> +	}
+> +
+> +	/* append auth_tag onto scatterlist */
+> +	__skb_push(skb, tag_size);
+> +	sg_set_buf(sg + nfrags + 1, skb->data, tag_size);
+> +
+> +	/* obtain packet ID, which is used both as a first
+> +	 * 4 bytes of nonce and last 4 bytes of associated data.
+> +	 */
+> +	ret = ovpn_pktid_xmit_next(&ks->pid_xmit, &pktid);
+> +	if (unlikely(ret < 0))
+> +		goto free_sg;
+> +
+> +	/* iv may be required by async crypto */
+> +	ovpn_skb_cb(skb)->iv = kmalloc(OVPN_NONCE_SIZE, GFP_ATOMIC);
+> +	if (unlikely(!ovpn_skb_cb(skb)->iv)) {
+> +		ret = -ENOMEM;
+> +		goto free_sg;
+> +	}
+> +
+> +	iv = ovpn_skb_cb(skb)->iv;
+> +
+> +	/* concat 4 bytes packet id and 8 bytes nonce tail into 12 bytes
+> +	 * nonce
+> +	 */
+> +	ovpn_pktid_aead_write(pktid, ks->nonce_tail_xmit, iv);
+> +
+> +	/* make space for packet id and push it to the front */
+> +	__skb_push(skb, OVPN_NONCE_WIRE_SIZE);
+> +	memcpy(skb->data, iv, OVPN_NONCE_WIRE_SIZE);
+> +
+> +	/* add packet op as head of additional data */
+> +	op = ovpn_opcode_compose(OVPN_DATA_V2, ks->key_id, peer->id);
+> +	__skb_push(skb, OVPN_OPCODE_SIZE);
+> +	BUILD_BUG_ON(sizeof(op) != OVPN_OPCODE_SIZE);
+> +	*((__force __be32 *)skb->data) = htonl(op);
+> +
+> +	/* AEAD Additional data */
+> +	sg_set_buf(sg, skb->data, OVPN_AAD_SIZE);
+> +
+> +	req = aead_request_alloc(ks->encrypt, GFP_ATOMIC);
+> +	if (unlikely(!req)) {
+> +		ret = -ENOMEM;
+> +		goto free_iv;
+> +	}
+> +
+> +	ovpn_skb_cb(skb)->req = req;
+> +
+> +	/* setup async crypto operation */
+> +	aead_request_set_tfm(req, ks->encrypt);
+> +	aead_request_set_callback(req, 0, ovpn_encrypt_post, skb);
+> +	aead_request_set_crypt(req, sg, sg,
+> +			       skb->len - ovpn_aead_encap_overhead(ks), iv);
+> +	aead_request_set_ad(req, OVPN_AAD_SIZE);
+> +
+> +	/* encrypt it */
+> +	return crypto_aead_encrypt(req);
+> +free_iv:
+> +	kfree(ovpn_skb_cb(skb)->iv);
+> +	ovpn_skb_cb(skb)->iv = NULL;
+> +free_sg:
+> +	kfree(ovpn_skb_cb(skb)->sg);
+> +	ovpn_skb_cb(skb)->sg = NULL;
+> +	return ret;
+> +}
+> +
+> +int ovpn_aead_decrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
+> +		      struct sk_buff *skb)
+> +{
+> +	const unsigned int tag_size = crypto_aead_authsize(ks->decrypt);
+> +	int ret, payload_len, nfrags;
+> +	unsigned int payload_offset;
+> +	struct aead_request *req;
+> +	struct sk_buff *trailer;
+> +	struct scatterlist *sg;
+> +	u8 *iv;
+> +
+> +	payload_offset = OVPN_AAD_SIZE + tag_size;
+> +	payload_len = skb->len - payload_offset;
+> +
+> +	ovpn_skb_cb(skb)->payload_offset = payload_offset;
+> +	ovpn_skb_cb(skb)->peer = peer;
+> +	ovpn_skb_cb(skb)->ks = ks;
+> +
+> +	/* sanity check on packet size, payload size must be >= 0 */
+> +	if (unlikely(payload_len < 0))
+> +		return -EINVAL;
+> +
+> +	/* Prepare the skb data buffer to be accessed up until the auth tag.
+> +	 * This is required because this area is directly mapped into the sg
+> +	 * list.
+> +	 */
+> +	if (unlikely(!pskb_may_pull(skb, payload_offset)))
+> +		return -ENODATA;
+> +
+> +	/* get number of skb frags and ensure that packet data is writable */
+> +	nfrags = skb_cow_data(skb, 0, &trailer);
+> +	if (unlikely(nfrags < 0))
+> +		return nfrags;
+> +
+> +	if (unlikely(nfrags + 2 > (MAX_SKB_FRAGS + 2)))
+> +		return -ENOSPC;
+> +
+> +	/* sg may be required by async crypto */
+> +	ovpn_skb_cb(skb)->sg = kmalloc(sizeof(*ovpn_skb_cb(skb)->sg) *
+> +				       (nfrags + 2), GFP_ATOMIC);
+> +	if (unlikely(!ovpn_skb_cb(skb)->sg))
+> +		return -ENOMEM;
+> +
+> +	sg = ovpn_skb_cb(skb)->sg;
+> +
+> +	/* sg table:
+> +	 * 0: op, wire nonce (AD, len=OVPN_OPCODE_SIZE+OVPN_NONCE_WIRE_SIZE),
+> +	 * 1, 2, 3, ..., n: payload,
+> +	 * n+1: auth_tag (len=tag_size)
+> +	 */
+> +	sg_init_table(sg, nfrags + 2);
+> +
+> +	/* packet op is head of additional data */
+> +	sg_set_buf(sg, skb->data, OVPN_AAD_SIZE);
+> +
+> +	/* build scatterlist to decrypt packet payload */
+> +	ret = skb_to_sgvec_nomark(skb, sg + 1, payload_offset, payload_len);
+> +	if (unlikely(nfrags != ret)) {
+> +		ret = -EINVAL;
+> +		goto free_sg;
+> +	}
+> +
+> +	/* append auth_tag onto scatterlist */
+> +	sg_set_buf(sg + nfrags + 1, skb->data + OVPN_AAD_SIZE, tag_size);
+> +
+> +	/* iv may be required by async crypto */
+> +	ovpn_skb_cb(skb)->iv = kmalloc(OVPN_NONCE_SIZE, GFP_ATOMIC);
+> +	if (unlikely(!ovpn_skb_cb(skb)->iv)) {
+> +		ret = -ENOMEM;
+> +		goto free_sg;
+> +	}
+> +
+> +	iv = ovpn_skb_cb(skb)->iv;
+> +
+> +	/* copy nonce into IV buffer */
+> +	memcpy(iv, skb->data + OVPN_OPCODE_SIZE, OVPN_NONCE_WIRE_SIZE);
+> +	memcpy(iv + OVPN_NONCE_WIRE_SIZE, ks->nonce_tail_recv,
+> +	       OVPN_NONCE_TAIL_SIZE);
+> +
+> +	req = aead_request_alloc(ks->decrypt, GFP_ATOMIC);
+> +	if (unlikely(!req)) {
+> +		ret = -ENOMEM;
+> +		goto free_iv;
+> +	}
+> +
+> +	ovpn_skb_cb(skb)->req = req;
+> +
+> +	/* setup async crypto operation */
+> +	aead_request_set_tfm(req, ks->decrypt);
+> +	aead_request_set_callback(req, 0, ovpn_decrypt_post, skb);
+> +	aead_request_set_crypt(req, sg, sg, payload_len + tag_size, iv);
+> +
+> +	aead_request_set_ad(req, OVPN_AAD_SIZE);
+> +
+> +	/* decrypt it */
+> +	return crypto_aead_decrypt(req);
+> +free_iv:
+> +	kfree(ovpn_skb_cb(skb)->iv);
+> +	ovpn_skb_cb(skb)->iv = NULL;
+> +free_sg:
+> +	kfree(ovpn_skb_cb(skb)->sg);
+> +	ovpn_skb_cb(skb)->sg = NULL;
+> +	return ret;
+> +}
+> +
+> +/* Initialize a struct crypto_aead object */
+> +static struct crypto_aead *ovpn_aead_init(const char *title,
+> +					  const char *alg_name,
+> +					  const unsigned char *key,
+> +					  unsigned int keylen)
+> +{
+> +	struct crypto_aead *aead;
+> +	int ret;
+> +
+> +	aead = crypto_alloc_aead(alg_name, 0, 0);
+> +	if (IS_ERR(aead)) {
+> +		ret = PTR_ERR(aead);
+> +		pr_err("%s crypto_alloc_aead failed, err=%d\n", title, ret);
+> +		aead = NULL;
+> +		goto error;
+> +	}
+> +
+> +	ret = crypto_aead_setkey(aead, key, keylen);
+> +	if (ret) {
+> +		pr_err("%s crypto_aead_setkey size=%u failed, err=%d\n", title,
+> +		       keylen, ret);
+> +		goto error;
+> +	}
+> +
+> +	ret = crypto_aead_setauthsize(aead, OVPN_AUTH_TAG_SIZE);
+> +	if (ret) {
+> +		pr_err("%s crypto_aead_setauthsize failed, err=%d\n", title,
+> +		       ret);
+> +		goto error;
+> +	}
+> +
+> +	/* basic AEAD assumption */
+> +	if (crypto_aead_ivsize(aead) != OVPN_NONCE_SIZE) {
+> +		pr_err("%s IV size must be %d\n", title, OVPN_NONCE_SIZE);
+> +		ret = -EINVAL;
+> +		goto error;
+> +	}
+> +
+> +	pr_debug("********* Cipher %s (%s)\n", alg_name, title);
+> +	pr_debug("*** IV size=%u\n", crypto_aead_ivsize(aead));
+> +	pr_debug("*** req size=%u\n", crypto_aead_reqsize(aead));
+> +	pr_debug("*** block size=%u\n", crypto_aead_blocksize(aead));
+> +	pr_debug("*** auth size=%u\n", crypto_aead_authsize(aead));
+> +	pr_debug("*** alignmask=0x%x\n", crypto_aead_alignmask(aead));
+> +
+> +	return aead;
+> +
+> +error:
+> +	crypto_free_aead(aead);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +void ovpn_aead_crypto_key_slot_destroy(struct ovpn_crypto_key_slot *ks)
+> +{
+> +	if (!ks)
+> +		return;
+> +
+> +	crypto_free_aead(ks->encrypt);
+> +	crypto_free_aead(ks->decrypt);
+> +	kfree(ks);
+> +}
+> +
+> +struct ovpn_crypto_key_slot *
+> +ovpn_aead_crypto_key_slot_new(const struct ovpn_key_config *kc)
+> +{
+> +	struct ovpn_crypto_key_slot *ks = NULL;
+> +	const char *alg_name;
+> +	int ret;
+> +
+> +	/* validate crypto alg */
+> +	switch (kc->cipher_alg) {
+> +	case OVPN_CIPHER_ALG_AES_GCM:
+> +		alg_name = ALG_NAME_AES;
+> +		break;
+> +	case OVPN_CIPHER_ALG_CHACHA20_POLY1305:
+> +		alg_name = ALG_NAME_CHACHAPOLY;
+> +		break;
+> +	default:
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
+> +
+> +	if (kc->encrypt.nonce_tail_size != OVPN_NONCE_TAIL_SIZE ||
+> +	    kc->decrypt.nonce_tail_size != OVPN_NONCE_TAIL_SIZE)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	/* build the key slot */
+> +	ks = kmalloc(sizeof(*ks), GFP_KERNEL);
+> +	if (!ks)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ks->encrypt = NULL;
+> +	ks->decrypt = NULL;
+> +	kref_init(&ks->refcount);
+> +	ks->key_id = kc->key_id;
+> +
+> +	ks->encrypt = ovpn_aead_init("encrypt", alg_name,
+> +				     kc->encrypt.cipher_key,
+> +				     kc->encrypt.cipher_key_size);
+> +	if (IS_ERR(ks->encrypt)) {
+> +		ret = PTR_ERR(ks->encrypt);
+> +		ks->encrypt = NULL;
+> +		goto destroy_ks;
+> +	}
+> +
+> +	ks->decrypt = ovpn_aead_init("decrypt", alg_name,
+> +				     kc->decrypt.cipher_key,
+> +				     kc->decrypt.cipher_key_size);
+> +	if (IS_ERR(ks->decrypt)) {
+> +		ret = PTR_ERR(ks->decrypt);
+> +		ks->decrypt = NULL;
+> +		goto destroy_ks;
+> +	}
+> +
+> +	memcpy(ks->nonce_tail_xmit, kc->encrypt.nonce_tail,
+> +	       OVPN_NONCE_TAIL_SIZE);
+> +	memcpy(ks->nonce_tail_recv, kc->decrypt.nonce_tail,
+> +	       OVPN_NONCE_TAIL_SIZE);
+> +
+> +	/* init packet ID generation/validation */
+> +	ovpn_pktid_xmit_init(&ks->pid_xmit);
+> +	ovpn_pktid_recv_init(&ks->pid_recv);
+> +
+> +	return ks;
+> +
+> +destroy_ks:
+> +	ovpn_aead_crypto_key_slot_destroy(ks);
+> +	return ERR_PTR(ret);
+> +}
+> diff --git a/drivers/net/ovpn/crypto_aead.h b/drivers/net/ovpn/crypto_aead.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..40c056558add3b9d17fda5c43eb858cb44c95945
+> --- /dev/null
+> +++ b/drivers/net/ovpn/crypto_aead.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_OVPNAEAD_H_
+> +#define _NET_OVPN_OVPNAEAD_H_
+> +
+> +#include "crypto.h"
+> +
+> +#include <asm/types.h>
+> +#include <linux/skbuff.h>
+> +
+> +int ovpn_aead_encrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
+> +		      struct sk_buff *skb);
+> +int ovpn_aead_decrypt(struct ovpn_peer *peer, struct ovpn_crypto_key_slot *ks,
+> +		      struct sk_buff *skb);
+> +
+> +struct ovpn_crypto_key_slot *
+> +ovpn_aead_crypto_key_slot_new(const struct ovpn_key_config *kc);
+> +void ovpn_aead_crypto_key_slot_destroy(struct ovpn_crypto_key_slot *ks);
+> +
+> +#endif /* _NET_OVPN_OVPNAEAD_H_ */
+> diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
+> index 46ad27e8eb8425f810c7d2b6c63984ea008d90fa..f8113f160148c5953c40f69a87a3ed7ce62abacb 100644
+> --- a/drivers/net/ovpn/io.c
+> +++ b/drivers/net/ovpn/io.c
+> @@ -7,6 +7,7 @@
+>   *		Antonio Quartulli <antonio@openvpn.net>
+>   */
+>  
+> +#include <crypto/aead.h>
+>  #include <linux/netdevice.h>
+>  #include <linux/skbuff.h>
+>  #include <net/gro_cells.h>
+> @@ -15,6 +16,9 @@
+>  #include "ovpnpriv.h"
+>  #include "peer.h"
+>  #include "io.h"
+> +#include "bind.h"
+> +#include "crypto.h"
+> +#include "crypto_aead.h"
+>  #include "netlink.h"
+>  #include "proto.h"
+>  #include "udp.h"
+> @@ -44,7 +48,7 @@ static void ovpn_netdev_write(struct ovpn_peer *peer, struct sk_buff *skb)
+>  	skb_set_queue_mapping(skb, 0);
+>  	skb_scrub_packet(skb, true);
+>  
+> -	skb_reset_network_header(skb);
+> +	/* network header reset in ovpn_decrypt_post() */
+>  	skb_reset_transport_header(skb);
+>  	skb_reset_inner_headers(skb);
+>  
+> @@ -56,34 +60,147 @@ static void ovpn_netdev_write(struct ovpn_peer *peer, struct sk_buff *skb)
+>  		dev_sw_netstats_rx_add(peer->ovpn->dev, pkt_len);
+>  }
+>  
+> -static void ovpn_decrypt_post(struct sk_buff *skb, int ret)
+> +void ovpn_decrypt_post(void *data, int ret)
+>  {
+> -	struct ovpn_peer *peer = ovpn_skb_cb(skb)->peer;
+> +	struct ovpn_crypto_key_slot *ks;
+> +	unsigned int payload_offset = 0;
+> +	struct sk_buff *skb = data;
+> +	struct ovpn_peer *peer;
+> +	__be16 proto;
+> +	__be32 *pid;
+> +
+> +	/* crypto is happening asynchronously. this function will be called
+> +	 * again later by the crypto callback with a proper return code
+> +	 */
+> +	if (unlikely(ret == -EINPROGRESS))
+> +		return;
+> +
+> +	payload_offset = ovpn_skb_cb(skb)->payload_offset;
+> +	ks = ovpn_skb_cb(skb)->ks;
+> +	peer = ovpn_skb_cb(skb)->peer;
+> +
+> +	/* crypto is done, cleanup skb CB and its members */
+> +
+> +	if (likely(ovpn_skb_cb(skb)->iv))
+> +		kfree(ovpn_skb_cb(skb)->iv);
 
-You need to do something to document what is going on here and show
-the full schema with some explanation. It is hard to grasp the full
-intention just from the C code.
+NULL check before kfree is unnecessary, as kfree(NULL) is a noop.
 
-Jason
+> +
+> +	if (likely(ovpn_skb_cb(skb)->sg))
+> +		kfree(ovpn_skb_cb(skb)->sg);
+> +
+> +	if (likely(ovpn_skb_cb(skb)->req))
+> +		aead_request_free(ovpn_skb_cb(skb)->req);
+
+Likewise.
+
+>  
+>  	if (unlikely(ret < 0))
+>  		goto drop;
+>  
+> +	/* PID sits after the op */
+> +	pid = (__force __be32 *)(skb->data + OVPN_OPCODE_SIZE);
+> +	ret = ovpn_pktid_recv(&ks->pid_recv, ntohl(*pid), 0);
+> +	if (unlikely(ret < 0)) {
+> +		net_err_ratelimited("%s: PKT ID RX error for peer %u: %d\n",
+> +				    netdev_name(peer->ovpn->dev), peer->id,
+> +				    ret);
+> +		goto drop;
+> +	}
+> +
+> +	/* point to encapsulated IP packet */
+> +	__skb_pull(skb, payload_offset);
+> +
+> +	/* check if this is a valid datapacket that has to be delivered to the
+> +	 * ovpn interface
+> +	 */
+> +	skb_reset_network_header(skb);
+> +	proto = ovpn_ip_check_protocol(skb);
+> +	if (unlikely(!proto)) {
+> +		/* check if null packet */
+> +		if (unlikely(!pskb_may_pull(skb, 1))) {
+> +			net_info_ratelimited("%s: NULL packet received from peer %u\n",
+> +					     netdev_name(peer->ovpn->dev),
+> +					     peer->id);
+> +			goto drop;
+> +		}
+> +
+> +		net_info_ratelimited("%s: unsupported protocol received from peer %u\n",
+> +				     netdev_name(peer->ovpn->dev), peer->id);
+> +		goto drop;
+> +	}
+> +	skb->protocol = proto;
+> +
+> +	/* perform Reverse Path Filtering (RPF) */
+> +	if (unlikely(!ovpn_peer_check_by_src(peer->ovpn, skb, peer))) {
+> +		if (skb->protocol == htons(ETH_P_IPV6))
+> +			net_dbg_ratelimited("%s: RPF dropped packet from peer %u, src: %pI6c\n",
+> +					    netdev_name(peer->ovpn->dev),
+> +					    peer->id, &ipv6_hdr(skb)->saddr);
+> +		else
+> +			net_dbg_ratelimited("%s: RPF dropped packet from peer %u, src: %pI4\n",
+> +					    netdev_name(peer->ovpn->dev),
+> +					    peer->id, &ip_hdr(skb)->saddr);
+> +		goto drop;
+> +	}
+> +
+>  	ovpn_netdev_write(peer, skb);
+>  	/* skb is passed to upper layer - don't free it */
+>  	skb = NULL;
+>  drop:
+>  	if (unlikely(skb))
+>  		dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
+> -	ovpn_peer_put(peer);
+> +	if (likely(peer))
+> +		ovpn_peer_put(peer);
+> +	if (likely(ks))
+> +		ovpn_crypto_key_slot_put(ks);
+>  	kfree_skb(skb);
+>  }
+>  
+>  /* RX path entry point: decrypt packet and forward it to the device */
+>  void ovpn_recv(struct ovpn_peer *peer, struct sk_buff *skb)
+>  {
+> -	ovpn_skb_cb(skb)->peer = peer;
+> -	ovpn_decrypt_post(skb, 0);
+> +	struct ovpn_crypto_key_slot *ks;
+> +	u8 key_id;
+> +
+> +	/* get the key slot matching the key ID in the received packet */
+> +	key_id = ovpn_key_id_from_skb(skb);
+> +	ks = ovpn_crypto_key_id_to_slot(&peer->crypto, key_id);
+> +	if (unlikely(!ks)) {
+> +		net_info_ratelimited("%s: no available key for peer %u, key-id: %u\n",
+> +				     netdev_name(peer->ovpn->dev), peer->id,
+> +				     key_id);
+> +		dev_core_stats_rx_dropped_inc(peer->ovpn->dev);
+> +		kfree_skb(skb);
+> +		ovpn_peer_put(peer);
+> +		return;
+> +	}
+> +
+> +	memset(ovpn_skb_cb(skb), 0, sizeof(struct ovpn_cb));
+> +	ovpn_decrypt_post(skb, ovpn_aead_decrypt(peer, ks, skb));
+>  }
+>  
+> -static void ovpn_encrypt_post(struct sk_buff *skb, int ret)
+> +void ovpn_encrypt_post(void *data, int ret)
+>  {
+> -	struct ovpn_peer *peer = ovpn_skb_cb(skb)->peer;
+> +	struct ovpn_crypto_key_slot *ks;
+> +	struct sk_buff *skb = data;
+>  	struct ovpn_socket *sock;
+> +	struct ovpn_peer *peer;
+> +
+> +	/* encryption is happening asynchronously. This function will be
+> +	 * called later by the crypto callback with a proper return value
+> +	 */
+> +	if (unlikely(ret == -EINPROGRESS))
+> +		return;
+> +
+> +	ks = ovpn_skb_cb(skb)->ks;
+> +	peer = ovpn_skb_cb(skb)->peer;
+> +
+> +	/* crypto is done, cleanup skb CB and its members */
+> +
+> +	if (likely(ovpn_skb_cb(skb)->iv))
+> +		kfree(ovpn_skb_cb(skb)->iv);
+> +
+> +	if (likely(ovpn_skb_cb(skb)->sg))
+> +		kfree(ovpn_skb_cb(skb)->sg);
+> +
+> +	if (likely(ovpn_skb_cb(skb)->req))
+> +		aead_request_free(ovpn_skb_cb(skb)->req);
+>  
+>  	if (unlikely(ret < 0))
+>  		goto err;
+> @@ -110,23 +227,33 @@ static void ovpn_encrypt_post(struct sk_buff *skb, int ret)
+>  err:
+>  	if (unlikely(skb))
+>  		dev_core_stats_tx_dropped_inc(peer->ovpn->dev);
+> -	ovpn_peer_put(peer);
+> +	if (likely(peer))
+> +		ovpn_peer_put(peer);
+> +	if (likely(ks))
+> +		ovpn_crypto_key_slot_put(ks);
+>  	kfree_skb(skb);
+>  }
+>  
+>  static bool ovpn_encrypt_one(struct ovpn_peer *peer, struct sk_buff *skb)
+>  {
+> -	ovpn_skb_cb(skb)->peer = peer;
+> +	struct ovpn_crypto_key_slot *ks;
+> +
+> +	/* get primary key to be used for encrypting data */
+> +	ks = ovpn_crypto_key_slot_primary(&peer->crypto);
+> +	if (unlikely(!ks))
+> +		return false;
+>  
+>  	/* take a reference to the peer because the crypto code may run async.
+>  	 * ovpn_encrypt_post() will release it upon completion
+>  	 */
+>  	if (unlikely(!ovpn_peer_hold(peer))) {
+>  		DEBUG_NET_WARN_ON_ONCE(1);
+> +		ovpn_crypto_key_slot_put(ks);
+>  		return false;
+>  	}
+>  
+> -	ovpn_encrypt_post(skb, 0);
+> +	memset(ovpn_skb_cb(skb), 0, sizeof(struct ovpn_cb));
+> +	ovpn_encrypt_post(skb, ovpn_aead_encrypt(peer, ks, skb));
+>  	return true;
+>  }
+>  
+> diff --git a/drivers/net/ovpn/io.h b/drivers/net/ovpn/io.h
+> index 1cfa66873a2d4840ce57e337f8b4e8143e8b8e79..5143104b2c4b896a030ec4a8c8aea7015f40ef02 100644
+> --- a/drivers/net/ovpn/io.h
+> +++ b/drivers/net/ovpn/io.h
+> @@ -23,4 +23,7 @@ netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev);
+>  
+>  void ovpn_recv(struct ovpn_peer *peer, struct sk_buff *skb);
+>  
+> +void ovpn_encrypt_post(void *data, int ret);
+> +void ovpn_decrypt_post(void *data, int ret);
+> +
+>  #endif /* _NET_OVPN_OVPN_H_ */
+> diff --git a/drivers/net/ovpn/peer.c b/drivers/net/ovpn/peer.c
+> index 10eabd62ae7237162a36a333b41c748901a7d888..23eaab1b465b8b88a84cf9f1039621923b640b47 100644
+> --- a/drivers/net/ovpn/peer.c
+> +++ b/drivers/net/ovpn/peer.c
+> @@ -12,6 +12,8 @@
+>  
+>  #include "ovpnpriv.h"
+>  #include "bind.h"
+> +#include "pktid.h"
+> +#include "crypto.h"
+>  #include "io.h"
+>  #include "main.h"
+>  #include "netlink.h"
+> @@ -56,6 +58,7 @@ struct ovpn_peer *ovpn_peer_new(struct ovpn_priv *ovpn, u32 id)
+>  	peer->vpn_addrs.ipv6 = in6addr_any;
+>  
+>  	RCU_INIT_POINTER(peer->bind, NULL);
+> +	ovpn_crypto_state_init(&peer->crypto);
+>  	spin_lock_init(&peer->lock);
+>  	kref_init(&peer->refcount);
+>  
+> @@ -94,7 +97,10 @@ static void ovpn_peer_release_rcu(struct rcu_head *head)
+>   */
+>  static void ovpn_peer_release(struct ovpn_peer *peer)
+>  {
+> +	ovpn_crypto_state_release(&peer->crypto);
+> +	spin_lock_bh(&peer->lock);
+>  	ovpn_bind_reset(peer, NULL);
+> +	spin_unlock_bh(&peer->lock);
+>  	call_rcu(&peer->rcu, ovpn_peer_release_rcu);
+>  	netdev_put(peer->ovpn->dev, &peer->dev_tracker);
+>  }
+> @@ -326,6 +332,29 @@ struct ovpn_peer *ovpn_peer_get_by_dst(struct ovpn_priv *ovpn,
+>  	return peer;
+>  }
+>  
+> +/**
+> + * ovpn_peer_check_by_src - check that skb source is routed via peer
+> + * @ovpn: the openvpn instance to search
+> + * @skb: the packet to extract source address from
+> + * @peer: the peer to check against the source address
+> + *
+> + * Return: true if the peer is matching or false otherwise
+> + */
+> +bool ovpn_peer_check_by_src(struct ovpn_priv *ovpn, struct sk_buff *skb,
+> +			    struct ovpn_peer *peer)
+> +{
+> +	bool match = false;
+> +
+> +	if (ovpn->mode == OVPN_MODE_P2P) {
+> +		/* in P2P mode, no matter the destination, packets are always
+> +		 * sent to the single peer listening on the other side
+> +		 */
+> +		match = (peer == rcu_access_pointer(ovpn->peer));
+> +	}
+> +
+> +	return match;
+> +}
+> +
+>  /**
+>   * ovpn_peer_add_p2p - add peer to related tables in a P2P instance
+>   * @ovpn: the instance to add the peer to
+> diff --git a/drivers/net/ovpn/peer.h b/drivers/net/ovpn/peer.h
+> index fef04311c1593db4ccfa3c417487b3d4faaae9d7..a9113a969f94d66fa17208d563d0bbd255c23fa9 100644
+> --- a/drivers/net/ovpn/peer.h
+> +++ b/drivers/net/ovpn/peer.h
+> @@ -12,6 +12,7 @@
+>  
+>  #include <net/dst_cache.h>
+>  
+> +#include "crypto.h"
+>  #include "socket.h"
+>  
+>  /**
+> @@ -23,6 +24,7 @@
+>   * @vpn_addrs.ipv4: IPv4 assigned to peer on the tunnel
+>   * @vpn_addrs.ipv6: IPv6 assigned to peer on the tunnel
+>   * @sock: the socket being used to talk to this peer
+> + * @crypto: the crypto configuration (ciphers, keys, etc..)
+>   * @dst_cache: cache for dst_entry used to send to peer
+>   * @bind: remote peer binding
+>   * @delete_reason: why peer was deleted (i.e. timeout, transport error, ..)
+> @@ -40,6 +42,7 @@ struct ovpn_peer {
+>  		struct in6_addr ipv6;
+>  	} vpn_addrs;
+>  	struct ovpn_socket __rcu *sock;
+> +	struct ovpn_crypto_state crypto;
+>  	struct dst_cache dst_cache;
+>  	struct ovpn_bind __rcu *bind;
+>  	enum ovpn_del_peer_reason delete_reason;
+> @@ -82,5 +85,7 @@ struct ovpn_peer *ovpn_peer_get_by_transp_addr(struct ovpn_priv *ovpn,
+>  struct ovpn_peer *ovpn_peer_get_by_id(struct ovpn_priv *ovpn, u32 peer_id);
+>  struct ovpn_peer *ovpn_peer_get_by_dst(struct ovpn_priv *ovpn,
+>  				       struct sk_buff *skb);
+> +bool ovpn_peer_check_by_src(struct ovpn_priv *ovpn, struct sk_buff *skb,
+> +			    struct ovpn_peer *peer);
+>  
+>  #endif /* _NET_OVPN_OVPNPEER_H_ */
+> diff --git a/drivers/net/ovpn/pktid.c b/drivers/net/ovpn/pktid.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2e73d1c1ec8b6c4fe2fc10ebc1a4f3008362df21
+> --- /dev/null
+> +++ b/drivers/net/ovpn/pktid.c
+> @@ -0,0 +1,129 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
+> + *		James Yonan <james@openvpn.net>
+> + */
+> +
+> +#include <linux/atomic.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/net.h>
+> +#include <linux/netdevice.h>
+> +#include <linux/types.h>
+> +
+> +#include "ovpnpriv.h"
+> +#include "main.h"
+> +#include "pktid.h"
+> +
+> +void ovpn_pktid_xmit_init(struct ovpn_pktid_xmit *pid)
+> +{
+> +	atomic64_set(&pid->seq_num, 1);
+> +}
+> +
+> +void ovpn_pktid_recv_init(struct ovpn_pktid_recv *pr)
+> +{
+> +	memset(pr, 0, sizeof(*pr));
+> +	spin_lock_init(&pr->lock);
+> +}
+> +
+> +/* Packet replay detection.
+> + * Allows ID backtrack of up to REPLAY_WINDOW_SIZE - 1.
+> + */
+> +int ovpn_pktid_recv(struct ovpn_pktid_recv *pr, u32 pkt_id, u32 pkt_time)
+> +{
+> +	const unsigned long now = jiffies;
+> +	int ret;
+> +
+> +	/* ID must not be zero */
+> +	if (unlikely(pkt_id == 0))
+> +		return -EINVAL;
+> +
+> +	spin_lock_bh(&pr->lock);
+> +
+> +	/* expire backtracks at or below pr->id after PKTID_RECV_EXPIRE time */
+> +	if (unlikely(time_after_eq(now, pr->expire)))
+> +		pr->id_floor = pr->id;
+> +
+> +	/* time changed? */
+> +	if (unlikely(pkt_time != pr->time)) {
+> +		if (pkt_time > pr->time) {
+> +			/* time moved forward, accept */
+> +			pr->base = 0;
+> +			pr->extent = 0;
+> +			pr->id = 0;
+> +			pr->time = pkt_time;
+> +			pr->id_floor = 0;
+> +		} else {
+> +			/* time moved backward, reject */
+> +			ret = -ETIME;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (likely(pkt_id == pr->id + 1)) {
+> +		/* well-formed ID sequence (incremented by 1) */
+> +		pr->base = REPLAY_INDEX(pr->base, -1);
+> +		pr->history[pr->base / 8] |= (1 << (pr->base % 8));
+> +		if (pr->extent < REPLAY_WINDOW_SIZE)
+> +			++pr->extent;
+> +		pr->id = pkt_id;
+> +	} else if (pkt_id > pr->id) {
+> +		/* ID jumped forward by more than one */
+> +		const unsigned int delta = pkt_id - pr->id;
+> +
+> +		if (delta < REPLAY_WINDOW_SIZE) {
+> +			unsigned int i;
+> +
+> +			pr->base = REPLAY_INDEX(pr->base, -delta);
+> +			pr->history[pr->base / 8] |= (1 << (pr->base % 8));
+> +			pr->extent += delta;
+> +			if (pr->extent > REPLAY_WINDOW_SIZE)
+> +				pr->extent = REPLAY_WINDOW_SIZE;
+> +			for (i = 1; i < delta; ++i) {
+> +				unsigned int newb = REPLAY_INDEX(pr->base, i);
+> +
+> +				pr->history[newb / 8] &= ~BIT(newb % 8);
+> +			}
+> +		} else {
+> +			pr->base = 0;
+> +			pr->extent = REPLAY_WINDOW_SIZE;
+> +			memset(pr->history, 0, sizeof(pr->history));
+> +			pr->history[0] = 1;
+> +		}
+> +		pr->id = pkt_id;
+> +	} else {
+> +		/* ID backtrack */
+> +		const unsigned int delta = pr->id - pkt_id;
+> +
+> +		if (delta > pr->max_backtrack)
+> +			pr->max_backtrack = delta;
+> +		if (delta < pr->extent) {
+> +			if (pkt_id > pr->id_floor) {
+> +				const unsigned int ri = REPLAY_INDEX(pr->base,
+> +								     delta);
+> +				u8 *p = &pr->history[ri / 8];
+> +				const u8 mask = (1 << (ri % 8));
+> +
+> +				if (*p & mask) {
+> +					ret = -EINVAL;
+> +					goto out;
+> +				}
+> +				*p |= mask;
+> +			} else {
+> +				ret = -EINVAL;
+> +				goto out;
+> +			}
+> +		} else {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	pr->expire = now + PKTID_RECV_EXPIRE;
+> +	ret = 0;
+> +out:
+> +	spin_unlock_bh(&pr->lock);
+> +	return ret;
+> +}
+> diff --git a/drivers/net/ovpn/pktid.h b/drivers/net/ovpn/pktid.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..0e5fd91d488359f675f500a7368027f7a148f5c6
+> --- /dev/null
+> +++ b/drivers/net/ovpn/pktid.h
+> @@ -0,0 +1,87 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
+> + *		James Yonan <james@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_OVPNPKTID_H_
+> +#define _NET_OVPN_OVPNPKTID_H_
+> +
+> +#include "proto.h"
+> +
+> +/* If no packets received for this length of time, set a backtrack floor
+> + * at highest received packet ID thus far.
+> + */
+> +#define PKTID_RECV_EXPIRE (30 * HZ)
+> +
+> +/* Packet-ID state for transmitter */
+> +struct ovpn_pktid_xmit {
+> +	atomic64_t seq_num;
+
+pktid is 32-bit so atomic_t should be enough (see below).
+
+> +};
+> +
+> +/* replay window sizing in bytes = 2^REPLAY_WINDOW_ORDER */
+> +#define REPLAY_WINDOW_ORDER 8
+> +
+> +#define REPLAY_WINDOW_BYTES BIT(REPLAY_WINDOW_ORDER)
+> +#define REPLAY_WINDOW_SIZE  (REPLAY_WINDOW_BYTES * 8)
+> +#define REPLAY_INDEX(base, i) (((base) + (i)) & (REPLAY_WINDOW_SIZE - 1))
+> +
+> +/* Packet-ID state for receiver.
+> + * Other than lock member, can be zeroed to initialize.
+> + */
+> +struct ovpn_pktid_recv {
+> +	/* "sliding window" bitmask of recent packet IDs received */
+> +	u8 history[REPLAY_WINDOW_BYTES];
+> +	/* bit position of deque base in history */
+> +	unsigned int base;
+> +	/* extent (in bits) of deque in history */
+> +	unsigned int extent;
+> +	/* expiration of history in jiffies */
+> +	unsigned long expire;
+> +	/* highest sequence number received */
+> +	u32 id;
+> +	/* highest time stamp received */
+> +	u32 time;
+> +	/* we will only accept backtrack IDs > id_floor */
+> +	u32 id_floor;
+> +	unsigned int max_backtrack;
+> +	/* protects entire pktd ID state */
+> +	spinlock_t lock;
+> +};
+> +
+> +/* Get the next packet ID for xmit */
+> +static inline int ovpn_pktid_xmit_next(struct ovpn_pktid_xmit *pid, u32 *pktid)
+> +{
+> +	const s64 seq_num = atomic64_fetch_add_unless(&pid->seq_num, 1,
+> +						      0x100000000LL);
+> +	/* when the 32bit space is over, we return an error because the packet
+> +	 * ID is used to create the cipher IV and we do not want to reuse the
+> +	 * same value more than once
+> +	 */
+> +	if (unlikely(seq_num == 0x100000000LL))
+> +		return -ERANGE;
+
+You may use a 32-bit atomic_t, instead of checking if it equals
+0x1_00000000, check if it wraparounds to zero.
+Additionally, you don't need full memory ordering as you just want an
+incrementing value:
+
+int seq_num = atomic_fetch_inc_relaxed(&pid->seq_num);
+
+if (unlikely(!seq_num))
+	...
+
+> +
+> +	*pktid = (u32)seq_num;
+> +
+> +	return 0;
+> +}
+> +
+> +/* Write 12-byte AEAD IV to dest */
+> +static inline void ovpn_pktid_aead_write(const u32 pktid,
+> +					 const u8 nt[],
+> +					 unsigned char *dest)
+> +{
+> +	*(__force __be32 *)(dest) = htonl(pktid);
+> +	BUILD_BUG_ON(4 + OVPN_NONCE_TAIL_SIZE != OVPN_NONCE_SIZE);
+> +	memcpy(dest + 4, nt, OVPN_NONCE_TAIL_SIZE);
+> +}
+> +
+> +void ovpn_pktid_xmit_init(struct ovpn_pktid_xmit *pid);
+> +void ovpn_pktid_recv_init(struct ovpn_pktid_recv *pr);
+> +
+> +int ovpn_pktid_recv(struct ovpn_pktid_recv *pr, u32 pkt_id, u32 pkt_time);
+> +
+> +#endif /* _NET_OVPN_OVPNPKTID_H_ */
+> diff --git a/drivers/net/ovpn/proto.h b/drivers/net/ovpn/proto.h
+> index 591b97a9925fd9b91f996d6d591fac41b1aa6148..b7322c7c515e5c0744719e11ca81fece3ca28569 100644
+> --- a/drivers/net/ovpn/proto.h
+> +++ b/drivers/net/ovpn/proto.h
+> @@ -83,4 +83,36 @@ static inline u32 ovpn_peer_id_from_skb(const struct sk_buff *skb, u16 offset)
+>  	return FIELD_GET(OVPN_OPCODE_PEERID_MASK, opcode);
+>  }
+>  
+> +/**
+> + * ovpn_key_id_from_skb - extract key ID from the skb head
+> + * @skb: the packet to extract the key ID code from
+> + *
+> + * Note: this function assumes that the skb head was pulled enough
+> + * to access the first byte.
+> + *
+> + * Return: the key ID
+> + */
+> +static inline u8 ovpn_key_id_from_skb(const struct sk_buff *skb)
+> +{
+> +	u32 opcode = be32_to_cpu(*(__be32 *)skb->data);
+> +
+> +	return FIELD_GET(OVPN_OPCODE_KEYID_MASK, opcode);
+> +}
+> +
+> +/**
+> + * ovpn_opcode_compose - combine OP code, key ID and peer ID to wire format
+> + * @opcode: the OP code
+> + * @key_id: the key ID
+> + * @peer_id: the peer ID
+> + *
+> + * Return: a 4 bytes integer obtained combining all input values following the
+> + * OpenVPN wire format. This integer can then be written to the packet header.
+> + */
+> +static inline u32 ovpn_opcode_compose(u8 opcode, u8 key_id, u32 peer_id)
+> +{
+> +	return FIELD_PREP(OVPN_OPCODE_PKTTYPE_MASK, opcode) |
+> +	       FIELD_PREP(OVPN_OPCODE_KEYID_MASK, key_id) |
+> +	       FIELD_PREP(OVPN_OPCODE_PEERID_MASK, peer_id);
+> +}
+> +
+>  #endif /* _NET_OVPN_OVPNPROTO_H_ */
+> diff --git a/drivers/net/ovpn/skb.h b/drivers/net/ovpn/skb.h
+> index 9db7a9adebdb4cc493f162f89fb2e9c6301fa213..bd3cbcfc770d2c28d234fcdd081b4d02e6496ea0 100644
+> --- a/drivers/net/ovpn/skb.h
+> +++ b/drivers/net/ovpn/skb.h
+> @@ -20,6 +20,11 @@
+>  
+>  struct ovpn_cb {
+>  	struct ovpn_peer *peer;
+> +	struct ovpn_crypto_key_slot *ks;
+> +	struct aead_request *req;
+> +	struct scatterlist *sg;
+> +	u8 *iv;
+> +	unsigned int payload_offset;
+>  };
+>  
+>  static inline struct ovpn_cb *ovpn_skb_cb(struct sk_buff *skb)
+> 
+> -- 
+> 2.48.1
+
+-- Qingfang
 
