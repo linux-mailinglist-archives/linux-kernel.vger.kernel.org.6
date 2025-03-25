@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-575042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149D1A6ECCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:42:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6661FA6ECE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F0167A52B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E783B71E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C429254B0D;
-	Tue, 25 Mar 2025 09:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B4C25484A;
+	Tue, 25 Mar 2025 09:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYADZshQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="XtLZHqs9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AujYp9nI"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971DF254AF6;
-	Tue, 25 Mar 2025 09:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53031FAC3D;
+	Tue, 25 Mar 2025 09:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895446; cv=none; b=dJ5bEYDh4CzxgNfzo/jwGl4ExhYtbZufD/apAkeDyLgZjfZAFAJB5NyFongmiULCL7zUN0FOSIa84aL+/9dx6kasJVMv4XP8RfwE/76zc1Lu9ZjkFo0CVm3dLblL02GrDZtB8klem3Kb6V+3tNrH5y0T/muixxvYZTH5OItb4DM=
+	t=1742895642; cv=none; b=Cpk9lDrgZwjWhAbjVgBtxdEi/e6VKTg1MbopVmbAwCb/HAbJhXuzxM/GS0rhbwA38nh2vNUTFeKh3nQR1usjU/IkYhPYkHYI3jhacfeiaRlaw5KozCI3N8n2KqjEMHecIOWbGFlW0M9ogjU2CGWW05inFAhxfV76Jyn1rvV1xEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895446; c=relaxed/simple;
-	bh=AHwEEOsPxfM28gdYXP8G0pyWy24gA8HYOlRvrFe1cJk=;
+	s=arc-20240116; t=1742895642; c=relaxed/simple;
+	bh=eud//FrrPTn/NL9oNFt/scdtsVUNC3WUkl6HvB+h21I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VmvNskeva4C66rNorYyaRvHkNnzZe5Zz9PmJwMTb2I/f0QlYpXlgS1YQITQWUXaTtgZeeQV8Osn6n44lRfBOBnL/leGg+81PYT37nOw1wcWnw7xY2EWvvv+hFeR3xXj05pvUERA975ZFuycQRuC1pUcVUk+l8r2TpFfH7jbtWfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYADZshQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20655C4CEE4;
-	Tue, 25 Mar 2025 09:37:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742895446;
-	bh=AHwEEOsPxfM28gdYXP8G0pyWy24gA8HYOlRvrFe1cJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kYADZshQds3KWyP49aKYl2eeeDvjaIMEZakGwCFaJc9hwM4uhqD4XqoN6K+7Lx0Lb
-	 etHSzyBKh1r7NsSTTw2/cSYWM3CeRyyCD8qrSEYqe28W3ucYO7QDu+HxuZDESp9lKM
-	 HglVtEbT/rLtmbhYNZIcu0IaRdB12sUAlbRgFeJGngA4hK9qqMssVx0vr3U89M2ESv
-	 6xwTjX0vUp4/9qonvsY7jyPHzILZtguYA2cYhH8MUPNkx4ZyLY+hrEH5goAjP9JFNu
-	 JS55suwooAVuyFC2lq58IMWkvDG88uDhWRh3xXsBwtoUpt9u0kYf9Y4KEaX2jwVFCQ
-	 yAJnQszUBg2sA==
-Date: Tue, 25 Mar 2025 10:37:20 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Subject: Re: [tip: sched/core] sched/debug: Change SCHED_WARN_ON() to
- WARN_ON_ONCE()
-Message-ID: <Z-J5UEFwM3gh6VXR@gmail.com>
-References: <20250317104257.3496611-2-mingo@kernel.org>
- <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
- <20250324115955.GF14944@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hDiqjFJ+1Q7PVu1aEmVqeukrp5Olq6gr6jGuWC6smP58C9OQoljhM7JixslgVJGp+ptoi8i0UKL+2UYjHTibQ7KIiI9EepmTT+wPinA3c1soF5hco3dLdbaBYLgwE4vpVxjeTnz9whZ5XKJPVQO/mLI9N7MgJXgYRxNSgLSJohY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=XtLZHqs9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AujYp9nI; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B3DBE11402AF;
+	Tue, 25 Mar 2025 05:40:37 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 25 Mar 2025 05:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1742895637; x=
+	1742982037; bh=jJPAD2UcHldTjErdg3Kf7WH+pXGiXV6MKPRaF1AAmD8=; b=X
+	tLZHqs9AgHLr1kLcEAoRmL+WNrUdMjZNi/wlElR9ByrLL5zn6m/GxaiQKnHivG06
+	WvVjui0aG24m6qEh4cE7A6tAR46pGZpwfO1uCiI8Y8cDHwHJQD92VMG6meBQJojk
+	7+Cdps11bKHRiIlrBi/ar2kspXrT/SOqTMeJ4ZwFMko5ecbnzmNkUcnSzKebS1tm
+	QsMowBqYXF9tWW3FwhbiyKtH3iNtgf7lB+qgPtCH2HWMDZWm5uk2FiQ7kIVSniS6
+	NwCl0L26eA0T587BZ987x60v5s9uh3O9p7u2VrQWUK1ejNP08GD3CxGFdRDyp6Nk
+	MNkPGods9D2TxlrEAd6Ew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1742895637; x=1742982037; bh=jJPAD2UcHldTjErdg3Kf7WH+pXGiXV6MKPR
+	aF1AAmD8=; b=AujYp9nITJlK//rS43Gr10ZLd+shKs1Og20Pb1uMq2JQ+HQN/M3
+	DEpErdnCWySL/BQhwE/Hks0OvlDsnCeklzWd+WkhHg48bq3ru+Ji1ItnBh8NDwDJ
+	jSpot9UVM7fRgJK4nQUOiZqUyQUA3mXTHRK0grTwyo/j1W2H4gAmDSudcscKx45E
+	k0e29rJ31hhqasNWsJAV5L0eeqoGH362N7UTYOqhTSxaJUFwAyhWy4M/RqSSbkvs
+	msnvuiawgrvJWrCcxcVc6QqUl+hL1wni4R25uZYuEGL8rOYFMEY2sEgQl+mXe9mx
+	py5yMwYMDYHmQkPq/2KCPmdpq4ShPIfisTA==
+X-ME-Sender: <xms:FXriZ8uJQWN9AMjb-7FeO80wRmTJN7u8IUt_VZfLzGje0zs8_zsJUA>
+    <xme:FXriZ5cpzn2OT48ugIRXwZHGUQOVBl6dVjQja735_6jPcx9YxGQbsEZ1PGvbwCdvc
+    hUaUFezBqVS9n9ilik>
+X-ME-Received: <xmr:FXriZ3y3uQpydWUEkAuBq5qDvag92B_B0djhDbD_fasn2Oi1wZjKxdMUix2T>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvfeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:FXriZ_PzH1_2lmZRkmn8CYwcJqsqWo5i11g3ExFDqlzZW_5gm0OsVQ>
+    <xmx:FXriZ8_0DhBEqBhNrtDZ4b4QqaY3DkqPeXOjLLOUB1cuCmj4ze_I8A>
+    <xmx:FXriZ3XSCvioqBjHsh6m5MECSV_YYZ96ZhSOlUNusU_JOo3lqkjIOQ>
+    <xmx:FXriZ1dLKkIaPeuoheJeWz35FqaXM-hAr39j2AsDghQ9iIDaO6khBg>
+    <xmx:FXriZ2fuh1nrrdKCKQIBvDjIIdQQYbDBH3vcpDnpmDzTeYBj1sPFtKAZ>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Mar 2025 05:40:36 -0400 (EDT)
+Date: Tue, 25 Mar 2025 10:40:34 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH net-next v24 09/23] ovpn: implement packet processing
+Message-ID: <Z-J6EmX-wZRUYt4f@krikkit>
+References: <20250318-b4-ovpn-v24-0-3ec4ab5c4a77@openvpn.net>
+ <20250318-b4-ovpn-v24-9-3ec4ab5c4a77@openvpn.net>
+ <Z-E70n1tkzKdepTo@krikkit>
+ <ae9f3c18-7b03-4a49-83a4-a3e7d8c52a3e@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250324115955.GF14944@noisy.programming.kicks-ass.net>
+In-Reply-To: <ae9f3c18-7b03-4a49-83a4-a3e7d8c52a3e@openvpn.net>
 
-
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Thu, Mar 20, 2025 at 09:00:05AM -0000, tip-bot2 for Ingo Molnar wrote:
-> > The following commit has been merged into the sched/core branch of tip:
+2025-03-24, 21:53:02 +0100, Antonio Quartulli wrote:
+> On 24/03/2025 12:02, Sabrina Dubroca wrote:
+> > 2025-03-18, 02:40:44 +0100, Antonio Quartulli wrote:
+> > > +int ovpn_crypto_state_reset(struct ovpn_crypto_state *cs,
+> > > +			    const struct ovpn_peer_key_reset *pkr)
+> > > +{
+> > > +	struct ovpn_crypto_key_slot *old = NULL, *new;
+> > > +	u8 idx;
+> > > +
+> > > +	if (pkr->slot != OVPN_KEY_SLOT_PRIMARY &&
+> > > +	    pkr->slot != OVPN_KEY_SLOT_SECONDARY)
+> > > +		return -EINVAL;
+> > > +
+> > > +	new = ovpn_aead_crypto_key_slot_new(&pkr->key);
+> > > +	if (IS_ERR(new))
+> > > +		return PTR_ERR(new);
+> > > +
+> > > +	spin_lock_bh(&cs->lock);
 > > 
-> > Commit-ID:     f7d2728cc032a23fccb5ecde69793a38eb30ba5c
-> > Gitweb:        https://git.kernel.org/tip/f7d2728cc032a23fccb5ecde69793a38eb30ba5c
-> > Author:        Ingo Molnar <mingo@kernel.org>
-> > AuthorDate:    Mon, 17 Mar 2025 11:42:52 +01:00
-> > Committer:     Ingo Molnar <mingo@kernel.org>
-> > CommitterDate: Wed, 19 Mar 2025 22:20:53 +01:00
+> > At this point, should there be a check that we're not installing 2
+> > keys with the same key_id at the same time? I expect a well-behaved
+> > userspace never does that, but it would confuse
+> > ovpn_crypto_key_id_to_slot if it ever happened.
 > > 
-> > sched/debug: Change SCHED_WARN_ON() to WARN_ON_ONCE()
+> > ["well, then the tunnel is broken. if userspace sets up a broken
+> > config that's not the kernel's problem." is an acceptable answer]
 > > 
-> > The scheduler has this special SCHED_WARN() facility that
-> > depends on CONFIG_SCHED_DEBUG.
-> > 
-> > Since CONFIG_SCHED_DEBUG is getting removed, convert
-> > SCHED_WARN() to WARN_ON_ONCE().
-> > 
-> > Note that the warning output isn't 100% equivalent:
-> > 
-> >    #define SCHED_WARN_ON(x)      WARN_ONCE(x, #x)
-> > 
-> > Because SCHED_WARN_ON() would output the 'x' condition
-> > as well, while WARN_ONCE() will only show a backtrace.
-> > 
-> > Hopefully these are rare enough to not really matter.
-> > 
-> > If it does, we should probably introduce a new WARN_ON()
-> > variant that outputs the condition in stringified form,
-> > or improve WARN_ON() itself.
 > 
-> So those strings really were useful, trouble is WARN_ONCE() generates
-> utter crap code compared to WARN_ON_ONCE(), but since SCHED_DEBUG that
-> doesn't really matter.
+> The behaviour of ovpn_crypto_key_id_to_slot() is still "deterministic" as we
+> will first lookup the primary key.
+> 
+> Therefore we will simply always use the primary key and never the other,
+> which is what we should expect in this situation from the code.
+> 
+> I'd say this is just an ill-formed configuration, yet not invalid.
+> As per your statement, I'd say it's userspace's problem.
 
-Why wouldn't it matter? CONFIG_SCHED_DEBUG was turned on for 99.9999% 
-of Linux users, ie. we generated crap code for most of our users.
+Ok, sounds good, thanks.
 
-And as a side effect of using the standard WARN_ON_ONCE() primitive we 
-now generate better code, at the expense of harder to interpret debug 
-output, right?
-
-Ie. CONFIG_SCHED_DEBUG has obfuscated crappy code generation under the 
-"it's only debugging code" pretense, right?
-
-> Also, last time I measured, there was a measurable performance
-> difference between SCHED_DEBUG=n and SCHED_DEBUG=y.
-
-Which 99.9999% of Linux users are affected by. The config option 
-basically did nothing for them but hide this overhead...
-
-Thanks,
-
-	Ingo
+-- 
+Sabrina
 
