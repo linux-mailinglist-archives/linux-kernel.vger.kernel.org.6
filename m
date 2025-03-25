@@ -1,171 +1,209 @@
-Return-Path: <linux-kernel+bounces-575201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E2DA6F327
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:28:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35701A6F383
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE1F33B1DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5039D16B5A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D09255252;
-	Tue, 25 Mar 2025 11:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877A254866;
+	Tue, 25 Mar 2025 11:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WCsG5u1j"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pSrmThIi"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659632E337C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7BFEC4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902118; cv=none; b=GwkpTXKGCvBO8N3L7g7gkrxwzScsGQMpy0wY8OOMzfw71MloQ9eX2yEAzHFzX2EWD1k/9P5s3UCTGe3XL3fIGiBPApAqw8mq3gx8mJU0Oz5AyH08Vp/awlKL1Xkp/1UtTLeY3MH1LMoVZA3wRk2zJNU3UkkGAj1ILZloM+9LopY=
+	t=1742902163; cv=none; b=EGBRV1z7ogyRg0W6utYrdohWJsHFMMv1lJsSLN8/mXROuOYYa+TQmP77Zu4ngj7n9w3g59FQWygyyUN4bNoHaAhAQIopdSf08hEkfF6sHmCnhLWiOSQDDIvalYQU6DCkG+eq9HfhGLti6IS076IlINbEcP0udH1d+2fQfc8H8n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902118; c=relaxed/simple;
-	bh=UO8dfzamLTX2JBW7RLYiyPDW7DzGn85Kh3aNNI3GHiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8/qAEVHXxgTDd5aB4t5QhmAM0cpdXwPx2h7qEvdSTN/v1ajzcb7Pu8O3kG4alRWsu0b2PgFF50pD9bhS0zB0vgCuEfhu698SaC6gR6cBBqECRSHPnZQLNCndmuWJr2kIDZuiiZYc1uK0ygnoLrZVCAI+kwGEP5Shmd2VG/CRuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WCsG5u1j; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf861f936so7587115e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:28:36 -0700 (PDT)
+	s=arc-20240116; t=1742902163; c=relaxed/simple;
+	bh=6WZVWPjf58KWWazw9E62QrC9MrOdRIm1fEsQl3nSINQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AsRZlyfGBulTfW3p7NOEayCSrAAHBaIZfX3yEwbktswQgcXtDGB4t6Sw1wtEHlzUH52X8LCYZMa1uNTJAlk9JzmlnuupUaCYYXyADam4fU1zbTPEmM9pJoFd3nBB8JfkyluzFryIC4pAec279S1RzFkjdRCXBwgtkWN3IPEl8VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pSrmThIi; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47690a4ec97so56394191cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742902115; x=1743506915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWNNlWrDDTHRDetmUwitBfFYLgudVtk8IZ3jqGfYZ54=;
-        b=WCsG5u1jdNfCcxz+I8haCKDnu0JUffPbWy7gZ1hVWnNNU75ofgfT35f5TfSrSdrwCx
-         PGAcxzjQYnMbdo0QTcd4fygLjpadFH9qFFG/yoaL5VBjaL5Kh8FukrwQVHNVdvxYMYsB
-         hlE2zPtpprVekIpEZKgbIrmQt4AHvXV09si97/sOai3s9Piy1/EM7m42WO1RYg8lPk0Z
-         idXY9Gl/+PQgzMx6aHX6i+Qthw+qGBmionG7om/6LsRBuO6h+gsfUDxY42lHovP2NdT3
-         4ozN09jEJe1X8O2ZZTUYawMpfHjIHPTWd80fwSO+IlLpAn8MFj8mbuHIQsbcuNX4HUjy
-         Z9Og==
+        d=google.com; s=20230601; t=1742902160; x=1743506960; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbyhxA3XTFaxP685N+ePDqAN7mdWmcuPkaS6mWbntL0=;
+        b=pSrmThIiKaQ5Sk66W16iHw8T1LeXqE6K2OTZYiTq5RCw1YfqQdfN5UoIIvc3vgRYX0
+         SUWVXJiddywztH71UA48ZKguPMg5uP5f0DOvH0TkrdTQ9Svg+mVM26ynIWVo2SvDyOf3
+         Bf6aAfqHuBsQO7vtTey2A5478rUir3cfQbBHVTpVStcF/q8HzuLzQCIvhY2pNRMawsqA
+         zOaSwwUZao8o2KWE8+2zdDOSRWLt/Nt8OlxU7YljtfkRUkW4xcGVUVD+fzoDdeuy+8UO
+         rSJAWcGUbLvW6NPfAOmhMEqAFVH24NBYUpiJzgkMwevvCuk7Y7zgTBAl/FbiN/5jUUWl
+         7uqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742902115; x=1743506915;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cWNNlWrDDTHRDetmUwitBfFYLgudVtk8IZ3jqGfYZ54=;
-        b=H42FTuL5uMWQQuAhjdUgRvXCaEjJsFqQde7RX7JAgoYyjDTcobFWNsUiURZiiulrAD
-         mUBsxkUDuyigOhFfjPwkv4UyWH0WKLyd2e5ga8peaYHYDfbd0SOiEyoneu4FW0jOfb+4
-         YKNylonBIucxEG7p5bB+ZsYcxorPpl+UJ4ANmVDfrZcnRDKuYWxkJn//o0DqBpbZL9xy
-         tvQ1NS+Ai714qP3qzpK95ne1fxlKAtbP1gPVaq14ycp1YLE94vqKLz0wSqQGiKU6qVHj
-         NNpSr7xd81lKotGpFHUhuxAPxZOI2aLw7xy5M7Zak3v4pI1mtqRGFc7MID1cwnBPrjQt
-         dvVg==
-X-Forwarded-Encrypted: i=1; AJvYcCViGbt28MDY8p5lnVOPkwbn0n+ISwtJ2qBM9waRFi2VmztSq2KhEw2GHaj0BkoCYUGVJXJuv5fVTy9hd3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNFTERBLXSrr2BsKs53HeZrRIelYJFTuJxaGt/T8S8dNIX2YxG
-	k0L1cDw8wJQL+8AG+fZZWxcZF7cY8sCjYaxJAQ+GLrxvj3djo5YjAahMhWAdzXk=
-X-Gm-Gg: ASbGncvIQXoYtrUfPEjSZIikSwshUNOUodHEkmONOK3X00ZoVfNKJSHvdqd5a8O4wwW
-	Miew+ZUWTMH/uX9BEE1gFoOGx/jEE833mHeifXJ3pELMYPyLErLxcs3fMotht9CW/hlRKXaD4fy
-	+nyGrCMX0xfS2+V5S9MOHJKAzD+R6glL2GgZk7IV4WHcqGCYydKTHss3PmrKQeIY0IY1hEcAYnu
-	iV4MoM4c5ulWqj8RaWKEYc8LyHwWYMAht20t28mxAxhr6I1C1yJTv2fIqDqUneZx1vCiIj8LmrN
-	i8NuO3gjxyEz8VHYLdYP7LNsuQ/AZxC/O7Q5Vbq9li/pLA7A5g5jk2KpeHQLQaFD1vOYabGhYQ=
-	=
-X-Google-Smtp-Source: AGHT+IFHzP4Sr7LQGlH83Rzwb5FEq9rXadH6+A7sEk6BhIwA8PuYSxvqLr8adBKSw70sesFvFbJhyQ==
-X-Received: by 2002:a05:600c:46c3:b0:439:8294:2115 with SMTP id 5b1f17b1804b1-43d50a53d12mr59059975e9.8.1742902114704;
-        Tue, 25 Mar 2025 04:28:34 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd181b6sm146773755e9.9.2025.03.25.04.28.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 04:28:34 -0700 (PDT)
-Message-ID: <5946b0aa-ffdd-4269-b8f4-d1db1aa88493@linaro.org>
-Date: Tue, 25 Mar 2025 12:28:31 +0100
+        d=1e100.net; s=20230601; t=1742902160; x=1743506960;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JbyhxA3XTFaxP685N+ePDqAN7mdWmcuPkaS6mWbntL0=;
+        b=rFj/+2mCo8DrSx2VyA/MCcVPmjh3RmnJiJfSnseP5yZI9FZ/zrKF/DT3S9V35ReHaD
+         sDSvYQNN4SRoplY2aIDbaOAeizLFl/RZ6597pmDJFEw7KldYgZCigjUUHfqYJshBw8O3
+         cJoepKhb07D6dU0bTbN05VozSu9ljQNiQsyTiueMqRv7h/5jRpuNDUZZEccUlKiW6fCE
+         Zgi3cs8zBuXlNIB3DTLSySfoa0KnBO+gRe9QMylfrMw9cpSiF9vzyp8EwX+ePUtD1sLS
+         ozbnCU+5CzevU7ZxWkxyn2xF4s6dmROAROcvklRENHTqqAe8SmNmF4AioYVXF3rOGzAd
+         UNNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+twW574NIpMfVSuBx6pI72B1Yf9mny7ac8egUUX0/2CbqLtMAe35Wl5cCp3YKZQaACk7TOj2DZif+oLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIwCD41IDiXT8TZrxnUaK1K9+dgZ5X8DldfUD3rv7QiWb2hGRl
+	k/K1NFz73IO8CsvcwWxOU2bmf4jBdslDcORuy0GZTN/l7kw68p3Ar94G3xQDKTlWQCcI5D04aKU
+	yA3Vu4HKkC2RyQRNmQW7k5Coex1U2tHCZVbbJ
+X-Gm-Gg: ASbGncs/q9KKur25KA2iqXnNqXnAFNfSnhqEobqmlTf1agCQSh56EZXl2xvAaMXRXqr
+	S7GFscCZhtlWJUistbC+jV8JM+hPmJWuUaIwbdk+amnuvURCWwv1QZd2jv/KUp/NtJ8Y0erCtKe
+	uCUx1xgnkrmAfbmz+K/XLrAGXqfiUB9ctIJpC7
+X-Google-Smtp-Source: AGHT+IEDyQnLZ94AlNJpegQhgnUlz3sfVF1wukfvET4LdX4mBRW6DE6Jz986Kr/9vfULtKqKh3kQInbThoHgNzCmMrU=
+X-Received: by 2002:a05:622a:4cc8:b0:477:ca3:4b66 with SMTP id
+ d75a77b69052e-4771dd8037amr258935491cf.12.1742902160157; Tue, 25 Mar 2025
+ 04:29:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: Correct indentation and style in
- DTS example
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Colin Foster <colin.foster@in-advantage.com>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Marek Vasut <marek.vasut+renesas@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Jeff LaBundy <jeff@labundy.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20250324125239.82098-1-krzysztof.kozlowski@linaro.org>
- <20250324125239.82098-2-krzysztof.kozlowski@linaro.org>
- <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAMuHMdXkePsSX62+OyT8aTdqFfaNy9dGRM73Q5AuQ_pHTBi8Kg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250325110325.51958-1-jiayuan.chen@linux.dev>
+In-Reply-To: <20250325110325.51958-1-jiayuan.chen@linux.dev>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 25 Mar 2025 12:29:09 +0100
+X-Gm-Features: AQ5f1JquJgSHOt9w5svVDz0NoCBP_3ax7P-tfG8AXF1s_URMWpgRwYI3O4MdasA
+Message-ID: <CANn89iKxTHZ1JoQ9g9ekWq9=29LjRmhbxsnwkQ2RgPT-yCYMig@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] tcp: Support skb PAWS drop reason when TIME-WAIT
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuniyu@amazon.com, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	dsahern@kernel.org, ncardwell@google.com, mrpre@163.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/03/2025 14:31, Geert Uytterhoeven wrote:
->> -    pwmleds {
->> -            compatible = "pwm-leds";
->> -
->> -            led-1 {
->> -                    pwms = <&iqs620a_pwm 0 1000000>;
->> -                    max-brightness = <255>;
->> +            iqs620a_pwm: pwm {
->> +                compatible = "azoteq,iqs620a-pwm";
->> +                #pwm-cells = <2>;
->>              };
->> +        };
->>      };
->>
->>    - |
-> 
-> The removal of the pwmleds node belongs in patch [1/2].
-> The rest LGTM.
+On Tue, Mar 25, 2025 at 12:03=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linux.d=
+ev> wrote:
+>
+> PAWS is a long-standing issue, especially when there are upstream network
+> devices, making it more prone to occur.
+>
+> Currently, packet loss statistics for PAWS can only be viewed through MIB=
+,
+> which is a global metric and cannot be precisely obtained through tracing
+> to get the specific 4-tuple of the dropped packet. In the past, we had to
+> use kprobe ret to retrieve relevant skb information from
+> tcp_timewait_state_process().
+>
+> We add a drop_reason pointer, similar to what previous commit does:
+> commit e34100c2ecbb ("tcp: add a drop_reason pointer to tcp_check_req()")
+>
+> This commit addresses the PAWSESTABREJECTED case and also sets the
+> corresponding drop reason.
+>
+> We use 'pwru' to test.
+>
+> Before this commit:
+> ''''
+> ./pwru 'port 9999'
+> 2025/03/24 13:46:03 Listening for events..
+> TUPLE                                        FUNC
+> 172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_=
+REASON_NOT_SPECIFIED)
+> '''
+>
+> After this commit:
+> '''
+> ./pwru 'port 9999'
+> 2025/03/24 16:06:59 Listening for events..
+> TUPLE                                        FUNC
+> 172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_=
+REASON_TCP_RFC7323_PAWS)
+> '''
+>
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+> My apologize.
+> I struggled for a long time to get packetdrill to fix the client port, bu=
+t
+> ultimately failed to do so, which is why I couldn't provide a packetdrill
+> script.
+> Instead, I wrote my own program to trigger PAWS, which can be found at
+> https://github.com/mrpre/nettrigger/tree/main
+> ---
+>  include/net/tcp.h        | 3 ++-
+>  net/ipv4/tcp_ipv4.c      | 2 +-
+>  net/ipv4/tcp_minisocks.c | 7 +++++--
+>  net/ipv6/tcp_ipv6.c      | 2 +-
+>  4 files changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index f8efe56bbccb..e1574e804530 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -427,7 +427,8 @@ enum tcp_tw_status {
+>  enum tcp_tw_status tcp_timewait_state_process(struct inet_timewait_sock =
+*tw,
+>                                               struct sk_buff *skb,
+>                                               const struct tcphdr *th,
+> -                                             u32 *tw_isn);
+> +                                             u32 *tw_isn,
+> +                                             enum skb_drop_reason *drop_=
+reason);
+>  struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
+>                            struct request_sock *req, bool fastopen,
+>                            bool *lost_race, enum skb_drop_reason *drop_re=
+ason);
+> diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+> index 1cd0938d47e0..a9dde473a23f 100644
+> --- a/net/ipv4/tcp_ipv4.c
+> +++ b/net/ipv4/tcp_ipv4.c
+> @@ -2417,7 +2417,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
+>                 goto csum_error;
+>         }
+>
+> -       tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th, =
+&isn);
+> +       tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th, =
+&isn, &drop_reason);
+>         switch (tw_status) {
+>         case TCP_TW_SYN: {
+>                 struct sock *sk2 =3D inet_lookup_listener(net,
+> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
+> index fb9349be36b8..d16dfd41397e 100644
+> --- a/net/ipv4/tcp_minisocks.c
+> +++ b/net/ipv4/tcp_minisocks.c
+> @@ -97,7 +97,8 @@ static void twsk_rcv_nxt_update(struct tcp_timewait_soc=
+k *tcptw, u32 seq,
+>   */
+>  enum tcp_tw_status
+>  tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff=
+ *skb,
+> -                          const struct tcphdr *th, u32 *tw_isn)
+> +                          const struct tcphdr *th, u32 *tw_isn,
+> +                          enum skb_drop_reason *drop_reason)
+>  {
+>         struct tcp_timewait_sock *tcptw =3D tcp_twsk((struct sock *)tw);
+>         u32 rcv_nxt =3D READ_ONCE(tcptw->tw_rcv_nxt);
+> @@ -245,8 +246,10 @@ tcp_timewait_state_process(struct inet_timewait_sock=
+ *tw, struct sk_buff *skb,
+>                 return TCP_TW_SYN;
+>         }
+>
+> -       if (paws_reject)
+> +       if (paws_reject) {
+> +               *drop_reason =3D SKB_DROP_REASON_TCP_RFC7323_PAWS;
+>                 __NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED=
+);
 
-True, I lost it in the context. Thanks.
+I think we should add a new SNMP value and drop reason for TW sockets.
 
-Best regards,
-Krzysztof
+SNMP_MIB_ITEM("PAWSTimewait", LINUX_MIB_PAWSTIMEWAIT),
+
+and SKB_DROP_REASON_TCP_RFC7323_TW_PAWS ?
 
