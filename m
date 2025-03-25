@@ -1,268 +1,170 @@
-Return-Path: <linux-kernel+bounces-575751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D241A706BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:25:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FF2A706DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1497A12F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BD91713A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A4425DD1F;
-	Tue, 25 Mar 2025 16:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pr7idbwk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3790025D531;
+	Tue, 25 Mar 2025 16:24:58 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E778B1922FA;
-	Tue, 25 Mar 2025 16:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E24478F24;
+	Tue, 25 Mar 2025 16:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919877; cv=none; b=lrepVTWwuiQonQswwDJe00hE4yJd8L1I9D5RfK8lxyStblmgqsFd0D8nmV7R6/08gDO9dwq3kZq+pkUNwRng7L/K7Ki/waLH6/pwsD9wuE1JKsJA1CWTYk2QdmbfBCh40k/NI9QSPZK/1QqQuijHyTEvSJQFzlEIdenqiz/h80g=
+	t=1742919897; cv=none; b=HD9LOydpT7kzgMGkPG5YNbtFk5Y6i93RFFcK1nBaFWYzsl7XLbdq9LxJTXmQ5KEbI2iwvhP9LSyExpsibFXNVjsb/hQaT6SMlzJ3Z7Znd6FDAWhOPFdbe+tOMmbyPqO0KoNFyahnu6jxepg6/l8O0IrYOI5YgGzOYSFV+na96ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919877; c=relaxed/simple;
-	bh=VukOGOtUlzZWpnsmi5rnmoaNAqhpZwHs73q9WhAm618=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UkTs/EsiM4JHpiaj77mO0ifpuwKmTQ99tWCpbitk3Hcqly1VV2C3kDw3g0bASaMMS3n2Xz1lwOuNxVN5eOh535BIBRLY/Xo+7PkHrLhxJO7LmNHsnpW5ZBsGuFiA8Gw1Y+N/EQ95D/FoXXYSbkW+7+mDWiIR9fMV4q/s8KVx7B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pr7idbwk; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742919876; x=1774455876;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=VukOGOtUlzZWpnsmi5rnmoaNAqhpZwHs73q9WhAm618=;
-  b=Pr7idbwkwEwHJzorjAd3N7r6wXtBXW0idJrHgTZUX1/Nu8roZ/xK5jRN
-   +ocrJyPUN3E+ELIHouUEf8KQ7osfkjISuu6iM1K0gNV8DpmhKcNG47qWk
-   cvRNFR5S2TRf4J+OBy1+gZMVAOBwZqSlGx4WehXcf9GughAPFIlELw/a3
-   palVZRc22TG0CFqOqkuT7dWELhps+EpoGRHW3oC5t3ienM22WpobZxzf8
-   7g8GkcpQJxpD+HxfDvPJmfc7HoW3lLI5JvAGhDT8O6VY1fisFsrFMZUOd
-   nISYuDrGGKMonlov1rWA6ZeJWrgJvfKCkN7HCGo1sSnHwF81j1BvkCqxl
-   A==;
-X-CSE-ConnectionGUID: PDZXwcD0Qs+MfOai37/BGQ==
-X-CSE-MsgGUID: sFMeiycxSm2DHr3XKP3FVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="69538399"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="69538399"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:24:34 -0700
-X-CSE-ConnectionGUID: ljwZjIKoRFq5h0YESWwopw==
-X-CSE-MsgGUID: cJfoW89JSYGCpK9Lqhk5yQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="124463536"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:24:30 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 25 Mar 2025 18:24:27 +0200 (EET)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v4 02/11] HID: asus: prevent binding to all HID devices
- on ROG
-In-Reply-To: <20250324210151.6042-3-lkml@antheas.dev>
-Message-ID: <bf0d12f4-f3ea-6a79-d155-b1e3abc3a156@linux.intel.com>
-References: <20250324210151.6042-1-lkml@antheas.dev> <20250324210151.6042-3-lkml@antheas.dev>
+	s=arc-20240116; t=1742919897; c=relaxed/simple;
+	bh=C7fBDqjXv2CVmINJYOBkk5XGIiofXHQLfQocU+kGCtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hzfHbnoK2lldlaSAuVj/Peb2af5Kxn9DlRCFlkZn7r5SjeDI285xKFHQwe4ktMZ4IJz1fYWEY8idEN5j0pMdPX4sDpZ2PxWtn41n7uo86qn7Y5XJASr07OB6AoPyCRaYEjDjGIBaxiENtd/rDCwgSgWAkY7mwIWT51RfvKeTzSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86d69774081so2511530241.0;
+        Tue, 25 Mar 2025 09:24:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742919895; x=1743524695;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l3iUGf60hSD8kCkzesJGsUCW6fH2x3e5r2ngVLOx6QY=;
+        b=hqPAHYvPFqCQk+PVzAwDQW+sJrq9BHbjs9HmyAjDXTO0dP10bcgTj2Sc+dSpbSre+z
+         aOTdBVBE1/kbJKkb/EuvO4BXIbUX6LmHssbIpnymCo6ihZqIu8FVVz/T8ZsEDRfIVKqJ
+         7fmUlZdi/i7jEw0KVwujGY0CbcIL3rA9TpB5V7YdR6uRaO1eAOzN8H19AHFnKqjNLWPY
+         LF57MP4xJQaVGLuin5+EMHF0QvrGeQBOWQoBNRCbJVoc5P8vhmVq/t28JJUgntdKEUsD
+         Aw92tgNqp3SSX6qAmpLYyl+3ait1iVyvw0Bh4OdihcPDFsQPIODz18egeTSOP3yqyubx
+         rX+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTVR1Ag5J7D1+GUdWPtr4ZS/S4C2aYzonObmHDMNfMMZAcA1pXgPgycIs2e5Zortn5ecTp8v9lo0UHqXc=@vger.kernel.org, AJvYcCVgHshMf36r38RU3LeS6eKiGYx44iF2uvPf0D+lBpq2Q5JnI82ZWY6WnRortpBbJb7HUjlrrylU1YbLuX83JiG4JC4=@vger.kernel.org, AJvYcCVw5tQCWEkqqWr2HZngDvRtvHXc8P+NJozqcFB6QB8GzHIcoRi5shdm0PUu6fm5cyR6J5T1+d4eypMF9O8S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0cBafIfM9Ee0/MrUfWEq2VoJsFN4WTolz8KDeVEUHmQy6YglM
+	782FXGhecHZObiFsj9X6L6vco9UQFC6P6H3Wd0U5/hguElxiFXOXJxooQVUKdDk=
+X-Gm-Gg: ASbGncsqmxfyr4/5FEItrRYN1zFX2cH0192C5BeGX71j1eUmfzSEbkxOHJOa2TJLrt4
+	Mr+erQEj6vfoelj1++p4TiGGGyerjnRWyy/yVu8XGl+kQJ9ajKmr/EN2+P5BLhqPpHm9qe8xuwO
+	pmW+aI5RwACod6Y7z6Im+LJcyBxLlwebrbE+BETM/CDeOyXjVaccdgSHBK5BDIcpQ6cnI7KPHTt
+	KINDaNEDOPKSbhWaH8XQAChsQXnAjXMMgacPe6kI5LvJTMzaW/QmChbhtG7f2VkLp65BGmGl9oh
+	VygerUxe8l7EPpuIP/8OPaF702NKNFKZY6lmCMHXLryF7XF2xPRAdCykrtsZuZs43Z5KHAJUby+
+	2KvxvV2Y=
+X-Google-Smtp-Source: AGHT+IFto9b5UOUPtnV1wp1D8cIG5F0mOE1Sx7UffouZOawKSn+ZDssypAWeSNwzC+SmvX5A56nDTg==
+X-Received: by 2002:a05:6102:dd2:b0:4bb:b809:36c6 with SMTP id ada2fe7eead31-4c50d4fb6admr14454091137.11.1742919894530;
+        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c50bbb3affsm2061070137.4.2025.03.25.09.24.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86d69774081so2511508241.0;
+        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURJ19LYYbNOK7lgKgTs3QHoG1MJyIPQqd9k88FMl9STr3iG1nbI0TnPiGrvbEtUF74Q3vNyG1C4+QZdXGtuu6kNnY=@vger.kernel.org, AJvYcCUcbxHQvM6qFaNYC4NsRTIfKyxQyODePwGGAOC4PgAwHPF/9EjuBQcdPchJShNQeGeYOEpnob0bkltJcQQ=@vger.kernel.org, AJvYcCVTqJ55g22rByenzIFf/x+j2RVMTAjqqkV31Hr7HO5DcmP9yinGv59m9upGklMlxtYuaaYm5t0Fqe3jsFoK@vger.kernel.org
+X-Received: by 2002:a05:6102:3589:b0:4c2:2beb:b726 with SMTP id
+ ada2fe7eead31-4c50d4f1cd2mr11387064137.10.1742919893845; Tue, 25 Mar 2025
+ 09:24:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
+ <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
+ <Z-EpPL3tn54E8KG5@shikoro> <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+ <Z-HVD6w6ivYR6pt5@shikoro> <TY3PR01MB1134602E988AD8428422E820086A72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <Z-Jgdi5_SizHzcO0@shikoro> <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Mar 2025 17:24:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU8VSD1Z4ing_NLXyo4x4ErzqkqzeM_n4nXX3h_GYCLnA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrPdMUtwfzLYkd4tA2p5ykjTStKxFm2BOrBAk4-uGOWcV4_ArQkaw_jT80
+Message-ID: <CAMuHMdU8VSD1Z4ing_NLXyo4x4ErzqkqzeM_n4nXX3h_GYCLnA@mail.gmail.com>
+Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Paul Barker <paul.barker.ct@bp.renesas.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 24 Mar 2025, Antheas Kapenekakis wrote:
+Hi Thierry,
 
-> ROG keyboards are HID compliant and only care about the endpoint that
-> produces vendor events (e.g., fan mode) and has the keyboard backlight.
-> 
-> Therefore, handle all of the endpoints of ROG keyboards as compliant,
-> by adding HID_QUIRK_INPUT_PER_APP and, for devices other than the vendor
-> one, by adding QUIRK_HANDLE_GENERIC to stop mutating them.
-> 
-> Due to HID_QUIRK_INPUT_PER_APP, rgb register is moved into probe, as
-> the input_* functions are called multiple times (4 for the Z13).
-> 
-> Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/hid/hid-asus.c | 69 ++++++++++++++++++++++++++++++++----------
->  1 file changed, 53 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 8d4df1b6f143b..96461321c191c 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -84,6 +84,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  #define QUIRK_MEDION_E1239T		BIT(10)
->  #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
->  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
-> +#define QUIRK_HANDLE_GENERIC		BIT(13)
->  
->  #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
->  						 QUIRK_NO_INIT_REPORTS | \
-> @@ -120,7 +121,6 @@ struct asus_drvdata {
->  	struct input_dev *tp_kbd_input;
->  	struct asus_kbd_leds *kbd_backlight;
->  	const struct asus_touchpad_info *tp;
-> -	bool enable_backlight;
->  	struct power_supply *battery;
->  	struct power_supply_desc battery_desc;
->  	int battery_capacity;
-> @@ -326,6 +326,10 @@ static int asus_raw_event(struct hid_device *hdev,
->  {
->  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
->  
-> +	if (drvdata->quirks & QUIRK_HANDLE_GENERIC)
-> +		/* NOOP on generic HID devices to avoid side effects. */
-> +		return 0;
-> +
->  	if (drvdata->battery && data[0] == BATTERY_REPORT_ID)
->  		return asus_report_battery(drvdata, data, size);
->  
-> @@ -774,6 +778,10 @@ static int asus_input_configured(struct hid_device *hdev, struct hid_input *hi)
->  	struct input_dev *input = hi->input;
->  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
->  
-> +	if (drvdata->quirks & QUIRK_HANDLE_GENERIC)
-> +		/* NOOP on generic HID devices to avoid side effects. */
-> +		return 0;
+On Tue, 25 Mar 2025 at 11:49, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > > > > > +config SERIAL_RZ_SCI
+> > > > > >
+> > > > > > I think this name is too generic. Most RZ-variants so far do not
+> > > > > > have this SoC. Would 'RZT2H' work or is it too narrow then?
+> > > > >
+> > > > > This is too narrow, because for instance the RZ/N2H , which is
+> > > > > very similar, has the same SCI
+> > > >
+> > > > You know the differences better, what could be a suitable name?
+> > >
+> > > Please consider RZ/G3E and RZ/V2H SCI as well as it is almost similar
+> > IP.
+> >
+> > So, I am thinking to not use a name based on SoC but based on feature like
+> > SERIAL_SCI_32BIT or something. But I don't know the HW details enough to
+> > make the best possible name or maybe this is a bogus idea.
+>
+> This seems a little bit confusing, and like said in former discussions,
+> the 32 bits registers are not the main difference.
+>
+> Here are the known SoCs that have this IP, up to now:
+>
+> RZ/T2H
+> RZ/N2H
+> RZ/G3E
+> RZ/V2H
 
-You'd need braces for multiline indented constructs like this, however, I 
-think that comment can appear before the if line which wouldn't require 
-braces. The same applies to many cases below.
++ RZ/V2N
 
-> +
->  	/* T100CHI uses MULTI_INPUT, bind the touchpad to the mouse hid_input */
->  	if (drvdata->quirks & QUIRK_T100CHI &&
->  	    hi->report->id != T100CHI_MOUSE_REPORT_ID)
-> @@ -827,11 +835,6 @@ static int asus_input_configured(struct hid_device *hdev, struct hid_input *hi)
->  
->  	drvdata->input = input;
->  
-> -	if (drvdata->enable_backlight &&
-> -	    !asus_kbd_wmi_led_control_present(hdev) &&
-> -	    asus_kbd_register_leds(hdev))
-> -		hid_warn(hdev, "Failed to initialize backlight.\n");
-> -
->  	return 0;
->  }
->  
-> @@ -851,6 +854,10 @@ static int asus_input_mapping(struct hid_device *hdev,
->  		return -1;
->  	}
->  
-> +	if (drvdata->quirks & QUIRK_HANDLE_GENERIC)
-> +		/* NOOP on generic HID devices to avoid side effects. */
-> +		return 0;
-> +
->  	/*
->  	 * Ignore a bunch of bogus collections in the T100CHI descriptor.
->  	 * This avoids a bunch of non-functional hid_input devices getting
-> @@ -901,15 +908,6 @@ static int asus_input_mapping(struct hid_device *hdev,
->  			return -1;
->  		}
->  
-> -		/*
-> -		 * Check and enable backlight only on devices with UsagePage ==
-> -		 * 0xff31 to avoid initializing the keyboard firmware multiple
-> -		 * times on devices with multiple HID descriptors but same
-> -		 * PID/VID.
-> -		 */
-> -		if (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT)
-> -			drvdata->enable_backlight = true;
-> -
->  		set_bit(EV_REP, hi->input->evbit);
->  		return 1;
->  	}
-> @@ -1026,8 +1024,10 @@ static int __maybe_unused asus_reset_resume(struct hid_device *hdev)
->  
->  static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  {
-> -	int ret;
-> +	struct hid_report_enum *rep_enum;
->  	struct asus_drvdata *drvdata;
-> +	struct hid_report *rep;
-> +	int ret, is_vendor = 0;
->  
->  	drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
->  	if (drvdata == NULL) {
-> @@ -1111,12 +1111,45 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  		return ret;
->  	}
->  
-> +	/*
-> +	 * Check for the vendor interface (0xff31) to init the RGB.
+> So that seems reasonable to keep RZ in the name, even there are other RZ SoCs that
+> do not have it.
+>
+> The HW documentation does not mention a better name, or revision,
 
-The next line seems to be continuation, is . extra?
+While the RZ/T2H and RZ/N2H documentation just call it "SCI" ("SCIE"
+for a reduced-functionality variant), the RZ/G3E, RZV2H, and RZ/V2N
+documentation calls it "RSCI". More below...
 
-> +	 * and handle generic devices properly.
-> +	 */
-> +	rep_enum = &hdev->report_enum[HID_INPUT_REPORT];
-> +	list_for_each_entry(rep, &rep_enum->report_list, list) {
-> +		if ((rep->application & HID_USAGE_PAGE) == 0xff310000)
+> so, the suggestion is to arbitrarily consider it as a new 'T2' type.
+>
+> Would SERIAL_RZ_SCI_T2 (and rz-sci-t2 for the driver) be specific enough ?
 
-Use a named define for the literal?
+Please don't put the "SCI" in the middle of the part name
+=> SERIAL_RZT2_SCI.
 
-> +			is_vendor = true;
-> +	}
-> +
-> +	/*
-> +	 * For ROG keyboards, make them hid compliant by
-> +	 * creating one input per application. For interfaces other than
-> +	 * the vendor one, disable hid-asus handlers.
-> +	 */
-> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> +		if (!is_vendor)
-> +			drvdata->quirks |= QUIRK_HANDLE_GENERIC;
-> +		hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-> +	}
-> +
->  	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
->  	if (ret) {
->  		hid_err(hdev, "Asus hw start failed: %d\n", ret);
->  		return ret;
->  	}
->  
-> +	if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
-> +	    !asus_kbd_wmi_led_control_present(hdev) &&
-> +	    asus_kbd_register_leds(hdev))
-> +		hid_warn(hdev, "Failed to initialize backlight.\n");
-> +
-> +	/*
-> +	 * For ROG keyboards, skip rename for consistency and
-> +	 * ->input check as some devices do not have inputs.
+"RSCI" does not seem to be present on any Linux-capable Renesas SH,
+ARM or RISC-V SoC I have documentation for.  However it seems to
+originate from the RX series of microcontrollers:
+  - RX Family Application Note: Comparison of the Differences Between
+    the RSCI Module and the SCI Module[1],
+  - The RX26T documentation[2] shows RSCI on RX26T is very similar
+    to RSCI on the five RZ SoCs listed above, but not identical.
+    The RZ variant seems to be a reduced version with 16 instead of 32
+    FIFO entries, and less "special" (non-UART) modes.
 
-Please reflow to 80 chars.
+So I'm in favor of calling it "RSCI" (CONFIG_SERIAL_RSCI).
 
-> +	 */
-> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD)
-> +		return 0;
-> +
->  	if (!drvdata->input) {
->  		hid_err(hdev, "Asus input not registered\n");
->  		ret = -ENOMEM;
-> @@ -1167,6 +1200,10 @@ static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->  {
->  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
->  
-> +	if (drvdata->quirks & QUIRK_HANDLE_GENERIC)
-> +		/* NOOP on generic HID devices to avoid side effects. */
-> +		return rdesc;
-> +
->  	if (drvdata->quirks & QUIRK_FIX_NOTEBOOK_REPORT &&
->  			*rsize >= 56 && rdesc[54] == 0x25 && rdesc[55] == 0x65) {
->  		hid_info(hdev, "Fixing up Asus notebook report descriptor\n");
-> 
+[1] https://www.renesas.com/en/document/apn/comparison-differences-between-rsci-module-and-sci-module-rev100
+[2] https://www.renesas.com/en/products/microcontrollers-microprocessors/rx-32-bit-performance-efficiency-mcus/rx26t-32-bit-microcontroller-optimized-dual-motor-and-pfc-control
 
--- 
- i.
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
