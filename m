@@ -1,237 +1,170 @@
-Return-Path: <linux-kernel+bounces-575359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890D6A70176
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:24:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DD6A70131
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D1E19A0F97
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09544178B5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EB826FDA2;
-	Tue, 25 Mar 2025 12:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF2525D8F6;
+	Tue, 25 Mar 2025 12:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Ph2VMeNV"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="S9dATbHQ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C298226FA70;
-	Tue, 25 Mar 2025 12:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B626FA6F;
+	Tue, 25 Mar 2025 12:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742906400; cv=none; b=IGAOU9wUJzf02MtuWdqOGojlP/GDjLLHYFGf7oKvncZJCZ/4mwAUCbnr1mS8eWKpOXsc2fIqwlN3+lA81bi+KbaoujfXVPk6YU962sxSNC+Gw2eD9hoaHDGDLtN7Vl0kuHp7YdQBnQq/htlK1yebzEq1H0ZUWJyAK8UQyXfOjcA=
+	t=1742906399; cv=none; b=o1KgXM8Ad8pYFXjbY9BFqYtJrhjBT/v2UBI51KKdJeObnxY57FAykGssxUXgecKeBBhlvqpEJcR87wW9KRbr4CD2vG30d9mpdVD2SFQ3mFdgyQ6ueiUP42BI++PNNUdwUg8AXGq7PzroY8XDi/+rcVfzhhMv2ZOX58mMPCdjCSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742906400; c=relaxed/simple;
-	bh=hMfpvuD8OHyHlBPGVhbZTTgGFI+xWrk3NeZsR5xWQWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CByc54kgVIvPtzCb6ZxkoD9W8k4NrYzWGPSY40N+C5gHyxs0HukgJIx8Rh+HCwBJmGXVRuWjngfi4ng55fBhvF3zl9soOp8WZAyd2nLzjywQbBuN16qDwPcRUmN26emuDnSPhNka0+RQn0robvGhfjQ0ugDF0bi4mms5JZOKFF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Ph2VMeNV; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F7EB10382F1B;
-	Tue, 25 Mar 2025 13:39:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742906395; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=BlO6BNtBl1gk8zG3pRpzJ3qRY4omgmymjs/5E1n8HjU=;
-	b=Ph2VMeNVjojq7TyvN7jh1Xvncyxwlz6NpBlppHNo9w5Iu/1wa4qn5QR39AYjxqjTAPqwxR
-	TXeReWMOVxrLOSSlLiltJ2Wjjk18iMnCgzrRsVo1dHiPnSUCuiQMi9ACYt+WPA3/Fiyxtw
-	n9Tj4We6m0IQSaocMpO8/8CbewGDOxAHdmHmQ01rfWsS3KFbnTDUJWFJz2JlxQ19Ualrew
-	WRWDujnxrIt04pmWVl4zQWTf5IcXPwXu2uitdwbv7i7Bz2FqdYYnyuJSqHikLpGQTp5zub
-	mFnyW726zYKT9VIcjgCpTN8yRITpCo620DY8AGB8iiOhG6lu66/pX0AXMfDzfQ==
-Date: Tue, 25 Mar 2025 13:39:49 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
-Message-ID: <20250325133949.7782a8a5@wsk>
-In-Reply-To: <bf6d066c-f0dd-471a-bb61-9132476b515a@kernel.org>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-3-lukma@denx.de>
-	<2bf73cc2-c79a-4a06-9c5f-174e3b846f1d@kernel.org>
-	<20250325131507.692804cd@wsk>
-	<bf6d066c-f0dd-471a-bb61-9132476b515a@kernel.org>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742906399; c=relaxed/simple;
+	bh=8tP82OotsJmSeaPv/t9mJp2OiMqNRSJ6qjsDyEcX6/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KWFipGRFtOOtm8Vm6SZaGUPQzdHe3JAZPvahyk4rVkvF+CnLLEK4JKBczc7/3Qwt8f3QWdFtGLRoYJARSEXIJ6KLd6fTQ6AsQfaraHCylfnDd/ws0+fCjJk1NR/x0BrtmEMPP1w3i/J4kc2KL29+zkaqL3KH6tVMy75u5bKBJF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=S9dATbHQ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E788AA05BE;
+	Tue, 25 Mar 2025 13:39:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=RB9GJiRFJg6/bN2vnJM4
+	vC1ljE25oPT92TiI7BbGuH4=; b=S9dATbHQKVhWMebPspBcq6wTeWmup9sX72Kh
+	N6n2EOKfMxJ8hfo0eTHPW1XJagCC0ai0nBmCHIVy4CcHtuy/IXnIgexI30R+GdNl
+	duApg87u5HRR6AeTK/YocuQ6l0qO/UdIfXUct1soL8X9PKv9cQq0h1NBt2X0kI5q
+	+lEN+F2l2JIQI486Y6hh0CZEyKqP0TkDztsZGjlE3Uso/PHsCX1aGKhdGaqF1Rjl
+	+yZcvJGLae6yNEZgZGvIv3HmOOj4JjKAWu/0xAH4uJW4swwIiqcoJFiSrmskdLTm
+	7Y8ihLBis0RuF6MM+NSrVlSq4oBw/2dK9YHX3tSsi05orp7W06buvBssdGEA9Ovd
+	fZ2XqrL02cu625TnlTkTjrZBBs2DMjBk09f03HHe3wJhNAcqCHG5HmRSwsqLkJ0d
+	szXn94T4iai0+JUcFgko07Kg+uYwgI8hpnU+wrH90xaphxeVtGYJzCpqbXd6zy/A
+	5z8DotmD6V5RMOrH2eXdQhM8tJTAkLeUyWinSo3HCsKf8NIzqB8pJz95XaMWGHH+
+	1PqX1GnooCT3EhMYUffDfPUnOWlwoeOhS5ygusL8nLXtNLTMmYRquF+i7C7zWzVM
+	kwqMGcHByQCN9+ea0sgxkir8QTN4PyVDIzYVihd/v0s3gW9o51tuF2S0SEKD2pDk
+	+07bpVg=
+Message-ID: <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
+Date: Tue, 25 Mar 2025 13:39:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dA91ybGkb__gwOvzVaQYG_K";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
+To: Julian Calaby <julian.calaby@gmail.com>, Markus Elfring
+	<Markus.Elfring@web.de>
+CC: <dmaengine@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>, Chen-Yu Tsai <wens@csie.org>, "Christophe
+ Jaillet" <christophe.jaillet@wanadoo.fr>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Vinod Koul
+	<vkoul@kernel.org>
+References: <20250324172026.370253-2-csokas.bence@prolan.hu>
+ <92772f63-52c9-4979-9b60-37c8320ca009@web.de>
+ <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
+ <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de>
+ <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
+ <26e36378-d393-4fe1-938a-be8c3db94ede@web.de>
+ <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D948526C7562
 
---Sig_/dA91ybGkb__gwOvzVaQYG_K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Julian,
 
-Hi Krzysztof,
+On 2025. 03. 25. 13:20, Julian Calaby wrote:
+> Hi Markus,
+> 
+> I really wanted to keep out of this, but...
+> 
+> On Tue, Mar 25, 2025 at 8:14 PM Markus Elfring <Markus.Elfring@web.de> wrote:
+>>
+>>>> Implementation details are probably worth for another look.
+>>>
+>>> What don't you like in the implementation? Let's discuss that then.
+>>
+>> I dare to point concerns out also for the development process.
+> 
+> You're "concerned" about patch granularity, but this is not the sort
+> of thing that some random person would raise, this is the sort of
+> thing a maintainer asks for when patches are doing too many things or
+> are unreviewable. This is neither. It is a very simple cleanup of a
+> probe function as it says in the patch subject.
 
-> On 25/03/2025 13:15, Lukasz Majewski wrote:
-> > Hi Krzysztof,
-> >  =20
-> >> On 25/03/2025 12:57, Lukasz Majewski wrote: =20
-> >>> This patch provides description of the MTIP L2 switch available in
-> >>> some NXP's SOCs - imx287, vf610.
-> >>>
-> >>> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> >>> ---
-> >>>  .../bindings/net/fec,mtip-switch.yaml         | 160
-> >>> ++++++++++++++++++   =20
-> >>
-> >> Use compatible as filename. =20
-> >=20
-> > I've followed the fsl,fec.yaml as an example. This file has
-> > description for all the device tree sources from fec_main.c =20
->=20
->=20
-> That's a 14 year old binding, so clear antipattern.
+Exactly. That's why I asked if it broke something on Markus' end, 
+because it is a really specific thing to nitpick about, especially in a 
+changeset this small. So far, he did not indicate the *reasons* why he 
+thinks this should be split further.
 
-For some reason it is still there...
+> Futhermore, this already has an ack from the maintainer of this file.
+> This indicates that they're happy with it and no significant changes
+> are required. This is also version 6 of the patch, if the maintainer
+> was concerned about this, they'd have already provided some clear
+> guidance on this. If you check previous versions of this patch, no
+> such requests have been made.
+> 
+> Your only other "concern" had already been addressed as has already
+> been pointed out to you.
+> 
+>>>> Please distinguish better between information from the “changelog”
+>>>> and items in a message subject.
+>>>
+>>> What do you mean? The email body will be the commit message.
+>> See also:
+>> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14#n623
+> 
+> The email and patch structure are following the format outlined in the
+> document you link to _exactly_.
+> 
+> 
+> Once again your comments are just noise, and your insistence on
+> repeating them over and over and over and over and over again is
+> borderline harassment.
+> 
+> You have been told to stop this nonsense many many times, here's a
+> link to the most recent one:
+> 
+> https://lore.kernel.org/all/92d1a410788c54facedec033474046dda6a1a2cc.camel@sipsolutions.net/
+> 
+> Please stop sending these emails and go do something constructive with
+> your life.
+> 
+> * * * * *
+> 
+> Bence Csókás, (I hope I've got the order of your names correct)
 
->=20
-> >=20
-> > I've considered adding the full name - e.g.
-> > fec,imx287-mtip-switch.yaml but this driver could (and probably
-> > will) be extended to vf610. =20
->=20
-> Unless you add vf610 now, this should follow the compatible name.
+Either order works, Bence is the given name, and Csókás is the family 
+name (surname). Hungarian and Japanese order follows the scientific 
+"Surname, Given Name(s)" order, but commas broke many tools, including 
+Git < v2.46, and b4, so I switched to the germanic "Firstname Lastname" 
+format.
 
-Ok.
+> Please block or ignore Markus, at best he's a nuisance and at worst a troll.
 
->=20
-> >=20
-> > So what is the advised way to go?
-> >  =20
-> >> =20
-> >>>  1 file changed, 160 insertions(+)
-> >>>  create mode 100644
-> >>> Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
-> >>>
-> >>> diff --git
-> >>> a/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
-> >>> b/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml new
-> >>> file mode 100644 index 000000000000..cd85385e0f79 --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
-> >>> @@ -0,0 +1,160 @@
-> >>> +# SPDX-License-Identifier: GPL-2.0-only
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/net/fsl,mtip-switch.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Freescale MTIP Level 2 (L2) switch
-> >>> +
-> >>> +maintainers:
-> >>> +  - Lukasz Majewski <lukma@denx.de>
-> >>> +   =20
-> >>
-> >> description? =20
-> >=20
-> > Ok.
-> >  =20
-> >> =20
-> >>> +allOf:
-> >>> +  - $ref: ethernet-controller.yaml#
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    oneOf:   =20
-> >>
-> >> Drop, you have only one variant. =20
-> >=20
-> > Ok, for imx287 this can be dropped, and then extended with vf610.
-> >  =20
-> >> =20
-> >>> +      - enum:
-> >>> +	  - imx287-mtip-switch   =20
-> >>
-> >> This wasn't tested. Except whitespace errors, above compatible does
-> >> not have format of compatible. Please look at other NXP bindings.
-> >>
-> >> Missing blank line.
-> >> =20
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  interrupts:
-> >>> +    maxItems: 3   =20
-> >>
-> >> Need to list items instead.
-> >> =20
-> >>> +
-> >>> +  clocks:
-> >>> +    maxItems: 4
-> >>> +    description:
-> >>> +      The "ipg", for MAC ipg_clk_s, ipg_clk_mac_s that are for
-> >>> register accessing.
-> >>> +      The "ahb", for MAC ipg_clk, ipg_clk_mac that are bus clock.
-> >>> +      The "ptp"(option), for IEEE1588 timer clock that requires
-> >>> the clock.
-> >>> +      The "enet_out"(option), output clock for external device,
-> >>> like supply clock
-> >>> +      for PHY. The clock is required if PHY clock source from
-> >>> SOC.=20
-> >>
-> >> Same problems. This binding does not look at all as any other
-> >> binding. I finish review here, but the code has similar trivial
-> >> issues all the way, including incorrect indentation. Start from
-> >> well reviewed existing binding or example-schema. =20
-> >=20
-> > As I've stated above - this code is reduced copy of fsl,fec.yaml...
-> > =20
->=20
-> Don't take the worst, old code with all the anti-patterns we point out
-> on each review, as an example.
->=20
-> Take the most recent, well reviewed binding as an example. Or
-> example-schema.
+I'm still open to hear him out if, and only if, he can give *clear and 
+valid* reasoning on why he wants to achieve this. I'm a generally 
+understanding person. But if it's just hand-waving and linking to the 
+same page over and over again with no explanation on why he _thinks_ I 
+broke SubmittingPatches, then I will do exactly this.
 
-Ok.
+Lastly, to all other adressees, sorry for the spam. So let's end this 
+meta-discussion here and keep the rest of the conversation professional, 
+reasoning about the technicals.
 
->=20
-> Best regards,
-> Krzysztof
+Bence
 
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/dA91ybGkb__gwOvzVaQYG_K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfipBUACgkQAR8vZIA0
-zr3d0wf/bxDkHq2CXcGN5WbTK8hga817FnMv0+WxVnrO7+RB2b0lrOdZaTXXcwb6
-KM0DjW6hv1ZV/tY9uU1hNCnw3dYxia9dKKts3Xy7doPol9M31NkM9HUYpZ2gZPtR
-Db9R7nCqrNZmh2h3jqbVB1lZBpR4B9mFilCVs6+3hMn3y5bQWu6hRNvq5K+oSc9D
-d//uIGq7euZXpaAXxujJyYGQDEuJdmVf9lzktP6g9PCt/Tk799ulW7qe0RWcjfYl
-E48J4AzVxR1rCs2gJqAsxN/cKsCsuLmerC057YamM8NKVuqa30xmt7UTPFjJ89wb
-KjeIiOpkE56KfTAlW8new9bOhBT09A==
-=AANv
------END PGP SIGNATURE-----
-
---Sig_/dA91ybGkb__gwOvzVaQYG_K--
 
