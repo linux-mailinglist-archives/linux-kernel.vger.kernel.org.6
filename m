@@ -1,78 +1,173 @@
-Return-Path: <linux-kernel+bounces-576260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89296A70CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:28:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8BDA70CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197B97A1959
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:26:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7031189AD28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBBD269D1B;
-	Tue, 25 Mar 2025 22:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264DC26A0A9;
+	Tue, 25 Mar 2025 22:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcWEUss3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2CDa+or"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2200269D04;
-	Tue, 25 Mar 2025 22:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4EB2528FC;
+	Tue, 25 Mar 2025 22:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742941643; cv=none; b=X8yK2TLKjiYFqPuN6L5qvgNS6cpMtLBKSla/qvO9D2eY5AKqr4Xoy+k2kAe4+dQiUpZ0ziXIbuOUixot3uEE8E1CjpXZxIuT+8g9BEqzkAcLWs8DmJC7AK3Y3QMjcqGSLaE1xU64LpNKwGGa81jSCQKdZqaS9LYiqQEflyBbWtM=
+	t=1742942039; cv=none; b=PfCHXL7W7u/iOkdx9d4WGrj/8GzXyJlpFF7KxpKPF+acC1xtTvyVMan5JsqR8Y4IHM+jf1sSqgdBT0+8zR4HSxAIOGR2CkhGPDLhdrt1N6TICS0cHgQ+MaUAZ0KPtaS+5tW8oc/sUA/JaBaV19W3krvaUREB3fdlhhuCvj8ANeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742941643; c=relaxed/simple;
-	bh=CjhTi+TCLM66pen4h3uAMenY0PpRUjXiB10TSDhkPjo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VmuTBu/lFewRdXnrLSmrbId7ST5QAvF1w5Pk9fgitNd7TW5WfAXxi2kv5aIEuSFnEAJpXnqWAv7NBH93T7j2LRfJke4kvY3e3X7M1MtLd0Sr+LuNW7rA0O956FQSTBb/OCpmaug+HT+OMMtIKBSulFU6PhCQfMwWpooF8nm/CBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcWEUss3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59BCC4CEE4;
-	Tue, 25 Mar 2025 22:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742941643;
-	bh=CjhTi+TCLM66pen4h3uAMenY0PpRUjXiB10TSDhkPjo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=OcWEUss3sAXYW6VG2hooA8s+qYcKI3fdt9EnNrVcv2N4/9qX76eU8shHMRX4uXSxM
-	 OalIbZFd5ILginOU1AVMb3yjAj7SDrCywGvEx4LfIj3ssufFNN3ZiAQHhEcHxi9zdM
-	 +VL1rsha4mQnLt2xblAOxqX7MgRMRYMHozLaaZy6HQMYHMGyLVzxVZsW9Kmpyh54rB
-	 G8b+m2RjVrvrlR71GyZHK+L6TIeg2Rk+Adwm4o+nBCvpLvzeHZtturY15t3S37K7JM
-	 z+aXCWmW0xu4f/JkyONBGm6Ql4IKJgViiisbeYYpyuA5h5nmgznT8EB55LX2RyZ3h6
-	 /r6Kp94czaGag==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D72380DBFC;
-	Tue, 25 Mar 2025 22:28:01 +0000 (UTC)
-Subject: Re: [GIT PULL] Thermal control updates for v6.15-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0gsHdE+Mt+8vMbUJMRuTUdiBTnUTonaGM_41EpPt9wS5g@mail.gmail.com>
-References: <CAJZ5v0gsHdE+Mt+8vMbUJMRuTUdiBTnUTonaGM_41EpPt9wS5g@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-pm.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0gsHdE+Mt+8vMbUJMRuTUdiBTnUTonaGM_41EpPt9wS5g@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal-6.15-rc1
-X-PR-Tracked-Commit-Id: c3b659b74541f4564f9f5a39f65e625c47e77e21
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3c623b9a94f7f798715c87e7a75ceeecf15292f
-Message-Id: <174294167970.756596.8448296515241254975.pr-tracker-bot@kernel.org>
-Date: Tue, 25 Mar 2025 22:27:59 +0000
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+	s=arc-20240116; t=1742942039; c=relaxed/simple;
+	bh=FqsuMD+N2GSkIElGsGJHn4dcw9fvquMPH/SsgRRnoeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h3WXh2guZPZx+fq+rhx/7iN/pR4v5QtBXxJR6n0gyXrSbdXKJfApqyJzMrpAVUoBmiUaE+32vLBIeTL44v/xckoYN56B5ghLpAZ/L6Rie/03ycWe++2ey/ZPha3DiIo/Dvj4sxJKa8I/kTTUQ9DyyfgzmKbx6nQZKngiWy8ROKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2CDa+or; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54af20849bbso2252565e87.0;
+        Tue, 25 Mar 2025 15:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742942036; x=1743546836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Rhrkp4C3mtJ8SrlSBMmU8WkZfHfXdyvYKhxaaowYRs=;
+        b=I2CDa+orkEaGXixHA/zM9zEtX8bL14l/ix5Lj+0REp/VMGhHVLuJI5v1Jc7jiAtVSd
+         kkIoQUWw9eRMTknqKqQgnSHtE4bGXC8GrgDgpCCl8Mapj/BGDDvod7xCf94lV2uJPIiS
+         TaOQj/FAOpLQj58jbH+Js85fd3n4XhTrGdJzXfemRqpyOGqiQlfSI1TiMT3Q0SnEUJZc
+         kpi1bDOh8b6txk6X17jexDA/Ua4pXbgffa+pgWFtvpDvAuA73+/iLJdLclyPDYzmiKnc
+         jpJuDrC+GfABC2tQE/KKTAKQDExLHDlNbx4J86YeziNxrkqzT1e2fZyf+tEbD6Cvh+xO
+         skVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742942036; x=1743546836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Rhrkp4C3mtJ8SrlSBMmU8WkZfHfXdyvYKhxaaowYRs=;
+        b=oQvJSCZ22OIP4igQlXYzdn/kO2lIv8iaqy1Wyg6HR1M7umR6Gb4j8cJ5yDfsK9s12M
+         +wouob3TBSl9dV1ziNo5D/j3/0VlRciKkJIdvSdCvdSK9T5gf+keZ7tf2zgCB2InjSxh
+         DBVsqKQiVm4TtO3wUmt2x4og+i8sUsX0pYYPzwCJOPKym8wEdNzGEMI0DX+4NL1+RHZQ
+         K2S6Ys+W2d/JhRfQBr+ABPnciTBkaFD/xkEAuFnouKN08DtkNOQHli634XQOW+pXsg+J
+         zLvCJtR6Xxx/CvYF8+BeHqijSdw/BbufkyQf+U1T4G/NxiAIH7S77M43g7GtggnKWhpb
+         bSPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+nmPpE9M4EezihvkvxqHUSbwI0o8+NSr4JcDjD6xb9rOh7cKL/+A7n5hH2YOszgWRH9eWMVg9K4l8@vger.kernel.org, AJvYcCUnAHMVDXCDWBxj5YXbCM7LunAEjaO4mUhE8GMInFdmM6+US65tTq4tKB79Dq3P61/5W0Kd5aDAkK+lmzb2@vger.kernel.org, AJvYcCW5h/aGMKGY2AijCdtqRIgQiRNz0XHi5/QfBD+qbebCwm7TtE0CYRpRVBAdZyBIFoYMam+oklO0j/XCCQR9@vger.kernel.org, AJvYcCWA/2vdrxyqc7PshsxLye2bHyxU5+TC9ps3WHS7/jIrGb6NLqT7bFsaXUG05baETmv0fHNui3BJ/Kh53xXEq24=@vger.kernel.org, AJvYcCWVjjqfGUvB2JjCibuM1PUyBPpEjPqDa0eUOAV7wxy8Ru+K0tf1ilLfQPIIZVTOosn6mJum/oB2@vger.kernel.org, AJvYcCX6qA3jLmT/AAbHs72MK/kUnHwXdObF/ynXL4a96pZ5J17YDdDFKEqIWA1n9ci7+juSodEciuG8zk6IE/SMUNxW@vger.kernel.org, AJvYcCX8hXh81PTjZDl07mVaAlRnwx7InitZeEW8+wMewSHKPJHo5oHVb/hl8V8QBghjCMV96vSlhVA2zhwr@vger.kernel.org, AJvYcCXFc6CzwJt0yK/PppsGAQZCcBGf492gWe//PMh+12HGXtInfSR70lxZjxUOiR5yokaCwkwIjHShTqGwCJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAJMj5pyoAXRCoA+gl7w7YZUH/FQBQ/HpZYQw4HJndGJaYOF7S
+	TPLtmBxM1ej0NUVfAcHvdCNP4rRQkoidr00yoZHAkzLHBL9CIJ/NLviqK93n8aMGBH3gvEVNIfm
+	kT2HCHe38OmHxChbGIi3V+Z0FFMY=
+X-Gm-Gg: ASbGncssiRyhgbtn7kbD+GN9hnWnkUiUI1OklmukXiuiQi1cJVEGArDh5vwv7W8hUrj
+	61kBtXafre9JwyExqKZxDvmlTM1KwtrNl949QV5kHcmjjSLFQOVfHYmjiVeOpKGUBWKQshmfGLR
+	+VdvVI5bAW6YYMluEWdPoKNNAHqKP46GEP9WXi9dOr30hzJ9Jx5OTaRutH62tlh1RheKmVjQ==
+X-Google-Smtp-Source: AGHT+IF7oNHiA79ygoevBMCH/M8kBbwg6m++h2lH8/S2V9ylq5tEJ7Ga+KdvKmKrJrM61cBMQiYIb8DxAdgeGsC/R6E=
+X-Received: by 2002:a05:6512:31c9:b0:545:5a5:b69f with SMTP id
+ 2adb3069b0e04-54ad64799edmr5883337e87.9.1742942035388; Tue, 25 Mar 2025
+ 15:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com>
+ <20250325-ptr-as-ptr-v7-7-87ab452147b9@gmail.com> <D8POWLFKWABG.37BVXN2QCL8MP@proton.me>
+In-Reply-To: <D8POWLFKWABG.37BVXN2QCL8MP@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 25 Mar 2025 18:33:19 -0400
+X-Gm-Features: AQ5f1JosKyWe583mjIwVAHNfBxS6svc8VZc6q_vCfw8uzWZ3UtE-6_9jMFmmSrw
+Message-ID: <CAJ-ks9mUYw4FEJQfmDrHHt0oMy256jhp7qZ-CHp6R5c_sOCD4w@mail.gmail.com>
+Subject: Re: [PATCH v7 7/7] rust: enable `clippy::ref_as_ptr` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Mon, 24 Mar 2025 17:33:56 +0100:
+On Tue, Mar 25, 2025 at 6:11=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Tue Mar 25, 2025 at 9:07 PM CET, Tamir Duberstein wrote:
+> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> > index 40034f77fc2f..6233af50bab7 100644
+> > --- a/rust/kernel/str.rs
+> > +++ b/rust/kernel/str.rs
+> > @@ -29,7 +29,7 @@ pub const fn is_empty(&self) -> bool {
+> >      #[inline]
+> >      pub const fn from_bytes(bytes: &[u8]) -> &Self {
+> >          // SAFETY: `BStr` is transparent to `[u8]`.
+> > -        unsafe { &*(bytes as *const [u8] as *const BStr) }
+> > +        unsafe { &*(core::mem::transmute::<*const [u8], *const Self>(b=
+ytes)) }
+>
+> Hmm I'm not sure about using `transmute` here. Yes the types are
+> transparent, but I don't think that we should use it here.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git thermal-6.15-rc1
+What's your suggestion? I initially tried
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3c623b9a94f7f798715c87e7a75ceeecf15292f
+let bytes: *const [u8] =3D bytes;
+unsafe { &*bytes.cast() }
 
-Thank you!
+but that doesn't compile because of the implicit Sized bound on pointer::ca=
+st.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>
+> >      }
+> >
+> >      /// Strip a prefix from `self`. Delegates to [`slice::strip_prefix=
+`].
+> > @@ -290,7 +290,7 @@ pub const fn from_bytes_with_nul(bytes: &[u8]) -> R=
+esult<&Self, CStrConvertError
+> >      #[inline]
+> >      pub unsafe fn from_bytes_with_nul_unchecked_mut(bytes: &mut [u8]) =
+-> &mut CStr {
+> >          // SAFETY: Properties of `bytes` guaranteed by the safety prec=
+ondition.
+> > -        unsafe { &mut *(bytes as *mut [u8] as *mut CStr) }
+> > +        unsafe { &mut *(core::mem::transmute::<*mut [u8], *mut Self>(b=
+ytes)) }
+> >      }
+> >
+> >      /// Returns a C pointer to the string.
+> > diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+> > index 80a9782b1c6e..c042b1fe499e 100644
+> > --- a/rust/kernel/uaccess.rs
+> > +++ b/rust/kernel/uaccess.rs
+> > @@ -242,7 +242,7 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u=
+8>]) -> Result {
+> >      pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
+> >          // SAFETY: The types are compatible and `read_raw` doesn't wri=
+te uninitialized bytes to
+> >          // `out`.
+> > -        let out =3D unsafe { &mut *(out as *mut [u8] as *mut [MaybeUni=
+nit<u8>]) };
+> > +        let out =3D unsafe { &mut *(core::mem::transmute::<*mut [u8], =
+*mut [MaybeUninit<u8>]>(out)) };
+>
+> I have a patch that adds a `cast_slice_mut` method that could be used
+> here, so I can fix it in that series. But let's not use `transmute` here
+> either.
+
+See above - I don't know what else I could write here.
 
