@@ -1,231 +1,132 @@
-Return-Path: <linux-kernel+bounces-576135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7309A70B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8FBA70B7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4164F188C6D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58858189F2A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E3126656D;
-	Tue, 25 Mar 2025 20:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2D626656D;
+	Tue, 25 Mar 2025 20:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="MuNmNpdW"
-Received: from SJ2PR03CU002.outbound.protection.outlook.com (mail-westusazon11023136.outbound.protection.outlook.com [52.101.44.136])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NoDVDhB0"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFE91A0BF8;
-	Tue, 25 Mar 2025 20:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.44.136
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742934520; cv=fail; b=e268aQortrOqgTK3Avj+fom0xopcX5IRhkTwjO4uQmkK9QyvDfe4NXPIUsQxHKn46Ll+qGuCjMZtQUXef4OxmE9o34XPFW73NRMOKp74WTVHPU3d1Q0udBuFSSpdPpIquGdl3f64P4I+fcpRofmu+3tdqhvgMEYUbsapLLLRIuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742934520; c=relaxed/simple;
-	bh=CBHg9WFqHp/R/csgFKeGFKujmmMqCL/sGcqyT19Mf68=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pWJBQKFjahHuz7e/Wt4CvBJrQeBm21kmi6I6W3PMtGoZpg5A81PLF5DO2s0m1AvQR4SChEtC16Y0ppaGITQQmZgUSDGZhFFr9ksnDeoyaCvDKyYDgQitrisUpShz+7unU3MEoTaHKogpMHT4fcPxHKtR32lzXixBE9dAfzqk7Dw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=MuNmNpdW; arc=fail smtp.client-ip=52.101.44.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R1qz0CYywOqSZkk+AXIafaUsijISwRtWBbmN1OWz5Iy6JIwNk7FNX4aZZTe7yhfCrF0JdrN08A34cIp8GV3OD0REHumoPE/HTSmF+TVdOSKcv97Koqh3mahn2uPP7DH2VXFUClu18itkCauykaaAhKFE6/y6M6Hu2ckK5eg1AV+wrFgftUY+GIX3tw64qd3dJAadTdktHpzn6iNjk2CC2hBb/J8vjTBvCnugZUpmMR3N0t6DzqAk8AmL5nOef2mcPWM/0EF9m06RBHWxhp5ggbwi5ft500YCImTgxUa2H9NjbztIt6cDKCAmI6fT9WROcXIrAhtEWtbYq9Prqodu4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CBHg9WFqHp/R/csgFKeGFKujmmMqCL/sGcqyT19Mf68=;
- b=rn5ofkqsA6Cgij84CVc3ProdwRfwlIaf/9G4HvbGoKHw5n+7coIY3fll3CJeZ4N9VIbWpqzBkOvLd64rRxdK8QX4OBIFP5ZppTfuGFEPJp9LE01TW/e9x6R6/Lxy+R/YNS3mP5W17ptjfzu8mFI+dYn5zOHryaKjeq/UrW0nA/KEuvzQpgRoikQQxdWBhGITNsHeMqHuCOwjBdGO+w7Ckr0NlY72j+uaEPg8xYZTcscDrw5JtaHvrIojrt1xPtE8M602UvMUUMVm92IO9RNDV7gsiAH3LWyFu5l7nDoqt+4hgk1YRff0ZXaPo7H8gQe1jQQK7+98h6C+nrxc17SWtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CBHg9WFqHp/R/csgFKeGFKujmmMqCL/sGcqyT19Mf68=;
- b=MuNmNpdWoc2HZ8lnq/1yLL3M7cpEYYfdFLhXYhZUInnqjA1TwTFc/0WgprvSzGp/XBI+7L5MzIcdki16J41eJTHCmz/HTKHMLpqOv2bL/AJXDQCr743UW0VMWqSKioGwxDCV0C0FNDx0eZq2PTqNa9Pg3NoaerYYkCQaSt3rHg4=
-Received: from MN0PR21MB3437.namprd21.prod.outlook.com (2603:10b6:208:3d2::17)
- by BL6PEPF0002E785.namprd21.prod.outlook.com (2603:10b6:20f:fc04::c7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.24; Tue, 25 Mar
- 2025 20:28:35 +0000
-Received: from MN0PR21MB3437.namprd21.prod.outlook.com
- ([fe80::19f:96c4:be9a:c684]) by MN0PR21MB3437.namprd21.prod.outlook.com
- ([fe80::19f:96c4:be9a:c684%5]) with mapi id 15.20.8583.023; Tue, 25 Mar 2025
- 20:28:35 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Jakub Kicinski <kuba@kernel.org>, Erni Sri Satya Vennela
-	<ernis@linux.microsoft.com>, KY Srinivasan <kys@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>, "horms@kernel.org"
-	<horms@kernel.org>, "brett.creeley@amd.com" <brett.creeley@amd.com>,
-	"surenb@google.com" <surenb@google.com>, "schakrabarti@linux.microsoft.com"
-	<schakrabarti@linux.microsoft.com>, "kent.overstreet@linux.dev"
-	<kent.overstreet@linux.dev>, "shradhagupta@linux.microsoft.com"
-	<shradhagupta@linux.microsoft.com>, "erick.archer@outlook.com"
-	<erick.archer@outlook.com>, "rosenp@gmail.com" <rosenp@gmail.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, Paul Rosswurm
-	<paulros@microsoft.com>
-Subject: RE: [EXTERNAL] Re: [PATCH 2/3] net: mana: Implement
- set_link_ksettings in ethtool for speed
-Thread-Topic: [EXTERNAL] Re: [PATCH 2/3] net: mana: Implement
- set_link_ksettings in ethtool for speed
-Thread-Index: AQHbnai9kkA9WGlPSUyCoOvnIZFl4rOEIhUAgAAY2ICAAAdYwIAAAxUAgAAHb3A=
-Date: Tue, 25 Mar 2025 20:28:35 +0000
-Message-ID:
- <MN0PR21MB34376199FAFAE4901EF18E75CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
-References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
- <1742473341-15262-3-git-send-email-ernis@linux.microsoft.com>
- <fb6b544f-f683-4307-8adf-82d37540c556@lunn.ch>
- <20250325170955.GB23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <adaaa2b0-c161-4d4f-8199-921002355d05@lunn.ch>
- <20250325122135.14ffa389@kernel.org>
- <MN0PR21MB3437DA2C43930B08036BB146CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
- <6396c1f7-756d-476a-833e-7ea35ae41da8@lunn.ch>
-In-Reply-To: <6396c1f7-756d-476a-833e-7ea35ae41da8@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=9b36c230-8568-4ad1-9510-e2f5ccdd9c22;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-25T20:25:30Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR21MB3437:EE_|BL6PEPF0002E785:EE_
-x-ms-office365-filtering-correlation-id: 0c4630c7-ffd3-49a0-f7c4-08dd6bdb9e4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?FBKZGEhAt0yDV8TRF+2LoOdpDlHD+XjMQw/kPg9hzpiGl/arp3GfEFipIm1X?=
- =?us-ascii?Q?F97Ib4OvEFzTMCkHmE2zs5ksaXw4p3xtTzXv7y/mWJ0aQVVB3ssVR+oeJotM?=
- =?us-ascii?Q?8J1gl4WnCB7wgke+elm9DI8RpNNJHa8ZDLPV0kQbs9MITULojjWO1dn1b8WM?=
- =?us-ascii?Q?kryGcO6NInKRmECU0Z4INTSvZPFHkErcxf6C1cBDf6bNRawYrWH0G7bN3w1a?=
- =?us-ascii?Q?CjazmGKxU+65uTaDdirMhIcV9u49ru17wTuhkZ4Z9u2kS7+oOrwPiGmJcVz1?=
- =?us-ascii?Q?FD+F+FZ07DtciuNhhEUdZ/feu2vjne6u30XI+rath0Ico9L+mklrEctz/VeR?=
- =?us-ascii?Q?X3lJ2ty4JjsKwLlHgJDOC8wuRxKS1cs8/2c23DkY6igVriGH7y41vQnAzzsB?=
- =?us-ascii?Q?KRE1sdLtR8sBx17TsUGOVywrTXbN37kjzm8Ro5HOKJH3KoaGdh0B+6Luc5ew?=
- =?us-ascii?Q?gbFDX4/njAdVW47Kd2bxAb8pBmJJyBb+cTALfkexsn1jobSuJOEcDlKzx1po?=
- =?us-ascii?Q?hFq0U8TNC/k1tgHVXYBF5CvjCl/aIv3PDiFagoYTZ9pCGY39YhjyiZxszt4M?=
- =?us-ascii?Q?pRQ0HLRtcGPhTH1voj16VvXbXNJ4IRx2RN4lzIY2ePm9ZIjuqX2zHqrm2Z1w?=
- =?us-ascii?Q?zSXGRmEt2vDrni16HxVQeuOC4JcZOu1z2s0WGUvASJITDD1lLZCUayOKQsEM?=
- =?us-ascii?Q?IF0dKRUpx1yCBhpHU5SC9Wt+LphE+TzpY0OC6DjzYi1Ioz2FWXI4NCDNl86L?=
- =?us-ascii?Q?JXtLcXYBfIwZDBsz8wO+XZolMairSvRo4hnmRT93Unf46bfM+Fgm4uBZdnhU?=
- =?us-ascii?Q?9yXve+IwfABQq2Y1m/Lvch47uh8Uf2jldsoZAwLtndDUZu6mYBOSDdi4tEn0?=
- =?us-ascii?Q?XpAD6ngKXqAxGS/Dk//0o57yK0tdu2Gp8btQr5K4YSKxorArQqz8oHtEca+n?=
- =?us-ascii?Q?SQpBmRfNQHue2EA6WW/PqA5hj6b1m+fm8DknNXLHDG2XudILlEZ6NZ4qBxgo?=
- =?us-ascii?Q?GMBYMJBWiLbF89y7+7R230ShBg4fNa917LJUsALoBqzg4an8ZrwcJaEqaUwg?=
- =?us-ascii?Q?gnRAr0UhYVBJsQdxFqhGTOUFUudBI9KJuxQvVCj9euKtwHV1+BSm4APxuyZ3?=
- =?us-ascii?Q?vDoIevSPkjgW4FjXbgISSsCKzfEsck0PKejTx+SgLCvt6f+GLfiWASNIpfKc?=
- =?us-ascii?Q?5UZh/d4GmFAI9NQ4XMX5AEd6bsEJ42FkoFxHqKobpPbLOKIGIjcHwuhgXXqt?=
- =?us-ascii?Q?ozkfHtgTtkhP9dKL0QLXTyHF6rwVPKGyvtqG0jpQ44qPY6lnDascH0NSW4Dl?=
- =?us-ascii?Q?zYk8pQ79ZOFJOgOd93Re9aZa4B7b6FBnISTqsX9MugyXp3HU48btRAGYtIes?=
- =?us-ascii?Q?ioBFvB9f4FwRfakDmbRf00Y5yrxIGUcBsop6BQPLsd+2HYN3PlElhxPjXeaU?=
- =?us-ascii?Q?DzIcday4eHOv/Y6knecWywPAiuifCJ7AMra87S6WQrmtJcIcZajYuoe7qPLG?=
- =?us-ascii?Q?BKQl07FZH1q/Hfs=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR21MB3437.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?iwWKPD4prEwJtqQL4QS8cHsOg5r8i4Jx2aCHtLl5TsXm/2Ta+UBZUMBm4Q0P?=
- =?us-ascii?Q?uXesdVKKb1urvyM7jWtkfhPdU1+RPqxl+DRTbrFTKIrXBtPjRyWtV7OZ6Mn5?=
- =?us-ascii?Q?HYJpqOb19vCA07XafXLk+PL2VYuy++x/UmKASfAWhWMBEb5g2VC8AaexYVH8?=
- =?us-ascii?Q?MVlZ92DgirB5fGXG5x/uIGb+cKj/2EROxB5HLoGB2HYI4QnPTVx9i4TNTLyR?=
- =?us-ascii?Q?DB4JhshIJqwfpW/EejrcGtP2athw9yVlnZIhK3NUxJOkE9K4nIUi6If5BYmf?=
- =?us-ascii?Q?x4WPUqB0W2oDFB6WMiyWt3Rz4RozgUx7sQDkz8PhE1ongg8jEDiOYfbjVc2D?=
- =?us-ascii?Q?BLWZ6bIC+rLmLA4GtmRDKUocUd55Ok+wnXwoCBUJg/RjQnUIxJfet4D+liQY?=
- =?us-ascii?Q?ToiW+LZZ0fdWqJ2WReCWohQ34K7YzqQsNq0bnRUos/MhnuOU3vnYnUYqBesI?=
- =?us-ascii?Q?wIfUOD3RwQBN/PyF7BWObUwQOS0MpRH2Xj2C3NZWjuiX7EVyXAdg6f8G2s2Y?=
- =?us-ascii?Q?+SFfAhF/2rtVzSuEaGnWYJVJHPeHquIItAco9oDkdj7HhOd8huS9Y4VLlb6J?=
- =?us-ascii?Q?EoJcrvkd1PsNMpXxMXk71wF+/p1s4GIPrV9S2JNSATvIOrxJrPm/bEnUwBIH?=
- =?us-ascii?Q?sUH7NcxFm8Qz5H0KR2YQtl4oc/fJZLTxTjNPk9wbwqnJTk8ujZG3O1Fkyx3m?=
- =?us-ascii?Q?wdAUSY3yHAY8aY5Arb6/ImvFFFRNvxn5L6HaxgdYnNf/KkTZW/SmZHHIf4Qk?=
- =?us-ascii?Q?F6gEEcyCVeFMXxtiar6Do9mgOGDOZQsM5GJWurn41/8hcLImA0oIRv/GcSMU?=
- =?us-ascii?Q?kmyPSn33gvAU3CnJhL+I24iAGy8vqZg5x5WUZcAvWcjpfn5LgU6mGXHIf29D?=
- =?us-ascii?Q?hzOeE5l9WTXcdVdvBWSz8urw43BSVej1hXApFBo6lJqglyeP0Ung/L+rJY9Y?=
- =?us-ascii?Q?vElja5WPM1DEuY0Q+iq06GBYOPQ2XBOMXeGC39fLsdu+7ggPqYKwuMKWnm5D?=
- =?us-ascii?Q?YJdrfgfNFR7IGqOSjM92uXdpiQunVm5VZjRs5EUq/qtcq7REmWu00SN27yaN?=
- =?us-ascii?Q?poeD4/stjQYFTW45QDJRiwn2Ck25c3YCWGBUd0GjCMk3qchuYhfF6t557oFY?=
- =?us-ascii?Q?NpkBRT+MNwYpBUUchI5RCTPZ+9mlDmjpRHl2TT3GCuipZ6q/v4jAw7ar6/yu?=
- =?us-ascii?Q?HYV/9sV6iIc3OiXD0CqsiauIrvFfb6SyOtacELVAOj46vTDDzt8v2kc4d6lS?=
- =?us-ascii?Q?VVa/pjg7NgaVwo1WPrgEt+jfQdb/Bb/etWN6gU966eXIq4PXfQ+38j3VNzBO?=
- =?us-ascii?Q?C6O8vYXUFHnRQBEe07CWRR+lR7ko5eVEZWidfOXYoR/8Km2t4cvvsI3aGHFU?=
- =?us-ascii?Q?Xe5NvMY5CUss2ORkqQDirrvjGavYD2D1xc2IyA5HwKsIdei+0wRxZM0kC5OM?=
- =?us-ascii?Q?Km/n/jlu2gb5ylsdXZyD5H5ZWqQxhydsxQB0W03DKwzuWfGD87x1OjDVeyJn?=
- =?us-ascii?Q?sTYYKCAgC08br8ZCnjKnzSArBckSyadvjM9CYZVPrenFuGNM4dfKoYhuO4ie?=
- =?us-ascii?Q?r4Elux4S+KcGBbMkRW4SVOHi7oKKA23dcb9pA9kl?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCD21F3BA8;
+	Tue, 25 Mar 2025 20:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742934559; cv=none; b=qCh2jtv9KvS5+KHu5OtrLYAImPTUD11rNHMvx568C4LhlJhra4trBYzg7TZUrQnTuXN0l+50r9cJUP+3iUoXvfhywzy20XNdraNO11a0AONluYp2UYqAZdiPzRO5Iaq+nlstdKvTS5F6QJVflzihmZ8YNsuWCGb/jZO4wAJllM0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742934559; c=relaxed/simple;
+	bh=NsitWpF5+dUl6XB3pC20OcXtL3Kh1Nr2StHOUU26Rww=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D5/N+YsnWIb5eSG1V2zzmIxS9T7befeKdmMrFCXtZuKhQ5hTOGYTmvaTwXKN+rpvpAr9hNO0zbrK1ozwiaHDnpsZm8cc8PMdLCfiuu/tRNPBNNnK7tzyJ6mXnM8XFSVACfI1m6/WvigGlqCyMG2vxFuFVYx2Eu/muhnw43zmz2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NoDVDhB0; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742934549; x=1743193749;
+	bh=fTPMqJdkIWV8h1b6QmmqOOGLsg9Vu94+5wCbSBo1U7M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=NoDVDhB0CCmupcRCAvZNSH3l1aD/WNyg9Mg4ubXTk2x9A1WwphRRcBy/NfuIy7beH
+	 5xdp33WpCl5Len7Jvp4qcFppKQ9WTY+A7MuM3oOrTENvmDD+q+XmxJbVVtnCk6OPe0
+	 JXSZgIjTnagLUB5xZiH/xReFA5Up4rHcSiXJgHZ/gbo81dZg+KdsuxY/MyAkhFNHCV
+	 1iW0Q5kvL0EtnlXmT5navgKbHpRNYjA9xcIP2bV1bvcya2U1olC2W/5hDzEDJ02onQ
+	 C5Z5jApw9fbSAEaureo70Wul/jT2ZXBjleb8MB+1vDPK/kREjQRv2ktHjxndOedxe/
+	 s1gEN5loBVDvg==
+Date: Tue, 25 Mar 2025 20:29:01 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
+Message-ID: <D8PMQ9AY26ST.1PH9M02PY6JI2@proton.me>
+In-Reply-To: <CAJ-ks9mMVzm4m20AxiZ53DyAmSEaEh9veMoVB5XRxmTQP_H_ZQ@mail.gmail.com>
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com> <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me> <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com> <D8PAQXHJDVQE.36QKQGBVVL4QU@proton.me> <CAJ-ks9kuG8SyybioKQ0+bYwjnCQFMhip+4A1WnMhsdgnNZGiZQ@mail.gmail.com> <D8PGG7NTWB6U.3SS3A5LN4XWMN@proton.me> <CAJ-ks9mMVzm4m20AxiZ53DyAmSEaEh9veMoVB5XRxmTQP_H_ZQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3bb29e99a5a636aa3b2a32b49e8de7a3d3efd080
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR21MB3437.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c4630c7-ffd3-49a0-f7c4-08dd6bdb9e4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 20:28:35.3702
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bsn9MpCFBhd6P5+BDELUim8VAb24DmhaXkVUwVkfSgcw3pN0SuKrNvgSjerrKo7o+JREpHjoGSLibHPyMF+SiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL6PEPF0002E785
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue Mar 25, 2025 at 6:17 PM CET, Tamir Duberstein wrote:
+> On Tue, Mar 25, 2025 at 11:33=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> On Tue Mar 25, 2025 at 2:34 PM CET, Tamir Duberstein wrote:
+>> > On Tue, Mar 25, 2025 at 7:05=E2=80=AFAM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+>> >> On Mon Mar 24, 2025 at 10:59 PM CET, Tamir Duberstein wrote:
+>> >> > On Mon, Mar 24, 2025 at 5:55=E2=80=AFPM Benno Lossin <benno.lossin@=
+proton.me> wrote:
+>> >> >> On Mon Mar 24, 2025 at 9:55 PM CET, Tamir Duberstein wrote:
+>> >> >> > On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.loss=
+in@proton.me> wrote:
+>> >> >> >> I'll leave it up to you what you want to do with this: add it t=
+o this
+>> >> >> >> series, make a new one, or let someone else handle it. If you d=
+on't want
+>> >> >> >> to handle it, let me know, then I'll create a good-first-issue =
+:)
+>> >> >> >
+>> >> >> > I'll add a patch for `cast_lossless` -- the rest should probably=
+ go
+>> >> >> > into an issue.
+>> >> >>
+>> >> >> Do you mind filing the issue? Then you can decide yourself what yo=
+u want
+>> >> >> to do yourself vs what you want to leave for others. Feel free to =
+copy
+>> >> >> from my mail summary.
+>> >> >
+>> >> > Well, I don't really know what's left to do. We're pretty close at
+>> >> > this point to having enabled everything but the nukes. Then there's
+>> >> > the strict provenance thing, which I suppose we can write down.
+>> >>
+>> >> Yes, but there are also these from my original mail:
+>> >> * `shared_ref as *const _` (for example in rust/kernel/uaccess.rs:247=
+,
+>> >>   rust/kernel/str.rs:32 and rust/kernel/fs/file.rs:367), these we can
+>> >>   replace with `let ptr: *const ... =3D shared_ref;`. Don't know if t=
+here
+>> >>   is a clippy lint for this.
+>> >
+>> > I don't think we should go fixing things for which we don't have a
+>> > clippy lint. That way lies madness, particularly as patches begin to
+>> > be carried by other trees.
+>>
+>> There already exists a lint for that: `clippy::ref_as_ptr` (almost
+>> created an issue asking for one :)
+>
+> =F0=9F=AB=A1 picked this one up as well.
 
+Sniped yet again :)
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Tuesday, March 25, 2025 3:59 PM
-> To: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>; Erni Sri Satya Vennela
-> <ernis@linux.microsoft.com>; KY Srinivasan <kys@microsoft.com>;
-> wei.liu@kernel.org; Dexuan Cui <decui@microsoft.com>;
-> andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
-> pabeni@redhat.com; Long Li <longli@microsoft.com>; Konstantin Taranov
-> <kotaranov@microsoft.com>; horms@kernel.org; brett.creeley@amd.com;
-> surenb@google.com; schakrabarti@linux.microsoft.com;
-> kent.overstreet@linux.dev; shradhagupta@linux.microsoft.com;
-> erick.archer@outlook.com; rosenp@gmail.com; linux-hyperv@vger.kernel.org;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> rdma@vger.kernel.org; Paul Rosswurm <paulros@microsoft.com>
-> Subject: Re: [EXTERNAL] Re: [PATCH 2/3] net: mana: Implement
-> set_link_ksettings in ethtool for speed
->=20
-> > This patch is just to support the ethtool option for the speed.
-> > And seems there is no option on ethtool to reset NIC to the default
-> > speed?
->=20
-> There is no such thing as default speed. Speed is either:
->=20
-> 1) Negotiated with the link partner, picking the highest speed link
-> modes both partners support
->=20
-> 2) Forced to a specific speed, based on one of the link modes the
-> interfaces supports.
->=20
-> Since you don't have link modes, you are abusing the API. You should
-> choose a different API which actually fits what you are doing,
-> configuring a leaky bucket shaper.
->=20
+Thanks a lot for adding this one as well.
 
-Could you please point us to the interface struct, callback function
-names, and/or docs you are suggesting us to use?
+>> Here is another lint that we probably want to enable (after the `&raw
+>> {const,mut}` series lands): `clippy::borrow_as_ptr`.
+>
+> This sounds like a good one to file.
 
-Thanks,
-- Haiyang
+Since `raw_ref_op` is already enabled in rust-next, I just filed it:
+
+    https://github.com/Rust-for-Linux/linux/issues/1152
+
+---
+Cheers,
+Benno
 
 
