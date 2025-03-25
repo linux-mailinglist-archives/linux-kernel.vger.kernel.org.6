@@ -1,305 +1,160 @@
-Return-Path: <linux-kernel+bounces-576129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AF3A70B60
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:18:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B1BA70B58
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B997A35E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5F719A1425
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEB1266B5A;
-	Tue, 25 Mar 2025 20:13:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24726659F;
-	Tue, 25 Mar 2025 20:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539EA266572;
+	Tue, 25 Mar 2025 20:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlXX0U2b"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508D61EB9F4;
+	Tue, 25 Mar 2025 20:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933600; cv=none; b=Gh8nSIjkjEl5L4MDaBTJQ8UWjIMdqI+JOIrCQa4DOw9v4YBWvsbZ1mw6rhzgonW8BuRkWDhv4+EFOVcckfDytyDkfprlvJwtaRkGSAGX6zVE/1SF+MTsxeh4WE0FRndAP40AtEycV4xyKnZC/FLKALoJ1R4p3DPMGHDCqPTHQbA=
+	t=1742933693; cv=none; b=VKQP4oyXUNKeUIay/un26LPSinKdZDE8NISqIfee9gcTcfEf4TKCYM3pnlOU/MJbqG98DSJjfkGz626XHTYQkyF8u1MPEHCKB8mZ2CVe+Hnf0DRTUiFf7/kc6S2zepFpGOmNnw92YX6EhMXgHxJRL1eEIMihFzho03MAA3RErt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933600; c=relaxed/simple;
-	bh=xpI2DheeO89h9vm7XRDf0UpjkPypB4nxnBrkG726sVA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nGb2oUlzbSuPXsEcZZsDpgjDeF06Yt0Fi9MSyZNWKQMfzDDqjfcWlzrwgNcupaFMYnoBVvKkJs2aErtsuryjdRGXGFO0LauG7QIei8fLu/TVRLENDZIS2YMjcqiy9NKJNS245SjpCBVnsckt2/n8WQL3KQo8qQ+6mYdy7Xr/RQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E5561692;
-	Tue, 25 Mar 2025 13:13:22 -0700 (PDT)
-Received: from [10.57.85.102] (unknown [10.57.85.102])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D1243F694;
-	Tue, 25 Mar 2025 13:13:14 -0700 (PDT)
-Message-ID: <f62b63b1-e7fa-42e2-b5f6-8cf1bd81426d@arm.com>
-Date: Tue, 25 Mar 2025 20:13:12 +0000
+	s=arc-20240116; t=1742933693; c=relaxed/simple;
+	bh=1wmk2PFPiV4WoTPGZqqAvcvR0KTYNxn6noPKr2YRJtM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=epqes41cGcdhXyh0d9tOpuZb9RgMejmWh32LgfvVTrFeJpvhR3D+ujECVLEazhRncHlolCGPthDghnNS9+vpyzF1jY9e5RmREHIuG52zCDom1OKuMKu94oWrL/UJ2QxjEeZCllzlwVX2YGWxGdkU9ZBjQbgCjmi8tsJz/DlAm/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlXX0U2b; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22398e09e39so125847565ad.3;
+        Tue, 25 Mar 2025 13:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742933691; x=1743538491; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4HBinAcb/wy6AurK5zBu8Umuiu3SbLvkoHxzpLsX8Io=;
+        b=VlXX0U2blaonST9KZt/rU2exrNANZF7nklZ/l/nUFXMIDxRsB7x7gGAveGQ6vwCsxh
+         gNzeanZqK0r5WAvU0dMyCsMTZsRbJABflCxJXuWRAJcEfESVv/Or44GHTbvTtOacDxR/
+         Bv1gaOzNWli2ytEyDIMxF1p8tMWNUz0+9USzYTXzbnjUqajg9t5rpcHQU7Ui1jMsH+9i
+         P30Z+IN1A5wvwk72ff9iZ/OBCGKQUXarPaFzXDgszDKJ1fm2lBna1Lydl7ZYlu/VPbjG
+         vSX5v8PZ3S/7oQzGRICvlxP66BcrK9n4zwkHy+CnGWToik1X3hKCvYijrPpl7B2UkoAn
+         NJuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742933691; x=1743538491;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4HBinAcb/wy6AurK5zBu8Umuiu3SbLvkoHxzpLsX8Io=;
+        b=MiYi3DMkHPldSrVpP3HASOas4uwMhI9tBt9GrjhVlz1NhSy9I15QVkM9Azy2N1mBCh
+         YBBtzu+xfUlJ8+Yy1Vlts0QRAnLL2Jth2FFZUmJ1vk4VVpcZGtilC28l0FBQ1Ofx5IXo
+         JY3SP5QzPSVSVsKZF6L7xbmokJwifhvQqIxYv5begobkFhG6Xi6qRa8BwugYY0zV3gyg
+         gqRWrs3pSFv4ZyKOOXR/CQn+cW7ZhdquoDDEdEKbrAtGhaTHDwTQAk8ZLZriL6PHnykw
+         EmQbJ/2DDze3LMTeJmo5uiOXInV/qjUpstu+YBl7ztaQ1TtM4h8wI2VaTGOpFp/NtgoB
+         6mFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBlgzyXgttNrBLqJCN0tHZtyID1BEnQJdqgG8uf9Gn+KHTe8BfRUu2tRYdlFEUGkkV1UmBNcLIM8idQc635XGyKfZV3Q==@vger.kernel.org, AJvYcCVMOUVXT4wkgIDRgrN6W/M0k0jYTBdG/u6gPP7aYamewMmCfHGpJPXVDo/mxgQ+kWI3sQeHLlypOiEF+A==@vger.kernel.org, AJvYcCXbHEfreTgfLWJRKVbzeHiMbwJWs+yYkkVYX+4wIqyRgPKYAZgS99zrBahoZnj334zzNdYzdHo1yxDuXo95@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGWaS0LGawWI02EfcbNflj4JWPYUbxWhAlC8srwj3gtAsnvNoK
+	5OWBO1seQ/0Ao/4JqTxu+sa5XXCdjtp8nwXAr2dYfYWG0x8XCnfo
+X-Gm-Gg: ASbGncti0Joek+rLrXcCkIQ4DQybu6uzJi0VqsqHYCMQCfrc4Kp8UlVpdcygNcw8eRE
+	o1p/cxlZVbIIVu9D42YEDoFP2F9JV8Tf5WAw4hvCaoPeL7JJm8cecOcNsJgsS8nWxx6GVBz/Htw
+	zCks9c2fsoQ889Q35LIHMMdgqSqSxRJa+cWGZdG2HqknzDWocntnYgT1jc4kSvMOm4xQhGEnEnU
+	EATfnf9kDT2F1yawv63BeSsS+MLC54Vgp0unTFuYIenVPCP/GBW28g2EUKnVKpi4BI0MS0hHDz/
+	VJygmFRGP/LNHBWs/th5pi7Ufzu7zYWBHlhQBA==
+X-Google-Smtp-Source: AGHT+IEgMGKpQRJiJRgzad2YRv9qQgfGpZKXa1T2ITvhZX2hPnZNiJStXAeTyMF06nQh3Hi9EEk8QQ==
+X-Received: by 2002:a17:902:f644:b0:224:26f2:97d7 with SMTP id d9443c01a7336-22780c54385mr233841995ad.8.1742933691248;
+        Tue, 25 Mar 2025 13:14:51 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f4383sm94312165ad.229.2025.03.25.13.14.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 13:14:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to synth_event_trace2()
-From: Douglas Raillard <douglas.raillard@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Alice Ryhl <aliceryhl@google.com>
-References: <20250318180814.226644-1-douglas.raillard@arm.com>
- <20250318180814.226644-3-douglas.raillard@arm.com>
- <20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
- <3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
- <20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
- <9f030639-2ce2-4400-90e4-6c7dfbabf42c@arm.com>
- <20250325122542.02973078@gandalf.local.home>
- <28029bd8-e875-4281-9c2c-d9463a7cce53@arm.com>
-Content-Language: en-US
-In-Reply-To: <28029bd8-e875-4281-9c2c-d9463a7cce53@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 25 Mar 2025 17:14:46 -0300
+Message-Id: <D8PMFDWIJJUB.196935MS2OZ7J@gmail.com>
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
+ <linux-kernel@vger.kernel.org>, "Guenter Roeck" <linux@roeck-us.net>, "Jean
+ Delvare" <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>, "Bagas
+ Sanjaya" <bagasdotme@gmail.com>
+Subject: Re: [PATCH v6 00/12] platform/x86: alienware-wmi-wmax: HWMON
+ support + DebugFS + Improvements
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Kurt Borja" <kuurtb@gmail.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Armin Wolf" <W_Armin@gmx.de>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
+In-Reply-To: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
 
-On 25-03-2025 18:16, Douglas Raillard wrote:
-> On 25-03-2025 16:25, Steven Rostedt wrote:
->> On Tue, 25 Mar 2025 16:05:00 +0000
->> Douglas Raillard <douglas.raillard@arm.com> wrote:
->>
->>> Yes, the dynamic API was exactly what I needed unfortunately. I'm porting the kernel module we have to Rust (using our own bindings as
->>> we cannot mandate CONFIG_RUST=y). While I have some support for C code generation based on the Rust source, it is significantly more
->>> convenient to simply use a dynamic API. In the current state of my code, defining an event is as simple as:
->>>
->>>     let f = new_event! {
->>>         lisa__myevent2,
->>>         fields: {
->>>             field1: u8,
->>>             field3: &CStr,
->>>             field2: u64,
->>>         }
->>>     }?;
->>>     // Emit the event
->>>     f(1, c"hello", 2);
->>>     f(3, c"world", 4);
->>>
->>> So it's as non-confusing can be: the event name is stated plainly and the field names and types are mentioned once, with no repetition.
->>> The result can simply be called to emit the event, and when dropped, the event is unregistered.
->>
->> Interesting.
->>
->>>
->>>
->>> On top of that in ways unrelated to Rust:
->>> 1. We have some really high traffic event (PELT-related) that include some data that is not always needed (e.g. taskgroup name).
->>>      We currently regularly hit memory size limitation on our test device (pixel 6), and using trace-cmd record instead of
->>>      trace-cmd start is not always a good idea as this will have an effect on scheduling, disturbing the very thing we are trying
->>>      to observe. Having the dynamic API means we could simply omit the fields in the event that we don't care about in a specific
->>>      experiment via dynamic configuration.
->>>
->>> 2. Some events may or may not be supported on the system based on some runtime condition. Currently, there is no great way for
->>>      the module to feed back that info. No matter what, the event exists, even if the machinery that is supposed to emit it is
->>>      disabled for whatever reason. If some user starts tracing the event "everything will work" and there will be no event in the
->>>      trace. That may make the user think a condition did not trigger, whereas in fact the whole machinery was simply not operating.
->>>      Being able to register or not the event dynamically solves that cleanly, as enabling the event will simply fail as it won't
->>>      have been registered in the first place.
->>>
->>> 3. We will likely at some point relay events coming from some non-CPU part of the system into the ftrace buffer. If and when that
->>>      happens, it would be ideal if that producer can simply declare the events it supports, and our module dynamically create the
->>>      matching synthetic events. That would avoid any problem coming from mismatching source that would otherwise plague such setup.
->>>
->>> So considering things seem to work overall with not much tuning needed, it would be sad to have to revert to TRACE_EVENT() macro
->>> and end up having to do more work for a worse result. If that's the route you choose though, it may be nice to amend the
->>> documentation to clearly state this API is testing-only and not supported in normal use case, as it currently reads:
->>>
->>>     The trace event subsystem provides an in-kernel API allowing modules
->>>     or other kernel code to generate user-defined 'synthetic' events at
->>>     will, which can be used to either augment the existing trace stream
->>>     and/or signal that a particular important state has occurred.
->>
->> Note, there is also a CUSTOM_TRACE_EVENT() macro that can attach to any
->> tracepoint (including those that have a TRACE_EVENT() already attached to
->> them) and create a new trace event that shows up into tracefs.
-> 
-> I think I came across that at some point indeed. We probably could make use
-> of it for some of the events we emit, but not all. Also this was introduced
-> in 2022, but I need to support v5.15 kernels (2021), so maybe one day but not today :(
-> 
-> The event that does not fit this use case is emitted from a workqueue worker that
-> fires at regular interval to poll for some data. So there is no particular tracepoint
-> to attach to, we just emit an event from our own code. In the future, we will
-> probably end up having more of that sort.
-> 
->> I still do not think "synthetic events" should be used for this purpose.
->> They are complex enough with the user interface we shouldn't have them
->> created in the kernel. That documentation should be rewritten to not make
->> it sound like the kernel or modules can create them.
->>
->> That said, it doesn't mean you can't use dynamic events for this purpose.
->> Now what exactly is that "new_event!" doing?
-> 
-> That new_event!() macro takes the name and the list of fields and creates two related
-> things:
-> 1. An EventDesc value that contains the a Vec of the field names and their type.
->     Upon creation, this registers the synthetic event and unregisters it when dropped.
-> 
-> 2. An associated closure that takes one parameter per field, builds an array out of them,
->     and using the captured EventDesc emits the events.
-> 
-> Since the closure captures the EventDesc, the EventDesc cannot be dropped while some code
-> is able to call the closure, and since the EventDesc is responsible for the lifecycle of
-> the kernel synthetic event, there is no risk of "use after unregister".
-> 
-> The value returned by the macro is the closure, so it can just be called like a normal
-> function, but dropping it will also drop the captured EventDesc and unregister the event.
-> 
-> The field types have to implement a FieldTy trait, which exposes both the type name
-> as expected by the synthetic events API and conversion of a value to u64 for preparing
-> the array passed to synth_event_trace_array():
-> 
->    pub trait FieldTy {
->        const NAME: &'static str;
->        fn to_u64(self) -> u64;
->    }
-> 
-> Once the whole thing is shipping, I plan on adding a way to pass a runtime list of fields
-> to actually enable to new_event!(), so that the event size can be dynamically reduced to
-> what is needed and save precious MB of RAM in the buffer, e.g.:
-> 
->    // Coming from some runtime user config, via module parameter or sysfs
->    let enabled_fields = vec!["field", "field2"];
-> 
->    let f = crate::runtime::traceevent::new_event! {
->        lisa__myevent2,
->        fields: {
->            field1: u8,
->            field3: &CStr,
->            field2: u64,
->        },
->      enabled_fields,
->    }?;
-> 
->> I guess, what's different to that than a kprobe event? A kprobe event is a
->> dynamic trace event in the kernel. Could you do the same with that? Or is
->> this adding a nop in the code like a real event would?
-> 
-> Considering we not only need to emit events from existing tracepoints but also just from
-> our own code (workqueue worker gathering data not obtained via tracepoints), I don't think
-> kprobe-based solution is best unless I missed some usage of it.
-> 
->>
->> I'm not against rust dynamic events, but I do not think synthetic events
->> are the answer. It will just cause more confusion.
-> 
-> Is there some way of creating an event that would not hardcode the detail at compile-time
-> like the TRACE_EVENT() macro does ? In ways that are not designed to specifically feed a
-> well-known upstream data source into ftrace like tracepoints or kprobes. Our kernel module
-> is essentially sitting at the same layer as TRACE_CUSTOM_EVENT() or kprobe events, where
-> it takes some data source (some of it being from our own module) and feeds it into ftrace.
-> 
-> Maybe what I'm looking for is the dynevent_cmd API ? From the kernel doc:
-> 
->    Both the synthetic event and k/ret/probe event APIs are built on top of a
->    lower-level “dynevent_cmd” event command API, which is also available for more
->    specialized applications, or as the basis of other higher-level trace event
->    APIs.
+On Thu Mar 13, 2025 at 11:29 AM -03, Kurt Borja wrote:
+> Hi all,
+>
+> This set mainly adds hwmon and manual fan control support (patches 7-8)
+> to the alienware-wmi driver, after some improvements.
+>
+> Thank you for your feedback :)
+>
+> ---
+> Changes in v6:
+>
+> [08/12]
+>   - Define dev_pm_ops statically (kernel test robot)
+>
+> Link to v5: https://lore.kernel.org/r/20250312-hwm-v5-0-deb15ff8f3c6@gmai=
+l.com
+>
+> ---
+> Kurt Borja (12):
+>       platform/x86: alienware-wmi-wmax: Rename thermal related symbols
+>       platform/x86: alienware-wmi-wmax: Refactor is_awcc_thermal_mode()
+>       platform/x86: alienware-wmi-wmax: Improve internal AWCC API
+>       platform/x86: alienware-wmi-wmax: Modify supported_thermal_profiles=
+[]
+>       platform/x86: alienware-wmi-wmax: Improve platform profile probe
+>       platform/x86: alienware-wmi-wmax: Add support for the "custom" ther=
+mal profile
+>       platform/x86: alienware-wmi-wmax: Add HWMON support
+>       platform/x86: alienware-wmi-wmax: Add support for manual fan contro=
+l
+>       platform/x86: alienware-wmi-wmax: Add a DebugFS interface
+>       Documentation: wmi: Improve and update alienware-wmi documentation
+>       Documentation: admin-guide: laptops: Add documentation for alienwar=
+e-wmi
+>       Documentation: ABI: Add sysfs platform and debugfs ABI documentatio=
+n for alienware-wmi
+>
+>  Documentation/ABI/testing/debugfs-alienware-wmi    |   44 +
+>  .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
+>  .../admin-guide/laptops/alienware-wmi.rst          |  128 +++
+>  Documentation/admin-guide/laptops/index.rst        |    1 +
+>  Documentation/wmi/devices/alienware-wmi.rst        |  383 +++-----
+>  MAINTAINERS                                        |    3 +
+>  drivers/platform/x86/dell/Kconfig                  |    1 +
+>  drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1023 ++++++++++++++=
++++---
+>  8 files changed, 1187 insertions(+), 410 deletions(-)
+> ---
+> base-commit: f895f2493098b862f1ada0568aba278e49bf05b4
+> change-id: 20250305-hwm-f7bd91902b57
+>
+> Best regards,
 
-Answering to myself, this is a no-go, as this is indeed the basis of other high-level trace event
-APIs, but not ones created from modules since almost none of that API is exported.
+Hi Ilpo,
 
-> 
-> I'd rather avoid shipping an out-of-tree reimplementation of synthetic events if possible,
-> but if that API is public and usable from a module I could live with that as long as it allows
-> creating "well behaved" events (available in tracefs, enable/disable working,
-> instances working etc) and is stable enough that the same code can reasonably be expected to work
-> from v5.15 to now with minor tweaks only.
-> 
->> I also added Alice to the Cc, as she has created trace events for Rust.
-> 
-> Interesting, I could not find anything in the upstream bindings. All there seems to be is
-> a crude tracepoint binding that only allows emitting a tracepoint already defined in C.
-> If that's of any interest, I also have code to attach probes to tracepoints dynamically from Rust [1]
-> 
-> My plan B for emitting events is to use the infrastructure I have to include C-based function in the
-> Rust codebase to sneakily use the TRACE_EVENT() macro like any non-confusing module [2].
+Is there still a chance for this to go into v6.15? or are you planning
+to review it on the next cycle?
 
-Actually plan B can't fly, there is too much similar but different repetition in the TRACE_EVENT() macro
-(TP_ARGS() and TP_PROTO()) and the C syntax is not helping either (trailing comma forbidden).
-This will have to be plan C with a proc macro defining a custom syntax and generating the string literal
-at compile time, or defining it in C sources and dealing with copy/pasted Rust bindings.
+Thank you either way!
 
-> [1] The tracepoint probe bindings I have looks like that:
-> 
->    // Create a probe that increments a captured atomic counter.
->    //
->    // The new_probe!() macro creates:
->    // 1. The closure
->    // 2. A probe function that uses the first void* arg to pass the closure pointer
->    //    and then calls it
->    // 3. A Probe value that ties together both 1. and 2.. This is the value returned
->    //    by the macro.
->    let x = AtomicUsize::new(0);
->    let probe = new_probe!(
->      // That dropper is responsible for dropping all the probes attached to it,
->      // so that we pay only once for tracepoint_synchronize_unregister() rather
->      // than for each probe.
->        &dropper,
->          // Essentially a closure, with slightly odd syntax for boring reasons.
->        (preempt: bool, prev: *const c_void, next:* const c_void, prev_state: c_ulong) {
->            let x = x.fetch_add(1, Ordering::SeqCst);
->            crate::runtime::printk::pr_info!("SCHED_SWITCH {x}");
->        }
->    );
-> 
->    // Lookup the tracepoint dynamically. It's unsafe as the lifetime of a
->    // struct tracepoint is unknown if defined in a module, 'static otherwise.
->    // Also unsafe since the tp signature is not checked, as the lookup is 100% dynamic.
->    // I could probably make use of typeof(trace_foobar) function to typecheck that against the
->    // C API if the lookup was not dynamic, at the cost of failing to load the module rather than
->    // being able to dynamically deal with the failure if the tp does not exist.
->    let tp = unsafe {
->        Tracepoint::<(bool, *const c_void, * const c_void, c_ulong)>::lookup("sched_switch").expect("tp not found")
->    };
-> 
->    // Attach the probe to the tracepoint. If the signature does not match, it won't typecheck.
->    let registered = tp.register_probe(&probe);
-> 
->    // When dropped, the RegisteredProbe value detaches the probe from the
->    // tracepoint. The probe will only be actually deallocated when its
->    // associated dropper is dropped, after which the dropper calls
->    // tracepoint_synchronize_unregister().
->    drop(registered);
-> 
-> 
-> [2] FFI infrastructure to include C code inside the Rust code for bindings writing.
-> This is a function defined and usable inside the Rust code that has a body written in C:
-> 
->    [cfunc]
->    fn myfunction(param: u64) -> bool {
->        r#"
->          // Any C code allowed, we are just before the function
->          // definition
->        #include <linux/foo.h>
->        ";
->        r#"
->          // Any C code allowed, we are inside a function here.
->        return call_foo_function(param);
->        ";
->    }
-> 
-> The r#" "# syntax is just Rust multiline string literals. The optional first literal gets dumped before the function,
-> the mandatory second one inside, and an optional 3rd one after. The #[cfunc] proc macro takes care of generating the C
-> prototype matching the Rust one and to wire everything in a way that CFI is happy with. Since the C code is generated
-> at compile time as a string, any const operation is allowed on it, so I could work my way to a snippet of C that
-> uses TRACE_EVENT() in the first string literal and calls the trace_* function in the function body.
-> 
-> The C code ends up in a section of the Rust object file that is extracted with objdump in the Makefile and fed back to
-> Kbuild. That's very convenient to use and avoids splitting away one-liners like that, does not break randomly
-> like cbindgen on some Rust code I don't control coming from 3rd party crates, and since the module is built at runtime
-> by the user, it also has the big advantage of not requiring to build cbindgen in the "tepid" path.
-> 
->> -- Steve
-> 
-> 
-> Douglas
-
+--=20
+ ~ Kurt
 
