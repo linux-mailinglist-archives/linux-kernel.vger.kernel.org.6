@@ -1,227 +1,195 @@
-Return-Path: <linux-kernel+bounces-576042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE95A70A43
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:23:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D5FA70A45
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4F6189AF72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2D51897ABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3DE1EF088;
-	Tue, 25 Mar 2025 19:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057A31F1525;
+	Tue, 25 Mar 2025 19:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscv-rocks.de header.i=@riscv-rocks.de header.b="hKmcSJA1";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="AVAiw6cD"
-Received: from b224-18.smtp-out.eu-central-1.amazonses.com (b224-18.smtp-out.eu-central-1.amazonses.com [69.169.224.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJpo43Bz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47D41EDA1F;
-	Tue, 25 Mar 2025 19:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=69.169.224.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A611F03FF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742930525; cv=none; b=Le8w+P8SXN8wjnSKycKzfsDMmr6k2/32jGsTEtCqBkTe8F477AAUSscVyoVf7KJcutE/UUh/ZlUbNNpawfhIwGQdXXNtwSmfrgsjMpoV0/T4umCSxa5YcYntata8+gNaFweFIy8MKz4VrvpIilFraCfLqGeBFF+UweJSPjSxNVs=
+	t=1742930529; cv=none; b=OkJzZR4fkWVZxVdVy6Kvwrc42NDexwrL6HtthJI2sl1jqNB2NoATrm1lbauEtUoAnKH1CWvYYXn/8Vl2iALYE6GpVxY0VIQsQBC0K+c4RCSQ30U7O0r0YHBGpmkaW8fFCsWD+Uv8A/Sncz1ecsUI6Wagmn3nm3BL6iKih371u84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742930525; c=relaxed/simple;
-	bh=FdCrWB/PGMqRl9E6yvI0q12+/fCRDq9CWfKgDzpVcYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EGFPI3iGElRqNXjreKqacfbNoXXOW1AIVuRxeU5QL6ZqnnIE+Xum9etmWAtyUQ8uBQ6TQ5qmAo/696Q6qfLDbFDreYR5b5zmJigFdn+xAysapsHsN7NqknTaAskjIvp+YFEL8Jhf8SGpOpFkTy2dvKy6trNDkym4mr2uGjPQeBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=riscv-rocks.de; spf=pass smtp.mailfrom=mail.riscv-rocks.de; dkim=pass (2048-bit key) header.d=riscv-rocks.de header.i=@riscv-rocks.de header.b=hKmcSJA1; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=AVAiw6cD; arc=none smtp.client-ip=69.169.224.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=riscv-rocks.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.riscv-rocks.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=2kaovp6zxy5nzp5wqunvdq5vkiqbeqln; d=riscv-rocks.de; t=1742930520;
-	h=Date:From:To:Cc:Subject:Message-ID:Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To;
-	bh=FdCrWB/PGMqRl9E6yvI0q12+/fCRDq9CWfKgDzpVcYs=;
-	b=hKmcSJA1MuhxsIZPZfj7XEvEo2N6UH79MdWW9aunUqen4zNxJjW5wra5v/QO8qRT
-	yHSCH0G142gjUOtflLMR95TxxWgE6GQhr555Ds6o8gCRnj3sIKuQWRbIKKCAqaW1dwk
-	JjzNQYfx+6fZdXjpwp/nm5g0gr7aRGe4oHB2Tgo4drsF9dKykpVmbFwmBELXa+TxA0I
-	70COdN52Q+P45OpdGYqpthsQMXJb0zymfGlfgRwmltdIUJGkCcygt9fVSXg8gL4NRVk
-	Mj3BL5cdFR3KWewke+oo2W62KFEfOHSSHXalPODMl0EZCgkbdPeIqsHSjgbGOCYa2dF
-	09Z1/KaK9Q==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=54ecsf3zk7z4mwxwwox7z7bg6e5gwjsz; d=amazonses.com; t=1742930520;
-	h=Date:From:To:Cc:Subject:Message-ID:Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Feedback-ID;
-	bh=FdCrWB/PGMqRl9E6yvI0q12+/fCRDq9CWfKgDzpVcYs=;
-	b=AVAiw6cD+raTgnEdmxwoAMbu6Kb/WbReAY5v8LAYSDk6+Exstz74K8Fs12KL9V2M
-	8Os6Q8Yg3H4up1nbWyLjFsciZPWu046fbGEcRjOOoi8dVACNUBFvEWeVDNUCKAXgIzy
-	kMfXfH4L1wztt45u6aiYNQyPuSn8BmIXXrUNZlFo=
-Date: Tue, 25 Mar 2025 19:22:00 +0000
-From: Damian Tometzki <damian@riscv-rocks.de>
-To: Nicolas Chauvet <kwizart@gmail.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Kees Cook <kees@kernel.org>, 
-	Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Zhi Wang <zhi.wang.linux@gmail.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] drm/i915/gvt: Add __nonstring annotations for
- unterminated strings
-Message-ID: <01070195cec129de-3a185083-9c9f-451c-a7f9-3798f9eb5954-000000@eu-central-1.amazonses.com>
-Reply-To: Damian Tometzki <damian@riscv-rocks.de>
-Mail-Followup-To: Nicolas Chauvet <kwizart@gmail.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Kees Cook <kees@kernel.org>, Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.wang.linux@gmail.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250310222355.work.417-kees@kernel.org>
- <01070195c306db7f-9f28efdd-9456-4db3-b6c6-343298bd571b-000000@eu-central-1.amazonses.com>
- <87r02ma8s3.fsf@intel.com>
- <CABr+WTkggOTDDzgPFmnJo3Dab4QYxLRt=_g7in3bgr0z6jXf+g@mail.gmail.com>
+	s=arc-20240116; t=1742930529; c=relaxed/simple;
+	bh=LN+/bd2Olj3N0EdJKGdRLMdju9OGCP1EWi9G0sWNNZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qImDO1i6YGdRbUwCMkaIOco2ZwexlC+zr4+ZgN+U5c6wtZnSUp72gBlTGQqoBTeNAVTYp38B641QYD1QqTtNxjgybomXwySBsilyuXQEtG7Am7OJagHFE7AgaUjrEt6zwMb4h0Q4MW3i69v/ICukDu/20ubt/W+9Sb4f2WAq1ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJpo43Bz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742930526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4uusw5Mfq776t99OEEpC16y3um4OcX5n1LocwgSdxeo=;
+	b=AJpo43BzFOMWGAQ1ZRUVCUqCcPbHmPbPxJZjHeSipor7T8azpXYu3jm6v8g/QpIsB5ZbyF
+	56jUgcDlx8VCwHOrpUYfaIlfGZ1/LjaB/5vzNrsdK4QKNBJciB+nRZHO2Sq8QM8/i2z2gf
+	+zw5Xq5VmmLZLJFvy2sUtKw+Oq4LK1E=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-AztWwTZZPIKuyfsfAnYWMg-1; Tue, 25 Mar 2025 15:22:05 -0400
+X-MC-Unique: AztWwTZZPIKuyfsfAnYWMg-1
+X-Mimecast-MFC-AGG-ID: AztWwTZZPIKuyfsfAnYWMg_1742930525
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d9d8890fso26675885a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:22:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742930524; x=1743535324;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4uusw5Mfq776t99OEEpC16y3um4OcX5n1LocwgSdxeo=;
+        b=owRWprkZ3/OaSgwM7UdBOZE62OETlmxhjbBRb4VoQgtnc/NzdjfqBk3zPRW2GOQzkp
+         0Wz7+MZSP4uUnggWBLXifgHrCuDFZMDwRHxQ1llw7WqNeQ6/TJEapGM27Tn+rX72lQEZ
+         wrFSfJiAZD+tch7sB+oCA2D0pB41ffEIn9bKMIv8Aq6LNF0pq5UTt1euC7euGRrBfbyS
+         egIQUWi5JnGEujSKbL2ALrRrCx4DZrYAr5wXMnkLntnZ13vtFqkbhlWvATUZF5d1nW5V
+         pBqVMvtDS7/L1q0UGjnpWxfHzHPEXwTYZVfZaoJ+vMas12TcVBXwDMdEOP/3mN496UQs
+         xl9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWSC1y5S2iMklBgbQ8n/maRworcrK8kc28FVCL+9C2hVlaeEQQfdyUEScxXltnE1a90LtZ9Nqg6LdBSmgI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/NUJBXuGBEnkm2UvcJWfBbayvLw7WIjCSah7aSwvPAUm+J1Qt
+	WkxtMx/0ORzjv3Nh6/3kuwMGID2np8noLWr8Jru6hN9AOnJdu5YYZRPL8eaJz4MAPl99RLO9tMf
+	dlYNjapu8rQsfZY7ndbTYtjKM/s3g7T8dUqjjBdGcaeqEt9aV+U9XYYiv0m6+JQ==
+X-Gm-Gg: ASbGncv1Wtfxc6ISL0ugsg7PxGuVXN2rlBcOY7nG0EWqR94gV2gwOMKC4g6A4Hj9WUK
+	1otZBCb0Z5GYJN4JDyGnV5hlnyvpEg+8iapimJTlx8EKlUSYefceFoxCrLLcSfRbo/t8HnWdyg6
+	Vl2IrP7tgD/9zjbrC0v4ALUNTBjIgTGly6Nco7S5VaY9PtsyMWqxl+9BDVfinXdLrUMzwrfelIi
+	P/qIdRJKY9ckOAKLKFYhQYTQXJ0CvPWOK6sN96H6mx+IlORy83GiekpiptUrVk2FwCyu0dMCzk9
+	a9DieDbSx3+3
+X-Received: by 2002:a05:620a:1d03:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c5e494b431mr151018085a.24.1742930524602;
+        Tue, 25 Mar 2025 12:22:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEXSfDMRz0JKf36Wpss30g3vtLjnFK8ezZQX4sG9FZ6Z+Fvfb2FbRMSHP6VydBgJHZ4ZfB+g==
+X-Received: by 2002:a05:620a:1d03:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c5e494b431mr151015185a.24.1742930524235;
+        Tue, 25 Mar 2025 12:22:04 -0700 (PDT)
+Received: from [172.20.3.205] ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ec63dsm668951985a.62.2025.03.25.12.22.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 12:22:03 -0700 (PDT)
+Message-ID: <1767a68b-cb2e-425c-86bb-bc8e5289ee99@redhat.com>
+Date: Tue, 25 Mar 2025 20:22:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABr+WTkggOTDDzgPFmnJo3Dab4QYxLRt=_g7in3bgr0z6jXf+g@mail.gmail.com>
-User-Agent: Mutt
-X-Operating-System: Linux Fedora release 42 (Adams) (Kernel 6.14.0)
-Organization: Linux hacker
-Feedback-ID: ::1.eu-central-1.yMcBPu/jK26Vj3HVmCFyFk75QMsS8V3QY5HbXP/Qrys=:AmazonSES
-X-SES-Outgoing: 2025.03.25-69.169.224.18
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: mm: Correct the update of max_pfn
+To: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com,
+ mark.rutland@arm.com, ardb@kernel.org, yangyicong@hisilicon.com,
+ joey.gouly@arm.com, quic_cgoldswo@quicinc.com, quic_sudaraja@quicinc.com,
+ akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com
+References: <20250321070019.1271859-1-quic_zhenhuah@quicinc.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250321070019.1271859-1-quic_zhenhuah@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 24. Mar 22:19, Nicolas Chauvet wrote:
-> Le lun. 24 mars 2025 à 13:54, Jani Nikula
-> <jani.nikula@linux.intel.com> a écrit :
-> >
-> > On Sun, 23 Mar 2025, Damian Tometzki <damian@riscv-rocks.de> wrote:
-> > > On Mon, 10. Mar 15:23, Kees Cook wrote:
-> > >> When a character array without a terminating NUL character has a static
-> > >> initializer, GCC 15's -Wunterminated-string-initialization will only
-> > >> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
-> > >> with __nonstring to and correctly identify the char array as "not a C
-> > >> string" and thereby eliminate the warning.
-> > >>
-> > >> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-> > >> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-> > >> Cc: Zhi Wang <zhi.wang.linux@gmail.com>
-> > >> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > >> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > >> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > >> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> > >> Cc: David Airlie <airlied@gmail.com>
-> > >> Cc: Simona Vetter <simona@ffwll.ch>
-> > >> Cc: intel-gvt-dev@lists.freedesktop.org
-> > >> Cc: intel-gfx@lists.freedesktop.org
-> > >> Cc: dri-devel@lists.freedesktop.org
-> > >> Signed-off-by: Kees Cook <kees@kernel.org>
-> > >> ---
-> > >>  drivers/gpu/drm/i915/gvt/opregion.c | 4 ++--
-> > >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >>
-> > >> diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/gvt/opregion.c
-> > >> index 509f9ccae3a9..f701638d3145 100644
-> > >> --- a/drivers/gpu/drm/i915/gvt/opregion.c
-> > >> +++ b/drivers/gpu/drm/i915/gvt/opregion.c
-> > >> @@ -43,7 +43,7 @@
-> > >>  #define DEVICE_TYPE_EFP4   0x10
-> > >>
-> > >>  struct opregion_header {
-> > >> -    u8 signature[16];
-> > >> +    u8 signature[16] __nonstring;
-> >
-> > Why would this annotation be needed? It's not treated as a string
-> > anywhere, and it's u8 not char.
-> >
-> > >>      u32 size;
-> > >>      u32 opregion_ver;
-> > >>      u8 bios_ver[32];
-> > >> @@ -222,7 +222,7 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
-> > >>      u8 *buf;
-> > >>      struct opregion_header *header;
-> > >>      struct vbt v;
-> > >> -    const char opregion_signature[16] = OPREGION_SIGNATURE;
-> > >> +    const char opregion_signature[16] __nonstring = OPREGION_SIGNATURE;
-> > >>
-> > >>      gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
-> > >>      vgpu_opregion(vgpu)->va = (void *)__get_free_pages(GFP_KERNEL |
-> > >> --
-> > >> 2.34.1
-> > >>
-> > > Hello together,
-> > >
-> > > it doesnt resolve the build issue with gcc15 gcc (GCC) 15.0.1 20250228
-> > >
-> > > CC [M]  drivers/gpu/drm/i915/gvt/scheduler.o
-> > > /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c: In function ‘intel_vgpu_init_opregion’:
-> > > /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:35:28: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
-> > >    35 | #define OPREGION_SIGNATURE "IntelGraphicsMem"
-> > >       |                            ^~~~~~~~~~~~~~~~~~
-> > > /home/damian/kernel/linux/drivers/gpu/drm/i915/gvt/opregion.c:225:57: note: in expansion of macro ‘OPREGION_SIGNATURE’
-> > >   225 |         const char opregion_signature[16] __nonstring = OPREGION_SIGNATURE;
-> > >       |                                                         ^~~~~~~~~~~~~~~~~~
-> > >   CC [M]  drivers/gpu/drm/i915/gvt/trace_points.o
-> > > cc1: all warnings being treated as errors
-> > > make[7]: *** [/home/damian/kernel/linux/scripts/Makefile.build:207: drivers/gpu/drm/i915/gvt/opregion.o] Error 1
-> > > make[7]: *** Waiting for unfinished jobs....
-> > >   CC [M]  drivers/gpu/drm/i915/gvt/vgpu.o
-> > > make[6]: *** [/home/damian/kernel/linux/scripts/Makefile.build:465: drivers/gpu/drm/i915] Error 2
-> > > make[5]: *** [/home/damian/kernel/linux/s
-> >
-> > What about this?
-> >
-> > IMO it's anyway good practice to use sizeof(dest) rather than
-> > sizeof(src) for memcpy.
-> >
-> >
-> > diff --git a/drivers/gpu/drm/i915/gvt/opregion.c b/drivers/gpu/drm/i915/gvt/opregion.c
-> > index 509f9ccae3a9..dbad4d853d3a 100644
-> > --- a/drivers/gpu/drm/i915/gvt/opregion.c
-> > +++ b/drivers/gpu/drm/i915/gvt/opregion.c
-> > @@ -222,7 +222,6 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
-> >         u8 *buf;
-> >         struct opregion_header *header;
-> >         struct vbt v;
-> > -       const char opregion_signature[16] = OPREGION_SIGNATURE;
-> >
-> >         gvt_dbg_core("init vgpu%d opregion\n", vgpu->id);
-> >         vgpu_opregion(vgpu)->va = (void *)__get_free_pages(GFP_KERNEL |
-> > @@ -236,8 +235,10 @@ int intel_vgpu_init_opregion(struct intel_vgpu *vgpu)
-> >         /* emulated opregion with VBT mailbox only */
-> >         buf = (u8 *)vgpu_opregion(vgpu)->va;
-> >         header = (struct opregion_header *)buf;
-> > -       memcpy(header->signature, opregion_signature,
-> > -              sizeof(opregion_signature));
-> > +
-> > +       static_assert(sizeof(header->signature) == sizeof(OPREGION_SIGNATURE) - 1);
-> > +       memcpy(header->signature, OPREGION_SIGNATURE, sizeof(header->signature));
-> > +
-> >         header->size = 0x8;
-> >         header->opregion_ver = 0x02000000;
-> >         header->mboxes = MBOX_VBT;
-> >
-> >
-> >
-> > --
-> > Jani Nikula, Intel
+On 21.03.25 08:00, Zhenhua Huang wrote:
+> Hotplugged memory can be smaller than the original memory. For example,
+> on my target:
 > 
-> This patch does solve the build issue with gcc-15 on Fedora-42
-> (gcc-15.0.1-0.9.fc42.x86_64).
-> https://copr.fedorainfracloud.org/coprs/kwizart/kernel-longterm-6.12/build/8812754/
-testet-by Damian Tometzki
-Thanks
-Damian
+> root@genericarmv8:~# cat /sys/kernel/debug/memblock/memory
+>     0: 0x0000000064005000..0x0000000064023fff    0 NOMAP
+>     1: 0x0000000064400000..0x00000000647fffff    0 NOMAP
+>     2: 0x0000000068000000..0x000000006fffffff    0 DRV_MNG
+>     3: 0x0000000088800000..0x0000000094ffefff    0 NONE
+>     4: 0x0000000094fff000..0x0000000094ffffff    0 NOMAP
+> max_pfn will affect read_page_owner. Therefore, it should first compare and
+> then select the larger value for max_pfn.
+> 
+> Fixes: 8fac67ca236b ("arm64: mm: update max_pfn after memory hotplug")
+> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+> ---
+>   arch/arm64/mm/mmu.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 1dfe1a8efdbe..310ff75891ef 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -1361,7 +1361,8 @@ int arch_add_memory(int nid, u64 start, u64 size,
+>   		__remove_pgd_mapping(swapper_pg_dir,
+>   				     __phys_to_virt(start), size);
+>   	else {
+> -		max_pfn = PFN_UP(start + size);
+> +		/* Address of hotplugged memory can be smaller */
+> +		max_pfn = max(max_pfn, PFN_UP(start + size));
+>   		max_low_pfn = max_pfn;
+>   	}
+>   
 
-> 
-> Thanks.
+Yes, that's the right thing to do. (I always wonder if these values 
+should be atomically updated ...)
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-VG
-Damian Tometzki
+Cheers,
+
+David / dhildenb
+
 
