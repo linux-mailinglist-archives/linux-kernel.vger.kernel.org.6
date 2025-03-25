@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-575086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F4CA6ED5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:15:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85994A6ED5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8FE07A3C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51005188F966
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDF01DE8B4;
-	Tue, 25 Mar 2025 10:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1719004B;
+	Tue, 25 Mar 2025 10:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wnYS7xt9"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Fc6lIOAK"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AEB2AF1D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74631C84A6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742897722; cv=none; b=jlNRI64Oy73/ca65X64nU8oG0Y3taqTEvM1FbfG9OCtsQXeZJuN2VhKDWu3EgQHf4fOKjzNBgjiS7XPJqU8OzdpheyBexO1KRqwUYKjNl/XzDh++lbD4Dt86yYaimKpRMIdCSD4IzJUTNAns4YFod7Uo6d9HYCZ72hL49LFRNqs=
+	t=1742897725; cv=none; b=aJ7zYNHIOmifA7dRULjqTCYMcqjIxqznjc1Bio71evBioNyBr7BCeLkTC0jlhCWAlxFuRq6oNlUc+M65Z+/kdubQNYTvuIjouJytVluB+/ChANHbl2/cRe5ZE0SX1OvSTRNOASV2Uvf/3kmWu1oO3ltwNyB66ByddBA45DyObBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742897722; c=relaxed/simple;
-	bh=HIiymNtPWSmafw/vlEzUs3yK38VavdvhdwhqdM6/8zU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J3HcixqbD3vejwNLa9yWr+evvZMIk0HpCFKo03Gqa1zZm3ELTAMSoBiUCXAuPRhPe4uZyv2Td+t7qyyQzsac7JN1jK/KpFtqvqsYUtudcrixYZL4K/OJaRi0QHktd4NLpeoeoty3TIqPZnuseBsIGeXBHzFL1uoipQukc3C9fvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wnYS7xt9; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so33818545e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 03:15:19 -0700 (PDT)
+	s=arc-20240116; t=1742897725; c=relaxed/simple;
+	bh=gBxlLT5ivpGDh72oKPJ3CBVf2yMPWUqCIsclGPiI0ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9OFwLS4oc+TqEGQQX1kvTKAGg6vwMc4AqSub0ANdUF5eyvly7GQu0WsmThfToOi6hoEHCx9YQ64i3eNcZZX50uxZYcxfXmE+/qio3tZoJUiYGGtR5jhxf/aDRVCVHh0FlXUkyz2Y6cOWMY/TbXAIPK0EZuP/VAtgq7bCTbBaUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Fc6lIOAK; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso57920675e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 03:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742897718; x=1743502518; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HIiymNtPWSmafw/vlEzUs3yK38VavdvhdwhqdM6/8zU=;
-        b=wnYS7xt9skdjDZQardDs2MX4RWd/7Hz9oiEZT71HZULshe31/PUfeGxOaqom3RvRcv
-         3uZ2N//AJ0pJ9xWlMM3dk9Na+ZJjhJH6E7NQ+ITtCh0Tayc6E+jHNYg6yhmdzqq6GtfZ
-         MNKd2pfpghNQ1KKV08/0aYkVI1tNNVXpWgFY+alSftJ3hCtQFIfq0sOc+ld8K62N/LcB
-         B66AsZ2cHsZ788XHRgU+yzFAvesxAqw6q6PTWvIZCx1MdFHBQa4jQv+AtBLJrZv8cKt7
-         ntaLLQ0qkcDp4RSybC6nYBRzuYpR1Va/4FUXGWECQhDmbUnxueHf21eghbk7yKMiiKYF
-         RZnw==
+        d=suse.com; s=google; t=1742897721; x=1743502521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSbCNl4BxWO8IbyHRgNtn/a7Rf0u1sJorrF8gojdNyo=;
+        b=Fc6lIOAKpCOraZEvR/fbMV5DPHBT9DVzUJxny4j4iSVPija1FrydvR31VLyl9m0P+3
+         st+zmzGmXGZ73QIc3dXalcaw91I5w3P7vT426vY5pUqgLyziJcfoqOdbgodK+8P9vKh6
+         2poKQl7dd/2hNfG2GG3wenA7LXBMeIIyOACwJ+eEviS/HHsqvObC7FX5QZ7PwDsX+Wpj
+         xH2NV4KxrEtTLzbDlFjxSAs+SxBRrlgSfl3ccvgU+0qneT8Vu/5toPBGhYI2TQvWUr5X
+         UiwNQkLTv+lMQGSVrABaVF55REQI17nfgtaAtzXZoZM225/5YsKBN92o01tcCHg2RT0S
+         9/cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742897718; x=1743502518;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HIiymNtPWSmafw/vlEzUs3yK38VavdvhdwhqdM6/8zU=;
-        b=itqClVLVufZIllNHA4NLQOPCn7ZyKFDEqL+Xf5MDu826pCmNrqx1cw5IY27Ia/IbBx
-         vWyOuAKP35Z91Fs8XI5qGnlWAhmDgRVysqkcdqKiAVRe8a71VfHr9eQfVZ0FWKQsLQ6d
-         r+wHdLs8SRqojL5k2VUjm65Syu1rPXat2vFEOVOYU4025lwB1GpDyXBFrT56crN29nC+
-         ZpO6OcaNHsxrD/oLWCH6AMssOywHBPJy+a2ZdB5MkmmXeEEVWgoPnHBK6f35L3CB2gAe
-         qLqMeGG7Hm0ocvCwtIPP8MbF5YCqOnheLSObylcwWe9jFkiUA2BaFZb+7m3aPKJRAphN
-         loCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtUixXAQz/rOdZR/QDXOOyNm2MHG5F/Y0clFnCdaDiVNaPGjFyeQcTIEu0/H57S72UJCDJVZ6KM3Kt5Sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzglbJDlYZoI1LfC1hlj4a/FPJkYA5J1O1IZoyHL/uRvEsfdtNr
-	9oWfizasme6u2gTtWpYUlFc1z5Ln/cAWVNPvnj6X793hQeYm4VS6PHYM19k1QM0=
-X-Gm-Gg: ASbGncsifY5tr8FDU9bJ/aU9i6qcwVNxaD7sk11yupnJgbe+GpEmPgyLYNHEMmIin8Q
-	bIVPIbwcx6Wbe+FP09zODF2paW469cDZl13lSpnFoyavHx8Rto2PWdBbBSs3HvVwgk9py2maIrw
-	J4t+poOrzoTGLiYl6BkldNIB4ja9b9m5v0cm2brJEm5Nv92PxvbzPZYUurE4OtaO/9uizNcGGk/
-	Gclc/K2Vb6a6+MsdDSPV24SnIxGkEL7EPt7h6iShOg3x+xQSJcM3xaOuNv5NCCGVbCs0qNro2dG
-	7tFWlYkWGGfgc1ZKA+AwTstrUaBWvU5Zkqifmx/nOQJTIXk6sw==
-X-Google-Smtp-Source: AGHT+IFw2/pNQ5VlOB5j+GWsibTCWxrlkUBFFVpMfhBQZ4qA20RXRLBX1Zd3wl5pSv2Zad5KMtYTBw==
-X-Received: by 2002:a05:600c:1f10:b0:43c:e2dd:98ea with SMTP id 5b1f17b1804b1-43d5a32ce3amr105676265e9.22.1742897717551;
-        Tue, 25 Mar 2025 03:15:17 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd9ec84sm144043865e9.26.2025.03.25.03.15.16
+        d=1e100.net; s=20230601; t=1742897721; x=1743502521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VSbCNl4BxWO8IbyHRgNtn/a7Rf0u1sJorrF8gojdNyo=;
+        b=mKnrm7Eh+p7WjdMRVVVHVs91PZO837f4pr9QJqa+zw7HyKMkhO+NTYf7oyfqohCoR6
+         0MCtaK6NH8FBY7GSLhG/WzSAhyWuo0SaRpPJ/tcGlhebAMFD+OFofHhKC6PuRPcUnMxt
+         pZBPrzlfCq/ABEyc2OJN8FuKh1bPUaBcrbk7/n8tmw0OpLNT8hW7ffkSlSu1JI0kB5A8
+         TNgbs5JLsxYdkfcOA8kEnJ1l41GX5dI1oFqtvUFZpwo56slobJrie6Ghxdt/nWPwmHgw
+         8c794MEaVYaH6rHTAXpqStgCNjUjbrn6xSF4jKcjFIbwi5nKpiFXhWDh9aZWD14SUzBy
+         z3Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4TyRyE/7AaxujycqJNFnrQ7Ryjd9iSBMf/zY81j11zDcj03Z7E0vNjkw8S8n46C+TqvsdbkyRD4V03Xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ45OJZCI2nOqEPRTsvqnedWUXADAgG6uu8pyxvEPiV0UFg7BF
+	8nnm1XiwvDQ0mArLEDdcvxOhAO1RC1HXbOO22si+1OnN+2Z+kmBfFe6Ia7wcFuI=
+X-Gm-Gg: ASbGnctbptjkCZhByFZfSg7r30kFQoPIHRpVkisjlUwcU+1SjEgC8VsVMfvDN32I+Y8
+	/lHwMFCpeXk2bMCGxWP4dIoayCEV4tMkgGp8h/fE5Y4vSp1gEe4TNWCmDcRRkcfYYTPL5VVmqt1
+	5ZivnBiu8f44nVmxHgcluYbhxJ1i2/MrcSTcycjwDYM6mQyUyyfGasr08dowL2jroD3W/rBM/CE
+	LP+vFmawPNO7cWY4p/yY/VkAbJNTrWe8epjJlHFPot8OXAiWBd4d75ms6GF8cEg+AkkILB3qiZE
+	1yl7FAlK502RDT9LQoqPB3AeYNWppVt57Gl2ETrKO2Aq
+X-Google-Smtp-Source: AGHT+IEHsfS3jwIQd3DXLtKs6BlMXePkgOPcd8GrAW7V3JTw8OOWk8DEnFNJlXsh14KOgVQNsnrCHg==
+X-Received: by 2002:a05:600c:4584:b0:43c:efed:733e with SMTP id 5b1f17b1804b1-43d509f58b4mr147592855e9.14.1742897721087;
+        Tue, 25 Mar 2025 03:15:21 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fceb780sm149735745e9.4.2025.03.25.03.15.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 03:15:17 -0700 (PDT)
-Message-ID: <48c082ffbb6eaa75eacbf3c7cbf0e4caec441bfc.camel@linaro.org>
-Subject: Re: [PATCH v3 0/2] firmware: exynos-acpm: allow use during system
- shutdown
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Krzysztof Kozlowski
-	 <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 25 Mar 2025 10:15:16 +0000
-In-Reply-To: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
-References: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        Tue, 25 Mar 2025 03:15:20 -0700 (PDT)
+Date: Tue, 25 Mar 2025 11:15:19 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/6] vsprintf: Add __printf attribute to where it's
+ required
+Message-ID: <Z-KCNy7Qu2vFdwVx@pathway.suse.cz>
+References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
 
-On Tue, 2025-03-25 at 09:46 +0000, Andr=C3=A9 Draszik wrote:
-> One user of this ACPM driver is a PMIC driver that needs to communicate
-> with the PMIC during late system shutdown [1] and at that time we are
-> not allowed to sleep anymore.
->=20
-> This series address this by switching the code to using udelay() in the
-> specific case of system shutdown. This approach was inspired by I2C's
-> i2c_in_atomic_xfer_mode(), which has to deal with a similar corner
-> case.
+On Fri 2025-03-21 16:40:46, Andy Shevchenko wrote:
+> This whole series started from a simple fix (see the last patch)
+> to make GCC (Debian 14.2.0-17) happy when compiling with `make W=1`
+> (note, that CONFIG_WERROR=y and all warnings break the build!)
+> down to a rabbit hole.
+> 
+> However starting from v2 the last patch doesn't require the first
+> part, I prefer still to have them since the functions, while being
+> _binary_ printf()-like, are still printf()-like. It also puts in align
+> the tracing stuff with the rest and fixes the wrong parameter value.
+> 
+> These first 4 patches are organised in a strict order and can't be
+> reshuffled, otherwise it will produce a warnings in between.
+> 
+> I believe the best route for the series is printk tree with immutable
+> tag or branch for the others.
+> 
+> Alternatively the first 4 patches can be applied first as they
+> are pretty much straightforward. They also can be squashed to one
+> (as the same topic behind), but it all is up to the respective
+> maintainers.
 
-Looks like I forgot to update the paragraph here. As of v3, we
-now use udelay() unconditionally, instead of the fragile approach
-inspired by I2C, as suggested by Krzysztof.
+The whole series looks good to me:
 
-A.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
->=20
-> Link: https://lore.kernel.org/all/20250323-s2mpg10-v1-29-d08943702707@lin=
-aro.org/=C2=A0[1]
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
-> Changes in v3:
-> - switch to unconditional udelay() (Krzysztof)
-> - Link to v2: https://lore.kernel.org/r/20250324-acpm-atomic-v2-0-7d87746=
-e1765@linaro.org
->=20
-> Changes in v2:
-> - add missing ktime.h include
-> - switch to ktime_before() instead of !ktime_after()
-> - add link to user requiring this change to cover letter
-> - collect Tudor's Rb
-> - Link to v1: https://lore.kernel.org/r/20250321-acpm-atomic-v1-0-fb887bd=
-e7e61@linaro.org
->=20
-> ---
-> Andr=C3=A9 Draszik (2):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 firmware: exynos-acpm: use ktime APIs for =
-timeout detection
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 firmware: exynos-acpm: allow use during sy=
-stem shutdown
->=20
-> =C2=A0drivers/firmware/samsung/exynos-acpm.c | 16 ++++++++--------
-> =C2=A01 file changed, 8 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
-> change-id: 20250321-acpm-atomic-033775b051ef
->=20
-> Best regards,
+I am going to push it via the printk tree. I think about doing
+so as a second pull request by the end of this merge window.
 
+Anyway, I am going to wait few more days for eventual feedback
+or push back.
+
+Best Regards,
+Petr
 
