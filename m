@@ -1,179 +1,157 @@
-Return-Path: <linux-kernel+bounces-575654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09233A70552
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:42:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D1DA70547
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D56AE16859A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:42:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD151886731
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8ED1FF7B9;
-	Tue, 25 Mar 2025 15:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BE71F55F8;
+	Tue, 25 Mar 2025 15:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="CMynezLy"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eiC0dqTQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1B61FAC45
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9A6191493;
+	Tue, 25 Mar 2025 15:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742917350; cv=none; b=lhHflb6vGTaA3i2PFoo1AXNGe396KBopc4WQr4k6WyBE84AXq2DfWmEeXJ5qd5OShzuTCgceaor/Vp0YUZBmgMovpICFj6QRGU9bDOdGin+Otk29S5zk5NfCrmL7+zgOEvdLc/Es1vZonRM+U/vqLqOsIjZM1vhUHu+R9mlMNhc=
+	t=1742917293; cv=none; b=pNA9MPeeT5YdyFYbe+wE45sXW6MiYSdP2/NQ1aq94TrgcJsmo+WUpDIM/dC/VWrwyjCWoObJfwJCwTJsWYWzz+bGZVgHDR7bTiMDINsK7U7L5R48nvNUMTmCZ/zxIQQMw31aeCutT9WYF4x4BfQ62ZVRQHAYjTePMxoFG2y41SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742917350; c=relaxed/simple;
-	bh=Wjh9Paznu8NnzFmTrVdInS7lGF4OglVFJKeJ3NXhOBs=;
-	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References; b=HHY/E0/Wa/dbuXq+NoOVgGI8ZenFMYLTFSqcgln4EymKZ4LkM5EJSYusxVjo7dZ4FopdVO0uFQOQUFU5CppucJLEx4uIpGA3yr5Xq2EfNPv5RWsPdx44QAEWftW1j6MFvur3/YT8dcC5NbuLIidlYUnNndTrXO0YBQk5H+SxUJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=CMynezLy; arc=none smtp.client-ip=195.121.94.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: 9bb3b1c3-098f-11f0-b8e6-005056999439
-Received: from smtp.kpnmail.nl (unknown [10.31.155.7])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 9bb3b1c3-098f-11f0-b8e6-005056999439;
-	Tue, 25 Mar 2025 16:41:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=subject:to:from:message-id:date;
-	bh=/iyKBpZ/gMwDbddEXmZk60octJQNxxEQdaCmJAOFkuk=;
-	b=CMynezLyzHjdxNUe01pPVrV1lbaQ19c/IKefNy0VhdLrl33n8fZnUqe6Krjznw6wRfunerYNhzeCr
-	 ZBTi3XX6RrOmG48v9got9i7Yuun1otwlTTGJ5+atsSNodf+c5Nb81Wq8DYFHlEWj6C9ZMQUlkmxexC
-	 EhJDockh+DK7Mxvfy/KQtVfy+2enTr1ho6OzJcUqTAp4TyaLwlZAlKwbflOlUTYLeVzAqOKWC/4cAU
-	 i4ECWxIGFChcFlZ4B/cndB6aoIwbVEY8uyXp/rg5CQnQTSMtfjscnDLCmJ5H9W1QnNtparzzyREmJ0
-	 4Ti8yAP41aJdzZ06gc9kqLncQ8ySrtg==
-X-KPN-MID: 33|H4S3zKKDt/kSIctmlzwBbCj8TIujoseVgICSqUP1S8csdBVtOswMNX53d4JhC3b
- J+D5VZcpacU2gX1KCl77mckmkrx5gxY3FO7WLbxtGj5A=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|qkclhlP8gXsHt11V+3wWMyEYiW5D9cl8yFDpUObYky/bnyXgCJbIksIxwb0kULm
- R0HKCIMMJF4wdYpefApOzNg==
-Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id 968f98cb-098f-11f0-af94-005056998788;
-	Tue, 25 Mar 2025 16:41:16 +0100 (CET)
-Date: Tue, 25 Mar 2025 16:41:15 +0100
-Message-Id: <87ecyl6rtw.fsf@bloch.sibelius.xs4all.nl>
-From: Mark Kettenis <mark.kettenis@xs4all.nl>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net,
-	marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org
-In-Reply-To: <864izhmkzd.wl-maz@kernel.org> (message from Marc Zyngier on Tue,
-	25 Mar 2025 11:02:30 +0000)
-Subject: Re: [PATCH v2 01/13] dt-bindings: pci: apple,pcie: Add t6020 compatible string
-References: <20250325102610.2073863-1-maz@kernel.org>
-	<20250325102610.2073863-2-maz@kernel.org>
-	<87iknx75at.fsf@bloch.sibelius.xs4all.nl> <864izhmkzd.wl-maz@kernel.org>
+	s=arc-20240116; t=1742917293; c=relaxed/simple;
+	bh=0mbEID5ahHrKwR9jwh1G01FTCatcISBK/d1QAIR8hNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPxyDxa7OgjHgCDNF99GkSCEc2rckiasTbqvOtlCL9Llw1iGaK2wRgj6xwuolYyf/ixTo7y4tvBr/DmLAIihVDVckg2F/l6Y7ysz3jOd1vvKyHdSLeUH77/wQrOGB0DdcPXUPjFaf0IU3esTPmmtiTdPWbaZYCCPRdKl+DfJUqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eiC0dqTQ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742917292; x=1774453292;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0mbEID5ahHrKwR9jwh1G01FTCatcISBK/d1QAIR8hNI=;
+  b=eiC0dqTQBAupSC8YqTR8+Kl6zYKKn0QbPRnKh/O4BTAqQQfhtqpL5CWj
+   Jy+wUXq+j8yw47IDjeIeUUKsJF6wN8pL5xfwxRPPMDtxCvrNE9Xz1V8ss
+   6Wav9u2rHN1QHIZlkZciBgG7BTu0F4TJdFUY/0FH/JESHQzfByUNL5SU1
+   OGeAr1CRz0m37+CsU4OSmaJkOIVDKYv6w844W5BWaiY/QJc1aGerH5b6Q
+   LysTjVBh5UENbSVfI70LAQTHziGFe092RmwkAUfm3bFKZsTLRzMC6CbNW
+   DmyjGlW1efuo11FEdsIiFVn9RLI97nxExYXwK/889vYeGPmGfJDFtTUXL
+   g==;
+X-CSE-ConnectionGUID: yIRvxbfPT72FCGFBGrxhbQ==
+X-CSE-MsgGUID: LMPQEY+8QI6SWXA/pTXNfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61563434"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="61563434"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:41:31 -0700
+X-CSE-ConnectionGUID: eXX55xHSRGG72Mo/kqSWLQ==
+X-CSE-MsgGUID: TiWJfMkNSAisIA4JV4fERw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="124885124"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:41:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tx6P4-00000005n4L-3k44;
+	Tue, 25 Mar 2025 17:41:22 +0200
+Date: Tue, 25 Mar 2025 17:41:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+Message-ID: <Z-LOokj8h13IRSSo@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+ <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
+ <D8PF2VNMJ0TC.396PL4OJTTBOU@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D8PF2VNMJ0TC.396PL4OJTTBOU@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> Date: Tue, 25 Mar 2025 11:02:30 +0000
-> From: Marc Zyngier <maz@kernel.org>
+On Tue, Mar 25, 2025 at 03:29:18PM +0100, Mathieu Dubois-Briand wrote:
+> On Wed Mar 19, 2025 at 12:18 PM CET, Andy Shevchenko wrote:
+> > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootlin.com wrote:
 
-Hi Marc,
+...
 
-> Hi Mark,
-> 
-> On Tue, 25 Mar 2025 10:50:18 +0000,
-> Mark Kettenis <mark.kettenis@xs4all.nl> wrote:
-> > 
-> > > From: Marc Zyngier <maz@kernel.org>
-> > > Date: Tue, 25 Mar 2025 10:25:58 +0000
-> > 
-> > Hi Marc,
-> > 
-> > Sorry for not spotting this in the earlier versions, but:
-> 
-> No worries -- I expected issues in that department.
-> 
+> > > +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+> > > +					   struct pwm_device *pwm,
+> > > +					   const struct pwm_waveform *wf,
+> > > +					   void *_wfhw)
 > >
-> > > From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> > > 
-> > > t6020 adds some register ranges compared to t8103, so requires
-> > > a new compatible as well as the new PHY registers themselves.
-> > > 
-> > > Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> > > [maz: added PHY registers]
-> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/pci/apple,pcie.yaml | 11 ++++++++++-
-> > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pci/apple,pcie.yaml b/Documentation/devicetree/bindings/pci/apple,pcie.yaml
-> > > index c8775f9cb0713..77554899b9420 100644
-> > > --- a/Documentation/devicetree/bindings/pci/apple,pcie.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/apple,pcie.yaml
-> > > @@ -17,6 +17,10 @@ description: |
-> > >    implements its root ports.  But the ATU found on most DesignWare
-> > >    PCIe host bridges is absent.
-> > >  
-> > > +  On systems derived from T602x, the PHY registers are in a region
-> > > +  separate from the port registers. In that case, there is one PHY
-> > > +  register range per port register range.
+> > I would expect other way around, i.e. naming with leading underscore(s) to be
+> > private / local. Ditto for all similar cases.
+> 
+> I get the point, but the 2 existing drivers based on pwm_ops structure
+> name it that way: drivers/pwm/pwm-axi-pwmgen.c and
+> drivers/pwm/pwm-stm32.c.
+> 
+> Also, the parameter is mostly unusable as-is, as it is a void*, so I
+> believe it also makes sense to have no underscore for the correctly
+> casted one, that we will be using in the function body (wfhw).
+
+It's all up to PWM maintainers, but I find this style a bit weird, sorry.
+I only saw this in the macros, where it's kinda okay. In functions it's
+something that needs an additional thinking and understanding the semantics
+of the underscore.
+
+...
+
+> > > +static int max7360_pwm_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct device *dev = &pdev->dev;
+> > > +	struct pwm_chip *chip;
+> > > +	struct regmap *regmap;
+> > > +	int ret;
 > > > +
-> > >    All root ports share a single ECAM space, but separate GPIOs are
-> > >    used to take the PCI devices on those ports out of reset.  Therefore
-> > >    the standard "reset-gpios" and "max-link-speed" properties appear on
-> > > @@ -35,11 +39,12 @@ properties:
-> > >            - apple,t8103-pcie
-> > >            - apple,t8112-pcie
-> > >            - apple,t6000-pcie
-> > > +          - apple,t6020-pcie
-> > >        - const: apple,pcie
-> > 
-> > Since the T602x PCIe controller has a different register layout, it
-> > isn't compatible with the others, so it should not include the
-> > "apple,pcie" compatible.  The "downstream" device trees for
-> > T602x-based devices do indeed not list "apple,pcie" as a compatible.
-> > So I think this needs to be written as:
-> > 
-> >   compatible:
-> >     oneOf:
-> >       - items:
-> >           - enum:
-> >               - apple,t8103-pcie
-> >               - apple,t8112-pcie
-> >               - apple,t6000-pcie
-> >           - const: apple,pcie
-> >       - const: apple,t6020-pcie
-> 
-> Ah, indeed, that's a good point. Thanks for that.
-> 
-> Whilst I have your attention, how about my question below:
-> 
+> > > +	if (!dev->parent)
+> > > +		return dev_err_probe(dev, -ENODEV, "no parent device\n");
 > >
-> > >  
-> > >    reg:
-> > >      minItems: 3
-> > > -    maxItems: 6
-> > > +    maxItems: 10
-> > >  
-> > >    reg-names:
-> > >      minItems: 3
-> > > @@ -50,6 +55,10 @@ properties:
-> > >        - const: port1
-> > >        - const: port2
-> > >        - const: port3
-> > > +      - const: phy0
-> > > +      - const: phy1
-> > > +      - const: phy2
-> > > +      - const: phy3
+> > Why? Code most likely will fail on the regmap retrieval. Just do that first.
+> >
+> > > +	chip = devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
+> >
+> > This is quite worrying. The devm_ to parent makes a lot of assumptions that may
+> > not be realised. If you really need this, it has to have a very good comment
+> > explaining why and object lifetimes.
 > 
-> Do we need to make this t6020 specific?
-> 
-> Obviously, separate PHY registers do not make much sense before t6020,
-> but I couldn't find a way to describe that. I don't even know if
-> that's a desirable outcome.
+> Thanks, I'm fixing this in this driver and similar code in keypad,
+> rotary and pinctrl. More details in the child mail.
 
-I don't think there is a way to do that other than creating a separate
-binding for t6020.  But I'm far from a dt-schema expert.  Maybe robh
-has some advice here.
+Sure, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
