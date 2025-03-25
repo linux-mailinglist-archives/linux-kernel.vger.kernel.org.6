@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-575550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A584FA703F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:40:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F9EA70404
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA7616C62C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8851899CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B297025BAD7;
-	Tue, 25 Mar 2025 14:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BB525A35D;
+	Tue, 25 Mar 2025 14:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcyWc/R6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Dpgy+j9n"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16641197A7A;
-	Tue, 25 Mar 2025 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742913605; cv=none; b=DIc1rdMX/4Aas1pVKqxb+k+0nIPj2trr+T+uT/leo6qTQaoKrNaPEgndWjy4X29ei7b34wh3CQMlyGeS/DcfH35GQmccBy9Tsw9wLjIMkdo+b0qaNTx/VDDysCnRZdldzVMPEZyD4vuVtF+gfoq5WsYlTheRidjMLBz+lHhc+4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742913605; c=relaxed/simple;
-	bh=NOu2dEjZjNyRR7ev3N8tyYgYXm16NuUTpuYOhgNGviE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JH1AgdRJ7b3rIMb3Qb8Vdo8y69575aknHBFWVoZF7YI2uH0RORJCDTYfRNwQb992upwG5UsT7izTykJve5OKW/QhDOh7k5EvzaiEXl6X2nOgOClnXEROCepnecx4x+wodRqPuUsg0xnFkqF8q2FYlhCdF53yF8khAuCujOgOxp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcyWc/R6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E87F8C4CEE4;
-	Tue, 25 Mar 2025 14:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742913604;
-	bh=NOu2dEjZjNyRR7ev3N8tyYgYXm16NuUTpuYOhgNGviE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AcyWc/R6Aj3Gt0V/40m326ZlGgq1U+AWyRnu1EK3Oi9qll3sgjc32xj/e472oLNoe
-	 6kYLjmfPCwj58SvMirqbaycnyIRuetgxcM1jBHQ/ZvPJ50r7J67VVEbj4AltmgFr3F
-	 5KEVknu7q3GK4B2ZIVbkyoTEd7kUsPHxMcjgi2ACWbj0SFH1Bdo6v5EJR5egKS0IFa
-	 UWuArncw3ptQS3DuAMVRtE83DlLPKMLU3UiiSQdRzl5xEBnfDJ3DKDfr8rRTI22BNK
-	 kXCsAVzgs3ilAfT1BpmeLDHGZq5A3qPgDEOSvthK/5wOR7iqeGpXoO5e6AcqOLiFr5
-	 7nO7IJLsejlPg==
-Date: Tue, 25 Mar 2025 15:40:01 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	netdev@vger.kernel.org, asml.silence@gmail.com, hch@infradead.org, axboe@kernel.dk, 
-	edumazet@google.com, pabeni@redhat.com, horms@kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, "David S. Miller" <davem@davemloft.net>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH vfs/for-next 2/3] splice: Move splice_to_socket to
- net/socket.c
-Message-ID: <20250325-umkurven-abtauchen-47ab46d2d7f7@brauner>
-References: <20250322203558.206411-1-jdamato@fastly.com>
- <20250322203558.206411-3-jdamato@fastly.com>
- <20250324141526.5b5b0773@kernel.org>
- <Z-HiYx5C_HMWwO14@LQ3V64L9R2>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A74255E20;
+	Tue, 25 Mar 2025 14:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742913662; cv=pass; b=QyWRmJ7yx9iG4kc7G7bccHPUVCWLz6vYfiosI5c9OnVqtUO5KaFuUKa8ek+uXGZeBtzzQDefajgly5e8XGXV8iWUxpbTQDq9nwe7yElTqo24WbzEaJi/ZwbxIHvjU9F7jQPHJLYZ3Lmy9P7SwnX6PGt/1aAkHR56DorY3Go9eB0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742913662; c=relaxed/simple;
+	bh=63lOYZV7NkFONXEi2MTSmxaYbqmMmjBPS/7IpjDqqfU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=DaL8NFBiKvIrx+Arw10sLjZmMZzJ6nR0s3kySOI8RpQo7d3LyMz13QE3qtruNEN8EeA7mZwdb/DbysOs93px6ffl/vMoypbcCIdugtx8Arb+m9R2df5Xc6aFfwq2REJ4imUVbPk4+6KRdUIZFhGkVwGywpPutdGdWSx0u7eIhow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Dpgy+j9n; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742913635; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mSK7534lsmuMY1yU3gzoUV4tV9NhSWqiA1nNa+QGr3tJ1iDqZQdkBB1krYOQQ8Kx73pVuKGStY0yEd+LMqMO8DlIWWfAJthF7lu0C3z3gEhK9gyFp4Qh9JZoEh7euxkXOV2RnvXfEUEM5FoEFo64vUSzbXmpEPkX0Q0u/g/nurI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742913635; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=63lOYZV7NkFONXEi2MTSmxaYbqmMmjBPS/7IpjDqqfU=; 
+	b=YRmQFIRSoaE051hfd9AeUGSOqAv4Nb5xB+lS0L7cGG3NnPmHuf0VpFq5cZXxOFlbeMcFXy+Q6pkFnYInRL11pN8IgXxyxLSFhj4J5vOJ1hWqUjfU7FvFKp8FaibDnARHwhuTTS9850NBZDJ5nfPdN1q1WyJcu5+t0CSFLbZXEuc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742913635;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=63lOYZV7NkFONXEi2MTSmxaYbqmMmjBPS/7IpjDqqfU=;
+	b=Dpgy+j9nXqCUsuO7ZDmq6VCajWqGeZZqZ9vqo2DVta1FVyf3kqief2gogvd2uIiT
+	dQHuIuDMEDh3dgQASRoJ42Of6JLLV3CrZkeFxxoC3czJz8sxitdFQQShdKDc0z0hQmj
+	YgxjpKT8e1L3aweyqkbQQ/3s+/L4aMjI9acSr+Rk=
+Received: by mx.zohomail.com with SMTPS id 174291363222697.63769696253098;
+	Tue, 25 Mar 2025 07:40:32 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z-HiYx5C_HMWwO14@LQ3V64L9R2>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v4 05/11] scripts: generate_rust_analyzer.py: add type
+ hints
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CANiq72k0J1PqH6mQ3DJVMbM=yrzXsFZU5NpDX-rPU-DP_4QHeA@mail.gmail.com>
+Date: Tue, 25 Mar 2025 11:40:16 -0300
+Cc: Tamir Duberstein <tamird@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3A2F6F3A-D86E-4F9D-B0F9-6E37FE15E8EA@collabora.com>
+References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
+ <20250322-rust-analyzer-host-v4-5-1f51f9c907eb@gmail.com>
+ <FB3D0F03-B162-4AD5-B288-4E307421276B@collabora.com>
+ <3DC4063A-3E9E-412B-AAF4-AA0C33DEEBFC@collabora.com>
+ <CANiq72k0J1PqH6mQ3DJVMbM=yrzXsFZU5NpDX-rPU-DP_4QHeA@mail.gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On Mon, Mar 24, 2025 at 03:53:23PM -0700, Joe Damato wrote:
-> On Mon, Mar 24, 2025 at 02:15:26PM -0700, Jakub Kicinski wrote:
-> > On Sat, 22 Mar 2025 20:35:45 +0000 Joe Damato wrote:
-> > > Eliminate the #ifdef CONFIG_NET from fs/splice.c and move the
-> > > splice_to_socket helper to net/socket.c, where the other splice socket
-> > > helpers live (like sock_splice_read and sock_splice_eof).
-> > > 
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > 
-> > Matter of preference, to some extent, but FWIW:
-> > 
-> > Acked-by: Jakub Kicinski <kuba@kernel.org>
-> 
-> Thanks for the ACK.
-> 
-> It looks like Jens thinks maybe the code should stay where it is and
-> given that it might be more "splice related" than networking, it may
+Hi Miguel,
 
-Uhm, it should stay in fs/ especially since it's closely tied to
-pipe_lock().
+> On 25 Mar 2025, at 11:19, Miguel Ojeda =
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>=20
+> On Tue, Mar 25, 2025 at 2:39=E2=80=AFPM Daniel Almeida
+> <daniel.almeida@collabora.com> wrote:
+>>=20
+>> $ mypy --strict scripts/generate_rust_analyzer.py --python-version =
+3.8
+>> Success: no issues found in 1 source file
+>=20
+> Should this be a Tested-by? Or am I confused and did you mean =
+something else?
+>=20
+> Cheers,
+> Miguel
+
+Yes, that was a bit convoluted, sorry.
+
+Tested-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
