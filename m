@@ -1,89 +1,92 @@
-Return-Path: <linux-kernel+bounces-576178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547ABA70C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:32:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4803A70C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DFAE188CFB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:32:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B488F189B254
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E6126981E;
-	Tue, 25 Mar 2025 21:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK0clAUZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85202269AF4;
+	Tue, 25 Mar 2025 21:35:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41497266B55;
-	Tue, 25 Mar 2025 21:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA953269802
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742938283; cv=none; b=U4CSMd1cmZcZ5lMVawBL2eRBmY243joEc8E1P6Q+wPI/ITA+ApInI2quZht9wpSlJkdZEEb8k4XLl7SJcmzry3pal2mNFq42F0y93K9pj2t1gLhT2X6pBaSPVC7nfOkjzAGx/RNGFN9GgH0aE411pVju1TqjmZSzqBx2i3h0SxY=
+	t=1742938509; cv=none; b=Kgzo28BM/9HmQtLr6FWvxXz6OyvJWT99hq471Ln5NFG2ucCHLjOo9f7aUm3+nyIHcakl5R6JFQPdLqtWS6bHwvgPNCIYO4jPMhRlf3gtLyOLNPKiO4KL5YXy+etQEryI7sSO/3K+OA5N3/paUhHriOooSk9MZ2eB+l/PRY/82QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742938283; c=relaxed/simple;
-	bh=nAFi6dgMBV3lJUJPu6iKA4YLItIVFO/go3V3AiJ3/Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pbyBDRkpYrlIsmEBaPVRFSqWSmIk94PGNwhQeadSjwN4TkHoXtj/m216q+uCcx5AqHCyuNU8M8/kAcufKHmW0WCXX40mdWN5Vqu4yY13WvCZubC6UBgTsWb8jUih399tXVQutvj0JPtcMUhI1OK7Qz35ZEQdZmShdfMxmvrA7YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK0clAUZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1518EC4CEE9;
-	Tue, 25 Mar 2025 21:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742938282;
-	bh=nAFi6dgMBV3lJUJPu6iKA4YLItIVFO/go3V3AiJ3/Wo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tK0clAUZ2CpSENOT5//Ju4pTjOxtSmuMXIWYTtcKrpU+qkkubsZBWpAtUrHkoTgHf
-	 bVfe/E5zaN1lgojpbK15qdxKGM2hDp5Zls7hypsqCcW/gHgq19NN1E+JpNNLDKmdOk
-	 Ms2xm+CZWov5TwvUmfNovf4gjJIGUyFUjc873HFj64HBYrUeZCbOmEkL2D2JfkYy6d
-	 I1J2gdek9bPfcFK3D2lsZFNThGY78RddH0bsjBX7S3HDyV8292orDEGlDA3WQBtZXs
-	 hljEx4YmSq48bzfc8rngxLYX0GAmBhgjhkyy5AZ42mQ2rE/NCKgXmepn1Ehpchecru
-	 FSRU1K/O5tISw==
-Date: Tue, 25 Mar 2025 14:31:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>, Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>, Piergiorgio Beruto
- <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net-next v4 0/8] net: ethtool: Introduce ethnl dump
- helpers
-Message-ID: <20250325143111.4a9e26c2@kernel.org>
-In-Reply-To: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
-References: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1742938509; c=relaxed/simple;
+	bh=X97KUKmbzUHAvQ9lppO/yqeLZu5oLRLKlmwZEKx55g4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FoOFfOUN/79LqFMhQRmbcyZrkE1JV+gvZs0nKtTJXy2IL7/4HP3C8mJMfLLqfpAheOdaV0k500R+2y0bvchBXkhVcfPiZT8W9kiWV4Dnq2RmqHyU0s1MCybSf4gwYncPnKLMv/oIs5WRrQ1MpPjQrTmAvYpWWevv4GBTK2SMifA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1txBvE-0001nz-QZ; Tue, 25 Mar 2025 22:34:56 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	robh@kernel.org
+Cc: kernel@pengutronix.de,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ASoC: soc-core: fix bitclock-master and frame-master present check
+Date: Tue, 25 Mar 2025 22:34:53 +0100
+Message-Id: <20250325213455.3952361-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 24 Mar 2025 11:40:02 +0100 Maxime Chevallier wrote:
-> The patches 1 and 2 introduce the support for filtered DUMPs, where an
-> ifindex/ifname can be passed in the request header for the DUMP
-> operation. This is for when we want to dump everything a netdev
-> supports, but without doing so for every single netdev. ethtool's
-> "--show-phys ethX" option for example performs a filtered dump.
-> 
-> Patch 3 introduces 3 new ethnl ops : 
->  ->dump_start() to initialize a dump context
->  ->dump_one_dev(), that can be implemented per-command to dump  
->  everything on a given netdev
->  ->dump_done() to release the context  
+To check for a none boolean property of_property_present() should be
+used instead of of_property_read_bool(). The later returns a warning
+since commit c141ecc3cecd ("of: Warn when of_property_read_bool() is used
+on non-boolean properties").
 
-Did you consider ignoring the RSS and focusing purely on PHYs?
-The 3 callbacks are a bit generic, but we end up primarily
-using them for PHY stuff. And the implementations still need 
-to call ethnl_req_get_phydev() AFAICT
+Fixes: 69dd15a8ef0a ("ASoC: Use of_property_read_bool()")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+---
+ sound/soc/soc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 3c6d8aef4130..1e0cdd778a3b 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -3403,12 +3403,12 @@ unsigned int snd_soc_daifmt_parse_clock_provider_raw(struct device_node *np,
+ 	 * check "[prefix]frame-master"
+ 	 */
+ 	snprintf(prop, sizeof(prop), "%sbitclock-master", prefix);
+-	bit = of_property_read_bool(np, prop);
++	bit = of_property_present(np, prop);
+ 	if (bit && bitclkmaster)
+ 		*bitclkmaster = of_parse_phandle(np, prop, 0);
+ 
+ 	snprintf(prop, sizeof(prop), "%sframe-master", prefix);
+-	frame = of_property_read_bool(np, prop);
++	frame = of_property_present(np, prop);
+ 	if (frame && framemaster)
+ 		*framemaster = of_parse_phandle(np, prop, 0);
+ 
+-- 
+2.39.5
+
 
