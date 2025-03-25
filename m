@@ -1,195 +1,114 @@
-Return-Path: <linux-kernel+bounces-576043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D5FA70A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:23:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1210A70A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2D51897ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E379173CE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057A31F1525;
-	Tue, 25 Mar 2025 19:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAD81F130F;
+	Tue, 25 Mar 2025 19:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJpo43Bz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K9Dve6XZ"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A611F03FF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE51C1EB191;
+	Tue, 25 Mar 2025 19:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742930529; cv=none; b=OkJzZR4fkWVZxVdVy6Kvwrc42NDexwrL6HtthJI2sl1jqNB2NoATrm1lbauEtUoAnKH1CWvYYXn/8Vl2iALYE6GpVxY0VIQsQBC0K+c4RCSQ30U7O0r0YHBGpmkaW8fFCsWD+Uv8A/Sncz1ecsUI6Wagmn3nm3BL6iKih371u84=
+	t=1742931049; cv=none; b=eMjieXa21PeI4GGhObLyThP66JR21BY8u05P+EbGZeqg1mVKtmxdlF35rnKtqIHUy4iO0ojjgIGH3neVRE2QZkFImJyhPjlaaoqvj9TI63z99tAmW9xjm3ONXSZJm1CNv9ojRxBxumCWggJnJX/2byGCtK/MR5RFRvOCcFPCrkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742930529; c=relaxed/simple;
-	bh=LN+/bd2Olj3N0EdJKGdRLMdju9OGCP1EWi9G0sWNNZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qImDO1i6YGdRbUwCMkaIOco2ZwexlC+zr4+ZgN+U5c6wtZnSUp72gBlTGQqoBTeNAVTYp38B641QYD1QqTtNxjgybomXwySBsilyuXQEtG7Am7OJagHFE7AgaUjrEt6zwMb4h0Q4MW3i69v/ICukDu/20ubt/W+9Sb4f2WAq1ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AJpo43Bz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742930526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4uusw5Mfq776t99OEEpC16y3um4OcX5n1LocwgSdxeo=;
-	b=AJpo43BzFOMWGAQ1ZRUVCUqCcPbHmPbPxJZjHeSipor7T8azpXYu3jm6v8g/QpIsB5ZbyF
-	56jUgcDlx8VCwHOrpUYfaIlfGZ1/LjaB/5vzNrsdK4QKNBJciB+nRZHO2Sq8QM8/i2z2gf
-	+zw5Xq5VmmLZLJFvy2sUtKw+Oq4LK1E=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-AztWwTZZPIKuyfsfAnYWMg-1; Tue, 25 Mar 2025 15:22:05 -0400
-X-MC-Unique: AztWwTZZPIKuyfsfAnYWMg-1
-X-Mimecast-MFC-AGG-ID: AztWwTZZPIKuyfsfAnYWMg_1742930525
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d9d8890fso26675885a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:22:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742930524; x=1743535324;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4uusw5Mfq776t99OEEpC16y3um4OcX5n1LocwgSdxeo=;
-        b=owRWprkZ3/OaSgwM7UdBOZE62OETlmxhjbBRb4VoQgtnc/NzdjfqBk3zPRW2GOQzkp
-         0Wz7+MZSP4uUnggWBLXifgHrCuDFZMDwRHxQ1llw7WqNeQ6/TJEapGM27Tn+rX72lQEZ
-         wrFSfJiAZD+tch7sB+oCA2D0pB41ffEIn9bKMIv8Aq6LNF0pq5UTt1euC7euGRrBfbyS
-         egIQUWi5JnGEujSKbL2ALrRrCx4DZrYAr5wXMnkLntnZ13vtFqkbhlWvATUZF5d1nW5V
-         pBqVMvtDS7/L1q0UGjnpWxfHzHPEXwTYZVfZaoJ+vMas12TcVBXwDMdEOP/3mN496UQs
-         xl9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWSC1y5S2iMklBgbQ8n/maRworcrK8kc28FVCL+9C2hVlaeEQQfdyUEScxXltnE1a90LtZ9Nqg6LdBSmgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/NUJBXuGBEnkm2UvcJWfBbayvLw7WIjCSah7aSwvPAUm+J1Qt
-	WkxtMx/0ORzjv3Nh6/3kuwMGID2np8noLWr8Jru6hN9AOnJdu5YYZRPL8eaJz4MAPl99RLO9tMf
-	dlYNjapu8rQsfZY7ndbTYtjKM/s3g7T8dUqjjBdGcaeqEt9aV+U9XYYiv0m6+JQ==
-X-Gm-Gg: ASbGncv1Wtfxc6ISL0ugsg7PxGuVXN2rlBcOY7nG0EWqR94gV2gwOMKC4g6A4Hj9WUK
-	1otZBCb0Z5GYJN4JDyGnV5hlnyvpEg+8iapimJTlx8EKlUSYefceFoxCrLLcSfRbo/t8HnWdyg6
-	Vl2IrP7tgD/9zjbrC0v4ALUNTBjIgTGly6Nco7S5VaY9PtsyMWqxl+9BDVfinXdLrUMzwrfelIi
-	P/qIdRJKY9ckOAKLKFYhQYTQXJ0CvPWOK6sN96H6mx+IlORy83GiekpiptUrVk2FwCyu0dMCzk9
-	a9DieDbSx3+3
-X-Received: by 2002:a05:620a:1d03:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c5e494b431mr151018085a.24.1742930524602;
-        Tue, 25 Mar 2025 12:22:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEXSfDMRz0JKf36Wpss30g3vtLjnFK8ezZQX4sG9FZ6Z+Fvfb2FbRMSHP6VydBgJHZ4ZfB+g==
-X-Received: by 2002:a05:620a:1d03:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c5e494b431mr151015185a.24.1742930524235;
-        Tue, 25 Mar 2025 12:22:04 -0700 (PDT)
-Received: from [172.20.3.205] ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ec63dsm668951985a.62.2025.03.25.12.22.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 12:22:03 -0700 (PDT)
-Message-ID: <1767a68b-cb2e-425c-86bb-bc8e5289ee99@redhat.com>
-Date: Tue, 25 Mar 2025 20:22:02 +0100
+	s=arc-20240116; t=1742931049; c=relaxed/simple;
+	bh=5tGZSH7qmIlEZiTl3tTZmYCsJqF7oZCvY5s6A5p92No=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X8uZVxUHwDnGoP1SKpU90Tf2syFpt369UJ7jpoQMq/7+m4HZkt1znElP1ViP2qq9nEvvap9vwrzJeFv6FchPnc2oDmM4krz5QjmypYlPtbgdz17o0xAjOlF7bdfmB4/b7OFDR4RbibGKrJuDP2uLYrCAAYsa7ZKYkWgY2Fbkw5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=K9Dve6XZ; arc=none smtp.client-ip=192.19.166.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id CA3ABC000340;
+	Tue, 25 Mar 2025 12:22:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com CA3ABC000340
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1742930544;
+	bh=5tGZSH7qmIlEZiTl3tTZmYCsJqF7oZCvY5s6A5p92No=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K9Dve6XZjFAyOl6QzGCqW0PzGE8jxIFFGEoCt6KzYRuNDSzKonSeiKz9j/08BowdY
+	 x0xPnR7nb8WaR+AeSPq01SQ7D2iYuIW2TEp5bP0DAnFS9qZJbN94VG7yyVNYbOnl0y
+	 EtQXoHeLfPddPkTksEjYVoFmLnMVvyWfMDC9lJv8=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 71C2718000520;
+	Tue, 25 Mar 2025 12:22:24 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: stable@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <kafai@fb.com>,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Breno Leitao <leitao@debian.org>,
+	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
+	Yan Zhai <yan@cloudflare.com>,
+	Felix Huettner <felix.huettner@mail.schwarz>,
+	Joe Stringer <joestringer@nicira.com>,
+	Andy Zhou <azhou@nicira.com>,
+	Justin Pettit <jpettit@nicira.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Luca Czesla <luca.czesla@mail.schwarz>,
+	Simon Horman <simon.horman@corigine.com>,
+	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
+	linux-kernel@vger.kernel.org (open list),
+	dev@openvswitch.org (open list:OPENVSWITCH),
+	bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools))
+Subject: [PATCH stable 5.4 v2 0/2] openvswitch port output fixes
+Date: Tue, 25 Mar 2025 12:22:18 -0700
+Message-Id: <20250325192220.1849902-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: Correct the update of max_pfn
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com,
- mark.rutland@arm.com, ardb@kernel.org, yangyicong@hisilicon.com,
- joey.gouly@arm.com, quic_cgoldswo@quicinc.com, quic_sudaraja@quicinc.com,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, quic_tingweiz@quicinc.com
-References: <20250321070019.1271859-1-quic_zhenhuah@quicinc.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250321070019.1271859-1-quic_zhenhuah@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21.03.25 08:00, Zhenhua Huang wrote:
-> Hotplugged memory can be smaller than the original memory. For example,
-> on my target:
-> 
-> root@genericarmv8:~# cat /sys/kernel/debug/memblock/memory
->     0: 0x0000000064005000..0x0000000064023fff    0 NOMAP
->     1: 0x0000000064400000..0x00000000647fffff    0 NOMAP
->     2: 0x0000000068000000..0x000000006fffffff    0 DRV_MNG
->     3: 0x0000000088800000..0x0000000094ffefff    0 NONE
->     4: 0x0000000094fff000..0x0000000094ffffff    0 NOMAP
-> max_pfn will affect read_page_owner. Therefore, it should first compare and
-> then select the larger value for max_pfn.
-> 
-> Fixes: 8fac67ca236b ("arm64: mm: update max_pfn after memory hotplug")
-> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-> ---
->   arch/arm64/mm/mmu.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 1dfe1a8efdbe..310ff75891ef 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -1361,7 +1361,8 @@ int arch_add_memory(int nid, u64 start, u64 size,
->   		__remove_pgd_mapping(swapper_pg_dir,
->   				     __phys_to_virt(start), size);
->   	else {
-> -		max_pfn = PFN_UP(start + size);
-> +		/* Address of hotplugged memory can be smaller */
-> +		max_pfn = max(max_pfn, PFN_UP(start + size));
->   		max_low_pfn = max_pfn;
->   	}
->   
+This patch series contains some missing openvswitch port output fixes
+for the stable 5.4 kernel.
 
-Yes, that's the right thing to do. (I always wonder if these values 
-should be atomically updated ...)
+Changes in v2:
 
-Acked-by: David Hildenbrand <david@redhat.com>
+- use BUILD_BUG_ON_INVALID rather than DEBUG_NET_WARN_ON_ONCE which does
+  not exist in Linux 5.4
+
+Felix Huettner (1):
+  net: openvswitch: fix race on port output
+
+Ilya Maximets (1):
+  openvswitch: fix lockup on tx to unregistering netdev with carrier
+
+ net/core/dev.c            | 1 +
+ net/openvswitch/actions.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
