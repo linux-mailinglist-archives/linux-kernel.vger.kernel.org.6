@@ -1,134 +1,71 @@
-Return-Path: <linux-kernel+bounces-575604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1668A704A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:11:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1645A704A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF01C3AE0A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:11:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C87D7A32D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A84625BAAA;
-	Tue, 25 Mar 2025 15:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA3F25BAD1;
+	Tue, 25 Mar 2025 15:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gm8eYWgI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="apa/Xgsn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C230425B67D;
-	Tue, 25 Mar 2025 15:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67071EDA3E;
+	Tue, 25 Mar 2025 15:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915472; cv=none; b=aHvBkG1pXtEqGzDkL21jGA5zwPr+Bi+wbu8Ccs3AoZrFEHCEYhdasmfhPsqppcPg4j+Afv1sptNALIl0UFdZWC+28j2FjhzrZsxDNlPNWKMFCf1rTc6yVbhiupOR7zT+SWMXZhaok5sn2X2ChH/Sgilmk6+qdb7uuNYLFfRWjn4=
+	t=1742915498; cv=none; b=YfN4V0j4Iuhx6lq0rsUM3rfpf04IToqcgfij1JPikLYAB4ga1tJw/A6aI14C9zq7FQ05eWZQ0K69kaBYu3lQWWk/OCLrLmG/4mPQ2IEuxo7pnnAJWHNBjVd0om7VlSEWhdWNeUeOjF1wDU4YkLxV5Ha2TxWwdlnXy3BuzGjg018=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915472; c=relaxed/simple;
-	bh=Vod3ROmU+JnQThido/st53zu41n3FBS+YZCyzPx0c5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=flzz6v8doyg3PB7vZ4VfME5j78wGWjWRCKhvy+iAY3cuFQXRFIfsYERbmGpmDh1AwgUcQYOv/wEEmyYBGl4kRYUMI9U7JuS0FDoJe73+HetC+hUvZTyjcnOPLzG251odweE4lY9lnKjD3xjoxy2kU+xbHrz3z3BpQQrsb58rV34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gm8eYWgI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772DFC4CEE4;
-	Tue, 25 Mar 2025 15:11:03 +0000 (UTC)
+	s=arc-20240116; t=1742915498; c=relaxed/simple;
+	bh=31T3cY8R212Z8aHTs5rhNTvbbB/uMz7MjuMUCXin76Y=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=D+mGxUAIKHdBVnvuBS3TZn6II2ESXj+pZpurN8gC9qBYQngCZpAQjfHVler83FWxcUSz2LYf+PpFCjpOfX5YlxI/WXeIo92wmYJRNf3Ln575hdju+TZVlNxQ/91ZIste/xMZ7C+bY4LllR8lC9Jjimgvx/Aq8F8Wve1Gl6aDgFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=apa/Xgsn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C688C4CEE4;
+	Tue, 25 Mar 2025 15:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742915470;
-	bh=Vod3ROmU+JnQThido/st53zu41n3FBS+YZCyzPx0c5Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gm8eYWgIYe+NbzB2WbLx7c8b+HwcUCNrKswo2YgkTMJa2qyrlDJc0a4I/gez5BSGJ
-	 odHWwT4xBN7AMNu7JRNrExiNuMdHDOmUbbKH8ux7A2QDTCRo+acjvJJP8jCdygI5rt
-	 28NWGoUgmbclHLKH6j/+yni9yP5rGCTxWW7cj3ff8eLnyVjqKN9wqu2a/3CPliFmT6
-	 bpsIqquXA7EByh/HWI6DMTqQY7IsSaMNzruBArXrP0aIQWn6goI8Ma/TrXcwvJCv7i
-	 r0MZticb8iCkkEnTE4ENUcgwl7yjVvCaDe7tvYSaXsXFVHKs/w0rqUTf+AO/OTnRTR
-	 0sY6bKd0qOyvQ==
-Message-ID: <a60c6ea2-628b-447d-bdc2-ebc7bd7d7400@kernel.org>
-Date: Tue, 25 Mar 2025 16:11:00 +0100
+	s=k20201202; t=1742915497;
+	bh=31T3cY8R212Z8aHTs5rhNTvbbB/uMz7MjuMUCXin76Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=apa/XgsnwVd9nOb104wW3rJPdy4fsX4KHS7YuNwZNx7IXRYb2rMvZpWyh3H96xzkl
+	 HD7zsjTZAzj0u2HBcFWHipwm96K6sLdM9o2s6qs1e2NSekXo7yhuH03nuzSEsCfcy6
+	 3PqXuCLLAr5vVcB6mjV9xUXT+LifQtVX8zzRDG0EU6HiXOvl1fIkq9UkUNFxQneKkx
+	 VbH+xCdBzG+XWvJvO/E/3nADw72B42cTxghDKAMX/JhmJ2fNEMTpKuxHO9VFDRWQy3
+	 cMsy/zmsiAVnRNRZaZSqyer7kk3IAEgxTBgXt/S18OD4aj2uAjTWvvHgHb3GL8bNrU
+	 d9HfLvCQylkFw==
+Message-ID: <a3c5e4c369397efcf92dfb4ab6b0fb34@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
-To: Andrew Lunn <andrew@lunn.ch>, Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
-References: <20250325115736.1732721-1-lukma@denx.de>
- <20250325115736.1732721-3-lukma@denx.de>
- <2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2ccab52d-5ed1-4257-a8f1-328c76127ebe@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250323-s2mpg10-v1-26-d08943702707@linaro.org>
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org> <20250323-s2mpg10-v1-26-d08943702707@linaro.org>
+Subject: Re: [PATCH 26/34] clk: s2mps11: add support for S2MPG10 PMIC clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Date: Tue, 25 Mar 2025 08:11:35 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-On 25/03/2025 16:05, Andrew Lunn wrote:
->> +  phy-reset-gpios:
->> +    deprecated: true
->> +    description:
->> +      Should specify the gpio for phy reset.
-> 
-> It seem odd that a new binding has deprecated properties. Maybe add a
-> comment in the commit message as to why they are there. I assume this
-> is because you are re-using part of the FEC code as is, and it
-> implements them?
+Quoting Andr=C3=A9 Draszik (2025-03-23 15:39:42)
+> Add support for Samsung's S2MPG10 PMIC clock, which is similar to the
+> existing PMIC clocks supported by this driver.
+>=20
+> S2MPG10 has three clock outputs @ 32kHz: AP, peri1 and peri2.
+>=20
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
 
-Re-using existing driver code should not be a reason to use deprecated
-properties, because you can change that common driver parts to support
-both: old FEC style and new MTIP-L2-FEC switch.
-
-Best regards,
-Krzysztof
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
