@@ -1,98 +1,95 @@
-Return-Path: <linux-kernel+bounces-575603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360DCA704BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:15:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D3FA704AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2716218983A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC99416F731
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CFB25B67E;
-	Tue, 25 Mar 2025 15:10:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D25BDF78;
-	Tue, 25 Mar 2025 15:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679A025BAD6;
+	Tue, 25 Mar 2025 15:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbHx+F7P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C301B85FD;
+	Tue, 25 Mar 2025 15:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915444; cv=none; b=INS2ZAGpXofek941TvIALsAYrVr5ikbc0mSf7MHI714WxEnj+lY4eymlS3ov/bd4IK+z02F9MNf9GgRY9avkmh0XnK5tOR3JjQAA5xKAR2cg/6/kYXADrkyhuFSbauC8kM0znnlD6wUkyF92J+CrruyYrD5y6yKQgt3hUErtZcc=
+	t=1742915396; cv=none; b=nFwcYFAbt6fboOw8xvh77vqDptHXMuGXtxSv5Uo2J3cjo4qfY1bR82Nyxy7Jbsi9ckgEASU2KqJC3i/JEJrgIUmfXyoYY3PJhJsmArEjivbNfjSjwt9Y3KqBeu/e6HvMAVslMfTuSDDlaA/jw36WFVcaxoVodYk0Mia4pRGk8Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915444; c=relaxed/simple;
-	bh=BZYJziINKBIcqjS1/8unrKx3dUgU2wz565xUE4lre5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdRR7jgqVJLCI29T08feWYL3Im+BryAVHT6Ja6YX0L0fMzNIKCPS2gJ7aG5DhCN8RhrBiP2wUAoG4T7YL+38YMqmM6YVycA8bRBGIedmxx2og7o3egDmHafrRmfbI/X6g5htwyNo4nZk7z4usqCMOWAmwsfpEFOca8BVijSAlqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F9641756;
-	Tue, 25 Mar 2025 08:10:45 -0700 (PDT)
-Received: from [10.57.14.116] (unknown [10.57.14.116])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DF7A3F58B;
-	Tue, 25 Mar 2025 08:10:36 -0700 (PDT)
-Message-ID: <d629b646-d04b-4a26-86a2-34300dcd3e9f@arm.com>
-Date: Tue, 25 Mar 2025 16:10:30 +0100
+	s=arc-20240116; t=1742915396; c=relaxed/simple;
+	bh=OOCHEZWOntHnEnJ4X5afRh3Il+X2cvef/e+co+E8A0k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=d3wMEcKHLeEV8uQGl5X2de2z5n858L5p5dJJ7tE4/lBJMpsskfApYKLClsmCBkBT6Gy9L3mXu9vmjh71t7F4GzY8+EePIvrA8RYTozoEHk8jYfYjW0SUNQUOVOG1/pe4KlSNieKzxgWe94uyHo1wuVPh5v22VmeKWvKEiAQ3cz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WbHx+F7P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4C1C4CEEA;
+	Tue, 25 Mar 2025 15:09:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742915396;
+	bh=OOCHEZWOntHnEnJ4X5afRh3Il+X2cvef/e+co+E8A0k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WbHx+F7PWJwkgyWN+uBf7fx85bnmq67+avOvGZqIF+AC4NHzgiscZFT6BkMDmD/Ze
+	 w+tAkB3D6oBr9rKOvQYFO0780VPtFN/cc7w6Yp8L3h/xX5KSB+hcqBeVGA090jamvq
+	 QLH+FWB1Ng3QIuQbK1bAnq+dC8Gixkpf2wAsvUeH/98Kfni87HAXbE3Cms+RSkAlQU
+	 hE1mtNMdCSxxj+RFu/rES/TXBxOVm3YItLZKxOaBG339bhLmH+V5DKYMLXlcFjb0cG
+	 Uvk81Y8+ynoU9hr1DIaNfHZEin/p5m6KjhN27H+cKoCBpEStxIp52pQHjAQQ74slOL
+	 HHkBENmD6RpWA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF300380CFE7;
+	Tue, 25 Mar 2025 15:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Fix integer underflow
-To: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Rik van Riel <riel@surriel.com>
-References: <20241001134603.2758480-1-pierre.gondois@arm.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <20241001134603.2758480-1-pierre.gondois@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] bonding: check xdp prog when set bond mode
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174291543254.609648.7082589771393537826.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Mar 2025 15:10:32 +0000
+References: <20250321044852.1086551-1-wangliang74@huawei.com>
+In-Reply-To: <20250321044852.1086551-1-wangliang74@huawei.com>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: jv@jvosburgh.net, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, joamaki@gmail.com, yuehaibing@huawei.com,
+ zhangchangzhong@huawei.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
-Hello Vincent,
+Hello:
 
-This patch should still be relevant, would it be possible to pick it ?
-Or maybe something is missing ?
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Regards,
-Pierre
-
-On 10/1/24 15:46, Pierre Gondois wrote:
-> (struct sg_lb_stats).idle_cpus is of type 'unsigned int'.
-> (local->idle_cpus - busiest->idle_cpus) can underflow to UINT_MAX
-> for instance, and max_t(long, 0, UINT_MAX) will output UINT_MAX.
+On Fri, 21 Mar 2025 12:48:52 +0800 you wrote:
+> Following operations can trigger a warning[1]:
 > 
-> Use lsub_positive() instead of max_t().
+>     ip netns add ns1
+>     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
+>     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
+>     ip netns exec ns1 ip link set bond0 type bond mode broadcast
+>     ip netns del ns1
 > 
-> Fixes: 16b0a7a1a0af ("sched/fair: Ensure tasks spreading in LLC during LB")
-> cc: stable@vger.kernel.org
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->   kernel/sched/fair.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 9057584ec06d..6d9124499f52 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -10775,8 +10775,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->   			 * idle CPUs.
->   			 */
->   			env->migration_type = migrate_task;
-> -			env->imbalance = max_t(long, 0,
-> -					       (local->idle_cpus - busiest->idle_cpus));
-> +			env->imbalance = local->idle_cpus;
-> +			lsub_positive(&env->imbalance, busiest->idle_cpus);
->   		}
->   
->   #ifdef CONFIG_NUMA
+> [...]
+
+Here is the summary with links:
+  - [net,v2] bonding: check xdp prog when set bond mode
+    https://git.kernel.org/netdev/net/c/094ee6017ea0
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
