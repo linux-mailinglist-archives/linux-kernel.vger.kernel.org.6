@@ -1,148 +1,208 @@
-Return-Path: <linux-kernel+bounces-575278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF34A6FADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD04FA6FADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 577A03B1638
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2773B2A39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FE92571B8;
-	Tue, 25 Mar 2025 12:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C908D256C97;
+	Tue, 25 Mar 2025 12:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="2YbZ2L5i"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="RDAxNLLY"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1B31A073F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D33F1A073F;
+	Tue, 25 Mar 2025 12:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742904906; cv=none; b=l/bLlZRMgdyBzXaL/gyM3LIgGUSKQIGp5Nh1xAWVxSjKmlq3mpugjrLwt2Jt/F84A2mLHLfThdNzSCfajf/4wkVKBJjQnuFhekvxztuZT9FlZablaMYQxH/sueoVkL506wpDuftfbdtQWnWMK3IbvE/HF74NWFW8WbvE6Vhll6E=
+	t=1742904921; cv=none; b=NSazdjK7gypbvcOKDuXVuDOsb3IHPn5jGiu+F0Whcia52MHNeMCSZaS6gGGc+FDADhs7w+MjDIME9MEYGRG4XfuLyG6G5XsxgeiwY4pSGbPVdawDKITPBFhs00gD1I1gK6bWJ1vEVQtuG3BwWuglL3SU8zqzvk+/uptHfz4kA4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742904906; c=relaxed/simple;
-	bh=UKbfjZ5E4QscHPOYkQaEa00cn5sNfmffGihktUEZ+l4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGj8EmR8uHYwCJGFQsJ5BFUbz3QRdmsoklRnaMIa0IE5NP73v5N+obNeizrEj3W/VF5A3pdH3fwwhqQ0KTTJ3djelJY8Sz3EK87P8ocb8SSnwmwJpi/kOiIvTn3PGXR+HhZ3XG/d7a0zdPafpuc2B9h8yKtBmdMY4Y7/A0+bz2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=2YbZ2L5i; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3feb5d342a6so3345555b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 05:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742904904; x=1743509704; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wC3ijQaBf4K8OWU+SDgw4P+7cyUwlTWZLf3LU7lx7Xw=;
-        b=2YbZ2L5iLqqAq9w7CEQA1eBKRRLybpnJPvqMNezLnIZHB+01hRw7xydmdRS8yE40iH
-         OSf/IbzWFtETS4TNhVZFahVq3o2G80NgVHqEFC1r2Ok7InCuxW9P9oE/MZSLJVGQ/JaW
-         1oTcw50UGUahgKsMDV4MwKDkI+ySX0LrgSYvTO/tA07TU4jf7v1oeg9v8RjmkDbZGFLk
-         0JmXOApxULnTaISPRZ6jVZAO4l0wzLc74g9CFt8R/FWM3j1rM5f2kmeY89u65Qc39i4N
-         PspaNbsuS9oCXclBDnstBkzwMGUPrfruQHF5lb06+IDtzpcgdYkV8Fn0guWZQGuE/flY
-         kvdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742904904; x=1743509704;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wC3ijQaBf4K8OWU+SDgw4P+7cyUwlTWZLf3LU7lx7Xw=;
-        b=EzGgXOqdbY2Fau4XRlq8iL/pDwgxHXqjacCLtJczAvJ+5QKnMD7c17B8zbArSieeEy
-         wKcjgxjPVO1K1qe+vNR9N/p7QLkDcImHz5IM3kTKux7Ws8//FNnm0g6OHoYLBvsohFC7
-         FuyLwjcGjZhdIBSRr3uHI1Si94Ffii9Ct7Gn+DwxFwU2CMqtuiUteYkP8RT5jha3tuSP
-         bAeABXiLJ3KUMEq4MuGfff2Kb0ZbYJKqYfiemwSP4qYZBkNteCY0jr5cYVOG/ACowP84
-         amQrApGH4gdKihwcp9OQ/Xkc/33FbwzcjeyFQFG0ZuTWpqOC5yXUdU15o3ggBXv1NyK1
-         q7nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0B0tQgmLuebpcEQg8KGjaX8zwKTHZzPhAfOfyyiweejiIvy5RXMpEizd1dTlpprrczsY+acnStC+a6Dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUDy/tORJWaiKla4niKcdj3Kbs4L4OlVB1NcpJyVm6L8WtxGed
-	CUT0eB9O7ynBMs5mRiGHHj5+VY2s+kcfFAJ87FmN1z3Nftel0dmPSoimvoD8i1c=
-X-Gm-Gg: ASbGnctA/GdbpAXphegPMaFthz14emxsTcKk+QChB0Cb/wg6nEZ+/DojKhwYu6HVkwg
-	HBzs7SxBv5j8ND3UHpcJoWxbCVg+dxqZVd4lmFeUjvBYZlkCPA+HTVTZbyamZVE3LbqwkUbEa5u
-	qE8ZihvTJiIqNHOiEODSSTUOWNvp48e9Jz12X5hNSuDtQtRmbyP+6yU/KqMNoIcYZHZT3rpK26D
-	/E/fm9YxEYF+QaYlmm+zhHpb6UapdE54HXgzRkxEb2IaD1WT2fVwzJ26jPnQA2ZE6gI8isIa1bv
-	bmZeBHi9vln3C08mKLcJZbORMOZcX7cHItQc9cMpVplA5zLryBQND9fJJ8p3yRIqpGhOzP0hORY
-	EnRD4Wtd4
-X-Google-Smtp-Source: AGHT+IHZKE0q+q2yQSr22P7i6hKjZROug3Xpi7UzBNf6sOzdWBDPPxeLMvXTvddN7ZqquWTR4AKONQ==
-X-Received: by 2002:a05:6808:384e:b0:3f9:a187:1f2e with SMTP id 5614622812f47-3febf7382a8mr10579611b6e.18.1742904903718;
-        Tue, 25 Mar 2025 05:15:03 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3febf7927d5sm1974378b6e.31.2025.03.25.05.15.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 05:15:03 -0700 (PDT)
-Message-ID: <a5477192-ee6f-4273-b7b4-1d9dbd7e7b50@riscstar.com>
-Date: Tue, 25 Mar 2025 07:15:01 -0500
+	s=arc-20240116; t=1742904921; c=relaxed/simple;
+	bh=3EjRv+MDeGAnLpJRXA7dgB81OVwWdjtHPSO7rMKHRxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nsLnBN+SflG/bQaOzVFMTT4W3qdYReH85dG6+bPsfQ7G5SHwJ5wk73GhqQ7kwchtylTYRepOunwDwnwe4DvZjIX3SGMweYdkpmI2uU2bcHz4QmQfrNtzJYCNAEccxtKGhIUVqrNq/WLZCtUCmk2j5vNVNfZ8u0HFlzFLmYps5+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=RDAxNLLY; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4D418102F66FF;
+	Tue, 25 Mar 2025 13:15:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1742904913; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=9okx19OZpA+5j+MdAvd2Ecd4r6SR5dnQkH8UTLcqtMA=;
+	b=RDAxNLLY7NjCYc9nDp9XPBY/sX9jaLljzG7jM3kuJVgUUJ9EGP9qnv20zqYq/jCVu+G+4s
+	Y6Wr+WsadOCDrZwhb1vFIbDRgtYoGK75k7F9LddbLAmfAKwLpflfidZjb57bIcB8EXz9DJ
+	v0mInSfgKtf+VOU4Kbbp+74/VXeritZ2UpIVVZ7YL6VvbF7DkyT6bTmrokO/JgDNJsDemf
+	XqIBUp6QbmHYp2A7kzlsuE/zbgB25xjpj22T6ApRlIQWs/JHgph7x3hqQ1gi1Ob+MggWzk
+	7b+y3ih4yqzdD98wb+etvWGhl/0QRboNwsoSJr9u2nq4U3R/8WlCsVym/ceK1A==
+Date: Tue, 25 Mar 2025 13:15:07 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
+ Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
+ (fec,mtip-switch.yaml)
+Message-ID: <20250325131507.692804cd@wsk>
+In-Reply-To: <2bf73cc2-c79a-4a06-9c5f-174e3b846f1d@kernel.org>
+References: <20250325115736.1732721-1-lukma@denx.de>
+	<20250325115736.1732721-3-lukma@denx.de>
+	<2bf73cc2-c79a-4a06-9c5f-174e3b846f1d@kernel.org>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: greybus: Alignment warning
-To: Erick Karanja <karanja99erick@gmail.com>, outreachy@lists.linux.dev,
- johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org
-Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250322065800.21361-1-karanja99erick@gmail.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250322065800.21361-1-karanja99erick@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/Zapl74rJPPeU2cp5Y+tnTMV";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 3/22/25 1:58 AM, Erick Karanja wrote:
-> Correct the alignment of the parameters to match the open parenthesis.
-> 
-> Reported by checkpatch:
-> 
->      CHECK: Alignment should match open parenthesis
+--Sig_/Zapl74rJPPeU2cp5Y+tnTMV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think this change is OK.  However you'll notice that checkpatch.pl
-has three categories of issues that get reported:  errors, warnings,
-and checks.  These are in decreasing order of severity.
+Hi Krzysztof,
 
-Alignment issues like this are just "checks", which means they are
-minor nits that are often not considered a "real" problem.  In many
-cases, white space variances like this are done intentionally, to
-make the code more readable, or sometimes simply because the code
-that surrounds it used a different convention for alignment (some
-people simply align to an even number of tabs, for example).
+> On 25/03/2025 12:57, Lukasz Majewski wrote:
+> > This patch provides description of the MTIP L2 switch available in
+> > some NXP's SOCs - imx287, vf610.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > ---
+> >  .../bindings/net/fec,mtip-switch.yaml         | 160
+> > ++++++++++++++++++ =20
+>=20
+> Use compatible as filename.
 
-In this case, the change doesn't make the "look" of the code any
-worse, and doesn't reduce readability.  It furthermore gets rid
-of spaces after a tab that do *not* lead to the suggested alignment.
-It probably isn't a necessary change, but I think it's reasonable.
+I've followed the fsl,fec.yaml as an example. This file has description
+for all the device tree sources from fec_main.c
 
-I write all this to explain that these sorts of changes are in many
-cases rejected.
+I've considered adding the full name - e.g. fec,imx287-mtip-switch.yaml
+but this driver could (and probably will) be extended to vf610.
 
-I'll leave it to Greg to accept this, or offer a second opinion.
+So what is the advised way to go?
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
+>=20
+> >  1 file changed, 160 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
+> > b/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml new
+> > file mode 100644 index 000000000000..cd85385e0f79 --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
+> > @@ -0,0 +1,160 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/fsl,mtip-switch.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Freescale MTIP Level 2 (L2) switch
+> > +
+> > +maintainers:
+> > +  - Lukasz Majewski <lukma@denx.de>
+> > + =20
+>=20
+> description?
 
-> 
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->   drivers/staging/greybus/camera.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/greybus/camera.c b/drivers/staging/greybus/camera.c
-> index 5d80ace41d8e..ec9fddfc0b14 100644
-> --- a/drivers/staging/greybus/camera.c
-> +++ b/drivers/staging/greybus/camera.c
-> @@ -1165,8 +1165,8 @@ static int gb_camera_debugfs_init(struct gb_camera *gcam)
->   		gcam->debugfs.buffers[i].length = 0;
->   
->   		debugfs_create_file_aux(entry->name, entry->mask,
-> -				    gcam->debugfs.root, gcam, entry,
-> -				    &gb_camera_debugfs_ops);
-> +					gcam->debugfs.root, gcam, entry,
-> +					&gb_camera_debugfs_ops);
->   	}
->   
->   	return 0;
+Ok.
 
+>=20
+> > +allOf:
+> > +  - $ref: ethernet-controller.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf: =20
+>=20
+> Drop, you have only one variant.
+
+Ok, for imx287 this can be dropped, and then extended with vf610.
+
+>=20
+> > +      - enum:
+> > +	  - imx287-mtip-switch =20
+>=20
+> This wasn't tested. Except whitespace errors, above compatible does
+> not have format of compatible. Please look at other NXP bindings.
+>=20
+> Missing blank line.
+>=20
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 3 =20
+>=20
+> Need to list items instead.
+>=20
+> > +
+> > +  clocks:
+> > +    maxItems: 4
+> > +    description:
+> > +      The "ipg", for MAC ipg_clk_s, ipg_clk_mac_s that are for
+> > register accessing.
+> > +      The "ahb", for MAC ipg_clk, ipg_clk_mac that are bus clock.
+> > +      The "ptp"(option), for IEEE1588 timer clock that requires
+> > the clock.
+> > +      The "enet_out"(option), output clock for external device,
+> > like supply clock
+> > +      for PHY. The clock is required if PHY clock source from SOC.
+> > =20
+>=20
+> Same problems. This binding does not look at all as any other
+> binding. I finish review here, but the code has similar trivial
+> issues all the way, including incorrect indentation. Start from well
+> reviewed existing binding or example-schema.
+
+As I've stated above - this code is reduced copy of fsl,fec.yaml...
+
+>=20
+> Best regards,
+> Krzysztof
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/Zapl74rJPPeU2cp5Y+tnTMV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfinksACgkQAR8vZIA0
+zr17vAgAgqtwGoPNUc3EI7NljZqJvIZf6svb+ViihSV8scb7rPfd86a83cfQZpfC
+Bo90ssMcSCwGTisf+VkcCumpXu3rH2TM7dC7eGc9ipr8dxD5sTgQtoek0kU51IUF
+T1TpgmyNMS8qSG+Y7Y0GRE6+iRYQQrZXSRGzBaLYmamuvJdQpIbBt1v8rSojc1R7
+qme7A5VKr8j+ERYCwjDxqV/K8PNeUaNEpRxl6QOLi2g9xqQuYWFuk5pow4OGzOv/
+/Dnv6w1tZQNueZLPtd7noEh9ic/3jNHm0/36sQBBvQZv/IWBCtHq76PH/f2dGKa2
+M2JTkCKr7K5WdSzlmXYoGCSQTrfs7g==
+=5nCI
+-----END PGP SIGNATURE-----
+
+--Sig_/Zapl74rJPPeU2cp5Y+tnTMV--
 
