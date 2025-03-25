@@ -1,64 +1,95 @@
-Return-Path: <linux-kernel+bounces-575848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72507A70801
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:21:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0399FA70808
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6CB16BAC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E993A97A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45A32620CD;
-	Tue, 25 Mar 2025 17:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFC526139D;
+	Tue, 25 Mar 2025 17:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrjVHxK4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="V9P2qGD7"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C65C1ACEA6;
-	Tue, 25 Mar 2025 17:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E9025D1FA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923258; cv=none; b=oMsSY2LdwRxHI6u//+LbK2qi4P+DSyBqHzn6oIooEl1aTJqR/EoawgXppVnUKphb0WWWA66ZnEsF+jiP6k3IT5/+B2KhMcj3GrsfF1POgZ/rIIpIgPeaW6dZ6tL156WAiEKTYtKJwP7UO81JGNzmAqk0hGH+rgEP9UocgyIP1TI=
+	t=1742923283; cv=none; b=fiVN0njSTRJq1IeYbqWBT5jIZNbLLa5KjFvVtqxQN6GWAfoVxJzqSjUOHe7QZPxJMSsmtnqokAfVzkcfcLZyo4/vnIpQjLjiDpJcvQ95u6PBZqDb+AD1kFVJAJiSqqeY1r0HAKzggmvf9PmS/kKO4jIazNopC/3f1QSRjOCSaAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923258; c=relaxed/simple;
-	bh=xc1ElJ+b62y35nkWclbBi+8sfEbTXnBuisi6UIeMPJ8=;
+	s=arc-20240116; t=1742923283; c=relaxed/simple;
+	bh=NPknPnvDYpCkn1uRCPkw+yzN5O4OIPBJN8iAy4E9wm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CE/GmHQiZAbzpQYS1Q/ph9KBCd2XEL9LsnEFKrERs0P5nNrih2S8XCfniWs6TMp6vxeI2yk8zKQKCgslxIC4XtO4Ja+eiCbBhdqKtw+bpXgz+WVZABdOjx9mASPDH1Phyz+x0W7Rg7urIM3WfQLPgl4+FIZ9Vg83LdeB4Ot9LFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrjVHxK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AEABC4CEE4;
-	Tue, 25 Mar 2025 17:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742923257;
-	bh=xc1ElJ+b62y35nkWclbBi+8sfEbTXnBuisi6UIeMPJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JrjVHxK4qUYgdAElLMMKqzlJL6Nkc6XDXr0vM1YN5NBCHJG/j+YfSIXUjSSe7T6r9
-	 /deraSB+/od4aB7zmCzwXQz2DlVcoMq0mnilNc7CdQTK65JUJuogbM9tzBYmaUGMYP
-	 ute+DegIAWcQzgtAdujrIJBZ4xqzlW5YQJif1GO46z4ryTfaQ3IDVfG81bbS9m4v/6
-	 UcnBxZQjyhIl0/ymnIKFxFPSLwF88wtqfBmd1kAskMFlnIZ1Ut8VbIPVa0tEYP0gsd
-	 cimXHWRQOVEayDRaDhOoX3As6Ao03ASrQ1go6UJDitIKmveWaRelKhU1aLJ3AmJFIM
-	 nCeXT7uz7foJw==
-Date: Tue, 25 Mar 2025 17:20:53 +0000
-From: Simon Horman <horms@kernel.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next] rtase: Add ndo_setup_tc support for CBS offload
- in traffic control setup
-Message-ID: <20250325172053.GX892515@horms.kernel.org>
-References: <20250314094021.10120-1-justinlai0215@realtek.com>
- <20250319123407.GC280585@kernel.org>
- <6824bd62f05644ec8d301457449eae19@realtek.com>
- <ab27fd1a1e9d40759e090346eafb5881@realtek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gg70t0ii8nZbgt+0vrbmckS/rJ3KbFTAaNsPO+iRGUXmPpnZmntpZlO1JQ6ZGwAJtvPWnGDxDc2Be/R0ZlLQKz/3K6WL4bgZrKFG5S68BfHif78j70Jd8xOolNyoIEMIZ5HBGQuTKUUB39QEi/khcyt+pdTOIh9XX2a0SAlqPQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=V9P2qGD7; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d46fddf357so19019045ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1742923280; x=1743528080; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUIk8GuXhrJ6jaAZ3MspJDXmvD8FvwUk0pjUc2gjmR8=;
+        b=V9P2qGD7NokJPLELzfKjurERrkoT9mBdkszmK08S3EnSwq9pJlw+IE6l/2WOWLjDm/
+         bg90lLLYtk5AgkDaP/lA3T1mzMgomC1Gl6OIDFAQTsAzWdV/1i6NurlZw5ipCk9ST7j2
+         okg5RIAn7zCgu5hoFKODix+5YwPZiER20PX4MPloTKdFDvOl3ERISdaATFnEj7YniPmg
+         t59r/4zVdvHYDt3kymFG0MjArndqM+oxahR3QrCzJVjq7F4rnFuptPMNUjbsf1j6B1yU
+         vFFNhN67TNJKnaPP6JzYxrSz+XVIbg+CnWw73+O/7qF8b64gxeik230t7He/2Tu3flOi
+         HxzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742923280; x=1743528080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DUIk8GuXhrJ6jaAZ3MspJDXmvD8FvwUk0pjUc2gjmR8=;
+        b=lkajWiRHQbtk6Am7ynHiQVTk0RSaCOenAnoTm9TIavEs8s/ThcFixbzd+I1E/f27Nx
+         2rpZcC9qlBr/ocTMRPz4RXH8f5NuNjOJxAuAZvdfc/mQ1KVDxfVFTcR19bq5vMHmHhTY
+         nLMEzcsbcO6j3lpB+SjuiHM8VkngNJ1gjuDpozE3a46gDR2iyU6I6l6GoQzEQQgRbVAC
+         PVse9zAk58gwoTlUF6BvUfaKLhRYSezYMMnsXWmrJgyqxh0EIQmiCFW03LQWjei6d6kO
+         6uq70701T3nNmXFoMD1k+N+hSC0CCRLkwRpfZ3Flz0k6OuA7fMwqnxSNbJEmXvd6W0Im
+         wOAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ5X28gWT4pyA1/5PPFfQvtxWF40JjyHpnp4kp7Ekhp0w15YwM8YH7E3qeZrTVLJteaVbUPn7IHV63uvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIyZzGlbSe6hy2qFqVja5L1SdIm2iraTWLWUpqH+XKiz+MVHLg
+	Gu/aKI7MIQd2W+zc1KjxUPtsriyaETgQOZHbfxN/nmYILkp2N2GtBplfPB7h7oQ=
+X-Gm-Gg: ASbGncti1OqpBv4Gb+DTAQTBptLDFXm7kQDEJYWs7X+IYI++wCMAbp7YR0weBPX9ac/
+	DWcJe7ke0B20MbzFzfSdDo5AfdfET/sB/OOMASFSwojk6QWPgoLX95oUXp5pV+bDNHF/RoWyt4x
+	vcD1+ZfVvWEquuhOoPAK0C2shWiFC6mqvrh0urJgE8dzLsjOyYXVPI+iXm7PsYkaJjoDsvIkIm2
+	MqJrSQFGG+hH0d9Hsgc/gbxg9Lyt5hSwT56e6438dDRsxjQoS7Vh0eYXIAXD6Ntf3KNy2yLnbDZ
+	mt+TdmhCKUJDRbBnVgUZ6zwGbA==
+X-Google-Smtp-Source: AGHT+IErn2yVyz/LPwGN2xKKkAB0TxbWGFBbv6OD2treCwqPSm7m+FrwT6OtLiJJGQdJfF0D55qkhA==
+X-Received: by 2002:a05:6e02:9d:b0:3d4:2306:6d0 with SMTP id e9e14a558f8ab-3d59616b92fmr159808305ab.14.1742923280121;
+        Tue, 25 Mar 2025 10:21:20 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac5:8152:1b37::2b6:1])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbe80a3asm2455156173.95.2025.03.25.10.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 10:21:19 -0700 (PDT)
+Date: Tue, 25 Mar 2025 12:21:17 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	James Morris <james.l.morris@oracle.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-ima-devel@lists.sourceforge.net,
+	linux-ima-user@lists.sourceforge.net,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-team@cloudflare.com
+Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
+ on MAY_READ
+Message-ID: <Z-LmDe4E4uMZlArE@CMGLRV3>
+References: <20250325155934.4120184-1-fred@cloudflare.com>
+ <ed260472-c07e-4172-b389-deb8e92f416f@huaweicloud.com>
+ <Z-Lc5WxW7NRA6AiT@CMGLRV3>
+ <c1185901c99091a29a865f7a862bc979873301ad.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,69 +98,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ab27fd1a1e9d40759e090346eafb5881@realtek.com>
+In-Reply-To: <c1185901c99091a29a865f7a862bc979873301ad.camel@huaweicloud.com>
 
-On Mon, Mar 24, 2025 at 12:06:09PM +0000, Justin Lai wrote:
+On Tue, Mar 25, 2025 at 06:01:09PM +0100, Roberto Sassu wrote:
+> On Tue, 2025-03-25 at 11:42 -0500, Frederick Lawler wrote:
+> > On Tue, Mar 25, 2025 at 05:30:32PM +0100, Roberto Sassu wrote:
+> > > On 3/25/2025 4:58 PM, Frederick Lawler wrote:
+> > > > On IMA policy update, if a measure rule exists in the policy,
+> > > > IMA_MEASURE is set for ima_policy_flags which makes the violation_check
+> > > > variable always true. Coupled with a no-action on MAY_READ for a
+> > > > FILE_CHECK call, we're always taking the inode_lock().
+> > > > 
+> > > > This becomes a performance problem for extremely heavy read-only workloads.
+> > > > Therefore, prevent this only in the case there's no action to be taken.
+> > > > 
+> > > > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > > > ---
+> > > >   security/integrity/ima/ima_main.c | 2 +-
+> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > > index 2aebb7984437..78921e69ee14 100644
+> > > > --- a/security/integrity/ima/ima_main.c
+> > > > +++ b/security/integrity/ima/ima_main.c
+> > > > @@ -181,7 +181,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+> > > >   	action = ima_get_action(inode, mask, func, &pcr);
+> > > >   	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+> > > >   			   (ima_policy_flag & IMA_MEASURE));
+> > > > -	if (!action && !violation_check)
+> > > > +	if (!action && (mask == MAY_READ || !violation_check))
+> > > >   		return 0;
+> > > 
 > > 
-> > > On Fri, Mar 14, 2025 at 05:40:21PM +0800, Justin Lai wrote:
-> > > > Add support for ndo_setup_tc to enable CBS offload functionality as
-> > > > part of traffic control configuration for network devices.
-> > > >
-> > > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> > >
-> > > ...
-> > >
-> > > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > > index 2aacc1996796..2a61cd192026 100644
-> > > > --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > > @@ -1661,6 +1661,54 @@ static void rtase_get_stats64(struct
-> > > > net_device
-> > > *dev,
-> > > >       stats->rx_length_errors = tp->stats.rx_length_errors;  }
-> > > >
-> > > > +static void rtase_set_hw_cbs(const struct rtase_private *tp, u32
-> > > > +queue) {
-> > > > +     u32 idle = tp->tx_qos[queue].idleslope * RTASE_1T_CLOCK;
-> > > > +     u32 val, i;
-> > > > +
-> > > > +     val = u32_encode_bits(idle / RTASE_1T_POWER,
-> > > RTASE_IDLESLOPE_INT_MASK);
-> > > > +     idle %= RTASE_1T_POWER;
-> > > > +
-> > > > +     for (i = 1; i <= RTASE_IDLESLOPE_INT_SHIFT; i++) {
-> > > > +             idle *= 2;
-> > > > +             if ((idle / RTASE_1T_POWER) == 1)
-> > > > +                     val |= BIT(RTASE_IDLESLOPE_INT_SHIFT - i);
-> > > > +
-> > > > +             idle %= RTASE_1T_POWER;
-> > > > +     }
-> > > > +
-> > > > +     rtase_w32(tp, RTASE_TXQCRDT_0 + queue * 4, val); }
-> > > > +
-> > > > +static void rtase_setup_tc_cbs(struct rtase_private *tp,
-> > > > +                            const struct tc_cbs_qopt_offload *qopt)
-> > {
-> > > > +     u32 queue = qopt->queue;
-> > >
-> > > Hi Justin,
-> > >
-> > > Does queue need to be checked somewhere to make sure it is in range?
+> > Hi Roberto,
 > > 
-> > Hi Simon,
+> > > Hi Frederick
+> > > 
+> > > thanks, nice catch!
+> > > 
+> > > Thinking... in fact you are saying that there are conditions for which
+> > > ima_rdwr_violation_check() does nothing.
+> > > 
+> > > For better clarity, I would add the conditions for which we are doing a
+> > > violation check in violation_check directly. So that, one can just go to the
+> > > function and see that in fact nothing special is done other than doing the
+> > > same checks in advance before taking the lock (the conditions you are
+> > > checking on are immutable, so it is fine).
+> > > 
+> > > So, it is not a write, and the file is not being measured (this would be a
+> > > bit redundant given that we are checking anyway !action).
+> > > 
+> > > Thanks
+> > > 
 > > 
-> > Thank you for your response. I will add a check to ensure that the queue is
-> > within the specified range.
+> > The ima_rdwr_violation_check() call takes a action & IMA_MEASURE
+> > argument anyway.
+> > 
+> > My initial thought was to replace ima_flag_policy & IMA_MEASURE with
+> > action & IMA_MEASURE there, but I wasn't sure if there was a race
+> > problem that the ima_rdwr_violation_check() is trying to catch for the non
+> > FILE_CHECK cases.
 > 
-> Hi Simon,
+> Let's keep as it is for now.
 > 
-> Given that our hardware supports CBS offload on each queue, could it
-> be possible that checking the range of qopt->queue might not be
-> necessary?
+> > Otherwise, I think the checks in the ima_rdwr_violation_check() demand the lock,
+> > and therefore we can't just move them out to that violation_check
+> > variable--unless I'm missing something. As for other conditions, I think
+> > it's _just_ the MAY_READ we care about.
+> 
+> Yes, of course.
+> 
+> I meant, since in ima_rdwr_violation_check() there is:
+> 
+> 
+> if (mode & FMODE_WRITE)
+> ...
+> else if (... && must_measure)
+> 
+> 
+> which don't need to be under lock, then I would have modified
+> violation_check to:
+> 
+> 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
+> 			    func == MMAP_CHECK_REQPROT) &&
+> 			   (ima_policy_flag & IMA_MEASURE)) &&
+> 			   ((action & IMA_MEASURE) || (mask & MAY_WRITE));
+>
 
-Hi Justin,
+Sounds good! I'll make the change and submit a v2.
 
-If qopt->queue can only be a valid queue, and all queues support
-CBS, then I guess it would not be necessary.
+> Roberto
+> 
+> > Is what you're suggesting to move the check mask == MAY_READ to instead be in
+> > that violation_check variable than the branch?
+> > 
+> > > Roberto
+> > > 
+> > > >   	must_appraise = action & IMA_APPRAISE;
+> > > 
+> > 
+> > Thanks,
+> > Fred
+> 
 
