@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-576059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFAAA70A8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19654A70A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0987617A944
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD9317535A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8056E1EDA26;
-	Tue, 25 Mar 2025 19:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA051DDC2E;
+	Tue, 25 Mar 2025 19:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfS0eGJe"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsP6jvLb"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A4719049A;
-	Tue, 25 Mar 2025 19:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151FBA50
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742931043; cv=none; b=GWa3Q3ycOUcWSXNutsgeNQVoJT18rUPWY43pCTyhUV9Ydvsq54A2CC6bcMpHd5m1b3wYshsCo6DBMcqIe8syap1QBD8fcaQ9Kz95HgoeQFhDM0GiLFhr2Y6px3azp0QiHS7vNJ7BATZEwPU+BL+qAHJJBbXK/ldw26qUkl6Z4UM=
+	t=1742931320; cv=none; b=DcFVtbyHtIwsoBxVbySArgHAmCkLzSgiosuM+o2Xdti9+gC/igSpeyLmlPiTtWMyKBOgA6eH4tbt+Nnv8CqHb6wxp2LkIp4xh2d5WBGpQJ6O6Bq1y3N+m97RKJGAnW9+RXm95JdCqp2JMZWTWLIwG+C7pVLeuDwAfDq1bk24J/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742931043; c=relaxed/simple;
-	bh=V8M1FIqocDVgTg/Qhn+pCa3avFJiRNIIhW1vxEi3fyk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=U0M0+qlAbTPGyeK9SqvXgD9TQXRIZt6G7UPD9ZIKJxGv2PlaZFOjTLONtClVhREdOIgZcWyBF2C+hjQMacxW2qTwa1KpFJEghfbllufk76DAXeekqEXcM3J94XCbJnJJtUGuUmfAtpxGh7ILSRlNIJIpwtb9MpyGeXUwe6sifbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfS0eGJe; arc=none smtp.client-ip=209.85.160.46
+	s=arc-20240116; t=1742931320; c=relaxed/simple;
+	bh=0oW8ZhLEnQtMqlbuYx3wlQprIlFWVLs0KdOamwqzHw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dx2F7hq47EteeOIYTR8PMXP4bAtz55nHkoJt3AkTLwFzVYVAzAyD3hz1E4TKtJIGqnUFxQOfkvMf6yjG0eDe2kQDpcXVfzN8Us6gsrtUMNAEgLWaJz3qfwASURdOQg1u4kFN9psbXCUWleOOILZl0K2zyq9yZtStOu0i/x925Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsP6jvLb; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c6ed7ec0a5so1679056fac.1;
-        Tue, 25 Mar 2025 12:30:42 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f6ae4846c7so58420577b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:35:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742931041; x=1743535841; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4W8NwGIv3g9q9bD90ERb4CwpLXg29q/gl0kZGMFw8mM=;
-        b=VfS0eGJeFTdeJrV9qZN3LifrY1/PuswrTGeRCXGF3+a+ua9Ls1A3y1vU5Mm8seF9Mn
-         kow7/dBf84SMK9L5iM1f8FT9QpOAwSz4i2KBb0x5Yyo2Xygs/zsmvkJeD2S9stIbOzH2
-         p7gOygpuW4WpAlk4V9VRS4rX0q5x+f3Aj3gt/RuNFgsG0VIC+KqCCsqJiRS1tidMMKWA
-         RC4hCA1NTUwYRt3fPmJRcFYBXEEUybYMyXMTCIx4zRDh/dxcCuTjpVzHkrPt/tGGYvwc
-         7AiuR7WAH8LOgKEQCFQ5FdtozuFK5l5nwEgZEdE9Fba7vRTZYJqB4tyMwghC5zrTcH3v
-         1hVA==
+        d=gmail.com; s=20230601; t=1742931316; x=1743536116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=42aHX7MDOHSOMSp6xeS+nFUOuh+iMMc1q+a6ux7j3PQ=;
+        b=JsP6jvLbiTNmNFqyO0lejpn+S0NVggVeU0hYYl0maUpul1XMmORnlkRro4xp4J4Vj2
+         amfVLTYjruoV0aK1I/ryqMbNupXeLB4F4vvSgrpUTuTZ9DYUeynkR9rgr1O4+seYnNfO
+         ZTNRtRwdEnOQBcfnFeFq3H2krEN34CA5vjg4Rql5tTNfXoKE78BqrivjLnvIkMyH8iE3
+         rkb5k5SN9Q0BWdhvZnM24rQg0Oklfp3jRs9wO8X/ysvBSIK1eJeietva7+AtHxkygvZD
+         QjnH5ubfo5iF6x9rbkY/gY/POkf6NKjbis6xWRIWYf0sRW0FVSuF5dIvLdXzN4XCWZEd
+         KwOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742931041; x=1743535841;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4W8NwGIv3g9q9bD90ERb4CwpLXg29q/gl0kZGMFw8mM=;
-        b=d90AEH/1+fXPNnG1dnrLydxWF3RIH3vWNIT84pYeA4GwDt1FiKazPZGJGe+Vxe5giQ
-         UfBQdvzYzjwPJCD6MqGSrnMCewzyay+dgJ06sqQkaIbqZ5YeK/q0Aq/t8iz0fk6YhWMB
-         UUv8xm4iv4hZGM1pkDJGfbJIu9xkDVrAtaUT0GssjxM9TM4fxwlN/3YNorpnvFuzxsQY
-         ob4pYC2t6ENeFA8w1CeN+AHv8TseWZhq3CGjNF4tzp0uUvxygiaVWy7MKvmLrja5f4/1
-         pqsrXYacfLoH/aoYDJUSc5ci3mPyp/+reBjDps38xroLMdJRjuLhV0PRwXxA5DDXLz0D
-         S52g==
-X-Forwarded-Encrypted: i=1; AJvYcCUD9Pqbj9j0tZzeD+UjAjpWsPArUPnQ2VMSacsp6I9ReiOwii/oC6gYZqWyg1DSBj6dBaJbEAHJ8O4=@vger.kernel.org, AJvYcCUe3IcUAbir6HpU2YHKZTn6DR7HqNv7dZqvEFuspVDVJgv8w4+YYmjZJbgCTf5E++EsuXtRj2wQVwMcvBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5GF/9+9MpPSGzdJju1vhBUYrI/oXUpCQwHvpC4Ve7ZjVGWHss
-	iqkSdb3dKW4gUOWtEA7OslbmglsHYYKUiAp7VeEyW+4fy60MLOl7RZcCGgbb
-X-Gm-Gg: ASbGncvzbgp/DxzHxiUZUg35nkTwI5wWnhieri7w0g1+ECLeenc68YgyBytJuI4QEZu
-	XBwgQeVj4LDf97XYikPv99iPviJB2Vw0z5QYSmB2tGL8enpBobafyZd5dw7BSF42vHC+MI4EYKO
-	ATHo4C7DbuKpMdKmpiUsTlYWeVeQFvuTgWZq4wB0TKq++iPJJkc4VZnT7p2yJz3aP3N6DsYDylA
-	/JMrudJI4rCSnlC1UmJgWruTIPbGqu0zHZTARVbOFQJkf2IwHT5188SKs1M0uEyYApKQUzepadt
-	50lnnmNSbZtyDE+lwlzhXoiRh/S6fmXd6sAkooRJf+Bm0g==
-X-Google-Smtp-Source: AGHT+IEwsieHitnF5P9+HL5fGRcvkWJOdtlW3j2FjuRo8vp7AE4y1CEzqZ9QMeBYn1I8NAM+YMV68Q==
-X-Received: by 2002:a05:6871:8301:b0:29e:74a0:e03f with SMTP id 586e51a60fabf-2c7804c7e14mr11154768fac.24.1742931040920;
-        Tue, 25 Mar 2025 12:30:40 -0700 (PDT)
-Received: from debian ([200.92.175.161])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c77f0f6825sm2644934fac.43.2025.03.25.12.30.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 12:30:40 -0700 (PDT)
-Date: Tue, 25 Mar 2025 13:30:44 -0600
-From: Enrique Isidoro Vazquez Ramos <kike.correo99.f@gmail.com>
-To: glaroque@baylibre.com, rafael@kernel.org, daniel.lezcano@linaro.org,
-	rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: amlogic: Rename Uptat to uptat to follow kernel
- coding style
-Message-ID: <Z-MEZNMLUmj75uxN@debian.debian>
+        d=1e100.net; s=20230601; t=1742931316; x=1743536116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=42aHX7MDOHSOMSp6xeS+nFUOuh+iMMc1q+a6ux7j3PQ=;
+        b=IKtR4S+FmPNxBe7pBOBMmzxWi/aRgKXDcSHRYeMsdew70JPD2OMKs2j2mF/n0av/K3
+         XYcD6JNGxju6cejnha0rrMfMMhwtIX3+0pJ829+V2QbJSNfs0YhtkNfmQx38o8ZiIwn4
+         iMcsztPoL8mcQULD8qRSgyvgGsewoBj6DbBNUMyR2UbaQyKZ/W4Gy/x6D91KIGYYC1R8
+         wduSM9NFcBwWK60VLus9SolYXjg39fAoL8GtbrikczdFbOVghQaK3i3JhGzISNTXHWgD
+         8DcII3TjLFA7JKZtMMTpLfSlQ3fZIbPlP0LTVoCmu7ebURn9yawWRB3+owuzKYMoeEjd
+         tDrg==
+X-Gm-Message-State: AOJu0YyrjoLpO4atO0uEsAEKOcvy720edCGn/gmO0VllEUDzG4G2cqux
+	oZYzJ7E6+TftUxjb0ejyG5PBKTm3kmX7MimF0j5JqzaW9sDW8jsOX/RVNhrfwC7FsApTHT6duN0
+	hMdLBkXJxBgWwIJ1oWNRKAAIM2UY=
+X-Gm-Gg: ASbGnctAdqj6YYAuMh7nXh7G+mBEWlVrMSA0GUeksabrakRiJOj6cH8WW1FyUcoU1+E
+	8L41JwwYs6LgNIrKsPWvyN6UZrTYZtdoU18gQZtXaa5rSnpFDqOaHbeIUZGV0xMJ41I/Mx7GGCh
+	GvgC5Yo4ZidkzjZn3FA+Pr9UO8
+X-Google-Smtp-Source: AGHT+IHATNylw+gsEglZW+PXGiyYbRxUfbKIQGJtdl+fH3JTfXNCfGYjHvngrOpvTsOSzlZ94tSCZQ+ubU8QCVnzCek=
+X-Received: by 2002:a05:690c:7512:b0:6fd:4473:5184 with SMTP id
+ 00721157ae682-700bad025bcmr232347107b3.35.1742931315686; Tue, 25 Mar 2025
+ 12:35:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250320185238.447458-1-jim.cromie@gmail.com> <20250320185238.447458-48-jim.cromie@gmail.com>
+ <bec1c938-aafa-49cb-b173-5b876f77779f@bootlin.com>
+In-Reply-To: <bec1c938-aafa-49cb-b173-5b876f77779f@bootlin.com>
+From: jim.cromie@gmail.com
+Date: Tue, 25 Mar 2025 13:34:49 -0600
+X-Gm-Features: AQ5f1Jqa1QuPUv1TyJbyyX5GCLsktpgCTY8YYNpeF7kzWCBGQI4AZHsFZX61b_g
+Message-ID: <CAJfuBxyR_x7tKUFZppXFA_dKFaXb9gTkGnZYfP5GGA7SnorScA@mail.gmail.com>
+Subject: Re: [PATCH v2 47/59] drm-dyndbg: add DRM_CLASSMAP_USE to bochs
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, intel-gfx-trybot@lists.freedesktop.org, 
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org, 
+	daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The variable Uptat uses CamelCase, which violates the kernel's coding
-style that mandates snake_case for variable names. This is a purely
-cosmetic change with no functional impact.
+On Mon, Mar 24, 2025 at 9:03=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
+n.com> wrote:
+>
+>
+>
+> Le 20/03/2025 =C3=A0 19:52, Jim Cromie a =C3=A9crit :
+> > tiny/bochs has 5 DRM_UT_* debugs, make them controllable when
+> > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy by telling dyndbg that the module has
+> > class'd debugs.
+> >
+> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+>
+> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>
+> > ---
+> >   drivers/gpu/drm/tiny/bochs.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.=
+c
+> > index 8706763af8fb..dbcc8ba70dfa 100644
+> > --- a/drivers/gpu/drm/tiny/bochs.c
+> > +++ b/drivers/gpu/drm/tiny/bochs.c
+> > @@ -59,6 +59,8 @@ static int bochs_modeset =3D -1;
+> >   static int defx =3D 1024;
+> >   static int defy =3D 768;
+> >
+> > +DRM_CLASSMAP_USE(drm_debug_classes);
+>
+> Do we need to add it for each driver that use drm_* print macros? Is it
+> reasonable to add this directly in drm_print.h, so there is no way to
+> miss this call if you use drm_* macros.
+>
 
-Compilation tested with:
-- checkpatch.pl --strict passed (no new warnings/errors).
+Yes, AFAIK.
+Ive tried to invoke declarators from a header,
+It never works out.
 
-Signed-off-by: Enrique Isidoro Vazquez Ramos <kike.correo99.f@gmail.com>
----
- drivers/thermal/amlogic_thermal.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+59/59 was an attempt to do it for everyone, but it falls down...
 
-diff --git a/drivers/thermal/amlogic_thermal.c b/drivers/thermal/amlogic_thermal.c
-index 3c5f7dbddf2c..5448d772db12 100644
---- a/drivers/thermal/amlogic_thermal.c
-+++ b/drivers/thermal/amlogic_thermal.c
-@@ -7,10 +7,10 @@
-  *
-  * Register value to celsius temperature formulas:
-  *	Read_Val	    m * U
-- * U = ---------, Uptat = ---------
-+ * U = ---------, uptat = ---------
-  *	2^16		  1 + n * U
-  *
-- * Temperature = A * ( Uptat + u_efuse / 2^16 )- B
-+ * Temperature = A * ( uptat + u_efuse / 2^16 )- B
-  *
-  *  A B m n : calibration parameters
-  *  u_efuse : fused calibration value, it's a signed 16 bits value
-@@ -112,7 +112,7 @@ static int amlogic_thermal_code_to_millicelsius(struct amlogic_thermal *pdata,
- 	const struct amlogic_thermal_soc_calib_data *param =
- 					pdata->data->calibration_parameters;
- 	int temp;
--	s64 factor, Uptat, uefuse;
-+	s64 factor, uptat, uefuse;
- 
- 	uefuse = pdata->trim_info & TSENSOR_TRIM_SIGN_MASK ?
- 			     ~(pdata->trim_info & TSENSOR_TRIM_TEMP_MASK) + 1 :
-@@ -121,12 +121,12 @@ static int amlogic_thermal_code_to_millicelsius(struct amlogic_thermal *pdata,
- 	factor = param->n * temp_code;
- 	factor = div_s64(factor, 100);
- 
--	Uptat = temp_code * param->m;
--	Uptat = div_s64(Uptat, 100);
--	Uptat = Uptat * BIT(16);
--	Uptat = div_s64(Uptat, BIT(16) + factor);
-+	uptat = temp_code * param->m;
-+	uptat = div_s64(uptat, 100);
-+	uptat = uptat * BIT(16);
-+	uptat = div_s64(uptat, BIT(16) + factor);
- 
--	temp = (Uptat + uefuse) * param->A;
-+	temp = (uptat + uefuse) * param->A;
- 	temp = div_s64(temp, BIT(16));
- 	temp = (temp - param->B) * 100;
- 
--- 
-2.39.5
-
+> >   module_param_named(modeset, bochs_modeset, int, 0444);
+> >   MODULE_PARM_DESC(modeset, "enable/disable kernel modesetting");
+> >
+>
+> --
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>
+>
 
