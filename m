@@ -1,301 +1,255 @@
-Return-Path: <linux-kernel+bounces-575615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2E6A704CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:18:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5BEA704DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A18F97A258B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5D4168618
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B531725C704;
-	Tue, 25 Mar 2025 15:18:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6021F4E4B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3D25BADA;
+	Tue, 25 Mar 2025 15:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jHwVaob/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706C31F4E4B;
+	Tue, 25 Mar 2025 15:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915891; cv=none; b=XBSM/cMQoXYO92GF92QmhZ/sxKH/llEtItg9QeJi+rQeA7FU4i9WA8WRJ/uZR+RH5KxtyeiddRScR4v/4TwkpU2ToCfjCMMkGvx6iYD9o7pkpdTFOZnXKfuNC4wzZtulVEv9et7XaAu7nqiN+5vX3miLFlJf9EHAEsAXmmYq5Cg=
+	t=1742915919; cv=none; b=KChBIKPfefEYNLrIpEK0an/muQpkgEVWd8GQgLc0XaiANVt4LoJk9QRz9DdPdjmWgwUUnDGlky6fjzK1f4txChnIZgfXGtllEHQmn4v69JidRoCXTf06PYsSgimfy2gEWKlmu0VjUzFKyfGZNqPUAcdmdWP0Vx05JRId/+ol9mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915891; c=relaxed/simple;
-	bh=zkoP0hulZMAR7wBmbrzGy8q5F/HEyYjX8+IcYsgCaxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMNFo7v60rw42GMwerL3F8LWrGRzx3snpobraA1vtmIeyxpCG/pJtFzEHDdmqqD4tTA2x2KjiU9X+NORZyhbJrbn1PpXeA2AVjyD1CQmUv2mZpFlaxqZKUJpDpNDTf0SvbBw2lOhB0SM0HrPBEv1LzuR4IjMaPtEYtckkaYL0Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 221C81756;
-	Tue, 25 Mar 2025 08:18:14 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C720B3F58B;
-	Tue, 25 Mar 2025 08:18:07 -0700 (PDT)
-Date: Tue, 25 Mar 2025 15:18:03 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] coresight: prevent deactivate active config while
- enabling the config
-Message-ID: <20250325151803.GD604566@e132581.arm.com>
-References: <20250324191740.64964-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1742915919; c=relaxed/simple;
+	bh=Xip6hkelY2h/lK6tFQymAS6rSo2DEWd0lKjvZ0e3Hcc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lAkIUHafPh30T7x9RVTxPWgm3OarhUmQbqFyLagdAyNNtTHCH/vfSzztSBQ7a/9S8b6+MNkFViHXSPKaz5BWUimUueNDN6nFHkqJFtjQWkbCz2ag0mp8Ste0Sy70k42I3vGzU0QiKAWZ9O4vSqVFiltvWcgqBe9amVxbG7TEqaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jHwVaob/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742915917; x=1774451917;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Xip6hkelY2h/lK6tFQymAS6rSo2DEWd0lKjvZ0e3Hcc=;
+  b=jHwVaob/PLmlHfcbmN4RAiotEYGyh38e4s4tkNm+ldVRJtcvU14FME0J
+   hMiTYUat5FbfWr29Rsp8Rtkn0cfpRy+KFP51mlRCr0X95yrRw/QzxJ4co
+   JL1qBV17Q4K4tXs94OaaUiydclb5sTXKwNsft83a2Q33Oj3S5/Qd1IorP
+   lhLSuhasHyxl5K7ierzFIUDuYonY6U7uTK7Zj4s94XdyvSN8UyenHLbE9
+   u5QFIZWNlNzinkLWOjfcuYr+iMpZZoiC0uq+4z92OJ4/zlVzaCQ6SCrAc
+   x41Gpclv+G4D4vj3gi6uSS/cZgH6h59W5JFMGPqTaymgl+JYYeqzU/TRx
+   Q==;
+X-CSE-ConnectionGUID: 3WPlB1y3Qn+aPIgDpcYnFQ==
+X-CSE-MsgGUID: HYkUU9Q/RGqSpwkrziT/Mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="43403521"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="43403521"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:18:36 -0700
+X-CSE-ConnectionGUID: P3o4QEYDTAyJosVhLmbXQQ==
+X-CSE-MsgGUID: UYnuykAoQ6iH6quqPW0NuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="124878045"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:18:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 25 Mar 2025 17:18:29 +0200 (EET)
+To: Hans Zhang <18255117159@163.com>
+cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
+    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
+    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
+ finding the capabilities
+In-Reply-To: <de6ce71c-ba82-496e-9c72-7c9c61b37906@163.com>
+Message-ID: <ddabf340-a00f-75b1-2b6b-d9ab550a984f@linux.intel.com>
+References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-4-18255117159@163.com> <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com> <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com> <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
+ <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com> <26dcba54-93c1-dda4-c5e2-e324e9d50b09@linux.intel.com> <f2725090-e199-493d-9ae3-e807d65f647b@163.com> <de6ce71c-ba82-496e-9c72-7c9c61b37906@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324191740.64964-1-yeoreum.yun@arm.com>
+Content-Type: multipart/mixed; boundary="8323328-868479237-1742915909=:930"
 
-Hi Levi,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Mon, Mar 24, 2025 at 07:17:40PM +0000, Yeoreum Yun wrote:
-> While enable active config via cscfg_csdev_enable_active_config(),
-> active config could be deactivated via configfs' sysfs interface.
-> This could make UAF issue in below scenario:
-> 
-> CPU0                                          CPU1
-> (sysfs enable)                                load module
->                                               cscfg_load_config_sets()
->                                               activate config. // sysfs
->                                               (sys_active_cnt == 1)
-> ...
-> cscfg_csdev_enable_active_config()
->   lock(csdev->cscfg_csdev_lock)
->   // here load config activate by CPU1
->   unlock(csdev->cscfg_csdev_lock)
-> 
->                                               deactivate config // sysfs
->                                               (sys_activec_cnt == 0)
->                                               cscfg_unload_config_sets()
->                                               unload module
-> 
->   // access to config_desc which freed
->   // while unloading module.
->   cfs_csdev_enable_config
+--8323328-868479237-1742915909=:930
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-I am not sure if this flow can happen.  CoreSight configfs feature is
-integrated into the CoreSight core layer, and the other CoreSight
-modules are dependent on it.
+On Tue, 25 Mar 2025, Hans Zhang wrote:
+> On 2025/3/25 20:16, Hans Zhang wrote:
+> > > > > > > I'm really wondering why the read config function is provided
+> > > > > > > directly
+> > > > > > > as
+> > > > > > > an argument. Shouldn't struct pci_host_bridge have some ops t=
+hat
+> > > > > > > can
+> > > > > > > read
+> > > > > > > config so wouldn't it make much more sense to pass it and use=
+ the
+> > > > > > > func
+> > > > > > > from there? There seems to ops in pci_host_bridge that has re=
+ad(),
+> > > > > > > does
+> > > > > > > that work? If not, why?
+> > > > > > >=20
+> > > > > >=20
+> > > > > > No effect.
+> > > > >=20
+> > > > > I'm not sure what you meant?
+> > > > >=20
+> > > > > > Because we need to get the offset of the capability before PCIe
+> > > > > > enumerates the device.
+> > > > >=20
+> > > > > Is this to say it is needed before the struct pci_host_bridge is
+> > > > > created?
+> > > > >=20
+> > > > > > I originally added a separate find capability related
+> > > > > > function for CDNS in the following patch. It's also copied dire=
+ctly
+> > > > > > from
+> > > > > > DWC.
+> > > > > > Mani felt there was too much duplicate code and also suggested
+> > > > > > passing a
+> > > > > > callback function that could manipulate the registers of the ro=
+ot
+> > > > > > port of
+> > > > > > DWC
+> > > > > > or CDNS.
+> > > > >=20
+> > > > > I very much like the direction this patchset is moving (moving sh=
+ared
+> > > > > part of controllers code to core), I just feel this doesn't go fa=
+r
+> > > > > enough
+> > > > > when it's passing function pointer to the read function.
+> > > > >=20
+> > > > > I admit I've never written a controller driver so perhaps there's
+> > > > > something detail I lack knowledge of but I'd want to understand w=
+hy
+> > > > > struct pci_ops (which exists both in pci_host_bridge and pci_bus)
+> > > > > cannot
+> > > > > be used?
+> > > > >=20
+> > > >=20
+> > > >=20
+> > > > I don't know if the following code can make it clear to you.
+> > > >=20
+> > > > static const struct dw_pcie_host_ops qcom_pcie_dw_ops =3D {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0.host_init=C2=A0=C2=A0=C2=A0 =3D qcom_pcie_=
+host_init,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pcie->cfg->ops->post_init(pcie);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qcom_pcie_post_init_=
+2_3_3
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_=
+find_capability(pci, PCI_CAP_ID_EXP);
+> > > > };
+> > > >=20
+> > > > int dw_pcie_host_init(struct dw_pcie_rp *pp)
+> > > > =C2=A0=C2=A0 bridge =3D devm_pci_alloc_host_bridge(dev, 0);
+> > >=20
+> > > It does this almost immediately:
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 bridge->ops =3D &dw_pcie_ops;
+> > >=20
+> > > Can we like add some function into those ops such that the necessary =
+read
+> > > can be performed? Like .early_root_config_read or something like that=
+?
+> > >=20
+> > > Then the host bridge capability finder can input struct pci_host_brid=
+ge
+> > > *host_bridge and can do host_bridge->ops->early_root_cfg_read(host_br=
+idge,
+> > > ...). That would already be a big win over passing the read function
+> > > itself as a pointer.
+> > >=20
+> > > Hopefully having such a function in the ops would allow moving other
+> > > common controller driver functionality into PCI core as well as it wo=
+uld
+> > > abstract the per controller read function (for the time before everyt=
+hing
+> > > is fully instanciated).
+> > >=20
+> > > Is that a workable approach?
+> > >=20
+> >=20
+> > I'll try to add and test it in your way first.
+> >=20
+> > Another problem here is that I've seen some drivers invoke
+> > dw_pcie_find_*capability before if (pp->ops->init) {. When I confirm it=
+, or
+> > I'll see if I can cover all the issues.
+> >=20
+> > If I pass the test, I will provide the temporary patch here, please che=
+ck
+> > whether it is OK, and then submit the next version. If not, we'll discu=
+ss
+> > it.
+> >=20
+>=20
+> Hi Ilpo,
+>=20
+> Another question comes to mind:
+> If working in EP mode, devm_pci_alloc_host_bridge will not be executed an=
+d
+> there will be no struct pci_host_bridge.
+>=20
+> Don't know if you have anything to add?
 
-For example, if the ETM4x module is not removed, the kernel module
-management will natually prevent the CoreSight core module from being
-removed.
+Hi Hans,
 
-> To address this, use cscfg_config_desc's active_cnt as a reference count
-> which will be holded when
->     - activate the config.
->     - enable the activated config.
-> and put the module reference when config_active_cnt == 0.
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
-> Since v3:
->   - Remove enable arguments in cscfg_config_desc_get() (from Mike).
->   - https://lore.kernel.org/all/20250109171956.3535294-1-yeoreum.yun@arm.com/
-> ---
->  .../hwtracing/coresight/coresight-config.h    |  2 +-
->  .../coresight/coresight-etm4x-core.c          |  3 ++
->  .../hwtracing/coresight/coresight-syscfg.c    | 52 +++++++++++++------
->  3 files changed, 41 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-config.h b/drivers/hwtracing/coresight/coresight-config.h
-> index b9ebc9fcfb7f..90fd937d3bd8 100644
-> --- a/drivers/hwtracing/coresight/coresight-config.h
-> +++ b/drivers/hwtracing/coresight/coresight-config.h
-> @@ -228,7 +228,7 @@ struct cscfg_feature_csdev {
->   * @feats_csdev:references to the device features to enable.
->   */
->  struct cscfg_config_csdev {
-> -	const struct cscfg_config_desc *config_desc;
-> +	struct cscfg_config_desc *config_desc;
->  	struct coresight_device *csdev;
->  	bool enabled;
->  	struct list_head node;
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index e5972f16abff..ef96028fa56b 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1020,6 +1020,9 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
->  	smp_call_function_single(drvdata->cpu, etm4_disable_hw, drvdata, 1);
-> 
->  	raw_spin_unlock(&drvdata->spinlock);
-> +
-> +	cscfg_csdev_disable_active_config(csdev);
-> +
+No, I don't have further ideas at this point, sorry. It seems it isn't=20
+realistic without something more substantial that currently isn't there.
 
-In general, we need to split changes into several patches if each
-addresses a different issue.  From my understanding, the change above is
-to fix missing to disable config when disable Sysfs mode.
+This lack of way to have a generic way to read the config before the main=
+=20
+struct are instanciated by the PCI core seems to be the limitation that=20
+hinders sharing code between controller drivers and it would have been=20
+nice to address it.
 
-If so, could we use a seperate patch for this change?
+But please still make the capability list parsing code common, it should=20
+be relatively straightforward using a macro which can take different read=
+=20
+functions similar to read_poll_timeout. That will avoid at least some=20
+amount of code duplication.
 
->  	cpus_read_unlock();
-> 
->  	/*
-> diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
-> index a70c1454b410..6d8c212ad434 100644
-> --- a/drivers/hwtracing/coresight/coresight-syscfg.c
-> +++ b/drivers/hwtracing/coresight/coresight-syscfg.c
-> @@ -391,14 +391,17 @@ static void cscfg_owner_put(struct cscfg_load_owner_info *owner_info)
->  static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
->  {
->  	struct cscfg_config_csdev *config_csdev, *tmp;
-> +	unsigned long flags;
-> 
->  	if (list_empty(&csdev->config_csdev_list))
->  		return;
-> 
-> +	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+Thanks for trying to come up with a solution (or thinking enough to say=20
+it doesn't work)!
 
-I think we should use spinlock to guard the condition checking
-list_empty().
+> > Thank you very much for your advice.
+> >=20
+> > > > =C2=A0=C2=A0 if (pp->ops->host_init)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 pp->ops =3D &qcom_pcie_dw_ops;=C2=A0 // qc=
+om here needs to find capability
+> > > >=20
+> > > > =C2=A0=C2=A0 pci_host_probe(bridge); // pcie enumerate flow
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 pci_scan_root_bus_bridge(bridge);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci_register_host_bridge(bridg=
+e);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bus->ops =3D bridg=
+e->ops;=C2=A0=C2=A0 // Only pci bus ops can be used
+> > > >=20
+> > > >=20
+>=20
+> Best regards,
+> Hans
+>=20
 
-Here the race condition is the 'config_csdev_list' list and
-configurations on the list.  For atomicity, we should use lock to
-protect any operations on the list (read, add, delete, etc).
+--=20
+ i.
 
-A side topic, as here it adds locks for protecting 'config_csdev_list',
-I am wandering why we do not do the same thing for
-'feature_csdev_list' (See cscfg_remove_owned_csdev_features() and
-cscfg_get_feat_csdev()).
-
->  	list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
->  		if (config_csdev->config_desc->load_owner == load_owner)
->  			list_del(&config_csdev->node);
->  	}
-> +	raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
->  }
-> 
->  static void cscfg_remove_owned_csdev_features(struct coresight_device *csdev, void *load_owner)
-> @@ -867,6 +870,25 @@ void cscfg_csdev_reset_feats(struct coresight_device *csdev)
->  }
->  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
-> 
-> +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc)
-> +{
-> +	if (!atomic_fetch_inc(&config_desc->active_cnt)) {
-> +		/* must ensure that config cannot be unloaded in use */
-> +		if (unlikely(cscfg_owner_get(config_desc->load_owner))) {
-> +			atomic_dec(&config_desc->active_cnt);
-> +			return false;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void cscfg_config_desc_put(struct cscfg_config_desc *config_desc)
-> +{
-> +	if (!atomic_dec_return(&config_desc->active_cnt))
-> +		cscfg_owner_put(config_desc->load_owner);
-> +}
-> +
->  /*
->   * This activate configuration for either perf or sysfs. Perf can have multiple
->   * active configs, selected per event, sysfs is limited to one.
-> @@ -890,22 +912,17 @@ static int _cscfg_activate_config(unsigned long cfg_hash)
->  			if (config_desc->available == false)
->  				return -EBUSY;
-> 
-> -			/* must ensure that config cannot be unloaded in use */
-> -			err = cscfg_owner_get(config_desc->load_owner);
-> -			if (err)
-> +			if (!cscfg_config_desc_get(config_desc)) {
-> +				err = -EINVAL;
->  				break;
-> +			}
-> +
->  			/*
->  			 * increment the global active count - control changes to
->  			 * active configurations
->  			 */
->  			atomic_inc(&cscfg_mgr->sys_active_cnt);
-
-Seems to me, it is more reasonable to use 'sys_active_cnt' to acquire
-the module reference instead of 'config_desc->active_cnt'.  The reason
-is 'sys_active_cnt' is a global counter.
-
-> -			/*
-> -			 * mark the descriptor as active so enable config on a
-> -			 * device instance will use it
-> -			 */
-> -			atomic_inc(&config_desc->active_cnt);
-> -
->  			err = 0;
->  			dev_dbg(cscfg_device(), "Activate config %s.\n", config_desc->name);
->  			break;
-> @@ -920,9 +937,8 @@ static void _cscfg_deactivate_config(unsigned long cfg_hash)
-> 
->  	list_for_each_entry(config_desc, &cscfg_mgr->config_desc_list, item) {
->  		if ((unsigned long)config_desc->event_ea->var == cfg_hash) {
-> -			atomic_dec(&config_desc->active_cnt);
->  			atomic_dec(&cscfg_mgr->sys_active_cnt);
-> -			cscfg_owner_put(config_desc->load_owner);
-> +			cscfg_config_desc_put(config_desc);
->  			dev_dbg(cscfg_device(), "Deactivate config %s.\n", config_desc->name);
->  			break;
->  		}
-> @@ -1047,7 +1063,7 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
->  				     unsigned long cfg_hash, int preset)
->  {
->  	struct cscfg_config_csdev *config_csdev_active = NULL, *config_csdev_item;
-> -	const struct cscfg_config_desc *config_desc;
-> +	struct cscfg_config_desc *config_desc;
->  	unsigned long flags;
->  	int err = 0;
-> 
-> @@ -1062,8 +1078,8 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
->  	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
->  	list_for_each_entry(config_csdev_item, &csdev->config_csdev_list, node) {
->  		config_desc = config_csdev_item->config_desc;
-> -		if ((atomic_read(&config_desc->active_cnt)) &&
-> -		    ((unsigned long)config_desc->event_ea->var == cfg_hash)) {
-> +		if (((unsigned long)config_desc->event_ea->var == cfg_hash) &&
-> +				cscfg_config_desc_get(config_desc)) {
-
-This seems to me not right.  Why a config descriptor is get in multiple
-places?  One time getting a config descriptor is in
-_cscfg_activate_config(), another is at here.
-
-To be honest, I am not clear what is the difference between 'activate'
-config and 'enable active' config.  Literally, I think we only need to
-acquire the config at its creating phase (maybe match to activate
-config?).
-
->  			config_csdev_active = config_csdev_item;
->  			csdev->active_cscfg_ctxt = (void *)config_csdev_active;
->  			break;
-> @@ -1097,7 +1113,11 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
->  				err = -EBUSY;
->  			raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
->  		}
-> +
-> +		if (err)
-> +			cscfg_config_desc_put(config_desc);
->  	}
-> +
->  	return err;
->  }
->  EXPORT_SYMBOL_GPL(cscfg_csdev_enable_active_config);
-> @@ -1136,8 +1156,10 @@ void cscfg_csdev_disable_active_config(struct coresight_device *csdev)
->  	raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
-> 
->  	/* true if there was an enabled active config */
-> -	if (config_csdev)
-> +	if (config_csdev) {
->  		cscfg_csdev_disable_config(config_csdev);
-> +		cscfg_config_desc_put(config_csdev->config_desc);
-> +	}
->  }
->  EXPORT_SYMBOL_GPL(cscfg_csdev_disable_active_config);
-> 
-> --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
+--8323328-868479237-1742915909=:930--
 
