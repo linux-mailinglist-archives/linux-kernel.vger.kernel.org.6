@@ -1,155 +1,195 @@
-Return-Path: <linux-kernel+bounces-574890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00DBA6EB2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEEA6EB18
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E641890FA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:12:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C8D18891D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F09D207E08;
-	Tue, 25 Mar 2025 08:12:04 +0000 (UTC)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BA91F03E1;
+	Tue, 25 Mar 2025 08:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0OlD6aa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58DD1A5B89;
-	Tue, 25 Mar 2025 08:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B1F1A5B9B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890323; cv=none; b=ZpWN2UI48qcAt9Ofqub5+6HFPHncZ6Arvd6UBdpZ44YuL2nbe+eL5GY0baOLDQQAqU2+DX1KOw3nloQngoYDGXDo6BTwP6h0wgPG3VSPabUxpgwiBMWDDcdAQKOKSUZXtCFeFqDEOKeN/V/vZIllVhLmpXquSbhgxWcopIyZ/Ig=
+	t=1742890016; cv=none; b=S5AKgGPr2fgxF7Pxr1fbIWLDqF1axWc2wgvU3h3fcfOhChsPTYF1e+93TGjZvNce355YQAEJ3PmSw3N/mwSZgwcyq5FzzdPlDsL+kt1aN1wzrjx1a0FsjaWfzHY+b1dz4pK1SS5nkVh+H6nwJbd9T8GpK9TK/mAMDpEpSqluT9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890323; c=relaxed/simple;
-	bh=l3pgQA1U4vKTNf/KxkOtihkRRMDf1d1IdFUh6Y4HDO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLYu0jEP6ObqdYkvNy6Q8zvyNfKHguBM/KpHU94k9GdvAZjnjBCcP63I0o+bwGqYthdOBiZLwxDlR3Q/X9PsKVuwzjZjdtRF9a6bOebe/JXba8V3vo7QiXtjDZmpiYTh2nAdo7J10vwxSrQq8seTOD2XxbO2m/RM0N6aycV2Ga8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-474f0c1e1c6so81469161cf.1;
-        Tue, 25 Mar 2025 01:12:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742890320; x=1743495120;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ZC0G6MVz9EIHwJ/4QeHnpY6DgPswOWy+fhpxGY/Dqk=;
-        b=esD6r3dCfCCrZ7lGCP6tBOZoZ94O5w7ufJBNwyTrAMLwqeDTpDqT+472hNc9MOcDCE
-         2n+nzDtGrkdBeVlmAbEfv9wUISjYuaIsfIK+V071FttbhsNt4zqWHSVaiaW+ViPIL68R
-         D0KUSbAec8MHIBXOPG3PdyoCtp7HXVturLHZyZR0yPTRlnK38czfXm9l4XxImwMlryBl
-         lmMElq1Mr7gv0rag2mkYzSCoshxVSgi8kvCF244sGcDx0WLinDIMiLrXiKkgR3lIPWlf
-         plr4FdqlD7MTkpG62D5oI/SOnnw0GrI9yu9olGjrq21BXVVYh9tTqlNKznNijcQY26Pp
-         jP6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVvOuGAR0GgUHUKVxqoTgu9IsgXdjrUbSThu7s8SJlOYF/Qnp2kSHGE4Upth5IcyZvgLpkFybvdjc=@vger.kernel.org, AJvYcCVijNCbH65JH+ME6aId0EPCw+P97hQwzcwnkotgkX6ewbgyflX75TIPJv7tKaxHEA+b1VWNoNfVbHmPiQfdiAkW@vger.kernel.org, AJvYcCWV84DJFX5NlI3BKvJmMITpIZRtNGUsThFXLkevsP/xXgjHGO0FE8oj4QiFAACvASUHbRG6e+ZF1GIvOo9OUpGzZrTd@vger.kernel.org, AJvYcCXXxfISxwL0Q0fRm3/MKBikJiBgrUyumjbkixzXBLaWmQtjyyojGLzRhVoeQO7dXKaCCNPaHm5pWwMCghDi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxshZfS2oE0fIQlKNnkn57g+qCykK1R8WIVTnlZ6wmebgXNkdOR
-	JEyprjlP2bPokexnO822vbKkcSHCOXWpIB1fC05X/EWjRt9WBSpIFDkuaHQ+
-X-Gm-Gg: ASbGncv4+JrXwiM/Lmz8JSLrzpV/GAQrd2nPYAeUjkI09nZX29uJCjWx7nqt7LIRt3p
-	D7WQj29CriY22oc/E9dHasWoG8jLicR/T3jUt3MXgnCQ1NZxI36fpVw9fEfhm/QD//8Ni0lYwDT
-	UYF9mDVtZOnS3B2K9qWsQN5JXYe5Zen7J6h56yM8zGbKW3gZ3DRklF/OtH2V8y8fmSjPNgaNm/5
-	n/73Uj9XjSzgdcGw5YQXSFZOa2WgT7Z+CoAvC/VccTJM60XYSCS1QKp6REF4TrCJoUhoHZzOiWm
-	dv3MscQYXpJk1DKy7RpC41B9Xuy3QaLnh19q/nQntHNm2t0z/mU+leyjIZ/siIdaDh1G3V/Fpox
-	gwLzUwo4oA6E=
-X-Google-Smtp-Source: AGHT+IHRuYBdgv5CMYIjs0GWcwd0bsBW/6PeQyINMZ+bSfilx4dZBJ1dVxL8R5V3KYfbWDW4Zckcrg==
-X-Received: by 2002:a05:6214:f62:b0:6d4:1680:612d with SMTP id 6a1803df08f44-6eb3f1a731bmr234175116d6.0.1742890320257;
-        Tue, 25 Mar 2025 01:12:00 -0700 (PDT)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3ef0efd9sm54173736d6.11.2025.03.25.01.11.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 01:12:00 -0700 (PDT)
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c54b651310so810212485a.0;
-        Tue, 25 Mar 2025 01:11:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1V22TBGt0T1NkQmeL2wLhr2iq4DfHy8jrUIqM8KobF1As4PMNGKfQByaRGWe+z8gJsFRL9hU6vjlgRr4YXgug@vger.kernel.org, AJvYcCW+cNo86oSHm8ACu7lM9tDRFtNO4MCz5UQPtA2QshYkksT+sTgleO0qJr8pIFb2OOdFyrEyaZjH85IT6/sB@vger.kernel.org, AJvYcCWRkhrlzTB85NNdk9mmr4b/6dm9Ie0wmZZNxiuLPK49S53B+ozDb+I8wzFJDLBBw9Ploc9WjCoI6KRfvR3RclgEaNZp@vger.kernel.org, AJvYcCXp2r9VHiZuppe6rkoXeYJ80itSiktOJRbsNUI55o+e+tSrbDyuQTvAKhWtqwAuBcf8+Kz/5YdNlic=@vger.kernel.org
-X-Received: by 2002:a05:6102:5241:b0:4c4:dead:59a3 with SMTP id
- ada2fe7eead31-4c50d496a1cmr12372942137.2.1742889884357; Tue, 25 Mar 2025
- 01:04:44 -0700 (PDT)
+	s=arc-20240116; t=1742890016; c=relaxed/simple;
+	bh=d1/jH92hinFbeqB+glZ2Uw1fPSGgDPmQEFNpJCOf8JY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hxS6N7HLd0r361Exq+/ADCDLPulWV61889Agsv20ggqtUbLb//ncl89IFoYhQSbKpBUU/uyB8Uhpw+u1XToV6KwViTng5cHeJPNAS07/7YBn/gtBDkQE5ahT6gCzVGTyzHBNotCgO0ayss8L/tdut0SITIqR4NYmYYFq+XCiI/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0OlD6aa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62576C4CEE4;
+	Tue, 25 Mar 2025 08:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742890015;
+	bh=d1/jH92hinFbeqB+glZ2Uw1fPSGgDPmQEFNpJCOf8JY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O0OlD6aaJhUCv1SQ835KWyeuPRRXoytUKVSY79g1wore4dFkCnCV8AvFZp0zyFAlp
+	 VpjZUJL1hoXUXq6nYebTgbGST+z3zYtGNj6Y2L6fkRItn3M74lxxI2x+RqT9XGIjlQ
+	 26yKYDgkUokrqPFRkXyxrGbDQDhKNEzTH29B+WN8o5uLbNKpRxBbizDSZCKdJN9M9F
+	 1pgTMd67peHn8gekSMgbYXi9pjR/kjhejYsuzsyiw6KEl3DLYBfP02iw6BKpLXi4/w
+	 r8yZOHgmY/GqrOuJC6qa81n+QTt1HFBn2mJSZoe/FAcgg/H5EItVJ6gBNlNdh8zBKR
+	 hv+TIyUei7I9w==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH v2 1/2] f2fs: zone: fix to calculate first_zoned_segno correctly
+Date: Tue, 25 Mar 2025 16:06:45 +0800
+Message-ID: <20250325080646.3291947-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219153938.24966-1-boqun.feng@gmail.com> <20250219153938.24966-11-boqun.feng@gmail.com>
-In-Reply-To: <20250219153938.24966-11-boqun.feng@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Mar 2025 09:04:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JoE7ZunbEn2lIWdcQ0LTcplBdC2QyWAfIuaecNnkHmcPWNAR1fB65H0kiQ
-Message-ID: <CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com>
-Subject: Re: [PATCH rcu 10/11] srcu: Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing
-To: Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Shuah Khan <shuah@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Huth <thuth@redhat.com>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Yury Norov <yury.norov@gmail.com>, Valentin Schneider <vschneid@redhat.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Boqun, Paul,
+A zoned device can has both conventional zones and sequential zones,
+so we should not treat first segment of zoned device as first_zoned_segno,
+instead, we need to check zone type for each zone during traversing zoned
+device to find first_zoned_segno.
 
-On Wed, 19 Feb 2025 at 16:44, Boqun Feng <boqun.feng@gmail.com> wrote:
-> From: "Paul E. McKenney" <paulmck@kernel.org>
->
-> The srcu_read_lock_nmisafe() and srcu_read_unlock_nmisafe() functions
-> map to __srcu_read_lock() and __srcu_read_unlock() on systems like x86
-> that have NMI-safe this_cpu_inc() operations.  This makes the underlying
-> __srcu_read_lock_nmisafe() and __srcu_read_unlock_nmisafe() functions
-> difficult to test on (for example) x86 systems, allowing bugs to creep in.
->
-> This commit therefore creates a FORCE_NEED_SRCU_NMI_SAFE Kconfig that
-> forces those underlying functions to be used even on systems where they
-> are not needed, thus providing better testing coverage.
->
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Otherwise, for below case, first_zoned_segno will be 0, which could be
+wrong.
 
-Thanks for your patch, which is now commit 536e8b9b80bc7a0a ("srcu:
-Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing") in linus/master
+create_null_blk 512 2 1024 1024
+mkfs.f2fs -m /dev/nullb0
 
-> --- a/kernel/rcu/Kconfig
-> +++ b/kernel/rcu/Kconfig
-> @@ -65,6 +65,17 @@ config TREE_SRCU
->         help
->           This option selects the full-fledged version of SRCU.
->
-> +config FORCE_NEED_SRCU_NMI_SAFE
-> +       bool "Force selection of NEED_SRCU_NMI_SAFE"
+Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
+Cc: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- traverse w/ zone unit in get_first_zoned_segno()
+ fs/f2fs/f2fs.h    | 18 +++++++++++++-----
+ fs/f2fs/segment.c |  2 +-
+ fs/f2fs/super.c   | 37 +++++++++++++++++++++++++++++++++----
+ 3 files changed, 47 insertions(+), 10 deletions(-)
 
-What am I supposed to answer here? "n" I guess.
-What about distro and allmodconfig kernels?
-
-> +       depends on !TINY_SRCU
-> +       select NEED_SRCU_NMI_SAFE
-> +       default n
-> +       help
-> +         This option forces selection of the NEED_SRCU_NMI_SAFE
-> +         Kconfig option, allowing testing of srcu_read_lock_nmisafe()
-> +         and srcu_read_unlock_nmisafe() on architectures (like x86)
-> +         that select the ARCH_HAS_NMI_SAFE_THIS_CPU_OPS Kconfig option.
-
-Perhaps this should depend on ARCH_HAS_NMI_SAFE_THIS_CPU_OPS?
-
-> +
->  config NEED_SRCU_NMI_SAFE
->         def_bool HAVE_NMI && !ARCH_HAS_NMI_SAFE_THIS_CPU_OPS && !TINY_SRCU
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ca884e39a5ff..3dea037faa55 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -4630,12 +4630,16 @@ F2FS_FEATURE_FUNCS(readonly, RO);
+ F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+-				    block_t blkaddr)
++static inline bool f2fs_zone_is_seq(struct f2fs_sb_info *sbi, int devi,
++							unsigned int zone)
+ {
+-	unsigned int zno = blkaddr / sbi->blocks_per_blkz;
++	return test_bit(zone, FDEV(devi).blkz_seq);
++}
+ 
+-	return test_bit(zno, FDEV(devi).blkz_seq);
++static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
++								block_t blkaddr)
++{
++	return f2fs_zone_is_seq(sbi, devi, blkaddr / sbi->blocks_per_blkz);
+ }
+ #endif
+ 
+@@ -4711,9 +4715,13 @@ static inline bool f2fs_valid_pinned_area(struct f2fs_sb_info *sbi,
+ 					  block_t blkaddr)
+ {
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
++#ifdef CONFIG_BLK_DEV_ZONED
+ 		int devi = f2fs_target_device_index(sbi, blkaddr);
+ 
+-		return !bdev_is_zoned(FDEV(devi).bdev);
++		return !f2fs_blkz_is_seq(sbi, devi, blkaddr);
++#else
++		return true;
++#endif
+ 	}
+ 	return true;
+ }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 396ef71f41e3..dc360b4b0569 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3311,7 +3311,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
+ 
+ 	if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
+ 		f2fs_down_write(&sbi->gc_lock);
+-		err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk),
++		err = f2fs_gc_range(sbi, 0, sbi->first_zoned_segno - 1,
+ 				true, ZONED_PIN_SEC_REQUIRED_COUNT);
+ 		f2fs_up_write(&sbi->gc_lock);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 011925ee54f8..9a42a1323f42 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4307,12 +4307,33 @@ static void f2fs_record_error_work(struct work_struct *work)
+ 
+ static inline unsigned int get_first_zoned_segno(struct f2fs_sb_info *sbi)
+ {
++#ifdef CONFIG_BLK_DEV_ZONED
++	unsigned int zoneno, total_zones;
+ 	int devi;
+ 
+-	for (devi = 0; devi < sbi->s_ndevs; devi++)
+-		if (bdev_is_zoned(FDEV(devi).bdev))
+-			return GET_SEGNO(sbi, FDEV(devi).start_blk);
+-	return 0;
++	if (!f2fs_sb_has_blkzoned(sbi))
++		return NULL_SEGNO;
++
++	for (devi = 0; devi < sbi->s_ndevs; devi++) {
++		if (!bdev_is_zoned(FDEV(devi).bdev))
++			continue;
++
++		total_zones = GET_ZONE_FROM_SEG(sbi, FDEV(devi).total_segments);
++
++		for (zoneno = 0; zoneno < total_zones; zoneno++) {
++			unsigned int segs, blks;
++
++			if (!f2fs_zone_is_seq(sbi, devi, zoneno))
++				continue;
++
++			segs = GET_SEG_FROM_SEC(sbi,
++					zoneno * sbi->secs_per_zone);
++			blks = SEGS_TO_BLKS(sbi, segs);
++			return GET_SEGNO(sbi, FDEV(devi).start_blk + blks);
++		}
++	}
++#endif
++	return NULL_SEGNO;
+ }
+ 
+ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+@@ -4349,6 +4370,14 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
++		if (max_devices == 1) {
++			FDEV(i).total_segments =
++				le32_to_cpu(raw_super->segment_count_main);
++			FDEV(i).start_blk = 0;
++			FDEV(i).end_blk = FDEV(i).total_segments *
++						BLKS_PER_SEG(sbi);
++		}
++
+ 		if (i == 0)
+ 			FDEV(0).bdev_file = sbi->sb->s_bdev_file;
+ 		else if (!RDEV(i).path[0])
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.48.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
