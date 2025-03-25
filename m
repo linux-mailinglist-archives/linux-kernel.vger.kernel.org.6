@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-575816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1FEA70786
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:59:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B28A7078E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53628169B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CDF3A8F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830A425F7A0;
-	Tue, 25 Mar 2025 16:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199B325F7A2;
+	Tue, 25 Mar 2025 16:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cas0BCBQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gvfwj1bg"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFVVbQyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B301547C3;
-	Tue, 25 Mar 2025 16:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691881547C3;
+	Tue, 25 Mar 2025 16:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742921979; cv=none; b=WgrBXQZTJfQDCZGKgk3FPLFP28eTxfZAT6YeYVoCPUVayrKncYdHZQTZL8ownQIkH6sLlxOKipBONdXo7IzXxzt7FZ08FN2cXlvGZxSJOiVpzwc9YDcWd68sbMu1Irb4OZ6j9nQCIqtNPy/ea2mgtHo2Mj8QsBCFqoyjfhBrHpM=
+	t=1742921992; cv=none; b=GHkESm8EBuFD7QZe9ErBKuafS3XOsjayCRlItog4KmwE44ITkhEjvPD0r5wVvDkuITuv+udb1Vw7Uy+Gkk/uDjxOL2JikLfAs32th4PJeOLiSVEgyl8DfFUXIDbTJmuh0g7X4lJyyIMteADJZ4qkqvnWbkUyyE/1ZUEuY3PfETc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742921979; c=relaxed/simple;
-	bh=4W3BIyRaHFe7PrPpyfwCQpUYd2ckXMij+VhkaR9rlRg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bhEylzo2yb4uMkSavKE22T6TSmOGZOOAbyNkKq51nUFDl7Mm5zRoX9ngNYYDJOfHn+ASlv+QGpWmKOu7wuMX3nneAcfbG9kJJXWEyRSpC/YmIpGRoNzB/2I2cRx7k4Oev66bjYQ7XW6Vgr9+NQui5JCsncPOk00lVN6nN66dNVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cas0BCBQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gvfwj1bg; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 40FF111401BA;
-	Tue, 25 Mar 2025 12:59:36 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Tue, 25 Mar 2025 12:59:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742921976;
-	 x=1743008376; bh=1kZo2dIkUctXPOLQlyuKriYib5RXb/4Fue46r1qeads=; b=
-	cas0BCBQftI1df3SZtZgrE0YSKFUoiJyXMQOZvaybeuvTrAn5y0BQdOii8p8E5Lo
-	Wy5wBLqr2saZP0030woUFSD1unTwp0GIwLS+gZ3LUiX+wzg1hloTmoTEy5NQKBrt
-	TLO5cvQh1XEOMZVWFkDbE0udFUT2AtDf2/m8OYtF0uuj6Huj20IwBagVLIPvRrcy
-	Z02qCi9bgS0s969pxMrXdpOr0ItgzsL+cch0ZQ4bR2Lv837ZKYxzuJiKc6Wh5kvN
-	yik/O/ciR6CKkpfyuBhVhYnHKsYnSySSvKtyhjAiZ+OXt+k8AV4Gn47IVrFSA3tv
-	DCyb8CSiQOMvyo+ZxlaxmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742921976; x=
-	1743008376; bh=1kZo2dIkUctXPOLQlyuKriYib5RXb/4Fue46r1qeads=; b=g
-	vfwj1bgtD3IXFawdKt9BBjcBjjtWJYms8t2QHBDDqLYUMAfzg1W8pwXNfc3jTXTh
-	RN76OFW3TqT6JTBwOPyijrPF2cTAZ61zQmRA4tycyAh6fxupY1jx5juG+TdS/k0Y
-	XY3Pki1aukDuffzt/yXm8sQa+/4byAii8Ut2YThF3EiZ9MSXdzAxxd64h3DLJl7u
-	FplSAPUWx+xkqyO06TlSSfDsipc1FLAn+mIfYLSplT/NWqNjLmiDRKiWn4Tun3kE
-	VMJV3FlU1uyWX8e/GOw1ULhDcJ3F0ZMzU5gRgA26AhFANYlEXiU/ngs7XEsqgFI+
-	EfvE1kpYpUNgAXK9sCLcw==
-X-ME-Sender: <xms:9-DiZxg08AyG8NQJG_o8Xk3DBrrx3Pw16TSkR8-tc1XrxE30DhysZA>
-    <xme:9-DiZ2DaKW-U94kxMtFazEIvd6UgUYctMBmcXRiaHOmJxIv-8_CaLVtXJ-wp5kQrA
-    xC3cuEJw5bgdEEZktc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieefudelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedv
-    vdegjedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughvhihukhhovhesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepvghlvhgvrhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhgrshgrnhdquggvvh
-    esghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrtghh
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:9-DiZxGT5HYiuXiurSrrYEElDS_5tE8daS5nTZe49bbPi4HvVLsePQ>
-    <xmx:9-DiZ2RQA5Lw5HAPc-QXlWJC5cLJfg920U1ceCsi5scu-fqOlefSRQ>
-    <xmx:9-DiZ-zWFjamXMMJ6ZN1uRs0CufpBX1dXFiiibdgfHzQl7Oiu7PjXw>
-    <xmx:9-DiZ84mSNf77RxbnO4xkODeSzNv2MOseFCKbeGE3YwKfWoZCFT71g>
-    <xmx:-ODiZ1oUaxOfKSLrcy47mz1kvH3WB-AvHtxfzNnliw2F8e4BWFi7cM5o>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C90822220072; Tue, 25 Mar 2025 12:59:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742921992; c=relaxed/simple;
+	bh=TvuNV6wKnM0OfxGqgTXqnI3weghrkbXm3vheYinYnSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g9h5FjpcXtrkoyLJICC5l2NhDXz4x2RnFAswk6bVca0rTChMbDtFm8J2+8Z4pG1NIv+EZfD4wlP56vGoHif+yA1xanvXucznUuC6NUQ9XqX+L8bezKtyzp5qhi35QBWoy8w9Z4+J9OMfsQSEamdm6nOSUg2Grw9CbXDgbsLKcXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFVVbQyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3D7C4CEEE;
+	Tue, 25 Mar 2025 16:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742921991;
+	bh=TvuNV6wKnM0OfxGqgTXqnI3weghrkbXm3vheYinYnSo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YFVVbQywsW5HNlyalHgO9qClrVkGoea6T0cK2kb5qUUVpe4UtcD9OyNQn6GwOgc5w
+	 KZ8BMeg0b7/tvTrwSDzjfI1Ed032SMtEnzc9fOLAPFdop7qmCP8sSyNwaKMGOc4vLo
+	 oSkxiOYuOWTWfokEJSKFO8iwmMySncVMfoAelcg0P2dwbDfGY4KiXxl5iHBFc6s4s2
+	 Y7EDJ2VQCiOLAqsTOB/o8OZDXetwGLr81fylaTLzkmS00VnhDSUVmDYEfAQO5MmCBG
+	 5EPXANUu1uwCWXhtjtqO0kvPsAz79cXMlwIl5/DkF90xU+fPzau807rfYYw9AUqj8m
+	 tdMTQsVpdgHgQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30beedb99c9so56167421fa.3;
+        Tue, 25 Mar 2025 09:59:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVK41/zb3BtwsltTb13N6+RBpi2+3vv6ru4Em3O3/o04+6E9H3IjlQiNP+OE8EtC6Q3fYLvON41BVAEkGdf@vger.kernel.org, AJvYcCWgNsrgeKWiFyyWZE1Z8YFBtP+X7vKOHuMVTJP6cId1Ybhjv2ZGrJoN/TaZulqsBlcu2b3cGQZN82N0Vv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcWUTjdnPY2HVQ1jz2uvtkZ7YH8gffaQUF6Q98tMV0HPs0OoG6
+	qk16bblvmQ2Umd3p2JSSHS4mDVtvPpm2biwmjeMHJSzpNH4Gzqn0EPweqc81p7pVrDu/pSPCG7Q
+	/Zf2yPchrL8uMm4GkiJ7tuqGL5LA=
+X-Google-Smtp-Source: AGHT+IF0mLfYg906NjEtDJUBzhsSCFQvlfBVJeusa824a/YnxCdYXhYU64I5Kq9m2fk2SN5sjC3u2ZaN/0XMxdCr5QM=
+X-Received: by 2002:a05:651c:19a7:b0:30b:b00f:9507 with SMTP id
+ 38308e7fff4ca-30d7e2aaca1mr70115571fa.24.1742921990190; Tue, 25 Mar 2025
+ 09:59:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T022a60d36d02d9f7
-Date: Tue, 25 Mar 2025 17:59:14 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jann Horn" <jannh@google.com>, "Marco Elver" <elver@google.com>
-Cc: "Dmitry Vyukov" <dvyukov@google.com>, kasan-dev@googlegroups.com,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <fbd8d426-e45f-4f2e-b201-20b8396b20f9@app.fastmail.com>
-In-Reply-To: 
- <CAG48ez2eECk+iU759BhPLrDJrGcBPT2dkAZg_O_c1fdD+HsifQ@mail.gmail.com>
-References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
- <26df580c-b2cc-4bb0-b15b-4e9b74897ff0@app.fastmail.com>
- <CANpmjNMGr8-r_uPRMhwBGX42hbV+pavL7n1+zyBK167ZT7=nmA@mail.gmail.com>
- <CAG48ez2eECk+iU759BhPLrDJrGcBPT2dkAZg_O_c1fdD+HsifQ@mail.gmail.com>
-Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <ZOxnTFhchkTvKpZV@gondor.apana.org.au> <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au> <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
+ <ZkGN64ulwzPVvn6-@gondor.apana.org.au> <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
+ <ZuetBbpfq5X8BAwn@gondor.apana.org.au> <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
+ <Z5Ijqi4uSDU9noZm@gondor.apana.org.au> <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au> <20250325152541.GA1661@sol.localdomain>
+In-Reply-To: <20250325152541.GA1661@sol.localdomain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 25 Mar 2025 17:59:39 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFM29ZM5ncyZLrAbX35V7y8=C-n8KT0y1SZhafK_+5aHg@mail.gmail.com>
+X-Gm-Features: AQ5f1JqtBqIc34Ji6-nObeR0Ug-BwTZ3CpgACCZqe_azCWAm-c_PGc92djp7YpQ
+Message-ID: <CAMj1kXFM29ZM5ncyZLrAbX35V7y8=C-n8KT0y1SZhafK_+5aHg@mail.gmail.com>
+Subject: Re: [GIT PULL] Crypto Update for 6.15
+To: Eric Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 25, 2025, at 17:36, Jann Horn wrote:
-> On Tue, Mar 25, 2025 at 5:31=E2=80=AFPM Marco Elver <elver@google.com>=
- wrote:
->> On Tue, 25 Mar 2025 at 17:06, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Tue, Mar 25, 2025, at 17:01, Jann Horn wrote:
->> > > Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer inf=
-rastructure")
->> > > Signed-off-by: Jann Horn <jannh@google.com>
-> [...]
->> I have nothing pending yet. Unless you're very certain there'll be
->> more KCSAN patches,
+On Tue, 25 Mar 2025 at 16:25, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> No, I don't know yet whether I'll have more KCSAN patches for 6.15.
+> On Tue, Mar 25, 2025 at 01:53:28PM +0800, Herbert Xu wrote:
+> >
+> >       crypto: hash - Add request chaining API
 >
->> I'd suggest that Arnd can take it. I'm fine with
->> KCSAN-related patches that aren't strongly dependent on each other
->> outside kernel/kcsan to go through whichever tree is closest.
+> Herbert didn't mention that I have nacked this patch, which he is insisting on
+> pushing for some reason instead of my original version that is much better.
 >
-> Sounds good to me.
+> Let me reiterate why "request chaining" is a bad idea and is going to cause
+> problems.
+>
+> It makes it so that now a single hash request can now actually be a list of hash
+> requests.  It makes some of the crypto code operate on the whole list.  However,
+> most code still operates only on the first request in the list.  It's
+> undocumented and inconsistent which code is doing which, which is going to cause
+> bugs.  The first request in the list is also being treated specially in
+> undocumented ways, so submitting a list of requests is not necessarily
+> equivalent to submitting them all individually.  Another recipe for bugs.
+>
+> Each hash request can also contain an entire scatterlist.  It's overkill for
+> what is actually needed for multibuffer hashing, which is a simple API that
+> hashes two buffers specified by virtual address.  Herbert's API creates lots of
+> unnecessary edge cases, most of which lack any testing.  It continues many of
+> the worst practices of the crypto API that we *know* are not working, like
+> requiring per-request memory allocations and optimizing for legacy hardware
+> offload rather than the CPU-based crypto that almost everyone actually uses.
+>
+> In contrast, my patchset
+> https://lore.kernel.org/r/20250212154718.44255-1-ebiggers@kernel.org/ supports
+> multibuffer hashing in a much better way and has been ready for a year already.
+> It actually works; it has a smaller diffstat; it is faster; it has a much
+> simpler API; and it actually includes all needed pieces including x86 and arm64
+> support, dm-verity and fs-verity support, and full documentation and tests.
+>
+> I've been spending a lot of time fixing the kernel's crypto code over the years.
+> I'm not looking forward to having another set of major issues to fix.
+>
+> And this latest set of issues will be totally unnecessary.
+>
+> We can do better than this, especially for cryptography code.
+>
+> Nacked-by: Eric Biggers <ebiggers@kernel.org>
+>
 
-Applied, should be able send the PR tomorrow with the rest of
-my asm-generic changes.
+It's sad that it is coming to this, but I have to second Eric here:
+for CPU based crypto, the flexibility of Herbert's approach has no
+added value. SHA CPU instructions can be interleaved at the
+instruction level to get almost 2x speedup in some cases, and this
+works very well when operating on equal sized inputs. However,
+generalizing this to arbitrary request chains to accommodate async h/w
+offload introduces a lot of complexity for use cases that are only
+imaginary.
 
-     Arnd
+Given Eric's track record as a contributor to the crypto subsystem and
+as a maintainer of subsystems that are closely tied to it, I would
+expect Herbert to take his opinion more seriously, but it is just
+being ignored. Instead, a lightly tested alternative with no
+integration into existing users has been merged in its place, with
+very little input from the community.
+
+So Herbert, please withdraw this pull request, and work with Eric and
+the rest of us to converge on something that we can all get behind.
 
