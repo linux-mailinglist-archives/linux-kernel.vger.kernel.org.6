@@ -1,179 +1,301 @@
-Return-Path: <linux-kernel+bounces-575616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA109A704DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:21:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2E6A704CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CE11882C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:18:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A18F97A258B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE3525BADA;
-	Tue, 25 Mar 2025 15:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ofyL/OIc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE5E1F4E4B;
-	Tue, 25 Mar 2025 15:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B531725C704;
+	Tue, 25 Mar 2025 15:18:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6021F4E4B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915896; cv=none; b=TjkG6B0AAr+bBu2GT23r3nnI+wpZL2wrq2OHJK+evOBaDfFTpAf2Q9Ux4iTRrj7ym0s2q3utJUgrvyGdgwBHURWhABl3Thv+mBQF+4208ivR25URvvRYBknSohoBtPDIgPyLVTG9IkF5xnrvBXxHrW58B4WG/givmn+T+eZXZxI=
+	t=1742915891; cv=none; b=XBSM/cMQoXYO92GF92QmhZ/sxKH/llEtItg9QeJi+rQeA7FU4i9WA8WRJ/uZR+RH5KxtyeiddRScR4v/4TwkpU2ToCfjCMMkGvx6iYD9o7pkpdTFOZnXKfuNC4wzZtulVEv9et7XaAu7nqiN+5vX3miLFlJf9EHAEsAXmmYq5Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915896; c=relaxed/simple;
-	bh=7zq/CQC7TQPp6gi1tP1ro4BFZ88fGpzq1RD3fjNhW6o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cPsbUINlxLMnZuuFhYBq5Sv/YWdPitgjUfqyBjrJoGNRuxnWE53MgszK425PE32F14JzOSeLzK6+E9ErtC4hgTHLtj/6imYVNhu0AtKn73G/gR0+nLmIXbdGA88yxtvrJXB6L2oJoWyR9SEjTQsD39qYDqFnCGr4Jpk2CACB3q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ofyL/OIc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PEeu96027015;
-	Tue, 25 Mar 2025 15:17:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=POXX8n
-	qBEfdO/eqxbnBmny0LaPP4yz9sWD3d9Oar7FI=; b=ofyL/OIcmYxQR88RVL3G5J
-	bUQm0j3aqJRF7N/TaCaB7rsL0kv0BB++fHPUn4H4yGuoCdJuXTRi0UMCOKY2/wGC
-	IzF8u2eqePP63cteN+BzNrF7B2CdSALr4VG//nCpgr4r5Rdn/yCMhyhhFEnPHFxA
-	6I8BFZwSAEXOSXNersm9VK9ZIrzYDjYEaPgDCXZYVsBRBHL3e8YTh4OHj5mQ3CoC
-	+2MH/G671v2e2XmvslgKaBBZa7LNOuT+kj8ouUqTI+hruBMgZI0HFng94cWLeP2U
-	xeXpmmuSwF2xOZxJO+aVANb28Jt5NTUEd4CRhHA9l2rFhma7UiWERUeFqxVSw9Ug
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjwwfnh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 15:17:58 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52PFBSiu024807;
-	Tue, 25 Mar 2025 15:17:58 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjwwfna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 15:17:58 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52PBvQOv030325;
-	Tue, 25 Mar 2025 15:17:57 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htc62r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 15:17:57 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52PFHsYZ21889726
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Mar 2025 15:17:55 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9386B5805F;
-	Tue, 25 Mar 2025 15:17:56 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 97C9258053;
-	Tue, 25 Mar 2025 15:17:55 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.150.123])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 25 Mar 2025 15:17:55 +0000 (GMT)
-Message-ID: <5a1eb4d04d429bf636f781fc333cd4ccba2bdc0b.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 05/13] ima: select CRYPTO_SHA256 from Kconfig
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Stange <nstange@suse.de>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen
- <jarkko@kernel.org>,
-        James Bottomley
- <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 25 Mar 2025 11:17:55 -0400
-In-Reply-To: <20250323140911.226137-6-nstange@suse.de>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-6-nstange@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1742915891; c=relaxed/simple;
+	bh=zkoP0hulZMAR7wBmbrzGy8q5F/HEyYjX8+IcYsgCaxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMNFo7v60rw42GMwerL3F8LWrGRzx3snpobraA1vtmIeyxpCG/pJtFzEHDdmqqD4tTA2x2KjiU9X+NORZyhbJrbn1PpXeA2AVjyD1CQmUv2mZpFlaxqZKUJpDpNDTf0SvbBw2lOhB0SM0HrPBEv1LzuR4IjMaPtEYtckkaYL0Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 221C81756;
+	Tue, 25 Mar 2025 08:18:14 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C720B3F58B;
+	Tue, 25 Mar 2025 08:18:07 -0700 (PDT)
+Date: Tue, 25 Mar 2025 15:18:03 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: suzuki.poulose@arm.com, mike.leach@linaro.org, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] coresight: prevent deactivate active config while
+ enabling the config
+Message-ID: <20250325151803.GD604566@e132581.arm.com>
+References: <20250324191740.64964-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rLr7uNarF-6U1np-qOZqJ8_EVMHxTCnq
-X-Proofpoint-ORIG-GUID: J8L-Hbvx5O46SQOwmEbM5bq5SR7VegyH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
- clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503250105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324191740.64964-1-yeoreum.yun@arm.com>
 
-On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
-> Since recently, IMA would not record measurement list entries into PCR
-> banks for which it doesn't have a corresponding in-kernel hash algorithm
-> implementation available anymore (for
-> CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND=3Dn).
+Hi Levi,
 
-Not necessary info.
+On Mon, Mar 24, 2025 at 07:17:40PM +0000, Yeoreum Yun wrote:
+> While enable active config via cscfg_csdev_enable_active_config(),
+> active config could be deactivated via configfs' sysfs interface.
+> This could make UAF issue in below scenario:
+> 
+> CPU0                                          CPU1
+> (sysfs enable)                                load module
+>                                               cscfg_load_config_sets()
+>                                               activate config. // sysfs
+>                                               (sys_active_cnt == 1)
+> ...
+> cscfg_csdev_enable_active_config()
+>   lock(csdev->cscfg_csdev_lock)
+>   // here load config activate by CPU1
+>   unlock(csdev->cscfg_csdev_lock)
+> 
+>                                               deactivate config // sysfs
+>                                               (sys_activec_cnt == 0)
+>                                               cscfg_unload_config_sets()
+>                                               unload module
+> 
+>   // access to config_desc which freed
+>   // while unloading module.
+>   cfs_csdev_enable_config
 
->=20
-> With TPM 2.0, the only hash algorithms guaranteed to be implemented on a
-> TPM are SHA-256/384, c.f. "TCG PC Client Platform TPM Profile
-> Specification for TPM 2.0", sec. 4.6 "PCR Requirements".
+I am not sure if this flow can happen.  CoreSight configfs feature is
+integrated into the CoreSight core layer, and the other CoreSight
+modules are dependent on it.
 
-Ok
+For example, if the ETM4x module is not removed, the kernel module
+management will natually prevent the CoreSight core module from being
+removed.
 
-> In particular, sha1 is not mandatory, and thus, the CRYPTO_SHA1 dependenc=
-y
-> of IMA is not sufficient anymore for ensuring that IMA would find at leas=
-t
-> one usable PCR bank.
-
-No necessary info.
-
->=20
-> So, in order to make sure that IMA has access to at least one usable bank
-> on platforms featuring a TPM 2.0 device, make it depend on CRYPTO_SHA256.
-
--> Make sure that ...
-
->=20
-> Keep the dependency on CRYPTO_SHA1 for the TPM 1 case.
-
-Wondering if the "select CRYPTO_SHA1" could be dependent on TPM 1.2 being
-configured as builtin.
-
->=20
-> Signed-off-by: Nicolai Stange <nstange@suse.de>
+> To address this, use cscfg_config_desc's active_cnt as a reference count
+> which will be holded when
+>     - activate the config.
+>     - enable the activated config.
+> and put the module reference when config_active_cnt == 0.
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > ---
->  security/integrity/ima/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kcon=
-fig
-> index c8f12a4a4edf..8a7e74dc1477 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -7,6 +7,7 @@ config IMA
->  	select CRYPTO
->  	select CRYPTO_HMAC
->  	select CRYPTO_SHA1
-> +	select CRYPTO_SHA256
->  	select CRYPTO_HASH_INFO
->  	select SECURITY_PATH
->  	select TCG_TPM if HAS_IOMEM
+> Since v3:
+>   - Remove enable arguments in cscfg_config_desc_get() (from Mike).
+>   - https://lore.kernel.org/all/20250109171956.3535294-1-yeoreum.yun@arm.com/
+> ---
+>  .../hwtracing/coresight/coresight-config.h    |  2 +-
+>  .../coresight/coresight-etm4x-core.c          |  3 ++
+>  .../hwtracing/coresight/coresight-syscfg.c    | 52 +++++++++++++------
+>  3 files changed, 41 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-config.h b/drivers/hwtracing/coresight/coresight-config.h
+> index b9ebc9fcfb7f..90fd937d3bd8 100644
+> --- a/drivers/hwtracing/coresight/coresight-config.h
+> +++ b/drivers/hwtracing/coresight/coresight-config.h
+> @@ -228,7 +228,7 @@ struct cscfg_feature_csdev {
+>   * @feats_csdev:references to the device features to enable.
+>   */
+>  struct cscfg_config_csdev {
+> -	const struct cscfg_config_desc *config_desc;
+> +	struct cscfg_config_desc *config_desc;
+>  	struct coresight_device *csdev;
+>  	bool enabled;
+>  	struct list_head node;
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index e5972f16abff..ef96028fa56b 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -1020,6 +1020,9 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
+>  	smp_call_function_single(drvdata->cpu, etm4_disable_hw, drvdata, 1);
+> 
+>  	raw_spin_unlock(&drvdata->spinlock);
+> +
+> +	cscfg_csdev_disable_active_config(csdev);
+> +
 
-It's not enough to "select CRYPTO_SHA256".  As mentioned on "[RFC PATCH v2
-02/13] ima: always create runtime_measurements sysfs file for ima_hash",  d=
-on't
-assume "ima_hash" will be SHA256.  Include SHA256 as an "extra" hash algori=
-thm,
-even if it isn't an enabled TPM bank.
+In general, we need to split changes into several patches if each
+addresses a different issue.  From my understanding, the change above is
+to fix missing to disable config when disable Sysfs mode.
 
-Mimi
+If so, could we use a seperate patch for this change?
+
+>  	cpus_read_unlock();
+> 
+>  	/*
+> diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
+> index a70c1454b410..6d8c212ad434 100644
+> --- a/drivers/hwtracing/coresight/coresight-syscfg.c
+> +++ b/drivers/hwtracing/coresight/coresight-syscfg.c
+> @@ -391,14 +391,17 @@ static void cscfg_owner_put(struct cscfg_load_owner_info *owner_info)
+>  static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, void *load_owner)
+>  {
+>  	struct cscfg_config_csdev *config_csdev, *tmp;
+> +	unsigned long flags;
+> 
+>  	if (list_empty(&csdev->config_csdev_list))
+>  		return;
+> 
+> +	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+
+I think we should use spinlock to guard the condition checking
+list_empty().
+
+Here the race condition is the 'config_csdev_list' list and
+configurations on the list.  For atomicity, we should use lock to
+protect any operations on the list (read, add, delete, etc).
+
+A side topic, as here it adds locks for protecting 'config_csdev_list',
+I am wandering why we do not do the same thing for
+'feature_csdev_list' (See cscfg_remove_owned_csdev_features() and
+cscfg_get_feat_csdev()).
+
+>  	list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
+>  		if (config_csdev->config_desc->load_owner == load_owner)
+>  			list_del(&config_csdev->node);
+>  	}
+> +	raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  }
+> 
+>  static void cscfg_remove_owned_csdev_features(struct coresight_device *csdev, void *load_owner)
+> @@ -867,6 +870,25 @@ void cscfg_csdev_reset_feats(struct coresight_device *csdev)
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_reset_feats);
+> 
+> +static bool cscfg_config_desc_get(struct cscfg_config_desc *config_desc)
+> +{
+> +	if (!atomic_fetch_inc(&config_desc->active_cnt)) {
+> +		/* must ensure that config cannot be unloaded in use */
+> +		if (unlikely(cscfg_owner_get(config_desc->load_owner))) {
+> +			atomic_dec(&config_desc->active_cnt);
+> +			return false;
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +static void cscfg_config_desc_put(struct cscfg_config_desc *config_desc)
+> +{
+> +	if (!atomic_dec_return(&config_desc->active_cnt))
+> +		cscfg_owner_put(config_desc->load_owner);
+> +}
+> +
+>  /*
+>   * This activate configuration for either perf or sysfs. Perf can have multiple
+>   * active configs, selected per event, sysfs is limited to one.
+> @@ -890,22 +912,17 @@ static int _cscfg_activate_config(unsigned long cfg_hash)
+>  			if (config_desc->available == false)
+>  				return -EBUSY;
+> 
+> -			/* must ensure that config cannot be unloaded in use */
+> -			err = cscfg_owner_get(config_desc->load_owner);
+> -			if (err)
+> +			if (!cscfg_config_desc_get(config_desc)) {
+> +				err = -EINVAL;
+>  				break;
+> +			}
+> +
+>  			/*
+>  			 * increment the global active count - control changes to
+>  			 * active configurations
+>  			 */
+>  			atomic_inc(&cscfg_mgr->sys_active_cnt);
+
+Seems to me, it is more reasonable to use 'sys_active_cnt' to acquire
+the module reference instead of 'config_desc->active_cnt'.  The reason
+is 'sys_active_cnt' is a global counter.
+
+> -			/*
+> -			 * mark the descriptor as active so enable config on a
+> -			 * device instance will use it
+> -			 */
+> -			atomic_inc(&config_desc->active_cnt);
+> -
+>  			err = 0;
+>  			dev_dbg(cscfg_device(), "Activate config %s.\n", config_desc->name);
+>  			break;
+> @@ -920,9 +937,8 @@ static void _cscfg_deactivate_config(unsigned long cfg_hash)
+> 
+>  	list_for_each_entry(config_desc, &cscfg_mgr->config_desc_list, item) {
+>  		if ((unsigned long)config_desc->event_ea->var == cfg_hash) {
+> -			atomic_dec(&config_desc->active_cnt);
+>  			atomic_dec(&cscfg_mgr->sys_active_cnt);
+> -			cscfg_owner_put(config_desc->load_owner);
+> +			cscfg_config_desc_put(config_desc);
+>  			dev_dbg(cscfg_device(), "Deactivate config %s.\n", config_desc->name);
+>  			break;
+>  		}
+> @@ -1047,7 +1063,7 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  				     unsigned long cfg_hash, int preset)
+>  {
+>  	struct cscfg_config_csdev *config_csdev_active = NULL, *config_csdev_item;
+> -	const struct cscfg_config_desc *config_desc;
+> +	struct cscfg_config_desc *config_desc;
+>  	unsigned long flags;
+>  	int err = 0;
+> 
+> @@ -1062,8 +1078,8 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  	raw_spin_lock_irqsave(&csdev->cscfg_csdev_lock, flags);
+>  	list_for_each_entry(config_csdev_item, &csdev->config_csdev_list, node) {
+>  		config_desc = config_csdev_item->config_desc;
+> -		if ((atomic_read(&config_desc->active_cnt)) &&
+> -		    ((unsigned long)config_desc->event_ea->var == cfg_hash)) {
+> +		if (((unsigned long)config_desc->event_ea->var == cfg_hash) &&
+> +				cscfg_config_desc_get(config_desc)) {
+
+This seems to me not right.  Why a config descriptor is get in multiple
+places?  One time getting a config descriptor is in
+_cscfg_activate_config(), another is at here.
+
+To be honest, I am not clear what is the difference between 'activate'
+config and 'enable active' config.  Literally, I think we only need to
+acquire the config at its creating phase (maybe match to activate
+config?).
+
+>  			config_csdev_active = config_csdev_item;
+>  			csdev->active_cscfg_ctxt = (void *)config_csdev_active;
+>  			break;
+> @@ -1097,7 +1113,11 @@ int cscfg_csdev_enable_active_config(struct coresight_device *csdev,
+>  				err = -EBUSY;
+>  			raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+>  		}
+> +
+> +		if (err)
+> +			cscfg_config_desc_put(config_desc);
+>  	}
+> +
+>  	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_enable_active_config);
+> @@ -1136,8 +1156,10 @@ void cscfg_csdev_disable_active_config(struct coresight_device *csdev)
+>  	raw_spin_unlock_irqrestore(&csdev->cscfg_csdev_lock, flags);
+> 
+>  	/* true if there was an enabled active config */
+> -	if (config_csdev)
+> +	if (config_csdev) {
+>  		cscfg_csdev_disable_config(config_csdev);
+> +		cscfg_config_desc_put(config_csdev->config_desc);
+> +	}
+>  }
+>  EXPORT_SYMBOL_GPL(cscfg_csdev_disable_active_config);
+> 
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
 
