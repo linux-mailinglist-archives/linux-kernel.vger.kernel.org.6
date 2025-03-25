@@ -1,102 +1,180 @@
-Return-Path: <linux-kernel+bounces-576148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A48A70BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:39:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13AAA70BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EC11734C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF78A171BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52B1266B55;
-	Tue, 25 Mar 2025 20:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9AF266B49;
+	Tue, 25 Mar 2025 20:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eZWkwTAY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="No1TN7R0"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5021A5B88;
-	Tue, 25 Mar 2025 20:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67445242918;
+	Tue, 25 Mar 2025 20:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742935115; cv=none; b=hSo4LyLDAspYqokh2GET8vUt1s0kRi3wnQkKShu7xBTUJhLHsZZ/jYAZlgMOS7ssxOnRUpfLBV4cZ0LT7mL+UsJGw5QdDst2GXGtJyt61fGSTjzYQLI7Wl4zCzUPhgXZY/q6WYOCuQZGY8A9z38Na18iZKSxue4e9x0oGKh/PMI=
+	t=1742935208; cv=none; b=ZNz7Q6cSRRcft/d2PZrEDP16tqgCwEXq4GBm6Rtl9M08Rk7uR66BEJ2zyPxUjqchH4ExsL5WOFk90pOw0wJ7ymQOXSZZNcbHtR4peb5pW+8DKMIkd4JJuHMpvqdCabeSiAGgNsGr28+zCAgEvMjQM7E0YCOmL6+FjEAlGQ8wLLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742935115; c=relaxed/simple;
-	bh=eep9kvBkJcCshapLllM2aXRk30DdXOkhNpQwLtx8MaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOm6ae+wApJY2Yt6uZwll2LFj9jsltAi6pRa8rf5M00nqzceo8/1iyYF60cOibq66oqTYA5gF1vuLE9EiqM/vuFBprMJKy3tgNMyqq+65gijG2u/iM7SajZgW69qZCTxXKFHPb3hALzmuyYZZvhH9nuedsO8qt6vYGI9YbbTGqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eZWkwTAY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7JpyzTPxTIDtp6S7hw/3Jis3LGxTRMLKQRCEej/p3O0=; b=eZWkwTAYZsERGHkH8IgZA89n2I
-	CYvnb4lbmktg+Au5DTu2JSCZClWiREt/adBiFVqDF1dbAFnvk0f4MXIrqNEcP8uRlya8z01X1XMSM
-	rGdmwB/e8FlTd/oSzHF2Dlo2lFzxHBdHqiTvkoU9Q9XKF4id+01NBT18jHOMXwJYFd7k=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1txB2R-0076G2-MJ; Tue, 25 Mar 2025 21:38:19 +0100
-Date: Tue, 25 Mar 2025 21:38:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	KY Srinivasan <kys@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"brett.creeley@amd.com" <brett.creeley@amd.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"schakrabarti@linux.microsoft.com" <schakrabarti@linux.microsoft.com>,
-	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
-	"erick.archer@outlook.com" <erick.archer@outlook.com>,
-	"rosenp@gmail.com" <rosenp@gmail.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	Paul Rosswurm <paulros@microsoft.com>
-Subject: Re: [EXTERNAL] Re: [PATCH 2/3] net: mana: Implement
- set_link_ksettings in ethtool for speed
-Message-ID: <f2619b80-8d5d-4484-a154-18f902d43d63@lunn.ch>
-References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
- <1742473341-15262-3-git-send-email-ernis@linux.microsoft.com>
- <fb6b544f-f683-4307-8adf-82d37540c556@lunn.ch>
- <20250325170955.GB23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <adaaa2b0-c161-4d4f-8199-921002355d05@lunn.ch>
- <20250325122135.14ffa389@kernel.org>
- <MN0PR21MB3437DA2C43930B08036BB146CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
- <6396c1f7-756d-476a-833e-7ea35ae41da8@lunn.ch>
- <MN0PR21MB34376199FAFAE4901EF18E75CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1742935208; c=relaxed/simple;
+	bh=D86E6BYFMd2Fp5J90ilzXhmKsq3mI7+tGtgKlnXeE2w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V7Mr4qxGCojxixKSH1wZtRcS50u6FaeUL1hdyF0E7H3LMRLVCgwfSiywJO5zJPsAr1lAn+rVML4JD5aXlL+Ia9lYMx5x0iqbQW/iRzaC0s21KDWR60CEoMMr2ZE6xGqfPZ7egP1BKn9pcIh9AocPFRkeqzSf6Vtre6j3JIk/bK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=No1TN7R0; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223fd89d036so125873845ad.1;
+        Tue, 25 Mar 2025 13:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742935206; x=1743540006; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KCSIZbSYnkrCmNqKo+NkuiBjeNp8i28kuq9+kFrqnns=;
+        b=No1TN7R0f1gZt3LUTVLUMzYMdIzd+cL9IHTAbG0lQcuf4KTADtcvglQibrvmsK9BaN
+         Qow1qgfj9ms/AQqhbmkCBm/g3/M2YEePOD39YbSMx9XGeZvZg18t/tgXnLWtLYKVnkol
+         VIJ8pBxoKz0nlSgcWNpzxdQ0yZcL5eSyEzHLpakULhs72oekYRYGpi+yq34UItD9oZRN
+         XDlOlcYVA55GvsFX4+X/t4kqJFa8ZuGMsyRIEMQ8D9uGhtN4kqjFC2txEyQuCIel2o6s
+         0RfDrKQUPeXaKLesE7e6R/coc2myBB9TLSEIk4TAZBv9EmKZs+yu21dBL/MTCIZZhnYx
+         DCVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742935206; x=1743540006;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KCSIZbSYnkrCmNqKo+NkuiBjeNp8i28kuq9+kFrqnns=;
+        b=iVIYX0FKGzMBvuLC6QdLqpDlzK4BRwxpNWnXdU53RierRNzqDPk+Wyjuamx1T+1COp
+         nrtRvq+/Cte2drpbYUNyWuEYQzr9+zEzUd2FG5NGyvEQuzxweyKZPOm5Si3i6IgAZqza
+         /5cz7qut+DXsPFpVx91ZbTm7XAPV9DHWKbu7/EsachsaFLnn280sZbex2DBUwIkTgnC+
+         u9y6SYfeUEO2IqpBA33RrFn6lmdHDAN/onfau8ANoBrE20Gl6fP0dUL3ql6JrmWeFrle
+         njMDVsrPsIhl9/psuskdMlc97zDUXs2PM66U0vyUzme/ELlCfc2wovKF5ncXAWt/kQJN
+         s4zw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3D2CbewLbxPosRvYKJureoDr4dWqyawLy+4pYM8+d/lP2p/wShQt7CzXrpfETOYd/n3AE6MxJA/bq@vger.kernel.org, AJvYcCXgAGuVkdKDG8cMRJW7pPK/JqNlD8NK6JCEvWYehSCoCnYMJW7pxx3hgnaF1zO0EMwjdgNllTEM4lLM9qao@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznzudeiu6SZgO0vvpSEVbzeTAdgh9+534V6sRCn3mbeKkQ+7PN
+	QjZ24x4XZeqGx/oRtFb2h5PFUyoFnCAzrLiR5QolvCJgrphwHLFH
+X-Gm-Gg: ASbGncuzJlJQVZY2y4crmKlF5HRk/VhIbcMPvPhECB9bOrIt32fHy8lXeYCJLJq0jEO
+	7gTOXDRR9fh7ENW8EWIRA9ymD1D0Q/s7B7bQqHtYjrDWy7epmarQUZ5i6If2Uzm3ORIULSTDEBr
+	5q3AQmbF66CApRXRjXDGy1cLUwPgkiHcP21reMmJEOnVzARZrnd7ZKVfSqsMWGEX6k8EDx2hCUr
+	yg8vHGJ5GsCTPHTVyq7x1uuoT9hPD+Rco9DqB9UN0Grn+eYbWQS6YbBVbu+QbE7oe9KLyVqEoVl
+	/5fF8TOCSoXIDazwfyYqOFljbSz0OQYMLKTSZjkOkx3d
+X-Google-Smtp-Source: AGHT+IFsrXEZJouBZVR1sHC3IfRdJf5FCp29tGxgVj0TxQnh2e8ChT8ApBwtcQBi31rolwXpdISRrA==
+X-Received: by 2002:a17:902:f548:b0:21f:2a2:3c8b with SMTP id d9443c01a7336-22780c7e29emr255787495ad.11.1742935206478;
+        Tue, 25 Mar 2025 13:40:06 -0700 (PDT)
+Received: from [192.168.1.26] ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611cafesm10967566b3a.109.2025.03.25.13.40.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 13:40:06 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+Date: Tue, 25 Mar 2025 17:39:53 -0300
+Subject: [PATCH v2] ACPI: platform_profile: Optimize _aggregate_choices()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN0PR21MB34376199FAFAE4901EF18E75CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250325-pprof-opt-v2-1-736291e6e66b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJgU42cC/22MwQrDIBAFfyXsuRaziWh6yn+UHKzVZKGJokFag
+ v9em3N5p3kMc0CykWyCW3NAtJkS+a0CXhowi95my+hZGZCj4B0iCyF6x3zYmdFaOum6fngoqH6
+ I1tH7bN2nygul3cfPmc7t7/1XyS2r46IXQslBKxznVdPravwKUynlC1z3mN+iAAAA
+X-Change-ID: 20250322-pprof-opt-caa7f7f349b8
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+ Armin Wolf <W_Armin@gmx.de>, Len Brown <lenb@kernel.org>, 
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kurt Borja <kuurtb@gmail.com>
+X-Mailer: b4 0.14.2
 
-> Could you please point us to the interface struct, callback function
-> names, and/or docs you are suggesting us to use?
+Choices aggregates passed to _aggregate_choices() are already filled
+with ones, therefore we can avoid copying a new bitmap on the first
+iteration.
 
-If you cannot search the sources for tc htb, or net shaper, google the
-same, etc, you probably cannot write the code either.
+This makes setting the PLATFORM_PROFILE_LAST bit on aggregates
+unnecessary, so drop it as well.
 
-http://www.catb.org/esr/faqs/smart-questions.html
+While at it, add a couple empty lines to improve style.
 
-	Andrew
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+Changes in v2:
+- Mention bitmap requirements in kernel-doc
+- Link to v1: https://lore.kernel.org/r/20250322-pprof-opt-v1-1-105455879a82@gmail.com
+---
+ drivers/acpi/platform_profile.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+index ef9444482db1982b19d2a17884e1c3ab0e5cb55c..26d7ba49e9dcff1fded246cb6b5c836b180e07e8 100644
+--- a/drivers/acpi/platform_profile.c
++++ b/drivers/acpi/platform_profile.c
+@@ -245,7 +245,8 @@ static const struct class platform_profile_class = {
+ /**
+  * _aggregate_choices - Aggregate the available profile choices
+  * @dev: The device
+- * @arg: struct aggregate_choices_data
++ * @arg: struct aggregate_choices_data, with it's aggregate member bitmap
++ *	 initially filled with ones
+  *
+  * Return: 0 on success, -errno on failure
+  */
+@@ -256,12 +257,10 @@ static int _aggregate_choices(struct device *dev, void *arg)
+ 	struct platform_profile_handler *handler;
+ 
+ 	lockdep_assert_held(&profile_lock);
++
+ 	handler = to_pprof_handler(dev);
+ 	bitmap_or(tmp, handler->choices, handler->hidden_choices, PLATFORM_PROFILE_LAST);
+-	if (test_bit(PLATFORM_PROFILE_LAST, data->aggregate))
+-		bitmap_copy(data->aggregate, tmp, PLATFORM_PROFILE_LAST);
+-	else
+-		bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LAST);
++	bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LAST);
+ 	data->count++;
+ 
+ 	return 0;
+@@ -305,7 +304,6 @@ static ssize_t platform_profile_choices_show(struct device *dev,
+ 	};
+ 	int err;
+ 
+-	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+ 	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+ 		err = class_for_each_device(&platform_profile_class, NULL,
+ 					    &data, _aggregate_choices);
+@@ -422,7 +420,7 @@ static ssize_t platform_profile_store(struct device *dev,
+ 	i = sysfs_match_string(profile_names, buf);
+ 	if (i < 0 || i == PLATFORM_PROFILE_CUSTOM)
+ 		return -EINVAL;
+-	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
++
+ 	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+ 		ret = class_for_each_device(&platform_profile_class, NULL,
+ 					    &data, _aggregate_choices);
+@@ -502,7 +500,6 @@ int platform_profile_cycle(void)
+ 	enum platform_profile_option profile = PLATFORM_PROFILE_LAST;
+ 	int err;
+ 
+-	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+ 	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+ 		err = class_for_each_device(&platform_profile_class, NULL,
+ 					    &profile, _aggregate_profiles);
+
+---
+base-commit: 9a43102daf64dd0d172d8b39836dbc1dba4da1ea
+change-id: 20250322-pprof-opt-caa7f7f349b8
+
+Best regards,
+-- 
+ ~ Kurt
+
 
