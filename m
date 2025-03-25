@@ -1,125 +1,278 @@
-Return-Path: <linux-kernel+bounces-575871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41C1A70868
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:46:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCCFA70863
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433B11890A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFD73B7B5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2644263F49;
-	Tue, 25 Mar 2025 17:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4948E263C73;
+	Tue, 25 Mar 2025 17:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Vtm0J5GH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rQkSHL1J"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37EB262802
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BBD2561AD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742924693; cv=none; b=j+c57BMmcTH2IE5fzZkaVkxExnuJNgzRYLjdZkMdgwhg8Dv7qkSwOZ/w4Ret1oasy73wKpA/EXpg2M57SnoSumDM1nD1KZtqYayWt/sH8pHfRw6dXXmEn34ghkXQ6gcYyn9tAyCcuq8JQTP2zTwmQ5GmJ8wQNrl1PQdVVF+WLPo=
+	t=1742924690; cv=none; b=DHLt/cOUE/7Kp/ym1PwZ8pd8AypxiMbkF78YPeYJ3vbhixEB9Sec4f7JuPsz4zieqwhUbWW/mXoFi6J3by/yebnkqlLZ72QFqlQ+pZ9Ngi4p8XKIzwh+SaKFSXzqlwyGwwRO+ROUHrEu52z38vhaW2iepO2xQaxuzwumNMerzu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742924693; c=relaxed/simple;
-	bh=MtAwrWmxg9dBi0rjvIWm0PgZYmZqT8SbziCNVAGnVG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VK6TcHPYQj/+boeOkFSKl5/Tp+6dEWlxzMgzApHEusrqzi37iS9dHL5ONzqDgn72HSmea3wIyQNfUeuzljvSQUn21kzSpzR11wm69d2F6KPDgKp+jaOnKYjv0Vk8gIfh1M6RoPSSquVdkAORv+LoVEaZD1yjdF+/aVwQ4V0flC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Vtm0J5GH reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6ABD840E0219;
-	Tue, 25 Mar 2025 17:44:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bbYwQWPG2qlw; Tue, 25 Mar 2025 17:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742924683; bh=OZ4u4nJjvdtzKInAzjV19TBfXzG5uiiiHQN7zhblzZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vtm0J5GHGZPjia8oGn0oaUS9iZeFqUp4hxxdsB3phfwleSjLaXq8Hw1FFyV6HREJx
-	 qlcpBtmO/HQ/mLWnJw4mabx0eZmfhl+y8kDtT1DGDVObEP9j+TeajNLqN7EjheaNft
-	 XMnim2rMRriM0D9/tYuAgK9UpxXGLfObK1PbUou1ROhDBGWlQVpGMr+xy5Lc6gX4xR
-	 9E/7AgSSjpnEbNwivdVB/jPAhreo1olFABGzkkFQaohgmrU/M8qPX0dWSiiMEjhQD3
-	 E2hf5+Gqvo2rS/0K1jlyo8GNBCJtpJymLQpk3gIeqUIbrbLmbasn6MI09YN71Wicfj
-	 d0MC4s8RId9s385EvjWMId28HxKngWhotdRhZUomlpGCMMZbQ0XmO/UdfuXYipMHQi
-	 l6oY/8cjemt/10XIFBzmE5igSm0SISD6IN5xOgu7geaSP8+i4XGdzmMMzyfQF2U/Sw
-	 OQWMRxgErheAHzc9MwM5YUiRbru8nI7MxMiXmfHnq0O2HVepeI2zliIUlrXr0SCRW0
-	 HSaOxnWT6x99FoYLI2Y6OXsaap0dF7+r9j1m8Wz6ulCXB6J6lyd4l82T+oB+ds4BuR
-	 7pkrmYMZf5qtfnBbMRm0340eW1MUONyOkCwxChfNy/aKqnY3wBk7nqLymaHZFNy+Kd
-	 37pV+o4f/Ax57OcQGisDz4Vw=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C98A40E015D;
-	Tue, 25 Mar 2025 17:44:36 +0000 (UTC)
-Date: Tue, 25 Mar 2025 18:44:30 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip 1/2] x86/hweight: Fix false output register
- dependency of POPCNT insn
-Message-ID: <20250325174430.GEZ-LrfugbyA0OxOnH@fat_crate.local>
-References: <20250325164854.199420-1-ubizjak@gmail.com>
- <20250325170953.GCZ-LjYdl4rftqY-us@fat_crate.local>
- <CAFULd4ZbYmwTOR0vc8+Xiq8uPgqbte=ruKVGiKKngjHmkNunFw@mail.gmail.com>
+	s=arc-20240116; t=1742924690; c=relaxed/simple;
+	bh=o6g5HoC32I+6BiDO8vCfhv3kf+WezCmeDCwVZM3gAjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=XvWNR2x0eMZ4TkswFLmOELyuslZeSaG7X6R2xCDRSiWR2b8aheImsNhpWGJqyD64Z8NdBDkXfUvOtgkrRDzbmwzlWxCBjuAHUQwbytHTXiAndyI3G+i2D1oaxcQP564q4kTACJYN3AFpjjPz3/KBJ2qFYmU+ReqQwLMzrG3LSlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rQkSHL1J; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2240aad70f2so18605ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742924687; x=1743529487; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C557zFYMQNx6YZaNFk9a2tG90MlGVtliFmUOKVTtxbE=;
+        b=rQkSHL1JHmNlhh0a1ZWsWrS999xui5awFO7BqNybosaOIJkRSHoufCZWqAwL5S6AS5
+         waRJ/Abd9VjTSU2xFn5DNNCxCteivYlWCvsF+QbpfCjLB+31YxihfXUmJFRpIqKiJw7R
+         hVtTQUDvrJbnbSkACK4QT9Wspv5WeolxnfXYwVD9zT0zGD9e+jOYRt+angMGN3vEuG0m
+         QJeqI1pcc8uUnQ6RV7cDgyrzNA9H6xH1zdeA9PbS5Ushbk6/pamcxu7PfSSJxA/z0rig
+         30aVkBQKVQRjZZHcGUN41wcme+ClwhGrczWAEtatTyzSqEBKup4x31schAjjWRPUzPHG
+         QxsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742924687; x=1743529487;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C557zFYMQNx6YZaNFk9a2tG90MlGVtliFmUOKVTtxbE=;
+        b=dxES5d4symDOyie2812SlHicNRDlRlR0LdFtAuekmFtPxjt/EzrSba22whDwwRjQgc
+         SHrxKxf86N3adQ4sqG8b98iY9P/8kxlMObV065aL3OFwbRVyF0G+sLpm7rcFjA18e7Q4
+         jriK1ysxkm1f/P41S2ikkwNeix8dWFneiwdN+bmOtP50fz1GYPZKH6b1E35V16t8UKfg
+         zSD93c9ktaiJYOAwnJRnBUrtau6bPJTsFH1mZxTpv4r/C45otusy4WP7kkirpbHS6DDt
+         OC/nQ2YN6bdlIcVoKTVfWOoUUYldFo+oi7TAbbDzAwk7YGFdlnVqgU25tzNPqfq/2vcP
+         dRJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDm3suuvx3JDWlN0cBeTj9W7nVySiWKGQ5yNQkjLnaVdE+LmLeBL1ejSAEfh8d+3Idns4mAdHrUgLlFHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTbfMaIz+AfaYwtebw9uWKi6flRtMUffBABKhMgzd83992HNX4
+	btd0Rk9Nph7I7OGytQw4h8gWL7/rDh8PmLNGCAlwrjJB1ZHaGH8pfT/rtZBsVrmdXr94fWWHE1j
+	XG2az4fmo0uPrZji+9yV6TSnbzGsPnn74cyWJ50ArUkGEeThJNZUC
+X-Gm-Gg: ASbGncuO8FSZBwzkGK10CRXxfSt3vnYNmKLjVSLP8hrDQHrIV4MB2LUP2FKf9LmUx3X
+	lOduIKqkqaLYWp4aAPtCk21KHx0vxD2hQZ+1SQMlcJcjXsts7XZsc0ru3N23dFuKlJ+ODokt3Ud
+	PmOYAcAtKza1MEW+mItJstUuuIsC9hqj8pq9wmGQAkS4iWVlUKKHzACA==
+X-Google-Smtp-Source: AGHT+IHPelgDScufsa6zAdrdNBGBs5B6xqAFz7eUGQGOmOqHwOhJ5MfpsvqJ85TCgQC7BKeJ/DkvYhul0b9i7GXTf4c=
+X-Received: by 2002:a17:903:2c6:b0:21f:2ded:bfa0 with SMTP id
+ d9443c01a7336-22799f80a6bmr9127625ad.25.1742924687095; Tue, 25 Mar 2025
+ 10:44:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAFULd4ZbYmwTOR0vc8+Xiq8uPgqbte=ruKVGiKKngjHmkNunFw@mail.gmail.com>
+References: <20250122174308.350350-1-irogers@google.com> <20250122174308.350350-11-irogers@google.com>
+In-Reply-To: <20250122174308.350350-11-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 25 Mar 2025 10:44:34 -0700
+X-Gm-Features: AQ5f1JpIGP8wbMVFe85DxBTilH4hLmUR3dv-unPSph-h7lFMwMVjU6DwDza6nuM
+Message-ID: <CAP-5=fUt4rvEWRY=O6-EM0GGgOxz3VL933OgSYET2HxCi8fsCA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/18] perf dso: Support BPF programs in dso__read_symbol
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Aditya Gupta <adityag@linux.ibm.com>, 
+	"Steinar H. Gunderson" <sesse@google.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Changbin Du <changbin.du@huawei.com>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Kajol Jain <kjain@linux.ibm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Li Huafei <lihuafei1@huawei.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>, 
+	Chaitanya S Prakash <chaitanyas.prakash@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev, 
+	Song Liu <song@kernel.org>, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 06:17:01PM +0100, Uros Bizjak wrote:
-> Please see [1], errata 026.
+On Wed, Jan 22, 2025 at 9:43=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Set the buffer to the code in the BPF linear info. This enables BPF
+> JIT code disassembly by LLVM and capstone. Move the disassmble_bpf
+> calls to disassemble_objdump so that they are only called after
+> falling back to the objdump option.
 
-Then next time put at least a reference to such official source. Because =
-right
-now it reads like a wild guess.
+It would be nice to land this series in part because of supporting BPF
+disassembly with LLVM and capstone, possible because of the cleanups
+and refactorings.
 
-> There is a lot of performance analysis at [2] and [3].
+Thanks,
+Ian
 
-You mean the commit message should not mention it - people should use a s=
-earch
-engine to find that?!
-
-Lemme quote our documentation for you:
-
-"Quantify optimizations and trade-offs. If you claim improvements in
-performance, memory consumption, stack footprint, or binary size, include
-numbers that back them up. But also describe non-obvious costs. Optimizat=
-ions
-usually aren=E2=80=99t free but trade-offs between CPU, memory, and reada=
-bility; or,
-when it comes to heuristics, between different workloads. Describe the
-expected downsides of your optimization so that the reviewer can weigh co=
-sts
-against benefits."
-
-From: https://kernel.org/doc/html/latest/process/submitting-patches.html
-
-Please peruse that document when you get a chance.
-
-So my question still is: does that change has *any* *impact* on *kernel*
-workloads?
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/disasm.c | 12 +++---
+>  tools/perf/util/dso.c    | 85 +++++++++++++++++++++++++---------------
+>  2 files changed, 60 insertions(+), 37 deletions(-)
+>
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index a9cc588a3006..99b9c21e02b0 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -1500,6 +1500,12 @@ static int symbol__disassemble_objdump(const char =
+*filename, struct symbol *sym,
+>         struct child_process objdump_process;
+>         int err;
+>
+> +       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_PROG_INFO)
+> +               return symbol__disassemble_bpf(sym, args);
+> +
+> +       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_IMAGE)
+> +               return symbol__disassemble_bpf_image(sym, args);
+> +
+>         err =3D asprintf(&command,
+>                  "%s %s%s --start-address=3D0x%016" PRIx64
+>                  " --stop-address=3D0x%016" PRIx64
+> @@ -1681,11 +1687,7 @@ int symbol__disassemble(struct symbol *sym, struct=
+ annotate_args *args)
+>
+>         pr_debug("annotating [%p] %30s : [%p] %30s\n", dso, dso__long_nam=
+e(dso), sym, sym->name);
+>
+> -       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_PROG_INFO) =
+{
+> -               return symbol__disassemble_bpf(sym, args);
+> -       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_IMAG=
+E) {
+> -               return symbol__disassemble_bpf_image(sym, args);
+> -       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__NOT_FOUN=
+D) {
+> +       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__NOT_FOUND) {
+>                 return SYMBOL_ANNOTATE_ERRNO__COULDNT_DETERMINE_FILE_TYPE=
+;
+>         } else if (dso__is_kcore(dso)) {
+>                 kce.addr =3D map__rip_2objdump(map, sym->start);
+> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> index 0285904ed26d..a90799bed230 100644
+> --- a/tools/perf/util/dso.c
+> +++ b/tools/perf/util/dso.c
+> @@ -1686,48 +1686,69 @@ const u8 *dso__read_symbol(struct dso *dso, const=
+ char *symfs_filename,
+>                            const struct map *map, const struct symbol *sy=
+m,
+>                            u8 **out_buf, u64 *out_buf_len, bool *is_64bit=
+)
+>  {
+> -       struct nscookie nsc;
+>         u64 start =3D map__rip_2objdump(map, sym->start);
+>         u64 end =3D map__rip_2objdump(map, sym->end);
+> -       int fd, count;
+> -       u8 *buf =3D NULL;
+> -       size_t len;
+> -       struct find_file_offset_data data =3D {
+> -               .ip =3D start,
+> -       };
+> +       const u8 *buf;
+> +       size_t len =3D end - start;
+>
+>         *out_buf =3D NULL;
+>         *out_buf_len =3D 0;
+>         *is_64bit =3D false;
+>
+> -       nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+> -       fd =3D open(symfs_filename, O_RDONLY);
+> -       nsinfo__mountns_exit(&nsc);
+> -       if (fd < 0)
+> +       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_IMAGE) {
+> +               pr_debug("No BPF image disassembly support\n");
+>                 return NULL;
+> +       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_PROG=
+_INFO) {
+> +#ifdef HAVE_LIBBPF_SUPPORT
+> +               struct bpf_prog_info_node *info_node;
+> +               struct perf_bpil *info_linear;
+> +
+> +               *is_64bit =3D sizeof(void *) =3D=3D sizeof(u64);
+> +               info_node =3D perf_env__find_bpf_prog_info(dso__bpf_prog(=
+dso)->env,
+> +                                                        dso__bpf_prog(ds=
+o)->id);
+> +               if (!info_node) {
+> +                       errno =3D SYMBOL_ANNOTATE_ERRNO__BPF_MISSING_BTF;
+> +                       return NULL;
+> +               }
+> +               info_linear =3D info_node->info_linear;
+> +               buf =3D (const u8 *)(uintptr_t)(info_linear->info.jited_p=
+rog_insns);
+> +               assert(len <=3D info_linear->info.jited_prog_len);
+> +#else
+> +               pr_debug("No BPF program disassembly support\n");
+> +               return NULL;
+> +#endif
+> +       } else {
+> +               struct nscookie nsc;
+> +               int fd;
+> +               ssize_t count;
+> +               struct find_file_offset_data data =3D {
+> +                       .ip =3D start,
+> +               };
+> +               u8 *code_buf =3D NULL;
+>
+> -       if (file__read_maps(fd, /*exe=3D*/true, find_file_offset, &data, =
+is_64bit) =3D=3D 0)
+> -               goto err;
+> -
+> -       len =3D end - start;
+> -       buf =3D malloc(len);
+> -       if (buf =3D=3D NULL)
+> -               goto err;
+> -
+> -       count =3D pread(fd, buf, len, data.offset);
+> -       close(fd);
+> -       fd =3D -1;
+> -
+> -       if ((u64)count !=3D len)
+> -               goto err;
+> +               nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+> +               fd =3D open(symfs_filename, O_RDONLY);
+> +               nsinfo__mountns_exit(&nsc);
+> +               if (fd < 0)
+> +                       return NULL;
+>
+> -       *out_buf =3D buf;
+> +               if (file__read_maps(fd, /*exe=3D*/true, find_file_offset,=
+ &data, is_64bit) =3D=3D 0) {
+> +                       close(fd);
+> +                       return NULL;
+> +               }
+> +               buf =3D code_buf =3D malloc(len);
+> +               if (buf =3D=3D NULL) {
+> +                       close(fd);
+> +                       return NULL;
+> +               }
+> +               count =3D pread(fd, code_buf, len, data.offset);
+> +               close(fd);
+> +               if ((u64)count !=3D len) {
+> +                       free(code_buf);
+> +                       return NULL;
+> +               }
+> +               *out_buf =3D code_buf;
+> +       }
+>         *out_buf_len =3D len;
+>         return buf;
+> -
+> -err:
+> -       if (fd >=3D 0)
+> -               close(fd);
+> -       free(buf);
+> -       return NULL;
+>  }
+> --
+> 2.48.1.262.g85cc9f2d1e-goog
+>
 
