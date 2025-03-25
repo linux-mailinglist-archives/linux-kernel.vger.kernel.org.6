@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-575119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7FDA6EDB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:31:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3891A6EDB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88355171813
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:30:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AE5170596
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1162561C6;
-	Tue, 25 Mar 2025 10:28:15 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B687254AED;
-	Tue, 25 Mar 2025 10:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1525E254B05;
+	Tue, 25 Mar 2025 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GlB1XmtB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IQtOMNjv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D32D254AED;
+	Tue, 25 Mar 2025 10:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898494; cv=none; b=AWa6ntXW/fYV/To6rtQIQ5K0jaDsTEXHQZTghmB8WXDAMsbB3GfSn3PZikK1wpGXxKhxGO0zxafsr7qyb+z/gWzIs0AP02I/XOr2hfEmBFuDUNJLiLaOfv8JiIw+wZh0oKGGvE6FUwMSn5mNWydST1iozhjwKCq2NzvXUbIJJ6Q=
+	t=1742898475; cv=none; b=en32ZSESZglNYk6Tot6njWJmGsJGsuH9d0Any+s9Vf2RQSz/G3LOloMBMvG46Wg3VScBN5YRsohnLiY+9ThD6APrf+FfvIhqOp1nCin0/5c/47F/bJPIs6fxyZ+MTxHr+JB3dc81psIHRIdPQ80at+SUHDGUyoC6KhPGMV/2t7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898494; c=relaxed/simple;
-	bh=VoMONhNNoSLZOMZUowEmZUtizC7WgFG9m+4dKgH/5w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aWOLrH/8W8IU4f2Z3RUxulSOUlVIR7Xu/llj3ZYFus9IITFVjXb1y0U1dNLO+MNjqgWbOpCveNYIyDqf9gv6K1IMih1AqpU07mnbtKrfbHdj3SCgXXz8Gs42O6rytcoJ3U5xM9mR4HSBhTIAuq54iqMg7Tr9om23S+tsT862U5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-1d-67e28538ffd3
-From: Rakie Kim <rakie.kim@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	david@redhat.com,
-	Jonathan.Cameron@huawei.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Rakie Kim <rakie.kim@sk.com>
-Subject: Re: [PATCH v3 3/3] mm/mempolicy: Support memory hotplug in weighted interleave
-Date: Tue, 25 Mar 2025 19:27:39 +0900
-Message-ID: <20250325102804.1020-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z-FfAUiGePF9mnPS@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1742898475; c=relaxed/simple;
+	bh=sO2zRW2LVfn7/sESe/qE9A18pHkBu/5co8/Y8zkBJ1g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ACiIWGkBzw+wN/CW/0sNg5HPdRGp3wMKet/7pIlb2tYZX0rKRpizgis7wGc9o6CzOClBI5ZHhUFOaaS0ZowqhqzyFbABmosbRkHKlfXqRGFRvi4lYc/mcorvQl3NXfhVnk6bnelef4H5FmEy6wKZtRXFq7mvW+gmq06bLEEaK8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GlB1XmtB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IQtOMNjv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742898471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bvl32OvnPLRYSLXsLJD3K8ubXhDmR8NyKqSawYdGMGU=;
+	b=GlB1XmtBcJzrR/EujG1DcxuA7GSuw8ztFlhOAfHTpW18x4tuITiexuxuxWMRjViF59p7Ts
+	Q0WJKTzWxNhFOWCGCfvFG8bywkIZyKvEulLAE4j8J+UHdULxVLa+DgAfELJ6iueGaVLEtY
+	eHPixsxZ+WEuc4blT5gxAkNd7Pz5prQImkJcqCrdNVZ706TR/Xy4N4/VaG+xf+9Ipqd5xI
+	JECGdEvNBe33JEoKh3Femg0RcO6k076a8OfUXFfkKWZXxGXzty9Q1dOGC/kNQL5cI4bzMh
+	K9qKiyVv++xK59IaoDxbQbk589UwE0EJ9N3ensrAQAwcRvmBusSLx2kj3Oa9Kg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742898471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bvl32OvnPLRYSLXsLJD3K8ubXhDmR8NyKqSawYdGMGU=;
+	b=IQtOMNjvK2eZQPfrHHpxBU1R9ZHHsOc49/SwQ6rT6QsZ59ArWrRfX08DcAm7emFuXfy01b
+	shG3B2ECVR92IsBA==
+To: Roger Pau =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>
+Cc: Daniel Gomez <da.gomez@kernel.org>, =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?=
+ <jgross@suse.com>, Bjorn
+ Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
+ domain flag
+In-Reply-To: <Z-KDyCzeovpFGiVu@macbook.local>
+References: <20250320210741.GA1099701@bhelgaas>
+ <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
+ <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
+ <Z-GbuiIYEdqVRsHj@macbook.local>
+ <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
+ <Z-Gv6TG9dwKI-fvz@macbook.local> <87y0wtzg0z.ffs@tglx>
+ <87v7rxzct0.ffs@tglx> <Z-KDyCzeovpFGiVu@macbook.local>
+Date: Tue, 25 Mar 2025 11:27:51 +0100
+Message-ID: <87sen1z9p4.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXC9ZZnoa5F66N0g/PfVSzmrF/DZjF96gVG
-	i6/rfzFb/Lx7nN1i1cJrbBbHt85jtzg/6xSLxeVdc9gs7q35z2qxek2GA5fHzll32T262y6z
-	e7QcecvqsXjPSyaPTZ8msXucmPGbxWPnQ0uP9/uusnl83iQXwBnFZZOSmpNZllqkb5fAlXGt
-	Yx17wVv2ituntBoYO9m6GDk5JARMJCZ+WsYIY29dvpGpi5GDg01ASeLY3hgQU0RAVaLtinsX
-	IxcHs8AjJonT7UtZQcqFBcIlug8+ZAGxWYBqTjz5DjaGF2jMvdVtTBAjNSUaLt0DszkFzCTe
-	TrwHtlZIgEfi1Yb9UPWCEidnPgGbwywgL9G8dTYzyDIJgftsEifurmGBGCQpcXDFDZYJjPyz
-	kPTMQtKzgJFpFaNQZl5ZbmJmjoleRmVeZoVecn7uJkZgsC+r/RO9g/HTheBDjAIcjEo8vAHh
-	D9OFWBPLiitzDzFKcDArifAeYwUK8aYkVlalFuXHF5XmpBYfYpTmYFES5zX6Vp4iJJCeWJKa
-	nZpakFoEk2Xi4JRqYFzInOrxnnmXytuIUI5Om/Mf6wMtt/PV/UhW5foZH5WoWsGx49vPFz5G
-	x+OVP1nvdHrPn/fcm/F9z4qnfiI7jm49cUz/ilO7uJOiqeLMvwv5vdXvGm1ed5VPeafBnAD/
-	9T+qtQ4eX6lzbZYUw7Wt1+ousXucjv/7/ebxlf+SlGKOa7if7/m6iVGJpTgj0VCLuag4EQDV
-	R8qBcgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsXCNUNNS9ei9VG6wY0ZYhZz1q9hs5g+9QKj
-	xdf1v5gtft49zm7x+dlrZotVC6+xWRzfOo/d4vDck6wW52edYrG4vGsOm8W9Nf9ZLQ5de85q
-	sXpNhsXvbSvYHPg8ds66y+7R3XaZ3aPlyFtWj8V7XjJ5bPo0id3jxIzfLB47H1p6vN93lc3j
-	220Pj8UvPjB5fN4kF8AdxWWTkpqTWZZapG+XwJVxrWMde8Fb9orbp7QaGDvZuhg5OSQETCS2
-	Lt/I1MXIwcEmoCRxbG8MiCkioCrRdsW9i5GLg1ngEZPE6falrCDlwgLhEt0HH7KA2CxANSee
-	fGcEsXmBxtxb3cYEMVJTouHSPTCbU8BM4u3Ee2CrhAR4JF5t2A9VLyhxcuYTsDnMAvISzVtn
-	M09g5JmFJDULSWoBI9MqRpHMvLLcxMwcU73i7IzKvMwKveT83E2MwABfVvtn4g7GL5fdDzEK
-	cDAq8fBGxD1MF2JNLCuuzD3EKMHBrCTCe4wVKMSbklhZlVqUH19UmpNafIhRmoNFSZzXKzw1
-	QUggPbEkNTs1tSC1CCbLxMEp1cAYtyO5Ye2lp9KRzepNEp+0jvPHnWWtNE5y+qwXnBz64MYf
-	2R+eW88c5LFc9cagr4EtT/7U0u6atnDpvSpnZp638ouf7FXFKC9iYCsnsLNH/tXFlrT919ob
-	Ltcb7Ym48Z49tiEuMG52RfJy9lsG/I7CN/00wqVeHLxpWSHTaTzlvlvZCRbuw0osxRmJhlrM
-	RcWJAMl8FbNsAgAA
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 24 Mar 2025 09:32:49 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Mon, Mar 24, 2025 at 05:54:27PM +0900, Rakie Kim wrote:
-> > 
-> > I'm sorry, the code is missing.
-> > I may not fully understand the scenario you described, but I think your concern
-> > can be addressed by adding a simple check like the following:
-> > 
-> >     case MEM_OFFLINE:
-> >         if (!node_state(nid, N_MEMORY)) --> this point
-> >             sysfs_wi_node_release(nid);
-> >
-> 
-> This should work.  I have some questions about whether there might be
-> some subtle race conditions with this implementation, but I can take a
-> look after LSFMM.  (Example: Two blocks being offlined/onlined at the
-> same time, is state(nid, N_MEMORY) a raced value?)
-> 
-> ~Gregory
+On Tue, Mar 25 2025 at 11:22, Roger Pau Monn=C3=A9 wrote:
+> On Tue, Mar 25, 2025 at 10:20:43AM +0100, Thomas Gleixner wrote:
+> I'm a bit confused by what msi_create_device_irq_domain() does, as it
+> does allocate an irq_domain with an associated msi_domain_info
+> structure, however that irq_domain is set in
+> dev->msi.data->__domains[domid].domain rather than dev->msi.domain,
+> and doesn't override the default irq_domain set by
+> pcibios_device_add().
 
-I will also further review the code for any race condition
-issues. I intend to update v4 to incorporate the discussions
-from this patch series. Your feedback and review of v4 after
-LSFMM would be greatly appreciated.
+The default irq domain is a parent domain in that case on top of which
+the per device domains are built. And those are private to the device.
 
-Rakie
+The XEN variant uses the original global PCI/MSI domain concept with
+this outrageous domain wrapper hack. A crime committed by some tglx
+dude.
 
+> And the default x86 irq_domain (set by pcibios_device_add()) doesn't
+> have an associated msi_domain_info.
+
+It does not need one.
+
+Thanks,
+
+        tglx
 
