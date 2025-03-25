@@ -1,165 +1,237 @@
-Return-Path: <linux-kernel+bounces-575596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD61A7049A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:08:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA89EA7049C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234E31888BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:08:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECBA37A5D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C51E13D8A0;
-	Tue, 25 Mar 2025 15:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE9F25B685;
+	Tue, 25 Mar 2025 15:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lJ2c7OP2"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UWWdRn2u"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4090825A33A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D3327706;
+	Tue, 25 Mar 2025 15:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742915276; cv=none; b=UPP6GOQPFt6hYgQuVAR7+sxoPbgsdKW/j8bHt3qPSpoawCHK1/y2N5HiFs1J6C0bQR6FM9nzSF4kQ62/Jz7yh+Crd0tBWBSszL5nimEfKoj3WmX8k5jxPsz6oY/5EcYlbgNgdY3Q8VxNmcYR/srAULJBvXibBsEPfBl2VvbZcfM=
+	t=1742915331; cv=none; b=bJKDrVRc80k1xKXM59Rp/IgJEYhiwGEt7G7PahMIWkFq0Ogh6fvN5MnKS8SN6YmdjdkS+ln3B8yTVy8MxiYtoFirHszNjiWhD3HHQVlkvnfpzIQ5BVVtlXOqJ9QCv3bXweiTrEhi68gM9L42WUo685Ctu/6du+c7ex10ywMZx4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742915276; c=relaxed/simple;
-	bh=iSmodtdY7Dchcz1A/sUPS+H3SHiLLQyywM4beAv33u0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CsLDRRufoO/MHCf/Ojj9WSopsZ5KQMVhzu8VJ/PQov4Pf26joxh0YcFQSI6/H4B8Ljvx9S3oFgfqG65DZTV1CoPnmF/jGMOWToaCjtehG5DBYuWOGFx2MEBZBusuqyMqhMBgXdzPjlp5ZFTpO/+jwgiu2rBlEkkssbuGaACTLeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lJ2c7OP2; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-523f19d39d3so2756311e0c.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742915274; x=1743520074; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ASRZZn4DjAVCiGVwyErb4eVcqvprss3kx2mpnoqQ/Aw=;
-        b=lJ2c7OP2ctgy0sc4pykNStYO3q/NHZCwjiKUv8QE7ho11GEihMp+VE05S2NYUJmUJb
-         jM4U3gtcEogTOOSekGOjc5BlpmuF47WJqVR9d3r/9HeJgxW+yap4dEDtdMcoD766bCD9
-         kF0R5PjdemnYDPc6/fKm4++DrneK0PHlcs6BKRwu03DEDVONg9l/QK0nk/No1op2BaM9
-         Owfget9il+fzpy3iTpkw4x35Lnz12id8pVHkNnkvp34+ftBAX9kK27njAfra5KRjfaGY
-         V+EQbo72jEYebQHN2MpsRL8UuiHMKgzPFTWMPBmdN9Hykk6lhmXxdcEl3xCMUZ42cosM
-         pjrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742915274; x=1743520074;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ASRZZn4DjAVCiGVwyErb4eVcqvprss3kx2mpnoqQ/Aw=;
-        b=FFOY6JyvDz427gc+8HKBqiMayNhCJ/k5rOVX+pybptwHEOgfyhirii4oF95zi/cbLa
-         ppoG+DduhRYaRwWtruIP/6ng8HCQCW2Cuj7mMH0r2a56NAucF2NrgmA6OaRhoaSqlWCS
-         OGh1r3a7gb7TCYqZLmsE8/I1nc1OHOetOwuCA0Bzx1dquNYKqlFn3PwcHirJL4HGCG6B
-         ikmXK6+/o7UQ2ntYKn0PSvpeT0lBCOSPWVqq2MrG+Cr81uD2zimA/AmJT/+RYeGuCZQx
-         w448Wzfffsfruz7TGMicUAo/DoqC0h6LbNr4Ymm3+hreyuY/xlQgH6d1iYCvtW3XpoCF
-         3q6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPBd0KlWKtSHOsmvWU7YhotY6pVkDOHVpoA/0f79vyF3uNAmQqiS8CVqJwJ/m07BmpJvRjlIgROQBw/Us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx7J/OnVCwMAgPJVIHHD8Tqv+Lms4FtoE+4Iaa97pkW5XHTeCB
-	DVvweUwunxrfQsJOjV62/Wsblr7W89DUMMMEe9SqbYixWIfzWz0HHUSBcerJ/ek5BvuRFZ0Hoqu
-	At40KKbwWI2w27zNpuLG9Xlx0jUQk5bOHxychxA==
-X-Gm-Gg: ASbGncsXJZK48dyYHUxA45FvJFgWB2bSfZb/QkceYT0FQjeHTYpDzeXaqAGslc6TpDO
-	0+a2aVEidFdOeMmeduVdvmBSvbUa9w7HBQbZQI872DKtH/yGzpd9lDNrpuimVqTIts4Ik7egM2O
-	EsQmEicQv/B9iJ9QB8XR8XS/qyH5cVNfvCNwZxZar+ioibpP4klUjh+fHyz1E=
-X-Google-Smtp-Source: AGHT+IGJxNNn58Pr6BXkc8yTC7dt3Dz8oYa2jVHYnOw8DdFwyMT+9nGnrZ/TQ+Sepc3obyBo9xvaY36PFzfQAXxFVmo=
-X-Received: by 2002:a05:6122:2810:b0:520:60c2:3fb with SMTP id
- 71dfb90a1353d-525a80d5eb4mr10912049e0c.0.1742915273945; Tue, 25 Mar 2025
- 08:07:53 -0700 (PDT)
+	s=arc-20240116; t=1742915331; c=relaxed/simple;
+	bh=D+gJE+BgoJHFY+2QR+wwmhv93dFRwJgFNuy/vrLwQmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IK7tR+2vDVvnOFJWbxIjdViU1WJKdxDPGB0zhAehvZGCzYSAYCANhhGTf8bx1mUyDXMG+8CqIgh5mMj71gCvAn1jfD0kVML8Mr0mSCDo2o1KXlerZbgghpJkloo0GF70lDbeZVErjQrFUO8kMUerFQBlqcSxbet6sRLfLh9YROs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UWWdRn2u; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PBftiQ028252;
+	Tue, 25 Mar 2025 15:08:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=49WQ0+VXvpw4t+yWVOTCQc5o2SAhj
+	y8/rSQGINzSnNY=; b=UWWdRn2ub03OvX5H3iHewoVtc5od3yhgwLDTe80FEwj36
+	1s7Tj5DkK4eOLM/BlloTOorrR8lzKBO7Babdu+iw98/6XCGXtCI6c2yzBSmvZqQd
+	bxmo4GsQszlgPQPItPEFRrcRt7BU5VZlxuI0SNtxbyCw23pVLrPEYOa8EQv9QtMQ
+	8NmjJXXDb46mBxZ4LqRn5L6j3mZzGmNz5fu414HA3R2zCYpJHQu9QasKYER2KSVB
+	kKiGerzM+NmBuWwyhpi+aIT9DC37VrXfCMbzA/LFD7yG5H5ZHeNbU3h5n0c3tWei
+	+OcBSDXo69z/DWyQp759GH5m6uGxFqg2aIMJIThiA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45hnd67ae5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Mar 2025 15:08:01 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52PEimXC015178;
+	Tue, 25 Mar 2025 15:08:01 GMT
+Received: from kstolare-e5-ol8.osdevelopmeniad.oraclevcn.com (kstolare-e5-ol8.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.20])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45jj921a63-1;
+	Tue, 25 Mar 2025 15:08:01 +0000
+From: Karolina Stolarek <karolina.stolarek@oracle.com>
+To: linux-pci@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jon Pan-Doh <pandoh@google.com>,
+        Terry Bowman <terry.bowman@amd.com>, Len Brown <lenb@kernel.org>,
+        James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Ben Cheatham <Benjamin.Cheatham@amd.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Shuai Xue <xueshuai@linux.alibaba.com>,
+        Liu Xinpeng <liuxp11@chinatelecom.cn>,
+        Darren Hart <darren@os.amperecomputing.com>,
+        Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PCI/AER: Consolidate CXL, ACPI GHES and native AER reporting paths
+Date: Tue, 25 Mar 2025 15:07:47 +0000
+Message-ID: <81c040d54209627de2d8b150822636b415834c7f.1742900213.git.karolina.stolarek@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325122144.259256924@linuxfoundation.org>
-In-Reply-To: <20250325122144.259256924@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 25 Mar 2025 20:37:42 +0530
-X-Gm-Features: AQ5f1Jo5lbttZtSAb6LnZgDq3AuZotqFT2rixgG9lx0L7Z-hkj4vcw5915tDF-M
-Message-ID: <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
-Subject: Re: [PATCH 6.6 00/77] 6.6.85-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 adultscore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2503250106
+X-Proofpoint-ORIG-GUID: Vtkg1UMxfgyZJT3N2TsIkXeD8M33rmCb
+X-Proofpoint-GUID: Vtkg1UMxfgyZJT3N2TsIkXeD8M33rmCb
 
-On Tue, 25 Mar 2025 at 18:05, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.85 release.
-> There are 77 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Currently, CXL and GHES feature use pci_print_aer() function to
+log AER errors. Its implementation is pretty similar to aer_print_error(),
+duplicating the way how native PCIe devices report errors. We shouldn't
+log messages differently only because they are coming from a different
+code path.
 
+Make CXL devices and GHES to call aer_print_error() when reporting
+AER errors. Add a wrapper, aer_print_platform_error(), that translates
+aer_capabilities_regs to aer_err_info so we can use pci_print_aer()
+function.
 
-Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
-stable-rc 6.6.85-rc1
+Signed-off-by: Karolina Stolarek <karolina.stolarek@oracle.com>
+---
+v2:
+  - Don't expose aer_err_info to the world; as aer_recover_queue()
+    is tightly connected to the ghes code, introduce a wrapper for
+    aer_print_error()
+  - Move aer_err_info memset to the wrapper, don't expect the
+    caller to clean it for us
 
-First seen on the v6.6.83-245-gc1fb5424adea
- Good: v6.6.84
- Bad: 6.6.85-rc1
+  I'm still working on the logs; in the meantime, I think, we can
+  continue reviewing the patch.
 
-* arm64, build
-  - gcc-13-defconfig
+ drivers/cxl/core/pci.c |  2 +-
+ drivers/pci/pcie/aer.c | 64 ++++++++++++++++++++----------------------
+ include/linux/aer.h    |  4 +--
+ 3 files changed, 33 insertions(+), 37 deletions(-)
 
-Regression Analysis:
- - New regression? yes
- - Reproducibility? Yes
+diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+index 013b869b66cb..9ba711365388 100644
+--- a/drivers/cxl/core/pci.c
++++ b/drivers/cxl/core/pci.c
+@@ -885,7 +885,7 @@ static void cxl_handle_rdport_errors(struct cxl_dev_state *cxlds)
+ 	if (!cxl_rch_get_aer_severity(&aer_regs, &severity))
+ 		return;
+ 
+-	pci_print_aer(pdev, severity, &aer_regs);
++	aer_print_platform_error(pdev, severity, &aer_regs);
+ 
+ 	if (severity == AER_CORRECTABLE)
+ 		cxl_handle_rdport_cor_ras(cxlds, dport);
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a1cf8c7ef628..ec34bc9b2332 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -760,47 +760,42 @@ int cper_severity_to_aer(int cper_severity)
+ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
+ #endif
+ 
+-void pci_print_aer(struct pci_dev *dev, int aer_severity,
+-		   struct aer_capability_regs *aer)
++static void populate_aer_err_info(struct aer_err_info *info, int severity,
++				  struct aer_capability_regs *aer_regs)
+ {
+-	int layer, agent, tlp_header_valid = 0;
+-	u32 status, mask;
+-	struct aer_err_info info;
+-
+-	if (aer_severity == AER_CORRECTABLE) {
+-		status = aer->cor_status;
+-		mask = aer->cor_mask;
+-	} else {
+-		status = aer->uncor_status;
+-		mask = aer->uncor_mask;
+-		tlp_header_valid = status & AER_LOG_TLP_MASKS;
+-	}
+-
+-	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+-	agent = AER_GET_AGENT(aer_severity, status);
++	int tlp_header_valid;
+ 
+ 	memset(&info, 0, sizeof(info));
+-	info.severity = aer_severity;
+-	info.status = status;
+-	info.mask = mask;
+-	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
+ 
+-	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+-	__aer_print_error(dev, &info);
+-	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+-		aer_error_layer[layer], aer_agent_string[agent]);
++	info->severity = severity;
++	info->first_error = PCI_ERR_CAP_FEP(aer_regs->cap_control);
+ 
+-	if (aer_severity != AER_CORRECTABLE)
+-		pci_err(dev, "aer_uncor_severity: 0x%08x\n",
+-			aer->uncor_severity);
++	if (severity == AER_CORRECTABLE) {
++		info->id = aer_regs->cor_err_source;
++		info->status = aer_regs->cor_status;
++		info->mask = aer_regs->cor_mask;
++	} else {
++		info->id = aer_regs->uncor_err_source;
++		info->status = aer_regs->uncor_status;
++		info->mask = aer_regs->uncor_mask;
++		tlp_header_valid = info->status & AER_LOG_TLP_MASKS;
++
++		if (tlp_header_valid) {
++			info->tlp_header_valid = tlp_header_valid;
++			info->tlp = aer_regs->header_log;
++		}
++	}
++}
+ 
+-	if (tlp_header_valid)
+-		pcie_print_tlp_log(dev, &aer->header_log, dev_fmt("  "));
++void aer_print_platform_error(struct pci_dev *pdev, int severity,
++			      struct aer_capability_regs *aer_regs)
++{
++	struct aer_err_info info;
+ 
+-	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+-			aer_severity, tlp_header_valid, &aer->header_log);
++	populate_aer_err_info(&info, severity, aer_regs);
++	aer_print_error(pdev, &info);
+ }
+-EXPORT_SYMBOL_NS_GPL(pci_print_aer, "CXL");
++EXPORT_SYMBOL_NS_GPL(aer_print_platform_error, "CXL");
+ 
+ /**
+  * add_error_device - list device to be handled
+@@ -1146,7 +1141,8 @@ static void aer_recover_work_func(struct work_struct *work)
+ 			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
+ 			continue;
+ 		}
+-		pci_print_aer(pdev, entry.severity, entry.regs);
++
++		aer_print_platform_error(pdev, entry.severity, entry.regs);
+ 
+ 		/*
+ 		 * Memory for aer_capability_regs(entry.regs) is being
+diff --git a/include/linux/aer.h b/include/linux/aer.h
+index 02940be66324..5593352dfb51 100644
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@ -64,8 +64,8 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
+ static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+ #endif
+ 
+-void pci_print_aer(struct pci_dev *dev, int aer_severity,
+-		    struct aer_capability_regs *aer);
++void aer_print_platform_error(struct pci_dev *pdev, int severity,
++			      struct aer_capability_regs *aer_regs);
+ int cper_severity_to_aer(int cper_severity);
+ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+ 		       int severity, struct aer_capability_regs *aer_regs);
+-- 
+2.43.5
 
-
-Build regression: arm64 dtb rockchip non-existent node or label "vcca_0v9"
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log
-arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
-(phandle_references):
-/pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
-
-  also defined at arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
-
-## Source
-* Kernel version: 6.6.85-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: c1fb5424adea53e3a4d8b2018c5e974f7772af29
-* Git describe: v6.6.83-245-gc1fb5424adea
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/
-
-## Build
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27763720/suite/build/test/gcc-13-defconfig/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/config
-
-## Steps to reproduce
- - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
---kconfig defconfig
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
