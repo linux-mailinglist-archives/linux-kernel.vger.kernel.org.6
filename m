@@ -1,148 +1,102 @@
-Return-Path: <linux-kernel+bounces-575180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31401A6EF65
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:12:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4E4A6EEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454943BA946
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:09:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B7C1891E26
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830F12571AC;
-	Tue, 25 Mar 2025 11:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED03B255E3D;
+	Tue, 25 Mar 2025 11:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Huoc6BXr"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BDM6SVMI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D862566EE;
-	Tue, 25 Mar 2025 11:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39388254AE7;
+	Tue, 25 Mar 2025 11:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900904; cv=none; b=UtlPDsJGf/Y2yvG1RRE9iDAsLs6r86Jxi678f20KYcAdJqeDxJaf577A/aT7+8lYzabYBGPsfa0WBpnQ1xxIpV1EIuKDmAf1/+3j5tdJalyjZmjfWmpszechYZUbbQKxn5mjYWytPVwvqcHu/qWY6RUj9OQfmbGlGJQBqe4AMPY=
+	t=1742900799; cv=none; b=qFkVJmnZQP2Zq97/Ms8SArS7dTt3u1BVElXcE1a8i65dnAkCJyGg0rVH69F+MV/EHYNuqlioCjcNrehiLQ6m0MQFavHOVtDSLqjIKj+cBYglc+VS2ECW+3L2d2sZXmC1L+xGRNOcO9r5pQ4+vnZkG7hjX95nHpiTrdIOoe4vqSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900904; c=relaxed/simple;
-	bh=LyZ7Ds1GgfPH7txnaX5X2SHpowwbn5FMPsKuuSF1ER4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TmCHODXnvIZ9ubiikaGzIFJmOlrzV6rCjbP6ITO0ktIiRvCHBvWbdQCNtrh+13kqq4iQQHyKxf3n8vJysAyCrXBUWZY8jSn6CnvEjmNOJQ3IKONu55KfTLOu6jP5ZLChB3J+vS1+nGYGT9kOpKh+W34svfu6Yvt4ZPKLNTtQelg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Huoc6BXr; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2240b4de12bso36319535ad.2;
-        Tue, 25 Mar 2025 04:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742900903; x=1743505703; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2gkQtA6BSk/mRKzla3JHVlyl9UsPkc1mDthDlBu+rnk=;
-        b=Huoc6BXr8IBgckIteEyUYX4gu8UEebt7N/xZMmoDekix1f3oouKfJg5NSTkI8AShNT
-         bIVoQHfDDcdz/jlbQnLYtDPzhrRrozQjjnkDB+u39+u+EGypdjaU49SdyTcL35RD2cGD
-         ynOGN9SQ6zYnMbTmnaySfjasOn/B9P+nH4UdX/mWkLDvMfeArTuD+1TTMGywLQpZjo3q
-         hXZrEchDCHSrkduy0t4ZVSfK7rndSCDRLPfpuUX5Q0ML5JYSY1phldVj1CM3n/CqyXDN
-         M+25ZNwcUKWCcOklQLMn7ILV3lW0xis60lAtW/gLDc1lEALyw51CHFqCM6rl+EBBhi3L
-         bAxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742900903; x=1743505703;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2gkQtA6BSk/mRKzla3JHVlyl9UsPkc1mDthDlBu+rnk=;
-        b=a3W6xnYqduKKrEV3UgDv+ygTZ11NWBCmmcmED/p/Qnw6DwAmx6EzqQWdnqnrwrf7IM
-         bsR0GIKgjhpJnv2DZqr1b+ZOP1ZmpkgE7+MnmPoy1dSh5ajAZSkrsdiEPepVjfYuzXBU
-         giPSgsJDDsLTGYeQDLc9HiDlmFdYdsZME7G3IQQvURoQEFVwQHmO6y0VOmalwCCIkj5f
-         u+DWILx/NUWgpWCPciM8eeM0Da7f/XJy2NlyObq2cq7gJp99IgTRkLxhmm4EaZdy0wj+
-         h5ahOUq6T+ZDwmtOfnU+OM4JOtm9iWw9PSo1LJl+p+UlTGz2wrKhB2lnYTByhmoeUSk8
-         Mttg==
-X-Forwarded-Encrypted: i=1; AJvYcCWt7Wf7CKvk+XBDNt+b2crq2ionuYLxcFKgUr4wQkGYSEvuM1vum9cZlXMm44LM8bKO8nouad9uXFVUg2yp@vger.kernel.org, AJvYcCXpE2enKSHGDgjvTiS0xQvM3QJJM3OWZg+ImYd85hjOuvZyqwWgvehV/ZD5njgI++yQAIwfolwwKW4C8w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD956Hd+OQtT3d2Y3GyNoqvLbpJ3Pxdpj0MaG+YF586xNnWsBG
-	M4id9MMN/lG6fSEeqBOxJ8OsKqi4uXzzgu7Vp2FndMqFOf8duRmGuaIA6Mu0SFA=
-X-Gm-Gg: ASbGnctHL3WHfdXE9aRp6I7crosyHvlmeUosyOVFAxMV4SZJ4Em21IBQlITSquAisag
-	oOgbT1pghgaqefjETTfp+C1o4cq5zPSY2OK/1cIx9FyLF+jxKiO2kA5F+rUqzGrXSQbfQlDWCT+
-	AOJ01G1MLTEQIgrVgM7kKkXmlinu4d0U2gBOkVyvxpZ5h4qx5cldyv4d+dBQxtfRBF9kkrE4f4H
-	7xo+9GW4ySPFaUaaEOtiLjiYghQDtxlsyKl4Bf7zkJcUVZXsRd6j27delNeXrxYmiEJOeMTcNPQ
-	MOjTGIB89Q2sQo3yW0vjwNCDPDaBgXaum6Om4WAmqf980WowLZvFgA1VpxErUB+DKEXUGdptCBW
-	GoYlavvSbS7s8fR7BOxkSzuYuOqG2tQi5988+OTSQXdgOHA==
-X-Google-Smtp-Source: AGHT+IGa9t3IskA+J5tIjYqnIplK5sNodQOqUyNl7PVOst5jRQcbIW5LxLkL3kvVXHugMBvVHuxNWg==
-X-Received: by 2002:a17:902:cf07:b0:224:1234:5a3b with SMTP id d9443c01a7336-22780e31515mr248484255ad.51.1742900902551;
-        Tue, 25 Mar 2025 04:08:22 -0700 (PDT)
-Received: from codespaces-3dd663.dxrpqgqhlb3ehogrxrezr215ye.rx.internal.cloudapp.net ([20.192.21.54])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739061592b9sm9787667b3a.152.2025.03.25.04.08.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 04:08:22 -0700 (PDT)
-From: Aditya Garg <adityagarg1208@gmail.com>
-X-Google-Original-From: Aditya Garg <gargaditya08@live.com>
-To: jikos@kernel.org,
-	jkosina@suse.com,
-	bentiss@kernel.org,
-	benjamin.tissoires@redhat.com
-Cc: g.sokol99@g-sokol.info,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	gargaditya08@live.com
-Subject: [PATCH v3 5/5] HID: apple: Add Apple Magic Keyboard A3119 USB-C support
-Date: Tue, 25 Mar 2025 11:05:27 +0000
-Message-ID: <20250325110754.28359-6-gargaditya08@live.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325110754.28359-1-gargaditya08@live.com>
-References: <20250325110754.28359-1-gargaditya08@live.com>
+	s=arc-20240116; t=1742900799; c=relaxed/simple;
+	bh=D0N/mgLzCXi4oZJoUT9/lMZngBeCJnMRqCEe8RPVzCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQ05cZxF/aJ2jTEX85ApRfHrCX/P0AlCeLcoouX6swHoEIVMYFHgc2BNepvlWNBNFwmyt2gxqSloVscQAfb5D/s/VAQ1aoIJixbfFOQXqFcuEwe9o4D3UMKhXgfo6z6XcuFEIUyWwKb9jskxt7i5BpC7BXdFXdAg75txaRGUWms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BDM6SVMI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742900795;
+	bh=D0N/mgLzCXi4oZJoUT9/lMZngBeCJnMRqCEe8RPVzCw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BDM6SVMILwPq70pCVbl5bItk8GC0tcw9Yf/34rYFw6mCnsN+0yUhfJ/hjiEeDmn72
+	 U/rtTB5SmTcJGgmK3BZgMDjTc0hOnJaukjn/UNzwgBnVk7brn9q0PkuiUIBfUuZDFV
+	 /zv/Zxa8KTIPQG2taIBBWZ5p/GXotmZq93q8rvpyMR3QhlH9TaqL4UWMJLUDFeiJav
+	 oaWEJjL7EdSh00MXLBQG9R/fO5qaK1ES5NL0feETn5ewOfDXhGrOCpSZC+OTwfLJOL
+	 KAzWvgqVBrQpvPHyVOUJI/5otjdYifxjbuAroFyqWGttAulvH7kZxZ+7Cd/mLVZAPr
+	 QrTihiq9olnjw==
+Received: from [192.168.50.250] (unknown [171.76.87.92])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8ED1117E09D6;
+	Tue, 25 Mar 2025 12:06:30 +0100 (CET)
+Message-ID: <c71855d0-2638-4f06-9b75-cdbd137837bb@collabora.com>
+Date: Tue, 25 Mar 2025 16:36:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] drm/ci: uprev mesa
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
+ helen.fornazier@gmail.com, airlied@gmail.com, simona.vetter@ffwll.ch,
+ robdclark@gmail.com, guilherme.gallo@collabora.com,
+ sergi.blanch.torne@collabora.com, valentine.burley@collabora.com,
+ lumag@kernel.org, quic_abhinavk@quicinc.com, mripard@kernel.org,
+ jani.nikula@linux.intel.com, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250314085858.39328-1-vignesh.raman@collabora.com>
+ <20250314085858.39328-2-vignesh.raman@collabora.com>
+ <CAPj87rMjF84yyPqBshuGu=8qx6Xhq9Z-HgEnQe=tRtbu3E8OtQ@mail.gmail.com>
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <CAPj87rMjF84yyPqBshuGu=8qx6Xhq9Z-HgEnQe=tRtbu3E8OtQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add Apple Magic Keyboard 2024 with Touch ID and Numeric Keypad device ID
-(05ac:0322) to those recognized by the hid-apple driver. Keyboard is
-otherwise compatible with the existing implementation for its earlier
-2021 model.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/hid/hid-apple.c | 5 +++++
- drivers/hid/hid-ids.h   | 1 +
- 2 files changed, 6 insertions(+)
+On 21/03/25 15:56, Daniel Stone wrote:
+> Hi Vignesh,
+> 
+> On Fri, 14 Mar 2025 at 08:59, Vignesh Raman <vignesh.raman@collabora.com> wrote:
+>> LAVA was recently patched [1] with a fix on how parameters are parsed in
+>> `lava-test-case`, so we don't need to repeat quotes to send the
+>> arguments properly to it. Uprev mesa to fix this issue.
+> 
+> Thanks a lot; the series is:
+> Acked-by: Daniel Stone <daniels@collabora.com>
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index e95a54113..0524893f7 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -486,6 +486,7 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021:
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024:
- 		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024:
-+		case USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024:
- 			table = magic_keyboard_2021_and_2024_fn_keys;
- 			break;
- 		case USB_DEVICE_ID_APPLE_WELLSPRINGT2_J132:
-@@ -1182,6 +1183,10 @@ static const struct hid_device_id apple_devices[] = {
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024),
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLIGHT),
- 		.driver_data = APPLE_MAGIC_BACKLIGHT },
- 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 7f2976639..88925cb13 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -167,6 +167,7 @@
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021   0x029f
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024   0x0320
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2024   0x0321
-+#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2024   0x0322
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI	0x0290
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO	0x0291
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS	0x0292
--- 
-2.49.0
+Applied to drm-misc-next.
+
+Regards,
+Vignesh
+
+> 
+> Cheers,
+> Daniel
+> 
 
 
