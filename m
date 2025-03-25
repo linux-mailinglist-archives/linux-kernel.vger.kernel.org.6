@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-576303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D97EA70DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A033FA70DAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35FE3BC765
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:38:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD39F3B2D4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F6E269CED;
-	Tue, 25 Mar 2025 23:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IRZiowHK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91086263F3E;
+	Tue, 25 Mar 2025 23:38:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9659A18A6A8;
-	Tue, 25 Mar 2025 23:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A97018A6A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742945941; cv=none; b=gvcaCEfcUaNgwHSCm7KAm6vIStrQvXTuI7QUXDit/TETITcVGgffhc4mK3Am8ZMLLiM2iieuvRwDWpfeuc+vcFsiV868lrHy5RCXmVclCvbC2hfcO2ieMAUd3MgLMxDfcQS83otcyWA7jIdxRUPLp+RNQra7XZsb9XcQm9CgUDc=
+	t=1742945932; cv=none; b=s+WcvB3IPRK3aC4YfhB3yPIg2wekL2x/CKFMNmfBou76mLQ7qGsbbE2f/w/VDiJWSWlPJ8l1U5AUuTtnEHAJh1TqStwW/Sx+WLAXzWo7rW3BUiD+QSZLQrsVW6RexPWI/K6kFPS1AqlmUENwowSGHdc1wfklj4iZ6w9vgt07pfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742945941; c=relaxed/simple;
-	bh=KDrSbAJqMLnDB/8t2Mm0VghI0h21RNyKGidQ4EM+LZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cpPGOCmMm8Dp4AWR/vtAEw5FYa4QbyZSe6RJx0boCX+X8aer8qiPiHUHz/LamlvcHNR+I4nN49m4kL7SW6G510C5Pl2ZelXMeGFGxVLwknLjEgux1ddf0tubVGoVEHk/NMi+Vw26n1WavnhklTuDJaKYYdAtCMPqNVf1C76iEns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IRZiowHK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742945936;
-	bh=ofjW4FLKRx2ZxcY07rp0Sdj8ojIDQZhJLvWqQPeCnH0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IRZiowHKPR6Yyt+Ydc/EUJQydDcgHOeLWK2Q66QZH2gE7FDTqAsBNaiq4DQYbAR/a
-	 aqdv3NKfCdL2UNrF2ccUvCtOXxrK+8rFsIBTjtH9/131xdZGrRIh/9fNLm2FU25fo9
-	 SfVTRO/uMceAYoQUprxacom03JIgdip9PoPcw0BxSs0FAWvVSBlE4J2KIfyXrGPF6W
-	 jthxlxkUIg8VuOV9Yz+BnOFrCdSn6Opb2/NTBoy39B8KZYCi3wsBiZ3Z35NlWIjc3b
-	 q8qMHUK/G5UhGRRqZl8oxkoMfm8zO3FQck18RYBcoKCMhslJf/Jr0ehzEUx8C0UfjH
-	 lUUKxYE5yIrRA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMmb40DZyz4x21;
-	Wed, 26 Mar 2025 10:38:55 +1100 (AEDT)
-Date: Wed, 26 Mar 2025 10:38:54 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip-fixes tree
-Message-ID: <20250326103854.309e3c60@canb.auug.org.au>
+	s=arc-20240116; t=1742945932; c=relaxed/simple;
+	bh=prt0lASwxXBSBcy9UEKjIrliqfxx7XczJ3QrmorlyQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FxVGa09er9crbFTz2rbdJ3engki/+fbD1IZH7vivNiVodxllpY1G2MXW4TrvdPZViu02W5lq8VQeYS94GetRfY5MLgL2a0NXMKlLzuS+DAC3lUfPSKRJKTURQl9nfBjxrHKTe02vOfAQC8bBkC957qkWEvFiGYr3zJJjNI6Plhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CBDC4CEE4;
+	Tue, 25 Mar 2025 23:38:50 +0000 (UTC)
+Date: Tue, 25 Mar 2025 19:39:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Haiyue Wang <haiyuewa@163.com>, Jiapeng Chong
+ <jiapeng.chong@linux.alibaba.com>, Sasha Levin <sashal@kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Tengda Wu <wutengda@huaweicloud.com>
+Subject: [GIT PULL] ftrace: Updates for 6.15
+Message-ID: <20250325193935.66020aa3@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MqB5uhYn2YpiKFeF+/2rm+a";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/MqB5uhYn2YpiKFeF+/2rm+a
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
 
-After merging the tip-fixes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Linus,
 
-In file included from builtin-check.c:16:
-In function 'save_argv',
-    inlined from 'objtool_run' at builtin-check.c:296:2:
-tools/objtool/include/objtool/warn.h:47:17: error: '%s' directive argument =
-is null [-Werror=3Dformat-overflow=3D]
-   47 |                 "%s%s%s: objtool: " format "\n",        \
-      |                 ^~~~~~~~~~~~~~~~~~~
-tools/objtool/include/objtool/warn.h:92:9: note: in expansion of macro 'WAR=
-N'
-   92 |         WARN("%s: " format " failed: %s", __func__, ##__VA_ARGS__, =
-strerror(errno))
-      |         ^~~~
-builtin-check.c:241:25: note: in expansion of macro 'WARN_GLIBC'
-  241 |                         WARN_GLIBC("strdup(%s)", orig_argv[i]);
-      |                         ^~~~~~~~~~
-cc1: all warnings being treated as errors
+ftrace changes for v6.15:
 
-Caused (or exposed?) by commit
+- Record function parameters for function and function graph tracers
 
-  c5995abe1547 ("objtool: Improve error handling")
+  An option has been added to function tracer (func-args) and the function
+  graph tracer (funcgraph-args) that when set, the tracers will record the
+  registers that hold the arguments into each function event. On reading of
+  the trace, it will use BTF to print those arguments. Most archs support up
+  to 6 arguments (depending on the complexity of the arguments) and those
+  are printed. If a function has more arguments then what was recorded, the
+  output will end with " ... )".
 
-I have used the tip-fixes tree from next-20250325 for today.
+    Example of function graph tracer:
 
---=20
-Cheers,
-Stephen Rothwell
+    6)              | dummy_xmit [dummy](skb = 0x8887c100, dev = 0x872ca000) {
+    6)              |   consume_skb(skb = 0x8887c100) {
+    6)              |     skb_release_head_state(skb = 0x8887c100) {
+    6)  0.178 us    |       sock_wfree(skb = 0x8887c100)
+    6)  0.627 us    |     }
 
---Sig_/MqB5uhYn2YpiKFeF+/2rm+a
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+- The rest of the changes are minor clean ups and fixes
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjPo4ACgkQAVBC80lX
-0GwuEAf8C3bC7t4VGfjB9S9KVGgC35exEa6z6MoU9WAPMy2xG/CpiVRGTvrSMlDS
-TA27RvIOMNBNAVxjH2L2LxQILj1Tvgr1CKds5OtGLXdUdNOYi8iGwgg49pvnOpNh
-zDw1azFfHtr2gaqyQJqbpyiD6wtthy3I3AxvFxoab6b+AMZOQb8qQS604bLh2F97
-6Y9SypHIgcpWRPsl0NBkiUrqGTxR/cqXRZFXmcwo1vvfRIr6BfI0co2Eopkwx3ca
-zp6vdjh2HTu5e7mmaEnY7I+A4bjED6OLhFgSwAzkWTyEfniEYhTeoG4U4+QrP9Nw
-4VTKO17gJV18sOE5KOGXhkx+FIbZRA==
-=dfm0
------END PGP SIGNATURE-----
+Please pull the latest ftrace-v6.15 tree, which can be found at:
 
---Sig_/MqB5uhYn2YpiKFeF+/2rm+a--
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace-v6.15
+
+Tag SHA1: d96c183fee82a7cb9e3875c6e65fae637768d592
+Head SHA1: 391dda1bd7c56de62b96126214f040fe8965561b
+
+
+Haiyue Wang (1):
+      fgraph: Correct typo in ftrace_return_to_handler comment
+
+Jiapeng Chong (1):
+      function_graph: Remove the unused variable func
+
+Sasha Levin (1):
+      tracing: Use hashtable.h for event_hash
+
+Steven Rostedt (2):
+      ftrace: Have ftrace_free_filter() WARN and exit if ops is active
+      ftrace: Have funcgraph-args take affect during tracing
+
+Sven Schnelle (3):
+      ftrace: Add print_function_args()
+      ftrace: Add support for function argument to graph tracer
+      ftrace: Add arguments to function tracer
+
+Tengda Wu (1):
+      tracing: Fix use-after-free in print_graph_function_flags during tracer switching
+
+----
+ include/linux/ftrace_regs.h          |   5 +
+ kernel/trace/Kconfig                 |  12 +++
+ kernel/trace/fgraph.c                |   2 +-
+ kernel/trace/ftrace.c                |   2 +
+ kernel/trace/trace.c                 |  14 ++-
+ kernel/trace/trace.h                 |   5 +-
+ kernel/trace/trace_entries.h         |  12 ++-
+ kernel/trace/trace_functions.c       |  46 ++++++++-
+ kernel/trace/trace_functions_graph.c | 176 ++++++++++++++++++++++++++++-------
+ kernel/trace/trace_irqsoff.c         |  14 ++-
+ kernel/trace/trace_output.c          | 122 +++++++++++++++++++++---
+ kernel/trace/trace_output.h          |   9 ++
+ kernel/trace/trace_sched_wakeup.c    |   6 +-
+ 13 files changed, 351 insertions(+), 74 deletions(-)
+---------------------------
 
