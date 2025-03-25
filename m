@@ -1,78 +1,124 @@
-Return-Path: <linux-kernel+bounces-574659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D3EA6E830
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:59:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C04A6E83F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E37E188C48C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F15B189684D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F6319E98B;
-	Tue, 25 Mar 2025 01:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4977156C79;
+	Tue, 25 Mar 2025 02:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a66hl6Gd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="UtKZfQw1"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FF419D88F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744F514A62A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742867883; cv=none; b=Av3Y8EL+rI0sCEXJGAMeJfpT7IFKK59d7U3toWMWMDIod6DdaBhlbUXOupSPyaS/EHyKMqkOr/C+IUIrrphXrniOTIv3uqI77/fIr5Vb3jgV1z+Z4xnmn1JfpcFAyU7DAUPIcTpTccVr57OBcsDi4mBXXYk8ftaFo3SLtX5crm4=
+	t=1742868329; cv=none; b=i0zcFVqCcIaJ6drxBuBr98qg5UjV3X7pQnwMYDcmjsrGvvbFo8oSD8653h+NW/2cOANEmt9jgKGx0Qp4ZLoI2QF70z0RZJzafpT85dXVe+aWurTXlqt111bZHB4cpjUTFq8bHRoGuG39nlpZrR4tvxyp3VgCaWxJrjoGzE+479Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742867883; c=relaxed/simple;
-	bh=3y5WpF7lNXilRICp3VdO/ZVTWMQ3jk7HoGus36DCtuo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=pfZTVkyCdA/XT10Ep+kJVAZ9spCuNaCGUgukxOTOdHWG9koTD8gwIBhlB23ay5dTqg3Fs6Vahma3nW1qOoRx13+2rMp71TH02dh0WxGtZTqW82RdLXBtF3YuCGAobEPnhCSlRE4BUjM+YW2Uq88QISF4/lxdGn9RhcPTZxC6WN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a66hl6Gd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751EAC4CEE9;
-	Tue, 25 Mar 2025 01:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742867883;
-	bh=3y5WpF7lNXilRICp3VdO/ZVTWMQ3jk7HoGus36DCtuo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=a66hl6GdHdQZ+R/8eL6IbWMsVwqeribMg59yFI0QnKZLbeN02r0oRVZfEhI0qRujQ
-	 uukqO2c8Rm1DA4GAQS+VjJ1YLScDF0XpxPx1t9gLvggokAGyWkYhHQWHA25LMAbmiD
-	 5D0q75MYqntRqQdQFS+dBJ4UkelrKgchz0dBV4LliL9aJajWGwkYieMvA6kKECV7uS
-	 F1nO0234o5iMiF8gNpTRlhzkR/vo1fCtwIRku2MA+1Y68YqQJVAtN7ySc+MR2K0kBU
-	 lhtajxPyXtZb9jyWW+pumSP7I4v8r5bc0ps0fyqpg1BoCgmYuoEtjD5pTlUdxxwqb1
-	 xEWe2LS/nmbKw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB560380DBCD;
-	Tue, 25 Mar 2025 01:58:40 +0000 (UTC)
-Subject: Re: [GIT PULL] Stop-machine change for v6.15
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <a64ef1d7-95c3-487d-8c72-2343580bad95@paulmck-laptop>
-References: <a64ef1d7-95c3-487d-8c72-2343580bad95@paulmck-laptop>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <a64ef1d7-95c3-487d-8c72-2343580bad95@paulmck-laptop>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu tags/stop-machine.2025.03.21a
-X-PR-Tracked-Commit-Id: 2af8780d6c8addecda5a0f624c4f084a3a9578fe
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8541bc1a52e7e8facd67cef1e659f5714abc95ab
-Message-Id: <174286791952.53720.15844161425385341251.pr-tracker-bot@kernel.org>
-Date: Tue, 25 Mar 2025 01:58:39 +0000
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, tglx@linutronix.de, vschneid@redhat.com, neeraj.upadhyay@kernel.org, frederic@kernel.org
+	s=arc-20240116; t=1742868329; c=relaxed/simple;
+	bh=749guTHReJ43QAYjWO2kY5aXsr/i1vmJXJpGgWaiEQ8=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=CrYs1XLg6HK/T/WRVhR1hsbp4PQ6B9sHRwXLxdcDEMhsm0/lE38Kh5LBTXPCROMyuroO9a9WvpG/SsRTtz0dEgPmk6H+BEdodI8AWbfB2BUNmYlIfvuZmBqesu+q/WXCnSqw5P+CXVEqNkOR9VYsTW/Lx2z5E3WufRj0Q7Acm3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=UtKZfQw1; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1742867962;
+	bh=RXn3xdJvOCi1AozfgFkFj4o3yXrTvkZNmzS4EXmbBUQ=;
+	h=From:To:Cc:Subject:Date;
+	b=UtKZfQw1RVjVpG5S6oo0/dKOV9ra7P7ijClM6+pD8x0QWioj4ecYHV1TV2B+Ne6AT
+	 foJ4V5e6DmcrBxqd0HTAqplVG8/CFQNjaytOG5k4hJExxpCqG1G4nK5teyGBs1Zp5E
+	 WXl+6E33T+1Q3L05Mn1D37MoTu+/9sMdvt42Z6E4=
+Received: from localhost.localdomain ([116.128.244.169])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id ED53A8FC; Tue, 25 Mar 2025 09:59:21 +0800
+X-QQ-mid: xmsmtpt1742867961toj6rqhl1
+Message-ID: <tencent_E59F5CCD55B9EE47D4712F517941BE78A50A@qq.com>
+X-QQ-XMAILINFO: MAUQIEZVArhLcsV+j47LpxeFdXHP5qIdsW9xmY4ED+rvNEPHM496DxWsBSA8K9
+	 02T0kJ4vypRFyQM+apKFzc2fYoSZXadA23zboIy5WPbUIC3GskQ0fMdc6dGqR2Szdv4lg3u0kxWg
+	 3K6m0EwPscmSzvXCKrRhPyBTGbj/36apMJy6yFwrKegsQDUHe8O6IISW6h/Gx+n3IOBlfCQ10pSv
+	 z8PmBvKhH9mvivCmzRbKeyOEzHWmqRDik7YWgQlf00m9/XMif/39KVy8SZ/tnIcC3GoriG+bHM5b
+	 OzmEMDDxxzZHXaUPtrSH9V1JKdlLkFgmzLLSXR6d7TFuNh5zPLDB1sBPBYVEpjlstjhckF12wR8P
+	 bT8Vbv+Y+ieYmM4DI5CH2UppPmfv4NZw/X+Jo6p73b+YAZOmjaobL4ftsAwglxy0hLG8HsOoBctl
+	 gtrLrU2pIJDZmg0tBSo/rPn4H9fY40jPlnuOzpg7rKO17BYoTBnmd68ZzRoE4+kXTs/YA/ebkO2K
+	 WW3O3eu5Nh/UEP++JQig1yn3KzsUHmWyY6ZbvBlxFBu2LZA2m4CAiauDOqKC4LrNv4SfZt58vcxK
+	 iQR9GLy+tuJE5dKcQJWmSkfnZXBGhTFYgwglHaQzwKYoROtbMpREchnIuf3OaUIP29T7SqgiJaZV
+	 Wv4/NG8xtV7W6jDD8KiBTS5w9S70HwjMIJN9/xtyTpJztkNFrKu9SkkjpZsYK3/BVgnU8/0p17F2
+	 p2S47JM2fnUkVqclOcOd1KljBZ+iQgwr80YLbOSZIQ+Cw4glGQW4hQxiqS4wyZDyr5YVY2ihWhcf
+	 10imUH8sigXFT/RO9hG6vYFZgax447QA0fFRwvD4xmh34UX2flHMfuBXid8P0ifDWYBIOzZGIu09
+	 lPzuFRkPAcpUhDHS0JGGao3V9JLsIINWMR4Itv7Loae9J7Hw8NUPRHeBMFdm8CD1FHhPWgWPDMxu
+	 wdibJAusRc24WDWJ8ZfFTONljA/bJOufVsnc8M38o=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: xiaopeitux@foxmail.com
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	yuanzhichang@hisilicon.com,
+	john.g.garry@oracle.com
+Cc: Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] logic_pio: Add detailed comments for find_io_range() and logic_pio_trans_cpuaddr()
+Date: Tue, 25 Mar 2025 09:59:19 +0800
+X-OQ-MSGID: <b831fcad2e4f9f896f32a1890ae067718486bae6.1742867249.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri, 21 Mar 2025 16:33:09 -0700:
+From: Pei Xiao <xiaopei01@kylinos.cn>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu tags/stop-machine.2025.03.21a
+As a library file, every function should have comments,so add
+comments for any functions that were previously overlooked.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8541bc1a52e7e8facd67cef1e659f5714abc95ab
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+---
+ lib/logic_pio.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/lib/logic_pio.c b/lib/logic_pio.c
+index e29496a38d06..3a49f424acc0 100644
+--- a/lib/logic_pio.c
++++ b/lib/logic_pio.c
+@@ -138,7 +138,15 @@ struct logic_pio_hwaddr *find_io_range_by_fwnode(const struct fwnode_handle *fwn
+ 	return found_range;
+ }
+ 
+-/* Return a registered range given an input PIO token */
++/**
++ * find_io_range - find a registered range by PIO
++ * @pio: logical PIO value
++ *
++ * Return a registered range, NULL otherwise.
++ *
++ * Traverse the io_range_list to find the registered node for @pio.
++ * The input PIO should be unique in the whole logical PIO space.
++ */
+ static struct logic_pio_hwaddr *find_io_range(unsigned long pio)
+ {
+ 	struct logic_pio_hwaddr *range, *found_range = NULL;
+@@ -204,6 +212,12 @@ unsigned long logic_pio_trans_hwaddr(const struct fwnode_handle *fwnode,
+ 	return addr - range->hw_start + range->io_start;
+ }
+ 
++/**
++ * logic_pio_trans_cpuaddr - translate CPU address to logical PIO
++ * @addr: Host-relative CPU address
++ *
++ * Returns Logical PIO value if successful, ~0UL otherwise
++ */
+ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
+ {
+ 	struct logic_pio_hwaddr *range;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.25.1
+
 
