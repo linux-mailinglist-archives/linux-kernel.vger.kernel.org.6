@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-575584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCBECA70470
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:00:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA94A70479
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B9A17A2466
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B37F1891FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88E1DEFC8;
-	Tue, 25 Mar 2025 15:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFB71990AF;
+	Tue, 25 Mar 2025 15:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jo4lS6nb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bAuWqNV0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABAC25BAA7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A32D258CD6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914806; cv=none; b=gkmC/9ZF8y9x1QYV9fzdPO0c0mUso56lfq3wQsafW7tEY+qY2COuAbODhXxSr2IIyjIb4tdJB/8VAWcjymujkBCW74bfHq5zfOQc3c3BIQa8x2uMb7xc2rm/QxR5bzM4TFTZKrLGdq5X6voIUNLXtuV4DMlSXVf+Fii8ZViNF8o=
+	t=1742914819; cv=none; b=K9AUZAhoJbx/NkJdZe8lpsyJOwIlCaTNT505rDi370OUbjB2S3oBq+r9cZh1Uw4buSyj918vyyoblKydg/7OfwaPbObfUrL2J3Ab/nNJ20z5A8NMN949X8nJQw0IlGl9uxpJ+rN3ezG76o7xW6OnuG2Yp4kt89VO7oc1IPm2B90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914806; c=relaxed/simple;
-	bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ktf0031qhJDYmEAyXGofJhrkdiQJWbgfyqTLjofTITcfo/LMLa3evcuevfvfWW2I/X2ssuJod9aCKNd5Xp5vTenEa60+VkqO8w/mLQtUBQu4gxBl2vxDhRwYmAx24j9JVX5qRnqv/+GbAQ6jQq2KbZQ8x8pXLwpOUsyKtaaMWAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jo4lS6nb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742914802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
-	b=Jo4lS6nbSPFUZqQ/YRSzh47wyg/MiAFjBkkpBci2pLWgaKT9Y0MlnvS2QXsy4X13l2R9H4
-	ejad+NTAGfILpWnDfHsPYE9rfUrsJ48bNnjHrxRlHMbIcOef087NLrzcrDxTgE8nYrV14E
-	ZHrDxSnDbOH5rrYMnmX+a3mea471IEE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-696-5Fcm4JHDPSW29qY40pxkVA-1; Tue, 25 Mar 2025 11:00:00 -0400
-X-MC-Unique: 5Fcm4JHDPSW29qY40pxkVA-1
-X-Mimecast-MFC-AGG-ID: 5Fcm4JHDPSW29qY40pxkVA_1742914799
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac6a0443bafso216891466b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:00:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742914799; x=1743519599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
-        b=TFAWtBN9oQfLsYbQXNRBgnB7MZO7oIndCRHIf/LT0ihOXUd6rTb0FhoUg9oLc2DU+C
-         awdLqiHrQz4wLcK/4fqo6hqElPbJm5SCcJc06qeT4CNECbgcOq3OogqPqjPuA45Wk1+s
-         YojD1hfVI0LyTT64cEUKdGiZ5kko3L4jcLUkKztRUFmpcP5I36SMMgJJP/gFKgqBG0rj
-         8X2V6Gdy6LVokly+iQQxoJFXTf5qFcfbkUSH/FTypA/phAeIY95CZ+1FioEOj0ZYg1uc
-         K2QNDON2kG1YvElubx3KGXlQ7Vit3/YXegvxaZE2u4eEVMItDEqPwYgUxVZ4MPuBKXyN
-         6lzw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8wf1TX473qUwwY/yAwlyTfEe2gcbKKWvpXo4HsUl7oIjZ+ALec6g3f5VU+9PFEuwOTeQgFP1KU+d6YdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIs824WlnB9TUjUsa1XdsOgIm+jX8mC8xtWnfwpX97XmhxkFnS
-	dAANzB5LPgQQDTR13EmN+VJJCLsX57xV/aRCCOrWcpCQetcN04izdp+aygiTt2XUzUz9byBddgu
-	Jd0buFfHmNX9U/OLxK6TCZ4h9aECzKt4pcXduDiVo+6TE0ZqZooKwElWcC3bzPi14mEYstyMUKh
-	kmtDSgFFjSvY77BTVVLOBi6zUyX+AApLFOXzvu
-X-Gm-Gg: ASbGncvh+KsBaaNDnufKiO4ImnnC/gArEhcSoBCQ9nSl9Z0gOyf9b7vZX7OmFaGAJ0r
-	6aCHTPRQIWMW5xLfPpCABQ6QtHETKdCfKdN/X2Gc47X6YeEH/+Zh1PkG8ZJTpnAULllfMvtCBbw
-	==
-X-Received: by 2002:a17:907:1b05:b0:ac3:8626:607 with SMTP id a640c23a62f3a-ac3f251fbd3mr1795386466b.38.1742914798874;
-        Tue, 25 Mar 2025 07:59:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+YUjGVWtfpyBwCFBLJ1QlJAEWsiUBcgZ5CATDRVTkA/NPywRDWZDxKGd2LtWzuRZROP8MS1zhzDRVTnbwctU=
-X-Received: by 2002:a17:907:1b05:b0:ac3:8626:607 with SMTP id
- a640c23a62f3a-ac3f251fbd3mr1795382466b.38.1742914798382; Tue, 25 Mar 2025
- 07:59:58 -0700 (PDT)
+	s=arc-20240116; t=1742914819; c=relaxed/simple;
+	bh=h3uRvVb+0ICGMx0LfqKOcjSmYhpqbNlOGvum+Ghq0Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jk/XyI0GjRFv0SiGV39UmyACoiILP2yiz+rDW0V6aweh1501dSPw7zbxo5Ww6n3GiNuyY4rzCsqGXkWIVoEgsB4ge5Ov1oB/u8TJiqyGDu9vnZgERkkQ4YTPgNXuq/BCHzI3HCIA92pIHzOJ1wor52hlV923CJYDPysI3L7zNa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bAuWqNV0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 23B4940E0219;
+	Tue, 25 Mar 2025 15:00:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TUSoyLxPEBCb; Tue, 25 Mar 2025 15:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742914810; bh=t3V/3rW/HEY2R9g3mjaWW4qaO0Zv73LHgVqmtFGKwNY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bAuWqNV01lZt5yJsaZNANZpN0y1QJnedHSa50luyx2Ca7VAtnDpFgjPDqZX+OlL46
+	 AZoqG54SvkYfOV/75jPM+ZvH51O3+ecQsABtbnvqzrJpvCxff+BtzzeI9bh/+v9ibo
+	 8+U/A9+ZufYBuLS+Y4O69D5tmvrbzgIGE5PMHunJnBHLqAxW8DFprZNIi3d6WaJ+jE
+	 ej2QYMJrcqPnWXP9aYKTLK5FwOzIFKl3lCE0GmCPbKXFTxCzFzoVDLZUky74HBfsyq
+	 +eJEEtJjgdTtVydSbO6d+d49YvJ9f7u1CneOc8JSZJ+rKaI8tUzT//2pqDueWC8roL
+	 uqAz+WOkRVgwVQ2IK3xh4nXl3q3aQoj9YtzmxCnb4lGBmHTxb6XjMXLxYpDx3Xy5xl
+	 NSWVKXw27X+mzCQeN3k6YF2vM/gBslBH7/OY3U4KEarsf1Yh8IlrPcsAlOhzVckoe4
+	 MJveThLML8dAO9Cs1f6rQS3X+vTEGI19GtifwWjnNiwE8O8shbarDiRKyXTkO9fHes
+	 JtlwDvqsnu6MpzYrhgr10R1vzQ0Duv3txEjF+7ctLymEkHjAx3thJ66aFmgA7lZQss
+	 1IMat8W+rqZ9T3p3R7B3Oxe93H7tHICzxe6kWo2syhdxvjEFlFwgqBi1IYD6bzW/p0
+	 jOLL15SFuBBTwfEkhet24Abc=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9077240E01D1;
+	Tue, 25 Mar 2025 15:00:07 +0000 (UTC)
+Date: Tue, 25 Mar 2025 16:00:01 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ras/core for v6.15
+Message-ID: <20250325150001.GAZ-LE8Zk2JIGck0qW@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
- <8b0b2a41-203d-41f8-888d-2273afb877d0@qmon.net> <Z+KXN0KjyHlQPLUj@linux.ibm.com>
- <15370998-6a91-464d-b680-931074889bc1@kernel.org>
-In-Reply-To: <15370998-6a91-464d-b680-931074889bc1@kernel.org>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Tue, 25 Mar 2025 15:59:44 +0100
-X-Gm-Features: AQ5f1JoiLoJo4ZTpZl2aK1T1MfyI1PFI0KWuUJogAG7QL32ZnjVnpgltDvnuL14
-Message-ID: <CAP4=nvQ23pcQQ+bf6ddVWXd4zAXfUTqQxDrimqhsrB-sBXL_ew@mail.gmail.com>
-Subject: Re: [linux-next-20250324]/tool/bpf/bpftool fails to complie on linux-next-20250324
-To: Quentin Monnet <qmo@kernel.org>
-Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>, Venkat Rao Bagalkote <venkat88@linux.ibm.com>, 
-	Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com, 
-	williams@redhat.com, rostedt@goodmis.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hello Quentin, Venkat, Saket,
+Hi Linus,
 
-Thanks for looking into this.
+please pull a single RAS cleanup for v6.15.
 
-=C3=BAt 25. 3. 2025 v 13:12 odes=C3=ADlatel Quentin Monnet <qmo@kernel.org>=
- napsal:
-> If you talk about tools/tracing/rtla/Makefile failing to locate bpftool,
-> it's another matter. As far as I understand, the RTLA Makefile assumes
-> that bpftool is available from $PATH, this is why the commit introduced
-> a probe in tools/build/feature: to ensure that bpftool is installed and
-> available. So here again, I don't see the motivation for changing the
-> path to the binary (And how do you know it's /usr/sbin/bpftool anyway?
-> Some users have it under /usr/local/sbin/, for example). If the intent
-> were to compile a bootstrap bpftool to make sure that it's available
-> instead then it should replicate what other BPF utilities or selftests
-> do, and get rid of the probe. But the commit description for
-> 8a635c3856dd indicates that RTLA folks prefer not to compile bpftool and
-> rely on it being installed.
+Thx.
 
-Yes, that is correct. The reason why I opted to use the system bpftool
-is that bpftool itself has a lot of dependencies, and they would have
-to be available at the time of building RTLA. Since RTLA only requires
-basic bpftool skeleton generation, and the only "special" feature it
-uses is CO-RE which is already quite old now, I don't expect the build
-to fail with system bpftool, so I chose to use that to make both the
-build dependencies and the RTLA Makefiles simpler.
+---
 
-My commits sets BPFTOOL to bpftool since otherwise, the feature check
-would fail, as BPFTOOL wouldn't be defined, since it is not passed to
-the feature detection make call. I observed we are doing the same for
-Clang and the LLVM toolchain in tools/scripts/Makefile.include;
-obviously, there is no problem there, since neither of these are
-in-kernel.
+The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
 
-Shouldn't the selftests always test the in-tree bpftool instead of the
-system one? Let's say there is a stray BPFTOOL environmental variable.
-In that case, the tests will give incorrect, possibly false negative
-results, if the user is expecting selftests to test what is in the
-kernel tree. If it is intended to also be able to test with another
-version of bpftool, we can work around the problem by removing the
-BPFTOOL definition from tools/scripts/Makefile.include and exporting
-it from the rtla Makefiles instead, to make sure the feature tests see
-it. The problem with that is, obviously, that future users of the
-bpftool feature check would have to do the same, or they would always
-fail, unless the user sets BPFTOOL as an environment variable
-themselves.
+  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
 
-Tomas
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/ras_core_for_v6.15
+
+for you to fetch changes up to 6447828875b7d768e4ef0f58765b4bd4e16bcf18:
+
+  x86/mce/inject: Remove call to mce_notify_irq() (2025-02-26 12:18:37 +0100)
+
+----------------------------------------------------------------
+- A cleanup to the MCE notification machinery
+
+----------------------------------------------------------------
+Nikolay Borisov (1):
+      x86/mce/inject: Remove call to mce_notify_irq()
+
+ arch/x86/include/asm/mce.h       |  2 --
+ arch/x86/kernel/cpu/mce/core.c   | 44 ++++++++++++++++++++--------------------
+ arch/x86/kernel/cpu/mce/inject.c |  1 -
+ 3 files changed, 22 insertions(+), 25 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
