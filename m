@@ -1,159 +1,114 @@
-Return-Path: <linux-kernel+bounces-575844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C507DA707E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:18:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF274A707E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B4716C4DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:18:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFFFA3A97A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC8261596;
-	Tue, 25 Mar 2025 17:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CCC25DD07;
+	Tue, 25 Mar 2025 17:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chE8zGi4"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="FohdKXo1"
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5201E5B9E;
-	Tue, 25 Mar 2025 17:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAC01FBCA1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923070; cv=none; b=rtKNfm1I6LROd8L73C2QXjvpjIGog0wjfxaP6sYEV8C5wq8gFnjqFAaN3OeXxJDdHJm4SlV8oFHaGU8PNQYSKpRodGazUxkiQJzZzTl7QsLBcOngsGtaCH5/DHbtSbw7Y4+H4JbMpO5Rg7JY8wgItpTc0dzZc2DbNknefG0yeVU=
+	t=1742923147; cv=none; b=Xk3MExM3NJBOP/O6t8Y7RrAku3ADpqsQgjOy+j3c/05FIg8sZfmhIIASNFAR1A2qhjekiq2bfGlWrh06m+aFwo+GsrqXqBFqdYI+N/PGXam49mG2o3hs0VG4Gi76+Jhyy2MjSB1VoJBuYW+q/eZB/krSd9oO5Sv9EbcuXxVOl3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923070; c=relaxed/simple;
-	bh=b6MGlnUVaFKBQ+2xHwkDeovJSJdklX90bjhSIP8Uqkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lbx6HuIATkn/hOjfCdr9qmroOaXsCpLhDcss4qLE2PHLPpdPHvuvRF7z5aSLGNCB2oStADd0PIXfXZLfSSpWQ5uT+ZNoOSOZay92/SBvaHwTuXBZKAOQsy8AB1HyBorJo5eQvmP7Xb+vlN4z08g6djbXWJwPrkodbk3/DGA+Iww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chE8zGi4; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30bfd4d4c63so60157881fa.2;
-        Tue, 25 Mar 2025 10:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742923067; x=1743527867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ncjZuqLz4pCC4vphDuKl5ZPEUefScVXYO+j+PxLNSXk=;
-        b=chE8zGi4XqIqrv5sB9O5OWgRv3IWYGWbTNPTrgIkCSnLu4mpaEtpyDqCBx+FQUmXyQ
-         Fl0fEWKOuVdo6AfvbQ6lQDmBN9O/Sq6oTvCdPt8sprjVhCs388SMlux64f6Z1/1i8k2Z
-         0Q5qiJlSR5E5hJkgwGFiDyEcAEOryMlE/1Xa9dg9PjSGwJ5JLOLArHWD8ESltnQ5mF9K
-         JxwK3UostqofxMdAlH5vUE/Y9vbVO9M/2uJLwYTIQgBZcxjRSBIM1mB9FUhOV+uyGe0/
-         mC27Q43oCbD1yxSQJ6qDqzrJG7AU3zi81frK6Ov510F+JDT4o8IYg3+VNUFXEM8UHHdW
-         FLQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742923067; x=1743527867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ncjZuqLz4pCC4vphDuKl5ZPEUefScVXYO+j+PxLNSXk=;
-        b=O+H1NCc5ZiihLR5VaslFJQpKUYAfg1qk0tvveRfuUHfh2wleQWDC/PyCkxMX9pk8zY
-         iuG9Wv4BXpqqcNe5Mb8b2GsAUazGb7wliHVuykQjbrTy0vDRcN1MgPLchfSQC4cCDPUi
-         oAIZurjwqkYk0fEma+LGODLLJjzqQ8Su8KjsBU18r/PC/9QEGPobvVRgAsnCX7aI+t+u
-         xuruTm9NY+t6qEduNYg+hBAa/aeDh0g2WWCSbhjM6UD5TkeS1RWBYpVmP5RMCqx+jXLW
-         dcylwhx1iLvxs8r6iRHFHwmhTLQsx9lKuEMlLzAy5oIlPmQpcpi36AYUpH6YPUNgF27i
-         bXEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURQcgI4KfD9HA1UuB3yE7JQHkLKIXGzot2H6ncwW9+tLYmsIi+XEGWdeAhiYHV4rmG9LJtpK060V/8i8D+@vger.kernel.org, AJvYcCUxmyZFjf9+7SEpHAPU5LNoQd74T1rHzsPYSR8WHIvpiSDll3ObszKlGqLiolNkttJxbFxEYGIrEQj5LK0=@vger.kernel.org, AJvYcCVDOXk5CSSltCXMusu/YaW3+X00KSJQ/xKdRe6fBRUjJicizZj0CKXT3vaPxXZ0jIMAXdBHMCWNnncazolQM9yu@vger.kernel.org, AJvYcCVS0KJoxxoEgD93+bzub5IDrTyw464yCiOq2rRdVGQ0Uu4w6gVG2h48/XxakYHG2kAIZ+7DCzAuj11f@vger.kernel.org, AJvYcCVjzI95P2wI0ISTP1RWMTbvvqagt369jA2C/hhQ+6MvHDRDWiJjJzE0Gonaft4++NGn3mQ/tVihcvgu@vger.kernel.org, AJvYcCXEyOGWpjSMEEIVKumtMEgtOGqqLIxrp1X0ew5fb/f30mZ9YxDV3coijqcckpwJG4zmnQjPZ4ut8Klp9567@vger.kernel.org, AJvYcCXROI1TbrYkYL66KTXX9gLdNMgNA1aGQ8jhF8OcSVuUksf8BhK3wxP7W8Fr4m7vh9vfHt2/s9qKx5DfzO/jCx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPDqaRApEYYME2dVxALU485X8l9+W/1PbBahFmupYkf3VoWWt/
-	45DCVo4wUhHYg/lDrKsDJgVLjEJcfKnwaIbZUpHDnzrN21/90LUrSZJZS26J4d8upAdyBZLetay
-	sonJpnpj7kdgE1uqDPzRRJjj0HfA=
-X-Gm-Gg: ASbGncutG8fUCQatClst2ow8OXecMPw+wcjbWH16j++a87li5srjRO6Tss6+SSiKFPs
-	xrrFA58c35/K3TUhB724FfrhZ92qzNa4RZUrR9iR9kWUq51XWzbndqb4E41/4AQKeAmP6Wx5Yjn
-	iwupgEJ8yUKYVpGX3bkBTssYDVRVeCSHZ854xmz4671A==
-X-Google-Smtp-Source: AGHT+IEho6TRTFYibffTOcXg2imxNyfO/NDJlMfW4YuFXt5pXTh3sRV4mlcchTRWE3KKFuAFKeLrQV8vCY3tNcZg+Mc=
-X-Received: by 2002:a2e:88cb:0:b0:30c:177c:9e64 with SMTP id
- 38308e7fff4ca-30d7e2bce01mr65584441fa.35.1742923066511; Tue, 25 Mar 2025
- 10:17:46 -0700 (PDT)
+	s=arc-20240116; t=1742923147; c=relaxed/simple;
+	bh=89snBsB9hv5wlyxcY5446+E9mav+e9ltF9Zpa/H/XPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GCovE1O/PZL4o4Wrlhb5VU/K6a0HBksph48jy8dIuC2OG2Lb2ZsNsdksJ7aqTkilhirml5Nw8wCZZgKaAD8uEdc9tj1nqIUg6yrLvA+lVilsVhZdNe3J1f5k57m0M4eDuLCX1Nzi1dxU9JH3gTeQJ+FtP0uefaP5aL2U4+m/kwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=FohdKXo1; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250325171855fbf2bbfae7eda9b655
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 25 Mar 2025 18:18:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=QjB4n1CG5EJajMUvXPSpBjvTs6+Sq6WL3daydtuzFKg=;
+ b=FohdKXo1wbpag0EuxImEwOgHoN3ANC9mC3AjpYk3r6eCB3TXgUt1AaNnHSe14b+QINXieV
+ Hxj/LOWVtl4PF/1qjNe/wnRF2MS26XvXAzNAv6uP0vr9R/Xiz8CPGKWLGVSNoyIGo6KGNHyI
+ DKSJqeIMN55rKf0Kq6jnfbcNTTf56Cx8JPPD6b1TuCniNn0k2NtwdPxBLMQpOhdMNg33Hnzn
+ 4SIZ1SuWlwhYxKfQo231Ci+OLxplf4pBgqSlQUr8QgG1HUFBEN18uAqysm3xIE5Ye4oynq/5
+ OPMa2Z3hUqrkFS4JgDlNhEUxx82ciCDq1jDWovbxcDhGF8sagia3gJeQ==;
+Message-ID: <1beeb77c-83d6-4634-ba39-2b40efbb8437@siemens.com>
+Date: Tue, 25 Mar 2025 17:18:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me> <CAJ-ks9n-z0SETz+zBfJmda6Q_vJDeM2jmDXx48xX9qpMmR-mdQ@mail.gmail.com>
- <D8OTXLDQCOKI.34R1U5R0JSB8H@proton.me> <CAJ-ks9nc0ptzfh+tHj47aTCMqoaKB0SnGpZOLQ06upt7x8EBMQ@mail.gmail.com>
- <D8PAQXHJDVQE.36QKQGBVVL4QU@proton.me> <CAJ-ks9kuG8SyybioKQ0+bYwjnCQFMhip+4A1WnMhsdgnNZGiZQ@mail.gmail.com>
- <D8PGG7NTWB6U.3SS3A5LN4XWMN@proton.me>
-In-Reply-To: <D8PGG7NTWB6U.3SS3A5LN4XWMN@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 13:17:10 -0400
-X-Gm-Features: AQ5f1Jo-XOMVt3AtJU0OfhrKyPKg6t27WTK1AODdNRJ_VnhlwpYHl6kJ4WNIc0w
-Message-ID: <CAJ-ks9mMVzm4m20AxiZ53DyAmSEaEh9veMoVB5XRxmTQP_H_ZQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] rust: reduce pointer casts, enable related lints
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/2] ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP
+ device list
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com,
+ benedikt.niedermayr@siemens.com
+References: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
+ <20250317-ivo-intel_oc_wdt-v3-2-32c396f4eefd@siemens.com>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <20250317-ivo-intel_oc_wdt-v3-2-32c396f4eefd@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-On Tue, Mar 25, 2025 at 11:33=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> On Tue Mar 25, 2025 at 2:34 PM CET, Tamir Duberstein wrote:
-> > On Tue, Mar 25, 2025 at 7:05=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >> On Mon Mar 24, 2025 at 10:59 PM CET, Tamir Duberstein wrote:
-> >> > On Mon, Mar 24, 2025 at 5:55=E2=80=AFPM Benno Lossin <benno.lossin@p=
-roton.me> wrote:
-> >> >> On Mon Mar 24, 2025 at 9:55 PM CET, Tamir Duberstein wrote:
-> >> >> > On Mon, Mar 24, 2025 at 4:16=E2=80=AFPM Benno Lossin <benno.lossi=
-n@proton.me> wrote:
-> >> >> >> I'll leave it up to you what you want to do with this: add it to=
- this
-> >> >> >> series, make a new one, or let someone else handle it. If you do=
-n't want
-> >> >> >> to handle it, let me know, then I'll create a good-first-issue :=
-)
-> >> >> >
-> >> >> > I'll add a patch for `cast_lossless` -- the rest should probably =
-go
-> >> >> > into an issue.
-> >> >>
-> >> >> Do you mind filing the issue? Then you can decide yourself what you=
- want
-> >> >> to do yourself vs what you want to leave for others. Feel free to c=
-opy
-> >> >> from my mail summary.
-> >> >
-> >> > Well, I don't really know what's left to do. We're pretty close at
-> >> > this point to having enabled everything but the nukes. Then there's
-> >> > the strict provenance thing, which I suppose we can write down.
-> >>
-> >> Yes, but there are also these from my original mail:
-> >> * `shared_ref as *const _` (for example in rust/kernel/uaccess.rs:247,
-> >>   rust/kernel/str.rs:32 and rust/kernel/fs/file.rs:367), these we can
-> >>   replace with `let ptr: *const ... =3D shared_ref;`. Don't know if th=
-ere
-> >>   is a clippy lint for this.
-> >
-> > I don't think we should go fixing things for which we don't have a
-> > clippy lint. That way lies madness, particularly as patches begin to
-> > be carried by other trees.
->
-> There already exists a lint for that: `clippy::ref_as_ptr` (almost
-> created an issue asking for one :)
+Hello,
 
-=F0=9F=AB=A1 picked this one up as well.
+On 3/17/25 10:55 AM, Diogo Ivo wrote:
+> Intel Over-Clocking Watchdogs are described in ACPI tables by both the
+> generic PNP0C02 _CID and their ACPI _HID. The presence of the _CID then
+> causes the PNP scan handler to attach to the watchdog, preventing the
+> actual watchdog driver from binding. Address this by adding the ACPI
+> _HIDs to the list of non-PNP devices, so that the PNP scan handler is
+> bypassed.
+> 
+> Note that these watchdogs can be described by multiple _HIDs for what
+> seems to be identical hardware. This commit is not a complete list of
+> all the possible watchdog ACPI _HIDs.
+> 
+> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
+> ---
+> v2->v3:
+>   - Reword the commit message to clarify purpose of patch
+> ---
+> ---
+>   drivers/acpi/acpi_pnp.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
+> index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e32963a5b29d2587 100644
+> --- a/drivers/acpi/acpi_pnp.c
+> +++ b/drivers/acpi/acpi_pnp.c
+> @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, const struct acpi_device_id **matc
+>    * device represented by it.
+>    */
+>   static const struct acpi_device_id acpi_nonpnp_device_ids[] = {
+> +	{"INT3F0D"},
+>   	{"INTC1080"},
+>   	{"INTC1081"},
+> +	{"INTC1099"},
+>   	{""},
+>   };
+>   
+> 
 
-> Here is another lint that we probably want to enable (after the `&raw
-> {const,mut}` series lands): `clippy::borrow_as_ptr`.
+Gentle ping on this patch.
 
-This sounds like a good one to file.
+Best regards,
+Diogo
 
