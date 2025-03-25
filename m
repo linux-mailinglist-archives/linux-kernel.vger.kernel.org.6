@@ -1,147 +1,145 @@
-Return-Path: <linux-kernel+bounces-575121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B551A6EDB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:30:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FB6A6EDC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0364C7A20A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F30D189C27D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5B4256C85;
-	Tue, 25 Mar 2025 10:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2B1254851;
+	Tue, 25 Mar 2025 10:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l1tMbxtD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GXAD+Bs8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gfFaiqWZ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56531256C66;
-	Tue, 25 Mar 2025 10:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAAC1F09B4;
+	Tue, 25 Mar 2025 10:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898524; cv=none; b=UpPslpWWwbTa97IpJvvOtYgORFfqcQr5+BThwHzG27w9LLh956+d7rgsdNQZqxwqziBCIDxvlx67jZfEmtxBW8kAjgv0Ah6yJiK8QIKCZb/CX0n4ESFFspmKfF3mS3ejbYHZ+7CYB4lhVUpbwHkAVC4oVmcIImpZasjJB7t0cV0=
+	t=1742898671; cv=none; b=C+AsEL6L9cgHgwOgGghUeU9hJeQLuryt7ptvmqWapRa2zyrQqjDsa+FGST7cuhML7VnDNsx95xrT5Ls5cyj806tvJaynl+eoeaemN9zVEYRsNbQDiXuy70D4+WFoCB8amkFIhHKAtWyhGukjDQdjOguejJkS35HbBShVljOjvPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898524; c=relaxed/simple;
-	bh=CEtHLEkmzCcv4miis5NYvBNgXdEMUwVjsDuJ5LzH6sI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=K2UwOowIJ7vUVfUzFf3SRVQebV/eFtwCrF95mx97b9B0lR2XFgDUUZEE0gP3Km93/s1NXpKK9BKvqekuSnGmWGdfdgNm1MwK4Zk6MC06hBfp9sBiBo3HJ1GLQB150bZZozSk00AZidSIzc6GXUXnJ8gGhxCCzdnL1mo1I4KWInI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l1tMbxtD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GXAD+Bs8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 10:28:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742898521;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NZ70zDa/hcEixoh5UB085NEKBQjAhjInv0sylEtcbTw=;
-	b=l1tMbxtDB1iwnoSa6ywKigvP1m9ZMc5eAukdWkqd/2RvCmE2dQPFYGkObhEg9+mHU9WrD3
-	tK6iVaHjJYxRIo6Lk+hpgQN7EiBRnNlehCdPKxxFzZCBv2sm4bPF0b4EbV4B+66DrnBR12
-	U4f8Ro9OfXP93M7GYGt4F27c1UfaJFgEXNF8NEQPdzWG9ek9sbmdhYARpszbNQ5XDGa7vx
-	TZF+qF2Ygt536mK1Uv3jz5IUSaRULXxTDJRJYHBh/HzW8FrOWG6gNZ5bC1gdzgoZDZxn02
-	Sp9ECWKUkVKKPhF22VJH5LXEq3Lpjs1GFz2lthpMtVr/O7QEUmqtIJjFq8WvkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742898521;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NZ70zDa/hcEixoh5UB085NEKBQjAhjInv0sylEtcbTw=;
-	b=GXAD+Bs8aNjKGsd2IAHBbgK8pQZ70bzO+IYbA+bV0V5gMMZCgJWtHxVkqAtF4IN0Ph4AHJ
-	+5/9fpEQNv376NDQ==
-From: "tip-bot2 for Chang S. Bae" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu/xstate: Adjust XSAVE buffer size calculation
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, Ingo Molnar <mingo@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250320234301.8342-4-chang.seok.bae@intel.com>
-References: <20250320234301.8342-4-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1742898671; c=relaxed/simple;
+	bh=iUVRNoX1Knz7Y6rUE7hxKfH2OvC8R/1+8cUIgp2bKnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZbTcFsGmtYGweVBFzbvOID243R7GSiGAw1v57UjbTbzTd0ngFV41dBgsysrwN7LdZpSWcllBN2hpDbi+92E1T6x3oUfSU9DeUiqPUH8TzTkiYmmaqn9uLNaBNCdisXR+UtN8GZixk18LJovLOoKSnz/j5jnb/XGh03/vUj+jhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gfFaiqWZ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/kcNSHKt+p7xj8Bd8AiTv8+l1qAYvdxpi++1IEtteso=; b=gfFaiqWZoPHPtFfYrf3Z/e/vJj
+	gUrLZg/FV2zYzWXh7k0otAW57zDJ3F81RJMrj3f9jdnEWW9wz7dRze0kKx6p4uXNtcreAchaJeOEA
+	QcnE/ccvmOZxXFQpytN9KZ9eZX4QPrZccuh4HtgjKHt3Pd7dUg8DdsVCptXfQmVjHGlwj8rBV1OdG
+	XNAfhVHXAs6necQ4vvePPSmVf01mN4lGqmuTKAoMHOsxrMI5EBrE6Oove3ulQjDPbxqVUzWbx4Olc
+	Q1dfGMSi5+wSeYDhdh67b1lVfYkgwSjyy+WvhU3RIXRXxVRnjeN9ZQ+bYfJTqTFC9XjVog2vi6OO8
+	X4kJVCKA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tx1YV-00000003nQ3-3Mco;
+	Tue, 25 Mar 2025 10:30:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 28D7E3004AF; Tue, 25 Mar 2025 11:30:47 +0100 (CET)
+Date: Tue, 25 Mar 2025 11:30:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+	Greg Thelen <gthelen@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH] x86/alternatives: remove false sharing in
+ poke_int3_handler()
+Message-ID: <20250325103047.GH36322@noisy.programming.kicks-ass.net>
+References: <20250323072511.2353342-1-edumazet@google.com>
+ <Z-B_R737uM31m6_K@gmail.com>
+ <CANn89i+fmyJ8p=vBpwBy38yhVMCJv8XjrTkrXSUnSGedboCM_Q@mail.gmail.com>
+ <Z-EGvjhkg6llyX24@gmail.com>
+ <CANn89iL8o0UZTpomaT1oaMxRTBv1YdaXZGwXQn3H0dDO81UyGA@mail.gmail.com>
+ <CANn89iKwPpV7v=EnK2ac5KjHSef64eyVwUST=q=+oFaqTB95sQ@mail.gmail.com>
+ <20250324113304.GB14944@noisy.programming.kicks-ass.net>
+ <Z-JsJruueRgLQ8st@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174289852113.14745.4146028191063980814.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-JsJruueRgLQ8st@gmail.com>
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Tue, Mar 25, 2025 at 09:41:10AM +0100, Ingo Molnar wrote:
+> 
+> * Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Mon, Mar 24, 2025 at 08:53:31AM +0100, Eric Dumazet wrote:
+> > 
+> > > BTW the atomic_cond_read_acquire() part is never called even during my
+> > > stress test.
+> > 
+> > Yes, IIRC this is due to text_poke_sync() serializing the state, as that
+> > does a synchronous IPI broadcast, which by necessity requires all
+> > previous INT3 handlers to complete.
+> > 
+> > You can only hit that case if the INT3 remains after step-3 (IOW you're
+> > actively writing INT3 into the text). This is exceedingly rare.
+> 
+> Might make sense to add a comment for that.
 
-Commit-ID:     a6842ee9b5be3223cdb0c8fee3f6d71c274f68ba
-Gitweb:        https://git.kernel.org/tip/a6842ee9b5be3223cdb0c8fee3f6d71c274f68ba
-Author:        Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate:    Thu, 20 Mar 2025 16:42:54 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 11:21:20 +01:00
+Sure, find below.
 
-x86/fpu/xstate: Adjust XSAVE buffer size calculation
+> Also, any strong objections against doing this in the namespace:
+> 
+>   s/bp_/int3_
+> 
+> ?
+> 
+> Half of the code already calls it a variant of 'int3', half of it 'bp', 
+> which I had to think for a couple of seconds goes for breakpoint, not 
+> base pointer ... ;-)
 
-The current xstate size calculation assumes that the highest-numbered
-xstate feature has the highest offset in the buffer, determining the size
-based on the topmost bit in the feature mask. However, this assumption is
-not architecturally guaranteed -- higher-numbered features may have lower
-offsets.
+It actually is breakpoint, as in INT3 raises #BP. For complete confusion
+the things that are commonly known as debug breakpoints, those things in
+DR7, they raise #DB or debug exceptions.
 
-With the introduction of the xfeature order table and its helper macro,
-xstate components can now be traversed in their positional order. Update
-the non-compacted format handling to iterate through the table to
-determine the last-positioned feature. Then, set the offset accordingly.
+> Might as well standardize on int3_ and call it a day?
 
-Since size calculation primarily occurs during initialization or in
-non-critical paths, looping to find the last feature is not expected to
-have a meaningful performance impact.
+Yeah, perhaps. At some point you've got to know that INT3->#BP and
+DR7->#DB and it all sorta makes sense, but *shrug* :-)
 
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Link: https://lore.kernel.org/r/20250320234301.8342-4-chang.seok.bae@intel.com
+
 ---
- arch/x86/kernel/fpu/xstate.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 1e22103..93f9401 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -581,13 +581,20 @@ static bool __init check_xstate_against_struct(int nr)
- static unsigned int xstate_calculate_size(u64 xfeatures, bool compacted)
- {
- 	unsigned int topmost = fls64(xfeatures) -  1;
--	unsigned int offset = xstate_offsets[topmost];
-+	unsigned int offset, i;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index bf82c6f7d690..01e94603e767 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -2749,6 +2749,13 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
  
- 	if (topmost <= XFEATURE_SSE)
- 		return sizeof(struct xregs_state);
- 
--	if (compacted)
-+	if (compacted) {
- 		offset = xfeature_get_offset(xfeatures, topmost);
-+	} else {
-+		/* Walk through the xfeature order to pick the last */
-+		for_each_extended_xfeature_in_order(i, xfeatures)
-+			topmost = xfeature_uncompact_order[i];
-+		offset = xstate_offsets[topmost];
-+	}
-+
- 	return offset + xstate_sizes[topmost];
- }
- 
+ 	/*
+ 	 * Remove and wait for refs to be zero.
++	 *
++	 * Notably, if after step-3 above the INT3 got removed, then the
++	 * text_poke_sync() will have serialized against any running INT3
++	 * handlers and the below spin-wait will not happen.
++	 *
++	 * IOW. unless the replacement instruction is INT3, this case goes
++	 * unused.
+ 	 */
+ 	if (!atomic_dec_and_test(&bp_desc.refs))
+ 		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
 
