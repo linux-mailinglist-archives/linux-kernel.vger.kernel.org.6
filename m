@@ -1,111 +1,106 @@
-Return-Path: <linux-kernel+bounces-575832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7CDA707C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:10:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17C6A707C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D78F3AB779
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC19E188E7AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69FC261370;
-	Tue, 25 Mar 2025 17:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986E25FA31;
+	Tue, 25 Mar 2025 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="K2GMMy/U"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94792E339B;
-	Tue, 25 Mar 2025 17:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AveRPtLW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B31A0BFE;
+	Tue, 25 Mar 2025 17:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922597; cv=none; b=beWo5YcPV/NCNzbmNXrQ+O1W44wK1B3ZTjWz6ciPuAywcbxyudy1JbsCiNN+7IQW6ckufH1AdQNgl4HDO9fQYSrJ2o50Kw0OD/sPIDCH8+ChjJd4DqWf092thX2RknjGSN2Z74z3QKzMKCKFYJoImEyGVAzUr0hJNSlznJg3tE0=
+	t=1742922655; cv=none; b=jyMr0pZmRf0AvtPILznZJXE3liW8HKgXC8MyiTdkqqsGxn5ACG71lEPB5IEYCXH6h9EQxkTjSLrib62gLJLSc3Gl1+pqmwd+uAyflzj4KX5muP+/ZJ/yd5tMysQZCErCAMJE3F+LStA2MUsEvDx/wnromAsBj5EZQZIL/tN2nU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922597; c=relaxed/simple;
-	bh=v/k0ISaq5RYlyl5YrvYc26UUUVRy7HHPNAzlq4Z3UXc=;
+	s=arc-20240116; t=1742922655; c=relaxed/simple;
+	bh=GNqENFQaTr7pvnN27Xev/R/FfH7qw+nT7Ttp27/8aIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnEs4ihOFhy8zsdSrk5g7HKOfHsbUzyLe3ZKvG5DCfnM8qjg+G9PudXFdCGGbjAWi+ORLXioUikdZL9Ma1bqEuHTL2hWbiSYAn1tYNrmJmx76cpy8CimGlw/CRzG2SOwDpU0UbWvCjJ4zgY8ybjE5HcB/9rlEgt1Pna4aeI5Qog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=K2GMMy/U; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 5BDD2203659C; Tue, 25 Mar 2025 10:09:55 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5BDD2203659C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742922595;
-	bh=TKSCvK+Z+E2nBTbRXLRveMgjlIDGsBl82/XulX1hncc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=rW7Qdbeo5r3CGzIdTi6nhhC1Z7Djen5RAvhr5W071ebpTdYFNmwHZGZCPmYvFmOwGeIyVuJPKTyLK3zl6r5g05JhJ1Ou6XxVjjekLu3cw1tS2YFUUI6psyaNAHbj1ChV+aSy6HhsEaxXsxto40MvvyWrwxwuE7wVm8sy2784Als=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AveRPtLW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B43C4CEE4;
+	Tue, 25 Mar 2025 17:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742922654;
+	bh=GNqENFQaTr7pvnN27Xev/R/FfH7qw+nT7Ttp27/8aIc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K2GMMy/UlrBv+TZS3YWLozHje4h1h/PWk7hVSmmEMncBMrMAVK/ksD0z8g6bFQhg8
-	 zL+AvcdBh6YlR8ONiLtalFp8+qReHMizRK/ai6qPTykrijRYgcYr5PyEMbR5SkBbRV
-	 souOcTxF4XlP2qKiyxP4g2tbu/ZcVa354i/yuEsI=
-Date: Tue, 25 Mar 2025 10:09:55 -0700
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
-	brett.creeley@amd.com, surenb@google.com,
-	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
-	shradhagupta@linux.microsoft.com, erick.archer@outlook.com,
-	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: Re: [PATCH 2/3] net: mana: Implement set_link_ksettings in ethtool
- for speed
-Message-ID: <20250325170955.GB23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
- <1742473341-15262-3-git-send-email-ernis@linux.microsoft.com>
- <fb6b544f-f683-4307-8adf-82d37540c556@lunn.ch>
+	b=AveRPtLW8iwTMOgYDEmSrCG4Kr9UFnf9W4EpzpxIWsxlTEYpZr1GoX9Iy/x4bSGy4
+	 CgQK5G21DwIr4dGGS33VmnA4nBYAiJmxZyUjVON8wuC6vfCT95a/NY2JX2hxUmrP1Y
+	 M1N5MrmtOXAU5pmZFGwsGRK+1hUNuxqnjMUOjeKdrnmDQk/tJVlLjGUmec1eXeButL
+	 4C3pMWzW9/Ab6vswbh5qK0UgGYlclj+6YJqQOY5PcWjFMc3FTBTOk+TG9cNvUqMt7f
+	 I31n7BigTqc9bCDJbltm4d5rHpzrmR0hT/RNqLgXBAkSMSEQF99JYkJb8MmkQR/WQ+
+	 aVnQjSXgEbjbw==
+Date: Tue, 25 Mar 2025 17:10:48 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Nico Pache <npache@redhat.com>, patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, simont@opensource.cirrus.com,
+	ckeepax@opensource.cirrus.com, brendan.higgins@linux.dev,
+	davidgow@google.com, rmoar@google.com, johannes.berg@intel.com,
+	sj@kernel.org
+Subject: Re: [PATCH] kunit: cs_dsp: Depend on FW_CS_DSP rather then enabling
+ it
+Message-ID: <67e46328-3a8a-4fc9-8ec3-6c7bc224d6da@sirena.org.uk>
+References: <20250319230539.140869-1-npache@redhat.com>
+ <CAA1CXcD2g=sRRwgLSudiOAqWXq3sCj+NPuE1ju7B2gFXXefjXA@mail.gmail.com>
+ <d8fc1f66-f220-42fb-b58f-f5f9c7d30100@opensource.cirrus.com>
+ <CAA1CXcA460xfy48JMNeX5rNTfUqsahER8SDF6tWu82V35ripLg@mail.gmail.com>
+ <CAA1CXcD2RF6aXNH0ix=GN1+LTR9+dV7yRz-HGKZfUbSu+8ZM_w@mail.gmail.com>
+ <4cc16ecf-d498-44a6-99b2-eee840cff63d@opensource.cirrus.com>
+ <9d6831c7-053e-4414-ba9f-f5e71c690588@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HPN+G74z3uWNF37H"
+Content-Disposition: inline
+In-Reply-To: <9d6831c7-053e-4414-ba9f-f5e71c690588@opensource.cirrus.com>
+X-Cookie: Visit beautiful Vergas, Minnesota.
+
+
+--HPN+G74z3uWNF37H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fb6b544f-f683-4307-8adf-82d37540c556@lunn.ch>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Thu, Mar 20, 2025 at 02:43:34PM +0100, Andrew Lunn wrote:
-> On Thu, Mar 20, 2025 at 05:22:20AM -0700, Erni Sri Satya Vennela wrote:
-> > Add support for ethtool_set_link_ksettings for mana.
-> > Set speed information of the port using ethtool. This
-> > feature is not supported by all hardware.
-> > 
-> > Before the change:
-> > $ethtool -s enP30832s1 speed 100
-> > >netlink error: Operation not supported
-> > $ethtool enP30832s1
-> > >Settings for enP30832s1:
-> >         Supported ports: [  ]
-> >         Supported link modes:   Not reported
-> 
-> Since there are no link modes, what does this speed actually mean?
-> 
-Initially we planned to support for speed incrementally by 1Mbps, but
-after internal discussion with the host team, we will be supporting 
-only speed which is multiples of 100. The HWC commands 
-MANA_QUERY_LINK_CONFIG and MANA_SET_BW_CLAMP help us to get and
-set the speed in the hardware respectively.
-> > After the change:
-> > $ethtool -s enP30832s1 speed 100
-> 
-> Is 
-> 
-> $ethtool -s enP30832s1 speed 42
-> 
-> permitted? 
-> 
-The user will be allowed to set the speed which are multiples 
-of 100. And the minimum allowed bandwidth is 100Mbps. I will be making
-this change in the next version of this patch.
-> or
-> 
-> $ethtool -s enP30832s1 speed -1
-> 
-This case is handled by the firmware, which throws an error:
-ethtool (-s): invalid value '-1' for parameter 'speed'
-> 	Andrew
+On Sat, Mar 22, 2025 at 07:02:26PM +0000, Richard Fitzgerald wrote:
+> On 22/3/25 10:11, Richard Fitzgerald wrote:
+
+> > I got lucky on all the UM, X86 and ARM builds I tested.
+
+> It looks like that bugfix has got lost.
+> Mark sent an email on 20 Feb to say it has been merged into his
+> sound tree. But that patch isn't in torvalds/master.
+
+It was queued for -next rather than as a fix.
+
+--HPN+G74z3uWNF37H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfi45gACgkQJNaLcl1U
+h9DlAgf+NxfHOGfvo+VFOD75XLJkVKcL8K0dfEtpMMxBuzGtTAC5v6V8zk4PYCmN
+kv/Xs0jLwZCSoIKjbNFOOEZHqWwjXlGz4b8FB+1BnhFaF5T0A6c+cLSC3ieFX40r
+2d7N2Cgt7R7F1Bq9LbQbRFtt0tkEw9JW76tL9sanG60DdLwmw++nLiD3PM9Rq3Mn
+XZRFmRko/V1Wsyc3JrKCHGIaotgWtee7ESYzWQb7Y6MHcltAAHh4R8yg3VdMukUk
+wNnVfcpDF8wlUKOh175JUanvCPJi3n5RP6oV+0EWpmN2zUyVfGVzD8Cj6p9L2Qoj
+scQsC00CLr9fi3kqVuAyO+EHFl8hCQ==
+=uve9
+-----END PGP SIGNATURE-----
+
+--HPN+G74z3uWNF37H--
 
