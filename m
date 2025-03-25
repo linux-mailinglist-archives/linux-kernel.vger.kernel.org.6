@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-575024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC46FA6ECB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:39:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9635CA6ECB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881B816A20F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB6016660B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0499257ADE;
-	Tue, 25 Mar 2025 09:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD04A2580CC;
+	Tue, 25 Mar 2025 09:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y8ZUwaxT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UFOl3OKb"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PIe3Y0Nx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AHHuoEgI"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A741B257424;
-	Tue, 25 Mar 2025 09:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB014253B79;
+	Tue, 25 Mar 2025 09:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895394; cv=none; b=JLNhaBEBgK20Vhr1uGbqy+RAYBYsz7Zok7+eWWlAqkcV6iWe62ehbfiA9SK8y8Ovfj5gDgakKtps9neE0jyUe5EzEVSrUc+yNA9Q8NaGG8fIqUB07joxdH6M+xZe8Z5lnOqX7DpPtwPWEJNF2IDkvxVImj0f9RkTtXizyHUhpTM=
+	t=1742895394; cv=none; b=V+c41K+Rc3RZJXpBDTQFu5YrjFJ9EOU35U9/RbrHKYEijF7ffPvynov2tcBSawbUWYQRnkKGnhVMrA5lGwuYqjB5oy2hudOkvpHzsZYXAgRD51DYBj/6LLtqif4/6Ta01GKwSRZktl2Ru90ZO1l909ACELwUoWCjnTtifY2xfBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742895394; c=relaxed/simple;
-	bh=MpsES1aOfwb9PVAYJCjaz9/YKDO7U1wxJizrOt1L3js=;
+	bh=AOEHuRCIebmpdiPLaD/Z8yXXSKEHMJwDENBqwY9E+sI=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LuH9R2JKY3GJJNco18hGN3mm0iMQd3aFBlSymNkeMvV5q71TbL3xaeCmTo1gxACaauZZ+bxOjdaKzcU1wV0c2rrR5PpefePVlDoBT/uIwqfbwxI5jcoWKrelmqUAX78Uo0zYGK/ZnLmfP+GgyW/qU20Ei2oyf7hIgbqaybNCERs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y8ZUwaxT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UFOl3OKb; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Cm4iMJlyX8x4OtoZzNdNYQ8+mgfiOFnhNdeA95J6yScVdxZGdYNN3OakEQzzM8UX0y8B4LquWZhnZEI1oCAQKpVIyFoKo7+anN8RPJu7uAJXv4ZOiK6olBUCTndBuc4nyiC51z+UzMQHmTUdISvFCFtCZ3Y2g/zurTkwPIHXo7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PIe3Y0Nx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AHHuoEgI; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 09:36:29 -0000
+Date: Tue, 25 Mar 2025 09:36:30 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742895389;
+	s=2020; t=1742895391;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dwQhVEZegoNmIFMSUX/bQYZVzZfbd6ocxXnd6M3VY30=;
-	b=y8ZUwaxTUjKInA5DW5UQ6QftJ2c7QTmtVhyRWGrjG7AR9VBV4icRmdIyYUnFnnvlcFuis2
-	np8z+i6wh6/91G4QAgacKj05kA+XzNUuaXpeDOo+x8YyA6IflpY1j/7sWaJYf7CkKyLBbU
-	Qb9FKSb/6fbKZz/sYjZapkKWLI5iIhzTM9dpzsXlJMTQv9NW/GXVG1nUJEPN1vP5gWC+ot
-	wUk6bcGix5pQhpJkebGHBuj7jrdtMXIDfLvsjXauXUT4DCp4pPmnT88kLdgO/QJv5hNMgd
-	zx1Nn2K+FYinMnzVDxVatoBXM2jeWEL+R7rylAd0eI3fddPW+WVybPqBJZlTgw==
+	bh=TzZQsTes/rU5/zUraSqMrIpVAKWUC57GhwzbVYx9FA0=;
+	b=PIe3Y0NxmlGcJLgvQak26JMJvOOUyav/ZDbyuBqtKWxlYM2W0e55izHSmIwGo1zlkpcwGB
+	tLLr/l6CFWYxPHLAiFsJEuPcu1fEzwAb5OKLJPEDXmSTEidZp5WkIEF063C5JPO/cQBWFZ
+	+XcmHm+InZi+zzQP+64hkYqBTBfWmefUXN4tfDnULXnMVyJOXMloLg4h9VcpFmrYqZpTF9
+	mzzxXRTsZ0AwPaNIEwPWIGIJw8kAo1qniqGrEFtrBrIlbrwS2RA1U26iwkF4UMcmtpJ4HC
+	2LROHYeQhy/mc53BMOpTfOlZ6OPX+8zp/Zl7ic29VYRXeWbogf1Ojc+mTNAsZw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742895389;
+	s=2020e; t=1742895391;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dwQhVEZegoNmIFMSUX/bQYZVzZfbd6ocxXnd6M3VY30=;
-	b=UFOl3OKb8+kMiToECmZB4XkHKu2XcpwOsM3OMrezNaYATdaRuHkzLS7ePOdZwr8OXy/gEp
-	xlOeTgRTftrHKmDg==
+	bh=TzZQsTes/rU5/zUraSqMrIpVAKWUC57GhwzbVYx9FA0=;
+	b=AHHuoEgIRanzy2UVXUKt/bbjPlGzhj+/mBiFufTyL3lguIlu4+OV7wbSn1hQtwn2wH3ODc
+	He73UsTnMqODFrDA==
 From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cacheinfo: Separate Intel and AMD CPUID leaf 0x4
- code paths
+Subject:
+ [tip: x86/cpu] x86/cacheinfo: Separate amd_northbridge from _cpuid4_info_regs
 Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
  "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250324133324.23458-16-darwi@linutronix.de>
-References: <20250324133324.23458-16-darwi@linutronix.de>
+In-Reply-To: <20250324133324.23458-13-darwi@linutronix.de>
+References: <20250324133324.23458-13-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174289538917.14745.12734456253889364296.tip-bot2@tip-bot2>
+Message-ID: <174289539083.14745.18001318734650641416.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,197 +83,151 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     2d56cc87225035919dfceb40e676081d833dab13
-Gitweb:        https://git.kernel.org/tip/2d56cc87225035919dfceb40e676081d833dab13
+Commit-ID:     c58ed2d4da8dced3fa4505f498bd393f565b471a
+Gitweb:        https://git.kernel.org/tip/c58ed2d4da8dced3fa4505f498bd393f565b471a
 Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Mon, 24 Mar 2025 14:33:10 +01:00
+AuthorDate:    Mon, 24 Mar 2025 14:33:07 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 10:22:45 +01:00
+CommitterDate: Tue, 25 Mar 2025 10:22:36 +01:00
 
-x86/cacheinfo: Separate Intel and AMD CPUID leaf 0x4 code paths
+x86/cacheinfo: Separate amd_northbridge from _cpuid4_info_regs
 
-The CPUID leaf 0x4 parsing code at cpuid4_cache_lookup_regs() is ugly and
-convoluted.  It is tangled with multiple nested conditions to handle:
+'struct _cpuid4_info_regs' is meant to hold the CPUID leaf 0x4
+output registers (EAX, EBX, and ECX), as well as derived information
+such as the cache node ID and size.
 
-  * AMD with TOPEXT, or Hygon CPUs via leaf 0x8000001d
+It also contains a reference to amd_northbridge, which is there only to
+be "parked" until ci_info_init() can store it in the priv pointer of the
+<linux/cacheinfo.h> API.  That priv pointer is then used by AMD-specific
+L3 cache_disable_0/1 sysfs attributes.
 
-  * Legacy AMD fallback via leaf 0x4 emulation
-
-  * Intel CPUs via the actual CPUID leaf 0x4
-
-Moreover, AMD L3 northbridge initialization is also awkwardly placed
-alongside the CPUID calls of the first two scenarios above.  Refactor all
-of that as follows:
-
-  * Update AMD's leaf 0x4 emulation comment to represent current state
-
-  * Clearly label the AMD leaf 0x4 emulation function as a fallback
-
-  * Split AMD/Hygon and Intel code paths into separate functions
-
-  * Move AMD L3 northbridge initialization out of CPUID leaf 0x4 code,
-    and into populate_cache_leaves() where it belongs.  There,
-    ci_info_init() can directly store the initialized object in the
-    private pointer of the <linux/cacheinfo.h> API.
+Decouple amd_northbridge from _cpuid4_info_regs and pass it explicitly
+through the functions at x86/cacheinfo.  Doing so clarifies when
+amd_northbridge is actually needed (AMD-only code) and when it is
+not (Intel-specific code).  It also prepares for moving the AMD-specific
+L3 cache_disable_0/1 sysfs code into its own file in next commit.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250324133324.23458-16-darwi@linutronix.de
+Link: https://lore.kernel.org/r/20250324133324.23458-13-darwi@linutronix.de
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 95 ++++++++++++++++++--------------
- 1 file changed, 54 insertions(+), 41 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c | 45 ++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 16 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index ea6fba9..10a79d8 100644
+index f1055e8..8c2b51b 100644
 --- a/arch/x86/kernel/cpu/cacheinfo.c
 +++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -167,12 +167,11 @@ struct _cpuid4_info_regs {
+@@ -168,7 +168,6 @@ struct _cpuid4_info_regs {
+ 	union _cpuid4_leaf_ecx ecx;
+ 	unsigned int id;
  	unsigned long size;
+-	struct amd_northbridge *nb;
  };
  
--/* AMD doesn't have CPUID4. Emulate it here to report the same
--   information to the user.  This makes some assumptions about the machine:
--   L2 not shared, no SMT etc. that is currently true on AMD CPUs.
+ /* AMD doesn't have CPUID4. Emulate it here to report the same
+@@ -573,25 +572,36 @@ cache_get_priv_group(struct cacheinfo *ci)
+ 	return &cache_private_group;
+ }
+ 
+-static void amd_init_l3_cache(struct _cpuid4_info_regs *id4, int index)
++static struct amd_northbridge *amd_init_l3_cache(int index)
+ {
++	struct amd_northbridge *nb;
+ 	int node;
+ 
+ 	/* only for L3, and not in virtualized environments */
+ 	if (index < 3)
+-		return;
++		return NULL;
+ 
+ 	node = topology_amd_node_id(smp_processor_id());
+-	id4->nb = node_to_amd_nb(node);
+-	if (id4->nb && !id4->nb->l3_cache.indices)
+-		amd_calc_l3_indices(id4->nb);
++	nb = node_to_amd_nb(node);
++	if (nb && !nb->l3_cache.indices)
++		amd_calc_l3_indices(nb);
++
++	return nb;
+ }
+ #else
+-#define amd_init_l3_cache(x, y)
++static struct amd_northbridge *amd_init_l3_cache(int index)
++{
++	return NULL;
++}
+ #endif  /* CONFIG_AMD_NB && CONFIG_SYSFS */
+ 
+-static int
+-cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4)
 +/*
-+ * Fallback AMD CPUID(4) emulation
-+ * AMD CPUs with TOPOEXT can just use CPUID(0x8000001d)
++ * Fill passed _cpuid4_info_regs structure.
++ * Intel-only code paths should pass NULL for the amd_northbridge
++ * return pointer.
 + */
- 
--   In theory the TLBs could be reported as fake type (they are in "dummy").
--   Maybe later */
- union l1_cache {
- 	struct {
- 		unsigned line_size:8;
-@@ -228,9 +227,8 @@ static const enum cache_type cache_type_map[] = {
- 	[CTYPE_UNIFIED] = CACHE_TYPE_UNIFIED,
- };
- 
--static void
--amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
--	   union _cpuid4_leaf_ebx *ebx, union _cpuid4_leaf_ecx *ecx)
-+static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
-+			      union _cpuid4_leaf_ebx *ebx, union _cpuid4_leaf_ecx *ecx)
++static int cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4,
++				    struct amd_northbridge **nb)
  {
- 	unsigned int dummy, line_size, lines_per_tag, assoc, size_in_kb;
- 	union l1_cache l1i, l1d;
-@@ -297,36 +295,9 @@ amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 		(ebx->split.ways_of_associativity + 1) - 1;
- }
- 
--/*
-- * Fill passed _cpuid4_info_regs structure.
-- * Intel-only code paths should pass NULL for the amd_northbridge
-- * return pointer.
-- */
--static int cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4,
--				    struct amd_northbridge **nb)
-+static int cpuid4_info_fill_done(struct _cpuid4_info_regs *id4, union _cpuid4_leaf_eax eax,
-+				 union _cpuid4_leaf_ebx ebx, union _cpuid4_leaf_ecx ecx)
- {
--	u8 cpu_vendor = boot_cpu_data.x86_vendor;
--	union _cpuid4_leaf_eax eax;
--	union _cpuid4_leaf_ebx ebx;
--	union _cpuid4_leaf_ecx ecx;
--	u32 edx;
--
--	if (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON) {
--		if (boot_cpu_has(X86_FEATURE_TOPOEXT) || cpu_vendor == X86_VENDOR_HYGON) {
--			/* AMD with TOPOEXT, or HYGON */
--			cpuid_count(0x8000001d, index, &eax.full, &ebx.full, &ecx.full, &edx);
--		} else {
--			/* Legacy AMD fallback */
--			amd_cpuid4(index, &eax, &ebx, &ecx);
--		}
--
--		if (nb)
--			*nb = amd_init_l3_cache(index);
--	} else {
--		/* Intel */
--		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
--	}
--
- 	if (eax.split.type == CTYPE_NULL)
- 		return -EIO;
- 
-@@ -341,6 +312,42 @@ static int cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4,
- 	return 0;
- }
- 
-+static int amd_fill_cpuid4_info(int index, struct _cpuid4_info_regs *id4)
-+{
-+	union _cpuid4_leaf_eax eax;
-+	union _cpuid4_leaf_ebx ebx;
-+	union _cpuid4_leaf_ecx ecx;
-+	u32 ignored;
+ 	u8 cpu_vendor = boot_cpu_data.x86_vendor;
+ 	union _cpuid4_leaf_eax eax;
+@@ -607,7 +617,9 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4)
+ 			/* Legacy AMD fallback */
+ 			amd_cpuid4(index, &eax, &ebx, &ecx);
+ 		}
+-		amd_init_l3_cache(id4, index);
 +
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT) || boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-+		cpuid_count(0x8000001d, index, &eax.full, &ebx.full, &ecx.full, &ignored);
-+	else
-+		legacy_amd_cpuid4(index, &eax, &ebx, &ecx);
-+
-+	return cpuid4_info_fill_done(id4, eax, ebx, ecx);
-+}
-+
-+static int intel_fill_cpuid4_info(int index, struct _cpuid4_info_regs *id4)
-+{
-+	union _cpuid4_leaf_eax eax;
-+	union _cpuid4_leaf_ebx ebx;
-+	union _cpuid4_leaf_ecx ecx;
-+	u32 ignored;
-+
-+	cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &ignored);
-+
-+	return cpuid4_info_fill_done(id4, eax, ebx, ecx);
-+}
-+
-+static int fill_cpuid4_info(int index, struct _cpuid4_info_regs *id4)
-+{
-+	u8 cpu_vendor = boot_cpu_data.x86_vendor;
-+
-+	return (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON) ?
-+		amd_fill_cpuid4_info(index, id4) :
-+		intel_fill_cpuid4_info(index, id4);
-+}
-+
- static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- {
- 	unsigned int		eax, ebx, ecx, edx, op;
-@@ -472,7 +479,7 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
++		if (nb)
++			*nb = amd_init_l3_cache(index);
+ 	} else {
+ 		/* Intel */
+ 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
+@@ -758,7 +770,7 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
  			struct _cpuid4_info_regs id4 = {};
  			int retval;
  
--			retval = cpuid4_cache_lookup_regs(i, &id4, NULL);
-+			retval = intel_fill_cpuid4_info(i, &id4);
+-			retval = cpuid4_cache_lookup_regs(i, &id4);
++			retval = cpuid4_cache_lookup_regs(i, &id4, NULL);
  			if (retval < 0)
  				continue;
  
-@@ -692,17 +699,23 @@ static void get_cache_id(int cpu, struct _cpuid4_info_regs *id4)
+@@ -934,8 +946,8 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
+ 		}
+ }
  
- int populate_cache_leaves(unsigned int cpu)
+-static void ci_info_init(struct cacheinfo *ci,
+-			 const struct _cpuid4_info_regs *id4)
++static void ci_info_init(struct cacheinfo *ci, const struct _cpuid4_info_regs *id4,
++			 struct amd_northbridge *nb)
  {
--	unsigned int idx, ret;
+ 	ci->id				= id4->id;
+ 	ci->attributes			= CACHE_ID;
+@@ -946,7 +958,7 @@ static void ci_info_init(struct cacheinfo *ci,
+ 	ci->size			= id4->size;
+ 	ci->number_of_sets		= id4->ecx.split.number_of_sets + 1;
+ 	ci->physical_line_partition	= id4->ebx.split.physical_line_partition + 1;
+-	ci->priv			= id4->nb;
++	ci->priv			= nb;
+ }
+ 
+ int init_cache_level(unsigned int cpu)
+@@ -982,13 +994,14 @@ int populate_cache_leaves(unsigned int cpu)
  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
  	struct cacheinfo *ci = this_cpu_ci->info_list;
-+	u8 cpu_vendor = boot_cpu_data.x86_vendor;
  	struct _cpuid4_info_regs id4 = {};
--	struct amd_northbridge *nb;
-+	struct amd_northbridge *nb = NULL;
-+	int idx, ret;
++	struct amd_northbridge *nb;
  
  	for (idx = 0; idx < this_cpu_ci->num_leaves; idx++) {
--		ret = cpuid4_cache_lookup_regs(idx, &id4, &nb);
-+		ret = fill_cpuid4_info(idx, &id4);
+-		ret = cpuid4_cache_lookup_regs(idx, &id4);
++		ret = cpuid4_cache_lookup_regs(idx, &id4, &nb);
  		if (ret)
  			return ret;
-+
  		get_cache_id(cpu, &id4);
-+
-+		if (cpu_vendor == X86_VENDOR_AMD || cpu_vendor == X86_VENDOR_HYGON)
-+			nb = amd_init_l3_cache(idx);
-+
- 		ci_info_init(ci++, &id4, nb);
+-		ci_info_init(ci++, &id4);
++		ci_info_init(ci++, &id4, nb);
  		__cache_cpumap_setup(cpu, idx, &id4);
  	}
+ 	this_cpu_ci->cpu_map_populated = true;
 
