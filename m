@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-575369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCF1A70158
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:22:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5179AA701AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B93C7176F77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:16:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED9D19A089E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E76F264FBB;
-	Tue, 25 Mar 2025 12:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7508A265616;
+	Tue, 25 Mar 2025 12:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CX5aDAh+"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAajHxx8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D2C264F89
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB8719E83E;
+	Tue, 25 Mar 2025 12:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742907129; cv=none; b=qqchWK2BsHV5qzYF45XIlYOBBjb349BNpihIir6PMOkB2x5t07FXgJ3u8ElQLCcxjJc70pMdSAxUXGhycfwRq+Cclk967aMXraKnHSB425bLUkM9GexbZfNRNkALIcrctrw8oYCPKYVIOCthD2gXWit3uY2ZZUZUTIsXJh9MUuA=
+	t=1742907165; cv=none; b=auo3oJrTSrsegcWxksY6zuuxgNA7SiL7RNwk0kJkLX8FS823yIq8Su0oG1cbft+FiiFMhK63++nx+9uHNN6vq4aF3wKnF3w+9POv3joqecZHZOYHUivy5aIE7k7ZAf6nf1QRmm657DyUfSkOHJ9i1IxBa9wjkVbp6OgL6abXvbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742907129; c=relaxed/simple;
-	bh=tj03Iy2cOddp5Dpo6rnyDthdPVJfZRvM2w2yOeQBtyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i4GUIgbL8af9vF7xLCWscNZqEGlr6z/2yWOYbb7GYWONXjHTrWs9slFgvamf98cZWjBQrpx0e2wdMifP8UaapLDMFN8qB+ePQ7TBohKj7HuM5SlZVxEPjT1OFJ8KGIj5V9r3TW4xUQIesKqN0b1LHutabHXTmla/r1NbdkYVGFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CX5aDAh+; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-47686580529so53191101cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 05:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742907127; x=1743511927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oPJxOALUzRJxRqwO/dJ1oQ2Yu8yWnLQ9Qghb9Fdffx4=;
-        b=CX5aDAh+B2RplNkVJaER0zHAmQ++nERhrzKiz8fSi4iwM4tbDKnj5Gj5wym3VClJKe
-         WGNk9eC8v8wl56SR/ICHu/H+Vqn929dHqH6bHeBuYWocWOoW4qEX0dtVtGU86wtfJgVi
-         xLpEzUF0x+Yh3CeO5dQ/U2HtPgP2/8wRVLZOZQT7o+1yS/X3E4saigIdwBZ8eMqN+/2Y
-         Z9v9+A3c5y4X9BclrDEMya1DNFrbNNREWJfgiO8o4DOWqQtveztTgxa7/FbHkq/RmPgX
-         FxlVTCCBByZptzq96ilWR2RVhryQJnvYbnz4n3e+0popfOVLxFZOOB5oG6bGQICU8fYO
-         Sy8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742907127; x=1743511927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oPJxOALUzRJxRqwO/dJ1oQ2Yu8yWnLQ9Qghb9Fdffx4=;
-        b=FhYoZYR3f+jSUqPXzZdBeKRA+AOiGfPmKE0Dfwwub+V8OOLwyH6UQqMEPcNY+uPIbt
-         nnZOGSy5tFK9u7CXG1igkWQycANNvlJSIpEh/5WyuWaWp18UueE/xKtM5KrjSBzBXpgU
-         K+3qsM/Pm/1BRVhwxJ1POAM7aStud2pUCyatbRkS10vYWnEvmBgniVfDOlr4DYITsqre
-         KTQdE3n+QxDYjt8CJj3t29wHagTFJWQDwMqIh7h20B1opqFpZWY2zAhkwS1nVy2N1FdM
-         K9Iixbz+PtDCPXyYM9MBo3tj3sPYFpV5WBvzYWXEkZo9XLaC7ihyMPAS/mmQYklft69f
-         UkMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVobxUvG7YX+zg4ljIJQWyp9W3v3WUL4BXBSrwFMQfGdjRiBmCT1S9pUDZAqM//Ei6H3QeW9Uw5rtsncA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2llLYOlBLr0JjwSPoamwbQbVta3cs/Z9nwIQa2USc591gUUyo
-	SxfXAN73SPvENflRjWj0fEyni8GfwDOKig/XBfHoOaJCE9t2WSPgasWuDZyzor1Pobl5NnOapvE
-	6X9M=
-X-Gm-Gg: ASbGnctPcTN23s0tXALwFBkOOnzt0sRAT64yZTHs8LPKxgYIvM3KS9evg6SS7czQxBk
-	KT98GWhR+cQnXJf6gT7u4qkISjpon9r8qnJoWAuiYWfMHwRzol4yjQeM5jxuB9Oas9IhNWTn4ot
-	Zv6Hz5GB+sqeYuNAT/LocXUE8WekON59Calda+Se3iLVoEnsvtHXMeIkoF/nFYBAOf6ABTTZqQI
-	pMTqqPZJBuU+n5JH+V5fQBSXECwlfQWBhk6Hke3c6OBabm1MJ9ZG9VFkyiTHRn1uUYEgY3ylQAq
-	FbcZV2HJFpXRuLROO413H6KOKmy1mJ7hbvm7KtW33A==
-X-Google-Smtp-Source: AGHT+IGqEToBEJbz0GNzaBV9LfDIy0nCojMJeT0B2Xje5qrSOLPVomFIE6YsCWtEQNR3KpSKRJwAJw==
-X-Received: by 2002:a05:622a:2513:b0:471:b8dd:6411 with SMTP id d75a77b69052e-4771de62864mr302505941cf.47.1742907127141;
-        Tue, 25 Mar 2025 05:52:07 -0700 (PDT)
-Received: from [172.22.32.183] ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d18f6a3sm59449381cf.38.2025.03.25.05.52.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 05:52:06 -0700 (PDT)
-Message-ID: <bb7eb5db-6675-4e24-b08d-b48378ebbc88@kernel.dk>
-Date: Tue, 25 Mar 2025 06:52:05 -0600
+	s=arc-20240116; t=1742907165; c=relaxed/simple;
+	bh=lfa/8ta4vYPO/+JeucS0YpPl8uLr+Mk0WRA+iVH7hUA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=HtaLGQembPxg1Yr5WZLCESPVyvkGWqU4zWPBXgaroXhds9eXNXi/hg+DK0r5QfdrGMKD7b0HZDfCvhHuqVNJVVbQZq/U7IUYnTTob/RES77HBoxexHbhwAv0R3TlVdk9YFkOMeajXAJEdMtGWIFEcCuuAwKo/n2PVYjcazcweTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAajHxx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE642C4CEE4;
+	Tue, 25 Mar 2025 12:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742907165;
+	bh=lfa/8ta4vYPO/+JeucS0YpPl8uLr+Mk0WRA+iVH7hUA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=nAajHxx8XWm+QvC5X6u+BaKdw7/t6NBuVoB1Diqqau7NGm8MeWXevmFahioXrGcm3
+	 mrYlBE8Yv/tSoWFC0LC6Cqbn3JOYHJy/GIyq7vIU52ojzDxSPIj6wcvrh6H4FuIbz+
+	 F0F3y+GiBzthZ4mIzTY4HJCAWYuP5r0AQinzrbFDquwetB13wsTtxbt27PDZtwNCpU
+	 UVbXJIyT1n8fGsi1Db/0F17tHg3YlDWSOnUluN33QtmNCbmjYOEbQoODZQ2OovTRGR
+	 E9lO3JTjS/ToSivdOMBTXelL9iwMpF/YxfiBRrsSsbjwLMh8kuEuHQSVXUadJfC+UC
+	 cQvaPTR2/NTVQ==
+Date: Tue, 25 Mar 2025 13:52:42 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>, 
+    Benjamin Tissoires <benjamin.tissoires@redhat.com>
+cc: "bentiss@kernel.org" <bentiss@kernel.org>, 
+    Kerem Karabay <kekrby@gmail.com>, 
+    Orlando Chamberlain <orlandoch.dev@gmail.com>, 
+    Aun-Ali Zaidi <admin@kodeit.net>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH RESEND 0/5] HID: multitouch: Add support for Touch Bars
+ on x86 MacBook Pros
+In-Reply-To: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+Message-ID: <67829qr8-op53-7q0s-n858-9psq5sqopo45@xreary.bet>
+References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] nvme/ioctl: move blk_mq_free_request() out of
- nvme_map_user_request()
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Pavel Begunkov <asml.silence@gmail.com>
-Cc: Xinyu Zhang <xizhang@purestorage.com>, linux-nvme@lists.infradead.org,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324200540.910962-1-csander@purestorage.com>
- <20250324200540.910962-3-csander@purestorage.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250324200540.910962-3-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-Reviewed-by: Jens Axboe <axboe@kernel.dK>
+On Mon, 10 Mar 2025, Aditya Garg wrote:
+
+> Hi all!
+> 
+> This patch series aims to improve the Touch Bar support for x86 Macs.
+> 
+> Recently, the hid-appletb-kbd and hid-appletb-bl drivers were upstreamed
+> into the Linux kernel [1]. They enabled the Touch Bar to display a
+> predefined set of media and function keys, exactly the same it does on
+> Windows Bootcamp.
+> 
+> Now we are about to get support added for the DRM mode of the Touch Bar
+> as well [2].
+> 
+> The DRM mode enables the Touch Bar to act as a second display,
+> just like macOS. So now you can add a widget, put a clock or anything
+> else on the Touch Bar as long as you can develop a daemon.
+> 
+> Now via these patches, in the DRM mode, we can use the Touch Bar as a
+> touch screen. The Touch Bar seems to be not compliant with the HID spec,
+> thus via these patches several tweaks have been done under the cover of
+> a single quirk, MT_QUIRK_APPLE_TOUCHBAR.
+> 
+> For the case of T2 Macs, apple-bce [3], the driver for the T2 Security
+> Chip is also needed for all the peripherals, including the Touch Bar
+> to work. It is still WIP, and will be subsequently sent later to the
+> appropriate tree. Till then, I'll suggest for get the driver from [3],
+> or more preferably, get Linux support from https://t2linux.org/.
+
+Benjamin, could you please Ack this series?
+
+Thanks,
 
 -- 
-Jens Axboe
+Jiri Kosina
+SUSE Labs
+
 
