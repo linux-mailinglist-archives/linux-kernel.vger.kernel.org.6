@@ -1,195 +1,156 @@
-Return-Path: <linux-kernel+bounces-576243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A548A70CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064AAA70CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 778577A4EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDFE18922A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39088269AF8;
-	Tue, 25 Mar 2025 22:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BCA269D01;
+	Tue, 25 Mar 2025 22:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WovFY34z"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfynHWSX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07693269B0E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C68183CA6;
+	Tue, 25 Mar 2025 22:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940738; cv=none; b=StF0NtUzIByD6ATY922tQvdu4YN9nhq+EQJALhA56OPTYQNYCZ5B9QITa6Kk05vG/4BdK4txDy4I0i09S2uL+qEs8zKfT3B9whoFA5x0yotZu4snYQ7IrSgcglu032KCxLIPbCEKqkXNZsXIlbQsxa5+70kubdw4TuIGL6tcvqQ=
+	t=1742941000; cv=none; b=fSV3/l8asxVGV7iwCFPZKWPD54jEzFR1HuH2KAlJftJc70RfhSpcZpyzth89Rv9d8Ud2wJDsm6K2b4Eh0eW+hXtJwAJ61updjYh0pSVpJWe4qcY+0PigZ5PEc5kYRXsxJHrO5flQkOsAJOqk4L6h+7uVDFhQMdhY/gKZLC6KjDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940738; c=relaxed/simple;
-	bh=3eslH+t+TbD7LQuwNVVPfVOQ7J3+oAgPrGLbmfz0K7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mRj7oZzeOog+gcLI1zYztLgNiCoVnF0kUEFMOEjaNuQjhx4dB2oUv9Di2GMJgrKsibYiGrnbfevlpeY6RUaQCjlZ4IZz+kOLaV6nH1nrK4drc7JMXPpylhE7gOggjFCm7MykhiQ2vFMJO0lEeIOBXqIz9uRGM6rSZCW/qtSKbOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WovFY34z; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so1876545a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742940736; x=1743545536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=od9pHwvKTDqtCanN7vue6aidZIC4KSNszNDu5XDL030=;
-        b=WovFY34zRUO3te1wozi1027xRzUogCEsf1MnK/f9iSIqFuBy7v83cyKCmjQblhuzIA
-         x9iUiTFo/6a/wNFG47zMdv4c/4cE5alWq1hTEO7VvqZwoqDM1nad4gj5WjQjGIH03KV7
-         SVEuWs5Skjh/Ke7wDnUmnawhihJUdjsDslWqiQbDGKqksQrz4vrHFvm34p1QoFEkdhUt
-         7+1DcGulFu99zfCPGKBQwDZKZXv6iOB/4J6n5BGdyw4O5DCla9wliuPu0B154PxAy4pe
-         YncQmeJHWKNYjfRj2omW/ZcSoZez3EFGZ2w7dT3XIX19TFgFV5Y4r2UyXJgCS6tHXG7s
-         CKmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742940736; x=1743545536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=od9pHwvKTDqtCanN7vue6aidZIC4KSNszNDu5XDL030=;
-        b=Yr2IDsetHRaxN1xb92nqbX+xR/4O8x3qAg3NDxT/0HbpqHyE/FwXvS71HU3dkfDHbE
-         v8p1D9QmC3RxyVKI/7axCbXrnSMsicbDw4gE8Az3KqgB3+U5p0KTxcHHg9HAxkGw3diZ
-         0pzfh4arLgBYNDEfAKsXJLOWdhh8IXab6j6kyQ+bFob7P0/3AqIyYGgjCV29alxIWUzq
-         WijgigfxXwzLre57Md6FXvEVb8BOgn7Rxj72RBA14fdqCqF+9d0AjyZz2RGkza2jCX4R
-         w7XxShSmjuRv++h/QnnbCtCbud0c41Dqe/jzvRlRMvIGIx5dF2IJOAoXBVIAbFQlt7RD
-         iFzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBEKZOwxc0SxXJNo4Pooi3+QI2EuVpWaTpw62Jr3MgCpqcb+HDTGLdGQRR2RbOgr1S2gQoSM5SAGrF7qc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQjYYt74AA2c1UucIc50Unh+SP6aM2DkKcyJOL5yYzY6NaQI/x
-	BI3IK2hwk9cPKrVS7iki1G91zm65fIb6ibEq9nBVbQlYgmZf4u8DFXspJhSUOWIvsk22gDHKUDd
-	mw3+2wRWY422CgzR9m/Bbj9YLizc=
-X-Gm-Gg: ASbGncvvcNarXuCbnclV6u5XTC2zAbqa6GwRgcjxMx66AowVcZI1SUdL9fJywmbw9jP
-	zSdLxbZQTVCIsb1mceTO4bGY7eM3bnX4H1jMwf8FrbR18jfCQsjzOxPUrXJq35LjsAAHnZcx9C8
-	/94PmIIcPS1kWQV4vwcA5tBfWqAw==
-X-Google-Smtp-Source: AGHT+IGV1svpZf6dEQvMFQKxRZPRAcOHlrsfO4jmy72XxmgDQa5aB5mBLrtr9kwQGFf0DdhDb+az2tMunqavZTqdyWA=
-X-Received: by 2002:a17:90b:4c41:b0:2ff:6666:529d with SMTP id
- 98e67ed59e1d1-3030fef4b27mr11159900a91.6.1742940735916; Tue, 25 Mar 2025
- 15:12:15 -0700 (PDT)
+	s=arc-20240116; t=1742941000; c=relaxed/simple;
+	bh=ukbMYLaHnFNbzuxM/IwrERqYhxEtV6X2WUEaBtLFe88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BMfylrTOtA2Pu+o8Zob4YP33noRnM98kUMtBAwjAqFyC2YaZ9OnDn5hzzVI8Kjb7L1sotT6FW0/+00emkPksOvb0evVp3Pmy7RCnHVoHgWP15ptF/pJZsS0oT9aE61rURpudYH3pcJEBXuF68Okz1qbyiju0Oo2W3nnVYL77/uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfynHWSX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PGaVxL029366;
+	Tue, 25 Mar 2025 22:15:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IqkDku0FBWy439knwpj1QAw3htxh/zATuam0xlC2a9Y=; b=HfynHWSXtuodTWVN
+	xIma+SE8dmmmF3ql6VflRpSr4IqtIamNWpkUPQ+tOnhzjIsibRkDYj2UfOf5dbdO
+	G27HDtHzz9F7TJs5Gpz6dWpv8iDfRGLlis5Kws5sYkmy5BK2zbq5s1A4YPv2EeA8
+	mppt7B8TXMzmx1hJk69k2FJrvI6YYhXNZIF7n+5NInINs87H6Qp9o+ZlqYt33MIs
+	k3hCJWN4To+hRY80vHsu5OiVNgJRuWAoV56HWG70AnZb7qc8BJQWWRWk0VBsvozq
+	oFsGFaKh9RMFkxCg8AlngWO2KUR/OJG1bQTq3AuVlNr4kart+zedDk4sy72f3qtL
+	p6Wgag==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kjjf387p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 22:15:56 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52PMFuYK025311
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 22:15:56 GMT
+Received: from [10.46.162.103] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
+ 2025 15:15:55 -0700
+Message-ID: <c5ab13ec-f650-ea10-5cb8-d6a2ddf1e825@quicinc.com>
+Date: Tue, 25 Mar 2025 15:15:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325210517.2097188-1-bradynorander@gmail.com>
-In-Reply-To: <20250325210517.2097188-1-bradynorander@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 25 Mar 2025 18:12:04 -0400
-X-Gm-Features: AQ5f1Jq62_XuZD0k3dE4N_FzF_eoMBk1GYehLCaicuweyhrZdp2RKX8gCq_kFNs
-Message-ID: <CADnq5_MNBUY=jWbnq-gZQ_4_M_sBJGAgMD0bj2cMdnkoU9G=HA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: use static ids for ACP platform devs
-To: Brady Norander <bradynorander@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, alexander.deucher@amd.com, 
-	christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch, 
-	sunil.khatri@amd.com, boyuan.zhang@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v4 1/1] scsi: ufs: core: add device level exception
+ support
+To: Arthur Simchaev <Arthur.Simchaev@sandisk.com>,
+        "quic_cang@quicinc.com"
+	<quic_cang@quicinc.com>,
+        "quic_nitirawa@quicinc.com"
+	<quic_nitirawa@quicinc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "peter.wang@mediatek.com"
+	<peter.wang@mediatek.com>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "minwoo.im@samsung.com"
+	<minwoo.im@samsung.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        Matthias Brugger
+	<matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Keoseong Park <keosung.park@samsung.com>,
+        Ziqi Chen
+	<quic_ziqichen@quicinc.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Gwendal
+ Grignou" <gwendal@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        open
+ list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC
+ support:Keyword:mediatek" <linux-arm-kernel@lists.infradead.org>,
+        "moderated
+ list:ARM/Mediatek SoC support:Keyword:mediatek"
+	<linux-mediatek@lists.infradead.org>
+References: <4370b3a3b5a5675bb3e75aaa48a273674c159339.1742526978.git.quic_nguyenb@quicinc.com>
+ <SA2PR16MB4251229744D717821D3D8353F4A72@SA2PR16MB4251.namprd16.prod.outlook.com>
+Content-Language: en-US
+From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+In-Reply-To: <SA2PR16MB4251229744D717821D3D8353F4A72@SA2PR16MB4251.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mv-66VCUBBs-n4qkdNHUeFgF5sj03LhE
+X-Authority-Analysis: v=2.4 cv=Hol2G1TS c=1 sm=1 tr=0 ts=67e32b1c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=88o2ww302YIQ5eeAPVQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: mv-66VCUBBs-n4qkdNHUeFgF5sj03LhE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 spamscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250148
 
-On Tue, Mar 25, 2025 at 6:07=E2=80=AFPM Brady Norander <bradynorander@gmail=
-.com> wrote:
->
-> mfd_add_hotplug_devices() assigns child platform devices with
-> PLATFORM_DEVID_AUTO, but the ACP machine drivers expect the platform
-> device names to never change. Use mfd_add_devices() instead and give
-> each cell a unique id.
+On 3/25/2025 9:33 AM, Arthur Simchaev wrote:
+> Hi Bao
+> 
+> I think adding "struct utp_upiu_query_response_v4_0" is redundant and not correct for flags upiu response .
+> You can use "struct utp_upiu_query_v4_0"
+> 
+Hi Arthur,
+This is not a flags attribute. This is for a Query Read 64-bit Attribute 
+data. In the existing code, we do not have a read 64-bit attribute, so 
+adding this new code would also allow future re-use.
 
-While you are at it, can you take a look at
-drivers/gpu/drm/amd/amdgpu/isp_v4_1_0.c and
-drivers/gpu/drm/amd/amdgpu/isp_v4_1_1.c as well?
+The new "struct utp_upiu_query_response_v4_0" would improve readability 
+because it is formatted exactly as how the jedec standard defines for 
+Attribute Read. We won't need to use type cast to get the 64-bit value.
+There would be no issue with efficiency because the same machine code 
+would be generated.
 
-Alex
+The existing "struct utp_upiu_query_v4_0" probably has a bug in it. It 
+does not use the  __attribute__((__packed__)) attribute. The compiler is 
+free to add padding in this structure, resulting in the read attribute 
+value being incorrect. I plan to provide a separate patch to fix this issue.
 
->
-> Signed-off-by: Brady Norander <bradynorander@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_acp.c
-> index deb0785350e8..9c657637d317 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-> @@ -302,17 +302,19 @@ static int acp_hw_init(struct amdgpu_ip_block *ip_b=
-lock)
->                 adev->acp.acp_res[2].end =3D adev->acp.acp_res[2].start;
->
->                 adev->acp.acp_cell[0].name =3D "acp_audio_dma";
-> +               adev->acp.acp_cell[0].id =3D 0;
->                 adev->acp.acp_cell[0].num_resources =3D 3;
->                 adev->acp.acp_cell[0].resources =3D &adev->acp.acp_res[0]=
-;
->                 adev->acp.acp_cell[0].platform_data =3D &adev->asic_type;
->                 adev->acp.acp_cell[0].pdata_size =3D sizeof(adev->asic_ty=
-pe);
->
->                 adev->acp.acp_cell[1].name =3D "designware-i2s";
-> +               adev->acp.acp_cell[1].id =3D 1;
->                 adev->acp.acp_cell[1].num_resources =3D 1;
->                 adev->acp.acp_cell[1].resources =3D &adev->acp.acp_res[1]=
-;
->                 adev->acp.acp_cell[1].platform_data =3D &i2s_pdata[0];
->                 adev->acp.acp_cell[1].pdata_size =3D sizeof(struct i2s_pl=
-atform_data);
-> -               r =3D mfd_add_hotplug_devices(adev->acp.parent, adev->acp=
-.acp_cell, 2);
-> +               r =3D mfd_add_devices(adev->acp.parent, 0, adev->acp.acp_=
-cell, 2, NULL, 0, NULL);
->                 if (r)
->                         goto failure;
->                 r =3D device_for_each_child(adev->acp.parent, &adev->acp.=
-acp_genpd->gpd,
-> @@ -410,30 +412,34 @@ static int acp_hw_init(struct amdgpu_ip_block *ip_b=
-lock)
->                 adev->acp.acp_res[4].end =3D adev->acp.acp_res[4].start;
->
->                 adev->acp.acp_cell[0].name =3D "acp_audio_dma";
-> +               adev->acp.acp_cell[0].id =3D 0;
->                 adev->acp.acp_cell[0].num_resources =3D 5;
->                 adev->acp.acp_cell[0].resources =3D &adev->acp.acp_res[0]=
-;
->                 adev->acp.acp_cell[0].platform_data =3D &adev->asic_type;
->                 adev->acp.acp_cell[0].pdata_size =3D sizeof(adev->asic_ty=
-pe);
->
->                 adev->acp.acp_cell[1].name =3D "designware-i2s";
-> +               adev->acp.acp_cell[1].id =3D 1;
->                 adev->acp.acp_cell[1].num_resources =3D 1;
->                 adev->acp.acp_cell[1].resources =3D &adev->acp.acp_res[1]=
-;
->                 adev->acp.acp_cell[1].platform_data =3D &i2s_pdata[0];
->                 adev->acp.acp_cell[1].pdata_size =3D sizeof(struct i2s_pl=
-atform_data);
->
->                 adev->acp.acp_cell[2].name =3D "designware-i2s";
-> +               adev->acp.acp_cell[2].id =3D 2;
->                 adev->acp.acp_cell[2].num_resources =3D 1;
->                 adev->acp.acp_cell[2].resources =3D &adev->acp.acp_res[2]=
-;
->                 adev->acp.acp_cell[2].platform_data =3D &i2s_pdata[1];
->                 adev->acp.acp_cell[2].pdata_size =3D sizeof(struct i2s_pl=
-atform_data);
->
->                 adev->acp.acp_cell[3].name =3D "designware-i2s";
-> +               adev->acp.acp_cell[3].id =3D 3;
->                 adev->acp.acp_cell[3].num_resources =3D 1;
->                 adev->acp.acp_cell[3].resources =3D &adev->acp.acp_res[3]=
-;
->                 adev->acp.acp_cell[3].platform_data =3D &i2s_pdata[2];
->                 adev->acp.acp_cell[3].pdata_size =3D sizeof(struct i2s_pl=
-atform_data);
->
-> -               r =3D mfd_add_hotplug_devices(adev->acp.parent, adev->acp=
-.acp_cell, ACP_DEVS);
-> +               r =3D mfd_add_devices(adev->acp.parent, 0, adev->acp.acp_=
-cell, ACP_DEVS, NULL, 0, NULL);
->                 if (r)
->                         goto failure;
->
-> --
-> 2.48.1
->
+Thanks, Bao
 
