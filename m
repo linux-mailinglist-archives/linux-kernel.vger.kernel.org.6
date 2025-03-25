@@ -1,195 +1,274 @@
-Return-Path: <linux-kernel+bounces-574735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30D3A6E942
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:21:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549C8A6E944
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD2607A357B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C431890168
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8C41AB530;
-	Tue, 25 Mar 2025 05:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5E71A8F97;
+	Tue, 25 Mar 2025 05:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f8VvlodX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MRS5CbMo"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E7B149DE8;
-	Tue, 25 Mar 2025 05:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6989064D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 05:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742880057; cv=none; b=h1GfvKlAWj8w2o94irPYQ+8Xc/6+S6YTWetGYF/S33vucvnm0rOA1cZQ9MAlN0ZRaUA3S7PsNhD4WTRGBwnGJoH5C1gBo1dfWCyjCuo1vzm7oGD4HnSTHceHGnZs+u3Q200TlJ84KeHeUcTKOR/nNGt4laCo429Pz7Gg/FqhgRU=
+	t=1742880118; cv=none; b=fTIr7S2hfHVCjfeg5D1RGrYopIvn/xv1ncQvd6KcvMakK6qeWjy6JFNKNgUz0zqklhFWIlSW/dpUGPXB4OO53Fsy+p9BnnSrleqklLwdsRcPYMOd3E8tj6ouLzg2hLax+xIbWV+SfV23DcGszQXZVxQU/3hGmNJLBvMbebtECbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742880057; c=relaxed/simple;
-	bh=qXD97ZUHqYiJnZohYLFLbrftwnOclPGBDCBAuRUUFtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HBhW5P/UxIgT9uCuWpA1YYmt2fmZ8nT01yDgJuI31c2514Zd7zU7MBWeo+ivP3LbaVxblHySQy0rOwD4aJlHilijDuD2o+xG2UkRvrUwBleFybbPrh9mvCsOhe8oW6xyz7u3AqtLQI2zO46B3yEopHD0yd8Kwxtaw3ZxpLwaiRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f8VvlodX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OIj1Ls015727;
-	Tue, 25 Mar 2025 05:20:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	q/ZKsWZszj9a6vz4X4eyTuRLzkjltBj4c+jz9QDw2gg=; b=f8VvlodXOqa9THTL
-	RpikKS9p2GNYuY7JAshP4r2VJNvGEnZLrZCzTnCG9ZaI5nzPGbgr6Khxf8/WPOxU
-	hCk3xLbxAw6dKdtAhh0j0DVGHL0oBEV5h9G/xknZ3hIbjaS18VutGVx/d2MdpIrV
-	b06g/KeLz0opHyp73BRFtAc6wFPu7fBpN4ujUmCPVch6BmU17bNT2Kj+yXPAcBQk
-	dhCvm59USwc4Ol+m1FYqOUBXm1M1v+6fCqYaAFM+XwCAR2PSCXCz1fwYOor3xjoZ
-	sTvCuVZnCzdRqsJqsn/HSoI2ygGaihNglrmvxW8+6R8/PDAtVosxBJrPNiFSoVnT
-	9xqKXA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wehy0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 05:20:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P5KlIk004471
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 05:20:47 GMT
-Received: from [10.217.238.57] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 22:20:44 -0700
-Message-ID: <2bc16a4e-96d6-4175-a52c-e344115fc4ac@quicinc.com>
-Date: Tue, 25 Mar 2025 10:50:41 +0530
+	s=arc-20240116; t=1742880118; c=relaxed/simple;
+	bh=km3N0+p5UmnsX6COZ2KgI/JmqmDskXfPNFC8rI68hJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gT0Lvh3bn2VxY7QdvFkSSLW87xNp85dKWQQjVk24oz0dNCube9A+9k4R+wZQvh2G57GqwRybtKbzuCqYBBMDnUAwlu8YALAF5id/cWlDFJgqacThLuIULWt/KYRKeCWl7O2Pl+CA3m8xGp+VayCnTMaRZybVqhWF2s9fup4SHoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MRS5CbMo; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774ce422easo10590031cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 22:21:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742880115; x=1743484915; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lomCUCbXgX6nE+LW1PH+Y2bS1fjA57fzR64X+WRuwbE=;
+        b=MRS5CbMo6n+bNcsym3mD2jrQ77amVZlbWHLpjNpPqxluA6oml8ikxOL1C9BIc6vLoB
+         yh+Nj2mkMcAOr9+PExP0Vs8RF1v+iuXAEBi5RZdPj/wk+E/chpSlWPQrZ7dO+dimutzY
+         GNu97O+Ne9SXhGPuncrs0L6nNou2cg5eYVOCJCA9T8iEbVenwn/szMDZ5GQURCXQ6TPu
+         g8gAutoOxlFiH2VgGVogzlI2X3ZugRnltK2Gy93PYU8fPwlL7ozj9wlag2qhyManTEqP
+         SUBxEpw1W6txUEnwv2phZm21HKrn8ukAWKHRwcawGs2IyUl3mwKkCgVaV4z5S/Kfql84
+         p7Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742880115; x=1743484915;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lomCUCbXgX6nE+LW1PH+Y2bS1fjA57fzR64X+WRuwbE=;
+        b=prvYr2kt/I5cVRxM62jWM7IFLPcV4CdpzySE6waMMvEacdCuyTYkN5BGdtEUxbcfBj
+         vxYGNZS5J4/5phWaiNkeZuKbSNFzz3B9aBT5LxdqRHTc1yZKFO7OuqdzwIJ7Yz5DbfFK
+         QpJhUiGcL1gmrhuoHyT54nBXxKv9vWQ3a4rxX0YnmmMEj7AY+f9VXDiC6+K4C3LSzHn6
+         ss7tbj3ZvMQKa+MJ3fgrPJoJ8lPBdkyxHFwH2dcfhCFWeYEt1A+aTrTqPH1nS2x6RZNT
+         /YeFbNpjWmC9iEVzTfWFWx8m4nntbRDjfLI44K5i9g/Jqr1E65E4md2fAdnjxli/3Dce
+         psMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR7qqxdCCOd2Y3SiYRPWDQ3xePci1cGgDyYW6VpD3jIcRBKbou67q7FF9OjDBSMR/NwRbWiS+YdsG0GGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFPsE09FQsc1QK/M9yVEw97BotAkvTrDW1tSS2S1nW7I28Zdn2
+	ZqkRzSlEbsDm5dOgJgQJA9ZxRPP3LAulMFGXNZjZn4WOsNq6vOfkvti0TFQDZMB4dCNeMEWdWEw
+	ZZ9C+JpP6xPLOVyTUFqxXrXavwiQQz/chsKIA
+X-Gm-Gg: ASbGncugDtKjKvDqNWGD/oqr1zm+l7lthjJn6MAiKDtc3mxLCOk40BhNyD0e0vLQGWs
+	byeMTU+oluDpYRzXsFrUugqSpyIbWwQ9QVpcE2jpxw0XafKcmjl2shxP1gya1eq9BO5RbU/6e3x
+	iVI1F3mP04ZjHbdHY4w/3T2n4uHw==
+X-Google-Smtp-Source: AGHT+IFuoo9a80CaecGtUHiPU5cNU3ssgrGIkNvDUO0q8i3gYnU/YIjkCXifw+MTT/Xd2THwHK0JYHMFALY2+foT+sc=
+X-Received: by 2002:a05:622a:5e13:b0:476:980c:10a8 with SMTP id
+ d75a77b69052e-4771dd89817mr275087661cf.21.1742880114991; Mon, 24 Mar 2025
+ 22:21:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>
-CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
- <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
- <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
- <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
- <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
-Content-Language: en-US
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-In-Reply-To: <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
+References: <20250324-netns-debugfs-v1-1-c75e9d5a6266@kernel.org>
+In-Reply-To: <20250324-netns-debugfs-v1-1-c75e9d5a6266@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 25 Mar 2025 06:21:44 +0100
+X-Gm-Features: AQ5f1Jpo46yjmZxCGvmGXnjpHCubT1YLmkD_YwFqIO8scnLE13pByFExr1SBtRc
+Message-ID: <CANn89iL44SvNKgK-fbm2+bWUpCk+cT0LFVaMGj7HdVOkRiW9Vg@mail.gmail.com>
+Subject: Re: [PATCH] net: add a debugfs files for showing netns refcount
+ tracking info
+To: Jeff Layton <jlayton@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YijUQdsRbaWW6ijmO6YaxxhiAHOV4-qw
-X-Proofpoint-ORIG-GUID: YijUQdsRbaWW6ijmO6YaxxhiAHOV4-qw
-X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e23d31 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=wEgAGjhJSUDKPyw9TBoA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_02,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250035
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Mar 24, 2025 at 9:24=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> CONFIG_NET_NS_REFCNT_TRACKER currently has no convenient way to display
+> its tracking info. Add a new net_ns directory in debugfs. Have a
+> directory in there for every net, with refcnt and notrefcnt files that
+> show the currently tracked active and passive references.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> Recently, I had a need to track down some long-held netns references,
+> and discovered CONFIG_NET_NS_REFCNT_TRACKER. The main thing that seemed
+> to be missing from it though is a simple way to view the currently held
+> references on the netns. This adds files in debugfs for this.
+
+Thanks for working on this, this is a very good idea.
 
 
+> +#define MAX_NS_DEBUG_BUFSIZE   (32 * PAGE_SIZE)
+> +
+> +static int
+> +ns_debug_tracker_show(struct seq_file *f, void *v)
+> +{
+> +       struct ref_tracker_dir *tracker =3D f->private;
+> +       int len, bufsize =3D PAGE_SIZE;
+> +       char *buf;
+> +
+> +       for (;;) {
+> +               buf =3D kvmalloc(bufsize, GFP_KERNEL);
+> +               if (!buf)
+> +                       return -ENOMEM;
+> +
+> +               len =3D ref_tracker_dir_snprint(tracker, buf, bufsize);
+> +               if (len < bufsize)
+> +                       break;
+> +
+> +               kvfree(buf);
+> +               bufsize *=3D 2;
+> +               if (bufsize > MAX_NS_DEBUG_BUFSIZE)
+> +                       return -ENOBUFS;
+> +       }
+> +       seq_write(f, buf, len);
+> +       kvfree(buf);
+> +       return 0;
+> +}
 
-On 3/1/2025 7:06 PM, Krzysztof Kozlowski wrote:
-> On 28/02/2025 15:14, Bjorn Andersson wrote:
->> On Fri, Feb 28, 2025 at 11:01:16AM +0530, Yuvaraj Ranganathan wrote:
->>> On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
->>>> On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
->>>>> The initial QCE node change is reverted by the following patch 
->>>>
->>>> s/is/was/
->>>>
->>>>> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
->>>>> because of the build warning,
->>>>>
->>>>>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
->>>>>     ...
->>>>>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
->>>>>
->>>>> Add the QCE node back that fix the warnings.
->>>>>
->>>>
->>>> Are you saying that adding this node back will fix the warning?
->>>>
->>>> I'd expect that you would say something like "The changes to the
->>>> Devicetree binding has accepted, so add the node back".
->>>>
->>>> Regards,
->>>> Bjorn
->>>>
->>>>> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
->>>>> ---
->>>>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
->>>>>  1 file changed, 12 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>>> index 23049cc58896..b0d77b109305 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>>> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
->>>>>  				 <&apps_smmu 0x481 0x00>;
->>>>>  		};
->>>>>  
->>>>> +		crypto: crypto@1dfa000 {
->>>>> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
->>>>> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
->>>>> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
->>>>> +			dma-names = "rx", "tx";
->>>>> +			iommus = <&apps_smmu 0x480 0x00>,
->>>>> +				 <&apps_smmu 0x481 0x00>;
->>>>> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
->>>>> +					 &mc_virt SLAVE_EBI1 0>;
->>>>> +			interconnect-names = "memory";
->>>>> +		};
->>>>> +
->>>>>  		stm: stm@4002000 {
->>>>>  			compatible = "arm,coresight-stm", "arm,primecell";
->>>>>  			reg = <0x0 0x4002000 0x0 0x1000>,
->>>>> -- 
->>>>> 2.34.1
->>>>>
->>>
->>> DeviceTree bindings were accepted but the comptabile string does not
->>> properly bind to it. Hence, adding the correct binding string in the
->>> compatible has resolved the issue.
->>>
->>
->> Please then write that in the commit message.
->>
->>
->> That said, what did you base this patch on? While I have picked
->> Krzysztof's two reverts in my local tree, I have not yet published them.
->> So your patch is not even based on v6.14-rc1, which now is 4 weeks old.
->>
->> Patches sent upstream should be built and tested on a suitable upstream
->> branch!
-> 
-> I sent reverts because author, even though pinged more than once (!),
-> ignored reported problems.
-> 
-> It seems that reverting the code gets some attention, so maybe author
-> will fix the original issue and my reverts can be dropped/ignored.
-> 
-> Best regards,
-> Krzysztof
+I guess we could first change ref_tracker_dir_snprint(tracker, buf, bufsize=
+)
+to ref_tracker_dir_snprint(tracker, buf, bufsize, &needed) to avoid
+too many tries in this loop.
 
-The original issue was not observed at our end during the first time
-validation and its due to some environment issue. This patch does
-resolves the issue and it is validated against the linux-next master branch.
+Most of ref_tracker_dir_snprint() runs with hard irq being disabled...
 
-Thanks,
-Yuvaraj.
 
+diff --git a/drivers/gpu/drm/i915/intel_wakeref.c
+b/drivers/gpu/drm/i915/intel_wakeref.c
+index 87f2460473127af65a9a793c7f1934fafe41e79e..6650421b4f00c318adec72cd7c1=
+7a76832f14cce
+100644
+--- a/drivers/gpu/drm/i915/intel_wakeref.c
++++ b/drivers/gpu/drm/i915/intel_wakeref.c
+@@ -208,7 +208,7 @@ void intel_ref_tracker_show(struct ref_tracker_dir *dir=
+,
+        if (!buf)
+                return;
+
+-       count =3D ref_tracker_dir_snprint(dir, buf, buf_size);
++       count =3D ref_tracker_dir_snprint(dir, buf, buf_size, NULL);
+        if (!count)
+                goto free;
+        /* printk does not like big buffers, so we split it */
+diff --git a/include/linux/ref_tracker.h b/include/linux/ref_tracker.h
+index 8eac4f3d52547ccbaf9dcd09962ce80d26fbdff8..19bd42088434b661810082350a9=
+d5afcbff6a88a
+100644
+--- a/include/linux/ref_tracker.h
++++ b/include/linux/ref_tracker.h
+@@ -46,7 +46,7 @@ void ref_tracker_dir_print_locked(struct ref_tracker_dir =
+*dir,
+ void ref_tracker_dir_print(struct ref_tracker_dir *dir,
+                           unsigned int display_limit);
+
+-int ref_tracker_dir_snprint(struct ref_tracker_dir *dir, char *buf,
+size_t size);
++int ref_tracker_dir_snprint(struct ref_tracker_dir *dir, char *buf,
+size_t size, size_t *needed);
+
+ int ref_tracker_alloc(struct ref_tracker_dir *dir,
+                      struct ref_tracker **trackerp, gfp_t gfp);
+@@ -77,7 +77,7 @@ static inline void ref_tracker_dir_print(struct
+ref_tracker_dir *dir,
+ }
+
+ static inline int ref_tracker_dir_snprint(struct ref_tracker_dir *dir,
+-                                         char *buf, size_t size)
++                                         char *buf, size_t size,
+size_t *needed)
+ {
+        return 0;
+ }
+diff --git a/lib/ref_tracker.c b/lib/ref_tracker.c
+index cf5609b1ca79361763abe5a3a98484a3ee591ff2..d8d02dab7ce67caf91ae22f9391=
+abe2c92481c7f
+100644
+--- a/lib/ref_tracker.c
++++ b/lib/ref_tracker.c
+@@ -65,6 +65,7 @@ ref_tracker_get_stats(struct ref_tracker_dir *dir,
+unsigned int limit)
+ struct ostream {
+        char *buf;
+        int size, used;
++       size_t needed;
+ };
+
+ #define pr_ostream(stream, fmt, args...) \
+@@ -76,6 +77,7 @@ struct ostream {
+        } else { \
+                int ret, len =3D _s->size - _s->used; \
+                ret =3D snprintf(_s->buf + _s->used, len, pr_fmt(fmt), ##ar=
+gs); \
++               _s->needed +=3D ret; \
+                _s->used +=3D min(ret, len); \
+        } \
+ })
+@@ -141,7 +143,7 @@ void ref_tracker_dir_print(struct ref_tracker_dir *dir,
+ }
+ EXPORT_SYMBOL(ref_tracker_dir_print);
+
+-int ref_tracker_dir_snprint(struct ref_tracker_dir *dir, char *buf,
+size_t size)
++int ref_tracker_dir_snprint(struct ref_tracker_dir *dir, char *buf,
+size_t size, size_t *needed)
+ {
+        struct ostream os =3D { .buf =3D buf, .size =3D size };
+        unsigned long flags;
+@@ -150,6 +152,8 @@ int ref_tracker_dir_snprint(struct ref_tracker_dir
+*dir, char *buf, size_t size)
+        __ref_tracker_dir_pr_ostream(dir, 16, &os);
+        spin_unlock_irqrestore(&dir->lock, flags);
+
++       if (needed)
++               *needed =3D os.needed;
+        return os.used;
+ }
+ EXPORT_SYMBOL(ref_tracker_dir_snprint);
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index ce4b01cc7aca15ddf74f4160580871868e693fb8..61ce889ab29c2b726eab064b0ec=
+b39838db30229
+100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -1529,13 +1529,14 @@ struct ns_debug_net {
+        struct dentry *notrefcnt;
+ };
+
+-#define MAX_NS_DEBUG_BUFSIZE   (32 * PAGE_SIZE)
++#define MAX_NS_DEBUG_BUFSIZE   (1 << 20)
+
+ static int
+ ns_debug_tracker_show(struct seq_file *f, void *v)
+ {
+        struct ref_tracker_dir *tracker =3D f->private;
+        int len, bufsize =3D PAGE_SIZE;
++       size_t needed;
+        char *buf;
+
+        for (;;) {
+@@ -1543,12 +1544,12 @@ ns_debug_tracker_show(struct seq_file *f, void *v)
+                if (!buf)
+                        return -ENOMEM;
+
+-               len =3D ref_tracker_dir_snprint(tracker, buf, bufsize);
++               len =3D ref_tracker_dir_snprint(tracker, buf, bufsize, &nee=
+ded);
+                if (len < bufsize)
+                        break;
+
+                kvfree(buf);
+-               bufsize *=3D 2;
++               bufsize =3D round_up(needed, PAGE_SIZE);
+                if (bufsize > MAX_NS_DEBUG_BUFSIZE)
+                        return -ENOBUFS;
+        }
 
