@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-575517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91052A70391
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:24:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAACEA70390
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA56188E27B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9C81899E4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7214259CB1;
-	Tue, 25 Mar 2025 14:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3129325A2B2;
+	Tue, 25 Mar 2025 14:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="vsRan22Y"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y09QKFn/"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888072571A7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B80D2571A7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912433; cv=none; b=oYAaLDZpljt/wctWXxm3fgmaPsqeGjYXr67JDp8QQ8xeyPrulTAd/klhVPCzcD3vVT62e6CwIffdJDUJrJwN53b36stCVlerAPINCZXtArSPfFqHgQ7ONyl+qo8im5VnafiU6k/gv5RvEIrpwhs1U2PXfoDo5qA0o3ieBC7csi4=
+	t=1742912413; cv=none; b=KagWONeje69z5D+0vUJo1gHjjaH1iVM7d2540X0eK0O17OmylfYCd+m3eAoYWlGYTkD6wwONEKagehaQfEwGu1vm8mLolAq1gIhmED13sDmbq5CCiYffP6yG5TGKkNbQ7O79L15RV6J21LI2HTsSFcjw2hP39k5900+lm047z2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912433; c=relaxed/simple;
-	bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
+	s=arc-20240116; t=1742912413; c=relaxed/simple;
+	bh=TOpjA7jpbG6If//PTh5k3PFBfbMxxOiOsJHPkDgO9lY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bxPUcEnHmBNaia61zhdwLZIrvVblH/ez/S5d4x7BCE4lidXUxJlkENTUKjixZnaCb6jmIqyJKKrjVuBWXPJkl+XSSMK8eiSKZUnr3YXVNASJqUh/rfPJCdmoncjqXBBFgFANqc23HkosJ85utRc96Y8oYG7lk519vbzEmk/O2xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=vsRan22Y; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47688ae873fso57620801cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:20:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=jXs9n0HxEMa+AeTOjjQjC0clF/5+nhiRSpUABdkT8PzyCvO+kmicEK+/ztSPQV+Ank6qHPR8dMvXt8VVaf4f04jjFiefLUJ7jqcY+dU9xaqbS8JAI98wwpfIn9iSORVVPvyBQg5NLp/08QqwpQIcP+qLpIcgDWLOxinFKgMx28o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y09QKFn/; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ff62f9b6e4so1729801a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1742912430; x=1743517230; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
-        b=vsRan22Y4qwsj7yKN39U0ifO+/D//+MnwCOwtjNMHJqFDDYu+RMDhq+O40Axj6/Um1
-         rQIPN68gNjNB3/ge5b/8vkr++gSgSFwsHUqP0zuNFsXl8lWCh5zoLwDRteM4rMphdK8j
-         cc5J1VaKQK4JMKyJGYMhrrMZDIhKG0b6n+fmBpMOvS6sb/p7QytQQz47aWZESqvv0YTl
-         0x6jeMJSkFayACKpPoKzesUQBO8fNJAkwbvhZaklupQaHAi8AcRgURw8vEDgyFN5Cx/O
-         3ZeBweLhvHEf1pzWbPbymKvhYBAzNnWccownXDGeQFWWElvqnE7ruqcs2tW0gsBfKq1o
-         KV1A==
+        d=gmail.com; s=20230601; t=1742912411; x=1743517211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i4L7vtbekxau+N8vnTb0gwa/BBAesYIKpvGqtJoUimg=;
+        b=Y09QKFn//HzLsdYQJ6wxVZ3+XCVCF2zabvB9eRBVbO0a+RX/Pd70il96Sb+tsSfOUD
+         uDBquokHr7qYLE3HSNSrjyXk4o2zJUUzDQd6UhXZ6Y/naEm9JMeJwOjF9PE1/YWErI0k
+         b67q5RJFBWrj1Vxkl+2vrL6mak1QEMt6JlY0FUqndxHGhIKj4OClBL242zy6bAc45roP
+         Gq7watuZQ16pn3/x8JwFrC4gKjknOSOHE/eI7+amrHVZJJqLdcjrQDpVdx2kfe4XBK5F
+         rjF7H2p58B6lEeWH8X9z1pWC1yDDhAMGjbPxGHtJMVWhIqMQSxtRAE9TdXzdZgih7Q4h
+         gufA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742912430; x=1743517230;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6R9zA86q92q5KNyTPt/KezT2KM642idnT1llXfBvGGY=;
-        b=Af1Qkh5Sx8Q6rNQS1GursBQthWP5V+eNceqPE2bURMYX9f47Q/3S+58p8GLW1nOG3c
-         9FIXnfgHB4B4smn812gzTseqZVBhAEPvM9cf+3WTZVJC0Nrq2hmj8xPL65EqWihfEbKu
-         N8KBzbTs9TKIZYL1mwh8pGg463f5Bb1pYMk2YVCblBkZFkNWeYg5iwNG8G1z9qnIHi13
-         lvFBujH9Vlh3+zjoy5OGWF3Hknj582gMZduX6/XP2yYVIExiQCpI1ZVGA6CdOLhPSbSw
-         7G7uqEJmOgn/422tk8Di5Wq/rOj8yN3wLHZ6ejrqUjPHI29UfkUQ3jRa5fGP5ojLs7UU
-         2hkA==
-X-Gm-Message-State: AOJu0Yx9SCDN6oYZjZ1l61cG+2PB4BSEnw/wT/VSzSChgmQxIB5Br4TV
-	Ittc3+2LUKjY7VkYNwurGEKnZrDOylwKB4ynASfVYzUCxHO4UOUz+1HGXtb37TRHdwCBHm/1itv
-	VlPcix5Fseynk+C4TMbzV/atAkIcvGY8J+TQe9w==
-X-Gm-Gg: ASbGncsJ0kIcV4jDLd7IfxIjwwNxdPaqrmvb6fBq4AvrUe75JgKrMZ6qE+PcK7A5Cic
-	8a2G1tKMKhHlqcPgL7tm+pAgdGv87H2UsE/EDgsY4zQe+kykyYvH6zdNzbj1QpTLIyGL1pLeNyl
-	n9lyUK4KvKOqAhpMELYTMQcMAO
-X-Google-Smtp-Source: AGHT+IGc+rzcOSqRq1NAurG0wArv+f9TNDXi3NJHkDUdzPbqAqbmujaqTIOq09aOpi8XwtONse7qgR0mbQ4HEgDxOjc=
-X-Received: by 2002:ac8:529a:0:b0:477:29f5:53eb with SMTP id
- d75a77b69052e-47729f55467mr169156461cf.6.1742912430244; Tue, 25 Mar 2025
- 07:20:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742912411; x=1743517211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i4L7vtbekxau+N8vnTb0gwa/BBAesYIKpvGqtJoUimg=;
+        b=nI+VWULKuyW/jGoNIDJwGoDsrCxa8RJXreizcmTC1TbQjMZSdM8apyw5E4TXTMTMxT
+         +M/Vr13+Zxv/N6E33V3511Dn6uYKDobVORO07yycmIDbg5Sqn/0xVEedwxcA1OF8y++y
+         qfGuVaZTVP3AyFBLLZICqtwltz9jQDtKLP0teSOTA+mdFNNXOtK6iEr7q7GWFuI22isI
+         kYwuhpAqw++0OtH5iuNnXQN1+PtvAkmfTqliwZFFcM4Z+7aH7N1332//dYTRMrYlOw67
+         +s7MZrI6GrzoHMDqjV3gddCgrKSH0a30J6X+I6Kx6vlxMPePCxJPAVJiBb5dZoADyoEM
+         FCDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgosix97EKfFU+FLfIdAJ9I77AWWSpk1RalLdn/SxQJ49k4a5gnZqd+K4Q7r0odOqVrzT2hJVb1TD3rq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpryKHtyvW6dF/39FAIwI45rgo5FqvGN6MoMbR6COjH6e5t+9O
+	WeK+dV6je0wykda+1qtB+YbxZ5OUjCmJbMKZ99GH1aXSUbqyjx///XOCcV/Eqscq0ZF3Gr9lMKn
+	2nVFw1dBHD31xeJOOmNtg8vFS++w=
+X-Gm-Gg: ASbGncsudIB0JOONhpQKHTxVvZyzEQrcG/QHwgoM8RRsZnXmxXW4b7zSrKp++NDPr5X
+	3HnNhbeXu6gaSmCUFEMdgv/gFGjn224bM/x1T9qaqjaAgGj/0aDxCIEs4GsvxiZ1HN1bw4ENrZb
+	rKWbAeDro1Rh7TP+bHPeQL7Hp7xw==
+X-Google-Smtp-Source: AGHT+IHAolY+Get/kJBAAF50KlItDOfMAbpeBYkYfFsflb7rqe6tkJSn71jeSSxBNSv3ybme1lRgYtjxQaXjP5DQFqs=
+X-Received: by 2002:a17:90b:17c5:b0:2ff:4a6d:b359 with SMTP id
+ 98e67ed59e1d1-3030ff14660mr8976662a91.7.1742912411258; Tue, 25 Mar 2025
+ 07:20:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com>
-In-Reply-To: <20250320015551.2157511-1-changyuanl@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 25 Mar 2025 10:19:53 -0400
-X-Gm-Features: AQ5f1JpBD7J0LGV4vivBPILeYhry8D0ETPzHZusd7bV5-E3dLFdBAyFaK8Fs_Bw
-Message-ID: <CA+CK2bDtBk=49hbz+C=fDswz_Nbtj8kVjsY-pTsmBt+O8YPLmg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/16] kexec: introduce Kexec HandOver (KHO)
-To: Changyuan Lyu <changyuanl@google.com>
-Cc: linux-kernel@vger.kernel.org, graf@amazon.com, akpm@linux-foundation.org, 
-	luto@kernel.org, anthony.yznaga@oracle.com, arnd@arndb.de, 
-	ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
-	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
-	hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org, 
-	robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250325014912.23911-1-srikarananta01@gmail.com>
+In-Reply-To: <20250325014912.23911-1-srikarananta01@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 25 Mar 2025 10:19:59 -0400
+X-Gm-Features: AQ5f1Jpvm1BjO8DicOpLFH6O-0g58f9oKH-Qp-1OSpOcFPScESTJDPRJR3nUcy8
+Message-ID: <CADnq5_N9skrjQHEq5QP9c=7dad7HeSP7FaoTQFEg92dGdnJLtg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/amdgpu: Fix typo
+To: AnantaSrikar <srikarananta01@gmail.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, Jack.Xiao@amd.com, sunil.khatri@amd.com, 
+	Hawking.Zhang@amd.com, shaoyun.liu@amd.com, Jiadong.Zhu@amd.com, 
+	chongli2@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> To use the code, please boot the kernel with the "kho=on" command line
-> parameter.
-> KHO will automatically create scratch regions. If you want to set the
-> scratch size explicitly you can use "kho_scratch=" command line parameter.
-> For instance, "kho_scratch=16M,512M,256M" will reserve a 16 MiB low
-> memory scratch area, a 512 MiB global scratch region, and 256 MiB
-> per NUMA node scratch regions on boot.
+Applied.  Thanks!
 
-kho_scratch= is confusing. It should be renamed to what this memory
-actually represents, which is memory that cannot be preserved by KHO.
+Alex
 
-I suggest renaming all references to "scratch" and this parameter to:
-
-kho_nopersistent= or kho_nopreserve=
-
-This way, we can also add checks that early allocations done by the
-kernel in this memory do not get preserved. We can also add checks to
-ensure that scarce low DMA memory does not get preserved across
-reboots, and we avoid adding fragmentation to that region.
-
-Pasha
+On Tue, Mar 25, 2025 at 4:14=E2=80=AFAM AnantaSrikar <srikarananta01@gmail.=
+com> wrote:
+>
+> From: Ananta Srikar <srikarananta01@gmail.com>
+>
+> Fixes a typo in the word "version" in an error message.
+>
+> Signed-off-by: Ananta Srikar <srikarananta01@gmail.com>
+>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/mes_v11_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c b/drivers/gpu/drm/amd=
+/amdgpu/mes_v11_0.c
+> index f9a4d08eef92..fccf6e255b82 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/mes_v11_0.c
+> @@ -646,7 +646,7 @@ static int mes_v11_0_misc_op(struct amdgpu_mes *mes,
+>                 break;
+>         case MES_MISC_OP_CHANGE_CONFIG:
+>                 if ((mes->adev->mes.sched_version & AMDGPU_MES_VERSION_MA=
+SK) < 0x63) {
+> -                       dev_err(mes->adev->dev, "MES FW versoin must be l=
+arger than 0x63 to support limit single process feature.\n");
+> +                       dev_err(mes->adev->dev, "MES FW version must be l=
+arger than 0x63 to support limit single process feature.\n");
+>                         return -EINVAL;
+>                 }
+>                 misc_pkt.opcode =3D MESAPI_MISC__CHANGE_CONFIG;
+> --
+> 2.49.0
+>
 
