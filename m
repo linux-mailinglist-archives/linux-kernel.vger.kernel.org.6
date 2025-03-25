@@ -1,262 +1,504 @@
-Return-Path: <linux-kernel+bounces-575830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D39CA707B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB61BA707AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E4607A5E4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:05:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768397A4BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4BB25F988;
-	Tue, 25 Mar 2025 17:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WvnMeZ8n"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023143.outbound.protection.outlook.com [40.107.201.143])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292FC25EFAC;
+	Tue, 25 Mar 2025 17:05:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DFF25EFAC;
-	Tue, 25 Mar 2025 17:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.143
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922394; cv=fail; b=hKZFVli2TXGO9gF0P5TSY5W9vgYr78A7b9W8r47ncnmKwNFExPmnxoIfcktA+mjB6DU1PH9uP5abyhfNHXPvMX9VX5taorWPbL17fEnNQ5SuXjfv/ZB8FSvnt+qC+UipELHHTg4zWOBFCX52NLZVmpVZMjyyemCgmyC4RoEM1SQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922394; c=relaxed/simple;
-	bh=CRmt3v9OTd0JjOde23UG4Xoo6Q3cERyGacEHMgshe1c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AdL5DvDSejrqOD+bQUkuimskbYGzo3tyYYFwLZLDadkVruS9mVSrKuzJYnflVVSeEoyaXcIW9NDUBIus/Bj6mi7AqFBDzAutu8mI4GQlZpJVA+afntKVHp77CIwSy5uliVCtKjwxwlkMRWWL79MRTd84UpFyZYzhjKW/lzIBhLA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=WvnMeZ8n; arc=fail smtp.client-ip=40.107.201.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j8xmnC6kzkRox+jb/W7Yn8tJ0ULbV+Oo9iKGNuTZLG2PD2VcRuLJfo2YvENu6LTl27lDcuV87piwAMDr5EZsWXkBDSbZmbnxhzZ2axntC3tInrED+uQC469xrxre67j1JbcXzX0UzaCms0Tj1YAYrMqkusGQdrPJ/kBHBJW5beb9BOmKMz4dupGD/TUEfM5bTUryZNg7+mWH1WpvOiznyCt69TKbe/N+khv18+Hbdb393YQadVeY5R/zDsh3fZbzni7tMvOi7dDtCH7swhewZAAdmBdXunzL8Su0fbUpsgYFmftF2xBGvznDkY09Kp6Bw6uLS1kimjpd3mU2Sn/h7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2AzkDOiZynJNXrE6AzxvT7Ytv513bOvxkTizBKwZt1I=;
- b=Iv00Xqjd7qU12Kx2aY8hARzJ4pzVVHZAIk7DWcTSKjyyt6vEGYRldrdwHqZePnGj4UN6AqwqfV3sMYB6XMkrAF8fmZyYXhKQAZDO0DGXZwyCgwIoZi/CgtzJsTRi8lIp0MMZi937yc53kWt/SwKArvPeBnGu8zSbVVi48DOiOJ/sQmjesUjySpWvCUzlwZFdj0WLpHmTXsDSy0p8L6b1cXwxRpl3kJ4Q+FaYNaGkSmM4ru8wBUUxZEwP2yOwPomOYycg+wWZZvbqqjkURw0qmx+r6Nkp0FLtHxBu+SClALNf2NedpI1n0bppzPkvVPBR6GtrsCORtktE6drNf39cIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2AzkDOiZynJNXrE6AzxvT7Ytv513bOvxkTizBKwZt1I=;
- b=WvnMeZ8n3HjtXv2GlSSnPS6SRjDO62TRbH3toyDeVMbxpeXon4sBvP9QLOp7VgUCDB1cuSgCBizyfDPHk5rvFPgiAg9DL5rEq62tPKjCzSqQc24yWLvorRlEM4WiSk233NMesauBSTX0vDHOlvGNs77aL3m3sad7ughqSRjTC8Q=
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
- by DS7PR21MB3364.namprd21.prod.outlook.com (2603:10b6:8:80::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.25; Tue, 25 Mar
- 2025 17:06:28 +0000
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::ebfa:8e51:9b6f:f94a]) by SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::ebfa:8e51:9b6f:f94a%6]) with mapi id 15.20.8558.037; Tue, 25 Mar 2025
- 17:06:28 +0000
-From: Long Li <longli@microsoft.com>
-To: Haiyang Zhang <haiyangz@microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: Dexuan Cui <decui@microsoft.com>, "stephen@networkplumber.org"
-	<stephen@networkplumber.org>, KY Srinivasan <kys@microsoft.com>, Paul
- Rosswurm <paulros@microsoft.com>, "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets
-	<vkuznets@redhat.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "leon@kernel.org" <leon@kernel.org>,
-	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "john.fastabend@gmail.com"
-	<john.fastabend@gmail.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"ast@kernel.org" <ast@kernel.org>, "hawk@kernel.org" <hawk@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "shradhagupta@linux.microsoft.com"
-	<shradhagupta@linux.microsoft.com>, "jesse.brandeburg@intel.com"
-	<jesse.brandeburg@intel.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH net,v2] net: mana: Switch to page pool for jumbo frames
-Thread-Topic: [PATCH net,v2] net: mana: Switch to page pool for jumbo frames
-Thread-Index: AQHbnaOLMtMGcFkmHUqnlbDfcH1CsLOEFM+Q
-Date: Tue, 25 Mar 2025 17:06:28 +0000
-Message-ID:
- <SA6PR21MB42317CBFF4D1437A3B39F98ECEA72@SA6PR21MB4231.namprd21.prod.outlook.com>
-References: <1742920357-27263-1-git-send-email-haiyangz@microsoft.com>
-In-Reply-To: <1742920357-27263-1-git-send-email-haiyangz@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=e2d4f7ce-4753-4bcb-994f-e7b7d6feca24;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-25T17:05:00Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|DS7PR21MB3364:EE_
-x-ms-office365-filtering-correlation-id: 6d415a1d-2423-4891-88e6-08dd6bbf6218
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?+9fwZSm4o239a9Y6h9xcMM47IX9NFvKEZY/1Uj0BhZ84JBK4tfGKlIwlowX6?=
- =?us-ascii?Q?3z/NmsxUyE4nDpJ0pFF0NInV7Fvs/ZIMyg9X/Hfg36WJylkWGxZbot1pCEKy?=
- =?us-ascii?Q?vNb+RD5shEuMANgpX9LWYECcAF7c3LADFTbdMH9eSlKs+zVKlhSrW4Q3ojrP?=
- =?us-ascii?Q?asvhxdbOSujNqP5blr5ZCfxKYrSa6kSbl8VW+Vm56MizkmM+ILG35mOJoE8A?=
- =?us-ascii?Q?b3oPWnHgb+UX/384Y3JOe3jUcNPlEJg2AB0BIS4GOziJS5FKdUiBNRyZ5pRf?=
- =?us-ascii?Q?ieTr+I5Q/9S6vlSt9yL7XVvH9j6jnLB/j/2+CCxbhLL/f4AmiCMkgaiLOFYu?=
- =?us-ascii?Q?tcbZL3+X6Yixvg+eYsZ09a+yS+RDTEhvC7iiFPYCrFULsZqePc9dV/aP0hTW?=
- =?us-ascii?Q?5URq39q8FtnZgTsmAfFBTz1YWn8uuH3TvgOmisbqf+jMaz9HnB36wgDHhtr3?=
- =?us-ascii?Q?XhVk9JkOs9w9U/afVKxqB4fCL7XfsCMsMAbKLqisVLFiSIqJ64P6RTzmwvIS?=
- =?us-ascii?Q?ekGLzUPKDldX7g/oUoalIzEorIM1jqtpzGLM0PTY+oMTDfHG3goOavtFxFTn?=
- =?us-ascii?Q?kf7LVwW9QSwXT7dvRornYccAahUJsgKZdUGlkbcnU1fVX8Z3HxZir0Kfnuit?=
- =?us-ascii?Q?2DoNaadHk5E+C1oKlcUg/fxWnPISC8EnTn6Og2/CcpKljioTQXfJXbBfQYtf?=
- =?us-ascii?Q?Ipu196jSmaNRJIZ/FjXdMxTfMb1zTQkxV0i9Jqp/vtf3BKyPlKPGcMyWobny?=
- =?us-ascii?Q?uukG6nfROOMCAny9TgFScIta4nY+LV5z3Y7rN8yQD2yaEtxzYmYzZC3kQfDJ?=
- =?us-ascii?Q?fkFu03y+ZtutD2D6KCCOueSqPHtrPJ+IA1Mg/2U5+4tvjthm41fEJWrEXKO4?=
- =?us-ascii?Q?pKyc0neC+DW77911DnWXZJqY55fqX/+jMsFCqBT2JUmIbgA7TXy0dAyirFpt?=
- =?us-ascii?Q?Gnq3XPvwPUNjep2uINWcG+dHzUQP3br+0z40sre5YLSsP/1ktkMKWOWwlYDB?=
- =?us-ascii?Q?Ypk332aBMW9UnypdhKzId90sUOYoA58XRe4VJ2kZy7blm1jGckC1HKsnfrKt?=
- =?us-ascii?Q?hEkUG5/xNQ2vDLGV7unLDEv8Z//gWRB9afUfm+4Zc6DrgPrPUbNKKvc8Ypmk?=
- =?us-ascii?Q?/T6k/slCA3Z8qrU60Odux/SkWdGoMxzpSoVl736ymmP0Kq81lvx+rgoF7u0Y?=
- =?us-ascii?Q?uEGAST7xCi0EQE6iTbhgFQtTcOd2qqis06mC/verTi6CER98tqUM1KmC5MaJ?=
- =?us-ascii?Q?0+tJyup+AdHL7ww0aFHCuMw/F9QGSsTQoAPXJ7wXXEpfBzsxYnZ8BJ0ATzDj?=
- =?us-ascii?Q?hQCzlV6W41aO+ZMTguDoOOApt2TZkmhA0aLUkT+x4F7+Y+mC3WTSFP4LosUW?=
- =?us-ascii?Q?YseyAzmKiJLk1kgOBuMAZEzgpRAZ5di04T1CCsoPygq7LJSYO7FBgbB6hVkC?=
- =?us-ascii?Q?oGIsoqaN+1+/9NJhkE59x42ji862NzdmXesPq8HW9h9mCRzvY6JzMFo3uHWy?=
- =?us-ascii?Q?/wegOIQcKYUyN4Q=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA6PR21MB4231.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?grbgD65K7uuLIetZ/73+bFOLxwQE3kU9oJKjSmhLxH1K9A/9flXL8ZHU/Dpq?=
- =?us-ascii?Q?ZqKWl0sT/GUzSDyTINPW2YqkGMzk8cAYYyfy2UDosA8mbQQDKl00cwjrs1OX?=
- =?us-ascii?Q?Isc0b4CSlUNnq0/RwpgyAml6w26rxC9VkGJrS7koH21C3Ez5/mqcb5at/c5R?=
- =?us-ascii?Q?2KqYHBf7s5sJH+b/YRsBNAifny2P7Hip2H4CzAj5TdpG+eVgLb7HNvdsHoyT?=
- =?us-ascii?Q?4YpJHdjejk+9QhD83b1nmNP9kGEQ/fCHoCra0G8jyF00nyjERWpIMLMPgTrg?=
- =?us-ascii?Q?dTXhNXWH7awMNw9i+lwYybcwQhXYuu+q3e0KT/rzvdR6k10qWbTitVIr1nQA?=
- =?us-ascii?Q?qKkuvCLu4YNwbhyMeiMSj/GcwyvRZugWIl1xZcs6RZQceB0PUD/PGCafPbt6?=
- =?us-ascii?Q?z2wuT9STERlwKfJuvI9/lojbBrghEcFx0kk1pfUWI+Vxp6D5Py7y+w037Vya?=
- =?us-ascii?Q?iA1CneMztKPTf1xojk78585mw/ks3Rif6VKi29tZSaxgeu9rnoDZSdqzoIO4?=
- =?us-ascii?Q?bqhuEyL2IgUVzP24RA53tGHcOFWMttQwUlXxcfdKhxC1n/4Z5H49LvPKzK0S?=
- =?us-ascii?Q?4UCfg8kY9GXGy6eDDL/tsU/aYsPCcL8k6sM21ib/xZrq6riDYA+7SddukGSc?=
- =?us-ascii?Q?sSzsW6zd9m14ijFD42klyVKPamx6FVe8E65bH5vEWjfbDGgB3rqlWi9rGG5I?=
- =?us-ascii?Q?Ixsk6hT7F6RcqpNtrU3JllxhQlc0f9vVipZJ9acVjnsR33s/gwrf0Xjlbu2y?=
- =?us-ascii?Q?XnRMDHGqwqBPyB++vzC2bF17pAHjakT5LdFbGZCdGtls7tMntefqQlqE1Xet?=
- =?us-ascii?Q?saFCvTjBFLKO248xlpOqokzqSr+3PQZpBTe2rUbR3mPaafj92KmB0kSRKFmz?=
- =?us-ascii?Q?Nu+DoLrbD6P8CLYOuqxVrqvrlYeQLA0DJnUANrZbYCXWNuBLqQK3ev/NZnxX?=
- =?us-ascii?Q?wC355X1BvzZRQgIqVvxs0V8ldYkoHHH5mA8mHqknJcQJKTl6HBnC3Pt0VCia?=
- =?us-ascii?Q?fVelTKftexpxAdMuur5JVI+IreJSN9BDOcQKqHNtqT00zyLM3Ls2YO8cPMzA?=
- =?us-ascii?Q?hvCqV2LsZj+FawGjnXetEZBkuI5BV2kKUH2P0Cnc2Rvme6mT8nLcIMNfDZDc?=
- =?us-ascii?Q?ZWusPmUPFSFv8HGOjV7LoLg1ZxATf05Y/CCCpkHzQxlNa+Y686RzGbaL1URy?=
- =?us-ascii?Q?cF6RxJXcB21CQKIRf3GDFhYPlSlrlVvuOiBtyZ1azI+sDVNlWRq2ZSLp20Ix?=
- =?us-ascii?Q?12Sez/DcArl564+7YEXSnJ29GMQX7QJfePdXN4fVmgcmcayIaKndf5yc6Mfn?=
- =?us-ascii?Q?7MpzHltO6JqISiT8wuvSDjeVWBEhnlrMjpDwXvBBC9E4OYmN3hGgyoHlYqF6?=
- =?us-ascii?Q?YpaImtS5wnb+JV6sS/5AjPhvkUMxxO3pSGRnvB8vPIgw3s10kwrLlDA/4lNI?=
- =?us-ascii?Q?XFrFWewDqGpl9wWxykcyNV1NvUH+ATnez5tcdQGWdZS/wGb49PGUzy3CEl3/?=
- =?us-ascii?Q?g3NfyjFhZI090JvzZBcC1HQXXSgU1FSWtJcKGWDbz4qwXi9/dkxtZiDPi7Sn?=
- =?us-ascii?Q?9hEvYg4GIgtc6pV+f397D79KRb9PP2oQVhuUZOCD?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E0325FA1C;
+	Tue, 25 Mar 2025 17:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742922346; cv=none; b=f603fTw0OroYcARiXG1M0hutT4c6dgd6MEPx5GZ58pSsw4Je8BL8WaPjFCRrd7OOSOmOK/gX7d5bJIEGFKK/5r+P/Gdr0OAC9Cyn2VC5Nh5soqYj7kdWpYI1TRe5Id7pe4AbUOFMuGPUcKF/M1ZMqfGxQPbt+k/Tafoz03slA4c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742922346; c=relaxed/simple;
+	bh=xpgy+4QyhrxRrntZgFv3b4LawDvQKmKr7j81RNkK5xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ARNsMETKyXKalvuNTUGkG6fQXKKgg866fNGlkfIqVDNgkdb8DD9OGf92l9ano0D076xzp6YlFuF1kujWfh9RQ1Vu1Gkvcphl0jPhUNwc1MtEbC+wnqkip4dwdKiC74JGBbx3qW0Te6RlCOJdWsxy4C4+1lLKPnNJMsok0t7dQgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45DC8C4CEEA;
+	Tue, 25 Mar 2025 17:05:45 +0000 (UTC)
+Date: Tue, 25 Mar 2025 13:06:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] tracing: tprobe-events: Support multiple tprobes on
+ the same tracepoint
+Message-ID: <20250325130628.3a9e234c@gandalf.local.home>
+In-Reply-To: <174212769289.348872.12945848497242748827.stgit@devnote2>
+References: <174212767109.348872.18231451508464729427.stgit@devnote2>
+	<174212769289.348872.12945848497242748827.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d415a1d-2423-4891-88e6-08dd6bbf6218
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 17:06:28.4881
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1mSjVNAHVykJvma4306l69q1paq8jGrDqG2RwZSLjYTFWuVkMJgssBIRXxgzFmzXrptB5uEYjhFcgtSF7tu5tA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR21MB3364
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Sun, 16 Mar 2025 21:21:33 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> index 08def94f9ca6..863c9343a939 100644
+> --- a/kernel/trace/trace_fprobe.c
+> +++ b/kernel/trace/trace_fprobe.c
+> @@ -21,7 +21,6 @@
+>  #define FPROBE_EVENT_SYSTEM "fprobes"
+>  #define TRACEPOINT_EVENT_SYSTEM "tracepoints"
+>  #define RETHOOK_MAXACTIVE_MAX 4096
+> -#define TRACEPOINT_STUB ERR_PTR(-ENOENT)
+>  
+>  static int trace_fprobe_create(const char *raw_command);
+>  static int trace_fprobe_show(struct seq_file *m, struct dyn_event *ev);
+> @@ -38,6 +37,89 @@ static struct dyn_event_operations trace_fprobe_ops = {
+>  	.match = trace_fprobe_match,
+>  };
+>  
+> +struct tracepoint_user {
+> +	struct tracepoint	*tpoint;
+> +	unsigned int		refcount;
+> +};
+> +
+> +static bool tracepoint_user_is_registered(struct tracepoint_user *tuser)
+> +{
+> +	return tuser && tuser->tpoint;
+> +}
+> +
+> +static int tracepoint_user_register(struct tracepoint_user *tuser)
+> +{
+> +	struct tracepoint *tpoint = tuser->tpoint;
+> +
+> +	if (!tpoint)
+> +		return 0;
+> +
+> +	return tracepoint_probe_register_prio_may_exist(tpoint,
+> +					tpoint->probestub, NULL, 0);
+> +}
+> +
+> +static void tracepoint_user_unregister(struct tracepoint_user *tuser)
+> +{
+> +	if (!tuser->tpoint)
+> +		return;
+> +
+> +	WARN_ON_ONCE(tracepoint_probe_unregister(tuser->tpoint, tuser->tpoint->probestub, NULL));
+> +	tuser->tpoint = NULL;
+> +}
+> +
+> +static unsigned long tracepoint_user_ip(struct tracepoint_user *tuser)
+> +{
+> +	if (!tuser->tpoint)
+> +		return 0UL;
+> +
+> +	return (unsigned long)tuser->tpoint->probestub;
+> +}
+> +
+> +static bool tracepoint_user_within_module(struct tracepoint_user *tuser,
+> +					  struct module *mod)
+> +{
+> +	return within_module(tracepoint_user_ip(tuser), mod);
+> +}
+> +
+> +static struct tracepoint_user *tracepoint_user_allocate(struct tracepoint *tpoint)
+> +{
+> +	struct tracepoint_user *tuser __free(kfree) = NULL;
+
+Do you really want to use __free() here?
+
+> +
+> +	tuser = kzalloc(sizeof(*tuser), GFP_KERNEL);
+> +	if (!tuser)
+> +		return NULL;
+
+This is the only failure case in the function and tuser is NULL.
 
 
+> +	tuser->tpoint = tpoint;
+> +	tuser->refcount = 1;
+> +
+> +	return_ptr(tuser);
 
-> -----Original Message-----
-> From: LKML haiyangz <lkmlhyz@microsoft.com> On Behalf Of Haiyang Zhang
-> Sent: Tuesday, March 25, 2025 9:33 AM
-> To: linux-hyperv@vger.kernel.org; netdev@vger.kernel.org
-> Cc: Haiyang Zhang <haiyangz@microsoft.com>; Dexuan Cui
-> <decui@microsoft.com>; stephen@networkplumber.org; KY Srinivasan
-> <kys@microsoft.com>; Paul Rosswurm <paulros@microsoft.com>;
-> olaf@aepfle.de; vkuznets <vkuznets@redhat.com>; davem@davemloft.net;
-> wei.liu@kernel.org; edumazet@google.com; kuba@kernel.org;
-> pabeni@redhat.com; leon@kernel.org; Long Li <longli@microsoft.com>;
-> ssengar@linux.microsoft.com; linux-rdma@vger.kernel.org;
-> daniel@iogearbox.net; john.fastabend@gmail.com; bpf@vger.kernel.org;
-> ast@kernel.org; hawk@kernel.org; tglx@linutronix.de;
-> shradhagupta@linux.microsoft.com; jesse.brandeburg@intel.com;
-> andrew+netdev@lunn.ch; linux-kernel@vger.kernel.org; stable@vger.kernel.o=
-rg
-> Subject: [PATCH net,v2] net: mana: Switch to page pool for jumbo frames
->=20
-> Frag allocators, such as netdev_alloc_frag(), were not designed to work f=
-or
-> fragsz > PAGE_SIZE.
->=20
-> So, switch to page pool for jumbo frames instead of using page frag alloc=
-ators.
-> This driver is using page pool for smaller MTUs already.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 80f6215b450e ("net: mana: Add support for jumbo frame")
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-> ---
-> v2: updated the commit msg as suggested by Jakub Kicinski.
->=20
-> ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 46 ++++---------------
->  1 file changed, 9 insertions(+), 37 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index 9a8171f099b6..4d41f4cca3d8 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -661,30 +661,16 @@ int mana_pre_alloc_rxbufs(struct mana_port_context
-> *mpc, int new_mtu, int num_qu
->  	mpc->rxbpre_total =3D 0;
->=20
->  	for (i =3D 0; i < num_rxb; i++) {
-> -		if (mpc->rxbpre_alloc_size > PAGE_SIZE) {
-> -			va =3D netdev_alloc_frag(mpc->rxbpre_alloc_size);
-> -			if (!va)
-> -				goto error;
-> -
-> -			page =3D virt_to_head_page(va);
-> -			/* Check if the frag falls back to single page */
-> -			if (compound_order(page) <
-> -			    get_order(mpc->rxbpre_alloc_size)) {
-> -				put_page(page);
-> -				goto error;
+In fact, "kfree()" will never be called in this function, why the __free()?
+
+
+> +}
+> +
+> +/* These must be called with event_mutex */
+> +static void tracepoint_user_get(struct tracepoint_user *tuser)
+> +{
+> +	tuser->refcount++;
+> +}
+> +
+> +static void tracepoint_user_put(struct tracepoint_user *tuser)
+> +{
+> +	if (--tuser->refcount > 0)
+> +		return;
+> +
+> +	if (tracepoint_user_is_registered(tuser))
+> +		tracepoint_user_unregister(tuser);
+> +	kfree(tuser);
+> +}
+> +
+> +static const char *tracepoint_user_lookup(struct tracepoint_user *tuser, char *buf)
+> +{
+> +	struct tracepoint *tpoint = tuser->tpoint;
+> +
+> +	if (!tpoint)
+> +		return NULL;
+> +
+> +	return kallsyms_lookup((unsigned long)tpoint->probestub, NULL, NULL, NULL, buf);
+> +}
+> +
+>  /*
+>   * Fprobe event core functions
+>   */
+> @@ -45,7 +127,7 @@ struct trace_fprobe {
+>  	struct dyn_event	devent;
+>  	struct fprobe		fp;
+>  	const char		*symbol;
+> -	struct tracepoint	*tpoint;
+> +	struct tracepoint_user	*tuser;
+>  	struct trace_probe	tp;
+>  };
+>  
+> @@ -75,7 +157,7 @@ static bool trace_fprobe_is_return(struct trace_fprobe *tf)
+>  
+>  static bool trace_fprobe_is_tracepoint(struct trace_fprobe *tf)
+>  {
+> -	return tf->tpoint != NULL;
+> +	return tf->tuser != NULL;
+>  }
+>  
+>  static const char *trace_fprobe_symbol(struct trace_fprobe *tf)
+> @@ -125,6 +207,57 @@ static bool trace_fprobe_is_registered(struct trace_fprobe *tf)
+>  	return fprobe_is_registered(&tf->fp);
+>  }
+>  
+> +static struct tracepoint *find_tracepoint(const char *tp_name,
+> +	struct module **tp_mod);
+> +
+> +/*
+> + * Get tracepoint_user if exist, or allocate new one. If tracepoint is on a
+> + * module, get its refcounter.
+> + */
+> +static struct tracepoint_user *
+> +trace_fprobe_get_tracepoint_user(const char *name, struct module **pmod)
+> +{
+> +	struct tracepoint_user *tuser __free(kfree) = NULL;
+> +	struct tracepoint *tpoint;
+> +	struct trace_fprobe *tf;
+> +	struct dyn_event *dpos;
+> +	struct module *mod __free(module_put) = NULL;
+> +	int ret;
+> +
+> +	tpoint = find_tracepoint(name, &mod);
+> +	if (mod && !try_module_get(mod)) {
+
+I'm curious to what would cause this, and why we would want to continue?
+
+So, find_tracepoint() found a tracepoint with a module attached, but
+try_module_get() fails.
+
+> +		mod = NULL;
+> +		tpoint = NULL;
+
+What's the purpose of setting these to NULL and continuing?
+
+I'm confused.
+
+> +	}
+> +	/* tpoint can be NULL, but we don't care here. */
+> +
+> +	/* Search existing tracepoint_user */
+> +	for_each_trace_fprobe(tf, dpos) {
+> +		if (!trace_fprobe_is_tracepoint(tf))
+> +			continue;
+> +		if (!strcmp(tf->symbol, name)) {
+
+If the try_module_get() failed, can this every be true? What happens if the
+tracepoint it found belonged to another module?
+
+> +			tracepoint_user_get(tf->tuser);
+> +			*pmod = no_free_ptr(mod);
+> +			return tf->tuser;
+> +		}
+> +	}
+> +
+> +	/* Not found, allocate and register new tracepoint_user. */
+> +	tuser = tracepoint_user_allocate(tpoint);
+> +	if (!tuser)
+> +		return NULL;
+> +
+> +	if (tpoint) {
+> +		/* If the tracepoint is not loaded, tpoint can be NULL. */
+> +		ret = tracepoint_user_register(tuser);
+> +		if (ret)
+> +			return ERR_PTR(ret);
+> +	}
+> +
+> +	*pmod = no_free_ptr(mod);
+> +	return_ptr(tuser);
+> +}
+> +
+>  /*
+>   * Note that we don't verify the fetch_insn code, since it does not come
+>   * from user space.
+> @@ -410,6 +543,8 @@ static void free_trace_fprobe(struct trace_fprobe *tf)
+>  {
+>  	if (tf) {
+>  		trace_probe_cleanup(&tf->tp);
+> +		if (tf->tuser)
+> +			tracepoint_user_put(tf->tuser);
+>  		kfree(tf->symbol);
+>  		kfree(tf);
+>  	}
+> @@ -424,7 +559,7 @@ DEFINE_FREE(free_trace_fprobe, struct trace_fprobe *, if (!IS_ERR_OR_NULL(_T)) f
+>  static struct trace_fprobe *alloc_trace_fprobe(const char *group,
+>  					       const char *event,
+>  					       const char *symbol,
+> -					       struct tracepoint *tpoint,
+> +					       struct tracepoint_user *tuser,
+>  					       int nargs, bool is_return)
+>  {
+>  	struct trace_fprobe *tf __free(free_trace_fprobe) = NULL;
+> @@ -443,7 +578,7 @@ static struct trace_fprobe *alloc_trace_fprobe(const char *group,
+>  	else
+>  		tf->fp.entry_handler = fentry_dispatcher;
+>  
+> -	tf->tpoint = tpoint;
+> +	tf->tuser = tuser;
+>  
+>  	ret = trace_probe_init(&tf->tp, event, group, false, nargs);
+>  	if (ret < 0)
+> @@ -709,19 +844,11 @@ static int unregister_fprobe_event(struct trace_fprobe *tf)
+>  
+>  static int __regsiter_tracepoint_fprobe(struct trace_fprobe *tf)
+>  {
+> -	struct tracepoint *tpoint = tf->tpoint;
+> -	unsigned long ip = (unsigned long)tpoint->probestub;
+> -	int ret;
+> +	unsigned long ip = tracepoint_user_ip(tf->tuser);
+> +
+> +	if (!ip)
+> +		return -ENOENT;
+>  
+> -	/*
+> -	 * Here, we do 2 steps to enable fprobe on a tracepoint.
+> -	 * At first, put __probestub_##TP function on the tracepoint
+> -	 * and put a fprobe on the stub function.
+> -	 */
+> -	ret = tracepoint_probe_register_prio_may_exist(tpoint,
+> -				tpoint->probestub, NULL, 0);
+> -	if (ret < 0)
+> -		return ret;
+>  	return register_fprobe_ips(&tf->fp, &ip, 1);
+>  }
+>  
+> @@ -753,7 +880,7 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+>  	if (trace_fprobe_is_tracepoint(tf)) {
+>  
+>  		/* This tracepoint is not loaded yet */
+> -		if (tf->tpoint == TRACEPOINT_STUB)
+> +		if (!tracepoint_user_is_registered(tf->tuser))
+>  			return 0;
+>  
+>  		return __regsiter_tracepoint_fprobe(tf);
+> @@ -770,9 +897,8 @@ static void __unregister_trace_fprobe(struct trace_fprobe *tf)
+>  		unregister_fprobe(&tf->fp);
+>  		memset(&tf->fp, 0, sizeof(tf->fp));
+>  		if (trace_fprobe_is_tracepoint(tf)) {
+> -			tracepoint_probe_unregister(tf->tpoint,
+> -					tf->tpoint->probestub, NULL);
+> -			tf->tpoint = NULL;
+> +			tracepoint_user_put(tf->tuser);
+> +			tf->tuser = NULL;
+>  		}
+>  	}
+>  }
+> @@ -975,7 +1101,7 @@ static int __tracepoint_probe_module_cb(struct notifier_block *self,
+>  					unsigned long val, void *data)
+>  {
+>  	struct tp_module *tp_mod = data;
+> -	struct tracepoint *tpoint;
+> +	struct tracepoint_user *tuser;
+>  	struct trace_fprobe *tf;
+>  	struct dyn_event *pos;
+>  
+> @@ -984,21 +1110,48 @@ static int __tracepoint_probe_module_cb(struct notifier_block *self,
+>  
+>  	mutex_lock(&event_mutex);
+>  	for_each_trace_fprobe(tf, pos) {
+> -		if (val == MODULE_STATE_COMING && tf->tpoint == TRACEPOINT_STUB) {
+> +		if (!trace_fprobe_is_tracepoint(tf))
+> +			continue;
+> +
+> +		if (val == MODULE_STATE_COMING) {
+> +			/*
+> +			 * If any tracepoint used by tprobe is in the module,
+> +			 * register the stub.
+> +			 */
+> +			struct tracepoint *tpoint;
+> +
+>  			tpoint = find_tracepoint_in_module(tp_mod->mod, tf->symbol);
+> -			if (tpoint) {
+> -				tf->tpoint = tpoint;
+> -				if (!WARN_ON_ONCE(__regsiter_tracepoint_fprobe(tf)) &&
+> -				    trace_probe_is_enabled(&tf->tp))
+> -					reenable_trace_fprobe(tf);
 > -			}
-> -		} else {
-> -			page =3D dev_alloc_page();
-> -			if (!page)
-> -				goto error;
-> +		page =3D dev_alloc_pages(get_order(mpc->rxbpre_alloc_size));
-> +		if (!page)
-> +			goto error;
->=20
-> -			va =3D page_to_virt(page);
-> -		}
-> +		va =3D page_to_virt(page);
->=20
->  		da =3D dma_map_single(dev, va + mpc->rxbpre_headroom,
->  				    mpc->rxbpre_datasize, DMA_FROM_DEVICE);
->  		if (dma_mapping_error(dev, da)) {
-> -			put_page(virt_to_head_page(va));
-> +			put_page(page);
+> -		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod) {
+> -			unregister_fprobe(&tf->fp);
+> -			if (trace_fprobe_is_tracepoint(tf)) {
+> -				tracepoint_probe_unregister(tf->tpoint,
+> -					tf->tpoint->probestub, NULL);
+> -				tf->tpoint = TRACEPOINT_STUB;
+> +			/* This is not a tracepoint in this module. Skip it. */
+> +			if (!tpoint)
+> +				continue;
+> +
+> +			tuser = tf->tuser;
+> +			/* If the tracepoint is no registered yet, register it. */
 
-Should we use __free_pages()?
+					    "is not registered yet"
+
+> +			if (!tracepoint_user_is_registered(tuser)) {
+> +				tuser->tpoint = tpoint;
+> +				if (WARN_ON_ONCE(tracepoint_user_register(tuser)))
+> +					continue;
+>  			}
+> +
+> +			/* Finally enable fprobe on this module. */
+> +			if (!WARN_ON_ONCE(__regsiter_tracepoint_fprobe(tf)) &&
+> +			    trace_probe_is_enabled(&tf->tp))
+> +				reenable_trace_fprobe(tf);
+> +		} else if (val == MODULE_STATE_GOING) {
+> +			tuser = tf->tuser;
+> +			/* Unregister all tracepoint_user in this module. */
+> +			if (tracepoint_user_is_registered(tuser) &&
+> +			    tracepoint_user_within_module(tuser, tp_mod->mod))
+> +				tracepoint_user_unregister(tuser);
+> +
+
+
+> +			/*
+> +			 * Here we need to handle shared tracepoint_user case.
+> +			 * Such tuser is unregistered, but trace_fprobe itself
+> +			 * is registered. (Note this only handles tprobes.)
+> +			 */
+> +			if (!tracepoint_user_is_registered(tuser) &&
+> +			    trace_fprobe_is_registered(tf))
+> +				unregister_fprobe(&tf->fp);
+
+This looks to be unregistering every tprobe even if it's not in the module.
+
+The old code had:
+
+		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod) {
+
+And the new code has:
+
+		} else if (val == MODULE_STATE_GOING) {
+
+
+Where's the check here to see if tf is used by the module?
+
+-- Steve
+
+>  		}
+>  	}
+>  	mutex_unlock(&event_mutex);
+> @@ -1067,7 +1220,9 @@ static int parse_symbol_and_return(int argc, const char *argv[],
+>  	return 0;
+>  }
+>  
+> -DEFINE_FREE(module_put, struct module *, if (_T) module_put(_T))
+> +DEFINE_FREE(tuser_put, struct tracepoint_user *,
+> +	if (!IS_ERR_OR_NULL(_T))
+> +		tracepoint_user_put(_T))
+>  
+>  static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  					struct traceprobe_parse_context *ctx)
+> @@ -1097,6 +1252,8 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  	 *  FETCHARG:TYPE : use TYPE instead of unsigned long.
+>  	 */
+>  	struct trace_fprobe *tf __free(free_trace_fprobe) = NULL;
+> +	struct tracepoint_user *tuser __free(tuser_put) = NULL;
+> +	struct module *mod __free(module_put) = NULL;
+>  	int i, new_argc = 0, ret = 0;
+>  	bool is_return = false;
+>  	char *symbol __free(kfree) = NULL;
+> @@ -1108,8 +1265,6 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  	char abuf[MAX_BTF_ARGS_LEN];
+>  	char *dbuf __free(kfree) = NULL;
+>  	bool is_tracepoint = false;
+> -	struct module *tp_mod __free(module_put) = NULL;
+> -	struct tracepoint *tpoint = NULL;
+>  
+>  	if ((argv[0][0] != 'f' && argv[0][0] != 't') || argc < 2)
+>  		return -ECANCELED;
+> @@ -1162,25 +1317,18 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  
+>  	if (is_tracepoint) {
+>  		ctx->flags |= TPARG_FL_TPOINT;
+> -		tpoint = find_tracepoint(symbol, &tp_mod);
+> -		/* lock module until register this tprobe. */
+> -		if (tp_mod && !try_module_get(tp_mod)) {
+> -			tpoint = NULL;
+> -			tp_mod = NULL;
+> -		}
+> -		if (tpoint) {
+> -			ctx->funcname = kallsyms_lookup(
+> -				(unsigned long)tpoint->probestub,
+> -				NULL, NULL, NULL, sbuf);
+> -		} else if (IS_ENABLED(CONFIG_MODULES)) {
+> -				/* This *may* be loaded afterwards */
+> -				tpoint = TRACEPOINT_STUB;
+> -				ctx->funcname = symbol;
+> -		} else {
+> +		tuser = trace_fprobe_get_tracepoint_user(symbol, &mod);
+> +		if (!tuser)
+> +			return -ENOMEM;
+> +		if (IS_ERR(tuser)) {
+>  			trace_probe_log_set_index(1);
+>  			trace_probe_log_err(0, NO_TRACEPOINT);
+> -			return -EINVAL;
+> +			return PTR_ERR(tuser);
+>  		}
+> +		ctx->funcname = tracepoint_user_lookup(tuser, sbuf);
+> +		/* If tracepoint is not loaded yet, use symbol name as funcname. */
+> +		if (!ctx->funcname)
+> +			ctx->funcname = symbol;
+>  	} else
+>  		ctx->funcname = symbol;
+>  
+> @@ -1204,13 +1352,14 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  		return ret;
+>  
+>  	/* setup a probe */
+> -	tf = alloc_trace_fprobe(group, event, symbol, tpoint, argc, is_return);
+> +	tf = alloc_trace_fprobe(group, event, symbol, tuser, argc, is_return);
+>  	if (IS_ERR(tf)) {
+>  		ret = PTR_ERR(tf);
+>  		/* This must return -ENOMEM, else there is a bug */
+>  		WARN_ON_ONCE(ret != -ENOMEM);
+>  		return ret;
+>  	}
+> +	tuser = NULL; /* Move tuser to tf. */
+>  
+>  	/* parse arguments */
+>  	for (i = 0; i < argc; i++) {
 
 
