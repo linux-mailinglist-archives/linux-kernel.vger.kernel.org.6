@@ -1,153 +1,182 @@
-Return-Path: <linux-kernel+bounces-576063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB5A70A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:36:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A4AA70A9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E051A178EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF811897646
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CB51EE7B1;
-	Tue, 25 Mar 2025 19:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6181D1EE7B1;
+	Tue, 25 Mar 2025 19:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKryXs5+"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="i+uptN6X"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87196BA50;
-	Tue, 25 Mar 2025 19:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E471DF98F;
+	Tue, 25 Mar 2025 19:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742931349; cv=none; b=r4Gm3A6swrZpg0O0e4Es08xcoq1S4PldKz5phiHtM5x5dKtgQ3JRcKcGjQpBfIm7WsPWvMjD0DfyO3a/5pa14ixpbZW+jKeuB4gHN/j94Z3ZtftEta7F3ZwWO6imnLaA11XYu4vrOGcWUygFx1DRaZs0U4NHq6uQHHLz9c1QmEs=
+	t=1742931400; cv=none; b=qFsjO9viyGlIX2vM3g+ZxBNSrpQDw/94xbR2yLMiQWExheieU0TNtaTAwwpsuDR5H449dxbeapC4HzoCo4+UyFPV0zBPNgGKxb+DYHSHAUDx5RtbJshaN/lx+2pYL9Fx7uYqiHXTb8UIsyy0ckvzBs0MnvLTCE1Ec6roD4IDxrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742931349; c=relaxed/simple;
-	bh=GQ1usWDY/9UJHM3rPLJhK3PbcVc8D/tocEAt9WKi4i4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lPzkNYwW+aJuLccJQYz+qE64tOvNWIV1xHACB4GZvRB93bbpm5czwcyMUqGvA4OjnLhY+3uYJV0nWueq1OX/brHECVMpsVPrr0Cd8wFR5g7nBqHtP2lWXPxKVuIB+hwx+TRc2sxQJ6OlqnaQz0l/WmhgCaG3+lkK6enrMku8es8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKryXs5+; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso55784885e9.2;
-        Tue, 25 Mar 2025 12:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742931346; x=1743536146; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=grP25x16Wo7Fb4WipDbMu3jz9s4iEFrXl9o03iMXH6Q=;
-        b=jKryXs5+gxYgzmq9Y4ElM3e4dfbgxa3u4QCMZAc1xt4CUKkvHCf4fI099vVUzjUA/r
-         yHx4w6WTAVWz9Tv6/j9C9ksiBPHql9h/4TuCyit4jNvsdGojDA5xNx7h1wm1nUWk5mmN
-         taKlySfXhUzGcNJSNv7nPm+gwDBnqm0opEBnV1WUx78mkNIf6A54xRFiOy0faQ5h+7nG
-         w0x+BJrln5LDvZwoLloFv509U3X+XS3OmTHtuebT49xDU4mfiLRqo8idKZ4znYp/FUfJ
-         tdtBX3I/bkij9DJT6R9r9HnZngiCrb/lx7L5nPPkAWF+ohleFzpSEOoZhMm0dA1/xUtI
-         ACsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742931346; x=1743536146;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=grP25x16Wo7Fb4WipDbMu3jz9s4iEFrXl9o03iMXH6Q=;
-        b=U6hdHclnX5zZBmvr3bwAMWXBg8UICs0x6ueoAORQNuZfNgjnySzhfYhTPRbKLTT8Dl
-         XNd+zPW0Sxa9NO47zfOQ/c00t0RhTH1jGkh71t4nOnmCOtOG9fCCIfs1bw0MR8SF4CGi
-         tiCGwSF+owFEnYNzusMJePbp4iYGczAnhVjzXvgTAACxlL6BRikLyALbinq0H9VV0ws5
-         5fBXx7oDQWqbkG2vJ82Yq0SPZyDt/8RjXxAUHBiz6GV+L6EM2bncC2qULG1lA/acD1Dg
-         R8uadUiPW/WgHlwGTQdEI4qQqopkiF8s5rzZdlFnL3PJ3fKIvNfHo+jDPP7/5BAiUeV+
-         CeCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAGrSc/EA5Owh7WwL/Ya0eYciEWpWMCbOHcCt80Y6fFrpVvg8oh1hM+0yxqRDe/h6YIkClGMNM/zVGoSJCqK5iiNqlMLRx@vger.kernel.org, AJvYcCUuiZJ3miKZt+3cid0AJO/kCi5I+6WVDTQwn5yV6MR6slyH+AjV61fhs/o6467uTCaydBKFFUHCfd2f8/kS@vger.kernel.org, AJvYcCVuYmJlH+sFWWbotQTaD9SGX+boMD2oHdNdvLLnj6oAOUxlObSVm8UWHC7oHlXiJiWR0IgS+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQknC4x0Nhz9Y1ttMPFzv/JKWzNsgCZ8Zb5NX5NlzXLZ1LEwcD
-	B1dbbRXRSn4ZxoEw+HYfOeEP0f9IEAJG5SaqpIa0AscqoDlVE/SJ
-X-Gm-Gg: ASbGncvVd4qbWA0DhxsYMIKlOD0JAmn5P3rT6Z/OLNmDusnzmY9P0IPHyK6hlIAFsgY
-	5f0XgB2mGHUtfUVEO++bUoTf0K06iTp/YaFT+ORLp9mKO3DKtxYafQQCj+JyKjvtQ7U7QGqj4mG
-	q5s8SVn447IKGTxwB6FsSefiegirX0rroDx1dV1JbG6NlnDO8/L3X4sLRsl3bmpi4k817SwTmv0
-	OYcHkYFdsj2Zi6hYlibBcRI+FHikg3itk1X0ig9buGa/e7wPQvdJlFAGPXnWMghoonXpNCFX256
-	9x0wJk4cqEDhLCQiiT5ymzZfx5dIDyS1G6ikxoeiVQ35uTL2fQBQFRqkoTECYtc1SNhno4c=
-X-Google-Smtp-Source: AGHT+IGFskIGDs/TGx5glreuMOfmCRl15OlzDlLN6YqYkZAEgIdWGB3N8EyqUjMnpcrTDfnZD8yA0Q==
-X-Received: by 2002:a5d:5f8c:0:b0:390:e7c1:59c4 with SMTP id ffacd0b85a97d-3997f90123cmr17136626f8f.13.1742931345512;
-        Tue, 25 Mar 2025 12:35:45 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd9f058sm159064355e9.28.2025.03.25.12.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 12:35:45 -0700 (PDT)
-Date: Tue, 25 Mar 2025 20:35:43 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 01/28] lsm: Add audit_log_lsm_data() helper
-Message-ID: <20250325.3932dbc7b476@gnoack.org>
-References: <20250320190717.2287696-1-mic@digikod.net>
- <20250320190717.2287696-2-mic@digikod.net>
+	s=arc-20240116; t=1742931400; c=relaxed/simple;
+	bh=DUTM7ztKjFmkSDEZYYjGIaN2pOjh/5as/gUaUsrAHCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tZwK0GtKJ1YiQnBxejzSZQHvhFd4k+/MhkZrfAEn2cHyDnN+XTOBotNL9Z3gFwPuk0gfDsuwOPHYM8Vp4fJCoAuBGGsb+6fXbrvQaqMMAgZbvfDYQaVJf8QiZOu0C89U3Hq46KIVhAAmhec+0VgJ3PyOoavDw9T4wMBB/xEu4mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=i+uptN6X; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1742931385; x=1743536185; i=w_armin@gmx.de;
+	bh=w2rUU1hQX5apf6NgBk8mjjsIeJ2b5QAp1KZy+bb5PAA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=i+uptN6XHmA+yfQToCxf2jy/V0VL4j99LufTKAF4qv16loWWeh/ac/2qPNVBdTku
+	 d5exj6jK4uBzGXLwiT0dc3yBLoglWaqTN5SK0ONY883MVGIdUWdQWcN3k75TTfzRK
+	 OWOitPy23vhps/5Soe0EMqQ+GLk97FNNNe/c8FEEtnLKnU6779TXT4G70zqdR2Ady
+	 WEep099rBYeww8Op5MnaG99gaf1zwqufBkPz2GzMAk9Tu5kIeaDTkSBPWP2Nwaejv
+	 MIjUcosedj96d+AwE25q4dP/WPY1shgH9ITZ9qdBV0edr56Y3iJJlxw9yGTnlsyWb
+	 dN7dvtlMVBLJAEUrcg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.124.146] ([141.76.8.146]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MNbp3-1tlQuI2T3z-00S1zW; Tue, 25
+ Mar 2025 20:36:25 +0100
+Message-ID: <a66f55aa-9ee1-404b-8f78-258b307ea361@gmx.de>
+Date: Tue, 25 Mar 2025 20:36:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250320190717.2287696-2-mic@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: platform_profile: Optimize _aggregate_choices()
+To: Kurt Borja <kuurtb@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, Len Brown
+ <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250322-pprof-opt-v1-1-105455879a82@gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20250322-pprof-opt-v1-1-105455879a82@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KSxO+wDvcf8a7WrXYKlHDkbpkbjAD1j7r+uUxQ4lmVKaj+/pnNK
+ SWhWHC8KVXIuS4HVSqRIODnb/7MT24uurFHmowf6Gme0KtlUgyMtTdlf27mEUlp5bC86JJ7
+ 8ZrkjcDafXYokWfowZwafd1pahvDfzN8ELdb9nDYPJeX27pD+cGV2aQUigd8XZVnC2vtuiC
+ ekPmvVrtwy7nlfQKKkjgg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZSYWGQOiG5M=;XLK0EbOElR7+swyocv4Ly0nbB3N
+ 8GVMOMmCKLjwxFPltKpgEqspCMgup1He/zS1jKk9Np+1Ecx5XYezZD4hg2j7V2RNrLzDJbmYo
+ WGpotl4cmWZWRi75fsu1j7Aw0NN/rAUpzRMIUlXrw51ENofTOhF7D1lJ6NOja1X8KHheBADIc
+ QSAaWljl0aRvhgEl6w09XjMhJStfWLzt4/qPnOacuCa6txL9x9hQBKbjR0ZOPPYzgMTP27n3d
+ ZC7+UrTHN/nN4c5tO9Yl92SbyoPJ6KYNp6tcvExrJzHeM0jXKHzl9J5qxbDd6xNZTy8Iw1VUL
+ ZV96MpQLjpsrY00nDHAigGap33le24KHpGmoa8lIIiuXycOliWOZLe2BYc36tnFW0yaQOvrqn
+ 5M25PLSKZwmGegcmo6iCcmDj8CPb5ypSCIYf0jDty3E66bVG6m/95ohmg86qgUNYVqkPj+Op9
+ p8H7AnqFeRwtvd7s/jhUFAPHxYQCBbPkQT05T2S7bLdq1ilopEIFcY3y/lEmDKUozHI/LSn5E
+ kkEu/P+K/59PhKIFNvj+W/kwA/XgGaDEmM+FJqFQj1PDEIT6OmRGs3SuLWMtoOcAG+JkWWIC0
+ RGflubmmNgLxFQUOKIp/V2WIbWAX+F5mFLtG8PTKly8xwIPlBtmpBXD0JgNMN/P2zxAFGcWIM
+ fIiSRjZmQ9EU6a83tzPjNUKZzCtBlRmOGKhTUiy3ytj1pNvX1Xk7kIFIudtuotWewYNY32RrC
+ QVCNBYBxeLrLDSvIZ2ZrRmByKu+z1tN7ROK5BkWtvcB1bJkKu4VAZUtsui7WwmF4uvcfp4sVt
+ Q7wogVblGEO2e40mjmqAUOTj4RK+BCIwxMi42jNx0IjUnUd895/dYFt0MgDMq1hDzdVlZC+4R
+ IoOzsl+4+FxBoZ2L9U6VDsSUQSelXooqNkNp5XWTHVgCjgygYgJUwwlIF/nl/U/7dsW+3BQPb
+ LBy0zqfnhPO/xWO88DKFZBBSNcdPurxuKj5Gylw2SbnaiiUXyWksBGll4HwnVHSkF0E5dsEO/
+ TqHgM5kJ3R85EaPecicHKcE86FEef7W+JuJwUyugNWUtjVS1y0cpLQlq4qGKOoBEgQdHgC2oF
+ hVxw8TPuBRZhaGP1l/FxiWUyMPNTHbSCOOV+5aO7Ly8VmzULYn8zLDDxZVUswnRtZYIkxYXcI
+ d6b/Bezp7v+E9TUaLDOfrsYTA6PYy1RFMWhBuRNA1WQWvduZ2uG7AHAXg5AhYyR7RW4BbhbEY
+ N3fwGna9OyB3hrMr6Sykdup0QaWT4aGCntKsJtBb3/fPLwOU+KuOq9pwcmaatGGXLVa8cehQb
+ Vsy/uwd6WmQ9OyplydHAi4lEJ3QgL9429pq2kaOXoTEsHQRtNAxyzzuPSHxHk5VizNtlHr4eE
+ 7YEx5xRg6CCuWaU8JMSeP87BnAFRnT1CkpuZ6kvRWh6AeuQh/r/eM8FdvF1uAo04uRPIWk+Gc
+ 2Fhifsk/M6Re2ICaPQkSic17M5ePWRWZ2WKqyOp39y1aEN1DQg5GGQ+Qgv0o72fiH6ZPDuA==
 
-On Thu, Mar 20, 2025 at 08:06:50PM +0100, Mickaël Salaün wrote:
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 52db886dbba8..a61c7ebdb6a7 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -431,6 +425,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
->  	} /* switch (a->type) */
->  }
->  
-> +/**
-> + * dump_common_audit_data - helper to dump common audit data
-> + * @ab : the audit buffer
-> + * @a : common audit data
-> + */
+Am 22.03.25 um 22:03 schrieb Kurt Borja:
 
-I was tempted to remark on the unusual documentation style with the
-extra space before the colon, but I see that it has prior art in the
-same file...
+> Choices aggregates passed to _aggregate_choices() are already filled
+> with ones, therefore we can avoid copying a new bitmap on the first
+> iteration.
+>
+> This makes setting the PLATFORM_PROFILE_LAST bit on aggregates
+> unnecessary, so drop it as well.
+>
+> While at it, add a couple empty lines to improve style.
+>
+Please add a comment to signal future developers that the bitmap needs to =
+be filled with ones
+before being passed to _aggregate_choices().
 
-> +static void dump_common_audit_data(struct audit_buffer *ab,
-> +				   const struct common_audit_data *a)
-> +{
-> +	char comm[sizeof(current->comm)];
+With this being addressed:
+
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+>   drivers/acpi/platform_profile.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index ef9444482db1982b19d2a17884e1c3ab0e5cb55c..b5b24b075af6dfa612d56eb9=
+5342c6af87a60d3e 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -256,12 +256,10 @@ static int _aggregate_choices(struct device *dev, =
+void *arg)
+>   	struct platform_profile_handler *handler;
+>
+>   	lockdep_assert_held(&profile_lock);
 > +
-> +	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
-> +	audit_log_untrustedstring(ab, get_task_comm(comm, current));
-> +	audit_log_lsm_data(ab, a);
-> +}
+>   	handler =3D to_pprof_handler(dev);
+>   	bitmap_or(tmp, handler->choices, handler->hidden_choices, PLATFORM_PR=
+OFILE_LAST);
+> -	if (test_bit(PLATFORM_PROFILE_LAST, data->aggregate))
+> -		bitmap_copy(data->aggregate, tmp, PLATFORM_PROFILE_LAST);
+> -	else
+> -		bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LA=
+ST);
+> +	bitmap_and(data->aggregate, tmp, data->aggregate, PLATFORM_PROFILE_LAS=
+T);
+>   	data->count++;
+>
+>   	return 0;
+> @@ -305,7 +303,6 @@ static ssize_t platform_profile_choices_show(struct =
+device *dev,
+>   	};
+>   	int err;
+>
+> -	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>   		err =3D class_for_each_device(&platform_profile_class, NULL,
+>   					    &data, _aggregate_choices);
+> @@ -422,7 +419,7 @@ static ssize_t platform_profile_store(struct device =
+*dev,
+>   	i =3D sysfs_match_string(profile_names, buf);
+>   	if (i < 0 || i =3D=3D PLATFORM_PROFILE_CUSTOM)
+>   		return -EINVAL;
+> -	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
 > +
->  /**
->   * common_lsm_audit - generic LSM auditing function
->   * @a:  auxiliary audit data
-> -- 
-> 2.49.0
-> 
-
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>   		ret =3D class_for_each_device(&platform_profile_class, NULL,
+>   					    &data, _aggregate_choices);
+> @@ -502,7 +499,6 @@ int platform_profile_cycle(void)
+>   	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
+>   	int err;
+>
+> -	set_bit(PLATFORM_PROFILE_LAST, data.aggregate);
+>   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>   		err =3D class_for_each_device(&platform_profile_class, NULL,
+>   					    &profile, _aggregate_profiles);
+>
+> ---
+> base-commit: 9a43102daf64dd0d172d8b39836dbc1dba4da1ea
+> change-id: 20250322-pprof-opt-caa7f7f349b8
+>
+> Best regards,
 
