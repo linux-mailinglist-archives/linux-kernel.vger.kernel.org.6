@@ -1,183 +1,103 @@
-Return-Path: <linux-kernel+bounces-575124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FCBA6EDBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:32:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DC2A6EDCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBDC47A1B51
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA21316A9F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A341F09B4;
-	Tue, 25 Mar 2025 10:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC080254867;
+	Tue, 25 Mar 2025 10:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MBpKnnhe"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="yHgiuPRB"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2768F19EED3;
-	Tue, 25 Mar 2025 10:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7462F79F5;
+	Tue, 25 Mar 2025 10:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898744; cv=none; b=c1Gp0SiVi5i7m5DWvMs11age4w5mc044z5Bpt9WSlLKZO9/TbQsj7ThOpxjzXO4xNG37ym1Lb9nOZ/1BkfubpSo3Qi/GsX2Hxi5Fx1anYI+7vNOLN7N9XVQnJPGoErsCc72lV1SjZshH2BW5qMW4XEGOPs5d2sCFjCv53zlkc7s=
+	t=1742898822; cv=none; b=X0bUexvSOYU7lhX9SroUDw/p/2idblxNt9UbeUZhoovAdVWdJjPnFVAyd6PPdNlCjw5w4Os7B+InhUy3nJVhPMvnKtx6338qF5lU49bZWjN+YYbNfmW10qnGhIDEcWFryu7J+HY+zeAMueDoZ+ydTtRyS5K6xfB9haV634nGJzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898744; c=relaxed/simple;
-	bh=oUvc43xr6WPKRjpfGnFSErNnrJe4V3FbQA2sD2OzZUo=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=hm5tp+DaT7ldULN4F3qujkJD9qC/hvQ9pX33PFAeiVVW2Znmwx1glGWO1EE+70lve1VvlcD+POpYuMpGfeVKfABov1B537n/5vEVmdgupMFxUNKgEcId1k1wl5aO86Y7Pj1kMlETqmECvupljN81/vT8/YLSBek6DftVR6hkHyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MBpKnnhe; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P8rFDM011900;
-	Tue, 25 Mar 2025 10:32:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=TDu0Ny0Fcmjl+OCepVqwkzhE+JS6
-	jvmII5BtRtgp3Xw=; b=MBpKnnheWBepOp1W3NkAWcv+9Gb1k630RvhptHs0nJNd
-	1UJJXSc8yRGxr8XxX7CN59FL/oEAn+uI9A9zim3LeC8TfbI+vQ7+OCBhoD76uAxU
-	OCKZMjYzNbrW96JTv68qn2FcmuWp+Y3zsLQS5PNVBRphJeUn2f9cZyb/bhKSdkn0
-	g2G3+XNlNqu89PqAlokJuNhFY6sHrjlTcklqsmIOf2RTboe9vxF9RGHQqKOZdazC
-	uSO5eJ6aAm1WI/PXQu5LfVk2x7dCxt2y0Rj8aNLkVOUCqMb/mUr9xpGjEkxrsjeQ
-	XeeHxim5ceqLyRNtedDX3gSs+ASU+2BprMyJsRi0Ww==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kejptytp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 10:32:15 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52P7lM8M030330;
-	Tue, 25 Mar 2025 10:32:14 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j7htb351-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 10:32:14 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52PAWD2j11076112
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Mar 2025 10:32:14 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A7B3F58058;
-	Tue, 25 Mar 2025 10:32:13 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2058558059;
-	Tue, 25 Mar 2025 10:32:10 +0000 (GMT)
-Received: from [9.61.251.51] (unknown [9.61.251.51])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 25 Mar 2025 10:32:09 +0000 (GMT)
-Message-ID: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
-Date: Tue, 25 Mar 2025 16:02:08 +0530
+	s=arc-20240116; t=1742898822; c=relaxed/simple;
+	bh=8MlHlktm9PBdFMf9Nxkh6Nsoqf+HfDwTdyg7XPwfpns=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FughnH9H8BDmejFbUrK/GVFUDCMG48Ad6WscBNObku0ue0O1psVgEiJ0vrR4UWPVpdVTcEr7KE1jRPuXKVsw0NxS2oxqUlDjkN3CkskdgWnOgPpgxmV8qbpuWdTwcKMgEpGqZmT52aCZl+Qq2R2dWJNT8iUbvQwcsRz0pfwUTe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=yHgiuPRB; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=8MlHlktm9PBdFMf9Nxkh6Nsoqf+HfDwTdyg7XPwfpns=;
+	t=1742898820; x=1744108420; b=yHgiuPRBF4NkVH1CRZjCHffo7ADupUiEN/PfEiUNR6189Bm
+	4M8KR/9mzrRuHJBiYUnAkh/34aEvl0AFKeghkSeawXcBq+8hKMhlYiJSaELPUCcr4mOszWtwkiYtW
+	t4QaZASE05tg0VmpL2AwDeWOMlF7NPJZ1mo+baz0qrSZA+A5gcVqduSYnHI6QyXIuwGjSNcRITaWe
+	fFDZQhUnyCpH2Zr3ilnklqTS9Y41vLKlx0KLz1okKoa/W4TXB+ZzZ2o8rukTiSwmECnJggluKDqoe
+	KJf/FxkYfwQzqbeX/BxiA+LgJwdgmmlmfOG+vVg3XvWxbrUPBJPCOlSDlam9epmQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tx1b3-000000052CR-1hQL;
+	Tue, 25 Mar 2025 11:33:25 +0100
+Message-ID: <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
+Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
+From: Johannes Berg <johannes@sipsolutions.net>
+To: david@ixit.cz, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mailing List	
+ <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Bianconi
+	 <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
+ =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller	 <jerome.pouiller@silabs.com>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Andy Gross <agross@kernel.org>, Mailing List	
+ <devicetree-spec@vger.kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>
+Date: Tue, 25 Mar 2025 11:33:24 +0100
+In-Reply-To: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
+References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: Saket Kumar Bhaskar <skb99@linux.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com,
-        williams@redhat.com, tglozar@redhat.com, rostedt@goodmis.org
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [linux-next-20250324]/tool/bpf/bpftool fails to complie on
- linux-next-20250324
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: upORWBvozE1TM21JUSyh-tiHSH1YQ4xZ
-X-Proofpoint-GUID: upORWBvozE1TM21JUSyh-tiHSH1YQ4xZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_04,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=802 adultscore=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
- impostorscore=0 malwarescore=0 mlxscore=0 priorityscore=1501 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250072
+X-malware-bazaar: not-scanned
 
-Greetings!!!
+On Mon, 2025-03-24 at 18:41 +0100, David Heidelberg via B4 Relay wrote:
+> The Devicetree Specification, Release v0.3 specifies in section 4.3.1
+> a "Network Class Binding". This covers MAC address and maximal frame
+> size properties. "local-mac-address" and "mac-address" with a fixed
+> "address-size" of 48 bits are already in the ethernet-controller.yaml
+> schema so move those over.
+>=20
+> Keep "address-size" fixed to 48 bits as it's unclear if network protocols
+> using 64-bit mac addresses like ZigBee, 6LoWPAN and others are relevant f=
+or
+> this binding. This allows mac address array size validation for ethernet
+> and wireless lan devices.
+>=20
+> "max-frame-size" in the Devicetree Specification is written to cover the
+> whole layer 2 ethernet frame but actual use for this property is the
+> payload size. Keep the description from ethernet-controller.yaml which
+> specifies the property as MTU.
+>=20
 
+I have no idea what tree this should go through, and you CC'ed enough
+people that I can't figure it out either ... I'll assume not wifi but DT
+for now?
 
-bpftool fails to complie on linux-next-20250324 repo.
-
-
-Error:
-
-make: *** No rule to make target 'bpftool', needed by 
-'/home/linux/tools/testing/selftests/bpf/tools/include/vmlinux.h'. Stop.
-make: *** Waiting for unfinished jobs.....
-
-
-Git bisect points to commit: 8a635c3856ddb74ed3fe7c856b271cdfeb65f293 as 
-first bad commit.
-
-Bisect log:
-
-git bisect start
-# status: waiting for both good and bad commits
-# good: [4701f33a10702d5fc577c32434eb62adde0a1ae1] Linux 6.14-rc7
-git bisect good 4701f33a10702d5fc577c32434eb62adde0a1ae1
-# status: waiting for bad commit, 1 good commit known
-# bad: [882a18c2c14fc79adb30fe57a9758283aa20efaa] Add linux-next 
-specific files for 20250324
-git bisect bad 882a18c2c14fc79adb30fe57a9758283aa20efaa
-# good: [36ad536dbad8e29a1fdb7a8760a9c4fcb0dcf7cb] Merge branch 
-'for-next' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git
-git bisect good 36ad536dbad8e29a1fdb7a8760a9c4fcb0dcf7cb
-# good: [96c123361d8e32f6012aa449eed27147979af27e] Merge branch 'next' 
-of git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
-git bisect good 96c123361d8e32f6012aa449eed27147979af27e
-# bad: [b9fc57d1f74797e7b25c779671c03192a81feb1a] Merge branch 
-'usb-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-git bisect bad b9fc57d1f74797e7b25c779671c03192a81feb1a
-# good: [1da0a3d00734bf365f53480a7ffb4361fd61e6d5] Merge branch 'master' 
-of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-git bisect good 1da0a3d00734bf365f53480a7ffb4361fd61e6d5
-# bad: [4541ffab99f8b7ddadb367c73f28ea1fe70f2f97] Merge branch 'next' of 
-git://git.kernel.org/pub/scm/virt/kvm/kvm.git
-git bisect bad 4541ffab99f8b7ddadb367c73f28ea1fe70f2f97
-# good: [361da275e5ce98bbab5f6990d02eb9709742d703] Merge branch 
-'kvm-nvmx-and-vm-teardown' into HEAD
-git bisect good 361da275e5ce98bbab5f6990d02eb9709742d703
-# bad: [28b4c36e59ccfd4e38eaf804b292b3c5b2287900] Merge branch 
-'for-next' of 
-git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-git bisect bad 28b4c36e59ccfd4e38eaf804b292b3c5b2287900
-# good: [2ec5357274fdbe8d48d13d33a1b0e367bcadb85a] Merge sorttable/for-next
-git bisect good 2ec5357274fdbe8d48d13d33a1b0e367bcadb85a
-# good: [af1a78613133542583c9a9875c824678a3c3a145] Merge branch 
-'edac-drivers' into edac-for-next
-git bisect good af1a78613133542583c9a9875c824678a3c3a145
-# good: [2325ccf7b99fa8e1e95c3ce8a205e170d244b062] Merge branch 
-'edac-for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git
-git bisect good 2325ccf7b99fa8e1e95c3ce8a205e170d244b062
-# bad: [18923806b1291102cad3a6b713006c7e7f563534] rtla/timerlat_top: 
-Move divisor to update
-git bisect bad 18923806b1291102cad3a6b713006c7e7f563534
-# bad: [9dc3766ed07c95c9a77fa98dcbc83dcb7f49df3d] rtla: Add optional 
-dependency on BPF tooling
-git bisect bad 9dc3766ed07c95c9a77fa98dcbc83dcb7f49df3d
-# bad: [8a635c3856ddb74ed3fe7c856b271cdfeb65f293] tools/build: Add 
-bpftool-skeletons feature test
-git bisect bad 8a635c3856ddb74ed3fe7c856b271cdfeb65f293
-# good: [6fa5e3a87cd7838453be66c3a69c2236a1680504] rtla/timerlat: Unify 
-params struct
-git bisect good 6fa5e3a87cd7838453be66c3a69c2236a1680504
-# first bad commit: [8a635c3856ddb74ed3fe7c856b271cdfeb65f293] 
-tools/build: Add bpftool-skeletons feature test
-
-
-If you happen to fix this, please add below tag.
-
-
-Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-
-Regards,
-
-Venkat.
-
+johannes
 
