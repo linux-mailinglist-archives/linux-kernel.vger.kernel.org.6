@@ -1,180 +1,212 @@
-Return-Path: <linux-kernel+bounces-574635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066B7A6E7D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:05:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A21BA6E7DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C819188E0A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35491892CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD23413B58A;
-	Tue, 25 Mar 2025 01:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B794151991;
+	Tue, 25 Mar 2025 01:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W6nHcAPS"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OQBosDV4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825E311712;
-	Tue, 25 Mar 2025 01:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B154111712;
+	Tue, 25 Mar 2025 01:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742864660; cv=none; b=hBjFfkP9NqUOHP+kp2mPbIZY8Ey8KrjA5fTCZHqXkpaGEk7neqYmKF+WV1d/278Q9Ad4U5t4DaU5vxhenukjbpDna1jHT/CK1151qXk5i3NwuqNc5lMdh7ZtifyX6BtlM8ZE8mpzTNLcmWInjXqRyQ3RMl+Q4W+on6ojqjxPfCo=
+	t=1742864666; cv=none; b=VGOeRjLGW6ZhMAttCbklsqnqCY0EpKeG2p1MiSL0tGW7VaR8TDkBNT+3vemumtzFgp3wTtF8w37DxLv2nToVjaBmf3aE+MU3rUd1+hgr2NFxrFNNxlrz+29XzUGWTiqWEKGcsrQcF1BLR5vvB0vIEZ2zNmAkO1mHh1qHZ3wcV7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742864660; c=relaxed/simple;
-	bh=aHjMPBfWpy498Yd9hfP3xTQ6B1tKP7dKUerGBCkDEy4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XI2595Cu1JYRg5vj2AmiUFrT2rGKraGJKzgGVB72eqsBTRlD58NGA1vY98RGuToHcrOYTFv7FinP6KXYNy3jz9tJENqe+wMzeu6jDirQ0BDwU4TY7i5xKJzvsPLra1VWuL8sDe3ORr5TDgz2NYvnxN5GouQYcCyKQaX8ssIjOAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W6nHcAPS; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OLPCTR027979;
-	Tue, 25 Mar 2025 01:03:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=SVkkiy
-	pbdvsWYQ6AXdGiEwqDmcgkYftcfbss9MKI3Bc=; b=W6nHcAPS44gEhT4JaLVEbf
-	qECwqyw7AUtTXhmTfQU0Rsx2lCYdVUM47BtjDVIKwDozxlrDNB+3yhVtF1lycVwn
-	pVpBUTWPH41VsnBF+xkBKLgPoJdjtoGb9r3Bn/doQQ8UrR09R7OWx2VH1T1ET14T
-	3lXFFd6UnOas1f5cavXeNLxkDrAdj3rBBP4Yr8QePdWxhbb+Cj2nLzdB645sFDx9
-	qkyPlkYTkF3OY33uwfOG7SAvA5OjvvScRf5vULhvjMpEW3bFNL/ykaERPwVAp6U6
-	iPPmaP4X3HZlNievJFPNcxwqdLy6GPB/4ugvGeMIIRBt3nDhUeBaN65q1j2T6UbA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45k7e3bec0-1
+	s=arc-20240116; t=1742864666; c=relaxed/simple;
+	bh=/f5KC+2i9wQJD5t8shE+KB71uBEgb0zHIKuzW2IFpHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cIDq0Lph+8YwwoFu5eumPvG7pg/i4ji3b/uLXozfWumm7Me03oWDYKvqShBGRDcgN/rAyGq4y7kWkuHgSePkFIJ2h7z3TNIwBkoRhFIkUM4im6YQ1lFTm6MQ9uvXnqgt5VFHwTH/brVaPQzRSJsGhvd2U1ska+nGorYMoJhmIRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OQBosDV4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OMwZm4015560;
+	Tue, 25 Mar 2025 01:04:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HyTWSl4FFXzLuQLaenb4gwnDzJkBOmFvlp8r3VN/r4Y=; b=OQBosDV49WbHOgnU
+	Z7GfNvehMbv6ZQq3zBEIdhvZ56LODp+sREM/w1NXyW9wXGcb+HtuKo6kmXEZFV/d
+	tHwsFdODa8rGt26q2q8Kbt0A2qBdevtPMwyTrpuIzdH3VdWZXtwHo+/PgVxjgroZ
+	y4usmUlEgD8CwX2oE81sq8burnKRIEGqUkMGwMwxzTOYVWDjHZrNvjyj66koT5EJ
+	HM69xWevQ6Hwkr7q9cEPQ21Lwmca7Ed9H7+zr+5wYkjNiJexKzs5ValUuyqqwunk
+	gB+NfjTUjcIErNRJi6qfWAplnN6SJbp799aEqPmkFA1iRxK6UiTgpqR9iohsIIZs
+	ZbmLIQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hpcp5w31-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 01:03:55 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52P13Hs3004932;
-	Tue, 25 Mar 2025 01:03:54 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45k7e3bebx-1
+	Tue, 25 Mar 2025 01:04:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P14FcK010205
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 01:03:54 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52ONOrMQ025463;
-	Tue, 25 Mar 2025 01:03:53 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j7x012sc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 01:03:53 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52P13qRe22938008
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Mar 2025 01:03:53 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9FB158051;
-	Tue, 25 Mar 2025 01:03:52 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1C17D5805C;
-	Tue, 25 Mar 2025 01:03:52 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.190.127])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 25 Mar 2025 01:03:51 +0000 (GMT)
-Message-ID: <f7d257cd3f98447b2b3d7aff1eee6586c1596606.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 03/13] ima: invalidate unsupported PCR banks
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Nicolai Stange
- <nstange@suse.de>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen
-	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 24 Mar 2025 21:03:51 -0400
-In-Reply-To: <5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-4-nstange@suse.de>
-	 <5b15393c8046cf87cc09e932e6addf20d9b1d871.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	Tue, 25 Mar 2025 01:04:15 GMT
+Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 18:04:13 -0700
+Message-ID: <8ab7dddb-b4dc-408c-806b-e34846737d74@quicinc.com>
+Date: Tue, 25 Mar 2025 09:04:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vEcYtFgUjpoEJ7_qg5-3XkC-ReL6ZXWy
-X-Proofpoint-GUID: sFzrUdUcl8vmTCD7WNMJBYfmlThdYem8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+To: Johan Hovold <johan@kernel.org>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>
+References: <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+ <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
+ <Z9METTzUJe9yqVEI@hovoldconsulting.com>
+ <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
+ <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
+ <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
+ <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
+ <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
+ <Z9mwn3GzpPPZSiTG@hovoldconsulting.com>
+ <a8fc9f07-013c-4e31-9d9e-46e042d81dbf@quicinc.com>
+ <Z90yyrZcORhJJgNU@hovoldconsulting.com>
+Content-Language: en-US
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <Z90yyrZcORhJJgNU@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hoScGWf54ahlJCS37E1mSFkrT-EBncqQ
+X-Proofpoint-ORIG-GUID: hoScGWf54ahlJCS37E1mSFkrT-EBncqQ
+X-Authority-Analysis: v=2.4 cv=PLYP+eqC c=1 sm=1 tr=0 ts=67e20110 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=xObAXXU4KUaL95rEUbgA:9
+ a=QEXdDO2ut3YA:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_07,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxscore=0 suspectscore=0 phishscore=0 adultscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503250001
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250005
 
-On Sun, 2025-03-23 at 17:18 -0400, James Bottomley wrote:
-> On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
-> > Normally IMA would extend a template hash of each bank's associated
-> > algorithm into a PCR. However, if a bank's hash algorithm is
-> > unavailable to the kernel at IMA init time, it would fallback to
-> > extending padded SHA1 hashes instead.
-> >=20
-> > That is, if e.g. SHA-256 was missing at IMA init, it would extend
-> > padded SHA1 template hashes into a PCR's SHA-256 bank.
-> >=20
-> > The ima_measurement command (marked as experimental) from ima-evm-
-> > utils would accordingly try both variants when attempting to verify a
-> > measurement list against PCRs. keylime OTOH doesn't seem to -- it
-> > expects the template hash type to match the PCR bank algorithm. I
-> > would argue that for the latter case, the fallback scheme could
-> > potentially cause hard to debug verification failures.
-> >=20
-> > There's another problem with the fallback scheme: right now, SHA-1
-> > availability is a hard requirement for IMA, and it would be good for
-> > a number of reasons to get rid of that. However, if SHA-1 is not
-> > available to the kernel, it can hardly provide padded SHA-1 template
-> > hashes for PCR banks with unsupported algos.
->=20
-> I think this was done against the day IMA only supported sha1 and the
-> TPM sha256 and beyond so there'd at least be a record that could be
-> replayed.  I think today with most distros defaulting IMAs hash to
-> sha256 that's much less of a problem.
 
-Commit 1ea973df6e21 ("ima: Calculate and extend PCR with digests in
-ima_template_entry") added the support for extending multiple banks.  It
-included the support for extending padded SHA1 digests for unknown TPM bank=
- hash
-algorithms.  Clearly it wasn't addressing the case of a TPM sha256 bank.
 
->=20
-> > There are several more or less reasonable alternatives possible,
-> > among them are:
-> > a.) Instead of padded SHA-1, use padded/truncated ima_hash template
-> > =C2=A0=C2=A0=C2=A0 hashes.
-> > b.) Don't extend unsupported banks at all.
-> > c.) Record every event as a violation, i.e. extend unsupported banks
-> > =C2=A0=C2=A0=C2=A0 with 0xffs.
-> > d.) Invalidate unsupported banks at least once by extending with a
-> > unique
-> > =C2=A0=C2=A0=C2=A0 constant (e.g. with 0xfes).
->=20
-> Instead of any of that, why not do what the TCG tells us to do for
-> unsupported banks and simply cap them with 0xffffffff record
-> EV_SEPARATOR and stop extending to them? (note this would probably
-> require defining a separator event for IMA)
+On 3/21/2025 5:35 PM, Johan Hovold wrote:
+> On Wed, Mar 19, 2025 at 02:47:12PM +0800, Miaoqing Pan wrote:
+>> On 3/19/2025 1:42 AM, Johan Hovold wrote:
+> 
+>>> It could if the CPU observes the updates out of order due to the missing
+>>> barrier. The driver could be processing an earlier interrupt when the
+>>> new descriptor is added and head pointer updated. If for example the CPU
+>>> speculatively fetches the descriptor before the head pointer is updated,
+>>> then the descriptor length may be zero when the CPU sees the updated
+>>> head pointer.
+>>
+>> Sorry, I still think this situation won't happen. Please see the
+>> following code.
+>>
+>> ath11k_hal_srng_access_begin(ab, srng);
+>>     => srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
+>> desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
+>>     => if (srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp) return NULL;
+>> //dma_rmb();
+>> *nbytes = ath11k_hal_ce_dst_status_get_length(desc);
+>>
+>> If the condition 'srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp' is
+>> true, the descriptor retrieval fails.
+> 
+> The CPU can still speculate that this condition will be false and load
+> the descriptor.
+> 
+> If the speculation later turns out to be correct, then the descriptor
+> may have stale values from before the head pointer was updated.
+> 
+>>> This seems to be what is happening on the X13s since adding the memory
+>>> barrier makes the zero-length descriptors go away.
+>>
+>> Hmm, it is indeed a bit strange. Could it be that dma_rmb() introduces
+>> some delay ?
+> 
+> It's only expected since you must use memory barriers on weakly ordered
+> architectures like aarch64 to guarantee the ordering.
+>   
+>>>> The Copy Engine hardware module copies the metadata to the Status
+>>>> Descriptor after the DMA is complete, then updates the HP to trigger an
+>>>> interrupt. I think there might be some issues in this process, such as
+>>>> the lack of a wmb instruction after the copy is complete, causing the HP
+>>>> to be updated first.
+>>>
+>>> Yeah, possibly. At least it seems there are more issues than the missing
+>>> barrier on the machines you test.
+>>>    
+>>>>> Now obviously there are further issues in your system, which we should
+>>>>> make sure we understand before adding workarounds to the driver.
+>>>>>
+>>>>> Do you have a pointer to the downstream kernel sources you are testing
+>>>>> with? Or even better, can you reproduce the issue with mainline after
+>>>>> adding the PCIe patches that were posted to the lists for these
+>>>>> platforms?
+>>>>>
+>>>> https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
+>>>
+>>> Thanks for the pointer. That's a lot of out-of-tree patches on top of
+>>> stable so not that easy to check the state of the resulting tree.
+>>
+>> Yes, but there are only a few patches for ath11k.
+> 
+> Sure, but there are other components that come into play here such as
+> the PCIe controller driver.
+> 
+> A colleague of yours recently submitted an updated patch that overrides
+> the no_snoop bit for qcs8300:
+> 
+> 	https://lore.kernel.org/lkml/20250318053836.tievnd5ohzl7bmox@thinkpad/
+> 
+> but that flag appears not to be set in your downstream tree:
+> 
+> 	https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base-6.6/drivers/qcs8300/0004-PCI-qcom-Add-QCS8300-PCIe-support.patch
+> 
+> Something like that may prevent a cached descriptor from being
+> invalidated when the controller updates it.
+> 
+> Similarly, the PCIe controllers are marked as dma-coherent in your
+> devicetrees. A misconfiguration there could also cause problems.
 
-open-writers and ToMToU integrity violations are added to the IMA measureme=
-nt
-list as 0x00's, but are extended into the TPM using 0xFF's.  Unfortunately,=
- as
-mentioned previously, some verifiers ignore these integrity violations by
-automatically replacing the 0x00's with 0xFF's.
+Thank you very much for these suggestions. I tried setting no_snoop and 
+disabling relaxed_ordering, but unfortunately, these did not work.
 
-What do you mean by "simply cap" them?  Does it automatically prevent the P=
-CR
-from being extended?  If not, then this patch set is doing exactly that -
-preventing the TPM bank from additional extends.
+> 
+> I suggest we merge my fix that adds the missing memory barrier, and
+> which users have now been testing for a week without hitting the
+> corruption (which they used to see several times a day).
+> 
+Agreed, I previously mistakenly thought that the status descriptor was 
+not updated by DMA.
 
-Mimi
+
+> Then we can continue to track down why you are having coherency issues
+> on qcs615 and qcs8300. You really want to make sure that that is fixed
+> properly as it may lead to subtle bugs elsewhere too.
+> 
+
+The same WLAN card is attached to qcs615, qcs8300 and sa8775p, and the 
+issue is never be seen on sa8775p, maybe I can compare the PCIE settings 
+to track down the root cause.
+
+
 
