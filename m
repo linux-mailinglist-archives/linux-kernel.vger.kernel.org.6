@@ -1,131 +1,214 @@
-Return-Path: <linux-kernel+bounces-575193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DA2A6F1A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:19:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1788BA6F1A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC6D3B7FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083AD7A3721
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0498253F1C;
-	Tue, 25 Mar 2025 11:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB3F1F0E31;
+	Tue, 25 Mar 2025 11:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NpEMeVyE"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kukHuGM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D09D2E337C;
-	Tue, 25 Mar 2025 11:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCC279F5;
+	Tue, 25 Mar 2025 11:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742901507; cv=none; b=EPwNCEDtkjU6L+UjFXYxg56uNAePj5F0gPhcDAdZO+40Lg5l1v207EdGOwYM0v8h5cK1FVhzU5YQSp+Bi8ueatUlwYqSauyGocfzWFMB99sbjf4kaLE52DuM9tk06CFKc1uYKCwZffJ0M5UqXCPGdAgtFC4zUNgWqctgzRePKGk=
+	t=1742901525; cv=none; b=Ji6QM2JYcjSyypCcN6ALRjz3Z2BOd95q2SVyx7QybAYFjb3i16ztWGc/fn0J+4kbHrauGBDsOx5/dxT6Xafp2ObgjCaUIAwsWAsYvPScNiUO36bMyBBsAqow6346mOxEDVnsAhXDXs+rCzpdrk8v31JM05U0fn5uJsel+gOqIkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742901507; c=relaxed/simple;
-	bh=/A4Re9ZnXk9dFMPy8kLJyTDBCliwhE9DawViBWNrdTY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CBYmcnb348p2MMVTE85NpIOqjxNlKAFDX2iJGbK6DL+IG7tFO1TZArMqQ1vN5OVr9zcBEim22/LHVX+u4fxG1Weq8A88G85X/6eMYVRInZV03QzBqri4pY5kIS8Y7Bs6RTEeWYrO7Y59m0BUOIE0bFNAUHmjZ5wBjEDM5Sf8iGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NpEMeVyE; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=j3jqpzi7fbao5nhxypqetcbjbi.protonmail; t=1742901501; x=1743160701;
-	bh=PRIAuT+urW+Uxb9HvRuGGsdWcowDVCzwb9vcglusjuc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=NpEMeVyE9u+h5Gj12RsbKxkQT+GjekJu1zM6uwwaQxjNnelrHRtav897efjjRl2YV
-	 IuMRX1CgLBIKtopQ317TtoiRTgrlPKT2S/1VIS1u5So6kpyWVWFaaSc/lgzuMiFtV1
-	 UO764HId23CR+0WVRoZVjKlY4ydXzv9XxCbkEs3i5PmCCzrbk8zzSpdLy457LPYd8J
-	 gbLQxKoYPpEI69NA7Pdz6rsWftpNs8osKjAcscSL6/loYj1S2X4UNuznYO2MxeSsBr
-	 90nT8KHJGILTjcrbfKk5+36vezA7wF4fSldi/Zr/rw1I8y9BN3TOE5XBkoZ/moUhsj
-	 XzihJiduIIb3A==
-Date: Tue, 25 Mar 2025 11:18:17 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 3/5] rust: list: use consistent type parameter names
-Message-ID: <D8PB0LN62GOX.3P4K4V96OLVQ9@proton.me>
-In-Reply-To: <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
-References: <20250324-list-no-offset-v1-0-afd2b7fc442a@gmail.com> <20250324-list-no-offset-v1-3-afd2b7fc442a@gmail.com> <67e1d1b3.050a0220.4c4ff.6e89@mx.google.com> <CAJ-ks9moCO83cGkKuONR-2JMN61x18T2UVO98jhspDR=uyaVqw@mail.gmail.com> <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com> <Z-Iq6Okk1j3ImH1u@Mac.home> <CAJ-ks9n66_vVg3ww58VqfXV6+phng8Bhq9C=NNn854gXK0KAHg@mail.gmail.com> <D8PA5CKNMCGA.UODS331S36EG@proton.me> <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 8a508fb47a377576bf6cba327da34cc8bd8a0f3d
+	s=arc-20240116; t=1742901525; c=relaxed/simple;
+	bh=khDMRd3/8spXHUnQOPT5netn3r10aLnbqLNTmcWzJTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0GuTvo7mxkux+rsv5yoDuuqJI11H06mSac13ok9eLZutSpysOEO+7q8de6enhTDhLjgj6QuU5I3jJQGgetLKAW5kbi24AMAkqTiUKxlFon9Tnj4hC61GzVzjQ9V1JgVYT+/RItQlRXzt7BgJSOD66M3hay0PGbtjsmxmCOESCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kukHuGM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7EBBC4CEE4;
+	Tue, 25 Mar 2025 11:18:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742901524;
+	bh=khDMRd3/8spXHUnQOPT5netn3r10aLnbqLNTmcWzJTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kukHuGM5kAqyY3WKu39GCJbJrhnZXwWq7xs4VeZzS55T3Nhv8Q64JBh0z2eUIZBgf
+	 mOyWh70ATo8x21lTO1V9gSgn28Kh4cgsGgucpYeMJcnUQ/NBm6XOvIZI/4Ks3n8y+s
+	 d0rhL4xRAZz3ct4S17EgQsC0j/hJolNZQCzZgShdAn6AuwTlSivv8SwAWRAlRADnJk
+	 iNjHcLXZFTNKOVnI5SnzwMdSuE2yseFSBMTesaP45kaGDwLqCLadZOuUnsVSEgkzfd
+	 2mVmiYiJPdpqp/fh1sWInQ26WZ701weh5+x6PMqFqKx+Kazk40TbjWmriOEOGlqEfJ
+	 4y94wDltOc6kA==
+Date: Tue, 25 Mar 2025 12:18:39 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: [PATCH] bug: Introduce CONFIG_DEBUG_BUGVERBOSE_EXTRA=y to also log
+ warning conditions
+Message-ID: <Z-KRD3ODxT9f8Yjw@gmail.com>
+References: <20250317104257.3496611-2-mingo@kernel.org>
+ <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
+ <20250324115955.GF14944@noisy.programming.kicks-ass.net>
+ <Z-J5UEFwM3gh6VXR@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-J5UEFwM3gh6VXR@gmail.com>
 
-On Tue Mar 25, 2025 at 11:42 AM CET, Tamir Duberstein wrote:
-> On Tue, Mar 25, 2025 at 6:37=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->> On Tue Mar 25, 2025 at 10:52 AM CET, Tamir Duberstein wrote:
->> > On Tue, Mar 25, 2025 at 12:02=E2=80=AFAM Boqun Feng <boqun.feng@gmail.=
-com> wrote:
->> >> On Mon, Mar 24, 2025 at 05:56:57PM -0400, Tamir Duberstein wrote:
->> >> > On Mon, Mar 24, 2025 at 5:51=E2=80=AFPM Tamir Duberstein <tamird@gm=
-ail.com> wrote:
->> >> > > On Mon, Mar 24, 2025 at 5:42=E2=80=AFPM Boqun Feng <boqun.feng@gm=
-ail.com> wrote:
->> >> > > > On Mon, Mar 24, 2025 at 05:33:45PM -0400, Tamir Duberstein wrot=
-e:
->> >> > > > >              #[inline]
->> >> > > > > @@ -81,16 +81,16 @@ pub unsafe trait HasSelfPtr<T: ?Sized, co=
-nst ID: u64 =3D 0>
->> >> > > > >  /// Implements the [`HasListLinks`] and [`HasSelfPtr`] trait=
-s for the given type.
->> >> > > > >  #[macro_export]
->> >> > > > >  macro_rules! impl_has_list_links_self_ptr {
->> >> > > > > -    ($(impl$({$($implarg:tt)*})?
->> >> > > > > +    ($(impl$({$($generics:tt)*})?
->> >> > > >
->> >> > > > While you're at it, can you also change this to be
->> >> > > >
->> >> > > >         ($(impl$(<$($generics:tt)*>)?
->> >> > > >
->> >> > > > ?
->> >> > > >
->> >> > > > I don't know why we chose <> for impl_has_list_links, but {} fo=
-r
->> >> > > > impl_has_list_links_self_ptr ;-)
->> >> > >
->> >> > > This doesn't work in all cases:
->> >> > >
->> >> > > error: local ambiguity when calling macro `impl_has_work`: multip=
-le
->> >> > > parsing options: built-in NTs tt ('generics') or 1 other option.
->> >> > >    --> ../rust/kernel/workqueue.rs:522:11
->> >> > >     |
->> >> > > 522 |     impl<T> HasWork<Self> for ClosureWork<T> { self.work }
->> >> > >
->> >> > > The reason that `impl_has_list_links` uses <> and all others use =
-{} is
->> >> > > that `impl_has_list_links` is the only one that captures the gene=
-ric
->> >> > > parameter as an `ident`, the rest use `tt`. So we could change
->> >>
->> >> Why impl_has_list_links uses generics at `ident` but rest use `tt`? I=
-'m
->> >> a bit curious.
->> >
->> > I think it's because `ident` cannot deal with lifetimes or const
->> > generics - or at least I was not able to make it work with them.
->>
->> If you use `ident`, you can use the normal `<>` as the delimiters of
->> generics. For `tt`, you have to use `{}` (or `()`/`[]`).
->
-> Yes I know. But with `ident` you cannot capture lifetimes or const generi=
-cs.
 
-Why is that required for this macro? I think we could use `tt`.
+* Ingo Molnar <mingo@kernel.org> wrote:
 
+> > >    #define SCHED_WARN_ON(x)      WARN_ONCE(x, #x)
+> > > 
+> > > Because SCHED_WARN_ON() would output the 'x' condition
+> > > as well, while WARN_ONCE() will only show a backtrace.
+> > > 
+> > > Hopefully these are rare enough to not really matter.
+> > > 
+> > > If it does, we should probably introduce a new WARN_ON()
+> > > variant that outputs the condition in stringified form,
+> > > or improve WARN_ON() itself.
+> > 
+> > So those strings really were useful, trouble is WARN_ONCE() generates
+> > utter crap code compared to WARN_ON_ONCE(), but since SCHED_DEBUG that
+> > doesn't really matter.
+> 
+> Why wouldn't it matter? CONFIG_SCHED_DEBUG was turned on for 99.9999% 
+> of Linux users, ie. we generated crap code for most of our users.
+> 
+> And as a side effect of using the standard WARN_ON_ONCE() primitive we 
+> now generate better code, at the expense of harder to interpret debug 
+> output, right?
+> 
+> Ie. CONFIG_SCHED_DEBUG has obfuscated crappy code generation under the 
+> "it's only debugging code" pretense, right?
+
+So, to argue this via code, we'd like to have something like the patch below?
+
+When enabled it will warn in the following fashion:
+
+  static void super_perfect_kernel_function(void *ptr)
+  {
+	...
+	WARN_ON_ONCE(ptr == 0 && 1);
+	...
+  }
+
+
+  ------------[ cut here ]------------
+  FAIL: 'ptr == 0 && 1' is true
+  WARNING: CPU: 0 PID: 0 at kernel/sched/core.c:8511 sched_init+0x44/0x430
+  ...
+
+But the real question is, how do we keep distros from enabling 
+CONFIG_DEBUG_BUGVERBOSE_EXTRA=y?
+
+It does bloat the defconfig by about +144k .text and ~64k data, so 
+maybe that's deterrence enough.
+
+The BSS shift is due to it not using the clever x86 U2D tricks, right?
+
+Thanks,
+
+	Ingo
+
+=================>
+From: Ingo Molnar <mingo@kernel.org>
+Date: Tue, 25 Mar 2025 11:35:20 +0100
+Subject: [PATCH] bug: Introduce CONFIG_DEBUG_BUGVERBOSE_EXTRA=y to also log warning conditions
+
+      text         data	    bss	     dec	    hex	filename
+  29522704	7926322	1389904	38838930	250a292	vmlinux.before
+  29667392	8017958	1363024	39048374	253d4b6	vmlinux.after
+
+Totally-Not-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Cheers,
-Benno
+ include/asm-generic/bug.h |  7 +++++++
+ kernel/sched/core.c       |  2 ++
+ lib/Kconfig.debug         | 12 ++++++++++++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index 387720933973..5475258a99dc 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -92,6 +92,11 @@ void warn_slowpath_fmt(const char *file, const int line, unsigned taint,
+ 		       const char *fmt, ...);
+ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+ 
++#ifdef CONFIG_DEBUG_BUGVERBOSE_EXTRA
++#define WARN_ON_ONCE(condition)						\
++	DO_ONCE_LITE_IF(condition, WARN, 1, "FAIL: '%s' is true", #condition)
++#endif
++
+ #ifndef __WARN_FLAGS
+ #define __WARN()		__WARN_printf(TAINT_WARN, NULL)
+ #define __WARN_printf(taint, arg...) do {				\
+@@ -107,6 +112,7 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+ 		__WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+ 		instrumentation_end();					\
+ 	} while (0)
++#ifndef WARN_ON_ONCE
+ #define WARN_ON_ONCE(condition) ({				\
+ 	int __ret_warn_on = !!(condition);			\
+ 	if (unlikely(__ret_warn_on))				\
+@@ -115,6 +121,7 @@ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+ 	unlikely(__ret_warn_on);				\
+ })
+ #endif
++#endif
+ 
+ /* used internally by panic.c */
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 87540217fc09..71bf94bf68f8 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8508,6 +8508,8 @@ void __init sched_init(void)
+ 	unsigned long ptr = 0;
+ 	int i;
+ 
++	WARN_ON_ONCE(ptr == 0 && 1);
++
+ 	/* Make sure the linker didn't screw up */
+ #ifdef CONFIG_SMP
+ 	BUG_ON(!sched_class_above(&stop_sched_class, &dl_sched_class));
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index b1b92a9a8f24..88f215f712f8 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -206,6 +206,18 @@ config DEBUG_BUGVERBOSE
+ 	  of the BUG call as well as the EIP and oops trace.  This aids
+ 	  debugging but costs about 70-100K of memory.
+ 
++config DEBUG_BUGVERBOSE_EXTRA
++	bool "Extra verbose WARN_ON() reporting" if DEBUG_BUGVERBOSE
++	default n
++	help
++	  Say Y here to make WARN_ON() warnings extra verbose, printing
++	  the condition they warn about.
++
++	  This aids debugging but uses up some memory and causes some
++	  runtime overhead due to worse code generation.
++
++	  If unsure, say N.
++
+ endmenu # "printk and dmesg options"
+ 
+ config DEBUG_KERNEL
 
 
