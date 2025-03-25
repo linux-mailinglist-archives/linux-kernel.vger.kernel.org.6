@@ -1,103 +1,232 @@
-Return-Path: <linux-kernel+bounces-574853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B50A6EAC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:45:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8689A6EAC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF86E188DF60
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41991188DF2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDAE2045B9;
-	Tue, 25 Mar 2025 07:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413C5253B54;
+	Tue, 25 Mar 2025 07:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qn+kMkRq"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmV8JNGH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2804481CD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8208A194A60;
+	Tue, 25 Mar 2025 07:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742888724; cv=none; b=OXw6ksgOQgQNp6nOxgL7UhRX1+zw+FByMpE/kn60xugW+1Qpvrhpgic6NfprceTnEaxhgJgD+vH/LOknbyh665EmtmqUy3qK4lMuo3yzlBKFXVP0u6576TGjnNKbKFsb4B4PUP++QB6UkEM7cSbHGnelc1WN9hLuR4WSpHbkn/I=
+	t=1742888746; cv=none; b=igLIN8tuh0KiWRWKKrrmAFTmMxMIxbI2T7eGcEkkRVqYDAdajRukug94M4lRJvpEGsaDWwvTzOiJE7c8L7fdC2uYkRbH6FBDd06+NZnDbliDf2DALWj9GS6enS5SfzOK2dwN8bO6qXNAqzhYhC1y+K6d8WfWSHymYSM+PHBMi04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742888724; c=relaxed/simple;
-	bh=KXJv3KA+VGk1G2n3TxvoBs+9dMjstgii8GbSxuM+l3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SqhlLn7H+TTWPs89R5Zz9lOtbMc+uV+UllRoZzVBMomS9NKpDMX6WzG9eJMEBggr2q38/Pn+eE4Bm6pH8PVsNDJHLFia1Ygl/Kvs/Rq4k+UKxVGcqwogu/HvFAgzntZbbCgn6F8NdAEhtx+ZoLVYeYJKrp+7+O1xaBo21s4whkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qn+kMkRq; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47686580529so50878031cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 00:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742888721; x=1743493521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXJv3KA+VGk1G2n3TxvoBs+9dMjstgii8GbSxuM+l3I=;
-        b=qn+kMkRqO5R+u+OAomhYS7g1TXnnXUyt+aIlNnB/qXrqQ3mtIDI8hj+B7BEzuoM+WV
-         GWLYIj/UFWvkH2lMiVo8yjMObSmGp4eOsVWDWplbAJvmRue/jGe1uckIfsXDx8OVSvv0
-         hsde7pFiuT33pCgr0Gz/pFKrdPC2+vzgv67PhYyvOFPLBwKd/mUGHld9QMO4f9HQfJE3
-         SJmrd7etjba2iEilMRppFGoC3zD6WUSdJZAfLFe220yQI9C8EkaglKhTiVKPz9P7FP3i
-         L6HaIWHGnrMLyoYuN5kmaZ3T/IfE0BAa4fQflXlMjatJaTc/ocTOA58/XHov2lRWti8Y
-         gtEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742888721; x=1743493521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KXJv3KA+VGk1G2n3TxvoBs+9dMjstgii8GbSxuM+l3I=;
-        b=gUmFJEg65yZK8iHsDZIQ7nd/++nF7avRVewFq+CyDHuEr4MowyOPfv/GyVqhhWb4xx
-         DTCAzUBAlhMfXE92gWcFQiOuk4TiVxZQh3SoARZtF0VHKjHYcVwl0KVToStrrpsz/BNG
-         ZuMjin/rGtPlnZgmDdT/bGLn3GgT9EWix9CXIpe/4sqG7xZkqNk2PLhwUHI4f2472kDQ
-         OX7vaBtfCPWUEaIQzlhBcmKtUQ9ZI6tJY7Mqizh5LNk+Go9Fsguo1pv4jx3MjL6yJGev
-         4xPxmqS73FGKEkB/oaIO3rCJNLqeX3D1y+Y74qJxZ/iSPo8eSwqikT1SwfZ5KtBMjoXL
-         l0Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTzAxN+Ne55TdKTE4uFw5xFbgDKVJJ70R94OGsbAj67vHCKrnaqpNfGARZpJPPYthyNf7Iqz9162UnkQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxthgU06pHUlwOZUzOggnxrCyGbwvnWD7atKdu3dme2EaP97fPV
-	tjp3htS7GTmOsf2bJh5fiLUXu2PFFOifeN6UU0Uc2iEnwNaQcZ1J4vAkjw1zMp/iI2SeDHcO/2g
-	vIjmmK+JXUcZ4l0WHQ3jHlU0JpYE0cPR8bJ64
-X-Gm-Gg: ASbGncucf3JVgGYpcFazn72vBn+0bPG5xG7hpvdHGUM171qXDO4VHHPRDcNO3vVlcsq
-	nWFIlWWS1wZyMkCldqq5Bwnow7qtSnxgZvSN6g8ynSK/9kfyFJAxQ2lyBGCDATFMSD6B2GtZXmE
-	6I5IMfD8R9C7rewEj7aktyIILgQw==
-X-Google-Smtp-Source: AGHT+IFQ6AKs9yuPyEWUX1lXG98g0MgxzXXoE6kIh/7IMM0xqyJwp8WOtCZNAjMdqF9iMVJtHXS4nHRoCPy8TrKO0T4=
-X-Received: by 2002:a05:622a:418b:b0:476:b3b8:2a35 with SMTP id
- d75a77b69052e-4771de41bd0mr252207261cf.40.1742888721263; Tue, 25 Mar 2025
- 00:45:21 -0700 (PDT)
+	s=arc-20240116; t=1742888746; c=relaxed/simple;
+	bh=COv3ALd0K+Klf9VX67K/rQCTmju5YgCqlTdzWPNwzUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbmiyc8AUPffK+1wsJSwl0czLXFVvfdd8vpHrFVHoK2WaDaljda5IzJ6QakWGH3IQ/DI19LQeYlZyN8hF6Ac5VGeymi37q0KJZJVumO/a8rGk5V5W5Oawe4W2RUEcICy0LPUfWnyRjEqcRbriNNoaYbOlU4hsvElvCryr6h9Zv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmV8JNGH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C60B7C4CEE8;
+	Tue, 25 Mar 2025 07:45:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742888746;
+	bh=COv3ALd0K+Klf9VX67K/rQCTmju5YgCqlTdzWPNwzUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CmV8JNGH7Vcd7sDcWXD3QdzPpQ44/Z4BDNs9o6G3stDLHsydKUsfaTkn5pVxB4LPA
+	 8bRlP+4KjK7bp+4NSt/vU8sD7VicmTvEh1mRkaPB4cHTWKjQ0erj5Whm43Hn4IR/lG
+	 n4FQx6G25IIjt6rmj2JZELJ4TH8vJ+Gc/no9tWf/ut0j83e6BRUaXIj+SrtahRx5Jc
+	 Xc14v+l0DLaqJDsqJrx3zrrK6WoAVXunGAC88ehMCShTerowJG2KDCV82MqmyX4lSJ
+	 eXJdt5BhH/qM4beSZDGs9q+xElFI6D7w7eRvIn1A57pPIG/DiyhT0zEF0hhLfU1bSv
+	 th6orop3f5Pjg==
+Date: Tue, 25 Mar 2025 13:15:35 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v6 10/10] optee: smc abi: dynamic restricted memory
+ allocation
+Message-ID: <Z-JfH7VAm0DTTbVg@sumit-X1>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-11-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325043316.874518-1-edumazet@google.com> <Z-JX5ImltdTFoFgr@gmail.com>
-In-Reply-To: <Z-JX5ImltdTFoFgr@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 25 Mar 2025 08:45:09 +0100
-X-Gm-Features: AQ5f1JoPBDtsy07vWlKPsvzIEc1Q9Gdc9Mikq3sx1DBAUnBjOIFVLzg05pRb2Uo
-Message-ID: <CANn89iJ-BtE9twfibcHtzzB5ixVd7xhrkHo-kXJsSr+WaGrZEQ@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/alternatives: remove false sharing in poke_int3_handler()
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, 
-	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, 
-	Greg Thelen <gthelen@google.com>, Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305130634.1850178-11-jens.wiklander@linaro.org>
 
-On Tue, Mar 25, 2025 at 8:14=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
-e:
+On Wed, Mar 05, 2025 at 02:04:16PM +0100, Jens Wiklander wrote:
+> Add support in the OP-TEE backend driver for dynamic restricted memory
+> allocation using the SMC ABI.
+> 
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>  drivers/tee/optee/smc_abi.c | 96 +++++++++++++++++++++++++++++++------
+>  1 file changed, 81 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> index a14ff0b7d3b3..aa574ee6e277 100644
+> --- a/drivers/tee/optee/smc_abi.c
+> +++ b/drivers/tee/optee/smc_abi.c
+> @@ -1001,6 +1001,69 @@ static int optee_smc_do_call_with_arg(struct tee_context *ctx,
+>  	return rc;
+>  }
+>  
+> +static int optee_smc_lend_rstmem(struct optee *optee, struct tee_shm *rstmem,
+> +				 u16 *end_points, unsigned int ep_count,
+> +				 u32 use_case)
+> +{
+> +	struct optee_shm_arg_entry *entry;
+> +	struct optee_msg_arg *msg_arg;
+> +	struct tee_shm *shm;
+> +	u_int offs;
+> +	int rc;
+> +
+> +	msg_arg = optee_get_msg_arg(optee->ctx, 2, &entry, &shm, &offs);
+> +	if (IS_ERR(msg_arg))
+> +		return PTR_ERR(msg_arg);
+> +
+> +	msg_arg->cmd = OPTEE_MSG_CMD_LEND_RSTMEM;
+> +	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
+> +	msg_arg->params[0].u.value.a = use_case;
+> +	msg_arg->params[1].attr = OPTEE_MSG_ATTR_TYPE_TMEM_INPUT;
+> +	msg_arg->params[1].u.tmem.buf_ptr = rstmem->paddr;
+> +	msg_arg->params[1].u.tmem.size = rstmem->size;
+> +	msg_arg->params[1].u.tmem.shm_ref = (u_long)rstmem;
+> +
+> +	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
+> +	if (rc)
+> +		goto out;
+> +	if (msg_arg->ret != TEEC_SUCCESS) {
+> +		rc = -EINVAL;
+> +		goto out;
+> +	}
+> +	rstmem->sec_world_id = (u_long)rstmem;
+> +
+> +out:
+> +	optee_free_msg_arg(optee->ctx, entry, offs);
+> +	return rc;
+> +}
+> +
+> +static int optee_smc_reclaim_rstmem(struct optee *optee, struct tee_shm *rstmem)
+> +{
+> +	struct optee_shm_arg_entry *entry;
+> +	struct optee_msg_arg *msg_arg;
+> +	struct tee_shm *shm;
+> +	u_int offs;
+> +	int rc;
+> +
+> +	msg_arg = optee_get_msg_arg(optee->ctx, 1, &entry, &shm, &offs);
+> +	if (IS_ERR(msg_arg))
+> +		return PTR_ERR(msg_arg);
+> +
+> +	msg_arg->cmd = OPTEE_MSG_CMD_RECLAIM_RSTMEM;
+> +	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_RMEM_INPUT;
+> +	msg_arg->params[0].u.rmem.shm_ref = (u_long)rstmem;
+> +
+> +	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
+> +	if (rc)
+> +		goto out;
+> +	if (msg_arg->ret != TEEC_SUCCESS)
+> +		rc = -EINVAL;
+> +
+> +out:
+> +	optee_free_msg_arg(optee->ctx, entry, offs);
+> +	return rc;
+> +}
+> +
+>  /*
+>   * 5. Asynchronous notification
+>   */
+> @@ -1252,6 +1315,8 @@ static const struct optee_ops optee_ops = {
+>  	.do_call_with_arg = optee_smc_do_call_with_arg,
+>  	.to_msg_param = optee_to_msg_param,
+>  	.from_msg_param = optee_from_msg_param,
+> +	.lend_rstmem = optee_smc_lend_rstmem,
+> +	.reclaim_rstmem = optee_smc_reclaim_rstmem,
+>  };
+>  
+>  static int enable_async_notif(optee_invoke_fn *invoke_fn)
+> @@ -1622,11 +1687,13 @@ static inline int optee_load_fw(struct platform_device *pdev,
+>  
+>  static int optee_sdp_pool_init(struct optee *optee)
+>  {
+> +	bool sdp = optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_SDP;
+> +	bool dyn_sdp = optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_RSTMEM;
+>  	enum tee_dma_heap_id heap_id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
+> -	struct tee_rstmem_pool *pool;
+> -	int rc;
+> +	struct tee_rstmem_pool *pool = ERR_PTR(-EINVAL);
+> +	int rc = -EINVAL;
+>  
+> -	if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_SDP) {
+> +	if (sdp) {
+>  		union {
+>  			struct arm_smccc_res smccc;
+>  			struct optee_smc_get_sdp_config_result result;
+> @@ -1634,25 +1701,24 @@ static int optee_sdp_pool_init(struct optee *optee)
+>  
+>  		optee->smc.invoke_fn(OPTEE_SMC_GET_SDP_CONFIG, 0, 0, 0, 0, 0, 0,
+>  				     0, &res.smccc);
+> -		if (res.result.status != OPTEE_SMC_RETURN_OK) {
+> -			pr_err("Secure Data Path service not available\n");
+> -			return 0;
+> -		}
+> +		if (res.result.status == OPTEE_SMC_RETURN_OK)
+> +			pool = tee_rstmem_static_pool_alloc(res.result.start,
+> +							    res.result.size);
+> +	}
+>  
+> -		pool = tee_rstmem_static_pool_alloc(res.result.start,
+> -						    res.result.size);
+> -		if (IS_ERR(pool))
+> -			return PTR_ERR(pool);
+> +	if (dyn_sdp && IS_ERR(pool))
+> +		pool = optee_rstmem_alloc_cma_pool(optee, heap_id);
+>  
+> +	if (!IS_ERR(pool)) {
+>  		rc = tee_device_register_dma_heap(optee->teedev, heap_id, pool);
+>  		if (rc)
+> -			goto err;
+> +			pool->ops->destroy_pool(pool);
+>  	}
+>  
+> +	if (rc && (sdp || dyn_sdp))
+> +		pr_err("Secure Data Path service not available\n");
 
-> Thanks for the updates. I've further improved the changelog (see
-> attached below), and have tentatively applied it to
-> tip:x86/alternatives.
->
+Rather than an error message we should just use pr_info().
 
-Thanks Ingo !
+-Sumit
+
+> +
+>  	return 0;
+> -err:
+> -	pool->ops->destroy_pool(pool);
+> -	return rc;
+>  }
+>  
+>  static int optee_probe(struct platform_device *pdev)
+> -- 
+> 2.43.0
+> 
 
