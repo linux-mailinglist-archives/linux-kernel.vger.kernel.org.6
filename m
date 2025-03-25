@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-574939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85133A6EBC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:38:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09430A6EBC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16DB51895A12
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33CDE16BBEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B34A257459;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194462586C1;
 	Tue, 25 Mar 2025 08:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jap/rfEr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3PKcnlHb"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HB7IG2oD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c6OzyDsE"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D0525742B;
-	Tue, 25 Mar 2025 08:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C35925743E;
+	Tue, 25 Mar 2025 08:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742891714; cv=none; b=tz3IJ8AAtBJQn9sa/H8l4dqw3Q178wJt1Wo7aukiAlXGF3gnhyuBXlkAvfT7QyO5ndrI3ar7oEHgzpifgwDHd0XmYjEDSy7b+IBxbX28+ZUyxY6FAJAPghemyRuIWwjHco9M/d+GxVOWoW57OwkDwO3Dj7WViX4WsuEsNoQFTPs=
+	t=1742891714; cv=none; b=tcrYAn1vToEDBX+L2UMHcehtei1lxvWY26Cms4km/pxtgf8NxGUakjOq6000WjBQ4kOtNvQRumBGI3VVw8qMcs/pH/snflriu/pC8EejTmbNE0CYzwyWHE5osPifk3ZRQC9hAwQ7Wl+1NtyWCjDgmVxryyMFe7+ngyNKN4pyEKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742891714; c=relaxed/simple;
-	bh=fceMNrnCyVTdhgMWzQGlXiSceAqqEgdwtlpqsVQewL8=;
+	bh=HMHKKhxbHkT74qaSJ/2EQbHMFK31T+JYdwQXFALm0+A=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LGr01glzwH5SDQo8gRtb7SiEsVbF6CWAGrpQxqdpdqZwcIzSMiMkI6pEyJlpiaNkulSCKeUmXq+lRVPgREv4hksLrE6qNgfJxgT8KJCUQ0eMPXqLIdt1K4G6l0Q6M7ZjFX9fP9tOiz4fQnn09PnDuxKKK572+bmpQKP4bV1t+/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jap/rfEr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3PKcnlHb; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=VnWY7kaa5fRA7e0TIe4uLQRgazaQSv62Z5Xv08GceiFxl58V8HnSlOmcBS3uuxvfetooSgCkWdKE+NHWTB9nXxqaIb0LoSkNIK3WCLZIkNBdvBwjRB2CKsjIbmLilkESaksLodoW9JSrn5mX87j26VKsCumfIYTqE8pQ4D3ngnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HB7IG2oD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c6OzyDsE; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 08:35:09 -0000
+Date: Tue, 25 Mar 2025 08:35:10 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1742891710;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LVR5F/0mBWtxIm81U9ictH4C4UGLg8a13dlwExx+qBM=;
-	b=jap/rfErnqIDiwqbqimplN47KiMXZQGh724HI7sdGCyfdHLKpT4C7zyOB8b/kCc+i/VdqZ
-	kJK8Yiek4GnLwDkm8QHvHTb9MuPXqFngZwHXDfBBdxfLGJXvHyQNVvafLZN5fcu+iOWE7B
-	EvAgs1W7bh6Z88ndbYp5ZbXpp9Vx/EamK5oByzp+jCmbO4FS+mJwhDE5pkyLX86Z2svmD2
-	tfkHUTA4roxxEpFa6dxlOLid12Vm26Jqr41YJzWf1bLFxpIsa5vWRiW7lRXBgXEbLeNcZy
-	nnn7dYL4O8eq9nI83VcLu0Y2hAKr5a9YigX82VrlUXSYbHAGv3P/mXmYTF9yew==
+	bh=w65NSURQPqlLPTKxR/K2kyZiY2P7rh2rmzQaKoqFUHk=;
+	b=HB7IG2oDTrN/r47fgDys28SLpIU3J5dNAGrB85bWHY3oRovl8Z6AnWYtS/qeevS8JWSX6X
+	ILF757LY4A6C6Yqs2m8d/VAxxM7j+kjyHlEJexLwrfySdZCvSt0sd6Lwkw0+f3HxLHYhtf
+	HrNdzmzapZPdfUQWyzKp/VPqKDLQBAOJOtjtxcUpc5OrFfHlvftQety0EJv8L6aZFp3L8R
+	A8ISUb4Xt1K8+hO3v/jRH+2J7PKW57kh0NktwOjvUbVo3ZKAeb7wxntrecQVnczcqSJRpz
+	mZ5XA/D0oKV4q8Cpig6kabMRP2VZ7PPzo6NcbXYVBMQj3QqhlP/Ub2RdVTKpow==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1742891710;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,30 +52,29 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LVR5F/0mBWtxIm81U9ictH4C4UGLg8a13dlwExx+qBM=;
-	b=3PKcnlHbM0shFAjZF9hvmTDfsKlPD8+hrqW4SDkaGBFafwvdYjYmtpi1TBQOjsZ8tZDEjg
-	SUdY91TTWl1Pf1Dw==
+	bh=w65NSURQPqlLPTKxR/K2kyZiY2P7rh2rmzQaKoqFUHk=;
+	b=c6OzyDsEeWZumFMlbaGq+0PbWVSubEtY7y/TixSlBAFUUw+0b7NeUdEKG9JbDHARiwv1uO
+	6PczuO7+wVKRW6BQ==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/urgent] objtool: Fix X86_FEATURE_SMAP alternative handling
-Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>,
+Subject: [tip: objtool/urgent] objtool: Ignore entire functions rather than
+ instructions
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <de0621ca242130156a55d5d74fed86994dfa4c9c.1742852846.git.jpoimboe@kernel.org>
+ <4af13376567f83331a9372ae2bb25e11a3d0f055.1742852846.git.jpoimboe@kernel.org>
 References:
- <de0621ca242130156a55d5d74fed86994dfa4c9c.1742852846.git.jpoimboe@kernel.org>
+ <4af13376567f83331a9372ae2bb25e11a3d0f055.1742852846.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174289170972.14745.3057944293646099727.tip-bot2@tip-bot2>
+Message-ID: <174289171028.14745.16603362410029596951.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -85,425 +84,177 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/urgent branch of tip:
 
-Commit-ID:     1154bbd326de4453858cf78cf29420888b3ffd52
-Gitweb:        https://git.kernel.org/tip/1154bbd326de4453858cf78cf29420888b3ffd52
+Commit-ID:     c84301d706c5456b1460439b2987a0f0b6362a82
+Gitweb:        https://git.kernel.org/tip/c84301d706c5456b1460439b2987a0f0b6362a82
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Mon, 24 Mar 2025 14:55:54 -07:00
+AuthorDate:    Mon, 24 Mar 2025 14:55:53 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 09:20:26 +01:00
+CommitterDate: Tue, 25 Mar 2025 09:20:25 +01:00
 
-objtool: Fix X86_FEATURE_SMAP alternative handling
+objtool: Ignore entire functions rather than instructions
 
-For X86_FEATURE_SMAP alternatives which replace NOP with STAC or CLAC,
-uaccess validation skips the NOP branch to avoid following impossible
-code paths, e.g. where a STAC would be patched but a CLAC wouldn't.
+STACK_FRAME_NON_STANDARD applies to functions.  Use a function-specific
+ignore attribute in preparation for getting rid of insn->ignore.
 
-However, it's not safe to assume an X86_FEATURE_SMAP alternative is
-patching STAC/CLAC.  There can be other alternatives, like
-static_cpu_has(), where both branches need to be validated.
-
-Fix that by repurposing ANNOTATE_IGNORE_ALTERNATIVE for skipping either
-original instructions or new ones.  This is a more generic approach
-which enables the removal of the feature checking hacks and the
-insn->ignore bit.
-
-Fixes the following warnings:
-
-  arch/x86/mm/fault.o: warning: objtool: do_user_addr_fault+0x8ec: __stack_chk_fail() missing __noreturn in .c/.h or NORETURN() in noreturns.h
-  arch/x86/mm/fault.o: warning: objtool: do_user_addr_fault+0x8f1: unreachable instruction
-
-[ mingo: Fix up conflicts with recent x86 changes. ]
-
-Fixes: ea24213d8088 ("objtool: Add UACCESS validation")
-Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/de0621ca242130156a55d5d74fed86994dfa4c9c.1742852846.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202503181736.zkZUBv4N-lkp@intel.com/
+Link: https://lore.kernel.org/r/4af13376567f83331a9372ae2bb25e11a3d0f055.1742852846.git.jpoimboe@kernel.org
 ---
- arch/x86/include/asm/arch_hweight.h     |  6 ++--
- arch/x86/include/asm/smap.h             | 23 +++++++++-----
- arch/x86/include/asm/xen/hypercall.h    |  6 +---
- tools/objtool/arch/x86/special.c        | 33 +--------------------
- tools/objtool/check.c                   | 39 ++++++------------------
- tools/objtool/include/objtool/check.h   |  3 +-
- tools/objtool/include/objtool/special.h |  4 +--
- tools/objtool/special.c                 | 12 +------
- 8 files changed, 37 insertions(+), 89 deletions(-)
+ tools/objtool/check.c               | 35 ++++++++++++++--------------
+ tools/objtool/include/objtool/elf.h |  1 +-
+ 2 files changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-index b5982b9..cbc6157 100644
---- a/arch/x86/include/asm/arch_hweight.h
-+++ b/arch/x86/include/asm/arch_hweight.h
-@@ -16,7 +16,8 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
- {
- 	unsigned int res;
- 
--	asm_inline (ALTERNATIVE("call __sw_hweight32",
-+	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
-+				"call __sw_hweight32",
- 				"popcntl %[val], %[cnt]", X86_FEATURE_POPCNT)
- 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
- 			 : [val] REG_IN (w));
-@@ -45,7 +46,8 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
- {
- 	unsigned long res;
- 
--	asm_inline (ALTERNATIVE("call __sw_hweight64",
-+	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
-+				"call __sw_hweight64",
- 				"popcntq %[val], %[cnt]", X86_FEATURE_POPCNT)
- 			 : [cnt] "=" REG_OUT (res), ASM_CALL_CONSTRAINT
- 			 : [val] REG_IN (w));
-diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
-index daea94c..55a5e65 100644
---- a/arch/x86/include/asm/smap.h
-+++ b/arch/x86/include/asm/smap.h
-@@ -16,23 +16,23 @@
- #ifdef __ASSEMBLER__
- 
- #define ASM_CLAC \
--	ALTERNATIVE "", "clac", X86_FEATURE_SMAP
-+	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "clac", X86_FEATURE_SMAP
- 
- #define ASM_STAC \
--	ALTERNATIVE "", "stac", X86_FEATURE_SMAP
-+	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "stac", X86_FEATURE_SMAP
- 
- #else /* __ASSEMBLER__ */
- 
- static __always_inline void clac(void)
- {
- 	/* Note: a barrier is implicit in alternative() */
--	alternative("", "clac", X86_FEATURE_SMAP);
-+	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP);
- }
- 
- static __always_inline void stac(void)
- {
- 	/* Note: a barrier is implicit in alternative() */
--	alternative("", "stac", X86_FEATURE_SMAP);
-+	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP);
- }
- 
- static __always_inline unsigned long smap_save(void)
-@@ -40,7 +40,8 @@ static __always_inline unsigned long smap_save(void)
- 	unsigned long flags;
- 
- 	asm volatile ("# smap_save\n\t"
--		      ALTERNATIVE("", "pushf; pop %0; " "clac" "\n\t",
-+		      ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
-+				  "", "pushf; pop %0; clac",
- 				  X86_FEATURE_SMAP)
- 		      : "=rm" (flags) : : "memory", "cc");
- 
-@@ -50,16 +51,22 @@ static __always_inline unsigned long smap_save(void)
- static __always_inline void smap_restore(unsigned long flags)
- {
- 	asm volatile ("# smap_restore\n\t"
--		      ALTERNATIVE("", "push %0; popf\n\t",
-+		      ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
-+				  "", "push %0; popf",
- 				  X86_FEATURE_SMAP)
- 		      : : "g" (flags) : "memory", "cc");
- }
- 
- /* These macros can be used in asm() statements */
- #define ASM_CLAC \
--	ALTERNATIVE("", "clac", X86_FEATURE_SMAP)
-+	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP)
- #define ASM_STAC \
--	ALTERNATIVE("", "stac", X86_FEATURE_SMAP)
-+	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP)
-+
-+#define ASM_CLAC_UNSAFE \
-+	ALTERNATIVE("", ANNOTATE_IGNORE_ALTERNATIVE "clac", X86_FEATURE_SMAP)
-+#define ASM_STAC_UNSAFE \
-+	ALTERNATIVE("", ANNOTATE_IGNORE_ALTERNATIVE "stac", X86_FEATURE_SMAP)
- 
- #endif /* __ASSEMBLER__ */
- 
-diff --git a/arch/x86/include/asm/xen/hypercall.h b/arch/x86/include/asm/xen/hypercall.h
-index 97771b9..59a62c3 100644
---- a/arch/x86/include/asm/xen/hypercall.h
-+++ b/arch/x86/include/asm/xen/hypercall.h
-@@ -231,14 +231,12 @@ static __always_inline void __xen_stac(void)
- 	 * Suppress objtool seeing the STAC/CLAC and getting confused about it
- 	 * calling random code with AC=1.
- 	 */
--	asm volatile(ANNOTATE_IGNORE_ALTERNATIVE
--		     ASM_STAC ::: "memory", "flags");
-+	asm volatile(ASM_STAC_UNSAFE ::: "memory", "flags");
- }
- 
- static __always_inline void __xen_clac(void)
- {
--	asm volatile(ANNOTATE_IGNORE_ALTERNATIVE
--		     ASM_CLAC ::: "memory", "flags");
-+	asm volatile(ASM_CLAC_UNSAFE ::: "memory", "flags");
- }
- 
- static inline long
-diff --git a/tools/objtool/arch/x86/special.c b/tools/objtool/arch/x86/special.c
-index 5f46d4e..403e587 100644
---- a/tools/objtool/arch/x86/special.c
-+++ b/tools/objtool/arch/x86/special.c
-@@ -5,10 +5,7 @@
- #include <objtool/builtin.h>
- #include <objtool/warn.h>
- 
--#define X86_FEATURE_POPCNT (4 * 32 + 23)
--#define X86_FEATURE_SMAP   (9 * 32 + 20)
--
--void arch_handle_alternative(unsigned short feature, struct special_alt *alt)
-+void arch_handle_alternative(struct special_alt *alt)
- {
- 	static struct special_alt *group, *prev;
- 
-@@ -32,34 +29,6 @@ void arch_handle_alternative(unsigned short feature, struct special_alt *alt)
- 	} else group = alt;
- 
- 	prev = alt;
--
--	switch (feature) {
--	case X86_FEATURE_SMAP:
--		/*
--		 * If UACCESS validation is enabled; force that alternative;
--		 * otherwise force it the other way.
--		 *
--		 * What we want to avoid is having both the original and the
--		 * alternative code flow at the same time, in that case we can
--		 * find paths that see the STAC but take the NOP instead of
--		 * CLAC and the other way around.
--		 */
--		if (opts.uaccess)
--			alt->skip_orig = true;
--		else
--			alt->skip_alt = true;
--		break;
--	case X86_FEATURE_POPCNT:
--		/*
--		 * It has been requested that we don't validate the !POPCNT
--		 * feature path which is a "very very small percentage of
--		 * machines".
--		 */
--		alt->skip_orig = true;
--		break;
--	default:
--		break;
--	}
- }
- 
- bool arch_support_alt_relocation(struct special_alt *special_alt,
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index f465020..b2f6a7f 100644
+index dae17ed..f465020 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -25,7 +25,6 @@
- struct alternative {
- 	struct alternative *next;
- 	struct instruction *insn;
--	bool skip_orig;
- };
- 
- static unsigned long nr_cfi, nr_cfi_reused, nr_cfi_cache;
-@@ -1696,6 +1695,7 @@ static int handle_group_alt(struct objtool_file *file,
- 		orig_alt_group->first_insn = orig_insn;
- 		orig_alt_group->last_insn = last_orig_insn;
- 		orig_alt_group->nop = NULL;
-+		orig_alt_group->ignore = orig_insn->ignore_alts;
- 	} else {
- 		if (orig_alt_group->last_insn->offset + orig_alt_group->last_insn->len -
- 		    orig_alt_group->first_insn->offset != special_alt->orig_len) {
-@@ -1735,7 +1735,6 @@ static int handle_group_alt(struct objtool_file *file,
- 		nop->type = INSN_NOP;
- 		nop->sym = orig_insn->sym;
- 		nop->alt_group = new_alt_group;
--		nop->ignore = orig_insn->ignore_alts;
- 	}
- 
- 	if (!special_alt->new_len) {
-@@ -1752,7 +1751,6 @@ static int handle_group_alt(struct objtool_file *file,
- 
- 		last_new_insn = insn;
- 
--		insn->ignore = orig_insn->ignore_alts;
- 		insn->sym = orig_insn->sym;
- 		insn->alt_group = new_alt_group;
- 
-@@ -1799,6 +1797,7 @@ end:
- 	new_alt_group->first_insn = *new_insn;
- 	new_alt_group->last_insn = last_new_insn;
- 	new_alt_group->nop = nop;
-+	new_alt_group->ignore = (*new_insn)->ignore_alts;
- 	new_alt_group->cfi = orig_alt_group->cfi;
- 	return 0;
- }
-@@ -1916,8 +1915,6 @@ static int add_special_section_alts(struct objtool_file *file)
- 		}
- 
- 		alt->insn = new_insn;
--		alt->skip_orig = special_alt->skip_orig;
--		orig_insn->ignore_alts |= special_alt->skip_alt;
- 		alt->next = orig_insn->alts;
- 		orig_insn->alts = alt;
- 
-@@ -2295,6 +2292,8 @@ static int read_annotate(struct objtool_file *file,
- static int __annotate_early(struct objtool_file *file, int type, struct instruction *insn)
+@@ -981,7 +981,6 @@ static int create_direct_call_sections(struct objtool_file *file)
+  */
+ static void add_ignores(struct objtool_file *file)
  {
- 	switch (type) {
-+
-+	/* Must be before add_special_section_alts() */
- 	case ANNOTYPE_IGNORE_ALTS:
- 		insn->ignore_alts = true;
- 		break;
-@@ -3488,11 +3487,6 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			return 1;
+-	struct instruction *insn;
+ 	struct section *rsec;
+ 	struct symbol *func;
+ 	struct reloc *reloc;
+@@ -1008,8 +1007,7 @@ static void add_ignores(struct objtool_file *file)
+ 			continue;
  		}
  
--		if (func && insn->ignore) {
--			WARN_INSN(insn, "BUG: why am I validating an ignored function?");
--			return 1;
--		}
--
- 		visited = VISITED_BRANCH << state.uaccess;
- 		if (insn->visited & VISITED_BRANCH_MASK) {
- 			if (!insn->hint && !insn_cfi_match(insn, &state.cfi))
-@@ -3564,24 +3558,19 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 		if (propagate_alt_cfi(file, insn))
- 			return 1;
+-		func_for_each_insn(file, func, insn)
+-			insn->ignore = true;
++		func->ignore = true;
+ 	}
+ }
  
--		if (!insn->ignore_alts && insn->alts) {
--			bool skip_orig = false;
--
-+		if (insn->alts) {
- 			for (alt = insn->alts; alt; alt = alt->next) {
--				if (alt->skip_orig)
--					skip_orig = true;
--
- 				ret = validate_branch(file, func, alt->insn, state);
- 				if (ret) {
- 					BT_INSN(insn, "(alt)");
- 					return ret;
- 				}
+@@ -1612,6 +1610,7 @@ static int add_call_destinations(struct objtool_file *file)
+ 	struct reloc *reloc;
+ 
+ 	for_each_insn(file, insn) {
++		struct symbol *func = insn_func(insn);
+ 		if (insn->type != INSN_CALL)
+ 			continue;
+ 
+@@ -1622,7 +1621,7 @@ static int add_call_destinations(struct objtool_file *file)
+ 
+ 			add_call_dest(file, insn, dest, false);
+ 
+-			if (insn->ignore)
++			if (func && func->ignore)
+ 				continue;
+ 
+ 			if (!insn_call_dest(insn)) {
+@@ -1630,7 +1629,7 @@ static int add_call_destinations(struct objtool_file *file)
+ 				return -1;
  			}
--
--			if (skip_orig)
--				return 0;
- 		}
  
-+		if (insn->alt_group && insn->alt_group->ignore)
-+			return 0;
-+
- 		if (handle_insn_ops(insn, next_insn, &state))
- 			return 1;
- 
-@@ -3768,23 +3757,15 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 
- 		insn->visited |= VISITED_UNRET;
- 
--		if (!insn->ignore_alts && insn->alts) {
-+		if (insn->alts) {
- 			struct alternative *alt;
--			bool skip_orig = false;
--
- 			for (alt = insn->alts; alt; alt = alt->next) {
--				if (alt->skip_orig)
--					skip_orig = true;
--
- 				ret = validate_unret(file, alt->insn);
- 				if (ret) {
- 					BT_INSN(insn, "(alt)");
- 					return ret;
- 				}
+-			if (insn_func(insn) && insn_call_dest(insn)->type != STT_FUNC) {
++			if (func && insn_call_dest(insn)->type != STT_FUNC) {
+ 				WARN_INSN(insn, "unsupported call to non-function");
+ 				return -1;
  			}
--
--			if (skip_orig)
--				return 0;
- 		}
+@@ -3470,6 +3469,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 	u8 visited;
+ 	int ret;
  
- 		switch (insn->type) {
-@@ -3935,7 +3916,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
++	if (func && func->ignore)
++		return 0;
++
+ 	sec = insn->sec;
+ 
+ 	while (1) {
+@@ -3715,7 +3717,7 @@ static int validate_unwind_hint(struct objtool_file *file,
+ 				  struct instruction *insn,
+ 				  struct insn_state *state)
+ {
+-	if (insn->hint && !insn->visited && !insn->ignore) {
++	if (insn->hint && !insn->visited) {
+ 		int ret = validate_branch(file, insn_func(insn), insn, *state);
+ 		if (ret)
+ 			BT_INSN(insn, "<=== (hint)");
+@@ -3929,10 +3931,11 @@ static bool is_ubsan_insn(struct instruction *insn)
+ 
+ static bool ignore_unreachable_insn(struct objtool_file *file, struct instruction *insn)
+ {
+-	int i;
++	struct symbol *func = insn_func(insn);
  	struct instruction *prev_insn;
- 	int i;
++	int i;
  
--	if (insn->ignore || insn->type == INSN_NOP || insn->type == INSN_TRAP || (func && func->ignore))
-+	if (insn->type == INSN_NOP || insn->type == INSN_TRAP || (func && func->ignore))
+-	if (insn->ignore || insn->type == INSN_NOP || insn->type == INSN_TRAP)
++	if (insn->ignore || insn->type == INSN_NOP || insn->type == INSN_TRAP || (func && func->ignore))
  		return true;
  
  	/*
-diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/objtool/check.h
-index e1cd13c..00fb745 100644
---- a/tools/objtool/include/objtool/check.h
-+++ b/tools/objtool/include/objtool/check.h
-@@ -34,6 +34,8 @@ struct alt_group {
- 	 * This is shared with the other alt_groups in the same alternative.
+@@ -3951,7 +3954,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
+ 	 * In this case we'll find a piece of code (whole function) that is not
+ 	 * covered by a !section symbol. Ignore them.
  	 */
- 	struct cfi_state **cfi;
-+
-+	bool ignore;
- };
+-	if (opts.link && !insn_func(insn)) {
++	if (opts.link && !func) {
+ 		int size = find_symbol_hole_containing(insn->sec, insn->offset);
+ 		unsigned long end = insn->offset + size;
  
- #define INSN_CHUNK_BITS		8
-@@ -54,7 +56,6 @@ struct instruction {
+@@ -3977,19 +3980,17 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
+ 			 */
+ 			if (insn->jump_dest && insn_func(insn->jump_dest) &&
+ 			    strstr(insn_func(insn->jump_dest)->name, ".cold")) {
+-				struct instruction *dest = insn->jump_dest;
+-				func_for_each_insn(file, insn_func(dest), dest)
+-					dest->ignore = true;
++				insn_func(insn->jump_dest)->ignore = true;
+ 			}
+ 		}
  
- 	u32 idx			: INSN_CHUNK_BITS,
- 	    dead_end		: 1,
--	    ignore		: 1,
- 	    ignore_alts		: 1,
- 	    hint		: 1,
- 	    save		: 1,
-diff --git a/tools/objtool/include/objtool/special.h b/tools/objtool/include/objtool/special.h
-index e049679..72d09c0 100644
---- a/tools/objtool/include/objtool/special.h
-+++ b/tools/objtool/include/objtool/special.h
-@@ -16,8 +16,6 @@ struct special_alt {
- 	struct list_head list;
+ 		return false;
+ 	}
  
- 	bool group;
--	bool skip_orig;
--	bool skip_alt;
- 	bool jump_or_nop;
- 	u8 key_addend;
+-	if (!insn_func(insn))
++	if (!func)
+ 		return false;
  
-@@ -32,7 +30,7 @@ struct special_alt {
+-	if (insn_func(insn)->static_call_tramp)
++	if (func->static_call_tramp)
+ 		return true;
  
- int special_get_alts(struct elf *elf, struct list_head *alts);
+ 	/*
+@@ -4020,7 +4021,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
  
--void arch_handle_alternative(unsigned short feature, struct special_alt *alt);
-+void arch_handle_alternative(struct special_alt *alt);
+ 		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
+ 			if (insn->jump_dest &&
+-			    insn_func(insn->jump_dest) == insn_func(insn)) {
++			    insn_func(insn->jump_dest) == func) {
+ 				insn = insn->jump_dest;
+ 				continue;
+ 			}
+@@ -4028,7 +4029,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
+ 			break;
+ 		}
  
- bool arch_support_alt_relocation(struct special_alt *special_alt,
- 				 struct instruction *insn,
-diff --git a/tools/objtool/special.c b/tools/objtool/special.c
-index 097a69d..6cd7b1b 100644
---- a/tools/objtool/special.c
-+++ b/tools/objtool/special.c
-@@ -54,7 +54,7 @@ static const struct special_entry entries[] = {
- 	{},
- };
+-		if (insn->offset + insn->len >= insn_func(insn)->offset + insn_func(insn)->len)
++		if (insn->offset + insn->len >= func->offset + func->len)
+ 			break;
  
--void __weak arch_handle_alternative(unsigned short feature, struct special_alt *alt)
-+void __weak arch_handle_alternative(struct special_alt *alt)
- {
- }
+ 		insn = next_insn_same_sec(file, insn);
+@@ -4120,7 +4121,7 @@ static int validate_symbol(struct objtool_file *file, struct section *sec,
+ 		return 0;
  
-@@ -92,15 +92,7 @@ static int get_alt_entry(struct elf *elf, const struct special_entry *entry,
+ 	insn = find_insn(file, sec, sym->offset);
+-	if (!insn || insn->ignore || insn->visited)
++	if (!insn || insn->visited)
+ 		return 0;
  
- 	reloc_to_sec_off(orig_reloc, &alt->orig_sec, &alt->orig_off);
- 
--	if (entry->feature) {
--		unsigned short feature;
--
--		feature = bswap_if_needed(elf,
--					  *(unsigned short *)(sec->data->d_buf +
--							      offset +
--							      entry->feature));
--		arch_handle_alternative(feature, alt);
--	}
-+	arch_handle_alternative(alt);
- 
- 	if (!entry->group || alt->new_len) {
- 		new_reloc = find_reloc_by_dest(elf, sec, offset + entry->new);
+ 	state->uaccess = sym->uaccess_safe;
+diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objtool/elf.h
+index 4edc957..eba0439 100644
+--- a/tools/objtool/include/objtool/elf.h
++++ b/tools/objtool/include/objtool/elf.h
+@@ -68,6 +68,7 @@ struct symbol {
+ 	u8 embedded_insn     : 1;
+ 	u8 local_label       : 1;
+ 	u8 frame_pointer     : 1;
++	u8 ignore	     : 1;
+ 	u8 warnings	     : 2;
+ 	struct list_head pv_target;
+ 	struct reloc *relocs;
 
