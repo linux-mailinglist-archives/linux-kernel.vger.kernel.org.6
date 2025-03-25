@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-574859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E5DA6EAD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:47:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27214A6EAD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7773716EAC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:47:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942543B1EA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC8719D8A3;
-	Tue, 25 Mar 2025 07:47:19 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1F6253B6D;
+	Tue, 25 Mar 2025 07:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjUpSktb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D872F3B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D328460;
+	Tue, 25 Mar 2025 07:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742888838; cv=none; b=PgpAOzKns74PRVsifo/iShARzA7zh1pWVqu3b4sv8Tctv2o1H4+WgwKToL0TaThAPE8FZhfrUd+Pq4WAHBgdQW2O9CL4aZhAQPE7Kw0nVEp8Ioi3iT8HeUCtI24yIVN1uYYehXmnSCFvDlKw6SkUgC0LKpXI8ckqIhvusJAU0iw=
+	t=1742889006; cv=none; b=Q/F5ypSbomNE+TVecq8IgZPq42VGnba2Uo1btm8OWee0ilpRtz780QV+DGFujW9BAOCAAS+HF3uht6WL8BjGHYMRNyFQ0vHunXHgr011HpCp27oo/Pl86glUiKDEm5NYiBYvTgajYe128eFngmBsSYM3p0gYC9UW4hTuWPB0e+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742888838; c=relaxed/simple;
-	bh=AWAy+MhAcRApNnHLYuwTVxFiaH4IigRguFa6qkwG8JI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/F2nSSec8AM5mr8JSiAGOM9WcrNQSg5tHalTytWhpaoQJD1TNYHehqFScdSqqoiPonJmXw3PDf0/l5JCDNYsCEVWgPZg6v6HrZbOg0XdKhSCMYk0uFH5L4MdecDx6gJKQdpJS5tHgYyRu+/JQAghm1leSL35T+fGbWUrIXgC4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201621.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202503251546589330;
-        Tue, 25 Mar 2025 15:46:58 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201621.home.langchao.com (10.100.2.21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Mar 2025 15:46:57 +0800
-Received: from locahost.localdomain.com (10.94.16.22) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Mar 2025 15:46:56 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	"Charles Han" <hanchunchao@inspur.com>
-Subject: [PATCH] drm/bridge: dw-hdmi-cec: fix inconsistent indenting warning
-Date: Tue, 25 Mar 2025 15:46:54 +0800
-Message-ID: <20250325074654.3669-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742889006; c=relaxed/simple;
+	bh=gl7aw1gXR43jv6B8C8DV/bzy1B8aMUYob8A9EmYJ0dI=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
+	 In-Reply-To; b=pL1KHKT6fXPMgs034ab7bfq+GadCsYwHcdJCT736VCVs2BAHA4PlPlRR96igu+0U7znFyvxsHKzVcpaYNAWAbLY5EAP5spts/Uk7MREIr6114ES486CRG7PydR3vWObuUSmw9/9FBBAmdg3JevDl/3+ImF7nDDFKleKaV8g4HiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjUpSktb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDB1AC4CEE4;
+	Tue, 25 Mar 2025 07:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742889006;
+	bh=gl7aw1gXR43jv6B8C8DV/bzy1B8aMUYob8A9EmYJ0dI=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
+	b=gjUpSktbafio8QcZYsqZxOSgzLTrdgCWMi+nnIqkRovKENgOHSdJcxt7Fcp232cO9
+	 Go0SzbrvCB7Dvom6tTe7lbLJssaQKa4U1+H6HFwEHcXFjjzulnpnv06RnAFd4d+Sqm
+	 WDVCS6Bg8u+lSbcViC0F7oqauQMkG6YjCkb7tGHju3Fose+a8XtdpV4E8ih5eo2Ne+
+	 NsSEfqV2F/kGdiTB1FDdMOsFLxJq+Don13mwr6jWAqgKmpf3rodR5pT75KVs0STX32
+	 Ahq/iyqClRturu+LvUEx4i8a9BMQ86mIa9/EONx8v73mOWQgpUAHC6edo9FUd7NM32
+	 TB/VPu7WEWogg==
+Content-Type: multipart/signed;
+ boundary=b5386466c50b7c8f35d2b14e7321876c2e3b218f6e31ca8e0fea76d5f944;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 25 Mar 2025 08:50:02 +0100
+Message-Id: <D8P6L65D69PS.1VQKHJJA8TNL4@kernel.org>
+Subject: Re: [PATCH v5 06/11] gpio: regmap: Allow to allocate regmap-irq
+ device
+Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>, "Lee Jones"
+ <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
+ <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.16.0
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-6-fb20baf97da0@bootlin.com>
+ <D8K23TCWC5TO.3T1YPKL3G0OY5@kernel.org>
+ <D8KYF2DZOBT4.1337YU51E0ZKH@bootlin.com>
+In-Reply-To: <D8KYF2DZOBT4.1337YU51E0ZKH@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 20253251546589baccb332c493b841dce48370d458980
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c:336 dw_hdmi_cec_suspend() warn: inconsistent indenting
+--b5386466c50b7c8f35d2b14e7321876c2e3b218f6e31ca8e0fea76d5f944
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
-index 9549dabde941..9d5bded54e8b 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
-@@ -333,9 +333,9 @@ static int dw_hdmi_cec_suspend(struct device *dev)
- 	struct dw_hdmi_cec *cec = dev_get_drvdata(dev);
- 
- 	/* store interrupt status/mask registers */
--	 cec->regs_polarity = dw_hdmi_read(cec, HDMI_CEC_POLARITY);
--	 cec->regs_mask = dw_hdmi_read(cec, HDMI_CEC_MASK);
--	 cec->regs_mute_stat0 = dw_hdmi_read(cec, HDMI_IH_MUTE_CEC_STAT0);
-+	cec->regs_polarity = dw_hdmi_read(cec, HDMI_CEC_POLARITY);
-+	cec->regs_mask = dw_hdmi_read(cec, HDMI_CEC_MASK);
-+	cec->regs_mute_stat0 = dw_hdmi_read(cec, HDMI_IH_MUTE_CEC_STAT0);
- 
- 	return 0;
- }
--- 
-2.43.0
+> > > +#ifdef CONFIG_GPIOLIB_IRQCHIP
+> >
+> > Why do we need this ifdef?
+> >
+>
+> Hum yes, on second thought we probably need to depend on
+> CONFIG_REGMAP_IRQ here.
 
+But then, you'd also require the regmap_irq support for chips that
+don't support IRQs at all. devm_regmap_add_irq_fwnode() seems to be
+missing a stub version.
+
+-michael
+
+--b5386466c50b7c8f35d2b14e7321876c2e3b218f6e31ca8e0fea76d5f944
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ+JgKhIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gQDgGAu0gZkp5tnVphjXMlX9N85/T1hedWo0sj
+TAci3j5/eirJaHtI2qhUzGDVOpMtgKQjAYCkk3nqGplW+nghtvFBMgj0mKsadvwV
+or/OTN6lsHFE7+kc8CUvHgHMA9imk5i/txQ=
+=4ggC
+-----END PGP SIGNATURE-----
+
+--b5386466c50b7c8f35d2b14e7321876c2e3b218f6e31ca8e0fea76d5f944--
 
