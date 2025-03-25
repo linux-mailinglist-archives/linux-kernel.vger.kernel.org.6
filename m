@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-575391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D7A7021A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:37:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F67A70218
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288353BFDF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:21:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D68847336
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7552025D52C;
-	Tue, 25 Mar 2025 13:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BBA266F0F;
+	Tue, 25 Mar 2025 13:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYKwsjYa"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="nZirLOuP"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1932580CC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8193019CC2E;
+	Tue, 25 Mar 2025 13:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908281; cv=none; b=I22mwZjfHqP2V0vSckngqIlBJ1K7sTI/YAmNS+CKQA4CbSSiZCHWD0WeCGWlEAMR1HyGkzvT9Th15jcTs52ftn6/qJq2WW+Y3dzXnb9za3w9XR6EnsolRpEmI3JJ41XrbP6gmEMSpsNKEy31uwD6dVFMpNEufOZgGBgHvYNop5I=
+	t=1742908298; cv=none; b=ZVefcnZE78PqcfAqhYOg8HPvQ+mLCatt+tmYce6j3jiDYndU2fm5O2RLpGLvmm7WSLifvzrbf1o9xUTjALSHPTqW0Ax8RHWji0Dg/MgW+jH5xaPlELEBPVZULzk85WAMTzVJuVryw92gVrfYygkeqZjlPuE01CviG6JCQP5dj0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908281; c=relaxed/simple;
-	bh=edJ4YRNsOE/0C0ggXJSB0i5UyziNkEAhkYdp6Koq6L4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KAGgMatdmT3sCUYfoHlKI+99gBksf+y75UcH1sLDn02FC8HG8b/U2gM9TqTMf0FAlRKqnXW92WL3eQNedP87BjWP3DdXFovRalhq4PkTh0ZqubrEZFUZJFEyzlm6finSK1SvUhPz3+OOUBtS5JOWMRCfdbx5Bnsx/PwJp9k+/Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYKwsjYa; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab78e6edb99so785305266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:11:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742908278; x=1743513078; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zxm3ckLosiHCJw//iFVWkvyQ4kCXQJFNmNppDxHYSU8=;
-        b=QYKwsjYauljhJKd4WWpRzwi3KgoyXFNJPBQDEvxhgQERtN0BGWybiwxR0+FNAEGfah
-         2eXQb4TSt2MYES1rn4+KZVaACRo64VGG8QP6ABviMzGBpIENvpoXF3HMUmcO8X+dx4gO
-         axGF4+K1BcLo5PPKXQUB7efh0jo543q4ako0EWfmlcBMDXKmjd8iODTMKLHjb5lu2oIl
-         JGHCL1CMkCcrYMjOLw9alEgMTAiFbdJq4Pn6bx7G792USh5iCM8IquSWwyZxClgQexMw
-         mS8NWC8zFkIAX+iWOktJwqjVtTWeTteUBRGyfcMtbT/9BFUQFG0P6sNKGow1vlmGTwC1
-         aiQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742908278; x=1743513078;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zxm3ckLosiHCJw//iFVWkvyQ4kCXQJFNmNppDxHYSU8=;
-        b=Vnyilhq6nzR3gwxeYiE+RjhwnbY1ofVEa4pN+9iIbf+6xN9b1AwZ7VYlNhY94UT4PF
-         IDj8Z64L4f43XA6puATJIyF38q0pxfr2PipJagYwF6s4K6Ef4L28ZQKtYNEHp12AVbxG
-         3IQGat9OUQRk/vOEAq/D0n1fj6pKSF9qJ9hjopr/puF5QOWXcnJvD4WB3QmwHkuXtw7r
-         JxbJZ5C8ZYFLc4WyfWn+vVBMTo8pPjnYgNP2nQS7MFJozEtPKO7DqgP/5Gri6u0hrA25
-         6iiSwS1bPOYIeS+RZCbfiiSW8eGJdutk2CqzCXPb4Ik1EezbDDV6WNABM1vjDyrdaJby
-         a8vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXoriOJTyaJ6ZatApzIClw9Qb/yTTFt1rkQXrfsMoYVDOeKcNPiLSY+MXCPCM4NPfIxrIjO1W1vJZxKsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvQX+O0ImqgDidmOEDlpSCpHFo67pQKBAtVDkhA0Qcy439J0l9
-	jXRbUPj2EQrBVLxmqQx4X1obdJmxLCpd/Qxv0c6XqU3iN59CwNMyn37j2FGO
-X-Gm-Gg: ASbGncv0eIHLCqSfr1Shder0ZatmxHTRrzWAhkvX6E+9AvOaH/GE8uVgTTlvXvkFWeD
-	5U82N+q8/8cyeKsKb88u5YI03jzwpX80Fff+jMEjbql5Es30tz6TJ88g9tsycf+m7IGsrvHpooD
-	43Ky4ZCfOPbe1lE282UyvBHLGjYPU9nw0BHc6haQhUw3xJTxjZPogFee1ZJL7eHKRTjZbOB3ahq
-	Ek1SvRvUEg70sFVAEW4EcIprBRmWZo9iAnDRSFVIT8mv+2Yg/22vxbPnKLAc/QGsjQqrWehm7DY
-	ajvRD/0echH47MgHNl46dAxzrO7R6RCklN2w5Ws3UXzsW7IVmg==
-X-Google-Smtp-Source: AGHT+IG35J5bN+CEAXSSLE8h4t/YPW+a8XkdcaJSWu2ijuFgpXQb9vgmpH546mPppv3DaCUfHTisYg==
-X-Received: by 2002:a17:907:ec8c:b0:ac3:84d5:a911 with SMTP id a640c23a62f3a-ac3f224dc86mr1660857566b.28.1742908278079;
-        Tue, 25 Mar 2025 06:11:18 -0700 (PDT)
-Received: from HP-650 ([105.112.117.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb658b4sm848739066b.118.2025.03.25.06.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 06:11:17 -0700 (PDT)
-Date: Tue, 25 Mar 2025 14:11:04 +0100
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	outreachy@lists.linux.dev, Julia Lawall <julia.lawall@inria.fr>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: simplify if-else block by removing
- unnecessary braces
-Message-ID: <Z+KraOo2DfmH5zMX@HP-650>
+	s=arc-20240116; t=1742908298; c=relaxed/simple;
+	bh=zQE7l7QJJRU50A1ezQBABnNaU4SfTHa6rs31LDY+qOg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=amBqwxPrnWI4tU/ge/oeQGBfiPjKXhad0U/cSTkI3NLz10DSvaw20uagLDgGomAMcKIyLI8AFoayecs9K7KGxntavih5q0BVxi8bBZRGfZb0z/SZPE4qgG6qrrbLovm4JyGpDSZ4DXVYoZchRwJeUnXK0wGJ5r+Pm32GVGL594E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=nZirLOuP; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=zQE7l7QJJRU50A1ezQBABnNaU4SfTHa6rs31LDY+qOg=;
+	t=1742908296; x=1744117896; b=nZirLOuPOmDB0Vn1mFA+HGegbqYCW0UQu4PMyBfmhJDu5Ye
+	vrGW7UASEFvXaXGVoU4eqcoXNd/2H3dn9k8gCKmHFAbQw1GHNpJ3h2acpGuHiYPbZLoNSyhX7aJYI
+	84er/hAXiAriQwuv2WH4wxtpADuf5swPcNrtoHIPpHwYobvD8bwbfvg4hD/xlq2yR3Xvva/D1YhFY
+	lKKVod8jtrdmpPVOqnfvMVcrDhrDxuTbccLARhYnTaZFa92OYlyxvbtLceFl2Z6+tu6v79i11iNTx
+	Z8AO+4Vh8xDe85kz6uz5KJfEhwtXWNExKmU1ccOhcKbWOYVJt5QzCHIWzOJcAs1w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tx440-000000057Rx-3jhN;
+	Tue, 25 Mar 2025 14:11:29 +0100
+Message-ID: <bfb7433131cb9aeebc75666f86a67a6c71521229.camel@sipsolutions.net>
+Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Rob Herring <robh@kernel.org>
+Cc: david@ixit.cz, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski	
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Mailing List	
+ <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Bianconi
+	 <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
+ =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller	 <jerome.pouiller@silabs.com>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Andy Gross <agross@kernel.org>, Mailing List	
+ <devicetree-spec@vger.kernel.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org, Janne Grunau
+	 <j@jannau.net>
+Date: Tue, 25 Mar 2025 14:11:27 +0100
+In-Reply-To: <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
+References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
+	 <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
+	 <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-malware-bazaar: not-scanned
 
-The if-else block contained braces around single statements, which are
-unnecessary according to the Linux kernel coding style.
+On Tue, 2025-03-25 at 08:02 -0500, Rob Herring wrote:
+> >=20
+> > I have no idea what tree this should go through, and you CC'ed enough
+> > people that I can't figure it out either ... I'll assume not wifi but D=
+T
+> > for now?
+>=20
+> Can you take it via wifi as the main target here is wifi bindings.
 
-Remove the redundant braces to improve code readability and maintain
-consistency with the rest of the codebase.
+I can do that, but I suppose it's 6.16 material at this point.
 
-Reported by checkpatch:
-
-WARNING: braces {} are not necessary for any arm of this statement
-
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index 0ed420f3d096..53d4c113b19c 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -988,11 +988,10 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
- 	if (is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac)) {
- 		addr = of_get_property(np, "local-mac-address", &len);
- 
--		if (addr && len == ETH_ALEN) {
-+		if (addr && len == ETH_ALEN)
- 			ether_addr_copy(mac_addr, addr);
--		} else {
-+		else
- 			eth_random_addr(mac_addr);
--		}
- 	}
- }
- 
--- 
-2.34.1
-
+johannes
 
