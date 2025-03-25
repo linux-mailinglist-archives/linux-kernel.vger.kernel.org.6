@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-575930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B75A708FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:27:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20FFA708FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D7E3B139B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED4B176709
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1CD199FC1;
-	Tue, 25 Mar 2025 18:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A04919B3EC;
+	Tue, 25 Mar 2025 18:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZREYlyoP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XgMYmo0h"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B783D2628C;
-	Tue, 25 Mar 2025 18:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D250190679;
+	Tue, 25 Mar 2025 18:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742927214; cv=none; b=klqUofUhKoke+xzRvlBi4qpkzTK4d9iOjHbrwp7apyygCk57m0zh3mucN2Fcf0x8lsJXoCrSZBoNoteD0oNEIKCpaDUUQlOU3t6weXJDSQc2q6DLxAX/fq+arTOVcLZRHlyZH+laZ+A5CKyEjDhM1Y5oEdHjz557IH0QOWrDPDw=
+	t=1742927230; cv=none; b=DkbRliGYeGgrqgp7EX+2pssRHrTqo4yaJXAvyhhgNVSRTcZihHNSiPwmSWvlUt0fd6St/ADhjhhyWIrYWbPSKrFmRjgE2Se8xu4Gb+VXNOdnhc+rDAz42bkkStcanE9HKH0O1ch+aOEaD81d9vQ75MTc1O2bM9qPSS77geUfoqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742927214; c=relaxed/simple;
-	bh=88qoTG3H46IgMwoA1IM/GJKrDTtHn6XY3LMhRv68fTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B+sx39jOn7t+iorujFv/kZn6xyIsYIajM666h/lDxEXSNKZobc/cMhkeGb+V48gWaZuMVvsnzIyWPpAeb4L8LjuXLIF1VmlXmcfDqUttf5/sSYzoFirgcDQ70U7mO3PDFr7UKm+BQIjhSgaZCzLzELpLE5JJH0ITpZYiGFm7rWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZREYlyoP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0580C4CEE4;
-	Tue, 25 Mar 2025 18:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742927214;
-	bh=88qoTG3H46IgMwoA1IM/GJKrDTtHn6XY3LMhRv68fTs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZREYlyoP1JSGTRYpZXFsCmfd07dG0TbX2NKIFv/R56lBnS/DsJsKnaiyN16IY4XXJ
-	 LTYMQ5synksA1YKP7iEyGU1yDpeW1y+PHvRzWtrnfHHC2So7vMaxAadl30GwmeICLn
-	 qABNSVh7NIh2PTNqpQ3cQYTOQiM6EDKjWbtzw0XA0CETrW79Sv5lMTYCSWzI4/wNTa
-	 sfSSSlyscvHD/YHvt58aimtBMu0zBT6aOTu4RTakPt4aCNYYmov1WpUXPx0g/HmFSQ
-	 AM61W5u4hUey7Oje/rXTpL7HyDaO8wasfly/masGjb8ZvnqwNYzrTeX/u+ZrcnV5gd
-	 0hAu6oe6S9tUg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.12 000/116] 6.12.21-rc1 review
-Date: Tue, 25 Mar 2025 19:26:41 +0100
-Message-ID: <20250325182641.55860-1-ojeda@kernel.org>
-In-Reply-To: <20250325122149.207086105@linuxfoundation.org>
-References: <20250325122149.207086105@linuxfoundation.org>
+	s=arc-20240116; t=1742927230; c=relaxed/simple;
+	bh=MjWup5n1Y5trpMsv1vexhoBZtWDRpfEikOGRd6DqwfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9KYw1EuDI/WmZH7SAK42iqxndqYqWyCess1r8cEk7ie4U0kpCv4t9d9b1DrZmgdhvADaT6LFTmo18uQJJDPSAn/CHXEmtV02qPn1/agIlLQ+60694dbWeGR8KKiTIIK9RnmVAKaAaHNlRx4Foi/9bp5c3iTxPd9cf77Dsca5tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XgMYmo0h; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=i/lk6UFZQKBshnKZupy3heVh6FuisIDENlkWeAHkEnI=; b=XgMYmo0hpYdF/F0D39118bm6Rp
+	jDXVSJOVPAYFhg5Poq4C7nV7R91plgMpSm6kIxyXGrtpUPGaAvhtXQgdnDHJDn0d+LGFXWWkXAczK
+	3rVYUm+T1rbYnnmTF4zz1AjD8NX1yc8NrkBTv9GuNuM9u8rGiuhSf7r7rY6GhjZEI6MUqxqqNW6Dt
+	gsrxfiRhrxBA7K2sHLSnYfqCUbnvK9omW6ftYa+b5YKDB1MlhzGlUuO7qhw6lNqOOX6AxEoUginKx
+	WPrRSpoWKUZMyWK8HMScNQt7LTHWcDsNfG6E51gIvRQAAF1xWhBNwajL+lppOVVlVWySOxg1Zq4AK
+	kemVmu1A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41044)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tx8zF-0005AJ-1Y;
+	Tue, 25 Mar 2025 18:26:53 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tx8zC-0003Wj-1H;
+	Tue, 25 Mar 2025 18:26:50 +0000
+Date: Tue, 25 Mar 2025 18:26:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Rengarajan.S@microchip.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, Thangaraj.S@microchip.com,
+	Woojung.Huh@microchip.com, pabeni@redhat.com,
+	o.rempel@pengutronix.de, edumazet@google.com, kuba@kernel.org,
+	phil@raspberrypi.org, kernel@pengutronix.de, horms@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, maxime.chevallier@bootlin.com
+Subject: Re: [PATCH net-next v5 2/6] net: usb: lan78xx: Convert to PHYlink
+ for improved PHY and MAC management
+Message-ID: <Z-L1ap2HNc7apxHd@shell.armlinux.org.uk>
+References: <20250319084952.419051-1-o.rempel@pengutronix.de>
+ <20250319084952.419051-3-o.rempel@pengutronix.de>
+ <5de15da31f71e1bed8782375b402bcb5df2eb63a.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5de15da31f71e1bed8782375b402bcb5df2eb63a.camel@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, 25 Mar 2025 08:21:27 -0400 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.21 release.
-> There are 116 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
-> Anything received after that time might be too late.
+On Tue, Mar 25, 2025 at 05:37:53PM +0000, Rengarajan.S@microchip.com wrote:
+> Hi Oleksji,
+> 
+> On Wed, 2025-03-19 at 09:49 +0100, Oleksij Rempel wrote:
+> >         udev = interface_to_usbdev(intf);
+> >         net = dev->net;
+> > 
+> > +       rtnl_lock();
+> > +       phylink_stop(dev->phylink);
+> > +       phylink_disconnect_phy(dev->phylink);
+> > +       rtnl_unlock();
+> > +
+> > +       netif_napi_del(&dev->napi);
+> > +
+> >         unregister_netdev(net);
+> > 
+> >         timer_shutdown_sync(&dev->stat_monitor);
+> >         set_bit(EVENT_DEV_DISCONNECT, &dev->flags);
+> >         cancel_delayed_work_sync(&dev->wq);
+> > 
+> > -       phydev = net->phydev;
+> > -
+> > -       phy_disconnect(net->phydev);
+> > -
+> > -       if (phy_is_pseudo_fixed_link(phydev)) {
+> > -               fixed_phy_unregister(phydev);
+> > -               phy_device_free(phydev);
+> > -       }
+> > +       phylink_destroy(dev->phylink);
+> 
+> Before destroying phylink here is it possible to add a check to make
+> sure dev->phylink is allocated properly.
 
-Using my usual Rust configs, for all of them, I got the same issue in
-arm64 that Naresh reported:
+Not necessary.
 
-    arch/arm64/boot/dts/rockchip/rk3399-base.dtsi:291.23-336.4: ERROR (phandle_references): /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
+How would dev->phylink not be "allocated properly" ?
 
-      also defined at arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
-    ERROR: Input tree has errors, aborting (use -f to force output)
-    make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dtb] Error 2
+If it isn't "allocated properly" then lan78xx_phylink_setup() will
+return an error, which will cause lan78xx_probe() to fail. If the
+probe function fails, then the driver won't be bound.
 
-Boot-tested under QEMU for Rust x86_64 and riscv64; built-tested for
-loongarch64, build failure for arm64:
+Having additional nonsense checks for things that shouldn't ever
+happen is annying and detracts from code readability.
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
