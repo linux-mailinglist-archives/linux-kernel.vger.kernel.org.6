@@ -1,149 +1,85 @@
-Return-Path: <linux-kernel+bounces-575988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC61A709B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:58:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8360A709A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682BE189FBDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091DE179442
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CCB1FDE1E;
-	Tue, 25 Mar 2025 18:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB71F5826;
+	Tue, 25 Mar 2025 18:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="QuxRH2Cq"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZQ3ndTwK"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992611FCFF2;
-	Tue, 25 Mar 2025 18:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897E1AD41F;
+	Tue, 25 Mar 2025 18:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928390; cv=none; b=RiEsDRvob3xZnmlKcQkTAb4qNiF7PdwOSl/8DWWbKD4cY0pG0y52pHM2tOCvXN7FbMNxT/s/ixytSmqw005/7WYuZtEp0kcyOVdOtq8BWoU3YhV/iAk+IozxNUPn+lTKgkA98R5vEOL50czRIAsg5QGNwxziI/4O6KkdHAAOwr8=
+	t=1742928408; cv=none; b=HqhbHQkRtDiVJeVHNHWy1xik7pIFFzOaWVRkAKDqSOkHgmXI7WDFYXVMvDkvphVJBigwRQ+kM2f7y88AWpBomH6gaS8I1AGseia7VBuFHE6AKdp69KHr06/fvbvLS7Hth4dH5jl7/gA4t0DndRMZBGm96lhDMqgro7lqbAtURx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928390; c=relaxed/simple;
-	bh=cnyYgtOi5KNtxZEDgq5Z8kRh7d0LELzKtjDTyWT0K08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T4kHtBiGBw/MPDNERHBuGwOLWTwbvlIw3Q6fxrJoZhJM8zpa72o/wWi1yk/22U9DGEMLSe5VlbCCST8SuMOU2yL8LA97wzERT3M12FLRxhUbZO5Br29PsI715RXJTOmuv61yU40LPWa9odH0MlQxw2Eht+zViKaQhx97SC0TrOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=QuxRH2Cq; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:cbc0:999f:73ad:33bd])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 4091E2E024F9;
-	Tue, 25 Mar 2025 20:46:25 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742928386;
-	bh=az0RkbSqa+vM4kpXbq8OEgK4+Zp0D8jSA5cGFeYf7oo=; h=From:To:Subject;
-	b=QuxRH2CqGDrGUpf5qypp6+MVHwQ/aMCEStrdrDLEilZ9gKlVY4coSeT3SWcKTKkSG
-	 MhMOHCyECvIALlBw9/FrwoUu7iXGH0D0CU4sN4edFFFo3QqLk3qD4OmBmGbIIcYlbh
-	 Xai//HmQqCzxgq3uQcRd4XPzW4Fg5b5TUyXZyiq4=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:cbc0:999f:73ad:33bd) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v5 11/11] HID: asus: initialize LED endpoint early for old
- NKEY keyboards
-Date: Tue, 25 Mar 2025 19:46:00 +0100
-Message-ID: <20250325184601.10990-12-lkml@antheas.dev>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325184601.10990-1-lkml@antheas.dev>
-References: <20250325184601.10990-1-lkml@antheas.dev>
+	s=arc-20240116; t=1742928408; c=relaxed/simple;
+	bh=D8CU9OAiGVwJRbD8cmg5/i0vIksIQsFwuHBA/PigBi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDbd8yYLD9+onXWFSDF/bW0cMdxdN5na1L0cHWXisK8oUr7XNwqEd0RUjYtunALFg8JSJtCC9oWs122xETH4oqk2MnBkJS54Q3oG/+ue1fyUMoZtasd6LBX/twCpCDlbYwsYzdLEKwJWfAQ95OSULPqP6U4R+DawmLkQQCVSous=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZQ3ndTwK; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D8CU9OAiGVwJRbD8cmg5/i0vIksIQsFwuHBA/PigBi4=; b=ZQ3ndTwKIoMRBKbS5K7pSIeYQw
+	YeDhGtY1ASdYzjxHfAvRfJv4SNFQleiqK6qBMTL03Cys9UYxizIbSXldA1oysSXrGWeA31p18r737
+	Sd1fKRdZkYzh4KwfNy2Wx4YHwy42SyQBl9KMBAxl7EQqfcCIHj0Z3uDwaMoBAgUHR4JgiPWOXCMxM
+	y/rDVL2VLgnaH2Yec/vel59XNY0CbTb0odJ4aeG5S82TfQsxlmoaIVMpfeh0jH2Ggb4c/6ZWk2AHS
+	zUQ6r2+yp1GrMF/przOVEX3TKQer9OsYrE72OX/G16alQ+qjSKA7x0beyezspEZ48oxdbw8A2ECx3
+	COeWcqYQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1tx9IL-00000005gDK-0s17;
+	Tue, 25 Mar 2025 18:46:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A5BEB30017D; Tue, 25 Mar 2025 19:46:36 +0100 (CET)
+Date: Tue, 25 Mar 2025 19:46:36 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH] bug: Introduce CONFIG_DEBUG_BUGVERBOSE_EXTRA=y to also
+ log warning conditions
+Message-ID: <20250325184636.GB31413@noisy.programming.kicks-ass.net>
+References: <20250317104257.3496611-2-mingo@kernel.org>
+ <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
+ <20250324115955.GF14944@noisy.programming.kicks-ass.net>
+ <Z-J5UEFwM3gh6VXR@gmail.com>
+ <Z-KRD3ODxT9f8Yjw@gmail.com>
+ <20250325123625.GM36322@noisy.programming.kicks-ass.net>
+ <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174292838629.8406.5763028106211749699@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
 
-These keyboards have always had initialization in the kernel for 0x5d.
-At this point, it is hard to verify again and we risk regressions by
-removing this. Therefore, initialize with 0x5d, and skip RGB
-initialization if that is enabled.
+On Tue, Mar 25, 2025 at 10:48:49AM -0700, Linus Torvalds wrote:
+> Hmm?
 
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index fa8ec237efe26..d02d0629d03cd 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -90,6 +90,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
- #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
- #define QUIRK_HANDLE_GENERIC		BIT(13)
- #define QUIRK_ROG_NKEY_RGB		BIT(14)
-+#define QUIRK_ROG_NKEY_LEGACY		BIT(15)
- 
- #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
- 						 QUIRK_NO_INIT_REPORTS | \
-@@ -647,12 +648,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
- 	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
- 	unsigned char kbd_func;
- 	struct asus_kbd_leds *leds;
-+	bool rgb_init = true;
- 	int ret;
- 
- 	ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
- 	if (ret < 0)
- 		return ret;
- 
-+	if (drvdata->quirks & QUIRK_ROG_NKEY_LEGACY) {
-+		/*
-+		 * These keyboards might need 0x5d for shortcuts to work.
-+		 * As it has been more than 5 years, it is hard to verify.
-+		 */
-+		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
-+		if (ret < 0)
-+			return ret;
-+
-+		rgb_init = false;
-+	}
-+
- 	/* Get keyboard functions */
- 	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
- 	if (ret < 0)
-@@ -683,7 +697,7 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
- 	leds->rgb_colors[0] = 0;
- 	leds->rgb_colors[1] = 0;
- 	leds->rgb_colors[2] = 0;
--	leds->rgb_init = true;
-+	leds->rgb_init = rgb_init;
- 	leds->rgb_set = false;
- 	leds->mc_led.led_cdev.name = devm_kasprintf(&hdev->dev, GFP_KERNEL,
- 					"asus-%s:rgb:peripheral",
-@@ -1415,10 +1429,10 @@ static const struct hid_device_id asus_devices[] = {
- 	  QUIRK_USE_KBD_BACKLIGHT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_LEGACY },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_LEGACY },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_NKEY_RGB },
--- 
-2.49.0
-
+That is indeed what I was thinking of; far better articulated :-)
 
