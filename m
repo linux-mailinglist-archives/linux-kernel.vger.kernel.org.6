@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-576067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0773AA70AA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:39:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0206EA70AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:40:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38CB188EA3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:39:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 820907A7A6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6951C84B2;
-	Tue, 25 Mar 2025 19:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFA91EEA34;
+	Tue, 25 Mar 2025 19:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPPXSp6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oqhfabVN"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E1213633F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1509198851
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742931544; cv=none; b=M1oILnUQE6sALq9TNmKYw7FrAtqo30LmNYnEDrjHpLdRQOvX/oB182RA1M2voVXkFmLUQYuxhHrFqjl01iK+arSXgZ9z1peYpyeWIRVSJxKQLTH8nkF0w5ljgolDXoSpJovNFvUHgMgYJC68UTbEPAk8yrX9REtN3TyRzsEqGbg=
+	t=1742931649; cv=none; b=TpckW7Xyh8h/8q51QGiJf3XKd4hotgZk+qPrEouYw6/0DdATq608A1IBdAZwqH4rFQrKcUpbpBMqSRnZYaEblxETiYmLnLbfeOVd1cigM/1wzkK7bkWYP5iNWd+dbplQnnZuw2eqkqa132l9DlbGWi9Z6rq1UTV7mMzR+Ll+KFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742931544; c=relaxed/simple;
-	bh=wtevGHjO9YfmadWTDHQb7tQn90i90ndWDKXe4b3kLSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXvbQpyNJgSEb/pvFshfB/bIdC0vE82evavsgezNq/ucAjbQibqva42gsOxIksIfUgjQt7qUq0yBm+aa8x62A9ysaPIDXd5P3P+gqRRVCj1gjxrrCriVJ8DVLlsXOIzOgBZ89oCfuY3K0dN9S3gOExBZ1+ztqGhVD4axMWD2ol0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPPXSp6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E086DC4CEE4;
-	Tue, 25 Mar 2025 19:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742931543;
-	bh=wtevGHjO9YfmadWTDHQb7tQn90i90ndWDKXe4b3kLSQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UPPXSp6EoR0oYs4TLxEK4iOB5tlo7SGeKpZVf3ypQh3dpxUr+UqnQ+s+Xpo2syLCv
-	 e9LX+Yi1UX+CjMbv/c++QblBKrV8LH5IpORXu4gtkAmEP5NhMDAuDVvCOa9je1S08n
-	 mBrSSCMEXVn7kUDL9uIKSn4bt/l8fIcQQLf1qTSHuy5Bk8Tmgq3RrvQ8m1XIljZkbd
-	 cSR6t4GogP6umlbx28rmjBnMWuKyBz4k8h+hdgM6Cbmiqy+3SxITwi5nCo02fAz1pj
-	 +ELgoqFEY9h0lAjFjATkJxdtQkQZosA7YNTtyo2T/QQXpOC+CmTCz1VVUFhvxT+aX1
-	 spCLId5bzt0nA==
-Date: Tue, 25 Mar 2025 12:39:00 -0700
-From: Kees Cook <kees@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Brendan Jackman <jackmanb@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 22/22] lkdtm: Obfuscate do_nothing() pointer
-Message-ID: <202503251238.EE695D3@keescook>
-References: <cover.1742852846.git.jpoimboe@kernel.org>
- <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742931649; c=relaxed/simple;
+	bh=MUK3eOY2D/KmMRtrOOOx7NdkICr7244cBlfFLWGWFEc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DYTYRwAIFR0n6nyHG9HGem74A97n4Ek/2I8kU63OuCa6fyaJmZggNvTEz0hzR0yd+KmEd80Id9Y2ZZ7CthtdRQnA41ClGqq24vU+qy3U+VBoWtYHTeKOx5TZLO+3/LzdgfNGSRKNwmzWzVw0/ZFnfJNwvxzUNjpX2PbVGgJUOVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oqhfabVN; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742931633; x=1743536433; i=markus.elfring@web.de;
+	bh=MUK3eOY2D/KmMRtrOOOx7NdkICr7244cBlfFLWGWFEc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oqhfabVNARFH29r2ecI/pNSIltbvM67/UER6jddeIq0rlSDwzooejt5+7UoG0ZiG
+	 sLb7AZO4U84Wiv9NfXLPJB1heLdFa2nI7QGUvAO2fN2J6Azybc1JQ3lJzFXkHCzeP
+	 MopQrctiqKju4eX2wtgbhPKSNyEzQtqceYDl4Ev23zgz3SBAdaRMW7MTisa18WJmM
+	 ka/Wihz1IiVJchtNEdr3X9g+zWBuWW88xAzKtp7ncRPEMFZka24Dqnn0PPTcNLVhH
+	 8W0dj642ZoDKzeNYHdrxkuEWL7LMIb+Osugl6CZYcUxq836M19caPHJ1e2j7XO9Gw
+	 LpXqgY+Umtokb+eUgg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1tsGJ92I8A-00E1qR; Tue, 25
+ Mar 2025 20:40:33 +0100
+Message-ID: <a873663d-21f1-49ec-a8aa-fb3297413e02@web.de>
+Date: Tue, 25 Mar 2025 20:40:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
+User-Agent: Mozilla Thunderbird
+To: Ye Liu <liuye@kylinos.cn>, linux-mm@kvack.org
+Cc: Ye Liu <ye.liu@linux.dev>, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>
+References: <20250321062053.607044-1-ye.liu@linux.dev>
+Subject: Re: [PATCH v2] mm/page_alloc: Consolidate unlikely handling in
+ page_expected_state
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250321062053.607044-1-ye.liu@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UgEk1ORp0/i+uMTKzIfCmrtKxA0juMUwUWsfNAlNmVynz3rC5VF
+ 1ibT6D6uso66A4PGADZPx/QitnDgjL+bT0K+gqSumRg/TKW2RAFFceX+jKQoDucOG5tRUxI
+ C9d3ynTsk6Gt5F7cNnAmUzNWm9j2P4LJvOnT9CznnnqCoHliyzipxzMJBgj8r2uxwbY7G+o
+ KjIO0nbyS2yCgNsX2Ph/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LCOPm7V5d7I=;roML/cMHZWNSlaNAMzdXmsfSmq6
+ mMtzmoL/9MQYtxXgSwjaeNwz6t3Dv5Z4yDDARekc1jXcpIqahNSBCCoctIhzymu0d+gNwLzJv
+ 6ylKjcrTNLGH++KZBkc00wvsWZb4lrBes0iWTZhDCmpJ6jATc0Bn32mkRNIig10oaliTaH7rY
+ HMFpD/dfNgVI1D5pvBg9ck14L3AAiRNIPsvy4LpVfKzHYhHXK488kZPuWAJ3XUdAQ3yup19yl
+ Cvul1I5IosIFPw2L2yWuqMCOxY3jk9XRSASlhD2nfSV88rm2YsEfJs9fPMv9rsXU4B7bxFo7e
+ VD7LSZ33BweJXtsIjAEZH4VIfjXLVGLC6dLK+SGm6xAzCX2kX4+I3y/zqihZ2A8v8yMllchcj
+ 5zNLDHFyQC23HuKyE+FMGlM7mEJD0beEsH2QxyHdsvvoBvUEXqIN1rQn9BQWB9STeRa4hNUBM
+ JLkegkVT1TYZJLaoWBrAvgIMcxNaWzbTr52PIWDsYmFhLeOpzSNLT8rD+cVw6WU0z+yFH9YHz
+ gZZPtqT8RENCYn5dQ4mUSLDhXA9oT9CRrvc1Lttk2OrVkkE+NQXXwMBe85IVBgVRyM5Qq3CtU
+ FDo1FvGlU50l8++Ate84W5yEWXPXVeMjPRfBdc0F8nIu5RfmBP+6VbuFt0RON+Xpva7m3doqR
+ CLTjcOckJkyPu3mOJyCueiK+Hm4JBOIBqiFAzUmaoGJve5E71cpd8Ya922UiuMsEgjW9H32UC
+ pDiy7r3vOMrmuyw5BN4PCUihnvExqgEmnKgvDelaY/mJTg7sy8p0kq0toLJJf97DjW8Ykxst0
+ dAp0L8J6g18PmOxsFKT8P4gebR5fIjUDt+lh4iwuvotRKa8Y/xxPwiJFDqQg6W2Q6cb0tTSKc
+ CdgnfcQCR15ICTkX+O4/gXBuktAXSTgWx96MCOhfe5mnZ9o6fST5HX0+LapR2Qj4E8nJXzcEw
+ FtLXLsiQjhc2KFgec1MJZT2D22Md66NfDof5iozNsdMsU3eChSGtvOdiOIxpaY39qI6TB0Bwb
+ IxKgBGDZfMn4vkaLQMrYijvSYs1KanFZVV2RPUJOzB9uvyurbHs2jR7+monMKvS2jIZUE+tjG
+ RSYZyiITd5S1GUOO1YRmX+01pBT91VIGxcN2ElRMCT1P3L7VvLjjeM6c5vvf6yiFGzLQl9FLQ
+ sM3agOz3aLpkqgfZ5w85ktHj6A1Kv4DjqwckX1BzK9yNDQwpA069m39NK662MrhFG+rSzxNAd
+ QTUWzYV15XANN/E8vznbADmHG+PEN4AskXuL71ayUbw61m785X7gb26r1m+aINLjbgbO+/v6W
+ tdnUYGUz+eiIM0HNZErACLrJI822AzcA/4Nyz6DtZ0MdMXivAf/Akqkon31GzECquGKRWu3RH
+ vgosZQ1WLFxOunX1ETLNIt71u707RqDgNUKgWG9UDvwBh+t+jsIWZhUW8vMTlEBDHpE/TTsbA
+ x2Qn5JboegAo9Jw4bg9RvEmaAL5XA6qKoeyBQPj9vYUVMPMgb
 
-On Mon, Mar 24, 2025 at 02:56:12PM -0700, Josh Poimboeuf wrote:
-> If execute_location()'s memcpy of do_nothing() gets inlined and unrolled
-> by the compiler, it copies one word at a time:
-> 
->     mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x1374
->     mov    %rax,0x38(%rbx)
->     mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x136c
->     mov    %rax,0x30(%rbx)
->     ...
-> 
-> Those .text references point to the middle of the function, causing
-> objtool to complain about their lack of ENDBR.
-> 
-> Prevent that by resolving the function pointer at runtime rather than
-> build time.  This fixes the following warning:
-> 
->   drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x23: relocation to !ENDBR: .text+0x1378
-> 
-> Cc: Kees Cook <kees@kernel.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503191453.uFfxQy5R-lkp@intel.com/
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> This patch consolidates the handling of =E2=80=A6
 
-Thanks!
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14#n94
 
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--- 
-Kees Cook
+Regards,
+Markus
 
