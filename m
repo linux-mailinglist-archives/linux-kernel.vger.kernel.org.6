@@ -1,216 +1,179 @@
-Return-Path: <linux-kernel+bounces-576167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0592A70BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:16:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE7CA70BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3A2A7A6665
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4083B8E2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01901DDC3E;
-	Tue, 25 Mar 2025 21:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B1219ABD8;
+	Tue, 25 Mar 2025 21:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RbsbHWLO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpN3I45L"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C085F193086
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637032F5B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742937379; cv=none; b=PEiTyihUE4FL821gdcTjOxOjcUIPa8670tYZgEmLDGG2ZsGQfuZ5vRp3QUvfnB2gxp1qFNO3YbBXNiXnveniyE9snhf2oW0RJFtyqs7KVAw6ghQR5n/Z75RcyjZO6dQaKxi7iDPzYTZTZ24cZ8qZTYrKmUQuCy4mz14soI1C57w=
+	t=1742937364; cv=none; b=TG3vjte6GYUl5hTzBR01ziHW7tFf+kljMy39UPUJiIhsc4iZFsWRPa7oNC3QW+pMStqWKpn/xW++bLFyYMIt29aQp6h/fhkILxyjGFrcmG3qtE5MVa93q2p3B6jnEK8OScWm3E6SHH491FZ8YXiO1JnsNiwEp9BPvT/7Myu/gr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742937379; c=relaxed/simple;
-	bh=kVqnM6IIiekwG1nhtToL1QSNk+zUiDeseDQn3ChvGSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bUlKzWHvdStUXfqsLnq/7th/sihX+1BZQPHIal+tlrpYEIAQm8prwfHR3ArXM2himpR+LHGkBCIaTt8Q/1NHvrEipse+rbcNdbupNJgLxtz528QWl6lW24ZWj50zCuAnTKFWKJVK2k2ptnnVXZ/nm3SmLmchxlPwpWTYnxezsmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RbsbHWLO; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742937377; x=1774473377;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=kVqnM6IIiekwG1nhtToL1QSNk+zUiDeseDQn3ChvGSY=;
-  b=RbsbHWLOCnaOpKWOfUnb9DsOc1LRqvMITYr8nTIJWY3LqWuvL1efHSw2
-   o8YhU5NFpZelIW8/9e3nccPy0rMm13ieBmvLzYBO4Vs+LWN3oo0HRrV3e
-   w/48D9qUr8EUEM/Nc0T2qfNWpOm45G6y6gzpHc5dmtRUKZFFbH0cSrU7J
-   iq6eYLTlrvk0Av0dAvZ/Cyc+2MK674moOJw7WCmz2xoSG93tEIdGCb2YN
-   +FiL2m4yrn/UpiqL3+CDoedRja9IeLIFVhERsv4VnErgiCArU5M0h86E4
-   mzF53XLFyooCGJNYUsydwUFciakgaP8/QCX75kyyrRCTvGwuk85KmST40
-   g==;
-X-CSE-ConnectionGUID: mk4thHbyTHCp2ReY1icg2g==
-X-CSE-MsgGUID: eedBydMUQPCRgkaSNz63Tg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="55195446"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="55195446"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 14:15:59 -0700
-X-CSE-ConnectionGUID: 5TToGPVKQ6O92rDsooDKdA==
-X-CSE-MsgGUID: CUATTIjyTSaPNE0bnVlEvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="147681665"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 25 Mar 2025 14:15:58 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1txBch-0005Bj-0H;
-	Tue, 25 Mar 2025 21:15:53 +0000
-Date: Wed, 26 Mar 2025 05:15:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: ERROR: modpost: "_restfpr_20" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko]
- undefined!
-Message-ID: <202503260509.HQzWt8U0-lkp@intel.com>
+	s=arc-20240116; t=1742937364; c=relaxed/simple;
+	bh=xdUAEPlkjdFnId0CwibWv0kfo4J1OSdEA+5uuQwXCdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ONyaUMg85QsaWYkHDDbrXZ3k33wkXWef407kXVc1zH9lN3B5dnD5QgLPNzfJidhoOcTAJmhfK3rSQRqUl7LiDxTzlsmNQiwo3cfyx6igc45Nr1HAqsOTHTY3Su+GAW7ESBkl+7eR9nw2T6SZOejTpAxu+cpuBqTPvyviscfZNJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpN3I45L; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8f8657f29so51260766d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742937361; x=1743542161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=40K5pq7mYVh4VrEl8AnjijJbn+gIm8U/aSBOA3s0pZQ=;
+        b=bpN3I45LAgyrNAnhX2Jv91V6WXy0XibqpFHgkygji+IwXAaAqUxm/ASkW5IJXgVKUW
+         ZxY/mI87mbq+1MPb++6jzTC4z0vLu7h9hfOB1G5mxYbjYKF2zSdyXDb8CoRmWs8eZKfr
+         43xZ91pLa0HMOgF+JKW72nZRW/Sut70+pGFmjgjB1WLlOZDpoQHXF4liGx3Vnd8b9rYN
+         TJ0O6Mg9SMa5nuBlVMWGisilS7QfZoL5YoQjez9VWbZ9KdyvkokCJ77g42G1jDJ6oX84
+         wLna/7tv7ehXqpot0ApPGXo5foerw7RlyV2XnakWtG7RleY6W3yuXDIOqBm3x3KUEErC
+         2yZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742937361; x=1743542161;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=40K5pq7mYVh4VrEl8AnjijJbn+gIm8U/aSBOA3s0pZQ=;
+        b=LEnf6ZZSHPogFyjc5yi14IgZRu+4aYeLJA5Aj0eut7DEsRdbegi7K27p3FJH4YqdkP
+         REuCZrwjtPeM2+ReS7Gajzc7xcPpXJ9BKPPOjfnTjD2lVRn5bIQ+IOQ3sqMRyk4m8tIO
+         XTELXt8KesQn0fttYMJz/eGGnAC+3m1A7KtEbuJHxjqaRsdyhC6p5zZvx00A2eT8SlBz
+         VVxY+hqh+BB78RfTbgTt53TX/RZSFHWyPyNgsVornTP5drXdnANk0Ws0mq71qrHTFzHB
+         baAC0S81/rbjPcJd30fHNIhmhPOqnnZk2hX0h/uY35yvPwUD17Y3fNdXQJjOttMzpoUr
+         H4LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU63CpQ+9gmYCLn5uI8SEnA+GqtQBVZ26FhaGvflniw1lWVFO5dJviNn+W06EMMZCy56u4r9oakPaifz6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNu3F6yWodWhu7Gs41wffLXsTF7qAduCLHWsHmVzwIPPU9UCAi
+	qkDWo9g1zCEgCRu4ZGjIeMY9Fh9NL5zMEMDUy2qFIQBqnZs6luD9
+X-Gm-Gg: ASbGncvcoDZrixrMNslXd20H2Wfxuz+ihKWGOM6Q6Etk16n7TcO3wyTUkMn+w7x7Jtr
+	lxEfn6YJqfXgDCNjVQAsJu3gkhCRdVOD+wnHWFLvlCAjpkyWK6olO8/yzdSWFfbV/6c2e647Rw5
+	sHI/cAKNRATMa2AlB5uST6BUkoM+qgvF+MM6xggPBoqVJe9NftSyPMgwpTFN121XTg6jaNxpzDu
+	ZMTdZG7MiJTXZZ4/MbBhdhj7m6nK5PcB/C6uj2Uh5urfFf4OtOwIS0fpoptXANPu6PgdMto1H0S
+	SZDP7zM9VMW8FDXGa4u7+VJIqiKR5ZIbWtxK/r8m2wDbL1VqsdywAFor4+dX9MbxZeBS6BmXOZa
+	bHB8Qs84nbgn9ambWWRk=
+X-Google-Smtp-Source: AGHT+IHZN0DvqR3zf6bcLPm5iIDPZ4bv5imEYKlo5WLdo3X0XPq9mZKrg6GEYfXA8J0c5SD86F7baA==
+X-Received: by 2002:ad4:5d42:0:b0:6d8:b115:76a6 with SMTP id 6a1803df08f44-6eb3f1a7037mr239109526d6.0.1742937360994;
+        Tue, 25 Mar 2025 14:16:00 -0700 (PDT)
+Received: from localhost.localdomain (c-68-55-107-1.hsd1.mi.comcast.net. [68.55.107.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc5944sm59648256d6.75.2025.03.25.14.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 14:16:00 -0700 (PDT)
+From: Brady Norander <bradynorander@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Brady Norander <bradynorander@gmail.com>
+Subject: [PATCH 2/3] ASoC: amd: use new ACP dev names for DAI links
+Date: Tue, 25 Mar 2025 17:15:45 -0400
+Message-ID: <20250325211545.2099169-1-bradynorander@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Samuel,
+The old names used automatic platform device ids, which means they could
+change. Use the new device names which will never change.
 
-FYI, the error/warning still remains.
+Depends on patch: drm/amdgpu: use static ids for ACP platform devs [1]
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2d09a9449ecd9a2b9fdac62408c12ee20b6307d2
-commit: a28e4b672f042eb38d9b09f9d1fdf58c07052da4 drm/amd/display: use ARCH_HAS_KERNEL_FPU_SUPPORT
-date:   10 months ago
-config: powerpc64-randconfig-002-20250326 (https://download.01.org/0day-ci/archive/20250326/202503260509.HQzWt8U0-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250326/202503260509.HQzWt8U0-lkp@intel.com/reproduce)
+[1] https://lore.kernel.org/all/20250325210517.2097188-1-bradynorander@gmail.com/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503260509.HQzWt8U0-lkp@intel.com/
+Signed-off-by: Brady Norander <bradynorander@gmail.com>
+---
+ sound/soc/amd/acp-da7219-max98357a.c | 8 ++++----
+ sound/soc/amd/acp-es8336.c           | 4 ++--
+ sound/soc/amd/acp-rt5645.c           | 6 +++---
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test-kstrtox.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_list_sort.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_rhashtable.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_printf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kprobes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/atomic64_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/bitfield_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/hashtable_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_linear_ranges.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cmdline_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/memcpy_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/is_signed_type_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/overflow_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/stackinit_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/siphash_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/kyro/kyrofb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/offb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-fractional-divider_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/goldfish.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_kunit_helpers.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sii9234.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/bochs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/gud/gud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-raw-ram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_aec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/host/xhci-pci-renesas.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/matrix-keymap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/lib_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/menz69_wdt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/framebuffer-coreboot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-dr.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-google-stadiaff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gyration.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-maltron.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-microsoft.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-monterey.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ortek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-bootrom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-hid.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-light.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gbphy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-pwm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/ifcvf/ifcvf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
->> ERROR: modpost: "_restfpr_20" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_restfpr_26" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_restfpr_22" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_savegpr1_27" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_savegpr1_25" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_restfpr_28" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_savegpr1_29" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_savefpr_20" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_savefpr_22" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "_restfpr_15" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-WARNING: modpost: suppressed 54 unresolved symbol warnings because there were too many)
-
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index 02b04f355ca6..42aa009c4e13 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -517,11 +517,11 @@ static const struct snd_soc_ops cz_rt5682_dmic1_cap_ops = {
+ };
+ 
+ SND_SOC_DAILINK_DEF(designware1,
+-	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.1.auto")));
++	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.1")));
+ SND_SOC_DAILINK_DEF(designware2,
+-	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.2.auto")));
++	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.2")));
+ SND_SOC_DAILINK_DEF(designware3,
+-	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.3.auto")));
++	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.3")));
+ 
+ SND_SOC_DAILINK_DEF(dlgs,
+ 	DAILINK_COMP_ARRAY(COMP_CODEC("i2c-DLGS7219:00", "da7219-hifi")));
+@@ -533,7 +533,7 @@ SND_SOC_DAILINK_DEF(adau,
+ 	DAILINK_COMP_ARRAY(COMP_CODEC("ADAU7002:00", "adau7002-hifi")));
+ 
+ SND_SOC_DAILINK_DEF(platform,
+-	DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.0.auto")));
++	DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.0")));
+ 
+ static struct snd_soc_dai_link cz_dai_7219_98357[] = {
+ 	{
+diff --git a/sound/soc/amd/acp-es8336.c b/sound/soc/amd/acp-es8336.c
+index 0193b3eae7a6..b16dde0e2987 100644
+--- a/sound/soc/amd/acp-es8336.c
++++ b/sound/soc/amd/acp-es8336.c
+@@ -137,11 +137,11 @@ static const struct snd_soc_ops st_es8336_ops = {
+ };
+ 
+ SND_SOC_DAILINK_DEF(designware1,
+-		    DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.2.auto")));
++		    DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.1")));
+ SND_SOC_DAILINK_DEF(codec,
+ 		    DAILINK_COMP_ARRAY(COMP_CODEC("i2c-ESSX8336:00", "ES8316 HiFi")));
+ SND_SOC_DAILINK_DEF(platform,
+-		    DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.1.auto")));
++		    DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.0")));
+ 
+ static struct snd_soc_dai_link st_dai_es8336[] = {
+ 	{
+diff --git a/sound/soc/amd/acp-rt5645.c b/sound/soc/amd/acp-rt5645.c
+index 72ddad24dbda..11d373169380 100644
+--- a/sound/soc/amd/acp-rt5645.c
++++ b/sound/soc/amd/acp-rt5645.c
+@@ -108,15 +108,15 @@ static const struct snd_soc_ops cz_aif1_ops = {
+ };
+ 
+ SND_SOC_DAILINK_DEF(designware1,
+-	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.1.auto")));
++	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.1")));
+ SND_SOC_DAILINK_DEF(designware2,
+-	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.2.auto")));
++	DAILINK_COMP_ARRAY(COMP_CPU("designware-i2s.2")));
+ 
+ SND_SOC_DAILINK_DEF(codec,
+ 	DAILINK_COMP_ARRAY(COMP_CODEC("i2c-10EC5650:00", "rt5645-aif1")));
+ 
+ SND_SOC_DAILINK_DEF(platform,
+-	DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.0.auto")));
++	DAILINK_COMP_ARRAY(COMP_PLATFORM("acp_audio_dma.0")));
+ 
+ static struct snd_soc_dai_link cz_dai_rt5650[] = {
+ 	{
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.49.0
+
 
