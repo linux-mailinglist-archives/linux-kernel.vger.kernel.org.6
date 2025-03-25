@@ -1,162 +1,212 @@
-Return-Path: <linux-kernel+bounces-575353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB194A70041
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86C6A70193
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D791A7A75F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DB7188E2B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2259A26A0C1;
-	Tue, 25 Mar 2025 12:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="R6aoxlLP"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F335526B0B2;
+	Tue, 25 Mar 2025 12:36:57 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D9326B084
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F274926B09D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742906202; cv=none; b=KUbRWwLr+9RLfbPsdR9O356Cned4h0CC7q6uGnI9jnX+ItfClWeWKcsr+44AiWs/MONxEeOF4vfmRiTRTbff/oAOJpZGl1rkZSbTUD9tlKaioKm9s2/L4rQiYbk8veJRNRd/2hWqMbO3Sf+C3YZpQzhhzVUhVRMUHP5oxUVKyQg=
+	t=1742906217; cv=none; b=FLBqi33ebWMoltapWqtuEBnZo4uuW8mZX0ACFc2FII+1104JKbi1JhxdpPz18k1qIZSURuyo22MMPe2FheBPd5OHkkxklR4489Re7aLI0zg36HBiZIQti5WGV6UoYxWfjwad5JIEakkHqfjpHiysjQhXY6gL0GfsAr/Uuwy8UXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742906202; c=relaxed/simple;
-	bh=kF/4SP83eP8Xbwc4RoYXxSygK8pZn4d3t2Dba+Ka8B8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIxl3s1BETCyNnOlwYouZz7WwYXHan81bXGgSk5xTOCD0/hJNWETV2G6stA9EP2Wpcyo/fXwxGEzsZQo0FfyrAbTybSujTzvrixuQo7n3vrYZLuueetCe83GJzE8uYVom7Q1RHuNW01LmfynJ+8S52bxlNuYAOGZjfehkrdx2hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=R6aoxlLP; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4769bbc21b0so58285351cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 05:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1742906199; x=1743510999; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF/4SP83eP8Xbwc4RoYXxSygK8pZn4d3t2Dba+Ka8B8=;
-        b=R6aoxlLPQAkjRJPVn6UQKY+axJtOgCb9opi7uMwdqzSxq6yDpzVJboXoMURzqFNmXG
-         L4O6evUJSpFvB1ok/nkAvZ2ctxsJoJGXuCD5Hfcl44KP64YYXU13GEP0YO8Nau/AluDo
-         dwmvpAQBTe1LqtUycADgDK7X5PVMkLiTdnUNXX0D9l0eroks0GyGaEG2e0DV8VX4ddgC
-         7zSjqhv0fWoL3gPf+VGU1+rXRM5Nwx0srQafUgfbqXPk3xjimSWRPzLHwxPFJ/VzIJm8
-         styI2AyIntvNjgTTu1Uz79TV7Z9P2nkoB/bDnkzGibSm9AMzCtsSkHlsSbxQRi2emnYn
-         A+Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742906199; x=1743510999;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kF/4SP83eP8Xbwc4RoYXxSygK8pZn4d3t2Dba+Ka8B8=;
-        b=SEivEVrS9/zJ9jByts6VljrgtU3J+KBNLuf5yUbWuVNvihTkmJeohvRJ/OSYDTC9To
-         HhYIxFnDdHo8L8D/kU723AOjJr+6qE+723/ZsjXokapoO2Be4cMz6S83YCD8gF8BOmoH
-         NpJfN+VggT+HnX0A+Jg3fWJhfXc19Q/gK2oHpwcoF0RUSwIzGJDzofCzS82LcDYlpMBf
-         XTku4bzJap02H/bPpeh9p3Qr4nsMUgYUGaiG3H4ldr/O3uenf8CCg/8ucogvzgG5oSkJ
-         qMLXtL57veHrO+hII6JcQOzo9mDsnYepAiSyTuVF7mU5hP9KCshkLV4Jm0bu/Ou6ksqH
-         9EKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHx7PZpXjcdffvlEw/GqHdbkBRJBNHfZhXmUPchFYB9JVA+d5R2mLCXMpj34AGVG71dsqwvB4FL9dgi6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNHn3GTPceRaYogcP7NyLkPSahkZvOcBBFl3XS40EQRMWXEN5
-	zwzCOykZTRuINsatpV/CVISLTWeJpKihK9geW0rNFc4CnRlaI2IfVwRkO7lDfOQ=
-X-Gm-Gg: ASbGncuPKUlg+N/xRMnORmw+7b5ThgySQasS2Quthf5ErTSaba7hFwC/bxl9SY9NJcy
-	l6Qh+ONn07SQvJx5IHZV49UUZjUW7o7toOFvA8fDpFBfOJ4LFDLUgFopo7KWcwiNUdoQZO3MV4H
-	xXrNxs0RgWWSqh1anTZ0ko8uF3/0rIjO03FPzw/B0BIh8Ihbmzyr+/oZgau3Q2RNmGlpWOmepEa
-	OgvHP9nvdECcg847t0P28w1YxUy/gmZIBRYUwSzbTdpZwtKF+B849f8uQGj8HtptpCThd9M1WQt
-	yeS1ZeVCJsCbZ5uTSA==
-X-Google-Smtp-Source: AGHT+IFaGG2Y6kZs0f1G4EEOh4+V+xY6UlM60nMPDSox/R89SepA61uky3NuOhrbXo7zMnxqikKbBQ==
-X-Received: by 2002:a05:622a:4106:b0:477:cc4:cb76 with SMTP id d75a77b69052e-4771dd54452mr310138501cf.3.1742906199124;
-        Tue, 25 Mar 2025 05:36:39 -0700 (PDT)
-Received: from ziepe.ca ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d63597dsm59500991cf.71.2025.03.25.05.36.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 05:36:38 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tx3WH-0003AX-NS;
-	Tue, 25 Mar 2025 09:36:37 -0300
-Date: Tue, 25 Mar 2025 09:36:37 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v7 00/17] Provide a new two step DMA mapping API
-Message-ID: <Z+KjVVpPttE3Ci62@ziepe.ca>
-References: <cover.1738765879.git.leonro@nvidia.com>
- <20250220124827.GR53094@unreal>
- <1166a5f5-23cc-4cce-ba40-5e10ad2606de@arm.com>
- <20250302085717.GO53094@unreal>
- <e024fe3d-bddf-4006-8535-656fd0a3fada@arm.com>
+	s=arc-20240116; t=1742906217; c=relaxed/simple;
+	bh=FFBgvGrcSZfXu4z+dhJ+aL3FwcCd+I2q8ndoXeKJxco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=myekHh+5fSqACbbW1ffYijyNNq7TdYhdj8abWTl0eM36LT50ECupW7VluWOBIwlasu5joz9ptoemPl4BcPpCX4anutSowN9xx4qkWiPA/Od8/18ktQ0bRVBg75hzK9YxiZCGs+UVxIzu27x9rcFkjVVt05s2ZsW5dEbiuc2w8do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CC29E441A0;
+	Tue, 25 Mar 2025 12:36:44 +0000 (UTC)
+Message-ID: <3a7a92e9-8106-4068-915d-beab62308484@ghiti.fr>
+Date: Tue, 25 Mar 2025 13:36:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e024fe3d-bddf-4006-8535-656fd0a3fada@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/9] Merge arm64/riscv hugetlbfs contpte support
+Content-Language: en-US
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-mm@kvack.org
+References: <20250321130635.227011-1-alexghiti@rivosinc.com>
+ <1b0d0513-9d18-4603-91e9-20af36334145@csgroup.eu>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <1b0d0513-9d18-4603-91e9-20af36334145@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepheevhfevteehhefhueekiedtheeuvdfgieetteetudffgeegieegieeitdevgeelnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpihhnfhhrrgguvggrugdrohhrghenucfkphepfedurdefvddrkedurddukeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepfedurdefvddrkedurddukeejpdhhvghloheplgduledvrdduieekrddvuddrvdehngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtoheprghlvgigghhhihhtihesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhihrghnrdhrohgsv
+ ghrthhssegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomh
+X-GND-Sasl: alex@ghiti.fr
 
-On Fri, Mar 21, 2025 at 04:05:22PM +0000, Robin Murphy wrote:
+Hi Christophe,
 
-> What everyone seems to have missed is that while it is technically true that
-> the streaming DMA API doesn't need a literal struct page, it still very much
-> depends on something which having a struct page makes it sufficiently safe
-> to assume: that what it's being given is valid kernel memory that it can do
-> things like phys_to_virt() or kmap_atomic() on.
+On 21/03/2025 18:24, Christophe Leroy wrote:
+>
+>
+> Le 21/03/2025 à 14:06, Alexandre Ghiti a écrit :
+>> This patchset intends to merge the contiguous ptes hugetlbfs 
+>> implementation
+>> of arm64 and riscv.
+>
+> Can we also add powerpc in the dance ?
+>
+> powerpc also use contiguous PTEs allthough there is not (yet) a 
+> special name for it:
+> - b250c8c08c79 powerpc/8xx: Manage 512k huge pages as standard pages
+> - e47168f3d1b1 powerpc/8xx: Support 16k hugepages with 4k pages
+>
+> powerpc also use configuous PMDs/PUDs for larger hugepages:
+> - 57fb15c32f4f ("powerpc/64s: use contiguous PMD/PUD instead of HUGEPD")
+> - 7c44202e3609 ("powerpc/e500: use contiguous PMD instead of hugepd")
+> - 0549e7666373 ("powerpc/8xx: rework support for 8M pages using 
+> contiguous PTE entries")
 
-No one has missed this, we are not yet at the point of implementing a
-non-struct page PFN only path. That is going to be a followup series,
-and yes there are going to need to be some cases where DMA will get
-EOPNOTSUPP. You can't swiotlb something without a kmap, or MMIO for
-instance.
 
-> efficiently. And pushing the complexity into every caller to encourage and
-> normalise drivers calling virt_to_phys() all over (_so_ many bugs there...)
+So I have been looking at the powerpc hugetlb implementation and I have 
+to admit that I'm struggling to find similarities with how arm64 and 
+riscv deal with contiguous pte mappings.
 
-That is unlikely to be how things end up.
+I think the 2 main characteristics of contpte (arm64) and svnapot 
+(riscv) are the break-before-make requirement and the HW A/D update on 
+only a single pte. Those make the handling of hugetlb pages very similar 
+between arm64 and riscv.
 
-> and pass magic flags to influence internal behaviour of the API
-> implementation clearly isn't scalable. Don't think I haven't seen the other
-> thread where Christian had the same concern that this "sounds like an
-> absolutely horrible design."
+But I may have missed something, the powerpc hugetlb implementation is 
+quite "scattered" because of the radix/hash page table and 32/64 bit.
 
-Christian's perspective is thinking about DMABUF exporters using CPU
-PFNs to mmap them to VMAs. Which is a uniquely DRM API abuse.
+Thanks,
 
-I think everyone who has really dug into this stuff understands that
-the driver that is going to perform the DMA should be the one to do
-the DMA mapping. It makes little sense for the driver providing the
-memory to do the DMA mapping on behalf of the driver programming the
-HW for DMA.
+Alex
 
-Regardless it doesn't really change this series as the same DMA API
-interface to the driver is required to do the work. It doesn't matter
-if the DMABUF API puts the calls on the exporter or importer side of
-it's API.
 
-> So what is it now, a layering violation in a hat with still no clear path to
-> support SWIOTLB?
-
-I was under the impression Leon had been testing SWIOTLB?
-
-What does "no clear path to support SWIOTLB" mean?
-
-Jason
+>
+> Christophe
+>
+>>
+>> Both arm64 and riscv support the use of contiguous ptes to map pages 
+>> that
+>> are larger than the default page table size, respectively called contpte
+>> and svnapot.
+>>
+>> The riscv implementation differs from the arm64's in that the LSBs of 
+>> the
+>> pfn of a svnapot pte are used to store the size of the mapping, allowing
+>> for future sizes to be added (for now only 64KB is supported). That's an
+>> issue for the core mm code which expects to find the *real* pfn a pte 
+>> points
+>> to. Patch 1 fixes that by always returning svnapot ptes with the real 
+>> pfn
+>> and restores the size of the mapping when it is written to a page table.
+>>
+>> The following patches are just merges of the 2 different implementations
+>> that currently exist in arm64 and riscv which are very similar. It paves
+>> the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
+>> reimplementing the same in riscv.
+>>
+>> This patchset was tested by running the libhugetlbfs testsuite with 64KB
+>> and 2MB pages on both architectures (on a 4KB base page size arm64 
+>> kernel).
+>>
+>> [1] 
+>> https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
+>>
+>> v4: 
+>> https://lore.kernel.org/linux-riscv/20250127093530.19548-1-alexghiti@rivosinc.com/
+>> v3: 
+>> https://lore.kernel.org/all/20240802151430.99114-1-alexghiti@rivosinc.com/
+>> v2: 
+>> https://lore.kernel.org/linux-riscv/20240508113419.18620-1-alexghiti@rivosinc.com/
+>> v1: 
+>> https://lore.kernel.org/linux-riscv/20240301091455.246686-1-alexghiti@rivosinc.com/
+>>
+>> Changes in v5:
+>>    - Fix "int i" unused variable in patch 2 (as reported by PW)
+>>    - Fix !svnapot build
+>>    - Fix arch_make_huge_pte() which returned a real napot pte
+>>    - Make __ptep_get(), ptep_get_and_clear() and __set_ptes() napot 
+>> aware to
+>>      avoid leaking real napot pfns to core mm
+>>    - Fix arch_contpte_get_num_contig() that used to always try to get 
+>> the
+>>      mapping size from the ptep, which does not work if the ptep 
+>> comes the core mm
+>>    - Rebase on top of 6.14-rc7 + fix for
+>>      huge_ptep_get_and_clear()/huge_pte_clear()
+>> https://lore.kernel.org/linux-riscv/20250317072551.572169-1-alexghiti@rivosinc.com/
+>>
+>> Changes in v4:
+>>    - Rebase on top of 6.13
+>>
+>> Changes in v3:
+>>    - Split set_ptes and ptep_get into internal and external API (Ryan)
+>>    - Rename ARCH_HAS_CONTPTE into ARCH_WANT_GENERAL_HUGETLB_CONTPTE 
+>> so that
+>>      we split hugetlb functions from contpte functions (actually 
+>> riscv contpte
+>>      functions to support THP will come into another series) (Ryan)
+>>    - Rebase on top of 6.11-rc1
+>>
+>> Changes in v2:
+>>    - Rebase on top of 6.9-rc3
+>>
+>> Alexandre Ghiti (9):
+>>    riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
+>>    riscv: Restore the pfn in a NAPOT pte when manipulated by core mm 
+>> code
+>>    mm: Use common huge_ptep_get() function for riscv/arm64
+>>    mm: Use common set_huge_pte_at() function for riscv/arm64
+>>    mm: Use common huge_pte_clear() function for riscv/arm64
+>>    mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
+>>    mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
+>>    mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
+>>    mm: Use common huge_ptep_clear_flush() function for riscv/arm64
+>>
+>>   arch/arm64/Kconfig                  |   1 +
+>>   arch/arm64/include/asm/hugetlb.h    |  22 +--
+>>   arch/arm64/include/asm/pgtable.h    |  68 ++++++-
+>>   arch/arm64/mm/hugetlbpage.c         | 294 +---------------------------
+>>   arch/riscv/Kconfig                  |   1 +
+>>   arch/riscv/include/asm/hugetlb.h    |  36 +---
+>>   arch/riscv/include/asm/pgtable-64.h |  11 ++
+>>   arch/riscv/include/asm/pgtable.h    | 222 ++++++++++++++++++---
+>>   arch/riscv/mm/hugetlbpage.c         | 243 +----------------------
+>>   arch/riscv/mm/pgtable.c             |   6 +-
+>>   include/linux/hugetlb_contpte.h     |  39 ++++
+>>   mm/Kconfig                          |   3 +
+>>   mm/Makefile                         |   1 +
+>>   mm/hugetlb_contpte.c                | 258 ++++++++++++++++++++++++
+>>   14 files changed, 583 insertions(+), 622 deletions(-)
+>>   create mode 100644 include/linux/hugetlb_contpte.h
+>>   create mode 100644 mm/hugetlb_contpte.c
+>>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
