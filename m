@@ -1,184 +1,267 @@
-Return-Path: <linux-kernel+bounces-575466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A312CA702C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:51:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69BBA702CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406CB174257
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09E6B19A26E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EC925B673;
-	Tue, 25 Mar 2025 13:44:33 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DE225D205;
+	Tue, 25 Mar 2025 13:44:39 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2105.outbound.protection.outlook.com [40.107.215.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6655125A2CB;
-	Tue, 25 Mar 2025 13:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742910273; cv=none; b=rKgZgQgIbcm+OIR/bkGMkl8iIkNDxkRid6LnIG9KcH2h92unnxva1P2Dt0JxHFMs3sVv7CGEYGJQu7Rm6uIOnu4hG+vsmkWvpQbQzdy2kGKFmDwez/M9dOl8QYcykDrlgOXAQQ4A9UlL5QeiRm63Y2s/cPvM2SJ7UL0jOqITZn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742910273; c=relaxed/simple;
-	bh=6lx1eOJhv9ppzEicGls86YH1VCpVV0968XvMnr65aWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4kqJV+ximu7OjS+JQ6sVhSaEFEh+B63oM7WbcUGMNk2rlFSctM3ROoe2o1L5KtQITCR4DNntztCEFS8bJICfQabXCO/BU/4U+Z4wAmUVf2d4Ux3lnA2U0cc8MHTpraz9by3FWPQdT0e9cw/YY4BsIDMym8JnAzFmwHNnbHN2Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0FD6C43152;
-	Tue, 25 Mar 2025 13:44:25 +0000 (UTC)
-Message-ID: <bff3d8a4-2873-4613-b7fd-de0e8320f191@ghiti.fr>
-Date: Tue, 25 Mar 2025 14:44:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F00125C718;
+	Tue, 25 Mar 2025 13:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.105
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742910279; cv=fail; b=RfjjzhLu5EFcwQR/1sx++jvoyDvVYLdFq6zN7LoN/U6WSgyFxcHaySag6bnqnjgN/NCwVymExPOdv8mZqSAXqi95RyxZMkfBclTwuPMtQ2WyOYf60CgxdbQaRwIam9AacAULzCa8SC0HWb8baaoHWa0aD7K4G3/jJwhQDXbMFi4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742910279; c=relaxed/simple;
+	bh=FPdCBvPXZ0iTUKExjgA9+m4UTn/ItuT52RovvRiXy6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2PdPhEGWQ372R0OZQwXcO3aA2SnyXTAc0AWDRRboJMVdlldPLHg7xgxnqmD8e3oCk6yOrF8VVpBA0WL8X+hxpc+ve9bzqLTlldLDTvVPwcnaXXyYeojUwSGHWQBQc79q2JDjbE4zrrBTm+NIrWu060ZBMTuoTBHz8YAktsnsp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BIriYoLkgx/MNBWLi4Yos9zDXSeqBxOsPbu1oxz9hoD8cM/C8k5Bd8KdMtvBCL+DSi0nVQrsk/KurMtszzbjNqZ73LShsa2zhbvylQhdy2UShpYy+8fKd0SgRw2ppUnb40zvspcygSpKKrEPCIwuvxEU9E79eIMx/dbV4s8oocNnFEwx0YUySLEh3+B8xgCc/VKjLiBx1hINOQtfRVTFMR+vAj/fki0e4q66SmSqWoG6vdSJZI+Cc+OEi8Vy0ndeu6A3AJGqM7RBM0t45tjJmcGpvqs6f7hG9qV8poatybWn4YwpzcPLZ/Y2WrEkitzD0hWPLJr0CRuoRb0ITfVODw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ouee1u7iiS3DGlQQGSAH6t+QCWivpvooSGYluQ3z124=;
+ b=HmTk41k+rKCjMnIsa/xmKgC20Uxixikx3TMqxGOLDcogSkR80O84M/ipZMMxoJoM2tEqUv2BGL0N9qo6A0dvy65FukLv9bwg6utl/9ICxtZeX8jLHLSh90iCv9IvFesuhQx/72J/wfFw7Q2C17iqVoiOR8DJZps3xfLVmDshFUsnCIB9XiOHjB4SbvNbcme7pcc/AWctssMtNBeiPpK/nfVyfqLgwzgVvewZGlju90jy4k7JpiKuJH10tCHHsj4wma0+8Dhrogz4YYqwTA+Gnki1FppwerJfgZLqudMlJcCDEVDCKHM/OjllzQrSMCEqYWA1aCc9IIGcPmwrixz6lQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TYCP286CA0294.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:3c8::6)
+ by SEYPR06MB5182.apcprd06.prod.outlook.com (2603:1096:101:8b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 13:44:31 +0000
+Received: from OSA0EPF000000C7.apcprd02.prod.outlook.com
+ (2603:1096:400:3c8:cafe::e2) by TYCP286CA0294.outlook.office365.com
+ (2603:1096:400:3c8::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
+ 25 Mar 2025 13:44:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ OSA0EPF000000C7.mail.protection.outlook.com (10.167.240.53) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 25 Mar 2025 13:44:30 +0000
+Received: from gchen (unknown [172.20.64.84])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 921A24160502;
+	Tue, 25 Mar 2025 21:44:29 +0800 (CST)
+Date: Tue, 25 Mar 2025 13:44:28 +0000
+From: Guomin chen <guomin.chen@cixtech.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, cix-kernel-upstream@cixtech.com
+Subject: Re: [PATCH v2 2/2] mailbox: add Cixtech mailbox driver
+Message-ID: <Z+KzPHxTRPbXbYao@gchen>
+References: <20250325101807.2202758-1-guomin.chen@cixtech.com>
+ <20250325101807.2202758-3-guomin.chen@cixtech.com>
+ <410f05ba-73e2-45fd-9d31-0c07d648cdd5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] RISC-V: add vector crypto extension validation
- checks
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Eric Biggers <ebiggers@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <cleger@rivosinc.com>, Andy Chiu <andybnac@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250312-abide-pancreas-3576b8c44d2c@spud>
- <20250312-entertain-shaking-b664142c2f99@spud>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250312-entertain-shaking-b664142c2f99@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeehiefhuddtuddukeetkeehhedtffduhfevfeeftdefveffgfeuffejjeejfeekueenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtoheptghonhhorheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegtohhnohhrrdguohholhgvhiesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdpr
- hgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <410f05ba-73e2-45fd-9d31-0c07d648cdd5@kernel.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OSA0EPF000000C7:EE_|SEYPR06MB5182:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef6dcac5-0b8f-4c3d-fa75-08dd6ba32b7f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fkhIvMp3c9SDCbYpNE8a/f+SrK8kJwRtiAhb2xuBrv7Y5bpNK6WG+PAbLygk?=
+ =?us-ascii?Q?42s2U4oR14v5vUAc8L81So2ttCzXItK1X5MJbS+CCPNVbOgbqlpD+rleM4OX?=
+ =?us-ascii?Q?vzm4Rlab9NkI89/OvQmMddPMHlfKMKleiec8EiI9bqstm2KcolTlRFo7kOhD?=
+ =?us-ascii?Q?Kg8J7aJJqeY5F0IExgSoze1/uMbT3fFNdrGvLr1SJntmIFv+ZIlD2FoF7wUX?=
+ =?us-ascii?Q?dYo475bvZAdgE5trvdMdLSO6ny8S+qFiEL6y+d5tJKt4uRFWmDfgrTyq2LSK?=
+ =?us-ascii?Q?GxBlx74A2z7W4yMkMa4/05Podw/He5Sz5JuVBtHHMadn2uPjWuS+QndExZhk?=
+ =?us-ascii?Q?BYxY65UR9rzobiP8UeQlD/n1qaX2tcvw83MNn2/aauMpZu/gJEJL3GMBZzj7?=
+ =?us-ascii?Q?OMWd1KEuWEZl2v3ShHcRUT+oVs0wogsHDA2G3rHvH9K7q11VoUwuwwWrPTKe?=
+ =?us-ascii?Q?HZHjKPmk340nR8+IXxZvVUmfJRrBdUBwSnpRddRUWCDikIwOvfWS/YKqLDxU?=
+ =?us-ascii?Q?ZUx3mavbGejgn4k1tn1N/izluvhZWjZgfzDPSunt/URO2mN1BLVkpizmNjNn?=
+ =?us-ascii?Q?aGQrh5ETONDEoF9LDDq/A9Gi1LKySDDkemDuLForfME+WkAzf37T5VaHuwC/?=
+ =?us-ascii?Q?yTZOj+fMOnFidCCnuT01itoioY+Ecp2Vlu5rTHLFpoge2xbkhh18RoGtAxk4?=
+ =?us-ascii?Q?z2qPNJy8I0TeVdXI19CY2c51eVy4tKmpyuCYXWXbnfGwZBbOz7rPl8SgkfnU?=
+ =?us-ascii?Q?OXlXlW/bpuQcJ65RM5My/AePDWTTWTGoT8aJo0/HMVZdULxM+s11Cg1ce/Vn?=
+ =?us-ascii?Q?TjKlhkJAxYj0GGMgU9yXF7985Kpm1juosVF1rncDhsonDth0ooSH3EqdlOxn?=
+ =?us-ascii?Q?K/duiTCNGJ/zpDsRidKHmzSwY0PVMuketmv0H7g+YVLTyHCwUUSJO51FCGPB?=
+ =?us-ascii?Q?tzfVYx2yIcsmKFOX+2qYtxMsPWHGyZ5yGznG/zZyUIDiTfnE3UShKjUd1DlA?=
+ =?us-ascii?Q?ZzVQ/y4nBJm5vkyUvsxJuUvwQ5cmDeB4nh7/r88YcPysJODmtfGGRY8sCgYL?=
+ =?us-ascii?Q?LkDKhsDw4Zv4iXRfDWjy61OW/AroS1z/QkU7cw1I9FcXXV4zSei9rwIWg0Gl?=
+ =?us-ascii?Q?bgDijouMLPgZ/JRQogbGe1EmcTwV0BjidNmhV5HSdV7ZzwSinn2izezps6g+?=
+ =?us-ascii?Q?s7zWRejIaxKqRuSWzY+yFDR6/MnDQ49CCLgEXfmvU0RiyhjFFrF78w46z6w7?=
+ =?us-ascii?Q?YLE0WUIhAggJ5UV/L3VPyhhmWFxYqW+ZMIY0XR/Rz60ubMfbMgzAoCpxe9Uc?=
+ =?us-ascii?Q?5uQFvq9JUcS/ovR11mOWfCY2xsI568lTOICeZaYRu+R73+vTeUXTL35XOnbV?=
+ =?us-ascii?Q?/kaUN38CYCtZdqrDrWkXxpkEvOsuCS+vgVEsQt9xXvlNWmDm2oPZH8OQXUTk?=
+ =?us-ascii?Q?PPubprorxY4MfLdDNlL2h9iTHKte4dEcEqzFAPrXFV6b6VVUIVmBCnI66VDR?=
+ =?us-ascii?Q?7gavAlHYHU9UWgI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 13:44:30.7626
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef6dcac5-0b8f-4c3d-fa75-08dd6ba32b7f
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: OSA0EPF000000C7.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5182
 
-Hi Conor,
+On Tue, Mar 25, 2025 at 11:39:34AM +0100, Krzysztof Kozlowski wrote:
+> EXTERNAL EMAIL
+> 
+> On 25/03/2025 11:18, Guomin Chen wrote:
+> > +
+> > +static int cix_mbox_startup(struct mbox_chan *chan)
+> > +{
+> > +     struct cix_mbox_priv *priv = to_cix_mbox_priv(chan->mbox);
+> > +     struct cix_mbox_con_priv *cp = chan->con_priv;
+> > +     int ret;
+> > +     int index = cp->index;
+> > +     u32 val_32;
+> > +
+> > +     ret = request_irq(priv->irq, cix_mbox_isr, 0,
+> > +                       dev_name(priv->dev), chan);
+> > +     if (ret) {
+> > +             dev_err(priv->dev,
+> > +                     "Unable to acquire IRQ %d\n",
+> > +                     priv->irq);
+> 
+> Odd wrapping. All over the code. See coding style. Please follow it
+> precisely.
+hi Krzysztof
+Thank you. I will carefully review the coding style issues you mentioned and correct them in the next version.
 
-On 12/03/2025 14:11, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> Using Clement's new validation callbacks, support checking that
-> dependencies have been satisfied for the vector crpyto extensions.
-> Currently riscv_isa_extension_available(<vector crypto>) will return
-> true on systems that support the extensions but vector itself has been
-> disabled by the kernel, adding validation callbacks will prevent such a
-> scenario from occuring and make the behaviour of the extension detection
-> functions more consistent with user expectations - it's not expected to
-> have to check for vector AND the specific crypto extension.
->
-> The Unpriv spec states:
-> | The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly the
-> | composite extensions Zvkn, Zvknc, Zvkng, and Zvksc-- require a Zve64x
-> | base, or application ("V") base Vector Extension. All of the other
-> | Vector Crypto Extensions can be built on any embedded (Zve*) or
-> | application ("V") base Vector Extension.
->
-> While this could be used as the basis for checking that the correct base
-> for individual crypto extensions, but that's not really the kernel's job
-> in my opinion and it is sufficient to leave that sort of precision to
-> the dt-bindings. The kernel only needs to make sure that vector, in some
-> form, is available.
->
-> Link: https://github.com/riscv/riscv-isa-manual/blob/main/src/vector-crypto.adoc#extensions-overview
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->   arch/riscv/kernel/cpufeature.c | 49 +++++++++++++++++++++++-----------
->   1 file changed, 33 insertions(+), 16 deletions(-)
->
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index dbea6ed3f4da..4fa951e9f1cf 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -141,6 +141,23 @@ static int riscv_ext_vector_float_validate(const struct riscv_isa_ext_data *data
->   	return 0;
->   }
->   
-> +static int riscv_ext_vector_crypto_validate(const struct riscv_isa_ext_data *data,
-> +					    const unsigned long *isa_bitmap)
-> +{
-> +	if (!IS_ENABLED(CONFIG_RISCV_ISA_V))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * It isn't the kernel's job to check that the binding is correct, so
-> +	 * it should be enough to check that any of the vector extensions are
-> +	 * enabled, which in-turn means that vector is usable in this kernel
-> +	 */
-
-
-I'm not sure to understand this comment. For example, Zvknhb depends on 
-Zve64x so only checking for Zve32x would make Zvknhb usable in the 
-kernel even though it's actually not supported right? Or am I missing 
-something?
-
-Thanks,
-
-Alex
-
-
-> +	if (!__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZVE32X))
-> +		return -EPROBE_DEFER;
-> +
-> +	return 0;
-> +}
-> +
->   static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
->   				 const unsigned long *isa_bitmap)
->   {
-> @@ -400,8 +417,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->   	__RISCV_ISA_EXT_DATA(zksed, RISCV_ISA_EXT_ZKSED),
->   	__RISCV_ISA_EXT_DATA(zksh, RISCV_ISA_EXT_ZKSH),
->   	__RISCV_ISA_EXT_DATA(ztso, RISCV_ISA_EXT_ZTSO),
-> -	__RISCV_ISA_EXT_SUPERSET(zvbb, RISCV_ISA_EXT_ZVBB, riscv_zvbb_exts),
-> -	__RISCV_ISA_EXT_DATA(zvbc, RISCV_ISA_EXT_ZVBC),
-> +	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zvbb, RISCV_ISA_EXT_ZVBB, riscv_zvbb_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvbc, RISCV_ISA_EXT_ZVBC, riscv_ext_vector_crypto_validate),
->   	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve32f, RISCV_ISA_EXT_ZVE32F, riscv_zve32f_exts, riscv_ext_vector_float_validate),
->   	__RISCV_ISA_EXT_DATA_VALIDATE(zve32x, RISCV_ISA_EXT_ZVE32X, riscv_ext_vector_x_validate),
->   	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve64d, RISCV_ISA_EXT_ZVE64D, riscv_zve64d_exts, riscv_ext_vector_float_validate),
-> @@ -409,20 +426,20 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->   	__RISCV_ISA_EXT_SUPERSET_VALIDATE(zve64x, RISCV_ISA_EXT_ZVE64X, riscv_zve64x_exts, riscv_ext_vector_x_validate),
->   	__RISCV_ISA_EXT_DATA(zvfh, RISCV_ISA_EXT_ZVFH),
->   	__RISCV_ISA_EXT_DATA(zvfhmin, RISCV_ISA_EXT_ZVFHMIN),
-> -	__RISCV_ISA_EXT_DATA(zvkb, RISCV_ISA_EXT_ZVKB),
-> -	__RISCV_ISA_EXT_DATA(zvkg, RISCV_ISA_EXT_ZVKG),
-> -	__RISCV_ISA_EXT_BUNDLE(zvkn, riscv_zvkn_bundled_exts),
-> -	__RISCV_ISA_EXT_BUNDLE(zvknc, riscv_zvknc_bundled_exts),
-> -	__RISCV_ISA_EXT_DATA(zvkned, RISCV_ISA_EXT_ZVKNED),
-> -	__RISCV_ISA_EXT_BUNDLE(zvkng, riscv_zvkng_bundled_exts),
-> -	__RISCV_ISA_EXT_DATA(zvknha, RISCV_ISA_EXT_ZVKNHA),
-> -	__RISCV_ISA_EXT_DATA(zvknhb, RISCV_ISA_EXT_ZVKNHB),
-> -	__RISCV_ISA_EXT_BUNDLE(zvks, riscv_zvks_bundled_exts),
-> -	__RISCV_ISA_EXT_BUNDLE(zvksc, riscv_zvksc_bundled_exts),
-> -	__RISCV_ISA_EXT_DATA(zvksed, RISCV_ISA_EXT_ZVKSED),
-> -	__RISCV_ISA_EXT_DATA(zvksh, RISCV_ISA_EXT_ZVKSH),
-> -	__RISCV_ISA_EXT_BUNDLE(zvksg, riscv_zvksg_bundled_exts),
-> -	__RISCV_ISA_EXT_DATA(zvkt, RISCV_ISA_EXT_ZVKT),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvkb, RISCV_ISA_EXT_ZVKB, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvkg, RISCV_ISA_EXT_ZVKG, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvkn, riscv_zvkn_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvknc, riscv_zvknc_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvkned, RISCV_ISA_EXT_ZVKNED, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvkng, riscv_zvkng_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvknha, RISCV_ISA_EXT_ZVKNHA, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvknhb, RISCV_ISA_EXT_ZVKNHB, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvks, riscv_zvks_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvksc, riscv_zvksc_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvksed, RISCV_ISA_EXT_ZVKSED, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvksh, RISCV_ISA_EXT_ZVKSH, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_BUNDLE_VALIDATE(zvksg, riscv_zvksg_bundled_exts, riscv_ext_vector_crypto_validate),
-> +	__RISCV_ISA_EXT_DATA_VALIDATE(zvkt, RISCV_ISA_EXT_ZVKT, riscv_ext_vector_crypto_validate),
->   	__RISCV_ISA_EXT_DATA(smaia, RISCV_ISA_EXT_SMAIA),
->   	__RISCV_ISA_EXT_DATA(smmpm, RISCV_ISA_EXT_SMMPM),
->   	__RISCV_ISA_EXT_SUPERSET(smnpm, RISCV_ISA_EXT_SMNPM, riscv_xlinuxenvcfg_exts),
+Best regards
+Guomin Chen
+> 
+> > +             return ret;
+> > +     }
+> > +
+> > +     dev_info(priv->dev, "%s, irq %d, dir %d, type %d, index %d\n",
+> > +              __func__, priv->irq, priv->dir, cp->type, cp->index);
+> 
+> Drop or dev_dbg.
+> 
+> > +
+> > +     switch (cp->type) {
+> > +     case CIX_MBOX_TYPE_DB:
+> > +             /* Overwrite txdone_method for DB channel */
+> > +             chan->txdone_method = TXDONE_BY_ACK;
+> > +             fallthrough;
+> > +     case CIX_MBOX_TYPE_REG:
+> > +             if (priv->dir == MBOX_TX) {
+> > +                     /* Enable ACK interrupt */
+> > +                     val_32 = cix_mbox_read(priv, INT_ENABLE);
+> > +                     val_32 |= ACK_INT;
+> > +                     cix_mbox_write(priv, val_32, INT_ENABLE);
+> > +             } else {
+> > +                     /* Enable Doorbell interrupt */
+> > +                     val_32 = cix_mbox_read(priv, INT_ENABLE_SIDE_B);
+> > +                     val_32 |= DB_INT;
+> > +                     cix_mbox_write(priv, val_32, INT_ENABLE_SIDE_B);
+> > +             }
+> > +             break;
+> > +     case CIX_MBOX_TYPE_FIFO:
+> > +             /* reset fifo */
+> > +             cix_mbox_write(priv, FIFO_RST_BIT, FIFO_RST);
+> > +             /* set default watermark */
+> > +             cix_mbox_write(priv, FIFO_WM_DEFAULT, FIFO_WM);
+> > +             if (priv->dir == MBOX_TX) {
+> > +                     /* Enable fifo overflow interrupt */
+> > +                     val_32 = cix_mbox_read(priv, INT_ENABLE);
+> > +                     val_32 |= FIFO_OFLOW_INT;
+> > +                     cix_mbox_write(priv, val_32, INT_ENABLE);
+> > +             } else {
+> > +                     /* Enable fifo full/underflow interrupt */
+> > +                     val_32 = cix_mbox_read(priv, INT_ENABLE_SIDE_B);
+> > +                     val_32 |= FIFO_UFLOW_INT|FIFO_WM01_INT;
+> > +                     cix_mbox_write(priv, val_32, INT_ENABLE_SIDE_B);
+> > +             }
+> > +             break;
+> > +     case CIX_MBOX_TYPE_FAST:
+> 
+> ...
+> 
+> > +
+> > +static int cix_mbox_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev = &pdev->dev;
+> > +     struct cix_mbox_priv *priv;
+> > +     int ret;
+> > +     u32 dir;
+> > +
+> > +     priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv)
+> > +             return -ENOMEM;
+> > +
+> > +     priv->dev = dev;
+> > +     priv->base = devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(priv->base))
+> > +             return PTR_ERR(priv->base);
+> > +
+> > +     priv->irq = platform_get_irq(pdev, 0);
+> > +     if (priv->irq < 0)
+> > +             return priv->irq;
+> > +
+> > +     if (device_property_read_u32(dev, "cix,mbox-dir", &dir)) {
+> > +             dev_err(priv->dev, "cix,mbox_dir property not found\n");
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     if ((dir != MBOX_TX)
+> > +         && (dir != MBOX_RX)) {
+> 
+> Odd style. Please follow Linux kernel coding style. There is no wrapping
+> after 20 characters.
+> 
+> > +             dev_err(priv->dev, "Dir value is not expected! dir %d\n", dir);
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     cix_mbox_init(priv);
+> > +
+> > +     priv->dir = (int)dir;
+> > +     priv->mbox.dev = dev;
+> > +     priv->mbox.ops = &cix_mbox_chan_ops;
+> > +     priv->mbox.chans = priv->mbox_chans;
+> > +     priv->mbox.txdone_irq = true;
+> > +     priv->mbox.num_chans = CIX_MBOX_CHANS;
+> > +     priv->mbox.of_xlate = NULL;
+> > +     dev_info(priv->dev, "%s, irq %d, dir %d\n",
+> > +              __func__, priv->irq, priv->dir);
+> 
+> Drop, your driver is supposed to be silent on success.
+> 
+> > +
+> > +     platform_set_drvdata(pdev, priv);
+> > +     ret = devm_mbox_controller_register(dev, &priv->mbox);
+> > +     if (ret)
+> > +             dev_err(dev, "Failed to register mailbox %d\n", ret);
+> > +
+> Best regards,
+> Krzysztof
 
