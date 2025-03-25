@@ -1,131 +1,100 @@
-Return-Path: <linux-kernel+bounces-575399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF5BA701BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:28:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170D8A701D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C6587A9398
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:23:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1E57A2703
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D889267B6B;
-	Tue, 25 Mar 2025 13:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD132627E2;
+	Tue, 25 Mar 2025 13:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyPrZX2z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="P9iP3brw"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6871EB5D4;
-	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908452; cv=none; b=jrqq/7posKSng++8kNx6wo80V7aqht0OfyqEcfFdiHkhW7WS1uviRvsv4j+MIkChgIPD9tsoO57JX0KpftCctvn4tVFbmwBvOCRpNeTyAaB8NClhIICRJQFDnSrHWpbY8SY4OAlqNWl5keQEwOlJra2jfcWEjfvHer6Yj8B4I6M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908452; c=relaxed/simple;
-	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RpXY77JZei/+ZU7lsyb28PmmjTlrF3nZtvFn3n2TW9QPMQWcW6fx0KgClXm5pK4KZ//PkWrdhnWVepgkw6/WUHfxhX2N74OLjFGqSYYi2pfKt8bgWdBmXQFZy3ni/4E/PIxtJXwar9qTpCXt9GGv3Q1UBcKsmkh7AKvv4tok7aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyPrZX2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD6C4CEE9;
-	Tue, 25 Mar 2025 13:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742908451;
-	bh=7bzJUIwY16l63QfKJmsiupVF7IYNqpkd3IzG9gYAALc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NyPrZX2zvYx4m3VH9Fc1wiiQCHtp81BxhFIgJErfM1e6iK8yvSerc4sfbMDBzx1kQ
-	 QplIQZnPOseIWFkTXjK02uSDnGG6Uzq1AYv5KPHeujZiOAlbpwn4SbWEHhmX/gy469
-	 fFXR2na2foa9uxqRXn9AF0M+fongqdtMQAsDD80dHI5sfoaBLx23YVNceFsMWYKaVs
-	 C7/p11hnQkANTPBqtf0OU6Q+v+kaVBZb6VFrZLAR7m0krBlnMAO88LNmzTdnsOfaKI
-	 VpbZ0yXg04wccCBO9NlBypwixYU1z2XvmV1vo+KcGfLfjl1MuRnqI83HTSb88ieULT
-	 G+VRbIUrF/dSg==
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso59983555e9.3;
-        Tue, 25 Mar 2025 06:14:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDQXv//uYnrj0xTcZU7WoVMoXsnC/3gu66XtlzhNcKWAWClCYZLvGFOhRd/wPwE/RplCvZC8TRDulLQ==@vger.kernel.org, AJvYcCUQQaPOp/iHR9mUH3hdZ+jeZspVo8mWHltjG4p6aFoXYWYErU0uVVevUEdNaM5KJyAGAsY/nPfvd/1HefU=@vger.kernel.org, AJvYcCUarW0/Q35ssU9KErxd22g/odNmW7MR/7ygwu9BNiONMaL16TcYLEHZD3f0WgNBNKEv+V9WzIOzDfsrUg==@vger.kernel.org, AJvYcCUpTdI73jiOVulOW3xykQocH8ESIfVuJ0NwI6UXCa48EFAt8i13cVMKKbo2EfJbuxQZugM19eMEj1FkQ9LRdYHAmbIw@vger.kernel.org, AJvYcCUqGtqqdu1BKbieA+m4mV5HVW9A2zxvB7ue4nTXF1/9dYiq5bfuwZ7rxSIw7nzijLV3o4AlDF+9j5T+yYBPyrRD@vger.kernel.org, AJvYcCV0k0WLTol/AmF2TwDXkA5hHdRhlGI57vtKgWgbfUIy5zxgs32qEyeUd6OlBWwU3uue36s7qtb8FHqPZwrUkavU5Q==@vger.kernel.org, AJvYcCV96R7XvC0sBcJzfv1+JFi6y5dPPwcQmIXIgecPUoh5uPwP1IFsxC/aXtchKwD3sa08m65JEC3NRmer9NjWLg==@vger.kernel.org, AJvYcCVbY2P44jOmYD5WokSgc83MD52DC+DZvPTPpxrt5Z8EVe7vmdtWoxhd5FQIWvutTjQApH4EHMpv72NkGG8=@vger.kernel.org, AJvYcCVeJHk5ZgNEpRWzlERRIwowRlMXJhBVfyql9AKKr0d7Vlkx4ICmApOZ2sKWnKcsyPo3n6/yVofk@vger.kernel.org, 
- AJvYcCVuYHLlMYcQv0Chh3BGwMkFkbvO0UOiR8AXIZiZbmMeeD5BxR5ZK3+sVhUbOSkZI44tfEJwGnCNu/tf@vger.kernel.org, AJvYcCWUpyV3xY/tdBoaSzQg2aYhiXmzdLzCoPOIR+F1/QgIJjjSTYJEJ6omIGJqSkMUyyE7I8P8Hv7dhkrBffUb@vger.kernel.org, AJvYcCWY8Lx2oS3HV6lWBflOKBK6wQRPntVljekJTuf6VsvNdyrLl7fuNgVmsaP1ajle7/moLNfx4EQ+KZk084wL@vger.kernel.org, AJvYcCWuz2C1r6mkcr/lPwDS0gbHaYWXfHvDpKWBsvUYR0Ah9PHOarVdzdyUjtghSFfSkhl1Y0+I@vger.kernel.org, AJvYcCXJUJcg+Gw/oApBcMnGSX3f4CVkwk4GwaIN3+KgITbhIslMhO4Qwj6sZCVzL8bM8YRc1wVSQonl65ODuYGW@vger.kernel.org, AJvYcCXa37OlWm9MB2tH2oLAyFSuTKm04ajOsu2x/6NvYEbVFU+WaC89nXd3tzqTZWfvf+ETO+0=@vger.kernel.org, AJvYcCXc+KKLEe6Pf7joAGeGC6EvUCyprnEFqKNblq7UzQ5Q3G3G+cH8Fo/gYPvDL/4ezEKVzwMAyTtn0LfU@vger.kernel.org, AJvYcCXfxGrHfVIPwNBEYnIhw9DhpGlSgk0I/R5ZRuBRRKwoYjDJ8lzE1N0WBhLWQXr8RJSR23cRXkzVQjcPeM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFeIsFzV8LJgj+BUWgRx+dxrTbPmpqy/u2qrclOXzYCj6EUYAD
-	nV4naJhtYOgZQWzUIjJnZhpfSvQUrrOMvEzolKZoT37wZCvUyrv5tYCRnUAZQgxDs5gZ7KtmS/+
-	YapgTykTq3Os678Q8bDY1BsGd1fo=
-X-Google-Smtp-Source: AGHT+IGfKexksGgX0maV0KTcsKLOGrgVH5YKmlbhOfh8iEjwSz3eKgWZcomNnjiD6N1+SrsmiEpO9V65lbI9UvtGx1A=
-X-Received: by 2002:a5d:59a2:0:b0:38f:6287:6474 with SMTP id
- ffacd0b85a97d-3997f8fc43dmr15193020f8f.15.1742908449922; Tue, 25 Mar 2025
- 06:14:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44925FA2B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742908545; cv=pass; b=l8MZ+eG7xVka6DpTVys6ILsQIJE8ipPh8+fI9JwvcwOttMa+GHsZwEOTVYGDais/0PlTWhIU240bnxd3DIyzi5gw5m48ltky06pnZUpuoKdLcmmkp28FR5VY+AOpqL+fdald8tKBVldfOGyVGpNq5YlgdjLu/WElV3ZGRQ4RzOk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742908545; c=relaxed/simple;
+	bh=mvfeHZjae1E5x5TkdHlLfcgOt3i/eXml7PbHFz1OTIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMo7mLtKu/SWn0hcDfCzmd54sFFeTTyegurk2LpjnqAA2pNratT8IZilw8cQaTt2jqjqljgOrzuq34BvC5+o49TJVGHu9B0WYjbs6UoG8V1n+7Th7BM3OZq4KGNukFbag/JO2j0MP0rQOLF1GfqxYSXFU6WhV95GAIjCFLV3bJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=P9iP3brw; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742908515; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=G0wLS12QrrrDHaHlYmP03ogt1xfZVfb9evDM6I16nSkSssTrxIuSuDnI4gjFsPUfTBxy+VnC/WP9Bne1ZnWQZR4F42j8sn5K0PdnpEs77uV4GOU0hvo8fasIBDjCIEv+AxcIEGRxU4NPHwOoq0jCrNYFg56IEoIul2aJSTJnCT8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742908515; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fDm1R/WiqJq/sHw4nivRAfTA+VsQ/zxcGtGcMmbNCvw=; 
+	b=jt0z3EbVQFPTCg8o/JmE/nVvms0R3ZOI2oqquW451T3EdrV5xoi5Dczr0gbENDiUJPo9yDUw4TSQ8Q5oxZOl1L4MzhtREsDWOzFQ1eYPazUCYuupDzisoZ5hr6U+BJWwc7YEpu51W6jixHDhoRNjtLDDSdhNhaY93L3XnXQjP3k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742908515;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=fDm1R/WiqJq/sHw4nivRAfTA+VsQ/zxcGtGcMmbNCvw=;
+	b=P9iP3brwesqgWTGBzkjhMfUA6XjB989NDe+Wj+QPxUfY3H2wKFGwHzY2oUufmgSr
+	2CvZidmL5N+sN8wfLlZ1tXm6c8Gd60psUk7alhGck8wvSdI0Tbd5oTyfWfUcXQKYjL0
+	CShNKfQbkIWa911TrFlo74Opb6QcHe9BSnrLMU8w=
+Received: by mx.zohomail.com with SMTPS id 1742908513199129.5870997796227;
+	Tue, 25 Mar 2025 06:15:13 -0700 (PDT)
+Message-ID: <aa9df686-64ca-4679-acb7-7677de99f7cf@collabora.com>
+Date: Tue, 25 Mar 2025 16:15:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325121624.523258-1-guoren@kernel.org> <20250325122640.GK36322@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250325122640.GK36322@noisy.programming.kicks-ass.net>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 25 Mar 2025 21:13:57 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
-X-Gm-Features: AQ5f1JorUn_mZoEMhlL0Xe-AITZgnQPYbvOfeukBw1Vy-vsynC2mh-QB0cq8pe8
-Message-ID: <CAJF2gTRfo-JuGtCJvZKAFJ0BAEzdqe83TvccCKM54BL0NQHHJw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
- kernel-self with ILP32 ABI
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, anup@brainfault.org, 
-	atishp@atishpatra.org, oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, 
-	will@kernel.org, mark.rutland@arm.com, brauner@kernel.org, 
-	akpm@linux-foundation.org, rostedt@goodmis.org, edumazet@google.com, 
-	unicorn_wang@outlook.com, inochiama@outlook.com, gaohan@iscas.ac.cn, 
-	shihua@iscas.ac.cn, jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
-	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
-	dsterba@suse.com, mingo@redhat.com, boqun.feng@gmail.com, 
-	xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, leobras@redhat.com, 
-	jszhang@kernel.org, conor.dooley@microchip.com, samuel.holland@sifive.com, 
-	yongxuan.wang@sifive.com, luxu.kernel@bytedance.com, david@redhat.com, 
-	ruanjinjie@huawei.com, cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, 
-	qiaozhe@iscas.ac.cn, ardb@kernel.org, ast@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 01/10] drm/gem: Change locked/unlocked postfix of
+ drm_gem_v/unmap() function names
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Gerd Hoffmann <kraxel@redhat.com>, Qiang Yu <yuq825@gmail.com>,
+ Steven Price <steven.price@arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
+ <20250322212608.40511-2-dmitry.osipenko@collabora.com>
+ <e21e75a6-76a4-4202-bdff-bec73755229a@amd.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <e21e75a6-76a4-4202-bdff-bec73755229a@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Tue, Mar 25, 2025 at 8:27=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Tue, Mar 25, 2025 at 08:15:41AM -0400, guoren@kernel.org wrote:
-> > From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
-> >
-> > Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
-> > but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
->
-> I'm thinking you're going to be finding a metric ton of assumptions
-> about 'unsigned long' being 64bit when 64BIT=3Dy throughout the kernel.
-Less than you imagined. Most code is compatible with ILP32 ABI due to
-the CONFIG_32BIT. In my practice, it's deemed acceptable.
+On 3/24/25 16:05, Christian König wrote:
+> Am 22.03.25 um 22:25 schrieb Dmitry Osipenko:
+>> Make drm/gem API function names consistent by having locked function
+>> use the _locked postfix in the name, while the unlocked variants don't
+>> use the _unlocked postfix. Rename drm_gem_v/unmap() function names to
+>> make them consistent with the rest of the API functions.
+> 
+> I usually prefer keeping the function which people should use for new code without a postfix, but that isn't a must have.
+> 
+> Either way patch #1-#3 are Reviewed-by: Christian König <christian.koenig@amd.com>.
 
->
-> I know of a couple of places where 64BIT will result in different math
-> such that a 32bit 'unsigned long' will trivially overflow.
-I would be grateful if you could share some with me.
+Thanks!
 
->
-> Please, don't do this. This adds a significant maintenance burden on all
-> of us.
-The 64ILP32 ABI would bear the maintenance burden, not traditional
-64-bit or 32-bit ABIs. The patch set won't impact other CONFIG_64BIT
-or CONFIG_32BIT. Numerous RV64 chips require the RV64ILP32 ABI to
-reduce the memory and cache footprint; we will bear the burden. The
-core code maintainers would receive patches that would make them use
-BITS_PER_LONG and CONFIG_64BIT more accurately.
-
---=20
-Best Regards
- Guo Ren
+-- 
+Best regards,
+Dmitry
 
