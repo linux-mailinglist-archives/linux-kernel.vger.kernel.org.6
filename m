@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-574865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22758A6EAE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:55:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63EFA6EAF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:57:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12D2188DE4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B72E0188DF35
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001B2253B54;
-	Tue, 25 Mar 2025 07:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EA6253B52;
+	Tue, 25 Mar 2025 07:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqFJ6SZG"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFxdI4K+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00321FE471;
-	Tue, 25 Mar 2025 07:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEF21FE471;
+	Tue, 25 Mar 2025 07:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742889306; cv=none; b=gKB0AuOqX6DNbQnTsQ3dflogGCcAqSJzdiMu80pSkRRG+2FN9PtQ2+/lys/NecAcBrzTe4usDNQT5QW4ojoTxk4q7KeruliR8zzeR5hhHeoZBvt3gPf2QonoovSFRhddqov1K5fvE+7BWn9onmz4gRyE88bgK6w5jPDvcHPijlM=
+	t=1742889452; cv=none; b=fmDr33+YUFsSjZlb8X3XZFOcvQxhL9BMPyMgZXZbgDfC2EGNPmowoc6pEIZiHbxwoHI1so6qxyfI72yoYCPOAXTJNjR9nvY7kPuRxolewe5QgjKwBJlkPb2ns+bkoTsUfX8tav74fsjhYyLz/BIJ5sulFl+Qgfxltge4YEXSPAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742889306; c=relaxed/simple;
-	bh=tim0CjBCZCUNSYsfdqpjhc5M/8LJk7xy34yXEObHoD4=;
-	h=Message-ID:Date:Content-Type:MIME-Version:From:To:Cc:Subject; b=BxVLlcGqj8do2EOYKVE5UHPsBG9vL752L7c7iuLDlHFYFKRhYx5V80AtTiV86io3DVNK6Sj/D2QZuzodeWR4rP3XvUJqQ8OIbsVNHTSWJtm2AaCemb/JaUcQlV2SYevyGuEGDWVzU4mdMQfjiLywUehqvw19WGcYHohyjCqDAl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqFJ6SZG; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e17d3e92d9so41379736d6.1;
-        Tue, 25 Mar 2025 00:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742889304; x=1743494104; darn=vger.kernel.org;
-        h=subject:cc:to:from:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PWvyL5zaWl1iiCY61g6KYx0pemuqXQhwV74VbVAQYeI=;
-        b=XqFJ6SZGajbYjAuirkkiaUQ8twxx8De3StcuyvmYdHHJrB1bLKyawD35BkLqTzkrI2
-         +LbcpCvYnKgtywisHF7QAJDeRBDWAw61SO8WhDsMjFcxxVioHX6BjL1DsZyTe4P5fm+Y
-         AOdijbRKmDb9KUI7xV7dz1+PIIQQ1fIe5NnVc1IUa2MAKaU46EucqBwHwNYn2g75tm3e
-         oRCLKcplsqFZcYKgjPZl4jrW/9Y5r5/T2I/baCSsmZCNuVCytKqQg6/9RkeRWl1obEtL
-         lI0ypvlEpzI4WckNyxIwqSDlYUITz0QxNNjQgHkitPpqz6qjmoIGFRVyaHsN90pM1oS6
-         VhBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742889304; x=1743494104;
-        h=subject:cc:to:from:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PWvyL5zaWl1iiCY61g6KYx0pemuqXQhwV74VbVAQYeI=;
-        b=UbMV8wiz0ktyKGkcLridZPy9+KGkRy88QmvK23qpJh0L7jdhsOYfrZ7IrPVnBfmfS4
-         BvfSWMqNAE7DWPFyYoZsPPH11EB2Ypao1TfNiEGeBXiA9Wg2s2EQOupwR3y2vGFqT6ic
-         Z+lQoO+D1PU5DMwswN0xMOFjotBkKnAk+jr55DvZcB/UkIUzxIVBp0WGpPSKLTLE1r8W
-         5Sn/TUKYMGOs3Zl+gnxiEgNsO5Bg+ysm4jXR+DmkfTX8qJ1tVXcPqVvFCvHqRRWsqlcP
-         w5yFbBhPfmY4JtUVMmsXSRWIhjwvLgE+juQfIlONjtd0KViRBJ+x1I5aTxBpFUEBux6o
-         ANIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNowKZ0oUEt9hg5D3ocyo3sbQEJs6IykFB7D8Ot64eWoNxpz+l2n3L5zzjGF0Ye+s2VfILZgkJjjqz5CA=@vger.kernel.org, AJvYcCXPHRLsSu8onPV0xaQAotgooTB+qjjaJFnMKfao0D4WUmgMFmi0RbuCNVHr+RmO7LzFBprE+P5QSs46Ci0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZRrv2KpjGC95vI9HIFJz0D6QE0YiyqJ+3xro+j4T4j6/feevd
-	TTx41gf46jWrYEsEOek5mdrM3cH+LqkjYrRBx3Bkov5xUo+RRLLl
-X-Gm-Gg: ASbGncuRTSt0ccp5lxRomlOzs5c+KLPg4mrPpeTMjWy3PEsVbo9eW5ivISSb9frrJEk
-	N8e8KcMMqElzyN79bR95rhTzr+lJ025e5gKQ9y3lTyDqWoEuZFrgh13IIG9HnHl11ji+uUqgAn2
-	75oGSbmDkX69XpYyFITlMKyPg609sFPrdvlidcDwemPTq1MXyoHXvGVdMsCjGsuL02xoOCFq73x
-	iHhAeHx2kl9aktinVOMkSjlujX3ot9NNxx4gaMDwR7ax0sntsdvqfmZQEdB/Ki5xjPfQAW3bpLE
-	rxg6jBn+3Xi+qSz7xz04yYMVVl+ofKHuEcMoaYd5S3DLyQHBnPSMUcd+GRKDxgDHGaTD2/CDyJ+
-	F9flvahkuyA==
-X-Google-Smtp-Source: AGHT+IFgkpLgyaIuwi/UunIPUrsPIRmIsJVPGwvLNiNpYyWjTpkB7W61WX2Jz2rW00HVhpv5PQjWIw==
-X-Received: by 2002:a05:6214:194b:b0:6e8:9b52:7a1d with SMTP id 6a1803df08f44-6eb3f27f3a0mr229361886d6.8.1742889303599;
-        Tue, 25 Mar 2025 00:55:03 -0700 (PDT)
-Received: from [127.0.1.1] (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efe0c9csm54518066d6.95.2025.03.25.00.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 00:55:03 -0700 (PDT)
-Message-ID: <67e26157.0c0a0220.36adcd.506e@mx.google.com>
-Date: Tue, 25 Mar 2025 00:55:03 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="===============1076553333254439057=="
+	s=arc-20240116; t=1742889452; c=relaxed/simple;
+	bh=HXxzrKcaY6Po4D2vX685AUuFoG19pTyegFBuG5h8HLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNCH2Nsw0uZXywpisWebrtTQlqJ2wIg4ca8M8/g1vWs+ongG2RUgyF8bfCl8Ums6ijt1Gt+asnFYIkUX3BNtfIIhH5c8hj+66Lg66aV8oIaLyvd7xXDeaI6kIl/6HGO+6HpOOHGWAd5CTJ1MxYjtrhclvEtk0pnt8DOZrmHeAWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFxdI4K+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214CBC4CEE4;
+	Tue, 25 Mar 2025 07:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742889451;
+	bh=HXxzrKcaY6Po4D2vX685AUuFoG19pTyegFBuG5h8HLA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lFxdI4K+rw5hXYLFbKiyOdJvQ+FeyL9DV5K3+xr84A0vE+mKgFZZ48lxRdelD2J0+
+	 KImiarlFzdfvQLC7JtUss7xS275JTJ0oVFNpveK4HVDWJohPxBwIQHWLhhPX6QKR5t
+	 3mU+Tf3182mta+ZzstuctOPSEWiZyEkmK9/FoB1uTkxtERrsN/v7PdTxyqj1RJ+TCW
+	 bL1oerr3r1CBIeEGVrKa2sjCo1M9isH0Zkt0bJWIoCd5wyms3n+xg/SJ5XYNwsxXEo
+	 o2UYkZTGygUmmwQfQFL7+jgPE7OBw3fHU3uJF0UbkKWkUZ7l+x2YOu+52V9Pvo2vbG
+	 ffJSOFk2TYuKQ==
+Message-ID: <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
+Date: Tue, 25 Mar 2025 08:57:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: gshahrouzi@gmail.com
-To: laurent.pinchart@ideasonboard.com
-Cc: 
- hdegoede@redhat.com,mchehab@kernel.org,linux-media@vger.kernel.org,linux-kernel@vger.kernel.org,syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com,skhan@linuxfoundation.org,kernelmentees@lists.linuxfoundation.org
-Subject: [PATCH] media: Fix invalid link creation when source entity has 0
- pads
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
+ shutdown
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
+ <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---===============1076553333254439057==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On 24/03/2025 16:34, André Draszik wrote:
+> +static bool acpm_may_sleep(void)
+> +{
+> +	return system_state <= SYSTEM_RUNNING ||
+> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
+> +}
+> +
+>  /**
+>   * acpm_dequeue_by_polling() - RX dequeue by polling.
+>   * @achan:	ACPM channel info.
+> @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+>  			return 0;
+>  
+>  		/* Determined experimentally. */
+> -		usleep_range(20, 30);
+> +		if (!acpm_may_sleep())
+> +			udelay(10);
+> +		else
 
->From 307209d175be0145e36b9cf95944e2e62afeab11 Mon Sep 17 00:00:00 2001
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Date: Mon, 24 Mar 2025 19:45:55 -0400
-Subject: [PATCH] media: Fix invalid link creation when source entity has 0
- pads
+... and what do you do if IRQs get disabled exactly in this moment? This
+is just racy. You cannot check for a condition and assume it will be
+valid for whatever time you want it to be valid.
 
-This patch addresses the warning triggered in the media_create_pad_link()
-function, specifically related to the check WARN_ON(source_pad >=
-source->num_pads). The fix proposed adds an additional check to ensure that
-source->num_pads is non-zero before proceeding with the
-media_create_pad_link() function.
+What happens if system_state is changed to shutdown in this particular
+moment? How did you prevent this from happening?
 
-Reported-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
-Tested-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
-Fixes: a3fbc2e6bb05 ("media: mc-entity.c: use WARN_ON, validate link pads")
-Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
----
- drivers/media/usb/uvc/uvc_entity.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
-index cc68dd24eb42..5397ce76c218 100644
---- a/drivers/media/usb/uvc/uvc_entity.c
-+++ b/drivers/media/usb/uvc/uvc_entity.c
-@@ -43,7 +43,7 @@ static int uvc_mc_create_links(struct uvc_video_chain *chain,
- 		source = (UVC_ENTITY_TYPE(remote) == UVC_TT_STREAMING)
- 		       ? (remote->vdev ? &remote->vdev->entity : NULL)
- 		       : &remote->subdev.entity;
--		if (source == NULL)
-+		if (source == NULL || source->num_pads == 0)
- 			continue;
- 
- 		remote_pad = remote->num_pads - 1;
--- 
-2.43.0
+> +			usleep_range(20, 30);
+>  	} while (ktime_before(ktime_get(), timeout));
+>  
+>  	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx.\n",
+> 
 
 
---===============1076553333254439057==--
+Best regards,
+Krzysztof
 
