@@ -1,133 +1,154 @@
-Return-Path: <linux-kernel+bounces-576290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE34A70D83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:13:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFAFA70D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7165D171C71
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:13:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3E727A4183
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC5D26A0B0;
-	Tue, 25 Mar 2025 23:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Vp3NWqvx"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D913266B64;
+	Tue, 25 Mar 2025 23:13:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCF81E7C2D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA57118EB0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742944397; cv=none; b=mN+4qIZZHgGBC5THn/19T/LKryVnV8LQh3vIBTCF4v7Fi+ezRLnMoogSyzk869M6/kGb4e2bqBUglueryhAW2/jdmCw+yaG1W27aXebSVAiBKzZuh5mScwTAnP0I2ZyJHU9Yg1oaJxezqG60Q5tA+xcxfhxk0pW7jSR9laUH5Yg=
+	t=1742944395; cv=none; b=dwHcOxxzco9n45qNNxBuTSi4LJKJltqEmBB1OkhdIPm6oiGhmQj11HNPxqIIFqeEreQwfpyKYaqRiLCKZlpvq7+uLo6dxkhyXJpVFMD582h6C0Hr/i0eOMd4pmlAwX/nC7YW2CnItklF3BbeDfzaSh3zWsUbkXuPPQu0ud13KsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742944397; c=relaxed/simple;
-	bh=jw3maACCO3f6vt9Qr0IksUHDBNePsVPYv0eL53Q5Uko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rTqLTUxc7BYbMDmvBEFiL+ELlwWfi8i3hyfky29lvo+0Dp7iQTD5iNbCMXMD5QyjtGKkk4L8HdiWeH9D0epjqPeHv+to+1abf/hXcbVTJpUfaKwQ6FAVp5s7APb/FTs3zbJzw33NK9lxPDX+nT1vqCriUKgj+Cz+kUPADuKxUSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Vp3NWqvx; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso1034256366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742944394; x=1743549194; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O3h0xRoLxiN1v7pMNtH0qapseB+kIL16c87ibP89wiw=;
-        b=Vp3NWqvxJQJH9Tqz976dYwrBJ39GbXgtXhwSyJ2zz/vWMGUeLKoY9fcNO1j+McPb+m
-         1gjpiG/+WvLV24XPvsPyddGG5j561OTEwWD17PiTakIEVMrfZET6qRimMAAHan99zLfm
-         3Hgni7fsta5LUT66hDBbL/uY+pnJAbVmtIocc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742944394; x=1743549194;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O3h0xRoLxiN1v7pMNtH0qapseB+kIL16c87ibP89wiw=;
-        b=NWMvBcZKGfmU8hjMziBu5SOyy7g+s82/8yyxYrAs4oCwlw2t5dOQ7g6PxvuAnKhwot
-         vrhFdv1VbrdxYMl93u4AeAAyRmDTHUTKAPgw8El30PmxrsKor92OJpeDTCH4N5WwGIBB
-         PP7NMAY5WdmdUsABo7XFGs/8KC79Fir5c4pxBWmcDS66tUT19OUWCmTOHSB9eDONXDl4
-         abYOOcA+6uQE6N8rf6gAXWHmhwE9uf4ZPsP/fmMiiQoiR7ZUDpFxvvjas8qdsV+OY4q0
-         yFVBnEhTvArnDrTHtUI+I6FbfRfwbZP/rjrceGswb2gzCeOk9GIXfWHb4aKZDIzKMu+K
-         /CXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs1wD4g4nvmsVjT31Y8TKPGK0CadY6v5fhuD/Ldt1M6rXN9Gd95HPZ7sCRny/7OFy9/HbwfqL6K7wBCMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv6x4gsEJFGPdyBPZNMHaFvWjo4tD35rIGQVX8/awoj/D7I8cD
-	SKaiO1eeWI7PXJRtVo7RfWpzy/1ECV/IC90vTZPRBHQh1pxIr5MoTDwa2o1XiJRvdTrI7GUMjIj
-	xjoou/w==
-X-Gm-Gg: ASbGncsExCdkgjAQxEcrvgDTOfQG8k7HjT8fdFUZXg3EwUo7zT8oT4pYVcncU43epak
-	JNMJElcvF5vc/4smJ2zB1oOj8+Valuz2JUzVY6VWi6o2pSFBMMYydzjdS5WIglL0gh2eJfdi30W
-	xE+dPRghZd0HmeOQWmxbuHSey7NFzOemG2MRSiYVLufrajaqWRnXH3deYA1yqgZzRPwaoDSBRN1
-	HtAvQVCOqLrQuaoewMIIS/p+5jbhGLAblg2LylecpB1MX2T0LrhnznKJemuEhjQk8UAXiTN6EkE
-	Ka7Oeyov0k2eMqD9ALRt/zAHtNQhBS6jcxtOAebFLc6x4Ivtov2rue1B4tbY9jkI/sDeNptkmaY
-	Jo7BZW3qqT6+HfRyr28M=
-X-Google-Smtp-Source: AGHT+IFdjbmYOxtQRVM1fSV2CsR7vZmMoWEEL2JZaOrvrl9mlqW4mp+aCpWDA+VmvK4qTb6DKKOtBw==
-X-Received: by 2002:a17:907:7f24:b0:ac3:3cff:268 with SMTP id a640c23a62f3a-ac3f22b2c30mr1671702966b.30.1742944393836;
-        Tue, 25 Mar 2025 16:13:13 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd163cesm915945766b.151.2025.03.25.16.13.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 16:13:12 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac34257295dso1274494166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:13:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+QRtSTwz7aiQyNCzWqjQGrvA53YAtd6u2QkYOaIWkdna+asc+NWjVjgl5noTWdHczt+y/zZ7lCjSJUJc=@vger.kernel.org
-X-Received: by 2002:a17:907:9728:b0:ac3:26ff:11a0 with SMTP id
- a640c23a62f3a-ac3f251ac63mr2074660766b.38.1742944391848; Tue, 25 Mar 2025
- 16:13:11 -0700 (PDT)
+	s=arc-20240116; t=1742944395; c=relaxed/simple;
+	bh=6sWe4aERWUOwF2kMuXLU8LvEYbl0kzYPUBnM6PECUCQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TlQnsXrQiiDH9CnSAeza/BK4LXeNYQJDJtEBlf2aKhLELDkWYOK3qGezia5xmrfQMDa0v6/aiGlAM0PdNBNuKwNp2Wd7hXQ/99BlcMvZBylaG9do1M0BZf3RwjQJG9ul7CyQfMo2nJquVW2ei/Kv2pq5StJTfJaivG27yV00I+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1txDSI-00064Z-Iw; Wed, 26 Mar 2025 00:13:10 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1txDSH-001eeV-2h;
+	Wed, 26 Mar 2025 00:13:10 +0100
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1txDSI-00EnBh-0e;
+	Wed, 26 Mar 2025 00:13:10 +0100
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Wed, 26 Mar 2025 00:13:02 +0100
+Subject: [PATCH] pmdomain: core: only disable unused domains after
+ genpd_power_off_unused has passed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317104257.3496611-2-mingo@kernel.org> <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
- <20250324115955.GF14944@noisy.programming.kicks-ass.net> <Z-J5UEFwM3gh6VXR@gmail.com>
- <Z-KRD3ODxT9f8Yjw@gmail.com> <20250325123625.GM36322@noisy.programming.kicks-ass.net>
- <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com> <Z-MxULQtc--KoKMW@gmail.com>
-In-Reply-To: <Z-MxULQtc--KoKMW@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Mar 2025 16:12:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr72i2YXbGGJdC978hKkzVdmQ4LG3orQqVMCJwAlQF0vF7KbLFr4RRoHnc
-Message-ID: <CAHk-=wjMu5iGZ2ifBqjzV4a993D13OnDvfbtYe6jgPP8cZnAGQ@mail.gmail.com>
-Subject: Re: [PATCH] bug: Add the condition string to the CONFIG_DEBUG_BUGVERBOSE=y
- output
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-tip-commits@vger.kernel.org, Shrikanth Hegde <sshegde@linux.ibm.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250326-pmdomain_core-v1-1-c35d342f934f@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAH0442cC/x3MQQqAIBBA0avIrBNsIhddJSImHWsWqShEEN09a
+ fkW/z9QuQhXmNQDhS+pkmJD3ylwB8WdtfhmQIOjGdDqfPp0ksTVpcLab0gYcHOGLLQmFw5y/79
+ 5ed8P7uLmbl8AAAA=
+X-Change-ID: 20250326-pmdomain_core-db2a2f2bc0a6
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2082;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=6sWe4aERWUOwF2kMuXLU8LvEYbl0kzYPUBnM6PECUCQ=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBn4ziFtimtaQcE1/vOM8ozsEGLCHzBIR84o84rl
+ ZNmG+HicNmJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZ+M4hQAKCRC/aVhE+XH0
+ qxqoD/0fYbHVaTyk1VaoE1STd9h0jVBzj06s8McsPu+0U529mgqj8JSgI5tF2bJL5goyZY5iENy
+ WPauj95AWjTflGx/kqplVf3wLpd+Czf6u69EzTfD06eF4YfQw++L9CDBkCgQyX1fspBCkLsmP9e
+ MXKH2HxSyYZpsFbl5Btuuhx9a9fJ9egojS9sFIhD3uRm6S4HXbgZek8zea+kSPMoa2xWrkadbzc
+ 6WyJX8MHvgIH9uQGmqURS53M6Z6NMzjedDnTbI+YxnRERfw3YQlYhhUNIvoBj1RpY6oAGnmdrAF
+ GPCeLNNRZ52ryAWucE7SWYabFbsb0eos7Ftz9JS6EZh+OzhD3XCYUlVipoCQi+OQEoiBL2t6/OW
+ Nu25aOxyYF8nUK/MGPD6rn9k3SIOHgpVP+I+MKR103kD424kpG7R7aYB8+lIurm3IAdEbJYuDL8
+ 6rGkWKCj+hOXmGku3icNcVPyHulgCMYaIUkvZqJXeCJbnP8Q/4nXWU0sZ9QAapsnAjvYspB729n
+ uoUikdt4Qibd2O2DUIDpNUf2MeCoNKD6s0sGGsbJn4DCDNe+60qLHyzJsw77c6suLYj2NhgrmUa
+ 6isLiBgUjg8ZxZaldDBEj9r2p3CEydkrsz/uzCCRuf6o0vU0VfrIfam7jZyakk8Lj8PuxZCMkwv
+ 8rFb0OXnJZ8PFFA==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 25 Mar 2025 at 15:42, Ingo Molnar <mingo@kernel.org> wrote:
->
-> So something like the patch below?
-> [...]
-> After:
->
->   WARNING: CPU: 0 PID: 0 at [ptr == 0 && 1] kernel/sched/core.c:8511 sched_init+0x20/0x410
->                             ^^^^^^^^^^^^^^^
+If the genpd_power_off_unsused late_initcall did not pass yet, skip any
+genpd_power_off call. During the boot phase possible domain consumers
+could show up, so it is not helpful to disable and enable the power
+domains during that time.
 
-Hmm. Is that the prettiest output ever? No. But it does seem workable,
-and the patch is simple.
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+ drivers/pmdomain/core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-And I think the added condition string is useful, in that I often end
-up looking up warnings that other people report and where the line
-numbers have changed enough that it's not immediately obvious exactly
-which warning it is. Not only does it disambiguate which warning it
-is, it would probably often would obviate having to look it up
-entirely because the warning message is now more useful.
+diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+index 6c94137865c9b568666fb296e20e8669574a9576..493eee39e726abd62df8b8def047434871d15125 100644
+--- a/drivers/pmdomain/core.c
++++ b/drivers/pmdomain/core.c
+@@ -44,6 +44,8 @@ static DEFINE_IDA(genpd_ida);
+ static LIST_HEAD(gpd_list);
+ static DEFINE_MUTEX(gpd_list_lock);
+ 
++static bool genpd_power_off_unused_passed;
++
+ struct genpd_lock_ops {
+ 	void (*lock)(struct generic_pm_domain *genpd);
+ 	void (*lock_nested)(struct generic_pm_domain *genpd, int depth);
+@@ -1023,6 +1025,14 @@ static void genpd_power_off_work_fn(struct work_struct *work)
+ 
+ 	genpd = container_of(work, struct generic_pm_domain, power_off_work);
+ 
++	/*
++	 * If the genpd_power_off_unsused late_initcall did not pass yet
++	 * skip any genpd_power_off call since we are still in boot phase
++	 * where possible pw domain consumers could show up.
++	 */
++	if (!genpd_power_off_unused_passed)
++		return;
++
+ 	genpd_lock(genpd);
+ 	genpd_power_off(genpd, false, 0);
+ 	genpd_unlock(genpd);
+@@ -1249,6 +1259,8 @@ static int __init genpd_power_off_unused(void)
+ 		return 0;
+ 	}
+ 
++	genpd_power_off_unused_passed = true;
++
+ 	pr_info("genpd: Disabling unused power domains\n");
+ 	mutex_lock(&gpd_list_lock);
+ 
+@@ -3272,6 +3284,8 @@ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+ 
+ static int __init genpd_bus_init(void)
+ {
++	genpd_power_off_unused_passed = false;
++
+ 	return bus_register(&genpd_bus_type);
+ }
+ core_initcall(genpd_bus_init);
 
-So I think I like it. Let's see how it works in practice.
+---
+base-commit: b3c623b9a94f7f798715c87e7a75ceeecf15292f
+change-id: 20250326-pmdomain_core-db2a2f2bc0a6
 
-(I actually think the "CPU: 0 PID: 0" is likely the least useful part
-of that warning string, and maybe *that* should be moved away and make
-things a bit more legible, but I think that discussion might as well
-be part of that "Let's see how it works")
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-            Linus
 
