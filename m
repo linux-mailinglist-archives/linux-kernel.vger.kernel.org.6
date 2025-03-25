@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-575453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD40A70290
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:48:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCDEA70292
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E2517DED8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D25C16E98E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9191B85FD;
-	Tue, 25 Mar 2025 13:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109EC258CFA;
+	Tue, 25 Mar 2025 13:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqTxAPOX"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="B/mRhEa4"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52D61C27;
-	Tue, 25 Mar 2025 13:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909989; cv=none; b=ZfhCgBGwhxCWoaS2Mr7ScNJG55F9mdjbU1XWobz5NNXy5tO2bPUO6vAX2UlwePkGtqsBMwTMkQeotk3Z2cqvmkjiBJ5rgEQp2KEsRl+PC3JsMn/FZUh5pEr+ybv4blOjmR5npoQ4+BrmNX1HoXpaN82CZqOmHT0QsXEZY/0C0oc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909989; c=relaxed/simple;
-	bh=dVSxouOXZHtGWTtiyOJabZwsvfWCpDzgJrprCLF6xus=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=teaBykX4PYKWUEX2m3OG4MiNSxCgmJNhsn4ov2kMpg7M0i3/4GNb51r+YH8EQ9dG09O+h10la6yhj4mOXpa7OY3kFiA6H/ZQwOE3Fm0gw73BFwCaSd/BsqwgJM6CDO4sibYhoigX2BlSnOWGtuK9ZpodunaZ0UKko0K4/Ir/wL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqTxAPOX; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30b83290b7bso56363651fa.1;
-        Tue, 25 Mar 2025 06:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742909985; x=1743514785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=myPV0T66Hh2V3wozAvJIfoZDXZ6qFR3qJHf4P3jl/Gc=;
-        b=ZqTxAPOXkPjJDfKTjJtckTFtNz6qxzOHwlbtmu00BQJoeS7vIIyb8Rv8AXI7g793Dg
-         32HsXVoga2SQLAyiOxEoGeSlXpOoQW0pqINSrU+G4JtgX0xAjegc3tIdaYKbqw92bvzi
-         t5fcGc0XGifEYxhewue3/M8puO12oz3+qlWhnQLF37XmetBXVod9JKzPSqylcVJuIqMl
-         4wfVZh7D80JFXTqLqpYUWt8E3TR/0fW3pAytnGkD8lSQRJ0U/+cWkkulXwDuDpzrDA8J
-         757yVAB4i6xEoP4NdzUqPSI1Er0KjPFkKu0POyFMR5R2v8moXjuzkX1yQMWvU5TxCtca
-         4PRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742909985; x=1743514785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=myPV0T66Hh2V3wozAvJIfoZDXZ6qFR3qJHf4P3jl/Gc=;
-        b=aFo5EEh8Ax67mHles3Chb8YlbSJF5yLyvLLMsLMbmEtM/1qWDs8okANWB2+LvFtWxg
-         kQyfTWP4VajUTff0h4PKau1z5V+sW4sDDp8vrD02HhgOpTDgwiPuoqVew0TuI24+ktKc
-         dsANLckkhFIS/ZL728STOcdEw4YJhSetewu/BWv3SelcCtr8tfoiPTsTBEkZwsJ+ZTIb
-         l5+B17mJd0VKoj/JZ/DT0kdXcycJKvQSGVCIpBGpvlmBJJ+4jD7fdncHZDgxxxfqL7cj
-         GSGbyDhuzFVWBvqxkAvzkktoYQ9vdXTR5IxQt8+gun+Ie25uAIVUCZ+Ixhgs1NKKqVUR
-         aE9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YkGxVqMNFwxEAeUkl/gvPttVxFWjkFMFk6MXo5i1vo5eMw0L4v1Q7K3xZpCfz8jwqIGu+DlshODERI8=@vger.kernel.org, AJvYcCVVhf3gVWtRD9dIXkaR9MFjSVmuwIuXzdioA9AbhHew7fYqa+BeYaPO9WKXX6qb4cvj3cOwz3GMtiXG@vger.kernel.org, AJvYcCWqgzPvdS+mnye5tVd1aaUdJ01Enwa9LfMCdbLX9re/P99AaXedqxPo7WF+gS5cPiOO4bp5BW447nLs+QDBJXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweOacOdddgMT18pyPC0+mLnpAMdCbyNAdWdR1bbqHFC3IELK58
-	bwArZvGdvVphBYVsTYr7ir0vyPAUwbL1tgq6YiUi9iX/3cePyTS4w60vb7YHnsKs8BwOngjuXOf
-	/M2DO3woWqJu+/yqIyps1EJswUeo=
-X-Gm-Gg: ASbGncvCEzxtiEUXQliqv4XPHdnFVcvNf9TN3ptBY1zzQJTDIJumL2UbU0/mYiI3wEI
-	tm0/Un7jbaEF0xu9671ao8EdMiio9PlgP4dJSAAAaxu/oh+SGHM3IBmuAUDvkEh67BVp1epKgGw
-	KEdzAqGWhK18o4oY4i285LFBya06J19wWJxyID+/X0Vg==
-X-Google-Smtp-Source: AGHT+IGQKAXzEbYQwBhfNVo++jVfEu/zBZKZscu6KAG+LuY8INULRXFdRoAY3KbwyRZznozPQ8msRy9zM8JTWfjea6o=
-X-Received: by 2002:a2e:a78a:0:b0:30c:7a7:e87c with SMTP id
- 38308e7fff4ca-30d7e32e8eemr72008461fa.35.1742909985355; Tue, 25 Mar 2025
- 06:39:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BFD257421;
+	Tue, 25 Mar 2025 13:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742910008; cv=pass; b=OmJQad5wbDthmOlMq2SFtwJocsej6E5lBbxnv8wUtQPMkv3SgI4vLBo9gDZd9D5tAscUW8nPpJ/3hzQtG2yOXKmuCdNM0IrMeTcFwYmmZYAC5/91c+VU0ThPLU9I+Fj3XlQfKobhC5EE24FQWm7ZmLeC/m2j0c5hreOyA3RIpQU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742910008; c=relaxed/simple;
+	bh=E1aLYMGnS7zKaLY/UfigWOGLX5sjhXJl+77d7eid4vU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=EskKMUeXkOMWZpNtQBOEG7DPIsof6JjwYmNBBkhSKZIbY8LA3ywqVuib/u5UGb+0U1iR5vGav3wCaqO4bpz5kt3h00QBch1RVA5WjhmDHkI+wfoXw57aY/dnYqqK6V0G6wq0Osyav03f8jMMhZkhvtb8sIZOwdtiTVepHb/0WpQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=B/mRhEa4; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742909981; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JK8Afb3KUgbrCxmWZlnLN9jcBM10Klc6bIpIEl6jHNexPloQsRLdqFYV1SqCZnMDFDY88X8tPmRhE0+b9/TiB4EHEcd5q77NV5a7rYORIITi6AHxtkp6RKNb3JHJq33T7+SCO1rkNg/SU59MQHrBj3qZp3KLgQrEZKkNGI9+VOQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742909981; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=E1aLYMGnS7zKaLY/UfigWOGLX5sjhXJl+77d7eid4vU=; 
+	b=VCa+IKIzfxwOjBv7+51ra9ot4DvryeQdFUV5quXUv4wqhjIzUQuq8n9gfzxYv9punyorHHvIIlGOUTKH9y6iJIjWMKFuDix3goaK9Nsze5kt6dXnqPU4bLj/7h4+/BPdqE430eD7d7MDdS/7uYQU1oBejWsRzUbpWBCd4sIBrbo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742909981;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=E1aLYMGnS7zKaLY/UfigWOGLX5sjhXJl+77d7eid4vU=;
+	b=B/mRhEa4JAqwExkPR9JLiW4JHiboptNPN0hF5f1x3P0s3JVNRf9dIgioG4QV8BBF
+	TQ0DUWpB7cGV+YHbHDSq73NMrf8QzXCT62U8jy8f/5OXEKtaEWRscfemvn719NlVtgw
+	ktVzQajUYFhaQBcXpxLyBFeHL6hKYtoZFMrFnXnA=
+Received: by mx.zohomail.com with SMTPS id 1742909980149878.2853274737729;
+	Tue, 25 Mar 2025 06:39:40 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250324-list-no-offset-v1-0-afd2b7fc442a@gmail.com>
- <20250324-list-no-offset-v1-3-afd2b7fc442a@gmail.com> <67e1d1b3.050a0220.4c4ff.6e89@mx.google.com>
- <CAJ-ks9moCO83cGkKuONR-2JMN61x18T2UVO98jhspDR=uyaVqw@mail.gmail.com>
- <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com>
- <Z-Iq6Okk1j3ImH1u@Mac.home> <CAJ-ks9n66_vVg3ww58VqfXV6+phng8Bhq9C=NNn854gXK0KAHg@mail.gmail.com>
- <D8PA5CKNMCGA.UODS331S36EG@proton.me> <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
- <D8PB0LN62GOX.3P4K4V96OLVQ9@proton.me>
-In-Reply-To: <D8PB0LN62GOX.3P4K4V96OLVQ9@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 09:39:09 -0400
-X-Gm-Features: AQ5f1JpqoNfVeezWzd4_2GOPTgYYN2XUtv5DasiBOJhEEhrX8nf_xe86DllRAjI
-Message-ID: <CAJ-ks9mEWshCkpq8=7=MKVDz8N-aUVSj0w-YdCsEvEhH3U7h_g@mail.gmail.com>
-Subject: Re: [PATCH 3/5] rust: list: use consistent type parameter names
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v4 05/11] scripts: generate_rust_analyzer.py: add type
+ hints
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <FB3D0F03-B162-4AD5-B288-4E307421276B@collabora.com>
+Date: Tue, 25 Mar 2025 10:39:24 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <3DC4063A-3E9E-412B-AAF4-AA0C33DEEBFC@collabora.com>
+References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
+ <20250322-rust-analyzer-host-v4-5-1f51f9c907eb@gmail.com>
+ <FB3D0F03-B162-4AD5-B288-4E307421276B@collabora.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On Tue, Mar 25, 2025 at 7:18=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Tue Mar 25, 2025 at 11:42 AM CET, Tamir Duberstein wrote:
-> > On Tue, Mar 25, 2025 at 6:37=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >> On Tue Mar 25, 2025 at 10:52 AM CET, Tamir Duberstein wrote:
-> >> > On Tue, Mar 25, 2025 at 12:02=E2=80=AFAM Boqun Feng <boqun.feng@gmai=
-l.com> wrote:
-> >> >> On Mon, Mar 24, 2025 at 05:56:57PM -0400, Tamir Duberstein wrote:
-> >> >> > On Mon, Mar 24, 2025 at 5:51=E2=80=AFPM Tamir Duberstein <tamird@=
-gmail.com> wrote:
-> >> >> > > On Mon, Mar 24, 2025 at 5:42=E2=80=AFPM Boqun Feng <boqun.feng@=
-gmail.com> wrote:
-> >> >> > > > On Mon, Mar 24, 2025 at 05:33:45PM -0400, Tamir Duberstein wr=
-ote:
-> >> >> > > > >              #[inline]
-> >> >> > > > > @@ -81,16 +81,16 @@ pub unsafe trait HasSelfPtr<T: ?Sized, =
-const ID: u64 =3D 0>
-> >> >> > > > >  /// Implements the [`HasListLinks`] and [`HasSelfPtr`] tra=
-its for the given type.
-> >> >> > > > >  #[macro_export]
-> >> >> > > > >  macro_rules! impl_has_list_links_self_ptr {
-> >> >> > > > > -    ($(impl$({$($implarg:tt)*})?
-> >> >> > > > > +    ($(impl$({$($generics:tt)*})?
-> >> >> > > >
-> >> >> > > > While you're at it, can you also change this to be
-> >> >> > > >
-> >> >> > > >         ($(impl$(<$($generics:tt)*>)?
-> >> >> > > >
-> >> >> > > > ?
-> >> >> > > >
-> >> >> > > > I don't know why we chose <> for impl_has_list_links, but {} =
+Ah, by the way:
+
+
+> On 25 Mar 2025, at 10:37, Daniel Almeida =
+<daniel.almeida@collabora.com> wrote:
+>=20
+> Hi Tamir,
+>=20
+>> On 22 Mar 2025, at 10:23, Tamir Duberstein <tamird@gmail.com> wrote:
+>>=20
+>> Python type hints allow static analysis tools like mypy to detect =
+type
+>> errors during development, improving the developer experience.
+>>=20
+>> Python type hints have been present in the kernel since 2019 at the
+>> latest; see commit 6ebf5866f2e8 ("kunit: tool: add Python wrappers =
 for
-> >> >> > > > impl_has_list_links_self_ptr ;-)
-> >> >> > >
-> >> >> > > This doesn't work in all cases:
-> >> >> > >
-> >> >> > > error: local ambiguity when calling macro `impl_has_work`: mult=
-iple
-> >> >> > > parsing options: built-in NTs tt ('generics') or 1 other option=
-.
-> >> >> > >    --> ../rust/kernel/workqueue.rs:522:11
-> >> >> > >     |
-> >> >> > > 522 |     impl<T> HasWork<Self> for ClosureWork<T> { self.work =
-}
-> >> >> > >
-> >> >> > > The reason that `impl_has_list_links` uses <> and all others us=
-e {} is
-> >> >> > > that `impl_has_list_links` is the only one that captures the ge=
-neric
-> >> >> > > parameter as an `ident`, the rest use `tt`. So we could change
-> >> >>
-> >> >> Why impl_has_list_links uses generics at `ident` but rest use `tt`?=
- I'm
-> >> >> a bit curious.
-> >> >
-> >> > I think it's because `ident` cannot deal with lifetimes or const
-> >> > generics - or at least I was not able to make it work with them.
-> >>
-> >> If you use `ident`, you can use the normal `<>` as the delimiters of
-> >> generics. For `tt`, you have to use `{}` (or `()`/`[]`).
-> >
-> > Yes I know. But with `ident` you cannot capture lifetimes or const gene=
-rics.
->
-> Why is that required for this macro? I think we could use `tt`.
+>> running KUnit tests").
+>>=20
+>> Run `mypy --strict scripts/generate_rust_analyzer.py --python-version
+>> 3.8` to verify. Note that `mypy` no longer supports python < 3.8.
 
-We're in violent agreement. The change I've made is to use `tt`
-everywhere, including where `ident` is currently used with `<>`.
+$ mypy --strict scripts/generate_rust_analyzer.py --python-version 3.8
+Success: no issues found in 1 source file
+
+=E2=80=94 Daniel=
 
