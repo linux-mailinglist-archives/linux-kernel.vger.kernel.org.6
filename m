@@ -1,272 +1,276 @@
-Return-Path: <linux-kernel+bounces-575188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B699A6F0D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:16:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294F3A6F0F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:16:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58106167690
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B72F169E6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA591EFFB5;
-	Tue, 25 Mar 2025 11:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qlun8Bqw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA062E337C;
-	Tue, 25 Mar 2025 11:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D471EF0AE;
+	Tue, 25 Mar 2025 11:16:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6016A395
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742901357; cv=none; b=NV+EIfQvQpe1mGoW1tGFslWzLZ9RHNHe/oQme1DPDK99OrOeWbJwVcv2Oau9AZxvwAEkCmFsdxH5KfGc7VoQJpjPzgZpLMEsNq8Ec1gIkBA5JV/Ly04jdXKXDafPr355SkDvmw+zlXltY3vffzG8lvMh6tfDKxFmclaBZTgd1tU=
+	t=1742901374; cv=none; b=ltfFehE77KKkMzMB/cE9zvL3J5n/sk8zx1dVjfyPZSR69pnCKCVc/wQM0EExz3XEeBmz93F1Z0VxxxbpIDXISxCVF40cCwfW/hNIy6hIK7+9DY5kTGG4Cl16w+fyAJbytaA7YsL4YTEs/pdzoMjRR/SX5EST8SHD5j2CndrQlw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742901357; c=relaxed/simple;
-	bh=ejo2mJfaZPVCPpYuCkYgIZdpbhitxkRb24uvxJioFd0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FQyffSbCBZ9APqebvo6mMiXz3QNz/L70UJl20o+oa8dKyeOt8br1cGkT3jRgqQOAHV2DtkRns4zCkyVzduroX7Sk7d2KAmeewLTapdm0s5s0MRB0tixjisPcy/28gA9fwPqmZwwRkPrBmgY5cFj6qiWbICbpAjC2D6/SibyWkp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qlun8Bqw; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742901356; x=1774437356;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=ejo2mJfaZPVCPpYuCkYgIZdpbhitxkRb24uvxJioFd0=;
-  b=Qlun8BqwW/Uv+e2Xtm89Rjr3UR/kXcG8rhwppZZb0pTmM2u+9dPcNb5L
-   1EMcI65UWhq3x2oWp/iFSpDdKMP6wO+Bq53sx+Xa8Otr0OocGOcpUYWo/
-   PEZyt49i6GzhdxufKVcRD9TbVbDPaNJwy/OCtQjSq0bw+ah4XmyqWE6o/
-   vzzl72AKiZ3WRsE9d4I/yymkMEzXnxjkCwJphQhsO0XnRaaxpudd98zt/
-   llr83f49SrqK4VR5gDGUwqZwftICavLduo3UgkP2K7Kd64scEROaXL9be
-   NDF49u2qjKTnOvrHWXpYZXYSl8ZiXzCcOnPxh61cBESZuRy4FucpegtBb
-   Q==;
-X-CSE-ConnectionGUID: O0j/QV13SQaljd87p0Wg1w==
-X-CSE-MsgGUID: UsM1+8oiReafEuLt36F5xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43299869"
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="43299869"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 04:15:55 -0700
-X-CSE-ConnectionGUID: pezZcfE1QgmaLFl2HoRdKg==
-X-CSE-MsgGUID: Euqu4xK9QMqpCVBvr6tsdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="155253915"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 04:15:52 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 25 Mar 2025 13:15:49 +0200 (EET)
-To: Hans Zhang <18255117159@163.com>
-cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-    robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, 
-    thomas.richard@bootlin.com, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
- finding the capabilities
-In-Reply-To: <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com>
-Message-ID: <26dcba54-93c1-dda4-c5e2-e324e9d50b09@linux.intel.com>
-References: <20250323164852.430546-1-18255117159@163.com> <20250323164852.430546-4-18255117159@163.com> <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com> <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com> <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
- <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com>
+	s=arc-20240116; t=1742901374; c=relaxed/simple;
+	bh=YWVQ6PM10pQEwods3bxAs0yE58TK/G7E2yvIn/gqjXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h+7Iiy9hqVqe/jZ0vSjsVvduA3QyivOsherbbubknfHKmMAKNWa0NF+dbIyXN1BkBenCRQ6zsV+99vP+3ilBXCAjCdZrxKe3EGC2tvc0z2VN7jsTYUfcvsHy+gn2V1FEy7+P0OQgXkKBJxIUSX2KdyPokGlIMpnFB2K70uAOl+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1ACA91756;
+	Tue, 25 Mar 2025 04:16:18 -0700 (PDT)
+Received: from [10.57.41.137] (unknown [10.57.41.137])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C5163F58B;
+	Tue, 25 Mar 2025 04:16:08 -0700 (PDT)
+Message-ID: <b19a857c-4c01-471b-94be-c465de636cd9@arm.com>
+Date: Tue, 25 Mar 2025 11:16:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1369016099-1742899832=:930"
-Content-ID: <dcc4341b-40b0-3a66-8cf5-ba1fb697c37b@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7 v5] sched/fair: Add push task mechanism for EAS
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
+ pierre.gondois@arm.com, linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com, luis.machado@arm.com,
+ qperret@google.com
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+ <20250302210539.1563190-6-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250302210539.1563190-6-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 3/2/25 21:05, Vincent Guittot wrote:
+> EAS is based on wakeup events to efficiently place tasks on the system, but
+> there are cases where a task doesn't have wakeup events anymore or at a far
+> too low pace. For such situation, we can take advantage of the task being
+> put back in the enqueued list to check if it should be pushed on another
+> CPU. When the task is alone on the CPU, it's never put back in the enqueued
+> list; In this special case, we use the tick to run the check.
+> 
+> Wake up events remain the main way to migrate tasks but we now detect
+> situation where a task is stuck on a CPU by checking that its utilization
+> is larger than the max available compute capacity (max cpu capacity or
+> uclamp max setting)
+> 
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/fair.c  | 220 +++++++++++++++++++++++++++++++++++++++++++
+>  kernel/sched/sched.h |   2 +
+>  2 files changed, 222 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index a9b97bbc085f..c3e383b86808 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7051,6 +7051,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  	hrtick_update(rq);
+>  }
+>  
+> +static void fair_remove_pushable_task(struct rq *rq, struct task_struct *p);
+>  static void set_next_buddy(struct sched_entity *se);
+>  
+>  /*
+> @@ -7081,6 +7082,8 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+>  		h_nr_idle = task_has_idle_policy(p);
+>  		if (task_sleep || task_delayed || !se->sched_delayed)
+>  			h_nr_runnable = 1;
+> +
+> +		fair_remove_pushable_task(rq, p);
+>  	} else {
+>  		cfs_rq = group_cfs_rq(se);
+>  		slice = cfs_rq_min_slice(cfs_rq);
+> @@ -8589,6 +8592,197 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+>  	return target;
+>  }
+>  
+> +static inline bool task_stuck_on_cpu(struct task_struct *p, int cpu)
+> +{
+> +	unsigned long max_capa, util;
+> +
+> +	max_capa = min(get_actual_cpu_capacity(cpu),
+> +		       uclamp_eff_value(p, UCLAMP_MAX));
+> +	util = max(task_util_est(p), task_runnable(p));
+> +
+> +	/*
+> +	 * Return true only if the task might not sleep/wakeup because of a low
+> +	 * compute capacity. Tasks, which wake up regularly, will be handled by
+> +	 * feec().
+> +	 */
+> +	return (util > max_capa);
+> +}
+> +
+> +static inline bool sched_energy_push_task(struct task_struct *p, struct rq *rq)
+> +{
+> +	if (p->nr_cpus_allowed == 1)
+> +		return false;
+> +
+> +	if (is_rd_overutilized(rq->rd))
+> +		return false;
+> +
+> +	if (task_stuck_on_cpu(p, cpu_of(rq)))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static int active_load_balance_cpu_stop(void *data);
+> +
+> +static inline void check_pushable_task(struct task_struct *p, struct rq *rq)
+> +{
+> +	int new_cpu, cpu = cpu_of(rq);
+> +
+> +	if (!sched_energy_enabled())
+> +		return;
+> +
+> +	if (WARN_ON(!p))
+> +		return;
+> +
+> +	if (WARN_ON(!task_current(rq, p)))
+> +		return;
+> +
+> +	if (is_migration_disabled(p))
+> +		return;
+> +
+> +	/* If there are several task, wait for being put back */
+> +	if (rq->nr_running > 1)
+> +		return;
+> +
+> +	if (!sched_energy_push_task(p, rq))
+> +		return;
+> +
+> +	new_cpu = find_energy_efficient_cpu(p, cpu);
+> +
+> +	if (new_cpu == cpu)
+> +		return;
+> +
+> +	/*
+> +	 * ->active_balance synchronizes accesses to
+> +	 * ->active_balance_work.  Once set, it's cleared
+> +	 * only after active load balance is finished.
+> +	 */
+> +	if (!rq->active_balance) {
+> +		rq->active_balance = 1;
+> +		rq->push_cpu = new_cpu;
+> +	} else
+> +		return;
+> +
+> +	raw_spin_rq_unlock(rq);
+> +	stop_one_cpu_nowait(cpu,
+> +		active_load_balance_cpu_stop, rq,
+> +		&rq->active_balance_work);
+> +	raw_spin_rq_lock(rq);
+> +}
+> +
+> +static inline int has_pushable_tasks(struct rq *rq)
+> +{
+> +	return !plist_head_empty(&rq->cfs.pushable_tasks);
+> +}
+> +
+> +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
+> +{
+> +	struct task_struct *p;
+> +
+> +	if (!has_pushable_tasks(rq))
+> +		return NULL;
+> +
+> +	p = plist_first_entry(&rq->cfs.pushable_tasks,
+> +			      struct task_struct, pushable_tasks);
+> +
+> +	WARN_ON_ONCE(rq->cpu != task_cpu(p));
+> +	WARN_ON_ONCE(task_current(rq, p));
+> +	WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
+> +	WARN_ON_ONCE(!task_on_rq_queued(p));
+> +
+> +	/*
+> +	 * Remove task from the pushable list as we try only once after that
+> +	 * the task has been put back in enqueued list.
+> +	 */
+> +	plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
+> +
+> +	return p;
+> +}
+> +
+> +/*
+> + * See if the non running fair tasks on this rq can be sent on other CPUs
+> + * that fits better with their profile.
+> + */
+> +static bool push_fair_task(struct rq *rq)
+> +{
+> +	struct task_struct *next_task;
+> +	int prev_cpu, new_cpu;
+> +	struct rq *new_rq;
+> +
+> +	next_task = pick_next_pushable_fair_task(rq);
+> +	if (!next_task)
+> +		return false;
+> +
+> +	if (is_migration_disabled(next_task))
+> +		return true;
+> +
+> +	/* We might release rq lock */
+> +	get_task_struct(next_task);
+> +
+> +	prev_cpu = rq->cpu;
+> +
+> +	new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
 
---8323328-1369016099-1742899832=:930
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <79a7a062-7cab-6b21-e28f-218eedc1a9ca@linux.intel.com>
+We aren't gating this on a overutilized check for both call sites of this patch
+like the other feec() call and testing shows that this calls feec when OU
+relatively often.
+Why would it be OK to call feec() here when it isn't on task placement?
 
-On Tue, 25 Mar 2025, Hans Zhang wrote:
-> On 2025/3/24 23:02, Ilpo J=E4rvinen wrote:
-> > > > >    +static u32 cdns_pcie_read_cfg(void *priv, int where, int size=
-)
-> > > > > +{
-> > > > > +=09struct cdns_pcie *pcie =3D priv;
-> > > > > +=09u32 val;
-> > > > > +
-> > > > > +=09if (size =3D=3D 4)
-> > > > > +=09=09val =3D readl(pcie->reg_base + where);
-> > > >=20
-> > > > Should this use cdns_pcie_readl() ?
-> > >=20
-> > > pci_host_bridge_find_*capability required to read two or four bytes.
-> > >=20
-> > > reg =3D read_cfg(priv, cap_ptr, 2);
-> > > or
-> > > header =3D read_cfg(priv, pos, 4);
-> > >=20
-> > > Here I mainly want to write it the same way as size =3D=3D 2 and size=
- =3D=3D 1.
-> > > Or size =3D=3D 4 should I write it as cdns_pcie_readl() ?
-> >=20
-> > As is, it seems two functions are added for the same thing for the case
-> > with size =3D=3D 4 with different names which feels duplication. One co=
-uld add
-> > cdns_pcie_readw() and cdns_pcie_readb() too but perhaps cdns_pcie_readl=
-()
-> > should just call this new function instead?
->=20
-> Hi Ilpo,
->=20
-> Redefine a function with reference to DWC?
+> +
+> +	if (new_cpu == prev_cpu)
+> +		goto out;
+> +
+> +	new_rq = cpu_rq(new_cpu);
+> +
+> +	if (double_lock_balance(rq, new_rq)) {
+> +		/* The task has already migrated in between */
+> +		if (task_cpu(next_task) != rq->cpu) {
+> +			double_unlock_balance(rq, new_rq);
+> +			goto out;
+> +		}
+> +
+> +		deactivate_task(rq, next_task, 0);
+> +		set_task_cpu(next_task, new_cpu);
+> +		activate_task(new_rq, next_task, 0);
+> +
+> +		resched_curr(new_rq);
+> +
+> +		double_unlock_balance(rq, new_rq);
+> +	}
+> +
+> +out:
+> +	put_task_struct(next_task);
+> +
+> +	return true;
+> +}
+> +
+> +static void push_fair_tasks(struct rq *rq)
+> +{
+> +	/* push_fair_task() will return true if it moved a fair task */
 
-This patch was about cadence so my comment above what related to that.
+This isn't technically true, a bit of a nit, push_fair_task() also
+will return true when the task found wasn't moveable.
 
-> u32 dw_pcie_read_dbi(struct dw_pcie *pci, u32 reg, size_t size)
->   dw_pcie_read(pci->dbi_base + reg, size, &val);
->     dw_pcie_read
->=20
-> int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-> {
-> =09if (!IS_ALIGNED((uintptr_t)addr, size)) {
-> =09=09*val =3D 0;
-> =09=09return PCIBIOS_BAD_REGISTER_NUMBER;
-> =09}
->=20
-> =09if (size =3D=3D 4) {
-> =09=09*val =3D readl(addr);
-> =09} else if (size =3D=3D 2) {
-> =09=09*val =3D readw(addr);
-> =09} else if (size =3D=3D 1) {
-> =09=09*val =3D readb(addr);
-> =09} else {
-> =09=09*val =3D 0;
-> =09=09return PCIBIOS_BAD_REGISTER_NUMBER;
-> =09}
->=20
-> =09return PCIBIOS_SUCCESSFUL;
-> }
-> EXPORT_SYMBOL_GPL(dw_pcie_read);
->=20
-> >=20
-> > > > > +=09else if (size =3D=3D 2)
-> > > > > +=09=09val =3D readw(pcie->reg_base + where);
-> > > > > +=09else if (size =3D=3D 1)
-> > > > > +=09=09val =3D readb(pcie->reg_base + where);
-> > > > > +
-> > > > > +=09return val;
-> > > > > +}
-> > > > > +
-> > > > > +u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
-> > > > > +{
-> > > > > +=09return pci_host_bridge_find_capability(pcie,
-> > > > > cdns_pcie_read_cfg, cap);
-> > > > > +}
-> > > > > +
-> > > > > +u16 cdns_pcie_find_ext_capability(struct cdns_pcie *pcie, u8 cap=
-)
-> > > > > +{
-> > > > > +=09return pci_host_bridge_find_ext_capability(pcie,
-> > > > > cdns_pcie_read_cfg,
-> > > > > cap);
-> > > > > +}
-> > > >=20
-> > > > I'm really wondering why the read config function is provided direc=
-tly
-> > > > as
-> > > > an argument. Shouldn't struct pci_host_bridge have some ops that ca=
-n
-> > > > read
-> > > > config so wouldn't it make much more sense to pass it and use the f=
-unc
-> > > > from there? There seems to ops in pci_host_bridge that has read(), =
-does
-> > > > that work? If not, why?
-> > > >=20
-> > >=20
-> > > No effect.
-> >=20
-> > I'm not sure what you meant?
-> >=20
-> > > Because we need to get the offset of the capability before PCIe
-> > > enumerates the device.
-> >=20
-> > Is this to say it is needed before the struct pci_host_bridge is create=
-d?
-> >=20
-> > > I originally added a separate find capability related
-> > > function for CDNS in the following patch. It's also copied directly f=
-rom
-> > > DWC.
-> > > Mani felt there was too much duplicate code and also suggested passin=
-g a
-> > > callback function that could manipulate the registers of the root por=
-t of
-> > > DWC
-> > > or CDNS.
-> >=20
-> > I very much like the direction this patchset is moving (moving shared
-> > part of controllers code to core), I just feel this doesn't go far enou=
-gh
-> > when it's passing function pointer to the read function.
-> >=20
-> > I admit I've never written a controller driver so perhaps there's
-> > something detail I lack knowledge of but I'd want to understand why
-> > struct pci_ops (which exists both in pci_host_bridge and pci_bus) canno=
-t
-> > be used?
-> >=20
->=20
->=20
-> I don't know if the following code can make it clear to you.
->=20
-> static const struct dw_pcie_host_ops qcom_pcie_dw_ops =3D {
-> =09.host_init=09=3D qcom_pcie_host_init,
->                   pcie->cfg->ops->post_init(pcie);
->                     qcom_pcie_post_init_2_3_3
->                       dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> };
->=20
-> int dw_pcie_host_init(struct dw_pcie_rp *pp)
->   bridge =3D devm_pci_alloc_host_bridge(dev, 0);
-
-It does this almost immediately:
-
-    bridge->ops =3D &dw_pcie_ops;
-
-Can we like add some function into those ops such that the necessary read=
-=20
-can be performed? Like .early_root_config_read or something like that?
-
-Then the host bridge capability finder can input struct pci_host_bridge=20
-*host_bridge and can do host_bridge->ops->early_root_cfg_read(host_bridge,=
-=20
-=2E..). That would already be a big win over passing the read function=20
-itself as a pointer.
-
-Hopefully having such a function in the ops would allow moving other=20
-common controller driver functionality into PCI core as well as it would=20
-abstract the per controller read function (for the time before everything=
-=20
-is fully instanciated).
-
-Is that a workable approach?
-
->   if (pp->ops->host_init)
->     pp->ops =3D &qcom_pcie_dw_ops;  // qcom here needs to find capability
->
->   pci_host_probe(bridge); // pcie enumerate flow
->     pci_scan_root_bus_bridge(bridge);
->       pci_register_host_bridge(bridge);
->         bus->ops =3D bridge->ops;   // Only pci bus ops can be used
->=20
->=20
-> Best regards,
-> Hans
->=20
-
---=20
- i.
---8323328-1369016099-1742899832=:930--
+[snip]
 
