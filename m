@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-576278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EF5A70D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:52:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82BEA70D4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E63179352
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 092B3170A3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D87326A0D3;
-	Tue, 25 Mar 2025 22:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679F7269806;
+	Tue, 25 Mar 2025 22:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tybl/GdL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kQdFXwpL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011051EFF98;
-	Tue, 25 Mar 2025 22:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221341EFF98
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943144; cv=none; b=fC6qGS/1CLGt3letAGhaR/POe72PeJ3g3RiTMA58DmHp4w7QNl+/IM+P93/AvUvaoGOieKI0VuPztGXJA3b1ep+s7a9NfmVdKvCoo+WmMuxpfwqqz3T3duXV+PGh11QzP1JZyEbQZ2oou7dKfQnYLLyjafx/ZKM3euEmDn/FjtU=
+	t=1742943238; cv=none; b=IgS6f9oBybyUJ4xhzffmTOCmunEinR9SpEduQ5AoaPznGfbbgW8NbSKclaSWrA0qonc7TUUWutxTnDJ/cj7F5AABN+tr0lYK11A1QzXKsZJPwR0pwYkmGWjEIYkJ8fNdvLy4wbzUsa67ua0I/9d37/LCRFnqqvFZ78ot84IsKsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943144; c=relaxed/simple;
-	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqUM5nBGpmyceZkUc2Khx3WkcrKQ1nP6IdKEgQ5HN5jS8tbNuD7TfoRPd4eRaCQPRbVoV1njzMxTWvmeHy2j5wRmhPMafe1XjoajgvBxbSgvyVzcXPYr05kpPecZSHAN+PKhZaXq/D/09B0njJamaqfLF8PVfChs7VeyygRVYT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tybl/GdL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E030C4CEE9;
-	Tue, 25 Mar 2025 22:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742943143;
-	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tybl/GdLK10TBJU+VIc63abkA175F4g9CqD7Yl8FNGtk93qpc55VSIRzKlHvaEwrX
-	 ari8G50MwUaLxk0NjspvoPcMabur7H9rISJ44mGnkDV9TK+w36m1o9lzgFkPAhUkX4
-	 WirUjY7EDj3HE5TBvRdV2IXrK0QelCesepX4yoZBZ++SOcb3aSOL9QTja+Ab0Wukdj
-	 kPDZiiH3QkQb0igc4O+Da/3J5dYR2Zw20G5omsdNCwUvmohmJjTfbCbmLUGeO7YYb8
-	 puxYp5FMOrwa8OdmVVFHcIsfQ/oRXl7FnCjpUoTzVAVBFugB2bvVkIHPdc/vzUMhY7
-	 kTJl1vN5uDk+A==
-Date: Tue, 25 Mar 2025 15:52:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Lucien.Jheng" <lucienx123@gmail.com>
-Cc: linux-clk@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- joseph.lin@airoha.com, wenshin.chung@airoha.com, lucien.jheng@airoha.com
-Subject: Re: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
- provider for CKO pin
-Message-ID: <20250325155214.44a65306@kernel.org>
-In-Reply-To: <20250324142759.35141-1-lucienx123@gmail.com>
-References: <20250324142759.35141-1-lucienx123@gmail.com>
+	s=arc-20240116; t=1742943238; c=relaxed/simple;
+	bh=2lX4azzgAeTghBjDcton31mgDKIIIdZUB9sjcDT9M/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/6dPFnADxhmsNN9iZfBSwF5dRsxpTIgeTp5pJmLFwTRZ0bDbwCNj7GuzWxdXO81B1AE+5jznmS/s8FSEHxSanaZBnpQGLgtamwXHDKxRZWNUtxONOuM/O0IcMALAOlTt/Pq9u7kPsvsDAq+0o+Y5U/vYbVstkAO2onhLchFpb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kQdFXwpL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6iEGH+wqFikm0aAj4bF7ejT5MwPRP25Q3mYTk/IdX7o=; b=kQdFXwpLhi0YEZSdDnEjGTMsDU
+	euZFkSiodwlTIRIXZ+XQmpDKQ4HkcjV41S8LG0XDgt033iXb2jQZa98fAc7+nqhKHxT5yl40Y9A2e
+	Md1WfhMwRk7m/YMH8krESkq1xwWNvlyBrtO9fA4VWWItz3Ghv9Kc2kMy4Y0cjBTQqQpYXyLkIB+fc
+	PwU5/KtwA33WeBWrqe8BFsyPwbZf8JvTm1MB8U/RBNDGkiOhiykS+wMwMC6P7oWju/mjUAWwab6yO
+	i2NSysD3UuJ8tASzf5gv7mSIvmjTh+0/EoTBjhvaE7oF98oOZUSK/Ak8ziRIzENaTO9yc3o4NIxJn
+	qnn2WvuQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1txD8d-0000000FW62-3roa;
+	Tue, 25 Mar 2025 22:53:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 462BC3004AF; Tue, 25 Mar 2025 23:52:51 +0100 (CET)
+Date: Tue, 25 Mar 2025 23:52:51 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 20/21] futex: Implement FUTEX2_NUMA
+Message-ID: <20250325225251.GO36322@noisy.programming.kicks-ass.net>
+References: <20250312151634.2183278-1-bigeasy@linutronix.de>
+ <20250312151634.2183278-21-bigeasy@linutronix.de>
+ <fc3a6902-a845-4b11-ace8-514f10194288@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc3a6902-a845-4b11-ace8-514f10194288@linux.ibm.com>
 
-On Mon, 24 Mar 2025 22:27:59 +0800 Lucien.Jheng wrote:
-> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-> CKO clock operates continuously from power-up through md32 loading.
-> Implement clk provider driver so we can disable the clock output in case
-> it isn't needed, which also helps to reduce EMF noise
+On Wed, Mar 26, 2025 at 01:22:19AM +0530, Shrikanth Hegde wrote:
+
+> > +	if (node == FUTEX_NO_NODE) {
+> > +		/*
+> > +		 * In case of !FLAGS_NUMA, use some unused hash bits to pick a
+> > +		 * node -- this ensures regular futexes are interleaved across
+> > +		 * the nodes and avoids having to allocate multiple
+> > +		 * hash-tables.
+> > +		 *
+> > +		 * NOTE: this isn't perfectly uniform, but it is fast and
+> > +		 * handles sparse node masks.
+> > +		 */
+> > +		node = (hash >> futex_hashshift) % nr_node_ids;
+> > +		if (!node_possible(node)) {
+> > +			node = find_next_bit_wrap(node_possible_map.bits,
+> > +						  nr_node_ids, node);
+> > +		}
+> > +	}
+> > +
+> > +	return &futex_queues[node][hash & futex_hashmask];
 > 
-> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+> IIUC, when one specifies the numa node it can't be private futex anymore?
 
-This was posted after merge window started, so let me give you some
-extra nit picks and please repost after April 7th.
+The futex can be private just fine. It just won't end up in the process
+private hash, since that is a single mm wide hash.
 
-> +static int en8811h_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +
-> +	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-> +				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
 
-misaligned, continuation should align to opening bracket
-
-> +static int en8811h_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +	int ret = 0;
-
-unnecessary init
-
-> +	u32 pbus_value;
-> +
-> +	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return (pbus_value & EN8811H_CLK_CGM_CKO);
-> +}
-> +
-> +static const struct clk_ops en8811h_clk_ops = {
-> +	.recalc_rate = en8811h_clk_recalc_rate,
-> +	.enable = en8811h_clk_enable,
-> +	.disable = en8811h_clk_disable,
-
-these are not tab-aligned
-
-> +	.is_enabled	= en8811h_clk_is_enabled,
-
-this one is
-
-> +};
-> +
-> +static int en8811h_clk_provider_setup(struct device *dev,
-> +				      struct clk_hw *hw)
-
-no need to wrap this line
-
-> +{
-> +	struct clk_init_data init;
-> +	int ret;
-> +
-> +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-> +		return 0;
-> +
-> +	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
-> +				    fwnode_get_name(dev_fwnode(dev)));
-
-double space
--- 
-pw-bot: cr
 
