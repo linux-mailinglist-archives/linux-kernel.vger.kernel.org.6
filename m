@@ -1,81 +1,69 @@
-Return-Path: <linux-kernel+bounces-574768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256F1A6E9A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:34:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D145A6E9A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:34:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309611892046
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D008516AFC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3334D2528FB;
-	Tue, 25 Mar 2025 06:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768DF1FF1A1;
+	Tue, 25 Mar 2025 06:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+8EcVa0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3IHFUwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D8C20E6F7;
-	Tue, 25 Mar 2025 06:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D16A93D;
+	Tue, 25 Mar 2025 06:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742884441; cv=none; b=X57/qS+IVdO55e5aKjAJZPawPQH1n/oZTXJy3NCfpcAttIcqykQ6tUaR8kTyjUvhED+LE9Xu4XXOucAZvbBe3BeDIA/3GRXqSocNgFg2hL42Nx3I50xkpQSe7x+twj793MMfwpScbWX5AhSqy2kNBNrTaTLqH01WVMc/I7DC884=
+	t=1742884425; cv=none; b=iQK8kAWIMCK/gqY/9R44ozYUBCp4Ihto103o+6MKy1J0D+OiLwaPm1h9xivBMU23YJ994UMHiDxmXKbW+fmxftDjWni+KprdTekZQ0nrdTReW9I2ETW/oIih59Q4lvxrx/34eaQjUFzz3Cz4yOZaXRWOUL777QtPpk/6IEMDubg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742884441; c=relaxed/simple;
-	bh=9AmwvCBDzu9WR28vFl38+N6gLo043YVCwgjR3QF7otA=;
+	s=arc-20240116; t=1742884425; c=relaxed/simple;
+	bh=r7w+aGoUwFXDf+BRwierI19tADInAdQw9/spp+aVQTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brE0dxJ1iN4bR/nnGaJp9ICI0rm3t0kNGjMWQDLEjyxaS28VpfcmdxU9EVPoxw0VW6IngLDJoICI2zmkK9Goj1SW5JmkadtQpQeTXDmFIxR4uTc6u86rCfPxX2v9dAD5/PoEPbeg0GgOA6K6doGA52d076cEeLqlIeixe/zm0vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+8EcVa0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742884440; x=1774420440;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9AmwvCBDzu9WR28vFl38+N6gLo043YVCwgjR3QF7otA=;
-  b=Y+8EcVa0c1DQrR2rjhjy8DalE96WtHPRsbTLUga7Xsgx0L+VPxZtmUcw
-   CFzT5dkEhsbg0jY61MRKTOBvnlrKqLDdGcWgLIYgk9uI2Y57BKPa3dQ0k
-   np5IM9Ko2tdIBOAnBMy+W+jxl2XOQTJ7bZFilCr+7jLqf9uXs4x3GSuED
-   lnJ0ru2KL7rsAwsCswSD3LyqCGxNdXP0aSkvKKGuD429/sNhtOoV36t/m
-   MwhUzLr8+QaAe1HHU2l1X8LyABZhtPzN9I0aAxV9piVcWH0+BIOiBCMeU
-   Ww7oCKNKSK4yQr2XknAzHq0y50II16daJQYWWSGNWazAfwyrZRKA+RTvd
-   A==;
-X-CSE-ConnectionGUID: Crz3J1YFTt2R9qPFACewig==
-X-CSE-MsgGUID: 71W1CB4hSr2ZPufpapFZ/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="66573555"
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="66573555"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2025 23:33:59 -0700
-X-CSE-ConnectionGUID: 8Gs8zqMHSFSCR7zT/HNatQ==
-X-CSE-MsgGUID: Mk8E2JI+SpinTRZMRkHy+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
-   d="scan'208";a="128959997"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 24 Mar 2025 23:33:56 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1twxrA-0004Ae-0t;
-	Tue, 25 Mar 2025 06:33:49 +0000
-Date: Tue, 25 Mar 2025 14:32:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antheas Kapenekakis <lkml@antheas.dev>,
-	platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: Re: [PATCH v4 09/11] HID: asus: add basic RGB support
-Message-ID: <202503251316.lPXAIXIV-lkp@intel.com>
-References: <20250324210151.6042-10-lkml@antheas.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g++ia7WN7WuaOSuSCjD2M/hsAljZPA4RZFsLFybTpDAa79/wgNki4KWuabeeHBthqza6I/juWKzXQMnkdiJdK+3VaCMBmF4FBGHvt5VGsyE4JHFbENf+LKmuKKkyhEN9Gv5p6sN8IewHs6aR/Z41g5x1M+Nr6T999GvFjNY65DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3IHFUwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343E1C4CEE8;
+	Tue, 25 Mar 2025 06:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742884424;
+	bh=r7w+aGoUwFXDf+BRwierI19tADInAdQw9/spp+aVQTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i3IHFUwtIVBilg4swfttW/qf7qS8KKad83f+q4g9uFgLZzEpJzks4/PSIjrLKzWAu
+	 j+ccMadp3I6ugZLZfireS3axIGvkWGap9QUwUSueETzufTCItqDjCoaTtiBCt2lv0m
+	 sa4zDr10G7MlBWcYUEfAM2RffzWqAEnP3Q3+seB/bLtC+xTprncm7KwD00t8IcYFiQ
+	 p5HA3PYMHPpkrY6acnptDSRJrZwxMUxBzcePU59GBqrUWzMNk39yOgOqg4lvjjF5rS
+	 32MHOVfldTadnU2X66CWLb97fAi7uJZA4JdWI2O6qJjs40hXA/Kutad51vpn6ijVut
+	 NLeEXUPZjjUNQ==
+Date: Tue, 25 Mar 2025 12:03:34 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v6 05/10] tee: implement restricted DMA-heap
+Message-ID: <Z-JOPgcWlpTlskgd@sumit-X1>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-6-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,118 +72,665 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324210151.6042-10-lkml@antheas.dev>
+In-Reply-To: <20250305130634.1850178-6-jens.wiklander@linaro.org>
 
-Hi Antheas,
+Hi Jens,
 
-kernel test robot noticed the following build errors:
+On Wed, Mar 05, 2025 at 02:04:11PM +0100, Jens Wiklander wrote:
+> Implement DMA heap for restricted DMA-buf allocation in the TEE
+> subsystem.
+> 
+> Restricted memory refers to memory buffers behind a hardware enforced
+> firewall. It is not accessible to the kernel during normal circumstances
+> but rather only accessible to certain hardware IPs or CPUs executing in
+> higher or differently privileged mode than the kernel itself. This
+> interface allows to allocate and manage such restricted memory buffers
+> via interaction with a TEE implementation.
+> 
+> The restricted memory is allocated for a specific use-case, like Secure
+> Video Playback, Trusted UI, or Secure Video Recording where certain
+> hardware devices can access the memory.
+> 
+> The DMA-heaps are enabled explicitly by the TEE backend driver. The TEE
+> backend drivers needs to implement restricted memory pool to manage the
+> restricted memory.
+> 
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>  drivers/tee/Makefile      |   1 +
+>  drivers/tee/tee_heap.c    | 470 ++++++++++++++++++++++++++++++++++++++
+>  drivers/tee/tee_private.h |   6 +
+>  include/linux/tee_core.h  |  62 +++++
+>  4 files changed, 539 insertions(+)
+>  create mode 100644 drivers/tee/tee_heap.c
+> 
+> diff --git a/drivers/tee/Makefile b/drivers/tee/Makefile
+> index 5488cba30bd2..949a6a79fb06 100644
+> --- a/drivers/tee/Makefile
+> +++ b/drivers/tee/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_TEE) += tee.o
+>  tee-objs += tee_core.o
+> +tee-objs += tee_heap.o
+>  tee-objs += tee_shm.o
+>  tee-objs += tee_shm_pool.o
+>  obj-$(CONFIG_OPTEE) += optee/
+> diff --git a/drivers/tee/tee_heap.c b/drivers/tee/tee_heap.c
+> new file mode 100644
+> index 000000000000..476ab2e27260
+> --- /dev/null
+> +++ b/drivers/tee/tee_heap.c
+> @@ -0,0 +1,470 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025, Linaro Limited
+> + */
+> +
+> +#include <linux/scatterlist.h>
+> +#include <linux/dma-buf.h>
+> +#include <linux/dma-heap.h>
+> +#include <linux/genalloc.h>
+> +#include <linux/module.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/slab.h>
+> +#include <linux/tee_core.h>
+> +#include <linux/xarray.h>
 
-[auto build test ERROR on 38fec10eb60d687e30c8c6b5420d86e8149f7557]
+Lets try to follow alphabetical order here.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-refactor-init-sequence-per-spec/20250325-051852
-base:   38fec10eb60d687e30c8c6b5420d86e8149f7557
-patch link:    https://lore.kernel.org/r/20250324210151.6042-10-lkml%40antheas.dev
-patch subject: [PATCH v4 09/11] HID: asus: add basic RGB support
-config: riscv-randconfig-002-20250325 (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/reproduce)
+> +
+> +#include "tee_private.h"
+> +
+> +struct tee_dma_heap {
+> +	struct dma_heap *heap;
+> +	enum tee_dma_heap_id id;
+> +	struct tee_rstmem_pool *pool;
+> +	struct tee_device *teedev;
+> +	/* Protects pool and teedev above */
+> +	struct mutex mu;
+> +};
+> +
+> +struct tee_heap_buffer {
+> +	struct tee_rstmem_pool *pool;
+> +	struct tee_device *teedev;
+> +	size_t size;
+> +	size_t offs;
+> +	struct sg_table table;
+> +};
+> +
+> +struct tee_heap_attachment {
+> +	struct sg_table table;
+> +	struct device *dev;
+> +};
+> +
+> +struct tee_rstmem_static_pool {
+> +	struct tee_rstmem_pool pool;
+> +	struct gen_pool *gen_pool;
+> +	phys_addr_t pa_base;
+> +};
+> +
+> +#if !IS_MODULE(CONFIG_TEE) && IS_ENABLED(CONFIG_DMABUF_HEAPS)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503251316.lPXAIXIV-lkp@intel.com/
+Can this dependency rather be better managed via Kconfig?
 
-All errors (new ones prefixed by >>):
+> +static DEFINE_XARRAY_ALLOC(tee_dma_heap);
+> +
+> +static int copy_sg_table(struct sg_table *dst, struct sg_table *src)
+> +{
+> +	struct scatterlist *dst_sg;
+> +	struct scatterlist *src_sg;
+> +	int ret;
+> +	int i;
+> +
+> +	ret = sg_alloc_table(dst, src->orig_nents, GFP_KERNEL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dst_sg = dst->sgl;
+> +	for_each_sgtable_sg(src, src_sg, i) {
+> +		sg_set_page(dst_sg, sg_page(src_sg), src_sg->length,
+> +			    src_sg->offset);
+> +		dst_sg = sg_next(dst_sg);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int tee_heap_attach(struct dma_buf *dmabuf,
+> +			   struct dma_buf_attachment *attachment)
+> +{
+> +	struct tee_heap_buffer *buf = dmabuf->priv;
+> +	struct tee_heap_attachment *a;
+> +	int ret;
+> +
+> +	a = kzalloc(sizeof(*a), GFP_KERNEL);
+> +	if (!a)
+> +		return -ENOMEM;
+> +
+> +	ret = copy_sg_table(&a->table, &buf->table);
+> +	if (ret) {
+> +		kfree(a);
+> +		return ret;
+> +	}
+> +
+> +	a->dev = attachment->dev;
+> +	attachment->priv = a;
+> +
+> +	return 0;
+> +}
+> +
+> +static void tee_heap_detach(struct dma_buf *dmabuf,
+> +			    struct dma_buf_attachment *attachment)
+> +{
+> +	struct tee_heap_attachment *a = attachment->priv;
+> +
+> +	sg_free_table(&a->table);
+> +	kfree(a);
+> +}
+> +
+> +static struct sg_table *
+> +tee_heap_map_dma_buf(struct dma_buf_attachment *attachment,
+> +		     enum dma_data_direction direction)
+> +{
+> +	struct tee_heap_attachment *a = attachment->priv;
+> +	int ret;
+> +
+> +	ret = dma_map_sgtable(attachment->dev, &a->table, direction,
+> +			      DMA_ATTR_SKIP_CPU_SYNC);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return &a->table;
+> +}
+> +
+> +static void tee_heap_unmap_dma_buf(struct dma_buf_attachment *attachment,
+> +				   struct sg_table *table,
+> +				   enum dma_data_direction direction)
+> +{
+> +	struct tee_heap_attachment *a = attachment->priv;
+> +
+> +	WARN_ON(&a->table != table);
+> +
+> +	dma_unmap_sgtable(attachment->dev, table, direction,
+> +			  DMA_ATTR_SKIP_CPU_SYNC);
+> +}
+> +
+> +static void tee_heap_buf_free(struct dma_buf *dmabuf)
+> +{
+> +	struct tee_heap_buffer *buf = dmabuf->priv;
+> +	struct tee_device *teedev = buf->teedev;
+> +
+> +	buf->pool->ops->free(buf->pool, &buf->table);
+> +	tee_device_put(teedev);
+> +}
+> +
+> +static const struct dma_buf_ops tee_heap_buf_ops = {
+> +	.attach = tee_heap_attach,
+> +	.detach = tee_heap_detach,
+> +	.map_dma_buf = tee_heap_map_dma_buf,
+> +	.unmap_dma_buf = tee_heap_unmap_dma_buf,
+> +	.release = tee_heap_buf_free,
+> +};
+> +
+> +static struct dma_buf *tee_dma_heap_alloc(struct dma_heap *heap,
+> +					  unsigned long len, u32 fd_flags,
+> +					  u64 heap_flags)
+> +{
+> +	struct tee_dma_heap *h = dma_heap_get_drvdata(heap);
+> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+> +	struct tee_device *teedev = NULL;
+> +	struct tee_heap_buffer *buf;
+> +	struct tee_rstmem_pool *pool;
+> +	struct dma_buf *dmabuf;
+> +	int rc;
+> +
+> +	mutex_lock(&h->mu);
+> +	if (tee_device_get(h->teedev)) {
+> +		teedev = h->teedev;
+> +		pool = h->pool;
+> +	}
+> +	mutex_unlock(&h->mu);
+> +
+> +	if (!teedev)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+> +	if (!buf) {
+> +		dmabuf = ERR_PTR(-ENOMEM);
+> +		goto err;
+> +	}
+> +	buf->size = len;
+> +	buf->pool = pool;
+> +	buf->teedev = teedev;
+> +
+> +	rc = pool->ops->alloc(pool, &buf->table, len, &buf->offs);
+> +	if (rc) {
+> +		dmabuf = ERR_PTR(rc);
+> +		goto err_kfree;
+> +	}
+> +
+> +	exp_info.ops = &tee_heap_buf_ops;
+> +	exp_info.size = len;
+> +	exp_info.priv = buf;
+> +	exp_info.flags = fd_flags;
+> +	dmabuf = dma_buf_export(&exp_info);
+> +	if (IS_ERR(dmabuf))
+> +		goto err_rstmem_free;
+> +
+> +	return dmabuf;
+> +
+> +err_rstmem_free:
+> +	pool->ops->free(pool, &buf->table);
+> +err_kfree:
+> +	kfree(buf);
+> +err:
+> +	tee_device_put(h->teedev);
+> +	return dmabuf;
+> +}
+> +
+> +static const struct dma_heap_ops tee_dma_heap_ops = {
+> +	.allocate = tee_dma_heap_alloc,
+> +};
+> +
+> +static const char *heap_id_2_name(enum tee_dma_heap_id id)
+> +{
+> +	switch (id) {
+> +	case TEE_DMA_HEAP_SECURE_VIDEO_PLAY:
+> +		return "restricted,secure-video";
+> +	case TEE_DMA_HEAP_TRUSTED_UI:
+> +		return "restricted,trusted-ui";
+> +	case TEE_DMA_HEAP_SECURE_VIDEO_RECORD:
+> +		return "restricted,secure-video-record";
+> +	default:
+> +		return NULL;
+> +	}
+> +}
+> +
+> +static int alloc_dma_heap(struct tee_device *teedev, enum tee_dma_heap_id id,
+> +			  struct tee_rstmem_pool *pool)
+> +{
+> +	struct dma_heap_export_info exp_info = {
+> +		.ops = &tee_dma_heap_ops,
+> +		.name = heap_id_2_name(id),
+> +	};
+> +	struct tee_dma_heap *h;
+> +	int rc;
+> +
+> +	if (!exp_info.name)
+> +		return -EINVAL;
+> +
+> +	if (xa_reserve(&tee_dma_heap, id, GFP_KERNEL)) {
+> +		if (!xa_load(&tee_dma_heap, id))
+> +			return -EEXIST;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	h = kzalloc(sizeof(*h), GFP_KERNEL);
+> +	if (!h)
+> +		return -ENOMEM;
+> +	h->id = id;
+> +	h->teedev = teedev;
+> +	h->pool = pool;
+> +	mutex_init(&h->mu);
+> +
+> +	exp_info.priv = h;
+> +	h->heap = dma_heap_add(&exp_info);
+> +	if (IS_ERR(h->heap)) {
+> +		rc = PTR_ERR(h->heap);
+> +		kfree(h);
+> +
+> +		return rc;
+> +	}
+> +
+> +	/* "can't fail" due to the call to xa_reserve() above */
+> +	return WARN(xa_store(&tee_dma_heap, id, h, GFP_KERNEL),
+> +		    "xa_store() failed");
+> +}
+> +
+> +int tee_device_register_dma_heap(struct tee_device *teedev,
+> +				 enum tee_dma_heap_id id,
+> +				 struct tee_rstmem_pool *pool)
+> +{
+> +	struct tee_dma_heap *h;
+> +	int rc;
+> +
+> +	h = xa_load(&tee_dma_heap, id);
+> +	if (h) {
+> +		mutex_lock(&h->mu);
+> +		if (h->teedev) {
+> +			rc = -EBUSY;
+> +		} else {
+> +			h->teedev = teedev;
+> +			h->pool = pool;
+> +			rc = 0;
+> +		}
+> +		mutex_unlock(&h->mu);
+> +	} else {
+> +		rc = alloc_dma_heap(teedev, id, pool);
+> +	}
+> +
+> +	if (rc)
+> +		dev_err(&teedev->dev, "can't register DMA heap id %d (%s)\n",
+> +			id, heap_id_2_name(id));
+> +
+> +	return rc;
+> +}
+> +
+> +void tee_device_unregister_all_dma_heaps(struct tee_device *teedev)
+> +{
+> +	struct tee_rstmem_pool *pool;
+> +	struct tee_dma_heap *h;
+> +	u_long i;
+> +
+> +	xa_for_each(&tee_dma_heap, i, h) {
+> +		if (h) {
+> +			pool = NULL;
+> +			mutex_lock(&h->mu);
+> +			if (h->teedev == teedev) {
+> +				pool = h->pool;
+> +				h->teedev = NULL;
+> +				h->pool = NULL;
+> +			}
+> +			mutex_unlock(&h->mu);
+> +			if (pool)
+> +				pool->ops->destroy_pool(pool);
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(tee_device_unregister_all_dma_heaps);
+> +
+> +int tee_heap_update_from_dma_buf(struct tee_device *teedev,
+> +				 struct dma_buf *dmabuf, size_t *offset,
+> +				 struct tee_shm *shm,
+> +				 struct tee_shm **parent_shm)
+> +{
+> +	struct tee_heap_buffer *buf;
+> +	int rc;
+> +
+> +	/* The DMA-buf must be from our heap */
+> +	if (dmabuf->ops != &tee_heap_buf_ops)
+> +		return -EINVAL;
+> +
+> +	buf = dmabuf->priv;
+> +	/* The buffer must be from the same teedev */
+> +	if (buf->teedev != teedev)
+> +		return -EINVAL;
+> +
+> +	shm->size = buf->size;
+> +
+> +	rc = buf->pool->ops->update_shm(buf->pool, &buf->table, buf->offs, shm,
+> +					parent_shm);
+> +	if (!rc && *parent_shm)
+> +		*offset = buf->offs;
+> +
+> +	return rc;
+> +}
+> +#else
+> +int tee_device_register_dma_heap(struct tee_device *teedev __always_unused,
+> +				 enum tee_dma_heap_id id __always_unused,
+> +				 struct tee_rstmem_pool *pool __always_unused)
+> +{
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL_GPL(tee_device_register_dma_heap);
+> +
+> +void
+> +tee_device_unregister_all_dma_heaps(struct tee_device *teedev __always_unused)
+> +{
+> +}
+> +EXPORT_SYMBOL_GPL(tee_device_unregister_all_dma_heaps);
+> +
+> +int tee_heap_update_from_dma_buf(struct tee_device *teedev __always_unused,
+> +				 struct dma_buf *dmabuf __always_unused,
+> +				 size_t *offset __always_unused,
+> +				 struct tee_shm *shm __always_unused,
+> +				 struct tee_shm **parent_shm __always_unused)
+> +{
+> +	return -EINVAL;
+> +}
+> +#endif
+> +
+> +static struct tee_rstmem_static_pool *
+> +to_rstmem_static_pool(struct tee_rstmem_pool *pool)
+> +{
+> +	return container_of(pool, struct tee_rstmem_static_pool, pool);
+> +}
+> +
+> +static int rstmem_pool_op_static_alloc(struct tee_rstmem_pool *pool,
+> +				       struct sg_table *sgt, size_t size,
+> +				       size_t *offs)
+> +{
+> +	struct tee_rstmem_static_pool *stp = to_rstmem_static_pool(pool);
+> +	phys_addr_t pa;
+> +	int ret;
+> +
+> +	pa = gen_pool_alloc(stp->gen_pool, size);
+> +	if (!pa)
+> +		return -ENOMEM;
+> +
+> +	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
+> +	if (ret) {
+> +		gen_pool_free(stp->gen_pool, pa, size);
+> +		return ret;
+> +	}
+> +
+> +	sg_set_page(sgt->sgl, phys_to_page(pa), size, 0);
+> +	*offs = pa - stp->pa_base;
+> +
+> +	return 0;
+> +}
+> +
+> +static void rstmem_pool_op_static_free(struct tee_rstmem_pool *pool,
+> +				       struct sg_table *sgt)
+> +{
+> +	struct tee_rstmem_static_pool *stp = to_rstmem_static_pool(pool);
+> +	struct scatterlist *sg;
+> +	int i;
+> +
+> +	for_each_sgtable_sg(sgt, sg, i)
+> +		gen_pool_free(stp->gen_pool, sg_phys(sg), sg->length);
+> +	sg_free_table(sgt);
+> +}
+> +
+> +static int rstmem_pool_op_static_update_shm(struct tee_rstmem_pool *pool,
+> +					    struct sg_table *sgt, size_t offs,
+> +					    struct tee_shm *shm,
+> +					    struct tee_shm **parent_shm)
+> +{
+> +	struct tee_rstmem_static_pool *stp = to_rstmem_static_pool(pool);
+> +
+> +	shm->paddr = stp->pa_base + offs;
+> +	*parent_shm = NULL;
+> +
+> +	return 0;
+> +}
+> +
+> +static void rstmem_pool_op_static_destroy_pool(struct tee_rstmem_pool *pool)
+> +{
+> +	struct tee_rstmem_static_pool *stp = to_rstmem_static_pool(pool);
+> +
+> +	gen_pool_destroy(stp->gen_pool);
+> +	kfree(stp);
+> +}
+> +
+> +static struct tee_rstmem_pool_ops rstmem_pool_ops_static = {
+> +	.alloc = rstmem_pool_op_static_alloc,
+> +	.free = rstmem_pool_op_static_free,
+> +	.update_shm = rstmem_pool_op_static_update_shm,
+> +	.destroy_pool = rstmem_pool_op_static_destroy_pool,
+> +};
+> +
+> +struct tee_rstmem_pool *tee_rstmem_static_pool_alloc(phys_addr_t paddr,
+> +						     size_t size)
+> +{
+> +	const size_t page_mask = PAGE_SIZE - 1;
+> +	struct tee_rstmem_static_pool *stp;
+> +	int rc;
+> +
+> +	/* Check it's page aligned */
+> +	if ((paddr | size) & page_mask)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	stp = kzalloc(sizeof(*stp), GFP_KERNEL);
+> +	if (!stp)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	stp->gen_pool = gen_pool_create(PAGE_SHIFT, -1);
+> +	if (!stp->gen_pool) {
+> +		rc = -ENOMEM;
+> +		goto err_free;
+> +	}
+> +
+> +	rc = gen_pool_add(stp->gen_pool, paddr, size, -1);
+> +	if (rc)
+> +		goto err_free_pool;
+> +
+> +	stp->pool.ops = &rstmem_pool_ops_static;
+> +	stp->pa_base = paddr;
+> +	return &stp->pool;
+> +
+> +err_free_pool:
+> +	gen_pool_destroy(stp->gen_pool);
+> +err_free:
+> +	kfree(stp);
+> +
+> +	return ERR_PTR(rc);
+> +}
+> +EXPORT_SYMBOL_GPL(tee_rstmem_static_pool_alloc);
+> diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+> index 9bc50605227c..6c6ff5d5eed2 100644
+> --- a/drivers/tee/tee_private.h
+> +++ b/drivers/tee/tee_private.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/completion.h>
+>  #include <linux/device.h>
+> +#include <linux/dma-buf.h>
+>  #include <linux/kref.h>
+>  #include <linux/mutex.h>
+>  #include <linux/types.h>
+> @@ -24,4 +25,9 @@ struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t size);
+>  struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
+>  					  unsigned long addr, size_t length);
+>  
+> +int tee_heap_update_from_dma_buf(struct tee_device *teedev,
+> +				 struct dma_buf *dmabuf, size_t *offset,
+> +				 struct tee_shm *shm,
+> +				 struct tee_shm **parent_shm);
+> +
+>  #endif /*TEE_PRIVATE_H*/
+> diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+> index a38494d6b5f4..16ef078247ae 100644
+> --- a/include/linux/tee_core.h
+> +++ b/include/linux/tee_core.h
+> @@ -8,9 +8,11 @@
+>  
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+> +#include <linux/dma-buf.h>
+>  #include <linux/idr.h>
+>  #include <linux/kref.h>
+>  #include <linux/list.h>
+> +#include <linux/scatterlist.h>
+>  #include <linux/tee.h>
+>  #include <linux/tee_drv.h>
+>  #include <linux/types.h>
+> @@ -30,6 +32,12 @@
+>  #define TEE_DEVICE_FLAG_REGISTERED	0x1
+>  #define TEE_MAX_DEV_NAME_LEN		32
+>  
+> +enum tee_dma_heap_id {
+> +	TEE_DMA_HEAP_SECURE_VIDEO_PLAY = 1,
+> +	TEE_DMA_HEAP_TRUSTED_UI,
+> +	TEE_DMA_HEAP_SECURE_VIDEO_RECORD,
+> +};
+> +
+>  /**
+>   * struct tee_device - TEE Device representation
+>   * @name:	name of device
+> @@ -116,6 +124,33 @@ struct tee_desc {
+>  	u32 flags;
+>  };
+>  
+> +/**
+> + * struct tee_rstmem_pool - restricted memory pool
+> + * @ops:		operations
+> + *
+> + * This is an abstract interface where this struct is expected to be
+> + * embedded in another struct specific to the implementation.
+> + */
+> +struct tee_rstmem_pool {
+> +	const struct tee_rstmem_pool_ops *ops;
+> +};
+> +
+> +/**
+> + * struct tee_rstmem_pool_ops - restricted memory pool operations
+> + * @alloc:		called when allocating restricted memory
+> + * @free:		called when freeing restricted memory
+> + * @destroy_pool:	called when destroying the pool
+> + */
+> +struct tee_rstmem_pool_ops {
+> +	int (*alloc)(struct tee_rstmem_pool *pool, struct sg_table *sgt,
+> +		     size_t size, size_t *offs);
+> +	void (*free)(struct tee_rstmem_pool *pool, struct sg_table *sgt);
+> +	int (*update_shm)(struct tee_rstmem_pool *pool, struct sg_table *sgt,
+> +			  size_t offs, struct tee_shm *shm,
+> +			  struct tee_shm **parent_shm);
 
-   riscv64-linux-ld: drivers/hid/hid-asus.o: in function `asus_kbd_register_leds':
->> drivers/hid/hid-asus.c:676:(.text+0x23f8): undefined reference to `devm_led_classdev_multicolor_register_ext'
+This API isn't descibed in kdoc comment above. Can you descibe the role
+of this API and when it's needed?
 
+-Sumit
 
-vim +676 drivers/hid/hid-asus.c
-
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  645  
-af22a610bc3850 Carlo Caione        2017-04-06  646  static int asus_kbd_register_leds(struct hid_device *hdev)
-af22a610bc3850 Carlo Caione        2017-04-06  647  {
-af22a610bc3850 Carlo Caione        2017-04-06  648  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-af22a610bc3850 Carlo Caione        2017-04-06  649  	unsigned char kbd_func;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  650  	struct asus_kbd_leds *leds;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  651  	bool no_led;
-af22a610bc3850 Carlo Caione        2017-04-06  652  	int ret;
-af22a610bc3850 Carlo Caione        2017-04-06  653  
-2c82a7b20f7b7a Luke D. Jones       2024-04-16  654  	ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-2c82a7b20f7b7a Luke D. Jones       2024-04-16  655  	if (ret < 0)
-2c82a7b20f7b7a Luke D. Jones       2024-04-16  656  		return ret;
-2c82a7b20f7b7a Luke D. Jones       2024-04-16  657  
-3ebfeb18b44e01 Antheas Kapenekakis 2025-03-24  658  	/* Get keyboard functions */
-3ebfeb18b44e01 Antheas Kapenekakis 2025-03-24  659  	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-b92b80246e0626 Luke D Jones        2020-10-27  660  	if (ret < 0)
-b92b80246e0626 Luke D Jones        2020-10-27  661  		return ret;
-53078a736fbc60 Luke D. Jones       2025-01-11  662  
-53078a736fbc60 Luke D. Jones       2025-01-11  663  	if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-53078a736fbc60 Luke D. Jones       2025-01-11  664  		ret = asus_kbd_disable_oobe(hdev);
-53078a736fbc60 Luke D. Jones       2025-01-11  665  		if (ret < 0)
-53078a736fbc60 Luke D. Jones       2025-01-11  666  			return ret;
-53078a736fbc60 Luke D. Jones       2025-01-11  667  	}
-af22a610bc3850 Carlo Caione        2017-04-06  668  
-af22a610bc3850 Carlo Caione        2017-04-06  669  	/* Check for backlight support */
-af22a610bc3850 Carlo Caione        2017-04-06  670  	if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-af22a610bc3850 Carlo Caione        2017-04-06  671  		return -ENODEV;
-af22a610bc3850 Carlo Caione        2017-04-06  672  
-af22a610bc3850 Carlo Caione        2017-04-06  673  	drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
-af22a610bc3850 Carlo Caione        2017-04-06  674  					      sizeof(struct asus_kbd_leds),
-af22a610bc3850 Carlo Caione        2017-04-06  675  					      GFP_KERNEL);
-af22a610bc3850 Carlo Caione        2017-04-06 @676  	if (!drvdata->kbd_backlight)
-af22a610bc3850 Carlo Caione        2017-04-06  677  		return -ENOMEM;
-af22a610bc3850 Carlo Caione        2017-04-06  678  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  679  	leds = drvdata->kbd_backlight;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  680  	leds->removed = false;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  681  	leds->brightness = 3;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  682  	leds->hdev = hdev;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  683  	leds->listener.brightness_set = asus_kbd_listener_set;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  684  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  685  	leds->rgb_colors[0] = 0;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  686  	leds->rgb_colors[1] = 0;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  687  	leds->rgb_colors[2] = 0;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  688  	leds->rgb_init = true;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  689  	leds->rgb_set = false;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  690  	leds->mc_led.led_cdev.name = devm_kasprintf(&hdev->dev, GFP_KERNEL,
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  691  					"asus-%s:rgb:peripheral",
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  692  					strlen(hdev->uniq) ?
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  693  					hdev->uniq : dev_name(&hdev->dev));
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  694  	leds->mc_led.led_cdev.flags = LED_BRIGHT_HW_CHANGED;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  695  	leds->mc_led.led_cdev.max_brightness = 3,
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  696  	leds->mc_led.led_cdev.brightness_set = asus_kbd_brightness_set,
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  697  	leds->mc_led.led_cdev.brightness_get = asus_kbd_brightness_get,
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  698  	leds->mc_led.subled_info = leds->subled_info,
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  699  	leds->mc_led.num_colors = ARRAY_SIZE(leds->subled_info),
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  700  	leds->subled_info[0].color_index = LED_COLOR_ID_RED;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  701  	leds->subled_info[1].color_index = LED_COLOR_ID_GREEN;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  702  	leds->subled_info[2].color_index = LED_COLOR_ID_BLUE;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  703  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  704  	INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_work);
-315c537068a13f Pietro Borrello     2023-02-12  705  	spin_lock_init(&drvdata->kbd_backlight->lock);
-af22a610bc3850 Carlo Caione        2017-04-06  706  
-d37db2009c913c Antheas Kapenekakis 2025-03-24  707  	ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  708  	no_led = !!ret;
-d37db2009c913c Antheas Kapenekakis 2025-03-24  709  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  710  	if (drvdata->quirks & QUIRK_ROG_NKEY_RGB) {
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  711  		ret = devm_led_classdev_multicolor_register(
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  712  			&hdev->dev, &leds->mc_led);
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  713  		if (!ret)
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  714  			leds->rgb_registered = true;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  715  		no_led &= !!ret;
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  716  	}
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  717  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  718  	if (no_led) {
-af22a610bc3850 Carlo Caione        2017-04-06  719  		/* No need to have this still around */
-af22a610bc3850 Carlo Caione        2017-04-06  720  		devm_kfree(&hdev->dev, drvdata->kbd_backlight);
-af22a610bc3850 Carlo Caione        2017-04-06  721  	}
-af22a610bc3850 Carlo Caione        2017-04-06  722  
-312a522531f6e5 Antheas Kapenekakis 2025-03-24  723  	return no_led ? -ENODEV : 0;
-af22a610bc3850 Carlo Caione        2017-04-06  724  }
-af22a610bc3850 Carlo Caione        2017-04-06  725  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +	void (*destroy_pool)(struct tee_rstmem_pool *pool);
+> +};
+> +
+>  /**
+>   * tee_device_alloc() - Allocate a new struct tee_device instance
+>   * @teedesc:	Descriptor for this driver
+> @@ -154,6 +189,11 @@ int tee_device_register(struct tee_device *teedev);
+>   */
+>  void tee_device_unregister(struct tee_device *teedev);
+>  
+> +int tee_device_register_dma_heap(struct tee_device *teedev,
+> +				 enum tee_dma_heap_id id,
+> +				 struct tee_rstmem_pool *pool);
+> +void tee_device_unregister_all_dma_heaps(struct tee_device *teedev);
+> +
+>  /**
+>   * tee_device_set_dev_groups() - Set device attribute groups
+>   * @teedev:	Device to register
+> @@ -229,6 +269,28 @@ static inline void tee_shm_pool_free(struct tee_shm_pool *pool)
+>  	pool->ops->destroy_pool(pool);
+>  }
+>  
+> +/**
+> + * tee_rstmem_static_pool_alloc() - Create a restricted memory manager
+> + * @paddr:	Physical address of start of pool
+> + * @size:	Size in bytes of the pool
+> + *
+> + * @returns pointer to a 'struct tee_shm_pool' or an ERR_PTR on failure.
+> + */
+> +struct tee_rstmem_pool *tee_rstmem_static_pool_alloc(phys_addr_t paddr,
+> +						     size_t size);
+> +
+> +/**
+> + * tee_rstmem_pool_free() - Free a restricted memory pool
+> + * @pool:	The restricted memory pool to free
+> + *
+> + * There must be no remaining restricted memory allocated from this pool
+> + * when this function is called.
+> + */
+> +static inline void tee_rstmem_pool_free(struct tee_rstmem_pool *pool)
+> +{
+> +	pool->ops->destroy_pool(pool);
+> +}
+> +
+>  /**
+>   * tee_get_drvdata() - Return driver_data pointer
+>   * @returns the driver_data pointer supplied to tee_register().
+> -- 
+> 2.43.0
+> 
 
