@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-574636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A21BA6E7DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:05:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A0BA6E7E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35491892CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0941898D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B794151991;
-	Tue, 25 Mar 2025 01:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854E614D433;
+	Tue, 25 Mar 2025 01:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OQBosDV4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="fS/TbaFe"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B154111712;
-	Tue, 25 Mar 2025 01:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2471448E3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742864666; cv=none; b=VGOeRjLGW6ZhMAttCbklsqnqCY0EpKeG2p1MiSL0tGW7VaR8TDkBNT+3vemumtzFgp3wTtF8w37DxLv2nToVjaBmf3aE+MU3rUd1+hgr2NFxrFNNxlrz+29XzUGWTiqWEKGcsrQcF1BLR5vvB0vIEZ2zNmAkO1mHh1qHZ3wcV7k=
+	t=1742865186; cv=none; b=GfKqyL6cq+jfY0wJO6mqJ/SfP0r4iiRs0GdQxvaStf44j0JzDtkKdZbIJdeaTLm0QonJwVMpDBWklYXi8Y8GVi3BkIhs7/TOZOb41KnAe46MQS3WsbwNTB7yTCJMHIgla4XnlC2vgTOcMjyRNi+GI2dmJYknH9HCMFl1nyOJsGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742864666; c=relaxed/simple;
-	bh=/f5KC+2i9wQJD5t8shE+KB71uBEgb0zHIKuzW2IFpHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cIDq0Lph+8YwwoFu5eumPvG7pg/i4ji3b/uLXozfWumm7Me03oWDYKvqShBGRDcgN/rAyGq4y7kWkuHgSePkFIJ2h7z3TNIwBkoRhFIkUM4im6YQ1lFTm6MQ9uvXnqgt5VFHwTH/brVaPQzRSJsGhvd2U1ska+nGorYMoJhmIRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OQBosDV4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OMwZm4015560;
-	Tue, 25 Mar 2025 01:04:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HyTWSl4FFXzLuQLaenb4gwnDzJkBOmFvlp8r3VN/r4Y=; b=OQBosDV49WbHOgnU
-	Z7GfNvehMbv6ZQq3zBEIdhvZ56LODp+sREM/w1NXyW9wXGcb+HtuKo6kmXEZFV/d
-	tHwsFdODa8rGt26q2q8Kbt0A2qBdevtPMwyTrpuIzdH3VdWZXtwHo+/PgVxjgroZ
-	y4usmUlEgD8CwX2oE81sq8burnKRIEGqUkMGwMwxzTOYVWDjHZrNvjyj66koT5EJ
-	HM69xWevQ6Hwkr7q9cEPQ21Lwmca7Ed9H7+zr+5wYkjNiJexKzs5ValUuyqqwunk
-	gB+NfjTUjcIErNRJi6qfWAplnN6SJbp799aEqPmkFA1iRxK6UiTgpqR9iohsIIZs
-	ZbmLIQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hpcp5w31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 01:04:16 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P14FcK010205
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 01:04:15 GMT
-Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
- 2025 18:04:13 -0700
-Message-ID: <8ab7dddb-b4dc-408c-806b-e34846737d74@quicinc.com>
-Date: Tue, 25 Mar 2025 09:04:11 +0800
+	s=arc-20240116; t=1742865186; c=relaxed/simple;
+	bh=59b8GxSKdHIoohtTVvoh6d2qSq20IxVL/ynPTXhEdgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gaJyJzlszC5iQ/CQbczvpHeCVOsY5hez4vhuEixcvd4xV89fmn3rKHFrWwv3Ltlwd6Lh6uvXhsjOpAvfz7p61ukiIoaB8BtRyHVVc1BCLbUhcQpt26mpT0S32q2XxoVK5B/rQvJDt1Jdk0oyAbFLiyF9uu+mZDQ6dzS7lWMNCMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=fS/TbaFe; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d571ac3d2fso48238625ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:13:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1742865184; x=1743469984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=tilX7QnvKAF8sEocr5hjC3RCRlvcCP2GLlCgaOM9mZU=;
+        b=fS/TbaFeyrcMwOU69Oifk/aTtztKozl07K1xH4DNdY0LmOgvVJGesuaitLdkPnFQXj
+         ostoAvOyzLeLEJ5gZxtwj8IQAP9CYrYpSqz/Cb7VQsm6YIGRPf0YzpBRiWfkPxlcN2L8
+         GWmITUYWEkdYPEqIP+xdcRLv2WPgrMDxlJw3U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742865184; x=1743469984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tilX7QnvKAF8sEocr5hjC3RCRlvcCP2GLlCgaOM9mZU=;
+        b=qI/KqEkCDxK/2eFD/LFY8LHtO67eN9dKI0bo31Q2rpPq4EsEm917ucLZXda50arzJ1
+         mcYbtkz4Ep+8UU+oq5MsXQO9VLGmL2LgfPfnER2s8nk4ulZjpQmkBwERhCYbr+2Px2n3
+         Kf7wMIbVj/oYtLJ2YgSfoFTZ0sakgQa8HtjExU7tNvwbs07BLBn0MLm6zGnp95Zu9eKn
+         DW5icnAcmx10d3B8/kfr0ax99pvGdBTXD6s0Aeewbz4jkERMCaXWU2GZ4FiiHRNTzYJ9
+         t0lCm8cdwD40qikO/qUrpvpBn/Og5mH0A6m/LWDnYuCPPyFQq6EOZnRb8xtb3aVpw8OP
+         DQLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnJiTs1p6Y6hV6I/RQ+HMoyuSA/ChhUtpNPl+W0mDDTqA2fuVkPVpeGqSHWeBm2rPhucw+RooR+gqEHAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxK4WcoqfFjFdXQBiTqKVl5NLB/1Z0G4Tf5S9yN83RCVZ5xoTh
+	3cH1ogyaS7qDPs1on61NevpvUadens4h+8/PkINlSTCEeEQZcljSmpxLCR9znQ==
+X-Gm-Gg: ASbGncsSZNQexhzMcdpuduSV989WROgbJg5WIolepDJZcSN2swIECN0SUClxxbOuvGE
+	tYcAW8uvtsBCCWeZLD9HFJpP3XTaKl5ol6Le/JCezeEFFZKzUPp+o7D4QUKUDPUsGbPQS0ahXfR
+	l3Aj7iCPcuM19cEwHG5UJbfsORkjxcEVC+AZ6DCvwW90g5dfWq64gFpFWxUaZsPvE1kUWLnlzCy
+	qjDTjOpg5e8Kkx4uiHilkS/YJXH9k276hkpDx3J0Zg9k13mWdt+vHzpVCNxIYcPtCvHCTQfzU8P
+	UV6rkyGAwC77/0DfJk6PtEdiPPhR6eUBKKCZwD2X9I8mTg6F2U1u+Mvk5Y9/MDlqz6gN12nDjew
+	E/P7APg/W9+Kt
+X-Google-Smtp-Source: AGHT+IGSsAzB0Of7YOYUV68uvoK6ZCJ/6KJgHQicf12+sgaAuVAWuoM864+T45bF4b0vuJZt/1JG6w==
+X-Received: by 2002:a05:6e02:3904:b0:3d4:4010:4eff with SMTP id e9e14a558f8ab-3d596164076mr128011515ab.13.1742865183547;
+        Mon, 24 Mar 2025 18:13:03 -0700 (PDT)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d59606ee04sm20819565ab.6.2025.03.24.18.13.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 18:13:02 -0700 (PDT)
+Message-ID: <5c8fa538-6c04-4fcf-bcad-21fc1e2a0a9b@ieee.org>
+Date: Mon, 24 Mar 2025 20:12:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,149 +78,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-To: Johan Hovold <johan@kernel.org>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <johan+linaro@kernel.org>
-References: <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
- <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
- <Z9METTzUJe9yqVEI@hovoldconsulting.com>
- <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
- <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
- <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
- <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
- <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
- <Z9mwn3GzpPPZSiTG@hovoldconsulting.com>
- <a8fc9f07-013c-4e31-9d9e-46e042d81dbf@quicinc.com>
- <Z90yyrZcORhJJgNU@hovoldconsulting.com>
+Subject: Re: [PATCH] dt-bindings: net: qcom,ipa: Correct indentation and style
+ in DTS example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250324125222.82057-1-krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <Z90yyrZcORhJJgNU@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250324125222.82057-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hoScGWf54ahlJCS37E1mSFkrT-EBncqQ
-X-Proofpoint-ORIG-GUID: hoScGWf54ahlJCS37E1mSFkrT-EBncqQ
-X-Authority-Analysis: v=2.4 cv=PLYP+eqC c=1 sm=1 tr=0 ts=67e20110 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=xObAXXU4KUaL95rEUbgA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-24_07,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 mlxscore=0 impostorscore=0 priorityscore=1501
- phishscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 malwarescore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250005
 
+On 3/24/25 7:52 AM, Krzysztof Kozlowski wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+> 
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Looks identical with the exception of the white space change.
+Thanks Krzysztof.
 
-On 3/21/2025 5:35 PM, Johan Hovold wrote:
-> On Wed, Mar 19, 2025 at 02:47:12PM +0800, Miaoqing Pan wrote:
->> On 3/19/2025 1:42 AM, Johan Hovold wrote:
+Reviewed-by: Alex Elder <elder@riscstar.com>
+
+> ---
+>   .../devicetree/bindings/net/qcom,ipa.yaml     | 124 +++++++++---------
+>   1 file changed, 62 insertions(+), 62 deletions(-)
 > 
->>> It could if the CPU observes the updates out of order due to the missing
->>> barrier. The driver could be processing an earlier interrupt when the
->>> new descriptor is added and head pointer updated. If for example the CPU
->>> speculatively fetches the descriptor before the head pointer is updated,
->>> then the descriptor length may be zero when the CPU sees the updated
->>> head pointer.
->>
->> Sorry, I still think this situation won't happen. Please see the
->> following code.
->>
->> ath11k_hal_srng_access_begin(ab, srng);
->>     => srng->u.dst_ring.cached_hp = *srng->u.dst_ring.hp_addr;
->> desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
->>     => if (srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp) return NULL;
->> //dma_rmb();
->> *nbytes = ath11k_hal_ce_dst_status_get_length(desc);
->>
->> If the condition 'srng->u.dst_ring.tp == srng->u.dst_ring.cached_hp' is
->> true, the descriptor retrieval fails.
-> 
-> The CPU can still speculate that this condition will be false and load
-> the descriptor.
-> 
-> If the speculation later turns out to be correct, then the descriptor
-> may have stale values from before the head pointer was updated.
-> 
->>> This seems to be what is happening on the X13s since adding the memory
->>> barrier makes the zero-length descriptors go away.
->>
->> Hmm, it is indeed a bit strange. Could it be that dma_rmb() introduces
->> some delay ?
-> 
-> It's only expected since you must use memory barriers on weakly ordered
-> architectures like aarch64 to guarantee the ordering.
+> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> index 1a46d80a66e8..b4a79912d473 100644
+> --- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+> @@ -210,70 +210,70 @@ additionalProperties: false
 >   
->>>> The Copy Engine hardware module copies the metadata to the Status
->>>> Descriptor after the DMA is complete, then updates the HP to trigger an
->>>> interrupt. I think there might be some issues in this process, such as
->>>> the lack of a wmb instruction after the copy is complete, causing the HP
->>>> to be updated first.
->>>
->>> Yeah, possibly. At least it seems there are more issues than the missing
->>> barrier on the machines you test.
->>>    
->>>>> Now obviously there are further issues in your system, which we should
->>>>> make sure we understand before adding workarounds to the driver.
->>>>>
->>>>> Do you have a pointer to the downstream kernel sources you are testing
->>>>> with? Or even better, can you reproduce the issue with mainline after
->>>>> adding the PCIe patches that were posted to the lists for these
->>>>> platforms?
->>>>>
->>>> https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
->>>
->>> Thanks for the pointer. That's a lot of out-of-tree patches on top of
->>> stable so not that easy to check the state of the resulting tree.
->>
->> Yes, but there are only a few patches for ath11k.
-> 
-> Sure, but there are other components that come into play here such as
-> the PCIe controller driver.
-> 
-> A colleague of yours recently submitted an updated patch that overrides
-> the no_snoop bit for qcs8300:
-> 
-> 	https://lore.kernel.org/lkml/20250318053836.tievnd5ohzl7bmox@thinkpad/
-> 
-> but that flag appears not to be set in your downstream tree:
-> 
-> 	https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base-6.6/drivers/qcs8300/0004-PCI-qcom-Add-QCS8300-PCIe-support.patch
-> 
-> Something like that may prevent a cached descriptor from being
-> invalidated when the controller updates it.
-> 
-> Similarly, the PCIe controllers are marked as dma-coherent in your
-> devicetrees. A misconfiguration there could also cause problems.
-
-Thank you very much for these suggestions. I tried setting no_snoop and 
-disabling relaxed_ordering, but unfortunately, these did not work.
-
-> 
-> I suggest we merge my fix that adds the missing memory barrier, and
-> which users have now been testing for a week without hitting the
-> corruption (which they used to see several times a day).
-> 
-Agreed, I previously mistakenly thought that the status descriptor was 
-not updated by DMA.
-
-
-> Then we can continue to track down why you are having coherency issues
-> on qcs615 and qcs8300. You really want to make sure that that is fixed
-> properly as it may lead to subtle bugs elsewhere too.
-> 
-
-The same WLAN card is attached to qcs615, qcs8300 and sa8775p, and the 
-issue is never be seen on sa8775p, maybe I can compare the PCIE settings 
-to track down the root cause.
-
+>   examples:
+>     - |
+> -        #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -        #include <dt-bindings/clock/qcom,rpmh.h>
+> -        #include <dt-bindings/interconnect/qcom,sdm845.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/interconnect/qcom,sdm845.h>
+>   
+> -        smp2p-mpss {
+> -                compatible = "qcom,smp2p";
+> -                interrupts = <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>;
+> -                mboxes = <&apss_shared 6>;
+> -                qcom,smem = <94>, <432>;
+> -                qcom,local-pid = <0>;
+> -                qcom,remote-pid = <5>;
+> +    smp2p-mpss {
+> +        compatible = "qcom,smp2p";
+> +        interrupts = <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>;
+> +        mboxes = <&apss_shared 6>;
+> +        qcom,smem = <94>, <432>;
+> +        qcom,local-pid = <0>;
+> +        qcom,remote-pid = <5>;
+>   
+> -                ipa_smp2p_out: ipa-ap-to-modem {
+> -                        qcom,entry-name = "ipa";
+> -                        #qcom,smem-state-cells = <1>;
+> -                };
+> -
+> -                ipa_smp2p_in: ipa-modem-to-ap {
+> -                        qcom,entry-name = "ipa";
+> -                        interrupt-controller;
+> -                        #interrupt-cells = <2>;
+> -                };
+> +        ipa_smp2p_out: ipa-ap-to-modem {
+> +                qcom,entry-name = "ipa";
+> +                #qcom,smem-state-cells = <1>;
+>           };
+>   
+> -        ipa@1e40000 {
+> -                compatible = "qcom,sc7180-ipa";
+> -
+> -                qcom,gsi-loader = "self";
+> -                memory-region = <&ipa_fw_mem>;
+> -                firmware-name = "qcom/sc7180-trogdor/modem/modem.mbn";
+> -
+> -                iommus = <&apps_smmu 0x440 0x0>,
+> -                         <&apps_smmu 0x442 0x0>;
+> -                reg = <0x1e40000 0x7000>,
+> -                      <0x1e47000 0x2000>,
+> -                      <0x1e04000 0x2c000>;
+> -                reg-names = "ipa-reg",
+> -                            "ipa-shared",
+> -                            "gsi";
+> -
+> -                interrupts-extended = <&intc GIC_SPI 311 IRQ_TYPE_EDGE_RISING>,
+> -                                      <&intc GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
+> -                                      <&ipa_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> -                                      <&ipa_smp2p_in 1 IRQ_TYPE_EDGE_RISING>;
+> -                interrupt-names = "ipa",
+> -                                  "gsi",
+> -                                  "ipa-clock-query",
+> -                                  "ipa-setup-ready";
+> -
+> -                clocks = <&rpmhcc RPMH_IPA_CLK>;
+> -                clock-names = "core";
+> -
+> -                interconnects =
+> -                        <&aggre2_noc MASTER_IPA 0 &mc_virt SLAVE_EBI1 0>,
+> -                        <&aggre2_noc MASTER_IPA 0 &system_noc SLAVE_IMEM 0>,
+> -                        <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_IPA_CFG 0>;
+> -                interconnect-names = "memory",
+> -                                     "imem",
+> -                                     "config";
+> -
+> -                qcom,qmp = <&aoss_qmp>;
+> -
+> -                qcom,smem-states = <&ipa_smp2p_out 0>,
+> -                                   <&ipa_smp2p_out 1>;
+> -                qcom,smem-state-names = "ipa-clock-enabled-valid",
+> -                                        "ipa-clock-enabled";
+> +        ipa_smp2p_in: ipa-modem-to-ap {
+> +                qcom,entry-name = "ipa";
+> +                interrupt-controller;
+> +                #interrupt-cells = <2>;
+>           };
+> +    };
+> +
+> +    ipa@1e40000 {
+> +        compatible = "qcom,sc7180-ipa";
+> +
+> +        qcom,gsi-loader = "self";
+> +        memory-region = <&ipa_fw_mem>;
+> +        firmware-name = "qcom/sc7180-trogdor/modem/modem.mbn";
+> +
+> +        iommus = <&apps_smmu 0x440 0x0>,
+> +                 <&apps_smmu 0x442 0x0>;
+> +        reg = <0x1e40000 0x7000>,
+> +              <0x1e47000 0x2000>,
+> +              <0x1e04000 0x2c000>;
+> +        reg-names = "ipa-reg",
+> +                    "ipa-shared",
+> +                    "gsi";
+> +
+> +        interrupts-extended = <&intc GIC_SPI 311 IRQ_TYPE_EDGE_RISING>,
+> +                              <&intc GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
+> +                              <&ipa_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                              <&ipa_smp2p_in 1 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "ipa",
+> +                          "gsi",
+> +                          "ipa-clock-query",
+> +                          "ipa-setup-ready";
+> +
+> +        clocks = <&rpmhcc RPMH_IPA_CLK>;
+> +        clock-names = "core";
+> +
+> +        interconnects =
+> +                <&aggre2_noc MASTER_IPA 0 &mc_virt SLAVE_EBI1 0>,
+> +                <&aggre2_noc MASTER_IPA 0 &system_noc SLAVE_IMEM 0>,
+> +                <&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_IPA_CFG 0>;
+> +        interconnect-names = "memory",
+> +                             "imem",
+> +                             "config";
+> +
+> +        qcom,qmp = <&aoss_qmp>;
+> +
+> +        qcom,smem-states = <&ipa_smp2p_out 0>,
+> +                           <&ipa_smp2p_out 1>;
+> +        qcom,smem-state-names = "ipa-clock-enabled-valid",
+> +                                "ipa-clock-enabled";
+> +    };
 
 
