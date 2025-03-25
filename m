@@ -1,139 +1,215 @@
-Return-Path: <linux-kernel+bounces-575799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F61A70751
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:49:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE448A70757
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2E31885472
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:49:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8187A279F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0BA25EFBD;
-	Tue, 25 Mar 2025 16:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6F9254B09;
+	Tue, 25 Mar 2025 16:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUks1kwH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w57yMdih"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2078.outbound.protection.outlook.com [40.107.212.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F79F19F487;
-	Tue, 25 Mar 2025 16:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742921342; cv=none; b=r2GKju90Dx5bSYxwfTYtElIwgO4JxdjPeYF6lmOeVijVyMoH8WEdGyWiqoN0xtAUhMzmRw/KcfAFehKplyawTZqyVEocsIGLcIId/B1UfVanCQload6EKHuBN9zF7YtQGjnVgapZF859zm4yV3t/GKJjy5Tg+Ax04pecGg+Td4k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742921342; c=relaxed/simple;
-	bh=avp/c6N3lRSJ103iDEDRC4JwYP0yydF8DWmS20ImOPQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M7hu5BcazvS72Da62jczdYhuf4hRayQ6x2ndg6pDlpYWJ/WMiaM5QadrdeaEFBzApmr9my/b0/kzYKOeimoWb59RFc+9Z4m/jlYwXMtoAB8jZKyTQM5DdPLSkgnDk6xcbec0TtpeHK86TryAYpKlLesqp795aXfsBpp8YVmGDnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUks1kwH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B7CC4CEE4;
-	Tue, 25 Mar 2025 16:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742921342;
-	bh=avp/c6N3lRSJ103iDEDRC4JwYP0yydF8DWmS20ImOPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KUks1kwH7x+Q14S4ujHF1c73NCLQjw3NeZQ/ngWizjFUbNu9nfKtQkTau8pmgUky3
-	 DUC+fcV0cMw4cKVOFQZ4mtSRJLaBBIplIoLSbwgwEEdyTIywjydZEL6yDq8i5rn3Ow
-	 il+ixE64HXNAXRJIqPiEbQXzGGqDVqwQaEdm4o5CjXmEXrQzTP+An4dfz1OUN5AS2O
-	 NWMVAfJ0ViFxKzxXMCmrwYT1WOwEM9W3esYmTo2IApJAL0TNyxqvYevuU1kU9OoX1Z
-	 FfzpeQe2+tXedbaPg8Cla5zztvod2Twt5hRREim5sK7Iyh2FqH1ehWgdWwfzovp8qk
-	 Zehst1E9utW/g==
-Received: from 82-132-218-87.dab.02.net ([82.132.218.87] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tx7SU-00H1BS-Un;
-	Tue, 25 Mar 2025 16:48:59 +0000
-Date: Tue, 25 Mar 2025 16:48:53 +0000
-Message-ID: <87a599qcne.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Kettenis <mark.kettenis@xs4all.nl>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev,
-	alyssa@rosenzweig.io,
-	j@jannau.net,
-	marcan@marcan.st,
-	sven@svenpeter.dev,
-	bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org
-Subject: Re: [PATCH v2 01/13] dt-bindings: pci: apple,pcie: Add t6020 compatible string
-In-Reply-To: <87ecyl6rtw.fsf@bloch.sibelius.xs4all.nl>
-References: <20250325102610.2073863-1-maz@kernel.org>
-	<20250325102610.2073863-2-maz@kernel.org>
-	<87iknx75at.fsf@bloch.sibelius.xs4all.nl>
-	<864izhmkzd.wl-maz@kernel.org>
-	<87ecyl6rtw.fsf@bloch.sibelius.xs4all.nl>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FA925A2CF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742921373; cv=fail; b=GAp7A5fRE8dW2sC235APh8SASkMaloUcx5kmO3LQ6SXh8U/M26QdCluZp5MDjOJUkLCFXNTrw3eurqtkka7h9uAFry8/GknX54xQkgFCS4cgQlLJx0FlPJYN4CuQXNrmTao01xAQCCWU0WfssyPFVBIyvcAxuul/6v0RvLjPDnQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742921373; c=relaxed/simple;
+	bh=onyZ+6jBR8dFNbCQpp2WXJcYYBZj8XBp8vGTEXL47wM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KRZFS9FTDzn4GdFf/49nP8jjyUNGO4Avt9ukbkEa0wkbwHYyXR83Ulpgudphm1lvXBwwYdBuh89Pv5Xm9CWyCzpxMpdunG93vsMoujZFXlIA5rSEFYRyDNPL9BALSw5Wa5Pv98ycsp7MdLj4Ng3l+vRBcccPQoHYCwcaoAHEAug=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w57yMdih; arc=fail smtp.client-ip=40.107.212.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rt6mXzRAx86fIskw1kzGJqweQOwaBfCywK3FjUE8mTi8UJ7JD+PGQxfVgAd1hcUAQHq/0sHzc9VyAlG11D6yVyPA3/HucgbPQyNd/GaLQU/LIG5VYOGZn867hXgR2aId77tT+QRmAdc3eqedjJLTOJen1RdRpScus3EzBzP/3lmazFz6R8rhYox4/a6iaA/MmmiXMw75xCKf/hcZjZKt/GkbgNuDjujClzW/phjNd58hTM5AUTW5wTWRhMoKaM6Q1fD5h7Vz1dewBIMYdfnPwTvGuZLnpMIlB3UQOAuznVtTlT/LHaxgGnaum0kLEXXT0lW948LvReYtjWUgeJboug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HycmxVDEqqZCPf74R2+PCdRep2uYwvSEg3Z9pvxEVqI=;
+ b=vQwIXVzNmKLUCAh8sDXs5015NXGBFcuWTFu3oErdNeWO0ZUpWMYKssy/2FTkUYtqQLyCZdLcJFoKA6uIavB/VmwRsFCbh8p1B/HyCiN3p+757SCn0LC9NLal7m/k15pTwdZypizIrX+9x1eSSp0TNEHp+PPjZ6oMMZZu8HiuJh4et3L+I6vzkW8kVtXgVV0q5NrjwEzcQMdVhiQwJjqrpk6aRrs8sEuA/4QVEnHcVYBLAbRD8G5Hndf35PtOCayU/CjUjQVXcu8AAHRZ0wX3E7bnlvtqY4sE+GqEKfxXkOvbYxlCwu/t9G9Cw3QihKdvlUdNMJ6lzTVPjBaTym13ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HycmxVDEqqZCPf74R2+PCdRep2uYwvSEg3Z9pvxEVqI=;
+ b=w57yMdihKB9C51SMbd652dZIaTVuIqW1/RC5kX1iAh7FtXYNh4KQVDCJlbZv3EP4m7Pes6LN/uQW1cXSpNDEJbeKNbxCQu950A9TdupOKubvvaHMVvwib21NL/SzwKqC5+MlFsflmP2dVYdyWxgr4ka2HWiITsU9i5I6/k0lUVE=
+Received: from SJ0PR03CA0165.namprd03.prod.outlook.com (2603:10b6:a03:338::20)
+ by DM4PR12MB6541.namprd12.prod.outlook.com (2603:10b6:8:88::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 16:49:29 +0000
+Received: from SJ1PEPF0000231B.namprd03.prod.outlook.com
+ (2603:10b6:a03:338:cafe::d6) by SJ0PR03CA0165.outlook.office365.com
+ (2603:10b6:a03:338::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
+ 25 Mar 2025 16:49:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF0000231B.mail.protection.outlook.com (10.167.242.232) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Tue, 25 Mar 2025 16:49:28 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 11:49:27 -0500
+Received: from [172.22.20.237] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 25 Mar 2025 11:49:27 -0500
+Message-ID: <92b5c3ae-716c-4ea1-95f5-65150fccf39f@amd.com>
+Date: Tue, 25 Mar 2025 12:49:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.218.87
-X-SA-Exim-Rcpt-To: mark.kettenis@xs4all.nl, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] xen/acpi: upload power and performance related
+ data from a PVH dom0
+To: Jan Beulich <jbeulich@suse.com>, Penny Zheng <Penny.Zheng@amd.com>, "Roger
+ Pau Monne" <roger.pau@citrix.com>
+CC: Ray Huang <Ray.Huang@amd.com>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>, Juergen Gross <jgross@suse.com>, "Stefano
+ Stabellini" <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>
+References: <20250306110824.1506699-1-Penny.Zheng@amd.com>
+ <20250306110824.1506699-2-Penny.Zheng@amd.com>
+ <45640c36-0b7d-4502-bf4d-df1c1d17d528@suse.com>
+Content-Language: en-US
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <45640c36-0b7d-4502-bf4d-df1c1d17d528@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB03.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231B:EE_|DM4PR12MB6541:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93598dc3-16a6-42e3-6944-08dd6bbd025a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VEc0UFBZMWx2RjRuQzV2VFFGMmQ4UFFKZldBc01sNDdDYW94WXNyWGNDUlQ5?=
+ =?utf-8?B?TTVGL0toSVBJMHFsNm95NWVmd2d3ZTdwWTFRRFhHcW1NTTVhaW82MDR4TmtK?=
+ =?utf-8?B?b3d4eENjbjd6OG9hSXNQdE0wTkdTNVM1RE4rbnpHeVVwcEtyWDNXRks4QVdQ?=
+ =?utf-8?B?SnF5NzdneTZQZUFzb3BJWGoyRmovMjR3MldkQmUvZlh0dnErR2RhM1FBbXFE?=
+ =?utf-8?B?Zkp5Y1VMTWxIaHF4aytBcFRaU3ZqZytkRTJydHZTWlVPL3BsRmFIbHVuTnBY?=
+ =?utf-8?B?Y3h2ZHRnU3QwZ3FYQzgrOTZ4YncvYytHc2dmUXZmdWlzV1dNM040MGNQdEUr?=
+ =?utf-8?B?bHBJbkRhK0twWTlGaUpYb0kxNnJDendTNG1VZkl6MFN2TjVUT3N4UHM0VHZT?=
+ =?utf-8?B?K256QklSMXhEd3R3THFSWVk5TTBkeGMxZHpwNExEVVhTRnZaUG5EWCtQcXlv?=
+ =?utf-8?B?cFNaNVlMUnB5RzRzQXFWV09oQ1h5NkxHL0FQQXpIU1dxTzN3MjQvSk4zaDQy?=
+ =?utf-8?B?bjN5aTNyM2Nidkp0b1RRaVZXSUdTUExuYmgvMVpQYUpjV0pTL0tDY01xcDlr?=
+ =?utf-8?B?NXMzMWlTY0ZsMkMyaFpJZHg4aktxM2xHR2dIZVE5V2RhSlorUEJ6dGNYM2Zs?=
+ =?utf-8?B?aG1MVWF3U045RzJ5L1drMU9hMGNla0p2bEpocm9IYjFQdDl5OXYybi9nTGVP?=
+ =?utf-8?B?dTlHbm1rcnFjUjBxQlIrdmJCWHJmQ1c4YUlSMkMxdG1uL2xjYVVub3RoZU5l?=
+ =?utf-8?B?OGlZUUM3ZnVXYXRPMTFEajlMMnN4NkJESDZBaXd1QTdTcjNCYWovRTVZSWJs?=
+ =?utf-8?B?VER2TWptUjRkSzJnK2Z6TFlHUCs0QXJhdkM0SkRqa2tUV0U2dHAvYWZ6WUpK?=
+ =?utf-8?B?YXY1T0dpZDdoU29DVFZqajRYeUdGaGp5dEJNYjhxMGRJcWtBc0V5UGVmZzNK?=
+ =?utf-8?B?UFUzaklqUGFTSFNWUDdxNEJVd0pkaGNsSU91dlhEUUUzVSs4OVZCcElaQkdE?=
+ =?utf-8?B?Q1BlY080dUVNd1lJeEgydUN0Vzk2TmRNbWN2NytRTFF0eWhDV0xXNnVrdm5Z?=
+ =?utf-8?B?dHFzRk5md1FUSVpiMkdwdEJ2bWw5NEtuWEF2MFRyM3lZYXl6cDFWS3BwNThU?=
+ =?utf-8?B?Sk05Qmtodjc4cSszdTBycFlhL3lLNEgzbCtyMXdCbXhrcW03NkZQZXNmRXgr?=
+ =?utf-8?B?OWJqZytSYzZXWENaMHliTHFKUWdDdXVxWGk2a0tsU0lCUXd2dkxTTXVHajFE?=
+ =?utf-8?B?T0hxenB4RUd6ZnNsRk1wcVdXVys4ZkUyZ0o5b0tYMXRyelhuMEtpOFlXYmc0?=
+ =?utf-8?B?cHNiR01LSi8rakVUbklkQTIwUk1mYVJLQTkzMy9aejNvaFBsaUJIZU04dzBN?=
+ =?utf-8?B?SEVBRm9IWWtLY1VTUXNNTUFJUHJwTjdrR2VmWjB3OFRReSthMC9ReWlQeXZt?=
+ =?utf-8?B?aU13U3FpWmMrQlJnNndzajRnNHJEZDk4TVZ1K1Iwd0JaSFpxNWxYZDdocXVM?=
+ =?utf-8?B?WmN2ekw4UUJQd2ViUEVBNTZJV3R2c3FKMFdSbEcrck1TVHNtUENuM3M1YktX?=
+ =?utf-8?B?QW9RYnFjWU8yVkdFdnJvKzAzTWdndGZhVWR6dUVQTzdNc1QxQTY3eEZEN29w?=
+ =?utf-8?B?c2wyU0xybmtONndVbDVIS0ZvSWozTmNyb0NSanhoMnlPWHdRaWJUZEhOOGp3?=
+ =?utf-8?B?UE9PQ01BTGJOc0RnZWMwb0tjWnBkbWo2ajh0dUY2L2pCWXJaQTgvWWtPLzRX?=
+ =?utf-8?B?aW1vdE1hbVN3d2xMaUszU0FvQ1IzYS9WaFQ4Vm5sMUdUV2xleVdKZCttM2hF?=
+ =?utf-8?B?Rm9kbjNtRVJSOEFYbVJuN2ZKSlFVMG5PMHVFNkM4TzZLZUtBN3cxK3c4a1lN?=
+ =?utf-8?B?dmg4OFFlNlNGaGRSdldJNk1tdzdqWW10QWUxb2hOTTErK2Zoeng0ZTQxeElX?=
+ =?utf-8?B?anROWHlna3hlQjd4bE05Z3NsY1dRUVBqZ1ErRUhXR2wwV1VCaXdDU0tobHBG?=
+ =?utf-8?Q?QuYQAbMP2GOf/q0gYY8aoUleAcPjGg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 16:49:28.7386
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93598dc3-16a6-42e3-6944-08dd6bbd025a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231B.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6541
 
-On Tue, 25 Mar 2025 15:41:15 +0000,
-Mark Kettenis <mark.kettenis@xs4all.nl> wrote:
+On 2025-03-25 12:17, Jan Beulich wrote:
+> On 06.03.2025 12:08, Penny Zheng wrote:
+>> From: Roger Pau Monne <roger.pau@citrix.com>
+>>
+>> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
+>> report the correct numbers of vCPUs that dom0 has, so the host MADT is
+>> not provided to dom0.  This creates issues when parsing the power and
+>> performance related data from ACPI dynamic tables, as the ACPI
+>> Processor UIDs found on the dynamic code are likely to not match the
+>> ones crafted by Xen in the dom0 MADT.
+>>
+>> Xen would rely on Linux having filled at least the power and
+>> performance related data of the vCPUs on the system, and would clone
+>> that information in order to setup the remaining pCPUs on the system
+>> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
+>> that none of dom0 CPUs will have the power and performance data
+>> filled, and hence the Xen ACPI Processor driver needs to fetch that
+>> information by itself.
+>>
+>> In order to do so correctly, introduce a new helper to fetch the _CST
+>> data without taking into account the system capabilities from the
+>> CPUID output, as the capabilities reported to dom0 in CPUID might be
+>> different from the ones on the host.
+>>
+>> Note that the newly introduced code will only fetch the _CST, _PSS,
+>> _PPC and _PCT from a single CPU, and clone that information for all the
+>> other Processors.  This won't work on an heterogeneous system with
+>> Processors having different power and performance related data between
+>> them.
+>>
+>> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+>> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+>> ---
+>>   drivers/xen/pcpu.c               |   3 +-
+>>   drivers/xen/xen-acpi-processor.c | 232 ++++++++++++++++++++++++++++---
+>>   include/xen/xen.h                |   2 +-
+>>   3 files changed, 216 insertions(+), 21 deletions(-)
 > 
-> > Date: Tue, 25 Mar 2025 11:02:30 +0000
-> > From: Marc Zyngier <maz@kernel.org>
+> No dependency on another patch is mentioned anywhere (the cover letter
+> only says the series is based on the very patch here), yet the bulk of
+> the changes here (to drivers/xen/xen-acpi-processor.c) are meaningless
+> for a PVH Dom0, because of
 > 
-> Hi Marc,
+> config XEN_ACPI_PROCESSOR
+> 	tristate "Xen ACPI processor"
+> 	depends on XEN && XEN_PV_DOM0 && X86 && ACPI_PROCESSOR && CPU_FREQ
 > 
-> > Hi Mark,
-> > 
-> > On Tue, 25 Mar 2025 10:50:18 +0000,
-> > Mark Kettenis <mark.kettenis@xs4all.nl> wrote:
-> > > 
-> > > > From: Marc Zyngier <maz@kernel.org>
-> > > > Date: Tue, 25 Mar 2025 10:25:58 +0000
-> > > 
-> > > > @@ -50,6 +55,10 @@ properties:
-> > > >        - const: port1
-> > > >        - const: port2
-> > > >        - const: port3
-> > > > +      - const: phy0
-> > > > +      - const: phy1
-> > > > +      - const: phy2
-> > > > +      - const: phy3
-> > 
-> > Do we need to make this t6020 specific?
-> > 
-> > Obviously, separate PHY registers do not make much sense before t6020,
-> > but I couldn't find a way to describe that. I don't even know if
-> > that's a desirable outcome.
-> 
-> I don't think there is a way to do that other than creating a separate
-> binding for t6020.  But I'm far from a dt-schema expert.  Maybe robh
-> has some advice here.
+> (note the XEN_PV_DOM0 in there). Is the patch here perhaps missing an
+> adjustment to the above, to use XEN_DOM0 instead?
 
-Huh, I'd rather not create another binding. The only thing this would
-buy us is a stricter checking of the register ranges.  But it isn't
-like this block is going to find its way in random HW, and this is
-only described in a handful of core dtsi files anyway.
-
-Unless someone screams (and provides a reasonable alternative), I will
-leave it as is.
+Wow, I'm surprised you found that :)  Yes, that is a build-time 
+dependency, but the runtime dependency is only on xen_initial_domain(). 
+Yes, it deserves updating.
 
 Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Jason
 
