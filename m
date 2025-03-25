@@ -1,502 +1,243 @@
-Return-Path: <linux-kernel+bounces-574704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41875A6E8B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:42:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECECA6E8B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC62174311
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:42:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A5C16A186
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9117215381A;
-	Tue, 25 Mar 2025 03:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE011A23BA;
+	Tue, 25 Mar 2025 03:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nhs9tKRp"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PYDsl9DV";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="hz6HUzLa"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0CEDDA9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 03:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742874150; cv=none; b=AtdY6F655dCIS/CR/WNMKVUBawBiJt9nxVH4ysgfvm3vf31BamtvRowvJ2+llGHEI+swwp2f0hl4LYKXKgUyxlDe8GwCp5t0Us2qgjxaDJx3GtsMR36FUomhX/W4VRd7ZaWosD5KRRUaGww3TW9mbltGB1EaMYjP/nQgvpsHyfk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742874150; c=relaxed/simple;
-	bh=Ma33962il+p/QhyZvEJJw3lsleTmweRpXA7ldQkwxhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AvawU+UVpBfTrNBQMOB8xIHx9y/0T26TVIFSM1PRAPQm7TegF5ADvruXFJ8qWNR7d2macfrr3kMbTnDCBok/quzVEUzbNEyUlmY52leXT5f3UpTNPRieTDcgmWg+MFbgPiEIiqLDCUhnOHyqA28ToKTZ+/RoLX1GVG7G/dgfQ3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nhs9tKRp; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301302a328bso9723491a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 20:42:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40CE19F127;
+	Tue, 25 Mar 2025 03:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742874309; cv=fail; b=KZgGsVNvpdCo7Gg6Aio9KssxRt8Sgg/y2cAjPijda1GQgaLUQcmLbJIO+kb+Lh6SyfliXM3kgwvTnv6xMhPcG3163SxeoLvHxlR+m5F9phH2ptZmuTJvmaWbBPq/0PzKdhfgayS2wb+pn7nzsJxJ3WVsBGWynb93bwzy64Npf4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742874309; c=relaxed/simple;
+	bh=6QhqEuLKUttBh7A/w57jU+IrlNMIFAiC3qImyQnsNi8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FHlLVI7nELnZa29pCazg+lVvZ36SjPjd13sMREgTSv18w3C2tTP1MqPqmYXO0d+WjEiK9OCUbX4BP4Bs11RImkBGWSw6B0O7abbofDAbVbaNFq66JfgZBRxKBj801Jt1Smu0yOegxjHnZWtwuSo+yUv6+r9HHyOIoHQNMLCF2tI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PYDsl9DV; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=hz6HUzLa; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 885d05c6092b11f0aae1fd9735fae912-20250325
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=6QhqEuLKUttBh7A/w57jU+IrlNMIFAiC3qImyQnsNi8=;
+	b=PYDsl9DVyAL4JdfcsQfYFckWUTvcrbNPbMzX8b/X3UgLdZfUJxfQpe2/jZqy9uMRZhIU8UhpX57Nv9yavwd7a+HqbsE7owvgZddLixBSiTBarlEQ+IE8RXmEHIO9sGDQefXfEugmgc5fh1IDrkBECxQ5z3G7NiVutoVKutLc3GU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:a8f475ae-0a50-4e6f-b56e-b7744d97fef3,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:345b42a5-c619-47e3-a41b-90eedbf5b947,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,
+	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 885d05c6092b11f0aae1fd9735fae912-20250325
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 539408014; Tue, 25 Mar 2025 11:45:02 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 25 Mar 2025 11:45:01 +0800
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 25 Mar 2025 11:45:01 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w+gHu6yZq5LOxozveG6gljqlHpTePp24y8Rcmvhc9aL5ztMijUHIreErDH6/SvF+sKT3iKXGLMxjeY8NCWYYolY4Gr4XV5bcntbtLg/gY4i5J7H28uMw7S+NiaChbW3VzNAmdgV6ROCBBZyKuu50z/hnna6JfJuIZ0376e81MukMEblSGQUTBg22CviiVb0jPNsc1Ptu5WqYVU7H2xqMx1KyVK6nG3jMldus7AqWFGVzfthXxZtlGm97p+UH9kwCBSas1O0bKzsKuCCEXqbGJbWHusaBot94LQMKrRUIr3lYv8CJC4dMjGqmx242dlijVCaPxxWdH6e5EiA19avVvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6QhqEuLKUttBh7A/w57jU+IrlNMIFAiC3qImyQnsNi8=;
+ b=svcnoSjzYV5kkT6V6AEGe7lVcIiRKOMAP65ZcSzq4F9def7Bspd32s4aOjk3CU0jRBxQUm6pBv7YWvMddSFaK+BR9raPxizjeUMbKFDOmB3iaAWzSAZ1C6ySQv5xh4h0zGAPgXLSkzBMrBB9+E0lRvdyNTLgDaaLOuMSNbx+cN3BWwkr5orTONSrKsaJyhKBN9HAEV2hEATvreXKKuAQF9vlVA8QUHbHdp2c9YQ7M9Mu3YmxSt0YlGkZHxeKZ3QbGkJhSYhnhkW74k92hD9ksbTo4BKDL9/iMHxIDiFr4JGACFJcKKXZQFgMZJIYem6ZW0meT69sCLY5c17xTXMKwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742874148; x=1743478948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l6JEESLLV1JCllG84hanAMC518jUUA2QNEhCRHmRkPo=;
-        b=nhs9tKRpk57kOxDoMbaT6wDmFRfFilVPsBrc5kBs10x3G0tH4uJNBVVmBw9mfAPRo+
-         6afmkGkMT5psfP/bEt7o3r6qIu6HMyHZs2PbdYscofmExBuRlQ9PAc8HCgtYllkhLy8t
-         VCQ+3q0NywNFcLTgXdWQS6X1pc8FP3bCRkj0w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742874148; x=1743478948;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l6JEESLLV1JCllG84hanAMC518jUUA2QNEhCRHmRkPo=;
-        b=tGpRBAS6388OIhZcR6LJJFlwYZBYl+z2zxjWooBOpwonbNnVDBpMVlQYG3IBH5tFfz
-         BgXC1F2jAMpbUujHqV+SZHfnXvKk6Ms/drbPBCpcQ2/eV301+DuM/vSTFLkd9VR6pxo/
-         bfHmCZQAIUvh5vYSnZZwokOoeEx2YGbY17apci7jZN8CxfUTkNVjbh38CtVaGpaHjSt7
-         PeUUxygwjEU/aMNfaZ/59mOzvyRJ9yTPgttwA2+g8m+siVFJv71wCb+wujJ9ZK6lDCnl
-         kSlN3FevMZAeF/MaEUcO1q7ACzx8b7yygS5wBHduCl+LlCX5FZGFxzwadHtN0BOm6Tgk
-         ksFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXe1gh/8O9uLQnU9bPJaRLsmguVCKm+g3ZhgYtE1gpRfMKFfynd2tz3IA9KfiDGAq4//XmpaXw99uRILFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYvN+hT7o9q442wvxXoRDjUBhugaHZIEoi3D/XcJdlI7tD1UNn
-	t54JQzNWCikLqBKWv6DUht0lEHiCgRpeYkPtbreusU6Suq1Mgx4ldey/3ahhrA==
-X-Gm-Gg: ASbGnctmTGRAhunKxi88c+YfUco5FNM+QgkzoTwJMY28NdrxwCvNoKWQ88XrSB6hSLQ
-	xSLWacMdI53iYUteFm1Sj8uVlepD7IcajxwYGizPOh21bELQnVduaRMRB+reHDkM/3BJe9D1JRm
-	nt/5wdrjQUaUVURtW2R7K70Ry9SIDBoXHQ/nSZAIVWdh6Dh+Xw199U69xEG1BgQzQFPXFJLrfvO
-	+BYWNaJfpD4sdV2iO6iL2VYLqneOLK4AO1QzKtSOHaubPShjOWLrzkimZgHndPrPXBRic5VPAl+
-	H8cqzvu1OyGaET6YKr7bK8XDqA8PQNfM1aD6fGzWsBiQPxM4KKVNMjcyPtpRdNJrHyxTfuo=
-X-Google-Smtp-Source: AGHT+IEVH9C89zEjjdOOR4Fn285iF4/gs8w5ibNuGI/A6WU5hES9nEmIT7AkvlUyNMKvqOCPwYBXsg==
-X-Received: by 2002:a17:90b:4fc6:b0:2ee:45fd:34f2 with SMTP id 98e67ed59e1d1-3030fe5a096mr20199657a91.6.1742874147817;
-        Mon, 24 Mar 2025 20:42:27 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:f107:eb57:41d8:a285])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227e452ec4asm2642775ad.194.2025.03.24.20.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 20:42:27 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>
-Cc: Brian Geffon <bgeffon@google.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] zram: modernize writeback interface
-Date: Tue, 25 Mar 2025 12:42:04 +0900
-Message-ID: <20250325034210.3337080-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6QhqEuLKUttBh7A/w57jU+IrlNMIFAiC3qImyQnsNi8=;
+ b=hz6HUzLaI4hhxLYXTr8ayHylQS3BrRA+H+GrFCsEl0M9D5l9Dq6g6t5oWIh4TTryYaUURI6xwXRmDiTdRMtW0sq1704bm9btYCwbX9Lm+zOUxgPcO1a9aTkbvmFWjJDzYASVHU7AIZrxvGEBM93MPCZo3UIwZ5fhDzD9xZ9eOWM=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by JH0PR03MB8114.apcprd03.prod.outlook.com (2603:1096:990:3a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 03:44:57 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%2]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
+ 03:44:57 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, =?utf-8?B?UGF1bC1wbCBDaGVuICjpmbPmn4/pnJYp?=
+	<Paul-pl.Chen@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+CC: =?utf-8?B?U3VubnkgU2hlbiAo5rKI5aeN5aeNKQ==?= <Sunny.Shen@mediatek.com>,
+	=?utf-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
+	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
+	=?utf-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
+	<Xiandong.Wang@mediatek.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	=?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"fshao@chromium.org" <fshao@chromium.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, =?utf-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?=
+	<Singo.Chang@mediatek.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "treapking@chromium.org" <treapking@chromium.org>
+Subject: Re: [PATCH v2 14/15] drm/mediatek: Add support for multiple mmsys in
+ the one mediatek-drm driver
+Thread-Topic: [PATCH v2 14/15] drm/mediatek: Add support for multiple mmsys in
+ the one mediatek-drm driver
+Thread-Index: AQHbmkTnuu+CU41xcEO57FT6lx/4Y7ODPAIA
+Date: Tue, 25 Mar 2025 03:44:57 +0000
+Message-ID: <6bf9d4b3e060461ec491a3703d7ba952f9c5dceb.camel@mediatek.com>
+References: <20250321093435.94835-1-paul-pl.chen@mediatek.com>
+	 <20250321093435.94835-15-paul-pl.chen@mediatek.com>
+In-Reply-To: <20250321093435.94835-15-paul-pl.chen@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|JH0PR03MB8114:EE_
+x-ms-office365-filtering-correlation-id: 69f01f65-eb57-4e83-0c59-08dd6b4f6971
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?T2ZVZGFObzhVeC9NaGxjUndPTFpHU1FRWVdjUGlBY1hwcTZxemdxS0Z4YXcr?=
+ =?utf-8?B?NTBQSSsybnM3cVQrZDNvc0wwY2FmcVZDL3BNT0FVS1RsZWNEbUk2WjZIcW9U?=
+ =?utf-8?B?cjNaQUw2ODZWakNiaG5IQ1FZUm9GSEx5YlYvMHhTWVI0Q2FONXFrOGJkZVlT?=
+ =?utf-8?B?Q3hST3psUXhMZ1Fib0t4aUU4enJwSjBxWkVFYTEvV2FjUEFWYmFQcis3Q2tE?=
+ =?utf-8?B?RWVuR2VnR2ZuNUtSbzJvRUx3WHZZb0ZGS3VXV2xIR2xJcTdxcCtDZWtmenc3?=
+ =?utf-8?B?U2pMTytUYnovYlFtWG0wUkJIaHhYemxpaVZuWjRrdjQ0dXNTcGRxN1hpS2pw?=
+ =?utf-8?B?VHBXelg0VjRBSkRGOEM3dCtLL3V0d3c2cm5IdjB2akxSd1ZNZTc5SkxoeHh1?=
+ =?utf-8?B?bnRsTlpPejRERmtscXJya28vd0x0R05YK3NGb0sxL2VkM1Z1WmdUeDVwNG51?=
+ =?utf-8?B?NW9JNkNqWlpLY3hVQW5kVVM5YnIxWUlrcTlsbjVhK21zWjlrY3RBV1lSbTBH?=
+ =?utf-8?B?NmhDYzBKbjNvdXpLMUE4dm4xUmVzcWtNL3BuVTZjekJKRnZ6YllqcjNmRHUw?=
+ =?utf-8?B?NEpBU0h1MlM0dFBCL280UHpKOHBNbXRiM3I2N2tKd044anhrWnk4V3BvUEFM?=
+ =?utf-8?B?TlZkYzhuZTNNL2NJNEtuNjlxbVlaUDRhYVdkTkg3SlFGSm9BRUE0KzNGSms2?=
+ =?utf-8?B?YVZwWXZxNGh1TzcvSXlycEZnYTN4RUNhRXo1VGZ0Wmw0djJKM0wyYUpNZkFv?=
+ =?utf-8?B?bFhmc29tSnFGcUJ4ZElIWGsyRTExbVdiTVI4MFdEUnhsNEJjNnVYZk9jY3ZO?=
+ =?utf-8?B?dDVJV1RFSW16c1RlMEhqMmtVcTBMcnI4Skk0ZGNHTjY4N2hIaDR6QXB3dVg4?=
+ =?utf-8?B?eFh0RDdsc1pTZEIydVNUWkRaZUJ3K2pnRllTYVg3bHRYbXpXZmZlU1BtNXQ4?=
+ =?utf-8?B?ckJkTDk4UThwSTB6V2Y2K0o4ZktZWThSNjdYeDNLWHViS1RDeEV1b2h3NUFC?=
+ =?utf-8?B?emwxUDZiL1hJd0R2QWF6ZjdmQktoRUl0WTZydC8rTC9KL2Y5Ly9HSUZ4M3RI?=
+ =?utf-8?B?N2tIb3QyWTJLUUNsY2tKM2grRFM0cGVtbXRkaEZhMzBuL0lSK0g2UngvRTJl?=
+ =?utf-8?B?TlcxNWR6REthNW1ZdFkxL09EUFZ3UVF1VktGb3lydmoxV1FOL2MwL1duS1ZV?=
+ =?utf-8?B?ZzUxbTlKdkZxeHhiL1AxZnlWRmNXRGJoQTYzQ0VOeGJJTjJGeDQvQzVGWjhP?=
+ =?utf-8?B?c05Pb2drTVRyY1BxSlZRR1g3cTRmcW1ZNTgyZGZoRTAyTVNwLy9WclJIbFhY?=
+ =?utf-8?B?SFg5dVdQbE8wZDFtOWVQaXV2cjJTczZDNFBIUHRTVmpocElLUmxZNDdKaWli?=
+ =?utf-8?B?dWZvZ3NEOHZwTHluQzJYZU02RXh0UUxCK1BtVnZTRXBWdC9mUDZseThLNGRh?=
+ =?utf-8?B?UHQvWFB4OThRaFRpRDErNy9pd1d4NisrNk5hZHRSNlpRL3VCUlB3UFozY2N2?=
+ =?utf-8?B?ZkFQV1hILzdqUEtDQzRnMTFYaXdGZldJNHhhMEIxVUlxUEZoQ3JiTEZBVFY0?=
+ =?utf-8?B?Wit1emx2TmppaHJEV1ZkT2pNZXdRdmM1d3hlTHhuR29YYUVkcVFMN2FFdjNi?=
+ =?utf-8?B?TWt4RzFRZER4TTZqV2pVMUo0dy9kS3ZSLzliTmtqRTIyRmpvV2VIeVhQY2hC?=
+ =?utf-8?B?SXFCcVVHNTRDZHk1djJ5c0hKVVRJcW1hSWF2bEp4V1BtREhEYTMzMmhiTE5u?=
+ =?utf-8?B?RW85ZDlNbGFMMlBSZ0NTcTlGeEhPQjlIbVZ3cWVLNFdZQUkxTWdDc2RLcDNV?=
+ =?utf-8?B?akIvSE1wTUt0SmRzbFhXMFl3QnBGZFVxUGUvVXdkcDN4Tmg1c2pKVGMvU3V3?=
+ =?utf-8?B?ODQydFhMLyt6NEdlSnNwbE9HZDM4ZEpQN1NkTlNpVVR1QTZwWGN6WnNJMXBR?=
+ =?utf-8?B?QlpESHhtWXl4RUJ4T05tOURCellkYmhwc0JGUVRpTmNHQXJ6VlFlbWZ1Zmk5?=
+ =?utf-8?B?Tm9tWXRwVEp3PT0=?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NjR2b2lSYTlvQS9XZUdjWFBDUWxGUXk1Mk5vYU5NR1BDTTdFMm14ZlBaT2pj?=
+ =?utf-8?B?REUxWmk0ZkhzNlBuOHNGMUo4dVp0aUpiNWx1aEpwVUVxTXI3YnhEcnowSGhU?=
+ =?utf-8?B?blpDQUEvaXdqNEFVaVhGY2NqUmtpOFdBZ2NwR1FXY2VuMTlSSVBmVDN3Z2pD?=
+ =?utf-8?B?SVJSNVQxeDQ4NktLa0J6eSttendkaUU3b0EvV2FjL1dOR2c1WmxDSU5sREZC?=
+ =?utf-8?B?OElLVTJuS1VkV05BZG1PYnU0MmtiZHdYcS8ySk1WOW01dS9hc2lrSVdpNUhX?=
+ =?utf-8?B?b0lqaVk4QUtsanlLSXUrVENYVHZJalRVVXhoeCtHQ3BIVzMyeSt4RG96ZWNw?=
+ =?utf-8?B?VWx5R3pVdVplZkJpODQ0V2p5WFphWjg2WjBjMVJnamU0MFB5Nm1vTzJ1WlpV?=
+ =?utf-8?B?KzVOVy9nb2QwMGpGa2pPTW1pcDI4K0RLMkUrNXpLN3Z5T2hmUTY2UWRkN1or?=
+ =?utf-8?B?b3RZRWxtQldMMVdaNm5ZTkxYNzhZcUZJVGJFTHNTekhUSEZwSFAwM0xWUHdS?=
+ =?utf-8?B?NzBXc3VMY1Y5dlkrV0VoMmgzVEpuWk9ZUUl1QXFzT2QraURFNFlpU0ZuM1JO?=
+ =?utf-8?B?YjRPRXMzQXY5MEdOdkhGYWZhZTRNZXVwY1VLYlpiUlhBUk5WOGdibEtvWTFQ?=
+ =?utf-8?B?aERyV2VFdkljblZ2UHMzN252RmVPd3FoZHVYNFNHRFBmKy9US2k4cHVLWVZQ?=
+ =?utf-8?B?TEg2L3V5QXlYWWI4MmZnU1ZscEVDL1ZqVVczVHJMazFOd2UzRTcvSW9VbURq?=
+ =?utf-8?B?WUtNWjhoRzZkUUZoVnlEeVFOKzByaVBzcnZ3YlFoS2NlL2EvK2l4clNheVpS?=
+ =?utf-8?B?K01kL0JFc1NoY3l0azVrNS9PV3AzRUo1Q3gyM1lLaFdySUxLOFkvTUVLRGwx?=
+ =?utf-8?B?R015eGZrUndpMU5WZ21yVSs1Sm9odUhJUml0S3V3OWgrTjRNdzBta2dyL2oz?=
+ =?utf-8?B?M3dZdDl4QlR6S25PM2JENkNKQlFVMFA1bHNlWVE4L05UaU85UjdNOGJDR1RK?=
+ =?utf-8?B?eFdkN3NPWHhnMjVrR3V1dng4VVhzSmVWb1ZidEhQUngxY3FMV21zUTdhOHJ5?=
+ =?utf-8?B?SUJldlFSd2Y0aGNscXpyYTBvbDFDeUl1MWJwMHpKU0daVmtzQkZaN05OZk1q?=
+ =?utf-8?B?SjJCcDl1ZFRNSlR6WVY2bEdza3ZaUktRTDMxZkN6OS9jeVFHdWIycDh3Tnlz?=
+ =?utf-8?B?YnJGamJEQTJ3WTVDQnhvckU4NWFBdHFTOVIvc3hxSklkb1hJZEt1VThxa2Rk?=
+ =?utf-8?B?VG90T3hmc0hNTytIdklCY3hteVJ0WHNEelBaUzR0bUlQR3JVcmV5ZlBHVWVU?=
+ =?utf-8?B?OE50VXhYMDBabnZqRnVadGJLMkxmRVpkSHorU3JPZG5JVDUyYWFZdGV3TjBp?=
+ =?utf-8?B?T1gwbm44TG5MVTR3eFZrSUQ5a252K3h3ei9TaEliaFRxemhQcE43ZlloYS9s?=
+ =?utf-8?B?OW1Kb0M4aFdnT3c1ZmZjNHpYdWhMdmUzSDdVa0NwbkVIK1BaRSsvcjQyU05v?=
+ =?utf-8?B?ZUdyM3M3cDhzemFsRnVjQ0RKQjBZa2UyZTFIY1FjanFQajRDaGVxQVNoNEZt?=
+ =?utf-8?B?dzZKd1J2cDBLTlJEbm5pdEhKbFhTTWdmcWNzVHRtNUdTdVJ1K1lkdURKVCtD?=
+ =?utf-8?B?bXBXTTZjNG9sdFZFQnFKSHIrUjBKNU0zVmdTS3hrcHdyWkMxMjc5ME1tVU9M?=
+ =?utf-8?B?cDZkbG9aWVdHVjZSNWgrZlRFb1RCTkxGVTk3MUQwMit2Z05ORDlueEVreW9Q?=
+ =?utf-8?B?TG1ZaXpFR3EyVFJuWGxteUZpd0pteUZXbjg1Vk8zbDZIdW81S3ZvNjIyRHZ1?=
+ =?utf-8?B?NkRES0VBT28zK3B4cXI5bTQ2N2ViK3RabzhSNTg1NVZBSHhqd3A1YzNtc1Nr?=
+ =?utf-8?B?M0paSWpFeXkxNFRTc1VZTktmN2I0WVBRcE9rVEgzMVNqZGJQdEN1OG0ra3dR?=
+ =?utf-8?B?R1BWdEc1SWZoYjUyK2V4MURuUE1kZVJiaU52YmV2elA0SFcrWkYxK1hxU1ZG?=
+ =?utf-8?B?K245SUthdi9uOFV1S213MUVQSjVlVVc2SE9jNHZ5cTRNclF3NjMxVjRVTHNK?=
+ =?utf-8?B?VUpBWGU0NnlpQWNQQ3hxcUpLRXVTbTlVbzZrNEUyWGU0am9tUjczdlFiaUNY?=
+ =?utf-8?Q?tq0h6+sfwdRmgKT/ledoi+BBp?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EEA13BBA6F2EF140B4E1C9AD7F26DF72@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69f01f65-eb57-4e83-0c59-08dd6b4f6971
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 03:44:57.1926
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZXOjdbHd7rytpj5Zj2v5FDumOrRCdcqyMg0XLhxH5/QFiPoRt62dEdSfFYWlu1EQl2jCGo1sqqLMyibZF+FUkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8114
 
-The writeback interface supports a page_index=N parameter which
-performs writeback of the given page.  Since we rarely need to
-writeback just one single page, the typical use case involves
-a number of writeback calls, each performing writeback of one
-page:
-
-    echo page_index=100 > zram0/writeback
-    ...
-    echo page_index=200 > zram0/writeback
-    echo page_index=500 > zram0/writeback
-    ...
-    echo page_index=700 > zram0/writeback
-
-One obvious downside of this is that it increases the number of
-syscalls.  Less obvious, but a significantly more important downside,
-is that when given only one page to post-process zram cannot perform
-an optimal target selection.  This becomes a critical limitation
-when writeback_limit is enabled, because under writeback_limit we
-want to guarantee the highest memory savings hence we first need
-to writeback pages that release the highest amount of zsmalloc pool
-memory.
-
-This patch adds page_index_range=LOW-HIGH parameter to the writeback
-interface:
-
-    echo page_index_range=100-200 \
- 	 page_index_range=500-700 > zram0/writeback
-
-This gives zram a chance to apply an optimal target selection
-strategy on each iteration of the writeback loop.
-
-Apart from that the patch also unifies parameters passing and resembles
-other "modern" zram device attributes (e.g. recompression), while the
-old interface used a mixed scheme: values-less parameters for mode and
-a key=value format for page_index.  We still support the "old" value-less
-format for compatibility reasons.
-
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- Documentation/admin-guide/blockdev/zram.rst |  11 +
- drivers/block/zram/zram_drv.c               | 321 +++++++++++++-------
- 2 files changed, 227 insertions(+), 105 deletions(-)
-
-diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
-index 9bdb30901a93..9dca86365a4d 100644
---- a/Documentation/admin-guide/blockdev/zram.rst
-+++ b/Documentation/admin-guide/blockdev/zram.rst
-@@ -369,6 +369,17 @@ they could write a page index into the interface::
- 
- 	echo "page_index=1251" > /sys/block/zramX/writeback
- 
-+In Linux 6.16 this interface underwent some rework.  First, the interface
-+now supports `key=value` format for all of its parameters (`type=huge_idle`,
-+etc.)  Second, the support for `page_index_range` was introduced, which
-+specify `LOW-HIGH` range (or ranges) of pages to be written-back.  This
-+reduces the number of syscalls, but more importantly this enables optimal
-+post-processing target selection strategy. Usage example::
-+
-+	echo "type=idle" > /sys/block/zramX/writeback
-+	echo "page_index_range=1-100 page_index_range=200-300" > \
-+		/sys/block/zramX/writeback
-+
- If there are lots of write IO with flash device, potentially, it has
- flash wearout problem so that admin needs to design write limitation
- to guarantee storage health for entire product life.
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index fda7d8624889..2c39d12bd2d4 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -734,114 +734,19 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
- 	submit_bio(bio);
- }
- 
--#define PAGE_WB_SIG "page_index="
--
--#define PAGE_WRITEBACK			0
--#define HUGE_WRITEBACK			(1<<0)
--#define IDLE_WRITEBACK			(1<<1)
--#define INCOMPRESSIBLE_WRITEBACK	(1<<2)
--
--static int scan_slots_for_writeback(struct zram *zram, u32 mode,
--				    unsigned long nr_pages,
--				    unsigned long index,
--				    struct zram_pp_ctl *ctl)
-+static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
- {
--	for (; nr_pages != 0; index++, nr_pages--) {
--		bool ok = true;
--
--		zram_slot_lock(zram, index);
--		if (!zram_allocated(zram, index))
--			goto next;
--
--		if (zram_test_flag(zram, index, ZRAM_WB) ||
--		    zram_test_flag(zram, index, ZRAM_SAME))
--			goto next;
--
--		if (mode & IDLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_IDLE))
--			goto next;
--		if (mode & HUGE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_HUGE))
--			goto next;
--		if (mode & INCOMPRESSIBLE_WRITEBACK &&
--		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
--			goto next;
--
--		ok = place_pp_slot(zram, ctl, index);
--next:
--		zram_slot_unlock(zram, index);
--		if (!ok)
--			break;
--	}
--
--	return 0;
--}
--
--static ssize_t writeback_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t len)
--{
--	struct zram *zram = dev_to_zram(dev);
--	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
--	struct zram_pp_ctl *ctl = NULL;
-+	unsigned long blk_idx = 0;
-+	struct page *page = NULL;
- 	struct zram_pp_slot *pps;
--	unsigned long index = 0;
--	struct bio bio;
- 	struct bio_vec bio_vec;
--	struct page *page = NULL;
--	ssize_t ret = len;
--	int mode, err;
--	unsigned long blk_idx = 0;
--
--	if (sysfs_streq(buf, "idle"))
--		mode = IDLE_WRITEBACK;
--	else if (sysfs_streq(buf, "huge"))
--		mode = HUGE_WRITEBACK;
--	else if (sysfs_streq(buf, "huge_idle"))
--		mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
--	else if (sysfs_streq(buf, "incompressible"))
--		mode = INCOMPRESSIBLE_WRITEBACK;
--	else {
--		if (strncmp(buf, PAGE_WB_SIG, sizeof(PAGE_WB_SIG) - 1))
--			return -EINVAL;
--
--		if (kstrtol(buf + sizeof(PAGE_WB_SIG) - 1, 10, &index) ||
--				index >= nr_pages)
--			return -EINVAL;
--
--		nr_pages = 1;
--		mode = PAGE_WRITEBACK;
--	}
--
--	down_read(&zram->init_lock);
--	if (!init_done(zram)) {
--		ret = -EINVAL;
--		goto release_init_lock;
--	}
--
--	/* Do not permit concurrent post-processing actions. */
--	if (atomic_xchg(&zram->pp_in_progress, 1)) {
--		up_read(&zram->init_lock);
--		return -EAGAIN;
--	}
--
--	if (!zram->backing_dev) {
--		ret = -ENODEV;
--		goto release_init_lock;
--	}
-+	struct bio bio;
-+	int ret, err;
-+	u32 index;
- 
- 	page = alloc_page(GFP_KERNEL);
--	if (!page) {
--		ret = -ENOMEM;
--		goto release_init_lock;
--	}
--
--	ctl = init_pp_ctl();
--	if (!ctl) {
--		ret = -ENOMEM;
--		goto release_init_lock;
--	}
--
--	scan_slots_for_writeback(zram, mode, nr_pages, index, ctl);
-+	if (!page)
-+		return -ENOMEM;
- 
- 	while ((pps = select_pp_slot(ctl))) {
- 		spin_lock(&zram->wb_limit_lock);
-@@ -929,10 +834,216 @@ static ssize_t writeback_store(struct device *dev,
- 
- 	if (blk_idx)
- 		free_block_bdev(zram, blk_idx);
--
--release_init_lock:
- 	if (page)
- 		__free_page(page);
-+
-+	return ret;
-+}
-+
-+#define PAGE_WRITEBACK			0
-+#define HUGE_WRITEBACK			(1 << 0)
-+#define IDLE_WRITEBACK			(1 << 1)
-+#define INCOMPRESSIBLE_WRITEBACK	(1 << 2)
-+
-+static int parse_page_index(char *val, unsigned long nr_pages,
-+			    unsigned long *lo, unsigned long *hi)
-+{
-+	int ret;
-+
-+	ret = kstrtoul(val, 10, lo);
-+	if (ret)
-+		return ret;
-+	*hi = *lo + 1;
-+	if (*lo >= nr_pages || *hi > nr_pages)
-+		return -ERANGE;
-+	return 0;
-+}
-+
-+static int parse_page_index_range(char *val, unsigned long nr_pages,
-+				  unsigned long *lo, unsigned long *hi)
-+{
-+	char *delim;
-+	int ret;
-+
-+	delim = strchr(val, '-');
-+	if (!delim)
-+		return -EINVAL;
-+
-+	*delim = 0x00;
-+	ret = kstrtoul(val, 10, lo);
-+	if (ret)
-+		return ret;
-+	if (*lo >= nr_pages)
-+		return -ERANGE;
-+
-+	ret = kstrtoul(delim + 1, 10, hi);
-+	if (ret)
-+		return ret;
-+	if (*hi >= nr_pages || *lo > *hi)
-+		return -ERANGE;
-+	*hi += 1;
-+	return 0;
-+}
-+
-+static int parse_mode(char *val, u32 *mode)
-+{
-+	*mode = 0;
-+
-+	if (!strcmp(val, "idle"))
-+		*mode = IDLE_WRITEBACK;
-+	if (!strcmp(val, "huge"))
-+		*mode = HUGE_WRITEBACK;
-+	if (!strcmp(val, "huge_idle"))
-+		*mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
-+	if (!strcmp(val, "incompressible"))
-+		*mode = INCOMPRESSIBLE_WRITEBACK;
-+
-+	if (*mode == 0)
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+static int scan_slots_for_writeback(struct zram *zram, u32 mode,
-+				    unsigned long lo, unsigned long hi,
-+				    struct zram_pp_ctl *ctl)
-+{
-+	u32 index = lo;
-+
-+	while (index < hi) {
-+		bool ok = true;
-+
-+		zram_slot_lock(zram, index);
-+		if (!zram_allocated(zram, index))
-+			goto next;
-+
-+		if (zram_test_flag(zram, index, ZRAM_WB) ||
-+		    zram_test_flag(zram, index, ZRAM_SAME))
-+			goto next;
-+
-+		if (mode & IDLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_IDLE))
-+			goto next;
-+		if (mode & HUGE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_HUGE))
-+			goto next;
-+		if (mode & INCOMPRESSIBLE_WRITEBACK &&
-+		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
-+			goto next;
-+
-+		ok = place_pp_slot(zram, ctl, index);
-+next:
-+		zram_slot_unlock(zram, index);
-+		if (!ok)
-+			break;
-+		index++;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t writeback_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t len)
-+{
-+	struct zram *zram = dev_to_zram(dev);
-+	u64 nr_pages = zram->disksize >> PAGE_SHIFT;
-+	unsigned long lo = 0, hi = nr_pages;
-+	struct zram_pp_ctl *ctl = NULL;
-+	char *args, *param, *val;
-+	ssize_t ret = len;
-+	int err, mode = 0;
-+
-+	down_read(&zram->init_lock);
-+	if (!init_done(zram)) {
-+		up_read(&zram->init_lock);
-+		return -EINVAL;
-+	}
-+
-+	/* Do not permit concurrent post-processing actions. */
-+	if (atomic_xchg(&zram->pp_in_progress, 1)) {
-+		up_read(&zram->init_lock);
-+		return -EAGAIN;
-+	}
-+
-+	if (!zram->backing_dev) {
-+		ret = -ENODEV;
-+		goto release_init_lock;
-+	}
-+
-+	ctl = init_pp_ctl();
-+	if (!ctl) {
-+		ret = -ENOMEM;
-+		goto release_init_lock;
-+	}
-+
-+	args = skip_spaces(buf);
-+	while (*args) {
-+		args = next_arg(args, &param, &val);
-+
-+		/*
-+		 * Workaround to support the old writeback interface.
-+		 *
-+		 * The old writeback interface has a minor inconsistency and
-+		 * requires key=value only for page_index parameter, while the
-+		 * writeback mode is a valueless parameter.
-+		 *
-+		 * This is not the case anymore and now all parameters are
-+		 * required to have values, however, we need to support the
-+		 * legacy writeback interface format so we check if we can
-+		 * recognize a valueless parameter as the (legacy) writeback
-+		 * mode.
-+		 */
-+		if (!val || !*val) {
-+			err = parse_mode(param, &mode);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			break;
-+		}
-+
-+		if (!strcmp(param, "type")) {
-+			err = parse_mode(val, &mode);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			break;
-+		}
-+
-+		if (!strcmp(param, "page_index")) {
-+			err = parse_page_index(val, nr_pages, &lo, &hi);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			break;
-+		}
-+
-+		/* There can be several page index ranges */
-+		if (!strcmp(param, "page_index_range")) {
-+			err = parse_page_index_range(val, nr_pages, &lo, &hi);
-+			if (err) {
-+				ret = err;
-+				goto release_init_lock;
-+			}
-+
-+			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
-+			continue;
-+		}
-+	}
-+
-+	err = zram_writeback_slots(zram, ctl);
-+	if (err)
-+		ret = err;
-+
-+release_init_lock:
- 	release_pp_ctl(zram, ctl);
- 	atomic_set(&zram->pp_in_progress, 0);
- 	up_read(&zram->init_lock);
--- 
-2.49.0.395.g12beb8f557-goog
-
+T24gRnJpLCAyMDI1LTAzLTIxIGF0IDE3OjMzICswODAwLCBwYXVsLXBsLmNoZW4gd3JvdGU6DQo+
+IEZyb206IE5hbmN5IExpbiA8bmFuY3kubGluQG1lZGlhdGVrLmNvbT4NCj4gDQo+IFRvIHN1cHBv
+cnQgbXVsdGlwbGUgbW1zeXMgaW5zdGFuY2VzIGluIHRoZSBvbmUgbWVkaWF0ZWstZHJtIGluc3Rh
+bmNlLA0KPiBwcm92aWRpbmcgaW1wcm92ZWQgZmxleGliaWxpdHkgYW5kIHNjYWxhYmlsaXR5IGJ5
+IHRoZSBmb2xsb3dpbmcgY2hhbmdlczoNCj4gDQo+IDEuIEFkZCBERFBfQ09NUE9ORU5UX0RSTV9P
+VkxTWVNfQURBUFRPUiogdG8gcHJvYmUgdGhlDQo+ICAgb3Zsc3lzX2FkYXB0b3IgZHJpdmVycyBh
+bmQgc3VwcG9ydCBkaWZmZXJlbnQgbW1zeXMgY29tcG9zaXRpb24uDQo+IDIuIEFkZGVkIG5ldyBj
+b21wb25lbnQgdHlwZXMgTVRLX0RJU1BfVklSVFVBTCB0byBzdXBwb3J0IHRoZQ0KPiAgIHJvdXRp
+bmcgdG8gdmlydHVhbCBkaXNwbGF5IGNvbXBvbmVudHMuDQo+IDMuIEFkZGVkIGFuZCBhZGp1c3Rl
+ZCB0aGUgZXhpc3RlZCBzdHJ1Y3R1cmUgb3IgaW50ZXJmYWNlIHRvIGV4dGVuZA0KPiAgIHRoZSBz
+dXBwb3J0IG9mIG11bHRpcGxlIG1tc3lzIGluc3RhbmNlcy4NCj4gNC4gTW9kaWZpZWQgdGhlIGNv
+bXBvbmVudCBtYXRjaGluZyBhbmQgYmluZGluZyBsb2dpYyB0byBzdXBwb3J0DQo+ICAgbXVsdGlw
+bGUgbW1zeXMgaW5zdGFuY2VzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTmFuY3kgTGluIDxuYW5j
+eS5saW5AbWVkaWF0ZWsuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBQYXVsLXBsIENoZW4gPHBhdWwt
+cGwuY2hlbkBtZWRpYXRlay5jb20+DQo+IC0tLQ0KDQpbc25pcF0NCg0KPiAgDQo+ICtlbnVtIG10
+a19kcm1fbW1zeXMgew0KPiArCURJU1BTWVMwLA0KPiArCURJU1BTWVMxLA0KPiArCU9WTFNZUzAs
+DQo+ICsJT1ZMU1lTMSwNCj4gKwlNQVhfTU1TWVMsDQo+ICt9Ow0KDQpMZXQgb3Zsc3lzIHN1YiBk
+cml2ZXIgY29udHJvbCBPVkxTWVMwIGFuZCBPVkxTWVMxLCBzbyBtZWRpYXRlayBkcm0gZHJpdmVy
+IHdvdWxkIG5vdCBzZWUgdGhlbSBhbmQgdGhpcyBwYXRjaCBpcyBub3QgbmVjZXNzYXJ5Lg0KDQpS
+ZWdhcmRzLA0KQ0sNCg0KDQo=
 
