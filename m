@@ -1,126 +1,156 @@
-Return-Path: <linux-kernel+bounces-574959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02935A6EC01
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:56:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519B0A6EC03
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11BA53ABFF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E7E189648E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D843E1D63C3;
-	Tue, 25 Mar 2025 08:56:35 +0000 (UTC)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18571DB375;
+	Tue, 25 Mar 2025 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CzQYtn4C"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1469F1B4231;
-	Tue, 25 Mar 2025 08:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE41A5B8B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742892995; cv=none; b=Q+L94Y7LjHC9E2oyqUyiPx3NGHGZPQMBQHpmQ/bgFnELjrqWNFKQNTqJ6u6veA3PwleEvphXIwe+UFwUdwDbrZ9tMH644dSxC6UDS4X/VZAv3Z2DRzer+HAtdVeE0ognzmMl+/lF2VgfESQM9MTsf6wiiC7w6gkxhxN+N9BOstI=
+	t=1742893021; cv=none; b=GpMYUxw3yGfa4st7i31dNxyfePSQaqNMyoLxYv3X5qrq+gGQnlpufsyYUpMFVs8o1rvuezVEwPX3xDr3KHElLAV9y3P6WpIz/f7zOe9dPkYQhY0RmkKekXieIwxMTkuRiyag+7DGr2yYA3u7uvkgW6yfXu1nXgBMXI34hjKqGCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742892995; c=relaxed/simple;
-	bh=pF3R+3YDau9KUabMuvlU3fzSyQgYNUpoXNHr0OjVo2c=;
+	s=arc-20240116; t=1742893021; c=relaxed/simple;
+	bh=vshuMyCYFLJDvNpL15NUMHq/rID0RlGfkcQcA8Uhlf4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkyWwflEgcrCYAdsT48JhNHn01aCnpVyuerxlG5HQTfOLFNNkblS1y3LMWWGmlTb5LLET3SouEjvj3DP0k/D6Eny/V9FDnRBG390oeVC3840Oe+oD93MGEOpNt8YrselgEWtBq+S9unDU7P1cyBgiFtcF3Phn2DJcudaEBla8us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30bee1cb370so55471801fa.1;
-        Tue, 25 Mar 2025 01:56:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y5QtAj8ngq/JKpSdPn+rMGQYK+k6Tyvo01k6J+5M9FDlXm3dmQDd2be0RiR4ypvafmOt76liNiwEOzZaARA9potb2S0hYhrVCIXogaA+y9wywDJHK6NyFozTIqiAphifQEi0ywQR9jSJ5ouZxCdE/cG8Zy6x0GAnBpAVwTB/VFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CzQYtn4C; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54954fa61c9so6127201e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742893017; x=1743497817; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pekDRC5ZiCfjtVPCurs814x3fMwzvDjR3anDXf5w15E=;
+        b=CzQYtn4CUAFPz+Vlgl7EyeMkCq0HY4n25vcD5VrspQUwOctGoYOwllnr5Qc3d4apg/
+         Ec08bTvQbc2E/06MJLI7iWrHQq/rhg/R5EgcQqWQy8FKwYs2MCooKBz4RQ3t1SQvqWhk
+         TUQ3DZJtqNu9OLpGrxa6IJxtedi3WyjRgqpBI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742892989; x=1743497789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yug/5aBsatlN0TKX/juq/d600tRujIOyiR7/duVhtrI=;
-        b=WWbqedqchCv8tDEcT4nnBn4qXZqpTzm6nMor5t0RRChminYDdP2z3uf+5z5rli+Wsb
-         uznc7W3QnKNzUfDPKyEdyxka2iDMzahrXaOcwtYdue2sVUpvaeOCf1xCKvX/+UCXzAbD
-         8cK+RkU8YuQXu63uVgYjGEjFgb/am8zDVVVNuuJvLWdre1crWOkuSOchPfXRixNH7eVc
-         bQzOYtzDy9rpN/wuAYc/tcQY1p0ryVmXhHePGi4b11BpC7MbqojPju/4k0XSGymiwp3P
-         64cm4hMGm4+UIzeIHsWs7guKqIbLHdgj7bJtR3iP8rGUKq6MKvQ+F2s4vaqIbrZeYy6F
-         +SVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTa9I71ZfNxLrUxL5XjgVX0PcDiTizRVGHPxRcxU6jdI/8oThFe3Lu+hl7wFc6A14Nw7GQRb5Fi1Zm780=@vger.kernel.org, AJvYcCWth/YB9LJG+S3AGlu0/LQJj6pDxLqWUbyaapcWopBN90DyYILFPgrFEg0SGvID6+62I2u01gM0Mwa9xkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbbVWdudO87Gjxj/YfFZK3tBFxtcP3xfU0tqqHMHEzLU+HNo/a
-	GAhTBGAY+TDR4LAmMj9MF15ABvWTjf62v8tA/hnBP43nuxf4ni0O5b3LGTD6
-X-Gm-Gg: ASbGncv7yog7krEku2cnTu3qenAeUIKbQces1vih9MKohFcLUfvyfXdz6TYj4eQ2b7K
-	m/n7qmwQ1tf7zulQtiJ/mqxB2eqMKtGMKkxdEhzIQCatjSlCuMceYyoOmdmYLl8ZY9qxKxMxUO8
-	eNOlmfI1lA6VhiqtOZBjjmRPgd95j03cjiN1WwqOvEZJX4XNyjWbioZgyZQkNG1DZcwPYmoXkH1
-	/fqX+3Ty6P33LqXEjBNF1T2nrM3eBpPRGjQ6v5GhEJT8UuWXvWDTQ6XEmDIr0/m661dxR3M3zj3
-	kw4uh4gWWWMTRGhpVs5fBSlGDTvSvKWilS5RMb8JLQdehR1qVGNX/k2XS5BENHabAfS77aWVFSW
-	3iw==
-X-Google-Smtp-Source: AGHT+IGVAB2fOaJkWOw6CpS34WT0+hfGJcY9iOlB2QnL9TiJjqm4d+mTLD3G216x20PwPNqW8R9a6w==
-X-Received: by 2002:a2e:be8b:0:b0:30b:d156:9e97 with SMTP id 38308e7fff4ca-30d7e2012f3mr62233681fa.8.1742892988461;
-        Tue, 25 Mar 2025 01:56:28 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7fe73bsm17672951fa.50.2025.03.25.01.56.27
+        d=1e100.net; s=20230601; t=1742893017; x=1743497817;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pekDRC5ZiCfjtVPCurs814x3fMwzvDjR3anDXf5w15E=;
+        b=EFEnUYCovTnnN4a54LNK8C3hf5IC+A/Px+KbU7Zu7Fh6t9gy40hFj/+akOlEbbSKtt
+         tIaNDKSL/FV7Nmiaz4AwQC3tyf+BnLvMvSy58f6ln+jCq+vuF0ieUhkqNjp8zrr5JXcn
+         IaUjIorMGtgB2ddlFDNmSqwg3M0Ybkn2MYSKRFM/P/5QkR/Q03eVuSfMPMrsNvgSskIp
+         K6Awru3isWBZhgXbKrUrn/XQBrXqYe+INUcingmWIQZv8rM4m4VhHt7PMrTT6IJ+mlJd
+         SlKapUCahOSs0+fBjbR13gGe3uI+F2qkVihilQYgeP82KOnv/SGZNiH/TA70mS3MM/ZK
+         2kLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ+wTnQ+Hbrh+cdVtYjh26QdPrDlNzgZn7iv6Xq4CAJ5GXp1Nue4VNEItRhVcyDdqwBJOr6PiUe0HCX4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeZIARY1z5pODyNh9pNktwdHyBF5J34rrbb08zsDKZzXplkVy+
+	h1OtTDuN2BWyGUMp3vfqVAoX2hGQ+OQ2GNx3Aacw5o7o5cXxjkKez6t33rAxpQcySADkRi2VQQA
+	=
+X-Gm-Gg: ASbGncvLhKHeuYVf1lc8sdOKGMlVgmS4klMRSUeLLssVuW330A1Pk77E70hvS2dV+/7
+	kJ86pdSQMzNsN5/azBQXpIWPwdlpkW2ktaDRLApqft6Uydv3lt7YZyiWK7T8T8BbsCVw0bM+FdK
+	MR1tcHORZqgPp/aSZXgKdrPwThsC0v8CJxUG0qfqk9LK5hPsDGwQvvQ0G4Rk+WzZbaLNn/wdy0i
+	/fHBo5eg6ryMfQUxRgYVFH4EuHEMcmzGWaJY2CtxX2iwLXV8MDXHRnijmNrIXDH8jIAVYUDT9gM
+	+jDaGvvq1OYM+F1I0muIrsJ0608VnScLwMsMgJdx48abMLwcKFwXhaDydyvPhPkEiEirbf2XThY
+	UDXT6W8k=
+X-Google-Smtp-Source: AGHT+IETh620lzHTOurRzXKupeZlv8rnH1AU4tDktRYBc+mtlIVN7s1ABzLHtd/BIHqetcQaqdZqGw==
+X-Received: by 2002:a05:6512:31c9:b0:545:5a5:b69f with SMTP id 2adb3069b0e04-54ad64799edmr5028347e87.9.1742893017180;
+        Tue, 25 Mar 2025 01:56:57 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54adfb11328sm1165635e87.214.2025.03.25.01.56.56
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 01:56:28 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30c05fd126cso47565251fa.3;
-        Tue, 25 Mar 2025 01:56:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVyEPeIJJz3DDPXqLP+1JDrXtrlXCvI5SlTAP8oEzyq10xIm8YX7XTdZj25sd6bm8R9jcPZvOBq7lNTAhE=@vger.kernel.org, AJvYcCWfVEPfOp6dGT9NyE+tChyPGuGbdRpFBhpL/msh3DueXu+HY4beuBEHeAIH/14QBRg0UdQiEyHhy+c+C4c=@vger.kernel.org
-X-Received: by 2002:a05:651c:221a:b0:30b:971c:96e6 with SMTP id
- 38308e7fff4ca-30d7e2a2635mr57206101fa.26.1742892987667; Tue, 25 Mar 2025
- 01:56:27 -0700 (PDT)
+        Tue, 25 Mar 2025 01:56:56 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-549b159c84cso5979200e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:56:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUlhz1R4joXIzRLwX/j2URMsezzFZTcID5EDbz4A5FKE+88uViNIb484utftpCHIkTwHvOi+7qSAyaAcw=@vger.kernel.org
+X-Received: by 2002:a05:6512:3401:b0:545:56c:36c7 with SMTP id
+ 2adb3069b0e04-54ad64f58a6mr6508739e87.41.1742893015961; Tue, 25 Mar 2025
+ 01:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325032833.604073-1-nichen@iscas.ac.cn>
-In-Reply-To: <20250325032833.604073-1-nichen@iscas.ac.cn>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 25 Mar 2025 16:56:15 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65e8Hk7aZ543pEXYKJ9VDs1znuCtaDDdCOfaRKWrT2MdA@mail.gmail.com>
-X-Gm-Features: AQ5f1JornbCi49rWdD7DV_uaQAEm5VTpxGrz64paaXxDiD5xJP4tev5eWwCG9IU
-Message-ID: <CAGb2v65e8Hk7aZ543pEXYKJ9VDs1znuCtaDDdCOfaRKWrT2MdA@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: sun8i-codec: Remove unnecessary NULL check before clk_disable_unprepare()
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	jernej.skrabec@gmail.com, samuel@sholland.org, ckeepax@opensource.cirrus.com, 
-	u.kleine-koenig@baylibre.com, megi@xff.cz, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
+References: <67e26157.0c0a0220.36adcd.506e@mx.google.com>
+In-Reply-To: <67e26157.0c0a0220.36adcd.506e@mx.google.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 25 Mar 2025 09:56:43 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsvEke31SAgXhs_sXEN7d6fXrwuhJFsi2mzESq1Jc8pxA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp8blAGxVvtPz5mzFh1PiUzr5gC4lO_rNwm9J5fxVQkAwlMwA1GEUsRJ4M
+Message-ID: <CANiDSCsvEke31SAgXhs_sXEN7d6fXrwuhJFsi2mzESq1Jc8pxA@mail.gmail.com>
+Subject: Re: [PATCH] media: Fix invalid link creation when source entity has 0 pads
+To: gshahrouzi@gmail.com
+Cc: laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, mchehab@kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com, 
+	skhan@linuxfoundation.org, kernelmentees@lists.linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 11:29=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote=
-:
+Hi Gabriel
+
+On Tue, 25 Mar 2025 at 08:55, <gshahrouzi@gmail.com> wrote:
 >
-> clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
-> Remove unneeded NULL check for clk here.
+> >From 307209d175be0145e36b9cf95944e2e62afeab11 Mon Sep 17 00:00:00 2001
+> From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+> Date: Mon, 24 Mar 2025 19:45:55 -0400
+> Subject: [PATCH] media: Fix invalid link creation when source entity has 0
+>  pads
+>
+> This patch addresses the warning triggered in the media_create_pad_link()
+> function, specifically related to the check WARN_ON(source_pad >=
+> source->num_pads). The fix proposed adds an additional check to ensure that
+> source->num_pads is non-zero before proceeding with the
+> media_create_pad_link() function.
+>
+> Reported-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
+I cannot reach that URL
+> Tested-by: syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com
+> Fixes: a3fbc2e6bb05 ("media: mc-entity.c: use WARN_ON, validate link pads")
+Shouldn't it be? :
+Fixes: 4ffc2d89f38a ("[media] uvcvideo: Register subdevices for each entity")
 
-Please also clean up the clk_prepare_enable() call.
-
-ChenYu
-
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
 > ---
->  sound/soc/sunxi/sun8i-codec.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  drivers/media/usb/uvc/uvc_entity.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.=
-c
-> index 8b9eb1a202f7..a27976c375fe 100644
-> --- a/sound/soc/sunxi/sun8i-codec.c
-> +++ b/sound/soc/sunxi/sun8i-codec.c
-> @@ -274,8 +274,7 @@ static int sun8i_codec_runtime_suspend(struct device =
-*dev)
->         regcache_cache_only(scodec->regmap, true);
->         regcache_mark_dirty(scodec->regmap);
+> diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
+> index cc68dd24eb42..5397ce76c218 100644
+> --- a/drivers/media/usb/uvc/uvc_entity.c
+> +++ b/drivers/media/usb/uvc/uvc_entity.c
+> @@ -43,7 +43,7 @@ static int uvc_mc_create_links(struct uvc_video_chain *chain,
+>                 source = (UVC_ENTITY_TYPE(remote) == UVC_TT_STREAMING)
+>                        ? (remote->vdev ? &remote->vdev->entity : NULL)
+>                        : &remote->subdev.entity;
+> -               if (source == NULL)
+> +               if (source == NULL || source->num_pads == 0)
+Shouldn't source->num_pads be the same as remote->num_pads?
+
+Are you sure that your kernel does not contain?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/media/usb/uvc/uvc_entity.c?id=41ddb251c68ac75c101d3a50a68c4629c9055e4c
+
+Regards!
+
+>                         continue;
 >
-> -       if (scodec->clk_bus)
-> -               clk_disable_unprepare(scodec->clk_bus);
-> +       clk_disable_unprepare(scodec->clk_bus);
->
->         return 0;
->  }
+>                 remote_pad = remote->num_pads - 1;
 > --
-> 2.25.1
+> 2.43.0
 >
->
+
+
+-- 
+Ricardo Ribalda
 
