@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-576224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2ACA70C83
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:04:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F06A70C86
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A2C188F34A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:05:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6427D16698C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE905267B9D;
-	Tue, 25 Mar 2025 22:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26577267B9D;
+	Tue, 25 Mar 2025 22:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4NjjxMQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68905190664
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2D190664
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940285; cv=none; b=rRu1RNpxBVGP1zqGC5sZxKnHeLCP5aESfbdWN0jinI2OEiqGhx3p0wpgGbbOcUKKzeV97MwbR7ptutKh0yzpdlinWe6a70HxyhtZIzJGKj/VwcvK0G+q54AzNaw4FeY4lJTV/TlM9EzxEbSrbwtapIiBb6StT8ingL7qfJDq1S4=
+	t=1742940353; cv=none; b=IrYvQ8gS9muH4xmP07POypT7jKBc3eiptNSbSGZzQWZvJgCBARBjWfv8h/Fz3GVjFoYYrOoP+EeSzuIbfKsNaTbXfmnDP0+24dk7lEa5mour/jho0CFFLFN4wur3kkm2VnMLlQg7vEvpIc7rNTfcjdKKirByO8NzXUA2/KQKXAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940285; c=relaxed/simple;
-	bh=MLfg3tCA0imUiAHq1ZnK2Iheihjk6nU8lsCCEgkW230=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eE9C/RBU2czgj7/Q90yp66aSA2X+iCDELM0i51sSbsl+0SJJE/uWdsVWeJWTdCszs2IZ7MrJuOXjIvUcyQg5zFfm+aKx/IxdUy3lCCWdalfdKsV8G5DJ0pDfJWpdpIiCkAaGLvYX9YausJt3FHdElPZPsAxzivHYykQE8BVGMC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 868D8C4CEE4;
-	Tue, 25 Mar 2025 22:04:43 +0000 (UTC)
-Date: Tue, 25 Mar 2025 18:05:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mark
- Brown <broonie@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, Nathan
- Chancellor <nathan@kernel.org>
-Subject: [GIT PULL] tracing: scripts/sorttable: Updates for v6.15
-Message-ID: <20250325180527.5fc0a1fa@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742940353; c=relaxed/simple;
+	bh=H/G0uzHtJbq8O5EuUJeV+sv7t7xBlJqB/VXFBoAMC4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbKMuqTWuU0UN6Ymy/QcDrS6doNPrxrLP4cItZ4bAb8xorMIIHcI7Ik7AUX7xSrPEphDd0cCAaIXoVKV6FeerH0PtjvL2cFz72WTLp6JzHcgJLIJwuJdXCKaRXgr2s4V5Lo0Ujw4uT58vEooqb21o3JsFZlzV4M+bqypfDsjiCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4NjjxMQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6D2C4CEE4;
+	Tue, 25 Mar 2025 22:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742940353;
+	bh=H/G0uzHtJbq8O5EuUJeV+sv7t7xBlJqB/VXFBoAMC4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m4NjjxMQYlIKmEn1SMB18Y4RyVeA/RS4KMYOPCvZHSnXUIrICOKhLf2NzWJJDguBP
+	 u/L8xLbUEPaAJHgmNP2TfDQ+UmdU7HQjr7Tx5r9oXS9sXfmoeVbWeTyR68mg4xjL7k
+	 M3HUruK9/YylWNkiVxvHQypiBSXpSgSTETbv/QN9Ozv4P2o6dbYGKY72bFTPPYxLUn
+	 /N8fnGSVVEhTT7UeGKqjAirdkSIwz3Unrfx/lZEYYeSX0HAXXfrPhN+KLglOEftflx
+	 AoeATdS/cOy+Egx77G466fzxYuIDYOINa2z11s8TUfaBYcFPIBLpo4DpkDuMCZ8ymr
+	 0D9JJKQ190jrg==
+Date: Tue, 25 Mar 2025 23:05:48 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Nick Terrell <terrelln@meta.com>
+Cc: Michael Kelley <mhklinux@outlook.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"dsterba@suse.com" <dsterba@suse.com>,
+	"brgerst@gmail.com" <brgerst@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Compile problems w/gcc 9.4.0 in linux-next
+Message-ID: <Z-MovH_wFIW-xFBE@gmail.com>
+References: <SN6PR02MB415723FBCD79365E8D72CA5FD4D82@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <CAMj1kXH-awwT99FTaBJqyEbgBoxc20h4LfbzXMP00NQHBs03+A@mail.gmail.com>
+ <SN6PR02MB415765C109AF9820DDC3AF0FD4D82@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB41575C4BA0C467B1C95EEB21D4D82@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <Z90XZqJVwuWkarnX@gmail.com>
+ <SN6PR02MB4157E2AC0708EB2074302E6FD4DB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <323A7651-9BD8-4C8B-8784-8C9DAEF5FC88@meta.com>
+ <Z-KDA-yFUuNM6PSx@gmail.com>
+ <9B7AFB33-E930-44F4-B5AE-1414B3E9A56A@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9B7AFB33-E930-44F4-B5AE-1414B3E9A56A@meta.com>
 
 
+* Nick Terrell <terrelln@meta.com> wrote:
 
-Linus,
+> 
+> 
+> > On Mar 25, 2025, at 6:18 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> > 
+> > > 
+> > 
+> > * Nick Terrell <terrelln@meta.com> wrote:
+> > 
+> >> 
+> >> 
+> >>> On Mar 21, 2025, at 8:16 AM, Michael Kelley <mhklinux@outlook.com> wrote:
+> >>> 
+> >>>> 
+> >>> From: Ingo Molnar <mingo@kernel.org> Sent: Friday, March 21, 2025 12:38 AM
+> >>>> 
+> >>>> * Michael Kelley <mhklinux@outlook.com> wrote:
+> >>>> 
+> >>>>>> What are your thoughts as maintainers of lib/zstd?
+> >>>>> 
+> >>>>> FYI, the same segfault occurs with gcc 10.5. The problem is fixed
+> >>>>> in gcc 11.4.
+> >>>> 
+> >>>> So the patch below would work this around on GCC9 and GCC10?
+> >>> 
+> >>> I've confirmed that the patch gives a clean compile with gcc 9.4.
+> >>> 
+> >>> Note that I confirmed yesterday that the gcc problem is fixed with
+> >>> 11.4. I don't know about earlier gcc 11 minor versions. Lemme see
+> >>> if I can get the original gcc 11 release and try that to confirm that
+> >>> your patch has the right version cutoff.
+> >> 
+> >> Thanks for the report & proposed fix!
+> >> 
+> >> If you can test gcc-11.0, that would be great, otherwise we could just
+> >> cut off at (__GNUC__ >= 12 || (__GNUC__ == 11 && __GNUC_MINOR__ >= 4))
+> >> 
+> >> I am preparing the zstd-v1.5.7 update, and I will pull a patch that 
+> >> fixes this into my tree. If someone wants to submit a patch I'll pull 
+> >> that, otherwise I can submit one later today.
+> > 
+> > The proper cutoff would be GCC 11.1, not 11.4, as per the testing of 
+> > Michael Kelley, right?
+> 
+> Sorry, I didn't quite realize that the [tip: x86/core] was a commit. I'll drop
+> my patch, and just make sure that the fix is preserved in the zstd-v1.5.7
+> upgrade.
 
-tracing and sorttable updates for 6.15:
+Yeah, the segfault triggered due to changes in the x86 tree, so the fix 
+(workaround) is now upstream, but I think the cutoff is overly 
+conservative:
 
-- Implement arm64 build time sorting of the mcount location table
+  1400c87e6cac ("zstd: Increase DYNAMIC_BMI2 GCC version cutoff from 4.8 to 11.0 to work around compiler segfault")
 
-  When gcc is used to build arm64, the mcount_loc section is all zeros in
-  the vmlinux elf file. The addresses are stored in the Elf_Rela location.
-  To sort at build time, an array is allocated and the addresses are added
-  to it via the content of the mcount_loc section as well as he Elf_Rela
-  data. After sorting, the information is put back into the Elf_Rela which
-  now has the section sorted.
+So it might be a good idea to follow it up with your improved cutoff 
+patch, as a delta patch on top? That doesn't have any urgency that I 
+can see, so it can go through your tree, or any other path you'd 
+prefer!
 
-- Make sorting of mcount location table for arm64 work with clang as well
+Thanks,
 
-  When clang is used, the mcount_loc section contains the addresses, unlike
-  the gcc build. An array is still created and the sorting works for both
-  methods.
-
-- Remove weak functions from the mcount_loc section
-
-  Have the sorttable code pass in the data of functions defined via nm -S
-  which shows the functions as well as their sizes. Using this information
-  the sorttable code can determine if a function in the mcount_loc section
-  was weak and overridden. If the function is not found, it is set to be
-  zero. On boot, when the mcount_loc section is read and the ftrace table is
-  created, if the address in the mcount_loc is not in the kernel core text
-  then it is removed and not added to the ftrace_filter_functions (the
-  functions that can be attached by ftrace callbacks).
-
-- Update and fix the reporting of how much data is used for ftrace functions
-
-  On boot, a report of how many pages were used by the ftrace table as well
-  as how they were grouped (the table holds a list of sections that are
-  groups of pages that were able to be allocated). The removing of the weak
-  functions required the accounting to be updated.
-
-
-Please pull the latest trace-sorttable-v6.15 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-sorttable-v6.15
-
-Tag SHA1: 77e26125a028422c57c40da1c29b4bea889a21f2
-Head SHA1: dc208c69c033d3caba0509da1ae065d2b5ff165f
-
-
-Steven Rostedt (10):
-      arm64: scripts/sorttable: Implement sorting mcount_loc at boot for arm64
-      scripts/sorttable: Have mcount rela sort use direct values
-      scripts/sorttable: Always use an array for the mcount_loc sorting
-      scripts/sorttable: Zero out weak functions in mcount_loc table
-      ftrace: Update the mcount_loc check of skipped entries
-      ftrace: Have ftrace pages output reflect freed pages
-      ftrace: Test mcount_loc addr before calling ftrace_call_addr()
-      ftrace: Check against is_kernel_text() instead of kaslr_offset()
-      scripts/sorttable: Use normal sort if theres no relocs in the mcount section
-      scripts/sorttable: Allow matches to functions before function entry
-
-----
- arch/arm64/Kconfig      |   1 +
- kernel/trace/ftrace.c   |  55 ++++++-
- scripts/link-vmlinux.sh |   4 +-
- scripts/sorttable.c     | 411 +++++++++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 457 insertions(+), 14 deletions(-)
----------------------------
+	Ingo
 
