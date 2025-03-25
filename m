@@ -1,160 +1,157 @@
-Return-Path: <linux-kernel+bounces-576152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82A5A70BB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80734A70BB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812353B356D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC7C3B53C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00E266B5D;
-	Tue, 25 Mar 2025 20:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441D41F03F1;
+	Tue, 25 Mar 2025 20:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NJfMUe2T"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vvp1gwrv"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5EF19ADA6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929E18BC1D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742935312; cv=none; b=p2i8yM9jNHTZ6XflmJ3IRvThDGXnFLmZp5/ky3onUYcpWJJ3oMecBpdu5Fxi04sptJjBzJUf5C/LgCXysgDfsBLQSKfrMX49UuoPnpDNdT/HaO9Ktf4SYAHxBrKH/fGMNXmJpTDUJTODnuR4COJKCBbI8cNxKDzTvCQQwEXKgGU=
+	t=1742935556; cv=none; b=FBupVR/8GBGakQh0ZhEwi1X5mMGcKAl5V53JjR7pdlIQZZ+CSrySQAE25WIGOGvsB0L0czWWO76mjQ77ra5ugJ8DQykeb80fMgFyzBmbPCX8kJBkhhxdgzgu4r0IKRJiRPPnkQqTn0yfpTNuzE2KyWuoo6obLpdz+MzOfiXgFGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742935312; c=relaxed/simple;
-	bh=GCAhGVtueceq1ubCUXU7aIifbCxnCpAKEuI8oUAtt/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o2vezoab98SC8cXmtSqRyL/H2gemQXw5uSRTU1u4/riqtedPBPiIOPUSbZ6HTarq/MlOy9Efsd50olq3tBtaX9Ks4rFYRwIn7C/oDvsmf2q/RLg6jR3cUqqOVAP4y3TE8bKB3tb4gS2yCqpWvmY3PTDWyFXL5iyv6TWmxzNyrlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NJfMUe2T; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2963dc379so1025703266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:41:49 -0700 (PDT)
+	s=arc-20240116; t=1742935556; c=relaxed/simple;
+	bh=L4WAmOvAqqlmhgEuZU7Szyq4AKB+rJgG7LVopkTbvZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tu+KLZuYVnYLhKfW5mHhbJ2+62w/IQ6VGXgZFNyY6wAxhtV1v9i6JyVJYAlISQ206hlphftu7jBe9oftaBmoNhyQHSHzXCLom6EFSUfnZTi7/Z6yh2mbOpsVQ5BNXJGluiTxPW6/cEXa7T+dhx8EeJhNA5qkHJtvSum4ReW99sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vvp1gwrv; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2264c9d0295so57625ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:45:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742935308; x=1743540108; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=K52xAWNW5IEkY2W6yv56tbrXz/O78EY3OFwe6Kmcp1A=;
-        b=NJfMUe2T/SrCYvY9xa5ZYKh9B0hgZFfz2oOJdyX7/Z6exRgjt1v7EwWPfsB/ZTFwoM
-         3ATUtokNCJNYZs7aBFbUAru6STFWtJ4gH4qlJm/7mBVVjzRT8GOH7ylM9d1lwKG7upjX
-         scXfardQC6guO2+Bb+i+YVukNocsLibMnlYaI=
+        d=google.com; s=20230601; t=1742935554; x=1743540354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=og7voQ+Rn+DM07BPbCSM6gpW92L2IWvYVQjWMyJfnQg=;
+        b=Vvp1gwrvJjwQYgbGF73Hk1IprCTGmTcdLhZ+QwPvxvRC0iC9fjxwC0B0PrO6xzkmU2
+         TSN9wEH3/XuVfCPrcCk1H7WIEk5sMjIVx6M/kYJTDvCxkTHIOeouMTCoz+6MC9Vr4JuD
+         f4vqAoxh2DDCea5zOT+uMIAn9X5xs/ca4LI/O93F3Bx64lXugmEUrq3Fph/e4Vzws0GR
+         5aPhiRrNrR9tV4eepR+ukS6nEbjFI70fRE70RRo9iJ0QzCvcXvjD6gJSJfyGTR/dCm3R
+         Fgck6QnusE79OlhfsMTEdcYDGoy7ZOWjkwxMR8FBaQk0CURZqOFSBS3kaw90+ssZFUyS
+         sPnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742935308; x=1743540108;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K52xAWNW5IEkY2W6yv56tbrXz/O78EY3OFwe6Kmcp1A=;
-        b=XA4LK+j0tvxGYfuORaVY1z0EmzAjBo4PVFHmQoeg6qKPtdIuyeKa3bZ7d85zHwVlcF
-         icwbGZJzfBIPVOoHTA2IKzzCAkQZZ7IFnY4L7UmRUbNyGVK5XMPPmVcIB32115RCuWsg
-         g2rUyLJy2orlveglrkbyRyViiJ2wGvIpPUqWjbjRukFJkR6HooNEjd4pz9+8Dd53bBTT
-         rBHLFwTln5ajpf/auH0sIdXBr39het0qtrb2jFob8gK+Pz4jOd7uBDOZ/RngwlfGFUSc
-         n2F3sz8P465op0rY5yAA84UD6k2R9WjDHpZF0C4wQIm8hKS6GFrdLDRX3wPlp95Bvi6R
-         6oqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAbT4iPa3uEFWzviDN8CQGYWCXHYXRMcpY+8OlQg59rC+vis4zpcmjq+Pv2z2oaGtDKpErgWh2uGsplxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZzpFik1HGm0DIsDmoi10lGCMsa/rNhDi2hT34awC0kl6P0xmc
-	Wl67pIFwEyVtmzWo/FW8eLm6dc3pVzhRke6QQ9wfHXHtV5pwM6iKL369ioHj1OTc7hNyBWIHWsh
-	V8z8=
-X-Gm-Gg: ASbGncsyuQiu4CC3mAVYbYXvVU1Ddtn9mVr7tWz0+b2ZlYtWLGxfKJxT8S+0rLWY+hw
-	1RjIreOsjau9y0z1vo3ho8L1YJ2kaeO+UkM3iHtB3cwElFkujpl4uFaVQcCt6HXjhzr5rYpsxdo
-	q/Kzc8KQtKyyvsVaI9HzUFiUzOU0NAm8Ak80MrwNJaR/R8Qe71MP8lo1MRVrXeaCVJykYBEixaO
-	HD7lAFm/VFGJhn0hBLeyA4/0V0kTflbsyAthbI+ODmdHvSCDX0ehe5jJqopujWBPnEcXQn6gFSD
-	oDLMmEb6m0sNz6szcGh5UOtLtweMIv8EMpNaMvYHvShtUyeOxlkjh2PvYUp4NRZiMHt1HeUQCi1
-	SR3Xf0J8wSsgxunkp0QNZHEOIjshSJQ==
-X-Google-Smtp-Source: AGHT+IF1FtnepeAwflAOiIkSgwwJRzT5xaIdVINabyw9YJpBK9k1sKfH9BSRt+YkpyePg2/+iEHVIg==
-X-Received: by 2002:a17:907:a58c:b0:ac1:e332:b1e7 with SMTP id a640c23a62f3a-ac3f24164e1mr1998128966b.4.1742935308543;
-        Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb6588esm917117466b.90.2025.03.25.13.41.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf3d64849dso989640666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXiC1EMkFIy/+qsyJShk50G7Y4IRhGv95i642mktOA8KNYl4DzZw6RA8l5mo1Vrndiii5nhdPJqURH5ITs=@vger.kernel.org
-X-Received: by 2002:a17:907:95a4:b0:ac3:48e4:f8bc with SMTP id
- a640c23a62f3a-ac3f27fd3b3mr1859596466b.48.1742935307883; Tue, 25 Mar 2025
- 13:41:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742935554; x=1743540354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=og7voQ+Rn+DM07BPbCSM6gpW92L2IWvYVQjWMyJfnQg=;
+        b=qfzXlJKxxiDy28fQl56mDE1BJ2hUswX4gJAJG6lKRcMIPsNYKPWteeBvsC1RGez/bO
+         MMJemCxsVsFRU0b3WUcvddAJ9IxlKh3PR57kB/Vp7Cv6mO62FKLvu1MlgOtQCXxh+Lfn
+         7NYZ42uVcWEmgp5crVwZeiNECxHJTzraeNIMQ8k7Qm+0VbEcR9F3X5stbDHdGvHAgHhs
+         AWRNf2Y5y3EFDD978P0Mv5HvpGrEmiyQyviidCzQAgmCvHYNxff6djgE673Qdf5eHgGm
+         CCYv7EgOiCBnt+aAKwBbWnp5Sh9hgES4rsG+d/JXgEdUZpel9blIZexG/Z+Vn+p+Mppf
+         C84Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQGtCt/QAqTb0crVBSOXG42Y7z9ZGHhERP4MIp/+jFdUMND4jgyWpF1/toJ4PNOw0GQz7ZW87lGKg4ibY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv/+/M71pu1kqF2FHDJOnZercNRmHeqWV6o013lbyGX3Pmoap7
+	jHXbDhf/x8Dd2AoG3zpSpZJjI/+KN5XHjpQMBicXM8cWBrDKF+cfO4E8465baQ==
+X-Gm-Gg: ASbGnctRnTOl0xTNcRg8rbeifoSX3JhGUo+V1vbCd2kYs0fXE10TP6qZ0Y4Xy7jpGrP
+	mgwCDYV+L2Hpw2SV7k+yRSP3uv4muraWUG/5h7ET665bM5aLxqoXgKZxCbC4ZwTANAiWWB8a3Vy
+	apL3Aqcq/QpRUu1ihkqiX2+h3PPZ8b8DLsnC0ph5BmjTpiuO8gydoNWlqJueqllDS+kYsj+K/Fu
+	Mq4HoKYZqgh1uT+gmsVmDHDIM6CnzUGWuCJTl9PH3+LGO3p6Mav7k9955LAoQOlFiHQhzAX+wz6
+	1DTJRGQxxGgOogLG20tbdIra9CxWNEsTALqDUiEPrOmpmSE6kHlLzuBEHivrDnoLXkzGogOWj5n
+	c5R/A
+X-Google-Smtp-Source: AGHT+IGHjX9bK9q87iIXWhAvOMt0bWd6gEu8aYT/M14WqGyf8aibpiqxZfJLrxlowISVypTdfnWcjw==
+X-Received: by 2002:a17:902:f70d:b0:216:201e:1b63 with SMTP id d9443c01a7336-227f3178a20mr45325ad.11.1742935553921;
+        Tue, 25 Mar 2025 13:45:53 -0700 (PDT)
+Received: from google.com (128.65.83.34.bc.googleusercontent.com. [34.83.65.128])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a49bsm14876664a91.34.2025.03.25.13.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 13:45:53 -0700 (PDT)
+Date: Tue, 25 Mar 2025 20:45:48 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: "Tiffany Y. Yang" <ynaffit@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2] binder: use buffer offsets in debug logs
+Message-ID: <Z-MV_KoW2w9F0HZw@google.com>
+References: <20250324180716.1012478-3-ynaffit@google.com>
+ <Z-Go6qOLxT0ZfxyD@google.com>
+ <dbx8v7ryym9o.fsf@ynaffit-start.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325121624.523258-1-guoren@kernel.org> <20250325121624.523258-2-guoren@kernel.org>
-In-Reply-To: <20250325121624.523258-2-guoren@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Mar 2025 13:41:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpwFc7ifwGuAhyrs4E5qPgHx1McCR38KFycRhkLFRMKTveHrmoaWi4zba4
-Message-ID: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 01/43] rv64ilp32_abi: uapi: Reuse lp64 ABI interface
-To: guoren@kernel.org
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, anup@brainfault.org, atishp@atishpatra.org, 
-	oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, will@kernel.org, 
-	mark.rutland@arm.com, brauner@kernel.org, akpm@linux-foundation.org, 
-	rostedt@goodmis.org, edumazet@google.com, unicorn_wang@outlook.com, 
-	inochiama@outlook.com, gaohan@iscas.ac.cn, shihua@iscas.ac.cn, 
-	jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
-	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
-	dsterba@suse.com, mingo@redhat.com, peterz@infradead.org, 
-	boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, 
-	leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com, 
-	samuel.holland@sifive.com, yongxuan.wang@sifive.com, 
-	luxu.kernel@bytedance.com, david@redhat.com, ruanjinjie@huawei.com, 
-	cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn, 
-	ardb@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
-	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
-	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbx8v7ryym9o.fsf@ynaffit-start.c.googlers.com>
 
-On Tue, 25 Mar 2025 at 05:17, <guoren@kernel.org> wrote:
->
-> The rv64ilp32 abi kernel accommodates the lp64 abi userspace and
-> leverages the lp64 abi Linux interface. Hence, unify the
-> BITS_PER_LONG = 32 memory layout to match BITS_PER_LONG = 64.
+On Tue, Mar 25, 2025 at 12:41:39AM +0000, Tiffany Y. Yang wrote:
+> Carlos Llamas <cmllamas@google.com> writes:
+> 
+> > On Mon, Mar 24, 2025 at 06:07:18PM +0000, Tiffany Y. Yang wrote:
+> >> Identify buffer addresses using vma offsets instead of full user
+> >> addresses in debug logs.
+> >> 
+> >> Signed-off-by: Tiffany Y. Yang <ynaffit@google.com>
+> >> ---
+> >>  drivers/android/binder.c | 31 ++++++++++++++++---------------
+> >>  1 file changed, 16 insertions(+), 15 deletions(-)
+> >> 
+> >> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> >> index d1aa6d24450a..994ae205aa07 100644
+> >> --- a/drivers/android/binder.c
+> >> +++ b/drivers/android/binder.c
+> >> @@ -3261,20 +3261,20 @@ static void binder_transaction(struct binder_proc *proc,
+> >>  
+> >>  	if (reply)
+> >>  		binder_debug(BINDER_DEBUG_TRANSACTION,
+> >> -			     "%d:%d BC_REPLY %d -> %d:%d, data %016llx-%016llx size %lld-%lld-%lld\n",
+> >> +			     "%d:%d BC_REPLY %d -> %d:%d, buffer offset %lx-%lx size %lld-%lld-%lld\n",
+> >>  			     proc->pid, thread->pid, t->debug_id,
+> >>  			     target_proc->pid, target_thread->pid,
+> >> -			     (u64)tr->data.ptr.buffer,
+> >> -			     (u64)tr->data.ptr.offsets,
+> >> +			     (unsigned long)tr->data.ptr.buffer - proc->alloc.buffer,
+> >> +			     (unsigned long)tr->data.ptr.offsets - proc->alloc.buffer,
+> >
+> > These could be pointers to anywhere in user memory, not necessarily the
+> > alloc->buffer. So there will be cases where this substraction doesn't
+> > make sense. However, you are correct that we shouldn't log these addrs
+> > so maybe just don't? wdyt?
+> >
+> 
+> Ah, in that case I think it makes sense to remove them here. What
+> do you think about printing the full buffer and offsets values in cases
+> where we would print a binder_user_error or binder_transaction_error
+> instead. Ideally, I would try to limit this to cases when the data or
+> offsets ptr is invalid / copy would fail. Ostensibly this wouldn't
+> reveal dangerous information about the user address space because the
+> print statements would only happen when the data wasn't where it was
+> supposed to be and it would help with debugging, but I'm not sure if
+> this line of thought makes sense...
 
-No.
+My 2 cents...
 
-This isn't happening.
+I'm sure there will be a _few_ exceptions in which having the pointers
+from binder_transaction_data logged would aid debugging. However, this
+won't be info that most users care about. In practice, logging an error
+with "invalid buffer/offsets pointer" message is enough.
 
-You can't do crazy things in the RISC-V code and then expect the rest
-of the kernel to just go "ok, we'll do crazy things".
+There are _other_ pointers that users do care about when debugging, such
+as binder_ptr_cookie but not these. So I think is better if we don't log
+them at all, as calculating an "offset" is not possible either.
 
-We're not doing crazy __riscv_xlen hackery with random structures
-containing 64-bit values that the kernel then only looks at the low 32
-bits. That's wrong on *so* many levels.
-
-I'm willing to say "big-endian is dead", but I'm not willing to accept
-this kind of crazy hackery.
-
-Not today, not ever.
-
-If you want to run a ilp32 kernel on 64-bit hardware (and support
-64-bit ABI just in a 32-bit virtual memory size), I would suggest you
-
- (a) treat the kernel as natively 32-bit (obviously you can then tell
-the compiler to use the rv64 instructions, which I presume you're
-already doing - I didn't look)
-
- (b) look at making the compat stuff do the conversion the "wrong way".
-
-And btw, that (b) implies *not* just ignoring the high bits. If
-user-space gives 64-bit pointer, you don't just treat it as a 32-bit
-one by dropping the high bits. You add some logic to convert it to an
-invalid pointer so that user space gets -EFAULT.
-
-            Linus
+--
+Carlos Llamas
 
