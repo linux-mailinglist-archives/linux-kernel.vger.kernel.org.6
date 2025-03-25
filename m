@@ -1,116 +1,176 @@
-Return-Path: <linux-kernel+bounces-575418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33F2A70237
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:40:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE73A70238
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7299917D186
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:32:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770097AC4AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63F025F7B2;
-	Tue, 25 Mar 2025 13:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1325F99D;
+	Tue, 25 Mar 2025 13:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKWM5ZD7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C58oSnDm"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF49264F91;
-	Tue, 25 Mar 2025 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F158925E812;
+	Tue, 25 Mar 2025 13:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909132; cv=none; b=JE5+2azZmUbm5IhDhVl49n2en/sU0BpASEuIRF2T0McXuRcGJ/PpFCQhftvg5mxTRuxAtKt6hrpxq8mzjgiaLMsm4gijaFHshkUMwS8F8Qhi5bIwcPEQupfJy3Pl4aGkJoMwU3VzrAJJe8XH+g6d99xZ1j4UXGjxDXch8b/uzoI=
+	t=1742909190; cv=none; b=mu3dGuR/XHbQFS/CfkIymP9ETh1a1qaTYmEJFqHqevBSMhQaWgi4YmqUmMXpw7DW3J5b+5i0ohGXJ5usIMzDsrLbcBT0dvB3tKpZjF3vYatyFMphdSNK/aNqElbKlS0dbgl4CUfGfpuJ6G7SmCm4A77kaTAEWF/ybNn995Dxe+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909132; c=relaxed/simple;
-	bh=dr/I/9nNgrTKDQbi1FOfdC3fHsEg+MgYpU5p3SIxKFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rWXyyuyQy10KjQrf4SpgPD/6xs/AxdO3RSCQ60eFuNpZXl1VOBo5ezQ0rkaK8AlR1M82QSDRm0gSNSZr1dU5OtcLfXd9xD3AQFmd1o46f5G/vxp3vWfgRVPzhWRPW7ZIPgxb3RG1lMXUflZhvrVCylNFW3Uc2WfggX1dyJ4pabE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKWM5ZD7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D50C4CEED;
-	Tue, 25 Mar 2025 13:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742909132;
-	bh=dr/I/9nNgrTKDQbi1FOfdC3fHsEg+MgYpU5p3SIxKFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mKWM5ZD7jugXW5b5BRsr96+Cfdtb5zImy9KHAmlaWtdOeYduPQKFXMoUrn79QBKoK
-	 hlrLoh9b4kBVcBAYPyq72peGkYoERUrgG1eKnzpkDi9Add/E/sKRGqdvylh45TOD96
-	 yJtlrk1oHu5JcDQvI5aoO+0fo3Tjz715zakPyooFuXqgZ5aflbqHGo8QiXtfxemt+z
-	 1AUe7moQmSFX3wpUfvx0WaNRJMW/aqZ3qMv1hBrR+tpj7ITd28dooL0hl46lgKFmwY
-	 Pnl5T9mt3bBUuL6mW8IExIctbXQGxK07xtOvSvQReadebYzipdP5jfJy3IOWzGwBps
-	 KP4qV1lCag4GQ==
-Date: Tue, 25 Mar 2025 08:25:31 -0500
-From: Rob Herring <robh@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] PCI: apple: Set only available ports up
-Message-ID: <20250325132531.GA1717731-robh@kernel.org>
-References: <20250325102610.2073863-1-maz@kernel.org>
- <20250325102610.2073863-9-maz@kernel.org>
+	s=arc-20240116; t=1742909190; c=relaxed/simple;
+	bh=iUg6P/TqqtETbhidVxOSK0TI1+y+OTQyMRT6s+ZmIbE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T45kYtjHfdZX6P/0ipIogZMUYFNPKLfNtqtfuO47Q9rOrJDuMv3k8wF6BbbM5a4yLkEVIpDyAhVKPi9tPDTwvCzBEaP21uVTuFwRtU10HI36MgopsziPLOZRRy7kdWFYGCw4ULPM4IsybVXNurEWos7VQDjsqPZXsG5xeK8hiuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C58oSnDm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22403cbb47fso107229985ad.0;
+        Tue, 25 Mar 2025 06:26:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742909188; x=1743513988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ab6PpOwe2kPxwEEnYbmnpRkst1cOo0s43ySwaMSzdfE=;
+        b=C58oSnDmyjaiSpKAtkzaaPn6TacAd1fMb6oQACTgXDDgCEVdwcSGy9SOc6srqcCT3T
+         VKZ7imOMadIhv2y6R8TUVd0Q2Yj+Kx2Hq5Jd2CBkH8/jO3JcJ/6M50WPN/EqcRRfqdGO
+         0i/l025pnd604Bh50ICuAnYLfK4enG02i3Clw9/dFHZOy+NTpRyn1r0C/Q9Fiuie94GK
+         8GxcR2E8KnXRr7wDF/EB+beGcQ4x71Jsm39BsA7YXMSwmwUy6WbhjhZLQ8ohMtISGPbN
+         3Mv+idXv4KpRTLdd/my69hMSTroQwWqqvaU6fX4fparjSViKjFgph3P4k6eNPpcgQwBE
+         6J4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742909188; x=1743513988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ab6PpOwe2kPxwEEnYbmnpRkst1cOo0s43ySwaMSzdfE=;
+        b=ccTycmCoiCDQgRA182DPy9eDn2Rv0M9DVDTEdMXWHcaT+1QAS8Lpy4JtALCERsT3Fn
+         8GrALsrlSVlocBf63UfA0WVBom8/6t7FopQ+YnoMTuDd9qldkxLVK+E6QxbZDtP26huG
+         K73cETlWGElcv15ulJg+MKiV+X/U9sqSvxew31nkFxPGdxwTDNhskK2TjqxVd2Mg3DHs
+         BU7dOa2zE9zSLbhytS0LgzkVEDgbEUN/BwNiPBHQYP7hqFKxSE5jwurvDkDlHuq/g2u1
+         53WYaJnfed98YEboJN7DfW1R5gM/RVc4/mRNTEZqlP3/jW3hy2VKy5K8yzVE4Sgn82ku
+         0U+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEZBdcdcnNSYWrqB8If5tT8YvRkQWkVRTKGKGsuysRJvSbJPqaK7mUzHKBKVx/pfdraI6e+EGeUUvliWs=@vger.kernel.org, AJvYcCUcZ8QVENzCzoD4zZ5ENXKjCDYk99OKgdn3yr0NvWVLS9uEsLF5MIYkPLSz4qRQTuHjt29VypdQnt/X05FMwGnx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmfGtGlWKXQs6zXUb9idLt5yfOGSDwBkf7Vm52dHQRuq/BNGq3
+	9TNjNh6VeLwH1OdOtJ3NhXIiO8MhVKYl0TbTJjCE50FtkqHqMUUZm2cxoZ8ykUk=
+X-Gm-Gg: ASbGnctHF9gUuxjR4ECKksl1ck2y7kyWzcM5WHq/za3gHAbo4mj8BjcMEN3q2oVORBJ
+	eRhXmArZMn0sqyyUfOLJZH9AAb7nCHA3InqnFBPy54b0V+pHMr59lxMBv+WTjlP1dJVGVxx6chu
+	WwbmJ8OUYrx06bmreXcptkpLIJxZfBVFv7G/3NkYwWX8FSigRTFhdbfZRJhIuKkz9AVOY8auAUN
+	vw+XBNt6whSNTUxIG7kLx6LYRfq0t2kBbUY5GMF7L9owYtpFwbnhib5GD3fVnCU0vxSQAJhsfgT
+	ZQHZy2gHGKP/hHv3YXlvf1xaDjHwZONnu3ZpTq0RfURWRdRBwbBbJMZEpE/4Yxulr9jhf+Ds0Rm
+	XjEnzPFbWFcZhSN39qJczLhZLLh8=
+X-Google-Smtp-Source: AGHT+IHaKWMAJywuqpiu/ZTgxI4HUPATRBE9RZK/2F2hNLdtPn6H5jQSklYdYhW4Yfdj572f1yIbdA==
+X-Received: by 2002:a17:902:ccca:b0:223:fbc7:25f4 with SMTP id d9443c01a7336-22780c7b68amr325047355ad.14.1742909187891;
+        Tue, 25 Mar 2025 06:26:27 -0700 (PDT)
+Received: from malayaVM.mrout-thinkpadp16vgen1.punetw6.csb ([103.133.229.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811e3127sm89299625ad.197.2025.03.25.06.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 06:26:27 -0700 (PDT)
+From: Malaya Kumar Rout <malayarout91@gmail.com>
+To: peterz@infradead.org
+Cc: Malaya Kumar Rout <malayarout91@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject:  
+Date: Tue, 25 Mar 2025 18:55:51 +0530
+Message-ID: <20250325132617.13045-1-malayarout91@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAE2+fR_kG1SpE3DZ6cbZL+J8HT25RcaGxYrZP-H+rDFSJG6sdQ@mail.gmail.com>
+References: <CAE2+fR_kG1SpE3DZ6cbZL+J8HT25RcaGxYrZP-H+rDFSJG6sdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325102610.2073863-9-maz@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 10:26:05AM +0000, Marc Zyngier wrote:
-> From: Janne Grunau <j@jannau.net>
-> 
-> Iterating over disabled ports results in of_irq_parse_raw() parsing
-> the wrong "interrupt-map" entries, as it takes the status of the node
-> into account.
-> 
-> Switching from for_each_child_of_node() to for_each_available_child_of_node()
-> solves this issue.
 
-I really wish "available" was the default iterator...
 
-> 
-> This became apparent after disabling unused PCIe ports in the Apple
-> Silicon device trees instead of deleting them.
-> 
-> Link: https://lore.kernel.org/asahi/20230214-apple_dts_pcie_disable_unused-v1-0-5ea0d3ddcde3@jannau.net/
-> Link: https://lore.kernel.org/asahi/1ea2107a-bb86-8c22-0bbc-82c453ab08ce@linaro.org/
-> Fixes: 1e33888fbe44 ("PCI: apple: Add initial hardware bring-up")
-> Cc: stable@vger.kernel.org
 
-Fixes especially for stable should go first in the series.
 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/pci/controller/pcie-apple.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-> index 6271533f1b042..23d9f62bd2ad4 100644
-> --- a/drivers/pci/controller/pcie-apple.c
-> +++ b/drivers/pci/controller/pcie-apple.c
-> @@ -747,7 +747,7 @@ static int apple_pcie_init(struct pci_config_window *cfg)
->  	struct device_node *of_port;
->  	int ret;
->  
-> -	for_each_child_of_node(dev->of_node, of_port) {
-> +	for_each_available_child_of_node(dev->of_node, of_port) {
->  		ret = apple_pcie_setup_port(pcie, of_port);
->  		if (ret) {
->  			dev_err(dev, "Port %pOF setup fail: %d\n", of_port, ret);
-> -- 
-> 2.39.2
-> 
+
+
+From 92c5ac2ffa37f6e4fe0cfa49a20857432bc67718 Mon Sep 17 00:00:00 2001
+From: Malaya Kumar Rout <malayarout91@gmail.com>
+Date: Tue, 25 Mar 2025 18:42:33 +0530
+Subject: [PATCH v2] selftests/x86/lam: fix resource leak in do_uring() and allocate_dsa_pasid()
+
+Exception branch returns without closing 
+the file descriptors 'file_fd' and 'fd'
+
+Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
+---
+ tools/testing/selftests/x86/lam.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
+index 18d736640ece..eaba0a921322 100644
+--- a/tools/testing/selftests/x86/lam.c
++++ b/tools/testing/selftests/x86/lam.c
+@@ -682,7 +682,7 @@ int do_uring(unsigned long lam)
+ 		return 1;
+ 
+ 	if (fstat(file_fd, &st) < 0)
+-		return 1;
++		goto cleanup;
+ 
+ 	off_t file_sz = st.st_size;
+ 
+@@ -690,7 +690,7 @@ int do_uring(unsigned long lam)
+ 
+ 	fi = malloc(sizeof(*fi) + sizeof(struct iovec) * blocks);
+ 	if (!fi)
+-		return 1;
++		goto cleanup;
+ 
+ 	fi->file_sz = file_sz;
+ 	fi->file_fd = file_fd;
+@@ -698,7 +698,7 @@ int do_uring(unsigned long lam)
+ 	ring = malloc(sizeof(*ring));
+ 	if (!ring) {
+ 		free(fi);
+-		return 1;
++		goto cleanup;
+ 	}
+ 
+ 	memset(ring, 0, sizeof(struct io_ring));
+@@ -730,6 +730,9 @@ int do_uring(unsigned long lam)
+ 
+ 	free(fi);
+ 
++cleanup:
++	close(file_fd);
++
+ 	return ret;
+ }
+ 
+@@ -1189,8 +1192,10 @@ void *allocate_dsa_pasid(void)
+ 
+ 	wq = mmap(NULL, 0x1000, PROT_WRITE,
+ 			   MAP_SHARED | MAP_POPULATE, fd, 0);
+-	if (wq == MAP_FAILED)
++	if (wq == MAP_FAILED) {
++		close(fd);
+ 		perror("mmap");
++	}
+ 
+ 	return wq;
+ }
+-- 
+2.43.0
+
 
