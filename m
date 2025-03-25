@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-575753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C14A706E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:29:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE18EA706D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D99172B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D878C3B72BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB8925FA21;
-	Tue, 25 Mar 2025 16:25:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8825D21F;
+	Tue, 25 Mar 2025 16:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AnBdRvKf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE34B25EFBC;
-	Tue, 25 Mar 2025 16:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707C61C8621
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919899; cv=none; b=J9p3xNDS0uFm2fUnEPnFpcgRlcxpx+yRG6L8z2k5tPFVxlBlKppe1UNk50Hpt1j4vG9TSY79Xo4J8eWKeHiueXEG8dWg+fkmwG6wGuFeFxEdf9TSU/D6EQpxKGEmedbRzssdH00yonjH3XRapqYqxPjI90nChDI1jYC+1ta1qo0=
+	t=1742919977; cv=none; b=ZABjUaqFHAqaafBjuCWPdMghWXTNtj3jts21y88UPeeDxmKZrTlIpSgMEvLZHD/wP0FdRecBTrRIt83FdFS08AdELbNT6uD6ZXsgnjToyyVjWvifAd41hL7KhOos8jUHu4dhD4VU13aUW6vE4vAQp1/A2+mjPJtLOfVcLbfJHVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919899; c=relaxed/simple;
-	bh=Jf5QeiRGrAJkT2xtRP6oG4u7YIZYPlXTcKqRPOOEXDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ER6RQsH5P8EJT7mQwlCGS+hPuh4B3SPWtQNzOkElgTcU7cXBQsNJtpfapQZIfKuk7Cboj969rfg+66ZYMfYQevG4+/FcTtlwp+gXQF1bltn6ytjOpVebsA5LP5OIAnJ72pojHhV4GPEB3gde/LkfzRBntzMRkubviAZACgc2zD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E74C4CEEA;
-	Tue, 25 Mar 2025 16:24:58 +0000 (UTC)
-Date: Tue, 25 Mar 2025 12:25:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Douglas Raillard <douglas.raillard@arm.com>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH 3/3] tracing: Rename trace_synth() to
- synth_event_trace2()
-Message-ID: <20250325122542.02973078@gandalf.local.home>
-In-Reply-To: <9f030639-2ce2-4400-90e4-6c7dfbabf42c@arm.com>
-References: <20250318180814.226644-1-douglas.raillard@arm.com>
-	<20250318180814.226644-3-douglas.raillard@arm.com>
-	<20250319223728.ca7a5ac6fa37798d17bd2e29@kernel.org>
-	<3732e7f8-a452-4f65-8e8b-1575c01d33b9@arm.com>
-	<20250324152945.e47bc6d1e491658cfc6924fe@kernel.org>
-	<9f030639-2ce2-4400-90e4-6c7dfbabf42c@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742919977; c=relaxed/simple;
+	bh=zLF1T+Svm2nyklPUfhrXKb/s3OtiLT/we109JVFOEz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQrw9HbBFMOl7H6H+9/nfMERaJPW6qW+SlAtsOvoJhHEVuAvfLdYwQS5HIH/AP6olQOdkNq3NQpCBGR5x5Dy5Q6SKQutORg7B+SSJ6qCKYquF4IO53vLc3ZdbM/ipnpjNDfW6ABelSAnQrss9+jU8n5INrCq5TtBctoV1OKMuAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AnBdRvKf; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742919976; x=1774455976;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zLF1T+Svm2nyklPUfhrXKb/s3OtiLT/we109JVFOEz8=;
+  b=AnBdRvKfl36NwsvxiCq1GoOiv8jZ7YQ+sf8LBHtPqcIaZJNCzi+SDFaL
+   gmqRBi+BacXwNqvvJ9swsOXfwCa/43dWKwqT/3Rg3Ny1EYhhhcGppO0Db
+   EFoXGxmIS4xNQk3Lj/lVKEHG8pQ9H+9fKIa4cp8DoISW5UEutRXq93mPp
+   H9CJllZesftFpTQfqb3hq/WSrsQ25RS6J5EO7JrfC3oshs/oW0sieYK/R
+   BiD2gAOP2mbgwTgsDdDjO87KZhByT5oC6NM+4bNZJXwhYIjWFOgtzdoys
+   HhwIJ7/shMwPwHJKmiP6Y1bXHAr+jifZl5dDpm+/UojnepHPrAUuF7J2I
+   w==;
+X-CSE-ConnectionGUID: dCz6w/cmTMm2q7JeRH++Yg==
+X-CSE-MsgGUID: GayJc5IxTkiFo0kBEhS9OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="43332910"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="43332910"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:26:13 -0700
+X-CSE-ConnectionGUID: 5lFr19JRTeWxFDbZy+SCqA==
+X-CSE-MsgGUID: /wrgWLZpSzWFt4lXGFYYkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="125362586"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:26:10 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tx76L-00000005nkX-0spP;
+	Tue, 25 Mar 2025 18:26:05 +0200
+Date: Tue, 25 Mar 2025 18:26:04 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8 5/6] test_bits: add tests for GENMASK_U*()
+Message-ID: <Z-LZHD7sxiOImzu3@smile.fi.intel.com>
+References: <20250326-fixed-type-genmasks-v8-0-24afed16ca00@wanadoo.fr>
+ <20250326-fixed-type-genmasks-v8-5-24afed16ca00@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250326-fixed-type-genmasks-v8-5-24afed16ca00@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 25 Mar 2025 16:05:00 +0000
-Douglas Raillard <douglas.raillard@arm.com> wrote:
-
-> Yes, the dynamic API was exactly what I needed unfortunately. I'm porting the kernel module we have to Rust (using our own bindings as
-> we cannot mandate CONFIG_RUST=y). While I have some support for C code generation based on the Rust source, it is significantly more
-> convenient to simply use a dynamic API. In the current state of my code, defining an event is as simple as:
+On Wed, Mar 26, 2025 at 01:00:00AM +0900, Vincent Mailhol via B4 Relay wrote:
+> From: Lucas De Marchi <lucas.demarchi@intel.com>
 > 
->    let f = new_event! {
->    	lisa__myevent2,
->    	fields: {
->    		field1: u8,
->    		field3: &CStr,
->    		field2: u64,
->    	}
->    }?;
->    
->    // Emit the event
->    f(1, c"hello", 2);
->    f(3, c"world", 4);
+> Add some additional tests in lib/tests/test_bits.c to cover the
+> expected/non-expected values of the fixed-type GENMASK_U*() macros.
 > 
-> So it's as non-confusing can be: the event name is stated plainly and the field names and types are mentioned once, with no repetition.
-> The result can simply be called to emit the event, and when dropped, the event is unregistered.
+> Also check that the result value matches the expected type. Since
+> those are known at build time, use static_assert() instead of normal
+> kunit tests.
 
-Interesting.
+New tests always have a green light to go from my point of view,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> 
-> 
-> On top of that in ways unrelated to Rust:
-> 1. We have some really high traffic event (PELT-related) that include some data that is not always needed (e.g. taskgroup name).
->     We currently regularly hit memory size limitation on our test device (pixel 6), and using trace-cmd record instead of
->     trace-cmd start is not always a good idea as this will have an effect on scheduling, disturbing the very thing we are trying
->     to observe. Having the dynamic API means we could simply omit the fields in the event that we don't care about in a specific
->     experiment via dynamic configuration.
-> 
-> 2. Some events may or may not be supported on the system based on some runtime condition. Currently, there is no great way for
->     the module to feed back that info. No matter what, the event exists, even if the machinery that is supposed to emit it is
->     disabled for whatever reason. If some user starts tracing the event "everything will work" and there will be no event in the
->     trace. That may make the user think a condition did not trigger, whereas in fact the whole machinery was simply not operating.
->     Being able to register or not the event dynamically solves that cleanly, as enabling the event will simply fail as it won't
->     have been registered in the first place.
-> 
-> 3. We will likely at some point relay events coming from some non-CPU part of the system into the ftrace buffer. If and when that
->     happens, it would be ideal if that producer can simply declare the events it supports, and our module dynamically create the
->     matching synthetic events. That would avoid any problem coming from mismatching source that would otherwise plague such setup.
-> 
-> So considering things seem to work overall with not much tuning needed, it would be sad to have to revert to TRACE_EVENT() macro
-> and end up having to do more work for a worse result. If that's the route you choose though, it may be nice to amend the
-> documentation to clearly state this API is testing-only and not supported in normal use case, as it currently reads:
-> 
->    The trace event subsystem provides an in-kernel API allowing modules
->    or other kernel code to generate user-defined 'synthetic' events at
->    will, which can be used to either augment the existing trace stream
->    and/or signal that a particular important state has occurred.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Note, there is also a CUSTOM_TRACE_EVENT() macro that can attach to any
-tracepoint (including those that have a TRACE_EVENT() already attached to
-them) and create a new trace event that shows up into tracefs.
 
-I still do not think "synthetic events" should be used for this purpose.
-They are complex enough with the user interface we shouldn't have them
-created in the kernel. That documentation should be rewritten to not make
-it sound like the kernel or modules can create them.
-
-That said, it doesn't mean you can't use dynamic events for this purpose.
-Now what exactly is that "new_event!" doing?
-
-I guess, what's different to that than a kprobe event? A kprobe event is a
-dynamic trace event in the kernel. Could you do the same with that? Or is
-this adding a nop in the code like a real event would?
-
-I'm not against rust dynamic events, but I do not think synthetic events
-are the answer. It will just cause more confusion.
-
-I also added Alice to the Cc, as she has created trace events for Rust.
-
--- Steve
 
