@@ -1,161 +1,150 @@
-Return-Path: <linux-kernel+bounces-574830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDD1A6EA8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:32:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1676EA6EC1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:05:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1736F189565E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EC23AD8BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF942561A3;
-	Tue, 25 Mar 2025 07:30:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533CE1F63D9;
+	Tue, 25 Mar 2025 09:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KcxwqmKB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81107254B12
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF30C1DB924
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887809; cv=none; b=CZxyAy2z08YKmO3cMOCbDPPr0k9l3umBF7DoYPmhX+m57BqWKvA7Rud7xO0dXsAo+Y3YA4H6ARE86/I+2gTgrlyO57xPQvzA2070okL6iLdVrYejhYmQu0GXKZDbF7x6Ya7qxDEPrQr0p9+jW7W3MSEanLieU8eBudeCUDUreAU=
+	t=1742893522; cv=none; b=BaV2wd5tURQpml9rHmVfWpFxvJe0hCENUSm7iwiBemK6XR3t5Mjue8Q5ewY0teA9FJiSYnVTEEoPfwYEvfpj+XcFn+Z25PaFSMh1mXfmjQZ5REmFhmC4dzdwtdW1mEmQCsqQn8bnsE9S5cXp2xIQu1HaIeUtUYYLjcLfi9MsG5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887809; c=relaxed/simple;
-	bh=kg2008o8v9Ytw+Eu2Cj8ewqnuTpD/zcWnBku8HIJQCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g05yIsRZxtCOy5IuzONMixKgQzDnZyCWjccHJttvwaGewJXoAOCAT4P75GjWLqyPeD1O1y+WmUZCyUwai6lkWqNWXisMK4e40hGDn7IaeKQXf+g6iynEWbpCGCV6TknKHFhCTR5N63LsKJAMQeDeVpjvO4MlMsn81DVUrJnwgXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZMM4Y66fhz4f3m6Z
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:29:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 3C6A21A1395
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:29:58 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP2 (Coremail) with SMTP id Syh0CgB3M2ZxW+JnZofaHQ--.14216S10;
-	Tue, 25 Mar 2025 15:29:58 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org
-Cc: kasong@tencent.com,
-	tim.c.chen@linux.intel.com,
-	bhe@redhat.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/8] mm: swap: replace cluster_swap_free_nr() with swap_entries_put_[map/cache]()
-Date: Wed, 26 Mar 2025 00:25:28 +0800
-Message-Id: <20250325162528.68385-9-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250325162528.68385-1-shikemeng@huaweicloud.com>
-References: <20250325162528.68385-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1742893522; c=relaxed/simple;
+	bh=mKJ++G7wNhJzW9MVSALnmcUFApSRdiNlAhwjAt23yKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o27VzphykuiJRO8XdpKD7EeFlqhv76NpUVsBF1MdrImPUKhfkPi6AbbT3h/GjM8sgPGfmEg9EEU6u+/4oFh8NpuqhPwwyx7uOIThJsQF0iLrqBc/zrclzou7FMsjBGGFT9nKGTMkOZFICOCHtwLqygE/9VcMJeqMoGSdNdczYPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KcxwqmKB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742893519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PrC6whXEB8tIJZm3Od4OEZVDDngb94gqrtSVDSXgtaI=;
+	b=KcxwqmKBavatPD1sMsk30qZBb+d/+bkdCl9uXpc4dDOqzwIuvyls17bVVSqA+mvq0fjp8W
+	gjdWLJikCR+eSkK0tV48+Gu4wsnCUdtn3+wCX/CqGiAuk/FxJmo2+AhQdc5htEPlyEu9By
+	piaUc0XveDP3+GyeWVqks52T5eFKBd8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-516-1r6T9FyOPkWigZeOIL4-iQ-1; Tue, 25 Mar 2025 05:05:18 -0400
+X-MC-Unique: 1r6T9FyOPkWigZeOIL4-iQ-1
+X-Mimecast-MFC-AGG-ID: 1r6T9FyOPkWigZeOIL4-iQ_1742893517
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39123912ff0so2335793f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:05:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742893517; x=1743498317;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrC6whXEB8tIJZm3Od4OEZVDDngb94gqrtSVDSXgtaI=;
+        b=YIjolP76SHpjuYrS7rabCx1NiQrOPVcQ4+cvcUM6kjnrItjTq66W39k16QwwXDo3oP
+         qVGbVIWdsVNAJrQqoTcf/UAMEvVQud2FA60BQDbVqX1xWk4wwHlEX77mxMcfh3A5eJuc
+         nQuckxP3qQRtF9Q5d+lBNxuqKfpQmlf/RtiKaadeCIqw0u5B2+r54DTD7rw779k4D6ad
+         PpvaK2bhWriPiezSLtlBIOPDTEPmyMVFVct1jrjm6koFG6VRJFZmOTkbOrXQ8PtK+5WU
+         oDU1/OUMM9duA+3HTcR/akFD9vSi5Gjy45BqqnONBmR1++M7fRP63ZTxm3OrQB04sGTT
+         QIuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzOHPxlG7+GXdCIzqo75Pzy644yIVVY4uQLSTGQ2S8w8OfrFGhd5Q4527vy2eN3zwlO3nvv62+Sujioac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJJtHx04Wsvsm4Y1ewBBF4Ot0KpzyqBzKm3VhTwWZR+i4Aya0f
+	6H1qpxmpDz5vL+PosDp73JGvJvjiz4jzpAyeVqz6FznIl8+y3dFvWLT/uS6LUakYzP/8xtvbkBE
+	S+IkdHS/8oAGoEX+DsWn0Xh6Akqh+gg1k0tJCOjDl2YLhkqHRYdnC0rHhc/HRFg==
+X-Gm-Gg: ASbGncuHs52qPvbdEAZeS7+XKXv/Uq/M6zZ3Jeyk/JTH3CjcOMcgkfo0ybX9N+w17Sn
+	bSe6ZEdc2e1AUl6YeLWNnqJhgnJFnk84yfMES7J46R2E1GwMxQv2dijkY4HSWuKESWjHxvAsCxk
+	IVt4FxrpDD0KtHGFbq697eJPrOqB9jc41vvBNKE6bB3bvJd/LBhF7bnkKJDOMlQ9PUPQCBTZOiR
+	zVqiC03CWgin4SVvcwcDuqMj565bxATMilplk6KtdOctvK/tZjfV7y1VZbbVcjFE4zGnO9ps0n1
+	j7zz8LqvjdOBb05+Gcrn82kGftRXrotlCRjUTxMbzI+olsjsp+92Ry4=
+X-Received: by 2002:a05:6000:2a4:b0:391:ba6:c066 with SMTP id ffacd0b85a97d-3997f932dc7mr15340760f8f.35.1742893516847;
+        Tue, 25 Mar 2025 02:05:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTBT9UgEXQQoZOQCZf+geD9eCV4pZV+LkpuIAC9M/oAzFE2WYScIhUIhi8NX1J2SaBNujAOg==
+X-Received: by 2002:a05:6000:2a4:b0:391:ba6:c066 with SMTP id ffacd0b85a97d-3997f932dc7mr15340713f8f.35.1742893516379;
+        Tue, 25 Mar 2025 02:05:16 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fcea6ecsm145624925e9.5.2025.03.25.02.05.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 02:05:14 -0700 (PDT)
+Message-ID: <dd1616d5-4808-46be-9167-6fbfe76e0c73@redhat.com>
+Date: Tue, 25 Mar 2025 10:05:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB3M2ZxW+JnZofaHQ--.14216S10
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF1DJr1rCFWUGryxXF4rGrg_yoW5Xw43pF
-	93Wwn8Kr4xJr1xGr4fXw4DZFya93yxW3WUXFy7Ww1rZasFkryIqF1vyrZ7Cry5G34kuFZI
-	k3W7tr9xuF4Yyr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2
-	AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
-	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U09YFtUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] drm/panic: add missing Markdown code span
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org
+References: <20250324210359.1199574-1-ojeda@kernel.org>
+ <20250324210359.1199574-3-ojeda@kernel.org>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250324210359.1199574-3-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replace cluster_swap_free_nr() with swap_entries_put_[map/cache]() to
-remove repeat code and leverage batch-remove for entries with last flag.
-After removing cluster_swap_free_nr, only functions with "_nr" suffix
-could free entries spanning cross clusters. Add corresponding description
-in comment of swap_entries_put_map_nr() as is first function with "_nr"
-suffix and have a non-suffix variant function swap_entries_put_map().
+On 24/03/2025 22:03, Miguel Ojeda wrote:
+> Add missing Markdown code span.
+> 
+> This was found using the Clippy `doc_markdown` lint, which we may want
+> to enable.
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Reviewed-by: Baoquan He <bhe@redhat.com>
----
- mm/swapfile.c | 30 +++++++++++-------------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+Thanks, it looks good to me.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 40a7d75c01e8..c46b56d636af 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1512,6 +1512,11 @@ static bool swap_entries_put_map(struct swap_info_struct *si,
- 
- }
- 
-+/*
-+ * Only functions with "_nr" suffix are able to free entries spanning
-+ * cross multi clusters, so ensure the range is within a single cluster
-+ * when freeing entries with functions without "_nr" suffix.
-+ */
- static bool swap_entries_put_map_nr(struct swap_info_struct *si,
- 				    swp_entry_t entry, int nr)
- {
-@@ -1569,21 +1574,6 @@ static void swap_entries_free(struct swap_info_struct *si,
- 		partial_free_cluster(si, ci);
- }
- 
--static void cluster_swap_free_nr(struct swap_info_struct *si,
--		unsigned long offset, int nr_pages,
--		unsigned char usage)
--{
--	struct swap_cluster_info *ci;
--	unsigned long end = offset + nr_pages;
--
--	ci = lock_cluster(si, offset);
--	do {
--		swap_entry_put_locked(si, ci, swp_entry(si->type, offset),
--				      usage);
--	} while (++offset < end);
--	unlock_cluster(ci);
--}
--
- /*
-  * Caller has made sure that the swap device corresponding to entry
-  * is still around or has not been recycled.
-@@ -1600,7 +1590,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
- 
- 	while (nr_pages) {
- 		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
--		cluster_swap_free_nr(sis, offset, nr, 1);
-+		swap_entries_put_map(sis, swp_entry(sis->type, offset), nr);
- 		offset += nr;
- 		nr_pages -= nr;
- 	}
-@@ -3623,11 +3613,13 @@ int swapcache_prepare(swp_entry_t entry, int nr)
- 	return __swap_duplicate(entry, SWAP_HAS_CACHE, nr);
- }
- 
-+/*
-+ * Caller should ensure entries belong to the same folio so
-+ * the entries won't span cross cluster boundary.
-+ */
- void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
- {
--	unsigned long offset = swp_offset(entry);
--
--	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
-+	swap_entries_put_cache(si, entry, nr);
- }
- 
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+
+You want to take the whole series in the rust tree?
+
+Otherwise I can push the patch 1-2 to drm-misc-next if needed.
+
 -- 
-2.30.0
+
+Jocelyn
+
+> 
+> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+> index 9bd4d131f033..a8f832598c70 100644
+> --- a/drivers/gpu/drm/drm_panic_qr.rs
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -914,7 +914,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
+>   ///    will be encoded as binary segment, otherwise it will be encoded
+>   ///    efficiently as a numeric segment, and appended to the URL.
+>   /// * `data_len`: Length of the data, that needs to be encoded, must be less
+> -///    than data_size.
+> +///    than `data_size`.
+>   /// * `data_size`: Size of data buffer, it should be at least 4071 bytes to hold
+>   ///    a V40 QR code. It will then be overwritten with the QR code image.
+>   /// * `tmp`: A temporary buffer that the QR code encoder will use, to write the
 
 
