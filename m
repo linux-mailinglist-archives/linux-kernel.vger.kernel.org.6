@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-575211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D46A6F44D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:35:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D95A6F450
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C7BB7A4ACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:34:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A7173ABCBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF292566D0;
-	Tue, 25 Mar 2025 11:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0F9255E51;
+	Tue, 25 Mar 2025 11:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="b6X89kp4"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhUORY6i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B072561A4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1F019F111;
+	Tue, 25 Mar 2025 11:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902536; cv=none; b=mc5Rt66lp4ZTh7KK+Zfu6/qQiI82o6rADs18GjDQF6X7Ls/pEeQy5ztCLb6SI0YkF5CbuI7aHXxdxO3MPX3nEl4vsek3GFWP9FCPAzGgcuQ4XhPvm6fCCkJHGwmeHJgwieMdxdi8p7U3kXNr+5iAEI8ICUKnf93WGKTYqRu7Mjo=
+	t=1742902579; cv=none; b=TuG0fuPCj5oRntasbVbIRgIGqZXjikaQ1muL9GfHWohZlkyKHQ8TnOQTP/3FdJght4t+7w9bYmoOlkU4yoJwe0N4vBMlByTNCcyHri/LK9dJ2I51/3/HjuxM7XW/GkAEcxGUvhNKugwKh7XP4uYxOuveoOnQFY9CAslAd6ie24g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902536; c=relaxed/simple;
-	bh=9rrtKMN1m2WAJmx1cQRuCKHe9miH2lVC7ZL9btWYztE=;
+	s=arc-20240116; t=1742902579; c=relaxed/simple;
+	bh=rIbXhljOkxj2z3hzqg0CcvUqSKlVyl2BPT33QXRtPXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnnMpUk/ZIRe8SjK3uAFnyxdOsWrRsQ521rxLVyVEa1t1haXMCFfXLEJFduI4thwsVR7MaWOQrEHatqWYOD+0evcFuTHgrhigKVoJE059T5H7JuIkBNeOt29Snr2rWzwqIXBTO8SvoB8R9qcJTdlANLRkcf00nAfVfXlWLVE7Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=b6X89kp4; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9rrt
-	KMN1m2WAJmx1cQRuCKHe9miH2lVC7ZL9btWYztE=; b=b6X89kp46t+xWw4zP4Jg
-	XQtrqW1MFy+snhzXse3IbNX3QBElauelE8x1wcrCYNfkMeb7pAe2USHsqhUQ5v7E
-	EtQpZHoyKo8zP41N0g/9BLDtN/ipV/d9b4TCvvHR6jLdMSRwRpz7TRbhIV2fmI24
-	HH6kmk9Gvd3cgyELtF4XlAMd9ZxaX4rLtHRC0jZ4mv/MeNb9VlRoWmnSE9+tJsqP
-	zwnsHa7OBKIsC4Qzdv+EzcrZZrigwQcHDktQ5WPls4C33fq2rYkT3uFvMpxUPEhc
-	mDcBm+SEDvviWnQr7phmqGYd06fd1wDssBwPq+0dgLwfcbyLDWy+00OD3DCDcD30
-	0g==
-Received: (qmail 3030393 invoked from network); 25 Mar 2025 12:35:31 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 12:35:31 +0100
-X-UD-Smtp-Session: l3s3148p1@zZ1CHikxorkgAwDPXyTHAJp038nK7dx+
-Date: Tue, 25 Mar 2025 12:35:31 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 45/57] irqdomain: i2c: Switch to irq_find_mapping()
-Message-ID: <Z-KVA5syQmeKLOZP@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>, tglx@linutronix.de,
-	maz@kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org
-References: <20250319092951.37667-1-jirislaby@kernel.org>
- <20250319092951.37667-46-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhfc5w77nJ7oBb4Az3UJPQWxTwH60be/SjfE8PH6Fj/Z2ceMb4QpsoTRjzY4zoncQQXhwVfWOILWL968t4K0y3DfKsFlpGEEw1pJfDNx2cUUoyW1TXygDCGuo+8SYIU5BhqypOvYp2zpcZJQBWvJdvJ9uiaDYYLycUgxwPd3Fcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhUORY6i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C64C4CEE4;
+	Tue, 25 Mar 2025 11:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742902576;
+	bh=rIbXhljOkxj2z3hzqg0CcvUqSKlVyl2BPT33QXRtPXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GhUORY6iPrt3Im7+lu/cmCHKOKSvub7lONUBIxo1zpt7KoPO0nQ5Wra75x6o98Y7V
+	 b0gNIvhMOBPplGuYSJdm+NjjOsK+orDAVReSk38g+BPecK2nU+4J9TdDA6JLPVxAaw
+	 e6pQzuDAbUyJE4Kikm+aCiazcrX0u0yNUu5/7DAriagPPFp5ye0Lfff4jSXNni17gK
+	 n66Vi2+LE6oCkAf4+GgpKGu2e/lR0KtNaPbz83/oG0EvicsP6xbCgiY42gem0SjHTP
+	 8Zxen0kRRVU1FyLU6f2epF0+f/22ANHKR6bLkKL/744aiCe1Qz+/EA2w9E8Ww/RQH1
+	 gfxAhoB2BA9Ng==
+Date: Tue, 25 Mar 2025 12:36:11 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, ASoC: codecs: wcd934x: Remove
+ potential undefined behavior in wcd934x_slim_irq_handler()
+Message-ID: <Z-KVKztS2TXoafRC@gmail.com>
+References: <7e863839ec7301bf9c0f429a03873d44e484c31c.1742852847.git.jpoimboe@kernel.org>
+ <174289169388.14745.12400458342392826127.tip-bot2@tip-bot2>
+ <0b3b6878-a1c1-4cd0-b2a8-d70833759578@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zdd5loAjehf+YwVA"
-Content-Disposition: inline
-In-Reply-To: <20250319092951.37667-46-jirislaby@kernel.org>
-
-
---zdd5loAjehf+YwVA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 19, 2025 at 10:29:38AM +0100, Jiri Slaby (SUSE) wrote:
-> irq_linear_revmap() is deprecated, so remove all its uses and supersede
-> them by an identical call to irq_find_mapping().
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: linux-i2c@vger.kernel.org
-
-Applied to for-next, thanks!
+In-Reply-To: <0b3b6878-a1c1-4cd0-b2a8-d70833759578@sirena.org.uk>
 
 
---zdd5loAjehf+YwVA
-Content-Type: application/pgp-signature; name="signature.asc"
+* Mark Brown <broonie@kernel.org> wrote:
 
------BEGIN PGP SIGNATURE-----
+> On Tue, Mar 25, 2025 at 08:34:53AM -0000, tip-bot2 for Josh Poimboeuf wrote:
+> > The following commit has been merged into the objtool/urgent branch of tip:
+> > 
+> > Commit-ID:     46b70c569b774ea2c671bb3aff2a50d29760b7c3
+> > Gitweb:        https://git.kernel.org/tip/46b70c569b774ea2c671bb3aff2a50d29760b7c3
+> > Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+> > AuthorDate:    Mon, 24 Mar 2025 14:56:09 -07:00
+> > Committer:     Ingo Molnar <mingo@kernel.org>
+> > CommitterDate: Tue, 25 Mar 2025 09:20:29 +01:00
+> > 
+> > objtool, ASoC: codecs: wcd934x: Remove potential undefined behavior in wcd934x_slim_irq_handler()
+> 
+> FWIW the original patch doesn't seem to have made it into my inbox 
+> (the regmap one did), not that it makes a *huge* difference but might 
+> be some infra/script issue which crops up on some other more urgent 
+> occasion.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfilQMACgkQFA3kzBSg
-KbY5SA//RrdkIAxtC59Q3H+4pkRSlUzNE6qxFtcP5P9TFfy/Xilb8XEns9/c+ZTJ
-ZEUM/CcV46/MbwDLkWN5Ic5CMn8eDp64h/mgc69rDyhiEZvlljZSbWb83HwwQ5vD
-vbf856co3AJE9EG/0yh2mzM/Cg8zbb2+8aRvGdb6TRArD5Ie1rsugll0v3Fp6x0K
-q36C8Tlt2B6EUOJaT1ELEX4LGc8RDcRZe0j+rhnVGEEis+9NJLNcTo9SijwbED56
-jg6GlFnp6TK0G5ruDagvv5bWYW0NahsbBQyLMM5Wb2JUP1UKNkZKOeYjjr9RpfOh
-YRQefAOosVfj3TAFA+S2QTa0r1M00RCuufezTDgaSnqrsV0I4/NrFXyYrhTfS298
-gckpokhv1obEL5yxIueviW85jrTqzJY8bc3VpNDFgScMnZXV6NEiIEfKG+YOt3gS
-I+6j5M2gtuD8KzWs6bymsaCK/tKs04Cm+3mdWLlbxYRiSpyWjv0YvLMrb5Db7nS3
-QfepJzGG6bjrOPsXNAquhyv9krwIBryLNhzeAn6rlWy5bbKdkoO1WQyikkoZjwcj
-GMYsNfZP+2pDt+YBkOoTNbPAS+5j0jG+91JGQhCDaBjmv8oV1Rv1e8jiUbPcvLne
-aX3TNkZ7x3HlPLWBREG7DpXLfxopSBttd9q/do/Tlaelt3J/Mag=
-=a09R
------END PGP SIGNATURE-----
+Yeah, I noticed that the Cc: lines were incomplete for some of the 
+patches, so before applying them I went over the series and regenerated 
+the Cc: lines so everyone is informed and can review/object/ack if 
+necessary.
 
---zdd5loAjehf+YwVA--
+If there's any serious mistake we'll rebase the branch!
+
+Thanks,
+
+	Ingo
 
