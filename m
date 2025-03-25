@@ -1,131 +1,171 @@
-Return-Path: <linux-kernel+bounces-575395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA742A70234
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBB8A701E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5093BFFCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23EF847694
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46B82676D0;
-	Tue, 25 Mar 2025 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42C82676F7;
+	Tue, 25 Mar 2025 13:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MnvFuj61"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1+v2VVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5961B25D52E;
-	Tue, 25 Mar 2025 13:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908383; cv=pass; b=SsvnElaeR0CnDWbfLMxvs0Svr+SycFNWH7WVOkAIu7vsRs71ZVk6qw8SvTRNfZ9eS+sT8KwuBgOv4ZIxuOOta8I0epGwR1gb2vkpN6nWnBYGg1x8ZhV8XN3kNHON/NHpCcP5F9WZGVk/nN8nvnbakkA8J3qA92A/2q4XTSnptDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908383; c=relaxed/simple;
-	bh=XKlX6iqRU46yL85G+dbu84MIS9b/QnIIvCk1gZah01o=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=AFe+TgRAoGOIG7oT0e9i0Nw7sgNOLidr1Pi1K9CpwceXJ753T7cSnies3CzaU1YFogjkt+7eI28vFskKoUqYBlv9XhgMpqAErekCCni+3nKWCD+FULKRNodsXE8u0uM4W+O6mN3JgdixTnbr36t2J5t7LdzQHG+eW3Isg58gUxU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MnvFuj61; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742908353; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Z+VDrG8LN4a/SSZIxGGcnWeHuOAMvZ5KTehw2L0iZmLMT1RR7CGWOicbVjFuXjMmLqrUEFHTRI0V8isaCfZKOEAHdBdWqmspkRxv3txIhx+jmRAwT50GKive8qGPazZEjj3QSvfHkCrKKsH34xDOS0b9jKKqDO0IezGKCLuxNdg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742908353; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=U1DzXkzGwrt00tzTeYfRiOBq9nYPvYNpn2edXH0c3to=; 
-	b=TC4Xru1hcD8VEmOLBksGNVJr8z8IWDInbaD3IEF2E1qJgYCRAzMvfmGb6EFBHaDiVtSRZYtvMM1D2NPDuQ2BB56GmU21d6f0rJX7WLkewgaPVJDTrWtnajs+H72ZHlnaP/RaXGYOq+seg+lWp6v62XLfiNiFpQ5VWw8x0iGTVg8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742908353;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=U1DzXkzGwrt00tzTeYfRiOBq9nYPvYNpn2edXH0c3to=;
-	b=MnvFuj61a71BUKF6oB9kGQjqlFxTrjAdPWNEP57GpZ09BsFOHdIsdj510AQDQt7u
-	pumqImFZIZf7rqUAUwGK3R0GR/kVa06rGnxV3J1UViUT28s2vjoiJOuRCfW1hOJ+Qfg
-	YGbx4kaRQl/Z5IK5mZ+4/WBMLasciGoip1THRKMs=
-Received: by mx.zohomail.com with SMTPS id 1742908351023174.43653162229032;
-	Tue, 25 Mar 2025 06:12:31 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291AD2676DE;
+	Tue, 25 Mar 2025 13:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742908385; cv=none; b=cpuZa/lEOgLoBx8HaQ6Knk5sdCOBe35VtP/5CZO53a+Uz2lPnx4H40aD1cE1BukcC7FTshlYULkU3GYy09t3n4dYBv9jZrI7jPhCOCpm0NX2I59jOq0b2DqpcZusu5OpopSDyyxy7TFBePcrKwQRzFJTsG8cbc7RJeTgDFA9t3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742908385; c=relaxed/simple;
+	bh=LbCFI+SPyht74Ijlp27Gug9FjyQ0K7+yJfydNyjPGuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3LYpI8EKZJ7GDOfAaTAy5pg42xdkXnViY9zMR1hK7ZQv1HptK88zeh9KyYcVUpTt+yRwssgEy9KAiSMC1Oc61SDxpptMmiY7+2qQT3P3ybn0xDHVb4jZ+fd003cU///Vl6sKvYgQUQnBnOM6TzHfL4Hy/XNtD/E04qrbF46OHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1+v2VVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B2DC4CEE4;
+	Tue, 25 Mar 2025 13:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742908385;
+	bh=LbCFI+SPyht74Ijlp27Gug9FjyQ0K7+yJfydNyjPGuY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m1+v2VVwos/7AysiAFKWLbWz2klba90oMRBVsfbFWR4WBnuG8kNIsfHym941rtK8v
+	 oLLbTaXcO9FRT/gAOCaBEz/kxxSB6PXW6TPTCvdYSKnNKNU642FO6viK1oU8mx1qwb
+	 9pChwvI4Rk/ENVcr/TcNj2kLFWtpKGD62F+Yw5+nvUDuRMDQvcsYnPSMtw/QdxzE8c
+	 eItk9VXmKUdRgEYsIlsazmsfbIsBAXyTnwIz3LR18qD6xwlU5xWoV7VnPTI43Vplrj
+	 E/aaJ1HfjjpOVyob7L8/Y9ko8EVcGzdKPC/GqSc7tC2NZ5F0oyaeYdJTs5rIWTCb/Y
+	 Ic3IhkPma86yA==
+Date: Tue, 25 Mar 2025 14:13:00 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Jiri Kosina <jkosina@suse.com>, 
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>, Kerem Karabay <kekrby@gmail.com>, 
+	Orlando Chamberlain <orlandoch.dev@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple
+ Touch Bar
+Message-ID: <vx6hvspvlfsv3palzvjpvsrmkl6s7qut366bhxq3tcwvyf7z63@drzftehh2rew>
+References: <ECE4880B-2A87-4147-B83B-2D832639F3B2@live.com>
+ <90644A22-3136-4D4E-864E-7F7210D0C713@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v4 03/11] scripts: generate_rust_analyzer.py: add trailing
- comma
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250322-rust-analyzer-host-v4-3-1f51f9c907eb@gmail.com>
-Date: Tue, 25 Mar 2025 10:12:15 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris-Chengbiao Zhou <bobo1239@web.de>,
- Kees Cook <kees@kernel.org>,
- Fiona Behrens <me@kloenk.dev>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Lukas Wirth <lukas.wirth@ferrous-systems.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <47AA0C4B-AE6C-422F-9C32-1ED2B0FAE3E5@collabora.com>
-References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
- <20250322-rust-analyzer-host-v4-3-1f51f9c907eb@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90644A22-3136-4D4E-864E-7F7210D0C713@live.com>
 
-
-
-> On 22 Mar 2025, at 10:23, Tamir Duberstein <tamird@gmail.com> wrote:
->=20
-> Add missing trailing comma on multi-line function call as suggested by
-> PEP-8:
->=20
->> The pattern is to put each value (etc.) on a line by itself, always
->> adding a trailing comma, and add the close parenthesis/bracket/brace
->> on the next line.
->=20
-> This change was made by a code formatting tool.
->=20
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Mar 10 2025, Aditya Garg wrote:
+> From: Kerem Karabay <kekrby@gmail.com>
+> 
+> This patch adds the device ID of Apple Touch Bar found on x86 MacBook Pros
+> to the hid-multitouch driver.
+> 
+> Note that this is device ID is for T2 Macs. Testing on T1 Macs would be
+> appreciated.
+> 
+> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+> Co-developed-by: Aditya Garg <gargaditya08@live.com>
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
 > ---
-> scripts/generate_rust_analyzer.py | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/scripts/generate_rust_analyzer.py =
-b/scripts/generate_rust_analyzer.py
-> index e2bc4a717f87..e997d923268d 100755
-> --- a/scripts/generate_rust_analyzer.py
-> +++ b/scripts/generate_rust_analyzer.py
-> @@ -180,7 +180,7 @@ def main():
->=20
->     logging.basicConfig(
->         format=3D"[%(asctime)s] [%(levelname)s] %(message)s",
-> -        level=3Dlogging.INFO if args.verbose else logging.WARNING
-> +        level=3Dlogging.INFO if args.verbose else logging.WARNING,
->     )
->=20
->     # Making sure that the `sysroot` and `sysroot_src` belong to the =
-same toolchain.
->=20
-> --=20
-> 2.48.1
->=20
->=20
+>  drivers/hid/Kconfig          |  1 +
+>  drivers/hid/hid-multitouch.c | 25 +++++++++++++++++++++----
+>  2 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index dfc245867..727a2ed0d 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -743,6 +743,7 @@ config HID_MULTITOUCH
+>  	  Say Y here if you have one of the following devices:
+>  	  - 3M PCT touch screens
+>  	  - ActionStar dual touch panels
+> +	  - Apple Touch Bar on x86 MacBook Pros
+>  	  - Atmel panels
+>  	  - Cando dual touch panels
+>  	  - Chunghwa panels
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 66e33a482..078ceef62 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -221,6 +221,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
+>  #define MT_CLS_GOOGLE				0x0111
+>  #define MT_CLS_RAZER_BLADE_STEALTH		0x0112
+>  #define MT_CLS_SMART_TECH			0x0113
+> +#define MT_CLS_APPLE_TOUCHBAR			0x0114
+>  #define MT_CLS_SIS				0x0457
+>  
+>  #define MT_DEFAULT_MAXCONTACT	10
+> @@ -406,6 +407,12 @@ static const struct mt_class mt_classes[] = {
+>  			MT_QUIRK_CONTACT_CNT_ACCURATE |
+>  			MT_QUIRK_SEPARATE_APP_REPORT,
+>  	},
+> +	{ .name = MT_CLS_APPLE_TOUCHBAR,
+> +		.quirks = MT_QUIRK_HOVERING |
+> +			MT_QUIRK_SLOT_IS_CONTACTID_MINUS_ONE |
+> +			MT_QUIRK_APPLE_TOUCHBAR,
+> +		.maxcontacts = 11,
+> +	},
+>  	{ .name = MT_CLS_SIS,
+>  		.quirks = MT_QUIRK_NOT_SEEN_MEANS_UP |
+>  			MT_QUIRK_ALWAYS_VALID |
+> @@ -1807,6 +1814,15 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  		}
+>  	}
+>  
+> +	ret = hid_parse(hdev);
+> +	if (ret != 0)
+> +		return ret;
+> +
+> +	if (mtclass->name == MT_CLS_APPLE_TOUCHBAR &&
+> +	    !hid_find_field(hdev, HID_INPUT_REPORT,
+> +			    HID_DG_TOUCHPAD, HID_DG_TRANSDUCER_INDEX))
+> +		return -ENODEV;
+> +
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
+That hunk and the one below make me very nervous. Is there any reason
+preventing you to keep hid_parse() at the same place?
+
+The rest of the series looks fine as everything seems properly guarded
+by MT_CLS_APPLE_TOUCHBAR.
+
+Cheers,
+Benjamin
+
+>  	td = devm_kzalloc(&hdev->dev, sizeof(struct mt_device), GFP_KERNEL);
+>  	if (!td) {
+>  		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
+> @@ -1854,10 +1870,6 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  
+>  	timer_setup(&td->release_timer, mt_expired_timeout, 0);
+>  
+> -	ret = hid_parse(hdev);
+> -	if (ret != 0)
+> -		return ret;
+> -
+>  	if (mtclass->quirks & MT_QUIRK_FIX_CONST_CONTACT_ID)
+>  		mt_fix_const_fields(hdev, HID_DG_CONTACTID);
+>  
+> @@ -2339,6 +2351,11 @@ static const struct hid_device_id mt_devices[] = {
+>  		MT_USB_DEVICE(USB_VENDOR_ID_XIROKU,
+>  			USB_DEVICE_ID_XIROKU_CSR2) },
+>  
+> +	/* Apple Touch Bar */
+> +	{ .driver_data = MT_CLS_APPLE_TOUCHBAR,
+> +		HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
+> +			USB_DEVICE_ID_APPLE_TOUCHBAR_DISPLAY) },
+> +
+>  	/* Google MT devices */
+>  	{ .driver_data = MT_CLS_GOOGLE,
+>  		HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, USB_VENDOR_ID_GOOGLE,
+> -- 
+> 2.43.0
+> 
 
