@@ -1,109 +1,116 @@
-Return-Path: <linux-kernel+bounces-575044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E42A6ECD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:43:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5E8A6ECEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449E67A5AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEFD3BA300
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EB8255255;
-	Tue, 25 Mar 2025 09:42:24 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA121F63D9;
+	Tue, 25 Mar 2025 09:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwpHC4pf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688E0254AE5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4528019CC27;
+	Tue, 25 Mar 2025 09:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895744; cv=none; b=QEYxFf/vul4QqAvL40+xlopUZRyReZORqO9NYNwoRE66z0S5ZUrDVla5AJd5E447CgqI2Onm4wK5UrLHbQrM9rwwPyqRnThHHi8VZzYuLJ6Onz0MsXt5Dmr+kbJ0Osw6GjiA7URK9gzeJhjYceIgtOy0CywmLExjEXBw//7FZxI=
+	t=1742895780; cv=none; b=oamQ6A5kI0dnrtrXIzG1vfTyXskO/yiEZa8EGdnN3de+Hg2xOy75HIc5qRdLoG9sUD6//9d67qKwucZjHHHTQ15iSUuLZPej4l7BpbXRkli5+hrn1IClr/uKZblLeVIaNdEZtUAxdiOSaPG6LDVgd+YFcn7Uc3YSMFnQjxZ8T1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895744; c=relaxed/simple;
-	bh=kR7mmVDXSQQ0ZbXlhrdwUB4b1sJSjGlMoaEuCDViCW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=POThAbG6B6PPWIKdWk5FqBV+Q0gt/3uX93kWL/m1d9t0N5ZmEgelR33UGjK2U8Lr/+lf89njgxoMrJsTJ9VfGUAoTcYaiSkOkLrXbYpGjIpL4a1J87Gp1VPu2jWJWA7B3AKmwOUEzwWaPuil+ciEWyaWfGZPNDmY8ylRnGe+T/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 18FF943423;
-	Tue, 25 Mar 2025 09:42:15 +0000 (UTC)
-Message-ID: <2453d5e6-cd47-4a4e-8636-3a1524be0589@ghiti.fr>
-Date: Tue, 25 Mar 2025 10:42:15 +0100
+	s=arc-20240116; t=1742895780; c=relaxed/simple;
+	bh=Oiv8Av9xGB7EJoTp+udHsn8EcJRvAaBHEIhgkS3L1mI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GU3fyN0tCEY1e29QOzBBftVESjRWO3DZUxvurKjvHfNZMtca96dXsPOG+uPyL3/RDTe5pg8oahqz3Q4N+CBPzcMn4dtJBkeLDRwX4ls4KImjQwCvDDwvkawmF+FQ4Ax6vkjJATeiAlu17nAcn/kEhrtPKyAw/Et+nKpCMvmmIqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwpHC4pf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3141C4CEE4;
+	Tue, 25 Mar 2025 09:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742895778;
+	bh=Oiv8Av9xGB7EJoTp+udHsn8EcJRvAaBHEIhgkS3L1mI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwpHC4pf7aWNIhGxdSuYa3gt+J7lLM7DhBA/AhvGM2XK7H0Ow8cFaTPKxVsfSmZDX
+	 iIOJ/Ih2EuPcV3H2NxModzu+fn0f9fu+RpFmSYfokSTeHarXedBzlwGvEUukkXzF+9
+	 1DqbHwOHkpCuKxEzCThHqfNGMLidirWPb6Cu4YNJbm740x44RNJP79kti92/N/Ehmc
+	 2Z/+bGoNp+aQtb8R9C7LHchmdQz7PnGPCMQ92quqF94+mANscYdjZyAmR/G3GAYzY1
+	 K1XV69SVQXZbO4qCx+Q/o8EdeV8U4hPMrDeSzf+S6MpXIU+x/zBS0WpjhxFl6hnbaj
+	 5fP+fdLVuXZ8w==
+Date: Tue, 25 Mar 2025 10:42:36 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Ryo Takakura <ryotkkr98@gmail.com>,
+	NeilBrown <neilb@suse.de>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Borislav Petkov <bp@alien8.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v4] lockdep: Fix wait context check on softirq for
+ PREEMPT_RT
+Message-ID: <Z-J6jE0lHJpWA20l@gmail.com>
+References: <20250321143322.79651-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: traps: handle uprobe event in software-check
- exception
-Content-Language: en-US
-To: Zong Li <zong.li@sifive.com>, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, debug@rivosinc.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250314092614.27372-1-zong.li@sifive.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250314092614.27372-1-zong.li@sifive.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvfedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueefgeehheegtddvgeelgeejjeefudekgeetffeijefgveejudehfffftdelhffhnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepjedprhgtphhtthhopeiiohhnghdrlhhisehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepuggvsghughesrhhivhhoshhinhgtrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrr
- gguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
-
-Hi,
-
-On 14/03/2025 10:26, Zong Li wrote:
-> Handle the uprobe event first before handling the CFI violation in
-> software-check exception handler. Because when the landing pad is
-> activated, if the uprobe point is set at the lpad instruction at
-> the beginning of a function, the system triggers a software-check
-> exception instead of an ebreak exception due to the exception
-> priority, then uprobe can't work successfully.
->
-> Co-developed-by: Deepak Gupta <debug@rivosinc.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> ---
->
-> This patch is based on top of the following series
-> [PATCH v11 00/27] riscv control-flow integrity for usermode
->
->   arch/riscv/kernel/traps.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 3f7709f4595a..ef5a92111ee1 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -386,9 +386,12 @@ asmlinkage __visible __trap_section void do_trap_software_check(struct pt_regs *
->   	if (user_mode(regs)) {
->   		irqentry_enter_from_user_mode(regs);
->   
-> -		/* not a cfi violation, then merge into flow of unknown trap handler */
-> -		if (!handle_user_cfi_violation(regs))
-> -			do_trap_unknown(regs);
-> +		/* handle uprobe event frist */
-> +		if (!probe_breakpoint_handler(regs)) {
-> +			/* not a cfi violation, then merge into flow of unknown trap handler */
-> +			if (!handle_user_cfi_violation(regs))
-> +				do_trap_unknown(regs);
-> +		}
->   
->   		irqentry_exit_to_user_mode(regs);
->   	} else {
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321143322.79651-1-boqun.feng@gmail.com>
 
 
-Deepak, can you take this patch in your next spin of your CFI series? 
-Otherwise, I'm pretty sure we will forget about it :)
+* Boqun Feng <boqun.feng@gmail.com> wrote:
+
+> Since commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
+> PREEMPT_RT."), the wait context test for mutex usage within
+> "in softirq context" fails as it references @softirq_context.
+> 
+> [    0.184549]   | wait context tests |
+> [    0.184549]   --------------------------------------------------------------------------
+> [    0.184549]                                  | rcu  | raw  | spin |mutex |
+> [    0.184549]   --------------------------------------------------------------------------
+> [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
+> [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
+> [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
+> 
+> As a fix, add lockdep map for BH disabled section. This fixes the
+> issue by letting us catch cases when local_bh_disable() gets called
+> with preemption disabled where local_lock doesn't get acquired.
+> In the case of "in softirq context" selftest, local_bh_disable() was
+> being called with preemption disable as it's early in the boot.
+> 
+> [boqun: Move the lockdep annotations into __local_bh_*() to avoid false
+> positives because of unpaired local_bh_disable() reported by Borislav
+> Petkov [1] and Peter Zijlstra [2], and make bh_lock_map only exist for
+> PREEMPT_RT]
+> 
+> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Link: https://lore.kernel.org/all/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local/ [1]
+> Link: https://lore.kernel.org/lkml/20250307113955.GK16878@noisy.programming.kicks-ass.net/ [2]
+> Link: https://lore.kernel.org/r/20250118054900.18639-1-ryotkkr98@gmail.com
+
+That's a weird SOB chain. Following back the history of the submission 
+I believe this line went missing:
+
+  From: Ryo Takakura <ryotkkr98@gmail.com>
+
+I added it back in to the commit.
 
 Thanks,
 
-Alex
-
+	Ingo
 
