@@ -1,211 +1,141 @@
-Return-Path: <linux-kernel+bounces-574871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D20EA6EAF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:01:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5783EA6EAF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601E13B0373
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA8C1891889
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAAF19F12D;
-	Tue, 25 Mar 2025 08:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E9121480B;
+	Tue, 25 Mar 2025 08:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOytFZy0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GbxjZ5GH"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3862E3399
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9963019F13B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742889673; cv=none; b=cI53ro4ALYeNWNQTkG/d9MdKzxm4+LoTskujC1Epr88lX45g2GfYqQNKE03mZVOT6IYPMEWbtPpSP7BtbW5/c/RcCNUjBl+gEPwcjIG5uyIivib7eJRAvuF0cEGRMwtw/RLX90Sx4KBrXjynlGDn/GrH0b8x/nqYAZQrILvRODw=
+	t=1742889719; cv=none; b=NfgUjCh3IL0L4rCrfegXUyDHZDluFJ6fa8W0aYx1aWJEOndIoXl4gVs6ZyvkXuwY5pxC5ZaCmmQF4hmqz8j4pWBCDk8fitPpWH2IunCtQKhB+kHOFCoU0XxEAGGp2PGEzjESQgesn9NDp82JSa5R2Tsv7rwKHNITQKsJb+bDdJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742889673; c=relaxed/simple;
-	bh=nBzODTaNJWiJV4/XWp0uU9JMHDqmhaxlxmuw1FZbtrk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MlrlP1VwvKIuzDa17uRl38wutW7vBbs4Bz7SACii3QSfChaycy5jW2G7peo1V0+02YljI2gqrJgxEeW9mlyvhBpvSqmtV5f30H9/19/k2b9U6UoXL/tUTOaubFKkt7MbyUeu1s1PSxHHGzUcwYW9fZCdKylU/sVOuL2V9Fc+TX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOytFZy0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B15CC4CEE4;
-	Tue, 25 Mar 2025 08:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742889673;
-	bh=nBzODTaNJWiJV4/XWp0uU9JMHDqmhaxlxmuw1FZbtrk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=jOytFZy0qGEH9OQiN6+BWoYbhCsUJFebsk2njokSsMb7U49sLONdDcaZ3FuSxTpK/
-	 G7qzX2xJ4YNHJffaZH9vXknSR2ygFBQaCCzJ2ncA+jjyvUmurg/nG6oWcam+lKTabz
-	 4+RjQ2vCRBP+6WOZRj/MS8gUSVXvaT6du67LFbUGv70Wuku/jdFaUuVJ6ZMuvoaBqH
-	 oaKl0W6/+MLrb+Rr+cUPrwQwdPhTOW39E1KupY3frQMIN87JAnliQNL7oPJIYS4xOo
-	 3d4A184mjPQ/ZI2vnNFXN2yB0eVIx7mUlpCJVm2CTXzq9AS3wZ9z5gapRTaqBAxlEd
-	 DmAnd2wDZplYg==
-Message-ID: <6b130bed-a18c-4786-bb7f-3588dc8742ab@kernel.org>
-Date: Tue, 25 Mar 2025 16:01:10 +0800
+	s=arc-20240116; t=1742889719; c=relaxed/simple;
+	bh=D4/deZUrRvEFZ94m8Q9D3QeADW4HDx7z0RXbyw/bQXA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ubXXSrkUIeP+L0xXvoojUjBmmElwywpk4jNmSAFDKpvBbmw57oJAlGDwhhyCPI6kP6F0ppViTo7I09lFbt6+QLgcQgeGw8OhRdoOF7TTOKYyF6HikpFYmQt7zTLmlBjYIxMPdWP8qxOxdG4qNwtPfzMIVW0HaXdb+/XmlF4iJoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GbxjZ5GH; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39127512371so3455736f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742889716; x=1743494516; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Pw9b1PNCrvCj4pipFtdGJnivRzpncTcPSw1C2hnQDIE=;
+        b=GbxjZ5GHVrGPlrYG271WjOTid+0g9iCvl8JOwJJIbUDkpmIhpPrxsuF2/EdDO/dLJL
+         zWhkPNmZG1eAL2Bd/S2lrpGXAXpZrdmirHRs/shLz/X8rUHuXJ1WtzwHNInZHHm0MS7p
+         tbuV5nbFpH628EepIEopyZnT5iwUJ4f5kWaI0S1rKYuKRS6jvSndlw/OXdxYTX5viU3z
+         mclJilgWwEYdENsc2k4XOv+54mFoVHA/FsXkG30r3D3mCwvZfm0UNuMvlD4jd2B7EcUw
+         57SssvJ87Xls+23gP6MrV2GxyZCV/I+JTf+HOfpFLoJblzBv4s2Fmr8iVuZnojlbzVIv
+         U1zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742889716; x=1743494516;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pw9b1PNCrvCj4pipFtdGJnivRzpncTcPSw1C2hnQDIE=;
+        b=opyTtegQQpIOkHLDO18468Gjrdh8TKcNGLmfxrc8YGh0h0Yt997FgiJYqCDwm3Y44J
+         Hs0ke97GrKztQ4sHhiY62VR7Pky0LpGRkim4INcBoxT307CdjGbulWrDOz/6zM3w8oNI
+         I7M16ZNdGJI/y9TSuxKjbTOoHk05GbGN0ngeEgop4qX8Z29mS7tKJtOFgU9EIZifq1bU
+         9LX7Y/cIO3MPJ98Cmypx3ZsYEgYPAkbJS2Y3G4kHItACc/BqDQ+kcW8763cgndXa43EK
+         vDqkdXmVWbfBVDJF2wQAdSmDDetKl+daa0cWx5UJ9VKZ09rDf2K264z0/9Uw0SM+ZALJ
+         jVEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUxMBROy+vVtbBc9VjCIpYf9eXCCaNavh/My8ULTLIXLVsmeFEgG3CfC2FwlDgbfJs8W/fYF/epy4Ikss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgmKgJGY/QM14vbfTRFltIjmJfNMH2G5e8A1BX8qP3pWgzEUHG
+	QTsD+NOaqHHCXlj4QHGov8MGWq5OU2QOrOc6bwIIcNixcFYtpBVPvQYmX4d0mp0=
+X-Gm-Gg: ASbGncuKg+lapYiarqpAnBiXzQcyGMcGfsPL7tqo16vr7NCoJA9VnE7B5+Mz0rVDmEi
+	RZsuL9kxMHpbTjFbBjUP+JSq3JRO1Jr+IijL+DkGChvU6mDWyJZIvjMSe3HKC9uXMsqvqXNQpPj
+	StJ8cFFjgysg6AQACe76nSL9qFhNytX1VvPlRFwP7jyROio/IP6hALmtNEw+xPicJSS6yFIvL00
+	OD1ZHNjWvtiXFq6aQ7LuO+NrOUqAcJfc0ONMIoRXvgK80R8/vuYrpYCoTciZq3ev+fkkq3A9/aE
+	zje4rtAi4xkYwzo7x0mNyGIzmN+Ue8lv1DTfN6y0maEcIi6gcA==
+X-Google-Smtp-Source: AGHT+IEdKMh5Vkn8qIQcdV6MaRJha1LCACg2NhchPePa1fLHxwn1+onjPFo7rIPkaF3e2QGOEbXqGQ==
+X-Received: by 2002:a5d:6daa:0:b0:399:6af3:7a77 with SMTP id ffacd0b85a97d-3997f8fe892mr15837727f8f.19.1742889715763;
+        Tue, 25 Mar 2025 01:01:55 -0700 (PDT)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b5939sm13303207f8f.60.2025.03.25.01.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 01:01:55 -0700 (PDT)
+Message-ID: <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
+ shutdown
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus
+	 <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
+	 <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 25 Mar 2025 08:01:54 +0000
+In-Reply-To: <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
+References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
+	 <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
+	 <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org, Daeho Jeong <daehojeong@google.com>,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: zone: fix to calculate
- first_zoned_segno correctly
-To: Daeho Jeong <daeho43@gmail.com>
-References: <20250324114935.3087821-1-chao@kernel.org>
- <CACOAw_zQ1+yMknJ76B+H2-N=BfY4a85Yjwicip5UTQu9GLZQdA@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CACOAw_zQ1+yMknJ76B+H2-N=BfY4a85Yjwicip5UTQu9GLZQdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 3/25/25 04:49, Daeho Jeong wrote:
-> On Mon, Mar 24, 2025 at 4:54 AM Chao Yu via Linux-f2fs-devel
-> <linux-f2fs-devel@lists.sourceforge.net> wrote:
->>
->> A zoned device can has both conventional zones and sequential zones,
->> so we should not treat first segment of zoned device as first_zoned_segno,
->> instead, we need to check zone type for each zone during traversing zoned
->> device to find first_zoned_segno.
->>
->> Otherwise, for below case, first_zoned_segno will be 0, which could be
->> wrong.
->>
->> create_null_blk 512 2 1024 1024
->> mkfs.f2fs -m /dev/nullb0
->>
->> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
->> Cc: Daeho Jeong <daehojeong@google.com>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>  fs/f2fs/f2fs.h    | 18 +++++++++++++-----
->>  fs/f2fs/segment.c |  2 +-
->>  fs/f2fs/super.c   | 32 +++++++++++++++++++++++++++-----
->>  3 files changed, 41 insertions(+), 11 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index ca884e39a5ff..3dea037faa55 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -4630,12 +4630,16 @@ F2FS_FEATURE_FUNCS(readonly, RO);
->>  F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
->>
->>  #ifdef CONFIG_BLK_DEV_ZONED
->> -static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
->> -                                   block_t blkaddr)
->> +static inline bool f2fs_zone_is_seq(struct f2fs_sb_info *sbi, int devi,
->> +                                                       unsigned int zone)
->>  {
->> -       unsigned int zno = blkaddr / sbi->blocks_per_blkz;
->> +       return test_bit(zone, FDEV(devi).blkz_seq);
->> +}
->>
->> -       return test_bit(zno, FDEV(devi).blkz_seq);
->> +static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
->> +                                                               block_t blkaddr)
->> +{
->> +       return f2fs_zone_is_seq(sbi, devi, blkaddr / sbi->blocks_per_blkz);
->>  }
->>  #endif
->>
->> @@ -4711,9 +4715,13 @@ static inline bool f2fs_valid_pinned_area(struct f2fs_sb_info *sbi,
->>                                           block_t blkaddr)
->>  {
->>         if (f2fs_sb_has_blkzoned(sbi)) {
->> +#ifdef CONFIG_BLK_DEV_ZONED
->>                 int devi = f2fs_target_device_index(sbi, blkaddr);
->>
->> -               return !bdev_is_zoned(FDEV(devi).bdev);
->> +               return !f2fs_blkz_is_seq(sbi, devi, blkaddr);
->> +#else
->> +               return true;
->> +#endif
->>         }
->>         return true;
->>  }
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 396ef71f41e3..dc360b4b0569 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -3311,7 +3311,7 @@ int f2fs_allocate_pinning_section(struct f2fs_sb_info *sbi)
->>
->>         if (f2fs_sb_has_blkzoned(sbi) && err == -EAGAIN && gc_required) {
->>                 f2fs_down_write(&sbi->gc_lock);
->> -               err = f2fs_gc_range(sbi, 0, GET_SEGNO(sbi, FDEV(0).end_blk),
->> +               err = f2fs_gc_range(sbi, 0, sbi->first_zoned_segno - 1,
->>                                 true, ZONED_PIN_SEC_REQUIRED_COUNT);
->>                 f2fs_up_write(&sbi->gc_lock);
->>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 011925ee54f8..b2342366020a 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -4307,12 +4307,26 @@ static void f2fs_record_error_work(struct work_struct *work)
->>
->>  static inline unsigned int get_first_zoned_segno(struct f2fs_sb_info *sbi)
->>  {
->> -       int devi;
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +       unsigned int segno;
->> +       int devi, i;
->>
->> -       for (devi = 0; devi < sbi->s_ndevs; devi++)
->> -               if (bdev_is_zoned(FDEV(devi).bdev))
->> -                       return GET_SEGNO(sbi, FDEV(devi).start_blk);
->> -       return 0;
->> +       if (!f2fs_sb_has_blkzoned(sbi))
->> +               return NULL_SEGNO;
->> +
->> +       for (devi = 0; devi < sbi->s_ndevs; devi++) {
->> +               if (!bdev_is_zoned(FDEV(devi).bdev))
->> +                       continue;
->> +
->> +               segno = GET_SEGNO(sbi, FDEV(devi).start_blk);
->> +               for (i = 0; i < FDEV(devi).total_segments; i++) {
->> +                       if (f2fs_zone_is_seq(sbi, devi,
->> +                               GET_ZONE_FROM_SEG(sbi, segno + i)))
-> 
-> Maybe we can check it with a zone unit?
+Hi Krzysztof,
 
-Yeah, better, let me update it in v2.
+On Tue, 2025-03-25 at 08:57 +0100, Krzysztof Kozlowski wrote:
+> On 24/03/2025 16:34, Andr=C3=A9 Draszik wrote:
+> > +static bool acpm_may_sleep(void)
+> > +{
+> > +	return system_state <=3D SYSTEM_RUNNING ||
+> > +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled()=
+);
+> > +}
+> > +
+> > =C2=A0/**
+> > =C2=A0 * acpm_dequeue_by_polling() - RX dequeue by polling.
+> > =C2=A0 * @achan:	ACPM channel info.
+> > @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_cha=
+n *achan,
+> > =C2=A0			return 0;
+> > =C2=A0
+> > =C2=A0		/* Determined experimentally. */
+> > -		usleep_range(20, 30);
+> > +		if (!acpm_may_sleep())
+> > +			udelay(10);
+> > +		else
+>=20
+> ... and what do you do if IRQs get disabled exactly in this moment? This
+> is just racy. You cannot check for a condition and assume it will be
+> valid for whatever time you want it to be valid.
+>=20
+> What happens if system_state is changed to shutdown in this particular
+> moment? How did you prevent this from happening?
 
-Thanks,
+Yes, and that's also what the I2C subsystem is doing, AFAICS, see
+i2c_in_atomic_xfer_mode() and its use. This is to make a very
+specific corner case work, similar to I2C which has to deal with
+the same issue during shutdown.
 
-> 
->> +                               return segno + i;
->> +               }
->> +       }
->> +#endif
->> +       return NULL_SEGNO;
->>  }
->>
->>  static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->> @@ -4349,6 +4363,14 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->>  #endif
->>
->>         for (i = 0; i < max_devices; i++) {
->> +               if (max_devices == 1) {
->> +                       FDEV(i).total_segments =
->> +                               le32_to_cpu(raw_super->segment_count_main);
->> +                       FDEV(i).start_blk = 0;
->> +                       FDEV(i).end_blk = FDEV(i).total_segments *
->> +                                               BLKS_PER_SEG(sbi);
->> +               }
->> +
->>                 if (i == 0)
->>                         FDEV(0).bdev_file = sbi->sb->s_bdev_file;
->>                 else if (!RDEV(i).path[0])
->> --
->> 2.48.1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Would you have a better suggestion?
+
+
+Cheers,
+Andre'
 
 
