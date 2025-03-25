@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-575051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD82EA6ECE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:46:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702D0A6ECFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 031307A1CEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082553B7673
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3877E1FC111;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2154254855;
 	Tue, 25 Mar 2025 09:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Px6WGxeM"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cM8AJS6S"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E881DB125
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C621DE8A5
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895973; cv=none; b=tv6t+2vskGOuxWmX59ZoxLfK/LHPw4Ls192B7WdsKUITcsx56gOndh2dXfb6pQN81+kue4SrV9TJAeVKyM6LFjzJG7pCEZJ+wAS3XOTRZTogsFQ/rM7wzJF3gk7tpoPb7sDxxeke2z+oOkRw90uooshSVezs9MhP23/uQNqwFWI=
+	t=1742895974; cv=none; b=Nbqch5Me8rIl0jjRCcqQeh6jUKTioZnkV4QIUue3ID4eQBlOKiUC8ZI8+rpAcYqR4a1HI/IgRliC70oNDdGG33HnJcmQaFlbqQ5RUDcaOoCKIJt/sV/EJ7JgTwEAzjoyXYF4KxeuhTsUwUXt31pkU0hGHbR5Om4gjl8XK/sZj9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895973; c=relaxed/simple;
-	bh=ojat30aOqgXxfHLW0VMctCxg1ctIURlE5otCHR4gGXY=;
+	s=arc-20240116; t=1742895974; c=relaxed/simple;
+	bh=lJwd9RuzohyybOZuJcJO85WskvXGtLy1H+iADky9H0c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jvfHUueIIY8XUohBQ4DVYe/SMyAdcB+SHMtstE28HJKSQuaIJy5mQJ1pkIdrak3EDmBZDtoPA0+E4KmRoJ9/4BjnQT9N+fOWRCgh1se5EK6g5AeA84/U2NDfLdoc8Nfd5gF+DUnW39ujjIga+Jh/tHiOu7vscxh04p9qYG/1YqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Px6WGxeM; arc=none smtp.client-ip=209.85.208.49
+	 In-Reply-To:To:Cc; b=e2Q0XS7WAj95nwayRv4waFFYZfjMRPcF8kdQ1S1TDktGqta1dVf+ty4aKxS5aHIMdhltUztjGXMkKLMqZxGEDD7jX3wI1bPunn1vIG0m4/SDkdP/M2mlr+lpv5JllC0huYbDIcbdKZPvDsENYgSGuUOpl29qDw62ZEfFv+Cf9m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cM8AJS6S; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so8263087a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:46:11 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so9014699a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742895970; x=1743500770; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742895971; x=1743500771; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=22F3uA1pFjUSsqH5uZTrmsJjR2r2mTgeguTTuS3Ky1o=;
-        b=Px6WGxeMhXQBMSLGq1wFAABogETJ1BkQauAhD8XTDq5jNw52XZ9s+BhfrchA3w+93v
-         MOSK4fsrXQWMDBar2h1Xwi9PPWKimAai78el+cPxtKXoEtjK2b5c92FX204N14RzfV54
-         CgN2u28mEf1k3/5ZfhygR23viIWCO/hSMydYkdJutB/rdE5hjTc0I+xQ3SIDek+gmXVJ
-         j3P48UG5Ikg3/psVBn4G8RW3g24DzNqjPbPTk4abzuTFzopF0Zn3X7p0CAjGAMz5SJKl
-         XJ/CGH7i7ivmVvzaQYqFZB0luVNWzBFuQk98146Qh0vp4v8zgoOsv6XDuqnegSbu9ibr
-         Dyyg==
+        bh=u6Fu6WaKV6UwFUaV1JRbU4BYRYqi9fvopRa8oATbj0Q=;
+        b=cM8AJS6SIcApbWUlfjRAvQBOndqq8xy6NPu4i4FiOiFPAZrntpMTYYzROQsXt1/yMw
+         OSTpsjr0qlg0raV6TDEnZiYLW+v9HG0H0X+CiSFFZLM4MnuVx+KL0hOG8VrwZgu32ay9
+         zdW/X5ZqR0J92zhglj3Er1Dqezulz9Uwdu2cxw7lDtQ9xZXrHLfBpMbT8MVdnJbxi56t
+         /fs4HGAyGCCgw3I6mbgZxiSiBU1aB2LFaBolzsklbt55Z2CL5n4P904FsY8LFLNlszyw
+         nH3+Ow3y1zZbb45CclDDjoYUsYuCncwulhy1d890ivDXUlBvfIJag/FPVuQR149Fqwf1
+         a7Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742895970; x=1743500770;
+        d=1e100.net; s=20230601; t=1742895971; x=1743500771;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=22F3uA1pFjUSsqH5uZTrmsJjR2r2mTgeguTTuS3Ky1o=;
-        b=VvWPS4QnuZTAyIKY0E02OROew0/yh68ChzG/1dkesGBB86yJpHpOJfAnHyr2BHw+O2
-         lwDYhH0fnFmrTOEwZr6RIUiZD1TeKj3E0YL0o4a8dFUEOodjn781Oc7FV2KzfnLO98ZU
-         vNrHPzbnTA9tWRXqKsX373DrVIa0R6R4+bTQq9/qC6ej8Je7SQBtC9i8d1JbQepEGamz
-         ZbiSZb64Nb6ruVTQw1E+80q8t9JhcaH4h53YoJeIdZUS/n9sTnN8cczKuO1LysV5yPXN
-         wq0lGAzXRuSPMzjmmp6cyjPpYyHrHIwbtE57FRyQvc66EW+k4N4HKCmwwSG9z9pOjMru
-         L9UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9KzIIqeqDJOAPkboXqNPonXlfje18SPPQXHTUxo9JsbCUSkfIszgH5kjPpx1iY96cSARvcONFHCT3xKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3VrOoA9IqFrcNwu3AWtDjVDjYIxzp3gCFaAzGYPpJ5n1XAlGc
-	iBdfMnXLDwJl0citmJvWv7szDsBxe84Gvin+E8gnJJZK496ocPldt7qQe61EdTZZRKQyd2Ru50h
-	7yTI=
-X-Gm-Gg: ASbGnctuBw/mRc/FMQs+MBZm3hpXgeC3iUx9Iw32UAM76dnVkAOk2J+HUW4vvdJHrt5
-	eCBY8dDu+87/asH9Ro2iWq6F/1DAkEjK4MnXyYNoaxdceu+suXUwre03O6Yze4ugB5z8zIYjpoH
-	SgAe96ffvOwtH4FBEQMHP1Mu0he6WtKD2covQmIpMVxNWphDn8G7XsUwWhXpXBJhhy81JG9ilsn
-	tHwNuQ+7dPIsXNE6Po1xJT1piwTlGuYiX3du3aZyTHfqaOUz4gDbApNGQ9HAW/pRzEdJWjUQC1G
-	Ksc8EPEIxzccNd+vkf0ijTwp7TyP0/y2mnYOrVyEcCOP86LcupOCZPqUQRhDF5A6goS9F2KA6X7
-	fCD2LFumCviNGqsFCnJ95T1gWM4O5
-X-Google-Smtp-Source: AGHT+IHxghepagNA7JYR+0kzFqQK/51FZuRNjy/iCwlqs4UQAA4cdYxiEkKhK4hN7ohtA8n2bEJxNg==
-X-Received: by 2002:a17:907:bb4b:b0:ac1:e14a:19d6 with SMTP id a640c23a62f3a-ac3f1e494e8mr1615547566b.0.1742895970048;
+        bh=u6Fu6WaKV6UwFUaV1JRbU4BYRYqi9fvopRa8oATbj0Q=;
+        b=QIezg2aW4VYTjkHZzlAR1t610Dn77XKOi7B5nCAsIVRrQZ2+n6biqPeGpvtImw+of/
+         WeORcMf0qcRXTYaHSx6xzCsNLqDDEhkm3wLVWxJEZQVQWpCRwRnTT5uJOnWw6MUJ09Ue
+         u/nHiJ/SsvJccZGXgXQrxwuF7ZnCH/VbsdJY6cpf5Ur+lU+eUPTsRvZAAUX09XLZ0sHt
+         h6D1zrHOI/rBtW9A+kjyWxMJ3Mo76EYhM9uTl7Ddi5bSgO827ypg8WesX3ZfzXxzCO9H
+         4qY4JyuJ4S15fOnlR5jBDQWsQZJXEglKqO5doQC0PByvYGzloFsw+EqW956DA8KsgE14
+         QEhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmdQzzawkrJpCFlNDYj7qXN8qCJkw124YCJM3/PdxvkyR1eFfhlJxViOBSQwhv5ymcsrJs4ePg+mzb4CI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMK+KCsb+2ZPsz8H/57untyvxlYEFh+tG3XM1/oxWv2akuE3/Z
+	yJyzTZ3YoPanoApTBKGppVQTyn3RG/YtIdmWQh+PyB8pa9M4RFVl8qcccKnPyjLi3OGEJmnzwat
+	oHPg=
+X-Gm-Gg: ASbGncvluE3glz4zd4EmHtlqHrEqNOW79jVwqmxilLUGuA5gVMMie/rSKzH987qA0G2
+	9bjUk6SylsSxwe5j2qfuy12m649YBAKf/yZ5ejapyVMSf3FvOTp4X3I+j1plDk65iG90PEAFAEF
+	ChmmVWkw2b83xIDFPxlx6mx8eBN2JpagpQ3PjSCN8Yo9LKiN8yp9UYpWEmrXa359tJuouziaW/o
+	y6T7RtvAfTBYIn8ugXstGskxCrOiFlUlVf6YoUEsQqUja5TjYDAkKUMWWmSOhLMRgqexQ6BnoNH
+	OFZuaV0Jh0Y/wAK9HngrCHnMeyGwf4+AQYZ+lFDA8O3iZC0czJjs27/a1BUwZYhW3xwxdlr04dr
+	VzzcGQho32uplBPGZ5YwOvIA45dV8
+X-Google-Smtp-Source: AGHT+IHJAkOOtBg6Ow48+caX8OWgjB0vQLeBKP45DnYtGc5Gk49AKHqQCTiXRKEbwQxhd5ygBBxnoQ==
+X-Received: by 2002:a17:906:4795:b0:ac3:b372:6d10 with SMTP id a640c23a62f3a-ac3f2081eaamr1405346066b.4.1742895970561;
         Tue, 25 Mar 2025 02:46:10 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e509dsm832834566b.68.2025.03.25.02.46.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e509dsm832834566b.68.2025.03.25.02.46.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 02:46:09 -0700 (PDT)
+        Tue, 25 Mar 2025 02:46:10 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 25 Mar 2025 09:46:07 +0000
-Subject: [PATCH v3 1/2] firmware: exynos-acpm: use ktime APIs for timeout
- detection
+Date: Tue, 25 Mar 2025 09:46:08 +0000
+Subject: [PATCH v3 2/2] firmware: exynos-acpm: allow use during system
+ shutdown
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250325-acpm-atomic-v3-1-c66aae7df925@linaro.org>
+Message-Id: <20250325-acpm-atomic-v3-2-c66aae7df925@linaro.org>
 References: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
 In-Reply-To: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
@@ -98,83 +98,44 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.14.2
 
-acpm_dequeue_by_polling() uses a loop counter and assumes that each
-iteration of the loop takes 20us. It may take longer, though, because
-usleep_range() may sleep a different amount.
+We need to access the PMIC during late system shutdown and at that time
+we are not allowed to sleep anymore.
 
-Switch to using ktime_get() / ktime_before() to detect the timeout
-condition more reliably.
+To make this case work, and since we can't detect this case in a
+non-racy way, switch to using udelay() unconditionally, instead of
+usleep_range().
 
-This change also makes the code easier to follow and it allows us to
-adjust the sleep if necessary, without having to adjust the loop
-counter exit condition.
-
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
 ---
 v3:
-* slightly reword commit message due to updated patch 2/2
+* use udelay() unconditionally (Krzysztof)
+* drop previous Rb tag
 
-v2:
-* add missing ktime.h
-* ktime_before() instead of !ktime_after() (Tudor)
+udelay(20) causes a checkpatch --strict warning (it suggests to use
+usleep_range() instead for usec >= 10), but that's exactly what we can
+not do.
+Reducing the udelay to be smaller than 10 will generally cause the loop
+to be iterated more than once, which I wanted to avoid.
+I could reflow the code to hide the actual value from checkpatch, e.g.
+with the help of a local variable if that is preferred to ignoring the
+checkpatch warning.
 ---
- drivers/firmware/samsung/exynos-acpm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/firmware/samsung/exynos-acpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
-index a85b2dbdd9f0d7b1f327f54a0a283e4f32587a98..542eaff03f9e39422a8c5345ca75e05c1710a9ee 100644
+index 542eaff03f9e39422a8c5345ca75e05c1710a9ee..379da420b9eb3fcbca5461bec7e2de6bf0774659 100644
 --- a/drivers/firmware/samsung/exynos-acpm.c
 +++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -15,6 +15,7 @@
- #include <linux/firmware/samsung/exynos-acpm-protocol.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/ktime.h>
- #include <linux/mailbox/exynos-message.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
-@@ -32,8 +33,7 @@
- 
- #define ACPM_PROTOCOL_SEQNUM		GENMASK(21, 16)
- 
--/* The unit of counter is 20 us. 5000 * 20 = 100 ms */
--#define ACPM_POLL_TIMEOUT		5000
-+#define ACPM_POLL_TIMEOUT_US		(100 * USEC_PER_MSEC)
- #define ACPM_TX_TIMEOUT_US		500000
- 
- #define ACPM_GS101_INITDATA_BASE	0xa000
-@@ -284,12 +284,13 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
- 				   const struct acpm_xfer *xfer)
- {
- 	struct device *dev = achan->acpm->dev;
--	unsigned int cnt_20us = 0;
-+	ktime_t timeout;
- 	u32 seqnum;
- 	int ret;
- 
- 	seqnum = FIELD_GET(ACPM_PROTOCOL_SEQNUM, xfer->txd[0]);
- 
-+	timeout = ktime_add_us(ktime_get(), ACPM_POLL_TIMEOUT_US);
- 	do {
- 		ret = acpm_get_rx(achan, xfer);
- 		if (ret)
-@@ -300,11 +301,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+@@ -300,7 +300,7 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+ 			return 0;
  
  		/* Determined experimentally. */
- 		usleep_range(20, 30);
--		cnt_20us++;
--	} while (cnt_20us < ACPM_POLL_TIMEOUT);
-+	} while (ktime_before(ktime_get(), timeout));
+-		usleep_range(20, 30);
++		udelay(20);
+ 	} while (ktime_before(ktime_get(), timeout));
  
--	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx, cnt_20us = %d.\n",
--		achan->id, seqnum, achan->bitmap_seqnum[0], cnt_20us);
-+	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx.\n",
-+		achan->id, seqnum, achan->bitmap_seqnum[0]);
- 
- 	return -ETIME;
- }
+ 	dev_err(dev, "Timeout! ch:%u s:%u bitmap:%lx.\n",
 
 -- 
 2.49.0.395.g12beb8f557-goog
