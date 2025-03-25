@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-574861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943DEA6EADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:51:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3A5A6EADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D637188BC63
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:51:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A011698C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D651A314D;
-	Tue, 25 Mar 2025 07:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A6B253B75;
+	Tue, 25 Mar 2025 07:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kbQPfaqI"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LfSXwvPj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8161EA7DB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECD42F3B;
+	Tue, 25 Mar 2025 07:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742889091; cv=none; b=Nw8wcVzV77rJTec1q/sKZL+dWlDgOr7SK9CHAninWSe82NbbRH2sH4QJ/11n6B7vRf+CphL0PqKBgibGJDPDvdgOP9VW9xLzKGvz42JKzTu1KhiEv/CvWGA4CxzV1SedwJOgwG4Dpk9Feh1zhCabO7pofEdlFarI+cIOXx5wDhQ=
+	t=1742889233; cv=none; b=i3GOLhZWdtTXODiGTc26if5FMFR7zdI8mzR4VrptUgzjuOxcwbpzSLpP6jQffZp7gQ8nbohI+wIRjo9hXUG+ZavzWJaAwFAuxoFxtVaTT7TPEE0NQkpt2RbXK4isRUA/ctOtMEMhaySgeVsiyAZBwBL8shFKzGEboHybD9N58Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742889091; c=relaxed/simple;
-	bh=uDbdLw6yp0gVrTI5Xoe8EYwaKf5va/kxjisVUrf0L7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgiKya3ao298fSl9l+Xw3DZzdp+MOfMEf1szY1YMY7Q17i2a514dz3rfBOXhk/WgxbbAO9mI0yV3x5Ile4OiBFzP9HPqbFSO06bLrJibilm7uG6gE2LU9tDPGe0uuMJDXScRF6HT7y53pNMlHcGA9w2CNe2fYNmWELB9hghN1zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kbQPfaqI; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=uDbd
-	Lw6yp0gVrTI5Xoe8EYwaKf5va/kxjisVUrf0L7g=; b=kbQPfaqIcvqcma5fsAeH
-	XBx05Kuxtj+svstjnqhFmlEm5Dimv6BtvZSECXwinPZr2992CRk8+sZ0+1t/FalD
-	LGxZ7rdHQ/K783JglKler2fJi9QvXvf/lFHRCC8AWMmy+KRegyx8hH+5GyeTM+ZN
-	ahQAktbRnyHd4q5r2E9Q6lSCxE2VHlsAYhK32fWiRSNrijcdxxBWwzEwyaJWdejB
-	nKAH8Y+Oz0FvnZTxIJ2C4QZL/PbeqLkleYhKc/cmGbvdk7jZcPY9Im8W8h7aRTFH
-	LdgVzzv57bFchJQ/9t/jOotmVmUET53k8Z6OdD5tenzu3pNcg0LtYro831v84MQr
-	Qw==
-Received: (qmail 2926641 invoked from network); 25 Mar 2025 08:51:24 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 08:51:24 +0100
-X-UD-Smtp-Session: l3s3148p1@yKi9/CUxqIYgAwDPXyTHAJp038nK7dx+
-Date: Tue, 25 Mar 2025 08:51:18 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-Message-ID: <Z-Jgdi5_SizHzcO0@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
- <Z-EpPL3tn54E8KG5@shikoro>
- <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <Z-HVD6w6ivYR6pt5@shikoro>
- <TY3PR01MB1134602E988AD8428422E820086A72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1742889233; c=relaxed/simple;
+	bh=XrQaZRjO8ew439JNY1EllTC2gQVCKQ4kEK6eziMXiUY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ghVOMX5z4g3BWXfti20GHWirY4wfORAwurqJD2F1hp8ijD8hZi39jcKc5zu69Abz+0/3KZmxB6xZ6DMQ7AJt4hamSxSbuyMFxu/q66ALJoo9khCfpv2DtOATIO21tXHc5Pg4FTeMnqVhUthGXhMW0Pg0UkdxKoiAV2bDTsKWqgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LfSXwvPj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P5vVsv002251;
+	Tue, 25 Mar 2025 07:53:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CIcq8a62kenyIjAeBivGBN
+	WGYfvvNjBtVMn6t23wi/s=; b=LfSXwvPjxTmv+0CVb5KPDT25SK1mmOqXKhseXr
+	wipmJJ7KImGEuWDbHN6H0/FzTqhbS98PKkOKLj1ur2pvFuirnyaRuM33jJkBNiP8
+	OtsSUWpgKhYs8UUuzi4wvQEayylCtZtxXzQu7QUhD4vtnMWuIAKlTtYkEmmzp9wW
+	xmtey5LGIok7UhU+ShpYu9P9EtkKL6b8ZlcpUXxb8mL+rnGqGooZ69+aJObv4S3m
+	aUGubAmIrGQ4mLFzYTDPMcNVhAhuF03Qc2nShh9ZeUfXkG20n2PWiHt7gNm1gEac
+	dwUuEbsxKERRyXmR4ay78ByS9HyXUR+YFlSbgpi+V+bJjvGg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wex3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 07:53:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P7rk0q016200
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 07:53:46 GMT
+Received: from localhost.localdomain (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Mar 2025 00:53:43 -0700
+From: Stone Zhang <quic_stonez@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_miaoqing@quicinc.com>,
+        <quic_zhichen@quicinc.com>, <quic_yuzha@quicinc.com>,
+        Stone Zhang
+	<quic_stonez@quicinc.com>
+Subject: [PATCH v4 0/2] Enable WLAN for qcs8300-ride
+Date: Tue, 25 Mar 2025 15:53:29 +0800
+Message-ID: <20250325075331.1662306-1-quic_stonez@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o0zyLURa42vw/DRM"
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB1134602E988AD8428422E820086A72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Q8OygXmS0UOJzZwrgHpZ9mRnwWh6VFsz
+X-Proofpoint-ORIG-GUID: Q8OygXmS0UOJzZwrgHpZ9mRnwWh6VFsz
+X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e2610b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Yeman0STanS9RNZiH04A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_03,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=831
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250054
+
+Enable the WLAN subsystem of the qcs8300 ride board. The WCN6855 wireless
+chip is attached to PCIe interface 0.
+
+This patch series depends on:
+- PCIe
+https://lore.kernel.org/all/20250310063103.3924525-1-quic_ziyuzhan@quicinc.com/
+- PCIe SMMU
+https://lore.kernel.org/all/20250206-qcs8300-pcie-smmu-v1-1-8eee0e3585bc@quicinc.com/
+
+Changes in v4:
+- Rename the symbol pcieport0 to pcie0_port0 (Konrad)
+- Adjust the property order in node pcie0_port0 (Konrad)
+- Add to the commit message mentioning FW and BDF used by QCS8300 (Dmitry)
+- Specify the calibration data using the correct variant (Dmitry)
+- Link to v3: https://lore.kernel.org/all/20250318093350.2682132-1-quic_stonez@quicinc.com/
+
+Changes in v3:
+- Complete the nodes property definitions according to DTS binding requirements (Bjorn)
+- Link to v2: https://lore.kernel.org/all/20250227065439.1407230-1-quic_stonez@quicinc.com/
+
+Changes in v2:
+- Rename the nodes name according to DTS coding style (Konrad & Krzysztof)
+- Provide regulator-min/max-microvolt to the regulators (Konrad)
+- Link to v1: https://lore.kernel.org/all/20250210062910.3618336-1-quic_stonez@quicinc.com/
+
+Stone Zhang (2):
+  arm64: dts: qcom: qcs8300: add a PCIe port for WLAN
+  arm64: dts: qcom: qcs8300-ride: enable WLAN on qcs8300-ride
+
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 108 ++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi     |   9 ++
+ 2 files changed, 117 insertions(+)
 
 
---o0zyLURa42vw/DRM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: da920b7df701770e006928053672147075587fb2
+prerequisite-patch-id: c87e5f1cb29568c24566e8a960d6c8dd0be5969d
+prerequisite-patch-id: f80a486c6e34dfb62f09faf0eb3fae586cda85ec
+prerequisite-patch-id: 0e2cb7a4d8779539a58261111deea6bd6b750f6f
+prerequisite-patch-id: 8b9034fca96bd8edb5c4eca5b88811df7206120c
+prerequisite-patch-id: bb6ec99692ade9d7c89f91b5507cc0ee248e43dd
+prerequisite-patch-id: 32c051e9f77de6b53a4f4539ce49dde9859002ea
+prerequisite-patch-id: ccfa56b7d00a1139fbbdccdc13496bfc98440d5e
+-- 
+2.34.1
 
-
-> > > > > +config SERIAL_RZ_SCI
-> > > >
-> > > > I think this name is too generic. Most RZ-variants so far do not
-> > > > have this SoC. Would 'RZT2H' work or is it too narrow then?
-> > >
-> > > This is too narrow, because for instance the RZ/N2H , which is very
-> > > similar, has the same SCI
-> >=20
-> > You know the differences better, what could be a suitable name?
->=20
-> Please consider RZ/G3E and RZ/V2H SCI as well as it is almost similar IP.
-
-So, I am thinking to not use a name based on SoC but based on feature
-like SERIAL_SCI_32BIT or something. But I don't know the HW details
-enough to make the best possible name or maybe this is a bogus idea.
-
-
---o0zyLURa42vw/DRM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfiYHMACgkQFA3kzBSg
-Kba+fw/+PRZ7VzQDcXExbuLfx395bSnEEkQkT5J5qUkAJWBdYzoZz1rk/Eu9+Q1f
-wRCUjlpd6axW1URvCe3cbN3kcFc/5lpzsyN6T3ObjGSRfKw9hzIcEMtomzYx/QFu
-/O/GYEPzjND0QqYMBJ8+JSrPLEwbA+NvC0xU8RyBLtyUDTv7DtBkrtouZwxWKaVt
-WWA0FJIj6p1cv4reitbkGEQqBnPpgD7W5sAdKQeYKoqpvVH8GfCBZi0x2HbWj7XX
-u1Ge3ZOHTe98VC0mJTgI/TajTVfRUsFY+FPqn6/RSvoCCST48IVQLtjiq5GVJ517
-GGT8iXwbzQP2c7z96xKpaoaKuF2QRaHaPp6fbNMj3YVKhIOLvcl97C1JxRiuH9JY
-qh13iZk1LTOU/SBAC1TKND7gLiOOQ+sf34F/1l0Rb8v3Gb7vcSJuYzyv7F22PaPg
-sSCDd32MTQ7v4Cmx7+KujVBUF91HZm+22gzJgm1v9F9ub5YwiGJv9lkk4Xj47jAI
-VQ/o8522XPp+0xPbR+wK3bTwNC7FGNqTKpn4CKXRJgcjxs9YpXM2rh2ngdXDD5q+
-PhunpQxez5OU96ifRsXvwScZM/VW1mG3JJZk34WRc/1d/Rq5dHDO/m0+KYxtE7fQ
-tFI53uPXpioa/V7gxv6aTvMqhSwsfu+Y82R5G+pA2CnVJ+Gsx7M=
-=V7JO
------END PGP SIGNATURE-----
-
---o0zyLURa42vw/DRM--
 
