@@ -1,167 +1,182 @@
-Return-Path: <linux-kernel+bounces-575049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43907A6ECF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:48:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F021AA6ED1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D344A3B8EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40DA16F153
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61FB1F153C;
-	Tue, 25 Mar 2025 09:44:26 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076A7199FAB;
+	Tue, 25 Mar 2025 09:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpyNpvRm"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD01C15666B;
-	Tue, 25 Mar 2025 09:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED03C253F1F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895866; cv=none; b=BwzbTP3G9j++kxCB3H2aO7ff2mTBwy+0CagVMnRzlbnx4AUFCAtiI4trN+Zk6FITn4qQ8MfJJTIq2zLNm3UWG3bUTcb6xbEM1acdgWVSdAyEcryIWAmY7j2bGKnvBbk6E7pSVReUUJhkdxtDgjYi2XchBr0OZYg87yAGmc9djgw=
+	t=1742896513; cv=none; b=cNUqPwgG51jw0VJyEyzzVhwEaVOmBTsmf7M0P9N2Tt2uAyXqiRDMhqTMh4nkqEc9U9gPhHtQJTfloz3m8ISqVSVbqMzGKFaQKTPG5H7oP5ONcWN0YD38KwsKgmflBPK4TFEV4MciUccl9CwA2RK8LbuljDmno1dwlFNQXXEyxQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895866; c=relaxed/simple;
-	bh=YExHr+2mn/5PLGawiihdqqA9Qe1EXHQUBAkBpbg9IW4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RWhvcV+vI/QIx67RbrDHM0rbK/JVkWCZQ9zEcGiv2BMMmhfso9dD1XRcex47yeAED+3GNraRQ5LprT9dZyaMpxrqd2gRvr3yk7bF/dYBR+3e8H2oy3PeYKZX9Auqv6/UE2cqhXZzYoS+hQy2Px9x0jMMb/hKU57zemyppHdTUgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZMPyj382Mz1jBPp;
-	Tue, 25 Mar 2025 17:39:41 +0800 (CST)
-Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54F7B1A0188;
-	Tue, 25 Mar 2025 17:44:19 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemg200005.china.huawei.com
- (7.202.181.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Mar
- 2025 17:44:18 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<cong.wang@bytedance.com>, <kuniyu@amazon.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<wangliang74@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net] ipv6: sit: fix skb_under_panic with overflowed needed_headroom
-Date: Tue, 25 Mar 2025 17:54:49 +0800
-Message-ID: <20250325095449.2594874-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742896513; c=relaxed/simple;
+	bh=s3vRoJO9KCdRiGB7I2a3vCYZT0qYEi3rStspDL15YPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BML97ccghL2BKdTrpwbK9rPRyYG9Lzggte8q+MpJFDUjmEUckIY91o7MnIzX4VGw94G1A3JE/vSkpfEkIhhw1jIx45VwUdrh7r9umcKDkFhEhcEl/iSIVk0ywJf8P1rKQKUNi3tJIf2dFIiGtWtTR5KNjvfsXBYHMy53S0/0tNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpyNpvRm; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff69365e1dso7373576a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742896510; x=1743501310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OikC43tfGVqcaGJaSFtBGBt98zMmOylB8g82DSjPV3k=;
+        b=bpyNpvRm3kAzGTxN72OosjQpPSkRqD9aJPlBWsNK6A0mmcP1mnqfAuIkxm6aQYPH+H
+         e6705qrpm54ICv606WAG+5HodbzBKJzPaG2WdaxjlWAOIWvez3Q8paKeI2z/D6vsN6/H
+         k+v+ouUZa/iDsnhSQf9h6LWENVKJ5GoyQspmK0oDDs3du3V43bKOBLsdbpH4F8FmBeT3
+         i9GL8Axu00i5ZctICaqW51pkM3MC2K6Rw254YbNojD+SHtcd1Mwhp2nzzyA31qUPv0Fy
+         VTYUhuVFA64EVQvrTCKArtUr4NeIqn+QMe90OvJ8HN2EfLNDoP0JrivJRutdMRz9YbbX
+         nfdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742896510; x=1743501310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OikC43tfGVqcaGJaSFtBGBt98zMmOylB8g82DSjPV3k=;
+        b=j5/M21oFqj1Wokv6m0k9L7KOV5j71dzfzqHwH3h7n7EXN80D16QUi5SCUoEUjiXO30
+         2ufrx/nvTYg0KPCdbbb3t4NPbWjJwgNKTO//yK/npX4VWTjukqlNTUT9yiM6jS+bLsGJ
+         v6OtpQgbqcD9l7swCLm64rrpD056FQzCxs9SEjIGTT51KrvoUN5H83egE1D3ShBoaT9j
+         coJ81QTSV7IdJ5yOpS8n014vQV/CLp9P0V15CTYtZvWSquOq7tMeR2MlfIXWkVhsMJ6T
+         Y4fUquIoJuh3NWVlkPKzrp5smyxP/hoHrno36Qj7YjLFI3XWsO3z5SW6UslsLQBoU4ot
+         Kw3g==
+X-Gm-Message-State: AOJu0Yx0DaAlk/2aHInm3+2Duo+Gn+0c3iyV8vGK+u6w0p9Y0KccK3pO
+	eqzEinqhamr9av/Iavd4Xypa8JTDLGXv40fY++VizH0pzxEGcyCfWRRbG3q+KNksit1epldwrsk
+	bmdkyQqxDALbiAv9u94eq5aAQyrs=
+X-Gm-Gg: ASbGncukfyYm5fbzWRtkvaqX0LzceU2ef8TljfUV4aiGr4PivgDcXeEfB6XMQl6TRor
+	jIpMMMv+FfEQYxOjoDrFHF/PaAz8aLIBwL4cvPQjMWGnl81jGQavE0dnrOHtY43jHcB3gSbf6CE
+	qTGDbSIdBGR36NNFzhHkzc8Rr8tXW2L56yWYXo
+X-Google-Smtp-Source: AGHT+IGNIEeEUu6SigCoTSpIj9xYEpEWYK8C0NKYzoyZvgcjwlTLD0/P82xVLjttC0KKK2MAJ8X+XpE4+SSRkHydSjY=
+X-Received: by 2002:a17:90b:2647:b0:301:c5cb:7b13 with SMTP id
+ 98e67ed59e1d1-3030fe552f1mr23024928a91.3.1742896509787; Tue, 25 Mar 2025
+ 02:55:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200005.china.huawei.com (7.202.181.32)
+References: <CAJNi4rPaPeVWzBve6Toi8hhrxP6GROAGRug7+c3zg1crDeOt7Q@mail.gmail.com>
+ <875xk022wu.ffs@tglx>
+In-Reply-To: <875xk022wu.ffs@tglx>
+From: richard clark <richard.xnu.clark@gmail.com>
+Date: Tue, 25 Mar 2025 17:54:58 +0800
+X-Gm-Features: AQ5f1JqYEwNRR58lzDarOJKfOrvacm-ZDrKE_UsmaKh3gsTaUsm0aGs3qM00oss
+Message-ID: <CAJNi4rPtsUohpXgD28Bi7K4Y0G=ShgNuUmf1L3E4ze7txj_z0w@mail.gmail.com>
+Subject: Re: hrtimer precision issue/question??
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, richard clark <richard.xnu.clark@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When create ipip6 tunnel, if tunnel->parms.link is assigned to the previous
-created tunnel device, the dev->needed_headroom will increase based on the
-previous one.
+Hi tglx, Thanks for the explanation! I tried run 'cyclictest -a 0 -t 1
+-m -p99 -r' to use the relative timer instead of absolute, now the
+output of the same diff as:
+[   63.824382] [ 0- 0]t0=3D63816686720,t1=3D63817689248,d=3D1002 us
+[   63.825387] [ 0- 0]t0=3D63817691648,t1=3D63818694144,d=3D1002 us
+[   63.825691] [ 4- 7]t0=3D63808939136,t1=3D63818998336,d=3D10059 us
+[   63.826392] [ 0- 0]t0=3D63818696544,t1=3D63819699456,d=3D1002 us
+[   63.827402] [ 0- 0]t0=3D63819704352,t1=3D63820709120,d=3D1004 us
+[   63.828407] [ 0- 0]t0=3D63820712448,t1=3D63821714976,d=3D1002 us
+[   63.829413] [ 0- 0]t0=3D63821717536,t1=3D63822720032,d=3D1002 us
+[   63.830417] [ 0- 0]t0=3D63822722496,t1=3D63823724928,d=3D1002 us
+[   63.831423] [ 0- 0]t0=3D63823727264,t1=3D63824730912,d=3D1003 us
+[   63.832429] [ 0- 0]t0=3D63824734176,t1=3D63825736768,d=3D1002 us
+[   63.833434] [ 0- 0]t0=3D63825739168,t1=3D63826741568,d=3D1002 us
+[   63.834439] [ 0- 0]t0=3D63826743904,t1=3D63827746432,d=3D1002 us
+[   63.835445] [ 0- 0]t0=3D63827748832,t1=3D63828752576,d=3D1003 us
+[   63.836164] [ 7- 4]t0=3D63819412064,t1=3D63829471328,d=3D10059 us
+[   63.836452] [ 0- 0]t0=3D63828755936,t1=3D63829760032,d=3D1004 us
 
-If the number of tunnel device is sufficient, the needed_headroom can be
-overflowed. The overflow happens like this:
+Now I am wondering if the cyclictest will have the same result using
+the relative timer instead of absolute, suppose all the other
+conditions are the same?
+Also the '-a 0' set affinity to cpu0 and only one timer thread with
+'-t 1', don't know why some cyclictest migrate(?) to the other cpus
+than cpu0, any comments about this...
+Thanks!
 
-  ipip6_newlink
-    ipip6_tunnel_create
-      register_netdevice
-        ipip6_tunnel_init
-          ipip6_tunnel_bind_dev
-            t_hlen = tunnel->hlen + sizeof(struct iphdr); // 40
-            hlen = tdev->hard_header_len + tdev->needed_headroom; // 65496
-            dev->needed_headroom = t_hlen + hlen; // 65536 -> 0
-
-The value of LL_RESERVED_SPACE(rt->dst.dev) may be HH_DATA_MOD, that leads
-to a small skb allocated in __ip_append_data(), which triggers a
-skb_under_panic:
-
-  ------------[ cut here ]------------
-  kernel BUG at net/core/skbuff.c:209!
-  Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-  CPU: 0 UID: 0 PID: 24133 Comm: test Tainted: G W 6.14.0-rc7-00067-g76b6905c11fd-dirty #1
-  Tainted: [W]=WARN
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
-  RIP: 0010:skb_panic+0x156/0x1d0
-  Call Trace:
-   <TASK>
-   skb_push+0xc8/0xe0
-   fou_build_udp+0x31/0x3a0
-   gue_build_header+0xf7/0x150
-   ip_tunnel_xmit+0x684/0x3660
-   sit_tunnel_xmit__.isra.0+0xeb/0x150
-   sit_tunnel_xmit+0x2e3/0x2930
-   dev_hard_start_xmit+0x1a6/0x7b0
-   __dev_queue_xmit+0x2fa9/0x4120
-   neigh_connected_output+0x39e/0x590
-   ip_finish_output2+0x7bb/0x1f00
-   __ip_finish_output+0x442/0x940
-   ip_finish_output+0x31/0x380
-   ip_mc_output+0x1c4/0x6a0
-   ip_send_skb+0x339/0x570
-   udp_send_skb+0x905/0x1540
-   udp_sendmsg+0x17c8/0x28f0
-   udpv6_sendmsg+0x17f1/0x2c30
-   inet6_sendmsg+0x105/0x140
-   ____sys_sendmsg+0x801/0xc70
-   ___sys_sendmsg+0x110/0x1b0
-   __sys_sendmmsg+0x1f2/0x410
-   __x64_sys_sendmmsg+0x99/0x100
-   do_syscall_64+0x6e/0x1c0
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  ---[ end trace 0000000000000000 ]---
-
-Fix this by add check for needed_headroom in ipip6_tunnel_bind_dev().
-
-Reported-by: syzbot+4c63f36709a642f801c5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4c63f36709a642f801c5
-Fixes: c88f8d5cd95f ("sit: update dev->needed_headroom in ipip6_tunnel_bind_dev()")
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/ipv6/sit.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
-index 39bd8951bfca..1662b735c5e3 100644
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1095,7 +1095,7 @@ static netdev_tx_t sit_tunnel_xmit(struct sk_buff *skb,
- 
- }
- 
--static void ipip6_tunnel_bind_dev(struct net_device *dev)
-+static int ipip6_tunnel_bind_dev(struct net_device *dev)
- {
- 	struct ip_tunnel *tunnel = netdev_priv(dev);
- 	int t_hlen = tunnel->hlen + sizeof(struct iphdr);
-@@ -1134,7 +1134,12 @@ static void ipip6_tunnel_bind_dev(struct net_device *dev)
- 		WRITE_ONCE(dev->mtu, mtu);
- 		hlen = tdev->hard_header_len + tdev->needed_headroom;
- 	}
-+
-+	if (t_hlen + hlen > U16_MAX)
-+		return -EOVERFLOW;
-+
- 	dev->needed_headroom = t_hlen + hlen;
-+	return 0;
- }
- 
- static void ipip6_tunnel_update(struct ip_tunnel *t,
-@@ -1452,7 +1457,9 @@ static int ipip6_tunnel_init(struct net_device *dev)
- 	tunnel->net = dev_net(dev);
- 	strcpy(tunnel->parms.name, dev->name);
- 
--	ipip6_tunnel_bind_dev(dev);
-+	err = ipip6_tunnel_bind_dev(dev);
-+	if (err)
-+		return err;
- 
- 	err = dst_cache_init(&tunnel->dst_cache, GFP_KERNEL);
- 	if (err)
--- 
-2.34.1
-
+On Sun, Mar 23, 2025 at 5:04=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Sat, Mar 22 2025 at 11:20, richard clark wrote:
+> > With diff below under the 'cyclictest -a 0 -t 1 -m -p99' trigger from
+> > the arm64-based linux box, the interval is 1000us and the arch_timer
+> > in the system is: arch_timer: cp15 timer(s) running at 31.25MHz
+> > (phys).  1tick =3D 32ns for the arch timer, I am not sure if those
+> > durations less than 1000us are expected?
+>
+> With your method of measurement yes. There is a german saying, which
+> describes this. It roughly translates to:
+>
+>    "Who measures a lot, might measure a lot of garbage."
+>
+> But it accurately describes, what you are measuring here. You do:
+>
+>     t1 =3D ktime_get();
+>     arm_timer(T);
+>     schedule();
+>     t2 =3D ktime_get();
+>
+> and then look at t2 - t1. That only tells you how long the task actually
+> slept. But that's ignoring the most important information here:
+>
+>     arm_timer(T);
+>
+> cyclictest uses:
+>
+>            clock_nanosleep(clockid, ABSTIME, &T);
+>
+> and T is maintained in absolute time on a periodic time line.
+>
+>     T =3D starttime + N * interval;
+>
+> So the only interesting information here is at which time the task
+> returns from schedule(), i.e. you want to look at:
+>
+>         t2 - T
+>
+> Why? Because that gives you the latency of the wakeup. That's what
+> cyclictest is looking at in user space:
+>
+>            clock_nanosleep(... &T);
+>            clock_gettime(..., &T2);
+>            latency =3D T2 - T;
+>
+> Now what you are looking at is the time at which the cyclictest task
+> comes back into the kernel to sleep, which is obviously
+>
+>            t1 =3D T[N] + latency[N-1] + execution_time;
+>
+> But the timer is armed for T[N], so your t2 is:
+>
+>            t2 =3D T[N] + latency[N];
+>
+> You surely can do the remaining math and map that to the output:
+>
+> > [  165.555795] [ 0- 0]t0=3D165550399226,t1=3D165551394303,d=3D995 us
+> > [  165.556802] [ 0- 0]t0=3D165551398751,t1=3D165552400997,d=3D1002 us
+>
+> Right?
+>
+> Thanks,
+>
+>         tglx
 
