@@ -1,180 +1,171 @@
-Return-Path: <linux-kernel+bounces-575423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6090BA70243
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:41:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38389A70244
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:41:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BFA317275F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8B2189D95C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5BC2566FA;
-	Tue, 25 Mar 2025 13:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FC925BAD8;
+	Tue, 25 Mar 2025 13:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mN2B/xak"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQ4xG7Yp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B6118027;
-	Tue, 25 Mar 2025 13:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F8A1DE8B4;
+	Tue, 25 Mar 2025 13:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909415; cv=none; b=Cosz5hHPULUq+qQKrem+07RAVSuE4dG+1qzsdgY5YkvH5Jmn6nbksef7OTLCLtFw7upFtf/pMf9/McX2MVAs4AM+kXGZreQbWhdjiyCN6ZNSH2n0bKcJDFWUysvCSM+5kqsjSnlaEOJZNHxrPPbG9pZ+1mgDPfsS9TdVPbkBd8o=
+	t=1742909484; cv=none; b=UpIytnRlgbefpSg+hBo5LX7nZGQqUr5WA8fXD8ZqQRU/E0ZEOgGZQIZQOD8VFlIyELuYNVeaOdjMX5nnHnwsHSniA/F0CH/qxy2cmLd95w+ESs9FDIHb8ZZi4G4AsQ7nbLPP6wa/Qw157f6VAgFrr264j7DaDYC2vdbKFV8NBc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909415; c=relaxed/simple;
-	bh=pvUDOqjEhh6pD2PP/Wfy1+RA/r3jcg+Vawc2vWETGIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wz73J6SkEYoCSsODybYX4yuzKqYF3SM+a+uF5+66xEBxmySW0tNR1DfhYiFIfG+MLgni/gPKMnNOMCZm2duawh1ElRSJJ7fcgmdCpGcKGKE8BgJi2jPrN7bOluGLVJz7V0iInMaXhSKH/4OK/WrYnOPgjoy+Wnqi3jVP6+w5PZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mN2B/xak; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac29af3382dso949512166b.2;
-        Tue, 25 Mar 2025 06:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742909411; x=1743514211; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ThxKKB9wKE3kLciqa5eBDiDy0qqnYVk2yCJkc0l3CXU=;
-        b=mN2B/xakLlg4MBLzJGsycpuy/SR9InPg7UlinXHe261uKVgE+oTToqDSKI0CuuUenk
-         1JtcMumYoDw1vmzxtt068Mwc7DzDeYgeqXAYG44RA4MAM+ehOnoPMnHwiOQ2REaIYvCI
-         8XnIoR5sPFvawIJLdwMhGaoOUXlSrmNsSVX/3A2QpP87a4hpcjRdpItqx+BwYJNZrQ6d
-         z47WoOPUoIP7whcBsWehEVTcVtu0LmBK6OsNTCMK5n76aY3St3Xb5ek8LZUTJoitx8I8
-         tty1u6PO66MlaZVzK5b5l0kRgYw89V0Qel3igqRzXvx11GpaXMtXiJ6X5iLzUe0Z7lef
-         4eBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742909411; x=1743514211;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThxKKB9wKE3kLciqa5eBDiDy0qqnYVk2yCJkc0l3CXU=;
-        b=UkEiaeHrMB6EB3mF4uXltTe1aNf2Lm72uNLH89UfB5e8Jm1Ahu5m1IZaNpIrxVcuMf
-         fIwsP8Z3XIIuesTIn7/QKkjkNL9al9VIsHBzQhcCZVMULewoTmffywFmCOw6BCPwWbWv
-         xr5mVWan4YqsMrEK5HrjVKf/Dmk3d/t0WRZY0MYrSdUE77oh5HBWwnKr6MbxZycF90sa
-         51EaSh8qzi/YDHhyfwGOPZcw/OsmhxNTmBV9urmo/J2wuR/T93g/wKhsqGLjZCWNFNUC
-         4MCtbhutX+L3rYzl/NYltnyy2tQc8236sfVXjwMdsisuQ55BUJRiVBDFkcePbYZH+nPk
-         lBFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGHl6miqc13pcfFsTuxrayT2wEPOej7eFwXI9E6Rt+5UwiKj5dPb0sS93fyS/nMVILHeeAM9+xp3VBHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5l9rekY8AfxCJFg3ZaC6TGAH1hBxT/v09AUHTuxHLIMvn6Jo
-	UlwlMvjLBsXeWw0zMcTSkm6ZqNodoPcxBlAjEiIBjVvxmMC+UZeKgFO2HQ==
-X-Gm-Gg: ASbGncsOFP7rSrUq7Kw/lhbIcy5qFNXR0322HjFARGAG+r9AqSE1sGGBkJDDHFXXEvg
-	7VlwbVgZmJ9lKWOIV+gDpUeqtEiHSO5RcUmsJ228QYHUoeozre51ZeavOzzthaoBj0j43+VKjMY
-	xbY+R9ofTIYO6x4jyt9pIh/kiL41vfjF5qavQIHQlyh5OMnggH0tKKXtcnIozrb46h/aEcJQF+e
-	5tYCJJkH/6KKWChC2T0m107uEwpGXSr3g7J008bW//olc678+3sLuu/6d2YztrXwf67Z1aPUKvr
-	S6nv2tf53PDnmrW1hGiMY8+dTjVZi+l9fzCd4oYJiH5bySkW56TGn3M=
-X-Google-Smtp-Source: AGHT+IGNKHXotOMwpOQaaVUB7zQxZu0oFc/vWQlra2MlK+eLUShyy/i9ZscfPWFrDjUVu8YQHH2Eyg==
-X-Received: by 2002:a17:907:97d3:b0:ab7:bac4:b321 with SMTP id a640c23a62f3a-ac3f2286cc9mr1545955766b.29.1742909411180;
-        Tue, 25 Mar 2025 06:30:11 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.141.160])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6964189b3sm417566066b.3.2025.03.25.06.30.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 06:30:10 -0700 (PDT)
-Message-ID: <8b22d0df-f0ea-4667-b161-0ca42f03a232@gmail.com>
-Date: Tue, 25 Mar 2025 13:30:59 +0000
+	s=arc-20240116; t=1742909484; c=relaxed/simple;
+	bh=q4pxLc2dsJbpfFd+rTznh5LCvEgCmB34/vWrz6De0hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9TK2kPk0vj0bGv1hq1iB1q3Y03g2+quPtR8VH98VZRV0uzzQ0Pwqy4R0d+oN/CCqy8a8WikhkkTxgUm8X+nX6WRd2AbWjXKQqzZylEGH+s2U6UU0+8WHtIlHed59pTUtnFjDVfKyZeESYFGWdNqhiAr/kihYj88tQ1bawBGA9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQ4xG7Yp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47520C4CEE4;
+	Tue, 25 Mar 2025 13:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742909483;
+	bh=q4pxLc2dsJbpfFd+rTznh5LCvEgCmB34/vWrz6De0hM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uQ4xG7YpFCzolFz84asQ+QJ82OXo1g1LtIlsQlOWhhRwD+nk18Wd8Jf0edbDo3O9U
+	 NW7lerGkosc0mN4dYIHBovNJkXACPYbipALjVO2ZHIwln7oZH/Fn4QsB6ikndNydrQ
+	 8tJOOrGbO2B0JqCZO7Hiu73r+TsSCSR/SlKwVd3uj65HDnWj15IAgPrZOdq3OHh8Uq
+	 Rlfa9zMdWSdlHsvZWyIy0iRF/W6OsruZyjF2sIADhDZ9WpP5ufT0B/s9aOZkSr9lHB
+	 LQhpsKOsKzFlk8Em3jsjGHeiPBQdq02DDHw2lxomba7WgCi9tuBMnmiSWmrekqVOac
+	 I6tI1K4JAQB9A==
+Date: Tue, 25 Mar 2025 14:31:20 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Marco Crivellari <marco.crivellari@suse.com>,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Subject: Re: [PATCH v6 1/1] MIPS: Fix idle VS timer enqueue
+Message-ID: <Z-KwKACJQhH98EoW@localhost.localdomain>
+References: <20250315194002.13778-1-marco.crivellari@suse.com>
+ <20250315194002.13778-2-marco.crivellari@suse.com>
+ <alpine.DEB.2.21.2503211146001.35806@angie.orcam.me.uk>
+ <Z93Vj7BLTEvgWwda@pavilion.home>
+ <alpine.DEB.2.21.2503221516450.35806@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: use REQ_F_IMPORT_BUFFER for send_zc
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324151123.726124-1-csander@purestorage.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250324151123.726124-1-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.2503221516450.35806@angie.orcam.me.uk>
 
-On 3/24/25 15:11, Caleb Sander Mateos wrote:
-> Instead of a bool field in struct io_sr_msg, use REQ_F_IMPORT_BUFFER to
-> track whether io_send_zc() has already imported the buffer. This flag
-> already serves a similar purpose for sendmsg_zc and {read,write}v_fixed.
+Le Sat, Mar 22, 2025 at 04:08:31PM +0000, Maciej W. Rozycki a écrit :
+> On Fri, 21 Mar 2025, Frederic Weisbecker wrote:
 > 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-> ---
->   include/linux/io_uring_types.h | 5 ++++-
->   io_uring/net.c                 | 8 +++-----
->   2 files changed, 7 insertions(+), 6 deletions(-)
+> > > > diff --git a/arch/mips/kernel/genex.S b/arch/mips/kernel/genex.S
+> > > > index a572ce36a24f..4e012421d00f 100644
+> > > > --- a/arch/mips/kernel/genex.S
+> > > > +++ b/arch/mips/kernel/genex.S
+> > > > @@ -104,27 +104,30 @@ handle_vcei:
+> > > >  
+> > > >  	__FINIT
+> > > >  
+> > > > -	.align	5	/* 32 byte rollback region */
+> > > > +	.align	5
+> > > >  LEAF(__r4k_wait)
+> > > >  	.set	push
+> > > >  	.set	noreorder
+> > > > -	/* start of rollback region */
+> > > > -	LONG_L	t0, TI_FLAGS($28)
+> > > > -	nop
+> > > > -	andi	t0, _TIF_NEED_RESCHED
+> > > > -	bnez	t0, 1f
+> > > > -	 nop
+> > > > -	nop
+> > > > -	nop
+> > > > -#ifdef CONFIG_CPU_MICROMIPS
+> > > > -	nop
+> > > > -	nop
+> > > > -	nop
+> > > > -	nop
+> > > > -#endif
+> > > > +	/* Start of idle interrupt region. */
+> > > > +	MFC0	t0, CP0_STATUS
+> > > > +	/* Enable interrupt. */
+> > > > +	ori 	t0, 0x1f
+> > > 
+> > >  This instruction sequence still suffers from the coprocessor move delay 
+> > > hazard.  How many times do I need to request to get it fixed (counting 
+> > > three so far)?
+> > 
+> > This is because your request had follow-ups from Huacai and Marco that
+> > were left unanswered:
+> > 
+> >      https://lore.kernel.org/all/CAAhV-H5ptAzHTPAr1bxrgByZrnFmMK8zJ68Z++RwC=NHWjqZmw@mail.gmail.com/
 > 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index c17d2eedf478..699e2c0895ae 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -583,11 +583,14 @@ enum {
->   	REQ_F_BUFFERS_COMMIT	= IO_REQ_FLAG(REQ_F_BUFFERS_COMMIT_BIT),
->   	/* buf node is valid */
->   	REQ_F_BUF_NODE		= IO_REQ_FLAG(REQ_F_BUF_NODE_BIT),
->   	/* request has read/write metadata assigned */
->   	REQ_F_HAS_METADATA	= IO_REQ_FLAG(REQ_F_HAS_METADATA_BIT),
-> -	/* resolve padded iovec to registered buffers */
-> +	/*
-> +	 * For vectored fixed buffers, resolve iovec to registered buffers.
-> +	 * For SEND_ZC, whether to import buffers (i.e. the first issue).
-> +	 */
->   	REQ_F_IMPORT_BUFFER	= IO_REQ_FLAG(REQ_F_IMPORT_BUFFER_BIT),
->   };
->   
->   typedef void (*io_req_tw_func_t)(struct io_kiocb *req, io_tw_token_t tw);
->   
-> diff --git a/io_uring/net.c b/io_uring/net.c
-> index c87af980b98e..b221abe2600e 100644
-> --- a/io_uring/net.c
-> +++ b/io_uring/net.c
-> @@ -75,11 +75,10 @@ struct io_sr_msg {
->   	unsigned			nr_multishot_loops;
->   	u16				flags;
->   	/* initialised and used only by !msg send variants */
->   	u16				buf_group;
->   	bool				retry;
-> -	bool				imported; /* only for io_send_zc */
->   	void __user			*msg_control;
->   	/* used only for send zerocopy */
->   	struct io_kiocb 		*notif;
->   };
->   
-> @@ -1305,12 +1304,11 @@ int io_send_zc_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->   	struct io_ring_ctx *ctx = req->ctx;
->   	struct io_kiocb *notif;
->   
->   	zc->done_io = 0;
->   	zc->retry = false;
-> -	zc->imported = false;
-> -	req->flags |= REQ_F_POLL_NO_LAZY;
-> +	req->flags |= REQ_F_POLL_NO_LAZY | REQ_F_IMPORT_BUFFER;
+>  The conclusion made there is however wrong: `local_irq_enable' code 
+> plays no tricks with instruction scheduling and lets the toolchain 
+> resolve any pipeline hazards automatically, while `__r4k_wait' arranges 
+> for instructions to be scheduled by hand and any hazards resolved by the 
+> human writer of the code.  There's even explicit `.set reorder' in 
+> `local_irq_enable', which is redundant, because it's the default mode 
+> for inline assembly.
+> 
+>  And I can't emphasise it enough: manual instruction scheduling is tough
+> and ought to be restricted to cases where there is no other way really, 
+> such as for placing an instruction in a branch delay slot where there is 
+> a data antidependency between the branch and the delay-slot instruction.  
+> Yet this approach has often been used by code authors for other reasons 
+> (or I daresay no reason at all), leaving it up to the maintainers to 
+> keep the code working in the changing conditions while the submitter has 
+> long gone.  I converted some of such code in the past, but it also takes 
+> time and effort that does not come for free.
+> 
+> >      https://lore.kernel.org/all/CAAofZF4HAczyRmuRe-JmQ2wcZatevLwGTOMLf1V1okGbj7q5Wg@mail.gmail.com/
+> 
+>  I missed that one, sorry.  A ping would have helped, and I never have 
+> an issue with being pinged.  I do hope I have now addressed that concern 
+> with my other reply.
 
-This function is shared with sendmsg_zc, so if we set it here,
-it'll trigger io_import_reg_vec() in io_sendmsg_zc() even for
-non register buffer request.
+Hopefully, I'll let Marco follow-up on that as I must confess I'm lost
+with these details. But your help has been very valuable!
 
->   
->   	if (unlikely(READ_ONCE(sqe->__pad2[0]) || READ_ONCE(sqe->addr3)))
->   		return -EINVAL;
->   	/* we don't support IOSQE_CQE_SKIP_SUCCESS just yet */
->   	if (req->flags & REQ_F_CQE_SKIP)
-> @@ -1447,12 +1445,12 @@ int io_send_zc(struct io_kiocb *req, unsigned int issue_flags)
->   	if (unlikely(!sock))
->   		return -ENOTSOCK;
->   	if (!test_bit(SOCK_SUPPORT_ZC, &sock->flags))
->   		return -EOPNOTSUPP;
->   
-> -	if (!zc->imported) {
-> -		zc->imported = true;
-> +	if (req->flags & REQ_F_IMPORT_BUFFER) {
-> +		req->flags &= ~REQ_F_IMPORT_BUFFER;
->   		ret = io_send_zc_import(req, issue_flags);
->   		if (unlikely(ret))
->   			return ret;
->   	}
->   
+> 
+> > We have detected this longstanding architecture specific timer handling bug on
+> > loongson and MIPS and we could have just dropped a report and let you guys deal with
+> > it. Instead we decided to spend time ourselves (especially Marco) working on
+> > fixes for these architectures we don't run and which we are not familiar with,
+> > alongway taking reviews seriously and patiently re-iterating accordingly.
+> 
+>  Thank you for your effort, really appreciated.  Any fixes need to be 
+> technically correct however, it makes no sense to get one bug replaced 
+> with another one.  We've got enough technical debt accumulated already 
+> with a platform that no longer has any commercial support and relies 
+> solely on voluteers keeping it alive in their limited spare time.  I do 
+> have a long list of outstanding issues to address and ever so little 
+> time to take care of them, with hardware problems additionally kicking 
+> in and distracting every so often too.
 
--- 
-Pavel Begunkov
+Yeah I totally understand that!
 
+> 
+> > So please be gentle with us.
+> 
+>  As always, but also emphatic on this occasion.  We're in the same boat 
+> really, striving against the lack of resources and issues piling, and 
+> now we've made some progress.  Thank you for your understanding.
+
+Heh I know... Thanks a lot!
+
+> 
+>   Maciej
 
