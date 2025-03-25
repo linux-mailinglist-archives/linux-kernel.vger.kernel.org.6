@@ -1,85 +1,132 @@
-Return-Path: <linux-kernel+bounces-575989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8360A709A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:57:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFF9A7099E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:55:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091DE179442
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C223B2FAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB71F5826;
-	Tue, 25 Mar 2025 18:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC37199FC1;
+	Tue, 25 Mar 2025 18:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZQ3ndTwK"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9UKjknP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897E1AD41F;
-	Tue, 25 Mar 2025 18:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C291ADC86;
+	Tue, 25 Mar 2025 18:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928408; cv=none; b=HqhbHQkRtDiVJeVHNHWy1xik7pIFFzOaWVRkAKDqSOkHgmXI7WDFYXVMvDkvphVJBigwRQ+kM2f7y88AWpBomH6gaS8I1AGseia7VBuFHE6AKdp69KHr06/fvbvLS7Hth4dH5jl7/gA4t0DndRMZBGm96lhDMqgro7lqbAtURx4=
+	t=1742928564; cv=none; b=KlxjQOU+RrVrJoyrIyQeYMu8VjtVxeDvqPMCukSc/nLlKAlP6kH71xLlVbdW3pstcVLpqIqZZOB6vJFpnQK5i/hgxJFE15naoSf+usiNs12FHmFC/qDXYjR2kDCBx4oNR0F0Kpd0Am10tfWvRbz9QIXJpL0RWC8DiX/PIhTFVZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928408; c=relaxed/simple;
-	bh=D8CU9OAiGVwJRbD8cmg5/i0vIksIQsFwuHBA/PigBi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dDbd8yYLD9+onXWFSDF/bW0cMdxdN5na1L0cHWXisK8oUr7XNwqEd0RUjYtunALFg8JSJtCC9oWs122xETH4oqk2MnBkJS54Q3oG/+ue1fyUMoZtasd6LBX/twCpCDlbYwsYzdLEKwJWfAQ95OSULPqP6U4R+DawmLkQQCVSous=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZQ3ndTwK; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=D8CU9OAiGVwJRbD8cmg5/i0vIksIQsFwuHBA/PigBi4=; b=ZQ3ndTwKIoMRBKbS5K7pSIeYQw
-	YeDhGtY1ASdYzjxHfAvRfJv4SNFQleiqK6qBMTL03Cys9UYxizIbSXldA1oysSXrGWeA31p18r737
-	Sd1fKRdZkYzh4KwfNy2Wx4YHwy42SyQBl9KMBAxl7EQqfcCIHj0Z3uDwaMoBAgUHR4JgiPWOXCMxM
-	y/rDVL2VLgnaH2Yec/vel59XNY0CbTb0odJ4aeG5S82TfQsxlmoaIVMpfeh0jH2Ggb4c/6ZWk2AHS
-	zUQ6r2+yp1GrMF/przOVEX3TKQer9OsYrE72OX/G16alQ+qjSKA7x0beyezspEZ48oxdbw8A2ECx3
-	COeWcqYQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1tx9IL-00000005gDK-0s17;
-	Tue, 25 Mar 2025 18:46:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A5BEB30017D; Tue, 25 Mar 2025 19:46:36 +0100 (CET)
-Date: Tue, 25 Mar 2025 19:46:36 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH] bug: Introduce CONFIG_DEBUG_BUGVERBOSE_EXTRA=y to also
- log warning conditions
-Message-ID: <20250325184636.GB31413@noisy.programming.kicks-ass.net>
-References: <20250317104257.3496611-2-mingo@kernel.org>
- <174246120542.14745.16936293992221722909.tip-bot2@tip-bot2>
- <20250324115955.GF14944@noisy.programming.kicks-ass.net>
- <Z-J5UEFwM3gh6VXR@gmail.com>
- <Z-KRD3ODxT9f8Yjw@gmail.com>
- <20250325123625.GM36322@noisy.programming.kicks-ass.net>
- <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
+	s=arc-20240116; t=1742928564; c=relaxed/simple;
+	bh=dMnezC4ayMJ3IPQofFQCbhpFIaP/JJW0J5RFebyBYdI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ROWn3xzAhuD4bqIvbyJ8z37JK49GH7QxJ8Eq7nSW2C2nK5mrzpUK+5CT+5xYWmjk0z46t3u+0YWuarbtZ0P6VEqvpMG9SEiEoZUDeGGG4q9mfXO1Fpn0rU91yPApMQgHXg9Mq3qmtiGWQYmDe8j1CQbNpOHfbmi7Huh3ElwoSd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9UKjknP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6957FC4CEE8;
+	Tue, 25 Mar 2025 18:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742928564;
+	bh=dMnezC4ayMJ3IPQofFQCbhpFIaP/JJW0J5RFebyBYdI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=r9UKjknPytbiyC8ao3vIlO3IHvjjOX8QhbrJNZvHHIJ508ceweEL2zWK2U35kW0VV
+	 QhQEW0kyHmJckX3j0r/aYdt9SO1KAMZlS/j9XwzwPKimMQ+DNRZpdzxzgrGzr/997x
+	 6uoDcrz0Ms52ftX+bquYJNW8H1/1aq0Gz5Jiq3JK4CPIygImx4vv70Gu+7d633tGLE
+	 Hx9TxrWedwBpHXXO/kBzeomkjBC2bjV1wf0HwWDPoZbFeIOTKkzyyn7L592vP+wKYT
+	 BXjxsDR66+SDGvPf6l9oly0m9NkSIa49zhGK/OWxMCpVtw5/F0ocJGvwaPDCtzIySZ
+	 c6S5x7vGvIqXg==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 6.1 00/12] KVM: arm64: Backport of SVE fixes to v6.1
+Date: Tue, 25 Mar 2025 18:48:14 +0000
+Message-Id: <20250325-stable-sve-6-1-v1-0-83259d427d84@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg_BRnCs8o5vEjK_zDuc0KJ-z9bvq5845jKv+7UduS4hQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG/64mcC/x3MSwqAMAwA0atI1kbaSCt6FXHhJ2pAVBopgnh3i
+ 8u3mHlAOQgrNNkDgaOoHHuCzTMY135fGGVKBjLkDFGFevXDxqiR0aNFU7nRUu2G0peQojPwLPc
+ /bMEXFrr3/QAySG3WZQAAAA==
+X-Change-ID: 20250227-stable-sve-6-1-075c1295b363
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Oliver Upton <oliver.upton@linux.dev>, Oleg Nesterov <oleg@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kvmarm@lists.linux.dev, kvmarm@lists.cs.columbia.edu, 
+ Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Eric Auger <eauger@redhat.com>, Wilco Dijkstra <wilco.dijkstra@arm.com>, 
+ Eric Auger <eric.auger@redhat.com>, Florian Weimer <fweimer@redhat.com>, 
+ Fuad Tabba <tabba@google.com>, Jeremy Linton <jeremy.linton@arm.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.15-dev-1b0d6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2157; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=dMnezC4ayMJ3IPQofFQCbhpFIaP/JJW0J5RFebyBYdI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn4vqmCPwzcGSfTLOgeQzSiZW0IL4tQ4gwy2MUcCBh
+ H1gZPsqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ+L6pgAKCRAk1otyXVSH0Nb/B/
+ 9HIGw2v6yKXfbS3mLuw+X2L259feQoMEIwZ85e0Cjq9BUN4+xY/sFb1ruNIZC3voVU3DiSdqEes/yV
+ FUZGE1lcMQCHwiK9XAT5Bwv8xsMZWKPjjN5n6C/o78Uutl2Wm0H4DK7B2XmifIeFX5VXmR/Ul/HWHq
+ maG/Aq34b7vfa05OkX3JpGME3uIPlenoVStzJU5EuLJG+lnhRHpS0qOACLvHSvT0Js9Nd0WkrjjDuw
+ N/bclxtZP/mJbdTEE+gVt6ETuDfgBR0Bl5BPYnBDOSq7CdpHTfzdyt4PE/R0kRhA8PXrIMKdT/Ivol
+ mwY1eD8ShrnljyxTC71ePoBLmRM2Oe
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, Mar 25, 2025 at 10:48:49AM -0700, Linus Torvalds wrote:
-> Hmm?
+This series backports some recent fixes for SVE/KVM interactions from
+Mark Rutland to v6.1.
 
-That is indeed what I was thinking of; far better articulated :-)
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Fuad Tabba (1):
+      KVM: arm64: Calculate cptr_el2 traps on activating traps
+
+Mark Brown (4):
+      KVM: arm64: Discard any SVE state when entering KVM guests
+      arm64/fpsimd: Track the saved FPSIMD state type separately to TIF_SVE
+      arm64/fpsimd: Have KVM explicitly say which FP registers to save
+      arm64/fpsimd: Stop using TIF_SVE to manage register saving in KVM
+
+Mark Rutland (7):
+      KVM: arm64: Unconditionally save+flush host FPSIMD/SVE/SME state
+      KVM: arm64: Remove host FPSIMD saving for non-protected KVM
+      KVM: arm64: Remove VHE host restore of CPACR_EL1.ZEN
+      KVM: arm64: Remove VHE host restore of CPACR_EL1.SMEN
+      KVM: arm64: Refactor exit handlers
+      KVM: arm64: Mark some header functions as inline
+      KVM: arm64: Eagerly switch ZCR_EL{1,2}
+
+ arch/arm64/include/asm/fpsimd.h         |   4 +-
+ arch/arm64/include/asm/kvm_host.h       |  19 +++---
+ arch/arm64/include/asm/kvm_hyp.h        |   1 +
+ arch/arm64/include/asm/processor.h      |   7 +++
+ arch/arm64/kernel/fpsimd.c              |  69 +++++++++++++++------
+ arch/arm64/kernel/process.c             |   2 +
+ arch/arm64/kernel/ptrace.c              |   3 +
+ arch/arm64/kernel/signal.c              |   7 ++-
+ arch/arm64/kvm/arm.c                    |   1 -
+ arch/arm64/kvm/fpsimd.c                 |  92 ++++++++-------------------
+ arch/arm64/kvm/hyp/entry.S              |   5 ++
+ arch/arm64/kvm/hyp/include/hyp/switch.h | 106 +++++++++++++++++++++-----------
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      |   8 +--
+ arch/arm64/kvm/hyp/nvhe/pkvm.c          |  17 +----
+ arch/arm64/kvm/hyp/nvhe/switch.c        |  91 +++++++++++++++++----------
+ arch/arm64/kvm/hyp/vhe/switch.c         |  12 ++--
+ arch/arm64/kvm/reset.c                  |   3 +
+ 17 files changed, 259 insertions(+), 188 deletions(-)
+---
+base-commit: 344a09659766c83c42cdd4943318deabde89a9c3
+change-id: 20250227-stable-sve-6-1-075c1295b363
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
