@@ -1,138 +1,347 @@
-Return-Path: <linux-kernel+bounces-575437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F544A702C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD1BA702E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C2584554F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8561D880B55
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5484925743D;
-	Tue, 25 Mar 2025 13:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A1F25A2DD;
+	Tue, 25 Mar 2025 13:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ndT6DZJu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mna8tJEN"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B81259CA2;
-	Tue, 25 Mar 2025 13:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F6E25A2C7;
+	Tue, 25 Mar 2025 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909601; cv=none; b=FRpNEfMvYOX5987wJv0GdB/joG1GGmBQvozvNzQKlRGuXXpdlW/onhxHAnekGJCMR5VnjTiBuB9hnIyemRV/tyRkX2q6J7iR5ykYqX7F6wctmTIDPVzhWLZe6PLUKxEBg35AnkICGzBHpeiFFPEWHc1KGFDGbHioyHMU0vX5oT8=
+	t=1742909684; cv=none; b=YfyQ82eJOl8CP8Qp7zAah1PVfUceyC/Qu4vuCHcazrI9wOFVxJlKcv3QNTrX9GYpWEKoYs+UqdYo7m8WysBB07i0lEckUa5AoTaPhefpEN7362mjy4idgUdyKz0TxdX+hxsIjN/UzdRUesNXFrMPWFAegCQ1S+XWvsbT69mSXLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909601; c=relaxed/simple;
-	bh=BKF23zGSOyZlQEQGc6GyJrf5li3gckRHl1ef5SAMu58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmspOQmmDVRUtAnHDk8st6PHtrVhPq4gTZ8saMpk3pEvfxn6DTyU+PcBY5YUQG+Hmcm2RvCQgiVeMNmT4ug0oNaIdneC4HC0wucoETz+kiR2aVL9JT9Mq6L2DCNoggljfugAbf+Gfhnq6237oSDFaSnWVn1jD/31GX99lo1Yjh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ndT6DZJu; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742909600; x=1774445600;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=BKF23zGSOyZlQEQGc6GyJrf5li3gckRHl1ef5SAMu58=;
-  b=ndT6DZJu9CXhUVysvXTCd3Q0/suIBz/+wYZPMUt3lX+x+oAAr/Xtoz++
-   Q9keG1g9FzMIu2hKv5wUbykoMK/unZNIQMRlbF8iOXJc1kRzJd9yJHOT7
-   tF95W39tRILxcmm4c2HXgVzGxmS0koo4jDkVhGcjjEe3NxZClMDwaA01p
-   IZ2jjGnmCatFzoN7h2BK7bXB2ydrPU8mfFds/8sK+dbKcN1sbtVZXTDZ2
-   gpiPo/vRcMUMxNdpOnclE3WeAWtvK/dMGYlEpr8uFMNqwryRDZzp8BDG5
-   G8FjDAoZa8dj6Pk50rqSA6juERgNLBwyHns5Watqivg37K26ytebGyWt1
-   A==;
-X-CSE-ConnectionGUID: kFwRKtEMQVe38NoRWWr+Ug==
-X-CSE-MsgGUID: rzEhD69rQ0SZ1ggFrb280Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="31759281"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="31759281"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 06:33:18 -0700
-X-CSE-ConnectionGUID: ByO82vrGR8mAPXI+Zm8Xow==
-X-CSE-MsgGUID: Z44/HhGBRQKJKMmZjXOKsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="129489361"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP; 25 Mar 2025 06:33:17 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id DB770367; Tue, 25 Mar 2025 15:33:15 +0200 (EET)
-Date: Tue, 25 Mar 2025 15:33:15 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: "Aithal, Srikanth" <sraithal@amd.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, "Lendacky, Thomas" <Thomas.Lendacky@amd.com>, 
-	"Roth, Michael" <Michael.Roth@amd.com>
-Subject: Re: linux-next regression: SNP Guest boot hangs with certain cpu/mem
- config combination
-Message-ID: <rar5bkfy7iplfhitsbna3b2dmxbk7nunlaiclwars6kffdetl4@lzm7iualliua>
-References: <363f8293-23e3-44d3-8005-b31eb5b7f975@amd.com>
+	s=arc-20240116; t=1742909684; c=relaxed/simple;
+	bh=VsBADUsApZ2KApYoNHx21UZbUH6TXtjgJRtQeoyrx3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L8iSgkOrLMAcLNmn+VtWoPsbpcf7Fy/eaCLouhwA9sMos6Qg3C/BzlLyWh/OYnixqmV75rGrxp1hTeBVp1SbW0gmc7wbTF5Ux/y6FuDaLACmtmlBqgVpwF58MSFBZYIRMSEiRF1fRajb/mfg835hzHGdoc6wy3O0KtnHewHlkGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mna8tJEN; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c1c9b7bd9aso3026558fac.0;
+        Tue, 25 Mar 2025 06:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742909681; x=1743514481; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibfTEBaGoj6OxYYiBqziE5v81+mYjOWPi3IfiSv7Z2M=;
+        b=Mna8tJENe23bu10NehqZZcos+2QWZc9CVsfAgdnqBYbCi7Rqr3KKPi6O14rrJ92aWH
+         pesvJOYLls8coAcGzb4UkE/CpoOI/R8Fc4NIL38hvzlX+w9IBZsOdielnNHTvlr2st+d
+         iAUapLbmkgtz48iPSsFCFsLIyCU+o01G3Ik7cVsTGIPW4R29MOfNqyUlJ/dCu3NUSbs7
+         y96JMbn15pJVrM0a/1ashsPcSrdMKWZ4zPvXe0y1sJsNZw/5ST196ECM9PNdN8PXvlzy
+         86KBHTYXlln5t9dLvyRXGZ2AjSHHKRC1Yh19D3xpjM8DgZ1plpjBi7roEY3xiSIr65pO
+         Fc4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742909681; x=1743514481;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ibfTEBaGoj6OxYYiBqziE5v81+mYjOWPi3IfiSv7Z2M=;
+        b=dZpqahjWvPd/q01AtvnnzHEDd7P9lkcZChwZFy+SgbcXbCJEEacYFfwj1b/Vx/cqZJ
+         94UfvIsPj31Y+LW/XRuH/OFyKHrkP+e/9OPjqpiiiUO2LizqUp41UPoCjABpUjBnXcL9
+         JOK7zNiPVJCSeSH1uECcos6miBo2XP27otYnndxXQLcLZTrZwGS06Y6ec6TJWzBRRD5p
+         dLNlsyeE/YSQJeSOtb3q8okD+iBsOQ74jlOhIVg32eBGA5yDZAwP/CGXFkYYOdENBlfD
+         FgWYPcupNnou3moWcz5QSeV2JuGOr+/y6WldXWcu/3t/zxWEQly9g8D3rQfBbFdvpD5+
+         bzZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6gqjZCNCAnWjj+46jZQSpbYC4sZNoFSy1oOLOoRw8jOkOuzIKS8scLUHF4+WQ1N6Prp15q4qO1x7XQJ0ZuXk=@vger.kernel.org, AJvYcCWiJgJ1UwvIJtcKtZ6co+7tZs2WS2kwzJiIker27O9iHzSwZqcQyc5QbkvJQBECa/AeKhgrUndEyufFOsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybgrSyt2xRS9yLYzm181UYRYFeTCQoZH8oDqE+j5F2on5lgiKN
+	5gG/4vynZCla9luRoNyTXcZUpC3P8QNigANhL8fzh1974CtGDBFG
+X-Gm-Gg: ASbGncv6cdA4H7pkG4oTZ1bNoL/tBmpIPoDSpVd9ZQihHyF+Gzah4FIVOTGui89fiRB
+	305cq81kewrsr/u5kmAZbneryDihCDrfN+hCtJFAoaRRBAIdWphr0No8Iw2RKNUmqex3x8GVs72
+	mEtRVOhgxdUEX/8C2zQ8jwITYkG+DfZIEce/SJL9ErQojb9BIi59jz1VUxvIdekr0vXXDvTEMTA
+	OVqOhsNl9KcRSkQQDDefvYRhpTZC8DwKAR/Z+DSgOs6tm6JfFj0W+36iXNvtulcmEgO+d+f0cCu
+	76DQy2rBz1zfb1yM31RZ8gin4jQ20xZHMayXA2vxsKUwb6omc7+SGDMjAK1OkpK8J8opU2+Y91h
+	x25MwVAEhNVIGhryk
+X-Google-Smtp-Source: AGHT+IG74qaD7Mo8N1k2Ob/uOcrqx0C3Tw/8nG8Beyk01bpvrEAWjVDFPq1eEPSVvRpxdz3nx/8QTA==
+X-Received: by 2002:a05:6871:68a:b0:29e:69a9:8311 with SMTP id 586e51a60fabf-2c78051a58dmr11361643fac.36.1742909680978;
+        Tue, 25 Mar 2025 06:34:40 -0700 (PDT)
+Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72c0ac6c76esm1895354a34.49.2025.03.25.06.34.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 06:34:40 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: dakr@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	andrewjballance@gmail.com,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	jubalh@iodoru.org
+Subject: [PATCH v2] rust: docs: replace rustdoc refrences to alloc::format
+Date: Tue, 25 Mar 2025 08:33:52 -0500
+Message-ID: <20250325133352.441425-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <363f8293-23e3-44d3-8005-b31eb5b7f975@amd.com>
 
-On Tue, Mar 25, 2025 at 02:40:00PM +0530, Aithal, Srikanth wrote:
-> Hello,
-> 
-> 
-> Starting linux-next build next-20250312, including recent build 20250324, we
-> are seeing an issue where the SNP guest boot hangs at the "boot smp config"
-> step:
-> 
-> 
->  [ 2.294722] smp: Bringing up secondary CPUs ...
-> [    2.295211] smpboot: Parallel CPU startup disabled by the platform
-> [    2.309687] smpboot: x86: Booting SMP configuration:
-> [    2.310214] .... node  #0, CPUs:          #1   #2   #3   #4 #5   #6  
-> #7   #8   #9  #10  #11  #12  #13  #14  #15  #16  #17 #18  #19  #20  #21 
-> #22  #23  #24  #25  #26  #27  #28  #29  #30 #31  #32  #33  #34  #35  #36 
-> #37  #38  #39  #40  #41  #42  #43 #44  #45  #46  #47  #48  #49  #50  #51 
-> #52  #53  #54  #55  #56 #57  #58  #59  #60  #61  #62  #63  #64  #65  #66 
-> #67  #68  #69 #70  #71  #72  #73  #74  #75  #76  #77  #78  #79  #80  #81 
-> #82 #83  #84  #85  #86  #87  #88  #89  #90  #91  #92  #93  #94  #95 #96 
-> #97  #98  #99 #100 #101 #102 #103 #104 #105 #106 #107 #108 #109 #110 #111
-> #112 #113 #114 #115 #116 #117 #118 #119 #120 #121 #122 #123 #124 #125 #126
-> #127 #128 #129 #130 #131 #132 #133 #134 #135 #136 #137 #138 #139 #140 #141
-> #142 #143 #144 #145 #146 #147 #148 #149 #150 #151 #152 #153 #154 #155 #156
-> #157 #158 #159 #160 #161 #162 #163 #164 #165 #166 #167 #168 #169 #170 #171
-> #172 #173 #174 #175 #176 #177 #178 #179 #180 #181 #182 #183 #184 #185 #186
-> #187 #188 #189 #190 #191 #192 #193 #194 #195 #196 #197 #198
-> --> The guest hangs forever at this point.
-> 
-> 
-> I have observed that certain vCPU and memory combinations work, while others
-> do not. The VM configuration I am using does not have any NUMA nodes.
-> 
-> vcpus             Mem        SNP guest boot
-> <=240            19456M    Boots fine
-> >=241,<255   19456M    Hangs
-> 1-255              2048M    Boots fine
-> 1-255              4096M    Boots fine
-> >71                 8192M    Hangs
-> >41                 6144M    Hangs
-> 
-> When I bisected this issue, it pointed to the following commit :
-> 
-> 
-> *commit 800f1059c99e2b39899bdc67a7593a7bea6375d8*
-> Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Date:   Mon Mar 10 10:28:55 2025 +0200
-> 
->     mm/page_alloc: fix memory accept before watermarks gets initialized
+replaces alloc::format[1] in the pr_* and dev_* macros' doc comments
+with std::format[2] because they are identical but less likely to get
+confused with the kernel's alloc crate. and adds a url link
+for the std::format! macro
 
-Hm. It is puzzling for me. I don't see how this commit can cause the hang.
+Link: https://doc.rust-lang.org/alloc/macro.format.html [1]
+Link: https://doc.rust-lang.org/std/macro.format.html [2]
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+---
 
-Could you track down where hang happens?
+changes since v1:
+ - rewrote commit message
+ - added rust/kernel/device.rs to this patch (thanks Benno)
+ - link to v1: https://lore.kernel.org/rust-for-linux/20250323055948.89865-1-andrewjballance@gmail.com/
 
+ rust/kernel/device.rs | 24 ++++++++++++++++--------
+ rust/kernel/print.rs  | 27 ++++++++++++++++++---------
+ 2 files changed, 34 insertions(+), 17 deletions(-)
+
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index db2d9658ba47..3717f4cc10df 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -226,9 +226,10 @@ macro_rules! dev_printk {
+ /// Equivalent to the kernel's `dev_emerg` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -251,9 +252,10 @@ macro_rules! dev_emerg {
+ /// Equivalent to the kernel's `dev_alert` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -276,9 +278,10 @@ macro_rules! dev_alert {
+ /// Equivalent to the kernel's `dev_crit` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -301,9 +304,10 @@ macro_rules! dev_crit {
+ /// Equivalent to the kernel's `dev_err` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -326,9 +330,10 @@ macro_rules! dev_err {
+ /// Equivalent to the kernel's `dev_warn` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -351,9 +356,10 @@ macro_rules! dev_warn {
+ /// Equivalent to the kernel's `dev_notice` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -376,9 +382,10 @@ macro_rules! dev_notice {
+ /// Equivalent to the kernel's `dev_info` macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -401,9 +408,10 @@ macro_rules! dev_info {
+ /// Equivalent to the kernel's `dev_dbg` macro, except that it doesn't support dynamic debug yet.
+ ///
+ /// Mimics the interface of [`std::print!`]. More information about the syntax is available from
+-/// [`core::fmt`] and `alloc::format!`.
++/// [`core::fmt`] and [`std::format!`].
+ ///
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+diff --git a/rust/kernel/print.rs b/rust/kernel/print.rs
+index b19ee490be58..0f0a447bf5aa 100644
+--- a/rust/kernel/print.rs
++++ b/rust/kernel/print.rs
+@@ -198,10 +198,11 @@ macro_rules! print_macro (
+ /// Equivalent to the kernel's [`pr_emerg`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_emerg`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_emerg
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -222,10 +223,11 @@ macro_rules! pr_emerg (
+ /// Equivalent to the kernel's [`pr_alert`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_alert`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_alert
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -246,10 +248,11 @@ macro_rules! pr_alert (
+ /// Equivalent to the kernel's [`pr_crit`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_crit`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_crit
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -270,10 +273,11 @@ macro_rules! pr_crit (
+ /// Equivalent to the kernel's [`pr_err`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_err`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_err
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -294,10 +298,11 @@ macro_rules! pr_err (
+ /// Equivalent to the kernel's [`pr_warn`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_warn`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_warn
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -318,10 +323,11 @@ macro_rules! pr_warn (
+ /// Equivalent to the kernel's [`pr_notice`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_notice`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_notice
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -342,10 +348,11 @@ macro_rules! pr_notice (
+ /// Equivalent to the kernel's [`pr_info`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_info`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_info
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -368,10 +375,11 @@ macro_rules! pr_info (
+ /// yet.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_debug
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
+@@ -395,11 +403,12 @@ macro_rules! pr_debug (
+ /// Equivalent to the kernel's [`pr_cont`] macro.
+ ///
+ /// Mimics the interface of [`std::print!`]. See [`core::fmt`] and
+-/// `alloc::format!` for information about the formatting syntax.
++/// [`std::format!`] for information about the formatting syntax.
+ ///
+ /// [`pr_info!`]: crate::pr_info!
+ /// [`pr_cont`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_cont
+ /// [`std::print!`]: https://doc.rust-lang.org/std/macro.print.html
++/// [`std::format!`]: https://doc.rust-lang.org/std/macro.format.html
+ ///
+ /// # Examples
+ ///
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.49.0
+
 
