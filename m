@@ -1,259 +1,208 @@
-Return-Path: <linux-kernel+bounces-575861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1EAA70821
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:26:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514A1A70831
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:28:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F76188C48D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7733B26DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB92627E2;
-	Tue, 25 Mar 2025 17:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA16126139A;
+	Tue, 25 Mar 2025 17:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="djRgAH9Y"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zh5Uy97X"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2079.outbound.protection.outlook.com [40.107.100.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DBB257AF2;
-	Tue, 25 Mar 2025 17:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923551; cv=none; b=q7U2IeiopDa6/dC6ooXOLw3irpoBupcn2hfeBlzQK4GL75OJMtSw+UNZ6JTX95VU2seqtvUj2/9284UXX5clNy6aZ/fWC2QZinPwSldFalDpKbTS9887qSKB98MM32rqKJy4cMMwsyxwDJWOaQUudYVNVFijZzV6HgDIfR4uouE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923551; c=relaxed/simple;
-	bh=S6T4TmlUdE7gvOPo3bQyO4uG51sRLu56OEoAsFNC4ek=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=rIzGdSk6a2wN13ym1YSnz593dNTtZEQ6K7dOKZ7v8znytSx6c78Do2k5Mr6rFWBPjHg73BrJYdl0FuSUv5MV9UNyJM6Vv8pueXEOfS5bfRRNjXqmKOK9OzrLoV7yigXMz2NRlTlx2XKuyXQdiqIWACIOvNAlP9BDAWahDGLYGKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=djRgAH9Y; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 49E3A4433E;
-	Tue, 25 Mar 2025 17:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742923540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPvEeQoVwOan9vRz2MGLJjUipurACCpBk5gQyvnta10=;
-	b=djRgAH9YaswUdPWsaCe87EAlbswo5U9GhK3K6k5EYX2bvj6cj9H9AR++Q4xTrMjSQ5oaeG
-	rcgZDAWu9heu7gNHnzttKf1INMvKr+9LZuo1gvCZAUY1oDoIRAVMCJ/WLARxMlHSLL4LcR
-	uR4n0biXynNB5c/tk1wx15MFRJG8J1WrjS72JV1JIVc9wCjBi/7ysxM2w4T8zo1cH8CWaf
-	qJDgx/MHlD8/MDD2UNoAyImdQnzenXWLo9pfgfF1S/ruhg5GNfwtM4XkqyykzaobOQR38a
-	fZSaHTaOlra0UWasXGnvQYGeOOxYV9B89I4/ap9vV1559suWOMT3MzmRzHpevQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A79A1891AA;
+	Tue, 25 Mar 2025 17:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742923681; cv=fail; b=k10aPmkPBFkUjNgJNKVrcfyM0SpIGIGkY1lwZst6w92JLG7sD/BCCUwyYKPYl/Pqj1107utexeXxqSUzdz6RaNjKN9Obecnh6jvMtidt34G6vgTE3TAgX3E6mPEJ65NfjIIz266aOLNrq2NG/vGqf5dZL7GOOmK0FduoYjkRbCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742923681; c=relaxed/simple;
+	bh=PRKzcs3Nk2n/78D7IIpVmxNJzOgTRC+w8RH7gpr8m+A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gTDXcMxbhDzkidHIG+Kp1hCx1yewtVengLgDKglLJRwNqNMWo8w8lwPv1Jq+5u730p65nXu5CgzXtd8pJTXo7qNxLtkoFc3BszFOhfP3RoLDZPVF1XX6lVzEZXmqRUK5zPf3xqa8vXr+/FcyO87FvMDcFvSEHdUGXHleQ2PDYQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zh5Uy97X; arc=fail smtp.client-ip=40.107.100.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l+GNI4yTtOAn08uSO11Yzb6TVfdGZ3I9gHdqNDLKXy/b7VjA21ZY8H/Eglc487vZt1+iLbFw1Aw+GAPVWUCZabV2mYK7nYOkAg4X1hD6L9ejSk8CX8rYD5vxjoNzI3cQwCXIkEWMHKdAg/FekDAhOFcaNSinBJyI4WJS71YkrL2GhQdAHDwRgFpGqyQQTs4q3RnejXBIaQh3WP8XZxHv00p+Nqegf2Zi4p2PnhsRiqAC8Wy+aE6uedTSS9+u4Yq6zI7SakeuZmEKPv7E7Lh3s54v5d/XBEXw2WqWh/65vgF9Mm/suy7hWp9Du9QBtOH4vBjLNOvLaiZez48LU5RApA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PRKzcs3Nk2n/78D7IIpVmxNJzOgTRC+w8RH7gpr8m+A=;
+ b=nS20nfw4RbZdtKWH+p2Yha4Q//ZpgUK6zXriVkeSpqcojsj+2xZxeujCkPiUTbCdFZYJrW/zabYWRvZWZNyEyx/jUYe1vY1cSL+ymt8/xuKgSS2uj+9Beur5+/wRdr0inGsAr9Vg5Ai4hSnJyTcVhpqBdZNxdeTQVK55j0QROH7LTfbkPlLhRoXAww+Qzd7xHGpdmFuIzkeMiFjpZJVZQHbI0581/Jmv/wFyKi68vAXW2BetWyFyQ3wrQTUaZ21TelrvcYocT+cly+ZFTIwegYbTWffVN8TqeN1w673cWvGa4FwfgWMBJp96lrnSkdhe06VpcdRKj8IOm0S1m2t+4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PRKzcs3Nk2n/78D7IIpVmxNJzOgTRC+w8RH7gpr8m+A=;
+ b=Zh5Uy97X8vea++SJBIuG54S4VibZtLcu6+4E9uXlZo9PzFyeLT5cWxuj4EBH9+SJQyHG51czgv2zaseSf/PNBRHLiC31sxS9OpqcfgfgqRfURBJWyyf43o923ZN2YK/skv81vBnl6Df3+eTI5k03jjeHXuhkUlsH8VzR02Ayy/P2bCmnCfizj8FobJRklakwZewRlHr44rls8lQWkLaMVT1eEejhTK14QXpDCLdp55PnSsQudDpUCdgCT7krFWPcTZPMx2YPv1WdqBunXFQP9leJFSJGk1W+l+Zq8JHBYhlMaQGHTG1/FPA2dTwy8YMwQjXwA/QPI+mCEpwyCvB6Pg==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by DM4PR12MB6327.namprd12.prod.outlook.com (2603:10b6:8:a2::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.42; Tue, 25 Mar 2025 17:27:55 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
+ 17:27:55 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Caleb Sander Mateos <csander@purestorage.com>, Keith Busch
+	<kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Pavel Begunkov
+	<asml.silence@gmail.com>
+CC: Xinyu Zhang <xizhang@purestorage.com>, "linux-nvme@lists.infradead.org"
+	<linux-nvme@lists.infradead.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] nvme_map_user_request() cleanup
+Thread-Topic: [PATCH v3 0/3] nvme_map_user_request() cleanup
+Thread-Index: AQHbnPhIsPjXWhuJ9k2O7fCVxRZMC7OEHIsA
+Date: Tue, 25 Mar 2025 17:27:55 +0000
+Message-ID: <36e514f8-27a6-40e2-88dc-c2f985b0d04a@nvidia.com>
+References: <20250324200540.910962-1-csander@purestorage.com>
+In-Reply-To: <20250324200540.910962-1-csander@purestorage.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|DM4PR12MB6327:EE_
+x-ms-office365-filtering-correlation-id: 01d894b4-3e98-480c-fab5-08dd6bc26106
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|7416014|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Umc4NVZIbGRSM3ZEemtzVU82cEphMTJYZ2NGK0hyRmJqeVhaSEVoLzdGem1y?=
+ =?utf-8?B?T09KcGFpVFdPTnhGRjg3SFg3ajBFM1BNQ2F3Q0JwUlJYdUQrc3dpTnUyTjhk?=
+ =?utf-8?B?NHo3NmZCcXg0UkxWa0lIeVZGY212b25YZldzZ25XMzh2U1h0akRQVjFEajFE?=
+ =?utf-8?B?b1dGSDV5ZGNrVXEvRW5uaXVKeEdhUkRiOGhuOUtMYWxVYWk2VUlOd29hMnN2?=
+ =?utf-8?B?eTZqZXJKTzVBV01HQTNDU0JFMFJPWDJwbEFqUEtLeWM0VlVKZGcwaHpEUzYw?=
+ =?utf-8?B?bjY4UVhHN1dKdFIrRVdac3dIQUl5d2pTR0JOc2UwSjB0NEtjWkoyYytPSENJ?=
+ =?utf-8?B?T24ycWQ1UkxnRWgwa21HREdiN1NIS1Qvdm11Nlh4NHcvWmxiY25SZmZTcDNS?=
+ =?utf-8?B?YURKaytKeFYzU2d0dkliK09BZWtFMFpIRnhadDliUG10VTJkYzNnaURZRWtt?=
+ =?utf-8?B?YmI4UUhuWVhUWDhqUXY3MGtUYlhzdzN3QXlKTG9kOEwxQ1pCYU1ScUg0UWFN?=
+ =?utf-8?B?SC8yUGt3cHRyWGpyYmtpbTlpc1NVazZPclVJdE94eHlKbThYVmFwK1lKci9B?=
+ =?utf-8?B?dFZZbit2QlYyWHZGNCtTcHlOS0Z1VTRqdzhLTFpWZ1FMNWZBUWlIRVVWbSti?=
+ =?utf-8?B?SW5xS3hVMTZ1bk1VMGNHREk0akIvMFowTTBMdVJDZ01wL1g0ajJ6YXlmZHBL?=
+ =?utf-8?B?d2hVSlNFQ2lyMVkzY2xiYkw3d0REWXR3dHlsd3pVbUFOcVJVbSsyVHBnNFhm?=
+ =?utf-8?B?TzFhN2xNVUhydE9rZ01sN3RvVGFKWXZmMnhpVVhKSGt4cDdYSE5oQTA4L1Z1?=
+ =?utf-8?B?ZytjMG1TTHBOK3JlMGJXM3dUUDVOL1ZBeFJ6ZkJZcFhhdnNZbWd3ZjBWNThr?=
+ =?utf-8?B?REhWUXZUZmJIUENpNjJVRStya0lZSFU2Q3ZMK2lpSHlIMGRVaWttSk5rNUls?=
+ =?utf-8?B?eE83bm9lQnRRTXl0SytDc25DcGNPbXc0NU5hakYyaTVPbjNBbGV2STNDbHRn?=
+ =?utf-8?B?TFR2cWpSNkkyaVdIUDBaSlRQaTNjbnJOQ0IyL2tGS1JBQW83OVA0Z2JYektU?=
+ =?utf-8?B?WUhubHpjQUs2cjFDdy9QVlltR0VzNVVEVGNsUHo3blhoWG52RFYzK3hIVmFQ?=
+ =?utf-8?B?U0ZGWlVKakgvYVowVlNyVnl6QksrQ29ESjNaUXJ2ZjlNdGtrWEUwNTBac2M1?=
+ =?utf-8?B?NEkrYnFHT1FKQUdOUDF6cTNHTEFqb1pVK1ZLeHozWmpOcFBYalRqcUF2RGp6?=
+ =?utf-8?B?WjZsUmtQcFFyRTJuWklyN1dPQ1dpS3ZwVUh5UVUvUk5DdEx5bWV6SWwwMVRG?=
+ =?utf-8?B?bmJ3U2RTV0EzZHY5MlpyaG5weW1Oa2puTGFpTWJuZ0NYQmR3YTRBT0FvZTJR?=
+ =?utf-8?B?OWRNWWI4UnBVVHdxa0R2MnRESFc0UGdCWTdqTFBJcXhRaWdlMjJmeHFDMzRM?=
+ =?utf-8?B?bXppNDhXcmkwdSszSnp5TjZBemV4azdFUlJlYkxUUWhLV3ZmOU81VXYwQ0x3?=
+ =?utf-8?B?NjB1VC9XYS9XRFdOVUNsMHh2cThFb25SNCtXeGRqUlNLY0U0S3lPZzZscVhM?=
+ =?utf-8?B?RHkrd05IYTNCRmQxVlh2S0d4TGhRTHduRXJINHNTQ1lzSnlSWTczZFFiZWQx?=
+ =?utf-8?B?RlVDUmp2WG9jY0dGZ3Fxd3czRWN4YnJDVVBIZjMvdTFqUEY1dkc5WUpMUHNl?=
+ =?utf-8?B?RVd3Q0l1SDZpYzFIZUxqSUljQytVM2IyRW9hNnpod051anJ5L3NjRW9zSE9R?=
+ =?utf-8?B?d3F3RkJkc2VnMDh3STBuYi9VaVpoVXlnWnAwMWxJMlJvODBBcHZmOXFyS3FZ?=
+ =?utf-8?B?Z2ZTZzdaM2R6cHoxNTcxUnBzMnFPNjcyRlVWWWo4a1NQd0J1VXJ1aFVTdkZh?=
+ =?utf-8?B?UTN3azhRalEyQ1BJZyszTlFyMWJ1azU1dTVnUTYwL24yOU9GdkJzRGxlQnZU?=
+ =?utf-8?Q?9MfrxdRmXotv3QR+vNuzSGZTu/3L3AlZ?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(7416014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QXdwdzhOTWdudmxhY2VKWW1QK0ZhaGxIVFVxWXZOS0JiUEhWWENtTFE4Qkpa?=
+ =?utf-8?B?VlBBRmQ3L0JFRExaenJ1aWhVUGdGSExNVjBRV0FhdXRGVzVhcDhSQlJKRnF1?=
+ =?utf-8?B?VjA4ZHJDRHMvYXNOMnJTVGdiMWk4WW1sQ1Nvd2ZDaXp2M2VKVk5MMEFYdlR6?=
+ =?utf-8?B?eG1CdGFLSDFLeWx0RlpiOUZzR0UwZXZidWJCYTRENFZyRlQ1bmNDQjlLQVAr?=
+ =?utf-8?B?QWQ4YnhEZ2ppc2RPUzB4dHhWOGdLdnZhR3U5a1RwT09aaVhkb2VLNzU4S0NF?=
+ =?utf-8?B?OXRFQXZjaXFrMlFrSUVyYktBcTcxeGlzQktmVC96eitVb2s2ZjJZVm5JN0Vz?=
+ =?utf-8?B?K3NxWkVoanRMWGR1VFFrTXUvYWVIUmJpS3BHenhFSHg3WlNWOUxvdThSdVFX?=
+ =?utf-8?B?bFBpSGdoTXBBQUd0ajBPTnRnOTlUZENCQVRnT3pRYmhaRWhHVUNWYjdpbVky?=
+ =?utf-8?B?NE9TSjR2TGpaVWZ3ZmFiSE9iaWJra2EycmtUbzUzQmxNYSsxbWVyczRpZjdl?=
+ =?utf-8?B?SC8vTlA0ak9WY2Izc1k3VVN3MXhuL0xMSzFnYThxa0phMzhLcDZpYW9vWXcw?=
+ =?utf-8?B?dWxWcmZRZlZPUHMxeEoxaUcrZWZkN05hbmNlTTdocDJEaytjQjFkTS9ZcXQz?=
+ =?utf-8?B?eEhuVUdBRGd6K2hCVmx0eFhOQi9nMWUrZHlSRWJyTXFEa2ZhR3R6ZVJGNTVo?=
+ =?utf-8?B?TFlhK3BCdUV1UzhqdzA5TFpucHBxekU0U3g2cUdaRVA4blNmQzVNOThQMEs5?=
+ =?utf-8?B?TnBmdmdrN25HbVZvTTNrRGFlUFQ5VjVQMllzT3ArOXprV251ZGNROVRVRXZk?=
+ =?utf-8?B?bFc3WVpRZFlDKzd2UmV5MU1kWjJ0dk53N0daV1FjQVJzMWpSaTRZdTBUTEFS?=
+ =?utf-8?B?ZG42S2JFZENuaTQ5M3N4MVY2K1o3dUUvYjNJQlF0TG5XSXpicTZncWlsTzVO?=
+ =?utf-8?B?RTB1N3Bsa3R1UUpncmIxY2xuWHdzdGVKeTNXRXFUZ0RFSjVnOUMzYzZOdWxk?=
+ =?utf-8?B?M1dnS2svenI1VlQzWDZObXRHT1RzUU9QVnVDc0J1OFRtbTlDOVZicCszSmJJ?=
+ =?utf-8?B?RVR1MUhqdnc5bzNRVjhtVGJyVi9wU3Q5ZHZ6U0VzRkplODJ4R3prdFFmMnZh?=
+ =?utf-8?B?Wk9nekRPRTZNaDFJMHpQV0lvS0dYVm9na0xuZko4aHRrN3VIWVdRTkxPaXlt?=
+ =?utf-8?B?THB4OVIzcWdHaG4vY0VzbXFxM0JFRGlnYXY4eTJBK2JYcFVZeDVvQjF5VnRz?=
+ =?utf-8?B?emFITC9HeEdUcmxtKzVBTE5vS1hiaUlhSHF4UDB2bXl6ekhpV1ZCMHArd3Vq?=
+ =?utf-8?B?elhJcnB2MHBHOURkbHVqb0hoem1hWk01bVEwUFRzRDI2SGlYNVM0d2ZkUWI5?=
+ =?utf-8?B?YTV5QXBSRHFaUzN1bnZSMWFsMlRPMklrcklPRXQxWU5qcCtDbGJVR0FNOGZU?=
+ =?utf-8?B?aDNIdnVBczd1QXFqcXkwSjMyc1JzYjcrZlJkdjNVcGg3UGVadGJKOWM3eDhk?=
+ =?utf-8?B?RWlneW04a09vV0JnL3owY0xLbmlNUFNnMkJCdnE2R2c1dCtiZEdzV0Y4R0or?=
+ =?utf-8?B?Unl6ZWltOFFaTUNkM0U1Y3dEVFdJVVdxb2NPZCt4bjl5UVp3aUtYU0g5ang3?=
+ =?utf-8?B?YjBCNnFLSEhjR1hwSXZaY1hQVUN5bzhGMGRsaUxqVlVtZVU1NHFCbFM3NFVx?=
+ =?utf-8?B?OTUvM01Kb21EL0MzMWlMNmRLaEdXZTRQT3Q2emdRNzJVMzBXZmt3RmlZYXNt?=
+ =?utf-8?B?M3VrMzE5bjZTSGZZL20yZzhtMDVOM25YL3NEZXpuVHo0RmxGV0dmVnpMekUr?=
+ =?utf-8?B?VGRXY3VscnhKRzRNdzhlbEpoQ2YwdDJPNTZ3eFpBLyszandUU0NTZmNSRG4y?=
+ =?utf-8?B?UXBvTTlid05nUEFrS2QxQzBQWXl5TGhoUm4rSmxhUCsvVU4vU3QrU3phbjJT?=
+ =?utf-8?B?V3ZRVWM0Z0ExaXpOaEdQejVGQ2VYWE1BNDJ1Q1FYUEJLQVV6QkdsSDgvRlFN?=
+ =?utf-8?B?MG1NanlmckFpby95NW1NRnlmd3M0anJCSDFyT3NmdEdsVUlzWUVsUFdQQlpk?=
+ =?utf-8?B?MVN3Z0VwRVdBcHlSU2x2TktZTGRjVzBDTXZKck5qcnhmSmNNYnlESldGUmVO?=
+ =?utf-8?B?cDFmWmovZUlHWmljcjRnWG9zSDJqeEZ2WktEMDhSSW1GeW9ONTNydm1lNHpF?=
+ =?utf-8?Q?X35kPVepsGfb8oOM8tNMRUuLYK+4eedeshBRfaqPuFA2?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <59B2B04E63D2D84B9937CB76DF25BE95@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 25 Mar 2025 18:25:35 +0100
-Message-Id: <D8PITUNTWTXA.366TNSXDUL48G@bootlin.com>
-Cc: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
- <linux-mips@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Claudiu Beznea" <claudiu.beznea@tuxon.dev>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Alexandre Ghiti" <alex@ghiti.fr>, "Samuel
- Holland" <samuel.holland@sifive.com>, "Richard Cochran"
- <richardcochran@gmail.com>, "Russell King" <linux@armlinux.org.uk>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net-next 10/13] net: macb: Add "mobileye,eyeq5-gem"
- compatible
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250321-macb-v1-0-537b7e37971d@bootlin.com>
- <20250321-macb-v1-10-537b7e37971d@bootlin.com>
- <ea5de004-a26c-43a1-9408-0089fa18b44d@tuxon.dev>
-In-Reply-To: <ea5de004-a26c-43a1-9408-0089fa18b44d@tuxon.dev>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieefvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefvhffuofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeigfelffeuffetteetuddufffghefhudeuteeigeekteevgeeileejgfdvffelheenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepjeejrddufeehrdekuddrieehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeejrddufeehrdekuddrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvjedprhgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrg
- hdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01d894b4-3e98-480c-fab5-08dd6bc26106
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2025 17:27:55.2019
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5fKpE5q6bDv47PXfyrY5EcDTxnSV6DAfnLRjqZXIajaRmfSBPO7LI5f4AQjYVUk+RWF1fbXj7LBGZmuqF+ahow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6327
 
-On Mon Mar 24, 2025 at 9:18 AM CET, Claudiu Beznea wrote:
-> On 21.03.2025 21:09, Th=C3=A9o Lebrun wrote:
->> Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
->> compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
->> that accesses two system-controller registers.
->>=20
->> Noteworthy: NET_IP_ALIGN=3D2 on MIPS but the hardware does not align and
->> low bits aren't configurable, so we cannot respect the requested IP
->> header alignment.
->>=20
->> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
->> ---
->>  drivers/net/ethernet/cadence/macb_main.c | 95 +++++++++++++++++++++++++=
-+++++++
->>  1 file changed, 95 insertions(+)
->>=20
->> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethe=
-rnet/cadence/macb_main.c
->> index 79161d559166478f85a6f8294d488ed961d9be7f..9f2a5bf9a5ebca5941229bd9=
-6091a0fb96f0607d 100644
->> --- a/drivers/net/ethernet/cadence/macb_main.c
->> +++ b/drivers/net/ethernet/cadence/macb_main.c
-
-[...]
-
->> +static int eyeq5_init(struct platform_device *pdev)
->> +{
->> +	struct device *dev =3D &pdev->dev;
->> +	struct net_device *netdev =3D platform_get_drvdata(pdev);
->> +	struct macb *bp =3D netdev_priv(netdev);
->> +	struct device_node *np =3D dev->of_node;
->> +	unsigned int gp, sgmii;
->> +	struct regmap *regmap;
->> +	unsigned int args[2];
->> +	unsigned int reg;
->> +	int ret;
->> +
->> +	regmap =3D syscon_regmap_lookup_by_phandle_args(np, "mobileye,olb", 2,=
- args);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	gp =3D args[0];
->> +	sgmii =3D args[1];
->> +
->> +	/* Forced reset */
->> +	regmap_write(regmap, gp, 0);
->> +	regmap_write(regmap, sgmii, 0);
->> +	usleep_range(5, 20);
->> +
->> +	if (bp->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
->> +		regmap_write(regmap, gp, EYEQ5_OLB_GP_SGMII_MODE);
->> +
->> +		reg =3D EYEQ5_OLB_SGMII_PWR_EN | EYEQ5_OLB_SGMII_RST_DIS |
->> +		      EYEQ5_OLB_SGMII_PLL_EN;
->> +		regmap_write(regmap, sgmii, reg);
->> +
->> +		ret =3D regmap_read_poll_timeout(regmap, sgmii, reg,
->> +					       reg & EYEQ5_OLB_SGMII_PLL_ACK,
->> +					       1, 100);
->> +		if (ret)
->> +			return dev_err_probe(dev, ret, "PLL timeout");
->> +
->> +		regmap_read(regmap, sgmii, &reg);
->> +		reg |=3D EYEQ5_OLB_SGMII_PWR_STATE | EYEQ5_OLB_SGMII_SIG_DET_SW;
->> +		regmap_write(regmap, sgmii, reg);
->
-> You can use regmap_update_bits() here.
->
->> +	}
->> +
->> +	regmap_read(regmap, gp, &reg);
->> +	reg &=3D ~EYEQ5_OLB_GP_RGMII_DRV;
->> +	if (phy_interface_mode_is_rgmii(bp->phy_interface))
->> +		reg |=3D FIELD_PREP(EYEQ5_OLB_GP_RGMII_DRV, 0x9);
->> +	reg |=3D EYEQ5_OLB_GP_TX_SWRST_DIS | EYEQ5_OLB_GP_TX_M_CLKE;
->> +	reg |=3D EYEQ5_OLB_GP_SYS_SWRST_DIS | EYEQ5_OLB_GP_SYS_M_CLKE;
->> +	regmap_write(regmap, gp, reg);
->
-> To me it looks like this code could be abstracted as a phy driver. E.g.,
-> check the init_reset_optional() and its usage on "cdns,zynqmp-gem" (phy
-> driver here: drivers/phy/xilinx/phy-zynqmp.c).
-
-I thought about that question. Options to implement that sequence are:
-
- - (1) Implement a separate PHY driver, what you are proposing. I just
-   made a prototype branch to see what it'd look like. Nothing too
-   surprising; mostly the above sequence is copy-pasted inside
-   phy_init|power_on(). I see two issues:
-
-    - First, a practical one. This adds a lot of boilerplate for no
-      obvious benefit compared to a raw registers read/write sequence
-      inside macb_config->init().
-
-      The main reason for that boilerplate is to allow reuse of a PHY
-      across MACs; here we already know that cannot be useful because
-      the EyeQ5 has two GEMs and nothing else. Those registers are
-      EyeQ5-specific.
-
-    - Second, a semantic one. The registers we are touching are *not*
-      the PHY's registers. They are configuring the PHY's integration:
-      its input PLL, resets, etc.
-
- - (2) Second, taking into account that what we are configuring isn't
-   the PHY itself but its resources, we could try modeling each
-   individual register+field as a reset / clock / pin control (there is
-   some drive strength in here, *I think*). Issue: this would get
-   messy, fast.
-    - A single register would expose many resources.
-    - The sequence in macb_config->init() would need to be the exact
-      same order. IE we can't abstract much.
-
-   Something like this pseudocode (which is a bad idea, we'd all agree
-   here):
-
-      reset_deassert(bp->eq5_sgmii_reset);
-      reset_deassert(bp->eq5_sgmii_reset_pwr);
-      reset_deassert(bp->eq5_phy_reset_tx);
-      reset_deassert(bp->eq5_phy_reset_sys);
-
-      if (bp->phy_interface =3D=3D PHY_INTERFACE_MODE_SGMII) {
-         pinctrl_select_state(bp->eq5_phy_input_pinctrl, bp->eq5_pins_sgmii=
-);
-
-         reset_deassert(bp->eq5_sgmii_reset);
-         clk_prepare_enable(bp->eq5_sgmii_phy_input_pll);
-
-         reset_deassert(bp->eq5_sgmii_reset_pwr);
-      } else {
-         pinctrl_select_state(bp->eq5_pinctrl, bp->eq5_pins_rgmii);
-      }
-
-      reset_deassert(bp->eq5_phy_reset_tx);
-      reset_deassert(bp->eq5_phy_reset_sys);
-      clk_prepare_enable(bp->eq5_phy_mclk_tx);
-      clk_prepare_enable(bp->eq5_phy_mclk_sys);
-
- - (3) Keep the sequence in macb_config->init(). Plain and simple.
-    - Issue: it is somewhat unrelated platform-specific code that's
-      present inside macb_main.c.
-
-The two serious options are (1) and (3).
-(1) is what you proposed and (3) is what's in the series.
-
->>  static const struct of_device_id macb_dt_ids[] =3D {
->>  	{ .compatible =3D "cdns,at91sam9260-macb", .data =3D &at91sam9260_conf=
-ig },
->>  	{ .compatible =3D "cdns,macb" },
->> @@ -5152,6 +5246,7 @@ static const struct of_device_id macb_dt_ids[] =3D=
- {
->>  	{ .compatible =3D "cdns,zynqmp-gem", .data =3D &zynqmp_config}, /* dep=
-recated */
->>  	{ .compatible =3D "cdns,zynq-gem", .data =3D &zynq_config }, /* deprec=
-ated */
->>  	{ .compatible =3D "sifive,fu540-c000-gem", .data =3D &fu540_c000_confi=
-g },
->> +	{ .compatible =3D "mobileye,eyeq5-gem", .data =3D &eyeq5_config },
->
-> Maybe move it after microchip to have it a bit sorted.
-
-Argh those semi sorted lists. I saw "cdns" then "atmel" then "cdns" so I
-ignored sorting.
-
-Thanks for the review!
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+T24gMy8yNC8yNSAxMzowNSwgQ2FsZWIgU2FuZGVyIE1hdGVvcyB3cm90ZToNCj4gVGhlIGZpcnN0
+IGNvbW1pdCByZW1vdmVzIGEgV0FSTl9PTl9PTkNFKCkgY2hlY2tpbmcgdXNlcnNwYWNlIHZhbHVl
+cy4NCj4gVGhlIGxhc3QgMiBtb3ZlIGNvZGUgb3V0IG9mIG52bWVfbWFwX3VzZXJfcmVxdWVzdCgp
+IHRoYXQgYmVsb25ncyBiZXR0ZXINCj4gaW4gaXRzIGNhbGxlcnMsIGFuZCBtb3ZlIHRoZSBmaXhl
+ZCBidWZmZXIgaW1wb3J0IGJlZm9yZSBnb2luZyBhc3luYy4NCj4gQXMgZGlzY3Vzc2VkIGluIFsx
+XSwgdGhpcyBhbGxvd3MgYW4gTlZNZSBwYXNzdGhydSBvcGVyYXRpb24gc3VibWl0dGVkIGF0DQo+
+IHRoZSBzYW1lIHRpbWUgYXMgYSB1YmxrIHplcm8tY29weSBidWZmZXIgdW5yZWdpc3RlciBvcGVy
+YXRpb24gdG8gc3VjY2VlZA0KPiBldmVuIGlmIHRoZSBpbml0aWFsIGlzc3VlIGdvZXMgYXN5bmMu
+IFRoaXMgY2FuIGltcHJvdmUgcGVyZm9ybWFuY2Ugb2YNCj4gdXNlcnNwYWNlIGFwcGxpY2F0aW9u
+cyBzdWJtaXR0aW5nIHRoZSBvcGVyYXRpb25zIHRvZ2V0aGVyIGxpa2UgdGhpcyB3aXRoDQo+IGEg
+c2xvdyBmYWxsYmFjayBwYXRoIG9uIGZhaWx1cmUuIFRoaXMgaXMgYW4gYWx0ZXJuYXRlIGFwcHJv
+YWNoIHRvIFsyXSwNCj4gd2hpY2ggbW92ZWQgdGhlIGZpeGVkIGJ1ZmZlciBpbXBvcnQgdG8gdGhl
+IGlvX3VyaW5nIGxheWVyLg0KPg0KPiBUaGVyZSB3aWxsIGxpa2VseSBiZSBjb25mbGljdHMgd2l0
+aCB0aGUgcGFyYW1ldGVyIGNsZWFudXAgc2VyaWVzIEtlaXRoDQo+IHBvc3RlZCBsYXN0IG1vbnRo
+IGluIFszXS4NCj4NCj4gVGhlIHNlcmllcyBpcyBiYXNlZCBvbiBibG9jay9mb3ItNi4xNS9pb191
+cmluZywgd2l0aCBjb21taXQgMDA4MTdmMGYxYzQ1DQo+ICgibnZtZS1pb2N0bDogZml4IGxlYWtl
+ZCByZXF1ZXN0cyBvbiBtYXBwaW5nIGVycm9yIikgY2hlcnJ5LXBpY2tlZC4NCj4NCj4gWzFdOmh0
+dHBzOi8vbG9yZS5rZXJuZWwub3JnL2lvLXVyaW5nLzIwMjUwMzIxMTg0ODE5LjM4NDczODYtMS1j
+c2FuZGVyQHB1cmVzdG9yYWdlLmNvbS9ULyN1DQo+IFsyXTpodHRwczovL2xvcmUua2VybmVsLm9y
+Zy9pby11cmluZy8yMDI1MDMyMTE4NDgxOS4zODQ3Mzg2LTQtY3NhbmRlckBwdXJlc3RvcmFnZS5j
+b20vDQo+IFszXTpodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMjAyNTAyMjQxODIxMjguMjA0
+MjA2MS0xLWtidXNjaEBtZXRhLmNvbS9ULyN1DQo+DQo+IHYzOiBNb3ZlIHRoZSBmaXhlZCBidWZm
+ZXIgaW1wb3J0IGJlZm9yZSBhbGxvY2F0aW5nIGEgYmxrLW1xIHJlcXVlc3QNCj4NCj4gdjI6IEZp
+eCBpb3ZfaXRlciB2YWx1ZSBwYXNzZWQgdG8gbnZtZV9tYXBfdXNlcl9yZXF1ZXN0KCkNCg0KTG9v
+a3MgZ29vZCB0byBtZS4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2NoQG52
+aWRpYS5jb20+DQoNCi1jaw0KDQoNCg==
 
