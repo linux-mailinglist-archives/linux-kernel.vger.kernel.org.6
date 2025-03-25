@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-574906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D237A6EB5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:20:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BA5A6EB5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AB4A188B35E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298363B0DC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE3519F121;
-	Tue, 25 Mar 2025 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5825155C87;
+	Tue, 25 Mar 2025 08:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6jf3yMo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qXdzsJkg"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE732E3367;
-	Tue, 25 Mar 2025 08:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAA61531E8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890803; cv=none; b=QZnS4JO01r0tsaMbXTIVMLCMvMu+YYPMwFJ80wwFoq9lbBLcc1MNMSNq9eYzhg9t4TuNVC51SqVOWMFR+HUlnsoQWbiHmimfxXTtfHo5lEXkfGopNzvMDYdLTcFHYdWrkdxEFGZSRY9lw2avnKi1LlCG1O4JcGDLzJJjsZq+9kk=
+	t=1742890846; cv=none; b=KlhXvTkrRroR2bMmku3dDukOlr6RdUmVNIhgDC1j38N+ld9I/oYH9DktMFXgZVsns93udhnilceBs5f7PvyrRMCE/UY1yw7Y+ZimnuTgAwj46P1gzlXbMaX+5S6VRx6Q6AfcrngmaMhxFvqTZGU1OT9NX6m1ewFImT1VOXOqh7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890803; c=relaxed/simple;
-	bh=65J1Y1jSFMd8igm1QVIoq+zLF9Z+4+XgAc0a1xWvHnM=;
+	s=arc-20240116; t=1742890846; c=relaxed/simple;
+	bh=Nq3LbPY8wdiuNqJ6fGg7LVfLWByG0+3+km7SMi0dLEY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LpLZsII/70LzcLEnwWwb+r+CtFzSnxsaONo7RaxMiyiqSqKS30bB8bam0mkpi+ICfmyqR4BwCPMM1lRi1eaJf5tL3MCrhF/J0BlSVpnoNmLAcGmHfggXhxtsXr8oxCnbiih3+pwKGdjoGc6Z6foxjn027WSSF0KXrFbWGAhmEME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6jf3yMo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68236C4CEE4;
-	Tue, 25 Mar 2025 08:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890802;
-	bh=65J1Y1jSFMd8igm1QVIoq+zLF9Z+4+XgAc0a1xWvHnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l6jf3yMoj4H50aEmmsFF1RqWOzeqOM2AF3SVjbAL/zbpeSG+fy4J3hpSv5Df5THWB
-	 b1CvSC7uhXXQXVIGGWa7DQPyUgzYNaxlLFE3X11nO009NFS1v5vxOCbcz2q5HQLO47
-	 jGyWvFLf3zFsfPYKyEY3BW0P640l7+z0tOKD9RL+E8odECvzljhAJ3UMhBMubDM21A
-	 NRdHpwY3ocx+Rn8DBStXxkvplcvW5kopp77si+B6K+jbGY2mWLs6HnBFnYoGaqTfZY
-	 cm+Z8HbHeV0Lt5s2ZwalZlMifl0Gm1+Sga/s9MhwJ2iNA1eyK7Wrf0eWd8w4gzoiuK
-	 yjMB81eHND6+Q==
-Date: Tue, 25 Mar 2025 09:19:58 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kkumarcs@quicinc.com, 
-	quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, 
-	quic_leiwei@quicinc.com
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
- IPQ5424 SoC
-Message-ID: <20250325-imposing-wine-jackdaw-fb0af2@krzk-bin>
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
- <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHC0JGU9p2QvEO6ENtDx9ua0fgSACcLs79cA24Q+enGmD3I+WnhJ7mflLLF4MMY35qIcRalk8GR11YYYAskbRcHErkFLSDcTl5pgWYzEp5cpDQi7j+TMvfmxXH0SyP1yBWS9tp3X1LnEzpLBTnQGgfb68835IvGCcE+6GFkDkbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qXdzsJkg; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Mar 2025 09:20:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742890832;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8wlixF4pq3M+CE3IdI8vKJdp+75Qo2SsQ9Ofiyknbr0=;
+	b=qXdzsJkgbONELaeQnlw8bJxeayxBB5oeWdkEpP5XxCM+SuCi+geJyhGn7SmTcZNOZ5qUev
+	cbW42KOYLAv3PNEfRWc8lDjd/6l0xacQdpkIQKZFR0Ef5lBzr4woTJxIzBtWzkzlcVCyfZ
+	l/lVxg3OoSAxmrMmXEHWOVzS53/A5Ys=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
+ duration
+Message-ID: <4un43tc6jdwyueefqyjyk7yzh34366uhakimtoat2lhutm3myn@ero3pn22qfm7>
+References: <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+ <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
+ <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+ <Z9l04b5ZGy877j32@kekkonen.localdomain>
+ <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
+ <Z9l9-tEwHRtXnz1a@kekkonen.localdomain>
+ <s76b7q2cvcuk32n3jpsijyrhxhtstk6fewb5drkxdeopvt5grj@p4mcqltiza36>
+ <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
+ <CAPY8ntDzA+j97XB4VUfBtSH0RgpVKSdKxS1o5LnmoNDE1h=eyw@mail.gmail.com>
+ <Z9qXJE8M_BW1VIKR@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
+In-Reply-To: <Z9qXJE8M_BW1VIKR@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Mar 21, 2025 at 08:49:52PM +0800, Luo Jie wrote:
-> The CMN PLL block in the IPQ5424 SoC takes 48 MHZ as the reference
-> input clock. The output clocks are the same as IPQ9574 SoC, except
-> for the clock rate of output clocks to PPE and NSS.
+Hi Dave, Hi Sakari
+
+On Wed, Mar 19, 2025 at 10:06:28AM +0000, Sakari Ailus wrote:
+> Hi Dave,
 > 
-> Also, add macros for clock rates that are applicable specifically
-> only for IPQ5424.
+> On Tue, Mar 18, 2025 at 04:39:05PM +0000, Dave Stevenson wrote:
+> > Hi Sakari
+> > 
+> > On Tue, 18 Mar 2025 at 15:11, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> > >
+> > > Hi Richard,
+> > >
+> > > On Tue, Mar 18, 2025 at 03:46:18PM +0100, Richard Leitner wrote:
+
+...
+
+> > > > The ov9282 driver uses the sensor in global shutter mode.
+> > > >
+> > > > I totally agree with your statement. This pattern is only useful for
+> > > > global shutter operation.
+> > >
+> > > I think (nearly?) all supported sensors use a rolling shutter.
+> > 
+> > You've got at least two other global shutter sensors supported in
+> > mainline - Omnivision ov7251 and Sony imx296.
+> > Patches have been posted for OnSemi ar0144 (Laurent) and ar0234
+> > (Dongcheng), which are also both global shutter sensors.
+> > 
+> > So yes they are in the minority, but not that uncommon.
 > 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml        |  1 +
->  include/dt-bindings/clock/qcom,ipq-cmn-pll.h                   | 10 +++++++++-
->  2 files changed, 10 insertions(+), 1 deletion(-)
+> Thanks for the list. I briefly discussed this with Laurent and I agree with
+> him this information would probably be best kept with userspace (libcamera)
+> without trying to enumerate it from the kernel (albeit CCS might be an
+> exception, but that's an entirely different discussion then). Only changing
+> the global/rolling configuration would require a control.
+
+Thanks for the feeback and clarification!
+
+So am I understanding this correctly that the flash/strobe duration
+approach in this series is basically fine?
+
+If so I will send a v3 later today.
+
+regards;rl
+
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> index f869b3739be8..bbaf896ae908 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-> @@ -25,6 +25,7 @@ properties:
->    compatible:
->      enum:
->        - qcom,ipq9574-cmn-pll
-> +      - qcom,ipq5424-cmn-pll
-
-Same comments as before... keep the order.
-
->  
->    reg:
->      maxItems: 1
-> diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> index 936e92b3b62c..e30d57001c38 100644
-> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
-> @@ -1,6 +1,6 @@
->  /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->  /*
-> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
-> @@ -19,4 +19,12 @@
->  #define ETH1_50MHZ_CLK			7
->  #define ETH2_50MHZ_CLK			8
->  #define ETH_25MHZ_CLK			9
-> +
-> +/*
-> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
-> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
-
-Just come with different header. Why was this called in generic way,
-since we ask to name the headers based on compatible?
-
-Best regards,
-Krzysztof
-
+> -- 
+> Regards,
+> 
+> Sakari Ailus
 
