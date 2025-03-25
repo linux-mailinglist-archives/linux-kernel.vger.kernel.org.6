@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-575117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3891A6EDB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:31:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E71A6EDC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AE5170596
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29A443ACE6D
 	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1525E254B05;
-	Tue, 25 Mar 2025 10:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC01B1EEA4E;
+	Tue, 25 Mar 2025 10:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GlB1XmtB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IQtOMNjv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ke/f4Onm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D32D254AED;
-	Tue, 25 Mar 2025 10:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B091EF099;
+	Tue, 25 Mar 2025 10:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898475; cv=none; b=en32ZSESZglNYk6Tot6njWJmGsJGsuH9d0Any+s9Vf2RQSz/G3LOloMBMvG46Wg3VScBN5YRsohnLiY+9ThD6APrf+FfvIhqOp1nCin0/5c/47F/bJPIs6fxyZ+MTxHr+JB3dc81psIHRIdPQ80at+SUHDGUyoC6KhPGMV/2t7I=
+	t=1742898492; cv=none; b=keTGjsVXhWBPoKgWDVbxh1CVcDAFCJCegYxleJ6ldmLIeGDxyaImJ7T+ljJocyjPRmUp5MqmKgwENDdot62dCx0b7MImKJstK2/d6sbMPBvHbhp9xzxvJxu6Xc7JS6IY77L7wT7W3zUD87JhE5bfrC7MLYmlme8b2PIALzV9eRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898475; c=relaxed/simple;
-	bh=sO2zRW2LVfn7/sESe/qE9A18pHkBu/5co8/Y8zkBJ1g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ACiIWGkBzw+wN/CW/0sNg5HPdRGp3wMKet/7pIlb2tYZX0rKRpizgis7wGc9o6CzOClBI5ZHhUFOaaS0ZowqhqzyFbABmosbRkHKlfXqRGFRvi4lYc/mcorvQl3NXfhVnk6bnelef4H5FmEy6wKZtRXFq7mvW+gmq06bLEEaK8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GlB1XmtB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IQtOMNjv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742898471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bvl32OvnPLRYSLXsLJD3K8ubXhDmR8NyKqSawYdGMGU=;
-	b=GlB1XmtBcJzrR/EujG1DcxuA7GSuw8ztFlhOAfHTpW18x4tuITiexuxuxWMRjViF59p7Ts
-	Q0WJKTzWxNhFOWCGCfvFG8bywkIZyKvEulLAE4j8J+UHdULxVLa+DgAfELJ6iueGaVLEtY
-	eHPixsxZ+WEuc4blT5gxAkNd7Pz5prQImkJcqCrdNVZ706TR/Xy4N4/VaG+xf+9Ipqd5xI
-	JECGdEvNBe33JEoKh3Femg0RcO6k076a8OfUXFfkKWZXxGXzty9Q1dOGC/kNQL5cI4bzMh
-	K9qKiyVv++xK59IaoDxbQbk589UwE0EJ9N3ensrAQAwcRvmBusSLx2kj3Oa9Kg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742898471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bvl32OvnPLRYSLXsLJD3K8ubXhDmR8NyKqSawYdGMGU=;
-	b=IQtOMNjvK2eZQPfrHHpxBU1R9ZHHsOc49/SwQ6rT6QsZ59ArWrRfX08DcAm7emFuXfy01b
-	shG3B2ECVR92IsBA==
-To: Roger Pau =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>
-Cc: Daniel Gomez <da.gomez@kernel.org>, =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?=
- <jgross@suse.com>, Bjorn
- Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-pci@vger.kernel.org, Bjorn Helgaas
- <bhelgaas@google.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
- domain flag
-In-Reply-To: <Z-KDyCzeovpFGiVu@macbook.local>
-References: <20250320210741.GA1099701@bhelgaas>
- <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
- <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
- <Z-GbuiIYEdqVRsHj@macbook.local>
- <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
- <Z-Gv6TG9dwKI-fvz@macbook.local> <87y0wtzg0z.ffs@tglx>
- <87v7rxzct0.ffs@tglx> <Z-KDyCzeovpFGiVu@macbook.local>
-Date: Tue, 25 Mar 2025 11:27:51 +0100
-Message-ID: <87sen1z9p4.ffs@tglx>
+	s=arc-20240116; t=1742898492; c=relaxed/simple;
+	bh=ynEc60K6YQeeOcyOvYuKO+SfYNwPtk04/dRhtnauNzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nnupKtxV9rlDDEEEPILj8JV/ge7/r5jay5xFz/WUTczQkh+Tt31HiqogIxK0Tg1OuRTX4RpkFA3pYfk9pzo81Xe4SIjhlv59tk2Isrt2etfPxiMkfXUxZXUjcCkZMOhE39HSazrVzMyIwp6Fbb7cGQTEGNuiq2+aLHTKAq6+zTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ke/f4Onm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E401DC4CEE4;
+	Tue, 25 Mar 2025 10:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742898491;
+	bh=ynEc60K6YQeeOcyOvYuKO+SfYNwPtk04/dRhtnauNzE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ke/f4OnmuUWItLRENhmJy648Pe71M1IKAzs3RZS2h/JjqKNXTmXcWr1AcwZ+yEzkA
+	 u+nKn4DKBsNe3A1zp239hJJeT5uwMwwWF/pdQKuceQok3bQN3pa7QeQXicH62/XcrO
+	 EO55eBChz7Quc9TxX1Af4ZZZRxoBuTO9tbR75J6Tpt3FZNND2lf2Q8n16FaU3kGSVH
+	 FfMnitzr48057ndp1IpkjU2oTbksKQO76XGAoJaqmovvXP+g71pKfuPPZG9FdNhA3Q
+	 ZKku/IGxizfNjYJh8K7lYpLtBGIOVwKTORpLxxAa0Z4qlNBZnZZBAAIQaC6FfvsJcF
+	 /7HqrFsm3aXEg==
+Date: Tue, 25 Mar 2025 03:28:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+ jiri@resnulli.us, horms@kernel.org
+Subject: Re: [PATCH net-next v2] net: hold netdev reference during
+ qdisc_create request_module
+Message-ID: <20250325032803.1542c15e@kernel.org>
+In-Reply-To: <Z-HbGR1V9-1Fwf0H@mini-arch>
+References: <20250320165103.3926946-1-sdf@fomichev.me>
+	<20250324150425.32b3ec10@kernel.org>
+	<Z-HbGR1V9-1Fwf0H@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 25 2025 at 11:22, Roger Pau Monn=C3=A9 wrote:
-> On Tue, Mar 25, 2025 at 10:20:43AM +0100, Thomas Gleixner wrote:
-> I'm a bit confused by what msi_create_device_irq_domain() does, as it
-> does allocate an irq_domain with an associated msi_domain_info
-> structure, however that irq_domain is set in
-> dev->msi.data->__domains[domid].domain rather than dev->msi.domain,
-> and doesn't override the default irq_domain set by
-> pcibios_device_add().
+On Mon, 24 Mar 2025 15:22:17 -0700 Stanislav Fomichev wrote:
+> > I'm not sure if this is a correct sequence. Do we guarantee that locks
+> > will be taken before device is freed? I mean we do:
+> > 
+> > 	dev = netdev_wait_allrefs_any()
+> > 	free_netdev(dev)
+> > 		mutex_destroy(dev->lock)
+> > 
+> > without explicitly taking rtnl_lock() or netdev_lock(), so the moment
+> > that dev_put() is called the device may get freed from another thread
+> > - while its locked here.
+> > 
+> > My mental model is that taking the instance lock on a dev for which we
+> > only have a ref requires a dance implemented in __netdev_put_lock().  
+> 
+> Good point, didn't think about it. In this case, I think I need to
+> get back to exposing locked/unlocked signal back to the callers.
+> Even with __netdev_put_lock, there is a case where the netdev is
+> dead and can't be relocked. Will add some new 'bool *locked' argument
+> and reset it here; the caller will skip unlock when 'locked == false'.
+> LMK if you have better ideas, otherwise will post something tomorrow.
 
-The default irq domain is a parent domain in that case on top of which
-the per device domains are built. And those are private to the device.
-
-The XEN variant uses the original global PCI/MSI domain concept with
-this outrageous domain wrapper hack. A crime committed by some tglx
-dude.
-
-> And the default x86 irq_domain (set by pcibios_device_add()) doesn't
-> have an associated msi_domain_info.
-
-It does not need one.
-
-Thanks,
-
-        tglx
+I wonder if we can bubble up this module loading business all the way
+to tc_modify_qdisc(), before we look up the dev. At this point we
+already checked that user has permissions, so we can load the module,
+whether the request is valid or not? Instead of adding another bool
+we can probably kill the "replay" silliness.
 
