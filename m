@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-576117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B674AA70B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:12:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579BEA70B29
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DBD84175F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550AD19A0E97
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B164D265CCF;
-	Tue, 25 Mar 2025 20:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="D3tTe2W9"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA31265CD5;
+	Tue, 25 Mar 2025 20:07:52 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C056266569;
-	Tue, 25 Mar 2025 20:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98A266B45
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933250; cv=none; b=Wy8v724bqKr1GDtUOofZSbMHM/hjWU1IVMLKNowlBiCT62dE4+wvBP7O/aaQ+9uVM8s4V0jy9SJrSJDtwqEkaBT+vIgutxPAf8bWLhe2M8nhuSzCDAmNAgkE2IGNCfyUKtKco+tlYXR6z/ZRQp83I8Q0s8JRhZ6eTrw7o+B83Uk=
+	t=1742933272; cv=none; b=puDhl5r1VO0JFX0VrEeL7NT3T2/de0yIjZhnJi+NpwaYRSISXTjI/XX5xixRxFD8Rqr2riDPrfTVSQz8mjOw5pF+6dBKfh4y1wA8zuBVLwu/bg2WbUlSXBm9txVJ2ZBqZqcKJbkBDXVvdElK/TeggpyRfDmpkXG3xSS8WdADpi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933250; c=relaxed/simple;
-	bh=h12nujPrVxEu5STE3RwRLUsoUnli6vhz58xY3+tYaTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtWJ2PWQoHMpNa2ayEoEmC0C5Xa6vjgzWNv22GrvKpt8E1+h4ALirmlHhHtdX9MFpB/8xuE3pUmR2HG0HCTLU0WApoAlt5iJtlOwTj95GysSMwQq0YA71MCbXdRfC/Me/PYGbwMlTSlJPXnOguO3QIwyPZeqqbAU9hd7gvPMb3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=D3tTe2W9; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15898102F66E4;
-	Tue, 25 Mar 2025 21:07:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742933245; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=mMWsmyRuKUUusNiZ9qsNQ3v93lX+3Lkzf2Js+Q75+KY=;
-	b=D3tTe2W9IkxIyHacw7Kf4AVI0HXxENctJLjr2LGY0kng4oEYpkk99GmDmYHpRMnPGjoVKg
-	tjNyjdhr/AftVD1cRiUKs6sbhkTwkTu0psmjqSndmqsaueDM51h7jzP5y1iWckq1dCFy6J
-	KPlTtHcIYz56KtkZLernrSe9xogqZmZ5rL9XM91GWpngdSXt1yTdJjL+IiWJVSIbB778zo
-	mxF4brgLf5Y9va0W4p/lCCKGn2zWIUH9SzsvlNDe9cBH/cAxDS/RVtfNBdjx774moBrgqj
-	V/Y1XkK1u23bISJRyVArG1ta8h/n5Rs9Ilcg3WikGaFX+krNHEV3pkzo8EYC8g==
-Date: Tue, 25 Mar 2025 21:07:19 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.12 000/116] 6.12.21-rc1 review
-Message-ID: <Z+MM96vqPR1MWz1m@duo.ucw.cz>
-References: <20250325122149.207086105@linuxfoundation.org>
+	s=arc-20240116; t=1742933272; c=relaxed/simple;
+	bh=p1AaJqjpxD88lQPGM+UmThHulkdUHE4v6doWlWgXbHo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ql5ButIfJ93gInxdfRZ2tuTP6a5nAO8HNDwie3ffYp5e7i06LUPFJq+7s/1j+CQQheiGIUy45DKE2E1u+Ydcn9Xg4yeBe1VzLiD5jEi7DiY+0tN5pgn7Qv6EhGDVian99rgp6y0s/2a+j7XKTKbyvnXHhfySgU7TWfBRp4ZABRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <m.felsch@pengutronix.de>)
+	id 1txAYp-0006v1-AK; Tue, 25 Mar 2025 21:07:43 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: jens.wiklander@linaro.org,
+	sumit.garg@kernel.org,
+	vbabka@suse.cz,
+	akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: kernel@pengutronix.de,
+	op-tee@lists.trustedfirmware.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tee: shm: fix slab page refcounting
+Date: Tue, 25 Mar 2025 21:07:39 +0100
+Message-Id: <20250325200740.3645331-1-m.felsch@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Boa8ut/6H3QAHeGX"
-Content-Disposition: inline
-In-Reply-To: <20250325122149.207086105@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
+X-SA-Exim-Mail-From: m.felsch@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Skip manipulating the refcount in case of slab pages according commit
+b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page").
 
---Boa8ut/6H3QAHeGX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: b9c0e49abfca ("mm: decline to manipulate the refcount on a slab page")
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+---
+v2:
+- Make use of page variable
+v1:
+- https://lore.kernel.org/all/20250325195021.3589797-1-m.felsch@pengutronix.de/
 
-Hi!
+ drivers/tee/tee_shm.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-> This is the start of the stable review cycle for the 6.12.21 release.
-> There are 116 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+index daf6e5cfd59a..35f0ac359b12 100644
+--- a/drivers/tee/tee_shm.c
++++ b/drivers/tee/tee_shm.c
+@@ -19,16 +19,24 @@ static void shm_put_kernel_pages(struct page **pages, size_t page_count)
+ {
+ 	size_t n;
+ 
+-	for (n = 0; n < page_count; n++)
+-		put_page(pages[n]);
++	for (n = 0; n < page_count; n++) {
++		struct page *page = pages[n];
++
++		if (!PageSlab(page))
++			put_page(page);
++	}
+ }
+ 
+ static void shm_get_kernel_pages(struct page **pages, size_t page_count)
+ {
+ 	size_t n;
+ 
+-	for (n = 0; n < page_count; n++)
+-		get_page(pages[n]);
++	for (n = 0; n < page_count; n++) {
++		struct page *page = pages[n];
++
++		if (!PageSlab(page))
++			get_page(page);
++	}
+ }
+ 
+ static void release_registered_pages(struct tee_shm *shm)
+-- 
+2.39.5
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
-
-6.6 looks broken, I assume that's similar error to 6.1.
-
-6.13 is being retried, I guess it will pass.
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.13.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Boa8ut/6H3QAHeGX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+MM9wAKCRAw5/Bqldv6
-8obLAJ9OP+UGS1+0oXkcp6cq6rRxKDNLYACgiNnbe7kEkONB31XcWhUIBKcLjG8=
-=+daf
------END PGP SIGNATURE-----
-
---Boa8ut/6H3QAHeGX--
 
