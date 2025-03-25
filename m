@@ -1,271 +1,179 @@
-Return-Path: <linux-kernel+bounces-575078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4205FA6ED49
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:03:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A92A6ED4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91AF1894E33
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C060916E5FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC9319DF41;
-	Tue, 25 Mar 2025 10:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC7C1F940A;
+	Tue, 25 Mar 2025 10:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FvBGWK87"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LjPWLmPp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j9OBh6y+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DC6149DE8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B97219B5B4;
+	Tue, 25 Mar 2025 10:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742896966; cv=none; b=Edfuhw9ENlfTleqtpe/+3mvWnsfWs+3HWlSBgzT1VYP54yF/eo3GssDP237zep7HPGAQ4mqcdpyrW7FBj144NbS7JO1VLaqj2Py0gxb8U2+XwvuGsmKCzjnr3luyuEAyJ1jvUMMCkZq2Et7UGSX2SmwJp1xKO9mRK3SFLJnvedQ=
+	t=1742897190; cv=none; b=K2Kcw41oObEEKkzU80s3e4zit6wSxV0/B8cqCEpBoyz9goyEx15+peI5VTMY4jyNGHmGE5t8w52JtJeBgfJROy/0rTXZrPiBRvx1ygohtfxHHj5p7d7QngDkspIQZlGlmHDX3+JOpZSeYuu78zWU1jI6mLe3jvzW7e7MGay0ZGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742896966; c=relaxed/simple;
-	bh=Kx+8kK58UDDOeqNe6ijB2aq4bwGrZ/zEAjBdzB12Qbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xw0DwLy/hXTRt+hmrWqYuxL8KKzzrv8KDB5tv8JOxaT2L5q/MZZJ9Yn0+1dBApaMtcUYHPTUNhRk0gE7ohKuBR3aDZVRLSlz7ymVWdDX/4n+AircA/HfqICI1OqrAEoIdBWsoKX3pig4uMHV29w51wtQyJAnQcDIaomxYETdrP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FvBGWK87; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2239c066347so119285595ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 03:02:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742896963; x=1743501763; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DA8G5snMj+Ia9kBK7Bv3gXm5YjnljuWtRxGf46RBPnE=;
-        b=FvBGWK87QpLKUNlx6y7UETkiWUEs0FcIU0hXfUrmEM/uIinxYDbCFfeoeydLLteayj
-         X4SZzR4e6QAHErvfmlAFE1NdrKS9cVS2c8h2nR9uXVks22jl6Ew+mw5pguEVv/5TaHEq
-         jqb2oomtiJQDk2IjPLYRwnV4sjb0Umv5RNNxPFLOzrTt4e8fvisCd5p2KMQIj3kpKJSR
-         QISoYq6u4zpGy4Q7ouNfte/1m7twCYyj0lgbLEDU6H23V4Zde/XnU9Bf2PSj7WCo4PB3
-         2yBmGDLAK+o9izTgjKBDX2h3gzfAwpqvalREXXpIJ48tYB9S8azPW/LLsenJ38kc3Ywq
-         jMNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742896963; x=1743501763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DA8G5snMj+Ia9kBK7Bv3gXm5YjnljuWtRxGf46RBPnE=;
-        b=JpxSPy3T0Kl9aRe/+j+32Qd9gvtL1sDLQaWRENgyW67xel9ZgnSkIGDUq1e3yuNXCx
-         RzfRMDPbh3zFFczDp+6PDO55fcOPd8jaKRoFgTxUBxfPO8l4mBLojxweLknKhmGbRZF+
-         6oG7AhqvRG95iEM4vCt5aP8CAUCvew2qEjQLImAEQERCTYzLfpPKnTniB+L1rTLbOFSG
-         XcOtJ4JKt8fLplUIUp4yik192uWpBVxUr59+PSWHmCW82bQ11bPN6a/hvNGoEW0NhsF5
-         zKDc5mKN+gBW+237HJ16JNPfB4zcVbZZGo05BNRyPgQZst106KXhONk9Unkfds+HbVeo
-         WNCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1WYTIS6CPhSQBrg2cGBsiu6RV4IGLKVkNQKE+mdrr9wYX2J36dLtLfkqbkiA68IM2pShBaXQ/YOfrl8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWbyT7hpCNxjJLOHbH28lv/HXHhol3ONcnTTG/fo7AqVJPf8Ch
-	jiYjTOK//2UTmrKL9qm91DH3vrrGw3WdlgXjuj9qGIGPXKoyJ2Sc4bG0Zx1rVQ==
-X-Gm-Gg: ASbGncvdZO+hZQRMfNL+9eLJsya6eAdir7Z4qCe/z15adhDADSL8/IdEtmxHjRw9dtq
-	pW+t680xg1KdFY0QWI8R/SmD4hBOA+by9GURcG49GTYDsQHUBhE02WZJCAjpC9gJbiGXCGetaLG
-	RDvI8O5BOPKa5Jt5Ja5ClAo6AsUb0/1h705GBVJY237wBJWw/ghDSahXeXzhPQ8j6Lu24499/jx
-	qVwyexTcjsWn9ATP54DUjbOV7xKkP5IbFrJN2XCE00SONVWS+9ZgRuJ8+lWJoQTC2jrQHaaoDUR
-	ROikv+4CQ9BzXWxfQ4o8ZhdxWRj9GDfTDzlAd9bmsbLW
-X-Google-Smtp-Source: AGHT+IFMJkpfzrYQsiZm4y1cZaCzq0bbtrKmCxERumgQoGt3+jUALmh441vB5zuy0kk5gpTW4h7Wmw==
-X-Received: by 2002:a05:6a20:c886:b0:1f5:79c4:5da2 with SMTP id adf61e73a8af0-1fe4331ddc4mr31539700637.31.1742896963100;
-        Tue, 25 Mar 2025 03:02:43 -0700 (PDT)
-Received: from bytedance ([115.190.40.12])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a2843af9sm8649772a12.38.2025.03.25.03.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 03:02:42 -0700 (PDT)
-Date: Tue, 25 Mar 2025 18:02:25 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Xi Wang <xii@google.com>
-Cc: Chengming Zhou <chengming.zhou@linux.dev>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Josh Don <joshdon@google.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
- throttle
-Message-ID: <20250325100225.GA1539283@bytedance>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
- <CABk29Nuuq6s1+FBftOPAcMkYU+F1n2nebcP5tDK9dH4_KXA2cw@mail.gmail.com>
- <f121fdf9-aa0d-419f-9323-bd8b0c9682f3@linux.dev>
- <66a69f8e-6f0c-48d0-b8d6-6438092f9377@amd.com>
- <7d9fbee5-2a06-41ed-9ee3-93ef3c077eff@linux.dev>
- <CAOBoifh2Ya279_jjFBrSAHuczqz_FM4NGUne2Tk0sBV=gD4D+w@mail.gmail.com>
- <20250324085822.GA732629@bytedance>
+	s=arc-20240116; t=1742897190; c=relaxed/simple;
+	bh=XyDE2CEqYlVLaXbgJvzKpOkd2bsD6p8WqOoHpe8jZVk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZpAm57QUfiAI6gz0CQDO+tq2z/vRh5B+vqEhb1XT9j+o31FLyS37aUkyBkX25PEU8RF0/KvxzCSHVWnoyoYGar5wGfkKfjJw+6z33i21BNtgncnaebpkebAjY55j4z7g6XcSiy0L5+e/l8h2JlUNnPzoB+ph+oRDv19ZaAc0KqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LjPWLmPp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j9OBh6y+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Mar 2025 10:06:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742897187;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uof9g/Cj1Qfuu/FmUE4qy0Z2nMrEENfbBIKHt0SFqtU=;
+	b=LjPWLmPpv2JvPyXqZ4Yvqn8bv1Om8WDZkyBJFi9jqeJ+4+uz/KPW7DvksE4pbwiqRnX/3T
+	J4JfX9zxR81LxddKF3T20Ju0nF0qsQIjooGOOLG6BOBRdgtVTdSp0r9l1i7d+L7jrohMyR
+	+y9QT8gt6uLeo63NGllVXo6rJxWbFtD4UGe4WtoJBdUeB7FzhNOhiIo8Okm6qN3zV6eO7t
+	oB4F+UFLxozFLsfPnfLo5gl5ZLH7InvR9LzcjN45k6bOQST0pNaNYMkNLAXP+r/JgUu4pH
+	KWyTWOiNhGg7kptkgk34S3Y1Cqwameq4025S0NwRl1SCFALUWF5UtmEiRv44+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742897187;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uof9g/Cj1Qfuu/FmUE4qy0Z2nMrEENfbBIKHt0SFqtU=;
+	b=j9OBh6y+ANDVddMtkqhgE8kdFz58BfGG3FMJ5ei3KkltF/FZerkEsOT4xU7hPdPgp5cZ85
+	nyoUCE7zHQqwbUDg==
+From: "tip-bot2 for Ryo Takakura" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/urgent] lockdep: Fix wait context check on softirq for
+ PREEMPT_RT
+Cc: Ryo Takakura <ryotkkr98@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250321143322.79651-1-boqun.feng@gmail.com>
+References: <20250321143322.79651-1-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="+SYqT80xgeOfiHXD"
-Content-Disposition: inline
-In-Reply-To: <20250324085822.GA732629@bytedance>
+Message-ID: <174289718274.14745.16349720260441360293.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the locking/urgent branch of tip:
 
---+SYqT80xgeOfiHXD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Commit-ID:     61c39d8c83e2077f33e0a2c8980a76a7f323f0ce
+Gitweb:        https://git.kernel.org/tip/61c39d8c83e2077f33e0a2c8980a76a7f323f0ce
+Author:        Ryo Takakura <ryotkkr98@gmail.com>
+AuthorDate:    Fri, 21 Mar 2025 07:33:22 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 25 Mar 2025 10:46:44 +01:00
 
-On Mon, Mar 24, 2025 at 04:58:22PM +0800, Aaron Lu wrote:
-> On Thu, Mar 20, 2025 at 11:40:11AM -0700, Xi Wang wrote:
-> ...
-> > I am a bit unsure about the overhead experiment results. Maybe we can add some
-> > counters to check how many cgroups per cpu are actually touched and how many
-> > threads are actually dequeued / enqueued for throttling / unthrottling?
-> 
-> Sure thing.
-> 
-> > Looks like busy loop workloads were used for the experiment. With throttling
-> > deferred to exit_to_user_mode, it would only be triggered by ticks. A large
-> > runtime debt can accumulate before the on cpu threads are actually dequeued.
-> > (Also noted in https://lore.kernel.org/lkml/20240711130004.2157737-11-vschneid@redhat.com/)
-> > 
-> > distribute_cfs_runtime would finish early if the quotas are used up by the first
-> > few cpus, which would also result in throttling/unthrottling for only a few
-> > runqueues per period. An intermittent workload like hackbench may give us more
-> > information.
-> 
-> I've added some trace prints and noticed it already invovled almost all
-> cpu rqs on that 2sockets/384cpus test system, so I suppose it's OK to
-> continue use that setup as described before:
-> https://lore.kernel.org/lkml/CANCG0GdOwS7WO0k5Fb+hMd8R-4J_exPTt2aS3-0fAMUC5pVD8g@mail.gmail.com/
+lockdep: Fix wait context check on softirq for PREEMPT_RT
 
-One more data point that might be interesting. I've tested this on a
-v5.15 based kernel where async unthrottle is not available yet so things
-should be worse.
+Since:
 
-As Xi mentioned, since the test program is cpu hog, I tweaked the quota
-setting to make throttle happen more likely.
+  0c1d7a2c2d32 ("lockdep: Remove softirq accounting on PREEMPT_RT.")
 
-The bpftrace duration of distribute_cfs_runtime() is:
+the wait context test for mutex usage within "in softirq context" fails
+as it references @softirq_context:
 
-@durations:
-[4K, 8K)               1 |                                                    |
-[8K, 16K)              8 |                                                    |
-[16K, 32K)             1 |                                                    |
-[32K, 64K)             0 |                                                    |
-[64K, 128K)            0 |                                                    |
-[128K, 256K)           0 |                                                    |
-[256K, 512K)           0 |                                                    |
-[512K, 1M)             0 |                                                    |
-[1M, 2M)               0 |                                                    |
-[2M, 4M)               0 |                                                    |
-[4M, 8M)               0 |                                                    |
-[8M, 16M)              0 |                                                    |
-[16M, 32M)             0 |                                                    |
-[32M, 64M)           376 |@@@@@@@@@@@@@@@@@@@@@@@                             |
-[64M, 128M)          824 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+    | wait context tests |
+    --------------------------------------------------------------------------
+                                   | rcu  | raw  | spin |mutex |
+    --------------------------------------------------------------------------
+                 in hardirq context:  ok  |  ok  |  ok  |  ok  |
+  in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
+                 in softirq context:  ok  |  ok  |  ok  |FAILED|
 
-One random trace point from the trace prints is:
+As a fix, add lockdep map for BH disabled section. This fixes the
+issue by letting us catch cases when local_bh_disable() gets called
+with preemption disabled where local_lock doesn't get acquired.
+In the case of "in softirq context" selftest, local_bh_disable() was
+being called with preemption disable as it's early in the boot.
 
-          <idle>-0       [117] d.h1. 83206.734588: distribute_cfs_runtime: cpu117: begins
-          <idle>-0       [117] dnh1. 83206.801902: distribute_cfs_runtime: cpu117: finishes: unthrottled_rqs=384, unthrottled_cfs_rq=422784, unthrottled_task=10000
+[ boqun: Move the lockdep annotations into __local_bh_*() to avoid false
+         positives because of unpaired local_bh_disable() reported by
+	 Borislav Petkov and Peter Zijlstra, and make bh_lock_map
+	 only exist for PREEMPT_RT. ]
 
-So for the above trace point, distribute_cfs_runtime() unthrottled 384
-rqs with a total of 422784 cfs_rqs and enqueued back 10000 tasks, this
-took about 70ms.
+[ mingo: Restored authorship and improved the bh_lock_map definition. ]
 
-Note that other things like rq lock contention might make things worse -
-I did not notice any lock contention in this setup.
-
-I've attached the corresponding debug diff in case it's not clear what
-this trace print means.
-
---+SYqT80xgeOfiHXD
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="5.15.diff"
-
-Subject: [DEBUG PATCH] sched/fair: profile distribute_cfs_runtime()
-
+Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250321143322.79651-1-boqun.feng@gmail.com
 ---
- kernel/sched/fair.c  | 17 +++++++++++++++++
- kernel/sched/sched.h |  2 ++
- 2 files changed, 19 insertions(+)
+ kernel/softirq.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index da3f728b27725..e3546274a162d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5009,6 +5009,8 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
- 	cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
- 					cfs_rq->throttled_clock_pelt;
- 
-+	rq->unthrottled_cfs_rq++;
-+
- 	/* Re-enqueue the tasks that have been throttled at this level. */
- 	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, throttle_node) {
- 		list_del_init(&p->throttle_node);
-@@ -5017,6 +5019,7 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
- 		 * due to affinity change while p is throttled.
- 		 */
- 		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
-+		rq->unthrottled_task++;
- 	}
- 
- 	/* Add cfs_rq with load or one or more already running entities to the list */
-@@ -5193,7 +5196,9 @@ static void distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
- {
- 	struct cfs_rq *cfs_rq;
- 	u64 runtime, remaining = 1;
-+	unsigned int unthrottled_rqs = 0, unthrottled_cfs_rq = 0, unthrottled_task = 0;
- 
-+	trace_printk("cpu%d: begins\n", raw_smp_processor_id());
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(cfs_rq, &cfs_b->throttled_cfs_rq,
- 				throttled_list) {
-@@ -5201,6 +5206,7 @@ static void distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
- 		struct rq_flags rf;
- 
- 		rq_lock_irqsave(rq, &rf);
-+		rq->unthrottled_cfs_rq = rq->unthrottled_task = 0;
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
- 
-@@ -5222,12 +5228,23 @@ static void distribute_cfs_runtime(struct cfs_bandwidth *cfs_b)
- 			unthrottle_cfs_rq(cfs_rq);
- 
- next:
-+		trace_printk("cpu%d: cpu%d unthrottled_cfs_rq=%d/%d, unthrottled_task=%d/%d, remaining=%Lu\n",
-+				raw_smp_processor_id(), cpu_of(rq),
-+				rq->unthrottled_cfs_rq, unthrottled_cfs_rq,
-+				rq->unthrottled_task, unthrottled_task, remaining);
-+
-+		unthrottled_cfs_rq += rq->unthrottled_cfs_rq;
-+		unthrottled_task += rq->unthrottled_task;
-+		unthrottled_rqs++;
-+		rq->unthrottled_cfs_rq = rq->unthrottled_task = 0;
- 		rq_unlock_irqrestore(rq, &rf);
- 
- 		if (!remaining)
- 			break;
- 	}
- 	rcu_read_unlock();
-+	trace_printk("cpu%d: finishes: unthrottled_rqs=%u, unthrottled_cfs_rq=%u, unthrottled_task=%u\n",
-+			raw_smp_processor_id(), unthrottled_rqs, unthrottled_cfs_rq, unthrottled_task);
- }
- 
- /*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e0e05847855f0..bd3a11582d5b6 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1118,6 +1118,8 @@ struct rq {
- 	unsigned int		core_forceidle_occupation;
- 	u64			core_forceidle_start;
- #endif
-+	unsigned int		unthrottled_cfs_rq;
-+	unsigned int		unthrottled_task;
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 4dae6ac..513b194 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -126,6 +126,18 @@ static DEFINE_PER_CPU(struct softirq_ctrl, softirq_ctrl) = {
+ 	.lock	= INIT_LOCAL_LOCK(softirq_ctrl.lock),
  };
  
- #ifdef CONFIG_FAIR_GROUP_SCHED
--- 
-2.39.5
-
-
---+SYqT80xgeOfiHXD--
++#ifdef CONFIG_DEBUG_LOCK_ALLOC
++static struct lock_class_key bh_lock_key;
++struct lockdep_map bh_lock_map = {
++	.name			= "local_bh",
++	.key			= &bh_lock_key,
++	.wait_type_outer	= LD_WAIT_FREE,
++	.wait_type_inner	= LD_WAIT_CONFIG, /* PREEMPT_RT makes BH preemptible. */
++	.lock_type		= LD_LOCK_PERCPU,
++};
++EXPORT_SYMBOL_GPL(bh_lock_map);
++#endif
++
+ /**
+  * local_bh_blocked() - Check for idle whether BH processing is blocked
+  *
+@@ -148,6 +160,8 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+ 
+ 	WARN_ON_ONCE(in_hardirq());
+ 
++	lock_map_acquire_read(&bh_lock_map);
++
+ 	/* First entry of a task into a BH disabled section? */
+ 	if (!current->softirq_disable_cnt) {
+ 		if (preemptible()) {
+@@ -211,6 +225,8 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+ 	WARN_ON_ONCE(in_hardirq());
+ 	lockdep_assert_irqs_enabled();
+ 
++	lock_map_release(&bh_lock_map);
++
+ 	local_irq_save(flags);
+ 	curcnt = __this_cpu_read(softirq_ctrl.cnt);
+ 
+@@ -261,6 +277,8 @@ static inline void ksoftirqd_run_begin(void)
+ /* Counterpart to ksoftirqd_run_begin() */
+ static inline void ksoftirqd_run_end(void)
+ {
++	/* pairs with the lock_map_acquire_read() in ksoftirqd_run_begin() */
++	lock_map_release(&bh_lock_map);
+ 	__local_bh_enable(SOFTIRQ_OFFSET, true);
+ 	WARN_ON_ONCE(in_interrupt());
+ 	local_irq_enable();
 
