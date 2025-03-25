@@ -1,127 +1,109 @@
-Return-Path: <linux-kernel+bounces-576014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A5CA709ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:06:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA62A709F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854513B4B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586653B7DBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBE91AE876;
-	Tue, 25 Mar 2025 18:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BCA1D2F42;
+	Tue, 25 Mar 2025 19:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iz9YJ/Eh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gv68XKRw"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F82019049A;
-	Tue, 25 Mar 2025 18:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1610E15E96;
+	Tue, 25 Mar 2025 19:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742929168; cv=none; b=IjKU4m1rUVOfNTGO0l0stSTI9oTryKhDKnHlyIBi6CQk8bbCbodCayCeZzhxcIdNnnR26qjeuV0bNC5IVJANGstD09suKRo3AZMAE3cxe1ewriAmwkdIIa2ZuzQMx9n01LbcrNhQihHVc8DGITU4DYpyWOHnpyckEWFEfyNh7bE=
+	t=1742929244; cv=none; b=UoS/3DtahV6BJZC2VVuzgy60+2nA19gA4cfLMRwUeGAC3zkBiqsTM3XH+4Aha7mCj1KGvsHfFIdDSzJ5uFFeQ19UoN9NeAU25wHoZu/Fgp0VrzupQ898V/0l5YvnlzaZoWgDhpxiuzRJPARUAnZx3nqCbrmUk9v9VY1FVvoHsC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742929168; c=relaxed/simple;
-	bh=9LVQC+aIvaoTYsz1PD07JOGItrLOSYoDZl8VS7cgO18=;
+	s=arc-20240116; t=1742929244; c=relaxed/simple;
+	bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8JGFsbWokIpMYiq2A2QJNWw9cVKHDzABGtkrc/shCj3l9DznJEt+1R5FKfWl7hpiMeGJqcUOUSvbTHmgezGTgVAZWoPw8koCsTcZTX2hTJhbrO4tqJmAxicOCm3Mu/MyU0qp/71RSeAzW3j3q3UcHD63+bh+hH49XLdqJ59rtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iz9YJ/Eh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2945BC4CEE4;
-	Tue, 25 Mar 2025 18:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742929168;
-	bh=9LVQC+aIvaoTYsz1PD07JOGItrLOSYoDZl8VS7cgO18=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Iz9YJ/EhQZXeGnQD4IYmnwuPI0GmITr9xbroo1tjRiHIe21N+VYnK0kOhpEyKCGYj
-	 c7Ss4gE2LcryCD8MIkGYoSX2eCv9LFewUf/KSellZb8YumK1pLf8b1+l/Gw+MmizOa
-	 T7oYpcrI7Q8sopsTkRuLJBZsxNNhkpn45Q2YZLgOVYTH0R3Hd6aGLEIYFKZhdxvOLL
-	 equ4yP8y9fz5fhnvYb//YRvpF7m4M3K/TIpuRI3OWRf3ItCj63YaB1GcgFYZGsVc60
-	 7WBB9r3Gi/ZhxaAUUHIccTdYRfySvw82vFqkTKYe8YaGMzmQzVOnnJ54pQmY0kqjD3
-	 RjIlgbeTXpsLw==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2c2ada8264aso2608612fac.2;
-        Tue, 25 Mar 2025 11:59:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGjbRlwXJteJHIIOYIZ67zCxA4LUXfhBjAY516Zx1GsY76c7p3bSBFEf2hZgLxO0JplZyz5gtIyM2EU183@vger.kernel.org, AJvYcCVgKzxsgBuFzBDIosHp54F0zmfIefgtlVnKQpioOdCm/qh15GMvlKfvLfwbptT5dmGFanx3NKrZEEpwkljuMPY=@vger.kernel.org, AJvYcCWxz79TAgxawb413mOXicIsjlUn/C35JYiFJez2IF2hd4UkNI1tmlYfuxAgjzgRr+fP9uL261k2hsAB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5dsY7Sa3wV/igrAetx0EpMJ4ZQpVENCJCqvMcNcbita8cRIEO
-	ud9/+fr00QYan7YOathPaYu4ehDn6FadaqujCxXA9LVuXlTK8qKLVMZimU5nd6SnI2DxSA2Rc8Y
-	cX32HMmHne0XYSDdiUknKVy9K55w=
-X-Google-Smtp-Source: AGHT+IGYFDih76ZCcI4DFKFSbsLWidus3XA5/4LpT4w95waG2KqujFRpK+jyOo/5/j2lGBD6q/ezXcymcHZJHmVrqTs=
-X-Received: by 2002:a05:6870:46a8:b0:2c2:3ae9:5b9c with SMTP id
- 586e51a60fabf-2c7801fe4d5mr12078147fac.2.1742929167443; Tue, 25 Mar 2025
- 11:59:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=ks5LW3vVQwCw3n938KdsIFYId1eqeRSMTX+E8cG0CysG79CX/ac8hEL1oPqR40zjB92due1vmy6EInEB5qYuddEPw8J9SWbxGf2Y7OOTeIf3Fwcm0Xh1uV6C8JHo+C83dMY8zwwO2ySJFzZ8YZpPsuj+O+H+9GqMf5c1ZNBgaW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gv68XKRw; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso54157255e9.1;
+        Tue, 25 Mar 2025 12:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742929241; x=1743534041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
+        b=Gv68XKRwqop4pzkKc9JlRdw2HwgjCUxJ728IdtYxiSaWSufWez/xjOYXbhyAo2RBe6
+         oQ6tMm8pEfuhEf+ax1Jt7XH3ujtp5GGElDpyZdfdXMHHSPnUTTQF6TsNarDOpN98WXTg
+         3Mne9WpBulGgNDgiRkKdIhUd7E9dlW6dEYXMbo47mQFVzspYHn8a/R8/4+M7ZdTa5PWR
+         oWCRG4esW6kxtRFg5NxTIic2TSL1KqevjabugPH5NFMoEM0ba6Ov5yvi7DnCH6bll/qD
+         0H3jxv3wIoVw2bIHgEs1DthGHpqlqaTzvM4YQGX5BY47bkWHv8h/meUNE4GoyANDvoqL
+         OuAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742929241; x=1743534041;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
+        b=bBPvM/fS+Xqacy5/Zvb76+WH//nfRisti/UWKFki/PT9GZh5CyAnXqqKK9ul2pQGTx
+         n7JODJwOeVptrKnZ5KdkXmXU0JsXBli2xJx9enncwt/VisCynd8d72om23ObF7PnPEvS
+         FPan5OTyiq0wGxDt4HFnMdzskO0bGFxkO/2bJ8vbNZNlC7/7BVldruRVN4pZf9JxUMQt
+         dd0t3ahHxtuusu5MMUXiKDXC+2u4bjv5VUNp+y+jxaW61fhtCo941UXUSi0xwdZKOKL/
+         Q6T69ya3gQZhBZepmCk/scIVOxYUwXuI9HhlS6oevZtgMQpYQY0msWvnjbFkQ0tKfkd+
+         ouPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOkVSC6OJP1ivCNAESf3dyoTleIlp46V0Lz2OIjjCRWMjCmdo/KPz/v75xiwxZjwPJJYCuHUvq+24=@vger.kernel.org, AJvYcCUzX/PBpbxXEgp3RKo5LO6qkXsRaZS54TT8oMgSA/G6tqZueVFvfdf6mv5ssb9Ntt41qYtmvRg379I=@vger.kernel.org, AJvYcCVV46X4hUPHiG/G4suGxIbgp2RZ995/PGCnjVl+FCHtwYDdG/SKfThM6wpoKDgm/9ymlDcunNxfpMNIIfo=@vger.kernel.org, AJvYcCXkTvagOqLh6s0PEryWSIm4bDfph7XKE0k3VylNt+1mnM7u0BhyTRqB/veyherNsvocttvWJSOravMd9+pt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD0mACV3RbNGziLreMlxAclIpvBBu3JWERAKQGOYtn14q5844e
+	G8KXpPxGocuOG7xRT4c0Ih9D/r++bt4z6r2HewU0A/+Rd8F0diaJG0d+niyHOpNPV5vBU8Tg08h
+	Sjfs2YuhOfQFR8TSKLkTTUXy4WGs=
+X-Gm-Gg: ASbGncsnVJqfs18Kc3D5W0t/eJoAxNZWznyxwzul/7d+TCiwn981Gsgob0sloT4FwCB
+	q60EYOjhtwIMd8PMTVI+R0RJOmhHuqlOqoOYtip3YDFmCqukAjjkwJ234j/004+NzW3AjDab/J8
+	puOC6mGqWsPhou0q+O6+pxTpRng5k=
+X-Google-Smtp-Source: AGHT+IEDc3tyF/hFbw4j068/Le/2Xa4I49R2ihKwn1SilHlKBN8C9u6EyQgv8p1bCiDJ+HvE0ISRQn0HPEZ6zk620RE=
+X-Received: by 2002:a5d:6d0a:0:b0:391:306f:57de with SMTP id
+ ffacd0b85a97d-3997f9405c4mr17108463f8f.45.1742929241148; Tue, 25 Mar 2025
+ 12:00:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
- <20250317-ivo-intel_oc_wdt-v3-2-32c396f4eefd@siemens.com> <1beeb77c-83d6-4634-ba39-2b40efbb8437@siemens.com>
-In-Reply-To: <1beeb77c-83d6-4634-ba39-2b40efbb8437@siemens.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 25 Mar 2025 19:59:14 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jh1jJy+YRMtLDnYqAhPrN2Pox+NY0Vqh_uqb7F=NwqEg@mail.gmail.com>
-X-Gm-Features: AQ5f1JpddNTTHybEk3zZj11Lb5Jq8iuktb-1Vetg4y60p60aQiC_Sr6tzkoGS6k
-Message-ID: <CAJZ5v0jh1jJy+YRMtLDnYqAhPrN2Pox+NY0Vqh_uqb7F=NwqEg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP
- device list
-To: Diogo Ivo <diogo.ivo@siemens.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com, 
-	benedikt.niedermayr@siemens.com
+References: <20250321095556.91425-1-clamor95@gmail.com> <20250321095556.91425-3-clamor95@gmail.com>
+ <69024f13d296cf2127e7f4229d1e6ece@kernel.org>
+In-Reply-To: <69024f13d296cf2127e7f4229d1e6ece@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 25 Mar 2025 21:00:30 +0200
+X-Gm-Features: AQ5f1JoHj-5VGdi3sDjJ-Kr3rNBl5Ntlplq3pMlWWE5QBTFl7BLAfEiK3RB3B3s
+Message-ID: <CAPVz0n2GYUjV_LojZKMzAGC5P8APC5G-A_ApinV=-_K5YoO0wA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 6:19=E2=80=AFPM Diogo Ivo <diogo.ivo@siemens.com> w=
-rote:
+=D0=B2=D1=82, 25 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 20:56 Step=
+hen Boyd <sboyd@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Hello,
+> Quoting Svyatoslav Ryhel (2025-03-21 02:55:55)
+> > Extend the Tegra124 driver to include DFLL configuration settings requi=
+red
+> > for Tegra114 compatibility.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
 >
-> On 3/17/25 10:55 AM, Diogo Ivo wrote:
-> > Intel Over-Clocking Watchdogs are described in ACPI tables by both the
-> > generic PNP0C02 _CID and their ACPI _HID. The presence of the _CID then
-> > causes the PNP scan handler to attach to the watchdog, preventing the
-> > actual watchdog driver from binding. Address this by adding the ACPI
-> > _HIDs to the list of non-PNP devices, so that the PNP scan handler is
-> > bypassed.
-> >
-> > Note that these watchdogs can be described by multiple _HIDs for what
-> > seems to be identical hardware. This commit is not a complete list of
-> > all the possible watchdog ACPI _HIDs.
-> >
-> > Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
-> > ---
-> > v2->v3:
-> >   - Reword the commit message to clarify purpose of patch
-> > ---
-> > ---
-> >   drivers/acpi/acpi_pnp.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
-> > index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d57=
-9e32963a5b29d2587 100644
-> > --- a/drivers/acpi/acpi_pnp.c
-> > +++ b/drivers/acpi/acpi_pnp.c
-> > @@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, cons=
-t struct acpi_device_id **matc
-> >    * device represented by it.
-> >    */
-> >   static const struct acpi_device_id acpi_nonpnp_device_ids[] =3D {
-> > +     {"INT3F0D"},
-> >       {"INTC1080"},
-> >       {"INTC1081"},
-> > +     {"INTC1099"},
-> >       {""},
-> >   };
-> >
-> >
->
-> Gentle ping on this patch.
+> Drive by nitpick. The subject should drop "drivers: " because it's
+> implicit from "clk:".
 
-Do you want me to pick it up or do you want to route it through a
-different tree?
+If this is the only remark you have to this commit, I am happy to fix it ;)
 
