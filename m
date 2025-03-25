@@ -1,121 +1,161 @@
-Return-Path: <linux-kernel+bounces-575637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75589A7051D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 754A0A70530
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E193BA9CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2653A6177
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F501A23A2;
-	Tue, 25 Mar 2025 15:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="dqBa0NGx";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="q3qFTrXS"
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988A31F4E4B;
+	Tue, 25 Mar 2025 15:33:13 +0000 (UTC)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1155442A96;
-	Tue, 25 Mar 2025 15:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A517119DF4D;
+	Tue, 25 Mar 2025 15:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742916726; cv=none; b=LWvTEx5McdhTeTdJP6M9wbNfFv5pq7zZF/FKzlRAXEbwblLIfVuN1D55f5kzUqmeUM1HwkEbOt5IgKL+BR99afQHE134PByH1tL6zTKWOvbTB8bMs4pKjpvct8ETDC2yOYMWm5w/bcJPCHxuoTAvT/TL7ECrbAJc1ASKm1iKmx4=
+	t=1742916793; cv=none; b=Og4GXQQIWjThT66EHHh1BdYkok50dpcozW29hdUTPCn0hLwI7MJuL5YEG3/Wre0uPWUUOZyGMHGW5b+J19+DulDupMAqeSYIbbQXNE99ZAHevJxJnoolOlHZhXbPyZGnh4ktt9SqLCp5VVq6Yx30OLSSg5qL4MKon5ZHbONu2jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742916726; c=relaxed/simple;
-	bh=x2NmSt9yLbVIJPlyS82xD2DGNKCq8MlMoH8SFczXq3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKPMlFiSMGQ8Z8ms4c/VR1lkYGdzKVS+/FXTxVEn9wwnbUCzB7KpNvf6MKRCedwB+k8GInWAqbRb3DiGcDF7ApfAKFEIewl+WzZb9Di2SvLNs/WfIrK4mOquZhlW+29Nx5IKRi0HauKhUHBWkM1fhpbv4BIbecAz1/RjXnhxX+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=dqBa0NGx; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=q3qFTrXS; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id DE3016032E; Tue, 25 Mar 2025 16:32:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742916720;
-	bh=uqCXvfdB2apsnaT9FS0TOcbMaur2YtZsVJVBqKqOVhg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dqBa0NGxkoj44VfwN1i2rHQFWsvTKCPmfpuj7lnYou27otd2hiwa9RynLJfM39Jbf
-	 R2YAK1ZvEDr4aHAALJl4ZbDY5INvoqR50+cw93t4LeI3QnBL+C3ssbVFosNXGyvDxX
-	 ohy1mxW5luDd4JdEiWQdx7fujQu1cgq5OaY57Oo9tqGwphJ30RYE2CRThcJezbFsrl
-	 glnWX3Bh5x5/YIq8EQA2sV10KmgvMDJnNPLr40BmT/M8L82+zf9XFqY7afYp8R1+LO
-	 8CxkDu6ydQpfAK4Oe2W/jdUj0xH7kXTpDsFKqiJd8EjXkrBIycNyvyi085c5NXM+yR
-	 olJOiL0aquPFg==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 2F53960292;
-	Tue, 25 Mar 2025 16:31:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1742916718;
-	bh=uqCXvfdB2apsnaT9FS0TOcbMaur2YtZsVJVBqKqOVhg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q3qFTrXSS2hEHC9r/3hWthMYvvglJvKbVle3F0+2hmRKzCoQ+jsZD2yNt83Wc1bJQ
-	 a39DMxUYuu2tblvm4pUi642xqNzPMqpHomiXBNaTnCsAEaQjfZpbV5DQ8PqlFDICV3
-	 dYAIcTW1Qzw2uvAh/dZKFRTErBbfwxeIjYqhJwNbUOyykemfDYv+Z03l4WO6zyQm/P
-	 S1kzLKcPme6R4/8EJBdwKkZuU1DgvvjZYpv9taiOrWKk7npBWiVr1mAh5Mt3oC+ZFc
-	 Qg+wdlx7OqKoTjPcxZzFcqKXtbys0gzH30zFctsq3hkH081K5M+GKaUyl5L8ckOlo1
-	 yIls4dFI5VUPA==
-Date: Tue, 25 Mar 2025 16:31:55 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, cgroups@vger.kernel.org,
-	Jan Engelhardt <ej@inai.de>, Florian Westphal <fw@strlen.de>
-Subject: Re: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-Message-ID: <Z-LMa9k9q_tJolr3@calendula>
-References: <20250305170935.80558-1-mkoutny@suse.com>
- <Z9_SSuPu2TXeN2TD@calendula>
- <rpu5hl3jyvwhbvamjykjpxdxdvfmqllj4zyh7vygwdxhkpblbz@5i2abljyp2ts>
- <Z-GNBeCX0dg-rxgQ@calendula>
- <iy3wkjdtudq4m763oji7bhj6w7bj2pdst7sbtahtwgcjrhpx6i@a4cy47mlcnqf>
+	s=arc-20240116; t=1742916793; c=relaxed/simple;
+	bh=uOMaXxqQr1touZc2JkhdpC0WTA9CS+H9FhkB/6PIUEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jgBT62ST0+tZzY5mBDCeVMB52FOKBvdvvq1FHZlUSSSWzEGwJ5AmsvKsoTcGSUn6nTWxITjbY4owsuACEVTtWk9HoulFBCNppUDImhjiO03JbHl5ADIM2Cgtp9jpOPlVBG52g7rO2Bp03YqFPCSxo3DEMgv5MJxocKo0UoGKn8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4774ce422easo16309461cf.1;
+        Tue, 25 Mar 2025 08:33:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742916788; x=1743521588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PiWm+JkA0WFLQavBGxgJxiDDHRCBaxXFyxmdg7dNgng=;
+        b=TTF7VR+KJVbXUhkdKWdXc3eOlPXndbxaZjCdD9bi/hy7xQe5V2BIDfjw1Jslhm+n/N
+         xUNVn3dZXbxHUWUZVvt0W+a0aTb2ZIQwx8x5tR+Mhl6kFU78E00nl/gqxKV02frqYcdM
+         +qSDdReI6fodQMlzcpY7pLhFUN7ttJ13nitr4UH2tigsqCtNSBtjzGMOMiUcu+PLUYw6
+         c47da6ZmcPviuAbIO6uL9s8SRep+19EemnuAC0MsVxJ7wK7e6k7G/oqhTkwvgAwuEAH+
+         uDB0mq3NiUKi6EpmpDF9kuFPKZqaOcLIhUXchYtr/gLgyMHw4ixa+RYa48Mr2j0idbOX
+         ofdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIWAGCGQNb/V2PDf/77Wa02yZjxOvBI3oA2T+edhYgrryeQVoP49sl0uYkdO3sogas16BDqfQs4ICSDQ==@vger.kernel.org, AJvYcCWJ7f2x11xB+uxsi6lPWkClhdqOisrLcsfp6HXMY3k3TE754u54bUYZs49voT7L8bmiDKXQNvSeZDVv@vger.kernel.org, AJvYcCX4bL3x8ngxuuowvJRZAOxeSj1yF8YdvoMqP0AoreLuzYzpzl/4ws3LTkIYV9g2BXvCn84/j1fK5w5o@vger.kernel.org, AJvYcCXOC1K7NFtAmVMHDkGWcZ9gi7k8bTMFwiBvpqDbzF2b58mI6nyi3kIxl9DFkn6UhjAHZX44k6Nnxs/9WsBn/u4iQ4A=@vger.kernel.org, AJvYcCXUTLRrBomv0jYzM6CD7/2Ke7RY/vWbMvPdtxsASU5q5v0AhZJz4+YYeuJ06JRAZrKCJjTJqBqxY11j87W2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfRZr/crQdyprmk0W+1n12Ve25aGoDFKCguT/qYIvXxt3LLbFO
+	x8+dE34D9Ry2UGmz3CS6y1C05EUFR2BeqRjxlhLML00hPZ4cczXR/Euj3yY+AW0=
+X-Gm-Gg: ASbGncuF7p3VG5I0FYkNgQlLVBbkZRJTWcH705CbpljAsp5gXoeMRuonGH7PnqONFBJ
+	6Q2SSrBat3c5isu4rv52eLs39mWNnEbXXOUD+MT/nQzmEVqeqddKvtV/OJ/FYAKL4j4OwpYSktA
+	KQxqcRm4Xv+kup2WKxbyCA3J1YcIesJXs6BH2xzswDoA30R5kZtUaxY3nmwkgd5ETuLdc37hq4C
+	MGAsITd51TJa2LCg8nat7zzDaeyGStNcyeJMrdKKIfQMxePo4qWGYj4mse3uf9qn8DzZEsnRG7w
+	qTxyFMzer5aqlwr0m6TUyfOMCnMA0QTx8kQ40hVp45ys5mmgHnSkFWSiuibf62WF2AUjHBYP0qY
+	yKOH9S3s=
+X-Google-Smtp-Source: AGHT+IFqvTjsXvX3xul61e4WC7plgr7WMyl39JcGULtJxkbH1TVujp6hDW+oSamYLl5bCnwzLzVxyw==
+X-Received: by 2002:a05:620a:170a:b0:7c5:3b3b:c9d8 with SMTP id af79cd13be357-7c5ba1ea6e4mr2203802585a.45.1742916786164;
+        Tue, 25 Mar 2025 08:33:06 -0700 (PDT)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com. [209.85.219.41])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b9347bd1sm656352785a.70.2025.03.25.08.33.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 08:33:05 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f8657f29so48608956d6.3;
+        Tue, 25 Mar 2025 08:33:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGWFz/Nd/Uq1ns2oZ4TQiX9VYEWIa12T22DocPIxbQ1zXn7ShV4HjsElRzkjEqMbvG9lSwZZI5sM5z6g==@vger.kernel.org, AJvYcCUYwgm2g04WJotS+bIzp0HSdaY6rpAnHvk4F/S5qcx2A8pEk75JgwWhO76i/df72+42tQwYEBCqpb9auXbQkThCqT4=@vger.kernel.org, AJvYcCUfMIwztbyw/hV4LtJ3Z+wM9Lngjmn/r20Khyk9zgj/2rtFay+SqiVJYtGfZKAbsfoqPBl7DH45B5Pt@vger.kernel.org, AJvYcCVq7NIEqOa/0DEBzQwQcqaxmIuXKxbaUXHkYpkCMl1yG+uSI6qRDYY64FFW4JufZIl0qcG6pWoQBj7lFP4z@vger.kernel.org, AJvYcCVzQxK6CbhN47vU8YSbK4+NC+b8nreTdBuG1I6jF2PyCenyRMsXV77o/iyZxd/TCOVaZJpVwnIISFqq@vger.kernel.org
+X-Received: by 2002:a05:6214:20c7:b0:6e8:9085:5d2f with SMTP id
+ 6a1803df08f44-6eb3f339a37mr326036416d6.32.1742916785150; Tue, 25 Mar 2025
+ 08:33:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <iy3wkjdtudq4m763oji7bhj6w7bj2pdst7sbtahtwgcjrhpx6i@a4cy47mlcnqf>
+References: <cover.1740753261.git.robin.murphy@arm.com> <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
+ <CAMuHMdWPFnHTFeeWL2-BU8tKOL-E5K2ROOz=LLBLTJJLCK9NgA@mail.gmail.com> <25bd5477-a388-405f-a976-6b1a59860ef8@arm.com>
+In-Reply-To: <25bd5477-a388-405f-a976-6b1a59860ef8@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Mar 2025 16:32:42 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXt9gQxBSVrWw1VSji+faxga4Vo_NRie27K=EtdUMMa_Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JrInfgh7M7jTSsfMUqSCBjPY93HktuBUK2sUhwTSlijqeY8n60NM1ex8dE
+Message-ID: <CAMuHMdXt9gQxBSVrWw1VSji+faxga4Vo_NRie27K=EtdUMMa_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe path
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>, 
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta <nipun.gupta@amd.com>, 
+	Nikhil Agarwal <nikhil.agarwal@amd.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Charan Teja Kalla <quic_charante@quicinc.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 24, 2025 at 07:01:14PM +0100, Michal Koutný wrote:
-> On Mon, Mar 24, 2025 at 05:49:09PM +0100, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > If !CONFIG_CGROUP_NET_CLASSID, then no classid matching is possible.
-> > 
-> > So why allow a rule to match on cgroup with classid == 0?
-> 
-> It is conservative approach to supposed users who may have filtering
-> rules with classid=0 but never mkdir any net_cls group. Only those who
-> eventually need to mkdir would realize there's nowhere to mkdir on (with
-> !CONFIG_CGROUP_NET_CLASSID). Admittedly, I have no idea if this helps to
-> 5% of net_cls users or 0.05% or 0%. Do you have any insights into that?
+Hi Robin,
 
-I suspect this partial support will not help anyway, because user will
-be most likely matching to classid != 0 in their rulesets, and the
-ruleset loads via iptables-restore in an atomic fashion, ie. take it
-all or nothing.
+On Tue, 18 Mar 2025 at 18:24, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 18/03/2025 4:37 pm, Geert Uytterhoeven wrote:
+> [...]
+> > Thanks for your patch, which is now commit bcb81ac6ae3c2ef9 ("iommu:
+> > Get DT/ACPI parsing into the proper probe path") in iommu/next.
+> >
+> > This patch triggers two issues on R-Car Gen3 platforms:
+> >
+> > 1. I am seeing a warning on Renesas Salvator-XS with R-Car M3N
+> > (but not on the similar board with R-Car H3), and only for SATA[1].
+> > Unfortunately commit 73d2f10957f517e5 ("iommu: Don't warn prematurely
+> > about dodgy probes") does not help:
+> [...]
+> >      Call trace:
+> >       __iommu_probe_device+0x208/0x38c (P)
+> >       iommu_probe_device+0x34/0x74
+> >       of_iommu_configure+0x128/0x200
+> >       of_dma_configure_id+0xdc/0x1d4
+> >       platform_dma_configure+0x48/0x6c
+> >       really_probe+0xf0/0x260
+> >       __driver_probe_device+0xec/0x104
+> >       driver_probe_device+0x3c/0xc0
+>
+> Hurrah, this is the warning doing the correct job - something *is* off
+> if we're now getting here without the IOMMU configuration being done
+> already (for a normal device with no other funny business going on).
+>
+> > 2. The IOMMU driver's iommu_ops.of_xlate() callback is called about
+> > three times as much as before:
+>
+> That would suggest that the fwspec gets set up OK, then something later
+> in the __iommu_probe_device() path fails and tears it down again, so the
+> next attempt starts from scratch. Do you see the "Cannot attach to
+> IPMMU" message firing?
 
-> > Maybe simply do this instead?
-> > 
-> > static bool possible_classid(u32 classid)
-> > {
-> >        return IS_ENABLED(CONFIG_CGROUP_NET_CLASSID);
-> > }
-> 
-> Yes, if the above carefulness is unnecessary, I'd like to accompany this
-> with complete removal of sock_cgroup_classid() function then (to have it
-> compile-checked that it's really impossible to compare any classids w/o
-> CONFIG_CGROUP_NET_CLASSID).
+I do not see such messages.
 
-Go ahead remove this shim function and post v3.
+> And similarly to the Rockchip case, does the
+> below help?
 
-Thanks.
+The below is basically the same as your "[PATCH] iommu/ipmmu-vmsa:
+Register in a sensible order"[1].  While that fixes my first issue,
+it does not fix the second (harmless?) issue.
+
+Note that I only noticed the second issue because I have local debug
+code in soc_device_match().  Perhaps it happens, unnoticed, on other
+systems too?
+
+Thanks!
+
+[1] https://lore.kernel.org/53be6667544de65a15415b699e38a9a965692e45.1742481687.git.robin.murphy@arm.com/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
