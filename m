@@ -1,182 +1,137 @@
-Return-Path: <linux-kernel+bounces-575065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F021AA6ED1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:55:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340E7A6ED1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40DA16F153
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:55:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3FB81893393
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076A7199FAB;
-	Tue, 25 Mar 2025 09:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121B72528FC;
+	Tue, 25 Mar 2025 09:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpyNpvRm"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFVgd+d3"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED03C253F1F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C0199FAB;
+	Tue, 25 Mar 2025 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742896513; cv=none; b=cNUqPwgG51jw0VJyEyzzVhwEaVOmBTsmf7M0P9N2Tt2uAyXqiRDMhqTMh4nkqEc9U9gPhHtQJTfloz3m8ISqVSVbqMzGKFaQKTPG5H7oP5ONcWN0YD38KwsKgmflBPK4TFEV4MciUccl9CwA2RK8LbuljDmno1dwlFNQXXEyxQI=
+	t=1742896635; cv=none; b=VQlqX4rwlmAT02dFOB7MGU5mgUoEeKUyLXCkTcJeeKkLgK4xGvYV/PMqmvFBjTLwDjSGFxokk+OvEyxjOFOCcKxJxY6G4On29YUDHwkT/PoRapTZnXZHPL68rdIKsCGHYP3YUzJ+Ra6NrPtac47V3N7wzStXIyBrC26iJ3ae4WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742896513; c=relaxed/simple;
-	bh=s3vRoJO9KCdRiGB7I2a3vCYZT0qYEi3rStspDL15YPs=;
+	s=arc-20240116; t=1742896635; c=relaxed/simple;
+	bh=BvDDzlzdOcqf4BHdU6qJ8FawDbknKtetT8elHms5Yd8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BML97ccghL2BKdTrpwbK9rPRyYG9Lzggte8q+MpJFDUjmEUckIY91o7MnIzX4VGw94G1A3JE/vSkpfEkIhhw1jIx45VwUdrh7r9umcKDkFhEhcEl/iSIVk0ywJf8P1rKQKUNi3tJIf2dFIiGtWtTR5KNjvfsXBYHMy53S0/0tNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpyNpvRm; arc=none smtp.client-ip=209.85.216.43
+	 To:Cc:Content-Type; b=hxSVxcTnC/WXz3G29AFpRyYqYEkPy2UPYvbYuOkRp9eIIUHkyUJZGffNckPCXN9W/Qzg/V4RabguOjAb9HllXaNlUjcLAaUdqOMBaPl6JZs9OupXNxNFWv7jn4L794Kv2Ir1mivmipsW1hHkoDxKb1T8WS6LXwtaQxkgHvPedB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFVgd+d3; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff69365e1dso7373576a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:55:10 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac345bd8e13so956524566b.0;
+        Tue, 25 Mar 2025 02:57:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742896510; x=1743501310; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742896632; x=1743501432; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OikC43tfGVqcaGJaSFtBGBt98zMmOylB8g82DSjPV3k=;
-        b=bpyNpvRm3kAzGTxN72OosjQpPSkRqD9aJPlBWsNK6A0mmcP1mnqfAuIkxm6aQYPH+H
-         e6705qrpm54ICv606WAG+5HodbzBKJzPaG2WdaxjlWAOIWvez3Q8paKeI2z/D6vsN6/H
-         k+v+ouUZa/iDsnhSQf9h6LWENVKJ5GoyQspmK0oDDs3du3V43bKOBLsdbpH4F8FmBeT3
-         i9GL8Axu00i5ZctICaqW51pkM3MC2K6Rw254YbNojD+SHtcd1Mwhp2nzzyA31qUPv0Fy
-         VTYUhuVFA64EVQvrTCKArtUr4NeIqn+QMe90OvJ8HN2EfLNDoP0JrivJRutdMRz9YbbX
-         nfdQ==
+        bh=DEgV7dXBWUHlWp9THDdIl69Z+M8XTdqmdjv6ciiL/v0=;
+        b=JFVgd+d3101AiHcDUppGvTfflvkX7b1q0nfiii+tjQjFzqrSakMowxratyEC1kJ8vN
+         dzqgRBiv6xUDAQN3BsXiREIl7e59olEOEBtPLLyv4i4dfB76AvmMsugaLBLJXNahdk4k
+         Ih/uM7kzNuQuR5HDnVLN3jaYcI6R/wGWryvl2muMkqYBztVrs1YBhvq0HV+Hg9+KRJyx
+         QE/6enD8gU14OX+B0XILPAQVtwkY0DJnpnsHBHjkksuv3MwdcLuPwt3AZcKwC2Y8N1gO
+         x8ducReZwuwrEpg+T9aR1+gNvBFfA1OuPwv7WBpc8f1qFNU9m8aPditkdS9GIm99Qapz
+         D5vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742896510; x=1743501310;
+        d=1e100.net; s=20230601; t=1742896632; x=1743501432;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OikC43tfGVqcaGJaSFtBGBt98zMmOylB8g82DSjPV3k=;
-        b=j5/M21oFqj1Wokv6m0k9L7KOV5j71dzfzqHwH3h7n7EXN80D16QUi5SCUoEUjiXO30
-         2ufrx/nvTYg0KPCdbbb3t4NPbWjJwgNKTO//yK/npX4VWTjukqlNTUT9yiM6jS+bLsGJ
-         v6OtpQgbqcD9l7swCLm64rrpD056FQzCxs9SEjIGTT51KrvoUN5H83egE1D3ShBoaT9j
-         coJ81QTSV7IdJ5yOpS8n014vQV/CLp9P0V15CTYtZvWSquOq7tMeR2MlfIXWkVhsMJ6T
-         Y4fUquIoJuh3NWVlkPKzrp5smyxP/hoHrno36Qj7YjLFI3XWsO3z5SW6UslsLQBoU4ot
-         Kw3g==
-X-Gm-Message-State: AOJu0Yx0DaAlk/2aHInm3+2Duo+Gn+0c3iyV8vGK+u6w0p9Y0KccK3pO
-	eqzEinqhamr9av/Iavd4Xypa8JTDLGXv40fY++VizH0pzxEGcyCfWRRbG3q+KNksit1epldwrsk
-	bmdkyQqxDALbiAv9u94eq5aAQyrs=
-X-Gm-Gg: ASbGncukfyYm5fbzWRtkvaqX0LzceU2ef8TljfUV4aiGr4PivgDcXeEfB6XMQl6TRor
-	jIpMMMv+FfEQYxOjoDrFHF/PaAz8aLIBwL4cvPQjMWGnl81jGQavE0dnrOHtY43jHcB3gSbf6CE
-	qTGDbSIdBGR36NNFzhHkzc8Rr8tXW2L56yWYXo
-X-Google-Smtp-Source: AGHT+IGNIEeEUu6SigCoTSpIj9xYEpEWYK8C0NKYzoyZvgcjwlTLD0/P82xVLjttC0KKK2MAJ8X+XpE4+SSRkHydSjY=
-X-Received: by 2002:a17:90b:2647:b0:301:c5cb:7b13 with SMTP id
- 98e67ed59e1d1-3030fe552f1mr23024928a91.3.1742896509787; Tue, 25 Mar 2025
- 02:55:09 -0700 (PDT)
+        bh=DEgV7dXBWUHlWp9THDdIl69Z+M8XTdqmdjv6ciiL/v0=;
+        b=Izldsdbt73h0rqwEwU/JB+2qqfVX4wCnM730/6H8+Vy2kqjH3Eey4cHlO0WKGfTH+I
+         fCQcH3ruj4z8DTzeZVLWvxh46ol9bV/wM4fDzXCC8fEJSNjaAV8gVu8LXgIc2j17DcGN
+         PeD/FD2oaMUuqub1HXQsxZvICgSIzQbaKeLb+5OjgFWRj9Vb+Fo3EjQhzaIknzaehS7C
+         75HrXqjcc9Yzt1fOjztKzECxvwtvn2xYW8TB8jYieTT7vkUkQ8CQWy7tV+TFl9vHye7a
+         B2CzC4UOfSEJWrJiGq3+uehlkbjHm8uVJprzS5AhqmPivmB2plE8IZQYFSxKTFYDmA1n
+         /cZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpUAMCAv2kHhjMLTtf8UAMz718xuaWsTtYTOyu8jx5NsU+my5CQJBCOSDQf6zFTcxCkTK34Y+lZ6+hBuQ=@vger.kernel.org, AJvYcCVULTpm/+1NHpwIBpFvU7xRLwF0b4lL0I6KCqm8+YS4NER+5UTFQbCaothC7dsA/g7eCRIcbWqIRfzneW7B4Mma@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkfBuMuCNQDGp+3+LNyLCtbrs5PNvh/qFKc6tIt9C+dzfFljYR
+	VJiFtjylTJhD8qYx8jQN9Xtm8atM/DBUbGxmNBigd+eINY1zP0Uc5wAtCJxXPG5Uojc5ba4R0dv
+	zWHFOjSgrcBUQCD2CBUT75WVGH5s=
+X-Gm-Gg: ASbGncuOzRjPvAjwR/MO8rR5qL24qVr0jVccdw1rwwJzGVBDjU97dgFTLEnTzcRdP06
+	xqISzQ6uTuY7GltSkqwtT7G3lJZ3ZMh2wgcgwvPU+t+6FzTHZMQ/uZs0SUEiBpvAWaWAsg57CjL
+	5gJL1/AyZoZIK3GLzY8gBglmp+FkU7
+X-Google-Smtp-Source: AGHT+IGsybLlk6Gei/O6isFxKvdtM4iz5ryq2uJLMcJrXSpZT1dQ7GSgHEo9pIWxQarGx/awZwvUr8q/dPIStNwB2FM=
+X-Received: by 2002:a17:907:da0c:b0:ac3:f683:c842 with SMTP id
+ a640c23a62f3a-ac3f683c845mr1688462366b.42.1742896631914; Tue, 25 Mar 2025
+ 02:57:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJNi4rPaPeVWzBve6Toi8hhrxP6GROAGRug7+c3zg1crDeOt7Q@mail.gmail.com>
- <875xk022wu.ffs@tglx>
-In-Reply-To: <875xk022wu.ffs@tglx>
-From: richard clark <richard.xnu.clark@gmail.com>
-Date: Tue, 25 Mar 2025 17:54:58 +0800
-X-Gm-Features: AQ5f1JqYEwNRR58lzDarOJKfOrvacm-ZDrKE_UsmaKh3gsTaUsm0aGs3qM00oss
-Message-ID: <CAJNi4rPtsUohpXgD28Bi7K4Y0G=ShgNuUmf1L3E4ze7txj_z0w@mail.gmail.com>
-Subject: Re: hrtimer precision issue/question??
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, richard clark <richard.xnu.clark@gmail.com>
+References: <malayarout91@gmail.com> <20250324124810.883767-1-malayarout91@gmail.com>
+ <20250324125108.GH14944@noisy.programming.kicks-ass.net> <Z-J3jlYcocf_w4M_@gmail.com>
+In-Reply-To: <Z-J3jlYcocf_w4M_@gmail.com>
+From: malaya kumar rout <malayarout91@gmail.com>
+Date: Tue, 25 Mar 2025 15:26:58 +0530
+X-Gm-Features: AQ5f1JrI8xAwzMwi4u1x_sk952eG-lUxVvQamrG1sXprgY3Bm-WPSFDn1iveu5o
+Message-ID: <CAE2+fR_kG1SpE3DZ6cbZL+J8HT25RcaGxYrZP-H+rDFSJG6sdQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests/x86/lam: fix memory leak and resource leak in lam.c
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi tglx, Thanks for the explanation! I tried run 'cyclictest -a 0 -t 1
--m -p99 -r' to use the relative timer instead of absolute, now the
-output of the same diff as:
-[   63.824382] [ 0- 0]t0=3D63816686720,t1=3D63817689248,d=3D1002 us
-[   63.825387] [ 0- 0]t0=3D63817691648,t1=3D63818694144,d=3D1002 us
-[   63.825691] [ 4- 7]t0=3D63808939136,t1=3D63818998336,d=3D10059 us
-[   63.826392] [ 0- 0]t0=3D63818696544,t1=3D63819699456,d=3D1002 us
-[   63.827402] [ 0- 0]t0=3D63819704352,t1=3D63820709120,d=3D1004 us
-[   63.828407] [ 0- 0]t0=3D63820712448,t1=3D63821714976,d=3D1002 us
-[   63.829413] [ 0- 0]t0=3D63821717536,t1=3D63822720032,d=3D1002 us
-[   63.830417] [ 0- 0]t0=3D63822722496,t1=3D63823724928,d=3D1002 us
-[   63.831423] [ 0- 0]t0=3D63823727264,t1=3D63824730912,d=3D1003 us
-[   63.832429] [ 0- 0]t0=3D63824734176,t1=3D63825736768,d=3D1002 us
-[   63.833434] [ 0- 0]t0=3D63825739168,t1=3D63826741568,d=3D1002 us
-[   63.834439] [ 0- 0]t0=3D63826743904,t1=3D63827746432,d=3D1002 us
-[   63.835445] [ 0- 0]t0=3D63827748832,t1=3D63828752576,d=3D1003 us
-[   63.836164] [ 7- 4]t0=3D63819412064,t1=3D63829471328,d=3D10059 us
-[   63.836452] [ 0- 0]t0=3D63828755936,t1=3D63829760032,d=3D1004 us
+I appreciate all the feedback and recommendations provided. We will
+incorporate the same.
 
-Now I am wondering if the cyclictest will have the same result using
-the relative timer instead of absolute, suppose all the other
-conditions are the same?
-Also the '-a 0' set affinity to cpu0 and only one timer thread with
-'-t 1', don't know why some cyclictest migrate(?) to the other cpus
-than cpu0, any comments about this...
-Thanks!
+Thanks & Regards,
+Malaya Kumar Rout
 
-On Sun, Mar 23, 2025 at 5:04=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
+On Tue, Mar 25, 2025 at 2:59=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
+e:
 >
-> On Sat, Mar 22 2025 at 11:20, richard clark wrote:
-> > With diff below under the 'cyclictest -a 0 -t 1 -m -p99' trigger from
-> > the arm64-based linux box, the interval is 1000us and the arch_timer
-> > in the system is: arch_timer: cp15 timer(s) running at 31.25MHz
-> > (phys).  1tick =3D 32ns for the arch timer, I am not sure if those
-> > durations less than 1000us are expected?
 >
-> With your method of measurement yes. There is a german saying, which
-> describes this. It roughly translates to:
+> * Peter Zijlstra <peterz@infradead.org> wrote:
 >
->    "Who measures a lot, might measure a lot of garbage."
+> > On Mon, Mar 24, 2025 at 06:17:50PM +0530, Malaya Kumar Rout wrote:
+> > > Static Analyis for bench_htab_mem.c with cppcheck:error
+> > > tools/testing/selftests/x86/lam.c:585:3:
+> > > error: Resource leak: file_fd [resourceLeak]
+> > > tools/testing/selftests/x86/lam.c:593:3:
+> > > error: Resource leak: file_fd [resourceLeak]
+> > > tools/testing/selftests/x86/lam.c:600:3:
+> > > error: Memory leak: fi [memleak]
+> > > tools/testing/selftests/x86/lam.c:1066:2:
+> > > error: Resource leak: fd [resourceLeak]
+> > >
+> > > fix the issue by closing the file descriptors and
+> > > releasing the allocated memory.
+> > >
+> >
+> > But but but, doesn't the program just exit on any of those 'errors'
+> > anyway?
+> >
+> > That is, iirc this is a single shot program.
 >
-> But it accurately describes, what you are measuring here. You do:
+> While that's true, still proper cleanup of resources is a good practice
+> - and in more complicated tools it's useful to fix even these
+> semi-false-positives, to make sure other warnings don't get missed.
 >
->     t1 =3D ktime_get();
->     arm_timer(T);
->     schedule();
->     t2 =3D ktime_get();
->
-> and then look at t2 - t1. That only tells you how long the task actually
-> slept. But that's ignoring the most important information here:
->
->     arm_timer(T);
->
-> cyclictest uses:
->
->            clock_nanosleep(clockid, ABSTIME, &T);
->
-> and T is maintained in absolute time on a periodic time line.
->
->     T =3D starttime + N * interval;
->
-> So the only interesting information here is at which time the task
-> returns from schedule(), i.e. you want to look at:
->
->         t2 - T
->
-> Why? Because that gives you the latency of the wakeup. That's what
-> cyclictest is looking at in user space:
->
->            clock_nanosleep(... &T);
->            clock_gettime(..., &T2);
->            latency =3D T2 - T;
->
-> Now what you are looking at is the time at which the cyclictest task
-> comes back into the kernel to sleep, which is obviously
->
->            t1 =3D T[N] + latency[N-1] + execution_time;
->
-> But the timer is armed for T[N], so your t2 is:
->
->            t2 =3D T[N] + latency[N];
->
-> You surely can do the remaining math and map that to the output:
->
-> > [  165.555795] [ 0- 0]t0=3D165550399226,t1=3D165551394303,d=3D995 us
-> > [  165.556802] [ 0- 0]t0=3D165551398751,t1=3D165552400997,d=3D1002 us
->
-> Right?
+> Having said that, the error/cleanup control flow here doesn't look
+> overly clean here to begin with, so I'd suggest fixing that (with goto
+> labels or such) - which would fix the file_fd 'leak' as a happy side
+> effect.
 >
 > Thanks,
 >
->         tglx
+>         Ingo
 
