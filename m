@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-575003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48691A6EC74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:28:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF625A6EC75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B80BE7A30C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC0116A1DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B10253F2A;
-	Tue, 25 Mar 2025 09:28:20 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0818C1D619F;
+	Tue, 25 Mar 2025 09:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivr42c1q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6158D1FDD;
-	Tue, 25 Mar 2025 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A139479
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742894899; cv=none; b=oPVvkRqx3D5KBBqFEKdWWqi/SMp+TgUxIPcsKdRQ/vLLmFDSysI79KM/qkaKFFiWWFp30JtWQDQVBGpXfHf9XSMhoVPNbhBlhsdcH2uCwEZIDceEd2zczrTXBH93xx2dLKqxn38WlzZDlEFaU6lxG2DTO5VUn4NGu5WATKuWBQE=
+	t=1742894965; cv=none; b=CJBqSkBlVlbtjmAHrjRrEXfra84BmN92bsfqYQbyjhIfHjbyY1TiiNOri17jDgInbA2h/iGEnS+OXkzbrCGuhslEorrWVnxv0RHD82aXsMedkDG8diDDBCo6LRCvHfGQWXKHPTjq1ARSqKYohk1AMMYTNkkP/TpQ7pc0XD1DN4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742894899; c=relaxed/simple;
-	bh=RlzV/DVotiI5IkmU1KWUD9pG+Qn9qmbhQ/6ss8Rk0+I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UEPqfVDuIyknU4q9CQ2MyQwFOUhWdaZV7oClFgqHiRwGLvJ3at/Bpv1/UE726UFAUYf/EVqnn8IuiBRWd5+/bRit9aEV1Q5I7SSLrT1CAJ9oCt+jN2T+8Wd4DeVpJXHlePUJSLRKvPt1v5c0C5HbwnmOWqJ6a/qjB5Y8QhWr3UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACn5g4cd+JnPWRMAQ--.6335S2;
-	Tue, 25 Mar 2025 17:27:56 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	ckeepax@opensource.cirrus.com,
-	u.kleine-koenig@baylibre.com,
-	megi@xff.cz
-Cc: linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH v2] ASoC: sun8i-codec: Remove unnecessary NULL check before clk_prepare_enable/clk_disable_unprepare
-Date: Tue, 25 Mar 2025 17:26:40 +0800
-Message-Id: <20250325092640.996802-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742894965; c=relaxed/simple;
+	bh=pQJrDsIRCGcaaAOV8R2YCpZCdN6goihWB6J8Dl3Ulgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b67yqomE9HSbuzndYHB/LBsZ58ToGZkSEUu2V2j15vtjpBplGePkZLOVLsfXAaWUod7Y+RW1zEyfCLM0Q5/MVgI4C5AGc2PA/cGZYPB0MarPy90x28oljztFrT+/Ja2Ht0g56uJcHM5Zjiob80g02pPTBdetc37HlsqoMMKN/Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivr42c1q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766B2C4CEE4;
+	Tue, 25 Mar 2025 09:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742894964;
+	bh=pQJrDsIRCGcaaAOV8R2YCpZCdN6goihWB6J8Dl3Ulgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ivr42c1q3TF/Ref7GLfnx6ku/lWFi6YTjMADcS4+j5HlJRoR6WlK1Si9vGi8spEWc
+	 3tj+modCybXkdT89qZc3LEaNcZkQrKt1xmIny27eGo61yrPMqzbJMKxRBLMHTlAA+T
+	 Fbeernee2cE/MUkgn7sSo3/u/FZsoowco6IoN5FVQHEo/ZKI5SA47HVNISlQyEzjdR
+	 Pi/805PKncGuqPVgihrGWqyifkfiDxQ5u+QFFo4ZdUJbtnnNFOHTfHhgIys6TCnLYU
+	 HnqfNm+RH4MwcL1cxrPE21JtX2su2QMZ6sZcVOKW2NZqdq3LattlqdGhoQ7X9UqL7g
+	 U23wM7Rh5EUEg==
+Date: Tue, 25 Mar 2025 10:29:22 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: devbrones <jonas.cronholm@protonmail.com>, 
+	maarten.lankhorst@linux.intel.com, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+Message-ID: <20250325-inquisitive-ebony-mouse-bdf185@houat>
+References: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
+ <875xjxa2rk.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACn5g4cd+JnPWRMAQ--.6335S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJrWDWF18XrWDCr45WFWDtwb_yoW8GF15pa
-	4fGFWftrWfJ34F9rs3Zr18t3W5KrW29ay3A3yYk3Z5Zwn8GF10qF45Ja4v9FZ0kr98KF47
-	Wr1UtasYyFn8GaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUkrcfUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7qo75eqjhxv6bcp6"
+Content-Disposition: inline
+In-Reply-To: <875xjxa2rk.fsf@intel.com>
 
-clk_prepare_enable() and clk_disable_unprepare() already checked
-NULL clock parameter.Remove unneeded NULL check for clk here.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
-Changelog:
+--7qo75eqjhxv6bcp6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+MIME-Version: 1.0
 
-v1 -> v2:
+On Tue, Mar 25, 2025 at 11:16:47AM +0200, Jani Nikula wrote:
+> On Sat, 22 Mar 2025, devbrones <jonas.cronholm@protonmail.com> wrote:
+> > This fixes a bug where some Playstation VR Headsets would not be assign=
+ed
+> > the EDID_QUIRK_NON_DESKTOP quirk, causing them to be inaccessible by
+> > certain software under Wayland.
+>=20
+> Please file a bug over at [1], and attach the EDID on that bug, so we
+> have some clue what's going on.
+>
+> [1] https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new
 
-1. Add clean up for clk_prepare_enable() call.
----
- sound/soc/sunxi/sun8i-codec.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+I'd rather have them in the commit log. Nobody uses gitlab issues for
+drm-misc, and those kind of issues are just lingering around and
+becoming stale.
 
-diff --git a/sound/soc/sunxi/sun8i-codec.c b/sound/soc/sunxi/sun8i-codec.c
-index 8b9eb1a202f7..7b3496caa31e 100644
---- a/sound/soc/sunxi/sun8i-codec.c
-+++ b/sound/soc/sunxi/sun8i-codec.c
-@@ -248,12 +248,10 @@ static int sun8i_codec_runtime_resume(struct device *dev)
- 	struct sun8i_codec *scodec = dev_get_drvdata(dev);
- 	int ret;
- 
--	if (scodec->clk_bus) {
--		ret = clk_prepare_enable(scodec->clk_bus);
--		if (ret) {
--			dev_err(dev, "Failed to enable the bus clock\n");
--			return ret;
--		}
-+	ret = clk_prepare_enable(scodec->clk_bus);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable the bus clock\n");
-+		return ret;
- 	}
- 
- 	regcache_cache_only(scodec->regmap, false);
-@@ -274,8 +272,7 @@ static int sun8i_codec_runtime_suspend(struct device *dev)
- 	regcache_cache_only(scodec->regmap, true);
- 	regcache_mark_dirty(scodec->regmap);
- 
--	if (scodec->clk_bus)
--		clk_disable_unprepare(scodec->clk_bus);
-+	clk_disable_unprepare(scodec->clk_bus);
- 
- 	return 0;
- }
--- 
-2.25.1
+Maxime
 
+--7qo75eqjhxv6bcp6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+J3cQAKCRDj7w1vZxhR
+xVu5AQCE0X6uHOBYnSGbZVafc3oq1zchZWFptDTLm8soyrkaTwEA871ESHNjC/Rb
+Liqf9nI8u9d/aG0iVns6ui7AspsgQgs=
+=ijSu
+-----END PGP SIGNATURE-----
+
+--7qo75eqjhxv6bcp6--
 
