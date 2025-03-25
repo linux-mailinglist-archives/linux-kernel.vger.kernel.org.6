@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-576112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F73A70B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:10:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8901DA70B24
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB55A189F63A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D1683BDCB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CA6266578;
-	Tue, 25 Mar 2025 20:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889FE267F70;
+	Tue, 25 Mar 2025 20:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PV9bb6bG"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khCB68gx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995CF2676F3;
-	Tue, 25 Mar 2025 20:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A88F267B9E;
+	Tue, 25 Mar 2025 20:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933218; cv=none; b=q2wcumHjuzd4RcrRjcXGEaDQBsSDVcr7bctPCQr2OAIVMq5pQ8rx57ka315++fjwrSyIkLsHC+z6uQpdS4Dkikia0qQfBoTCkYwMRYazScT550UhdB3C8JHmYjOR/Exj5dbBU1gGj9Ao0LvUKXxQcKqkf/U9bIJgSKdhpm8K/bI=
+	t=1742933224; cv=none; b=elFYqINr8V3aMDAlrcG4zcsGU4MLpVn4nvebXZuS/RnisTr7UnCJuh/z3zV64Z1FHiljXhUyYdKorYrHPujfsA5OTmB1QXap2yt/u8gEbK2HUh0UJiieztVFoB2+Sepnb+7lhQmgXmi2AkibfM8DYqcyas1zfJlQBat8E847TTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933218; c=relaxed/simple;
-	bh=l7C8LIRo3jzIHuUJ93UZmTfHkJn7Pu3Uak0d0iCS0yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jA5/bt3lhdatHxORNDXuByt3OuBD9EpqfVM3enYh3H/nmJt/lw5Zdb320+WNQy+3B1fyIYUIf0ERDFf5IXfZfdYwO3/dKNCxPTFA6AAQvns7I1j64+gSkXydsbA1KnBnAgXAY2vAtM4jNJwbJRXva1e9kats48Ywk8ssYIlNb2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PV9bb6bG; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=RAsui1tHpSbJgGexr5H0HED26l04puvhVJUKlrM78oU=; b=PV9bb6bGXb/fjjN4gsc629oAIo
-	4eV1l1Pd79eugrcACzEeJZQ5Wnd8ktYgMTeBCBzBRs+5v5s7YSG/IIYlEMsyncYN0w7Y9RBQ3yQD7
-	h3CH0ah22FLGTzbWfw69Dy4ZmcX7/WXetew5b9ILVo+FgvpBI/QONoJ4tMz828Mz+TOI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1txAXv-00765D-Ba; Tue, 25 Mar 2025 21:06:47 +0100
-Date: Tue, 25 Mar 2025 21:06:47 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rengarajan.S@microchip.com
-Cc: andrew+netdev@lunn.ch, rmk+kernel@armlinux.org.uk, davem@davemloft.net,
-	Thangaraj.S@microchip.com, Woojung.Huh@microchip.com,
-	pabeni@redhat.com, o.rempel@pengutronix.de, edumazet@google.com,
-	kuba@kernel.org, phil@raspberrypi.org, kernel@pengutronix.de,
-	horms@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	maxime.chevallier@bootlin.com
-Subject: Re: [PATCH net-next v5 1/6] net: usb: lan78xx: Improve error
- handling in PHY initialization
-Message-ID: <d1ce9f0d-9158-47ee-a60f-640822e35610@lunn.ch>
-References: <20250319084952.419051-1-o.rempel@pengutronix.de>
- <20250319084952.419051-2-o.rempel@pengutronix.de>
- <5f9b4b549d45c1c1a422c6e683a566b7a125f2a5.camel@microchip.com>
+	s=arc-20240116; t=1742933224; c=relaxed/simple;
+	bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ZQorr3h+Gu8mPlGTBCv1gvDPOtZHRdgWI7Vv8CsATDABXhNt4Tdim2qidOnuUuuFSAOj3oL0sd1dvLQm5reEEhHtAR7wtNVHjAm4Ec9ZUxTdVChTNPCC33zqp0vDVNcNgY9akA10OgTnaXxTYQv7aRlfmIvNUQFL3VoWiHUbvmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khCB68gx; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223f4c06e9fso3953795ad.1;
+        Tue, 25 Mar 2025 13:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742933222; x=1743538022; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
+        b=khCB68gx2zeYn5+4lu4SLeF0W8MHPn6IkoNvdNc8dqyHC7Sw5Hv4GopsthfHMHkzTJ
+         //uCIgxSf7liM3jWcQTSnfPbNzZG3PfzWDpyChqX6z9fUNdI+NakSbQ7EgjRA7MiH2F7
+         A4pxL5ddHe1pmtLDLxE0mV9R/xAyxW1fztX6Jo0o1WO3k1EXcx58O7Ut564kiFUgXbc6
+         5f56+RKlkmSjtn9NOpXbaiu6dQemK6GxXB4TrywNui8G/MDt3g0TKoyMhwvtKqWQjkB5
+         Ea4eQyxgeVtdS+XwZiYzIFQVRi7tpLGH5QiUHz/xnzH/fSZMFzAP6LhOrvA8eXnvdVXf
+         PU3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742933222; x=1743538022;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
+        b=doCWiTzrrC6t8e8AwDRh1wvGBisvtE9GBuscaB+Upe2Y3e5xXl8lGrB+PXVklLJi3F
+         9ogzpPmAfoId14td23017+45BUU2pecsCNZanr8rwjqfszfJPkEbdSGLIPsTGSqFblVh
+         qBjuAEoq88VkprzZVejopvnTO+uYUYXNJ8tqDCMq0TVeJxsDT9S+asUMvahWjQLJX7Yg
+         cndZIrB3QIb4Vn4Ua8hSorKVr/hJ6HL4CPSFDohHsSik6wZMhCO+VFVr0+a7K1jJrMl+
+         jy/Wh5zQqb9XN4KsJA1L6h8IM7A90mO3hpQnq4pkMeCASbu6tVWDYLLdYWaW8oERVTJp
+         9ZKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIyYct1DukGdkSb2JT2uMCUYMqQohpt5XujjB1mAj1cJ6dU4P8Ijuf2P4K81FJO/kmP+3HpBBB9hDHp9Ko@vger.kernel.org, AJvYcCV4AyCF871IeQXpBcLYskRScJr6g6D5PI66g49EYC1gftFm6QNDuXWoXKXq2RnikLk4oug0j8pSwAE4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjbrtJLcSNxu7EeaSH5DQ8iE/DJPyQ3LAHoLaAnswpObd+rLNy
+	D+vUMfnV8tAsXVy1CqLYqr4qDtcyvZVtpDdq638FwoOc2ApeGffe
+X-Gm-Gg: ASbGncusKhmAeLbI10HjOEWCgLckH0hJEG1GBQCcLAerBIwriH/r/f3EnXkzTGwLTam
+	BqazVVWZ3IRiJ/7j3M5JZdQz7BiLMdWSPU3cFD2j7BL8UyspNy6BCvPsjogCJ5RLwh2s729KYFK
+	IAFnKo0Z4q0Z3z1/YKIT1sYzUH8tV4kqrVKrocdZqtowxRqcwJMcJl9NAcfx1cME5LZjKOdmlW4
+	FuRNvdbLa6M1qhPGAEJFf8OErEA1Jib0F+Mta0g2z1GPdlH06X17L21FJkOLhOVRwy3tFYLz/wN
+	oiLLJ3c7qFaboJ68qqLojwyt1ePQBvpdgEAbj0hDPRwex5W2
+X-Google-Smtp-Source: AGHT+IE+lzdM+Ptk09dWS8IoLI3bFfZRmtMysmn4d27tUOZ9HPEFhuMB+8v3KUg2zEBCEiB9ShFc7A==
+X-Received: by 2002:a17:902:f547:b0:225:abd2:5e5a with SMTP id d9443c01a7336-227efaa0686mr12163825ad.4.1742933222434;
+        Tue, 25 Mar 2025 13:07:02 -0700 (PDT)
+Received: from localhost ([181.91.133.137])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da32fsm94335935ad.182.2025.03.25.13.07.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 13:07:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f9b4b549d45c1c1a422c6e683a566b7a125f2a5.camel@microchip.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 25 Mar 2025 17:06:58 -0300
+Message-Id: <D8PM9ESWNN10.QARF2AMDMH6W@gmail.com>
+Cc: "Mario Limonciello" <mario.limonciello@amd.com>, "Len Brown"
+ <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ACPI: platform_profile: Optimize _aggregate_choices()
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Armin Wolf" <W_Armin@gmx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Mark
+ Pearson" <mpearson-lenovo@squebb.ca>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250322-pprof-opt-v1-1-105455879a82@gmail.com>
+ <a66f55aa-9ee1-404b-8f78-258b307ea361@gmx.de>
+In-Reply-To: <a66f55aa-9ee1-404b-8f78-258b307ea361@gmx.de>
 
-> >  static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
-> >  {
-> > -       u32 buf;
-> > -       int ret;
-> >         struct fixed_phy_status fphy_status = {
-> >                 .link = 1,
-> >                 .speed = SPEED_1000,
-> >                 .duplex = DUPLEX_FULL,
-> >         };
-> >         struct phy_device *phydev;
-> > +       int ret;
-> > 
-> >         phydev = phy_find_first(dev->mdiobus);
-> >         if (!phydev) {
-> > @@ -2525,30 +2524,40 @@ static struct phy_device
-> > *lan7801_phy_init(struct lan78xx_net *dev)
-> >                 phydev = fixed_phy_register(PHY_POLL, &fphy_status,
-> > NULL);
-> >                 if (IS_ERR(phydev)) {
-> >                         netdev_err(dev->net, "No PHY/fixed_PHY
-> > found\n");
-> > -                       return NULL;
-> > +                       return ERR_PTR(-ENODEV);
-> >                 }
-> >                 netdev_dbg(dev->net, "Registered FIXED PHY\n");
-> >                 dev->interface = PHY_INTERFACE_MODE_RGMII;
-> >                 ret = lan78xx_write_reg(dev, MAC_RGMII_ID,
-> >                                         MAC_RGMII_ID_TXC_DELAY_EN_);
-> > +               if (ret < 0)
-> > +                       return ERR_PTR(ret);
-> > +
-> 
-> I noticed that fixed_phy_register is removed in later patches. However,
-> in the above implementation, if a failure occurs we exit without
-> unregistering it. To avoid this issue, can we include the patch that
-> removes fixed_phy_register first to avoid the cleanup scenario?
+On Tue Mar 25, 2025 at 4:36 PM -03, Armin Wolf wrote:
+> Am 22.03.25 um 22:03 schrieb Kurt Borja:
+>
+>> Choices aggregates passed to _aggregate_choices() are already filled
+>> with ones, therefore we can avoid copying a new bitmap on the first
+>> iteration.
+>>
+>> This makes setting the PLATFORM_PROFILE_LAST bit on aggregates
+>> unnecessary, so drop it as well.
+>>
+>> While at it, add a couple empty lines to improve style.
+>>
+> Please add a comment to signal future developers that the bitmap needs to=
+ be filled with ones
+> before being passed to _aggregate_choices().
 
-phylink itself implements fixed phy. So it is being removed later
-because it is not needed once the conversation to phylink is
-performed. If you remove it here, before the conversion to phylink,
-you break the driver when it is using fixed phy.
+Sure, I'll mention it in the kernel-doc for v2.
 
-With this sort of refactoring, you should not break the normal
-case. But there is some wiggle room for error cases, which should not
-happen, so long as by the end of the patch series, it is all clean.
+>
+> With this being addressed:
+>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-So i personally don't care about this leak of a fixed link, at this
-stage.
+Thank you Mario and Armin for the reviews!
 
-	Andrew
+--=20
+ ~ Kurt
 
