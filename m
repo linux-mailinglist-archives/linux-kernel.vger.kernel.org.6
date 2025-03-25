@@ -1,101 +1,200 @@
-Return-Path: <linux-kernel+bounces-574810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A93FA6EA60
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2D3A6EA32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0177D3B57AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6023A4ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B002528E3;
-	Tue, 25 Mar 2025 07:20:14 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B94234969
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589882343C9;
+	Tue, 25 Mar 2025 07:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGuI/gEN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD87179F5;
+	Tue, 25 Mar 2025 07:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887214; cv=none; b=mRocRgnEzx82A7lFCQqCT89X0lrxBhq5kmR/6vuntoU9jrB/o2mCbE/pz9Rn7cNNsOEnSYmxpvGhaU4sMZAgYjVeZi0TcMYUT4huxwDOz4XDcvpIgLnZnp3bd8SJ5eG8IOsz2xBNkX6is8U6JQ7MqKlhWCB1ueuYesEPemE/xS4=
+	t=1742886445; cv=none; b=hV1kyDT2DAgJwmkUXqE4OZtrLp8NTQPooKjb2CHFYGVua6OF15y8iCoZeLPVUYjXGKAoUN7EyW9sKfMupg8qYSLCC9I9LOaoUmpRLS8YZy+yrMFz4bqyYoIWjYfgU/SMLVm2oqqoS/WlzrxvpdVAvB+vqrDyavOSaPhLOQYWjpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887214; c=relaxed/simple;
-	bh=FBKgAl0dls+V54M/y6/NImGIXa8V8XrwxDn2mtWskRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oC4Z3gf63Oub6vNBI70YGwyULzjEDRrJFD21we+ZEKpx0DuIQgRh4yM7sKsgVc6eUx/KhvZ4+HhvB1ZVkOpqDpaOygyeYGss20w3w21WhulGXAh6fruFwPssgHsN56JZ7Oy/35/m2epxPMVqZl988i5BzK6N9ZDY2oJh5uE4RTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4ZMLYK5Gt4z9sSh;
-	Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id FJ4bAikuKLHX; Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZMLYK4VFHz9sSg;
-	Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 851568B765;
-	Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 1R3S4luMUOar; Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 565FA8B763;
-	Tue, 25 Mar 2025 08:05:57 +0100 (CET)
-Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 52P75npS009415
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 08:05:49 +0100
-Received: (from chleroy@localhost)
-	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 52P75mFm009410;
-	Tue, 25 Mar 2025 08:05:48 +0100
-X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: ioana.ciornei@nxp.com, stuyoder@gmail.com, linux@treblig.org
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: fsl-mc: Remove deadcode
-Date: Tue, 25 Mar 2025 08:03:29 +0100
-Message-ID: <174288553818.2234438.11007216946587143383.b4-ty@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241115152055.279732-1-linux@treblig.org>
-References: <20241115152055.279732-1-linux@treblig.org>
+	s=arc-20240116; t=1742886445; c=relaxed/simple;
+	bh=tg+CzT94V2KHL7cvcsv3BOAj9cqZ8YzAUgJ5W4z5H4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OlVmdBS1WukjH2nxifhRIWr7lFJyfvvhTjyu4G8qNXkaItzXD3z13eiKk6rPfglSOVtHIpsfEjUonP5dQRokPKtUPicWihAgH7u5wA/9yEStF/8aCVc9I2yA4f0kadSLP1ZVvak6rMQXQb23k19psR8Z+elG5oxWcaZQOZySa68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGuI/gEN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D46C4CEE8;
+	Tue, 25 Mar 2025 07:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742886445;
+	bh=tg+CzT94V2KHL7cvcsv3BOAj9cqZ8YzAUgJ5W4z5H4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uGuI/gENsIOfo9g5ssUpgXDjOcPi/XDvQ0rYWtHHZe1uUQrrQ8ebTZWvoWVg+18B+
+	 CFGPkLQOw+VRAO30/5q9eIme3Vkr4yH8NLyfqw1F6AFisurhS0oNLivQo9O3w5Uotr
+	 6GSqx3JjQ9kNBfeeJpGcV9Lw+w/WKlkf5+zKDRf5zOKgy2ST8honmAVIHVsoECIyrC
+	 SyjaBIh8m9eQQHuu1KsbRnzeG8y7nv4gh8X4RsMufU1N0p9Gd34AFsR8ZJpckY4+nb
+	 RRsOPpkVUIbVu1UswcBf11rCBapP0682sP1oFXtCXmeZFKj4CnGAlPxZblMVTRTLp6
+	 kwoVO1kXmRLyg==
+Date: Tue, 25 Mar 2025 12:37:15 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	linux-arm-kernel@lists.infradead.org,
+	Olivier Masse <olivier.masse@nxp.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T . J . Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
+	Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH v6 08/10] optee: support restricted memory allocation
+Message-ID: <Z-JWIyd8cKyXQR0H@sumit-X1>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-9-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742886214; l=584; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=VhmgXn8UTNWepu/WKdG9W0WStpBu+2fR6BBNfwNb5Vo=; b=OOvXAJey8QbW05uaPC1iND6tTU4jLioJLk4ni3WxNp8YZL9IeOycvAmyn8xVebICfDxO/xZ2T ZW88LyzkL67DtjvUgJNVQ4IKPHgyaY28eIKUhtLCD0xCKdaYppLQQbT
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305130634.1850178-9-jens.wiklander@linaro.org>
 
-
-On Fri, 15 Nov 2024 15:20:55 +0000, linux@treblig.org wrote:
-> fsl_mc_allocator_driver_exit() was added explicitly by
-> commit 1e8ac83b6caf ("bus: fsl-mc: add fsl_mc_allocator cleanup function")
-> but was never used.
+On Wed, Mar 05, 2025 at 02:04:14PM +0100, Jens Wiklander wrote:
+> Add support in the OP-TEE backend driver for restricted memory
+> allocation. The support is limited to only the SMC ABI and for secure
+> video buffers.
 > 
-> Remove it.
+> OP-TEE is probed for the range of restricted physical memory and a
+> memory pool allocator is initialized if OP-TEE have support for such
+> memory.
 > 
-> fsl_mc_portal_reset() was added in 2015 by
-> commit 197f4d6a4a00 ("staging: fsl-mc: fsl-mc object allocator driver")
-> but was never used.
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> ---
+>  drivers/tee/optee/core.c    |  1 +
+>  drivers/tee/optee/smc_abi.c | 44 +++++++++++++++++++++++++++++++++++--
+>  2 files changed, 43 insertions(+), 2 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+> index c75fddc83576..c7fd8040480e 100644
+> --- a/drivers/tee/optee/core.c
+> +++ b/drivers/tee/optee/core.c
+> @@ -181,6 +181,7 @@ void optee_remove_common(struct optee *optee)
+>  	tee_device_unregister(optee->supp_teedev);
+>  	tee_device_unregister(optee->teedev);
+>  
+> +	tee_device_unregister_all_dma_heaps(optee->teedev);
+>  	tee_shm_pool_free(optee->pool);
+>  	optee_supp_uninit(&optee->supp);
+>  	mutex_destroy(&optee->call_queue.mutex);
+> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> index cfdae266548b..a14ff0b7d3b3 100644
+> --- a/drivers/tee/optee/smc_abi.c
+> +++ b/drivers/tee/optee/smc_abi.c
+> @@ -1620,6 +1620,41 @@ static inline int optee_load_fw(struct platform_device *pdev,
+>  }
+>  #endif
+>  
+> +static int optee_sdp_pool_init(struct optee *optee)
+> +{
+> +	enum tee_dma_heap_id heap_id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
+> +	struct tee_rstmem_pool *pool;
+> +	int rc;
+> +
+> +	if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_SDP) {
 
-Applied, thanks!
+Is this SDP capability an ABI yet since we haven't supported it in
+upstream kernel? If no then can we rename it as
+OPTEE_SMC_SEC_CAP_RSTMEM?
 
-[1/1] bus: fsl-mc: Remove deadcode
-      commit: c25951eb7518844fcb7fc9ec58e888731e8c46d0
+> +		union {
+> +			struct arm_smccc_res smccc;
+> +			struct optee_smc_get_sdp_config_result result;
+> +		} res;
+> +
+> +		optee->smc.invoke_fn(OPTEE_SMC_GET_SDP_CONFIG, 0, 0, 0, 0, 0, 0,
+> +				     0, &res.smccc);
+> +		if (res.result.status != OPTEE_SMC_RETURN_OK) {
+> +			pr_err("Secure Data Path service not available\n");
+> +			return 0;
+> +		}
+> +
+> +		pool = tee_rstmem_static_pool_alloc(res.result.start,
+> +						    res.result.size);
+> +		if (IS_ERR(pool))
+> +			return PTR_ERR(pool);
+> +
+> +		rc = tee_device_register_dma_heap(optee->teedev, heap_id, pool);
+> +		if (rc)
+> +			goto err;
+> +	}
+> +
+> +	return 0;
+> +err:
+> +	pool->ops->destroy_pool(pool);
+> +	return rc;
+> +}
+> +
+>  static int optee_probe(struct platform_device *pdev)
+>  {
+>  	optee_invoke_fn *invoke_fn;
+> @@ -1715,7 +1750,7 @@ static int optee_probe(struct platform_device *pdev)
+>  	optee = kzalloc(sizeof(*optee), GFP_KERNEL);
+>  	if (!optee) {
+>  		rc = -ENOMEM;
+> -		goto err_free_pool;
+> +		goto err_free_shm_pool;
+>  	}
+>  
+>  	optee->ops = &optee_ops;
+> @@ -1788,6 +1823,10 @@ static int optee_probe(struct platform_device *pdev)
+>  		pr_info("Asynchronous notifications enabled\n");
+>  	}
+>  
+> +	rc = optee_sdp_pool_init(optee);
 
-Best regards,
--- 
-Christophe Leroy <christophe.leroy@csgroup.eu>
+s/optee_sdp_pool_init/optee_rstmem_pool_init/
+
+-Sumit
+
+> +	if (rc)
+> +		goto err_notif_uninit;
+> +
+>  	/*
+>  	 * Ensure that there are no pre-existing shm objects before enabling
+>  	 * the shm cache so that there's no chance of receiving an invalid
+> @@ -1823,6 +1862,7 @@ static int optee_probe(struct platform_device *pdev)
+>  		optee_disable_shm_cache(optee);
+>  	optee_smc_notif_uninit_irq(optee);
+>  	optee_unregister_devices();
+> +	tee_device_unregister_all_dma_heaps(optee->teedev);
+>  err_notif_uninit:
+>  	optee_notif_uninit(optee);
+>  err_close_ctx:
+> @@ -1839,7 +1879,7 @@ static int optee_probe(struct platform_device *pdev)
+>  	tee_device_unregister(optee->teedev);
+>  err_free_optee:
+>  	kfree(optee);
+> -err_free_pool:
+> +err_free_shm_pool:
+>  	tee_shm_pool_free(pool);
+>  	if (memremaped_shm)
+>  		memunmap(memremaped_shm);
+> -- 
+> 2.43.0
+> 
 
