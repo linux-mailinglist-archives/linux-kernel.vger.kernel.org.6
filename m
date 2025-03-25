@@ -1,264 +1,195 @@
-Return-Path: <linux-kernel+bounces-574734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F279EA6E93F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:21:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30D3A6E942
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110CA3AA33E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:20:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD2607A357B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266021A5BB3;
-	Tue, 25 Mar 2025 05:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8C41AB530;
+	Tue, 25 Mar 2025 05:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5LOxKKvT"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2086.outbound.protection.outlook.com [40.107.243.86])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f8VvlodX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AF64D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 05:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742880056; cv=fail; b=MPCs9cX4Db+SiM6qAQdpDnpm23SERoSXSGbN3k8MmNnGuvroJydX4Asyk2cagt96IV0XotE+jMKKTRwyLUd47MeUUhJ2T0T+cgggyHZSCBi+lD9HGscjw+ZJaw36OVrN15PoMh036fLG5rJ8D76l8MmtGezncev/8PmCbRpSAr0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742880056; c=relaxed/simple;
-	bh=tlUld4QAWiaLr9g3ewYwVWt71QOoXV85NHRtfaJAlGg=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rYJjXe1OsXyC49Iu3vdb9FwAEW8g0KVZQaVbrmd7QBDpjapywFX3+fgtRdkoTCHUKCHRdSDKj+ZpQ6moCdoADvOKO4l55VKvHqWN9otQEZ0Zv1Tjai+PDxn5Qed5ueaSBFRWZiCyCzZWBOLaxRkqo7kSw4cqC8HeJTWI6CFzKsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5LOxKKvT; arc=fail smtp.client-ip=40.107.243.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z2szNmD+ETD7rwjAVBfmF/XfxHn1qOJkwWhLFv3hLGeNfgeRZ8chkpNsptvy5APiNVStMhsO2OIIfTkazkPO/qAKrK5cmEZWLSjhJivwPRKLpsFwV72AYMhf4k6BnhA02olNzX+0SDKLziCEue3s4kDqn5nxP1yYuEd01pryW16BP9x6/x6lOtHSnicgGDtNrkQUq3aSXlqkINSUeqRNlEJXfGXJPSdBSiGxxgdOiTTeEE1yvnlQ8WSrSpJ7QJG4Js1/Lpa7l7NqME1hYzubzcJxzo0HZvq85pUrfQ2kqfCocSDIxNxoFKq+XHy6ybnRWSqpHMigeoT4RexlXZEEYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FJLzNy+0T194klZKJw2/J7hUGW1yhZjOp/XLblAyLMg=;
- b=pVOiNw43k0hK+bvnc1LoUMMB+dQLzw8iu/oSRECUaMeT4YgWJBgHIUTHMvFToOhk/LmCG9xF1ms9Ee/Vu9owTsdaoabfbhfHOIBi5QaSTuL8u0u6E4OzO1zY0/R9x0vRr7Fvs33tYZAcVNAiCMSoBL53ZzWnja1LMB2l/6KYZB3OoTjG3hI7SQahxxLI4rYFXiV2KcUEw5eEwiXlcyNJC4CRZg26fg+XcP1rsKVeXAeGtkItLJuPX/+D0hWUZb5wkQu4wjMCZaoIJ5U8+J5L8QuDFkrTBJ7CmWb2jZ1jP0gZpuTIaEW7I6v57usyIvtBdQSJkBp+bpjTtqA5V0jMXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FJLzNy+0T194klZKJw2/J7hUGW1yhZjOp/XLblAyLMg=;
- b=5LOxKKvToRl8Om6H6RNJYsaQvl16Et2/smqP21uweYGPL23iYe+lPgF2mQt/6G1nQnK+lwyeXUlzuqjBXnQZ8SRWexe29rqw6DybybcCS2HRmh9ZG5S//nJ3mxFOvrNWlMsprcz2ZfZ83nIwu0olRywrFRha6aPHaIs7Sy/MLus=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by LV8PR12MB9408.namprd12.prod.outlook.com (2603:10b6:408:208::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 05:20:51 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 05:20:51 +0000
-Message-ID: <02548b27-2442-4172-8f4f-a6fb7588d705@amd.com>
-Date: Tue, 25 Mar 2025 10:50:39 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Enhancements to Page Migration with
- Multi-threading and Batch Offloading to DMA
-From: Shivank Garg <shivankg@amd.com>
-To: akpm@linux-foundation.org, lsf-pc@lists.linux-foundation.org,
- linux-mm@kvack.org, ziy@nvidia.com
-Cc: AneeshKumar.KizhakeVeetil@arm.com, baolin.wang@linux.alibaba.com,
- bharata@amd.com, david@redhat.com, gregory.price@memverge.com,
- honggyu.kim@sk.com, jane.chu@oracle.com, jhubbard@nvidia.com,
- jon.grimm@amd.com, k.shutemov@gmail.com, leesuyeon0506@gmail.com,
- leillc@google.com, liam.howlett@oracle.com, linux-kernel@vger.kernel.org,
- mel.gorman@gmail.com, Michael.Day@amd.com,
- Raghavendra.KodsaraThimmappa@amd.com, riel@surriel.com, rientjes@google.com,
- santosh.shukla@amd.com, shy828301@gmail.com, sj@kernel.org,
- wangkefeng.wang@huawei.com, weixugc@google.com, willy@infradead.org,
- ying.huang@linux.alibaba.com, wei.huang2@amd.com,
- Jonathan.Cameron@huawei.com, byungchul@sk.com
-References: <cf6fc05d-c0b0-4de3-985e-5403977aa3aa@amd.com>
- <0f9e697e-d01c-4559-9c1c-7dd2ce76045b@amd.com>
-Content-Language: en-US
-In-Reply-To: <0f9e697e-d01c-4559-9c1c-7dd2ce76045b@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0124.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:96::12) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E7B149DE8;
+	Tue, 25 Mar 2025 05:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742880057; cv=none; b=h1GfvKlAWj8w2o94irPYQ+8Xc/6+S6YTWetGYF/S33vucvnm0rOA1cZQ9MAlN0ZRaUA3S7PsNhD4WTRGBwnGJoH5C1gBo1dfWCyjCuo1vzm7oGD4HnSTHceHGnZs+u3Q200TlJ84KeHeUcTKOR/nNGt4laCo429Pz7Gg/FqhgRU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742880057; c=relaxed/simple;
+	bh=qXD97ZUHqYiJnZohYLFLbrftwnOclPGBDCBAuRUUFtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HBhW5P/UxIgT9uCuWpA1YYmt2fmZ8nT01yDgJuI31c2514Zd7zU7MBWeo+ivP3LbaVxblHySQy0rOwD4aJlHilijDuD2o+xG2UkRvrUwBleFybbPrh9mvCsOhe8oW6xyz7u3AqtLQI2zO46B3yEopHD0yd8Kwxtaw3ZxpLwaiRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f8VvlodX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OIj1Ls015727;
+	Tue, 25 Mar 2025 05:20:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	q/ZKsWZszj9a6vz4X4eyTuRLzkjltBj4c+jz9QDw2gg=; b=f8VvlodXOqa9THTL
+	RpikKS9p2GNYuY7JAshP4r2VJNvGEnZLrZCzTnCG9ZaI5nzPGbgr6Khxf8/WPOxU
+	hCk3xLbxAw6dKdtAhh0j0DVGHL0oBEV5h9G/xknZ3hIbjaS18VutGVx/d2MdpIrV
+	b06g/KeLz0opHyp73BRFtAc6wFPu7fBpN4ujUmCPVch6BmU17bNT2Kj+yXPAcBQk
+	dhCvm59USwc4Ol+m1FYqOUBXm1M1v+6fCqYaAFM+XwCAR2PSCXCz1fwYOor3xjoZ
+	sTvCuVZnCzdRqsJqsn/HSoI2ygGaihNglrmvxW8+6R8/PDAtVosxBJrPNiFSoVnT
+	9xqKXA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wehy0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 05:20:49 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P5KlIk004471
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 05:20:47 GMT
+Received: from [10.217.238.57] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 22:20:44 -0700
+Message-ID: <2bc16a4e-96d6-4175-a52c-e344115fc4ac@quicinc.com>
+Date: Tue, 25 Mar 2025 10:50:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|LV8PR12MB9408:EE_
-X-MS-Office365-Filtering-Correlation-Id: c41cc8b5-1e10-427c-e792-08dd6b5ccefd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cml2ZDZHOVZjYVpqMW52d1UvTk9JNWF5WUZ2VlVwNHpLMnNNcE1LTjNMYnRI?=
- =?utf-8?B?ZjRXa3Y2UC9CZ0NYNXJPZ3NuWnI4bEtXZkFDL2VvQy9Sb04xeStqTXFQajhp?=
- =?utf-8?B?Lzh3RVc4MGdtUDBmQ3c5VjRsdFhaOUo0dWJiODNTS3o2dmZxVnlMbk5WZXBH?=
- =?utf-8?B?Kytva05DT0VmMHZSR2pTWTZWU3VZb05JNVpwMmtZRkd3alFvRkRyUUkzdWRB?=
- =?utf-8?B?QXRNRE1VNW1jVUlrVjU2Z0NXNEZBZ0dndVUzbVpORUg1RXFKeGFoc2k3USs4?=
- =?utf-8?B?cTB3ME4vME1CSkwxK0FCR2xKM2MvOVVGSjZNUGxFMy9zdWdacHZ4ZXhLMTdm?=
- =?utf-8?B?K2VuR05SYzVoamFmdjhubm5OaWtIZVNJcXJvcXRsdUF6VUhuKytUQS9va29S?=
- =?utf-8?B?UlpvRmlvRGFTSUp6TEo2WTI4am9UYXpNaTNVeXdCWndpeEtPdmdvODQ1dXUv?=
- =?utf-8?B?ZnVKTmdPdTVDc2VFVTRKWU55b3g0Q2dxUTlHV1NId200a2NDb1Z6Rk5KYk82?=
- =?utf-8?B?VHAzVkdHc2pKKytJRUtZMTdQS0R1U3BHWjJZMS85M1F3bTZXdjVwM21BNk9X?=
- =?utf-8?B?QmlnUXVKcHRkbm9aMTE1amQyaHRxcStnQ3dCNVJqWklmczZpbVgxNENodkhC?=
- =?utf-8?B?RzFObUZQZ2VIOFNNSjFSamRQcUtSTlIxNTd4QnpveTVxam5RSm05Mk5KUHJ5?=
- =?utf-8?B?NlE4bUh1eldPWGEweGN6OGlCdjlDZkJrQk5MWXE0SXN4cUVkL2NKMlcvQlRJ?=
- =?utf-8?B?WlpySUwxSytkQjZuU1VQeGdIaVpLWUgyYXhwaXdXLzlnSHFZQmtqdWoyQjR1?=
- =?utf-8?B?Qnpkd3ovZ1Awb2FsVTMyd0VMQlM5SktpOHZvK3hLTkJTcmRXMysrQW1MaXZr?=
- =?utf-8?B?SkNsdGlMK1Z2RmpwSTFydGYvenlsS216Q0VaQldlMW90cnN0cW1iUzJUTEM2?=
- =?utf-8?B?MFhUT1Z4QnZCZlFWeHdWZzhpMWFLNHJsQ0V0L01hK3NjMW03VDRhcTlYK0ZQ?=
- =?utf-8?B?eGR2WndYUXJCdnhOa3VVeFU2aDVSSFEvU1pzeldmYndtRUdRcGRGczhUUGhy?=
- =?utf-8?B?RjVNOUZiYkkzckEwMEcvVE90elJsLzI2Rk1iM2VaU0FKK1VpK0NWSlBhV05v?=
- =?utf-8?B?QmxlYkdCek1VT3doMCtTK0NiRVBObE5Ecyt6Q3htSzZzNjVwcHVaeEdGVEZu?=
- =?utf-8?B?azJGWmdaZnlHcGE4M1UrSWtsKytBSGxGcWZuajh1ZGkrL0hvNGV0MFRnc1BY?=
- =?utf-8?B?RUtSTEo1Y25CaUNHc2dQVXUrNjgvTjltL3FoQno5R2srRHVDelNFZS81Qll5?=
- =?utf-8?B?TUpyZWVNblRrVmJPQVZqL29UZmpObnE0cFp0eE5yb2haK25DYVhZbTAySE5E?=
- =?utf-8?B?ZkxFMjV0U2ZqWXVySnZyQUNuRENKSmdvazVnMW5IaVkyUTRaZ2d0UlVqWnR5?=
- =?utf-8?B?U0l4U1djREFtcWo1UlJCQjBNekl3dzNZcG5QcHNjNkgrcUE1REp5RWRnaXpt?=
- =?utf-8?B?eGxLQWl0ZEZxc1hmQ0FoY0lYNVd2d1BldVgxZEFsaE9IcTZJWVo1RlhocGl4?=
- =?utf-8?B?R0lnemdvaXI4b1RUclJzSmFOYW5ITXJaZEd4MTlua0JQTVRaQ3l5MC85bW9Z?=
- =?utf-8?B?UWdSNjZMazNhaUFIbVBLSEZPbkVwK1JWQ2ZYb3VNM0U2NERtWTVIN0d2UGNj?=
- =?utf-8?B?djNTNUliRDhzRmRDUDZJQlVMaWhOQUN1SWY4MnhpWDlCNlFiZldPR2xzR2lP?=
- =?utf-8?B?UWpzUStDNHA1aDRObld5WmdvZWRPWWNuUVJ2djNYTXh5ejRHMy9LQnlWaWdX?=
- =?utf-8?B?RWc3eTJLRHY2S3F3TXl4dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SXB0bGpSa2dGV1FFSURDNEVGWCtmRTlQejVyR1hLd2V2aU40RnlwNXFNS3Za?=
- =?utf-8?B?QUdHcnhvdlhsdVV5TVVMY2tPaHV3blVwUzBNWlg3ZGFmNzFQa3J5bWtUOGVw?=
- =?utf-8?B?bWNBL2lrdlRveUFPMUhBK284eUJQT016ZitWNlhOT3hCUkRuQlhFUmtPeWNF?=
- =?utf-8?B?Z2hwMWlEcm1qcWJvTjVOTmFNRVdWa3d6cUpnNXRkdExjRTd5b0VjOVZ5eWhi?=
- =?utf-8?B?aE1IcXhkSThSSFRseHpZa0Vua2NSTjlRMkdOWWNVbTE3Q3ZtcmhwenRmdXpR?=
- =?utf-8?B?K3NtOVh4clFxTk5JK0haWVZlZTc0cWtma1J6WnNQYzZVVUdpc0ZiU1drdE4x?=
- =?utf-8?B?aUtSSGk1aGpXdmFCdWFET3lJd090dUdPU3ZUWk5sWEdEWXVCYmY2TkNKVStu?=
- =?utf-8?B?Vk42aHlhdFFLaC9jbDAxT2hFSW5hVWlEdWlOSVh6VXgvL1pBeU1VMHFQS3A1?=
- =?utf-8?B?RzN5dUZ5RG9FSFR5eVBHelIvNjZTUlFvamRyekl1c3BuYWIrdkV1T280ZTVv?=
- =?utf-8?B?ZlNwMXNsZk0za2ROeTRUai9nOWk0UzlnbWl4Sk5GYlA0MFAyOVZFRUYwVS93?=
- =?utf-8?B?RUltR0NLczBxUWJGeWV4czd0UXBCSUVLVXpxN1VWU2RRdWE3dTlhWXdtUCtl?=
- =?utf-8?B?Z0l6YXhaVWNKOWM2SEROdjdlMG1udkRQWENVU1cySW9pSkdhVmd4c25wdUR2?=
- =?utf-8?B?b2RmdW9NMUtWdlZmTjlTT1hhb1FwVUlYSVVZTk5jMzhsaThWdURTOExnbjN3?=
- =?utf-8?B?S1l0Mm1rcENNOFJ2MHVHMFgvTXlhREpvS1ZkMXhvZ1FzcU9FenAwUU9Bbkcy?=
- =?utf-8?B?aFJEbWpXYmo5d2NTTFhHWWJmcTcrbVZ2MW5uMGpqNHlKejJOR3A1MjNWeHBG?=
- =?utf-8?B?RExqZ0daSEl4VWQ2bzd1VmRNMHVRQ2R5SXVCUXJVTmlhdkpBR25nWktZaGxv?=
- =?utf-8?B?QkVSNnhIYmdJU1VzaVVpRlRiTDJzcjh3TmtmaksxdVV0ZUQxWE5sODVOWG5x?=
- =?utf-8?B?Wnpjb2g2eDlOQndLWXBvSkt3Rjh0RFVTdnBwWFN1MWY0ZmNBdUlJbVQydSt6?=
- =?utf-8?B?RWd3WDZoSUZxdWo2NTJLOURmUHppd3ZCZHJoeVRCdGN4ZjJ1aVM3MFlETDVE?=
- =?utf-8?B?SFhLUmxzSkxLdVhucjNOYnlyV1RTK0xPdFgzcjlPajNObUVlOVZxQ25WZzR5?=
- =?utf-8?B?dnlCekQ3L2xsRDU1dUVqa3A3b0pKNFBwMlBQbGVheFJDWWxKckV2amw5VGQy?=
- =?utf-8?B?R01tSHdONnRJOTdSdFh3bWZMMnFDUmNrUVBNaFF3ZGNDNDFHSllsVzNCUW9L?=
- =?utf-8?B?YW50NExCUFI0VUVzRm5BUkh5SDhMb1NWVEZ0V0lQZGp1aUJybThlb04rYk9S?=
- =?utf-8?B?b050eDFDNnMrOEdmemF6S095UjcySFNQcWJCcldtKzA4eWR0SWRtZ2luRFJG?=
- =?utf-8?B?aUQwYUYrNzJBUWY5ZnF2eUtNb0hyMi9ONUFVZUpnZkVHUnBmTHZHMUJKaHhK?=
- =?utf-8?B?Q0JaWWJIOGJvWnRTdmJZRGZtUjlrM3A1YTFEK3FFNXJtaXZkbEkydTFoUzdi?=
- =?utf-8?B?YnIvdTRzVnNMRWJCdGhJZnBtb2ttU21OSE1iaWR6cW1JV3RTMXdsUzF3YmUz?=
- =?utf-8?B?SmhRWVZHUlEzdGZPNE9xM1Z0dUprcFBTMDA2aHhEYXJpSU4zR2xTRmhIYU5k?=
- =?utf-8?B?N3RTc0dBam0rWHRzZkM0T3U5TWR0ODRReVUvQzNpTjZyd2M2TDRhbkZtOGM1?=
- =?utf-8?B?TDlmZCtuWEVWdW9jdXNZZUluMGVyU1ppQ2hvNDhHdmhNTzZPNEUwcmx4M3Nq?=
- =?utf-8?B?c014c3F1QWVhOHN3OWF5dGdtYlR4L2VvV3ZURHplb0o4Mlkzc2xoTUtHYWkx?=
- =?utf-8?B?SThnNFR4YWhaOXdMVUZGV0xheWlycUdaSXZyS01TN2lGQklJNm1uOXhEZTFZ?=
- =?utf-8?B?aTlDQ3RzSGhWdWJTZVMya25hRjdIYmQ0MWlic2pzbmkxUnZtSFIzdmV1NG5v?=
- =?utf-8?B?RDdpNHo5R2dCek1QVXhTNUdaZDRFM0h0T1F5SWpTWUJtVXdjMlE0NDJGSDZL?=
- =?utf-8?B?VXUyZlRYekxReUd2ZzdHbk8vR1lXenE2VmpxaFhuNmNVamhsYzZIY09ybE5n?=
- =?utf-8?Q?5hKi0yOfRLofK0ooJ5PT7+hz5?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c41cc8b5-1e10-427c-e792-08dd6b5ccefd
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 05:20:51.4110
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OP+RycWkkwB0kIuqmFgfVubIqBMgrWEOpXdr3IRAS1sBCKNrTbeGmwLPvTToblYLRzd0fuqT7wxhp0HgNsYLIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9408
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: sa8775p: add QCrypto node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250227180817.3386795-1-quic_yrangana@quicinc.com>
+ <2mlmhzllhb5fhcbwtupy2nk74my5hruliayyr3kayrjvmtou25@em5encygrn2i>
+ <7b219289-4f3d-4428-a0af-42491acb1cbb@quicinc.com>
+ <uohwigzosxv2onh7dtgvhqdkdu2jufiukp6ztxrvfbjoihrypx@cq3apkdx2rhw>
+ <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
+Content-Language: en-US
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+In-Reply-To: <d5f67734-db1e-4096-98f9-3f026e4bd46b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YijUQdsRbaWW6ijmO6YaxxhiAHOV4-qw
+X-Proofpoint-ORIG-GUID: YijUQdsRbaWW6ijmO6YaxxhiAHOV4-qw
+X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e23d31 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=wEgAGjhJSUDKPyw9TBoA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_02,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250035
 
 
 
-On 3/24/2025 11:31 AM, Shivank Garg wrote:
+On 3/1/2025 7:06 PM, Krzysztof Kozlowski wrote:
+> On 28/02/2025 15:14, Bjorn Andersson wrote:
+>> On Fri, Feb 28, 2025 at 11:01:16AM +0530, Yuvaraj Ranganathan wrote:
+>>> On 2/28/2025 5:56 AM, Bjorn Andersson wrote:
+>>>> On Thu, Feb 27, 2025 at 11:38:16PM +0530, Yuvaraj Ranganathan wrote:
+>>>>> The initial QCE node change is reverted by the following patch 
+>>>>
+>>>> s/is/was/
+>>>>
+>>>>> https://lore.kernel.org/all/20250128115333.95021-1-krzysztof.kozlowski@linaro.org/
+>>>>> because of the build warning,
+>>>>>
+>>>>>   sa8775p-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+>>>>>     ...
+>>>>>     'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+>>>>>
+>>>>> Add the QCE node back that fix the warnings.
+>>>>>
+>>>>
+>>>> Are you saying that adding this node back will fix the warning?
+>>>>
+>>>> I'd expect that you would say something like "The changes to the
+>>>> Devicetree binding has accepted, so add the node back".
+>>>>
+>>>> Regards,
+>>>> Bjorn
+>>>>
+>>>>> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
+>>>>>  1 file changed, 12 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>>> index 23049cc58896..b0d77b109305 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>>>>> @@ -2418,6 +2418,18 @@ cryptobam: dma-controller@1dc4000 {
+>>>>>  				 <&apps_smmu 0x481 0x00>;
+>>>>>  		};
+>>>>>  
+>>>>> +		crypto: crypto@1dfa000 {
+>>>>> +			compatible = "qcom,sa8775p-qce", "qcom,sm8150-qce", "qcom,qce";
+>>>>> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
+>>>>> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
+>>>>> +			dma-names = "rx", "tx";
+>>>>> +			iommus = <&apps_smmu 0x480 0x00>,
+>>>>> +				 <&apps_smmu 0x481 0x00>;
+>>>>> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0
+>>>>> +					 &mc_virt SLAVE_EBI1 0>;
+>>>>> +			interconnect-names = "memory";
+>>>>> +		};
+>>>>> +
+>>>>>  		stm: stm@4002000 {
+>>>>>  			compatible = "arm,coresight-stm", "arm,primecell";
+>>>>>  			reg = <0x0 0x4002000 0x0 0x1000>,
+>>>>> -- 
+>>>>> 2.34.1
+>>>>>
+>>>
+>>> DeviceTree bindings were accepted but the comptabile string does not
+>>> properly bind to it. Hence, adding the correct binding string in the
+>>> compatible has resolved the issue.
+>>>
+>>
+>> Please then write that in the commit message.
+>>
+>>
+>> That said, what did you base this patch on? While I have picked
+>> Krzysztof's two reverts in my local tree, I have not yet published them.
+>> So your patch is not even based on v6.14-rc1, which now is 4 weeks old.
+>>
+>> Patches sent upstream should be built and tested on a suitable upstream
+>> branch!
 > 
+> I sent reverts because author, even though pinged more than once (!),
+> ignored reported problems.
 > 
-> On 1/23/2025 11:25 AM, Shivank Garg wrote:
->> Hi all,
->>
->> Zi Yan and I would like to propose the topic: Enhancements to Page
->> Migration with Multi-threading and Batch Offloading to DMA.
->>
->> Page migration is a critical operation in NUMA systems that can incur
->> significant overheads, affecting memory management performance across
->> various workloads. For example, copying folios between DRAM NUMA nodes
->> can take ~25% of the total migration cost for migrating 256MB of data.
->>
->> Modern systems are equipped with powerful DMA engines for bulk data
->> copying, GPUs, and high CPU core counts. Leveraging these hardware
->> capabilities becomes essential for systems where frequent page promotion
->> and demotion occur - from large-scale tiered-memory systems with CXL nodes
->> to CPU-GPU coherent system with GPU memory exposed as NUMA nodes.
->>
->> Existing page migration performs sequential page copying, underutilizing
->> modern CPU architectures and high-bandwidth memory subsystems.
->>
->> We have proposed and posted RFCs to enhance page migration through three
->> key techniques:
->> 1. Batching migration operations for bulk copying data [1]
->> 2. Multi-threaded folio copying [2]
->> 3. DMA offloading to hardware accelerators [1]
->>
->> By employing batching and multi-threaded folio copying, we are able to
->> achieve significant improvements in page migration throughput for large
->> pages.
->>
->> Discussion points:
->> 1. Performance:
->>    a. Policy decision for DMA and CPU selection
->>    b. Platform-specific scheduling of folio-copy worker threads for better
->>       bandwidth utilization
->>    c. Using Non-temporal instructions for CPU-based memcpy
->>    d. Upscaling/downscaling worker threads based on migration size, CPU
->>       availability (system load), bandwidth saturation, etc.
->> 2. Interface requirements with DMA hardware:
->>    a. Standardizing APIs for DMA drivers and support for different DMA
->>       drivers
->>    b. Enhancing DMA drivers for bulk copying (e.g., SDXi Engine)
->> 3. Resources Accounting:
->>    a. CPU cgroups accounting and fairness [3]
->>    b. Who bears migration cost? - (Migration cost attribution)
->>
+> It seems that reverting the code gets some attention, so maybe author
+> will fix the original issue and my reverts can be dropped/ignored.
 > 
-> Hi all,
-> 
-> For reference, here is the link to the latest RFC v2:
-> 
-> https://lore.kernel.org/linux-mm/20250319192211.10092-1-shivankg@amd.com
-> 
-> This version combines the ideas discussed in [1] and [2] and includes details
-> on performance improvements and experimental findings to provide more context
-> for discussion.
+> Best regards,
+> Krzysztof
 
-Sharing the slides from today’s presentation:
-
-Main Slide Deck: https://docs.google.com/presentation/d/1mjl5-jiz-TMVRK9bQcQ_IsSXrIP82CqWS8Q6em3mJi0/edit?usp=sharing
-Multi-threading Slide Deck: https://docs.google.com/presentation/d/10czypcUbRMOUn6knp340Cwv4bf83Ha2gUX8TwNXUwCs/edit#slide=id.p6
+The original issue was not observed at our end during the first time
+validation and its due to some environment issue. This patch does
+resolves the issue and it is validated against the linux-next master branch.
 
 Thanks,
-Shivank
-
-> 
->> References:
->> [1] https://lore.kernel.org/all/20240614221525.19170-1-shivankg@amd.com
->> [2] https://lore.kernel.org/all/20250103172419.4148674-1-ziy@nvidia.com
->> [3] https://lore.kernel.org/all/CAHbLzkpoKP0fVZP5b10wdzAMDLWysDy7oH0qaUssiUXj80R6bw@mail.gmail.com
-> 
-> Looking forward to your feedback!
-> 
-> Thanks,
-> Shivank
->  
+Yuvaraj.
 
 
