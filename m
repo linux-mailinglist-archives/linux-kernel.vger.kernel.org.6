@@ -1,126 +1,84 @@
-Return-Path: <linux-kernel+bounces-576074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39982A70AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:49:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE79A70AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFFE163372
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56DBC1889C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71B11F1527;
-	Tue, 25 Mar 2025 19:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED771F12EB;
+	Tue, 25 Mar 2025 19:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkxxXbog"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ts6oedkg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E629B1F0E59;
-	Tue, 25 Mar 2025 19:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05281CAA9C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742932112; cv=none; b=hAbCqGr5mepxy4blXOu+HQ/Os0IUBe99qSLrmZXabdpZpF4pa+Wv2SfWgL8NVWPAFqt9rHTOtvBYQq11UEBJDpg7EBk11zoflGsp5Wh+DUiMzRyftp3Z32M77s+JpgWMRPg7Q1NvuVOALZWP9nEFQSNHuyBU3jW3wFjfkqOzmiY=
+	t=1742932140; cv=none; b=dWrnCIi9A7LlOEamHveCYErwOed/E2Wq9GL7JQJfyfj6mldYXLghm3oRNQC79BIgj2NsUi86Kq+bey4NEgG2MkyDlKrtUdwuHuRHBsZGT6YijZkrnS0LEG2J5LthNEnYNgyYPRoU/q7ey4uOpkigcO+Vh4zTxv+7M3ptFRMIgUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742932112; c=relaxed/simple;
-	bh=kWRz7TnGEyqbpdoqqbqwf78f4CQUMOrIDZK4ebHnEkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2nwpS8nOPssCcxy8OAIACxXdo5YV02jk5lExqnlv71wI88I539kZsADfypPQQHEmk0NT6r/sgO966LeLlCuakuuCs9grSeOoHh/cKwjjjVpu5T3P69FYMXZzNOp1R9O2PamrzuW5Ow107DqNsr832xIgm/+TYDjP1lDuRM3/OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nkxxXbog; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22403c99457so14007025ad.3;
-        Tue, 25 Mar 2025 12:48:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742932110; x=1743536910; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N8OkNb0Gk1huvCdNeb+R5YeTaXEOuCO6fGN5IzB1KVw=;
-        b=nkxxXbogKk6zfxQRBGT/6ooGRow+99Bws1svl8U825Y5g7wOi8gSbhuhklSx36TdnJ
-         mMnWqB1tGvjG5swculswOyqX4UpVQ5gw592PCx5STijyWIgD8Ecyskg7ruyIcy49EBwP
-         Y91lbg7Gjlac3CiqaRfLBn8C3ekjdq0n4qmf3jd7LVGlLzOTiGQ3mOVq3pa0A6tKDnKg
-         nPloQiJGnVeiHJ6YzFOVKp2X/l9R6m7PfxaJItDd18xYkzdL1AWvUHCLFHVdPJkuhD1e
-         81PtvLuPyqgWMltHvcZBuB21p5EalG1+XxXMLC8kktgHRJ/c+nE07fUHfvURNkaKLrD2
-         4jwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742932110; x=1743536910;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N8OkNb0Gk1huvCdNeb+R5YeTaXEOuCO6fGN5IzB1KVw=;
-        b=vIwA0Up8mowI9F2MOCbywK9fYOR+2Y6CQMIrnQhhbshIh4SqdNB2Jkqyi6gMRJVBgK
-         FDpUNuaetLwXqtzyEnU0O/AdvsX+e11ai4Qm1naJUWDo/LbVsGQDCRDR7hyLAjVuKi5D
-         qPAxqDTSI+SdZvC5HYgwmhWmlSUjXfVANUiA4x+IL5FpkkG7mewoZGQbrJRomS3/S5P/
-         FxLMgdWVIrBFHRpdKGkF2rpSK0jEPLfw8dlu2wgRlB2RXIs3N5Jp0Pwj9Z21N4w+ZSt4
-         guPbJY+i0Bvq0Y2frySkqawkayK6twOfEeKi3Ju2XCWXNRVAUSlZoEjUx8dKYlgqASX7
-         ZEsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbq44M7KdG3E67V5dVsgfkJB7swCx0kQdOitoguagBuWNAsVTfZYGyxZJOQGSLHBuEZWGnK6PbQALSSEd6S60=@vger.kernel.org, AJvYcCWGzAA1nTSDsnyd4Tpa7kJUJfLyMwRGOF+OhDOXAkcqArnXw72dFfaz3U8yPrAktP+kPxpa/6f6FzW2NFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHhVp89mjCo+o62+J67iEOnUF3INza/SmjMMywdQdzJQEk2SVO
-	q4rj2u/OZt2+UN/ieIFicyoVjku+cxcyMuau/kfTwlZ34usR+yS34zfGBoK/SqCRAlILcOMTGSz
-	OLp1wdKqEGMRl1kLqLqatAIapUHk=
-X-Gm-Gg: ASbGncucvKdN2e2iC8p+O3KD8k8nNvLDFzokpoPMplpCKKACqQ+oQv0RI+Gb7I1FOgq
-	WrUt79ewg4EMisZhxPNaTcHpL5dPoVWj64m1ngsN4f7FgN1RA4CFWLw8jpIs1zs5vvn7jC4CDkj
-	kWMTNA8F06SJWRfsj6N0OlkH1zUA==
-X-Google-Smtp-Source: AGHT+IFxBWD68KB8/HxS5e8dGM3BB7KTxo4N4mhnjuZj5L+9yyTC70mMnIp1cyTclOTT83cY3hEXidYZMRLFX4HVM5Y=
-X-Received: by 2002:a17:903:234e:b0:223:5525:622f with SMTP id
- d9443c01a7336-22780c503a9mr99495195ad.1.1742932109937; Tue, 25 Mar 2025
- 12:48:29 -0700 (PDT)
+	s=arc-20240116; t=1742932140; c=relaxed/simple;
+	bh=T2tfIj0EMqxgBkrFEZ8g8NogOAZa1Xyq2LGTgPKCosk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dUNvunqxixqkdwO32OyYUPWABOhO7tlsP2Cizv6ZvvitKpE4y3S45YKpGf6ijIJFxi7w+Fu2qTMCGy35LycWQdF6vVmMBHpG0QINXNwGEtcNervYvmP+DKLMm2XDMzSceGxqeo/LZ8qIX6XEmKcEtSeBQ0wwmWuaQvYWa/Xo6ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ts6oedkg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43231C4CEE4;
+	Tue, 25 Mar 2025 19:49:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742932140;
+	bh=T2tfIj0EMqxgBkrFEZ8g8NogOAZa1Xyq2LGTgPKCosk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ts6oedkgny1/hghDURxtPRinRxWEURcWTacNJv5E8lF1HzjvjXFbjQi2LMdWEN7ht
+	 XVFofZhWEaximlufpe5XG9Bhsrc+OEwRBaHCXjfS1/vP0XWzg+9IyTgG2iHuXmp9Nv
+	 EmNS2jdABTQhekWa/y0y8/GETjy7MTlyVU8l+nRa4QKshJd87JzGFeOoVwaLm7jnDv
+	 lJOH570C0vdIkoJOP/DUxwV4HDvbGPkbxuTPc+Jzb9whIM6/yPWLtw5vsHiiIB6zow
+	 zEqPrGdJW+lmlv2k8O7e59WDn87zS1mepzrhEJ85Knk9XGe4D6qkJ8GcOiOtAMECoa
+	 0FQZSxLbIA1oA==
+Date: Tue, 25 Mar 2025 12:48:57 -0700
+From: Kees Cook <kees@kernel.org>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "tamird@gmail.com" <tamird@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] printf: add tests for generic FourCCs
+Message-ID: <202503251247.086BD45C@keescook>
+References: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325184309.97170-1-ojeda@kernel.org>
-In-Reply-To: <20250325184309.97170-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 25 Mar 2025 20:48:17 +0100
-X-Gm-Features: AQ5f1JpNyVdd47wH2I_NWPgt1x_uShOAv6Q_Kz6PcSYhTfdjyZuGqcfgDJh1oE8
-Message-ID: <CANiq72kWumOHt=VgV3mb2G4mOE3bCVUCUrKdjk4caFJPVCTBbA@mail.gmail.com>
-Subject: Re: [PATCH] rust: workaround `bindgen` issue with forward references
- to `enum` types
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4378DDFE-3263-497A-8364-433DC1984FEE@live.com>
 
-On Tue, Mar 25, 2025 at 7:43=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Instead, let's have a section at the top of our `bindings_helper.h` that
-> `#include`s the headers with the affected types -- hopefully there are
-> not many cases and there is a single ordering that covers all cases.
+On Fri, Mar 14, 2025 at 03:45:01AM +0000, Aditya Garg wrote:
+> From: Aditya Garg <gargaditya08@live.com>
+> 
+> Format specifiers for printing generic 32-bit FourCCs were recently added
+> to vsprintf. They are going through the DRM tree alongwith the appletbdrm
+> driver. Since the printf tests are being converted to kunit, this separate
+> patch for the tests should make it easier to rebase when the merge window
+> opens.
+> 
+> Link: https://lore.kernel.org/dri-devel/79FA3F41-FD7A-41D9-852B-D32606AF5EB4@live.com/T/#u
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+>  lib/tests/printf_kunit.c | 39 ++++++++++++++++++++++++++++++++-------
 
-By the way, I was curious and from a quick look at generated bindings
-lines matching `type.*i32` for a x86_64 build I have, I see only other
-three cases:
+Linus has applied the kunit /lib move tree, so this patch can land via
+regular trees now. Who should take it?
 
-  - `key_serial_t` is not an `enum`, i.e. it is correct.
-
-  - `fs_value_type` and `drm_mode_status` are both `enum`s, and they
-indeed suffer from this issue. However, we do not use them and I don't
-see any patches posted for them either.
-
-Those are good news.
-
-However, there are also bad news: if for instance we actually needed
-either of those two latter ones, then we cannot just include the
-header that defines them, because that header happens to include
-others that in turn use forward references to that `enum` the root one
-defines.
-
-So in some cases, if we start to use them before we have a fix, would
-require C header changes to avoid the forward references. Thus, for
-those, I think it may be simpler to instead use a cast and mark them
-with a comment so that we know we should clean them up.
-
-Cheers,
-Miguel
+-- 
+Kees Cook
 
