@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-574893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BDDA6EB36
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:13:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEF5A6EB35
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738977A440E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8717318912AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345E4253B6A;
-	Tue, 25 Mar 2025 08:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8132253B52;
+	Tue, 25 Mar 2025 08:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyEVArTW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baEVxmc3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923121A5BA6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC0B481C4;
+	Tue, 25 Mar 2025 08:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890406; cv=none; b=ubbS4D4fDJKm5uGSOVZhtAU90w449so2t9k3GhHNKhVXK9wfOxCTiYE9c+pqA2s+4boKaRs1yymia6t1iPHPc9/Q3TivjboP1qRUJdMcyuOAPryOPJF1vPWbliwcNhsKUP9MtqE2S8r3qRVy007Z2bBdbIhbMjpncFiUEREv7z0=
+	t=1742890406; cv=none; b=rTWm1z6zb/OU9J2cuTdBYtIAOwplb5zDo3LG2M8BiGDnJssMswbbkc0VZ0FSaFgECmEsHLCpFGUEaH9XHlcd1ep8GXq3x3+rlJGUQ5CiflWD+wnBzeQmr6s2NR+LLCYRUHYxZbNYF9+Y4qIBHRHpJIpori+O1YH2Y44+VZJ5BFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742890406; c=relaxed/simple;
-	bh=LtRdniLcPqa7ao3nLrAh74t9DlpseprTi8ntyDAeLik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dcV3FbP5kc33cgn74gXTKQrrLBH9MCmgYxnkiUc7BBcQlzzboOGniB5AXgZAj9nGDLL2KqHFEsc/vwpmWQ7SqHbvjsB+/KhilE36ih2SH8MAgzUY7LnLzqKZN2Twy/Al8gnJacCygEDJ02unGiYkhkljumnPJUE2k7lBPXhiabE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyEVArTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B29AC4CEE8;
+	bh=f6XJAegToS0M5tfF5z+5zMcVYoym5F06kRgni6qPdOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQ+/zidwAYNvyE1juDaub3ba0S5e1P5A0sJEHPupMoYH5lp07cE6QeSLseD/a+P2LNt0uJWQYYrSO9ZbkfaAG9LEoOymBV9ORSQaMwb7aWE0Fjro0FNMWMpQkeco1ogTTGiBptQu4reYAhr8jBymTtHATssxCY3r8x5rhwhbmhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baEVxmc3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB913C4CEE4;
 	Tue, 25 Mar 2025 08:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890406;
-	bh=LtRdniLcPqa7ao3nLrAh74t9DlpseprTi8ntyDAeLik=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MyEVArTWZinYlc0UyKhExD7y6Zsq8cAsvxIG1OUzHrmWdb5qzOErLKCig3Ry+zNDO
-	 yhdqtSPQxB2x7YwGCI3sOYVbrAGUsweAt4Sk8IY867ibaDUatPNFzkApDxnBv9qIJQ
-	 ky/O85t3knHqdBB+Lq4rNf+n2sFmFFwwJHG5S0uLjJi1jKAbL+6jLFgfSVnVd46KmC
-	 tVKuOrrrOpMe3n5JkJaHZw0yj7ukc5dBqmzKjCLQ7hWqTgGcwX468a+WxsHCM5Rwue
-	 KHmXaKQXfFXXU5XQh0gkzD9KF/qrIrgXGktvb9P+n4JiMlk3kxM3ZeXIpN/kDRwngX
-	 cUSw9Ua2YAweA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: add a fast path in finish_preallocate_blocks()
-Date: Tue, 25 Mar 2025 16:13:21 +0800
-Message-ID: <20250325081321.3296714-1-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+	s=k20201202; t=1742890405;
+	bh=f6XJAegToS0M5tfF5z+5zMcVYoym5F06kRgni6qPdOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=baEVxmc3M4Wz1Zex6nUZ6qxP+swaMOjHIO3FB4/csR5/EO+pEs+wJiHME3ZnE1fSa
+	 D7wpUsUNVxOFeyCtB0DT4hcxGOHEF4tHVYaCVN9fIq3bmd6FUPMXcbY7u7gZw5xEd4
+	 QMd/uIbZSH4vmVvEj7vq9wu77t/i7XUBAJsMxIOofygKG9Q1Klsi8zveL878QqYVK0
+	 l++w4HGhe8xpU2Sl65wzo/lBvI9pkiFXERmljUUq6vecU+hn3XmFbdkhYfGzMdDmVc
+	 uWBe7eNddDEEDIJurJvEIQ5yFRquLENP+JbXs35afdO6OAJzQAoCCwGNwnSqcbN58w
+	 jve2gNPx5FYag==
+Date: Tue, 25 Mar 2025 09:13:22 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Lee Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
+ simple-mfd syscon on PolarFire SoC
+Message-ID: <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+ <20250321-ramrod-scabby-a1869f9979b6@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250321-ramrod-scabby-a1869f9979b6@spud>
 
-This patch uses i_sem to protect access/update on f2fs_inode_info.flag
-in finish_preallocate_blocks(), it avoids grabbing inode_lock() in
-each open().
+On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
+> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
+> +
+> +maintainers:
+> +  - Conor Dooley <conor.dooley@microchip.com>
+> +
+> +description:
+> +  An wide assortment of registers that control elements of the MSS on PolarFire
+> +  SoC, including pinmuxing, resets and clocks among others.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: microchip,mpfs-mss-top-sysreg
+> +      - const: syscon
+> +      - const: simple-mfd
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- get rid of read lock during querying FI_OPENED_FILE once we held
-inode lock.
- fs/f2fs/file.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+You need to list the children if you use simple-mfd. Commit msg
+mentioned clock controller, so where is it?
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index abbcbb5865a3..a71946976761 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -554,19 +554,21 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 
- static int finish_preallocate_blocks(struct inode *inode)
- {
--	int ret;
-+	int ret = 0;
-+	bool opened;
- 
--	inode_lock(inode);
--	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
--		inode_unlock(inode);
-+	f2fs_down_read(&F2FS_I(inode)->i_sem);
-+	opened = is_inode_flag_set(inode, FI_OPENED_FILE);
-+	f2fs_up_read(&F2FS_I(inode)->i_sem);
-+	if (opened)
- 		return 0;
--	}
- 
--	if (!file_should_truncate(inode)) {
--		set_inode_flag(inode, FI_OPENED_FILE);
--		inode_unlock(inode);
--		return 0;
--	}
-+	inode_lock(inode);
-+	if (is_inode_flag_set(inode, FI_OPENED_FILE))
-+		goto out_unlock;
-+
-+	if (!file_should_truncate(inode))
-+		goto out_update;
- 
- 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
- 	filemap_invalidate_lock(inode->i_mapping);
-@@ -576,16 +578,17 @@ static int finish_preallocate_blocks(struct inode *inode)
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
- 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
--
--	if (!ret)
--		set_inode_flag(inode, FI_OPENED_FILE);
--
--	inode_unlock(inode);
- 	if (ret)
--		return ret;
-+		goto out_unlock;
- 
- 	file_dont_truncate(inode);
--	return 0;
-+out_update:
-+	f2fs_down_write(&F2FS_I(inode)->i_sem);
-+	set_inode_flag(inode, FI_OPENED_FILE);
-+	f2fs_up_write(&F2FS_I(inode)->i_sem);
-+out_unlock:
-+	inode_unlock(inode);
-+	return ret;
- }
- 
- static int f2fs_file_open(struct inode *inode, struct file *filp)
--- 
-2.48.1
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#reset-cells':
+> +    description:
+> +      The AHB/AXI peripherals on the PolarFire SoC have reset support, so
+> +      from CLK_ENVM to CLK_CFM. The reset consumer should specify the
+> +      desired peripheral via the clock ID in its "resets" phandle cell.
+> +      See include/dt-bindings/clock/microchip,mpfs-clock.h for the full list
+> +      of PolarFire clock/reset IDs.
+> +    const: 1
+
+Best regards,
+Krzysztof
 
 
