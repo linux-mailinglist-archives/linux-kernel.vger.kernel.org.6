@@ -1,209 +1,147 @@
-Return-Path: <linux-kernel+bounces-575202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35701A6F383
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:29:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324E9A6F3AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5039D16B5A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1249E3AD4C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877A254866;
-	Tue, 25 Mar 2025 11:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA2254B1B;
+	Tue, 25 Mar 2025 11:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pSrmThIi"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hswChsry"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7BFEC4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0972517B3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902163; cv=none; b=EGBRV1z7ogyRg0W6utYrdohWJsHFMMv1lJsSLN8/mXROuOYYa+TQmP77Zu4ngj7n9w3g59FQWygyyUN4bNoHaAhAQIopdSf08hEkfF6sHmCnhLWiOSQDDIvalYQU6DCkG+eq9HfhGLti6IS076IlINbEcP0udH1d+2fQfc8H8n0=
+	t=1742902184; cv=none; b=AFZ18SLoOLhlW1r/6VpRMb5ihz0ThiGAls8RNbPsgG3SyhRRxOAbU7QeGLYy1hBAe3likzcnj6VKC0u7RroS/hPCuyyuAvsx/46YZ78EcBaHfMH8GF8sqBC8oVxEO0PH1yPK2e2/beBbUgyjI8YrhBmesGAnYX7jf/J29/N5Svo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902163; c=relaxed/simple;
-	bh=6WZVWPjf58KWWazw9E62QrC9MrOdRIm1fEsQl3nSINQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AsRZlyfGBulTfW3p7NOEayCSrAAHBaIZfX3yEwbktswQgcXtDGB4t6Sw1wtEHlzUH52X8LCYZMa1uNTJAlk9JzmlnuupUaCYYXyADam4fU1zbTPEmM9pJoFd3nBB8JfkyluzFryIC4pAec279S1RzFkjdRCXBwgtkWN3IPEl8VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pSrmThIi; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-47690a4ec97so56394191cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742902160; x=1743506960; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JbyhxA3XTFaxP685N+ePDqAN7mdWmcuPkaS6mWbntL0=;
-        b=pSrmThIiKaQ5Sk66W16iHw8T1LeXqE6K2OTZYiTq5RCw1YfqQdfN5UoIIvc3vgRYX0
-         SUWVXJiddywztH71UA48ZKguPMg5uP5f0DOvH0TkrdTQ9Svg+mVM26ynIWVo2SvDyOf3
-         Bf6aAfqHuBsQO7vtTey2A5478rUir3cfQbBHVTpVStcF/q8HzuLzQCIvhY2pNRMawsqA
-         zOaSwwUZao8o2KWE8+2zdDOSRWLt/Nt8OlxU7YljtfkRUkW4xcGVUVD+fzoDdeuy+8UO
-         rSJAWcGUbLvW6NPfAOmhMEqAFVH24NBYUpiJzgkMwevvCuk7Y7zgTBAl/FbiN/5jUUWl
-         7uqA==
+	s=arc-20240116; t=1742902184; c=relaxed/simple;
+	bh=jzaTLKgPXg/1h8OKaR7eOqQXP1uAjIG0fBFTIjt9+D4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+Eqnk4ag3Cybio/nnNprM/Lj+vo1MumTfYPtojrc0b40liFBzC7ZIk6BvkxI82qrXRmtctUYSNAdZ5xk7NCCA/y1Y6J0/weKKrZTSCup6gaT9aLHNkOWeiGj75AxZ3vvMKRBVGixZKqdqapm49GtbZn1LfH1EZGCi7n+xL6AHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hswChsry; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P5vwEu002776
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:29:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wVFxJzi8/lwuxxcRq8n+KCJaooAZuyuxIjSQGw+9Oc8=; b=hswChsry8l4kA4Lq
+	ayFgqOyo5APynvZBR3PyUbfgJvFa4bbif0xZ1dHWQ4iGN2wwFipjDmc0vXUZW2ij
+	fNntv0F2fchrkoG3Anp5lHa2f0O/L+x3RP5SZeXqEgMJjovtXpf8EIdw97yLqVuX
+	6y9OBiYVhXKOzgHsr+cCei34YE8UXBXu56VZB3/ry998/gE0LF9auDpuXfmghDl/
+	r9g8A2bqwTK7ZPJO+xKI6MHNv2EBesE5IIDLjqTAyA8JG5M4G1kxVEbCHVavFj3r
+	z6gi8Ovg8m0UQ0yl3enw7wQdptaXzzjsbtDOmB4lp/Qf+6P5eJTRIiv3WHetTMok
+	+/Ne2Q==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hn9wfm75-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:29:41 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5ad42d6bcso160460685a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:29:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742902160; x=1743506960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JbyhxA3XTFaxP685N+ePDqAN7mdWmcuPkaS6mWbntL0=;
-        b=rFj/+2mCo8DrSx2VyA/MCcVPmjh3RmnJiJfSnseP5yZI9FZ/zrKF/DT3S9V35ReHaD
-         sDSvYQNN4SRoplY2aIDbaOAeizLFl/RZ6597pmDJFEw7KldYgZCigjUUHfqYJshBw8O3
-         cJoepKhb07D6dU0bTbN05VozSu9ljQNiQsyTiueMqRv7h/5jRpuNDUZZEccUlKiW6fCE
-         Zgi3cs8zBuXlNIB3DTLSySfoa0KnBO+gRe9QMylfrMw9cpSiF9vzyp8EwX+ePUtD1sLS
-         ozbnCU+5CzevU7ZxWkxyn2xF4s6dmROAROcvklRENHTqqAe8SmNmF4AioYVXF3rOGzAd
-         UNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+twW574NIpMfVSuBx6pI72B1Yf9mny7ac8egUUX0/2CbqLtMAe35Wl5cCp3YKZQaACk7TOj2DZif+oLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIwCD41IDiXT8TZrxnUaK1K9+dgZ5X8DldfUD3rv7QiWb2hGRl
-	k/K1NFz73IO8CsvcwWxOU2bmf4jBdslDcORuy0GZTN/l7kw68p3Ar94G3xQDKTlWQCcI5D04aKU
-	yA3Vu4HKkC2RyQRNmQW7k5Coex1U2tHCZVbbJ
-X-Gm-Gg: ASbGncs/q9KKur25KA2iqXnNqXnAFNfSnhqEobqmlTf1agCQSh56EZXl2xvAaMXRXqr
-	S7GFscCZhtlWJUistbC+jV8JM+hPmJWuUaIwbdk+amnuvURCWwv1QZd2jv/KUp/NtJ8Y0erCtKe
-	uCUx1xgnkrmAfbmz+K/XLrAGXqfiUB9ctIJpC7
-X-Google-Smtp-Source: AGHT+IEDyQnLZ94AlNJpegQhgnUlz3sfVF1wukfvET4LdX4mBRW6DE6Jz986Kr/9vfULtKqKh3kQInbThoHgNzCmMrU=
-X-Received: by 2002:a05:622a:4cc8:b0:477:ca3:4b66 with SMTP id
- d75a77b69052e-4771dd8037amr258935491cf.12.1742902160157; Tue, 25 Mar 2025
- 04:29:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742902181; x=1743506981;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVFxJzi8/lwuxxcRq8n+KCJaooAZuyuxIjSQGw+9Oc8=;
+        b=O3NbFo+2NsUXJGl5SodACuG+Rbze3gog4LzB+6Fdr1PyBwZf8aKgf4cBAwgL2Jxalo
+         JO0zBvY/QVVpZVscbVXPq7sE5rcqlx+DsE79ILYiOaKbA1B8k3y+0OdxHNqDK2MFB7sA
+         rbkQICTr+d1ctyXi3iLed6UUoDTIEWXhNccwjNP4k5cxypJj+i95ylTJFnvbGxy6f4Al
+         2bU90VDyNPFhMMZxZ2i0kwgPwK+fSAnk/RbPbs0dBrdDdeprjlr1XBYoS3Y5qG7i0J+q
+         /w0qOKbSRZlwECT/NLR1QhIoJozTIIqs05G7K+VLPd4BXy0neRwqaxmv4s1S9XteZH8R
+         lj6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBgMaWcgx/rUGplTBiEg9FsRO7eTU4HjxKUaOU0FFCl7xX3kbTurYheQ/dpk7MQrOwepJ9E3JENHG3pkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzviTX7fg0G74LvVGsVYFd0Z4Lu8mgHOuQO6AR5T78hnKu0oJsk
+	dD3ff41Rxl1yn2vlM+9ixgjNhMACxaToUoWrFYkcIta+9cPNew28VdTr0ZrEjGHebfEoOlNuyIW
+	f2GsTG/1XGlubbjMGMu+eouRIzgB3ZeFsiiJIaGCH6lq2UlmJ0V81shPMbwIzckQ=
+X-Gm-Gg: ASbGnctZn79lqctVDIDsqlLCd8vcCHNgV+IgrgyQCdcrlJR24VUFLCIoCGqtkHwpmJo
+	AVY0uupcgLJDZnKwz3D67nbRXKo5qIOLChrMsy7GTZHGMj73X7oq75zXv1lLq4B7PTUzg/fHQ/a
+	Y7LJmg/Qle6Be3JMJcMwK7x24iZBZOYhwSj6udo6yBvVYEF+UZepMXmHX2+UVAlbkL31TcQakg9
+	YUpG6dz8mLxychk7qrSjf3AnhyKPFIIVoMAMwIj7tjctt7HHAKFuOveXURvhDxQfR0xDQYNL8nN
+	Wu6P2qVr64id5mjuttZLKfOVMLcA/WIwGUmNLnwavWmSQF8WN4PxuyajWipQOfYDP+hfcg==
+X-Received: by 2002:a05:622a:28d:b0:475:6af:9fc4 with SMTP id d75a77b69052e-477513d8167mr14908551cf.12.1742902180495;
+        Tue, 25 Mar 2025 04:29:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMmiF13ilq7yTbZW1TEyvgNhMVeaBnQRt6C3sGaNzXAK3mTk/weoMaltViWpUtxtDzSTL1hw==
+X-Received: by 2002:a05:622a:28d:b0:475:6af:9fc4 with SMTP id d75a77b69052e-477513d8167mr14908311cf.12.1742902179977;
+        Tue, 25 Mar 2025 04:29:39 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c76c4sm7549423a12.56.2025.03.25.04.29.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 04:29:39 -0700 (PDT)
+Message-ID: <7d74ef63-83fc-4c19-a247-d779cdd4e482@oss.qualcomm.com>
+Date: Tue, 25 Mar 2025 12:29:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325110325.51958-1-jiayuan.chen@linux.dev>
-In-Reply-To: <20250325110325.51958-1-jiayuan.chen@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 25 Mar 2025 12:29:09 +0100
-X-Gm-Features: AQ5f1JquJgSHOt9w5svVDz0NoCBP_3ax7P-tfG8AXF1s_URMWpgRwYI3O4MdasA
-Message-ID: <CANn89iKxTHZ1JoQ9g9ekWq9=29LjRmhbxsnwkQ2RgPT-yCYMig@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] tcp: Support skb PAWS drop reason when TIME-WAIT
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuniyu@amazon.com, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	dsahern@kernel.org, ncardwell@google.com, mrpre@163.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
+ events
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Clayton Craft <clayton@craftyguy.net>
+References: <20250324132448.6134-1-johan+linaro@kernel.org>
+ <7f161a25-f134-44cd-a619-8f7b806a869d@oss.qualcomm.com>
+ <Z-Jr7MifpkR8cL5B@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <Z-Jr7MifpkR8cL5B@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: thDMhGQaTINxN0IXxbt4Klabwlacb4ij
+X-Proofpoint-ORIG-GUID: thDMhGQaTINxN0IXxbt4Klabwlacb4ij
+X-Authority-Analysis: v=2.4 cv=CPoqXQrD c=1 sm=1 tr=0 ts=67e293a5 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=u3giuUM6ARgIoqdfjbwA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_04,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=999
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250080
 
-On Tue, Mar 25, 2025 at 12:03=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linux.d=
-ev> wrote:
->
-> PAWS is a long-standing issue, especially when there are upstream network
-> devices, making it more prone to occur.
->
-> Currently, packet loss statistics for PAWS can only be viewed through MIB=
-,
-> which is a global metric and cannot be precisely obtained through tracing
-> to get the specific 4-tuple of the dropped packet. In the past, we had to
-> use kprobe ret to retrieve relevant skb information from
-> tcp_timewait_state_process().
->
-> We add a drop_reason pointer, similar to what previous commit does:
-> commit e34100c2ecbb ("tcp: add a drop_reason pointer to tcp_check_req()")
->
-> This commit addresses the PAWSESTABREJECTED case and also sets the
-> corresponding drop reason.
->
-> We use 'pwru' to test.
->
-> Before this commit:
-> ''''
-> ./pwru 'port 9999'
-> 2025/03/24 13:46:03 Listening for events..
-> TUPLE                                        FUNC
-> 172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_=
-REASON_NOT_SPECIFIED)
-> '''
->
-> After this commit:
-> '''
-> ./pwru 'port 9999'
-> 2025/03/24 16:06:59 Listening for events..
-> TUPLE                                        FUNC
-> 172.31.75.115:12345->172.31.75.114:9999(tcp) sk_skb_reason_drop(SKB_DROP_=
-REASON_TCP_RFC7323_PAWS)
-> '''
->
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> ---
-> My apologize.
-> I struggled for a long time to get packetdrill to fix the client port, bu=
-t
-> ultimately failed to do so, which is why I couldn't provide a packetdrill
-> script.
-> Instead, I wrote my own program to trigger PAWS, which can be found at
-> https://github.com/mrpre/nettrigger/tree/main
-> ---
->  include/net/tcp.h        | 3 ++-
->  net/ipv4/tcp_ipv4.c      | 2 +-
->  net/ipv4/tcp_minisocks.c | 7 +++++--
->  net/ipv6/tcp_ipv6.c      | 2 +-
->  4 files changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/include/net/tcp.h b/include/net/tcp.h
-> index f8efe56bbccb..e1574e804530 100644
-> --- a/include/net/tcp.h
-> +++ b/include/net/tcp.h
-> @@ -427,7 +427,8 @@ enum tcp_tw_status {
->  enum tcp_tw_status tcp_timewait_state_process(struct inet_timewait_sock =
-*tw,
->                                               struct sk_buff *skb,
->                                               const struct tcphdr *th,
-> -                                             u32 *tw_isn);
-> +                                             u32 *tw_isn,
-> +                                             enum skb_drop_reason *drop_=
-reason);
->  struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
->                            struct request_sock *req, bool fastopen,
->                            bool *lost_race, enum skb_drop_reason *drop_re=
-ason);
-> diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-> index 1cd0938d47e0..a9dde473a23f 100644
-> --- a/net/ipv4/tcp_ipv4.c
-> +++ b/net/ipv4/tcp_ipv4.c
-> @@ -2417,7 +2417,7 @@ int tcp_v4_rcv(struct sk_buff *skb)
->                 goto csum_error;
->         }
->
-> -       tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th, =
-&isn);
-> +       tw_status =3D tcp_timewait_state_process(inet_twsk(sk), skb, th, =
-&isn, &drop_reason);
->         switch (tw_status) {
->         case TCP_TW_SYN: {
->                 struct sock *sk2 =3D inet_lookup_listener(net,
-> diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-> index fb9349be36b8..d16dfd41397e 100644
-> --- a/net/ipv4/tcp_minisocks.c
-> +++ b/net/ipv4/tcp_minisocks.c
-> @@ -97,7 +97,8 @@ static void twsk_rcv_nxt_update(struct tcp_timewait_soc=
-k *tcptw, u32 seq,
->   */
->  enum tcp_tw_status
->  tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff=
- *skb,
-> -                          const struct tcphdr *th, u32 *tw_isn)
-> +                          const struct tcphdr *th, u32 *tw_isn,
-> +                          enum skb_drop_reason *drop_reason)
->  {
->         struct tcp_timewait_sock *tcptw =3D tcp_twsk((struct sock *)tw);
->         u32 rcv_nxt =3D READ_ONCE(tcptw->tw_rcv_nxt);
-> @@ -245,8 +246,10 @@ tcp_timewait_state_process(struct inet_timewait_sock=
- *tw, struct sk_buff *skb,
->                 return TCP_TW_SYN;
->         }
->
-> -       if (paws_reject)
-> +       if (paws_reject) {
-> +               *drop_reason =3D SKB_DROP_REASON_TCP_RFC7323_PAWS;
->                 __NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED=
-);
+On 3/25/25 9:40 AM, Johan Hovold wrote:
+> On Mon, Mar 24, 2025 at 08:21:10PM +0100, Konrad Dybcio wrote:
+>> On 3/24/25 2:24 PM, Johan Hovold wrote:
+>>> The PMIC GLINK driver is currently generating DisplayPort hotplug
+>>> notifications whenever something is connected to (or disconnected from)
+>>> a port regardless of the type of notification sent by the firmware.
+>>
+>> Yikes!
+>>
+>> Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> That said, I'm hoping there isn't any sort of "port is full of water,
+>> emergency" messages that we should treat as "unplug" though..
+> 
+> Seems a bit far fetched, but I guess only you guys inside Qualcomm can
+> try to figure that out.
 
-I think we should add a new SNMP value and drop reason for TW sockets.
+I tried looking around, but couldn't find anything like that
 
-SNMP_MIB_ITEM("PAWSTimewait", LINUX_MIB_PAWSTIMEWAIT),
+> An alternative could be to cache the hpd_state regardless of the svid
+> and only forward changes. But perhaps the hpd_state bit is only valid
+> for DP notifications.
 
-and SKB_DROP_REASON_TCP_RFC7323_TW_PAWS ?
+The current state of your patch seems to be a good approach, I think.
+
+Konrad
 
