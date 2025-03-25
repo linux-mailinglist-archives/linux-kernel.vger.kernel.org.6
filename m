@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-575507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5327FA7035E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA028A703BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:32:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4150E1685C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8503B1970
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B760259C8D;
-	Tue, 25 Mar 2025 14:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB0125A62B;
+	Tue, 25 Mar 2025 14:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xob5GJY/"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="mKeKHH2I"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75E25522B;
-	Tue, 25 Mar 2025 14:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ECA2561DF;
+	Tue, 25 Mar 2025 14:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912123; cv=none; b=mlowtc5xo+C5jPLr/nMfD9l8IEeBf3vvLw2VKFew4EjSNlNhcUQNvqOjUcRrqkQHq1RclPZhzbmr/R3eqZF2XlPi4ICvVElWeB6lOD8YFQm3yH3pl+EWbC6ZNVyLMhRVb5LqARqSSQjD28nBCgCsNf4ZJtb4RVNgjCHL2/UvHHE=
+	t=1742912705; cv=none; b=bmxqyEQ516fbA7lPCKUH3dadiKBTOXDlHqrYfR7Ub2KimRfB8b291VBb6V2fLyRQhTbBU1S45CAPeMPfu/BbybaophJw6MbtdPv3HEsE5+tBVdgOEf6vSDO6Adpyk/wXELcZhofD5/pVhTHIe8w6JqCPCf3gEuOKGC0WRpqzQUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912123; c=relaxed/simple;
-	bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KyJ9hBNxSWheQVYT+1XfZp8wTId9FmcIGsmKv7Sa0UUQiint/UEUqZCRrX+trk+QitGI8sOAnX8WIEkIU9qnCcoTgqERBup4OHu5Ntrnmww22dVGriVQglatewAKf4FuD8ppb6eio+aY/EYLQhyWhqF40LSjdVJC9FsP1bWfQb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xob5GJY/; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so10230916a12.1;
-        Tue, 25 Mar 2025 07:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742912120; x=1743516920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
-        b=Xob5GJY/JSC+XBU5GOgWFti7wzv5A7ApXFX6667Ph18jTYxXWzoxr7UrabL+A44sCk
-         cimdWsTDipyas+vgjg4qE27wCsP/tT+pEOvpwd6Jn6C3Wl0TILAmOoDQgyL+JDV4WrgI
-         JU9sWWKDOeC+KFIAK9/6pIex0YWIiVpBIfA+DezRWUV/PjCYOcTXtraISDk1DNBMP1H2
-         Ibg9C4IVte4hGOMRe6pVRcE6Gg732KRL2lRiGMM6Kyuwjcol8ntbR/8qpROiqpyS2PfQ
-         yxUkFGVZTk6oGs+KsSqIbF3Otd5RNHIiyEt6TvDboqbs8YNFRxer1PGAE5TTnZhDguWV
-         RxGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742912120; x=1743516920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZMaNHZC6xbmIZfH1KZ7uFhl2JDUoKP3oGCElsgWSgIw=;
-        b=Becc7DLGpkHiExhAY0PunoTA30iMt+B/0NMZ1zChBrJ3OjYR1UXLMQpL8ccYCckDF0
-         A/ZvEEUeQfFFm1dtLOpWrJmKEowqrvavzaeP0IqGev/CiKYh1XWdENyZBI+zjZYV2W43
-         JC9u884zvwfQXaleTH5FuVgoxf/2Cx7RcRe9mWZLULVRisXsoP4WFp/SgzEln14rXoZh
-         slZRq+PY7xLOpiLvoZiXYHh6L6RE6jxFu+r6v+TN7dTbVocz/d9BPA3qhuubkpUQqgf6
-         ItOxOknVDQAWtPk5aeOSpHTPDn6BPO7pxHBAjtANjdUtEINoMpgIKwjLWFqi5pasJR4q
-         R3fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+B5MgnpypyGa+aHXfuBeaWtN39pE+jsRm5axyPXgqwHJv/zuuT9CD8ADBvLRQy8/bYQAWuh7po675KcpI@vger.kernel.org, AJvYcCVfoTmh4b2918IAgMkylVGtaHatXE3bZeHf0QDNWPD1XEKk3KCaQsivkHbBQe+RHaQgBJmIH/YvVxv1D9cz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8czkqEnWQ5xhAgkistgjx2Q9FoWij2RpV4g5tHeLFitewt4U8
-	hp6oOs9LInykV7dEUQFEO4kSINNJ5xKy2QAXaNnVPaVEMfl25bbsmE8MEP6TwlY2TsdrsDjOrxp
-	8IR8y+4JWqoy57JhRFWlWDR42XTA=
-X-Gm-Gg: ASbGncsgpWRpZVAzRspIuIQcfLFFcGMT9d4EzKhuhXRUq5iC/5VztJXgfbASwjxX+Qf
-	d3z6G4TIEeQHNi82uRK4PBVmXbCTsAoTMX7nquBa2qYj+WytphQ4YUgnhg/nG2PGmttIeLrbQVn
-	H5OW2n/EJUgS+8Rbqp+Kv/rBfLRQEHobYJ3OC2
-X-Google-Smtp-Source: AGHT+IGCXq0i5sPbB6D+egYNTkN8t7fqQ46d/BSo5o0rsWhypxWST0TCfi0Il6K80MobV/2JX8on8SPeqOHSZWZg/k4=
-X-Received: by 2002:a05:6402:2712:b0:5e5:9c04:777 with SMTP id
- 4fb4d7f45d1cf-5eb9972ae95mr19756146a12.6.1742912119870; Tue, 25 Mar 2025
- 07:15:19 -0700 (PDT)
+	s=arc-20240116; t=1742912705; c=relaxed/simple;
+	bh=eMk1f/RHiH+lKxFlP00WZ8fNmi+GJKXqW2G5fZKB+qw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=scBqlvuXJFiW9rbQ796rXL3e047AABZk/5LPpJeTixKHVXbSOQjyF2Qd4GPP4H+LzTX5rjEYWcw3vWgifq5FkOSy+k3Eyqtzsx4v0YA1jXHkQsZudQaBh5bimqd5b59xWUIkjDM7ZJlUNXBMCW+5OxkFS6IdNK1WZ6PNT7rEp6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=mKeKHH2I; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 04363C0016;
+	Tue, 25 Mar 2025 17:18:36 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 04363C0016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1742912316; bh=tmgQrOdqbX3U/2BKIqDRRlI0g7Ca44O16T1BCXK717Q=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=mKeKHH2IEl6gCiluS7BD3w/pNU1UKXwQ/mFP/N48Dt+zm49GWm3TaQS+LKiAqXr+s
+	 PU+QBqdpJYqEUlbszu2MRObV343IrvoAsySL+xe11PF7QwwNzitAeAWvOF7mDLUA+9
+	 oMy4Wsyml6iilKDx3cZ2X+Io1mFSXCZ6CEj4orGoqKnS4MJk/E8h78WIw6pTpoGJdr
+	 xKxhzNFMcWyOv5Vz0iUGqotmuItBtFZyNnsD6nGp0uga/V5NxjDdh1jBHrfuOkAM2L
+	 yv//ykJh7HR7SokI1RL4SmzzG6eTOYKqjjUy7lU3zIYoIeWmsrsiaT9pSMWTXlTLi+
+	 YvZlB4pI+ouDw==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Tue, 25 Mar 2025 17:18:35 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 25 Mar 2025 17:18:34 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: "David S. Miller" <davem@davemloft.net>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Jakub Kicinski
+	<kuba@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net 0/4] Avoid using WARN_ON() on allocation failure in device_rename()
+Date: Tue, 25 Mar 2025 17:17:19 +0300
+Message-ID: <20250325141723.499850-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com> <20250324160003.GA8878@redhat.com>
- <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
- <20250324182722.GA29185@redhat.com> <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
- <20250325100936.GC29185@redhat.com> <CAGudoHFSzw7KJ-E9qZzfgHs3uoye08po0KJ_cGN_Kumu7ajaBw@mail.gmail.com>
- <20250325132136.GB7904@redhat.com> <20250325-bretter-anfahren-39ee9eedf048@brauner>
-In-Reply-To: <20250325-bretter-anfahren-39ee9eedf048@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 25 Mar 2025 15:15:06 +0100
-X-Gm-Features: AQ5f1Jr8oXwwdmvGSBUITgwEGjTjEUXxS32Qqv2Kn_lvnq3BY7I5kPchOqLOEt8
-Message-ID: <CAGudoHFGcTergsO2Pg_v9J4aj94dWnCn_KrE1wpGd+x=g8_f1Q@mail.gmail.com>
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-To: Christian Brauner <brauner@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, 
-	syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>, kees@kernel.org, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/25 12:54:00
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, git.kernel.org:7.1.1;mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 192091 [Mar 25 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/25 08:37:00 #27838357
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/03/25 12:54:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On Tue, Mar 25, 2025 at 2:30=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Mar 25, 2025 at 02:21:36PM +0100, Oleg Nesterov wrote:
-> > On 03/25, Mateusz Guzik wrote:
-> > >
-> > > On Tue, Mar 25, 2025 at 11:10=E2=80=AFAM Oleg Nesterov <oleg@redhat.c=
-om> wrote:
-> > > >
-> > > > On 03/24, Mateusz Guzik wrote:
-> > > > >
-> > > > > On Mon, Mar 24, 2025 at 7:28=E2=80=AFPM Oleg Nesterov <oleg@redha=
-t.com> wrote:
-> > > > > >
-> > > > > > So to me it would be better to have the trivial fix for stable,
-> > > > > > exactly because it is trivially backportable. Then cleanup/simp=
-lify
-> > > > > > this logic on top of it.
-> > > > >
-> > > > > So I got myself a crap testcase with a CLONE_FS'ed task which can
-> > > > > execve and sanity-checked that suid is indeed not honored as expe=
-cted.
-> > > >
-> > > > So you mean my patch can't fix the problem?
-> > >
-> > > No, I think the patch works.
-> > >
-> > > I am saying the current scheme is avoidably hard to reason about.
-> >
-> > Ah, OK, thanks. Then I still think it makes more sense to do the
-> > cleanups you propose on top of this fix.
->
-> I agree. We should go with Oleg's fix that in the old scheme and use
-> that. And then @Mateusz your cleanup should please go on top!
+This patch series is based on
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/ and is
+intended for the generic netdev maintainers, as it affects multiple
+networking subsystems.
 
-Ok, in that case I'm gonna ship when I'm gonna ship(tm), maybe later this w=
-eek.
+There are a couple of Syzkaller reports about WARN_ON() being triggered
+by failed device_rename().
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+They are triggered by fuzzer's fault injection and subsequent allocation
+failure in kstrdup(). Failure of kstrdup() in device_rename() should not
+lead to WARN_ON(), so means to avoid it are introduced in this series.
+
+If it is possible to reverse the changes done prior to failed
+device_rename(), do that. Otherwise ignore -ENOMEM return code in
+WARN_ON().
+
+Ivan Abramov (4):
+  ieee802154: Restore initial state on failed device_rename() in
+    cfg802154_switch_netns()
+  ieee802154: Avoid calling WARN_ON() on -ENOMEM in
+    cfg802154_pernet_exit()
+  cfg80211: Avoid calling WARN_ON() on -ENOMEM in
+    cfg80211_switch_netns()
+  net: Avoid calling WARN_ON() on -ENOMEM in
+    __dev_change_net_namespace()
+
+ net/core/dev.c        |  2 +-
+ net/ieee802154/core.c | 51 ++++++++++++++++++++++++-------------------
+ net/wireless/core.c   |  2 +-
+ 3 files changed, 31 insertions(+), 24 deletions(-)
+
+-- 
+2.39.5
+
 
