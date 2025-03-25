@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-576092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA37A70AD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3791A70ADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353443A4BE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:57:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1F13B3570
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F55B23A588;
-	Tue, 25 Mar 2025 19:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3237723A98C;
+	Tue, 25 Mar 2025 19:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Raf7wW+5"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nMe+Ry21"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4268919F42C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD401F1913;
+	Tue, 25 Mar 2025 19:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742932626; cv=none; b=SnQymg65WnTISLCDMmN+us7QUmaBauDI+Rr1dAs0ykG+vc/eBt1JjO03flUhKZ1nKen0i4JQKAyL8KJGxVcNEHjAfbs+C/SZjDpFLXp8oGm3C8T6cPS+QCL71pwXRkAeam5k63CHn1+1gvS76BPpeshfyeEGGPKjg3HuxvGeL7c=
+	t=1742932752; cv=none; b=DtO2AJTicX9u5Tv1fqQFlK2KKRzB4g1m+VUQS5jE3F3gSwjdVEvj0zIZcNh4FE3UUGlov7P4FIuMEjMnK+0rINQAOP8RUELrNefSY+Oajwjnnh84efWPD/N8qPFIEzVEPUlxu72Q5XaFG0UH0688Xw32QPfSEAXkv/cn44gX3hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742932626; c=relaxed/simple;
-	bh=1tTP058U/RZniMjA5RRXdT5NvSnKY+Avf1zsfo+l6jI=;
+	s=arc-20240116; t=1742932752; c=relaxed/simple;
+	bh=Kmce4MR3+inOg7HfHkfr1xXue4qdR8d/2SSpd5/SfNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOVsDRDtjI5B+fArxVS3TlqdVkOWZ8oxrbCN84swYQ5ULTmLduTvuh1w04d+q1n4cBsIbDx8cfKf3UO4Z+F+7Qhw/srqMSNR2q0xpHtazQ/UGXMQIE1mToHN8tzuMQOjaC30pPKbHdE47wtHgQMC9X0Y5rwGEcIr0Hx8cKsz8Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Raf7wW+5; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/TUv
-	Rr1uqxFHiFGPh0oQrQytVTgLxTwwMQrPyS+qaE0=; b=Raf7wW+5del1qQO2rVTc
-	dROrNiKXOUWQsLaulfKD+JXXLZ+7rABuEjnLDfC1O5u2TuOm1ZWUG0KpeDjJX3k9
-	16fYmYUBsFe/6PUiSISgdtV342p1fBb7CB7kipEQFKyl7pMiKR4V0fdiLW6jz2ve
-	FZrlTz0Kjb0oQ/A23rXRGIM1LphkxFOulgXmFPpEh03xX6DvkydwacIm7dZo4blk
-	Inq0H6j669xnm4VuQQZnexdZdq+/fY2T38Hd+i/QIngTO1Azshy2ujxJ3N1jSH3v
-	q5Ihj073a2+S8surf0YXSE7C/OG+owzEV0M8UtsaKsabM5owfZychASOs9BumqN0
-	EQ==
-Received: (qmail 3243685 invoked from network); 25 Mar 2025 20:56:59 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 20:56:59 +0100
-X-UD-Smtp-Session: l3s3148p1@oNKhHzAxvNgujnsv
-Date: Tue, 25 Mar 2025 20:56:57 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] media: dvb: usb: Fix WARNING in
- dib0700_i2c_xfer/usb_submit_urb
-Message-ID: <Z-MKiV0Ei5lmWik6@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	syzbot <syzbot+c38e5e60d0041a99dbf5@syzkaller.appspotmail.com>,
-	gregkh@linuxfoundation.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-References: <6bb3b80b-a808-4992-8666-535ed9a5c980@rowland.harvard.edu>
- <67e2fed5.050a0220.a7ebc.0053.GAE@google.com>
- <29db5fdc-13c9-45f0-9183-c80d637725c6@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHJFGKA0qfh6+Ipybr8TE2C0wMyKOxSLsj78wTNA+55lxrjmNi2ml4pLSnMkt3dmv6F3Y+Bmq5+ZZd8oNUN+YTO0iZ9muQ7luyPqo8/J9SnxW/WIH+GsUMjS8YEtWpB98Oi2emVla5rKzrI2MWwV2icGEn/pDvGsYK+pbU1iM74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nMe+Ry21; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zASb+pDKpANBRsEZlpC72O+O+RlCzusRinXEvy0fxqU=; b=nMe+Ry21jpk3cRkc5nVgAP1JUk
+	q4VJXR9zH6nu56ZEW7EvGapafBds7R97l1UOS1iypLq6k546wjGV974D7x3loABlnDVqiqUcOoYhn
+	H7asLD5Hj/awUS9uWgvbOwpHOBuJXL+Y9ePnPrkAugLjbTVzw5vPjuL9F/RT48D8Xr7o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1txAQI-00760q-Ox; Tue, 25 Mar 2025 20:58:54 +0100
+Date: Tue, 25 Mar 2025 20:58:54 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	KY Srinivasan <kys@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"brett.creeley@amd.com" <brett.creeley@amd.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"schakrabarti@linux.microsoft.com" <schakrabarti@linux.microsoft.com>,
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>,
+	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
+	"erick.archer@outlook.com" <erick.archer@outlook.com>,
+	"rosenp@gmail.com" <rosenp@gmail.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	Paul Rosswurm <paulros@microsoft.com>
+Subject: Re: [EXTERNAL] Re: [PATCH 2/3] net: mana: Implement
+ set_link_ksettings in ethtool for speed
+Message-ID: <6396c1f7-756d-476a-833e-7ea35ae41da8@lunn.ch>
+References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
+ <1742473341-15262-3-git-send-email-ernis@linux.microsoft.com>
+ <fb6b544f-f683-4307-8adf-82d37540c556@lunn.ch>
+ <20250325170955.GB23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <adaaa2b0-c161-4d4f-8199-921002355d05@lunn.ch>
+ <20250325122135.14ffa389@kernel.org>
+ <MN0PR21MB3437DA2C43930B08036BB146CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PdB2PpB4ywylG8dJ"
-Content-Disposition: inline
-In-Reply-To: <29db5fdc-13c9-45f0-9183-c80d637725c6@rowland.harvard.edu>
-
-
---PdB2PpB4ywylG8dJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <MN0PR21MB3437DA2C43930B08036BB146CAA72@MN0PR21MB3437.namprd21.prod.outlook.com>
 
+> This patch is just to support the ethtool option for the speed.
+> And seems there is no option on ethtool to reset NIC to the default
+> speed?
 
-> +	static const struct i2c_adapter_quirks i2c_usb_quirks = {
-> +		.flags = I2C_AQ_NO_ZERO_LEN_READ,
-> +	};
+There is no such thing as default speed. Speed is either:
 
-Why didn't you create the static struct outside of probe?
+1) Negotiated with the link partner, picking the highest speed link
+modes both partners support
 
+2) Forced to a specific speed, based on one of the link modes the
+interfaces supports.
 
---PdB2PpB4ywylG8dJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Since you don't have link modes, you are abusing the API. You should
+choose a different API which actually fits what you are doing,
+configuring a leaky bucket shaper.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfjCoUACgkQFA3kzBSg
-KbZKnw//XPVwaFcMUSIF2UEN3ZMPxQsnn+Jnrn8t49B8jFJe7GPzeJL4Be0ZIgoD
-5DXd78EyPvF0QG2yaO6tUVsKOfJQPL6OG6yvKak7HvFFwGaxB7J/XYm44zEnZ3o5
-yjp4n5Mx56hFKjoVtzCMaHBR4Rg4q4315k+aWP8cVnIy3tGfJtsAzlB18+zLhKKw
-ZcCWXE03dDSsKEspwbPWebyzd4jiDS6VClIAJJREtu1yhvo1EIPMNH38WIXUhpkf
-x8K4lXwm2mngnBt3TJvRsAum8mjwjROlBq6iRcCFlUt6Z/Dqij/m6/dSKrLflQzf
-RM7j63MOFWGkrraM0qrIPgeJCCB7XDoDJ6/PNGdZ1YH9mkqm/Gr5TuTh7qKAxv5p
-L88pcP0zc5faYZN52OhDjwYkd4S31D7QDt26ZAomj7T7BM6ZsPu4c9K5dmYgOf7u
-tiOsEVqnkA4g/QDd5ON7zdjVxM3v3sYBl3MQr7dCLZ6p2CNzmvR19KzohCkRLBsu
-0K10HXVjn4vWcpvryKiOploFznU1U3Np8Yl+d3l9woyJBbmoFjaPwG/igEABhZAW
-nzOFN66meh/sTXll5F1t4uqoSraoNbWFrsJ/WFUpibTLZeUMGZi7wmBIpzisCVv+
-cxEbMqXtv5xIJm0Plse5mtB5CDpBTwQ9mvs7rLCnTNKSH29eqKc=
-=wPxk
------END PGP SIGNATURE-----
-
---PdB2PpB4ywylG8dJ--
+	Andrew
 
