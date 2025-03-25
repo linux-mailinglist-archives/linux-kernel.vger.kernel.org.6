@@ -1,85 +1,165 @@
-Return-Path: <linux-kernel+bounces-575722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAADBA7064A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:12:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EB5A7064E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC3C1896692
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1071897433
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424612627E5;
-	Tue, 25 Mar 2025 16:10:28 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4F02571CD;
-	Tue, 25 Mar 2025 16:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBB025A348;
+	Tue, 25 Mar 2025 16:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYiPadP7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431F5255E32;
+	Tue, 25 Mar 2025 16:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919027; cv=none; b=E8PZYzFPXH89ZgvznhgZQOZ7i+Vep/HEs20pbtKk55meTVrxhwuRxIGLzixo4CSjYUhB9rm57Zu4pBkJuptKcUTXL+ucrUr6Hyo/HK+wFkTnRI1dV2A6vu4GhZk1pLveAyv3/QXEwccdT8mWNUTa+VR6t92ioozbrrxWSMGvCFw=
+	t=1742919061; cv=none; b=o+ouddcJyA/hSZit2BIwmCSYAKcBVrh3IgbPZVfAXBAY0149JB2+dC5uC0mftfobpWtr8hubtGl/6NaNCcwOoEixMxGajY3VyjBwq9NXgJO27nqsli9VP+hAeLG8BpZJjTimfYoegj6CVfcW54Dn7Pn9KnXFjaX0gymeI3CVPDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919027; c=relaxed/simple;
-	bh=7jpFlkZFIPn+CFD4GKO+3v8Kb/sOCF3+lpXcZxAyPdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cLCRew7wflvLZSKVoyQq00Wu+pbghh9AuhnXvGGpJocEkfuYqefPwkLsfm9RqrfAUlX05l85etW192dP5zLLh2UsLTHut9RKf/HXtxe8LI2HDyCsAIN1e4ZcrvpgQjznPlGbFHcMrhp0y3KC+muRGNxSd3ofiiqrifCBjnlRLsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: A/fQKbXvSr2TxMtcVS998A==
-X-CSE-MsgGUID: qI/YtFrRQh2DEQq7gV2JAw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Mar 2025 01:10:24 +0900
-Received: from superbuilder.administration.lan (unknown [10.226.93.92])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5A6694013766;
-	Wed, 26 Mar 2025 01:10:22 +0900 (JST)
-From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-To: thierry.bultel@linatsea.fr
-Cc: linux-renesas-soc@vger.kernel.org,
-	geert@linux-m68k.org,
-	paul.barker.ct@bp.renesas.com,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 13/13] arm64: defconfig: Enable Renesas RZ/T2H serial SCI
-Date: Tue, 25 Mar 2025 17:09:01 +0100
-Message-ID: <20250325160904.2688858-14-thierry.bultel.yh@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
-References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
+	s=arc-20240116; t=1742919061; c=relaxed/simple;
+	bh=smwmled8hr02Pgtfh3CQQ2bUvez65YipbMRkmIvNS14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYpGP6kGqv0B7SEfHaA5foMguJ1GrJ1gjcPWU7asZA88pH2odqtbW1eXtnFMmtx/OE5IjulcDvDDd8N3ZnkN/L2KKEE/C7YmHmvJqd/VDtK/xNA1lmLyilQ6lYOnXhnNmouMJPmgBMBmi4S3Vzo7d17q99YyFJ2OQmbGdIuRCQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYiPadP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8460CC4CEEE;
+	Tue, 25 Mar 2025 16:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742919060;
+	bh=smwmled8hr02Pgtfh3CQQ2bUvez65YipbMRkmIvNS14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZYiPadP7GRFumbzemtXxwgVauqdtAr/sBHrZMT/qlt/lVKHWplsZfr4+MbX9r5px6
+	 bQQ3XdeazsSETT8KOdIWvsso7hC+2Ir5VUEk12/U5xCXY98XUMtSUBFhrbFX4UtLD2
+	 I1ETLG4EtKDfabsAtAwDaDb7JrR6O35ruPeEmNzVTID7DdjEPOU4mRxgkHzuy/EjcY
+	 ttWYFNgAG8FS8Cx8E0wNZusdga0AR+7Z/8yOMY2lVMg1NUcmClTBzS4rWsqR7t8+83
+	 uwUjHijJRTf8TtyvTBXznXX12LTSaum6c7XT7Ch6ipWEDqNLpnyA988fzjYos3lwki
+	 UP2vnyVw/1svQ==
+Date: Tue, 25 Mar 2025 16:10:59 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: longli@linuxonhyperv.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Long Li <longli@microsoft.com>
+Subject: Re: [Patch v3] uio_hv_generic: Set event for all channels on the
+ device
+Message-ID: <Z-LVk8jWkalG5KdD@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
 
-Selects RZ/T2H (aka r9a09g077) SCI (serial) specific code.
+On Mon, Mar 10, 2025 at 03:12:01PM -0700, longli@linuxonhyperv.com wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> Hyper-V may offer a non latency sensitive device with subchannels without
+> monitor bit enabled. The decision is entirely on the Hyper-V host not
+> configurable within guest.
+> 
+> When a device has subchannels, also signal events for the subchannel
+> if its monitor bit is disabled.
+> 
+> This patch also removes the memory barrier when monitor bit is enabled
+> as it is not necessary. The memory barrier is only needed between
+> setting up interrupt mask and calling vmbus_set_event() when monitor
+> bit is disabled.
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
 
-Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
----
-Changes v4->v5:
-   - Renamed CONFIG_SERIAL_RZ_SCI to CONFIG_SERIAL_RZ_SCI_T2
-Changes v3->v4:
-   - Remove CONFIG_ARCH_R9A09G077=y
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Greg, are you going to take this patch?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da4415599..100f85ceeff5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -492,6 +492,7 @@ CONFIG_SERIAL_TEGRA_TCU=y
- CONFIG_SERIAL_IMX=y
- CONFIG_SERIAL_IMX_CONSOLE=y
- CONFIG_SERIAL_SH_SCI=y
-+CONFIG_SERIAL_RZ_SCI_T2=y
- CONFIG_SERIAL_MSM=y
- CONFIG_SERIAL_MSM_CONSOLE=y
- CONFIG_SERIAL_QCOM_GENI=y
--- 
-2.43.0
+I can take it if you want.
 
+Thanks,
+Wei.
+
+> ---
+> Change log
+> v2: Use vmbus_set_event() to avoid additional check on monitored bit
+>     Lock vmbus_connection.channel_mutex when going through subchannels
+> v3: Add details in commit messsage on the memory barrier.
+> 
+>  drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
+>  1 file changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index 3976360d0096..45be2f8baade 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -65,6 +65,16 @@ struct hv_uio_private_data {
+>  	char	send_name[32];
+>  };
+>  
+> +static void set_event(struct vmbus_channel *channel, s32 irq_state)
+> +{
+> +	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
+> +	if (!channel->offermsg.monitor_allocated && irq_state) {
+> +		/* MB is needed for host to see the interrupt mask first */
+> +		virt_mb();
+> +		vmbus_set_event(channel);
+> +	}
+> +}
+> +
+>  /*
+>   * This is the irqcontrol callback to be registered to uio_info.
+>   * It can be used to disable/enable interrupt from user space processes.
+> @@ -79,12 +89,15 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
+>  {
+>  	struct hv_uio_private_data *pdata = info->priv;
+>  	struct hv_device *dev = pdata->device;
+> +	struct vmbus_channel *primary, *sc;
+>  
+> -	dev->channel->inbound.ring_buffer->interrupt_mask = !irq_state;
+> -	virt_mb();
+> +	primary = dev->channel;
+> +	set_event(primary, irq_state);
+>  
+> -	if (!dev->channel->offermsg.monitor_allocated && irq_state)
+> -		vmbus_setevent(dev->channel);
+> +	mutex_lock(&vmbus_connection.channel_mutex);
+> +	list_for_each_entry(sc, &primary->sc_list, sc_list)
+> +		set_event(sc, irq_state);
+> +	mutex_unlock(&vmbus_connection.channel_mutex);
+>  
+>  	return 0;
+>  }
+> @@ -95,12 +108,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
+>  static void hv_uio_channel_cb(void *context)
+>  {
+>  	struct vmbus_channel *chan = context;
+> -	struct hv_device *hv_dev = chan->device_obj;
+> -	struct hv_uio_private_data *pdata = hv_get_drvdata(hv_dev);
+> +	struct hv_device *hv_dev;
+> +	struct hv_uio_private_data *pdata;
+>  
+>  	chan->inbound.ring_buffer->interrupt_mask = 1;
+>  	virt_mb();
+>  
+> +	/*
+> +	 * The callback may come from a subchannel, in which case look
+> +	 * for the hv device in the primary channel
+> +	 */
+> +	hv_dev = chan->primary_channel ?
+> +		 chan->primary_channel->device_obj : chan->device_obj;
+> +	pdata = hv_get_drvdata(hv_dev);
+>  	uio_event_notify(&pdata->info);
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 
