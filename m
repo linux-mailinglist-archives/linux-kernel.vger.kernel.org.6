@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-574888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80E4A6EB27
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13C2A6EB29
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDED1891455
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F419189372D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A360F25484D;
-	Tue, 25 Mar 2025 08:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E538925487B;
+	Tue, 25 Mar 2025 08:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xuu9Wv6p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zawn//iF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMAY3ru9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2F253B60;
-	Tue, 25 Mar 2025 08:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AEA1D7E37;
+	Tue, 25 Mar 2025 08:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890274; cv=none; b=HB/+k7Pz5rOeNDD+jSSIaJUWF0mPaTcVNEKJlnR7mkeZnPxKtFhCKs9qP7+/ensCOTmGzE1CFTFxr7oaWvXVjYg4lMDj7aUV6meVgqXzk4jYyTYbRsGEhk1rc1h4JF82i4rlZHTt+EGFWL0VRfW6614kNOj8F4be2VLok4x5B2Y=
+	t=1742890278; cv=none; b=XNJpnjYOIQIrA+/tb7RXG2snmE/wvkMgg8TwYpBIojibXSsN50OPrgMoO8VZFtS/28rM9+2VNKVEJbj+syN7LGLjC/PdDqUOB83hN5VYrao5ynefxR3yVI7nfE3W85ZUUQPXZ4MX/jv1QDNNIbBy8dirL1+VFtepFdQuEv0OUTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890274; c=relaxed/simple;
-	bh=8gjoMs+t6/hW1hSlaknfnqD78WUml+/4v7BFGq/X2W8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Wp+PopehmVBy3jDuyF0J4x/fGRfi3W7i6YuvsbRCABYl8eGxM56cQYwlKRgzdpHdhjNwhTeXuSIOs+DRCEDP6jQcak34gW5BJStaaj3D66akKMN4vuhAx1HNN+wwbgJbWdiRewfTBix4X7M0otAg54ZwIt3RPmRsceWvt+lYQWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xuu9Wv6p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zawn//iF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742890269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBlYuYPxuiW4f/YH3m2JiPO9h8/st5bDHO18kaoaxWU=;
-	b=xuu9Wv6psqJzPFfn8nMntVCSCH9iODJd96EJ94rTd8BA3tpxSRI7FC+Z8px+3BfOtKWwz4
-	EQNAYMOijbgOFFS7+rH/VfTxOn3FxTl5i4udS+twC9fl5AXSJ702DONji18Nfzufxt3P8k
-	hAJMo9n336BIMnf84oX/JXqSA0j0lKk6zhJuprnlWpwoGcrlYJRF1G/qysdW9NOceQ8IWz
-	AxC3zXeAMYHxivQJvG3CSp+tbm0DA65C8MoZL07GOeZp7AaIlLeLgXZ217wNE9p4f98eNQ
-	FWWjzyRHu5AOK9111zSqok0p+97KrvNlYKC5GAOPqqYwJuqrraND0jAhG6UZfA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742890269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gBlYuYPxuiW4f/YH3m2JiPO9h8/st5bDHO18kaoaxWU=;
-	b=zawn//iFOlyQCFAWgDgHOmxcNuu0Ak6JkpKA/7TZ4dwphNSIIW3fFEFxxZVI3iFGgo16uU
-	kGLzpS+oUoMNZnBg==
-To: Roger Pau =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>, Daniel Gomez
- <da.gomez@kernel.org>
-Cc: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Bjorn Helgaas
- <helgaas@kernel.org>,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
- domain flag
-In-Reply-To: <Z-Gv6TG9dwKI-fvz@macbook.local>
-References: <20250320210741.GA1099701@bhelgaas>
- <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
- <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
- <Z-GbuiIYEdqVRsHj@macbook.local>
- <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
- <Z-Gv6TG9dwKI-fvz@macbook.local>
-Date: Tue, 25 Mar 2025 09:11:08 +0100
-Message-ID: <87y0wtzg0z.ffs@tglx>
+	s=arc-20240116; t=1742890278; c=relaxed/simple;
+	bh=sqdqt6cZvQDX0oVFnEsMmomrp/59fMvqIHre9ETCDls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQUMpR9nY3kN8HybncffTN0na42KPN2dfVJDDHUEGSQHpJ48IrFT4FoLweSv7wA2YU/ZuPoy37qqm1p5YTLK9kH9EHiOW67zpVtIICcOPOpr4lP9Sx7k4i6YR3vKn/woyVbNmWHFBqLzP2V98AI35kDduPzYZRpLtxMIKszPrkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMAY3ru9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E849C4CEED;
+	Tue, 25 Mar 2025 08:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742890276;
+	bh=sqdqt6cZvQDX0oVFnEsMmomrp/59fMvqIHre9ETCDls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PMAY3ru9tqbAtQHP+Mmh0vHI9ITvVoixjATT8q9BGmYBsUbdiuyw5Hx/u0kdIZspb
+	 U27ZCeYIB2w5HMp6W+6gkT79t/2g2nIxcQqN028eqrj29zXDfVu61sGpa6aHVSWe4Y
+	 flDNs8AMn7f7tmMYkzsjJSqdKPR2vZNhoJESVKcJeAEQ7rg0/jT+h8KXT89mTu5e8Q
+	 p1/VI/ALO8ukV0nhSKs42FfLUUQEn3LL8Umu8U5uIJnhIrQAKUoQ5zhqVTGoGYcSQD
+	 cXqGW983DM3/cNO5YhMxxWQxAbDdgCU4QOIJnWbP5ZtLbJ1gO5a4QaWPp7SVkrW+Ua
+	 7iGQ0CbFBtpBw==
+Date: Tue, 25 Mar 2025 09:11:13 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
+	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Lee Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/9] dt-bindings: mfd: syscon document the
+ control-scb syscon on PolarFire SoC
+Message-ID: <20250325-analytic-axolotl-of-prestige-e82aff@krzk-bin>
+References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+ <20250321-idiom-remedial-daeddab1dcd8@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,25 +64,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250321-idiom-remedial-daeddab1dcd8@spud>
 
-On Mon, Mar 24 2025 at 20:18, Roger Pau Monn=C3=A9 wrote:
-> On Mon, Mar 24, 2025 at 07:58:14PM +0100, Daniel Gomez wrote:
->> The issue is that info appears to be uninitialized. So, this worked for =
-me:
->
-> Indeed, irq_domain->host_data is NULL, there's no msi_domain_info.  As
-> this is x86, I was expecting x86 ot always use
-> x86_init_dev_msi_info(), but that doesn't seem to be the case.  I
-> would like to better understand this.
+On Fri, Mar 21, 2025 at 05:22:34PM +0000, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The "control-scb" region, contains the "tvs" temperature and voltage
+> sensors and the control/status registers for the system controller's
+> mailbox. The mailbox has a dedicated node, so there's no need for a
+> child node describing it, looking the syscon up by compatible is
+> sufficient.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v2:
+> add the control-scb syscon here too, since it doesn't have any children.
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Indeed. On x86 this should not happen at all. On architectures, which do
-not use (hierarchical) interrupt domains, it will return NULL.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-So I really want to understand why this happens on x86 before such a
-"fix" is deployed.
+Best regards,
+Krzysztof
 
-Thanks,
-
-        tglx
 
