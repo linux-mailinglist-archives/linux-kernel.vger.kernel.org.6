@@ -1,301 +1,122 @@
-Return-Path: <linux-kernel+bounces-575489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE25A7032E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:07:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2956DA70340
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DD98174CD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916383A99F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1495F208AD;
-	Tue, 25 Mar 2025 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5A72586E7;
+	Tue, 25 Mar 2025 14:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="bkZfd5zt"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgCAV8aD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AC92571A8;
-	Tue, 25 Mar 2025 14:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742911334; cv=pass; b=kU9riNlits3syDVm60Ig88atqkXS8bqcoL7bhPT6/da+LALrjfqlV/FAqxlXB1oKaH6oqu3TaSWKQXd/BPoKO225zU+LznZPYGyED9jAu1/6CnNkLCWuDJLb0HSvXFUJVgmsbaCHN33/kkuksKM7oHYvLiRbiK4kLz8vNH3ZbVc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742911334; c=relaxed/simple;
-	bh=9O4uqy1naeX8bzCKhM3eYUxsi/i9W+iJkdCDH/bQvuU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Zm5vOUk8Oo1gTuoqqz27MAsbbDqJw4Zna5GcfDQd3VhF1VyrJaGYWIiMbkqejF/9FGeYcLIXpdJjD30Ou0PE5dRHHAmQy2T7X55I9ugsIvGtlgYz+f99yqSrHBVezx0r5GWTCmTDOX76+jluSraE/0Acvqtf3wgQJ+vAn6s4ZU8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=bkZfd5zt; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742911286; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IRFGJzjYDFnAAqMFvFQXDY8O7v26YZe/QK8HqXR9ORiOiv2YgAz1mJJ4ajtrEBJCh5a/Uk8eSPqm0He/o2K7oM95yqejiC1+B/ZyspZHLCnitzp9ZWIExZSljyaiF74vAzohkEADIWeFdzg9Kr6C6NNtJJN/7pFhiM8zcQV7UKI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742911286; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=1t9m9SPFoJmycN3sPfqfbtevGGXJbztvUbH5/PjzUdA=; 
-	b=LDDlxX34uPCjC07wd3SRlNKcVDDpfJ53NkXgC8lWaCiNQhVWUK+ZrweoH/SozivoeKczpWTY3VH0cypvoZbz8L7YZ3uen90eL8oOgSl99/3abMbH93oKMgkseFwdY6ExNG+M2aw299ICZMtRdog43vvWYt9Mjz5Qqc8vd9yzBh0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742911286;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=1t9m9SPFoJmycN3sPfqfbtevGGXJbztvUbH5/PjzUdA=;
-	b=bkZfd5ztrycIJwn3iCqyPvV3aPEtVo9hbS1XSrcTibUMeGlj8Jyt94mEWpm+Aph2
-	P2yjbBwz6r5ybASsV7ACkNOX/VxpHYtPWyc54FKS5PMJO3U8YUc0rdbh2E1i3iPCqdC
-	DL0oqKikMkuKssxCv4hA+7FLHHF1AfaaiYcvCHsc=
-Received: by mx.zohomail.com with SMTPS id 1742911284117910.7174817445112;
-	Tue, 25 Mar 2025 07:01:24 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B23E2571B4;
+	Tue, 25 Mar 2025 14:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742911298; cv=none; b=kFTRPvKNU3reVSZwRRNvyangJ9NyMoqRAckYYjRsx6fqiNd4BvgB9bZnUHz8EXXfC+NvtOs4ecO0/NdyZ9KV/8emEjEbijwCrQq0bMEiCwj4yRr/j8mF4rPm4bOrybIKjPVyHztPw7sAd8r+HZNXl64Xx9YFe6JOfjnaZskT1TA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742911298; c=relaxed/simple;
+	bh=KKBnNn/S4R4f5Mz5eckMo80BqvJaP7VN+nATZxJyyCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEVbDFlcnwEM4dyq+7g2zUOSysKAIM6MwQZpPupcoLl59d+CZlmhEp0kKTkDgKAtOg8/vYmd74NCtzCDFHaN1n7Fp4JMPa7JSfU/v4zNVO/ozRq28gH+qlLIQ6s0dFTb5XWcYVPielbIXyMCbtaDN5CGHvVauOp/fXAIWAWwUT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgCAV8aD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA819C4CEE4;
+	Tue, 25 Mar 2025 14:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742911298;
+	bh=KKBnNn/S4R4f5Mz5eckMo80BqvJaP7VN+nATZxJyyCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XgCAV8aD40fxO0b7OxsOFkRnwVnu8aifYiSg1YvkIwDHtvgaY7AtBSFGIGERIh9Oj
+	 a3XApPyiUgMIRnA3XnKi/bZfHKDqWhCAYO0kygaSMCtlOC40WrSP9pIK4LJdBv43mo
+	 1zBFTC86JK1sovpU9sN9pFp9aPZvKRXLOpXvMZLDui5k9i6BWsNZG1/hXW7kofo/jn
+	 c4AZ5QJuLVECUCi6k7TQlNO9SIdcbQW/oRjG7DHxs6/Ki1wze6GMMxw63zpfwwUI5v
+	 JMonbhDHYSi9OzHEZXzSsmMJXE+oNuzMlqmQfCb56C0FK85tWQPu9iisFXJe9mTC1S
+	 EcGvfOMaNe57g==
+Date: Tue, 25 Mar 2025 09:01:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Guomin chen <guomin.chen@cixtech.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Chen <peter.chen@cixtech.com>,
+	cix-kernel-upstream@cixtech.com, linux-kernel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: mailbox: add cix,sky1-mbox
+Message-ID: <20250325140136.GA1843686-robh@kernel.org>
+References: <20250325101807.2202758-1-guomin.chen@cixtech.com>
+ <20250325101807.2202758-2-guomin.chen@cixtech.com>
+ <174290730775.1655008.14031380406017771195.robh@kernel.org>
+ <Z+KxIRVRRw1slKqB@gchen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v4 07/11] scripts: generate_rust_analyzer.py: identify
- crates explicitly
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250322-rust-analyzer-host-v4-7-1f51f9c907eb@gmail.com>
-Date: Tue, 25 Mar 2025 11:01:08 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris-Chengbiao Zhou <bobo1239@web.de>,
- Kees Cook <kees@kernel.org>,
- Fiona Behrens <me@kloenk.dev>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Lukas Wirth <lukas.wirth@ferrous-systems.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A959347E-EC7D-4CF1-A0C4-A4EA4C7E041F@collabora.com>
-References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
- <20250322-rust-analyzer-host-v4-7-1f51f9c907eb@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z+KxIRVRRw1slKqB@gchen>
 
+On Tue, Mar 25, 2025 at 01:35:29PM +0000, Guomin chen wrote:
+> On Tue, Mar 25, 2025 at 07:55:10AM -0500, Rob Herring (Arm) wrote:
+> > [Some people who received this message don't often get email from robh@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> > 
+> > EXTERNAL EMAIL
+> > 
+> > On Tue, 25 Mar 2025 10:18:06 +0000, Guomin Chen wrote:
+> > > From: Guomin Chen <Guomin.Chen@cixtech.com>
+> > >
+> > > Add a dt-binding for the Cixtech Mailbox Controller.
+> > >
+> > > Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+> > > Signed-off-by: Lihua Liu <Lihua.Liu@cixtech.com>
+> > > Signed-off-by: Guomin Chen <Guomin.Chen@cixtech.com>
+> > > ---
+> > >  .../bindings/mailbox/cix,sky1-mbox.yaml       | 80 +++++++++++++++++++
+> > >  1 file changed, 80 insertions(+)
+> > >
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> ...
+> >  l,.*', 'pinctrl-[0-9]+'
+> >         from schema $id: http://devicetree.org/schemas/vendor-prefixes.yaml#
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250325101807.2202758-2-guomin.chen@cixtech.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> 
+> Thank you very much. 
+> Although I have already run 'make dt_binding_check DT_SCHEMA_FILES=mailbox/cix,sky1-mbox.yaml' in my environment.
+> I will try updating dtschema and re-check it.
 
+With DT_SCHEMA_FILES you only check what matches. You have to run 
+without it.
 
-> On 22 Mar 2025, at 10:23, Tamir Duberstein <tamird@gmail.com> wrote:
->=20
-> Use the return of `append_crate` to declare dependency on that crate.
-> This allows multiple crates with the same display_name be defined, =
-which
-> we'll use to define host crates separately from target crates.
->=20
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> scripts/generate_rust_analyzer.py | 70 =
-+++++++++++++++++++--------------------
-> 1 file changed, 34 insertions(+), 36 deletions(-)
->=20
-> diff --git a/scripts/generate_rust_analyzer.py =
-b/scripts/generate_rust_analyzer.py
-> index 1ee079c6d916..de1193117161 100755
-> --- a/scripts/generate_rust_analyzer.py
-> +++ b/scripts/generate_rust_analyzer.py
-> @@ -68,17 +68,14 @@ def generate_crates(
->             line =3D line.replace("\n", "")
->             cfg.append(line)
->=20
-> -    # Now fill the crates list -- dependencies need to come first.
-> -    #
-> -    # Avoid O(n^2) iterations by keeping a map of indexes.
-> +    # Now fill the crates list.
->     crates: List[Crate] =3D []
-> -    crates_indexes: Dict[str, int] =3D {}
->     crates_cfgs =3D args_crates_cfgs(cfgs)
->=20
->     def build_crate(
->         display_name: str,
->         root_module: pathlib.Path,
-> -        deps: List[str],
-> +        deps: List[Dependency],
->         cfg: List[str] =3D [],
->         is_workspace_member: bool =3D True,
->     ) -> Crate:
-> @@ -86,7 +83,7 @@ def generate_crates(
->             "display_name": display_name,
->             "root_module": str(root_module),
->             "is_workspace_member": is_workspace_member,
-> -            "deps": [{"crate": crates_indexes[dep], "name": dep} for =
-dep in deps],
-> +            "deps": deps,
->             "cfg": cfg,
->             "edition": "2021",
->             "env": {
-> @@ -94,27 +91,28 @@ def generate_crates(
->             },
->         }
->=20
-> -    def register_crate(crate: Crate) -> None:
-> -        crates_indexes[crate["display_name"]] =3D len(crates)
-> +    def register_crate(crate: Crate) -> Dependency:
-> +        index =3D len(crates)
->         crates.append(crate)
-> +        return {"crate": index, "name": crate["display_name"]}
->=20
->     def append_crate(
->         display_name: str,
->         root_module: pathlib.Path,
-> -        deps: List[str],
-> +        deps: List[Dependency],
->         cfg: List[str] =3D [],
->         is_workspace_member: bool =3D True,
-> -    ) -> None:
-> -        register_crate(
-> +    ) -> Dependency:
-> +        return register_crate(
->             build_crate(display_name, root_module, deps, cfg, =
-is_workspace_member)
->         )
->=20
->     def append_proc_macro_crate(
->         display_name: str,
->         root_module: pathlib.Path,
-> -        deps: List[str],
-> +        deps: List[Dependency],
->         cfg: List[str] =3D [],
-> -    ) -> None:
-> +    ) -> Dependency:
->         crate =3D build_crate(display_name, root_module, deps, cfg)
->         proc_macro_dylib_name =3D subprocess.check_output(
->             [os.environ["RUSTC"], "--print", "file-names", =
-"--crate-name", display_name, "--crate-type", "proc-macro", "-"],
-> @@ -125,14 +123,14 @@ def generate_crates(
->             "is_proc_macro": True,
->             "proc_macro_dylib_path": str(objtree / "rust" / =
-proc_macro_dylib_name),
->         }
-> -        register_crate(proc_macro_crate)
-> +        return register_crate(proc_macro_crate)
->=20
->     def append_sysroot_crate(
->         display_name: str,
-> -        deps: List[str],
-> +        deps: List[Dependency],
->         cfg: List[str] =3D [],
-> -    ) -> None:
-> -        register_crate(
-> +    ) -> Dependency:
-> +        return register_crate(
->             build_crate(
->                 display_name,
->                 sysroot_src / display_name / "src" / "lib.rs",
-> @@ -145,47 +143,47 @@ def generate_crates(
->     # NB: sysroot crates reexport items from one another so setting up =
-our transitive dependencies
->     # here is important for ensuring that rust-analyzer can resolve =
-symbols. The sources of truth
->     # for this dependency graph are `(sysroot_src / crate / =
-"Cargo.toml" for crate in crates)`.
-> -    append_sysroot_crate("core", [], cfg=3Dcrates_cfgs.get("core", =
-[]))
-> -    append_sysroot_crate("alloc", ["core"])
-> -    append_sysroot_crate("std", ["alloc", "core"])
-> -    append_sysroot_crate("proc_macro", ["core", "std"])
-> +    core =3D append_sysroot_crate("core", [], =
-cfg=3Dcrates_cfgs.get("core", []))
-> +    alloc =3D append_sysroot_crate("alloc", [core])
-> +    std =3D append_sysroot_crate("std", [alloc, core])
-> +    proc_macro =3D append_sysroot_crate("proc_macro", [core, std])
->=20
-> -    append_crate(
-> +    compiler_builtins =3D append_crate(
->         "compiler_builtins",
->         srctree / "rust" / "compiler_builtins.rs",
->         [],
->     )
->=20
-> -    append_proc_macro_crate(
-> +    macros =3D append_proc_macro_crate(
->         "macros",
->         srctree / "rust" / "macros" / "lib.rs",
-> -        ["std", "proc_macro"],
-> +        [std, proc_macro],
->     )
->=20
-> -    append_crate(
-> +    build_error =3D append_crate(
->         "build_error",
->         srctree / "rust" / "build_error.rs",
-> -        ["core", "compiler_builtins"],
-> +        [core, compiler_builtins],
->     )
->=20
-> -    append_proc_macro_crate(
-> +    pin_init_internal =3D append_proc_macro_crate(
->         "pin_init_internal",
->         srctree / "rust" / "pin-init" / "internal" / "src" / "lib.rs",
->         [],
->         cfg=3D["kernel"],
->     )
->=20
-> -    append_crate(
-> +    pin_init =3D append_crate(
->         "pin_init",
->         srctree / "rust" / "pin-init" / "src" / "lib.rs",
-> -        ["core", "pin_init_internal", "macros"],
-> +        [core, pin_init_internal, macros],
->         cfg=3D["kernel"],
->     )
->=20
->     def append_crate_with_generated(
->         display_name: str,
-> -        deps: List[str],
-> -    ) -> None:
-> +        deps: List[Dependency],
-> +    ) -> Dependency:
->         crate =3D build_crate(
->             display_name,
->             srctree / "rust" / display_name / "lib.rs",
-> @@ -203,11 +201,11 @@ def generate_crates(
->                 "exclude_dirs": [],
->             }
->         }
-> -        register_crate(crate_with_generated)
-> +        return register_crate(crate_with_generated)
->=20
-> -    append_crate_with_generated("bindings", ["core"])
-> -    append_crate_with_generated("uapi", ["core"])
-> -    append_crate_with_generated("kernel", ["core", "macros", =
-"build_error", "bindings", "pin_init", "uapi"])
-> +    bindings =3D append_crate_with_generated("bindings", [core])
-> +    uapi =3D append_crate_with_generated("uapi", [core])
-> +    kernel =3D append_crate_with_generated("kernel", [core, macros, =
-build_error, bindings, pin_init, uapi])
->=20
->     def is_root_crate(build_file: pathlib.Path, target: str) -> bool:
->         try:
-> @@ -237,7 +235,7 @@ def generate_crates(
->             append_crate(
->                 name,
->                 path,
-> -                ["core", "kernel"],
-> +                [core, kernel],
->                 cfg=3Dcfg,
->             )
->=20
->=20
-> --=20
-> 2.48.1
->=20
->=20
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Rob
 
 
