@@ -1,163 +1,118 @@
-Return-Path: <linux-kernel+bounces-575663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596CEA7056E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:47:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A38A7057F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7075F188AC96
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:46:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A26516C89C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8B6256C89;
-	Tue, 25 Mar 2025 15:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD271FAC34;
+	Tue, 25 Mar 2025 15:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3+mul1B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQ7yJPcn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA4E25BABA;
-	Tue, 25 Mar 2025 15:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792052E3382
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742917547; cv=none; b=N8FQVJNHicYvfdJcu/wYre5m6OvAPKT593mOMAhKGIK3MEOG6hGnAdzlPKAgeOYGV8xBzVdW/OINa6SRxRxAXRSVb7Guv+H2aY+eZC+ui6FDGkC77hQfapIkpfgN71o94VVXJFVtyA7LQHsoqS1Bl75b3qDJOuzzuf/5uk7Pp5A=
+	t=1742917737; cv=none; b=M4oVFLlyyMJudVy0OcD7w1Xlcp2DDsOz2uYG6Mh4aBTIK65vG6uKwM/g7cANVTgrYKkCWhM8hWfuExXtdH9ldcBffBLISKeOCj28nEzwSH6QFFUP3qHsFX3Z/9zDk2kiH86J3p+5sW6Gw7VpBm1v12e9jpL8aPxZkYzdF2q3NX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742917547; c=relaxed/simple;
-	bh=xVCx2kciP/eq/LO5hKJChVYRZx47bjD2BczzGnahD9o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hzuhl83J5Nlcmbi7sLtoMQ7IildwGXChxJbUsWCZqolYorbUYHEjZ5BVIRmQyHp087tOkbgSYPhI5wAVHntHIOtKYZ9CrZlQjXWQRGbTKD95P6b84kW0J2d1H61sOOVai4HkUS4evcajIwMMhrqZhh0eN/pA0PLSKVUqmiOxrnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3+mul1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049A0C4CEF1;
-	Tue, 25 Mar 2025 15:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742917546;
-	bh=xVCx2kciP/eq/LO5hKJChVYRZx47bjD2BczzGnahD9o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=j3+mul1B2B616Ow0fu3XYA8oZCiKaJB13Q8/KHhLIGGTVhfu3WhYy4d6YFfY+Upo6
-	 8I1YXzSXD7tKrMEOQdJB2Wl3NSq1OhZ8JXp9hXJ8cRgx3sqInJ58J9VGRSITJP3NgZ
-	 Vg7WZ66uCvuA0mBfmXMjSJjdpKoScY5H/kBaypQdHyTqOKlTH+gkzRaGIjzv/kRBWM
-	 BNfR9eHh3t+vkLygqOwrOLBGPSDSsFBVXEl7rkeCRAW20TGN5X51z3abNij8eONKXk
-	 7KRku3GVkCkKpDbEyooIdi+0DZK7RG1Tju0K7kjiFZ5P5VjInhuLq8yj5P/ciRNU2i
-	 nga+c5cHXDRsw==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Tue, 25 Mar 2025 08:45:19 -0700
-Subject: [PATCH RFC 2/2] wcslen() prototype in string.h
+	s=arc-20240116; t=1742917737; c=relaxed/simple;
+	bh=yqgGOiWrNPG+wQbjX2ddul66Titgdg7RfSlbjzQ1Hks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wj77OPGU3OkDkElbaAEnCK/klfZ9HIuerMgm4mRzmnBUX/FWDThbRqodT9CNOHAJ/pn+wcPpGLzm8ifcRCGgFx2ppsy5orVq/N2FOU0OfF25fyirLbjmN+xcXfNwTo/fWL2vEVPd8Y15VYn+OMusckV5XiTsCy2x/aYP6WwQ1gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQ7yJPcn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742917735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yqgGOiWrNPG+wQbjX2ddul66Titgdg7RfSlbjzQ1Hks=;
+	b=WQ7yJPcnDImSxXSuqpJfOG5sMyKuomUIYYviu+Ov9Ny054oeyVDASGD+H+h0jQd+Th1NdT
+	OWqbR2XDQrcTi1MJ9MSPAdYRWO61yccYEoMFQHmIxhhbz8tAG+spwocrrpCcb99tXEp1Lv
+	JNWq/fUV1quDosWXKb81+y9GRjYkE1Q=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-GP31lPQUM0WHSVuEBM1TNw-1; Tue, 25 Mar 2025 11:48:51 -0400
+X-MC-Unique: GP31lPQUM0WHSVuEBM1TNw-1
+X-Mimecast-MFC-AGG-ID: GP31lPQUM0WHSVuEBM1TNw_1742917730
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab68fbe53a4so691968966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:48:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742917730; x=1743522530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yqgGOiWrNPG+wQbjX2ddul66Titgdg7RfSlbjzQ1Hks=;
+        b=SIhd1FnFvdhzkTBf1Brv5jXQDzxIEtWxqw0qVNK+RGi20b+7FXuK9mDGPHyBXHVTPC
+         xYFnR46oGblSIuSIxQcU+699FtF7sbpBtEjnhhdTKjybDa9m5keqYxXmSYMDkGyI+Oxk
+         tBJxzZ0FhugK+EjRpaZwVDMd8dAEnCbb7IQuGYQRvNYvTcWPaW71hPOFu0lKs8AC3UA3
+         j498w5Hzp0LjICIGa7d4fd7G2BdG3JeTyEEQR3gfnO+0frc0+0YCBpLsh0zJjPXxAomN
+         jJnOqg3a2vBaCo6d3n06RYVd0ZrGSR6ZxxUQaPNHqf7Wx0FFxPjnDcJ498d2CrTa1Me0
+         kQzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdsENrv6vBZP1W5kcQPXRMum2Ovg7+iQlyrQcIrAVQ9t0zTtv0U5tzeiqQn5R/Va+0VqgCaCxGBYd6OF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAGOGXZqfg12ABFHvX0I07MlEC+/+CcvpT8syFTqxPx6156W5z
+	kM6q7a1cEyeZvzxQgQ/iiL1NYTht/5SSezUpXwxuO99bFIUQixOf6EKTLSt/63aNbfJvhpJ02v6
+	52SWM8DJz20RYH/udirlsgfX3RllNadcuk+ctEbYJzRkoTS3kkdxHhCJVjPU5nMW4IN8WGfdXPo
+	PXGpmIkGTwa3F3Rn6Ls6MMB0Pq+2Qw7UDKWiq5
+X-Gm-Gg: ASbGncsjGYXO38Vww9/Apq2z1XTZ15sdxNPjsxxvDGrunCB64UZBxZgDSX3niqFh0R8
+	0FtUs+SyINkS2S+7ruCZ4W8/Fy3MvQUfbGC/tFsnxjWEJeDCoPiCe5tPYY6C98HXmOxPU9QZKdA
+	==
+X-Received: by 2002:a17:907:f50a:b0:ac3:45b5:d325 with SMTP id a640c23a62f3a-ac3f253011emr1834030466b.52.1742917730277;
+        Tue, 25 Mar 2025 08:48:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFD64oBfGmIy4l7ipkxycYxKe6ZIbenXBCa1X1NVXvuOTgJbZUFc6bXWv82qD2ySlajcuBwkr3lQOUImvYCoOM=
+X-Received: by 2002:a17:907:f50a:b0:ac3:45b5:d325 with SMTP id
+ a640c23a62f3a-ac3f253011emr1834028166b.52.1742917729882; Tue, 25 Mar 2025
+ 08:48:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250325-string-add-wcslen-for-llvm-opt-v1-2-b8f1e2c17888@kernel.org>
-References: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
-In-Reply-To: <20250325-string-add-wcslen-for-llvm-opt-v1-0-b8f1e2c17888@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Andy Shevchenko <andy@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
- linux-efi@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3349; i=nathan@kernel.org;
- h=from:subject:message-id; bh=xVCx2kciP/eq/LO5hKJChVYRZx47bjD2BczzGnahD9o=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOmPzi/6svQ4k8Dxq/xirT+S42+WK99wP7JxJ6PDo6Un9
- 596Zysp0lHKwiDGxSArpshS/Vj1uKHhnLOMN05NgpnDygQyhIGLUwAm4uvP8D/CZ6PjhDlGi/0m
- LdGR/f54W+qPkifaP8XZKtQfrv767psTI8N6949nvwo+/d92LvZhbtbF3zqvWpQqj81deu9W4em
- Yu/wMAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+References: <20250322183439.393533-2-costa.shul@redhat.com>
+In-Reply-To: <20250322183439.393533-2-costa.shul@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Tue, 25 Mar 2025 16:48:36 +0100
+X-Gm-Features: AQ5f1Jr0dsAtsjzTVe3U7QzJt6ah2IQQOliT5wpbbU_ZQBdQgNVZsG0gU14KJaI
+Message-ID: <CAP4=nvTXEO=i7Rf4ONOpr89XoFLnkGYKp78xMLZk4yYh6dnZEA@mail.gmail.com>
+Subject: Re: [PATCH v1] rtla: Fix crash due to NULL record dereference
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Daniel Bristot de Oliveira <bristot@kernel.org>, 
+	John Kacur <jkacur@redhat.com>, "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, 
+	Eder Zulian <ezulian@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Gabriele Monaco <gmonaco@redhat.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If this is desired, it should be squashed into the previous change. I
-wrote it separately because it is slightly more invasive.
+so 22. 3. 2025 v 19:40 odes=C3=ADlatel Costa Shulyupin
+<costa.shul@redhat.com> napsal:
+>
+> The previous patch introduced a crash by dereferencing record,
+> which can be NULL.
+>
+> Add checks to prevent the crash.
+>
+> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
 
-In order to export wcslen() to the rest of the kernel (should it ever be
-necessary elsewhere), it needs to be added to string.h, along with nls.h
-for the typedef of wchar_t. However, dragging in nls.h into string.h
-causes an error in the efistub due to a conflicting function name:
+This is a duplicate of my fix [1]. I added a NULL check inside the
+function and made the callers pass NULL if the record instance is not
+initialized.
 
-  drivers/firmware/efi/libstub/printk.c:27:5: error: static declaration of 'utf8_to_utf32' follows non-static declaration
-     27 | u32 utf8_to_utf32(const u8 **s8)
-        |     ^
-  include/linux/nls.h:55:12: note: previous declaration is here
-     55 | extern int utf8_to_utf32(const u8 *s, int len, unicode_t *pu);
-        |            ^
-  drivers/firmware/efi/libstub/printk.c:85:26: error: too few arguments to function call, expected 3, have 1
-     85 |                 c32 = utf8_to_utf32(&s8);
-        |                       ~~~~~~~~~~~~~    ^
-  include/linux/nls.h:55:12: note: 'utf8_to_utf32' declared here
-     55 | extern int utf8_to_utf32(const u8 *s, int len, unicode_t *pu);
-        |            ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  2 errors generated.
+[1] https://lore.kernel.org/linux-trace-kernel/20250313141034.299117-1-tglo=
+zar@redhat.com/
 
-Rename the efi function to avoid the conflict.
-
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/firmware/efi/libstub/printk.c | 4 ++--
- include/linux/string.h                | 2 ++
- lib/string.c                          | 1 -
- 3 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware/efi/libstub/printk.c
-index 3a67a2cea7bd..334f7e89845c 100644
---- a/drivers/firmware/efi/libstub/printk.c
-+++ b/drivers/firmware/efi/libstub/printk.c
-@@ -24,7 +24,7 @@ void efi_char16_puts(efi_char16_t *str)
- }
- 
- static
--u32 utf8_to_utf32(const u8 **s8)
-+u32 efi_utf8_to_utf32(const u8 **s8)
- {
- 	u32 c32;
- 	u8 c0, cx;
-@@ -82,7 +82,7 @@ void efi_puts(const char *str)
- 	while (*s8) {
- 		if (*s8 == '\n')
- 			buf[pos++] = L'\r';
--		c32 = utf8_to_utf32(&s8);
-+		c32 = efi_utf8_to_utf32(&s8);
- 		if (c32 < 0x10000) {
- 			/* Characters in plane 0 use a single word. */
- 			buf[pos++] = c32;
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 0403a4ca4c11..45e01cf3434c 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -7,6 +7,7 @@
- #include <linux/cleanup.h>	/* for DEFINE_FREE() */
- #include <linux/compiler.h>	/* for inline */
- #include <linux/types.h>	/* for size_t */
-+#include <linux/nls.h>		/* for wchar_t */
- #include <linux/stddef.h>	/* for NULL */
- #include <linux/err.h>		/* for ERR_PTR() */
- #include <linux/errno.h>	/* for E2BIG */
-@@ -203,6 +204,7 @@ extern __kernel_size_t strlen(const char *);
- #ifndef __HAVE_ARCH_STRNLEN
- extern __kernel_size_t strnlen(const char *,__kernel_size_t);
- #endif
-+extern __kernel_size_t wcslen(const wchar_t *s);
- #ifndef __HAVE_ARCH_STRPBRK
- extern char * strpbrk(const char *,const char *);
- #endif
-diff --git a/lib/string.c b/lib/string.c
-index bbee8a9e4d83..1aa09925254b 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -430,7 +430,6 @@ size_t strnlen(const char *s, size_t count)
- EXPORT_SYMBOL(strnlen);
- #endif
- 
--size_t wcslen(const wchar_t *s);
- size_t wcslen(const wchar_t *s)
- {
- 	const wchar_t *sc;
-
--- 
-2.49.0
+Tomas
 
 
