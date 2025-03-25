@@ -1,291 +1,217 @@
-Return-Path: <linux-kernel+bounces-574721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB71AA6E8DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:30:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC004A6E8E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8716FD6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E67947A4A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6933C1A5BB9;
-	Tue, 25 Mar 2025 04:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8E91A3151;
+	Tue, 25 Mar 2025 04:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FNrd2TuC"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wHS14jGP"
+Received: from mail-qv1-f73.google.com (mail-qv1-f73.google.com [209.85.219.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D812033F7;
-	Tue, 25 Mar 2025 04:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742877016; cv=fail; b=VOVHHfObr28VpeKIL3nvJ8hTQVSITN/YyfpHabOsv1FM6vyKVIeeEzJOhthOO/AHCLq3v7/YtpZ04g3RTXtHe6a8UzLVa/+1UDoxastrnARsRzrTxsniD4N75H9IQbwPhmfmOHPDNJ4hB79z/yH94rHBFeL/0kjT+0brqqw4rVc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742877016; c=relaxed/simple;
-	bh=k6LEZF1TJ/Qon/t8SdsrMu/EMLtoHcfwWGBc/RBrLfw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fsy//BVa9J084c3BR9NQcLrN0hrvWE3t+cn/irr/tx4aZWpYuP6wZrXvBjRygkSZEdmhnSjPc/j4Ym45zPFWn8+HLqOZFPrZ3EXte3opuAn7mg62XCv5m/wSkkPHXnDNp9qHqydixcXItIG7qsfWK6bQ3mUGSFjIEuAT3d2jFCc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FNrd2TuC; arc=fail smtp.client-ip=40.107.236.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pYqECpI/6sX8BAADEVtc/Zd7EXcISo5nwa/TG+wyRlcWv1mBgIsrS4QTJ9t1lXwNuGP6pZMmz75uxyJ26wvyg4mnzBktDdWPZjoNxG56lJj+NNYL/VAaDTFLCJDTEciHL5obpRpyZsMhwV86/adS7Igua8Lbr169+PljQcr95YhCmoUdvcUsrZ/wefVL0nlfhFe1AEOkNISJnZWgZ0zoliEWygOqgFzDnXCdpWJIUlSsm3rrWLx5g5aSzn1OSw5ulr5dH5M285h3UJ6l3ev1PxncxrfySJekhMygztI73YZr2KaXeD+bZBegFfdaoDet3pCXB7gv7OdV2Ldudj+QcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q6UNlo8yJiMoYitNwutOmx/BjMyehBUuYb/gmJCWlgQ=;
- b=iTbWrXQ0h0FNRIM6dYnmdcqwARKo4M3RnBb8VLY+UjCza6Xiel7vuB0FTas07JHccOAkf41cGv9FS10SfM5Jr7awB+VMoYivpARlz9ybnke7RhvXGlu1A2r4qXVZB3iSUCkvlLR5i9F+af68PQKUEMkJB/ck/9DzDfln+KtQAzlDx6sMLflBQCAYe8kh5LKv17ixYIBGEVAD3mLZfy8YU/5DovVTII7j3zSj6CpqTGxLd5wrmdLRRW7/Ys33hcD9UNbGDwcYtdM2ZF+IiyQjiOIK15xDBv6tbrGHjkCRf6xyvK3e1fhlP9Ryrm55X/gNv4+mCYwCLmdrMDoP+DsLig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q6UNlo8yJiMoYitNwutOmx/BjMyehBUuYb/gmJCWlgQ=;
- b=FNrd2TuCUZvhgOXZT+G+aWAsKlbExW16PUoV7QI7kLR5ss3nnjnF9Q9naG6OrixODAvrICmegFUM9WGMtFw5EZiZCDLdVociPcwtgCMrBKcXODAg0yOuEHUeX9YXYYUgmNXjpx0Xr/UttrY5ajLBadOQdWGwgQDsJ6wqJxU4oCA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by SJ0PR12MB6926.namprd12.prod.outlook.com (2603:10b6:a03:485::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
- 2025 04:30:07 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 04:30:07 +0000
-Message-ID: <2e1f1002-458f-4dd8-a101-a121c840022c@amd.com>
-Date: Tue, 25 Mar 2025 10:00:00 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] cpufreq/amd-pstate: Add dynamic energy performance
- preference
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250321022858.1538173-1-superm1@kernel.org>
- <20250321022858.1538173-2-superm1@kernel.org>
- <4d224956-b4f9-4b0c-b5fb-70abe82e6ab5@amd.com>
- <784b2e21-10fb-44d8-b874-b6bc2ee238c6@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <784b2e21-10fb-44d8-b874-b6bc2ee238c6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2P153CA0051.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::20)
- To LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E79833F7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742877202; cv=none; b=SMPkgKktZDvs/ChEtciqTAMujPAbIFbBJenbODjZcV7oLZki3U3ZrXaO60Tv12qhsM8vtD7WMbqPAs1I56fq3VFXbC+qn6XyyBJzf0hH52o+ioZ3YsdFmjkXaCH3gDDA26f6/gPcwNSAzUE8qcqd0BQdPHVg+SB5KCXKcbJZnwI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742877202; c=relaxed/simple;
+	bh=1/WsQmT81GA5GOyiKNySyRtps6yWrHFsx3f9ljDeG/E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=I8kSpnf9nw/Eh9MUBM+/lXS0K+FiNGLD0DO5RN4KSrIeJ+fMOLpradjnX6Y6Mt79QL1t8pU8mMARPYyOi+3OdDp2uKBY2EH3e+2anS8ybAhq/ALofZUu39nRNMaqYyQRcJGtJjMnNeiL3oa340Ft4FGXUuuS7Z3QQpOIbgVXvxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wHS14jGP; arc=none smtp.client-ip=209.85.219.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edumazet.bounces.google.com
+Received: by mail-qv1-f73.google.com with SMTP id 6a1803df08f44-6e90788e2a7so81343936d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742877199; x=1743481999; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DOulYq2NHr2PymZtB9unHgSxEBSMQr0JlxQYUR3VGOg=;
+        b=wHS14jGPRREAIk+NzoYhnRIWmK2AUcjWeYSosj3cGiXgWeGbuMY/2htTNckKj7TmKS
+         EIcgjyZlfkTf2kdhgNmarRHV+HxLcd0AhRoNe6EKAn7C35U4im5WVDp8fv7CGxoSEp5y
+         qx/g9DrjG6S9F5D/CAPaZfCv+RuLk1VkdCXaxcM4IOnKtWzYOerrkwAjzIIRpjksuWD+
+         Snskw7Cf60jNUFfWML7T0AhJ1i++NFPUTCIZQy/OhRg+an801lUxQrTMPMP+EOBIuFwp
+         DT+gt3O8LwC6ipKtbvoy00UsIZin8/Sf2Vph/GYBnIGj3wKhSXlgZji7jm6cnIh9PoYQ
+         zQ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742877199; x=1743481999;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DOulYq2NHr2PymZtB9unHgSxEBSMQr0JlxQYUR3VGOg=;
+        b=OQA2QwdmlL1gEceBytCgOfK6pPhSSVMYJMK+5Wdx63BHSiFDYfaNxDDLGtnVhsOzjb
+         +T8TfN2cr03rX99BeLFU8fnsKKPoXLeRucic15pHVTnLF3mbRQrH8r7Ywuh58CK19WfE
+         lZUfCKFr3516LdnoSe+aQ7JrJl8dIkRrTFJihY5gT0xZUK9Hazw7p2Ws6d+FlQHDsJoh
+         dENNuYWqWGidFWwaPnBBAzYj+B4qaBJIWEI45zVbp55qIxSJJpeHwyq4yr7MyThUsWel
+         yOFGOUrxSgzwIMdkaTTttjTeilQ2WrFq1YgBrqHd21bLcAIQn2xwVm84VTRq95p4XBtS
+         yHEQ==
+X-Gm-Message-State: AOJu0YytcOnOMuzJxrlMbMuLYjXURUhCCfSfJGJEuk7trpsC+2RxVWID
+	c4nyAJtyCd928nh787TRzL/zuoFylFci4d8rRmkZC2STbn8m0UsOcoOGauhRo46aRrrbZxGO30x
+	FQqkTm1k98g==
+X-Google-Smtp-Source: AGHT+IHBDywK4vJdMDik6Gb5h6hLtA44ETSf25RUCCSkPYMy/dnXKh1KuyzD5S2/qD1WsD/KiePrSdYGrJ8ePw==
+X-Received: from qvbny15.prod.google.com ([2002:a05:6214:398f:b0:6e4:5aee:a1ca])
+ (user=edumazet job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6214:f0c:b0:6e4:5317:64a0 with SMTP id 6a1803df08f44-6eb34997bc4mr283791036d6.13.1742877199458;
+ Mon, 24 Mar 2025 21:33:19 -0700 (PDT)
+Date: Tue, 25 Mar 2025 04:33:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SJ0PR12MB6926:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c3e86b7-5473-4a53-2e72-08dd6b55b8ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NEtadTM1NHZjZzFWaVErWmZrVGNKc2tGZGQrSGw5UXRDMWNSbGRGRGQ5Wk1m?=
- =?utf-8?B?RXhhTXpQZ01jRE4zdm1rb3JHU20xQVlLYUtFcDBXODc0aHp6Q25zWFhxSmpK?=
- =?utf-8?B?V0dueG9JcmhUU016cm9LSHZUYU9OQWJJRE81VFl3YUpuTEF5S1AxUmI1MHJj?=
- =?utf-8?B?bFFzR25UOWF3RDB4ejdOb3FPdWtPWmZJQmQycmNCTDNqV05QbG1KM0dSMTRL?=
- =?utf-8?B?aW9NT1F2a1hSZmJ4VlAwdzlFd204MXBjVWlyT0pxR2hWeW45Z3FHdis3SkRF?=
- =?utf-8?B?QTRic3Arb0dleEhzSDVoRWZwSGhlWUs4YmpTNTRwZk5vY09HbnNDRnQ2emE0?=
- =?utf-8?B?cTFBcDFNcm5EWkRoeEMrQ01JcWV3R0JGOFZTeTkwNmdZL0tVbGpUQ1M3Sm5C?=
- =?utf-8?B?QnMyYXlKVVRubFoyaWVpOXZ6NzI3c2hoVnJ1ZDBWTUlYNFVQckZUNmZjZ1V5?=
- =?utf-8?B?S3U1Q2lFV1FITkQrMVM1a2R4dm1LMk43eGdqV3FjbzZMTnFuUGFFUlprdHhv?=
- =?utf-8?B?QXQ0ZjljMVhZdDNUSERBN3JWb1huTXVqMEhkL211YlJaSWRlc2hETUw0RmdD?=
- =?utf-8?B?TCtPRHp1N2RWL2c1V3kyL0NLYzZiT3JuUENrLzF0SW9GT1ZibnJQcU5aaWIy?=
- =?utf-8?B?OUtmSVBFSHB0UFJZd2NFQUczVHNZbzdRZGcwS3dQbWY4Tzc3Q1BLUm9DbGlH?=
- =?utf-8?B?MjBERWxZbmdkcWVKNEErRSt0cXBkWWlneG9TWWRNdklvY1FGdXZNYTlzNVRt?=
- =?utf-8?B?NG5ybnUxTjdmcHpsc3dxTGlPTkM3MWRBNnRvb3VETXJYZGlQNWpIUzl4SmZs?=
- =?utf-8?B?eWJGVExiWHBISW5LWFNuT3BJT2RqVTdjeXE0UlBlb3JjMVhUdDV5bVlFSzZw?=
- =?utf-8?B?Nk5kUCtnYUZ0QWVkUmh2YUhaalVIWWxkdEJtZitlSDlTNVdUUmI3dG9vb281?=
- =?utf-8?B?KzFwMjUvZGltWTdZekZtL0t6MkpjQTBUN3hyN3JnMTFYRzNpTi9tLy8vTDAw?=
- =?utf-8?B?em92OUV6UTluV1dyRDJOdEZieCszb2d3SHV4TVo1a1JNakpaendsc3pLdHpl?=
- =?utf-8?B?b1YyMnZYQlNSZFc3NndZTVk1RzlhS04zUEdxb1R0aXR6V0JnN25MUlNTdTNB?=
- =?utf-8?B?dkpqbFZvUXdtOHlRaFlCR04rMmlwb3ROZXhtSFZ2dHRvRlFPTjNlUDBuMHFO?=
- =?utf-8?B?cFRGcFh3R2ZlZWVvY2dFK095ZXZIaXJzeEMxSDY3TEpFc2FuM1dkek5qZ1Aw?=
- =?utf-8?B?dklIQkMvbEQzeUxmWXFteUxsZXdHcWhDeDdya3dCUk9tOXBxaTVXaXlLVUow?=
- =?utf-8?B?VGFzTnNYSXN3U0k2Sm51NjZ0TmRvMm5FWGxiKzdlTysvazZNQ09hR2M3VDly?=
- =?utf-8?B?N2dXYk83cWVLNWdiN1d4Vm5LMXNEQmJxMDZWdEIxVzliSVhYM2ZacWJkLzFm?=
- =?utf-8?B?T1ljSlh5bkhsQ3VQMzBrZTRIeXlWaW5paVRudFRwemNSNmpCVjRZdlBKaS9o?=
- =?utf-8?B?NkZTcWJxa2pqZVdMZ08vUlRmNlVzOGZDNzYzdXlXQm5LM3JLSjJVM3F3OG5P?=
- =?utf-8?B?Y3R5T09XV1NlZE9ON25Cbkp1TnMzQ3FlYlFsbFp6OHVtbHFpY25GWXlVUEU4?=
- =?utf-8?B?YjZ3bVRjM0tQKytlWkFVQjRaV2lWeUpnZTlkQUsxbmV3WjlseXp4Ly83Um5R?=
- =?utf-8?B?bDc5Ynhyb0FVU2JVY3hvbFp2ZFZ5cmRUU1RJM0JtbU83Qy9Gc3VHOGMyVDcr?=
- =?utf-8?B?Z2hQTjBRRzdEbXQ2eldlM2duOCtOaEluQmdEMTFVcnJkNWRtTkJLS1FMVHIw?=
- =?utf-8?B?N1E0UVBLM3BNaUJoc0xWTFArZmNVWDYwdkJSd203MUN2a0R0SUlaeUFpdGZh?=
- =?utf-8?Q?kLwYdkuhSdGqV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T0xtMHFzS0s4cXlNT1Qxb25IZkg4elJ6L2VybTdNS1BFZHFlZzFrclE3UnVm?=
- =?utf-8?B?T2gwRXBrSU9tcFRzL1pscWhibDdJUVRXckpaNDUyWUhxUUR3amk1cFRyWFBH?=
- =?utf-8?B?L1dEczJacW15WlV5QU1QcmkxUHd3UUFFZW5lYWhaNkg2RlhHTkVNTmlmYm1y?=
- =?utf-8?B?bHZQOGRmSDFSdXR5THFnRlIwWC9QR1ZuNlBRdXhkUDBaUUxFVEszaG9lL21t?=
- =?utf-8?B?WGFac0lqWWVQV3psSEhSMkxLK0xLcmpSQVZaUUZ5TkduZjdOcGpUcUhNeWtm?=
- =?utf-8?B?anMyMm82eWJaOEVqN0w4c2FtbzNBeXZQN3NJeWtvemJ0ZmtkUzJrRHhFeXJt?=
- =?utf-8?B?WGk5R3FxamZMdkt2NVBuWTVTcFpEOEdPejZSSDAzYTRKRWh1dDFjT2hEaGk1?=
- =?utf-8?B?S1h3RSs5b1hQaWdPUDU5dXV2RjBWWkE3Vk1KVDVxWjJVZ0VDZk1zZ0RaNUx6?=
- =?utf-8?B?T0NpSENVZnI3alg2cjN4NVRyWVhpUUpvMHJzK2JTVm44RW1yYytRRW1SQjRs?=
- =?utf-8?B?cWkzd09FN3dPUDUwTk1BdzNBTFV1eERWS1dLdmFJaml6bUtWS3ErbmlHc21l?=
- =?utf-8?B?V3ZVbmsvbGs2SXBTanhNUDZLZXJoVUNKdUwxaGt4QnpsY3FjdHpialpoS3Qr?=
- =?utf-8?B?UVoyUmIyS3FIOHB4cVZPRDdQeitaOHVBMW53SU9NVVRSV1Y4NllZNkJsSDJU?=
- =?utf-8?B?aExGUHZGRVFiUHYzcDE5SktBdkVJL1VYaVI4MUpuVVFwRWFEUnNlMzlwQXJj?=
- =?utf-8?B?by9WY01TaUpCOUFQVjVZVUx0TTFIckxST1UyVHdXZzdYVVphMFkxUkxYcE12?=
- =?utf-8?B?QjBaTUFDZDJVeG1NQ2NaSW1OREJXcGV3ZVZEd2dHWmpTaXFpRHFrSi9kVjZK?=
- =?utf-8?B?U3Uvdk1PcEFTN2xYdmdiUkhzU3NpWnNnV2hCKzMvZ1hiVHcra3RlNENOWkly?=
- =?utf-8?B?d0RvK1dsZzVYK1QySmljdmlpam9TQ1pkVUZnYlAwczZ0dmxjbzFvdjE0Q1ls?=
- =?utf-8?B?RDdUcXR5Q2c4MCsvRDNnVjFhd2JiYWxBVVRCTlIvQWg2cXF5dUhzQUg0QWJD?=
- =?utf-8?B?TVFVNEdMYlZXdTZta1RnSFh4d2t0c0VSZDNjaUwxeDY5SW52d1VJL3M0Q0Fl?=
- =?utf-8?B?UWQyM214ZXR1SDU4dzlhQVVidGdUd0FpZEYzM3NNNU5lVmVSYWhkUWdkS2Nv?=
- =?utf-8?B?RjR0Ri9ZYktHcVYvdnBHVm85WGpSMjFsZ0FuaDlnakx2M2VNOUJKMFBrOHBr?=
- =?utf-8?B?Mitmakh1b2dqV3ZuczdBRnpNOWZ2RFA4OFNka1hrUkdqUU5wRFhBb1dUTHRy?=
- =?utf-8?B?Q3E3dEY3eGhYWGRTNEV6aFRXaERQdjNmeDB5RTgzQXpNU3ZGSnlzNGFGakVR?=
- =?utf-8?B?eXRlNG0welFGTWdHV3RFNHViU1dNZWw3NzhKdFE0dThlSm9Zb0I5M0VuVWRP?=
- =?utf-8?B?S1ZjQzk0anQwcFQzNFBNaklTeHdLVmh5Q2RQWGlpV3U5cUdjMVJYelhqWGth?=
- =?utf-8?B?VWxSallGRU13QXA5eklMSzFVSjloVmZtTm9QNllMTVRHS0tCVVVlcFBsODFo?=
- =?utf-8?B?dVBYdTEzR2l6eGJkeEJmVnZtVk0xU3c0UGxSazJDalgyMHcyMXI0c0JDQm8w?=
- =?utf-8?B?NWhDb1YyWmFTSk5SQXVhdjQ0UEpGVTVYVzI0S09WSDhIUUVlQmExRkNHQnRH?=
- =?utf-8?B?NENaSGNkUHZGdC93L0JGZVo4TUZkdDBjdUVEc2M5YzhQd0NFTy9JdFViNVBG?=
- =?utf-8?B?bE1jbmFWMDJSY3FUQXlvQk8xbVd1UDNSb0tCdDBRYWUyTGJ1bVBTanZ4cHpo?=
- =?utf-8?B?M1lnai9MaXYvcVpSV2xPTllRcnlkN0dkUEJ1d0ZJd2tWREhQcWh4bVlyTG9r?=
- =?utf-8?B?TzNldVBwV1VUSDh0M2toTHFWbkVNVS80c1J4dkFDK2NJOXVlQUpab2dTamEx?=
- =?utf-8?B?RHRYUUhLbHhqSDRyM2kwdm83MWkxbnZqcElxSWtDbVMyV0hIdmFicTZmRnV6?=
- =?utf-8?B?SlpYYTcrN0hIOGdQcnd2VFl3L2ljMVE2K2UvTWVmaUNrTEF1Wk93elltRVpE?=
- =?utf-8?B?TDdJM25xaUppdlZrUVdVZlgrWnBmU1lnQ0hXdWpIUDNqcUxQeVRZRzdzZ1Zn?=
- =?utf-8?Q?ayDTZFTJrxNvRdbKv5hNo4n4L?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c3e86b7-5473-4a53-2e72-08dd6b55b8ab
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 04:30:07.5023
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZEvIURBlQWiKJXR8ydM66c6ZzLRF2wmqjwhp8OlGtxBBVSIKSJMcrma64OJ4bxaadHCCSNJmBYWwJjiJ/2Nrzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6926
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+Message-ID: <20250325043316.874518-1-edumazet@google.com>
+Subject: [PATCH v3] x86/alternatives: remove false sharing in poke_int3_handler()
+From: Eric Dumazet <edumazet@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, 
+	Greg Thelen <gthelen@google.com>, Stephane Eranian <eranian@google.com>, 
+	Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/25/2025 7:04 AM, Mario Limonciello wrote:
-> On 3/24/2025 04:58, Dhananjay Ugwekar wrote:
->> On 3/21/2025 7:58 AM, Mario Limonciello wrote:
->>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>
->>> Dynamic energy performance preference will change the EPP profile
->>> based on whether the machine is running on AC or DC power.
->>>
->>> A notification chain from the power supply core is used to adjust
->>> EPP values on plug in or plug out events.
->>>
->>> For non-server systems:
->>>      * the default EPP for AC mode is `performance`.
->>>      * the default EPP for DC mode is `balance_performance`.
->>>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> v3->v4:
->>>   * Handle Kconfig not being set
->>>   * Fix dynamic epp default on server
->>> v2-v3:
->>>   * Fix typo in Kconfig
->>> v1->v2:
->>>   * Change defaults to performance (AC) and balance_performance (DC)
->>>   * Default Kconfig to disabled for now
->>>   * Rebase on latest branch
->>> ---
->>>   Documentation/admin-guide/pm/amd-pstate.rst |  18 ++-
->>>   drivers/cpufreq/Kconfig.x86                 |  12 ++
->>>   drivers/cpufreq/amd-pstate.c                | 135 +++++++++++++++++++-
->>>   drivers/cpufreq/amd-pstate.h                |   5 +-
->>>   4 files changed, 161 insertions(+), 9 deletions(-)
->>>
->> [snip]
->>> @@ -1050,6 +1056,73 @@ static void amd_pstate_cpu_exit(struct cpufreq_policy *policy)
->>>       kfree(cpudata);
->>>   }
->>>   +static int amd_pstate_get_balanced_epp(struct cpufreq_policy *policy)
->>> +{
->>> +    struct amd_cpudata *cpudata = policy->driver_data;
->>> +
->>> +    if (power_supply_is_system_supplied())
->>> +        return cpudata->epp_default_ac;
->>> +    else
->>> +        return cpudata->epp_default_dc;
->>> +}
->>> +
->>> +static int amd_pstate_power_supply_notifier(struct notifier_block *nb,
->>> +                        unsigned long event, void *data)
->>> +{
->>> +    struct amd_cpudata *cpudata = container_of(nb, struct amd_cpudata, power_nb);
->>> +    struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpudata->cpu);
->>
->> For consistency, we should add "if (!policy)" check I think
->>
->>> +    u8 epp;
->>> +    int ret;
->>> +
->>> +    if (event != PSY_EVENT_PROP_CHANGED)
->>> +        return NOTIFY_OK;
->>> +
->>> +    epp = amd_pstate_get_balanced_epp(policy);
->>> +
->>> +    ret = amd_pstate_set_epp(policy, epp);
->>> +    if (ret)
->>> +        pr_warn("Failed to set CPU %d EPP %u: %d\n", cpudata->cpu, epp, ret);
->>> +
->>> +    return NOTIFY_OK;
->>> +}
->> [snip]
->>> @@ -1364,6 +1444,32 @@ static ssize_t prefcore_show(struct device *dev,
->>>       return sysfs_emit(buf, "%s\n", str_enabled_disabled(amd_pstate_prefcore));
->>>   }
->>>   +static ssize_t dynamic_epp_show(struct device *dev,
->>> +                struct device_attribute *attr, char *buf)
->>> +{
->>> +    return sysfs_emit(buf, "%s\n", str_enabled_disabled(dynamic_epp));
->>> +}
->>> +
->>> +static ssize_t dynamic_epp_store(struct device *a, struct device_attribute *b,
->>> +                 const char *buf, size_t count)
->>> +{
->>> +    bool enabled;
->>> +    int ret;
->>> +
->>> +    ret = kstrtobool(buf, &enabled);
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    if (dynamic_epp == enabled)
->>> +        return -EINVAL;
->>> +
->>> +    /* reinitialize with desired dynamic EPP value */
->>> +    dynamic_epp = enabled;
->>> +    ret = amd_pstate_change_driver_mode(cppc_state);
->>
->> I think implicitly changing the driver mode when we write to dynamic_epp file might lead to some confusions.
-> 
-> How about only allowing to write dynamic_epp attribute when in active mode already?
+eBPF programs can be run 50,000,000 times per second on busy servers.
 
-Yes, I think we should allow, dynamic_epp only with "active mode + powersave governor". And when user tries 
-to enable dynamic_epp in the wrong combination, we should fail, right?
+Whenever /proc/sys/kernel/bpf_stats_enabled is turned off,
+hundreds of calls sites are patched from text_poke_bp_batch()
+and we see a huge loss of performance due to false sharing
+on bp_desc.refs lasting up to three seconds.
 
-> 
->>
->>> +
->>> +    return ret ? ret : count;
->>> +}
->>> +
->>>   cpufreq_freq_attr_ro(amd_pstate_max_freq);
->>>   cpufreq_freq_attr_ro(amd_pstate_lowest_nonlinear_freq);
-> 
+   51.30%  server_bin       [kernel.kallsyms]           [k] poke_int3_handler
+            |
+            |--46.45%--poke_int3_handler
+            |          exc_int3
+            |          asm_exc_int3
+            |          |
+            |          |--24.26%--cls_bpf_classify
+            |          |          tcf_classify
+            |          |          __dev_queue_xmit
+            |          |          ip6_finish_output2
+            |          |          ip6_output
+            |          |          ip6_xmit
+            |          |          inet6_csk_xmit
+            |          |          __tcp_transmit_skb
+
+Fix this by replacing bp_desc.refs with a per-cpu bp_refs.
+
+Before the patch, on a host with 240 cores (480 threads):
+
+sysctl -wq kernel.bpf_stats_enabled=0
+
+text_poke_bp_batch(nr_entries=164) : Took 2655300 usec
+
+bpftool prog | grep run_time_ns
+...
+105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+3009063719 run_cnt 82757845 : average cost is 36 nsec per call
+
+After this patch:
+
+sysctl -wq kernel.bpf_stats_enabled=0
+
+text_poke_bp_batch(nr_entries=164) : Took 702 usec
+
+$ bpftool prog | grep run_time_ns
+...
+105: sched_cls  name hn_egress  tag 699fc5eea64144e3  gpl run_time_ns
+1928223019 run_cnt 67682728 : average cost is 28 nsec per call
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+---
+ arch/x86/kernel/alternative.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index c71b575bf229..5d364e990055 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -2137,28 +2137,29 @@ struct text_poke_loc {
+ struct bp_patching_desc {
+ 	struct text_poke_loc *vec;
+ 	int nr_entries;
+-	atomic_t refs;
+ };
+ 
++static DEFINE_PER_CPU(atomic_t, bp_refs);
++
+ static struct bp_patching_desc bp_desc;
+ 
+ static __always_inline
+ struct bp_patching_desc *try_get_desc(void)
+ {
+-	struct bp_patching_desc *desc = &bp_desc;
++	atomic_t *refs = this_cpu_ptr(&bp_refs);
+ 
+-	if (!raw_atomic_inc_not_zero(&desc->refs))
++	if (!raw_atomic_inc_not_zero(refs))
+ 		return NULL;
+ 
+-	return desc;
++	return &bp_desc;
+ }
+ 
+ static __always_inline void put_desc(void)
+ {
+-	struct bp_patching_desc *desc = &bp_desc;
++	atomic_t *refs = this_cpu_ptr(&bp_refs);
+ 
+ 	smp_mb__before_atomic();
+-	raw_atomic_dec(&desc->refs);
++	raw_atomic_dec(refs);
+ }
+ 
+ static __always_inline void *text_poke_addr(struct text_poke_loc *tp)
+@@ -2191,9 +2192,9 @@ noinstr int poke_int3_handler(struct pt_regs *regs)
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_desc with non-zero refcount:
+ 	 *
+-	 *	bp_desc.refs = 1		INT3
+-	 *	WMB				RMB
+-	 *	write INT3			if (bp_desc.refs != 0)
++	 *	bp_refs = 1		INT3
++	 *	WMB			RMB
++	 *	write INT3		if (bp_refs != 0)
+ 	 */
+ 	smp_rmb();
+ 
+@@ -2299,7 +2300,8 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	 * Corresponds to the implicit memory barrier in try_get_desc() to
+ 	 * ensure reading a non-zero refcount provides up to date bp_desc data.
+ 	 */
+-	atomic_set_release(&bp_desc.refs, 1);
++	for_each_possible_cpu(i)
++		atomic_set_release(per_cpu_ptr(&bp_refs, i), 1);
+ 
+ 	/*
+ 	 * Function tracing can enable thousands of places that need to be
+@@ -2413,8 +2415,12 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
+ 	/*
+ 	 * Remove and wait for refs to be zero.
+ 	 */
+-	if (!atomic_dec_and_test(&bp_desc.refs))
+-		atomic_cond_read_acquire(&bp_desc.refs, !VAL);
++	for_each_possible_cpu(i) {
++		atomic_t *refs = per_cpu_ptr(&bp_refs, i);
++
++		if (unlikely(!atomic_dec_and_test(refs)))
++			atomic_cond_read_acquire(refs, !VAL);
++	}
+ }
+ 
+ static void text_poke_loc_init(struct text_poke_loc *tp, void *addr,
+-- 
+2.49.0.395.g12beb8f557-goog
 
 
