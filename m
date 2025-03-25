@@ -1,58 +1,91 @@
-Return-Path: <linux-kernel+bounces-575723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EB5A7064E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:12:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57654A70654
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A1071897433
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2781718973E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBB025A348;
-	Tue, 25 Mar 2025 16:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF0125D918;
+	Tue, 25 Mar 2025 16:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYiPadP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WN6t+BOI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431F5255E32;
-	Tue, 25 Mar 2025 16:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712061DF72C;
+	Tue, 25 Mar 2025 16:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919061; cv=none; b=o+ouddcJyA/hSZit2BIwmCSYAKcBVrh3IgbPZVfAXBAY0149JB2+dC5uC0mftfobpWtr8hubtGl/6NaNCcwOoEixMxGajY3VyjBwq9NXgJO27nqsli9VP+hAeLG8BpZJjTimfYoegj6CVfcW54Dn7Pn9KnXFjaX0gymeI3CVPDs=
+	t=1742919097; cv=none; b=A0r4X17s0GScrJLcTtfdXZ4k29O1DeDVsJt2U54Tu2YhLNUB7qaZulDUcyakkhfSCaOPVaToD5N2DYh3QAtyMmACBZGAE+x2Qw/isgTVAS42uRmjfDbtZmd+cQbGnkt8VWDvj2/x8A2qr9Agke3MBjceQh91xYnu/cU10RWZ8l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919061; c=relaxed/simple;
-	bh=smwmled8hr02Pgtfh3CQQ2bUvez65YipbMRkmIvNS14=;
+	s=arc-20240116; t=1742919097; c=relaxed/simple;
+	bh=jyHGvmbnbdeWa7XIMdLa87iQlVfILdAjrFO/D3rTsrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYpGP6kGqv0B7SEfHaA5foMguJ1GrJ1gjcPWU7asZA88pH2odqtbW1eXtnFMmtx/OE5IjulcDvDDd8N3ZnkN/L2KKEE/C7YmHmvJqd/VDtK/xNA1lmLyilQ6lYOnXhnNmouMJPmgBMBmi4S3Vzo7d17q99YyFJ2OQmbGdIuRCQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYiPadP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8460CC4CEEE;
-	Tue, 25 Mar 2025 16:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742919060;
-	bh=smwmled8hr02Pgtfh3CQQ2bUvez65YipbMRkmIvNS14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZYiPadP7GRFumbzemtXxwgVauqdtAr/sBHrZMT/qlt/lVKHWplsZfr4+MbX9r5px6
-	 bQQ3XdeazsSETT8KOdIWvsso7hC+2Ir5VUEk12/U5xCXY98XUMtSUBFhrbFX4UtLD2
-	 I1ETLG4EtKDfabsAtAwDaDb7JrR6O35ruPeEmNzVTID7DdjEPOU4mRxgkHzuy/EjcY
-	 ttWYFNgAG8FS8Cx8E0wNZusdga0AR+7Z/8yOMY2lVMg1NUcmClTBzS4rWsqR7t8+83
-	 uwUjHijJRTf8TtyvTBXznXX12LTSaum6c7XT7Ch6ipWEDqNLpnyA988fzjYos3lwki
-	 UP2vnyVw/1svQ==
-Date: Tue, 25 Mar 2025 16:10:59 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: longli@linuxonhyperv.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2ZRd+MQK1sqeRMam5BlEaqXlBcoPbwPDNIEZFH4bU8l5dzS+rHtZYIn2KeOKwwvuU7rwRjYLixohkr3Wg0aKFtEKb89NJVGjtgfurUQ9J5BRaaS8C8UzvTCs+9T4LRwTX/c7jOXaNV98GYuZFW89OMvig1grAz4vdWJ3FmuCIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WN6t+BOI; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742919096; x=1774455096;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jyHGvmbnbdeWa7XIMdLa87iQlVfILdAjrFO/D3rTsrc=;
+  b=WN6t+BOI2ILhJi6g21x9bvapC6L7LHFFVgp1ERUNZqBBG31UH7CM7Cna
+   nXVwhTAlH/H121NjLL0zxE4pGl6KZu052JmGkq6rNkiF7/ioOrkCqQylK
+   2yM8SXDP03wUT8X/8nRFahSuG3aqcFuG2M0AijJ2uIoY3BfewBWCCqCKg
+   IBng2AnBWsd39EgwKwcUFjeCPLSrIfAPZj8vkTvoKKBpBV3aeTbHsiYM6
+   8Sbwd3GoyVz9koUeuHHXvGcQ4WCC2D927HGrENFfLBrZI+fcjI7cAFQYw
+   jhwa42MK/jHxB06S5mfKjgJJHmNaG8+mhnLCfSV0HnN3YN4OL7xgjTpym
+   w==;
+X-CSE-ConnectionGUID: pSXzvV05Qn2zyXvPpkPkqQ==
+X-CSE-MsgGUID: rFG9trlRRsSNTCZuSToYdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="61700132"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="61700132"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:11:33 -0700
+X-CSE-ConnectionGUID: PhWCsTrISQKn7IZdH+GpnA==
+X-CSE-MsgGUID: 3rwQhTSyRQ+NR+krREQSCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="124891739"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:11:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tx6sA-00000005nW6-0GLN;
+	Tue, 25 Mar 2025 18:11:26 +0200
+Date: Tue, 25 Mar 2025 18:11:25 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Long Li <longli@microsoft.com>
-Subject: Re: [Patch v3] uio_hv_generic: Set event for all channels on the
- device
-Message-ID: <Z-LVk8jWkalG5KdD@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
+Message-ID: <Z-LVrdvKCBI5x2wy@smile.fi.intel.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
+ <Z9q0eaxhecN0kGKI@smile.fi.intel.com>
+ <D8PGXIKGXXK9.244NSFST6C0YD@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,105 +94,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1741644721-20389-1-git-send-email-longli@linuxonhyperv.com>
+In-Reply-To: <D8PGXIKGXXK9.244NSFST6C0YD@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Mar 10, 2025 at 03:12:01PM -0700, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> Hyper-V may offer a non latency sensitive device with subchannels without
-> monitor bit enabled. The decision is entirely on the Hyper-V host not
-> configurable within guest.
-> 
-> When a device has subchannels, also signal events for the subchannel
-> if its monitor bit is disabled.
-> 
-> This patch also removes the memory barrier when monitor bit is enabled
-> as it is not necessary. The memory barrier is only needed between
-> setting up interrupt mask and calling vmbus_set_event() when monitor
-> bit is disabled.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
+On Tue, Mar 25, 2025 at 04:56:20PM +0100, Mathieu Dubois-Briand wrote:
+> On Wed Mar 19, 2025 at 1:11 PM CET, Andy Shevchenko wrote:
+> > On Tue, Mar 18, 2025 at 05:26:26PM +0100, Mathieu Dubois-Briand wrote:
 
-Greg, are you going to take this patch?
+...
 
-I can take it if you want.
+> > > +	int val;
 
-Thanks,
-Wei.
+Btw, this has to be unsigned to match the API.
 
-> ---
-> Change log
-> v2: Use vmbus_set_event() to avoid additional check on monitored bit
->     Lock vmbus_connection.channel_mutex when going through subchannels
-> v3: Add details in commit messsage on the memory barrier.
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_read(max7360_rotary->regmap, MAX7360_REG_RTR_CNT, &val);
+> > > +	if (ret < 0) {
+> > > +		dev_err(&max7360_rotary->input->dev,
+> > > +			"Failed to read rotary counter\n");
+> > > +		return IRQ_NONE;
+> > > +	}
+
+> > > +	input_report_rel(max7360_rotary->input, max7360_rotary->axis,
+> > > +			 (int8_t)val);
+> >
+> > This is strange:
+> > 1) why casting to begin with?
+> > 2) why to C type and not kernel (s8) type?
 > 
->  drivers/uio/uio_hv_generic.c | 32 ++++++++++++++++++++++++++------
->  1 file changed, 26 insertions(+), 6 deletions(-)
+> I believe the cast is needed, as, while the value read with
+> regmap_read() is stored in an int, the underlying value is indeed a
+> signed 8 bits integer.
 > 
-> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> index 3976360d0096..45be2f8baade 100644
-> --- a/drivers/uio/uio_hv_generic.c
-> +++ b/drivers/uio/uio_hv_generic.c
-> @@ -65,6 +65,16 @@ struct hv_uio_private_data {
->  	char	send_name[32];
->  };
->  
-> +static void set_event(struct vmbus_channel *channel, s32 irq_state)
-> +{
-> +	channel->inbound.ring_buffer->interrupt_mask = !irq_state;
-> +	if (!channel->offermsg.monitor_allocated && irq_state) {
-> +		/* MB is needed for host to see the interrupt mask first */
-> +		virt_mb();
-> +		vmbus_set_event(channel);
-> +	}
-> +}
-> +
->  /*
->   * This is the irqcontrol callback to be registered to uio_info.
->   * It can be used to disable/enable interrupt from user space processes.
-> @@ -79,12 +89,15 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
->  {
->  	struct hv_uio_private_data *pdata = info->priv;
->  	struct hv_device *dev = pdata->device;
-> +	struct vmbus_channel *primary, *sc;
->  
-> -	dev->channel->inbound.ring_buffer->interrupt_mask = !irq_state;
-> -	virt_mb();
-> +	primary = dev->channel;
-> +	set_event(primary, irq_state);
->  
-> -	if (!dev->channel->offermsg.monitor_allocated && irq_state)
-> -		vmbus_setevent(dev->channel);
-> +	mutex_lock(&vmbus_connection.channel_mutex);
-> +	list_for_each_entry(sc, &primary->sc_list, sc_list)
-> +		set_event(sc, irq_state);
-> +	mutex_unlock(&vmbus_connection.channel_mutex);
->  
->  	return 0;
->  }
-> @@ -95,12 +108,19 @@ hv_uio_irqcontrol(struct uio_info *info, s32 irq_state)
->  static void hv_uio_channel_cb(void *context)
->  {
->  	struct vmbus_channel *chan = context;
-> -	struct hv_device *hv_dev = chan->device_obj;
-> -	struct hv_uio_private_data *pdata = hv_get_drvdata(hv_dev);
-> +	struct hv_device *hv_dev;
-> +	struct hv_uio_private_data *pdata;
->  
->  	chan->inbound.ring_buffer->interrupt_mask = 1;
->  	virt_mb();
->  
-> +	/*
-> +	 * The callback may come from a subchannel, in which case look
-> +	 * for the hv device in the primary channel
-> +	 */
-> +	hv_dev = chan->primary_channel ?
-> +		 chan->primary_channel->device_obj : chan->device_obj;
-> +	pdata = hv_get_drvdata(hv_dev);
->  	uio_event_notify(&pdata->info);
->  }
->  
-> -- 
-> 2.34.1
-> 
+> Without cast negative values will not be correct: -1 (0xFF) -> will be
+> interpreted as 255 (0x000000FF).
+
+With the above fix it makes sense, but it's not clear for the reader still.
+What you want is most likely to call sign_extend32().
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
