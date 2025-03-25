@@ -1,169 +1,193 @@
-Return-Path: <linux-kernel+bounces-575415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8D3A7025D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:43:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDB4A702BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B6319A6280
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0DD3846F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E870D25C6E0;
-	Tue, 25 Mar 2025 13:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC225EFAC;
+	Tue, 25 Mar 2025 13:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnFvzxnf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HMu4/LNV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484E819E7F8;
-	Tue, 25 Mar 2025 13:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909065; cv=none; b=FxlCQ7GArnjR8sDs/YoE25fuG0L/kRsIPAyvCxBpV1bKWDuqa6bbVAqKqvr0vj+rAC58VMcMQpUZvEbbHSeq7t0W13xtz2KKuYiNtQVhlXLeROqE6dxSdejWpS+1On0mvjauOLFF8wisk+O38E3avVsXTGo9Q6oLw1Z2UrsM4X4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909065; c=relaxed/simple;
-	bh=wozwOKQiaMagwbpwK6NFNx/fOsvnFGH61CvbZNCe3Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tzlZHlOU2Aw4k8qmUvRsvgCy1qUnUyv4FO803R/Horw6xtcDJJQ7a8RAm+dH4v4i8H34JZodpUMnZLdCrlLLVpYVIEW9mvj2amjGhJvAMlog5n5aUjRfUinQtZ8Z1yMnL3wJ2dp2i03rIDSD0WffRLbiyanCFnLPZte0rBLMY08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RnFvzxnf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87FCEC4CEE4;
-	Tue, 25 Mar 2025 13:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742909064;
-	bh=wozwOKQiaMagwbpwK6NFNx/fOsvnFGH61CvbZNCe3Gg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RnFvzxnfSxNj3kF9oZmvyMhC+P8+Gb2kSHobDmo6DHmG/FPs8kGz3DrKMfesNMEn+
-	 JiX6c5Cmhlqf+1fNHrDLMcngAqk7qkN+VfLZ75dbGbt44A0/uQkibzR/C9ZFkV7m39
-	 Utbzgkf1fldCv1DftWRqK70jqDUDMYBVLyfmQbspaD5wJEKUN2WaTGrJUTACpsjtxI
-	 NNs2rIAhGz6X2FuC9Q9MRmo7VIwV2EYXwPAfEMZAcLweB/NDSX8L5vwka451h8FV4e
-	 6oy5XZp8k2RsrVkAifyLRHfNXLaJYpvrkuG7yyU7D8QVv7/xst2SVEaLCCdsfXdNrD
-	 kBNf3rQg2iTzA==
-Date: Tue, 25 Mar 2025 06:24:16 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Nikolay
- Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>, Cosmin
- Ratiu <cratiu@nvidia.com>, linux-kernel@vger.kernel.org, Liang Li
- <liali@redhat.com>
-Subject: Re: [PATCH net] bonding: use permanent address for MAC swapping if
- device address is same
-Message-ID: <20250325062416.4d60681b@kernel.org>
-In-Reply-To: <20250319080947.2001-1-liuhangbin@gmail.com>
-References: <20250319080947.2001-1-liuhangbin@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1C225DD1F;
+	Tue, 25 Mar 2025 13:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742909125; cv=pass; b=e9BHamP5pXECh/ycJJRW1mDZ81AGynSc2Gzj89TJCCz7+M4YdmJb6UcZ3jZiVqqq82ruzOJbqE4FCOC/ApXCmCEoErcPSedtJHjnLo7jiny0QMj1l/bzqlxCPw3WN6teOjizhnP/oyevba9MDUjTY31EhGv7lH5rX/XPP82AxL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742909125; c=relaxed/simple;
+	bh=W+UTbiw9KsgdHjpdl2qKp7aAQkBRf9Zuq3Mdb3Qt7e4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RgJLmctpV2tIS2VZLnKwB4w0Q94Gl83Efkk3gfZJq+wyF0lmz0ZAnY+IlkLp9fXmFDP7UKAZI7gMy+ZAq5hTM0nSsLlyd1YO6Bi9tqYtnhB7vLxOW/5FKrBY5xKYoFWoCdbPstvp/RNektb+TPGp0syqSxfR7LURXf8GKgEDR9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HMu4/LNV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742909099; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=eKy8iHUVaCFrsBZeIriYO3CQ5eqZgSBGW6nXyhN2mbSyvVMDPxrJRdoVAULhPlMsyaYcPLqj2uChhLnO51frR8xxblLCu71i9rLE4KyBaNtVIstzhCmepe/8ij+eVx5b5wyRZ+t20xX0B4mB3quJFsyop1fsOoz1wPpKGHQGENE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742909099; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2UycCl2Syp0F8vxGR2SV/m2IXAWT+b6fuwrAt14/u64=; 
+	b=Hpp5ExZBed6Jltd8DuMx/PNIzySW1TE2fC/JzQpO7/71jNGR2gsBoZhNe8Axc7DJlfWDD5ARzwRu/bPLslo7zBUq9ParSJFhmE/FNu6IYzeWccvx+oGShT132y0OeTtcQtKcq2N5iE1jOEQrQwpjmqT89r51+m7xANcsa0PGUv8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742909099;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=2UycCl2Syp0F8vxGR2SV/m2IXAWT+b6fuwrAt14/u64=;
+	b=HMu4/LNVl5hyc2K8nTYE7ftT3Q/n79cNx7KfI4bSmtT+bSt8Kw900MIJwFLeDSrX
+	EomRWx25GjOovJ1onHmDJ4JZCK7cPrSpWkHpAEnytK0bwWMwk5/FIQ5iwflFk8I/0RU
+	rv8ASD4NKFYqMYWRDuyAV0MmTcC6sJ1Pu4dy6PQo=
+Received: by mx.zohomail.com with SMTPS id 1742909097312358.84031429399;
+	Tue, 25 Mar 2025 06:24:57 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH v4 04/11] scripts: generate_rust_analyzer.py: extract
+ `{build,register}_crate`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250322-rust-analyzer-host-v4-4-1f51f9c907eb@gmail.com>
+Date: Tue, 25 Mar 2025 10:24:41 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Boris-Chengbiao Zhou <bobo1239@web.de>,
+ Kees Cook <kees@kernel.org>,
+ Fiona Behrens <me@kloenk.dev>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Lukas Wirth <lukas.wirth@ferrous-systems.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <9C4E7DCF-5C90-4D8C-8338-00DB24B65BC5@collabora.com>
+References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
+ <20250322-rust-analyzer-host-v4-4-1f51f9c907eb@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-ZohoMailClient: External
 
-On Wed, 19 Mar 2025 08:09:47 +0000 Hangbin Liu wrote:
-> Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
-> fail_over_mac policy"). The fail_over_mac follow mode requires the former=
-ly
-> active slave to swap MAC addresses with the newly active slave during
-> failover. However, the slave's MAC address can be same under certain
-> conditions:
->=20
-> 1) ip link set eth0 master bond0
->    bond0 adopts eth0's MAC address (MAC0).
->=20
-> 1) ip link set eth1 master bond0
 
-nit: 2)
 
->    eth1 is added as a backup with its own MAC (MAC1).
+> On 22 Mar 2025, at 10:23, Tamir Duberstein <tamird@gmail.com> wrote:
 >=20
-> 3) ip link set eth0 nomaster
->    eth0 is released and restores its MAC (MAC0).
->    eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
-
-I don't know much about bonding, but this seems like a problem already
-to me. Assuming both eth0 and eth1 are on the same segment we now have
-two interfaces with the same MAC on the network. Shouldn't we override
-the address of eth0 to a random one when it leaves?
-
-> 4) ip link set eth0 master bond0
->    eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
->    breaking the follow policy.
+> Extract helpers from `append_crate` to avoid the need to peek into
+> `crates[-1]`. This improves readability.
 >=20
-> To resolve this issue, we need to swap the new active slave=E2=80=99s per=
-manent
-> MAC address with the old one. The new active slave then uses the old
-> dev_addr, ensuring that it matches the bond address. After the fix:
->=20
-> 5) ip link set bond0 type bond active_slave eth0
->    dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
->    Swap new active eth0's permanent MAC (MAC0) to eth1.
->    MAC addresses remain unchanged.
->=20
-> 6) ip link set bond0 type bond active_slave eth1
->    dev_addr is the same, swap the old active eth0's MAC (MAC0) with eth1.
->    Swap new active eth1's permanent MAC (MAC1) to eth0.
->    The MAC addresses are now correctly differentiated.
->=20
-> Fixes: 3915c1e8634a ("bonding: Add "follow" option to fail_over_mac")
-> Reported-by: Liang Li <liali@redhat.com>
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> Suggested-by: Trevor Gross <tmgross@umich.edu>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 > ---
->  drivers/net/bonding/bond_main.c | 9 +++++++--
->  include/net/bonding.h           | 8 ++++++++
->  2 files changed, 15 insertions(+), 2 deletions(-)
+> scripts/generate_rust_analyzer.py | 35 =
+++++++++++++++++++++++++++++++-----
+> 1 file changed, 30 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
-ain.c
-> index e45bba240cbc..9cc2348d4ee9 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -1107,8 +1107,13 @@ static void bond_do_fail_over_mac(struct bonding *=
-bond,
->  			old_active =3D bond_get_old_active(bond, new_active);
-> =20
->  		if (old_active) {
-> -			bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
-> -					  new_active->dev->addr_len);
-> +			if (bond_hw_addr_equal(old_active->dev->dev_addr, new_active->dev->de=
-v_addr,
-> +					       new_active->dev->addr_len))
-> +				bond_hw_addr_copy(tmp_mac, new_active->perm_hwaddr,
-> +						  new_active->dev->addr_len);
-> +			else
-> +				bond_hw_addr_copy(tmp_mac, new_active->dev->dev_addr,
-> +						  new_active->dev->addr_len);
->  			bond_hw_addr_copy(ss.__data,
->  					  old_active->dev->dev_addr,
->  					  old_active->dev->addr_len);
-> diff --git a/include/net/bonding.h b/include/net/bonding.h
-> index 8bb5f016969f..de965c24dde0 100644
-> --- a/include/net/bonding.h
-> +++ b/include/net/bonding.h
-> @@ -463,6 +463,14 @@ static inline void bond_hw_addr_copy(u8 *dst, const =
-u8 *src, unsigned int len)
->  	memcpy(dst, src, len);
->  }
-> =20
-> +static inline bool bond_hw_addr_equal(const u8 *dst, const u8 *src, unsi=
-gned int len)
-> +{
-> +	if (len =3D=3D ETH_ALEN)
-> +		return ether_addr_equal(dst, src);
-> +	else
-> +		return (memcmp(dst, src, len) =3D=3D 0);
-
-looks like this is on ctrl path, just always use memcmp directly ?
-not sure if this helper actually.. helps.
-
-> +}
+> diff --git a/scripts/generate_rust_analyzer.py =
+b/scripts/generate_rust_analyzer.py
+> index e997d923268d..03f55cce673c 100755
+> --- a/scripts/generate_rust_analyzer.py
+> +++ b/scripts/generate_rust_analyzer.py
+> @@ -35,7 +35,14 @@ def generate_crates(srctree, objtree, sysroot_src, =
+external_src, cfgs):
+>     crates_indexes =3D {}
+>     crates_cfgs =3D args_crates_cfgs(cfgs)
+>=20
+> -    def append_crate(display_name, root_module, deps, cfg=3D[], =
+is_workspace_member=3DTrue, is_proc_macro=3DFalse):
+> +    def build_crate(
+> +        display_name,
+> +        root_module,
+> +        deps,
+> +        cfg=3D[],
+> +        is_workspace_member=3DTrue,
+> +        is_proc_macro=3DFalse,
+> +    ):
+>         crate =3D {
+>             "display_name": display_name,
+>             "root_module": str(root_module),
+> @@ -54,9 +61,26 @@ def generate_crates(srctree, objtree, sysroot_src, =
+external_src, cfgs):
+>                 stdin=3Dsubprocess.DEVNULL,
+>             ).decode('utf-8').strip()
+>             crate["proc_macro_dylib_path"] =3D =
+f"{objtree}/rust/{proc_macro_dylib_name}"
+> -        crates_indexes[display_name] =3D len(crates)
+> +        return crate
 > +
->  #define BOND_PRI_RESELECT_ALWAYS	0
->  #define BOND_PRI_RESELECT_BETTER	1
->  #define BOND_PRI_RESELECT_FAILURE	2
---=20
-pw-bot: cr
+> +    def register_crate(crate):
+> +        crates_indexes[crate["display_name"]] =3D len(crates)
+>         crates.append(crate)
+>=20
+> +    def append_crate(
+> +        display_name,
+> +        root_module,
+> +        deps,
+> +        cfg=3D[],
+> +        is_workspace_member=3DTrue,
+> +        is_proc_macro=3DFalse,
+> +    ):
+> +        register_crate(
+> +            build_crate(
+> +                display_name, root_module, deps, cfg, =
+is_workspace_member, is_proc_macro
+> +            )
+> +        )
+> +
+>     def append_sysroot_crate(
+>         display_name,
+>         deps,
+> @@ -116,20 +140,21 @@ def generate_crates(srctree, objtree, =
+sysroot_src, external_src, cfgs):
+>         display_name,
+>         deps,
+>     ):
+> -        append_crate(
+> +        crate =3D build_crate(
+>             display_name,
+>             srctree / "rust" / display_name / "lib.rs",
+>             deps,
+>             cfg=3Dcfg,
+>         )
+> -        crates[-1]["env"]["OBJTREE"] =3D str(objtree.resolve(True))
+> -        crates[-1]["source"] =3D {
+> +        crate["env"]["OBJTREE"] =3D str(objtree.resolve(True))
+> +        crate["source"] =3D {
+>             "include_dirs": [
+>                 str(srctree / "rust" / display_name),
+>                 str(objtree / "rust")
+>             ],
+>             "exclude_dirs": [],
+>         }
+> +        register_crate(crate)
+>=20
+>     append_crate_with_generated("bindings", ["core"])
+>     append_crate_with_generated("uapi", ["core"])
+>=20
+> --=20
+> 2.48.1
+>=20
+>=20
+
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+
 
