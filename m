@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-575388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E11BA701C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:29:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8922A70180
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C709B174485
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:21:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A2227A2EBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A8225BADA;
-	Tue, 25 Mar 2025 13:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976F25C6FA;
+	Tue, 25 Mar 2025 13:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MYmsZL+U"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkgL+9dj"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F0C1A08CA;
-	Tue, 25 Mar 2025 13:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908179; cv=pass; b=JXuJ9lr/yXHtTpMz0HV7Doj8tRVXwig9PkFpRnIfF4YOYm382KC5UzwDToInVjh9kBFlkujpHI+rZoGNwJSANasQVa/vhgpdEm1OR7SpjvnHYtXUTlzrGeY8HNbKpSLA+vBjefqtgSCDygBsCB9GtCFwz5BVew7tVWNBlwnL+iM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908179; c=relaxed/simple;
-	bh=qC4l4nPLUTUaBmleI7UPp73e252CkmVXUnVVOP0EV64=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ckxM8sQPDt0vbs0N4UAAgmx/HxP7HUDES6xRtJBHUFfHTY6Z8TKza0RA8GgERlJYbM5lCZuJ6uOyZW6GbK5UUIBD2amaay+gBgm+VSMFGzp7MRmnwPqQHJ6r5nB0hfMEkhJnGtlqA6ZakyTCAt992IRd9sIhlO1hakjL/mQwBK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MYmsZL+U; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742908142; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DEE7M+6DmoZWacTR1YwipsLkVotmNDPAMQcKWj5XQDYddHmrb5najhjuIG8+ptuKP8s7yJczhZqmCda6aX+FViygjdkVKuXYuwLqnuigiyY7JYco8SKK28zNknP8WOjczlmiHC8y3V46fIYHNTeZ3p6kwrvK4Pb4ZVQ4DvIABZQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742908142; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=loSLMFB/IK10Jq3RhR5KxRAIMn6HEZPEdIlCTq/6jts=; 
-	b=SNCVvKQucVOW962iVCqqEqzoY9iX7BJ3NH2/c90Rhlt17G65X77EdLVUS7tOR062kPVgC823GV0a5UQjS4il6szbTASU6kahzkiuRxHYbGK6foQNLmEEIQ5pN5mah9Jk5wLiw/Lf5ooY5isjfjWQM81dRHk6SYy2SRYIHCzxDQk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742908142;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=loSLMFB/IK10Jq3RhR5KxRAIMn6HEZPEdIlCTq/6jts=;
-	b=MYmsZL+UzosObPezDG7LFquTZ3PEdzao3JSj9QXecy4V9s7axf9ewD0xQk/PPsGC
-	ADqJRQyApSzzJNpJVfFJ9CwjF5tVxhAr7yYMn97GpS6YIaFhxYjYsbk0e8rRNdev+fl
-	RNgejQK7KBVuX3/SKYQDCfKoENk62joBMZFT+dhA=
-Received: by mx.zohomail.com with SMTPS id 1742908138934887.6151181162378;
-	Tue, 25 Mar 2025 06:08:58 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13EF1A08CA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742908204; cv=none; b=ldYKa/gaUPTJmr4JoMAN2VGEbHK9kw/Bib3JNdGLTTOIK1jWMFnDsHmjjGiotoGHgOupiGEc2l2oAeyVQQI54UuOENQZPqjkph4ptoBvJO2/DlfBFCFHIO8AP6Tx4MO+sf20ie/FWrjl6/KhZcpFj2x5UU3tu6duZL1j6f57pUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742908204; c=relaxed/simple;
+	bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VKkw91jN04qA1g81TXYZYr5brzgEfD4jqY+X8ZyHoIFu40429RuNtCLtZ9/EqgZpLBFiHiWaqlSVo2dAphVM5oM3BPPyWnTwrp23GRp3ToLePGBlTJteM62owPoamU7pwlxWEgmu5aNaSFHc4VHlZZgeRFjr2pZs4SoeBjrmBpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkgL+9dj; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so6146596e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742908201; x=1743513001; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
+        b=wkgL+9djV4oUk8AeK2bW9Bpxi9jE88XeNszTTIS0hjfCYy+t95RHuHjmIM7THhnMcB
+         w+1ayyJU+LVdBWfs1RKwcmqiTwYDIdyBZuhTI63VvRyAzHYMTh6NkbPsojI3F7r/Mg/6
+         Ug8x/ZGu92v1oEmS/eMIM2MFowZoBrKejnFePJ2ZmoARJEn0r22udhvOyYohh3YiSD+E
+         cyohYJs6SHZcSP8Ot3tWHSg6aBLs9erDUPtDo4ixv3jOJBHpCXkYGrWldNQDeyFL4fkr
+         nu7g8G3wpDImCShJoWYwxdf0W9bZcaOmlxZIfOb2qJYU2AqP3cqUVfH037/UssWpMgfc
+         SFXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742908201; x=1743513001;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
+        b=w44eqGxRDktmaTbJ4/Sm99hxKQ0JgtfAVGALBriwiqJ9uTEtF3nJFdIQTHGK3byFD0
+         4HRDqHn6X18YoHEURPhSZbdx8x0k91wdYsNPUQwkiLORT539OJXGoC8Mqaiz54pr8GZ2
+         ljd5/gH5uYALNjuBGn7tlyEUzf4E+agbztq5XRgdgTZHfqXY2vXSBs42ChI91N/4qOd+
+         Rk2E5N7Fxa6zwKFghR++A+R+YRDqtdbXlSPnvY0PoRtxhwF5mqve20pldJAGQgew7y3l
+         YDNp50iXQCAEVeA80TRgvOXdWDe5Nqmjb6cCCKdF9t7dbRVQlKVcSENXWe6Q6p6YknW0
+         +C8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+T4C94HTJgp4VaEqNo47EQyH/jFNtPd0vX1BW1S/yAJitc9epmnRA/okQld22aW5bgxEFmg5auEsPPYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy48HqsRBw0LNsHRsReNqf+qX4ZrR+ZwueLZZvNX2anfg/c41hs
+	MgD+xZU0ynuHBr84d48Hu6x1h5p0J4aJeZB/r7c3oAYX6gpYNm/dHoQ1PRUeVnUnOonvgrnSRnJ
+	zt1yJej2AhoJ9q1HC+5PPR39giVw+u/MOfftymA==
+X-Gm-Gg: ASbGncv/TGYdxyk1uq8KBLxXv+L3GSbJF6aaOnbSVpfx77sljAezMyN2K27KbLfE3JK
+	hxka5CMdEJYukNewlP3iZV5InslHT016SuG9WslLX3FakxrsTVBWfpL7+CIrm71hw2bQyLNDiCG
+	psRsOIu5zfOeWRAc+6ECePXm0=
+X-Google-Smtp-Source: AGHT+IEA8eZg1F5rTtYtGgxFGDqJ7eNk3ccgMGnZd3pLrENcTaD8LN6KiUTpuvzO7iXkBw9qPrcSIjiZ+Ib/g7be7BA=
+X-Received: by 2002:a05:6512:1314:b0:54a:cbfb:b62e with SMTP id
+ 2adb3069b0e04-54ad64f6791mr6320883e87.35.1742908200694; Tue, 25 Mar 2025
+ 06:10:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v4 01/11] scripts: generate_rust_analyzer.py: add missing
- whitespace
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250322-rust-analyzer-host-v4-1-1f51f9c907eb@gmail.com>
-Date: Tue, 25 Mar 2025 10:08:42 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Boris-Chengbiao Zhou <bobo1239@web.de>,
- Kees Cook <kees@kernel.org>,
- Fiona Behrens <me@kloenk.dev>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Lukas Wirth <lukas.wirth@ferrous-systems.com>
+MIME-Version: 1.0
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+ <Z9lJETLh2y27934q@black.fi.intel.com> <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org> <20250324033038.GA9886@nxa18884-linux>
+ <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org> <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Mar 2025 14:09:48 +0100
+X-Gm-Features: AQ5f1JrTRSKcnNRqr9tDe943HyISqe1Jb1O_0dxGZ5xxZb_T1URcA8bYen_No_M
+Message-ID: <CACRpkdYCgkwuOm5vw8oOSnu7ZVLsC3FDJoA2695gAufwp4NQVQ@mail.gmail.com>
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	Andy Shevchenko <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, 
+	"broonie@kernel.org" <broonie@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <E0ED9858-7ABC-4461-BDB8-38D59AD3AF8B@collabora.com>
-References: <20250322-rust-analyzer-host-v4-0-1f51f9c907eb@gmail.com>
- <20250322-rust-analyzer-host-v4-1-1f51f9c907eb@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
-X-ZohoMailClient: External
 
+On Tue, Mar 25, 2025 at 12:26=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+> > On 24/03/2025 05:21, Peng Fan wrote:
+> > > On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski
 
+> > > To keep DTS unchanged, we need update polarity in gpiolib to force
+> > > GPIO_ACTIVE_LOW.
+> >
+> > How are you going to achieve it if one DTS has LOW and other has
+> > HIGH?
+>
+> With this gpiolib-of change, to fix polarity as HIGH.
 
-> On 22 Mar 2025, at 10:23, Tamir Duberstein <tamird@gmail.com> wrote:
->=20
-> Add a space before the `/` operator for consistency with surrounding
-> code and code formatting tools. Add a second newline between top-level
-> items in accordance with PEP 8[1]:
->=20
->> Surround top-level function and class definitions with two blank
-> lines.
->=20
-> This change was made by a code formatting tool.
->=20
-> Link: https://peps.python.org/pep-0008/ [1]
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> scripts/generate_rust_analyzer.py | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/scripts/generate_rust_analyzer.py =
-b/scripts/generate_rust_analyzer.py
-> index a0e5a0aef444..fc1788764b31 100755
-> --- a/scripts/generate_rust_analyzer.py
-> +++ b/scripts/generate_rust_analyzer.py
-> @@ -118,7 +118,7 @@ def generate_crates(srctree, objtree, sysroot_src, =
-external_src, cfgs):
->     ):
->         append_crate(
->             display_name,
-> -            srctree / "rust"/ display_name / "lib.rs",
-> +            srctree / "rust" / display_name / "lib.rs",
->             deps,
->             cfg=3Dcfg,
->         )
-> @@ -193,5 +193,6 @@ def main():
->=20
->     json.dump(rust_project, sys.stdout, sort_keys=3DTrue, indent=3D4)
->=20
-> +
-> if __name__ =3D=3D "__main__":
->     main()
->=20
-> --=20
-> 2.48.1
->=20
->=20
+Yep those quirks is what we have done to handle legacy cases,
+mostly from old devicetrees using bindings where proper polarity
+wasn't enforced or properly used because the drivers would
+override it anyway.
 
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Ideally the bindings schema should enforce consumers to use
+GPIO_ACTIVE_LOW but I don't know if that is possible, but maybe
+Krzysztof has ideas!
 
-
+Yours,
+Linus Walleij
 
