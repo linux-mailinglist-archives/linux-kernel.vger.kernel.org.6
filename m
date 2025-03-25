@@ -1,125 +1,97 @@
-Return-Path: <linux-kernel+bounces-575167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B5EA6EEC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:07:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EBDA6EEB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C721891CDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCE83B645E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C6F2561A4;
-	Tue, 25 Mar 2025 11:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F853255E3D;
+	Tue, 25 Mar 2025 11:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZAar6WoU"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cKKkKRJU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D346255252
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FBB25485A;
+	Tue, 25 Mar 2025 11:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900813; cv=none; b=FH87DVolyd/KtsTs0gaatSxP5eh/M60zMU2ywSBmG8gbWOJ2nKBjkid2CYequF7rYKUqqv2jnxlwmQuhln+z9+m6Pqan1/CHp6UpZWyNweQuCSTnSTREguwrWwkz41M3L0aRN6+Eexqbzm5PEI52PhcUzj7GOm0PJiM+gR49s2w=
+	t=1742900833; cv=none; b=TWE3494UXM+SIS4JUKtQdxyRYMR2tZU1wX27Vxib0ps+HmQcu9HAGoizfQyT1z4EqERXDXigHFUHnoIJYJLOcv+SDbg0BaZa9IYxZSLGUlN7BPB/WVqubpCIhhiSuZAo8dZYlpd35LcJ/0Yja6MhfrLDaw/hapP3Q1KzrQE39ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900813; c=relaxed/simple;
-	bh=vmdMzRsge6rNZ1LRkzX7z+rHOWaV9SylfaktcIGnP54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+lDosGtmgaZwOPLivTHYayU8o21IfDqQwa5UYfI01LrBtCHarpclBjYj+ze34erHjNStYuD2cRj2kzh61zahOJBKPpB/17hamKe+siOxPuNBIxhFpUv5Hwvk4vDXrfciVtrAPixu60+Azjzk9RVwH9UoRLLyq8ovWzc03WNRws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZAar6WoU; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=vmdM
-	zRsge6rNZ1LRkzX7z+rHOWaV9SylfaktcIGnP54=; b=ZAar6WoUSglQkwhOiy/3
-	vOXLvs7Fc0qrbgMFtN9dLx4akox7ffQsmmqwuUEV8BJzjrpvc/aN0ELGg3rMh13t
-	jAFxAivN6zDynI4X7mv2agNW7V/5LvXb7++fZG+kGmJtpnoO/wq83INRAofjhD9s
-	6VHck9kdN0RRIgH0otyUfZloGezMx0jp1z3OUqRCcOiC76CgSjS5xu5X9g1pXTFF
-	8kQ+LWAL/05W4mDlqWUcogRWMXmAQ6h3SWYqIkCB6Bm+qv3MZNDMrOAMheEqTvRv
-	7pO/u7JQX+urkO9AJkMmF+DjcExaU4EDe4rVeAYZJcg5QZCZFJsWc6AinzAJ3kH+
-	jg==
-Received: (qmail 3018856 invoked from network); 25 Mar 2025 12:06:41 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 12:06:41 +0100
-X-UD-Smtp-Session: l3s3148p1@/+catygxorQgAwDPXyTHAJp038nK7dx+
-Date: Tue, 25 Mar 2025 12:06:40 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-Message-ID: <Z-KOQMx9IHQXwrt1@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"geert@linux-m68k.org" <geert@linux-m68k.org>,
-	Paul Barker <paul.barker.ct@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
- <Z-EpPL3tn54E8KG5@shikoro>
- <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <Z-HVD6w6ivYR6pt5@shikoro>
- <TY3PR01MB1134602E988AD8428422E820086A72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <Z-Jgdi5_SizHzcO0@shikoro>
- <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1742900833; c=relaxed/simple;
+	bh=L6stbKrSJItr4b97Xxhs4L11+kqiuh6UY41CNBNHrRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SlOceW0FSm9UFt7skJSQFg+G8jstHbgqwSogvA7e45hGIgQuf3aTAz3NXZWdtfdTuwRhMyW8vYNjIC661gim5j83S4OQwZlSX357lVEb5uwmKW+AAymLjh6XnIE1rh5eRZAX9TyR9gH+BrXTG3q4tRgfzpns1IS8Kl9PxQkJP0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cKKkKRJU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742900830;
+	bh=L6stbKrSJItr4b97Xxhs4L11+kqiuh6UY41CNBNHrRE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cKKkKRJU324QW2eljbzVlG3gkBQzcjDClqBQy9fPsTZLmOuzG8KhOm+D35N5Lq3be
+	 mhbyotG5G7LzurKTTOxhZJmtW/zzwxu0rcZr96XgHC2BQL/AXP28vXR7a68z1s7ZTj
+	 KkKkcTMQzunPKU7KIP1wnbgndCQxjyPG3dNJom383RC7pb2wNDHGMuC/K+ZAoW0i/Z
+	 vnC/uBtuM29bkJBnLA5G12TJsDqxlt6ysOeLDM7z1iTk+XJLQyIKPdbKSryRsYhFP7
+	 ut5N4QXYTjVD9U22cL30Q8hIYkq/9+HeWI/7lMaMI/SH1xJxT8/4YaNsNf3ujMz5WL
+	 e85Ed0TLJjZ5Q==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A01B117E09D6;
+	Tue, 25 Mar 2025 12:07:09 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chaotian.jing@mediatek.com
+Cc: ulf.hansson@linaro.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com,
+	axe.yang@mediatek.com
+Subject: [PATCH 0/4] mmc: mtk-sd: Cleanups for register R/W
+Date: Tue, 25 Mar 2025 12:06:57 +0100
+Message-ID: <20250325110701.52623-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Lh4eZ0BfjukHNZUE"
-Content-Disposition: inline
-In-Reply-To: <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
+This series adds missing register field definitions for the MSDC patch
+bit registers and aggregates various register writes into just one,
+greatly lowering the amount of register reads and writes especially
+during the controller initialization phase, other than the tuning
+phases and set_ios for mclk setting.
 
---Lh4eZ0BfjukHNZUE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While this will have a performance gain, that is completely ignorable,
+hence this series' only focus is a cleanup and an improvement in the
+readability of the register settings (as those now have actual names,
+some documenting, and no magic numbers around).
 
+This series brings no functional differences.
 
-> Would SERIAL_RZ_SCI_T2 (and rz-sci-t2 for the driver) be specific enough ?
+AngeloGioacchino Del Regno (4):
+  mmc: mtk-sd: Clarify patch bit register initialization and layout
+  mmc: mtk-sd: Aggregate writes for MSDC_PATCH_BIT1/2 setup
+  mmc: mtk-sd: Do single write in function msdc_new_tx_setting
+  mmc: mtk-sd: Aggregate R/W for top_base iospace case where possible
 
-For me, yes. That means at least "as first supported in RZ/T2". Only
-RZ_SCI seems more arbitrary to me. It might show up in non-RZ platforms
-later, and then RZ_SCI basically has no information gain.
+ drivers/mmc/host/mtk-sd.c | 207 ++++++++++++++++++++++++--------------
+ 1 file changed, 132 insertions(+), 75 deletions(-)
 
-That being said, I see that there doesn't seem to be an easily available
-better name, and we are entering bike-shedding area. I do prefer
-SERIAL_RZ_SCI_T2 but if you really want to keep this version, so be it.
+-- 
+2.48.1
 
-
-
---Lh4eZ0BfjukHNZUE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfijjwACgkQFA3kzBSg
-KbZlzQ/+Lsk+IZzFWOt3O0lk6Ng2geoq/7aFMUBTwOMXC5oyq09CoEkOcGS5mzw9
-psN/a8WqMOu+4KZ6fwFMNvJtNN05RhDnfP0fiWrPkwPJZTfEr6+uoiBpHvaLX/5O
-8caJOH9V/63DFnswv8E0pefy+3MNu2fktwMDsu6GCAf0L4A8YOwYevl8J3ApuEsz
-/TgMX9rm27bs7h6om/iD0TP/3iph/UzCeG7Zf8/IxkjqGWHsVQKbh1YcP5F11ZF0
-bQHJ0zUb4m1ZAkuN+/1DmKXHNFDgbBoRtnAZ47ytXscWLC4NN5wNu2cs+dW9l6Z4
-ANDl6/+vOQdhEQ6qo0v3WGAr0hTVb1ppcA4pkKI4EQEcHTqq9ofwB/ohb7xYjCQN
-BoW3fDv/d/VODrUjJRHqAggIVpXUKlAnDfW2A98Qi77uFYP3OCCNsa09JZ91ot8J
-DkWJunQc42f2CpHqyD8oFCSrnTyvB1F9n5ozQJgnoxByKItrb6h09SWZrha0kDhV
-e9xCsBe+xfdFOKrreKLeUAu2tzKaZ2X6Zs2xf0LK3es+oRgwdYY80Erm9TFsYuxp
-3G48w42FCcSAJBMDpaFKSGzlLKn3VGv1KKUg1NLEs68cUnljs/8+D+MWwTdD3F9F
-jQOPD5t6ywnhmY38v9U/rdGl4nfcpN5YchF541hqsT+cRldX9Bc=
-=fMXS
------END PGP SIGNATURE-----
-
---Lh4eZ0BfjukHNZUE--
 
