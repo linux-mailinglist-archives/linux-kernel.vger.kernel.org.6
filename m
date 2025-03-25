@@ -1,144 +1,259 @@
-Return-Path: <linux-kernel+bounces-576285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF80A70D70
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:02:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34345A70D77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3BD188BEC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:02:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 629B77A3E62
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764D025484F;
-	Tue, 25 Mar 2025 23:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA0B254841;
+	Tue, 25 Mar 2025 23:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TvQJQQft"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m19BXeUe"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B861AD41F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047FC1B4234
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943754; cv=none; b=Gc7RvH96UwmFCS6HFnqKwp1nD8cktaLnXIeMVXYtKrQEDCuCdVByQRZiLJTlDwHyEx55w2albvb/Zr4+4/vo6KbjSK99qD+WQpStmgFtfgl0wRTjWLCZ0tTwb7V33Mczhl8o+NT5FsikcdxYNktfqrWakTjE9mS3qtwL1h1CqkQ=
+	t=1742943953; cv=none; b=nkFaVQaou6CxnnuLj4WY6tIOvjJrD82OaH6TBGSTzX4icqgf8V81rTs1TtVY0MzI04DPoZjwXwaEQLTb2ZFkSAsUHhXa48lOAN51W4LgrK2lPHN1aYv9ALFXqj2EejFFKunMD2dEBjer8tBke/ZPcNipmGujBfdO4YPvI8v1OIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943754; c=relaxed/simple;
-	bh=rvtaKCacTd+dMFEwCfsS4KnID/jFXOuQd2z1cHSbJkM=;
+	s=arc-20240116; t=1742943953; c=relaxed/simple;
+	bh=30uExJbNla7us7TaZvc03CFiD8p46S3/jIKRWAZnYiU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KbprBiwrUtKcQu6xrPII2JxVt6S8c/B5VRxnldfksKIvEVsxk9pJIxXFvXiUiI5aO8IO9Vy9b21qyAhTp8VKo1BBvgJkF9VTBbLk6F6/xAc588TV7Y3EtrWBSC51RW5bOKN7NDeJuFtXuLsLjyDlS3/Bi3ZqAMfEzI5ZROYoj24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TvQJQQft; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso62076066b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:02:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=E+N+QX/0WNnJdRJKwJVxaHFFu1mjS6gSWcxmaxXhuRn1G+f/+aitYH/eFNedWHLfYMVkVuAEfqGxkTVaZKNjzkf0DYlR4cr/S7s0LrFjFlbgC//foiXMaSP1hsVz4ZoYgvicab3Atf8UQ4neVs1WoI4Lacd1gsdhTPU9TqGVzmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m19BXeUe; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f6ae4846c7so60087347b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742943750; x=1743548550; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
-        b=TvQJQQftxjnjBEsYKJ4D4jIp0QLg5epctPeAgEs/wDiyWmlee4fD1sFifdmm8ADQQI
-         i47MljpIxv8kYqjM2huld4rnbPT0rwhCa+/ImIXWAKNT/j6Anw5OuLBSdFH6MwC+c5VO
-         4D3HvCz6xcc27e996+QJVNWyWqDMNanYGq3kE=
+        d=gmail.com; s=20230601; t=1742943951; x=1743548751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3LYyh7cvIBy6gyg3IkrEGbKsjVJ9+uHDh9H38tA/bPY=;
+        b=m19BXeUeEFK/hbi4tfeRCuszKKIckTAROJnk2SkI2vbG7HZWXuD3Nvk+p89eZOGjQs
+         KumyDuv4EjiSDkLYuXkH1Uu4RyU91ZPRQ8DY5LhWLZORQBD2/q09izTQE3uQYfdNlydF
+         cWJzb90vLc8TE2cuLj3o6zLdQbw6JhFOtJUdYii9UnMNUKg3mNzTIDHid9O5PwVpbYvC
+         Itdtyyi799WdaWDQwWY0eSM1hOzNAF6SIb5DfQtnNRnW7/WOs30P1YtGmFWsF4jM6gqe
+         GTnBcnYt846DFE8lD20k/FuiS3kwxxHTx7PAkWtFX9gT6QSOLDR+aNTS83lP2GEG8vVf
+         fG0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742943750; x=1743548550;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
-        b=EJTfsfGYuMraSpLZ6/Q8yQJgGIfgLEDdhzrlT2CCgj68LqpwzJwuU40skcPX20hySJ
-         NLeCQXwWj/oi3IT25fklWptkdwJQrMI6/BhTtMLrgINhNQVnrMGdxUFJM6fPgwQYgGto
-         dZGQ0vRYZHM/k0PgqOkhnRxqVOcP33mvMihvapW4iJgR07aDJFh/XTGCM/GqfHHBde5g
-         G9/Eul5nLmhatEm8VRHR2R5uMDJ6v6PdMZSNk3xnrmpJLSwV+ytyTw2RbmhBAFSJY/No
-         MaVo1ygX7DY2SYht76eBTGu7E0pweUC9rsipffIxIahxlFqLIKDK8lcqUyYJx6wL0QM/
-         RWjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9VG4vk3+wOC4tLr4HbvI/4+ee3kzk6rKPJYEPOMwH+UHOm6NJALKe+8662f6EjLeBb6Fs+qxZSZK4pRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDI2ICe6cQQOtdsgOBM/pWcMs+2endWhDQSjRAyWy7OkeS/SBA
-	91urLjP1oxm+rlGI9P/ID3sUDMXUHlyuZF3Rv2e3SSrFutJ2v5yYHdQCYUzJy7W2NTab5uNSoYN
-	1hMplQw==
-X-Gm-Gg: ASbGnct7uQ3ffdOEYrumU93mvtdhIWK9Z2PNUwbmXIxf40s9k53kSyQQ3Dgidns8vcf
-	dNL3kOOy04xBBJawm4Ce2rQ1acnuLDCLfZzTTU4rAP0NUFxZfCXyh4PlUlHwmYrZPHRemMaXSgW
-	413vShBOtRFrHmxrdlY1f+9DAEIxOB1LLbwzmZT4q+1IgRs6FSJn5WXx2mAwOaa0ykEqZhUcMq4
-	018EWpKeEDzo0fNhK+msZnwvXozRSK7hm1SSA4V1/pv5HG9pT9nkGgNzSnufhGFYZjmqPLm/U1B
-	cO9agsNmZb6u+W0tHAYC5ciW8Nh+QGMqI+WhDc4VRo8RgOtPG9dPNR2QvbZlmcaXC9WgA8Ebbas
-	TjJYh3MOK33vkfxGmM28=
-X-Google-Smtp-Source: AGHT+IFR7U9lIJmUaY6kS0YSAgfr4jdZC+fS+DhFsPjpg2FNtY7S9CNkMid2lrCdxmLZYm5lekPzZw==
-X-Received: by 2002:a17:907:3f98:b0:abf:6a8d:76b8 with SMTP id a640c23a62f3a-ac6e0a0bbfdmr164163766b.11.1742943750460;
-        Tue, 25 Mar 2025 16:02:30 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbd4640sm909126866b.129.2025.03.25.16.02.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso62073366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVF9mYKHEPkO3A0dgpPWgVjDPnEVL6ynSICEcZsVSM/y3ACa1DeLYtAhocYt0uEkCwQnNnjzs6e01XxJ7o=@vger.kernel.org
-X-Received: by 2002:a17:906:81d6:b0:ac6:e42a:fb4c with SMTP id
- a640c23a62f3a-ac6e42afbbbmr77412666b.9.1742943749513; Tue, 25 Mar 2025
- 16:02:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742943951; x=1743548751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3LYyh7cvIBy6gyg3IkrEGbKsjVJ9+uHDh9H38tA/bPY=;
+        b=QbJmWNIgLmsgb+hZmoOoaFkZNgDiIliw226+0OUgpRim9X2xmt5znxGoLzp4wjGsHf
+         UZXMSayvXqrvLTCEv5Z/038KEjbNutXchbxM5Xbb6QPtudE9IL62F7d3i3eSJuZOzZrD
+         1Gue4+Mny7tnTyO4bjSIbRYqas0P82g9azsjCSyrxPoSxhLP2r7dChr1DIYMOP8m5ckb
+         ajC831bf7m2iEr26uMRUBTe6elfDYc6t1b/gGy2S/P0Gaccgk2pzSF4gPljuOtATj0cS
+         bkT0JDYDYpzkbGVI1PlmS5uMLyQYkLukz4W6AueMSF6wqFUxbUYsIGvsbzzOmQ17lmNf
+         aQUQ==
+X-Gm-Message-State: AOJu0YxuVyxJeVRWfMJGhmi16/p0cf6qpBJdJuw5nZBj7LbQiPFDzu8x
+	vGQEbnzuzJwLBUJX+yw/tRsP571lTKBf262AkWLkT5FqNfoIwrdtg/MvQqrjrj9LI6XO8lWS8h0
+	g8LbRt8rgmGDhefkSgr/ljWE2BZ977OCH
+X-Gm-Gg: ASbGncsoGb8U3dwVw6LbuG4tgN76bPaKpIPjVWPAAVxz6m9ztox1VE+IjszGNQTT9XW
+	Y4iB2fkQHRj4EUQI0YNKQ7Y9dN2fG0hZWpDLbA/ehfD+lEZ+RuBh6EowGV1OKf76xKGHfrTyHoo
+	YQkPMVb9BCWlpE5r/UkH50dGTV
+X-Google-Smtp-Source: AGHT+IFDS0/bmylajohYScfMRJASfdJ94Z8dAaU9Iu5+MxKXgHCh/sXXScoa/kPcmSMVjhI64o9HD206lCBiVRkHZUw=
+X-Received: by 2002:a05:690c:62c7:b0:6fd:22fb:f21b with SMTP id
+ 00721157ae682-700bac5dd77mr270803627b3.18.1742943950541; Tue, 25 Mar 2025
+ 16:05:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
-In-Reply-To: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Mar 2025 16:02:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq6H2w1UwofX9xTNQfWxTgnnyE_4keu9omt7uh5If6fR9mM7-LXzR1V2TI
-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
-Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
-To: Paul Moore <paul@paul-moore.com>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250320185238.447458-1-jim.cromie@gmail.com> <20250320185238.447458-31-jim.cromie@gmail.com>
+ <0828cfdb-abf3-42c5-8500-70f36affd0a8@bootlin.com> <CAJfuBxzHEtS1psJ+L_6=FP-mU3b8mgLQbXRWoizLkZoRUB6G1Q@mail.gmail.com>
+In-Reply-To: <CAJfuBxzHEtS1psJ+L_6=FP-mU3b8mgLQbXRWoizLkZoRUB6G1Q@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Tue, 25 Mar 2025 17:05:24 -0600
+X-Gm-Features: AQ5f1JqDBPnZp9kI3zjF5AGf9PrDQTP2_tFSu-HI5zfD_s9-HLrOkUICv28MItI
+Message-ID: <CAJfuBxy3HWJuiBBSySGEUtDcpSNh7Kmds2t8TRGouSOqE1O2OA@mail.gmail.com>
+Subject: Re: [PATCH v2 30/59] dyndbg: drop "protection" of class'd pr_debugs
+ from legacy queries
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, intel-gfx-trybot@lists.freedesktop.org, 
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org, 
+	daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 23 Mar 2025 at 12:39, Paul Moore <paul@paul-moore.com> wrote:
+On Tue, Mar 25, 2025 at 12:29=E2=80=AFPM <jim.cromie@gmail.com> wrote:
 >
-> - Add additional SELinux access controls for kernel file reads/loads
+> On Mon, Mar 24, 2025 at 9:20=E2=80=AFAM Louis Chauvet <louis.chauvet@boot=
+lin.com> wrote:
+> >
+> >
+> >
+> > Le 20/03/2025 =C3=A0 19:52, Jim Cromie a =C3=A9crit :
+> > > Current classmap code protects class'd pr_debugs from unintended
+> > > changes by "legacy" unclassed queries:
+> > >
+> > >    # this doesn't disable all of DRM_UT_* categories
+> > >    echo "-p" > /proc/dynamic_debug/control
+> > >
+> > >    # name the class to change it - protective but tedious
+> > >    echo "class DRM_UT_CORE +p" > /proc/dynamic_debug/control
+> > >
+> > >    # or do it the subsystem way
+> > >    echo 1 > /sys/module/drm/parameters/debug
+> > >
+> > > This "name the class to change it" behavior gave a modicum of
+> > > protection to classmap users (ie DRM) so their debug settings aren't
+> > > trivially and unintentionally altered underneath them.
+> > >
+> > > But this made the class keyword special in some sense; the other
+> > > keywords skip only on explicit mismatch, otherwize the code falls thr=
+u
+> >
+> > s/otherwize/otherwise/
 >
->   The SELinux kernel file read/load access controls were never updated
->   beyond the initial kernel module support, this pull request adds
->   support for firmware, kexec, policies, and x.509 certificates.
+> ack
+>
+> >
+> > > to adjust the pr-debug site.
+> > >
+> > > So Jason Baron didn't like this special case when I 1st proposed it;
+> > > I argued 2 points:
+> > > - "protection gives stable-debug, improving utility"
+> > > - __drm_debug is authoritative w/o dyndbg under it.
+> > >
+> > > I thought I'd convinced him back then, (and the patchset got merged),
+> > > but he noted it again when he reviewed this series.  So this commit
+> > > names the "special case": ddebug_client_module_protects_classes(), an=
+d
+> > > reverts it to Jason's preference.
+> >   >
+> > > If a class mismatch is seen, code distinguishes whether the class was
+> > > explicitly given (and always skips/continue), or the DFLT was assumed
+> > > because no class was given.  Here we test
+> > > ddebug_client_module_protects_classes(), skip if so.
+> > >
+> > > Later, if any user/module wants to protect its classes, we could add =
+a
+> > > flag to ddebug_table, a means to set it from CLASSMAP_DEFINE, and
+> > > check it when applying a classless query/cmd.
+> >
+> > I don't really understand the goal of the protection, do you have the
+> > discussion between you and Jason so I can have some context and some
+> > answer to my questions?
+> >
+>
+> The on-list discussion is here.
+>
+> https://lore.kernel.org/lkml/2d3846cb-ff9a-3484-61a8-973799727d8f@akamai.=
+com/
+> https://lore.kernel.org/lkml/0d9f644f-3d60-02c3-7ce0-01296757e181@akamai.=
+com/#t
+>
+> At the time I thought it was unfinished business, and expected some
+> more discussion,
+> but that didnt happen, and later GregKH committed the set.
+>
+> Last summer I emailed him privately, and he made a 5-6 points Ive
+> addressed in this rev,
+> (reduction of repetitive code, enforcing classmap constraints,
+> protecting against misuse)
+> but it also became clear he still didnt like the "specialness" of the key=
+word,
+> given by the _DFLT constraint applied to legacy callsites and queries.
+>
+> Since thats a bit of a philosophical debate, I looked for a technical sol=
+ution,
+> to have it either way with fairly trivial additions, and to yield
+> until user experience
+> dictates otherwise
+>
+> To be clear, I still think protecting the "classed" is proper.
+> Without dyndbg, /sys/module/drm/parameters/debug is authoritative, full s=
+top.
+> I'm surprised any customer would give away that certainty,
+> it looks like a (small caliber) footgun to me.
+> But its not worth disagreeing on.
+> Hence this patch reverts that "protection"
+>
+> > With the example you gave above, I think this could lead to a very odd
+> > behavior: if I enable dyndbg, I expect any pr_dbg to be managed by
+> > dyndbg settings.
+>
+> if by "any" you mean ALL the ones that currently exist,
+> before we add a whole new "CLASS" of user,
+> (with ~5k uses, all comfortable with their exclusive control)
+> I can agree.
+>
+> echo class FOO +p > control
+> gives full control.  You just have to say so for the new classes of users=
+.
+>
+> >
+> > If a user writes stuff on dyndbg control, he clearly knows what he is
+> > doing, and he wants to control what logs he wants.
+> >
+> > And if you allow multiple "protected" users, the normal way to disable
+> > all dyndbg logs will be:
+> >
+> >         ddcmd -p
+> >         ddcmd class DRM_UT_CORE -p
+> >         ddcmd class DRM_... -p # all drm classes
+> >         ddcmd class SPI_... -p # all spi classes
+> >         ddcmd class WHATEVER_... -p # all other subsystem
+> >
+> >         # And only now you can enable only what you want
+> >         ddcmd module my_mod +p
+> >
+> > This is clearly annoying to write.
+>
+> It is clearly annoying.
+> It doesnt need to be handy.
+> thats what /sys/module/drm/parameters/debug is for.
+> with modest "protection" of explicit naming,
+> the sysfs knob can reasonably be expected
+> to reflect whats going on underneath.
+> Without it, bets are misplaced.
+>
 
-Honestly, is there a *reason* for this, or is this just some misguided
-"for completeness" issue?
+Heres an improvement:
 
-Because dammit, adding more complexity to the security rules isn't a
-feature, and isn't security. It's just theater.
+a use of CLASSMAP_PARAM means user wants a sysfs knob.
+We can reasonably conclude they prefer that mode of control
+(its what DRM users would expect, since a long time ago).
 
-And it adds completely pointless extra cases making the different
-cases use artificially different code.
+In that case, protect the PARAM settings
+(from unqualified settings, use of class FOO still works)
+otherwise no protection.
+simple to explain, no extra knobs.
 
-The commit message doesn't actually make any mention of *why* any of
-this would be a good idea.
 
-I've pulled this, but honestly, I think all those new cases should be
-removed, and if people object to us having "LOADING_MODULE" for other
-kinds of reads, then I think the fix should be to just rename it to
-"KERNEL_LOAD" or whatever.
 
-Because dammit, this "make security interfaces more complicated just
-because" needs to STOP.
+> >
+> > If DRM (or whatever subsystem) wants to add a debug parameter and use i=
+t
+> > to control their logs without being impacted by dyndbg, I believe it
+> > should not use dyndbg classes to do it.
+>
+> hmm - dyndbg's 1st value is its NOOP cost when off.
+> If thats not worth something, you wouldnt bother using it.
+>
+>
+> In any case, its pretty clear that my viewpoint isnt prevailing here,
+> and as I said, I dont care enough to disagree.
+> the reversion here can stand.
+>
+>
 
-We are literally wasting enormous amounts of time in the security
-layers - I regularly see the lsm and selinux layers spending *more*
-time on security than the actual operation takes because the security
-people have written random code without taking performance into
-account - and I need to see *reasons* for adding more crap in this
-area, not "let's expand" with no actual reason given.
-
-So I really think that commit needs to be either reverted or explained
-very clearly why user policy _needs_ to care for the difference
-between a module load and a firmware image load.
-
-Because I think any such explanation is likely complete BS. The
-difference between loading modules and loading firmware usually would
-boil down to "different hardware does things differently". There's no
-obvious reason why one should be considered different from another
-from a security standpoint.
-
-               Linus
+apologies, since Im sounding kinda argumentative.
+Jim
 
