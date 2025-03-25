@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-575682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C47CA705C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:58:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5025A705E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0370188CD9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379911894C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FE7256C89;
-	Tue, 25 Mar 2025 15:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942F6209F40;
+	Tue, 25 Mar 2025 15:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WJJl+ED1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="BVn6XOb5"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BD920E30F;
-	Tue, 25 Mar 2025 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ACD255E32
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918320; cv=none; b=Iw3uuFP/e1S0uwDsqmX8Le8WmnQ27Sy12ncPP3AXyrBTQarOVnecWpW9erorzKbACaCl0SvFTLVfvTNU+Sjb0tRejBzqr/WNVnAIt+L/ZVEKatuiEXZqyByqx2/vq1mgGEKvLB5zgRo7gjT8xu5LvEdNxoBoB+tORIM3ys5gDFg=
+	t=1742918391; cv=none; b=LipWXOE8A/jIKdoNGvCfBbFMdIh8dkFVblMcLGfDl5WqdQtui9drbQt9eDU4GjX3DE8eWnuWoqGjMVOGkXAHr0jwCpWI1EAekvj+iZy8Fy3Rd4iPbyLnExU0pL2AAN9MAlqx5+YEzTZBzSyf3jeavhfX3o7kcpYm1YXqDukFRIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918320; c=relaxed/simple;
-	bh=B5U+FnoyiD8ehcQwNrX3Bjp4on7HLO0Q7pE59+Vx5is=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5wybZRBnlwsZ2N0q+On8kkqWjfXMvOC8FjALm08OOSZHD01NFf5a0M36HH2Fpd7lBgkhFmM7GY9iJX0mxrsBZ3o+D3jHAc0kkvwoJ5gvtnza+G0PdADIcUZOmIKNBIt/ORDcofZJjtBn/5I4yKSb6qAI4q2apq0LzMR2YDkD7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WJJl+ED1; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742918319; x=1774454319;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B5U+FnoyiD8ehcQwNrX3Bjp4on7HLO0Q7pE59+Vx5is=;
-  b=WJJl+ED13g661dH+4Zso1nlB/UgQwA0JjhcDSCaU+/YOYvzhwrciKd+V
-   a1Re4bWH2MfObE1qAVwSvEcTMqKFhmcRHzjaEiz24/wxqMlaNE8bW6Mx7
-   A8XzCByoQsNDYn3cWgym8hZn8amcxAis9OL+/H12+ksWSH8YPD5ZII2h8
-   mWgihlOm2k+SO+SQnPjqh/0IIph2xiO07/zRLXHlE67lKWdz1MWhP7i5I
-   R3njqVKAhuVslDBgp2Gd0WhhcvAifUa3aiRSz291zCnFskWFoR9TJpr6M
-   GRdopDY6fl7YBQcSDN28+fE1W519hpd/rUDtc1KtC4Ydp/9jjeWrj1KP3
-   w==;
-X-CSE-ConnectionGUID: VAITzi+CR2SHtF1HeBeQ3g==
-X-CSE-MsgGUID: Uq+T3maRRte9eC6IMCGOgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="55554972"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="55554972"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:58:38 -0700
-X-CSE-ConnectionGUID: zM8aJLmCQ1uFZw0B+5Ks7w==
-X-CSE-MsgGUID: P+HCHL29QAGv6ulPZo1Uag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="124370501"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 08:58:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tx6fd-00000005nK4-12Ba;
-	Tue, 25 Mar 2025 17:58:29 +0200
-Date: Tue, 25 Mar 2025 17:58:29 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 09/11] input: keyboard: Add support for MAX7360 keypad
-Message-ID: <Z-LSpRq3M3YYGOsW@smile.fi.intel.com>
-References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
- <20250318-mdb-max7360-support-v5-9-fb20baf97da0@bootlin.com>
- <Z9qybcY7VyQBvZMv@smile.fi.intel.com>
- <D8PFO3LSGWQD.38SX4PSHQ84W2@bootlin.com>
+	s=arc-20240116; t=1742918391; c=relaxed/simple;
+	bh=P9EZvz4B3JvjSrOKiGhWM8/zqDEdiPCtLo7O1sswpoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QB+fL2LY+Nehf778orsWrzNutmS0c5uFW9aWBIYU/90triVG2uukUD9dYnFmOAbnTXiJoVC1Xwjwnuu2ohBaWqevZB0LwZwca7mhpXCcYLuDsba5vgTe7wmSlB1ZG+VifsIeBclP7k8cYoburRtUwwHMTM4z1gYXwfESGwrl91I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=BVn6XOb5; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85b3f92c866so64584139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1742918388; x=1743523188; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ToYD10NOrDEQyo76Lqg0Zr9yLQm8kUn7JcZ1hRviNk4=;
+        b=BVn6XOb5sKx0mD1rcQ8BW8NwiwPKWKQbkmRq/H3H9puIXuH1y52rb3P0neRwphDyui
+         FimyQGLI9nqWnHFtszqk60ypb2+FCmw6C3lNvk0QdG5t4XZXgL2KhFaBlW9p1dpHuzGq
+         qLPnzV+vyCsByBkMK2M4h+dIfw8ChzmvSuc4/XznIAtjHqQ/iBONF8S+kd/DH7K2P8a5
+         foSjhX2XeQdkiamLNdHbhd0tAEcNSSTZZ/0tFa446hmKDSLvdWwQF8o5OMIXHJTwxxY5
+         SS8O64Rt5WJwpNHW3VLR/7a6BmwfUu1kKMSKU9U3spHuyuQYMQLj+S64bAbe5zXD5jfo
+         q5Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742918388; x=1743523188;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ToYD10NOrDEQyo76Lqg0Zr9yLQm8kUn7JcZ1hRviNk4=;
+        b=pSLgeH8TnIj/1rJziSHqoX12u4820ZGlH1eJsyU69Azn6CK1e9WVcyDieJpy69fb8r
+         /Fu3car0VNbWI9v3gMscQV19uMQmZfDrp/boedoTZ74OARw7Jft7FVrd7GhxsdraArmm
+         JH5SrsmeUKR91v3kzjEzdStSx0u4z4+10hTmQPU1WGnvQvSMLgG1ffYVIErbUaLxNEd/
+         /GH1XGlpcmeGDJDCOY5EQahd/lzuhRfF27qBgYt0WsfrMhmF02qw8UTO5V4BO4qF92fF
+         2dK74glQLgV42N5VrNQ3ayJU4BubuQAFAdRhngcEPU1Ja4B2Ws9+BCqwOhZIhIxa29jD
+         mY+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ1/gEfTy07BraZZi7ZcupT3lnzVEEX2QxmTTawjlzp/3hA6zYXdn66Gc81XFgp64gq8KmteDQbXwQ5kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuy+w8WgC+pjtnYe4wsidqHC13rGnOfs7PCM5MWpOd5JYqTCgT
+	hxxwZMI6lLJozpuaWfZsrZoAgVYPL5jwzIlA4uUAgu19+VlNn4hFd/xLvRts2vY=
+X-Gm-Gg: ASbGnctndiSA9tLGR46UttjOqajyuRvOwd51jMbQMX84J4HQQ5l1GexbBmXHvGS9zKr
+	Nh97hup3WFe3CJq+YMruHJNOOZMp3R8ByLqBsxz/Wu8v68w+sCQT62AFFm1xOJfRFjQmUxlyf8a
+	a5jevQjX1HoxxJ6H0OptSwbcCtRB+3H7fn4glrZNHVN8bi0uLcaCegJPRliRFeLjyjonu6XYSmO
+	qfqbxIardluR3mWHJb7HVm2iJbZXSVVOnaeyeu4Rktbmxj0pK09WUN/Lhm3y9oGb8mr2AsqkvFw
+	3D5DGegK0a4VIRwiEtCYetUvUacY
+X-Google-Smtp-Source: AGHT+IERsLCKQu0CXD36QCbALj7leHW0DXhR5mfzF4W90S9fbas/OUhKJkADjxti4v/7OWSezllccQ==
+X-Received: by 2002:a05:6602:4013:b0:85b:3827:ed06 with SMTP id ca18e2360f4ac-85e2ca33995mr1894741539f.4.1742918388082;
+        Tue, 25 Mar 2025 08:59:48 -0700 (PDT)
+Received: from CMGLRV3.. ([2a09:bac5:8152:1b37::2b6:1])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bc273a1sm219975639f.18.2025.03.25.08.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 08:59:47 -0700 (PDT)
+From: Frederick Lawler <fred@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	James Morris <james.l.morris@oracle.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-ima-devel@lists.sourceforge.net,
+	linux-ima-user@lists.sourceforge.net,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-team@cloudflare.com,
+	Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH] ima: process_measurement() needlessly takes inode_lock() on MAY_READ
+Date: Tue, 25 Mar 2025 10:58:59 -0500
+Message-ID: <20250325155934.4120184-1-fred@cloudflare.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8PFO3LSGWQD.38SX4PSHQ84W2@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 25, 2025 at 03:57:01PM +0100, Mathieu Dubois-Briand wrote:
-> On Wed Mar 19, 2025 at 1:02 PM CET, Andy Shevchenko wrote:
-> > On Tue, Mar 18, 2025 at 05:26:25PM +0100, Mathieu Dubois-Briand wrote:
+On IMA policy update, if a measure rule exists in the policy,
+IMA_MEASURE is set for ima_policy_flags which makes the violation_check
+variable always true. Coupled with a no-action on MAY_READ for a
+FILE_CHECK call, we're always taking the inode_lock().
 
-...
+This becomes a performance problem for extremely heavy read-only workloads.
+Therefore, prevent this only in the case there's no action to be taken.
 
-> > > +	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, max7360_keypad_irq,
-> > > +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-> >
-> > What's wrong with the interrupt flags provided by firmware description?
-> 
-> So same question as for the GPIO driver: IRQF_TRIGGER_LOW from the
-> firmware, but IRQF_ONESHOT from the driver? Or should everything come
-> from the firmware?
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+ security/integrity/ima/ima_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The same answer, yes, the Linux stuff (e.g., ONESHOT) should be given
-explicitly here.
-
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2aebb7984437..78921e69ee14 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -181,7 +181,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
+ 	action = ima_get_action(inode, mask, func, &pcr);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+-	if (!action && !violation_check)
++	if (!action && (mask == MAY_READ || !violation_check))
+ 		return 0;
+ 
+ 	must_appraise = action & IMA_APPRAISE;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
