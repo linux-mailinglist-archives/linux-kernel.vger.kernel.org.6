@@ -1,234 +1,107 @@
-Return-Path: <linux-kernel+bounces-575792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20955A7074A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:47:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856B0A70737
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAF23A3C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:42:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 303737A43FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BF725D8E1;
-	Tue, 25 Mar 2025 16:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9517B25E476;
+	Tue, 25 Mar 2025 16:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tp+h0/9/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ke2EYGto"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0F925DB11;
-	Tue, 25 Mar 2025 16:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815E625DCFA;
+	Tue, 25 Mar 2025 16:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742920963; cv=none; b=D+W3u0tzTp0xqa2YHQa0XiRNF+oFRK0lcmUwFIuz0/zrLnIKNvbmS9NsJi0WbFxR7yPL3Q3fGnKY4JqFuSdCLQfuCP+xNhay1rRCIlH5mNweScpml82HxWlobxZe2p+2xJ3KgTygjr35V/cJMp1BFUyXEEhAjdYlpvMqWSZXjJQ=
+	t=1742921015; cv=none; b=L8l4h3SlGEpnlpshRBVG510EREMQT0EkCYt+IfvsiK667jGeXkqcc74akYpvx5Sxdq5rcFLI0VPv+JY3N9USsqtJxOiAJH2nHVkERhrrHe8R/3oxRNT9o3EbNANBqn6nCAq3T4C0ziIEeKjG7UnitQq/mbPoXAT9FNqCvJM+Pa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742920963; c=relaxed/simple;
-	bh=9PfQrrMML2fjLMx4RoL4K7Q1wOqMz2whJnLqpbVaMFs=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nlcj7d7Om2nNPdc3eWVi4XdPUSdUMimkBMoa13AaRZZq7auyfhKwnOcglQKcwf/b1VSIhks9uDddBXu60FuDi/VV2EeTCuApkGzViuLwKFqwVChvA7WGFgXHBF8hMn92BNAoMA9uiOh584Ivj5zOHESpywmLY9xsg6ZrtHJhHtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tp+h0/9/; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742920962; x=1774456962;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=9PfQrrMML2fjLMx4RoL4K7Q1wOqMz2whJnLqpbVaMFs=;
-  b=Tp+h0/9/1TeFbqK6lKDo8DujcYUty1YVFgyCAqmRNAy8OOg3QVo2Cx5s
-   adhHUsUQhokZ5DoNRb4nDdc4EEUuMWiTtKl/9QfMWqBZORiGvWQFg48RA
-   vTKWbIRmJ0//G4nhTlz6dqTIEW51EovJhqAAzgSqPVFDHm+7vEmaDL2R0
-   4HeP1UU9w+npO3a5Iz0OYLgy2EJhzaO+quGVFU7ZW/GRkH0F20Zwm5BZQ
-   Y4kRWHYapGrdLXwdFRr6ehJuX95GPKX8uPqZaQt0ihkKbkeLegEAau6S0
-   ISeoh29vfq45MXKmK9xK62/MR/c8M4yOoYluftQCn8K+wgTWg5My0/mGB
-   A==;
-X-CSE-ConnectionGUID: xezW43UWQOS4jOTwX014Pw==
-X-CSE-MsgGUID: upwZcTP6TTO8fZprk5Ghxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="54842127"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="54842127"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:42:41 -0700
-X-CSE-ConnectionGUID: FLX+2TuuQmqfEn6clN5cRg==
-X-CSE-MsgGUID: f2yMtUYDTc2B84S9/D9z4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="155343580"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:42:37 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 25 Mar 2025 18:42:33 +0200 (EET)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v4 05/11] HID: asus: listen to the asus-wmi brightness
- device instead of creating one
-In-Reply-To: <20250324210151.6042-6-lkml@antheas.dev>
-Message-ID: <30fd838f-e6f0-50ed-7dca-f01f4e773f2f@linux.intel.com>
-References: <20250324210151.6042-1-lkml@antheas.dev> <20250324210151.6042-6-lkml@antheas.dev>
+	s=arc-20240116; t=1742921015; c=relaxed/simple;
+	bh=drMQDkgJmMbLDEmO3efWQL4mfA24GQIsptNGl51WiYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQoDwleDkSFuzYaEdFQjXKg4j5vIbQ/hsAPXEqE1a4v7ENWN/SR962lSW1WvyfZVDs+5JIYtc4ERkTaJE03kFfsdRkKa45mb5u2BKJ33yMEK9wrrgE30FnK8V+BvGLGrgyRVh6AZ6vFgMQePFv3C6sDab4g8vL+pYRBHtFpu+RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ke2EYGto; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5OahHluwUaYB0aciGU0SrFW4AnlsngHJ7Cwk3N7UL/0=; b=ke2EYGtoThSJpmkggihm8mOUMR
+	bU/dq43rafiwb8Su+ZBsA3suIQQvmQzOLmqjGkCukrZQbtez1c6ndU75o7nIFo2iRdk2hU37q4Q15
+	NVLhAsKOk3pqw+sGtLMKmLVLDUnDRrXScQZDHHFyeSrTsxOx6QVcD5xL3FvZaPrHrvYA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tx7Mx-00754F-Ms; Tue, 25 Mar 2025 17:43:15 +0100
+Date: Tue, 25 Mar 2025 17:43:15 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
+	brett.creeley@amd.com, surenb@google.com,
+	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
+	shradhagupta@linux.microsoft.com, erick.archer@outlook.com,
+	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 1/3] net: mana: Add speed support in
+ mana_get_link_ksettings
+Message-ID: <dcfd3551-acfc-4de3-b5c1-cf8a18730ad0@lunn.ch>
+References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
+ <1742473341-15262-2-git-send-email-ernis@linux.microsoft.com>
+ <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
+ <20250324174339.GA29274@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <909eae34-02ac-4acd-8f0e-1194f0049a21@lunn.ch>
+ <20250325162527.GA23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325162527.GA23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 
-On Mon, 24 Mar 2025, Antheas Kapenekakis wrote:
+> The QoS control is at the hardware/firmware level and applies to the
+> egress rate.
 
-> Some ROG laptops expose multiple interfaces for controlling the
-> keyboard/RGB brightness. This creates a name conflict under
-> asus::kbd_brightness, where the second device ends up being
-> named asus::kbd_brightness_1 and they are both broken.
-> 
-> Therefore, register a listener to the asus-wmi brightness device
-> instead of creating a new one.
-> 
-> Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/hid/hid-asus.c | 65 +++++++-----------------------------------
->  1 file changed, 11 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index e97fb76eda619..c40b5c14c797f 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -96,7 +96,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  #define TRKID_SGN       ((TRKID_MAX + 1) >> 1)
->  
->  struct asus_kbd_leds {
-> -	struct led_classdev cdev;
-> +	struct asus_hid_listener listener;
->  	struct hid_device *hdev;
->  	struct work_struct work;
->  	unsigned int brightness;
-> @@ -493,11 +493,11 @@ static void asus_schedule_work(struct asus_kbd_leds *led)
->  	spin_unlock_irqrestore(&led->lock, flags);
->  }
->  
-> -static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
-> -				   enum led_brightness brightness)
-> +static void asus_kbd_backlight_set(struct asus_hid_listener *listener,
-> +				   int brightness)
->  {
-> -	struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
-> -						 cdev);
-> +	struct asus_kbd_leds *led = container_of(listener, struct asus_kbd_leds,
-> +						 listener);
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&led->lock, flags);
-> @@ -507,20 +507,6 @@ static void asus_kbd_backlight_set(struct led_classdev *led_cdev,
->  	asus_schedule_work(led);
->  }
->  
-> -static enum led_brightness asus_kbd_backlight_get(struct led_classdev *led_cdev)
-> -{
-> -	struct asus_kbd_leds *led = container_of(led_cdev, struct asus_kbd_leds,
-> -						 cdev);
-> -	enum led_brightness brightness;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&led->lock, flags);
-> -	brightness = led->brightness;
-> -	spin_unlock_irqrestore(&led->lock, flags);
-> -
-> -	return brightness;
-> -}
-> -
->  static void asus_kbd_backlight_work(struct work_struct *work)
->  {
->  	struct asus_kbd_leds *led = container_of(work, struct asus_kbd_leds, work);
-> @@ -537,34 +523,6 @@ static void asus_kbd_backlight_work(struct work_struct *work)
->  		hid_err(led->hdev, "Asus failed to set keyboard backlight: %d\n", ret);
->  }
->  
-> -/* WMI-based keyboard backlight LED control (via asus-wmi driver) takes
-> - * precedence. We only activate HID-based backlight control when the
-> - * WMI control is not available.
-> - */
-> -static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
-> -{
-> -	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> -	u32 value;
-> -	int ret;
-> -
-> -	if (!IS_ENABLED(CONFIG_ASUS_WMI))
-> -		return false;
-> -
-> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
-> -			dmi_check_system(asus_use_hid_led_dmi_ids)) {
-> -		hid_info(hdev, "using HID for asus::kbd_backlight\n");
-> -		return false;
-> -	}
-> -
-> -	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
-> -				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
-> -	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
-> -	if (ret)
-> -		return false;
-> -
-> -	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
-> -}
-> -
->  static int asus_kbd_register_leds(struct hid_device *hdev)
->  {
->  	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> @@ -599,14 +557,12 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->  	drvdata->kbd_backlight->removed = false;
->  	drvdata->kbd_backlight->brightness = 0;
->  	drvdata->kbd_backlight->hdev = hdev;
-> -	drvdata->kbd_backlight->cdev.name = "asus::kbd_backlight";
-> -	drvdata->kbd_backlight->cdev.max_brightness = 3;
-> -	drvdata->kbd_backlight->cdev.brightness_set = asus_kbd_backlight_set;
-> -	drvdata->kbd_backlight->cdev.brightness_get = asus_kbd_backlight_get;
-> +	drvdata->kbd_backlight->listener.brightness_set = asus_kbd_backlight_set;
->  	INIT_WORK(&drvdata->kbd_backlight->work, asus_kbd_backlight_work);
->  	spin_lock_init(&drvdata->kbd_backlight->lock);
->  
-> -	ret = devm_led_classdev_register(&hdev->dev, &drvdata->kbd_backlight->cdev);
-> +	ret = asus_hid_register_listener(&drvdata->kbd_backlight->listener);
-> +
->  	if (ret < 0) {
+egress relative to the VM? So what the VM sends to the hypervisor.
+There is no restriction the other way, hypervisor to the VM?
 
-Please don't add empty line in between function and its error handling.
+That is not what link modes do. 10Mbps is the limit in both
+directions.
 
->  		/* No need to have this still around */
->  		devm_kfree(&hdev->dev, drvdata->kbd_backlight);
-> @@ -1000,7 +956,7 @@ static int __maybe_unused asus_resume(struct hid_device *hdev) {
->  
->  	if (drvdata->kbd_backlight) {
->  		const u8 buf[] = { FEATURE_KBD_REPORT_ID, 0xba, 0xc5, 0xc4,
-> -				drvdata->kbd_backlight->cdev.brightness };
-> +				drvdata->kbd_backlight->brightness };
->  		ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
->  		if (ret < 0) {
->  			hid_err(hdev, "Asus failed to set keyboard backlight: %d\n", ret);
-> @@ -1139,7 +1095,6 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  	}
->  
->  	if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
-> -	    !asus_kbd_wmi_led_control_present(hdev) &&
->  	    asus_kbd_register_leds(hdev))
->  		hid_warn(hdev, "Failed to initialize backlight.\n");
->  
-> @@ -1180,6 +1135,8 @@ static void asus_remove(struct hid_device *hdev)
->  	unsigned long flags;
->  
->  	if (drvdata->kbd_backlight) {
-> +		asus_hid_unregister_listener(&drvdata->kbd_backlight->listener);
-> +
->  		spin_lock_irqsave(&drvdata->kbd_backlight->lock, flags);
->  		drvdata->kbd_backlight->removed = true;
->  		spin_unlock_irqrestore(&drvdata->kbd_backlight->lock, flags);
-> 
+> > Also, if i understand correctly MANA is a virtual device and this is
+> > the VM side of it. If this is used for bandwidth limitation, why is
+> > the VM controlling this, not the hypervisor? What is the security
+> > model?
+> > 
+> In certain cluster and hardware versions, Azure allows this API to
+> restrict the bandwidth limit to a lesser value than what was configured
+> by the Azure control plane. The device will not allow a higher limit
+> than what was configured through the Azure control plane to be set by
+> the VM through this API.
 
--- 
- i.
+So all this information needs adding to the commit message. When you
+are using an API in a strange way, you have to expect questions to be
+asked, and you can save a lot of time by answering those questions in
+the commit message, before they are even asked.
 
+So, i think this is the wrong API.
+
+Please implement it as a TC offload. I'm not an TC expert, but htb
+might work.
+
+	Andrew
 
