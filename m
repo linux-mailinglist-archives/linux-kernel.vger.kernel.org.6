@@ -1,179 +1,164 @@
-Return-Path: <linux-kernel+bounces-575621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09B0A704E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:22:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8264A704EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0573B5C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7256C1673DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0BB25D1EA;
-	Tue, 25 Mar 2025 15:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BCA25C6E2;
+	Tue, 25 Mar 2025 15:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oTXccmZA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t9fFNFkt"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D521325BAAB;
-	Tue, 25 Mar 2025 15:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081D025A336
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742916058; cv=none; b=Kjni0PHvS3I7pYd1IHzHbTD81QixEP0QiTC5kZa79Fx4ddtaYDmKDwcdL3GyeRy4tB4ELe9TJ+hGPWlVn7QZk2c0RK5WcjWZr/gJ98bwAVMEvdiMk/3cEZ2OWYPoJkkdfyxVdoiBFutEgMVLcLDLUbY7YARPppHge6f390Q6nOA=
+	t=1742916173; cv=none; b=k4es7Q9RFYQxO8i9jWRJ/ctXnVV4yv2PkVZJjYELqvzdr2Ue/mqj0FfSAirpZ29x7UxSS9EUYoEmaLQxGBnFEZQcXr3NQ65PTHXe19ZAGKwG6jSWRWSD39rMGKr/Cb5mDmm0aNUKkWGQl4KuI2hdVXig1TBZVDlijvXJzn9n2eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742916058; c=relaxed/simple;
-	bh=6PTx7Qnvw8HdZAQZzxdvDTe2LyRa83x4/p2m4DpCrC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QFRwPk3swUobkkBbuZgJvV9CvI50V2BJkf5mln4qXa3R8OKv7mSns4XzWdwLITgkS3ncGMVcM3VFx5epOkGw8hjRHdMD5pcw8CIFfTpBIiECcJi95CIkJSqHkOJYWbmlMFiWKYMhHyOJjEzgBQPu70k/7/KWlvrKYByn1sBNVRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oTXccmZA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PFBVmW005427;
-	Tue, 25 Mar 2025 15:20:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	99jQ2nlZEiAOniNnZM9a4jOlhArr5JS51LLQ2XWoYnA=; b=oTXccmZA3rlafmZx
-	56T8RfAvDADf7OsrtY1VtWFDNZmcq/C7QLJX07Yj7tG4NWlb6+44JK+KaBsGf6pD
-	u3v9YvxfK2cuBRao45EOT+bSht7a9gsByeB07kAg+yxkcARwVnRWOE8yJ0qeLjLZ
-	Cw+e6u62E5eYr0FgnI+1gPYuiPFvuQQDi4783l3nlBzGXhKg5X+CDjDY6TP8Vvnu
-	827lORaWf1hhjoE3ewiXj+q0CchMs//k6Cfn77LFFdv1qQp+WuVVdzG35KjSsRUc
-	THcX42OtvJ4/sDwrzGe7oB3hi0Z+OkciPK/8+e/W8IYgyRP1DtjfXGi3Da2Q8uhM
-	C5e2pA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmd320uk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 15:20:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52PFKXrb011318
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Mar 2025 15:20:33 GMT
-Received: from [10.253.12.41] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
- 2025 08:20:29 -0700
-Message-ID: <d4747355-65c2-4361-b515-e9c0945badfb@quicinc.com>
-Date: Tue, 25 Mar 2025 23:20:27 +0800
+	s=arc-20240116; t=1742916173; c=relaxed/simple;
+	bh=vs+t2NdfqiK4z8GbA1CIrnlz9zIFlKWM1eLzsT7vTkA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dciKh9gtlSBDpdn36iSvWDErpQ3AgmvWEC+ewgdq2riGCZN9gC/tk6x4uTKCSxWwfFV66gS6fnD213SIXMxAJxr09Tx1IZvELqJkiVhCF/ZjJUZqDJBJ0Te/daVeqveTwGc/8xZ4WQ7tpIrKKuFttKueGHwob0VSMW9jxWMIqy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t9fFNFkt; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-524038ba657so5550756e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:22:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742916171; x=1743520971; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FR1psq8rYb0jVgAPAumoNgxnKTwTi/S55HLEy0wx1vw=;
+        b=t9fFNFktJsSi83AKlQTzXkk6PGNEFn+kAhEkyuCV0/HkEsw2osEztVG9ByM7A3JmVM
+         DioQoImuLuEnZhXYQ8cRljQmzFR6zHTLut1tzx92K0In0O/ORlw6+Gncu/Wd0F/iSgVp
+         W8tI8nzGw0TdOnYnZdxJN2XcLGKkNddZna654lJQjbc89a0Fck/6mh4Pe6QS4GJkHwVn
+         jz07/BC0sdw/lmTODEFAGq5czvkxHops52zgioLxUEkXFiCuSKDn+yV7DO9E8/C4Bd5V
+         vXylB5RvjTF1bXoe80EKzxM9GG98ltQnvIYlOPTsskvbt6lxkWBgmvr37wqP+6w5xk9B
+         J3IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742916171; x=1743520971;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FR1psq8rYb0jVgAPAumoNgxnKTwTi/S55HLEy0wx1vw=;
+        b=OTZm8Rz0Qit8CqQWKa7gjLoO9EKqO15xTQwtnRYX1kCcSZX+TS8a0pXAMStzuMt2yH
+         ID0cZe8jFM/+lRwW+DyeUz3qwh+fU+RmN7dhALurD72lvweZEI/bPGNkwF54FbNuVXK6
+         vQsM/IS8VzJXCHgZGgM0+/ZeGqRZD3xXw2dzgKDNFIbcENTKP4aoJeJ5NkvpvRxc6cQE
+         pq6vGzZoeSaYIj89m/FmcCyNc/iEMkFeaMS0FqiPquWfNJD0R9VfNklO9XOtgrIZgcRC
+         ZvgOHqkt+M5+eX/R0txFXhNd4h7EitaWzjuz8pxTWBZ71AtoCuU1a53cTAakyX9fMvbU
+         CehQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUTAYFd+EFuNi02usbr6dV6Z778I9zefuH7eMmFVoLT3tqJgGMg3OmmNTH7Kr66jemmwQhVdoGYD8mX0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5ZkT0BGgxBiOkjxSHji9BJDHYY7X2OfploF2FFA4UPeicecvD
+	nYvSJnLVAe13VD5pc0S68wTIDU8HBawCMAsp89PqVq/arlT7nRcDB8BJEwEq8EXcexoOmZkyV6o
+	7IYsvZVoDnGSRkA6uhDLE+gkxyRboezMw3pw7rg==
+X-Gm-Gg: ASbGncsl2AKhfNTMaEcTnMR40TKd56kmhqUL7sb1Pz2pfMH6snCkWT1CBa5KW46u+dU
+	wwLNCIcD9CrQg5Vqi5BBhlcl3xQfaQSY3OJ7/zPEwzRM3/Fb6UNuBAEn+oWGcon2Cv0SUoTbfr1
+	i336a/PEVsQrhXiprRzn8msVJrQyxxodA55Eg5z/hBud7ekuWgHLh04i6yEjWx4xdjEByK7w==
+X-Google-Smtp-Source: AGHT+IFPyQveoVq2SQJDsUBSx33+PpHB6pNXsSERn8w+t52W+nsQCR7YrtRu8eLNlWuhbuil8gCmDMnrysGjzJPJ4tM=
+X-Received: by 2002:a05:6122:a24:b0:51f:a02b:45d4 with SMTP id
+ 71dfb90a1353d-525f0acd8a5mr202640e0c.1.1742916170612; Tue, 25 Mar 2025
+ 08:22:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
- IPQ5424 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
- <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
- <20250325-imposing-wine-jackdaw-fb0af2@krzk-bin>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <20250325-imposing-wine-jackdaw-fb0af2@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2rXMjlUu3O3Pf0R624JVrXJSUsNJ9e_V
-X-Proofpoint-ORIG-GUID: 2rXMjlUu3O3Pf0R624JVrXJSUsNJ9e_V
-X-Authority-Analysis: v=2.4 cv=P646hjAu c=1 sm=1 tr=0 ts=67e2c9d4 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=L8H8-DU4cjMHBsthIx0A:9 a=QEXdDO2ut3YA:10
- a=RVmHIydaz68A:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 phishscore=0 mlxlogscore=999 priorityscore=1501 bulkscore=0
- mlxscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250108
+References: <20250325122156.633329074@linuxfoundation.org>
+In-Reply-To: <20250325122156.633329074@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 25 Mar 2025 20:52:39 +0530
+X-Gm-Features: AQ5f1Jpu_5veFnVwrvzd6ONxa6kMdH0QnKmtM7yQuJWdcSN64QgsvR2p84j7Rx0
+Message-ID: <CA+G9fYss7RcH=ocag66EM4z26O-6o-gaq+Jo+GOUr2W773vQOw@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/198] 6.1.132-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dragan Simic <dsimic@manjaro.org>, Heiko Stuebner <heiko@sntech.de>, jorn Helgaas <helgaas@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 25 Mar 2025 at 17:55, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.132 release.
+> There are 198 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.132-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
+stable-rc 6.1.132-rc1
 
-On 3/25/2025 4:19 PM, Krzysztof Kozlowski wrote:
-> On Fri, Mar 21, 2025 at 08:49:52PM +0800, Luo Jie wrote:
->> The CMN PLL block in the IPQ5424 SoC takes 48 MHZ as the reference
->> input clock. The output clocks are the same as IPQ9574 SoC, except
->> for the clock rate of output clocks to PPE and NSS.
->>
->> Also, add macros for clock rates that are applicable specifically
->> only for IPQ5424.
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml        |  1 +
->>   include/dt-bindings/clock/qcom,ipq-cmn-pll.h                   | 10 +++++++++-
->>   2 files changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->> index f869b3739be8..bbaf896ae908 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->> @@ -25,6 +25,7 @@ properties:
->>     compatible:
->>       enum:
->>         - qcom,ipq9574-cmn-pll
->> +      - qcom,ipq5424-cmn-pll
-> 
-> Same comments as before... keep the order.
+First seen on the v6.1.131-199-gc8f0cb669e59
+ Good: v6.1.131
+ Bad: 6.1.132-rc1
 
-OK, I will update to keep the compatible strings in alphanumerical
-order.
+* arm64, build
+  - gcc-13-defconfig
 
-> 
->>   
->>     reg:
->>       maxItems: 1
->> diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
->> index 936e92b3b62c..e30d57001c38 100644
->> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
->> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
->> @@ -1,6 +1,6 @@
->>   /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>   /*
->> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>   
->>   #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
->> @@ -19,4 +19,12 @@
->>   #define ETH1_50MHZ_CLK			7
->>   #define ETH2_50MHZ_CLK			8
->>   #define ETH_25MHZ_CLK			9
->> +
->> +/*
->> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
->> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
-> 
-> Just come with different header. Why was this called in generic way,
-> since we ask to name the headers based on compatible?
-> 
-> Best regards,
-> Krzysztof
-> 
+Regression Analysis:
+ - New regression? yes
+ - Reproducibility? Yes
 
-The DT binding file is named according to the compatible string, however
-I had incorrectly assumed that this recommendation was applicable only
-to the bindings file. OK, I will add a compatible specific header file
-to support the SoC IPQ5424. Thanks.
+Build regression: arm64 dtb rockchip non-existent node or label "vcca_0v9"
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build log
+arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+(phandle_references):
+  /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
+
+  also defined at arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:665.8-675.3
+
+## Source
+* Kernel version: 6.1.132-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: c8f0cb669e590c6c73c274b9fc56270ec33fa06b
+* Git describe: v6.1.131-199-gc8f0cb669e59
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.131-199-gc8f0cb669e59/testrun/27755718/suite/build/test/gcc-13-lkftconfig-devicetree/details/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoE2WrLPnhBvFm7ejgwd6QJxk8/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoE2WrLPnhBvFm7ejgwd6QJxk8/config
+
+## Steps to reproduce
+ - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+--kconfig defconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
