@@ -1,190 +1,198 @@
-Return-Path: <linux-kernel+bounces-576264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234A3A70CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:36:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9C4A70D08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 747FF7A62A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276CD3BB80C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29118269D17;
-	Tue, 25 Mar 2025 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604FB26A08C;
+	Tue, 25 Mar 2025 22:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1fchmnu"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gyDsKAvQ"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CA61E1E05;
-	Tue, 25 Mar 2025 22:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742942179; cv=none; b=AhFpxIkxKgjFQKJ8TXcR43tFWYwAvVPv/e2JJQhnRAZH7eRHJRnYW/fPiD05nPqv0zWFG1Z6HsdwtPIZsq16aTmyGATyxG0LzcmfOAjm7Z16kEPOOt24qVM2zmH+HbQeNxi5IxlBWxH3IJHQqGkEjz03vT9grPdtJ+Jj5wpFz5s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742942179; c=relaxed/simple;
-	bh=gf0QVH3ClfVnh9TAPZXKqyK/98W4k+fNIruViGOwN08=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UaSGXaJKfXdK8Wc72hIOWWdLJS8WM/R3rZKZQzgEkFQzRjmAY5DvlZtEA6J6COXbVyLWWoZuumeBfJRtjR7fUlJwGRTz+Atd59Lsyvv68U7L3f+Bdkz3SCO02WG6dKBdheUNvfFWl670g+qlfgOSoR71eRHOl+RWnBChCN/pRDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1fchmnu; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301e05b90caso9585458a91.2;
-        Tue, 25 Mar 2025 15:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742942177; x=1743546977; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=JLVF8BBcCX9EFNyurFh/9xV8/0ZaAQTFAX4iYbHSE7Q=;
-        b=Q1fchmnuyUQbJWnc++6fDZNZmZLPXS672gqueAo3noAhxpL+BveX/d8TLhehXhCgco
-         lJMvreGXrpVE6L+rVxfGRmGkgdSa+AkcNBBnOlaB5hln6GudZQJe3yM7mzq3R/0O6rnA
-         885OdHnlcXeeE1ajlkt2LYOQ3IcOUw5Ls1GUkGhU4qMNI0JiaIY5iE7C4CAixuOhAQBV
-         RK56OWC8NQmHI4VxkMmtaL5Z41lMZY1MTAs+zByHHhq1X9W+c9oaxcMXR0NvqRtbYSd1
-         sKf9AUIz5shQ5zOLjUWHyRdxDT7WXr2YNmT47hO37imqFLY5lOXzZdg7kuL3LNxTfvA3
-         AzrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742942177; x=1743546977;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JLVF8BBcCX9EFNyurFh/9xV8/0ZaAQTFAX4iYbHSE7Q=;
-        b=MdQ7BwzaVKV35qaBoVDoA7fJt207BOhXFp741QZa2bLPCHi/9+lDg9U44za4bmg6iS
-         HzPlb1+Vmd42n0MiKqFKIILhHLUp9hI32MlXOBYp5ZlmMnVGszOhOs4O+vJKubZDjUZY
-         Szx1zUjgkjnFy7/pKH1IzFrTlI35MSGB0J2T7qIU+CFUGl4J4dl4YHiE5rz1a+XmEgt4
-         Q6FNTfaQFCQ0iGFtAF4f3Uk/ILOZCJJdoj7exYKrdMCXZ2qVKC3oUTnjXKABimwLAqif
-         cv1lZOZ7GkxITNhWT2j/SlrEr1hOqPC9qenGenXLHiP02d+++mtfbeiVH8XQzZgNieFl
-         4q8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPzswMG1EPGLLrinTQDjvKOhx4RPGJPmqC/e7tW237QMEI+cWbog72bqlq2udJXbXy++yCJRaSGg4GTkCk@vger.kernel.org, AJvYcCVRpu8TEufXmDC9ytatnAjkYzH0gx9BvJBFpweWquN3qwxg3iYaFTmlRwdE6BMWvV/cnc0xHZC5WIMQ9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw024+OMzZiGfQWWFvDyWjMFOJCdUTxnW/vVJjm1AwblIiVm+l7
-	uDf1a1GBKzP6wDQT1PhuncBj0HnK5nyq+tFymebfxygnsIHZRRMegRH5tw==
-X-Gm-Gg: ASbGnctI3GwdS9uJ8okdApbdnonW2fln23P8K7LS2k4u9EhmQ2h5Cfi35u5iXC1s4Sg
-	t4U8DhqY6l6gD99eg9T3uHJruJ1uOhL26YwQTQkptc2TDCZ4ufyBYyCPXabZEjUkSunKh9Iyr2W
-	DO82uJQGnSB4OpmZFTGo3mxCt1BA1vztQoTfnpie+pXgEHdOBFIoJ0tPDZi+qRTmrAXoeua/DUA
-	mq2R/qAid8VgTg4Xnj7KDFa43bFlx8fRiIFhBg/CWySmGoIPR2sY02Y/vJPXeZVW1J2Hdvz4atq
-	iX0v8YbuKZZzcAoE6RtlqVpbix8jw66lv2VsTtwoqs99/kN7mE6h5LldZSsNBGdFqWMhPhMZ/TQ
-	+ShTzY3iTjFl3dhNQRA==
-X-Google-Smtp-Source: AGHT+IECppBUFTKZnbtSW5oPIU1oodXvMxlmlCTZ6HDx4Xw6gCkWYaBd8LLsNdAIigl3L90Mm9EVcg==
-X-Received: by 2002:a17:90b:1d46:b0:2fa:1851:a023 with SMTP id 98e67ed59e1d1-3030ff11268mr30422717a91.35.1742942176619;
-        Tue, 25 Mar 2025 15:36:16 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf61a48fsm14933743a91.33.2025.03.25.15.36.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 15:36:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e6301e40-b925-4dcf-9306-d8b4ae6b70ce@roeck-us.net>
-Date: Tue, 25 Mar 2025 15:36:14 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D083E1DEFD7;
+	Tue, 25 Mar 2025 22:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742942316; cv=fail; b=DDEbhXpPC/VKIWPh95HZqMg1mAYXFSJtJw/YuC1im5NUcj+lCaUenL4oXkn2uD/ja+CH1fWXXEPylqSWEFtV//acAjEY8zMfXRDqJWvzgZU5V7axBQUXOHaeDDe8peEwx5mX5MX45836oIEGGeJuUBeLrk26JS6SHsA3yVxt0tA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742942316; c=relaxed/simple;
+	bh=jIRfNwx93BIKX24euHDAhng4UZOnfb4YAcAxkXd/nuA=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HWumVfDXcY34lSLxgZ42ERBidDTNLyzuN1QyBfy6C+Pbzq0EP6P6GlGZjX61ONzwHRDWBAuDUnjORLZj7CFfouMzjq8+rYK0lasq09KIApkx0eANIeqHLCTb7IqdqnBrA98/LpbKBSeJ3NJ9qXCzy66eO4Do6I77+bJqjhgxYBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=fail (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gyDsKAvQ reason="signature verification failed"; arc=fail smtp.client-ip=40.107.223.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zzd6sr/w1Sy2oi1qlugpzLKYQngVA3SGD6Ei98qBi0Du4/ZS2ZIt5FKOExRdWLSRWsvDbwP9u7VbjaijZ2sIWuhE+5m2TiWP+HpkBhSUF2Sl68yqMj4huSQIXFNKPmVvk8zEAPjiOloTJeBDC0SJ+v/pEfH/vRuTZfhO3sf9i/tdD3OXyBWcscrcw4uhGjmdHweXfD7j8zu2GO3lG/WH9RoLsOeyjvRpQuRkQm3hfaJtJOr+g9r6aalqJaDrUleCxsQ8kPaSrCugwHgO4mSx+WZjdTLArLy/3EH2Ib653yIAVG4WnlEuWvF9EOHGyzazjoglA8mKGRoR87UXDsBs2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cFTknCwEj4lQMXPooqOdtKCPu0v1//MkRbjqh7V3orM=;
+ b=vVY1GwAUDhncQT0lBMj+H8q1nS1JBxGMpz5D4JskSU3wsxn9kbg07Ta17BMKQEJJvpF/Ga+ApX7JI2LykjdOSGFJQE7CdHIMKlcsSK4tFHa7kjyvXuv7UZy+4hTH6SIZHdKiFKgHoT0MvWOC7OOl8HzigdD6NBDEDbKyEQth89pu5uIoxUTOqIHyYj+Z1blAOX3fm22bqKk87urBIVC4pL8DdAxyHNeKAT5jWuUg2D84GZfgTBjpqJkw5/n9MDy5adJ/Yp74t/BMbqBXTN/1PeZOkfEWWXhHw9vDh4CbMO65dzBKu0YZyVdXCsgALCqTXVWfC56es5WYHSwZKP3A3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cFTknCwEj4lQMXPooqOdtKCPu0v1//MkRbjqh7V3orM=;
+ b=gyDsKAvQJtm6v1Rx6/Fmqa5Z2/nJyWye5O+BlYRWRmsFxiox2dsEsSvQWWW+dw9QjlmXpEaswF1VBu9eym7qmZyq+Os2hCgARBjWQhOSwaZ5u1FP7L3jGaVrQyr8qxl84n2EQ7slWgsjEsM6/I7Ur9kL7uJAk6YuMXgmQIUO2kI=
+Received: from MN2PR08CA0029.namprd08.prod.outlook.com (2603:10b6:208:239::34)
+ by CH3PR12MB7666.namprd12.prod.outlook.com (2603:10b6:610:152::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 22:38:29 +0000
+Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
+ (2603:10b6:208:239:cafe::d5) by MN2PR08CA0029.outlook.office365.com
+ (2603:10b6:208:239::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
+ 25 Mar 2025 22:38:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8606.2 via Frontend Transport; Tue, 25 Mar 2025 22:38:29 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 17:38:28 -0500
+Date: Tue, 25 Mar 2025 17:37:52 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: "Aithal, Srikanth" <sraithal@amd.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bhelgaas@google.com>, <sfr@canb.auug.org.au>,
+	<syzkaller-bugs@googlegroups.com>, <linux-next@vger.kernel.org>, "Roger Pau
+ Monne" <roger.pau@citrix.com>, Juergen Gross <jgross@suse.com>
+Subject: Re: [syzbot] [pci?] linux-next test error: general protection fault
+ in msix_capability_init
+Message-ID: <20250325223752.f5tjazbpbblgppyz@amd.com>
+Reply-To: <423b87d8-2ae3-48af-b368-657f1fbab88d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Add support for CCD temperatures in AMD 1Ah CPUs model
- 0x40..0x4f
-To: David Hows <david@hows.id.au>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <78352732-6494-4c29-a79b-879a8898bac5@roeck-us.net>
- <AB8136A4-472C-47E4-A783-3C1CBD67D869@hows.id.au>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <AB8136A4-472C-47E4-A783-3C1CBD67D869@hows.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|CH3PR12MB7666:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3d4155a-5261-4047-9d49-08dd6bedc3da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?ckNW0UhqRgqyuTnhv7ZBIYnvQWXw6rZPSbBAkRkJrMJV5oepalMiS57PRT?=
+ =?iso-8859-1?Q?dYU+9a7JewgGf3/rE6H2OaEdNB8a9r2zk9Ft241BbmIFvGo+eyeRS42JmZ?=
+ =?iso-8859-1?Q?3zv6j0fLNGh68Pj8K/UCuGRymv4a8149FglPQz0FTNJ1TT9NAtKZRjVuWs?=
+ =?iso-8859-1?Q?ribhEu1lTglw/cjutb7pHKZhQYplo0WBkILYKtggfMxCHOlLRCnc9TpErv?=
+ =?iso-8859-1?Q?geThbsU80opz08iNtXO2XTItVgDZ1WQTWDfglQ0k24lvuI9RtE3zsgi9ik?=
+ =?iso-8859-1?Q?eBE3+M5G5g7EIQjZW/O1bIPRk0+o4ITQDhy/um3IJZmL7qemxcAcUKVXRP?=
+ =?iso-8859-1?Q?0agOeOLXOOohX5iUQLZUgmVsABlLc/fjFtcMUCcP0zWGpVe0it5a8CTWdr?=
+ =?iso-8859-1?Q?Y4tEVwXc+cGG8rTnp3Bak7KiX1SAQW0kaQR6nCVXQUKcsGPHUHgbNM2aft?=
+ =?iso-8859-1?Q?zGWykYNjCGqRinGC/ZkU72TN5Dn8g/HtwB4fBnEX3kqjnQNwBow0SK/R7O?=
+ =?iso-8859-1?Q?gjn2a+j0vAZhAAOEbwetr3XzwYvKQGd+az/r8icdByW/Yt1zgQPrTpwbTE?=
+ =?iso-8859-1?Q?33QnfI0SkhsDqncZd4KnjVcAVD6usVZU7fktITyW/soZRErc8BMUJu8yDm?=
+ =?iso-8859-1?Q?IJsCohaIaGaZ9MIf0YY5SxtgNvxoJV6tG7vJRcMLuurDQOauyHMJduMFiR?=
+ =?iso-8859-1?Q?dpTY8FJvUFmq7BOnvGRUjm+3+ysVaH56zsQmiPUKPXh3UgT/Qy4Wf0NU+F?=
+ =?iso-8859-1?Q?FQF27Km6QrSIYmfkiBw6P2AfZGG1y71LzScquX8g+0Fgo6EXYuDyhHLNZU?=
+ =?iso-8859-1?Q?fRWq38EV7H9EsUUxXIywj3vMlpfvH0uMVs9rNLFG1BEnFmQG75ngH6UgHm?=
+ =?iso-8859-1?Q?M2SocIKbz9X6MtIzy5kYl1VmNa3cUZF3a/ikaTcL61u6DZ4mh7UD/RmQA0?=
+ =?iso-8859-1?Q?JT2pavErnIKFbGZUm9+curAwxJVYwLLCNM9JrWjXHCul4q/6T0Z4MbYgEq?=
+ =?iso-8859-1?Q?VArvUAcLG0r/trBf8W3qHgzSOVZ7kxwGF1rezOVpOVfW6KD+EaW+3CgBBY?=
+ =?iso-8859-1?Q?RdWMh3fSdzQpFoJCbweD/bnoWmsVQ+YeaL+oFZVAsdsSWh55ZXu8Och0zH?=
+ =?iso-8859-1?Q?QhYaEDe1HCBixNb005NJVNIvwYhRiNmMjz3SDQaJ0YjjRfte+KPYNln3w0?=
+ =?iso-8859-1?Q?pv2kymdwdysbcE4AqetZ8Do329dh+8AgETk3WTc+vWuadSgp+ngAmbA+BT?=
+ =?iso-8859-1?Q?97MfZxI7+H/o9dq3iI8+R5/Dw0fM4bvck2mENHhtReEXIetRcdJa2ySYkm?=
+ =?iso-8859-1?Q?kVfLpQJeONt88JtyxO2fAWRAjQxLfkNBczvwQDQYsL2q06NdCGSQ9hHwIk?=
+ =?iso-8859-1?Q?p98NTigo46pi25eqLQupQ0/qhvPJU1o1YfvW+I4PWPP4eA4IBNtYY7aZwF?=
+ =?iso-8859-1?Q?0nuI8gSRj0bjMsqbHhBA4eW96fsNVIA2zXNOk0ZUqFxChE6r219SkKVFk3?=
+ =?iso-8859-1?Q?GP2Nh2KRGrFoTgTfg+vlh/q18BZ6uMkz3hEqU0Al3GyOM0jOl2jzerp4oD?=
+ =?iso-8859-1?Q?h7DzHxBs4aXtAUklpv/ryE6OPRmQ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 22:38:29.3304
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3d4155a-5261-4047-9d49-08dd6bedc3da
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06B.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7666
 
-On 3/25/25 12:04, David Hows wrote:
-> Thank you.
-> 
-> Should i make changes and re-submit?
-> 
+Also able to reproduce this trace on every boot with a basic KVM guest on an
+EPYC Milan system using next-20250325 for both host/guest.
 
-Yes, please.
+A bisect of commits to drivers/pci/msi seems to indicate the following commit
+is the source of the regression:
+
+  commit d9f2164238d814d119e8c979a3579d1199e271bb
+  Author: Roger Pau Monne <roger.pau@citrix.com>
+  Date:   Wed Feb 19 10:20:57 2025 +0100
+  
+      PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag
+      
+      Setting pci_msi_ignore_mask inhibits the toggling of the mask bit for both
+      MSI and MSI-X entries globally, regardless of the IRQ chip they are using.
+      Only Xen sets the pci_msi_ignore_mask when routing physical interrupts over
+      event channels, to prevent PCI code from attempting to toggle the maskbit,
+      as it's Xen that controls the bit.
+      
+      However, the pci_msi_ignore_mask being global will affect devices that use
+      MSI interrupts but are not routing those interrupts over event channels
+      (not using the Xen pIRQ chip).  One example is devices behind a VMD PCI
+      bridge.  In that scenario the VMD bridge configures MSI(-X) using the
+      normal IRQ chip (the pIRQ one in the Xen case), and devices behind the
+      bridge configure the MSI entries using indexes into the VMD bridge MSI
+      table.  The VMD bridge then demultiplexes such interrupts and delivers to
+      the destination device(s).  Having pci_msi_ignore_mask set in that scenario
+      prevents (un)masking of MSI entries for devices behind the VMD bridge.
+      
+      Move the signaling of no entry masking into the MSI domain flags, as that
+      allows setting it on a per-domain basis.  Set it for the Xen MSI domain
+      that uses the pIRQ chip, while leaving it unset for the rest of the
+      cases.
+      
+      Remove pci_msi_ignore_mask at once, since it was only used by Xen code, and
+      with Xen dropping usage the variable is unneeded.
+      
+      This fixes using devices behind a VMD bridge on Xen PV hardware domains.
+      
+      Albeit Devices behind a VMD bridge are not known to Xen, that doesn't mean
+      Linux cannot use them.  By inhibiting the usage of
+      VMD_FEAT_CAN_BYPASS_MSI_REMAP and the removal of the pci_msi_ignore_mask
+      bodge devices behind a VMD bridge do work fine when use from a Linux Xen
+      hardware domain.  That's the whole point of the series.
+      
+      Signed-off-by: Roger Pau Monn� <roger.pau@citrix.com>
+      Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+      Acked-by: Juergen Gross <jgross@suse.com>
+      Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+      Message-ID: <20250219092059.90850-4-roger.pau@citrix.com>
+      Signed-off-by: Juergen Gross <jgross@suse.com>
 
 Thanks,
-Guenter
 
->> On 25 Mar 2025, at 11:46 pm, Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> ﻿Hi,
->>
->>> On 3/25/25 04:14, David Hows wrote:
->>> ---
->>
->> The subject should start with "hwmon: (k10temp)". Also, it should really say
->> something like "Add support for Zen5 Ryzen Desktop" or similar to better
->> describe what it actually does.
->>
->> Every patch needs a description. Please see
->> Documentation/process/submitting-patches.rst for guidance.
->>
->> Thanks,
->> Guenter
->>
->>>   drivers/hwmon/k10temp.c | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
->>> index d0b4cc9a5011..cc2ad7a324f9 100644
->>> --- a/drivers/hwmon/k10temp.c
->>> +++ b/drivers/hwmon/k10temp.c
->>> @@ -502,6 +502,13 @@ static int k10temp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>               k10temp_get_ccd_support(data, 12);
->>>               break;
->>>           }
->>> +    } else if (boot_cpu_data.x86 == 0x1a) {
->>> +        switch (boot_cpu_data.x86_model) {
->>> +        case 0x40 ... 0x4f:    /* Zen5 Ryzen Desktop*/
->>> +            data->ccd_offset = 0x308;
->>> +            k10temp_get_ccd_support(data, 8);
->>> +            break;
->>> +        }
->>>       }
->>>         for (i = 0; i < ARRAY_SIZE(tctl_offset_table); i++) {
-
+Mike
 
