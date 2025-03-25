@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-576082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFE1A70AC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:52:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28721A70ABB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF24516B2F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF0A188B0D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178B51F418F;
-	Tue, 25 Mar 2025 19:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEMT7v/u"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B27E1F1526;
+	Tue, 25 Mar 2025 19:49:12 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AA11F3FD9;
-	Tue, 25 Mar 2025 19:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA1A1CAA9C;
+	Tue, 25 Mar 2025 19:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742932173; cv=none; b=NdlX4RmSRk2EyjwQqRAf35LZ1PN8hiVrXisHvQgNYYbwjk348scy4JsxXXKnjgP847PUMJSgHerwv1NE5oxKmEGsAt5QqG6SsyKert+iVKr1zmFQDt8C7dL4ir/f9U8g3D7etORLT1iduYdnzrdLyXGQZqqd51cNDbfmNiWekf8=
+	t=1742932152; cv=none; b=pl86t751Fa7wJYCY+SshqyFrTNrSBNk9XACLg6BYEhJH0Gor9h3okHjyHD4hIOrlN7uwesVMBqcETYWBbID/FAf6cEQtsOKxz6/GTYIbC6BgDV6QQDEvwo2gN0C8NSxBneGyCOkIwJ+J4NkjpTzcgW6ySgslUHVR/9/NPFDXBXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742932173; c=relaxed/simple;
-	bh=PBdlfqXugO2BiYFTNYFV+vhtp4+EVWOejcXfNbvjCx0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Uz+joF04UJeqULK3g9z2sYPfUMTUcQipaU6ZfMzt8iFpf1nw7kNSEris1MGi3ot2GpHX2YS6iMO6uAWWLz2t8olTWr31da2o1BRMs5OmIKVaLEfuN4wtRzSEA/fDjpJ+gRGiVsijbC1S++pNCyp+M0Xzo68/CaFwEzkTudr0iB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEMT7v/u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E26C4CEEF;
-	Tue, 25 Mar 2025 19:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742932172;
-	bh=PBdlfqXugO2BiYFTNYFV+vhtp4+EVWOejcXfNbvjCx0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tEMT7v/ubC9X7+xm89kaiOUC2rk9SvDYlDw8IEd7l+83f2r+pEdnjinYE3wxaOfI4
-	 PNrSGnONQchrnc4VAz35TSJ3wdtbwFzhR1uiDDlGy+ZfH5HJpA8isIKgs4otYvEaYM
-	 8AVka+xbBaPHwe2XkbabWeu044wfsCP+oiJooEb8CJYOxLchKzkJHVbHmCMGg02jAv
-	 XFI+a4G8C6RByyzYyJglK3p5DRO4wZRDAnOV1pdgrK6CtLaFJhJQiKyCT5psBWDhb2
-	 vQZLJD60DjuNyjjmTLvfeQaSaF44EWlQuJqYC5M7lhaonAHQ2O/ojE0O7YFsAk0GGF
-	 Lf/zGr/gPtvUg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
- Sally Shi <sshii@google.com>
-In-Reply-To: <20250307220922.434319-1-namhyung@kernel.org>
-References: <20250307220922.434319-1-namhyung@kernel.org>
-Subject: Re: [PATCH] perf bpf-filter: Fix a parsing error with comma
-Message-Id: <174293217243.2401011.8039718227768171802.b4-ty@kernel.org>
-Date: Tue, 25 Mar 2025 12:49:32 -0700
+	s=arc-20240116; t=1742932152; c=relaxed/simple;
+	bh=upzxSgG6f7CYOVrBvqIfcjjoIdI0ZTBLwP/LjgwfYRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hz5THPyog6GRZvE7Q9ho+0Tc5CAak3F53amJvpNlAo2YIS+u5ImEYQ1ElsKJ0kGY92dz99HHsv0ApPKkgRzscjhsjIJ11f0oZPfdpAj0xhInko9ef3V753wp9O+In/Apb/977KWWGd1A86U7P5ZNpMfFQt4N8PHLIfw/QOV69Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39583C4CEE4;
+	Tue, 25 Mar 2025 19:49:11 +0000 (UTC)
+Date: Tue, 25 Mar 2025 15:49:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/1] tracing: Show last module text symbols in the
+ stacktrace
+Message-ID: <20250325154955.5ed4fa33@gandalf.local.home>
+In-Reply-To: <174282689201.356346.17647540360450727687.stgit@mhiramat.tok.corp.google.com>
+References: <174282688292.356346.8368421078882769536.stgit@mhiramat.tok.corp.google.com>
+	<174282689201.356346.17647540360450727687.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
 
-On Fri, 07 Mar 2025 14:09:21 -0800, Namhyung Kim wrote:
-> The previous change to support cgroup filters introduced a bug that
-> pathname can include commas.  It confused the lexer to treat an item and
-> the trailing comma as a single token.  And it resulted in a parse error:
+On Mon, 24 Mar 2025 23:34:52 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
->   $ sudo perf record -e cycles:P --filter 'period > 0, ip > 64' -- true
->   perf_bpf_filter: Error: Unexpected item: 0,
->   perf_bpf_filter: syntax error, unexpected BFT_ERROR, expecting BFT_NUM
+> Since the previous boot trace buffer can include module text address in
+> the stacktrace. As same as the kernel text address, convert the module
+> text address using the module address information.
 > 
-> [...]
-Applied to perf-tools-next, thanks!
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202503112303.D7g66VSd-lkp@intel.com/
 
-Best regards,
-Namhyung
+FYI, You don't add "Reported-by" and "Closes" tags for kernel test robot
+reports for previous versions of a patch set.
+
+It even says that in the report:
+
+   If you fix the issue in a separate patch/commit (i.e. not just a new version of
+   the same patch/commit), kindly add following tags
+   | Reported-by: kernel test robot <lkp@intel.com>
+   | Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
+
+"not just a new version of the same patch/commit"
 
 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v6:
+>   - Protect module_delta by RCU.
+>   - Make nop make_mod_delta() for CONFIG_MODULES=n.
+>   - Rebased on linux-trace/for-next.
+>  Changes in v4:
+>   - Move module_delta to trace_array again.
+>   - Use bsearch for lookup module_delta.
+>   - Revert the boolean logic to avoid '!',
+>   - Fix !CONFIG_MODULES compile errors.
+> ---
+>  kernel/trace/trace.c        |  133 +++++++++++++++++++++++++++++++++++++++++--
+>  kernel/trace/trace.h        |    8 +++
+>  kernel/trace/trace_output.c |    4 +
+>  3 files changed, 138 insertions(+), 7 deletions(-)
+> 
 
