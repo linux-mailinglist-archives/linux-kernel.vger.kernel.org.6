@@ -1,166 +1,149 @@
-Return-Path: <linux-kernel+bounces-575733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E82A70696
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:18:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224F4A70697
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70CC43ACB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B40753A9EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB40920E30F;
-	Tue, 25 Mar 2025 16:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A0625BAA8;
+	Tue, 25 Mar 2025 16:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="etuhEHLc"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HD1XM9m/"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0BA12EBE7;
-	Tue, 25 Mar 2025 16:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8542C25A631
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919403; cv=none; b=nYOnV17V0IW0sTNRAGThZVTAUwpxFw2ipjaacY3ieTnrPQg6KRquWpm+XbzvzlN7LBUO4vnLN1a8mbd3QdrOZl+LJ0VUx6o0cfkdK2ALAAET5O4rbYmp0OuB90ybNWi8lcNwNgSX8fQn77dSy8cyXIdnPjbawFEXebcQTiS3To4=
+	t=1742919435; cv=none; b=l9V/KQIuv+zr9HVJbUlkg/M6Q71NFGfBCeLefqgd89J/QMRm0zH5+FeHOAzclWs+XN5GO+4MUsVsD6XLobGzG5AcCiZRnyf9LeWmlHIjcTGDHwAmu7UnJFcH+C4wWDeWe9VmP2VtVKmbKF+76JAfmrvEOP2iKjesvmglRzzHeI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919403; c=relaxed/simple;
-	bh=8aUjtTkLVSkcyr6ieKYqb/IyOv7g99gpoF5vwmnrsKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrCZ8qBLa2AA4gJ/YlNb/u9wLUUrCyPqWm9PQcI2Qeoojc4OhWiJ8tf4TH9O2xWubbSTVBG7cJsXY3+0QoB611G8efISV/5wrC1CxvkvEy+YWp9oDdwYAUu6VLu7Jp4qvNVDVhIlg1CTN9NfHrHi8CW0xEUwyTR8YJrRCKQynAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=etuhEHLc; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0EF54102F66E4;
-	Tue, 25 Mar 2025 17:16:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742919398; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=RWBAlXIiGSk72+6SessRFhuHLNEcm290ACC2CqugoH8=;
-	b=etuhEHLcGMuGJ2sHkEQHMUW7CYyd3kSRO3VgG7YzetdL6iKlTmQA65K9QexSY4M43MDD/r
-	KCcEd+MmekrLuoa37EcJI/0jVOs3zXxpLl1cNyqzsJwavPkatyebPXJQXI+e0SWcf9o4eS
-	AWqtCd6tTylJ06cBTHBZfrXyioOnFHYokl3L/EkiJMyvXIzE9MnzQe5s011oXV+4lGofXM
-	pfrMFFlbky0wXbK5uLpu8eZlkIxe/PjP4+fC8ikwsQ9kfo1YuS51Ftr2OF/xs0Dlhmm6VT
-	0TURP8y1DhSClSnNk+U1Lc1odU0a219CNa/vm6D3qm0KjQMMA9r/8Loc5VVXmg==
-Date: Tue, 25 Mar 2025 17:16:34 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 4/5] arm: dts: imx287: Provide description for MTIP L2
- switch
-Message-ID: <20250325171634.1c982583@wsk>
-In-Reply-To: <40c6c272-d4a3-4bf2-87a1-17086d96afea@lunn.ch>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-5-lukma@denx.de>
-	<40c6c272-d4a3-4bf2-87a1-17086d96afea@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742919435; c=relaxed/simple;
+	bh=M736tMda+Xo3V451dLSmP5tUE0yt+PReWmVjVSa8LF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SBXzCrFA1o1Yk1AUfLgjz7Y+cEaUtF3WTXh4/HeDL55v7kNtME/DC1waWYyEnlmjpuRLxqsQYDIZmsVGL6WXXYr6f+8IQuPGOfT8uZnlPJx2ND/km1op4E2dcdo7AO/r6kWmkFe+qd2Js44gzSalhjgC8it2OzbtAaW/3NtjvxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HD1XM9m/; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4635940E0214;
+	Tue, 25 Mar 2025 16:17:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ifvA_0Gysur2; Tue, 25 Mar 2025 16:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742919423; bh=Z3ONUzf5mfUfq03VJB8Ha1NlpPj1E3lbbqhevOTT0AY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HD1XM9m/x5bS9lRd25s2Spp/8Nw5dO4c3bVmSFTWOEuXnVP031y97DbwcevFANQxt
+	 D/M98JqUGv13qBBVYceKqhDxepBCsJ5mFbuEIO7trq8d7BEvu+Smq8LtoLmyb7Gwlb
+	 V2JulOloR+i1EB08788Lb4uGD/epiS4bTtPlgIoCWNu+FNcnsSpgn5haZRiGaNv/ND
+	 Mu7CyRXPr/CrY/uC+QBBE8agVuBSeL9g1UPsjL6OfzFuOPF+m47S7kVO1bZvca2vtX
+	 hJZBk72G8kb/Tg8kCtzpln8XDD++7xmyrxk1WtBnPQOo4QmyMIafPrIeDZwl9W5Ecs
+	 ZF2dMDEnAQ6aRLIS6wDAOlOWs+jKHDLH5BKKXbox6wOV3lfdBdMRgQWWJr40NcJHcD
+	 VLw5G4GsFqElg8M78HKCIdhS+w9iZfUQe4p/x9tp+oxWuvEypXMduetlEOrgRNKYqt
+	 pjGMwtDy4kaWS1g9WmxqTcngOYjk3VVTSuCp3suKDU7SFgjrzksDWFRCEMGpUDaPyM
+	 dlsuKRNbfx1ZOjrr9AAptYF6I4Utf+aWDuhhcMq2g+3qU1q8WuD7riqMIwiQUPXssv
+	 hZ3ixyIXwHhJNfz00QDpUdYbS45qfsQbEr3IctLgySwWThfhCVF/7l5hxjxs5FPQFQ
+	 L7WrY1RUBmlX533bUgwxzzng=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 271DD40E015D;
+	Tue, 25 Mar 2025 16:17:00 +0000 (UTC)
+Date: Tue, 25 Mar 2025 17:16:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/bugs for v6.15
+Message-ID: <20250325161653.GAZ-LW9WpsQrJgWx16@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/greT4myIzbgADdfT0SPqvTm";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
---Sig_/greT4myIzbgADdfT0SPqvTm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi Andrew,
+please pull the x86 spec mitigations updates for v6.15.
 
-> On Tue, Mar 25, 2025 at 12:57:35PM +0100, Lukasz Majewski wrote:
-> > This description is similar to one supprted with the cpsw_new.c
-> > driver.
-> >=20
-> > It has separated ports and PHYs (connected to mdio bus).
-> >=20
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> > ---
-> >  arch/arm/boot/dts/nxp/mxs/imx28-xea.dts | 56
-> > +++++++++++++++++++++++++ 1 file changed, 56 insertions(+)
-> >=20
-> > diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts
-> > b/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts index
-> > 6c5e6856648a..e645b086574d 100644 ---
-> > a/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts +++
-> > b/arch/arm/boot/dts/nxp/mxs/imx28-xea.dts @@ -5,6 +5,7 @@
-> >   */
-> > =20
-> >  /dts-v1/;
-> > +#include<dt-bindings/interrupt-controller/irq.h>
-> >  #include "imx28-lwe.dtsi"
-> > =20
-> >  / {
-> > @@ -18,6 +19,61 @@ &can0 {
-> >  	status =3D "okay";
-> >  };
-> > =20
-> > +&eth_switch {
-> > +	compatible =3D "fsl,imx287-mtip-switch"; =20
->=20
-> The switch is part of the SoC. So i would expect the compatible to be
-> in the .dtsi file for the SoC.
+Thx.
 
-Ok.
+---
 
-I'm also wondering if I shall use "fsl," or "nxp," prefix. The former
-one is the same as in fec_main.c, but as I do add new driver, the
-prefix could be updated.
+The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
 
->=20
-> > +	pinctrl-names =3D "default";
-> > +	pinctrl-0 =3D <&mac0_pins_a>, <&mac1_pins_a>;
-> > +	phy-supply =3D <&reg_fec_3v3>;
-> > +	phy-reset-duration =3D <25>;
-> > +	phy-reset-post-delay =3D <10>;
-> > +	interrupts =3D <100>, <101>, <102>;
-> > +	clocks =3D <&clks 57>, <&clks 57>, <&clks 64>, <&clks 35>;
-> > +	clock-names =3D "ipg", "ahb", "enet_out", "ptp"; =20
->=20
-> Which of these properties are SoC properties? I _guess_ interrupts,
-> clocks and clock-names. So they should be in the SoC .dtsi file. You
-> should only add board properties here.
+  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
 
-Ok. I will add them.
+are available in the Git repository at:
 
->=20
->        Andrew
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_bugs_for_v6.15
 
-Best regards,
+for you to fetch changes up to 98fdaeb296f51ef08e727a7cc72e5b5c864c4f4d:
 
-Lukasz Majewski
+  x86/bugs: Make spectre user default depend on MITIGATION_SPECTRE_V2 (2025-03-03 12:48:41 +0100)
 
---
+----------------------------------------------------------------
+- Some preparatory work to convert the mitigations machinery to mitigating
+  attack vectors instead of single vulnerabilities
 
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+- Untangle and remove a now unneeded X86_FEATURE_USE_IBPB flag
 
---Sig_/greT4myIzbgADdfT0SPqvTm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+- Add support for a Zen5-specific SRSO mitigation
 
------BEGIN PGP SIGNATURE-----
+- Cleanups and minor improvements
 
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfi1uIACgkQAR8vZIA0
-zr1rmggAx1FgdV+Uvb819ObkX0K7D/zPrmuFUWMVgi8RNIV2Wr55ejmrX3s/QQRV
-emSwGiQ4g3CJL9w4bbtQ1lvEmxPMmzlzG69NXvgWyLykHKFLnlCQ8YBclJHRHNWy
-gwzqLyqpSkM4RgM/qVh8Tqg1HEk9hyhwiLVwZo25qyPOq/0mPzbFhgqyKHi3CIxT
-U75LviRxABG9/5/7/7cNgYsobJfrKjFA4rRDjXiSfxwv6gX0oO8hyKLGMviv+5B8
-KBoETzr7Ukhty1Iqp2g8HyUAeU11GV+HxPwENZ6EwAy1FytBgKj28mP/kl+pAXLQ
-zpHVgwgILNnvfDlFKcZPaAcUBdmeMw==
-=gPXo
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Borislav Petkov (1):
+      x86/bugs: KVM: Add support for SRSO_MSR_FIX
 
---Sig_/greT4myIzbgADdfT0SPqvTm--
+Breno Leitao (2):
+      x86/bugs: Use the cpu_smt_possible() helper instead of open-coded code
+      x86/bugs: Make spectre user default depend on MITIGATION_SPECTRE_V2
+
+David Kaplan (3):
+      x86/bugs: Add X86_BUG_SPECTRE_V2_USER
+      x86/bugs: Relocate mds/taa/mmio/rfds defines
+      x86/bugs: Add AUTO mitigations for mds/taa/mmio/rfds
+
+Yosry Ahmed (6):
+      x86/bugs: Move the X86_FEATURE_USE_IBPB check into callers
+      x86/mm: Remove X86_FEATURE_USE_IBPB checks in cond_mitigation()
+      x86/bugs: Remove the X86_FEATURE_USE_IBPB check in ib_prctl_set()
+      x86/bugs: Use a static branch to guard IBPB on vCPU switch
+      KVM: nVMX: Always use IBPB to properly virtualize IBRS
+      x86/bugs: Remove X86_FEATURE_USE_IBPB
+
+ Documentation/admin-guide/hw-vuln/srso.rst      |  13 +++
+ Documentation/admin-guide/kernel-parameters.txt |   2 +
+ arch/x86/include/asm/cpufeatures.h              |   6 +-
+ arch/x86/include/asm/msr-index.h                |   1 +
+ arch/x86/include/asm/nospec-branch.h            |   4 +-
+ arch/x86/include/asm/processor.h                |   1 +
+ arch/x86/kernel/cpu/bugs.c                      | 121 +++++++++++++++---------
+ arch/x86/kernel/cpu/common.c                    |   4 +-
+ arch/x86/kvm/svm/svm.c                          |   9 +-
+ arch/x86/kvm/vmx/vmx.c                          |   3 +-
+ arch/x86/lib/msr.c                              |   2 +
+ arch/x86/mm/tlb.c                               |   3 +-
+ tools/arch/x86/include/asm/cpufeatures.h        |   1 -
+ 13 files changed, 118 insertions(+), 52 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
