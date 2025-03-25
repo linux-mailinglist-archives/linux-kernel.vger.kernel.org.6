@@ -1,87 +1,103 @@
-Return-Path: <linux-kernel+bounces-575166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EF2A6EEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:06:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDD9A6EF81
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D4A1694EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19027189AF7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3FC255E34;
-	Tue, 25 Mar 2025 11:06:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E725522B;
-	Tue, 25 Mar 2025 11:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C478D257451;
+	Tue, 25 Mar 2025 11:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tg7vjrNQ"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD2B257427;
+	Tue, 25 Mar 2025 11:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900811; cv=none; b=eyX/XmQ18YEso8BFOIocySL2TeCURhoxcA1nLvY0a2TnKEA4LVv71smZX0ZvEglIAVOkDTeR0VZhiYG3nvtiTLPZ7HtsIjWN7V2GQdIz4se+YREwzxSr8XfRTvVS8G0Op+tciogrwcwpr/bP6CIbJFK/SQIyUT7phUDekjzf0N8=
+	t=1742900908; cv=none; b=A8TTa/F4QwApaOtryimF8SgyGrRhynb4RwplDtzcuck1Y3BuDFGH0jdmoWvhDvtD0PfOH0WgNTKpJ2yw9+6iVXNYoqxNMyk8cwWELx8DR6fQHlNaLDqxfUyoTLNMi0Bxplt4AKHWlAo08L857pxnD9wV6TLJieYsLTgLA8ySCTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900811; c=relaxed/simple;
-	bh=1oUtFGtYzogbL0vB7U/WIQ8hwYhjr5hl5aNe3i3p1t8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nArYDGCp7u9DRk7Mmo/soWcrNfqm+6QpP06qsP7H5N0vprGKzBhi/TaknNrM5N4xrRT8B2je8IYMCr8782s8ezoFuFKmxgbrVAlh58ibET+KJjBqcjEIlO+XqFQBJo0+NUZUpbHGdxTdaNqJ+Is/LlXVA869m2H3OND6l8QN+io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D407106F;
-	Tue, 25 Mar 2025 04:06:48 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 182383F58B;
-	Tue, 25 Mar 2025 04:06:38 -0700 (PDT)
-Message-ID: <5e49377e-6a3e-4a48-94c9-db06f13cffe8@arm.com>
-Date: Tue, 25 Mar 2025 11:06:37 +0000
+	s=arc-20240116; t=1742900908; c=relaxed/simple;
+	bh=Fp3OuqKIGI87B+2qLAxVYAj1U/8NXpcexesT2kFFqoc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Byhghtxa2MPfgg7XhvVBrpQfO1zc0t89zAc0MI2PShY7CjBtJVKEowMvatRzYED7r27cxTdzmoLKXAR6j+zLEIHjXfisAuGzVP4WZeTF72yGwgef/03fIsR0i/FSNmADZgpj6x0EA6sw8dVxiTD32tpkhDLGt5kEkyC2k/5mudY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tg7vjrNQ; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742900904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cQwFKVuOUJVkhVIojgcrzkha3ElxfIW69cI+JU/dNp4=;
+	b=Tg7vjrNQRJ6lXbi19BR8wkML3vpzTtgbaltdrGjQi7/ovYGEf+urVTbTtwe+L13zmxmk+n
+	Zatr/MZ7LHa8epIRed9+nfLrFVAcbmhwF6rblxhnPmTVTN9WD1xzZmuuaPa5w2RrLLqHOf
+	nKWFZ9HCZX4YiGWycUodp95zp0abBmo=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	mptcp@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] mptcp: pm: Fix undefined behavior in mptcp_remove_anno_list_by_saddr()
+Date: Tue, 25 Mar 2025 12:06:39 +0100
+Message-ID: <20250325110639.49399-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] arm64: Add BBM Level 2 cpu feature
-To: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- ryan.roberts@arm.com, yang@os.amperecomputing.com, corbet@lwn.net,
- catalin.marinas@arm.com, will@kernel.org, jean-philippe@linaro.org,
- robin.murphy@arm.com, joro@8bytes.org, akpm@linux-foundation.org,
- ardb@kernel.org, mark.rutland@arm.com, joey.gouly@arm.com, maz@kernel.org,
- james.morse@arm.com, broonie@kernel.org, oliver.upton@linux.dev,
- baohua@kernel.org, david@redhat.com, ioworker0@gmail.com, jgg@ziepe.ca,
- nicolinc@nvidia.com, mshavit@google.com, jsnitsel@redhat.com,
- smostafa@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev
-References: <20250325093625.55184-1-miko.lenczewski@arm.com>
- <20250325093625.55184-2-miko.lenczewski@arm.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250325093625.55184-2-miko.lenczewski@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 25/03/2025 09:36, Mikołaj Lenczewski wrote:
-> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
-> and this commit adds a dedicated BBML2 cpufeature to test against
-> support for, as well as a kernel commandline parameter to optionally
-> disable BBML2 altogether.
-> 
-> This is a system feature as we might have a big.LITTLE architecture
-> where some cores support BBML2 and some don't, but we want all cores to
-> be available and BBM to default to level 0 (as opposed to having cores
-> without BBML2 not coming online).
-> 
-> To support BBML2 in as wide a range of contexts as we can, we want not
-> only the architectural guarantees that BBML2 makes, but additionally
-> want BBML2 to not create TLB conflict aborts. Not causing aborts avoids
-> us having to prove that no recursive faults can be induced in any path
-> that uses BBML2, allowing its use for arbitrary kernel mappings.
-> Support detection of such CPUs.
-> 
-> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+Commit e4c28e3d5c090 ("mptcp: pm: move generic PM helpers to pm.c")
+removed a necessary if-check, leading to undefined behavior because
+the freed pointer is subsequently returned from the function.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reintroduce the if-check to fix this and add a local return variable to
+prevent further checkpatch warnings, which originally led to the removal
+of the if-check.
 
+Fixes: e4c28e3d5c090 ("mptcp: pm: move generic PM helpers to pm.c")
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/mptcp/pm.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/net/mptcp/pm.c b/net/mptcp/pm.c
+index 18b19dbccbba..5a6d5e4897dd 100644
+--- a/net/mptcp/pm.c
++++ b/net/mptcp/pm.c
+@@ -151,10 +151,15 @@ bool mptcp_remove_anno_list_by_saddr(struct mptcp_sock *msk,
+ 				     const struct mptcp_addr_info *addr)
+ {
+ 	struct mptcp_pm_add_entry *entry;
++	bool ret = false;
+ 
+ 	entry = mptcp_pm_del_add_timer(msk, addr, false);
+-	kfree(entry);
+-	return entry;
++	if (entry) {
++		ret = true;
++		kfree(entry);
++	}
++
++	return ret;
+ }
+ 
+ bool mptcp_pm_sport_in_anno_list(struct mptcp_sock *msk, const struct sock *sk)
 
