@@ -1,95 +1,57 @@
-Return-Path: <linux-kernel+bounces-575850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0399FA70808
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:22:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F20DA7080A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E993A97A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D201C188708C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFC526139D;
-	Tue, 25 Mar 2025 17:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD9526139A;
+	Tue, 25 Mar 2025 17:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="V9P2qGD7"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJ2T5CwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E9025D1FA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED3E42A96;
+	Tue, 25 Mar 2025 17:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923283; cv=none; b=fiVN0njSTRJq1IeYbqWBT5jIZNbLLa5KjFvVtqxQN6GWAfoVxJzqSjUOHe7QZPxJMSsmtnqokAfVzkcfcLZyo4/vnIpQjLjiDpJcvQ95u6PBZqDb+AD1kFVJAJiSqqeY1r0HAKzggmvf9PmS/kKO4jIazNopC/3f1QSRjOCSaAc=
+	t=1742923327; cv=none; b=tcZ9AU67lUiML0PIWs08rRvUBPZ3RQLx19hfHc4xWa8xe7CCeaiyxx4r4S6gw4Ty2R2+osAZS4n7YlFoLtSEBJv4/au76FQWncr1fMTYSApG4LL79eKse9pOPBMEXhIwOPh0Y0HhxSONWEZlBaexCgZNS512OGMAfN/pQLq8d0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923283; c=relaxed/simple;
-	bh=NPknPnvDYpCkn1uRCPkw+yzN5O4OIPBJN8iAy4E9wm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gg70t0ii8nZbgt+0vrbmckS/rJ3KbFTAaNsPO+iRGUXmPpnZmntpZlO1JQ6ZGwAJtvPWnGDxDc2Be/R0ZlLQKz/3K6WL4bgZrKFG5S68BfHif78j70Jd8xOolNyoIEMIZ5HBGQuTKUUB39QEi/khcyt+pdTOIh9XX2a0SAlqPQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=V9P2qGD7; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d46fddf357so19019045ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1742923280; x=1743528080; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DUIk8GuXhrJ6jaAZ3MspJDXmvD8FvwUk0pjUc2gjmR8=;
-        b=V9P2qGD7NokJPLELzfKjurERrkoT9mBdkszmK08S3EnSwq9pJlw+IE6l/2WOWLjDm/
-         bg90lLLYtk5AgkDaP/lA3T1mzMgomC1Gl6OIDFAQTsAzWdV/1i6NurlZw5ipCk9ST7j2
-         okg5RIAn7zCgu5hoFKODix+5YwPZiER20PX4MPloTKdFDvOl3ERISdaATFnEj7YniPmg
-         t59r/4zVdvHYDt3kymFG0MjArndqM+oxahR3QrCzJVjq7F4rnFuptPMNUjbsf1j6B1yU
-         vFFNhN67TNJKnaPP6JzYxrSz+XVIbg+CnWw73+O/7qF8b64gxeik230t7He/2Tu3flOi
-         HxzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742923280; x=1743528080;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUIk8GuXhrJ6jaAZ3MspJDXmvD8FvwUk0pjUc2gjmR8=;
-        b=lkajWiRHQbtk6Am7ynHiQVTk0RSaCOenAnoTm9TIavEs8s/ThcFixbzd+I1E/f27Nx
-         2rpZcC9qlBr/ocTMRPz4RXH8f5NuNjOJxAuAZvdfc/mQ1KVDxfVFTcR19bq5vMHmHhTY
-         nLMEzcsbcO6j3lpB+SjuiHM8VkngNJ1gjuDpozE3a46gDR2iyU6I6l6GoQzEQQgRbVAC
-         PVse9zAk58gwoTlUF6BvUfaKLhRYSezYMMnsXWmrJgyqxh0EIQmiCFW03LQWjei6d6kO
-         6uq70701T3nNmXFoMD1k+N+hSC0CCRLkwRpfZ3Flz0k6OuA7fMwqnxSNbJEmXvd6W0Im
-         wOAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ5X28gWT4pyA1/5PPFfQvtxWF40JjyHpnp4kp7Ekhp0w15YwM8YH7E3qeZrTVLJteaVbUPn7IHV63uvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIyZzGlbSe6hy2qFqVja5L1SdIm2iraTWLWUpqH+XKiz+MVHLg
-	Gu/aKI7MIQd2W+zc1KjxUPtsriyaETgQOZHbfxN/nmYILkp2N2GtBplfPB7h7oQ=
-X-Gm-Gg: ASbGncti1OqpBv4Gb+DTAQTBptLDFXm7kQDEJYWs7X+IYI++wCMAbp7YR0weBPX9ac/
-	DWcJe7ke0B20MbzFzfSdDo5AfdfET/sB/OOMASFSwojk6QWPgoLX95oUXp5pV+bDNHF/RoWyt4x
-	vcD1+ZfVvWEquuhOoPAK0C2shWiFC6mqvrh0urJgE8dzLsjOyYXVPI+iXm7PsYkaJjoDsvIkIm2
-	MqJrSQFGG+hH0d9Hsgc/gbxg9Lyt5hSwT56e6438dDRsxjQoS7Vh0eYXIAXD6Ntf3KNy2yLnbDZ
-	mt+TdmhCKUJDRbBnVgUZ6zwGbA==
-X-Google-Smtp-Source: AGHT+IErn2yVyz/LPwGN2xKKkAB0TxbWGFBbv6OD2treCwqPSm7m+FrwT6OtLiJJGQdJfF0D55qkhA==
-X-Received: by 2002:a05:6e02:9d:b0:3d4:2306:6d0 with SMTP id e9e14a558f8ab-3d59616b92fmr159808305ab.14.1742923280121;
-        Tue, 25 Mar 2025 10:21:20 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8152:1b37::2b6:1])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbe80a3asm2455156173.95.2025.03.25.10.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 10:21:19 -0700 (PDT)
-Date: Tue, 25 Mar 2025 12:21:17 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	James Morris <james.l.morris@oracle.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-ima-devel@lists.sourceforge.net,
-	linux-ima-user@lists.sourceforge.net,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-team@cloudflare.com
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-Message-ID: <Z-LmDe4E4uMZlArE@CMGLRV3>
-References: <20250325155934.4120184-1-fred@cloudflare.com>
- <ed260472-c07e-4172-b389-deb8e92f416f@huaweicloud.com>
- <Z-Lc5WxW7NRA6AiT@CMGLRV3>
- <c1185901c99091a29a865f7a862bc979873301ad.camel@huaweicloud.com>
+	s=arc-20240116; t=1742923327; c=relaxed/simple;
+	bh=nzFJ6RQkVQu0YREAlMsXBrpOIrhfn/ssZhBuPOFAUjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HmkwZ9yZDYE36RbSaM9/pRbykTOFeIrqrgFPvBhxbdW7xbQMtYUyb0ac8PvaGua0T0zhe/Ky7GPoi6BbT9NQQgf/bc7DKK1kmS1vJ6KbvnUVNsOWKjEbKWIEf3sdRObK4huB9p0OSdr4YmQvhj0Ozj+3oifWjvrUgAGU/4jablU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJ2T5CwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C7E7C4CEE4;
+	Tue, 25 Mar 2025 17:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742923326;
+	bh=nzFJ6RQkVQu0YREAlMsXBrpOIrhfn/ssZhBuPOFAUjA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CJ2T5CwZJoDIGUXxwbh3PxJSjYEiXlXpOzYhc5eq+MwV8L2+/ehPZxV+DYdYAIShA
+	 nOKKYpBq0RKKe5MgEbwg3bHmBaznL41pT7pS+iS8WKFd9RIV9I3mmFh4CNU4TcgpEV
+	 /pczWanmqwdoZFoDgdta6LnWSCrztYQ3y+2lcLgR3Xs28yfPnbbXeT4fnDYjOCTeJB
+	 jMZ3l7eB3gFzOGP42+Aj3qkT/1VraDcX7ZVRUEQ76Ht55lpwgFXBb/nOuWhIIBrLKa
+	 FnNN8LMwHgZZY+DF3K1ImE7ohYeSyn0+kBsjMplmEWStMxqzcjGnVnAbvq3cRBHwy5
+	 ldcwA2ZF8gJ0w==
+Date: Tue, 25 Mar 2025 18:21:36 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, 
+	Bharadwaj Raju <bharadwaj.raju777@gmail.com>, Chandra Pratap <chandrapratap3519@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Joel Granados <joel.granados@kernel.org>, Kaixiong Yu <yukaixiong@huawei.com>, 
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, Kees Cook <kees@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] sysctl changes for v6.15-rc1
+Message-ID: <mmb5fqe6a3a7bdoeyeccfn4wafhzgbpsnowjhhj6jtnbdwv24r@73wpky2szbg6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,106 +60,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c1185901c99091a29a865f7a862bc979873301ad.camel@huaweicloud.com>
 
-On Tue, Mar 25, 2025 at 06:01:09PM +0100, Roberto Sassu wrote:
-> On Tue, 2025-03-25 at 11:42 -0500, Frederick Lawler wrote:
-> > On Tue, Mar 25, 2025 at 05:30:32PM +0100, Roberto Sassu wrote:
-> > > On 3/25/2025 4:58 PM, Frederick Lawler wrote:
-> > > > On IMA policy update, if a measure rule exists in the policy,
-> > > > IMA_MEASURE is set for ima_policy_flags which makes the violation_check
-> > > > variable always true. Coupled with a no-action on MAY_READ for a
-> > > > FILE_CHECK call, we're always taking the inode_lock().
-> > > > 
-> > > > This becomes a performance problem for extremely heavy read-only workloads.
-> > > > Therefore, prevent this only in the case there's no action to be taken.
-> > > > 
-> > > > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> > > > ---
-> > > >   security/integrity/ima/ima_main.c | 2 +-
-> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > > > index 2aebb7984437..78921e69ee14 100644
-> > > > --- a/security/integrity/ima/ima_main.c
-> > > > +++ b/security/integrity/ima/ima_main.c
-> > > > @@ -181,7 +181,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
-> > > >   	action = ima_get_action(inode, mask, func, &pcr);
-> > > >   	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
-> > > >   			   (ima_policy_flag & IMA_MEASURE));
-> > > > -	if (!action && !violation_check)
-> > > > +	if (!action && (mask == MAY_READ || !violation_check))
-> > > >   		return 0;
-> > > 
-> > 
-> > Hi Roberto,
-> > 
-> > > Hi Frederick
-> > > 
-> > > thanks, nice catch!
-> > > 
-> > > Thinking... in fact you are saying that there are conditions for which
-> > > ima_rdwr_violation_check() does nothing.
-> > > 
-> > > For better clarity, I would add the conditions for which we are doing a
-> > > violation check in violation_check directly. So that, one can just go to the
-> > > function and see that in fact nothing special is done other than doing the
-> > > same checks in advance before taking the lock (the conditions you are
-> > > checking on are immutable, so it is fine).
-> > > 
-> > > So, it is not a write, and the file is not being measured (this would be a
-> > > bit redundant given that we are checking anyway !action).
-> > > 
-> > > Thanks
-> > > 
-> > 
-> > The ima_rdwr_violation_check() call takes a action & IMA_MEASURE
-> > argument anyway.
-> > 
-> > My initial thought was to replace ima_flag_policy & IMA_MEASURE with
-> > action & IMA_MEASURE there, but I wasn't sure if there was a race
-> > problem that the ima_rdwr_violation_check() is trying to catch for the non
-> > FILE_CHECK cases.
-> 
-> Let's keep as it is for now.
-> 
-> > Otherwise, I think the checks in the ima_rdwr_violation_check() demand the lock,
-> > and therefore we can't just move them out to that violation_check
-> > variable--unless I'm missing something. As for other conditions, I think
-> > it's _just_ the MAY_READ we care about.
-> 
-> Yes, of course.
-> 
-> I meant, since in ima_rdwr_violation_check() there is:
-> 
-> 
-> if (mode & FMODE_WRITE)
-> ...
-> else if (... && must_measure)
-> 
-> 
-> which don't need to be under lock, then I would have modified
-> violation_check to:
-> 
-> 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
-> 			    func == MMAP_CHECK_REQPROT) &&
-> 			   (ima_policy_flag & IMA_MEASURE)) &&
-> 			   ((action & IMA_MEASURE) || (mask & MAY_WRITE));
->
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-Sounds good! I'll make the change and submit a v2.
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-> Roberto
-> 
-> > Is what you're suggesting to move the check mask == MAY_READ to instead be in
-> > that violation_check variable than the branch?
-> > 
-> > > Roberto
-> > > 
-> > > >   	must_appraise = action & IMA_APPRAISE;
-> > > 
-> > 
-> > Thanks,
-> > Fred
-> 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.15-rc1
+
+for you to fetch changes up to 29fa7d7934216e0a93102a930ef28e2a6ae852b1:
+
+  selftests/sysctl: fix wording of help messages (2025-02-27 10:02:12 +0100)
+
+----------------------------------------------------------------
+Summary
+
+* Move vm_table members out of kernel/sysctl.c
+
+  All vm_table array members have moved to their respective subsystems leading
+  to the removal of vm_table from kernel/sysctl.c. This increases modularity by
+  placing the ctl_tables closer to where they are actually used and at the same
+  time reducing the chances of merge conflicts in kernel/sysctl.c.
+
+* ctl_table range fixes
+
+  Replace the proc_handler function that checks variable ranges in
+  coredump_sysctls and vdso_table with the one that actually uses the extra{1,2}
+  pointers as min/max values. This tightens the range of the values that users
+  can pass into the kernel effectively preventing {under,over}flows.
+
+* Misc fixes
+
+  Correct grammar errors and typos in test messages. Update sysctl files in
+  MAINTAINERS. Constified and removed array size in declaration for
+  alignment_tbl
+
+* Testing
+
+  - These have all been in linux-next for at least 1 month
+  - They have gone through 0-day
+  - Ran all these through sysctl selftests in x86_64
+
+----------------------------------------------------------------
+Bharadwaj Raju (1):
+      selftests/sysctl: fix wording of help messages
+
+Chandra Pratap (1):
+      selftests: fix spelling/grammar errors in sysctl/sysctl.sh
+
+Joel Granados (2):
+      csky: Remove the size from alignment_tbl declaration
+      MAINTAINERS: Update sysctl file list in MAINTAINERS
+
+Kaixiong Yu (16):
+      mm: vmstat: move sysctls to mm/vmstat.c
+      mm: filemap: move sysctl to mm/filemap.c
+      mm: swap: move sysctl to mm/swap.c
+      mm: vmscan: move vmscan sysctls to mm/vmscan.c
+      mm: util: move sysctls to mm/util.c
+      mm: mmap: move sysctl to mm/mmap.c
+      security: min_addr: move sysctl to security/min_addr.c
+      mm: nommu: move sysctl to mm/nommu.c
+      fs: fs-writeback: move sysctl to fs/fs-writeback.c
+      fs: drop_caches: move sysctl to fs/drop_caches.c
+      sunrpc: simplify rpcauth_cache_shrink_count()
+      fs: dcache: move the sysctl to fs/dcache.c
+      x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+      sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+      sysctl: remove the vm_table
+      sysctl: remove unneeded include
+
+Nicolas Bouchinet (2):
+      coredump: Fixes core_pipe_limit sysctl proc_handler
+      sysctl: Fix underflow value setting risk in vm_table
+
+ MAINTAINERS                              |   7 +-
+ arch/csky/abiv1/alignment.c              |   2 +-
+ arch/sh/kernel/vsyscall/vsyscall.c       |  21 +++
+ arch/x86/entry/vdso/vdso32-setup.c       |  16 ++-
+ fs/coredump.c                            |   4 +-
+ fs/dcache.c                              |  21 ++-
+ fs/drop_caches.c                         |  23 +++-
+ fs/fs-writeback.c                        |  30 +++--
+ include/linux/dcache.h                   |   7 +-
+ include/linux/mm.h                       |  23 ----
+ include/linux/mman.h                     |   2 -
+ include/linux/swap.h                     |   9 --
+ include/linux/vmstat.h                   |  11 --
+ include/linux/writeback.h                |   4 -
+ kernel/sysctl.c                          | 221 -------------------------------
+ mm/filemap.c                             |  18 ++-
+ mm/internal.h                            |  10 ++
+ mm/mmap.c                                |  54 ++++++++
+ mm/nommu.c                               |  15 ++-
+ mm/swap.c                                |  16 ++-
+ mm/swap.h                                |   1 +
+ mm/util.c                                |  67 ++++++++--
+ mm/vmscan.c                              |  23 ++++
+ mm/vmstat.c                              |  44 +++++-
+ net/sunrpc/auth.c                        |   2 +-
+ security/min_addr.c                      |  11 ++
+ tools/testing/selftests/sysctl/sysctl.sh |  10 +-
+ 27 files changed, 350 insertions(+), 322 deletions(-)
+
+Best
+-- 
+
+Joel Granados
 
