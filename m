@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-575513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AF2A7038D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:23:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89D5A70371
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D01189800A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA6E16A141
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3326B25A34B;
-	Tue, 25 Mar 2025 14:19:19 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEE125A2D0;
+	Tue, 25 Mar 2025 14:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhrWVqlp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA73A2561C3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3E2571A7;
+	Tue, 25 Mar 2025 14:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912358; cv=none; b=qUkAr+AGjVeDwhxfmc4uaug+eS5mddYr5Gt+lHr1H9ev5kJl3jNuhgKNJkMZ/O3l4wl8JzbHY8u5SC80BKuLrgkail2/CkZUmkixNYyH87Q3F/3FVeyg/TK/FQsySP/E775sTUdN7yRahYd4gC+WpRT01WwKGyPIAuHjImzncPc=
+	t=1742912356; cv=none; b=B3PXyFxl89Gkh7EHGbfycPAM39lN/nFf+bR+fd0gGXCkvLdaMgIsYecVsp+7/nOPOM9ehFCLPbwAigigPpS1PCvtSM1C6pVg4Z33tdGDlrXkeCu/HYleKrNpb+3GwHvWFb5S+IOZy8P0Y2vJhDjO2mtTMTT+uoLNMmdMFD03Tyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912358; c=relaxed/simple;
-	bh=8u4Y3ZSLgNRFVySzx54/EIAWbDGZ4w0oYa5xJjD9FSc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IqVAWH5SoIV5V0+l1p7z4UA2QKpi3eKY4aVMRKwYbK5TLWXEFTHGPnlhbOXt3s6wbfndgTAkaGrZA3PxfmQSOOIPgcVt4gQ2k3la1tomyKl2FbgWfocQMLdAM9s7BtOuKVyoWaRihk5Re0IDzpALRCheQicGQ2hU/vCe6vtlOpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZMX3m4lHjz1jBLl;
-	Tue, 25 Mar 2025 22:14:28 +0800 (CST)
-Received: from kwepemg100001.china.huawei.com (unknown [7.202.181.18])
-	by mail.maildlp.com (Postfix) with ESMTPS id C7E2F1800B1;
-	Tue, 25 Mar 2025 22:19:06 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by kwepemg100001.china.huawei.com
- (7.202.181.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Mar
- 2025 22:19:06 +0800
-From: Jinqian Yang <yangjinqian1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<oliver.upton@linux.dev>, <maz@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<wangzhou1@hisilicon.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<liuyonglong@huawei.com>, <jiangkunkun@huawei.com>,
-	<yangjinqian1@huawei.comm>, <xueshan2@huawei.com>, Jinqian Yang
-	<yangjinqian1@huawei.com>
-Subject: [PATCH] arm64: Add support for HIP09 Spectre-BHB mitigation
-Date: Tue, 25 Mar 2025 22:19:00 +0800
-Message-ID: <20250325141900.2057314-1-yangjinqian1@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1742912356; c=relaxed/simple;
+	bh=mIhScVX3smYC5tbYdAQOfnNOIXy7bHsGuGTi/Ntoec8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WkJPPvZdJmxg1hts/EGlKGZ7s8hOUmt8I5quFILsqNlIkEdtRsVmIWG19Cco2/99OC++5uHZAqj9WqXXPUez7TqfToZoQL/KTbmcSF8xqZO5EPvKpyJ1rOI7MOFv7EGxClULX85rD42/8IEEPc0hfIov+vF08YIh6MzWhNasoEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhrWVqlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7334BC4CEE4;
+	Tue, 25 Mar 2025 14:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742912354;
+	bh=mIhScVX3smYC5tbYdAQOfnNOIXy7bHsGuGTi/Ntoec8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AhrWVqlp9FmUuV/jNdRQAaW5qnWpsJ3/qLccnJr/ovgjpIyWedl3qW+3jbOS9SJGa
+	 NLqJDSa5S3X78ajVtMtqRF7JkLgXY/O5PtQVuhc3gJ1NC+T8ibFyhYROluKlITS87R
+	 zrWIeuv+9GoC1Qk+wMW8WwrrUFLTSUoQLlJgO0ikh1cv43k209LY1yQTozcLCqqSF6
+	 xroWsvJ8hq/PFEnb3p2/++7mTFN57g1CEvhqCQDBPK96EzHAymJfIRD0arNA7Mh9vd
+	 0xjk6XxsETAk6zuGnukq3PHUsbrNB40rGnpIfrRR1mOIlzthHk9eyO9xoPglJV7jwe
+	 myMF8ul+zv4dA==
+Date: Tue, 25 Mar 2025 07:19:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, danishanwar@ti.com, srk@ti.com,
+ linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/9] net: ethernet: ti: am65-cpsw: add network
+ flow classification support
+Message-ID: <20250325071906.48550ac1@kernel.org>
+In-Reply-To: <20250319-am65-cpsw-rx-class-v1-0-2bfded07490e@kernel.org>
+References: <20250319-am65-cpsw-rx-class-v1-0-2bfded07490e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg100001.china.huawei.com (7.202.181.18)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The HIP09 processor is vulnerable to the Spectre-BHB (Branch History
-Buffer) attack, which can be exploited to leak information through
-branch prediction side channels. This commit adds the MIDR of HIP09
-to the list for software mitigation.
+On Wed, 19 Mar 2025 15:38:26 +0200 Roger Quadros wrote:
+> Adds support for -N/--config-nfc ethtool command for
+> configuring RX classfiers.
+> 
+> Currently only raw Ethernet (flow-type ether) matching is added
+> based on source/destination addresses and VLAN Priority (PCP).
+> 
+> The ALE policer engine is used to perform the matching and routing to
+> a specific RX channel.
+> 
+> Test cases:
+> 
+> Increase number of RX channels to 8
+> ip link set eth1 down
+> ip link set eth0 down
+> ethtool -L eth0 rx 8
+> 
+> 1) Ether source address test
+> 	ethtool -N eth0 flow-type ether src xx:yy:zz:aa:bb:cc action 5
+> 
+>   Traffic from that address should route to channel 5
+> 
+> 2) Ether destination address test
+> 	ethtool -N eth0 flow-type ether src yy:zz:aa:bb:cc:dd action 4
+> 
+>   Traffic to that address should route to channel 4
+> 
+> 3) Drop test
+> 	ethtool -N end0 flow-type ether src xx:yy:zz:aa:bb:cc action -1
+> 
+>   Traffic from that address should be dropped
+> 
+> 4) VLAN PCP test
+> 
+> on Remote create VLAN with ID 5 and all traffic mapping to required priority to test. e.g. 7
+> 	sudo ip link add link eno1 name eno1.5 type vlan id 5 egress-qos-map 0:7 1:7 2:7 3:7 4:7 5:7 6:7 7:7
+> 	sudo ifconfig eno1.5 192.168.10.1
+> 
+> on DUT create VLAN with id 5
+> 	ip link add link end0 name end0.5 type vlan id 5
+> 	ifconfig end0.5 192.168.10.5
+> 
+> VLAN pcp 7 vid 5 route to RX channel 6
+> 	ethtool -N end0 flow-type ether vlan 0xe005 action 6
+> 
+>   Traffic from that VLAN with PCP 7 should route to channel 6
 
-Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
----
- arch/arm64/include/asm/cputype.h | 2 ++
- arch/arm64/kernel/proton-pack.c  | 1 +
- 2 files changed, 3 insertions(+)
+No longer applies:
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index 6f3f4142e214..363a9cbe780e 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -130,6 +130,7 @@
- #define FUJITSU_CPU_PART_A64FX		0x001
- 
- #define HISI_CPU_PART_TSV110		0xD01
-+#define HISI_CPU_PART_HIP09			0xD02
- 
- #define APPLE_CPU_PART_M1_ICESTORM	0x022
- #define APPLE_CPU_PART_M1_FIRESTORM	0x023
-@@ -204,6 +205,7 @@
- #define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
- #define MIDR_FUJITSU_A64FX MIDR_CPU_MODEL(ARM_CPU_IMP_FUJITSU, FUJITSU_CPU_PART_A64FX)
- #define MIDR_HISI_TSV110 MIDR_CPU_MODEL(ARM_CPU_IMP_HISI, HISI_CPU_PART_TSV110)
-+#define MIDR_HISI_HIP09 MIDR_CPU_MODEL(ARM_CPU_IMP_HISI, HISI_CPU_PART_HIP09)
- #define MIDR_APPLE_M1_ICESTORM MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_ICESTORM)
- #define MIDR_APPLE_M1_FIRESTORM MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_FIRESTORM)
- #define MIDR_APPLE_M1_ICESTORM_PRO MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M1_ICESTORM_PRO)
-diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-index da53722f95d4..98bb7251a184 100644
---- a/arch/arm64/kernel/proton-pack.c
-+++ b/arch/arm64/kernel/proton-pack.c
-@@ -866,6 +866,7 @@ u8 spectre_bhb_loop_affected(int scope)
- 			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
- 			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
- 			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
-+			MIDR_ALL_VERSIONS(MIDR_HISI_HIP09),
- 			{},
- 		};
- 		static const struct midr_range spectre_bhb_k11_list[] = {
+Applying: net: ethernet: ti: cpsw_ale: Update Policer fields for more ALE size/ports
+Applying: net: ethernet: ti: cpsw_ale: return ALE index in cpsw_ale_add_vlan()
+Applying: net: ethernet: ti: cpsw_ale: return ALE index in cpsw_ale_vlan_add_modify()
+Applying: net: ethernet: ti: cpsw_ale: return ALE index in cpsw_ale_add_ucast()
+Applying: net: ethernet: ti: cpsw_ale: add cpsw_ale_policer_reset_entry()
+Applying: net: ethernet: ti: cpsw_ale: add cpsw_ale_policer_set/clr_entry()
+Applying: net: ethernet: ti: cpsw_ale: add policer save restore for PM sleep
+Applying: net: ethernet: ti: am65-cpsw: add network flow classification support
+Applying: net: ethernet: ti: am65-cpsw: remove cpsw_ale_classifier_setup_default()
+error: sha1 information is lacking or useless (drivers/net/ethernet/ti/am65-cpsw-nuss.c).
+error: could not build fake ancestor
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+Patch failed at 0009 net: ethernet: ti: am65-cpsw: remove cpsw_ale_classifier_setup_default()
 -- 
-2.33.0
-
+pw-bot: cr
 
