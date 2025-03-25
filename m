@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-575416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A45A70225
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D33F2A70237
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DC8F1676CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7299917D186
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2232B25DCE9;
-	Tue, 25 Mar 2025 13:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63F025F7B2;
+	Tue, 25 Mar 2025 13:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6yTA+u2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKWM5ZD7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7639E502BE;
-	Tue, 25 Mar 2025 13:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF49264F91;
+	Tue, 25 Mar 2025 13:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742909122; cv=none; b=u4JMZxVNZHso35G92OMMCTMtARK5/zLXs8RWqHvfPUsI7UwPQIbEasXIrNO2ZIefVUPE0AaE4CjQaKKnebBNkdXa0KxH5DyH0hIzDxK7Sf8dgiP7se75R2O137anGqka0eh5vu1JKwRAoq60uOdTAAJAPfrs3EXPTWO3eh0kc88=
+	t=1742909132; cv=none; b=JE5+2azZmUbm5IhDhVl49n2en/sU0BpASEuIRF2T0McXuRcGJ/PpFCQhftvg5mxTRuxAtKt6hrpxq8mzjgiaLMsm4gijaFHshkUMwS8F8Qhi5bIwcPEQupfJy3Pl4aGkJoMwU3VzrAJJe8XH+g6d99xZ1j4UXGjxDXch8b/uzoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742909122; c=relaxed/simple;
-	bh=riM+PdIFp4F9Ca2yh3yjjOIAa8IAvG/TWOdBiFmYJ9I=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=j+wv+tQm292hOmqg72ohiq56sUkzTZLFJFzb6gWxghF1LLzarxkWTn/BjL6U0JaTL6cjwwFBd67peNM1JEcc+CMQ1OTv3z8djZ3ZZ8wYhiu9zKC/b0TOyWdE3/1HvqcXbHDXVQqNEmvsYbPb0R1MR2AdFPw2U8iqB/uBKm8tKkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6yTA+u2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18D2C4CEE4;
-	Tue, 25 Mar 2025 13:25:21 +0000 (UTC)
+	s=arc-20240116; t=1742909132; c=relaxed/simple;
+	bh=dr/I/9nNgrTKDQbi1FOfdC3fHsEg+MgYpU5p3SIxKFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rWXyyuyQy10KjQrf4SpgPD/6xs/AxdO3RSCQ60eFuNpZXl1VOBo5ezQ0rkaK8AlR1M82QSDRm0gSNSZr1dU5OtcLfXd9xD3AQFmd1o46f5G/vxp3vWfgRVPzhWRPW7ZIPgxb3RG1lMXUflZhvrVCylNFW3Uc2WfggX1dyJ4pabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mKWM5ZD7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D50C4CEED;
+	Tue, 25 Mar 2025 13:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742909121;
-	bh=riM+PdIFp4F9Ca2yh3yjjOIAa8IAvG/TWOdBiFmYJ9I=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=g6yTA+u242qu0hdKl4BvNNw97H3vXjD+RFcgUJ7/oTJrixxqztdDclDi9SN7xlVPn
-	 KNdRpdTVoTccoffC8fgy+0i5yEQj+SengpKnB1MpQN7zB8+08NHbcisXimbWppiknD
-	 WXGOGKweTmeINMT9M0R1EqXDfIRYsCLfWKgRDWuyYU++G1vez0DENGhNkUgm7NZ8vv
-	 UdyuP0Xlf98AOWomB18BziEJHqVBFLL3jJkmZnRfT8N3njdePJfwMsVoSn36/IayoG
-	 Uu2RdmNzRcMxYpfRGJapYf+XRXJ+NElXC0KF+Nvor5j7Y+nRLXUTndufa3QRgIUn6M
-	 VkgxJtJhZwEgA==
-Date: Tue, 25 Mar 2025 08:25:20 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1742909132;
+	bh=dr/I/9nNgrTKDQbi1FOfdC3fHsEg+MgYpU5p3SIxKFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mKWM5ZD7jugXW5b5BRsr96+Cfdtb5zImy9KHAmlaWtdOeYduPQKFXMoUrn79QBKoK
+	 hlrLoh9b4kBVcBAYPyq72peGkYoERUrgG1eKnzpkDi9Add/E/sKRGqdvylh45TOD96
+	 yJtlrk1oHu5JcDQvI5aoO+0fo3Tjz715zakPyooFuXqgZ5aflbqHGo8QiXtfxemt+z
+	 1AUe7moQmSFX3wpUfvx0WaNRJMW/aqZ3qMv1hBrR+tpj7ITd28dooL0hl46lgKFmwY
+	 Pnl5T9mt3bBUuL6mW8IExIctbXQGxK07xtOvSvQReadebYzipdP5jfJy3IOWzGwBps
+	 KP4qV1lCag4GQ==
+Date: Tue, 25 Mar 2025 08:25:31 -0500
+From: Rob Herring <robh@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 08/13] PCI: apple: Set only available ports up
+Message-ID: <20250325132531.GA1717731-robh@kernel.org>
+References: <20250325102610.2073863-1-maz@kernel.org>
+ <20250325102610.2073863-9-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: davem@davemloft.net, Paolo Abeni <pabeni@redhat.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
- linux-kernel@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Fabio Estevam <festevam@gmail.com>, Eric Dumazet <edumazet@google.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>
-To: Lukasz Majewski <lukma@denx.de>
-In-Reply-To: <20250325115736.1732721-3-lukma@denx.de>
-References: <20250325115736.1732721-1-lukma@denx.de>
- <20250325115736.1732721-3-lukma@denx.de>
-Message-Id: <174290912071.1778035.16692989163958141305.robh@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325102610.2073863-9-maz@kernel.org>
 
-
-On Tue, 25 Mar 2025 12:57:33 +0100, Lukasz Majewski wrote:
-> This patch provides description of the MTIP L2 switch available in some
-> NXP's SOCs - imx287, vf610.
+On Tue, Mar 25, 2025 at 10:26:05AM +0000, Marc Zyngier wrote:
+> From: Janne Grunau <j@jannau.net>
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Iterating over disabled ports results in of_irq_parse_raw() parsing
+> the wrong "interrupt-map" entries, as it takes the status of the node
+> into account.
+> 
+> Switching from for_each_child_of_node() to for_each_available_child_of_node()
+> solves this issue.
+
+I really wish "available" was the default iterator...
+
+> 
+> This became apparent after disabling unused PCIe ports in the Apple
+> Silicon device trees instead of deleting them.
+> 
+> Link: https://lore.kernel.org/asahi/20230214-apple_dts_pcie_disable_unused-v1-0-5ea0d3ddcde3@jannau.net/
+> Link: https://lore.kernel.org/asahi/1ea2107a-bb86-8c22-0bbc-82c453ab08ce@linaro.org/
+> Fixes: 1e33888fbe44 ("PCI: apple: Add initial hardware bring-up")
+> Cc: stable@vger.kernel.org
+
+Fixes especially for stable should go first in the series.
+
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 > ---
->  .../bindings/net/fec,mtip-switch.yaml         | 160 ++++++++++++++++++
->  1 file changed, 160 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
+>  drivers/pci/controller/pcie-apple.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/fec,mtip-switch.yaml:19:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fec,mtip-switch.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/net/fec,mtip-switch.yaml:19:1: found character '\t' that cannot start any token
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/net/fec,mtip-switch.example.dts'
-Documentation/devicetree/bindings/net/fec,mtip-switch.yaml:19:1: found character '\t' that cannot start any token
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/net/fec,mtip-switch.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250325115736.1732721-3-lukma@denx.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
+> index 6271533f1b042..23d9f62bd2ad4 100644
+> --- a/drivers/pci/controller/pcie-apple.c
+> +++ b/drivers/pci/controller/pcie-apple.c
+> @@ -747,7 +747,7 @@ static int apple_pcie_init(struct pci_config_window *cfg)
+>  	struct device_node *of_port;
+>  	int ret;
+>  
+> -	for_each_child_of_node(dev->of_node, of_port) {
+> +	for_each_available_child_of_node(dev->of_node, of_port) {
+>  		ret = apple_pcie_setup_port(pcie, of_port);
+>  		if (ret) {
+>  			dev_err(dev, "Port %pOF setup fail: %d\n", of_port, ret);
+> -- 
+> 2.39.2
+> 
 
