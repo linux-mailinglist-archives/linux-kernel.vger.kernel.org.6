@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-576099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD45A70AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:06:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE065A70AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E76179BAF
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088DA189DEBE
 	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BC2265CD1;
-	Tue, 25 Mar 2025 20:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B20265CCF;
+	Tue, 25 Mar 2025 20:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="J2IWJvPN"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahM6QEZc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870D61F03E6;
-	Tue, 25 Mar 2025 20:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730A01F03E6;
+	Tue, 25 Mar 2025 20:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933155; cv=none; b=gk9Z/eBiIfwuN5ZZWtuYsAi97fIc6uxloR7oz4kjvgcryyAhUSlSq3sD9/XPfPjPlibnBpjC+TxMEHmdEfU8al6RP4y9kOUKfPncWx7wgFk3xnyCkpvv8QjaNuTO6FQyw9NRHjxvLoSktJNluswWl+QNdwBXCpp8wU8yQmG9WV8=
+	t=1742933146; cv=none; b=VVH+ByWlHOQZxVVUCNUr/Nv2ssQp/sDGJbgStrqDwMFErnGR1kuECWv3xZ14iEB/oclDw5xqt4/adwXguTbq8BcKrscl36FnWZ6iVK3zUzKjqFp0QMbGuIZvmMUvSoJSpL03dkUcP6OMxX3egSA0lEkRp9JTeopwHMyrO1rKXRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933155; c=relaxed/simple;
-	bh=PGAkhABXnxd41204V2AYWG/wCmnIXbwKUppclXtUxpQ=;
+	s=arc-20240116; t=1742933146; c=relaxed/simple;
+	bh=X/72qEeKSYHb3elkSglf86VYveOfq9a0qmJcTUN5hDA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5vZieCue0jjKwR5xp6WneXnvMaFD5brPXo6O1uXn1ih9eRmtQIOhSK9vqdpgiRvlYReDyl5R6unI+1SGo0uFTh+VdlnzFD99LwuhizeT4F06hq/hnBxJVpGl6/7Uiar8gmv7eVlEns4mTZvnfgRc//DzdyLLnF2InWq6bojRko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=J2IWJvPN; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 97EC9102F66E4;
-	Tue, 25 Mar 2025 21:05:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742933150; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=KyyxNsONepDd2/RuTEcl4CgAsXJouk0NlQPd8mFXAXI=;
-	b=J2IWJvPN/AxoTiY918TLOq1AEiwiTIem7uJhyya+JTUxhlbsDf7AVoqjxWjeQfYYLnXXdy
-	OdmH7Oen3EGguXqW8I4poLzoNuDcTznNK9nrt4xCpkB2fx/Fc8b28j5vpP0vPXufdPPQRS
-	adyb8WUMZN+V8sSnzU6Hhy7jzaWPuIrzpYmy8FFCm3u49weBdf3HJqzW4nI/UlBV7sVcyl
-	V6gHbqar7BTJQmjU6mYcXGj5i1Q31V/A4KP+8SGzK4ch/hJYfsKWITErZwtRO1riq4N8NB
-	+zbhf0qLWYUPDQRaZZEDFD459KBFGZvoMIJ6sS0K84TAA4RZQz5Y5oBH++crvg==
-Date: Tue, 25 Mar 2025 21:05:44 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/198] 6.1.132-rc1 review
-Message-ID: <Z+MMmG+f4IGx4e2t@duo.ucw.cz>
-References: <20250325122156.633329074@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayCxmtT2T8784ZyONi2P2alBuKQrmfDgqJkKvrdFHekBarRs+qwaTFAbhPFdGzhiY9qiUeUZu/mBfgngtQGFkja1cI6gY/dLjhUfVS2S1t4husNulYcflDIqWdPucYfoQTvtQwT5+4G3UDy/MJFGAqiU5VHiWj3keFXaKxnqx9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahM6QEZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA3EC4CEE4;
+	Tue, 25 Mar 2025 20:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742933145;
+	bh=X/72qEeKSYHb3elkSglf86VYveOfq9a0qmJcTUN5hDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ahM6QEZcVCjW3BKr+TU9Xmp0YDSX/cu9MQRksROxL7aglAWOxiMyhridJgcTp/Se0
+	 DzQEGs49sg9qFUNT5x+F2Dw4vxeHVxT9aQIegI3yp/n/FaTxw2ob08lZUhCYMWWaKV
+	 cuNPOtVoJ4yRwLw3TN07ECkf9VSx6pOmK9q+zJlFH51al+3SJZBLKjRrKvzcSQp+av
+	 HwKgZYLB/u4uCKrjcaoouEUAplD5yR1Z7C7XRT1tdHpDRBCNulkg2KWB1fdgEYUG6c
+	 I9LPjoiDkBcOnhRX50d/fQRqcnyQlwRRYR37u/0Rzp/6Q8RaZ/NxRDoBMMTxjxaOW2
+	 +Ca6+PmaKmydQ==
+Date: Tue, 25 Mar 2025 15:05:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
+Cc: Simon Glass <sjg@chromium.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RESEND] scripts/make_fit: Print DT name before libfdt
+ errors
+Message-ID: <20250325200544.GA2195874-robh@kernel.org>
+References: <20250209-makefit-v1-1-bfe6151e8f0a@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CPQuxGFZU6NtkyFA"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250325122156.633329074@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250209-makefit-v1-1-bfe6151e8f0a@posteo.net>
 
+On Sun, Feb 09, 2025 at 05:55:28PM +0100, J. Neuschäfer wrote:
+> This makes it easier to pinpoint where the error happened. For example:
+> 
+>   FIT     arch/powerpc/boot/image.fit
+> Error processing arch/powerpc/boot/dts/microwatt.dtb:
+> Traceback (most recent call last):
+>   File "/home/jn/dev/linux/linux-git/build-mpc83xx/../scripts/make_fit.py", line 335, in <module>
+>     sys.exit(run_make_fit())
+>              ^^^^^^^^^^^^^^
+>   File "/home/jn/dev/linux/linux-git/build-mpc83xx/../scripts/make_fit.py", line 309, in run_make_fit
+>     out_data, count, size = build_fit(args)
+>                             ^^^^^^^^^^^^^^^
+>   File "/home/jn/dev/linux/linux-git/build-mpc83xx/../scripts/make_fit.py", line 286, in build_fit
+>     raise e
+>   File "/home/jn/dev/linux/linux-git/build-mpc83xx/../scripts/make_fit.py", line 283, in build_fit
+>     (model, compat, files) = process_dtb(fname, args)
+>                              ^^^^^^^^^^^^^^^^^^^^^^^^
+>   File "/home/jn/dev/linux/linux-git/build-mpc83xx/../scripts/make_fit.py", line 231, in process_dtb
+>     model = fdt.getprop(0, 'model').as_str()
+>             ^^^^^^^^^^^^^^^^^^^^^^^
+>   File "/usr/lib/python3/dist-packages/libfdt.py", line 448, in getprop
+>     pdata = check_err_null(fdt_getprop(self._fdt, nodeoffset, prop_name),
+>             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>   File "/usr/lib/python3/dist-packages/libfdt.py", line 153, in check_err_null
+>     raise FdtException(val)
+> libfdt.FdtException: pylibfdt error -1: FDT_ERR_NOTFOUND
+> 
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+> The example is from a different series which I will release soon, which
+> enables FIT on powerpc.
+> ---
+>  scripts/make_fit.py | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
---CPQuxGFZU6NtkyFA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, sorry for the delay.
 
-Hi!
-
-> This is the start of the stable review cycle for the 6.1.132 release.
-> There are 198 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Ouch, and we see failure in xfs, too:
-
-In file included from ./include/linux/string.h:5,
-3824
-                 from ./include/linux/uuid.h:12,
-3825
-                 from ./fs/xfs/xfs_linux.h:10,
-3826
-                 from ./fs/xfs/xfs.h:22,
-3827
-                 from fs/xfs/libxfs/xfs_alloc.c:6:
-3828
-fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
-3829
-fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use in thi=
-s function); did you mean 'tp'?
-3830
- 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
-3831
-      |                                                   ^~
-
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/951826=
-0339
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---CPQuxGFZU6NtkyFA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+MMmAAKCRAw5/Bqldv6
-8sc6AJ9bE+u8ahxgD+TLaAgPaZZC9FS5zACfThFXC6CUMnjdT42d6z4LigP78DM=
-=yzlP
------END PGP SIGNATURE-----
-
---CPQuxGFZU6NtkyFA--
+Rob
 
