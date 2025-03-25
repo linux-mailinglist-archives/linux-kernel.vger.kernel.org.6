@@ -1,159 +1,163 @@
-Return-Path: <linux-kernel+bounces-575136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479EAA6EDF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:43:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB8EA6EE00
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1C28188D5A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80DFC16833F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48175254AF7;
-	Tue, 25 Mar 2025 10:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889011EEA51;
+	Tue, 25 Mar 2025 10:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkWCOgPD"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FA5DuLQa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Ps4+2Fu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FA5DuLQa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4Ps4+2Fu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC4D1C84A7;
-	Tue, 25 Mar 2025 10:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C4719ABA3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742899388; cv=none; b=VjhWJx7BIgCVzRcqZXZCdO3eRcyoYTSywWaLrPuqOSOYqYj0fxaQQDij/CE3ioZKuMbF6TZfPlqW4u7KAgOjlgwSLkjUcUJImMrOKO/nr/OG+z/BAQvVFHmZWieFxI9wiyy44yDmDJS99l2Z0GlZH48JdM2OKzjzPSYB7BkoKB4=
+	t=1742899519; cv=none; b=adbeD90YY2f9fEsOhJ2MRd5i/DXBEwdaGRwCPz0JbKw8uGKVrKtWFU3QIjk5ZKTe70sqXrNKrGNJcWtewNfTMNjvtc7/s7Dchrnn2RJBAmKHiANMP/iOOaYkQfFQx7EvFEwKnZXKE/8ecEdG+WZ7gK+XjhkWnTkYDsDmJ8ghb4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742899388; c=relaxed/simple;
-	bh=/c3CjXG1Swyt/wD6IMBpN2c7HTr+1ZT0GUM20XgTU2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h2IugkYdkm97S7FfXUpAgKQau6CeNISHRTONbPdk0ItYugUjomcCZb3v11r+/kDBiX6NtFM1iVfBGEP71xz6p2+y64bzYRQMTL9HfRbIrjXxqLJuy4kfyButQaLJPV7+8qKd90ZqdrE7rV6QETnCHFSdAnxur26eMRp5+Y9V4RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GkWCOgPD; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so5697708e87.2;
-        Tue, 25 Mar 2025 03:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742899385; x=1743504185; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8Sshxxvwc2uBLvUYSBC6XZDdk/tekBp/ZA9yuvM01Q=;
-        b=GkWCOgPDSFIvxHaPJokH216X+AGzEM9E7HVbJNgKetvVMTTCb9n2T7rTU2X1JIjviQ
-         t9v8gaGCBHskN1iLpeWvBLLesQ+sA+Y0nwetXy9nG8V4VyE4opmt3Ld/VFQ231phOF1w
-         L/TQGcYk5umhdSMDoyaTxBjL55Y8fud2cQnYCaFq2a4ugNxEfBAoAGKa0HHnfrkzjOFl
-         VM6rtimg9SZTh6H7N35aP3FRkHICtKQ75PbD4G1n9IAklt4tgAJ+drNsZn6XGgZo6Ltn
-         hybUvDnw8RHpJXvPrRT2x6IPiZIW6Y+96AH7MXxgHATnl35Uoj4EqJjF/kXPmrXL4tJ+
-         t5Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742899385; x=1743504185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G8Sshxxvwc2uBLvUYSBC6XZDdk/tekBp/ZA9yuvM01Q=;
-        b=vyiVXtK+KiD6NIh86/zoDAqPYSZKkm9pZtoKLklbWT7wEoKGsb+y9Et6wzKKA6bh+f
-         dK+PdjpBGxNNJmULe7NqqQ5wiGjLOpRjniTGTjOUwv9TlxZN3LODFts1lkgjThML8xll
-         n0VO5k5anwGTDXM530WdNHL8bxhULOk1eCQvWkyEk8CUI2DepSL0gfqXNCPwr310Y7n1
-         gM/Zh51yt+QUX1FJ5gyCfRXy9f6SYbjJGHxtG3JKwNG3ykQv51Jydb1P1UAoJUsenVs4
-         OGezIs7HdfhTate2VlTUkX2osRCma1pv1F+gasKOfdmCtmhZLSHFmwLO7ZYv/39JlozT
-         Vo0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUsaZTGW+2Sn8CxHn35R2gX8/1ew/35+wL65NGCZowABZOY/to9jake8MDnrPyYTuxCo07p8lzs29pFCNYM40Y=@vger.kernel.org, AJvYcCV7I19XV4XwP7KsyiEfftPnb6d3yd+6Hy5LNmlGEMZXIOA9wHwBLe0nODIgogHlh0jGxxLNiAcK6Smk@vger.kernel.org, AJvYcCXKR1j18rRPC1K4w0dlXU3BLVqJH486d3J1M/ln6mnB5zhGS2R4rxcW+30alCnaOMhVwC5NeTBkHXYxRcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7wjlHETfU59r8QrFwKbIvqoZUBRtA3iCzYDOi+6DvUwb4ogSK
-	E3OdDQnXQ3+B3VA5AalQRdTPXBsfOaoQY2aJ2m6VuvkNl3B7IVwC/JWuaF6Y9+JxEbqmAtjibeQ
-	+1BTf5T6vc42Ngs4kfY6Yt22r2/Y=
-X-Gm-Gg: ASbGncue543+nQb+SHKt1s69jeldJ4P3uteCyFSn7zFbwN4pRrmaoF2fqV9PnqLoWar
-	8KsL51iAuz/EYJ6EMmjKLPIiGUCPcRyhFULu4UAOGl/nRjA2CquHtlrc5FQknqh3qr3HlsUy9mP
-	+CXiZxHOql29uWUppv9s4dWOHBQREI8wKkV2Yi56NNHyLVipRmXORF7R6tpYQ=
-X-Google-Smtp-Source: AGHT+IGzzB3CZY+eFUxwaYk3A0Y61jWXkplYq/KLhvIEpW+nxXkKlOGV+SrMXaeb83oUKr8wcRsBmXk8kZsF8sxCWVg=
-X-Received: by 2002:a05:6512:3e23:b0:545:22ec:8b6c with SMTP id
- 2adb3069b0e04-54ad64b311cmr6004267e87.35.1742899384720; Tue, 25 Mar 2025
- 03:43:04 -0700 (PDT)
+	s=arc-20240116; t=1742899519; c=relaxed/simple;
+	bh=JhPeedg859hO5Xn9kfQvOnjhlS8q0xjhsgC6OTFP0c4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dCFQajzJXNOvQCMT1u3fXAQg1W//roxU3/DINBWd/AuCpwpjKja+dc+I5wngSygaGwZUnzXK6MzUDHntkqANxN+lGplyL19WRi8RWj/VuhoM+e1TKQU/WlXVOdfyZee6j9Oct7tCWQu2pOtsuRkpGsKEevdhidcbiTjwqFkjFrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FA5DuLQa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Ps4+2Fu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FA5DuLQa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4Ps4+2Fu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A4FA121168;
+	Tue, 25 Mar 2025 10:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742899515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e9zLWqX6yoEEWcpjzy7q0ZG4a3JyA4ZR+yXAZIVuauk=;
+	b=FA5DuLQaGkddETl9sEiVyoQ6/AmERzXpc5hq80J0P6ak2O5A5QkoaFFXaam5+zrpH2HLfE
+	pGajCgAufeIC6swijECTuEZ+lANhKVg4PrkWSyFttjwJ5geYGenMWzmjvtJ9lUcHcrFZ78
+	Dz2KmoMWSPIyO0hFinkbi0sQZ2vVdPQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742899515;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e9zLWqX6yoEEWcpjzy7q0ZG4a3JyA4ZR+yXAZIVuauk=;
+	b=4Ps4+2FuQjfNjha/HcGwfNIetLS3X4FYNIaOj8fnX3XM/OEHR1MgBzBxNwYG5dLdmrBwvb
+	26pR6PgkbDpqv9Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=FA5DuLQa;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4Ps4+2Fu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742899515; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e9zLWqX6yoEEWcpjzy7q0ZG4a3JyA4ZR+yXAZIVuauk=;
+	b=FA5DuLQaGkddETl9sEiVyoQ6/AmERzXpc5hq80J0P6ak2O5A5QkoaFFXaam5+zrpH2HLfE
+	pGajCgAufeIC6swijECTuEZ+lANhKVg4PrkWSyFttjwJ5geYGenMWzmjvtJ9lUcHcrFZ78
+	Dz2KmoMWSPIyO0hFinkbi0sQZ2vVdPQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742899515;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e9zLWqX6yoEEWcpjzy7q0ZG4a3JyA4ZR+yXAZIVuauk=;
+	b=4Ps4+2FuQjfNjha/HcGwfNIetLS3X4FYNIaOj8fnX3XM/OEHR1MgBzBxNwYG5dLdmrBwvb
+	26pR6PgkbDpqv9Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69DD2137AC;
+	Tue, 25 Mar 2025 10:45:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uwegGDuJ4mcITwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 25 Mar 2025 10:45:15 +0000
+Date: Tue, 25 Mar 2025 11:45:15 +0100
+Message-ID: <87o6xpcrt0.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Andres Traumann <andres.traumann.01@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kailang Yang <kailang@realtek.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/realtek: Bass speaker fixup for ASUS UM5606KA
+In-Reply-To: <20250325102535.8172-1-andres.traumann.01@gmail.com>
+References: <20250325102535.8172-1-andres.traumann.01@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250324-list-no-offset-v1-0-afd2b7fc442a@gmail.com>
- <20250324-list-no-offset-v1-3-afd2b7fc442a@gmail.com> <67e1d1b3.050a0220.4c4ff.6e89@mx.google.com>
- <CAJ-ks9moCO83cGkKuONR-2JMN61x18T2UVO98jhspDR=uyaVqw@mail.gmail.com>
- <CAJ-ks9kPhb00-Dv8KucYGOVjLFMVYvfpBnqrV87M+eJmODAmyw@mail.gmail.com>
- <Z-Iq6Okk1j3ImH1u@Mac.home> <CAJ-ks9n66_vVg3ww58VqfXV6+phng8Bhq9C=NNn854gXK0KAHg@mail.gmail.com>
- <D8PA5CKNMCGA.UODS331S36EG@proton.me>
-In-Reply-To: <D8PA5CKNMCGA.UODS331S36EG@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 06:42:28 -0400
-X-Gm-Features: AQ5f1JpUWGdrl0VmBVTq2r6QOrcMyS5cb4ylDEIRr4yLL9rMhb12hHtyHw30R4Y
-Message-ID: <CAJ-ks9kOFk2GGwjX_Eo7Kuxoh5eziGSKRpLE8oVjEs7pRnWyRw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] rust: list: use consistent type parameter names
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: A4FA121168
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.01
+X-Spam-Flag: NO
 
-On Tue, Mar 25, 2025 at 6:37=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Tue Mar 25, 2025 at 10:52 AM CET, Tamir Duberstein wrote:
-> > On Tue, Mar 25, 2025 at 12:02=E2=80=AFAM Boqun Feng <boqun.feng@gmail.c=
-om> wrote:
-> >> On Mon, Mar 24, 2025 at 05:56:57PM -0400, Tamir Duberstein wrote:
-> >> > On Mon, Mar 24, 2025 at 5:51=E2=80=AFPM Tamir Duberstein <tamird@gma=
-il.com> wrote:
-> >> > > On Mon, Mar 24, 2025 at 5:42=E2=80=AFPM Boqun Feng <boqun.feng@gma=
-il.com> wrote:
-> >> > > > On Mon, Mar 24, 2025 at 05:33:45PM -0400, Tamir Duberstein wrote=
-:
-> >> > > > >              #[inline]
-> >> > > > > @@ -81,16 +81,16 @@ pub unsafe trait HasSelfPtr<T: ?Sized, con=
-st ID: u64 =3D 0>
-> >> > > > >  /// Implements the [`HasListLinks`] and [`HasSelfPtr`] traits=
- for the given type.
-> >> > > > >  #[macro_export]
-> >> > > > >  macro_rules! impl_has_list_links_self_ptr {
-> >> > > > > -    ($(impl$({$($implarg:tt)*})?
-> >> > > > > +    ($(impl$({$($generics:tt)*})?
-> >> > > >
-> >> > > > While you're at it, can you also change this to be
-> >> > > >
-> >> > > >         ($(impl$(<$($generics:tt)*>)?
-> >> > > >
-> >> > > > ?
-> >> > > >
-> >> > > > I don't know why we chose <> for impl_has_list_links, but {} for
-> >> > > > impl_has_list_links_self_ptr ;-)
-> >> > >
-> >> > > This doesn't work in all cases:
-> >> > >
-> >> > > error: local ambiguity when calling macro `impl_has_work`: multipl=
-e
-> >> > > parsing options: built-in NTs tt ('generics') or 1 other option.
-> >> > >    --> ../rust/kernel/workqueue.rs:522:11
-> >> > >     |
-> >> > > 522 |     impl<T> HasWork<Self> for ClosureWork<T> { self.work }
-> >> > >
-> >> > > The reason that `impl_has_list_links` uses <> and all others use {=
-} is
-> >> > > that `impl_has_list_links` is the only one that captures the gener=
-ic
-> >> > > parameter as an `ident`, the rest use `tt`. So we could change
-> >>
-> >> Why impl_has_list_links uses generics at `ident` but rest use `tt`? I'=
-m
-> >> a bit curious.
-> >
-> > I think it's because `ident` cannot deal with lifetimes or const
-> > generics - or at least I was not able to make it work with them.
->
-> If you use `ident`, you can use the normal `<>` as the delimiters of
-> generics. For `tt`, you have to use `{}` (or `()`/`[]`).
+On Tue, 25 Mar 2025 11:25:35 +0100,
+Andres Traumann wrote:
+> 
+> This patch applies the ALC294 bass speaker fixup (ALC294_FIXUP_BASS_SPEAKER_15),
+> previously introduced in commit a7df7f909cec ("ALSA: hda: improve bass
+> speaker support for ASUS Zenbook UM5606WA"), to the ASUS Zenbook UM5606KA.
+> This hardware configuration matches ASUS Zenbook UM5606WA, where DAC NID
+> 0x06 was removed from the bass speaker (NID 0x15), routing both speaker
+> pins to DAC NID 0x03.
+> 
+> This resolves the bass speaker routing issue, ensuring correct audio
+> output on ASUS UM5606KA.
+> 
+> Signed-off-by: Andres Traumann <andres.traumann.01@gmail.com>
 
-Yes I know. But with `ident` you cannot capture lifetimes or const generics=
-.
+Thanks, applied now.
+
+
+Takashi
 
