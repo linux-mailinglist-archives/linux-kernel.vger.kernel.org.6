@@ -1,127 +1,104 @@
-Return-Path: <linux-kernel+bounces-574887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1CDA6EB23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80E4A6EB27
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4C01890F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDED1891455
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4547F204F98;
-	Tue, 25 Mar 2025 08:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A360F25484D;
+	Tue, 25 Mar 2025 08:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbMsKg7+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xuu9Wv6p";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zawn//iF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6702E19E98A;
-	Tue, 25 Mar 2025 08:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2F253B60;
+	Tue, 25 Mar 2025 08:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890271; cv=none; b=ZJrTZLGQH4CkaZRR/oPu66dg3IGsXjICOXQXXJ/83Tn8CHE2WVtUdWrgs7wlogdWvhvpbvSNI8HO/kw3DzFVec56Tk8u8Qk//QwiG0XSX2uk/mPHqPxwln2Ca/N7px016ZjFwjTGHuxBJe8XuHY5SlPPzbAZG/uMeJZdKn473Y8=
+	t=1742890274; cv=none; b=HB/+k7Pz5rOeNDD+jSSIaJUWF0mPaTcVNEKJlnR7mkeZnPxKtFhCKs9qP7+/ensCOTmGzE1CFTFxr7oaWvXVjYg4lMDj7aUV6meVgqXzk4jYyTYbRsGEhk1rc1h4JF82i4rlZHTt+EGFWL0VRfW6614kNOj8F4be2VLok4x5B2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890271; c=relaxed/simple;
-	bh=XdvV9lTKalQ/MN6RLxbFVsr52vq2mOjL+T0ABaNCys4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNfpROpHrwoN+ZsLlC2Sj/zJgEkCVB2wwhKjo+sD1CjS/6BTuq4woihK7r1eETHKynG0o6Rn2M37gvUAaWi0yBDdmHLKk9QH0CRz26QAIsIUjtiIIXz7MNHI5g4p3cLjoFyPALa55F7NLJp9MaHbyCW4sp3SMNpj3I3BXSO6WIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbMsKg7+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223a7065ff8so34305095ad.0;
-        Tue, 25 Mar 2025 01:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742890268; x=1743495068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8EJXAz1GLPl9e3L3417MLNSET1/+5vfTeUSz68+Ai0k=;
-        b=TbMsKg7+sOWRHmcAv5kukHMlKcIT7yB+ea374ZImNycGw1q1cHOlSFNZo+VRmjAIm7
-         yBzzd+w5wMczZ5ZZfo5GTLknDc8EdGUzLq1khas9zHoKRFkzVlDkN4jp69lsCWHC7Xah
-         fRYdVurMrDgfcztcMDamjqtHLaLd7chpwd09ppmnOGOR1IV06u/WRbZWjNIrx6zezZQk
-         47mymhnoBfW8p+rxb/okchgnN5CG0CP+6PT7FPECw855i5tfMlD7p8NKQChZNMLFCAU4
-         74Fwu7jBnM7Qv4P4B1n5ystoow7zsIvzbf56TSZXq1Rgbbbk/zpw5Cht4ELdk1Q1rst9
-         uTxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742890268; x=1743495068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8EJXAz1GLPl9e3L3417MLNSET1/+5vfTeUSz68+Ai0k=;
-        b=ph8QVfaFX/aQl+si9IZCJ1JzQliopBFfLzweIq3VfDVwz29Umy8LO8gU8oPbqIDuVj
-         O6xbbX5cVlJGvRinhiUFefEUAu9End7/ft324RV1+/E5tIZ+2MGOM/CDV9gMK2QGW8og
-         MD1zYmtSpvwcW6fUxvw09ooAHKd6lOicBqRLzwuvX9BbnPsGOuA2Q0BI/eTYeVCFJtIv
-         NlfidGVFiT+aTX15sC1SDodsJXCiHMMpl2JJaI/g7bRNV3SlrGox8nClMI1bFAwxxNrZ
-         wIK104g2zEqVTdlj1ES3x/hJvxTgX6XqksWubCW9S8g23VPsKH5CjBFPYSCzXqtvjKVO
-         UoDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF9ebIvxFL9udow130o/9vU/gQyinijXZp9rkg9ZX5YRd/CiigQz5ag0UW25zhUa5z68Eg2HOY@vger.kernel.org, AJvYcCXBni0zXbjdPOGP+P29Rb8bgIoNbnpBST9SLPUKXD8MtDAuEy3DmUgfqD1D2FWJlwnnrlqsrBNoVUch5Kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvmV3MHDpJjMC7MVNr+oZtmcqINpUR6C+ohF2Z4KO9rr45ApDz
-	aNFx7ues53b4E8Ia2jCBft3M0eNuuuObqkOQz2xqjLY07VQEd0FD
-X-Gm-Gg: ASbGncvkpfI7xc1aJ5MNNmA9eSiiCDhnw0v8h1Wg1v0qqBJrOMP41sDuyIJAJQ5sftL
-	yGgd4IJJ5yTv4k3QFUBRBU7a3Pt/+oGRgcoJalJmK2+DTKERU9jzSSr1we5+kLeWgfpmoFtOqEl
-	bVgE9bMFbEaiFmGyvoagreukvysebpzn6nzMkajVFV9ujShLQr/K0z5QIYMJtopdcggL41Fcvw5
-	l2f7amjIxIAD0cFoWiUPfiYyGvhKg1Q8vKbagi0RzNo+9O4oJ/i9KPd49htrl8j0tLxZ611YePQ
-	o0CqmBZ2s3Mf8KSYIcqvigezS2NNYWvu3NObr18gEEt9rIQzAGHEehvSc7GDZIEZfts4a44H0Ml
-	2J3bKsqRk/omU/7LbWTNeIqQ24QMRiZBGiRsU9Dt1RX6lEXgU1qaECj8aFI0x0G09vU71GC7dDU
-	kNTYs=
-X-Google-Smtp-Source: AGHT+IHJizhf0y3pfXmrbvOIcfN6DwwlgtT71R3QsohrGK18ne60hKpj5CKjX4+kaDnpMFehBZjy3A==
-X-Received: by 2002:a17:902:cec4:b0:220:c143:90a0 with SMTP id d9443c01a7336-22780d96ac7mr262843405ad.24.1742890268445;
-        Tue, 25 Mar 2025 01:11:08 -0700 (PDT)
-Received: from bu9-daniel.dhcpserver.bu9bmc.local (2001-b400-e308-c6d8-50cc-86f4-63a9-3bcd.emome-ip6.hinet.net. [2001:b400:e308:c6d8:50cc:86f4:63a9:3bcd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf59e2desm13677993a91.23.2025.03.25.01.11.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 01:11:08 -0700 (PDT)
-From: Daniel Hsu <d486250@gmail.com>
-X-Google-Original-From: Daniel Hsu <Daniel-Hsu@quantatw.com>
-To: jk@codeconstruct.com.au
-Cc: matt@codeconstruct.com.au,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Hsu <Daniel-Hsu@quantatw.com>
-Subject: [PATCH] mctp: Fix incorrect tx flow invalidation condition in mctp-i2c
-Date: Tue, 25 Mar 2025 16:10:08 +0800
-Message-Id: <20250325081008.3372960-1-Daniel-Hsu@quantatw.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742890274; c=relaxed/simple;
+	bh=8gjoMs+t6/hW1hSlaknfnqD78WUml+/4v7BFGq/X2W8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Wp+PopehmVBy3jDuyF0J4x/fGRfi3W7i6YuvsbRCABYl8eGxM56cQYwlKRgzdpHdhjNwhTeXuSIOs+DRCEDP6jQcak34gW5BJStaaj3D66akKMN4vuhAx1HNN+wwbgJbWdiRewfTBix4X7M0otAg54ZwIt3RPmRsceWvt+lYQWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xuu9Wv6p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zawn//iF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742890269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gBlYuYPxuiW4f/YH3m2JiPO9h8/st5bDHO18kaoaxWU=;
+	b=xuu9Wv6psqJzPFfn8nMntVCSCH9iODJd96EJ94rTd8BA3tpxSRI7FC+Z8px+3BfOtKWwz4
+	EQNAYMOijbgOFFS7+rH/VfTxOn3FxTl5i4udS+twC9fl5AXSJ702DONji18Nfzufxt3P8k
+	hAJMo9n336BIMnf84oX/JXqSA0j0lKk6zhJuprnlWpwoGcrlYJRF1G/qysdW9NOceQ8IWz
+	AxC3zXeAMYHxivQJvG3CSp+tbm0DA65C8MoZL07GOeZp7AaIlLeLgXZ217wNE9p4f98eNQ
+	FWWjzyRHu5AOK9111zSqok0p+97KrvNlYKC5GAOPqqYwJuqrraND0jAhG6UZfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742890269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gBlYuYPxuiW4f/YH3m2JiPO9h8/st5bDHO18kaoaxWU=;
+	b=zawn//iFOlyQCFAWgDgHOmxcNuu0Ak6JkpKA/7TZ4dwphNSIIW3fFEFxxZVI3iFGgo16uU
+	kGLzpS+oUoMNZnBg==
+To: Roger Pau =?utf-8?Q?Monn=C3=A9?= <roger.pau@citrix.com>, Daniel Gomez
+ <da.gomez@kernel.org>
+Cc: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Bjorn Helgaas
+ <helgaas@kernel.org>,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>
+Subject: Re: [PATCH v3 3/3] PCI/MSI: Convert pci_msi_ignore_mask to per MSI
+ domain flag
+In-Reply-To: <Z-Gv6TG9dwKI-fvz@macbook.local>
+References: <20250320210741.GA1099701@bhelgaas>
+ <846c80f8-b80f-49fd-8a50-3fe8a473b8ec@suse.com>
+ <qn7fzggcj6qe6r6gdbwcz23pzdz2jx64aldccmsuheabhmjgrt@tawf5nfwuvw7>
+ <Z-GbuiIYEdqVRsHj@macbook.local>
+ <kp372led6jcryd4ubpyglc4h7b3erramgzsjl2slahxdk7w575@jganskuwkfvb>
+ <Z-Gv6TG9dwKI-fvz@macbook.local>
+Date: Tue, 25 Mar 2025 09:11:08 +0100
+Message-ID: <87y0wtzg0z.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Previously, the condition for invalidating the tx flow in
-mctp_i2c_invalidate_tx_flow() checked if `rc` was nonzero.
-However, this could incorrectly trigger the invalidation
-even when `rc > 0` was returned as a success status.
+On Mon, Mar 24 2025 at 20:18, Roger Pau Monn=C3=A9 wrote:
+> On Mon, Mar 24, 2025 at 07:58:14PM +0100, Daniel Gomez wrote:
+>> The issue is that info appears to be uninitialized. So, this worked for =
+me:
+>
+> Indeed, irq_domain->host_data is NULL, there's no msi_domain_info.  As
+> this is x86, I was expecting x86 ot always use
+> x86_init_dev_msi_info(), but that doesn't seem to be the case.  I
+> would like to better understand this.
 
-This patch updates the condition to explicitly check for `rc < 0`,
-ensuring that only error cases trigger the invalidation.
+Indeed. On x86 this should not happen at all. On architectures, which do
+not use (hierarchical) interrupt domains, it will return NULL.
 
-Signed-off-by: Daniel Hsu <Daniel-Hsu@quantatw.com>
----
- drivers/net/mctp/mctp-i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So I really want to understand why this happens on x86 before such a
+"fix" is deployed.
 
-diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
-index d74d47dd6e04..f782d93f826e 100644
---- a/drivers/net/mctp/mctp-i2c.c
-+++ b/drivers/net/mctp/mctp-i2c.c
-@@ -537,7 +537,7 @@ static void mctp_i2c_xmit(struct mctp_i2c_dev *midev, struct sk_buff *skb)
- 		rc = __i2c_transfer(midev->adapter, &msg, 1);
- 
- 		/* on tx errors, the flow can no longer be considered valid */
--		if (rc)
-+		if (rc < 0)
- 			mctp_i2c_invalidate_tx_flow(midev, skb);
- 
- 		break;
--- 
-2.25.1
+Thanks,
 
+        tglx
 
