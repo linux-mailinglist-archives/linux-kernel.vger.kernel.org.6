@@ -1,85 +1,92 @@
-Return-Path: <linux-kernel+bounces-576255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A35A70CD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:25:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3A9A70CD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50B323B6A05
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:25:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E03947A5EDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8134E26A08C;
-	Tue, 25 Mar 2025 22:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B32C26A08F;
+	Tue, 25 Mar 2025 22:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a6MF6CC2"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="bz9dH6x9"
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D978269CF1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1FE13633F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742941531; cv=none; b=Z7d7cy42Sc/Ajcv0HLvyE2M80lv7dcUxGDMRMNuIp8lg1T0QgLdxRfcFqBtebUGSSbg4eAUwbpy0wDM/zFwH/CgqczO37xBEaycaODOjbg+ZIoBjrMa2B7WCtLmtb130CJ7pF3sl3MBQwnAM1XRh8ivLTP96jDCfKWXNur3rUjw=
+	t=1742941576; cv=none; b=rENxAzvtuov9EWSGamKlenjreBUp2l03cURomGw7ONGd5wmRueDLHfgSfSR+D6D7gOxraJfWDJm3pPBgGW4hyuZDj05OKT2gHEnhjuR6m1tMkgSF4mqb9DDx9yMoji9UzsxCkoF36mClpUSWFtsmvoD8nc7b2364KOTwh5LmUBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742941531; c=relaxed/simple;
-	bh=DxbUnuBK5ISJePyX2IHCaXKQFXjrwR0Adn2978Bbh18=;
+	s=arc-20240116; t=1742941576; c=relaxed/simple;
+	bh=KKtFXFITA4hOuLwA4HcWHFD1w/QWq7sNwvdwYb0AV3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bggsJAqJkYfGvNZ+jFtrjJOqoo8jmIKrvTBT4McKTlBTs0LvdLSTHUZy2G0y8B6nGi9RfMbmc0eNR1HlMpXvxGvxhMAF3P8xZ5etGAz8mUINechbAqhLUkmkVOC6ukpeKdcSUhn3JsaLSnLDv5AVCVv71To1t1DhT7ykHlwWjwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a6MF6CC2; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22580c9ee0aso126962955ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:25:29 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=f15JSZlY/sn9GKVU84Y4r7L5CZESeiXAyjELQaSrrr6NSCmOOphjkherYs6ysrpcjhIF0lrDG+bGm/FvMmBgB9cTB/qTi1y19KRkmVb2ckJO4VPK9aglZWL1req98weQCF6E26ZuhtRjcd2fRg5lB03g+wZLfuHlYRxlypmsUK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=bz9dH6x9; arc=none smtp.client-ip=209.85.214.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-2255003f4c6so119719245ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:26:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742941529; x=1743546329; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1742941574; x=1743546374; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e872gGg4Gz2lxgWQ8PrbHnFp07xu+/jOZUr0j6fpLIg=;
-        b=a6MF6CC2oWz49InrEUZIAMfKaoSJktAMJO2sQt+JYyjKmXBOR2l95H4ffjGaTlWJzJ
-         y5TcWnEkUn1MliKJYNo15G98GN/9kLlcc4+AC3gZyqWE6p+T+WeirQ8WO5M4EOihxFUO
-         p8vJdh0ABQMCboa3q8JMjEfY4IjHPJhNvRSZ4=
+        bh=KKtFXFITA4hOuLwA4HcWHFD1w/QWq7sNwvdwYb0AV3c=;
+        b=bz9dH6x9Mz+fIEKoQQzJKPqpr4dPafCNM4vlLhiEYAoZ/V8uyM1JQO9SBkKlOkFLtZ
+         8Wbyqgo/mgcm9xGnBVBBpAeMPoYlKQR7IKLHQthPHb4vxX6UdDrygIqCVq1Vabv/Fyp4
+         CujRq0VEDYcKdcl8it5KKfx5oRfYEQmEbQIP44kzSNzYVBlgg0k9wCpH16TVfAu+IU4/
+         SKmsoE9OGhGxcgMNvkZRtP2MPlkHwoeZgJFdfwxjJrwR9VcehdG7BnmuLHwGoW0vJFsq
+         8SbVu1lQlgz5eH7LpixyYMW3MBfjvFUmC62YLrr7LA113yQGkrPX9U8N1Uf7/grc9Fsm
+         dJBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742941529; x=1743546329;
+        d=1e100.net; s=20230601; t=1742941574; x=1743546374;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e872gGg4Gz2lxgWQ8PrbHnFp07xu+/jOZUr0j6fpLIg=;
-        b=afHtpVRFYS097AqAT622zltIx4rXhiwYaWv5ktcoGaGuuXkWS+/FN6hYyXctgsyc1W
-         REP4fLsh/0HJ/qk7Qw0FR3T3iE5fAQiGfDL9UiIjzC3VSou1I++Gq/uZQmSaEkcGbvfM
-         x0Hb4dPEF9HQOBEBp+mJ83Ku77BOiBMfYWtY77KvtnOyKHsfwSsWdwijAZTxgOeMt9xH
-         GPEXaxI1pbjNBSkOtItFlHSGfYFGAJlRVorSfI4i+fPzzc4TR9P9RRLN9lUq/TQ3QLDL
-         vBLGKGyuTXL/Z7nyZDa2D/8drAYps/Q2eILC4L6spvaQNcv1bXbPL/CrhZBAc8GJwYO5
-         6wEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ17xKc0XaEOoWcybvpUbjTxdDxc3peqGh/WiIjg833SoykByf6tb/FNbjj9xgHRYEw4DqzZ66pL6LYZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN6bp8Dk18pW9e3kHpBs280opiNOCb0pJIJb4I8vAavy0Xyuz+
-	eg6kLybTPESF/S4VDnvJ5W9NSiawHpNoguOAS6LvVBPlyJsEINU+QE5xYWbgCQ==
-X-Gm-Gg: ASbGncvP8MR7orXn9+SUYZoO/ZuqKWu8GBuU+AN343RM9Oj6FuAwAAkhGdeVWnmZZEH
-	0cWeQPpug6RYTyNhwT3OG2ric0BJPEUKND2Ls8M1QvimXST/FTVCZFbbnSotAKHFtu7e+hP6CwL
-	5PYDfD+mFDHDfPog8CQ3y0chIuiTGmpv+bpzO1UN/BQlOEkDjihMiQ3CoZFLuVC8Oq2ldTPHQi6
-	ndJQeannABW/teT5yef3FRnQiePY0/w+nd0q8Qb0wmXfNvy1OTJx60s4Cjb7jm9YzVEOFftuOWL
-	PyH0K5bO0WaRY1bJ6cSnmOflG+U8ppNC8lT7PwJaGYbqVEPz6uFlETEVp9OiDeOaqpBEKKo4Vy5
-	4K3NsZUM=
-X-Google-Smtp-Source: AGHT+IGfR3dYvOb5O7Gtf+Lz8lxv5DNfeDk0VRui04c4b/0fsh/5+kLMqM9QCS8L5AH9kKzdEgIq5Q==
-X-Received: by 2002:a17:90b:35c4:b0:2fe:80cb:ac05 with SMTP id 98e67ed59e1d1-3030fe7f0fcmr28488510a91.9.1742941529313;
-        Tue, 25 Mar 2025 15:25:29 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:b885:47c3:6268:77fb])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3037c8ec9fdsm36517a91.1.2025.03.25.15.25.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 15:25:28 -0700 (PDT)
-Date: Tue, 25 Mar 2025 15:25:26 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de
-Subject: Re: [PATCH wireless-next v5 10/10] wifi: mwifiex: drop asynchronous
- init waiting code
-Message-ID: <Z-MtVj4NpcLuZxJv@google.com>
-References: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
- <20250324-mwifiex-cleanup-1-v5-10-1128a2be02af@pengutronix.de>
+        bh=KKtFXFITA4hOuLwA4HcWHFD1w/QWq7sNwvdwYb0AV3c=;
+        b=tDoQFrOGxmNHNVEgTjOE8vqksVJEd2ScjNtbaApCZZEtANRpkMy8nUbHlbDbZcY0yR
+         9dhCTKOxFriP6TgCQs3b11qoNP7kU9Jg/ScMlPNwOOX/IDxHvjVSWuQ41uGjQGNJIq3L
+         3FLoLG+pd1fKYF4EVv9RnFx5wUO5AsWauoHUPzsZgMgG5A2goIxifqvikXrLgy+nMCwH
+         V+8LPLOsCF/2lZJvFGpQ/6NnBJedn3Tnme7gxugWOuVkzMV9tcyReD6bJs6A9uz7ELbt
+         g1W0lUXHodqs49DZRJOknPOWlLdfzAbtwqHUZoh9IGocy51tfg1kXo5PdVxcRKrhKaCZ
+         gr6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXJtr9lFa88C/T+uxE8YdTDJW++tD9MHjYmvntntaKpDsA+9whJBd8XXCwio72H5RhoQsIn6iGFOgeHGgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7o0w3JLP4aRojQ7CZ03qj4fUHOZof2UKf0bFD7A4FajCVOhGY
+	PYV7V3XgfrGoK3ew/uNYI/0zWkqwCqsnW8SVBgWTFHyCcRB+QzT7KvU/VMJjzqguHO9r53+MtEr
+	8TybsPzXt1HJNYPefU3EGFBAG0zB4iBGZrHbCqEcMDgNgFFXV
+X-Gm-Gg: ASbGncvGf9QvwU1Dd8N31qX+7+i+6mY+/WRjL8GSCNi+ZQwgWDkDBFIfF1bS/CJT5c/
+	CVDOIwztefNyLXHs1jV5lAmTUWJKFyGIJdPbsY5jQGTTh9PnWQOtlKQywTsan+vMIp1FGaQdbIW
+	/h4CXNwO7/Kyzxv8j5k0D88R1mHxOHBijy1HY+FHmpwtwwiUE7mX3JUOdiTHMgFacGw7dFO5G1U
+	YqPDRsj3KGfBtXU38cAaxy/wHrpw0FQ2p6ThdZRXwelN/6rpM2onAuzyPm+GDMGL+xmuBALgIPc
+	2I1Z0HTvJSP+jzZRdUXKY7edO+oXcIHytWE=
+X-Google-Smtp-Source: AGHT+IGT0KKJcSpjdtMSKMKsUWymjpS7sayjzqsLE4bPkiJaL54O/zO+3IKG+hoGFZrocDh08pKlkUao+W+O
+X-Received: by 2002:a17:902:f683:b0:21f:136a:a374 with SMTP id d9443c01a7336-22780e25b3dmr295953605ad.43.1742941574203;
+        Tue, 25 Mar 2025 15:26:14 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-227eb1938c4sm643615ad.58.2025.03.25.15.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 15:26:14 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 70C3234041F;
+	Tue, 25 Mar 2025 16:26:13 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id 0EFD8E40158; Tue, 25 Mar 2025 16:26:13 -0600 (MDT)
+Date: Tue, 25 Mar 2025 16:26:13 -0600
+From: Uday Shankar <ushankar@purestorage.com>
+To: Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] selftests: ublk: kublk: use ioctl-encoded opcodes
+Message-ID: <Z+MthdcV2jaSBnwC@dev-ushankar.dev.purestorage.com>
+References: <20250325-ublk_timeout-v1-0-262f0121a7bd@purestorage.com>
+ <20250325-ublk_timeout-v1-1-262f0121a7bd@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,122 +95,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324-mwifiex-cleanup-1-v5-10-1128a2be02af@pengutronix.de>
+In-Reply-To: <20250325-ublk_timeout-v1-1-262f0121a7bd@purestorage.com>
 
-Hi Sascha,
+On Tue, Mar 25, 2025 at 04:19:31PM -0600, Uday Shankar wrote:
+> There are a couple of places in the kublk selftests ublk server which
+> use the legacy ublk opcodes. These operations fail (with -EOPNOTSUPP) on
+> a kernel compiled without CONFIG_BLKDEV_UBLK_LEGACY_OPCODES set. We
+> could easily require it to be set as a prerequisite for these selftests,
+> but since new applications should not be using the legacy opcodes, use
+> the ioctl-encoded opcodes everywhere in kublk.
 
-On Mon, Mar 24, 2025 at 02:24:11PM +0100, Sascha Hauer wrote:
-> Historically all commands sent to the mwifiex driver have been
-> asynchronous. The different commands sent during driver initialization
-> have been queued at once and only the final command has been waited
-> for being ready before finally starting the driver.
-> 
-> This has been changed in 7bff9c974e1a ("mwifiex: send firmware
-> initialization commands synchronously"). With this the initialization
-> is finished once the last mwifiex_send_cmd_sync() (now
-> mwifiex_send_cmd()) has returned. This makes all the code used to
-> wait for the last initialization command to be finished unnecessary,
-> so it's removed in this patch.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Is it required to allow for the building of old userspace code (using
+legacy opcodes) against new kernel headers? Or do we only need to
+guarantee that old userspace code using legacy opcodes that is already
+compiled continues to work against newer ublk_drv? If it's the latter
+case, maybe we can consider removing the legacy opcode definitions from
+the userspace header as a follow-on change?
 
-There are a few things that confuse me in here. See below.
-
-> ---
->  drivers/net/wireless/marvell/mwifiex/cmdevt.c  | 16 ----------------
->  drivers/net/wireless/marvell/mwifiex/init.c    | 18 +++++-------------
->  drivers/net/wireless/marvell/mwifiex/main.c    | 25 +++----------------------
->  drivers/net/wireless/marvell/mwifiex/main.h    |  6 ------
->  drivers/net/wireless/marvell/mwifiex/sta_cmd.c |  6 ------
->  drivers/net/wireless/marvell/mwifiex/util.c    | 18 ------------------
->  6 files changed, 8 insertions(+), 81 deletions(-)
-> 
-...
-> diff --git a/drivers/net/wireless/marvell/mwifiex/init.c b/drivers/net/wireless/marvell/mwifiex/init.c
-> index 8b61e45cd6678..fc58ca1a60ca8 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/init.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/init.c
-> @@ -487,7 +487,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
->  	int ret;
->  	struct mwifiex_private *priv;
->  	u8 i, first_sta = true;
-> -	int is_cmd_pend_q_empty;
->  
->  	adapter->hw_status = MWIFIEX_HW_STATUS_INITIALIZING;
->  
-> @@ -509,7 +508,6 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
->  	}
->  	if (adapter->mfg_mode) {
->  		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
-> -		ret = -EINPROGRESS;
-
-Why are you dropping this line? To be fair, I'm not sure I understand
-all the manufacturing-mode support anyway, but I equally don't
-understand why you're dropping this.
-
->  	} else {
->  		for (i = 0; i < adapter->priv_num; i++) {
->  			ret = mwifiex_sta_init_cmd(adapter->priv[i],
-> @@ -521,18 +519,12 @@ int mwifiex_init_fw(struct mwifiex_adapter *adapter)
->  		}
->  	}
->  
-> -	spin_lock_bh(&adapter->cmd_pending_q_lock);
-> -	is_cmd_pend_q_empty = list_empty(&adapter->cmd_pending_q);
-
-I believe your reasoning around the synchronous command logic, but would
-it help to include any sort of fail-safe here for the future? Something
-like:
-
-	WARN_ON(!list_empty(&adapter->cmd_pending_q));
-
-? Or am I being overly cautious?
-
-> -	spin_unlock_bh(&adapter->cmd_pending_q_lock);
-> -	if (!is_cmd_pend_q_empty) {
-> -		/* Send the first command in queue and return */
-> -		if (mwifiex_main_process(adapter) != -1)
-> -			ret = -EINPROGRESS;
-
-You need to update the function comments now that you're dropping this.
-
-Brian
-
-> -	} else {
-> -		adapter->hw_status = MWIFIEX_HW_STATUS_READY;
-> -	}
-> +	adapter->hw_status = MWIFIEX_HW_STATUS_READY;
->  
-> -	return ret;
-> +	if (adapter->if_ops.init_fw_port)
-> +		adapter->if_ops.init_fw_port(adapter);
-> +
-> +	return 0;
->  }
->  
->  /*
-...
-> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> index f2e9f582ae818..199a8e52e5b16 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
-> @@ -2418,11 +2418,5 @@ int mwifiex_sta_init_cmd(struct mwifiex_private *priv, u8 first_sta, bool init)
->  	ret = mwifiex_send_cmd(priv, HostCmd_CMD_11N_CFG,
->  			       HostCmd_ACT_GEN_SET, 0, &tx_cfg, true);
->  
-> -	if (init) {
-
-The 'init' function parameter is no longer used. Can you drop it from
-the function signature?
-
-Brian
-
-> -		/* set last_init_cmd before sending the command */
-> -		priv->adapter->last_init_cmd = HostCmd_CMD_11N_CFG;
-> -		ret = -EINPROGRESS;
-> -	}
-> -
->  	return ret;
->  }
-... 
 
