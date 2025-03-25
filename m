@@ -1,273 +1,173 @@
-Return-Path: <linux-kernel+bounces-575481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BFBA70325
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:05:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0FBA7032D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2604F16CA3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB4943A4B2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E3259CA6;
-	Tue, 25 Mar 2025 13:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3659C257ACF;
+	Tue, 25 Mar 2025 13:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cs2tLvqF"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bwgfOe93"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B2259C92
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2C02566DE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742911000; cv=none; b=KjX6f6fKt0QTdcDcHrKsG2qaqXrX9CrMxxF7cEDOZfrKsEzRnbc0FoHdnTxaRU2uGvn6F2yLp1XtSvxt+3RS548Oy+JjmpOsTrCi3C+h7M/IQ2XhGAjuazY6MkGOGnL9ZfnjoRwFBgCTUHqbSfkHB/5BlsnrpPSy9+11TvBw/z0=
+	t=1742911010; cv=none; b=ZoabP0TIrHj8yaAtQ06EVibgcSTbvPpqnNu/uA/l/RFDsMx0/EsarnDdhzpQCkfe2JiMXk4ugYUEmMDJ5S1NDxtY9uXhINIPR5r5siU1gngDtBYMclHICnPOmRwL3jQjiRmiU5woFycAC6M2mbJYZUBO6OkG2/T04neyAhX6CfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742911000; c=relaxed/simple;
-	bh=fM18Y2UDoYBSYtZGWqXQbd5up5uRuayQ7l/F3XctdF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WcdRy07D9HM7dlO/eY660BCZ1d/8BSjNVmrsCI5G0nU//WrQN56j/Of+bgfHT2zPKIl3nhwGxfXNhRcKMgQ2I5ch0+KuhML8mgPkqExJXmXOBtzjptIg1B2gp1o8DkPsnjbK7acNODdfrmas8LM/tIWnuF174WFbJwkO9ogzX/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cs2tLvqF; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-390f5f48eafso3134238f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742910996; x=1743515796; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCDJmpGf3Eg15VbX5Sp8vwTJcSjhepylteCEjoFRn4k=;
-        b=Cs2tLvqFGCjYeGVnhMtq+SuRQfuM1RjfAJWyJPtPhNwKdeY/xcxJTlgW5o6XPfv218
-         JI/tmt/vUnvuzF7Qoib/9zs/wJBHjoJoWzvooFEu8yfJNzDlYxSEA/xKpAETbbHi4cH9
-         erpns84yCRJsd3+EJBeOh1V5Q6mrOhwd94WS1GH8KghOUCjd1L5PkV1NPn1Lxkx3WlwZ
-         YtSUg5lS54JqZbnSQ1IMi11Jh740bVpC9FNcvSyWMQJvhKY/bLCK0ERnN567AbICykuq
-         1tUS4TC9cm/talnY+gDkqUw2hfpf7OtFlWNTxdU0pSvS8Yy920nOwUBu9IRmu0l0cB/k
-         A9Vw==
+	s=arc-20240116; t=1742911010; c=relaxed/simple;
+	bh=9IaDry6fuUbenQllqTlT5gYi5cOj1Q3ja/I4EJIT8z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXWzRv8DHfIaMwThk0w5Nmwu+wkjmL7/arcKhWwFatXO5MxgH8Dyzey2mJ5+JCVVOl1wcChNMCdTWHLt7KlPAlURuph8m80Fq/7Xp3zTPEbSp+SFAlxtZJVp7RSOhRV7piHeG6zpVtcIjlYcwFlZAEEx+c3cT36nLtG4Sa7K/4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bwgfOe93; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PD0VeJ018765
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:56:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0sLDZktwhqsG1wOZKxLglmBiOdJLLONIkvu2uYKb5xE=; b=bwgfOe93NgXIrhvF
+	iy2HZAAvfKWT42nzdJgEpzmXlWXWSGymuWBRuz1x71ybDi0vo6sYN2C1H1su3imx
+	BuQfU1UOemDBpZ5YbLCBT3aQmaSF3yxook1e/SnKD4ek5vgiJwaSuElQ5DYyYK+f
+	DFG3OnMesGr/CYRFxqTo+lKbfuteauAb6Crv+r9YP/YVZGWkf6n7W58RYVSuBqwB
+	4viRSJhtD6wp7hqFBcu9QFMhIPw9j7fVRc7aVyDVHt4zR9aRz9TzJpuFuLvMq4EO
+	WR+zx4HbyztXPMB6ZVYYJnM8T8tDU2d6o71QVgO+8uLlRM7OQ7zJCE8zv/1JvEu1
+	c97pLg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnrasn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:56:46 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-475127bacd0so5507511cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:56:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742910996; x=1743515796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCDJmpGf3Eg15VbX5Sp8vwTJcSjhepylteCEjoFRn4k=;
-        b=kKH0fKPrM0P7j6olw6ZbTYv61fmKpD0R/JMWkeVOEra9Kz+U4tghSjl0lfarzAh4hE
-         mn461yAjI0cxYDxMn4iXLRIjAG0LKA6xqmXLLB7K/FpVVGDk1VZd9xr5z+8oyoiT/fIu
-         dFp5scQmwyicukzd9PeUS6RZ/t3U03MZ8Hxfly9RSaZZP0GIY1J1BLMnREAlg4fcNr0S
-         he5wg7JE1AkuRCryPZKoXDLWXt65DBqommmo1FHHHjG5ezaujJ0rWlbXrepCnYXwsIKt
-         KXo0vjmTtB5PVBD+bVp2ULPaJzLUibJnVDUA+p1qlrfzMrVBhvsVEcYn2DMGyzLziUgh
-         iSFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb+e6QudwcDJ1K5Gviyk270XmWL88pJXXHP7/KyyeTngaydbNKUJuQJ3zc6gu7Tsdnh7FzuRN01PIfV/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz38YEoSh+z1dBMczFDx78xGYCOZ6mYtg65esSG9dceeWyvDNX0
-	TbIv+d/jDWCFYYKOywyIhdCiEz/FqcTbvPo+QWzCjxgdHzvaOW/Bs6a7+4ya2ZA=
-X-Gm-Gg: ASbGncsZ3xJfS13Rd6MlIWx9BhzFNq6GqE4/31kKE8RxqY+YSscYN5iMWv/BnEzbIRx
-	IRI2C19L6r/92Im5Ee4E88+brUPA5e9aDvPZfxmIqloGwIQ0PI2Tf66bXmi7+fxQ/cgFbtJ+QnD
-	Mg34NCZAazKdOoW8sWYGjbcJ0ufNMNtyv+evDiRDta8O3geX/CRABTH3XBe7zoZxKXW89FAffgo
-	rSlNK8m6XwP8y6IFINGJx4x6dRNi8hYemNGIZ51AljL1+VReKIlnpFCGJr1TPPSh5MH4f39srr5
-	uT/rUatNfJ7ZPf1jVtLAER5FmtJhgSYka5iSur2rP63H/G9Z9w==
-X-Google-Smtp-Source: AGHT+IEXygql+ba4dLAEprcqbbBUZm9vu5V/1aZTrj16kuq0a0ccf1f7yorovN1W6gxa7/NXqYYLjQ==
-X-Received: by 2002:a5d:6da1:0:b0:391:10c5:d1c6 with SMTP id ffacd0b85a97d-3997f8ed9c9mr14586179f8f.2.1742910995979;
-        Tue, 25 Mar 2025 06:56:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d440ed4d9sm203483275e9.33.2025.03.25.06.56.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 06:56:35 -0700 (PDT)
-Date: Tue, 25 Mar 2025 16:56:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Roger Pau Monne <roger.pau@citrix.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	PCI <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	shivamurthy.shastri@linutronix.de,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20250324: x86_64: BUG: kernel NULL pointer dereference
- __pci_enable_msi_range
-Message-ID: <b6df035d-74b5-4113-84c3-1a0a18a61e78@stanley.mountain>
-References: <CA+G9fYs4-4y=edxddERXQ_fMsW_nUJU+V0bSMHFDL3St7NiLxQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1742911005; x=1743515805;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sLDZktwhqsG1wOZKxLglmBiOdJLLONIkvu2uYKb5xE=;
+        b=cEOwG5P6cILZQQiWm5Klny6gnchvI5c+lkZ0InDs8esBN5ofRShPGymdFEFiN312DE
+         Dyf5EReybLtnOcVhNlttcY9ED/UowmaetFu8zrqxqe3xvUESQ1p4n3FXyvtctJ8JJlK0
+         +cokvw13ZnC9TNd2tAnb9XKy98XhlG52vHZNEpH/NzbCr0o3fHGVzvCQDE2/1oh330RT
+         sbitVB0U6j1gv/hyTmZ7gb9u86/3ca1kWhZbcAUYNyawtxXu1vEms1v3txefInLYYzF7
+         6C/gAtKuBNht8ayoiq3BoAk6wo6pRntn4j/EyRemT3JqWESMik08yjoWjvIl1+5Sm+E3
+         /mLw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/F90LmV4r7rIzAP6EuqDEZ3RYFSFa8XfwkwTMrUcPWup56QjLHSFm5uICCwux6XBFPIh1icLJu3IhiPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIMvwXJ1+q2qyRCakgyIQ636lGgWyND6q6fQT9vaoC1mAjGLWj
+	xTYSzisj8338JsLSju2QXykItZISRYY1d4tAhJ6LW6vd21GtIMLSEmQCITKLy6ZW5FNl+4RqZJ+
+	olui12+tAOFGaSuu+tjtn2sFO3RKGEkczk2oN44dPC2PV2CeyfV8Gk/lGQI6KScE=
+X-Gm-Gg: ASbGncsARljUUX2e2YsV5hMhdDExxGGJmES7CwHytNhcED1XT3seODe+ux2cxSuhMyp
+	GyfnEpD/VszwytYNdx1aTeeo5fGAUwVnY9W8LmEszWtZ9jfI6wIjDBpPgLicRlvZV+CIOYFJjRb
+	VKTUaULUZ0TS5rStujtiPwSYk0w+YQCZs8hb50G7+vAi7wO9nD143Qfo6qyepC2jeiAYD0dxYA5
+	32tiP1Sykw8QkgYnl4k1NywvWQiDRIgB5lQovRgqWX7aFSpJIcI3/x6b2LBJBGsgxQRXaCEoW1e
+	asqBXCzgywr/d/21FKW8XCOobBL+QOxgn2OJERgK+tFkpjNIV/5e+SLny/0o7Itfa6WjMw==
+X-Received: by 2002:a05:622a:1883:b0:473:884e:dcff with SMTP id d75a77b69052e-4771de13f51mr88067311cf.13.1742911005334;
+        Tue, 25 Mar 2025 06:56:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFn+bjrW3qy1jJkHXha130pv0V5DkYmNYCdBX0USZFkxoEZBO3/5NEu0ewfyB/epISxwClUwg==
+X-Received: by 2002:a05:622a:1883:b0:473:884e:dcff with SMTP id d75a77b69052e-4771de13f51mr88067141cf.13.1742911004890;
+        Tue, 25 Mar 2025 06:56:44 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccf665dcsm7788319a12.13.2025.03.25.06.56.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 06:56:44 -0700 (PDT)
+Message-ID: <8e301a7b-c475-4642-bf91-7a5176a00d1f@oss.qualcomm.com>
+Date: Tue, 25 Mar 2025 14:56:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYs4-4y=edxddERXQ_fMsW_nUJU+V0bSMHFDL3St7NiLxQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] dt-bindings: PCI: Add binding for Toshiba TC956x
+ PCIe switch
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        chaitanya chundru <quic_krichai@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
+        amitk@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        jorge.ramirez@oss.qualcomm.com
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com>
+ <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250226-eager-urchin-of-performance-b71ae4@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e2b61e cx=c_pps a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gGbnW7COpTo7U3-rSK8A:9
+ a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: nF6MKdN6YgjpZgsWFAIo4hlJ1LVWD32J
+X-Proofpoint-GUID: nF6MKdN6YgjpZgsWFAIo4hlJ1LVWD32J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250098
 
-If I had to guess, I'd say that it was related to Fixes: d9f2164238d8
-("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag").  I
-suspect d->host_data can be NULL.  I could be wrong, but let's add Roger
-to the CC list just in case.
+On 2/26/25 8:30 AM, Krzysztof Kozlowski wrote:
+> On Tue, Feb 25, 2025 at 03:03:58PM +0530, Krishna Chaitanya Chundru wrote:
+>> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>
+>> Add a device tree binding for the Toshiba TC956x PCIe switch, which
+>> provides an Ethernet MAC integrated to the 3rd downstream port and two
+>> downstream PCIe ports.
+>>
+>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> 
+> Drop, file was named entirely different. I see other changes, altough
+> comparing with b4 is impossible.
+> 
+> Why b4 does not work for this patch?
+> 
+>   b4 diff '20250225-qps615_v4_1-v4-1-e08633a7bdf8@oss.qualcomm.com'
+>   Checking for older revisions
+>   Grabbing search results from lore.kernel.org
+>   Nothing matching that query.
+> 
+> Looks like you use b4 but decide to not use b4 changesets/versions. Why
+> making it difficult for reviewers and for yourself?
+> 
+> 
+>> ---
+>>  .../devicetree/bindings/pci/toshiba,tc956x.yaml    | 178 +++++++++++++++++++++
+>>  1 file changed, 178 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
+>> new file mode 100644
+>> index 000000000000..ffed23004f0d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc956x.yaml
+> 
+> What is "x" here? Wildcard?
 
-regards,
-dan carpenter
+Yes, an overly broad one. Let's use the actual name going forward.
 
-On Tue, Mar 25, 2025 at 05:11:20PM +0530, Naresh Kamboju wrote:
-> Regressions on x86_64 boot failed with Linux next-20250324 tag kernel
-> 6.14.0-rc7-next-20250324
-> 
-> First seen on the next-20250324
->  Good: next-20250321
->  Bad:  next-20250324 ..next-20250325
-> 
-> Regressions found on x86_84:
->  - boot
-> 
-> Regression Analysis:
->  - New regression? Yes
->  - Reproducible? Yes
-> 
-> Boot regression: x86 boot fail kernel panic __pci_enable_msi_range
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Boot log
-> <1>[    1.525485] BUG: kernel NULL pointer dereference, address:
-> 0000000000000002
-> <1>[    1.525573] #PF: supervisor read access in kernel mode
-> <1>[    1.525573] #PF: error_code(0x0000) - not-present page
-> <6>[    1.525573] PGD 0 P4D 0
-> <4>[    1.525573] Oops: Oops: 0000 [#1] SMP PTI
-> <4>[    1.525573] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
-> 6.14.0-rc7-next-20250324 #1 PREEMPT(voluntary)
-> <4>[    1.525573] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-> BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> <4>[    1.525573] RIP: 0010:__pci_enable_msi_range+0x306/0x6b0
-> <4>[    1.525573] Code: ff ff ff e8 1c 05 fe ff f6 83 21 08 00 00 10
-> 0f b7 85 6e ff ff ff 74 0c 0d 00 01 00 00 66 89 85 6e ff ff ff 8b 8d
-> 68 ff ff ff <41> f6 44 24 02 40 74 0c 25 ff fe 00 00 66 89 85 6e ff ff
-> ff 89 8d
-> <4>[    1.525573] RSP: 0000:ffffa83b00013740 EFLAGS: 00010246
-> <4>[    1.525573] RAX: 0000000000000080 RBX: ffffa11c8023e000 RCX:
-> 0000000000000001
-> <4>[    1.525573] RDX: 0000000000000000 RSI: ffffffff9e60c683 RDI:
-> ffffffff9e6519a8
-> <4>[    1.525573] RBP: ffffa83b00013810 R08: 0000000000000002 R09:
-> ffffa83b0001370c
-> <4>[    1.525573] R10: 0000000000000001 R11: ffffffff9e60c5b0 R12:
-> 0000000000000000
-> <4>[    1.525573] R13: 0000000000000000 R14: 0000000000000001 R15:
-> ffffa11c8023e000
-> <4>[    1.525573] FS:  0000000000000000(0000)
-> GS:ffffa11d5c339000(0000) knlGS:0000000000000000
-> <4>[    1.525573] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> <4>[    1.525573] CR2: 0000000000000002 CR3: 000000007d844000 CR4:
-> 00000000000006f0
-> <4>[    1.525573] Call Trace:
-> <4>[    1.525573]  <TASK>
-> <4>[    1.525573]  ? __die_body+0xb4/0xc0
-> <4>[    1.525573]  ? __die+0x2e/0x40
-> <4>[    1.525573]  ? page_fault_oops+0x3ae/0x410
-> <4>[    1.525573]  ? kernelmode_fixup_or_oops+0x54/0x70
-> <4>[    1.525573]  ? __bad_area_nosemaphore+0x52/0x240
-> <4>[    1.525573]  ? bad_area_nosemaphore+0x16/0x20
-> <4>[    1.525573]  ? do_user_addr_fault+0x738/0x7a0
-> <4>[    1.525573]  ? irqentry_enter+0x2d/0x50
-> <4>[    1.525573]  ? exc_page_fault+0x4d/0x120
-> <4>[    1.525573]  ? exc_page_fault+0x70/0x120
-> <4>[    1.525573]  ? asm_exc_page_fault+0x2b/0x30
-> <4>[    1.525573]  ? __pfx_pci_conf1_read+0x10/0x10
-> <4>[    1.525573]  ? pci_conf1_read+0xd3/0xf0
-> <4>[    1.525573]  ? _raw_spin_unlock_irqrestore+0x28/0x50
-> <4>[    1.525573]  ? __pci_enable_msi_range+0x306/0x6b0
-> <4>[    1.525573]  ? _raw_spin_unlock_irqrestore+0x28/0x50
-> <4>[    1.525573]  pci_alloc_irq_vectors_affinity+0xbf/0x140
-> <4>[    1.525573]  pci_alloc_irq_vectors+0x15/0x20
-> <4>[    1.525573]  ahci_init_irq+0x90/0xc0
-> <4>[    1.525573]  ahci_init_one+0x82c/0xd10
-> <4>[    1.525573]  pci_device_probe+0x198/0x230
-> <4>[    1.525573]  really_probe+0x146/0x450
-> <4>[    1.525573]  __driver_probe_device+0x7a/0xf0
-> <4>[    1.525573]  driver_probe_device+0x24/0x190
-> <4>[    1.525573]  __driver_attach+0x104/0x250
-> <4>[    1.525573]  ? __pfx___driver_attach+0x10/0x10
-> <4>[    1.525573]  bus_for_each_dev+0x10e/0x160
-> <4>[    1.525573]  driver_attach+0x22/0x30
-> <4>[    1.525573]  bus_add_driver+0x175/0x2c0
-> <4>[    1.525573]  driver_register+0x65/0xf0
-> <4>[    1.525573]  ? __pfx_ahci_pci_driver_init+0x10/0x10
-> <4>[    1.525573]  __pci_register_driver+0x68/0x70
-> <4>[    1.525573]  ahci_pci_driver_init+0x22/0x30
-> <4>[    1.525573]  do_one_initcall+0x121/0x330
-> <4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
-> <4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
-> <4>[    1.525573]  ? trace_preempt_on+0x12/0x80
-> <4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
-> <4>[    1.525573]  ? preempt_count_sub+0x63/0x80
-> <4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
-> <4>[    1.525573]  ? trace_hardirqs_on+0x29/0xa0
-> <4>[    1.525573]  ? irqentry_exit+0x57/0x60
-> <4>[    1.525573]  ? sysvec_apic_timer_interrupt+0x52/0x90
-> <4>[    1.525573]  ? next_arg+0xcd/0x150
-> <4>[    1.525573]  ? next_arg+0x138/0x150
-> <4>[    1.525573]  ? parse_args+0x16e/0x440
-> <4>[    1.525573]  do_initcall_level+0x80/0xf0
-> <4>[    1.525573]  do_initcalls+0x48/0x80
-> <4>[    1.525573]  do_basic_setup+0x1d/0x30
-> <4>[    1.525573]  kernel_init_freeable+0x10c/0x180
-> <4>[    1.525573]  ? __pfx_kernel_init+0x10/0x10
-> <4>[    1.525573]  kernel_init+0x1e/0x130
-> <4>[    1.525573]  ret_from_fork+0x45/0x50
-> <4>[    1.525573]  ? __pfx_kernel_init+0x10/0x10
-> <4>[    1.525573]  ret_from_fork_asm+0x1a/0x30
-> <4>[    1.525573]  </TASK>
-> <4>[    1.525573] Modules linked in:
-> <4>[    1.525573] CR2: 0000000000000002
-> <4>[    1.525573] ---[ end trace 0000000000000000 ]---
-> <4>[    1.525573] RIP: 0010:__pci_enable_msi_range+0x306/0x6b0
-> <4>[    1.525573] Code: ff ff ff e8 1c 05 fe ff f6 83 21 08 00 00 10
-> 0f b7 85 6e ff ff ff 74 0c 0d 00 01 00 00 66 89 85 6e ff ff ff 8b 8d
-> 68 ff ff ff <41> f6 44 24 02 40 74 0c 25 ff fe 00 00 66 89 85 6e ff ff
-> ff 89 8d
-> <4>[    1.525573] RSP: 0000:ffffa83b00013740 EFLAGS: 00010246
-> <4>[    1.525573] RAX: 0000000000000080 RBX: ffffa11c8023e000 RCX:
-> 0000000000000001
-> <4>[    1.525573] RDX: 0000000000000000 RSI: ffffffff9e60c683 RDI:
-> ffffffff9e6519a8
-> <4>[    1.525573] RBP: ffffa83b00013810 R08: 0000000000000002 R09:
-> ffffa83b0001370c
-> <4>[    1.525573] R10: 0000000000000001 R11: ffffffff9e60c5b0 R12:
-> 0000000000000000
-> <4>[    1.525573] R13: 0000000000000000 R14: 0000000000000001 R15:
-> ffffa11c8023e000
-> <4>[    1.525573] FS:  0000000000000000(0000)
-> GS:ffffa11d5c339000(0000) knlGS:0000000000000000
-> <4>[    1.525573] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> <4>[    1.525573] CR2: 0000000000000002 CR3: 000000007d844000 CR4:
-> 00000000000006f0
-> <6>[    1.525573] note: swapper/0[1] exited with irqs disabled
-> <0>[    1.553459] Kernel panic - not syncing: Attempted to kill init!
-> exitcode=0x00000009
-> <0>[    1.553844] Kernel Offset: 0x1c000000 from 0xffffffff81000000
-> (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> <0>[    1.553844] ---[ end Kernel panic - not syncing: Attempted to
-> kill init! exitcode=0x00000009 ]---
-> 
-> 
-> ## Source
-> * Kernel version: 6.14.0-rc7-next-20250324
-> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git sha: 882a18c2c14fc79adb30fe57a9758283aa20efaa
-> * Git describe: next-20250324
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/
-> 
-> ## Test
-> * Test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735988/suite/boot/test/clang-20-lkftconfig/log
-> * Test history:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735988/suite/boot/test/clang-20-lkftconfig/history/
-> * Test details:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735936/suite/boot/test/clang-20-lkftconfig/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ulLSNJUAxmyv6UZdUMeoptIZNn/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2ulLSNJUAxmyv6UZdUMeoptIZNn/config
-> 
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
+Konrad
 
