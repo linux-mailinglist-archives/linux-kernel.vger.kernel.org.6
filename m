@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-575262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA568A6FAB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8FBA6FAB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A333189CA74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7363B8797
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D318256C70;
-	Tue, 25 Mar 2025 12:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69483254AE5;
+	Tue, 25 Mar 2025 12:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUcSar/5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMSi9rHJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C3D19E83E;
-	Tue, 25 Mar 2025 12:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C540EF9E6;
+	Tue, 25 Mar 2025 12:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742904088; cv=none; b=IJmTqeI+PX5ARVPziRtAQJMgKxLXzzXQqstQ8XCghlJunGE8L4VJ3lxY3llbGkapYHI04Kk8W1nr6S+qE6vr6e7b+DBJSy5NekMxqA2/hZuWzcEzcFyMrykQHP8EtE0HEEZVJ1vp+y2JItbeECS0jwHAbk65t5DUksIw2kfrcws=
+	t=1742904268; cv=none; b=mc4/Vys5aTr6lL7Q+C9zKrQDYlJsz6Z6lRzY5qdA7yB4l8W4QH7lXbO5YcyZqomoMhcTcy91Ol14+9HmUOyqq0cRuScy6fzlGovI3Dq+or6C0Zh/D2eS2Kk/6+7IRRHPlm3o0s0Q0EYRhHaOQBiuJwnlJQ3jyNPzgRyy5VFsv1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742904088; c=relaxed/simple;
-	bh=lf6NbP9uGbIdfY/HisFYRArb89IlBLLC6LzdNMf/Ves=;
+	s=arc-20240116; t=1742904268; c=relaxed/simple;
+	bh=Lgn+GjPuLLv587AjfxPK4UTvCKPwHlaM+UJ3rYCoRzY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3p3g+RNolwL3sqCpBc2CzIp0ef3VePHXY+h38Ol4Dw+9JmmIVNqlGicdM/N7ff57OQAXnHFHqx7VcZqGJ5xSVIublkxNJMei3d3MxgEqUeEGwjFevh8TzBF6jCUH6DfK7nHIMkI6EQOEWiTZWVg9TIVHEoH7ASS5hOSGAp3NZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUcSar/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94128C4CEE4;
-	Tue, 25 Mar 2025 12:01:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=thxann04ogw6k9YSIAxUbxgHON9BUrO7h9VoP2e/lA7W74xw6X+I8PFQn5DyNCfpUc5gpyCzQXtiIoddZ+8kD5KQx1W99RallcggIw64RiDVouE6dfU8Ox0/pCacDrYut74y4KLwhC+e1O98ZelgTQqVCEU4L5kXltvpofkvO5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMSi9rHJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E74FC4CEE4;
+	Tue, 25 Mar 2025 12:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742904087;
-	bh=lf6NbP9uGbIdfY/HisFYRArb89IlBLLC6LzdNMf/Ves=;
+	s=k20201202; t=1742904268;
+	bh=Lgn+GjPuLLv587AjfxPK4UTvCKPwHlaM+UJ3rYCoRzY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bUcSar/5/m6Smc9wth1n99aC1r3WskMKZAEfYHTu6Lrwgp5h3jFFrCy87OVMj3FiF
-	 YYTRmHoOIa85YqzJybCjpnpQ/YzFw0rxooWfGEQbLjXCb6EAp0bSqkn9Ys6Fwa1nOT
-	 yuj3sVpszYV7M7HOk3A3+l7eIw3800okx/w0y9d0XWGTiXFU8sntMvcvGvSfjAI4R/
-	 415Zhc52pOcqATzu+V/TC+nX4gnR5bTiSa+Wzx0wmS4Cbrb/Rb/x3e/NmpgIDfgMJl
-	 /AU0+qMn4qBLAz57Z1O6yMDCmT3NvcmJIcjzN3YJjeZrmLBC7k0jYxrskM54MEcUg2
-	 ZLeKQbYberl/g==
-Message-ID: <e7d3f22f-4576-448a-a77e-644cd21c9a16@kernel.org>
-Date: Tue, 25 Mar 2025 13:01:18 +0100
+	b=LMSi9rHJGjJXGdNd/dIHCcGyuASfC3D6gHLXw6U5bfhA2YP24OMJAO+wrDIG5gew4
+	 sEZio9lQpI7z8bb89Ge3UshE+gkbRCrtyFM3f7B7apBf7L9OMwjQ9TfSEdGnLfnBYL
+	 OAHaOR3AoaiFCD98Xo6niQRRVAIovLyiU5NMaogC+V1x3XqO780BSJAFwzFzKaO6Cy
+	 BVsDv9WvNSFzZbur5DauCssWseQYStvLOjP/rMyRMjHbSDJtJI3QA/3j2Ozhg2A55j
+	 0TZmi1rTkX7txMyOfv6wmTdIQKz3MG3ZVLZD9gpdvjkdPvRrxX96kvLLgXxKuuQ95X
+	 dp/Q4QJtUtNtw==
+Message-ID: <15370998-6a91-464d-b680-931074889bc1@kernel.org>
+Date: Tue, 25 Mar 2025 12:04:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +49,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] MAINTAINERS: Add myself as the MTIP L2 switch
- maintainer (IMX SoCs: imx287)
-To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
-References: <20250325115736.1732721-1-lukma@denx.de>
- <20250325115736.1732721-2-lukma@denx.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250325115736.1732721-2-lukma@denx.de>
+Subject: Re: [linux-next-20250324]/tool/bpf/bpftool fails to complie on
+ linux-next-20250324
+To: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
+ jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com,
+ williams@redhat.com, tglozar@redhat.com, rostedt@goodmis.org
+References: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
+ <8b0b2a41-203d-41f8-888d-2273afb877d0@qmon.net>
+ <Z+KXN0KjyHlQPLUj@linux.ibm.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <Z+KXN0KjyHlQPLUj@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/03/2025 12:57, Lukasz Majewski wrote:
-> Add myself as a maintainer for this particular network driver.
+2025-03-25 17:14 UTC+0530 ~ Saket Kumar Bhaskar <skb99@linux.ibm.com>
+> On Tue, Mar 25, 2025 at 11:09:24AM +0000, Quentin Monnet wrote:
+>> 2025-03-25 16:02 UTC+0530 ~ Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+>>> Greetings!!!
+>>>
+>>>
+>>> bpftool fails to complie on linux-next-20250324 repo.
+>>>
+>>>
+>>> Error:
+>>>
+>>> make: *** No rule to make target 'bpftool', needed by '/home/linux/
+>>> tools/testing/selftests/bpf/tools/include/vmlinux.h'. Stop.
+>>> make: *** Waiting for unfinished jobs.....
+>>
+>>
+>> Thanks! Would be great to have a bit more context on the error (and on
+>> how to reproduce) for next time. Bpftool itself seems to compile fine,
+>> the error shows that it's building it from the context of the selftests
+>> that seems broken.
+>>
+>>
+> Yes, selftest build for BPF fails.
+> ## pwd
+> /linux/tools/testing/selftests/bpf
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+> # make -j 33
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5959513a7359..255edd825fa1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9270,6 +9270,13 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/i2c/i2c-mpc.yaml
->  F:	drivers/i2c/busses/i2c-mpc.c
->  
-> +FREESCALE MTIP ETHERNET SWITCH DRIVER
-> +M:	Lukasz Majewski <lukma@denx.de>
-> +L:	netdev@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/net/fec,mtip-switch.yaml
-> +F:	drivers/net/ethernet/freescale/mtipsw/*
+> make: *** No rule to make target 'bpftool', needed by '/home/upstreamci/linux/tools/testing/selftests/bpf/tools/include/vmlinux.h'.  Stop.
+> make: *** Waiting for unfinished jobs....
+> 
+>>> Git bisect points to commit: 8a635c3856ddb74ed3fe7c856b271cdfeb65f293 as
+>>> first bad commit.
+>>
+>> Thank you Venkat for the bisect!
+>>
+>> On a quick look, that commit introduced a definition for BPFTOOL in
+>> tools/scripts/Makefile.include:
+>>
+>> 	diff --git a/tools/scripts/Makefile.include .../Makefile.include
+>> 	index 0aa4005017c7..71bbe52721b3 100644
+>> 	--- a/tools/scripts/Makefile.include
+>> 	+++ b/tools/scripts/Makefile.include
+>> 	@@ -91,6 +91,9 @@ LLVM_CONFIG	?= llvm-config
+>> 	 LLVM_OBJCOPY	?= llvm-objcopy
+>> 	 LLVM_STRIP	?= llvm-strip
+>> 	
+>> 	+# Some tools require bpftool
+>> 	+BPFTOOL		?= bpftool
+>> 	+
+>> 	 ifeq ($(CC_NO_CLANG), 1)
+>> 	 EXTRA_WARNINGS += -Wstrict-aliasing=3
+>>
+>> But several utilities or selftests under tools/ include
+>> tools/scripts/Makefile.include _and_ use their own version of the
+>> $(BPFTOOL) variable, often assigning only if unset, for example in
+>> tools/testing/selftests/bpf/Makefile:
+>>
+>> 	BPFTOOL ?= $(DEFAULT_BPFTOOL)
+>>
+>> My guess is that the new definition from Makefile.include overrides this
+>> with simply "bpftool" as a value, and the Makefile fails to build it as
+>> a result.
+>>
+>> If I guessed correctly, one workaround would be to rename the variable
+>> in Makefile.include (and in whatever Makefile now relies on it) into
+>> something that is not used in the other Makefiles, for example
+>> BPFTOOL_BINARY.
+>>
+>> Please copy the BPF mailing list on changes impacting BPF tooling (or
+>> for BPF-related patchsets in general).
+>>
+>> Thanks,
+>> Quentin
+> Yes you are right that the new definition from Makefile.include overrides this
+> with simply "bpftool" as a value, and the Makefile in bpf selftest fails to 
+> build it as a result.
+> 
+> But the main cause is that it is not able to locate the bpftool binary.
 
-You need to re-order the patches, there are no such files yet, so this
-causes warnings.
+I'm not sure I follow. What component is not able to locate the binary?
 
-Best regards,
-Krzysztof
+If you talk about the BPF selftests, I believe they only fail to locate
+it because of the collision on the $(BPFTOOL) variable. Selftests'
+Makefile was able to find the binary before that commit, so there should
+be no need to change the path to the binary.
+
+If you talk about tools/tracing/rtla/Makefile failing to locate bpftool,
+it's another matter. As far as I understand, the RTLA Makefile assumes
+that bpftool is available from $PATH, this is why the commit introduced
+a probe in tools/build/feature: to ensure that bpftool is installed and
+available. So here again, I don't see the motivation for changing the
+path to the binary (And how do you know it's /usr/sbin/bpftool anyway?
+Some users have it under /usr/local/sbin/, for example). If the intent
+were to compile a bootstrap bpftool to make sure that it's available
+instead then it should replicate what other BPF utilities or selftests
+do, and get rid of the probe. But the commit description for
+8a635c3856dd indicates that RTLA folks prefer not to compile bpftool and
+rely on it being installed.
+
+Quentin
 
