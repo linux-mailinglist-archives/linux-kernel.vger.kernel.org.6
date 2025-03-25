@@ -1,119 +1,392 @@
-Return-Path: <linux-kernel+bounces-575389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8922A70180
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:25:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27868A701FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A2227A2EBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2DF188819F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2976F25C6FA;
-	Tue, 25 Mar 2025 13:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E5725B69D;
+	Tue, 25 Mar 2025 13:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkgL+9dj"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0K9I9Up"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13EF1A08CA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B0E257455;
+	Tue, 25 Mar 2025 13:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908204; cv=none; b=ldYKa/gaUPTJmr4JoMAN2VGEbHK9kw/Bib3JNdGLTTOIK1jWMFnDsHmjjGiotoGHgOupiGEc2l2oAeyVQQI54UuOENQZPqjkph4ptoBvJO2/DlfBFCFHIO8AP6Tx4MO+sf20ie/FWrjl6/KhZcpFj2x5UU3tu6duZL1j6f57pUs=
+	t=1742908259; cv=none; b=hItNESMelIA6PXjOLNPFS7vxwcrcWtHDN3Gc0sSeP7eK6BfW15Ftca09W57jrJYM9tbnLOjxz99gbt3yuJAvv34VBtDiMLAz7g1JzcKdIyqN6tJI/7YZCHz1/IuxuOHcWc0wLEwhCZNzDbhDUIiX4z3zi87NawFTGMQYzhHJAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908204; c=relaxed/simple;
-	bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKkw91jN04qA1g81TXYZYr5brzgEfD4jqY+X8ZyHoIFu40429RuNtCLtZ9/EqgZpLBFiHiWaqlSVo2dAphVM5oM3BPPyWnTwrp23GRp3ToLePGBlTJteM62owPoamU7pwlxWEgmu5aNaSFHc4VHlZZgeRFjr2pZs4SoeBjrmBpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkgL+9dj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so6146596e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:10:02 -0700 (PDT)
+	s=arc-20240116; t=1742908259; c=relaxed/simple;
+	bh=rrfaQ3tdVDSvSvJwIWSHVurE1j0Pvow2Lh2aFt+z9vQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V9fVLKI3UBMwCPoXehZ+ApQqfd35C+kpVpCvqPEpKwSTDOdB+8+R7TEG3VzDKcDIPxJIVMyK6T3J8MjAk3PggjxFfJxIWlSjWOHczFW5I+AJyt96tahRGL6C0RP1o0eT/24nq+i411qzcjMGR8l9hbalgeQLgZWR+q5146zim5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0K9I9Up; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223f4c06e9fso93249835ad.1;
+        Tue, 25 Mar 2025 06:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742908201; x=1743513001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-        b=wkgL+9djV4oUk8AeK2bW9Bpxi9jE88XeNszTTIS0hjfCYy+t95RHuHjmIM7THhnMcB
-         w+1ayyJU+LVdBWfs1RKwcmqiTwYDIdyBZuhTI63VvRyAzHYMTh6NkbPsojI3F7r/Mg/6
-         Ug8x/ZGu92v1oEmS/eMIM2MFowZoBrKejnFePJ2ZmoARJEn0r22udhvOyYohh3YiSD+E
-         cyohYJs6SHZcSP8Ot3tWHSg6aBLs9erDUPtDo4ixv3jOJBHpCXkYGrWldNQDeyFL4fkr
-         nu7g8G3wpDImCShJoWYwxdf0W9bZcaOmlxZIfOb2qJYU2AqP3cqUVfH037/UssWpMgfc
-         SFXw==
+        d=gmail.com; s=20230601; t=1742908257; x=1743513057; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=718yhfW//Mn3iY8Lmfx30kySEx2J2S2e2Ce9hQGo+1Y=;
+        b=e0K9I9Up+KHElm4sjnWh22CYzVcbH3rJIm1Lhb41F7etGmvt5gFQtpmlBauOmaCBw8
+         b0OK8ko2ggEDS/nYBlUSJndNg8JvDQQNkVrq7Ka4PKSJbN8fjH8jw7b3xQeHnaVvIktb
+         V1pP/ndk0/WbgFKA3f+zZn02tF6AaiXYEA4OBPEMv0/V0ZsXRGdNe+2+TcPS42X+iyUK
+         oSzZ9Fj8whQ4YZA7yxmiEncdwP2hGTftLHfXQ9/cHbiAYDiJheWBZV/Gq+OSdnQxcFg9
+         L5PVrhW5Gt1mPDeHzuwgPTCdp2m1vJtIO6GPI4V3Du1YEzg2zFJ6BNa0RwIzA6YRavTz
+         M+fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742908201; x=1743513001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MrQdnqrQ37zkSH+xmL91qGq72ZTsS3ZvH1TLByFafAY=;
-        b=w44eqGxRDktmaTbJ4/Sm99hxKQ0JgtfAVGALBriwiqJ9uTEtF3nJFdIQTHGK3byFD0
-         4HRDqHn6X18YoHEURPhSZbdx8x0k91wdYsNPUQwkiLORT539OJXGoC8Mqaiz54pr8GZ2
-         ljd5/gH5uYALNjuBGn7tlyEUzf4E+agbztq5XRgdgTZHfqXY2vXSBs42ChI91N/4qOd+
-         Rk2E5N7Fxa6zwKFghR++A+R+YRDqtdbXlSPnvY0PoRtxhwF5mqve20pldJAGQgew7y3l
-         YDNp50iXQCAEVeA80TRgvOXdWDe5Nqmjb6cCCKdF9t7dbRVQlKVcSENXWe6Q6p6YknW0
-         +C8w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+T4C94HTJgp4VaEqNo47EQyH/jFNtPd0vX1BW1S/yAJitc9epmnRA/okQld22aW5bgxEFmg5auEsPPYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy48HqsRBw0LNsHRsReNqf+qX4ZrR+ZwueLZZvNX2anfg/c41hs
-	MgD+xZU0ynuHBr84d48Hu6x1h5p0J4aJeZB/r7c3oAYX6gpYNm/dHoQ1PRUeVnUnOonvgrnSRnJ
-	zt1yJej2AhoJ9q1HC+5PPR39giVw+u/MOfftymA==
-X-Gm-Gg: ASbGncv/TGYdxyk1uq8KBLxXv+L3GSbJF6aaOnbSVpfx77sljAezMyN2K27KbLfE3JK
-	hxka5CMdEJYukNewlP3iZV5InslHT016SuG9WslLX3FakxrsTVBWfpL7+CIrm71hw2bQyLNDiCG
-	psRsOIu5zfOeWRAc+6ECePXm0=
-X-Google-Smtp-Source: AGHT+IEA8eZg1F5rTtYtGgxFGDqJ7eNk3ccgMGnZd3pLrENcTaD8LN6KiUTpuvzO7iXkBw9qPrcSIjiZ+Ib/g7be7BA=
-X-Received: by 2002:a05:6512:1314:b0:54a:cbfb:b62e with SMTP id
- 2adb3069b0e04-54ad64f6791mr6320883e87.35.1742908200694; Tue, 25 Mar 2025
- 06:10:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742908257; x=1743513057;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=718yhfW//Mn3iY8Lmfx30kySEx2J2S2e2Ce9hQGo+1Y=;
+        b=ZMh9Kh3y/yEGZYxm6zxN2uodGNg/KcQ9Ta41BW8bcRwR0sc5KZ+UZ09glb4UkDYOjE
+         HGsd8eb0R/M2Pv/J5u6VIa+WAILUmWdW+1bq3t6nOs8OBbUXDPUaU8A3Spmd5I5rMD3Z
+         5c81d9Iax/8Box1gyWgNMDpR5wmwoOcL2dE8kbII8YJySns8S9C2/qJY4BPHICA8qHnD
+         JGU7LaUhwkac9Z/ZaJTwZrXDQwZ7WtdElyn6RjRmKJGkfrL4smrZ1yE89sOZ2CrMqjW8
+         zWKqPNKOEO6bk0QKrDr4+34+rCFNv3uhSdd8/083t8MCAHJ+UO1v/tXpyaHr23mXSRAj
+         jsxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKfW+hl8ceUUSEsE8cSBtOTTP/9TtIqOfnBgklYCttIGGP2jnYkHnJ9N0WPPAZspUBk1ivviwq3iuUchQ=@vger.kernel.org, AJvYcCVoYqsxxn37F4HUDAFeROMNyRix5Z9tgIEpCt38iJHL7mQsgs/2WkySNrSG/H35LrPPrlS0phE5cDFJPg7SbWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxkCMp4mhr2Ai4cjQR5LNztt1/DgiWtjsWjnptKZK/v+2skZAK
+	MK5Nv5AX4mBohORT9zZnBK6Bdimn8eUKd4i17+8Mkz5P5zHnE6wx
+X-Gm-Gg: ASbGnctAUMlIlW+4tU5FgXpCGGluboWzkllQxeQitUj4wpbeFfxlYy9R48vmyDdu2A4
+	euMXSr0AWfxdqtxO3H4Dnavy9RVsk3vgxFbOWFqHMQmjtmWjVB36wiFQ46vo2/MXygA/RDgnViI
+	bsdUsaOJMJ4JcwrG908aS0mAD1zLInYOiyydiqSYoAXyP4kpzf69dx7QePS7+0canGHDT5mAYMs
+	GZodxhkyqi3rDLpSif9upbpwn2lpYe9j9S9MfaL3hPaGxI6neEsTgkSnpyrILGI3TCtD/gi5I+V
+	YWJ2BUd0IE93TRC1jpYNN84AZt+7WaMOIKxDx8hweyQ0WxOoVmSM
+X-Google-Smtp-Source: AGHT+IEm2+kzUc71unqBDC6EYHCoAQXcOJUjGGlcB9EitOapNGUnH/xveNXXKh1nulB0axYy3o3bkg==
+X-Received: by 2002:a17:902:c949:b0:21f:2e:4e4e with SMTP id d9443c01a7336-2278067c0a6mr251195795ad.5.1742908257054;
+        Tue, 25 Mar 2025 06:10:57 -0700 (PDT)
+Received: from fedora.local ([2804:d57:4e50:a700:f33d:65d1:e22e:109b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811f6937sm89271375ad.235.2025.03.25.06.10.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 06:10:56 -0700 (PDT)
+From: Filipe Xavier <felipeaggger@gmail.com>
+Date: Tue, 25 Mar 2025 10:10:25 -0300
+Subject: [PATCH v2] rust: add new macro for common bitmap operations
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
- <Z9lJETLh2y27934q@black.fi.intel.com> <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <e3abe8cc-357c-471f-b489-e1a8625933e0@kernel.org> <20250324033038.GA9886@nxa18884-linux>
- <7f22be3e-908d-4036-ab92-97c6b0427d26@kernel.org> <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB8459BDF97DAA5FC1A3A8B7AA88A72@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 25 Mar 2025 14:09:48 +0100
-X-Gm-Features: AQ5f1JrTRSKcnNRqr9tDe943HyISqe1Jb1O_0dxGZ5xxZb_T1URcA8bYen_No_M
-Message-ID: <CACRpkdYCgkwuOm5vw8oOSnu7ZVLsC3FDJoA2695gAufwp4NQVQ@mail.gmail.com>
-Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, 
-	"broonie@kernel.org" <broonie@kernel.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250325-feat-add-bitmask-macro-v2-1-d3beabdad90f@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAECr4mcC/4WNTQ6CMBCFr0Jm7Rg6VEhceQ/Doj8DTLTUtIRoC
+ He3cgHzVt9L3vc2yJyEM1yrDRKvkiXOBehUgZvMPDKKLwxU06Vuao0DmwWN92hlCSY/MBiXIra
+ atFWuUR0TlPEr8SDvQ3zvC0+Sl5g+x8+qfu1f5aqwxJEn66zuWnsbg5Hn2cUA/b7vX5hVoFa8A
+ AAA
+X-Change-ID: 20250304-feat-add-bitmask-macro-6424b1c317e2
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Cc: daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org, 
+ felipe_life@live.com, linux-kernel@vger.kernel.org, 
+ Filipe Xavier <felipeaggger@gmail.com>, Lyude Paul <lyude@redhat.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Mar 25, 2025 at 12:26=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
-> > On 24/03/2025 05:21, Peng Fan wrote:
-> > > On Tue, Mar 18, 2025 at 02:48:05PM +0100, Krzysztof Kozlowski
+We have seen a proliferation of mod_whatever::foo::Flags
+being defined with essentially the same implementation
+for BitAnd, BitOr, contains and etc.
 
-> > > To keep DTS unchanged, we need update polarity in gpiolib to force
-> > > GPIO_ACTIVE_LOW.
-> >
-> > How are you going to achieve it if one DTS has LOW and other has
-> > HIGH?
->
-> With this gpiolib-of change, to fix polarity as HIGH.
+This macro aims to bring a solution for this,
+allowing to generate these methods for user-defined structs.
+With some use cases in KMS and VideoCodecs.
 
-Yep those quirks is what we have done to handle legacy cases,
-mostly from old devicetrees using bindings where proper polarity
-wasn't enforced or properly used because the drivers would
-override it anyway.
+Small use sample:
+`
+const READ: Permission = Permission(1 << 0);
+const WRITE: Permission = Permission(1 << 1);
 
-Ideally the bindings schema should enforce consumers to use
-GPIO_ACTIVE_LOW but I don't know if that is possible, but maybe
-Krzysztof has ideas!
+impl_flags!(Permissions, Permission, u32);
 
-Yours,
-Linus Walleij
+let read_write = Permissions::from(READ) | WRITE;
+let read_only = read_write & READ;
+`
+
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/We.20really.20need.20a.20common.20.60Flags.60.20type
+Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+Suggested-by: Daniel Almeida <daniel.almeida@collabora.com>
+Suggested-by: Lyude Paul <lyude@redhat.com>
+---
+Changes in v2:
+- rename: change macro and file name to impl_flags.
+- negation sign: change char for negation to `!`. 
+- transpose docs: add support to transpose user provided docs.
+- visibility: add support to use user defined visibility.
+- operations: add new operations for flag, 
+to support use between bit and bitmap, eg: flag & flags.
+- code style: small fixes to remove warnings.
+- Link to v1: https://lore.kernel.org/r/20250304-feat-add-bitmask-macro-v1-1-1c2d2bcb476b@gmail.com
+---
+ rust/kernel/impl_flags.rs | 214 ++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/prelude.rs    |   1 +
+ 3 files changed, 216 insertions(+)
+
+diff --git a/rust/kernel/impl_flags.rs b/rust/kernel/impl_flags.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..e7cf00e14bdcd2acea47b8c158a984ac0206568b
+--- /dev/null
++++ b/rust/kernel/impl_flags.rs
+@@ -0,0 +1,214 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! impl_flags utilities for working with flags.
++
++/// Declares a impl_flags type with its corresponding flag type.
++///
++/// This macro generates:
++/// - Implementations of common bitmask operations ([`BitOr`], [`BitAnd`], etc.).
++/// - Utility methods such as `.contains()` to check flags.
++///
++/// # Examples
++///
++/// Defining and using impl_flags:
++///
++/// ```
++/// impl_flags!(
++///     /// Represents multiple permissions.
++///     pub Permissions,
++///     /// Represents a single permission.
++///     pub Permission,
++///     u32
++/// );
++///
++/// // Define some individual permissions.
++/// const READ: Permission = Permission(1 << 0);
++/// const WRITE: Permission = Permission(1 << 1);
++/// const EXECUTE: Permission = Permission(1 << 2);
++///
++/// // Combine multiple permissions using operation OR (`|`).
++/// let read_write = Permissions::from(READ) | WRITE;
++///
++/// assert!(read_write.contains(READ));
++/// assert!(read_write.contains(WRITE));
++/// assert!(!read_write.contains(EXECUTE));
++///
++/// // Removing a permission with operation AND (`&`).
++/// let read_only = read_write & READ;
++/// assert!(read_only.contains(READ));
++/// assert!(!read_only.contains(WRITE));
++///
++/// // Toggling permissions with XOR (`^`).
++/// let toggled = read_only ^ Permissions::from(READ);
++/// assert!(!toggled.contains(READ));
++///
++/// // Inverting permissions with negation (`!`).
++/// let negated = !read_only;
++/// assert!(negated.contains(WRITE));
++/// ```
++#[macro_export]
++macro_rules! impl_flags {
++    (
++        $(#[$outer_flags:meta])* $vis_flags:vis $flags:ident,
++        $(#[$outer_flag:meta])* $vis_flag:vis $flag:ident,
++        $ty:ty
++    ) => {
++        $(#[$outer_flags])*
++        #[repr(transparent)]
++        #[derive(Copy, Clone, Default, PartialEq, Eq)]
++        $vis_flags struct $flags($ty);
++
++        $(#[$outer_flag])*
++        #[derive(Copy, Clone, PartialEq, Eq)]
++        $vis_flag struct $flag($ty);
++
++        impl From<$flag> for $flags {
++            #[inline]
++            fn from(value: $flag) -> Self {
++                Self(value.0)
++            }
++        }
++
++        impl From<$flags> for $ty {
++            #[inline]
++            fn from(value: $flags) -> Self {
++                value.0
++            }
++        }
++
++        impl core::ops::BitOr for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn bitor(self, rhs: Self) -> Self::Output {
++                Self(self.0 | rhs.0)
++            }
++        }
++
++        impl core::ops::BitOrAssign for $flags {
++            #[inline]
++            fn bitor_assign(&mut self, rhs: Self) {
++                *self = *self | rhs;
++            }
++        }
++
++        impl core::ops::BitAnd for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn bitand(self, rhs: Self) -> Self::Output {
++                Self(self.0 & rhs.0)
++            }
++        }
++
++        impl core::ops::BitAndAssign for $flags {
++            #[inline]
++            fn bitand_assign(&mut self, rhs: Self) {
++                *self = *self & rhs;
++            }
++        }
++
++        impl core::ops::BitOr<$flag> for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn bitor(self, rhs: $flag) -> Self::Output {
++                self | Self::from(rhs)
++            }
++        }
++
++        impl core::ops::BitOrAssign<$flag> for $flags {
++            #[inline]
++            fn bitor_assign(&mut self, rhs: $flag) {
++                *self = *self | rhs;
++            }
++        }
++
++        impl core::ops::BitAnd<$flag> for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn bitand(self, rhs: $flag) -> Self::Output {
++                self & Self::from(rhs)
++            }
++        }
++
++        impl core::ops::BitAndAssign<$flag> for $flags {
++            #[inline]
++            fn bitand_assign(&mut self, rhs: $flag) {
++                *self = *self & rhs;
++            }
++        }
++
++        impl core::ops::BitXor for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn bitxor(self, rhs: Self) -> Self::Output {
++                Self(self.0 ^ rhs.0)
++            }
++        }
++
++        impl core::ops::BitXorAssign for $flags {
++            #[inline]
++            fn bitxor_assign(&mut self, rhs: Self) {
++                *self = *self ^ rhs;
++            }
++        }
++
++        impl core::ops::Not for $flags {
++            type Output = Self;
++
++            #[inline]
++            fn not(self) -> Self::Output {
++                Self(!self.0)
++            }
++        }
++
++        impl core::ops::BitOr for $flag {
++            type Output = $flags;
++            #[inline]
++            fn bitor(self, rhs: Self) -> Self::Output {
++                $flags(self.0 | rhs.0)
++            }
++        }
++
++        impl core::ops::BitAnd for $flag {
++            type Output = $flags;
++            #[inline]
++            fn bitand(self, rhs: Self) -> Self::Output {
++                $flags(self.0 & rhs.0)
++            }
++        }
++
++        impl core::ops::BitXor for $flag {
++            type Output = $flags;
++            #[inline]
++            fn bitxor(self, rhs: Self) -> Self::Output {
++                $flags(self.0 ^ rhs.0)
++            }
++        }
++
++        impl core::ops::Not for $flag {
++            type Output = $flags;
++            #[inline]
++            fn not(self) -> Self::Output {
++                $flags(!self.0)
++            }
++        }
++
++        impl $flags {
++            /// Returns an empty instance of `type` where no flags are set.
++            #[inline]
++            pub const fn empty() -> Self {
++                Self(0)
++            }
++
++            /// Checks if a specific flag is set.
++            #[inline]
++            pub fn contains(self, flag: $flag) -> bool {
++                (self.0 & flag.0) == flag.0
++            }
++        }
++    };
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 496ed32b0911a9fdbce5d26738b9cf7ef910b269..7653485a456ae5aa51becbf04153ea54a7067d9e 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -49,6 +49,7 @@
+ #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+ pub mod firmware;
+ pub mod fs;
++pub mod impl_flags;
+ pub mod init;
+ pub mod io;
+ pub mod ioctl;
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index dde2e0649790ca24e6c347b29465ea0a1c3e503b..0f691dd2df71d821265fae01555ba50e6a76f372 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -25,6 +25,7 @@
+ #[doc(no_inline)]
+ pub use super::dbg;
+ pub use super::fmt;
++pub use super::impl_flags;
+ pub use super::{dev_alert, dev_crit, dev_dbg, dev_emerg, dev_err, dev_info, dev_notice, dev_warn};
+ pub use super::{pr_alert, pr_crit, pr_debug, pr_emerg, pr_err, pr_info, pr_notice, pr_warn};
+ 
+
+---
+base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
+change-id: 20250304-feat-add-bitmask-macro-6424b1c317e2
+
+Best regards,
+-- 
+Filipe Xavier <felipeaggger@gmail.com>
+
 
