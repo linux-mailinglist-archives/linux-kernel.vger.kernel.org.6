@@ -1,143 +1,230 @@
-Return-Path: <linux-kernel+bounces-575382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2706FA70163
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:23:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56127A701C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766317A9201
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5708174438
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF394258CCE;
-	Tue, 25 Mar 2025 13:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FEF25B682;
+	Tue, 25 Mar 2025 13:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa7uX92K"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGJDrosw"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688361A5B8F;
-	Tue, 25 Mar 2025 13:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6F255E30;
+	Tue, 25 Mar 2025 13:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742907865; cv=none; b=NcBurtNqoM/qxXT0whZgpPoq07GNX+KvRVwu03VPhGuwo1yVwk6aNvgM2UHchqlJ4LZFdLf2FGQkuY7tp2xyxphVDFxSqRYwkuR1+hXIWgILfVqHcbFgX1X3Ic0FvHYbhsioe2hYJLdFfEkVziVABfrqRSA606u+stZugwTWZoQ=
+	t=1742907908; cv=none; b=Gfc9x3Wau4/6BMafLAbE3g31FWP1FG/87bca+97rDx8aRoXWhdHV3kZZmsftRBpwEX0Z1xvinkpgxQv7H1o91iA5bHGUdg+vgFH7xYxoHUA1tV7lr55WtCt/ZaNOnrrC9gq3qtkJw29/zNqyaoAualvNJF1AfA+a6bMdd/Dsr6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742907865; c=relaxed/simple;
-	bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SDAvPioHe+yfrF3qxiPEMfbKHpZnkn5DRQpgn9YurPzTceEioiUaOBNXx2jdsAaJS+U4hHjewCm6AovzXGqFoXMHvJdVYGptj/bye46MJt+w1fb0qt0h9fnfTw78KA1PdFM1+pMhwmQUOGLapg81obmtTKhe4uuoj07FHLcy5+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa7uX92K; arc=none smtp.client-ip=209.85.219.47
+	s=arc-20240116; t=1742907908; c=relaxed/simple;
+	bh=0QDNLH+sxP46MeDJIJ6Ee8uPjmsLeUfxsIeVfFxSUe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MXx5KqN97IKJUBnBpdZkS9K+Q061jgZRFFFozea/8sPLm/12x/8mtA70zmwT5io3q360xpgj0FQfd/EMGNlBKPgPMIGZAtnXwmsLvwTxFqIrpbbus/1wiLDUVK+t+yYF2KnD6CM6qaNhFCJsYIHbi01pM48Qm31EgI7pVau4RFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGJDrosw; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso46900146d6.1;
-        Tue, 25 Mar 2025 06:04:23 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3965c995151so2773542f8f.1;
+        Tue, 25 Mar 2025 06:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742907862; x=1743512662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
-        b=Wa7uX92KMW9yeIwtesJ1tHzSvA9Fpxlb0073hs2XCM8AUfasnOcY+MlL8ipzW07ueE
-         vfDHM+SXGg8DJgtMGxDxSqoKypqAwxpgRqw2vM4BMb5x/+XyckezWZuo6d/eIA2PXKAb
-         OCs1IKgeyyFEhAOBfrTqSxhPEGaPeoTM0M0vFHAKghjrTrIwbvKQAlJgKp/lto1PEZFy
-         PLphP9yiA8oIE4XAP6ZMrFJ4S1QLV7+JM1YN5yv/25Rqh0JLfO6MKkt8POAN3W1SNgHB
-         IuW+sKWtIahM3dLWx0y4xFVpOCh/eHtXYu1SkEqHTTW3ezylKuZN8/CNd+4iodrqgf1o
-         phog==
+        d=gmail.com; s=20230601; t=1742907905; x=1743512705; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8yU5t16C8uLoiRoKoFedR2Elw3f8Z8Xmjk69RnHTg+I=;
+        b=JGJDrosw3R5iArQZ10TOfjlkaUihMQCrLM17ndZ4IeUmAgglynu8639uuwBWzuFy6C
+         I4M0iz71oG32s3c1BgoG+l0iALy160w5dZbRpu2FD0dN70sRwYOV8P4z2VeUzDDt9muO
+         B2pFxxHzfdvNfa9q46ucUuAPmrf6oI0CxQh0A1L8JNkcRDgaevMKfLRodk8PSoaJu5ga
+         MXRz+/rGlWKCiVvkvOy+dyIkSrol3YmlwG7s9wVdHpXwSdEyI5zD08R5d/X0P7kGwtgI
+         UtLY7pxPOQ3nR20u/ki1CamIkK2ZG9NobhTa56UVctwNBj9Z3ju4fPhl2kb6C3f3hy0S
+         xT0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742907862; x=1743512662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
-        b=ck+Lzr75Cennnt//VrWb73S3porp6LNPrMMBrGx1YHbHiy6jsiA3tkSduw7nFY6CF0
-         Y+nwXiLVC5IIm5K0TLdLgcfAQxc0A+yjHidniZapimUn7Cd4CjTsfMv539rUNsNXxfcc
-         AcA0Cx8bhjzBzNJyWe6rfYwX+b8Ekes82fBQHG232wiSsgClH+4eia3tNsovgsYDonax
-         33nbquexz188SoDU1Gi/Pln7qZ+FFWwJN3N7RISDtzHeq4QvbCBJyAAZP9SdpejHrJUn
-         5iJYD+TmhBuOPBdH+pFiuT5We90Jt4vQksTCiIhv0UbOZPbf3tq4/e64qLQRi27mTKZE
-         0evA==
-X-Forwarded-Encrypted: i=1; AJvYcCUD9NIumMLp9u2/Fkw8qzmsPnessDrno8L2vk+E1rDpvhuqVBueIrHkvFcZJXqia+/NIWsHbUqfNik=@vger.kernel.org, AJvYcCUmuc6kQZdgesDCfUnS2ftY2xgT/4hK+P0BcmqutXSO35C5dzSWiQkrKqkCvn6LSCVTl0KNjN4BVS1Geqhk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYgNvNO+PG42ym6Eme1DB897YBkAf2IRSmxkqGt3/MeQCeOOjG
-	rK7vV0mmHc/+6BmTZ2zNSc037cjrDNQCU7LFBFzWgZ9I9zsuv4ybghtrQ0ER4fh88gjzZxFmhjC
-	k4ZwrNQy+fk68obGo5WPUXX63vh0=
-X-Gm-Gg: ASbGnctawtGd4xbIPpBUyN2Qpckh5JXmbFu1pYaoYvhcHYef7SYk/PnYIkeEVqKlqVR
-	wFnc6qM1pdDnYSXvJNPJNh6vde7CUlRCXYn/jRH9F+7VIi7qNY2uqeOl93nZUPAgXaCLrP7xXtT
-	Pn46WqxYriQtomrGWCnS2qWtBTvNZm430XH/yy1JPN0A==
-X-Google-Smtp-Source: AGHT+IE51PXGLgkSnQJ98M/ddGNci74PQXWvqk0kA+jVT/PXCPMy/JwdbENsPVcSNY10HlA73yPF/yQqtOeqqz2rqvE=
-X-Received: by 2002:a05:6214:2607:b0:6e6:61a5:aa57 with SMTP id
- 6a1803df08f44-6eb3f2937ccmr297309616d6.14.1742907862103; Tue, 25 Mar 2025
- 06:04:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742907905; x=1743512705;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8yU5t16C8uLoiRoKoFedR2Elw3f8Z8Xmjk69RnHTg+I=;
+        b=KlzdypB2JYJHjatiePNW93zO5Wd5plqo2keKqhcP4Q87ScBXxQ930tMwGXBuaFdk8a
+         0KjCc8rflteFMIkDstlzyuAADin4ztuELNArBaFCSBkxejbn/QUTRlJdJhrFgRWjmJ/N
+         vF2ucFVfeMdQYnGl2xSpjq0tZY8Lpe03U2PYor0qsT7Ct81hkL0VOZahz6L2Kv8tagA+
+         /ohHANv7HMtH0yPZ8wiYA2zx+1JF/izanAnDSxFIfAtixxmAF/A3fbR+BmOGtt0F8ubF
+         YCvH5e6C7hLVUg16tAptn0YmkaEFCXmLGRSRJ9wjENGU7KQUbOrefrq3uBEx0oBdYaWX
+         34kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgDzRePzLq/mQzpUoKxOh1ZO9Xl3xGpLSOxO7fCISlwIlhJ8KUc1Zw7+C6IBL9MWYSml5n960/4ymT@vger.kernel.org, AJvYcCVRgDVwM92p+XjeBN9QL2zuAgj+H6vxVSysjB8xrdjZffFtSBv+yd/zSsaYbddhs+4FOFfh3fYP90XW@vger.kernel.org, AJvYcCVRnjqUvRt6BgVINva/wXd2kf404nmaoQ1lJnQCDZIHwpP/+G1Q9v7/+vi+VoA0XZSe8V1JdiqWsq+faWU=@vger.kernel.org, AJvYcCWALWKqgh8lbnE+Y1nn6Uu27MBTUHU7sCwyRLEN41SlrkQpUVIsfnOvZ0RncjxwLTpcFu8kkZBp13gFdJJJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3ps+4SMsrA3FBzHfBt0ewsdkpNMqpIi/7S723qmVRWhRDcq1h
+	GIrwzYRVhDIIAZO5Yb/WqPA9usme72C1RFE/HtyJ3q+9RnMbvrgmbForlg==
+X-Gm-Gg: ASbGncs4l5r7ttP8ITr6r8wGRV1r5kUblEMgIkeVlLkJprkTrkBPS0PlsCYwW0xlP4z
+	S1+agDPxia4SK3BTD/j8nXRaaTrVDiSPo+vJZ/IBTMCTEzaRujY723pWlMI8Q7GNidThsV8LtUM
+	IdaXE/6emWLb4yNSYr91b/4x3Cra9LhyQLSMGcFWeBH69B49mt9poHBkJUs7EJ9fVoPY4j47CZN
+	U/qi3IKm/RLtF1rr8WMr0ynM0czrpK7ZvcVLBzYpgbQp0hNpv9bqs2nxmewgXOotnBpJLXBVh/N
+	qjOqiykzMb92ykcmuETYk5aGlVf3Ba+PyfJnBDYUV3ToTc6k+NuU3z/c0DeHb4F3D2cFhE2VJAF
+	RWJb1M91RRRs9tGVIRCkAJEBrH0Jve4SrgQBfo4wIvQ==
+X-Google-Smtp-Source: AGHT+IEGibM2+7Y+vK26boa3HLWMCcHmOw8sIojyepErpqcBPUsXp1BRlA/IoTuMQ88eEqX9dJSSyA==
+X-Received: by 2002:a05:6000:1ace:b0:39a:ca59:a626 with SMTP id ffacd0b85a97d-39aca59a880mr1323556f8f.28.1742907904343;
+        Tue, 25 Mar 2025 06:05:04 -0700 (PDT)
+Received: from orome (p200300e41f4bef00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:ef00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b5b8dsm13887347f8f.59.2025.03.25.06.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 06:05:03 -0700 (PDT)
+Date: Tue, 25 Mar 2025 14:05:01 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Vishwaroop A <va@nvidia.com>, krzk+dt@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+Message-ID: <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
+References: <20241126134529.936451-1-va@nvidia.com>
+ <20241126134529.936451-3-va@nvidia.com>
+ <a1278046-038e-4825-b029-1b478f28cb7c@sirena.org.uk>
+ <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
+ <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
+ <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
+ <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
+ <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
+ <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
+ <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324172026.370253-2-csokas.bence@prolan.hu>
- <92772f63-52c9-4979-9b60-37c8320ca009@web.de> <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
- <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de> <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
- <26e36378-d393-4fe1-938a-be8c3db94ede@web.de> <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
- <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
-In-Reply-To: <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Wed, 26 Mar 2025 00:04:10 +1100
-X-Gm-Features: AQ5f1JoI1ggKA9Gw7ELv7T2TUC8A9SzwWIQijK61-mP9ZJ-R-qeFWsNR8IL_vmU
-Message-ID: <CAGRGNgVcPRJB+sx_5g-+CLJih4vTWU-FrqiRbvVQ07219WBZPA@mail.gmail.com>
-Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-Cc: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kx5s7u4cc743aks2"
+Content-Disposition: inline
+In-Reply-To: <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
+
+
+--kx5s7u4cc743aks2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
+ controller
+MIME-Version: 1.0
 
-Hi Bence,
+On Tue, Mar 25, 2025 at 01:45:26PM +0100, Thierry Reding wrote:
+> On Tue, Mar 25, 2025 at 12:10:19PM +0000, Mark Brown wrote:
+> > On Tue, Mar 25, 2025 at 10:36:29AM +0000, Jon Hunter wrote:
+> > > On 27/11/2024 17:31, Mark Brown wrote:
+> >=20
+> > > > You can put 'spidev' in as the compatible and get the warning, we d=
+on't
+> > > > require specific compatibles if the Linux device ID is good enough.=
+  If
+> > > > you genuinely just have bare wires you're probably able to cope wit=
+h the
+> > > > warning.  If something is actually connected you should use the
+> > > > compatible for whatever that is, if spidev makes sense for it then
+> > > > that'd be OK to add to spidev.
+> >=20
+> > > We finally got back to this. Looks like just having 'spidev' as the
+> > > compatible does not work. Apparently, it use to work and yes you woul=
+d get
+> > > the warning, but that no longer seems to be the case. I see a few oth=
+ers
+> > > have been doing similar things and hacking their device-trees in diff=
+erent
+> > > ways [0].
+> >=20
+> > Huh, OK.  I don't recall any deliberate SPI change for that.
+>=20
+> People in the discussion that Jon linked to indicated that it was this
+> patch that caused the "regression":
+>=20
+> commit 6840615f85f6046039ebc4989870ddb12892b7fc
+> Author: Mark Brown <broonie@kernel.org>
+> Date:   Thu Sep 23 18:00:23 2021 +0100
+>     spi: spidev: Add SPI ID table
+>    =20
+>     Currently autoloading for SPI devices does not use the DT ID table, i=
+t uses
+>     SPI modalises. Supporting OF modalises is going to be difficult if not
+>     impractical, an attempt was made but has been reverted, so ensure that
+>     module autoloading works for this driver by adding an id_table listin=
+g the
+>     SPI IDs for everything.
+>    =20
+>     Fixes: 96c8395e2166 ("spi: Revert modalias changes")
+>     Signed-off-by: Mark Brown <broonie@kernel.org>
+>     Link: https://lore.kernel.org/r/20210923170023.1683-1-broonie@kernel.=
+org
+>     Signed-off-by: Mark Brown <broonie@kernel.org>
+>=20
+> If you say that the regression wasn't deliberate, maybe we should look
+> at fixing this so that people don't have to work around stuff?
 
-On Tue, Mar 25, 2025 at 11:39=E2=80=AFPM Cs=C3=B3k=C3=A1s Bence <csokas.ben=
-ce@prolan.hu> wrote:
->
-> Hi Julian,
->
-> On 2025. 03. 25. 13:20, Julian Calaby wrote:
+Hm... there's also this:
 
-[snip]
+commit f6f6a6320eeeb3e80e1393f727f898f8ca976bfd
+Author: Javier Martinez Canillas <javierm@redhat.com>
+Date:   Fri Nov 19 13:11:39 2021 +0100
+    spi: docs: improve the SPI userspace API documentation
 
-> > Bence Cs=C3=B3k=C3=A1s, (I hope I've got the order of your names correc=
-t)
->
-> Either order works, Bence is the given name, and Cs=C3=B3k=C3=A1s is the =
-family
-> name (surname). Hungarian and Japanese order follows the scientific
-> "Surname, Given Name(s)" order, but commas broke many tools, including
-> Git < v2.46, and b4, so I switched to the germanic "Firstname Lastname"
-> format.
+    This doc is fairly outdated and only uses legacy device instantiation
+    terminology. Let us update it and also mention the OF and ACPI device
+    tables, to make easier for users to figure out how should be defined.
 
-Thanks for that, I'll try to keep that in mind!
+    Also, mention that devices bind could be done in user-space now using
+    the "driver_override" sysfs entry.
 
-[snip]
+    Suggested-by: Ralph Siemsen <ralph.siemsen@linaro.org>
+    Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+    Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+    Link: https://lore.kernel.org/r/20211119121139.2412761-1-javierm@redhat=
+=2Ecom
+    Signed-off-by: Mark Brown <broonie@kernel.org>
 
-> Lastly, to all other adressees, sorry for the spam. So let's end this
-> meta-discussion here and keep the rest of the conversation professional,
-> reasoning about the technicals.
+That explicitly says that the linux,spidev or spidev compatible strings
+are no longer supported, but also mentions the sysfs interface to bind
+spidev to a given device.
 
-And this is why I was so hessitant to step in here.
+Jon, I take it that the current sysfs is not enough for our use-case
+because it only works if a device is predefined (i.e. the sysfs doesn't
+allow specifying the chipselect)? Maybe we could enhance sysfs to allow
+adding a generic spidev client, similar to how other busses (USB, PCI, I
+think) allow using configfs to create these devices at runtime.
 
-Getting back to that, your patch looks good to me and it's awesome how
-the devm_ functions and their frends can simplify things.
+I2C has a different mechanism that could perhaps be used to achieve
+something similar, except that it exposes each controller as a device
+with a set of defined IOCTLs. That would be another option, but given
+that there's already a spidev interface that doesn't seem like a good
+fit for SPI.
 
-I'm going to point out that this does swap the clock enable and reset
-deassert, but I'm assuming that is harmless.
+Mark, would another alternative be to add something like a sysfs export
+attribute? Something that you'd write a controller/chipselect pair to in
+order to create a spidev device? That has the benefit of removing this
+entirely from device tree where it doesn't belong, but still makes this
+option available to users that would otherwise have to resort to hacks.
 
-Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+Thierry
 
-Thanks,
+--kx5s7u4cc743aks2
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Julian Calaby
+-----BEGIN PGP SIGNATURE-----
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfiqfkACgkQ3SOs138+
+s6EawRAAj60yE1rshoLP+65u+7bXPy/2DmRFZEdjQwZI6tRDlkqdRYLg8kRCeJ0n
+4DzJggKQZ8dM9g3laEatxJv0z6zNrlUkmy3oVnpi7Xl9mHMPhEDtV9NLFpo8uFT6
+IE91gzWjmkG/uEqxIR+J4/eOY1+dc6aeqIjdc6UgQYPAorTmpAJT/ji94Km79md3
+sauNqDAw4ZLZd//owuSBHdiVDhHMnH3bptNWwNKPg2RaDzKlJSNixdz/mSIUNjBV
+ke8bbIuZyZHkpDEmlZ1CJjQq1mnPgwvuMA8S/O5A0P+KRvo2gNaPgqJjikYveZE+
+AN9ZqAqXggEkBGqIwjXotARcrBO7ag5Z25rpidd9Wnip3JCR97D8eFBPD5bVDArT
+k4006AhzWmHyM5WbnC8w9nHMxL0cVKwP+PcgChd45f11IT01NFikDhr4fsp+390j
+RfYZWVcvg4rUJKqNXE9VtfcDs5SC7afj65/6BwVXkLjB3BsPofIn5SD3QrgtPh+S
+UkuTMAI74u3jIq/oe3EJlNUSCv+O/rlyEaR0Ju/TzsU7tW6d5WIhmFHLCtKkHL3u
+wWILU5qt33M3n+3ZYsDmsx7BEnksbMbFtC1eiCbhyyingVl1gGvb8EJqpLHXw7aY
+Boug7cWxIv6wxWvFO7w3Cn0+ALu+hgxl8gICT3scZpYPAXvfR/c=
+=cr0m
+-----END PGP SIGNATURE-----
+
+--kx5s7u4cc743aks2--
 
