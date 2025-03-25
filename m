@@ -1,122 +1,104 @@
-Return-Path: <linux-kernel+bounces-575831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EDDA707B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:07:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF87A707C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A928C3AA578
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ED5C188D830
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D2325FA1C;
-	Tue, 25 Mar 2025 17:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43B5262802;
+	Tue, 25 Mar 2025 17:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YGdxRfbz"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="itv3wHSz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AEA2E339B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3560525F988
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922418; cv=none; b=HK0Cg+uATz+WK2jTYltnFUZQ1zoYOq/jk5+cwXqbllYKAJYRS+Izw3RhY7JvAvUty4o6JZ8xH0Xi8UIwaZhYT4XtgpJg2c+WrGzh6XvuRbKnuhpWzxN8oPzRujuKFntOcG5Ihwu2gVSKiHSnSdrkZ+KIK1uo170oARHwc3kt/70=
+	t=1742922615; cv=none; b=K3V80mpDIxcIoN3qG/R680qz8WlzGV6/1RNhebVKoZ6KSXYoV0YSDDtEVGN/x8uvzv30wRLwzfZh0HOUXhMgYj2KzmqWdwYrZrLJsWln/IZhGXVMJ+3TT7sDuQZW6rSGLf2VivRtdaRHVYurC9nJUe3+OLjNw2zlgEX+u5fHUrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922418; c=relaxed/simple;
-	bh=p4hI6rmj/B2jQcKFonO+VLVTRv3JWXwyiknfAMihw2Y=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=A71pkFeJzvD8ZDde0ADOqBtL/CWPp99w9OYBoT5OMuDyPHy/tPSSkDexISgCkc2+BtQWPx6l45eb7sjEKS7cnOu19HWlhbsVHtjE8wRF+O55sP7NEWLkNpUY1OVAofIBjiNTkaslGETKZonMR+hhvYvoYTKsxKWON3UKmCrmp1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YGdxRfbz; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6ab8b951-a2be-4434-8621-0b31d00608ad@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742922414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Nbign4VerDHGQ4baDVBf0Bsdr3S4g3WcFkWogC97fU=;
-	b=YGdxRfbzDkzHKl5/qMOZrrR4LII7XP0QUt4iwMW61UJEowyRrEsbO9yZpQA0ymxy+9uyFW
-	jTqenr7oGL2jmdGvM8YgwevbtNmWQ7EdCjIvoqFM/bjS9YrRYVsCdLPkYCvMnHVonpPY42
-	zWBWUW+7/xFGNwbkcmzVqhqiX94q6wo=
-Date: Tue, 25 Mar 2025 18:06:51 +0100
+	s=arc-20240116; t=1742922615; c=relaxed/simple;
+	bh=VTzh6p8sdLXgtm1dcyU8A3yPyAfqZP2PURip12/aE/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+8F6jFy9W4dp+xSK8p3BHc8viDtqervFIL+4UKeUrMLnd4Ws44rgCJmR05gAf23ywdzOaPrcOW3mFm39sPhZkpvUTcCSYlFjG+hCk7KzL7iD8iAZ+Vqe1t4Sr//bmVWuf3zk3quClxcGAX0qz75U9Nz/gYPNpoz+zBGUPkkcn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=itv3wHSz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1176140E0219;
+	Tue, 25 Mar 2025 17:10:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ESc8JYNbU0sP; Tue, 25 Mar 2025 17:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742922606; bh=xuW+1acWbyIXSc6I4FgAnoNPiRSbNAyPu57oGWJiKRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itv3wHSz/vRFGCJuRGswigasZzUZ/h3avnPbR6adgie+8LPdiiiSaWgrL5vpgd6Pw
+	 cNtcmIVlCZQIR0Onj+lEGlKAAhdyAeYxhY3xYZvGzWZZP4p7wpkXgbzjVie4Le6SCw
+	 gR0b9XOIwHYqjaA2S90GqFIgtrNYseGsH6f+mZRFKtxivw18TDdjvSWKr35US2tmz7
+	 KUFCkezVLS97Fu7coHh0Yjrhy4bwnQNqqNtbE/bobK/VyFN7MY6ETNn+960vFdjImS
+	 q1VQqb5400Iz//VLTBM+HSbt2qBxFLmzqqUVzYPgQiB5OpeAKP0FiuPceA39wcYJCu
+	 Huc7WMuqKDysnfcYRQy9aSgn+laOaGM4Nhmy3YhTOrOZxt2axZT1sJ/KrgHNZeygEy
+	 A6JZfw6ddKFnin/seZ3Pa3iOu6BUsnaCXFyFUFZ9w10PNO5y1Hxov8FnGcLCCLNFIG
+	 WZNILA5TJBR162V59psWI5fGymmR2Kc7RnjHPWJtgLr3AEp9lz75h8YNHPD/PdzfsK
+	 aZdB0zBAmRihTpa8VY5lT5JLlS8++ZhogNAnKDq8wc0fSgJNbgjTFkvY1fImazy3sW
+	 qpLotoa72STtkfkWhXmtcK/mXmz1ZtKYDwW3WS6pRHrMkK3rmh+r230iJ1XcAnq0lf
+	 RBPkOG4G42uMCL2J2Pc79Ia8=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C6F040E0214;
+	Tue, 25 Mar 2025 17:09:59 +0000 (UTC)
+Date: Tue, 25 Mar 2025 18:09:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -tip 1/2] x86/hweight: Fix false output register
+ dependency of POPCNT insn
+Message-ID: <20250325170953.GCZ-LjYdl4rftqY-us@fat_crate.local>
+References: <20250325164854.199420-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Marco Pagani <marco.pagani@linux.dev>
-Subject: Re: [PATCH 04/10] fpga: tests: add module descriptions
-To: Arnd Bergmann <arnd@kernel.org>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Moritz Fischer <mdf@kernel.org>,
- Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Tom Rix <trix@redhat.com>,
- Marco Pagani <marpagan@redhat.com>, Russ Weight <russ.weight@linux.dev>,
- linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250324173242.1501003-1-arnd@kernel.org>
- <20250324173242.1501003-4-arnd@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250324173242.1501003-4-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250325164854.199420-1-ubizjak@gmail.com>
 
+On Tue, Mar 25, 2025 at 05:48:37PM +0100, Uros Bizjak wrote:
+> +/*
+> + * On Sandy/Ivy Bridge and later Intel processors, the POPCNT instruction
+> + * appears to have a false dependency on the destination register. Even
+> + * though the instruction only writes to it, the instruction will wait
+> + * until destination is ready before executing. This false dependency
+> + * was fixed for Cannon Lake (and later) processors.
 
-On 2025-03-24 18:32, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Modules without a description now cause a warning:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Any official documentation about that?
 
-Reviewed-by: Marco Pagani <marco.pagani@linux.dev>
+Any performance numbers to justify that change?
 
-> ---
->  drivers/fpga/tests/fpga-bridge-test.c | 1 +
->  drivers/fpga/tests/fpga-mgr-test.c    | 1 +
->  drivers/fpga/tests/fpga-region-test.c | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/fpga/tests/fpga-bridge-test.c b/drivers/fpga/tests/fpga-bridge-test.c
-> index b9ab29809e96..124ba40e32b1 100644
-> --- a/drivers/fpga/tests/fpga-bridge-test.c
-> +++ b/drivers/fpga/tests/fpga-bridge-test.c
-> @@ -170,4 +170,5 @@ static struct kunit_suite fpga_bridge_suite = {
->  
->  kunit_test_suite(fpga_bridge_suite);
->  
-> +MODULE_DESCRIPTION("KUnit test for the FPGA Bridge");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
-> index 9cb37aefbac4..8748babb0504 100644
-> --- a/drivers/fpga/tests/fpga-mgr-test.c
-> +++ b/drivers/fpga/tests/fpga-mgr-test.c
-> @@ -330,4 +330,5 @@ static struct kunit_suite fpga_mgr_suite = {
->  
->  kunit_test_suite(fpga_mgr_suite);
->  
-> +MODULE_DESCRIPTION("KUnit test for the FPGA Manager");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/fpga/tests/fpga-region-test.c b/drivers/fpga/tests/fpga-region-test.c
-> index 6a108cafded8..020ceac48509 100644
-> --- a/drivers/fpga/tests/fpga-region-test.c
-> +++ b/drivers/fpga/tests/fpga-region-test.c
-> @@ -214,4 +214,5 @@ static struct kunit_suite fpga_region_suite = {
->  
->  kunit_test_suite(fpga_region_suite);
->  
-> +MODULE_DESCRIPTION("KUnit test for the FPGA Region");
->  MODULE_LICENSE("GPL");
+Because if it doesn't matter, why do it in the first place? Especially if
+you're doing this XORing now for *everyone* - not just the affected parties.
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
