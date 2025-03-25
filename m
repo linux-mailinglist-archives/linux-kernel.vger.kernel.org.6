@@ -1,121 +1,121 @@
-Return-Path: <linux-kernel+bounces-576240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2F5A70CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:12:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62F9A70CAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACB0177399
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B261897EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682E5269CED;
-	Tue, 25 Mar 2025 22:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E8F26A08A;
+	Tue, 25 Mar 2025 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN1xYoYU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egAyl6g+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C044A269B03;
-	Tue, 25 Mar 2025 22:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCF1269D04;
+	Tue, 25 Mar 2025 22:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940615; cv=none; b=kR+tdqRTHX1YAGVa0I1AMbLsxs6DK5QmXSobFAw8Gs4tjgDAsFG1LaQ8CaDAv1rmmfW8uVjKvsgROkZ1MyTGczaSSZRYQXRmlWYK4o4a1xWjFaNDJd4dju41+wEhUz+8vDj5C1d/IiBQDRu3tPehpgdkFpIMxR8XOdxVUtl6lS8=
+	t=1742940636; cv=none; b=baAFS2pH745+H9IZv74GtcmtgET4IIG2MqDVI1lpoyDsNzGHMDcqOND8idqFZEigjHBwrtOuyf0Qc6C83M8hrV38qAW36ZmgE/ioqI9t9KoUZ8qkvoqMzDutzJsImgu0zfSbrYkiznMYxYhw8v7cUJwQWZXtJwboSo3RN1F3594=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940615; c=relaxed/simple;
-	bh=wT4x+n5x6UsN8Uy+iI2Ioy+2sbSgRPmrV+sg1r0WxIA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GKQMxe443l8NTaeRqG4D2AY3mB9sR+gLqkZunDXByAZsKpWO6CL2NWEAZiTY7p+NJNPwKSmDMGqucuHmo96fKuObyqaM9XtXDpZSnU49KxGHAQbrngPwU1qiwTQD2AHZXLIuGGzHjr1VDf3ML1YNP0OQFwDjAN9c+wBVP6R90MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN1xYoYU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4B5C4CEE4;
-	Tue, 25 Mar 2025 22:10:13 +0000 (UTC)
+	s=arc-20240116; t=1742940636; c=relaxed/simple;
+	bh=cTquolJn+rUh2RRuwDkxwlWODcI2LbtYrc6pA6KyL3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBsOChrAw3uoIWYAN75+hTUbV+9OkFHtV6AV0fukQrTzNQLROYZ18HoAa5SkRz4Q3099/NsdcTiRmCd7VEQrA5ve/mpX4rdGvZFslVxWTeJ9p72z13rP/6+aVGHqcVuVx5BvFypkfjuGYutKSv8wUWsT25q6s+r8ePnyCd7iQhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egAyl6g+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E415C4CEE4;
+	Tue, 25 Mar 2025 22:10:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742940615;
-	bh=wT4x+n5x6UsN8Uy+iI2Ioy+2sbSgRPmrV+sg1r0WxIA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HN1xYoYUeup0jmzYo7eqpZu2tg61FK4ik0TH3XmrsCDT1sz44SVCv1oRYrrQ5/t9V
-	 LpnffUxlhXqavPoWMPxMnaX8T+lh7qfQI/cD5AOhWhXo84Qh9fj6FjaLIRIJmMuyoO
-	 wH7cutLCSa31E2Y2xxThqaom8EhSiGaXv4g7c05yr2Kdguynqe5oFYqz42PcN4tMBO
-	 UueoLOrIbpN4/duGNsfeILl4YOrwLLoqG00HTysNCAUFX87FdJUtKCxOgPyO9mUY7L
-	 GfuRPTqJxjdPE7vPoBPvpvl7148C/lWFgWJybyTQUnVSS8a0DduS8m4lxEXviMIF1e
-	 tp20/eDWeW8rQ==
-Date: Wed, 26 Mar 2025 07:10:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/1] tracing: Show last module text symbols in the
- stacktrace
-Message-Id: <20250326071011.3c2c97ba3a441c1a5fca582f@kernel.org>
-In-Reply-To: <20250325154955.5ed4fa33@gandalf.local.home>
-References: <174282688292.356346.8368421078882769536.stgit@mhiramat.tok.corp.google.com>
-	<174282689201.356346.17647540360450727687.stgit@mhiramat.tok.corp.google.com>
-	<20250325154955.5ed4fa33@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742940636;
+	bh=cTquolJn+rUh2RRuwDkxwlWODcI2LbtYrc6pA6KyL3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=egAyl6g+iVGFzIBxy/6KPAEBc337m16BX37IGGjA9YtzkJcfDkBGaXUQB7e/W++fN
+	 GFjtLBvBkTsC/xkKm0hxxUA6i7BDN4NsGhkJQRq5BysJ5C0/gbzFk5EiB2TiajQzH1
+	 UXK56JTAeyPzRSL7Q1qvfOA0hPKvtumQxcqlXIcp+pJBVVgwjJNBsiEU+QNIBgJCjT
+	 IDa03BQbxpC0xQiqqVfh2Wlrl5Bl1NB9GgctLBHQyF/bwT3HHUd/ZF6kqeP6PWN4ry
+	 /Q0/KgMvoVSdwb3IGTOsMHHl3Gd5xmcp43/jG+OlH6eiNAoW0hbw3FW5yw+6xqMwQb
+	 yuOag9KE32bmg==
+Date: Tue, 25 Mar 2025 17:10:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Prashanth K <prashanth.k@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] Add snps,dis_u3_susphy_quirk for some QC targets
+Message-ID: <5k45tcntn2bhxqt35quzfm2dsq6eug3hgqdcrta25oy47zuqja@4jclvspwob5x>
+References: <20250325123019.597976-1-prashanth.k@oss.qualcomm.com>
+ <ee0848ea-7a06-4f4e-9115-5e3c0ab8bf95@oss.qualcomm.com>
+ <7029a455-47be-475d-b429-98031d227653@oss.qualcomm.com>
+ <db0bbc62-ecf2-4f72-a0c9-462fbaadebc4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db0bbc62-ecf2-4f72-a0c9-462fbaadebc4@oss.qualcomm.com>
 
-On Tue, 25 Mar 2025 15:49:55 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Mon, 24 Mar 2025 23:34:52 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Since the previous boot trace buffer can include module text address in
-> > the stacktrace. As same as the kernel text address, convert the module
-> > text address using the module address information.
+On Tue, Mar 25, 2025 at 05:31:28PM +0100, Konrad Dybcio wrote:
+> On 3/25/25 4:01 PM, Prashanth K wrote:
 > > 
 > > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202503112303.D7g66VSd-lkp@intel.com/
-> 
-> FYI, You don't add "Reported-by" and "Closes" tags for kernel test robot
-> reports for previous versions of a patch set.
-> 
-> It even says that in the report:
-> 
->    If you fix the issue in a separate patch/commit (i.e. not just a new version of
->    the same patch/commit), kindly add following tags
->    | Reported-by: kernel test robot <lkp@intel.com>
->    | Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
-> 
-> "not just a new version of the same patch/commit"
-
-Ah, I got it. I missed that part.
-
-Thanks!
-
-> 
-> 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  Changes in v6:
-> >   - Protect module_delta by RCU.
-> >   - Make nop make_mod_delta() for CONFIG_MODULES=n.
-> >   - Rebased on linux-trace/for-next.
-> >  Changes in v4:
-> >   - Move module_delta to trace_array again.
-> >   - Use bsearch for lookup module_delta.
-> >   - Revert the boolean logic to avoid '!',
-> >   - Fix !CONFIG_MODULES compile errors.
-> > ---
-> >  kernel/trace/trace.c        |  133 +++++++++++++++++++++++++++++++++++++++++--
-> >  kernel/trace/trace.h        |    8 +++
-> >  kernel/trace/trace_output.c |    4 +
-> >  3 files changed, 138 insertions(+), 7 deletions(-)
+> > On 25-03-25 08:11 pm, Konrad Dybcio wrote:
+> >> On 3/25/25 1:30 PM, Prashanth K wrote:
+> >>> During device mode initialization on certain QC targets, before the
+> >>> runstop bit is set, sometimes it's observed that the GEVNTADR{LO/HI}
+> >>> register write fails. As a result, GEVTADDR registers are still 0x0.
+> >>> Upon setting runstop bit, DWC3 controller attempts to write the new
+> >>> events to address 0x0, causing an SMMU fault and system crash. More
+> >>> info about the crash at [1].
+> >>>
+> >>> This was initially observed on SM8450 and later reported on few
+> >>> other targets as well. As suggested by Qualcomm HW team, clearing
+> >>> the GUSB3PIPECTL.SUSPHY bit resolves the issue by preventing register
+> >>> write failures. Address this by setting the snps,dis_u3_susphy_quirk
+> >>> to keep the GUSB3PIPECTL.SUSPHY bit cleared. This change was tested
+> >>> on multiple targets (SM8350, SM8450 QCS615 etc.) for over an year
+> >>> and hasn't exhibited any side effects.
+> >>>
+> >>> [1]: https://lore.kernel.org/all/fa94cbc9-e637-ba9b-8ec8-67c6955eca98@quicinc.com/
+> >>>
+> >>> Prashanth K (3):
+> >>>   arm64: dts: qcom: sm8150: Add snps,dis_u3_susphy_quirk
+> >>>   arm64: dts: qcom: sm8350: Add snps,dis_u3_susphy_quirk
+> >>>   arm64: dts: qcom: sm8450: Add snps,dis_u3_susphy_quirk
+> >>>
+> >>> Pratham Pratap (2):
+> >>>   arm64: dts: qcom: qcs615: Add snps,dis_u3_susphy_quirk
+> >>>   arm64: dts: qcom: qdu1000: Add snps,dis_u3_susphy_quirk
+> >>
+> >> Are there more targets affected, from the list of the ones currently
+> >> supported upstream?
+> >>
+> >> Konrad
 > > 
+> > My initial plan was to add it for all the QC platforms, but wasn't
+> > confident enough about it. Because we have seen the issue only on these
+> > targets and hence tested only on these.
+> 
+> Okay, let's proceed with these and in the meantime please query internally
+> whether it could be applicable to others too
+> 
 
+But if it applies to all qcom targets, wouldn't it make more sense to
+add the property in the qcom glue driver?
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Regards,
+Bjorn
+
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Konrad
 
