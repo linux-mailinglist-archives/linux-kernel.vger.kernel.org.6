@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-575583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FF4A7046C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:59:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBECA70470
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9ABE188F744
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:59:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B9A17A2466
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0697A25B67E;
-	Tue, 25 Mar 2025 14:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88E1DEFC8;
+	Tue, 25 Mar 2025 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="W3/5436i"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10BA1EDA3E;
-	Tue, 25 Mar 2025 14:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jo4lS6nb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABAC25BAA7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914762; cv=none; b=DnpF4+qCt+jfw2Kw/Lp0vxEvSe4qkw1+3mkaH6P9rhCSCb7z8jqHfquAB0Ecevvowk1kioMmOwE2XuGXRJRY4ax64T3tjCgkPHKDfV8Wt0Q+3XWckSMASLXK1/VRCnvXUPojlTDzXv6i/NqpY1PHbtxljNW+jY+Lf8GcEglSezk=
+	t=1742914806; cv=none; b=gkmC/9ZF8y9x1QYV9fzdPO0c0mUso56lfq3wQsafW7tEY+qY2COuAbODhXxSr2IIyjIb4tdJB/8VAWcjymujkBCW74bfHq5zfOQc3c3BIQa8x2uMb7xc2rm/QxR5bzM4TFTZKrLGdq5X6voIUNLXtuV4DMlSXVf+Fii8ZViNF8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914762; c=relaxed/simple;
-	bh=jFKEhjNjq9tWLi1tufH12YoYuLncNqbR/nzyYY8yoFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGLFVkiCOiHzA4Bsg/ZvvgR2Euwg2WGw9qdKsoC1JT58k99EEkANMUcw/iX6RYlenJLUqpO/jeK2czJ5Y1uSLaSakP5FDcp7CxyvrfY2v5gozSnUlywpjUNPe85e0OcLCLo1pT0+Yot1GxHyKJQIdPY/xYVnvdMsnWOzakxGvCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=W3/5436i; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 494BD14C2D3;
-	Tue, 25 Mar 2025 15:59:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742914758;
+	s=arc-20240116; t=1742914806; c=relaxed/simple;
+	bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ktf0031qhJDYmEAyXGofJhrkdiQJWbgfyqTLjofTITcfo/LMLa3evcuevfvfWW2I/X2ssuJod9aCKNd5Xp5vTenEa60+VkqO8w/mLQtUBQu4gxBl2vxDhRwYmAx24j9JVX5qRnqv/+GbAQ6jQq2KbZQ8x8pXLwpOUsyKtaaMWAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jo4lS6nb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742914802;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LA2ZWfipp543V5Octm+YivgRf31pm38h6sG4nFoFVL4=;
-	b=W3/5436ielp+x8Mg+ylaT1KwQLXmybgWQDRFANia1QIR5etK8+gW7Dk4fWWTQlCrj6Tkad
-	vgLy5gZ/5N8CvbH+NS29LwIEi23qDuWlaxtwdi8nV8zNAN8L0Ztf0cUYdpEIPrYOvKrtL0
-	nKtHroMZM9HTu/lCxJ7sBGryNeMS1iRjuWs2kl7o1BM6Pg1FkZkhBBAwWCpBVnvNcGzq3s
-	rVAXnUzgy8K1U3e/Qn6FeFY4w8hcycOuxZKajjueOVaqnN0z4ieDQOQEqh70519uT/MjvE
-	cWZOqiDjql//4x7MeXIQ9UiRxAtbG0VD4DWlRRn0JeRy5uelCkgZgtw/6cgWlg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ad07f38a;
-	Tue, 25 Mar 2025 14:59:11 +0000 (UTC)
-Date: Tue, 25 Mar 2025 23:58:56 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <Z-LEsPFE4e7TTMiY@codewreck.org>
-References: <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
- <20250323210251.GD14883@redhat.com>
- <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
- <20250325130410.GA10828@redhat.com>
- <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
+	bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
+	b=Jo4lS6nbSPFUZqQ/YRSzh47wyg/MiAFjBkkpBci2pLWgaKT9Y0MlnvS2QXsy4X13l2R9H4
+	ejad+NTAGfILpWnDfHsPYE9rfUrsJ48bNnjHrxRlHMbIcOef087NLrzcrDxTgE8nYrV14E
+	ZHrDxSnDbOH5rrYMnmX+a3mea471IEE=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-696-5Fcm4JHDPSW29qY40pxkVA-1; Tue, 25 Mar 2025 11:00:00 -0400
+X-MC-Unique: 5Fcm4JHDPSW29qY40pxkVA-1
+X-Mimecast-MFC-AGG-ID: 5Fcm4JHDPSW29qY40pxkVA_1742914799
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac6a0443bafso216891466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:00:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742914799; x=1743519599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GPD56TsPvi3UfQl0ryL3JUmt+MmqXDPi65xi8w44GI8=;
+        b=TFAWtBN9oQfLsYbQXNRBgnB7MZO7oIndCRHIf/LT0ihOXUd6rTb0FhoUg9oLc2DU+C
+         awdLqiHrQz4wLcK/4fqo6hqElPbJm5SCcJc06qeT4CNECbgcOq3OogqPqjPuA45Wk1+s
+         YojD1hfVI0LyTT64cEUKdGiZ5kko3L4jcLUkKztRUFmpcP5I36SMMgJJP/gFKgqBG0rj
+         8X2V6Gdy6LVokly+iQQxoJFXTf5qFcfbkUSH/FTypA/phAeIY95CZ+1FioEOj0ZYg1uc
+         K2QNDON2kG1YvElubx3KGXlQ7Vit3/YXegvxaZE2u4eEVMItDEqPwYgUxVZ4MPuBKXyN
+         6lzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8wf1TX473qUwwY/yAwlyTfEe2gcbKKWvpXo4HsUl7oIjZ+ALec6g3f5VU+9PFEuwOTeQgFP1KU+d6YdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIs824WlnB9TUjUsa1XdsOgIm+jX8mC8xtWnfwpX97XmhxkFnS
+	dAANzB5LPgQQDTR13EmN+VJJCLsX57xV/aRCCOrWcpCQetcN04izdp+aygiTt2XUzUz9byBddgu
+	Jd0buFfHmNX9U/OLxK6TCZ4h9aECzKt4pcXduDiVo+6TE0ZqZooKwElWcC3bzPi14mEYstyMUKh
+	kmtDSgFFjSvY77BTVVLOBi6zUyX+AApLFOXzvu
+X-Gm-Gg: ASbGncvh+KsBaaNDnufKiO4ImnnC/gArEhcSoBCQ9nSl9Z0gOyf9b7vZX7OmFaGAJ0r
+	6aCHTPRQIWMW5xLfPpCABQ6QtHETKdCfKdN/X2Gc47X6YeEH/+Zh1PkG8ZJTpnAULllfMvtCBbw
+	==
+X-Received: by 2002:a17:907:1b05:b0:ac3:8626:607 with SMTP id a640c23a62f3a-ac3f251fbd3mr1795386466b.38.1742914798874;
+        Tue, 25 Mar 2025 07:59:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+YUjGVWtfpyBwCFBLJ1QlJAEWsiUBcgZ5CATDRVTkA/NPywRDWZDxKGd2LtWzuRZROP8MS1zhzDRVTnbwctU=
+X-Received: by 2002:a17:907:1b05:b0:ac3:8626:607 with SMTP id
+ a640c23a62f3a-ac3f251fbd3mr1795382466b.38.1742914798382; Tue, 25 Mar 2025
+ 07:59:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f855a988-d5e9-4f5a-8b49-891828367ed7@amd.com>
+References: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
+ <8b0b2a41-203d-41f8-888d-2273afb877d0@qmon.net> <Z+KXN0KjyHlQPLUj@linux.ibm.com>
+ <15370998-6a91-464d-b680-931074889bc1@kernel.org>
+In-Reply-To: <15370998-6a91-464d-b680-931074889bc1@kernel.org>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Tue, 25 Mar 2025 15:59:44 +0100
+X-Gm-Features: AQ5f1JoiLoJo4ZTpZl2aK1T1MfyI1PFI0KWuUJogAG7QL32ZnjVnpgltDvnuL14
+Message-ID: <CAP4=nvQ23pcQQ+bf6ddVWXd4zAXfUTqQxDrimqhsrB-sBXL_ew@mail.gmail.com>
+Subject: Re: [linux-next-20250324]/tool/bpf/bpftool fails to complie on linux-next-20250324
+To: Quentin Monnet <qmo@kernel.org>
+Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>, Venkat Rao Bagalkote <venkat88@linux.ibm.com>, 
+	Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com, 
+	williams@redhat.com, rostedt@goodmis.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the traces.
+Hello Quentin, Venkat, Saket,
 
-w/ revert
-K Prateek Nayak wrote on Tue, Mar 25, 2025 at 08:19:26PM +0530:
->    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_poll rd poll
->    kworker/100:1-1803    [100] .....   286.618822: p9_fd_poll: p9_fd_request wr poll
->    kworker/100:1-1803    [100] .....   286.618823: p9_read_work: Data read wait 7
+Thanks for looking into this.
 
-new behavior
->            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_poll rd poll
->            repro-4076    [031] .....    95.011394: p9_fd_poll: p9_fd_request wr poll
->            repro-4076    [031] .....    99.731970: p9_client_rpc: Wait event killable (-512)
+=C3=BAt 25. 3. 2025 v 13:12 odes=C3=ADlatel Quentin Monnet <qmo@kernel.org>=
+ napsal:
+> If you talk about tools/tracing/rtla/Makefile failing to locate bpftool,
+> it's another matter. As far as I understand, the RTLA Makefile assumes
+> that bpftool is available from $PATH, this is why the commit introduced
+> a probe in tools/build/feature: to ensure that bpftool is installed and
+> available. So here again, I don't see the motivation for changing the
+> path to the binary (And how do you know it's /usr/sbin/bpftool anyway?
+> Some users have it under /usr/local/sbin/, for example). If the intent
+> were to compile a bootstrap bpftool to make sure that it's available
+> instead then it should replicate what other BPF utilities or selftests
+> do, and get rid of the probe. But the commit description for
+> 8a635c3856dd indicates that RTLA folks prefer not to compile bpftool and
+> rely on it being installed.
 
-For me the problem isn't so much that this gets ERESTARTSYS but that it
-nevers gets to read the 7 bytes that are available?
+Yes, that is correct. The reason why I opted to use the system bpftool
+is that bpftool itself has a lot of dependencies, and they would have
+to be available at the time of building RTLA. Since RTLA only requires
+basic bpftool skeleton generation, and the only "special" feature it
+uses is CO-RE which is already quite old now, I don't expect the build
+to fail with system bpftool, so I chose to use that to make both the
+build dependencies and the RTLA Makefiles simpler.
 
-If the repro has already written the bytes in both cases then there's no
-reason to wait 5 seconds here...
+My commits sets BPFTOOL to bpftool since otherwise, the feature check
+would fail, as BPFTOOL wouldn't be defined, since it is not passed to
+the feature detection make call. I observed we are doing the same for
+Clang and the LLVM toolchain in tools/scripts/Makefile.include;
+obviously, there is no problem there, since neither of these are
+in-kernel.
 
-OTOH syzbot 9p code is silly and might have been depending on something
-that's not supposed to work e.g. they might be missing a flush or
-equivalent for all I know (I still haven't looked at the repro)
+Shouldn't the selftests always test the in-tree bpftool instead of the
+system one? Let's say there is a stray BPFTOOL environmental variable.
+In that case, the tests will give incorrect, possibly false negative
+results, if the user is expecting selftests to test what is in the
+kernel tree. If it is intended to also be able to test with another
+version of bpftool, we can work around the problem by removing the
+BPFTOOL definition from tools/scripts/Makefile.include and exporting
+it from the rtla Makefiles instead, to make sure the feature tests see
+it. The problem with that is, obviously, that future users of the
+bpftool feature check would have to do the same, or they would always
+fail, unless the user sets BPFTOOL as an environment variable
+themselves.
 
--- 
-Dominique
+Tomas
+
 
