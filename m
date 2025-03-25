@@ -1,103 +1,141 @@
-Return-Path: <linux-kernel+bounces-575576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCFFA70455
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:53:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F9FA70454
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5ADF16B4C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA2E16AC90
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1266325A640;
-	Tue, 25 Mar 2025 14:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1420E25B678;
+	Tue, 25 Mar 2025 14:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvuJa/dw"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FanOVWdv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBC327456;
-	Tue, 25 Mar 2025 14:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584625A322
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914393; cv=none; b=VfTRF3hn9wntqt223dvVKqGBQPqO9bnvamT9AvX83WxDTwSS/6ZKQ/lAsbee4zWnbGsaDXlu2S8JAxA0D19ho9UlYHkM18eOcAc1V1JxZACwJ+k+MwuhULj1Q2If4dmvsaVYG6vHso6mAzq2ay7SIhC1EdVd74yJqWSrTU1L3zQ=
+	t=1742914375; cv=none; b=GQ5bzNOT6UsaXGrf5xyghzBwryRIEbBYh+n+OIPwe6VNh2FPKvSj+uTGuJ/pmiUWaWJOU8tcems0eb5ahXOz7m0eSS+IF4j0z3dO+b8hbf7KQRB50a3uvUrZk8Yb4bj9BRLsei1lyjVXG2k04CP3GIryoL25p96NCGrFz0CDiok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914393; c=relaxed/simple;
-	bh=TOkLz6mRTGWS4FifolhJ5PIlrqTalQbrkuwn2eCQM8I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nXrrccaOs3WMFKNQAUiBf1oDggzfd7nfVvvGALzKPP/b/w9iR00acpsPes1O8K4PqhVjwM1NasU+/neWOmh9Be+5fQDBKj5D7h+U0iAszEGQat2rPax+raGMBQmegW4DTfI3JiOh3uHELiGDR7gEvmUNp10/8bV8tvvd/Zq0dts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvuJa/dw; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso613801966b.3;
-        Tue, 25 Mar 2025 07:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742914390; x=1743519190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOkLz6mRTGWS4FifolhJ5PIlrqTalQbrkuwn2eCQM8I=;
-        b=ZvuJa/dwgiV96uXbTA+VBHTaPuwwfyobxcHLQgZ39gPnEbNrOTcyxZAvjCrVaNuWJl
-         Ck3oaXr0xRaXvpT8YrIAfRX5Q9RIQ47/1QnTmE2KWcdwzLHD2wI4EWghhPlufH5zQuAo
-         G2gjRZ0Fa+Bs2nCMVM8178XhGkaBQye87QiSBXjcvYqTA1Vln5aLo7D1VUs8T7ZA59QT
-         sw/GQMjnykMxU1PaN20tjhRo6p7R2DpCEUL90oAaumLZOf4zISPMXQlUtvsB4zSm6Y+A
-         745JSfgo7kqxfVjpOzVQIgciwSPf7dzvHHO1lsCRxReG/tVtQL+9H8hWoS6FjC4Y/CuQ
-         ZgSg==
+	s=arc-20240116; t=1742914375; c=relaxed/simple;
+	bh=d+kKsfl2TTj9vTCfKwIjZehCx6egu08uzHV5hFpXi0c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m7eGB/jfI3CCHJk8xsVsbiT1eQdmshA9RuuY3rdoGYh1c3+BkgssB5mFmsoWEj5DWNnf23SaXiiGSG9pwTOXCZtUYkvio0e59R5Ak3dKcfdxTZiC/dMDz39wMrf4SNBZX9l8leUU4BPMdfUv24lPUajPIgVXXmtCSMZAqwm25+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FanOVWdv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PDM6et028569
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ftcTynJFhZf6Ou+y+dlXrXlxZij+fB0u3WfPkqUsG4U=; b=FanOVWdvToSN62/b
+	eW6+fkKgH4vKcZ3veFc7yfEXb+Rr3khkkdMVXH6U1UngLzagHNH6F8cDVe+5QzUK
+	GEvsefQhWHyPGgxoycMaKSqp+uUa6FGNvQZ6eSYptJYBVpOi85dAdcMVii6iAUXc
+	LoOCgBP8f7ATs6TwAo/cdvn7fRcI6yjQnfoSX9CGGUaMtKcLokmDSv8xqbg9kCdy
+	vpbXnUN47r/V4Je8/mPr7Jhi7ZQqrxHnzUzYZ038VEyzPTsGi218JIhRl2LdkxDa
+	QAGGMHQt75IEy/E8WGqNpY4yWgv6z1Rzur4ltIHdTVSgOjkLLjQ7TALPvrckcWg/
+	6KjDZg==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjg2yq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so16287587a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:52:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742914390; x=1743519190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742914371; x=1743519171;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TOkLz6mRTGWS4FifolhJ5PIlrqTalQbrkuwn2eCQM8I=;
-        b=vBhcgnFMzX4IW9ETa+avTTr6Ofo44KLHVDJVZcFXoVlTWW5koIcGNDDrfG4c2k/Mdi
-         +8KNtpxn5w2W9R/CgtrQMC54QpWyMbqqFqGJHd53r+8ZSw0+Xsr23MIKQcvtWsbOQKjR
-         V++WXXiTvkjAH09lU5cVCrAYeaZ1xWhfhHCa0zJalltIas9fyruheyZIeFvKpRfLh9Ts
-         o2W3zX+WvX3rbyo8QpPCQ0KlktYoHpOFmZB3GTcUhlz+URKr2pG9D+BRW5wGvAKq7MET
-         +x7CQHt2TSc4/YUEzrrlZkKkHnLqgPa9va0NQZstGs5n6P2qDRqJNIl9SCcFnLY5MO+M
-         0GBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZjUzo1Tc+tuMBCTjhB57Q8sv+EOIX3GyCBnBk2Qyy6JPImpvoRRf5ZTYqmE+adnjACRRKzfxko0lvKLU=@vger.kernel.org, AJvYcCW3UblWkpv4X3wB/m5ePjZfJJVkAWZJWjaoTKNyUBs09rnaowvRMdJxjwlhXn3IokZd0b+FUYHFflJ7+cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbEoVKfU1fKnlt5/ZV2qeUAmwLMYTBBR/LxmN8+s4AsuDqu83M
-	1AjdftE9aei81gY1FewRwzK5vCPG+a18Er5KZ6yl0NFWcyP4jFQcvW9sdcZZFYm7b1gPUbgMBau
-	jpOfaX/qAvcOz4h+7G2Jt732LIPk=
-X-Gm-Gg: ASbGncvzzhFpRDQQ3BhXzq/ZkgUZru5plws6/+XPNToLURGhHb5Xn+pPSmUVY5yx85O
-	5objaFw83RMEuNVjLois3Jt6zpo8XOQ1PqBSGae4PJeS0FnHlk4MfHRqXacsXLFaaxXV9pkW62C
-	udyDF5Y84wQyCKZgJ5Aog1vvUjvGHBAetvLyNPjz0=
-X-Google-Smtp-Source: AGHT+IH7lN5CfLZLavK97BN7iwMt/ktAkv6chOHZ+24E39mR8J6eI1+P/F0cmxCLQz4nXHsw+IQ++Em1RnDC5kIBM6c=
-X-Received: by 2002:a17:907:940e:b0:ac2:9683:ad25 with SMTP id
- a640c23a62f3a-ac3f23e5d2fmr1952450466b.34.1742914389822; Tue, 25 Mar 2025
- 07:53:09 -0700 (PDT)
+        bh=ftcTynJFhZf6Ou+y+dlXrXlxZij+fB0u3WfPkqUsG4U=;
+        b=O5EydZ0Q02TCg2IpzWvK94bPSIhlCX0LqQ/i4Zv1O9UG6OrH8NA+jwZPwKcF5sqO/y
+         DMPha0lsyElEJnkESEOcucS3m42vswQiyeFvqU8y/XfNgendQ9wYPE4kS+8HV4UU60Md
+         R8jLV0AxbZIQDN/NHnMNUSrXAVEj5MfNEBAkecIJq7Mrog7NZx5+mqfadiai4OemvmSr
+         k0LYCsJlG+CEOAMhkl5+eNCwvNa+KjPxgicJet7eiePFprvzuw93jixJLhWZ3Mpl3snr
+         u4ttfWMHQERwwjMr4TPrMnM0g+hCanQbvcyMJJzBJIW32tCT9mMXqxT04WSwGVkcJTIM
+         hyng==
+X-Forwarded-Encrypted: i=1; AJvYcCUllEmBgR3ekETvKcjJdCuadF1BlYs/q8/YsNn3XThb8+3eJEyduI7/hwqIbNfM4KJu97o5JozpOs//gCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcH6SRUEgEsEvGcc9CufJS0wSxOy3WZIxL+XOD5wqUkrISxYcP
+	CRCzPEnIZuWfeChXbxG5lSjN6q/AqpsoEQ6hih7EQlxYAF6/1qxfaS1VAUKdzrp1F7OaA344xbt
+	YVTj/relTyZeI+YvTKmS3vupf8nsnQ1cI0RPorUixw6GWCv7KWc3gRSLoxV0FErGwoz1wcqA=
+X-Gm-Gg: ASbGncsQTBfKfOSOWaKdwxbGfaxXdfgaKZWgISyodJrjMpzs+6t13e2WGRo+DcED1rC
+	J6KusbXiR9Em5wSHwjUiYmvk9ALHOxclxoOGOcC5jaKXecLzvV6oLbRVE3rmluD9pVcWdKn6tex
+	G/LvBgYMOgGYj+V5qUv93sehax8D5Jq3OlT6q112MW33fyX+4LP2BSW80q2XrXCeByORazh+OrB
+	2Xi/36XwBSLqCFgnR8EtTbQzzmb9elOK9/IiijCSSHWl3tJsFCRqksWNZJCeLN5LIimTcF/a8Vs
+	sOwfQ5LW3KNPaJ14NES2fp/ZxwJClqfJJzz3yeHDe2hA9scynQHM
+X-Received: by 2002:a17:90b:4a44:b0:2f4:4003:f3d4 with SMTP id 98e67ed59e1d1-3030ff08e4amr25846270a91.30.1742914371014;
+        Tue, 25 Mar 2025 07:52:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGq37xgRTdz1JPqWrLC0RaHjS1VYwIHPt1R/tO8cE0n4o8nk/6ax8nuzgtSl/hVZJ/IF/xkg==
+X-Received: by 2002:a17:90b:4a44:b0:2f4:4003:f3d4 with SMTP id 98e67ed59e1d1-3030ff08e4amr25846235a91.30.1742914370543;
+        Tue, 25 Mar 2025 07:52:50 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3036c973cf0sm1136656a91.1.2025.03.25.07.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 07:52:50 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>
+In-Reply-To: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
+References: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
+Subject: Re: [PATCH ath-next] wifi: ath12k: don't put
+ ieee80211_chanctx_conf struct in ath12k_link_vif
+Message-Id: <174291436978.1215324.3680053989987464544.b4-ty@oss.qualcomm.com>
+Date: Tue, 25 Mar 2025 07:52:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325032226.603963-1-nichen@iscas.ac.cn>
-In-Reply-To: <20250325032226.603963-1-nichen@iscas.ac.cn>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 25 Mar 2025 16:52:33 +0200
-X-Gm-Features: AQ5f1JqB3_n7wRPOyndANI8VeuPDptNV_crShDtQnUHsVNMYKd4aVNeBOodvySo
-Message-ID: <CAHp75VdPFsg9z+SVQHgCWqg4eA5nmXCvMhi7=-xmsSUCJq-=rw@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: sta32x: Remove unnecessary NULL check before clk_disable_unprepare()
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	u.kleine-koenig@pengutronix.de, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e2c344 cx=c_pps a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=2YHuQJzV6Ps-Yg4M2TkA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: 1aJXVD5wLJBO40kU5wDeLf6mRgnlYNcz
+X-Proofpoint-ORIG-GUID: 1aJXVD5wLJBO40kU5wDeLf6mRgnlYNcz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ suspectscore=0 mlxlogscore=777 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250104
 
-On Tue, Mar 25, 2025 at 5:23=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
->
-> clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
 
-IS_ERR_OR_NULL()
+On Fri, 21 Mar 2025 09:45:53 +0800, Baochen Qiang wrote:
+> ieee80211_chanctx_conf struct is not put at the end of ath12k_link_vif.
+> Note ieee80211_chanctx_conf has flexible array member inside it, causing
+> below warning with GCC-14:
+> 
+> drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Although there is no issue for now since the array is not getting used,
+> this should be fixed to avoid any potential data corruption issue in the
+> future.
+> 
+> [...]
 
-> Remove unneeded NULL check for clk here.
+Applied, thanks!
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+[1/1] wifi: ath12k: don't put ieee80211_chanctx_conf struct in ath12k_link_vif
+      commit: ce0779378c62758a0c503bf85e643c6d8f343703
 
---=20
-With Best Regards,
-Andy Shevchenko
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+
 
