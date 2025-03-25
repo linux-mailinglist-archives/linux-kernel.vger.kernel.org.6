@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-575082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E600AA6ED54
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:10:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8772A6ED56
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B16AA18921B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C525C3AC254
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6579253F38;
-	Tue, 25 Mar 2025 10:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D711FC111;
+	Tue, 25 Mar 2025 10:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LuxrneUn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWhfVvFe"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16D81A23AA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6721D1A2389
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742897424; cv=none; b=agFKTksSToSAIyzhdeEycPfJuf/j0yFk7i8/EMhe7uJKF3uCA5Ea9UyM1srmPmECqxLFD8jVMTrIQkStMrpmyz7FK2ibFbezJZjUR4efuS2E2cNdcXJTLbIhqQtnLyd46nrGgc/OJkcJYBSBnlJwLzf76AcQVmRJeDVHPgNxoZc=
+	t=1742897525; cv=none; b=LmZfov+hlBkxr635/Tm4JPRmuSDjVwQdCY2abYQSJwyX0TwCtW+O8Ufmvy6+i7Eegc0kFwQB+cgYUjWEQAkboF7fPaQfjZ2iYYJ+1PcBuRJ7OdGKNIZ+kT+zji37KKGc2Y2cBZCXI4FWnSAbVTnlOqatDImeF7V/kNAamtYmDWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742897424; c=relaxed/simple;
-	bh=+yHwlyVryiDRjhu9Lrq1vGrFAuzbF6NTK9Kgojwnnyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eQYTW97jmlZcTbyMaG22AV2DtPfR6KZ/KrHg9i3+Dt2CvlbubtVFBixgYl3YWjtfx4nVdgTIbpAAaAlSbb3PxJRDOfLuxSVKFBA8709PghLvF1VkgGdZukSI9ONMAcJqhn3JjmwYPQXJkM71mQNVX+4uVoeM75xlcwMlu+xwPmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LuxrneUn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742897421;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+yHwlyVryiDRjhu9Lrq1vGrFAuzbF6NTK9Kgojwnnyo=;
-	b=LuxrneUnrdU7wymIvZXO20eSq+85eGGJaPErWjF+/paQCZpU6VQr0JHOxb0tEksmI8Q8uM
-	57Rdfo+UMrsSaOO6jBLe1qIxyAw5yN+bPAVMFcAakIoRvWwouepVy8ffCK4GD4ztwtWOnk
-	G2ziakadQEjmKhkZ802zI+uw66DkPwo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-496-liIXkxccNoKKRN5ZT6cOSw-1; Tue,
- 25 Mar 2025 06:10:17 -0400
-X-MC-Unique: liIXkxccNoKKRN5ZT6cOSw-1
-X-Mimecast-MFC-AGG-ID: liIXkxccNoKKRN5ZT6cOSw_1742897415
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C8D61801A06;
-	Tue, 25 Mar 2025 10:10:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4080D1956095;
-	Tue, 25 Mar 2025 10:10:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Mar 2025 11:09:42 +0100 (CET)
-Date: Tue, 25 Mar 2025 11:09:37 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: syzbot <syzbot+1c486d0b62032c82a968@syzkaller.appspotmail.com>,
-	brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
-Message-ID: <20250325100936.GC29185@redhat.com>
-References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
- <20250324160003.GA8878@redhat.com>
- <CAGudoHHuZEc4AbxXUyBQ3n28+fzF9VPjMv8W=gmmbu+Yx5ixkg@mail.gmail.com>
- <20250324182722.GA29185@redhat.com>
- <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
+	s=arc-20240116; t=1742897525; c=relaxed/simple;
+	bh=KpilHOOJo67Z4VWOQXgm4x9QaziC64Nge4Tp+ZLbApY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y2bQx/36qumhULiLIVVZxdMT4ccVlk3P7NbZPJPOmLryyFnIubiDfLdKB7fH09Ej8Bb/D7NfPidiFzoqf4H0zAZCF1zYVgC6Jb8lAifWSxFNFPJF1r1fOMvHC4jp2Qvt54wyletFIjVPwKFzdcC+RV+5OHsEF6poM/VmnSjMw4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWhfVvFe; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so7811363a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 03:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742897522; x=1743502322; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUyR3Oe6iYVQ9/r3ijgRJfklg/wMi4nHhN2lq9dus2Q=;
+        b=cWhfVvFe4B7T0MBJVPYnYJm4MtPLuZSGYTPFEFfHJkcLjJF32itPHOp5ZCNRCVUQue
+         iJvIoEXfmbQRHLp47OFZpp2TwTU1myDnxTo5mQL82yiuV6lh80pn3w91KWXEcMkYOWNV
+         U/IeoLdsvlSROmCzn/iG+wlunuyWUXBjCBvd9SkGeZIBMx7ZHzPB+NOOGZc1EeQqzKDZ
+         khn5Tqvn+nawleyU4KaUvh07CT2pxfZD4EheFc6ImAYE3Jzv4Y2nQDl59Z1TAhOz9UQH
+         hK0TMgDfY2+lqzltVQ0zQ6aWym6XeixYg/NDqYPVqtbC/htHvXROMJDTgv6PK11yEIGU
+         yTaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742897522; x=1743502322;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dUyR3Oe6iYVQ9/r3ijgRJfklg/wMi4nHhN2lq9dus2Q=;
+        b=vul6aCeOgZBuC9qSaYIl8Ye629afHaUICMpZpAnmp5UehAEm6yNHuBafbqUzi0OBX1
+         Twe6XhnDyPzef+OOthuYm4a336tKJZ+RPEAN7vrR5PtbPYX3anuIceGHJyXYd0RKWyHu
+         xA61DaLo9ggbCy9m2dpEGhxiFZZIFHXxkb0xypflhYhricsHpO6f4CngC3jGgFC5VkVb
+         LFcOFbOhs77/npfmRrMAfOcIMfVWyFEmADX/WOdC4wOPhFhdjVvZdV3ZoVYfQXuSWgYV
+         lb1wdu0XxPU28Ia/AkXPojzRdc9lZbg8UKdp0SUE0OEXtrLxBbzUU/VdMCql60/macIA
+         LkPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXC6rYyd2PDK3YoxkwVAQedW79PeQY3arKN62HLrHpMp43YlOls2rwcd0lRCi0HMQ2LbZMNjxzX/S2zA20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6DXeGz6a0hC14QE6uCLm8EV44ubNQ30zqpwv0T6D5kGhkqN7H
+	YHtO8TyKC+m0djV+ohuG5h/KmOxShwZmj91UqwcOWuE/H/uYCYeb
+X-Gm-Gg: ASbGncvhqQdAJj9UAPzSP33Iv5arGcvDhNoykccSQ5L7UotqIKPrEy6u6NBI82Xd0cx
+	R3gx98rjpAH31yD1V5Jl8CttXNkOtrDH6N5wFtrllsihwV8LijuX6ietam4hQQjrUtqS3qLXIlK
+	BE5sVs5CkIrIUNn1ypE3nJgcGIlO+iS3vqozZ4BgboMxA6H4Q8uzq6I/Czvd8ZPPIWf9rBnYCVK
+	MA4Wsnp7NTmhbHwdHstLIlPYorYIatPIoHoR+pz7Pvm/NMo5HL9fwi1DaKONi5cnpOwFcFTrxHG
+	/ouB9H3mou2kdfcrGPMK619cgq7PnlVghjgUBWUIKr3X2OEVz9lvqw==
+X-Google-Smtp-Source: AGHT+IGZ3tbJNEZfEAj8nuAD8spNiWrpR+xPBxDApkcc/3wYUXEYlvHNuM/ofGxTCSCpXV/bnwY4pg==
+X-Received: by 2002:a17:907:c1c:b0:ac3:422a:76dc with SMTP id a640c23a62f3a-ac3f22b52f7mr1747463166b.34.1742897521258;
+        Tue, 25 Mar 2025 03:12:01 -0700 (PDT)
+Received: from localhost.localdomain ([41.90.66.126])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c6f47sm7429284a12.52.2025.03.25.03.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 03:12:00 -0700 (PDT)
+From: nancyenos <nicymimz@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev,
+	nancyenos <nicymimz@gmail.com>
+Subject: [PATCH] staging: octeon: Fix unused macro Argument 'x'
+Date: Tue, 25 Mar 2025 03:09:52 -0700
+Message-Id: <20250325100952.2956-1-nicymimz@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHE8AKKxvtw+e4KpOV5DuVcVdtTwO0XjaYSaFir+09gWhQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 03/24, Mateusz Guzik wrote:
->
-> On Mon, Mar 24, 2025 at 7:28 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > So to me it would be better to have the trivial fix for stable,
-> > exactly because it is trivially backportable. Then cleanup/simplify
-> > this logic on top of it.
->
-> So I got myself a crap testcase with a CLONE_FS'ed task which can
-> execve and sanity-checked that suid is indeed not honored as expected.
+warning found by checkpath.pl
 
-So you mean my patch can't fix the problem?
+Signed-off-by: nancyenos <nicymimz@gmail.com>
+---
+ drivers/staging/octeon/octeon-stubs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Anyhow, the plan would be to serialize on the bit, synchronized with
-> the current spin lock. copy_fs would call a helper to wait for it to
-> clear, would still bump ->users under the spin lock.
->
-> This would decouple the handling from cred_mutex and avoid weirdness
-> like clearing the ->in_exec flag when we never set it.
-
-I don't really understand the idea, but as I said I won't argue with
-another solution.
-
-Oleg.
+diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+index 44cced319c11..0155f3c41657 100644
+--- a/drivers/staging/octeon/octeon-stubs.h
++++ b/drivers/staging/octeon/octeon-stubs.h
+@@ -8,8 +8,8 @@
+ #define OCTEON_IRQ_WORKQ0 0
+ #define OCTEON_IRQ_RML 0
+ #define OCTEON_IRQ_TIMER1 0
+-#define OCTEON_IS_MODEL(x) 0
+-#define octeon_has_feature(x)	0
++#define OCTEON_IS_MODEL(x) ((void)(x), 0)
++#define octeon_has_feature(x) ((void)(x), 0)
+ #define octeon_get_clock_rate()	0
+ 
+ #define CVMX_SYNCIOBDMA		do { } while (0)
+-- 
+2.25.1
 
 
