@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-576277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CB8A70D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:52:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EF5A70D47
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58643BFCB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E63179352
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6879C269D1B;
-	Tue, 25 Mar 2025 22:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D87326A0D3;
+	Tue, 25 Mar 2025 22:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WdazGhhl"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tybl/GdL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7071D1EFF98
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011051EFF98;
+	Tue, 25 Mar 2025 22:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943139; cv=none; b=POnJF3SbVOAQ5AD3b6NiH36maN6CIJIqo8WUHIvkL4+e9WrootDXhsQjwEqwivO9YHvlvwWEKeNBf20z3A5UQvsnXSlDgD1XN2m70vBC1UU+mGSzt59vOQt1ke15WOEsMfJ+AoXuG1O5/CBIPSGdBIn+/+RY1iSsGTfH53EYP50=
+	t=1742943144; cv=none; b=fC6qGS/1CLGt3letAGhaR/POe72PeJ3g3RiTMA58DmHp4w7QNl+/IM+P93/AvUvaoGOieKI0VuPztGXJA3b1ep+s7a9NfmVdKvCoo+WmMuxpfwqqz3T3duXV+PGh11QzP1JZyEbQZ2oou7dKfQnYLLyjafx/ZKM3euEmDn/FjtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943139; c=relaxed/simple;
-	bh=ZTbkWv6CnlDbqJY3BfLE4M7+Ch+I7zT0wzeQIR2kUd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VPsIfKYCVXY0a4WFhNei+wbP4SMY2xfKi4Sp1vw95NDO+88G1etfEN0oCyWIc8Szrh0q2R1YeZ2uDcqY6xy31ZU1FN5e5rQXJ6EXQWNUlSnWGWUUeSedZWRrG4BFxuVFtvLffawjRA/ooph77t/W1IPPbUkaQvX+07/pJpr/324=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WdazGhhl; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2c663a3daso416146266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742943134; x=1743547934; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4JDrtoGXDDLDIXwqSlEibUrhSsFbkL9xiBiOdDzBwo=;
-        b=WdazGhhlXj7CZwF3pWw1zJn9MfCVwRtH1teUD4boj/XNNGaaiOEbCYwcLndLfeZD/h
-         a/kIROZprtLOKPnYAPhur1wzXwSWW81h7TeSfJ9unRvt/N1pEYiQtFnspPEAoCvdZuQg
-         M1ldqaHZAu4Adh3JYCQS+anrAGvslehEu1mVM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742943134; x=1743547934;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e4JDrtoGXDDLDIXwqSlEibUrhSsFbkL9xiBiOdDzBwo=;
-        b=LEB3ZkMWVzbmOY5IWZKc4+LbRFhBebi6sY2+JQbgMRah7xmj36VlV29Eaav5XmVbkQ
-         YlbKXyiwfX5d8bcjZSrJk6yKqn6IXcLZ38EIPKop/NHUjLu81+EibMKRnBvIgZ2VtI3c
-         LipD2zma3/7jl2jYRc/O0UOcd3L5pLsC8vNQ94o1uaiF7Rvm5Q3wzvwqmmQVaX/hpWiq
-         AVXawPPlhB8t2nfXjoX+Utlm11EyI/ojzz6CQJm2KFyXijZOiyF8LljdpdgvpO9Kv8DY
-         1tSPT+6nwOafFJxJ6tyzenIQ/RQzGORq6RK2i0A3YdBde6phj2p2a75ZDG87VEqQanJA
-         E26Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVqu4ESzMwlYWNAGsAjAHkYe9P8SOYznSAu43jm5C2ZLy3hD+yzfSeTgEH1NJ7+3c5tZyFgJ10HoX5e8Uo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHuPH8uwrxTlGwmxISR3Pa4FlKqiIo0XkVP4OK0HcmFin2kM/z
-	H5PR6noemqKKYMKanBqtSSZf5Va4sMo8TCoeGMDmymez+Xr4fpxK2PcpizV0zTIy98rDz0wx6Pv
-	vk4PbmA==
-X-Gm-Gg: ASbGncsFIfHhAs7C9Y/4DdihEBDDf9EAAyuVGQN2DMX6/jO0vi27/PMsFnDgZ3r2Syv
-	fBgrVw3bzcIkPbcqkbJksX9P7a34jAaP3+Thfh0+w202LdWhT1OtNOM9IC6YBdrotrh9hm7/yPg
-	vkvKEGk7rfzL+rZWGUur3efNbQzpYR1SOFCJ9wHplrlUcp+ihyxmXeuwVLjqZxytnCOtvNhXRbB
-	j2yhBvuHkLKYsJFNT5OZooBdRBHiEr8PEn5sseZRih3w8U4EtuVq0yPPcbH6QoUnBfZ4QTlSzWK
-	hmysiVeWM6IiKQM5gPZO+xLNxGNI2vSTkfy8tt28d5hnwbLtHlkR/HwNy7Eltn2NV3d6IgQJ/rx
-	crbf2MZlJlZ8KOmaTAGE=
-X-Google-Smtp-Source: AGHT+IHXdvKHiraHHwnPZf7B0AMbW09We1o6CRj+JpXtRRVIfzq43ZGXOKUQxK4hwt5elS3WU5yZ0w==
-X-Received: by 2002:a17:907:7d8f:b0:ac2:a4ec:46c2 with SMTP id a640c23a62f3a-ac3f25342b4mr1831847466b.49.1742943134470;
-        Tue, 25 Mar 2025 15:52:14 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef93e17asm930106966b.78.2025.03.25.15.52.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 15:52:12 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac339f53df9so139953366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:52:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWI6JgkrWR+XWlhHiFo1M9JzGvet3wVuofALB37ItJq3kDjcEhe3ox0LjewrX0F4wYQQR+4bf5VOo2QOsw=@vger.kernel.org
-X-Received: by 2002:a17:907:7215:b0:ac3:97f4:9c08 with SMTP id
- a640c23a62f3a-ac3f224dc29mr1773944466b.31.1742943131705; Tue, 25 Mar 2025
- 15:52:11 -0700 (PDT)
+	s=arc-20240116; t=1742943144; c=relaxed/simple;
+	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gqUM5nBGpmyceZkUc2Khx3WkcrKQ1nP6IdKEgQ5HN5jS8tbNuD7TfoRPd4eRaCQPRbVoV1njzMxTWvmeHy2j5wRmhPMafe1XjoajgvBxbSgvyVzcXPYr05kpPecZSHAN+PKhZaXq/D/09B0njJamaqfLF8PVfChs7VeyygRVYT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tybl/GdL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E030C4CEE9;
+	Tue, 25 Mar 2025 22:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742943143;
+	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tybl/GdLK10TBJU+VIc63abkA175F4g9CqD7Yl8FNGtk93qpc55VSIRzKlHvaEwrX
+	 ari8G50MwUaLxk0NjspvoPcMabur7H9rISJ44mGnkDV9TK+w36m1o9lzgFkPAhUkX4
+	 WirUjY7EDj3HE5TBvRdV2IXrK0QelCesepX4yoZBZ++SOcb3aSOL9QTja+Ab0Wukdj
+	 kPDZiiH3QkQb0igc4O+Da/3J5dYR2Zw20G5omsdNCwUvmohmJjTfbCbmLUGeO7YYb8
+	 puxYp5FMOrwa8OdmVVFHcIsfQ/oRXl7FnCjpUoTzVAVBFugB2bvVkIHPdc/vzUMhY7
+	 kTJl1vN5uDk+A==
+Date: Tue, 25 Mar 2025 15:52:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Lucien.Jheng" <lucienx123@gmail.com>
+Cc: linux-clk@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ joseph.lin@airoha.com, wenshin.chung@airoha.com, lucien.jheng@airoha.com
+Subject: Re: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
+ provider for CKO pin
+Message-ID: <20250325155214.44a65306@kernel.org>
+In-Reply-To: <20250324142759.35141-1-lucienx123@gmail.com>
+References: <20250324142759.35141-1-lucienx123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320190514.1961144-1-mjguzik@gmail.com> <CAHk-=whd82fzhEbFRw9d_EMtR1SeefOJabjCHcm4-6jzeqqd3g@mail.gmail.com>
- <CAGudoHGNFT+LC24842ZKLWBxD3vvvddBqDKa6gkixN4Esor+RQ@mail.gmail.com>
- <CAHk-=wjo__Bj3JNw_7E8HhTDUF65LVOApvN0D2cofgotJoqpmg@mail.gmail.com>
- <CAHk-=wjxi0poUzCd666Kx5wCjgOwN5v=-zG8xSAL7Wj_ax8Zvw@mail.gmail.com>
- <20250321204723.1e21cb23@pumpkin> <CAJmZWFHTG8cR77zrUpKF81tphcTQ1fyDO6vqnY57ptcs2yM=-A@mail.gmail.com>
-In-Reply-To: <CAJmZWFHTG8cR77zrUpKF81tphcTQ1fyDO6vqnY57ptcs2yM=-A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Mar 2025 15:51:55 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wisCz3HHBKjgHKfnCjNf=fLyr40fWH=D7jYe+EpHnWJeg@mail.gmail.com>
-X-Gm-Features: AQ5f1Joa_8sHjM6LPpyMv0TuOd7sCIgFX8S25jah0G-9L4UHRV75Vg6PuVlHofM
-Message-ID: <CAHk-=wisCz3HHBKjgHKfnCjNf=fLyr40fWH=D7jYe+EpHnWJeg@mail.gmail.com>
-Subject: Re: [PATCH] x86: handle the tail in rep_movs_alternative() with an
- overlapping store
-To: Herton Krzesinski <hkrzesin@redhat.com>
-Cc: David Laight <david.laight.linux@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, x86@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, olichtne@redhat.com, 
-	atomasov@redhat.com, aokuliar@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025 at 15:42, Herton Krzesinski <hkrzesin@redhat.com> wrote:
->
-> I have been trying to also measure the impact of changes like above, however,
-> it seems I don't get improvement or it's limited due impact of
-> profiling,
+On Mon, 24 Mar 2025 22:27:59 +0800 Lucien.Jheng wrote:
+> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+> CKO clock operates continuously from power-up through md32 loading.
+> Implement clk provider driver so we can disable the clock output in case
+> it isn't needed, which also helps to reduce EMF noise
+> 
+> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
 
-In my experience, profiling overhead - assuming you have half-way
-modern hardware that has support for it - is simply not an issue.
+This was posted after merge window started, so let me give you some
+extra nit picks and please repost after April 7th.
 
-So I think that if we don't have performance numbers on some hardware
-where it can be shown to matter, let's just leave things be.
+> +static int en8811h_clk_enable(struct clk_hw *hw)
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +
+> +	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
+> +				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
 
-            Linus
+misaligned, continuation should align to opening bracket
+
+> +static int en8811h_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +	int ret = 0;
+
+unnecessary init
+
+> +	u32 pbus_value;
+> +
+> +	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (pbus_value & EN8811H_CLK_CGM_CKO);
+> +}
+> +
+> +static const struct clk_ops en8811h_clk_ops = {
+> +	.recalc_rate = en8811h_clk_recalc_rate,
+> +	.enable = en8811h_clk_enable,
+> +	.disable = en8811h_clk_disable,
+
+these are not tab-aligned
+
+> +	.is_enabled	= en8811h_clk_is_enabled,
+
+this one is
+
+> +};
+> +
+> +static int en8811h_clk_provider_setup(struct device *dev,
+> +				      struct clk_hw *hw)
+
+no need to wrap this line
+
+> +{
+> +	struct clk_init_data init;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
+> +		return 0;
+> +
+> +	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
+> +				    fwnode_get_name(dev_fwnode(dev)));
+
+double space
+-- 
+pw-bot: cr
 
