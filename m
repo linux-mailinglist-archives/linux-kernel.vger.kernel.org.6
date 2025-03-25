@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-574771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97FF8A6E9AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:39:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A480A6E9B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4130518897ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5DFA16BD34
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF94FA93D;
-	Tue, 25 Mar 2025 06:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D719E204693;
+	Tue, 25 Mar 2025 06:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2HYKJxMC"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yWw076pz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eE53qwTu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yWw076pz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eE53qwTu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D617A1F4613
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A341F4613
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742884739; cv=none; b=iazZAeTcExTf9m3y1x7rNNiDLBTQwDUjKDkYfVdfbWoj234amjlt1KKv0bs4OrFAT29AASbCbHKPs8qZySFNK8eqZpXYMEKeRsY6sH7VwLg7o09Z1SHAYOlkrL6Ze71ZbaKVAsEVNCld9o0ku/69WF7sv/LTQrmosGlDU6pcvn4=
+	t=1742884947; cv=none; b=fqFZOP/qnHccCQel9+MhFVu0aCjffBtt9o/V9yewTAIqav1vCkN7eMqXK9/+bN9ZDLWXLHdgotCsXLp69jwIKW0jWS8xUL+mkyF4FGzsNSdDhkn9FKzsVrGewofKwWLP6peXLZsfC3U0vE8uV+UrNdtuafLeE+afuq7XNod7BhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742884739; c=relaxed/simple;
-	bh=T1Kj5XzFBrmk3jHH7k6f4Yi0UaHdUydFK1dPr4nCHCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PPTLzftbQBh64eFyyvuZ0L9V3nWsDk54QE18mXzehfoZ1ezmEAZHz5wEIjuFd3PRSJWNOcsL1wZqS8u6CzixN0xW6rreWPyPD1mx7afEW6CXOo27VKdijB9ILwoBAr4TIxs1N2M9r7YVOWzOXOwmlqVAedXSYI1wglpdzm9zm6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2HYKJxMC; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476a304a8edso46298331cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 23:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742884737; x=1743489537; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=71tdewEckJw/9nhboX3/e3aFJxffZh5g7UprIW8MqNw=;
-        b=2HYKJxMCYylCPq9x9N/uk1q77RLa9P0uS8uS7WjFtI4X7fdGdJMgACypahGtZzus8U
-         o7RTeVXr6B2tR+OTrc2akym54iZ/Hvg34tDKbXixa8ad36C7RpuDzDeNJ2nn9WWHSFbS
-         LWB1tH/L/lRqK3DlSbT+8vZsOEq9Kk5ny0FNVYD5w5Q5ASJTm/Jv5g9DmCULbNkon/Wv
-         r3JtTIm7Y76lEfwRF9J3SL4BJQIjhiD/ooR+fBE56vs0DHyMwsKHKWj8rHLkkcSVEezU
-         lZE4gtlFQsyGmRZ7GkLYZ9heO1AarIlwz6zz/2L4DR3YnlfLKEKSyHNUjOtbFMtGOqMz
-         +UsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742884737; x=1743489537;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=71tdewEckJw/9nhboX3/e3aFJxffZh5g7UprIW8MqNw=;
-        b=W90+xDGVNRB3s8RvonagyULbOBmTUnWH0jFYLRI35Rc9mCpqJ7MNyyWVwKkSgOKGef
-         rci8p26S3/4yW9rvgWdCCy8apfsfO/W04dLlsPSsiMkYOX9obNakh7nRAHX19b6IEdyT
-         IkSlAjHlneFUySxQFTU3jj6Fvv0oXxnpQNx9p95huUEn1rheQYn8Lst9TZBhuHCLvBfB
-         Txzr3mf/ERr5DjE4JJUCjU9d48mwfldrnNBB9e7JCLrr/IYUWw5GwQkbEj2BLW7QbVQh
-         jznOKoY7fD3ng960tRzQT01qyNeaUW+EHz3SsrwPHghiHtzrzKj3qmgjoLJRSAQlov0X
-         IxrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0wIW+Rf+vBbcFWFAPA6aaoCDesgzMC5T8Q08mWEXY833+kv/WUVLBMKE/u6JAxkv2pvt3Jl5Oukr+spk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw17RATUYrmSsrMquJnqck4HcomAfIL+hkfKuTDzpIFRuVpbERj
-	LS8KCXfH/IlBRps7iUXM6TCW3iti8ycgwhn3nDDUjhtXgDV96Mg3jtbu5bNDgV1jAG5YTjPPwez
-	gAkadNSTuN3G7IlIQQnyERJrmcY/WL6pVYb6/
-X-Gm-Gg: ASbGncsfZdSbxJrdUOZtVQ6YcXRXOLC+jzwb2tsrCDo9mAzyi7zhOnhDl6wopG/lNi/
-	A0KVWmV5KNTI3gV2V4jD/p9RflyQwhrH/XMXvgxJ/mNx1rrliuxRHBPLHaMboN9fIksztVQip+B
-	G14oJR3AMX+8QY+mg08/jSkYG0ffrb0C3iiNb4q43mWHcx6EdiQkQk+ek=
-X-Google-Smtp-Source: AGHT+IEGKZi+1aLt9scm9sUb9YqAFLoiTtqxzsba9OKFz2SH4DHeaqUENbYD6sAd8IV/WNsbR6PqJ9B/RKqnO0xTd0g=
-X-Received: by 2002:a05:622a:250a:b0:477:4224:9607 with SMTP id
- d75a77b69052e-477422496a6mr99228691cf.12.1742884736415; Mon, 24 Mar 2025
- 23:38:56 -0700 (PDT)
+	s=arc-20240116; t=1742884947; c=relaxed/simple;
+	bh=HumAS1jvRZ4ha6GWl14Y+g2ezuCC0Aw6+B4VeiTuRqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MZLKTQQsj8xIz1BUbeevSBKwc4tsyA+AjIe6doDefiE4EcABaRVeNnyky30I5wyVNasS5YRUMXi8B3WrevlM6TaDUwp3rqd6tBAnZwCo8LIZ5XkoKQTtj+S7k0C4pvn2kp3oaKnz/yLBXnVFh61shUY4EzCaYlJ6FgNGVuRS4zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yWw076pz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eE53qwTu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yWw076pz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eE53qwTu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D52E21179;
+	Tue, 25 Mar 2025 06:42:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742884938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
+	b=yWw076pzQgxu1rGu3pGJJiK3uS1kUhcN0l+dxjgUXioApt3CGt4OJC1QLS93un/klqhnEs
+	JWbazHfYw6pJ5hb0ry6bHXjTRTP1foaj0d/PgZEo5WwE6eqigkf0qrtQri0tBUQL0NUdYW
+	IEVJouBBZtEzPu8zvMqRGegMsq5SykM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742884938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
+	b=eE53qwTufrzx0xlgjcug5ixl2lqozCkcSQRofYhV86v39ssDlyDNjwCgb6J67LElRT/swu
+	J2dcwtzHEwMw7lDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742884938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
+	b=yWw076pzQgxu1rGu3pGJJiK3uS1kUhcN0l+dxjgUXioApt3CGt4OJC1QLS93un/klqhnEs
+	JWbazHfYw6pJ5hb0ry6bHXjTRTP1foaj0d/PgZEo5WwE6eqigkf0qrtQri0tBUQL0NUdYW
+	IEVJouBBZtEzPu8zvMqRGegMsq5SykM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742884938;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XXwI8dfCcwC4g4BUCUZgxrLvKM1Snxm0aSv7x3EVfic=;
+	b=eE53qwTufrzx0xlgjcug5ixl2lqozCkcSQRofYhV86v39ssDlyDNjwCgb6J67LElRT/swu
+	J2dcwtzHEwMw7lDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2657B13957;
+	Tue, 25 Mar 2025 06:42:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hUDwMkVQ4md/fAAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Tue, 25 Mar 2025 06:42:13 +0000
+Date: Tue, 25 Mar 2025 17:42:03 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: julian.stecklina@cyberus-technology.de
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Gao
+ Xiang <xiang@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/9] initrd: remove ASCII spinner
+Message-ID: <20250325174203.67398632.ddiss@suse.de>
+In-Reply-To: <20250322-initrd-erofs-v2-1-d66ee4a2c756@cyberus-technology.de>
+References: <20250322-initrd-erofs-v2-0-d66ee4a2c756@cyberus-technology.de>
+	<20250322-initrd-erofs-v2-1-d66ee4a2c756@cyberus-technology.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303070501.2740392-1-danielsftsai@google.com>
- <87a5a2cwer.ffs@tglx> <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
- <87eczd6scg.ffs@tglx> <CAK7fddAqDPw1CuvBDUsQApbs1ZSE_ruyTAdsp+c4116C0ZjvVw@mail.gmail.com>
- <878qpi61sk.ffs@tglx> <CAK7fddCG6-Q0s-jh5GE7LG+Kf6nON8u9BS4Ame9Xa7VF1=ujiw@mail.gmail.com>
- <878qpg4o4t.ffs@tglx> <CAK7fddBSJk61h2t73Ly9gxNX22cGAF46kAP+A2T5BU8VKENceQ@mail.gmail.com>
- <874izz1x42.ffs@tglx>
-In-Reply-To: <874izz1x42.ffs@tglx>
-From: Tsai Sung-Fu <danielsftsai@google.com>
-Date: Tue, 25 Mar 2025 14:38:44 +0800
-X-Gm-Features: AQ5f1Jp-jjTIxnmSKo3TNp7XO34_AyVvuL271vXLLP8rCOHFLde3CpN2V_7ltwY
-Message-ID: <CAK7fddBidt90Yjh=fjj=w8uovjEyes6Qe1U0m7k5XWGYZm+GHA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the parent
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant <achant@google.com>, 
-	Brian Norris <briannorris@google.com>, Sajid Dalvi <sdalvi@google.com>, 
-	Mark Cheng <markcheng@google.com>, Ben Cheng <bccheng@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Mar 11, 2025 at 10:05=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> On Tue, Mar 11 2025 at 17:52, Tsai Sung-Fu wrote:
->
-> Please do not top-post and trim your replies.
->
-> > Running some basic tests with this patch (
-> > https://tglx.de/~tglx/patches.tar ) applied on my device, at first
-> > glance, the affinity feature is working.
-> >
-> > I didn't run stress test to test the stability, and the Kernel version
-> > we used is a bit old, so I only applied change in this 2 patches
->
-> I don't care about old kernels and what you can apply or not. Kernel
-> development happens against upstream and not against randomly chosen
-> private kernel versions.
->
-> > And adding if check on irq_chip_redirect_set_affinity() and
-> > irq_set_redirect_target() to avoid cpumask_first() return nr_cpu_ids
->
-> I assume you know how diff works.
->
-> > May I ask, would this patch be officially added to the 6.14 kernel ?
->
-> You may ask. But you should know the answer already, no?
->
-> The merge window for 6.14 closed on February 2nd with the release of
-> 6.14-rc1. Anything which goes into Linus tree between rc1 and the final
-> release is fixes only.
->
-> This is new infrastructure, which has neither been posted nor reviewed
-> nor properly tested. There are also no numbers about the overhead and
-> no analysis whether that overhead causes regressions on existing setups.
->
-> These changes want to be:
->
->    1) Put into a series with proper change logs
->
->    2) Posted on the relevant mailing list
->
->    3) Tested and proper numbers provided
->
-> So they are not even close to be ready for the 6.15 merge window, simply
-> because the irq tree is going to freeze at 6.14-rc7, i.e. by the end of
-> this week.
->
-> I'm not planning to work on them. Feel free to take the PoC patches,
-> polish them up and post them according to the documented process.
->
-I really appreciate the patches from you, I am quite new to the
-upstream and IRQ framework. So would you help to share
-some experiences on how this kind of new infrastructure of IRQ
-framework should be tested if you don't mind ?
-> Thanks,
->
->         tglx
+> From: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+> 
+> Writing the ASCII spinner probably costs more cycles than copying the
+> block of data on some output devices if you output to serial and in
+> all other cases it rotates at lightspeed in 2025.
+> 
+> Signed-off-by: Julian Stecklina <julian.stecklina@cyberus-technology.de>
+> ---
+>  init/do_mounts_rd.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index ac021ae6e6fa78c7b7828a78ab2fa3af3611bef3..473f4f9417e157118b9a6e582607435484d53d63 100644
 
-Thanks
+Looks good.
+Reviewed-by: David Disseldorp <ddiss@suse.de>
+
+Will wait for v3 before looking at the rest of the series.
 
