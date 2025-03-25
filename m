@@ -1,84 +1,101 @@
-Return-Path: <linux-kernel+bounces-575275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBDEA6FAC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:11:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6198A6FAD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6415D16DBA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678713B4EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15566256C74;
-	Tue, 25 Mar 2025 12:11:35 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA11F256C73;
+	Tue, 25 Mar 2025 12:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZd3WC2h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADFC254B1B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3A2256C71;
+	Tue, 25 Mar 2025 12:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742904694; cv=none; b=NWWHcCASN6sPCWL/Xm66pkL01m3NxxD+na3S1UILmKTHbwMW8qUiOi9/o7v5dK2Vnxz+pUr9hSlH1ZDC8SO26bER7j10WRZ1JgPvQn9KEOk3XiYYTI1EqMXyGE2rSY8oKcThUvjCW4rz8BRDPdSXjAipgJU5THVDTVellk3iGpY=
+	t=1742904698; cv=none; b=S+YkQ1vkw4G12KFbR91+XFLURUuv/GikRGWPrhiqDAoEFqgymn8GiKWwrcj6Oi+T2Uhx2PooJ8n0pUgi1Jb5Z7uF35LkfMX2ojjoTHJ9fDTqlhHYndwu5GY/AmM697OsAxt/Wc39hrmwZW/1ZWYMLiUcU8sO+VwYh8Nuf08b5UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742904694; c=relaxed/simple;
-	bh=DEC5ifR+Mt8gyk9Zce/fh7iv6TUCsXEt+U7XN+jEuvU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s0SHgN9DdMbUve/QeVS+g58Vg4wb3YH5UZ4cyT388ArEEtu6rxWdoM1Am7Euq4J3B1TNOxzF98HTBz+192YvLADQ2lwQI3US0k9osL1/toQ37u7mIzZI01r8g1spyfoKGL6wKI2W2gZxpzZErX1ZJ9raIWR3ZrTTVj1H4b3z5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZMTG54bqgzHrFd;
-	Tue, 25 Mar 2025 20:08:13 +0800 (CST)
-Received: from kwepemg100001.china.huawei.com (unknown [7.202.181.18])
-	by mail.maildlp.com (Postfix) with ESMTPS id 72AC618006C;
-	Tue, 25 Mar 2025 20:11:30 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by kwepemg100001.china.huawei.com
- (7.202.181.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Mar
- 2025 20:11:29 +0800
-From: Jinqian Yang <yangjinqian1@huawei.com>
-To: <maz@kernel.org>, <oliver.upton@linux.dev>, <yuzenghui@huawei.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <wangzhou1@hisilicon.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <liuyonglong@huawei.com>,
-	<jiangkunkun@huawei.com>, <yangjinqian1@huawei.com>
-Subject: [PATCH] KVM: arm64: Make HCX writable from userspace
-Date: Tue, 25 Mar 2025 20:11:26 +0800
-Message-ID: <20250325121126.1380681-1-yangjinqian1@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1742904698; c=relaxed/simple;
+	bh=wstB9AYDKQp+WL9io6XrHHPxJMW99imT4RaGNLRLzAw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=LVxCoTbcf8AQQj1GwKO059isVU4cjnHtqlGS+UKk0kYSyufKR7MibtbPNTuh5P1p8mpEzz2chGfM6kYLc8nWD9+VMPeFYOc6whkhtl9iFMg7H6RxGKb0quPitj0VMzsZici494XWbyH8K6mR7gGvjgAFmB1AJUBeOKDDkuHz/B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZd3WC2h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F22C4CEE4;
+	Tue, 25 Mar 2025 12:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742904697;
+	bh=wstB9AYDKQp+WL9io6XrHHPxJMW99imT4RaGNLRLzAw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=ZZd3WC2hM36Sa5eiVCCAac6uxEfggZwWvCxBl/y5L12DHUSG8mjwm8K/2vc0HngpM
+	 djJsfHWqZc+YBqK/g7u4lSduKC80M/Vus7xObeB57HceX7H7p3HhVBaoe7LnXKl/Gh
+	 /IsGfWan8RRotnMErichDAKCWJeOAoQSLzH63OsMIb/eQ6J0oeNDxHRuEyGoYov4sU
+	 kk80yK8rFqCbn0kIws9ZFdY+PEUTmCbHYqd5dGbbsDqsDcngaBuscck4xiSYccSk87
+	 EA921+7RPd4aC3qo31uZGqNUM7cxVMQnpj/Znt1mc/1AJQH6LVn/XDKzgLkDfsDKk3
+	 9oEuOt1Kt+j9Q==
+Date: Tue, 25 Mar 2025 13:11:34 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+cc: kernel test robot <lkp@intel.com>, platform-driver-x86@vger.kernel.org, 
+    linux-input@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
+    linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>, 
+    =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v4 09/11] HID: asus: add basic RGB support
+In-Reply-To: <CAGwozwFnu+eQv+qe3XyfcNEjwjFoH23K0ixssEp7m=5Xnh4nhQ@mail.gmail.com>
+Message-ID: <p1q83s69-8850-8008-o9qq-son994s5q5oo@xreary.bet>
+References: <20250324210151.6042-10-lkml@antheas.dev> <202503251316.lPXAIXIV-lkp@intel.com> <CAGwozwFnu+eQv+qe3XyfcNEjwjFoH23K0ixssEp7m=5Xnh4nhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg100001.china.huawei.com (7.202.181.18)
+Content-Type: text/plain; charset=US-ASCII
 
-Allow userspace to modify guest visible value for HCX in
-ID_AA64MMFR1_EL1.
+On Tue, 25 Mar 2025, Antheas Kapenekakis wrote:
 
-Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
----
- arch/arm64/kvm/sys_regs.c | 1 -
- 1 file changed, 1 deletion(-)
+> > [auto build test ERROR on 38fec10eb60d687e30c8c6b5420d86e8149f7557]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-refactor-init-sequence-per-spec/20250325-051852
+> > base:   38fec10eb60d687e30c8c6b5420d86e8149f7557
+> > patch link:    https://lore.kernel.org/r/20250324210151.6042-10-lkml%40antheas.dev
+> > patch subject: [PATCH v4 09/11] HID: asus: add basic RGB support
+> > config: riscv-randconfig-002-20250325 (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/config)
+> > compiler: riscv64-linux-gcc (GCC) 14.2.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250325/202503251316.lPXAIXIV-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202503251316.lPXAIXIV-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    riscv64-linux-ld: drivers/hid/hid-asus.o: in function `asus_kbd_register_leds':
+> > >> drivers/hid/hid-asus.c:676:(.text+0x23f8): undefined reference to `devm_led_classdev_multicolor_register_ext'
+> >
+> 
+> Since I have been getting this error by test robot often, what is the
+> canonical way to check that KConfig is correct before sending patches?
+> 
+> I will try to fix the KConfig and send it later today
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 82430c1e1dd0..b105f156bdf6 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -2666,7 +2666,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 					ID_AA64MMFR0_EL1_TGRAN16_2 |
- 					ID_AA64MMFR0_EL1_ASIDBITS)),
- 	ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
--					ID_AA64MMFR1_EL1_HCX |
- 					ID_AA64MMFR1_EL1_TWED |
- 					ID_AA64MMFR1_EL1_XNX |
- 					ID_AA64MMFR1_EL1_VH |
+You either need to add driver's dependency on LEDS_CLASS_MULTICOLOR, or 
+ifdef those parts out in case it's not set.
+
+Thanks,
+
 -- 
-2.33.0
+Jiri Kosina
+SUSE Labs
 
 
