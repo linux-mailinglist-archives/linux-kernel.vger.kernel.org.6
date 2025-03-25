@@ -1,85 +1,58 @@
-Return-Path: <linux-kernel+bounces-575769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B43AA70705
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:36:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0950DA706FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1A5170923
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9631895EF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CA925DD1F;
-	Tue, 25 Mar 2025 16:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFB025DAFA;
+	Tue, 25 Mar 2025 16:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tsggc41S";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tsggc41S"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="IFWRq18x"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10A225D21F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D046212E1CD;
+	Tue, 25 Mar 2025 16:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742920335; cv=none; b=GFQHO5kY4ev1IXLDrL1CLV3wZZ3VRBA+2+MdLezbKH4a4FAXeCrcgc/v7S+1HpIHttdLZ6W2uO7T63TqD3TFGF7dCBLn3mDd3vT8fq6N8TVmzPt/rMBjro4w04HfCGLpwZoo11OEjKz9IYD+DMATRnuuZwIVW8ywnDIgeYfB9fs=
+	t=1742920361; cv=none; b=F5fJnrBoOukWxgA+Gsoaa0gdV64CMtbc7CRVE4UKlBcB2qF4eyv6CQrvOeStdJsGUjPEQKXGnePFBb4/8jzNAVPS+clb6jqReCK3P5i/eRBChKPfps2EFLyOhwIS0gbWpmqdopW035KlI4/S2J9gTxaOqw6jhyK4sCvYC8Pev2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742920335; c=relaxed/simple;
-	bh=+a+aGSk/YWiUCPhe5u/nwtnq9eiwWu7KqUURGQUojxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p7ShM1INYsekp2oOp+0+VdYhz239+AA787oZwA6So1PM8S7qWK/XdYbA7fd9Hb8x56IEjy7l7xcdolvmkg6rNT5vz9hkC3EH13KVutCON+ELZuaZS81Yj86A+T2X4MRLQTomx5lODSNYYTDfPQPrNgrPSCkLFnU/CuOXCvYL/Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tsggc41S; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tsggc41S; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E04B521193;
-	Tue, 25 Mar 2025 16:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742920314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJyeMoKB0EHg6JVVeIaUfBU01Do74x3esYio0TY5ck=;
-	b=tsggc41Sy3Yw2tCVHOvihVY3q8S3gaOQg7JJIOh9p25G9ajIVsihlzTIts25K6iZ6y96JV
-	QswoUwW0YRJq01J49mB/v4CfFmxZWY9CND9BV8FAhB7lWsVK5Fthp2/XW9wfVIho6M52xL
-	ff8zGmzGP/1LujJqPpLoxqW0FogV/3g=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=tsggc41S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742920314; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cUJyeMoKB0EHg6JVVeIaUfBU01Do74x3esYio0TY5ck=;
-	b=tsggc41Sy3Yw2tCVHOvihVY3q8S3gaOQg7JJIOh9p25G9ajIVsihlzTIts25K6iZ6y96JV
-	QswoUwW0YRJq01J49mB/v4CfFmxZWY9CND9BV8FAhB7lWsVK5Fthp2/XW9wfVIho6M52xL
-	ff8zGmzGP/1LujJqPpLoxqW0FogV/3g=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7C45137AC;
-	Tue, 25 Mar 2025 16:31:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eE0yMHra4meDSQAAD6G6ig
-	(envelope-from <neelx@suse.com>); Tue, 25 Mar 2025 16:31:54 +0000
-From: Daniel Vacek <neelx@suse.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>
-Cc: Daniel Vacek <neelx@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] btrfs: cleanup EXTENT_BUFFER_CORRUPT flag
-Date: Tue, 25 Mar 2025 17:31:38 +0100
-Message-ID: <20250325163139.878473-4-neelx@suse.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250325163139.878473-1-neelx@suse.com>
-References: <20250325163139.878473-1-neelx@suse.com>
+	s=arc-20240116; t=1742920361; c=relaxed/simple;
+	bh=vl9PHw3P9CnPqxmaj5vO84SgXuxPVC3cqOewI6IQ9AU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZ6R3nInsLL1YOk8GNyhQgpywey2Mt5RmBMhyB3HllAr1V0q5rK6NViPWpMKnTNujOOdGj+hJl2IB26F7esC/0O9ImWta7Bt4imveruekcxSaAfJXcBqUkl4Vm/z13La/LaDA1m2Cu8vW8TlMRX/LRHNmsCyrqiwZAs0p0+lp10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=IFWRq18x; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.13])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 4161C448787A;
+	Tue, 25 Mar 2025 16:32:29 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 4161C448787A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1742920349;
+	bh=xtjQNCIG90SkONBmw2cPQ+VxbDhw9iY6/7ps8Q1kb8g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IFWRq18xmsCHUVqvKa7vP77Ae03kPGXNyvbr33sDvejaQOUZiEnIwgVm7sloBCkNh
+	 ACyuNMbQ/EdaLzr9MpGbAB6oFmHrhIetXs4QH+sTk2cIyCUl49rRkkURmEdd6GJgSc
+	 zrN+6Vc4R6fsIE2EfmP4Ll3oxPFOwrWqNd97DEdk=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	David Woodhouse <dwmw2@infradead.org>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] jffs2: check jffs2_prealloc_raw_node_refs() result in few other places
+Date: Tue, 25 Mar 2025 19:32:13 +0300
+Message-ID: <20250325163215.287311-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,110 +60,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: E04B521193
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim,suse.com:mid,suse.com:email];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-This flag is no longer being used. Remove it.
+Fuzzing hit another invalid pointer dereference due to the lack of
+checking whether jffs2_prealloc_raw_node_refs() completed successfully.
+Subsequent logic implies that the node refs have been allocated.
 
-It was added by commit a826d6dcb32d ("Btrfs: check items for correctness as
-we search") but it's no longer being used after commit f26c92386028 ("btrfs:
-remove reada infrastructure").
+Handle that. The code is ready for propagating the error upwards.
 
-Signed-off-by: Daniel Vacek <neelx@suse.com>
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 PID: 5835 Comm: syz-executor145 Not tainted 5.10.234-syzkaller #0
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+RIP: 0010:jffs2_link_node_ref+0xac/0x690 fs/jffs2/nodelist.c:600
+Call Trace:
+ jffs2_mark_erased_block fs/jffs2/erase.c:460 [inline]
+ jffs2_erase_pending_blocks+0x688/0x1860 fs/jffs2/erase.c:118
+ jffs2_garbage_collect_pass+0x638/0x1a00 fs/jffs2/gc.c:253
+ jffs2_reserve_space+0x3f4/0xad0 fs/jffs2/nodemgmt.c:167
+ jffs2_write_inode_range+0x246/0xb50 fs/jffs2/write.c:362
+ jffs2_write_end+0x712/0x1110 fs/jffs2/file.c:302
+ generic_perform_write+0x2c2/0x500 mm/filemap.c:3347
+ __generic_file_write_iter+0x252/0x610 mm/filemap.c:3465
+ generic_file_write_iter+0xdb/0x230 mm/filemap.c:3497
+ call_write_iter include/linux/fs.h:2039 [inline]
+ do_iter_readv_writev+0x46d/0x750 fs/read_write.c:740
+ do_iter_write+0x18c/0x710 fs/read_write.c:866
+ vfs_writev+0x1db/0x6a0 fs/read_write.c:939
+ do_pwritev fs/read_write.c:1036 [inline]
+ __do_sys_pwritev fs/read_write.c:1083 [inline]
+ __se_sys_pwritev fs/read_write.c:1078 [inline]
+ __x64_sys_pwritev+0x235/0x310 fs/read_write.c:1078
+ do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x67/0xd1
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 2f785402f39b ("[JFFS2] Reduce visibility of raw_node_ref to upper layers of JFFS2 code.")
+Fixes: f560928baa60 ("[JFFS2] Allocate node_ref for wasted space when skipping to page boundary")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 ---
- fs/btrfs/disk-io.c     | 11 ++---------
- fs/btrfs/extent-tree.c |  6 ------
- fs/btrfs/extent_io.h   |  1 -
- 3 files changed, 2 insertions(+), 16 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 1a916716cefeb..6303d4dda8725 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -224,7 +224,6 @@ int btrfs_read_extent_buffer(struct extent_buffer *eb,
- 	ASSERT(check);
+Similar to https://lore.kernel.org/linux-mtd/20250307163409.13491-2-a.sadovnikov@ispras.ru/
+but touches two remaining places.
+
+ fs/jffs2/erase.c | 4 +++-
+ fs/jffs2/scan.c  | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
+index ef3a1e1b6cb0..fda9f4d6093f 100644
+--- a/fs/jffs2/erase.c
++++ b/fs/jffs2/erase.c
+@@ -425,7 +425,9 @@ static void jffs2_mark_erased_block(struct jffs2_sb_info *c, struct jffs2_eraseb
+ 			.totlen =	cpu_to_je32(c->cleanmarker_size)
+ 		};
  
- 	while (1) {
--		clear_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
- 		ret = read_extent_buffer_pages(eb, mirror_num, check);
- 		if (!ret)
- 			break;
-@@ -452,15 +451,9 @@ int btrfs_validate_extent_buffer(struct extent_buffer *eb,
- 			goto out;
+-		jffs2_prealloc_raw_node_refs(c, jeb, 1);
++		ret = jffs2_prealloc_raw_node_refs(c, jeb, 1);
++		if (ret)
++			goto filebad;
+ 
+ 		marker.hdr_crc = cpu_to_je32(crc32(0, &marker, sizeof(struct jffs2_unknown_node)-4));
+ 
+diff --git a/fs/jffs2/scan.c b/fs/jffs2/scan.c
+index 29671e33a171..62879c218d4b 100644
+--- a/fs/jffs2/scan.c
++++ b/fs/jffs2/scan.c
+@@ -256,7 +256,9 @@ int jffs2_scan_medium(struct jffs2_sb_info *c)
+ 
+ 		jffs2_dbg(1, "%s(): Skipping %d bytes in nextblock to ensure page alignment\n",
+ 			  __func__, skip);
+-		jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
++		ret = jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
++		if (ret)
++			goto out;
+ 		jffs2_scan_dirty_space(c, c->nextblock, skip);
  	}
- 
--	/*
--	 * If this is a leaf block and it is corrupt, set the corrupt bit so
--	 * that we don't try and read the other copies of this block, just
--	 * return -EIO.
--	 */
--	if (found_level == 0 && btrfs_check_leaf(eb)) {
--		set_bit(EXTENT_BUFFER_CORRUPT, &eb->bflags);
-+	/* If this is a leaf block and it is corrupt, just return -EIO. */
-+	if (found_level == 0 && btrfs_check_leaf(eb))
- 		ret = -EIO;
--	}
- 
- 	if (found_level > 0 && btrfs_check_node(eb))
- 		ret = -EIO;
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 957230abd8271..47db37b7236d3 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -3488,12 +3488,6 @@ int btrfs_free_tree_block(struct btrfs_trans_handle *trans,
- 	trace_btrfs_reserved_extent_free(fs_info, buf->start, buf->len);
- 
- out:
--
--	/*
--	 * Deleting the buffer, clear the corrupt flag since it doesn't
--	 * matter anymore.
--	 */
--	clear_bit(EXTENT_BUFFER_CORRUPT, &buf->bflags);
- 	return 0;
- }
- 
-diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-index d0b3526749aa2..c74e4a07d0ad1 100644
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@ -38,7 +38,6 @@ struct btrfs_tree_parent_check;
- enum {
- 	EXTENT_BUFFER_UPTODATE,
- 	EXTENT_BUFFER_DIRTY,
--	EXTENT_BUFFER_CORRUPT,
- 	EXTENT_BUFFER_TREE_REF,
- 	EXTENT_BUFFER_STALE,
- 	EXTENT_BUFFER_WRITEBACK,
+ #endif
 -- 
-2.47.2
+2.49.0
 
 
