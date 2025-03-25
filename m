@@ -1,194 +1,98 @@
-Return-Path: <linux-kernel+bounces-574781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EDAA6E9E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:57:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B830A6E9EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1C1168AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D28116AE9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0206E21CC61;
-	Tue, 25 Mar 2025 06:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpkDX5jg"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C56F2153F4;
+	Tue, 25 Mar 2025 06:58:02 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D5C2E3367;
-	Tue, 25 Mar 2025 06:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBE21FDE2B;
+	Tue, 25 Mar 2025 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742885839; cv=none; b=ddsXeOa6L+61kDg/exAhUDC5i11vLH1RvOqUhrX2ZgMa+53jIjTD5H8gY4Koqnc8rml6lD0h09ZW7/P0Femuvoq9oge5aYoybl5mZhvbIfyF29ZGmgNCv7osm/3qvluNtsAfH9VUH9NTiPe1jCUpjLBOhynUWF7zutKUAbwZuRI=
+	t=1742885881; cv=none; b=sfgM01nS5BgDkXxPV3HNJIdxiSMt7j1MrLH3VaxCF/CQcwprnDiTfIjwe9mAxAG5hJe2qE4C6+GGIBFFqA1LpLa3A2VkNtRZIXEIjeOBXtIisigXXLQ3K0tafTEiz+kzA3aJwmZhElJ2D4Eu30mFUd/Tw0avuLhPcCfJ0QBaa4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742885839; c=relaxed/simple;
-	bh=nubJe1Q57sCtS7tpBsPUyLcnGFJgq8kTtTqgavzVXpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qdmRKhi+Hk9UXMkkQKYB0m0sCjxCEO4iam36bg9SFWubLek9tvXPHFNu+2pzSra+BRPoRCadRM23NFbyBVjakJ+24pMcAQfyW88mRXe4ELl5PcjeLV8fAi3K2iGNEaKHBnza+A6ePKqOKM7llbpShitlxAQ/NvSggPXjTPHsvcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VpkDX5jg; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso47706965e9.2;
-        Mon, 24 Mar 2025 23:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742885836; x=1743490636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k65APOhnqHaRwVdf0hVouqcw3j31GIBJHVdTpUSuBKE=;
-        b=VpkDX5jg4qTBIMwXM9i6vVYbTZJHC84rRsoX+2ASkhNOa0BTIUe3qM0Q4UASzvAzpG
-         ffXrYImXxcHaZE9d4yivQRDlRslLCrhOIJjesH/CpqYXWss/yk8Pdlv+qqtLKlY4wwsq
-         +PdQIzd698csZ/oSmGPSQkwbbySRprKh/TnttfjkJojoSE7WuKMQZUJVt5Yh5+SIrykv
-         w8779gBoeEkHAYmDApoPe08AGuQh33CIP8TkQV6wIydi5AT2993DIviP8w3r4xKv9RON
-         m2wqnCrRNxvKDJzkHFMsl/izbuYwqCaybbmfHfEeJk5CYuQ6sMHMobKeTLKtVd40vMQJ
-         LdQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742885836; x=1743490636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k65APOhnqHaRwVdf0hVouqcw3j31GIBJHVdTpUSuBKE=;
-        b=KUWTDaSGczDu5/Fm9MO4vQD3XEtCtCXY/BUl235m/oouA42bmtD0TYnDFOEfxfg1ss
-         DbKwKiUN61lAnpUL6KyrglXgTgR7bpUF2S5hPAnhG3BRmlJwxWEYIRqOK0lcbBZNM4Gp
-         eKgvPPpU7fncWluEAnAhbnkn4yqaQyw0j7OZ9T6/FRHnEfFEy3kIFTv8mTCzPhMzK2d7
-         +gvERTit+8hOqorFPqA09Q61YAFK4kmJ8LsUYgRXSiGyxYaYGLZTjB90t07ZVSk/tLBW
-         35HoGBv180qswePd6w4/vbNeKYLs//8UdQZ7Dykf7wdGXawQucui/AcauqgCKdyfJd0h
-         PNEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0x3FjibiodwyOfevSAs82NUD6fVoyCTqURc4V6sOsDWtUFe+AAZ1e/OCHjTqi1v6ndWID+GE6BKMnuSw=@vger.kernel.org, AJvYcCV3nrO3rihXJmgHikwzrjzCdWkZ0BCC8PSsndi5fqny2afy2yxuG1ubbu9k300tgpAVO7xbwYSwgg4YBQ2V@vger.kernel.org, AJvYcCWTWOzQTO0HUc4mMoGxcsjcwaKGs8YrDossiQCqZbadyvTsZ/TdBTUm0YfQPPj118LMDGBXKHwgBFBM@vger.kernel.org, AJvYcCWfsUEgsdVWSYPa+RBgHry9dMTTmq3Jit/FK3kAUf6SZm2WKdBm75MaPMFXxUdrK4eJg5jjX3WYNrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4xd7/ftBzPjfLP1Dm9WoGiQYXMIKNu/0jQ9tNkjOHqd00zmJu
-	7mA1GfRXN/OKmdbQQF2mkV7mfb6XOKVwiZe/nkbV2h9CfpaMqknZiOevPi299SXt71QS+6e7Hsu
-	UmFzwjotFHaC+4N7Iwep4AVa6ISE=
-X-Gm-Gg: ASbGncu+CftbwCHOAMJbu6ui8gN1QQyTXNPk0+Kel45OTmXLTvhNot4ZCDWmJgN+MFx
-	8Y7WoSd25wfm6y0oGeI826Ps9YIWtMZ3DxMKMhDqtcjc8+S6AxRa514igiG5/Enm7kUj8c8BB85
-	5+MgBoqTyDPKPe2Eycky7GifAAPk06iXyFTu2/wA==
-X-Google-Smtp-Source: AGHT+IEn8uK6OcuXe4+4ZV0D1Yn8fN0XMYuQo7Z4S5x5OfABVLsYnevDbVXea+6E55YkcHbDVu4xegboKjhKSnnhnbE=
-X-Received: by 2002:a05:600c:4512:b0:43c:fcbc:968c with SMTP id
- 5b1f17b1804b1-43d509ed7d2mr158951395e9.7.1742885835643; Mon, 24 Mar 2025
- 23:57:15 -0700 (PDT)
+	s=arc-20240116; t=1742885881; c=relaxed/simple;
+	bh=IqmayMFbaRwfa6pOBja6MsbI3Ce21MRioKUeoVKU8zI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aGNrnay1y6cttJyYxdV04NRWEZ3EokHM/vjxs4jynODqKrmPMHotNJjtGpd2fSPGHcpNcAXQOFuDGz7W5pz/V9LeURwzIxMSoGKFrBGCwT+MTtVj+iaTQo2raLpEf5nI7JNRYQS++T6JxsKpju4dTJA6JuA7rLONzMSvNFcCNsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: bizesmtp85t1742885851te2pfnrf
+X-QQ-Originating-IP: sjFDA/nHGtsSLioS6p2O0oBNw02XrOBVBE+trc+Mp3I=
+Received: from localhost.localdomain ( [103.233.162.252])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 25 Mar 2025 14:57:30 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4388623427805967701
+From: Yibo Dong <dong100@mucse.com>
+To: bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yibo Dong <dong100@mucse.com>
+Subject: [PATCH] PCI: Add MUCSE vendor ID to pci_ids.h
+Date: Tue, 25 Mar 2025 14:57:18 +0800
+Message-Id: <20250325065718.333301-1-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250323071424.48779-1-clamor95@gmail.com> <20250323071424.48779-3-clamor95@gmail.com>
- <20250324165257.GA458528-robh@kernel.org> <CAPVz0n3=-QL1_NGP31WX_4LQBt5-T47BbU_yn6td1zk9C2T=iA@mail.gmail.com>
- <CAL_JsqLCW+zE2LfsVybuxn_xu1JwtLSXSbMNj-YYfVgtYhZcaQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqLCW+zE2LfsVybuxn_xu1JwtLSXSbMNj-YYfVgtYhZcaQ@mail.gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 25 Mar 2025 08:57:04 +0200
-X-Gm-Features: AQ5f1Jo76E6Mm4Px7njxt-5XyFnOQUvdYlcF9GwjoI1ZpO7vOF99PZtNXOIgaYg
-Message-ID: <CAPVz0n2EwGhCb3r7JTfM38YjyFmejeVbVRGxASqQ7EUH7MY9VQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: mfd: Document Infineon/Cypress
- CG7153AM MCU
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NTHY/YkN8c+x8xr/rvf5Bm4wCgCJCv9en+3UN/p8ZfCGP0Z8PSUS5ivv
+	XEet8FMx0fe72nGfQNgNgKpj26zmaO3++k53b0DlZaAg1Cz0UQI4HjL8hc0pI4ps9sWCZT+
+	Gx9p6DPMIAFfF7LPPc6Rkx5m7j29Zcmi7xNN3cX6NclCh+GbFZD7iij7Pc4C/bk+NzVxY2J
+	fpFzInqmxSTR2v0+vRALg3wOpXQiWZwLKkYgrckbvu+6W0Bu9UdJynXSW2wtRYLZ7D481PD
+	wdpQfagvshRi/4utmXA1JEyzlIB/++4NUw5T+E86zfvdis6S3l01n0vUrDFxo9qx7W81peV
+	PjSIMln9GP9FgHh1DwuJYUefPbrPh8TKyDZFPR6VnzmZPAd7fo1q+0UgxntBwYEpkWpFASu
+	PF6tauibCg8RHvUWCj1sxsa6VUe6pxBpbzllryR3RtacQQhpKswRlAkVsNnvGb9XoSxybJi
+	EtDwL3lfjIk3k+MOP74GAacoXr4FWF5h41f3Zn9oWE8/vfCrTA2MrM2yHRxtjeMVBfaSyXC
+	B4TUBdzDyx5FMVL5iStrwRe+62jUx8o+cO7XV+ZAFBVVjm/iYZS4wTNiWiNzv1uLB+B2cs8
+	YNhjfLhbk+NVIDzm5n808LAH9BMn6BG0bds0mcbXCUhbyx00mGFhDty7pcIbPYqcXkrX5BW
+	i1bcfMmLiVjnvQdhkdW5d2IpTvkolPZe2DT9u0oQMLNTIPkjxwrew/PpkbY5U2M3uMdGqYp
+	4ntF9MaATLCTDrXaQh0MqE0IkG+XJpHUycgweVReS7j+h8RripQAiLAA5nFtxTRAN8wmsnY
+	gg0gzf53kPNr1f1NoAEb8VOcue+1lCMG44MvrbjXwzLuNfLc0MGCEYdLYuXMwf31v3wBy0N
+	JbINqJlrPuYUsq/KMlQbdDbueAoTwKQbiQU1L37q25DNc1CLAD7sCwbWrOUV/GZSuANKi5S
+	cDQ2VU9VASKu4SA==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-=D0=B2=D1=82, 25 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 05:00 Rob =
-Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Mar 24, 2025 at 12:06=E2=80=AFPM Svyatoslav Ryhel <clamor95@gmail=
-.com> wrote:
-> >
-> > =D0=BF=D0=BD, 24 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 18:52 =
-Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Sun, Mar 23, 2025 at 09:14:22AM +0200, Svyatoslav Ryhel wrote:
-> > > > Add binding for Cypress CG7153AM embedded controller. Pegatron impl=
-emented
-> > > > a custom configuration of this MCU in their Chagall tablets, utiliz=
-ing it
-> > > > for battery monitoring.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  .../bindings/mfd/cypress,cg7153am.yaml        | 55 +++++++++++++++=
-++++
-> > > >  1 file changed, 55 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/cypress,c=
-g7153am.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/mfd/cypress,cg7153am=
-.yaml b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..f8469b5e3816
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
-> > > > @@ -0,0 +1,55 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/mfd/cypress,cg7153am.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Infineon/Cypress Semicon CG7153AM Microcontroller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > +
-> > > > +description:
-> > > > +  The CG7153AM, an 8-bit programmable microcontroller from Infineo=
-n/Cypress
-> > > > +  Semiconductor, communicates over I2C and is implemented in devic=
-es like the
-> > > > +  Pegatron Chagall tablet for fuel gauge and battery control funct=
-ions.
-> > > > +
-> > > > +$ref: /schemas/power/supply/power-supply.yaml
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    oneOf:
-> > > > +      - items:
-> > > > +          - enum:
-> > > > +              - pegatron,chagall-ec # Pegatron Chagall tablet devi=
-ce
-> > > > +          - const: cypress,cg7153am
-> > > > +      - items:
-> > > > +          const: cypress,cg7153am
-> > >
-> > > Is this just some general purpose uC which could be used for anything
-> > > and the interface exposed is Pegatron's invention. If so, then I'd dr=
-op
-> > > the cypress,cg7153am compatible. What use would it be to software?
-> > >
-> >
-> > Yeah, Cypress made an MPU, Pegatron used it as a base to make a fuel ga=
-uge.
-> >
-> > You propose smth like this?
-> >
-> >       - items:
-> >           - enum:
-> >               - pegatron,chagall-ec # Pegatron Chagall tablet device
-> >           - const: cypress,cg7153am
-> >
-> > Without oneOf and second item or remove cypress,cg7153am entirely and
-> > submit as pegatron,chagall-ec.yaml? Just to be clear.
-> >
-> > I am fine with removing oneOf and items: const: cypress,cg7153am, but
-> > I would like to preserve cypress,cg7153am as second compatible since
-> > this is an actual MCU model.
->
-> I would just drop the cypress compatible entirely. It needs to be
-> useful to a client (OS) in some way. If you said something like the
-> firmware downloading is defined by Cypress or some other feature, then
-> it would make sense. Otherwise, how this interface is implemented is
-> irrelevant. I can't think of any other embedded controller where we
-> have a compatible for the underlying MCU.
->
+Add MUCSE as a vendor ID (0x8848) for PCI devices so we can use
+the macro for future drivers.
 
-So I will move this schema to power supplies and name it
-pegratron,chagall-ec.yaml along with suggested changes in the
-compatible and descriptions.
+Signed-off-by: Yibo Dong <dong100@mucse.com>
+---
+ include/linux/pci_ids.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Rob
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index de5deb1a0118..f1b4c61c6d3c 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -3143,6 +3143,8 @@
+ #define PCI_VENDOR_ID_SCALEMP		0x8686
+ #define PCI_DEVICE_ID_SCALEMP_VSMP_CTL	0x1010
+ 
++#define PCI_VENDOR_ID_MUCSE		0x8848
++
+ #define PCI_VENDOR_ID_COMPUTONE		0x8e0e
+ #define PCI_DEVICE_ID_COMPUTONE_PG	0x0302
+ #define PCI_SUBVENDOR_ID_COMPUTONE	0x8e0e
+-- 
+2.25.1
+
 
