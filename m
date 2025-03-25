@@ -1,231 +1,127 @@
-Return-Path: <linux-kernel+bounces-575760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7045DA706EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:31:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BF6A706F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7137D179963
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E973AE191
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0015A25D1E2;
-	Tue, 25 Mar 2025 16:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5543A25D55A;
+	Tue, 25 Mar 2025 16:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bCAws/4E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dE0avIrz"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C278F24;
-	Tue, 25 Mar 2025 16:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0C825D530
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742920060; cv=none; b=kH8bF8Qiav24USWe5aow77c8+F1joYi4jDmcld3W1AJxTPu/481XslzLVEFyMzRgXnerl0o80WMFbmXP2+R4ZJJO9IKQNWtuuyGvkrdjbopA5UVmFVwplvbWYsofDB+0iYkZrTDgcWB1F23BEU9aGI3amaqnTFBIW8cCagluZrU=
+	t=1742920219; cv=none; b=g9gIf2SKEHZ7gYET6WtKkYvUJ31xM8EiyFy6aLds72HICT1J+CUcS75ZcTla4qJPp1paR87RRNA0UvcPsD/N6tqKGZzSRtvsUWxg4sCXab/YUjuO52np1bckMk9YHwNeTc6K0oDd6zxZiLabf4orzyQn+5SC1LbY1UuCF1npXIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742920060; c=relaxed/simple;
-	bh=tJlzdJvvn50GZ/sbX4QRHPW0Nvdqdn08rXhb8dievTU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Waw577t5iKuCX60cZlBrHfTcyvLYAJ3SEf4f/alVycSF3wtzolj3BnzkB0ZUFx7tNouvRy4WUqOrioHwt1pI4jWADg5H6mvIuGZ5hMZW3+IrCaNrHg36iHUxczt4OaDJAlRCHWT9Hkmc5JOK1xAJG4mRqxfN3QyaJvwufybzQXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bCAws/4E; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742920059; x=1774456059;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=tJlzdJvvn50GZ/sbX4QRHPW0Nvdqdn08rXhb8dievTU=;
-  b=bCAws/4E9ib38y7qMMDBJ6YcVW+h3IRcSgbLZhxH75NlvXzzHcttGNFc
-   K+duQkWCKXu5BuEp9JeGvae5U8VNONv7kHaS7V8mdO/5Y7PG6splC+CFf
-   1Gi4Pfs905evPkDkHl8N2Zcj2sqOex5bugjHFGAZ0yFRl1lNW+Uq5abBN
-   wpnJB9DRuasyx+JkzUsp+Gud8bNmGKb8elf1EHgCnz8D6HQc2zHgM/E4B
-   JdyVWYW72k0x2nO7m5By+raPsc4lZdxH4SeG4+dJM+Z1Nst4CQq3j0VDt
-   KVGmj7HkDc5tqJdWAN5NZE4SpJ60IboyFcCZ5b1dg+wSnCmTa/Imj71c1
-   Q==;
-X-CSE-ConnectionGUID: itrhp2V/Sv6SoKXnbNp9bA==
-X-CSE-MsgGUID: qFserG0hQImZK1JLkR3Row==
-X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44103870"
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="44103870"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:27:38 -0700
-X-CSE-ConnectionGUID: 0935cxWlRCaJvTpWnVRpLg==
-X-CSE-MsgGUID: H0iIP9+XQFyod2BiBEe8mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
-   d="scan'208";a="124402118"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.158])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:27:35 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 25 Mar 2025 18:27:31 +0200 (EET)
-To: Antheas Kapenekakis <lkml@antheas.dev>
-cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v4 01/11] HID: asus: refactor init sequence per spec
-In-Reply-To: <20250324210151.6042-2-lkml@antheas.dev>
-Message-ID: <9ab75a7e-621d-1fb9-fc16-0a837d5c27ed@linux.intel.com>
-References: <20250324210151.6042-1-lkml@antheas.dev> <20250324210151.6042-2-lkml@antheas.dev>
+	s=arc-20240116; t=1742920219; c=relaxed/simple;
+	bh=Kb7vSHn4zmJXmVmPF+ez3noeAspoob2LmYsHA4oLIAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hV1sOHLZ7KKv91hlBlcggMmWTVE12Dz2YTun31amF6K6T6zbabiPojFoYhVqwJr4jF5oRM08RwZqZfWid2z8PHTl08l2MG7xjUPjGQbydFRpHwBz8PegPkBLzhUnSHKQBO7zYFlurK2NpX2vBLEtY7momm6trMEApVdXE0fB2Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dE0avIrz; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22401f4d35aso123802235ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742920215; x=1743525015; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7XOEBoIoTxapXkqN32rureiAN9LUz3SUdTVTRufLCvo=;
+        b=dE0avIrz9wnfhsL7T1iJd29r0snNgirhDOMwYEGJbndt3rucplzFXlqGb2Gi9lH1os
+         f7j5Tw6fWWjXRKh54cKDIICH0MQ1DfIx/Dxp9N1QZtuCV7Oij9ZYPBSb8W+StWxEp62w
+         OhJBLIMaRxCzAGaWwGHXNwfozqlrozOkryLLb/6SSS1VXgAlY5VZUwalLz524O9j9DoX
+         dw9dTVCcr5jfcomwXXPoXQ3Xp/p6FIBhVA9PfNfsTFQqYI5kxsPkC616PbWAhhZeZ10D
+         1v+5nDO1MLya9oRLrNMns7paKEZrFHowYgFSVReNeDDi2YRX9pPk9Ey4aZepF5qMuLjT
+         eIqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742920215; x=1743525015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7XOEBoIoTxapXkqN32rureiAN9LUz3SUdTVTRufLCvo=;
+        b=Fu6Gt4MN2fwX8HqJDIZe9nWCmHJy5s0ye/H/7Zco9/a7SYh/V+c1MutUtaMmR+FHnW
+         A7/dQWyHu4betDPvkWi5Hsuv41+TXRmuzNqVq/fcThSk9ZalXcK06org07mizcMZMU7Q
+         soXLbWMpMfPxVq0ZGm0ETmYJPcrkvz3snXbZFeGACRCJZADnK0Qr1BgLx+ghRgmx582r
+         Zr31wHsLYUN9jAIrA1ee8T1PHOpS7DhY2VM0dNbNX1I0A9SjWJTMGHN3Ip4DphzlMP6W
+         ah2glDm1JwqV0XaEWOfE0Bo+jfGke1Evlf4uiOVvD2tmftguWeUXIEsV0RhjJk8Xy9wQ
+         SprQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhmCAuU6tmP+HelPzrGwQ5HSolsrmnkSeKm2LGMOEilMQPUzozQqKakWp4O+X/c24Ehvein5qrsOOIwpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMfA0ByOvLUBiizXHNaFl9MJVurKeigtbrjS4T0mO6ASeWwHxq
+	bXZHgRw/vOoh6yq81vi1Y63YfVYhAB2OGC7Jb+WMB3DRlWR980Rd7qf9M1ZE
+X-Gm-Gg: ASbGncuU3h1rkh9xAPhY5UvRsmRrOhZ8vhSqzKI/tOeyULXfPxcJG0fQzmr91VXBGxR
+	G+2g2xS/2J1u6NYGU+uaoGoOmX9Zfpv4o8WA8SqOi/1K7HCxGlMhAL3kGZ3xu92JxJjQjQHRcVa
+	aBKuPE2wd04hhWDBSZJjqQTK+KBGvKjUFlpC4NmymM2bmsaRa6zVQ0UZvJi71nPLPFn4fdPAkas
+	KhdYPYFBrCtRw/hPaAKsfonJ4L9kQCC5/1rMNEjDlDOqR6zOUOKNl14LLma2TaA6z6ujbZLePN0
+	hRIg0kVUiZtnV7Qhjtfu1cUUEH+8yxdti0ZnaLYvf5o+
+X-Google-Smtp-Source: AGHT+IGcGh1uUnRJ1nh7gGywlabmECcecS4FX72r/Ur9GzJ48tu+/YOISn4PE+ECHi2P7HDwl8PEvg==
+X-Received: by 2002:a17:902:ec87:b0:216:393b:23d4 with SMTP id d9443c01a7336-22780c68a0fmr268278305ad.11.1742920215330;
+        Tue, 25 Mar 2025 09:30:15 -0700 (PDT)
+Received: from localhost ([216.228.125.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811b2bf0sm92890235ad.145.2025.03.25.09.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 09:30:14 -0700 (PDT)
+Date: Tue, 25 Mar 2025 12:30:11 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v7 0/5] bits: Fixed-type GENMASK_U*() and BIT_U*()
+Message-ID: <Z-LaE8u8ZYsLxnrN@thinkpad>
+References: <20250322-fixed-type-genmasks-v7-0-da380ff1c5b9@wanadoo.fr>
+ <Z-FsJPA1aq7KyTlm@thinkpad>
+ <7e114fdb-0340-4a3c-956f-b26c9373041d@wanadoo.fr>
+ <Z-LKapMBpMfJwcL7@thinkpad>
+ <58d6a3ba-4db9-4b17-a2ba-96d7f8b52e85@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58d6a3ba-4db9-4b17-a2ba-96d7f8b52e85@wanadoo.fr>
 
-On Mon, 24 Mar 2025, Antheas Kapenekakis wrote:
-
-> Currently, asus_kbd_init() uses a reverse engineered init sequence
-> from Windows, which contains the handshakes from multiple programs.
-> Keep the main one, which is 0x5a (meant for brightness drivers).
+On Wed, Mar 26, 2025 at 01:13:28AM +0900, Vincent Mailhol wrote:
+> On 26/03/2025 at 00:23, Yury Norov wrote:
+> > On Tue, Mar 25, 2025 at 01:23:22AM +0900, Vincent Mailhol wrote:
 > 
-> In addition, perform a get_response and check if the response is the
-> same. To avoid regressions, print an error if the response does not
-> match instead of rejecting device.
+> (...)
 > 
-> Then, refactor asus_kbd_get_functions() to use the same ID it is called
-> with, instead of hardcoding it to 0x5a so that it may be used for 0x0d
-> in the future.
+> > This series doesn't apply on 6.15-rc1 because test_bits.c has moved to
+> > lib/tests. Can you please rebase your v8 and submit? I see no other
+> > issues to merge it in bitmap-for-next.
 > 
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/hid/hid-asus.c | 82 +++++++++++++++++++++++-------------------
->  1 file changed, 46 insertions(+), 36 deletions(-)
+> git was smart enough to rebase everything automatically!
 > 
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 46e3e42f9eb5f..8d4df1b6f143b 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -48,7 +48,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  #define FEATURE_REPORT_ID 0x0d
->  #define INPUT_REPORT_ID 0x5d
->  #define FEATURE_KBD_REPORT_ID 0x5a
-> -#define FEATURE_KBD_REPORT_SIZE 16
-> +#define FEATURE_KBD_REPORT_SIZE 64
->  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
->  #define FEATURE_KBD_LED_REPORT_ID2 0x5e
->  
-> @@ -388,14 +388,41 @@ static int asus_kbd_set_report(struct hid_device *hdev, const u8 *buf, size_t bu
->  
->  static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
->  {
-> -	const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20, 0x54,
-> -		     0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
-> +	/*
-> +	 * Asus handshake identifying us as a driver (0x5A)
-> +	 * 0x5A then ASCII for "ASUS Tech.Inc."
-> +	 * 0x5D is for userspace Windows applications.
-> +	 *
-> +	 * The handshake is first sent as a set_report, then retrieved
-> +	 * from a get_report to verify the response.
-> +	 */
-> +	const u8 buf[] = { report_id, 0x41, 0x53, 0x55, 0x53, 0x20,
-> +		0x54, 0x65, 0x63, 0x68, 0x2e, 0x49, 0x6e, 0x63, 0x2e, 0x00 };
-> +	u8 *readbuf;
->  	int ret;
->  
->  	ret = asus_kbd_set_report(hdev, buf, sizeof(buf));
-> -	if (ret < 0)
-> -		hid_err(hdev, "Asus failed to send init command: %d\n", ret);
-> +	if (ret < 0) {
-> +		hid_err(hdev, "Asus failed to send handshake: %d\n", ret);
-> +		return ret;
-> +	}
->  
-> +	readbuf = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
-> +	if (!readbuf)
-> +		return -ENOMEM;
-> +
-> +	ret = hid_hw_raw_request(hdev, report_id, readbuf,
-> +				 FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
-> +				 HID_REQ_GET_REPORT);
-> +	if (ret < 0) {
-> +		hid_err(hdev, "Asus failed to receive handshake ack: %d\n", ret);
-> +	} else if (memcmp(readbuf, buf, sizeof(buf)) != 0) {
-> +		hid_err(hdev, "Asus handshake returned invalid response: %*ph\n",
-> +			FEATURE_KBD_REPORT_SIZE, readbuf);
-> +		// Do not return error if handshake is wrong to avoid regressions
-
-Should it be on warn/info level if the error is ignored.
-
-> +	}
-> +
-> +	kfree(readbuf);
->  	return ret;
->  }
->  
-> @@ -417,7 +444,7 @@ static int asus_kbd_get_functions(struct hid_device *hdev,
->  	if (!readbuf)
->  		return -ENOMEM;
->  
-> -	ret = hid_hw_raw_request(hdev, FEATURE_KBD_REPORT_ID, readbuf,
-> +	ret = hid_hw_raw_request(hdev, report_id, readbuf,
->  				 FEATURE_KBD_REPORT_SIZE, HID_FEATURE_REPORT,
->  				 HID_REQ_GET_REPORT);
->  	if (ret < 0) {
-> @@ -540,42 +567,25 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
->  	unsigned char kbd_func;
->  	int ret;
->  
-> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> -		/* Initialize keyboard */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		/* The LED endpoint is initialised in two HID */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
-> -		if (ret < 0)
-> -			return ret;
-> +	ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -		if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> -			ret = asus_kbd_disable_oobe(hdev);
-> -			if (ret < 0)
-> -				return ret;
-> -		}
-> -	} else {
-> -		/* Initialize keyboard */
-> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> -		if (ret < 0)
-> -			return ret;
-> +	/* Get keyboard functions */
-> +	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -		/* Get keyboard functions */
-> -		ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> +	if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> +		ret = asus_kbd_disable_oobe(hdev);
->  		if (ret < 0)
->  			return ret;
-> -
-> -		/* Check for backlight support */
-> -		if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> -			return -ENODEV;
->  	}
->  
-> +	/* Check for backlight support */
-> +	if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> +		return -ENODEV;
-> +
->  	drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
->  					      sizeof(struct asus_kbd_leds),
->  					      GFP_KERNEL);
+> Here is the v8 (which includes the other few nitpicks from you and Andy):
 > 
+> https://lore.kernel.org/all/20250326-fixed-type-genmasks-v8-0-24afed16ca00@wanadoo.fr/
+> 
+> Do you also want me to rebase the other series which consolidates the
+> GENMASK(), GENMASK_ULL() and GENMASK_U128() now? Or should I wait a while?
 
--- 
- i.
-
+Let's wait for feedback, especially from ARM folks.
 
