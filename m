@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-575383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F1EA701B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:28:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2706FA70163
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415CE3AA512
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:20:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766317A9201
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BCB25C6F0;
-	Tue, 25 Mar 2025 13:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF394258CCE;
+	Tue, 25 Mar 2025 13:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CjS9SY3H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa7uX92K"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3120025A64E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688361A5B8F;
+	Tue, 25 Mar 2025 13:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742907902; cv=none; b=fwfNUmY5e8BrayxekSAYDDKtRXsVvfvO5ykhQpfe86bkwsqVXY6ET9+UAZBOxpM+pdxXq/hhiRemwU3mKNy7VwRiXZw1la+a0KBY5GliXfr2tOa8hG7Lcd5iVhVlp9Vus6XltaUp2W/mIdGqucRa8SUBsXJai2HelT3Ycn3RkWs=
+	t=1742907865; cv=none; b=NcBurtNqoM/qxXT0whZgpPoq07GNX+KvRVwu03VPhGuwo1yVwk6aNvgM2UHchqlJ4LZFdLf2FGQkuY7tp2xyxphVDFxSqRYwkuR1+hXIWgILfVqHcbFgX1X3Ic0FvHYbhsioe2hYJLdFfEkVziVABfrqRSA606u+stZugwTWZoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742907902; c=relaxed/simple;
-	bh=KtXukF7zS507yXC0bV3Lgtc0k1fuYoFUyPiii35Srw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjD1iFdcAeZD5ytpVjoPIoX8ZX7UsXTTH1PyiQ6WNInDv7Z2h/LWnZZC4mWM8/y7nb/cFv+GhLuywRLQumGLwvLI54dKUT3AIv9odCOb3yGwdRSoOJKHWfZwgC0CZgOWcD3zpAaJaGWkLycKMBiXM9S4+oBMCz0Kkpgg16VsFLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CjS9SY3H; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742907900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a717aorAR0FFD6ZXSPKWzRFsANFSqFlPrG/xcqr9NTM=;
-	b=CjS9SY3HIFBd6k6NuSRNqBivatesiYZE7jIna8UsH7yflmFCgKXmguCVR8q49vvim+fcB0
-	7FmPWYgwN20WWzmeLIOt2NNFh9sz2CbBDNf6IqpJHCRz6TRmEho/RuLbcXAPOZ2mFbPci/
-	scl9jN5K4cGVD48xtbPb7pF8h7Z4Ops=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-ONqfwzWAMceN_6i1pbI_rA-1; Tue,
- 25 Mar 2025 09:04:54 -0400
-X-MC-Unique: ONqfwzWAMceN_6i1pbI_rA-1
-X-Mimecast-MFC-AGG-ID: ONqfwzWAMceN_6i1pbI_rA_1742907891
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66D21956067;
-	Tue, 25 Mar 2025 13:04:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 719BF19541A5;
-	Tue, 25 Mar 2025 13:04:44 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Mar 2025 14:04:17 +0100 (CET)
-Date: Tue, 25 Mar 2025 14:04:10 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
-	syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>,
-	brauner@kernel.org, dhowells@redhat.com, jack@suse.cz,
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-	swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com,
-	viro@zeniv.linux.org.uk, v9fs@lists.linux.dev
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-Message-ID: <20250325130410.GA10828@redhat.com>
-References: <67e05e30.050a0220.21942d.0003.GAE@google.com>
- <20250323194701.GC14883@redhat.com>
- <CAGudoHHmvU54MU8dsZy422A4+ZzWTVs7LFevP7NpKzwZ1YOqgg@mail.gmail.com>
- <20250323210251.GD14883@redhat.com>
- <af0134a7-6f2a-46e1-85aa-c97477bd6ed8@amd.com>
- <CAGudoHH9w8VO8069iKf_TsAjnfuRSrgiJ2e2D9-NGEDgXW+Lcw@mail.gmail.com>
- <7e377feb-a78b-4055-88cc-2c20f924bf82@amd.com>
- <f7585a27-aaef-4334-a1de-5e081f10c901@amd.com>
- <ff294b3c-cd24-4aa6-9d03-718ff7087158@amd.com>
- <20250325121526.GA7904@redhat.com>
+	s=arc-20240116; t=1742907865; c=relaxed/simple;
+	bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SDAvPioHe+yfrF3qxiPEMfbKHpZnkn5DRQpgn9YurPzTceEioiUaOBNXx2jdsAaJS+U4hHjewCm6AovzXGqFoXMHvJdVYGptj/bye46MJt+w1fb0qt0h9fnfTw78KA1PdFM1+pMhwmQUOGLapg81obmtTKhe4uuoj07FHLcy5+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa7uX92K; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso46900146d6.1;
+        Tue, 25 Mar 2025 06:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742907862; x=1743512662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
+        b=Wa7uX92KMW9yeIwtesJ1tHzSvA9Fpxlb0073hs2XCM8AUfasnOcY+MlL8ipzW07ueE
+         vfDHM+SXGg8DJgtMGxDxSqoKypqAwxpgRqw2vM4BMb5x/+XyckezWZuo6d/eIA2PXKAb
+         OCs1IKgeyyFEhAOBfrTqSxhPEGaPeoTM0M0vFHAKghjrTrIwbvKQAlJgKp/lto1PEZFy
+         PLphP9yiA8oIE4XAP6ZMrFJ4S1QLV7+JM1YN5yv/25Rqh0JLfO6MKkt8POAN3W1SNgHB
+         IuW+sKWtIahM3dLWx0y4xFVpOCh/eHtXYu1SkEqHTTW3ezylKuZN8/CNd+4iodrqgf1o
+         phog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742907862; x=1743512662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ytAAvQ7JGlkRy9+sQoqDV7MKxsmXX7OMGSm/op62KLs=;
+        b=ck+Lzr75Cennnt//VrWb73S3porp6LNPrMMBrGx1YHbHiy6jsiA3tkSduw7nFY6CF0
+         Y+nwXiLVC5IIm5K0TLdLgcfAQxc0A+yjHidniZapimUn7Cd4CjTsfMv539rUNsNXxfcc
+         AcA0Cx8bhjzBzNJyWe6rfYwX+b8Ekes82fBQHG232wiSsgClH+4eia3tNsovgsYDonax
+         33nbquexz188SoDU1Gi/Pln7qZ+FFWwJN3N7RISDtzHeq4QvbCBJyAAZP9SdpejHrJUn
+         5iJYD+TmhBuOPBdH+pFiuT5We90Jt4vQksTCiIhv0UbOZPbf3tq4/e64qLQRi27mTKZE
+         0evA==
+X-Forwarded-Encrypted: i=1; AJvYcCUD9NIumMLp9u2/Fkw8qzmsPnessDrno8L2vk+E1rDpvhuqVBueIrHkvFcZJXqia+/NIWsHbUqfNik=@vger.kernel.org, AJvYcCUmuc6kQZdgesDCfUnS2ftY2xgT/4hK+P0BcmqutXSO35C5dzSWiQkrKqkCvn6LSCVTl0KNjN4BVS1Geqhk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYgNvNO+PG42ym6Eme1DB897YBkAf2IRSmxkqGt3/MeQCeOOjG
+	rK7vV0mmHc/+6BmTZ2zNSc037cjrDNQCU7LFBFzWgZ9I9zsuv4ybghtrQ0ER4fh88gjzZxFmhjC
+	k4ZwrNQy+fk68obGo5WPUXX63vh0=
+X-Gm-Gg: ASbGnctawtGd4xbIPpBUyN2Qpckh5JXmbFu1pYaoYvhcHYef7SYk/PnYIkeEVqKlqVR
+	wFnc6qM1pdDnYSXvJNPJNh6vde7CUlRCXYn/jRH9F+7VIi7qNY2uqeOl93nZUPAgXaCLrP7xXtT
+	Pn46WqxYriQtomrGWCnS2qWtBTvNZm430XH/yy1JPN0A==
+X-Google-Smtp-Source: AGHT+IE51PXGLgkSnQJ98M/ddGNci74PQXWvqk0kA+jVT/PXCPMy/JwdbENsPVcSNY10HlA73yPF/yQqtOeqqz2rqvE=
+X-Received: by 2002:a05:6214:2607:b0:6e6:61a5:aa57 with SMTP id
+ 6a1803df08f44-6eb3f2937ccmr297309616d6.14.1742907862103; Tue, 25 Mar 2025
+ 06:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325121526.GA7904@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250324172026.370253-2-csokas.bence@prolan.hu>
+ <92772f63-52c9-4979-9b60-37c8320ca009@web.de> <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
+ <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de> <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
+ <26e36378-d393-4fe1-938a-be8c3db94ede@web.de> <CAGRGNgU7t85oG3Bq7L3KjKUAbRyd6SHSM6F6BvmdXDVkbNegKg@mail.gmail.com>
+ <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
+In-Reply-To: <bd7b31d8-be25-4dbc-9a81-4b0cccd64798@prolan.hu>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Wed, 26 Mar 2025 00:04:10 +1100
+X-Gm-Features: AQ5f1JoI1ggKA9Gw7ELv7T2TUC8A9SzwWIQijK61-mP9ZJ-R-qeFWsNR8IL_vmU
+Message-ID: <CAGRGNgVcPRJB+sx_5g-+CLJih4vTWU-FrqiRbvVQ07219WBZPA@mail.gmail.com>
+Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
+To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+Cc: Markus Elfring <Markus.Elfring@web.de>, dmaengine@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/25, K Prateek Nayak wrote:
+Hi Bence,
+
+On Tue, Mar 25, 2025 at 11:39=E2=80=AFPM Cs=C3=B3k=C3=A1s Bence <csokas.ben=
+ce@prolan.hu> wrote:
 >
-> I chased this down to p9_client_rpc() net/9p/client.c specifically:
+> Hi Julian,
 >
->         err = c->trans_mod->request(c, req);
->         if (err < 0) {
->                 /* write won't happen */
->                 p9_req_put(c, req);
->                 if (err != -ERESTARTSYS && err != -EFAULT)
->                         c->status = Disconnected;
->                 goto recalc_sigpending;
->         }
+> On 2025. 03. 25. 13:20, Julian Calaby wrote:
+
+[snip]
+
+> > Bence Cs=C3=B3k=C3=A1s, (I hope I've got the order of your names correc=
+t)
 >
-> c->trans_mod->request() calls p9_fd_request() in net/9p/trans_fd.c
-> which basically does a p9_fd_poll().
+> Either order works, Bence is the given name, and Cs=C3=B3k=C3=A1s is the =
+family
+> name (surname). Hungarian and Japanese order follows the scientific
+> "Surname, Given Name(s)" order, but commas broke many tools, including
+> Git < v2.46, and b4, so I switched to the germanic "Firstname Lastname"
+> format.
 
-Again, I know nothing about 9p... but if p9_fd_request() returns
-an err < 0, then it comes from p9_conn->err and p9_fd_request()
-does nothing else.
+Thanks for that, I'll try to keep that in mind!
 
-> Previously, the above would fail with err as -EIO which would
-> cause the client to "Disconnect" and the retry logic would make
-> progress. Now however, the err returned is -ERESTARTSYS
+[snip]
 
-OK... So p9_conn->err = -ERESTARTSYS was set by p9_conn_cancel()
-called by p9_write_work() because pipe_write() returns ERESTARTSYS?
+> Lastly, to all other adressees, sorry for the spam. So let's end this
+> meta-discussion here and keep the rest of the conversation professional,
+> reasoning about the technicals.
 
-But I don't understand -EIO with the reverted commit aaec5a95d59615
+And this is why I was so hessitant to step in here.
 
-Oleg.
+Getting back to that, your patch looks good to me and it's awesome how
+the devm_ functions and their frends can simplify things.
 
+I'm going to point out that this does swap the clock enable and reset
+deassert, but I'm assuming that is harmless.
+
+Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+
+Thanks,
+
+--=20
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
 
