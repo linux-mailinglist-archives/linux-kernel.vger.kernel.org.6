@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-576116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8901DA70B24
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B674AA70B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D1683BDCB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DBD84175F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889FE267F70;
-	Tue, 25 Mar 2025 20:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B164D265CCF;
+	Tue, 25 Mar 2025 20:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khCB68gx"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="D3tTe2W9"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A88F267B9E;
-	Tue, 25 Mar 2025 20:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C056266569;
+	Tue, 25 Mar 2025 20:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933224; cv=none; b=elFYqINr8V3aMDAlrcG4zcsGU4MLpVn4nvebXZuS/RnisTr7UnCJuh/z3zV64Z1FHiljXhUyYdKorYrHPujfsA5OTmB1QXap2yt/u8gEbK2HUh0UJiieztVFoB2+Sepnb+7lhQmgXmi2AkibfM8DYqcyas1zfJlQBat8E847TTE=
+	t=1742933250; cv=none; b=Wy8v724bqKr1GDtUOofZSbMHM/hjWU1IVMLKNowlBiCT62dE4+wvBP7O/aaQ+9uVM8s4V0jy9SJrSJDtwqEkaBT+vIgutxPAf8bWLhe2M8nhuSzCDAmNAgkE2IGNCfyUKtKco+tlYXR6z/ZRQp83I8Q0s8JRhZ6eTrw7o+B83Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933224; c=relaxed/simple;
-	bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZQorr3h+Gu8mPlGTBCv1gvDPOtZHRdgWI7Vv8CsATDABXhNt4Tdim2qidOnuUuuFSAOj3oL0sd1dvLQm5reEEhHtAR7wtNVHjAm4Ec9ZUxTdVChTNPCC33zqp0vDVNcNgY9akA10OgTnaXxTYQv7aRlfmIvNUQFL3VoWiHUbvmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khCB68gx; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223f4c06e9fso3953795ad.1;
-        Tue, 25 Mar 2025 13:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742933222; x=1743538022; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
-        b=khCB68gx2zeYn5+4lu4SLeF0W8MHPn6IkoNvdNc8dqyHC7Sw5Hv4GopsthfHMHkzTJ
-         //uCIgxSf7liM3jWcQTSnfPbNzZG3PfzWDpyChqX6z9fUNdI+NakSbQ7EgjRA7MiH2F7
-         A4pxL5ddHe1pmtLDLxE0mV9R/xAyxW1fztX6Jo0o1WO3k1EXcx58O7Ut564kiFUgXbc6
-         5f56+RKlkmSjtn9NOpXbaiu6dQemK6GxXB4TrywNui8G/MDt3g0TKoyMhwvtKqWQjkB5
-         Ea4eQyxgeVtdS+XwZiYzIFQVRi7tpLGH5QiUHz/xnzH/fSZMFzAP6LhOrvA8eXnvdVXf
-         PU3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742933222; x=1743538022;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tj0V8WO1QBHCvlLieT9zL79MvFmfnXHh40llfNUDrnw=;
-        b=doCWiTzrrC6t8e8AwDRh1wvGBisvtE9GBuscaB+Upe2Y3e5xXl8lGrB+PXVklLJi3F
-         9ogzpPmAfoId14td23017+45BUU2pecsCNZanr8rwjqfszfJPkEbdSGLIPsTGSqFblVh
-         qBjuAEoq88VkprzZVejopvnTO+uYUYXNJ8tqDCMq0TVeJxsDT9S+asUMvahWjQLJX7Yg
-         cndZIrB3QIb4Vn4Ua8hSorKVr/hJ6HL4CPSFDohHsSik6wZMhCO+VFVr0+a7K1jJrMl+
-         jy/Wh5zQqb9XN4KsJA1L6h8IM7A90mO3hpQnq4pkMeCASbu6tVWDYLLdYWaW8oERVTJp
-         9ZKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIyYct1DukGdkSb2JT2uMCUYMqQohpt5XujjB1mAj1cJ6dU4P8Ijuf2P4K81FJO/kmP+3HpBBB9hDHp9Ko@vger.kernel.org, AJvYcCV4AyCF871IeQXpBcLYskRScJr6g6D5PI66g49EYC1gftFm6QNDuXWoXKXq2RnikLk4oug0j8pSwAE4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjbrtJLcSNxu7EeaSH5DQ8iE/DJPyQ3LAHoLaAnswpObd+rLNy
-	D+vUMfnV8tAsXVy1CqLYqr4qDtcyvZVtpDdq638FwoOc2ApeGffe
-X-Gm-Gg: ASbGncusKhmAeLbI10HjOEWCgLckH0hJEG1GBQCcLAerBIwriH/r/f3EnXkzTGwLTam
-	BqazVVWZ3IRiJ/7j3M5JZdQz7BiLMdWSPU3cFD2j7BL8UyspNy6BCvPsjogCJ5RLwh2s729KYFK
-	IAFnKo0Z4q0Z3z1/YKIT1sYzUH8tV4kqrVKrocdZqtowxRqcwJMcJl9NAcfx1cME5LZjKOdmlW4
-	FuRNvdbLa6M1qhPGAEJFf8OErEA1Jib0F+Mta0g2z1GPdlH06X17L21FJkOLhOVRwy3tFYLz/wN
-	oiLLJ3c7qFaboJ68qqLojwyt1ePQBvpdgEAbj0hDPRwex5W2
-X-Google-Smtp-Source: AGHT+IE+lzdM+Ptk09dWS8IoLI3bFfZRmtMysmn4d27tUOZ9HPEFhuMB+8v3KUg2zEBCEiB9ShFc7A==
-X-Received: by 2002:a17:902:f547:b0:225:abd2:5e5a with SMTP id d9443c01a7336-227efaa0686mr12163825ad.4.1742933222434;
-        Tue, 25 Mar 2025 13:07:02 -0700 (PDT)
-Received: from localhost ([181.91.133.137])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da32fsm94335935ad.182.2025.03.25.13.07.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 13:07:02 -0700 (PDT)
+	s=arc-20240116; t=1742933250; c=relaxed/simple;
+	bh=h12nujPrVxEu5STE3RwRLUsoUnli6vhz58xY3+tYaTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DtWJ2PWQoHMpNa2ayEoEmC0C5Xa6vjgzWNv22GrvKpt8E1+h4ALirmlHhHtdX9MFpB/8xuE3pUmR2HG0HCTLU0WApoAlt5iJtlOwTj95GysSMwQq0YA71MCbXdRfC/Me/PYGbwMlTSlJPXnOguO3QIwyPZeqqbAU9hd7gvPMb3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=D3tTe2W9; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15898102F66E4;
+	Tue, 25 Mar 2025 21:07:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1742933245; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=mMWsmyRuKUUusNiZ9qsNQ3v93lX+3Lkzf2Js+Q75+KY=;
+	b=D3tTe2W9IkxIyHacw7Kf4AVI0HXxENctJLjr2LGY0kng4oEYpkk99GmDmYHpRMnPGjoVKg
+	tjNyjdhr/AftVD1cRiUKs6sbhkTwkTu0psmjqSndmqsaueDM51h7jzP5y1iWckq1dCFy6J
+	KPlTtHcIYz56KtkZLernrSe9xogqZmZ5rL9XM91GWpngdSXt1yTdJjL+IiWJVSIbB778zo
+	mxF4brgLf5Y9va0W4p/lCCKGn2zWIUH9SzsvlNDe9cBH/cAxDS/RVtfNBdjx774moBrgqj
+	V/Y1XkK1u23bISJRyVArG1ta8h/n5Rs9Ilcg3WikGaFX+krNHEV3pkzo8EYC8g==
+Date: Tue, 25 Mar 2025 21:07:19 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 000/116] 6.12.21-rc1 review
+Message-ID: <Z+MM96vqPR1MWz1m@duo.ucw.cz>
+References: <20250325122149.207086105@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Boa8ut/6H3QAHeGX"
+Content-Disposition: inline
+In-Reply-To: <20250325122149.207086105@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--Boa8ut/6H3QAHeGX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 25 Mar 2025 17:06:58 -0300
-Message-Id: <D8PM9ESWNN10.QARF2AMDMH6W@gmail.com>
-Cc: "Mario Limonciello" <mario.limonciello@amd.com>, "Len Brown"
- <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ACPI: platform_profile: Optimize _aggregate_choices()
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Armin Wolf" <W_Armin@gmx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Mark
- Pearson" <mpearson-lenovo@squebb.ca>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250322-pprof-opt-v1-1-105455879a82@gmail.com>
- <a66f55aa-9ee1-404b-8f78-258b307ea361@gmx.de>
-In-Reply-To: <a66f55aa-9ee1-404b-8f78-258b307ea361@gmx.de>
 
-On Tue Mar 25, 2025 at 4:36 PM -03, Armin Wolf wrote:
-> Am 22.03.25 um 22:03 schrieb Kurt Borja:
->
->> Choices aggregates passed to _aggregate_choices() are already filled
->> with ones, therefore we can avoid copying a new bitmap on the first
->> iteration.
->>
->> This makes setting the PLATFORM_PROFILE_LAST bit on aggregates
->> unnecessary, so drop it as well.
->>
->> While at it, add a couple empty lines to improve style.
->>
-> Please add a comment to signal future developers that the bitmap needs to=
- be filled with ones
-> before being passed to _aggregate_choices().
+Hi!
 
-Sure, I'll mention it in the kernel-doc for v2.
+> This is the start of the stable review cycle for the 6.12.21 release.
+> There are 116 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
->
-> With this being addressed:
->
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+CIP testing did not find any problems here:
 
-Thank you Mario and Armin for the reviews!
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
 
+6.6 looks broken, I assume that's similar error to 6.1.
+
+6.13 is being retried, I guess it will pass.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
 --=20
- ~ Kurt
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Boa8ut/6H3QAHeGX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+MM9wAKCRAw5/Bqldv6
+8obLAJ9OP+UGS1+0oXkcp6cq6rRxKDNLYACgiNnbe7kEkONB31XcWhUIBKcLjG8=
+=+daf
+-----END PGP SIGNATURE-----
+
+--Boa8ut/6H3QAHeGX--
 
