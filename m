@@ -1,189 +1,128 @@
-Return-Path: <linux-kernel+bounces-576216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE6BA70C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:56:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F32A70C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4724C188F191
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC931892384
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2919266B55;
-	Tue, 25 Mar 2025 21:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728CA269CE0;
+	Tue, 25 Mar 2025 21:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osfpcF8m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWQ+/g03"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A28619F422;
-	Tue, 25 Mar 2025 21:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E8F267AFA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742939769; cv=none; b=q7s1Sw69gOj8yIm8Sp+2uXUDgl2A1YChBqonANB082AQVgCqDaPgogLcCJzQJEWcjate6DqqC1AFodldr0Db7Fh24E0bUpen6sEAd8bFIlXj7pup2cM6UeNSlwWbMa8iBl1UhhGgeltFeK6hncepfX7chkBAl4o8si47UHBxe2g=
+	t=1742939776; cv=none; b=qiHiBUc1PyKUSxDslczVSQ23ykPRWxQtaEmcSGjvTt4Tnh03ZPhIF0aTL8O761M5+Cud0iDc+V6C/FEGukK2BaLI0WsQ0C7PIf7qEFJgtcYryUhFjyR5DZygfQPJf0L6SioFpCAy3Xqx3ehQoxWBeKZDKiGywuavw7EhrYPsJ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742939769; c=relaxed/simple;
-	bh=4ifqJtJbofI2xLx93Gi3OwiRVjusXlxOWrfih4v8Wx0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Vsj9DMVrOjqt3yfa6XRZyEnaaRlNWpDhDKz1uG649p7NbLQC5crNG/7zXa1uA3pN5j6aO2ruGYgs7jUtlsMw42P/Hcn2cTV9uNO/5Vcm9CDGHfdEHvsH3z+oZikTpBmWfJBGZxOQDKQi7/8YDd7RSlxmwoIOv/ip5ncuZqi2aYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osfpcF8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63E57C4CEE4;
-	Tue, 25 Mar 2025 21:56:07 +0000 (UTC)
+	s=arc-20240116; t=1742939776; c=relaxed/simple;
+	bh=7br8AaG8QRt+Y7p9nY+NCHBZBDh/3nwaBmqYeH6jESg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lfvyz+aS6DeSmm1yNvR7riT3lWZoOLggF3TPNyxKNZ4UoRnPuiT/QSLWWjTW8EJ5DONs4/RZFgjpvVNLARGzAIeJ0CGoXK+79P+klbESexjKx4ZIticXyde7/dAlqESvlgqL+trcmKfUX9+7rBx/dyhvW9BFfK/AFb4YVci5BFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWQ+/g03; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7122CC4CEE9;
+	Tue, 25 Mar 2025 21:56:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742939768;
-	bh=4ifqJtJbofI2xLx93Gi3OwiRVjusXlxOWrfih4v8Wx0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=osfpcF8mgWVyiLLi5K63WAeLkrFeSyjo4rT7SwqsSViUuKfo556CizgofpP5aPuNE
-	 XemItG9Z6Uuo3abMDrgowCyf7NBr1LPUNsfHp6tK4p+cKAWZOGBXr5Uz5N2A/V4ZX0
-	 uTnPgpSZqyphORrQONuqpkjhE+ceRhFrjG1EoDWJClT3LO0RhBfPzj9Tc6MRJOZguj
-	 VF3Ck0xO56gCDFo+ixGHqiyW94R5fXxvjCi+9d6IGu/nDcjNn8XWUiqSK8ETBXoqLP
-	 QSkCZhDFr4gi2XwAMILcCXMfAt6zozVs3zgfYFqKPTOc4kz9Y3vghEPZy0t+JPTRF/
-	 tYzYZA3JwixMQ==
-Date: Wed, 26 Mar 2025 06:56:05 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] tracing: fprobe-events: Register fprobe-events only
- when it is enabled
-Message-Id: <20250326065605.f2ba50780414fb9ba1110ab5@kernel.org>
-In-Reply-To: <20250325144111.48fc4ec3@gandalf.local.home>
-References: <174212767109.348872.18231451508464729427.stgit@devnote2>
-	<174212770238.348872.12106623852892827796.stgit@devnote2>
-	<20250325144111.48fc4ec3@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742939776;
+	bh=7br8AaG8QRt+Y7p9nY+NCHBZBDh/3nwaBmqYeH6jESg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oWQ+/g03fQn+hRaIRoCKXD6+Y8eThKxyhvkCl04fLOcAOacLNTjWG6ijtdClMdz6B
+	 1GhL1SGMUbJWMjCEZzl0STLWPhNMPSv4TSaCzQ7a/lx6bpifNQBmHV5/Er6fHJSdMV
+	 IKao2UZiJxq/t38PW7bNq54SSHz8GXme4Qs0lvH1mxY5hFCsU5sJIu5C25QT7We6jA
+	 ubMwu47ACZalGYIgDrWj4XAdrowbtLBxSEUuyj5d+3oug9hKm1jOJzV5cBLZ2nmmlI
+	 JRlTld60yDzpua++leJ6Nsrl+Vvddp1bBP9NpmtB2eBNXU59lQRxh9BYHTAhtt8/0K
+	 USMN/5hyH6Ljg==
+Date: Tue, 25 Mar 2025 22:56:11 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -tip 2/2] x86/hweight: Use POPCNT when available with
+ X86_NATIVE_CPU option
+Message-ID: <Z-Mme_OxuhYfxgzO@gmail.com>
+References: <20250325164854.199420-1-ubizjak@gmail.com>
+ <20250325164854.199420-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325164854.199420-2-ubizjak@gmail.com>
 
-On Tue, 25 Mar 2025 14:41:11 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> On Sun, 16 Mar 2025 21:21:42 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+* Uros Bizjak <ubizjak@gmail.com> wrote:
+
+> Emit naked POPCNT instruction when available with X86_NATIVE_CPU
+> option. The compiler is not bound by ABI when emitting the instruction
+> without the fallback call to __sw_hweight{32,64}() library function
+> and has much more freedom to allocate input and output operands,
+> including memory input operand.
 > 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Currently fprobe events are registered when it is defined. Thus it will
-> > give some overhead even if it is disabled. This changes it to register the
-> > fprobe only when it is enabled.
-> > 
-> > Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  include/linux/fprobe.h      |    8 +
-> >  kernel/trace/fprobe.c       |   29 +++--
-> >  kernel/trace/trace_fprobe.c |  234 +++++++++++++++++++++----------------------
-> >  3 files changed, 140 insertions(+), 131 deletions(-)
-> > 
-> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-> > index 702099f08929..9635a24d5a25 100644
-> > --- a/include/linux/fprobe.h
-> > +++ b/include/linux/fprobe.h
-> > @@ -94,6 +94,8 @@ int register_fprobe_ips(struct fprobe *fp, unsigned long *addrs, int num);
-> >  int register_fprobe_syms(struct fprobe *fp, const char **syms, int num);
-> >  int unregister_fprobe(struct fprobe *fp);
-> >  bool fprobe_is_registered(struct fprobe *fp);
-> > +int fprobe_alloc_ip_list_from_filter(const char *filter, const char *notfilter,
-> > +	unsigned long **addrs);
-> >  #else
-> >  static inline int register_fprobe(struct fprobe *fp, const char *filter, const char *notfilter)
-> >  {
-> > @@ -115,6 +117,12 @@ static inline bool fprobe_is_registered(struct fprobe *fp)
-> >  {
-> >  	return false;
-> >  }
-> > +static inline int fprobe_alloc_ip_list_from_filter(const char *filter,
-> > +						   const char *notfilter,
-> > +						   unsigned long **addrs)
-> > +{
-> > +	return -EOPNOTSUPP;
-> > +}
-> >  #endif
-> >  
-> >  /**
-> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > index 33082c4e8154..05050f1c2239 100644
-> > --- a/kernel/trace/fprobe.c
-> > +++ b/kernel/trace/fprobe.c
-> > @@ -486,6 +486,24 @@ static int ip_list_from_filter(const char *filter, const char *notfilter,
-> >  	return match.index ?: -ENOENT;
-> >  }
-> >  
-> > +#define FPROBE_IPS_MAX	INT_MAX
-> > +
-> > +int fprobe_alloc_ip_list_from_filter(const char *filter, const char *notfilter,
-> > +				     unsigned long **addrs)
-> > +{
-> > +	int ret;
-> > +
-> > +	/* Count the number of ips from filter. */
-> > +	ret = ip_list_from_filter(filter, notfilter, NULL, FPROBE_IPS_MAX);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	*addrs = kcalloc(ret, sizeof(unsigned long), GFP_KERNEL);
-> > +	if (!*addrs)
-> > +		return -ENOMEM;
-> > +	return ip_list_from_filter(filter, notfilter, *addrs, ret);
+> The code size of x86_64 defconfig (with X86_NATIVE_CPU option)
+> shrinks by 599 bytes:
 > 
-> This was in the old code, but I'm wondering. Does this code prevent modules
-> from being loaded and unloaded too?
-
-Ah, no. In that case we should do module_get() for each module
-found in module_kallsyms_on_each_symbol(), hmm.
-
+>   add/remove: 0/0 grow/shrink: 45/197 up/down: 843/-1442 (-599)
+>   Total: Before=22710531, After=22709932, chg -0.00%
 > 
-> I'm asking because if we call the first instance of ip_list_from_filter()
-> and it finds a list of functions from a module, and then that module is
-> unloaded, the ip_list_from_filter() will return a failure, and *addrs would
-> be a memory leak.
+> The asm changes from e.g.:
+> 
+> 	   3bf9c:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi
+> 	   3bfa3:	e8 00 00 00 00       	call   3bfa8 <...>
+> 	   3bfa8:	90                   	nop
+> 	   3bfa9:	90                   	nop
+> 
+> with:
+> 
+> 	     34b:	31 c0                	xor    %eax,%eax
+> 	     34d:	f3 48 0f b8 c7       	popcnt %rdi,%rax
+> 
+> in the .altinstr_replacement section
+> 
+> to:
+> 
+> 	   3bfdc:	31 c0                	xor    %eax,%eax
+> 	   3bfde:	f3 48 0f b8 05 00 00 	popcnt 0x0(%rip),%rax
+> 	   3bfe5:	00 00
+> 
+> where there is no need for an entry in the .altinstr_replacement
+> section, shrinking all text sections by 9476 bytes:
+> 
+> 	    text           data     bss      dec            hex filename
+> 	27267068        4643047  814852 32724967        1f357e7 vmlinux-old.o
+> 	27257592        4643047  814852 32715491        1f332e3 vmlinux-new.o
 
-Good catch! Let me fix it.
+> +#ifdef __POPCNT__
+> +	asm_inline (ASM_FORCE_CLR "popcntl %[val], %[cnt]"
+> +		    : [cnt] "=&r" (res)
+> +		    : [val] ASM_INPUT_RM (w));
+> +#else
+>  	asm_inline (ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE
+>  				"call __sw_hweight32",
+>  				ASM_CLR "popcntl %[val], %[cnt]",
+>  				X86_FEATURE_POPCNT)
+>  			 : [cnt] "=a" (res), ASM_CALL_CONSTRAINT
+>  			 : [val] REG_IN (w));
+
+So a better optimization I think would be to declare and implement 
+__sw_hweight32 with a different, less intrusive function call ABI that 
+mirrors that of the instruction in essence, so that we optimize for the 
+overwhelmingly common case of having the POPCNT instruction.
 
 Thanks,
 
-> 
-> -- Steve
-> 
-> > +}
-> > +
-> >  static void fprobe_fail_cleanup(struct fprobe *fp)
-> >  {
-> >  	kfree(fp->hlist_array);
-> > @@ -528,8 +546,6 @@ static int fprobe_init(struct fprobe *fp, unsigned long *addrs, int num)
-> >  	return 0;
-> >  }
-> >  
-> > -#define FPROBE_IPS_MAX	INT_MAX
-> > -
-> >  /**
-> >   * register_fprobe() - Register fprobe to ftrace by pattern.
-> >   * @fp: A fprobe data structure to be registered.
-> > @@ -549,14 +565,7 @@ int register_fprobe(struct fprobe *fp, const char *filter, const char *notfilter
-> >  	if (!fp || !filter)
-> >  		return -EINVAL;
-> >  
-> > -	ret = ip_list_from_filter(filter, notfilter, NULL, FPROBE_IPS_MAX);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	addrs = kcalloc(ret, sizeof(unsigned long), GFP_KERNEL);
-> > -	if (!addrs)
-> > -		return -ENOMEM;
-> > -	ret = ip_list_from_filter(filter, notfilter, addrs, ret);
-> > +	ret = fprobe_alloc_ip_list_from_filter(filter, notfilter, &addrs);
-> >  	if (ret > 0)
-> >  		ret = register_fprobe_ips(fp, addrs, ret);
-> >  
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+	Ingo
 
