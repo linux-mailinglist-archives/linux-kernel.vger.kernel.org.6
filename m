@@ -1,237 +1,102 @@
-Return-Path: <linux-kernel+bounces-574719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD1DA6E8D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:15:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC607A6E8DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A22172921
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F8B188D9DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A81D1A7AE3;
-	Tue, 25 Mar 2025 04:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5E21A3BA1;
+	Tue, 25 Mar 2025 04:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+Y2j2C1"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FEsO0TJt"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9C419E98C;
-	Tue, 25 Mar 2025 04:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676B3183CA6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742876100; cv=none; b=MAd7xlFfVzQ9I9Ov+Cq/Hf2O5lR0/hQcFEHXbcuLarZb3pk+oYgL5I2uFwImRDkuTMzTaNVU3K3TIydkuO13QEH8UYctmdg8RWR7Df01lF+bLmeo6WlK5fLOL5of/h9GZm3fvur+4DDwSxshyxf7UWWfQpXsD+aUXG3g/zbiATY=
+	t=1742876934; cv=none; b=bHd6EvIkLq/GD48ZkXXmykTh+Jtup7SYb8erB/2hrVHFYHeyPks3ctk6OrH0UQ7ofmhhwlV6hxFWZUrwv3tT1jiZBuXJuqIXjLH6jkI49a+SiWdEWPTjUQNJRKZ+NFO/nckDTLFtnc5kK6ZiZ5vczsKmO6QkPrcdzifmzTQjMTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742876100; c=relaxed/simple;
-	bh=13ymGvOxQHq7CtZ+BMVOFQ4rdep4nCwxm257XsS+T8E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=s5N78Dq2x4kRNzHpr1Iwh4pKRQY23ifbcAxY2Asg4L8BWYYRnI2PLNKPzThdGifNByvv7NwoI58AfgEwqNNJ7txVf7Sm9AgWv+XsBQqhjl/8k7helb8AFnV1oTIaJwbjRExQhojdksf14QSqt552pfoXV/0vEk99jJTBj4Hi/BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+Y2j2C1; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-224341bbc1dso96830865ad.3;
-        Mon, 24 Mar 2025 21:14:58 -0700 (PDT)
+	s=arc-20240116; t=1742876934; c=relaxed/simple;
+	bh=pp6ZbS9UeYuz7oVMqa353ZXCNXt02VdkFc3MHYN4Hew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bSVfLsgDq5yYYzNx8kszRDtEBTYEPiJ3dfnqZDLh0zAqMV9w5rmuIoYEl780H/lsBSKO5xxlm6yXIfXnJq9jE6JrdxHqNkWGoxV0c4Bi346h/tSG+SuD4UNZcdetZZWoyqVIuechpdL8Spa4vKbv6NwsJWUMFExLJP+uu3xVBJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FEsO0TJt; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476ae781d21so45798161cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742876098; x=1743480898; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8Z+v7Jn9beBer1FkhIJ6pBhkHOPTxa22J6kYt2PvD38=;
-        b=H+Y2j2C1A50V2jdb7yVzssn0SEp1NBQTOBEVClPSjFcZOt32itBY4g/dAZd0hkDfxd
-         YCIk4lAl39/29NTbC7/Mly3vpCoI5x4CoCzP1KHL174bXnp1SfmuAGFx3P1MLHI7Fr+D
-         PBiug+Zt52ge8hYhOD7OpjCm2bjvUnqEdipvOtVjpGXLOwtylFCz6X8eZPzeEJnVrw5O
-         H7rbHhIZCavRBnVDO91JI7XQ/mSFSKg2uw38CeN9oPzAcbOk2g4iuy1p6NoVejeafbw+
-         GHD8xZ/l53y6kR3RiLLfWZGshPn5krzMwZnIhj3qKOTHBWFECC4lzShrzpnEkTd/OUR2
-         /6/Q==
+        d=google.com; s=20230601; t=1742876932; x=1743481732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pp6ZbS9UeYuz7oVMqa353ZXCNXt02VdkFc3MHYN4Hew=;
+        b=FEsO0TJtgHXdu8dY7A8XKwjWo6b0LyitXgXNEcnsQHAePIMulSqfxVxHPlB7ApGH+e
+         BcEqohEWyGuOSeoBcptmsDZxFp7SfQAf9C11MlO/fr3C1+W0tCK6hDZYYLohYFGV4YMR
+         ac8kPR6V01k2qCbBt451QkdKgR1dm3x/QjzD4MNinXEtyTIiQtVVosQwvw6qAv0yEEa+
+         1wXpm6oAh5EVamoiUpKwiBP288s6muyrkrMUWX6Vej8MLi8xNiveatf5XYGZlciYfPjm
+         gNMXvw74cHj3wHVMKIdH2I0WE4LQysNLNRlwdyasDSrX65E3Tq2oYapCpWuUtziWJf/Q
+         zX9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742876098; x=1743480898;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Z+v7Jn9beBer1FkhIJ6pBhkHOPTxa22J6kYt2PvD38=;
-        b=FGGT+1XMmnjSKP0UOgJApPjjYBJFwIiMx3B+ZmzZbtyXMigtxyBOxxsBbkb56TeW3B
-         PNNKRaAuew/Aoq4Xr07lNFvhj55d/1Z44ctZhTmHscodPBIQI3z+BIvKwkg28aeu0IV8
-         4lxhPz9mq8VpqZf8DFSGM5n2ushL/kbQtbwdqJ0vJP95xfCOf2y4K6zVLLND5AjltvD4
-         UJ9GKjU8HDMkejGMRqOpclCsvRmPeAA3cf7ufN1qGR+FPn5UE/VphV38BsMhm4rNJuQq
-         IvI7cDo14frbNut+4ZJjS3hl7sQ1CacMIqFlHYyjp/CqAxb6A9Wej9zzDpOO3lM2EvmU
-         dasQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwQliJci6dS+1Cq8NCO2cqSI93U+xVWqVgn8eoeV7WedicBwJIvj/t23yy6yTt2bWVPqO+wswUE9s7BXgH@vger.kernel.org, AJvYcCX6xg/FXfz8ZLaUqq+YK5al2dGdzsoUh+LKobLUZEPzLPkUTS5gaqkdL/W2bQBMCrrECkTIDovuhdBY4Q7R@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrj0I74j0wdcPhfIz8dG5OzC8SSVQ81F2vDmjKsvk7UrwImqC7
-	os+oT0/chXP4/+ycKl0P5/doMLoR2A4mWhm8Q5kfOyeQlxQh+px5
-X-Gm-Gg: ASbGncsYxcPQqFNXEAPLv9OdIv/EHUvdQxioen1tkm9A7hoQKu29VqnKi3g3jAaVGT4
-	W77E8JmyJzS/k8boAUYxq1QajB+3tKQ7CqwUeMT/f6sH01GU/5WN3Wuz38LYZySbXEuRuZrUWom
-	DupfjInJan3JTuSdw94ZluAQ23RRzWLqfwtmAAUryyw+CZkyfHNNNHEq5Cn8yI1rI0mDG9Ujd0H
-	03EFw64e+FHwB03XAxSC6So54o72e75Xyv+PI3LE+wtRZ+oOmiMLHYu1lKBuydiuwaKxYWezr7i
-	T9lr29RunEeCasvRLi9Iw0BGT1EGTLPmaMJ7qH8a2MPPczFUJRwOT0Ti7/XbofJePoDhkh6rNEy
-	w6Wfy
-X-Google-Smtp-Source: AGHT+IGhOZmiC2eth2WL1r0oxdj8u60sBUhVZ+SVsC11s7uTwEQzGmI4MIGxY8M00w4ZHPEej2wgRA==
-X-Received: by 2002:a05:6a00:84c:b0:736:4644:86e6 with SMTP id d2e1a72fcca58-739059c3dfdmr22049172b3a.12.1742876097778;
-        Mon, 24 Mar 2025 21:14:57 -0700 (PDT)
-Received: from ubuntu.localdomain ([221.214.202.225])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fa4021sm9327650b3a.13.2025.03.24.21.14.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 21:14:57 -0700 (PDT)
-From: Penglei Jiang <superman.xpt@gmail.com>
-To: mjguzik@gmail.com
-Cc: adrian.ratiu@collabora.com,
-	akpm@linux-foundation.org,
-	brauner@kernel.org,
-	felix.moessbauer@siemens.com,
-	jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lorenzo.stoakes@oracle.com,
-	superman.xpt@gmail.com,
-	syzbot+02e64be5307d72e9c309@syzkaller.appspotmail.com,
-	syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com,
-	tglx@linutronix.de,
-	viro@zeniv.linux.org.uk,
-	xu.xin16@zte.com.cn
-Subject: [PATCH V2] proc: Fix the issue of proc_mem_open returning NULL
-Date: Mon, 24 Mar 2025 21:14:48 -0700
-Message-Id: <20250325041448.43211-1-superman.xpt@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <ajipijba74lvxh2qqyxbxtbmlqil2smsuxayym5ipbmjdysxq2@stvu4kt62yzu>
-References: <ajipijba74lvxh2qqyxbxtbmlqil2smsuxayym5ipbmjdysxq2@stvu4kt62yzu>
+        d=1e100.net; s=20230601; t=1742876932; x=1743481732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pp6ZbS9UeYuz7oVMqa353ZXCNXt02VdkFc3MHYN4Hew=;
+        b=u1mqQ0Ps2Qxg2bA6AiLqQPCxZ8qozyyjD5tgi79M3OphGbmsXYTQXYFd031CpnCbag
+         dai14Mrqzd+ajmXep7DFM0Av23OKE4FEhNYSYYUC0+cSvOJbe2vIuY5K/vkTbi8tDSwV
+         NcCZQpKHbW/5BpmDPUVtVyRjUMJi/RbG1QmD7vNBhY3xQn8lwrvTQS5XwXgVMIMQpSz9
+         PAdEsR5iuMyH3cUCOR+qbOyHGJIOj/m+3h+Qoz0eCfbEWnNJie5gX5H6Hu7hvYXGbRx8
+         Ur7jqG4fKyncoO8i1QVtUgc1GpOq5JuKhB66qHwJnCuLgHBonCpgNVIVrb30c+WOiFA2
+         Q2FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrJyIObp1k3YeqC4iGLb7eO6jV+++EMKkZ1QkhRmvTvM6nY4TbfT2bjrZjiqA8alUJmtB2cIZKr4VRuKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGGmxmlchWE6JKXpc1LbukgntgXfwGN8DiCWdEtPVh/TxkflN1
+	E7CbBlaequmA2G7O6Ibwk0zphqkDzDnpK/tZ4yAhJCXtMh/SAVgkV4cGxNS7wjueRa43bhLC+/Y
+	CE8AQVE9h8xaq1ZHuy/8vYZ1AVpEPztJYn/Cd
+X-Gm-Gg: ASbGncsWYTUObmtmVmR0Ohw3+TqeOApl9dFcqsR27yVPZXJhuhWWE6QBEbzgVcUZckF
+	HtJ8LiOnWKDBWOvaxNzlhrwWkVYhwMd4MjZ1IpVEGWKoDTS2Y0fhKDlL7MbGo1GqnYW2z/cpClC
+	lJ0lxSXV3vmW7ShjsnA7p6q5RkJg==
+X-Google-Smtp-Source: AGHT+IEk4eqKPSzGKY1+mBhTmBlhZ4wamfo5qiv4PteJPuafaGTKKSFX/5mQRuQ4kwCXVSYe9V4L6Il9Sj3Y43eFwRc=
+X-Received: by 2002:a05:622a:2588:b0:476:8288:9563 with SMTP id
+ d75a77b69052e-4771dd607c0mr194124491cf.10.1742876931987; Mon, 24 Mar 2025
+ 21:28:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250324083051.3938815-1-edumazet@google.com> <20250324111817.GA14944@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250324111817.GA14944@noisy.programming.kicks-ass.net>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 25 Mar 2025 05:28:41 +0100
+X-Gm-Features: AQ5f1JpDNlWAkzmCY5RVAqO5XFqXmRAO1sjpsACH8OWOtorMBnMSQtaAvCYWiL0
+Message-ID: <CANn89iJ1by2zbasXDi7+_Y0=9J8no0r5GcpeN4SEAG_Nxvkp+A@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/alternatives: remove false sharing in poke_int3_handler()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org, bpf@vger.kernel.org, 
+	Eric Dumazet <eric.dumazet@gmail.com>, Greg Thelen <gthelen@google.com>, 
+	Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, all
-
-On Mon, 24 Mar 2025 18:48:35 +0100, Mateusz Guzik wrote:
-> On Mon, Mar 24, 2025 at 09:23:53AM -0700, Penglei Jiang wrote:
-> > The following functions call proc_mem_open but do not handle the case
-> > where it returns NULL:
-> >
-> >   __mem_open in fs/proc/base.c
-> >   proc_maps_open in fs/proc/task_mmu.c
-> >   smaps_rollup_open in fs/proc/task_mmu.c
-> >   pagemap_open in fs/proc/task_mmu.c
-> >   maps_open in fs/proc/task_nommu.c
-> >
-> > The following reported bugs may be related to this issue:
-> >
-> >   https://lore.kernel.org/all/000000000000f52642060d4e3750@google.com
-> >   https://lore.kernel.org/all/0000000000001bc4a00612d9a7f4@google.com
-> >
-> > Fix:
-> >
-> > Modify proc_mem_open to return an error code in case of errors, instead
-> > of returning NULL.
-> >
+On Mon, Mar 24, 2025 at 12:18=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
 >
-> The rw routines associated with these consumers explictly NULL check
-> mm, which becomes redundant with the patch.
+
 >
-> While I find it fishy that returning NULL was ever a thing to begin
-> with, it is unclear to me if it can be easily changed now from
-> userspace-visible behavior standpoint.
->
-> I think the best way forward for the time being is to add the missing
-> NULL checks instead.
->
-> > Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
-> > ---
-> >  fs/proc/base.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index cd89e956c322..b5e7317cf0dc 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -840,7 +840,7 @@ struct mm_struct *proc_mem_open(struct inode *inode, unsigned int mode)
-> >  put_task_struct(task);
-> >
-> >  if (IS_ERR(mm))
-> > -return mm == ERR_PTR(-ESRCH) ? NULL : mm;
-> > +return mm;
-> >
-> >  /* ensure this mm_struct can't be freed */
-> >  mmgrab(mm);
-> > --
-> > 2.17.1
-> >
+> This is unreadable due to the amount of pointless repetition.
 
-Mateusz Guzik provides valuable suggestions.
-
-Complete the missing NULL checks.
-
-Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
----
- fs/proc/base.c       |  4 ++--
- fs/proc/task_mmu.c   | 12 ++++++------
- fs/proc/task_nommu.c |  4 ++--
- 3 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index cd89e956c322..d898cec3ee71 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -854,8 +854,8 @@ static int __mem_open(struct inode *inode, struct file *file, unsigned int mode)
- {
- 	struct mm_struct *mm = proc_mem_open(inode, mode);
- 
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 
- 	file->private_data = mm;
- 	return 0;
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f02cd362309a..14d1d8d3e432 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -212,8 +212,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
-@@ -1312,8 +1312,8 @@ static int smaps_rollup_open(struct inode *inode, struct file *file)
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		ret = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		ret = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		single_release(inode, file);
- 		goto out_free;
-@@ -2045,8 +2045,8 @@ static int pagemap_open(struct inode *inode, struct file *file)
- 	struct mm_struct *mm;
- 
- 	mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(mm))
--		return PTR_ERR(mm);
-+	if (IS_ERR_OR_NULL(mm))
-+		return mm ? PTR_ERR(mm) : -ESRCH;
- 	file->private_data = mm;
- 	return 0;
- }
-diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
-index bce674533000..59bfd61d653a 100644
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -260,8 +260,8 @@ static int maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR(priv->mm)) {
--		int err = PTR_ERR(priv->mm);
-+	if (IS_ERR_OR_NULL(priv->mm)) {
-+		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
- 
- 		seq_release_private(inode, file);
- 		return err;
--- 
-2.17.1
-
+Thanks, I am trimming the changelog in v3.
 
