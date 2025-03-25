@@ -1,144 +1,175 @@
-Return-Path: <linux-kernel+bounces-575407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543EEA7022A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:38:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1657A701F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5452918806BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:29:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F037A1F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE60F188A3A;
-	Tue, 25 Mar 2025 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88FE259CB1;
+	Tue, 25 Mar 2025 13:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SmhH3SNb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="QT45mSxu"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FPxBmddj"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE8F125DF;
-	Tue, 25 Mar 2025 13:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B692F872;
+	Tue, 25 Mar 2025 13:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908783; cv=none; b=tfHkJjpfMWraSk510F8iQ3zK4lbcTTKpLVR74PZivgp+bmlzhSAd04i8B2yaSoZmvpE5J8Phheg8kYCGbXHjzlxqCCbR41iSk/Tvay/kMvAVM05EdeCvMJSuTbBsqEdz0RLQ7QUzU4QW6w4SfXnAfWwib90EYwhUYIDeWh9694U=
+	t=1742908736; cv=none; b=XVTb6w0AJ+9w13cocj392flR+rHgc1rAzi1K9sReL0B2MUittsu8Ysde/9NJmnvwgAHNLp5Acp9KDslFT6nDdMDcXlcqCLSfN0QoujdukCd9K2KDP63i45gPTMCPyxjj5YCxPlCHaSLKVyQ5u06UiecBERm2TrgF4uleZxkO+Jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908783; c=relaxed/simple;
-	bh=DVeixBVuxDT4oMWaD2rURJ/uLpvPHd0QOtOr4AymZrg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fGPc0QzgnZPEthpREpwZd0mvArfGIdLETNFvp7kUi39xMcNwbOb3AD8hQ4OYy8NNZqhqOB5sfzPGh6PRgiXq+gEQPJpP064PF7ZR2jb6ZOp4xEetnLDoNymD9Jn8/iR6G8pf960YIWLGn/AzPChKc0OxzvLsfIN8jN2bzefLO9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SmhH3SNb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=QT45mSxu reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1742908779; x=1774444779;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8UycVuZiVNJB4WUINByx61NDOE4aSQezliwEn5u6VQ8=;
-  b=SmhH3SNbMjaWwc0gCy97ZIyZBblJVIFnmwAKd+58/XodLBHMyD/vX7Dq
-   myG/YKURzqZBaMFq1kfQd8HbrgvOfgrtu61lQtsAsFDQUF2toGaomzGy+
-   lEX9p7nB6F5U6Y729hMYEs7+wxkEe5XMzJx181L2tsjSgPPUWYJ9D0zoB
-   AsO5/0JOIg5Ic0BjjVsAgC4kUOrNWP0F4TzwDxx46NBcMCudL0Km+PCK4
-   AEV7kY4PeAJ6c74gdoZtpfWyx3SdW439i+fLj7W+hDFDA76wVThYplLZl
-   DwRYF7l1XfunLsp6dONSsC5zjnnhCxJ54bJNv+8jDKzI+W++BN/U7Zidc
-   Q==;
-X-CSE-ConnectionGUID: xEkqf47SRmOlZuBVH8GBHA==
-X-CSE-MsgGUID: ZasAIHFhSm2cLlpvUuDSCQ==
-X-IronPort-AV: E=Sophos;i="6.14,275,1736809200"; 
-   d="scan'208";a="43148001"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Mar 2025 14:19:30 +0100
-X-CheckPoint: {67E2AD62-2E-2417938-F0170C2B}
-X-MAIL-CPID: 13A640736E1C7EA6E91AFA08FE664B38_2
-X-Control-Analysis: str=0001.0A006396.67E2AD5A.0038,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D57916AB6C;
-	Tue, 25 Mar 2025 14:19:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1742908765;
+	s=arc-20240116; t=1742908736; c=relaxed/simple;
+	bh=l8iqz2n3evM97wrxbe1qrRE1+6og2+3pk8V4qJCu+ZA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fwL3P6zalQWXUHsxFBjsY/uW0+tnra/e6OWL0v5N1gLj0M6yHJ4aNSRJd+GQNKJWQHTNxuhgZ8p318UpTZcJ1fFPi//nQwQqQnXmVrUdHh5SQIrixY/9Bs/NP1MPgu+Q2XUG3/ju1WsfZs4otQGWir+iTLYUT9Vm3eArkpnKxYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FPxBmddj; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id BDB182FC0059;
+	Tue, 25 Mar 2025 14:18:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1742908730;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8UycVuZiVNJB4WUINByx61NDOE4aSQezliwEn5u6VQ8=;
-	b=QT45mSxuM3bcqPqUbEzB60yOjsQ5VvM2MdE50KKc685znvgYCijep6FbiEbtaehC6jeAP/
-	SzcAom3TRCUoVz5tRUvkJ8hv3bOTmzrgBfyyJSSjgEsBQus3WpNmnThIhF3LkWUPeBz72q
-	LPR5YohyA4sdyU0F2L+NNWvDq30Aoi4uONEcRXTzrjS9fRL69bhGuYiwh7lxhVd1C2lTaE
-	klH0ZyzBA1OzIefw+9rv9ujPVnzH46p67+tuFKZtLCrrmLEztDwc7nux12hstszAgRheyf
-	4PQW5YgnoWukrmpte0yuKJdUqA+RUFlBFIUsjb8TMz1YVO/1I43yXEjcYFmbYQ==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3] dt-bindings: usb: dwc3: Allow connector in USB controller node
-Date: Tue, 25 Mar 2025 14:18:48 +0100
-Message-ID: <20250325131848.127438-1-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.49.0
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QsV4a2PwVAcbUA2lXNzgr9uW5puLLLKVsrx3FzBD+vQ=;
+	b=FPxBmddjlRrgl35pjUbhSTNjc4Wr9J22HN5NEtM7NxfekqCAUCJ19Xgl1rJ/StkGrkgvlE
+	i8hybybbrTP4LW/xRlTqEN7rsFIYWdzRKL7fUney3pyalYjiIgNFExO+ZHZadCvyl7OVVV
+	cavd7pZoxOGLNA+4rCeg4zvnXMfP3qg=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <f95febec-4643-4bc0-bcff-b9ac34b65464@tuxedocomputers.com>
+Date: Tue, 25 Mar 2025 14:18:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+From: Werner Sembach <wse@tuxedocomputers.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+ <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
+ <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
+ <f742f82e-d533-431f-bf64-01cec4bead09@tuxedocomputers.com>
+ <bd05271b-eefc-4a4d-90aa-9345e8d01807@redhat.com>
+ <9e53c2e9-3393-463d-915f-d70f3139893f@tuxedocomputers.com>
+Content-Language: en-US
+In-Reply-To: <9e53c2e9-3393-463d-915f-d70f3139893f@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Allow specifying the connector directly in the USB controller node, as
-allow in other USB controller bindings and commonly used for
-"gpio-usb-b-connector". Linux already supports this without driver
-changes.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
-
-Changes in v3:
-- Rebased onto linux-next (moved to the new snps,dwc3-common.yaml)
-- Extended commit message
-- Pull patch out of "TQ-Systems TQMa62xx SoM and MBa62xx board" series,
-  as the series will need some more rework, and this patch should be
-  good to go independently (and should go through the USB tree, unlike
-  the rest of the series)
-  In the submissions of the previous versions, the linux-usb list was
-  forgotten by accident.
-
-Changes in v2:
-- Collected ack
-- Rebased onto v6.13-rc1
-
- Documentation/devicetree/bindings/usb/snps,dwc3-common.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3-common.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3-common.yaml
-index 71249b6ba6168..6c0b8b6538246 100644
---- a/Documentation/devicetree/bindings/usb/snps,dwc3-common.yaml
-+++ b/Documentation/devicetree/bindings/usb/snps,dwc3-common.yaml
-@@ -390,6 +390,12 @@ properties:
-     maximum: 8
-     default: 1
- 
-+  connector:
-+    $ref: /schemas/connector/usb-connector.yaml#
-+    description: Connector for dual role switch
-+    type: object
-+    unevaluatedProperties: false
-+
-   port:
-     $ref: /schemas/graph.yaml#/properties/port
-     description:
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
-
+Am 18.03.25 um 11:20 schrieb Werner Sembach:
+> Hi Hans
+>
+> Am 17.03.25 um 23:22 schrieb Hans de Goede:
+>> Hi,
+>>
+>> On 17-Mar-25 5:47 PM, Werner Sembach wrote:
+>>> Hi again,
+>>>
+>>> Am 17.03.25 um 13:06 schrieb Hans de Goede:
+>>>> Hi,
+>>>>
+>>>> On 11-Mar-25 19:10, Werner Sembach wrote:
+>>>>> Hi Hans, Hi Dimitry,
+>>>>>
+>>>>> resending this too on the v2 to not cause confusion:
+>>>>>
+>>>>> Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
+>>>>>
+>>>>> Am 11.03.25 um 19:06 schrieb Werner Sembach:
+>>>>>> Currently only F23 is correctly mapped for PS/2 keyboards.
+>>>>>>
+>>>>>> Following to this table:
+>>>>>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf 
+>>>>>>
+>>>>>>
+>>>>>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
+>>>>>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch 
+>>>>>> binds the
+>>>>>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU 
+>>>>>> keycode is
+>>>>>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+>>>>> I think what the firmware vendor actually wanted to do was to send 
+>>>>> ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line 
+>>>>> with, for example, the copilot key being implemented as shift+super+f23.
+>>>> I agree that that seems to be the intent.
+>>>>
+>>>>> Following this, my suggestion is to do this remapping and handle the rest 
+>>>>> in xkeyboard-config
+>>>> xkeyboard config already contains mappings for F13 - F18 and F20-F23 in
+>>>> /usr/share/X11/xkb/symbols/inet
+>>>>
+>>>> So all that needs to happen there is map FK19 -> F19 and FK24 -> F24.
+>>>>
+>>>> And then teach KDE + GNOME that ctrl+super+f24 means touchpad-toggle.
+>>> Alternative suggestion, again following how the copilot key is implemented:
+>>>
+>>> key <FK19>   {      [ F19 ]       };
+>>> [...]
+>>> key <FK23>   {      [ XF86TouchpadOff, XF86Assistant ], type[Group1] = 
+>>> "PC_SHIFT_SUPER_LEVEL2" };
+>>> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = 
+>>> "PC_CONTROL_SUPER_LEVEL2" };
+>>>
+>>> Then only xkb has to be touched again, but not KDE and GNOME.
+>> Ah I did not know you could do this. Yes this sounds like a very good
+>> plan wrt the xkbconfig changes and then indeed we can do all the handling
+>> in xkbconfig.
+>>
+>>
+>>>> We could maybe get away with also dropping the weird mappings for FK13 - FK18
+>>>> and map those straight to F13 - F18, but we need the special mappings
+>>>> for F20 - F23 to stay in place to not break stuff.
+>>> Good question
+>>>
+>>> XF86Tools launches system settings on KDE.
+>> Right, but XF86Tools is also send for KEY_CONFIG which makes more sense,
+>> the question is are there any devices actually sending KEY_F13 in
+>> a case where they really should be sending KEY_CONFIG instead.
+>>
+>> Note this is unrelated to the XF86TouchpadToggle thing though, just
+>> something which I noticed while looking at things.
+>>
+>>> Looking at the links in the git log of xkeyboard-config (commit 
+>>> 1e94d48801bf8cb75741aa308d4cdfb63b03c66c and 
+>>> 01d742bc5cd22543d21edb2101fec6558d4075db) these seems to be device specific 
+>>> bindings that got accepted in the default config because the keys where 
+>>> unbound before.
+>> I see, so it might be worthwhile to try and fix these, but in
+>> a separate pull-request from the:
+>>
+>> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = 
+>> "PC_CONTROL_SUPER_LEVEL2" };
+>
+> ack, I will create a MR as soon as the freedesktop gitlab migration is finished.
+https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/816
+>
+> Best regards,
+>
+> Werner
+>
+>>
+>> addition.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+>>
 
