@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-575770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0950DA706FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:35:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DADA7070A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9631895EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE645176FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFB025DAFA;
-	Tue, 25 Mar 2025 16:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA1625EFB9;
+	Tue, 25 Mar 2025 16:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="IFWRq18x"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jonbwN5g"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D046212E1CD;
-	Tue, 25 Mar 2025 16:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BEB25D91E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742920361; cv=none; b=F5fJnrBoOukWxgA+Gsoaa0gdV64CMtbc7CRVE4UKlBcB2qF4eyv6CQrvOeStdJsGUjPEQKXGnePFBb4/8jzNAVPS+clb6jqReCK3P5i/eRBChKPfps2EFLyOhwIS0gbWpmqdopW035KlI4/S2J9gTxaOqw6jhyK4sCvYC8Pev2c=
+	t=1742920372; cv=none; b=cB2AkNSr/wmNSTDMWqzF8SIM+L1B94ZsHcynqf1ATfkykBj543SpZd+WF6YH2lG9J/BJYidROlmwTuB5pC7CVfPC90hQeKH9dKvNmcKaOt+AVljldQ4oTy25FDRllP2jy9+RVRzfynDpCPGlr/D1LTYA3BkenFMGBrmeFnK1Uvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742920361; c=relaxed/simple;
-	bh=vl9PHw3P9CnPqxmaj5vO84SgXuxPVC3cqOewI6IQ9AU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZ6R3nInsLL1YOk8GNyhQgpywey2Mt5RmBMhyB3HllAr1V0q5rK6NViPWpMKnTNujOOdGj+hJl2IB26F7esC/0O9ImWta7Bt4imveruekcxSaAfJXcBqUkl4Vm/z13La/LaDA1m2Cu8vW8TlMRX/LRHNmsCyrqiwZAs0p0+lp10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=IFWRq18x; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedora.intra.ispras.ru (unknown [10.10.165.13])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 4161C448787A;
-	Tue, 25 Mar 2025 16:32:29 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 4161C448787A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1742920349;
-	bh=xtjQNCIG90SkONBmw2cPQ+VxbDhw9iY6/7ps8Q1kb8g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IFWRq18xmsCHUVqvKa7vP77Ae03kPGXNyvbr33sDvejaQOUZiEnIwgVm7sloBCkNh
-	 ACyuNMbQ/EdaLzr9MpGbAB6oFmHrhIetXs4QH+sTk2cIyCUl49rRkkURmEdd6GJgSc
-	 zrN+6Vc4R6fsIE2EfmP4Ll3oxPFOwrWqNd97DEdk=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	David Woodhouse <dwmw2@infradead.org>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] jffs2: check jffs2_prealloc_raw_node_refs() result in few other places
-Date: Tue, 25 Mar 2025 19:32:13 +0300
-Message-ID: <20250325163215.287311-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742920372; c=relaxed/simple;
+	bh=NSec+iBcn7Q/AJxbbFrWQy9WdryMOTeKoH6dL/cAgaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BvLyHCpasSz6OWQX19h/8hXLzt20ccpNQFGNl6gmdudF/BBCHOqv1POMgGMryWUFxOXajJO4DcDIqg0IaHhuj+jNsuZcT7Pgx8hFXvnFyDeUstSTegP3CkDkacd7QkyDiGnJEQ7oNFFA6lB5mnhylBWZkC+K7GLhSd86uS/N7IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jonbwN5g; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e8be1bdb7bso9161353a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742920369; x=1743525169; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4odgKTupI6gjEJZNLy+RWifMVtAgdHPam3xHzX2/tcs=;
+        b=jonbwN5gg+cGVLHEdKFljZjUVpHzPCr8Wh/CWCxCCy+cApKmwdtds7xFT++RVoW7Om
+         JARUJQV0OIY182AeJZe/hw2+CBpnXGomuuluNfCsVpwgoMyxkgut/EEO6Q2tg7bdqYmH
+         kzKzI1sSUNMzm3+XnnmnCEt0aNIh/xKCvsI+YMsSOt6T4uy3hVX6YGoEBD6s3qSQ9653
+         3GcDt6LvhOJBVTkiJjCZ6n9AsJEptqsGY1HQrOJxfiiB7pKJ3wrl02bFhpjtrt7r5dQn
+         Ygf7zENNUFqD5cI7ID9Wu1Zk+sWJpHE6k7fejwnxEucTJoFLbiApf0RctQGtPC7FpPYq
+         m5EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742920369; x=1743525169;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4odgKTupI6gjEJZNLy+RWifMVtAgdHPam3xHzX2/tcs=;
+        b=ODSVvulLzZs8A5fpfQrJD409OGn+4qx5qbRpfWFZaS/+J2JBCgZ6khnz3GOBUMcHeC
+         Rj6fB2ZBbOVqxPCQBjXbqd/M/B7HUsGNRb6raTrkme31PK3NPaQD9u2VZb0GHnq2HFYB
+         dcvbpXffdHBN9OnvjkqDKm834RQZ3sib3SGd2GmvsT8LzeB4PuaNeSZ3qGWJECaNvrG9
+         rZvEA629LhFT2WA/VQe7j7+31c2wvNzN+34/A3oH0gxRK4SLm0Vogzf87i8UVtj0yRlY
+         rVP4psGX88i0MQDqcclXsJ8BYaBLhyQ06OzkntuMG9bqpYLQdWJNZLY9KASzgfLmdpI0
+         qZqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBfC9H7j2pIiUP+bx9O9INTxC+1kQhZmLOgCjsxiGEo0+gtfy4nJaAWRIlWOmXEHg9ZgHVaj7NjhzRRmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoqqL+ur/n4sWTREPPEKYZlo/S8ZAVDWJaw6tzC2OyhOicLBpO
+	yPcOu0TFQutvTqHvTUzM2IzFX1so464rbvfggVldlqQsaeBh5CHVzue0scgm
+X-Gm-Gg: ASbGnctcVhQglPDVRTcJnPxy3SdgGyoCUupq6cHVRTVBGL5NCuvUPQ0NMXSLt4T0uMO
+	dOJUVZZ1aBajfAg3iZrfYRynDHj+LE+zAs5E4PYTiUDEatNrLtrwMYf5vMMWpvPl2orxY9qQfQj
+	YpnnD5z4nysXoZTdeF1GxB20kuPVAlK87vIuWPyTCdn/f1KFANyFCD1KBfBq0rWvAl3GhNPB3NB
+	4/reiSdY/bspNSt6br3Tek6PGUY+YA03YvbYIiPDiyQoozlVWTKadJmk+1cPoTXpN8hEuf7Akk1
+	LWOin6O4GVBoIm9NKtAw9hNIbt3JfXGgnIXn9qCPECCPSkzevA==
+X-Google-Smtp-Source: AGHT+IHVgHE8zQfANSq9zhdazHfrmTIr8aqswsXlpCS61/JJ0ZXz7XZidItYALPPaLUJjU2St1EgHA==
+X-Received: by 2002:a05:6402:13d0:b0:5eb:9673:feb with SMTP id 4fb4d7f45d1cf-5ebcd4f8250mr15323553a12.25.1742920368472;
+        Tue, 25 Mar 2025 09:32:48 -0700 (PDT)
+Received: from HP-650 ([105.112.117.141])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c7157sm8011720a12.60.2025.03.25.09.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 09:32:48 -0700 (PDT)
+Date: Tue, 25 Mar 2025 17:32:31 +0100
+From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	outreachy@lists.linux.dev, Julia Lawall <julia.lawal@inria.fr>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: remove braces around single statements
+Message-ID: <Z+Lan0xeQd3m5ejY@HP-650>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fuzzing hit another invalid pointer dereference due to the lack of
-checking whether jffs2_prealloc_raw_node_refs() completed successfully.
-Subsequent logic implies that the node refs have been allocated.
+The code contains braces around single statements in the if blocks
+which are unnecessary according to the Linux kernel coding style.
 
-Handle that. The code is ready for propagating the error upwards.
+Remove the braces to improve readability and maintain consistency.
 
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 PID: 5835 Comm: syz-executor145 Not tainted 5.10.234-syzkaller #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-RIP: 0010:jffs2_link_node_ref+0xac/0x690 fs/jffs2/nodelist.c:600
-Call Trace:
- jffs2_mark_erased_block fs/jffs2/erase.c:460 [inline]
- jffs2_erase_pending_blocks+0x688/0x1860 fs/jffs2/erase.c:118
- jffs2_garbage_collect_pass+0x638/0x1a00 fs/jffs2/gc.c:253
- jffs2_reserve_space+0x3f4/0xad0 fs/jffs2/nodemgmt.c:167
- jffs2_write_inode_range+0x246/0xb50 fs/jffs2/write.c:362
- jffs2_write_end+0x712/0x1110 fs/jffs2/file.c:302
- generic_perform_write+0x2c2/0x500 mm/filemap.c:3347
- __generic_file_write_iter+0x252/0x610 mm/filemap.c:3465
- generic_file_write_iter+0xdb/0x230 mm/filemap.c:3497
- call_write_iter include/linux/fs.h:2039 [inline]
- do_iter_readv_writev+0x46d/0x750 fs/read_write.c:740
- do_iter_write+0x18c/0x710 fs/read_write.c:866
- vfs_writev+0x1db/0x6a0 fs/read_write.c:939
- do_pwritev fs/read_write.c:1036 [inline]
- __do_sys_pwritev fs/read_write.c:1083 [inline]
- __se_sys_pwritev fs/read_write.c:1078 [inline]
- __x64_sys_pwritev+0x235/0x310 fs/read_write.c:1078
- do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x67/0xd1
+Reported by checkpatch:
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+WARNING: braces {} are not necessary for single statement blocks
 
-Fixes: 2f785402f39b ("[JFFS2] Reduce visibility of raw_node_ref to upper layers of JFFS2 code.")
-Fixes: f560928baa60 ("[JFFS2] Allocate node_ref for wasted space when skipping to page boundary")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
 ---
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Similar to https://lore.kernel.org/linux-mtd/20250307163409.13491-2-a.sadovnikov@ispras.ru/
-but touches two remaining places.
-
- fs/jffs2/erase.c | 4 +++-
- fs/jffs2/scan.c  | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
-index ef3a1e1b6cb0..fda9f4d6093f 100644
---- a/fs/jffs2/erase.c
-+++ b/fs/jffs2/erase.c
-@@ -425,7 +425,9 @@ static void jffs2_mark_erased_block(struct jffs2_sb_info *c, struct jffs2_eraseb
- 			.totlen =	cpu_to_je32(c->cleanmarker_size)
- 		};
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index c60e179bb2e1..b17b295e8d3c 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -56,9 +56,9 @@ int _ips_leave(struct adapter *padapter)
+ 		pwrpriv->ips_leave_cnts++;
  
--		jffs2_prealloc_raw_node_refs(c, jeb, 1);
-+		ret = jffs2_prealloc_raw_node_refs(c, jeb, 1);
-+		if (ret)
-+			goto filebad;
+ 		result = rtw_ips_pwr_up(padapter);
+-		if (result == _SUCCESS) {
++		if (result == _SUCCESS)
+ 			pwrpriv->rf_pwrstate = rf_on;
+-		}
++
+ 		pwrpriv->bips_processing = false;
  
- 		marker.hdr_crc = cpu_to_je32(crc32(0, &marker, sizeof(struct jffs2_unknown_node)-4));
+ 		pwrpriv->bkeepfwalive = false;
+@@ -549,9 +549,8 @@ void LeaveAllPowerSaveMode(struct adapter *Adapter)
  
-diff --git a/fs/jffs2/scan.c b/fs/jffs2/scan.c
-index 29671e33a171..62879c218d4b 100644
---- a/fs/jffs2/scan.c
-+++ b/fs/jffs2/scan.c
-@@ -256,7 +256,9 @@ int jffs2_scan_medium(struct jffs2_sb_info *c)
- 
- 		jffs2_dbg(1, "%s(): Skipping %d bytes in nextblock to ensure page alignment\n",
- 			  __func__, skip);
--		jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
-+		ret = jffs2_prealloc_raw_node_refs(c, c->nextblock, 1);
-+		if (ret)
-+			goto out;
- 		jffs2_scan_dirty_space(c, c->nextblock, skip);
+ 		LPS_Leave_check(Adapter);
+ 	} else {
+-		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off) {
++		if (adapter_to_pwrctl(Adapter)->rf_pwrstate == rf_off)
+ 			ips_leave(Adapter);
+-		}
  	}
- #endif
+ }
+ 
 -- 
-2.49.0
+2.34.1
 
 
