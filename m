@@ -1,133 +1,158 @@
-Return-Path: <linux-kernel+bounces-575705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050FDA70605
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:06:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43ECA70609
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:07:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97CE3A6AD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B70D3A683E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF6E251790;
-	Tue, 25 Mar 2025 16:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B674B215060;
+	Tue, 25 Mar 2025 16:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="esKtqLEC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mBJCjyD8"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="wUfVeTSd"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B55C13D8A0;
-	Tue, 25 Mar 2025 16:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD217253B41;
+	Tue, 25 Mar 2025 16:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918780; cv=none; b=ee9FtrbrI6O/krMFCKtuoqw8uKwufbKSiuZZ6vSZn3CatKmY2FvZ+3mjAlqvhRduUlxpx25VVipMcaqKysI8Z4lcTx3KczrLxzwgYFNv+tV6VBvL3nJGrqKtiVnOYjBj4MXWkwlPoDMu2iwIbrye6qfzI+h1THx7GUm6PzYWgSU=
+	t=1742918848; cv=none; b=l0m5uRY+tUaqxI0WyCkdQgP2QOed0ni+v+zrId2SHjWQQCHTHgTqzIBNJkU/HLhbHnjPeOGYfnqu24DP03p5C3m4topAwgh1qsZOkgUG5HjYoohZyAjOSF/5YO5Qt75FsajUu9z488WLExyVGamRyrtV55AcNu2JG90e7tQVuzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918780; c=relaxed/simple;
-	bh=wni3V1/bvtXy3LA3Xm4VzfKB0NyrZZt/omgbUesO1Q4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=u82HrK2A7pcfx8zoQjh63WuJFzJrvBwODv0QhtUPs7eTdxluCkh+qRFuMse1DkTlSCxl8R17ldNMB+MuTsBpFATJb5avQpxGsfAmRF543d42g4VY2wqK2tNxjrpIIR1DSY9Yu/KK/8wx/Nhn4khqJYY6LLHFQbhRTR1PzL+BwjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=esKtqLEC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mBJCjyD8; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id CDF3B2540092;
-	Tue, 25 Mar 2025 12:06:16 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Tue, 25 Mar 2025 12:06:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742918776;
-	 x=1743005176; bh=i5gIEhSWhDc/CD1KGDEUUBNtkR8QlRiEolUuUnkGdoo=; b=
-	esKtqLECGr8TnPL6JwLrbJMgFt9hAUdzWjtnA1hBjI7LokNiM1mzUpl4lmq1IBrA
-	LJOjm0W/xiAXT83nARr3cfy3Q2a4MvS/trAgesz2F09GJhWw3dNBStLevaETknjb
-	iU9xtTHQL3k3/28ZWAkT1TVPsd1/CyTI1OxtUra4Mz6AVj1d/yxkOu+cTZbZaptB
-	96qG1xIsLja+IX8lLTK+Ly8IeAd9Io+MziiKSz0obPJiLWlpgqn8c9zNDNg5Pc19
-	Dl3SNSgKjJwYJhViGL+CiICkbag2Pq3ahdFQM1AvZBrfaKEXeuMMAXqvcbTZXlO7
-	o0sxoD30kRjiA/VcUfVcKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1742918776; x=
-	1743005176; bh=i5gIEhSWhDc/CD1KGDEUUBNtkR8QlRiEolUuUnkGdoo=; b=m
-	BJCjyD8cynsrLMJbTNALq1x9FuqAyfDCCxxqTW2tnG5K+Pkxr0gSBNcfs8xLOmFo
-	TiK0wZlWzkjl1OiTk1DxCewKkq/lPfotYFsVusKCNtsXlxGde9vvbLGUTw0DRc8W
-	sdzxFcAtlCYJbW9aeupmTAJSU7h7SdJ8BvpnvoRnKKqrNTaRyozQqHYCXWLAaDYX
-	2MNIB62+sDMypBkhAXp18sH+dnMoIDR6BJTfYJ1mT4jyvlmGkUq/Ef7W1Uvqvlcv
-	oHzWu5EiuhXnoxyCyshQRipCJtNWPfX4QIWS6N9oC07Us81ayEO+SynOxDsoT5ip
-	+25mIyqgQgDU6dWPgn3TQ==
-X-ME-Sender: <xms:eNTiZwQlPft4XSGRBXtVoJhgFD-vKRjCjv4oPdAhBskETnzprfZGtw>
-    <xme:eNTiZ9x28MeQ3cTw5PO5lrE7uhedBL9lD7oIfOxTU8hc6L2AUwszexsSBF4-LT1Y9
-    AxkH4qVgslJrAbGEv8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeftdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepughvhihukhhovhesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepvghlvhgvrhesghhoohhglhgvrdgtohhmpdhrtghpthht
-    ohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhgrshgrnhdquggvvh
-    esghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrtghh
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:eNTiZ92bXH6QFbxQO7HBGMa0g4GARgz_nwJE28LhKcPrr6RmFCwNAw>
-    <xmx:eNTiZ0BXFpzb0QGtoIFoaLaggqk1VxeUOnLPOsKLZn4NPKnEZxM-Aw>
-    <xmx:eNTiZ5hqKrPp0M7VQwCUhrF7Pxau2BZKq4SuyuPhjyxp0dwGmUgcCw>
-    <xmx:eNTiZwqP2vlLz9nuyx9gTFNWMhpW2MI75QxDR3nefI3irdpX1BxA7g>
-    <xmx:eNTiZ3YkwhbNrX_V5IcNwWphY-Fxw97ZuQL3WccceM9V_GtiEYOel2E2>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 61E852220072; Tue, 25 Mar 2025 12:06:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742918848; c=relaxed/simple;
+	bh=AfeinVZchvMBv438BnpRosunMeQS/bsLf199sZ53/es=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=hBOJPpsMdL8T+SPCD9bkPE5foLXGZDocFDSfPMhY5mEyIz2rPCX+nk6sZalJUpMUxDDlDzzaXhbMNnDDRR4f8+QmM03VM8ciifwfxqpBsStoFQB/wcKwv+Hl3gKoETWBDeinvYPJ5M9NTmrtE9S6IkTTKOObSH2HpimJb3jqtoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=wUfVeTSd; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T022a60d36d02d9f7
-Date: Tue, 25 Mar 2025 17:05:55 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jann Horn" <jannh@google.com>, "Marco Elver" <elver@google.com>,
- "Dmitry Vyukov" <dvyukov@google.com>
-Cc: kasan-dev@googlegroups.com, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <26df580c-b2cc-4bb0-b15b-4e9b74897ff0@app.fastmail.com>
-In-Reply-To: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
-References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com>
-Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
-Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1742918837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QCdOLNdtvvawO2bLA9Pq/xQEF8vw52RF0Zlq/SJ2c7c=;
+	b=wUfVeTSdLHzAFhu0xYsljK9AL/NIapgRddAqJIa07lxsXIGlgJUt3Gwqs7VSjnfvqky12j
+	tofRAlyjRtNI2LmU9bPpPFPuMlaDzj86ewGY3BvH6YutxsxM7xNtwI+mTniyo6HophI5if
+	2CD2b+wWt6fScbtF7D/6O1+vUEyIO9TQCThj9NzV14uxa6pae/cESsldjNjMy5MOZUXjGP
+	7uRZ51L7//TMWgAO8rXlmiEqlQaLIDfDzbaMpkT30JAE64LNdRGc2f2bxvH+edlBXO8Jlx
+	cxEo5Uwr+FAepTbwxvv1IpMwxp9QKmLNUGwxqcXxiTH9AwDSKI4rsQFwW8AN3w==
+Date: Tue, 25 Mar 2025 17:07:16 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 6.6 00/77] 6.6.85-rc1 review
+In-Reply-To: <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
+References: <20250325122144.259256924@linuxfoundation.org>
+ <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
+Message-ID: <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Tue, Mar 25, 2025, at 17:01, Jann Horn wrote:
-> Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer infrastructure")
-> Signed-off-by: Jann Horn <jannh@google.com>
+Hello Naresh,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+On 2025-03-25 16:07, Naresh Kamboju wrote:
+> On Tue, 25 Mar 2025 at 18:05, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>> 
+>> This is the start of the stable review cycle for the 6.6.85 release.
+>> There are 77 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, 
+>> please
+>> let me know.
+>> 
+>> Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
+>> Anything received after that time might be too late.
+>> 
+>> The whole patch series can be found in one patch at:
+>>         
+>> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc1.gz
+>> or in the git tree and branch at:
+>>         
+>> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
+>> linux-6.6.y
+>> and the diffstat can be found below.
+>> 
+>> thanks,
+>> 
+>> greg k-h
+> 
+> 
+> Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
+> stable-rc 6.6.85-rc1
+> 
+> First seen on the v6.6.83-245-gc1fb5424adea
+>  Good: v6.6.84
+>  Bad: 6.6.85-rc1
+> 
+> * arm64, build
+>   - gcc-13-defconfig
+> 
+> Regression Analysis:
+>  - New regression? yes
+>  - Reproducibility? Yes
+> 
+> 
+> Build regression: arm64 dtb rockchip non-existent node or label 
+> "vcca_0v9"
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ## Build log
+> arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+> (phandle_references):
+> /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
+> 
+>   also defined at 
+> arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
+> 
+> ## Source
+> * Kernel version: 6.6.85-rc1
+> * Git tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * Git sha: c1fb5424adea53e3a4d8b2018c5e974f7772af29
+> * Git describe: v6.6.83-245-gc1fb5424adea
+> * Project details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/
+> 
+> ## Build
+> * Build log:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/log
+> * Build history:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27763720/suite/build/test/gcc-13-defconfig/history/
+> * Build details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/
+> * Build link:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/config
+> 
+> ## Steps to reproduce
+>  - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+> --kconfig defconfig
 
-> ---
-> This is a low-priority fix. I've never actually hit this issue with
-> upstream KCSAN.
-> (I only noticed it because I... err... hooked up KASAN to the KCSAN
-> hooks. Long story.)
->
-> I'm not sure if this should go through Arnd's tree (because it's in
-> rwonce.h) or Marco's (because it's a KCSAN thing).
-> Going through Marco's tree (after getting an Ack from Arnd) might
-> work a little better for me, I may or may not have more KCSAN patches
-> in the future.
-
-I agree it's easier if Marco takes it through his tree, as this
-is something I rarely touch.
-
-If Marco has nothing else pending for 6.15, I can take it though.
-
-       Arnd
+This is caused by another patch from the original series failing
+to apply due to some bulk regulator renaming.  I'll send backported
+version of that patch soon, which should make everything fine.
 
