@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-574883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76BBFA6EB15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:07:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CCAA6EB1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:08:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 955707A3294
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517131630D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209ED253B68;
-	Tue, 25 Mar 2025 08:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93851C6BE;
+	Tue, 25 Mar 2025 08:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAiLQstl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGWLAPQI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752D5214210
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005B7149E13;
+	Tue, 25 Mar 2025 08:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890017; cv=none; b=pS0xykeMAwPwZWxyKlSMCpC/o2rTV9UX29jd1dNtjSD6LG5B1ADJKt/5s6aCn6qT9NTm/jVdwmGyQuWtSh4OuQIdCf06qmSyliOEfq5gsJ9Ik1p99d2amZaS04mPhXSkopPeUJyVEalzkuabS5/TKZBn1j6jFF3RWjqTIBHMHXI=
+	t=1742890060; cv=none; b=U4KwnV6BBbBw7X5OBjzpMvu5lnhaTygs4P1GiKMr+Q5rT/uNzn7Uz07Bog4CMxcy6dM1B6nZlDWjYw+vKgIs7DEUQYEiVM/IodzNCTZmxosUgijtzQZs8+k5fNn3ze2NXdLsWJlPOZrMOIMqQNYdSfoHJxA57lHjGIWpVGb/2hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890017; c=relaxed/simple;
-	bh=aK4cVtkeCzV7Vtkp8T5BWdByXypevspHRuz/pAuSwYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gE//xDR2FWz2gzuK95gfELfBhJTE/X06IqL8U7CkBR7AFIK1NxunuNiZR4vYx0ch/DIjY0fy8jnukeBbXhVKQabICIy6Gc+HWOH+vGUoH61GwQamdn5gZJxLkb/K0fcSg2SuwsSCpUigMvIKBMNXs4pAfMqLNwxxngjIA5L5Ny8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAiLQstl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78C5C4CEEF;
-	Tue, 25 Mar 2025 08:06:55 +0000 (UTC)
+	s=arc-20240116; t=1742890060; c=relaxed/simple;
+	bh=52zyLFG2TvCbXGWeu7jwjKlgPApCjRDfZRYPLHcf0kA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUCHVMMyj3AUsoMV3HI/wOaTgi+dmd0jHW9+vmygXhx3YFDM5+in8j1JJcBr3zXT/edCqL6IxqbCrmFwxPvZaELnV0iKwKnGK00R1Lbtwc0qunIhdCwLqzNR2s6pF1jiUizhA3FCUHCaVS4rY286DiYKlijosB17W8JU6vkAeeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGWLAPQI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 425BEC4CEE8;
+	Tue, 25 Mar 2025 08:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890017;
-	bh=aK4cVtkeCzV7Vtkp8T5BWdByXypevspHRuz/pAuSwYI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oAiLQstlI4Sb3/grA+mB67yXAM8b7Hxv/qSQG0qoCFUffhSwOTqxkt2g2CSLj1lYa
-	 FTtgwSEcAGDuCxJrnjygWpLPM48jA026JD2TvzMK1Lv42ixb2B3c4p/BJc8swWRCIE
-	 0YRi3kCd8iHuyea8Xpf+NQc1nrFWKIim2iBXgnJ92kKjoc0kXjZvuIO0TFgB841qqH
-	 iubAJUIT5/6Ywj188fKtk3Yd4Z0Woz4AMEib11XiwuFv817j59pecV7lKl/YmTgFES
-	 X6pKXs1bwPhui1H3J0e3+8DljOElw4p+m9M4fIV466mpnLl9Klz6EfpMtaHgbTM3PV
-	 4WvDEcnqJj4dA==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH v2 2/2] f2fs: zone: fix to avoid inconsistence in between SIT and SSA
-Date: Tue, 25 Mar 2025 16:06:46 +0800
-Message-ID: <20250325080646.3291947-2-chao@kernel.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-In-Reply-To: <20250325080646.3291947-1-chao@kernel.org>
-References: <20250325080646.3291947-1-chao@kernel.org>
+	s=k20201202; t=1742890059;
+	bh=52zyLFG2TvCbXGWeu7jwjKlgPApCjRDfZRYPLHcf0kA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XGWLAPQIxAyQzTTYb9FHs6cVINnm2qZCLgunp6BJ9ro3NYEq4tZr0S8Jn95XW5B7u
+	 1e8mwQdbKe61PmUmf6LIB8RMT68k7fLA4wHZGPs3Zg2d4A08WbZYuxkBuCPQ30oAon
+	 r/u5VpDBZOcJF6JiapyN8jGszWlQik3UNmr5kvuttzbtgN6Fn05mvVunzAvq+hUMgU
+	 6ck7UJPDJPHIL25DOVUu8n0+3NTtFk5VVGiBzp++Em/ubrvtOTY215KGzYtZe08hoQ
+	 68Ogxmc0pKw2sufmyjblMID/pFKF9kjcP8HTBN655co24v+TVhMivyQJj1sXI0lMy/
+	 sncDrAB0DNPnw==
+Message-ID: <60732c52-7774-48c6-8ec8-44ae82d86267@kernel.org>
+Date: Tue, 25 Mar 2025 09:07:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: exynos-acpm: allow use during system
+ shutdown
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org>
+ <20250324-acpm-atomic-v2-2-7d87746e1765@linaro.org>
+ <be580155-372f-445b-b9d1-2dc4fbf1c3a1@kernel.org>
+ <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <974ddabee5a2a43b9d32f382ec4b13afab066f1a.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-w/ below testcase, it will cause inconsistence in between SIT and SSA.
+On 25/03/2025 09:01, André Draszik wrote:
+> Hi Krzysztof,
+> 
+> On Tue, 2025-03-25 at 08:57 +0100, Krzysztof Kozlowski wrote:
+>> On 24/03/2025 16:34, André Draszik wrote:
+>>> +static bool acpm_may_sleep(void)
+>>> +{
+>>> +	return system_state <= SYSTEM_RUNNING ||
+>>> +		(IS_ENABLED(CONFIG_PREEMPT_COUNT) ? preemptible() : !irqs_disabled());
+>>> +}
+>>> +
+>>>  /**
+>>>   * acpm_dequeue_by_polling() - RX dequeue by polling.
+>>>   * @achan:	ACPM channel info.
+>>> @@ -300,7 +314,10 @@ static int acpm_dequeue_by_polling(struct acpm_chan *achan,
+>>>  			return 0;
+>>>  
+>>>  		/* Determined experimentally. */
+>>> -		usleep_range(20, 30);
+>>> +		if (!acpm_may_sleep())
+>>> +			udelay(10);
+>>> +		else
+>>
+>> ... and what do you do if IRQs get disabled exactly in this moment? This
+>> is just racy. You cannot check for a condition and assume it will be
+>> valid for whatever time you want it to be valid.
+>>
+>> What happens if system_state is changed to shutdown in this particular
+>> moment? How did you prevent this from happening?
+> 
+> Yes, and that's also what the I2C subsystem is doing, AFAICS, see
+> i2c_in_atomic_xfer_mode() and its use. This is to make a very
+> specific corner case work, similar to I2C which has to deal with
+> the same issue during shutdown.
 
-create_null_blk 512 2 1024 1024
-mkfs.f2fs -m /dev/nullb0
-mount /dev/nullb0 /mnt/f2fs/
-touch /mnt/f2fs/file
-f2fs_io pinfile set /mnt/f2fs/file
-fallocate -l 4GiB /mnt/f2fs/file
+But they don't have a choice so they try to do the best to avoid
+sleeping. And it is a subsystem, not a driver, which means their
+patterns are sometimes special. Drivers should not replicate subsystem
+workarounds.
 
-F2FS-fs (nullb0): Inconsistent segment (0) type [1, 0] in SSA and SIT
-CPU: 5 UID: 0 PID: 2398 Comm: fallocate Tainted: G           O       6.13.0-rc1 #84
-Tainted: [O]=OOT_MODULE
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-Call Trace:
- <TASK>
- dump_stack_lvl+0xb3/0xd0
- dump_stack+0x14/0x20
- f2fs_handle_critical_error+0x18c/0x220 [f2fs]
- f2fs_stop_checkpoint+0x38/0x50 [f2fs]
- do_garbage_collect+0x674/0x6e0 [f2fs]
- f2fs_gc_range+0x12b/0x230 [f2fs]
- f2fs_allocate_pinning_section+0x5c/0x150 [f2fs]
- f2fs_expand_inode_data+0x1cc/0x3c0 [f2fs]
- f2fs_fallocate+0x3c3/0x410 [f2fs]
- vfs_fallocate+0x15f/0x4b0
- __x64_sys_fallocate+0x4a/0x80
- x64_sys_call+0x15e8/0x1b80
- do_syscall_64+0x68/0x130
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x7f9dba5197ca
-F2FS-fs (nullb0): Stopped filesystem due to reason: 4
+> 
+> Would you have a better suggestion?
 
-The reason is f2fs_gc_range() may try to migrate block in curseg, however,
-its SSA block is not uptodate due to the last summary block data is still
-in cache of curseg.
+Yes, you have a choice, you can always use udelay. Driver code is
+supposed to be always correct.
 
-In this patch, we add a condition in f2fs_gc_range() to check whether
-section is opened or not, and skip block migration for opened section.
-
-Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- add rvb tag from Daeho
- fs/f2fs/gc.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2b8f9239bede..8b5a55b72264 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -2066,6 +2066,9 @@ int f2fs_gc_range(struct f2fs_sb_info *sbi,
- 			.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 		};
- 
-+		if (IS_CURSEC(sbi, GET_SEC_FROM_SEG(sbi, segno)))
-+			continue;
-+
- 		do_garbage_collect(sbi, segno, &gc_list, FG_GC, true, false);
- 		put_gc_inode(&gc_list);
- 
--- 
-2.48.1
-
+Best regards,
+Krzysztof
 
