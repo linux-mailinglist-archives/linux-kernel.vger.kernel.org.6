@@ -1,141 +1,79 @@
-Return-Path: <linux-kernel+bounces-575817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B28A7078E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:01:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68325A7078C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CDF3A8F3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C29C188DB55
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199B325F7A2;
-	Tue, 25 Mar 2025 16:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20929261367;
+	Tue, 25 Mar 2025 17:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFVVbQyw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8SVvpg2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691881547C3;
-	Tue, 25 Mar 2025 16:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB7E25F983;
+	Tue, 25 Mar 2025 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742921992; cv=none; b=GHkESm8EBuFD7QZe9ErBKuafS3XOsjayCRlItog4KmwE44ITkhEjvPD0r5wVvDkuITuv+udb1Vw7Uy+Gkk/uDjxOL2JikLfAs32th4PJeOLiSVEgyl8DfFUXIDbTJmuh0g7X4lJyyIMteADJZ4qkqvnWbkUyyE/1ZUEuY3PfETc=
+	t=1742922025; cv=none; b=HtlxaLBUAkCNi5TPx2geVsnhlLOzvEX1lLrcOeluc1EM6zTclRRuPqq0MiBPFBDMD5CfuZOdOwHKtZ6p8NdjtUiujfyEiZv/E2Y2Xc2gbxCb5zIT64VxoppV3o436uWbyuXAuJzBExbbRpOO8x8dFuNE4uIc2AoWfAI5lACwXt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742921992; c=relaxed/simple;
-	bh=TvuNV6wKnM0OfxGqgTXqnI3weghrkbXm3vheYinYnSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g9h5FjpcXtrkoyLJICC5l2NhDXz4x2RnFAswk6bVca0rTChMbDtFm8J2+8Z4pG1NIv+EZfD4wlP56vGoHif+yA1xanvXucznUuC6NUQ9XqX+L8bezKtyzp5qhi35QBWoy8w9Z4+J9OMfsQSEamdm6nOSUg2Grw9CbXDgbsLKcXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFVVbQyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF3D7C4CEEE;
-	Tue, 25 Mar 2025 16:59:51 +0000 (UTC)
+	s=arc-20240116; t=1742922025; c=relaxed/simple;
+	bh=Q0Z/XV2SVEkIoUtYmxXKaHbhCHg46BhIFu++fLKZfDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B++V008ZcPdI1Fhm2yH23iIC2/Lw7cejt/sD2gAf6lsbzQkohZgLxWbQYF9Rn+6dSHXDnJw66Be1+Jw/JumQYesc47WDMz16hCvIcIy3euugC6JKC/3xeTJFRacPbB5aW0UYjkxY4ArGiNOx8ooe2vad0whzckAYuOsP/be9J+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8SVvpg2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0647BC4CEE4;
+	Tue, 25 Mar 2025 17:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742921991;
-	bh=TvuNV6wKnM0OfxGqgTXqnI3weghrkbXm3vheYinYnSo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YFVVbQywsW5HNlyalHgO9qClrVkGoea6T0cK2kb5qUUVpe4UtcD9OyNQn6GwOgc5w
-	 KZ8BMeg0b7/tvTrwSDzjfI1Ed032SMtEnzc9fOLAPFdop7qmCP8sSyNwaKMGOc4vLo
-	 oSkxiOYuOWTWfokEJSKFO8iwmMySncVMfoAelcg0P2dwbDfGY4KiXxl5iHBFc6s4s2
-	 Y7EDJ2VQCiOLAqsTOB/o8OZDXetwGLr81fylaTLzkmS00VnhDSUVmDYEfAQO5MmCBG
-	 5EPXANUu1uwCWXhtjtqO0kvPsAz79cXMlwIl5/DkF90xU+fPzau807rfYYw9AUqj8m
-	 tdMTQsVpdgHgQ==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30beedb99c9so56167421fa.3;
-        Tue, 25 Mar 2025 09:59:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVK41/zb3BtwsltTb13N6+RBpi2+3vv6ru4Em3O3/o04+6E9H3IjlQiNP+OE8EtC6Q3fYLvON41BVAEkGdf@vger.kernel.org, AJvYcCWgNsrgeKWiFyyWZE1Z8YFBtP+X7vKOHuMVTJP6cId1Ybhjv2ZGrJoN/TaZulqsBlcu2b3cGQZN82N0Vv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcWUTjdnPY2HVQ1jz2uvtkZ7YH8gffaQUF6Q98tMV0HPs0OoG6
-	qk16bblvmQ2Umd3p2JSSHS4mDVtvPpm2biwmjeMHJSzpNH4Gzqn0EPweqc81p7pVrDu/pSPCG7Q
-	/Zf2yPchrL8uMm4GkiJ7tuqGL5LA=
-X-Google-Smtp-Source: AGHT+IF0mLfYg906NjEtDJUBzhsSCFQvlfBVJeusa824a/YnxCdYXhYU64I5Kq9m2fk2SN5sjC3u2ZaN/0XMxdCr5QM=
-X-Received: by 2002:a05:651c:19a7:b0:30b:b00f:9507 with SMTP id
- 38308e7fff4ca-30d7e2aaca1mr70115571fa.24.1742921990190; Tue, 25 Mar 2025
- 09:59:50 -0700 (PDT)
+	s=k20201202; t=1742922025;
+	bh=Q0Z/XV2SVEkIoUtYmxXKaHbhCHg46BhIFu++fLKZfDk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r8SVvpg2Qgrp8zS0g95LAlCt3BckoWlwfpt905d2X3EGknhoQhsYsWvLg9zT4n8/s
+	 SivSt4gQnuIvjXxAyywcH7D26ZX0fkpqTyP/EE/oh6/jbfWhVAk5H6IYgRpZKAm7q6
+	 t6fJA1pl7PncnqYIAQoXmwkNgIv8x4IR1fofa84gSbrgC+kQNLiM6VUKM898F9WQAu
+	 k8PsYcRKnQ0n+GFLXMFiz5AbedNp9isySqDuy/AsskCexBMvSqoEyiHtosMiPgnVOY
+	 AKvtMa6fX+ek7hIcCHT8aYNTwzgmXjVX2Y2xAxZmD7IZiy102wfqfCEs+/TYl47sWk
+	 hIm66LYVx2nFw==
+Date: Tue, 25 Mar 2025 10:00:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCH net-next] netpoll: optimize struct layout for cache
+ efficiency
+Message-ID: <20250325100017.257cb04b@kernel.org>
+In-Reply-To: <20250325-just-sloth-of-examination-7cd2df@leitao>
+References: <20250324-netpoll_structstruct-v1-1-ff78f8a88dbb@debian.org>
+	<20250325084838.5b2fdd1c@kernel.org>
+	<20250325-just-sloth-of-examination-7cd2df@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZOxnTFhchkTvKpZV@gondor.apana.org.au> <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
- <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au> <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
- <ZkGN64ulwzPVvn6-@gondor.apana.org.au> <ZpkdZopjF9/9/Njx@gondor.apana.org.au>
- <ZuetBbpfq5X8BAwn@gondor.apana.org.au> <ZzqyAW2HKeIjGnKa@gondor.apana.org.au>
- <Z5Ijqi4uSDU9noZm@gondor.apana.org.au> <Z-JE2HNY-Tj8qwQw@gondor.apana.org.au> <20250325152541.GA1661@sol.localdomain>
-In-Reply-To: <20250325152541.GA1661@sol.localdomain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 25 Mar 2025 17:59:39 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFM29ZM5ncyZLrAbX35V7y8=C-n8KT0y1SZhafK_+5aHg@mail.gmail.com>
-X-Gm-Features: AQ5f1JqtBqIc34Ji6-nObeR0Ug-BwTZ3CpgACCZqe_azCWAm-c_PGc92djp7YpQ
-Message-ID: <CAMj1kXFM29ZM5ncyZLrAbX35V7y8=C-n8KT0y1SZhafK_+5aHg@mail.gmail.com>
-Subject: Re: [GIT PULL] Crypto Update for 6.15
-To: Eric Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025 at 16:25, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Tue, Mar 25, 2025 at 01:53:28PM +0800, Herbert Xu wrote:
-> >
-> >       crypto: hash - Add request chaining API
->
-> Herbert didn't mention that I have nacked this patch, which he is insisting on
-> pushing for some reason instead of my original version that is much better.
->
-> Let me reiterate why "request chaining" is a bad idea and is going to cause
-> problems.
->
-> It makes it so that now a single hash request can now actually be a list of hash
-> requests.  It makes some of the crypto code operate on the whole list.  However,
-> most code still operates only on the first request in the list.  It's
-> undocumented and inconsistent which code is doing which, which is going to cause
-> bugs.  The first request in the list is also being treated specially in
-> undocumented ways, so submitting a list of requests is not necessarily
-> equivalent to submitting them all individually.  Another recipe for bugs.
->
-> Each hash request can also contain an entire scatterlist.  It's overkill for
-> what is actually needed for multibuffer hashing, which is a simple API that
-> hashes two buffers specified by virtual address.  Herbert's API creates lots of
-> unnecessary edge cases, most of which lack any testing.  It continues many of
-> the worst practices of the crypto API that we *know* are not working, like
-> requiring per-request memory allocations and optimizing for legacy hardware
-> offload rather than the CPU-based crypto that almost everyone actually uses.
->
-> In contrast, my patchset
-> https://lore.kernel.org/r/20250212154718.44255-1-ebiggers@kernel.org/ supports
-> multibuffer hashing in a much better way and has been ready for a year already.
-> It actually works; it has a smaller diffstat; it is faster; it has a much
-> simpler API; and it actually includes all needed pieces including x86 and arm64
-> support, dm-verity and fs-verity support, and full documentation and tests.
->
-> I've been spending a lot of time fixing the kernel's crypto code over the years.
-> I'm not looking forward to having another set of major issues to fix.
->
-> And this latest set of issues will be totally unnecessary.
->
-> We can do better than this, especially for cryptography code.
->
-> Nacked-by: Eric Biggers <ebiggers@kernel.org>
->
+On Tue, 25 Mar 2025 09:50:21 -0700 Breno Leitao wrote:
+> > It's a little odd to leave the tracker in hot data, if you do it
+> > should at least be adjacent to the pointer it tracks?  
+> 
+> Double-checking this better, netdevice_tracker is NOT on the hot path.
+> It is only used on the setup functions.
+> 
+> If you think this is not a total waste of time, I will send a v2 moving
+> it to the bottom.
 
-It's sad that it is coming to this, but I have to second Eric here:
-for CPU based crypto, the flexibility of Herbert's approach has no
-added value. SHA CPU instructions can be interleaved at the
-instruction level to get almost 2x speedup in some cases, and this
-works very well when operating on equal sized inputs. However,
-generalizing this to arbitrary request chains to accommodate async h/w
-offload introduces a lot of complexity for use cases that are only
-imaginary.
-
-Given Eric's track record as a contributor to the crypto subsystem and
-as a maintainer of subsystems that are closely tied to it, I would
-expect Herbert to take his opinion more seriously, but it is just
-being ignored. Instead, a lightly tested alternative with no
-integration into existing users has been merged in its place, with
-very little input from the community.
-
-So Herbert, please withdraw this pull request, and work with Eric and
-the rest of us to converge on something that we can all get behind.
+I'd keep it next to dev. A bit of packing to save space is fine, 
+but let's prioritize readability during the reshuffle.
+Note that net-next is closed for the MW.
 
