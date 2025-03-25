@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-576219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9D8A70C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:57:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7AEA70C7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:01:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4847174768
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:57:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068C3170F74
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3B2267B9D;
-	Tue, 25 Mar 2025 21:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E601725524E;
+	Tue, 25 Mar 2025 22:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1XyMEmN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Fx3KTu7t"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C03D1A725A;
-	Tue, 25 Mar 2025 21:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676AD530;
+	Tue, 25 Mar 2025 22:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742939824; cv=none; b=ckjpLRxvYZQXo2LC2Uq/VsoSafJHWnjo7J9KSM4mlVdX25S9zMCzQy1nA7drVfMQVFp3Oqy7uoyY5EO4OqcmUf4i/KL6tvNskH0twm5qd8DC8jOTVELpWgEO22w7AC7E+stqKl69I+PNY10i61iSEmBzuK2OgIjz7mZqQkH9Kp4=
+	t=1742940090; cv=none; b=al3EtaxuJWDoY/qrvfs4xPO8R/RmtqH65AYJQLSsZTzcWku8Bs+Dns7AqBtrTk3ABVlbvrc9PgUnc2hvEVcdEHWCwQVebTw+JVzw6tD7fXf3X4682ijjcG/pGlp+fVAzoxu+fE2MABiNRDLbmsxuyKQxryWoJJN/8E0Y53bT8Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742939824; c=relaxed/simple;
-	bh=dVbKSNw9IpYPnjB4Ud3V8KshkTL7MxnrLDQsyEYyjgs=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=s90kHz72AXhnfl+Vg/qcjEnndEWFxXM/ZjD4j4OA6uiBpnGPDvy1OZ7jjeaY4D5+GQh7DlzOOHTyf2IfrEmhprj05fDqskGy+Qx59OKD9jg7r7QTEftNlqiloQOetcf7YXfXeH8wnNDUw1o99Ui2DrNuKoYx+fGLA7zP0WcU3yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1XyMEmN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B47C4CEE4;
-	Tue, 25 Mar 2025 21:57:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742939824;
-	bh=dVbKSNw9IpYPnjB4Ud3V8KshkTL7MxnrLDQsyEYyjgs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=U1XyMEmNYZIlwYioOLPxclfPhiC+yUspDrhkZq+hTqghQwVjwS0zv2BVZbh2GVg89
-	 9otj4z/5i+7itFygyS8sD2cfaHriu6bLgJ+l2P2O8hQcSU07nLPDrKt6M4tqEiyvTN
-	 ZztdVM9vFRbExjb0NzQBvOzxk1yXRP+VN0G1BYdUBCQSyPbstgBzS2TUHuWaR50a3y
-	 K+QkC1xQ9k0hM3kXBkBIHNSQwO3eKsLYojZ/rXqJ47GtUh8Vp5DMdu+XGaOkqmjQ5Z
-	 M+w1s7PRQfeXZQDUQ/oAR4FiAcUtlN+24cCvCuOOSvJv6Tf8GZYWBI4h/atfb8K5aF
-	 KzDUpJTwDMq2g==
-Message-ID: <4db0bf5937c6c2a480b89b11e841782c@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742940090; c=relaxed/simple;
+	bh=BQLtxhJ85Tld/lC/ncVMNKJQuS4VQZX8eMuRf6WuLvY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iXXWO58cdXZvaz+v/FNLvTNgMcesCP6rOjpuYtsKzzJXxFMELit7BEZw1YLG7dUPFJJRHj+SUIpPkmgV91AS1zECZDEliokCYJRKU8QxmXJsdPVMc8tUrQc5tSJvwOW0Jbj9DdCN3En5D/PRh0wXrukDXc9JiFd6LlcG+3O8tzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Fx3KTu7t; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1742940088; x=1774476088;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HYi90DVAyrf6sk195M81TGjvn40aKO20224itqCURZI=;
+  b=Fx3KTu7tLGE+39jsFbO/deQRY1GBAA+g0aatswhffhhAXpaJT7btzKte
+   bSfnaKsPfFPJl+DH5zo4YDSxtQcVZZHUJoE7FF33aKMTnMh2ebPS2eJmk
+   pbLMVYAcgkK2a7RDLHdVx5EdBDOChA2p5XcUvv67LzGIox4gRgLM1Gafh
+   k=;
+X-IronPort-AV: E=Sophos;i="6.14,276,1736812800"; 
+   d="scan'208";a="35114054"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 22:01:26 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:42592]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.0.51:2525] with esmtp (Farcaster)
+ id 73e7438d-f8c3-4d69-9ccd-068c33d4b0ca; Tue, 25 Mar 2025 22:01:26 +0000 (UTC)
+X-Farcaster-Flow-ID: 73e7438d-f8c3-4d69-9ccd-068c33d4b0ca
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 25 Mar 2025 22:01:26 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.100.12) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 25 Mar 2025 22:01:23 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <i.abramov@mt-integration.ru>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, <netdev@vger.kernel.org>, <kuniyu@amazon.com>
+Subject: Re: [PATCH net 1/4] ieee802154: Restore initial state on failed device_rename() in cfg802154_switch_netns()
+Date: Tue, 25 Mar 2025 15:00:47 -0700
+Message-ID: <20250325220115.67524-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250325141723.499850-2-i.abramov@mt-integration.ru>
+References: <20250325141723.499850-2-i.abramov@mt-integration.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
-References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com> <20250120-amlogic-clk-drop-clk-regmap-tables-v3-1-126244146947@baylibre.com> <508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org> <1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH v3 1/4] clk: add a clk_hw helpers to get the clock device or device_node
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 25 Mar 2025 14:57:01 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWC002.ant.amazon.com (10.13.139.238) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-Quoting Jerome Brunet (2025-03-21 10:53:49)
-> On Wed 26 Feb 2025 at 17:01, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
->=20
-> >> +static void clk_hw_get_of_node_test(struct kunit *test)
-> >> +{
-> >> +       struct device_node *np;
-> >> +       struct clk_hw *hw;
-> >> +
-> >> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-> >> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-> >> +
-> >> +       np =3D of_find_compatible_node(NULL, NULL, "test,clk-dummy-dev=
-ice");
-> >> +       hw->init =3D CLK_HW_INIT_NO_PARENT("test_get_of_node",
-> >> +                                        &clk_dummy_rate_ops, 0);
-> >> +       of_node_put_kunit(test, np);
-> >> +
-> >> +       KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw=
-));
-> >
-> > The stuff before the expectation should likely go to the init function.
-> > Or it can use the genparams stuff so we can set some struct members to
-> > indicate if the pointer should be NULL or not and then twist through the
-> > code a couple times.
-> >
->=20
-> I'm trying to address all your comments but I'm starting to wonder if
-> this isn't going a bit too far ? The functions tested are one line
-> returns. Is it really worth all this ?
->=20
-> I do understand the idea for things that actually do something, such as
-> reparenting, setting rates or what not ... But this ? It feels like a
-> lot of test code for very little added value, don't you think ?
->=20
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+Date: Tue, 25 Mar 2025 17:17:20 +0300
+> Currently, the return value of device_rename() is not checked or acted
+> upon. There is also a pointless WARN_ON() call in case of an allocation
+> failure, since it only leads to useless splats caused by deliberate fault
+> injections.
+> 
+> Since it's possible to roll back the changes made before the
+> device_rename() call in case of failure, do it.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 66e5c2672cd1 ("ieee802154: add netns support")
+> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+> ---
+>  net/ieee802154/core.c | 44 +++++++++++++++++++++++--------------------
+>  1 file changed, 24 insertions(+), 20 deletions(-)
+> 
+> diff --git a/net/ieee802154/core.c b/net/ieee802154/core.c
+> index 88adb04e4072..f9865eb2c7cf 100644
+> --- a/net/ieee802154/core.c
+> +++ b/net/ieee802154/core.c
+> @@ -233,31 +233,35 @@ int cfg802154_switch_netns(struct cfg802154_registered_device *rdev,
+>  		wpan_dev->netdev->netns_local = true;
+>  	}
+>  
+> -	if (err) {
+> -		/* failed -- clean up to old netns */
+> -		net = wpan_phy_net(&rdev->wpan_phy);
+> -
+> -		list_for_each_entry_continue_reverse(wpan_dev,
+> -						     &rdev->wpan_dev_list,
+> -						     list) {
+> -			if (!wpan_dev->netdev)
+> -				continue;
+> -			wpan_dev->netdev->netns_local = false;
+> -			err = dev_change_net_namespace(wpan_dev->netdev, net,
+> -						       "wpan%d");
+> -			WARN_ON(err);
+> -			wpan_dev->netdev->netns_local = true;
+> -		}
+> +	if (err)
+> +		goto errout;
+>  
+> -		return err;
+> -	}
+> +	err = device_rename(&rdev->wpan_phy.dev, dev_name(&rdev->wpan_phy.dev));
+>  
+> -	wpan_phy_net_set(&rdev->wpan_phy, net);
+> +	if (err)
+> +		goto errout;
+>  
+> -	err = device_rename(&rdev->wpan_phy.dev, dev_name(&rdev->wpan_phy.dev));
+> -	WARN_ON(err);
+> +	wpan_phy_net_set(&rdev->wpan_phy, net);
+>  
+>  	return 0;
+> +
+> +errout:
+> +	/* failed -- clean up to old netns */
+> +	net = wpan_phy_net(&rdev->wpan_phy);
+> +
+> +	list_for_each_entry_continue_reverse(wpan_dev,
+> +					     &rdev->wpan_dev_list,
+> +					     list) {
+> +		if (!wpan_dev->netdev)
+> +			continue;
+> +		wpan_dev->netdev->netns_local = false;
+> +		err = dev_change_net_namespace(wpan_dev->netdev, net,
+> +					       "wpan%d");
+> +		WARN_ON(err);
 
-Just so I understand, you're saying that this is always going to be a
-simple "getter" API that doesn't do much else? We're not _only_ testing
-the getter API, we're also testing the registration path that actually
-sets the device or of_node pointers for a clk. I'm not really thinking
-about the one line return functions here.
+It's still possible to trigger this with -ENOMEM.
 
-Writing tests is definitely a balancing act. I'd say we want to test the
-behavior of the API in relation to how a clk is registered and writing
-tests to show the intended usage is helpful to understand if we've
-thought of corner cases like the clk was registered with a device
-pointer that also has an of_node associated with it. (Did we remember to
-stash that of_node pointer too?) We have a bunch of clk registration
-APIs, and we want to make sure this getter API works with all of them.
-Note that we don't care about the clk flags or parent relation chains
-here, just that the device or of_node passed in to registration comes
-out the other side with the getter API.
+For example, see bitmap_zalloc() in __dev_alloc_name().
 
-A little code duplication is OK, as long as the test is easy to
-understand. Maybe genparams stuff is going too far, I don't know, but at
-the least we want to make sure the clk registration APIs behave as
-expected when the getter API is used to get the device or of_node later.
+Perhaps simply use pr_warn() or net_warn_ratelimited() as do_setlink().
 
-I've found this google chapter[1] useful for unit testing best
-practices. I recommend reading it if you haven't already.
+I guess the stack trace from here is not so interesting as it doens't
+show where it actually failed.
 
-[1] https://abseil.io/resources/swe-book/html/ch12.html
+
+> +		wpan_dev->netdev->netns_local = true;
+> +	}
+> +
+> +	return err;
+>  }
+>  
+>  void cfg802154_dev_free(struct cfg802154_registered_device *rdev)
+> -- 
+> 2.39.5
 
