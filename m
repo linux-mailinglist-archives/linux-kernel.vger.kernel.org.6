@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-575068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43163A6ED23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:00:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F14A6ED29
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CAD3A5FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710571894593
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDC91EA7F7;
-	Tue, 25 Mar 2025 09:59:54 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2CD1EB1B8;
+	Tue, 25 Mar 2025 10:00:42 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057D5199FAB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B14149DE8;
+	Tue, 25 Mar 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742896794; cv=none; b=AXOndMyk6NLWu2puRhFcOK5z8rsbMxtgHh/bZtZCReONYPjhsUJaXl87THDQ0lXjeP72xzNdDuLNXf5D18PCaq19TmD5kV4tOY/fQHJgOqCkgS7HRJLlhnpg6ekYUI39Y3T9UNBIoJSCuGBjjLvSpRYA7126L3ikuicVo6G4lj4=
+	t=1742896842; cv=none; b=CvJpPqmIVLCzQKfGztk7ffik8YW/eOUVILEN3S264jJvVSa/cAtl2X5Pf4klU7DPGCYI5ELAzMdMzYmz9ZK9lPlj7fdenHBhBCkws5cU1f9vzlmE9gVe1iBenYS59kkS+vo7b5fWlODJ3MbD6+z1zhEg704bvEo0Mks0AGx7aRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742896794; c=relaxed/simple;
-	bh=SWsfRbLRu6z1OAvlaXUoNay9G0Cd94I/ud7jbpcroHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FiISDZEjrjWFSJtqsAuOH54W5BH68pFmB6JMOVJwDlSpCio8mxOyqLzio5K9JVaF7gRa00qXiVn8r+RqjZnYsjAHon5syUoyvbx0Xkj6Vj/P/caToUcQZj3HPAQG8rI56ZrNG7zyEbWW6MgKGNKeJpPzm+qzqVrRuUeKAaC9I58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A3EB3433EC;
-	Tue, 25 Mar 2025 09:59:43 +0000 (UTC)
-Message-ID: <1036c9e7-dd0c-4ae0-ad20-cb424a37736d@ghiti.fr>
-Date: Tue, 25 Mar 2025 10:59:42 +0100
+	s=arc-20240116; t=1742896842; c=relaxed/simple;
+	bh=zItez3DvRy994cvN0r+zRcG3vFAhLR7Yt/BqQ4GVF38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVL5IYDvmcxSw0n20eqogkMNlPWO2TLHd/vIJjMmXB3Tgeq0tZfuMuwOK2ybx2zNuRBdkW0TrotzUKfApJ9iIHeCUG4UmDlKJQ5CzYENZsobwa2No3/9ktno0wse4q0VyUiwLKZ7R1xb6rnm7HfJ/7MmpuJ8QvEDqzM1B9ZRzLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 0A6BD34332A;
+	Tue, 25 Mar 2025 10:00:39 +0000 (UTC)
+Date: Tue, 25 Mar 2025 10:00:35 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Alex Elder <elder@riscstar.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v7 2/4] gpio: spacemit: add support for K1 SoC
+Message-ID: <20250325100035-GYA22564@gentoo>
+References: <20250226-03-k1-gpio-v7-0-be489c4a609b@gentoo.org>
+ <20250226-03-k1-gpio-v7-2-be489c4a609b@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] riscv: print hartid on bringup
-Content-Language: en-US
-To: Yunhui Cui <cuiyunhui@bytedance.com>, apatel@ventanamicro.com,
- atishp@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, samuel.holland@sifive.com, alexghiti@rivosinc.com,
- jassisinghbrar@gmail.com, takakura@valinux.co.jp,
- valentina.fernandezalanis@microchip.com, ruanjinjie@huawei.com,
- charlie@rivosinc.com, conor.dooley@microchip.com, haibo1.xu@intel.com,
- andybnac@gmail.com, ke.zhao@shingroup.cn, tglx@linutronix.de,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250303083424.14309-1-cuiyunhui@bytedance.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250303083424.14309-1-cuiyunhui@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepueefgeehheegtddvgeelgeejjeefudekgeetffeijefgveejudehfffftdelhffhnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtoheptghuihihuhhnhhhuihessgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopegrphgrthgvlhesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtoheprghtihhshhhpsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehprghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvggtshdrsggvrhhkv
- ghlvgihrdgvughupdhrtghpthhtohepshgrmhhuvghlrdhhohhllhgrnhgusehsihhfihhvvgdrtghomhdprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226-03-k1-gpio-v7-2-be489c4a609b@gentoo.org>
 
-Hi Yunhui,
+Hi All:
 
-On 03/03/2025 09:34, Yunhui Cui wrote:
-> Firmware randomly releases cores, so CPU numbers don't linearly map
-> to hartids. When the system has an exception, we care more about hartids.
-> Adding "dyndbg="file smpboot.c +p" loglevel=8" to the cmdline can output
-> the hartid.
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+The gpio controller request clocks to work, I will address this
+in next version
+
+also will 
+On 08:41 Wed 26 Feb     , Yixun Lan wrote:
+> Implement GPIO functionality which capable of setting pin as
+> input, output. Also, each pin can be used as interrupt which
+> support rising, falling, or both edge type trigger.
+> 
+> Reviewed-by: Alex Elder <elder@riscstar.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
 > ---
->   arch/riscv/kernel/smp.c     | 2 ++
->   arch/riscv/kernel/smpboot.c | 4 ++++
->   2 files changed, 6 insertions(+)
->
-> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> index d58b5e751286..e650dec44817 100644
-> --- a/arch/riscv/kernel/smp.c
-> +++ b/arch/riscv/kernel/smp.c
-> @@ -48,6 +48,8 @@ EXPORT_SYMBOL_GPL(__cpuid_to_hartid_map);
->   void __init smp_setup_processor_id(void)
->   {
->   	cpuid_to_hartid_map(0) = boot_cpu_hartid;
+>  drivers/gpio/Kconfig            |   8 ++
+>  drivers/gpio/Makefile           |   1 +
+>  drivers/gpio/gpio-spacemit-k1.c | 277 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 286 insertions(+)
 > +
-> +	pr_info("Booting Linux on hartid %lu\n", boot_cpu_hartid);
->   }
->   
->   static DEFINE_PER_CPU_READ_MOSTLY(int, ipi_dummy_dev);
-> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-> index e36d20205bd7..601a321e0f17 100644
-> --- a/arch/riscv/kernel/smpboot.c
-> +++ b/arch/riscv/kernel/smpboot.c
-> @@ -231,6 +231,10 @@ asmlinkage __visible void smp_callin(void)
->   	riscv_ipi_enable();
->   
->   	numa_add_cpu(curr_cpuid);
+...
+> +static int spacemit_gpio_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct spacemit_gpio *sg;
+> +	struct resource *res;
+> +	void __iomem *regs;
+> +	int i, irq, ret;
 > +
-> +	pr_debug("CPU%u: Booted secondary hartid %lu\n", curr_cpuid,
-> +		cpuid_to_hartid_map(curr_cpuid));
+> +	sg = devm_kzalloc(dev, sizeof(*sg), GFP_KERNEL);
+> +	if (!sg)
+> +		return -ENOMEM;
 > +
->   	set_cpu_online(curr_cpuid, true);
->   
->   	/*
+> +	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+will update to devm_platform_ioremap_resource() to get rid of &res parameter
 
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
