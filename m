@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-575101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DEEA6ED86
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:26:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D83A6ED92
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B257F16D7B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4DF83AFC57
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826841F03EE;
-	Tue, 25 Mar 2025 10:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA843254AF5;
+	Tue, 25 Mar 2025 10:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="db4/JWG0"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rr0YtK1P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851A178F24;
-	Tue, 25 Mar 2025 10:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034591EEA4E;
+	Tue, 25 Mar 2025 10:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742898356; cv=none; b=UUb1jYm8oQpxjNjjFp4zSu6KkY4oky6xaj0Pkm0Ye4nlM1JGEZQ8elofYgegi1ASghI3O6P0lrdB2K7nHB8U3xdamZ/5NCzUu7gEnUuzqKumgK3WDZRElLbTvW7443mlmszOovnqxrmtb4Jrc5uLWUyniHRFIY3bNmgBgGqiWdc=
+	t=1742898395; cv=none; b=Vu00x35TD8aiqp2WDTTXZL2zrBJ2ijwautdxNHbrOwNY8ohkbqpUAyfVWAHM1OnwEAUAzVsCYkvO8sq/l7QHhZvQ/OncFte0VWK6ln5+bD5dwqJLdAo90qPs53gqxyVOH2I4xjheDWnukpXoPLKdi40TxKlBaER5mtvJTnQj4b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742898356; c=relaxed/simple;
-	bh=pPYr2AHRKW9t53TYJf/9ZrFy4ScNeMvk2ssp+Q9q49A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pVfCTwifUaj6zGD2oNOzmxYPQxr86JLZ7NAGGKBaeeiPJNdjV0RY+gvf88Rfpqiw6rXPvHh1cT1jJueKyMwJKyer51qMvEjpEzEfhsHjfVGknCAw8ikR8TOnO+kCMATYpt29aoQcyvR0YXBmHM2p2hGgNxFX8rCPWkaAl5YHyJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=db4/JWG0; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2255003f4c6so102439645ad.0;
-        Tue, 25 Mar 2025 03:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742898354; x=1743503154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5TQZ1mJnI/mAePfWZskq+M/BEdwOR8KjNOwJYBWNuFU=;
-        b=db4/JWG0fFhcN36DUdT5AIaQgHQ2PKB0gVC8B+ZLzg686y2z6rhmZvhOlLjt6J8ZHI
-         6kX7l2IKWzKSxhkytUViNTqdI/gSXhBDSAX6H8UmLI+oJbM3xlDHSQnvG7wM9rQbr31R
-         yiJ4h80NV/fGAyG4xNcvxURJ/JU9BEX7Bw0IaJIeBbbGXIZmS5RgKY/QYKKcUYWGxjHX
-         okVtpr+dGE6aE9ADwVY+bJSf+B/jbGWmzO9YNKVHPzpqahgW/6SLUbsr4jVNUPYQKKVf
-         D9YfB70oayDiAMpC1hQ1/iqPV3dLzPtuofb6H/A/NZZYmojY1KkAeELjzjHIsWFGRlld
-         dFeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742898354; x=1743503154;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5TQZ1mJnI/mAePfWZskq+M/BEdwOR8KjNOwJYBWNuFU=;
-        b=eBNxQvvsLVjDZlpCdFsgkDlfEhHTNAjjY233CqXX7AONT1uFUOviZLELhG7VqDRpFp
-         dSYZjuM76Nr8/NdpUz0zMMvncgVYR0GrfzzkvLpzQWtEFw7dE+5wivXlgbUoyMb7DRJj
-         ssOV+IVX6oiUainbH29wYwoZuVDnJThZf58XU1UjzfgHoiUI4M6ZyLwY6b3ZIYVfMcyH
-         6mfaGcKzhn0dXRqMkdxUiSegC7lXGAMwJh5qC3O1KjZqNo0TA0sW/mUnr9pGIbx6K1ff
-         0YTj0yTllvMv1XbXm6MlV6vn9aN2pZfY3REMkWEYCVoM1yT9TXZUNq0fV840XZpgQWU+
-         gJqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUcC2rnxhNsKglVTe8HEMFtFXl6IBrApfHoYpwX/MHZbFKH6M4lcD79MD5IEKKP+8OCARJpFXPGQKaXEo=@vger.kernel.org, AJvYcCVgGZnvgAUzaIXq32mYV2JG6PC5gQevRRhDblr1x9VhD+t74glGUopU9bd4fM/85Hv35ly0beSmt9fri64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRaNUbNMbEu8VB6cuIEqniTftl9INvKB8xArzqsG/dCYOJwwpa
-	LcznND36/JA7ZH/ysRmuSEN+NqjYmsVIdGy5YXUcdcgLmmTF3Mn/
-X-Gm-Gg: ASbGncvYUJtL1NEpQe9Zn4zWu7OxWiZLfscFycm2N4anrBWUGoOS6+RCOcc/R3UcahC
-	KS/9DcHA5npzeKCtaAhstkey3g8bn1KFCl71YRtu2D3iv1V8dnRlIYlH/97DfOxBjX1qy/nFVOw
-	RSidbIz5eZm6vxUFxJe7zBiTfyhXsfpq1wKPISoDklJecHUSVCxcKPrcn0knkPJmODlxldHdfQ0
-	GRFZImJs007KHEqMjpiurKQYNKMDv0D4E1nmIsFR/qhunt3Nd06ErbK1+FEyK3xlvox6LDRxAvi
-	9d2hqZD61iirih+emK78q345BZB4byzoxWd3yTVersTDk433zQkumoM/zlFbaei/0/xMAKx6DlQ
-	B
-X-Google-Smtp-Source: AGHT+IFp4W9MioP21Q0bUey2FAzrWuQgB0D3Elg/a81AxrqjWatuuSruZPC8YfCpE4FUaELr+gttBA==
-X-Received: by 2002:a05:6a20:43a7:b0:1f3:36f7:c0d2 with SMTP id adf61e73a8af0-1fe43319764mr28856857637.41.1742898353564;
-        Tue, 25 Mar 2025 03:25:53 -0700 (PDT)
-Received: from r.www.tendawifi.com ([203.95.197.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390611d1dasm10063253b3a.106.2025.03.25.03.25.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 03:25:53 -0700 (PDT)
-From: Andres Traumann <andres.traumann.01@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Kailang Yang <kailang@realtek.com>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1742898395; c=relaxed/simple;
+	bh=6gx8a7ztb8u3B/u8fPofO/Tuvql7eBwSe4k9mBhaLjc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gAIZ7K4iqqaMFbvteeIH9vpCGcA9xPvN4ESJHf84c8Jzq+iCdhTun2W9qlBPXRjTdxPHaPfvQDvG+xjAx+4oxHNH4I91Q07sBeXnx/+iBeijYdqTEDiKuK0LjLrKnTeqZtsWtVUFyT6Hf7uVb/p0J24NDiFPqU5uyCYrnK1/EJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rr0YtK1P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8030CC4CEE4;
+	Tue, 25 Mar 2025 10:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742898394;
+	bh=6gx8a7ztb8u3B/u8fPofO/Tuvql7eBwSe4k9mBhaLjc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rr0YtK1PQzC4NSDXu0DSxFUvhd4oVsWJv62czkyG0iVVQ8VuGA5YnDFCqLi1twziZ
+	 tPfNakYxPcjcAv2pzkmvMKPJ3+uKM0rs6mUcTdjghbkIV5PvB+jZqh3dqt4R8U86D1
+	 lgnBd6zTLTnEjkj8Z3MXUI8Q1+lchlFLUaCzyhI1DZX25DGP7MBxEvChQPvaJXTrro
+	 +hfoE95+lbABCqwmPeY5GCylveZ1xfjSNhSvBbbkCnvRQ/HewS5e+079aANhN7Rc+Z
+	 2URIbNlp7x0rqzE4TIronOOBp9oB/osdXg08TPDB8BxZ4mxuS5/R/nLC+4N6vSZk5c
+	 8+IBZkrVVwpuw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tx1UO-00GsRS-28;
+	Tue, 25 Mar 2025 10:26:32 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andres Traumann <andres.traumann.01@gmail.com>
-Subject: [PATCH] ALSA: hda/realtek: Bass speaker fixup for ASUS UM5606KA
-Date: Tue, 25 Mar 2025 17:25:35 +0700
-Message-ID: <20250325102535.8172-1-andres.traumann.01@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	asahi@lists.linux.dev
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Janne Grunau <j@jannau.net>,
+	Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: [PATCH v2 00/13] PCI: apple: Add support for t6020
+Date: Tue, 25 Mar 2025 10:25:57 +0000
+Message-Id: <20250325102610.2073863-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,35 +72,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, asahi@lists.linux.dev, alyssa@rosenzweig.io, j@jannau.net, marcan@marcan.st, sven@svenpeter.dev, bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-This patch applies the ALC294 bass speaker fixup (ALC294_FIXUP_BASS_SPEAKER_15),
-previously introduced in commit a7df7f909cec ("ALSA: hda: improve bass
-speaker support for ASUS Zenbook UM5606WA"), to the ASUS Zenbook UM5606KA.
-This hardware configuration matches ASUS Zenbook UM5606WA, where DAC NID
-0x06 was removed from the bass speaker (NID 0x15), routing both speaker
-pins to DAC NID 0x03.
+As Alyssa didn't have the bandwidth to deal with this series, I have
+taken it over. All bugs are therefore mine.
 
-This resolves the bass speaker routing issue, ensuring correct audio
-output on ASUS UM5606KA.
+The initial series [1] stated:
 
-Signed-off-by: Andres Traumann <andres.traumann.01@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+"This series adds T6020 support to the Apple PCIe controller. Mostly
+ Apple shuffled registers around (presumably to accommodate the larger
+ configurations on those machines). So there's a bit of churn here but
+ not too much in the way of functional changes."
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index a84857a3c2bf..286ff8c57079 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10783,6 +10783,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1043, 0x1d4e, "ASUS TM420", ALC256_FIXUP_ASUS_HPE),
- 	SND_PCI_QUIRK(0x1043, 0x1da2, "ASUS UP6502ZA/ZD", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1df3, "ASUS UM5606WA", ALC294_FIXUP_BASS_SPEAKER_15),
-+	SND_PCI_QUIRK(0x1043, 0x1264, "ASUS UM5606KA", ALC294_FIXUP_BASS_SPEAKER_15),
- 	SND_PCI_QUIRK(0x1043, 0x1e02, "ASUS UX3402ZA", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1e11, "ASUS Zephyrus G15", ALC289_FIXUP_ASUS_GA502),
- 	SND_PCI_QUIRK(0x1043, 0x1e12, "ASUS UM3402", ALC287_FIXUP_CS35L41_I2C_2),
+The biggest change is affecting the ECAM layer, allowing an ECAM
+driver to provide its own probe function instead of relying on the
+.init() callback to do the work. The ECAM layer can therefore be used
+as a library instead of a convoluted driver.
+
+The rest is a mix of bug fixes, cleanups, and required abstraction.
+
+This has been tested on T6020 (M2-Pro mini) and T8102 (M1 mini).
+
+* From v1[1]:
+
+  - Described the PHY registers in the DT binding
+
+  - Extracted a ecam bridge creation helper from the host-common layer
+
+  - Moved probing into its own function instead of pci_host_common_probe()
+    
+  - Moved host-specific data to the of_device_id[] table
+
+  - Added dynamic allocation of the RID/SID bitmap
+
+  - Fixed latent bug in RC-generated interrupts
+
+  - Renamed reg_info to hw_info
+
+  - Dropped useless max_msimap
+
+  - Dropped code being moved around without justification
+
+  - Re-split some of the patches to follow a more logical progression
+
+  - General cleanup to fit my own taste
+
+[1] https://lore.kernel.org/r/20250211-pcie-t6-v1-0-b60e6d2501bb@rosenzweig.io
+
+Alyssa Rosenzweig (1):
+  dt-bindings: pci: apple,pcie: Add t6020 compatible string
+
+Hector Martin (6):
+  PCI: apple: Fix missing OF node reference in apple_pcie_setup_port
+  PCI: apple: Move port PHY registers to their own reg items
+  PCI: apple: Drop poll for CORE_RC_PHYIF_STAT_REFCLK
+  PCI: apple: Use gpiod_set_value_cansleep in probe flow
+  PCI: apple: Abstract register offsets via a SoC-specific structure
+  PCI: apple: Add T602x PCIe support
+
+Janne Grunau (1):
+  PCI: apple: Set only available ports up
+
+Marc Zyngier (5):
+  PCI: host-generic: Extract an ecam bridge creation helper from
+    pci_host_common_probe()
+  PCI: ecam: Allow cfg->priv to be pre-populated from the root port
+    device
+  PCI: apple: Move over to standalone probing
+  PCI: apple: Dynamically allocate RID-to_SID bitmap
+  PCI: apple: Move away from INTMSK{SET,CLR} for INTx and private
+    interrupts
+
+ .../devicetree/bindings/pci/apple,pcie.yaml   |  11 +-
+ drivers/pci/controller/pci-host-common.c      |  24 +-
+ drivers/pci/controller/pcie-apple.c           | 241 +++++++++++++-----
+ drivers/pci/ecam.c                            |   2 +
+ include/linux/pci-ecam.h                      |   2 +
+ 5 files changed, 204 insertions(+), 76 deletions(-)
+
 -- 
-2.49.0
+2.39.2
 
 
