@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-575380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D301AA7021E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:37:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F369A70195
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4EC844263
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:19:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C3E17D519
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573E2571B5;
-	Tue, 25 Mar 2025 13:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0499F26562D;
+	Tue, 25 Mar 2025 13:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cm0uiIhK"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fkt2f92k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B4FD53C;
-	Tue, 25 Mar 2025 13:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A455A95E;
+	Tue, 25 Mar 2025 13:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742907715; cv=none; b=UFHcZEvB3ifgubfLOoXQ8TgvNdeScNJ/+L1z2KAnxZMPGkyBSX9dGsp3O8vm1Kw8Fg2lIzCXY7ztq9Zut/d+vKlSMDl5Tk1Di9YtXM7oTqGgkKq95WuC3of/wqDgdB/8el3LZTi2yMuNRqlTp6AvQVtZhAIVKD5URT1/pDbFhRw=
+	t=1742907792; cv=none; b=CdaGbCCGvXxDlvuOUnQ0B2UpL73stVotCcqDsv2ZXBPkUg6nw8rrDCzAsMtCnW0QWk8TOSiIbpfjdbwFlJ0ErzTLyJjEteRfSkalJfrL3VjTo9w5oWgIUd+5RrTzIOJ61UYrd1BMkl3G+g8EKbynNPoxcI9A4UNP0UDV5W81jVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742907715; c=relaxed/simple;
-	bh=ChDDyeXHBmIp5lYuhOG5pqs0dqH9HwS+H4o0o1uxWXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAHwg7wqKPxSHWXVVdGZtea6neAvgTrJ5ZmYtsqhcrzACMwnkU30EbM6SigImLu2CaxYhYJLJDaoftwQzHLTEJNm0L1mqxm5h7RTJQfLOu3X+QXSRbEzP+o+f4lN1DJRPVE7QxKv3to9CMuPP4Em9lV1l4m+7VQtl+Gtd/zrLLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cm0uiIhK; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-226185948ffso105670365ad.0;
-        Tue, 25 Mar 2025 06:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742907713; x=1743512513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3eakavgIIxLImWp2a1A76dIncpFHpF9rY6XvVvtdLww=;
-        b=cm0uiIhKt6+GGpGYX6Zy0YmThevVNZBhmGdbHKVkELFggE7MEheYJMdapIRxNGe9hV
-         c5xwHPprX3JCditqFP6D/BfhOuDrvVfgkFTepGPKCvt5SR0T6ewNCdpxuRj/VXdKYMTo
-         Hi61jY7a1FTgSV6zUWGpEbLddymapFLcszrZNYcQlSlsOaQZTTTLzmB+OXADs5LNgDvT
-         bBEA+fBZqIIB91rH6fHs9Iq7fhFk36c8KMTP3Njd8hwqmcWxGQJhnSrIvjUa5+DmNDgH
-         Y0p+c2EqvyFo6a+rgeJprG8NpeLGEOrSs7s+MA3Jv15FGxQKXstWhift7xqduBrylwjF
-         6Feg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742907713; x=1743512513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3eakavgIIxLImWp2a1A76dIncpFHpF9rY6XvVvtdLww=;
-        b=oEM6uN/i55i6LkXjdXLTFC/2ULMgvNdvHIy2jU7Pyys+PNQ6gxRd1N/6xa2Iw3JbdN
-         Me+i7u9XUkYYhsBmedYKIYF1Zvf8GgRD3lYoiWMpDxxL3xBQNI9Q7/8/zk/q4Wg3915b
-         HQONOzsd9EklbUy+LVrz7SzHwH9bZ8RlDjwnogtJGQVoDeY+dOQPZJ9j9PIfvum5SI1B
-         DtpfjPT0x79zYnVBQKRcBXBBXsm7HdDzKSmQ5y3GS3KfV5Gqdhr6Y1tEBuC9rjkY1EHe
-         uq2xTLhmBuyKRLdSOPtddY3v/1oYKOUkTTsKgFCSd8lRmJnP8z/RuwKX5o/plnAJLD5j
-         8YJg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6hwYReeVafMWCfDDv9v+wszYTEqs4bus6pwx87gMplNf8KSj98LSiolk9SXtfBsuxnZBClTf8phpvpMKCRXM=@vger.kernel.org, AJvYcCXo808+IItXSBCTY2hBmnId7wmngjX4fXNxb0hJpc/gR5oYa0PoxNkaTHVa2Hs3v1jsfEPmkUkWzg6iSmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmcSpv1D1C45ueqZtBwmbX1S6fyXLm+V42GSTZmHCNUpxzxNYe
-	Hchq6zvVJk4troKnws/EHJyriKP7oGTEElScqk39csbNrjs8lcPa
-X-Gm-Gg: ASbGncsEU0qB+Sqauy/kkoJt5uvIjE89oZG4zQtzf2CLPuxU2Bxg+kdLUp4/foc2saR
-	nXgbU5/NC9nS7UiumuITfhJristaSsNqzy2n4pV2UL41nCK2Zvgkeap4oTG4R7e5vMl0Inb/C4Y
-	TvMADDqij29ALfZ5G8IM2sZjsLEVcMFxrtFUEAHFFleOm0Bw+u6itm5FVJMMENnYuA4ASZg+AKk
-	3uJIYo+rAYR78sGfKEYbUChlFqzwgsEcHdyurD9ZyowQ0Vxmnl66f3x36hDBAn4JZ+V/taZYWF4
-	rkvf/e6Vp+xuRRNqQdKnKwg6J8e78MnnFXa2KdEFlU5VR17gzGJZl2GhLA==
-X-Google-Smtp-Source: AGHT+IHvtynTWNxLoQ3IgRPWxLPUB1X72tcT/Mi4Ko1ZGWDhgTK4FXPGPpRHC+eyfHtUogAbbNam0A==
-X-Received: by 2002:a17:903:46c3:b0:223:49cb:5eaa with SMTP id d9443c01a7336-22780e0a7dbmr294796755ad.35.1742907712571;
-        Tue, 25 Mar 2025 06:01:52 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73905fd67b5sm10365925b3a.68.2025.03.25.06.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 06:01:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 25 Mar 2025 06:01:51 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Support Opensource <support.opensource@diasemi.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] watchdog: da9052_wdt: use timeout value from
- external inputs
-Message-ID: <5110bf6b-9225-4a90-ba98-a470aee139b5@roeck-us.net>
-References: <20250325-da9052-fixes-v2-0-bfac3f07b4a4@gmail.com>
- <20250325-da9052-fixes-v2-2-bfac3f07b4a4@gmail.com>
+	s=arc-20240116; t=1742907792; c=relaxed/simple;
+	bh=NOtSZO6+mIJhpKmav78FIQ7+8EjmLGHsFa+GzKNPUZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dg2zp2IWCtjFhTd+TXZ6O45CndY0BAF9BKSOKHIdLWBTUHXqMxD4A8+Pk2tmvYHIIv3xRK/64wko6/SFQ6DagCECAAQUFA4IryJWlIATRM3kRalc7zbfb9+766VHFME21py5Go3WSE5vtwML2T7JuTTAi/kyXDjSV3RMpIcdLk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fkt2f92k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111C7C4CEF3;
+	Tue, 25 Mar 2025 13:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742907792;
+	bh=NOtSZO6+mIJhpKmav78FIQ7+8EjmLGHsFa+GzKNPUZg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Fkt2f92kJiGWhH8dgk17/UoRqdJx0EFe/3P/dy4V1s5KFOcQBfhFPknqCwMCrbm6/
+	 xQjQOvggDEzDyOsIOE623THEpITveY2dRX8fO+8ia0MsnvPzH3VZCtioaeqCxzuBjy
+	 JaoZsexlhO6gfrDEN2F6R84U7RTlY1tzf+2VXUZZvzGoGB4oL1cGPJnw40aRmZVpU2
+	 N/M9WO1QdqSS6PBVtpgJQypgCL9UBhGszkA+cg0oNo1w2WVNHVRgsafoRthA/cgVJz
+	 KlRJZSKbHbQrWjY9jRq12NqOaBRm8MvivREYHKVonSwAKmbUfLZQJ9B3ALN3qcs8ae
+	 nAVXsi7XusNvg==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso8674346a12.1;
+        Tue, 25 Mar 2025 06:03:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4X3X5uabf4fdRLpBFAOBP91rSdxdhBlQ4V54FhgYfHLdB5+31LbK5+ksNOoBnQ0luNndG5qRGIGC1c4TRqJk=@vger.kernel.org, AJvYcCUPiKl7sGumk37Qo/LRDum9KYYbHfZhDIbC9xEAYDdXUGvkzcy10EC7YbxDYk1wLeXlLk/bmKif99FPf4gm4Q==@vger.kernel.org, AJvYcCVK06wdAIXemLnSaK70GvnDkFUVYa2kbfjKXRnxD4MrC0oSyobtzMI97pJxdHrqC37m+X0QfhnidtUfrw==@vger.kernel.org, AJvYcCVWyJ/1Sh8Fv9s4wLOUuAfkPFMNXSMXehx8awAI74DBHo9xV4SN96m16/ME1hd5lJj/XPy1Xw97kLv8Wc4G@vger.kernel.org, AJvYcCWwLqXvdcYzq7yZypByv3OGe3KWfoinL353dRklC0UbiWQWDEp32PV+f1MA3sVCuclikI5Vgh6BUgXvyDEVTiM=@vger.kernel.org, AJvYcCXPT1P0ZT44NE0qGLi4LpIq9TFCQHhjs31kWxIL3PLGVHjwxsIXL5QeVMnMouIkbK5+9kxKLRVI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyiU3GODGyL4a/LBV4c+txrLdnizbVXq1kYMqpIBpTKnysNpU2
+	01IkjShI/j3/6Tt14iRTQcc/cUBcEDUpL4+2dPk62niJyT61vYuUAebqdsLjYjYwnG670csdHPy
+	OD4Ay0mesMKaJ0OYdjrAKkrecUg==
+X-Google-Smtp-Source: AGHT+IE9YIgEdFy0C8MVlG0nopmhGsYdec5XnoCD98500ifVdHHqN4dUOGNkZiKuQcgs2ZSWsIpcRThQGaL/16F7l+4=
+X-Received: by 2002:a05:6402:5189:b0:5e5:4807:5441 with SMTP id
+ 4fb4d7f45d1cf-5ebcd520049mr11476593a12.30.1742907790342; Tue, 25 Mar 2025
+ 06:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250325-da9052-fixes-v2-2-bfac3f07b4a4@gmail.com>
+References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz> <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
+In-Reply-To: <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 25 Mar 2025 08:02:59 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JriMZBTiF3C2w64Aagyvo_O56C7A0zRxATovzxB1bkU0K4BsN971bbnmGo
+Message-ID: <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: david@ixit.cz, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mailing List <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
+	=?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Andy Gross <agross@kernel.org>, Mailing List <devicetree-spec@vger.kernel.org>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Janne Grunau <j@jannau.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 25, 2025 at 08:27:13AM +0100, Marcus Folkesson wrote:
-> Introduce the `timeout` module parameter and pass it to
-> watchdog_init_timeout(). If the parameter is not set or contains an
-> invalid value, fallback on the `timeout-secs` devicetree property value.
-> 
-> If none of the above is valid, go for the old default value.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On Tue, Mar 25, 2025 at 5:33=E2=80=AFAM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
+>
+> On Mon, 2025-03-24 at 18:41 +0100, David Heidelberg via B4 Relay wrote:
+> > The Devicetree Specification, Release v0.3 specifies in section 4.3.1
+> > a "Network Class Binding". This covers MAC address and maximal frame
+> > size properties. "local-mac-address" and "mac-address" with a fixed
+> > "address-size" of 48 bits are already in the ethernet-controller.yaml
+> > schema so move those over.
+> >
+> > Keep "address-size" fixed to 48 bits as it's unclear if network protoco=
+ls
+> > using 64-bit mac addresses like ZigBee, 6LoWPAN and others are relevant=
+ for
+> > this binding. This allows mac address array size validation for etherne=
+t
+> > and wireless lan devices.
+> >
+> > "max-frame-size" in the Devicetree Specification is written to cover th=
+e
+> > whole layer 2 ethernet frame but actual use for this property is the
+> > payload size. Keep the description from ethernet-controller.yaml which
+> > specifies the property as MTU.
+> >
+>
+> I have no idea what tree this should go through, and you CC'ed enough
+> people that I can't figure it out either ... I'll assume not wifi but DT
+> for now?
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Can you take it via wifi as the main target here is wifi bindings.
+
+Rob
 
