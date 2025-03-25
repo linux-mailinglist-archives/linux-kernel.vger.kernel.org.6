@@ -1,50 +1,76 @@
-Return-Path: <linux-kernel+bounces-574759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B6DA6E993
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:26:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7884A6E988
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71EC188CD02
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D260188B77D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 06:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7232F1F9AAB;
-	Tue, 25 Mar 2025 06:26:32 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6081F63F5;
+	Tue, 25 Mar 2025 06:19:16 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AEC38385
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F7149E13;
+	Tue, 25 Mar 2025 06:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742883992; cv=none; b=Bu86I3s1LGO6Cic25GO5kfQtnZT9SivuIjgH13UFC1IaJ8UsRiFivJCMCEzMZNcZoBvIJ7L/LMh+7WvhhL2B7cBgmcW8U7p3LR6wTztTgZODHw5oXZsTZ9ZJbDRu4PqVaf/vl/BtlsgQGYMo3BrR61u8XS5qtKND4ByO0K6dM8g=
+	t=1742883556; cv=none; b=Woqx+CbLAXQeGg0unr+QEqG9fSdWYuwWlykEddGconJGj1Qlf+gwgM/QiseCscKCw2/cya+u+TmmUkI0OG6cxfZ9mCMARGuX6nmYq+VAjOI0FYhjbkwNN6MgdpSriqsAUCB0i+xsyKjXfMYjUCsm3herKOUd580IZOCe5Janjdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742883992; c=relaxed/simple;
-	bh=Ox1fhONWN8x2PVBse44ep4LUGaP+pA4mpHXFB6FyPvM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IAKOx6k32B+/UPP9lMmjnxNNxEPzTq6J7/SFzjn/0Kf0PL3wdM9PTiwZ5olCd9Db5KZOqzBzyNjntkxJKzw2U6viMYP3d6nCaAQyPtUXtZgmTOHMKSR4nTSUTsKV5x1ZQajJBmluUAp+TePGA0xzJrS+frigSva+3Vy9BKmdwPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZMKf10n59ztRM2;
-	Tue, 25 Mar 2025 14:24:57 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id D35C81800E2;
-	Tue, 25 Mar 2025 14:26:23 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
- (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Mar
- 2025 14:26:23 +0800
-From: Wupeng Ma <mawupeng1@huawei.com>
-To: <akpm@linux-foundation.org>, <mike.kravetz@oracle.com>, <david@redhat.com>
-CC: <muchun.song@linux.dev>, <mawupeng1@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] mm: hugetlb: Fix incorrect fallback for subpool
-Date: Tue, 25 Mar 2025 14:16:34 +0800
-Message-ID: <20250325061634.2118202-1-mawupeng1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742883556; c=relaxed/simple;
+	bh=TO2lEut0XDqrCR4bqwS+85PxH2Zzvo42jRmIrs7h3yA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CamvsRdyHUHBxd7NGtZVV5rCXAjEQIOrL9hdu26D0Bq1YB6neC9J70eTmp4Bp792GhCcfMGLft5gv5QwzxrNuIp3896A9CsdufvZkZDIhKbmmvkVe0uq7B15594UvmEYP1oeP+f3w6VL/FbrtHviibGcg9HzKgca8+8Zo/7Q8XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0c1f444a094111f0a216b1d71e6e1362-20250325
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
+	SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-UNFAMILIAR: 1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:7078d6c1-95f9-42bf-9991-d4f1195ba71d,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:14,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:24
+X-CID-INFO: VERSION:1.1.45,REQID:7078d6c1-95f9-42bf-9991-d4f1195ba71d,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:14,FILE:0,BULK:0,RULE:Release_HamU,ACTION
+	:release,TS:24
+X-CID-META: VersionHash:6493067,CLOUDID:941d9d141db511915ec5b711ac73168f,BulkI
+	D:250325141904QGK09D20,BulkQuantity:0,Recheck:0,SF:16|19|24|38|43|66|74|78
+	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:
+	0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_USA,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 0c1f444a094111f0a216b1d71e6e1362-20250325
+X-User: mengfanhui@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <mengfanhui@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 2114292732; Tue, 25 Mar 2025 14:19:02 +0800
+From: Fanhui Meng <mengfanhui@kylinos.cn>
+To: kashyap.desai@broadcom.com,
+	sumit.saxena@broadcom.com,
+	shivasharan.srikanteshwara@broadcom.com,
+	chandrakanth.patil@broadcom.com,
+	mengfanhui@kylinos.cn
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: megaraid_sas: Add write permissions to the scmd_timeout interface
+Date: Tue, 25 Mar 2025 14:18:35 +0800
+Message-Id: <20250325061835.112404-1-mengfanhui@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,111 +78,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg100017.china.huawei.com (7.202.181.58)
 
-During our testing with hugetlb subpool enabled, we observe that
-hstate->resv_huge_pages may underflow into negative values. Root cause
-analysis reveals a race condition in subpool reservation fallback handling
-as follow:
+Due to the different response capabilities of different RAID cards to commands,
+the timeout of each RAID card is adjusted to the optimal value, thus add write
+permissions to the scmd_timeout interface.
 
-hugetlb_reserve_pages()
-    /* Attempt subpool reservation */
-    gbl_reserve = hugepage_subpool_get_pages(spool, chg);
-
-    /* Global reservation may fail after subpool allocation */
-    if (hugetlb_acct_memory(h, gbl_reserve) < 0)
-        goto out_put_pages;
-
-out_put_pages:
-    /* This incorrectly restores reservation to subpool */
-    hugepage_subpool_put_pages(spool, chg);
-
-When hugetlb_acct_memory() fails after subpool allocation, the current
-implementation over-commits subpool reservations by returning the full
-'chg' value instead of the actual allocated 'gbl_reserve' amount. This
-discrepancy propagates to global reservations during subsequent releases,
-eventually causing resv_huge_pages underflow.
-
-This problem can be trigger easily with the following steps:
-1. reverse hugepage for hugeltb allocation
-2. mount hugetlbfs with min_size to enable hugetlb subpool
-3. alloc hugepages with two task(make sure the second will fail due to
-   insufficient amount of hugepages)
-4. with for a few seconds and repeat step 3 which will make
-   hstate->resv_huge_pages to go below zero.
-
-To fix this problem, return corrent amount of pages to subpool during the
-fallback after hugepage_subpool_get_pages is called.
-
-Fixes: 1c5ecae3a93f ("hugetlbfs: add minimum size accounting to subpools")
-Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
+Signed-off-by: Fanhui Meng <mengfanhui@kylinos.cn>
 ---
- mm/hugetlb.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 318624c96584..dc4449592d00 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2987,7 +2987,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 	struct hugepage_subpool *spool = subpool_vma(vma);
- 	struct hstate *h = hstate_vma(vma);
- 	struct folio *folio;
--	long retval, gbl_chg;
-+	long retval, gbl_chg, gbl_reserve;
- 	map_chg_state map_chg;
- 	int ret, idx;
- 	struct hugetlb_cgroup *h_cg = NULL;
-@@ -3140,8 +3140,16 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 		hugetlb_cgroup_uncharge_cgroup_rsvd(idx, pages_per_huge_page(h),
- 						    h_cg);
- out_subpool_put:
--	if (map_chg)
--		hugepage_subpool_put_pages(spool, 1);
-+	/*
-+	 * put page to subpool iff the quota of subpool's rsv_hpages is used
-+	 * during hugepage_subpool_get_pages.
-+	 */
-+	if (map_chg && !gbl_chg) {
-+		gbl_reserve = hugepage_subpool_put_pages(spool, 1);
-+		hugetlb_acct_memory(h, -gbl_reserve);
-+	}
-+
-+
- out_end_reservation:
- 	if (map_chg != MAP_CHG_ENFORCED)
- 		vma_end_reservation(h, vma, addr);
-@@ -6949,7 +6957,7 @@ bool hugetlb_reserve_pages(struct inode *inode,
- 					struct vm_area_struct *vma,
- 					vm_flags_t vm_flags)
- {
--	long chg = -1, add = -1;
-+	long chg = -1, add = -1, spool_resv, gbl_resv;
- 	struct hstate *h = hstate_inode(inode);
- 	struct hugepage_subpool *spool = subpool_inode(inode);
- 	struct resv_map *resv_map;
-@@ -7084,8 +7092,16 @@ bool hugetlb_reserve_pages(struct inode *inode,
- 	return true;
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index d85f990aec88..dfe065dd0c75 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -90,7 +90,7 @@ module_param(dual_qdepth_disable, int, 0444);
+ MODULE_PARM_DESC(dual_qdepth_disable, "Disable dual queue depth feature. Default: 0");
  
- out_put_pages:
--	/* put back original number of pages, chg */
--	(void)hugepage_subpool_put_pages(spool, chg);
-+	spool_resv = chg - gbl_reserve;
-+	if (spool_resv) {
-+		/* put sub pool's reservation back, chg - gbl_reserve */
-+		gbl_resv = hugepage_subpool_put_pages(spool, spool_resv);
-+		/*
-+		 * subpool's reserved pages can not be put back due to race,
-+		 * return to hstate.
-+		 */
-+		hugetlb_acct_memory(h, -gbl_resv);
-+	}
- out_uncharge_cgroup:
- 	hugetlb_cgroup_uncharge_cgroup_rsvd(hstate_index(h),
- 					    chg * pages_per_huge_page(h), h_cg);
+ static unsigned int scmd_timeout = MEGASAS_DEFAULT_CMD_TIMEOUT;
+-module_param(scmd_timeout, int, 0444);
++module_param(scmd_timeout, int, 0644);
+ MODULE_PARM_DESC(scmd_timeout, "scsi command timeout (10-90s), default 90s. See megasas_reset_timer.");
+ 
+ int perf_mode = -1;
 -- 
-2.43.0
+2.25.1
 
 
