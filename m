@@ -1,99 +1,130 @@
-Return-Path: <linux-kernel+bounces-575146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76593A6EE40
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA25A6EE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3873B5123
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5553B5017
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0037F254866;
-	Tue, 25 Mar 2025 10:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55922254867;
+	Tue, 25 Mar 2025 10:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KgO5HIou"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C1Fl0Spr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EwXtgt7n"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC91EE7BD;
-	Tue, 25 Mar 2025 10:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4955A1EA7E7;
+	Tue, 25 Mar 2025 10:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742900027; cv=none; b=d4QJw3NEpNN/i5t+3tPXHCD/4TgetI19ZeScF/zWJUfXDILTG9ahTQZ7xzBNGygzSqKP0/S4RBwFEwSSoLDF70G7+iXTOInxoI8VeSqs7Pk0Df9v5+pHj612IEfYim7YCi9l3Vh+HC6XwW+AeXINk4aeSLDpjw6TyZSbTTBzRhY=
+	t=1742900103; cv=none; b=UbpWipBzsmTdbOAm+TnxCInKskvAFtXI6b4X6M9VD1zXxqGqgIrP//Y2X0bx5wuNmzpWbGIUAjpFl+9AwqUivX7mXbkAkawtHIOKsBymDcyHJrUAajxz9Gln6L10WDqhFcecbqpP9wEYOEAcwoH6aAKfdlLZilGA/nlONkz0oIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742900027; c=relaxed/simple;
-	bh=wOlH4b2HejrysZeyBI2IuhdZWBRpPWmrhF128i5vQbI=;
+	s=arc-20240116; t=1742900103; c=relaxed/simple;
+	bh=P1ychP+36qjmXkdCWXhrk2xGfDgipiJ7S+cbf1cusAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYwd0+Ej4o8Y8hbm4e3FWGDe19RoeIuwnvp22DZdbYvhYPYRbyC9aAH2PWFrT3KaVFPnnbQZ/cse4sluk297lNAFJbEatIgAUkVGVtA5He/g+cbo9BhO/+sfxCVLUep7Bp90Q5qdw/brg3UQ8o4VWxpgDvTSpWf/bGn2E/GDVeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KgO5HIou; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Nb567w52U4VX6RZjUZZTTfiL9LAMzEOtwHBwdKK5Hbc=; b=KgO5HIoukwLGEoCeX08x3EAFwK
-	GguROLbOvjWQ/+UilEVKvr0ye+kuwYiGN3sLL+QkP8mE6bXpw2MSDESAE5pCllViCqmRZB2+iaoHz
-	BS9uZlyi5xy1y+rQVtWNi78ok9I5/x+dxOij5WuzFLkmmLF3fChSUVuQwUZe0ph/OHXmRHqxwuZRS
-	v8m9zjz4AJ89tVe6vQMNuLPXBb6KMI5L7acEYKAnXanttEy3ATH33I9MwGcTbk/6AGa6GhSV7S6Hv
-	5T9m7oyaE4C1pGtBIceHds6d1vwSbTcSo6jSy/qtxIEKJAS2YO9xGVwBf5cmry9olzAS3sdLDY2Q9
-	VF14oI6A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tx1uU-00000003qLq-3WNM;
-	Tue, 25 Mar 2025 10:53:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 66A333004AF; Tue, 25 Mar 2025 11:53:30 +0100 (CET)
-Date: Tue, 25 Mar 2025 11:53:30 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: Re: [PATCH v3 0/3] kernel/events/uprobes: uprobe_write_opcode()
- rewrite
-Message-ID: <20250325105330.GI36322@noisy.programming.kicks-ass.net>
-References: <20250321113713.204682-1-david@redhat.com>
- <20250321133401.GB4776@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqdEPlS11RH5Kgd5d+Hz6kBu+ba+THsvC+D5JX3mCMrAskKC0iujfjeU4ATk5b512H4rUPdx7SL7zcetJlJsmv2yTud4W809dG2vDqhoPArOKk5O4wLp1uPqrY62/VRrcuaOdcIZ12QrW2RE87uUKHCjMOhB8BZOuHWbvJFVtX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C1Fl0Spr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EwXtgt7n; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Mar 2025 11:54:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742900100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65yWQ8YBB+8DDN6DCpX/9zSZQCjct9PcGo9p6rB0SL0=;
+	b=C1Fl0Spr8Z2jSRNT50xhm3wK+Du5SXlyYowPLzDGgGn4orGOTyQ4WfxyFea1jrzbdHi8PX
+	GqN3zz3tWaG6cDObGVdXyzfrkS4Qw26qe2fvNWYjdKBq5lCatdf0BTDGdmQlA5Si9wffEF
+	JDnK5YUAteBTE2y5MJG4lDFltLGt3oyjg6enjAAeapU6F4ok4d6yLp38Xj8K+YSRjQ5hkG
+	GkU065DJp2dUdvbi5p7NJhh7itPDthop8Ga9GNHtrM0ZGUTYNNIZjAkDU/2l7epTQ7ZI7w
+	gGm4AK3Y0+jUFVSabsozXAFFx26UkBD3YBcsDOuomZOnPAJZeRVgwgh/owESrg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742900100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65yWQ8YBB+8DDN6DCpX/9zSZQCjct9PcGo9p6rB0SL0=;
+	b=EwXtgt7nrastImk24s40TB/rYZFUxBRZ3lctbVCOLhOeK4t/rK4UVKebbp6I2zu2AA6CQ4
+	DLGC/XgGtx+gB4DA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH 3/3] selftests: vDSO: chacha: Provide default definition
+ of HWCAP_S390_VXRS
+Message-ID: <20250325115127-0eaf5fcb-202d-4aaa-bfd2-fede68f8e7b4@linutronix.de>
+References: <20250324-s390-vdso-hwcap-v1-0-cb9ad001ceba@linutronix.de>
+ <20250324-s390-vdso-hwcap-v1-3-cb9ad001ceba@linutronix.de>
+ <20250324155513.12139G44-hca@linux.ibm.com>
+ <20250325074319-b478adcc-3e04-447f-81b5-c92741c91bfd@linutronix.de>
+ <20250325071840.7910A12-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250321133401.GB4776@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250325071840.7910A12-hca@linux.ibm.com>
 
-On Fri, Mar 21, 2025 at 02:34:01PM +0100, Oleg Nesterov wrote:
-> On 03/21, David Hildenbrand wrote:
-> >
-> > Based on mm/unstable.
+On Tue, Mar 25, 2025 at 08:18:40AM +0100, Heiko Carstens wrote:
+> On Tue, Mar 25, 2025 at 07:48:48AM +0100, Thomas Weiﬂschuh wrote:
+> > On Mon, Mar 24, 2025 at 04:55:13PM +0100, Heiko Carstens wrote:
+> > > On Mon, Mar 24, 2025 at 03:03:17PM +0100, Thomas Weiﬂschuh wrote:
+> > > > s390 does not provide a hwcap.h UAPI header.
+> > > > 
+> > > > Add an inline definition for the constant HWCAP_S390_VXRS until a proper
+> > > > UAPI header is introduced.
+> > > > 
+> > > > Fixes: 210860e7f733 ("selftests: vDSO: check cpu caps before running chacha test")
+> > > > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > > > ---
+> > > >  tools/testing/selftests/vDSO/vdso_test_chacha.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
 > 
-> which has another fix from David in __replace_page() plus the fix from
-> Tong in uprobe_write_opcode().
+> ...
 > 
-> So, Andrew, could you take this series as well? Peter, will you agree?
+> > > >  #elif defined(__s390x__)
+> > > > +#ifndef HWCAP_S390_VXRS
+> > > > +#define HWCAP_S390_VXRS	(1 << 11)
+> > > > +#endif
+> > > >  static bool cpu_has_capabilities(void)
+> > > >  {
+> > > >  	return getauxval(AT_HWCAP) & HWCAP_S390_VXRS;
+> > > 
+> > > How did this cause a problem?
+> > > 
+> > > Did you use something different than glibc(-devel) on your test
+> > > system? Just wondering since glibc-devel provides the define since
+> > > ages and is also required for getauxval().
+> > 
+> > I used nolibc (from the kernel tree at tools/include/nolibc/) to make cross
+> > platform usage of the tests easier. See also [0].
+> > I got confused by the existence of hwcap.h in the kernel UAPI headers for
+> > various architectures and didn't check the libc headers.
+> > So this isn't really a bug right now, and the hwcap changes will only really be
+> > necessary once my other work goes upstream.
+> 
+> Thanks for explaining!
+> 
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 
-Yeah,
+Thanks!
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+I'll wait for some more feedback and then resend the series with some better
+explanations, and without the incorrect Fixes: tags.
+If there is pushback for applying any of the patches now, I'll carry them
+downstream and will resubmit them as part of the later series which integrates
+more of the vDSO selftests with nolibc.
 
