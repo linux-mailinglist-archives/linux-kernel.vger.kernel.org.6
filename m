@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-575575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F9FA70454
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:53:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C8A70457
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA2E16AC90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:53:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45FCF16BD56
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1420E25B678;
-	Tue, 25 Mar 2025 14:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D7325A648;
+	Tue, 25 Mar 2025 14:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FanOVWdv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="c+fhiXdo"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584625A322
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE7C25A350
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914375; cv=none; b=GQ5bzNOT6UsaXGrf5xyghzBwryRIEbBYh+n+OIPwe6VNh2FPKvSj+uTGuJ/pmiUWaWJOU8tcems0eb5ahXOz7m0eSS+IF4j0z3dO+b8hbf7KQRB50a3uvUrZk8Yb4bj9BRLsei1lyjVXG2k04CP3GIryoL25p96NCGrFz0CDiok=
+	t=1742914427; cv=none; b=mzolR2klfaZ9pc7n7/UB8pY1OJSXC9RHlAsgdX40fjowlB01btdXqvbEuosQeRS353uABxvUqxT4RlsZ4GGfmz5hzPqtTqDREp2AL/LdrtR4jjC5Eqm9hqUJJK+JMcAqEiPXu2b+4noBcdhDqFEJVCyDcnsEpYWnzWgOTQLGuP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914375; c=relaxed/simple;
-	bh=d+kKsfl2TTj9vTCfKwIjZehCx6egu08uzHV5hFpXi0c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m7eGB/jfI3CCHJk8xsVsbiT1eQdmshA9RuuY3rdoGYh1c3+BkgssB5mFmsoWEj5DWNnf23SaXiiGSG9pwTOXCZtUYkvio0e59R5Ak3dKcfdxTZiC/dMDz39wMrf4SNBZX9l8leUU4BPMdfUv24lPUajPIgVXXmtCSMZAqwm25+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FanOVWdv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PDM6et028569
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ftcTynJFhZf6Ou+y+dlXrXlxZij+fB0u3WfPkqUsG4U=; b=FanOVWdvToSN62/b
-	eW6+fkKgH4vKcZ3veFc7yfEXb+Rr3khkkdMVXH6U1UngLzagHNH6F8cDVe+5QzUK
-	GEvsefQhWHyPGgxoycMaKSqp+uUa6FGNvQZ6eSYptJYBVpOi85dAdcMVii6iAUXc
-	LoOCgBP8f7ATs6TwAo/cdvn7fRcI6yjQnfoSX9CGGUaMtKcLokmDSv8xqbg9kCdy
-	vpbXnUN47r/V4Je8/mPr7Jhi7ZQqrxHnzUzYZ038VEyzPTsGi218JIhRl2LdkxDa
-	QAGGMHQt75IEy/E8WGqNpY4yWgv6z1Rzur4ltIHdTVSgOjkLLjQ7TALPvrckcWg/
-	6KjDZg==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnyjg2yq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:52:52 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff6af1e264so16287587a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:52:52 -0700 (PDT)
+	s=arc-20240116; t=1742914427; c=relaxed/simple;
+	bh=1sM5l4Le9uZaYWmJvDCU8/tUWoePiEbJJ8FpsxGPQHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAUrh8FfrtiBzP8HtyY0Xw77q73ZNBhTOrW14MCK+WLBojkeu6yxqlpMJHv+AdNLbeJD4yuKAgCyF6wtN2ySuggoxaKpCdjAXiQ3WThyCBHr5z/pu3OBJrYb+fOVvyH7FmfshjXszOBAeOTW7LG/d+cKJpcJHBlKFM25e+LkUjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=c+fhiXdo; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-301302a328bso10840653a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1742914425; x=1743519225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TdkDS/vMk5p1AZv8W+AgQj6RaWYMpbzjtCmMRhYEbI=;
+        b=c+fhiXdoVvykfu7MlS9X+itas6WJclx71D0tUzBqIpP4q+OXrzEjZUNQR7kFIdfFjb
+         lM7FJVOPbNU8Sp7llOUUbJ92w8e2h8+Qxs3A5NkLMyT470VhVL6Ggn2q3U2wLOtCzQs8
+         cKtZlOqOz3D+7+Rw2ES22wkODhcNmtY33GILg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742914371; x=1743519171;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftcTynJFhZf6Ou+y+dlXrXlxZij+fB0u3WfPkqUsG4U=;
-        b=O5EydZ0Q02TCg2IpzWvK94bPSIhlCX0LqQ/i4Zv1O9UG6OrH8NA+jwZPwKcF5sqO/y
-         DMPha0lsyElEJnkESEOcucS3m42vswQiyeFvqU8y/XfNgendQ9wYPE4kS+8HV4UU60Md
-         R8jLV0AxbZIQDN/NHnMNUSrXAVEj5MfNEBAkecIJq7Mrog7NZx5+mqfadiai4OemvmSr
-         k0LYCsJlG+CEOAMhkl5+eNCwvNa+KjPxgicJet7eiePFprvzuw93jixJLhWZ3Mpl3snr
-         u4ttfWMHQERwwjMr4TPrMnM0g+hCanQbvcyMJJzBJIW32tCT9mMXqxT04WSwGVkcJTIM
-         hyng==
-X-Forwarded-Encrypted: i=1; AJvYcCUllEmBgR3ekETvKcjJdCuadF1BlYs/q8/YsNn3XThb8+3eJEyduI7/hwqIbNfM4KJu97o5JozpOs//gCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcH6SRUEgEsEvGcc9CufJS0wSxOy3WZIxL+XOD5wqUkrISxYcP
-	CRCzPEnIZuWfeChXbxG5lSjN6q/AqpsoEQ6hih7EQlxYAF6/1qxfaS1VAUKdzrp1F7OaA344xbt
-	YVTj/relTyZeI+YvTKmS3vupf8nsnQ1cI0RPorUixw6GWCv7KWc3gRSLoxV0FErGwoz1wcqA=
-X-Gm-Gg: ASbGncsQTBfKfOSOWaKdwxbGfaxXdfgaKZWgISyodJrjMpzs+6t13e2WGRo+DcED1rC
-	J6KusbXiR9Em5wSHwjUiYmvk9ALHOxclxoOGOcC5jaKXecLzvV6oLbRVE3rmluD9pVcWdKn6tex
-	G/LvBgYMOgGYj+V5qUv93sehax8D5Jq3OlT6q112MW33fyX+4LP2BSW80q2XrXCeByORazh+OrB
-	2Xi/36XwBSLqCFgnR8EtTbQzzmb9elOK9/IiijCSSHWl3tJsFCRqksWNZJCeLN5LIimTcF/a8Vs
-	sOwfQ5LW3KNPaJ14NES2fp/ZxwJClqfJJzz3yeHDe2hA9scynQHM
-X-Received: by 2002:a17:90b:4a44:b0:2f4:4003:f3d4 with SMTP id 98e67ed59e1d1-3030ff08e4amr25846270a91.30.1742914371014;
-        Tue, 25 Mar 2025 07:52:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGq37xgRTdz1JPqWrLC0RaHjS1VYwIHPt1R/tO8cE0n4o8nk/6ax8nuzgtSl/hVZJ/IF/xkg==
-X-Received: by 2002:a17:90b:4a44:b0:2f4:4003:f3d4 with SMTP id 98e67ed59e1d1-3030ff08e4amr25846235a91.30.1742914370543;
-        Tue, 25 Mar 2025 07:52:50 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3036c973cf0sm1136656a91.1.2025.03.25.07.52.49
+        d=1e100.net; s=20230601; t=1742914425; x=1743519225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/TdkDS/vMk5p1AZv8W+AgQj6RaWYMpbzjtCmMRhYEbI=;
+        b=aAkxqKyRRUTMdiQpspzAMH6dhHw1ScQUoFpZPM/M1mCytxqrNWhM7urxnF1r+eq2QL
+         09mv6j3t10d5UquiMqTLkxjr+FO94jBT8jM0QBvzbj9XbRVKqD7TlffDX1KhZD7f4q0h
+         gl/xUGD7ruB+MQSzjBot+NX24KQmlGaamGXr86PTLAA6g4a02PJWj67boOcBHTnvgvCH
+         O+OIhuPsBVr+Rwmgjc2d2FmHlSywoKp+PQ3zmYpxmh3Dc9B5XtAhxy9UzA7wxQvhmAxN
+         RTFlI2CTObjOBpg4PKjZ39c/zyobfdnmRW6JDGe15cqCEm2zTt3tDBGJg8uHEIzeD6oc
+         DwHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFH7yHmw9RjQeqO0QuBpqt4QjxKzgL+h4gZ7FTkemVf8P3ugJfDMj7AuaHba5UvXqx6iCRRmsoD7zutCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfOri/+50aKDRG9hOyrnDM9XstTSVhNAd5v3J7rgsMnJF4qoaj
+	UfYSDUTGrn+bPgy+jcPKyf4FZKOtjAfwSxiSwJZR3pluuJZJai1zsNr1CZJC9P4=
+X-Gm-Gg: ASbGncvc5bS94KqIPi1p2qz2528TXNHP03ThYhAGJIL44sb5lsPNyTjUMHHdPAN76mO
+	wK52/rY+Y1HuCY3GuZdVbAebeyA6xr3E0dKd+1Oorr5k35wraMF7Ib/9uheyoVZsChfh+UcT4Db
+	ZMSyemRryCC47gzXRwrCp2pkfoQfDM2guEhM2kERIR8XYrh6AYAKbql3TjAAWbFDQeUql2nM99q
+	mkdAEXUNK3id6GJFGSR/HJmhFch9Q6/NgEIkGK9aVcxkU7ikRkQ60FeUAbuGfL3jVWGRq7BHaVm
+	T4eei6C65MFsR7iPZVSKsAYVcv/0Ekt+K6ncW0Tp4A21KuPyGjRO8HY/GzM5
+X-Google-Smtp-Source: AGHT+IGTbPk9dPvPoREsYcLOoknFmq0RVX2PWOyMpPbWJ8k+G1JOY7Wb19hLjnqLwlugSDnBNIwDXA==
+X-Received: by 2002:a17:90b:51cf:b0:2ee:edae:75e with SMTP id 98e67ed59e1d1-3030fe86471mr27282348a91.13.1742914425185;
+        Tue, 25 Mar 2025 07:53:45 -0700 (PDT)
+Received: from localhost ([84.78.159.3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-227811baf30sm90844895ad.130.2025.03.25.07.53.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 07:52:50 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-In-Reply-To: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
-References: <20250321-ath12k-dont-put-chanctx-in-arvif-v1-1-c8e93061952b@quicinc.com>
-Subject: Re: [PATCH ath-next] wifi: ath12k: don't put
- ieee80211_chanctx_conf struct in ath12k_link_vif
-Message-Id: <174291436978.1215324.3680053989987464544.b4-ty@oss.qualcomm.com>
-Date: Tue, 25 Mar 2025 07:52:49 -0700
+        Tue, 25 Mar 2025 07:53:44 -0700 (PDT)
+Date: Tue, 25 Mar 2025 15:53:40 +0100
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	PCI <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	shivamurthy.shastri@linutronix.de,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: next-20250324: x86_64: BUG: kernel NULL pointer dereference
+ __pci_enable_msi_range
+Message-ID: <Z-LDdPeTsnBi8gAU@macbook.local>
+References: <CA+G9fYs4-4y=edxddERXQ_fMsW_nUJU+V0bSMHFDL3St7NiLxQ@mail.gmail.com>
+ <b6df035d-74b5-4113-84c3-1a0a18a61e78@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
-X-Authority-Analysis: v=2.4 cv=Ybu95xRf c=1 sm=1 tr=0 ts=67e2c344 cx=c_pps a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=2YHuQJzV6Ps-Yg4M2TkA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: 1aJXVD5wLJBO40kU5wDeLf6mRgnlYNcz
-X-Proofpoint-ORIG-GUID: 1aJXVD5wLJBO40kU5wDeLf6mRgnlYNcz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_06,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 mlxlogscore=777 priorityscore=1501 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250104
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b6df035d-74b5-4113-84c3-1a0a18a61e78@stanley.mountain>
 
+On Tue, Mar 25, 2025 at 04:56:33PM +0300, Dan Carpenter wrote:
+> If I had to guess, I'd say that it was related to Fixes: d9f2164238d8
+> ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag").  I
+> suspect d->host_data can be NULL.  I could be wrong, but let's add Roger
+> to the CC list just in case.
 
-On Fri, 21 Mar 2025 09:45:53 +0800, Baochen Qiang wrote:
-> ieee80211_chanctx_conf struct is not put at the end of ath12k_link_vif.
-> Note ieee80211_chanctx_conf has flexible array member inside it, causing
-> below warning with GCC-14:
-> 
-> drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Although there is no issue for now since the array is not getting used,
-> this should be fixed to avoid any potential data corruption issue in the
-> future.
-> 
-> [...]
+Indeed, sorry.  There's a patch from Thomas to switch to using
+pci_msi_domain_supports() for fetching the flag, as there's no
+guarantee all call contexts will have an associated msi_domain_info:
 
-Applied, thanks!
+https://lore.kernel.org/xen-devel/87v7rxzct0.ffs@tglx/
 
-[1/1] wifi: ath12k: don't put ieee80211_chanctx_conf struct in ath12k_link_vif
-      commit: ce0779378c62758a0c503bf85e643c6d8f343703
-
-Best regards,
--- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-
+Regards, Roger.
 
