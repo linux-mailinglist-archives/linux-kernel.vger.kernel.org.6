@@ -1,191 +1,249 @@
-Return-Path: <linux-kernel+bounces-575222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9A9A6F518
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:43:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D3AA6F533
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D19F7A60DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347893AA349
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF9E257ADE;
-	Tue, 25 Mar 2025 11:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453952566F3;
+	Tue, 25 Mar 2025 11:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O37S5wV+"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MgLXv+cB"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9450A2571DF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5D72561DA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902875; cv=none; b=IgQ504b9srHmi80ZYBNJaMBrY2ShLMuK+9Y0qIDAbIdJWqzgVIrMNWbvnC5+2eeqfK6TcoAdGQTaAoM9yyLKGJlNHRDEVm3YGtZS0AX32k8pBBoZpz2/oF15f5jJ9lbzw3u9WDTRtoUvjA18V9YvqSPq+YCsHUs3RO5asFeHRYU=
+	t=1742902895; cv=none; b=psy9PUBTwXE+hK6wDY0iQlb2AA/sIAyyMIQC+j1GteIUVcCnqxGrObje+qyWRMhe7FtokSzvtqzg8a4Am5T4ZwV9fhsUsUMeI8T71m5qBOdgCZayo7dn4D9UoQk95viurmQ1hQKVORshalerNAa68pMMmUNCcYkV9ET0zAnYW/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902875; c=relaxed/simple;
-	bh=4hK5NwvGZj3PELV41E3//V4IRXz5oGNBj9IGYps+vOQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OEYfhpQdQ5j3rnusDa1GNY6xrgc5Dts1ppxMeIzMUxDRTAM+3ADZh2TsCbYcuEoCkZB+WiFavYZNq3w4Vhg1K45u1eGTVap0B8oh6hOxgMqetEFJ+wnLMY8kcg6DUxrmbuKT8VSErm+8zR7i2sBV6E1az8ZvMnMpHEZrE0FPn6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O37S5wV+; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1742902895; c=relaxed/simple;
+	bh=/4MN9pL13QS8WSvmrDAkH9tjZnUJYGKfLLZEMOGkYI4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qJeZotMoK0uI4DGnc24iKUTiido4M821ueCzgcEEpK7OdbSwIzfSrgGXWMGROU9TEICeFnG7qfPFzUXDBOm/DYB3ZA60prcoZNZuykyk7cMKUWs2Xxvxv+oW4+1u+CDF0++RI7dT1wOB4fNx0KYmGRErVQOdk/UD/8Di3WYkx+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MgLXv+cB; arc=none smtp.client-ip=209.85.221.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39133f709f5so2924449f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:41:13 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5259327a937so2148139e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742902872; x=1743507672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LHH3q92f3jVI2cl1PwT0LmA+qhtDvCooULm9gmNkwck=;
-        b=O37S5wV+iqpX8LHQLqDuBub3v39fJGQ1jyfFmU5HgS1AsV6pBmA00c4M0oJU2vSSSy
-         RhQnb2/5QHg18hkf+Ayg5tGQkQz7U6R8jui0UnBLcJWv4COW6MTfyrqDnbtJmk1IYWaP
-         MsNDYDcbEClzxgGIVWAjY87akqe7w5eaZHTM63o+jNya7GNn5akIBv0Bb5tVpemnQYul
-         8ycHGqhi7H9cQ9s8d9V3MkC9NBl6n+7213xOjRfFdpRG45ZyXYEOqv4UAtlCGeoDOsUy
-         cqJYWsGLq3QhZnBtCHjzW3O5e90rw/1X/ByTdSfPPwZOnf/ePaZ8wd2VbVqO6qTmyKBq
-         KYjg==
+        d=linaro.org; s=google; t=1742902892; x=1743507692; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GojWv6JgO00ZhMt6mOebWUL6XxDfc/RWWGCpH5UC34U=;
+        b=MgLXv+cB28foKrGLTatBjcBBVIBvdKNDE/yoCExu1J7VUIPu0WgZsxMobKaqeekO07
+         +vINemjTkv1e6VVZPUyaoj+Bz2FTBTVaxnqTwAuTyUPqoHsifCcOMwxPxWznJ0vWScuk
+         7mvozJuvnQGNorY0y0rD7e2iAga/OJpGq/8dc/YV8AwS9IpLb+Fh4u2uYhjl5ITafmkH
+         5OJ/ZhKLVqX01/Bww+fAd0NAQMJZiM0aR9IZ41mREVruHreSbZgsnyc8RzmRvqYOZTd4
+         B0lw67JonW+lzQkU2Ix2UTj9fj4K0x95vCTvua4NgK5uzhoI02PsgKeB2TKagljd7Fv8
+         OPPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742902872; x=1743507672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LHH3q92f3jVI2cl1PwT0LmA+qhtDvCooULm9gmNkwck=;
-        b=hlb/QIIDutVwUzk6YWFKKtpccQaagtCd/r7U9hJZ89QqKaEftadyKi5jKSaczmDwj8
-         dDK45Hzpnh21Tn82ofRDSbF18sWQDYUFQmpBLFMD7ivZTJgvOG65BEyyBtgeegPprsZd
-         r+CaYfGsODWsfgeH89Y++ej2TsUKaGjk9zky6a+adkS1xAJbcuuVx67v+92lZU1OPl4s
-         E6dYYTh8ka2N/7AGTvfsqXmSmYE+f9bqlqbYUY3wMsBrDPYHjy2DytY3K1OAou3O+87E
-         ow4fnw9rR1/mUh/AB58VeLitdlh9mia6WI1n5sFts3TCJaCnK79YxEglCoM+F563b+It
-         Rnuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzwM6JJ+qqKX8s9GB2wJGQdgdnCME0UDauBs0KDzk8EnLT1UQTRRPu09vC95g4IiyMNan/hS8J/hjYPWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAFlm1KlbFdoJDLHm5jPUMhB5ksLGcmJybphdTM+x76V5WCaFY
-	7pXPjzTV5i+1nkWsyk+6ZM69Vp/b6gipEJkh79rwp7PL3CSokV1rzSlmz6t3Npo=
-X-Gm-Gg: ASbGncs2uFxmj2+sFFKoVvI6RPnD0fyidZTl5gh33Gmc/wrPyv8GFxcbMyArqRrLmvX
-	eoCEkRSke3BaDyPgcO9Q9wUmQ5dwPt3OTKn8ZepzsHtWpFYj8hrd6hcMz/UC6bWxpE/ekOk6ZOM
-	1gkxDX131mBT6J6E+T/sTeWYTn1mYZoksf5vdtuPvOc1+Z0eZG5DiJVqlFj5bJby/tqLlA+eM1M
-	2QFUzjemmUrlJpbfWqbh7gQFKzl+P6cHJ3QxkKDRgMIWwGS1igsYN7Fsx9SYks4uC8jG1Q9yswV
-	/iRAng4GzhMkSn0iLKT7xhdPXV1kAhB0vU/MtWiFtiD2VYIX/hMafRGxo1epOd1SU2BXdw==
-X-Google-Smtp-Source: AGHT+IEMuI1g0ZU02+lOgr8fYYCjQ7o8X4OMjftQEoVT08K9es8AYYCt3BGby4k10kE/8HnyILx4Lg==
-X-Received: by 2002:a5d:59a6:0:b0:390:f6aa:4e72 with SMTP id ffacd0b85a97d-3997f8fabdbmr14153166f8f.18.1742902871718;
-        Tue, 25 Mar 2025 04:41:11 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a6326sm13213330f8f.29.2025.03.25.04.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 04:41:10 -0700 (PDT)
-From: srinivas.kandagatla@linaro.org
-To: peda@axentia.se,
-	broonie@kernel.org,
-	andersson@kernel.org,
-	krzk+dt@kernel.org
-Cc: ivprusov@salutedevices.com,
-	luca.ceresoli@bootlin.com,
-	zhoubinbin@loongson.cn,
-	paulha@opensource.cirrus.com,
-	lgirdwood@gmail.com,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	konradybcio@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	johan+linaro@kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Christopher Obbard <christopher.obbard@linaro.org>
-Subject: [PATCH v5 6/6] arm64: dts: qcom: x1e78100-t14s: Enable audio headset support
-Date: Tue, 25 Mar 2025 11:40:58 +0000
-Message-Id: <20250325114058.12083-7-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250325114058.12083-1-srinivas.kandagatla@linaro.org>
-References: <20250325114058.12083-1-srinivas.kandagatla@linaro.org>
+        d=1e100.net; s=20230601; t=1742902892; x=1743507692;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GojWv6JgO00ZhMt6mOebWUL6XxDfc/RWWGCpH5UC34U=;
+        b=Q9pvM55Sb0UpjmpIORYfbX2xd2kyCl58LOEBLSSFonq4BbkYi/vBSrgeSAuxlgWY4C
+         01nqcSAO7E1gpVC0bOwXkmJYjEurIgC3v/0BvfFcZLILMHjsnn/IJF30RLYtBNhp5d8q
+         /bsdvtUcu2jjMnpp1N4MRwlnBptyTet3FYvNrz4GiBfACzdAzIR5Bi3Vgf4XONdhPNih
+         he3Pk8brbABhzwNuOKNHVU2pY0dbgQkXySyWX6P4owZAkcrcSzCDfSq0he9iry488tn3
+         Mmd2igPIB6Nv2aNO74txBlNsiGqgHvB6/FpGWPwzucJcXvrH1HcPft/MTlOGM/AlNOjl
+         xodA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYHx/AZTp7gk9YYCg/V1p5qVsLxHYwZv+g4DuKg9qWrtx/xDWMRbCVcS0OZDwrsvoxrfZ3EiUrV2999HI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx114fDA0Q1/o2eBB2LQ/6ayuK6DqxOYnleIkfet4bObmEKEULc
+	RMwYQrozbQzXe4U+DG6fND3Yd6GAMgBlOjnLVySwly9Boc2YWE5sNA5z3hKrkdeaKJsrqkOkWo2
+	reU3QkkqdpkXKCO1WiF7ed53B2U/T/9O0Mum2CA==
+X-Gm-Gg: ASbGncsrFikx/B8YQ0NSF1A4MzW9fl6pQ6XPziM2qA1LQk4+c9CWkZTB38Ag8MYiGCP
+	HOwSbiGP+eMapRU15b27nHkL08N5mvBpnGNwHlXrEOJkpj0t99kGxgSgISbQXTPCuLBfHoQO10o
+	d2DH62CaIzVmgZQN/j9d69Gk0qDnTbLUHQ22oNj8lZoyiil85UqJy6n/eQq00=
+X-Google-Smtp-Source: AGHT+IErnLB8k2eURQkQuvonw7hDaTgDK/6MY679H/xblBZRcECFv8MSDYwthPn/gDiugNBls/DTd74DC7XLhdBeVrs=
+X-Received: by 2002:a05:6122:2783:b0:51b:a11f:cbdb with SMTP id
+ 71dfb90a1353d-525a833b0cfmr11322920e0c.4.1742902892035; Tue, 25 Mar 2025
+ 04:41:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 25 Mar 2025 17:11:20 +0530
+X-Gm-Features: AQ5f1Jp4MnK8M9WIj6QfiQc4fPhqZDUJiPB_52yu7nH9UEpCQdOPXm-gf5TLGEQ
+Message-ID: <CA+G9fYs4-4y=edxddERXQ_fMsW_nUJU+V0bSMHFDL3St7NiLxQ@mail.gmail.com>
+Subject: next-20250324: x86_64: BUG: kernel NULL pointer dereference __pci_enable_msi_range
+To: PCI <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, shivamurthy.shastri@linutronix.de, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Regressions on x86_64 boot failed with Linux next-20250324 tag kernel
+6.14.0-rc7-next-20250324
 
-On Lenovo ThinkPad T14s, the headset is connected via a HiFi mux to
-support CTIA and OMTP headsets. This switch is used to minimise pop and
-click during headset type switching.
+First seen on the next-20250324
+ Good: next-20250321
+ Bad:  next-20250324 ..next-20250325
 
-Enable the mux controls required to power this switch along with wiring up
-gpio that control the headset switching.
+Regressions found on x86_84:
+ - boot
 
-Without this, headset audio will be very noisy and might see headset
-detection errors.
+Regression Analysis:
+ - New regression? Yes
+ - Reproducible? Yes
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
----
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dtsi   | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Boot regression: x86 boot fail kernel panic __pci_enable_msi_range
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-index afea82616bc4..34d1d8927484 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
-@@ -41,6 +41,7 @@ wcd938x: audio-codec {
- 		qcom,tx-device = <&wcd_tx>;
- 
- 		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+		mux-controls = <&us_euro_mux_ctrl>;
- 
- 		vdd-buck-supply = <&vreg_l15b_1p8>;
- 		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-@@ -149,6 +150,16 @@ pmic_glink_ss1_con_sbu_in: endpoint {
- 		};
- 	};
- 
-+	/* two muxes together support CTIA and OMTP switching */
-+	us_euro_mux_ctrl: mux-controller {
-+		compatible = "gpio-mux";
-+		pinctrl-0 = <&us_euro_hs_sel>;
-+		pinctrl-names = "default";
-+		mux-supply = <&vreg_l16b_2p5>;
-+		#mux-control-cells = <0>;
-+		mux-gpios = <&tlmm 68 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	reserved-memory {
- 		linux,cma {
- 			compatible = "shared-dma-pool";
-@@ -604,6 +615,13 @@ vreg_l15b_1p8: ldo15 {
- 			regulator-always-on;
- 		};
- 
-+		vreg_l16b_2p5: ldo16 {
-+			regulator-name = "vreg_l16b_2p5";
-+			regulator-min-microvolt = <2504000>;
-+			regulator-max-microvolt = <2504000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l17b_2p5: ldo17 {
- 			regulator-name = "vreg_l17b_2p5";
- 			regulator-min-microvolt = <2504000>;
-@@ -1461,6 +1479,13 @@ rtmr1_default: rtmr1-reset-n-active-state {
- 		bias-disable;
- 	};
- 
-+	us_euro_hs_sel: us-euro-hs-sel-state {
-+		pins = "gpio68";
-+		function = "gpio";
-+		bias-pull-down;
-+		drive-strength = <2>;
-+	};
-+
- 	usb1_pwr_1p15_reg_en: usb1-pwr-1p15-reg-en-state {
- 		pins = "gpio188";
- 		function = "gpio";
--- 
-2.39.5
+## Boot log
+<1>[    1.525485] BUG: kernel NULL pointer dereference, address:
+0000000000000002
+<1>[    1.525573] #PF: supervisor read access in kernel mode
+<1>[    1.525573] #PF: error_code(0x0000) - not-present page
+<6>[    1.525573] PGD 0 P4D 0
+<4>[    1.525573] Oops: Oops: 0000 [#1] SMP PTI
+<4>[    1.525573] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.14.0-rc7-next-20250324 #1 PREEMPT(voluntary)
+<4>[    1.525573] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+<4>[    1.525573] RIP: 0010:__pci_enable_msi_range+0x306/0x6b0
+<4>[    1.525573] Code: ff ff ff e8 1c 05 fe ff f6 83 21 08 00 00 10
+0f b7 85 6e ff ff ff 74 0c 0d 00 01 00 00 66 89 85 6e ff ff ff 8b 8d
+68 ff ff ff <41> f6 44 24 02 40 74 0c 25 ff fe 00 00 66 89 85 6e ff ff
+ff 89 8d
+<4>[    1.525573] RSP: 0000:ffffa83b00013740 EFLAGS: 00010246
+<4>[    1.525573] RAX: 0000000000000080 RBX: ffffa11c8023e000 RCX:
+0000000000000001
+<4>[    1.525573] RDX: 0000000000000000 RSI: ffffffff9e60c683 RDI:
+ffffffff9e6519a8
+<4>[    1.525573] RBP: ffffa83b00013810 R08: 0000000000000002 R09:
+ffffa83b0001370c
+<4>[    1.525573] R10: 0000000000000001 R11: ffffffff9e60c5b0 R12:
+0000000000000000
+<4>[    1.525573] R13: 0000000000000000 R14: 0000000000000001 R15:
+ffffa11c8023e000
+<4>[    1.525573] FS:  0000000000000000(0000)
+GS:ffffa11d5c339000(0000) knlGS:0000000000000000
+<4>[    1.525573] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[    1.525573] CR2: 0000000000000002 CR3: 000000007d844000 CR4:
+00000000000006f0
+<4>[    1.525573] Call Trace:
+<4>[    1.525573]  <TASK>
+<4>[    1.525573]  ? __die_body+0xb4/0xc0
+<4>[    1.525573]  ? __die+0x2e/0x40
+<4>[    1.525573]  ? page_fault_oops+0x3ae/0x410
+<4>[    1.525573]  ? kernelmode_fixup_or_oops+0x54/0x70
+<4>[    1.525573]  ? __bad_area_nosemaphore+0x52/0x240
+<4>[    1.525573]  ? bad_area_nosemaphore+0x16/0x20
+<4>[    1.525573]  ? do_user_addr_fault+0x738/0x7a0
+<4>[    1.525573]  ? irqentry_enter+0x2d/0x50
+<4>[    1.525573]  ? exc_page_fault+0x4d/0x120
+<4>[    1.525573]  ? exc_page_fault+0x70/0x120
+<4>[    1.525573]  ? asm_exc_page_fault+0x2b/0x30
+<4>[    1.525573]  ? __pfx_pci_conf1_read+0x10/0x10
+<4>[    1.525573]  ? pci_conf1_read+0xd3/0xf0
+<4>[    1.525573]  ? _raw_spin_unlock_irqrestore+0x28/0x50
+<4>[    1.525573]  ? __pci_enable_msi_range+0x306/0x6b0
+<4>[    1.525573]  ? _raw_spin_unlock_irqrestore+0x28/0x50
+<4>[    1.525573]  pci_alloc_irq_vectors_affinity+0xbf/0x140
+<4>[    1.525573]  pci_alloc_irq_vectors+0x15/0x20
+<4>[    1.525573]  ahci_init_irq+0x90/0xc0
+<4>[    1.525573]  ahci_init_one+0x82c/0xd10
+<4>[    1.525573]  pci_device_probe+0x198/0x230
+<4>[    1.525573]  really_probe+0x146/0x450
+<4>[    1.525573]  __driver_probe_device+0x7a/0xf0
+<4>[    1.525573]  driver_probe_device+0x24/0x190
+<4>[    1.525573]  __driver_attach+0x104/0x250
+<4>[    1.525573]  ? __pfx___driver_attach+0x10/0x10
+<4>[    1.525573]  bus_for_each_dev+0x10e/0x160
+<4>[    1.525573]  driver_attach+0x22/0x30
+<4>[    1.525573]  bus_add_driver+0x175/0x2c0
+<4>[    1.525573]  driver_register+0x65/0xf0
+<4>[    1.525573]  ? __pfx_ahci_pci_driver_init+0x10/0x10
+<4>[    1.525573]  __pci_register_driver+0x68/0x70
+<4>[    1.525573]  ahci_pci_driver_init+0x22/0x30
+<4>[    1.525573]  do_one_initcall+0x121/0x330
+<4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
+<4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
+<4>[    1.525573]  ? trace_preempt_on+0x12/0x80
+<4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
+<4>[    1.525573]  ? preempt_count_sub+0x63/0x80
+<4>[    1.525573]  ? alloc_pages_mpol+0x170/0x1c0
+<4>[    1.525573]  ? trace_hardirqs_on+0x29/0xa0
+<4>[    1.525573]  ? irqentry_exit+0x57/0x60
+<4>[    1.525573]  ? sysvec_apic_timer_interrupt+0x52/0x90
+<4>[    1.525573]  ? next_arg+0xcd/0x150
+<4>[    1.525573]  ? next_arg+0x138/0x150
+<4>[    1.525573]  ? parse_args+0x16e/0x440
+<4>[    1.525573]  do_initcall_level+0x80/0xf0
+<4>[    1.525573]  do_initcalls+0x48/0x80
+<4>[    1.525573]  do_basic_setup+0x1d/0x30
+<4>[    1.525573]  kernel_init_freeable+0x10c/0x180
+<4>[    1.525573]  ? __pfx_kernel_init+0x10/0x10
+<4>[    1.525573]  kernel_init+0x1e/0x130
+<4>[    1.525573]  ret_from_fork+0x45/0x50
+<4>[    1.525573]  ? __pfx_kernel_init+0x10/0x10
+<4>[    1.525573]  ret_from_fork_asm+0x1a/0x30
+<4>[    1.525573]  </TASK>
+<4>[    1.525573] Modules linked in:
+<4>[    1.525573] CR2: 0000000000000002
+<4>[    1.525573] ---[ end trace 0000000000000000 ]---
+<4>[    1.525573] RIP: 0010:__pci_enable_msi_range+0x306/0x6b0
+<4>[    1.525573] Code: ff ff ff e8 1c 05 fe ff f6 83 21 08 00 00 10
+0f b7 85 6e ff ff ff 74 0c 0d 00 01 00 00 66 89 85 6e ff ff ff 8b 8d
+68 ff ff ff <41> f6 44 24 02 40 74 0c 25 ff fe 00 00 66 89 85 6e ff ff
+ff 89 8d
+<4>[    1.525573] RSP: 0000:ffffa83b00013740 EFLAGS: 00010246
+<4>[    1.525573] RAX: 0000000000000080 RBX: ffffa11c8023e000 RCX:
+0000000000000001
+<4>[    1.525573] RDX: 0000000000000000 RSI: ffffffff9e60c683 RDI:
+ffffffff9e6519a8
+<4>[    1.525573] RBP: ffffa83b00013810 R08: 0000000000000002 R09:
+ffffa83b0001370c
+<4>[    1.525573] R10: 0000000000000001 R11: ffffffff9e60c5b0 R12:
+0000000000000000
+<4>[    1.525573] R13: 0000000000000000 R14: 0000000000000001 R15:
+ffffa11c8023e000
+<4>[    1.525573] FS:  0000000000000000(0000)
+GS:ffffa11d5c339000(0000) knlGS:0000000000000000
+<4>[    1.525573] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[    1.525573] CR2: 0000000000000002 CR3: 000000007d844000 CR4:
+00000000000006f0
+<6>[    1.525573] note: swapper/0[1] exited with irqs disabled
+<0>[    1.553459] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x00000009
+<0>[    1.553844] Kernel Offset: 0x1c000000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+<0>[    1.553844] ---[ end Kernel panic - not syncing: Attempted to
+kill init! exitcode=0x00000009 ]---
 
+
+## Source
+* Kernel version: 6.14.0-rc7-next-20250324
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 882a18c2c14fc79adb30fe57a9758283aa20efaa
+* Git describe: next-20250324
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/
+
+## Test
+* Test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735988/suite/boot/test/clang-20-lkftconfig/log
+* Test history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735988/suite/boot/test/clang-20-lkftconfig/history/
+* Test details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250324/testrun/27735936/suite/boot/test/clang-20-lkftconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ulLSNJUAxmyv6UZdUMeoptIZNn/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2ulLSNJUAxmyv6UZdUMeoptIZNn/config
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
