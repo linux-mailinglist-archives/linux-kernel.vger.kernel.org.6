@@ -1,213 +1,198 @@
-Return-Path: <linux-kernel+bounces-576005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52409A709C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:00:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229CEA709D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF93842028
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476AF17DBEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05381F3FD3;
-	Tue, 25 Mar 2025 18:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60731F4C82;
+	Tue, 25 Mar 2025 18:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b="l+8Fezu9"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IfOPRDuI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605A11F3B9D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAC41F4188
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928668; cv=none; b=pgnYYAggnpgPJK2bFipy3r2GnE5CMl6dRnY50RaPxEfwxnDcRKCk9E5TiAMGS9t8LAKWyTMOdq4eUXNW8SigN5dT4j84g3Lc2tTDcUTKMTafpuCV9j278/UHt55ivuI2uvsGTl6GFbsKY7ZzWGYzPN3tepA9zyxVD8RhY1jn1+c=
+	t=1742928717; cv=none; b=AWTGUvC1sFt0XpBiYGcl4WEKIOqiD3Gi3BfT1QqWCuA+r1rKz9sCQZueDadvYmDxZ1MSHbi4tnZBCC92YM4ht3NNTZdBKk9BoCSebUtHBiley3pvi5WYxulgprm8SFd1isptTRg+Z3o5aJkBIVAsBt4BH7jU73BWMHhMgAsRF9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928668; c=relaxed/simple;
-	bh=9LXbgpoOCiVQGaVF3eaFZ78LjOK6T4XMFnOl9Fypu/8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pY++SOvlwBdy5BOJREWDti96taYwS2BaFXnzRiGJ9ZG/uAj61oYMht/6UBR4oa4UAEl3BnwMBreO4hB4i1DgBnz7PvwvmTykUKTpeUv/vbGBQgnkEBoR+Mx/Yl6BOdp0ieMNin/LRM8mgXRkY97uR3G+qZqMLWLJESkyXSblNCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com; spf=pass smtp.mailfrom=jrtc27.com; dkim=pass (2048-bit key) header.d=jrtc27.com header.i=@jrtc27.com header.b=l+8Fezu9; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jrtc27.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jrtc27.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso975215e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jrtc27.com; s=gmail.jrtc27.user; t=1742928665; x=1743533465; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hKFyRYKxF1WM7/Qzxwsb5esyJjWasxcKEvmo6HpGkec=;
-        b=l+8Fezu9lKnFO1vakZYrnDeGzq89y7YQIGvcEv0x2c69aIML9E2wNPGUWovNrbn+d+
-         RyHeeNLdsSKjxGdbCG5ldajKJugYNe/EFvDNy7vy42Lhxqg2bQVTIqjna4jSD0oOwMAA
-         Y5Z736XXuKaDn0ETHWLSLIlx+/AG50s1E9yGvFPxQr9q/ihD/tudsYzQgmReVIYJPkxw
-         kNi9fmvfOzmtNwKEwHUmL5TzbeUvpZOARJKexnu8mOeu9QL0cjAKqEwy0hasENtrXl7G
-         c/L69gkrAedzR6fFNasClcFxoDLad5U/Ihovpzq9nlJLd4OOXiNXefpF2Gdjp4inr70O
-         jmLQ==
+	s=arc-20240116; t=1742928717; c=relaxed/simple;
+	bh=2xXGFLVwkInmobcJUBE5/1UQyq/cvN0CxyPECWhZDZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ISwhFp2DNpPUjhzCm+j1pRPv9S62ne2A7DXQ4wpvMuKD8JU34lBwr6H/iTQqfnX5gr37vVXT4kqDAb5azO4ifmzp5o5mnJ0eHeXNaaSMkMRCtxcVu2sAnijqYRMmoxFVyEkRARouZmP4pD47RpL8ql+BuICwHnTwuX9Ow9vxzg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IfOPRDuI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742928713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=t8j8FcQOo2vXT0+x/EC8FM0KhlfrmjmrMAU0Mg5SiOs=;
+	b=IfOPRDuIJb6mcD26eVv03HxOHVXjlqMmW0qdvja63G+EVtDAVTS+71vN8WxEgkUXbDe99M
+	F67N3MqKl7LwUKqlMCtKh+lQlo/4gADy46882U41Z5/rvMgl+tWjJ2qPpXZZMw7G37rYlA
+	IDue9AQ4G+f8s20KPbZEqVHW7WgO2E8=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-221-Bq-F57uUOOiRXmDbY0bLng-1; Tue, 25 Mar 2025 14:51:52 -0400
+X-MC-Unique: Bq-F57uUOOiRXmDbY0bLng-1
+X-Mimecast-MFC-AGG-ID: Bq-F57uUOOiRXmDbY0bLng_1742928711
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8feea216aso2613176d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:51:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742928665; x=1743533465;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hKFyRYKxF1WM7/Qzxwsb5esyJjWasxcKEvmo6HpGkec=;
-        b=jD365IewTLXOK0tXoPbrkPphGkTeWuHjADZp3f4xV2PG+19YMkiABteKxLzO3Xr1hU
-         kmNdMASbAW/yGGCdJCecXac6jwjSztZGJJMAmtjI7HQEfZ/1IsA5xJtw2T6fPeHKComu
-         +qE633WCcnhmRyIoNcciIhw/DQPs8cjpVs+rcDjQpP/O3EElVImcmJrJs3OF8t42OefN
-         Inj9qnNlPP300IcOIQWcSUVtlIwZBmGx7glEfAYfCyHl48386cpwbMSG6LptvW9awf0w
-         HtcVWoeyAHEY1R1eiFnoE5KlRhkkk2ML3iwIImFnu2NaylRxFcnGbueHpcPrchAvmOhj
-         ky+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4dtWdF8VQIgp9noKEufhL5hJ8hiv5VmcOgiSc3gnTNwQqlDhrl3lVZyThvMjrN+0IDR5vCoeJPGJbDMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbR/SaAgX+Owfsyfkqt5RvYNPeUCKOBoLqDXsgzIkcIl08oErc
-	NEYll/4QfLjwUJEA2NeFhgMhiCsyrmufGEFb14etqK7u5yGNqPSoK9PU+L2Cxsk=
-X-Gm-Gg: ASbGnctad5HTOKH+ldrKNIzUXCVICN5Hzq99Rpe1nu1Nmzll9xyksvqSyXMLs3Ttel1
-	cJ7Zpu0UiVF/MwS9sAW5fcqIznm+ASnnuNyDbB+GcFenS3/ebKo9Uc12K8kfuJamXAEEw4UB42C
-	x1ceYxqVqF74nd06N9PyO8Jov957uDw0aNHsXUujX3pV2ezY7LTvc0XXtCo4CRdOMyvyfUylIVT
-	vhQFZ4An28cZMALXIiVuYk1MXDDlLVJK79E8roCxTSQqVqvqR7NNIPXgA4BewI/0RPyTx0Na6sX
-	/EwNyAOcMRkq3M+WJxCQzC9knVoOHhG70kP88bu+DJR7EYlzJBr2sUjllw==
-X-Google-Smtp-Source: AGHT+IE3tPDzR9UC+jvepT8+s1j1/v6Ba1MUiSkiWeQVK07RICCfaGQOUUCB6kQZK6oyqwZkxgnC/w==
-X-Received: by 2002:a05:600c:5247:b0:439:4c1e:d810 with SMTP id 5b1f17b1804b1-43d775fbf63mr8654245e9.9.1742928664501;
-        Tue, 25 Mar 2025 11:51:04 -0700 (PDT)
-Received: from smtpclient.apple ([131.111.5.201])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3c2csm14167481f8f.46.2025.03.25.11.51.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Mar 2025 11:51:04 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1742928711; x=1743533511;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=t8j8FcQOo2vXT0+x/EC8FM0KhlfrmjmrMAU0Mg5SiOs=;
+        b=XkybC5lLMCMO0TRc4WchNDt2Re8Afda6SLFO2atWMohlrWoR4yFRFpdejxlZgxT+50
+         9g5POKCbRZiOt5PtUWzYFrS/oAO3T2TdKh71fFttDgzjYPR4Tj+JSrgej8AmEQcVXnsR
+         r6Amda+gNc7nzgi2AU7V+S3RXaoLJKp98E5ZqOAzxAgmWoth2qFu9xc2OK9jsVesAhvM
+         woGOfB3FeUXcpG6ZxmiKrdkq2lJNo+mxmpFklD8VeMReT0n9Kyebq1gKwtjfaudPnU39
+         +qgk+QDlqshQ9xUQFMJyRCeXrIjbh6lkZ6c+bqH37R5EJdd/Wgvlv71DAR+l+M7nzyG8
+         dvqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU48BqGfSk7M1ZT093AXUMiEetizpal5lo4i9+JOrQzuxb8sU5O0JOLCppKMUpS7lUHn2BmykAzGh65bRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4xxOxmKncp0J7F3tBWJHPY06QcjSosUJGOljDIS9jvYiKx04k
+	HbCrNONIUuEPLPL+yVuvzqQPAYxWuRGnw0UX/pQ8M4KRR7iF4wHRmVPicmHxQE+iyY3v8uBSg5c
+	I5kZi1urBVry9oHgEc9lMakU7X1SD4COG+MQx0cbsE4AK/VteeZrwobwV6I+cAQ==
+X-Gm-Gg: ASbGncvzC5Tg/QVHDcRxQOHkacw9EunOSRKeeFXMuvKGnS2T50cHCob48RKDKawbutk
+	FT7c7YvEbjlJxbVIIAPLfA0Cj+fZnYNeXrpYFIbsJxX1Cef4KYKzc49u8TBJfvaCGd4SR6zcbIg
+	ua+UXXOfDzs65+NH3slNRVXo3rbPzU61jQyCoNZ4m6P7FXIkBp6ZfAsf1HfF5pMVwOx5YhBTZy+
+	sWcfziJyUFsXQLkI/oXyCXU0DOcEz9RYMa05Z0ddeLGqDulsMqZ63NpzeAX0s8VWedp9XBAfwUf
+	IH+YdlWMmc1G
+X-Received: by 2002:a0c:eb46:0:b0:6ea:d503:6cfd with SMTP id 6a1803df08f44-6ed16cde3f6mr12230646d6.19.1742928711432;
+        Tue, 25 Mar 2025 11:51:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqYQjFn4K1j4fuehDL2vDnCV4xeKoEsPSC3k3g7nw2h2mfdx1DkNTmzNbOxS9v9bBBC08uag==
+X-Received: by 2002:a0c:eb46:0:b0:6ea:d503:6cfd with SMTP id 6a1803df08f44-6ed16cde3f6mr12229966d6.19.1742928710955;
+        Tue, 25 Mar 2025 11:51:50 -0700 (PDT)
+Received: from [172.20.3.205] ([99.209.85.25])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eb3efc5952sm58924306d6.83.2025.03.25.11.51.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 11:51:50 -0700 (PDT)
+Message-ID: <0e1d8823-620f-420c-86a5-35495ccbd10f@redhat.com>
+Date: Tue, 25 Mar 2025 19:51:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH] iommu: riscv: Split 8-byte accesses on 32 bit I/O bus
- platform
-From: Jessica Clarke <jrtc27@jrtc27.com>
-In-Reply-To: <20250325144252.27403-1-luxu.kernel@bytedance.com>
-Date: Tue, 25 Mar 2025 18:50:53 +0000
-Cc: tjeznach@rivosinc.com,
- joro@8bytes.org,
- will@kernel.org,
- robin.murphy@arm.com,
- alex@ghiti.fr,
- lihangjing@bytedance.com,
- xieyongji@bytedance.com,
- linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9F043708-3BB6-46CF-BEC3-2636E9A388B7@jrtc27.com>
-References: <20250325144252.27403-1-luxu.kernel@bytedance.com>
-To: Xu Lu <luxu.kernel@bytedance.com>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH V3 00/43] rv64ilp32_abi: Build CONFIG_64BIT
+ kernel-self with ILP32 ABI
+To: Peter Zijlstra <peterz@infradead.org>, guoren@kernel.org
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, anup@brainfault.org,
+ atishp@atishpatra.org, oleg@redhat.com, kees@kernel.org, tglx@linutronix.de,
+ will@kernel.org, mark.rutland@arm.com, brauner@kernel.org,
+ akpm@linux-foundation.org, rostedt@goodmis.org, edumazet@google.com,
+ unicorn_wang@outlook.com, inochiama@outlook.com, gaohan@iscas.ac.cn,
+ shihua@iscas.ac.cn, jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn,
+ drew@pdp7.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ ctsai390@andestech.com, wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com,
+ josef@toxicpanda.com, dsterba@suse.com, mingo@redhat.com,
+ boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn,
+ leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com,
+ samuel.holland@sifive.com, yongxuan.wang@sifive.com,
+ luxu.kernel@bytedance.com, ruanjinjie@huawei.com, cuiyunhui@bytedance.com,
+ wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn, ardb@kernel.org,
+ ast@kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, linux-mm@kvack.org,
+ linux-crypto@vger.kernel.org, bpf@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, maple-tree@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250325121624.523258-1-guoren@kernel.org>
+ <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250325122640.GK36322@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25 Mar 2025, at 14:42, Xu Lu <luxu.kernel@bytedance.com> wrote:
->=20
-> Introduce a new configuration CONFIG_RISCV_IOMMU_32BIT to enable
-> splitting 8-byte access into 4-byte transactions for hardware platform
-> whose I/O bus limits access to 4-byte transfers.
->=20
-> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+On 25.03.25 13:26, Peter Zijlstra wrote:
+> On Tue, Mar 25, 2025 at 08:15:41AM -0400, guoren@kernel.org wrote:
+>> From: "Guo Ren (Alibaba DAMO Academy)" <guoren@kernel.org>
+>>
+>> Since 2001, the CONFIG_64BIT kernel has been built with the LP64 ABI,
+>> but this patchset allows the CONFIG_64BIT kernel to use an ILP32 ABI
+> 
+> I'm thinking you're going to be finding a metric ton of assumptions
+> about 'unsigned long' being 64bit when 64BIT=y throughout the kernel.
+> 
+> I know of a couple of places where 64BIT will result in different math
+> such that a 32bit 'unsigned long' will trivially overflow.
+> 
+> Please, don't do this. This adds a significant maintenance burden on all
+> of us.
+> 
 
-Is such a platform conformant to the specification? Either way, why is
-this a static build-time configuration choice rather than a dynamic
-run-time choice based on the FDT / ACPI tables / some other platform
-probing method?
+Fully agreed.
 
-Jess
+-- 
+Cheers,
 
-> ---
-> drivers/iommu/riscv/Kconfig |  9 +++++++++
-> drivers/iommu/riscv/iommu.h | 28 +++++++++++++++++++++++-----
-> 2 files changed, 32 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/iommu/riscv/Kconfig b/drivers/iommu/riscv/Kconfig
-> index c071816f59a6..b7c9ea22d969 100644
-> --- a/drivers/iommu/riscv/Kconfig
-> +++ b/drivers/iommu/riscv/Kconfig
-> @@ -18,3 +18,12 @@ config RISCV_IOMMU_PCI
-> def_bool y if RISCV_IOMMU && PCI_MSI
-> help
->  Support for the PCIe implementation of RISC-V IOMMU architecture.
-> +
-> +config RISCV_IOMMU_32BIT
-> + bool "Support 4-Byte Accesses on RISC-V IOMMU Registers"
-> + depends on RISCV_IOMMU
-> + default n
-> + help
-> +  Support hardware platform whose I/O bus limits access to 4-byte
-> +  transfers. When enabled, all accesses to IOMMU registers will be
-> +  split into 4-byte accesses.
-> diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
-> index 46df79dd5495..0e3552a8142d 100644
-> --- a/drivers/iommu/riscv/iommu.h
-> +++ b/drivers/iommu/riscv/iommu.h
-> @@ -14,6 +14,10 @@
-> #include <linux/iommu.h>
-> #include <linux/types.h>
-> #include <linux/iopoll.h>
-> +#ifdef CONFIG_RISCV_IOMMU_32BIT
-> +#include <linux/io-64-nonatomic-hi-lo.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
-> +#endif
->=20
-> #include "iommu-bits.h"
->=20
-> @@ -69,21 +73,35 @@ void riscv_iommu_disable(struct riscv_iommu_device =
-*iommu);
-> #define riscv_iommu_readl(iommu, addr) \
-> readl_relaxed((iommu)->reg + (addr))
->=20
-> -#define riscv_iommu_readq(iommu, addr) \
-> - readq_relaxed((iommu)->reg + (addr))
-> -
-> #define riscv_iommu_writel(iommu, addr, val) \
-> writel_relaxed((val), (iommu)->reg + (addr))
->=20
-> +#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, =
-timeout_us) \
-> + readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, =
-\
-> +   delay_us, timeout_us)
-> +
-> +#ifndef CONFIG_RISCV_IOMMU_32BIT
-> +#define riscv_iommu_readq(iommu, addr) \
-> + readq_relaxed((iommu)->reg + (addr))
-> +
-> #define riscv_iommu_writeq(iommu, addr, val) \
-> writeq_relaxed((val), (iommu)->reg + (addr))
->=20
-> #define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, =
-timeout_us) \
-> readx_poll_timeout(readq_relaxed, (iommu)->reg + (addr), val, cond, \
->   delay_us, timeout_us)
-> +#else /* CONFIG_RISCV_IOMMU_32BIT */
-> +#define riscv_iommu_readq(iommu, addr) \
-> + hi_lo_readq_relaxed((iommu)->reg + (addr))
->=20
-> -#define riscv_iommu_readl_timeout(iommu, addr, val, cond, delay_us, =
-timeout_us) \
-> - readx_poll_timeout(readl_relaxed, (iommu)->reg + (addr), val, cond, =
-\
-> +#define riscv_iommu_writeq(iommu, addr, val) \
-> + ((addr =3D=3D RISCV_IOMMU_REG_IOHPMCYCLES) ? \
-> + lo_hi_writeq_relaxed((val), (iommu)->reg + (addr)) : \
-> + hi_lo_writeq_relaxed((val), (iommu)->reg + (addr)))
-> +
-> +#define riscv_iommu_readq_timeout(iommu, addr, val, cond, delay_us, =
-timeout_us) \
-> + readx_poll_timeout(hi_lo_readq_relaxed, (iommu)->reg + (addr), val, =
-cond, \
->   delay_us, timeout_us)
-> +#endif /* CONFIG_RISCV_IOMMU_32BIT */
->=20
-> #endif
-> --=20
-> 2.20.1
->=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+David / dhildenb
 
 
