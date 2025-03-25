@@ -1,152 +1,191 @@
-Return-Path: <linux-kernel+bounces-574651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCB2A6E821
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:56:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F36A6E824
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79EF71738E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:56:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0AA18986C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141F81865EB;
-	Tue, 25 Mar 2025 01:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3769B19259A;
+	Tue, 25 Mar 2025 01:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ai6+ezQl"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvadbDv5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1376316F282
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04E37DA73
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742867787; cv=none; b=HyC8SBFMsjUC/+ZnVEfLrIlP1DDnumS7jETjgfdj3Kecl9r+ioLVp0eHLiFHNg5+WbfB0ay9pN4C8fo92xVjm5ZYXWnlNHxpCcYX2ZBLbUzLIzZCvvNAI0X5uw73n+yKRFFJ0xvIN1GTvs4NR+ILFNZSyaH1fXRaIOOLJWWeVsw=
+	t=1742867793; cv=none; b=VnItoixbDLrHkptYBDiG7rLrNKFqHBRcDXJwY3ONQqstjn5ny8zZ4RtOg1nPpvgjDUqTPI7V4t5dvEkkbipvKIP6kdNVGT/n+NDYPMKNLdcdT/4oHWuHfI8WsfLm1BGkm47vWdcqFF6VjP7Wps0D+VRCBwG/u/AI8MsLP/8p5p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742867787; c=relaxed/simple;
-	bh=3Ssal8wO83LAvy5YDPICfixRHLNHOiETBBH4FyiHuA4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VLJJKGGSJ9s7vXQJhtIa1E90lwX4SQvWTeDWaCWoSLOAdfRrTqf7imG8IMndPlpadlJsqz19gfnU9gEDghcp+fOJhFnJPS5NWg2vSGNp0rMKAAi8/Rqcfp7rOoO7Q0qdLH18NkFCquYnrpkmGOsNVd4sjXqfHHAgsncJOLVK/zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ai6+ezQl; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--pcc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff69646218so13478970a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742867785; x=1743472585; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KbmWscRvAoMTscJ7YX1VjxJzdFRKT7QCMrJKO+SUNOM=;
-        b=ai6+ezQl3Qry/w+DxlaCoWIW9hEYsT4UsBt8KqEaJZNhdBrqxfeUL5iOnecn1BG2af
-         EDg+0uY07u1qxYRJm70E/0pvw3WHrhgIm03yhFAInkZ0AWiHuPsaeLZNjBxImQknNCl+
-         wGSWVWYNj9NYBxnRyEMs9tMXspQ0/lVdFIVD7U2E9y8rsfWZL1hamUHIAomkRpuArI5M
-         1B7Q2+lO7gGqNZT86Li/L2a/TImIAVPnMhFxB1HcRN9nsmQlQBfuRo/K7CXo6VkRUbEp
-         JlZfOmuFE8+7711ikI/TgVPcJJccPyg5l+e0CV8lq3t3Ap31uK8YqGeFrkaBBZkzNULZ
-         +/kQ==
+	s=arc-20240116; t=1742867793; c=relaxed/simple;
+	bh=fK/UsrCxMTb/bFeRcKZI1xKhJ5uNZYEiUm6hg7SWcH4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FWATCV9L0alBOfYm+A/ZeHhAP76VepzeW+y9xj3W7ClfnXmvsLxYvBZueaDYH64P17msihfUamokHPuXYF0UPE1lRoQj2VqLsbfejfmsBRcJfGFhpvaT2bJFGpsVZCcDha3lqpHDZAWwN2UYFVpFttlls1LaiQhdN3FuNMIS3Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvadbDv5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742867790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGi7NAnxBHUh6gjg9N+ded9e6tq7Gp9efHz1x28aF8Y=;
+	b=UvadbDv5hIK1xKDl0dIHmZhQKlndBRdMxptC7vpaq92oLxzvKSHvk8WE/igcBOtfEP96uQ
+	Jm0iPy3VtHNHjrozN9FCMgVtvys0X5HHeBksk6hZnBb8ylQQpLpXLAUExyxrj8ZNlIAK4u
+	iiOjSHkxbDAhLEWyFtPRATtga7vzYpM=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351-13haEYxsNR6hhqBjffx5lg-1; Mon, 24 Mar 2025 21:56:28 -0400
+X-MC-Unique: 13haEYxsNR6hhqBjffx5lg-1
+X-Mimecast-MFC-AGG-ID: 13haEYxsNR6hhqBjffx5lg_1742867788
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476a8aff693so109223141cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:56:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742867785; x=1743472585;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KbmWscRvAoMTscJ7YX1VjxJzdFRKT7QCMrJKO+SUNOM=;
-        b=o0shyMrnaqUkKa4kWgisDgWuq6uUmJkTnZmF6/EiaUg7kVxR5NXuC1T0dNuEsqtOWG
-         0CNWyvfAx+xVdvUcH9gMDhjVFnmImvi5xLTuD5hU0Y66u3+5YaRkZkejVx1MoDNVD5hI
-         Uc7E8ZBgFVoT31aIAwvhfLz9U/jTypNDB/9I/GyLFGYcQ6HPE+3IN3/oh1Fs6WxAT1Ch
-         evceOjhmgwtJVZ5E3X3uwFrORJZKwTLvgT84Fba7r2K20FDTdX39DQqexuXdwXMwq22L
-         kscJYp3/nn03UATYT1wyC82q0W+MxfUTzdFAQ2CTUxILy5SAic/lCHED3u2t4tlGdhUD
-         yl6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdc+uCy+yuHUUgmBX+ZJCpQxZAvtq2Jry/ywNAr+PHyqbZuJIX4zxc+K5IGwECsaeO4QYgXkA17cfZwG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxemDYFinun6UDulF6iPDt3NAe+RssaDOO1ouehF0FvcqRfAUr0
-	s4AlwFpAQw8zFAC8w7RjNdhsCtk4qLOB/hB/acGPas5+IhAVE3Cxr0g4gvejo7TizA==
-X-Google-Smtp-Source: AGHT+IHw/mFa4K32w6FBmgVCLK0lfqwfx84tHmcbhBFHdeJjTz1GHC7yDdmMbL5MTLDA5q8NZ++fySA=
-X-Received: from pgcu63.prod.google.com ([2002:a63:7942:0:b0:af2:3541:76e2])
- (user=pcc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:113:b0:1f5:874c:c987
- with SMTP id adf61e73a8af0-1fe42f2c872mr24619131637.15.1742867785611; Mon, 24
- Mar 2025 18:56:25 -0700 (PDT)
-Date: Mon, 24 Mar 2025 18:56:15 -0700
-In-Reply-To: <20250325015617.23455-1-pcc@google.com>
+        d=1e100.net; s=20230601; t=1742867788; x=1743472588;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGi7NAnxBHUh6gjg9N+ded9e6tq7Gp9efHz1x28aF8Y=;
+        b=BTGVy+S3bVdf4t51ckcLS8A7OtFA97n1Lw6fJ5LS64/eOkMiVmnYM5/I4SmG5WIjhI
+         2oKKQusM33z34r6F69pr+8NqmHB0HdSA7bSgbHN8aIjJwF3z7vV83KoK0xIEjoPZ/hLq
+         aRdmtJoGWmPjc9HeP3oSEeF2inHP2NcDaWuq9ZFFzBP0A7f5CNEiRSVKK5PUYecu0pZD
+         V8Ude6/wF+G9/tfEcyU3K0oNi51FAH9538bVrnqhB5g1eznCdvJpxjqtggKyb8M/R1qN
+         QpS1hOuAGC+t/37xqrrpgba9XnVCezdaDH6CZbgpSVhJrLa/m8ElaG2WmqzW5FczCqwP
+         wyXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaopx1YjGkykVhRWUMr760HC8zWIJA9TuANObFmIGEKh3eFV2C1S27lPlSO8oAijEiwkFhD4LIqqL9DWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx31W26KYHHtA/KGhx++MaYwsa5C6EDA7zokykMp7URQ9ZVdVsc
+	WqSxCpkiWJSrW2n4lwGgI24i6Mj9pDQnOaXNQXXK2r9LXDfiz4KKVqvyQJ+CCOcidV4PfXui8e5
+	ahHzCUwhHodR1wAg+1DrFyGv+USNdQNYa8+S5EV9LhgImIe0FZLpi22lQ64JdIg==
+X-Gm-Gg: ASbGncvVpUq0wP9QgaJ99wbYGYYXI0uPOZbsrY/YJ0r5ynUd1HZ5yD8DLvztBEyNyU+
+	fdU4vMph4tRgZ0Deg5QikKMcJgyg0IhuXhjLm3giXhHH9KcyrIct6qynMkG5ncTrAf15r7jdRq6
+	hKDNB0zP9J++OR0IHXtbyNL2BMtFqrxPeqavwSULtj0WDydYOpYLC5A4Uo0LblzpYDNyC4twJ7w
+	IRafzDnxXY5FFcWPGfM6cxcVTnwJ3YPAbmkbExEf+TWSTKs3MvbCxQkwT8zkHMDjP2XgIGprquu
+	bT7TXrmPmz6TEiXDEl/vA3jOLFnQT1SCwrL2scrGNaIHs10rTdxhyNV9O8sVcw==
+X-Received: by 2002:a05:622a:4c8a:b0:476:aead:802c with SMTP id d75a77b69052e-4771ddf06a6mr253342361cf.36.1742867787641;
+        Mon, 24 Mar 2025 18:56:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZHSdt8gryK7O+AdpXsKRXlm4DRU4seZmKB5+iQXgPpdf8Tf3GXj6xgUGJTZ621axJfD0q0A==
+X-Received: by 2002:a05:622a:4c8a:b0:476:aead:802c with SMTP id d75a77b69052e-4771ddf06a6mr253342101cf.36.1742867787152;
+        Mon, 24 Mar 2025 18:56:27 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d17b320sm54082861cf.31.2025.03.24.18.56.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 18:56:26 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <c0a9a0d5-400b-4238-9242-bf21f875d419@redhat.com>
+Date: Mon, 24 Mar 2025 21:56:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250325015617.23455-1-pcc@google.com>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
-Message-ID: <20250325015617.23455-3-pcc@google.com>
-Subject: [PATCH v3 2/2] kasan: Add strscpy() test to trigger tag fault on arm64
-From: Peter Collingbourne <pcc@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
-	Peter Collingbourne <pcc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lockdep: Speed up lockdep_unregister_key() with expedited
+ RCU synchronization
+To: Boqun Feng <boqun.feng@gmail.com>, Eric Dumazet <edumazet@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Breno Leitao <leitao@debian.org>,
+ Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, aeh@meta.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, jhs@mojatatu.com,
+ kernel-team@meta.com, Erik Lundgren <elundgren@meta.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+References: <20250321-lockdep-v1-1-78b732d195fb@debian.org>
+ <20250324121202.GG14944@noisy.programming.kicks-ass.net>
+ <CANn89iKykrnUVUsqML7dqMuHx6OuGnKWg-xRUV4ch4vGJtUTeg@mail.gmail.com>
+ <67e1b0a6.050a0220.91d85.6caf@mx.google.com>
+ <67e1b2c4.050a0220.353291.663c@mx.google.com>
+ <67e1fd15.050a0220.bc49a.766e@mx.google.com>
+Content-Language: en-US
+In-Reply-To: <67e1fd15.050a0220.bc49a.766e@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+On 3/24/25 8:47 PM, Boqun Feng wrote:
+> On Mon, Mar 24, 2025 at 12:30:10PM -0700, Boqun Feng wrote:
+>> On Mon, Mar 24, 2025 at 12:21:07PM -0700, Boqun Feng wrote:
+>>> On Mon, Mar 24, 2025 at 01:23:50PM +0100, Eric Dumazet wrote:
+>>> [...]
+>>>>>> ---
+>>>>>>   kernel/locking/lockdep.c | 6 ++++--
+>>>>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+>>>>>> index 4470680f02269..a79030ac36dd4 100644
+>>>>>> --- a/kernel/locking/lockdep.c
+>>>>>> +++ b/kernel/locking/lockdep.c
+>>>>>> @@ -6595,8 +6595,10 @@ void lockdep_unregister_key(struct lock_class_key *key)
+>>>>>>        if (need_callback)
+>>>>>>                call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+>>>>>>
+>>>>>> -     /* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
+>>>>>> -     synchronize_rcu();
+>>> I feel a bit confusing even for the old comment, normally I would expect
+>>> the caller of lockdep_unregister_key() should guarantee the key has been
+>>> unpublished, in other words, there is no way a lockdep_unregister_key()
+>>> could race with a register_lock_class()/lockdep_init_map_type(). The
+>>> synchronize_rcu() is not needed then.
+>>>
+>>> Let's say someone breaks my assumption above, then when doing a
+>>> register_lock_class() with a key about to be unregister, I cannot see
+>>> anything stops the following:
+>>>
+>>> 	CPU 0				CPU 1
+>>> 	=====				=====
+>>> 	register_lock_class():
+>>> 	  ...
+>>> 	  } else if (... && !is_dynamic_key(lock->key)) {
+>>> 	  	// ->key is not unregistered yet, so this branch is not
+>>> 		// taken.
+>>> 	  	return NULL;
+>>> 	  }
+>>> 	  				lockdep_unregister_key(..);
+>>> 					// key unregister, can be free
+>>> 					// any time.
+>>> 	  key = lock->key->subkeys + subclass; // BOOM! UAF.
+>>>
+>>> So either we don't need the synchronize_rcu() here or the
+>>> synchronize_rcu() doesn't help at all. Am I missing something subtle
+>>> here?
+>>>
+>> Oh! Maybe I was missing register_lock_class() must be called with irq
+>> disabled, which is also an RCU read-side critical section.
+>>
+> Since register_lock_class() will be call with irq disabled, maybe hazard
+> pointers [1] is better because most of the case we only have nr_cpus
+> readers, so the potential hazard pointer slots are fixed.
+>
+> So the below patch can reduce the time of the tc command from real ~1.7
+> second (v6.14) to real ~0.05 second (v6.14 + patch) in my test env,
+> which is not surprising given it's a dedicated hazard pointers for
+> lock_class_key.
+>
+> Thoughts?
 
-When we invoke strscpy() with a maximum size of N bytes, it assumes
-that:
-- It can always read N bytes from the source.
-- It always write N bytes (zero-padded) to the destination.
+My understanding is that it is not a race between register_lock_class() 
+and lockdep_unregister_key(). It is the fact that the structure that 
+holds the lock_class_key may be freed immediately after return from 
+lockdep_unregister_key(). So any processes that are in the process of 
+iterating the hash_list containing the hash_entry to be unregistered may 
+hit a UAF problem. See commit 61cc4534b6550 ("locking/lockdep: Avoid 
+potential access of invalid memory in lock_class") for a discussion of 
+this kind of UAF problem.
 
-On aarch64 with Memory Tagging Extension enabled if we pass an N that is
-bigger then the source buffer, it triggers an MTE fault.
+As suggested by Eric, one possible solution is to add a 
+lockdep_unregister_key() variant function that presumes the structure 
+holding the key won't be freed until after a RCU delay. In this case, we 
+can skip the last synchronize_rcu() call. Any callers that need 
+immediate return should use kfree_rcu() to free the structure after 
+calling the lockdep_unregister_key() variant.
 
-Implement a KASAN KUnit test that triggers the issue with the current
-implementation of read_word_at_a_time() on aarch64 with MTE enabled.
-
-Cc: Will Deacon <will@kernel.org>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Co-developed-by: Peter Collingbourne <pcc@google.com>
-Signed-off-by: Peter Collingbourne <pcc@google.com>
-Link: https://linux-review.googlesource.com/id/If88e396b9e7c058c1a4b5a252274120e77b1898a
----
-v3:
-- simplify test case
-
-v2:
-- rebased
-- fixed test failure
-
- mm/kasan/kasan_test_c.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index 59d673400085f..b69f66b7eda1d 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -1570,6 +1570,7 @@ static void kasan_memcmp(struct kunit *test)
- static void kasan_strings(struct kunit *test)
- {
- 	char *ptr;
-+	char *src;
- 	size_t size = 24;
- 
- 	/*
-@@ -1581,6 +1582,18 @@ static void kasan_strings(struct kunit *test)
- 	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
- 
-+	src = kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
-+	strscpy(src, "f0cacc1a0000000", KASAN_GRANULE_SIZE);
-+
-+	/*
-+	 * The expected size does not include the terminator '\0'
-+	 * so it is (KASAN_GRANULE_SIZE - 2) ==
-+	 * KASAN_GRANULE_SIZE - ("initial removed character" + "\0").
-+	 */
-+	KUNIT_EXPECT_EQ(test, KASAN_GRANULE_SIZE - 2,
-+			strscpy(ptr, src + 1, KASAN_GRANULE_SIZE));
-+
-+	kfree(src);
- 	kfree(ptr);
- 
- 	/*
--- 
-2.49.0.395.g12beb8f557-goog
+Cheers,
+Longman
 
 
