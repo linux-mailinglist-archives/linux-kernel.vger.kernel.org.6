@@ -1,168 +1,144 @@
-Return-Path: <linux-kernel+bounces-576284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609B0A70D56
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:58:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF80A70D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619E6167C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3BD188BEC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFDC26A0B0;
-	Tue, 25 Mar 2025 22:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764D025484F;
+	Tue, 25 Mar 2025 23:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A6999KLI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TvQJQQft"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D832C269CE5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B861AD41F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943526; cv=none; b=GLZ/Ctcc4dDs4QVVjbCVa5CCEt32TjGCydezfXYA+nla39XbtRqxdpO9EapVnPlcH+0ew2vbwbIV18jluivv4lBubgJWug1x3EJRcXirGwwl31ABzQfzuSt06y7DX3uU+4BVoQt2+Jxsn51OjVYDJZzI5SAjNg/qCVo1hmSvelE=
+	t=1742943754; cv=none; b=Gc7RvH96UwmFCS6HFnqKwp1nD8cktaLnXIeMVXYtKrQEDCuCdVByQRZiLJTlDwHyEx55w2albvb/Zr4+4/vo6KbjSK99qD+WQpStmgFtfgl0wRTjWLCZ0tTwb7V33Mczhl8o+NT5FsikcdxYNktfqrWakTjE9mS3qtwL1h1CqkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943526; c=relaxed/simple;
-	bh=Z/y6mJiLJp8HFySWM1EYtA+bwRhHRXWpZhYEF2TQ6WU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCgUsLohVreYbnZLIdu2G6EcalUYgNvQY00O9I57x0wbWImjKMBoI9LsrfKYRjWNBcg4LMTTiFa+WFFUp08e3xJcgAdASFfp6La4e/dsTiQi63yedKKnSCsP5eTc05kwpdbpzmGLWe6wPyUEhfJBSf32paHgxTUuYyiUh3yuFeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A6999KLI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52PGai4O004833
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:58:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	j7cASkMJs9s2On5tUArhdk6ea7g1dAT8ajgqhRmsXi8=; b=A6999KLIQuhUfagj
-	zVOaeZT3dEIs9v23e4X3+Hw8FMnorG94jymU+F9ImEMlsG9oXt9kCXo9j6uZ0ZLe
-	TQ5I5puG0HECyQLY8e13dfRiUM9xJoyGQOy1dTW1iRchX9xelZrRHaPAx2ufHgbU
-	ZJtcmv92b4P1/Q05wYhPAj5ul9xVrkpY/Cj9fpmTwNoOO3RPdwqzsEdrzJYuLg9n
-	SqqV4xLpOc+iSa311mf0jj7mCoPRLHZEEU2sAr59kkRKmgPecLlm76BeANUv5973
-	ou7ehhOk9Fbzv3r5A66rYMDtEeMhO7JPiLO2o/+2ELGVFa5rTKjR7iJWU29FcDKN
-	t3x0Rw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kyps8w6b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:58:43 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c3c8f8ab79so879245185a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:58:43 -0700 (PDT)
+	s=arc-20240116; t=1742943754; c=relaxed/simple;
+	bh=rvtaKCacTd+dMFEwCfsS4KnID/jFXOuQd2z1cHSbJkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KbprBiwrUtKcQu6xrPII2JxVt6S8c/B5VRxnldfksKIvEVsxk9pJIxXFvXiUiI5aO8IO9Vy9b21qyAhTp8VKo1BBvgJkF9VTBbLk6F6/xAc588TV7Y3EtrWBSC51RW5bOKN7NDeJuFtXuLsLjyDlS3/Bi3ZqAMfEzI5ZROYoj24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TvQJQQft; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso62076066b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1742943750; x=1743548550; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
+        b=TvQJQQftxjnjBEsYKJ4D4jIp0QLg5epctPeAgEs/wDiyWmlee4fD1sFifdmm8ADQQI
+         i47MljpIxv8kYqjM2huld4rnbPT0rwhCa+/ImIXWAKNT/j6Anw5OuLBSdFH6MwC+c5VO
+         4D3HvCz6xcc27e996+QJVNWyWqDMNanYGq3kE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742943522; x=1743548322;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7cASkMJs9s2On5tUArhdk6ea7g1dAT8ajgqhRmsXi8=;
-        b=Q80IOfJVpULdesfNXeTqHdXuEXvtv7g9e+rA2N7DTo+FHNmFRyENayqgbSmkLYmKMp
-         ucx/mbNWZVPZwLa1kIqPyaOI7rwCQ8LRr0NCNlCmlTr76oyEV+LsWReKg3N4lorW+9Rj
-         7lKxOLDXl7tmughrjnbE5CVSRix2OYPukn5X9DkN3WyJ/SexkXY//dF3DFNfa8v7zPP1
-         MkuXdZZK3lmhMGKiE5AcUGA5nybdFgLb38MBUpE0XnXX9wEMiqM7jPYPZoBdZgDxgcxb
-         jFwfEvzZNJR4edvIy7dwbWUjMRL+Co3AkO83smF5bUO/ejYAbUtKW2zNVkALmiuKEkI4
-         r9lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSrUAPmYiz2QKb4yVVM/y4PhiXTKUNY0O2sI/rArp9WnUyk7OxlW96HUJt6lDImenuPtAD3lux3Y+fipw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlT/V5VoAefjjMXpUcXGIB7LRWeAoQTDBIHTVBvacec5LXrhVh
-	4FsxG9aDM0+IwAbYeFZK09eV9gqywCsOlAHV9zNIbz4NLn2olE8+J9kP/MR/0PSCEcU79sb0RQm
-	Hlqx3V4E8SSl3NdCJSO7cvvxsYBHmAiod4v8ZmxggWDpbL7rOrfW4zsuxeZWkqhM=
-X-Gm-Gg: ASbGncvCqlZqCtT7MAvAJVmmRIn62ZIr/0bVSPKq6FdOQr6O4X9IqwQw2FhdtG/amPr
-	O9tCdJNN1tOE3J1yG7EFHQrIY2ZMrpyLCTQKGG5T0kqmaoino3WcbkcI5h9shxkY9Q/j9O/aiMM
-	FDk3NOGBNVE/edCVMm/bcQZNV0pZCZUwHt+rh7y388kN6l3GVN1PNLeFhXs0Pa77z0baNWEgcW9
-	vL5qfBfAJTdIC5RRiqVSLDtg4jpQI4z0JKxUwwj9aYlKvG51N3my5iEJe+MAxLy91ZNjXiuCSoB
-	3heQ9bux1/2893Jw6vQQqmNPNKWz3y8u7r1HQABWF4k5x7dfCBS3jJZgJAutGu760nq+u9juJ5O
-	sQwOFYrtyB8F546FH6l23xLHqzY4FSo0aypOXoMnniSg7ljkAscC2KqA5e+CTZFGPlpWIquTg
-X-Received: by 2002:a05:620a:29c6:b0:7c5:3e22:6167 with SMTP id af79cd13be357-7c5ba18485amr2798803185a.23.1742943522232;
-        Tue, 25 Mar 2025 15:58:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdhqOT+2PpPpIz2kYCxa+wKuV1xSTgF0K8M8p6Vt0yMIoOuFSU0fElZGTZMSysHiTifnZv9A==
-X-Received: by 2002:a05:620a:29c6:b0:7c5:3e22:6167 with SMTP id af79cd13be357-7c5ba18485amr2798799785a.23.1742943521700;
-        Tue, 25 Mar 2025 15:58:41 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:112:599c:156e:7946:30e2:6502? (2001-14bb-112-599c-156e-7946-30e2-6502.rev.dnainternet.fi. [2001:14bb:112:599c:156e:7946:30e2:6502])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7c1c17sm19276581fa.21.2025.03.25.15.58.38
+        d=1e100.net; s=20230601; t=1742943750; x=1743548550;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
+        b=EJTfsfGYuMraSpLZ6/Q8yQJgGIfgLEDdhzrlT2CCgj68LqpwzJwuU40skcPX20hySJ
+         NLeCQXwWj/oi3IT25fklWptkdwJQrMI6/BhTtMLrgINhNQVnrMGdxUFJM6fPgwQYgGto
+         dZGQ0vRYZHM/k0PgqOkhnRxqVOcP33mvMihvapW4iJgR07aDJFh/XTGCM/GqfHHBde5g
+         G9/Eul5nLmhatEm8VRHR2R5uMDJ6v6PdMZSNk3xnrmpJLSwV+ytyTw2RbmhBAFSJY/No
+         MaVo1ygX7DY2SYht76eBTGu7E0pweUC9rsipffIxIahxlFqLIKDK8lcqUyYJx6wL0QM/
+         RWjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9VG4vk3+wOC4tLr4HbvI/4+ee3kzk6rKPJYEPOMwH+UHOm6NJALKe+8662f6EjLeBb6Fs+qxZSZK4pRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDI2ICe6cQQOtdsgOBM/pWcMs+2endWhDQSjRAyWy7OkeS/SBA
+	91urLjP1oxm+rlGI9P/ID3sUDMXUHlyuZF3Rv2e3SSrFutJ2v5yYHdQCYUzJy7W2NTab5uNSoYN
+	1hMplQw==
+X-Gm-Gg: ASbGnct7uQ3ffdOEYrumU93mvtdhIWK9Z2PNUwbmXIxf40s9k53kSyQQ3Dgidns8vcf
+	dNL3kOOy04xBBJawm4Ce2rQ1acnuLDCLfZzTTU4rAP0NUFxZfCXyh4PlUlHwmYrZPHRemMaXSgW
+	413vShBOtRFrHmxrdlY1f+9DAEIxOB1LLbwzmZT4q+1IgRs6FSJn5WXx2mAwOaa0ykEqZhUcMq4
+	018EWpKeEDzo0fNhK+msZnwvXozRSK7hm1SSA4V1/pv5HG9pT9nkGgNzSnufhGFYZjmqPLm/U1B
+	cO9agsNmZb6u+W0tHAYC5ciW8Nh+QGMqI+WhDc4VRo8RgOtPG9dPNR2QvbZlmcaXC9WgA8Ebbas
+	TjJYh3MOK33vkfxGmM28=
+X-Google-Smtp-Source: AGHT+IFR7U9lIJmUaY6kS0YSAgfr4jdZC+fS+DhFsPjpg2FNtY7S9CNkMid2lrCdxmLZYm5lekPzZw==
+X-Received: by 2002:a17:907:3f98:b0:abf:6a8d:76b8 with SMTP id a640c23a62f3a-ac6e0a0bbfdmr164163766b.11.1742943750460;
+        Tue, 25 Mar 2025 16:02:30 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efbd4640sm909126866b.129.2025.03.25.16.02.29
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 15:58:39 -0700 (PDT)
-Message-ID: <366202bb-2087-495d-8bcf-9fe05a9c7767@oss.qualcomm.com>
-Date: Wed, 26 Mar 2025 00:58:37 +0200
+        Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso62073366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVF9mYKHEPkO3A0dgpPWgVjDPnEVL6ynSICEcZsVSM/y3ACa1DeLYtAhocYt0uEkCwQnNnjzs6e01XxJ7o=@vger.kernel.org
+X-Received: by 2002:a17:906:81d6:b0:ac6:e42a:fb4c with SMTP id
+ a640c23a62f3a-ac6e42afbbbmr77412666b.9.1742943749513; Tue, 25 Mar 2025
+ 16:02:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: qcom: x1e78100-t14s-oled: add eDP
- panel
-To: Christopher Obbard <christopher.obbard@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Rui Miguel Silva <rui.silva@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>, devicetree@vger.kernel.org
-References: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org>
- <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-3-e9bc7c9d30cc@linaro.org>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-3-e9bc7c9d30cc@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 2G4Pm2gwx_ULT_NBEjH1L6UOvyTLGCmz
-X-Authority-Analysis: v=2.4 cv=fIA53Yae c=1 sm=1 tr=0 ts=67e33523 cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=Lw57bTjF4WcXWk72GT8A:9 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 2G4Pm2gwx_ULT_NBEjH1L6UOvyTLGCmz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_10,2025-03-25_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- phishscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250152
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+In-Reply-To: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Mar 2025 16:02:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq6H2w1UwofX9xTNQfWxTgnnyE_4keu9omt7uh5If6fR9mM7-LXzR1V2TI
+Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/03/2025 21:21, Christopher Obbard wrote:
-> Add the Samsung ATNA40YK20 eDP panel to the device tree for the
-> Snapdragon T14s OLED model.
-> 
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
->   .../arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-> index be65fafafa736a0401a5872c40f69cb20cfbbd90..753add73df41050565e71b9faafee62bb2031b75 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-> @@ -10,3 +10,13 @@ / {
->   	compatible = "lenovo,thinkpad-t14s-oled", "lenovo,thinkpad-t14s",
->   		     "qcom,x1e78100", "qcom,x1e80100";
->   };
-> +
-> +&panel {
-> +	compatible = "samsung,atna40yk20", "samsung,atna33xc20";
-> +	enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
-> +	hpd-gpios = <&tlmm 119 GPIO_ACTIVE_HIGH>;
-> +	power-supply = <&vreg_edp_3p3>;
+On Sun, 23 Mar 2025 at 12:39, Paul Moore <paul@paul-moore.com> wrote:
+>
+> - Add additional SELinux access controls for kernel file reads/loads
+>
+>   The SELinux kernel file read/load access controls were never updated
+>   beyond the initial kernel module support, this pull request adds
+>   support for firmware, kexec, policies, and x.509 certificates.
 
-Why do you need to repeat hpd-gpios and power-supply properties?
+Honestly, is there a *reason* for this, or is this just some misguided
+"for completeness" issue?
 
-> +
-> +	pinctrl-0 = <&edp_bl_en>, <&edp_hpd_n_default>;
-> +	pinctrl-names = "default";
-> +};
-> 
+Because dammit, adding more complexity to the security rules isn't a
+feature, and isn't security. It's just theater.
 
+And it adds completely pointless extra cases making the different
+cases use artificially different code.
 
--- 
-With best wishes
-Dmitry
+The commit message doesn't actually make any mention of *why* any of
+this would be a good idea.
+
+I've pulled this, but honestly, I think all those new cases should be
+removed, and if people object to us having "LOADING_MODULE" for other
+kinds of reads, then I think the fix should be to just rename it to
+"KERNEL_LOAD" or whatever.
+
+Because dammit, this "make security interfaces more complicated just
+because" needs to STOP.
+
+We are literally wasting enormous amounts of time in the security
+layers - I regularly see the lsm and selinux layers spending *more*
+time on security than the actual operation takes because the security
+people have written random code without taking performance into
+account - and I need to see *reasons* for adding more crap in this
+area, not "let's expand" with no actual reason given.
+
+So I really think that commit needs to be either reverted or explained
+very clearly why user policy _needs_ to care for the difference
+between a module load and a firmware image load.
+
+Because I think any such explanation is likely complete BS. The
+difference between loading modules and loading firmware usually would
+boil down to "different hardware does things differently". There's no
+obvious reason why one should be considered different from another
+from a security standpoint.
+
+               Linus
 
