@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-574920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1C0A6EB9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:32:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6E58A6EBA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BD11894B5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AE23A86F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F27253B60;
-	Tue, 25 Mar 2025 08:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB17253B51;
+	Tue, 25 Mar 2025 08:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvTmuiql"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P9CtCmAp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bTPwil7i"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EDE1D7E37;
-	Tue, 25 Mar 2025 08:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997521E9B26;
+	Tue, 25 Mar 2025 08:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742891531; cv=none; b=YmVPTAuM1joJdt7mlHsSHIWOefhHG3GcGH9z4fTlgl8P6CpX5Z9pST9rKg6NWSH2C1PEFDwFKhnqvdFbzgn3eGqFOegN8rBRIZt/ByZHO9UhjdKi6MNuEVRUXD7lZJ8RcACsgpduR8iRulBBp7ODDTid5OfXWmOhGfvD0A7Q5Yk=
+	t=1742891695; cv=none; b=K8Gs/m/NphSg1brBR/ggHXQX07wMYDPPoNNWQZO+MioOpPQh/vQ43fpoC0NNUMQ5OTyoABfCR6uGx1nrMrxzoALBRjZ+mxApO38tFcShubHLviycesgGnStL6SzvllfeegLoBwLrn09VZBYtbYoxKMTCOVOS2Avr57A3S5DOcCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742891531; c=relaxed/simple;
-	bh=snSj499Z4B28SJ88vP0oYeHCn3eY1Jv30mTgTv+rVOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGGiI4RzFIimQzoY0MmPFGIf3tmACCJtvupu9wuEYO9vp9qqTmeLBc2eP/zsqCoYQ6GY5MS/lhy2WweUyrBp4kk7pxLbylQRx1uRahC5shPMw+5DnBgdwyxxCu6k9URRFBkA2jm7Zh4K6ivlPf54/qceUO+tZrcrpnla2az4ddg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvTmuiql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4718FC4CEE4;
-	Tue, 25 Mar 2025 08:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742891529;
-	bh=snSj499Z4B28SJ88vP0oYeHCn3eY1Jv30mTgTv+rVOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NvTmuiqllccBeyG1Y4jvNQkKN67zLMJh7EMxMFKfYq5vX4l0KR5XzbgkjIazMwWTY
-	 /pN3MulBZ/XBLvBQSaQeHHAfmG2G0quThleMm9RntG5VBtzXtzsMn7xvLTl77o4TmO
-	 NsS7DvL7SChtvGefLPolDH9iPE21EXrrNqhdNOvzqP8Gd23W5/NJ/U+cgTtPK8SOE3
-	 mDJ+ta8oWHc6TB6HMYr/Ux34OyAUhAzHCaQhu3odV1JMD8kfEtOsvbbS5AzAXA27VF
-	 i6mrGMy6SPw/K0In6r0RHD9n7AQ9riP54+OXKN2v/05nZkXTlE3pD1MJsPhGhXhekg
-	 Fs5oovz2BJVGA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1twzhh-000000005kQ-1WOy;
-	Tue, 25 Mar 2025 09:32:10 +0100
-Date: Tue, 25 Mar 2025 09:32:09 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Clayton Craft <clayton@craftyguy.net>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: pmic_glink_altmode: fix spurious DP hotplug
- events
-Message-ID: <Z-JqCUu13US1E5wY@hovoldconsulting.com>
-References: <20250324132448.6134-1-johan+linaro@kernel.org>
- <dd1bc01c-75f4-4071-a2ac-534a12dd3029@craftyguy.net>
+	s=arc-20240116; t=1742891695; c=relaxed/simple;
+	bh=kAYSLH4MolkT8DzXnGmuWhTlEptTGPplHND2lLWbaa8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=c3JQRSczQQFCYq5KWdQsksr/VpzWH3RZftDVH14i9CPj98l2sJ7ieiYBJzvmDn5tSxYgjvgud+o/sias5fwLYt2RkGHGOP6mWMxxvd/toVRuyXV2Gb6vdT+xLiXMcANSIi/fTpgPV4qjM1tOh5Dv/WhNiuKRHmfJkrmTRFmkRsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P9CtCmAp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bTPwil7i; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Mar 2025 08:34:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742891691;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kJ1gAehpE01b4ZaMOlQNDQEnzsNNzqGABusib0qeMy8=;
+	b=P9CtCmApjNmW/zWdMx3CoIChkzsOzIptApCkthhcnlyrdJAjtcswbQDTuhWk2olospslch
+	DBDe3DKzlwePikz3P79003Z0dkSj5Ry3dNncj9vmNLkD3Pj17sYZBfn4hkKqjQwwHjw2ov
+	7/rAcfWv0qDsNbqlBTM/r0mMmNKokSG0BWt6nzaJhEVyK+p1qrEPa0CGDlZs/f8jOz7B8i
+	h5ZLETU+7/5ItxecB4t5nuPdIComxeT8D//EwLvQYa5EFKNunY8YZJmC3yDK/vUf+nTdkl
+	V3JMCav12u21AIWC3YJ7/YiNVmlH1eMTN8z/OMPCvpw5ugPBkJfF1nEF7ETO7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742891691;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kJ1gAehpE01b4ZaMOlQNDQEnzsNNzqGABusib0qeMy8=;
+	b=bTPwil7iVP5umpAEhE69XDE6HF+cwlA3nb4NziLR2VcHrK32j8EZXso5jUSoW7uIFD6MkH
+	CXZHLQ9f9LjBEZAg==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: objtool/urgent] objtool, lkdtm: Obfuscate the do_nothing() pointer
+Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Kees Cook <kees@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
+References:
+ <30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd1bc01c-75f4-4071-a2ac-534a12dd3029@craftyguy.net>
+Message-ID: <174289169036.14745.18072654948931716330.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 10:05:44AM -0700, Clayton Craft wrote:
-> On 3/24/25 06:24, Johan Hovold wrote:
-> > The PMIC GLINK driver is currently generating DisplayPort hotplug
-> > notifications whenever something is connected to (or disconnected from)
-> > a port regardless of the type of notification sent by the firmware.
-> > 
-> > These notifications are forwarded to user space by the DRM subsystem as
-> > connector "change" uevents:
+The following commit has been merged into the objtool/urgent branch of tip:
 
-> > ---
-> > 
-> > Clayton reported seeing display flickering with recent RC kernels, which
-> > may possibly be related to these spurious events being generated with
-> > even greater frequency.
-> > 
-> > That still remains to be fully understood, but the spurious events, that
-> > on the X13s are generated every 90 seconds, should be fixed either way.
-> 
-> When a display/dock (which has ethernet) is connected, I see this 
-> hotplug change event 2 times (every 30 seconds) which I think you said 
-> this is expected now?
+Commit-ID:     33fea486a42d952a40eb110a9b7885a7ac8d2778
+Gitweb:        https://git.kernel.org/tip/33fea486a42d952a40eb110a9b7885a7ac8d2778
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Mon, 24 Mar 2025 14:56:12 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 25 Mar 2025 09:20:33 +01:00
 
-I didn't realise you were also using a display/dock. Bjorn mentioned
-that he has noticed issues with one of his monitors (e.g. built-in hub
-reenumerating repeatedly iirc) which may be related.
+objtool, lkdtm: Obfuscate the do_nothing() pointer
 
-I see these pairs of identical notification when connecting the stock
-charger to one of the ports directly, and I noticed that they repeat
-every 90 seconds here. After plugging and unplugging a bunch of devices
-I think they stopped at one point, but they were there again after a
-reboot.
+If execute_location()'s memcpy of do_nothing() gets inlined and unrolled
+by the compiler, it copies one word at a time:
 
-So there's something going on with the PMIC GLINK firmware or driver on
-the X13s. I did not see these repeated messages on the T14s with just a
-charger (and I don't have a dock to test with).
+    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x1374
+    mov    %rax,0x38(%rbx)
+    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x136c
+    mov    %rax,0x30(%rbx)
+    ...
 
-> > UDEV  [236.150574] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [236.588696] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [266.208175] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [266.644710] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [296.243187] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [296.678177] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [326.276256] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> > UDEV  [326.712248] change   /devices/platform/soc@0/ae00000.display-subsystem/ae01000.display-controller/drm/card0 (drm)
-> 
-> Not sure about you seeing it every 90s vs my 30s... anyways, I no longer 
-> see these events when a PD charger is connected though, so this patch 
-> seems to help with that!
+Those .text references point to the middle of the function, causing
+objtool to complain about their lack of ENDBR.
 
-Just so I understand you correctly here, you're no longer seeing the
-repeated uevents with this patch? Both when using a dock and when using
-a charger directly?
+Prevent that by resolving the function pointer at runtime rather than
+build time.  This fixes the following warning:
 
-Did it help with the display flickering too? Was that only on the
-external display?
+  drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x23: relocation to !ENDBR: .text+0x1378
 
-> Tested-by: Clayton Craft <clayton@craftyguy.net>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/oe-kbuild-all/202503191453.uFfxQy5R-lkp@intel.com/
+---
+ drivers/misc/lkdtm/perms.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-Thanks for testing.
-
-Johan
+diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
+index 5b861db..6c24426 100644
+--- a/drivers/misc/lkdtm/perms.c
++++ b/drivers/misc/lkdtm/perms.c
+@@ -29,6 +29,13 @@ static const unsigned long rodata = 0xAA55AA55;
+ static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
+ 
+ /*
++ * This is a pointer to do_nothing() which is initialized at runtime rather
++ * than build time to avoid objtool IBT validation warnings caused by an
++ * inlined unrolled memcpy() in execute_location().
++ */
++static void __ro_after_init *do_nothing_ptr;
++
++/*
+  * This just returns to the caller. It is designed to be copied into
+  * non-executable memory regions.
+  */
+@@ -65,13 +72,12 @@ static noinline __nocfi void execute_location(void *dst, bool write)
+ {
+ 	void (*func)(void);
+ 	func_desc_t fdesc;
+-	void *do_nothing_text = dereference_function_descriptor(do_nothing);
+ 
+-	pr_info("attempting ok execution at %px\n", do_nothing_text);
++	pr_info("attempting ok execution at %px\n", do_nothing_ptr);
+ 	do_nothing();
+ 
+ 	if (write == CODE_WRITE) {
+-		memcpy(dst, do_nothing_text, EXEC_SIZE);
++		memcpy(dst, do_nothing_ptr, EXEC_SIZE);
+ 		flush_icache_range((unsigned long)dst,
+ 				   (unsigned long)dst + EXEC_SIZE);
+ 	}
+@@ -267,6 +273,8 @@ static void lkdtm_ACCESS_NULL(void)
+ 
+ void __init lkdtm_perms_init(void)
+ {
++	do_nothing_ptr = dereference_function_descriptor(do_nothing);
++
+ 	/* Make sure we can write to __ro_after_init values during __init */
+ 	ro_after_init |= 0xAA;
+ }
 
