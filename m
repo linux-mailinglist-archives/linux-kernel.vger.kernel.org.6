@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-576309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8F4A70DC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:52:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A4A70DCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7FD189F764
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38607A7662
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BACC26A1AC;
-	Tue, 25 Mar 2025 23:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBC026A0D5;
+	Tue, 25 Mar 2025 23:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDe3jjJQ"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bF6cOrUD"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0CF26A0F3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 23:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F97E1991D2;
+	Tue, 25 Mar 2025 23:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742946738; cv=none; b=K/eb707BC6JTwahC748KG0B1XKie/CIT4e+2PI07/io83i/D1qeim5d56dEvTve64mhs3iDFegrZJPGLOfFJE1fU6zqB8vo2wQMt0hwWEq2bQRQEMLiIRQBcyZT/O7vr9smwV2vrcIPbJqy64dBYWgWl8OyelPkipB10kyTVWjE=
+	t=1742946894; cv=none; b=Iwajw/j5Dz1xrRSXhoeFsgwafdW2S7bSuoIQVa5dTF5x7agtuUPAgOSlWxJ7q9K/d/YkmzBq+dgSg7N8gqlDwzoc3fSHTrX6vCTsgSNGJZS/lfJn18I+Vmgta5V+/ZNIJUpi3hn7Ya2PHWn6xc1uDJwhnAROVS4+8/UPGAwmQT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742946738; c=relaxed/simple;
-	bh=IJHMfU0+bj5AibH3+6BRIECuj8qg4Ch5vf6J0tJsttQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EYc6XIrYtaKXaR3LUbszAtCsNKLfaddjZ2ewYb+0cDUZrfcEyH6LC8LFM2dqVXf+pvfjqotNV6xAh8wOwtBM6lVse54s5Tf8WlI2VJaaZWVUYWGYEsrMGejXKIN/YTQNrnWALMydEtpFSjAfkBo68GK88AqPdTSLI1t3fyl/zJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDe3jjJQ; arc=none smtp.client-ip=209.85.166.172
+	s=arc-20240116; t=1742946894; c=relaxed/simple;
+	bh=6UqvdtaSd9bhr0j5Ur9aT8CLuyVb17CgSPoBEK250RA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XrDyPAkIe11Vu7xfKU51oQPFd/4sTGBTepCOx+bQsJUGr3SAic+OG2tNlZmqGvhfj6kIUHcIfkmqgpgYvSooBsomypGn+UbDRC54xjTki4p0g7Bs/m4qfE2OlzctSlJzw3m42ExXWfLuvI5H6zozHREG4LraundhfY4GdR5sduk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bF6cOrUD; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d58908c43fso15168785ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:52:14 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-307bc125e2eso62693001fa.3;
+        Tue, 25 Mar 2025 16:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742946733; x=1743551533; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742946890; x=1743551690; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XSHSr0u4As7sD1DIiD605hwGrKMgm3oDc7PmVTv7IgM=;
-        b=VDe3jjJQeA3eCkz5CzCeZlfr2Xka4bGJ0YTv/6MaXTOuMzsijwCGFzz5ItKc2VkyQi
-         TiW1owxVAL9T68MPiTwjJZDm50fGzJsrNHg5CjkMCCit9hOba1Oh4T6+QGVzQ8ZiIwvi
-         SUvfFrpTew8KykXlObkqrwZjqVwpUJFthhj0Oqw2tX1ZxaLJic09MUrT0gnpToI/AS/M
-         T6NdsjuUJDhU5HU1y6VdapfLZi8MOozTGXUf3X9Pqhi4kF57d7nuUFRCs+Xq33H6c4nY
-         s8ejERG11pPMDuyiL1A4cTfMxfkyHuWJVe1wM1F9w5OMGCyL2uNwenQygyeCaFQ1VcHC
-         ypZg==
+        bh=pB7DLVd4H6QiUxYIjx/2k/QTp6fyJCUONMOEFYG9jGU=;
+        b=bF6cOrUDnRAqpqviqgd/KrsCoZu4z51+X9AJbg6XKus2ce8yKfc7qAqje6huX65ozr
+         2Q+Rw70h7t3DhcvfvW44TeDGyPm4HqYIqEn+kJ8ehIWKv1SfoUW9slfnI7jNPkGN+bRC
+         HFIAJaW+VrG9dcB7muCDyKjpTRZYHbD9j4SP2TX0wGmEh+Q7bcemLjOOneOLM/BKdLw5
+         EzKQxLRFrW642l/DgY8eY+xh0tOSMRFwV7q+68YXA0vcwdvQk1JnB6wwolpp9VkYArNX
+         O7ZEaEP8rkKEdWRLk69pPYwzWVFAk8kBG3y0f8otyRkBILr8TnuGEkvkbBTI1LG5UbFY
+         oImw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742946733; x=1743551533;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1742946890; x=1743551690;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XSHSr0u4As7sD1DIiD605hwGrKMgm3oDc7PmVTv7IgM=;
-        b=iq5uQpeykmd2P2zxo6U4SaeZYkkuibRr1EQWxpJbAGzIBekaZltgaVhmsQyniiB9p/
-         I8XIKnH44RBGFEivw5HDu1NtM30Nz/B5NBAHkpYSoVJecDbwXWUUyABMc7OnyflSCWVu
-         yrMbcPuqOXPlhVfSJ+AySicqVOIeyG4w/V4cLYxlLahP1tTBbWhs4patEzzQ8wBnHIFc
-         O/uqDMJIYgwgXTr7KapwO8uf6ppdrbBBFAqaa72tk8BP6ki5aFOO6GzUOlPm9F9eTy88
-         Jl8iioQyTKGRdIZEerW+bX+EVWSSP6XHSV/uCQ5SftMqXBObUpvb5BPljYts9Ve2HxWl
-         XZEA==
-X-Gm-Message-State: AOJu0Ywx5tNhDBseX5l0f9O1QYcSZGnvllz/Xs77rHkizZt/iTEtp9MF
-	5acVepgF1V4nGY6alX0Hyy6fczWmSC2PJUTAiG8N4CEbSMawPBOc/FDaLrLD
-X-Gm-Gg: ASbGnctUM3rKw0FItjD460wPnoTqFymmdI0jCciV9WKGWV5WthSDT2bTlP6lOfcUpmX
-	U8aGX7pzWXw0OqgHpsd6LeYNFESQkOuqSSv7YUHIG7poeXeJRT13K2NEMmW7i7nSv6SgmeuFq66
-	6+PZe3lg6hhPrpSJbPd8kaZABTrQMhhgwF0bezGHuhNxMeVybP0JzPlm8ZjML/3Hl0HGhwSmB1g
-	XwnE4ZIxGmTzAopi7AVzPdPo4RIm427Ng+Szhmbm8sGSpYCrtQguyIjBQtx0FwmG9gtWcwWypN7
-	yVT5k2mIKR7YWPI/h5w6EWGsTmrVRhXtBeElVZX8nGDNBoqYjLpQqiyGusw+uksRAOPza2xwMDL
-	PgA==
-X-Google-Smtp-Source: AGHT+IEWcmVoDR5hy0HIKUuQ3tRpK1CPyfpUq6GeUKLrvaSnNV66+zs6I/lD783Hseg0FOQdhBHTBQ==
-X-Received: by 2002:a05:6e02:3b46:b0:3d5:817d:6462 with SMTP id e9e14a558f8ab-3d5960d112cmr189774785ab.5.1742946733209;
-        Tue, 25 Mar 2025 16:52:13 -0700 (PDT)
-Received: from gandalf.. (c-67-165-245-5.hsd1.co.comcast.net. [67.165.245.5])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d5960cea10sm25191175ab.45.2025.03.25.16.52.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 16:52:12 -0700 (PDT)
-From: Jim Cromie <jim.cromie@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: akpm@linuxfoundation.org,
-	Jim Cromie <jim.cromie@gmail.com>
-Subject: [PATCH 3/3] powernow: use pr_info_once
-Date: Tue, 25 Mar 2025 17:51:56 -0600
-Message-ID: <20250325235156.663269-4-jim.cromie@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250325235156.663269-1-jim.cromie@gmail.com>
-References: <20250325235156.663269-1-jim.cromie@gmail.com>
+        bh=pB7DLVd4H6QiUxYIjx/2k/QTp6fyJCUONMOEFYG9jGU=;
+        b=A+U1jat49ARJ+XfnQCIJcge02Kbs3hshjKAYGpVFjJn/8MF9peQhXIq3rp+/sc2Ub+
+         CYFcGjaZCAGTwG3ScNmcgukulv83U6FzhsvebyeohMqt4LpkyFQ33pHOHIzUKKES73EE
+         8r/9ds6uhGHkzrb27CsrCvg1q55k3tmdoMu0YmAUAFaGZfopWKxmYo3/pWbKVx+EUty5
+         OUzXNYASOYVWk60vCpczxs/NcnUu6wAMaRgJWCcLg/e2k84SfydwCOuwrRu+GepV6Rlx
+         OaKzs59IKHxvxM1eXWwOnU7JgYxdjqbnkP9cToq4MRGQB/mbj3L/Ik+0YA387c3FmJgg
+         TV9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUfWXZbQVoyCKfJUpmQh9UowLdNXfwkrbnXqe2mKa/Myp3qfua6kOJCt7A39zxj5Y3o84NLqZqvQiFzkxMhz449@vger.kernel.org, AJvYcCVn6fBme+UzhNMzWBgvCX/46pEW2UDFp7zTkAQyNnzjlpcX7ajXrn37EUP2VpUwGPOP4W2bzsV/3PeBhTgD3G4=@vger.kernel.org, AJvYcCWGTAeEWvY89C8y0Gsj8c4CDKgqYmg+FHt08wLVV0r21D8QolhjYijWLxe9DOh4FEX3msTPO2Z4hNJe@vger.kernel.org, AJvYcCWV5VoHkR0De/Hew/VeIuAKFFOVRmq87Tezw/oIpwSV1LYH/WlqBud4y2NY1DwFHjrH4NQJq1ZzkW2qC+Dc@vger.kernel.org, AJvYcCXSdf80h6cqH+Xc7/yj1TB3nBstdnV2Wz/1XIDLQgRrwCQeEqLEGWu1OztdVQVhuoaU6LxoeumD2dbfaL/a@vger.kernel.org, AJvYcCXUMnQUibP9OjbYGZ7brujmOXaaKym9PRbVWpgKLn3OwRoWComUFALf+4A7qPemVpr7a0wjZ9r1d4BMt3Y=@vger.kernel.org, AJvYcCXypfuw71q/ZJG+c+s8S9IC3Uj9UNxGlxGdi7qIRAklD8+GRIbzHWc5yAiVN0hg6rdzVPlcnDtQkyUP@vger.kernel.org, AJvYcCXzntfbImOQCidjwUU38axyfILk950Kdui6F3ysNRqArFUttbVTsWWc3RZvpv8KU8nKdLHEUm29@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7SId7TPAQledO/lsUGC3LC2hZMkhonhqbOfWthomifDQGRjlg
+	iOYiHBDsKnU4NwXTY8AWs/08g7ASYN99H3AQdXEieUtMbDN6CCy+pnwTiAcA34xrH/3Go/3bub7
+	YDv8H/XKgL84mTPIcvBnvohUxv7k=
+X-Gm-Gg: ASbGncsd5KU/Az8Zjei/EG8Lqkth3znd4SqhK95YJjCkpDC9iiuyQFIVFnXoxhomR/h
+	pQgWCe3Oih0xhHIs1o+FMIdW/AOAyznvprdJwUEBOFSYhOClBqP7vb9DTup+U3BsqYz4zlzKEY/
+	pzzcmJQhZxr9YVQedZdUoIRcMRrqQms4ikAPcJBKPKXQgtNYkdn4Ok82GLtF3u
+X-Google-Smtp-Source: AGHT+IEg1mlV1KCvvMCOJZ2ohnF8J2y7cC9+rBdT4VizZQCJYeiV1bsXLR4jAOajsN9bSIhV3DiNsWgYsqG+SYPmsOQ=
+X-Received: by 2002:a2e:be1f:0:b0:30d:b216:ef0e with SMTP id
+ 38308e7fff4ca-30db216f00cmr15397781fa.17.1742946890132; Tue, 25 Mar 2025
+ 16:54:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com>
+ <20250325-ptr-as-ptr-v7-7-87ab452147b9@gmail.com> <D8POWLFKWABG.37BVXN2QCL8MP@proton.me>
+ <CAJ-ks9mUYw4FEJQfmDrHHt0oMy256jhp7qZ-CHp6R5c_sOCD4w@mail.gmail.com> <D8PPIYIJCNX8.13VPQULEI0ALN@proton.me>
+In-Reply-To: <D8PPIYIJCNX8.13VPQULEI0ALN@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 25 Mar 2025 19:54:14 -0400
+X-Gm-Features: AQ5f1JrqN1yE_LZiN0APCcG96GfKe6UILX465X2ULhw-kc5Avbv5dHlRP2RM1po
+Message-ID: <CAJ-ks9k6220j6CQSOF4TDrgY9qq4PfV9uaMXz1Qk4m=eeSr5Ag@mail.gmail.com>
+Subject: Re: [PATCH v7 7/7] rust: enable `clippy::ref_as_ptr` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This reduces log-msgs during boot from many pages to ~10 occurrences.
-I didn't investigate why it wasn't just 1, maybe its a low-level
-service to other modules, re-probed by each of them ?
+On Tue, Mar 25, 2025 at 6:40=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On Tue Mar 25, 2025 at 11:33 PM CET, Tamir Duberstein wrote:
+> > On Tue, Mar 25, 2025 at 6:11=E2=80=AFPM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+> >>
+> >> On Tue Mar 25, 2025 at 9:07 PM CET, Tamir Duberstein wrote:
+> >> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> >> > index 40034f77fc2f..6233af50bab7 100644
+> >> > --- a/rust/kernel/str.rs
+> >> > +++ b/rust/kernel/str.rs
+> >> > @@ -29,7 +29,7 @@ pub const fn is_empty(&self) -> bool {
+> >> >      #[inline]
+> >> >      pub const fn from_bytes(bytes: &[u8]) -> &Self {
+> >> >          // SAFETY: `BStr` is transparent to `[u8]`.
+> >> > -        unsafe { &*(bytes as *const [u8] as *const BStr) }
+> >> > +        unsafe { &*(core::mem::transmute::<*const [u8], *const Self=
+>(bytes)) }
+> >>
+> >> Hmm I'm not sure about using `transmute` here. Yes the types are
+> >> transparent, but I don't think that we should use it here.
+> >
+> > What's your suggestion? I initially tried
+> >
+> > let bytes: *const [u8] =3D bytes;
+> > unsafe { &*bytes.cast() }
+> >
+> > but that doesn't compile because of the implicit Sized bound on pointer=
+::cast.
+>
+> This is AFAIK one of the only places where we cannot get rid of the `as`
+> cast. So:
+>
+>     let bytes: *const [u8] =3D bytes;
+>     // CAST: `BStr` transparently wraps `[u8]`.
+>     let bytes =3D bytes as *const BStr;
+>     // SAFETY: `bytes` is derived from a reference.
+>     unsafe { &*bytes }
+>
+> IMO a `transmute` is worse than an `as` cast :)
 
-Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
----
- drivers/cpufreq/powernow-k8.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm, looking at this again we can just transmute ref-to-ref and avoid
+pointers entirely. We're already doing that in
+`CStr::from_bytes_with_nul_unchecked`
 
-diff --git a/drivers/cpufreq/powernow-k8.c b/drivers/cpufreq/powernow-k8.c
-index a01170f7d01c..0559be0d87a5 100644
---- a/drivers/cpufreq/powernow-k8.c
-+++ b/drivers/cpufreq/powernow-k8.c
-@@ -482,7 +482,7 @@ static void check_supported_cpu(void *_rc)
- 		cpuid(CPUID_FREQ_VOLT_CAPABILITIES, &eax, &ebx, &ecx, &edx);
- 		if ((edx & P_STATE_TRANSITION_CAPABLE)
- 			!= P_STATE_TRANSITION_CAPABLE) {
--			pr_info("Power state transitions not supported\n");
-+			pr_info_once("Power state transitions not supported\n");
- 			return;
- 		}
- 		*rc = 0;
--- 
-2.49.0
-
+Why is transmute worse than an `as` cast?
 
