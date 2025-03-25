@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-576222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76B8A70C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:03:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85306A70C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BDDD188EA5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E83188F0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C025524E;
-	Tue, 25 Mar 2025 22:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390E2268FF4;
+	Tue, 25 Mar 2025 22:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RggYCKbA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtwEBROz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003D7D530;
-	Tue, 25 Mar 2025 22:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1081FF5FC;
+	Tue, 25 Mar 2025 22:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940200; cv=none; b=AAeoEZPPxAUnOV95AgtzNB6waO+4jezf9ofmjtB+oQ0kEaaNbllj96+KKdhxDPm8w76VjKRSjeEYPW52/UZ0YWL7PVCcVtf472rZavcpiC76ukRnLoKLYKrqQUd48gKiVWeOO89BE9UoiQeyZRN0d+ltNL9BA9jAJmVrKgaqsQQ=
+	t=1742940221; cv=none; b=TGaS0FzsWAvcxNRNPOsut9BIAuEw4xih6FKkmfTa49lzUqvENJ+OJECwDlydvr7TSzWEV+wrSz4Thp36nQ30U0X5qATPMognVg5+6tsUhlotsTq0sjXs2xUEYS1E83zeiL0iyygvUTN6nb9KOj1tVnfcxwluCPjSS5iDzCYL89Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940200; c=relaxed/simple;
-	bh=sOvUY+7IRDk4UFh0A4n4ZbSZW9+agMvEydOR+upZykA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n0c7yTbxzDyhRExRstWdZCPj2YkDGCodgj4rjj3wYoNI6EOsNawxnCSf5ihTQJCrf/wzfqziWCwt/z0zz1WtESKV2EoBmAtKlM7/w0gkdJ42oJfR4R2J8zxfVZSsFvFQnrGgzCzFL8143TlbG0RjEkCnk+QtE2dT1nP3l7PEqNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RggYCKbA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742940191;
-	bh=38W8upVMOF87Aaqs8SXomZEIZnrWoUhgAIMPG3P4yZM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RggYCKbAoCiOHYSJV+bY2Hl3iw6i4MSLGTV5DvNF7h9DNq2h6S2sufhSUSaLXhAHQ
-	 qbW3rHyi24rHHrvluWOkTYB0/fyqfqHQ4wUdK2ITeHrgOFEpp0KXD2nGtBZx2c2NPX
-	 LZIfQGsXJiwNNV8tFxqw8XAiwASSJ8INdDfykTyDjopnA+kRF71oUSSL9y0dVWIgq3
-	 aXvXH6YlQmpjJnfi+wgnYUt3pLWOYstY87gjrFEOSSXY/6fwfLPyLcfgFWyuaPQt5/
-	 6pZ/+5l1EcM3BnMCnMKIf0S4/niaX/kjt7pX0PAuKsVLmXrPVlJpEajWOmGm34CSc8
-	 8cuYn7MF1DpYw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMkSb34QMz4x3S;
-	Wed, 26 Mar 2025 09:03:11 +1100 (AEDT)
-Date: Wed, 26 Mar 2025 09:03:10 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk
- <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel
- <xen-devel@lists.xenproject.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the xen-tip tree
-Message-ID: <20250326090310.4f162838@canb.auug.org.au>
+	s=arc-20240116; t=1742940221; c=relaxed/simple;
+	bh=r4FrZ3kQRtogOz5YRrI0Y7RwoXdZXIEq6GXFizuIs5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YK2yaj4cXdL15QKe11bs0PYzpsz8Vd96F2pPAhqfqIiks0lVYhoEIjIeqE0C4qO0YYN7qLVu4c4ApJV1lSX+hti6/uK5cYfFKcyaz/8A+LzHro0l7bCV452msmLswjQ6jDZIWmfPe4dWT6F5iec8WucRnMrvkhaGI4C2vP3rI5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtwEBROz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8334C4CEE9;
+	Tue, 25 Mar 2025 22:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742940221;
+	bh=r4FrZ3kQRtogOz5YRrI0Y7RwoXdZXIEq6GXFizuIs5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LtwEBROz1sVZ4zPjLlon/FtAMGwhCVzqKiknXc6JE3JQCPwPnnJDcM94RhFu2Fw1V
+	 Ie+pikQW5ibhnh/d6rkDkJZhxSxwj7QTizo+8ZZBGR/PRaK/rQqi+eZFcVqjTW5WZw
+	 wrXiZUqBwjsW3G0FQc9Q6GfVK5esB7hNfrSQnTZJFbPq0y/Ax8Ry5a4aR8AvxCLISA
+	 y+0ex+Hw1IcoPCwEfnvy4MbzmeVcyR5E4F2j+VpORHmpNLrQDwErhFTxurLBU17Jrp
+	 nozmUFyF6A1DbFXxwqsoQY5j2l7/CESYqVruKX7/kEJNJxyWZAJhB3WO6cZeNzJk5u
+	 M6x96mkwVM02g==
+Date: Tue, 25 Mar 2025 23:03:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Ryo Takakura <ryotkkr98@gmail.com>,
+	NeilBrown <neilb@suse.de>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Borislav Petkov <bp@alien8.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v4] lockdep: Fix wait context check on softirq for
+ PREEMPT_RT
+Message-ID: <Z-MoNvnFOQmST8f3@gmail.com>
+References: <20250321143322.79651-1-boqun.feng@gmail.com>
+ <Z-J6jE0lHJpWA20l@gmail.com>
+ <Z-L2Km8nHE7Eevis@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/FIk6u8s3DQ3M9mmnBRSUw+D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-L2Km8nHE7Eevis@boqun-archlinux>
 
---Sig_/FIk6u8s3DQ3M9mmnBRSUw+D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Boqun Feng <boqun.feng@gmail.com> wrote:
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+> On Tue, Mar 25, 2025 at 10:42:36AM +0100, Ingo Molnar wrote:
+> > 
+> > * Boqun Feng <boqun.feng@gmail.com> wrote:
+> > 
+> > > Since commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
+> > > PREEMPT_RT."), the wait context test for mutex usage within
+> > > "in softirq context" fails as it references @softirq_context.
+> > > 
+> > > [    0.184549]   | wait context tests |
+> > > [    0.184549]   --------------------------------------------------------------------------
+> > > [    0.184549]                                  | rcu  | raw  | spin |mutex |
+> > > [    0.184549]   --------------------------------------------------------------------------
+> > > [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
+> > > [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
+> > > [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
+> > > 
+> > > As a fix, add lockdep map for BH disabled section. This fixes the
+> > > issue by letting us catch cases when local_bh_disable() gets called
+> > > with preemption disabled where local_lock doesn't get acquired.
+> > > In the case of "in softirq context" selftest, local_bh_disable() was
+> > > being called with preemption disable as it's early in the boot.
+> > > 
+> > > [boqun: Move the lockdep annotations into __local_bh_*() to avoid false
+> > > positives because of unpaired local_bh_disable() reported by Borislav
+> > > Petkov [1] and Peter Zijlstra [2], and make bh_lock_map only exist for
+> > > PREEMPT_RT]
+> > > 
+> > > Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
+> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > > Link: https://lore.kernel.org/all/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local/ [1]
+> > > Link: https://lore.kernel.org/lkml/20250307113955.GK16878@noisy.programming.kicks-ass.net/ [2]
+> > > Link: https://lore.kernel.org/r/20250118054900.18639-1-ryotkkr98@gmail.com
+> > 
+> > That's a weird SOB chain. Following back the history of the submission 
+> > I believe this line went missing:
+> > 
+> >   From: Ryo Takakura <ryotkkr98@gmail.com>
+> > 
+> > I added it back in to the commit.
+> > 
+> 
+> Thanks! Looks like I lost the "From:" field when I post the draft of v4
+> at:
+> 
+> 	https://lore.kernel.org/lkml/Z8t8imzJVhWyDvhC@boqun-archlinux/
+> 
+> I must re-apply that email as a patch to my branch, hence the "From:"
+> field got changed. Sorry for the mistakes.
 
-  d9f2164238d8 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain fla=
-g")
-  cae5129fccb1 ("PCI: vmd: Disable MSI remapping bypass under Xen")
+No worries - sometimes when rebasing with a conflict or applying with a 
+conflict, Git can drop authorship without much of a warning - I've ran 
+into that myself - so it happens.
 
-These are commits
+Thanks,
 
-  c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain fla=
-g")
-  6c4d5aadf5df ("PCI: vmd: Disable MSI remapping bypass under Xen")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FIk6u8s3DQ3M9mmnBRSUw+D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjKB4ACgkQAVBC80lX
-0GwvEQf8Cax0RQJCNfhf8Gk3G999eeL2bfU+Cz1UURF+bFcV8xCQyVjrgqh5iksV
-Mod2f+MVSKcsaJ4Ssj4hpuTbU7MJw9rBWuQymBKs7ImPMKFB5XXK/kOg1uhvQZsk
-YSygHcbKRTp5aUzf0G7NP29JVQWV1MSL/IK6R85DYnp5ieu9bB/evcXsOs+r/MAh
-YdgutM1IaZXBy7wb6StjxGQ+TNtbrEnUS+wUbkvFDt0QwGFOIXV32e95CwyKAXnc
-ztgPHPurzAKR7jWqjjdxne9+IopPVwDCyaHE/w0CrV8vhuuAapyuqASNejMuJR5m
-quRcnpAzoQOo7S2PECRraGvEdvI6Rw==
-=k2y0
------END PGP SIGNATURE-----
-
---Sig_/FIk6u8s3DQ3M9mmnBRSUw+D--
+	Ingo
 
