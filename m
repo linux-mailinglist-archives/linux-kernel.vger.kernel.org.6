@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-576065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB718A70A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:37:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA64A70AA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F98C7A4C3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:36:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC557A49E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A66B1EEA2A;
-	Tue, 25 Mar 2025 19:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2456B1EFF98;
+	Tue, 25 Mar 2025 19:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZP8kv4tk"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1ssPvgD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD913633F;
-	Tue, 25 Mar 2025 19:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A8E1C84B2;
+	Tue, 25 Mar 2025 19:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742931430; cv=none; b=rVsJ0Nw4GZX4r8OKYSUdX2pMIOxCcNSUkyAUj1KnMXzTuadAoZaYBO57xqYpLCY3EKabznknpKi8TXsbtJOmDleBJFOBlAgvTVzwP5aViBqflF/dNa415MBps9hiA20YGlvGLERoBqEM3VJkYq6/e6YXgG/A+PIbShkj+W+aong=
+	t=1742931524; cv=none; b=RAFdrF1Y8DzqDg19sh1ysT78Gj0d3uabOJcZyAB9tGfpDIhcfdCnhAwzZMLsSQKneFpaCfT2/y2ZZNUzuM/BPde3bdolq96K26SLRKeCKuV2Hy2qqvtIaDkNugd0Z2HiX+rlqUqbXgr90l0Yh2HDO8faGgnb0VG4mi5NRLWGKzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742931430; c=relaxed/simple;
-	bh=uthNjXBoXkAGwHsnyFmQnHx+HwMrTRlPfgpjVBvqb3Q=;
+	s=arc-20240116; t=1742931524; c=relaxed/simple;
+	bh=cCzRPZR36CeDuVFblvhPpvooqSdvmdM3hUpVjselwBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Co7AGaLdSnHTdX8hGpfKHt074OJUA3AaYzc61CgPuFQt4rYY/2N+eaPzhinPOMQbCSlPeClG0km0u+5u0U8hEJBto1t5rHWFmXto4eVBSGGZUWF8kt/QNYQVQ500gFxJuZPLMF0FeShec+3oGJQ0affHgpZ6Oa1EVztInqmRzzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZP8kv4tk; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso42590315e9.1;
-        Tue, 25 Mar 2025 12:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742931427; x=1743536227; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rH4vDDOqAIrVKZRAgJWmuhvlSdSlkAEZ46YZCOWscpc=;
-        b=ZP8kv4tkYh+WCHmAiFNO8CpRzBCCUrMguwlCo5QnknvzqhSBgUZdxmHZ92TsamZhrN
-         GSteVHRjXDYoFDpEIwWufBsPnNlchMKQWK740CIM17kgE11jBS+hRy1A14c4XSjk68ic
-         o6qV7Aw/axNIFs9Db/BnRI9TQu4N3wzn7NqVlYGZefLzqBgmSJvZ02CAjfQjy1x0+TB4
-         Z61Or9SwyVSx0tpm6in6K3CPVLqhr1ekWqQpPtCpfEpyL7PIMjAIdktVT98O27IVZ7qs
-         56+v1pTgKVnQROUU24/SgVT8kLUIe7Uq3g5Ysb0XFyu+oanlS/pIxnMGxiCVga/nVUsq
-         UWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742931427; x=1743536227;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rH4vDDOqAIrVKZRAgJWmuhvlSdSlkAEZ46YZCOWscpc=;
-        b=VKkk20joQFoau/vffW9xoZBH0SXdSTccZO4GbAUFaun6e0EOXos8Mcxou+H3c6wtgC
-         wUaCCbnwuusG8pZH7MUatnexSHQA19DAfF5oil6y9o5z7/j0IFeu2kZlxsOmGViEJMF1
-         IK5Y1sd5BwmwgVmEmK8uCosUsef/MlyAMy58njCC9qeNOmGRNfxVf/VodvL1tvw92EoN
-         DF7AklJdBhEIkYW+W/OLujRa3YLiOWvQbi5pVSnYo5tfp5xxokX2u6zJB/h0IKFcxn3r
-         wLKQij9UgzeMOxMRGZ3Q2lr+e5gQUv/HB8HR8eb9ejFzSjH5yfV05fwETw2zFFtgOf7g
-         r8sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm17WXRbjKLz9K265hIswAirbzQllQwIuBUGIYAXld8dwJkS+ns0POh1+zx1Ck1Fow8+GTzw==@vger.kernel.org, AJvYcCX+yQTkt3Y/a1ji63kkQwXNsebsgrOsOH0eFvVWodQrqjwebEQzGPdljfJ8JjAT8jX0NbxXIdNBovLaofZ3@vger.kernel.org, AJvYcCXmeGmsSZ8Zc8qT/Jnajb7EDcKJ9nBjBOM83AFWffq4o4eW2CKFh3P0WP+EZf3TUFA8tulP9blkH4SNwxjMhtMKyfmSxNKF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP5fU/LWH14IDSZ/BI0rERw4tlGEZaQ6BessvxuVQAmcg+MDYH
-	Vn7VsP6K2QgvYiFb1P4nDg/C8fqe4KDseDImvah4z+erEHesCRha
-X-Gm-Gg: ASbGncuP7FHBg9HBIAsZr/9SDPdxUHQcp6L2v/TcPYajsx/at6uxXTBQjFoKZyV3v3z
-	uchHg48OgDfHK9Qkd7/vOwu1neZf9ZMHeRTCE16pkDgCvo+QNRRzIPVqheDfWwPU5GtxTTXNS1p
-	CwmnMfsD0ZsEjjyjOA+fJMZp0VP2WVhAwT8uZj5fgc5VNkveEQqYqY4xPSTYO5H5TbBKAFW3/zw
-	W8e5c1i/xuAUjL1YGdPFr5t9Skgx8J6UQdRqMuQbG19cEexX2KWNgqVEvM55ed6Hdrs2CR0ssrW
-	LCbXbHT/fVE2Y3uUCrYsoTYqSv2B8+YxTU3bA3V8d6Mj21KPYEqxr893jFHwXBIJlQswZpQ=
-X-Google-Smtp-Source: AGHT+IFw1NFR+crAxRcNWPmKUDM5DyrL5IeJVqh0zoYri/CvcsnKkABhXy2mkwDNvRPMfbvA77BJ1g==
-X-Received: by 2002:a05:600c:4ec7:b0:43c:fb36:d296 with SMTP id 5b1f17b1804b1-43d50a3c159mr133322765e9.25.1742931427201;
-        Tue, 25 Mar 2025 12:37:07 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d6eab9d0fsm19968985e9.1.2025.03.25.12.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 12:37:06 -0700 (PDT)
-Date: Tue, 25 Mar 2025 20:37:05 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 03/28] landlock: Move domain hierarchy management
-Message-ID: <20250325.706d2d207107@gnoack.org>
-References: <20250320190717.2287696-1-mic@digikod.net>
- <20250320190717.2287696-4-mic@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzpVYmkJnW6aHlkoviMxfbA5iw3SChUhV0kQ3FaO7Qu7NmB4Z+g4+K6051sicl3qirAgjyaRTo9BEdwQmSx5Bg8jIjTMTB05j8KFfTNw4ZWqeDLGmPbwvazYXPdmf7ufOm91Tu7gjdf1OJoENpCSkRwdFz8ky5zRmTypc5hx7J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1ssPvgD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCF6C4CEE4;
+	Tue, 25 Mar 2025 19:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742931522;
+	bh=cCzRPZR36CeDuVFblvhPpvooqSdvmdM3hUpVjselwBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z1ssPvgDg+h3HzcBJjbFvleIeOP8lJq+ZY+pjqpGcYRS5yLGkXFHshdEGGRQ5xjYD
+	 Xh1NkxA3i+1hIa98+DDMZUPPerF36yX4bDbwdxfVCWkiS4yEup0ooeXNkUYWpFdOds
+	 JWhtQQaKwYud777ZNofvnJ/EtNRIyE9S9KzA0+MobsTuQWKOt6eVd1rG/oDe6CuDV6
+	 HmDVjS5eal4xyZyD4kpRjMVKOudP2TnoSudqqKcC/VwSmQLxoJ02Ed1y/4yecOJZKO
+	 GJ7+U5ZTjkDdVoPyJ0/XIqPHmAUFlJrDBj4vgb9+sMXDJqWrLo7FwVZGaaCbfngHIB
+	 ugJXt7g8N55qw==
+Date: Tue, 25 Mar 2025 12:38:38 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/6] vsprintf: Add __printf attribute to where it's
+ required
+Message-ID: <202503251238.4BA5CA87@keescook>
+References: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250320190717.2287696-4-mic@digikod.net>
+In-Reply-To: <20250321144822.324050-1-andriy.shevchenko@linux.intel.com>
 
-On Thu, Mar 20, 2025 at 08:06:52PM +0100, Mickaël Salaün wrote:
-> Create a new domain.h file containing the struct landlock_hierarchy
-> definition and helpers.  This type will grow with audit support.  This
-> also prepares for a new domain type.
+On Fri, Mar 21, 2025 at 04:40:46PM +0200, Andy Shevchenko wrote:
+> This whole series started from a simple fix (see the last patch)
+> to make GCC (Debian 14.2.0-17) happy when compiling with `make W=1`
+> (note, that CONFIG_WERROR=y and all warnings break the build!)
+> down to a rabbit hole.
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> However starting from v2 the last patch doesn't require the first
+> part, I prefer still to have them since the functions, while being
+> _binary_ printf()-like, are still printf()-like. It also puts in align
+> the tracing stuff with the rest and fixes the wrong parameter value.
+> 
+> These first 4 patches are organised in a strict order and can't be
+> reshuffled, otherwise it will produce a warnings in between.
+> 
+> I believe the best route for the series is printk tree with immutable
+> tag or branch for the others.
+> 
+> Alternatively the first 4 patches can be applied first as they
+> are pretty much straightforward. They also can be squashed to one
+> (as the same topic behind), but it all is up to the respective
+> maintainers.
+> 
+> In v2:
+> - split out patch 5 (Rasmus)
+> - rewritten the approach for the va_format() fix (Rasmus)
+> - amended tracing patch (removed a blank line and a __printf() in C file)
+> 
+> Andy Shevchenko (6):
+>   seq_buf: Mark binary printing functions with __printf() attribute
+>   seq_file: Mark binary printing functions with __printf() attribute
+>   tracing: Mark binary printing functions with __printf() attribute
+>   vsnprintf: Mark binary printing functions with __printf() attribute
+>   vsnprintf: Drop unused const char fmt * in va_format()
+>   vsnprintf: Silence false positive GCC warning for va_format()
+> 
+>  include/linux/seq_buf.h   |  4 ++--
+>  include/linux/seq_file.h  |  1 +
+>  include/linux/string.h    |  4 ++--
+>  include/linux/trace.h     |  4 ++--
+>  include/linux/trace_seq.h |  8 ++++----
+>  kernel/trace/trace.c      | 11 +++--------
+>  kernel/trace/trace.h      | 16 +++++++++-------
+>  lib/vsprintf.c            |  9 +++++++--
+>  8 files changed, 30 insertions(+), 27 deletions(-)
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Cool; it'll be nice to get these marked up.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+-- 
+Kees Cook
 
