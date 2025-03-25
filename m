@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-574891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21087A6EB2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:12:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BDDA6EB36
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9ED51891045
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:12:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738977A440E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9D91A5BA6;
-	Tue, 25 Mar 2025 08:12:41 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345E4253B6A;
+	Tue, 25 Mar 2025 08:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyEVArTW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF9481C4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923121A5BA6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890361; cv=none; b=rs44CTKzMkXlWcdLDG9jVuqaXvNkHl3hKzJ6UwNKQ3rHV8IzrS1D+xPNAOoA0TBbrShCmVduEezGWhNAofOO2/Tz/HJKWHUrZXIWdGApsrE3bYWZ+4H5/MOu/dQtjAooplc0/g2gjkpRitrv3ajKQTiFFif8i5y6FERfFmxFrso=
+	t=1742890406; cv=none; b=ubbS4D4fDJKm5uGSOVZhtAU90w449so2t9k3GhHNKhVXK9wfOxCTiYE9c+pqA2s+4boKaRs1yymia6t1iPHPc9/Q3TivjboP1qRUJdMcyuOAPryOPJF1vPWbliwcNhsKUP9MtqE2S8r3qRVy007Z2bBdbIhbMjpncFiUEREv7z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890361; c=relaxed/simple;
-	bh=5PEk+JDQsfLzMycFsSiNa9hy6CLK/qnFNELdqsC06r0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WloanrvhiROMEkhzf4ptlDI4PLdPnDr3lbZBu/d8m67dIVJUSOzBnlhp7w/NzTWP2aU7l3bc9Ot9fF2YFxvsYSJkNJZOejSbnKL5aOGu4KeK4NYowPPEyrvz966je9Dj8Vf9lxQdqg+zqUkG8qeBxEIyzAKxJ5dykvaa5nrX8HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201603.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503251612350664;
-        Tue, 25 Mar 2025 16:12:35 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Mar 2025 16:12:34 +0800
-Received: from locahost.localdomain.com (10.94.16.22) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Mar 2025 16:12:33 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <mripard@kernel.org>, <dave.stevenson@raspberrypi.com>,
-	<mcanal@igalia.com>, <kernel-list@raspberrypi.com>,
-	<maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-	<airlied@gmail.com>, <simona@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	"Charles Han" <hanchunchao@inspur.com>
-Subject: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
-Date: Tue, 25 Mar 2025 16:12:32 +0800
-Message-ID: <20250325081232.4217-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742890406; c=relaxed/simple;
+	bh=LtRdniLcPqa7ao3nLrAh74t9DlpseprTi8ntyDAeLik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dcV3FbP5kc33cgn74gXTKQrrLBH9MCmgYxnkiUc7BBcQlzzboOGniB5AXgZAj9nGDLL2KqHFEsc/vwpmWQ7SqHbvjsB+/KhilE36ih2SH8MAgzUY7LnLzqKZN2Twy/Al8gnJacCygEDJ02unGiYkhkljumnPJUE2k7lBPXhiabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyEVArTW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B29AC4CEE8;
+	Tue, 25 Mar 2025 08:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742890406;
+	bh=LtRdniLcPqa7ao3nLrAh74t9DlpseprTi8ntyDAeLik=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MyEVArTWZinYlc0UyKhExD7y6Zsq8cAsvxIG1OUzHrmWdb5qzOErLKCig3Ry+zNDO
+	 yhdqtSPQxB2x7YwGCI3sOYVbrAGUsweAt4Sk8IY867ibaDUatPNFzkApDxnBv9qIJQ
+	 ky/O85t3knHqdBB+Lq4rNf+n2sFmFFwwJHG5S0uLjJi1jKAbL+6jLFgfSVnVd46KmC
+	 tVKuOrrrOpMe3n5JkJaHZw0yj7ukc5dBqmzKjCLQ7hWqTgGcwX468a+WxsHCM5Rwue
+	 KHmXaKQXfFXXU5XQh0gkzD9KF/qrIrgXGktvb9P+n4JiMlk3kxM3ZeXIpN/kDRwngX
+	 cUSw9Ua2YAweA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: add a fast path in finish_preallocate_blocks()
+Date: Tue, 25 Mar 2025 16:13:21 +0800
+Message-ID: <20250325081321.3296714-1-chao@kernel.org>
+X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,38 +55,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025325161235ef9fda8f684a16f0e8a09cc18c2a19e4
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
+This patch uses i_sem to protect access/update on f2fs_inode_info.flag
+in finish_preallocate_blocks(), it avoids grabbing inode_lock() in
+each open().
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+- get rid of read lock during querying FI_OPENED_FILE once we held
+inode lock.
+ fs/f2fs/file.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index c5e84d3494d2..056d344c5411 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
- 			/* HPPF plane 1 */
- 			vc4_dlist_write(vc4_state, kernel);
- 			/* VPPF plane 1 */
--				vc4_dlist_write(vc4_state, kernel);
-+			vc4_dlist_write(vc4_state, kernel);
- 		}
- 	}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index abbcbb5865a3..a71946976761 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -554,19 +554,21 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
  
+ static int finish_preallocate_blocks(struct inode *inode)
+ {
+-	int ret;
++	int ret = 0;
++	bool opened;
+ 
+-	inode_lock(inode);
+-	if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
+-		inode_unlock(inode);
++	f2fs_down_read(&F2FS_I(inode)->i_sem);
++	opened = is_inode_flag_set(inode, FI_OPENED_FILE);
++	f2fs_up_read(&F2FS_I(inode)->i_sem);
++	if (opened)
+ 		return 0;
+-	}
+ 
+-	if (!file_should_truncate(inode)) {
+-		set_inode_flag(inode, FI_OPENED_FILE);
+-		inode_unlock(inode);
+-		return 0;
+-	}
++	inode_lock(inode);
++	if (is_inode_flag_set(inode, FI_OPENED_FILE))
++		goto out_unlock;
++
++	if (!file_should_truncate(inode))
++		goto out_update;
+ 
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(inode->i_mapping);
+@@ -576,16 +578,17 @@ static int finish_preallocate_blocks(struct inode *inode)
+ 
+ 	filemap_invalidate_unlock(inode->i_mapping);
+ 	f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-
+-	if (!ret)
+-		set_inode_flag(inode, FI_OPENED_FILE);
+-
+-	inode_unlock(inode);
+ 	if (ret)
+-		return ret;
++		goto out_unlock;
+ 
+ 	file_dont_truncate(inode);
+-	return 0;
++out_update:
++	f2fs_down_write(&F2FS_I(inode)->i_sem);
++	set_inode_flag(inode, FI_OPENED_FILE);
++	f2fs_up_write(&F2FS_I(inode)->i_sem);
++out_unlock:
++	inode_unlock(inode);
++	return ret;
+ }
+ 
+ static int f2fs_file_open(struct inode *inode, struct file *filp)
 -- 
-2.43.0
+2.48.1
 
 
