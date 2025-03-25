@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-575820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B65A7078F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:01:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14064A7078A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F7C188E895
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1CB188C8CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1F262801;
-	Tue, 25 Mar 2025 17:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F2225EFAC;
+	Tue, 25 Mar 2025 17:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LW7xLAPW"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgosEb7T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BBE2627F9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32B925C716
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 17:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922029; cv=none; b=PiDMLYuCItot3D7J9++ViWIRqHZtawWaaEz3HJ0Ii1BYqupRTBWmblODazdzJbuPe6GOfWIOoQY8GSIrfTvMVFwhhD8Od0JSNUvzmGCd/nTI1qA6deiKTOz0rAqrJYtk1gVPNMQbYUfiND8WE5fcj04i8xam14DojDKYxVqkyDM=
+	t=1742922024; cv=none; b=QeGwTohfJwBAoB7Jl8oLbNVKudt1dBqkmcidH85J1jDxudMrsQw7LlGyftZOc4mEJ2orLa28weOyST43Vrtk6vLqjeVr8lb9uoDNrJc5MVv/dykhtKjHxpPqgda0dwV+on5R15csSRVY3zVicCVWBazSljdGZ+8lw8CdmDJqwQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922029; c=relaxed/simple;
-	bh=JzSyyxHPLR8iFxVsVqAjhsJGNcPWV1+9aX0eGoXDf/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/LDczSllQgcpFO/7E8R1bnjxhOEEZ4LWRiZKgT2xMjlwrXS/fxCMXzO63d5VQuukxzuZorFI2iJ7JC+86smADEqD+vk2vinVt9+ucEYPJXBoS+v9aEecMY6O5cOBB4LBR/nBUS8+QBKkUGwhSl/dFOvUISmkmWgdPJARiRpMN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LW7xLAPW; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22580c9ee0aso121167965ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742922027; x=1743526827; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Azc65USrzFasHU1jO29UHHSBs9Cx7/6a82Lf9CyANV0=;
-        b=LW7xLAPWxQCbQFO8raM5S9i7xiy47n3lFTKo/aJ5OHC3Xm51KGw9unkDnSHKpFDDQ8
-         yWz2i0/M7PnymEqg1h8f9ZzPvEB55QGw7+Me7vdv93Xz1bY/7+At+oBFMSy2xKuka4B7
-         nNB2Wb9goCJ+Yafnf6/on3LAlA6MwF9UBdHbCvuOl3lJ1WvMRTWVnsI3rl/43+77E9dd
-         4zVAeapeCZmOFd+2yhQUVesCVyBOJxasAI9Hi7ZT+00wG9qW1ZqHm8tj74KhFFMcU7/2
-         s3yxsMsKA1OqheSHWJFxDLf02jMZhlCo5m/xVJ7hD7WyiW1FpF5eZIFB+NRL+gRDzJTj
-         tiXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742922027; x=1743526827;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Azc65USrzFasHU1jO29UHHSBs9Cx7/6a82Lf9CyANV0=;
-        b=AkhcokhzTfBRJxgL+rWzE7/UYgY8oQUd/ib8FEmTQVKD0pauHs4TG0L1xiakRslt7j
-         aTgKZTOeLygpscsL06n6YCZheOwGZiHnaaZNHb/Y6OmTWs9qPt5efnY6rpZCTthgrD9Y
-         KPjiB0OFq2SUuu8jRfGp6f+txAaHC8VwhoZTDNninTlGI/fVeGaluL4UtyA/EU+9PoqR
-         YINqV2lwey2r2qjNmrSYCLkhXGXGgx62X9R3FlhNXrkD/3wP5A4ZaOiJvGFpaNyFXqFU
-         36AjxwGfnPHl6SkMtiidue4mhbuWtTkIUQaOd0qhPWeVBPMbIrwuCI1WkAhuEgBrnEMU
-         /RFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVS+9Bq82REXCqWYsLbiHvEi9vJEspNWicm2DK+UMR9jpwJfZ35WWlPKQ9DnMfn3eU+1NS+CWxT4kITrUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwThGl4VZILtZ7C84pMjRaWYJ4r0A2/VD/Rxu6PhmvUeIzEEgFg
-	s8dzNQ7NMQD/PUv9RiOr4/dGB/teao7Oq3WTk15tgvyI7rUo1lMBu/RePal0ZN0=
-X-Gm-Gg: ASbGnctnar7c+S/wbgLpeIqfyuI3t7J1kesgGG8EoH42qSezHzyfBfVRyI1VnowNXU5
-	Xpvr0KBQeXo3o20LGSXfiZdiFVgZ8xyDX8LMfbpRMpnK6o8BbRzYAoNd1sefRyjOKlI1ydlbLvS
-	PixWtNgErFC+y34TGrlHZpNQQ0e/nszATwpccCMvN/ykR9UJXNEjx5k1Ndn1NODRSRcvTBMq0rD
-	OTiOZujDSbO35BDQp+G0fxN3Ke6NabuggcI82GcuHSs4BXDWgPXHpbA1LhwbqjtNObjF/RYl5P/
-	USA+qPziKAt7DfvisTbhimDhTKAPeNGCSqhE++mQXdZro/yAvX7MeyeiIhBOk9XRWFtbit0VijJ
-	TUBmo32JwdtquYylpvOSlmg==
-X-Google-Smtp-Source: AGHT+IEtyy/9fIlH63J5nf464X6zt4pW5HhepzL30KIteieGw8th0/q5z55+RkGRF7k3MuqwqELCXA==
-X-Received: by 2002:a05:6a00:2291:b0:736:53c5:33ba with SMTP id d2e1a72fcca58-73905a02b96mr28409737b3a.16.1742922027226;
-        Tue, 25 Mar 2025 10:00:27 -0700 (PDT)
-Received: from ?IPV6:2409:4080:119f:3ad6:66e:eb88:9ca5:b5e6? ([2409:4080:119f:3ad6:66e:eb88:9ca5:b5e6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af8a284695dsm9386261a12.44.2025.03.25.10.00.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 10:00:26 -0700 (PDT)
-Message-ID: <31800f57-2fd5-4e9b-a301-36a67ba27210@gmail.com>
-Date: Tue, 25 Mar 2025 22:30:19 +0530
+	s=arc-20240116; t=1742922024; c=relaxed/simple;
+	bh=fMDCIrknMga52tByCYAzlgDLTGxj2rqO7TMXOqtzQTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kl3jPzPXZzMEkQURFNdWhdB1haSFEo/JzhOnYPjdGtSW5hAXclJfAmSyZeGLQM7uEGyzwRC7EGdt9PqUGLwQLJWGyp5DvsnVF6k/c5kMnnCdFLizTFBOQEZahlgsd8008m00F5boDbXP8CmRq1RsyXg2BV6lWMT9rtr3pe/P2AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgosEb7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C353EC4CEEA;
+	Tue, 25 Mar 2025 17:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742922024;
+	bh=fMDCIrknMga52tByCYAzlgDLTGxj2rqO7TMXOqtzQTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jgosEb7TUdFofoFDLjNEd3EDRk6cnWxqTccGPnhqNG6KThpdqe22/0ZCNvKHAqrZ6
+	 +jMfoUUeKiqp1qdg2lE0wDlndMPhil5VDNBPCOw4823uTyGhCi2uGoh4y6KdRmasL+
+	 +/+mZcenkT1sTWLI+inIZOcxaBKZCGEdgDHruP2WCqXeXIGlWu8f9bG/S8wWq2ugk6
+	 Tr/NBzXEIBAZv6xg1GMAv0ajnO7xpQ80yR/r3lmaUG4MBMBc57rzm6RzucVWDD7LrV
+	 I4DQ0wXi0oJx0eFM29sDvY4U7HAwFxo0sqmqHwxxY+R0+AwHG2LuWNLNtMJWrBtAOx
+	 wQka+Hbk83u8Q==
+Date: Tue, 25 Mar 2025 18:00:21 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: devbrones <jonas.cronholm@protonmail.com>, 
+	maarten.lankhorst@linux.intel.com, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+Message-ID: <20250325-crouching-benevolent-serval-fd54b8@houat>
+References: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
+ <875xjxa2rk.fsf@intel.com>
+ <20250325-inquisitive-ebony-mouse-bdf185@houat>
+ <87pli58jze.fsf@intel.com>
+ <20250325-annoying-precise-uakari-6b6438@houat>
+ <87h63h884t.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: jfs: Avoid sleeping function call in softirq
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net,
- linux-kernel@vger.kernel.org,
- syzbot+219127d0a3bce650e1b6@syzkaller.appspotmail.com
-References: <20250322142134.35325-1-purvayeshi550@gmail.com>
- <20250322143549.GH2023217@ZenIV>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <20250322143549.GH2023217@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vutrervm6fjxn5pl"
+Content-Disposition: inline
+In-Reply-To: <87h63h884t.fsf@intel.com>
 
-On 22/03/25 20:05, Al Viro wrote:
-> On Sat, Mar 22, 2025 at 07:51:34PM +0530, Purva Yeshi wrote:
->> Bug detected by Syzbot:
->> BUG: sleeping function called from invalid context in jfs_fsync
->>
->> Fix jfs_fsync() to avoid sleeping in softirq/atomic, preventing crash.
->> Skip execution in softirq/atomic and return -EWOULDBLOCK to prevent issues.
->> Correct generic_file_fsync() call to pass the required arguments properly.
-> 
-> _ANY_ ->fsync() instance may sleep; adding that bandaid in jfs one does
-> not fix anything - the realy bug is whatever leads to having that
-> *called* in such conditions (e.g. having an unbalanced spin_lock()
-> somewhere, etc.)
-> 
-> NAK.
 
-Thanks for the review. Based on your feedback, I have analyzed the call 
-path leading to fsync() being invoked in an invalid context. The issue 
-arises because generic_write_sync() is being called inside 
-dio_complete(), which can be triggered from dio_bio_end_aio().
+--vutrervm6fjxn5pl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+MIME-Version: 1.0
 
-dio_bio_end_aio() executes as a bio completion handler, which may run in 
-a SoftIRQ context. If dio_complete() is called directly (without 
-deferring), generic_write_sync() gets executed within SoftIRQ, which is 
-problematic since fsync() (invoked later) may sleep.
+On Tue, Mar 25, 2025 at 05:03:46PM +0200, Jani Nikula wrote:
+> On Tue, 25 Mar 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> > On Tue, Mar 25, 2025 at 12:47:49PM +0200, Jani Nikula wrote:
+> >> On Tue, 25 Mar 2025, Maxime Ripard <mripard@kernel.org> wrote:
+> >> > On Tue, Mar 25, 2025 at 11:16:47AM +0200, Jani Nikula wrote:
+> >> >> On Sat, 22 Mar 2025, devbrones <jonas.cronholm@protonmail.com> wrot=
+e:
+> >> >> > This fixes a bug where some Playstation VR Headsets would not be =
+assigned
+> >> >> > the EDID_QUIRK_NON_DESKTOP quirk, causing them to be inaccessible=
+ by
+> >> >> > certain software under Wayland.
+> >> >>=20
+> >> >> Please file a bug over at [1], and attach the EDID on that bug, so =
+we
+> >> >> have some clue what's going on.
+> >> >>
+> >> >> [1] https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new
+> >> >
+> >> > I'd rather have them in the commit log. Nobody uses gitlab issues for
+> >> > drm-misc, and those kind of issues are just lingering around and
+> >> > becoming stale.
+> >>=20
+> >> For this one, it's fine as long as we preserve the raw EDID for
+> >> posterity. Unless the EDID does indicate VR and we need to dig deeper,
+> >> that is.
+> >
+> > What I was trying to say is if "posterity" means "a forever open issue
+> > in drm-misc", then no, sorry, that doesn't work for me.
+>=20
+> I want to check the EDID before we merge the quirk.
+>=20
+> If the EDID does not indicate VR, we can merge. I want the EDID
+> preserved so we can track them down later if we need to drop or modify
+> the quirks.
+>=20
+> If the EDID does indicate VR, either the quirk is unnecessary or there's
+> a bug somewhere. This requires further debugging, and we must not merge
+> the quirk.
+
+I understand that, but I don't see why putting it in the commit log, or
+as a mail reply to the patch is not a good solution for that.
+
+Or why using drm-misc issues for this is a good one.
+
+Maxime
+
+--vutrervm6fjxn5pl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ+LhJQAKCRDj7w1vZxhR
+xf12AQCkpCIuaInNcgBVfxP39ielwCgnCH71pclDTaqRhvXwQgEAwjtHnvtxboWH
+rnnPN9tQza5+KuVRKykQsWBpDDHivQk=
+=Gr6x
+-----END PGP SIGNATURE-----
+
+--vutrervm6fjxn5pl--
 
