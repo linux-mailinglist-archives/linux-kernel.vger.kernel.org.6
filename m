@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-576239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A67A70C9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:11:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2F5A70CA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731E63BC2D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BACB0177399
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38AA26A1CC;
-	Tue, 25 Mar 2025 22:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682E5269CED;
+	Tue, 25 Mar 2025 22:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jYcR0M/a";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dEgqV6Pw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN1xYoYU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B2226A0EA;
-	Tue, 25 Mar 2025 22:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C044A269B03;
+	Tue, 25 Mar 2025 22:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940604; cv=none; b=Co/VUfA+ZyiUVBg4Jo5I6hAoo49NE5SsKB0IPilMcVOh5yLmgiI8sBAgNKQ1iUuvUvYpxbYV0ZJWnuKapxqQ61iR9c9LL6aPWfSgZjEXWxJMWZO+cXnbof5uz/DLfeEzzEn8wUiQTC1MYmG6Mvn73Lqf7dOyCCKuXxQ1Lx+73r8=
+	t=1742940615; cv=none; b=kR+tdqRTHX1YAGVa0I1AMbLsxs6DK5QmXSobFAw8Gs4tjgDAsFG1LaQ8CaDAv1rmmfW8uVjKvsgROkZ1MyTGczaSSZRYQXRmlWYK4o4a1xWjFaNDJd4dju41+wEhUz+8vDj5C1d/IiBQDRu3tPehpgdkFpIMxR8XOdxVUtl6lS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940604; c=relaxed/simple;
-	bh=YdUbScf68uKSvmmNBID0unomYwPo6TWuZk/j2Vc0qrE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=k0f/PzAQmtUMGdjgbakZZdQdHtX4YvE3JWCsmzxiWBQcJjU6g/efXim8MAQwPG7sWL3LsfakzTQxk0OP8HzwTPICGef23VsXh6Qs5YjBQkvPkqRdJoKrJfnnGcW3E/rIuJ2hZzmdyvXgLMUr1n0h03//vI4nmPrUkWVhI86TLhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jYcR0M/a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dEgqV6Pw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 22:10:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742940600;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khg9tQsGOz8f7tU5JSPhmE9SNOc+uuTcJWc7D9Awcqs=;
-	b=jYcR0M/adntFIQc9uyFOlApQUiROVjlT9UldAWJQLLoloB/tsNScOA5a0yzhF0Xd6QNhVO
-	0TrPC8gY3rRD4z6fblAE6fdQD5rxjOSKSLjPbs6z5eUtNFX10sqYwG9crbqt01UDbHmRoE
-	MaSTzN6B1dh1kgXXvbsygAoTRG0YShGHaf0Q3qKAaAAK19evt3M9NbtSjZzhkFNBs/M/lr
-	YLsh4H9bK1XaEfJrnoYwm3WNupgqfauKcxA7OEdbCd8Eu2e6CVXXJrLcu6nR87cTXt2+LO
-	qIamrRvW4/TSCckV1qfm0NDbbQkLEmYJmMemghAxLhTzuOfXsfptpmE1oLS6iA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742940600;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khg9tQsGOz8f7tU5JSPhmE9SNOc+uuTcJWc7D9Awcqs=;
-	b=dEgqV6PwKk3InmyXCvBk6gV7Kb25Ld0yq8gKR96UIo0BvjFs6KxvdG7hLSwbc4uF3yXwRe
-	JfCDtTWhQuoJfXBw==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool, spi: amd: Fix out-of-bounds stack
- access in amd_set_spi_freq()
-Cc: kernel test robot <lkp@intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Mark Brown <broonie@kernel.org>,
- Raju Rangoju <Raju.Rangoju@amd.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <78fef0f2434f35be9095bcc9ffa23dd8cab667b9.1742852847.git.jpoimboe@kernel.org>
-References:
- <78fef0f2434f35be9095bcc9ffa23dd8cab667b9.1742852847.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742940615; c=relaxed/simple;
+	bh=wT4x+n5x6UsN8Uy+iI2Ioy+2sbSgRPmrV+sg1r0WxIA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GKQMxe443l8NTaeRqG4D2AY3mB9sR+gLqkZunDXByAZsKpWO6CL2NWEAZiTY7p+NJNPwKSmDMGqucuHmo96fKuObyqaM9XtXDpZSnU49KxGHAQbrngPwU1qiwTQD2AHZXLIuGGzHjr1VDf3ML1YNP0OQFwDjAN9c+wBVP6R90MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN1xYoYU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA4B5C4CEE4;
+	Tue, 25 Mar 2025 22:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742940615;
+	bh=wT4x+n5x6UsN8Uy+iI2Ioy+2sbSgRPmrV+sg1r0WxIA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HN1xYoYUeup0jmzYo7eqpZu2tg61FK4ik0TH3XmrsCDT1sz44SVCv1oRYrrQ5/t9V
+	 LpnffUxlhXqavPoWMPxMnaX8T+lh7qfQI/cD5AOhWhXo84Qh9fj6FjaLIRIJmMuyoO
+	 wH7cutLCSa31E2Y2xxThqaom8EhSiGaXv4g7c05yr2Kdguynqe5oFYqz42PcN4tMBO
+	 UueoLOrIbpN4/duGNsfeILl4YOrwLLoqG00HTysNCAUFX87FdJUtKCxOgPyO9mUY7L
+	 GfuRPTqJxjdPE7vPoBPvpvl7148C/lWFgWJybyTQUnVSS8a0DduS8m4lxEXviMIF1e
+	 tp20/eDWeW8rQ==
+Date: Wed, 26 Mar 2025 07:10:11 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/1] tracing: Show last module text symbols in the
+ stacktrace
+Message-Id: <20250326071011.3c2c97ba3a441c1a5fca582f@kernel.org>
+In-Reply-To: <20250325154955.5ed4fa33@gandalf.local.home>
+References: <174282688292.356346.8368421078882769536.stgit@mhiramat.tok.corp.google.com>
+	<174282689201.356346.17647540360450727687.stgit@mhiramat.tok.corp.google.com>
+	<20250325154955.5ed4fa33@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174294060018.14745.1774182983307255027.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the objtool/urgent branch of tip:
+On Tue, 25 Mar 2025 15:49:55 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Commit-ID:     76e51db43fe4aaaebcc5ddda67b0807f7c9bdecc
-Gitweb:        https://git.kernel.org/tip/76e51db43fe4aaaebcc5ddda67b0807f7c9bdecc
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Mon, 24 Mar 2025 14:56:04 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 23:00:03 +01:00
+> On Mon, 24 Mar 2025 23:34:52 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Since the previous boot trace buffer can include module text address in
+> > the stacktrace. As same as the kernel text address, convert the module
+> > text address using the module address information.
+> > 
+> > 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202503112303.D7g66VSd-lkp@intel.com/
+> 
+> FYI, You don't add "Reported-by" and "Closes" tags for kernel test robot
+> reports for previous versions of a patch set.
+> 
+> It even says that in the report:
+> 
+>    If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>    the same patch/commit), kindly add following tags
+>    | Reported-by: kernel test robot <lkp@intel.com>
+>    | Closes: https://lore.kernel.org/oe-kbuild-all/202503112205.joXgt8gR-lkp@intel.com/
+> 
+> "not just a new version of the same patch/commit"
 
-objtool, spi: amd: Fix out-of-bounds stack access in amd_set_spi_freq()
+Ah, I got it. I missed that part.
 
-If speed_hz < AMD_SPI_MIN_HZ, amd_set_spi_freq() iterates over the
-entire amd_spi_freq array without breaking out early, causing 'i' to go
-beyond the array bounds.
+Thanks!
 
-Fix that by stopping the loop when it gets to the last entry, so the low
-speed_hz value gets clamped up to AMD_SPI_MIN_HZ.
+> 
+> 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  Changes in v6:
+> >   - Protect module_delta by RCU.
+> >   - Make nop make_mod_delta() for CONFIG_MODULES=n.
+> >   - Rebased on linux-trace/for-next.
+> >  Changes in v4:
+> >   - Move module_delta to trace_array again.
+> >   - Use bsearch for lookup module_delta.
+> >   - Revert the boolean logic to avoid '!',
+> >   - Fix !CONFIG_MODULES compile errors.
+> > ---
+> >  kernel/trace/trace.c        |  133 +++++++++++++++++++++++++++++++++++++++++--
+> >  kernel/trace/trace.h        |    8 +++
+> >  kernel/trace/trace_output.c |    4 +
+> >  3 files changed, 138 insertions(+), 7 deletions(-)
+> > 
 
-Fixes the following warning with an UBSAN kernel:
 
-  drivers/spi/spi-amd.o: error: objtool: amd_set_spi_freq() falls through to next function amd_spi_set_opcode()
-
-Fixes: 3fe26121dc3a ("spi: amd: Configure device speed")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Mark Brown <broonie@kernel.org>
-Cc: Raju Rangoju <Raju.Rangoju@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/78fef0f2434f35be9095bcc9ffa23dd8cab667b9.1742852847.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/r/202503161828.RUk9EhWx-lkp@intel.com/
----
- drivers/spi/spi-amd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-amd.c b/drivers/spi/spi-amd.c
-index c859974..17fc0b1 100644
---- a/drivers/spi/spi-amd.c
-+++ b/drivers/spi/spi-amd.c
-@@ -302,7 +302,7 @@ static void amd_set_spi_freq(struct amd_spi *amd_spi, u32 speed_hz)
- {
- 	unsigned int i, spd7_val, alt_spd;
- 
--	for (i = 0; i < ARRAY_SIZE(amd_spi_freq); i++)
-+	for (i = 0; i < ARRAY_SIZE(amd_spi_freq)-1; i++)
- 		if (speed_hz >= amd_spi_freq[i].speed_hz)
- 			break;
- 
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
