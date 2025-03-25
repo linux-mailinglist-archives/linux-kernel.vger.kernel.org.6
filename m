@@ -1,180 +1,142 @@
-Return-Path: <linux-kernel+bounces-574964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D81A6EC08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:00:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E336A6EC11
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93A7D7A32BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9856116BC6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB591C8611;
-	Tue, 25 Mar 2025 08:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DC21E9B06;
+	Tue, 25 Mar 2025 09:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlhDJntn"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hJKOv3x9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A61A239D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9AA18A6A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742893191; cv=none; b=gH8pzqNiJAgIKD3oxZqhIacJbI2rc0/BWyITZLOjTNNiREvbzysz/MppZMw4DYJHgH8+AcdLN5MNC+x41pGl9u0Q5iq5Bp8dT5iuQH6WYZDcPDqNfNZTShsPPr2ZxAC7//GMjxN2k9vJ3aHx6v3AE4257zjF7aCHeuykyY5KUcE=
+	t=1742893349; cv=none; b=ju1H17ql0alpTsb0VO+IQJxjElJyUDCsF65QbZK9apg9vpmrDEDTWUnUcj9S8U8WAoJZocjaDW5ew8Ouri2Xbpj0UuquobCdVZ3ykYOlAvy3hVOfFUqjXl8H18h0pDlxKu/rUfgRfyy68q9+BSlJtfkuNPH1y+o632WwgoLLL1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742893191; c=relaxed/simple;
-	bh=ofLmYNjdbpyhD44h5YU4MrDqG5F9Y4nedaNje98DxbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJA9gFOWGlAZSav3RBHSKIBFmEObFVJ6qlg0pr8DuoNUnrPbr3sHwDyRlcivjFuPkMd5UfXZLmEJBwZdLXes3rn8wsbYhzH4bTd16LB44ZmJYxItQcA3rFuA8sLc2i3W1l3uB7Ljf5CXQNxkdify2HhFPc965jK4FkHqq70hWSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlhDJntn; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39127effa72so580206f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742893187; x=1743497987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=glsT11ch6LS6yViOCJ/VQP3qGlWpbr1oPnawjwbltqU=;
-        b=jlhDJntnkDWCUR3O+mAb0xFCxuDkz8Ik33aW5I1iE+eKmPNsGc1E4hzPtEixGw0z7K
-         OYaDp6EV+WXFE9qg4U67KXPKsFGWD4rVPTWu+3YIPXxv6zt0CPDUDIDWmnkoZyi9Y+Be
-         Dtm4H6AaLdeqZdtJcxEwrQFvNXbUzPGHH6UjfE55/GNRuVM+xPrbzoQBRteBemfKwiud
-         ccTqrPFWXFtwoWL445Fr1clA//wO1mcvNxSkTMrC3pDNVuqZYhc/qfnes3ljZn5aMFdX
-         I5QQBkyxjbuN2c/CNOpHEWESI7+6snl2tcJHBIknEbys+3l91eMOFLf/Xdp51YKrf+Qe
-         UbmQ==
+	s=arc-20240116; t=1742893349; c=relaxed/simple;
+	bh=wcSRVHryt2bmCq50gGdWBD1baQzrF0iPIIeTmkanllw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X7IR5kxpxv+WYQG/JynH1qL70LhHXLzQeRq4sbpZMQODt+raD9HlosHGT+bSk8RF6aW5DuyXMB/fuuhLVtmRea/niSZTDK8AAiHjqih/93DhJaKcjI6O4YwzNCPcCWSYD/wV7gSAwNwC5wov/OqSm3PDkhqaPUvgf6D8NTGCaEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hJKOv3x9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742893346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wj1IChreYTEW7S1AiPXdgyUmHcauFp5NeY4Eqtc9FGw=;
+	b=hJKOv3x9LSrXF23YoQlw2ngGe9MmiGZu3lzlPMCmDQtt4SEmI2bqnr7KK84hA+g2WhFlY6
+	nNT7pKOAQiDO8jmglkRG5o2w1gdLRCtPP1nhqk+mksE3LIE1cGWWfECUSSFRIhF4wiElMf
+	CpZNR1eSdCQEyi8IhG0EvOLeDpRzzAk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-UeTRfxTSN9ujlyFVMwkV4Q-1; Tue, 25 Mar 2025 05:02:25 -0400
+X-MC-Unique: UeTRfxTSN9ujlyFVMwkV4Q-1
+X-Mimecast-MFC-AGG-ID: UeTRfxTSN9ujlyFVMwkV4Q_1742893344
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d08915f61so32610075e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:02:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742893187; x=1743497987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=glsT11ch6LS6yViOCJ/VQP3qGlWpbr1oPnawjwbltqU=;
-        b=HFWrKbIhKRHIM/GAMztCfRr0wnvngNI4yjBJyn+DHQ88MJ0s6kU7af3PKh9Gsw7H+r
-         fnNB/lGurIbjGgOOqTyVF3m+22QnU35CFiCixwzSeP1Y3FW0JhucBpP9Thfmfa0KWuNV
-         khCYzELaKWKcs8lS65dH1DCdMf/AoG752wKceR2QB+O3Zlt4RtIYi6qR8HdiDe2+l4Tt
-         RC/MwVNjhs7dkgLjNIyFD6rgi3hhRi1ipjp9MhStxuHxsrUSSoG64Pe0NRT+onKlTD16
-         BB/kesCt/7Abpo9w2NQ/ZOnl3EkrBlxfm0IYpxtghclzcoIl/yAKdGGLtR3ERpm1qQVw
-         SaYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPQfMB7N2IbeLD6Tn2AXZHmNDMpy/9NFxQ8j+Cez6Q1QUPjWAILbffZpACbiPLX9VhLxA3vSx3+pNL6ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcJ44EyGTxHiq/pqIId1UM0OWyORr5dchQy07H0ECdoXFL6V+O
-	JjjN8esPGj696MBALg3MbEmVCA/PcvipwVj7N6Gmg6/LP/kbvvRDSNXONB/7eIX0O67B2bdF1in
-	oaVK5WTU1k7B4CBXpuS0BDR2Bu6c=
-X-Gm-Gg: ASbGnctYBohkqfy0dnZIqBQmU0hWPyF93l1C8OeL8kCvEdNUo2hRBdjEKMwNjwvOD+d
-	mXkQMC6evoHZaFMEgE+0UlVTpUAvb/4QCcDSqVDkd7Qg5nakZ7jRd8G8Aq/sIX00yLjx9yOarb8
-	xwnIKJLbt8vQX8TLTPFZWxaQ54dNY=
-X-Google-Smtp-Source: AGHT+IGlFLOkvqgLQoad7JIPOSLXkZC37ZBSFekySUSnVOY7c3NB6TdbLk5QHx4qnk7I2u+fUirodl2TMiGq3jgQXmw=
-X-Received: by 2002:a05:6000:1864:b0:391:10c5:d1b4 with SMTP id
- ffacd0b85a97d-3997f90c5c0mr5641935f8f.7.1742893187080; Tue, 25 Mar 2025
- 01:59:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742893344; x=1743498144;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wj1IChreYTEW7S1AiPXdgyUmHcauFp5NeY4Eqtc9FGw=;
+        b=N/cI4QZKZwH7ZT0iNnFY/UMBZEZbSPq4UBvfQWyzPN3CXvhPO3tIq7ID0kcg8brNd9
+         vi/luM0kgm/2DxdFgqKK0VNWeyAJWjiB+IvKlIxd4mmpR7X2WWgo/fMlaJOvFtFboM1z
+         PH3g2sHgiSc36seKU5EgX0QSKlW5fxBdU20SYKZsn2fts2Z1s3Zs62ISn4T5xcVFFSLO
+         f8YclCLAjAkZkyRsqbrZ9VpJtowkTCw93X0CI4vFrs/auol78cZab95EbVd9FkYrsYmR
+         /+4tutNkQcZGb2UrFvHG+UvYuy+gwBK3os1AozDeneiQipKROv/2oW3PTZ8LMYBi7H8v
+         GdTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUonBkzQ5T/ApA7e4yxY0dMrLuBGitCpeFXd90Ckl85fP0x3lCnirbJNGM+TVEM54H66GilasrgN78iam0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRRAKo6YFjPhzt6nfBJls2bOWTW7dHWYdzKvHm7NvjYPewE2fy
+	Hk4U3EDDwQFxuw2kMq0yqYir6muvvXC5lEqQlX0e5nJWgbAVSd4+DByZzHbvpo1AE5ToE3umUMO
+	/j2fcZg7h9QVtGvClHHbH6lUOLYwsNBBN6oaZmzVQUidiY23ie8IJAcTwu/2JPg==
+X-Gm-Gg: ASbGncs1VkUzK5iV4cXKqYRvjRbJdG+bsovAbknN3YD7RnhmFgsw8r8IFn3P+LKFfhE
+	qmhoCh7ff8hPWoaQpIPvmaDOGoBgo530CdKj/tFbxIPF/3GTcZ7pEV2ZBb4zR+eCwF2XSuO4orT
+	vrjZRM/7U7kezm3CxmKu1Mn6PfCxpbq1BYEGInm3U+bvKgv8LBdIsdtX2Z5AF2dHJSnq/N1yoX/
+	LvM/7dm4wtAjMyaCL2GDwUJ2y2Jrh7+VcvxdlCG185Pg1od+GMhwx8ztWjV9NqKiUwAvobIzmk0
+	qYlmMpkIbdJOuIA9xNGQnzGRtJ7hNiVU8tjkmhTgdl6z0t/qBy8K5YE=
+X-Received: by 2002:a05:6000:410a:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-3997f8ff121mr13033029f8f.21.1742893344032;
+        Tue, 25 Mar 2025 02:02:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmIfLZm7khPWjwEcKM+sZzsNS9/OV7LqARaa/EFUtim00jKs/LTQtUTCr53eUD4BnsaUPNvA==
+X-Received: by 2002:a05:6000:410a:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-3997f8ff121mr13032888f8f.21.1742893342596;
+        Tue, 25 Mar 2025 02:02:22 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b409fsm13375318f8f.50.2025.03.25.02.02.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 02:02:22 -0700 (PDT)
+Message-ID: <2628502d-5b43-41da-978f-66a68623889d@redhat.com>
+Date: Tue, 25 Mar 2025 10:02:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325081321.3296714-1-chao@kernel.org>
-In-Reply-To: <20250325081321.3296714-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Tue, 25 Mar 2025 16:59:35 +0800
-X-Gm-Features: AQ5f1Jqb4RDwBaBuaX-qxrbYUKJDl4U_AwjAIlhbhcx9wnk7MrjM02VFoCUQO30
-Message-ID: <CAHJ8P3+tfdMZ=MNdiYx0HCwf0vWuf9ezJONsrvEhh3DbcQhMiw@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add a fast path in finish_preallocate_blocks()
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] drm/panic: add missing space
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org
+References: <20250324210359.1199574-1-ojeda@kernel.org>
+ <20250324210359.1199574-2-ojeda@kernel.org>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20250324210359.1199574-2-ojeda@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-=E4=BA=8E2025=E5=B9=B43=E6=9C=8825=E6=97=A5=E5=91=A8=E4=BA=8C 16:15=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> This patch uses i_sem to protect access/update on f2fs_inode_info.flag
-> in finish_preallocate_blocks(), it avoids grabbing inode_lock() in
-> each open().
->
-> Signed-off-by: Chao Yu <chao@kernel.org>
+On 24/03/2025 22:03, Miguel Ojeda wrote:
+> Add missing space in sentence.
+> 
+> This was found using the Clippy `doc_markdown` lint, which we may want
+> to enable.
 
-Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-thanks=EF=BC=81
+Thanks, it looks good to me.
+
+Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+
+> 
+> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
-> v2:
-> - get rid of read lock during querying FI_OPENED_FILE once we held
-> inode lock.
->  fs/f2fs/file.c | 37 ++++++++++++++++++++-----------------
->  1 file changed, 20 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index abbcbb5865a3..a71946976761 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -554,19 +554,21 @@ static int f2fs_file_mmap(struct file *file, struct=
- vm_area_struct *vma)
->
->  static int finish_preallocate_blocks(struct inode *inode)
->  {
-> -       int ret;
-> +       int ret =3D 0;
-> +       bool opened;
->
-> -       inode_lock(inode);
-> -       if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
-> -               inode_unlock(inode);
-> +       f2fs_down_read(&F2FS_I(inode)->i_sem);
-> +       opened =3D is_inode_flag_set(inode, FI_OPENED_FILE);
-> +       f2fs_up_read(&F2FS_I(inode)->i_sem);
-> +       if (opened)
->                 return 0;
-> -       }
->
-> -       if (!file_should_truncate(inode)) {
-> -               set_inode_flag(inode, FI_OPENED_FILE);
-> -               inode_unlock(inode);
-> -               return 0;
-> -       }
-> +       inode_lock(inode);
-> +       if (is_inode_flag_set(inode, FI_OPENED_FILE))
-> +               goto out_unlock;
-> +
-> +       if (!file_should_truncate(inode))
-> +               goto out_update;
->
->         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->         filemap_invalidate_lock(inode->i_mapping);
-> @@ -576,16 +578,17 @@ static int finish_preallocate_blocks(struct inode *=
-inode)
->
->         filemap_invalidate_unlock(inode->i_mapping);
->         f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> -
-> -       if (!ret)
-> -               set_inode_flag(inode, FI_OPENED_FILE);
-> -
-> -       inode_unlock(inode);
->         if (ret)
-> -               return ret;
-> +               goto out_unlock;
->
->         file_dont_truncate(inode);
-> -       return 0;
-> +out_update:
-> +       f2fs_down_write(&F2FS_I(inode)->i_sem);
-> +       set_inode_flag(inode, FI_OPENED_FILE);
-> +       f2fs_up_write(&F2FS_I(inode)->i_sem);
-> +out_unlock:
-> +       inode_unlock(inode);
-> +       return ret;
->  }
->
->  static int f2fs_file_open(struct inode *inode, struct file *filp)
-> --
-> 2.48.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
+> index ecd87e8ffe05..9bd4d131f033 100644
+> --- a/drivers/gpu/drm/drm_panic_qr.rs
+> +++ b/drivers/gpu/drm/drm_panic_qr.rs
+> @@ -5,7 +5,7 @@
+>   //! It is called from a panic handler, so it should't allocate memory and
+>   //! does all the work on the stack or on the provided buffers. For
+>   //! simplification, it only supports low error correction, and applies the
+> -//! first mask (checkerboard). It will draw the smallest QRcode that can
+> +//! first mask (checkerboard). It will draw the smallest QR code that can
+>   //! contain the string passed as parameter. To get the most compact
+>   //! QR code, the start of the URL is encoded as binary, and the
+>   //! compressed kmsg is encoded as numeric.
+
 
