@@ -1,165 +1,160 @@
-Return-Path: <linux-kernel+bounces-576151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7EAA70BB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:41:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82A5A70BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 207867A3E0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812353B356D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04754266B63;
-	Tue, 25 Mar 2025 20:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00E266B5D;
+	Tue, 25 Mar 2025 20:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dw0srGt7"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NJfMUe2T"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE7E266591;
-	Tue, 25 Mar 2025 20:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5EF19ADA6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 20:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742935287; cv=none; b=mdbrhUFsft61pPgEgF0AhXcZW0rHHnzHSnAFvIXHeZLJTtk6+Vzd2KSsJ2TGpcyexjmzsf80HgbOx95/CTbsr9bodpr9iUSI7QR42JlDXjiY4S7IeaBbuG7hDZ3XEiSV+HsZl7orggWOMHUnNYLBUboNAb6ECs0ZzGy4rqgHQXY=
+	t=1742935312; cv=none; b=p2i8yM9jNHTZ6XflmJ3IRvThDGXnFLmZp5/ky3onUYcpWJJ3oMecBpdu5Fxi04sptJjBzJUf5C/LgCXysgDfsBLQSKfrMX49UuoPnpDNdT/HaO9Ktf4SYAHxBrKH/fGMNXmJpTDUJTODnuR4COJKCBbI8cNxKDzTvCQQwEXKgGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742935287; c=relaxed/simple;
-	bh=NGwV71ouwRn8P44y4aAqa9mJWu7Iye7dn0XvhDpFZOI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxoKxMKfqPptYhy3F+DVb3EgXsUWIk8P3d4NpdyjkQDUH2PFDdgypAnX2z1iI6l2CYFISwNsAJAeZ27HRoM2n0f2SxbiGOB10LQbJ5Pjs4dkzXZWPpD+e4idfq9IU48LBS2YX1SuHHg79Kn1Csa1Fd2C2+48rTDaCaLR5RWorbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dw0srGt7; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43948021a45so53299485e9.1;
-        Tue, 25 Mar 2025 13:41:25 -0700 (PDT)
+	s=arc-20240116; t=1742935312; c=relaxed/simple;
+	bh=GCAhGVtueceq1ubCUXU7aIifbCxnCpAKEuI8oUAtt/U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o2vezoab98SC8cXmtSqRyL/H2gemQXw5uSRTU1u4/riqtedPBPiIOPUSbZ6HTarq/MlOy9Efsd50olq3tBtaX9Ks4rFYRwIn7C/oDvsmf2q/RLg6jR3cUqqOVAP4y3TE8bKB3tb4gS2yCqpWvmY3PTDWyFXL5iyv6TWmxzNyrlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NJfMUe2T; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2963dc379so1025703266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742935284; x=1743540084; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObDluC7htwMnBsTKfbVBbC9NKP/ElE+eUTaBtGCq1so=;
-        b=dw0srGt7LlsLUWfMvu1/x6i5hdD5bsYGAXBO1fKj8x35FtJdF6bxr1OsNCRcxYUXnD
-         YQKNmnipJVFFOkQh4xPob+/9Mt+MO+dNZzWI5uvRLG3F4ucK/EzMzTOWQlgiBWWebAF+
-         yC3pzJ30GRV/oNpb9C6GCBPvXdlRV3laioMFsm+v+2ubIYORNMGb2lQWM8CGc8AHl+JO
-         w95dN7cTtgQsy/6vA1LpOH9ukTtDrdnnq9iUxy0HynzFWqu9s1cIhiQ3F+yCDPCH89uc
-         8+qD943PRkH3FvWeJ+/Q66zAwgwt80c97kbPtM+yn1JqZubs4bY/fjwBFoUbMFkVIaKy
-         MIow==
+        d=linux-foundation.org; s=google; t=1742935308; x=1743540108; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=K52xAWNW5IEkY2W6yv56tbrXz/O78EY3OFwe6Kmcp1A=;
+        b=NJfMUe2T/SrCYvY9xa5ZYKh9B0hgZFfz2oOJdyX7/Z6exRgjt1v7EwWPfsB/ZTFwoM
+         3ATUtokNCJNYZs7aBFbUAru6STFWtJ4gH4qlJm/7mBVVjzRT8GOH7ylM9d1lwKG7upjX
+         scXfardQC6guO2+Bb+i+YVukNocsLibMnlYaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742935284; x=1743540084;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ObDluC7htwMnBsTKfbVBbC9NKP/ElE+eUTaBtGCq1so=;
-        b=TuDiBREPz3vxRFZlwxrLKm+EgcrF+8bbgfA/IHsyvWu6TbhE1jGu/DcZdXmtHVmsGi
-         oDTNsMdJZ8GKZGp7Nd7KGaT2QmXA5kOnfO5Xof6ZTD6W4YvKtsuFU4GFxluZ4wLivSiI
-         6sZPDQN2FouRzwhHXro6cr1NrZtgeYrAKxTQy4B7xm54XT8gUeVxVjOA+67wZ0i1NiBN
-         7s7AdLiC8/bUYeTKKn0B+xSxQ063zOzgX4G901d1CG+AaMjQUzrb2ylcMSsA9iiSNgZ0
-         VLLB5lU7xbrjtHp/1/uRW6Yq+WmGPKigYwXAB6I3Shx8zbBtLNz4fL3E6fIVL+XCsKqC
-         yBuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWa9oQDLUyB6dJD8VrYKgPGCBVrkch58SukfQDZJC1UMO7wEFin6dvn1SAL415bAcSO1VAtkv5@vger.kernel.org, AJvYcCVgSUj4rn+rQZSM0oQILVDuTyUkf4euawi9FjA36LSEMxhCTii9O6yodLd3aOJecjsoTy/oW+2X+XyaIFwa@vger.kernel.org, AJvYcCX6fZWGBlBxUYaGgGTwnuIPHjrDM9xmuJqtqTqx9Te6d4uKY7ioKv+BD9Vr6CvOLMt4lloxkpBjoV7V@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyiBGTqUaAeiK66i8ZkA7H/xImxfkWaDQxvYCDsR0fmSCiV9Qf
-	PNnp7e0Ms9Y3GxyYLlpyTBqfs+y+IWjTVGhf2lWhpoJhBXtSbqmK
-X-Gm-Gg: ASbGncugi32P7FNcy1zrp7itmKbG0JvtjzYhu/MuIHF2ezwENwfPGASH5c4fFKXnnFx
-	COBAB9mGVo/vnIivixH/iqcfFDiObHg9vt3o9V/kIncvvRhDPs3H1fjvTkzTFBWKjfNUoINzYFv
-	TxMoZwiit/t/B+CJYivFQK6rnMB7NQqjLfDGN1IFKt8zE8rQxny55AgsVljpoIwt4wjDTil6hBl
-	aobf7VLO+5KDpHuFb6HpXPYyaFjBL+K+PJGOKomQ9gLVMIauM0xdd7kH5fIYNqi/T+5bKAsdJHP
-	RPir391yi/JWs5WxIP5mmywPeGeDfNqEpOBwufWN992zxcvZn9cqicYIRgh+z6iZQkz535OtzHM
-	j
-X-Google-Smtp-Source: AGHT+IEnjy2hTMKMPgPy3Js4eIkxvZAQFMajHMEoTEcvVY2vaBzZm658GE79LL1+20hG96Jtz32P9Q==
-X-Received: by 2002:a05:600c:12ca:b0:43d:7588:6688 with SMTP id 5b1f17b1804b1-43d75886820mr11370355e9.12.1742935283184;
-        Tue, 25 Mar 2025 13:41:23 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d4fd9decbsm160143145e9.27.2025.03.25.13.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 13:41:22 -0700 (PDT)
-Message-ID: <67e314f2.050a0220.f130b.7b84@mx.google.com>
-X-Google-Original-Message-ID: <Z-MU8LVYhPuuU6GD@Ansuel-XPS.>
-Date: Tue, 25 Mar 2025 21:41:20 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH 1/2] net: phy: Add support for new Aeonsemi PHYs
-References: <20250323225439.32400-1-ansuelsmth@gmail.com>
- <f0c685b0-b543-4038-a9bd-9db7fc00c808@lunn.ch>
- <67e1692c.050a0220.2b4ad0.c073@mx.google.com>
- <a9abc0c6-91c2-4366-88dd-83e993791508@lunn.ch>
- <67e29bce.050a0220.15db86.84a4@mx.google.com>
- <4f865b3a-0568-4fef-a56d-6360dfbd18f6@lunn.ch>
+        d=1e100.net; s=20230601; t=1742935308; x=1743540108;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K52xAWNW5IEkY2W6yv56tbrXz/O78EY3OFwe6Kmcp1A=;
+        b=XA4LK+j0tvxGYfuORaVY1z0EmzAjBo4PVFHmQoeg6qKPtdIuyeKa3bZ7d85zHwVlcF
+         icwbGZJzfBIPVOoHTA2IKzzCAkQZZ7IFnY4L7UmRUbNyGVK5XMPPmVcIB32115RCuWsg
+         g2rUyLJy2orlveglrkbyRyViiJ2wGvIpPUqWjbjRukFJkR6HooNEjd4pz9+8Dd53bBTT
+         rBHLFwTln5ajpf/auH0sIdXBr39het0qtrb2jFob8gK+Pz4jOd7uBDOZ/RngwlfGFUSc
+         n2F3sz8P465op0rY5yAA84UD6k2R9WjDHpZF0C4wQIm8hKS6GFrdLDRX3wPlp95Bvi6R
+         6oqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAbT4iPa3uEFWzviDN8CQGYWCXHYXRMcpY+8OlQg59rC+vis4zpcmjq+Pv2z2oaGtDKpErgWh2uGsplxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZzpFik1HGm0DIsDmoi10lGCMsa/rNhDi2hT34awC0kl6P0xmc
+	Wl67pIFwEyVtmzWo/FW8eLm6dc3pVzhRke6QQ9wfHXHtV5pwM6iKL369ioHj1OTc7hNyBWIHWsh
+	V8z8=
+X-Gm-Gg: ASbGncsyuQiu4CC3mAVYbYXvVU1Ddtn9mVr7tWz0+b2ZlYtWLGxfKJxT8S+0rLWY+hw
+	1RjIreOsjau9y0z1vo3ho8L1YJ2kaeO+UkM3iHtB3cwElFkujpl4uFaVQcCt6HXjhzr5rYpsxdo
+	q/Kzc8KQtKyyvsVaI9HzUFiUzOU0NAm8Ak80MrwNJaR/R8Qe71MP8lo1MRVrXeaCVJykYBEixaO
+	HD7lAFm/VFGJhn0hBLeyA4/0V0kTflbsyAthbI+ODmdHvSCDX0ehe5jJqopujWBPnEcXQn6gFSD
+	oDLMmEb6m0sNz6szcGh5UOtLtweMIv8EMpNaMvYHvShtUyeOxlkjh2PvYUp4NRZiMHt1HeUQCi1
+	SR3Xf0J8wSsgxunkp0QNZHEOIjshSJQ==
+X-Google-Smtp-Source: AGHT+IF1FtnepeAwflAOiIkSgwwJRzT5xaIdVINabyw9YJpBK9k1sKfH9BSRt+YkpyePg2/+iEHVIg==
+X-Received: by 2002:a17:907:a58c:b0:ac1:e332:b1e7 with SMTP id a640c23a62f3a-ac3f24164e1mr1998128966b.4.1742935308543;
+        Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb6588esm917117466b.90.2025.03.25.13.41.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abf3d64849dso989640666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:41:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXiC1EMkFIy/+qsyJShk50G7Y4IRhGv95i642mktOA8KNYl4DzZw6RA8l5mo1Vrndiii5nhdPJqURH5ITs=@vger.kernel.org
+X-Received: by 2002:a17:907:95a4:b0:ac3:48e4:f8bc with SMTP id
+ a640c23a62f3a-ac3f27fd3b3mr1859596466b.48.1742935307883; Tue, 25 Mar 2025
+ 13:41:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f865b3a-0568-4fef-a56d-6360dfbd18f6@lunn.ch>
+References: <20250325121624.523258-1-guoren@kernel.org> <20250325121624.523258-2-guoren@kernel.org>
+In-Reply-To: <20250325121624.523258-2-guoren@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Mar 2025 13:41:30 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpwFc7ifwGuAhyrs4E5qPgHx1McCR38KFycRhkLFRMKTveHrmoaWi4zba4
+Message-ID: <CAHk-=wiVgTJpSxrQbEi28pUOmuWXrox45vV9kPhe9q5CcRxEbw@mail.gmail.com>
+Subject: Re: [RFC PATCH V3 01/43] rv64ilp32_abi: uapi: Reuse lp64 ABI interface
+To: guoren@kernel.org
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, anup@brainfault.org, atishp@atishpatra.org, 
+	oleg@redhat.com, kees@kernel.org, tglx@linutronix.de, will@kernel.org, 
+	mark.rutland@arm.com, brauner@kernel.org, akpm@linux-foundation.org, 
+	rostedt@goodmis.org, edumazet@google.com, unicorn_wang@outlook.com, 
+	inochiama@outlook.com, gaohan@iscas.ac.cn, shihua@iscas.ac.cn, 
+	jiawei@iscas.ac.cn, wuwei2016@iscas.ac.cn, drew@pdp7.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, ctsai390@andestech.com, 
+	wefu@redhat.com, kuba@kernel.org, pabeni@redhat.com, josef@toxicpanda.com, 
+	dsterba@suse.com, mingo@redhat.com, peterz@infradead.org, 
+	boqun.feng@gmail.com, xiao.w.wang@intel.com, qingfang.deng@siflower.com.cn, 
+	leobras@redhat.com, jszhang@kernel.org, conor.dooley@microchip.com, 
+	samuel.holland@sifive.com, yongxuan.wang@sifive.com, 
+	luxu.kernel@bytedance.com, david@redhat.com, ruanjinjie@huawei.com, 
+	cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com, qiaozhe@iscas.ac.cn, 
+	ardb@kernel.org, ast@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-mm@kvack.org, 
+	linux-crypto@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-trace-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	linux-nfs@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 25, 2025 at 09:33:26PM +0100, Andrew Lunn wrote:
-> On Tue, Mar 25, 2025 at 01:04:30PM +0100, Christian Marangi wrote:
-> > On Mon, Mar 24, 2025 at 04:16:09PM +0100, Andrew Lunn wrote:
-> > > On Mon, Mar 24, 2025 at 03:16:08PM +0100, Christian Marangi wrote:
-> > > > On Mon, Mar 24, 2025 at 03:03:51PM +0100, Andrew Lunn wrote:
-> > > > > > Supported PHYs AS21011JB1, AS21011PB1, AS21010JB1, AS21010PB1,
-> > > > > > AS21511JB1, AS21511PB1, AS21510JB1, AS21510PB1, AS21210JB1,
-> > > > > > AS21210PB1 that all register with the PHY ID 0x7500 0x7500
-> > > > > > before the firmware is loaded.
-> 
-> Do you have details of how these different PHY differ? Do they have
-> different features?
+On Tue, 25 Mar 2025 at 05:17, <guoren@kernel.org> wrote:
 >
+> The rv64ilp32 abi kernel accommodates the lp64 abi userspace and
+> leverages the lp64 abi Linux interface. Hence, unify the
+> BITS_PER_LONG = 32 memory layout to match BITS_PER_LONG = 64.
 
-No but I can ask more details. From what I can assume, gigabit, 2.5g 10g
-and probably a PHY that expose multiple port (PHY package thing)
+No.
 
-> > Ok update on this... The PHY report 7500 7500 but on enabling PTP clock,
-> > a more specific ""family"" ID is filled in MMD that is 0x7500 0x9410.
-> 
-> Do they all support PTP?
-> 
+This isn't happening.
 
-With PTP it's not the PTP we think but I guess it's something internal to
-the PHY to actually start it. From comments it's called PTP Clock...
+You can't do crazy things in the RISC-V code and then expect the rest
+of the kernel to just go "ok, we'll do crazy things".
 
-> > They all use the same firmware so matching for the family ID might not
-> > be a bad idea... The alternative is either load the firmware in
-> > match_phy_device or introduce some additional OPs to handle this
-> > correctly...
-> > 
-> > Considering how the thing are evolving with PHY I really feel it's time
-> > we start introducing specific OP for firmware loading and we might call
-> > this OP before PHY ID matching is done (or maybe do it again).
-> 
-> You cannot download firmware before doing some sort of match, because
-> you have no idea what PHY you actually have until you do a match, and
-> if the PHY needs firmware.
-> 
-> match_phy_device() gives you a bit more flexibility. It will be called
-> for every PHY on the board, independent of the ID registers. So you
-> can read the ID registers, see if it is at least a vendor you know how
-> to download firmware to, do the download, and then look at the ID
-> registers again to see if it is the version of the PHY you want to
-> drive. If not, return -ENODEV, and the core will try the next driver
-> entry.
->
+We're not doing crazy __riscv_xlen hackery with random structures
+containing 64-bit values that the kernel then only looks at the low 32
+bits. That's wrong on *so* many levels.
 
-I'm finishing preparing V2 and I'm curious what you will think of the
-implementation.
+I'm willing to say "big-endian is dead", but I'm not willing to accept
+this kind of crazy hackery.
 
-The approach I found works good is permit PHY device to register a
-second time and the PHY driver toggle this.
+Not today, not ever.
 
-This way in a PHY driver we register OPs for the to-be-init PHY and then
-we probe the real one.
+If you want to run a ilp32 kernel on 64-bit hardware (and support
+64-bit ABI just in a 32-bit virtual memory size), I would suggest you
 
--- 
-	Ansuel
+ (a) treat the kernel as natively 32-bit (obviously you can then tell
+the compiler to use the rv64 instructions, which I presume you're
+already doing - I didn't look)
+
+ (b) look at making the compat stuff do the conversion the "wrong way".
+
+And btw, that (b) implies *not* just ignoring the high bits. If
+user-space gives 64-bit pointer, you don't just treat it as a 32-bit
+one by dropping the high bits. You add some logic to convert it to an
+invalid pointer so that user space gets -EFAULT.
+
+            Linus
 
