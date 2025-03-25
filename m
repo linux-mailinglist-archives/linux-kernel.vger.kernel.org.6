@@ -1,160 +1,193 @@
-Return-Path: <linux-kernel+bounces-575527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01084A703CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:35:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5235A703B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFC63B2637
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44537188729B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3368325A355;
-	Tue, 25 Mar 2025 14:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32E325A652;
+	Tue, 25 Mar 2025 14:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="RDBIDrIm"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oAHnWyak"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1ABC2561C3;
-	Tue, 25 Mar 2025 14:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD2525A2DF;
+	Tue, 25 Mar 2025 14:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742912849; cv=none; b=qUjVfkgJw1Cq3VhFQ4dEHPbBX/llqCO7ijS+Kxr15wcCBkRV8w/LTDCtufm7GCPsL07zgaXu94AXNWXZwfgb1Gu5aDG30eqASen+UyXjMVEoQeFLi8+yF5N06B/kBRcwWr0A6SnpdwSK4R6fl/R+37nIwUUqlNPUurA/61ZmKWY=
+	t=1742912965; cv=none; b=biiQV+GaDxPzpuETiZD8JN2PHp7vJzn9lncZtkjy1rZkxE55QaInE4nC3FmI/e6PmvWI8pL8uUBJECESET6XCu65IQh9guZOhaOpsldZRxf2RcnqGp7KQJM9K8WEFXNm/0NA8ax9BAntabU8wAjTmlbEHj4DjuG8bl2ju69I0po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742912849; c=relaxed/simple;
-	bh=s62avkPOhLvhos9H7jBVW/rOZb45kpCRMFopOI7Upzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y9Kru5n9lp89+QWbMFX2HODZvxO+FL1DJnfTGefstG1tflYik/uSnCgKD6IpKLlQxh76GRGk9yOD8aXhwGhV487RPbRw8J1msH47ustbOrDSZZ6M3F5I317qxIua7QIBS6lrcf7iNIqzwhJzPdNXTnztbncok0f2sDTPBfp7xKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=RDBIDrIm; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A5B811029027E;
-	Tue, 25 Mar 2025 15:27:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742912846; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=gSvf9PO2tqFZJOjUKNihe05fihUTdxiKCVGVrwqCb5M=;
-	b=RDBIDrIm9ENcVGoDsRYP7G8NhrGNiZndKT7QocmSB7YMCPMHnr5kq9ESBuGGZOJkK8IBiH
-	E8vQJNj+haMjKM8uMz8f1EaHszQ5qd7vajeem8EwUGnrbgLI1qr6se1Rwzamz8Ebr7f2pC
-	qBYhog+vHqI+jmkXw8byuk1fF0zKXl1sKz5yQo0eprQB+H8ty9T8vx34oomS210b0ldtE4
-	wYrBp2G1xSZUVNUctLdxhhmJLS5vAE72mDMvTfIPKQkQHT3T9iJZfzk3oKRdbLHaYWMuKR
-	CH28TPU68Q3V8qZvaOy6syttfnkDCR0ohZeKR66koiT77+TjuparqLJcB8mqrw==
-Date: Tue, 25 Mar 2025 15:27:21 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- davem@davemloft.net, Andrew Lunn <andrew+netdev@lunn.ch>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Richard
- Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 2/5] dt-bindings: net: Add MTIP L2 switch description
- (fec,mtip-switch.yaml)
-Message-ID: <20250325152721.4aeb3761@wsk>
-In-Reply-To: <7d3fbe0b-f566-4615-a5df-a8f3b4544c3b@kernel.org>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-3-lukma@denx.de>
-	<2bf73cc2-c79a-4a06-9c5f-174e3b846f1d@kernel.org>
-	<20250325131507.692804cd@wsk>
-	<bf6d066c-f0dd-471a-bb61-9132476b515a@kernel.org>
-	<20250325133949.7782a8a5@wsk>
-	<7d3fbe0b-f566-4615-a5df-a8f3b4544c3b@kernel.org>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742912965; c=relaxed/simple;
+	bh=Vl3vvuU3EXqhhL0Aq4L5M6JCpv6r2cjM4xNvae15GQk=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:Mime-Version:
+	 References:In-Reply-To; b=Ir+ZXJvD8UuOYVS3P4QCNltVYzobPR2UJgm+/7nBSR6sKsHwjs8CM2ThWulY1DORIykukc1lc0aYnvpkvswJhNopYPQTWmtvD2aFzQReWK9tuye2JQtzH/XkoIKlRVxwWFR592FA36yp/xLhVhkYBbiG98HsBwtSnoXj4hft5ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oAHnWyak; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2305244297;
+	Tue, 25 Mar 2025 14:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742912960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9/w2I/hCM+TADHxxC0YZFOVsXPy5gKaRLqo80ZlcyTM=;
+	b=oAHnWyaktVUyy0V9/uFdjA0D7NqFeMOTOABLtlGA/LYMCAHfnqVveZBXIbm9Yl/izlprG/
+	GbOtt0+uvmzukhKHZgJ7tN+MiXIqmN1R6zQtQi/uXq8bZuzxBHfPZtGRxfK1Xw4qHYY1wS
+	IFuePgNdYj4Y/Dq8aHLygwhQM5i3ckF9nUUgF6O+yRT9xQB0mCrox6VzPY5sM5p0/6GGLk
+	kAaGk6GFgCulOKC19E7nNRhixE6YoY3M1CVsX0RMXdUsCk7PwrhE1p/vFYn0jfZeSkQ3WR
+	YOWUaA/Kq3eABtnf208DEndGf24IUcouW3StcgqEQdMmNm2BtLTi0gbduRLR/w==
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 25 Mar 2025 15:29:18 +0100
+Message-Id: <D8PF2VNMJ0TC.396PL4OJTTBOU@bootlin.com>
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6lSmEnGq9ohM/ZV9=THLOqf";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
-
---Sig_/6lSmEnGq9ohM/ZV9=THLOqf
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+ <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
+In-Reply-To: <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegtfffkvefhvffuggfgofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelfeetjeetffegkeeukeehvdegleeklefggfdtieduvdfgkeeggefhfeekffefhfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhl
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-Hi Krzysztof,
-
-> On 25/03/2025 13:39, Lukasz Majewski wrote:
-> > Hi Krzysztof,
-> >  =20
-> >> On 25/03/2025 13:15, Lukasz Majewski wrote: =20
-> >>> Hi Krzysztof,
-> >>>    =20
-> >>>> On 25/03/2025 12:57, Lukasz Majewski wrote:   =20
-> >>>>> This patch provides description of the MTIP L2 switch available
-> >>>>> in some NXP's SOCs - imx287, vf610.
-> >>>>>
-> >>>>> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> >>>>> ---
-> >>>>>  .../bindings/net/fec,mtip-switch.yaml         | 160
-> >>>>> ++++++++++++++++++     =20
-> >>>>
-> >>>> Use compatible as filename.   =20
-> >>>
-> >>> I've followed the fsl,fec.yaml as an example. This file has
-> >>> description for all the device tree sources from fec_main.c   =20
-> >>
-> >>
-> >> That's a 14 year old binding, so clear antipattern. =20
+On Wed Mar 19, 2025 at 12:18 PM CET, Andy Shevchenko wrote:
+> On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootlin.c=
+om wrote:
+> > From: Kamel Bouhara <kamel.bouhara@bootlin.com>
 > >=20
-> > For some reason it is still there... =20
->=20
-> And it will be there for very long time. Bindings are not removed just
-> because they are old, because they are an ABI. That's still not a
-> reason to use something old as starting point.
+> > Add driver for Maxim Integrated MAX7360 PWM controller, supporting up t=
+o
+> > 8 independent PWM outputs.
+>
+> ...
+>
+>
+> > +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
+> > +					   struct pwm_device *pwm,
+> > +					   const struct pwm_waveform *wf,
+> > +					   void *_wfhw)
+>
+> I would expect other way around, i.e. naming with leading underscore(s) t=
+o be
+> private / local. Ditto for all similar cases.
 
-It was unintentional - if I would know that fsl,fec.yaml is so old, I
-would use another one as a starting point.
+I get the point, but the 2 existing drivers based on pwm_ops structure
+name it that way: drivers/pwm/pwm-axi-pwmgen.c and
+drivers/pwm/pwm-stm32.c.
 
-I will use more recent one to provide proper bindings for this driver.
+Also, the parameter is mostly unusable as-is, as it is a void*, so I
+believe it also makes sense to have no underscore for the correctly
+casted one, that we will be using in the function body (wfhw).
 
->=20
-> It's the same with drivers, although driver can be easier changed and
-> old pattern can be dropped. You cannot easily drop old, anti-patterns
-> from the binding.
+>
+> ...
+>
+> > +static int max7360_pwm_read_waveform(struct pwm_chip *chip,
+> > +				     struct pwm_device *pwm,
+> > +				     void *_wfhw)
+> > +{
+> > +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
+> > +	struct regmap *regmap;
+> > +	unsigned int val;
+> > +	int ret;
+> > +
+> > +	regmap =3D pwmchip_get_drvdata(chip);
+> > +
+> > +	ret =3D regmap_read(regmap, MAX7360_REG_GPIOCTRL, &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (val & BIT(pwm->hwpwm)) {
+> > +		wfhw->enabled =3D true;
+>
+> Also can be (but up to you)
+>
+> 	wfhw->enabled =3D val & BIT(pwm->hwpwm);
+> 	if (wfhw->enabled) {
+>
+> And also see below. Perhaps it is not a good suggestion after all.
+>
+> > +		ret =3D regmap_read(regmap, MAX7360_REG_PWM(pwm->hwpwm), &val);
+> > +		wfhw->duty_steps =3D val;
+>
+> Set to a garbage in case of error, why?
+>
 
-Yes, I'm fully aware of the problem.
+Ok, I'm fixing the whole block of code.
 
->=20
-> Best regards,
-> Krzysztof
+> > +	} else {
+> > +		wfhw->enabled =3D false;
+> > +		wfhw->duty_steps =3D 0;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+>
+> ...
+>
+> > +static int max7360_pwm_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct pwm_chip *chip;
+> > +	struct regmap *regmap;
+> > +	int ret;
+> > +
+> > +	if (!dev->parent)
+> > +		return dev_err_probe(dev, -ENODEV, "no parent device\n");
+>
+> Why? Code most likely will fail on the regmap retrieval. Just do that fir=
+st.
+>
+> > +	chip =3D devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
+>
+> This is quite worrying. The devm_ to parent makes a lot of assumptions th=
+at may
+> not be realised. If you really need this, it has to have a very good comm=
+ent
+> explaining why and object lifetimes.
+>
 
+Thanks, I'm fixing this in this driver and similar code in keypad,
+rotary and pinctrl. More details in the child mail.
 
+Thanks for your review!
+Mathieu
 
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/6lSmEnGq9ohM/ZV9=THLOqf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfivUkACgkQAR8vZIA0
-zr2Tqwf/SGk7rTkRbhWp18Uj5U62OiHZ4Z5IG6yCm/VVMS5W+g3WAdCQAmLkeIGF
-XYksXNPNlSjajTtdymcLx3k6HtMaLAbwTcyRjveRkTIaj2qYZP/svvbnTaEsekE1
-azzE5nMLIe4frACfzbht3MZ5jRGxM2g7n4tcs39tk8p+O7/trcg9Wv2YYy69zfFU
-jeXjlAMkKuh2Sz0oyadV/K7OWB3CcLqxwcjYfUueEyk/iB7iuTl9Sq7kfS5R7sEb
-1kMqu+9tNt8b2+ShhNycPDmwOI4juRWaT3pBvlZHrYAO5SISQ051HJv0H2jYARo1
-Vv8/qfE4zOTZseWUfTp3GKXhZFDBAg==
-=Loga
------END PGP SIGNATURE-----
-
---Sig_/6lSmEnGq9ohM/ZV9=THLOqf--
 
