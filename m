@@ -1,162 +1,192 @@
-Return-Path: <linux-kernel+bounces-575564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1129EA7042F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:48:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2702CA70434
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E28188D148
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E973A3A38
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BE925A640;
-	Tue, 25 Mar 2025 14:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C01825A62B;
+	Tue, 25 Mar 2025 14:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M0GQ80LD"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFEB25A64A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UV/YGwZH"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8896198A29;
+	Tue, 25 Mar 2025 14:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742914066; cv=none; b=cNXI1GmeJvwQAyd7wqEhNX1xl9hLVc9RyjFEUMeh+xHzEDSQMzoSOUp4OK9rHW+oD8Z66pascJQbG8UTVj5SFolQIEC/bXx5g+38ivGil6i7OxhH10R+wEWvi8u001NezNNuFoh6SqawYkYN7KdBocvO/gAh8MnOLwceMMPnqlM=
+	t=1742914106; cv=none; b=Iz8EHeeBMEmp7F4h4/GlkHX1WsI99AHTRKdfgxvRjghguyizzw1gmslKAopuvlbZXXea9dH1Y6fz8H+XmJF51hpkoFyTu/gjsSgW653jjAfFojlKHkEjtkqHnluZhyOkaZkNoAT85/Xlt1mk3h8dmL4tk542HusjpIW2P+sTBdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742914066; c=relaxed/simple;
-	bh=6tCgdCxUoslKrQ/ImEbkLjcgZlfYHCZbXA2Xtm38wu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lYQAKGOFR/U6k8zoHvhhxDBnH3rEuMGx0bv6am8I8cK5EpV92qc2GPRhVHDChRHSegvIikM+oYsCZBd9zWRARoRORg6B6MuT+Px/AFy9GGuNtjjd0JunnULgRaEAvRfa5dKcb1KtuGfNcR4WZukt4H2ZCdPwM4AKS0QAYhqi8LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M0GQ80LD; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742914062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8xwJEyFiNpZJx3SaGRoYy6EGc/eXAk39jTVoaj7Yj4Y=;
-	b=M0GQ80LDJ/lC/A+AKKrvato8INN3kffgFKiNBRLjChpIIGsxc7DiHprLhehJ9EqGT09p0r
-	YLB21lNJ+5YNljlYUWPCVbklaEtJ99QzTa/83GKAOWDov5fpwRaecIRPZFu71YMTJ9VtFy
-	PH/TIitAGXu1VoNfAMRTRi1BplbRJOc=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: netdev@vger.kernel.org,
-	edumazet@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kuniyu@amazon.com,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	dsahern@kernel.org,
-	ncardwell@google.com,
-	mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>
-Subject: [PATCH net-next v3 2/2] tcp: add LINUX_MIB_PAWS_TW_REJECTED counter
-Date: Tue, 25 Mar 2025 22:47:04 +0800
-Message-ID: <20250325144704.14363-3-jiayuan.chen@linux.dev>
-In-Reply-To: <20250325144704.14363-1-jiayuan.chen@linux.dev>
-References: <20250325144704.14363-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1742914106; c=relaxed/simple;
+	bh=9+2Uh/BLViIs+1GHNo/s+KKopYxrsV6VsqfGI5tmUfk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ycyob5aARveP3gMBdjOB8j2wtRUhhCLE8RNthNXZpf9cweqpUykVBH/uGYyVMD4Tnj1+rKA6URt4zEjQeSK71o2fh7U7ZFJnE7PMl5kBud4AyG+X3nTxjQahgoXSYArG3P89kl8Z/e5wwh8wReLHAd/ENsVo+dzdON1VCBCAvug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UV/YGwZH; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=txp6lf9K0o1E/un52ErXwYWFA2aX9m0KATXJ22mjZqg=;
+	b=UV/YGwZHERd+GITRKoypcpDEVAC+YcbpU0KN2MM3mdleF02gWUeAMo+2jn3glV
+	pYiyreE9/fedampuGZbJZxqXYAYMIsNLnAtBI1U/teozyUKeHMnI7VhHPxQ4rF5Z
+	GzjXJVo/BCokahWMTNccVuyu1SHxL7S57/jBBpcRm5gMk=
+Received: from [192.168.60.52] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCHrnEOwuJn_ts_Bw--.57661S2;
+	Tue, 25 Mar 2025 22:47:42 +0800 (CST)
+Message-ID: <de6ce71c-ba82-496e-9c72-7c9c61b37906@163.com>
+Date: Tue, 25 Mar 2025 22:47:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 3/5] PCI: cadence: Use common PCI host bridge APIs for
+ finding the capabilities
+From: Hans Zhang <18255117159@163.com>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250323164852.430546-1-18255117159@163.com>
+ <20250323164852.430546-4-18255117159@163.com>
+ <f467056d-8d4a-9dab-2f0a-ca589adfde53@linux.intel.com>
+ <d370b69a-3b70-4e3b-94a3-43e0bc1305cd@163.com>
+ <a3462c68-ec1b-0b1a-fee7-612bd1109819@linux.intel.com>
+ <3d9b2fa9-98bf-4f47-aa76-640a4f82cb2f@163.com>
+ <26dcba54-93c1-dda4-c5e2-e324e9d50b09@linux.intel.com>
+ <f2725090-e199-493d-9ae3-e807d65f647b@163.com>
+Content-Language: en-US
+In-Reply-To: <f2725090-e199-493d-9ae3-e807d65f647b@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:_____wCHrnEOwuJn_ts_Bw--.57661S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFykArW5Jr45KFy8tryxXwb_yoWrJF1kpa
+	yY93W7Kr4kJr43Cr1IvF48tF12yrZ0yrW5Xw1DJryUZw1q93W0gFZrCryjkFnrAF4rtF1j
+	qa1Yqryxur98AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBrWwUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhAbo2fivrtfRQAAsI
 
-When TCP is in TIME_WAIT state, PAWS verification uses
-LINUX_PAWSESTABREJECTED, which is ambiguous and cannot be distinguished
-from other PAWS verification processes.
 
-Moreover, when PAWS occurs in TIME_WAIT, we typically need to pay special
-attention to upstream network devices, so we added a new counter, like the
-existing PAWS_OLD_ACK one.
 
-Also we update the doc with previously missing PAWS_OLD_ACK.
+On 2025/3/25 20:16, Hans Zhang wrote:
+>>>>>> I'm really wondering why the read config function is provided 
+>>>>>> directly
+>>>>>> as
+>>>>>> an argument. Shouldn't struct pci_host_bridge have some ops that can
+>>>>>> read
+>>>>>> config so wouldn't it make much more sense to pass it and use the 
+>>>>>> func
+>>>>>> from there? There seems to ops in pci_host_bridge that has read(), 
+>>>>>> does
+>>>>>> that work? If not, why?
+>>>>>>
+>>>>>
+>>>>> No effect.
+>>>>
+>>>> I'm not sure what you meant?
+>>>>
+>>>>> Because we need to get the offset of the capability before PCIe
+>>>>> enumerates the device.
+>>>>
+>>>> Is this to say it is needed before the struct pci_host_bridge is 
+>>>> created?
+>>>>
+>>>>> I originally added a separate find capability related
+>>>>> function for CDNS in the following patch. It's also copied directly 
+>>>>> from
+>>>>> DWC.
+>>>>> Mani felt there was too much duplicate code and also suggested 
+>>>>> passing a
+>>>>> callback function that could manipulate the registers of the root 
+>>>>> port of
+>>>>> DWC
+>>>>> or CDNS.
+>>>>
+>>>> I very much like the direction this patchset is moving (moving shared
+>>>> part of controllers code to core), I just feel this doesn't go far 
+>>>> enough
+>>>> when it's passing function pointer to the read function.
+>>>>
+>>>> I admit I've never written a controller driver so perhaps there's
+>>>> something detail I lack knowledge of but I'd want to understand why
+>>>> struct pci_ops (which exists both in pci_host_bridge and pci_bus) 
+>>>> cannot
+>>>> be used?
+>>>>
+>>>
+>>>
+>>> I don't know if the following code can make it clear to you.
+>>>
+>>> static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+>>>     .host_init    = qcom_pcie_host_init,
+>>>                    pcie->cfg->ops->post_init(pcie);
+>>>                      qcom_pcie_post_init_2_3_3
+>>>                        dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>> };
+>>>
+>>> int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>>>    bridge = devm_pci_alloc_host_bridge(dev, 0);
+>>
+>> It does this almost immediately:
+>>
+>>      bridge->ops = &dw_pcie_ops;
+>>
+>> Can we like add some function into those ops such that the necessary read
+>> can be performed? Like .early_root_config_read or something like that?
+>>
+>> Then the host bridge capability finder can input struct pci_host_bridge
+>> *host_bridge and can do 
+>> host_bridge->ops->early_root_cfg_read(host_bridge,
+>> ...). That would already be a big win over passing the read function
+>> itself as a pointer.
+>>
+>> Hopefully having such a function in the ops would allow moving other
+>> common controller driver functionality into PCI core as well as it would
+>> abstract the per controller read function (for the time before everything
+>> is fully instanciated).
+>>
+>> Is that a workable approach?
+>>
+> 
+> I'll try to add and test it in your way first.
+> 
+> Another problem here is that I've seen some drivers invoke 
+> dw_pcie_find_*capability before if (pp->ops->init) {. When I confirm it, 
+> or I'll see if I can cover all the issues.
+> 
+> If I pass the test, I will provide the temporary patch here, please 
+> check whether it is OK, and then submit the next version. If not, we'll 
+> discuss it.
+> 
 
-usage:
-'''
-nstat -az | grep PAWSTimewait
-TcpExtPAWSTimewait              1                  0.0
-'''
+Hi Ilpo,
 
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- Documentation/networking/net_cachelines/snmp.rst | 2 ++
- include/net/dropreason-core.h                    | 1 +
- include/uapi/linux/snmp.h                        | 1 +
- net/ipv4/proc.c                                  | 1 +
- net/ipv4/tcp_minisocks.c                         | 2 +-
- 5 files changed, 6 insertions(+), 1 deletion(-)
+Another question comes to mind:
+If working in EP mode, devm_pci_alloc_host_bridge will not be executed 
+and there will be no struct pci_host_bridge.
 
-diff --git a/Documentation/networking/net_cachelines/snmp.rst b/Documentation/networking/net_cachelines/snmp.rst
-index bc96efc92cf5..bd44b3eebbef 100644
---- a/Documentation/networking/net_cachelines/snmp.rst
-+++ b/Documentation/networking/net_cachelines/snmp.rst
-@@ -37,6 +37,8 @@ unsigned_long  LINUX_MIB_TIMEWAITKILLED
- unsigned_long  LINUX_MIB_PAWSACTIVEREJECTED
- unsigned_long  LINUX_MIB_PAWSESTABREJECTED
- unsigned_long  LINUX_MIB_TSECR_REJECTED
-+unsigned_long  LINUX_MIB_PAWS_OLD_ACK
-+unsigned_long  LINUX_MIB_PAWS_TW_REJECTED
- unsigned_long  LINUX_MIB_DELAYEDACKLOST
- unsigned_long  LINUX_MIB_LISTENOVERFLOWS
- unsigned_long  LINUX_MIB_LISTENDROPS
-diff --git a/include/net/dropreason-core.h b/include/net/dropreason-core.h
-index 9701d7f936f6..bea77934a235 100644
---- a/include/net/dropreason-core.h
-+++ b/include/net/dropreason-core.h
-@@ -287,6 +287,7 @@ enum skb_drop_reason {
- 	/**
- 	 * @SKB_DROP_REASON_TCP_RFC7323_TW_PAWS: PAWS check, socket is in
- 	 * TIME_WAIT state.
-+	 * Corresponds to LINUX_MIB_PAWS_TW_REJECTED.
- 	 */
- 	SKB_DROP_REASON_TCP_RFC7323_TW_PAWS,
- 	/**
-diff --git a/include/uapi/linux/snmp.h b/include/uapi/linux/snmp.h
-index eb9fb776fdc3..cca7f7eb6e9c 100644
---- a/include/uapi/linux/snmp.h
-+++ b/include/uapi/linux/snmp.h
-@@ -188,6 +188,7 @@ enum
- 	LINUX_MIB_PAWSESTABREJECTED,		/* PAWSEstabRejected */
- 	LINUX_MIB_TSECRREJECTED,		/* TSEcrRejected */
- 	LINUX_MIB_PAWS_OLD_ACK,			/* PAWSOldAck */
-+	LINUX_MIB_PAWS_TW_REJECTED,		/* PAWSTimewait */
- 	LINUX_MIB_DELAYEDACKS,			/* DelayedACKs */
- 	LINUX_MIB_DELAYEDACKLOCKED,		/* DelayedACKLocked */
- 	LINUX_MIB_DELAYEDACKLOST,		/* DelayedACKLost */
-diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
-index 10cbeb76c274..ea2f01584379 100644
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -191,6 +191,7 @@ static const struct snmp_mib snmp4_net_list[] = {
- 	SNMP_MIB_ITEM("PAWSEstab", LINUX_MIB_PAWSESTABREJECTED),
- 	SNMP_MIB_ITEM("TSEcrRejected", LINUX_MIB_TSECRREJECTED),
- 	SNMP_MIB_ITEM("PAWSOldAck", LINUX_MIB_PAWS_OLD_ACK),
-+	SNMP_MIB_ITEM("PAWSTimewait", LINUX_MIB_PAWS_TW_REJECTED),
- 	SNMP_MIB_ITEM("DelayedACKs", LINUX_MIB_DELAYEDACKS),
- 	SNMP_MIB_ITEM("DelayedACKLocked", LINUX_MIB_DELAYEDACKLOCKED),
- 	SNMP_MIB_ITEM("DelayedACKLost", LINUX_MIB_DELAYEDACKLOST),
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 27511bf58c0f..43d7852ce07e 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -248,7 +248,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
- 
- 	if (paws_reject) {
- 		*drop_reason = SKB_DROP_REASON_TCP_RFC7323_TW_PAWS;
--		__NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED);
-+		__NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWS_TW_REJECTED);
- 	}
- 
- 	if (!th->rst) {
--- 
-2.47.1
+Don't know if you have anything to add?
+
+> Thank you very much for your advice.
+> 
+>>>    if (pp->ops->host_init)
+>>>      pp->ops = &qcom_pcie_dw_ops;  // qcom here needs to find capability
+>>>
+>>>    pci_host_probe(bridge); // pcie enumerate flow
+>>>      pci_scan_root_bus_bridge(bridge);
+>>>        pci_register_host_bridge(bridge);
+>>>          bus->ops = bridge->ops;   // Only pci bus ops can be used
+>>>
+>>>
+
+Best regards,
+Hans
 
 
