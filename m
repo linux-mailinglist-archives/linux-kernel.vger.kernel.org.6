@@ -1,361 +1,311 @@
-Return-Path: <linux-kernel+bounces-575699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AA5A705F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:04:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B02A705F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956B21898C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51F017054A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E284F255E32;
-	Tue, 25 Mar 2025 16:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="os+htRFa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F3F2E3382;
+	Tue, 25 Mar 2025 16:03:18 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2109.outbound.protection.outlook.com [40.107.215.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB36B2E3382;
-	Tue, 25 Mar 2025 16:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918565; cv=none; b=FWlaItW8p5zxLTIcO0+XpkgemRrSOCfvZs8dv22iiCQw2TVgGQnupoWrk6RNdtFFoBpi3JfP7xPVQHrHHV+yHonzv+9ZIAYdIAmoBHyRbvvTBOsiozCyhueOx9bac6HSDPdkK04GLpxdj8ToKoc0AEqlV/QxfuoUZZejqH5MZIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918565; c=relaxed/simple;
-	bh=svblI899drwouAJLliXU7j5kNLcdRAspJBa9jzt2N/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jhSuHcwynys11ofNjGyHIm+0FCdVdTE3jcA7kxbV7JfWXvrK09yYMZdHgCRftTjDK9wAVQP2oXrYn9m2StxOxRzZPz1Zz8qvnJslrvBZ9Kr1c2oQs3BrvTFjuKiWDV2erpRRxifcOtNhCLY2oYwoL9Cuc4CQHtpdanZs9itrOaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=os+htRFa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:904a:b2d:8d57:4705:738e])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DB4AA353;
-	Tue, 25 Mar 2025 17:00:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742918452;
-	bh=svblI899drwouAJLliXU7j5kNLcdRAspJBa9jzt2N/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=os+htRFaaip/nXUcIVJPffdfgCg27lDV0gK/Mme0RD6HITVJvzUStbguTrl7n6FOI
-	 Xwfnw87ilHJEmOf6DSURdGJgN9T1I75/aG2Ec8HGedkn5n6TRFBUk3VL96waPcCKm0
-	 UN6yUbE/W2tdj8AiqEadZNY9bQjzShRM8AFm05CU=
-Date: Tue, 25 Mar 2025 21:32:33 +0530
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-To: Mirela Rabulea <mirela.rabulea@nxp.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>, 
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>, 
-	"laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>, 
-	Laurentiu Palcu <laurentiu.palcu@nxp.com>, Robert Chiras <robert.chiras@nxp.com>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	LnxRevLi <LnxRevLi@nxp.com>, 
-	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>, 
-	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>, "mike.rudenko@gmail.com" <mike.rudenko@gmail.com>, 
-	"alain.volmat@foss.st.com" <alain.volmat@foss.st.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "umang.jain@ideasonboard.com" <umang.jain@ideasonboard.com>, 
-	"zhi.mao@mediatek.com" <zhi.mao@mediatek.com>, "festevam@denx.de" <festevam@denx.de>, 
-	Julien Vuillaumier <julien.vuillaumier@nxp.com>, "devarsht@ti.com" <devarsht@ti.com>, 
-	"r-donadkar@ti.com" <r-donadkar@ti.com>, Oliver Brown <oliver.brown@nxp.com>
-Subject: Re: [PATCH v4 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
- driver
-Message-ID: <pzbbtaltu7wcrsjvjg6n2x33uwm3us4uwpykektc7xlj47s7pz@odqzjc64db2i>
-References: <20250305094359.299895-1-mirela.rabulea@nxp.com>
- <20250305094359.299895-3-mirela.rabulea@nxp.com>
- <46eescbpdyjr3ljlhyv7fwzxksuln5s57xqgv7nim4yon57im3@22slmk45taf2>
- <6f0168b5-6f79-470e-a8f8-bed8d2495826@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBA64A18;
+	Tue, 25 Mar 2025 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742918597; cv=fail; b=nnfzMJSt9tWwzmeATM2pZxbCKSP75q2u+KdIQO+oPIzHp66yaOtKWYd5GhkXv3uvlLLiOZtzLDfPjfGPpkyDG9bafZ4ZvxPw9xNjTWPlCb2kPshRXTZN2GFHdEAB3/RGmAbGI8DLM950gAHEXsPlvqy7IbOuzmAicMVbUpf5JSU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742918597; c=relaxed/simple;
+	bh=NQdZ3E1vkUnNmpmUzcxY/MOxMreZbSzYIJ79k2hvMKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sW2yPkBHcv/myNwkBJ2eGHpx57R/kKoZLalg22JAu+ofMMogziWKnx+X49Dqc5BBfw7xOgpz20GjiJDGzTLqnT7UXYoDxsPvudbRIHHlRC4+B5gdC7+HaOzPPcYQw2XTOt14MfKrMU+ZEBnyI2SXw+/FE8IQx1+tJmWl4f5/ZDU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pbis3r35toIMs1fHESUy4sxt0LHUm5v8OAq/uHJylz++zjalUa9pd1Y3yqf9qLqQYaFs7QJCzXdEiqeKYNU4tZUa6t+5nUf1WR0xmyVhgbAQe4JJmKXQNPxfQCya7ZsgD6nZYRZRyVUjQYzqszBBhLz2JoFOy1VXHmxj0NYWCIoR/nuS5dfHwAwh6PkcMqX0DE/KyvlegczVbFVEdxCTgZIFL17Xvjxli8k611ktzPTJHJXnso1ecr8N6QS1+NGyxJuowLx+YSRKeTT9Tj6M9LNEuBd0+H/s0AGO2lBUye/hTht5Tbyod8Sd768p3TivuQ8GheO4gHkihd183ulLwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3H0E1btw7ZiLx+evR48cALPGpiP2ei2e4Bo38LE3tkQ=;
+ b=jxAi+oWsQTFn9mhU/QHTsqexHemNCtCeASavguKgGnlQKjqS7q6fATaOcGBMy0CHinMG64VPUR0t4FksfaFUWw+7fyw8iYgJhQFLm5rvKIa57b62tH72ZDw3qZloMMhZsYC2LBwo++VKqWerymk/mR00rYqOE3pwh1fC+ZRlDkYObRC8C7/GcfJ1rhgCGbXfQAsJ+8GdKFsr8WA4kTGYTBkRxkHHv8lrmmNYdPQLIwlZh0CnSY7POYb7fyE+Wk3jHiMRMOLzyH9sBYvfSBfK0tM7AV3RYc3fhKxGprBf0jOe0Kr00iA0KIipPHoM1FW46BHFQdD1duL1BlHtyab/nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=bootlin.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TYCP286CA0207.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:385::20)
+ by PUZPR06MB6054.apcprd06.prod.outlook.com (2603:1096:301:104::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 16:03:06 +0000
+Received: from TY2PEPF0000AB88.apcprd03.prod.outlook.com
+ (2603:1096:400:385:cafe::2c) by TYCP286CA0207.outlook.office365.com
+ (2603:1096:400:385::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
+ 25 Mar 2025 16:03:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB88.mail.protection.outlook.com (10.167.253.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Tue, 25 Mar 2025 16:03:05 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id BDC994160514;
+	Wed, 26 Mar 2025 00:03:04 +0800 (CST)
+Message-ID: <96940e1e-a395-49bc-ac29-7ca86bfb8ad7@cixtech.com>
+Date: Wed, 26 Mar 2025 00:03:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="omz7nozsxwgvuor4"
-Content-Disposition: inline
-In-Reply-To: <6f0168b5-6f79-470e-a8f8-bed8d2495826@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
+To: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+Cc: Peter Chen <peter.chen@cixtech.com>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "vigneshr@ti.com" <vigneshr@ti.com>, "kishon@kernel.org"
+ <kishon@kernel.org>, "cassel@kernel.org" <cassel@kernel.org>,
+ "wojciech.jasko-EXT@continental-corporation.com"
+ <wojciech.jasko-EXT@continental-corporation.com>,
+ "thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
+ "bwawrzyn@cisco.com" <bwawrzyn@cisco.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "srk@ti.com" <srk@ti.com>
+References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+ <Z9pffxeXHVOsoi4O@nchen-desktop> <20250319062534.ollh3s5t7znf5zqs@uda0492258>
+ <Z9qO1f5MgNcwO5A4@nchen-desktop> <20250319095511.hf3y2c6vbbnm3ien@thinkpad>
+ <a8966792-fa0e-4e8e-aceb-427819ae4ef5@cixtech.com>
+ <bkw4xm4jwe3iuf6sixxl4udosea3bhlwogfua66naf5echbyzv@dlwcbscedh6w>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <bkw4xm4jwe3iuf6sixxl4udosea3bhlwogfua66naf5echbyzv@dlwcbscedh6w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB88:EE_|PUZPR06MB6054:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4eb6a799-487e-4635-5701-08dd6bb687a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SkRCc1VyZUNLRTZwUTRISXorOFQ3bE1nZGt6UWJNSFZMZmFudTYzaW5NU0dH?=
+ =?utf-8?B?VnUybU8yVHpSMC9tSUJMOUQxZ3REazNwRURrNkUwcitZUXFvbFBoZ2xSR0tl?=
+ =?utf-8?B?UjJpSkhRT3pRZ0Q4RDh3MVAxVkZmMldmRnJsZ1VZUnk4STlndWU1S29QalVZ?=
+ =?utf-8?B?N2RRd0NsL1Z5dTd2bzZhc2tudHRINUJ6M05nbEhwbDhGOFFzQ0hXMkg5V0Nr?=
+ =?utf-8?B?R1dzbXRIelVkWXUrQjZod255bWdReGxtQ0NTdm84OEs3Qjg1T2RaSWJpYVp4?=
+ =?utf-8?B?QUZVRDcxTjNyUHBqZ0ZJdU5DYW42WGZCY0NBbFJ1N3dPejl3aE4xdUF1Vytz?=
+ =?utf-8?B?czQvMHBPaVZFVkxaUDBLdncvNGhrcGJWT0M3ajdxdUxscUE3YXlEK0FKcFFC?=
+ =?utf-8?B?MGljNVc1dW81RmxtYVpwMzcrdVlXWGFBMkdSS25CdHc3OERHK2VUWXM3Y3ZO?=
+ =?utf-8?B?SEUzdElEMTdFbktwYXNhdEs3Q1VneVlTcDgrTVlpZkNSODJZb3FqOXpqRHEx?=
+ =?utf-8?B?TUhRajJWM3dWWVJTMkIyak9ZdmNPRU1RaDlWK3I2dFJkQjFTc0JnTUJvUU1z?=
+ =?utf-8?B?cXV0WUg1M2Rock14dlpYNDEvYVVZZFg0VzI5Y3ZJQmU5d3UvRlV1ZHJtbm5W?=
+ =?utf-8?B?eXRqUFlJSVMvVDhFZDJNdW1nc3U3WTJ3NHpxb2FzcENpcXFYa0REbVRlU1dC?=
+ =?utf-8?B?cTFjYjlwNmZqSGlJZFp4NDJSM2lMMnJzUzV1dUx3TjhFUTdGMHlqZHYzQUhh?=
+ =?utf-8?B?TXcyTk40cEVvTG5KbytjRlJFeDVEbkRUWmczOWcvRjJZMytnaUZ4QnBMaEFk?=
+ =?utf-8?B?c2pZYjlsd2UrYTFiZi9rWFFOazV4eGM1eDJGVGZDL3BtNWUxN1hQdjN4eUxq?=
+ =?utf-8?B?bmhlc1JGWDBRVUJuaDhwRXgwZzhwYmNJeHFOWklnUTEvRDFWbWZReWdmWG5z?=
+ =?utf-8?B?MlVSTHJ0N3Q3WEhHYVhrNmNrMHR2MHB5YmlrMXFqTnFRYUxlSjdDWGpwdGk5?=
+ =?utf-8?B?Nms2Z2d3VlJOUFZyR2ZpNndmazUvSnhZZXYvczgzckpWT0JOZUZaOFFDYzZm?=
+ =?utf-8?B?VThsKzNkTmxubTh2bXpieC94SWx6QW5uVzVDeHBhaEVYUG9lalJrOTk5c2xt?=
+ =?utf-8?B?MEJVSjNHcFFWbnhyMUt6dUxoU3ZyTnh4SXdsWS9oODEzVEQzbWpscFMycHBw?=
+ =?utf-8?B?bnB1ak1WZ2hibkVnWTZUV0pKYnhWNm1rTUpYdU5wanpJdVBrTDJRRDBIcXhR?=
+ =?utf-8?B?QWplRitaSUtwSVJIbjJSNXRITmNXUnRZcXh5d1dwa3FJU294dHpWVTl0THQ2?=
+ =?utf-8?B?SmNTeExqb2tmMldwYXQ1blBLbjl0b0hwaUJtVHdXU09maU5HeGp0VDhtMlBS?=
+ =?utf-8?B?bllKOUY2MmljSlVmSTV0b3ZLeEtNUVdsSWVIbTYxOGo0SDJWaGp5WXFxS1FV?=
+ =?utf-8?B?RXZ1TU8zNXk3RlQvT2poOGU0a3JHVWVDa2NmQUxsazEvbVZLWWdITjFFa0s4?=
+ =?utf-8?B?QzZEQWR3MTExYmR1cjg2Ymo2azA4RHJBQmZ1MnQxR3B6WkxXeVdVbVlFSE9z?=
+ =?utf-8?B?THBLRytsMnlDQ0Y5SFFWQzkwdVo3MEZkVFh4VG9SZHhESFhIMGxZamkybno1?=
+ =?utf-8?B?Qlhpa09VS3o3Kyt6RTgvN0U1VjRGa3BidURLOUoxMTZmOVNFSmVzT29OdjNw?=
+ =?utf-8?B?OTI1OUdtNkVKS0tGSlhodHdabHlOc24vZVNsRVpqWFZTUnFaQ2NOTE9YR3dZ?=
+ =?utf-8?B?eVZhUkxyOUNHVXVJVEx4T1RIOTgrTHhqZ05XdXBsSXRIUUs0L3RtNHFvQUNq?=
+ =?utf-8?B?SFhIUmh1VVR0bCtJbEJCSitlaDhqTmVISFBRZjNQaW5IbDU5Y0drQTFKaHly?=
+ =?utf-8?B?a1VQd2NPRmttdmN4cDUyQUZuME5JVGdLR1R2aytKWmsvYmEvZXg4TXRTYW9U?=
+ =?utf-8?B?L3BlMXJhVFpWa25vV1BhMmtybHVrQllXZEtwZ3Z1RVljSnVMc2UrMWNCcmMy?=
+ =?utf-8?Q?V0qSStZmt7x8IlNBAyZfDDjF6DcDpM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 16:03:05.7982
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb6a799-487e-4635-5701-08dd6bb687a3
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: TY2PEPF0000AB88.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6054
 
 
---omz7nozsxwgvuor4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] media: ox05b1s: Add omnivision OX05B1S raw sensor
- driver
-MIME-Version: 1.0
 
-On Mar 24, 2025 at 17:32:01 +0200, Mirela Rabulea wrote:
-> Hi Jai and all,
->=20
-> On Mar 19, 2025 at 16:40:30 +0530, Jai Luthra wrote:
-> > Hi Mirela,
-> >=20
-> > Thanks a lot for your patch/series.
-> >=20
-> > On Mar 05, 2025 at 11:43:57 +0200, Mirela Rabulea wrote:
-> > > Add a v4l2 subdevice driver for the Omnivision OX05B1S RGB-IR sensor.
-> > >=20
-> > > The Omnivision OX05B1S is a 1/2.5-Inch CMOS image sensor with an
-> > > active array size of 2592 x 1944.
-> > >=20
-> > > The following features are supported for OX05B1S:
-> > > - Manual exposure an gain control support
-> > > - vblank/hblank control support
-> > > - Supported resolution: 2592 x 1944 @ 30fps (SGRBG10)
-> > >=20
-> > > Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
-> > > ---
-> > > Changes in v4:
-> > > 	Switch to Y media bus codes. The CFA pattern control will be impleme=
-nted when patches get merged, or maybe separatelly as RFC?
-> > > 	Add pixel_rate member to mode struct, remove fps member. We do not h=
-ave information how to calculate the pixel rate from the PLL parameters tha=
-t can be made public.
-> > > 	Use register macros for the registers that are documented. User regi=
-ster group macros, where individual registers are not documented
-> > > 	Remove some uneeded local variable initialisations
-> > > 	Fix extra/missing spaces
-> > > 	Add missing ending \n
-> > > 	Use return -ENODEV & return 0 to ease reading
-> > > 	Rename retval to ret in probe for consistency
-> > > 	Use devm_mutex_init instead of mutex_init
-> > > 	Replace more dev_err's with dev_err_probe
-> > > 	Constify more structs
-> > > 	Remove some unneded ending commas after a terminator
-> > > 	Fix smatch error in ox05b1s_s_ctrl: error: typename in expression
-> > > 	Fix a seeries of smatch warnings like: warning: symbol 'ovx5b_init_s=
-etting_2592x1944' was not declared. Should it be static?
-> > > 	Shorten some more lines to 80 columns
-> > >=20
-> > > Changes in v3:
-> > > 	Use helpers from v4l2-cci.h (drop ox05b1s_write_reg, ox05b1s_read_re=
-g, ox05b1s_set_hts/vts/exp/analog_gain, ox05b1s_regmap_config)
-> > > 	Don't hardcode timing registers: remove timing registers x_output_si=
-ze/y_output_size from register configuration list, add them to ox05b1s_appl=
-y_current_mode
-> > > 	Remove HTS,VTS from register config list as they are written by HBLA=
-NK and VBLANK controls through __v4l2_ctrl_handler_setup
-> > > 	ox05b1s register config cleaning (remove all registers that were at =
-their default value, and more, keep only what seems mandatory to be able to=
- stream)
-> > > 	Use const for ox05b1s_supported_modes
-> > > 	Device should be silent on success, use dev_dbg.
-> > > 	Drop unneeded {}
-> > > 	Fixed an error introduced in v2 in ox05b1s_nearest_size (set_fmt for=
- 4k BGGR12 mode was stuck)
-> > > 	Fix an issue in ox05b1s_set_fmt, the format was saved in subdev stat=
-e only for _TRY, save it also for _ACTIVE
-> > >=20
-> > > Changes in v2:
-> > > 	Use dev_err_probe for missing clock, since it is now required proper=
-ty, and use NULL for devm_clk_get (no name for single clock), remove check =
-for non NULL sensor->sensor_clk
-> > > 	Remove dev_err message for devm_regmap_init_i2c allocation error
-> > > 	Added spaces inside brackets, wrap lines to 80
-> > > 	Remove some redundant initializations
-> > > 	Add regulators
-> > > 	Make "sizes" a pointer
-> > > 		Use struct v4l2_area instead of u32[2] array
-> > > 		Remove the count for supported_modes[] and supported_codes[], inste=
-ad use sentinel element at the end
-> > > 		Consequently, update ox05b1s_enum_mbus_code, ox05b1s_enum_frame_siz=
-e, ox05b1s_nearest_size, ox05b1s_find_code, to not use the count
-> > > 	Remove .h files for modes, however did not move this code in the dri=
-ver file but added a separate c file for all supported modes
-> > > 	Refactor register lists to allow multiple register arrays per mode
-> > > 	Use GPL-2.0-only instead of GPL-2.0
-> > >=20
-> > >  drivers/media/i2c/Kconfig                 |   1 +
-> > >  drivers/media/i2c/Makefile                |   1 +
-> > >  drivers/media/i2c/ox05b1s/Kconfig         |  10 +
-> > >  drivers/media/i2c/ox05b1s/Makefile        |   2 +
-> > >  drivers/media/i2c/ox05b1s/ox05b1s.h       |  22 +
-> > >  drivers/media/i2c/ox05b1s/ox05b1s_mipi.c  | 951 ++++++++++++++++++++=
-++
-> > >  drivers/media/i2c/ox05b1s/ox05b1s_modes.c |  77 ++
-> > >  7 files changed, 1064 insertions(+)
-> > >  create mode 100644 drivers/media/i2c/ox05b1s/Kconfig
-> > >  create mode 100644 drivers/media/i2c/ox05b1s/Makefile
-> > >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s.h
-> > >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> > >  create mode 100644 drivers/media/i2c/ox05b1s/ox05b1s_modes.c
-> > >=20
-> > [snip]
-> > > diff --git a/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c=20
-> > > b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> > > new file mode 100644
-> > > index 000000000000..1026216ddd5b
-> > > --- /dev/null
-> > > +++ b/drivers/media/i2c/ox05b1s/ox05b1s_mipi.c
-> > > @@ -0,0 +1,951 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * A V4L2 driver for Omnivision OX05B1S RGB-IR camera.
-> > > + * Copyright (C) 2024, NXP
-> > > + *
-> > > + * Inspired from Sony imx219, imx290, imx214 and imx334 camera drive=
-rs
-> > > + *
-> > > + */
-> > > +
-> > > +#include <linux/clk.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +#include <media/v4l2-cci.h>
-> > > +#include <media/mipi-csi2.h>
-> > > +#include <media/v4l2-ctrls.h>
-> > > +#include <media/v4l2-device.h>
-> > > +#include <media/v4l2-fwnode.h>
-> > > +
-> > > +#include "ox05b1s.h"
-> > > +
-> > > +#define OX05B1S_SENS_PAD_SOURCE	0
-> > > +#define OX05B1S_SENS_PADS_NUM	1
-> > > +
-> > > +#define OX05B1S_REG_SW_STB		CCI_REG8(0x0100)
-> > > +#define OX05B1S_REG_SW_RST		CCI_REG8(0x0103)
-> >=20
-> > > +#define OX05B1S_REG_CHIP_ID		CCI_REG24(0x300a)
-> > > +#define OX05B1S_REG_TIMING_HTS		CCI_REG16(0x380c)
-> > > +#define OX05B1S_REG_TIMING_VTS		CCI_REG16(0x380e)
-> > > +#define OX05B1S_REG_EXPOSURE		CCI_REG16(0x3501)
-> > > +#define OX05B1S_REG_GAIN		CCI_REG16(0x3508)
-> >=20
-> > There is a non-trivial overlap of registers between this driver and=20
-> > ov9282.c which supports OV9281/OV9282 (1MP Mono).
-> >=20
-> > There are two other Omnivision sensors, OV2311 (2MP Mono) and OV2312=20
-> > (2MP 4x4 RGB-IR Bayer) with an even larger register overlap with OX05B1=
-S=20
-> > and OS08A20. Unfortunately those two have separate downstream drivers i=
-n=20
-> > RPi and TI linux downstream trees respectively, and haven't yet been=20
-> > posted upstream.
->
-> Thanks for sharing this information, I was unaware. The question of=20
-> how much similarity should two sensors share, in order to stay in the=20
-> same driver, was also on my mind for some time, and I=E2=80=99d be glad t=
-o=20
-> hear more opinions on it ;)
->=20
+On 2025/3/25 23:26, manivannan.sadhasivam@linaro.org wrote:
+> EXTERNAL EMAIL
+> 
+> On Thu, Mar 20, 2025 at 10:14:02AM +0800, hans.zhang wrote:
+>>
+>>
+>> On 2025/3/19 17:55, manivannan.sadhasivam@linaro.org wrote:
+>>> EXTERNAL EMAIL
+>>>
+>>> On Wed, Mar 19, 2025 at 05:31:01PM +0800, Peter Chen wrote:
+>>>> On 25-03-19 14:25:34, Siddharth Vadapalli wrote:
+>>>>>>>
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> This series enables support to build the PCIe Cadence Controller drivers
+>>>>>>> and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+>>>>>>> Modules. The motivation for this series is that PCIe is not a necessity
+>>>>>>> for booting the SoC, due to which it doesn't have to be a built-in
+>>>>>>> module. Additionally, the defconfig doesn't enable the PCIe Cadence
+>>>>>>> Controller drivers and the PCI J721E driver, due to which PCIe is not
+>>>>>>> supported by default. Enabling the configs as of now (i.e. without this
+>>>>>>> series) will result in built-in drivers i.e. a bloated Linux Image for
+>>>>>>> everyone who doesn't have the PCIe Controller.
+>>>>>>
+>>>>>> If the user doesn't enable PCIe controller device through DTS/ACPI,
+>>>>>> that's doesn't matter.
+>>>>>
+>>>>> The Linux Image for arm64 systems built using:
+>>>>> arch/arm64/configs/defconfig
+>>>>> will not have support for the Cadence PCIe Controller and the PCIe J721e
+>>>>> driver, because these configs aren't enabled.
+>>>>>
+>>>>>>
+>>>>>>> @@ -209,6 +209,12 @@ CONFIG_NFC=m
+>>>>>>>    CONFIG_NFC_NCI=m
+>>>>>>>    CONFIG_NFC_S3FWRN5_I2C=m
+>>>>>>>    CONFIG_PCI=y
+>>>>>>> +CONFIG_PCI_J721E=m
+>>>>>>> +CONFIG_PCI_J721E_HOST=m
+>>>>>>> +CONFIG_PCI_J721E_EP=m
+>>>>>>> +CONFIG_PCIE_CADENCE=m
+>>>>>>> +CONFIG_PCIE_CADENCE_HOST=m
+>>>>>>> +CONFIG_PCIE_CADENCE_EP=m
+>>>>>>
+>>>>>> The common Cadence configuration will be select if the glue layer's
+>>>>>> configuration is select according to Kconfig.
+>>>>>>
+>>>>>> Please do not set common configuration as module, some user may need
+>>>>>> it as build-in like dw's. Considering the situation, the rootfs is at
+>>>>>> NVMe.
+>>>>>
+>>>>> The common configuration at the moment is "DISABLED" i.e. no support for
+>>>>> the Cadence Controller at all. Which "user" are you referring to? This
+>>>>> series was introduced since having the drivers built-in was pushed back at:
+>>>>
+>>>> We are using Cadence controller, and prepare upstream radxa-o6 board
+>>>> whose rootfs is at PCIe NVMe.
+>>>>
+>>>
+>>> It doesn't matter. Only criteria AFAIK to build the driver as built-in in
+>>> defconfig is that it should be a depedency for console. For some time, storage
+>>> was also a dependency, but for sure PCIe is not.
+>>>
+>>> Moreover, CONFIG_BLK_DEV_NVME is built as a module in ARM64 defconfig. So it
+>>> doesn't matter if you build PCIe controller driver as a built-in or not. You
+>>> need to load the NVMe driver somehow.
+>>>
+>>> So please use initramfs.
+>>>
+>>>> You could build driver as module for TI glue layer, but don't force
+>>>> other vendors using module as well, see dwc as an example please.
+>>>>
+>>>
+>>> DWC is a bad example here. Only reason the DWC drivers are not loadable is due
+>>> to the in-built MSI controller implementation as irqchip. People tend to build
+>>> the irqchip controllers as always built-in for some known issues. Even then some
+>>> driver developers prefer to built them as loadable module but suppress unbind to
+>>> avoid rmmoding the module.
+>> Hi Mani,
+>>
+>> I think the MSI RTL module provided by Synopsys PCIe controller IP is not a
+>> standard operation. The reason for this MSI module is probably to be used by
+>> some cpus that do not have ITS(LPI interrupt) designed. Or RISC-V SOC, etc.
+>> MSI is defined as an MSI/MSIX interrupt that starts with a direct write
+>> memory access.
+>>
+> 
+> Yeah, DWC MSI controller is not a great design. The older ones are even more
+> horrible (using SPI interrupts for reporting AERs etc...).
 
-Same here :)
+Hi Mani,
 
-> >=20
-> > It would be ideal to have a single driver for all of these Omnivision=
-=20
-> > sensors, or if not, at least a common C module that can implement the=
-=20
-> > shared functionality like gain, exposure, blanking (vts & hts) in a=20
-> > single place, as this will make maintenance much easier.
->=20
-> I would need to get more information on the sensors you mentioned in order
-> to issue an informed opinion. So far, with the OX05B1S and OS08A20, I have
-> found some small differences regarding exposure and digital gain register=
-s,
-> so the overlap is not perfect, I expect it will also not be a perfect
-> overlap with the other sensors you mentioned.
->=20
+Currently Synopsys and Cadence provide SPI interrupts for reporting AERs 
+etc... This IP vendor only provides an alternative approach that 
+actually requires SOC design companies to design according to PCIe SPEC 
+and conform to linux OS software behavior.
 
-Sure, I had some experience with supporting OV2312 and OX05B1S in the=20
-downstream TI linux tree, and while they share the registers for=20
-exposure and gain, there are some other differences in features, aside=20
-=66rom the 2MP vs 5MP resolution.
+I have a way to workaround AER is SPI interrupt. It can also use aer.c 
+drivers. However, I have been afraid to submit patch, because this is a 
+problem of SOC designers themselves, which does not conform to the port 
+driver of linux os (aer.c). So it will certainly not be accepted.
 
-> >=20
-> > My question here to you and the maintainers is, would it be okay to use=
-=20
-> > this driver as a baseline to integrate all these different sensors=20
-> > together? And secondly, would you like to take a look at supporting=20
-> > ov9282, so the other driver can be dropped?
-> >=20
-> For the first question, I don't know what to say, and I cannot tell if=20
-> we are far or close for this patch-set to be accepted. Also, I am=20
-> unsure about how maintenance would go on a driver claiming to support=20
-> a multitude of sensors, who could test them all, whenever something=20
-> changes? Are you thinking to add ov2311/12 as other compatibles to=20
-> this driver?
->=20
 
-While it would be ideal to have OV2312 support within this driver if=20
-there is a significant register overlap, it might still require some=20
-effort, as TI's downstream drivers for the RGBIR sensors capture two=20
-streams with different exposure, gain and IR flash values, and different=20
-MIPI CSI virtual channels, using the group hold functionality. Which=20
-IIUC may be quite different from what your patches implement, and will=20
-require adding streams/routing support so the userspace can configure.
+> 
+>> There are also SOC vendors that do not use the built-in MSI RTL module.
+>> Instead, MSI/MSIX interrupts are transmitted directly to the GIC's ITS
+>> module via the GIC V3/V4 interface. For example, RK3588, they do not use the
+>> PCIe controller built-in MSI module. Some Qualcomm platforms also modify the
+>> PCIe controller's built-in MSI modules to connect each of them to 32 SPI
+>> interrupts to the GIC. I was under the impression that the SDM845 was
+>> designed that way. The only explanation is that SPI interrupts are faster
+>> than LPI interrupts without having to look up some tables.
+>>
+> 
+> If ITS is available, platforms should make use of that. There is no way DWC MSI
+> is superior than ITS. We are slowly migrating the Qcom platforms to use ITS.
+> 
 
-> I agree there is a great deal of similarity shared across many raw,
-> mode-based sensor drivers, and it sounds good to have some common framewo=
-rk.
-> Some steps were done with the common raw sensor model. I would definitely
-> also like to hear more expert opinions on this.
->=20
-> For the second question, as of now, we do not have any of the sensors you
-> mentioned, unfortunately. I could help in the future to test patches for
-> this driver on the sensors that we already have, but cannot make any
-> promises for what I do not have, best effort if we find these sensors in a
-> form factor that will work for our boards.
->=20
+I agree with you.
 
-I agree, having a single maintainer would not be feasible given=20
-different sensor modules may have incompatible connectors. But yes it=20
-should be okay to provide a T-By tag or a Nack on the shared driver if a=20
-patch breaks your particular hardware or usecase, similar to how other=20
-popular sensor drivers are maintained like IMX219 or OV5640.
+> And btw, Qcom DWC MSI controller raise interrupts for AER/PME sent by the
+> downstream components. So enabling ITS is uncovering AER errors which were
+> already present :)
+> 
+>> So the dwc driver can also compile to ko?
+>>
+> 
+> Only if the MSI support is made as a build time option and there is a guarantee
+> that the platform will never use it (which is difficult to do as the driver can
+> only detect it during the runtime based on devicetree).
 
-> > Anyway thanks again for your series, hopefully this will give a good=20
-> > starting point for upstreaming OV2311 and OV2312 soon.
-> >=20
-> I would like to know more about the OV2312 (RGB-Ir) sensor and if it=20
-> has many similarities with OX05B1S.=C2=A0 What hardware are you using to=
-=20
-> test this sensor? And what interface to connect the sensor? We are=20
-> working with MIPI-CSI on most imx boards, and also RPI on imx93.
+Anyway, I would still like to request that the Cadence PCIe controller 
+driver not be in module mode. Cadence also has a lot of customers, we 
+are one of them, it's just that many customers don't have upstream. We 
+are about to upstream.
 
-For OV2312 I have used this FPDLink module [1] with the Arducam V3Link=20
-board [2] that connects to the EVM using 22-pin FFC MIPI-CSI connector=20
-that is pin-compatible with the RPi5 connector.
+This series was introduced since having the drivers built-in was pushed 
+back at:
+https://lore.kernel.org/linux-arm-kernel/20250122145822.4ewsmkk6ztbeejzf@slashing/
 
-[1]: https://leopardimaging.com/wp-content/uploads/2024/03/LI-OV2312-FPDLIN=
-KIII_Datasheet.pdf=20
-[2]: https://www.arducam.com/downloads/datasheet/Arducam_V3Link_Datasheet.p=
-df
+Hans:
+The Cadence PCIe root port driver can not be made into module mode 
+because of TI's idea. We should consider the ideas of other customers. 
+If you have to make it module mode, I think all peripheral drivers 
+should be module mode. Maybe I'm being direct, but that's probably the case.
 
->=20
-> =C2=A0Regards,
->=20
-> Mirela
+Many thanks Mani for replying to me.
 
-PS: Your mail client broke the quotations on your reply. I have fixed=20
-those here, but might be a good idea to double-check your client=20
-settings.
+Best regards,
+Hans
 
---=20
-Thanks,
-Jai
-
---omz7nozsxwgvuor4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmfi05kACgkQQ96R+SSa
-cUVj2RAAv3N3yhY7ubGrCH3U92Gc4yIxQ+c7XzIjRl3M95OVXMoGA8V7OEkIjEYV
-plE9DXndDSbYYba3AFL6ygx6PvbeCkwvjcaan0ogePMfxoaogROKdxjyRRZHkm2F
-qbMoHcYupxsRKEKOdSgFhOg/ef5YCtCmRYQ/hrOEX1gsEa3+zldDa9o/AX4s74Vv
-LVJ697QmaWVu1aSkkklCGJJt9g4vW6yuw0Hi8JqgWLxoErdIoUoZ+jwFyPC3np+8
-6JFxDxdiGFsxZy+fEMlvYjdyTuR+VDtb/Npn+464UosZIz0Zyav/XJcJPNu2l8UE
-FRiiiZqLLBgWdFfnVK4a5rGUImUvsNX0cC8WGJVALQ8220szDy9hpBLbQ9GpiNx8
-gdjzYXfzW8/etapBPj7e+7kPLaagPXkB51Yf8nMaQ/5zbMPmeve6FCdOjUrDAv4a
-pcDj73aN0UBXAoliCX9PvubRmhndfLmFTqL3JESi/FayxI/bHS0tokw/IH5ck/YY
-SxeaQWRFdRSw3mYuPkFuWqSqwW3wSI2T8bm+2s4RbtOsK9pWDAkuJ+prBABW4I2v
-7OeS6o97BTEAf0fWzRznx1KXg4zy/A0Bc7P4iNEYWrWMOw0vJ4ZR3O4Rg3dWS1+y
-BVAB+pDOUaOkVdovODFHqV2lH/vFyX8wUHmcBX2JKPit2YoHavk=
-=VYrY
------END PGP SIGNATURE-----
-
---omz7nozsxwgvuor4--
 
