@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-576008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D67C0A709D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:03:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEFCA709D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F3717E8C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1460A3A47AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F311E1020;
-	Tue, 25 Mar 2025 18:53:47 +0000 (UTC)
-Received: from mail-ua1-f78.google.com (mail-ua1-f78.google.com [209.85.222.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D891A7044;
+	Tue, 25 Mar 2025 18:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO+teKn+"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47C1B412A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3971ACEC9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928826; cv=none; b=TTzmn3YwLbhESCU66Pm67LhspsqO7EhkPnO8HX9agB/l4MeQ5tZMRpQkC7uf1e04O2Pl/ID8UzUgh3ega1kZcEY8gskmIFQAJ1Xpp1BvlPDxuPmyHjOXdVvB+hM0DVP6H5orWEwBnOkS5Sv6cOxw0ZmWLlIofeJCIa4U3WfebXA=
+	t=1742929036; cv=none; b=c4ZTURqyU9j4dAxBup52yyfOJSDHyPvOnaudHhvSTvq+s4WQM/6TmephaHasABx25dSUQ2QCqxQR3jTizLqxol2FdyYG9e9GyurY2DUjM++luucPtujhtax49heIhwyAmHhDDinfd4pbluXj8TyaOqQbLpyD5KDAkYgcj0md1G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928826; c=relaxed/simple;
-	bh=zGupvF8yrRozOv6tT9j+/eKRp+/zVe79XmqL3dHGU8o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=g2CftSmPlkGk9w6UvrP6LZk5XVoW7LqB1hSq58MzQotQXCrvmQKsRTl2mNE8a0Bzf+tYs5ZqTVHgs0c3ZhxrAwtJJJsaSSd87v8ZyVtss6d35k5OdFEaRFSZR/fx8afwYCDAugqH1orzsvFQchjp7L4ZDPIHNartVYWkTOvd6ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.222.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-ua1-f78.google.com with SMTP id a1e0cc1a2514c-85c8a0d07f2so7962869241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:53:44 -0700 (PDT)
+	s=arc-20240116; t=1742929036; c=relaxed/simple;
+	bh=bH08W7y44kEthONmxWs0JsMCJXv5WJd+1QRs+3Z1JkE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UN+weOJYdkJi+FWls0BR3LNbLsYo0eBERpcjMpUCrVEY5yDCzq/W61waAMnFP1omgCFnX8cjjV6/4alcr4xH3JBL5YftC3CXrzDxLTasaq9BVDHFZv7GLFNOVDmWkyiNJJalScLd+f0qw2aeeatclsAL/oXRNrmsSd9DM1r9SjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CO+teKn+; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-476a1acf61eso55450331cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742929033; x=1743533833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wc1b/KonmqQlWVjQyIDNx1PB8OnyCz3qh1Tew/uSRf8=;
+        b=CO+teKn+MWsezEymr5tFlJJ67bxc1yTMnTqg7KpfybKZzcvsaZ4FbA87hLfJT0SeDc
+         u1Z/ka+qgkGPm5rOBVXIWmgWTc9sS9AImUzuSCxzF/ec4pfbS/S3fOkEAWSlwaG87PhY
+         Taqy6L71nGQdX9lmfg4NftBqx7glRpQm4k2dTrdDfA8oGhm0yBw6WtRraHCzZ7X6YR6U
+         zRV2zNIIF6070GhUK+xhKxY6OBwkxUnUf9mM8MMKx7EjCoSSP2WYqPKbQQ4aHDNpMHJt
+         JqT72hbzBSAoDriyEVM2+BSS3Z/FVTTrKnx82A14oTjRGD1CllthyRtGQarYRswurnnA
+         cn2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742928824; x=1743533624;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GG0iCKwDH9KZTZsDp4Avb3wqwoFz6sePEbX2q3Ppj48=;
-        b=UYMzmi1/Bj8gYdEeVw5a3zjktHF7PkulXxSG0EeKGBOaZ4X6RfS0v7SdoRyQfTgHnm
-         6bueXC/4s2+Gh0fnZuIEWGg3JfTVLOKP0W4ARu4tNZjd9nqxEnmgHqTKkxuvvXF/dZ6E
-         AgjpFhPjSyCKOeCJYFJR98mmEHYYd1QlJShCrPVzwpuo/R1QuSk7WnHvGTNg5BfP6ftk
-         hld6LEIdiM+hoi+LyqmsgWvO1qSDyxcnIGO2qN+XN2yw88wlKNzkJRW/yD+KX3h2H0xJ
-         c+M2jM6CsMP/uLJwCP5OAFNkiLNYQBlDMPYC+OAwr7Ab4p7PjzXnwAMrsrIxlTe2yw/C
-         xh2A==
-X-Forwarded-Encrypted: i=1; AJvYcCW87Pbsf68HR8L7eZuUzbqyvKjhFpxDnMWOgbZpSL8sr7jWa4AyIU/0PLmMZ4p1buK2T2I+edcEMy3RzCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo7DLCUf5LMObn1RmLBfl9vCyEpnSmN8FtPhErUxiNcc963Exm
-	ZMQ1XliExDmfTT82jcfciBHhrup9Qz7tHNR5CfyUBUNkRcR3ntdQQ4yu8iWV5UIKozo12q/65Tp
-	SqVrWQnzCpIf4qAJCw8bepTqA9xufNUkyFWPYP/aYqa+Q5P2Nn7qe7mE=
-X-Google-Smtp-Source: AGHT+IH9aZIr86YFiB/nZHoAPIpiFpPmKisM4Mc/3V3NF81TDmbJHgoghCJ/dvYt9MZpKzy+bEC3111aWBBUM1mj0KhgoMl73MoN
+        d=1e100.net; s=20230601; t=1742929033; x=1743533833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wc1b/KonmqQlWVjQyIDNx1PB8OnyCz3qh1Tew/uSRf8=;
+        b=MsqPs1HrmKaH4eHVmDfjCm8GPvvb2x/qss1kKg/NsrgzGVTzq3DLQ0RliOGT2jDDwX
+         oYkvVFwIVdNs1VM4Bul+UaVsO31d9kHgtDpS2z5G7HVsMkVHOn70EsP7+khyj1Rl+2b7
+         spUCLna0Pqs8XX1fiBuk3qAVEOpz3fvdVshKEYt4eeGmy7fuC6xPYPhgEoLk/2m2q2IF
+         KGNQs8Mi3BE+SPjqXfgKECTsMbB4OIIJfGL1rP0NREWtCQpAWwmZwoW+Yy2k4uaj+Y9Q
+         zljLtdI4xk51ExEmFeCkNhU4igAyGjFWnwd6JJqB3YcQvy+jD4T3bUzzwvoIWVf+5Bi8
+         lHBg==
+X-Gm-Message-State: AOJu0Yzrq4bePD1+c8B5q+ElGBxLgGo8PCufdLIyqGr9EKOpEgRBuoiD
+	QbBlqMmoJoenAk+T5V4qQ2/syvfn4YNdq8H6ZIJLejAzedYCHs49oiV2bAR+qWeFi3thmtbN8oI
+	1rDrhHyOFHaLXkUtplJvldTfnZuuUZ2D2
+X-Gm-Gg: ASbGncvbRVLFwUPVfT3xoxgf+yV+oVcg/N7FI1UheXaYXq/cupZ8JykqZdLxD3P41MN
+	6ZRTb03HtOldAKt/LOnL2mVDnVZAFUBYyri0sM2YzgknXL8E65Uc/E7XI4XI3ycW5Wx9NoK/kHF
+	XfO9w5HaW7hNlgJzrgTl6xjDYq4IV2HUIeoBI=
+X-Google-Smtp-Source: AGHT+IHZrxz76tlBAchwWlwvG1UO5HlgQQvC8bUrjtin9ky9DD1ICNaN0M4Dchd5qiDKedF02gvCDAitk2nLkn591/E=
+X-Received: by 2002:a05:6122:251b:b0:520:61ee:c7f9 with SMTP id
+ 71dfb90a1353d-525a84c5e96mr14236045e0c.7.1742929022532; Tue, 25 Mar 2025
+ 11:57:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca46:0:b0:3d3:d823:5402 with SMTP id
- e9e14a558f8ab-3d59613ea0bmr199543535ab.7.1742928813390; Tue, 25 Mar 2025
- 11:53:33 -0700 (PDT)
-Date: Tue, 25 Mar 2025 11:53:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67e2fbad.050a0220.a7ebc.0052.GAE@google.com>
-Subject: [syzbot] [io-uring?] WARNING: refcount bug in io_tx_ubuf_complete
-From: syzbot <syzbot+640cb22897e59078196e@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250320185238.447458-1-jim.cromie@gmail.com> <20250320185238.447458-45-jim.cromie@gmail.com>
+ <c3514758-5a22-4acb-8ff0-1f4ddade02f4@bootlin.com>
+In-Reply-To: <c3514758-5a22-4acb-8ff0-1f4ddade02f4@bootlin.com>
+From: jim.cromie@gmail.com
+Date: Tue, 25 Mar 2025 12:56:36 -0600
+X-Gm-Features: AQ5f1JqwCZoNQkWvPRC6s-f7lWQaMvaFRZI7Bln1P_k3mQTyHi7JUmVlxPTmisg
+Message-ID: <CAJfuBxw_OixCp0KsoYu9nH6=hprKJpKt7dkPT0hL-32syCTJ7A@mail.gmail.com>
+Subject: Re: [PATCH v2 44/59] drm-dyndbg: add DRM_CLASSMAP_USE to Xe driver
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, intel-gfx-trybot@lists.freedesktop.org, 
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org, 
+	daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Mar 24, 2025 at 9:24=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
+n.com> wrote:
+>
+>
+>
+> Le 20/03/2025 =C3=A0 19:52, Jim Cromie a =C3=A9crit :
+> > Invoke DRM_CLASSMAP_USE from xe_drm_client.c.  When built with
+> > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy, this tells dydnbg that Xe uses
+> > has drm.debug calls.
+> >
+> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > ---
+> >   drivers/gpu/drm/xe/xe_drm_client.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/xe/xe_drm_client.c b/drivers/gpu/drm/xe/xe=
+_drm_client.c
+> > index 2d4874d2b922..756dba5c88f8 100644
+> > --- a/drivers/gpu/drm/xe/xe_drm_client.c
+> > +++ b/drivers/gpu/drm/xe/xe_drm_client.c
+> > @@ -21,6 +21,8 @@
+> >   #include "xe_pm.h"
+> >   #include "xe_trace.h"
+> >
+> > +DRM_CLASSMAP_USE(drm_debug_classes);
+> > +
+>
+> Is xe_drm_client.c the best place to do it? I think the module entry
+> point is a bit better [1].
+>
 
-syzbot found the following issue on:
-
-HEAD commit:    d07de43e3f05 Merge tag 'io_uring-6.14-20250321' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e4de98580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=640cb22897e59078196e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89a42818241f/disk-d07de43e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/379e7ddd9b3b/vmlinux-d07de43e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1ad55828885f/bzImage-d07de43e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+640cb22897e59078196e@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 1 PID: 11036 at lib/refcount.c:28 refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
-Modules linked in:
-CPU: 1 UID: 0 PID: 11036 Comm: syz.5.1209 Not tainted 6.14.0-rc7-syzkaller-00186-gd07de43e3f05 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
-Code: ff 89 de e8 e8 1b f5 fc 84 db 0f 85 66 ff ff ff e8 3b 21 f5 fc c6 05 77 2b 86 0b 01 90 48 c7 c7 20 17 d3 8b e8 87 51 b5 fc 90 <0f> 0b 90 90 e9 43 ff ff ff e8 18 21 f5 fc 0f b6 1d 52 2b 86 0b 31
-RSP: 0018:ffffc9000bd979c8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9001d01c000
-RDX: 0000000000080000 RSI: ffffffff817a2276 RDI: 0000000000000001
-RBP: ffff888049207010 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff888049207010 R15: ffff88802a564000
-FS:  00007fa9b395d6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f53a8057d58 CR3: 000000002b110000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000097 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_sub_and_test include/linux/refcount.h:275 [inline]
- __refcount_dec_and_test include/linux/refcount.h:307 [inline]
- refcount_dec_and_test include/linux/refcount.h:325 [inline]
- io_tx_ubuf_complete+0x236/0x280 io_uring/notif.c:50
- io_notif_flush io_uring/notif.h:40 [inline]
- io_send_zc_cleanup+0x8a/0x1c0 io_uring/net.c:1222
- io_clean_op io_uring/io_uring.c:406 [inline]
- io_free_batch_list io_uring/io_uring.c:1429 [inline]
- __io_submit_flush_completions+0xcb3/0x1df0 io_uring/io_uring.c:1470
- io_submit_flush_completions io_uring/io_uring.h:159 [inline]
- ctx_flush_and_put.constprop.0+0x9a/0x410 io_uring/io_uring.c:1031
- io_handle_tw_list+0x3df/0x540 io_uring/io_uring.c:1071
- tctx_task_work_run+0xac/0x390 io_uring/io_uring.c:1123
- tctx_task_work+0x7b/0xd0 io_uring/io_uring.c:1141
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- get_signal+0x1d3/0x26c0 kernel/signal.c:2809
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa9b2b8d169
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa9b395d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
-RAX: 0000000000000800 RBX: 00007fa9b2da5fa0 RCX: 00007fa9b2b8d169
-RDX: 0000000000000000 RSI: 00000000000047bc RDI: 0000000000000005
-RBP: 00007fa9b2c0e2a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa9b2da5fa0 R15: 00007ffee776f038
- </TASK>
+yes perhaps.  I was drawn by the _client in the file-name.
+Im not sure Im fully consistent, iirc the drivers get it near driver-iinit =
+ops.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> [1]:https://elixir.bootlin.com/linux/v6.13.7/source/drivers/gpu/drm/xe/xe=
+_module.c
+>
+> >   /**
+> >    * DOC: DRM Client usage stats
+> >    *
+>
+> --
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>
+>
 
