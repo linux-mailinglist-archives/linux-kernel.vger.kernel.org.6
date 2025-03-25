@@ -1,171 +1,109 @@
-Return-Path: <linux-kernel+bounces-576221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7AEA70C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:01:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76B8A70C80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068C3170F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:01:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BDDD188EA5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E601725524E;
-	Tue, 25 Mar 2025 22:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900C025524E;
+	Tue, 25 Mar 2025 22:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Fx3KTu7t"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RggYCKbA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676AD530;
-	Tue, 25 Mar 2025 22:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003D7D530;
+	Tue, 25 Mar 2025 22:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940090; cv=none; b=al3EtaxuJWDoY/qrvfs4xPO8R/RmtqH65AYJQLSsZTzcWku8Bs+Dns7AqBtrTk3ABVlbvrc9PgUnc2hvEVcdEHWCwQVebTw+JVzw6tD7fXf3X4682ijjcG/pGlp+fVAzoxu+fE2MABiNRDLbmsxuyKQxryWoJJN/8E0Y53bT8Aw=
+	t=1742940200; cv=none; b=AAeoEZPPxAUnOV95AgtzNB6waO+4jezf9ofmjtB+oQ0kEaaNbllj96+KKdhxDPm8w76VjKRSjeEYPW52/UZ0YWL7PVCcVtf472rZavcpiC76ukRnLoKLYKrqQUd48gKiVWeOO89BE9UoiQeyZRN0d+ltNL9BA9jAJmVrKgaqsQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940090; c=relaxed/simple;
-	bh=BQLtxhJ85Tld/lC/ncVMNKJQuS4VQZX8eMuRf6WuLvY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iXXWO58cdXZvaz+v/FNLvTNgMcesCP6rOjpuYtsKzzJXxFMELit7BEZw1YLG7dUPFJJRHj+SUIpPkmgV91AS1zECZDEliokCYJRKU8QxmXJsdPVMc8tUrQc5tSJvwOW0Jbj9DdCN3En5D/PRh0wXrukDXc9JiFd6LlcG+3O8tzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Fx3KTu7t; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1742940088; x=1774476088;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HYi90DVAyrf6sk195M81TGjvn40aKO20224itqCURZI=;
-  b=Fx3KTu7tLGE+39jsFbO/deQRY1GBAA+g0aatswhffhhAXpaJT7btzKte
-   bSfnaKsPfFPJl+DH5zo4YDSxtQcVZZHUJoE7FF33aKMTnMh2ebPS2eJmk
-   pbLMVYAcgkK2a7RDLHdVx5EdBDOChA2p5XcUvv67LzGIox4gRgLM1Gafh
-   k=;
-X-IronPort-AV: E=Sophos;i="6.14,276,1736812800"; 
-   d="scan'208";a="35114054"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 22:01:26 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:42592]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.0.51:2525] with esmtp (Farcaster)
- id 73e7438d-f8c3-4d69-9ccd-068c33d4b0ca; Tue, 25 Mar 2025 22:01:26 +0000 (UTC)
-X-Farcaster-Flow-ID: 73e7438d-f8c3-4d69-9ccd-068c33d4b0ca
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Mar 2025 22:01:26 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.100.12) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 25 Mar 2025 22:01:23 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <i.abramov@mt-integration.ru>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <netdev@vger.kernel.org>, <kuniyu@amazon.com>
-Subject: Re: [PATCH net 1/4] ieee802154: Restore initial state on failed device_rename() in cfg802154_switch_netns()
-Date: Tue, 25 Mar 2025 15:00:47 -0700
-Message-ID: <20250325220115.67524-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250325141723.499850-2-i.abramov@mt-integration.ru>
-References: <20250325141723.499850-2-i.abramov@mt-integration.ru>
+	s=arc-20240116; t=1742940200; c=relaxed/simple;
+	bh=sOvUY+7IRDk4UFh0A4n4ZbSZW9+agMvEydOR+upZykA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n0c7yTbxzDyhRExRstWdZCPj2YkDGCodgj4rjj3wYoNI6EOsNawxnCSf5ihTQJCrf/wzfqziWCwt/z0zz1WtESKV2EoBmAtKlM7/w0gkdJ42oJfR4R2J8zxfVZSsFvFQnrGgzCzFL8143TlbG0RjEkCnk+QtE2dT1nP3l7PEqNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RggYCKbA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742940191;
+	bh=38W8upVMOF87Aaqs8SXomZEIZnrWoUhgAIMPG3P4yZM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RggYCKbAoCiOHYSJV+bY2Hl3iw6i4MSLGTV5DvNF7h9DNq2h6S2sufhSUSaLXhAHQ
+	 qbW3rHyi24rHHrvluWOkTYB0/fyqfqHQ4wUdK2ITeHrgOFEpp0KXD2nGtBZx2c2NPX
+	 LZIfQGsXJiwNNV8tFxqw8XAiwASSJ8INdDfykTyDjopnA+kRF71oUSSL9y0dVWIgq3
+	 aXvXH6YlQmpjJnfi+wgnYUt3pLWOYstY87gjrFEOSSXY/6fwfLPyLcfgFWyuaPQt5/
+	 6pZ/+5l1EcM3BnMCnMKIf0S4/niaX/kjt7pX0PAuKsVLmXrPVlJpEajWOmGm34CSc8
+	 8cuYn7MF1DpYw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMkSb34QMz4x3S;
+	Wed, 26 Mar 2025 09:03:11 +1100 (AEDT)
+Date: Wed, 26 Mar 2025 09:03:10 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk
+ <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel
+ <xen-devel@lists.xenproject.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the xen-tip tree
+Message-ID: <20250326090310.4f162838@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWC002.ant.amazon.com (10.13.139.238) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: multipart/signed; boundary="Sig_/FIk6u8s3DQ3M9mmnBRSUw+D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-Date: Tue, 25 Mar 2025 17:17:20 +0300
-> Currently, the return value of device_rename() is not checked or acted
-> upon. There is also a pointless WARN_ON() call in case of an allocation
-> failure, since it only leads to useless splats caused by deliberate fault
-> injections.
-> 
-> Since it's possible to roll back the changes made before the
-> device_rename() call in case of failure, do it.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Fixes: 66e5c2672cd1 ("ieee802154: add netns support")
-> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
-> ---
->  net/ieee802154/core.c | 44 +++++++++++++++++++++++--------------------
->  1 file changed, 24 insertions(+), 20 deletions(-)
-> 
-> diff --git a/net/ieee802154/core.c b/net/ieee802154/core.c
-> index 88adb04e4072..f9865eb2c7cf 100644
-> --- a/net/ieee802154/core.c
-> +++ b/net/ieee802154/core.c
-> @@ -233,31 +233,35 @@ int cfg802154_switch_netns(struct cfg802154_registered_device *rdev,
->  		wpan_dev->netdev->netns_local = true;
->  	}
->  
-> -	if (err) {
-> -		/* failed -- clean up to old netns */
-> -		net = wpan_phy_net(&rdev->wpan_phy);
-> -
-> -		list_for_each_entry_continue_reverse(wpan_dev,
-> -						     &rdev->wpan_dev_list,
-> -						     list) {
-> -			if (!wpan_dev->netdev)
-> -				continue;
-> -			wpan_dev->netdev->netns_local = false;
-> -			err = dev_change_net_namespace(wpan_dev->netdev, net,
-> -						       "wpan%d");
-> -			WARN_ON(err);
-> -			wpan_dev->netdev->netns_local = true;
-> -		}
-> +	if (err)
-> +		goto errout;
->  
-> -		return err;
-> -	}
-> +	err = device_rename(&rdev->wpan_phy.dev, dev_name(&rdev->wpan_phy.dev));
->  
-> -	wpan_phy_net_set(&rdev->wpan_phy, net);
-> +	if (err)
-> +		goto errout;
->  
-> -	err = device_rename(&rdev->wpan_phy.dev, dev_name(&rdev->wpan_phy.dev));
-> -	WARN_ON(err);
-> +	wpan_phy_net_set(&rdev->wpan_phy, net);
->  
->  	return 0;
-> +
-> +errout:
-> +	/* failed -- clean up to old netns */
-> +	net = wpan_phy_net(&rdev->wpan_phy);
-> +
-> +	list_for_each_entry_continue_reverse(wpan_dev,
-> +					     &rdev->wpan_dev_list,
-> +					     list) {
-> +		if (!wpan_dev->netdev)
-> +			continue;
-> +		wpan_dev->netdev->netns_local = false;
-> +		err = dev_change_net_namespace(wpan_dev->netdev, net,
-> +					       "wpan%d");
-> +		WARN_ON(err);
+--Sig_/FIk6u8s3DQ3M9mmnBRSUw+D
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It's still possible to trigger this with -ENOMEM.
+Hi all,
 
-For example, see bitmap_zalloc() in __dev_alloc_name().
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-Perhaps simply use pr_warn() or net_warn_ratelimited() as do_setlink().
+  d9f2164238d8 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain fla=
+g")
+  cae5129fccb1 ("PCI: vmd: Disable MSI remapping bypass under Xen")
 
-I guess the stack trace from here is not so interesting as it doens't
-show where it actually failed.
+These are commits
 
+  c3164d2e0d18 ("PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain fla=
+g")
+  6c4d5aadf5df ("PCI: vmd: Disable MSI remapping bypass under Xen")
 
-> +		wpan_dev->netdev->netns_local = true;
-> +	}
-> +
-> +	return err;
->  }
->  
->  void cfg802154_dev_free(struct cfg802154_registered_device *rdev)
-> -- 
-> 2.39.5
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/FIk6u8s3DQ3M9mmnBRSUw+D
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjKB4ACgkQAVBC80lX
+0GwvEQf8Cax0RQJCNfhf8Gk3G999eeL2bfU+Cz1UURF+bFcV8xCQyVjrgqh5iksV
+Mod2f+MVSKcsaJ4Ssj4hpuTbU7MJw9rBWuQymBKs7ImPMKFB5XXK/kOg1uhvQZsk
+YSygHcbKRTp5aUzf0G7NP29JVQWV1MSL/IK6R85DYnp5ieu9bB/evcXsOs+r/MAh
+YdgutM1IaZXBy7wb6StjxGQ+TNtbrEnUS+wUbkvFDt0QwGFOIXV32e95CwyKAXnc
+ztgPHPurzAKR7jWqjjdxne9+IopPVwDCyaHE/w0CrV8vhuuAapyuqASNejMuJR5m
+quRcnpAzoQOo7S2PECRraGvEdvI6Rw==
+=k2y0
+-----END PGP SIGNATURE-----
+
+--Sig_/FIk6u8s3DQ3M9mmnBRSUw+D--
 
