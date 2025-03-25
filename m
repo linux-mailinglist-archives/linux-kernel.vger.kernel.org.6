@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-574894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EFDA6EB3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:14:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776B9A6EA2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666A316BE22
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B431887264
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A59B204693;
-	Tue, 25 Mar 2025 08:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D52253F2A;
+	Tue, 25 Mar 2025 07:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HT/woCYX"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BDJDBk/u"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6224C481C4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA30253F0E;
+	Tue, 25 Mar 2025 07:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890463; cv=none; b=shPiAkEp9uvNsceELdYBj0l++7KdSJdPL9I5gAQMKsvFyCX+ELkGNniOmNk+5P/uXPnNfpapjNyzPh1MFpuVuikx2nIPnRmrhCJv0h10M8kO38r11ST4xtF+Pj8q4oun3LNsVktqqzx2V53/HUB+HvAZTEJOaJSFsthhjrHkvIM=
+	t=1742886252; cv=none; b=PAh8i7lCCHmq+wLyQkyL/dpHockAifgGk7EFx2YLqr5SmbkzqwMGLZw9PkUVwmeTl9be2BDvUoBdy/SaUSkSQvEeIDtEM3fgt7F1B6j99yngQVSMr8DzuPJBKTpRhFO9N1S1QOnxHV4lE0NbXdGH17oVpNiSb5riQ0LvJaR/y0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890463; c=relaxed/simple;
-	bh=otQXdpFdlu2BChfhwuQRzaNNK0IsSAk7WEEMHeNI4TU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b9G0aurKYqwAitCSrqQ9OU8FyHum0JNHrUmNHhomn4tA/0PgcGDTmkk7LWwFrfjVRTbGa+VNevp2AexZSdpoFXtS0qZwef82qEE7grr/CU+NS+ZOvpYGU1WaLe0tH9baw9mrlU5Tu8DfF+TZl54IM7J0j/V79PpD6tVtZjTtUF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HT/woCYX; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2243803b776so31730555ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742890460; x=1743495260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kNYXBQpFyPKAPrC63ak+6Lghv9itCVCrzkPP9piyvFo=;
-        b=HT/woCYX7bdqjuYF3gXmVf/YJ102qpupCux0ZXtnWEVeH9sgAxlWOFItIkMCutLLeo
-         gR5xFNmVMtBNulRP6e3OGoML8cvHU28nN1nyNgTEVLhl/g8wKibhhFl4lwDKe2Ge/ksZ
-         Agzw+3sj6or8Psad14BdYL5a87fr/MKXCebUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742890460; x=1743495260;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kNYXBQpFyPKAPrC63ak+6Lghv9itCVCrzkPP9piyvFo=;
-        b=JiEzAgTjr+X454KxbteaHim4r/9z88n0mbiY4hDKsUwZFJuq3DnlKTR6r4T+6U3WL/
-         m9rh7qtpG/De0Pbx8bNm3HFlawsFTdHQP3s/FWYUumwMz2ilvd6YkWZ0tCbFpJBMyUA4
-         0ezzzFiz7ij9o0S2NUpX+vJNnVeEyowMdLJBwr1WZ+8oYrgoEC2kfEx9xiy9EBVPMnL4
-         QHW1D3ONAv7tAQhsB3N99o1dR0oTtA2J1BK0mfM3B3MUQMQYwk7uTvxqyN+LqCUTwADu
-         kG1eYhUu2RjuoLqOyJ85E0ZjosMwCKyh6TpRMI1A6Z/gZoBY5bbM7cymU9bJo9hvLk8W
-         IEbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfIJ+8zYTzipJpSf1Oh7KntZ//KRC2ETn0EZLrFLbGkx/7nwgKn5ehYgXN0LPR5F26XmqBb6S1YCpxHkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy667CTLwoOY7a8odeOuSqok8PmFIuANR+30ZN+AWdQ+CS7WYlv
-	sYj8f1+m1o2aswBEoQ2a8QiVJ81l6r0Gwts5o9y1UdfQoym4M95+L8Jppm1OwA==
-X-Gm-Gg: ASbGncvASKRLdVYrlSneEm9kFJuhuzVMDBpw+/Tb3IjWxfe5QmfQBgc/gTMW/ky3ifz
-	eEhYJ7eLvTAA8cu1AYuI8XrlElpR5EMF+VZ1V5CaDhYYsKBqz/rhvcycqNOIARkTs1sxls1OeA3
-	uQZDfKfWveB06tV8bw39h/y+SCOsLURX0DHTh8y9EYUIHGE71jOQ4NvNBgAMSJA3TfKUSw3lrkR
-	LQIUikEFQ8AXBFI8HoVllb9sAOvEcxQ4thGVM7GAYeBe1GrUTADkAA/EePu0hmhXRwteUTsl42W
-	o/ek+dZjoTDV42IOSo4gpuFizdbquCcwI0q98J3KIflyhQtdgCcl+lCsAR36jwNg
-X-Google-Smtp-Source: AGHT+IGDbB2izvu+t9h4n+6kBg4rcIhVYj9jR1WRlX4F5kfsit9jrFvvckdmOs5NpmzKyk+jgcasxQ==
-X-Received: by 2002:a05:6a00:3c95:b0:736:eb7e:df39 with SMTP id d2e1a72fcca58-73905a54b96mr28430513b3a.24.1742890460358;
-        Tue, 25 Mar 2025 01:14:20 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:d83e:63a8:42b9:7425])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7390618c056sm9457156b3a.163.2025.03.25.01.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 01:14:19 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>
-Cc: Xin Ji <xji@analogixsemi.com>,
-	Fei Shao <fshao@chromium.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/bridge: anx7625: Simplify INTERFACE_CHANGE_INT reg clear write
-Date: Tue, 25 Mar 2025 13:54:43 +0800
-Message-ID: <20250325081331.1965917-1-fshao@chromium.org>
-X-Mailer: git-send-email 2.49.0.395.g12beb8f557-goog
+	s=arc-20240116; t=1742886252; c=relaxed/simple;
+	bh=0BimZBJc1XVRW5ZmeAzMVSeyol5gKZu79sdS6JVdjEc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h2wmEC1qoofCTTbntfc9fGsI7JkKLDnTdu/I2PWAFFQxGCklAv8/l3HB6hC1Ep6myDceCRRi9RzItUoqiGJZHaFZ/3WweHd0KPHv/k49ql1+5hlvXiuULta8fSndSUrDzUWeiGb1ZXXcCf9Mxyq+0Yf+UCCtfIJgoo65MJ6W8cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BDJDBk/u; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P0A5ga001404;
+	Tue, 25 Mar 2025 08:03:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	umpdSL1RKDrcoeiEHF4TRnfTgu3+K+Z+OfPFiuVf284=; b=BDJDBk/uC2fTS7+B
+	6msmrNmD72HJbQ3vzimICXB/O17aExo2nM8zjrrC0n10Z89v2UtzFP+ecrzBxQhs
+	e2/ybX9fkfVSBj+WcCJktUEHkTvz0njnHH5B3MVhdDY3zWT9vsFZ0Dg4QOoFQxUh
+	tSGvnm7nsrGEVYmMEBxUjZEt0wseqWu7SLGJof6EWFh5A7YZiT/RWg2Ip/S1hHD+
+	TwiAy86L2MLjPkeEHMi/gvNwyDFaAFHmP+hFoO4J0DDzurdlcfYraU8hnJQ9L1BT
+	JJp0LekoycfF11+0B1nqONIXnwPb0Va8Yt43Siym96HwrKHwWXHtXjoRINU8thWF
+	htGzXA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45j7n88n3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 08:03:49 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 469A540069;
+	Tue, 25 Mar 2025 08:02:29 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B57D482D10A;
+	Tue, 25 Mar 2025 08:01:16 +0100 (CET)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Mar
+ 2025 08:01:16 +0100
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
+        <cassel@kernel.org>, <quic_schintav@quicinc.com>
+CC: <fabrice.gasnier@foss.st.com>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 8/9 RESEND] arm64: dts: st: Add PCIe Endpoint mode on stm32mp251
+Date: Tue, 25 Mar 2025 07:59:34 +0100
+Message-ID: <20250325065935.908886-9-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250325065935.908886-1-christian.bruel@foss.st.com>
+References: <20250325065935.908886-1-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,32 +81,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_03,2025-03-21_01,2024-11-22_01
 
-Simply clear the INTERFACE_CHANGE_INT register with 0 and replace the
-indirect `x & (~x)` pattern, since they are logically the same.
-No functional change.
+Add pcie_ep node to support STM32 MP25 PCIe driver based on the
+DesignWare PCIe core configured as Endpoint mode
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
+Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
 ---
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- drivers/gpu/drm/bridge/analogix/anx7625.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-index 0b97b66de577..df2d1dd95d01 100644
---- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-+++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-@@ -1586,8 +1586,7 @@ static int anx7625_hpd_change_detect(struct anx7625_data *ctx)
- 	}
- 	DRM_DEV_DEBUG_DRIVER(dev, "0x7e:0x44=%x\n", intr_vector);
- 	status = anx7625_reg_write(ctx, ctx->i2c.rx_p0_client,
--				   INTERFACE_CHANGE_INT,
--				   intr_vector & (~intr_vector));
-+				   INTERFACE_CHANGE_INT, 0);
- 	if (status < 0) {
- 		DRM_DEV_ERROR(dev, "cannot clear interrupt change reg.\n");
- 		return status;
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index a8abb13ab663..fe73161ed0d4 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -909,6 +909,19 @@ stmmac_axi_config_1: stmmac-axi-config {
+ 				};
+ 			};
+ 
++			pcie_ep: pcie-ep@48400000 {
++				compatible = "st,stm32mp25-pcie-ep";
++				reg = <0x48400000 0x400000>,
++				      <0x10000000 0x8000000>;
++				reg-names = "dbi", "addr_space";
++				clocks = <&rcc CK_BUS_PCIE>;
++				resets = <&rcc PCIE_R>;
++				phys = <&combophy PHY_TYPE_PCIE>;
++				access-controllers = <&rifsc 68>;
++				power-domains = <&CLUSTER_PD>;
++				status = "disabled";
++			};
++
+ 			pcie_rc: pcie@48400000 {
+ 				compatible = "st,stm32mp25-pcie-rc";
+ 				device_type = "pci";
 -- 
-2.49.0.395.g12beb8f557-goog
+2.34.1
 
 
