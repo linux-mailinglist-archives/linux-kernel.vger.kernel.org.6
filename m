@@ -1,49 +1,65 @@
-Return-Path: <linux-kernel+bounces-576159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44093A70BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326FFA70BDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B68617571F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:00:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B81097A573F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A76266F09;
-	Tue, 25 Mar 2025 21:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7031FF5FC;
+	Tue, 25 Mar 2025 21:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRCmBxxd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHy01Rzk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F97266EE7;
-	Tue, 25 Mar 2025 21:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BBB7DA73;
+	Tue, 25 Mar 2025 21:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742936407; cv=none; b=d+BGgigmE7RomnLgHymDUopkB/a8KFmzmALWTRovRKjhzKRly5EIvAbeoqRf5uRJfURSRV4DzRivjNvljl0l9n/fSsGLq3BlFyvtDHhzBhd1j8bZcW1iH1ejlRdO/MvjT+Wz/GPnNpk0+/AaOkvteFgYfN3wpwV5Fq+g51zzllA=
+	t=1742936478; cv=none; b=MWwVPIT645osW6Vb5a4GZG38XGMmRls4n4wF726YaaeievyfrteMNFZz6EJTgl8nGdLk30Z27STQqSbEg5BdIjjDiAlU56mt8YNBHCwZqvwus8tSCepamQqZWmPxVKJ+GB9jjqWYtOW0BbLwp8yRbuFL7uT1GcJ2ERyiFeTXp1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742936407; c=relaxed/simple;
-	bh=nwYZ4xRXWP8OrnzOAXnqcuHW/wuIip4+FcULbWZfzT8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hAxOZMRtW6nBDSK6r0BK2VtodzOLSQKigksP7vLYfh+Em/v6rGg9gMqFHhOFkp9EDElXTGacN0zYeOfgjDeGd/biUi+47V9+vEfdlcnaoaEj3XGsyQDFzPVHepAcHLaNIYkBlhnzsP2QLlZhGI1zaGcuLy1VBHDszvC2HObAfsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRCmBxxd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B038FC4CEE4;
-	Tue, 25 Mar 2025 21:00:06 +0000 (UTC)
+	s=arc-20240116; t=1742936478; c=relaxed/simple;
+	bh=PPWU3l4LCJdB98jPPjw2NNmWLBKLIu9LtckOISw4RA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W5bSETZLCH2f/iRn8KNOPpgxkXk9Dp5eY9KWkhgyV0inJoHeMnaa9NPpTZ512maVTG2lFWAdbBQRQnCj00YjgXo+w6rvyK8uscwPD6Fjz+oDLIkAoIscIeH4U8QhoVnzswCkKQy4Whw/mmmwMljUK3/7li6ABrTQmEvLZZNLeB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHy01Rzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7696BC4CEE4;
+	Tue, 25 Mar 2025 21:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742936406;
-	bh=nwYZ4xRXWP8OrnzOAXnqcuHW/wuIip4+FcULbWZfzT8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mRCmBxxdhKCQyF38pU9hkKhxkwdjfPSAVLqhgY0H7NfLFxq4K2T2f4Y+smfLWMWnk
-	 56ybXmQOYMZb3iR58B9FC+2hbLJbrooATPTL61OSTb1uZ+DeStHYSwxBRhTGXrYD4l
-	 3Y1iEa6GD4ekVo5qIW1jXUyii5TdgnnRllqLq5dodwmeoCD9xPWe+ZTf4obULRoVgd
-	 +idU4Vh0e7cZ2dbLnNxR81suvBbdhSd/df8k4PaZ3u3+PZ1XiO9ECyAAXwoP00pvBB
-	 S7vJE6HG0PKa1QrYYTrB6YVvoHxpA6K4TjuG6iLwF3pUnh1uOgvAZgSpSQgwkwt0/N
-	 wDsDow/gPdM/w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3456B380DBFC;
-	Tue, 25 Mar 2025 21:00:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1742936477;
+	bh=PPWU3l4LCJdB98jPPjw2NNmWLBKLIu9LtckOISw4RA8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QHy01RzkeJFnCXZeMmZeCz9KlY7xH2E9N8czzp1uWSqEH4lozSh9g+S2msBefoPep
+	 Wwte+jVcwS/N/xbEfJ+Uuy0huSJGCx4MDKS1daaqKkRt25ZoLubavA7d0BQkmy/DgG
+	 znc+4jkl8+BBESO/OpPTJG+Px+MJVapzDkh3lXZ3u4q61vpJZF9oc8eTGTkMmRlL2l
+	 RG3IwkhX9CJo6dRjcMkHa4cpDnDeDPjeP2BDNEJ8VXR+3AqApzXiFMItzwlb8VMBl0
+	 QkbaDFF3VZh19Nxbvk7+kvDBOa2tARLORV4A6QiYKi1bv0T3vGvWozvNYiIr9FNQ74
+	 7jJzkonGr6eqA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Raghavendra K T <raghavendra.kt@amd.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gregory Price <gourry@gourry.net>,
+	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
+	Jiaming Yan <jiamingy@amazon.com>,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [LSF/MM/BPF TOPIC] DAMON Requirements for Access-aware MM of Future
+Date: Tue, 25 Mar 2025 14:01:13 -0700
+Message-ID: <20250325210114.844509-1-sj@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250101222039.74565-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,55 +67,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v7 0/7] net: tn40xx: add support for AQR105 based
- cards
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174293644280.727243.6471962658538147478.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Mar 2025 21:00:42 +0000
-References: <20250322-tn9510-v3a-v7-0-672a9a3d8628@gmx.net>
-In-Reply-To: <20250322-tn9510-v3a-v7-0-672a9a3d8628@gmx.net>
-To: Hans-Frieder Vogt <hfdevel@gmx.net>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- fujita.tomonori@gmail.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+Hello,
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+On Wed,  1 Jan 2025 14:20:39 -0800 SeongJae Park <sj@kernel.org> wrote:
 
-On Sat, 22 Mar 2025 11:45:51 +0100 you wrote:
-> This patch series adds support to the Tehuti tn40xx driver for TN9510 cards
-> which combine a TN4010 MAC with an Aquantia AQR105.
-> It is an update of the patch series "net: tn40xx: add support for AQR105
-> based cards", addressing review comments and generally cleaning up the series.
+> Hi all,
 > 
-> The patch was tested on a Tehuti TN9510 card (1fc9:4025:1fc9:3015).
 > 
-> [...]
+> I find a few interesting and promising projects that aim to do efficient access
+> pattern-aware memory management of near future, including below (alphabetically
+> sorted).
+> 
+> - CXL hotness monitoring unit
+>   (https://lore.kernel.org/20241121101845.1815660-1-Jonathan.Cameron@huawei.com)
+> - Memory tiering fainess by per-cgroup control of promotion and demotion
+>   (https://lore.kernel.org/20241108190152.3587484-1-kaiyang2@cs.cmu.edu)
+> - Promotion of unmapped page cache folios
+>   (https://lore.kernel.org/20241210213744.2968-1-gourry@gourry.net)
+> - Slow-tier page promotion based on PTE A bit
+>   (https://lore.kernel.org/20241201153818.2633616-1-raghavendra.kt@amd.com)
+> - Workingset reporting
+>   (https://lore.kernel.org/20241127025728.3689245-1-yuanchu@google.com)
+> 
+> The goal of DAMON is to help accelerating such developments by being a
+> framework that can reduce fundamental efforts for monitoring memory access
+> patterns and managing memory using the information.  AWS Aurora Serverless v2
+> and SK hynix are successfully using DAMON in the way for proactive memory
+> reclamation[1] and CXL memory tiering[2].
+> 
+> To further deliver such benefits for the ongoing and future projects, we need
+> to better understand what the projects really need, how DAMON can provide those
+> now or in future, and if there are alternatives better than DAMON.  Regardless
+> of the conclusion about DAMON, the works apparently have common parts, so the
+> discussion will benefit all.
+> 
+> I propose to have the discussion at LSF/MM/BPF.  In the session, I will briefly
+> introduce the works and possible DAMON usages, and continue the open discussion
+> for better understanding each other.  The discussion will not be limited to
+> DAMON and abovely mentioned projects but possible alternatives and general
+> access-aware memory management projects.  After the discussion, we will
+> hopefully find ways to efficiently collaborate, or at least do not disturb each
+> other.
+> 
+> [1] https://assets.amazon.science/ee/a4/41ff11374f2f865e5e24de11bd17/resource-management-in-aurora-serverless.pdf
+> [2] https://github.com/skhynix/hmsdk/wiki/Capacity-Expansion
 
-Here is the summary with links:
-  - [net-next,v7,1/7] net: phy: Add swnode support to mdiobus_scan
-    https://git.kernel.org/netdev/net-next/c/43564f062bfe
-  - [net-next,v7,2/7] net: phy: aquantia: add probe function to aqr105 for firmware loading
-    https://git.kernel.org/netdev/net-next/c/74e4264efe47
-  - [net-next,v7,3/7] net: phy: aquantia: search for firmware-name in fwnode
-    https://git.kernel.org/netdev/net-next/c/5f27092328ce
-  - [net-next,v7,4/7] net: phy: aquantia: add essential functions to aqr105 driver
-    https://git.kernel.org/netdev/net-next/c/e31e67f58cf2
-  - [net-next,v7,5/7] net: tn40xx: create swnode for mdio and aqr105 phy and add to mdiobus
-    https://git.kernel.org/netdev/net-next/c/25b6a6d29d40
-  - [net-next,v7,6/7] net: tn40xx: prepare tn40xx driver to find phy of the TN9510 card
-    https://git.kernel.org/netdev/net-next/c/07cfe3a55756
-  - [net-next,v7,7/7] net: tn40xx: add pci-id of the aqr105-based Tehuti TN4010 cards
-    https://git.kernel.org/netdev/net-next/c/53377b5c2952
+A draft of the slides for this session is now available at
+https://github.com/damonitor/talks/blob/master/2025/lsfmmbpf/damon_requirements_lsfmmbpf_2025.pdf
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I may make more last time changes to the slides, but the final version should
+also be available on the same URL.
 
 
+Thanks,
+SJ
+
+[...]
 
