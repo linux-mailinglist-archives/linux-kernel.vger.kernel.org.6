@@ -1,69 +1,62 @@
-Return-Path: <linux-kernel+bounces-574687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75D4A6E885
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:12:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6007BA6E88A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA6117317A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718833AF5FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539E31A0BFE;
-	Tue, 25 Mar 2025 03:12:48 +0000 (UTC)
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2118.outbound.protection.outlook.com [40.107.255.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20DC1A23BA;
+	Tue, 25 Mar 2025 03:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MC4e9bUx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0B619AD86;
-	Tue, 25 Mar 2025 03:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742872367; cv=fail; b=I7SEPkNTjKLCGHGPRqwXwxHZNiSdM1d9572ClX2aKmOuAdNf0IRq3xb0Eg7l+BU00Mkl/7ZmUoZ1D280qhUMgksGPK7iMTG8e9JO4WRPEu+voqB+xuAEuTeGYRVRc+StaP8cPynTiJVDtQL8JdkvOs2PK5JGnAr7y9xvumxfoP8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742872367; c=relaxed/simple;
-	bh=N6BY0ASeksdwEZa51qQx2nROSSZITOI0xdHk5zHcHX8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SIasCS0drETmsrvDFJ25KqOxS4uj3KlVWuEgiPUTm4NWanC1GaBCVPN4Umsh4+gbLQRuxUKTMhfL6dXbYfgVZSbjqw/OzU/GmyRn0OiQHobQgtfNGGPtjx/b+diQToo2Qz3AO3VEMzv0KUNCLM0b54bd+kvqTr9sWE7LIEmx0og=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.255.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tloOrZJbvJ8X1GrwQyhDgl9eZOBLNj/JLCG4Y1NWW0KszuQhRGuaBMG/YpBSItycNOPTuTFoaKJDtnQFo3rz9FrX5T4OEu6GP4BdtTXG/3w9Rr1LdJjTK5lzR72E9XcZs2UWx1hMVjZed4uIzM7Z3c5TeknuWVbsBsKm1SdTTSDO86HeztvSJbRkg1fzymD4gl5MOaJCPLc+6S515u22DzHbMOaKOHMWND8ZFB1d5X0tmBhiTJwrXJRlk8IP+WJpZx6Vh8mczUybhtVnfpSI/6Oq6Nxc6ixk5vP7X19y0DJ8nDPPfJoN83rZwjutqlFyXqQYPYQ4xQBVVJUFWJ0FjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s5fX6tYFLqoABJePtFjXjD1/6pldin8cwJ5YaJ51PBg=;
- b=ymvl+I/n3mgx7pIB8MPgwPtQ7smFunBUGXfkrmYIvALmOJTB8asWH7i1lS/HWL/8yDKdPxUN7Bwvu2WJMsSJmKhM485TlNUKsqbK16cqaHkKXq3uWynCV/m5NSMX9yNplBPixXHpyl95VSG96pulG1tmoLC4irQbTCpszGSsHnL21SGKAdA29FJu8xVRQCPKSpby3/cfUjPNt4VDpY+jIaT9gCTpqGl+d2R/I/OxpIUjHcc3ZLp9Q4KDBRICaqfnrAwVehIWlfQT1Ege4IPx/i2NSadngACLehrTw60gBo63Sw2cqdhOOFyyZjInqrygcemcRPEAEkcMkxF7rE0qKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TY4P286CA0011.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:26d::11)
- by SE1PPF50B2D80A0.apcprd06.prod.outlook.com (2603:1096:108:1::415) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Tue, 25 Mar
- 2025 03:12:40 +0000
-Received: from OSA0EPF000000C7.apcprd02.prod.outlook.com
- (2603:1096:405:26d:cafe::aa) by TY4P286CA0011.outlook.office365.com
- (2603:1096:405:26d::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.42 via Frontend Transport; Tue,
- 25 Mar 2025 03:12:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000C7.mail.protection.outlook.com (10.167.240.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Tue, 25 Mar 2025 03:12:38 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 0FBF84160502;
-	Tue, 25 Mar 2025 11:12:38 +0800 (CST)
-Message-ID: <2ab4bf45-5bfd-48b0-bb5f-262d60c6f507@cixtech.com>
-Date: Tue, 25 Mar 2025 11:12:37 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4B51A072C;
+	Tue, 25 Mar 2025 03:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742872401; cv=none; b=EkLUi0F+t4qmj+/UQMOM/6Zf97E0zwTi5AK6ht860Zb2NNzOkNjn63GpLVN+sutheMjh+/mHBvqp3tWeACquesQ7wqs261KyPk6FVlUkhwdbkF7v5qTu81WM7QQ4u+DP+yDYkPM6jS0yUcfEUeTzp+UPgk6LthGVkbwaRpzABFs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742872401; c=relaxed/simple;
+	bh=E5E+SasWAzmDnR3MDJcTIVlbgU8JQ/HWkUH11MrnKDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C/qwENCTyMMtc8LmXE4or3MDyGwBzezIwupj307Ub2OUEBkSFrooqU0nDLea0ozaCQr7mf7xjRh0suKl8eeA1bvK/W27MSAiUIptkYeRCamLFcenZlcWELs8MX7htLOOaO2rxB2cuaV2jRXjMY0/7zZsJa7Yu5L7R/UJtfzYjpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MC4e9bUx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OIlWkq025925;
+	Tue, 25 Mar 2025 03:12:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rQ7cgtzuqO4DhE1RlYh2UYPnVaMrrglIVihyRrbs1zA=; b=MC4e9bUxUv+eNk8l
+	bcxILeTNQ81165jcKPnncsZ6FhWnU9g2hsomTd622n1/h6L7c5jKjggwCDctqWBL
+	ct5H8vM9UTjM9kFI4IXJIGsZq0RR+cHDrtzVMR8QiNSXypdkooZzZR0I5jD+QnTE
+	tUO5SYhiU1Sa8jsdnMbUNj+a5qR1Wd/0zo+MQAUG3thYP6/swpn1qN/HRryaVvoS
+	Mmbv8HIisu2jYCo3pLhUISfV41w4JAY/BLh3Pgzzx9VjBiH6h8pN89xF9jsdONAG
+	n1geKYSUyhuN8tVC3FvzbZ68wG0aKziuMZjMC12bDQWVq37jw7o6pVW67D6POTBm
+	kqt8WQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnphqt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 03:12:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P3Cquu016163
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 03:12:52 GMT
+Received: from [10.216.37.30] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Mar
+ 2025 20:12:45 -0700
+Message-ID: <430ed11c-0490-45be-897b-27cad9682371@quicinc.com>
+Date: Tue, 25 Mar 2025 08:42:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,139 +64,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] PCI: cadence: Add header support for PCIe next
- generation controllers
-From: Hans Zhang <hans.zhang@cixtech.com>
-To: Manikandan Karunakaran Pillai <mpillai@cadence.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "kw@linux.com" <kw@linux.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <20250324082353.2566115-1-mpillai@cadence.com>
- <CH2PPF4D26F8E1CDE19710828C0186B13EEA2A42@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
- <c69ef0ad-9391-42f2-9b6f-1742e9a746e4@cixtech.com>
+Subject: Re: [PATCH v2 2/6] phy: qcom-qmp-ufs: Add PHY Configuration support
+ for sm8750
+To: <neil.armstrong@linaro.org>, Melody Olvera <quic_molvera@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, Manish Pandey <quic_mapa@quicinc.com>,
+        "Linux
+ regressions mailing list" <regressions@lists.linux.dev>
+References: <20250310-sm8750_ufs_master-v2-0-0dfdd6823161@quicinc.com>
+ <20250310-sm8750_ufs_master-v2-2-0dfdd6823161@quicinc.com>
+ <1526d8a4-9606-4fb3-bb86-79bd8eb8a789@linaro.org>
 Content-Language: en-US
-In-Reply-To: <c69ef0ad-9391-42f2-9b6f-1742e9a746e4@cixtech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <1526d8a4-9606-4fb3-bb86-79bd8eb8a789@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C7:EE_|SE1PPF50B2D80A0:EE_
-X-MS-Office365-Filtering-Correlation-Id: 015a30c6-3613-4145-1a4f-08dd6b4ae649
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OXhJOWdCWThhYUozT2Y3R2dVOTQvQStWV0dRQ3hONWdjMy90Z3I0b2FsYjN2?=
- =?utf-8?B?c1QrSmoxN2R3Z2ZHek1VMUFDZ0tTUTJJdDFPWHZsVmxoVjNuaE11dGUxZ3Ns?=
- =?utf-8?B?T0JWKzZpZGZoZjRVcG9yNlNOWEE4OUYxSUhYb0JWdS9wRFhIOWFtUGtYeGRZ?=
- =?utf-8?B?ZjVsSzljblRtbFF2SnFtcEJXdm4vUVN2allheFdlYkFjNmwwclROTDBveG9U?=
- =?utf-8?B?dUFZNXByU1hPVFNyYzVueUtkeW1zVXo0UXVURGZhZkYrQ2pwYWZOKzFyR0FZ?=
- =?utf-8?B?SUE2RTJTNmMyV1pWcURMM0lWRG8xdWtaMlR0K21EQ0pCbmlWbUJpL05Bc05X?=
- =?utf-8?B?Sm4yQmJobXFWUkpGdUp2RWpXUWIrSUp3TXdxNU1uWnpWQ3NvckRrYy82SGs0?=
- =?utf-8?B?MjRxZTMxM1RMN3ZoT3JTRmNKNTZuSUNWbjFlUUpaenRYNFNMeWxZRldhbitZ?=
- =?utf-8?B?c2lVUFhxa1pRYmlMcHBidG1pSWFwaGZ4WWhCcm0zYVNMYjZTd0dQZkNHTzBT?=
- =?utf-8?B?N01sSGU3VWhSTVR6by8yWDlPdlVjNGVYd0tUUVRhTjVSZUh5Uyt3bmF1aU9l?=
- =?utf-8?B?cHluTzFwaHNWQWxvR2ppYXBJalhrWWZ5M1I3cWlaTFJYWkRtMFdNTE5CUGh6?=
- =?utf-8?B?WmFTc0FlTG1jN0Z5dlE1bms0RDdjMEEvbFNOWkJheEtzWjBpYWJ0MUQ4cDNm?=
- =?utf-8?B?Z2tYdGFZSUFGcEJ6WnlwNDlLT05qeDk0bU5oSERVTDRvMHhyWWJhUzA2NWVI?=
- =?utf-8?B?My9VandYR2JBZjBpS1Q4Z2F2ZWZtczYxNGd3RW5tbnAvcmxTRmpCYVVvN0NI?=
- =?utf-8?B?c0dyblVrdUNiMWtDSmRnSWFqS0hrcHREdFNIMnhJS0ZUSENyQ2VCS0lrVmh5?=
- =?utf-8?B?LzVkWjZsYnJ1cDlpVktsRmdNWkNPbUFac3U2VFR4U0lQSERwRmlwN2Y3eVU3?=
- =?utf-8?B?cEYyd013T0xaY0t1TzJHcXhrRDBKU0M5bGxQVjFXckZYVkJMQ040c0Q4aEhi?=
- =?utf-8?B?RWtoMjlVTE9IVkxzUnBXSVpKUktGREl0R2JlS0lUZEtabWVpcytScHFvQ0ww?=
- =?utf-8?B?TUEyUGdHTXRObU5NcEFrdDkvcndQcEdFV08yMHN1akQzaVdCRk8zb0dnODdI?=
- =?utf-8?B?blhUU2ZNRDJqK1dKTmlBdjdnc01Zc21jTm9QN3hoV3NlTXNSaExla2JMQXhG?=
- =?utf-8?B?cTZ1SW9hMWpXMU00YTNFOENsdmd4bDNqRDEyWm00K3p2SFMyYWsxYkxYdGVT?=
- =?utf-8?B?QVhlU2JWemxqYkNya2RodTYyL1YzYjRVMzk5RkREOHRTRGJNZVd5YVd4UTdT?=
- =?utf-8?B?ZzAxRmNOWk41alF2cTE3aW1nanEwbytIL1kwOElaVW9CdmFkMFZhV0EveGZX?=
- =?utf-8?B?TFNSMGZhOUdBM1VZOU1XcktzVC8vSU14R3ZIczBBZ253b3BkZVptc2g3RWFm?=
- =?utf-8?B?dVJ0aWQ0R3d6R1Q3TWoydUgxSE9DdHA5NXlmSDdtS1B6RmlKUjEyNXJJaVpw?=
- =?utf-8?B?S1dVRS84M1BSUnhQbG5TL3FYTnpTaTRjSThUWTlkdG9HQys4bnBXejIxWEVp?=
- =?utf-8?B?NTlBckhPWGdEdmkrVklYcjZkQmpNdDI2aEY4dm9NcWQ5VU55V3BleVY1eW5U?=
- =?utf-8?B?RlpmT2JqU2ZRaFBaWC9CazhVSzVGUjN6Vng1dFJYZTI1WW1CK2RVSklIZUJz?=
- =?utf-8?B?a2lnaGFOdllaMS9sSG1RWm5qL3UxYk1ZTVZEU0k5ZkVleXFrcEZxSHFEWVF3?=
- =?utf-8?B?TUMzUDZhTkxMS0ZQOEtSQ1d2V2ozRE9yd1BVTm5EN29NZlRGYm1WRFZZZHZB?=
- =?utf-8?B?UVo0RWVQTndoalI3R0krQy83SkpLM0dDU05TMXhVTEJPK2tKMnlyTEhVWDRt?=
- =?utf-8?B?UjV6b2E0bTdKZndwOVpwSHc5djNUVGtLcTFZVE1WRFJCTTNrRzBxSUZ3SFhD?=
- =?utf-8?B?bWY0c3lTOThwVDA2UFFzaG41Y2tJTVFvMmd2dnJBRkltekw0Vzd6ak1uMFM3?=
- =?utf-8?B?UUpIV1NTSThRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 03:12:38.9436
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 015a30c6-3613-4145-1a4f-08dd6b4ae649
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: OSA0EPF000000C7.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPF50B2D80A0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e21f35 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=vcR0Wi4gQSUtL0Q4ZNYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=fsdK_YakeE02zTmptMdW:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: RKjLOZTbSq54X9vtTLN_7PzxMYE2-NJY
+X-Proofpoint-GUID: RKjLOZTbSq54X9vtTLN_7PzxMYE2-NJY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_01,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250021
 
 
 
-On 2025/3/24 18:09, hans.zhang wrote:
->> + * High Performance Architecture(HPA) PCIe controller register
->> + */
->> +#define CDNS_PCIE_HPA_IP_REG_BANK              0x01000000
->> +#define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK     0x01003C00
->> +#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON     0x01020000
->> +/*
->> + * Address Translation Registers(HPA)
->> + */
->> +#define CDNS_PCIE_HPA_AXI_SLAVE                 0x03000000
->> +#define CDNS_PCIE_HPA_AXI_MASTER                0x03002000
+On 3/24/2025 11:40 PM, Neil Armstrong wrote:
+> Hi,
 > 
-> Hi Manikandan,
+> On 10/03/2025 22:12, Melody Olvera wrote:
+>> From: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>
+>> Add SM8750 specific register layout and table configs. The serdes
+>> TX RX register offset has changed for SM8750 and hence keep UFS
+>> specific serdes offsets in a dedicated header file.
+>>
+>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Co-developed-by: Manish Pandey <quic_mapa@quicinc.com>
+>> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v6.h |   7 +
+>>   .../qualcomm/phy-qcom-qmp-qserdes-txrx-ufs-v7.h    |  67 ++++++++
+>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c            | 180 +++++++++++ 
+>> +++++++++-
+>>   3 files changed, 246 insertions(+), 8 deletions(-)
+>>
 > 
-> Can you change this part of the code to look like this?
+> <snip>
 > 
-> #define CDNS_PCIE_HPA_IP_REG_BANK(a)              (a)
-> #define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK(a)     (a)
-> #define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON(a)     (a)
-> #define CDNS_PCIE_HPA_AXI_SLAVE(a)                (a)
-> #define CDNS_PCIE_HPA_AXI_MASTER(a)               (a)
+> This change breaks UFS on the SM8550-HDK:
 > 
-> 
-> 
-> The offset we designed is: (Cixtech)
-> #define CDNS_PCIE_HPA_IP_REG_BANK 0x1000
-> #define CDNS_PCIE_HPA_IP_CFG_CTRL_REG_BANK 0x4c00
-> #define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON 0xf000
-> #define CDNS_PCIE_HPA_AXI_SLAVE 0x9000
-> #define CDNS_PCIE_HPA_AXI_MASTER 0xb000
-> #define CDNS_PCIE_HPA_AXI_HLS_REGISTERS 0xc000
-> #define CDNS_PCIE_HPA_DTI_REGISTERS 0xd000
-> #define CDNS_PCIE_HPA_AXI_RAS_REGISTERS 0xe000
-> #define CDNS_PCIE_HPA_DMA_BASE 0xf400
-> #define CDNS_PCIE_HPA_DMA_COMMON_BASE 0xf800
-> 
-> 
-> The original register bank consumed at least 48MB address space which is 
-> begin from 0x0000_0000 to 0x03020000. Because there is unoccupied 
-> address space between every two register banks , our hardware remaps the 
-> registers to a smaller address space which means the register bank 
-> offset address is changed by custormer. So, we cannot utilise the common 
-> code directly without rewriting the function.
-> 
-> 
-> We submit and pull a Cadence case: #46872873
-> 
-> We will also reply to you in the case.
+> [    7.418161] qcom-qmp-ufs-phy 1d80000.phy: phy initialization timed-out
+> [    7.427021] phy phy-1d80000.phy.0: phy poweron failed --> -110
+> [    7.493514] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
+> ...
 
-Reply from Cadence case Manikandan:
-Another option I can propose is to pass these values through the DTS 
-file … (Hopefully that would be lesser changes)
+Hi Neil,
 
-Hans:
-I agree to get it through the DTS attribute, please modify it, so as to 
-be more flexible. This offset value may be modified when RTL is integrated.
+Thanks for testing and reporting.
+I did tested this patch on SM8750 MTP, SM8750 QRD, SM8650 MTP, SM8550 
+MTP and SM8850 QRD all of these have rate B and hence no issue.
 
-Best regards,
-Hans
+Unfortunately only SM8550 HDK platform which UFS4.0 and RateA couldn't 
+get tested. As we know SM8550 with gear 5 only support rate A.
+
+I was applying rate B setting without checking for mode type. Since
+SM8550 is only platform which support only rate A with UFS4.0 . Hence
+this could be the issue.
+
+Meanwhile can you help test at your end with below change and let me if 
+it resolves for you. I will also try at my end to test as well.
+
+=============================================================================
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c 
+b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+index 45b3b792696e..b33e2e2b5014 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+@@ -1754,7 +1754,8 @@ static void qmp_ufs_init_registers(struct qmp_ufs 
+*qmp, const struct qmp_phy_cfg
+                 qmp_ufs_init_all(qmp, &cfg->tbls_hs_overlay[i]);
+         }
+
+-       qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
++       if (qmp->mode == PHY_MODE_UFS_HS_B)
++               qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+  }
+
+=================================================================================
+
+
+Thanks,
+Nitin
+
+> 
+> GIT bisect points to:
+> b02cc9a176793b207e959701af1ec26222093b05 is the first bad commit
+> Author: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Date:   Mon Mar 10 14:12:30 2025 -0700
+> 
+>      phy: qcom-qmp-ufs: Add PHY Configuration support for sm8750
+> 
+> bisect log:
+> git bisect start 'ff7f9b199e3f' 'v6.14-rc1'
+> git bisect good 36c18c562846300d4e59f1a65008800b787f4fe4
+> git bisect good 85cf0293c3a75726e7bc54d3efdc5dc783debc07
+> git bisect good b2cd73e18cec75f917d14b9188f82a2fdef64ebe
+> git bisect bad b247639d33ad16ea76797268fd0eef08d8027dfd
+> git bisect good 9b3f2dfdad1cc0ab90a0fa371c8cbee08b2446e3
+> git bisect bad 8dc30c3e4cf8c4e370cf08bd09eb87b0deccd3de
+> git bisect bad 100aeb03a437f30300894091627e4406605ee3cb
+> git bisect bad b2a1a2ae7818c9d8da12bf7b1983c8b9f5fb712b
+> git bisect good 8f831f272b4c89aa13b45bd010c2c18ad97a3f1b
+> git bisect good e45cc62c23428eefbae18a9b4d88d10749741bdd
+> git bisect bad ebf198f17b5ac967db6256f4083bbcbdcc2a3100
+> git bisect good 12185bc38f7667b1d895b2165a8a47335a4cf31b
+> git bisect bad e46e59b77a9e6f322ef1ad08a8874211f389cf47
+> git bisect bad b02cc9a176793b207e959701af1ec26222093b05
+> 
+> CI run: https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba- 
+> tester/-/jobs/229880#L1281
+> 
+> #regzbot introduced: b02cc9a17679
+> 
+> Neil
+
 
