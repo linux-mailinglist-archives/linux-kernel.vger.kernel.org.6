@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-575048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE87EA6ECF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:47:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107F6A6ECE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3483B8BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:43:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 382BB7A1C33
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3051EA7FD;
-	Tue, 25 Mar 2025 09:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBC1DE4C2;
+	Tue, 25 Mar 2025 09:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="g4HCkfsF"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z4rZA/qg"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEB91946AA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680802E3399
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895843; cv=none; b=Tz1UqrGrDLPEP9Xdi+6A+qtWwl8R0XnQPkXf/t9HSWtODqv/QmvaGt9pKY8PNFLz5gcvW94f/MrdZMr73YGYAMMS/fbjN8W07t7311/oOtdj6hnZllF+HoQXsSmyT5t4PDNDk8eEpySZuUlFVkSv0EBgi9NZj4jz53NYiHxBtPQ=
+	t=1742895973; cv=none; b=HE54MHands8AQrdvFs8Cjva5rONG4mgd+I3+16ym+PoeA6MuVv/5068SxArfbQhqaN8G4F7eEhqM0SdQS2JwKtXAwyW0P9FMMHiqsvvhRPZRBaZXk6HHXmkoNc2GdDD/GWyN9u0Kjca5WuiSOUGpWscZ1OiRmOCuYmg8kQE0G/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895843; c=relaxed/simple;
-	bh=TYIKRFmySxjaYkrzWC6O+A1EEpgPYclffCAzpy/s7Go=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=t6em6me0nxQWyXfRJx6EOQzZmFOPk7OTi3Ist05u3EIbF+fjznUK9GN42ZBSX20vQTExNTTDjf/ew9h12cdQOoZGkiM323Lyr9t+ClAG1y70y0Cnrm7TdS01iY+GRZrk25B4qHoOpwjnqWyFUmQW8qgY6qzJzB6zFNEXFvJsjSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=g4HCkfsF; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1742895973; c=relaxed/simple;
+	bh=KxaPfmUvSFnV3Byq3QqC+CSZjErbzsYdDMoKikjwIGo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X5dkceO0JPjSti1h58ruFFJUlg7bgZdCzkSXfeg2P1D2JhECbywp+tYjGEptSxWXtovxJ7bCGItO5tRKQRa91C7sC2mvOFxlOWUcnqHTl6Z/urR2UkyJ/HJrqo1WAcjJ4EBtlFAnyuPIjL3pIEmsmUOOPihC4qoVLPwMomQUFB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z4rZA/qg; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6ff035e9aso9798962a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=v2KhdyEfE1+Z09fS//IwfD9BpZAAnrKgq8D0E/CrNbM=;
-  b=g4HCkfsFWzng8WSNB72ZEPZTfkhHndqwt1nUIFglGLCdIifX2WF4Znpy
-   zvOk6uyYMRkt0lHuxd6lKu0srq35qmKPkkWBhTzShY+ENb7UqqqJFIwe0
-   dMFTsRAU045kdK95kwoZTcrlNp/7yR0KzQdrBp3Aowjrwo4ISGdInkcTo
-   Y=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.14,274,1736809200"; 
-   d="scan'208";a="214612573"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 10:43:58 +0100
-Date: Tue, 25 Mar 2025 10:43:57 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Erick Karanja <karanja99erick@gmail.com>
-cc: gregkh@linuxfoundation.org, outreachy@lists.linux.dev, 
-    philipp.g.hortmann@gmail.com, davidzalman.101@gmail.com, 
-    vivek6429.ts@gmail.com, viro@zeniv.linux.org.uk, 
-    linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Rename variable supportRateNum
-In-Reply-To: <20250325091220.38601-1-karanja99erick@gmail.com>
-Message-ID: <58c6f23e-1fb-fef6-8177-4f24ad559889@inria.fr>
-References: <20250325091220.38601-1-karanja99erick@gmail.com>
+        d=linaro.org; s=google; t=1742895970; x=1743500770; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IbefRUQKW2oql/88hpKv3fFad6yESLUR8BZTv5IsOP0=;
+        b=z4rZA/qgUpvD2iU+efBlQ7bWMsQvXwDh2o5un+PKtQvZc8aTSsof0v2flPdwM724+O
+         2JA7X8MZaBslhCKvsowbHJzXSkkRcKeM6JjTPIlKh5HPyxq1JQIpPrj12zyB1Lz4XOhV
+         Wd1dFbxrDhFVMssT//qUw1XUL4jPLSjk+SL+eLNEs+Apnw0lDV8WwsXYnhg57zo/mrkI
+         VUk+jAriuRX9YXG/VUez/t+mw19/G6ZPKbqPlVLHJHv2Q6TfbP/FoWriLVQno7QkpC+j
+         9m+dkmX1WOwoi5//KqdxlBrv2lpZ+NU4AEOeCSVI3jZYpT0cAKR61MT+IV2Ji2ap5YFa
+         p9Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742895970; x=1743500770;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IbefRUQKW2oql/88hpKv3fFad6yESLUR8BZTv5IsOP0=;
+        b=g9z/Lby8q8LhCCiYTtcOW1l0WioWoGz5IxDJcXqHxLPow+AQULXLrzlgQ6bovNSUsa
+         Va0h+i8vgLq50wEC2CVc33N61ye+Q5a2z+PbLPAOt0bBG5FzKwhuObhkebHzlSIT6jNU
+         04up8esf7mav0vQcb11YR150io1VrRCZc/y/iQf8gTodOCbpXWtThRnGXVQLCrp/upxO
+         +JYLFIXvuUveIKqBYleYAxgBffG5i8TfWS62X7VGVJ0U6EwaRBLzyrwlkAoYOxy9rb2M
+         e7xXEmWxhoRRcKa/jn4g2CIdMjdd6roH1hKnikeXWvLgavuU2KKBlXMD7EB68JKUNjQ+
+         bB/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU9pp0piIjWRYaAk3GJL+ySIHlopNOnhDfPHoZrpz1RmJ8nUEvZNLIiWsNJ4awtyuvcMzxlOL9NgyZsRp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUp7A64JyQZMSk1A4q57aun5GDykr8OiS0ofjj4/00rE+6Cjsx
+	MT+eCsNsqh/XjBHhZH9gY+sJ7nCcgBGW6L1+Y9ls7BRyTfhcEITrtORKelQ25LpuQO61YBraWqj
+	E1WI=
+X-Gm-Gg: ASbGnctQe++rAP6NSn7bsLnAm/ugoGUlDAllyP1t/DNyVfd5ndAR43atcQepU/QL1Wb
+	UIXiQc+1hvQvGFkav7bv0llEgzdmq+hX7cLLx6eOOG/rppEzk64ZKAsKkSZF81kzQdcM86qX5FR
+	68Ymjps4IILotT7UC9gnlJ19s0fbu8cgoqmoMRXH5Yqj4L/bQA8FmyjsXrJRRYC6WrrA4u5xRn0
+	j677rz7kIf/GZ2+zYGJbW/1cmd+9RWwe4L1kJ2I+WOq2xYEvT9tFuwOLi0aMkGPgviNwGAL4ZJJ
+	5zaTO3hVsylWKrH/eCK9G4+3Ti/fOWX1ao3zdrLrZ4PVbLvHCHPbPieU/KV1kUV55vaHAY+Yiia
+	u/nLp2AzsArEcWGXiLQGOMBH3tDKQ
+X-Google-Smtp-Source: AGHT+IFYMNqZbEEZU24hSgKcW3m5RLIViDlNIgnffwEY/e9N3Ve3Ev3qTdJRHo9n8Lr2y8eJMqGUHg==
+X-Received: by 2002:a17:907:972a:b0:ac3:cff:80f1 with SMTP id a640c23a62f3a-ac3f258cee9mr1765840966b.54.1742895969537;
+        Tue, 25 Mar 2025 02:46:09 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef8e509dsm832834566b.68.2025.03.25.02.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 02:46:09 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 0/2] firmware: exynos-acpm: allow use during system
+ shutdown
+Date: Tue, 25 Mar 2025 09:46:06 +0000
+Message-Id: <20250325-acpm-atomic-v3-0-c66aae7df925@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF574mcC/23MSwqDMBSF4a1Ixk3Jw3ilo+6jdBDjVS9UI4mEF
+ nHvjY4qdHgOfP/KIgbCyG7FygImiuSnPPSlYG6wU4+c2ryZEsoIrSS3bh65XfxIjgutAUwjjMS
+ OZTEH7Oh91B7PvAeKiw+fI57k/v7vJMkF75q6hqZFwEreXzTZ4K8+9GwPJfWLyzNWGUNbA5QVS
+ qjMCW/b9gWJkyPp5AAAAA==
+X-Change-ID: 20250321-acpm-atomic-033775b051ef
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
+One user of this ACPM driver is a PMIC driver that needs to communicate
+with the PMIC during late system shutdown [1] and at that time we are
+not allowed to sleep anymore.
 
+This series address this by switching the code to using udelay() in the
+specific case of system shutdown. This approach was inspired by I2C's
+i2c_in_atomic_xfer_mode(), which has to deal with a similar corner
+case.
 
-On Tue, 25 Mar 2025, Erick Karanja wrote:
+Link: https://lore.kernel.org/all/20250323-s2mpg10-v1-29-d08943702707@linaro.org/ [1]
 
-> Rename the variable `supportRateNum` to `support_rate_num` to adhere to
-> Linux kernel coding standards by using snake_case instead of CamelCase.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- switch to unconditional udelay() (Krzysztof)
+- Link to v2: https://lore.kernel.org/r/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org
 
-Maybe it would make sense to do supportRate at the same time, since they
-seem to be closely related?
+Changes in v2:
+- add missing ktime.h include
+- switch to ktime_before() instead of !ktime_after()
+- add link to user requiring this change to cover letter
+- collect Tudor's Rb
+- Link to v1: https://lore.kernel.org/r/20250321-acpm-atomic-v1-0-fb887bde7e61@linaro.org
 
-julia
+---
+André Draszik (2):
+      firmware: exynos-acpm: use ktime APIs for timeout detection
+      firmware: exynos-acpm: allow use during system shutdown
 
->
-> Fixes checkpatch.pl warning:
->     CHECK: Avoid CamelCase: <supportRateNum>
->
-> Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/core/rtw_ap.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-> index 50022bb5911e..5124260602c8 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-> @@ -370,7 +370,7 @@ void add_RATid(struct adapter *padapter, struct sta_info *psta, u8 rssi_level)
->  void update_bmc_sta(struct adapter *padapter)
->  {
->  	unsigned char network_type;
-> -	int supportRateNum = 0;
-> +	int support_rate_num = 0;
->  	unsigned int tx_ra_bitmap = 0;
->  	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
->  	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
-> @@ -396,9 +396,9 @@ void update_bmc_sta(struct adapter *padapter)
->  		/* psta->dot118021XPrivacy = _NO_PRIVACY_;//!!! remove it, because it has been set before this. */
->
->  		/* prepare for add_RATid */
-> -		supportRateNum = rtw_get_rateset_len((u8 *)&pcur_network->supported_rates);
-> +		support_rate_num = rtw_get_rateset_len((u8 *)&pcur_network->supported_rates);
->  		network_type = rtw_check_network_type((u8 *)&pcur_network->supported_rates,
-> -						      supportRateNum,
-> +						      support_rate_num,
->  						      pcur_network->configuration.ds_config
->  		);
->  		if (is_supported_tx_cck(network_type)) {
-> @@ -893,7 +893,7 @@ int rtw_check_beacon_data(struct adapter *padapter, u8 *pbuf,  int len)
->  	);
->  	if (p) {
->  		memcpy(supportRate, p + 2, ie_len);
-> -		supportRateNum = ie_len;
-> +		support_rate_num = ie_len;
->  	}
->
->  	/* get ext_supported rates */
-> @@ -904,11 +904,12 @@ int rtw_check_beacon_data(struct adapter *padapter, u8 *pbuf,  int len)
->  		pbss_network->ie_length - _BEACON_IE_OFFSET_
->  	);
->  	if (p) {
-> -		memcpy(supportRate + supportRateNum, p + 2, ie_len);
-> -		supportRateNum += ie_len;
-> +		memcpy(supportRate + support_rate_num, p + 2, ie_len);
-> +		support_rate_num += ie_len;
->  	}
->
-> -	network_type = rtw_check_network_type(supportRate, supportRateNum, channel);
-> +	network_type = rtw_check_network_type(supportRate, support_rate_num,
-> +					      channel);
->
->  	rtw_set_supported_rate(pbss_network->supported_rates, network_type);
->
-> --
-> 2.43.0
->
->
->
+ drivers/firmware/samsung/exynos-acpm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250321-acpm-atomic-033775b051ef
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
