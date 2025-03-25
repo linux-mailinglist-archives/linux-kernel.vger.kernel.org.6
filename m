@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-574934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D02A6EBBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:37:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69441A6EBBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123311894FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F185F16ACCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBC5257421;
-	Tue, 25 Mar 2025 08:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B192257435;
+	Tue, 25 Mar 2025 08:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oUhH3K8X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m7w1MT0D"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uv0FcZqC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UDZ4vAc5"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F25253F38;
-	Tue, 25 Mar 2025 08:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8F62571D1;
+	Tue, 25 Mar 2025 08:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742891710; cv=none; b=U23dqXYUjEPkeFvCHDo6freMO+qDfvEii+bYyvvPw2mZ2LBJvzdmuB6y0wZAgCf3FHc6+mb2r5KxYxd2QYOMDB55Qijbtz6xXOxjZWAlEs1oq6whPyC7kZvwEZlBPma+KTy3ie/JkzMxs0Uicj4Mz5zztRi6143F6ZBvnDm4TIo=
+	t=1742891711; cv=none; b=gvJTDCLjmxcciODZRVBTUqlofte3C6RlSYfxlv2dMS7XVuAynUZ3FqiQWjLLF9LrkBSBmutUFn0vvhO12zDBPd5aN3nTqCx5C+Snu5i93blgs6erZ9vfUu3Q0GN9dxwbE/NMkSq3yITGfV7B25vbUfOpM3Ib9MIfShymkd3TViM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742891710; c=relaxed/simple;
-	bh=rf2HfJYhUCin9SFhHhfRIF6ycCo5RE0VFxL/DmZhIK0=;
+	s=arc-20240116; t=1742891711; c=relaxed/simple;
+	bh=R5/Y1drLQwgMvbxLh9dIelr4GjzkicZ+F1kOgEMlHkU=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Y2BtHtAwmtdPVanVQ/loxDviFpLhUpR6d9GOP7fSwjrKny81Ml1jp62tKRQv7vTirDaJOMiUK3M/AchV3FrDMi+S3NMkymOLUPpjhMrYMfAOZxIfTKWGoL5CD/ZZ7X5UtR9KWqljcA/rxm1PAFggZ0wY0lE1kQLX8e2FCXVWyUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oUhH3K8X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m7w1MT0D; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Em1bz7uvnAtqB3PbEFSQ6qrqCPCPbxJkhpyT4IAGCLpKgqFJTl4kdGaxsPNRHj1TxxbGpyj7f6lrcWF0jFFMDElIpodUziqNbVGLcc34b9Y1U9l2EBXY/rJPh1YbR+Wefe8hCeAG/NLnXPEnLSX6vsOsWt8sed2sSarEp7OC4ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uv0FcZqC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UDZ4vAc5; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 08:35:06 -0000
+Date: Tue, 25 Mar 2025 08:35:07 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1742891707;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GLUJH341Jr7pWgGf+1jPktPWaXVpq+ZfMdJANEsSPXg=;
-	b=oUhH3K8XDEEwSmadg9wtENZqMs876tYy8va0lnnIRLbxq09lzCG6wD7r82ouHcW52hxfKt
-	ZSNwiTRvqS439bE3GFtMActWC2uewypQzsme0SfVtKBdk8utoVj3z1brYhmrQjyPrbA27e
-	ovPfIx9a28eOTfcFKn3ke7MAEr2Q5wcg8lvGBk42uMOTP789u5iuKKlLhCpm9BlGtKEYTy
-	7PgKfVWCAYkMtrjYj9Gd5fUDUhd5OkIOmBRtlvtHIOGz+CzTrBAM4IJ8NxllJyVnkOZ8yl
-	vd3E4UolylzkVaiG1sCP8XCsY6W6enqaKLeKfmdKl6uebbNrL5u2mYSFyUXDZQ==
+	bh=o/yfm0fdo1Ru0tHqiNxX1NPVQkzd0AJYL4OW1RbQJek=;
+	b=uv0FcZqCzm1NoEm8E/n8Hwxfi1Gtzugqn/Xs4bFJVmNp9pWCmLk7D2hSIenb0pVppKkhNU
+	+nNNpekoAv/pNxu9Xa/ins63UaJi2dcM0wfl26g9H538muIPfEGkLfHbxesjjdsd1+2Uqw
+	yvJfdBwOJoADMHCplNAgPB7J9Dz+HJa/EmR0BJWR9WPOrp/H49Dqv/0MGfPcarcbTVKs4w
+	/QOn4VXzlw3ceG7KMCs147Y1zev3pg/D9mzIxV8I5GYoqOGXVZGwuM9EhKPVR0PKg1EOgU
+	qLRounNRBs0AMC4vezBtVLlyNVfl4H4n/T+wVoZMHXpmWK3LqU3wT5+hsSUrYg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1742891707;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,29 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GLUJH341Jr7pWgGf+1jPktPWaXVpq+ZfMdJANEsSPXg=;
-	b=m7w1MT0DyiK6VqkqjjMF+tFK8wIKBYE2keuQcCNZFzURoH+xDqpOK8vPLq6KYlZwmx4U6F
-	zSt2n1l0TcyXuRDQ==
+	bh=o/yfm0fdo1Ru0tHqiNxX1NPVQkzd0AJYL4OW1RbQJek=;
+	b=UDZ4vAc5MTqaqX4FqT07TuEpuGXq9fbWmoJejpBalb6RPIBy81oSItcqzdiUK7Dj9UkWkO
+	PFuQ28DJPlZA8jCA==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool: Properly disable uaccess validation
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+Subject: [tip: objtool/urgent] objtool: Silence more KCOV warnings
+Cc: Ingo Molnar <mingo@kernel.org>, kernel test robot <lkp@intel.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <0e95581c1d2107fb5f59418edf2b26bba38b0cbb.1742852846.git.jpoimboe@kernel.org>
+ <66a61a0b65d74e072d3dc02384e395edb2adc3c5.1742852846.git.jpoimboe@kernel.org>
 References:
- <0e95581c1d2107fb5f59418edf2b26bba38b0cbb.1742852846.git.jpoimboe@kernel.org>
+ <66a61a0b65d74e072d3dc02384e395edb2adc3c5.1742852846.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174289170674.14745.2223636098662849576.tip-bot2@tip-bot2>
+Message-ID: <174289170727.14745.16099451430887766436.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,68 +84,67 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/urgent branch of tip:
 
-Commit-ID:     e1a9dda74dbffbc3fa2069ff418a1876dc99fb14
-Gitweb:        https://git.kernel.org/tip/e1a9dda74dbffbc3fa2069ff418a1876dc99fb14
+Commit-ID:     6b023c7842048c4bbeede802f3cf36b96c7a8b25
+Gitweb:        https://git.kernel.org/tip/6b023c7842048c4bbeede802f3cf36b96c7a8b25
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Mon, 24 Mar 2025 14:55:58 -07:00
+AuthorDate:    Mon, 24 Mar 2025 14:55:57 -07:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 25 Mar 2025 09:20:26 +01:00
 
-objtool: Properly disable uaccess validation
+objtool: Silence more KCOV warnings
 
-If opts.uaccess isn't set, the uaccess validation is disabled, but only
-partially: it doesn't read the uaccess_safe_builtin list but still tries
-to do the validation.  Disable it completely to prevent false warnings.
+In the past there were issues with KCOV triggering unreachable
+instruction warnings, which is why unreachable warnings are now disabled
+with CONFIG_KCOV.
 
+Now some new KCOV warnings are showing up with GCC 14:
+
+  vmlinux.o: warning: objtool: cpuset_write_resmask() falls through to next function cpuset_update_active_cpus.cold()
+  drivers/usb/core/driver.o: error: objtool: usb_deregister() falls through to next function usb_match_device()
+  sound/soc/codecs/snd-soc-wcd934x.o: warning: objtool: .text.wcd934x_slim_irq_handler: unexpected end of section
+
+All are caused by GCC KCOV not finishing an optimization, leaving behind
+a never-taken conditional branch to a basic block which falls through to
+the next function (or end of section).
+
+At a high level this is similar to the unreachable warnings mentioned
+above, in that KCOV isn't fully removing dead code.  Treat it the same
+way by adding these to the list of warnings to ignore with CONFIG_KCOV.
+
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/0e95581c1d2107fb5f59418edf2b26bba38b0cbb.1742852846.git.jpoimboe@kernel.org
+Link: https://lore.kernel.org/r/66a61a0b65d74e072d3dc02384e395edb2adc3c5.1742852846.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/Z9iTsI09AEBlxlHC@gmail.com
+Closes: https://lore.kernel.org/oe-kbuild-all/202503180044.oH9gyPeg-lkp@intel.com/
 ---
- tools/objtool/check.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ tools/objtool/check.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index cb66e6b..b0ef14a 100644
+index 2f7aff1..cb66e6b 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -3187,7 +3187,7 @@ static int handle_insn_ops(struct instruction *insn,
- 		if (update_cfi_state(insn, next_insn, &state->cfi, op))
+@@ -3485,6 +3485,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 			    !strncmp(func->name, "__pfx_", 6))
+ 				return 0;
+ 
++			if (file->ignore_unreachables)
++				return 0;
++
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn_func(insn)->name);
  			return 1;
- 
--		if (!insn->alt_group)
-+		if (!opts.uaccess || !insn->alt_group)
- 			continue;
- 
- 		if (op->dest.type == OP_DEST_PUSHF) {
-@@ -3647,6 +3647,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			return 0;
- 
- 		case INSN_STAC:
-+			if (!opts.uaccess)
-+				break;
+@@ -3694,6 +3697,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 		if (!next_insn) {
+ 			if (state.cfi.cfa.base == CFI_UNDEFINED)
+ 				return 0;
++			if (file->ignore_unreachables)
++				return 0;
 +
- 			if (state.uaccess) {
- 				WARN_INSN(insn, "recursive UACCESS enable");
- 				return 1;
-@@ -3656,6 +3659,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			break;
- 
- 		case INSN_CLAC:
-+			if (!opts.uaccess)
-+				break;
-+
- 			if (!state.uaccess && func) {
- 				WARN_INSN(insn, "redundant UACCESS disable");
- 				return 1;
-@@ -4114,7 +4120,8 @@ static int validate_symbol(struct objtool_file *file, struct section *sec,
- 	if (!insn || insn->visited)
- 		return 0;
- 
--	state->uaccess = sym->uaccess_safe;
-+	if (opts.uaccess)
-+		state->uaccess = sym->uaccess_safe;
- 
- 	ret = validate_branch(file, insn_func(insn), insn, *state);
- 	if (ret)
+ 			WARN("%s: unexpected end of section", sec->name);
+ 			return 1;
+ 		}
 
