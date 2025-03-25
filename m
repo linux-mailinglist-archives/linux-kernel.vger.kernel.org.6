@@ -1,420 +1,190 @@
-Return-Path: <linux-kernel+bounces-576034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA76A70A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9E9A70A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7B03B77FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B232F3BFA6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7C41E5B9E;
-	Tue, 25 Mar 2025 19:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC511F03E6;
+	Tue, 25 Mar 2025 19:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhEprT7T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gyVsavqr"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250B1E1E1D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9E61E1E1D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 19:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742930399; cv=none; b=be6knaxIU2RBAOeY6AsnJZORU9S47nT5xVygVe54JnLdFPzdmXXXzwAlf+4ePjUb/nq97aXmZ833bd7Ik1FlXoRF7ruTlD+FB+IjlpjkRgfQlDhdjiVT8pXuZAM/np1d0QdPGlB19bvtKXKVddxUYFW9wvSVYy9ZwOtcMhVup2I=
+	t=1742930506; cv=none; b=jmNQZAfayq8utPLmcj+XpvQvpQ74+tjLvho+aRrNfkVRQw/eVDC/tvrRYVVYs9e98BH2qIYd16vn74AlgAjYujRNwqf3G5MesQ8skAr9gqp55b90NN3J/98l3AGEA/iOCF13WmHGPNql2Vn2O/Gw3qENgBmxIY4gPUX7cfgCYns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742930399; c=relaxed/simple;
-	bh=QA3wRUW6R1BTE0w4hCoYsF8cTWEjA0tFYpeJv5HGjiY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RZia1ESpyEvmMJzXpAGinYXUyRoA5qo6bZITnhfsZelUeqSvwlvbPxYSz3sUnd76dCi7Vd/o85z8B9k+/0PoXgqoyMoC6lJ3FKlUjrCu8L5Q+D6WbIwi9BQtL+JXI7ojLKWl1K4zrcjekksAoRTS/7uJBOkmqkOoffwLk4u+G+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhEprT7T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742930395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RPItviY8/0WhEmkAlyHXuooS8Uc3VmDSsaun24VLMh8=;
-	b=YhEprT7Ts6NEpkX6BRdIdMlJhpduti4SLIbBgZOnpJAYxZZRyCqoW4xlv8RPT1raBIIAI7
-	GiBbEbxxNILfaOZ9dxK7qwNebhBbdRL62eJI20z4OvyK668CxrkCM3tA6LZ/GXuWpMYX9R
-	6pCCRENygTFvNTJBqY+r5l9O0c4ZeGs=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-424-8yr57XHiONSn7vlDx8HLOw-1; Tue, 25 Mar 2025 15:19:54 -0400
-X-MC-Unique: 8yr57XHiONSn7vlDx8HLOw-1
-X-Mimecast-MFC-AGG-ID: 8yr57XHiONSn7vlDx8HLOw_1742930394
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5b9333642so689288785a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:19:54 -0700 (PDT)
+	s=arc-20240116; t=1742930506; c=relaxed/simple;
+	bh=md+Nvy/friY/gG6k6yqPyGwrpTI8eWyHK4kFwy43AdQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XZZropA2Uxtejl6PXzimFY3DMQjYjluaY+LBDpwsQmotB+sIas0cnUCu5YNo7uFET1QFNzFNpCYUQmV2KstLsppIIBPCblPkZJ3EM0aAHThUiSp6AFSqtXMZMMxREfPO3inYH4bhfU+u+Ll7hLa4YMOM4PW+mgXi0v6YCoemHJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gyVsavqr; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so63022185e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 12:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742930502; x=1743535302; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i04oqWV50VZLFwP1WBYwkjJ9UvrcYxbthnWBqIqEM+M=;
+        b=gyVsavqr3JUX38dr82SidarWyXt7U5HJqMtvAXsuaYyHdXEKp4U8yHa2MxWjxX2NpF
+         59ppWmMN5yP/QsBUzdiDB1WGsqOx3MMUsHN7ToFOBbMDUi6tfqtRG93hRUl4Z11TkS+K
+         vWpRMkALnI7K8KVcDLjyYLi92jyCWxC3Qd+tjP3T6kW3L5ER3pBg0kLoYmUc25xyx2Ix
+         1jbX8iTotXWzUewdNS2XBVRch/cGaXLIWTui6ErPIazRybnkg9A6dOj/1UXaqPyPoOni
+         vfh7txSJF0sfaGq298WtlZDF7TC+3MWd1oqoiA89dcG8+AAxSbDgZnvM1WK8HYszrNY5
+         VU5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742930394; x=1743535194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742930502; x=1743535302;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RPItviY8/0WhEmkAlyHXuooS8Uc3VmDSsaun24VLMh8=;
-        b=whFNmX1hDJ7mTVRBXmxAkwA+aAe1ug2vilB+gABLqNl3umHRgFSctIMWAi4q03PWjU
-         ++SN0+hB9CA3taVi3jAkRYMcyiiQBAqt4bU1N6bnVFNsbQdNMONPIdgBl1ULKMzYYmFy
-         EFFahDX2uKttvU2+3sdQwh+tanqNbe39k4gsCmG5j/aCafmTb01g11UqHKhEdFfItzwU
-         oWC4Rn5REaNXk+8hnDTxbFSKusvojNIkNk/LhhOLAlSiZgEDBrlHomZBIBkz5DEl4Ub9
-         f8lFaKGmCNtjtzmdBuNw0EPhXrdGVehofQzQb24ImrLJJ9cBzGNnI+m16Vyf4+GKZWDJ
-         CWSg==
-X-Gm-Message-State: AOJu0YyIkpy8oXpb/7Y26zMV0MKqFCjIVY8QzKRbEslwr7dJ+1nybegZ
-	Ev5K3E1yN6NC6tZ7xhKmIsSuxvvAVKktw2YpmMAwAJv4v/y+o3G7eM5TcbfOVRM0NqQ1srPMTle
-	9nGJZXPJkAEZgGrb1IXLW09PIaimmXX6/wrhzsId7mQF1OfuyakZbZUnUOLmhta1RQkfjK4kPdP
-	pZn7XT+uGVw60C2Z/hoB2KCKLRr+qPvSEmXhRmH+YAnPI6
-X-Gm-Gg: ASbGncsbnZrAnY3bBjul9oWWkYcCw+VbY6S/4h0QkcZD15eGLtDZvntE1lIR9k64r92
-	HNFE/3B9xLTVRoaL9//S50FqnlTSB61lcwCvbXxX0JShSOKOOIBDMc8ke+numdmK6cJBKj1v9GL
-	DVZRHUyijoYNNctYS/3A81s+T5xDyZU9+17AJS0P5Y2oj7wrLlLm64TDrGdqbqOzI6RIUkSoP9m
-	BMmXrtgH+L6VKIOKgMRAvquS8r5LG1RxQB9laNfFoliB6YexeywGp1G2+7tT6lKADPd+KmX0xov
-	R1P2tGEmsw==
-X-Received: by 2002:a05:620a:2494:b0:7c5:48bc:8c84 with SMTP id af79cd13be357-7c5ba15d8b6mr2139620785a.15.1742930393476;
-        Tue, 25 Mar 2025 12:19:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHnSDRvPkYHIS5gCFPV87Hk6I+UiKsIH9jkyhEF8jaj+I7eCFJJS+R1GvMrv8zc2ruYiMN8+g==
-X-Received: by 2002:a05:620a:2494:b0:7c5:48bc:8c84 with SMTP id af79cd13be357-7c5ba15d8b6mr2139613885a.15.1742930392788;
-        Tue, 25 Mar 2025 12:19:52 -0700 (PDT)
-Received: from localhost ([99.209.85.25])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c5b935e8a9sm670571085a.114.2025.03.25.12.19.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 12:19:52 -0700 (PDT)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	x86@kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	xingwei lee <xrivendell7@gmail.com>,
-	yuxin wang <wang1315768607@163.com>,
-	Marius Fleischer <fleischermarius@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Rik van Riel <riel@surriel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Xu <peterx@redhat.com>
-Subject: [PATCH v3] x86/mm/pat: Fix VM_PAT handling when fork() fails in copy_page_range()
-Date: Tue, 25 Mar 2025 20:19:51 +0100
-Message-ID: <20250325191951.471185-1-david@redhat.com>
-X-Mailer: git-send-email 2.48.1
+        bh=i04oqWV50VZLFwP1WBYwkjJ9UvrcYxbthnWBqIqEM+M=;
+        b=LppnbFeYN4g7Qj6FkSIBonrihnRusyopLNaffPWJYfiFjMQDDCv3aSrl91GujylbFd
+         byTFrKlX5BZfKBJt/8utCbrfSs4LmMAxJV9DgjDuofpZO5eGrrwZc++RFhKS04dJ8F6s
+         vLlMHrvdYweSbZfIVAfIvPEUE29rnx6AV9iO1ybfROkT9FwX8ddFy3Vh/AzNWQoJwWb+
+         ppExvWd106vTKq4QFC25ysyGoYGGBOj1ivxqu+anT3hfqmO3ZAtFv7pOh353++oKo7zz
+         irRBsxWKyjFT1hvYQ19f3oZcjdbxjnmU0SeM3rw+T5nUnF8n7l6UoPLuOp57Rr0tI+gD
+         drZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKKgZxthhBJ5PR0YLWMpxObKn9IT95BzDo/hEQH/zGd0nIncydV1yD4k9cS+D2BlyUu01LdSJ7UZu+FK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbcMgqwhK4ahNriUQ1Lbec+jMrtQv/FJXtzs1GYXn9sAmsuhxb
+	bYysDGesToFKUBaNoebv2nOlG8Nl+yOeVSTJTDW3373VLYvLWAtjwJEKnyrapw8=
+X-Gm-Gg: ASbGncvqHqpVK6mlmicrhCgLnLIlWDQF+hudWIdvmNuNBWwugRNbT+Rr6eMaw+w0/0b
+	JkikpZ0knmOxX/m3jE+GesbrgwUMzcvnpopzn4Y1W5i5v7jJD86Oo+D98HbCaRxNExvK2NUeV5/
+	itFBBa0ekvpAzk1eo3dW7x0wczmCFTsxa+ZF0C/n9xye2oa8MJVBH/Nrl33/sw2NHa6qYHkYHnv
+	SpvL1p2oiR+w/AIwUpXSL/KhDMdTki2BsOINf5bwIM7nXdmi/8ZEcHFwh9psgmAHHORPPcKpTiP
+	jYDKCO627qZNU8unM+9zjDdNGvYibd0LFKlIeMgaaSswVlgofwD9qIdL
+X-Google-Smtp-Source: AGHT+IEZF7k07Jx1ad5ysjRNAg5B+AJzjdfZigdy2MLueMpoQ8j3EXhwNoIeB55rhCmkG2CbsETXjg==
+X-Received: by 2002:a5d:6482:0:b0:390:fe4b:70b9 with SMTP id ffacd0b85a97d-3997f908ce3mr19247979f8f.21.1742930502174;
+        Tue, 25 Mar 2025 12:21:42 -0700 (PDT)
+Received: from localhost ([2a00:23c8:b70a:ae01:9cf7:b69:fc50:980f])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9a3f81sm14773053f8f.35.2025.03.25.12.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 12:21:41 -0700 (PDT)
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Subject: [PATCH v2 0/4] Add support for OLED panel used on Snapdragon
+ Lenovo T14s Gen6
+Date: Tue, 25 Mar 2025 19:21:25 +0000
+Message-Id: <20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADUC42cC/5WNQQ6CMBAAv2J6dk1bQY0n/2E4tN0FNsEutgQ1h
+ L9b+YHHmcPMojIlpqyuu0UlmjmzxAJ2v1Ohd7EjYCysrLa1PloNLx5BvHcJAzyDPGAyVQYZCGF
+ 0kQbw56oltAZPWquSGRO1/N4W96Zwz3mS9NmOs/nZP+KzAQO69qHyGPBi3W3g6JIcJHWqWdf1C
+ 33XxtvRAAAA
+X-Change-ID: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
+To: Douglas Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+ Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ devicetree@vger.kernel.org, 
+ Christopher Obbard <christopher.obbard@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2859;
+ i=christopher.obbard@linaro.org; h=from:subject:message-id;
+ bh=md+Nvy/friY/gG6k6yqPyGwrpTI8eWyHK4kFwy43AdQ=;
+ b=owEBbQKS/ZANAwAKAWNNxPBocEb4AcsmYgBn4wJA5S31TTOVHN/v6jFBnPQPIFmt24PojTU3r
+ GzCNEMBFGeJAjMEAAEKAB0WIQTxi9yLbCX5CqI9UXRjTcTwaHBG+AUCZ+MCQAAKCRBjTcTwaHBG
+ +LgID/9Ca9OBPpTaa3Uaky7aiCgjrixN5V4DB83M/leY7itaG4Gy8fLKMFlQsjm6WcSlffEonsj
+ cqANrY1LTbyV5uIcPrTAfgRPN8vx9yhb4KRHMwI+LjNzG0UaNFmIhWnggtPwx3RqLn9XOVHZvHP
+ ZGOllCayiqwTnNi/GnD0JqTi2Ow4afPdys9Ym++9V5FqKdsaex1dC+tnpiuvfRlXZDyYj7+tQ16
+ YGRV8EgSRCIwWJMxTjOSDDYX68urtiuzsEydMEHgRZt4iHaqq8t9iKW9k3e8gBduXyHXy+sMy8v
+ q2UpEPIpLSJ0Hp7RidGbuVbH00DNE1sPiFh19u+hOQomqQhN6yUn710EOP3Z7Cr5F4Rzt+9V2F5
+ sqAvu+/Ri8/WUJGka0qsaDlD+BNIGFpUQyH/Sq6s2atdA6zBhpfcGcohZG7AnBk+vwPHEs0+pLK
+ JkVoBtDT0aPe5TDI1ZNrhYYfKhStxamyq22vVPZMO3hfqGUiP3dc5d2JIF2fhmEJXQgGo89LeIQ
+ wc8t0Rx9WWuQpskQtixI+lb1G+2Dxmdx0bNUT5WDlfN/e9Yw0xmExLwYqX+mcuXS28ZyjowSXrZ
+ RI1ClvJAA4bIx7hPzYOQLfnZZ6qpirB7nUMjy2wyzZic4mWLe243LO/G781tzhPNXUX2HQ0cA5d
+ vW6LO6FITQk6scQ==
+X-Developer-Key: i=christopher.obbard@linaro.org; a=openpgp;
+ fpr=F18BDC8B6C25F90AA23D5174634DC4F0687046F8
 
-If track_pfn_copy() fails, we already added the dst VMA to the maple
-tree. As fork() fails, we'll cleanup the maple tree, and stumble over
-the dst VMA for which we neither performed any reservation nor copied
-any page tables.
+The Snapdragon Lenovo T14s Gen6 can be bought with a number of different
+panels. This patch series adds support for the OLED model which has a
+Samsung ATNA40YK20 panel.
 
-Consequently untrack_pfn() will see VM_PAT and try obtaining the
-PAT information from the page table -- which fails because the page
-table was not copied.
+The first patch documents the panel in the existing driver.
 
-The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
-if track_pfn_copy() fails. However, the whole thing is about "simply"
-clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
-and performed a reservation, but copying the page tables fails, we'll
-simply clear the VM_PAT flag, not properly undoing the reservation ...
-which is also wrong.
+The second patch adds the missing HPD gpio to the T14s devicetree. I
+think that this patch could be split into two; one patch for the pinctrl
+addition and one patch for adding the hpd-gpio property to the T14s
+panel. But that can come in V3.
 
-So let's fix it properly: set the VM_PAT flag only if the reservation
-succeeded (leaving it clear initially), and undo the reservation if
-anything goes wrong while copying the page tables: clearing the VM_PAT
-flag after undoing the reservation.
+The third patch adds the eDP panel to the T14s OLED devicetree.
 
-Note that any copied page table entries will get zapped when the VMA will
-get removed later, after copy_page_range() succeeded; as VM_PAT is not set
-then, we won't try cleaning VM_PAT up once more and untrack_pfn() will be
-happy. Note that leaving these page tables in place without a reservation
-is not a problem, as we are aborting fork(); this process will never run.
+The fourth (and final) patch works around a problem when reading the
+eDP panel's maximum backlight value. Without this patch, the maximum
+brightness is detected as 0, thus meaning the backlight is never enabled.
+I expect this patch to need a few rounds of rework/testing on other
+devices!
 
-A reproducer can trigger this usually at the first try:
+The raw EDID of the panel is:
 
-  https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/reproducers/pat_fork.c
+00 ff ff ff ff ff ff 00 4c 83 9f 41 00 00 00 00
+00 21 01 04 b5 1e 13 78 02 0c f1 ae 52 3c b9 23
+0c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 ca fe 40 64 b0 08 18 70 20 08
+88 00 2e bd 10 00 00 1b ca fe 40 64 b0 08 38 77
+08 20 88 00 2e bd 10 00 00 1b 00 00 00 fe 00 53
+44 43 20 20 20 20 20 20 20 20 20 20 00 00 00 fe
+00 41 54 4e 41 34 30 59 4b 32 30 2d 30 20 01 cf
+02 03 0f 00 e3 05 80 00 e6 06 05 01 74 60 07 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 b7
 
-  [   45.239440] WARNING: CPU: 26 PID: 11650 at arch/x86/mm/pat/memtype.c:983 get_pat_info+0xf6/0x110
-  [   45.241082] Modules linked in: ...
-  [   45.249119] CPU: 26 UID: 0 PID: 11650 Comm: repro3 Not tainted 6.12.0-rc5+ #92
-  [   45.250598] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
-  [   45.252181] RIP: 0010:get_pat_info+0xf6/0x110
-  ...
-  [   45.268513] Call Trace:
-  [   45.269003]  <TASK>
-  [   45.269425]  ? __warn.cold+0xb7/0x14d
-  [   45.270131]  ? get_pat_info+0xf6/0x110
-  [   45.270846]  ? report_bug+0xff/0x140
-  [   45.271519]  ? handle_bug+0x58/0x90
-  [   45.272192]  ? exc_invalid_op+0x17/0x70
-  [   45.272935]  ? asm_exc_invalid_op+0x1a/0x20
-  [   45.273717]  ? get_pat_info+0xf6/0x110
-  [   45.274438]  ? get_pat_info+0x71/0x110
-  [   45.275165]  untrack_pfn+0x52/0x110
-  [   45.275835]  unmap_single_vma+0xa6/0xe0
-  [   45.276549]  unmap_vmas+0x105/0x1f0
-  [   45.277256]  exit_mmap+0xf6/0x460
-  [   45.277913]  __mmput+0x4b/0x120
-  [   45.278512]  copy_process+0x1bf6/0x2aa0
-  [   45.279264]  kernel_clone+0xab/0x440
-  [   45.279959]  __do_sys_clone+0x66/0x90
-  [   45.280650]  do_syscall_64+0x95/0x180
-
-Likely this case was missed in commit d155df53f310 ("x86/mm/pat: clear
-VM_PAT if copy_p4d_range failed")
-
-... and instead of undoing the reservation we simply cleared the VM_PAT flag.
-
-Keep the documentation of these functions in include/linux/pgtable.h,
-one place is more than sufficient -- we should clean that up for the other
-functions like track_pfn_remap/untrack_pfn separately.
-
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: yuxin wang <wang1315768607@163.com>
-Closes: https://lore.kernel.org/lkml/CABOYnLx_dnqzpCW99G81DmOr+2UzdmZMk=T3uxwNxwz+R1RAwg@mail.gmail.com/
-Reported-by: Marius Fleischer <fleischermarius@gmail.com>
-Closes: https://lore.kernel.org/lkml/CAJg=8jwijTP5fre8woS4JVJQ8iUA6v+iNcsOgtj9Zfpc3obDOQ@mail.gmail.com/
-Fixes: d155df53f310 ("x86/mm/pat: clear VM_PAT if copy_p4d_range failed")
-Fixes: 2ab640379a0a ("x86: PAT: hooks in generic vm code to help archs to track pfnmap regions - v3")
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Xu <peterx@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
 ---
-
-v2 -> v3:
-* Make some !MMU configs happy by just moving the code into memtype.c
-
-v1 -> v2:
-* Avoid a second get_pat_info() [and thereby fix the error checking]
-  by passing the pfn from track_pfn_copy() to untrack_pfn_copy()
-* Simplify untrack_pfn_copy() by calling untrack_pfn().
-* Retested
-
-Not sure if we want to CC stable ... it's really hard to trigger in
-sane environments.
+Changes in v2:
+- Use the existing atna33xc20 driver rather than panel-edp.
+- Add eDP panel into OLED devicetree.
+- Add patch to read the correct maximum brightness from the eDP panel.
+- Link to v1: https://lore.kernel.org/r/20250320-wip-obbardc-qcom-t14s-oled-panel-v1-1-05bc4bdcd82a@linaro.org
 
 ---
- arch/x86/mm/pat/memtype.c | 52 +++++++++++++++++++++------------------
- include/linux/pgtable.h   | 28 ++++++++++++++++-----
- kernel/fork.c             |  4 +++
- mm/memory.c               | 11 +++------
- 4 files changed, 58 insertions(+), 37 deletions(-)
+Christopher Obbard (4):
+      dt-bindings: display: panel: samsung,atna40yk20: document ATNA40YK20
+      arm64: dts: qcom: x1e78100-t14s: add hpd gpio to LCD panel
+      arm64: dts: qcom: x1e78100-t14s-oled: add eDP panel
+      drm/dp: fallback to maximum when PWM bit count is zero
 
-diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
-index feb8cc6a12bf2..d721cc19addbd 100644
---- a/arch/x86/mm/pat/memtype.c
-+++ b/arch/x86/mm/pat/memtype.c
-@@ -984,29 +984,42 @@ static int get_pat_info(struct vm_area_struct *vma, resource_size_t *paddr,
- 	return -EINVAL;
- }
- 
--/*
-- * track_pfn_copy is called when vma that is covering the pfnmap gets
-- * copied through copy_page_range().
-- *
-- * If the vma has a linear pfn mapping for the entire range, we get the prot
-- * from pte and reserve the entire vma range with single reserve_pfn_range call.
-- */
--int track_pfn_copy(struct vm_area_struct *vma)
-+int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma, unsigned long *pfn)
- {
-+	const unsigned long vma_size = src_vma->vm_end - src_vma->vm_start;
- 	resource_size_t paddr;
--	unsigned long vma_size = vma->vm_end - vma->vm_start;
- 	pgprot_t pgprot;
-+	int rc;
- 
--	if (vma->vm_flags & VM_PAT) {
--		if (get_pat_info(vma, &paddr, &pgprot))
--			return -EINVAL;
--		/* reserve the whole chunk covered by vma. */
--		return reserve_pfn_range(paddr, vma_size, &pgprot, 1);
--	}
-+	if (!(src_vma->vm_flags & VM_PAT))
-+		return 0;
-+
-+	/*
-+	 * Duplicate the PAT information for the dst VMA based on the src
-+	 * VMA.
-+	 */
-+	if (get_pat_info(src_vma, &paddr, &pgprot))
-+		return -EINVAL;
-+	rc = reserve_pfn_range(paddr, vma_size, &pgprot, 1);
-+	if (rc)
-+		return rc;
- 
-+	/* Reservation for the destination VMA succeeded. */
-+	vm_flags_set(dst_vma, VM_PAT);
-+	*pfn = PHYS_PFN(paddr);
- 	return 0;
- }
- 
-+void untrack_pfn_copy(struct vm_area_struct *dst_vma, unsigned long pfn)
-+{
-+	untrack_pfn(dst_vma, pfn, dst_vma->vm_end - dst_vma->vm_start, true);
-+	/*
-+	 * Reservation was freed, any copied page tables will get cleaned
-+	 * up later, but without getting PAT involved again.
-+	 */
-+}
-+
- /*
-  * prot is passed in as a parameter for the new mapping. If the vma has
-  * a linear pfn mapping for the entire range, or no vma is provided,
-@@ -1095,15 +1108,6 @@ void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
- 	}
- }
- 
--/*
-- * untrack_pfn_clear is called if the following situation fits:
-- *
-- * 1) while mremapping a pfnmap for a new region,  with the old vma after
-- * its pfnmap page table has been removed.  The new vma has a new pfnmap
-- * to the same pfn & cache type with VM_PAT set.
-- * 2) while duplicating vm area, the new vma fails to copy the pgtable from
-- * old vma.
-- */
- void untrack_pfn_clear(struct vm_area_struct *vma)
- {
- 	vm_flags_clear(vma, VM_PAT);
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 94d267d02372e..4c107e17c547e 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1508,14 +1508,25 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
- }
- 
- /*
-- * track_pfn_copy is called when vma that is covering the pfnmap gets
-- * copied through copy_page_range().
-+ * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
-+ * tables copied during copy_page_range(). On success, stores the pfn to be
-+ * passed to untrack_pfn_copy().
-  */
--static inline int track_pfn_copy(struct vm_area_struct *vma)
-+static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma, unsigned long *pfn)
- {
- 	return 0;
- }
- 
-+/*
-+ * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
-+ * copy_page_range(), but after track_pfn_copy() was already called.
-+ */
-+static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-+		unsigned long pfn)
-+{
-+}
-+
- /*
-  * untrack_pfn is called while unmapping a pfnmap for a region.
-  * untrack can be called for a specific region indicated by pfn and size or
-@@ -1528,8 +1539,10 @@ static inline void untrack_pfn(struct vm_area_struct *vma,
- }
- 
- /*
-- * untrack_pfn_clear is called while mremapping a pfnmap for a new region
-- * or fails to copy pgtable during duplicate vm area.
-+ * untrack_pfn_clear is called in the following cases on a VM_PFNMAP VMA:
-+ *
-+ * 1) During mremap() on the src VMA after the page tables were moved.
-+ * 2) During fork() on the dst VMA, immediately after duplicating the src VMA.
-  */
- static inline void untrack_pfn_clear(struct vm_area_struct *vma)
- {
-@@ -1540,7 +1553,10 @@ extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
- 			   unsigned long size);
- extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
- 			     pfn_t pfn);
--extern int track_pfn_copy(struct vm_area_struct *vma);
-+extern int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma, unsigned long *pfn);
-+extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-+		unsigned long pfn);
- extern void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
- 			unsigned long size, bool mm_wr_locked);
- extern void untrack_pfn_clear(struct vm_area_struct *vma);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 735405a9c5f32..ca2ca3884f763 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -504,6 +504,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- 	vma_numab_state_init(new);
- 	dup_anon_vma_name(orig, new);
- 
-+	/* track_pfn_copy() will later take care of copying internal state. */
-+	if (unlikely(new->vm_flags & VM_PFNMAP))
-+		untrack_pfn_clear(new);
-+
- 	return new;
- }
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index fb7b8dc751679..dc8efa1358e94 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1362,12 +1362,12 @@ int
- copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- {
- 	pgd_t *src_pgd, *dst_pgd;
--	unsigned long next;
- 	unsigned long addr = src_vma->vm_start;
- 	unsigned long end = src_vma->vm_end;
- 	struct mm_struct *dst_mm = dst_vma->vm_mm;
- 	struct mm_struct *src_mm = src_vma->vm_mm;
- 	struct mmu_notifier_range range;
-+	unsigned long next, pfn;
- 	bool is_cow;
- 	int ret;
- 
-@@ -1378,11 +1378,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
- 
- 	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
--		/*
--		 * We do not free on error cases below as remove_vma
--		 * gets called on error from higher level routine
--		 */
--		ret = track_pfn_copy(src_vma);
-+		ret = track_pfn_copy(dst_vma, src_vma, &pfn);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1419,7 +1415,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 			continue;
- 		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
- 					    addr, next))) {
--			untrack_pfn_clear(dst_vma);
- 			ret = -ENOMEM;
- 			break;
- 		}
-@@ -1429,6 +1424,8 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 		raw_write_seqcount_end(&src_mm->write_protect_seq);
- 		mmu_notifier_invalidate_range_end(&range);
- 	}
-+	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
-+		untrack_pfn_copy(dst_vma, pfn);
- 	return ret;
- }
- 
+ .../bindings/display/panel/samsung,atna33xc20.yaml |  2 +
+ .../qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts    | 10 +++++
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    | 11 +++++
+ drivers/gpu/drm/display/drm_dp_helper.c            | 51 ++++++++++++++--------
+ 4 files changed, 57 insertions(+), 17 deletions(-)
+---
+base-commit: b6ae34803e82511009e2b78dc4fd154330ecdc2d
+change-id: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
 
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+Best regards,
 -- 
-2.48.1
+Christopher Obbard <christopher.obbard@linaro.org>
 
 
