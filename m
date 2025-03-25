@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-574654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2655A6E829
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:58:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA64DA6E83A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 03:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBE2189687B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6943AE692
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E329B18A6AD;
-	Tue, 25 Mar 2025 01:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S6r7GxtJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F6715C140;
+	Tue, 25 Mar 2025 02:03:40 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D95D178372
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B6CB666;
+	Tue, 25 Mar 2025 02:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742867878; cv=none; b=IfR59CYZTQr+FLFZhjhrhv114C4LTSzknxAcYl7x5CytdLRlR19FDJEtzUi/H6npMaorxj288IMPR7lWVeJZh031Nzue+nHOExq+KFmRzRGhuCDVVOe3cukouFL+WuhB4wSUdylM7uWUBKmcV2agkcjE6ebzxrW7OvBS/K76XY8=
+	t=1742868220; cv=none; b=M6D2lU1h9j4p4aWBaWORMg1c0BDA6modHzBhcSX2NdtkGQOFQ5kfXURICN1z6Bgt7hEQ5SuhMD5VdUN5+X/uPA3zb5OyKLMi8L8eVu1als/+ctsHNSSO7arE9JNAawawdHBXiIgKqqBc/gTfhegt2yTgb1D3riTiimUH2qgaAJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742867878; c=relaxed/simple;
-	bh=ugsMpxNkJUSFp+7lz8ioeDr01ht/xTBvE8gTxUNDI9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TTkJ+qGdp4v8YJ+V2i70BDBEXf/XG3kosH/Nkf9zAkAJ2ibVZfmAKGkQF17TewQVTLDWCdNFTZZwAOTj3OXlYFT7lwlYsm63TbGLzN1ZgV9huAOBad/MS44YeINu54M0ZKDAqCS5fIjT9z0ORDzTAvGDub2JmyOgp9Gnct0WnW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S6r7GxtJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742867875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QJ8V4OG2SIBR15qRmgINunGJlllawBsHryHVXkf+1VU=;
-	b=S6r7GxtJCD6/GXxcDswQl+yWPVHx+PBBbJTJtVijLyFpi9g+qprbRqsmoitwy/z2715NBJ
-	B+p6SJy5/oNL6ONqZhITKDfdahCef4sTywPxoGGYabCurt09SBl8guy6D32ZFRWeznTQyA
-	0QIfw1gW6Ke5g49+StdCuw0wpOETdgU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-16-QrdUzY6RNTiwNCnTTmx6UQ-1; Mon,
- 24 Mar 2025 21:57:52 -0400
-X-MC-Unique: QrdUzY6RNTiwNCnTTmx6UQ-1
-X-Mimecast-MFC-AGG-ID: QrdUzY6RNTiwNCnTTmx6UQ_1742867870
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3680619560BB;
-	Tue, 25 Mar 2025 01:57:50 +0000 (UTC)
-Received: from starship.lan (unknown [10.22.65.191])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BE190180176A;
-	Tue, 25 Mar 2025 01:57:47 +0000 (UTC)
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	s=arc-20240116; t=1742868220; c=relaxed/simple;
+	bh=WFE7MOFRJd0H1oOzfPjhras3v2n3Oy+pB4YlnYimc/A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VAVc/GzntiefezSWPR6oTKE7EpvPeFrXnwVJbmxe144n9pZBVkeW5zkPLpZyGj1GsTsBL+gL2qWdlSSCgVs/5FOQFBTHufQB4QehyH8EYzTo0kTOdiBJnnFpIfxSgjURwMHq3esD2S/SWNcgEs6CmItaPdCwhwvf69D+ld+Jovs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZMCqp3wF4z4f3kj8;
+	Tue, 25 Mar 2025 10:03:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 67A851A0D4E;
+	Tue, 25 Mar 2025 10:03:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDnSl_rDuJnainyHQ--.34151S4;
+	Tue, 25 Mar 2025 10:03:25 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	yukuai3@huawei.com,
+	jgq516@gmail.com
+Cc: linux-raid@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>,
-	James Houghton <jthoughton@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	linux-kselftest@vger.kernel.org,
-	Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2 2/2] KVM: selftests: access_tracking_perf_test: add option to skip the sanity check
-Date: Mon, 24 Mar 2025 21:57:41 -0400
-Message-Id: <20250325015741.2478906-3-mlevitsk@redhat.com>
-In-Reply-To: <20250325015741.2478906-1-mlevitsk@redhat.com>
-References: <20250325015741.2478906-1-mlevitsk@redhat.com>
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] md/raid10: fix missing discard IO accounting
+Date: Tue, 25 Mar 2025 09:57:46 +0800
+Message-Id: <20250325015746.3195035-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,131 +56,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-CM-TRANSID:gCh0CgDnSl_rDuJnainyHQ--.34151S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrWxAFWUXryDXrW7GFyrXrb_yoWkJrg_K3
+	Z3WryxKr4fKrn3Kw1Fvr1Ivryj9w109FZ7WrWUWFWUZF98Wryjyry0gFWDtr15CF95Zr15
+	A3WkWF1jvF1q9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Add an option to skip sanity check of number of still idle pages,
-and set it by default to skip, in case hypervisor or NUMA balancing
-is detected.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+md_account_bio() is not called from raid10_handle_discard(), now that we
+handle bitmap inside md_account_bio(), also fix missing
+bitmap_startwrite for discard.
+
+Test whole disk discard for 20G raid10:
+
+Before:
+Device   d/s     dMB/s   drqm/s  %drqm d_await dareq-sz
+md0    48.00     16.00     0.00   0.00    5.42   341.33
+
+After:
+Device   d/s     dMB/s   drqm/s  %drqm d_await dareq-sz
+md0    68.00  20462.00     0.00   0.00    2.65 308133.65
+
+Fixes: 528bc2cf2fcc ("md/raid10: enable io accounting")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- .../selftests/kvm/access_tracking_perf_test.c | 33 ++++++++++++++++---
- .../testing/selftests/kvm/include/test_util.h |  1 +
- tools/testing/selftests/kvm/lib/test_util.c   |  7 ++++
- 3 files changed, 37 insertions(+), 4 deletions(-)
+ drivers/md/raid10.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/kvm/access_tracking_perf_test.c b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-index 3c7defd34f56..6d50c829f00c 100644
---- a/tools/testing/selftests/kvm/access_tracking_perf_test.c
-+++ b/tools/testing/selftests/kvm/access_tracking_perf_test.c
-@@ -65,6 +65,8 @@ static int vcpu_last_completed_iteration[KVM_MAX_VCPUS];
- /* Whether to overlap the regions of memory vCPUs access. */
- static bool overlap_memory_access;
- 
-+static int warn_on_too_many_idle_pages = -1;
-+
- struct test_params {
- 	/* The backing source for the region of memory. */
- 	enum vm_mem_backing_src_type backing_src;
-@@ -184,11 +186,10 @@ static void mark_vcpu_memory_idle(struct kvm_vm *vm,
- 	 * are cached and the guest won't see the "idle" bit cleared.
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index 9d8516acf2fd..6ef65b4d1093 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1735,6 +1735,7 @@ static int raid10_handle_discard(struct mddev *mddev, struct bio *bio)
+ 	 * The discard bio returns only first r10bio finishes
  	 */
- 	if (still_idle >= pages / 10) {
--#ifdef __x86_64__
--		TEST_ASSERT(this_cpu_has(X86_FEATURE_HYPERVISOR),
-+		TEST_ASSERT(warn_on_too_many_idle_pages,
- 			    "vCPU%d: Too many pages still idle (%lu out of %lu)",
- 			    vcpu_idx, still_idle, pages);
--#endif
-+
- 		printf("WARNING: vCPU%d: Too many pages still idle (%lu out of %lu), "
- 		       "this will affect performance results.\n",
- 		       vcpu_idx, still_idle, pages);
-@@ -342,6 +343,8 @@ static void help(char *name)
- 	printf(" -v: specify the number of vCPUs to run.\n");
- 	printf(" -o: Overlap guest memory accesses instead of partitioning\n"
- 	       "     them into a separate region of memory for each vCPU.\n");
-+	printf(" -w: Skip or force enable the check that after dirtying the guest memory, most (90%%) of \n"
-+	       "it is reported as dirty again (0/1)");
- 	backing_src_help("-s");
- 	puts("");
- 	exit(0);
-@@ -359,7 +362,7 @@ int main(int argc, char *argv[])
- 
- 	guest_modes_append_default();
- 
--	while ((opt = getopt(argc, argv, "hm:b:v:os:")) != -1) {
-+	while ((opt = getopt(argc, argv, "hm:b:v:os:w:")) != -1) {
- 		switch (opt) {
- 		case 'm':
- 			guest_modes_cmdline(optarg);
-@@ -376,6 +379,11 @@ int main(int argc, char *argv[])
- 		case 's':
- 			params.backing_src = parse_backing_src_type(optarg);
- 			break;
-+		case 'w':
-+			warn_on_too_many_idle_pages =
-+				atoi_non_negative("1 - enable warning, 0 - disable",
-+						  optarg);
-+			break;
- 		case 'h':
- 		default:
- 			help(argv[0]);
-@@ -386,6 +394,23 @@ int main(int argc, char *argv[])
- 	page_idle_fd = open("/sys/kernel/mm/page_idle/bitmap", O_RDWR);
- 	__TEST_REQUIRE(page_idle_fd >= 0,
- 		       "CONFIG_IDLE_PAGE_TRACKING is not enabled");
-+	if (warn_on_too_many_idle_pages == -1) {
-+#ifdef __x86_64__
-+		if (this_cpu_has(X86_FEATURE_HYPERVISOR)) {
-+			printf("Skipping idle page count sanity check, because the test is run nested\n");
-+			warn_on_too_many_idle_pages = 0;
-+		} else
-+#endif
-+		if (is_numa_balancing_enabled()) {
-+			printf("Skipping idle page count sanity check, because NUMA balance is enabled\n");
-+			warn_on_too_many_idle_pages = 0;
-+		} else {
-+			warn_on_too_many_idle_pages = 1;
-+		}
-+	} else if (!warn_on_too_many_idle_pages) {
-+		printf("Skipping idle page count sanity check, because this was requested by the user\n");
-+	}
-+
- 	close(page_idle_fd);
- 
- 	for_each_guest_mode(run_test, &params);
-diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-index 3e473058849f..1bc9b0a92427 100644
---- a/tools/testing/selftests/kvm/include/test_util.h
-+++ b/tools/testing/selftests/kvm/include/test_util.h
-@@ -153,6 +153,7 @@ bool is_backing_src_hugetlb(uint32_t i);
- void backing_src_help(const char *flag);
- enum vm_mem_backing_src_type parse_backing_src_type(const char *type_name);
- long get_run_delay(void);
-+bool is_numa_balancing_enabled(void);
- 
- /*
-  * Whether or not the given source type is shared memory (as opposed to
-diff --git a/tools/testing/selftests/kvm/lib/test_util.c b/tools/testing/selftests/kvm/lib/test_util.c
-index 3dc8538f5d69..03eb99af9b8d 100644
---- a/tools/testing/selftests/kvm/lib/test_util.c
-+++ b/tools/testing/selftests/kvm/lib/test_util.c
-@@ -176,6 +176,13 @@ size_t get_trans_hugepagesz(void)
- 	return get_sysfs_val("/sys/kernel/mm/transparent_hugepage/hpage_pmd_size");
- }
- 
-+bool is_numa_balancing_enabled(void)
-+{
-+	if (!test_sysfs_path("/proc/sys/kernel/numa_balancing"))
-+		return false;
-+	return get_sysfs_val("/proc/sys/kernel/numa_balancing") == 1;
-+}
-+
- size_t get_def_hugetlb_pagesz(void)
- {
- 	char buf[64];
+ 	if (first_copy) {
++		md_account_bio(mddev, &bio);
+ 		r10_bio->master_bio = bio;
+ 		set_bit(R10BIO_Discard, &r10_bio->state);
+ 		first_copy = false;
 -- 
-2.26.3
+2.39.2
 
 
