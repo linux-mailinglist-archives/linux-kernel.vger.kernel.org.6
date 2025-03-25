@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-575189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA2AA6F0E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:16:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52666A6EFB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE71A167690
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB52189C51B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE3F255E3C;
-	Tue, 25 Mar 2025 11:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qmon.net header.i=@qmon.net header.b="r3FoCtrO"
-Received: from outbound.soverin.net (outbound.soverin.net [185.233.34.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9586816A395;
-	Tue, 25 Mar 2025 11:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.34.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575882561DE;
+	Tue, 25 Mar 2025 11:10:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCC633EC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742901359; cv=none; b=RiRGfnGNgJ+dV3umT6GgdPTb9KGp3nRAvztzAxmx8BqVFMo8nnH7MPFeca1g9NXKlLJ/WaUX+F6VYcrTyZ4SbIUOfzM4aw42YUPlurUlpAoUBArub6GRVw8lqMr2sGzj/eCA53Fc42w2nTnMWnaUB8gKiRzHBTj8YcGLkpvb1do=
+	t=1742901005; cv=none; b=ffhVPCCDWsCk+4kYGf5HE0r4GgDf0shkyVd2TnSsZ6+OFsABRUhg8JtaD+fxXCOyuZ2Y3Y+m8Yfza6f0hKLbi7a1FnAOWnm8XtadH0FahVSefP7xC3iprNlKnESwC0mf7oDCyo8Kzb9z8qrIoYKQ5mPHQsmz2TParGSytSO+XNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742901359; c=relaxed/simple;
-	bh=bTLjwuVyybm/I/wCHz+nDM/wvGZp90Vk4U3oPodejdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qxdwwBRvOAaAlpyTlAmT62giVv0zXbiImXpgO1bZZPav7k/8aUYGeKydv2DOfncDtINGGAQLSUzkTlBluCxTqBDxLWmTE2vGhxlDH9PLfdABGU+/gz9+GYd1cQtSBrdyl/yZy8j2g90fSVZ4JciNQuwD9H/Nv342vOQHy+onCAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qmon.net; spf=pass smtp.mailfrom=qmon.net; dkim=pass (2048-bit key) header.d=qmon.net header.i=@qmon.net header.b=r3FoCtrO; arc=none smtp.client-ip=185.233.34.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qmon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qmon.net
-Received: from smtp.soverin.net (c04cst-smtp-sov02.int.sover.in [10.10.4.100])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by outbound.soverin.net (Postfix) with ESMTPS id 4ZMRyF59pSz5Y;
-	Tue, 25 Mar 2025 11:09:25 +0000 (UTC)
-Received: from smtp.soverin.net (smtp.soverin.net [10.10.4.100]) by soverin.net (Postfix) with ESMTPSA id 4ZMRyD4TSVzML;
-	Tue, 25 Mar 2025 11:09:24 +0000 (UTC)
-Authentication-Results: smtp.soverin.net;
-	dkim=pass (2048-bit key; unprotected) header.d=qmon.net header.i=@qmon.net header.a=rsa-sha256 header.s=soverin1 header.b=r3FoCtrO;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qmon.net; s=soverin1;
-	t=1742900965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cGOfD2XTG3f2KGCnBBCpnWBs5ydWIF56orN3h4fexfI=;
-	b=r3FoCtrOdZY5uz3a4IWefaYR/yF9GCJwVwz6OPF/s3+iZQezt1m0luRyELbSFNh1oXjS3Y
-	TenjkE7Pwl+to1A2eAgE1ZuFPvbXdKH0zUapeJsie8/v1M4fCtmCNVz/ljAbFwSluvla5V
-	cUwZbqQJCvpCUyAvwKvjAWZa2PkZsbanYqQDP/o3hR+3A+niH8kRgZMqA07gp/OdgzzQeN
-	SCpJAliHzTXy3L/ydV3sEdoh+2Ee9BD7WPcV7ulIgJFMM8L7crZUjWD6r02rbzO3UXbVDU
-	x+Onj0gIaJ+s5ljhcJZwVRyZq1QimJrCZKV/nycNsBmjrrLMXmRWX0pBLcceZA==
-X-CM-Envelope: MS4xfE9qJlPwytaJvqH5tq1m5QU56wWQBwUboh0Qh6Yd9gPG3SfGIEto9BX9dKfT5mpckLp6hdBINDG1q65gThfj8VIClkPgn3mJ+gwirrZuazommNFE7IVj f8pr3U4gUKXfDXH9/HS4vCY4QB+ycLV97kwbthBKcJKphbKv4/clwyNx5phT0PVdlrFynOx3BW/v61eZV/Xwy7uLbQMxLLUtDLTSjfKhjgcwBPENDF1iunsZ 1pa3vf8wIMJR9J6b86EksOEXARDZDDa7g5G4zoNAKMbUiwjQ/QQwruJlEGIGadx8Qjy/Zc0DUaxCp4hvLjZEC86gwgq6Qyd7qOwt8fM9r5Pui8OilCkRpakL lX70dETd699Ogy4m4MnbmpHYwqV7LS2PDeBBtr0av5iRrl0ov5xtVaXURGB1YSG39F2lLT4ddjq8wlBThQ79j39LTLOWoiBPH1FtOKaFBX+ZDVW+3IaxLxUU Ja4Pnl+rUa0s9ti265wJnrKHJ2lB7mLFXNtzyD9ihJLPqfDP1TQ6/6LxPcB6CYqgmljjQ3n37XnGLCwLZXwdrF03sYzpFs4G7j19BiP9cxfzPzmQ95pnNBg1 M28Bu9gKEAYQ23bly3Hd9ZqyEImn0l2S9+LJHcgo5DrdhvJKmLdHLv7lSZYEz6SL+1M=
-X-CM-Analysis: v=2.4 cv=I7afRMgg c=1 sm=1 tr=0 ts=67e28ee5 a=vzOQIoBu8N4nb49veeH0EQ==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VnNF1IyMAAAA:8 a=K2RAGah4TdK_Dg0oFeQA:9 a=QEXdDO2ut3YA:10
-Message-ID: <8b0b2a41-203d-41f8-888d-2273afb877d0@qmon.net>
-Date: Tue, 25 Mar 2025 11:09:24 +0000
+	s=arc-20240116; t=1742901005; c=relaxed/simple;
+	bh=Mlo9nkuf8hVOFYgL7mLgOdK0xFR9i1nTldeCr0R6Aok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kt+ZhjUIAXQEkH26VXKYprOTdBo/A2CtFQxzfgmMzxmN6qlSkopQ6j+fTKloVOLOjQGeO3lqao1RUSolr2hOtdTCQqmlFHACYW7+Rl+aYuEO3cKWyZ7HBpQY3xcYi//m/ACwiS5bmVw/mpGMrMBr/gjxTUG1N5uezBSj+S0kTIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15BBE1756;
+	Tue, 25 Mar 2025 04:10:09 -0700 (PDT)
+Received: from [10.57.14.116] (unknown [10.57.14.116])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77D013F58B;
+	Tue, 25 Mar 2025 04:10:00 -0700 (PDT)
+Message-ID: <6b217eb3-f8f5-4a25-8fe9-550cc7a15a81@arm.com>
+Date: Tue, 25 Mar 2025 12:09:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [linux-next-20250324]/tool/bpf/bpftool fails to complie on
- linux-next-20250324
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- Saket Kumar Bhaskar <skb99@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org,
- jkacur@redhat.com, lgoncalv@redhat.com, gmonaco@redhat.com,
- williams@redhat.com, tglozar@redhat.com, rostedt@goodmis.org
-References: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
-From: Quentin Monnet <qmo@qmon.net>
-Content-Language: en-GB
-In-Reply-To: <5df6968a-2e5f-468e-b457-fc201535dd4c@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7 v5] sched/fair: Rework feec() to use cost instead of
+ spare capacity
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, lukasz.luba@arm.com, rafael.j.wysocki@intel.com,
+ linux-kernel@vger.kernel.org
+Cc: qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com,
+ luis.machado@arm.com, qperret@google.com
+References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
+ <20250302210539.1563190-4-vincent.guittot@linaro.org>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20250302210539.1563190-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spampanel-Class: ham
 
-2025-03-25 16:02 UTC+0530 ~ Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> Greetings!!!
+Hello Vincent,
+
+On 3/2/25 22:05, Vincent Guittot wrote:
+> feec() looks for the CPU with highest spare capacity in a PD assuming that
+> it will be the best CPU from a energy efficiency PoV because it will
+> require the smallest increase of OPP. Although this is true generally
+> speaking, this policy also filters some others CPUs which will be as
+> efficients because of using the same OPP.
+> In fact, we really care about the cost of the new OPP that will be
+> selected to handle the waking task. In many cases, several CPUs will end
+> up selecting the same OPP and as a result using the same energy cost. In
+> these cases, we can use other metrics to select the best CPU for the same
+> energy cost.
 > 
+> Rework feec() to look 1st for the lowest cost in a PD and then the most
+> performant CPU between CPUs. The cost of the OPP remains the only
+> comparison criteria between Performance Domains.
 > 
-> bpftool fails to complie on linux-next-20250324 repo.
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>   kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
+>   1 file changed, 246 insertions(+), 220 deletions(-)
 > 
-> 
-> Error:
-> 
-> make: *** No rule to make target 'bpftool', needed by '/home/linux/
-> tools/testing/selftests/bpf/tools/include/vmlinux.h'. Stop.
-> make: *** Waiting for unfinished jobs.....
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index d3d1a2ba6b1a..a9b97bbc085f 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
 
+[...]
 
-Thanks! Would be great to have a bit more context on the error (and on
-how to reproduce) for next time. Bpftool itself seems to compile fine,
-the error shows that it's building it from the context of the selftests
-that seems broken.
+>   
+> -	if ((best_fits > prev_fits) ||
+> -	    ((best_fits > 0) && (best_delta < prev_delta)) ||
+> -	    ((best_fits < 0) && (best_actual_cap > prev_actual_cap)))
+> -		target = best_energy_cpu;
+> +		/* Add the energy cost of p */
+> +		delta_nrg = task_util * min_stat.cost;
 
+Not capping task_util to the target CPU's max capacity when computing energy
+means this is ok to have fully-utilized CPUs.
 
-> Git bisect points to commit: 8a635c3856ddb74ed3fe7c856b271cdfeb65f293 as
-> first bad commit.
+Just to re-advertise what can happen with utilization values of CPUs that are
+fully utilized:
 
-Thank you Venkat for the bisect!
+On a Pixel6, placing 3 tasks with:
+period=16ms, duty_cycle=100%, UCLAMP_MAX=700, cpuset=5,6
+I.e. the tasks can run on one medium/big core. UCLAMP_MAX is set such as the
+system doesn't become overutilized.
 
-On a quick look, that commit introduced a definition for BPFTOOL in
-tools/scripts/Makefile.include:
+Tasks are going to bounce on the medium CPU as, if we follow one task:
+1. The task will grow to reach a maximum utilization of ~340 (=1024/3 due to
+the pressure of other tasks)
+2. As the big CPU is less energy efficient than the medium CPU, the big CPU
+will eventually reach an OPP where it will be better to run on the medium CPU
+energy-wise
+3. The task is migrated to the medium CPU. However the task can now grow
+its utilization since there is no pressure from other tasks. So the
+utilization of the task slowly grows.
+4. The medium CPU reaches on OPP where it is more energy efficient to migrate
+the task on the big CPU. We can go to step 1.
 
-	diff --git a/tools/scripts/Makefile.include .../Makefile.include
-	index 0aa4005017c7..71bbe52721b3 100644
-	--- a/tools/scripts/Makefile.include
-	+++ b/tools/scripts/Makefile.include
-	@@ -91,6 +91,9 @@ LLVM_CONFIG	?= llvm-config
-	 LLVM_OBJCOPY	?= llvm-objcopy
-	 LLVM_STRIP	?= llvm-strip
-	
-	+# Some tools require bpftool
-	+BPFTOOL		?= bpftool
-	+
-	 ifeq ($(CC_NO_CLANG), 1)
-	 EXTRA_WARNINGS += -Wstrict-aliasing=3
+As the utilization is only a reflection of how much CPU time the task received,
+util_avg depends on the #tasks/niceness of the co-scheduled tasks. Thus, it is
+really hard to make any assumption based on this value. UCLAMP_MAX puts tasks
+in the exact situation where util_avg doesn't represent the size of the task
+anymore.
 
-But several utilities or selftests under tools/ include
-tools/scripts/Makefile.include _and_ use their own version of the
-$(BPFTOOL) variable, often assigning only if unset, for example in
-tools/testing/selftests/bpf/Makefile:
+------
 
-	BPFTOOL ?= $(DEFAULT_BPFTOOL)
+In this example, niceness is not taken into account, but cf. the other thread,
+other scenarios could be created where the task placement is incorrect/un-stable.
+EAS mainly relies on util_avg, so having correct task estimations should be the
+priority.
 
-My guess is that the new definition from Makefile.include overrides this
-with simply "bpftool" as a value, and the Makefile fails to build it as
-a result.
+------
 
-If I guessed correctly, one workaround would be to rename the variable
-in Makefile.include (and in whatever Makefile now relies on it) into
-something that is not used in the other Makefiles, for example
-BPFTOOL_BINARY.
+As you and Christian I think briefly evoked as an idea, setting the SCHED_IDLE
+policy to UCLAMP_MAX could maybe help. However, this implies:
+1. not being able to set UCLAMP_MIN and UCLAMP_MAX at the same time for a task
+Indeed, as someone might want to have SCHED_NORMAL for it UCLAMP_MIN task
 
-Please copy the BPF mailing list on changes impacting BPF tooling (or
-for BPF-related patchsets in general).
+2. not using feec() for UCLAMP_MAX tasks.
+Indeed, SCHED_IDLE tasks will likely have wrong util_avg values since they don't
+have much running time. So doing energy computation using these values would not
+work.
+Another advantage is that UCLAMP_MAX tasks will impact the util_avg of
+non-UCLAMP_MAX tasks only lightly as their running time will be really low.
+Balancing CPUs based on h_nr_idle rather than h_nr_runnable would also allow
+to have ~the same number of UCLAMP_MAX tasks on all CPUs of the same
+type/capacity.
 
-Thanks,
-Quentin
+------
+
+At the risk of being a bit insistant, I don't see how UCLAMP_MAX tasks could
+be placed using EAS. Either EAS or UCLAMP_MAX needs to change...
 
