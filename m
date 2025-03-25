@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-575752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FF2A706DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:29:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CFD5A706E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BD91713A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FDFE176A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3790025D531;
-	Tue, 25 Mar 2025 16:24:58 +0000 (UTC)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E24478F24;
-	Tue, 25 Mar 2025 16:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F8A25DCF6;
+	Tue, 25 Mar 2025 16:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ELmNXG5V"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4635A25B694;
+	Tue, 25 Mar 2025 16:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919897; cv=none; b=HD9LOydpT7kzgMGkPG5YNbtFk5Y6i93RFFcK1nBaFWYzsl7XLbdq9LxJTXmQ5KEbI2iwvhP9LSyExpsibFXNVjsb/hQaT6SMlzJ3Z7Znd6FDAWhOPFdbe+tOMmbyPqO0KoNFyahnu6jxepg6/l8O0IrYOI5YgGzOYSFV+na96ww=
+	t=1742919935; cv=none; b=JojnzVm6wh6SkkvYEmYPS3MM4V7QK6xry+WQ4cUrFnE5sg3i/FS0tPr36J7qoordNeqwk9XZmCWisUvx5xByt9jCGeSjT83lTEBb8w7+C1geVnCkvi5j+D5TgveH4W8FutZixFCpuXz0BW/sgPUN6Z8AgC2O213K50AuPAns/c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919897; c=relaxed/simple;
-	bh=C7fBDqjXv2CVmINJYOBkk5XGIiofXHQLfQocU+kGCtk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hzfHbnoK2lldlaSAuVj/Peb2af5Kxn9DlRCFlkZn7r5SjeDI285xKFHQwe4ktMZ4IJz1fYWEY8idEN5j0pMdPX4sDpZ2PxWtn41n7uo86qn7Y5XJASr07OB6AoPyCRaYEjDjGIBaxiENtd/rDCwgSgWAkY7mwIWT51RfvKeTzSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86d69774081so2511530241.0;
-        Tue, 25 Mar 2025 09:24:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742919895; x=1743524695;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l3iUGf60hSD8kCkzesJGsUCW6fH2x3e5r2ngVLOx6QY=;
-        b=hqPAHYvPFqCQk+PVzAwDQW+sJrq9BHbjs9HmyAjDXTO0dP10bcgTj2Sc+dSpbSre+z
-         aOTdBVBE1/kbJKkb/EuvO4BXIbUX6LmHssbIpnymCo6ihZqIu8FVVz/T8ZsEDRfIVKqJ
-         7fmUlZdi/i7jEw0KVwujGY0CbcIL3rA9TpB5V7YdR6uRaO1eAOzN8H19AHFnKqjNLWPY
-         LF57MP4xJQaVGLuin5+EMHF0QvrGeQBOWQoBNRCbJVoc5P8vhmVq/t28JJUgntdKEUsD
-         Aw92tgNqp3SSX6qAmpLYyl+3ait1iVyvw0Bh4OdihcPDFsQPIODz18egeTSOP3yqyubx
-         rX+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTVR1Ag5J7D1+GUdWPtr4ZS/S4C2aYzonObmHDMNfMMZAcA1pXgPgycIs2e5Zortn5ecTp8v9lo0UHqXc=@vger.kernel.org, AJvYcCVgHshMf36r38RU3LeS6eKiGYx44iF2uvPf0D+lBpq2Q5JnI82ZWY6WnRortpBbJb7HUjlrrylU1YbLuX83JiG4JC4=@vger.kernel.org, AJvYcCVw5tQCWEkqqWr2HZngDvRtvHXc8P+NJozqcFB6QB8GzHIcoRi5shdm0PUu6fm5cyR6J5T1+d4eypMF9O8S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0cBafIfM9Ee0/MrUfWEq2VoJsFN4WTolz8KDeVEUHmQy6YglM
-	782FXGhecHZObiFsj9X6L6vco9UQFC6P6H3Wd0U5/hguElxiFXOXJxooQVUKdDk=
-X-Gm-Gg: ASbGncsqmxfyr4/5FEItrRYN1zFX2cH0192C5BeGX71j1eUmfzSEbkxOHJOa2TJLrt4
-	Mr+erQEj6vfoelj1++p4TiGGGyerjnRWyy/yVu8XGl+kQJ9ajKmr/EN2+P5BLhqPpHm9qe8xuwO
-	pmW+aI5RwACod6Y7z6Im+LJcyBxLlwebrbE+BETM/CDeOyXjVaccdgSHBK5BDIcpQ6cnI7KPHTt
-	KINDaNEDOPKSbhWaH8XQAChsQXnAjXMMgacPe6kI5LvJTMzaW/QmChbhtG7f2VkLp65BGmGl9oh
-	VygerUxe8l7EPpuIP/8OPaF702NKNFKZY6lmCMHXLryF7XF2xPRAdCykrtsZuZs43Z5KHAJUby+
-	2KvxvV2Y=
-X-Google-Smtp-Source: AGHT+IFto9b5UOUPtnV1wp1D8cIG5F0mOE1Sx7UffouZOawKSn+ZDssypAWeSNwzC+SmvX5A56nDTg==
-X-Received: by 2002:a05:6102:dd2:b0:4bb:b809:36c6 with SMTP id ada2fe7eead31-4c50d4fb6admr14454091137.11.1742919894530;
-        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c50bbb3affsm2061070137.4.2025.03.25.09.24.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86d69774081so2511508241.0;
-        Tue, 25 Mar 2025 09:24:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURJ19LYYbNOK7lgKgTs3QHoG1MJyIPQqd9k88FMl9STr3iG1nbI0TnPiGrvbEtUF74Q3vNyG1C4+QZdXGtuu6kNnY=@vger.kernel.org, AJvYcCUcbxHQvM6qFaNYC4NsRTIfKyxQyODePwGGAOC4PgAwHPF/9EjuBQcdPchJShNQeGeYOEpnob0bkltJcQQ=@vger.kernel.org, AJvYcCVTqJ55g22rByenzIFf/x+j2RVMTAjqqkV31Hr7HO5DcmP9yinGv59m9upGklMlxtYuaaYm5t0Fqe3jsFoK@vger.kernel.org
-X-Received: by 2002:a05:6102:3589:b0:4c2:2beb:b726 with SMTP id
- ada2fe7eead31-4c50d4f1cd2mr11387064137.10.1742919893845; Tue, 25 Mar 2025
- 09:24:53 -0700 (PDT)
+	s=arc-20240116; t=1742919935; c=relaxed/simple;
+	bh=BXB/l04YScle6+SQ16r/GNRKm8jIFSwM2i1fBG35qZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4JpU0U2u0lHhx2TykttMqkjgIzKjVeXavNUzl48XiiI9ynfy5GdXb+YpWWhfytKxqo4VmuIbQNy+Nvy2oW6Vi78wyCGBnE9WMyS4oGiLXNJUK9Td+zfyp224clxAXiGPdl3fMviNpUVvNSaIFoYANXViA+sSuURqkDLgismcZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ELmNXG5V; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 0400F203659D; Tue, 25 Mar 2025 09:25:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0400F203659D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742919928;
+	bh=vAsYO4e2FF8ruSEJfqgRDn/Skz0UOeL97KKsWvDclCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELmNXG5V4eDrSe8Aqp1Esb/HO28PJiDSZCehL+kIX3btbTaAU/w0V9iChjtwp764J
+	 Ewge6UwEWgVPPAvCCsNIRwCr9fjmFU2tUmYiuLOO04/oLElu7D7W0IbyG+WNghUfjQ
+	 71SqlHxLOI/sps5r/aqgpLCCEqXGNyxlCW20WI7w=
+Date: Tue, 25 Mar 2025 09:25:27 -0700
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	longli@microsoft.com, kotaranov@microsoft.com, horms@kernel.org,
+	brett.creeley@amd.com, surenb@google.com,
+	schakrabarti@linux.microsoft.com, kent.overstreet@linux.dev,
+	shradhagupta@linux.microsoft.com, erick.archer@outlook.com,
+	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH 1/3] net: mana: Add speed support in
+ mana_get_link_ksettings
+Message-ID: <20250325162527.GA23398@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1742473341-15262-1-git-send-email-ernis@linux.microsoft.com>
+ <1742473341-15262-2-git-send-email-ernis@linux.microsoft.com>
+ <f4e84b99-53b5-455d-bad2-ef638cafdeae@lunn.ch>
+ <20250324174339.GA29274@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <909eae34-02ac-4acd-8f0e-1194f0049a21@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-11-thierry.bultel.yh@bp.renesas.com>
- <Z-EpPL3tn54E8KG5@shikoro> <TYCPR01MB114922CBDC2911E2F644BDADC8AA42@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <Z-HVD6w6ivYR6pt5@shikoro> <TY3PR01MB1134602E988AD8428422E820086A72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <Z-Jgdi5_SizHzcO0@shikoro> <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11492F2D6D73B2EC18E46D6B98AA72@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Mar 2025 17:24:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU8VSD1Z4ing_NLXyo4x4ErzqkqzeM_n4nXX3h_GYCLnA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrPdMUtwfzLYkd4tA2p5ykjTStKxFm2BOrBAk4-uGOWcV4_ArQkaw_jT80
-Message-ID: <CAMuHMdU8VSD1Z4ing_NLXyo4x4ErzqkqzeM_n4nXX3h_GYCLnA@mail.gmail.com>
-Subject: Re: [PATCH v4 10/13] serial: sh-sci: Add support for RZ/T2H SCI
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	"thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <909eae34-02ac-4acd-8f0e-1194f0049a21@lunn.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi Thierry,
-
-On Tue, 25 Mar 2025 at 11:49, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > > > > +config SERIAL_RZ_SCI
-> > > > > >
-> > > > > > I think this name is too generic. Most RZ-variants so far do not
-> > > > > > have this SoC. Would 'RZT2H' work or is it too narrow then?
-> > > > >
-> > > > > This is too narrow, because for instance the RZ/N2H , which is
-> > > > > very similar, has the same SCI
-> > > >
-> > > > You know the differences better, what could be a suitable name?
-> > >
-> > > Please consider RZ/G3E and RZ/V2H SCI as well as it is almost similar
-> > IP.
-> >
-> > So, I am thinking to not use a name based on SoC but based on feature like
-> > SERIAL_SCI_32BIT or something. But I don't know the HW details enough to
-> > make the best possible name or maybe this is a bogus idea.
->
-> This seems a little bit confusing, and like said in former discussions,
-> the 32 bits registers are not the main difference.
->
-> Here are the known SoCs that have this IP, up to now:
->
-> RZ/T2H
-> RZ/N2H
-> RZ/G3E
-> RZ/V2H
-
-+ RZ/V2N
-
-> So that seems reasonable to keep RZ in the name, even there are other RZ SoCs that
-> do not have it.
->
-> The HW documentation does not mention a better name, or revision,
-
-While the RZ/T2H and RZ/N2H documentation just call it "SCI" ("SCIE"
-for a reduced-functionality variant), the RZ/G3E, RZV2H, and RZ/V2N
-documentation calls it "RSCI". More below...
-
-> so, the suggestion is to arbitrarily consider it as a new 'T2' type.
->
-> Would SERIAL_RZ_SCI_T2 (and rz-sci-t2 for the driver) be specific enough ?
-
-Please don't put the "SCI" in the middle of the part name
-=> SERIAL_RZT2_SCI.
-
-"RSCI" does not seem to be present on any Linux-capable Renesas SH,
-ARM or RISC-V SoC I have documentation for.  However it seems to
-originate from the RX series of microcontrollers:
-  - RX Family Application Note: Comparison of the Differences Between
-    the RSCI Module and the SCI Module[1],
-  - The RX26T documentation[2] shows RSCI on RX26T is very similar
-    to RSCI on the five RZ SoCs listed above, but not identical.
-    The RZ variant seems to be a reduced version with 16 instead of 32
-    FIFO entries, and less "special" (non-UART) modes.
-
-So I'm in favor of calling it "RSCI" (CONFIG_SERIAL_RSCI).
-
-[1] https://www.renesas.com/en/document/apn/comparison-differences-between-rsci-module-and-sci-module-rev100
-[2] https://www.renesas.com/en/products/microcontrollers-microprocessors/rx-32-bit-performance-efficiency-mcus/rx26t-32-bit-microcontroller-optimized-dual-motor-and-pfc-control
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On Mon, Mar 24, 2025 at 07:44:39PM +0100, Andrew Lunn wrote:
+> On Mon, Mar 24, 2025 at 10:43:39AM -0700, Erni Sri Satya Vennela wrote:
+> > On Thu, Mar 20, 2025 at 02:37:47PM +0100, Andrew Lunn wrote:
+> > > > +int mana_query_link_cfg(struct mana_port_context *apc)
+> > > > +{
+> > > > +	struct net_device *ndev = apc->ndev;
+> > > > +	struct mana_query_link_config_req req = {};
+> > > > +	struct mana_query_link_config_resp resp = {};
+> > > > +	int err;
+> > > > +
+> > > > +	mana_gd_init_req_hdr(&req.hdr, MANA_QUERY_LINK_CONFIG,
+> > > > +			     sizeof(req), sizeof(resp));
+> > > > +
+> > > > +	req.vport = apc->port_handle;
+> > > > +
+> > > > +	err = mana_send_request(apc->ac, &req, sizeof(req), &resp,
+> > > > +				sizeof(resp));
+> > > > +
+> > > > +	if (err) {
+> > > > +		netdev_err(ndev, "Failed to query link config: %d\n", err);
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	err = mana_verify_resp_hdr(&resp.hdr, MANA_QUERY_LINK_CONFIG,
+> > > > +				   sizeof(resp));
+> > > > +
+> > > > +	if (err || resp.hdr.status) {
+> > > > +		netdev_err(ndev, "Failed to query link config: %d, 0x%x\n", err,
+> > > > +			   resp.hdr.status);
+> > > > +		if (!err)
+> > > > +			err = -EPROTO;
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	if (resp.qos_unconfigured) {
+> > > > +		err = -EINVAL;
+> > > > +		goto out;
+> > > > +	}
+> > > > +	apc->speed = resp.link_speed;
+> > > 
+> > > Might be worth adding a comment that the firmware is returning speed
+> > > in Mbps.
+> > > 
+> > > Or name the struct member link_speed_mbps.
+> > > 
+> > Thank you for your suggestion. I'll make this change for the next
+> > version of this patchset.
+> 
+> Please answer my other questions before posting the next version of
+> the patch. I'm really questioning if this is the correct uAPI to be
+> using. You have a very poor description of what you are trying to
+> do. Maybe TC is the better fit? Does this speed apply to ingress and
+> egress? If so, there are two leaky buckets, so why only one
+> configuration value? Or can you only configure ingress?
+> 
+The QoS control is at the hardware/firmware level and applies to the
+egress rate.
+> Also, if i understand correctly MANA is a virtual device and this is
+> the VM side of it. If this is used for bandwidth limitation, why is
+> the VM controlling this, not the hypervisor? What is the security
+> model?
+> 
+In certain cluster and hardware versions, Azure allows this API to
+restrict the bandwidth limit to a lesser value than what was configured
+by the Azure control plane. The device will not allow a higher limit
+than what was configured through the Azure control plane to be set by
+the VM through this API.
+> 	Andrew
 
