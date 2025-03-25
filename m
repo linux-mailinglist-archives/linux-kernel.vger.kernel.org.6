@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-574889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13C2A6EB29
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21087A6EB2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F419189372D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9ED51891045
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E538925487B;
-	Tue, 25 Mar 2025 08:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMAY3ru9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9D91A5BA6;
+	Tue, 25 Mar 2025 08:12:41 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AEA1D7E37;
-	Tue, 25 Mar 2025 08:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF9481C4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890278; cv=none; b=XNJpnjYOIQIrA+/tb7RXG2snmE/wvkMgg8TwYpBIojibXSsN50OPrgMoO8VZFtS/28rM9+2VNKVEJbj+syN7LGLjC/PdDqUOB83hN5VYrao5ynefxR3yVI7nfE3W85ZUUQPXZ4MX/jv1QDNNIbBy8dirL1+VFtepFdQuEv0OUTg=
+	t=1742890361; cv=none; b=rs44CTKzMkXlWcdLDG9jVuqaXvNkHl3hKzJ6UwNKQ3rHV8IzrS1D+xPNAOoA0TBbrShCmVduEezGWhNAofOO2/Tz/HJKWHUrZXIWdGApsrE3bYWZ+4H5/MOu/dQtjAooplc0/g2gjkpRitrv3ajKQTiFFif8i5y6FERfFmxFrso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890278; c=relaxed/simple;
-	bh=sqdqt6cZvQDX0oVFnEsMmomrp/59fMvqIHre9ETCDls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQUMpR9nY3kN8HybncffTN0na42KPN2dfVJDDHUEGSQHpJ48IrFT4FoLweSv7wA2YU/ZuPoy37qqm1p5YTLK9kH9EHiOW67zpVtIICcOPOpr4lP9Sx7k4i6YR3vKn/woyVbNmWHFBqLzP2V98AI35kDduPzYZRpLtxMIKszPrkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMAY3ru9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E849C4CEED;
-	Tue, 25 Mar 2025 08:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890276;
-	bh=sqdqt6cZvQDX0oVFnEsMmomrp/59fMvqIHre9ETCDls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PMAY3ru9tqbAtQHP+Mmh0vHI9ITvVoixjATT8q9BGmYBsUbdiuyw5Hx/u0kdIZspb
-	 U27ZCeYIB2w5HMp6W+6gkT79t/2g2nIxcQqN028eqrj29zXDfVu61sGpa6aHVSWe4Y
-	 flDNs8AMn7f7tmMYkzsjJSqdKPR2vZNhoJESVKcJeAEQ7rg0/jT+h8KXT89mTu5e8Q
-	 p1/VI/ALO8ukV0nhSKs42FfLUUQEn3LL8Umu8U5uIJnhIrQAKUoQ5zhqVTGoGYcSQD
-	 cXqGW983DM3/cNO5YhMxxWQxAbDdgCU4QOIJnWbP5ZtLbJ1gO5a4QaWPp7SVkrW+Ua
-	 7iGQ0CbFBtpBw==
-Date: Tue, 25 Mar 2025 09:11:13 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Lee Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/9] dt-bindings: mfd: syscon document the
- control-scb syscon on PolarFire SoC
-Message-ID: <20250325-analytic-axolotl-of-prestige-e82aff@krzk-bin>
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
- <20250321-idiom-remedial-daeddab1dcd8@spud>
+	s=arc-20240116; t=1742890361; c=relaxed/simple;
+	bh=5PEk+JDQsfLzMycFsSiNa9hy6CLK/qnFNELdqsC06r0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WloanrvhiROMEkhzf4ptlDI4PLdPnDr3lbZBu/d8m67dIVJUSOzBnlhp7w/NzTWP2aU7l3bc9Ot9fF2YFxvsYSJkNJZOejSbnKL5aOGu4KeK4NYowPPEyrvz966je9Dj8Vf9lxQdqg+zqUkG8qeBxEIyzAKxJ5dykvaa5nrX8HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201603.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503251612350664;
+        Tue, 25 Mar 2025 16:12:35 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 25 Mar 2025 16:12:34 +0800
+Received: from locahost.localdomain.com (10.94.16.22) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 25 Mar 2025 16:12:33 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <mripard@kernel.org>, <dave.stevenson@raspberrypi.com>,
+	<mcanal@igalia.com>, <kernel-list@raspberrypi.com>,
+	<maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+	<airlied@gmail.com>, <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	"Charles Han" <hanchunchao@inspur.com>
+Subject: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
+Date: Tue, 25 Mar 2025 16:12:32 +0800
+Message-ID: <20250325081232.4217-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250321-idiom-remedial-daeddab1dcd8@spud>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
+ jtjnmail201607.home.langchao.com (10.100.2.7)
+tUid: 2025325161235ef9fda8f684a16f0e8a09cc18c2a19e4
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Fri, Mar 21, 2025 at 05:22:34PM +0000, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
-> 
-> The "control-scb" region, contains the "tvs" temperature and voltage
-> sensors and the control/status registers for the system controller's
-> mailbox. The mailbox has a dedicated node, so there's no need for a
-> child node describing it, looking the syscon up by compatible is
-> sufficient.
-> 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v2:
-> add the control-scb syscon here too, since it doesn't have any children.
-> ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+Fix below inconsistent indenting smatch warning.
+smatch warnings:
+drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+index c5e84d3494d2..056d344c5411 100644
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
+ 			/* HPPF plane 1 */
+ 			vc4_dlist_write(vc4_state, kernel);
+ 			/* VPPF plane 1 */
+-				vc4_dlist_write(vc4_state, kernel);
++			vc4_dlist_write(vc4_state, kernel);
+ 		}
+ 	}
+ 
+-- 
+2.43.0
 
 
