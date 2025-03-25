@@ -1,693 +1,533 @@
-Return-Path: <linux-kernel+bounces-574851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4126A6EABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:42:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64573A6EAC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3EA16A096
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A3316AE02
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21864253B52;
-	Tue, 25 Mar 2025 07:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753E4253B64;
+	Tue, 25 Mar 2025 07:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO25fr9+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xbdkhIqZ"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C7E25776;
-	Tue, 25 Mar 2025 07:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC740253323
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742888521; cv=none; b=JppYdVic7IGrVd41NNqX9FObLvmZY0Q+Dc7ib7BsMZ1Nh7+EcYZUuCwzM5ViuKr5G+iaWUhF7z3wE29Gm0lkYEgc3+TKarRcZeWU91MNSEM8yeG2l/6h9hlJ9MHgf3p10L0VnGbiZCoAz8aHWX97tjz3lZjVKaQKtHPk8/pm/Ps=
+	t=1742888648; cv=none; b=Y8c3cf86AGNwa1VFjY8kuLoXT8xWuuss/xrLAlxRrCviyb9ocRwmGctSzKR7YgLDKQRdf+3aTQyvV47Z15mouBDaoW9vFSQ7Lq3pmH7zJVaEMGUCtMFqHPNpridwfExSgYoqsBHy1569+DLAbVaz/K8wEwfxPwYGY44ehgoczUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742888521; c=relaxed/simple;
-	bh=TFRJDQ2La7vli87XOc2oGlXTZu1111nEsjjLXhmtjbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1kb90CqVqBDkZj+JITTpVZFHHqK7JxbPRc7nHRu49Ain2rLZ19wYPJ70pdVJ//AjirDKbWAj81Gqia+FNIJGa81R4FJfB0/Ju06tPyba1a/xKpXPKW/hSexNraRsJ/2X7KwlidZF3uL1NVPdcpWLc/BZPg2i8fBNrzueqPgnLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO25fr9+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BD2C4CEE8;
-	Tue, 25 Mar 2025 07:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742888520;
-	bh=TFRJDQ2La7vli87XOc2oGlXTZu1111nEsjjLXhmtjbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PO25fr9+eOCrDIMDJId3JqA54+MkcuWAuwX3SJKh1JUVr54UQRJcJ6JmLm6mqQmXb
-	 BHp0po3Ho0tuE4ueCFXgOETlYpIscWYbvozaxVMg5Qcjzq5DQZ68d0cfvZqe98Ymna
-	 ax0l0i2kXorys8uIm19/xI/OKlKsV+F7YBUBXolPthf6RSKx+CMWTqXRlj+41k82vW
-	 8I/edWgGVE0pSVEEe+G/7y1rptkobya9atok54hwzLjbvl/iXjo8zo9BfGHXoOE/+g
-	 tqQ6Pp361KE3HfnKcIELUTqi6GQb79DLUf9+dQtPhNXGzyHUayxyYA3xsCzpFQO5gz
-	 4n0NgYrFBlGNA==
-Date: Tue, 25 Mar 2025 13:11:50 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	linux-arm-kernel@lists.infradead.org,
-	Olivier Masse <olivier.masse@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T . J . Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	azarrabi@qti.qualcomm.com, Simona Vetter <simona.vetter@ffwll.ch>,
-	Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH v6 09/10] optee: FF-A: dynamic restricted memory
- allocation
-Message-ID: <Z-JePo6yGlUgrZkw@sumit-X1>
-References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
- <20250305130634.1850178-10-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1742888648; c=relaxed/simple;
+	bh=4NiQgZMSwrlR+JP7H+qFxgTQg9u9tPLA/MMcOxm14aI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jpGF2ap5M9sn2yeZIPHMz43IehLVNY+1O3XodPyRpPED2Vxk5gNESVIew074hiwhhmlpjB92HLWEir/Cdw/vU76+nf1tCpsgO1XDJDjT944XAWrzOIdjGi1dCrkGqq47gaBD4QNg2eRGBMzWyb/nEJ017w9hHuw8WYk3bwQV298=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xbdkhIqZ; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-391342fc148so3603395f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 00:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742888643; x=1743493443; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eczzhwXoRgAcqLghhwJhTM97oQ4KgvKobW4G8xPa/PU=;
+        b=xbdkhIqZw5hCXXi7LidZmGuKsoAPUV0HCNFzuQuAAeJ7D/10erMH4v1soxQoAU9SJD
+         fMYCb+ykMbQJE/RM0FmGdeUNc1VWfOhHN3Z5hNJ18tuKWqyTRnS//EVhPOIAWsJ6wV8Y
+         NCSOcfemkapWdqakw46NCwf8tfF2AsBzyrRBR/axsyo/0J4cYXz7OehQtgFpxBbTRU7D
+         gcU7DcOgt644tmUroTD0HlB38ZOL45/b6rw0Yn8tyCF01KF5V06e048s4br/F8sg9SL7
+         UmKzPH9RORvVv6BJNufS0rEnuX9rnAX9KWQUdEdHJE/E8gEaOQfbNVnXRRXyrzJo/Yar
+         TfqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742888643; x=1743493443;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eczzhwXoRgAcqLghhwJhTM97oQ4KgvKobW4G8xPa/PU=;
+        b=Zqg0J/7NDeGeORC5NXzVy8e6fI12qmdBvgzJgiHv9397NVQfhEvC9iDBkEFjX9Rukj
+         mgLhCHBB1CL3qAeSv8GywzbyomI+ITQoUqiqHkA/FCVPQoRUUc4RZ3HAyTFXa4wzNXV4
+         HrtDxen3T/VyzrH+vFA6tQU/6mLmSNzRZpWCP2byLgvQzVvHcMULfkr97gOkJ0X1ivEK
+         Pm4esDSv30u/OBXBBj8XmsIrKh/HqeyIXvn+bMJrD43LJz5ZW42Ju1LNDvs3pC1NdDU8
+         8v1tP0oJ/LJKtOpGb0alkvRKQglvWl68F4PmAQIsMNya6UOBeFgg5cWrEdigU9sHph1g
+         TCNg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9LD9WfnWGvq41/eeHi3K5IiDAjN/xDx5n1dg1q/IU48ebxN2lCWEZoM/QH8/uTtBY60qRdcfmiPyvaM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXTbHTfHZ9ov3fg/iuNN1yNPfnb+s8zqImSmQUUyPpZhU+GM04
+	6mGFg+lg/jQ1Vj10gDGE3LlOPIuRVPlD/ylNEZgwwsFXeOaxuyEjlWf1W9GjzPQ=
+X-Gm-Gg: ASbGncvhKsnK+2z0mlMP9eRV6TNTK+ASBJrMoINKj+0rXwx4SsUipWYXymnnepvIh2q
+	VBvhLZ6uoJ0evq5dtUzLIuOxnUy+jy+ue2Byj5pBTJx0X571M79wQDtnTmMpO8U1b5wTyyqAKFl
+	MMN1vnfpXjChCfTiPsMocUfP9wNhLuzPrQG0llJpeEkLi8zzERJcJ7692qWTkx8nXMCb3EynjQc
+	46L7eusojauFSSp3kqkOhiDMOUeTxAuTp0twtLitGYuEROXr0oEZ76AfMIh4z8gvH7mSL3MDyFV
+	hk8cqZzIAPRxT/gjt8mEOT0tCViX0LosBfIzCZMAF/ejVf+5Zg==
+X-Google-Smtp-Source: AGHT+IGE2O3IeAFMHRAltTNfiA5eMN0un3ogwPPEss4f2Fe3njXvrUl/tTHABRDHWxnCK4rwwyn/3Q==
+X-Received: by 2002:a05:6000:1ac8:b0:397:5de8:6937 with SMTP id ffacd0b85a97d-3997f932ddfmr16284259f8f.41.1742888642897;
+        Tue, 25 Mar 2025 00:44:02 -0700 (PDT)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440eda26sm193960045e9.36.2025.03.25.00.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 00:44:02 -0700 (PDT)
+Message-ID: <0edda62ae5616bec2453467f21728334ded19286.camel@linaro.org>
+Subject: Re: [PATCH v4 4/6] mfd: max77759: add Maxim MAX77759 core mfd driver
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
+ Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Tue, 25 Mar 2025 07:44:00 +0000
+In-Reply-To: <20250321105457.GG1750245@google.com>
+References: <20250312-max77759-mfd-v4-0-b908d606c8cb@linaro.org>
+	 <20250312-max77759-mfd-v4-4-b908d606c8cb@linaro.org>
+	 <20250314123150.GM3890718@google.com>
+	 <7d94ed5bd79f0081d392747f74773e7f866252bd.camel@linaro.org>
+	 <20250321105457.GG1750245@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305130634.1850178-10-jens.wiklander@linaro.org>
 
-On Wed, Mar 05, 2025 at 02:04:15PM +0100, Jens Wiklander wrote:
-> Add support in the OP-TEE backend driver dynamic restricted memory
-> allocation with FF-A.
-> 
-> The restricted memory pools for dynamically allocated restrict memory
-> are instantiated when requested by user-space. This instantiation can
-> fail if OP-TEE doesn't support the requested use-case of restricted
-> memory.
-> 
-> Restricted memory pools based on a static carveout or dynamic allocation
-> can coexist for different use-cases. We use only dynamic allocation with
-> FF-A.
-> 
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> ---
->  drivers/tee/optee/Makefile        |   1 +
->  drivers/tee/optee/ffa_abi.c       | 143 ++++++++++++-
->  drivers/tee/optee/optee_private.h |  13 +-
->  drivers/tee/optee/rstmem.c        | 329 ++++++++++++++++++++++++++++++
->  4 files changed, 483 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/tee/optee/rstmem.c
-> 
-> diff --git a/drivers/tee/optee/Makefile b/drivers/tee/optee/Makefile
-> index a6eff388d300..498969fb8e40 100644
-> --- a/drivers/tee/optee/Makefile
-> +++ b/drivers/tee/optee/Makefile
-> @@ -4,6 +4,7 @@ optee-objs += core.o
->  optee-objs += call.o
->  optee-objs += notif.o
->  optee-objs += rpc.o
-> +optee-objs += rstmem.o
->  optee-objs += supp.o
->  optee-objs += device.o
->  optee-objs += smc_abi.o
-> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi.c
-> index e4b08cd195f3..6a55114232ef 100644
-> --- a/drivers/tee/optee/ffa_abi.c
-> +++ b/drivers/tee/optee/ffa_abi.c
-> @@ -672,6 +672,123 @@ static int optee_ffa_do_call_with_arg(struct tee_context *ctx,
->  	return optee_ffa_yielding_call(ctx, &data, rpc_arg, system_thread);
->  }
->  
-> +static int do_call_lend_rstmem(struct optee *optee, u64 cookie, u32 use_case)
-> +{
-> +	struct optee_shm_arg_entry *entry;
-> +	struct optee_msg_arg *msg_arg;
-> +	struct tee_shm *shm;
-> +	u_int offs;
-> +	int rc;
-> +
-> +	msg_arg = optee_get_msg_arg(optee->ctx, 1, &entry, &shm, &offs);
-> +	if (IS_ERR(msg_arg))
-> +		return PTR_ERR(msg_arg);
-> +
-> +	msg_arg->cmd = OPTEE_MSG_CMD_ASSIGN_RSTMEM;
-> +	msg_arg->params[0].attr = OPTEE_MSG_ATTR_TYPE_VALUE_INPUT;
-> +	msg_arg->params[0].u.value.a = cookie;
-> +	msg_arg->params[0].u.value.b = use_case;
-> +
-> +	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-> +	if (rc)
-> +		goto out;
-> +	if (msg_arg->ret != TEEC_SUCCESS) {
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +out:
-> +	optee_free_msg_arg(optee->ctx, entry, offs);
-> +	return rc;
-> +}
-> +
-> +static int optee_ffa_lend_rstmem(struct optee *optee, struct tee_shm *rstmem,
-> +				 u16 *end_points, unsigned int ep_count,
-> +				 u32 use_case)
-> +{
-> +	struct ffa_device *ffa_dev = optee->ffa.ffa_dev;
-> +	const struct ffa_mem_ops *mem_ops = ffa_dev->ops->mem_ops;
-> +	const struct ffa_msg_ops *msg_ops = ffa_dev->ops->msg_ops;
-> +	struct ffa_send_direct_data data;
-> +	struct ffa_mem_region_attributes *mem_attr;
-> +	struct ffa_mem_ops_args args = {
-> +		.use_txbuf = true,
-> +		.tag = use_case,
-> +	};
-> +	struct page *page;
-> +	struct scatterlist sgl;
-> +	unsigned int n;
-> +	int rc;
-> +
-> +	mem_attr = kcalloc(ep_count, sizeof(*mem_attr), GFP_KERNEL);
-> +	for (n = 0; n < ep_count; n++) {
-> +		mem_attr[n].receiver = end_points[n];
-> +		mem_attr[n].attrs = FFA_MEM_RW;
-> +	}
-> +	args.attrs = mem_attr;
-> +	args.nattrs = ep_count;
-> +
-> +	page = phys_to_page(rstmem->paddr);
-> +	sg_init_table(&sgl, 1);
-> +	sg_set_page(&sgl, page, rstmem->size, 0);
-> +
-> +	args.sg = &sgl;
-> +	rc = mem_ops->memory_lend(&args);
-> +	kfree(mem_attr);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = do_call_lend_rstmem(optee, args.g_handle, use_case);
-> +	if (rc)
-> +		goto err_reclaim;
-> +
-> +	rc = optee_shm_add_ffa_handle(optee, rstmem, args.g_handle);
-> +	if (rc)
-> +		goto err_unreg;
-> +
-> +	rstmem->sec_world_id = args.g_handle;
-> +
-> +	return 0;
-> +
-> +err_unreg:
-> +	data = (struct ffa_send_direct_data){
-> +		.data0 = OPTEE_FFA_RELEASE_RSTMEM,
-> +		.data1 = (u32)args.g_handle,
-> +		.data2 = (u32)(args.g_handle >> 32),
-> +	};
-> +	msg_ops->sync_send_receive(ffa_dev, &data);
-> +err_reclaim:
-> +	mem_ops->memory_reclaim(args.g_handle, 0);
-> +	return rc;
-> +}
-> +
-> +static int optee_ffa_reclaim_rstmem(struct optee *optee, struct tee_shm *rstmem)
-> +{
-> +	struct ffa_device *ffa_dev = optee->ffa.ffa_dev;
-> +	const struct ffa_msg_ops *msg_ops = ffa_dev->ops->msg_ops;
-> +	const struct ffa_mem_ops *mem_ops = ffa_dev->ops->mem_ops;
-> +	u64 global_handle = rstmem->sec_world_id;
-> +	struct ffa_send_direct_data data = {
-> +		.data0 = OPTEE_FFA_RELEASE_RSTMEM,
-> +		.data1 = (u32)global_handle,
-> +		.data2 = (u32)(global_handle >> 32)
-> +	};
-> +	int rc;
-> +
-> +	optee_shm_rem_ffa_handle(optee, global_handle);
-> +	rstmem->sec_world_id = 0;
-> +
-> +	rc = msg_ops->sync_send_receive(ffa_dev, &data);
-> +	if (rc)
-> +		pr_err("Release SHM id 0x%llx rc %d\n", global_handle, rc);
-> +
-> +	rc = mem_ops->memory_reclaim(global_handle, 0);
-> +	if (rc)
-> +		pr_err("mem_reclaim: 0x%llx %d", global_handle, rc);
-> +
-> +	return rc;
-> +}
-> +
->  /*
->   * 6. Driver initialization
->   *
-> @@ -833,6 +950,8 @@ static const struct optee_ops optee_ffa_ops = {
->  	.do_call_with_arg = optee_ffa_do_call_with_arg,
->  	.to_msg_param = optee_ffa_to_msg_param,
->  	.from_msg_param = optee_ffa_from_msg_param,
-> +	.lend_rstmem = optee_ffa_lend_rstmem,
-> +	.reclaim_rstmem = optee_ffa_reclaim_rstmem,
->  };
->  
->  static void optee_ffa_remove(struct ffa_device *ffa_dev)
-> @@ -941,7 +1060,7 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
->  				  optee->pool, optee);
->  	if (IS_ERR(teedev)) {
->  		rc = PTR_ERR(teedev);
-> -		goto err_free_pool;
-> +		goto err_free_shm_pool;
->  	}
->  	optee->teedev = teedev;
->  
-> @@ -988,6 +1107,24 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
->  			       rc);
->  	}
->  
-> +	if (IS_ENABLED(CONFIG_CMA) && !IS_MODULE(CONFIG_OPTEE) &&
+Thanks Lee for your patience,
 
-The CMA dependency should be managed via Kconfig.
+On Fri, 2025-03-21 at 10:54 +0000, Lee Jones wrote:
+> On Fri, 14 Mar 2025, Andr=C3=A9 Draszik wrote:
+>=20
+> > Hi Lee,
+> >=20
+> > Thanks for your review!
+> >=20
+> > On Fri, 2025-03-14 at 12:31 +0000, Lee Jones wrote:
+> > > On Wed, 12 Mar 2025, Andr=C3=A9 Draszik wrote:
 
-> +	    (sec_caps & OPTEE_FFA_SEC_CAP_RSTMEM)) {
-> +		enum tee_dma_heap_id id = TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
-> +		struct tee_rstmem_pool *pool;
-> +
-> +		pool = optee_rstmem_alloc_cma_pool(optee, id);
-> +		if (IS_ERR(pool)) {
-> +			rc = PTR_ERR(pool);
-> +			goto err_notif_uninit;
-> +		}
-> +
-> +		rc = tee_device_register_dma_heap(optee->teedev, id, pool);
-> +		if (rc) {
-> +			pool->ops->destroy_pool(pool);
-> +			goto err_notif_uninit;
-> +		}
-> +	}
-> +
->  	rc = optee_enumerate_devices(PTA_CMD_GET_DEVICES);
->  	if (rc)
->  		goto err_unregister_devices;
-> @@ -1001,6 +1138,8 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
->  
->  err_unregister_devices:
->  	optee_unregister_devices();
-> +	tee_device_unregister_all_dma_heaps(optee->teedev);
-> +err_notif_uninit:
->  	if (optee->ffa.bottom_half_value != U32_MAX)
->  		notif_ops->notify_relinquish(ffa_dev,
->  					     optee->ffa.bottom_half_value);
-> @@ -1018,7 +1157,7 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev)
->  	tee_device_unregister(optee->supp_teedev);
->  err_unreg_teedev:
->  	tee_device_unregister(optee->teedev);
-> -err_free_pool:
-> +err_free_shm_pool:
->  	tee_shm_pool_free(pool);
->  err_free_optee:
->  	kfree(optee);
-> diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
-> index 20eda508dbac..faab31ad7c52 100644
-> --- a/drivers/tee/optee/optee_private.h
-> +++ b/drivers/tee/optee/optee_private.h
-> @@ -174,9 +174,14 @@ struct optee;
->   * @do_call_with_arg:	enters OP-TEE in secure world
->   * @to_msg_param:	converts from struct tee_param to OPTEE_MSG parameters
->   * @from_msg_param:	converts from OPTEE_MSG parameters to struct tee_param
-> + * @lend_rstmem:	lends physically contiguous memory as restricted
-> + *			memory, inaccessible by the kernel
-> + * @reclaim_rstmem:	reclaims restricted memory previously lent with
-> + *			@lend_rstmem() and makes it accessible by the
-> + *			kernel again
->   *
->   * These OPs are only supposed to be used internally in the OP-TEE driver
-> - * as a way of abstracting the different methogs of entering OP-TEE in
-> + * as a way of abstracting the different methods of entering OP-TEE in
->   * secure world.
->   */
->  struct optee_ops {
-> @@ -191,6 +196,10 @@ struct optee_ops {
->  			      size_t num_params,
->  			      const struct optee_msg_param *msg_params,
->  			      bool update_out);
-> +	int (*lend_rstmem)(struct optee *optee, struct tee_shm *rstmem,
-> +			   u16 *end_points, unsigned int ep_count,
-> +			   u32 use_case);
-> +	int (*reclaim_rstmem)(struct optee *optee, struct tee_shm *rstmem);
->  };
->  
->  /**
-> @@ -285,6 +294,8 @@ u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_params,
->  void optee_supp_init(struct optee_supp *supp);
->  void optee_supp_uninit(struct optee_supp *supp);
->  void optee_supp_release(struct optee_supp *supp);
-> +struct tee_rstmem_pool *optee_rstmem_alloc_cma_pool(struct optee *optee,
-> +						    enum tee_dma_heap_id id);
->  
->  int optee_supp_recv(struct tee_context *ctx, u32 *func, u32 *num_params,
->  		    struct tee_param *param);
-> diff --git a/drivers/tee/optee/rstmem.c b/drivers/tee/optee/rstmem.c
-> new file mode 100644
-> index 000000000000..ea27769934d4
-> --- /dev/null
-> +++ b/drivers/tee/optee/rstmem.c
-> @@ -0,0 +1,329 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2025, Linaro Limited
-> + */
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/errno.h>
-> +#include <linux/genalloc.h>
-> +#include <linux/slab.h>
-> +#include <linux/string.h>
-> +#include <linux/tee_core.h>
-> +#include <linux/types.h>
-> +#include "optee_private.h"
-> +
-> +struct optee_rstmem_cma_pool {
-> +	struct tee_rstmem_pool pool;
-> +	struct gen_pool *gen_pool;
-> +	struct optee *optee;
-> +	size_t page_count;
-> +	u16 *end_points;
-> +	u_int end_point_count;
-> +	u_int align;
-> +	refcount_t refcount;
-> +	u32 use_case;
-> +	struct tee_shm *rstmem;
-> +	/* Protects when initializing and tearing down this struct */
-> +	struct mutex mutex;
-> +};
-> +
-> +static struct optee_rstmem_cma_pool *
-> +to_rstmem_cma_pool(struct tee_rstmem_pool *pool)
-> +{
-> +	return container_of(pool, struct optee_rstmem_cma_pool, pool);
-> +}
-> +
-> +static int init_cma_rstmem(struct optee_rstmem_cma_pool *rp)
-> +{
-> +	int rc;
-> +
-> +	rp->rstmem = tee_shm_alloc_cma_phys_mem(rp->optee->ctx, rp->page_count,
-> +						rp->align);
-> +	if (IS_ERR(rp->rstmem)) {
-> +		rc = PTR_ERR(rp->rstmem);
-> +		goto err_null_rstmem;
-> +	}
-> +
-> +	/*
-> +	 * TODO unmap the memory range since the physical memory will
-> +	 * become inaccesible after the lend_rstmem() call.
-> +	 */
+[...]
+> >=20
 
-What's your plan for this TODO? I think we need a CMA allocator here
-which can allocate un-mapped memory such that any cache speculation
-won't lead to CPU hangs once the memory restriction comes into picture.
+> > > This sort of goes without saying.=C2=A0 Suggest you remove this comme=
+nt.
+> > >=20
+> > > > +/* PMIC / TOP */
+> > > > +#define MAX77759_PMIC_REG_PMIC_ID=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x00
+> > > > +#define MAX77759_PMIC_REG_PMIC_ID_MAX77759=C2=A0=C2=A0=C2=A0 59
+> > >=20
+> > > Is this a register or a value?
+> >=20
+> > It's a value, which the suffix in the macro name was meant to
+> > convey :-) 59 is the value (in decimal) for max77759 that
+> > the ID register is expected to contain.
+>=20
+> You mean the REG suffix, that is in both the register address and value?
 
-> +	rc = rp->optee->ops->lend_rstmem(rp->optee, rp->rstmem, rp->end_points,
-> +					 rp->end_point_count, rp->use_case);
-> +	if (rc)
-> +		goto err_put_shm;
-> +	rp->rstmem->flags |= TEE_SHM_DYNAMIC;
-> +
-> +	rp->gen_pool = gen_pool_create(PAGE_SHIFT, -1);
-> +	if (!rp->gen_pool) {
-> +		rc = -ENOMEM;
-> +		goto err_reclaim;
-> +	}
-> +
-> +	rc = gen_pool_add(rp->gen_pool, rp->rstmem->paddr,
-> +			  rp->rstmem->size, -1);
-> +	if (rc)
-> +		goto err_free_pool;
-> +
-> +	refcount_set(&rp->refcount, 1);
-> +	return 0;
-> +
-> +err_free_pool:
-> +	gen_pool_destroy(rp->gen_pool);
-> +	rp->gen_pool = NULL;
-> +err_reclaim:
-> +	rp->optee->ops->reclaim_rstmem(rp->optee, rp->rstmem);
-> +err_put_shm:
-> +	tee_shm_put(rp->rstmem);
-> +err_null_rstmem:
-> +	rp->rstmem = NULL;
-> +	return rc;
-> +}
-> +
-> +static int get_cma_rstmem(struct optee_rstmem_cma_pool *rp)
-> +{
-> +	int rc = 0;
-> +
-> +	if (!refcount_inc_not_zero(&rp->refcount)) {
-> +		mutex_lock(&rp->mutex);
-> +		if (rp->gen_pool) {
-> +			/*
-> +			 * Another thread has already initialized the pool
-> +			 * before us, or the pool was just about to be torn
-> +			 * down. Either way we only need to increase the
-> +			 * refcount and we're done.
-> +			 */
-> +			refcount_inc(&rp->refcount);
-> +		} else {
-> +			rc = init_cma_rstmem(rp);
-> +		}
-> +		mutex_unlock(&rp->mutex);
-> +	}
-> +
-> +	return rc;
-> +}
-> +
-> +static void release_cma_rstmem(struct optee_rstmem_cma_pool *rp)
-> +{
-> +	gen_pool_destroy(rp->gen_pool);
-> +	rp->gen_pool = NULL;
-> +
-> +	rp->optee->ops->reclaim_rstmem(rp->optee, rp->rstmem);
-> +	rp->rstmem->flags &= ~TEE_SHM_DYNAMIC;
-> +
-> +	WARN(refcount_read(&rp->rstmem->refcount) != 1, "Unexpected refcount");
-> +	tee_shm_put(rp->rstmem);
-> +	rp->rstmem = NULL;
-> +}
-> +
-> +static void put_cma_rstmem(struct optee_rstmem_cma_pool *rp)
-> +{
-> +	if (refcount_dec_and_test(&rp->refcount)) {
-> +		mutex_lock(&rp->mutex);
-> +		if (rp->gen_pool)
-> +			release_cma_rstmem(rp);
-> +		mutex_unlock(&rp->mutex);
-> +	}
-> +}
-> +
-> +static int rstmem_pool_op_cma_alloc(struct tee_rstmem_pool *pool,
-> +				    struct sg_table *sgt, size_t size,
-> +				    size_t *offs)
-> +{
-> +	struct optee_rstmem_cma_pool *rp = to_rstmem_cma_pool(pool);
-> +	size_t sz = ALIGN(size, PAGE_SIZE);
-> +	phys_addr_t pa;
-> +	int rc;
-> +
-> +	rc = get_cma_rstmem(rp);
-> +	if (rc)
-> +		return rc;
-> +
-> +	pa = gen_pool_alloc(rp->gen_pool, sz);
-> +	if (!pa) {
-> +		rc = -ENOMEM;
-> +		goto err_put;
-> +	}
-> +
-> +	rc = sg_alloc_table(sgt, 1, GFP_KERNEL);
-> +	if (rc)
-> +		goto err_free;
-> +
-> +	sg_set_page(sgt->sgl, phys_to_page(pa), size, 0);
-> +	*offs = pa - rp->rstmem->paddr;
-> +
-> +	return 0;
-> +err_free:
-> +	gen_pool_free(rp->gen_pool, pa, size);
-> +err_put:
-> +	put_cma_rstmem(rp);
-> +
-> +	return rc;
-> +}
-> +
-> +static void rstmem_pool_op_cma_free(struct tee_rstmem_pool *pool,
-> +				    struct sg_table *sgt)
-> +{
-> +	struct optee_rstmem_cma_pool *rp = to_rstmem_cma_pool(pool);
-> +	struct scatterlist *sg;
-> +	int i;
-> +
-> +	for_each_sgtable_sg(sgt, sg, i)
-> +		gen_pool_free(rp->gen_pool, sg_phys(sg), sg->length);
-> +	sg_free_table(sgt);
-> +	put_cma_rstmem(rp);
-> +}
-> +
-> +static int rstmem_pool_op_cma_update_shm(struct tee_rstmem_pool *pool,
-> +					 struct sg_table *sgt, size_t offs,
-> +					 struct tee_shm *shm,
-> +					 struct tee_shm **parent_shm)
-> +{
-> +	struct optee_rstmem_cma_pool *rp = to_rstmem_cma_pool(pool);
-> +
-> +	*parent_shm = rp->rstmem;
-> +
-> +	return 0;
-> +}
-> +
-> +static void pool_op_cma_destroy_pool(struct tee_rstmem_pool *pool)
-> +{
-> +	struct optee_rstmem_cma_pool *rp = to_rstmem_cma_pool(pool);
-> +
-> +	mutex_destroy(&rp->mutex);
-> +	kfree(rp);
-> +}
-> +
-> +static struct tee_rstmem_pool_ops rstmem_pool_ops_cma = {
-> +	.alloc = rstmem_pool_op_cma_alloc,
-> +	.free = rstmem_pool_op_cma_free,
-> +	.update_shm = rstmem_pool_op_cma_update_shm,
-> +	.destroy_pool = pool_op_cma_destroy_pool,
-> +};
-> +
-> +static int get_rstmem_config(struct optee *optee, u32 use_case,
-> +			     size_t *min_size, u_int *min_align,
-> +			     u16 *end_points, u_int *ep_count)
+With suffix, I meant the last part '_MAX77759$' above.
 
-I guess this end points terminology is specific to FF-A ABI. Is there
-any relevance for this in the common APIs?
+>=20
+> And why do you have MAX77759 in there twice?=C2=A0 That's just odd.
 
--Sumit
+Everything starts with max77759 in this driver, for namespace reasons. The
+suffix could be different if support for a different ICs was added in the
+future, but I'll use your suggested enum below instead.
+ =20
+>=20
+> Suggest that expected values, like IDs are placed in an enum with the
+> other supported platforms
+>=20
+> enum {
+> 	MAX77759_CHIP_ID =3D 59,
+> 	MAX77760_CHIP_ID =3D 60,
+> 	MAX77761_CHIP_ID =3D 61,
+> };
 
-> +{
-> +	struct tee_param params[2] = {
-> +		[0] = {
-> +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INOUT,
-> +			.u.value.a = use_case,
-> +		},
-> +		[1] = {
-> +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT,
-> +		},
-> +	};
-> +	struct optee_shm_arg_entry *entry;
-> +	struct tee_shm *shm_param = NULL;
-> +	struct optee_msg_arg *msg_arg;
-> +	struct tee_shm *shm;
-> +	u_int offs;
-> +	int rc;
-> +
-> +	if (end_points && *ep_count) {
-> +		params[1].u.memref.size = *ep_count * sizeof(*end_points);
-> +		shm_param = tee_shm_alloc_priv_buf(optee->ctx,
-> +						   params[1].u.memref.size);
-> +		if (IS_ERR(shm_param))
-> +			return PTR_ERR(shm_param);
-> +		params[1].u.memref.shm = shm_param;
-> +	}
-> +
-> +	msg_arg = optee_get_msg_arg(optee->ctx, ARRAY_SIZE(params), &entry,
-> +				    &shm, &offs);
-> +	if (IS_ERR(msg_arg)) {
-> +		rc = PTR_ERR(msg_arg);
-> +		goto out_free_shm;
-> +	}
-> +	msg_arg->cmd = OPTEE_MSG_CMD_GET_RSTMEM_CONFIG;
-> +
-> +	rc = optee->ops->to_msg_param(optee, msg_arg->params,
-> +				      ARRAY_SIZE(params), params,
-> +				      false /*!update_out*/);
-> +	if (rc)
-> +		goto out_free_msg;
-> +
-> +	rc = optee->ops->do_call_with_arg(optee->ctx, shm, offs, false);
-> +	if (rc)
-> +		goto out_free_msg;
-> +	if (msg_arg->ret && msg_arg->ret != TEEC_ERROR_SHORT_BUFFER) {
-> +		rc = -EINVAL;
-> +		goto out_free_msg;
-> +	}
-> +
-> +	rc = optee->ops->from_msg_param(optee, params, ARRAY_SIZE(params),
-> +					msg_arg->params, true /*update_out*/);
-> +	if (rc)
-> +		goto out_free_msg;
-> +
-> +	if (!msg_arg->ret && end_points &&
-> +	    *ep_count < params[1].u.memref.size / sizeof(u16)) {
-> +		rc = -EINVAL;
-> +		goto out_free_msg;
-> +	}
-> +
-> +	*min_size = params[0].u.value.a;
-> +	*min_align = params[0].u.value.b;
-> +	*ep_count = params[1].u.memref.size / sizeof(u16);
-> +
-> +	if (msg_arg->ret == TEEC_ERROR_SHORT_BUFFER) {
-> +		rc = -ENOSPC;
-> +		goto out_free_msg;
-> +	}
-> +
-> +	if (end_points)
-> +		memcpy(end_points, tee_shm_get_va(shm_param, 0),
-> +		       params[1].u.memref.size);
-> +
-> +out_free_msg:
-> +	optee_free_msg_arg(optee->ctx, entry, offs);
-> +out_free_shm:
-> +	if (shm_param)
-> +		tee_shm_free(shm_param);
-> +	return rc;
-> +}
-> +
-> +struct tee_rstmem_pool *optee_rstmem_alloc_cma_pool(struct optee *optee,
-> +						    enum tee_dma_heap_id id)
-> +{
-> +	struct optee_rstmem_cma_pool *rp;
-> +	u32 use_case = id;
-> +	size_t min_size;
-> +	int rc;
-> +
-> +	rp = kzalloc(sizeof(*rp), GFP_KERNEL);
-> +	if (!rp)
-> +		return ERR_PTR(-ENOMEM);
-> +	rp->use_case = use_case;
-> +
-> +	rc = get_rstmem_config(optee, use_case, &min_size, &rp->align, NULL,
-> +			       &rp->end_point_count);
-> +	if (rc) {
-> +		if (rc != -ENOSPC)
-> +			goto err;
-> +		rp->end_points = kcalloc(rp->end_point_count,
-> +					 sizeof(*rp->end_points), GFP_KERNEL);
-> +		if (!rp->end_points) {
-> +			rc = -ENOMEM;
-> +			goto err;
-> +		}
-> +		rc = get_rstmem_config(optee, use_case, &min_size, &rp->align,
-> +				       rp->end_points, &rp->end_point_count);
-> +		if (rc)
-> +			goto err_kfree_eps;
-> +	}
-> +
-> +	rp->pool.ops = &rstmem_pool_ops_cma;
-> +	rp->optee = optee;
-> +	rp->page_count = min_size / PAGE_SIZE;
-> +	mutex_init(&rp->mutex);
-> +
-> +	return &rp->pool;
-> +
-> +err_kfree_eps:
-> +	kfree(rp->end_points);
-> +err:
-> +	kfree(rp);
-> +	return ERR_PTR(rc);
-> +}
-> -- 
-> 2.43.0
-> 
+OK, will do, although this introduces a new prefix for a symbol name
+in this driver in case support for a different ICs was added in the
+future.
+
+> >=20
+> > >=20
+> > > > +#define MAX77759_PMIC_REG_PMIC_REVISION=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 0x01
+> > > > +#define MAX77759_PMIC_REG_OTP_REVISION=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 0x02
+> > > > +
+> > > > +#define MAX77759_PMIC_REG_INTSRC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x22
+> > > > +#define MAX77759_PMIC_REG_INTSRCMASK=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x23
+> > > > +#define MAX77759_PMIC_REG_INTSRC_MAXQ=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 BIT(3)
+> > > > +#define MAX77759_PMIC_REG_INTSRC_TOPSYS=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 BIT(1)
+> > > > +#define MAX77759_PMIC_REG_INTSRC_CHGR=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 BIT(0)
+> > >=20
+> > > These look like bit offsets rather than reg addresses?
+> >=20
+> > Of course, could you please clarify what you're hinting at
+> > here?
+>=20
+> Register bits/masks {c,sh}ould be indented below the register names:
+>=20
+> #define MAX77759_PMIC_REG_INTSRCMASK		0x23
+> #define=C2=A0=C2=A0 MAX77759_PMIC_REG_INTSRC_MAXQ		BIT(3)
+
+Thanks for your clarification.
+
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x24
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT_MASK=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x26
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT_TSHDN=C2=A0=C2=A0=C2=A0 BIT(6=
+)
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT_SYSOVLO=C2=A0 BIT(5)
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT_SYSUVLO=C2=A0 BIT(4)
+> > > > +#define MAX77759_PMIC_REG_TOPSYS_INT_FSHIP=C2=A0=C2=A0=C2=A0 BIT(0=
+)
+> > > > +
+> > > > +#define MAX77759_PMIC_REG_I2C_CNFG=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x40
+> > > > +#define MAX77759_PMIC_REG_SWRESET=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x50
+> > > > +#define MAX77759_PMIC_REG_CONTROL_FG=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x51
+> > > > +#define MAX77759_PMIC_REG_LAST_REGISTER=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 MAX77759_PMIC_REG_CONTROL_FG
+> > >=20
+> > > You could just use MAX77759_PMIC_REG_CONTROL_FG in-place?
+> >=20
+> > I think this makes it more obvious in the regmap definition
+> > below - struct regmap_config::max_register vs
+> > struct regmap_config::num_reg_defaults_raw
+>=20
+> The attributes are already suitably named.
+>=20
+> Creating a new define to make this doubly obvious is not required.
+
+Ok.
+
+>=20
+> [...]
+>=20
+> > > Where are the other registers?
+> >=20
+> > The intention is to add them once we start working on charger.
+>=20
+> Add it when you do instead.
+
+I've added them here now.
+
+>=20
+> > > > +enum max77759_i2c_subdev_id {
+> > > > +	MAX77759_I2C_SUBDEV_ID_MAXQ,
+> > > > +	MAX77759_I2C_SUBDEV_ID_CHARGER,
+> > >=20
+> > > Are these truly arbitrary or are you relying on the fact that the
+> > > compiler usually starts from 0 and incs by 1?
+> >=20
+> > It's not arbitrary. A conforming compiler is required to start with
+> > 0, this is part of the C standard, e.g.
+> > https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf=C2=A06.7.2.2=
+.3
+>=20
+> I'm aware of the standard.
+>=20
+> However from a readability perspective they look arbitrary, so either
+> add a comment to say that you're relying on this behaviour and that the
+> presence and order of each entry is fixed and should not be amended or
+> do future contributors a favour and hard code them from the beginning.
+
+I've added a comment to clarify.
+
+> [...]
+>=20
+> > > > +	struct mutex maxq_lock;
+> > > > +	struct regmap *regmap_maxq;
+> > > > +	struct completion cmd_done;
+> > > > +
+> > > > +	struct regmap *regmap_top;
+> > >=20
+> > > What is top?
+> >=20
+> > One of its functional blocks as per the data sheet. I think
+> > it makes sense to use nomenclature from it.
+>=20
+> Maybe a comment should be added to say what top actually represents.
+>=20
+> Not all readers of this code will have the datasheet open.
+
+I've added a kerneldoc to the struct, hopefully that's good enough :-)
+
+>=20
+> > > > +	struct regmap *regmap_charger;
+> > > > +};
+> > > > +
+> > > > +struct max77759_i2c_subdev {
+> > > > +	enum max77759_i2c_subdev_id id;
+> > > > +	const struct regmap_config *cfg;
+> > > > +	u16 i2c_address;
+> > > > +};
+> > > > +
+> > > > +/* TOP registers */
+> > > > +static const struct regmap_range max77759_top_registers[] =3D {
+> > > > +	regmap_reg_range(0x00, 0x02),
+> > > > +	regmap_reg_range(0x22, 0x24),
+> > > > +	regmap_reg_range(0x26, 0x26),
+> > > > +	regmap_reg_range(0x40, 0x40),
+> > > > +	regmap_reg_range(0x50, 0x51),
+> > >=20
+> > > What are these magic numbers?=C2=A0 Can you define them?
+> >=20
+> > This is on purpose, as I think it makes it much easier to have
+> > the ranges as numbers, otherwise you always have to look them up
+> > in the header when trying to verify correctness or simply looking
+> > at this. Additionally, things wouldn't be nicely aligned anymore,
+> >=20
+> > Without data sheet, whether these are numbers or macro names
+> > makes no difference, and it's impossible to reason about them.
+> >=20
+> > With data sheet, it's easier this way to compare.
+> >=20
+> > But I'll change them.
+>=20
+> Or provide come helpful comments.=C2=A0 Magic numbers are generally decri=
+ed.
+>=20
+> This is made worse here, since it's not obvious what this function block =
+does.
+
+I've added some comments, hopefully better :-)
+
+[...
+
+> > > > +	struct device *dev =3D regmap_get_device(max77759_mfd->regmap_max=
+q);
+> > >=20
+> > > > +	static const unsigned int timeout_ms =3D 200;
+> > >=20
+> > > Why 200?
+> >=20
+> > This is what downstream uses, I can add a comment to say so.
+>=20
+> We're not generally interested in downstream here.
+>=20
+> Why do downstream use it?=C2=A0 Is there a value in the datasheet?
+
+No, there isn't. We know that 200ms must work reliably since downstream
+uses that value, hence I re-used it.
+I've dropped it to 20ms now, since in most cases in very simple tests it
+takes less than 5ms, but I don't know if there are cases when e.g.
+the uC is busy (e.g doing USB-C related handling) where it might take
+longer. I guess we'll see.
+
+>=20
+> > > > +
+> > > > +	if (cmd->length > MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	/* rsp is allowed to be NULL. In that case we do need a temporary=
+. */
+> > >=20
+> > > More details please.
+> > >=20
+> > > Why is NULL valid?
+> >=20
+> > The kernel doc explains it:
+> >=20
+> > =C2=A0* @rsp: Any response data associated with the command will be cop=
+ied here;
+> > =C2=A0*=C2=A0=C2=A0=C2=A0=C2=A0 can be %NULL if the command has no resp=
+onse (other than ACK).
+> >=20
+> > Do you want me to duplicate this information?
+>=20
+> You already did, just in a less useful way.
+>=20
+> It's arguably more critical to document it here than tucked away in the h=
+eader.
+>=20
+> > > Why does it need a placeholder?=C2=A0 What are you using as the place=
+holder?
+> >=20
+> > Here, we still need a location to write the response to, as we
+> > need to verify that the command was indeed completed correctly.
+>=20
+> Then please tell all of the future readers who may have the same queries.
+
+The header / kdoc is for API users, so it makes sense to have it there. I'v=
+e
+updated the comment here as well.
+
+> > > > [...]
+
+
+> > > > +	ret =3D devm_mutex_init(&client->dev, &max77759_mfd->maxq_lock);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	i2c_set_clientdata(client, max77759_mfd);
+> > > > +
+> > > > +	for (int i =3D 0; i < ARRAY_SIZE(max77759_i2c_subdevs); ++i) {
+> > >=20
+> > > Any reason for the pre-increment?
+> > >=20
+> > > If not, it's more standards to post-inc.
+> >=20
+> > My reason is that historically compilers have created better code
+> > with preinc, and I generally still prefer it, to make it obvious.
+>=20
+> Is this still true today?
+>=20
+> Historically, we used program computers with punched cards as well.=C2=A0=
+ =3D:-)
+>=20
+> > There are thousands of users doing preinc in for loops in the kernel
+> > tree, so unless you really insist, I'd like to keep it that way for
+> > that reason if you're OK with reason :-)
+>=20
+> Let's play top-trumps:
+>=20
+> % git grep "++i" | wc -l
+> 7062
+> % git grep "i++" | wc -l
+> 75158
+>=20
+> There is more than an order of magnitude of difference between the
+> styles and I bet quite a few of the aforementioned cases were authored
+> because they _required_ pre-inc.
+
+It's unlikely that
+
+$ git grep 'for (i.*++i' | wc -l
+5861
+
+_require_ pre-inc. But sure, since that's the preference, I've changed it
+
+>=20
+> [...]
+>=20
+> > > > diff --git a/include/linux/mfd/max77759.h b/include/linux/mfd/max77=
+759.h
+> > > > new file mode 100644
+> > > > index 0000000000000000000000000000000000000000..b038b4e9b748287e23e=
+3a7030496f09dc8bdc816
+> > > > --- /dev/null
+> > > > +++ b/include/linux/mfd/max77759.h
+> > > > @@ -0,0 +1,98 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > > > +/*
+> > > > + * Copyright 2020 Google Inc.
+> > > > + * Copyright 2025 Linaro Ltd.
+> > > > + *
+> > > > + * Client interface for Maxim MAX77759 MFD driver
+> > > > + */
+> > > > +
+> > > > +#ifndef __LINUX_MFD_MAX77759_H
+> > > > +#define __LINUX_MFD_MAX77759_H
+> > > > +
+> > > > +/* MaxQ opcodes */
+> > > > +#define MAX77759_MAXQ_OPCODE_MAXLENGTH 33
+> > > > +
+> > > > +#define MAX77759_MAXQ_OPCODE_GPIO_TRIGGER_READ=C2=A0=C2=A0 0x21
+> > > > +#define MAX77759_MAXQ_OPCODE_GPIO_TRIGGER_WRITE=C2=A0 0x22
+> > > > +#define MAX77759_MAXQ_OPCODE_GPIO_CONTROL_READ=C2=A0=C2=A0 0x23
+> > > > +#define MAX77759_MAXQ_OPCODE_GPIO_CONTROL_WRITE=C2=A0 0x24
+> > > > +#define MAX77759_MAXQ_OPCODE_USER_SPACE_READ=C2=A0=C2=A0=C2=A0=C2=
+=A0 0x81
+> > > > +#define MAX77759_MAXQ_OPCODE_USER_SPACE_WRITE=C2=A0=C2=A0=C2=A0 0x=
+82
+> > > > +
+> > > > +/*
+> > > > + * register map (incomplete) - registers not useful for drivers ar=
+e not
+> > > > + * declared here
+> > > > + */
+> > > > +/* MaxQ */
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x64
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_APCMDRESI=C2=A0 BIT(7)
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_SYSMSGI=C2=A0=C2=A0=C2=A0 BIT(6=
+)
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_GPIO6I=C2=A0=C2=A0=C2=A0=C2=A0 =
+BIT(1)
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_GPIO5I=C2=A0=C2=A0=C2=A0=C2=A0 =
+BIT(0)
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(offs, en)=C2=A0 (((en) &=
+ 1) << (offs))
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_GPIOxI_MASK(offs) \
+> > > > +				MAX77759_MAXQ_REG_UIC_INT1_GPIOxI(offs, ~0)
+> > > > +
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x65
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x66
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT4=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x67
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS1=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x68
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS2=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x69
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS3=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6a
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS4=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6b
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS5=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6c
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS6=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6d
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS7=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6f
+> > > > +#define MAX77759_MAXQ_REG_UIC_UIC_STATUS8=C2=A0=C2=A0=C2=A0=C2=A0 =
+0x6f
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT1_M=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x70
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT2_M=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x71
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT3_M=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x72
+> > > > +#define MAX77759_MAXQ_REG_UIC_INT4_M=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 0x73
+> > > > +
+> > > > +/* charger */
+> > > > +#define MAX77759_CHGR_REG_CHG_INT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 0xb0
+> > > > +#define MAX77759_CHGR_REG_CHG_INT2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0xb1
+> > > > +#define MAX77759_CHGR_REG_CHG_INT_MASK=C2=A0=C2=A0 0xb2
+> > > > +#define MAX77759_CHGR_REG_CHG_INT2_MASK=C2=A0 0xb3
+> > > > +
+> > > > +struct max77759_mfd;
+> > >=20
+> > > Place the definition in here instead.
+> >=20
+> > I would like to keep it private. There is no need for it to
+> > become public, it's meant to be an opaque handle.
+>=20
+> No, it's not.
+>=20
+> It's device data that you already shared with all of the children.
+>=20
+> If you don't want them to have it, don't give it to them.
+
+It's normal to have opaque handles for API users if those API users
+don't need to know implementation details, like in this case.
+
+Anyway, I've made it public.
+
+Thanks Lee!
+
+Cheers,
+A.
+
 
