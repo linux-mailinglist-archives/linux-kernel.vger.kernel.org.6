@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-575206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3F5A6F417
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:32:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AA3A6F416
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DB33AA6A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:32:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FB118917CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F913255E2C;
-	Tue, 25 Mar 2025 11:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228392561C5;
+	Tue, 25 Mar 2025 11:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FI6FF7W5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft/YGqeE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5BC1F0E31
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2962561A4;
+	Tue, 25 Mar 2025 11:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902354; cv=none; b=CvRwoh/U3LVIzZMuGffo1PJh+6khYS+W4AuAIrpFsRi4zA00RxkuGyQWuMzsvmzzlb92t3uKupiSrc3sllxYYV0NVUFXbYUnZJSQy9PR9q3kdWluUfLi63OUcPuF1Ir1JgyEHVCs0SAUCkGq4TbQWWL9kn1RVBA9KNuXbCVAHgI=
+	t=1742902356; cv=none; b=ieAjhnAFa8rT8HBPKAhPnVXzk+/FAmJtoWvDgXgX4kUM/Aui0o5afhjANMTMSZvxUSM5w0Hmj/0TWIUFXvXLxXvnlGkggTI+bev3szwWbhtVmDxbsogJO2AJxdjkYPKruo8Urqk7HN7/jjQCLIfuzyTx4tqsciTKXgc9+67RtCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902354; c=relaxed/simple;
-	bh=pLt36G8wzYS308hePFvWcTj/mP1iMuzUm3GgVjUFZRY=;
+	s=arc-20240116; t=1742902356; c=relaxed/simple;
+	bh=LAr8Bf6j+HhEyNruXvqxpBt11yzs3KpmWOMV+YIiS+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0AtVjUPmmnyVXKVuLxJM5QsieB+KC64dohgC5CHJSQ9S57SmoVaREKnYL+XTDi3H7w7ny16OM7DsopFKwxdGlUQsvJYDFZuoItyLdZ8HDvcSYGNmCPaEBEa6iWdxCmjRx0YNRjsadcaX7/IJygvc2nNYx7Pwhcr9bonOzJfGck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FI6FF7W5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742902351;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rLTjIkAEyVDfqSLVGRyd4Pw4GfqI4jhl0z3ueIuaXQc=;
-	b=FI6FF7W595N6VooJex7ukVJyVqLA0fRcyCtiLUPSYRc58L7G2leRxfsNkfQCgnqhn4Shi2
-	iqDzeui3JcKxRzuY4PqWC6AnSN6MXLax0b2FMC51i05UoNRFQlBXbL6f7RpQVmL3B59Va2
-	qD8P6RCTYfbRumUNy50hmvrTCPmbvUE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-292-x0VVr2t6OBeXA_E2AThOog-1; Tue,
- 25 Mar 2025 07:32:29 -0400
-X-MC-Unique: x0VVr2t6OBeXA_E2AThOog-1
-X-Mimecast-MFC-AGG-ID: x0VVr2t6OBeXA_E2AThOog_1742902347
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8CC11955D84;
-	Tue, 25 Mar 2025 11:32:26 +0000 (UTC)
-Received: from localhost (unknown [10.43.135.229])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6ABE1801769;
-	Tue, 25 Mar 2025 11:32:23 +0000 (UTC)
-Date: Tue, 25 Mar 2025 12:32:21 +0100
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
-Subject: Re: [PATCH v2 1/2] time/timekeeping: Fix possible inconsistencies in
- _COARSE clockids
-Message-ID: <Z-KURRE_Gr72Xv_n@localhost>
-References: <20250320200306.1712599-1-jstultz@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJMj2QM5OPBlWnL46PFrNIBGd7wGjHtw/OyttyEW0E1XKwWIepGcBMolbgtMzplkBopBomj2FQzRnpkKBcPR1hMK2UeITAJoqsUj5LoAYcXnNeK9sRov0RTi+iP1azxG1PjHBIYLymQi1SobXOXfcxq2Wm+Btu9rkbG8NHdBPCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ft/YGqeE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980B6C4CEED;
+	Tue, 25 Mar 2025 11:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742902355;
+	bh=LAr8Bf6j+HhEyNruXvqxpBt11yzs3KpmWOMV+YIiS+c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ft/YGqeE1BLI0gBEuiXyxhjESzNkAXleA4deBPgFxuKFyBy0ukzyKCOCsGeybaVXZ
+	 UgZR00E6uMxaZN7UbwdiMpk25bNq9PGNLJZEcVP0rG7mI2w7gANx0fHbtXcpM2JLHy
+	 7eFp5+Aov7n/9oyLbC/o7gJCX1HtsC6BEidrBmefgtwqHdD6oKMhlOu4BrVBBuYl9k
+	 Knza2xDh3uDauozFuq9vTlzJ4Lkz7Bs3LtuVljY31QDDR1UyGxWTVz/s7bDSf9EEL/
+	 uDw5b4uofzMdoj8M3qrQmM9cOQRvJGLZQ4rjzA8e7Vv7g0yu6bD0rUPjYddnGXSi/u
+	 /XEo73ibeLQEA==
+Date: Tue, 25 Mar 2025 11:32:30 +0000
+From: Mark Brown <broonie@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, ASoC: codecs: wcd934x: Remove
+ potential undefined behavior in wcd934x_slim_irq_handler()
+Message-ID: <0b3b6878-a1c1-4cd0-b2a8-d70833759578@sirena.org.uk>
+References: <7e863839ec7301bf9c0f429a03873d44e484c31c.1742852847.git.jpoimboe@kernel.org>
+ <174289169388.14745.12400458342392826127.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/luSzX7yQ7aRVIJC"
+Content-Disposition: inline
+In-Reply-To: <174289169388.14745.12400458342392826127.tip-bot2@tip-bot2>
+X-Cookie: Visit beautiful Vergas, Minnesota.
+
+
+--/luSzX7yQ7aRVIJC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250320200306.1712599-1-jstultz@google.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 20, 2025 at 01:03:00PM -0700, John Stultz wrote:
-> +static u64 timekeeping_accumulate(struct timekeeper *tk, u64 offset,
-> +				  enum timekeeping_adv_mode mode,
-> +				  unsigned int *clock_set)
+On Tue, Mar 25, 2025 at 08:34:53AM -0000, tip-bot2 for Josh Poimboeuf wrote:
+> The following commit has been merged into the objtool/urgent branch of ti=
+p:
+>=20
+> Commit-ID:     46b70c569b774ea2c671bb3aff2a50d29760b7c3
+> Gitweb:        https://git.kernel.org/tip/46b70c569b774ea2c671bb3aff2a50d=
+29760b7c3
+> Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+> AuthorDate:    Mon, 24 Mar 2025 14:56:09 -07:00
+> Committer:     Ingo Molnar <mingo@kernel.org>
+> CommitterDate: Tue, 25 Mar 2025 09:20:29 +01:00
+>=20
+> objtool, ASoC: codecs: wcd934x: Remove potential undefined behavior in wc=
+d934x_slim_irq_handler()
 
-> +	 * Also reset tk::ntp_error as it does not make sense to keep the
-> +	 * old accumulated error around in this case.
-> +	 */
+FWIW the original patch doesn't seem to have made it into my inbox (the
+regmap one did), not that it makes a *huge* difference but might be some
+infra/script issue which crops up on some other more urgent occasion.
 
-I'm not sure if I still understand the timekeeping code correctly, but
-that doesn't seem right to me. At least the comment should explain why
-it does not make sense to keep the NTP error.
+--/luSzX7yQ7aRVIJC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Resetting the NTP error causes a small time step. An NTP/PTP client
-can be setting the frequency very frequently, e.g. up to 128 times per
-second and the interval between updates can be random. If the timing
-was right, I suspect it could cause a measurable drift. The client
-should be able to compensate for it, but why make its job harder by
-making the clock less predictable. My expectation for the clock is
-that its frequency will not change if the same (or only slightly
-different) frequency is set repeatedly by adjtimex().
+-----BEGIN PGP SIGNATURE-----
 
-> +	if (mode == TK_ADV_FREQ) {
-> +		timekeeping_forward(tk, tk->tkr_mono.cycle_last + offset);
-> +		tk->ntp_error = 0;
-> +		return 0;
-> +	}
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfilE0ACgkQJNaLcl1U
+h9BS1Qf/QbN3kgpPBI9JdevrTNj9IHyosHVeUBtM1GQdE1P7Fw50gV/HyLB1Hnpc
+GuYNQ4S/8lvkGQWCMmmiLSoJ5zjHtksN/zlbRIkm3GYe37BWt/vzLxcP9jouiA5K
+uslGY4grHpKJFi37DQBOZuZSo0/cbPbfr7vLGlO1a6QgNMLtZAaYdO4hX99siihF
+K6ulcpVG91Jk5GXNj/jbLmVqeHMBx3dSORhjnt4tkcp1GfAd3p0oyRu10jFGl7bF
+eDhpBP6bBJ6X1krpiuXS6/P3DVtV2HROVv1893FG7egO3bTr811LQ7uo1Wjg8KH4
+2fE4HPHSwoYqkNwys0BTDaJ3ut0QFQ==
+=9Ocm
+-----END PGP SIGNATURE-----
 
--- 
-Miroslav Lichvar
-
+--/luSzX7yQ7aRVIJC--
 
