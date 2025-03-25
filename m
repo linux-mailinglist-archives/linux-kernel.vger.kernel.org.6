@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-576300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206BBA70DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:32:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93549A70DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6374189EF24
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC6E57A380F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79B526A0BD;
-	Tue, 25 Mar 2025 23:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB9019DFB4;
+	Tue, 25 Mar 2025 23:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C36IW42v"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QkeblEwJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC451624DD;
-	Tue, 25 Mar 2025 23:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBA2199934;
+	Tue, 25 Mar 2025 23:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742945532; cv=none; b=pn2Q3+8kgqZUh5SezTkDPu9UBrBY3hYiR6WTnPjCRz24JP/FkccpNYBKrpbGDt6MD3mv1flRNINCurzpc9O3/gA8aCMNKBrbfmSbWOKiG5hPan6f2fukurDQ/ffpIW8AgfMd4zORoQiqp6vq7oJfkZIrLVhoEHrZgniTxTphrWc=
+	t=1742945868; cv=none; b=dU1UVSeKX66loYw0ooYmugscjUr4DEksw1pdct/NIkb8QBLxKiC+roHxNfT+0ihvhSkV84XCGmYn1zMjtOddOHCoaBD67/l9/Z2AVeBjbk/am1d7bVwbOs7m/Bqb9MzRj/IJ0Po2rP0p+wwrMw45a6rKkkoowE2TUaOd/6+vXnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742945532; c=relaxed/simple;
-	bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GNErjIcuch4bDZTh85MZI31r8G/3/9/O/45lx3+c5ivEvTzKRwBebe6t0Eg1hYh3RsAJTXVp1W9ZgdDrjQeMPHMkyOLNmgzrWAfjc+zbC3jbjF3RQakKW/l0BveEFb5PSpYCXFwofscmQWWGb3WnWSJzNJdEoQoEOEH9JoxWumg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C36IW42v; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a6bso64335101fa.1;
-        Tue, 25 Mar 2025 16:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742945528; x=1743550328; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
-        b=C36IW42vSDX8AsfdN9ifM3U4YtkmuaYPPaQpdjFyT+zEpNKJFlO3NSMRMUoeo27+YJ
-         Ikf//JM+d/mpMqVbXuqyDdZ/yAjqGPWlaBikVhMANovhXviej+nCJqlH+vqnGLNK8NyX
-         ko9kVj09MQovDSGULzPkJmCMx7ywVBUaJ4HUpuUtVPHetpLr6+eWg81Q7jc3IpeE449t
-         DjeMTH8DKx3RWZv/ky+oA39RpktJ7sTgW5oEXGvgQ7rjj6yxxOR3XW6/GDFJVROMryIf
-         HHix0K/kAfWdvj6gjqcVOneCa4mT3URApTtcpc8DDepFyx89IhsQ0gwQ9E7XAKOyj9jL
-         6NSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742945528; x=1743550328;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eefr6HbRlYtDKXKjCQxLxiNjejMQgJVFupcX7Ph1gcM=;
-        b=RvfA+9HP/7lBjf1goX/JrDR75gn642jTkOl6HOsPvIxGwP5R8ivtoEZ/x9GKgX8Iqh
-         JpOFhJK01mn+exee4syb/GXuQkywvIdjdFJH+kV5A5sbLyypFt1p9K7+3fwghGtRlI5i
-         c4AS1CYjlP4MNOeaQ5fnD9M/taluK/Zt5JAudDfnizEcy+iCHYbRQ8BEKFwazXs4k/9e
-         TPinBKWgC6MeaeeNOPE2iE5qiJgxq82o5kMEJg4CF5awxyDNOeP4HXTyis2/KfYFcFrg
-         ZZi4WB5bQpF5+5msKILR6zRS5YhRGt1THyTHVW8OozowEFr5wWhlx7Go/DYom+gak21S
-         ignQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Zkmkwsz4K+Pf9Jfp9tunpIBAnRFRiBSX0Gxr5WXyZ+Y87F1q3u9ALJT2DcztjzHT/n/U1XvQ+EhCqAs=@vger.kernel.org, AJvYcCUItrrFj7aqsGua/D7qmedLOKXeqykvMINUP3z7Rt68B0QH9DL0A0eK+vncwb5sBxUtRb3YYiPO@vger.kernel.org, AJvYcCUKTXz+tJJHbe0BtIy5LOTkE38/sV4ydf8bEdoIs2SSUgqpSHPUbOypENZfm7svqauZmRHHmlg4yb+r@vger.kernel.org, AJvYcCUUQCucInV3MyysM5xIxXrItWXcLOlQMYafQYlwQ5TBNlBTx+3Uifn1L9lVUSW2LOM4yUxJdwHD+Q/K2Ps4@vger.kernel.org, AJvYcCVj2Z0irQ6dTQc77IbeVSIqBjbcidIcrJsZgaVldCkj2reRzd5iULllxwK7hbI6bJtutANNQFDkyPkef1dU@vger.kernel.org, AJvYcCVq3uoRUKRXOra7ilvFfY79SSSUG5JxPq+CjPJDNQq0BbPUsmNP7enCxoD8tdmMC9lOTjimwS+xHQWFTTJ1spk=@vger.kernel.org, AJvYcCW4/1Ln6s2vkAnQZ+/R8wzrmlJN3H+/5B+Ajlowb9owh+70vkUYnybvJaS+38mDOCIlzNPDJb4byErG@vger.kernel.org, AJvYcCWPr0j3nVRh3zqJDUPpP5rbcH4ZOyvR2W5aA5leZ0IhdaT8iM18Wu9JK0ecUHG/GYvhAPPWJx1JXNPsIKkoi0Bp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGy8QSgrQfbauiTH8lWmOHKEd9W+6RQNXnHTt1frIKTakFxyZI
-	sbSuLZcAxREy/szvwBH+k85ShR3i81Fuj+895CHZAwrc0Jz9SgYgkraKrBjKomjfx3pU33ph3Bo
-	UFlKJYGq6vp5kUM5AgIPIxELViHY=
-X-Gm-Gg: ASbGncsVI2Amp7e1bgffpm2CZROuDYDD0S68NfyW1hSy4aMkNE1vzleehXtoMOv+O7j
-	0v1MNMellL20JIBfD3lhH9IHTxHlb5cY8CFzYWh2E3umnks7iYmvv362mQYbOYEdoQ2DzbpFTkE
-	8OCiL2v2ZxxeSGfapcsJkgjvIJMU9K4uoRHauLBFUQbExgTZTbuPxhVKkIuvg=
-X-Google-Smtp-Source: AGHT+IFxHYJ+0IsL/dVIF9u+EAWIllGZhFdwDLi1uT8DJOuKNoI5GnEZcD+Vh9CnqpoEAhYqpPdcD4a8c0fhXk8RIyI=
-X-Received: by 2002:a2e:bc1b:0:b0:30b:a9b7:7dfa with SMTP id
- 38308e7fff4ca-30d7e214c8dmr68301441fa.3.1742945528268; Tue, 25 Mar 2025
- 16:32:08 -0700 (PDT)
+	s=arc-20240116; t=1742945868; c=relaxed/simple;
+	bh=00/ArSjIQEZNs37g+f5KqAlg1L1Kwu+QoXBNEaLDdA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPwl9k7PyfhwX/oEIwaZ0hbKxOtzDI2UgftYJ9kDH7qqZ1+YOj8J1ENaeaiXU7/on9PY8suGAPgKRkAHduj1+80RAsKQOPGF2cIOTRfJgNtr8n42pjC7kK9L6pCwmwrazuQN1FrISGk7QpeOQS8hEJUBzuln0PPyssrhMYuIOLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QkeblEwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659C2C4CEE4;
+	Tue, 25 Mar 2025 23:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742945867;
+	bh=00/ArSjIQEZNs37g+f5KqAlg1L1Kwu+QoXBNEaLDdA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QkeblEwJcGEu19kTCnrKzhnz2M7cJmU/cnC2SBixBbgwn2LyZYpsatZ1pNX5vD+cw
+	 J7JRWmMtT0hWyoi5qRo2EgPRpSdUeSRMIn2pupgr/nRYN1L8LSbFWfwOgrWu3Ov43G
+	 frGd/KqrFVbdYF4iqOyajnHG4JMSe54RtoOZ56z4=
+Date: Tue, 25 Mar 2025 19:36:20 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH 6.6 00/77] 6.6.85-rc1 review
+Message-ID: <2025032556-faceplate-stingy-fe31@gregkh>
+References: <20250325122144.259256924@linuxfoundation.org>
+ <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
+ <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250325-ptr-as-ptr-v7-0-87ab452147b9@gmail.com> <CANiq72kYt2mYG8FA=U6C4CPUGfAwDFZ8Jji5SH2Yt2NnOHua0w@mail.gmail.com>
-In-Reply-To: <CANiq72kYt2mYG8FA=U6C4CPUGfAwDFZ8Jji5SH2Yt2NnOHua0w@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 19:31:32 -0400
-X-Gm-Features: AQ5f1Jr6QN6jniT-TQODJ_8YxxFjZq1wvjuil1EsgVPT_xGsnF65ZNPxsL_Gs5g
-Message-ID: <CAJ-ks9kjY0i4ZHe6WJ=6Peo+6nN-5cPkuWQu1iYva_mH=356cw@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] rust: reduce `as` casts, enable related lints
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
 
-On Tue, Mar 25, 2025 at 4:23=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Mar 25, 2025 at 9:07=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > Changes in v7:
-> > - Add patch to enable `clippy::ref_as_ptr`.
-> > - Link to v6: https://lore.kernel.org/r/20250324-ptr-as-ptr-v6-0-49d1b7=
-fd4290@gmail.com
->
-> Please slow down -- at least wait a few days between revisions (unless
-> there is a particular reason that requires it, of course).
+On Tue, Mar 25, 2025 at 05:07:16PM +0100, Dragan Simic wrote:
+> Hello Naresh,
+> 
+> On 2025-03-25 16:07, Naresh Kamboju wrote:
+> > On Tue, 25 Mar 2025 at 18:05, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > 
+> > > This is the start of the stable review cycle for the 6.6.85 release.
+> > > There are 77 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied,
+> > > please
+> > > let me know.
+> > > 
+> > > Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > > https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc1.gz
+> > > or in the git tree and branch at:
 
-Thanks, certainly no urgency here. In this particular case this isn't
-a true revision: the difference between v7 and v6 is the presence of
-an additional patch.
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > > linux-6.6.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > 
+> > Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
+> > stable-rc 6.6.85-rc1
+> > 
+> > First seen on the v6.6.83-245-gc1fb5424adea
+> >  Good: v6.6.84
+> >  Bad: 6.6.85-rc1
+> > 
+> > * arm64, build
+> >   - gcc-13-defconfig
+> > 
+> > Regression Analysis:
+> >  - New regression? yes
+> >  - Reproducibility? Yes
+> > 
+> > 
+> > Build regression: arm64 dtb rockchip non-existent node or label
+> > "vcca_0v9"
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > ## Build log
+> > arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
+> > (phandle_references):
+> > /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
+> > 
+> >   also defined at
+> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
+> > 
+> > ## Source
+> > * Kernel version: 6.6.85-rc1
+> > * Git tree:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > * Git sha: c1fb5424adea53e3a4d8b2018c5e974f7772af29
+> > * Git describe: v6.6.83-245-gc1fb5424adea
+> > * Project details:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/
+> > 
+> > ## Build
+> > * Build log:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/log
+> > * Build history:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27763720/suite/build/test/gcc-13-defconfig/history/
+> > * Build details:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/
+> > * Build link:
+> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/
+> > * Kernel config:
+> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/config
+> > 
+> > ## Steps to reproduce
+> >  - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
+> > --kconfig defconfig
+> 
+> This is caused by another patch from the original series failing
+> to apply due to some bulk regulator renaming.  I'll send backported
+> version of that patch soon, which should make everything fine.
+> 
 
-> We are in the merge window anyway, so there is no urgency to resend
-> since these cannot go in, and you may want to rebase on top of -rc1
-> when it gets released so that you can cover most/all cases added by
-> then.
+What commit id needs to be backported?  Or did you submit the fix
+already and I just missed it?
 
-While it's true that this won't be picked up for some time (and that's
-ok), I wanted to get Benno's eyes on it sooner than later. Is there a
-workflow (within the mailing list) for such a case, or do folks go out
-of band in this situation?
+thanks,
 
-Thanks!
-Tamir
+greg k-h
 
