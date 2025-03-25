@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-575026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA06A6ECC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:41:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A5FA6ECC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FFF3B8BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F76188C303
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9A12580F1;
-	Tue, 25 Mar 2025 09:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D2E2586CD;
+	Tue, 25 Mar 2025 09:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UFTU9J/N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="THI0wL4D"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OEmx3bny";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KyIRlsVG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA719257430;
-	Tue, 25 Mar 2025 09:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0933925743E;
+	Tue, 25 Mar 2025 09:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742895395; cv=none; b=inSddUsLOa2KmfT7FICNqcQdxEwOXeZDZNPUOlstYCezWarCH7qNQ+ZFSviSpCTRFXz9s2muLSyJuft/UMTiKTuYrEcMvo2CKOJERjs4QAk0pf6XUrsqIVyCRM54vGMOyfpWQ9zy+zHcz1qizevCzUJrqwklkC9L9JvgwqSA2Dc=
+	t=1742895396; cv=none; b=d/zvtm/qU52CjWmsh9DS3h3BnlYBuWK4R1GadK0baSWRpL+Icb2g/aYcuIauhX0ViPN4i/AdEO7GuXNHiFgav0Zakolo14qJJAZuc/Fz0pn5Pg9JzqLXwhiWVdhSX2ODvD5d0H/6K7F7RSx3MUSb8L51RqUYfZctEQM7Oo3eau4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742895395; c=relaxed/simple;
-	bh=pnR3CndA1WK+rh1s3HDz+IkkMCrEEdzVuyQya2kj1bc=;
+	s=arc-20240116; t=1742895396; c=relaxed/simple;
+	bh=AmmwvHUu5cVGl9Ob3IYghTfqOoftS6R3meUv7KTEEZY=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PCmq9Tcb/C30tBmJgOhJux/ov6JCMgi33ww8OVXF+9/t239xlDvwf+RadTp4CFHsl+6DQC64S+DV+kUAt9VSZkNIYoFHmMOzTVmeqAtUn9WGNmK1adfz3bblKH6bJmA2QJzsMvjEjoD8aquxqBuxIn1Ilr0LUjCQ0bVn12DZovg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UFTU9J/N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=THI0wL4D; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=pw61ANVaZVAYWAYRXxNN5xZN9lzJpenCArw0VcBC122TPiNG6dEeo9R1KjxzAfgx5K8PY3VG6YcByjqLpFdIlNPMyMT6LT1rn1nBE0DEhQIN7zsTtin8DqvvhHjYhWh46KRfcqtOP0dsWAwXRTVlhM9zGNdjePk1y63Lz/LitqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OEmx3bny; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KyIRlsVG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 09:36:30 -0000
+Date: Tue, 25 Mar 2025 09:36:31 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742895391;
+	s=2020; t=1742895392;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p4SE+Ts1FOIr2Y9KagBN5uOjcvfSbtlKIdAkhxWhUvc=;
-	b=UFTU9J/Nj7wFItD30Brzg166TaHnyF5qow/shmUoXe75uKREfBNVvUdW13rW9w6fZeV7Bu
-	RSLTDqXAOyaiPS9VH9GpDW8dYw6o+XGCjr5pcpIhVezVODvWYEnG6vDP1ELRw7/ZYhvAmF
-	dSO5rJsm6fg800dEIYZqaLct7WplUIDEcJrwt6ptgX97XWzAfagqmCXX1HtclpHG/gV5Yt
-	qqiYn59J8klKOy9HzIIySpu5koq1vY2JrAaDTM4qjddhEwb3OBbtjM/C/Hic20pA6WgJYk
-	YG93Kyjj9r7Gs0CLJG0Qgolg6xTFvWV2CpB9vGcxtUV0z6USQg7Fil2J7A4WJw==
+	bh=4yrAJgJp+009GvBgZY7NcPhnZVy5e1bCJJvkEEbXSM0=;
+	b=OEmx3bnyzMQxpK6peWTIhHbK5F1hHQaTIf1VlRXthgWtXNJ9YKYXGiTy9isiOwlx2NQDgj
+	xHhP0rtpUbCACIeE8nonH8g3FkNDVshcTb4FkABToHPLQXpJ/DzraMbu1JK0KnwnWxzC4S
+	p2DgBIvn5aSapwHdOeLypTZIKgPz35/wWeYoEhsb1ptRM6FCCNCasgHjmbJBRIgqU6igsO
+	Etf9inFkV+s5z1f7R6pUmln6LDkzejvMCMwmEZvH7U1hVT75ji9Kh5iRKQT1HqRAyA76+q
+	B8hozkmOCbKsTsXwqijUBGjEQPS3dsIlPJQUWeGtE1XEmt2WdAPJBkdpI2dOgw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742895391;
+	s=2020e; t=1742895392;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=p4SE+Ts1FOIr2Y9KagBN5uOjcvfSbtlKIdAkhxWhUvc=;
-	b=THI0wL4DRMg6lacE3cVOel0wv96KrA3v1n1D2cXT90jmdj7jNoVhdLBsBN5x0+WdR5DyMg
-	wGRnc13XfJE5sZAg==
+	bh=4yrAJgJp+009GvBgZY7NcPhnZVy5e1bCJJvkEEbXSM0=;
+	b=KyIRlsVG7JlpJArxWE7rO/WJezKK1MfsMLZrxfGSNuRs5+C6TKfu4gT/AfQ0P1BKs05WtR
+	AbIYkaKyMrtmvTAg==
 From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cacheinfo: Move AMD cache_disable_0/1 handling to
- separate file
+Subject:
+ [tip: x86/cpu] x86/cacheinfo: Standardize _cpuid4_info_regs instance naming
 Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
  "H. Peter Anvin" <hpa@zytor.com>,
  Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250324133324.23458-14-darwi@linutronix.de>
-References: <20250324133324.23458-14-darwi@linutronix.de>
+In-Reply-To: <20250324133324.23458-11-darwi@linutronix.de>
+References: <20250324133324.23458-11-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174289539024.14745.14150812839476422033.tip-bot2@tip-bot2>
+Message-ID: <174289539193.14745.10416711403740140284.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,697 +83,257 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     365e960d296ef9f36b20971aa4854ce07817a9bb
-Gitweb:        https://git.kernel.org/tip/365e960d296ef9f36b20971aa4854ce07817a9bb
+Commit-ID:     1374ff60ed0d4cedd55f653edd3f59f9f19c4171
+Gitweb:        https://git.kernel.org/tip/1374ff60ed0d4cedd55f653edd3f59f9f19c4171
 Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Mon, 24 Mar 2025 14:33:08 +01:00
+AuthorDate:    Mon, 24 Mar 2025 14:33:05 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 10:22:39 +01:00
+CommitterDate: Tue, 25 Mar 2025 10:22:29 +01:00
 
-x86/cacheinfo: Move AMD cache_disable_0/1 handling to separate file
+x86/cacheinfo: Standardize _cpuid4_info_regs instance naming
 
-Parent commit decoupled amd_northbridge out of _cpuid4_info_regs, where
-it was merely "parked" there until ci_info_init() can store it in the
-private pointer of the <linux/cacheinfo.h> API.
+The cacheinfo code frequently uses the output registers from CPUID leaf
+0x4.  Such registers are cached in 'struct _cpuid4_info_regs', augmented
+with related information, and are then passed across functions.
 
-Given that decoupling, move the AMD-specific L3 cache_disable_0/1 sysfs
-code from the generic (and already extremely convoluted) x86/cacheinfo
-code into its own file.
+The naming of these _cpuid4_info_regs instances is confusing at best.
 
-Compile the file only if CONFIG_AMD_NB and CONFIG_SYSFS are both
-enabled, which mirrors the existing logic.
+Some instances are called "this_leaf", which is vague as "this" lacks
+context and "leaf" is overly generic given that other CPUID leaves are
+also processed within cacheinfo.  Other _cpuid4_info_regs instances are
+just called "base", adding further ambiguity.
+
+Standardize on id4 for all instances.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250324133324.23458-14-darwi@linutronix.de
+Link: https://lore.kernel.org/r/20250324133324.23458-11-darwi@linutronix.de
 ---
- arch/x86/kernel/cpu/Makefile            |   3 +-
- arch/x86/kernel/cpu/amd_cache_disable.c | 301 +++++++++++++++++++++++-
- arch/x86/kernel/cpu/cacheinfo.c         | 298 +-----------------------
- arch/x86/kernel/cpu/cpu.h               |   9 +-
- 4 files changed, 313 insertions(+), 298 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/amd_cache_disable.c
+ arch/x86/kernel/cpu/cacheinfo.c | 97 ++++++++++++++++----------------
+ 1 file changed, 49 insertions(+), 48 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index 4efdf5c..3a39396 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -38,6 +38,9 @@ obj-y					+= intel.o tsx.o
- obj-$(CONFIG_PM)			+= intel_epb.o
- endif
- obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
-+ifeq ($(CONFIG_AMD_NB)$(CONFIG_SYSFS),yy)
-+obj-y					+= amd_cache_disable.o
-+endif
- obj-$(CONFIG_CPU_SUP_HYGON)		+= hygon.o
- obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
- obj-$(CONFIG_CPU_SUP_CENTAUR)		+= centaur.o
-diff --git a/arch/x86/kernel/cpu/amd_cache_disable.c b/arch/x86/kernel/cpu/amd_cache_disable.c
-new file mode 100644
-index 0000000..6d53aee
---- /dev/null
-+++ b/arch/x86/kernel/cpu/amd_cache_disable.c
-@@ -0,0 +1,301 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * AMD L3 cache_disable_{0,1} sysfs handling
-+ * Documentation/ABI/testing/sysfs-devices-system-cpu
-+ */
-+
-+#include <linux/cacheinfo.h>
-+#include <linux/capability.h>
-+#include <linux/pci.h>
-+#include <linux/sysfs.h>
-+
-+#include <asm/amd_nb.h>
-+
-+#include "cpu.h"
-+
-+/*
-+ * L3 cache descriptors
-+ */
-+static void amd_calc_l3_indices(struct amd_northbridge *nb)
-+{
-+	struct amd_l3_cache *l3 = &nb->l3_cache;
-+	unsigned int sc0, sc1, sc2, sc3;
-+	u32 val = 0;
-+
-+	pci_read_config_dword(nb->misc, 0x1C4, &val);
-+
-+	/* calculate subcache sizes */
-+	l3->subcaches[0] = sc0 = !(val & BIT(0));
-+	l3->subcaches[1] = sc1 = !(val & BIT(4));
-+
-+	if (boot_cpu_data.x86 == 0x15) {
-+		l3->subcaches[0] = sc0 += !(val & BIT(1));
-+		l3->subcaches[1] = sc1 += !(val & BIT(5));
-+	}
-+
-+	l3->subcaches[2] = sc2 = !(val & BIT(8))  + !(val & BIT(9));
-+	l3->subcaches[3] = sc3 = !(val & BIT(12)) + !(val & BIT(13));
-+
-+	l3->indices = (max(max3(sc0, sc1, sc2), sc3) << 10) - 1;
-+}
-+
-+/*
-+ * check whether a slot used for disabling an L3 index is occupied.
-+ * @l3: L3 cache descriptor
-+ * @slot: slot number (0..1)
-+ *
-+ * @returns: the disabled index if used or negative value if slot free.
-+ */
-+static int amd_get_l3_disable_slot(struct amd_northbridge *nb, unsigned int slot)
-+{
-+	unsigned int reg = 0;
-+
-+	pci_read_config_dword(nb->misc, 0x1BC + slot * 4, &reg);
-+
-+	/* check whether this slot is activated already */
-+	if (reg & (3UL << 30))
-+		return reg & 0xfff;
-+
-+	return -1;
-+}
-+
-+static ssize_t show_cache_disable(struct cacheinfo *ci, char *buf, unsigned int slot)
-+{
-+	int index;
-+	struct amd_northbridge *nb = ci->priv;
-+
-+	index = amd_get_l3_disable_slot(nb, slot);
-+	if (index >= 0)
-+		return sprintf(buf, "%d\n", index);
-+
-+	return sprintf(buf, "FREE\n");
-+}
-+
-+#define SHOW_CACHE_DISABLE(slot)					\
-+static ssize_t								\
-+cache_disable_##slot##_show(struct device *dev,				\
-+			    struct device_attribute *attr, char *buf)	\
-+{									\
-+	struct cacheinfo *ci = dev_get_drvdata(dev);			\
-+	return show_cache_disable(ci, buf, slot);			\
-+}
-+
-+SHOW_CACHE_DISABLE(0)
-+SHOW_CACHE_DISABLE(1)
-+
-+static void amd_l3_disable_index(struct amd_northbridge *nb, int cpu,
-+				 unsigned int slot, unsigned long idx)
-+{
-+	int i;
-+
-+	idx |= BIT(30);
-+
-+	/*
-+	 *  disable index in all 4 subcaches
-+	 */
-+	for (i = 0; i < 4; i++) {
-+		u32 reg = idx | (i << 20);
-+
-+		if (!nb->l3_cache.subcaches[i])
-+			continue;
-+
-+		pci_write_config_dword(nb->misc, 0x1BC + slot * 4, reg);
-+
-+		/*
-+		 * We need to WBINVD on a core on the node containing the L3
-+		 * cache which indices we disable therefore a simple wbinvd()
-+		 * is not sufficient.
-+		 */
-+		wbinvd_on_cpu(cpu);
-+
-+		reg |= BIT(31);
-+		pci_write_config_dword(nb->misc, 0x1BC + slot * 4, reg);
-+	}
-+}
-+
-+/*
-+ * disable a L3 cache index by using a disable-slot
-+ *
-+ * @l3:    L3 cache descriptor
-+ * @cpu:   A CPU on the node containing the L3 cache
-+ * @slot:  slot number (0..1)
-+ * @index: index to disable
-+ *
-+ * @return: 0 on success, error status on failure
-+ */
-+static int amd_set_l3_disable_slot(struct amd_northbridge *nb, int cpu,
-+				   unsigned int slot, unsigned long index)
-+{
-+	int ret = 0;
-+
-+	/*  check if @slot is already used or the index is already disabled */
-+	ret = amd_get_l3_disable_slot(nb, slot);
-+	if (ret >= 0)
-+		return -EEXIST;
-+
-+	if (index > nb->l3_cache.indices)
-+		return -EINVAL;
-+
-+	/* check whether the other slot has disabled the same index already */
-+	if (index == amd_get_l3_disable_slot(nb, !slot))
-+		return -EEXIST;
-+
-+	amd_l3_disable_index(nb, cpu, slot, index);
-+
-+	return 0;
-+}
-+
-+static ssize_t store_cache_disable(struct cacheinfo *ci, const char *buf,
-+				   size_t count, unsigned int slot)
-+{
-+	struct amd_northbridge *nb = ci->priv;
-+	unsigned long val = 0;
-+	int cpu, err = 0;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	cpu = cpumask_first(&ci->shared_cpu_map);
-+
-+	if (kstrtoul(buf, 10, &val) < 0)
-+		return -EINVAL;
-+
-+	err = amd_set_l3_disable_slot(nb, cpu, slot, val);
-+	if (err) {
-+		if (err == -EEXIST)
-+			pr_warn("L3 slot %d in use/index already disabled!\n",
-+				   slot);
-+		return err;
-+	}
-+	return count;
-+}
-+
-+#define STORE_CACHE_DISABLE(slot)					\
-+static ssize_t								\
-+cache_disable_##slot##_store(struct device *dev,			\
-+			     struct device_attribute *attr,		\
-+			     const char *buf, size_t count)		\
-+{									\
-+	struct cacheinfo *ci = dev_get_drvdata(dev);			\
-+	return store_cache_disable(ci, buf, count, slot);		\
-+}
-+
-+STORE_CACHE_DISABLE(0)
-+STORE_CACHE_DISABLE(1)
-+
-+static ssize_t subcaches_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
-+{
-+	struct cacheinfo *ci = dev_get_drvdata(dev);
-+	int cpu = cpumask_first(&ci->shared_cpu_map);
-+
-+	return sprintf(buf, "%x\n", amd_get_subcaches(cpu));
-+}
-+
-+static ssize_t subcaches_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t count)
-+{
-+	struct cacheinfo *ci = dev_get_drvdata(dev);
-+	int cpu = cpumask_first(&ci->shared_cpu_map);
-+	unsigned long val;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (kstrtoul(buf, 16, &val) < 0)
-+		return -EINVAL;
-+
-+	if (amd_set_subcaches(cpu, val))
-+		return -EINVAL;
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(cache_disable_0);
-+static DEVICE_ATTR_RW(cache_disable_1);
-+static DEVICE_ATTR_RW(subcaches);
-+
-+static umode_t cache_private_attrs_is_visible(struct kobject *kobj,
-+					      struct attribute *attr, int unused)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct cacheinfo *ci = dev_get_drvdata(dev);
-+	umode_t mode = attr->mode;
-+
-+	if (!ci->priv)
-+		return 0;
-+
-+	if ((attr == &dev_attr_subcaches.attr) &&
-+	    amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
-+		return mode;
-+
-+	if ((attr == &dev_attr_cache_disable_0.attr ||
-+	     attr == &dev_attr_cache_disable_1.attr) &&
-+	    amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE))
-+		return mode;
-+
-+	return 0;
-+}
-+
-+static struct attribute_group cache_private_group = {
-+	.is_visible = cache_private_attrs_is_visible,
-+};
-+
-+static void init_amd_l3_attrs(void)
-+{
-+	static struct attribute **amd_l3_attrs;
-+	int n = 1;
-+
-+	if (amd_l3_attrs) /* already initialized */
-+		return;
-+
-+	if (amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE))
-+		n += 2;
-+	if (amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
-+		n += 1;
-+
-+	amd_l3_attrs = kcalloc(n, sizeof(*amd_l3_attrs), GFP_KERNEL);
-+	if (!amd_l3_attrs)
-+		return;
-+
-+	n = 0;
-+	if (amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE)) {
-+		amd_l3_attrs[n++] = &dev_attr_cache_disable_0.attr;
-+		amd_l3_attrs[n++] = &dev_attr_cache_disable_1.attr;
-+	}
-+	if (amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
-+		amd_l3_attrs[n++] = &dev_attr_subcaches.attr;
-+
-+	cache_private_group.attrs = amd_l3_attrs;
-+}
-+
-+const struct attribute_group *cache_get_priv_group(struct cacheinfo *ci)
-+{
-+	struct amd_northbridge *nb = ci->priv;
-+
-+	if (ci->level < 3 || !nb)
-+		return NULL;
-+
-+	if (nb && nb->l3_cache.indices)
-+		init_amd_l3_attrs();
-+
-+	return &cache_private_group;
-+}
-+
-+struct amd_northbridge *amd_init_l3_cache(int index)
-+{
-+	struct amd_northbridge *nb;
-+	int node;
-+
-+	/* only for L3, and not in virtualized environments */
-+	if (index < 3)
-+		return NULL;
-+
-+	node = topology_amd_node_id(smp_processor_id());
-+	nb = node_to_amd_nb(node);
-+	if (nb && !nb->l3_cache.indices)
-+		amd_calc_l3_indices(nb);
-+
-+	return nb;
-+}
 diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 8c2b51b..ea6fba9 100644
+index b273ecf..1b2a2bf 100644
 --- a/arch/x86/kernel/cpu/cacheinfo.c
 +++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -9,12 +9,9 @@
-  */
- 
- #include <linux/cacheinfo.h>
--#include <linux/capability.h>
- #include <linux/cpu.h>
- #include <linux/cpuhotplug.h>
--#include <linux/pci.h>
- #include <linux/stop_machine.h>
--#include <linux/sysfs.h>
- 
- #include <asm/amd_nb.h>
- #include <asm/cacheinfo.h>
-@@ -300,301 +297,6 @@ amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 		(ebx->split.ways_of_associativity + 1) - 1;
+@@ -573,7 +573,7 @@ cache_get_priv_group(struct cacheinfo *ci)
+ 	return &cache_private_group;
  }
  
--#if defined(CONFIG_AMD_NB) && defined(CONFIG_SYSFS)
--
--/*
-- * L3 cache descriptors
-- */
--static void amd_calc_l3_indices(struct amd_northbridge *nb)
--{
--	struct amd_l3_cache *l3 = &nb->l3_cache;
--	unsigned int sc0, sc1, sc2, sc3;
--	u32 val = 0;
--
--	pci_read_config_dword(nb->misc, 0x1C4, &val);
--
--	/* calculate subcache sizes */
--	l3->subcaches[0] = sc0 = !(val & BIT(0));
--	l3->subcaches[1] = sc1 = !(val & BIT(4));
--
--	if (boot_cpu_data.x86 == 0x15) {
--		l3->subcaches[0] = sc0 += !(val & BIT(1));
--		l3->subcaches[1] = sc1 += !(val & BIT(5));
--	}
--
--	l3->subcaches[2] = sc2 = !(val & BIT(8))  + !(val & BIT(9));
--	l3->subcaches[3] = sc3 = !(val & BIT(12)) + !(val & BIT(13));
--
--	l3->indices = (max(max3(sc0, sc1, sc2), sc3) << 10) - 1;
--}
--
--/*
-- * check whether a slot used for disabling an L3 index is occupied.
-- * @l3: L3 cache descriptor
-- * @slot: slot number (0..1)
-- *
-- * @returns: the disabled index if used or negative value if slot free.
-- */
--static int amd_get_l3_disable_slot(struct amd_northbridge *nb, unsigned slot)
--{
--	unsigned int reg = 0;
--
--	pci_read_config_dword(nb->misc, 0x1BC + slot * 4, &reg);
--
--	/* check whether this slot is activated already */
--	if (reg & (3UL << 30))
--		return reg & 0xfff;
--
--	return -1;
--}
--
--static ssize_t show_cache_disable(struct cacheinfo *ci, char *buf, unsigned int slot)
--{
--	int index;
--	struct amd_northbridge *nb = ci->priv;
--
--	index = amd_get_l3_disable_slot(nb, slot);
--	if (index >= 0)
--		return sprintf(buf, "%d\n", index);
--
--	return sprintf(buf, "FREE\n");
--}
--
--#define SHOW_CACHE_DISABLE(slot)					\
--static ssize_t								\
--cache_disable_##slot##_show(struct device *dev,				\
--			    struct device_attribute *attr, char *buf)	\
--{									\
--	struct cacheinfo *ci = dev_get_drvdata(dev);			\
--	return show_cache_disable(ci, buf, slot);			\
--}
--SHOW_CACHE_DISABLE(0)
--SHOW_CACHE_DISABLE(1)
--
--static void amd_l3_disable_index(struct amd_northbridge *nb, int cpu,
--				 unsigned slot, unsigned long idx)
--{
--	int i;
--
--	idx |= BIT(30);
--
--	/*
--	 *  disable index in all 4 subcaches
--	 */
--	for (i = 0; i < 4; i++) {
--		u32 reg = idx | (i << 20);
--
--		if (!nb->l3_cache.subcaches[i])
--			continue;
--
--		pci_write_config_dword(nb->misc, 0x1BC + slot * 4, reg);
--
--		/*
--		 * We need to WBINVD on a core on the node containing the L3
--		 * cache which indices we disable therefore a simple wbinvd()
--		 * is not sufficient.
--		 */
--		wbinvd_on_cpu(cpu);
--
--		reg |= BIT(31);
--		pci_write_config_dword(nb->misc, 0x1BC + slot * 4, reg);
--	}
--}
--
--/*
-- * disable a L3 cache index by using a disable-slot
-- *
-- * @l3:    L3 cache descriptor
-- * @cpu:   A CPU on the node containing the L3 cache
-- * @slot:  slot number (0..1)
-- * @index: index to disable
-- *
-- * @return: 0 on success, error status on failure
-- */
--static int amd_set_l3_disable_slot(struct amd_northbridge *nb, int cpu,
--			    unsigned slot, unsigned long index)
--{
--	int ret = 0;
--
--	/*  check if @slot is already used or the index is already disabled */
--	ret = amd_get_l3_disable_slot(nb, slot);
--	if (ret >= 0)
--		return -EEXIST;
--
--	if (index > nb->l3_cache.indices)
--		return -EINVAL;
--
--	/* check whether the other slot has disabled the same index already */
--	if (index == amd_get_l3_disable_slot(nb, !slot))
--		return -EEXIST;
--
--	amd_l3_disable_index(nb, cpu, slot, index);
--
--	return 0;
--}
--
--static ssize_t store_cache_disable(struct cacheinfo *ci, const char *buf,
--				   size_t count, unsigned int slot)
--{
--	unsigned long val = 0;
--	int cpu, err = 0;
--	struct amd_northbridge *nb = ci->priv;
--
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
--	cpu = cpumask_first(&ci->shared_cpu_map);
--
--	if (kstrtoul(buf, 10, &val) < 0)
--		return -EINVAL;
--
--	err = amd_set_l3_disable_slot(nb, cpu, slot, val);
--	if (err) {
--		if (err == -EEXIST)
--			pr_warn("L3 slot %d in use/index already disabled!\n",
--				   slot);
--		return err;
--	}
--	return count;
--}
--
--#define STORE_CACHE_DISABLE(slot)					\
--static ssize_t								\
--cache_disable_##slot##_store(struct device *dev,			\
--			     struct device_attribute *attr,		\
--			     const char *buf, size_t count)		\
--{									\
--	struct cacheinfo *ci = dev_get_drvdata(dev);			\
--	return store_cache_disable(ci, buf, count, slot);		\
--}
--STORE_CACHE_DISABLE(0)
--STORE_CACHE_DISABLE(1)
--
--static ssize_t subcaches_show(struct device *dev,
--			      struct device_attribute *attr, char *buf)
--{
--	struct cacheinfo *ci = dev_get_drvdata(dev);
--	int cpu = cpumask_first(&ci->shared_cpu_map);
--
--	return sprintf(buf, "%x\n", amd_get_subcaches(cpu));
--}
--
--static ssize_t subcaches_store(struct device *dev,
--			       struct device_attribute *attr,
--			       const char *buf, size_t count)
--{
--	struct cacheinfo *ci = dev_get_drvdata(dev);
--	int cpu = cpumask_first(&ci->shared_cpu_map);
--	unsigned long val;
--
--	if (!capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
--	if (kstrtoul(buf, 16, &val) < 0)
--		return -EINVAL;
--
--	if (amd_set_subcaches(cpu, val))
--		return -EINVAL;
--
--	return count;
--}
--
--static DEVICE_ATTR_RW(cache_disable_0);
--static DEVICE_ATTR_RW(cache_disable_1);
--static DEVICE_ATTR_RW(subcaches);
--
--static umode_t
--cache_private_attrs_is_visible(struct kobject *kobj,
--			       struct attribute *attr, int unused)
--{
--	struct device *dev = kobj_to_dev(kobj);
--	struct cacheinfo *ci = dev_get_drvdata(dev);
--	umode_t mode = attr->mode;
--
--	if (!ci->priv)
--		return 0;
--
--	if ((attr == &dev_attr_subcaches.attr) &&
--	    amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
--		return mode;
--
--	if ((attr == &dev_attr_cache_disable_0.attr ||
--	     attr == &dev_attr_cache_disable_1.attr) &&
--	    amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE))
--		return mode;
--
--	return 0;
--}
--
--static struct attribute_group cache_private_group = {
--	.is_visible = cache_private_attrs_is_visible,
--};
--
--static void init_amd_l3_attrs(void)
--{
--	int n = 1;
--	static struct attribute **amd_l3_attrs;
--
--	if (amd_l3_attrs) /* already initialized */
--		return;
--
--	if (amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE))
--		n += 2;
--	if (amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
--		n += 1;
--
--	amd_l3_attrs = kcalloc(n, sizeof(*amd_l3_attrs), GFP_KERNEL);
--	if (!amd_l3_attrs)
--		return;
--
--	n = 0;
--	if (amd_nb_has_feature(AMD_NB_L3_INDEX_DISABLE)) {
--		amd_l3_attrs[n++] = &dev_attr_cache_disable_0.attr;
--		amd_l3_attrs[n++] = &dev_attr_cache_disable_1.attr;
--	}
--	if (amd_nb_has_feature(AMD_NB_L3_PARTITIONING))
--		amd_l3_attrs[n++] = &dev_attr_subcaches.attr;
--
--	cache_private_group.attrs = amd_l3_attrs;
--}
--
--const struct attribute_group *
--cache_get_priv_group(struct cacheinfo *ci)
--{
--	struct amd_northbridge *nb = ci->priv;
--
--	if (ci->level < 3 || !nb)
--		return NULL;
--
--	if (nb && nb->l3_cache.indices)
--		init_amd_l3_attrs();
--
--	return &cache_private_group;
--}
--
--static struct amd_northbridge *amd_init_l3_cache(int index)
--{
--	struct amd_northbridge *nb;
--	int node;
--
--	/* only for L3, and not in virtualized environments */
--	if (index < 3)
--		return NULL;
--
--	node = topology_amd_node_id(smp_processor_id());
--	nb = node_to_amd_nb(node);
--	if (nb && !nb->l3_cache.indices)
--		amd_calc_l3_indices(nb);
--
--	return nb;
--}
--#else
--static struct amd_northbridge *amd_init_l3_cache(int index)
--{
--	return NULL;
--}
--#endif  /* CONFIG_AMD_NB && CONFIG_SYSFS */
--
- /*
-  * Fill passed _cpuid4_info_regs structure.
-  * Intel-only code paths should pass NULL for the amd_northbridge
-diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index 51deb60..bc38b2d 100644
---- a/arch/x86/kernel/cpu/cpu.h
-+++ b/arch/x86/kernel/cpu/cpu.h
-@@ -75,6 +75,15 @@ extern void check_null_seg_clears_base(struct cpuinfo_x86 *c);
- void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id);
- void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c);
+-static void amd_init_l3_cache(struct _cpuid4_info_regs *this_leaf, int index)
++static void amd_init_l3_cache(struct _cpuid4_info_regs *id4, int index)
+ {
+ 	int node;
  
-+#if defined(CONFIG_AMD_NB) && defined(CONFIG_SYSFS)
-+struct amd_northbridge *amd_init_l3_cache(int index);
-+#else
-+static inline struct amd_northbridge *amd_init_l3_cache(int index)
-+{
-+	return NULL;
-+}
-+#endif
+@@ -582,16 +582,16 @@ static void amd_init_l3_cache(struct _cpuid4_info_regs *this_leaf, int index)
+ 		return;
+ 
+ 	node = topology_amd_node_id(smp_processor_id());
+-	this_leaf->nb = node_to_amd_nb(node);
+-	if (this_leaf->nb && !this_leaf->nb->l3_cache.indices)
+-		amd_calc_l3_indices(this_leaf->nb);
++	id4->nb = node_to_amd_nb(node);
++	if (id4->nb && !id4->nb->l3_cache.indices)
++		amd_calc_l3_indices(id4->nb);
+ }
+ #else
+ #define amd_init_l3_cache(x, y)
+ #endif  /* CONFIG_AMD_NB && CONFIG_SYSFS */
+ 
+ static int
+-cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
++cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4)
+ {
+ 	union _cpuid4_leaf_eax	eax;
+ 	union _cpuid4_leaf_ebx	ebx;
+@@ -604,11 +604,11 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
+ 				    &ebx.full, &ecx.full, &edx);
+ 		else
+ 			amd_cpuid4(index, &eax, &ebx, &ecx);
+-		amd_init_l3_cache(this_leaf, index);
++		amd_init_l3_cache(id4, index);
+ 	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
+ 		cpuid_count(0x8000001d, index, &eax.full,
+ 			    &ebx.full, &ecx.full, &edx);
+-		amd_init_l3_cache(this_leaf, index);
++		amd_init_l3_cache(id4, index);
+ 	} else {
+ 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
+ 	}
+@@ -616,13 +616,14 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
+ 	if (eax.split.type == CTYPE_NULL)
+ 		return -EIO; /* better error ? */
+ 
+-	this_leaf->eax = eax;
+-	this_leaf->ebx = ebx;
+-	this_leaf->ecx = ecx;
+-	this_leaf->size = (ecx.split.number_of_sets          + 1) *
+-			  (ebx.split.coherency_line_size     + 1) *
+-			  (ebx.split.physical_line_partition + 1) *
+-			  (ebx.split.ways_of_associativity   + 1);
++	id4->eax = eax;
++	id4->ebx = ebx;
++	id4->ecx = ecx;
++	id4->size = (ecx.split.number_of_sets          + 1) *
++		    (ebx.split.coherency_line_size     + 1) *
++		    (ebx.split.physical_line_partition + 1) *
++		    (ebx.split.ways_of_associativity   + 1);
 +
- unsigned int aperfmperf_get_khz(int cpu);
- void cpu_select_mitigations(void);
+ 	return 0;
+ }
+ 
+@@ -754,29 +755,29 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 		 * parameters cpuid leaf to find the cache details
+ 		 */
+ 		for (i = 0; i < ci->num_leaves; i++) {
+-			struct _cpuid4_info_regs this_leaf = {};
++			struct _cpuid4_info_regs id4 = {};
+ 			int retval;
+ 
+-			retval = cpuid4_cache_lookup_regs(i, &this_leaf);
++			retval = cpuid4_cache_lookup_regs(i, &id4);
+ 			if (retval < 0)
+ 				continue;
+ 
+-			switch (this_leaf.eax.split.level) {
++			switch (id4.eax.split.level) {
+ 			case 1:
+-				if (this_leaf.eax.split.type == CTYPE_DATA)
+-					new_l1d = this_leaf.size/1024;
+-				else if (this_leaf.eax.split.type == CTYPE_INST)
+-					new_l1i = this_leaf.size/1024;
++				if (id4.eax.split.type == CTYPE_DATA)
++					new_l1d = id4.size/1024;
++				else if (id4.eax.split.type == CTYPE_INST)
++					new_l1i = id4.size/1024;
+ 				break;
+ 			case 2:
+-				new_l2 = this_leaf.size/1024;
+-				num_threads_sharing = 1 + this_leaf.eax.split.num_threads_sharing;
++				new_l2 = id4.size/1024;
++				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
+ 				index_msb = get_count_order(num_threads_sharing);
+ 				l2_id = c->topo.apicid & ~((1 << index_msb) - 1);
+ 				break;
+ 			case 3:
+-				new_l3 = this_leaf.size/1024;
+-				num_threads_sharing = 1 + this_leaf.eax.split.num_threads_sharing;
++				new_l3 = id4.size/1024;
++				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
+ 				index_msb = get_count_order(num_threads_sharing);
+ 				l3_id = c->topo.apicid & ~((1 << index_msb) - 1);
+ 				break;
+@@ -841,7 +842,7 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ }
+ 
+ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
+-				    const struct _cpuid4_info_regs *base)
++				    const struct _cpuid4_info_regs *id4)
+ {
+ 	struct cpu_cacheinfo *this_cpu_ci;
+ 	struct cacheinfo *ci;
+@@ -867,7 +868,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
+ 	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
+ 		unsigned int apicid, nshared, first, last;
+ 
+-		nshared = base->eax.split.num_threads_sharing + 1;
++		nshared = id4->eax.split.num_threads_sharing + 1;
+ 		apicid = cpu_data(cpu).topo.apicid;
+ 		first = apicid - (apicid % nshared);
+ 		last = first + nshared - 1;
+@@ -898,7 +899,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
+ }
+ 
+ static void __cache_cpumap_setup(unsigned int cpu, int index,
+-				 const struct _cpuid4_info_regs *base)
++				 const struct _cpuid4_info_regs *id4)
+ {
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	struct cacheinfo *ci, *sibling_ci;
+@@ -908,12 +909,12 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
+ 
+ 	if (c->x86_vendor == X86_VENDOR_AMD ||
+ 	    c->x86_vendor == X86_VENDOR_HYGON) {
+-		if (__cache_amd_cpumap_setup(cpu, index, base))
++		if (__cache_amd_cpumap_setup(cpu, index, id4))
+ 			return;
+ 	}
+ 
+ 	ci = this_cpu_ci->info_list + index;
+-	num_threads_sharing = 1 + base->eax.split.num_threads_sharing;
++	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
+ 
+ 	cpumask_set_cpu(cpu, &ci->shared_cpu_map);
+ 	if (num_threads_sharing == 1)
+@@ -934,18 +935,18 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
+ }
+ 
+ static void ci_info_init(struct cacheinfo *ci,
+-			 const struct _cpuid4_info_regs *base)
++			 const struct _cpuid4_info_regs *id4)
+ {
+-	ci->id				= base->id;
++	ci->id				= id4->id;
+ 	ci->attributes			= CACHE_ID;
+-	ci->level			= base->eax.split.level;
+-	ci->type			= cache_type_map[base->eax.split.type];
+-	ci->coherency_line_size		= base->ebx.split.coherency_line_size + 1;
+-	ci->ways_of_associativity	= base->ebx.split.ways_of_associativity + 1;
+-	ci->size			= base->size;
+-	ci->number_of_sets		= base->ecx.split.number_of_sets + 1;
+-	ci->physical_line_partition	= base->ebx.split.physical_line_partition + 1;
+-	ci->priv			= base->nb;
++	ci->level			= id4->eax.split.level;
++	ci->type			= cache_type_map[id4->eax.split.type];
++	ci->coherency_line_size		= id4->ebx.split.coherency_line_size + 1;
++	ci->ways_of_associativity	= id4->ebx.split.ways_of_associativity + 1;
++	ci->size			= id4->size;
++	ci->number_of_sets		= id4->ecx.split.number_of_sets + 1;
++	ci->physical_line_partition	= id4->ebx.split.physical_line_partition + 1;
++	ci->priv			= id4->nb;
+ }
+ 
+ int init_cache_level(unsigned int cpu)
+@@ -964,15 +965,15 @@ int init_cache_level(unsigned int cpu)
+  * ECX as cache index. Then right shift apicid by the number's order to get
+  * cache id for this cache node.
+  */
+-static void get_cache_id(int cpu, struct _cpuid4_info_regs *id4_regs)
++static void get_cache_id(int cpu, struct _cpuid4_info_regs *id4)
+ {
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	unsigned long num_threads_sharing;
+ 	int index_msb;
+ 
+-	num_threads_sharing = 1 + id4_regs->eax.split.num_threads_sharing;
++	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
+ 	index_msb = get_count_order(num_threads_sharing);
+-	id4_regs->id = c->topo.apicid >> index_msb;
++	id4->id = c->topo.apicid >> index_msb;
+ }
+ 
+ int populate_cache_leaves(unsigned int cpu)
+@@ -980,15 +981,15 @@ int populate_cache_leaves(unsigned int cpu)
+ 	unsigned int idx, ret;
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	struct cacheinfo *ci = this_cpu_ci->info_list;
+-	struct _cpuid4_info_regs id4_regs = {};
++	struct _cpuid4_info_regs id4 = {};
+ 
+ 	for (idx = 0; idx < this_cpu_ci->num_leaves; idx++) {
+-		ret = cpuid4_cache_lookup_regs(idx, &id4_regs);
++		ret = cpuid4_cache_lookup_regs(idx, &id4);
+ 		if (ret)
+ 			return ret;
+-		get_cache_id(cpu, &id4_regs);
+-		ci_info_init(ci++, &id4_regs);
+-		__cache_cpumap_setup(cpu, idx, &id4_regs);
++		get_cache_id(cpu, &id4);
++		ci_info_init(ci++, &id4);
++		__cache_cpumap_setup(cpu, idx, &id4);
+ 	}
+ 	this_cpu_ci->cpu_map_populated = true;
  
 
