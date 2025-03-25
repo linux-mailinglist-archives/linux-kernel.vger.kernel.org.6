@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-574895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16D5FA6EB3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:14:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D438DA6EB40
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653EB16BCC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:14:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F616D510
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD6207E08;
-	Tue, 25 Mar 2025 08:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070B3253F2D;
+	Tue, 25 Mar 2025 08:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sd/zIHkG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N2Xt3B9U";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DAWvqiqx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA241A7AE3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF34F204693;
+	Tue, 25 Mar 2025 08:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890489; cv=none; b=eQGwKL6QJV3YzD/p021eTvV8vLY0B1PPA0/8QJFCj3ecoP5mUg+uiiORHxjENNMLY81R4dHOjA7+gNbYHVQUnBzvlufKuSsmNk6F3VOxXd85CYt+58p6nz/X8zx5GYV22wtHvyiLRLwit8XFMicM4JtmApESldbLflidOu3VV7w=
+	t=1742890498; cv=none; b=dAfy/A9rfJDlbLYboeMa/L5MR04Hf4p46jOg/ENmnBHc+lZC7OOnB8k5IeBE4g7pK9fSS4j+8y3h7IfkzN8m5smAJ+MaDStlb2ptVr7wo+u54kKPzooQ2djjZXYdsojIMsT+I/VptJ2H4MT4TWyBP5H+H4vdetJFqO04hUr6Q8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890489; c=relaxed/simple;
-	bh=ltivJF64SSk4I6uvhklyPDUN85qLH92F3LeDnTLLN7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lb/cY08jhHjEff6Av6zBcrV3kkkDLtTEO7c92buJs4iZ/+h5BJjathNlZXs7eHpfwseKWrWdUv5v3xXsmbBFySJ8XlkYb9cDYaREWz36t21Ofa1TYOa05jO8hh15nV1C/TdooUu9ElGSjxgnSTsIKMG0n86rfSJ2z8KKhEH+qh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sd/zIHkG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742890485;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1742890498; c=relaxed/simple;
+	bh=6RIChLFcwdC6aM35gmMxc0YpR233ZumN/Zx4dcu4UYQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=bTf4RYKT83nKUBhjBpw7uunDWoUQOL5lhluQOoMzPiyhWgR0dAxdKdNi93lxK4f5g86mdDSvfERt00vAXj17dLrrmjyFhNtREZltJ1pQNl8vO4tmTLflLzVIiNAGRg6VhWddv7lPkDnTZYwb5FnIeGuq8S51KU8J3QGwxtKG3WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N2Xt3B9U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DAWvqiqx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Mar 2025 08:14:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742890494;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ziIO7gqQIRwTQc7WQaTagZxoA1eVxh2k/2C5JLipzwk=;
-	b=Sd/zIHkG4A2R2IfwgNS2jbPThW1Dqtfe3J08KZfconJwz87Y+yal8kJSqnpzZWeuzkeM8B
-	KSvg4Ap8xjrZRkHWBLi39LIakrGIZPj8JvQeHuuCVisbAiU9UPB9/N1OMv3dzIpJww/95Q
-	K5IIWMlgKjaplLHIMizOmQOM850JCHk=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-PPPsTDdXMF-aiKDZu_epPA-1; Tue, 25 Mar 2025 04:14:42 -0400
-X-MC-Unique: PPPsTDdXMF-aiKDZu_epPA-1
-X-Mimecast-MFC-AGG-ID: PPPsTDdXMF-aiKDZu_epPA_1742890481
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2241e7e3addso77518635ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:14:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742890481; x=1743495281;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ziIO7gqQIRwTQc7WQaTagZxoA1eVxh2k/2C5JLipzwk=;
-        b=gWdeKVf30+HEO/deunnjVBsBdtG7IbGvk2oN0PxEvZcxNYRCGmRRZw/43IAexiYe0D
-         bj5TeBDjzzt3h/aPaEZ9sGkartmZz/MoueMWKYBPIdlMCbHv7l4JXzRoA0AjSPwo4KWt
-         QRIiSzlAmTYvd7jRIyz+u6kx3lLMSYLIMnfdBDnCYTTNNy2F3/cQkdCxvV6YxFokXJFj
-         zYHmAH0TaGxPERSbNFRMiXF/YoiUDUfjHaKGKFGYCoZxcQLg7ZC0bhVzKyJAP5/8QtBf
-         olGfy3uIUpTdb5vf2q5GGZfoFXW2h65UqqKOzduz6gBUXGt1JwGHIcQ4U1ihXwZtFj2y
-         jxUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTLQ6zTNnqWhdGigfQgNA7AR4noLtPcOCM9R5FFxf/Wo4u/GP3XHb7yji/sf717+H3IMXasjYzeArOC30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwMF/xR9uyYqaZH/cElgtRORwt3Zr2ojpSBeGdCX+9EV3n8ey8
-	iCf9jHm6xmXjaE0ifs0322y19bNnpQnUzNzjiwpWN46RPJv25kGprQ77axb60wVCvJuKolqRFWt
-	GDMXdut6fW3SKYX4b4eVyIe2rCkFe0ksbkDK8bTfsEACsQrqKjpUNiVsyFxt/JA==
-X-Gm-Gg: ASbGnctDKVEPuZg0IkJc4P0XgShMXVqpkqpbBX5n2N3EIYAlYoZfWxkgztkrFHt9DE7
-	GiakV1LB4OLcXYpb2jmoLAFWALavuQXYAw4L24PFhRgwbXMMmEnlDLtsi55gWMSppBc/lizQ7oh
-	P0NwEhDLES3uOr8a7M+2HfTK2u4ZroFFO2+hkaso2OPcg+JLR3HtGcemU6ybjIV+jBpTo7QNiBg
-	n6ihqRRUVmoxFq+5cIyWTepoYjs60aSRg09jr3CobCToF3Ix1bclwuBqtD2uJPMH3ajD5ZiAqse
-	Uf5pn9A=
-X-Received: by 2002:a17:902:e786:b0:224:fa0:36d2 with SMTP id d9443c01a7336-227a5222abfmr149756615ad.26.1742890480839;
-        Tue, 25 Mar 2025 01:14:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHrwEmK2v1Nu8SZcLQeKU8/uA4mow3l3buGiwqqoQFXJ/XEgO6oVtaXIKW8/K2cVHkviIYcw==
-X-Received: by 2002:a17:902:e786:b0:224:fa0:36d2 with SMTP id d9443c01a7336-227a5222abfmr149756175ad.26.1742890480351;
-        Tue, 25 Mar 2025 01:14:40 -0700 (PDT)
-Received: from redhat.com ([101.100.166.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22780f4c4easm84134515ad.84.2025.03.25.01.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 01:14:39 -0700 (PDT)
-Date: Tue, 25 Mar 2025 04:14:35 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Daniel Verkamp <dverkamp@chromium.org>
-Cc: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	pasic@linux.ibm.com, amit@kernel.org, schnelle@linux.ibm.com,
-	Kusanagi Kouichi <slash@ac.auone-net.jp>
-Subject: Re: [PATCH] virtio_console: fix order of fields cols and rows
-Message-ID: <20250325041411-mutt-send-email-mst@kernel.org>
-References: <20250324144300.905535-1-maxbr@linux.ibm.com>
- <CABVzXAn1iNHP_8h-sj1mTJDuu9dxOBhwi+nbhhr9d27NTo-6wg@mail.gmail.com>
+	bh=97IRLafD28YGMxQIhEEl6Pt6gPnwfdxDVkQZV+PT9dE=;
+	b=N2Xt3B9UI1hVS8rZlZk6Vx6iqmjBkoPgP51+HoRDSk83HdmsF3UX2UWQvc2GGYTcltD/5g
+	dJMfdrfkYLvUWXq3z8kGeBm0cUjNb8oHbg+8bqr7Eocu5YHOWNwDT3ka+8jFEOr4l5ZSDP
+	pZJQ00VpfYqbvr+QuUN34r3LN7kRk2gCYbUNbyMYUEjreKZRdrDO6ObpCZ3FV6JUh/91sc
+	DYCie4Y9TKM1dSPXmV6THa5to6rcXm+LPpZvp5+4T93LFZGi11p8uu7SAHbZ06c9a2uNfi
+	SdMzYWvv5SXG8g6/Jack/964q++fd3JIGTl7HBT1H9NXkv4B/23jSV9g8pjhxQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742890494;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=97IRLafD28YGMxQIhEEl6Pt6gPnwfdxDVkQZV+PT9dE=;
+	b=DAWvqiqxMd97bHwu5gWCBY0nIn0Fs8NZMq8lcYLZRTjrruAW5dWfV+yEZx2JuN+s/7jK5V
+	GZaVxv1O9kbQGxCQ==
+From: "tip-bot2 for Nick Hu" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/clocksource] dt-bindings: timer: Add SiFive CLINT2
+Cc: Nick Hu <nick.hu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250321083507.25298-1-nick.hu@sifive.com>
+References: <20250321083507.25298-1-nick.hu@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVzXAn1iNHP_8h-sj1mTJDuu9dxOBhwi+nbhhr9d27NTo-6wg@mail.gmail.com>
+Message-ID: <174289049320.14745.2681693065117216206.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 12:53:29PM -0700, Daniel Verkamp wrote:
-> On Mon, Mar 24, 2025 at 7:43 AM Maximilian Immanuel Brandtner
-> <maxbr@linux.ibm.com> wrote:
-> >
-> > According to section 5.3.6.2 (Multiport Device Operation) of the virtio
-> > spec(version 1.2) a control buffer with the event VIRTIO_CONSOLE_RESIZE
-> > is followed by a virtio_console_resize struct containing cols then rows.
-> > The kernel implements this the wrong way around (rows then cols) resulting
-> > in the two values being swapped.
-> >
-> > Signed-off-by: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-> > ---
-> >  drivers/char/virtio_console.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-> > index 21de774996ad..38af3029da39 100644
-> > --- a/drivers/char/virtio_console.c
-> > +++ b/drivers/char/virtio_console.c
-> > @@ -1579,8 +1579,8 @@ static void handle_control_message(struct virtio_device *vdev,
-> >                 break;
-> >         case VIRTIO_CONSOLE_RESIZE: {
-> >                 struct {
-> > -                       __virtio16 rows;
-> >                         __virtio16 cols;
-> > +                       __virtio16 rows;
-> >                 } size;
-> 
-> The order of the fields after the patch matches the spec, so from that
-> perspective, looks fine:
-> Reviewed-by: Daniel Verkamp <dverkamp@chromium.org>
-> 
-> Since the driver code has been using the wrong order since support for
-> this message was added in 2010, but there is no support for sending
-> this message in the current qemu device implementation, I wondered
-> what device code was used to test this when it was originally added. I
-> dug up what I assume is the corresponding qemu device change from the
-> same era, which sends the VIRTIO_CONSOLE_RESIZE message using the
-> rows, cols order that matches the kernel driver (and differs from the
-> spec):
-> 
-> https://lore.kernel.org/qemu-devel/1273092505-22783-1-git-send-email-amit.shah@redhat.com/
-> ("[Qemu-devel] [PATCH] virtio-serial: Send per-console port resize
-> notifications to guest", May 6, 2010)
-> 
-> However, I don't believe that patch ever made it into an actual qemu
-> release, so it's probably not a compatibility concern. (If there are
-> any other device implementations that use the kernel driver order
-> rather than the spec order, then maybe this would need more
-> consideration, but I don't personally know of any.)
-> 
-> Thanks,
-> -- Daniel
+The following commit has been merged into the timers/clocksource branch of tip:
 
-I agree. Cc author of the qemu patch for confirmation.
+Commit-ID:     0f920690a82cc99ae08cab08bee2e5685b62fd04
+Gitweb:        https://git.kernel.org/tip/0f920690a82cc99ae08cab08bee2e5685b62fd04
+Author:        Nick Hu <nick.hu@sifive.com>
+AuthorDate:    Fri, 21 Mar 2025 16:35:06 +08:00
+Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CommitterDate: Sun, 23 Mar 2025 10:55:43 +01:00
 
--- 
-MST
+dt-bindings: timer: Add SiFive CLINT2
 
+Add compatible string and property for the SiFive CLINT v2. The SiFive
+CLINT v2 is incompatible with the SiFive CLINT v0 due to differences
+in their control methods.
+
+Signed-off-by: Nick Hu <nick.hu@sifive.com>
+Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://lore.kernel.org/r/20250321083507.25298-1-nick.hu@sifive.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ Documentation/devicetree/bindings/timer/sifive,clint.yaml | 22 +++++++-
+ 1 file changed, 22 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+index 73edde5..653e2e0 100644
+--- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
++++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
+@@ -37,6 +37,12 @@ properties:
+               - starfive,jh8100-clint   # StarFive JH8100
+           - const: sifive,clint0        # SiFive CLINT v0 IP block
+       - items:
++          - {}
++          - const: sifive,clint2        # SiFive CLINT v2 IP block
++        description:
++          SiFive CLINT v2 is the HRT that supports the Zicntr. The control of sifive,clint2
++          differs from that of sifive,clint0, making them incompatible.
++      - items:
+           - enum:
+               - allwinner,sun20i-d1-clint
+               - sophgo,cv1800b-clint
+@@ -62,6 +68,22 @@ properties:
+     minItems: 1
+     maxItems: 4095
+ 
++  sifive,fine-ctr-bits:
++    maximum: 15
++    description: The width in bits of the fine counter.
++
++if:
++  properties:
++    compatible:
++      contains:
++        const: sifive,clint2
++then:
++  required:
++    - sifive,fine-ctr-bits
++else:
++  properties:
++    sifive,fine-ctr-bits: false
++
+ additionalProperties: false
+ 
+ required:
 
