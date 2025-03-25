@@ -1,192 +1,161 @@
-Return-Path: <linux-kernel+bounces-575531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3CAA703C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:33:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD11A703E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97A716A14A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CB53B7E1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D089F257ADB;
-	Tue, 25 Mar 2025 14:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BvXM8LVe"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D82E25A351;
+	Tue, 25 Mar 2025 14:34:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5F7CA52
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3418B197A7A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 14:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742913182; cv=none; b=RZ9Zc6YeHJGb4B/StEHkZjze28+7AMnMHkHEEt2sjsGxliRVAPXIErd6Vz2nn2D4ZMrJOrXXw+LN9wCE3hl1KMyrTpo9e+kScZ1Kxl/UcxZX9WG6XHfn2amAxxjFkY6MFlLnIDXggYcEPvvfB8HdstbjwHVAt0uv0aQEJ5om5u0=
+	t=1742913258; cv=none; b=siLT8d6xFd763W6XYGonn6K1WeNE1nbq+YcCDApSJTczC80sYrZp1+udu4C5J45efj4vFaScAXso/sOp+9/hVtsoJHMjzjlXv8bPJdrl07DUUnaOYpjfFgwW2YT25SSkE0jpQhPAxx+oZhAHUmnGzewToLvE71bugvVChT5Du34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742913182; c=relaxed/simple;
-	bh=m0zKd5ydXx6oxCg5WUGcqC9H5SeZXiPlfiQFHbhUVtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dS/LWIljQL32cQ+xarpUCn24k7Ne7uffQpyZ7lBEq+sbMen4DDMq7QC5iofwZ/h1J+5VFGgjfc/bDGGjNJUAPjYzej8IGzKoL2nzSCQgav7dMwzVNYAor7kk4aKQQOXqwyZ8u0KP9jhkmHPuEoYkCCccWtmHUPKBR23T2jCN6pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BvXM8LVe; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301cda78d48so10940008a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:33:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742913180; x=1743517980; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OKRABh44uDFI70lZVbe1fR/gjcdCuWiPeTV+hZF44Lg=;
-        b=BvXM8LVeE/IXEpPesgsWAWCG1sw+C605d9mnCx7TYnTY8y+6+2It4Yhl8Rby4lfrq7
-         gMiyo3XV+cCgUjo6AeRyrSOgnop4TBxvaHsPL2+2F+rdT28YSmUj4M5yKJnPnELwo1Vj
-         1PPorv5aGRpCS2LqMGlzYlRrIysFqizfxAuuUgxjSBV2GTMO3D3gKFck3CwNrUyHPkVm
-         9vcrAquem+DctcD6HSuRKkA+MN8XsGGeUpp74yutH0hOUfNSHk+gP7ZSXl1Slk5VJLzO
-         z9KnfjovJY3HtBHU/eMhGMo036e+1uz0iYkb/rTux5iYUsuivknRVBpLtXbI1Ko4KCOn
-         vqng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742913180; x=1743517980;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKRABh44uDFI70lZVbe1fR/gjcdCuWiPeTV+hZF44Lg=;
-        b=Pid1mag4YZhAEAsNko6RUrB1FmfkJXXrR1JvVL4xgOKjyeddVfxwuIbzVdGGWNRkgR
-         PMYpsM3etdhjYDH9fpHrpLsuLhsxpKHCF0ByBxD+ep4mzoEf5chfyO7ic1czZY6EfBfd
-         pLh9ZjT3Qe740vIUEm5B3H6Pb1f0X6lTkp6JhDQsxicB2ggR3/inLJmdv3JS6QE7h7oC
-         px7puVCZlP+NZ9rNEiMBp+Ww6jU7zCeXswvQw5vmXNmea6SWRzV8svr+d9ZAIMArVIef
-         92UCpXHwfICcMgGHgr0tpXIeI37e4auJF0txXYKKCG062cL3HgeGoElevyjPtJvz4For
-         9Z0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXbpIHkyQEKU6Z50X1fCPL2nvLnGkkDjMhNw3XRsiC/e/pqSm9ksCMdEuRtCQ7mzzdjNboJzh1NFw1W738=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTtS+HsX4vteQs/4o7OII8045GTHFmEvaxPIV2sJdCcnsflfW2
-	5e2jFeSSzFZL/0nw2MvRG2rm2HOpVjOPTZ1Du1/bLuidF+KB5Ko2yUpn+735qA==
-X-Gm-Gg: ASbGnctk+hSX6JkVzns6vN5VIvNVcsukdS1sRlhkB22zH/qOXp+7WrI2VWCwHVha15T
-	33OAVYntgnnmUyHf6mzFAp6L81YICro2ab19zn/2Yz+mO4PgvQyKQVpCdsC8fTdNwXw+iEEOLgA
-	Z7nGrgbSws2Z6mUuASHBkHOtUx2Pc77U3Zhud0ZJRMMbhkCRSkG3rpaKbnHHdj8SmUXB3QRbVUR
-	eZy3kOCIF45PhMna72NnGWQ1b8cUsMBn76zGNtY6xriXB7h0+EyDpXjVOMPoihTWE3z7b2o3sS0
-	XmhRuLgttpuODozKsesClAMOmfw7AzUsN0OLjK3Rgq3n8PIIMvMqD1ux
-X-Google-Smtp-Source: AGHT+IEB+XaCO6duAN2wp0HmjUzHuf7tiQOHA3Esz/U9fWrPnrUspdywgNu7CbKOFz9lwCKIl8JtAA==
-X-Received: by 2002:a17:90b:5450:b0:301:6343:1626 with SMTP id 98e67ed59e1d1-3030fe58e5bmr25896303a91.1.1742913179728;
-        Tue, 25 Mar 2025 07:32:59 -0700 (PDT)
-Received: from thinkpad ([120.60.136.104])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf64aca3sm14431313a91.49.2025.03.25.07.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 07:32:59 -0700 (PDT)
-Date: Tue, 25 Mar 2025 20:02:54 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
-	broonie@kernel.org, bbrezillon@kernel.org, linux-mtd@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] mtd: rawnand: qcom: Pass 18 bit offset from QPIC
- base address to BAM
-Message-ID: <bu2msy7ngxzjk54rdq3fmgvww5rrn5ogjm4uq2vt2pwp6toxfw@ytvk6x6wcgi5>
-References: <20250310120906.1577292-1-quic_mdalam@quicinc.com>
- <20250310120906.1577292-2-quic_mdalam@quicinc.com>
- <20250318073332.guylcyqjmfq5nyyr@thinkpad>
- <004c7c4a-69b4-c6f6-14c2-eb62672a7125@quicinc.com>
+	s=arc-20240116; t=1742913258; c=relaxed/simple;
+	bh=CvKuAYlNINIidt8CdiB5wzYSKP/PszRrKzsYeGd2G+A=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=ciyGndRQ55mKwlda0Oe16QM7Hm3yYpNGLSOne1ehAG6CETI6+QDSup0RQffTfqL/3MviCzwclr0yex7vbm7TONmKhW1cxvkB2vsTMqVnv+2fMQQpxBAYF3sO5IK+lwRoVtSjMM6xQ+LdsaabI0AhN9vSnhChT0OUN311oBhkItY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8100C4CEE4;
+	Tue, 25 Mar 2025 14:34:17 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tx5Mr-00000002OyP-3t9M;
+	Tue, 25 Mar 2025 10:35:01 -0400
+Message-ID: <20250325143436.168114339@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 25 Mar 2025 10:34:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 0/9] rv: Updates for 6.15
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <004c7c4a-69b4-c6f6-14c2-eb62672a7125@quicinc.com>
 
-On Thu, Mar 20, 2025 at 11:23:40AM +0530, Md Sadre Alam wrote:
-> 
-> 
-> On 3/18/2025 1:03 PM, Manivannan Sadhasivam wrote:
-> > On Mon, Mar 10, 2025 at 05:39:03PM +0530, Md Sadre Alam wrote:
-> > > Currently we are configuring lower 24 bits of address in descriptor
-> > > whereas QPIC design expects 18 bit register offset from QPIC base
-> > > address to be configured in cmd descriptors. This is leading to a
-> > > different address actually being used in HW, leading to wrong value
-> > > read.
-> > > 
-> > > the actual issue is that the NANDc base address is different from the
-> > > QPIC base address. But the driver doesn't take it into account and just
-> > > used the QPIC base as the NANDc base. This used to work as the NANDc IP
-> > > only considers the lower 18 bits of the address passed by the driver to
-> > > derive the register offset. Since the base address of QPIC used to contain
-> > > all 0 for lower 18 bits (like 0x07980000), the driver ended up passing the
-> > 
-> > What is this address? Is it coming from DT?
-> > 
-> > > actual register offset in it and NANDc worked properly. But on newer SoCs
-> > > like SDX75, the QPIC base address doesn't contain all 0 for lower 18 bits
-> > > (like 0x01C98000). So NANDc sees wrong offset as per the current logic
-> > > 
-> > > The address should be passed to BAM 0x30000 + offset. In older targets
-> > 
-> > You gave no explanation on how this 0x30000 offset came into picture. I gave the
-> > reasoning in v2:
-> > 
-> > "SDX55's NANDc base is 0x01b30000 and it has bits 17 and 18 set corresponding to
-> > 0x30000. So it is correct that the IP only considers lower 18 bits and it used
-> > to work as the driver ended up passing 0x3000 + register offset."
-> > 
-> > Then you replied:
-> > 
-> > "This address 0x30000 is the address from QPIC_BASE to QPIC_EBI2NAND
-> > e.g for SDX55 and SDX65 the QPIC_BASE is 0x01B00000. So here lower 18-bits
-> > are zero only."
-> > 
-> > No one outside Qcom knows what QPIC_BASE and QPIC_EBI2NAND are. We just know the
-> > NANDc address mentioned in DT, which corresponds to 0x01b30000 for SDX55.
-> > 
-> > Please reword the commit message to present the full picture and not half baked
-> > info. This is v3, I see no improvement in the commit message, sorry.
-> > 
-> > > the lower 18-bits are zero so that correct address being paased. But
-> > > in newer targets the lower 18-bits are non-zero in QPIC base so that
-> > > 0x300000 + offset giving the wrong value.
-> > > 
-> > > SDX75 : QPIC_QPIC | 0x01C98000 (Lower 18 bits are non zero)
-> > > SDX55 : QPIC_QPIC | 0x1B00000 (Lower 18 bits are zero) Same for
-> > 
-> > There is no address as '0x1B00000' in DT.
-> 
-> Mani,
-> 
-> Please see if this commit message would be acceptable?
-> 
-> 	The BAM command descriptor provides only 18 bits to specify
-> 	the NAND register offset. Additionally, in the BAM command
-> 	descriptor, the NAND register offset is supposed to be
-> 	specified as "(NANDc offset - BAM base offset) + reg_off".
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+latency/for-next
 
-Isn't it, (NANDc base - BAM base)? 'offset' is not valid here.
+Head SHA1: 4ffef9579ffc51647c5eb55869fb310f3c1e2db2
 
-And also, you are just mixing the names everywhere. Here you say, NANDc base
-and BAM base, but in patch 4:
 
-"NAND register addresses to be computed based on the NAND register offset from
-QPIC base". So the second address is BAM or QPIC?
+Gabriele Monaco (9):
+      sched: Add sched tracepoints for RV task model
+      rv: Add option for nested monitors and include sched
+      rv: Add sco and tss per-cpu monitors
+      rv: Add snroc per-task monitor
+      rv: Add scpd, snep and sncid per-cpu monitors
+      tools/rv: Add support for nested monitors
+      verification/dot2k: Add support for nested monitors
+      Documentation/rv: Add docs for the sched monitors
+      tools/rv: Allow rv list to filter for container
 
-Please be consistent with naming.
-
-> 	Since, the nand driver isn't aware of the BAM base offset,
-> 	have the value of "NANDc offset - BAM base offset" in a new
-> 	field 'nandc_offset' in the NAND properties structure and use
-> 	it while preparing the descriptor.
-> 
-
-And what about 'nandc_offset'? NANDc is already the term used for NAND
-controller which has the base address of 0x01b30000 in DT. So clearly, the name
-of the offset variable is not correct.
-
-> 	Previously, the NAND driver was incorrectly specifying the
-> 	NAND register offset directly in the BAM descriptor.
-> 
-
-No. Previously, the driver was specifying the NANDc base address in the BAM
-descriptor. You are now trying to pass the register offset.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+----
+ Documentation/tools/rv/rv-mon-sched.rst            |  69 ++++++
+ Documentation/trace/rv/monitor_sched.rst           | 171 ++++++++++++++
+ include/linux/rv.h                                 |   4 +-
+ include/linux/sched.h                              |  16 ++
+ include/trace/events/sched.h                       |  13 ++
+ kernel/sched/core.c                                |  23 +-
+ kernel/trace/rv/Kconfig                            |   7 +
+ kernel/trace/rv/Makefile                           |   7 +
+ kernel/trace/rv/monitors/sched/Kconfig             |  11 +
+ kernel/trace/rv/monitors/sched/sched.c             |  38 +++
+ kernel/trace/rv/monitors/sched/sched.h             |   3 +
+ kernel/trace/rv/monitors/sco/Kconfig               |  14 ++
+ kernel/trace/rv/monitors/sco/sco.c                 |  88 +++++++
+ kernel/trace/rv/monitors/sco/sco.h                 |  47 ++++
+ kernel/trace/rv/monitors/sco/sco_trace.h           |  15 ++
+ kernel/trace/rv/monitors/scpd/Kconfig              |  15 ++
+ kernel/trace/rv/monitors/scpd/scpd.c               |  96 ++++++++
+ kernel/trace/rv/monitors/scpd/scpd.h               |  49 ++++
+ kernel/trace/rv/monitors/scpd/scpd_trace.h         |  15 ++
+ kernel/trace/rv/monitors/sncid/Kconfig             |  15 ++
+ kernel/trace/rv/monitors/sncid/sncid.c             |  96 ++++++++
+ kernel/trace/rv/monitors/sncid/sncid.h             |  49 ++++
+ kernel/trace/rv/monitors/sncid/sncid_trace.h       |  15 ++
+ kernel/trace/rv/monitors/snep/Kconfig              |  15 ++
+ kernel/trace/rv/monitors/snep/snep.c               |  96 ++++++++
+ kernel/trace/rv/monitors/snep/snep.h               |  49 ++++
+ kernel/trace/rv/monitors/snep/snep_trace.h         |  15 ++
+ kernel/trace/rv/monitors/snroc/Kconfig             |  14 ++
+ kernel/trace/rv/monitors/snroc/snroc.c             |  85 +++++++
+ kernel/trace/rv/monitors/snroc/snroc.h             |  47 ++++
+ kernel/trace/rv/monitors/snroc/snroc_trace.h       |  15 ++
+ kernel/trace/rv/monitors/tss/Kconfig               |  14 ++
+ kernel/trace/rv/monitors/tss/tss.c                 |  91 ++++++++
+ kernel/trace/rv/monitors/tss/tss.h                 |  47 ++++
+ kernel/trace/rv/monitors/tss/tss_trace.h           |  15 ++
+ kernel/trace/rv/monitors/wip/wip.c                 |   2 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.c               |   2 +-
+ kernel/trace/rv/rv.c                               | 154 +++++++++++--
+ kernel/trace/rv/rv.h                               |   4 +
+ kernel/trace/rv/rv_reactors.c                      |  28 ++-
+ kernel/trace/rv/rv_trace.h                         |   6 +
+ tools/verification/dot2/dot2k                      |  27 ++-
+ tools/verification/dot2/dot2k.py                   |  79 +++++--
+ tools/verification/dot2/dot2k_templates/Kconfig    |   1 +
+ tools/verification/dot2/dot2k_templates/main.c     |   4 +-
+ .../dot2/dot2k_templates/main_container.c          |  38 +++
+ .../dot2/dot2k_templates/main_container.h          |   3 +
+ tools/verification/models/sched/sco.dot            |  18 ++
+ tools/verification/models/sched/scpd.dot           |  18 ++
+ tools/verification/models/sched/sncid.dot          |  18 ++
+ tools/verification/models/sched/snep.dot           |  18 ++
+ tools/verification/models/sched/snroc.dot          |  18 ++
+ tools/verification/models/sched/tss.dot            |  18 ++
+ tools/verification/rv/include/in_kernel.h          |   2 +-
+ tools/verification/rv/include/rv.h                 |   3 +-
+ tools/verification/rv/src/in_kernel.c              | 256 ++++++++++++++++-----
+ tools/verification/rv/src/rv.c                     |  38 +--
+ 57 files changed, 2007 insertions(+), 127 deletions(-)
+ create mode 100644 Documentation/tools/rv/rv-mon-sched.rst
+ create mode 100644 Documentation/trace/rv/monitor_sched.rst
+ create mode 100644 kernel/trace/rv/monitors/sched/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sched/sched.c
+ create mode 100644 kernel/trace/rv/monitors/sched/sched.h
+ create mode 100644 kernel/trace/rv/monitors/sco/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sco/sco.c
+ create mode 100644 kernel/trace/rv/monitors/sco/sco.h
+ create mode 100644 kernel/trace/rv/monitors/sco/sco_trace.h
+ create mode 100644 kernel/trace/rv/monitors/scpd/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd.c
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd.h
+ create mode 100644 kernel/trace/rv/monitors/scpd/scpd_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sncid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ create mode 100644 kernel/trace/rv/monitors/sncid/sncid_trace.h
+ create mode 100644 kernel/trace/rv/monitors/snep/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/snep/snep.c
+ create mode 100644 kernel/trace/rv/monitors/snep/snep.h
+ create mode 100644 kernel/trace/rv/monitors/snep/snep_trace.h
+ create mode 100644 kernel/trace/rv/monitors/snroc/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc.c
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc.h
+ create mode 100644 kernel/trace/rv/monitors/snroc/snroc_trace.h
+ create mode 100644 kernel/trace/rv/monitors/tss/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ create mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ create mode 100644 kernel/trace/rv/monitors/tss/tss_trace.h
+ create mode 100644 tools/verification/dot2/dot2k_templates/main_container.c
+ create mode 100644 tools/verification/dot2/dot2k_templates/main_container.h
+ create mode 100644 tools/verification/models/sched/sco.dot
+ create mode 100644 tools/verification/models/sched/scpd.dot
+ create mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/snep.dot
+ create mode 100644 tools/verification/models/sched/snroc.dot
+ create mode 100644 tools/verification/models/sched/tss.dot
 
