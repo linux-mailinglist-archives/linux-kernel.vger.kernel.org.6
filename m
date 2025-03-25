@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-576257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDEDA70CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:27:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47723A70CE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E19D3BB42C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257247A62AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC3E26A098;
-	Tue, 25 Mar 2025 22:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3BD26A091;
+	Tue, 25 Mar 2025 22:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vi7sb70J"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74F2269D16
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ys7MDF98"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2197A269D04;
+	Tue, 25 Mar 2025 22:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742941604; cv=none; b=QoKy/7nLE0Nv/pTlsF5oBfH2o5E72vx10g2r2rWoO7dAcroIn9vEiGvKvXJKJmg91/Eypb+mouxyKPWefks4t/uUdZ9+JunuNqI8zTppaD8nXzsJj+xdqLLV76s7bihRmV2zkQQT8AdmxHNsUX0DAwnlIjHAbMR6FIXvwqdQvpg=
+	t=1742941667; cv=none; b=qIup1Qhy2+9Rzyy2okgpboEiMNYlaC3+uIsn5SeClO2I123bX5jk/BGgz/hJEm2s7gjX2K0CN6J4FWDJIOe6U/i2q1EQ3yhqPnmIp7vduN3reMfj0a+aUBfpaxPhi9vC7IChlpSYsnl/T9JvaN1QNxqU/Kd9d+yv1olwMn9X6o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742941604; c=relaxed/simple;
-	bh=Ax/xgb3TsFCNXd+hqnMtNKg6gGOsr2N5FRf66cIOIgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNrXec2KsPBvGGI3o0XDdPqkDttgq4CodSZBBpHG9i/aRNg2z5nZaAPs1G1ymm+YK5tI+JVwiUH1jfG2qg5BfvtpSiVA6qj3syBgmQQgSEpkbQcmg+Dyj65exQYl9nnOfs3u6f40r87JGdqB31xBj1BsRUHiaBZJdzS1K5cKIUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Vi7sb70J; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2260c915749so83710875ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:26:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742941602; x=1743546402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ax/xgb3TsFCNXd+hqnMtNKg6gGOsr2N5FRf66cIOIgg=;
-        b=Vi7sb70JtuukLn5QGDZk04k5Cnb/LmkT+4Bcd5F5LF6Ue7BmnVPKXComjR0tj04gIw
-         iukAnQ2ki9J5FupWsM0WhPvw8VqRm+G3jEzYb3m9eoX/n7T1x2gFGdT7qLzq+ZDRafqB
-         34LDoKzaA2fwQXL5FtT8v5Tvy8wLsQO75Qw2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742941602; x=1743546402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ax/xgb3TsFCNXd+hqnMtNKg6gGOsr2N5FRf66cIOIgg=;
-        b=QtTj2vLatyxdADZq34uBVXf9+qG7aHGpEUQOG0JZzYxNgJntO55a9c91LcoWFbM0S6
-         pkwnsA5Lmg0JUDEGoEX9gpl2psHDIW1nQSov/p/gkiu/y6dz/vSDm1nW7GhKkxsdElEp
-         uvuIypcxXkhRoILABIBknQX0Hsy5vgChzYS0nMx36ApMuRXD0f6UN6SRYA/G/IsOgjMA
-         UtClpqrEaqUe7lfWf/fTahg1vcxLmUQrVoKWVnVWyArOOs42ipR9SqjQO4TVmwhz0A9f
-         EJoid0pbFZJ47wfJy2UkoLx8lQzpreME/Vn5YfR8mMOJ4XxQJuiTY1dNcTKnA8g89CaN
-         0ndA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgpbYpoLVCG44f+kL+acqAaA39iQaJD596O1ND2el80HrDTUmS42Gd2JV/OQ/G4AuOXXIlnF4pQuu4dCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbxGsrpv8gS6xTsfwp2eeef/auXkux09/c8NNnPpaTXns1JAux
-	snIzxFU91G/mYC45sa+uaCfSKv+gIxNzXMdVonJ+i0lz4dqvMiLdfsnbbowBsQ==
-X-Gm-Gg: ASbGncvpAPFl0KAi+62yKPFNfVfviS44XW8ECMJOLcwVrsUOppJGozJ42dVB0WAu38M
-	RXsJs9QvawqmXdrnHkjnznLCuF6UaFhtvRbzyPsJjV3GRnQtZgyju2yC0adJ18Edv4XH4mXmoSU
-	nsi/GhSLyd68dpAG02Ent0C45hDB1gJmBRyWXfZPt8JU+iUoC551jT6Q++UIGfJ0ss9384Wwi2N
-	lyKr6NBdxWWBKeOahL6k88FkbhtNAKLwbxdI2w0102Y5UbfYJgdMiDHM/FDKe7paThh1tWzOHlB
-	uFeTdHyaCzEH90fZRhY9iHNNqHkrYYwmITkEOF73h9fuyf7XhS5q5jRaSNM/XQHQbQ7CtO7z/NZ
-	YxtT38cc=
-X-Google-Smtp-Source: AGHT+IHVHlRkM1Xo1gijBPKRyHa63UrZO0+fcBb9I1JM7qtE52PfSIfTdRLQC0cXlJNB8zkMo6XFeQ==
-X-Received: by 2002:a17:903:3285:b0:223:5ca1:3b0b with SMTP id d9443c01a7336-22780e122c6mr238387615ad.40.1742941601896;
-        Tue, 25 Mar 2025 15:26:41 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:b885:47c3:6268:77fb])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22780f39d48sm96249485ad.37.2025.03.25.15.26.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 15:26:41 -0700 (PDT)
-Date: Tue, 25 Mar 2025 15:26:40 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lin <yu-hao.lin@nxp.com>, kernel@pengutronix.de,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH wireless-next v5 00/10] mwifiex: cleanups
-Message-ID: <Z-MtoOCLX2_1GztI@google.com>
-References: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
+	s=arc-20240116; t=1742941667; c=relaxed/simple;
+	bh=I6Bh2Pj6j0LoG+gyB+9U4Am8CJTmsjj3+N2uNJx+TkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k6gznCpay4J1C0P44S+BOYY2BU2EKpR54ZzSPcSZbJsZnuwQMa0AGoZmIODpJByV6xkHBculQ41HAvughlzuqYhKc9ysTq/O+GgEkBd8csnFrIHpnN6WLTJIuia8SpG6wbAoi9jbzDmphHD8gzMlEgH9UWus5gFIHaalCYGQVoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ys7MDF98; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.173] (unknown [131.107.8.109])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3AD04204E596;
+	Tue, 25 Mar 2025 15:27:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AD04204E596
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742941665;
+	bh=yu+zl6twDuJmGCQvb+BJhKb1ZJUDVREmR4BMuDWngzo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ys7MDF98d7F6l7lO9UCnXF/KFQKz7cXYNKkmxX7+w/ntWkDq23pjCzvFEabp0ldlI
+	 yZr6ADwe2o1JSR5oVDNsw3uMxSyxVLVT+h+iKf2UIUheJgaUP+FqcD3CVAFghPZ4WW
+	 GBj5l4/HREsMBvqHdkzChu8fcboRIvH/w57jXdeU=
+Message-ID: <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
+Date: Tue, 25 Mar 2025 15:27:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324-mwifiex-cleanup-1-v5-0-1128a2be02af@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
+ execute
+To: Baoquan He <bhe@redhat.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+ nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-7-chenste@linux.microsoft.com>
+ <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
+ <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+ <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 24, 2025 at 02:24:01PM +0100, Sascha Hauer wrote:
-> This contains several cleanup patches for the mwifiex driver. I dropped
-> the MAC address fixing patch this time as it needs more discussion, but
-> the remaining patches sent here are nearly unchanged from v1 and should
-> be good to go.
+On 3/24/2025 4:00 AM, Baoquan He wrote:
+> On 03/21/25 at 09:23am, steven chen wrote:
+>> On 3/19/2025 7:06 PM, Baoquan He wrote:
+>>> On 03/17/25 at 06:04pm, steven chen wrote:
+>>> ...snip...
+>>>> ---
+>>>>    kernel/kexec_file.c                | 10 ++++++
+>>>>    security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
+>>>>    2 files changed, 40 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+>>>> index 606132253c79..ab449b43aaee 100644
+>>>> --- a/kernel/kexec_file.c
+>>>> +++ b/kernel/kexec_file.c
+>>>> @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
+>>>>    }
+>>>>    #endif
+>>>> +static void kimage_file_post_load(struct kimage *image)
+>>>> +{
+>>>> +#ifdef CONFIG_IMA_KEXEC
+>>>> +	ima_kexec_post_load(image);
+>>>> +#endif
+>>>> +}
+>>>> +
+>>>>    /*
+>>>>     * In file mode list of segments is prepared by kernel. Copy relevant
+>>>>     * data from user space, do error checking, prepare segment list
+>>>> @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+>>>>    	kimage_terminate(image);
+>>>> +	if (!(flags & KEXEC_FILE_ON_CRASH))
+>>>> +		kimage_file_post_load(image);
+>>> machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
+>>> we should use it to do things post load, but not introducing another
+>>> kimage_file_post_load().
+>> Hi Baoquan,
+>>
+>> Could you give me more detail about this?
+> I mean machine_kexec_post_load() is the place where post load operations
+> are done, including kexec_load and kexec_file_load. There's no need to
+> specifically introduce a kimage_file_post_load() to do post load
+> operaton for kexec_file_load.
 
-Thanks! For patches 1-9:
+Hi Baoquan,
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+Updating the machine_kexec_post_load() API to carry flags would indeed 
+require changes to multiple files. This approach involves the condition 
+check if (!(flags & KEXEC_FILE_ON_CRASH)) and ensuring that the flags 
+are properly passed and handled across the relevant file
 
-I had some issues with patch 10.
+if just adding a API kimage_file_post_load() here, it is much easy and 
+clean, right?
 
-If you respin before Johannes applies any of these, feel free to carry
-my Acked-by.
+How do you think?
 
-Brian
+Thanks,
+
+Steven
+
 
