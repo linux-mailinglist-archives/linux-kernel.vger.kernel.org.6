@@ -1,177 +1,130 @@
-Return-Path: <linux-kernel+bounces-575542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1BAA703D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:36:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94213A703E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D792516B218
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15F91895F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8915225A351;
-	Tue, 25 Mar 2025 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8012825A62E;
+	Tue, 25 Mar 2025 14:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKEIiGy1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EKIkRHBn"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9E2CA52;
-	Tue, 25 Mar 2025 14:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FDD1EE7AD;
+	Tue, 25 Mar 2025 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742913393; cv=none; b=EY/teOBLb37sHvcFJT38jMSL/N7g3NQepEdTxxCVFCJfPtAfyFiEuyMMQBldXDitnAzJVr7kXYM43oXz58uPVaFgppyiB6QRaDyApBs8h1pa+rwH/Kxp2wlnO2crxs9CqVbODXLEBLW/uEwz7AYjIJRMV3TYUwIblW5vJPyhwdo=
+	t=1742913455; cv=none; b=R+fO8Nxu2HC7GlqjqN/dZ7cHhAEUL4iOwEGIYmy6fozUzGen6m/SMNbVs1icBLkf93QaRLfFYSebYScRG+rLyzEQpa7MRqaCl+xdetwrHXl/9ewiUsXEGTcaux8BMhX1cOe7CTy5d4enhZ4aEUz1JRwfcdj2ehVlvzokjkpTnfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742913393; c=relaxed/simple;
-	bh=IVOSkXmDgbIuOfSI47r9Hqv+oNEWNJibsDYP8zrNx3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzlumD2Opd+1cP4CpVvWnD5151WP1OyRW2IB3kjbgK8uZmVLpVbEd5sN709lqpAWc4nKDTefMemf/zDlUalruOfGGpE/au5jvI5wpI3/NxaFhSGu9oPcuJoXY2BLFeDf7db/pTfI4ltDHLfl8Rs8sAY0FjaY7Jf9vf/D0bhjcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKEIiGy1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97E08C4CEE4;
-	Tue, 25 Mar 2025 14:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742913393;
-	bh=IVOSkXmDgbIuOfSI47r9Hqv+oNEWNJibsDYP8zrNx3Q=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=eKEIiGy1SwR60AHw3h6GukjJuQw4w/ACHqyr1Zqto8JanvvUeahsivIi2rgd7VHVV
-	 JFL4E8m3z3unEMYX3t2pgrRzb7xfUbtSKy9UCSBV/YccvFMjK3UijQaFQ+ZWM9M5tw
-	 5k5hU6yAr/2Co4XljrrFs+VjuhgZEdw94SYdfDaNCcIxep3Iexcp36KaZbfuP5fFsd
-	 1vlCGetEyWfFWYeNOzGfY6jviBLrBexSqxRjEtIxkKOM3w3CHf/oNGhJmpEoUvHL0e
-	 dSbfc2/PZ+tKrP2EtSj9fBFr79hK5xokSJ7jdnnAL9OLQ2i2B7OMnToTO3aL1k7hg1
-	 JAWKqvGvLyEnA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3C066CE0843; Tue, 25 Mar 2025 07:36:33 -0700 (PDT)
-Date: Tue, 25 Mar 2025 07:36:33 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, rcu@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, Shuah Khan <shuah@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Huth <thuth@redhat.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Valentin Schneider <vschneid@redhat.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH rcu 10/11] srcu: Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for
- testing
-Message-ID: <5bf94fdb-7556-4b34-ba21-389dfa1df4f7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250219153938.24966-1-boqun.feng@gmail.com>
- <20250219153938.24966-11-boqun.feng@gmail.com>
- <CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com>
+	s=arc-20240116; t=1742913455; c=relaxed/simple;
+	bh=xG0/szBJu70OcmWh3jP2ZdEvOWwAmwJE5cR+2i2FUho=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=Jnno6hNEuIkpz0LAT+0DekLhzH+MNvkasiEdzBju8PNGiOsSt5oCB0O7Primu4f7UcjMqN2nOVrZFOTSoPHJFLYoh4iQ0Gt1PahtL00qBrvlga6I2z4wYvYGRQ3Pr7schVyzaigCoSGEmyqITtxNm08UoHCK2hP1tqDELz1lHdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EKIkRHBn; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1492D204D0;
+	Tue, 25 Mar 2025 14:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742913451;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z7Lwuf+qvv4mXLFIz/xryFk97UaX7ituYqVU5VC582Q=;
+	b=EKIkRHBnaD+ebuEP9QkMglemu93QomYfbnyYHq2w7ok+JIR0mZR+xtbQ6mUmS+7E6F7Hy+
+	J9HLaysErfvKeD7PbRM2FJJK3J/FIwf9nfiMrW5jAQSTVp3lamJqxSYbblZ2BBinv3Ns9s
+	WEo1Jemw16AEw0cQfvjqFTbLA7z221hCH/vjcabpP4BC9woUHy7EaKxt5zz03Ww7rOavJ3
+	chzklLDfz3TaeSGnogpWJuL+09KD73zc50SHW69n6rC+dRBJdKD1/85bc+vYT7uyPY8k2k
+	Knw5FVm98oubsOb1COUpsDzJQ6YEmSDTbM6y3/0LVOuySu4zlZhxEisOcNfGvg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 25 Mar 2025 15:37:29 +0100
+Message-Id: <D8PF958QL5AK.2JIE4F1N1NI0F@bootlin.com>
+Subject: Re: [PATCH v5 04/11] pwm: max7360: Add MAX7360 PWM support
+Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
+ <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+ <linux-pwm@vger.kernel.org>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Andy Shevchenko" <andriy.shevchenko@intel.com>,
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+ <20250318-mdb-max7360-support-v5-4-fb20baf97da0@bootlin.com>
+ <Z9qoGmNKcozbIjeH@smile.fi.intel.com>
+ <hinocg3itjqizbmzgaxv6cfnhtus6wbykouiy6pa27cxnjjuuk@l5ppwh7md6ul>
+ <Z9vydaUguJiVaHtU@smile.fi.intel.com>
+In-Reply-To: <Z9vydaUguJiVaHtU@smile.fi.intel.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduiedvleduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekhfekieeftefhjeetveefudehuddvvdeuvddvudfgfffhveekffethfeuffdtudenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhklhgvihhnvghksehkv
+ ghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhg
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Tue, Mar 25, 2025 at 09:04:31AM +0100, Geert Uytterhoeven wrote:
-> Hi Boqun, Paul,
-> 
-> On Wed, 19 Feb 2025 at 16:44, Boqun Feng <boqun.feng@gmail.com> wrote:
-> > From: "Paul E. McKenney" <paulmck@kernel.org>
-> >
-> > The srcu_read_lock_nmisafe() and srcu_read_unlock_nmisafe() functions
-> > map to __srcu_read_lock() and __srcu_read_unlock() on systems like x86
-> > that have NMI-safe this_cpu_inc() operations.  This makes the underlying
-> > __srcu_read_lock_nmisafe() and __srcu_read_unlock_nmisafe() functions
-> > difficult to test on (for example) x86 systems, allowing bugs to creep in.
-> >
-> > This commit therefore creates a FORCE_NEED_SRCU_NMI_SAFE Kconfig that
-> > forces those underlying functions to be used even on systems where they
-> > are not needed, thus providing better testing coverage.
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> Thanks for your patch, which is now commit 536e8b9b80bc7a0a ("srcu:
-> Add FORCE_NEED_SRCU_NMI_SAFE Kconfig for testing") in linus/master
-> 
-> > --- a/kernel/rcu/Kconfig
-> > +++ b/kernel/rcu/Kconfig
-> > @@ -65,6 +65,17 @@ config TREE_SRCU
-> >         help
-> >           This option selects the full-fledged version of SRCU.
-> >
-> > +config FORCE_NEED_SRCU_NMI_SAFE
-> > +       bool "Force selection of NEED_SRCU_NMI_SAFE"
-> 
-> What am I supposed to answer here? "n" I guess.
-> What about distro and allmodconfig kernels?
+On Thu Mar 20, 2025 at 11:48 AM CET, Andy Shevchenko wrote:
+> On Thu, Mar 20, 2025 at 08:50:00AM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > On Wed, Mar 19, 2025 at 01:18:50PM +0200, Andy Shevchenko wrote:
+> > > On Tue, Mar 18, 2025 at 05:26:20PM +0100, mathieu.dubois-briand@bootl=
+in.com wrote:
+>
+> ...
+>
+> > > > +	chip =3D devm_pwmchip_alloc(dev->parent, MAX7360_NUM_PWMS, 0);
+> > >=20
+> > > This is quite worrying. The devm_ to parent makes a lot of assumption=
+s that may
+> > > not be realised. If you really need this, it has to have a very good =
+comment
+> > > explaining why and object lifetimes.
+> >=20
+> > Pretty sure this is broken. This results for example in the device link
+> > being created on the parent. So if the pwm devices goes away a consumer
+> > might not notice (at least in the usual way). I guess this was done to
+> > ensure that #pwm-cells is parsed from the right dt node? If so, that
+> > needs a different adaption. That will probably involve calling
+> > device_set_of_node_from_dev().
+>
+> It's an MFD based driver, and MFD core cares about propagating fwnode by
+> default. I believe it should just work if we drop that '->parent' part.
 
-Yes, you should select "n" unless ...
+Are you sure about that?
 
-> > +       depends on !TINY_SRCU
-> > +       select NEED_SRCU_NMI_SAFE
-> > +       default n
-> > +       help
-> > +         This option forces selection of the NEED_SRCU_NMI_SAFE
-> > +         Kconfig option, allowing testing of srcu_read_lock_nmisafe()
-> > +         and srcu_read_unlock_nmisafe() on architectures (like x86)
-> > +         that select the ARCH_HAS_NMI_SAFE_THIS_CPU_OPS Kconfig option.
-> 
-> Perhaps this should depend on ARCH_HAS_NMI_SAFE_THIS_CPU_OPS?
+On my side it does not work if I just drop the '->parent', this is why I
+ended whit this (bad) pattern.
 
-... you are on a system selecting ARCH_HAS_NMI_SAFE_THIS_CPU_OPS and
-you would like to test the SRCU setup that needed only by systems that
-do not select ARCH_HAS_NMI_SAFE_THIS_CPU_OPS.
+Now it does work if I do call device_set_of_node_from_dev() manually, so
+it's definitely better. But I believe the MFD core is not propagating
+OF data, and I did not find where it would do that in the code. Yet it
+does something like this for ACPI in mfd_acpi_add_device(). Or maybe we
+do something bad in our MFD driver?
 
-Ah.  I forgot to add "depends on RCU_EXPERT".
 
-Apologies, I will fix this.  Does the patch show below do the trick?
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit b5c8c6f89c6d7ac778e961ad4b883eada0c1f42a
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Tue Mar 25 07:31:45 2025 -0700
-
-    srcu: Make FORCE_NEED_SRCU_NMI_SAFE depend on RCU_EXPERT
-    
-    The FORCE_NEED_SRCU_NMI_SAFE is useful only for those wishing to test
-    the SRCU code paths that accommodate architectures that do not have
-    NMI-safe per-CPU operations, that is, those architectures that do not
-    select the ARCH_HAS_NMI_SAFE_THIS_CPU_OPS Kconfig option.  As such, this
-    is a specialized Kconfig option that is not intended for casual users.
-    
-    This commit therefore hides it behind the RCU_EXPERT Kconfig option.
-    
-    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-    Closes: https://lore.kernel.org/all/CAMuHMdX6dy9_tmpLkpcnGzxyRbe6qSWYukcPp=H1GzZdyd3qBQ@mail.gmail.com/
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index b3f985d41717a..cc4ce79f58aa6 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -68,6 +68,7 @@ config TREE_SRCU
- config FORCE_NEED_SRCU_NMI_SAFE
- 	bool "Force selection of NEED_SRCU_NMI_SAFE"
- 	depends on !TINY_SRCU
-+	depends on RCU_EXPERT
- 	select NEED_SRCU_NMI_SAFE
- 	default n
- 	help
 
