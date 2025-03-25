@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-574995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B64A6EC53
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:13:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF85A6EC59
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23C581886C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:13:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82C041897518
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CCD19B5B4;
-	Tue, 25 Mar 2025 09:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AE71DDA35;
+	Tue, 25 Mar 2025 09:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="I1MlzG8X"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H2MghPZ/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D4D1FC111;
-	Tue, 25 Mar 2025 09:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D181DACA1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742893970; cv=none; b=qyyb3UEhU+r3H9oqgpugWXzermpEw8q3Mr5pKn/rIi6uSjeBpVCBbh+n3zVDr09JTY95FEuwly4YIT0AkfTva5kvzpMTkL7qhqCXKvAXn86zfqUmrEAKdZ76J71qr2K/+E++ebVSeB2xN0omcBmkTBAwE6G1VSsR4qgOmluXYzY=
+	t=1742894215; cv=none; b=R6DR8lZHsnEL2oZ5aPxa9EyycQyKDmp3ZWsIWz47VoquxrFILYHIAbbqPl2u6SocGPpuaP2cadk/dCokR4PxLysVcpRraImrg5wY3UoIQOQzC6N89ivKhbr8NA2h2sgfF40LLZsdD8/xPMfroAs5OEnBZ7DwX7B4Ak+kX51eXmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742893970; c=relaxed/simple;
-	bh=7735V3C3ILJk25/lRz1qPycq191SaOU7EuCWXdBwUY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqznjXzkbu62rQyGOQXXXqYf9D+4pS2MUsyoHNT0pmSS3UAbtwFeyBAXZowTXnsn3jdMiybBjdS/eAoCmoNjvHd8oFqW0pQ6sKrjSmKiVS/2tXge99HPndEH5M3E/wDVkVCdrNbxxeCxwQz3sEMBPs6EZ4+yfo7hu3VAzRqDNrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=I1MlzG8X; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742893954; x=1743498754; i=markus.elfring@web.de;
-	bh=7735V3C3ILJk25/lRz1qPycq191SaOU7EuCWXdBwUY8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=I1MlzG8Xh+HByYF3nbgXmtn9lDpdE6p1UYYc0DT1eHcHx6HxnPyM+M2wWc8HKbyM
-	 jycicOwkyYfXhAhB/f4bZRqNsFpFqJVCbGYj0Cs7ey7ZmyUesr/xM6L4LuRlk8xmB
-	 i5TwwfiPwDnucf3UU4c0O9qLc7YpWrlos9dHrQYunAeeWPFIyMOfSP/ycjUsPrZAo
-	 bJNEWqrUSDrHoBLY5C1zI8aaxDABcK6XLS7MJtvBr6HClr2LjV9p7wxB5qBqH/uRh
-	 9csXnnNwqHQ1ONcd4mgfXUVdi4Pozdwh7i8bqiM1GTw2vRR7AilxZpru7bPMkA0J+
-	 KvbVo1yQcX0vOYK5zw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mvsln-1t76P739uh-00uWjp; Tue, 25
- Mar 2025 10:12:34 +0100
-Message-ID: <26e36378-d393-4fe1-938a-be8c3db94ede@web.de>
-Date: Tue, 25 Mar 2025 10:12:33 +0100
+	s=arc-20240116; t=1742894215; c=relaxed/simple;
+	bh=Q04Pa5WfYlc8uaPeRNABjNQkU6MR7ctfOjPyC9TC5S4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PPggkhbbi4JnzMNkq7ZU7ibx7NpBtTtnGlkSUF6htJdWfUWsusyzFVImLzdHmlWVyN2Vi/PWM6XnLtaZkR+jJeg3ScvqIuuqFOEXA+U+3v5VNC3A77u/c5Yigop4sQJ+ULA69YtQdxbwV9wD30L79LRZH6dPvh1AiGZ3oT2JHXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H2MghPZ/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742894214; x=1774430214;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Q04Pa5WfYlc8uaPeRNABjNQkU6MR7ctfOjPyC9TC5S4=;
+  b=H2MghPZ/284E+XMVvTiwY1CU1aW332xvn3RFbGq051g6C9+fmxFJhRQs
+   JN11RCDn9SsuC29urwqRw7LY0WGhACwYZvN9snSHwK6dqWTlSB5IWZXcb
+   RvPNznmXUcKqlqY+Y5VCuU1o/nQkhiPJ4WlakZkdbqRYxfPwkFinwtrQT
+   miPuIq/33teKsKaViGcnVlxc6FBupEE63KtoW+8LIE7vevdmvMTXzhx3K
+   WNNzRcczfDejM2c9NZOXNW1O4/a2pyGYiOvvRo0KyYwz9i7ILbyBzz7UT
+   PAk6y6IlBgOdjb6zjzoReVl7PfHqqcrxAY1MQtPYJJaz6odZSqx600wJQ
+   Q==;
+X-CSE-ConnectionGUID: sSE8u28NQn+j3yTrIoo3Dw==
+X-CSE-MsgGUID: fgqJiNkQTyeDe/XTIR+A+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11383"; a="43854366"
+X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
+   d="scan'208";a="43854366"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 02:16:53 -0700
+X-CSE-ConnectionGUID: eRAHrhygS7imR+lj1/z6rQ==
+X-CSE-MsgGUID: OccYvP0eT/CB4Q6qCYJJXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,274,1736841600"; 
+   d="scan'208";a="129002396"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.134])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 02:16:50 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: devbrones <jonas.cronholm@protonmail.com>
+Cc: maarten.lankhorst@linux.intel.com, devbrones
+ <jonas.cronholm@protonmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/edid: Add non-desktop quirk for Playstation VR
+ Headsets with Product ID 0xB403
+In-Reply-To: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250322122048.28677-1-jonas.cronholm@protonmail.com>
+Date: Tue, 25 Mar 2025 11:16:47 +0200
+Message-ID: <875xjxa2rk.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6] dma-engine: sun4i: Simplify error handling in probe()
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- dmaengine@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>
-References: <20250324172026.370253-2-csokas.bence@prolan.hu>
- <92772f63-52c9-4979-9b60-37c8320ca009@web.de>
- <7064597b-caf7-42e2-b083-b3531e874200@prolan.hu>
- <7332ccd2-ebe6-4b9d-a2ae-8f33641e7bd4@web.de>
- <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <7afcbbee-6261-4b2f-be14-a3076746d53c@prolan.hu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8IPLs4JjgoAwnZBVuo4oHJ/Ciu1YA+xoS2w/ZcwW/pYUMnMiIbY
- IwDmkMzC6yXPtMraEcf+SSLLUr9KOd205vJ7xm69+ApFyfidn9izbw6lVauJobrMWeP4GLW
- cY/2KiFKLi3I0dgOMnqkjFBhO6g6KmcgL31nr2aXE+OJ3K/bPYseWklQzUK3pkhmdAU/Jvd
- 7KO+Dr9FCpC2cDQiL7mzA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ddw/l2RqzMY=;OKc9+i6eEjX7bsAuzX3wQky2u9s
- S1dm/3/p506efJEfN07cglPPulQ9g4K9CH/WH6pQT2uXEOQRvGnINz1mC1InRyhxUrZR0BJiT
- gihrvCkKXMj7DgJNvvzFhwVKK3MgvfdZkYL6QVgs9O2asOGqqGZh7tC/OrwrjWswc9cmI61B0
- eOxh5ISyuq++7S5P9ulDrjzyJJdvFmz6owlQF6BAnsvvypHFJ1xUbC0Dd91xOzv5cqgnTtQyt
- fZxHM3KQskbLyequGolU+/TspYgZAGReeMPev8ARFbxLVOXNHLPe+Gy/YR4bBmdsOKAjrj3/W
- Tlp0f/LtDlKF0nUHerPGzy/tNcjTPbCj4yZIisg5MmQTm4ZBXFuXicL6cLXqufaRBysxYVbqg
- R2Cn0oaDmolNjcb1jgLQSVEXChuKx3iwTlfOorgVQThAEp7FQ8cvw/Sw0+bcEvPEHtK6lWujt
- QnWNtL0rtnK4Tzih59WfZiYX4B+aldX3cl2wCnFLXFNyOlauNkr6gZ0SqfGkSH3JITiJiC+Ln
- jp3z471tMdksUcZ5z2h8Gy2dYB5RvIF+ZdBmkKthES4xZk8PGrup2Nex6F5ZmeJWzVT0BEjt+
- ZMN3jYzhqnu7Ppafcnhd5Px6QBtWkK8I+Mmf72Kv2Fy+ZmmAejfzhZNyPVsKHFTX9eH2tdYah
- 5anCluA8MrQuDji0d3gL4QBQPIwzF8SHG9AfRrnz6r+fOamS7pOp/VeWlE9n5OADxACSU2U8r
- 65WX8uUiv+SSbuH00hYZ/wj4Yxe9DzgTMTlzLWnnup0JgVNGQ/EpBocteIghAD0E4qwaIUNds
- H5WJjPmJZWV+YAgRTjx/qfkgaWWXRztnJZ1YrWt+eHZTxCtPAIENTDu66GfwVc7NrnPSpv3qK
- i2CJYBtdxNWxseJmWBr+uwLwDrrRcOkEwDlrslnR1kJfv292LGcyhDQ6bkRpFt4I1aKA0T0ys
- GfFYPHBGqC++TUdYSjA3hboAFtP/z/7qssZ3HywRJSXvsFi5TLHxI3IRRABLKaMYLmPpWPGBS
- 4ntvD5t0WQ3t13MdrH5xjTiylcqK6c1z1feSQWAKyiKTOJ7ogLIh2E324NCvjZ+XmywbFaxWz
- TGS12PU76KjIR2jHZ0KO8c9Rx02aMU4rz4BH9XaghiC4spr25WFU4rwXt5Ekml3HBkfHjTJ1d
- Nsa38Mo5/LhXXx45zbh0IzNjm0xftu+1U9KDbmNCFbIolp8T89z5INSiE5hVIamuMIwxTP4HB
- EjP7qcDc396N6YVkUDLfGI10zpbFWLrsTAxIvMjIU+FUgNsLinkwsKlXbcz7H82sI1pVKdDHl
- FR8izw8ldMq5Awa6ZlX2UEHaegkR457PhqJWAi537TdnPZxSvPi/H+nSSnS2lzuxwBEGdxe9S
- Um2QbpnfLWvMyl0v0TbkPbYCMDfY73Ot5gvcSzrUDKBIKgIYcgoh6fhdJ+gOZV1ts7f/bAU40
- 6GpOBK1faEdJV2iPE8XtNBa9IzZ6taZyG9aCjZEo0itp167Kl
+Content-Type: text/plain
 
->> Implementation details are probably worth for another look.
+On Sat, 22 Mar 2025, devbrones <jonas.cronholm@protonmail.com> wrote:
+> This fixes a bug where some Playstation VR Headsets would not be assigned
+> the EDID_QUIRK_NON_DESKTOP quirk, causing them to be inaccessible by
+> certain software under Wayland.
+
+Please file a bug over at [1], and attach the EDID on that bug, so we
+have some clue what's going on.
+
+Thanks,
+Jani.
+
+
+[1] https://gitlab.freedesktop.org/drm/misc/kernel/-/issues/new
+
+
 >
-> What don't you like in the implementation? Let's discuss that then.
-
-I dare to point concerns out also for the development process.
-
-
->> Please distinguish better between information from the =E2=80=9Cchangel=
-og=E2=80=9D
->> and items in a message subject.
+> Signed-off-by: devbrones <jonas.cronholm@protonmail.com>
+> ---
+>  drivers/gpu/drm/drm_edid.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> What do you mean? The email body will be the commit message.
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14#n623
+> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+> index 13bc4c290b17..51b4d7a02c02 100644
+> --- a/drivers/gpu/drm/drm_edid.c
+> +++ b/drivers/gpu/drm/drm_edid.c
+> @@ -239,6 +239,7 @@ static const struct edid_quirk {
+>  
+>  	/* Sony PlayStation VR Headset */
+>  	EDID_QUIRK('S', 'N', 'Y', 0x0704, EDID_QUIRK_NON_DESKTOP),
+> +	EDID_QUIRK('S', 'N', 'Y', 0xB403, EDID_QUIRK_NON_DESKTOP),
+>  
+>  	/* Sensics VR Headsets */
+>  	EDID_QUIRK('S', 'E', 'N', 0x1019, EDID_QUIRK_NON_DESKTOP),
 
-Regards,
-Markus
+-- 
+Jani Nikula, Intel
 
