@@ -1,91 +1,145 @@
-Return-Path: <linux-kernel+bounces-576283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05284A70D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:56:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35B7A70D4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CCF7172F5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74773A7EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB5926A089;
-	Tue, 25 Mar 2025 22:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cu0s7nIL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B9D26A098;
+	Tue, 25 Mar 2025 22:55:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D9A269D1B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2912A190696;
+	Tue, 25 Mar 2025 22:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943370; cv=none; b=l8+5ffsSvA6gGiw2v2cb0EMrr+enbjOoyOVCilXzWaCpqXCa0xLJPao0iA4l/GDgQtRbrrMAxdbFEtiAIfM4y6YmzEedejdHiN6RvH4WcVBo7lFxMkdu1TR0KI+j964O0YPFJOhwluuISFbbNQ4sLpp1twyivlGcuopmF8eU5JQ=
+	t=1742943336; cv=none; b=MlJlofzucUnlfj1H+5TDHh0Kkt3MgPJKLky767t3RYlbHhyprR324+NnZ4g6QuBv/homcWWyXN/vLT6hPLDCMGn6Nh0eh/5ySpQSbNjPmGtUEIxPhZhcZJoe2/qoV2Clw47cfxSNWnI3fXl0Ox9JHI+0AScK2shjKqoCtiFGS4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943370; c=relaxed/simple;
-	bh=FVXn+ePiO7SsganxJWLxApMnAvpevyjQ5Nmk1sQuArw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgmJWgTzi+FV9ZyWoSjI+Rpe8jGo1MulO8liuh2XLqxO2K2AVqGK3AmWb4harwIT15UwrXFblLg3c1j+SHfrQf8CkstGUTDsXdg62vhLi03hEIkQHr9g75Kd2mh9g1RP0Tu0h8q2uuvNingOe/6s4fCePRpCyqWJrRDe52FIh5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cu0s7nIL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=48qNXt5Nqoz8bU6zLlnPCh1vzoAG4BT9CKkzfi0YKjE=; b=cu0s7nILI3fBDPiB3nB6M46+zp
-	CVqE966Ro3HImuNxX0z1qCqqcM655wEcquh2bvj7e8fELhsSuQ96Of5xtZ7+y9Ils4EjCnKCqU/1q
-	Z5PEgXQlYDI+cGP9pWiQWi80MK+0W7W/zSLO/iO8tE3lF0bESGhLav0Qvv0cMa3PwfD1By24OLvit
-	eMdlTr59zTgJhaYVRF8M9fDbXd8/8ELu36yxo8prgmpl7uSVFdK5JZbMISELOvsGrBtQ5I2drm34D
-	NmLK5sGGty9nku54P62ftDkzSTl4v/WuPMjYkgW25vyLRVQhiavMkdovwnT4hQqfaZjI02swK90UO
-	hO6fUp6Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1txDBg-0000000FXQM-43ge;
-	Tue, 25 Mar 2025 22:56:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 89E463004AF; Tue, 25 Mar 2025 23:56:00 +0100 (CET)
-Date: Tue, 25 Mar 2025 23:56:00 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 20/21] futex: Implement FUTEX2_NUMA
-Message-ID: <20250325225600.GP36322@noisy.programming.kicks-ass.net>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <20250312151634.2183278-21-bigeasy@linutronix.de>
- <fc3a6902-a845-4b11-ace8-514f10194288@linux.ibm.com>
+	s=arc-20240116; t=1742943336; c=relaxed/simple;
+	bh=2nQzsqOOrvKOqCo3drGiKKMEpjDeHpD3jFNBe8CNXk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dBpHdcGij29ZjINa1eFiTEt+XKhBUl71B6Fij/sPKWuqKfAv2ECa8pFvHOCHMNlDpGtSpbhaav8hySUxzxsZNKA2pAt4aCLePnfrriWFbhepKab4BCR1ZLJH7xgUnTpfFtpJN+6NiQIMlsRIxfiaRBpKZkqLd5w1QPSWImU1V5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E12C4CEE9;
+	Tue, 25 Mar 2025 22:55:34 +0000 (UTC)
+Date: Tue, 25 Mar 2025 18:56:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3] tracing: Adjust addresses for printing out fields
+Message-ID: <20250325185619.54b85587@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc3a6902-a845-4b11-ace8-514f10194288@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 26, 2025 at 01:22:19AM +0530, Shrikanth Hegde wrote:
+From: Steven Rostedt <rostedt@goodmis.org>
 
-> > +	return &futex_queues[node][hash & futex_hashmask];
+Add adjustments to the values of the "fields" output if the buffer is a
+persistent ring buffer to adjust the addresses to both the kernel core and
+kernel modules if they match a module in the persistent memory and that
+module is also loaded.
 
-                            ^^^^^^^
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v2: https://lore.kernel.org/20250325213919.956212394@goodmis.org
 
-> > +	hashsize = 256 * num_possible_cpus();
-> > +	hashsize /= num_possible_nodes();
-> 
-> Wouldn't it be better to use num_online_nodes? each node may get a bigger
-> hash bucket which means less collision no?
+- Fix 32 bit build when casting an unsigned long long to pointer,
+  needs to be cast to (long) first. But this code isn't even run
+  on 32 bit, but it is compiled on 32 bit.
 
-No. There are two problems with num_online_nodes, and both are evident
-above.
+ kernel/trace/trace_output.c | 38 ++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-Consider the case of a sparse set.
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index ef6307a6ca5e..f88acc9257d5 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -858,6 +858,9 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 			 struct list_head *head)
+ {
+ 	struct ftrace_event_field *field;
++	struct trace_array *tr = iter->tr;
++	unsigned long long laddr;
++	unsigned long addr;
+ 	int offset;
+ 	int len;
+ 	int ret;
+@@ -894,8 +897,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 		case FILTER_PTR_STRING:
+ 			if (!iter->fmt_size)
+ 				trace_iter_expand_format(iter);
+-			pos = *(void **)pos;
+-			ret = strncpy_from_kernel_nofault(iter->fmt, pos,
++			addr = trace_adjust_address(tr, *(unsigned long *)pos);
++			ret = strncpy_from_kernel_nofault(iter->fmt, (void *)addr,
+ 							  iter->fmt_size);
+ 			if (ret < 0)
+ 				trace_seq_printf(&iter->seq, "(0x%px)", pos);
+@@ -904,8 +907,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 						 pos, iter->fmt);
+ 			break;
+ 		case FILTER_TRACE_FN:
+-			pos = *(void **)pos;
+-			trace_seq_printf(&iter->seq, "%pS", pos);
++			addr = trace_adjust_address(tr, *(unsigned long *)pos);
++			trace_seq_printf(&iter->seq, "%pS", (void *)addr);
+ 			break;
+ 		case FILTER_CPU:
+ 		case FILTER_OTHER:
+@@ -935,24 +938,25 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 					break;
+ 				}
+ 
+-				if (sizeof(long) == 4)
++				addr = *(unsigned int *)pos;
++				if (sizeof(long) == 4) {
++					addr = trace_adjust_address(tr, addr);
+ 					trace_seq_printf(&iter->seq, "%pS (%d)",
+-							 *(void **)pos,
+-							 *(unsigned int *)pos);
+-				else
++							 (void *)addr, (int)addr);
++				} else {
+ 					trace_seq_printf(&iter->seq, "0x%x (%d)",
+-							 *(unsigned int *)pos,
+-							 *(unsigned int *)pos);
++							 (unsigned int)addr, (int)addr);
++				}
+ 				break;
+ 			case 8:
+-				if (sizeof(long) == 8)
++				laddr = *(unsigned long long *)pos;
++				if (sizeof(long) == 8) {
++					laddr = trace_adjust_address(tr, (unsigned long)laddr);
+ 					trace_seq_printf(&iter->seq, "%pS (%lld)",
+-							 *(void **)pos,
+-							 *(unsigned long long *)pos);
+-				else
+-					trace_seq_printf(&iter->seq, "0x%llx (%lld)",
+-							 *(unsigned long long *)pos,
+-							 *(unsigned long long *)pos);
++							 (void *)(long)laddr, laddr);
++				} else {
++					trace_seq_printf(&iter->seq, "0x%llx (%lld)", laddr, laddr);
++				}
+ 				break;
+ 			default:
+ 				trace_seq_puts(&iter->seq, "<INVALID-SIZE>");
+-- 
+2.47.2
+
 
