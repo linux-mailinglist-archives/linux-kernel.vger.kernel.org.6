@@ -1,167 +1,162 @@
-Return-Path: <linux-kernel+bounces-575138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD15A6EE1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:46:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845E2A6EE2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:47:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506A2169413
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:46:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FB03A6D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F3C25522B;
-	Tue, 25 Mar 2025 10:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0AE254B0D;
+	Tue, 25 Mar 2025 10:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzpIbKkI"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwv2jgic"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BEAEC4;
-	Tue, 25 Mar 2025 10:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AA1C5D50;
+	Tue, 25 Mar 2025 10:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742899581; cv=none; b=ivQXGpLHMXX8jNxEZTW/n7E/GqQ+ebLfCYqtxLmlQOv8r3Qt8H5rvdb5zx0TQbfFkt29NdaOSbLYW+4X69CYbn0a9f1DrORZDCxGfJkFl4dKSyzdRAJKZDtOODqG3+lGhghJauJOgIg6imkI78pn7y8nfDlArOb/MQB+bkB6dx4=
+	t=1742899613; cv=none; b=jOdAGbCPTlJ8us7n3aq7HuCvzKNCcz4E5aF413O+E7SS6QjGBsEllaW6d1Gk+aGR2ymlgp9iaV+NvguYB5oaVDUq+Vl6VB0H/MTSO85AE7e2cjoelul0tdrndvp8cqK8HTvZg9KAm6b/eNOQuhyPVHhJwr4Z2gqwaUQH+GVHPBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742899581; c=relaxed/simple;
-	bh=2FNYeomT71KgMuXHlZVXWtH4XFxIInQK18bvX+WzreA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kOYAV/7HwUfORLsMd4XsDN9gPkANewPv/v4HOXMY0g948EzlaqSuId9Ukqse47DvjrVP0TA7TEJoBrjvH72SjSfZN3xi70MGoOXtJ/WEOYu5UvptughRqRKoplK8HUEJsYddpWqvXzoeD0Lg0WwWQmYcA3MvpGyBsBsV2+NlF8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzpIbKkI; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30613802a6bso56788941fa.1;
-        Tue, 25 Mar 2025 03:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742899576; x=1743504376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1y03yDy8TIpQcuFAWH67h1VizPaAxuPKN6wBSpHwrrE=;
-        b=NzpIbKkIwRSafVFV+gaPJAZygUiBqPdtydf+9CI6WFVHzwd9FZ9eGyOGyCxaje01d0
-         sY8K/fV0SU14XII4d3DIi7G9PinzGTzFONG3FvoVawDJ39piU+RxkK7slGJ9mPwgsTcB
-         o9+03fchHP2X7ffXePFKP5FA1V0dRNSXRbbggY3hdgJbdBGibk1QqlB6znT0aRJD7YPn
-         3bZnjJHNt2fikP7Wa7A5k2yMfhPLgodJjG+gVP3lLt8bczmYJig2r4nn4opMDJnaGe4L
-         XdrKYqCZtCvVfkS48iPAaTVAxvcrCIMdcst7WRVvvRcD9CRtlvYSCm9ML3YmU8I94YwJ
-         jLhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742899576; x=1743504376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1y03yDy8TIpQcuFAWH67h1VizPaAxuPKN6wBSpHwrrE=;
-        b=j5fN+5AWPjSpoOq44BfSlbmMMa6BLfDoELK1TmXq97jVLDAeZEyxbP9Rhbn8PPYdWh
-         NUY+1c7YMaKOXndukFVgLXlwsWgE3SgueQNFPkheSGzHxzhpolDlTNHtQPEnpDs5t1nl
-         wlWh4jyFcN/5x3tbtZkpUvcQU8cHaU0KAOnT/x3JYRGPQYqtp2irZikSDQHjAX73YByb
-         co9kZsCM10F7m3JtjDh0YxGEwEVzHsO114m1e6b07Et5I/egS7f7VrIoie5397f+vcNP
-         L9pffr54edzD3wIS/wNErEbN62WYsKj1syNcU1XZssq1zf+z5s8JZ5O/iRWUA85Y+cU2
-         E5Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUItc5XQFctFi1vKukySWQj2jCVWSBMDBW5iRGWxVsiXA9Lm5jkI68pfXQ101xGPy1nk5or+XFe4AW0VFsT@vger.kernel.org, AJvYcCUWGfMD39FUm2qScYQhxLlo9hVl483Y2ia7kBSH0ITqkw23caZ7jvw5Fb4JmGjtqtGuwD670H+wicGA1Y8=@vger.kernel.org, AJvYcCVu/YC4iG0AWeCcKfZMaM8aZaLYerMrgoxwANhAxphw64/vRpQi4qw/ahksqRmMmyVL3zjaWTLkKVA9IzjeVe9S@vger.kernel.org, AJvYcCWHJph0BoYTXwXd7QeMqjU4Q42WEyms0klqeDSVisKO5f0+OI4ijWGLyBQcZ+HCRpGCOzJwfg06qQYJ@vger.kernel.org, AJvYcCWfNlM2eDLFe1AX37cl4UrNBCwgqHF2AdrGVpZTf0Uzhok9M4q5sN6LwrhZtC117ObHjtGMdSNy7Aj7S50u@vger.kernel.org, AJvYcCWhx4wTPG9+SGbgLOoiUwft6Sjp1zDuAva5iGiW5nXZh+WyyNFBBij/QTBsk92LzyIAgddKErLA@vger.kernel.org, AJvYcCX7UdQ62+AgpV/IBN4l7gmAEv4PI2vU5dXtxsAtjYbFwxuSjBSMoMDfWl6oOTq/AzUHPbiLSpvk5PXU@vger.kernel.org, AJvYcCXOrTRC0FOMc69UxcTCh3Hyt3DYe6UNXBHWVdKVAzhlWP8IW9HOi6El+DP9sZHAcTiyuEtUQziK9hiBS7SepBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCyt0WH2fKMjrD2OfDEkON/1j3/FoeO+a9sMMDYBEfTsnHsrzt
-	cGMjChTgeiVxJZnslzX7WH7fwlbpBogparXQVYSqFos4NYyjsXavZmedwO657cd+OleljGpagNP
-	f5R+4vJVMuGW1xNhQtbcLfbbuOMo=
-X-Gm-Gg: ASbGncv7vzppAyQkBn3HRCDBf71n9N0iiuCj9OHnwFx6w8S4AjZ5k7mdGPiI25uWxzV
-	lEe6I9saKwpN6GI7cINgDyqbpef+l6NZLNwyx/QLO8xyKvHyaCAXQkzqgeFZEJJ3KpIhkWIM9Q1
-	yt8fdSUW56NOgIlbCUCJJMI4Ks/PNUKalpcJ5Sot/sAwBdFicbFNMtf9NullS17EAVzyOov0E=
-X-Google-Smtp-Source: AGHT+IEeSFZcNncq+Hzrd6WJLKO5wQXJ5YPLXL3SpmKlQ5a2soAQyRH0mbHomADrM6Z19b8LkmwZD61xn1jA9K4yWjQ=
-X-Received: by 2002:a2e:b888:0:b0:30b:8f84:49c5 with SMTP id
- 38308e7fff4ca-30d7e3000ecmr55915601fa.28.1742899576246; Tue, 25 Mar 2025
- 03:46:16 -0700 (PDT)
+	s=arc-20240116; t=1742899613; c=relaxed/simple;
+	bh=rqVeZKTsfR1Mw1ipXxcLoywYP3wysPSlC0jiSRkwu8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L6CW0uLKRxyropIuMdJRG8iWU+xQt2Ui5tbO1GyOeIMAhhve7nn1h6dYAkNkhlx7u/F6qTxybifobFwzWXdQfsQTnaEzlpH04ib6uKY/wo4gPoaIgDD4OTDEyIpUBmgzDHaQ5woshJXEOS1+ZBr8u5eA647F/SWcmUnvUrycTfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwv2jgic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD19C4CEE4;
+	Tue, 25 Mar 2025 10:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742899613;
+	bh=rqVeZKTsfR1Mw1ipXxcLoywYP3wysPSlC0jiSRkwu8w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bwv2jgicOKrT+0/PuMPF9JVYRWhWGnsPdExi0sLbALZIYWOLLSxskxBDkhsla5GyA
+	 EZMfb6D7WzVC2jaW5kDfwAXdNjd0dJ3LOwan4R9/mTR6jnpoOK9604glTKzGVKbedS
+	 zfjm6MsenHiUa+rXgA+Wva5BpGOQWSdN8UYH1nd2hR+1MnSb+YtlZYmLAXxdQfkbT1
+	 uGyZLOKh2xC3wLlmMOkZLkDAJEQAXwZ7tD1qOKrhL6SU2wlny48gLCy3GFAZ+Y6Jsi
+	 ED4DquLSM8QnZIj23rLbtF/0AQNUtkkmmR09IrclOq4rzrKxeUrQj4zx3PcWjlStsa
+	 afECIgclpRrwg==
+Date: Tue, 25 Mar 2025 03:46:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: Fan Gong <gongfan1@huawei.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Lee Trager
+ <lee@trager.us>, <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>, Cai Huoqing
+ <cai.huoqing@linux.dev>, luosifu <luosifu@huawei.com>, Xin Guo
+ <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
+ Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
+ <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Suman Ghosh
+ <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, Joe
+ Damato <jdamato@fastly.com>
+Subject: Re: [PATCH net-next v09 1/1] hinic3: module initialization and
+ tx/rx logic
+Message-ID: <20250325034641.65536e13@kernel.org>
+In-Reply-To: <60a3c7b146920eee8b15464e0b0d1ea35db0b30e.1742202778.git.gur.stavi@huawei.com>
+References: <cover.1742202778.git.gur.stavi@huawei.com>
+	<60a3c7b146920eee8b15464e0b0d1ea35db0b30e.1742202778.git.gur.stavi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250324-ptr-as-ptr-v6-0-49d1b7fd4290@gmail.com>
- <20250324-ptr-as-ptr-v6-6-49d1b7fd4290@gmail.com> <D8PA773W07SS.3T2SZUIJH4HOH@proton.me>
-In-Reply-To: <D8PA773W07SS.3T2SZUIJH4HOH@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 06:45:40 -0400
-X-Gm-Features: AQ5f1JoREcOZKZS-EjqFeDZFT-IOtHg2hx9DVULWtMdlFDlEyVW6GfpqQHdJRUU
-Message-ID: <CAJ-ks9=1BOsd-edBH-ZsDLzhtX=YfvZPMHebX=br4Wc1K1V-TA@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] rust: enable `clippy::cast_lossless` lint
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 25, 2025 at 6:40=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Mon Mar 24, 2025 at 11:01 PM CET, Tamir Duberstein wrote:
-> > Before Rust 1.29.0, Clippy introduced the `cast_lossless` lint [1]:
-> >
-> >> Rust=E2=80=99s `as` keyword will perform many kinds of conversions, in=
-cluding
-> >> silently lossy conversions. Conversion functions such as `i32::from`
-> >> will only perform lossless conversions. Using the conversion functions
-> >> prevents conversions from becoming silently lossy if the input types
-> >> ever change, and makes it clear for people reading the code that the
-> >> conversion is lossless.
-> >
-> > While this doesn't eliminate unchecked `as` conversions, it makes such
-> > conversions easier to scrutinize.  It also has the slight benefit of
-> > removing a degree of freedom on which to bikeshed. Thus apply the
-> > changes and enable the lint -- no functional change intended.
-> >
-> > Link: https://rust-lang.github.io/rust-clippy/master/index.html#cast_lo=
-ssless [1]
-> > Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> > Link: https://lore.kernel.org/all/D8ORTXSUTKGL.1KOJAGBM8F8TN@proton.me/
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> One nit below, but you may add:
->
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+On Mon, 17 Mar 2025 11:40:39 +0200 Gur Stavi wrote:
+> +static int hinic3_poll(struct napi_struct *napi, int budget)
+> +{
+> +	struct hinic3_irq_cfg *irq_cfg =
+> +		container_of(napi, struct hinic3_irq_cfg, napi);
+> +	struct hinic3_nic_dev *nic_dev;
+> +	int tx_pkts, rx_pkts;
+> +
+> +	nic_dev = netdev_priv(irq_cfg->netdev);
+> +	rx_pkts = hinic3_rx_poll(irq_cfg->rxq, budget);
+> +
+> +	tx_pkts = hinic3_tx_poll(irq_cfg->txq, budget);
 
-Thanks!
+You should service Tx first, it frees skbs into a cache which Rx 
+can then use, while they are hopefully still cache-warm.
 
->
-> > ---
-> >  Makefile                        |  1 +
-> >  drivers/gpu/drm/drm_panic_qr.rs | 10 +++++-----
-> >  rust/bindings/lib.rs            |  2 +-
-> >  rust/kernel/net/phy.rs          |  4 ++--
-> >  4 files changed, 9 insertions(+), 8 deletions(-)
->
-> > diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> > index 0486a32ed314..591e4ca9bc54 100644
-> > --- a/rust/bindings/lib.rs
-> > +++ b/rust/bindings/lib.rs
-> > @@ -25,7 +25,7 @@
-> >  )]
-> >
-> >  #[allow(dead_code)]
-> > -#[allow(clippy::ptr_as_ptr)]
-> > +#[allow(clippy::cast_lossless, clippy::ptr_as_ptr)]
->
-> Not sure if we instead want this in a separate attribute, ultimately it
-> doesn't really matter, but why should `undocumented_unsafe_blocks` be
-> special?
+> +	if (tx_pkts >= budget || rx_pkts >= budget)
+> +		return budget;
+> +
+> +	napi_complete(napi);
 
-No reason. Moved it to a separate line. I won't respin just for this -
-hopefully Miguel doesn't mind fixing when he takes it, if there's not
-a v7 by then.
+Please use napi_complete_done().
 
-Tamir
+> +	hinic3_set_msix_state(nic_dev->hwdev, irq_cfg->msix_entry_idx,
+> +			      HINIC3_MSIX_ENABLE);
+> +
+> +	return max(tx_pkts, rx_pkts);
+> +}
+
+> +static int hinic3_nic_probe(struct auxiliary_device *adev,
+> +			    const struct auxiliary_device_id *id)
+
+> +	err = register_netdev(netdev);
+> +	if (err)
+> +		goto err_register_netdev;
+> +
+> +	netif_carrier_off(netdev);
+
+You should carrier_off before you register
+
+> +	err = pci_enable_device(pdev);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to enable PCI device\n");
+> +		goto err_pci_enable;
+> +	}
+> +
+> +	err = pci_request_regions(pdev, HINIC3_NIC_DRV_NAME);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to request regions\n");
+> +		goto err_pci_regions;
+> +	}
+> +
+> +	pci_set_master(pdev);
+> +
+> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> +	if (err) {
+> +		dev_warn(&pdev->dev, "Couldn't set 64-bit DMA mask\n");
+> +		/* try 32 bit DMA mask if 64 bit fails */
+> +		err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> +		if (err) {
+> +			dev_err(&pdev->dev, "Failed to set DMA mask\n");
+> +			goto err_dma_mask;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +err_dma_mask:
+> +	pci_clear_master(pdev);
+> +	pci_release_regions(pdev);
+> +
+> +err_pci_regions:
+> +	pci_disable_device(pdev);
+> +
+> +err_pci_enable:
+> +	pci_set_drvdata(pdev, NULL);
+> +	mutex_destroy(&pci_adapter->pdev_mutex);
+> +	kfree(pci_adapter);
+
+Please name the error labels after the target, not the source.
+
+Quoting documentation:
+
+  Choose label names which say what the goto does or why the goto exists.  An
+  example of a good name could be ``out_free_buffer:`` if the goto frees ``buffer``.
+
+See: https://www.kernel.org/doc/html/next/process/coding-style.html#centralized-exiting-of-functions
+-- 
+pw-bot: cr
 
