@@ -1,173 +1,339 @@
-Return-Path: <linux-kernel+bounces-574725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B31A6E8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:43:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B7AA6E8F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 05:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1033B47FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E361896FE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 04:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CE81A83E8;
-	Tue, 25 Mar 2025 04:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jNnC4RLE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948151A2C11;
+	Tue, 25 Mar 2025 04:45:24 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482131624E0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3A41862
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742877803; cv=none; b=kZ0CgyXTaKhEmGEVlPPz4YF6R7u8CZ7HWlGsCkSYOWMkLWCpZUq7f31UtmtuBm6e/I4UjQfn81L2+J87tfVDsVgheyw7cDhwMkof+WMlrnnZhcvpu0PcYFDlSDb0DAYh+aLOFcmYDXgblbVPFEOpc3VE9HPPA89oKhFIseOuxQI=
+	t=1742877923; cv=none; b=J1JxF7On6CTxPx8z9nFNgzeK7rmRMqJgwASueztKe9oLxHPXwGXU7GxlMNLjk2MBXktU4Hq3aVv0exZSAepdn0rwVIWM4H5lMJ0F44+5ecsUfoSf/rEVeDtt/OGCq6YS0bs0a+WY4v1OKlQGwdVSg6/JSTYSO/p5c/Gtlv8yRyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742877803; c=relaxed/simple;
-	bh=SIXKcpBMIQGoLpI7fW2p0s99bbX903KeXkbaEGxXY64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVN3xFnCG+gV8MQeCkNBQTcvPJQII2L0WauYGaZTjQ/4PXmFkcOukbwiJ5mOLN7pzg82QxET3ZnIvEKA/x64tBmRCqm1vn3gb6TLb7NB5aNqeacEjkfaHzjHMdK/7Osm1PY7YgJ7dkXGaj3MWHw7dF/f2Med1cvvm54m/00ql0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jNnC4RLE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52OI5qFZ004136
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:43:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8rg16wpSQyfAsE/YtUxxFvRY2qDBDufr5ivHz9mkK9s=; b=jNnC4RLEs2ZKvOab
-	/gdws6j4I+3nL8A63nPCl8Sh7gzusmIlS1tpiOowvyvcXEFhR0XLx4wlh9gynOWt
-	HTGs0Wq0RGP6e2oM+GsAiWustpSZ4LwNsEjfnPfEoqUYf/zCib0p75MTP5qLo9iW
-	7d6zOmtsUzkUM3pFxqmZOqip57wZt5ra6xEEqxb2SApwt5lnn+g3cm24EEsbpOea
-	pgClGGIcyuR8gtWVZu0H2VlQx3pi40eIufwuUPZXMcv/Hg9gqRH9ykH5M2MzZqHe
-	ZqBMQ62bn3iEVU8KoHUthu6+ZuvPDqYleil2c9tII7CS+Ne6YTBlR9GCH+yj42Wb
-	XAnVmg==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hnk8pgs3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 04:43:20 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2240a96112fso142173185ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:43:20 -0700 (PDT)
+	s=arc-20240116; t=1742877923; c=relaxed/simple;
+	bh=devzYDNalMsUjT+07OWPsr5ZmxLSUtrHJJ7Th81/KmA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jmy+TmQeIxL7nOM8VFGHbRaXkXvU1vL/bzt1MIHvl4nfNH2RPoqv9S88Cs1GFrJHyz/scKMnhylZ1S1sfWKhOYt+QpyI7jFVUb9C6HxKWm1AdU/06DMszg8LViBatsGLdJaWm/F7M4Mu9zxVr2kmWdo47uAQcKQRuv4MFt48v3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3cf64584097so56571905ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 21:45:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742877799; x=1743482599;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8rg16wpSQyfAsE/YtUxxFvRY2qDBDufr5ivHz9mkK9s=;
-        b=mAiXFnp1sDIqXYtmQO2VBjpnjS1D4NFe4KoTs44ZupFoSfMT2Y/XsLw1LX956B9oOW
-         qLX5cBRYuEImnDGXDFKYROIvbt1OC/pPs8qV+bQdddVPMK249escGFCAl5AbQOWnrN1f
-         cVnT2ub3tnYrRv+FVfXsstuN1Ph69GSyiY2c0TeCLnBn5H8xeSxxtJFxH5IqIqYwvxN9
-         A4hfbJ0z/rsjv1nb5QKWjXmTsoEbyh8OQVriMFsG8dIx0rle2mzS8qC6bKiPuytXul+i
-         M8AjtLd257o4bs28Y/FWc9lXn0mNCQhsfZ74usWymvOdD7S4f+DOBiczmpFU3TAKCzIL
-         zCYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwPVOyhx4iZ1aV7E2cGNBnK7crc164bHuJPnbUUVp//cX1xMT7DKGkGevjLFGcb3faNL0XiYniwdtf/WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYuBiHBMqDWiVmevE+NeSQb4DkfZF5o9O0XmEwlUSfuHqFQGGX
-	cWqlF+qNUnUUDhJTtvdthyCzXKl5LJZo4g3hNRc1633Z5J4m3YWXCs8lARDh1pIU01nFP9StV41
-	II2CTDgXPtUZ+qz5+vRRVF0hbFVRKkrDEl1dcCvKTyzP/XwfcQvTBYaRifz6VYT4=
-X-Gm-Gg: ASbGnctsDda4/QGI3ZDVMMWo574TfsmgVBl4xBYQeEXyyayTe7X87LnP/eLX7dSbCte
-	Fm9olOFmgUS5+ueTpjaDnDgNUUBY4eVD+Rpuslk23omySQGNCTjNYEB6VyBFjI97dsG5FMB2PDp
-	cu5Fs1kjnz9nYRbifKYPNCvr33owg5GCxY6qW7WHc7LQ2YLc5yOhFT/fX845T2q/zCsZXE2WRVx
-	U86yrVAw8Yv9syDta4njzIeKdmh6HKEXFn7R4Kts8VvmbvH1PsbWZpWmxBjcjMHDipck6FuypT4
-	EkjBrbzUPEP3jTVKYOqnvRjaFz/3SsNFZQRTFBeA06cuBg==
-X-Received: by 2002:a17:902:d2d0:b0:224:1001:677c with SMTP id d9443c01a7336-22780c526b7mr205321245ad.9.1742877799439;
-        Mon, 24 Mar 2025 21:43:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHhiFYkMAYAQ90q+e8se3nX4Nk3qVKNalr3u13o8pkfzAvJxAo67LexTL8yeMYxb1e286o3g==
-X-Received: by 2002:a17:902:d2d0:b0:224:1001:677c with SMTP id d9443c01a7336-22780c526b7mr205320995ad.9.1742877798911;
-        Mon, 24 Mar 2025 21:43:18 -0700 (PDT)
-Received: from [10.92.192.202] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739061872b7sm8948785b3a.162.2025.03.24.21.43.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 21:43:18 -0700 (PDT)
-Message-ID: <3bccf9a8-f60c-90e7-4301-8e10417c8107@oss.qualcomm.com>
-Date: Tue, 25 Mar 2025 10:13:12 +0530
+        d=1e100.net; s=20230601; t=1742877921; x=1743482721;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s2PClflp1mOPEfAM9+lwaW49MMMNvSeyHVI9gRiU4BI=;
+        b=GAZS/seOXfZwjKjRarW8+znvI9M+biCCr8Kber9i0R8zy4JX/cNVpokXolnlUxKRZ1
+         GhUpcNFjXjkIJSTjxupwhARjAbFHyDTmibu502Hsf74aXkWL+UnQzuPhpvMpkN9lb3K2
+         IfiuKQtASmZL6UzPTSR3KD9ItucXNbsp/GFsAM91r2o0I/DYuFN6Rl45LqQsBcx6bo3E
+         91RIou93unxw6jNKLRlLh2De1Sg+Dlu9RNq7KVwIiH7AD28ugZOtlE0+aOXbB2p5TW1V
+         3TRw/sJ8DfgxL3bAr2AYcgxDt2bCvS3ghaw6xBd0LJhkh/5Tx7ot9IJjROfX2urs0Re8
+         wu6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWg34sXYBxKi0TxtWIbUXOKlO9tveV1uynUrqyJuNJCrdu6FZECeI9BUEugSojSmpimj5GKbuUoMXu4Zso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKKYwF0KAvV3nARnEMPVtSSeHfsphtOCBs5mUhug70Rpjb9Czt
+	ptwo4Ew7fJNRO2hxTzVapzDUlJm7+XUu7sByRNsCjZuBI+H5j0btLPN9AB60+p5i50T+4v8ZlwN
+	Oxb3RbpFYvIu0rTOJG92/y5bfyHHpcHjM1hQIHW2Esvu7GiiyBf0gL0Q=
+X-Google-Smtp-Source: AGHT+IFZq+ZHo/JIarbTlRWfyK1/HcaEsKdQlqvo+vvo90zrZBrmKURTSzFjXrXKyBqXBrW6TLymQpa34QDwBrBaYeTekD3tueqB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/3] arm64: qcom: sc7280: Move phy, perst to root port
- node
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
-References: <20250322-perst-v1-0-e5e4da74a204@oss.qualcomm.com>
- <20250322-perst-v1-2-e5e4da74a204@oss.qualcomm.com>
- <2b038454-8994-490c-9d59-9bd03f52e337@oss.qualcomm.com>
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <2b038454-8994-490c-9d59-9bd03f52e337@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 7IA0Uep4VQu-ZOZLlRZNbj6e40Xq96fl
-X-Authority-Analysis: v=2.4 cv=KMlaDEFo c=1 sm=1 tr=0 ts=67e23469 cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=1RYYy9rr-L5vwPXD2fUA:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: 7IA0Uep4VQu-ZOZLlRZNbj6e40Xq96fl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-25_02,2025-03-21_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- bulkscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503250030
+X-Received: by 2002:a05:6e02:746:b0:3d3:dcb8:1bf1 with SMTP id
+ e9e14a558f8ab-3d5960d1ea3mr176397295ab.3.1742877920787; Mon, 24 Mar 2025
+ 21:45:20 -0700 (PDT)
+Date: Mon, 24 Mar 2025 21:45:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e234e0.050a0220.a7ebc.0037.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in memscan (2)
+From: syzbot <syzbot+ca8a872d9fa7652522da@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    88d324e69ea9 Merge tag 'spi-fix-v6.14-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14203e98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=27515cfdbafbb90d
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca8a872d9fa7652522da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-88d324e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0fdb8d29892b/vmlinux-88d324e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f6e1986450b4/bzImage-88d324e6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ca8a872d9fa7652522da@syzkaller.appspotmail.com
+
+bcachefs (loop0): check_unreachable_inodes... done
+bcachefs (loop0): check_subvolume_structure... done
+bcachefs (loop0): check_directory_structure... done
+bcachefs (loop0): check_nlinks... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): set_fs_needs_rebalance... done
+bcachefs (loop0): done starting filesystem
+FAULT_INJECTION: forcing a failure.
+name failslab, interval 1, probability 0, space 0, times 1
+CPU: 0 UID: 0 PID: 5321 Comm: syz.0.0 Not tainted 6.14.0-rc7-syzkaller-00196-g88d324e69ea9 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ fail_dump lib/fault-inject.c:73 [inline]
+ should_fail_ex+0x40a/0x550 lib/fault-inject.c:174
+ should_failslab+0xac/0x100 mm/failslab.c:46
+ slab_pre_alloc_hook mm/slub.c:4068 [inline]
+ slab_alloc_node mm/slub.c:4144 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_node_track_caller_noprof+0xdc/0x4c0 mm/slub.c:4313
+ __do_krealloc mm/slub.c:4820 [inline]
+ krealloc_noprof+0x10f/0x300 mm/slub.c:4873
+ bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
+ printbuf_insert_spaces+0x56/0x530 fs/bcachefs/printbuf.c:81
+ __printbuf_do_indent fs/bcachefs/printbuf.c:138 [inline]
+ printbuf_do_indent+0x4c4/0xa00 fs/bcachefs/printbuf.c:155
+ bch2_prt_printf+0x559/0x6d0 fs/bcachefs/printbuf.c:190
+ trace_bucket_alloc2+0x119/0xb90 fs/bcachefs/alloc_foreground.c:485
+ bch2_bucket_alloc_trans+0x2e89/0x2ea0 fs/bcachefs/alloc_foreground.c:604
+ bch2_bucket_alloc_set_trans+0x57c/0xd60 fs/bcachefs/alloc_foreground.c:730
+ __open_bucket_add_buckets+0x13e1/0x1e50 fs/bcachefs/alloc_foreground.c:973
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1017
+ bch2_alloc_sectors_start_trans+0xce9/0x2030
+ __bch2_write+0x769/0x5a80 fs/bcachefs/io_write.c:1466
+ bch2_write+0x865/0x1660 fs/bcachefs/io_write.c:1659
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
+ bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x35f/0x880 mm/page-writeback.c:2687
+ filemap_fdatawrite_wbc mm/filemap.c:388 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:421 [inline]
+ file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:796
+ bch2_fsync+0x13a/0x350 fs/bcachefs/fs-io.c:228
+ generic_write_sync include/linux/fs.h:2970 [inline]
+ bch2_write_iter+0x298a/0x2cd0 fs/bcachefs/fs-io-buffered.c:1072
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xacf/0xd10 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b07d8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8b08b31038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f8b07fa5fa0 RCX: 00007f8b07d8d169
+RDX: 0000000000000010 RSI: 0000200000000080 RDI: 0000000000000006
+RBP: 00007f8b08b31090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f8b07fa5fa0 R15: 00007ffca8a26258
+ </TASK>
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memscan+0x62/0x80 lib/string.c:728
+Read of size 1 at addr ffff8880409bd697 by task syz.0.0/5321
+
+CPU: 0 UID: 0 PID: 5321 Comm: syz.0.0 Not tainted 6.14.0-rc7-syzkaller-00196-g88d324e69ea9 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x16e/0x5b0 mm/kasan/report.c:521
+ kasan_report+0x143/0x180 mm/kasan/report.c:634
+ memscan+0x62/0x80 lib/string.c:728
+ _Z7memscanPvU25pass_dynamic_object_size0im include/linux/fortify-string.h:708 [inline]
+ __printbuf_do_indent fs/bcachefs/printbuf.c:101 [inline]
+ printbuf_do_indent+0x110/0xa00 fs/bcachefs/printbuf.c:155
+ bch2_prt_printf+0x559/0x6d0 fs/bcachefs/printbuf.c:190
+ trace_bucket_alloc2+0x119/0xb90 fs/bcachefs/alloc_foreground.c:485
+ bch2_bucket_alloc_trans+0x2e89/0x2ea0 fs/bcachefs/alloc_foreground.c:604
+ bch2_bucket_alloc_set_trans+0x57c/0xd60 fs/bcachefs/alloc_foreground.c:730
+ __open_bucket_add_buckets+0x13e1/0x1e50 fs/bcachefs/alloc_foreground.c:973
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1017
+ bch2_alloc_sectors_start_trans+0xce9/0x2030
+ __bch2_write+0x769/0x5a80 fs/bcachefs/io_write.c:1466
+ bch2_write+0x865/0x1660 fs/bcachefs/io_write.c:1659
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
+ bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x35f/0x880 mm/page-writeback.c:2687
+ filemap_fdatawrite_wbc mm/filemap.c:388 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:421 [inline]
+ file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:796
+ bch2_fsync+0x13a/0x350 fs/bcachefs/fs-io.c:228
+ generic_write_sync include/linux/fs.h:2970 [inline]
+ bch2_write_iter+0x298a/0x2cd0 fs/bcachefs/fs-io-buffered.c:1072
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xacf/0xd10 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b07d8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8b08b31038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f8b07fa5fa0 RCX: 00007f8b07d8d169
+RDX: 0000000000000010 RSI: 0000200000000080 RDI: 0000000000000006
+RBP: 00007f8b08b31090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f8b07fa5fa0 R15: 00007ffca8a26258
+ </TASK>
+
+Allocated by task 5321:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4294 [inline]
+ __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4313
+ __do_krealloc mm/slub.c:4820 [inline]
+ krealloc_noprof+0x10f/0x300 mm/slub.c:4873
+ bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
+ bch2_prt_printf+0x267/0x6d0 fs/bcachefs/printbuf.c:186
+ trace_bucket_alloc2+0x119/0xb90 fs/bcachefs/alloc_foreground.c:485
+ bch2_bucket_alloc_trans+0x2e89/0x2ea0 fs/bcachefs/alloc_foreground.c:604
+ bch2_bucket_alloc_set_trans+0x57c/0xd60 fs/bcachefs/alloc_foreground.c:730
+ __open_bucket_add_buckets+0x13e1/0x1e50 fs/bcachefs/alloc_foreground.c:973
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1017
+ bch2_alloc_sectors_start_trans+0xce9/0x2030
+ __bch2_write+0x769/0x5a80 fs/bcachefs/io_write.c:1466
+ bch2_write+0x865/0x1660 fs/bcachefs/io_write.c:1659
+ closure_queue include/linux/closure.h:270 [inline]
+ closure_call include/linux/closure.h:432 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:469 [inline]
+ bch2_writepages+0x284/0x390 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x35f/0x880 mm/page-writeback.c:2687
+ filemap_fdatawrite_wbc mm/filemap.c:388 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:421 [inline]
+ file_write_and_wait_range+0x2a3/0x3c0 mm/filemap.c:796
+ bch2_fsync+0x13a/0x350 fs/bcachefs/fs-io.c:228
+ generic_write_sync include/linux/fs.h:2970 [inline]
+ bch2_write_iter+0x298a/0x2cd0 fs/bcachefs/fs-io-buffered.c:1072
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xacf/0xd10 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880409bd680
+ which belongs to the cache kmalloc-16 of size 16
+The buggy address is located 7 bytes to the right of
+ allocated 16-byte region [ffff8880409bd680, ffff8880409bd690)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x409bd
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff88801b041640 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080800080 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5321, tgid 5320 (syz.0.0), ts 71936914615, free_ts 71869688975
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4740
+ alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
+ alloc_slab_page mm/slub.c:2423 [inline]
+ allocate_slab+0x8f/0x3a0 mm/slub.c:2587
+ new_slab mm/slub.c:2640 [inline]
+ ___slab_alloc+0xc27/0x14a0 mm/slub.c:3826
+ __slab_alloc+0x58/0xa0 mm/slub.c:3916
+ __slab_alloc_node mm/slub.c:3991 [inline]
+ slab_alloc_node mm/slub.c:4152 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_node_track_caller_noprof+0x2e9/0x4c0 mm/slub.c:4313
+ __do_krealloc mm/slub.c:4820 [inline]
+ krealloc_noprof+0x10f/0x300 mm/slub.c:4873
+ bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
+ bch2_prt_printf+0x267/0x6d0 fs/bcachefs/printbuf.c:186
+ trace_bucket_alloc2+0x119/0xb90 fs/bcachefs/alloc_foreground.c:485
+ bch2_bucket_alloc_trans+0x2e89/0x2ea0 fs/bcachefs/alloc_foreground.c:604
+ bch2_bucket_alloc_set_trans+0x57c/0xd60 fs/bcachefs/alloc_foreground.c:730
+ __open_bucket_add_buckets+0x13e1/0x1e50 fs/bcachefs/alloc_foreground.c:973
+ open_bucket_add_buckets+0x33a/0x410 fs/bcachefs/alloc_foreground.c:1017
+page last free pid 5321 tgid 5320 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2660
+ __slab_free+0x2c2/0x380 mm/slub.c:4520
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4115 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ __do_kmalloc_node mm/slub.c:4293 [inline]
+ __kmalloc_node_noprof+0x23c/0x4d0 mm/slub.c:4300
+ __kvmalloc_node_noprof+0x72/0x190 mm/util.c:665
+ __bch2_darray_resize_noprof+0xd2/0x290 fs/bcachefs/darray.c:24
+ bch2_write_super+0x48a/0x3cd0 fs/bcachefs/super-io.c:1003
+ bch2_clear_recovery_pass_required fs/bcachefs/recovery_passes.c:186 [inline]
+ bch2_run_recovery_passes+0x4a3/0xa90 fs/bcachefs/recovery_passes.c:295
+ bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+ bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0xdb7/0x17a0 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+
+Memory state around the buggy address:
+ ffff8880409bd580: fa fb fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
+ ffff8880409bd600: 00 00 fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
+>ffff8880409bd680: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff8880409bd700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880409bd780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 3/25/2025 12:45 AM, Konrad Dybcio wrote:
-> On 3/22/25 4:00 AM, Krishna Chaitanya Chundru wrote:
->> Move phy, perst, to root port from the controller node.
->>
->> Rename perst-gpios to reset-gpios to align with the expected naming
->> convention of pci-bus-common.yaml.
->>
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> index 0f2caf36910b..6c21c320a2b5 100644
->> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->> @@ -2271,9 +2271,6 @@ pcie1: pcie@1c08000 {
->>   
->>   			power-domains = <&gcc GCC_PCIE_1_GDSC>;
->>   
->> -			phys = <&pcie1_phy>;
->> -			phy-names = "pciephy";
->> -
->>   			pinctrl-names = "default";
->>   			pinctrl-0 = <&pcie1_clkreq_n>;
->>   
->> @@ -2284,7 +2281,7 @@ pcie1: pcie@1c08000 {
->>   
->>   			status = "disabled";
->>   
->> -			pcie@0 {
->> +			pcieport1: pcie@0 {
-> 
-> pcie1_port0 (or pcie1_port), please
-> 
-pcie1_port0 makes more sense as pcie1 indicates pcie instance
-and port0 indicates root port0. I will update this in next
-series.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-- Krishna Chaitanya.
-> Konrad
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
