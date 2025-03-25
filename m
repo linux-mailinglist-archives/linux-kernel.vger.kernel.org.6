@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-575392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F67A70218
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:37:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25770A701AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D68847336
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:22:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C761745BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BBA266F0F;
-	Tue, 25 Mar 2025 13:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5218125DB0E;
+	Tue, 25 Mar 2025 13:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="nZirLOuP"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8Op20jJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8193019CC2E;
-	Tue, 25 Mar 2025 13:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E6A25D52E;
+	Tue, 25 Mar 2025 13:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908298; cv=none; b=ZVefcnZE78PqcfAqhYOg8HPvQ+mLCatt+tmYce6j3jiDYndU2fm5O2RLpGLvmm7WSLifvzrbf1o9xUTjALSHPTqW0Ax8RHWji0Dg/MgW+jH5xaPlELEBPVZULzk85WAMTzVJuVryw92gVrfYygkeqZjlPuE01CviG6JCQP5dj0M=
+	t=1742908335; cv=none; b=as8/YoekosFp9jq2vNN5ppUYTQBS4LilB+QO4Qwd4zIoETW0KWhJJBE2ARZqNBOmNyJtJKkVZVzjWDLcJk0qnsjQkzjPt5InOa3l57QTVuNZT+HHW4nmri0AAdYK99RLjQ4W3Yic43CrMrq/z0Qqt+PkQ6sW8NeagHxx6lS2jHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908298; c=relaxed/simple;
-	bh=zQE7l7QJJRU50A1ezQBABnNaU4SfTHa6rs31LDY+qOg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=amBqwxPrnWI4tU/ge/oeQGBfiPjKXhad0U/cSTkI3NLz10DSvaw20uagLDgGomAMcKIyLI8AFoayecs9K7KGxntavih5q0BVxi8bBZRGfZb0z/SZPE4qgG6qrrbLovm4JyGpDSZ4DXVYoZchRwJeUnXK0wGJ5r+Pm32GVGL594E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=nZirLOuP; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=zQE7l7QJJRU50A1ezQBABnNaU4SfTHa6rs31LDY+qOg=;
-	t=1742908296; x=1744117896; b=nZirLOuPOmDB0Vn1mFA+HGegbqYCW0UQu4PMyBfmhJDu5Ye
-	vrGW7UASEFvXaXGVoU4eqcoXNd/2H3dn9k8gCKmHFAbQw1GHNpJ3h2acpGuHiYPbZLoNSyhX7aJYI
-	84er/hAXiAriQwuv2WH4wxtpADuf5swPcNrtoHIPpHwYobvD8bwbfvg4hD/xlq2yR3Xvva/D1YhFY
-	lKKVod8jtrdmpPVOqnfvMVcrDhrDxuTbccLARhYnTaZFa92OYlyxvbtLceFl2Z6+tu6v79i11iNTx
-	Z8AO+4Vh8xDe85kz6uz5KJfEhwtXWNExKmU1ccOhcKbWOYVJt5QzCHIWzOJcAs1w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tx440-000000057Rx-3jhN;
-	Tue, 25 Mar 2025 14:11:29 +0100
-Message-ID: <bfb7433131cb9aeebc75666f86a67a6c71521229.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 0/5] dt-bindings: net: Add network-class.yaml schema
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Rob Herring <robh@kernel.org>
-Cc: david@ixit.cz, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"	
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Mailing List	
- <devicetree-spec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Bianconi
-	 <lorenzo@kernel.org>, van Spriel <arend@broadcom.com>, 
- =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller	 <jerome.pouiller@silabs.com>, Bjorn
- Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Andy Gross <agross@kernel.org>, Mailing List	
- <devicetree-spec@vger.kernel.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org, Janne Grunau
-	 <j@jannau.net>
-Date: Tue, 25 Mar 2025 14:11:27 +0100
-In-Reply-To: <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
-References: <20250324-dt-bindings-network-class-v5-0-f5c3fe00e8f0@ixit.cz>
-	 <3452b67752228665fa275030a7d8100b73063392.camel@sipsolutions.net>
-	 <CAL_JsqLv9THitHzj8nj7ppCp-aKn010-Oz=s+AUNKOCoDmBnbQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742908335; c=relaxed/simple;
+	bh=4aswzqAW+ogeV4aHAXwjgfEpwAH3OmO8RxKMs9jtGYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/x/LaJVCMVjvjXeDJT3Vg4OeLT4dspdrikRE0/GpSVbiCx+a6RrtZ6+NIAM90YTjuRbjbTBdOHI7gQgTw+BMg38oJTe6cdS2SbEeLI1wtqqROgl7h8vMESKKWbLmj1PdB3lpWeEPZ7kN5SWFhcpew3c0h8D0HWbVRmhTnVNaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8Op20jJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 907DBC4CEE4;
+	Tue, 25 Mar 2025 13:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742908334;
+	bh=4aswzqAW+ogeV4aHAXwjgfEpwAH3OmO8RxKMs9jtGYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U8Op20jJ/0e8QXGJc7jpQYgFvB4iN6yNNFI/7hbkRjvr4GJ6EYwOTnPfC1byBl2Gl
+	 O/y9mBE+ow771lKXKQ42evwjcN/kdOzIZc6wXEZ2LD8iwG6Ru9Is/c6dL5xwBYZdnX
+	 Ue/BC0KjvNYq4LafjaEnkeCtVe0LN0EZKAIxExdYMtQr4oAuTrG6W91V/4I2+2uuTg
+	 0Rp/UEc/ijVbAgkXp07jlMpJpjSxwatqWgdSlqnry2W5eg1dO3eAeQPb3yWaZAfpR1
+	 kyo4VzPVfLfDt/Fil2JuG8lq5HZ8/9ufRuh7+0wcPqehT/MjmCXliQNXsqh1R28157
+	 JCiQoe2qsp9OA==
+Date: Tue, 25 Mar 2025 13:12:08 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: objtool/urgent] objtool, ASoC: codecs: wcd934x: Remove
+ potential undefined behavior in wcd934x_slim_irq_handler()
+Message-ID: <331c7461-9adc-4bd4-b164-b4d8738517b9@sirena.org.uk>
+References: <7e863839ec7301bf9c0f429a03873d44e484c31c.1742852847.git.jpoimboe@kernel.org>
+ <174289169388.14745.12400458342392826127.tip-bot2@tip-bot2>
+ <0b3b6878-a1c1-4cd0-b2a8-d70833759578@sirena.org.uk>
+ <Z-KVKztS2TXoafRC@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yfSLrB3N/gT31HVe"
+Content-Disposition: inline
+In-Reply-To: <Z-KVKztS2TXoafRC@gmail.com>
+X-Cookie: Visit beautiful Vergas, Minnesota.
 
-On Tue, 2025-03-25 at 08:02 -0500, Rob Herring wrote:
-> >=20
-> > I have no idea what tree this should go through, and you CC'ed enough
-> > people that I can't figure it out either ... I'll assume not wifi but D=
-T
-> > for now?
->=20
-> Can you take it via wifi as the main target here is wifi bindings.
 
-I can do that, but I suppose it's 6.16 material at this point.
+--yfSLrB3N/gT31HVe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-johannes
+On Tue, Mar 25, 2025 at 12:36:11PM +0100, Ingo Molnar wrote:
+
+> > FWIW the original patch doesn't seem to have made it into my inbox=20
+> > (the regmap one did), not that it makes a *huge* difference but might=
+=20
+> > be some infra/script issue which crops up on some other more urgent=20
+> > occasion.
+
+> Yeah, I noticed that the Cc: lines were incomplete for some of the=20
+> patches, so before applying them I went over the series and regenerated=
+=20
+> the Cc: lines so everyone is informed and can review/object/ack if=20
+> necessary.
+
+> If there's any serious mistake we'll rebase the branch!
+
+No problem here, just wanted to flag the potential infra thing.  I
+didn't bother acking since the patches were applied:
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--yfSLrB3N/gT31HVe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfiq6cACgkQJNaLcl1U
+h9AMjQf/RFqT8qnAq1etw/12Io1sEmxD+ZCkkItji7YORoarHu9h4KZEHSMfDY8k
+3GhncE7q+QglCdZ7+OB7DRhOi49Ts4+9orRs/Ezcf3XPtjmq4tRmaCViSmfZO42/
+Lqd6nBIx/2Ktt0Oh2el9xuVNk+371GiollzcNSB0sZcL/a84RwIiRG9EKJlMufet
+5OcBxuD5nI2lpoCg9DgAtzsBJiHfj5+QLWybRC4dF1YUupz8nPdbnsFhj0xXp4ob
+NBIwQ+keCrhrGgv3KqsWnngwTQLu6EpZWzT9I/7yh+7a+G4a1u5kdYmEyj1oQL4C
+Q/bEyHscWDC4ivyDRTJ/nP1i7UssvA==
+=siZn
+-----END PGP SIGNATURE-----
+
+--yfSLrB3N/gT31HVe--
 
