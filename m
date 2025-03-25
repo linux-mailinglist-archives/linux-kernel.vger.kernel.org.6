@@ -1,220 +1,122 @@
-Return-Path: <linux-kernel+bounces-576267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112DDA70D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:41:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13038A70D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80387189929F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D9F189D4D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BAF26A0A9;
-	Tue, 25 Mar 2025 22:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54BF26A0D5;
+	Tue, 25 Mar 2025 22:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tagu8h6T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GQhYK1hd"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F07426A089;
-	Tue, 25 Mar 2025 22:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74C426A0BD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 22:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742942423; cv=none; b=jjHtfLzNooEjLPRFzz0L1c04cM+cDY6ufPKV+PFRFMJ0fzfGe0+iJclgfYC7OlV/B/NH4BNtf2yTp8A3Ec3qKqYedrEBq9HfoTaKUVfq5f1h9sD5tSskyWfWEb1IXirzC/PCyct3ruEzlFowi2gSnjwaH0RbaJp2iXke5Sdt2Hc=
+	t=1742942427; cv=none; b=l8Jc9AxahTMx4fO3qknduTLGmXe/xY6JHKb7kEcsPJLIfKStzpSqCgkova/cRjt6l0HWIDgfQPit7WFDuSd7DZqxkjyEre1wE8sNB//gr0+3kC+H7TfVTiaZMGa/XtB/cj4E/bFnzPeQzXF081PXnhgMcfs6jGrsdD5/84tvtcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742942423; c=relaxed/simple;
-	bh=ZwFQGGHCzEWqYV+kgRF0C+r5YrECLUTwbbkpi6uTcMc=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=r5RurRvN8xO2/QuQ8EmQZ0aeslC5iYovJBBITTCRRYEILW6XrZkaPMkcm6M7EhJ8aPcFkYtCKmfaokx9hE/8pB3pSUAcba/dHi/ZXJSE9JhIMJGvOip4JJajzx9I0o1NBkD+jqwFXZXSBBgQW9npORupmIoiDXtClUzOqSx6zBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tagu8h6T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21ACC4CEE9;
-	Tue, 25 Mar 2025 22:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742942423;
-	bh=ZwFQGGHCzEWqYV+kgRF0C+r5YrECLUTwbbkpi6uTcMc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Tagu8h6TXiZN1htJwb26+AeAvfUUIMU8gmWGtEY/iwYylXhz+G87b+5dhgjh8WroX
-	 CfTLgxFBFP6Qh1bLYWFY4ve06ZMx1LmgkzkIZIGQThY+TqCzbnechN4mdOANlCJHSF
-	 ykUto/fDJJfxvIfNUCS0oEFd+jD/1fldGOa6afjKWYkgexr5fQYXNS79jWIomTWD70
-	 QgPdVS2CPKHPYz2jf2cUWDl4WmFj9C/JhxALphtFBie3E5NPthq52uhATKE/8hdgFk
-	 nkgb7epYm3ko2hB1VRn04IURtecg0ya+vK8Ey6nIds2t2nyc54pvIXhcVlLHmnN/SR
-	 mOcG7HWvJSA3w==
-Message-ID: <38d9650fc11a674c8b689d6bab937acf@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742942427; c=relaxed/simple;
+	bh=pQ4UoyDlpkHuiZgOcYbiP4Xig7yGzQ3Q2/+D3ehiXNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fmucd1QU/yesErwkkPzpiT71mk6EVq4MvlX1mZ5bWBIoSXNgyXfazDM2PoP7VMsaouHgAcui6rhPq5vq1AtQJBbad5dqG5/gR54adrqDmG5vWbXJKUylp02zsAeepjNpcVzW9b1y5cAPYBA6kfhi5OaIrVYAndqbBrv2OVcx+Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GQhYK1hd; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301918a4e3bso11280647a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 15:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742942425; x=1743547225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZQ0mQOw62tpJtHtq3bDP+LhjKb7VU3twZUif4e7fNdo=;
+        b=GQhYK1hdsQPc38IdJ6AIvyattcUJJLw0K6nefnDPT46rZvc/BQs5h3hF377S31XDhK
+         3KxXg8htAQA1HPmJufoEETmGqsFahje/CjWGlEbF4b/fDpuKuDmG1pbmxk6XsG0vP9Bb
+         CU5VaaihLJgMKAFvhoL9BnTJAawhZOR5+Kd5s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742942425; x=1743547225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQ0mQOw62tpJtHtq3bDP+LhjKb7VU3twZUif4e7fNdo=;
+        b=qeAhwbe7KL4xNMISiz2vDY3jqrnxoeLntc+3+RzRe1as8qrF8kEMoFTdRkezHbLDnP
+         6pETF23Cs/LjWB1lZKPJbJtyG/cNkbkrcr7Ry8aLYWQeItlnl5ksdJg05n5PvyHd3iWk
+         YhFIxPhayXxpgvt6C9qEmtcQ6iIudh7wqg9PdkZzO1rgmf7E+V3jSGSuu4zrpOznl25A
+         IfyjIOptJ1ZAvQXlV5/atVqiXkOGTanJXVM3ZZTBfb60JgV9VUr+rifUy5wyiTNJ8t9J
+         owusvlRwh/eA4KUs+j9RCntYXDA/fnaOn5KNEnpppvM9SCtM5l87zIV619wlh/vwjzwa
+         G0zA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8nY35vWLvfMXTcfky/JcUt/ji1/ONcNJXk2x8rjgSoQgqb3pYYPmS0hfMcAUf/Mj67JpthpTVteOpv4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzClgJsoT9nJ3DOoC78PRyNIRzD3qU3ca4TNpzie/oF53KGUqHI
+	NURnzCBBbNMo+Lvyejxry7BNF1ngHSs9YXfB7dwz1UWOfcMDWKrpK2W2OoLXrpynI4xNNfRZ9RI
+	=
+X-Gm-Gg: ASbGncuVoJ7HWoT2WOWl+VKkjDfa8n/wbZ/pJkv0tC51myIZ82OtDqozKnWCVsh7EeX
+	lywyfw/jUv2ej2d633YZPHyxdqW1FwPnZDSRQ5BAw6tck8s+mTKexmlQDK2qNoMEUWhTYScQL91
+	roptmO2zLxmtmBNkD8B7vFSb2iiJPpcF7hlA0PTfsaLdroESCDhvlA23SCZ2pyMtj4KLIYhm47P
+	2HdvJFojk+NC1OcNHfijZPyvr6QMYp5Z9Arf3RteLx9TqqfUyLljllG8WuNUtmdcdmLLlyrjNLI
+	2Df9oyiUuF64OHo4J2mcTRDjo1+po109uHJ7EMiPTXw9cdslYg9BiUkAChlmASVuExcrMBhHoUa
+	+kzRHd74=
+X-Google-Smtp-Source: AGHT+IFnMbdSPWJg/PZpthIfsM4Byyr22hmvQEezyxPZc4t6JJRig3bNhZIvvWZylXPImyBG3wYAXA==
+X-Received: by 2002:a17:90b:4d07:b0:2ff:69d4:6fe2 with SMTP id 98e67ed59e1d1-3030fe9c932mr32753804a91.16.1742942424766;
+        Tue, 25 Mar 2025 15:40:24 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:b885:47c3:6268:77fb])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-301bf61b525sm14937020a91.35.2025.03.25.15.40.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 15:40:24 -0700 (PDT)
+Date: Tue, 25 Mar 2025 15:40:22 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Allison Randal <allison@lohutok.net>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] wifi: mwifiex: Add __nonstring annotations for
+ unterminated strings
+Message-ID: <Z-Mw1gvbkBQ1fZ7y@google.com>
+References: <20250310222332.work.202-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com>
-References: <20250303143629.400583-1-m.wilczynski@samsung.com> <CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com> <20250303143629.400583-5-m.wilczynski@samsung.com> <de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org> <4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com> <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de> <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com>
-Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with CLKGEN reset support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, alex@ghiti.fr, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, wefu@redhat.com, Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 25 Mar 2025 15:40:20 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310222332.work.202-kees@kernel.org>
 
-Quoting Michal Wilczynski (2025-03-19 02:22:11)
->=20
->=20
-> On 3/13/25 10:25, Philipp Zabel wrote:
-> > On Do, 2025-03-06 at 17:43 +0100, Michal Wilczynski wrote:
-> >>
-> >> On 3/6/25 00:47, Stephen Boyd wrote:
-> >>> Quoting Michal Wilczynski (2025-03-03 06:36:29)
-> >>>> The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
-> >>>> clock gate is marked as "Reserved" in hardware, while core and cfg a=
-re
-> >>>> configurable. In order for these clock gates to work properly, the
-> >>>> CLKGEN reset must be managed in a specific sequence.
-> >>>>
-> >>>> Move the CLKGEN reset handling to the clock driver since it's
-> >>>> fundamentally a clock-related workaround [1]. This ensures that clk_=
-enabled
-> >>>> GPU clocks stay physically enabled without external interference from
-> >>>> the reset driver.  The reset is now deasserted only when both core a=
-nd
-> >>>> cfg clocks are enabled, and asserted when either of them is disabled.
-> >>>>
-> >>>> The mem clock is configured to use nop operations since it cannot be
-> >>>> controlled.
-> >>>>
-> >>>> Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b7=
-5fea5c.camel@pengutronix.de [1]
-> >>>>
-> >>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> >>> [...]
-> >>>> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/c=
-lk-th1520-ap.c
-> >>>> index ea96d007aecd..1dfcde867233 100644
-> >>>> --- a/drivers/clk/thead/clk-th1520-ap.c
-> >>>> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> >>>> @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1",=
- axi_aclk_pd, 0x20c, BIT(3), 0);
-> >>> [...]
-> >>>> =20
-> >>>>  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
-> >>>>                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_op=
-s);
-> >>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
-> >>>> +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_g=
-pu_ops);
-> >>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-ac=
-lk",
-> >>>> +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_g=
-pu_ops);
-> >>>> +
-> >>>> +static void ccu_gpu_clk_disable(struct clk_hw *hw)
-> >>>> +{
-> >>>> +       struct ccu_gate *cg =3D hw_to_ccu_gate(hw);
-> >>>> +       unsigned long flags;
-> >>>> +
-> >>>> +       spin_lock_irqsave(&gpu_reset_lock, flags);
-> >>>> +
-> >>>> +       ccu_disable_helper(&cg->common, cg->enable);
-> >>>> +
-> >>>> +       if ((cg =3D=3D &gpu_core_clk &&
-> >>>> +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
-> >>>> +           (cg =3D=3D &gpu_cfg_aclk &&
-> >>>> +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
-> >>>> +               reset_control_assert(gpu_reset);
-> >>>
-> >>> Why can't the clk consumer control the reset itself? Doing this here =
-is
-> >>> not ideal because we hold the clk lock when we try to grab the reset
-> >>> lock. These are all spinlocks that should be small in lines of code
-> >>> where the lock is held, but we're calling into an entire other framew=
-ork
-> >>> under a spinlock. If an (unrelated) reset driver tries to grab the clk
-> >>> lock it will deadlock.
-> >>
-> >> So in our case the clk consumer is the drm/imagination driver. Here is
-> >> the comment from the maintainer for my previous attempt to use a reset
-> >> driver to abstract the GPU init sequence [1]:
-> >>
-> >> "Do you know what this resets? From our side, the GPU only has a single
-> >> reset line (which I assume to be GPU_RESET)."
-> >>
-> >> "I don't love that this procedure appears in the platform reset driver.
-> >> I appreciate it may not be clear from the SoC TRM, but this is the
-> >> standard reset procedure for all IMG Rogue GPUs. The currently
-> >> supported TI SoC handles this in silicon, when power up/down requests
-> >> are sent so we never needed to encode it in the driver before.
-> >>
-> >> Strictly speaking, the 32 cycle delay is required between power and
-> >> clocks being enabled and the reset line being deasserted. If nothing
-> >> here touches power or clocks (which I don't think it should), the delay
-> >> could potentially be lifted to the GPU driver."=20
-> >>
-> >> From the drm/imagination maintainers point of view their hardware has
-> >> only one reset, the extra CLKGEN reset is SoC specific.
-> >=20
-> > If I am understanding correctly, the CLKGEN reset doesn't reset
-> > anything in the GPU itself, but holds the GPU clock generator block in
-> > reset, effectively disabling the three GPU clocks as a workaround for
-> > the always-ungated GPU_MEM clock.
-> >=20
-> >> Also the reset driver maintainer didn't like my way of abstracting two
-> >> resets ("GPU" and and SoC specific"CLKGEN") into one reset
-> >=20
-> > That is one part of it. The other is that (according to my
-> > understanding as laid out above), the combined GPU+CLKGEN reset would
-> > effectively disable all three GPU clocks for a while, after the GPU
-> > driver has already requested them to be enabled.
->=20
-> Thank you for your comments Philipp, it seems like we're on the same
-> page here. I was wondering whether there is anything I can do to move the
-> patches forward.
->=20
-> Stephen, if the current patch is a no go from your perspective could you
-> please advise whether there is a way to solve this in a clock that would
-> be acceptable to you.
+On Mon, Mar 10, 2025 at 03:23:32PM -0700, Kees Cook wrote:
+> When a character array without a terminating NUL character has a static
+> initializer, GCC 15's -Wunterminated-string-initialization will only
+> warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> with __nonstring to and correctly identify the char array as "not a C
+> string" and thereby eliminate the warning.
+> 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+> Cc: Brian Norris <briannorris@chromium.org>
+> Cc: Francesco Dolcini <francesco@dolcini.it>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Allison Randal <allison@lohutok.net>
+> Cc: linux-wireless@vger.kernel.org
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-It looks like the SoC glue makes the interactions between the clk and
-reset frameworks complicated because GPU clks don't work if a reset is
-asserted. You're trying to find a place to coordinate the clk and reset.
-Am I right?
+This code is kinda weird, because only 2 bytes actually end up used, and
+yet we explicitly initialize it with 3 non-NUL bytes.
 
-I'd advise managing the clks and resets in a generic power domain that
-is attached to the GPU device. In that power domain, coordinate the clk
-and reset sequencing so that the reset is deasserted before the clks are
-enabled (or whatever the actual requirement is). If the GPU driver
-_must_ have a clk and reset pointer to use, implement one that either
-does nothing or flag to the GPU driver that the power domain is managing
-all this for it so it should just use runtime PM and system PM hooks to
-turn on the clks and take the GPU out of reset.
+This solutions seems fine though, as it is indeed not a C string and
+does not desire nor rely on a NUL byte:
 
-From what I can tell, the GPU driver maintainer doesn't want to think
-about the wrapper that likely got placed around the hardware block
-shipped by IMG. This wrapper is the SoC glue that needs to go into a
-generic power domain so that the different PM resources, reset, clk,
-etc. can be coordinated based on the GPU device's power state. It's
-either that, or go the dwc3 route and have SoC glue platform drivers
-that manage this stuff and create a child device to represent the hard
-macro shipped by the vendor like Synopsys/Imagination. Doing the parent
-device design isn't as flexible as PM domains because you can only have
-one parent device and the child device state can be ignored vs. many PM
-domains attached in a graph to a device that are more directly
-influenced by the device using runtime PM.
+Acked-by: Brian Norris <briannorris@chromium.org>
 
-Maybe you'll be heartened to know this problem isn't unique and has
-existed for decades :) I don't know what state the graphics driver is in
-but they'll likely be interested in solving this problem in a way that
-doesn't "pollute" their driver with SoC specific details. It's all a
-question of where you put the code. The reset framework wants to focus
-on resets, the clk framework wants to focus on clks, and the graphics
-driver wants to focus on graphics. BTW, we went through a similar
-discussion with regulators and clks years ago and ended up handling that
-with OPPs and power domains.
-
-I believe a PM domain is the right place for this kind of stuff, and I
-actually presented on this topic at OSSEU[1], but I don't maintain that
-code. Ulf does.
-
-[1] https://osseu2024.sched.com/event/1ej38/the-case-for-an-soc-power-manag=
-ement-driver-stephen-boyd-google
+Looks like Johannes already applied it anyway.
 
