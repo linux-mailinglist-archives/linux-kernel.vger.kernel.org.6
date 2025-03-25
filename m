@@ -1,184 +1,244 @@
-Return-Path: <linux-kernel+bounces-575745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30A6A706B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:24:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4234EA706B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067963A80F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1203A6FB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8518425B682;
-	Tue, 25 Mar 2025 16:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3761725D918;
+	Tue, 25 Mar 2025 16:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZxPIbZV"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnXqzg1M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEED25B68D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742919840; cv=none; b=slVzw5Np3j+V7IDRxyKdz6fbLftF2lWqp2RvS13KlmYUd9+kTP1xyYVeXrPG5iCpaWgA0UzKS8x+UCKWlFjOav74jo845K+K/6zKi7Wcdam1cWJuEkxABcQP6/S+UbT5xH7OYpaV+K0tdt2bnQmgQTDND6jqWEZ4vEZrAgy2CVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742919840; c=relaxed/simple;
-	bh=1oQMgY87+HXoIhnvNr1OgsTQ1uKlztmUhKClc5Srgk4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z9P6hhLgEYn6secz5fYUpPRMRtAOHq6oSS55msDugM83pjtcw0/Xox+fkyC72AbzaOCi/bmbQrID8e7GauBSWbeOCbEu6H0+yobHZPvuskiPCHHjX/chVzNkUImVmRvgjO3CBkjcKELJypGnKSAyi7BpbxQ1OUecRZxg3f+iBiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZxPIbZV; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ff4faf858cso43826677b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742919837; x=1743524637; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+tvajp1z7h7S0xpIBdVLXi2Xx6HMtp2pRa+CQIj7GVM=;
-        b=MZxPIbZVu+7x3Alyv5Yyu8TdlvzDcxg0KQYlHm1T7SduhvOmZiR+BxfxFGjNieKgUP
-         BRgzrsfy3yGD3tWYiDUabh64UV1R323nqfDa0VFkUnuamSOpFVIfNgfRIEQv+D+4KSOv
-         souykij4bXTVBfInHQ28m7yBB5SiL8ADG8RSVZ86zA4za2gmuDs7tV5sIajtYOyaXl7r
-         EBIWaXEGSYEY9JyteaAM6qb9lTjiHQqWccrZd5VdzIlHLdP/BW0AfnANs2CQF1pRtLK1
-         VBs3wBx29xrZeKTlbD+dHqhkpJ1crDmUqt+VCe/Nv5XHl32est5ogY+szQMpOpR2L0vM
-         HGnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742919837; x=1743524637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+tvajp1z7h7S0xpIBdVLXi2Xx6HMtp2pRa+CQIj7GVM=;
-        b=pxrGkfPe0xqBzqdqGrjliMET68rBCDUC9QL0kpB2TP9MH8gixfWwWKEifrZibUjP4x
-         69s0Gk6YhiTRWij2OshMqLcOiJXjMjTS/GXXWzlPxg5Vyen5x/0HeQtu/jCEeSZya9RZ
-         MnrGbsNhNfbJjonQsTmdxptuhYOg4tJKRZnmoUxW4niAtuyLvWCAe5MfbKEVDA34x+ty
-         kxmUoe7FTb62YFufBv4+WGSmMBdeDrr8TCd2yAAuhFisrKGcWVIRWNgq8593VjhpHeFd
-         NVyb4plpK+cX5EQFJ6h+AlGZL89BRmrOYQtUR6ibec6mdu+VnCjTHxByjof2VXO5vRee
-         8jPw==
-X-Gm-Message-State: AOJu0YyljZpoDJp3MZNl2x4bV3anVGfNk+aEkwvwbE0dEfcPPM91MYri
-	Ll+EzrdSVl5XfE50FM1YOMcjPx847IXW3cobuaDybjauHPHiG+7se8MJH62sq6jS72oofhg0SIC
-	OZwpbmOk+1i/cWoIL1YicdfuOtpI=
-X-Gm-Gg: ASbGncvzG6DMwCwNp3rGVE0e1KHj28gxE50bgBy3nzWxJNasHoC0i2aODQdz7uFZ7eR
-	l9LQoAWaSZQpHrXqEV1esvTcwkySR0FJoQ4DCYgjsD6ZFSEFQqaE8Ac9mkzqQntaWgVy1vAGI8X
-	7dcAOVx9/RNDHIgvxgh1lo8fKI
-X-Google-Smtp-Source: AGHT+IHvdSe6ls10wjFf5bZyI+Qsy8fQwauViiWeGwoJ0PgaQ5nRuZQauZvKQvLsCsA2s5Sf9UtaUnq1uwtCBzUkiGs=
-X-Received: by 2002:a05:690c:3708:b0:6f9:afa2:acbd with SMTP id
- 00721157ae682-700bad18b66mr239831077b3.38.1742919837042; Tue, 25 Mar 2025
- 09:23:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F0E25A64C;
+	Tue, 25 Mar 2025 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742919842; cv=fail; b=tmIBPew4tEvRlZGWc/Dtff4Sg8aRW7v/M6ZNB6odnCvLJzx4BkbsSFQaH78PaRw5h4S7WX0vNZJJUJjag04sg7P/Vn8weheGFKfQvNIJw50OUQnTYvxBE13ZdXjqR9DvZ+Boa98Uj65QpbA2sUKc90gMaIjZyvsUH4OS1qgmGno=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742919842; c=relaxed/simple;
+	bh=pUUgTOZkxYcnh28MtqacfdbKWZjgGP62HyROMd1HuQQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LCYf8665Oaz8FsJo48M9fdDGZ61aK9wQPKO0LEzePEFUqLwMhf1HLI2zbaasmIuvazAkJDW2osXOQliX4yZZ8o+kxhQgxHSqQ2D648wHrrcFqZ2pJrxPQ4bswcl1XLGp+7V8UJQHpRVuZdWkK6rVUx/+f613WysICd35abyllUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnXqzg1M; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742919841; x=1774455841;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=pUUgTOZkxYcnh28MtqacfdbKWZjgGP62HyROMd1HuQQ=;
+  b=YnXqzg1MYUvEiDKy/lWDi7XLZjYjhXsIyvXDd+MBCsgsfU9IzjOP7iaQ
+   i2sA9yYgCxIpIwiHXAJSYiJOGjUAj00bTxKYjnAnT5+VYmC8BHTGyw50+
+   wfOCuyu+3HaJUgVue8xmiFyRnyPDytypoPYAcTzuKnE33VnAu0vyzsnXp
+   zOQNFiIWj/xqAg9LdGP0Or6KD19VAIWSU/1dAHWysisyWtPlhVkMIcYkS
+   kGTi3cdFypU/5vDVmPnk5eAMUbJ5GwnEWg/AF6E73IENiKL77S4J36vEf
+   Q53EKuJhOBRZ1QAvK3pbmQ5yTQsWTZiXtyZHWnyW867n096lFFIZogSdV
+   w==;
+X-CSE-ConnectionGUID: 1vo6C4KXRcWh6qOY5c5J0A==
+X-CSE-MsgGUID: xmHieUMgR5m/9I2ab5bhtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11384"; a="44103473"
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="44103473"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2025 09:23:59 -0700
+X-CSE-ConnectionGUID: OPeI/42VRKKswKxlaUteTA==
+X-CSE-MsgGUID: zbx6EbwHRyqZ0jmHXotVgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,275,1736841600"; 
+   d="scan'208";a="124401400"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Mar 2025 09:23:58 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 25 Mar 2025 09:23:57 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 25 Mar 2025 09:23:57 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.49) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 25 Mar 2025 09:23:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FoaCydx3y5/IoAfK1GOcTvACurJXfJmtQ5MwyaS3/lQybyWwGmRkeOs5UksrIOVzKMthKNYHN9KPFEJKNY7DATPBfXjRP9Q2Kyrbmh8LTYvm8VfQ+OFKrnkoVVx6Cet6ihvh/B5Ab8YhCYoSB9/cF2gdnG5UfL9o6FV56l8izeZl5wf5Hkdfg2XVTLiwvJoDiIaYqWpJx5ZCTXIAlfHJrwqkgtvI2u0z4txdl1BJNS5ixm9TVyvKU8jU6AYCJEOwuM4ErFeRMiRUGW4cAXWMy0VMVWHvgHwV4ECwy6rkLlQ8aUS/8Ew98ClcTGras0pkrjXyR3jl0RVdXtHoaVyibw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ADdlOlIrGiH92yj+8b0xYZe93Pcqr40IKPM/Lp/JSvw=;
+ b=ssO9SM+jLrOJnJ26BdfRrTMXHxa8tBDjVlvPZ1vof7oAZu5WR/8yF2ce9fBlUjDhffQhn1TRg88+MWQm+Xpy4GV/8KxGsq/kffSgsBU3L+uJ4LrBaucJOx2UCKAcWkJOXBRks94dR7HYi1D2yi1tYecEDskGDk4EUGKvBEjaih4IFYjeDYlqtYOHlOOl3JIzBgIUpJpyZW8bfL/SNcP9k/+frl38wkbyEg5wd/PB+YOUJxxCODvNSrzlPrIVQFUJpy8HFVjB92NAwAZIhPhIk5yf7RJdSpskv+lOMKE61rIGDe3AdaPsiOEUHgevNSCaNCwHOa9SKnZ1emfKXamWOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6307.namprd11.prod.outlook.com (2603:10b6:930:21::20)
+ by DS0PR11MB6472.namprd11.prod.outlook.com (2603:10b6:8:c0::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.42; Tue, 25 Mar 2025 16:23:54 +0000
+Received: from CY5PR11MB6307.namprd11.prod.outlook.com
+ ([fe80::1fa2:d2f9:5904:2a14]) by CY5PR11MB6307.namprd11.prod.outlook.com
+ ([fe80::1fa2:d2f9:5904:2a14%6]) with mapi id 15.20.8534.042; Tue, 25 Mar 2025
+ 16:23:54 +0000
+Message-ID: <0cee0610-19e7-4f25-9f27-86908834f36d@intel.com>
+Date: Tue, 25 Mar 2025 18:23:47 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net] igc: Fix XSK queue NAPI ID
+ mapping
+To: Joe Damato <jdamato@fastly.com>, <netdev@vger.kernel.org>
+CC: <vitaly.lifshits@intel.com>, <avigailx.dahan@intel.com>,
+	<anthony.l.nguyen@intel.com>, <stable@vger.kernel.org>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "Jesper Dangaard
+ Brouer" <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	"Przemek Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	<pabeni@redhat.com>, "open list:XDP (eXpress Data Path)"
+	<bpf@vger.kernel.org>, "moderated list:INTEL ETHERNET DRIVERS"
+	<intel-wired-lan@lists.osuosl.org>, open list <linux-kernel@vger.kernel.org>
+References: <20250305180901.128286-1-jdamato@fastly.com>
+Content-Language: en-US
+From: Mor Bar-Gabay <morx.bar.gabay@intel.com>
+In-Reply-To: <20250305180901.128286-1-jdamato@fastly.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TLZP290CA0006.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:9::16) To CY5PR11MB6307.namprd11.prod.outlook.com
+ (2603:10b6:930:21::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320185238.447458-1-jim.cromie@gmail.com> <20250320185238.447458-30-jim.cromie@gmail.com>
- <05dff3c7-91e8-4d42-b75a-90c410d6470d@bootlin.com>
-In-Reply-To: <05dff3c7-91e8-4d42-b75a-90c410d6470d@bootlin.com>
-From: jim.cromie@gmail.com
-Date: Tue, 25 Mar 2025 10:23:30 -0600
-X-Gm-Features: AQ5f1JqQLsquNqtoxYfgRolUJVYd3SVfRGVGDiVPUxl9S4QdlGwEvycISFycUMY
-Message-ID: <CAJfuBxyHzkNOrjsKQ5TmBX8UOpJDKnxZr-t+eQ52Hfkq3BVC-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 29/59] dyndbg: change __dynamic_func_call_cls* macros
- into expressions
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, intel-gfx-trybot@lists.freedesktop.org, 
-	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org, 
-	daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6307:EE_|DS0PR11MB6472:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6df74bd8-8566-4e83-6fec-08dd6bb96f45
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SjA0MjVkeVd1QXJHM2dINjJxRXJ2OTAzb1htNmd0SWRTMEdFL0VvajUwdDNm?=
+ =?utf-8?B?bFFGNmFucHZ5cmxpKzd5cTBhTVJYdGlPalZSOEhTR0Uxdi9uQk1iczZQNzZ4?=
+ =?utf-8?B?UTJtR3dmSWRaTWhpWW1jZkRuSWgyMEhOM2FBVUdxakI3L2hhdkhpK0pKK0ox?=
+ =?utf-8?B?UmI2TEVnNis1Q21mdkhCZk9BZE5ZbWFXR0lQRTJSZ3ZEK2YzRmxQMlB6RjRs?=
+ =?utf-8?B?NHpaT2NJOEJjNUx3eDNibk9oVCtqWkJkNTIyR2pLWDlpdDF1SmVUK0tTeWtT?=
+ =?utf-8?B?dnV2WTg1SGNFcWtpTlVkVzZ3elJWV3kzQnVxNTBsdXlNQzBNK0VLZTZBTlJB?=
+ =?utf-8?B?elFvd3N0SnFDQVpMWjFVOHNRNTl3L3NxYURLSnVRNm9oTWk2QjdpLzU4RWd6?=
+ =?utf-8?B?YVJVK0lWY0tuRmJzNU13TU5Yek1mRDlWYUI3TXhlZktJcEFsUi8yK2dTSGhl?=
+ =?utf-8?B?QjEvME5xbk93c2haUTZ3aitxYjJzb0hQNWMxZVdBbnpSMjRhQS9rMFpwaTFj?=
+ =?utf-8?B?VVZGb2orbkZ0M2VobWplbDJKRk5TSzBycE81N0ZubWVhc0IycFN6dGFlRE9r?=
+ =?utf-8?B?M0FzRWxYbWloTlB5eS91NDNVOW05bWRDYVhtVENDQktCY2dFSWlrVWQzRVR4?=
+ =?utf-8?B?eFIzV1h3RENiUGRxRExYN2tlVXR1K1NoODBieU9TVWx2OXJvSlVlcHlmZWt6?=
+ =?utf-8?B?L0orZlBpQ2RSUmU1OWxsTDFHdmRjNmdQL29JcVZiR3psQUdkU1IvZjZLVUxI?=
+ =?utf-8?B?SnFHMDFzWnpBVVoza1A3b3BwSW5ERXBjVWNzSmVSZ3BnMDVhK1lhZFY3SGpy?=
+ =?utf-8?B?NXJZYmdDY1Q0WXpiU3N5VjlWNUZLeXJzOFJTM2dzUVJMeHZsNlVzam1SeFZR?=
+ =?utf-8?B?OGdibHFNbGJsTWF0NGtRaFlRSktibEdYdnhGcTQzTHNEQzdnVVg2NnU5MGhE?=
+ =?utf-8?B?a2pRd3krWFpKYVlzc2txeU5oZWdsbTRacnlNMU5lOVVCQTYrKzZsY3BvR25L?=
+ =?utf-8?B?OUkwOU40ZVZwR212N0xreXVtMVJKSVJDdEtzKzR6ejd3NmFnK0dXcFQ4dVo0?=
+ =?utf-8?B?bjRya3FSMFJZYis5MERnOCs1b29vTWdhUkpNa3JhYS9kL0pVM2VJT3doMS93?=
+ =?utf-8?B?Q3crV1c3L25VWkVJV05yZDNrdkNxcTFGUTlCSkdHR3p5L0pNTTI2ck5BaVRz?=
+ =?utf-8?B?NjRCYkNpSXNaZEpxcEZaeWhad3M2U3hNd0ZSUnVWQ0Y2QlJ6OEpvZjM5MjJH?=
+ =?utf-8?B?L29sYTB3azdZeGYrenpIZDM4WEJGOWFLTmhwMTVMRzZPK1hGOW4rMWp3cVA1?=
+ =?utf-8?B?REgxanlDVkF0MzFWMmNEY0dFUWNxcEJPVXVJSi9HZEs4REpxQ3hXWllPRUNu?=
+ =?utf-8?B?V01sSlUxVXZ2WU1QNlBGUGRRWlN4dTNrM0MyQ21FLzhxZHB6cURXQ21PSzV4?=
+ =?utf-8?B?OHNkdktQbXBFK2NaT1hHbVU3bTRQMk9jSFI5RkFQZnlhdERPOFR1aDF1Q3Vw?=
+ =?utf-8?B?OUNvU0ZLaFBvWUVTd1BydnZwSHBuVEtMZkQralN0Z3hHVU9mbnhSeWJZc0ZQ?=
+ =?utf-8?B?MmhJYkNUU05EZDFWN0NxamtGZ2VQaWpmemc2OTNwVkQ4K3QwREVFYkpDS2Ft?=
+ =?utf-8?B?aURXdzQwMlZYMjZnVmgzMndrd1pwbVZqQ1pDclA1SHhkQ3B5aTVuNFEvZlJj?=
+ =?utf-8?B?bFRvYTRXeUM5Z2xYN3VHS0JnUWE2WVFQVUdNTk5RL2JXK1ZJR0E1eTkraXFF?=
+ =?utf-8?B?bkNlb0IxaFNaQmF5Y1o5SWhyRjArNldUbm0yOVJxd0IwcDVvZVV0T1NQbVMx?=
+ =?utf-8?B?bGFKRGE3djFKMGU0Ulh5K25XbUtGVHlOL0drQnpHNm8yS3p6eU1QYWhkZGNm?=
+ =?utf-8?B?UEFtUSt1ZTVCSFQvVWN1cGZmb1hGZEhaRkRnU240YVpYUm55Mkc5MUJBS3Iw?=
+ =?utf-8?Q?91Q2OntLpNA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6307.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TDNGTnVLMjNiaEdPSDhWdldEWWZuWGgzOUhmY1pYeG5ydVBOTUkwdUltbXVu?=
+ =?utf-8?B?ekJvN3V2bnRzZzJuRG85RDZjNHZBWTJ6ZTYvd3k0UTFvYnFWTlhuL0x4YkRm?=
+ =?utf-8?B?TlJYTFFpaTcxY0lPSTRiYjh4V3AvK3JGdTdSdUhUNHV4d2d0cGtSWTVEMi9F?=
+ =?utf-8?B?aUdxa3dQa3ZwQVlmR0FlMTBjMTExV2NMdUhRWUdSOUNMRTI2MVFKQkpBQ3o2?=
+ =?utf-8?B?RVRtaCtwc0NzYzhqQjVqaVlLdWJyRXlUSVhsYkNCdXVDYzhNOEprRm96Mkwv?=
+ =?utf-8?B?dnFQN3grczBBT3NRZ2U1aGE1Wk16dTFWUUhBYnZzOFZNUlRYem5nK2NCdms3?=
+ =?utf-8?B?RnU4N1dIZEp3ZS8wZU5oeTVBbnN1VE5pcTJIMGkvRlBPWUthaWF5QW04MmFw?=
+ =?utf-8?B?Q2dlaDc0Q29XT2pXbXBlanY0bzBPR0l6NGJBYWh1WFVxeFlTTk5FaVJocVI1?=
+ =?utf-8?B?QnVvSTExMEtxWFJoamlaMVpNVERwNldNdXFyNzhDTHhsQXNyeUptTGFwRTBs?=
+ =?utf-8?B?dzZia2d5bHRGRDFTYUN2eUNKSHpuWWI3aFlCUWJLVDgvZFFzRk91bTlkTURo?=
+ =?utf-8?B?dnQ0T09PY1NidnQrYjZMSTVHYTNPOWVuNCtGKzlUR2hCa1NFbTZLYmJudE1X?=
+ =?utf-8?B?dVplQ0pucXVhTE0rTkpLNEp2UjBMVG9kSGY3U3NqdDhqc0RZbHhJZ2tOeWhB?=
+ =?utf-8?B?bVQ3bDVuZVg4MWR2ZkNZZGY4dGhDTUhYTmU2Uzk5VVhKeDcvb2J2cUtJSm5l?=
+ =?utf-8?B?K3RZK2FCWCtrZnh3NVl1UURwQUxVcEFvUnU3SjdIb2VqUU9iSFoycVNhSEEr?=
+ =?utf-8?B?MFNKT0JyL21HUWFRVFFCVTdwZnBlaWNWOW9xeGZqV3ZmSGUvWFRUWlF5Rnln?=
+ =?utf-8?B?SHVWdWIvZklBOFhGb0I4ckJrSVhJRU1tc3FEcWk5VVRmbVRQc0w2bEFvUTZl?=
+ =?utf-8?B?YkRaTHFvMHJRekQ2R3NPWlJYdlp1UlJwOXBneDhITGVQOUtDVkV6WGNVcjh4?=
+ =?utf-8?B?WnVsVVdING5ESnFEemdua1I2RndYTzZLaE41WkZhdUlrU2xNY2J5azdBdmRI?=
+ =?utf-8?B?SzVkWlh6MGJ4WjRnMXVlRHByRThoNHVmZ1RPU1luMmFhdy9SQ09oM1dXaGpl?=
+ =?utf-8?B?eXFrdmEvOWplWGlhRW56TzJnN2hoMFkrS0lvRGNzaTc1eDlzUEk2VEtkME5H?=
+ =?utf-8?B?aXIzUUpXTkZjYXlpNk9VSjh3TmpHd29WVWs1Sm5XdmN1NjNOZGRudksvdTlx?=
+ =?utf-8?B?ZGk2aHVYSC9ScXc3Y3Q2dHdxcVo3OHk5Wk42K2NRc0ErakhkUDV4SlRWb2Fw?=
+ =?utf-8?B?U0h4bWhFenN2MzhCdkFGNWtET2NFSXMyank5RVI4TlpkRU5ZUC92TXp2dkRF?=
+ =?utf-8?B?M1NOYTlGUTRnUUl4S1VuV1JkcHgwVFNxN2lGRi9uN3dUZFZiWGNYNFYvRnpJ?=
+ =?utf-8?B?Q3RMY3ZaeTJqazZoeEh5SXlUZXhCc0dFYitXeFM2OTI5T3BlaTlYQkFOamNV?=
+ =?utf-8?B?NE9WTXhxVGErNlpBZjV2bUF0bDN5SUpuVll4NFdtMnQvQnczTFdvcUZZSVli?=
+ =?utf-8?B?RTNxejVDamVBUVBTaThxMnhiemNKTG9HZkJOK29QMVNJaFhMemxLS2g3MU5v?=
+ =?utf-8?B?RmhzM1FMSlVUQURPM2owSGVURTBKK3RvOG5LNnNNSnBibEd3S3ZBMUh5Z3Fj?=
+ =?utf-8?B?VkU5bXgvZlBxbzVEZkd4TG9lV29OT1Fxa21aWDljVVhHN0ZzSnVWUEo5b2Zp?=
+ =?utf-8?B?dkZpNXcvNmJBa3h3VVNnY2prQXVJQ2ZUUzFGa21samQvMUtKZWUyMUdxazA2?=
+ =?utf-8?B?aU5yTFcveDN1QmYyNWVqQVl0Q29XUGVjc3FtZFhiQUg3Qm9qRWF6T3VTdDR5?=
+ =?utf-8?B?cGg5QlVhWG5FMGZKWHdRZVhhd1FmUk5FMXVxeWZVMTlsY2hEdURGSmNOVzdQ?=
+ =?utf-8?B?Y3YrdnNxeEtiRzFTQ3IwODFsc2cvaG1ZaS9jVERnaEJyUmxlV2ZXZUVSekRi?=
+ =?utf-8?B?SytQUnpXRndiUjVOOC9MaDRMdWVPTW1pS1h6OGVJQ2xWMWJBMjJycGJhUG5o?=
+ =?utf-8?B?enFWdUJZM2lWb3AvQjhGWFgzLzRDRnhlUFFvNjdaRFRGUm1kR1BRZS9OWi93?=
+ =?utf-8?B?YmFzbmlna3NaQ2V4WGFVWUJic3FoMkxpbHZkdCtDZlQ2MTFkSmRNNUU3L2Rr?=
+ =?utf-8?B?VkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6df74bd8-8566-4e83-6fec-08dd6bb96f45
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6307.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 16:23:53.9273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7PUX5UoaSxGFuMw3g3rUsVQWUPGLqYpRvwJQniZTo8XrpUZEcK0Q5yTf+3QEagK8U5NPkW+9EMsyYvsts0lGH2KqkdAPNC/Hri8gzDFJN/0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6472
+X-OriginatorOrg: intel.com
 
-On Mon, Mar 24, 2025 at 9:19=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
-n.com> wrote:
->
->
->
-> Le 20/03/2025 =C3=A0 19:52, Jim Cromie a =C3=A9crit :
-> > The Xe driver's XE_IOCTL_DBG macro calls drm_dbg() from inside an if
-> > (expression).  This breaks when CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy becaus=
-e
-> > the invoked macro has a do-while-0 wrapper.
-> >
-> >     if (cond && (drm_dbg("expr-form"),1)) {
-> >        ... do some more stuff
-> >     }
-> >
-> > Fix for this usage by changing __dynamic_func_call_cls{,_no_desc}
-> > macros into expressions, by replacing the do-while-0s with a ({ })
-> > wrapper.  In the common usage, the trailing ';' converts the
-> > expression into a statement.
-> >
-> >     drm_dbg("statement form");
-> >
-> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> > ---
-> > ---
-> >   include/linux/dynamic_debug.h | 12 ++++++------
-> >   1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debu=
-g.h
-> > index 8043966a0fd6..80bcaad03400 100644
-> > --- a/include/linux/dynamic_debug.h
-> > +++ b/include/linux/dynamic_debug.h
-> > @@ -339,20 +339,20 @@ void __dynamic_ibdev_dbg(struct _ddebug *descript=
-or,
-> >    * (|_cls): adds in _DPRINT_CLASS_DFLT as needed
-> >    * (|_no_desc):     former gets callsite descriptor as 1st arg (for p=
-rdbgs)
-> >    */
-> > -#define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {        \
-> > -     DEFINE_DYNAMIC_DEBUG_METADATA_CLS((id), cls, fmt);      \
-> > +#define __dynamic_func_call_cls(id, cls, fmt, func, ...) ({  \
-> > +     DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);        \
->
-> Is it normal to remove the parenthesis around id? Or the other way
-> around, why did you add parenthesis in PATCH 17?
->
-
-heisen-thinking ?
-noisy inputs ?
-historically, checkpatch warnings on macros have given me difficulty
-so I tend toward defense.
-I think this one was a red-herring.
-
-> >       if (DYNAMIC_DEBUG_BRANCH(id))                           \
-> > -             func(&id, ##__VA_ARGS__);                       \
-> > -} while (0)
-> > +             func(&(id), ##__VA_ARGS__);                     \
-> > +})
-> >   #define __dynamic_func_call(id, fmt, func, ...)                      =
-       \
-> >       __dynamic_func_call_cls(id, _DPRINTK_CLASS_DFLT, fmt,           \
-> >                               func, ##__VA_ARGS__)
-> >
-> > -#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) do { =
-       \
-> > +#define __dynamic_func_call_cls_no_desc(id, cls, fmt, func, ...) ({  \
-> >       DEFINE_DYNAMIC_DEBUG_METADATA_CLS(id, cls, fmt);                \
->
-> I expect the same constraints around id here, both with parenthesis, or
-> no parenthesis at all.
->
-
-yes, inconsistent.
-
-> >       if (DYNAMIC_DEBUG_BRANCH(id))                                   \
-> >               func(__VA_ARGS__);                                      \
-> > -} while (0)
-> > +})
-> >   #define __dynamic_func_call_no_desc(id, fmt, func, ...)              =
-       \
-> >       __dynamic_func_call_cls_no_desc(id, _DPRINTK_CLASS_DFLT,        \
-> >                                       fmt, func, ##__VA_ARGS__)
->
-> --
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
->
+On 05/03/2025 20:09, Joe Damato wrote:
+> In commit b65969856d4f ("igc: Link queues to NAPI instances"), the XSK
+> queues were incorrectly unmapped from their NAPI instances. After
+> discussion on the mailing list and the introduction of a test to codify
+> the expected behavior, we can see that the unmapping causes the
+> check_xsk test to fail:
+> 
+> NETIF=enp86s0 ./tools/testing/selftests/drivers/net/queues.py
+> 
+> [...]
+>    # Check|     ksft_eq(q.get('xsk', None), {},
+>    # Check failed None != {} xsk attr on queue we configured
+>    not ok 4 queues.check_xsk
+> 
+> After this commit, the test passes:
+> 
+>    ok 4 queues.check_xsk
+> 
+> Note that the test itself is only in net-next, so I tested this change
+> by applying it to my local net-next tree, booting, and running the test.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b65969856d4f ("igc: Link queues to NAPI instances")
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
+> ---
+>   drivers/net/ethernet/intel/igc/igc_xdp.c | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+Tested-by: Mor Bar-Gabay <morx.bar.gabay@intel.com>
 
