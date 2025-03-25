@@ -1,222 +1,124 @@
-Return-Path: <linux-kernel+bounces-575134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6429A6EDEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:42:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAD7A6EDED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2E67A4101
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16112168596
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77A7254AE5;
-	Tue, 25 Mar 2025 10:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1181E254857;
+	Tue, 25 Mar 2025 10:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jMd1jw7N";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6kc4EbTB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jMd1jw7N";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6kc4EbTB"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQ8TMEUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9655F254863
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B289254869;
+	Tue, 25 Mar 2025 10:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742899340; cv=none; b=V7X49oTTJq9+N4+hSXJrLCuDTx8a9aaVfaXe0anwWfQHF3/pNTz8v2zdzYzjDEYElp6RauoFaNGU2wfe2fs8EYUz9iqnCU2gkrj5ziqrbXugAoVXPHkysHBHlOP5OJl6/1BElJu3UpPzRYEfXLcnk4gW4Bv8jKhMsY3E9VJNpIw=
+	t=1742899350; cv=none; b=e534fOQE/daGQNs1Ll0I8IHkTJh4pAXZkmGWSA5Ob24L7wv2QmdaRStOCaqxdZOtTVObz2YIt3nAduETHFRz9sSNaWjM6rJR5tlp+o1ZW1G7JdmaLvywsmplBQuC9MuqNqCiLX0tYvvwcp2XRbHS9meBR/eicdMxSPbdqzsCYDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742899340; c=relaxed/simple;
-	bh=4M685YFYylBe1+NiGa82PVUKBg9Vt+l/BT1my7zTJ4k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EFlq+TMMVAFIgLAwLOs06XAMYgMOHX4NufXkDdzyp5q54euxsgOIt7lHbtCwfRCUjf5aUdD5cMHlNNogqvGgFaj5Envy6HfxpBpkxR3mXU2W8H+C39dkL9oVtpf75NR3WwasnKJOBl4Q14+lLlcpMHtnxRDdA3TLs+AShCzhlf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jMd1jw7N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6kc4EbTB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jMd1jw7N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6kc4EbTB; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8ADFA21157;
-	Tue, 25 Mar 2025 10:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742899336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=arYeXTM3mdXUvVX2yoxaWjgO4joW01BAfqMKfnfpp+U=;
-	b=jMd1jw7NfPHFe1EzKfGP17P/xabwDhLGlGU18Ej+orltFNN0do0og67rh7h6vLOp0CY94K
-	7OA/OklYcnMCyX84bhSPOmc50byi6vhO0M8X7r60cDLh2r/BEmRjy5unxzKSCcrUuZjIN4
-	Q5vUNH1SMOQvVDnxGF6ZzG1H58tbwGM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742899336;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=arYeXTM3mdXUvVX2yoxaWjgO4joW01BAfqMKfnfpp+U=;
-	b=6kc4EbTBC2zr0lESUskhbAezs0cS6ySbpDkPUC/4SAyg9RCDZbRm29EYtR/EKjuApbpMT4
-	kti7XBRJcdcghlDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742899336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=arYeXTM3mdXUvVX2yoxaWjgO4joW01BAfqMKfnfpp+U=;
-	b=jMd1jw7NfPHFe1EzKfGP17P/xabwDhLGlGU18Ej+orltFNN0do0og67rh7h6vLOp0CY94K
-	7OA/OklYcnMCyX84bhSPOmc50byi6vhO0M8X7r60cDLh2r/BEmRjy5unxzKSCcrUuZjIN4
-	Q5vUNH1SMOQvVDnxGF6ZzG1H58tbwGM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742899336;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=arYeXTM3mdXUvVX2yoxaWjgO4joW01BAfqMKfnfpp+U=;
-	b=6kc4EbTBC2zr0lESUskhbAezs0cS6ySbpDkPUC/4SAyg9RCDZbRm29EYtR/EKjuApbpMT4
-	kti7XBRJcdcghlDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C54E137AC;
-	Tue, 25 Mar 2025 10:42:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Zu5SEYiI4mfGTQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 25 Mar 2025 10:42:16 +0000
-Date: Tue, 25 Mar 2025 11:42:15 +0100
-Message-ID: <87r02lcry0.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Support dsp firmware Alpha and Beta seaies
-In-Reply-To: <20250325103612.2021-1-shenghao-ding@ti.com>
-References: <20250325103612.2021-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1742899350; c=relaxed/simple;
+	bh=B1/bInfDKWf1cZZAVd1d/MG1S6r3ZR8NWGbPgfpDnPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hTY/hYqlM7CjUDG9dlt4ZaVWvmWrFT7xg+bL8QiLBX3KZXnpRlOaHmgFdvrE8wfL/xZ2b0tnF69QjWDNfcxIkxiTTJyeldHKBvthCfMhcBIB5QgSLdZQvdFZR4Xldl1U3Gmd+RhnlzTd2lfsJxMABjqGF2eDmnZj2kE7UxAMPZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQ8TMEUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B163C4CEE4;
+	Tue, 25 Mar 2025 10:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742899349;
+	bh=B1/bInfDKWf1cZZAVd1d/MG1S6r3ZR8NWGbPgfpDnPI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=AQ8TMEUjqllQacuKzTkF01G7vmVf4yHafK4tgPmCnbGAFtIXcO+v6+9Sqhy9GukJh
+	 UmKHFqQqeuV+YI9HsYCJjTKtmTE+WfvLNG6tNAj3z3Exyc/2BgkB7bEJd3nR8QzFm2
+	 7vbnlNxsXUdWbQFgnpJIHCD1Y/UtPMgnIbeTYeNi+jYea/JZ//57pmSMo4YyVUUKll
+	 bJ0SklspPSBkMI4HYnorBiQo7WTto2JFp+AH3nuJV2SMm8S6Ni2bHNMtcCCyy82jtC
+	 A8DHUuW81+L2D/zdXlutFzO8jPeyOmDnjEjlErDP+bE8Ulou6+MQxFbodWyJvycnC5
+	 OqXUgB9RqcheQ==
+Message-ID: <d6938aab-8080-470b-9cbb-ef8fd4c936ac@kernel.org>
+Date: Tue, 25 Mar 2025 11:42:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ti.com:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 45/57] irqdomain: i2c: Switch to irq_find_mapping()
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, tglx@linutronix.de,
+ maz@kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+ linux-i2c@vger.kernel.org
+References: <20250319092951.37667-1-jirislaby@kernel.org>
+ <20250319092951.37667-46-jirislaby@kernel.org> <Z-J2baboKnPmuJMW@shikoro>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <Z-J2baboKnPmuJMW@shikoro>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Mar 2025 11:36:12 +0100,
-Shenghao Ding wrote:
+On 25. 03. 25, 10:25, Wolfram Sang wrote:
+> On Wed, Mar 19, 2025 at 10:29:38AM +0100, Jiri Slaby (SUSE) wrote:
+>> irq_linear_revmap() is deprecated, so remove all its uses and supersede
+>> them by an identical call to irq_find_mapping().
+>>
+>> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+>> Cc: Peter Rosin <peda@axentia.se>
+>> Cc: linux-i2c@vger.kernel.org
 > 
-> For calibration data, basic version firmware does not contain any
-> calibration addresses, it depends on calibration tool to convey the
-> addresses to the driver. Since Alpha and Beta firmware, all the
-> calibration addresses are saved into the firmware.
+> I can apply this independently of the other I2C change which needs a v3,
+> right?
 
-The description is same with the other changes in ASoC and that's
-*very* confusing.
-
-Please give the proper description that matches with the actual
-change.  Also consider a better subject line, too.
-
-The same problem happened already a few times from your submitted
-series in the past.  Please try to improve the process.
-
+Right.
 
 thanks,
-
-Takashi
-
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-> 
-> ---
-> v1:
->  - Add updating calibration addresses code into tas2781_apply_calib in
->    case of Alpha and Beta firmware.
-> ---
->  sound/pci/hda/tas2781_hda_i2c.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
-> 
-> diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-> index 50c5e5f26589..cb3d683013d9 100644
-> --- a/sound/pci/hda/tas2781_hda_i2c.c
-> +++ b/sound/pci/hda/tas2781_hda_i2c.c
-> @@ -558,28 +558,38 @@ static int tas2563_save_calibration(struct tasdevice_priv *tas_priv)
->  
->  static void tas2781_apply_calib(struct tasdevice_priv *tas_priv)
->  {
-> -	static const unsigned char page_array[CALIB_MAX] = {
-> -		0x17, 0x18, 0x18, 0x13, 0x18,
-> +	struct calidata *cali_data = &tas_priv->cali_data;
-> +	struct cali_reg *r = &cali_data->cali_reg_array;
-> +	unsigned int cali_reg[CALIB_MAX] = {
-> +		TASDEVICE_REG(0, 0x17, 0x74),
-> +		TASDEVICE_REG(0, 0x18, 0x0c),
-> +		TASDEVICE_REG(0, 0x18, 0x14),
-> +		TASDEVICE_REG(0, 0x13, 0x70),
-> +		TASDEVICE_REG(0, 0x18, 0x7c),
->  	};
-> -	static const unsigned char rgno_array[CALIB_MAX] = {
-> -		0x74, 0x0c, 0x14, 0x70, 0x7c,
-> -	};
-> -	int offset = 0;
->  	int i, j, rc;
-> +	int oft = 0;
->  	__be32 data;
->  
-> +	if (tas_priv->dspbin_typ != TASDEV_BASIC) {
-> +		cali_reg[0] = r->r0_reg;
-> +		cali_reg[1] = r->invr0_reg;
-> +		cali_reg[2] = r->r0_low_reg;
-> +		cali_reg[3] = r->pow_reg;
-> +		cali_reg[4] = r->tlimit_reg;
-> +	}
-> +
->  	for (i = 0; i < tas_priv->ndev; i++) {
->  		for (j = 0; j < CALIB_MAX; j++) {
->  			data = cpu_to_be32(
-> -				*(uint32_t *)&tas_priv->cali_data.data[offset]);
-> +				*(uint32_t *)&tas_priv->cali_data.data[oft]);
->  			rc = tasdevice_dev_bulk_write(tas_priv, i,
-> -				TASDEVICE_REG(0, page_array[j], rgno_array[j]),
-> -				(unsigned char *)&data, 4);
-> +				cali_reg[j], (unsigned char *)&data, 4);
->  			if (rc < 0)
->  				dev_err(tas_priv->dev,
->  					"chn %d calib %d bulk_wr err = %d\n",
->  					i, j, rc);
-> -			offset += 4;
-> +			oft += 4;
->  		}
->  	}
->  }
-> -- 
-> 2.34.1
-> 
+-- 
+js
+suse labs
 
