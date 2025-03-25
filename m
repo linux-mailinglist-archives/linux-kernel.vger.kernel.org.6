@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-575129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D6CA6EDD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:36:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E8CA6EDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4AE168423
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 622B2168C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA481F12F9;
-	Tue, 25 Mar 2025 10:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC0F254B09;
+	Tue, 25 Mar 2025 10:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JM0jx9RR"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g7goroyq"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0027F254869
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA741D7E37
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 10:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742899006; cv=none; b=nUkRU710sNGDgOkSexJKaqrXinLyoAbY87JRx3scnm+AjOBmsU87nAcpkYmZYFj5v9fiRtEGmVeX2p5liiV/WWwXEeJz7sCUXzXK8drTBUSy4ibGoBKNaWKX5YZQ4uZ5oJj9eFFRvAz3NFnnmQ0eAIXpXnZojvnCoJKeAKI9nBE=
+	t=1742899008; cv=none; b=VSXSmxiLO3IX6YhN1U2u6mrczHHVO4rEq6PXTWLi4jXpvtme+wKLclp0RRmf0PhsN0ZYKrf4s3RqoflFZhB59JeJv6WZ+e8UboGX72LPuUbwdjPXxQb1VMhIqjzIii5e7o9e6tkCpgQihlwWo2xEQcgts1mTtw63a4/N9qlc0bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742899006; c=relaxed/simple;
-	bh=rw8y9VnPnejJL6hybk/2JjnjQWKkV5LPZp+ps37jAk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TFaRCM71TVE4MW0UC1IVRZ/n4qjPxxtvalmeasM0DndmEOkf56qDo5l9QkRWm2avdrN8SPxervpE58MNhn6fn2p+sokfV5W4PBNb26yQ4gx2fmOtvOnca0MZq8uaF84zcQ6BMIFUzw085FR7T3zjxWtZDRor1sk1qG+LPsd/730=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JM0jx9RR; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=G7nYKqTlrwdciC2jlP0mlhTruy9qnVkXuAUEoJVLEPw=; b=JM0jx9RRsbWAMbDY+0P4VKr5+m
-	qyIhmhu40UDT6hTolRqFS/45dxTdSeynMLoZ8izG8GXqOCQOcFKzyKwpAczVaVfADa7QV0cQ6QET9
-	I8Tx4piQeOkVhy/7oyaIoX7KGSZAsc5IRCUn1bCwwAJT8rwxYgQvIHBqZAe9zWqPW6GmICq3ToO+Q
-	hLGru0+ngK8ZHHbqFiIaDDU43oZ/qboY9htiX8dSpEVST1Ognm1uT644pCxIUcOVR0MeHOnO9cCRg
-	7m3c0wZNqVjCnCTo6O226ZXw3o0QGa0vKHjVZeG5vsv36luGS8WdhD4mBmJk4vWKxodpzjnI4Kv12
-	XDOSikCA==;
-Received: from [189.7.87.178] (helo=[192.168.0.224])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tx1di-00670B-Rp; Tue, 25 Mar 2025 11:36:11 +0100
-Message-ID: <a6b35845-6a4e-4488-8ece-04a4c1e920d5@igalia.com>
-Date: Tue, 25 Mar 2025 07:36:05 -0300
+	s=arc-20240116; t=1742899008; c=relaxed/simple;
+	bh=U9X3tzPT7BQe+BlJQO2hC0MSCjvawwWLAxcaRfrpyys=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CJpjai2sQs9B4RuRnJsPshtBXkyX5VKh1m6SdP0yhUT7pX3D9IcKzBO1d7+j69+DwBvmM0V5iAHYRLuoffZwkssXXyVoDB8YJec9rDK/85d8HNdNuaIeVv/Ta5Du9EsGK6ZIvXuS30CwNc/qU8zNvS9WqlDOhh7QgO1xEwBqSUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g7goroyq; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52PAaLob1212930
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 25 Mar 2025 05:36:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742898981;
+	bh=QZzVl2bgbkhshmlS+4PPDIcVCBo3+7gB4Z4ciwuH+U0=;
+	h=From:To:CC:Subject:Date;
+	b=g7goroyq828zgwWjNqWnHDv5XOlqdYxtCTpcgxhIs9pEU41E8xwsgeIdZ41c3U6GG
+	 ANvr6Ax+M+YSBBjUedYrNsV77LCSnx90yKJYolVSRe+nA5UIeqOAbn1nXnmlYm4D8U
+	 ikvzjvheU0v2cNrStsU834cm7rQG2uepwMVhM1Zs=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52PAaLY7064974;
+	Tue, 25 Mar 2025 05:36:21 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
+ Mar 2025 05:36:21 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 25 Mar 2025 05:36:21 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.197])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52PAaGDo036326;
+	Tue, 25 Mar 2025 05:36:17 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <tiwai@suse.de>
+CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <13564923607@139.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <baojun.xu@ti.com>,
+        <Baojun.Xu@fpt.com>, <robinchen@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v1] ALSA: hda/tas2781: Support dsp firmware Alpha and Beta seaies
+Date: Tue, 25 Mar 2025 18:36:12 +0800
+Message-ID: <20250325103612.2021-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
-To: Charles Han <hanchunchao@inspur.com>, mripard@kernel.org,
- dave.stevenson@raspberrypi.com, kernel-list@raspberrypi.com,
- maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250325081232.4217-1-hanchunchao@inspur.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20250325081232.4217-1-hanchunchao@inspur.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Charles,
+For calibration data, basic version firmware does not contain any
+calibration addresses, it depends on calibration tool to convey the
+addresses to the driver. Since Alpha and Beta firmware, all the
+calibration addresses are saved into the firmware.
 
-I already applied this patch earlier this month as I mentioned in this
-e-mail [1]. Here is the commit [2].
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
-[1] 
-https://lore.kernel.org/dri-devel/f5f920ec-be44-48d3-ae4d-bd385c3a4a5b@igalia.com/
-[2] 
-https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ce468a7b63f1e4e2b09f951ca0a7c8d402fed746
+---
+v1:
+ - Add updating calibration addresses code into tas2781_apply_calib in
+   case of Alpha and Beta firmware.
+---
+ sound/pci/hda/tas2781_hda_i2c.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-Best Regards,
-- Maíra
-
-On 25/03/25 05:12, Charles Han wrote:
-> Fix below inconsistent indenting smatch warning.
-> smatch warnings:
-> drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
-> 
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
-> ---
->   drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-> index c5e84d3494d2..056d344c5411 100644
-> --- a/drivers/gpu/drm/vc4/vc4_plane.c
-> +++ b/drivers/gpu/drm/vc4/vc4_plane.c
-> @@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
->   			/* HPPF plane 1 */
->   			vc4_dlist_write(vc4_state, kernel);
->   			/* VPPF plane 1 */
-> -				vc4_dlist_write(vc4_state, kernel);
-> +			vc4_dlist_write(vc4_state, kernel);
->   		}
->   	}
->   
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 50c5e5f26589..cb3d683013d9 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -558,28 +558,38 @@ static int tas2563_save_calibration(struct tasdevice_priv *tas_priv)
+ 
+ static void tas2781_apply_calib(struct tasdevice_priv *tas_priv)
+ {
+-	static const unsigned char page_array[CALIB_MAX] = {
+-		0x17, 0x18, 0x18, 0x13, 0x18,
++	struct calidata *cali_data = &tas_priv->cali_data;
++	struct cali_reg *r = &cali_data->cali_reg_array;
++	unsigned int cali_reg[CALIB_MAX] = {
++		TASDEVICE_REG(0, 0x17, 0x74),
++		TASDEVICE_REG(0, 0x18, 0x0c),
++		TASDEVICE_REG(0, 0x18, 0x14),
++		TASDEVICE_REG(0, 0x13, 0x70),
++		TASDEVICE_REG(0, 0x18, 0x7c),
+ 	};
+-	static const unsigned char rgno_array[CALIB_MAX] = {
+-		0x74, 0x0c, 0x14, 0x70, 0x7c,
+-	};
+-	int offset = 0;
+ 	int i, j, rc;
++	int oft = 0;
+ 	__be32 data;
+ 
++	if (tas_priv->dspbin_typ != TASDEV_BASIC) {
++		cali_reg[0] = r->r0_reg;
++		cali_reg[1] = r->invr0_reg;
++		cali_reg[2] = r->r0_low_reg;
++		cali_reg[3] = r->pow_reg;
++		cali_reg[4] = r->tlimit_reg;
++	}
++
+ 	for (i = 0; i < tas_priv->ndev; i++) {
+ 		for (j = 0; j < CALIB_MAX; j++) {
+ 			data = cpu_to_be32(
+-				*(uint32_t *)&tas_priv->cali_data.data[offset]);
++				*(uint32_t *)&tas_priv->cali_data.data[oft]);
+ 			rc = tasdevice_dev_bulk_write(tas_priv, i,
+-				TASDEVICE_REG(0, page_array[j], rgno_array[j]),
+-				(unsigned char *)&data, 4);
++				cali_reg[j], (unsigned char *)&data, 4);
+ 			if (rc < 0)
+ 				dev_err(tas_priv->dev,
+ 					"chn %d calib %d bulk_wr err = %d\n",
+ 					i, j, rc);
+-			offset += 4;
++			oft += 4;
+ 		}
+ 	}
+ }
+-- 
+2.34.1
 
 
