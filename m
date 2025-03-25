@@ -1,183 +1,113 @@
-Return-Path: <linux-kernel+bounces-575864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11009A7083C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:30:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E70A70841
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8512916CC08
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A6B3B3A1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039D625E802;
-	Tue, 25 Mar 2025 17:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA6225EF90;
+	Tue, 25 Mar 2025 17:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="eYd7Nzep"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKDuDsEz"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D93257AFC;
-	Tue, 25 Mar 2025 17:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C45E19E971;
+	Tue, 25 Mar 2025 17:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742923820; cv=none; b=AaVCs4iUGPpXqa3WQkAWEsdPJnMs53sHNOq4m5BMpmIn4msmW8seDq7ouXRLrYcU7MLpSv7DgCRqdmDrgoFvZVRlhAuyTrzdvL1tnzBNbYeiZjdupcwQBMECmRAG2AXC59+B0idef7EEYQNsMcaZ3z8vEj2gXedo+DiHflWdN0M=
+	t=1742923909; cv=none; b=AsbKjL9bL9wfr20Ryp6XlpTOzpKKA1VECH5MunecSicwP0BLi6wcJfIUJd0svOIVuF2kDSFDOX4OMi/hUWyljCbZphqjqPKm//mOkbkF83j8eaZrPypbRoNsH6C1nn1JTJRBBsGjCnSkOc5Xz5z5izEHYdn9ux2swtWj45tXHZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742923820; c=relaxed/simple;
-	bh=af/qHaAv8wr7ohqEEz6YmtWfQIwybjKt+19CY5VMK/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pKak+AZLfzkM6osG28wthCkNSUuNeYiFMhzHPgbyJuv18wet5Fot4nhagn/5hCE/wC+LQciebpUKGU3gSVWS8vQG3K6Q3I9hpVVmPV+5azB/mACnBpY3h/zA3NGVAXKSgz84/b3ZNYrOa1Euig04JtcaBjXzZOjf9+u1+ByFkz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=eYd7Nzep; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 34D83102F66E4;
-	Tue, 25 Mar 2025 18:30:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742923815; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=eI14fRc9SgUgLwy7/SzPwK7ui4N4JuoaWPwp0MI9v1w=;
-	b=eYd7NzepKQqK2eSrPI8FEFriEYWhaavSzTZJ4hcetjyIwJx+vVQimsoU9aOfT5VG5+vl6X
-	iCDiYqDiDVvvRetIf3pstTAnVGxtuUydTSc8sJUpPWU4ea8nUIFi8sqqK89G22zhBTUCjY
-	UegnfTP43buAPi1PaCWNEOfrZgoYRA3tIaOLY446g0RdlGQBSa9B2K1B2z8SWDefqSJTGF
-	PrtAMFV08qt85/1bjQOBFE5ud0RGAmt33zkvcC8hQKNmKl5OcvufCWKM29NwWBqhfnnu+B
-	BvATIGVovo0wlnzbyerfviUh+4aYAUtqC0HqH0bRbYcCKNG8BUeKXQk4ERDsgQ==
-Date: Tue, 25 Mar 2025 18:30:09 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Paolo
- Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, davem@davemloft.net, Andrew Lunn
- <andrew+netdev@lunn.ch>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
- netdev@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 5/5] net: mtip: The L2 switch driver for imx287
-Message-ID: <20250325183009.3f7e8a1c@wsk>
-In-Reply-To: <39ec01b8-c2d7-47c3-90d9-32fe41f08a5d@kernel.org>
-References: <20250325115736.1732721-1-lukma@denx.de>
-	<20250325115736.1732721-6-lukma@denx.de>
-	<32d93a90-3601-4094-8054-2737a57acbc7@kernel.org>
-	<20250325142810.0aa07912@wsk>
-	<0a908dc7-55eb-4e23-8452-7b7d2e0f4289@lunn.ch>
-	<20250325173846.4c7db33c@wsk>
-	<39ec01b8-c2d7-47c3-90d9-32fe41f08a5d@kernel.org>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742923909; c=relaxed/simple;
+	bh=dLf58HcvoCDMO7xEyKMr9WZxJir+JrD7Fikmuq9g5XY=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=TyI3zEpKiEjm+8WI6Zq5sJK1k6ESuP0Y1GOvQvR4x9f/EOKFHICXLHUElN3SEtW5A9YYENaMwpuUQXxBWfbJIkrU1glSzSXY20yJFUYtKqHZIRQYfORs3A18nKufSPi2wmiWk6v6vsAl+Y7iIsu8yXSdqjacbRmfrPPPfq9sBwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKDuDsEz; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c55500d08cso560714785a.0;
+        Tue, 25 Mar 2025 10:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742923907; x=1743528707; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dLf58HcvoCDMO7xEyKMr9WZxJir+JrD7Fikmuq9g5XY=;
+        b=QKDuDsEzIJnefp0B4u4YjFEW9+nnfy4gcHAwxcemHppdXmmqpEgLEhvjTfKqkI14wf
+         zXH1P0WywA+dAvk+GSW+e+mO+B3oxtxyIPRBOm0Pa2ZrWBXEe+RTPCF1zvRD6bmdeL8R
+         t+0pdBGFM/kVsOT8CwjPWvdjncPo4oHth94b87499zGXn/021Exk6kkBha866BBkaBE9
+         W2w++rtONc7lz8hLUil/8oniuG8iPA+6G8NoN4Pz2GALP6HMn1PEMBfDzJTOsJ1Ae9tF
+         zNk/jNVCQEOgppU8zT0klMsYk6cQzeif4CV8UcJfes5I29wauj53Zk5GoQZM0OM6OYo/
+         Mu6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742923907; x=1743528707;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dLf58HcvoCDMO7xEyKMr9WZxJir+JrD7Fikmuq9g5XY=;
+        b=CeHa9K2I2FgpJ4t5NwZheOaP+jZCt48A8d+AVWwX4D+JRROAgUCTj1NV2vcLwAF0pr
+         jvx99lzINAi2LlhYHFg6eEqaaqDpXpqitC9Cf+hHyTyPDFnOY7O55OGDidVTea8JTsKB
+         QfAVyfXtRjB0fQbjs31XPVsXd8IM3GrwDM7Drvt1+Pd02/0itSSzAqaqgdkpKWCYCDzk
+         K6AZcTxvOVj1Nm3Ogp/L0hMi/BkqwyWYP0zZZVdCReixuEnxpL+h0z9ynnnGdW/r8pYy
+         jqk6zMvyXUU2QsfZoo0Qlangtyo7Ihatl/ffqCiw5K95cAj0BOJnWWoGyR181CfAfFzw
+         +KpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaGMnFF96M9rzqIl019Z8yfxb7H4iFecjWvJI9qw/NDj+DNrL8HJ/S5PTA85H6MVmoU9WcxOVceNCVXg==@vger.kernel.org, AJvYcCXMPqZojq3ze1YxgNvnSoKt9fxvefDZbOkDsZVHgb15HRNH6T2PokiW+Yr8kKI9ysjA4kKC4LFndJQtkjdc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb/5Xt1u+0RnU+wjytCTGhSaPVN/ZlPFpglpy818RowZg3wWAg
+	TEMhZqciuo0QifNsJk+fNjw4q52n0ECQfXeAYL7wVky9ZqdcIwMm
+X-Gm-Gg: ASbGncs1CWeoYbitWrHa3Ov4Xbwx/g6HxS0Qb7NV8gxn9RnblcUrYTilqpWLuVPNjqY
+	2U4IUjX65kkPwkoOYFQb9GlsKvd6GAwf72e9EPRM8udlpD6pSE7WfKXCDVCoxuJuNUmz67mMFtu
+	Pcuf/abYGn/z4wEmTVt7nnziGkYlacs+yXZnr7nRUcW9gxg6ZDwfccVBYv/jdaH4xLfAFtDGuMs
+	xvkQA1g7izlCJPVSzkU3cwjVu03GmGfURsDBRi4rmXQNnHHMqgh8KgaHSX4gT6hgOniHDcvKxtr
+	yXWuBlVyfLq/T/VPByXkLskDOwW4XP/UfM5fL/zPA6IT1gJpqKyWY2KH4tVumitvgveyMSX4END
+	pfQ==
+X-Google-Smtp-Source: AGHT+IEZaPr3Q9rgN66crHhd92PHXzKB7jY1snL+mD2zoFbBbjV4DRiP87hbutRJY2CS7a42I3eqIw==
+X-Received: by 2002:a05:620a:3906:b0:7c5:4c44:db9a with SMTP id af79cd13be357-7c5ba1ee96emr2431514385a.37.1742923906653;
+        Tue, 25 Mar 2025 10:31:46 -0700 (PDT)
+Received: from smtpclient.apple ([2401:4900:5fb3:22d:b894:2ac5:970e:769c])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86f9f384e49sm2139156241.4.2025.03.25.10.31.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 10:31:45 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Aditya Garg <adityagarg1208@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mrx3VObtQardV+8O_zt0.CL";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH RESEND 5/5] HID: multitouch: add device ID for Apple Touch Bar
+Date: Tue, 25 Mar 2025 23:01:31 +0530
+Message-Id: <219B5F93-611D-48FA-A4D9-F9B71401A57D@gmail.com>
+References: <bzb6rk7q7rs27kbonihpfftkgueievpux7vpqjgrgsud5pf5g2@tuxymj7vk3it>
+Cc: admin@kodeit.net, benjamin.tissoires@redhat.com, GARGADITYA08@live.com,
+ jikos@kernel.org, jkosina@suse.com, kekrby@gmail.com,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ orlandoch.dev@gmail.com
+In-Reply-To: <bzb6rk7q7rs27kbonihpfftkgueievpux7vpqjgrgsud5pf5g2@tuxymj7vk3it>
+To: Benjamin Tissoires <bentiss@kernel.org>
+X-Mailer: iPad Mail (22D82)
 
---Sig_/mrx3VObtQardV+8O_zt0.CL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
 
-> On 25/03/2025 17:38, Lukasz Majewski wrote:
-> >>>>
-> >>>> I don't understand this code. Do you want to re-implement
-> >>>> get_optional? But why?   =20
-> >>>
-> >>> Here the get_optional() shall be used.   =20
-> >>
-> >> This is the problem with trying to use old code. It needs more work
-> >> than just making it compile. It needs to be brought up to HEAD of
-> >> mainline standard, which often nearly ends in a re-write. =20
-> >=20
-> > But you cannot rewrite this code from scratch, as the IP block is
-> > not so well documented, and there maybe are some issues that you
-> > are not aware of.
-> >=20
-> > Moreover, this code is already in production use, and you don't
-> > want to be in situation when regression tests cannot be run. =20
+> On 25 Mar 2025, at 10:59=E2=80=AFPM, Benjamin Tissoires <bentiss@kernel.or=
+g> wrote:
 >=20
-> This is a good reason to add it to staging, but not to mainline. Just
-> because someone has somewhere products with poor code is not the
-> reason to accept that poor code.
-
-I've tried to upstream this driver several times. Attempts were
-made for 4.19 and 5.12. The reason the code was not accepted was that
-conceptually the code had to be written in a different way (exact
-discussion is available [1]).
-
-What I've tried to say above - was that I need to have working device
-at any point of development.
-
-And, yes "upstream first" is a great policy, but imx287 based HW was in
-the kernel long time ago.
-
-> Otherwise all the people and
-> companies who upstream BEFORE would be quite disappointed. Why anyone
-> would care to work on upstreaming BEFORE hardware release,=20
-
-Yes, this shall be appreciated.
-
-> if you can
-> ship whatever to production and then ask mainline to pick up "because
-> it is in production use".
-
-Where I've stated this?
-
-My point is that for regression testing I prefer to gradually update
-the code and not start from scratch.
-
-I do appreciate your and Andrew's feedback and try to make the driver
-eligible for upstreaming.
-
-To sum up:
-##########
-
-- Yes, I'm aware that this code needs some more adjustments/update
-
-- Yes, fsl,fec.yaml was the wrong file to use as a starting point
-
-- Yes, bindings are ABI and shall be done right (that was one of the
-  reason the driver from 5.12 was not accepted).
-
-
-Links:
-[1] - https://lore.kernel.org/netdev/20210629140104.70a3da1a@ktm/T/
-
+> =EF=BB=BFOn Mar 25 2025, Aditya Garg wrote:
+>> Yes I can move hid_find_field to the original location as well. But, I wo=
+uld not want to devm_kzalloc as well unnecessarily if the touchbar is in the=
+ basic mode instead of drm mode which will cause this -ENODEV to be executed=
+ right?
 >=20
-> Best regards,
-> Krzysztof
+> It shouldn't matter. hid_core calls devres_open_group() before calling
+> .probe(), and calls devres_release_group() on failure. So yes, we'll
+> allocate a piece of memory and release it after, but it's not something
+> uncommon.
 
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/mrx3VObtQardV+8O_zt0.CL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmfi6CEACgkQAR8vZIA0
-zr3NAAgAhtMjYHZz0S6KDjq/IEmqopGlqJgFjvjtklfA8BpjDXNA6Is65pgFd6LH
-idHOlhnCV/PAkb0gwJ3VMuG++BluGUsIWV/JZ236mXW9VFoRFYC5zT4IDPJLd4Or
-pObbUtxs3V3ZVpn1ZFQ+y4aDcCYZL0iAIiYWdF36F30xJ821EjeCn5Ah43GfyCWk
-WSTG/uTuCNkOoGXyjeJHD+GG+YshNwd0GyJrdbSlUaPsSaBy1D4tST0QKinduNWq
-nvSvlUXZlL5o7jHPt+XXtWvyfNp3Odh/fdhshgeS4uIjd+3dGFdg0F4jx/TUVoiv
-A9YioUZbLh9npLz19KYNKzaGJDLNsw==
-=GR0R
------END PGP SIGNATURE-----
-
---Sig_/mrx3VObtQardV+8O_zt0.CL--
+Fair. I'll send a v2
 
