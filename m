@@ -1,118 +1,243 @@
-Return-Path: <linux-kernel+bounces-575477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBB8A7030D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:03:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC97A7030C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 15:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787E9168EB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:55:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65FBD3A4D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D35D256C70;
-	Tue, 25 Mar 2025 13:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A602580E2;
+	Tue, 25 Mar 2025 13:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ap4WG8wP"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C2d+gLWk"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FED31DBB13
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F9257455
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 13:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742910935; cv=none; b=bZbuxmWcs9SeMfpwaBvyva22I/c/diml97BDagNMOBK7lxbvmdXJPTobvaiQg1/m2qtRowfvkhlWL2KfXk1QDT1WiPzsJAZuhSHqgsv9zo+KThaIMk3tN1H17rElVkmKTgVBXT3zQ3tsIgl0CBI5HAEMd2ZAllboleeRD9z4IqI=
+	t=1742910946; cv=none; b=JliffipUF4Rgu31RHGg4F/Jn56+LJFxGsIs6Vxm1LrokFGyCb7XWC+HduAbxpizuVf6FB6+/2KPtFQYLEFNkcHxiplUSYSJA5xeta2wWr0Ys5g4bh8eyPt4Zs09BFxTzYMbxSYqn5OzpQjG00R2cXFHuk9o1NeNzEhRz77dmNJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742910935; c=relaxed/simple;
-	bh=OSX0TORPiNrDXa8v+Fpy4Nylpvg63xS3qyc2FnH4q+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rmex15PDdk+DpGUrqP0r5MvtZXFsEs2DbX3C9wEzvqAWZJ96AfiA2jBOfEBQ8ITrIKLnbL9xtg6iSB7vIxnp57AKoZE3LgQZfGtdfeu60t7awc1zghpsjwusd2oP1T5LreqmkZND3PWW2H3ySh7ZK8+FgHr38ThDnepVbUBfQwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ap4WG8wP; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-477282401b3so38976311cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:55:33 -0700 (PDT)
+	s=arc-20240116; t=1742910946; c=relaxed/simple;
+	bh=Xo2iU9kz5ZfSUKvwoiTyRsIWDgU8IAHazUbpND4gTAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D9Foq3ICW37gqpOqI2JE3mak2fKafOoikv5Tk2LpiYyNSu5IjmAVoq0FFlMLGaMOevcdWZUvFLTl8nhcdhyLzzFiSRaduI/CXf9FMOgm1AbZdJ+rnGAvdDWUEBMFCW7mCBrOaNqp9inLkUh6U9eAZddGR0Ih3MfdEz5+jEGJcVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C2d+gLWk; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2b2b6019a74so2799322fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 06:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1742910932; x=1743515732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVfx3UQRZQeGiEfg09GHBIEEGmSfPB7wa4J0uKs3RME=;
-        b=ap4WG8wPmBSb8/XdIF83BORCSmQzjffScOehv78NDPDGzmMYIKI+wdfemY6XVPmUYa
-         4rt2IIYPrKGiSLROMekcY8725sxV1KSPZjzEegh+VeN3uFiRx+PWfBXPM2zGnARSDR0e
-         AFwyvOn/9TH8HlBmI7XJUH81Vd/NyCzbwYvYhE0NIRXJezZcgLxdKnjn9T8lI5Vc4C4i
-         joEIvrDjVeT83p6pIYxYZctUSNOuj1GgGqytQvNEYGlZIuCYE/73zhyQzUhWwkZSQHAD
-         ajmtPcaojEsW1Gn/Fu2EYzIgatIS9YwGRExVVy6Gni9RpY/go6oQx4NVBENAdmYYPaED
-         qmnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742910932; x=1743515732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1742910944; x=1743515744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EVfx3UQRZQeGiEfg09GHBIEEGmSfPB7wa4J0uKs3RME=;
-        b=Hqun6nfOY3xt7b5YWpAzcUNFqDGkRPemyjPHhKM4r5xvt54AlDuqjuaHJhCfiLt+EF
-         le30goUZQFns8j+rrgLCZFnytUuGKH0pWZtBTHebj4Yu0xTAzzr9B/55P9M0/IuWOxqo
-         aCf05WkwZ8BuQbKq+38GaK9f7H5kocuTXMfQmUS89F0IYRZmRoDhT+cMKuv7SiWgjAbq
-         llNj/6kIl8t1SOHnkwF4BE8TtQloE4gdy2ydjWy/QdYYdQcLpG4VihBX11uQ51s37EgG
-         n6afPmIuNj6gCqbJN6cfgtabHPHZxwMWPhxiFTrGLq22A0JuoDzCicQi5H9zM8OrfB6B
-         ivCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWA/bvorOC6wMQGvLz4nGgeoWvMjp3lmZ0aAm+ph5OB9zRnplykEMPxT6RNzGBHipz1AWBUB2ihVkj2lmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCRkN2LtP0tD9LqN2Fr/XhWDudXjjqdYdknUO2a1inWU9VyT/T
-	8HZe1SKOR1883Zx5KZv1rt34IGP3hdBJuePneoVL48H1/BXuTnInGwiQxwIrsLzs1GhsjZmZZZ9
-	n
-X-Gm-Gg: ASbGnct3J9UQXR8Ddy7gmYVlX5mV4qhBPpAObUxAJHc594BVfluVsBnY3AA8go6O3Im
-	GiyA0eFQBTm7mpOu0UOm+2eLy+Rh5nQnCEgaUtYcrOsKKjQuX+tzE7X9ldif1LuwjxoSOHsBQTF
-	TG54pUm+5Gnv5C/gxGi+jjzj24MvUjqKoF3bvjBpxnOrzLrBI3FTtnnMAF4KILhlap1NxuORXtw
-	4wR+ZT4HQcQzrDUIb1TC0y04sos0yKKMkZWmJy4sGiAQKSMBj6KON2JfZTD/J8qx7TIpbgVe1gT
-	yXVKRq7guliBSIBlaYgcn7jSP4F1
-X-Google-Smtp-Source: AGHT+IEw+cUq8N3YnTJQvX1WmFYfTqQVR7hTqQXnoJ+ZcLi1ljTgfQoIUXe99s2hH3estqLJNitCKQ==
-X-Received: by 2002:a05:622a:58c6:b0:476:909b:8287 with SMTP id d75a77b69052e-4771dd801c5mr305002311cf.20.1742910932009;
-        Tue, 25 Mar 2025 06:55:32 -0700 (PDT)
-Received: from ziepe.ca ([99.209.85.25])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4771d18f7f5sm60098791cf.35.2025.03.25.06.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 06:55:31 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tx4kd-0009Ay-2x;
-	Tue, 25 Mar 2025 10:55:31 -0300
-Date: Tue, 25 Mar 2025 10:55:31 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: benve@cisco.com, neescoba@cisco.com, leon@kernel.org,
-	liyuyu6@huawei.com, roland@purestorage.com, umalhi@cisco.com,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yanjun.zhu@linux.dev
-Subject: Re: [PATCH v2 -next] RDMA/usnic: Fix passing zero to PTR_ERR in
- usnic_ib_pci_probe()
-Message-ID: <Z+K103IYCOwa/pwg@ziepe.ca>
-References: <20250324123132.2392077-1-yuehaibing@huawei.com>
+        bh=HfXW1tINyjybFH59i2/tceSOuMsWCGxf0dWvSOQSE9Q=;
+        b=C2d+gLWk22FLZ8ZVj8d1UndfkHSdlMSq7NycPwbOQ4vVkRQNh7us1PYmBdugOXnZox
+         yXAUWLotljI1Kip5ido+6/pdWWFYsW6aKPWXPMYb1ik5Td34BwibBeSEVSAuq7CNcv7g
+         8nWVUg2iOD6AMevche/2rVhEYe5ThJSj0OKCm7D1a33i4ZACN24Be3+MFhr57RVFr/0Y
+         PSQNY2JhuQfLdF85DUIc8x5jDFhrTyxFv1i83bGETZbUj24bD5tnUUm37MM1Ta1uhxj5
+         e99daG2CyyhO4kghQCTsqzQb2wH0hrj7i1tl9j3bnWOGJwYJKnALBIfq+YbAN8rqaC0l
+         6R0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742910944; x=1743515744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HfXW1tINyjybFH59i2/tceSOuMsWCGxf0dWvSOQSE9Q=;
+        b=QH25jqZLJ5KAQPhni+DCRaZe0MMXk5gAlDY9sQ+FYYLcmbN29V8l3qpPlqitD226pU
+         smbAnG+9RsJOgusRU5eIx7k50BUDF3MH01DxT0nT4fKD54ypUWEN3yEVOX68zwvQbjFE
+         afzlXgtWBza+INbdA7vZv4dfCrKYGUSt9oxTKidzOabHI83eiggaqLM/r6wdT9xd6D0N
+         FuGMM+rxZWxOHh1T7aUZto9bxBH4fNTJ5HelqPhGTf7aws+TKY4IfZ8eIHYD8Ukrfv8J
+         SXz6IAmm4y14TX+/tHzjiEwItiE/NtmO2vi0HgJZnxq10cy1jRw4tP3f+jx4GFSsG4iw
+         SujQ==
+X-Gm-Message-State: AOJu0Yyyiru+BPVzMNijCKXwUPDaZ2GhvVDqPc1CDznJrIdaeNV7YSPo
+	XSJRB1O/f175S9To0JKQDozel89gQsbV95Wlpzwx0GFEIAPjxtzjdxObwrmxiY3JplsxYs5RqON
+	U/fQiWsT03E4lBL7q44XSiZgIH45vWwWo8oumcA==
+X-Gm-Gg: ASbGncu2v7/nylNAjYGOPij9Ksx0uJU5ZN5o9/uupWDjyd8xEDDpcQKBukz82RKC/xP
+	xzRCpxuYbPbop9kQo/MMQFeCSkbqpr0yNW+vvf3L04lWBavoyPIp1BHDqopP3oUeJJhTtDRikf1
+	ku/w0GSQXXcXgDpcuWUfL0PdkxY44=
+X-Google-Smtp-Source: AGHT+IEwBPPwUVoRos1sVNedvDmYTl2oPMhg6qa7EWRFlVhYT0/1fPMMFcZLaxlXCLhryoazT9mEtzOs9FsiBb8tVPo=
+X-Received: by 2002:a05:6870:f80b:b0:296:bbc8:4a82 with SMTP id
+ 586e51a60fabf-2c780495379mr12124356fac.27.1742910943713; Tue, 25 Mar 2025
+ 06:55:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250324123132.2392077-1-yuehaibing@huawei.com>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-9-jens.wiklander@linaro.org> <Z-JWIyd8cKyXQR0H@sumit-X1>
+In-Reply-To: <Z-JWIyd8cKyXQR0H@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Tue, 25 Mar 2025 14:55:32 +0100
+X-Gm-Features: AQ5f1Jp3D7eSeWP8gWeTN_I1pHWpPzOxKysZVMBSQkU1nox7ff2kFajLYyiQcek
+Message-ID: <CAHUa44FXjG1hC9v18Yx1ENPX_Bc9sZW1Z2=+m6+KUsxPMvDE+w@mail.gmail.com>
+Subject: Re: [PATCH v6 08/10] optee: support restricted memory allocation
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 24, 2025 at 08:31:32PM +0800, Yue Haibing wrote:
-> drivers/infiniband/hw/usnic/usnic_ib_main.c:590
->  usnic_ib_pci_probe() warn: passing zero to 'PTR_ERR'
-> 
-> Make usnic_ib_device_add() return NULL on fail path, also remove
-> useless NULL check for usnic_ib_discover_pf()
-> 
-> Fixes: e3cf00d0a87f ("IB/usnic: Add Cisco VIC low-level hardware driver")
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-> ---
-> v2: remove useless null check for usnic_ib_discover_pf
-> ---
->  drivers/infiniband/hw/usnic/usnic_ib_main.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+On Tue, Mar 25, 2025 at 8:07=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
+wrote:
+>
+> On Wed, Mar 05, 2025 at 02:04:14PM +0100, Jens Wiklander wrote:
+> > Add support in the OP-TEE backend driver for restricted memory
+> > allocation. The support is limited to only the SMC ABI and for secure
+> > video buffers.
+> >
+> > OP-TEE is probed for the range of restricted physical memory and a
+> > memory pool allocator is initialized if OP-TEE have support for such
+> > memory.
+> >
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > ---
+> >  drivers/tee/optee/core.c    |  1 +
+> >  drivers/tee/optee/smc_abi.c | 44 +++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 43 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+> > index c75fddc83576..c7fd8040480e 100644
+> > --- a/drivers/tee/optee/core.c
+> > +++ b/drivers/tee/optee/core.c
+> > @@ -181,6 +181,7 @@ void optee_remove_common(struct optee *optee)
+> >       tee_device_unregister(optee->supp_teedev);
+> >       tee_device_unregister(optee->teedev);
+> >
+> > +     tee_device_unregister_all_dma_heaps(optee->teedev);
+> >       tee_shm_pool_free(optee->pool);
+> >       optee_supp_uninit(&optee->supp);
+> >       mutex_destroy(&optee->call_queue.mutex);
+> > diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> > index cfdae266548b..a14ff0b7d3b3 100644
+> > --- a/drivers/tee/optee/smc_abi.c
+> > +++ b/drivers/tee/optee/smc_abi.c
+> > @@ -1620,6 +1620,41 @@ static inline int optee_load_fw(struct platform_=
+device *pdev,
+> >  }
+> >  #endif
+> >
+> > +static int optee_sdp_pool_init(struct optee *optee)
+> > +{
+> > +     enum tee_dma_heap_id heap_id =3D TEE_DMA_HEAP_SECURE_VIDEO_PLAY;
+> > +     struct tee_rstmem_pool *pool;
+> > +     int rc;
+> > +
+> > +     if (optee->smc.sec_caps & OPTEE_SMC_SEC_CAP_SDP) {
+>
+> Is this SDP capability an ABI yet since we haven't supported it in
+> upstream kernel? If no then can we rename it as
+> OPTEE_SMC_SEC_CAP_RSTMEM?
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+No problem. We can rename it.
 
-Jason
+>
+> > +             union {
+> > +                     struct arm_smccc_res smccc;
+> > +                     struct optee_smc_get_sdp_config_result result;
+> > +             } res;
+> > +
+> > +             optee->smc.invoke_fn(OPTEE_SMC_GET_SDP_CONFIG, 0, 0, 0, 0=
+, 0, 0,
+> > +                                  0, &res.smccc);
+> > +             if (res.result.status !=3D OPTEE_SMC_RETURN_OK) {
+> > +                     pr_err("Secure Data Path service not available\n"=
+);
+> > +                     return 0;
+> > +             }
+> > +
+> > +             pool =3D tee_rstmem_static_pool_alloc(res.result.start,
+> > +                                                 res.result.size);
+> > +             if (IS_ERR(pool))
+> > +                     return PTR_ERR(pool);
+> > +
+> > +             rc =3D tee_device_register_dma_heap(optee->teedev, heap_i=
+d, pool);
+> > +             if (rc)
+> > +                     goto err;
+> > +     }
+> > +
+> > +     return 0;
+> > +err:
+> > +     pool->ops->destroy_pool(pool);
+> > +     return rc;
+> > +}
+> > +
+> >  static int optee_probe(struct platform_device *pdev)
+> >  {
+> >       optee_invoke_fn *invoke_fn;
+> > @@ -1715,7 +1750,7 @@ static int optee_probe(struct platform_device *pd=
+ev)
+> >       optee =3D kzalloc(sizeof(*optee), GFP_KERNEL);
+> >       if (!optee) {
+> >               rc =3D -ENOMEM;
+> > -             goto err_free_pool;
+> > +             goto err_free_shm_pool;
+> >       }
+> >
+> >       optee->ops =3D &optee_ops;
+> > @@ -1788,6 +1823,10 @@ static int optee_probe(struct platform_device *p=
+dev)
+> >               pr_info("Asynchronous notifications enabled\n");
+> >       }
+> >
+> > +     rc =3D optee_sdp_pool_init(optee);
+>
+> s/optee_sdp_pool_init/optee_rstmem_pool_init/
+
+OK
+
+Cheers,
+Jens
+
+>
+> -Sumit
+>
+> > +     if (rc)
+> > +             goto err_notif_uninit;
+> > +
+> >       /*
+> >        * Ensure that there are no pre-existing shm objects before enabl=
+ing
+> >        * the shm cache so that there's no chance of receiving an invali=
+d
+> > @@ -1823,6 +1862,7 @@ static int optee_probe(struct platform_device *pd=
+ev)
+> >               optee_disable_shm_cache(optee);
+> >       optee_smc_notif_uninit_irq(optee);
+> >       optee_unregister_devices();
+> > +     tee_device_unregister_all_dma_heaps(optee->teedev);
+> >  err_notif_uninit:
+> >       optee_notif_uninit(optee);
+> >  err_close_ctx:
+> > @@ -1839,7 +1879,7 @@ static int optee_probe(struct platform_device *pd=
+ev)
+> >       tee_device_unregister(optee->teedev);
+> >  err_free_optee:
+> >       kfree(optee);
+> > -err_free_pool:
+> > +err_free_shm_pool:
+> >       tee_shm_pool_free(pool);
+> >       if (memremaped_shm)
+> >               memunmap(memremaped_shm);
+> > --
+> > 2.43.0
+> >
 
