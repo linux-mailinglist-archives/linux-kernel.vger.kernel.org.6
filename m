@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-575213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EF9A6F454
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:36:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23837A6F45A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 12:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8054C3AA0FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:36:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE041886AA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 11:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7E7255E58;
-	Tue, 25 Mar 2025 11:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE162561B3;
+	Tue, 25 Mar 2025 11:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GeYd3UGa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kk9Js/+X"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Fs8WdXg5"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C841C19F111;
-	Tue, 25 Mar 2025 11:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B676255E51
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742902608; cv=none; b=mU8XPr5WIWOh+reILkBG8HatAkqhykyAukJvRZFQora2OtMDL8GpdMHNwb9kXGNjcCgbOb4Z42k0atvk+gbQaIU5cUdoaRtc8LofT9WU6OF1LEEblTCx5JKlayExoq1byMuZomO5QinKaUone3N6qny1D8/1A0RL4tbACoZGEvM=
+	t=1742902693; cv=none; b=aXaR5+ZLTlPEEhzTwYhBqpauO/WISs7Yq/Z2zYDcPUD8ZAjyvQSnQMDr1/3Om0PMUMHhNZOKdbc9q1JGMgs8fE2mLfkvz/XqpoV/Y+szwuIeISTjPyqpf/JhN/vPHKWQmEl8NbW68rf3LkcIpLv14TdA/HiXj6B/zDt7kkn1y2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742902608; c=relaxed/simple;
-	bh=FHUiyVK61Z+ZufI9QgFm1YrVVHw4RRX9oYv2WVaS56U=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CzLTfnOXCMVQrnRgl0XM78pYLalPeor82xqrubBf3XUouNOCVVdGI//ZPH/Wp38CQJa7MijlpkxndIyvXL8q/mt9ehuD1KKGaxlMDNQ2Y2URGp8T23bftjIWN4DBCRXXyhTMLIxy9Y6Kl7MQvQTCP3BL3qajoNsZVdMH4pHM1R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GeYd3UGa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kk9Js/+X; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Mar 2025 11:36:39 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742902604;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z0dEfgZlBFKVpRfIOd62N5kE7OQkKpHmT+0YAAGUhJI=;
-	b=GeYd3UGaqsnVVcpgMKd1cqAQrazAru3h/NY36UyUzkOYKQWP/FgznNl8S4NZVpDbIaD435
-	uUIFpJwmbtPw/KFCRso74+ReGuDGL9aeZHxg0Bo2z50LFuAoaXnVg0Z64dzHbdluGVqy/N
-	8wv+9OKvdsc8l+QxPaXTx3t7p42SlMKBdxvn4WxlQAS8TxC+mV2md0iV9wA3RYEaBGfgBv
-	u4W8Xo/Cxijp88R8/9pAUyeoJLvpRO/NuTEga2x8f3RLOHjSJz0WA7ytFN2EpeAd3xAYf0
-	/aeOXBcceC5/oLyMbnvDORYssFgIAvbaJMXenH8YBdt7j65/MaU5Q/EOwOFt3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742902604;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z0dEfgZlBFKVpRfIOd62N5kE7OQkKpHmT+0YAAGUhJI=;
-	b=Kk9Js/+XQHBTgaCNj346JrbQnWif3NoD+2SgAek1Ip4YNS9XPkQjX/jBJC4ndtHln77O9Y
-	gWUq9su0QX1xLLDQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/alternatives] x86/alternatives: Document the
- text_poke_bp_batch() synchronization rules a bit more
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250325103047.GH36322@noisy.programming.kicks-ass.net>
-References: <20250325103047.GH36322@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1742902693; c=relaxed/simple;
+	bh=FA6d2dRVk8LxnzwIHtQlX5bcI9YBfV2aFKyu05XfbPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z7Hm31WvfBGOojitbjhkYBDH3rZRUzx4ZHOY7FIMjrz717OtorxQVg31vNYYhU3EVVYpWgfNr1jFPzUB4TdXIi0mKphwMxDjGqLFjwSTGRAEXwd5IaaGAMviMEGZp8MrlgioKIYoe4RiMelCv2RK7ekzGyjm08yAeezSUMfC+5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Fs8WdXg5; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=K3xC
+	bq1aSNfvAgcHKhHmE6cyJzpFHMkkBmPR4tehSj8=; b=Fs8WdXg5zgf3QXSDvskj
+	jPLkKvQCbpC6DzjVMeCCCadDQwpFjBLjVlm7V1DOM7TsZ+Bu52Grsr9QsHAvmdDO
+	4iANkHpo71hNwLNSxOIslp+/FUMg+VE+wjyvfveuzS4NGtEUnyzUE/YeRPefleeZ
+	StNmVyWqZhdlr3MiGrK4vnrVw+TjePiuOMQuMxUCcRSjplHUlzB1d26uvVAJ1tne
+	lnAAaa8vovXAAEwdsbddPAabe4BTOpkB9+tuY7xq0Yg2LUtyTOys+Ar+I4AUaB1d
+	MzvythRs1wmDnod/ht7l+JDDj120SOjo5wWnoO7h5beojc4LXDynLMW42wVc0GwQ
+	5g==
+Received: (qmail 3031330 invoked from network); 25 Mar 2025 12:38:09 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Mar 2025 12:38:09 +0100
+X-UD-Smtp-Session: l3s3148p1@JR2pJykx3KAgAwDPXyTHAJp038nK7dx+
+Date: Tue, 25 Mar 2025 12:38:09 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host for v6.15
+Message-ID: <Z-KVoRCm0fd-tLBs@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <u2isvs32qv53rrkmhwqfex25zeegyb4slbelxk42hpfkun2ruv@274wvt44675k>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174290260003.14745.15724435557527848007.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kAmn8II20RhuryIa"
+Content-Disposition: inline
+In-Reply-To: <u2isvs32qv53rrkmhwqfex25zeegyb4slbelxk42hpfkun2ruv@274wvt44675k>
 
-The following commit has been merged into the x86/alternatives branch of tip:
 
-Commit-ID:     451283cd40bceccc02397d0e5b2b6eda6047b1ed
-Gitweb:        https://git.kernel.org/tip/451283cd40bceccc02397d0e5b2b6eda6047b1ed
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 25 Mar 2025 11:30:47 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 25 Mar 2025 12:28:35 +01:00
+--kAmn8II20RhuryIa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-x86/alternatives: Document the text_poke_bp_batch() synchronization rules a bit more
+On Sat, Mar 22, 2025 at 04:45:15PM +0100, Andi Shyti wrote:
+> Hi Wolfram,
+>=20
+> Here we go with the pull request for the merge window.
+>=20
+> It's not a huge batch in terms of patch count, but a few pieces
+> of long standing work finally reached the finish line.
+>=20
+> Some patches are refreshed from the past, something I plan to do
+> more often going forward.
+>=20
+> One new driver was added: Spacemit K1.
+>=20
+> Andy has also been very active, contributing the new
+> i2c_10bit_addr_*_from_msg() helper, which is now being adopted
+> across several drivers.
+>=20
+> I don't think I've missed anything from the recent submissions,
+> and I'm happy to have caught up with the pending work. So I
+> don't expect the need for a part 2 pull request next week.
+>=20
+> Thanks, and I wish you a great weekend!
+> Andi
+>=20
+> The following changes since commit 4701f33a10702d5fc577c32434eb62adde0a1a=
+e1:
+>=20
+>   Linux 6.14-rc7 (2025-03-16 12:55:17 -1000)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-6.15
+>=20
+> for you to fetch changes up to 39f8d63804505222dccf265797c2d03de7f2d5b3:
+>=20
+>   i2c: iproc: Refactor prototype and remove redundant error checks (2025-=
+03-22 13:11:53 +0100)
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lore.kernel.org/r/20250325103047.GH36322@noisy.programming.kicks-ass.net
----
- arch/x86/kernel/alternative.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thank you, Andi, pulled!
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 85089c7..5f44814 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -2751,6 +2751,13 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
- 
- 	/*
- 	 * Remove and wait for refs to be zero.
-+	 *
-+	 * Notably, if after step-3 above the INT3 got removed, then the
-+	 * text_poke_sync() will have serialized against any running INT3
-+	 * handlers and the below spin-wait will not happen.
-+	 *
-+	 * IOW. unless the replacement instruction is INT3, this case goes
-+	 * unused.
- 	 */
- 	for_each_possible_cpu(i) {
- 		atomic_t *refs = per_cpu_ptr(&bp_refs, i);
+
+--kAmn8II20RhuryIa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfilZ0ACgkQFA3kzBSg
+KbaJNxAAiw2IYuXOZ4iujuQ4hKbBePi+DKpVj07DMg2pYHuMtHU9Dxg1nUBhl/Nh
+VpgPwqt3Cs9fWLTbijE93lSLh2lObX4mTiW9rrxyzPEQ8Sho8sjJ5XalDE3598Q/
+xOddYkrdQL/nw4gYPm8hrxJai6O14vSK1BwajnNA8AS940htxh82IW0SxXLVCOKn
+1EpF9cdRs4aSbZJC+0ih2+jaoS4Q+3zgfJh71gMksnwaZnTmS/c1zMcorBn7utTg
+TULG3wmz0aQu2N2Z6YPqnFgNai8rUK1odrTfIRXmbnckVW5cSfgA+sihycziz47Y
+fLAdKPEtgHTiBZgPo2BHMxYfzPQeSq2AVgtbaKMNI39PRJQhLwMLrjkNfSrsdLys
+I9FCB+psiEGUnoTwMnAL+Mvx+B3JhEqoi9iQnLIXX63Gsq9FVyOsDMcnimtpa4ii
+h/+ICgg0QK+/AjYYdPKXsCTuUJcZcCiNnF7OBIo9lnXmgWL49H4C7+HieUO/6fol
+60x0SyOPXLyKpaCkEJAaU2u17DACbfodbnV/roItYyGDC3X4gHQJRmGsdxPhQjEO
+5SFYG8KzhagUutbeTAB+KvfV40Y/XCveaX7rGLb6JAS40R6hvz+c7yn8QPe8Me/O
+Wwk2z0/Vfe7yv1t4l7Hd0MagBXZ2WLbGCVPKUD0rHYCy4Fbku2k=
+=lptR
+-----END PGP SIGNATURE-----
+
+--kAmn8II20RhuryIa--
 
