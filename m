@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-574815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A921A6EA73
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:27:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E8BA6EA75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EEE53B1439
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3781C18938B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB255252914;
-	Tue, 25 Mar 2025 07:27:14 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D1D2517BD;
+	Tue, 25 Mar 2025 07:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqluXcpZ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD52714EC46;
-	Tue, 25 Mar 2025 07:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D869A14EC46;
+	Tue, 25 Mar 2025 07:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887634; cv=none; b=Xj3HQOeIo2mR8mJDSzkW2hW0Tac22sm+gHnVSI0BKeu128NLmkwdCx/jWRsi8ZrvFnWNPxc216ITE9PK5dx3ImL4dvpPMbwVvEQxSASz4PGDdElJeyTqwKsIxyzB+LWh8XDzYieiCM7ojMa6fqIgv8hmSk5NbsWqoHJVg8YMPu0=
+	t=1742887666; cv=none; b=i0SF2pQgpokGcjKDYxf/BcsVZUdjXou6Ip0tWdyg/Dc5s4PpEDtZPSBGOqJ532nXcJb49WEKEKeqefntxj1lGtFOzZ0FIulNkg8l4xPxTLNBR57lKUCJLmzb5AhbY1cPHQlCavORBmW7QRSB+ja8ZshsOQyZjv+Jwo1pyIl0RXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887634; c=relaxed/simple;
-	bh=dp3Q86fPtgLnyc9HDmsZaQrdgwB9SX8s5wmrhdxLUss=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bcFLbAm34nR1I1MZNje9rDsZqZdflFKetJQyUrXtMfNVPrCL9wMv1STC7p7l4/7SEWOCGQrP479UVHHzCY43p0ZKe1K7QZ862AehIDdGWQ/J2Vl2BM3c0RlOXJiQqGcsVwBf9QtB2OpauuDq2DP/nOzb0GEdy3/2J98CKPYQL7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZMM1K4HFkz4f3jYK;
-	Tue, 25 Mar 2025 15:26:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 760F21A1192;
-	Tue, 25 Mar 2025 15:27:08 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB32l7KWuJnOXAIHg--.35537S3;
-	Tue, 25 Mar 2025 15:27:08 +0800 (CST)
-Subject: Re: [PATCH] md/raid10: fix missing discard IO accounting
-To: Coly Li <colyli@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, jgq516@gmail.com, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250325015746.3195035-1-yukuai1@huaweicloud.com>
- <brtjiiejckcekwq4racmjgpzq7dod5bg2t4csj7caevnl4pkqm@zaanpogvtvus>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <36f1f74b-4376-89f3-0690-09f36e05d6e1@huaweicloud.com>
-Date: Tue, 25 Mar 2025 15:27:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1742887666; c=relaxed/simple;
+	bh=vDZjMDRfpIWiVV0aSXOU+kW1WUREJ8hxHFE4R9JrT6U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F4TO4iUw6m8pNwhwIfCKWUxSY9xaCyy2ST1CPd6P7CVsqPpUbB9BygX6SVPkVlFdqqOIEFSf2cf4GuljK0ftiWUyWoXXd7ve5qhg8uIw9Yfr5R6pdcybQy1a7QePhpjP+toc312DSqZ6g7dGNjv5BJtCOqQeyWg6/u3CyoNxjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqluXcpZ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30bf5d7d107so44124281fa.2;
+        Tue, 25 Mar 2025 00:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742887663; x=1743492463; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m9tWabLN/oOXbS0p5O3pA+2F9VFFmwTF6H81jPPhkBM=;
+        b=FqluXcpZGIYtq8tfjGnUp2f8diy1UE5iVsNLrLMVgCuBk6bE7DgsM28qOL5DmMjsg8
+         bSksDVotHvFLsX+i2AHQn4mvWTnIvUxexImV84a7poeaxGpj2dyaxBrYKO4yYWjg63Gr
+         hKBuqnEZOT1gqPGCD5+Ds2byprdwu5YdU6UspqUgoQfPakQmmh5tBzhoIaUJ5KA2rie1
+         21bYMrdvLYF1a7rNCHj4sFUe9cl2my+L8r78zOTGFHyl45cDAaTLj+3wE5qDBkR9wpYO
+         im7Cn09rSqXROc6P4ckBbr486FZ486B46oo9kk6o8LmH8LhSo8FXcysJygwCEXDyjhp9
+         GFtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742887663; x=1743492463;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m9tWabLN/oOXbS0p5O3pA+2F9VFFmwTF6H81jPPhkBM=;
+        b=JNGze6HHMR4Z5V6oBVyf3sZQlbkAbfBPPdGRWuSCCXQ79xy+LvPSNljw0QqmjuUN5x
+         OPMOX/+hfScThMNzud9o2nrZUJcwvrAf0Yqb6LwQI+3WTGOTtCGqE0QIvsUWwXEZyccA
+         S2hRqNGMH2FPhVs3TdmWO0jMzxpE9BV/a0XqCA0c6r+kuGSEYH0G1AJZbsgfS4uXpvtG
+         yuYTq8kMlIq8LF34pZ4nf4MiUB9z9JG/FujgTwi1x0619BkJw19dbapBe+EYASvVd0AE
+         +oeuXYlyC6sx2WCmUn/yKLSr4+13PjdqNRntQpWkprluvt+4MtncZulTkKLv5V0mM9/G
+         nJog==
+X-Forwarded-Encrypted: i=1; AJvYcCUKWJraN9NcSS5FIKD84ZO7KCrRnc7T4dRkd+qdPKBIhnoALmIH7cVcwLywwwoJFdWX4UrQ5zKeE0/qKiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3Lc71kjPIzrYe4S133WCXH1HY0puBcUxl4O8Xbg1Zd22nciW
+	edo+tLaNG20foOgCtJo3/jhtfuuF65Ujjuy8oTbbB9Xg5fd96q5S
+X-Gm-Gg: ASbGnctZp6sP+HHIelYBIHB3+F+d3vClHjE7pDyrOSSkr5CGsoNFz6Go6w7FqtoHAA8
+	foztsnfhYArBMCbts6WlOCRHzQyLN17pgxeMN3Vd3+Tw9ZOhUYAFKqu/x1OH+S8UV4CeghvAzzh
+	2o2hnKuxxr/m0FZHJjsBeGE4TAxUafwyHfflRedHOE+SWCmLQGPiWrfyefFCO9iagxWYML0SFZV
+	fPnqOVask2Sv7m4Q2igMgtB98+Gg9UyT0T7fZt72E1BurV2kcSxdaAcwGTz+9sUqZfJtKzq+Hmz
+	MNytYgaWS4xX2qt0zPFvpy2sJ1+tjV+QTbsepbLJaC3Nw7ApYwt98QUaCKbEOUd4bVERRX+ORT/
+	HZBpvvaTGTRrd
+X-Google-Smtp-Source: AGHT+IEFAKLOVvQR99VNsKiRcwaZjRcb2nYfKuYBL2Jc9Gp0J6U0HpqBZOjmwznhx9PC3H6FkDevFw==
+X-Received: by 2002:a2e:b8cc:0:b0:30d:7c85:14f5 with SMTP id 38308e7fff4ca-30d7e28bdeemr72855521fa.25.1742887662390;
+        Tue, 25 Mar 2025 00:27:42 -0700 (PDT)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d89661aa3sm14307621fa.31.2025.03.25.00.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 00:27:40 -0700 (PDT)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Subject: [PATCH v2 0/4] Various fixes for the da9052 watchdog
+Date: Tue, 25 Mar 2025 08:27:11 +0100
+Message-Id: <20250325-da9052-fixes-v2-0-bfac3f07b4a4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <brtjiiejckcekwq4racmjgpzq7dod5bg2t4csj7caevnl4pkqm@zaanpogvtvus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB32l7KWuJnOXAIHg--.35537S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kw1kJrW8JFW5WF4UtF1UWrg_yoW8WFyDp3
-	y2qFWYka1ru3yUuw4qqay5Ga4rt3yDJayayrWFgrWxAF9IgFW3AF15J3yrKwnFgr4agF10
-	qFn7Kay7Ga4ayaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM9a4mcC/3WMwQ7CIBAFf6XZsxhgSyme/A/TA1LabmKLAUM0D
+ f8u9u5x3svMDslH8gkuzQ7RZ0oUtgry1IBb7DZ7RmNlkFwqjgLZaA1Xkk309omJvut0e8fWGIS
+ qPKM/jmrchsoLpVeIn6OexW/9E8qCcYbajK7XdjIKr/Nq6XF2YYWhlPIFMBPKyqgAAAA=
+X-Change-ID: 20250313-da9052-fixes-186674b34993
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1105;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=vDZjMDRfpIWiVV0aSXOU+kW1WUREJ8hxHFE4R9JrT6U=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn4lrQsWZ9RIH88sXC5PBI/Z3nub4lLQPqBPj/Z
+ a2bzf85kq6JAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ+Ja0AAKCRCIgE5vWV1S
+ MozoEAC40QaOnzm18/q+IUCRwO1Ki+kNSbkaSKoqAqO2NWDblKGEy73wErdElHOjrgMPQR1ABLt
+ nJNutMv1C6a48HKRWOG8mPG3cmKPCojTUd8XTPebOENG12GTvdTlUXfx/TTWFNCI+TDxiSX1DHZ
+ JVZZcwd1z66qOEexu/dAAIud5mCmPxe11QG058OqSsIlAk12z+H7XXFX505WF5apJ3UscAovXo+
+ 5sRlJenPz1vBGnnxouhozL3hPMgFTccB4So6ri7sqKObiKFxYqrkXRp2/EcPnSwam5if9JHwFzA
+ F6ORbxaLsVQFPd9rNcovGVsa+T5MUYatzhA+Yzi4kL1bwy4F2YmsMoY3m0MnglYMKfGZpDqzMD7
+ Y+3aqwfvWFqLKIC8yKBrCbe+kNd7EP0dmQpAihA7OAdg4sRQ/4RSWKo3X38dZPDBiBF6VW9jxhz
+ 1gPJHDGPcKv3Wy50RwceRB837qH8+lEGLvX9r68o/Zq5LQAj1/bDZbaOjAxVrbd0BI21XtEM7Vp
+ ztBmDAysx6DD85KVc2RPnt+rap7LEatgw5tyhMC6usJGLyKmANbc4Jm9H52m47On+VF4e96BuYL
+ ZWi+DRZ+Panef7rKhCsRCpC/0dRRqibfGLmCryPK2dj0VDFmTbsTEDzxllG/nuUfbbmUqKusw3D
+ Uc/vNthgDilqBzg==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
-Hi,
+Add support for the nowayout and timeout module parameters and treat
+them in a standard way.
 
-在 2025/03/25 15:04, Coly Li 写道:
-> On Tue, Mar 25, 2025 at 09:57:46AM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> md_account_bio() is not called from raid10_handle_discard(), now that we
->> handle bitmap inside md_account_bio(), also fix missing
->> bitmap_startwrite for discard.
->>
->> Test whole disk discard for 20G raid10:
->>
->> Before:
->> Device   d/s     dMB/s   drqm/s  %drqm d_await dareq-sz
->> md0    48.00     16.00     0.00   0.00    5.42   341.33
->>
->> After:
->> Device   d/s     dMB/s   drqm/s  %drqm d_await dareq-sz
->> md0    68.00  20462.00     0.00   0.00    2.65 308133.65
->>
->> Fixes: 528bc2cf2fcc ("md/raid10: enable io accounting")
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> 
-> Should we treat discard request as real I/O?
-> 
-> Normally IMHO discard request should not be counted as real data transfer,
-> correct me if I am wrong.
+Respect twdmin, without this the watchdog timer will immediately assert
+TWD_ERROR and power down to reset mode.
 
-Normally it's not, that's why discard IOs are accounted separately in
-the block layer.
+Do not stop the watchdog during probe. If the watchdog is enabled in the
+bootloader, it should propably supposed to stay on.
 
-Also notice that discard should be treated as write, because after
-discard, reading will get zero data.
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+Changes in v2:
+- Fix warning found by kernel test robot
+- Link to v1: https://lore.kernel.org/r/20250313-da9052-fixes-v1-0-379dc87af953@gmail.com
 
-Thanks,
-Kuai
+---
+Marcus Folkesson (4):
+      watchdog: da9052_wdt: add support for nowayout
+      watchdog: da9052_wdt: use timeout value from external inputs
+      watchdog: da9052_wdt: do not disable wdt during probe
+      watchdog: da9052_wdt: respect TWDMIN
 
-> 
-> Thanks.
-> 
-> 
->> ---
->>   drivers/md/raid10.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index 9d8516acf2fd..6ef65b4d1093 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -1735,6 +1735,7 @@ static int raid10_handle_discard(struct mddev *mddev, struct bio *bio)
->>   	 * The discard bio returns only first r10bio finishes
->>   	 */
->>   	if (first_copy) {
->> +		md_account_bio(mddev, &bio);
->>   		r10_bio->master_bio = bio;
->>   		set_bit(R10BIO_Discard, &r10_bio->state);
->>   		first_copy = false;
->> -- 
->> 2.39.2
->>
->>
-> 
+ drivers/watchdog/da9052_wdt.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+---
+base-commit: 0fed89a961ea851945d23cc35beb59d6e56c0964
+change-id: 20250313-da9052-fixes-186674b34993
+
+Best regards,
+-- 
+Marcus Folkesson <marcus.folkesson@gmail.com>
 
 
