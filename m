@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-576113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E08A70B15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCBDA70B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 847BF7A8178
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:08:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 873597A7F9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E170C267B6F;
-	Tue, 25 Mar 2025 20:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0407B267B85;
+	Tue, 25 Mar 2025 20:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/p7fweh"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKbJJO5w"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54CC267738;
-	Tue, 25 Mar 2025 20:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1EE267B0D;
+	Tue, 25 Mar 2025 20:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742933221; cv=none; b=GMMCeVx+vIZehuD1qxUoQ2L3eQ43S/kJG1QRi6DJx1caZdS3TPll9VrgGT9bqfJFYfpHFAy20nDQ/IvAy365mWVLRg6rvWnGYMcJdMMvY7YJ6wMzovEQfsqBn+IMDS0xKMoR/BjxN80I9Tpdk4DqBzfcXRaveaEvfg9OJl3CmFU=
+	t=1742933222; cv=none; b=e7iml5d31iXMI+koLJvRCouIo5/bjpngKfq8jEpA8o+hDuDnvcmTqjV9yw1mWZkNpnb8dy2Kf+SnnxmP+VKCUG2r+oEMFJJYU1DzsZfUwQaCg+NlZtiqhNJQzamkRl3G3XM3DOQogY0/rlBjZFwmhJSk4+UG+7AHI+4U4RKWWX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742933221; c=relaxed/simple;
-	bh=BHB6Vy9d7NxjCKjq3gR1UE9YFnZTGlh4Yeoqryhywic=;
+	s=arc-20240116; t=1742933222; c=relaxed/simple;
+	bh=srGNfh5JskTbG+L+vHX6JNmL4vBd4cpetPvPNJaflC0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=agpmdMHD2BhEBhukGPTiF3K83S8HZZyTtfPDH5qs2J9BpC6S1VcNSum3PV3tAeXXRn4Gpnb7Yes7wXbyYR7ob6H4MPVYCPbvyVTTIJVyrPxIy0b2n8Ltt05tjheDKSy3EsxEwL1kULtjha3GRgOBGWjfkCmgrsCieQxiSa3LkSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/p7fweh; arc=none smtp.client-ip=209.85.222.171
+	 In-Reply-To:To:Cc; b=H5+0pgLEWy1dKRY+4bJ9ssCfH3CyxQih1gMfrYH1YiUpELiPCCtHZC0xsUuWdjBt2SIEP1uqo8o63PqyZXibbd03bcFXGA+bKc9jqTHwhFhjv9hbywHA9bdhvw+xnw2OBULX664IBjuH3MlffjwEKGNRgf5rzX00aNb/wJjqarM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKbJJO5w; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c547932d2eso361403985a.0;
-        Tue, 25 Mar 2025 13:06:58 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c55b53a459so577020685a.3;
+        Tue, 25 Mar 2025 13:07:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742933218; x=1743538018; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742933219; x=1743538019; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XEN7PB6kZDExUuTgOn6RpUdfZ7yLfXh3+d7K0qcH+/E=;
-        b=g/p7fweh4RXmLOcIIuB98U590Ct6Fc0NK/2inbY4YoC7u530hP2rcytS/R7ufPI3DO
-         Op+BvHGLKGycxfol1WjFHW1d4WAlTG/brP2JBdvBqU2oy0PpFEtv/ldapfHjNFVGgzjm
-         BZvsgv12mQPPvstX/zOQ4pQK7NLkQEpATY63oB6EOyyyqVxsjaGmYMIROtwvjjhKMQuO
-         33FuxQX6Wvl/PYi0/XPzu3TEgw3J1zschQubDVbDScf1RQtqKmC0ldHb061JHJUudFpo
-         di8vymxELeVGxIyBkYAPvdenUpEpfhmZnEQdVr6rYE3sxb7kb93T4etT9g4VBNq/VbQx
-         mJjw==
+        bh=WSRxIJTrtDAGZ/UrpdmNrq7fIRw+Z0BD29MCAXHGwUY=;
+        b=DKbJJO5wB/uofVPQyrRyH1H6HbpOOyKFzCPnJpC3AdlcdTuTjJ6za/aLkcTCyjYTNA
+         lhEnUUdUd5mHApKzLF9qvjaPjF10vMa6x62q8f4e3IisH5+OmqiBsG/YpBzkq5l6ieUp
+         pJojLemkjLsXIhVJNgqKPLza33XR7FYU1VDLf/cUrrQpoNHr+C18y63jgbaP1JwvNlkD
+         6kLnG1L+LppK4cxtVE+lJG92t7jlJVVhjOrRZubd/pfI2MNFwvF+rZyePYEpI5Jxh8Tf
+         hKccTTX0RDOe3xn8cLwhL93IGu5oyLgbGUiW1rqHubf+F/64fPnCoq5b2JO5pa3Uc/wA
+         E60w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742933218; x=1743538018;
+        d=1e100.net; s=20230601; t=1742933219; x=1743538019;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XEN7PB6kZDExUuTgOn6RpUdfZ7yLfXh3+d7K0qcH+/E=;
-        b=Xfqp0OZ06pFMPoGzFPv+60mbjcMVOPncGuckQcu8VdXu91rXACkHgXp4fwDqNvWoa/
-         3CCPz7gER8FvIdf4b0oqTB/8KBdkBiAY6LGUk+fbpdBMGNN7RhfMvV5eQf8UqHaq+8yT
-         T10QIihWP+GxMZRscbFeyNTRCitlzFqkgVJ3sGBxVTdCkY+rTjA97ivGiirl3VEKX7K4
-         m3Y2TA6KJLLgf/mesJEnXpKpFK5wX8PTF9FTJwWoCkdjUPPnNV8QrQadis5Q853nV4M/
-         15PcpT4vfvSaBg8klSz0CWRYjgYbNp15at1/C/JVY9ls+r0FxKZTl8tBVhw6aOF4TWqo
-         lI5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+LcMLD2pIO/5jsUx1cj/pSGPL749SscMhDtPmJ9y3uo+EYZ+LpCbcOZtsdY6QK0w+2tDhrM7SR2CC1Bk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi/MTFu1mFGzIgBPRxKodqSTdfVDXifRT7SqGZ2q5MVsdTaWoJ
-	8ZDbgykW/RXSsMd/UxYXANUpIn3Mj/FKPA8xW3rUNhTKY0b5NtaD
-X-Gm-Gg: ASbGnctq4Ppqo6YJ273cpkdiniP8x48Ze4Grc0QPTid8wyQO6tKULKdW4L8gIZyNb16
-	Um/bTZsu1ITzKT/OU5FVSQdrhmyEONsBjqVxlDBeIN7HD1PWFAX//xBihPvE6Fm1i7YCWrFKMjS
-	LSzTm+lVAKHkOUnY2CuzG5OVyNfy42o5AtSJSMbFN/Kay9VS5qOxfOrX/iQmT/Oep0vSi4DxsuF
-	C7pinYaL0HgI3Yl49iDFL5g623Kznt2dkf0JQN41pggmF+upJVVLex6gaxDKbF9e9wyRN/3asE5
-	BXZoTgMYN8QZ+xfkxFvtQpGUSSxCAjhQ0FamWocnRqQbRBwt17077loPlbp77dTT21FWszxKWHb
-	cxUCGdfQs0Y24pHtN3wecKQI0hlKpBYnxZ+GpOR+hUdDkG7HDbsni5A==
-X-Google-Smtp-Source: AGHT+IF7vZx9UcR8te7aISj1/g1fYSXlc2GYAFCIsBWp8ozlUyt/Uo/TGyiZyFHzwJ770vE4x/LxRg==
-X-Received: by 2002:a05:620a:24d4:b0:7c5:50ab:de04 with SMTP id af79cd13be357-7c5ba190b77mr2479071685a.32.1742933217696;
-        Tue, 25 Mar 2025 13:06:57 -0700 (PDT)
+        bh=WSRxIJTrtDAGZ/UrpdmNrq7fIRw+Z0BD29MCAXHGwUY=;
+        b=lCUuSAXG4hq74FX32Y+X2nIswfXsMv0aAfudB4JaigJYRIdPhfRLWeMtOL3nO93H8D
+         g2JE5ZF76z0U//xmw8ew2NmDWG7RC+f0TrCGZiPAUluclNEjppOo8e3an6w/7sg++8Kx
+         VhqsMWKOYvBgxsCH9cok6TLyvrjFgi1U3uYjeH94LZBb1+tdK7lmutPgDxlnpNa3h2Po
+         dGG0fp4n/JCWZCLY3+qkTwj00+tov4OR+qS/pMQ0dZg1sO1CK0m/Be3DwQR5TkxTyWiE
+         b2iHWvVa2zGddByCjWZrAQ3FAuPh7164ZLMQFqiNnHVL6E+hM6rNvL9hznr75xo7nE9f
+         uttw==
+X-Forwarded-Encrypted: i=1; AJvYcCUERe4OD9LKBON4CZyQ1aHEnybhROxyHkLiO6ANIOdWiUgDqCmJVKQ4yHVx1w3q4Z2bATYJbqFtsKUHFAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5WaNdwNEEXTZnRdrUxQh44fZhDt7n+HE6DYn83BHUg1AezD5u
+	LNK0/aGv6Gwfha6eIr1KNTK9atiPjliUMKEKuLq9LL8OeDFnL7XF
+X-Gm-Gg: ASbGnctNgzTINt43+A3cEKkWDfRIJkG6SwvRf4Ko7//HaBT+gxIT2YO0cshgBOth7Is
+	d4yyJYbWM3ukwlMdUbPewDiTjolZOnaIu+4QJQ8HmK4H7Pbs3fjH6c3wf2xXEqrhaouJI856hUx
+	5Yh2u0oNZaWm3mfKYGaCNUOWeIKyAqWnPIp4YUZxLolDIu9FdmyvVqzIZyXYWff1jPvR2uSSukr
+	URL1xalveqpADOORaV8WFmm6EmHV964K88QVGQm7Ek2oE0LvuqNA7nXroo+ELOKh/+3PLvzXQ0h
+	3yhf6roGD8RHxMzkW+xW+c27hCvX/zd0wWb5xbA61dppNakq9wmgyz9ODhWKPThBSvJqIoDQa+x
+	5i8jmnOUljeDMBkBZLsXM44CO7mefUns7PdXEcOtidTYjUGnj32YNPw==
+X-Google-Smtp-Source: AGHT+IFsSzdWyb8Lup1WtXHsJBfffopY2Nuc8ptZE/CVsJGtvVVON39tfpOR9VwrPv2J1yxTspuChA==
+X-Received: by 2002:a05:620a:2405:b0:7c0:7c8f:c3a9 with SMTP id af79cd13be357-7c5ba131e23mr2368292685a.1.1742933219437;
+        Tue, 25 Mar 2025 13:06:59 -0700 (PDT)
 Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:38f6])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ed179sm673528485a.57.2025.03.25.13.06.56
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c5b92ed179sm673528485a.57.2025.03.25.13.06.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 13:06:57 -0700 (PDT)
+        Tue, 25 Mar 2025 13:06:58 -0700 (PDT)
 From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 25 Mar 2025 16:06:35 -0400
-Subject: [PATCH v5 12/13] scripts: generate_rust_analyzer.py: define
- scripts
+Date: Tue, 25 Mar 2025 16:06:36 -0400
+Subject: [PATCH v5 13/13] scripts: generate_rust_analyzer.py: use
+ `cfg_groups`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250325-rust-analyzer-host-v5-12-385e7f1e1e23@gmail.com>
+Message-Id: <20250325-rust-analyzer-host-v5-13-385e7f1e1e23@gmail.com>
 References: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com>
 In-Reply-To: <20250325-rust-analyzer-host-v5-0-385e7f1e1e23@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
@@ -101,53 +101,85 @@ Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
  Daniel Almeida <daniel.almeida@collabora.com>
 X-Mailer: b4 0.15-dev
 
-Generate rust-project.json entries for scripts written in Rust. This is
-possible now that we have a definition for `std` built for the host.
+Declare common `cfg`s just once to reduce the size of rust-analyzer.json
+from 30619 to 2624 lines.
 
-Use `str::rstrip` for consistency.
-
+Link: https://github.com/rust-lang/rust-analyzer/commit/2607c09fddef36da0d6f0a84625db5e20a5ebde3
 Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-by: Fiona Behrens <me@kloenk.dev>
 Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 ---
- scripts/generate_rust_analyzer.py | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ scripts/generate_rust_analyzer.py | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
 diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-index e3f1ec856ecf..5c0056c265bb 100755
+index 5c0056c265bb..4faf01e2cbc6 100755
 --- a/scripts/generate_rust_analyzer.py
 +++ b/scripts/generate_rust_analyzer.py
-@@ -249,6 +249,20 @@ def generate_crates(
-         cfg=[],
-     )
+@@ -29,6 +29,7 @@ class Crate(TypedDict):
+     root_module: str
+     is_workspace_member: bool
+     deps: List[Dependency]
++    cfg_groups: List[str]
+     cfg: List[str]
+     edition: Literal["2021"]
+     env: Dict[str, str]
+@@ -51,15 +52,8 @@ def generate_crates(
+     sysroot_src: pathlib.Path,
+     external_src: pathlib.Path,
+     crates_cfgs: DefaultDict[str, List[str]],
++    cfg_groups: List[str],
+ ) -> List[Crate]:
+-    # Generate the configuration list.
+-    cfg = []
+-    with open(objtree / "include" / "generated" / "rustc_cfg") as fd:
+-        for line in fd:
+-            line = line.replace("--cfg=", "")
+-            line = line.replace("\n", "")
+-            cfg.append(line)
+-
+     # Now fill the crates list.
+     crates: List[Crate] = []
  
-+    scripts = srctree / "scripts"
-+    with open(scripts / "Makefile") as f:
-+        makefile = f.read()
-+    for path in scripts.glob("*.rs"):
-+        name = path.name.rstrip(".rs")
-+        if f"{name}-rust" not in makefile:
-+            continue
-+        _script = append_crate(
-+            name,
-+            path,
-+            deps=[host_std],
-+            cfg=[],
-+        )
+@@ -76,6 +70,7 @@ def generate_crates(
+             "root_module": str(root_module),
+             "is_workspace_member": is_workspace_member,
+             "deps": deps,
++            "cfg_groups": cfg_groups if is_workspace_member else [],
+             "cfg": cfg,
+             "edition": "2021",
+             "env": {
+@@ -293,7 +288,7 @@ def generate_crates(
+                 name,
+                 path,
+                 deps=[core, kernel],
+-                cfg=cfg,
++                cfg=[],
+             )
+ 
+     return crates
+@@ -328,6 +323,10 @@ def main() -> None:
+     # Making sure that the `sysroot` and `sysroot_src` belong to the same toolchain.
+     assert args.sysroot in args.sysroot_src.parents
+ 
++    # Generate the configuration list.
++    with open(args.objtree / "include" / "generated" / "rustc_cfg") as fd:
++        cfg_groups = {"rustc_cfg": [line.lstrip("--cfg=").rstrip("\n") for line in fd]}
 +
-     def is_root_crate(build_file: pathlib.Path, target: str) -> bool:
-         try:
-             with open(build_file) as f:
-@@ -267,7 +281,7 @@ def generate_crates(
-     for folder in extra_dirs:
-         for path in folder.rglob("*.rs"):
-             logging.info("Checking %s", path)
--            name = path.name.replace(".rs", "")
-+            name = path.name.rstrip(".rs")
+     rust_project = {
+         "crates": generate_crates(
+             args.srctree,
+@@ -341,8 +340,10 @@ def main() -> None:
+                     for crate, vals in map(lambda cfg: cfg.split("=", 1), args.cfgs)
+                 },
+             ),
++            list(cfg_groups.keys()),
+         ),
+         "sysroot": str(args.sysroot),
++        "cfg_groups": cfg_groups,
+     }
  
-             # Skip those that are not crate roots.
-             if not is_root_crate(path.parent / "Makefile", name) and \
+     json.dump(rust_project, sys.stdout, sort_keys=True, indent=4)
 
 -- 
 2.49.0
