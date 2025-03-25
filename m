@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-574965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E336A6EC11
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB36EA6EC17
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 10:03:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9856116BC6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E28C16BCA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DC21E9B06;
-	Tue, 25 Mar 2025 09:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681C51F940A;
+	Tue, 25 Mar 2025 09:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hJKOv3x9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSYgpHtC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9AA18A6A8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0F12F3B;
+	Tue, 25 Mar 2025 09:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742893349; cv=none; b=ju1H17ql0alpTsb0VO+IQJxjElJyUDCsF65QbZK9apg9vpmrDEDTWUnUcj9S8U8WAoJZocjaDW5ew8Ouri2Xbpj0UuquobCdVZ3ykYOlAvy3hVOfFUqjXl8H18h0pDlxKu/rUfgRfyy68q9+BSlJtfkuNPH1y+o632WwgoLLL1Q=
+	t=1742893395; cv=none; b=Mz8bIl3AVKKmChmyEjpR9S6oDwQPO8EvJZkD9miPc4fvlpV/Mv0FSKfLeUVrqi7JkMRSX7dF/Y3DQlK1SBER3KwO8Byn2kGWHJZmOD4mkFrIqHFo9SjwDux6MxaHJ60glihUrr6hWaOpHQrdIcAA8ZiNY/ycdOYPaAAtBX8sQ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742893349; c=relaxed/simple;
-	bh=wcSRVHryt2bmCq50gGdWBD1baQzrF0iPIIeTmkanllw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X7IR5kxpxv+WYQG/JynH1qL70LhHXLzQeRq4sbpZMQODt+raD9HlosHGT+bSk8RF6aW5DuyXMB/fuuhLVtmRea/niSZTDK8AAiHjqih/93DhJaKcjI6O4YwzNCPcCWSYD/wV7gSAwNwC5wov/OqSm3PDkhqaPUvgf6D8NTGCaEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hJKOv3x9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742893346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wj1IChreYTEW7S1AiPXdgyUmHcauFp5NeY4Eqtc9FGw=;
-	b=hJKOv3x9LSrXF23YoQlw2ngGe9MmiGZu3lzlPMCmDQtt4SEmI2bqnr7KK84hA+g2WhFlY6
-	nNT7pKOAQiDO8jmglkRG5o2w1gdLRCtPP1nhqk+mksE3LIE1cGWWfECUSSFRIhF4wiElMf
-	CpZNR1eSdCQEyi8IhG0EvOLeDpRzzAk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-654-UeTRfxTSN9ujlyFVMwkV4Q-1; Tue, 25 Mar 2025 05:02:25 -0400
-X-MC-Unique: UeTRfxTSN9ujlyFVMwkV4Q-1
-X-Mimecast-MFC-AGG-ID: UeTRfxTSN9ujlyFVMwkV4Q_1742893344
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d08915f61so32610075e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 02:02:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742893344; x=1743498144;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wj1IChreYTEW7S1AiPXdgyUmHcauFp5NeY4Eqtc9FGw=;
-        b=N/cI4QZKZwH7ZT0iNnFY/UMBZEZbSPq4UBvfQWyzPN3CXvhPO3tIq7ID0kcg8brNd9
-         vi/luM0kgm/2DxdFgqKK0VNWeyAJWjiB+IvKlIxd4mmpR7X2WWgo/fMlaJOvFtFboM1z
-         PH3g2sHgiSc36seKU5EgX0QSKlW5fxBdU20SYKZsn2fts2Z1s3Zs62ISn4T5xcVFFSLO
-         f8YclCLAjAkZkyRsqbrZ9VpJtowkTCw93X0CI4vFrs/auol78cZab95EbVd9FkYrsYmR
-         /+4tutNkQcZGb2UrFvHG+UvYuy+gwBK3os1AozDeneiQipKROv/2oW3PTZ8LMYBi7H8v
-         GdTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUonBkzQ5T/ApA7e4yxY0dMrLuBGitCpeFXd90Ckl85fP0x3lCnirbJNGM+TVEM54H66GilasrgN78iam0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRRAKo6YFjPhzt6nfBJls2bOWTW7dHWYdzKvHm7NvjYPewE2fy
-	Hk4U3EDDwQFxuw2kMq0yqYir6muvvXC5lEqQlX0e5nJWgbAVSd4+DByZzHbvpo1AE5ToE3umUMO
-	/j2fcZg7h9QVtGvClHHbH6lUOLYwsNBBN6oaZmzVQUidiY23ie8IJAcTwu/2JPg==
-X-Gm-Gg: ASbGncs1VkUzK5iV4cXKqYRvjRbJdG+bsovAbknN3YD7RnhmFgsw8r8IFn3P+LKFfhE
-	qmhoCh7ff8hPWoaQpIPvmaDOGoBgo530CdKj/tFbxIPF/3GTcZ7pEV2ZBb4zR+eCwF2XSuO4orT
-	vrjZRM/7U7kezm3CxmKu1Mn6PfCxpbq1BYEGInm3U+bvKgv8LBdIsdtX2Z5AF2dHJSnq/N1yoX/
-	LvM/7dm4wtAjMyaCL2GDwUJ2y2Jrh7+VcvxdlCG185Pg1od+GMhwx8ztWjV9NqKiUwAvobIzmk0
-	qYlmMpkIbdJOuIA9xNGQnzGRtJ7hNiVU8tjkmhTgdl6z0t/qBy8K5YE=
-X-Received: by 2002:a05:6000:410a:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-3997f8ff121mr13033029f8f.21.1742893344032;
-        Tue, 25 Mar 2025 02:02:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmIfLZm7khPWjwEcKM+sZzsNS9/OV7LqARaa/EFUtim00jKs/LTQtUTCr53eUD4BnsaUPNvA==
-X-Received: by 2002:a05:6000:410a:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-3997f8ff121mr13032888f8f.21.1742893342596;
-        Tue, 25 Mar 2025 02:02:22 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b409fsm13375318f8f.50.2025.03.25.02.02.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 02:02:22 -0700 (PDT)
-Message-ID: <2628502d-5b43-41da-978f-66a68623889d@redhat.com>
-Date: Tue, 25 Mar 2025 10:02:19 +0100
+	s=arc-20240116; t=1742893395; c=relaxed/simple;
+	bh=cBsrhRBS+DWfi0cH22u/P2LpI2D5VhhvLbPkAevAy4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DpOGKE3ZzKCtcDLuRI9jfh/9FFq7AwMlCGK8Wh9bReBbMuJOLSN3I7xKH+X/R4MX4YYX8c9gDW8HRrbm0NyilTfQxfOEc0i7ox809bZdOoPEVkbI9PAmIrklYWpoaO32l6HJFOBWof4WZNEjfhFmWqgiQrhk0oY+Y2fmix91KAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSYgpHtC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P5vdgi017053;
+	Tue, 25 Mar 2025 09:03:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+3UzLSyUtXHxMizmFuAu4gH2M3uLKcvTZzt0VqrRGlo=; b=VSYgpHtCiRnaRI+R
+	5G0qbpEo6Fzr4d/RKiXKmdzHIj4w0imQJEkNTsPtf5MHTmtNVXwpkeJ5x3tho1py
+	wfa7Q/Vuyj6Dsg3UNATwCglq+ecAIPuWHbUhkZ0fQOwHfqW7GcGRgAQy5wahuUM+
+	bQYLs19e/2tKK5iCnjAjdwkEhyCFU31MVSYoXru2IX4n74aXRr5qpNTQ22324ItT
+	IxcL2ZU71+untvgqOpvxqaU5vQoSKhzLauPyO30cOslFtAsyUqV3iWWi0qKJKP/s
+	4unpm7roV5WCH6IAQlvjV5Mla9vGDxEPM451whXzSHBrGGwwR6qfGM15pknbsgCg
+	YtA+LQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45kmcy8vfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 09:03:09 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52P93972029731
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 09:03:09 GMT
+Received: from [10.217.217.240] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Mar
+ 2025 02:03:06 -0700
+Message-ID: <6fcefb33-a488-45a2-b34d-08a85ae7a0ef@quicinc.com>
+Date: Tue, 25 Mar 2025 14:32:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,56 +64,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] drm/panic: add missing space
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org
-References: <20250324210359.1199574-1-ojeda@kernel.org>
- <20250324210359.1199574-2-ojeda@kernel.org>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250324210359.1199574-2-ojeda@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH V3 2/3] scsi: ufs-qcom: Add support for dumping MCQ
+ registers
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+References: <20250313051635.22073-1-quic_mapa@quicinc.com>
+ <20250313051635.22073-3-quic_mapa@quicinc.com>
+ <20250318064421.bvlv2xz7libxikk5@thinkpad>
+ <12753be6-c69b-448d-a258-79221f4dbc7c@quicinc.com>
+ <awc2ql2x5amiahf7l47xqhgl7ugi4zpk5wz7qycgbqb52gh4yb@24za7q2rqqob>
+Content-Language: en-US
+From: MANISH PANDEY <quic_mapa@quicinc.com>
+In-Reply-To: <awc2ql2x5amiahf7l47xqhgl7ugi4zpk5wz7qycgbqb52gh4yb@24za7q2rqqob>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=EZ3IQOmC c=1 sm=1 tr=0 ts=67e2714d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=vDryth-CmtdcD-kvv_8A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: CvBCXMXlc5vx7cguv5wpI3F2kUAoEa8c
+X-Proofpoint-GUID: CvBCXMXlc5vx7cguv5wpI3F2kUAoEa8c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_03,2025-03-25_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=807
+ spamscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ adultscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503250063
 
-On 24/03/2025 22:03, Miguel Ojeda wrote:
-> Add missing space in sentence.
+
+
+On 3/24/2025 1:09 PM, Manivannan Sadhasivam wrote:
+> On Wed, Mar 19, 2025 at 11:51:07AM +0530, MANISH PANDEY wrote:
+>>
+>>
+>> On 3/18/2025 12:14 PM, Manivannan Sadhasivam wrote:
+>>> On Thu, Mar 13, 2025 at 10:46:34AM +0530, Manish Pandey wrote:
+>>>> This patch adds functionality to dump MCQ registers.
+>>>> This will help in diagnosing issues related to MCQ
+>>>> operations by providing detailed register dumps.
+>>>>
+>>>
+>>> Same comment as previous patch. Also, make use of 75 column width.
+>>>
+>> will Update in next patch set.>> Signed-off-by: Manish Pandey
+>> <quic_mapa@quicinc.com>
+>>>> ---
+>>>>
+>>>> Changes in v3:
+>>>> - Addressed Bart's review comments by adding explanations for the
+>>>>     in_task() and usleep_range() calls.
+>>>> Changes in v2:
+>>>> - Rebased patchsets.
+>>>> - Link to v1: https://lore.kernel.org/linux-arm-msm/20241025055054.23170-1-quic_mapa@quicinc.com/
+>>>> ---
+>>>>    drivers/ufs/host/ufs-qcom.c | 60 +++++++++++++++++++++++++++++++++++++
+>>>>    drivers/ufs/host/ufs-qcom.h |  2 ++
+>>>>    2 files changed, 62 insertions(+)
+>>>>
+>>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>>>> index f5181773c0e5..fb9da04c0d35 100644
+>>>> --- a/drivers/ufs/host/ufs-qcom.c
+>>>> +++ b/drivers/ufs/host/ufs-qcom.c
+>>>> @@ -1566,6 +1566,54 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
+>>>>    	return 0;
+>>>>    }
+>>>> +static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
+>>>> +{
+>>>> +	/* sleep intermittently to prevent CPU hog during data dumps. */
+>>>> +	/* RES_MCQ_1 */
+>>>> +	ufshcd_dump_regs(hba, 0x0, 256 * 4, "MCQ HCI 1da0000-1da03f0 ");
+>>>> +	usleep_range(1000, 1100);
+>>>
+>>> If your motivation is just to not hog the CPU, use cond_resched().
+>>>
+>>> - Mani
+>>>
+>> The intention here is to introduce a specific delay between each dump.
 > 
-> This was found using the Clippy `doc_markdown` lint, which we may want
-> to enable.
-
-Thanks, it looks good to me.
-
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-
+> What is the reason for that?
 > 
-> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>> Therefore, i would like to use usleep_range() instead of cond_resched().
+>> Please let me know if i am getting it wrong..
+>>
 > 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index ecd87e8ffe05..9bd4d131f033 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -5,7 +5,7 @@
->   //! It is called from a panic handler, so it should't allocate memory and
->   //! does all the work on the stack or on the provided buffers. For
->   //! simplification, it only supports low error correction, and applies the
-> -//! first mask (checkerboard). It will draw the smallest QRcode that can
-> +//! first mask (checkerboard). It will draw the smallest QR code that can
->   //! contain the string passed as parameter. To get the most compact
->   //! QR code, the start of the URL is encoded as binary, and the
->   //! compressed kmsg is encoded as numeric.
+> Without knowing the reason, I cannot judge. Your comment said that you do not
+> want to hog the CPU during dump. But now you are saying that you wanted to have
+> a delay. Both are contradictions.
+> 
+> - Mani
+> 
+Hi Mani, Could you please clarify what you meant by delay? Did you mean 
+udelay? That's not the case here, as we are using usleep(), which is 
+similar to cond_resched(). I believe both serve the same purpose in this 
+case. Therefore, I chose usleep() to provide a fixed delay between dumps 
+since we are dumping a large amount of data. Additionally, I wanted to 
+avoid any extra scheduling latency associated with cond_resched().
 
+How ever i am open to change it to cond_resched() if needed.
+Please suggest.
+
+Regards
+Manish
 
