@@ -1,243 +1,163 @@
-Return-Path: <linux-kernel+bounces-576007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64515A709C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:01:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67C0A709D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 20:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56748842FD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F3717E8C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994961C32EA;
-	Tue, 25 Mar 2025 18:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="13wNtudt"
-Received: from mail-il1-f201.google.com (mail-il1-f201.google.com [209.85.166.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F311E1020;
+	Tue, 25 Mar 2025 18:53:47 +0000 (UTC)
+Received: from mail-ua1-f78.google.com (mail-ua1-f78.google.com [209.85.222.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E851A83ED
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E47C1B412A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 18:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742928761; cv=none; b=bXvf8E3iSrVvWEd93gXFHYRAqDRR262nlqJmU0kncADrvQL1h0GmueYqo7AInvC5BCYau7R6dsF0K9N5psdC3kxjzKjIkXf6OGCoiIl48fjp+DzUMB7m64BDAC5fT4SVlfurGFO5uAq4FGn6tufr+HxH1OEzb+fvM5LFtmuc2xM=
+	t=1742928826; cv=none; b=TTzmn3YwLbhESCU66Pm67LhspsqO7EhkPnO8HX9agB/l4MeQ5tZMRpQkC7uf1e04O2Pl/ID8UzUgh3ega1kZcEY8gskmIFQAJ1Xpp1BvlPDxuPmyHjOXdVvB+hM0DVP6H5orWEwBnOkS5Sv6cOxw0ZmWLlIofeJCIa4U3WfebXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742928761; c=relaxed/simple;
-	bh=mjUlY3jFSJjaOKRM/bqH7VbePb3z1ii+rpI0lBwhP68=;
-	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=FptR2I4xAfN/kKo5qEt/0ruJ0n5tljN1G5v3vtX88ay41UNG4LAt7e/VE3phNlemb4IyX/VUkcAy1RQHtc2iPLlnyrt65MD3GpouKEBgYD1Aex76VrHxp994S8rrTXDcVdxrhoE7wZCJobHcdeGrllgCK3CVcdwwHmjZFosZRgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=13wNtudt; arc=none smtp.client-ip=209.85.166.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-il1-f201.google.com with SMTP id e9e14a558f8ab-3d5b3819ff6so19237675ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:52:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742928759; x=1743533559; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nH4P9eJG9ixX5QbX8zMqKoULuBPy5l5wVy3PBOk0b0g=;
-        b=13wNtudt0qEtd4TWuza1iSfb4nWqnBZBclPosKMI9tpwnNj3XiWh82wK2wpnDwQR1H
-         z0Ro7vOMEhI7nBGi1kLpVPxdhH53Z5e5e7wvE8rKhRtg+z3dDWvpET5BlDChhUviM+aM
-         gDdM0nIGkHrNUM/pB8V3vFyR5oUVGLbOHXUskmMGbKJJyYNQyzK/xKx0BfCNaM32MX6V
-         ee82p37rOyGD3jAo69WPD7BAB00ZYkV5JklFuNmpVe8uutPw6hbroHAyxvkhV83u5m1t
-         qHPZR6rXQyUwKjllUmHwx/P4/C6YNQ+lQUfLfTsSHzaKsyHpBJ+iOC0H9cd/w90nX/xn
-         tBLg==
+	s=arc-20240116; t=1742928826; c=relaxed/simple;
+	bh=zGupvF8yrRozOv6tT9j+/eKRp+/zVe79XmqL3dHGU8o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=g2CftSmPlkGk9w6UvrP6LZk5XVoW7LqB1hSq58MzQotQXCrvmQKsRTl2mNE8a0Bzf+tYs5ZqTVHgs0c3ZhxrAwtJJJsaSSd87v8ZyVtss6d35k5OdFEaRFSZR/fx8afwYCDAugqH1orzsvFQchjp7L4ZDPIHNartVYWkTOvd6ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.222.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ua1-f78.google.com with SMTP id a1e0cc1a2514c-85c8a0d07f2so7962869241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 11:53:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742928759; x=1743533559;
-        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nH4P9eJG9ixX5QbX8zMqKoULuBPy5l5wVy3PBOk0b0g=;
-        b=ZxpeBgfmkUrTc8fj6b6mlUWXkDtXbD/00i1nEXPaii8Gt9iJXo4aC8Oc7WlKBO8sIk
-         X8XePFl9il+qtNEfNj8XdC/rTCfg89n7d4czdSw5fUol+oYinadaIsMi1kLpPFtljFZq
-         R13xxRril6dwphkgtpGlWmRUNHHGZDSuQGpYoVQmw88OPnyJr7args6BUSJbLKyxL9HG
-         aDjIKjz8wVaOT4bE2CdCl9oquGbqd5E5hFzbgvMewcO8oFMcNR0igWMvdPhf7JeqLG8g
-         uRHn5TR9iKI3ZX0ipzkPLnLlC1P4HpgettrMThsGsMluIHH8LORjWpxNmjcGrJnqj3C1
-         0JvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX6ngWKSlo7MwZCgfLqYLR4xG/UD+e97DarkIO+30yHFLVADG13z7YwNX8jsIJNs8HZ28GoziWEe1/6xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa0GxOVK0iYdhIwmoyN42MT5Oog38d6KrGAzOmLQLi2PEZva8p
-	5kQDXjcDSjDbFZVvbs2DhNWE0jKH84CfIlpM7y/UXy4mu2cP/cY+cCSN3S3YKANrIbodjydY9pO
-	CRrQ50sOPw2JCqnynDmp7NQ==
-X-Google-Smtp-Source: AGHT+IFihTn29mkx1GCcsdzB1BWaATm719zstIXb77dxFcanWyTVCgHo5XFcuAcWL7Ck6Mq9GEViCbd4LSLj7nsAJQ==
-X-Received: from ilbcp4.prod.google.com ([2002:a05:6e02:3984:b0:3d2:ad2f:c829])
- (user=coltonlewis job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6e02:3d86:b0:3d0:443d:a5c3 with SMTP id e9e14a558f8ab-3d5960c1226mr193021365ab.3.1742928759319;
- Tue, 25 Mar 2025 11:52:39 -0700 (PDT)
-Date: Tue, 25 Mar 2025 18:52:38 +0000
-In-Reply-To: <8450a182-5c62-4546-ab91-5d39eb252254@linaro.org> (message from
- James Clark on Mon, 24 Mar 2025 14:52:26 +0000)
+        d=1e100.net; s=20230601; t=1742928824; x=1743533624;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GG0iCKwDH9KZTZsDp4Avb3wqwoFz6sePEbX2q3Ppj48=;
+        b=UYMzmi1/Bj8gYdEeVw5a3zjktHF7PkulXxSG0EeKGBOaZ4X6RfS0v7SdoRyQfTgHnm
+         6bueXC/4s2+Gh0fnZuIEWGg3JfTVLOKP0W4ARu4tNZjd9nqxEnmgHqTKkxuvvXF/dZ6E
+         AgjpFhPjSyCKOeCJYFJR98mmEHYYd1QlJShCrPVzwpuo/R1QuSk7WnHvGTNg5BfP6ftk
+         hld6LEIdiM+hoi+LyqmsgWvO1qSDyxcnIGO2qN+XN2yw88wlKNzkJRW/yD+KX3h2H0xJ
+         c+M2jM6CsMP/uLJwCP5OAFNkiLNYQBlDMPYC+OAwr7Ab4p7PjzXnwAMrsrIxlTe2yw/C
+         xh2A==
+X-Forwarded-Encrypted: i=1; AJvYcCW87Pbsf68HR8L7eZuUzbqyvKjhFpxDnMWOgbZpSL8sr7jWa4AyIU/0PLmMZ4p1buK2T2I+edcEMy3RzCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo7DLCUf5LMObn1RmLBfl9vCyEpnSmN8FtPhErUxiNcc963Exm
+	ZMQ1XliExDmfTT82jcfciBHhrup9Qz7tHNR5CfyUBUNkRcR3ntdQQ4yu8iWV5UIKozo12q/65Tp
+	SqVrWQnzCpIf4qAJCw8bepTqA9xufNUkyFWPYP/aYqa+Q5P2Nn7qe7mE=
+X-Google-Smtp-Source: AGHT+IH9aZIr86YFiB/nZHoAPIpiFpPmKisM4Mc/3V3NF81TDmbJHgoghCJ/dvYt9MZpKzy+bEC3111aWBBUM1mj0KhgoMl73MoN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <gsnty0wtlz7t.fsf@coltonlewis-kvm.c.googlers.com>
-Subject: Re: [RFC PATCH v3 7/8] perf: arm_pmuv3: Keep out of guest counter partition
-From: Colton Lewis <coltonlewis@google.com>
-To: James Clark <james.clark@linaro.org>
-Cc: kvm@vger.kernel.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
-	will@kernel.org, maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com, 
-	pbonzini@redhat.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+MIME-Version: 1.0
+X-Received: by 2002:a92:ca46:0:b0:3d3:d823:5402 with SMTP id
+ e9e14a558f8ab-3d59613ea0bmr199543535ab.7.1742928813390; Tue, 25 Mar 2025
+ 11:53:33 -0700 (PDT)
+Date: Tue, 25 Mar 2025 11:53:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67e2fbad.050a0220.a7ebc.0052.GAE@google.com>
+Subject: [syzbot] [io-uring?] WARNING: refcount bug in io_tx_ubuf_complete
+From: syzbot <syzbot+640cb22897e59078196e@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-James Clark <james.clark@linaro.org> writes:
+Hello,
 
-> On 13/02/2025 6:03 pm, Colton Lewis wrote:
->> If the PMU is partitioned, keep the driver out of the guest counter
->> partition and only use the host counter partition. Partitioning is
->> defined by the MDCR_EL2.HPMN register field and saved in
->> cpu_pmu->hpmn. The range 0..HPMN-1 is accessible by EL1 and EL0 while
->> HPMN..PMCR.N is reserved for EL2.
+syzbot found the following issue on:
 
->> Define some macros that take HPMN as an argument and construct
->> mutually exclusive bitmaps for testing which partition a particular
->> counter is in. Note that despite their different position in the
->> bitmap, the cycle and instruction counters are always in the guest
->> partition.
+HEAD commit:    d07de43e3f05 Merge tag 'io_uring-6.14-20250321' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e4de98580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=640cb22897e59078196e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
->> Signed-off-by: Colton Lewis <coltonlewis@google.com>
->> ---
->>    arch/arm/include/asm/arm_pmuv3.h |  2 +
->>    arch/arm64/include/asm/kvm_pmu.h |  5 +++
->>    arch/arm64/kvm/pmu-part.c        | 16 +++++++
->>    drivers/perf/arm_pmuv3.c         | 73 +++++++++++++++++++++++++++-----
->>    include/linux/perf/arm_pmuv3.h   |  8 ++++
->>    5 files changed, 94 insertions(+), 10 deletions(-)
+Unfortunately, I don't have any reproducer for this issue yet.
 
->> diff --git a/arch/arm/include/asm/arm_pmuv3.h  
->> b/arch/arm/include/asm/arm_pmuv3.h
->> index 2ec0e5e83fc9..dadd4ddf51af 100644
->> --- a/arch/arm/include/asm/arm_pmuv3.h
->> +++ b/arch/arm/include/asm/arm_pmuv3.h
->> @@ -227,6 +227,8 @@ static inline bool kvm_set_pmuserenr(u64 val)
->>    }
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/89a42818241f/disk-d07de43e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/379e7ddd9b3b/vmlinux-d07de43e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1ad55828885f/bzImage-d07de43e.xz
 
->>    static inline void kvm_vcpu_pmu_resync_el0(void) {}
->> +static inline void kvm_pmu_host_counters_enable(void) {}
->> +static inline void kvm_pmu_host_counters_disable(void) {}
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+640cb22897e59078196e@syzkaller.appspotmail.com
 
->>    /* PMU Version in DFR Register */
->>    #define ARMV8_PMU_DFR_VER_NI        0
->> diff --git a/arch/arm64/include/asm/kvm_pmu.h  
->> b/arch/arm64/include/asm/kvm_pmu.h
->> index 174b7f376d95..8f25754fde47 100644
->> --- a/arch/arm64/include/asm/kvm_pmu.h
->> +++ b/arch/arm64/include/asm/kvm_pmu.h
->> @@ -25,6 +25,8 @@ void kvm_host_pmu_init(struct arm_pmu *pmu);
->>    u8 kvm_pmu_get_reserved_counters(void);
->>    u8 kvm_pmu_hpmn(u8 nr_counters);
->>    void kvm_pmu_partition(struct arm_pmu *pmu);
->> +void kvm_pmu_host_counters_enable(void);
->> +void kvm_pmu_host_counters_disable(void);
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 1 PID: 11036 at lib/refcount.c:28 refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
+Modules linked in:
+CPU: 1 UID: 0 PID: 11036 Comm: syz.5.1209 Not tainted 6.14.0-rc7-syzkaller-00186-gd07de43e3f05 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
+Code: ff 89 de e8 e8 1b f5 fc 84 db 0f 85 66 ff ff ff e8 3b 21 f5 fc c6 05 77 2b 86 0b 01 90 48 c7 c7 20 17 d3 8b e8 87 51 b5 fc 90 <0f> 0b 90 90 e9 43 ff ff ff e8 18 21 f5 fc 0f b6 1d 52 2b 86 0b 31
+RSP: 0018:ffffc9000bd979c8 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9001d01c000
+RDX: 0000000000080000 RSI: ffffffff817a2276 RDI: 0000000000000001
+RBP: ffff888049207010 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000001
+R13: 0000000000000000 R14: ffff888049207010 R15: ffff88802a564000
+FS:  00007fa9b395d6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f53a8057d58 CR3: 000000002b110000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000097 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __refcount_sub_and_test include/linux/refcount.h:275 [inline]
+ __refcount_dec_and_test include/linux/refcount.h:307 [inline]
+ refcount_dec_and_test include/linux/refcount.h:325 [inline]
+ io_tx_ubuf_complete+0x236/0x280 io_uring/notif.c:50
+ io_notif_flush io_uring/notif.h:40 [inline]
+ io_send_zc_cleanup+0x8a/0x1c0 io_uring/net.c:1222
+ io_clean_op io_uring/io_uring.c:406 [inline]
+ io_free_batch_list io_uring/io_uring.c:1429 [inline]
+ __io_submit_flush_completions+0xcb3/0x1df0 io_uring/io_uring.c:1470
+ io_submit_flush_completions io_uring/io_uring.h:159 [inline]
+ ctx_flush_and_put.constprop.0+0x9a/0x410 io_uring/io_uring.c:1031
+ io_handle_tw_list+0x3df/0x540 io_uring/io_uring.c:1071
+ tctx_task_work_run+0xac/0x390 io_uring/io_uring.c:1123
+ tctx_task_work+0x7b/0xd0 io_uring/io_uring.c:1141
+ task_work_run+0x14e/0x250 kernel/task_work.c:227
+ get_signal+0x1d3/0x26c0 kernel/signal.c:2809
+ arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa9b2b8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa9b395d038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: 0000000000000800 RBX: 00007fa9b2da5fa0 RCX: 00007fa9b2b8d169
+RDX: 0000000000000000 RSI: 00000000000047bc RDI: 0000000000000005
+RBP: 00007fa9b2c0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa9b2da5fa0 R15: 00007ffee776f038
+ </TASK>
 
->>    #else
 
->> @@ -37,6 +39,9 @@ static inline bool kvm_set_pmuserenr(u64 val)
->>    static inline void kvm_vcpu_pmu_resync_el0(void) {}
->>    static inline void kvm_host_pmu_init(struct arm_pmu *pmu) {}
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->> +static inline void kvm_pmu_host_counters_enable(void) {}
->> +static inline void kvm_pmu_host_counters_disable(void) {}
->> +
->>    #endif
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->>    #endif
->> diff --git a/arch/arm64/kvm/pmu-part.c b/arch/arm64/kvm/pmu-part.c
->> index e74fecc67e37..51da65c678f9 100644
->> --- a/arch/arm64/kvm/pmu-part.c
->> +++ b/arch/arm64/kvm/pmu-part.c
->> @@ -45,3 +45,19 @@ void kvm_pmu_partition(struct arm_pmu *pmu)
->>    		pmu->partitioned = false;
->>    	}
->>    }
->> +
->> +void kvm_pmu_host_counters_enable(void)
->> +{
->> +	u64 mdcr = read_sysreg(mdcr_el2);
->> +
->> +	mdcr |= MDCR_EL2_HPME;
->> +	write_sysreg(mdcr, mdcr_el2);
->> +}
->> +
->> +void kvm_pmu_host_counters_disable(void)
->> +{
->> +	u64 mdcr = read_sysreg(mdcr_el2);
->> +
->> +	mdcr &= ~MDCR_EL2_HPME;
->> +	write_sysreg(mdcr, mdcr_el2);
->> +}
->> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
->> index 0e360feb3432..442dcff56d5b 100644
->> --- a/drivers/perf/arm_pmuv3.c
->> +++ b/drivers/perf/arm_pmuv3.c
->> @@ -730,15 +730,19 @@ static void armv8pmu_disable_event_irq(struct  
->> perf_event *event)
->>    	armv8pmu_disable_intens(BIT(event->hw.idx));
->>    }
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->> -static u64 armv8pmu_getreset_flags(void)
->> +static u64 armv8pmu_getreset_flags(struct arm_pmu *cpu_pmu)
->>    {
->>    	u64 value;
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->>    	/* Read */
->>    	value = read_pmovsclr();
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
->> +	if (cpu_pmu->partitioned)
->> +		value &= ARMV8_PMU_HOST_CNT_PART(cpu_pmu->hpmn);
->> +	else
->> +		value &= ARMV8_PMU_OVERFLOWED_MASK;
->> +
->>    	/* Write to clear flags */
->> -	value &= ARMV8_PMU_OVERFLOWED_MASK;
->>    	write_pmovsclr(value);
-
->>    	return value;
->> @@ -765,6 +769,18 @@ static void armv8pmu_disable_user_access(void)
->>    	update_pmuserenr(0);
->>    }
-
->> +static bool armv8pmu_is_guest_part(struct arm_pmu *cpu_pmu, u8 idx)
->> +{
->> +	return cpu_pmu->partitioned &&
->> +		(BIT(idx) & ARMV8_PMU_GUEST_CNT_PART(cpu_pmu->hpmn));
->> +}
->> +
->> +static bool armv8pmu_is_host_part(struct arm_pmu *cpu_pmu, u8 idx)
->> +{
->> +	return !cpu_pmu->partitioned ||
->> +		(BIT(idx) & ARMV8_PMU_HOST_CNT_PART(cpu_pmu->hpmn));
->> +}
->> +
->>    static void armv8pmu_enable_user_access(struct arm_pmu *cpu_pmu)
->>    {
->>    	int i;
->> @@ -773,6 +789,8 @@ static void armv8pmu_enable_user_access(struct  
->> arm_pmu *cpu_pmu)
->>    	if (is_pmuv3p9(cpu_pmu->pmuver)) {
->>    		u64 mask = 0;
->>    		for_each_set_bit(i, cpuc->used_mask, ARMPMU_MAX_HWEVENTS) {
->> +			if (armv8pmu_is_guest_part(cpu_pmu, i))
->> +				continue;
-
-> Hi Colton,
-
-> Is it possible to keep the guest bits out of used_mask and cntr_mask in
-> the first place? Then all these loops don't need to have the logic for
-> is_guest_part()/is_host_part().
-
-It should be possible.
-
-> That leads me to wonder about updating the printout:
-
->    hw perfevents: enabled with armv8_pmuv3_0 PMU driver, 7 (0,8000003f)
->      counters available
-
-> It might be a bit confusing if that doesn't quite reflect reality anymore.
-
-Good point.
+If you want to undo deduplication, reply with:
+#syz undup
 
