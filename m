@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-574951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5184FA6EBE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:47:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6DBA6EBE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C0941895376
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996B2189547C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F6B194A59;
-	Tue, 25 Mar 2025 08:47:23 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E81E1531E8;
+	Tue, 25 Mar 2025 08:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="WB7KVkCP"
+Received: from mail.crpt.ru (mail1.crpt.ru [91.236.205.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911D1481B6;
-	Tue, 25 Mar 2025 08:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270C01891AB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742892443; cv=none; b=Q3ux+Y/6moKQX51gBCrCGWhdOgdLapTy9o2GWmg/dMcXT469OCC+5M4z2C0JGOE53T/J81jt0IIaZUzBlw2GQ/KgezcVptx/A3dxp7/vqtO//i3jsUpVqPHU4eu/devv15fSGZu2MT7y+yWXl9Qp8i0EWOI3Ff1FCpL6ONOoAFQ=
+	t=1742892465; cv=none; b=l+Nlc2YF896Y6UDzxRQuaaARCJysyk+Te6ymuAWGYv4xDr2L+OAtnSbz8cBQrE59Rm2lLYTWpfy9kqEpxmEFN9a/VVTpRJCTfp1G1r+TVypv6mAKCQMGV19SLM0GrUHcKg6gMJn5kUX4X3/dOXnVo/b1p0WN0bQAk/XnLPMP1yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742892443; c=relaxed/simple;
-	bh=9fXQ7OLrIwmyKrFG9EsUSvhJbHHhomXNiCW6EUBSm0Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SOKqId7vZl+2mlxEBFreO6B4PG9gs+/Up11mPTuWqgfZHZy0dH+R9rE74fjQrhmWdXmVlHlDGjYb9nexcZsz7y7weTVLwERnI5XC5ugQK39nGFrJ4MWyyxQILIkEdi94GDqvoLW5d/+Grm/Li8B/Y/I7Hi22ICvTy1GF/8Y3HzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAA3cAiMbeJnwA1JAQ--.35438S2;
-	Tue, 25 Mar 2025 16:47:08 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: david.rhodes@cirrus.com,
-	rf@opensource.cirrus.com,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ALSA: hda: cs35l56: Remove unnecessary NULL check before release_firmware()
-Date: Tue, 25 Mar 2025 16:46:39 +0800
-Message-Id: <20250325084639.801054-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742892465; c=relaxed/simple;
+	bh=tzBXqdFzlvCLrWdYzBBJz7FksR1bwGTJoicUa37FuuY=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=RtaIapW3poEN0X0hR8WFIs+4/XxgafC3bahpLkUV0YZPr7g/oAZ3LwWBM+ePdgDFldI5Hx3zBmGMPk21uQMq6LWL6vB6wfOSKPvXW5VmVuUhI253V1DQfK/surPI4ZN4+77Yk4ZVl6TzJ2BOod0c8rIbHliNFgB6q2oJ1hMLx40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=WB7KVkCP; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Received: from mail.crpt.ru ([192.168.60.4])
+	by mail.crpt.ru  with ESMTP id 52P8kpIT026018-52P8kpIV026018
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Tue, 25 Mar 2025 11:46:51 +0300
+Received: from EX2.crpt.local (192.168.60.4) by ex2.crpt.local (192.168.60.4)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 25 Mar
+ 2025 11:46:51 +0300
+Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
+ ([192.168.60.4]) with mapi id 15.01.2507.044; Tue, 25 Mar 2025 11:46:51 +0300
+From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Thierry Reding
+	<treding@nvidia.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] drm/gem: fix overflow in calculating DMA GEM size
+Thread-Topic: [PATCH] drm/gem: fix overflow in calculating DMA GEM size
+Thread-Index: AQHbnWJ0hAOaMBX100G4nwmUrv+9yA==
+Date: Tue, 25 Mar 2025 08:46:51 +0000
+Message-ID: <20250325084645.37258-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX2.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 3/24/2025 10:00:00 PM
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="koi8-r"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3cAiMbeJnwA1JAQ--.35438S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8JFy8Grg_yoWfArX_u3
-	4vkr1UGFy8t3yDXw17Zr13ZryrG398WryfGrnFyayUXF97Gw4Sqr1Uua90va48W3yxKFyf
-	AF18A3yDC3s8XjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFylc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUbo7K3UUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-FEAS-Client-IP: 192.168.60.4
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=KqREC5FZose4y5KY8VpmWDONAuHhKTdDrg4djn91UJ0=;
+ b=WB7KVkCPsqSa1lj9GBVgLiwXmfMpnzhx38S+PnbNdMCIr9vuU/uhv8qOd0cjlD4w8/qA3n8v1Oxb
+	b6fVMNUug5JTzhlvDseZOJwQE+4Fytsy/D630OaT6iJB+wFsY5pAh3RLrYU63urY59/6h3px+5eL
+	1QRZGUjbmoI4yN42wD0TYYcV8timTUsEFXfBrcIzWqhFJwc7pyavdPZOYy6V54ssraNySwATuiy3
+	bcMgJiOKlFdFUB30I1HaKn/JKOAMbRSmG+KaPHdKG+ASZ5A4YtoHsEooIbuT8MSQbQ3P1efxMDDa
+	3IWErzaoO7v+2m6kLAACCeCAtJ7+iDh/QonBBA==
 
-release_firmware() checks for NULL pointers internally.
-Remove unneeded NULL check for fmw here.
+From: Andrey Vatoropin <a.vatoropin@crpt.ru>
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+The IOCTL handler drm_gem_dma_dumb_create() calculates "size" by
+multiplying "pitch" and "height." This expression is currently being=20
+evaluated using 32-bit arithmetic, which can lead to an overflow during=20
+multiplication.
+
+Since a value of type 'u64' is used to store the eventual size, it is=20
+necessary to perform 64-bit arithmetic to avoid overflow during the
+multiplication.
+
+The same thing was done in commit 0f8f8a643000=20
+("drm/i915/gem: Detect overflow in calculating dumb buffer size")
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+      =20
+Fixes: 6d1782919dc9 ("drm/cma: Introduce drm_gem_cma_dumb_create_internal()=
+")
+Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>=20
 ---
- sound/pci/hda/cs35l56_hda.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/drm_gem_dma_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-index 4ef7878e8fd4..235d22049aa9 100644
---- a/sound/pci/hda/cs35l56_hda.c
-+++ b/sound/pci/hda/cs35l56_hda.c
-@@ -546,12 +546,10 @@ static void cs35l56_hda_release_firmware_files(const struct firmware *wmfw_firmw
- 					       const struct firmware *coeff_firmware,
- 					       char *coeff_filename)
- {
--	if (wmfw_firmware)
--		release_firmware(wmfw_firmware);
-+	release_firmware(wmfw_firmware);
- 	kfree(wmfw_filename);
- 
--	if (coeff_firmware)
--		release_firmware(coeff_firmware);
-+	release_firmware(coeff_firmware);
- 	kfree(coeff_filename);
- }
- 
--- 
-2.25.1
-
+diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem=
+_dma_helper.c
+index 16988d316a6d..ac300777c79e 100644
+--- a/drivers/gpu/drm/drm_gem_dma_helper.c
++++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+@@ -306,7 +306,7 @@ int drm_gem_dma_dumb_create(struct drm_file *file_priv,
+ 	struct drm_gem_dma_object *dma_obj;
+=20
+ 	args->pitch =3D DIV_ROUND_UP(args->width * args->bpp, 8);
+-	args->size =3D args->pitch * args->height;
++	args->size =3D mul_u32_u32(args->pitch, args->height);
+=20
+ 	dma_obj =3D drm_gem_dma_create_with_handle(file_priv, drm, args->size,
+ 						 &args->handle);
+--=20
+2.43.0
 
