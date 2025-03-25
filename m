@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-575803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6AEA70758
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:49:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3704A70701
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 17:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCDA167510
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F7216CEC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 16:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9FC25F78D;
-	Tue, 25 Mar 2025 16:49:45 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6A0257AF2;
+	Tue, 25 Mar 2025 16:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WORJzFnm"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C3425A2CF;
-	Tue, 25 Mar 2025 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76CB12E1CD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742921385; cv=none; b=GiBiDukrDkP3JP9UQHaHa79gVE5lMtYvQZ27fPZE3OhXub4NIVFrXlAc1kYwWHiZmXfvaoqOClF1gl4J02cYOy3CsNc1kd8Jem33LIC+7kgmwYg78rSPCZA0L6RZ0VGXjC+PwVrjZsbkRER7msKXaeBldqX4r4Eqk5dp5G+QyZY=
+	t=1742920308; cv=none; b=XjzdObKP/SXK5zqf9BHA0IwYFaCCBIjBbHwCqOnP/HMCgRhngA3kEfaC63SVkIYnp/KXxzJHmNdKa5In6d9Ts4Az0oQfpkd7OoMJ+lttqlhM/qslmIImBFZYdm7WCI1wI+rxZ4SEWvEjyaWwGIM3cOWkZPmMPxIFaCyrYVx+Ep8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742921385; c=relaxed/simple;
-	bh=zoU3gwFolxp7eipK1+P+Baqd3/1sqUEWtu2YpZVO8AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTo0ypb9H8c11lAKOA0aGleH0ya7YRwk5VmF7XNmInVW9ZHNd895WC8O3f48BQ4CkcDW5sZpP9i/NEw0xPlCuVGulgHyzzCfY72DamjNI4H2KqyLyTBhkt2bL3E84G2uAAqaFhJINkNnl9ExEkiZJmo4OPsVTL2cKX4/MJqk8S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZMb4W74V5z1HBQX;
-	Wed, 26 Mar 2025 00:30:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id DA684140392;
-	Wed, 26 Mar 2025 00:30:44 +0800 (CST)
-Received: from [10.221.98.126] (unknown [10.221.98.126])
-	by APP1 (Coremail) with SMTP id LxC2BwDHS0or2uJn7PTYBA--.47295S2;
-	Tue, 25 Mar 2025 17:30:44 +0100 (CET)
-Message-ID: <ed260472-c07e-4172-b389-deb8e92f416f@huaweicloud.com>
-Date: Tue, 25 Mar 2025 17:30:32 +0100
+	s=arc-20240116; t=1742920308; c=relaxed/simple;
+	bh=FqCTIgh8QO/t7KPUealsnN0UqFbnMBx72fTK2JxImZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AOAk+H+IposYafaSGrtdofcL2Kp+HGo1F5gUN6OA8/dYy7sRa78chmsF8lqE1RVcFdJifTG/ZiDzred2qfxt9rjH0D4E4lDJhbeZ9vGQa4xzMHcx5dok4B1R4b66S8YzHH4eCVHJHMBuZXps3mhrgtXOSwyjzpfo4obp6G5MD0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WORJzFnm; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22548a28d0cso126942525ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 09:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742920306; x=1743525106; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FqCTIgh8QO/t7KPUealsnN0UqFbnMBx72fTK2JxImZA=;
+        b=WORJzFnmqQKLQHUQGsbgutdP+8FYmzlWK+Sx67omcM7DaFtCKKPb8Z1aI6m12IrsL9
+         j/zBWJ7yRpQ4ro0biN1qEl3ilk/F+brryi1dL0yPR9aboc7H5Kx6dHuyt74IjV1sDgQP
+         Oqwg3mEYtOayzX7HHHRotOsqNJXGX2SmNT7K/TunrVibClWg3GrWYhW1HlxVFLUMmU52
+         6X8dyttDKdzKlG0vVuoWfQExGI3A9qfwEp7RFQrCmSALEQJArEty1EdYxwwJhClhVmLR
+         8mskdbfsE/bSF74xIFKZ8Y5LN2rHsFINl9cBcx+wc3nGx9Ge2rwmXxFdOlNs4LE0hW20
+         hgCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742920306; x=1743525106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FqCTIgh8QO/t7KPUealsnN0UqFbnMBx72fTK2JxImZA=;
+        b=iXFgxKVIRQ8wJaqG95A0T85IkrSqqoiTguMZl2d9ufpvRtRYsTnFcDmPTw0Jop7MYc
+         XVnRXvhHzU4CJDW2RlJe5kXNBcPGCh84Vtzg/Hms+1yYmrquDX1RNoTbu3MB4R3Nvq5S
+         Lza2WuKQOh8tv5MoSN7VQl7TIu6zw9DXMRHm83HFt2rrerX5H9kfKgIX4YHTG3XD5DqE
+         XpCryQHoM9M9LULDkkBsgvpjmTk9ckPbMqroUHreI9NA6zxUTQNteORntA262FY7XOBO
+         kn9yGLc/1bGjP5Ao+prUr/RaU91Y9aHW6AMv4iegyysjxSO3zCe15+wvs3QN4pUoYv5s
+         Og6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUW2LZkUbFwkvDxnwY04l6AIa/qkGaHMaX5xOYIN67I3xJLXVLeBxmuCeaslaf6XjWLFgDA70STf8XMu6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT4FlW79QgOlxuXDicP62IF6jvc8yTWZ5GCV+XIFi6c0Vh67Mu
+	U4ufyrKPdRKTTCkNvbYMPJ8lWhRob3nafMXeMDxeJum44CWrzyXd3hpT0peqKJNmI7lHjQbZUAh
+	Qoq66fIUhpY83UxRb8bBAORT0pg0vITx2fBtS
+X-Gm-Gg: ASbGnct6zJsF71M6d5SRxnQrBs9bq4uajR/OmnGYVEVUu4xPndYePuO9yz13NnELwuo
+	vizXvPz7XrRncsnR+3wBJlS8wFbSIDAyh2Sghw8Sf3yGl2nJE37g0TIJxNd3xmJ9I7Gs22mSnW7
+	AoI5YW4+bgmx8X9l6mmri/TNBkg1JYA45T4LIz59GHA4UGFikzPMn4jKR+Aj/9CAYI
+X-Google-Smtp-Source: AGHT+IE2SR9bpc54rZzeETcMjOZPU5KZizBq4WuPKmSbzaKhsMuxbQn4aRhsY1Rh/59zdT9tE5i7EBsD3SxvGx8pyiw=
+X-Received: by 2002:a17:90b:4a44:b0:2f4:4003:f3d4 with SMTP id
+ 98e67ed59e1d1-3030ff08e4amr26346030a91.30.1742920305908; Tue, 25 Mar 2025
+ 09:31:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
- James Morris <james.l.morris@oracle.com>, "Serge E. Hallyn"
- <serge@hallyn.com>, linux-ima-devel@lists.sourceforge.net,
- linux-ima-user@lists.sourceforge.net, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-team@cloudflare.com
-References: <20250325155934.4120184-1-fred@cloudflare.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <20250325155934.4120184-1-fred@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwDHS0or2uJn7PTYBA--.47295S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWkGF17KFWDCFW5Kw17Wrg_yoW8CFWfpa
-	1ktF48Ar1UKFyakry7Jan0yrZ5G3ykKr4UJw15ZF1UAan5XF1vvrZ0y3Wj9ryfXrnYy34S
-	qa1agrW3Aan0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBGfiVdoI3gABsJ
+References: <20250325-kcsan-rwonce-v1-1-36b3833a66ae@google.com> <26df580c-b2cc-4bb0-b15b-4e9b74897ff0@app.fastmail.com>
+In-Reply-To: <26df580c-b2cc-4bb0-b15b-4e9b74897ff0@app.fastmail.com>
+From: Marco Elver <elver@google.com>
+Date: Tue, 25 Mar 2025 17:31:09 +0100
+X-Gm-Features: AQ5f1JpE-9eEvuTImZnrBRyMVLS4S4ftn6GcJfbHDvLlEcvUIVnaUo1LgJcC6PM
+Message-ID: <CANpmjNMGr8-r_uPRMhwBGX42hbV+pavL7n1+zyBK167ZT7=nmA@mail.gmail.com>
+Subject: Re: [PATCH] rwonce: handle KCSAN like KASAN in read_word_at_a_time()
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jann Horn <jannh@google.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/25/2025 4:58 PM, Frederick Lawler wrote:
-> On IMA policy update, if a measure rule exists in the policy,
-> IMA_MEASURE is set for ima_policy_flags which makes the violation_check
-> variable always true. Coupled with a no-action on MAY_READ for a
-> FILE_CHECK call, we're always taking the inode_lock().
-> 
-> This becomes a performance problem for extremely heavy read-only workloads.
-> Therefore, prevent this only in the case there's no action to be taken.
-> 
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> ---
->   security/integrity/ima/ima_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 2aebb7984437..78921e69ee14 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -181,7 +181,7 @@ static int process_measurement(struct file *file, char *buf, loff_t size,
->   	action = ima_get_action(inode, mask, func, &pcr);
->   	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
->   			   (ima_policy_flag & IMA_MEASURE));
-> -	if (!action && !violation_check)
-> +	if (!action && (mask == MAY_READ || !violation_check))
->   		return 0;
+On Tue, 25 Mar 2025 at 17:06, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Mar 25, 2025, at 17:01, Jann Horn wrote:
+> > Fixes: dfd402a4c4ba ("kcsan: Add Kernel Concurrency Sanitizer infrastructure")
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Hi Frederick
+Acked-by: Marco Elver <elver@google.com>
 
-thanks, nice catch!
+> > ---
+> > This is a low-priority fix. I've never actually hit this issue with
+> > upstream KCSAN.
+> > (I only noticed it because I... err... hooked up KASAN to the KCSAN
+> > hooks. Long story.)
 
-Thinking... in fact you are saying that there are conditions for which 
-ima_rdwr_violation_check() does nothing.
+Sounds exciting... ;-)
 
-For better clarity, I would add the conditions for which we are doing a 
-violation check in violation_check directly. So that, one can just go to 
-the function and see that in fact nothing special is done other than 
-doing the same checks in advance before taking the lock (the conditions 
-you are checking on are immutable, so it is fine).
+> > I'm not sure if this should go through Arnd's tree (because it's in
+> > rwonce.h) or Marco's (because it's a KCSAN thing).
+> > Going through Marco's tree (after getting an Ack from Arnd) might
+> > work a little better for me, I may or may not have more KCSAN patches
+> > in the future.
+>
+> I agree it's easier if Marco takes it through his tree, as this
+> is something I rarely touch.
+>
+> If Marco has nothing else pending for 6.15, I can take it though.
 
-So, it is not a write, and the file is not being measured (this would be 
-a bit redundant given that we are checking anyway !action).
+I have nothing pending yet. Unless you're very certain there'll be
+more KCSAN patches, I'd suggest that Arnd can take it. I'm fine with
+KCSAN-related patches that aren't strongly dependent on each other
+outside kernel/kcsan to go through whichever tree is closest.
 
-Thanks
-
-Roberto
-
->   	must_appraise = action & IMA_APPRAISE;
-
+Thanks,
+-- Marco
 
