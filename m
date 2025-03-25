@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-574886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F190AA6EB20
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:10:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1CDA6EB23
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4731890D35
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A4C01890F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770191A8F6E;
-	Tue, 25 Mar 2025 08:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4547F204F98;
+	Tue, 25 Mar 2025 08:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F27BsnLZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbMsKg7+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D872319E98A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6702E19E98A;
+	Tue, 25 Mar 2025 08:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890165; cv=none; b=fqLEHxF6NGaLbLz62Wpnrv5bi8mDktSWsj4MC6jgY5RDxWMGCPaus6EzXLSswMq3YHRt/mG5HxbsyCDdEfSznRdY1fJP5ibT1HQpM4fZI3DrD86rwug360+CHB0rLK3Jk9VbnIprlhb2U/a9wigDwJ7PsY2jQ6bu8gVY2czGMPk=
+	t=1742890271; cv=none; b=ZJrTZLGQH4CkaZRR/oPu66dg3IGsXjICOXQXXJ/83Tn8CHE2WVtUdWrgs7wlogdWvhvpbvSNI8HO/kw3DzFVec56Tk8u8Qk//QwiG0XSX2uk/mPHqPxwln2Ca/N7px016ZjFwjTGHuxBJe8XuHY5SlPPzbAZG/uMeJZdKn473Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890165; c=relaxed/simple;
-	bh=t7ku1Yjv6c5+qa7d3xQ27A85ZDF0wVyffRWddMb6pmo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oIGiN6wW1Ik9p13iTspK76uENFtTyJY+ZRDiGKqyqSSTDFQVLEhL6rvWoFD8BGbEwbhTMNM3qL0lq5DDnSUeYfRZ/UoiKOUmRRPoxnxmFCFMjwFsO9Gxhq3l5ZkUXGVeKZWWrOI3AJ34O6gJmonz+CxUO4f/g7b1bqdzAFiASAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F27BsnLZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF85C4CEE4;
-	Tue, 25 Mar 2025 08:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890165;
-	bh=t7ku1Yjv6c5+qa7d3xQ27A85ZDF0wVyffRWddMb6pmo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=F27BsnLZ88Cj6eKSR/GsIDu9JFjnbDybcenIapq4WyFl4xsd18gDrlRAYTIgD02AH
-	 YEibtBuB2WH9nIeFD0ZTa7LPIISwlap82XdK8VOHlnDmRl/vdsd62SctAVTe0T+2b4
-	 4ULNZytLTrHBK4hbPKALe3B1STUE0yR1/Zjz1ct08DfJbaCI56RLg9SjXQX+0PsFJm
-	 7Lwu1g65OB3VcD5xWKdKGLaiUpwzXuzo7IwChNkViaLPw7++SeJbW72JL6gCl7Sf5K
-	 3AR5/b7lF+w1K0Mon/974n0UC9xANZAsjGCk+2MeefkkieCqu0uU9zMCsdagaSUTfT
-	 PKc5zMDBmFAcg==
-Message-ID: <1afd3158-19bb-472b-905e-6ae0c6e7a416@kernel.org>
-Date: Tue, 25 Mar 2025 16:09:21 +0800
+	s=arc-20240116; t=1742890271; c=relaxed/simple;
+	bh=XdvV9lTKalQ/MN6RLxbFVsr52vq2mOjL+T0ABaNCys4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNfpROpHrwoN+ZsLlC2Sj/zJgEkCVB2wwhKjo+sD1CjS/6BTuq4woihK7r1eETHKynG0o6Rn2M37gvUAaWi0yBDdmHLKk9QH0CRz26QAIsIUjtiIIXz7MNHI5g4p3cLjoFyPALa55F7NLJp9MaHbyCW4sp3SMNpj3I3BXSO6WIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbMsKg7+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223a7065ff8so34305095ad.0;
+        Tue, 25 Mar 2025 01:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742890268; x=1743495068; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8EJXAz1GLPl9e3L3417MLNSET1/+5vfTeUSz68+Ai0k=;
+        b=TbMsKg7+sOWRHmcAv5kukHMlKcIT7yB+ea374ZImNycGw1q1cHOlSFNZo+VRmjAIm7
+         yBzzd+w5wMczZ5ZZfo5GTLknDc8EdGUzLq1khas9zHoKRFkzVlDkN4jp69lsCWHC7Xah
+         fRYdVurMrDgfcztcMDamjqtHLaLd7chpwd09ppmnOGOR1IV06u/WRbZWjNIrx6zezZQk
+         47mymhnoBfW8p+rxb/okchgnN5CG0CP+6PT7FPECw855i5tfMlD7p8NKQChZNMLFCAU4
+         74Fwu7jBnM7Qv4P4B1n5ystoow7zsIvzbf56TSZXq1Rgbbbk/zpw5Cht4ELdk1Q1rst9
+         uTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742890268; x=1743495068;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8EJXAz1GLPl9e3L3417MLNSET1/+5vfTeUSz68+Ai0k=;
+        b=ph8QVfaFX/aQl+si9IZCJ1JzQliopBFfLzweIq3VfDVwz29Umy8LO8gU8oPbqIDuVj
+         O6xbbX5cVlJGvRinhiUFefEUAu9End7/ft324RV1+/E5tIZ+2MGOM/CDV9gMK2QGW8og
+         MD1zYmtSpvwcW6fUxvw09ooAHKd6lOicBqRLzwuvX9BbnPsGOuA2Q0BI/eTYeVCFJtIv
+         NlfidGVFiT+aTX15sC1SDodsJXCiHMMpl2JJaI/g7bRNV3SlrGox8nClMI1bFAwxxNrZ
+         wIK104g2zEqVTdlj1ES3x/hJvxTgX6XqksWubCW9S8g23VPsKH5CjBFPYSCzXqtvjKVO
+         UoDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWF9ebIvxFL9udow130o/9vU/gQyinijXZp9rkg9ZX5YRd/CiigQz5ag0UW25zhUa5z68Eg2HOY@vger.kernel.org, AJvYcCXBni0zXbjdPOGP+P29Rb8bgIoNbnpBST9SLPUKXD8MtDAuEy3DmUgfqD1D2FWJlwnnrlqsrBNoVUch5Kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvmV3MHDpJjMC7MVNr+oZtmcqINpUR6C+ohF2Z4KO9rr45ApDz
+	aNFx7ues53b4E8Ia2jCBft3M0eNuuuObqkOQz2xqjLY07VQEd0FD
+X-Gm-Gg: ASbGncvkpfI7xc1aJ5MNNmA9eSiiCDhnw0v8h1Wg1v0qqBJrOMP41sDuyIJAJQ5sftL
+	yGgd4IJJ5yTv4k3QFUBRBU7a3Pt/+oGRgcoJalJmK2+DTKERU9jzSSr1we5+kLeWgfpmoFtOqEl
+	bVgE9bMFbEaiFmGyvoagreukvysebpzn6nzMkajVFV9ujShLQr/K0z5QIYMJtopdcggL41Fcvw5
+	l2f7amjIxIAD0cFoWiUPfiYyGvhKg1Q8vKbagi0RzNo+9O4oJ/i9KPd49htrl8j0tLxZ611YePQ
+	o0CqmBZ2s3Mf8KSYIcqvigezS2NNYWvu3NObr18gEEt9rIQzAGHEehvSc7GDZIEZfts4a44H0Ml
+	2J3bKsqRk/omU/7LbWTNeIqQ24QMRiZBGiRsU9Dt1RX6lEXgU1qaECj8aFI0x0G09vU71GC7dDU
+	kNTYs=
+X-Google-Smtp-Source: AGHT+IHJizhf0y3pfXmrbvOIcfN6DwwlgtT71R3QsohrGK18ne60hKpj5CKjX4+kaDnpMFehBZjy3A==
+X-Received: by 2002:a17:902:cec4:b0:220:c143:90a0 with SMTP id d9443c01a7336-22780d96ac7mr262843405ad.24.1742890268445;
+        Tue, 25 Mar 2025 01:11:08 -0700 (PDT)
+Received: from bu9-daniel.dhcpserver.bu9bmc.local (2001-b400-e308-c6d8-50cc-86f4-63a9-3bcd.emome-ip6.hinet.net. [2001:b400:e308:c6d8:50cc:86f4:63a9:3bcd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301bf59e2desm13677993a91.23.2025.03.25.01.11.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 01:11:08 -0700 (PDT)
+From: Daniel Hsu <d486250@gmail.com>
+X-Google-Original-From: Daniel Hsu <Daniel-Hsu@quantatw.com>
+To: jk@codeconstruct.com.au
+Cc: matt@codeconstruct.com.au,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Hsu <Daniel-Hsu@quantatw.com>
+Subject: [PATCH] mctp: Fix incorrect tx flow invalidation condition in mctp-i2c
+Date: Tue, 25 Mar 2025 16:10:08 +0800
+Message-Id: <20250325081008.3372960-1-Daniel-Hsu@quantatw.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add a fast path in
- finish_preallocate_blocks()
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <20250324113249.3084413-1-chao@kernel.org>
- <CAHJ8P3L0vJKdLQMSGGQJuDD3_++8BhV1b4cvL4PCFu0WY+EWwg@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3L0vJKdLQMSGGQJuDD3_++8BhV1b4cvL4PCFu0WY+EWwg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 3/25/25 14:31, Zhiguo Niu wrote:
-> Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-> 于2025年3月24日周一 19:36写道：
->>
->> This patch uses i_sem to protect access/update on f2fs_inode_info.flag
->> in finish_preallocate_blocks(), it avoids grabbing inode_lock() in
->> each open().
->>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>  fs/f2fs/file.c | 40 +++++++++++++++++++++++-----------------
->>  1 file changed, 23 insertions(+), 17 deletions(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index abbcbb5865a3..bb6ba3269de0 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -554,19 +554,24 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
->>
->>  static int finish_preallocate_blocks(struct inode *inode)
->>  {
->> -       int ret;
->> +       int ret = 0;
->> +       bool opened;
->>
->> -       inode_lock(inode);
->> -       if (is_inode_flag_set(inode, FI_OPENED_FILE)) {
->> -               inode_unlock(inode);
->> +       f2fs_down_read(&F2FS_I(inode)->i_sem);
->> +       opened = is_inode_flag_set(inode, FI_OPENED_FILE);
->> +       f2fs_up_read(&F2FS_I(inode)->i_sem);
->> +       if (opened)
->>                 return 0;
->> -       }
->>
->> -       if (!file_should_truncate(inode)) {
->> -               set_inode_flag(inode, FI_OPENED_FILE);
->> -               inode_unlock(inode);
->> -               return 0;
->> -       }
->> +       inode_lock(inode);
->> +       f2fs_down_read(&F2FS_I(inode)->i_sem);
->> +       opened = is_inode_flag_set(inode, FI_OPENED_FILE);
->> +       f2fs_up_read(&F2FS_I(inode)->i_sem);
-> Hi Chao,
-> F2FS_I(inode)->i_sem is not needed for this judgment FI_OPENED_FILE area?
-> because inode_lock has been hold and this is a write lock, if process
-> A get inode_lock,
-> other proccesses will be blocked inode_lock until inode_unlock with
-> FI_OPENED_FILE  been set?
-> how do you think?
+Previously, the condition for invalidating the tx flow in
+mctp_i2c_invalidate_tx_flow() checked if `rc` was nonzero.
+However, this could incorrectly trigger the invalidation
+even when `rc > 0` was returned as a success status.
 
-Zhiguo,
+This patch updates the condition to explicitly check for `rc < 0`,
+ensuring that only error cases trigger the invalidation.
 
-Agreed, let me update it. Thank you.
+Signed-off-by: Daniel Hsu <Daniel-Hsu@quantatw.com>
+---
+ drivers/net/mctp/mctp-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-> thanks！
->> +       if (opened)
->> +               goto out_unlock;
->> +
->> +       if (!file_should_truncate(inode))
->> +               goto out_update;
->>
->>         f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->>         filemap_invalidate_lock(inode->i_mapping);
->> @@ -576,16 +581,17 @@ static int finish_preallocate_blocks(struct inode *inode)
->>
->>         filemap_invalidate_unlock(inode->i_mapping);
->>         f2fs_up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->> -
->> -       if (!ret)
->> -               set_inode_flag(inode, FI_OPENED_FILE);
->> -
->> -       inode_unlock(inode);
->>         if (ret)
->> -               return ret;
->> +               goto out_unlock;
->>
->>         file_dont_truncate(inode);
->> -       return 0;
->> +out_update:
->> +       f2fs_down_write(&F2FS_I(inode)->i_sem);
->> +       set_inode_flag(inode, FI_OPENED_FILE);
->> +       f2fs_up_write(&F2FS_I(inode)->i_sem);
->> +out_unlock:
->> +       inode_unlock(inode);
->> +       return ret;
->>  }
->>
->>  static int f2fs_file_open(struct inode *inode, struct file *filp)
->> --
->> 2.48.1
->>
->>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
+index d74d47dd6e04..f782d93f826e 100644
+--- a/drivers/net/mctp/mctp-i2c.c
++++ b/drivers/net/mctp/mctp-i2c.c
+@@ -537,7 +537,7 @@ static void mctp_i2c_xmit(struct mctp_i2c_dev *midev, struct sk_buff *skb)
+ 		rc = __i2c_transfer(midev->adapter, &msg, 1);
+ 
+ 		/* on tx errors, the flow can no longer be considered valid */
+-		if (rc)
++		if (rc < 0)
+ 			mctp_i2c_invalidate_tx_flow(midev, skb);
+ 
+ 		break;
+-- 
+2.25.1
 
 
