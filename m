@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-576199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E105EA70C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:43:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D87A70BF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:15:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76AC81898C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019E03B8DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 21:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31CD266B55;
-	Tue, 25 Mar 2025 21:41:53 +0000 (UTC)
-Received: from mailhost.m5p.com (mailhost.m5p.com [74.104.188.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7E72690E6;
+	Tue, 25 Mar 2025 21:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sb25Rr9J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1856A193086
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 21:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.104.188.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFA4268FFB;
+	Tue, 25 Mar 2025 21:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742938913; cv=none; b=Xl0hLjDzC52d/q9lgEW/X4hLzSRUKFgYhAFl7OZYk7HgHxouRvYoU+5QfIi6nV9Z0ZMoK9z8zYoHyIkb11RuN07zFfds3eUsSCzZEHKLGaHUmMnu07pYUsPkB+WMWneu+hp4tH2d0k+Gxi0qs06QNsJp3RPCvrgOXVn+Vf3ySGg=
+	t=1742937319; cv=none; b=ghDHt59sbpT1ZUtFIW00iBaSm4ju3alzYPjHFii0V6+A+aBWFpelwu+wdgHD/ZIDCHFadb/NhiYWtQxTrXypawX2z9DASdXHDyqdkl97MbDvhpmXiwxSsaUKeoT/DI2R67SBrAqvNu93Wb44S5UnjS21TxFuc3fv6IML+1qh6z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742938913; c=relaxed/simple;
-	bh=vvDcGk8qlEeR5T+IQBxZTUZVQfv45FaSVtB8iM3l9gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKpjVV7m6j+OOKJ1u6HdGd4iUiOmJPKQrAuB6KFhe+e5O8UGo+Ckhg3cQj7F7VkMYKFO6xiEDkZvwyrTD6HCOByOYLm/rI56wyyKXv+sAVe4ku/51lD5kK1JbmvT2TN+eg9YikJ8UwFMIZs3Geq3F+tVLziCmtTPrcZM82NMDBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m5p.com; spf=pass smtp.mailfrom=m5p.com; arc=none smtp.client-ip=74.104.188.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m5p.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m5p.com
-Received: from m5p.com (mailhost.m5p.com [IPv6:2001:470:1f07:15ff:0:0:0:f7])
-	by mailhost.m5p.com (8.18.1/8.17.1) with ESMTPS id 52PLBpj4040624
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 25 Mar 2025 17:11:57 -0400 (EDT)
-	(envelope-from ehem@m5p.com)
-Received: (from ehem@localhost)
-	by m5p.com (8.18.1/8.15.2/Submit) id 52PLBpmb040623;
-	Tue, 25 Mar 2025 14:11:51 -0700 (PDT)
-	(envelope-from ehem)
-Date: Tue, 25 Mar 2025 14:11:51 -0700
-From: Elliott Mitchell <ehem+xen@m5p.com>
-To: Penny Zheng <Penny.Zheng@amd.com>
-Cc: jbeulich@suse.com, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-        Ray Huang <Ray.Huang@amd.com>, Jason Andryuk <jason.andryuk@amd.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        Roger Pau Monne <roger.pau@citrix.com>
-Subject: Re: [PATCH v3 1/5] xen/acpi: upload power and performance related
- data from a PVH dom0
-Message-ID: <Z-McF__J_QVvwnxe@mattapan.m5p.com>
-References: <20250306110824.1506699-1-Penny.Zheng@amd.com>
- <20250306110824.1506699-2-Penny.Zheng@amd.com>
+	s=arc-20240116; t=1742937319; c=relaxed/simple;
+	bh=mxt6JNXfJPXNlWUTHnpRW/oHvE3ekeq0oRQ0lYqYPBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NU4Nqy39Q6nMDylhHAUldpLXC7V0fkWwORqXfdSmeavQJTMa+sg22qCNqMVYoG371wZzQN7PXDXFGJ2wpXKR0WteIXE1YqFB0+f3e5v19gAePS3TurqBBSIfRyNf9GdTj1DjdxnQzEVFHw2y2TTkzHWg1XcXjOaBSbqboqDWsnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sb25Rr9J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B42AC4CEE4;
+	Tue, 25 Mar 2025 21:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742937317;
+	bh=mxt6JNXfJPXNlWUTHnpRW/oHvE3ekeq0oRQ0lYqYPBk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sb25Rr9JGnrPnbmxJYCYAEXS15QlDG83gDuR/Dw7yx0CFM5sgk3IHmrrLKeWsdr0E
+	 9cxjJX1J512P+r4j8aAWCmNUA7OZNLdxj4tAMQIBzUV3U0zcQC+O27wcihRxngY9O3
+	 17i921yxwU0CpmRHFrYaI8qSJ0zMmUQKWybWKq3Q56NCGlTfBx2e7TuD2liEVmu8Pq
+	 2Sn/NFmXj0pY2vl7rvv9rGZRC3nu+bFPq0esdjL3/WhucdHEYzmUDygRgdCM6amQZY
+	 ld97nWIilA9C/YhbpBq9Hl+hj1JQ8QI1EP1ObvoLov26eyND4KtSX1AsFISJ4hMFc/
+	 LDVUz5UiyYvGg==
+Date: Tue, 25 Mar 2025 14:15:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+ Andrew Lunn <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
+ Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net-next v4 2/8] net: ethtool: netlink: Allow
+ per-netdevice DUMP operations
+Message-ID: <20250325141507.4a223b03@kernel.org>
+In-Reply-To: <20250325122706.5287774d@kmaincent-XPS-13-7390>
+References: <20250324104012.367366-1-maxime.chevallier@bootlin.com>
+	<20250324104012.367366-3-maxime.chevallier@bootlin.com>
+	<20250325122706.5287774d@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306110824.1506699-2-Penny.Zheng@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 07:08:20PM +0800, Penny Zheng wrote:
-> From: Roger Pau Monne <roger.pau@citrix.com>
+On Tue, 25 Mar 2025 12:27:06 +0100 Kory Maincent wrote:
+> > @@ -636,10 +659,10 @@ static int ethnl_default_start(struct netlink_callback
+> > *cb) }
+> >  
+> >  	ret = ethnl_default_parse(req_info, &info->info, ops, false);
+> > -	if (req_info->dev) {
+> > -		/* We ignore device specification in dump requests but as the
+> > -		 * same parser as for non-dump (doit) requests is used, it
+> > -		 * would take reference to the device if it finds one
+> > +	if (req_info->dev && !ops->allow_pernetdev_dump) {
+> > +		/* We ignore device specification in unfiltered dump requests
+> > +		 * but as the same parser as for non-dump (doit) requests is
+> > +		 * used, it would take reference to the device if it finds  
 > 
-> When running as a PVH dom0 the ACPI MADT is crafted by Xen in order to
-> report the correct numbers of vCPUs that dom0 has, so the host MADT is
-> not provided to dom0.  This creates issues when parsing the power and
-> performance related data from ACPI dynamic tables, as the ACPI
-> Processor UIDs found on the dynamic code are likely to not match the
-> ones crafted by Xen in the dom0 MADT.
-> 
-> Xen would rely on Linux having filled at least the power and
-> performance related data of the vCPUs on the system, and would clone
-> that information in order to setup the remaining pCPUs on the system
-> if dom0 vCPUs < pCPUs.  However when running as PVH dom0 it's likely
-> that none of dom0 CPUs will have the power and performance data
-> filled, and hence the Xen ACPI Processor driver needs to fetch that
-> information by itself.
-> 
-> In order to do so correctly, introduce a new helper to fetch the _CST
-> data without taking into account the system capabilities from the
-> CPUID output, as the capabilities reported to dom0 in CPUID might be
-> different from the ones on the host.
-> 
-> Note that the newly introduced code will only fetch the _CST, _PSS,
-> _PPC and _PCT from a single CPU, and clone that information for all the
-> other Processors.  This won't work on an heterogeneous system with
-> Processors having different power and performance related data between
-> them.
+> This means the dump will have a different behavior in case of filtered dump
+> (allow_pernetdev_dump) or standard dump.
+> The standard dump will drop the interface device so it will dump all interfaces
+> even if one is specified.
+> The filtered dump will dump only the specified interface. 
+> Maybe it would be nice to have the same behavior for the dump for all the
+> ethtool command.
+> Even if this change modify the behavior of the dump for all the ethtool commands
+> it won't be an issue as the filtered dump did not exist before, so I suppose it
+> won't break anything. IMHO it is safer to do it now than later, if existing
+> ethtool command adds support for filtered dump.
+> We should find another way to know the parser is called from dump or doit.
 
-I'm unsure whether the above description is inaccurate versus what I've
-seen being a distinct issue.
+Let's try. We can probably make required_dev attr of
+ethnl_parse_header_dev_get() a three state one: require, allow, reject?
 
-This also effects PV domain 0 and isn't limited to AMD processors.  In
-particular if domain 0 is PV, C-states will only be uploaded for
-processors which domain 0 has a corresponding vCPU.
-
-xen-acpi-processor uploads C/P-states in two passes.  The first pass
-being for processors which domain 0 has a vCPU.  The second pass being
-for all physical processors.  In a PV domain 0, xen-acpi-processor is
-unable to upload C-states during the second pass.
-
-Snippet from pass 1:
-
-xen_acpi_processor: ACPI CPU0 - C-states uploaded.
-xen_acpi_processor:      C1: ACPI HLT 1 uS
-xen_acpi_processor:      C2: ACPI IOPORT 0x414 18 uS
-xen_acpi_processor:      C3: ACPI IOPORT 0x415 350 uS
-xen_acpi_processor: ACPI CPU0 - P-states uploaded.
-xen_acpi_processor:      *P0: 4500 MHz, 5625 mW, 0 uS
-xen_acpi_processor:       P1: 3000 MHz, 2550 mW, 0 uS
-xen_acpi_processor: ACPI CPU2 - C-states uploaded.
-xen_acpi_processor:      C1: ACPI HLT 1 uS
-xen_acpi_processor:      C2: ACPI IOPORT 0x414 18 uS
-xen_acpi_processor:      C3: ACPI IOPORT 0x415 350 uS
-xen_acpi_processor: ACPI CPU2 - P-states uploaded.
-xen_acpi_processor:      *P0: 4500 MHz, 5625 mW, 0 uS
-xen_acpi_processor:       P1: 3000 MHz, 2550 mW, 0 uS
-
-Intermediate:
-xen_acpi_processor: ACPI CPU0 w/ PBLK:0x0
-xen_acpi_processor: ACPI CPU0 w/ PST:coord_type = 254 domain = 0
-xen_acpi_processor: ACPI CPU1 w/ PBLK:0x0
-xen_acpi_processor: ACPI CPU1 w/ PST:coord_type = 254 domain = 0
-xen_acpi_processor: ACPI CPU2 w/ PBLK:0x0
-xen_acpi_processor: ACPI CPU2 w/ PST:coord_type = 254 domain = 1
-xen_acpi_processor: ACPI CPU3 w/ PBLK:0x0
-xen_acpi_processor: ACPI CPU3 w/ PST:coord_type = 254 domain = 1
-
-Snippet from pass 2:
-xen_acpi_processor: ACPI CPU1 - P-states uploaded.
-xen_acpi_processor:      *P0: 4500 MHz, 5625 mW, 0 uS
-xen_acpi_processor:       P1: 3000 MHz, 2550 mW, 0 uS
-xen_acpi_processor: ACPI CPU3 - P-states uploaded.
-xen_acpi_processor:      *P0: 4500 MHz, 5625 mW, 0 uS
-xen_acpi_processor:       P1: 3000 MHz, 2550 mW, 0 uS
-
-Come to think of it, I've been wondering about the mapping between Xen
-CPU numbers and ACPI CPU numbers...
-
-
+Part of the problem is that ethtool is not converted to split ops, so
+do and dump share the same parsing policy. But that's too painful to
+fix now, I think.
 -- 
-(\___(\___(\______          --=> 8-) EHM <=--          ______/)___/)___/)
- \BS (    |         ehem+sigmsg@m5p.com  PGP 87145445         |    )   /
-  \_CS\   |  _____  -O #include <stddisclaimer.h> O-   _____  |   /  _/
-8A19\___\_|_/58D2 7E3D DDF4 7BA6 <-PGP-> 41D1 B375 37D0 8714\_|_/___/5445
-
-
+pw-bot: cr
 
