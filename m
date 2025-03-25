@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-576223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85306A70C82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:03:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FB0A70C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E83188F0E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B894F1887B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 22:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390E2268FF4;
-	Tue, 25 Mar 2025 22:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B15C26981E;
+	Tue, 25 Mar 2025 22:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtwEBROz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSWFRXOs"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1081FF5FC;
-	Tue, 25 Mar 2025 22:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDA725BAC9;
+	Tue, 25 Mar 2025 22:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742940221; cv=none; b=TGaS0FzsWAvcxNRNPOsut9BIAuEw4xih6FKkmfTa49lzUqvENJ+OJECwDlydvr7TSzWEV+wrSz4Thp36nQ30U0X5qATPMognVg5+6tsUhlotsTq0sjXs2xUEYS1E83zeiL0iyygvUTN6nb9KOj1tVnfcxwluCPjSS5iDzCYL89Y=
+	t=1742940306; cv=none; b=ijm+53Bxqq7fsX69/GPY1AdO0LUdrln4rXd91pEBdTX1mIhxSw7h2NXbHP6eY4Ay4yajI/y+UDUVaYkiUgB4yNB71XTNLeHVz5wgvno7wHmJUwDd5Lqe5BXEp94FoBpZKnKZG7Fd2CV07ES8JoywIwgrzjAfA4Pr0tgGDsymCFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742940221; c=relaxed/simple;
-	bh=r4FrZ3kQRtogOz5YRrI0Y7RwoXdZXIEq6GXFizuIs5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YK2yaj4cXdL15QKe11bs0PYzpsz8Vd96F2pPAhqfqIiks0lVYhoEIjIeqE0C4qO0YYN7qLVu4c4ApJV1lSX+hti6/uK5cYfFKcyaz/8A+LzHro0l7bCV452msmLswjQ6jDZIWmfPe4dWT6F5iec8WucRnMrvkhaGI4C2vP3rI5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtwEBROz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8334C4CEE9;
-	Tue, 25 Mar 2025 22:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742940221;
-	bh=r4FrZ3kQRtogOz5YRrI0Y7RwoXdZXIEq6GXFizuIs5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LtwEBROz1sVZ4zPjLlon/FtAMGwhCVzqKiknXc6JE3JQCPwPnnJDcM94RhFu2Fw1V
-	 Ie+pikQW5ibhnh/d6rkDkJZhxSxwj7QTizo+8ZZBGR/PRaK/rQqi+eZFcVqjTW5WZw
-	 wrXiZUqBwjsW3G0FQc9Q6GfVK5esB7hNfrSQnTZJFbPq0y/Ax8Ry5a4aR8AvxCLISA
-	 y+0ex+Hw1IcoPCwEfnvy4MbzmeVcyR5E4F2j+VpORHmpNLrQDwErhFTxurLBU17Jrp
-	 nozmUFyF6A1DbFXxwqsoQY5j2l7/CESYqVruKX7/kEJNJxyWZAJhB3WO6cZeNzJk5u
-	 M6x96mkwVM02g==
-Date: Tue, 25 Mar 2025 23:03:34 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Ryo Takakura <ryotkkr98@gmail.com>,
-	NeilBrown <neilb@suse.de>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Borislav Petkov <bp@alien8.de>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v4] lockdep: Fix wait context check on softirq for
- PREEMPT_RT
-Message-ID: <Z-MoNvnFOQmST8f3@gmail.com>
-References: <20250321143322.79651-1-boqun.feng@gmail.com>
- <Z-J6jE0lHJpWA20l@gmail.com>
- <Z-L2Km8nHE7Eevis@boqun-archlinux>
+	s=arc-20240116; t=1742940306; c=relaxed/simple;
+	bh=9JjCWAUSbL7MlmQQ6iUu8UnS3Uo7bB5trQqc0l6Y5gI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PC02OHSt075t0zMJTLuFYqXByHfEE520weSUaMVKLsR7pHl9fPf7DWGHNuN2YKj3VquHsAtKG+B5p08uJjlA6cxn3VnFTTXxp62zHI3gSluHMWTDUaaCI5eJ+YIWGomSm9iDBRddFQOjliBZpD6QvoXFhbUKfi32AINLf/peM80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSWFRXOs; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47690a4ec97so63114631cf.2;
+        Tue, 25 Mar 2025 15:05:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742940303; x=1743545103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9JjCWAUSbL7MlmQQ6iUu8UnS3Uo7bB5trQqc0l6Y5gI=;
+        b=XSWFRXOsAOzh68rDgU07hsX2ekSQgn/Qv9WGqJ2h0JDecqj2Bqvn5L9JiR4K1EbgYc
+         e5DVJeMdO5XvcSlGnjjD4sJJZa17bvuHnHGRlOFEIkldX7pue0jGy4IBpnfGDrIIAAHT
+         pUqir43Lmcwe0/KQ2AESotfHg1/m8E9ibgp7AbPYOkfYQTHmkOnCvkrYuhw0PE28YxA3
+         LhG60N7aHRlFKWleiz5CLOdkR7W86+j/tD2/8OBWx1nSTQg0DvSXTI/v62qnZ5DEQmQG
+         o6bohY1XuSFvy77ONqTW6vk9/7SFFFXtdLltt8vLeO9s8lx1/7QcRalgb26tzCWWUq8f
+         m9MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742940303; x=1743545103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9JjCWAUSbL7MlmQQ6iUu8UnS3Uo7bB5trQqc0l6Y5gI=;
+        b=iJ3dkMJt78HCpiExn0kxZG45OGKcwm0c1DSTMnAw72I5zPbAul/hLOOawRvE4tDcPs
+         UPLR3abgh1xFrEyg20EYzeayR4tkj9nCKsalR+/qpZTzy+quLoKp4UcfHgVbgvP7sF+F
+         kkTfygAIKBpQ7FyAr0UmoSG6hbgGxNqaIArXqtRHcof6f6WQHNAYdmVqjcX6dZIH7iim
+         KQJDMMAjFX9OTiUAY3ZarutTUpkQMzi5CLJZHvCfC+tZ5wK+XSANNxHy8iEPHggZvxHr
+         f7SwlmoEf/qOqaEAU8Z7V0h7OnhCqJpTpuHqvsiTNLUabc1OaD82m7tk8iRdjFFUp5me
+         l7LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZF80kauJ2P43VL7KAMwDPzoborPbcuKuOquuW0QYm+/PVp8OHppKrLjGm0WqtorUG9RqBdpsElpF6mCQ=@vger.kernel.org, AJvYcCVMy/slrLSnLDfOuJbYDpE8j49ZGUozugQkL6ULo7SvbN9sPU1nNeatNyrwg+u7jxnR4N1fi+zsdNgOaZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcMwPu2b+1E+2az4VyMBpVggm01vQi3S6r91tbd5XwVE9D02kn
+	DLs1UZo3E7ZlVJh0pGJ4V85rAUsoqPSa+lrCZLCQl+J2s4ilZZ1pFSjdMpOAtTNjtxhtlkNvwsU
+	GVM9pezqATGh7PrxJZ+/gE6QW32M=
+X-Gm-Gg: ASbGncvnly9Jq15KJWhoMflqU/mP/A69hJS6ztWBSm+r/Cq4WEkk/z+IsBDCZn2V5xs
+	TFUcyNVCn0w/dr5zlZSZ2NpJgkGmdigz+PtvlHFKMjOrDWhJcCywvp5z1ec+2dkDBbubAbQPsRM
+	ZB84BInd2pFepGhLxrwL2uP3w7woBm2jXPyQDnJC2jda4E3Ib4c55zkGec5g==
+X-Google-Smtp-Source: AGHT+IHpdlbiQP4YYJBEsemRtGzoMbPGKleaESyu1c1F0dSUX0w9aFseEGmo0pEXcdk28J/qW7ignG2k2BLc4X/Aeho=
+X-Received: by 2002:a05:622a:17c8:b0:475:531:9b0b with SMTP id
+ d75a77b69052e-4771dd8dfc4mr304156421cf.20.1742940303221; Tue, 25 Mar 2025
+ 15:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-L2Km8nHE7Eevis@boqun-archlinux>
+References: <67e26157.0c0a0220.36adcd.506e@mx.google.com> <CANiDSCsvEke31SAgXhs_sXEN7d6fXrwuhJFsi2mzESq1Jc8pxA@mail.gmail.com>
+In-Reply-To: <CANiDSCsvEke31SAgXhs_sXEN7d6fXrwuhJFsi2mzESq1Jc8pxA@mail.gmail.com>
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Tue, 25 Mar 2025 18:05:00 -0400
+X-Gm-Features: AQ5f1JrXOkjuU1L7Mb87J1If6bWwRxGb7oz_C0O_PA4BFYQ2OlEXvYvUsMQim3Q
+Message-ID: <CAKUZ0zJjdSDH3cw=8iKJauU5dmcq9TFhAaJX4yS5UQoiCUaguA@mail.gmail.com>
+Subject: Re: [PATCH] media: Fix invalid link creation when source entity has 0 pads
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: laurent.pinchart@ideasonboard.com, hdegoede@redhat.com, mchehab@kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+701fc9cc0cb44e2b0fe9@syzkaller.appspotmail.com, 
+	skhan@linuxfoundation.org, kernelmentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Ricardo,
 
-* Boqun Feng <boqun.feng@gmail.com> wrote:
+> I cannot reach that URL
+I was unable to access the URL from my email client when I initially
+sent the email, but a couple of hours later, I was able to. Initially,
+copying and pasting the URL into the browser provided a workaround.
 
-> On Tue, Mar 25, 2025 at 10:42:36AM +0100, Ingo Molnar wrote:
-> > 
-> > * Boqun Feng <boqun.feng@gmail.com> wrote:
-> > 
-> > > Since commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
-> > > PREEMPT_RT."), the wait context test for mutex usage within
-> > > "in softirq context" fails as it references @softirq_context.
-> > > 
-> > > [    0.184549]   | wait context tests |
-> > > [    0.184549]   --------------------------------------------------------------------------
-> > > [    0.184549]                                  | rcu  | raw  | spin |mutex |
-> > > [    0.184549]   --------------------------------------------------------------------------
-> > > [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
-> > > [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
-> > > [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
-> > > 
-> > > As a fix, add lockdep map for BH disabled section. This fixes the
-> > > issue by letting us catch cases when local_bh_disable() gets called
-> > > with preemption disabled where local_lock doesn't get acquired.
-> > > In the case of "in softirq context" selftest, local_bh_disable() was
-> > > being called with preemption disable as it's early in the boot.
-> > > 
-> > > [boqun: Move the lockdep annotations into __local_bh_*() to avoid false
-> > > positives because of unpaired local_bh_disable() reported by Borislav
-> > > Petkov [1] and Peter Zijlstra [2], and make bh_lock_map only exist for
-> > > PREEMPT_RT]
-> > > 
-> > > Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > > Link: https://lore.kernel.org/all/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local/ [1]
-> > > Link: https://lore.kernel.org/lkml/20250307113955.GK16878@noisy.programming.kicks-ass.net/ [2]
-> > > Link: https://lore.kernel.org/r/20250118054900.18639-1-ryotkkr98@gmail.com
-> > 
-> > That's a weird SOB chain. Following back the history of the submission 
-> > I believe this line went missing:
-> > 
-> >   From: Ryo Takakura <ryotkkr98@gmail.com>
-> > 
-> > I added it back in to the commit.
-> > 
-> 
-> Thanks! Looks like I lost the "From:" field when I post the draft of v4
-> at:
-> 
-> 	https://lore.kernel.org/lkml/Z8t8imzJVhWyDvhC@boqun-archlinux/
-> 
-> I must re-apply that email as a patch to my branch, hence the "From:"
-> field got changed. Sorry for the mistakes.
+> Shouldn't it be?:
+> Fixes: 4ffc2d89f38a ("[media] uvcvideo: Register subdevices for each enti=
+ty")
+You're right, I incorrectly referenced the wrong commit. However, I=E2=80=
+=99m
+not certain if it should reference a96aa5342d57 (Fixes: a96aa5342d57 -
+'[media] uvcvideo: Ignore entities for terminals with no supported
+format') as it's the latest commit affecting the line I'm changing or
+the one you mentioned.
 
-No worries - sometimes when rebasing with a conflict or applying with a 
-conflict, Git can drop authorship without much of a warning - I've ran 
-into that myself - so it happens.
+> Shouldn't source->num_pads be the same as remote->num_pads?
+The fuzzer (Syzkaller) that triggered the warning appears to have
+encountered a case where source->num_pads and remote->num_pads were
+different. When analyzing the case in GDB, remote->num_pads was 1,
+while source->num_pads was 0.
 
-Thanks,
+> Are you sure that your kernel does not contain?
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
+mmit/drivers/media/usb/uvc/uvc_entity.c?id=3D41ddb251c68ac75c101d3a50a68c46=
+29c9055e4c
+Yes, it should be included since I am running the upstream kernel.
 
-	Ingo
+Regards,
+Gabriel
 
