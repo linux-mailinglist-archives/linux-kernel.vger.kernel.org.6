@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-574907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BA5A6EB5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:20:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36108A6EB71
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 09:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298363B0DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D281892403
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5825155C87;
-	Tue, 25 Mar 2025 08:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B4C19F42F;
+	Tue, 25 Mar 2025 08:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qXdzsJkg"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxOv19OM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FAA61531E8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 08:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2271531E8;
+	Tue, 25 Mar 2025 08:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890846; cv=none; b=KlhXvTkrRroR2bMmku3dDukOlr6RdUmVNIhgDC1j38N+ld9I/oYH9DktMFXgZVsns93udhnilceBs5f7PvyrRMCE/UY1yw7Y+ZimnuTgAwj46P1gzlXbMaX+5S6VRx6Q6AfcrngmaMhxFvqTZGU1OT9NX6m1ewFImT1VOXOqh7A=
+	t=1742890927; cv=none; b=HMyEqp8G2wpz6h7tw34PTURUfuNqEmyB8yKgXdrFth470fTtJFzpWR3CWZBJNwxSxarfG8KaBO3dXVLeSJPjze94teHfscaW5c0Z3PJvQVGGYa8e0GoUcvWoQ7jF+abeuErv3SXLg8eY5AfpOiVXkzjJk8to2z1Bm8PhBawM9wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890846; c=relaxed/simple;
-	bh=Nq3LbPY8wdiuNqJ6fGg7LVfLWByG0+3+km7SMi0dLEY=;
+	s=arc-20240116; t=1742890927; c=relaxed/simple;
+	bh=9cAY2McCQXS48N57VtIiW94xQLdP98mhy8C3wDAuzFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHC0JGU9p2QvEO6ENtDx9ua0fgSACcLs79cA24Q+enGmD3I+WnhJ7mflLLF4MMY35qIcRalk8GR11YYYAskbRcHErkFLSDcTl5pgWYzEp5cpDQi7j+TMvfmxXH0SyP1yBWS9tp3X1LnEzpLBTnQGgfb68835IvGCcE+6GFkDkbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qXdzsJkg; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 25 Mar 2025 09:20:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742890832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8wlixF4pq3M+CE3IdI8vKJdp+75Qo2SsQ9Ofiyknbr0=;
-	b=qXdzsJkgbONELaeQnlw8bJxeayxBB5oeWdkEpP5XxCM+SuCi+geJyhGn7SmTcZNOZ5qUev
-	cbW42KOYLAv3PNEfRWc8lDjd/6l0xacQdpkIQKZFR0Ef5lBzr4woTJxIzBtWzkzlcVCyfZ
-	l/lVxg3OoSAxmrMmXEHWOVzS53/A5Ys=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
- duration
-Message-ID: <4un43tc6jdwyueefqyjyk7yzh34366uhakimtoat2lhutm3myn@ero3pn22qfm7>
-References: <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
- <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
- <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
- <Z9l04b5ZGy877j32@kekkonen.localdomain>
- <myyn53owptzx3dm3qmudtm4pmnon7axmjks2u5adno6ywktd3t@qriiifsitqoh>
- <Z9l9-tEwHRtXnz1a@kekkonen.localdomain>
- <s76b7q2cvcuk32n3jpsijyrhxhtstk6fewb5drkxdeopvt5grj@p4mcqltiza36>
- <Z9mNKG07sJcbnk3Z@kekkonen.localdomain>
- <CAPY8ntDzA+j97XB4VUfBtSH0RgpVKSdKxS1o5LnmoNDE1h=eyw@mail.gmail.com>
- <Z9qXJE8M_BW1VIKR@kekkonen.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KY04RAsZLNg6nwUNikU6icXQ8b9WdKkcHsrOrC/JxokZaTNMZDu5QIIXReQ/CNn9JToDcut9lwSc3N1i/zhCGpXhhga5odS3otfl0zYO4SWF3IMBEmMqt5xhINhrm2BQ5KhUViAw5UPxrlciM7KZcYX9I6xmSOvIRxi+MDDjcOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxOv19OM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 394EEC4CEE4;
+	Tue, 25 Mar 2025 08:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742890925;
+	bh=9cAY2McCQXS48N57VtIiW94xQLdP98mhy8C3wDAuzFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pxOv19OMcYl+EhDQ6JmMwr+BB8QSESmhtQo3KzTnvYw1Ru28mw0dDmiR6HN/TF4yx
+	 XFo3AmJHVehi8pF9oP6/82cUtgvo0jO4ihb2N/E/WvaJwJROzXLpinttjjqjg522Jq
+	 wBGJUr5MlVBR6JbbvN/E61TBhnILM5fDVUtPPW9drfyjytnu6ya79SOVbtoSkX9wOw
+	 JZv2+9GsQPYvdbcbKuhGyxPChJCsacoRgz4iOO4Lf7FujbaLdeqvdohNCTA/VQ7bLk
+	 6LIxLKWqEWlRhSraoODwPNLUsJ7+b3L5CO2jqKJWB4l89kQXxH8FNGT0ASCOWf3his
+	 FwreK2GWIHRBw==
+Date: Tue, 25 Mar 2025 09:22:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Luo Jie <quic_luoj@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kkumarcs@quicinc.com, 
+	quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, 
+	quic_leiwei@quicinc.com
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5424 SoC
+Message-ID: <20250325-victorious-flamingo-of-destiny-c778a3@krzk-bin>
+References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
+ <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
+ <55eada15-222e-4b97-a519-95b5e3aa7c23@oss.qualcomm.com>
+ <ba6cbf94-3e78-4c77-8c4f-908d3d90a1b1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z9qXJE8M_BW1VIKR@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ba6cbf94-3e78-4c77-8c4f-908d3d90a1b1@oss.qualcomm.com>
 
-Hi Dave, Hi Sakari
-
-On Wed, Mar 19, 2025 at 10:06:28AM +0000, Sakari Ailus wrote:
-> Hi Dave,
-> 
-> On Tue, Mar 18, 2025 at 04:39:05PM +0000, Dave Stevenson wrote:
-> > Hi Sakari
+On Tue, Mar 25, 2025 at 12:59:49AM +0100, Konrad Dybcio wrote:
+> On 3/25/25 12:57 AM, Konrad Dybcio wrote:
+> > On 3/21/25 1:49 PM, Luo Jie wrote:
+> >> The CMN PLL block in the IPQ5424 SoC takes 48 MHZ as the reference
+> >> input clock. The output clocks are the same as IPQ9574 SoC, except
+> >> for the clock rate of output clocks to PPE and NSS.
+> >>
+> >> Also, add macros for clock rates that are applicable specifically
+> >> only for IPQ5424.
+> >>
+> >> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> >> ---
+> >>  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml        |  1 +
+> >>  include/dt-bindings/clock/qcom,ipq-cmn-pll.h                   | 10 +++++++++-
+> >>  2 files changed, 10 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> >> index f869b3739be8..bbaf896ae908 100644
+> >> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> >> @@ -25,6 +25,7 @@ properties:
+> >>    compatible:
+> >>      enum:
+> >>        - qcom,ipq9574-cmn-pll
+> >> +      - qcom,ipq5424-cmn-pll
+> >>  
+> >>    reg:
+> >>      maxItems: 1
+> >> diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> >> index 936e92b3b62c..e30d57001c38 100644
+> >> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> >> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> >> @@ -1,6 +1,6 @@
+> >>  /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> >>  /*
+> >> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> >> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> >>   */
+> >>  
+> >>  #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
+> >> @@ -19,4 +19,12 @@
+> >>  #define ETH1_50MHZ_CLK			7
+> >>  #define ETH2_50MHZ_CLK			8
+> >>  #define ETH_25MHZ_CLK			9
+> >> +
+> >> +/*
+> >> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
+> >> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
+> >> + */
+> >> +#define NSS_300MHZ_CLK			4
+> >> +#define PPE_375MHZ_CLK			5
 > > 
-> > On Tue, 18 Mar 2025 at 15:11, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Richard,
-> > >
-> > > On Tue, Mar 18, 2025 at 03:46:18PM +0100, Richard Leitner wrote:
-
-...
-
-> > > > The ov9282 driver uses the sensor in global shutter mode.
-> > > >
-> > > > I totally agree with your statement. This pattern is only useful for
-> > > > global shutter operation.
-> > >
-> > > I think (nearly?) all supported sensors use a rolling shutter.
-> > 
-> > You've got at least two other global shutter sensors supported in
-> > mainline - Omnivision ov7251 and Sony imx296.
-> > Patches have been posted for OnSemi ar0144 (Laurent) and ar0234
-> > (Dongcheng), which are also both global shutter sensors.
-> > 
-> > So yes they are in the minority, but not that uncommon.
+> > Not a huge fan of this, such differences are only relevant to the driver
+> > part in my view - bindings only let a consumer reference a specific piece
+> > of hardware
 > 
-> Thanks for the list. I briefly discussed this with Laurent and I agree with
-> him this information would probably be best kept with userspace (libcamera)
-> without trying to enumerate it from the kernel (albeit CCS might be an
-> exception, but that's an entirely different discussion then). Only changing
-> the global/rolling configuration would require a control.
+> Oh I the bindings are stepping into the frequency department already,
+> hmm.. Then I suppose it's fine if the dt-bindings maintainers don't have any
+> concerns
 
-Thanks for the feeback and clarification!
 
-So am I understanding this correctly that the flash/strobe duration
-approach in this series is basically fine?
+Nooooo, it was said these are output clocks, not rates. If these are
+rates, then NAK.
 
-If so I will send a v3 later today.
+Best regards,
+Krzysztof
 
-regards;rl
-
-> 
-> -- 
-> Regards,
-> 
-> Sakari Ailus
 
