@@ -1,116 +1,180 @@
-Return-Path: <linux-kernel+bounces-574642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9692FA6E7FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:33:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054CAA6E800
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F913B4DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D530189362D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694D014B959;
-	Tue, 25 Mar 2025 01:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C4F1531E9;
+	Tue, 25 Mar 2025 01:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1txE17V"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRWg8BfU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FD7BA53;
-	Tue, 25 Mar 2025 01:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25C145979;
+	Tue, 25 Mar 2025 01:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742866398; cv=none; b=g+VO2C13/2/5dOg/hKhpRMoNNugoWXw3DxJlc6pTiSVn4PN/w5DgTHrl2lIQsLkR2kwUli97ylcYyHU/kre4zV8GyGohFykdMucI+zlURQsD/COu/1fYH8OJMZPQmyF3d5BmLGdk4fva9TE7JHI5eqeJ1ifVzVNwtNIxNCc+s28=
+	t=1742866459; cv=none; b=ni/yFDbG7NW/DgU2S4jMJ3+EYjPFp+109fAvp1s+pAHh3HgFPE9/DA68bfThpA9u4CYiLywOGo5NMkoxoxSE4/+63iRGMmuURLyXP7fVFSecpltEQmYwKchv3LjTuEKTcWD12LAbhusK2dlli0jeieKSXw8Sgiz6jNzp6P05G7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742866398; c=relaxed/simple;
-	bh=dBaOEme30YRUdSk2oIRZi23qL/4FGjEpNPquQLSQKIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JBhRt0eAAPAXvBfxwe5EImJOsTSVqFJy3CKScCwtWRmUah92EBISUil2ZZRhwUMZtVzB9N02RGgFlO0ndB/w6Ht0NP2EEZG3VNr8id2npbAvaDQoEW4o93rJUCqooI9mRAmptreZPW3j+6OiUFrajojDDS1mQm/5/A+ov1Lpkjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1txE17V; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-524038ba657so4922714e0c.0;
-        Mon, 24 Mar 2025 18:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742866395; x=1743471195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dBaOEme30YRUdSk2oIRZi23qL/4FGjEpNPquQLSQKIA=;
-        b=C1txE17Vtf59xrIhIpHLcrMxE//2bfWOjxw4p4tZ/3xqdqwMsGO6e6oJuykrvOfwVB
-         fYH0InX8ec7MMOnfi44649k/vsSXEEuQ4JxsuNQaKp4i0vMNdh71RAsY9BeEAMRbIWfc
-         MHxzfcsw5msEJVJbxauwoK739SUE6v9+7661nT1CsEbCVni1X2boTM5JDRpM0v/nKaJj
-         RYkPxO/I+kD/OYL2TDGcWmkayxU9vupGK0qczBQJIN/0buWQFQXHfj8yQWnu4asPD9G+
-         j0nBqlcx4WzwGaENSk0uGg4ZGhMz0Vo5QKBX53bJ5pUlCV26kOT6lH169RdEnyOxL/dP
-         ap4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742866395; x=1743471195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dBaOEme30YRUdSk2oIRZi23qL/4FGjEpNPquQLSQKIA=;
-        b=HTJdS01cvbA39rfSzOYwGMLeQ4XE1YIpqS6pQTo4hV876Y2oe0qP9iOJ4fMLAHVJmp
-         3Rm2PLqEalmhLUNlo771U4PACUx2mTkok0h175Q1bPMYUPiUfkr99ICJd5mp+BBMDdwj
-         cFMihd6+Yr9+2f/5l3Rz1mQxP1gMpHqq9fmV99p4wzwuuTD8qnwt0MqXROokPLLIOyvL
-         nlydO+Oahq2FsrUyK7N0E4OcHhuFSnrJFZB8ETrkJpNNB5fHTXRAWcG1kexSJfujiGbv
-         0doRO9d1slBuZL0ghA25UPmefK/GFrl33wi02ejsU1H+DXnuK0JdiIe6weSk5WiHHzKR
-         mIoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8yJIrrKHugpLlxQqqJAmVq8wnGvJIeonPZU0bp/Er08p+HLjrXJcDGYrmEYsHmLzEClSNqfDLVzui1dhoaA==@vger.kernel.org, AJvYcCXC6F8qwXmwHyIfBr4PzNw6WQetVd/Xu8q6+5d6ZeGYAibPhmch/vTNEJ6aK2ITalB+An4gtoYg9i1VOhop@vger.kernel.org, AJvYcCXMJbRzCBiSGgZFfRDp7jXIXovrSCxoBfDI7ddpUNzIxal8SDpMj8CQUGo7wqO0xzX4vUjjwiqXfZJyOelI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN4LTwmZfwk+YF4DqeCRzcQNvIlpGDTdsnfXwNXt4jSm3dfP0k
-	p5txb0S5RxNVXCvDQSyzdDSgnxsyhLQXfvGolY3e4mWhQEscNxqZ+AF6v8ape9Bjfu+OupMUYpc
-	r6XdqPGwv5xMuWFfz5vycHSI7M2A=
-X-Gm-Gg: ASbGnctFeCslk+M23pS+P8rZGlkX0dFokJpH48IooNtHUYzX7gi1sn/i+/0s35sNR4S
-	kaSaWW5fYfH1eyZFe7dwg60r8CvEdE+KOuwDFtUPIutQk72TYRdjbZ7kaZTY2ks1cdLlNSLHuzM
-	60GUFJH2MeHWJWvhmNvQURyhUh3Oc=
-X-Google-Smtp-Source: AGHT+IFcKyGrmwFeZOkZfUk6dgLpT20Raubjmbigh65PTf9Zgys4T3/kl6TOrYJigHLNClVGpmixmCpg85sh5NXU7bA=
-X-Received: by 2002:ac5:c9bc:0:b0:523:771e:8b81 with SMTP id
- 71dfb90a1353d-52595ec0b28mr10952976e0c.7.1742866394818; Mon, 24 Mar 2025
- 18:33:14 -0700 (PDT)
+	s=arc-20240116; t=1742866459; c=relaxed/simple;
+	bh=k6YTo4Zr5Qq8YQxTYAb1qPCJ6BxZ9R4fMywb4Roq9EY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHnJCdl+8isDM0PQgv8GiMAyKjpB2BCEARBuKKHFqkW9/kmggPiYuCkuwT9VuI1upXF1ov4X9bWnKJL1/rBdvVgvHsMKwv6A7L/EVAA3tUi/+ySx8uILjwN9ZO9Ei0xJOPZz7mhA1fzorEqJNa6Vv1qe0Yypp0awT/VhrQTBB8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRWg8BfU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A418FC4CEDD;
+	Tue, 25 Mar 2025 01:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742866458;
+	bh=k6YTo4Zr5Qq8YQxTYAb1qPCJ6BxZ9R4fMywb4Roq9EY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HRWg8BfUdlcAzZlz488smp25PEXzJ6S6mqALPHJaDq8OqS8BUKoRxTsoA+m0NkeYU
+	 XDj1+53wO5Hq6xgUf8hmoapDuw5HpGCyW/mnzguwG9fs0U69UE83du+hzcBTmhkiZ5
+	 AXdz9bQAr6Xi46D30fSyhR5jqzwYBO0KOGR5b/rozhKNSDtHTUKcQmDg5sOq+/jfdf
+	 44QELlfHbHTLwIVvLgJn/C5A3oHdCQhozRRYnQxcyRK6XvNWfrnpdjWcy2Cxxlv8ve
+	 E6EMa2lf16WlriWZzkrwhBcvgCgLPa+MPGf/DL6QqKcgXJvzNrbuiVsmsm63tRmH0k
+	 AQLO+qXLwS3nQ==
+Message-ID: <784b2e21-10fb-44d8-b874-b6bc2ee238c6@kernel.org>
+Date: Mon, 24 Mar 2025 20:34:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHOo4gLWAbArwg+w+AqqkxGmOFX6cm8Tvy85tb4igN6V7Z9BZQ@mail.gmail.com>
- <20250324170046.GA19087@google.com> <rs7ocmzcqkwf3ac6spqvign6rov2ecqef3bu2dzeg6y6ryvv7x@4c47km4r5iqb>
-In-Reply-To: <rs7ocmzcqkwf3ac6spqvign6rov2ecqef3bu2dzeg6y6ryvv7x@4c47km4r5iqb>
-From: Hui Guo <guohui.study@gmail.com>
-Date: Tue, 25 Mar 2025 09:33:03 +0800
-X-Gm-Features: AQ5f1JpqKL-h73MdjIF1-5BnHK1FjqGccZpWWAyLvdauIRBJVCsC8gDEKSFQXUE
-Message-ID: <CAHOo4gKENirYHJ40sU3LBQv9MPic9umz3+g8DcTGzX+LEn7Uog@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in poly1305_update_arch
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-bcachefs@vger.kernel.org, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] cpufreq/amd-pstate: Add dynamic energy performance
+ preference
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250321022858.1538173-1-superm1@kernel.org>
+ <20250321022858.1538173-2-superm1@kernel.org>
+ <4d224956-b4f9-4b0c-b5fb-70abe82e6ab5@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <4d224956-b4f9-4b0c-b5fb-70abe82e6ab5@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-https://raw.githubusercontent.com/androidAppGuard/KernelBugs/refs/heads/mai=
-n/586de92313fcab8ed84ac5f78f4d2aae2db92c59/my.config
-you can try this config to build the kernel image. I reproduce this
-issue in 586de92313fcab8ed84ac5f78f4d2aae2db92c59 (kernel commit) by
-the above my.config.
+On 3/24/2025 04:58, Dhananjay Ugwekar wrote:
+> On 3/21/2025 7:58 AM, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> Dynamic energy performance preference will change the EPP profile
+>> based on whether the machine is running on AC or DC power.
+>>
+>> A notification chain from the power supply core is used to adjust
+>> EPP values on plug in or plug out events.
+>>
+>> For non-server systems:
+>>      * the default EPP for AC mode is `performance`.
+>>      * the default EPP for DC mode is `balance_performance`.
+>>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> v3->v4:
+>>   * Handle Kconfig not being set
+>>   * Fix dynamic epp default on server
+>> v2-v3:
+>>   * Fix typo in Kconfig
+>> v1->v2:
+>>   * Change defaults to performance (AC) and balance_performance (DC)
+>>   * Default Kconfig to disabled for now
+>>   * Rebase on latest branch
+>> ---
+>>   Documentation/admin-guide/pm/amd-pstate.rst |  18 ++-
+>>   drivers/cpufreq/Kconfig.x86                 |  12 ++
+>>   drivers/cpufreq/amd-pstate.c                | 135 +++++++++++++++++++-
+>>   drivers/cpufreq/amd-pstate.h                |   5 +-
+>>   4 files changed, 161 insertions(+), 9 deletions(-)
+>>
+> [snip]
+>> @@ -1050,6 +1056,73 @@ static void amd_pstate_cpu_exit(struct cpufreq_policy *policy)
+>>   	kfree(cpudata);
+>>   }
+>>   
+>> +static int amd_pstate_get_balanced_epp(struct cpufreq_policy *policy)
+>> +{
+>> +	struct amd_cpudata *cpudata = policy->driver_data;
+>> +
+>> +	if (power_supply_is_system_supplied())
+>> +		return cpudata->epp_default_ac;
+>> +	else
+>> +		return cpudata->epp_default_dc;
+>> +}
+>> +
+>> +static int amd_pstate_power_supply_notifier(struct notifier_block *nb,
+>> +					    unsigned long event, void *data)
+>> +{
+>> +	struct amd_cpudata *cpudata = container_of(nb, struct amd_cpudata, power_nb);
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) = cpufreq_cpu_get(cpudata->cpu);
+> 
+> For consistency, we should add "if (!policy)" check I think
+> 
+>> +	u8 epp;
+>> +	int ret;
+>> +
+>> +	if (event != PSY_EVENT_PROP_CHANGED)
+>> +		return NOTIFY_OK;
+>> +
+>> +	epp = amd_pstate_get_balanced_epp(policy);
+>> +
+>> +	ret = amd_pstate_set_epp(policy, epp);
+>> +	if (ret)
+>> +		pr_warn("Failed to set CPU %d EPP %u: %d\n", cpudata->cpu, epp, ret);
+>> +
+>> +	return NOTIFY_OK;
+>> +}
+> [snip]
+>> @@ -1364,6 +1444,32 @@ static ssize_t prefcore_show(struct device *dev,
+>>   	return sysfs_emit(buf, "%s\n", str_enabled_disabled(amd_pstate_prefcore));
+>>   }
+>>   
+>> +static ssize_t dynamic_epp_show(struct device *dev,
+>> +				struct device_attribute *attr, char *buf)
+>> +{
+>> +	return sysfs_emit(buf, "%s\n", str_enabled_disabled(dynamic_epp));
+>> +}
+>> +
+>> +static ssize_t dynamic_epp_store(struct device *a, struct device_attribute *b,
+>> +				 const char *buf, size_t count)
+>> +{
+>> +	bool enabled;
+>> +	int ret;
+>> +
+>> +	ret = kstrtobool(buf, &enabled);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (dynamic_epp == enabled)
+>> +		return -EINVAL;
+>> +
+>> +	/* reinitialize with desired dynamic EPP value */
+>> +	dynamic_epp = enabled;
+>> +	ret = amd_pstate_change_driver_mode(cppc_state);
+> 
+> I think implicitly changing the driver mode when we write to dynamic_epp file might lead to some confusions.
 
-Kent Overstreet <kent.overstreet@linux.dev> =E4=BA=8E2025=E5=B9=B43=E6=9C=
-=8825=E6=97=A5=E5=91=A8=E4=BA=8C 02:06=E5=86=99=E9=81=93=EF=BC=9A
+How about only allowing to write dynamic_epp attribute when in active 
+mode already?
 
->
-> On Mon, Mar 24, 2025 at 05:00:46PM +0000, Eric Biggers wrote:
-> > This is a bcachefs issue.
-> >
-> > +linux-bcachefs@vger.kernel.org
-> >
-> > In the future, when fuzzing a filesystem please direct any bugs found d=
-irectly
-> > to the mailing list for the corresponding filesystem.
->
-> This is also one I've been unable to reproduce, so if anyone knows what
-> does it (kernel config opts?) so I can repro it in ktest - please let me
-> know
+> 
+>> +
+>> +	return ret ? ret : count;
+>> +}
+>> +
+>>   cpufreq_freq_attr_ro(amd_pstate_max_freq);
+>>   cpufreq_freq_attr_ro(amd_pstate_lowest_nonlinear_freq);
+
 
