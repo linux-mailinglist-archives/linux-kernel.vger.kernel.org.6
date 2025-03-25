@@ -1,159 +1,119 @@
-Return-Path: <linux-kernel+bounces-576301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-576303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93549A70DAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D97EA70DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Mar 2025 00:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC6E57A380F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35FE3BC765
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 23:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB9019DFB4;
-	Tue, 25 Mar 2025 23:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F6E269CED;
+	Tue, 25 Mar 2025 23:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QkeblEwJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IRZiowHK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBA2199934;
-	Tue, 25 Mar 2025 23:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9659A18A6A8;
+	Tue, 25 Mar 2025 23:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742945868; cv=none; b=dU1UVSeKX66loYw0ooYmugscjUr4DEksw1pdct/NIkb8QBLxKiC+roHxNfT+0ihvhSkV84XCGmYn1zMjtOddOHCoaBD67/l9/Z2AVeBjbk/am1d7bVwbOs7m/Bqb9MzRj/IJ0Po2rP0p+wwrMw45a6rKkkoowE2TUaOd/6+vXnk=
+	t=1742945941; cv=none; b=gvcaCEfcUaNgwHSCm7KAm6vIStrQvXTuI7QUXDit/TETITcVGgffhc4mK3Am8ZMLLiM2iieuvRwDWpfeuc+vcFsiV868lrHy5RCXmVclCvbC2hfcO2ieMAUd3MgLMxDfcQS83otcyWA7jIdxRUPLp+RNQra7XZsb9XcQm9CgUDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742945868; c=relaxed/simple;
-	bh=00/ArSjIQEZNs37g+f5KqAlg1L1Kwu+QoXBNEaLDdA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPwl9k7PyfhwX/oEIwaZ0hbKxOtzDI2UgftYJ9kDH7qqZ1+YOj8J1ENaeaiXU7/on9PY8suGAPgKRkAHduj1+80RAsKQOPGF2cIOTRfJgNtr8n42pjC7kK9L6pCwmwrazuQN1FrISGk7QpeOQS8hEJUBzuln0PPyssrhMYuIOLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QkeblEwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659C2C4CEE4;
-	Tue, 25 Mar 2025 23:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742945867;
-	bh=00/ArSjIQEZNs37g+f5KqAlg1L1Kwu+QoXBNEaLDdA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QkeblEwJcGEu19kTCnrKzhnz2M7cJmU/cnC2SBixBbgwn2LyZYpsatZ1pNX5vD+cw
-	 J7JRWmMtT0hWyoi5qRo2EgPRpSdUeSRMIn2pupgr/nRYN1L8LSbFWfwOgrWu3Ov43G
-	 frGd/KqrFVbdYF4iqOyajnHG4JMSe54RtoOZ56z4=
-Date: Tue, 25 Mar 2025 19:36:20 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 6.6 00/77] 6.6.85-rc1 review
-Message-ID: <2025032556-faceplate-stingy-fe31@gregkh>
-References: <20250325122144.259256924@linuxfoundation.org>
- <CA+G9fYvWau1nC8wmpWkxG8gWPaRMP9pbkh2eNsAZoUMeRPgzqA@mail.gmail.com>
- <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
+	s=arc-20240116; t=1742945941; c=relaxed/simple;
+	bh=KDrSbAJqMLnDB/8t2Mm0VghI0h21RNyKGidQ4EM+LZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cpPGOCmMm8Dp4AWR/vtAEw5FYa4QbyZSe6RJx0boCX+X8aer8qiPiHUHz/LamlvcHNR+I4nN49m4kL7SW6G510C5Pl2ZelXMeGFGxVLwknLjEgux1ddf0tubVGoVEHk/NMi+Vw26n1WavnhklTuDJaKYYdAtCMPqNVf1C76iEns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IRZiowHK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742945936;
+	bh=ofjW4FLKRx2ZxcY07rp0Sdj8ojIDQZhJLvWqQPeCnH0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IRZiowHKPR6Yyt+Ydc/EUJQydDcgHOeLWK2Q66QZH2gE7FDTqAsBNaiq4DQYbAR/a
+	 aqdv3NKfCdL2UNrF2ccUvCtOXxrK+8rFsIBTjtH9/131xdZGrRIh/9fNLm2FU25fo9
+	 SfVTRO/uMceAYoQUprxacom03JIgdip9PoPcw0BxSs0FAWvVSBlE4J2KIfyXrGPF6W
+	 jthxlxkUIg8VuOV9Yz+BnOFrCdSn6Opb2/NTBoy39B8KZYCi3wsBiZ3Z35NlWIjc3b
+	 q8qMHUK/G5UhGRRqZl8oxkoMfm8zO3FQck18RYBcoKCMhslJf/Jr0ehzEUx8C0UfjH
+	 lUUKxYE5yIrRA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZMmb40DZyz4x21;
+	Wed, 26 Mar 2025 10:38:55 +1100 (AEDT)
+Date: Wed, 26 Mar 2025 10:38:54 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip-fixes tree
+Message-ID: <20250326103854.309e3c60@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a823454af9915fe3acfcb66fd84dc826@manjaro.org>
+Content-Type: multipart/signed; boundary="Sig_/MqB5uhYn2YpiKFeF+/2rm+a";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Mar 25, 2025 at 05:07:16PM +0100, Dragan Simic wrote:
-> Hello Naresh,
-> 
-> On 2025-03-25 16:07, Naresh Kamboju wrote:
-> > On Tue, 25 Mar 2025 at 18:05, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > 
-> > > This is the start of the stable review cycle for the 6.6.85 release.
-> > > There are 77 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied,
-> > > please
-> > > let me know.
-> > > 
-> > > Responses should be made by Thu, 27 Mar 2025 12:21:27 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.85-rc1.gz
-> > > or in the git tree and branch at:
+--Sig_/MqB5uhYn2YpiKFeF+/2rm+a
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > > linux-6.6.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > 
-> > Regressions on arm64 rk3399 dtb builds failed with gcc-13 the
-> > stable-rc 6.6.85-rc1
-> > 
-> > First seen on the v6.6.83-245-gc1fb5424adea
-> >  Good: v6.6.84
-> >  Bad: 6.6.85-rc1
-> > 
-> > * arm64, build
-> >   - gcc-13-defconfig
-> > 
-> > Regression Analysis:
-> >  - New regression? yes
-> >  - Reproducibility? Yes
-> > 
-> > 
-> > Build regression: arm64 dtb rockchip non-existent node or label
-> > "vcca_0v9"
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > 
-> > ## Build log
-> > arch/arm64/boot/dts/rockchip/rk3399.dtsi:221.23-266.4: ERROR
-> > (phandle_references):
-> > /pcie@f8000000: Reference to non-existent node or label "vcca_0v9"
-> > 
-> >   also defined at
-> > arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
-> > 
-> > ## Source
-> > * Kernel version: 6.6.85-rc1
-> > * Git tree:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > * Git sha: c1fb5424adea53e3a4d8b2018c5e974f7772af29
-> > * Git describe: v6.6.83-245-gc1fb5424adea
-> > * Project details:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/
-> > 
-> > ## Build
-> > * Build log:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/log
-> > * Build history:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27763720/suite/build/test/gcc-13-defconfig/history/
-> > * Build details:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.83-245-gc1fb5424adea/testrun/27760755/suite/build/test/gcc-13-defconfig/
-> > * Build link:
-> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/
-> > * Kernel config:
-> > https://storage.tuxsuite.com/public/linaro/lkft/builds/2uoHmBcVLd60GQ0SVHWAaZRZfNd/config
-> > 
-> > ## Steps to reproduce
-> >  - # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
-> > --kconfig defconfig
-> 
-> This is caused by another patch from the original series failing
-> to apply due to some bulk regulator renaming.  I'll send backported
-> version of that patch soon, which should make everything fine.
-> 
+Hi all,
 
-What commit id needs to be backported?  Or did you submit the fix
-already and I just missed it?
+After merging the tip-fixes tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks,
+In file included from builtin-check.c:16:
+In function 'save_argv',
+    inlined from 'objtool_run' at builtin-check.c:296:2:
+tools/objtool/include/objtool/warn.h:47:17: error: '%s' directive argument =
+is null [-Werror=3Dformat-overflow=3D]
+   47 |                 "%s%s%s: objtool: " format "\n",        \
+      |                 ^~~~~~~~~~~~~~~~~~~
+tools/objtool/include/objtool/warn.h:92:9: note: in expansion of macro 'WAR=
+N'
+   92 |         WARN("%s: " format " failed: %s", __func__, ##__VA_ARGS__, =
+strerror(errno))
+      |         ^~~~
+builtin-check.c:241:25: note: in expansion of macro 'WARN_GLIBC'
+  241 |                         WARN_GLIBC("strdup(%s)", orig_argv[i]);
+      |                         ^~~~~~~~~~
+cc1: all warnings being treated as errors
 
-greg k-h
+Caused (or exposed?) by commit
+
+  c5995abe1547 ("objtool: Improve error handling")
+
+I have used the tip-fixes tree from next-20250325 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/MqB5uhYn2YpiKFeF+/2rm+a
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfjPo4ACgkQAVBC80lX
+0GwuEAf8C3bC7t4VGfjB9S9KVGgC35exEa6z6MoU9WAPMy2xG/CpiVRGTvrSMlDS
+TA27RvIOMNBNAVxjH2L2LxQILj1Tvgr1CKds5OtGLXdUdNOYi8iGwgg49pvnOpNh
+zDw1azFfHtr2gaqyQJqbpyiD6wtthy3I3AxvFxoab6b+AMZOQb8qQS604bLh2F97
+6Y9SypHIgcpWRPsl0NBkiUrqGTxR/cqXRZFXmcwo1vvfRIr6BfI0co2Eopkwx3ca
+zp6vdjh2HTu5e7mmaEnY7I+A4bjED6OLhFgSwAzkWTyEfniEYhTeoG4U4+QrP9Nw
+4VTKO17gJV18sOE5KOGXhkx+FIbZRA==
+=dfm0
+-----END PGP SIGNATURE-----
+
+--Sig_/MqB5uhYn2YpiKFeF+/2rm+a--
 
