@@ -1,101 +1,246 @@
-Return-Path: <linux-kernel+bounces-574833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A6AA6EA8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD9DA6EA94
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 08:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FE93B7C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0533ADC0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 07:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F8C253B60;
-	Tue, 25 Mar 2025 07:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9A253332;
+	Tue, 25 Mar 2025 07:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TD3aPTjI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QuC3VJ+D"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57781199EB7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49151A2C06
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 07:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742887909; cv=none; b=qCMXfne/+yz1BxswuquPYluooHMz6UiNkJnXdrXRZyw+niINM2YORNqrTqVdj/690UmopfKKQa31dg3KR2ail86ICEzCe6G61uhATYtGAyIWnR6/cjQ0sNpLhSogGz2Lc7isM6W9L47BL4rGXtdwcGx68rkhChalRL8yNrYcAGc=
+	t=1742888073; cv=none; b=NdYMkqN5FY+lN1kG+37r4I3DG+uTwtFkZmlt7q8ZisZPBg5583X7kyr35z/7Hm6M/9qXwh2Il0LTZA6Vtsab4A++rmsn5dYJ3RXFvymT0unnKipOlKCsPvjD0g4Dk4WSrZDx9RSZLyUnYKWI5dSoymvDhBwOGHFomEYYYGiZ4CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742887909; c=relaxed/simple;
-	bh=IQxe5ZB2omP4K06R4i46loG52z4yhoz/4TI5QBwYyNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FDelk7ikQwSruiwcZlE3Md49+3ryL3KJ0pPso5CqvAEyVcQ/RjIp7xExVkLoU6vKU6B+zKqlHZVZPNj16IsmBd+ql/uQeGTbDcnhB5oEJrdgbxDjsyHlZ2o/MctlzYawHf06ZzKB0CTeZey8vi0OF52VJT975Wixe7w9tukPf8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TD3aPTjI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A525C4CEED;
-	Tue, 25 Mar 2025 07:31:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742887908;
-	bh=IQxe5ZB2omP4K06R4i46loG52z4yhoz/4TI5QBwYyNg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TD3aPTjI/W7X8yRzl5xZy0pUHD6W0BoezoQ4ACPdwQLWfx3iMHRu9qyytbcju6Wr1
-	 e+pkOHcnXpIzrHPIl6JINFO9tzhLzDnL9ECrfNVBmn9c43lNtcCNv/H8NEp0aS/PKb
-	 7cyeZQe6iAko9Xcufq1fgOuSxT6h6hRGtBrbDg/KJpMbIEEnfTL6KCnpLU6qR2QQr0
-	 55uNojT56g/K71aU/1oKi1v/HwhHe2mJ19U6pzHP4YsAW+eeEJ3k7lVZrsNBAI774Y
-	 7DB4MifdogsqdD8rpypEmHTT5kMQpzszNgxCk9Hikuo3O5wNrfsgFeqxh8vz+9xI7n
-	 uR2k9vu95XKSg==
-Date: Tue, 25 Mar 2025 08:31:43 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Vernon Lovejoy <vlovejoy@redhat.com>
-Subject: Re: [PATCH 2/2] x86/dumpstack: Fix broken unwinding from exception
- stacks
-Message-ID: <Z-Jb3xEcQWKn_uqe@gmail.com>
-References: <20250325-2025-03-unwind-fixes-v1-0-acd774364768@google.com>
- <20250325-2025-03-unwind-fixes-v1-2-acd774364768@google.com>
- <CAG48ez0=dtR85yhy07jqvq9YC__3ocT_N_hpJMN4v-FfMs-PsA@mail.gmail.com>
+	s=arc-20240116; t=1742888073; c=relaxed/simple;
+	bh=vTXsTVR0ZKu4Wr6zEkooNTCYeYEv0t+nx3LtuQ8HjOU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Rnsg6HSe398tA0amhPIgofMgIn/JinLpiqk8MDMN2DoeE/mpJrSNuXXLunt+qyaZH478odmzFuAkfHbLo/TujLVOSYzbRbL4QwUbyKGcmDcLGkPLcfPXo0LqRlSmhounMM9tq9451eRrOdq4MnJ+OILle4DG1mH2vGkq2Fkl39o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QuC3VJ+D; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so39304815e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 00:34:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742888069; x=1743492869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dw4NCGNv66MAAuIS/WGnZWAoOWEAhDyM06XM2XtuC0M=;
+        b=QuC3VJ+DC1Q6/lo8+GRJOLwe2rXGr+0/qOica2dXGCrol57up252+MeIv2XMpL++N7
+         a03zBlAgj/2isCL7aaqQhilYw0D9SkG9twtfPt+/3J7pa3aff0LrkqhvSenewuVkkAsi
+         8kaKQylbCMVQZLkMBryBR1Z+v2M6I4iq+4Z2GjrzG0OEn1ETC/Sc0Q7MWDD06AY0/3vU
+         f6GoHVw6h0HVwyJp+SArV48J+dVh/udkjURSYXkd3db+M/kmEWYYu+LTzYTe9PN5gUbv
+         xeXXMSBC+uNPioFTHFR7GrTGVqks28OhBoeI43bHbLWfcNQsIvhm5o/4Yxm3QWvWz8iV
+         42nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742888069; x=1743492869;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dw4NCGNv66MAAuIS/WGnZWAoOWEAhDyM06XM2XtuC0M=;
+        b=cPUuIWX2rg7SPr3jLanvuyXVLgvYuS+80rW/tqDmA7lj4dC4xfTFhOkhLKXT8UwD3O
+         hxjKynev9qYxIkLvFaH4kjArx2opVITS2nbvIjUmoWx2oTMHUwA1FOxLZBC3ubirTtE/
+         lmE+Otflj0xu/Z+qQ4kLmc+nD1pgxi++N2SwhM5VdYOwBkCOkhtRQjhPxc+LDxf74WXK
+         4uOPl0aL0XCvk4xuFj+BbAKlPRXRP5bWgqxNH0Db3pwJPwo0OM7GdbonCJ8Gqq7StvQ5
+         2LfWqJmCjNCykHwIbS+CgOEZduMr14oJMQ42jup25aszv8YJR8FgTTC1nQW/0vdP7I0z
+         +N8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXf50IPI4/BlOvKRC4P2fpWN8ZIW79xwp9OrmAvvdOedvYZuinaSlpzeGJ64IEi1smkZB1xJ4lfD6EvJlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySVd9EwinVTSBbaWoG2osfa6tilRN96eCbKrMIXoqY8U66jlDZ
+	yslpsZlE/XdCiw9z4x7uJ6R5K3zelJkEzuwRaSENLzDEQ7RtpXrhCJeYTK4kENs=
+X-Gm-Gg: ASbGnct8TO8PaWxjlsiiu4E1prIdZ6d1PIflYHyNXQR+UKn6deBWCZesImZAI/DRjIz
+	HPXtsNVr8IhlQBwridfL+bGVj+nvLO3fqJc6gI9edStglka6O2+3mnkUK+Y/UMeuKGPpPgB0pj7
+	l9Q+OQ0Wgc0cjLYvN4ClSPd/73UPXdRAoqNPf+Ma3NSrk1s+lqq2x5RYuoEeuqRGMM27pbXOZ/m
+	HaYJUKHmtt8aIzURXr/eek9+poFpwkS59DB+WUJXaEnDMf5JunByBBulQJpNJVupd/xjP9vZZOb
+	lCGIRqbJffrG+CwFWSPPzaOj3TJyZWoyMAJ9l5PYpolRYikkaz12snQkjdS9TZCbJSDMdNg05mJ
+	ISM5xRTvH1USlIXgG
+X-Google-Smtp-Source: AGHT+IHWBeEyvVjrXMWACuoAPAwFdFBSgnXABio9agz6uinOol23K1b216zwJPS2SDqRfbcDRCxUBA==
+X-Received: by 2002:a05:6000:1a86:b0:391:2e6a:30fa with SMTP id ffacd0b85a97d-3997959cc2amr15956115f8f.27.1742888069073;
+        Tue, 25 Mar 2025 00:34:29 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:7a:6952:5850:1802? ([2a01:e0a:3d9:2080:7a:6952:5850:1802])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9b3ebcsm12812684f8f.47.2025.03.25.00.34.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 00:34:28 -0700 (PDT)
+Message-ID: <731f1ad1-8979-49a1-b168-56e24b94f4fb@linaro.org>
+Date: Tue, 25 Mar 2025 08:34:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/6] phy: qcom-qmp-ufs: Add PHY Configuration support
+ for sm8750
+To: Nitin Rawat <quic_nitirawa@quicinc.com>,
+ Melody Olvera <quic_molvera@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Bjorn Andersson
+ <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+ Trilok Soni <quic_tsoni@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Manish Pandey <quic_mapa@quicinc.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <20250310-sm8750_ufs_master-v2-0-0dfdd6823161@quicinc.com>
+ <20250310-sm8750_ufs_master-v2-2-0dfdd6823161@quicinc.com>
+ <1526d8a4-9606-4fb3-bb86-79bd8eb8a789@linaro.org>
+ <430ed11c-0490-45be-897b-27cad9682371@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <430ed11c-0490-45be-897b-27cad9682371@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez0=dtR85yhy07jqvq9YC__3ocT_N_hpJMN4v-FfMs-PsA@mail.gmail.com>
 
+Hi,
 
-* Jann Horn <jannh@google.com> wrote:
-
-> On Tue, Mar 25, 2025 at 3:01 AM Jann Horn <jannh@google.com> wrote:
-> > Originally, get_stack_pointer() used the regs provided by the caller; after
-> > that commit, get_stack_pointer() instead uses the regs at the top of the
-> > stack frame the unwinder is looking at. Often, there are no such regs at
-> > all, and "regs" is NULL, causing get_stack_pointer() to fall back to the
-> > task's current stack pointer, which is not what we want here, but probably
-> > happens to mostly work. Other times, the original regs will point to
-> > another regs frame - in that case, the linear guess unwind logic in
-> > show_trace_log_lvl() will start unwinding too far up the stack, causing the
-> > first frame found by the proper unwinder to never be visited, resulting in
-> > a stack trace consisting purely of guess lines.
+On 25/03/2025 04:12, Nitin Rawat wrote:
 > 
-> I guess the subject line is kind of misleading - maybe "x86/dumpstack:
-> Fix misplaced assignment in unwinder" would be better?
+> 
+> On 3/24/2025 11:40 PM, Neil Armstrong wrote:
+>> Hi,
+>>
+>> On 10/03/2025 22:12, Melody Olvera wrote:
+>>> From: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>>
+>>> Add SM8750 specific register layout and table configs. The serdes
+>>> TX RX register offset has changed for SM8750 and hence keep UFS
+>>> specific serdes offsets in a dedicated header file.
+>>>
+>>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> Co-developed-by: Manish Pandey <quic_mapa@quicinc.com>
+>>> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+>>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>>> ---
+>>>   drivers/phy/qualcomm/phy-qcom-qmp-qserdes-com-v6.h |   7 +
+>>>   .../qualcomm/phy-qcom-qmp-qserdes-txrx-ufs-v7.h    |  67 ++++++++
+>>>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c            | 180 +++++++++++ +++++++++-
+>>>   3 files changed, 246 insertions(+), 8 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>> This change breaks UFS on the SM8550-HDK:
+>>
+>> [    7.418161] qcom-qmp-ufs-phy 1d80000.phy: phy initialization timed-out
+>> [    7.427021] phy phy-1d80000.phy.0: phy poweron failed --> -110
+>> [    7.493514] ufshcd-qcom 1d84000.ufshc: Enabling the controller failed
+>> ...
+> 
+> Hi Neil,
+> 
+> Thanks for testing and reporting.
+> I did tested this patch on SM8750 MTP, SM8750 QRD, SM8650 MTP, SM8550 MTP and SM8850 QRD all of these have rate B and hence no issue.
+> 
+> Unfortunately only SM8550 HDK platform which UFS4.0 and RateA couldn't get tested. As we know SM8550 with gear 5 only support rate A.
+> 
+> I was applying rate B setting without checking for mode type. Since
+> SM8550 is only platform which support only rate A with UFS4.0 . Hence
+> this could be the issue.
+> 
+> Meanwhile can you help test at your end with below change and let me if it resolves for you. I will also try at my end to test as well.
+> 
+> =============================================================================
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index 45b3b792696e..b33e2e2b5014 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1754,7 +1754,8 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
+>                  qmp_ufs_init_all(qmp, &cfg->tbls_hs_overlay[i]);
+>          }
+> 
+> -       qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+> +       if (qmp->mode == PHY_MODE_UFS_HS_B)
+> +               qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+>   }
+> 
+> =================================================================================
 
-Well, it's a bug and the code is broken that results in subpar stack 
-dumps from exception contexts that fall back to the guess-dumper, 
-right?
-
-So I've edited the subject line to:
-
-   x86/dumpstack: Fix inaccurate unwinding from exception stacks due to misplaced assignment
-
-But I'd have no problem calling it broken either - even if the bug 
-doesn't crash anything.
+With this change the UFS works again.
 
 Thanks,
+Neil
 
-	Ingo
+> 
+> 
+> Thanks,
+> Nitin
+> 
+>>
+>> GIT bisect points to:
+>> b02cc9a176793b207e959701af1ec26222093b05 is the first bad commit
+>> Author: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> Date:   Mon Mar 10 14:12:30 2025 -0700
+>>
+>>      phy: qcom-qmp-ufs: Add PHY Configuration support for sm8750
+>>
+>> bisect log:
+>> git bisect start 'ff7f9b199e3f' 'v6.14-rc1'
+>> git bisect good 36c18c562846300d4e59f1a65008800b787f4fe4
+>> git bisect good 85cf0293c3a75726e7bc54d3efdc5dc783debc07
+>> git bisect good b2cd73e18cec75f917d14b9188f82a2fdef64ebe
+>> git bisect bad b247639d33ad16ea76797268fd0eef08d8027dfd
+>> git bisect good 9b3f2dfdad1cc0ab90a0fa371c8cbee08b2446e3
+>> git bisect bad 8dc30c3e4cf8c4e370cf08bd09eb87b0deccd3de
+>> git bisect bad 100aeb03a437f30300894091627e4406605ee3cb
+>> git bisect bad b2a1a2ae7818c9d8da12bf7b1983c8b9f5fb712b
+>> git bisect good 8f831f272b4c89aa13b45bd010c2c18ad97a3f1b
+>> git bisect good e45cc62c23428eefbae18a9b4d88d10749741bdd
+>> git bisect bad ebf198f17b5ac967db6256f4083bbcbdcc2a3100
+>> git bisect good 12185bc38f7667b1d895b2165a8a47335a4cf31b
+>> git bisect bad e46e59b77a9e6f322ef1ad08a8874211f389cf47
+>> git bisect bad b02cc9a176793b207e959701af1ec26222093b05
+>>
+>> CI run: https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba- tester/-/jobs/229880#L1281
+>>
+>> #regzbot introduced: b02cc9a17679
+>>
+>> Neil
+> 
+
 
