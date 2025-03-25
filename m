@@ -1,195 +1,340 @@
-Return-Path: <linux-kernel+bounces-574638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-574639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1607A6E7EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:23:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DD9A6E7F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 02:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347717A39B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144BC168B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 01:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEB1149C6F;
-	Tue, 25 Mar 2025 01:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967C5149C6F;
+	Tue, 25 Mar 2025 01:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TZPRRp74"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWFsNA3Q"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DF2AD2D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Mar 2025 01:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742865828; cv=none; b=L1IfA3DqjQxbB3vZOMR6OwDVC/kHZItIYaiEuW5519Vvc6qXXKSu47n59p/ejdRRL12nEKCv/NIGcP/pPfEgsuqoTqinbr781ORuluveJoWO+WVftQujGt5BIb8nO42hglk2uYta10I2yz6CkJ2/ZROJInGNWzGoIKmzPinvCAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742865828; c=relaxed/simple;
-	bh=dmXOgSyiMkzP5lmOjikLvzTL3OGmqHkvRNIsCLUyNUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i4u+PJsMzhaV2072vp/w91wfKRiOcO623mxRYKHLoaFwyhCIzjrBPkkxIR7TRqwrNMqEzrdYnL13KNUt3b6RgtNZIEu/5wMbB3j9eyFDKGokaQ113WlAeIapAShWJQRfgHU5UKp8lQNND2YeguImQSCYVL/YevSwQM7J5KLafZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TZPRRp74; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742865825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=80YXslX43Vd+KzUMLEtvDw9pbdwUBTF2zW23HR+RDds=;
-	b=TZPRRp74mFhm3kfkgSDZisTDWCN/BEAIvX8sVo9SkkPtev0LXoHwCRZ8ByTEzsSwRYe0UX
-	MpJ7ekxNA7gEVGJPrOX6/zl+65W9ItEgEV5wXd5XGSipV2vppoKYaWVxYfszd0vxQnO+dy
-	RsyjpjQ8JoQ3cUbL4uvwc9b8JJGY2Io=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-ZPx4-XNENRmpnTKz1GMXjQ-1; Mon, 24 Mar 2025 21:23:43 -0400
-X-MC-Unique: ZPx4-XNENRmpnTKz1GMXjQ-1
-X-Mimecast-MFC-AGG-ID: ZPx4-XNENRmpnTKz1GMXjQ_1742865821
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d5bb1708e4so2357465ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Mar 2025 18:23:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742865821; x=1743470621;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=80YXslX43Vd+KzUMLEtvDw9pbdwUBTF2zW23HR+RDds=;
-        b=pWpz/bZnrh9Ut39961EJiCKmXT03VufggU3Bp0+uo4nHad8Ke8N4Nz+KfyZUb7EzUR
-         a8rmgQwRRGxH2nwDNwjLVjkner68Q8nBBv7hTgERQawMwwht6y0i4M5r+M7VvQFE9aD8
-         VygZrr43Unof5L3ZlUNGYQtQqcdB+oymjqfYMf+7PiYS7e9b7Ugav0GTHBmaypRPrKhd
-         F0Xc57AiOOEO8nmj18g3DwX04NRZWLH2/PZy1o4gu8EZ+xs6Kg9Q/j8yf+LbXcDWeBN/
-         feC7TZSgO1QTSCL+qOI4WXWtVNktniLWp1RVscVVjRjqQzxdvcWw8uZs/IkGaoP5ck+G
-         41vw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD5KQELokIbISvuqIXx0iVUEjLgKqXIwQdKEf94rywuzwVcVEcaq+tspnJjeZfBAWA0XE5aifHt+1qBDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWew3CG+SvG+4QN9LtfaNUqhN28VRp0dZ4MpCpieDppP7r+7ry
-	WS45WIVdIB0/UGUcoagz/po98rmIKW4X2UOf8+8ZVoBbxw+3v+yFTqnSCwh2BigAA3dxn/Us46H
-	sB9XcOkF5XQMSYQJk+FMJbA7iPFs7cBRgHlGmzjvfauXu2nxbV0NAuj9niShP2b2v0PsdSBe8A9
-	HERMQaj7e20tjUFHBCjZegwQ78cEUWLEs10WHl
-X-Gm-Gg: ASbGncs+ubl6eauspT4p20vJBE5lf2FyLFB3V9n3Qts4g76gRippO1ycfEekAB1l5ab
-	krBh6zpuK0i8ZjeUQEIb0OAHjcTmIiYeqlsNMT8uD+aI6Evzj6TtjrCQEY/Ubt97LWBCMb1gaSg
-	==
-X-Received: by 2002:a05:6e02:349c:b0:3d3:dd60:bc37 with SMTP id e9e14a558f8ab-3d5961c530dmr173137175ab.22.1742865821202;
-        Mon, 24 Mar 2025 18:23:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/JUKTQmyT7rmzB1113MDJsVnMSnwa5fEmJ4QQvGW8nT/qrXson+JpXQKKM8geQr7VEFqwbzNfblKLM2iKFAI=
-X-Received: by 2002:a05:6e02:349c:b0:3d3:dd60:bc37 with SMTP id
- e9e14a558f8ab-3d5961c530dmr173136965ab.22.1742865820779; Mon, 24 Mar 2025
- 18:23:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F7B2F3B;
+	Tue, 25 Mar 2025 01:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742866055; cv=fail; b=HeXOH5c7owOnUtEVB2BZGhKDx9/cYpWjsMrzWA/M0O7csSP+rGhVYQ1f5NgYn82dIQnDGZlQc0WnwDQcVS5C4l/dbq+dEAK1zuQUZGIAONZekxleCFTmszTfFCj/+MiVUeo84phuf77SSmQrQUqUhehFyAUk/f4Naxi8/3q2iBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742866055; c=relaxed/simple;
+	bh=57FsN4yRqBSw40dPkJeLUhVu+l+4ytwWPPwd0Ri3PSA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=L6lg2rH0Pz8JR/oD8Z/ARtXvBGsywWj2hcwdvBEyu2ChqNr/5M5mdyv51dsEaTg55vdYnciGrnMPnteDCUXWDdVAmCNAFr4c4Qy7tBJLLGEgEgOvgrWhw1iL3qUadvBjxW4nIRatjXeKuOH+Imls9HW44J3EQBnfB3IoslTydeI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWFsNA3Q; arc=fail smtp.client-ip=40.107.237.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d3h69sEVp2RG3v8JKFT0JjplAXmY/7zNc74Bu3yLArG4mYJ7BURMLl7Yu8VQ66dmmGjBEMU5WHjoESz15RXGlzhhFo4BXcqOLse0+4z1T6JR7oTM1+zFggncYGeHmB9a/g7kWMnOMh3n2WlXFWJTAdwgwHNGHccHj0+ulnkock3CVwHUz1mH3OO1wl1ClXPzAixi3zISYOZ6G452kCJ6SVQuomoiPCClGr8d+vqVVQ0fBSgY2sA1EEbBRycULegAudyhUji+yLJP3VJHRA80MXy9cKm0uakFCkkt15H/M+S44FnuJF+0sk5krrERPXB++ll3C9fjjiQkPGvd67mKVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DvnRCC4oT55yAZ43aluIMsqKmPH+vEzv/fPBiQ5HfE8=;
+ b=gIUwbJGwyEiHLLF358Ff5sHd80JslnQ2slUAnLPpvGa+TqTCRxRKaxkLbD3UK4UvueK+cj0HsXIOjjQF9lghm1fchEcAFCPSDt4zl1xEME4xaHBU+knEtNwNnBg6fASoKJhzvYroNvFCCUEnewOwy/xuR2vLIkkJ9Lgb0hcwBnjPWedmBJCgsz9oBQVfzN33edVJCANrqC2CJ0sHvLEntPL21Xu24nmIUqhLn1y9xRDH029yhzSNSbSgrhgl2Rf+yyGnw4FbY1A9avaWXPngB11bESB6W/L20Fly2JGeVb+psX8ZTFQuS0ukEvwAJxguRpi/qoE+hEVFUGWk1Ie3gA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DvnRCC4oT55yAZ43aluIMsqKmPH+vEzv/fPBiQ5HfE8=;
+ b=qWFsNA3QFGMv+uBaGNd6G/NH79sNdfxS0oKZTxgwCdn5tUoY4gMujcb5qV5iGECbM+SB00E8see9upPxuTBpThp9tO0hrlNQBT4h1NKQXEZJkXK3e6zmEWTwNoZS+vBfZkDMtFzhs5okTVpuBGdcCq6DH6dzUnju/GJwUAmqwzA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by CH3PR12MB9021.namprd12.prod.outlook.com (2603:10b6:610:173::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.42; Tue, 25 Mar
+ 2025 01:27:31 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
+ 01:27:31 +0000
+Message-ID: <79c013a1-a9df-4feb-871a-203c08ef938c@amd.com>
+Date: Mon, 24 Mar 2025 20:27:29 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] hid-asus: check ROG Ally MCU version and warn
+To: Luke Jones <luke@ljones.dev>, linux-kernel@vger.kernel.org
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ bentiss@kernel.org, jikos@kernel.org, lkml@antheas.dev
+References: <20250323023421.78012-1-luke@ljones.dev>
+ <20250323023421.78012-2-luke@ljones.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250323023421.78012-2-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P221CA0015.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::20) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250320015551.2157511-1-changyuanl@google.com>
- <20250320015551.2157511-12-changyuanl@google.com> <CALu+AoS01QJ-H5Vpr378rbx==iRQLG0HajtMCUzDXRO75biCag@mail.gmail.com>
- <CA+CK2bC4PM0JnHOUm7qfpQ=wUhwsYQ-hJ12tTK_7pSWgYk+bhg@mail.gmail.com>
-In-Reply-To: <CA+CK2bC4PM0JnHOUm7qfpQ=wUhwsYQ-hJ12tTK_7pSWgYk+bhg@mail.gmail.com>
-From: Dave Young <dyoung@redhat.com>
-Date: Tue, 25 Mar 2025 09:24:02 +0800
-X-Gm-Features: AQ5f1JqwitaQjBg4ofN5mWtcdKnJXVa6ylkj6L0R0h_oYxt_kysMu1ZOpV0VfzE
-Message-ID: <CALu+AoRL+oHW2vN8nf1wpsG2Ki8d44AABQRCBMd+CE4_XzqRTw@mail.gmail.com>
-Subject: Re: [PATCH v5 11/16] kexec: add config option for KHO
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org, graf@amazon.com, 
-	akpm@linux-foundation.org, luto@kernel.org, anthony.yznaga@oracle.com, 
-	arnd@arndb.de, ashish.kalra@amd.com, benh@kernel.crashing.org, bp@alien8.de, 
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com, corbet@lwn.net, 
-	krzk@kernel.org, rppt@kernel.org, mark.rutland@arm.com, pbonzini@redhat.com, 
-	hpa@zytor.com, peterz@infradead.org, ptyadav@amazon.de, robh+dt@kernel.org, 
-	robh@kernel.org, saravanak@google.com, skinsburskii@linux.microsoft.com, 
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, will@kernel.org, devicetree@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB9021:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e5531f4-51ff-4974-fdf5-08dd6b3c368a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dFBpemFXcmEzbW1PaU9vaDFicDFNNUVSSkI1RnpvT2hqM1p6c2tIR0JENUJE?=
+ =?utf-8?B?aUttclRLYmV2ODJOUzREZG9vNXMyT0piemRqQnd5YzkyWUVvMGxEa2RJN3Rx?=
+ =?utf-8?B?QXVOQzM3OXZCbVNSSmNlclVWZkRXaDJZdWpzU3lWanVBTWt6WnlDOEdodHBL?=
+ =?utf-8?B?cDUzcjJUU05XVjBRemwwRldMaTBidlFzbStLTkZnek1qaFdkWEpKMDV4d1dK?=
+ =?utf-8?B?djA5anc1L09QRE1DbTQ0TzZIQWhZU0p0OFk5NnhvU1ZNWktvYjhqclZJTyth?=
+ =?utf-8?B?NmtzM3hlRDhBZkROdklKL1o2T3V1dHpjelE3VkVOWWxKZ1Q5bkgrdmIwQ2ZY?=
+ =?utf-8?B?NTJyN2pnUnd3WXA0aERNMENDNjM0NEQ1YVp0aXBMV2NBQmo2bmwzU0I4ckJT?=
+ =?utf-8?B?dnJsbVBKQTNqSnVvVHVZUTRVaVNRVlJiYjR3L05MaHpSNHRtaWtsY09YZ0xj?=
+ =?utf-8?B?ZVBpcHRhL2Z3ZVl3N2FmSS9BeDRVNVhFaFc2NVpuRWFTeSttREE1SXBKNVh4?=
+ =?utf-8?B?cEFNeldZMFkwWXFYdGdwU3BMcU1Zd0NKTXlZVndwM0xSNitKZ0M0akJUTnRk?=
+ =?utf-8?B?VStnbmVrZGlRRWU2VmFPMGpSVTczTmxvMDdVL0kxc0VTTkZQd3dtUHJ0UGZE?=
+ =?utf-8?B?NzQxSVU2S1p4NXVSbzZ1V0M3cG8wWklmZG9tQTN0ekdnZFRCQ2xXVWR6RFRH?=
+ =?utf-8?B?SW80M2hJV01OSXJrdVBjOXFsZzdrbS9Pb2JrVEFLcDQ2TE1SQ0FnaHlYbW1k?=
+ =?utf-8?B?bEJKTDY0akJvMUQxZ1RCMkpUem93NTVvQVhmUEVyTWZpWDQ3TkE3YVVuK0VR?=
+ =?utf-8?B?YWpEWlExMDFGYThnWEN1MkEraG4xNEw0V2p3VE52NUtqMGNQNkVSNDFDMUxM?=
+ =?utf-8?B?VHlGMWdCb1RvRkl3SEdmV1hMTW5MS0IrNGp6blQ1RSthcGZCbVZTS3VwM2tn?=
+ =?utf-8?B?REFSK3kzbEJKdDNZb2Y2ZEdRRk03QzBwUWQzVVcxQ25hT2JrK25JbTh2UkJI?=
+ =?utf-8?B?M25HOWcwQ0JWcGx4cmxlT1JpR3VLY1dGa2NOQWFpNko4RnFPd1dJV0VVRml2?=
+ =?utf-8?B?M3J1TWV6eEJtM2hJZ3JjVGwxNExCQW9FL1hwSG92ajdwOExNTUlHZ0plN2wx?=
+ =?utf-8?B?cW1wSVlZWitTVjhTOGpxb0NPU2h3aU1JbnFPWFdnRXlUMDNXaEtKTXhhUGQ0?=
+ =?utf-8?B?bVhRUXNZSUhJaWpmUlJ2ckNVcysyOEYzRDdxc0d1MGdBdC9DaEJTMGZZQm9I?=
+ =?utf-8?B?TkJJdTcvWUNwdXBLVm5obDNTWmxSeUJySEdpQ1JRckpQYWphcWpPbXVIbkph?=
+ =?utf-8?B?UFpvWDV0SHZHMU05WEhHM05XTUorSzM2YXNSV2JBSTQ4MFpzNTgwbzZPUWVx?=
+ =?utf-8?B?Kzg3ZzZCbWpYbXhEZ0RGOENJYXR3YWNZNy9MaVJqMm5QNVU2NU1yMXBjaG53?=
+ =?utf-8?B?eCtJbEVraitlOE9PK2N2S2tGT0d0d1BnRzEycXhEMm40ajJpVVV3R1FyemIw?=
+ =?utf-8?B?VUxWQWdUZ3hvTjVDT1lRRlpwUVF6Wk1vUkxFSkdjc1h2THQveVgrVzNTRUZU?=
+ =?utf-8?B?L2l4QnMxMGY1dGJVejFYMWFGZ21RQit1ZXkvR1B6NzgyaFJEdGR6ZytESXgw?=
+ =?utf-8?B?L2dhOXM2Q004eDVRd3hxeDhmWnBEd1hmVlFyQ056OS8xbUdWZGt5SWUvY25i?=
+ =?utf-8?B?cnZTQmhMZFo1UlY5dVBoRlJ3UWIyZkdBd25mV2l5bW12TWpKNUxYSlpjekJ2?=
+ =?utf-8?B?VDhwZTk1aUtVTXlmaXlLaTE3RVFaZzUwdjlKUXJLUmhxMC9kTW51cnlHbnMz?=
+ =?utf-8?B?NHZRNWpMK1krUzJnTCtFQUo4VUxyR29CUjZsN3ZpemFjMWU2R3JyT2IzdkFP?=
+ =?utf-8?Q?Rc5lRY/4DXw7a?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TTJxV0pLVmxRSHZQcHk5Q3EwUWZ2QXEvY2RyNjV2TDcwc1VGREJQR1JhMWlp?=
+ =?utf-8?B?aXFiS3h5UVFJS0F3VU5MY0YyTnlBVE5RU044OEpxTFVMZDFGNk55dkt6S1FV?=
+ =?utf-8?B?UEUwQVBNNGdkSGtidFQ2MzhieHVVZHdvVXFGVjhSNXUveDhKaW9DQ0lJUFBZ?=
+ =?utf-8?B?QXlHS1lRQjVpTTBNRU5xcUlucG1FYldtZjFMN2hlTGFrSllDdHZ4LzM5aGJ1?=
+ =?utf-8?B?M0FrNTlBSVVyTVdSTEFmMmpOTUZjZitKTE9KQlk1OWFEdXJuZEh2WkZKUWhZ?=
+ =?utf-8?B?VFJ1RU9EbGRNUVBRcnJnNkVDWmVxbEYzWnZ1UkhUSkpXMnU2YzVuMXpncml3?=
+ =?utf-8?B?SUpXQU1ZK1I0cDNwbVpCVEpSTWExK25sZ1hVRjl2YjlHQXlOTUY2Nm1wQjI5?=
+ =?utf-8?B?dE9vSCtQN0ZEZDRldmR1SDJ4b3h6ekxjWVphTWc0enliTVB3Z1g1U2Y4cS95?=
+ =?utf-8?B?SEY0S241ekdqcHA0OERwakpVdzNKakV2WENXUy9XNXlWeGR2amxZM2tEYTJ0?=
+ =?utf-8?B?L0pWVUZNc1FKNUd6UE1xVTFjRDBVRFMxMWVZeGxCai9TZFROdUV2cEZiU3RI?=
+ =?utf-8?B?bjZQNExpZHdEU3FpK0tsek0zN2lIcWd0VWtZNXVCMEpNRUpBNDlRaURaQmMy?=
+ =?utf-8?B?akNMSGV4dXJkaldici8wUDdDRDNwK2J5anJNSlM0d3pmSHdMMmxqcWNvSURH?=
+ =?utf-8?B?QUFpOWhVQ2ZiTE5kVndXNGw0czRLNTFXTWlXa3lDOGt1OHYrSDNXYk5VY2p4?=
+ =?utf-8?B?YVlvU0wzZ0hmd0dYYlJWZ2pIRkJSTkh0Y1hMVnAzUmRpTkVOQXFoR0JUVG9O?=
+ =?utf-8?B?QWVpTkdLTitqTmdJM3ZjLzBSbGRvYWcrWTZwYWhPUjB1T0tQZkRPQm00ZFph?=
+ =?utf-8?B?cHg5WmU1UnRmTmlwWFNJYzd6WFRSWFVyMTBZM1IzbGpCRytLb1R5UER2cnpo?=
+ =?utf-8?B?dzhlc2tqaHZrTEFoSEl4enl1aWVDOE4yRDZvcG9wOUIrNStUcEZpT1hncGdp?=
+ =?utf-8?B?NmFCUjZOLzIrcGFicXdXRVdlTCtJbGh5MWc2blVPakZDcEFidnJNUWcvT01G?=
+ =?utf-8?B?Q2FNNnppdXhrb2NGSXhhMzNhQldpaHc4SHhpVk5nSW9UMzZjakgwNm9UNHBF?=
+ =?utf-8?B?U1l2UVJmUU9ZOGxTUDlHaWJ5dlg0SkhMRjkvcEZFblBvMlNRSklkbjdqaHNO?=
+ =?utf-8?B?Rmg2TXdiRS91ck9lMklWVmlnMUx6RlRlbWo3NzBLRE1ua1ZlQ2ZDcmRMV1hR?=
+ =?utf-8?B?d2ZRb3FSTkY1SFB4NmQ1WFlObzQ3NWppaWFpbnBJeC9yL2J5MVNaTlN3Nkxo?=
+ =?utf-8?B?eVBWRVJTR2lVblowQUVQUk42NW43Mnovc0V2Y1I1U0kxQ0djd3BSVzV4V0tC?=
+ =?utf-8?B?UVJ2MXowb0J6bHZwREdvM2p5a1lON0p4aldyakVvWFNPb3d4MzFpUXNjZGN6?=
+ =?utf-8?B?RmgvWlNlRW9PUlUzMlhTZ243WnRsL2UvZHZIYzR6VE1GWDRBWUpiSjRJTDNN?=
+ =?utf-8?B?clVoZTdmNzRDOHJtQzJ4Yy9EZU5Lb21WNE9mTW11ckdYNzI1Zkt5dmxZU3Jz?=
+ =?utf-8?B?ZE5ZUm1hNDY0UEVjd3VkKzZETk1EYWFMcEoyclVpZlI4aGtlUCtpa1RYeEVs?=
+ =?utf-8?B?NzZ0Sk9JVFY1eWpOR2ZyYUF0ZlNkN3FuNENaZ0hZVGY4NVk5a0ZpSkZPaVBz?=
+ =?utf-8?B?ZXE2S2diSXdTS1VGMFdCV2ZrMzI5NGNUMkwyejFOMEtpNFJpVFFjb2JKckVR?=
+ =?utf-8?B?R0g1aDE3QjFMMndqV0lwMXJZTkFiRXRWR2pCczJIRndHb3AyYVlCSmM3c0Ri?=
+ =?utf-8?B?d0NEWEJ3czY3ZWxyYUQzOXpOVFIrWExhMVYybUVBeEt6R3BaTk8zcHpyWVVP?=
+ =?utf-8?B?S1dEODdXMkVVbEZzc2pkNEl5dlNEQkJOR3h4YVhPb1YydjJMT0Rvd0RVQTNM?=
+ =?utf-8?B?N2VCR1kxV1V3aTgyQllmNmhwSURSVkNlRjNQcGFWNGpNMjUweW41QnBuOFR4?=
+ =?utf-8?B?TnIvMWN3dGtKUHd3VG1MckplUWJXbm1WdFVET0F6QTgyR2tHa1VGYVFHaEFY?=
+ =?utf-8?B?cWRmMzJiUWhMNzVqNWwvU0xWR3YyTUo1RFNXdm5ubWlKOERKZDUvbHdmUnI3?=
+ =?utf-8?Q?/uuSCBHb126t8difhrRgOK76V?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e5531f4-51ff-4974-fdf5-08dd6b3c368a
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 01:27:31.5051
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zid7ZbR/RKLhWdQ0Gqt1HZaRlRAEImol+ILkNtBaUm7y5a987W82I3imiHmsdIqrWZWwPd4QqObMFNR8YdABVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9021
 
-On Tue, 25 Mar 2025 at 03:27, Pasha Tatashin <pasha.tatashin@soleen.com> wr=
-ote:
->
-> On Mon, Mar 24, 2025 at 12:18=E2=80=AFAM Dave Young <dyoung@redhat.com> w=
-rote:
-> >
-> > On Thu, 20 Mar 2025 at 23:05, Changyuan Lyu <changyuanl@google.com> wro=
-te:
-> > >
-> > > From: Alexander Graf <graf@amazon.com>
-> > >
-> > > We have all generic code in place now to support Kexec with KHO. This
-> > > patch adds a config option that depends on architecture support to
-> > > enable KHO support.
-> > >
-> > > Signed-off-by: Alexander Graf <graf@amazon.com>
-> > > Co-developed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > > Co-developed-by: Changyuan Lyu <changyuanl@google.com>
-> > > Signed-off-by: Changyuan Lyu <changyuanl@google.com>
-> > > ---
-> > >  kernel/Kconfig.kexec | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> > > index 4d111f871951..57db99e758a8 100644
-> > > --- a/kernel/Kconfig.kexec
-> > > +++ b/kernel/Kconfig.kexec
-> > > @@ -95,6 +95,21 @@ config KEXEC_JUMP
-> > >           Jump between original kernel and kexeced kernel and invoke
-> > >           code in physical address mode via KEXEC
-> > >
-> > > +config KEXEC_HANDOVER
-> > > +       bool "kexec handover"
-> > > +       depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXE=
-C_FILE
-> > > +       select MEMBLOCK_KHO_SCRATCH
-> > > +       select KEXEC_FILE
-> > > +       select DEBUG_FS
-> > > +       select LIBFDT
-> > > +       select CMA
-> > > +       select XXHASH
-> > > +       help
-> > > +         Allow kexec to hand over state across kernels by generating=
- and
-> > > +         passing additional metadata to the target kernel. This is u=
-seful
-> > > +         to keep data or state alive across the kexec. For this to w=
-ork,
-> > > +         both source and target kernels need to have this option ena=
-bled.
-> > > +
-> >
-> > Have you tested kdump?  In my mind there are two issues,  one is with
-> > CMA enabled, it could cause kdump crashkernel memory reservation
-> > failures more often due to the fragmented low memory.  Secondly,  in
->
-> As I understand cma low memory scratch reservation is needed only to
-> support some legacy pci devices that cannot use the full 64-bit space.
-> If so, I am not sure if KHO needs to be supported on machines with
-> such devices. However, even if we keep it, it should really be small,
-> so I would not expect that to be a problem for crash kernel memory
-> reservation.
-
-It is not easy to estimate how much of the KHO reserved memory is
-needed.  I assume this as a mechanism for all different users, it is
-not  predictable.  Also it is not only about the size, but also it
-makes the memory fragmented.
-
->
-> > kdump kernel dump the crazy scratch memory in vmcore is not very
-> > meaningful.  Otherwise I suspect this is not tested under kdump.  If
-> > so please disable this option for kdump.
->
-> The scratch memory will appear as regular CMA in the vmcore. The crash
-> kernel can be kexec loaded only from userland, long after the scratch
-> memory is converted to CMA.
-
-Depending on the reserved size, if big enough it should be excluded in
-vmcore dumping.
-Otherwise if it is a kdump kernel it should skip the handling of the
-KHO passed previous old states.
-
->
-> Pasha
->
+On 3/22/2025 21:34, Luke Jones wrote:
+> From: "Luke D. Jones" <luke@ljones.dev>
+> 
+> ASUS have fixed suspend issues arising from a flag not being cleared in
+> the MCU FW in both the ROG Ally 1 and the ROG Ally X.
+> 
+> Implement a check and a warning to encourage users to update the FW to
+> a minimum supported version.
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/hid/hid-asus.c | 107 ++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 105 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 46e3e42f9eb5..599c836507ff 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -52,6 +52,10 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>   #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+>   #define FEATURE_KBD_LED_REPORT_ID2 0x5e
+>   
+> +#define ROG_ALLY_REPORT_SIZE 64
+> +#define ROG_ALLY_X_MIN_MCU 313
+> +#define ROG_ALLY_MIN_MCU 319
+> +
+>   #define SUPPORT_KBD_BACKLIGHT BIT(0)
+>   
+>   #define MAX_TOUCH_MAJOR 8
+> @@ -84,6 +88,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>   #define QUIRK_MEDION_E1239T		BIT(10)
+>   #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
+>   #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
+> +#define QUIRK_ROG_ALLY_XPAD		BIT(13)
+>   
+>   #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
+>   						 QUIRK_NO_INIT_REPORTS | \
+> @@ -534,9 +539,99 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
+>   	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
+>   }
+>   
+> +/*
+> + * We don't care about any other part of the string except the version section.
+> + * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
+> + * The bytes "5a 05 03 31 00 1a 13" and possibly more come before the version
+> + * string, and there may be additional bytes after the version string such as
+> + * "75 00 74 00 65 00" or a postfix such as "_T01"
+> + */
+> +static int mcu_parse_version_string(const u8 *response, size_t response_size)
+> +{
+> +	const u8 *end = response + response_size;
+> +	const u8 *p = response;
+> +	int dots, err, version;
+> +	char buf[4];
+> +
+> +	dots = 0;
+> +	while (p < end && dots < 2) {
+> +		if (*p++ == '.')
+> +			dots++;
+> +	}
+> +
+> +	if (dots != 2 || p >= end || (p + 3) >= end)
+> +		return -EINVAL;
+> +
+> +	memcpy(buf, p, 3);
+> +	buf[3] = '\0';
+> +
+> +	err = kstrtoint(buf, 10, &version);
+> +	if (err || version < 0)
+> +		return -EINVAL;
+> +
+> +	return version;
+> +}
+> +
+> +static int mcu_request_version(struct hid_device *hdev)
+> +{
+> +	u8 *response __free(kfree) = kzalloc(ROG_ALLY_REPORT_SIZE, GFP_KERNEL);
+> +	const u8 request[] = { 0x5a, 0x05, 0x03, 0x31, 0x00, 0x20 };
+> +	int ret;
+> +
+> +	if (!response)
+> +		return -ENOMEM;
+> +
+> +	ret = asus_kbd_set_report(hdev, request, sizeof(request));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = hid_hw_raw_request(hdev, FEATURE_REPORT_ID, response,
+> +				ROG_ALLY_REPORT_SIZE, HID_FEATURE_REPORT,
+> +				HID_REQ_GET_REPORT);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = mcu_parse_version_string(response, ROG_ALLY_REPORT_SIZE);
+> +	if (ret < 0) {
+> +		pr_err("Failed to parse MCU version: %d\n", ret);
+> +		print_hex_dump(KERN_ERR, "MCU: ", DUMP_PREFIX_NONE,
+> +			      16, 1, response, ROG_ALLY_REPORT_SIZE, false);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
+> +{
+> +	int min_version, version;
+> +
+> +	version = mcu_request_version(hdev);
+> +	if (version < 0)
+> +		return;
+> +
+> +	switch (idProduct) {
+> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY:
+> +		min_version = ROG_ALLY_MIN_MCU;
+> +		break;
+> +	case USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X:
+> +		min_version = ROG_ALLY_X_MIN_MCU;
+> +		break;
+> +	default:
+> +		min_version = 0;
+> +	}
+> +
+> +	if (version < min_version) {
+> +		hid_warn(hdev,
+> +			"The MCU firmware version must be %d or greater to avoid issues with suspend.\n",
+> +			min_version);
+> +	}
+> +}
+> +
+>   static int asus_kbd_register_leds(struct hid_device *hdev)
+>   {
+>   	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> +	struct usb_interface *intf;
+> +	struct usb_device *udev;
+>   	unsigned char kbd_func;
+>   	int ret;
+>   
+> @@ -560,6 +655,14 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>   			if (ret < 0)
+>   				return ret;
+>   		}
+> +
+> +		if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> +			intf = to_usb_interface(hdev->dev.parent);
+> +			udev = interface_to_usbdev(intf);
+> +			validate_mcu_fw_version(hdev,
+> +				le16_to_cpu(udev->descriptor.idProduct));
+> +		}
+> +
+>   	} else {
+>   		/* Initialize keyboard */
+>   		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> @@ -1280,10 +1383,10 @@ static const struct hid_device_id asus_devices[] = {
+>   	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD},
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
+> -	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD },
+>   	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>   	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
+>   	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
 
 
