@@ -1,175 +1,113 @@
-Return-Path: <linux-kernel+bounces-575406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1657A701F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:34:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C25A70206
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 14:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F037A1F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A57D17B6E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 13:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88FE259CB1;
-	Tue, 25 Mar 2025 13:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EC425A32D;
+	Tue, 25 Mar 2025 13:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="FPxBmddj"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WpMnN8Ii"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B692F872;
-	Tue, 25 Mar 2025 13:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8979F2580CD;
+	Tue, 25 Mar 2025 13:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742908736; cv=none; b=XVTb6w0AJ+9w13cocj392flR+rHgc1rAzi1K9sReL0B2MUittsu8Ysde/9NJmnvwgAHNLp5Acp9KDslFT6nDdMDcXlcqCLSfN0QoujdukCd9K2KDP63i45gPTMCPyxjj5YCxPlCHaSLKVyQ5u06UiecBERm2TrgF4uleZxkO+Jw=
+	t=1742908807; cv=none; b=ooEnmovb0Em6sQZ3AegeNd0Ohu6f2+uoV0irEyySKGWYDUg3vN+DB0vrTp5cAgTaInrkr3Qxvd9F8qkGkolaPMqFcmRLC73nJZR3km20sUX2zvhOSI6gcBnZF8mmRIQWACgleRpkMGyG4jGw6rcx7A2225sXK253yqVIqhi+Umw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742908736; c=relaxed/simple;
-	bh=l8iqz2n3evM97wrxbe1qrRE1+6og2+3pk8V4qJCu+ZA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fwL3P6zalQWXUHsxFBjsY/uW0+tnra/e6OWL0v5N1gLj0M6yHJ4aNSRJd+GQNKJWQHTNxuhgZ8p318UpTZcJ1fFPi//nQwQqQnXmVrUdHh5SQIrixY/9Bs/NP1MPgu+Q2XUG3/ju1WsfZs4otQGWir+iTLYUT9Vm3eArkpnKxYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=FPxBmddj; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id BDB182FC0059;
-	Tue, 25 Mar 2025 14:18:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1742908730;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QsV4a2PwVAcbUA2lXNzgr9uW5puLLLKVsrx3FzBD+vQ=;
-	b=FPxBmddjlRrgl35pjUbhSTNjc4Wr9J22HN5NEtM7NxfekqCAUCJ19Xgl1rJ/StkGrkgvlE
-	i8hybybbrTP4LW/xRlTqEN7rsFIYWdzRKL7fUney3pyalYjiIgNFExO+ZHZadCvyl7OVVV
-	cavd7pZoxOGLNA+4rCeg4zvnXMfP3qg=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <f95febec-4643-4bc0-bcff-b9ac34b65464@tuxedocomputers.com>
-Date: Tue, 25 Mar 2025 14:18:50 +0100
+	s=arc-20240116; t=1742908807; c=relaxed/simple;
+	bh=cK+5YAUzLq6jCKHW5OeuVB2g368h6AsALn6lCDxZysg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fhQZjT4+PpVpwsBvtgqXECQQ8m1LwS6HbuGCoypKYu95S5fSMwCOrQTlLbHC67gSMo8fY6B8eim7Srf52GtApCnD9tBBTrBTAzoTrQHT0n3+TN6dKTbH3OxDf+OH3y2SIyHAdS6q+ZfY1w9yJPMMByKNG/foJD5YTf/KjHCjM4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WpMnN8Ii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBFBCC4CEE4;
+	Tue, 25 Mar 2025 13:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742908807;
+	bh=cK+5YAUzLq6jCKHW5OeuVB2g368h6AsALn6lCDxZysg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WpMnN8IivBVyI7y/sbx70qAsbhiYfUPZoesYDqeHNxOeAPAUDFz6NX+Imca+YjU+V
+	 gyGcHtm/ZhD8xFgTHIikddhriBS9ubWxYVFhbTU0PXvhxsWdYOQCLjGXXYxIGIPE3h
+	 9acwbm+yfzl0brKBZ+nyygd5C/0nAy1i7hTvF4eRv4UIg6oICg0EOBa+Rm46ZLBpWt
+	 ZSgu1SX0+U61Y4KoP3qiKMgIHhsw92lRp/mr8petY3DPcw8rTorHqsl7uq0c6SqAwY
+	 u0yg3F23rzs2UorNoTzNILi8jD9gEZnUQa1+pGRT0Hb6ihJZycFNIHf0bh0PPG25Gm
+	 U/TqcSFcm5Vag==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DA0380CFE7;
+	Tue, 25 Mar 2025 13:20:44 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Hans de Goede <hdegoede@redhat.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
- <20250311180643.1107430-2-wse@tuxedocomputers.com>
- <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
- <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
- <f742f82e-d533-431f-bf64-01cec4bead09@tuxedocomputers.com>
- <bd05271b-eefc-4a4d-90aa-9345e8d01807@redhat.com>
- <9e53c2e9-3393-463d-915f-d70f3139893f@tuxedocomputers.com>
-Content-Language: en-US
-In-Reply-To: <9e53c2e9-3393-463d-915f-d70f3139893f@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 0/7] selftests/net: Mixed select()+polling mode
+ for TCP-AO tests
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174290884305.571725.8165425409134442696.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Mar 2025 13:20:43 +0000
+References: <20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com>
+In-Reply-To: <20250319-tcp-ao-selftests-polling-v2-0-da48040153d1@gmail.com>
+To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, shuah@kernel.org, 0x7f454c46@gmail.com,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 19 Mar 2025 03:13:33 +0000 you wrote:
+> Should fix flaky tcp-ao/connect-deny-ipv6 test.
+> Begging pardon for the delay since the report and for sending it this
+> late in the release cycle.
+> 
+> To: David S. Miller <davem@davemloft.net>
+> To: Eric Dumazet <edumazet@google.com>
+> To: Jakub Kicinski <kuba@kernel.org>
+> To: Paolo Abeni <pabeni@redhat.com>
+> To: Simon Horman <horms@kernel.org>
+> To: Shuah Khan <shuah@kernel.org>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/7] selftests/net: Print TCP flags in more common format
+    https://git.kernel.org/netdev/net-next/c/65ffdf31be68
+  - [net-next,v2,2/7] selftests/net: Provide tcp-ao counters comparison helper
+    https://git.kernel.org/netdev/net-next/c/1fe4221093d1
+  - [net-next,v2,3/7] selftests/net: Fetch and check TCP-MD5 counters
+    https://git.kernel.org/netdev/net-next/c/5a0a3193f6c4
+  - [net-next,v2,4/7] selftests/net: Add mixed select()+polling mode to TCP-AO tests
+    https://git.kernel.org/netdev/net-next/c/3f36781e57b3
+  - [net-next,v2,5/7] selftests/net: Print the testing side in unsigned-md5
+    https://git.kernel.org/netdev/net-next/c/266ed1ace8ee
+  - [net-next,v2,6/7] selftests/net: Delete timeout from test_connect_socket()
+    https://git.kernel.org/netdev/net-next/c/1e1738faa2bb
+  - [net-next,v2,7/7] selftests/net: Drop timeout argument from test_client_verify()
+    https://git.kernel.org/netdev/net-next/c/edbac739e4d1
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Am 18.03.25 um 11:20 schrieb Werner Sembach:
-> Hi Hans
->
-> Am 17.03.25 um 23:22 schrieb Hans de Goede:
->> Hi,
->>
->> On 17-Mar-25 5:47 PM, Werner Sembach wrote:
->>> Hi again,
->>>
->>> Am 17.03.25 um 13:06 schrieb Hans de Goede:
->>>> Hi,
->>>>
->>>> On 11-Mar-25 19:10, Werner Sembach wrote:
->>>>> Hi Hans, Hi Dimitry,
->>>>>
->>>>> resending this too on the v2 to not cause confusion:
->>>>>
->>>>> Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
->>>>>
->>>>> Am 11.03.25 um 19:06 schrieb Werner Sembach:
->>>>>> Currently only F23 is correctly mapped for PS/2 keyboards.
->>>>>>
->>>>>> Following to this table:
->>>>>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf 
->>>>>>
->>>>>>
->>>>>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
->>>>>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch 
->>>>>> binds the
->>>>>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU 
->>>>>> keycode is
->>>>>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
->>>>> I think what the firmware vendor actually wanted to do was to send 
->>>>> ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line 
->>>>> with, for example, the copilot key being implemented as shift+super+f23.
->>>> I agree that that seems to be the intent.
->>>>
->>>>> Following this, my suggestion is to do this remapping and handle the rest 
->>>>> in xkeyboard-config
->>>> xkeyboard config already contains mappings for F13 - F18 and F20-F23 in
->>>> /usr/share/X11/xkb/symbols/inet
->>>>
->>>> So all that needs to happen there is map FK19 -> F19 and FK24 -> F24.
->>>>
->>>> And then teach KDE + GNOME that ctrl+super+f24 means touchpad-toggle.
->>> Alternative suggestion, again following how the copilot key is implemented:
->>>
->>> key <FK19>   {      [ F19 ]       };
->>> [...]
->>> key <FK23>   {      [ XF86TouchpadOff, XF86Assistant ], type[Group1] = 
->>> "PC_SHIFT_SUPER_LEVEL2" };
->>> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = 
->>> "PC_CONTROL_SUPER_LEVEL2" };
->>>
->>> Then only xkb has to be touched again, but not KDE and GNOME.
->> Ah I did not know you could do this. Yes this sounds like a very good
->> plan wrt the xkbconfig changes and then indeed we can do all the handling
->> in xkbconfig.
->>
->>
->>>> We could maybe get away with also dropping the weird mappings for FK13 - FK18
->>>> and map those straight to F13 - F18, but we need the special mappings
->>>> for F20 - F23 to stay in place to not break stuff.
->>> Good question
->>>
->>> XF86Tools launches system settings on KDE.
->> Right, but XF86Tools is also send for KEY_CONFIG which makes more sense,
->> the question is are there any devices actually sending KEY_F13 in
->> a case where they really should be sending KEY_CONFIG instead.
->>
->> Note this is unrelated to the XF86TouchpadToggle thing though, just
->> something which I noticed while looking at things.
->>
->>> Looking at the links in the git log of xkeyboard-config (commit 
->>> 1e94d48801bf8cb75741aa308d4cdfb63b03c66c and 
->>> 01d742bc5cd22543d21edb2101fec6558d4075db) these seems to be device specific 
->>> bindings that got accepted in the default config because the keys where 
->>> unbound before.
->> I see, so it might be worthwhile to try and fix these, but in
->> a separate pull-request from the:
->>
->> key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = 
->> "PC_CONTROL_SUPER_LEVEL2" };
->
-> ack, I will create a MR as soon as the freedesktop gitlab migration is finished.
-https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/816
->
-> Best regards,
->
-> Werner
->
->>
->> addition.
->>
->> Regards,
->>
->> Hans
->>
->>
 
