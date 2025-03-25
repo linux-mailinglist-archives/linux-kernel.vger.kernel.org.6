@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-575929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-575928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B046FA708FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:24:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110F1A708F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 19:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E321D1884814
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:24:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972E91765B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Mar 2025 18:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F884190679;
-	Tue, 25 Mar 2025 18:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E1D19ABC3;
+	Tue, 25 Mar 2025 18:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtW2u0f+"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Modie2ge"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AA219066B;
-	Tue, 25 Mar 2025 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D924B1991D2;
+	Tue, 25 Mar 2025 18:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742927026; cv=none; b=aAF6uquiZASd5PmvgaoUnehjCaAgH/E+TpEJRUNJLXpGKGYmRCjvqFZI6qawfwrQu8ANky33dgP6dp7WTrfrqhMLZRowqNg76TEmwg8MLqtE2bRdkpRegSQzDQ0+XyjBpw0YbVhQB37FVzDt55S2SKb0+ld3OUqGPUFWSaM97ng=
+	t=1742927004; cv=none; b=B2BYb4/0xmplry1X6m/GGF199Jdh7OgzhwPtd2RQQULGxaqphJSDkI7sH9QcYvCNbPm9kADVP0hXIgjE13aa+n4+RB12sYSGk1O252HEkOppalMsKJKgHpJTwK1C5u1ooqKeqIH1n7WaH4q0GjQYTzpO3BolcPD0vr9O2wErcwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742927026; c=relaxed/simple;
-	bh=mcnEau1wEvdkMarh9SDVAW8uBdhX35UZa+0DBSnS++Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbtqY92bBdRQ1XrEj1+uSt+QBt7KPMFisBmr/T9z0R2oup0DM77A21IRxC6ZzV2FGxg1Ktfq7T9KdJ9OyRjWyem1CL+pGoYK+kwlHOfjhbJmu8s23tju5UE9pmLcDz5LcwTHmjki5x7RxAEch9/7mdvi/y3x1wAbk6VDfKYBD4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtW2u0f+; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3035858c687so3333352a91.2;
-        Tue, 25 Mar 2025 11:23:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742927025; x=1743531825; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vCaqNT6Z4XukVuCat8lSt865NhuPSV6jdLTRDZQ+QQ=;
-        b=XtW2u0f+7sKqoQB60/LHMFkv8cChZHlYwDanJlmM7gb9mJY/epeO9FofcuGiJglRDq
-         Afo4pCEetYVZ8vTPWN7A38G67pOzj+U7/8DVIMu2wbalVplc/0LS3j5gC/UoPQrq1PCZ
-         oK18MFIEhv+X6/Svkyxxrv22DPereZ77V+XtGQV3hUHMcVlAfdnSYoc9PHCmMPQXJNxF
-         pn1GTOTS+24WOy8sAYa6LbRsEK3O3SuLWbjT2Gn54mntYh6DqpRrodJ1Gqz8kFHJQYVc
-         TfofxUcHiFmT4solLNb7+y8h9IkeJw7q+4j/fvkh+d3RDjkLpVeSjBg5gpEBSaN6jcL6
-         5a5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742927025; x=1743531825;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vCaqNT6Z4XukVuCat8lSt865NhuPSV6jdLTRDZQ+QQ=;
-        b=TTxpXxo1hsOri7VsEQ36Oe1Mufw3KNvBm7skR42MLX58n76jWztY6mfICSfnZ5Ycm1
-         PB5xahs9Fv1501vBqHp1WASSuNYcQwbhwC6+hPqeClgScDNTwZwLuSWhraO+TJUbDbZb
-         K4GyEolKFiTc+f1r2LTgA63y72fc/kDERuY2lCLYkOj1TfQ9lvygfKI4sCdyRItQR13V
-         /arA6saTbfA9waTWhKee/x44PyrRlLiiMYuPgkUt4PvL9n5pgfSy10vhqu032RuSThBR
-         h25chUNiAeGnmQaLLJ9zG+HqbP7ie/gkHBiWhm2RHF0scp+izikKW4X38UCB7JMlsmAK
-         7aaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxQRK/6qua6QnwxEgkAV23MmO1oYdzCDTPzZVMlO/7BjZD5f5kal+HZRwYad2hKjxNfV66oA4MvIL2q+z64CHs@vger.kernel.org, AJvYcCV4YhB4PfHAaXsgNPFN9z0OFbsAN6Ly+uXXmvTWjAlH47g+cEaeBgZBTpzRVVLXTQgU4V0zk3Qgku5e/YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK6vJxK3vWMsSuiUmTwd+plCXAxBizFgky67DjVQtg2XyKsIPy
-	16X5xQfl7pTaqNkXFcyixy9bjrrQLqvNCUtVrAkzXCyiDa5Y2Zjr
-X-Gm-Gg: ASbGncuYmKCo4jDkmoasXszMB8jtR+tYmu9k3DSMLXwsvXYjKtzw7qm6rQklF2WKBqF
-	T7099nSUVRvtpimlhcrrtIZbfYTKHOSk5zNsej7ACUeKG3zSjcPpOKGXaoO5dYNeKxcId5ajFfY
-	pv86iu2gtV5GIoLaRjWVsh9vQgRq8k5pGnPLcwOA6p5niQca4MrlOvh4DGFeUURPclEmXvJcZoa
-	M7Lkti0BBUdU4JdXvl01V6f1hUm3QTITZtZInG0Uvpm0KBnDqA/mEnXe9eHCh9nbRmzuKFRKj7E
-	hKFWY1R9dbE5+X3Od0KbQZyKDQXZupf7ch/Qnz5XhExpLhmn3eYehqqZZA4uYqBgewceOytK2zU
-	TQruXVdeb7cAqYSvjP3Flv8WI8t8=
-X-Google-Smtp-Source: AGHT+IEuRRdtDJ7J706QxzLdO+4/epryr3zMKq0ApySo1GrbkiLWxZVJJTSujlolia+qBaD3KpAWrg==
-X-Received: by 2002:a17:90b:3950:b0:2ee:cded:9ac7 with SMTP id 98e67ed59e1d1-3030fe988c3mr26901615a91.20.1742927024329;
-        Tue, 25 Mar 2025 11:23:44 -0700 (PDT)
-Received: from malayaVM.mrout-thinkpadp16vgen1.punetw6.csb ([103.133.229.222])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3030f7ea12bsm10646401a91.33.2025.03.25.11.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 11:23:43 -0700 (PDT)
-From: Malaya Kumar Rout <malayarout91@gmail.com>
-To: malayarout91@gmail.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] selftests/mm/cow: fix minor memory leak in child_vmsplice_memcmp_fn()
-Date: Tue, 25 Mar 2025 23:52:55 +0530
-Message-ID: <20250325182319.29352-1-malayarout91@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742927004; c=relaxed/simple;
+	bh=wBXyK5/v+zshiQ5AJ78U67rSVAz/Ur6ZkcGgzsmTp8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WasXoXt3E9/jwhGrcweA5SeIqMJh6Qep94HgPdwMiO5rKP4swIZSYPOY5vUhpQVMBRnm1MNdDVDjiNlgJYKXJZgFPQRSKGcSRwXqFvAJnN4nRvwJTdyr/E5P8aX9XCCCEBD77XwvYKtEWKRzhl9crQoTBugE7uxQUUPtZl+OZug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Modie2ge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BDDC4CEE4;
+	Tue, 25 Mar 2025 18:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742927003;
+	bh=wBXyK5/v+zshiQ5AJ78U67rSVAz/Ur6ZkcGgzsmTp8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Modie2getBGH7oWwsObJBFzjFv49uLHLKNDG1G/a3eAgXCOBzRiogF11g6dYAxV4/
+	 XvODcc00PjgRmLF7zSjwmm0Tpd30g+oSgZG05WokPSNbP7+2y35JjcFtcuEbU6nqZQ
+	 0ILc8m0lZ0zNxr6zSU2ib+ByI33v+kIhjh9OboonFyJccND/IPWG6asVgfkH2PtaZT
+	 lkYBRX6318Q8hN26hmNu8ChHVoWvrZLzFwaisA98ve70kYEN2+C/m4QJhWL9IAo90+
+	 k4Y/SaeRt1nL4ZRvplFOU1/TxTwxbGxeA9RVVaDXEFcSNuHuFe7Sd0OlHR7mAT4iu9
+	 u8iIJ9E6D/oPw==
+Date: Tue, 25 Mar 2025 18:23:16 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jeremy Linton <jeremy.linton@arm.com>
+Cc: linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	yury.khrustalev@arm.com, kristina.martsenko@arm.com,
+	liaochang1@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] arm64: uaccess: Add additional userspace GCS
+ accessors
+Message-ID: <203a89bc-75d1-4ab0-ab42-52616103ad72@sirena.org.uk>
+References: <20250318204841.373116-1-jeremy.linton@arm.com>
+ <20250318204841.373116-4-jeremy.linton@arm.com>
+ <50a0920d-3e3d-4e96-b68a-a7a0d78c3695@sirena.org.uk>
+ <e8ada81d-0e10-412b-8792-035bc63113a6@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XP2AO17pHJsMVVJY"
+Content-Disposition: inline
+In-Reply-To: <e8ada81d-0e10-412b-8792-035bc63113a6@arm.com>
+X-Cookie: Visit beautiful Vergas, Minnesota.
 
-Static Analyis for cow.c: error
-Exception branch exits without releasing memory 'old' and 'new'
 
-fix the issue by releasing the allocated memory.
+--XP2AO17pHJsMVVJY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
----
- tools/testing/selftests/mm/cow.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+On Fri, Mar 21, 2025 at 06:43:23PM -0500, Jeremy Linton wrote:
+> On 3/19/25 8:24 AM, Mark Brown wrote:
 
-diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
-index 9446673645eb..fdee42850548 100644
---- a/tools/testing/selftests/mm/cow.c
-+++ b/tools/testing/selftests/mm/cow.c
-@@ -168,18 +168,18 @@ static int child_vmsplice_memcmp_fn(char *mem, size_t size,
- 	memcpy(old, mem, size);
- 
- 	if (pipe(fds) < 0)
--		return -errno;
-+		goto out;
- 
- 	/* Trigger a read-only pin. */
- 	transferred = vmsplice(fds[1], &iov, 1, 0);
- 	if (transferred < 0)
--		return -errno;
-+		goto out;
- 	if (transferred == 0)
- 		return -EINVAL;
- 
- 	/* Unmap it from our page tables. */
- 	if (munmap(mem, size) < 0)
--		return -errno;
-+		goto out;
- 
- 	/* Wait until the parent modified it. */
- 	write(comm_pipes->child_ready[1], "0", 1);
-@@ -190,10 +190,15 @@ static int child_vmsplice_memcmp_fn(char *mem, size_t size,
- 	for (total = 0; total < transferred; total += cur) {
- 		cur = read(fds[0], new + total, transferred - total);
- 		if (cur < 0)
--			return -errno;
-+			goto out;
- 	}
- 
- 	return memcmp(old, new, transferred);
-+
-+out:
-+	free(old);
-+	free(new);
-+	return -errno;
- }
- 
- typedef int (*child_fn)(char *mem, size_t size, struct comm_pipes *comm_pipes);
--- 
-2.43.0
+> > A GCS load done by the hardware will verify that we are loading from GCS
+> > memory (the accesses are marked as AccessType_GCS in the pseudocode
+> > which is then validated in for example S1CheckPermissions()).  Sadly
+> > there's no equivalent of GCSSTR so we'd need to do the permission check
+> > ourselves to match this behaviour.
 
+> Right, except that if I grab the VMA as a placeholder for the page, check to
+> see if its a VM_SHADOW_STACK under any of
+> map_read_lock()/lock_vma_under_rcu()/etc and then perform the access, the
+> resulting possible fault will have problems with vma locking. Otherwise
+> there ends up being a few different races that at the moment I've not yet
+> figured out how to fix without making a big mess. For example, we can reduce
+> that possible window, by reading the value/locking and checking shadow stack
+> state/dropping the lock/rereading the value, or some other construct but it
+> seems pointless because the suggested problem is that we might be creating a
+> way to bypass some of the shadow stack security. In which case, leaving a
+> little race is likely the same as leaving it wide open.
+
+Yeah, it's messy.  The "nicest" thing I could think of was doing a GCS
+store of the value we just read to validate the GCS permission but that
+has very obvious ick and is in it's own way incorrect.  Since the GCS
+permission is always read/write I'm not sure what would notice without
+an incredibly dodgy race but it's wrong.
+
+> Otherwise, maybe we can ignore the problem, or just refuse to allow probes
+> on 'RET' instructions which seems to be the main problematic case. Although,
+> given we don't really know if GCS is enabled until the probe is hit,
+> SIGSEG'ing the target process is a big hammer.
+
+Yeah, that doesn't feel like the solution.
+
+> Ignoring it might be a valid option. I guess it could to be one of those "if
+> the user puts a uprobe on a RET some of the shadow stack security is
+> reduced" footguns. If an attacker can also manipulate the address space in a
+> way to exploit it then its probably game over anyway. Ideally, the kernel
+> would warn on this, but per the conversation around patch 6/7 that seems to
+> be off the table.
+
+I'm not completely opposed to just not doing the validation given the
+pain with implementing it, it's hard to be enthusiastic about any of the
+options really.  If we are going to do something other than fully
+and accurately emulate then we should acknowledge what's missing and
+why, at least in the changelog and probably also in the code.
+
+--XP2AO17pHJsMVVJY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfi9JMACgkQJNaLcl1U
+h9BVLgf9EGjIyA/yyo9Zc1l0VBnDeFJuL1QxPKsgq61Al37wBaxFi6YFTJp6uGYG
+0frvA6r4/tMT4Tb1MTCwqp4BrIC9Iow8m17C16HRSDdG8yLxkIJgsH9nWGBZX55w
+yLANK/H3BBc06kKKOYJqojJ2kjgFj+0JuD8JoKY4VUxEeUVFgv66n/LNb0+wWw5c
+iRdolRJg/KGnQhYBpaWU8+A/HUEO14I/Te0DQCBe3q7DLLJhzruAW5SttcTElZDp
+S4SjdGtbN3ES8fUObvqPKXq0KX/3YrsWlRmSQP9K6+PfbbmpksndRfyoNHZU8gkk
+FY5l02qmP5eNnHNn3MFJ9m7WbyIcRw==
+=agKn
+-----END PGP SIGNATURE-----
+
+--XP2AO17pHJsMVVJY--
 
